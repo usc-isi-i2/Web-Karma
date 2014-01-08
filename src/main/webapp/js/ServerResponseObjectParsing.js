@@ -106,6 +106,8 @@ function parse(data) {
                                 .click(showMapViewForWorksheet))
                             .append($("<div>")
                                 .addClass("showHideWorkSheet")
+                                .addClass("glyphicon")
+                                .addClass("glyphicon-chevron-up")		
                                 .attr("id", "hideShow" + worksheet["worksheetId"])
                                 .click(function() {
                                     $("div.svg-model", mainDiv).toggle(400);
@@ -117,29 +119,14 @@ function parse(data) {
                                     titleDiv.toggleClass("ui-corner-all");
 
                                     // Change the icon
-                                    if($(this).data("state") == "open") {
-                                        $(this).data("state", "close");
-                                        $(this).button({
-                                            icons : {
-                                                primary : 'ui-icon-plusthick'
-                                            },
-                                            text : false
-                                        });
-                                    } else if($(this).data("state") == "close") {
-                                        $(this).data("state", "open");
-                                        $(this).button({
-                                            icons : {
-                                                primary : 'ui-icon-minusthick'
-                                            },
-                                            text : false
-                                        });
+                                    if($(this).hasClass("glyphicon-chevron-up")) {
+                                    	$(this).removeClass("glyphicon-chevron-up");
+                                    	$(this).addClass("glyphicon-chevron-down");
+                                    } else {
+                                    	$(this).addClass("glyphicon-chevron-up");
+                                    	$(this).removeClass("glyphicon-chevron-down");
                                     }
-                                }).button({
-                                    icons : {
-                                        primary : 'ui-icon-minusthick'
-                                    },
-                                    text : false
-                                }).data("state", "open")
+                                })
                             )
                         );
                     mainDiv.append(titleDiv);
