@@ -204,6 +204,8 @@ public class D2rqMapping
 				return colorTranslationTable();
 			case EventType:
 				return eventTranslationTable();
+			case Citizenship:
+				return citizenTranslationTable();
 			default:
 				return null;
 		}
@@ -228,6 +230,7 @@ public class D2rqMapping
 
 	public enum translationTables {
 		Color,
+		Citizenship,
 		EventType
 	}
 
@@ -244,6 +247,217 @@ public class D2rqMapping
 			colorTranslationTable = createTranslationTable(colorTranslations,"Color");
 		}
 		return colorTranslationTable;
+	}
+
+	private Resource citizenshipTranslationTable;
+
+	private Resource citizenTranslationTable()
+	{
+		if (citizenshipTranslationTable == null)
+		{
+			Map<String, Resource> translations = new HashMap<>();
+			translations.put("Germany", agent.CitizenRoleFederalRepublicOfGermany);
+			translations.put("Trinidad", agent.CitizenRoleTrinidadAndTobago);
+			translations.put("Congo", agent.CitizenRoleCongo);
+			translations.put("Nicaragua", agent.CitizenRoleNicaragua);
+			translations.put("Mauritius", agent.CitizenRoleMauritius);
+			translations.put("Niue", agent.CitizenRoleNiue);
+			translations.put("Iceland", agent.CitizenRoleIceland);
+			translations.put("Libyan Arab Jamahiriya", agent.CitizenRoleLibyanArabJamahiriya);
+			translations.put("Tonga", agent.CitizenRoleTonga);
+			translations.put("Egypt", agent.CitizenRoleEgypt);
+			translations.put("Turkmenistan", agent.CitizenRoleTurkmenistan);
+			translations.put("Mozambique", agent.CitizenRoleMozambique);
+			translations.put("Cambodia", agent.CitizenRoleCambodia);
+			translations.put("United Kingdom", agent.CitizenRoleUnitedKingdomOfGreatBritainAndNorthernIreland);
+			translations.put("Faroe Islands", agent.CitizenRoleFaroeIslands);
+			translations.put("Taiwan", agent.CitizenRoleTaiwan);
+			translations.put("Equatorial Guinea", agent.CitizenRoleEquatorialGuinea);
+			translations.put("Palau", agent.CitizenRolePalau);
+			translations.put("Dominican Republic", agent.CitizenRoleDominicanRepublic);
+			translations.put("Greece", agent.CitizenRoleGreece);
+			translations.put("Gabon", agent.CitizenRoleGabon);
+			translations.put("Burkina Faso", agent.CitizenRoleBurkinaFaso);
+			translations.put("Zimbabwe", agent.CitizenRoleZimbabwe);
+			translations.put("Azerbaijan", agent.CitizenRoleAzerbaijan);
+			translations.put("Saint Vincent And The Grenadines", agent.CitizenRoleSaintVincentAndTheGrenadines);
+			translations.put("Djibouti", agent.CitizenRoleDjibouti);
+			translations.put("Hungary", agent.CitizenRoleHungary);
+			translations.put("Belarus", agent.CitizenRoleBelarus);
+			translations.put("Saint Lucia", agent.CitizenRoleSaintLucia);
+			translations.put("Saint Kitts And Nevis", agent.CitizenRoleSaintKittsAndNevis);
+			translations.put("Slovenia", agent.CitizenRoleSlovenia);
+			translations.put("Malaysia", agent.CitizenRoleMalaysia);
+			translations.put("Iran", agent.CitizenRoleIslamicRepublicOfIran);
+			translations.put("Singapore", agent.CitizenRoleSingapore);
+			translations.put("United Arab Emirates", agent.CitizenRoleUnitedArabEmirates);
+			translations.put("Yemen", agent.CitizenRoleDemocraticYemen);
+			translations.put("Georgia", agent.CitizenRoleGeorgia);
+			translations.put("Guinea", agent.CitizenRoleGuinea);
+			translations.put("Colombia", agent.CitizenRoleColombia);
+			translations.put("Albania", agent.CitizenRoleAlbania);
+			translations.put("Paraguay", agent.CitizenRoleParaguay);
+			translations.put("Zaire", agent.CitizenRoleZaire);
+			translations.put("Guyana", agent.CitizenRoleGuyana);
+			translations.put("Central African Republic", agent.CitizenRoleCentralAfricanRepublic);
+			translations.put("Afghanistan", agent.CitizenRoleAfghanistan);
+			translations.put("Antigua And Barbuda", agent.CitizenRoleAntiguaAndBarbuda);
+			translations.put("Tajikistan", agent.CitizenRoleTajikistan);
+			translations.put("Nauru", agent.CitizenRoleNauru);
+			translations.put("Finland", agent.CitizenRoleFinland);
+			translations.put("Tuvalu", agent.CitizenRoleTuvalu);
+			translations.put("Andorra", agent.CitizenRoleAndorra);
+			translations.put("Honduras", agent.CitizenRoleHonduras);
+			translations.put("Timor Leste", agent.CitizenRoleTimorLeste);
+			translations.put("Lebanon", agent.CitizenRoleLebanon);
+			translations.put("Luxembourg", agent.CitizenRoleLuxembourg);
+			translations.put("Saudi Arabia", agent.CitizenRoleSaudiArabia);
+			translations.put("Myanmar", agent.CitizenRoleMyanmar);
+			translations.put("Kyrgyzstan", agent.CitizenRoleKyrgyzstan);
+			translations.put("Monaco", agent.CitizenRoleMonaco);
+			translations.put("China", agent.CitizenRoleChina);
+			translations.put("Ukraine", agent.CitizenRoleUkraine);
+			translations.put("Togo", agent.CitizenRoleTogo);
+			translations.put("Mauritania", agent.CitizenRoleMauritania);
+			translations.put("Sudan", agent.CitizenRoleSudan);
+			translations.put("Ghana", agent.CitizenRoleGhana);
+			translations.put("Switzerland", agent.CitizenRoleSwitzerland);
+			translations.put("Ireland", agent.CitizenRoleIreland);
+			translations.put("Portugal", agent.CitizenRolePortugal);
+			translations.put("Peru", agent.CitizenRolePeru);
+			translations.put("Montenegro", agent.CitizenRoleMontenegro);
+			translations.put("Serbia And Montenegro", agent.CitizenRoleSerbiaAndMontenegro);
+			translations.put("SanMarino", agent.CitizenRoleSanMarino);
+			translations.put("Marshall Islands", agent.CitizenRoleMarshallIslands);
+			translations.put("South Africa", agent.CitizenRoleSouthAfrica);
+			translations.put("Liberia", agent.CitizenRoleLiberia);
+			translations.put("Cape Verde", agent.CitizenRoleCapeVerde);
+			translations.put("Denmark", agent.CitizenRoleDenmark);
+			translations.put("Mexico", agent.CitizenRoleMexico);
+			translations.put("Rwanda", agent.CitizenRoleRwanda);
+			translations.put("Benin", agent.CitizenRoleBenin);
+			translations.put("France", agent.CitizenRoleFrance);
+			translations.put("Fiji", agent.CitizenRoleFiji);
+			translations.put("Guatemala", agent.CitizenRoleGuatemala);
+			translations.put("Zambia", agent.CitizenRoleZambia);
+			translations.put("Czech Republic", agent.CitizenRoleCzechRepublic);
+			translations.put("Latvia", agent.CitizenRoleLatvia);
+			translations.put("Former Yugoslav Republic Of Macedonia", agent.CitizenRoleFormerYugoslavRepublicOfMacedonia);
+			translations.put("Chad", agent.CitizenRoleChad);
+			translations.put("Brunei Darussalam", agent.CitizenRoleBruneiDarussalam);
+			translations.put("Republic Of Moldova", agent.CitizenRoleRepublicOfMoldova);
+			translations.put("Serbia", agent.CitizenRoleSerbia);
+			translations.put("Vanuatu", agent.CitizenRoleVanuatu);
+			translations.put("Lithuania", agent.CitizenRoleLithuania);
+			translations.put("Bahrain", agent.CitizenRoleBahrain);
+			translations.put("Eritrea", agent.CitizenRoleEritrea);
+			translations.put("United States", agent.CitizenRoleUnitedStates);
+			translations.put("Congo", agent.CitizenRoleDemocraticRepublicOfTheCongo);
+			translations.put("Uganda", agent.CitizenRoleUganda);
+			translations.put("Bosnia", agent.CitizenRoleBosniaAndHerzegovina);
+			translations.put("Lao Peoples Democratic Republic", agent.CitizenRoleLaoPeoplesDemocraticRepublic);
+			translations.put("India", agent.CitizenRoleIndia);
+			translations.put("SierraLeone", agent.CitizenRoleSierraLeone);
+			translations.put("Malta", agent.CitizenRoleMalta);
+			translations.put("Nigeria", agent.CitizenRoleNigeria);
+			translations.put("Uruguay", agent.CitizenRoleUruguay);
+			translations.put("Liechtenstein", agent.CitizenRoleLiechtenstein);
+			translations.put("Republic Of Korea", agent.CitizenRoleRepublicOfKorea);
+			translations.put("Lesotho", agent.CitizenRoleLesotho);
+			translations.put("CostaRica", agent.CitizenRoleCostaRica);
+			translations.put("Senegal", agent.CitizenRoleSenegal);
+			translations.put("Tunisia", agent.CitizenRoleTunisia);
+			translations.put("Romania", agent.CitizenRoleRomania);
+			translations.put("Madagascar", agent.CitizenRoleMadagascar);
+			translations.put("Jordan", agent.CitizenRoleJordan);
+			translations.put("Algeria", agent.CitizenRoleAlgeria);
+			translations.put("Chile", agent.CitizenRoleChile);
+			translations.put("Kiribati", agent.CitizenRoleKiribati);
+			translations.put("Iraq", agent.CitizenRoleIraq);
+			translations.put("Ecuador", agent.CitizenRoleEcuador);
+			translations.put("Syria", agent.CitizenRoleSyrianArabRepublic);
+			translations.put("Sri Lanka", agent.CitizenRoleSriLanka);
+			translations.put("Kazakhstan", agent.CitizenRoleKazakhstan);
+			translations.put("Netherlands", agent.CitizenRoleNetherlands);
+			translations.put("Swaziland", agent.CitizenRoleSwaziland);
+			translations.put("Spain", agent.CitizenRoleSpain);
+			translations.put("Angola", agent.CitizenRoleAngola);
+			translations.put("Dominica", agent.CitizenRoleDominica);
+			translations.put("Norway", agent.CitizenRoleNorway);
+			translations.put("Tanzania", agent.CitizenRoleUnitedRepublicOfTanzania);
+			translations.put("Micronesia", agent.CitizenRoleFederatedStatesOfMicronesia);
+			translations.put("Grenada", agent.CitizenRoleGrenada);
+			translations.put("Cameroon", agent.CitizenRoleCameroon);
+			translations.put("Estonia", agent.CitizenRoleEstonia);
+			translations.put("Italy", agent.CitizenRoleItaly);
+			translations.put("Nepal", agent.CitizenRoleNepal);
+			translations.put("Bangladesh", agent.CitizenRoleBangladesh);
+			translations.put("Comoros", agent.CitizenRoleComoros);
+			translations.put("Cook Islands", agent.CitizenRoleCookIslands);
+			translations.put("Armenia", agent.CitizenRoleArmenia);
+			translations.put("Belgium", agent.CitizenRoleBelgium);
+			translations.put("Solomon Islands", agent.CitizenRoleSolomonIslands);
+			translations.put("Gambia", agent.CitizenRoleGambia);
+			translations.put("Barbados", agent.CitizenRoleBarbados);
+			translations.put("Maldives", agent.CitizenRoleMaldives);
+			translations.put("Brazil", agent.CitizenRoleBrazil);
+			translations.put("New Zealand", agent.CitizenRoleNewZealand);
+			translations.put("Seychelles", agent.CitizenRoleSeychelles);
+			translations.put("Korea", agent.CitizenRoleDemocraticPeoplesRepublicOfKorea);
+			translations.put("Belize", agent.CitizenRoleBelize);
+			translations.put("Mali", agent.CitizenRoleMali);
+			translations.put("Samoa", agent.CitizenRoleSamoa);
+			translations.put("Bolivia", agent.CitizenRoleBolivia);
+			translations.put("Venezuela", agent.CitizenRoleVenezuela);
+			translations.put("Japan", agent.CitizenRoleJapan);
+			translations.put("Jamaica", agent.CitizenRoleJamaica);
+			translations.put("Namibia", agent.CitizenRoleNamibia);
+			translations.put("Thailand", agent.CitizenRoleThailand);
+			translations.put("Uzbekistan", agent.CitizenRoleUzbekistan);
+			translations.put("Morocco", agent.CitizenRoleMorocco);
+			translations.put("Australia", agent.CitizenRoleAustralia);
+			translations.put("Niger", agent.CitizenRoleNiger);
+			translations.put("El Salvador", agent.CitizenRoleElSalvador);
+			translations.put("Haiti", agent.CitizenRoleHaiti);
+			translations.put("Poland", agent.CitizenRolePoland);
+			translations.put("Cyprus", agent.CitizenRoleCyprus);
+			translations.put("Israel", agent.CitizenRoleIsrael);
+			translations.put("Papua New Guinea", agent.CitizenRolePapuaNewGuinea);
+			translations.put("Croatia", agent.CitizenRoleCroatia);
+			translations.put("Philippines", agent.CitizenRolePhilippines);
+			translations.put("Oman", agent.CitizenRoleOman);
+			translations.put("Kenya", agent.CitizenRoleKenya);
+			translations.put("Sao Tome And Principe", agent.CitizenRoleSaoTomeAndPrincipe);
+			translations.put("Argentina", agent.CitizenRoleArgentina);
+			translations.put("Burundi", agent.CitizenRoleBurundi);
+			translations.put("Bahamas", agent.CitizenRoleBahamas);
+			translations.put("Botswana", agent.CitizenRoleBotswana);
+			translations.put("Pakistan", agent.CitizenRolePakistan);
+			translations.put("Panama", agent.CitizenRolePanama);
+			translations.put("Kuwait", agent.CitizenRoleKuwait);
+			translations.put("Viet Nam", agent.CitizenRoleVietNam);
+			translations.put("Yemen", agent.CitizenRoleYemen);
+			translations.put("Indonesia", agent.CitizenRoleIndonesia);
+			translations.put("Bhutan", agent.CitizenRoleBhutan);
+			translations.put("Austria", agent.CitizenRoleAustria);
+			translations.put("Suriname", agent.CitizenRoleSuriname);
+			translations.put("Canada", agent.CitizenRoleCanada);
+			translations.put("Cuba", agent.CitizenRoleCuba);
+			translations.put("Qatar", agent.CitizenRoleQatar);
+			translations.put("Sweden", agent.CitizenRoleSweden);
+			translations.put("Russian", agent.CitizenRoleRussianFederation);
+			translations.put("Mongolia", agent.CitizenRoleMongolia);
+			translations.put("Turkey", agent.CitizenRoleTurkey);
+			translations.put("Cote DIvoire", agent.CitizenRoleCoteDIvoire);
+			translations.put("Slovakia", agent.CitizenRoleSlovakia);
+			translations.put("Ethiopia", agent.CitizenRoleEthiopia);
+			translations.put("Bulgaria", agent.CitizenRoleBulgaria);
+			translations.put("Malawi", agent.CitizenRoleMalawi);
+			translations.put("Guinea Bissau", agent.CitizenRoleGuineaBissau);
+			translations.put("Somalia", agent.CitizenRoleSomalia);
+			citizenshipTranslationTable = createTranslationTable(translations, "CitizenshipRole");
+		}
+		return citizenshipTranslationTable;
 	}
 
 	private Resource eventTypeTranslationTable;
@@ -282,7 +496,7 @@ public class D2rqMapping
 		while (it.hasNext()) {
 			Map.Entry<String,Resource> e = it.next();
 			Resource translation = d2rqMapping.createResource();
-			translation.addProperty(d2rq.valueContains,e.getKey());
+			translation.addProperty(d2rq.databaseValue, e.getKey());
 			translation.addProperty(d2rq.rdfValue,e.getValue());
 			translationTable.addProperty(d2rq.translation,translation);
 		}

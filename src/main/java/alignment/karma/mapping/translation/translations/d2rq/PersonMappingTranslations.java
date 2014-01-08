@@ -34,10 +34,29 @@ public class PersonMappingTranslations extends D2rqTranslation
 			personHairColorTranslation(model, d2rqMapping);
 			personFreeFormTextDescription(model, d2rqMapping);
 			personIdentificationDocument(model, d2rqMapping);
+			personCitizenshipNationality(model, d2rqMapping);
 			//TODO contact info Phone email web
 			personPhoneNumber(model, d2rqMapping);
 			//TODO addresses home..work
 			personHomeAddress(model, d2rqMapping);
+		}
+	}
+
+	private static void personCitizenshipNationality(Model karmaModel, D2rqMapping d2rqMapping)
+	{
+		KarmaMappingSparqlQuery kQuery = new KarmaMappingSparqlQuery();
+		KarmaSparqlQueryVariable person = new KarmaSparqlQueryVariable(BadOntology.Person);
+		KarmaSparqlQueryVariable nationality = new KarmaSparqlQueryVariable(BadOntology.Nationality);
+		kQuery.addStatement(person, BadOntology.person_properties, nationality);
+		kQuery.setSelectVariables(nationality);
+		QueryExecution qe = QueryExecutionFactory.create(kQuery.getQuery(), karmaModel);
+		ResultSet rs = qe.execSelect();
+		if (rs.hasNext())
+		{
+			Resource citizen = d2rqMapping.createClassMap("Nationality", agent.CitizenRole);
+			d2rqMapping.createPropertyBridge(personResource, ero.has_role, citizen);
+			List<String> columnNames = getConnectedColumns(rs.next().get(nationality.variableName), BadOntology.has_value, karmaModel);
+			d2rqMapping.translationTableTypeTranslation(citizen, D2rqMapping.translationTables.Citizenship, columnNames);
 		}
 	}
 
