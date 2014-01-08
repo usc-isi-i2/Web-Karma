@@ -180,12 +180,9 @@ public class ProgSynthesis {
 				if (xString.compareTo("NO_CLASIF") == 0) {
 					return null; // indistinguishable classes.
 				}
-				if (termCnt == 10) {
-					termCnt = 0;
-					if ((System.currentTimeMillis() - startTime) / 1000 >= time_limit) {
-						findRule = false;
-						break;
-					}
+				if ((System.currentTimeMillis() - startTime) / 1000 >= time_limit) {
+					findRule = false;
+					break;
 				}
 				for (Partition p : prog.partitions) {
 					if (p.label.compareTo(xString) == 0) {
