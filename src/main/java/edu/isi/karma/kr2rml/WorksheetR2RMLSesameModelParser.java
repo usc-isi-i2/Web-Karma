@@ -21,16 +21,12 @@
 
 package edu.isi.karma.kr2rml;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -50,15 +46,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNodePath;
-import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 
+@Deprecated
 public class WorksheetR2RMLSesameModelParser {
-	private Worksheet worksheet;
-	private RepFactory factory;
 	private Repository myRepository;
 	private RepositoryConnection con;
 	private ValueFactory f;
@@ -72,22 +64,18 @@ public class WorksheetR2RMLSesameModelParser {
 	private int objectMapCounter = 1;
 	private static Logger logger = LoggerFactory.getLogger(WorksheetR2RMLSesameModelParser.class);
 	
-	public WorksheetR2RMLSesameModelParser(Worksheet worksheet, RepFactory factory, File modelFile) 
+	public WorksheetR2RMLSesameModelParser(Worksheet worksheet, RepFactory factory, R2RMLMappingIdentifier id) 
 			throws RepositoryException, RDFParseException, IOException, JSONException {
-		this.worksheet = worksheet;
-		this.factory = factory;
-		
-		this.r2rmlMapping = new R2RMLMapping();
+		this.r2rmlMapping = new R2RMLMapping(id);
 		this.auxInfo = new KR2RMLMappingAuxillaryInformation();
 		this.subjectMapIndex = new HashMap<String, SubjectMap>();
 		this.triplesMapIndex = new HashMap<String, TriplesMap>();
-		
 		/** Initialize the repository **/
 		myRepository = new SailRepository(new MemoryStore());
 		myRepository.initialize();
 		con = myRepository.getConnection();
 		f = con.getValueFactory();
-		con.add(modelFile, "", RDFFormat.TURTLE);
+		con.add(id.getLocation(), "", RDFFormat.TURTLE);
 		
 		// Generate TriplesMap for each InternalNode in the tree
 		createSubjectMaps();
@@ -186,7 +174,7 @@ public class WorksheetR2RMLSesameModelParser {
 				} else {
 					pred.setTemplate(TemplateTermSetBuilder.
 							constructTemplateTermSetFromR2rmlTemplateString(
-									predVal.stringValue(), worksheet, factory));
+									predVal.stringValue()));
 				}
 			}
 			pom.setPredicate(pred);
@@ -234,7 +222,7 @@ public class WorksheetR2RMLSesameModelParser {
 						Value colVal = objMapColStmt.getObject();
 						objMap = new ObjectMap(getNewObjectMapId(), 
 								TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlColumnString(
-										colVal.stringValue(), worksheet, factory), rdfLiteralTypeTermSet);
+										colVal.stringValue()), rdfLiteralTypeTermSet);
 					}
 					// Check if anything needs to be added to the hNodeIdToPredicateObjectMap Map
 					addHNodeIdToPredObjectMapLink(objMap, pom);
@@ -251,12 +239,12 @@ public class WorksheetR2RMLSesameModelParser {
 			if (term instanceof ColumnTemplateTerm) {
 				String hNodeId = term.getTemplateTermValue();
 				List<PredicateObjectMap> existingPomList = this.auxInfo.
-						getHNodeIdToPredObjLinks().get(hNodeId);  
+						getColumnNameToPredObjLinks().get(hNodeId);  
 				if (existingPomList == null) {
 					existingPomList = new ArrayList<PredicateObjectMap>();
 				}
 				existingPomList.add(pom);
-				this.auxInfo.getHNodeIdToPredObjLinks().put(hNodeId, existingPomList);
+				this.auxInfo.getColumnNameToPredObjLinks().put(hNodeId, existingPomList);
 			}
 		}
 	}
@@ -291,9 +279,9 @@ public class WorksheetR2RMLSesameModelParser {
 					templateUri, null, false);
 			while (templates.hasNext()) {
 				Statement templStmt = templates.next();
-				System.out.println("Template: " + templStmt.getObject().stringValue());
+				logger.debug("Template: " + templStmt.getObject().stringValue());
 				subjTemplTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
-						templStmt.getObject().stringValue(), worksheet, factory);
+						templStmt.getObject().stringValue());
 			}
 			subjMap.setTemplate(subjTemplTermSet);
 			
@@ -314,7 +302,7 @@ public class WorksheetR2RMLSesameModelParser {
 					subjMap.addRdfsType(typeTermSet);
 				} else {
 					TemplateTermSet typeTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
-							typeStmt.getObject().stringValue(), worksheet, factory);
+							typeStmt.getObject().stringValue());
 					subjMap.addRdfsType(typeTermSet);
 				}
 				
@@ -332,59 +320,40 @@ public class WorksheetR2RMLSesameModelParser {
 			throws RepositoryException, JSONException {
 		URI termTypeUri = f.createURI(Uris.RR_TERM_TYPE_URI);
 		URI blankNodeUri = f.createURI(Uris.RR_BLANK_NODE_URI);
-		URI kmCoverColumnUri = f.createURI(Uris.KM_BLANK_NODE_COVERS_COLUMN_URI);
 		URI kmBnodePrefixUri = f.createURI(Uris.KM_BLANK_NODE_PREFIX_URI);
 		
 		RepositoryResult<Statement> blankNodeSubjectMapStmts = con.getStatements(null, termTypeUri, 
 				blankNodeUri, false);
-		List<HNodePath> allColPaths = worksheet.getHeaders().getAllPaths();
 		while (blankNodeSubjectMapStmts.hasNext()) {
 			Resource blankNodeSubjRes = blankNodeSubjectMapStmts.next().getSubject();
 			SubjectMap subjMap = this.subjectMapIndex.get(blankNodeSubjRes.stringValue());
 			subjMap.setAsBlankNode(true);
 			
-			// Get the column it covers
-			RepositoryResult<Statement> coverColStmts = con.getStatements(blankNodeSubjRes, 
-					kmCoverColumnUri, null, false);
 			List<String> columnsCoveredHnodeIds = new ArrayList<String>();
-			while (coverColStmts.hasNext()) {
-				Value colName = coverColStmts.next().getObject();
-				// If hierarchical column
-				if (colName.stringValue().startsWith("[") && colName.stringValue().endsWith("]")) {
-					System.out.println("Hierarchical column encountered!");
-					JSONArray strArr = new JSONArray(colName.stringValue());
-					HTable hTable = worksheet.getHeaders();
-		    		for (int i=0; i<strArr.length(); i++) {
-						String cName = (String) strArr.get(i);
-						
-						logger.debug("Column being normalized: "+ cName);
-						HNode hNode = hTable.getHNodeFromColumnName(cName);
-						if(hNode == null || hTable == null) {
-							logger.error("Error retrieving column: " + cName);
-						}
-						
-						if (i == strArr.length()-1) {		// Found!
-							String hNodeId = hNode.getId();
-							columnsCoveredHnodeIds.add(hNodeId);
-						} else {
-							hTable = hNode.getNestedTable();
-						}
-		    		}
-				} 
-				// Single level column
-				else {
-					for (HNodePath path:allColPaths) {
-						HNode lastNode = path.getLeaf();
-//						System.out.println("Last node col name: " + lastNode.getColumnName());
-						if (colName.stringValue().equals(lastNode.getColumnName())) {
-//							System.out.println("Matched column name: " + colName);
-							columnsCoveredHnodeIds.add(lastNode.getId());
+			TriplesMap mytm = null;
+			for(TriplesMap tm : r2rmlMapping.getTriplesMapList())
+			{
+				if(tm.getSubject().getId().equalsIgnoreCase(subjMap.getId()))
+				{
+					mytm = tm;
+					
+					List<PredicateObjectMap> poms = mytm.getPredicateObjectMaps();
+					for(PredicateObjectMap pom : poms )
+					{
+						TemplateTermSet templateTermSet = pom.getObject().getTemplate();
+						if(templateTermSet != null)
+						{
+							TemplateTerm term = templateTermSet.getAllTerms().get(0);
+							if(term!= null)
+							{
+								columnsCoveredHnodeIds.add(term.getTemplateTermValue());
+							}
 						}
 					}
+					break;
 				}
-//				System.out.println("Column name from RDF: " +colName.stringValue());
 			}
-			System.out.println("Adding columns for blank node" + subjMap.getId() + " List: " + columnsCoveredHnodeIds);
+			logger.debug("Adding columns for blank node" + subjMap.getId() + " List: " + columnsCoveredHnodeIds);
 			this.auxInfo.getBlankNodesColumnCoverage().put(subjMap.getId(), columnsCoveredHnodeIds);
 			
 			// Get the blank node prefix
@@ -397,69 +366,4 @@ public class WorksheetR2RMLSesameModelParser {
 		}
 	}
 
-	public static void main(String[] args) {
-		String str = "http://id.americanart.si.edu/linkeddata/conceptscheme}";
-		Pattern p = Pattern.compile("\\{\\\".*?\\\"\\}");
-	    Matcher matcher = p.matcher(str);
-	    if (matcher.find()) {
-	    	matcher.reset();
-	    	while (matcher.find()) {
-	    		System.out.println("Match: " + matcher.group());
-	    	}
-	    } else {
-	    	System.out.println("Only string!");
-	    }
-//		File modelFile = new File("/Users/shubhamgupta/Documents/eclipse/workspace/Web-Karma/src/" +
-//				"main/webapp/publish/R2RML/WSP1VW1-wells-small.csv-model.ttl");
-		
-		try {
-			
-////			RepositoryConnection con = myRepository.getConnection();
-////			ValueFactory f = myRepository.getValueFactory();
-//			con.add(modelFile, "", RDFFormat.TURTLE);
-//			
-//			// Get all the triple maps
-//			URI trTypeUri = f.createURI(Uris.RR_TRIPLESMAP_CLASS_URI);
-//			URI templateUri = f.createURI(Uris.RR_TEMPLATE_URI);
-//			URI subjMapUri = f.createURI(Uris.RR_SUBJECTMAP_URI);
-//			URI predUri = f.createURI(Uris.RR_PREDICATE_URI);
-//			URI objectMapUri = f.createURI(Uris.RR_OBJECTMAP_URI);
-//			URI columnUri = f.createURI(Uris.RR_COLUMN_URI);
-//			URI rfObjClassUri = f.createURI(Uris.RR_REF_OBJECT_MAP_URI);
-//			URI parentTriplesMapUri = f.createURI(Uris.RR_PARENT_TRIPLE_MAP_URI);
-//			URI predObjMapMapUri = f.createURI(Uris.RR_PRED_OBJ_MAP_URI);
-//			URI blankNodeUri = f.createURI(Uris.RR_BLANK_NODE_URI);
-//			URI termTypeUri = f.createURI(Uris.RR_TERM_TYPE_URI);
-//			
-//			URI coversColUri = f.createURI(Uris.KM_BLANK_NODE_COVERS_COLUMN_URI);
-//			URI bnNamePrefixUri = f.createURI(Uris.KM_BLANK_NODE_PREFIX_URI);
-			
-//			RepositoryResult<Statement> tripleMapsStmts = con.getStatements(null, RDF.TYPE, trTypeUri, false);
-//			while (tripleMapsStmts.hasNext()) {
-//				Statement st = tripleMapsStmts.next();
-//				Resource subj = st.getSubject();
-//				System.out.println(subj.stringValue());
-//				
-//				// Get the subject map
-//				RepositoryResult<Statement> subjMapStmts = con.getStatements(subj, subjMapUri, null, false);
-//				while (subjMapStmts.hasNext()) {
-//					Statement subjMapStmt = subjMapStmts.next();
-//					Resource subjMapBlankNode = (Resource) subjMapStmt.getObject();
-//					
-//					System.out.println(subjMapBlankNode.stringValue());
-//					
-//					// Get the subject template
-//					RepositoryResult<Statement> templates = con.getStatements(subjMapBlankNode, 
-//							templateUri, null, false);
-//					while (templates.hasNext()) {
-//						Statement templStmt = templates.next();
-//						System.out.println("Template: " + templStmt.getObject().stringValue());
-//					}
-//				}
-//			}
-//			
-		} catch (Exception t) {
-			t.printStackTrace();
-		}
-	}
 }

@@ -33,6 +33,7 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.util.EncodingDetector;
 
 public class Test {
 
@@ -54,7 +55,8 @@ public class Test {
 //		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\Dovetail_ISI_mod.owl");
 		
 		for (int i = 1; i < 2; i++) {
-			ontManager.doImportAndUpdateCache(f[i]);
+			String encoding = EncodingDetector.detect(f[i]);
+			ontManager.doImportAndUpdateCache(f[i], encoding);
 		}
 	}
 	

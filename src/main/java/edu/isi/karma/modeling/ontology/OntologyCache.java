@@ -128,12 +128,71 @@ class OntologyCache {
 	
 	public OntologyCache(OntologyHandler ontHandler) {
 		this.ontHandler = ontHandler;
+
+		allocateDataStructures();
 	}
 
 	public void init() {
 
 		logger.debug("start building the ontology cache ...");
 		
+		
+		long start = System.currentTimeMillis();
+		
+		// create a list of classes and properties of the model
+		this.loadClasses();
+		this.loadProperties();
+		
+		logger.debug("number of classes:" + classes.size());
+		logger.debug("number of all properties:" + properties.size());
+		logger.debug("number of data properties:" + dataProperties.size() );
+		logger.debug("number of object properties:" + objectProperties.size() );
+		// A = number of all properties including rdf:Property 
+		// B = number of properties defined as Data Property
+		// C = number of properties defined as Object Property
+		// properties = A
+		// dataproperties = A - C
+		// objectproperties = A - B
+		logger.debug("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
+		logger.debug("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
+
+		// create a hierarchy of classes and properties of the model
+		this.buildClassHierarchy(classHierarchy);
+		this.buildDataPropertyHierarchy(dataPropertyHierarchy);
+		this.buildObjectPropertyHierarchy(objectPropertyHierarchy);
+		
+		// build hashmaps for indirect subclass and subproperty relationships
+		this.buildSubClassesMaps();
+		this.buildSuperClassesMaps();
+		this.buildSubPropertiesMaps();
+		this.buildSuperPropertiesMaps();
+
+		// build hashmaps to include inverse(Of) properties
+		this.buildInverseProperties();
+		
+		// build some hashmaps that will be used in alignment
+		this.buildDataPropertiesMaps();
+		this.buildObjectPropertiesMaps();
+		// update hashmaps to include the subproperty relations  
+		this.updateMapsWithSubpropertyDefinitions();
+		
+		// classify different types of properties
+		this.classifyProperties();
+
+		// build connectivity hashmaps
+		this.buildConnectivityMaps();
+		
+		// build hashmaps to speed up adding links to the graph
+//		this.buildObjectPropertyDomainRangeMap();
+		
+		// add some common properties like rdfs:label, rdfs:comment, ...
+		this.addPropertiesOfRDFVocabulary();
+		
+		float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
+		logger.debug("time to build the ontology cache: " + elapsedTimeSec);
+	}
+
+	private void allocateDataStructures() {
 		this.classes = new HashMap<String, Label>();
 		this.properties = new HashMap<String, Label>();
 		this.dataProperties = new HashMap<String, Label>();
@@ -193,60 +252,6 @@ class OntologyCache {
 		this.connectedByIndirectProperties = new HashSet<String>();
 		this.connectedByDomainlessProperties = new HashSet<String>();
 		this.connectedByRangelessProperties = new HashSet<String>();
-		
-		long start = System.currentTimeMillis();
-		
-		// create a list of classes and properties of the model
-		this.loadClasses();
-		this.loadProperties();
-		
-		logger.debug("number of classes:" + classes.size());
-		logger.debug("number of all properties:" + properties.size());
-		logger.debug("number of data properties:" + dataProperties.size() );
-		logger.debug("number of object properties:" + objectProperties.size() );
-		// A = number of all properties including rdf:Property 
-		// B = number of properties defined as Data Property
-		// C = number of properties defined as Object Property
-		// properties = A
-		// dataproperties = A - C
-		// objectproperties = A - B
-		logger.debug("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
-		logger.debug("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
-
-		// create a hierarchy of classes and properties of the model
-		this.buildClassHierarchy(classHierarchy);
-		this.buildDataPropertyHierarchy(dataPropertyHierarchy);
-		this.buildObjectPropertyHierarchy(objectPropertyHierarchy);
-		
-		// build hashmaps for indirect subclass and subproperty relationships
-		this.buildSubClassesMaps();
-		this.buildSuperClassesMaps();
-		this.buildSubPropertiesMaps();
-		this.buildSuperPropertiesMaps();
-
-		// build hashmaps to include inverse(Of) properties
-		this.buildInverseProperties();
-		
-		// build some hashmaps that will be used in alignment
-		this.buildDataPropertiesMaps();
-		this.buildObjectPropertiesMaps();
-		// update hashmaps to include the subproperty relations  
-		this.updateMapsWithSubpropertyDefinitions();
-		
-		// classify different types of properties
-		this.classifyProperties();
-
-		// build connectivity hashmaps
-		this.buildConnectivityMaps();
-		
-		// build hashmaps to speed up adding links to the graph
-//		this.buildObjectPropertyDomainRangeMap();
-		
-		// add some common properties like rdfs:label, rdfs:comment, ...
-		this.addPropertiesOfRDFVocabulary();
-		
-		float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
-		logger.debug("time to build the ontology cache: " + elapsedTimeSec);
 	}
 	
 	public HashMap<String, Label> getClasses() {
@@ -491,6 +496,19 @@ class OntologyCache {
 	}
 
 	private void loadProperties() {
+
+		this.properties.put(Uris.RDF_TYPE_URI, new Label(Uris.RDF_TYPE_URI, Namespaces.RDF, Prefixes.RDF));
+		
+		this.properties.put(Uris.RDFS_SUBCLASS_URI, new Label(Uris.RDFS_SUBCLASS_URI, Namespaces.RDFS, Prefixes.RDFS));
+		this.properties.put(Uris.RDFS_LABEL_URI, new Label(Uris.RDFS_LABEL_URI, Namespaces.RDFS, Prefixes.RDFS));
+		this.properties.put(Uris.RDFS_COMMENT_URI, new Label(Uris.RDFS_COMMENT_URI, Namespaces.RDFS, Prefixes.RDFS));
+		this.properties.put(Uris.RDFS_VALUE_URI, new Label(Uris.RDFS_VALUE_URI, Namespaces.RDFS, Prefixes.RDFS));
+		
+		this.properties.put(Uris.CLASS_INSTANCE_LINK_URI, new Label(Uris.CLASS_INSTANCE_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
+		this.properties.put(Uris.COLUMN_SUBCLASS_LINK_URI, new Label(Uris.COLUMN_SUBCLASS_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
+		this.properties.put(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI, new Label(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
+		this.properties.put(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI, new Label(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
+		this.properties.put(Uris.PLAIN_LINK_URI, new Label(Uris.PLAIN_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
 		
 		ExtendedIterator<OntProperty> itrP = ontHandler.getOntModel().listAllOntProperties();
 		
@@ -521,14 +539,27 @@ class OntologyCache {
 		}
 	}
 	
+	private boolean isTopLevelClass(String c) {
+		
+		Set<String> superClasses = this.ontHandler.getSuperClasses(c, false).keySet();
+
+		if (superClasses == null || superClasses.isEmpty())
+			return true;
+		
+		for (String s : superClasses)
+			if (this.classes.containsKey(s))
+				return false;
+		
+		return true;
+	}
+	
 	private void buildClassHierarchy(OntologyTreeNode node) {
 		
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
 			for (String s : this.classes.keySet()) {
 				if (s.equalsIgnoreCase(Uris.THING_URI)) continue;
-				Set<String> superClasses = this.ontHandler.getSuperClasses(s, false).keySet();
-				if (superClasses == null || superClasses.size() == 0) {
+				if (isTopLevelClass(s)) {
 					Label label = this.classes.get(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					buildClassHierarchy(childNode);
@@ -550,13 +581,26 @@ class OntologyCache {
 		node.setChildren(children);
 	}
 	
+	private boolean isTopLevelProperty(String property) {
+		
+		Set<String> superProperties = this.ontHandler.getSuperProperties(property, false).keySet();
+
+		if (superProperties == null || superProperties.isEmpty())
+			return true;
+		
+		for (String s : superProperties)
+			if (this.properties.containsKey(s))
+				return false;
+		
+		return true;
+	}
+	
 	private void buildDataPropertyHierarchy(OntologyTreeNode node) {
 		
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
 			for (String s : this.dataProperties.keySet()) {
-				Set<String> superProperties = this.ontHandler.getSuperProperties(s, false).keySet();
-				if (superProperties == null || superProperties.size() == 0) {
+				if (isTopLevelProperty(s)) {
 					Label label = this.dataProperties.get(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					buildDataPropertyHierarchy(childNode);
@@ -584,8 +628,7 @@ class OntologyCache {
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
 			for (String s : this.objectProperties.keySet()) {
-				Set<String> superProperties = this.ontHandler.getSuperProperties(s, false).keySet();
-				if (superProperties == null || superProperties.size() == 0) {
+				if (isTopLevelProperty(s)) {
 					Label label = this.objectProperties.get(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					buildObjectPropertyHierarchy(childNode);
@@ -1090,24 +1133,20 @@ class OntologyCache {
 		
 		List<String> uris = new ArrayList<String>();
 		
-		String labelUri = "http://www.w3.org/2000/01/rdf-schema#label";
-		String commentUri = "http://www.w3.org/2000/01/rdf-schema#comment";
-		String valueUri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#value";
-		
-		uris.add(labelUri);
-		uris.add(commentUri);
-		uris.add(valueUri);
+		uris.add(Uris.RDFS_LABEL_URI);
+		uris.add(Uris.RDFS_COMMENT_URI);
+		uris.add(Uris.RDFS_VALUE_URI);
 		
 		HashSet<String> temp;
 		
-		ontHandler.getOntModel().setNsPrefix("rdfs", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-		ontHandler.getOntModel().setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		ontHandler.getOntModel().setNsPrefix(Prefixes.RDF, Namespaces.RDF);
+		ontHandler.getOntModel().setNsPrefix(Prefixes.RDFS, Namespaces.RDFS);
 		
 		for (String uri : uris) 
 			ontHandler.getOntModel().createDatatypeProperty(uri);
 
 		
-		// add label and comment property to the properties of all the classes
+		// add label, value, comment property to the properties of all the classes
 		for (String s : this.classes.keySet()) {
 			temp = indirectOutDataProperties.get(s);
 			if (temp == null) {
@@ -1123,11 +1162,10 @@ class OntologyCache {
 			temp = propertyIndirectDomains.get(uri);
 			if (temp == null) {
 				temp = new HashSet<String>();
-				propertyIndirectDomains.put(labelUri, temp);
+				propertyIndirectDomains.put(uri, temp);
 			}
 			for (String s : this.classes.keySet())
-				if (!temp.contains(s))
-					temp.add(s);
+				temp.add(s);
 		}
 		
 	}

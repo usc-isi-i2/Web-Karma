@@ -41,6 +41,7 @@ import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.Util;
 import edu.isi.karma.webserver.KarmaException;
 
 /**
@@ -155,6 +156,7 @@ public class AddColumnCommand extends WorksheetCommand {
 			return c;
 		} catch (Exception e) {
 			logger.error("Error in AddColumnCommand" + e.toString());
+			Util.logException(logger, e);
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
 	}

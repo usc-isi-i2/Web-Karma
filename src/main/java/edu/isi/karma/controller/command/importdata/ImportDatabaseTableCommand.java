@@ -55,7 +55,7 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
     // Table name
     private String tableName;
     private InteractionType requestedInteractionType;
-
+ 
     // private static Logger logger = LoggerFactory.getLogger(ImportDatabaseTableCommand.class);
     protected enum InteractionType {
 
@@ -102,6 +102,7 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
         return requestedInteractionType;
     }
 
+  
     @Override
     public UpdateContainer showPreview()
             throws CommandException {
@@ -146,6 +147,7 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
             default:
                 break;
         }
+       
         return c;
     }
 
@@ -193,6 +195,6 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
     protected Import createImport(Workspace workspace) {
         return new DatabaseTableImport(
                     dbType, hostname, portnumber, username, password, dBorSIDName,
-                    tableName, workspace);
+                    tableName, workspace, "");
     }
 }

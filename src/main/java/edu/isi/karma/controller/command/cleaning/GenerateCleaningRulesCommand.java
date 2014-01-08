@@ -34,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.cleaning.ExampleSelection;
-import edu.isi.karma.cleaning.ProgramRule;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
 import edu.isi.karma.cleaning.UtilTools;
@@ -311,12 +310,10 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		HashMap<String, HashMap<String, String>> resdata = new HashMap<String, HashMap<String, String>>();
 		HashSet<String> keys = new HashSet<String>();
 		while (iter.hasNext()) {
-			long _time5 = System.currentTimeMillis();
 			String tpid = iter.next();
 			ValueCollection rvco = rtf.getTransformedValues_debug(tpid);
 			if (rvco == null)
 				continue;
-			long _time6 = System.currentTimeMillis();
 			// constructing displaying data
 			HashMap<String, String[]> xyzHashMap = new HashMap<String, String[]>();
 			for (String key : rvco.getNodeIDs()) {
@@ -369,11 +366,6 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			}
 			if(!rtf.nullRule)
 				keys.add(getBestExample(xyzHashMap, expFeData));
-			long _time7 = System.currentTimeMillis();
-			long time6 = 0;
-			long time7 = 0;
-			time6 += _time6 - _time5;
-			time7 = _time7 - _time6;
 		}
 		// find the best row
 		String vars = "";

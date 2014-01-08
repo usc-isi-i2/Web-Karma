@@ -63,22 +63,22 @@ public class Alignment implements OntologyUpdateListener {
 
 	static Logger logger = LoggerFactory.getLogger(Alignment.class);
 
+	private OntologyManager ontologyManager;
 	private GraphBuilder graphBuilder;
 	private DirectedWeightedMultigraph<Node, Link> steinerTree = null;
 	private Node root = null;
 	
 	private NodeIdFactory nodeIdFactory;
-//	private LinkIdFactory linkIdFactory;
 	
 	public Alignment(OntologyManager ontologyManager) {
 
+		this.ontologyManager = ontologyManager;
 		this.nodeIdFactory = new NodeIdFactory();
-//		this.linkIdFactory = new LinkIdFactory();
 
-		ontologyManager.subscribeListener(this);
+		this.ontologyManager.subscribeListener(this);
 
 		logger.debug("building initial graph ...");
-		graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory);//, linkIdFactory);
+		graphBuilder = new GraphBuilder(this.ontologyManager, nodeIdFactory, true);
 		
 	}
 	
@@ -126,8 +126,8 @@ public class Alignment implements OntologyUpdateListener {
 		return this.graphBuilder.getIdToNodeMap().get(nodeId);
 	}
 	
-	public Set<Node> getNodesByUri(String uriString) {
-		return this.graphBuilder.getUriToNodesMap().get(uriString);
+	public Set<Node> getNodesByUri(String uri) {
+		return this.graphBuilder.getUriToNodesMap().get(uri);
 	}
 	
 	public Set<Node> getNodesByType(NodeType type) {
@@ -138,8 +138,8 @@ public class Alignment implements OntologyUpdateListener {
 		return this.graphBuilder.getIdToLinkMap().get(linkId);
 	}
 	
-	public Set<Link> getLinksByUri(String uriString) {
-		return this.graphBuilder.getUriToLinksMap().get(uriString);
+	public Set<Link> getLinksByUri(String uri) {
+		return this.graphBuilder.getUriToLinksMap().get(uri);
 	}
 	
 	public Set<Link> getLinksByType(LinkType type) {
@@ -153,7 +153,7 @@ public class Alignment implements OntologyUpdateListener {
 	public int getLastIndexOfNodeUri(String uri) {
 		return this.nodeIdFactory.lastIndexOf(uri);
 	}
-
+	
 //	public int getLastIndexOfLinkUri(String uri) {
 //		return this.linkIdFactory.lastIndexOf(uri);
 //	}
@@ -177,11 +177,11 @@ public class Alignment implements OntologyUpdateListener {
 	
 	// AddNode methods
 	
-	public ColumnNode addColumnNode(String hNodeId, String columnName, String rdfLiteralType, List<SemanticType> crfSuggestedSemanticTypes) {
+	public ColumnNode addColumnNode(String hNodeId, String columnName, Label rdfLiteralType, List<SemanticType> crfSuggestedSemanticTypes) {
 		
 		// use hNodeId as id of the node
 		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType, crfSuggestedSemanticTypes);
-		if (this.graphBuilder.addNode(node)) 
+		if (this.graphBuilder.addNodeAndUpdate(node)) 
 			return node;
 		return null;
 	}
@@ -190,12 +190,8 @@ public class Alignment implements OntologyUpdateListener {
 		
 		String id = nodeIdFactory.getNodeId(label.getUri());
 		InternalNode node = new InternalNode(id, label);
-		if (this.graphBuilder.addNode(node)) return node;
+		if (this.graphBuilder.addNodeAndUpdate(node)) return node;
 		return null;	
-	}
-
-	public void updateGraph() {
-		this.graphBuilder.updateGraph();
 	}
 	
 	// AddLink methods
@@ -243,9 +239,9 @@ public class Alignment implements OntologyUpdateListener {
 		return null;	
 	}
 	
-	public ObjectPropertySpecializationLink addObjectPropertySpecializationLink(Node source, Node target, Link specializedLink) {
+	public ObjectPropertySpecializationLink addObjectPropertySpecializationLink(Node source, Node target, String specializedLinkId) {
 		String id = LinkIdFactory.getLinkId(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI, source.getId(), target.getId());
-		ObjectPropertySpecializationLink link = new ObjectPropertySpecializationLink(id, specializedLink);
+		ObjectPropertySpecializationLink link = new ObjectPropertySpecializationLink(id, specializedLinkId);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;
 	}
@@ -554,15 +550,13 @@ public class Alignment implements OntologyUpdateListener {
 		}
 
 		logger.debug("*** steiner tree before post processing step ***");
-		logger.info(GraphUtil.graphToString(this.steinerTree));
-//		logger.debug("selecting a root for the tree ...");
-		TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, tree, 
-				getLinksByStatus(LinkStatus.ForcedByUser), this.graphBuilder.getThingNode());
+		logger.debug(GraphUtil.graphToString(this.steinerTree));
+		TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, tree, getLinksByStatus(LinkStatus.ForcedByUser));
 
 		this.steinerTree = treePostProcess.getTree();
 		this.root = treePostProcess.getRoot();
 
-		logger.debug("*** steiner tree after post processing step ***");
+		logger.info("*** steiner tree after post processing step ***");
 		logger.info(GraphUtil.graphToString(this.steinerTree));
 
 		long elapsedTimeMillis = System.currentTimeMillis() - start;

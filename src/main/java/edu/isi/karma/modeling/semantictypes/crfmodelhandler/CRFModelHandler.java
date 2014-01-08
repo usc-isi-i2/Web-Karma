@@ -341,17 +341,17 @@ public class CRFModelHandler {
 		ArrayList<Double> columnProbabilitiesList ;
 		HashSet<String> features;
 		if (file == null) {
-			logger.error("CRF Model is not ready, either because it was never read or an error happened while reading it previously. Please try reading the model file again.");
+			logger.warn("CRF Model is not ready, either because it was never read or an error happened while reading it previously. Please try reading the model file again.");
 			return false ;
 		}
 		// Sanity checks for arguments
 		if (examples == null || examples.size() == 0 || numPredictions <= 0 || predictedLabels == null || confidenceScores == null) {
-			logger.error("Invalid arguments. Possible problems: examples list size is zero, numPredictions is non-positive, predictedLabels or confidenceScores list is null.") ;
+			logger.warn("Invalid arguments. Possible problems: examples list size is zero, numPredictions is non-positive, predictedLabels or confidenceScores list is null.") ;
 			return false ;
 		}
 		// Making sure that there exists a model.
 		if(globalData.labels.size() == 0) {
-			logger.error("The model does have not any semantic types. Please add some labels with their examples before attempting to predict using this model.") ;
+			logger.warn("The model does have not any semantic types. Please add some labels with their examples before attempting to predict using this model.") ;
 			return false ;
 		}
 		exampleProbabilitiesFullList = new ArrayList<ArrayList<Double>>() ;

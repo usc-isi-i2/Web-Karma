@@ -28,6 +28,8 @@ public interface Uris {
 	public static final String RDF_TYPE_URI = Namespaces.RDF + "type"; 
 	public static final String RDFS_CLASS_URI = Namespaces.RDFS + "Class";
 	public static final String RDFS_LABEL_URI = Namespaces.RDFS + "label";
+	public static final String RDFS_COMMENT_URI = Namespaces.RDFS + "comment";
+	public static final String RDFS_VALUE_URI = Namespaces.RDFS + "value";
 
 	// Karma Internal URIs
 	public static final String PLAIN_LINK_URI = Namespaces.KARMA_DEV + "plainLink"; 
@@ -59,7 +61,6 @@ public interface Uris {
 	public static final String RR_BLANK_NODE_URI = Namespaces.RR + "BlankNode";
 	public static final String RR_CLASS_URI = Namespaces.RR + "class";
 	
-	public static final String KM_BLANK_NODE_COVERS_COLUMN_URI = Namespaces.KARMA_DEV + "coversColumn";
 	public static final String KM_BLANK_NODE_PREFIX_URI = Namespaces.KARMA_DEV + "namePrefix";
 	public static final String KM_NODE_ID_URI = Namespaces.KARMA_DEV + "alignmentNodeId";
 	public static final String KM_R2RML_MAPPING_URI = Namespaces.KARMA_DEV + "R2RMLMapping";
@@ -68,6 +69,7 @@ public interface Uris {
 	public static final String KM_HAS_TRIPLES_MAP_URI = Namespaces.KARMA_DEV + "hasTriplesMap";
 	public static final String KM_HAS_WORKSHEET_HISTORY_URI = Namespaces.KARMA_DEV + "hasWorksheetHistory";
 	public static final String KM_MODEL_PUBLICATION_TIME_URI = Namespaces.KARMA_DEV + "modelPublicationTime";
+	public static final String KM_MODEL_VERSION_URI = Namespaces.KARMA_DEV + "modelVersion";
 	
 	public static final String PROV_ENTITY_URI = Namespaces.PROV + "Entity";
 	public static final String PROV_WAS_DERIVED_FROM_URI = Namespaces.PROV + "wasDerivedFrom";

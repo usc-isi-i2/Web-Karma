@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 
 public class DisplayModel {
@@ -61,7 +62,7 @@ public class DisplayModel {
 		this.nodesLevel = new HashMap<Node, Integer>();
 		this.nodesSpan = new HashMap<Node, Set<ColumnNode>>();
 		this.hTable = hTable;
-		
+
 		levelingCyclicGraph();
 //		printLevels();
 
@@ -80,26 +81,62 @@ public class DisplayModel {
 		return model;
 	}
 
-	public void setModel(DirectedWeightedMultigraph<Node, Link> model) {
-		this.model = model;
-	}
-
 	public HashMap<Node, Integer> getNodesLevel() {
 		return nodesLevel;
-	}
-
-	public void setNodesLevel(HashMap<Node, Integer> nodesLevel) {
-		this.nodesLevel = nodesLevel;
 	}
 
 	public HashMap<Node, Set<ColumnNode>> getNodesSpan() {
 		return nodesSpan;
 	}
 
-	public void setNodesSpan(HashMap<Node, Set<ColumnNode>> nodesSpan) {
-		this.nodesSpan = nodesSpan;
+	private static HashMap<Node, Integer> inDegreeInSet(DirectedWeightedMultigraph<Node, Link> g, 
+			Set<Node> nodes, boolean includeSelfLinks) {
+		
+		HashMap<Node, Integer> nodeToInDegree = new HashMap<Node, Integer>();
+		if (g == null || nodes == null) return nodeToInDegree;
+		for (Node n : nodes) {
+			Set<Link> incomingLinks = g.incomingEdgesOf(n);
+			if (incomingLinks == null || incomingLinks.size() == 0) {
+				nodeToInDegree.put(n, 0);
+			} else {
+				int count = 0;
+				for (Link l : incomingLinks) {
+					if (includeSelfLinks) {
+						if (nodes.contains(l.getSource())) count++;
+					} else {
+						if (nodes.contains(l.getSource()) && !n.equals(l.getSource())) count++;
+					}
+				}
+				nodeToInDegree.put(n, count);
+			}
+		}
+		return nodeToInDegree;
 	}
-
+	
+	private static HashMap<Node, Integer> outDegreeInSet(DirectedWeightedMultigraph<Node, Link> g, 
+			Set<Node> nodes, boolean includeSelfLinks) {
+		
+		HashMap<Node, Integer> nodeToOutDegree = new HashMap<Node, Integer>();
+		if (g == null || nodes == null) return nodeToOutDegree;
+		for (Node n : nodes) {
+			Set<Link> outgoingLinks = g.outgoingEdgesOf(n);
+			if (outgoingLinks == null || outgoingLinks.size() == 0) {
+				nodeToOutDegree.put(n, 0);
+			} else {
+				int count = 0;
+				for (Link l : outgoingLinks) {
+					if (includeSelfLinks) {
+						if (nodes.contains(l.getSource())) count++;
+					} else {
+						if (nodes.contains(l.getSource()) && !n.equals(l.getSource())) count++;
+					}
+				}
+				nodeToOutDegree.put(n, count);
+			}
+		}
+		return nodeToOutDegree;
+	}
+	
 	private void levelingCyclicGraph() {
 		
 		if (this.model == null || this.model.vertexSet() == null || this.model.vertexSet().size() == 0) {
@@ -138,7 +175,7 @@ public class DisplayModel {
 			}
 		}
 		
-		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes();
+		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes(false);
 		
 		// find in/out degree in each level
 		int k = 0;
@@ -152,13 +189,14 @@ public class DisplayModel {
 				Set<Node> nodes = levelToNodes.get(k);
 				if (nodes == null || nodes.size() == 0) break;
 				
-				HashMap<Node, Integer> nodeToInDegree = GraphUtil.inDegreeInSet(this.model, nodes, false);
-				HashMap<Node, Integer> nodeToOutDegree = GraphUtil.outDegreeInSet(this.model, nodes, false);
+				HashMap<Node, Integer> nodeToInDegree = inDegreeInSet(this.model, nodes, false);
+				HashMap<Node, Integer> nodeToOutDegree = outDegreeInSet(this.model, nodes, false);
 				
 				int sum = 0, d = 0;
 				int maxDegree = -1;
 				
 				for (Node u : nodes) {
+					
 					d = nodeToInDegree.get(u);
 					sum += d;
 					if (d > maxDegree) {
@@ -196,7 +234,7 @@ public class DisplayModel {
 		
 	}
 	
-	public HashMap<Integer, Set<Node>> getLevelToNodes() {
+	public HashMap<Integer, Set<Node>> getLevelToNodes(boolean considerColumnNodes) {
 
 		HashMap<Integer, Set<Node>> levelToNodes = 
 				new HashMap<Integer, Set<Node>>();
@@ -210,6 +248,10 @@ public class DisplayModel {
 				nodes = new HashSet<Node>();
 				levelToNodes.put(entry.getValue(), nodes);
 			}
+			
+			if (!considerColumnNodes && entry.getKey() instanceof ColumnNode)
+				continue;
+			
 			nodes.add(entry.getKey());
 			
 		}
@@ -251,7 +293,8 @@ public class DisplayModel {
 			nodesSpan.put(n, columnNodes);
 		}
 		
-		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes();
+		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes(true);
+		Set<ColumnNode> allColumnNodes = new HashSet<ColumnNode>();
 		
 		int i = getMaxLevel(true);
 		while (i >= 0) {
@@ -262,12 +305,13 @@ public class DisplayModel {
 					
 					if (n instanceof ColumnNode) {
 						this.nodesSpan.get(n).add((ColumnNode)n);
+						allColumnNodes.add((ColumnNode)n);
 						continue;
 					}
 					
 					List<Node> neighborsInLowerLevel = new ArrayList<Node>();
 					
-					// finding the nodes connected to n (incoming & outgoing) from a lower leve
+					// finding the nodes connected to n (incoming & outgoing) from a lower level
 					Set<Link> outgoingLinks = this.model.outgoingEdgesOf(n);
 					if (outgoingLinks != null && !outgoingLinks.isEmpty()) 
 						for (Link l : outgoingLinks) 
@@ -279,6 +323,11 @@ public class DisplayModel {
 						for (Link l : incomingLinks) 
 							if (nodesLevel.get(l.getSource()) > nodesLevel.get(n))
 								neighborsInLowerLevel.add(l.getSource());
+					
+					// To handle a dangling internal node: put it in a completely separate level
+					if (neighborsInLowerLevel == null || neighborsInLowerLevel.isEmpty()) {
+						this.nodesSpan.get(n).addAll(allColumnNodes);
+					}
 					
 					for (Node nn : neighborsInLowerLevel) {
 						if (nn instanceof ColumnNode) {
@@ -321,8 +370,11 @@ public class DisplayModel {
 		List<Integer> n1SpanPositions = new ArrayList<Integer>();
 		List<Integer> n2SpanPositions = new ArrayList<Integer>();
 		
-		for (int i = 0; i < this.hTable.getOrderedNodeIds().size(); i++) {
-			String hNodeId = this.hTable.getOrderedNodeIds().get(i);
+		ArrayList<HNode> orderedNodeIds = new ArrayList<HNode>();
+		this.hTable.getSortedLeafHNodes(orderedNodeIds);
+		if (orderedNodeIds != null)
+		for (int i = 0; i < orderedNodeIds.size(); i++) {
+			String hNodeId = orderedNodeIds.get(i).getId();
 			if (n1NodeIds.contains(hNodeId))
 				n1SpanPositions.add(i);
 			if (n2NodeIds.contains(hNodeId))
@@ -370,7 +422,7 @@ public class DisplayModel {
 		
 		int maxLevel = this.model.vertexSet().size();
 
-		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes();
+		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes(false);
 
 		// find in/out degree in each level
 		int k = 0;
@@ -385,8 +437,8 @@ public class DisplayModel {
 				if (nodes == null || nodes.size() == 0) break;
 				
 				HashMap<Node, Integer> nodesOverlap = getNodeOverlap(nodes);
-				HashMap<Node, Integer> nodeToInDegree = GraphUtil.inDegreeInSet(this.model, nodes, false);
-				HashMap<Node, Integer> nodeToOutDegree = GraphUtil.outDegreeInSet(this.model, nodes, false);
+				HashMap<Node, Integer> nodeToInDegree = inDegreeInSet(this.model, nodes, false);
+				HashMap<Node, Integer> nodeToOutDegree = outDegreeInSet(this.model, nodes, false);
 				
 				int sumOfIntraLinks = 0, sumOfOverlaps = 0; 
 				int d = 0, overlap = 0;
@@ -410,7 +462,10 @@ public class DisplayModel {
 					
 					overlap = nodesOverlap.get(u); // move the node with minimum number of overlaps (probably higher span) to the next level
 					sumOfOverlaps += overlap;
-					if (overlap < minOverlap || 
+					if ( 
+							(overlap > 0 && 
+							overlap < minOverlap) 
+							|| 
 							(overlap == minOverlap && 
 							this.nodesSpan.get(u) != null &&
 							this.nodesSpan.get(nodeWithMinOverlap) != null && 
@@ -456,7 +511,7 @@ public class DisplayModel {
 	
 	public void printLevels() {
 		for (Entry<Node, Integer> entry : this.nodesLevel.entrySet()) {
-			logger.debug(entry.getKey().getId() + " ---> " + entry.getValue().intValue());
+			logger.info(entry.getKey().getId() + " ---> " + entry.getValue().intValue());
 		}
 	}
 	
@@ -465,7 +520,7 @@ public class DisplayModel {
 			logger.debug(entry.getKey().getId() + " spans ---> ");
 			if (entry.getValue() != null)
 				for (ColumnNode columnNode : entry.getValue()) {
-					logger.debug("\t" + columnNode.getColumnName());
+					logger.info("\t" + columnNode.getColumnName());
 				}
 		}
 	}

@@ -84,7 +84,7 @@ public class AlignmentManager {
 			Node n = alignment.getNodeById(hNodeId);
 			if (n == null) {
 				paths.add(path);
-				alignment.addColumnNode(hNodeId, node.getColumnName(), "", new ArrayList<SemanticType>());
+				alignment.addColumnNode(hNodeId, node.getColumnName(), null, new ArrayList<SemanticType>());
 			} else if (n instanceof ColumnNode) {
 				ColumnNode c =  ((ColumnNode)n);
 				if (c.getCrfSuggestedSemanticTypes() == null || c.getCrfSuggestedSemanticTypes().isEmpty())

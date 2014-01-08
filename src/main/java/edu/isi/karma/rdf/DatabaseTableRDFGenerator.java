@@ -34,10 +34,10 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.rdf.model.Model;
-
 import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLMapping;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
+import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
@@ -61,12 +61,12 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 	private String password;
 	private String dBorSIDName;
 	private String tablename;
-	
+	private String encoding;
 	private static int DATABASE_TABLE_FETCH_SIZE = 10000;
 	
 	public DatabaseTableRDFGenerator(DBType dbType, String hostname,
 			int portnumber, String username, String password,
-			String dBorSIDName, String tablename) {
+			String dBorSIDName, String tablename, String encoding) {
 		super();
 		this.dbType = dbType;
 		this.hostname = hostname;
@@ -75,16 +75,19 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		this.password = password;
 		this.dBorSIDName = dBorSIDName;
 		this.tablename = tablename;
+		this.encoding = encoding;
 	}
 	
 	/*
 	 * Only warn about SQL exception once. //Pedro //TODO: this whole code is copy-pasted
 	 */
 	private static boolean warnedSqlException = false;
-	public void generateRDF(PrintWriter pw, Model model) 
+	public void generateRDF(PrintWriter pw, R2RMLMappingIdentifier id) 
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
 		logger.debug("Generating RDF...");
 
+		WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(id);
+		KR2RMLMapping mapping = parserTest.parse();
 		
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		Connection conn = dbUtil.getConnection(hostname, portnumber, username, password, dBorSIDName);
@@ -105,7 +108,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 	     Workspace workspace = initializeWorkspace();
  	
 		RepFactory factory = workspace.getFactory();
-		Worksheet wk = factory.createWorksheet(tablename, workspace);
+		Worksheet wk = factory.createWorksheet(tablename, workspace, encoding);
 		List<String> headersList = addHeaders(wk, columnNames, factory);
 		
 		int counter = 0;
@@ -113,12 +116,12 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		while (r.next()) {
 			// Generate RDF and create a new worksheet for every DATABASE_TABLE_FETCH_SIZE rows
 			if(counter%DATABASE_TABLE_FETCH_SIZE == 0 && counter != 0) {
-				generateRDFFromWorksheet(wk, workspace, model, pw);
+				generateRDFFromWorksheet(wk, workspace, mapping, pw);
 				logger.debug("Done for " + counter + " rows ..." );
 			    removeWorkspace(workspace);
 			    workspace = initializeWorkspace();
 			    factory = workspace.getFactory();
-				wk = factory.createWorksheet(tablename, workspace);
+				wk = factory.createWorksheet(tablename, workspace, encoding);
 				headersList = addHeaders(wk, columnNames, factory);
 				
 			}
@@ -142,7 +145,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 			counter++;
 		}
 		
-		generateRDFFromWorksheet(wk, workspace, model, pw);
+		generateRDFFromWorksheet(wk, workspace, mapping, pw);
 		
 		// Releasing all the resources
 		r.close();
@@ -152,19 +155,18 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 	}
 
 	private void generateRDFFromWorksheet(Worksheet wk, 
-			Workspace workspace, Model model, PrintWriter pw) 
+			Workspace workspace, KR2RMLMapping mapping, PrintWriter pw) 
 					throws IOException, JSONException, KarmaException {
 		// Generate RDF for the remaining rows
-		WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(
-				wk, workspace, model, tablename);
-		
 		// Gets all the errors generated during the RDF generation
 		ErrorReport errorReport = new ErrorReport();
 		
+		this.applyHistoryToWorksheet(workspace, wk, mapping);
+
 		// RDF generation object initialization
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(wk, 
 				workspace.getFactory(), workspace.getOntologyManager(), pw, 
-				parserTest.getAuxInfo(), errorReport, false);
+				mapping, errorReport, false);
 
 		// Generate the rdf
 		rdfGen.generateRDF(false);

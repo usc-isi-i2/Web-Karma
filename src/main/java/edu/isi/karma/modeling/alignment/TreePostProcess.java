@@ -46,7 +46,6 @@ public class TreePostProcess {
 	private GraphBuilder graphBuilder;
 	private DirectedWeightedMultigraph<Node, Link> tree;
 	private Node root = null;
-	private Node thingNode = null;
 //	private List<Node> dangledVertexList;
 
 	// Constructor
@@ -54,12 +53,10 @@ public class TreePostProcess {
 	public TreePostProcess(
 			GraphBuilder graphBuilder,
 			WeightedMultigraph<Node, Link> tree, 
-			Set<Link> newLinks,
-			Node thingNode) {
+			Set<Link> newLinks) {
 		
 		this.graphBuilder = graphBuilder;
 		this.tree = (DirectedWeightedMultigraph<Node, Link>)GraphUtil.asDirectedGraph(tree);
-		this.thingNode = thingNode;
 		buildOutputTree();
 		addLinks(newLinks);
 		selectRoot(findPossibleRoots());
@@ -83,11 +80,11 @@ public class TreePostProcess {
 		List<Node> possibleRoots = new ArrayList<Node>();
 
 		// If tree contains the Thing, we return it as the root
-		for (Node v: this.tree.vertexSet()) 
-			if (v.equals(this.thingNode)) {
+		for (Node v: this.tree.vertexSet()) { 
+			if (v.getLabel() != null && v.getLabel().getUri().equals(Uris.THING_URI)) {
 				possibleRoots.add(v);
-				return possibleRoots;
 			}
+		}
 
 		int maxReachableNodes = -1;
 		int reachableNodes = -1;

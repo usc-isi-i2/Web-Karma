@@ -43,10 +43,13 @@ import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
 import edu.isi.karma.kr2rml.WorksheetModelWriter;
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.alignment.SemanticModel;
+import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -142,6 +145,35 @@ public class GenerateR2RMLModelCommand extends Command {
 					"Please align the worksheet before generating R2RML Model!"));
 		}
 		
+		// mohsen: my code to enable Karma to leran semantic models
+		// *****************************************************************************************
+		// *****************************************************************************************
+
+		SemanticModel semanticModel = new SemanticModel(worksheetName, alignment.getSteinerTree());
+		semanticModel.setName(worksheetName);
+		try {
+			semanticModel.writeJson(ModelingConfiguration.getModelsJsonDir() + 
+					semanticModel.getName() + 
+					".model.json");
+		} catch (Exception e) {
+			logger.error("error in exporting the model to JSON!");
+//			e.printStackTrace();
+		}
+		try {
+			semanticModel.writeGraphviz(ModelingConfiguration.getModelsGraphvizDir() + 
+					semanticModel.getName() + 
+					".model.dot", false, false);
+		} catch (Exception e) {
+			logger.error("error in exporting the model to GRAPHVIZ!");
+//			e.printStackTrace();
+		}
+
+		if (ModelingConfiguration.isLearnerEnabled())
+			ModelLearningGraph.getInstance(workspace.getOntologyManager()).addModelAndUpdateGraphJson(semanticModel);
+		
+		// *****************************************************************************************
+		// *****************************************************************************************
+
 		try {
 			// Get the namespace and prefix from the preferences
 			String namespace = "";
@@ -162,12 +194,11 @@ public class GenerateR2RMLModelCommand extends Command {
 			
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
-			OntologyManager ontMgr = workspace.getOntologyManager();
-			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(ontMgr, alignment, 
+			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
 			
 			// Write the model
-			writeModel(workspace, ontMgr, mappingGen, worksheet, modelFileLocalPath);
+			writeModel(workspace, workspace.getOntologyManager(), mappingGen, worksheet, modelFileLocalPath);
 			
 			// Write the model to the triple store
 			TripleStoreUtil utilObj = new TripleStoreUtil();

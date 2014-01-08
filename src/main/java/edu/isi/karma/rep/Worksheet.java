@@ -41,7 +41,8 @@ public class Worksheet extends RepEntity {
     private SemanticTypes semanticTypes = new SemanticTypes();
     private FullCRFModel crfModel = new FullCRFModel();
     private MetadataContainer metadataContainer;
-
+    private String encoding;
+    
     @Override
     public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {
         pw.print(prefix);
@@ -50,10 +51,11 @@ public class Worksheet extends RepEntity {
         dataTable.prettyPrint(prefix + "  ", pw, factory);
     }
 
-    Worksheet(String id, HTable headers, Table dataTable) {
+    Worksheet(String id, HTable headers, Table dataTable, String encoding) {
         super(id);
         this.headers = headers;
         this.dataTable = dataTable;
+        this.encoding = encoding;
     }
     
     /*
@@ -85,6 +87,10 @@ public class Worksheet extends RepEntity {
         return dataTable;
     }
 
+    public String getEncoding() {
+    	return this.encoding;
+    }
+    
     public String getTitle() {
         return headers.getTableName();
     }

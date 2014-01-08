@@ -31,14 +31,16 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.rep.Node.NodeStatus;
+
 /**
  * @author szekely
  * 
  */
 public class Table extends RepEntity {
 
-	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(Table.class);
+	private static Logger logger = LoggerFactory.getLogger(Table.class
+			.getSimpleName());
 
 	// The worksheet where I am defined.
 	private final String worksheetId;
@@ -103,8 +105,8 @@ public class Table extends RepEntity {
 			r.addNodeToDataTable(newHNode, this, factory);
 		}
 	}
-	
-	//mariam
+
+	// mariam
 	public void removeNodeFromDataTable(String hNodeId) {
 		for (Row r : rows) {
 			r.removeNode(hNodeId);
@@ -123,7 +125,6 @@ public class Table extends RepEntity {
 			r.addNestedTableToDataTable(hNode, this, factory);
 		}
 	}
-
 
 	/**
 	 * @param startIndex
@@ -201,36 +202,88 @@ public class Table extends RepEntity {
 		}
 	}
 
+	public void setCollectedNodeValues(HNodePath path, List<String> nodes,
+			RepFactory factory) {
+		setCollectedNodeValues(path, nodes, rows, 0, factory);
+	}
+
+	private void setCollectedNodeValues(HNodePath path, List<String> nodes,
+			List<Row> rows, int nodeIdx, RepFactory factory) {
+
+		RowIterator: for (Row r : rows) {
+
+			Node n = r.getNode(path.getFirst().getId());
+			if (n == null) {
+				continue RowIterator;
+			}
+			// Check if the path has only one HNode
+			if (path.getRest() == null || path.getRest().isEmpty()) {
+				n.setValue(nodes.get(nodeIdx++), NodeStatus.original, factory);
+				continue RowIterator;
+			}
+
+			// Check if the node has a nested table
+			if (n.hasNestedTable()) {
+				int numRows = n.getNestedTable().getNumRows();
+				if (numRows == 0)
+					continue RowIterator;
+
+				List<Row> rowsNestedTable = n.getNestedTable().getRows(0,
+						numRows);
+				if (rowsNestedTable != null && rowsNestedTable.size() != 0) {
+					setCollectedNodeValues(path.getRest(), nodes,
+							rowsNestedTable, nodeIdx, factory);
+					continue RowIterator;
+				}
+			}
+
+		}
+	}
+
 	/**
+	 * 2013-12-07: Pedro modified this code so that we don't create orphans but
+	 * rather add another row to the existing table.
 	 * 
-	 * 
+	 * @param hNodeIdWhereValueWas
+	 *            the HNode that just acquired a nested table
 	 * @param value
 	 *            an orphan value is a value that was the value of a node, but
 	 *            the node acquired a nested table, so the value now needs to be
-	 *            reocred in the nested table (this table).
+	 *            recorded in the nested table (this table).
 	 */
-	public void addOrphanValue(CellValue value, RepFactory factory) {
-		HTable hTable = factory.getHTable(hTableId);
-		HNode hNode = hTable.addAutomaticallyGeneratedColumn(
-				HTable.ORPHAN_COLUMN_NAME, factory.getWorksheet(worksheetId),
-				factory);
-
-		// If the nested table is empty we need to add a row where we can store
-		// the value.
-		if (rows.isEmpty()) {
-			addRow(factory);
+	public void addOrphanValue(CellValue value, String hNodeIdWhereValueWas,
+			RepFactory factory) {
+		Row newRow = addRow(factory);
+		HNode columnForOrphan = factory.getHTable(hTableId)
+				.getHNodeFromColumnName(HTable.VALUES_COLUMN);
+		if (columnForOrphan == null) {
+			// There is no "values" column? This tends to happen because we need
+			// to add the nested table before we know what we are going to put
+			// in it.
+			HTable headers = factory.getHTable(hTableId);
+			columnForOrphan = headers.addHNode(HTable.VALUES_COLUMN, factory.getWorksheet(worksheetId), factory);
+			logger.warn("Cannot find 'values' in nested table inside column '"
+					+ factory.getColumnName(hNodeIdWhereValueWas)
+					+ "' Cannot find a column to assign the orphan value '"
+					+ value.asString() + ". Discarding it.");
 		}
-
-		setValueInAllRows(hNode.getId(), value, factory);
+	
+		logger.info("Adding orphan value '" + value.asString()
+				+ "' to column '" + factory.getColumnName(hNodeIdWhereValueWas)
+				+ "'.");
+		newRow.setValue(columnForOrphan.getId(), value,
+				Node.NodeStatus.original, factory);
 	}
 
 	public void setValueInAllRows(String hNodeId, CellValue value,
 			RepFactory factory) {
-//		logger.info("Setting value of column " + factory.getColumnName(hNodeId) + " to "
-//				+ value.asString());
+		// logger.info("Setting value of column " +
+		// factory.getColumnName(hNodeId) + " to "
+		// + value.asString());
 		for (Row r : rows) {
-//			logger.info("Setting value of column " + factory.getColumnName(hNodeId) + " in row "
-//					+ r.getId() + " to " + value.asString());
+			// logger.info("Setting value of column " +
+			// factory.getColumnName(hNodeId) + " in row "
+			// + r.getId() + " to " + value.asString());
 			r.setValue(hNodeId, value, Node.NodeStatus.original, factory);
 		}
 	}

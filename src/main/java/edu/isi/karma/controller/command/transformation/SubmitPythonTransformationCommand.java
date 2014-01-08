@@ -21,6 +21,9 @@
 
 package edu.isi.karma.controller.command.transformation;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -35,6 +38,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -45,6 +49,8 @@ import edu.isi.karma.webserver.WorkspaceRegistry;
 public class SubmitPythonTransformationCommand extends MutatingPythonTransformationCommand {
 	
 	protected AddColumnCommand addColCmd;
+	protected ArrayList<String> originalColumnValues;
+	protected String pythonNodeId;
 	
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitPythonTransformationCommand.class);
@@ -52,7 +58,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	public SubmitPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
 			String worksheetId, String hNodeId, String errorDefaultValue) {
 		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
-		
+		this.pythonNodeId = hNodeId;
 	}
 
 	@Override
@@ -74,7 +80,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	public CommandType getCommandType() {
 		return CommandType.undoable;
 	}
-
+	
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
@@ -82,21 +88,27 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		HNode hNode = f.getHNode(hNodeId);
 		String hTableId = hNode.getHTableId();
 		HTable hTable = hNode.getHTable(f);
+		String nodeId = hTable.getHNodeIdFromColumnName(newColumnName);
 		
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
 		// Invoke the add column command
-		logger.info(hNodeId);
+		logger.info("SubmitPythonTranformation: " + hNodeId + ":" + nodeId);
 		try
 		{
-			if(null != hTable.getHNodeFromColumnName(newColumnName) )
+			HNode newColumnNameHNode = hTable.getHNodeFromColumnName(newColumnName);
+			if(null != newColumnNameHNode ) //Column name already exists
 			{
-				logger.error("PyTransform failed because the new column "
-						+ newColumnName + " already exists!");
-				return new UpdateContainer(new ErrorUpdate(
-						"PyTransform failed because the new column "
-								+ newColumnName + " already exists!"));
+				pythonNodeId = nodeId;
+				saveColumnValues(workspace);
+				logger.info("SubmitPythonTranformation: Tranform Existing Column" + hNodeId + ":" + nodeId);
+				UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
+						newColumnNameHNode, ctrl, nodeId);
+				return c;
 			}
+			
+			saveColumnValues(workspace);
+			
 			if (null == addColCmd) {
 				JSONArray addColumnInput = getAddColumnCommandInputJSON(hTableId);
 				AddColumnCommandFactory addColumnFac = (AddColumnCommandFactory) ctrl
@@ -143,11 +155,42 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		addColCmd.undoIt(workspace);
+		if(addColCmd != null) {
+			addColCmd.undoIt(workspace);
+		} else if(this.originalColumnValues != null) {
+			resetColumnValues(workspace);
+		}
+		
 		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
 		// TODO is it necessary to compute alignment and semantic types for everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}
 
+	protected void saveColumnValues(Workspace workspace) {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		RepFactory f = workspace.getFactory();
+		HNode hNode = f.getHNode(pythonNodeId);
+		
+		this.originalColumnValues = new ArrayList<String>();
+		Collection<Node> nodes = new ArrayList<Node>();
+		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes);
+		for(Node node : nodes) {
+			originalColumnValues.add(node.getValue().asString());
+		}
+	}
+	
+	public void resetColumnValues(Workspace workspace) {
+		if(this.originalColumnValues != null) {
+			Worksheet worksheet = workspace.getWorksheet(worksheetId);
+			RepFactory f = workspace.getFactory();
+			HNode hNode = f.getHNode(pythonNodeId);
+	
+			worksheet.getDataTable().setCollectedNodeValues(hNode.getHNodePath(f), this.originalColumnValues, f);
+		}
+	}
+	
+	public ArrayList<String> getOriginalColumnValues() {
+		return this.originalColumnValues;
+	}
 }

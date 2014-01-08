@@ -32,7 +32,8 @@ import java.util.regex.Pattern;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
-import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.LinkIdFactory;
+import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -42,6 +43,9 @@ import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticType.Origin;
+import edu.isi.karma.util.RandomGUID;
 
 
 public class ModelReader {
@@ -83,16 +87,21 @@ public class ModelReader {
 	
 	public static void main(String[] args) throws Exception {
 		
-		List<ServiceModel> serviceModels = null;
+		List<SemanticModel> semanticModels = null;
 
 		try {
 
-			serviceModels = importServiceModelsFromJGraphModels(Params.JGRAPHT_DIR, ".main.jgraph");
-			if (serviceModels != null) {
-				for (ServiceModel sm : serviceModels) {
+			semanticModels = importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
+//			semanticModels = importSemanticModels(Params.INPUT_DIR);
+			if (semanticModels != null) {
+				for (SemanticModel sm : semanticModels) {
 					sm.print();
-					sm.exportModelToGraphviz(Params.GRAPHVIS_DIR);
-//					GraphUtil.serialize(sm.getModel(), Params.JGRAPHT_DIR + sm.getServiceNameWithPrefix() + ".main.jgraph");
+					sm.writeGraphviz(Params.GRAPHVIS_DIR + sm.getName() + Params.GRAPHVIS_MAIN_FILE_EXT, true, true);
+					sm.writeJson(Params.MODEL_DIR + sm.getName() + Params.MODEL_MAIN_FILE_EXT);
+					
+					// To test JsonReader and JsonWriter
+//					SemanticModel m = SemanticModel.readJson(Params.MODEL_DIR + sm.getName() + ".main.model.json");
+//					m.writeJson(Params.MODEL_DIR + sm.getName() + ".main.model2.json");
 				}
 			}
 
@@ -175,38 +184,29 @@ public class ModelReader {
 
 	}
 	
-	public static List<ServiceModel> importServiceModelsFromJGraphModels(String path, String fileExtension) throws Exception {
+	public static List<SemanticModel> importSemanticModelsFromJsonFiles(String path, String fileExtension) throws Exception {
 
 		File ff = new File(path);
 		File[] files = ff.listFiles();
 		
-		List<ServiceModel> serviceModels = new ArrayList<ServiceModel>();
-		String serviceName;
-		DirectedWeightedMultigraph<Node, Link> model;
-		int count = 1;
+		List<SemanticModel> semanticModels = new ArrayList<SemanticModel>();
 		
 		for (File f : files) {
 			if (f.getName().endsWith(fileExtension)) {
-				serviceName = f.getName().replace(fileExtension, "");
-				ServiceModel serviceModel = new ServiceModel("s" + String.valueOf(count));
-				serviceModel.setServiceName(serviceName);
-				serviceModel.setServiceDescription("");
-				model = GraphUtil.deserialize(f.getAbsolutePath()); 
-				serviceModel.addModel(model);
-				serviceModels.add(serviceModel);
-				count++;
+				SemanticModel model = SemanticModel.readJson(f.getAbsolutePath());
+				semanticModels.add(model);
 			}
 		}
 		
-		return serviceModels;
+		return semanticModels;
 
 	}
 	
-	public static List<ServiceModel> importServiceModels(String importDir) throws IOException {
+	public static List<SemanticModel> importSemanticModels(String importDir) throws IOException {
 		
 		initPrefixNsMapping();
 		
-		List<ServiceModel> serviceModels = new ArrayList<ServiceModel>();
+		List<SemanticModel> semanticModels = new ArrayList<SemanticModel>();
 		
 		File dir = new File(importDir);
 		File[] modelExamples = dir.listFiles();
@@ -217,37 +217,35 @@ public class ModelReader {
 		Matcher matcher;
 
 		String subject = "", predicate = "", object = "";
-		String serviceName = "";
 		
 		int count = 1;
 		
 		if (modelExamples != null)
 		for (File f : modelExamples) {
 
+			String id = "s" + String.valueOf(count);
+			String name = "", description = "";
+
 			matcher = fileNamePattern.matcher(f.getName());
 			if (!matcher.find()) {
 				continue;
 			}
-
-			ServiceModel serviceModel = new ServiceModel("s" + String.valueOf(count));
 			
+			List<Statement> statements = null;
 			LineNumberReader lr = new LineNumberReader(new FileReader(f));
 			String curLine = "";
 			while ((curLine = lr.readLine()) != null) {
 				
 				matcher = serviceNamePattern.matcher(curLine);
 				if (matcher.find()) {
-					serviceModel.setServiceDescription(curLine.trim());
-					serviceModel.setServiceNameWithPrefix(f.getName().replaceAll(".txt", ""));
-					serviceName = matcher.group(2).trim();
-					serviceModel.setServiceName(serviceName);
-//					System.out.println(serviceName);
+					name = f.getName().replaceAll(".txt", "");
+					description = curLine.trim();
 				}
 				
 				if (!curLine.trim().startsWith("<N3>"))
 					continue;
 				
-				List<Statement> statements = new ArrayList<Statement>();
+				statements = new ArrayList<Statement>();
 				while ((curLine = lr.readLine()) != null) {
 					if (curLine.trim().startsWith("</N3>"))
 						break;
@@ -268,18 +266,21 @@ public class ModelReader {
 					statements.add(st);
 				}
 				
-				DirectedWeightedMultigraph<Node, Link> graph = buildGraphsFromStatements2(serviceModel.getId(), statements);
-				if (graph != null)
-					serviceModel.addModel(graph);
-			
 			}
 			
 			lr.close();
-			serviceModels.add(serviceModel);
+
+			DirectedWeightedMultigraph<Node, Link> graph = buildGraphsFromStatements2(statements);
+
+			SemanticModel semanticModel = new SemanticModel(id, graph);
+			semanticModel.setName(name);
+			semanticModel.setDescription(description);
+
+			semanticModels.add(semanticModel);
 			count++;
 		}
 		
-		return serviceModels;
+		return semanticModels;
 	}
 
 	
@@ -332,13 +333,13 @@ public class ModelReader {
 		return uri;
 	}
 	
-	private static DirectedWeightedMultigraph<Node, Link> buildGraphsFromStatements2(String serviceId, List<Statement> statements) {
-		
-		DirectedWeightedMultigraph<Node, Link> graph = 
-				new DirectedWeightedMultigraph<Node, Link>(Link.class);
+	private static DirectedWeightedMultigraph<Node, Link> buildGraphsFromStatements2(List<Statement> statements) {
 		
 		if (statements == null || statements.size() == 0)
 			return null;
+
+		DirectedWeightedMultigraph<Node, Link> graph = 
+				new DirectedWeightedMultigraph<Node, Link>(Link.class);
 		
 		// Assumption: there is only one rdf:type for each URI
 		HashMap<String, Node> uri2Classes = new HashMap<String, Node>();
@@ -362,7 +363,7 @@ public class ModelReader {
 		}
 		
 //		int countOfLiterals = 0;
-		
+		String id;
 		for (Statement st : statements) {
 			
 			String subjStr = st.getSubject();
@@ -384,9 +385,18 @@ public class ModelReader {
 
 			Node obj = uri2Classes.get(objStr);
 			if (obj == null) {
-				if (objStr.startsWith(attPrefix))
-					obj = new ColumnNode(objStr, null, null, "", null);
-				else if (objStr.indexOf(":") == -1 && objStr.indexOf("\"") != -1) {
+				if (objStr.startsWith(attPrefix)) {
+					id = new RandomGUID().toString();
+					obj = new ColumnNode(id, objStr, objStr, null, null);
+					SemanticType semanticType = new SemanticType(((ColumnNode)obj).getHNodeId(), 
+							new Label(predicateStr), 
+							subj.getLabel(), 
+							Origin.User, 
+							1.0, 
+							false);
+					((ColumnNode)obj).setUserSelectedSemanticType(semanticType);
+
+				} else if (objStr.indexOf(":") == -1 && objStr.indexOf("\"") != -1) {
 //					String literalId = "lit:" + serviceId + "_l" + String.valueOf(countOfLiterals); 
 					obj = new LiteralNode(objStr, objStr, null);
 //					countOfLiterals ++;
@@ -398,9 +408,9 @@ public class ModelReader {
 			
 			Link e;
 			if (obj instanceof InternalNode)
-				e = new ObjectPropertyLink(predicateStr, new Label(predicateStr), ObjectPropertyType.None);
+				e = new ObjectPropertyLink(LinkIdFactory.getLinkId(predicateStr, subj.getId(), obj.getId()), new Label(predicateStr), ObjectPropertyType.None);
 			else
-				e = new DataPropertyLink(predicateStr, new Label(predicateStr));
+				e = new DataPropertyLink(LinkIdFactory.getLinkId(predicateStr, subj.getId(), obj.getId()), new Label(predicateStr));
 			graph.addEdge(subj, obj, e);
 			
 		}

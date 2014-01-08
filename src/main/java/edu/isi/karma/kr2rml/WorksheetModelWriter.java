@@ -29,9 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jetty.http.HttpMethod;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.BNode;
 import org.openrdf.model.Resource;
@@ -53,11 +51,11 @@ import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.FileUtil;
 
 public class WorksheetModelWriter {
@@ -91,6 +89,7 @@ public class WorksheetModelWriter {
 		/** Create resource for the mapping as a blank node **/
 		URI r2rmlMapUri = f.createURI(Uris.KM_R2RML_MAPPING_URI);
 		URI sourceNameUri = f.createURI(Uris.KM_SOURCE_NAME_URI);
+		URI modelVersion = f.createURI(Uris.KM_MODEL_VERSION_URI);
 		mappingRes = f.createBNode();
 		con.add(mappingRes, RDF.TYPE, r2rmlMapUri);
 		this.worksheetName = worksheetName;
@@ -100,13 +99,16 @@ public class WorksheetModelWriter {
 		// Add the timestamp
 		URI pubTime = f.createURI(Uris.KM_MODEL_PUBLICATION_TIME_URI);
 		con.add(mappingRes, pubTime, f.createLiteral(new Date().getTime()));
+		
+		// Add the version
+				con.add(mappingRes, modelVersion, f.createLiteral(KR2RMLVersion.getCurrent().toString()));
 	}
 	
 	public boolean writeR2RMLMapping(OntologyManager ontManager, KR2RMLMappingGenerator mappingGen)
 			throws RepositoryException, JSONException {
 		/** Get the required data structures of R2RML **/
-		R2RMLMapping mapping = mappingGen.getR2RMLMapping();
-		KR2RMLMappingAuxillaryInformation auxInfo = mappingGen.getMappingAuxillaryInformation();
+		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
+		KR2RMLMappingAuxillaryInformation auxInfo = mapping.getAuxInfo();
 		List<TriplesMap> triplesMapList = mapping.getTriplesMapList();
 		
 		try {
@@ -127,7 +129,6 @@ public class WorksheetModelWriter {
 			URI tableNameUri = f.createURI(Uris.RR_TABLENAME_URI);
 			URI classUri = f.createURI(Uris.RR_CLASS_URI);
 			
-			URI coversColUri = f.createURI(Uris.KM_BLANK_NODE_COVERS_COLUMN_URI);
 			URI bnNamePrefixUri = f.createURI(Uris.KM_BLANK_NODE_PREFIX_URI);
 			URI nodeIdUri = f.createURI(Uris.KM_NODE_ID_URI);
 			URI steinerTreeRootNodeUri = f.createURI(Uris.KM_STEINER_TREE_ROOT_NODE);
@@ -150,9 +151,6 @@ public class WorksheetModelWriter {
 				// Add the subject map statements
 				SubjectMap sjMap = trMap.getSubject();
 				BNode sjBlankNode = f.createBNode();
-				Value templVal = f.createLiteral(sjMap.getTemplate()
-						.getR2rmlTemplateString(factory));
-				con.add(sjBlankNode, templateUri, templVal);
 				con.add(trMapUri, subjMapUri, sjBlankNode);
 
 				// Add the node id for the subject
@@ -178,21 +176,18 @@ public class WorksheetModelWriter {
 				// Check if the subject map is a blank node
 				if (sjMap.isBlankNode()) {
 					con.add(sjBlankNode, termTypeUri, blankNodeUri);
-					// Add the information about the columns that it covers.
-					// This info is used in constructing the blank node's URI.
-					List<String> columnsCovered = auxInfo.getBlankNodesColumnCoverage().
-							get(sjMap.getId());
-					for (String colHnodeId:columnsCovered) {
-						HNode hNode = factory.getHNode(colHnodeId);
-						if (hNode != null) {
-							Value colNameVal = f.createLiteral(getR2RMLColNameRepresentation(hNode));
-							con.add(sjBlankNode, coversColUri, colNameVal);	
-						}
-					}
+					
 					// Add the prefix name for the blank node
 					String prefix = auxInfo.getBlankNodesUriPrefixMap().get(sjMap.getId());
 					Value prefixVal = f.createLiteral(prefix);
 					con.add(sjBlankNode, bnNamePrefixUri, prefixVal);
+				}
+				else
+				{
+					// Print out the template for anything that isn't a blank node
+					Value templVal = f.createLiteral(sjMap.getTemplate()
+							.getR2rmlTemplateString(factory));
+					con.add(sjBlankNode, templateUri, templVal);
 				}
 				
 				// Mark as Steiner tree root node if required
@@ -276,23 +271,6 @@ public class WorksheetModelWriter {
 		return true;
 	}
 
-	private String getR2RMLColNameRepresentation(HNode hNode) throws JSONException {
-		String colNameStr = "";
-		JSONArray colNameArr = hNode.getJSONArrayRepresentation(factory);
-		if (colNameArr.length() == 1) {
-			colNameStr = (String) 
-					(((JSONObject)colNameArr.get(0)).get("columnName"));
-		} else {
-			JSONArray colNames = new JSONArray();
-			for (int i=0; i<colNameArr.length();i++) {
-				colNames.put((String)
-						(((JSONObject)colNameArr.get(i)).get("columnName")));
-			}
-			colNameStr = colNames.toString();
-		}
-		return colNameStr;
-	}
-
 	public void close() throws RepositoryException {
 		con.close();
 		myRepository.shutDown();
@@ -308,7 +286,8 @@ public class WorksheetModelWriter {
 			return;
 		}
 		try {
-			String historyJsonStr = FileUtil.readFileContentsToString(historyFile);
+			String encoding = EncodingDetector.detect(historyFile);
+			String historyJsonStr = FileUtil.readFileContentsToString(historyFile, encoding);
 			Value historyLiteral = f.createLiteral(historyJsonStr);
 			con.add(mappingRes, hasWorksheetHistoryUri, historyLiteral);
 		} catch (IOException e) {

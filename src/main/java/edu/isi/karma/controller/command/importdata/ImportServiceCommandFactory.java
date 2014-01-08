@@ -28,7 +28,7 @@ import edu.isi.karma.rep.Workspace;
 
 public class ImportServiceCommandFactory extends CommandFactory {
 	private enum Arguments {
-		serviceUrl, worksheetName, includeInputAttributes
+		serviceUrl, worksheetName, includeInputAttributes, encoding
 	}
 
 	@Override
@@ -37,7 +37,9 @@ public class ImportServiceCommandFactory extends CommandFactory {
 		return new ImportServiceCommand(getNewId(workspace), 
 				request.getParameter(Arguments.serviceUrl.name()),
 				request.getParameter(Arguments.worksheetName.name()),
-				Boolean.parseBoolean(request.getParameter(Arguments.includeInputAttributes.name())));
+				Boolean.parseBoolean(request.getParameter(Arguments.includeInputAttributes.name())),
+				request.getParameter(Arguments.encoding.name())
+				);
 	}
 
 }
