@@ -79,22 +79,7 @@ function parse(data) {
                     });
 
                     titleDiv
-                        .append($("<div>")
-                            .text(worksheet["title"])
-                            .addClass("tableTitleTextDiv"))
-                        .append($("<div>")
-                            .addClass("WorksheetOptionsButtonDiv")
-                            .attr("id", "optionsButton" + worksheet["worksheetId"])
-                            .data("worksheetId", worksheet["worksheetId"])
-                            .click(openWorksheetOptions).button({
-                                icons : {
-                                    primary : 'ui-icon-triangle-1-s'
-                                },
-                                text : false
-                            })
-                            .mouseleave(function() {
-                                $("#WorksheetOptionsDiv").hide();
-                            }))
+                        .append((new WorksheetOptions(worksheet["worksheetId"], worksheet["title"])).generateJS())
                         .append($("<div>")
                             .addClass("rightOptionsToolbar")
                             .append($("<div>")
@@ -380,7 +365,7 @@ function parse(data) {
                 .text("CSV")
                 .addClass("CSVDownloadLink  DownloadLink")
                 .attr("target", "_blank");
-            $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
             $.sticky("CSV file published");
         }
         else if(element["updateType"] == "PublishMDBUpdate") {
@@ -393,7 +378,7 @@ function parse(data) {
                 .text("ACCESS MDB")
                 .addClass("MDBDownloadLink  DownloadLink")
                 .attr("target", "_blank");
-            $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
             $.sticky("MDB file published");
         }
         else if(element["updateType"] == "PublishR2RMLUpdate") {
@@ -403,7 +388,7 @@ function parse(data) {
             var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
             hideLoading(element["worksheetId"]);
             var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("R2RML Model").addClass("R2RMLDownloadLink  DownloadLink").attr("target", "_blank");
-            $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
             $.sticky("R2RML Model published");
         }
         else if(element["updateType"] == "PublishSpatialDataUpdate") {
@@ -412,7 +397,7 @@ function parse(data) {
             // Remove existing link if any
             hideLoading(element["worksheetId"]);
             var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("SPATIAL DATA").addClass("SpatialDataDownloadLink  DownloadLink").attr("target", "_blank");
-            $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
             $.sticky("Spatial data published");
         }
         else if(element["updateType"] == "PublishRDFUpdate") {
@@ -421,7 +406,7 @@ function parse(data) {
             $("a.RdfDownloadLink", titleDiv).remove();
 
             var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("RDF").addClass("RdfDownloadLink  DownloadLink").attr("target", "_blank");
-            $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
 
             var errorArr = $.parseJSON(element["errorReport"]);
             if (errorArr && errorArr.length !=0) {
@@ -444,7 +429,7 @@ function parse(data) {
             $("a.HistoryDownloadLink", titleDiv).remove();
 
             var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("History").addClass("HistoryDownloadLink DownloadLink").attr("target", "_blank");
-            $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
         }
         else if(element["updateType"] == "PublishDatabaseUpdate") {
             if(element["numRowsNotInserted"] == 0) {

@@ -22,6 +22,7 @@
 #tablesWorkspace {
 
 	overflow: auto;
+	min-height: 450px;
 }
 
 #ScrollHeadersPlaceholder table{
@@ -50,6 +51,17 @@
 	/*background-image: url("../images/navBG.png");
 	background-repeat: repeat-x;*/
 	color:black;
+	padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    height: 30px;
+}
+.WorksheetTitle, .WorksheetTitle a, .WorksheetTitle a:visited, .WorksheetTitle a:active, .WorksheetTitle a:hover, .WorksheetTitle a:focus {
+	text-decoration: none;
+	color: black;
+}
+.worksheetDropdown {
+	float: left;
 }
 
 .nestedTableLastRow img{
@@ -76,15 +88,8 @@
 	border: solid 1px;
 }
 
-.WorksheetOptionsButtonDiv {
-	float: left;
-	/*display: inline-block;*/
+.cursorPointer {
 	cursor: pointer;
-    width: 20px;
-    height: 14px;
-    margin-left:4px;
-    margin-top: 5px;
-    margin-right: 4px;
 }
 
 div#tableCellMenuButtonDiv {
@@ -373,15 +378,7 @@ div#ScrollHeadersPlaceholder table td {
 }
 
 div#WorksheetOptionsDiv {
-	width: 135px;
-	padding: 4px;
-	background-color: #A3A3A3;
-	height: 355px;
-}
-
-div#WorksheetOptionsDiv button {
-	margin: 2px;
-	width: 130px;
+	padding-right: 20px;
 }
 
 div#tableCellToolBarMenu {
@@ -488,9 +485,11 @@ span.bold {
 }
 
 a.DownloadLink {
-	margin-left: 5px;
-	font-family: Helvetica;
-	font-size: 0.8em;
+	border-left: 1px solid;
+    font-family: Helvetica;
+    font-size: 0.8em;
+    margin-left: 5px;
+    padding-left: 5px;
 }
 
 input.smallSizedFont {

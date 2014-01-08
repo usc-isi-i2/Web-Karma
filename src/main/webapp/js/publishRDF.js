@@ -103,9 +103,10 @@ function validateAndPublishRDF() {
 	}
 }
 function publishRDFFunction(graphUri) {
-	
-	$("div#PublishRDFDialogBox").dialog("close");
-	$("div#confirmPublishRDFDialogBox").dialog("close");
+	if(isDialogInitialized($('div#PublishRDFDialogBox')))
+		$("div#PublishRDFDialogBox").dialog("close");
+	if(isDialogInitialized($('div#confirmPublishRDFDialogBox')))
+		$("div#confirmPublishRDFDialogBox").dialog("close");
 
 	var info = new Object();
 	info["worksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");

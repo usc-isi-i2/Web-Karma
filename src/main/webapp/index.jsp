@@ -83,6 +83,10 @@ and related projects, please see: http://www.isi.edu/integration
 			  }
 			}
 			
+			a:hover, a:focus {
+				text-decoration: none;
+				color: black;
+			}
 		</style>
 	</head>
 
@@ -194,81 +198,8 @@ and related projects, please see: http://www.isi.edu/integration
         
 
         <div id="ScrollHeadersPlaceholder"></div>
-        <div id="WorksheetOptionsDiv" style="display: none">
-            <button href="#" id="showModel">
-                Show Model
-            </button>
-            <button href="#" id="setWorksheetProperties">
-                Set properties
-            </button>
-            <button href="#" id="showAutoModel">
-                Show AutoModel
-            </button>
-            <button href="#" id="resetModel" style="display: none">
-                Reset Model
-            </button>
-            <button href="#" id="publishRDF">
-                Publish RDF
-            </button>
-            <button href="#" id="publishR2RML">
-                Publish Model
-            </button>
-            <!-- <button href="#" id="saveR2RMLToTripleStore">
-                Publish Model
-            </button> -->
-            <button href="#" id="populateSource">
-                Populate Source
-            </button>
-            <button href="#" id="csvExport">
-                Export to CSV
-            </button>
-            <button href="#" id="publishDatabase">
-                Export to Database
-            </button>
-            <button href="#" id="mdbExport">
-                Export to MDB
-            </button>
-            <button href="#" id="spatialdataExport">
-                Export to SpatialData
-            </button>
-            <button href="#" id="publishServiceModel">
-                Publish Service Model
-            </button>
-            <button href="#" id="showR2RMLFromTripleStore">
-                Invoke Service
-            </button>
-            <!--<button href="#" id="transformcolumns">-->
-            <!--Transform Columns-->
-            <!--</button>-->
-            <!--<button href="#" id="publishWorksheetHistory">-->
-            <!--Publish Worksheet History-->
-            <!--</button>-->
-            <div class="container">
-                <!-- <input type="file" name="file1" id="uploadFile_JSON"> -->
-                <form id="applyWorksheetHistory" action="ImportFileCommand" method="POST" enctype="multipart/form-data">
-                    <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
-                    <div class="row fileupload-buttonbar">
-                        <div class="span7">
-                            <!-- The fileinput-button span is used to style the file input field as button -->
-                            <span class="btn btn-success fileinput-button importButton" id="applyHistoryButton"> <!-- <i class="icon-plus icon-white"></i> --> <span>Apply R2RML Model</span>
-                                <input type="file" name="files[]" multiple>
-                            </span>
-                        </div>
-                        <!-- The global progress information -->
-                        <div class="span5 fileupload-progress fade">
-                            <!-- The global progress bar -->
-                            <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                                <div class="bar" style="width:0%;"></div>
-                            </div>
-                            <!-- The extended global progress information -->
-                            <div class="progress-extended">
-                                &nbsp;
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
+     
+      
         <div id="ChangeSemanticTypesDialogBox" style="display: none">
             <div id="CurrentSemanticTypesBox" class="ui-corner-all">
                 <span class="mediumSizedFont">Semantic types:</span>
@@ -941,11 +872,11 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/pytransform.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/cleaning-charts.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/showModel.js?<jsp:include page='version.jsp' />"></script>
-        
+        <script type="text/javascript" src="js/worksheetOptions.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/util.js?<jsp:include page='version.jsp' />"></script>
+         
         <script>
             $(function() {
-               	// Stylize the worksheet options div panel
-                styleAndAssignHandlersToWorksheetOptionButtons();
 
                 // Attach handlers to the ontology options table
                 attachOntologyOptionsRadioButtonHandlers();

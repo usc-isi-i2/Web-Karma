@@ -51,7 +51,7 @@ var FileFormatSelectionDialog = (function() {
                     worksheets.each(function(){
                         var item = $('<option />');
                         item.val($(this).attr('id'));
-                        item.text($(this).find('.tableTitleTextDiv').text());
+                        item.text($(this).find('.WorksheetTitle').text());
 
                         $('#revisedWorksheetSelector').append(item);
                     });
@@ -295,6 +295,7 @@ var FileOptionsDialog = (function() {
 			if(execute) {
 				options["execute"] = true;
 				options["interactionType"] = "importTable";
+				showWaitingSignOnScreen();
 			}
 			
 			$.ajax({

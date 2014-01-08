@@ -27,7 +27,7 @@ function publishDatabaseFunction() {
 			$("div#PublishDatabaseDialogBox").dialog("close");
 
 			var info = new Object();
-			info["worksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+			info["worksheetId"] = $("div#PublishDatabaseDialogBox").data("worksheetId");
 			info["workspaceId"] = $.workspaceGlobalInformation.id;
 			info["command"] = "PublishDatabaseCommand";
 			info["dbType"] = $("select#dbType").val();
