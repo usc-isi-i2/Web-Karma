@@ -74,7 +74,7 @@ public class SybaseUtil extends AbstractJDBCUtil {
 			String tableName, String dBorSIDName, int rowCount) throws SQLException, ClassNotFoundException {
 	
 		Connection conn = getConnection(hostname, portnumber, username, password, dBorSIDName);
-		String query = "Select * from " + tableName + " limit " + rowCount;
+		String query = "Select top " + rowCount + " * from " + tableName;
 		
 		Statement s = conn.createStatement();
 		ResultSet r = s.executeQuery(query);
