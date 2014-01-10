@@ -36,11 +36,9 @@ import edu.isi.karma.modeling.ModelingConfiguration;
 public class CandidateSteinerSets {
 	
 	private static Logger logger = LoggerFactory.getLogger(CandidateSteinerSets.class);
-	private int maxNumberOfSteinerNodes;
 	private List<SteinerNodes> steinerSets;
 	
 	public CandidateSteinerSets(int maxNumberOfSteinerNodes) {
-		this.maxNumberOfSteinerNodes = maxNumberOfSteinerNodes;
 		this.steinerSets = new ArrayList<SteinerNodes>();
 	}
 	
@@ -60,7 +58,7 @@ public class CandidateSteinerSets {
 		
 		if (this.steinerSets.size() == 0) {
 			for (SemanticTypeMapping stm : mappings) {
-				SteinerNodes sn = new SteinerNodes(maxNumberOfSteinerNodes);
+				SteinerNodes sn = new SteinerNodes();
 				sn.addNodes(stm.getSourceColumn(), stm.getSource(), stm.getTarget(), stm.getConfidence());
 				this.steinerSets.add(sn);
 			}			

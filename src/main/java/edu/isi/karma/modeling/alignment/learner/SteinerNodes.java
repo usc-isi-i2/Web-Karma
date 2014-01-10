@@ -22,6 +22,7 @@
 package edu.isi.karma.modeling.alignment.learner;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,13 +49,13 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	
 	private Set<Node> nodes;
 	private Map<ColumnNode, ColumnNode> mappingToSourceColumns;
-	private int maxNodeCount;
 	private List<Double> confidenceList;
 	private List<CoherenceItem> coherenceList;
 	private double confidence;
 	private double coherence;
 	private int frequency;
 	private double score;
+	private int semanticTypeCount;
 	
 //	class ValueComparator implements Comparator<String> {
 //
@@ -73,14 +74,15 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 //	    }
 //	}
 	
-	public SteinerNodes(int maxNodeCount) {
+	public SteinerNodes() {
 		this.nodes = new HashSet<Node>();
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
-		this.maxNodeCount = maxNodeCount;
+		this.semanticTypeCount = 0;
 		this.confidenceList = new Vector<Double>();
 		this.coherenceList = new ArrayList<CoherenceItem>();
 		this.frequency = 0;
-		this.confidence = 1.0;
+//		this.confidence = 1.0;
+		this.confidence = 0.0;
 		this.coherence = 0.0;
 		this.score = 0.0;
 	}
@@ -93,7 +95,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.frequency = steinerNodes.getFrequency();
 		this.confidence = steinerNodes.getConfidence();
 		this.coherence = steinerNodes.getCoherence();
-		this.maxNodeCount = steinerNodes.getMaxNodeCount();
+		this.semanticTypeCount = steinerNodes.getSemanticTypeCount();
 		this.score = steinerNodes.getScore();
 	}
 	
@@ -105,14 +107,16 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		return mappingToSourceColumns;
 	}
 
-	public int getMaxNodeCount() {
-		return maxNodeCount;
+	public int getSemanticTypeCount() {
+		return semanticTypeCount;
 	}
 
 	public boolean addNodes(ColumnNode sourceColumn, InternalNode n1, ColumnNode n2, double confidence) {
 		
 		if (this.nodes.contains(n1) && this.nodes.contains(n2))
 			return false;
+		
+		this.semanticTypeCount ++;
 		
 		this.nodes.add(n1);
 		this.nodes.add(n2);
@@ -123,13 +127,13 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 			confidence = MIN_CONFIDENCE;
 		
 		this.confidenceList.add(confidence);
-		this.confidence *= confidence;
 		
 		this.frequency += n1.getModelIds() == null ? 0 : n1.getModelIds().size();
 		this.frequency += n2.getModelIds() == null ? 0 : n2.getModelIds().size();
 		
 		this.computeCoherenceList();
 		this.computeCoherenceValue();
+		this.computeConfidenceValue();
 		
 		this.computeScore();
 		
@@ -188,6 +192,22 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 //		
 //		return confidence;
 //	}
+	
+	private void computeConfidenceValue() {
+		
+		double sum = 0.0;
+		double mult = 1.0;
+		int count = 0;
+		for (Double d : this.confidenceList) {
+			if (d != null) {
+				count ++;
+				sum += d.doubleValue();
+				mult *= d == 0.0? 0.1 : d.doubleValue();
+			}
+		}
+		this.confidence = mult;
+		this.confidence = sum / (double)count;
+	}
 	
 	private void computeCoherenceList() {
 		
@@ -274,31 +294,99 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		BigDecimal factor = new BigDecimal(100);
 		BigDecimal b;
 		
+		double normalizedCoherence;
 		for (CoherenceItem ci : this.coherenceList) {
+			
+			normalizedCoherence = (double)ci.getX() / (double)(this.semanticTypeCount * 2);
+			normalizedCoherence *= 100;
+			normalizedCoherence = (double) ((int)normalizedCoherence);
+			
 			denominator = denominator.multiply(factor);
-			b = new BigDecimal(ci.getDouble());
+			b = new BigDecimal(normalizedCoherence);
+//			b = new BigDecimal(ci.getDouble());
 			b= b.divide(denominator);
 			value = value.add(b);
 		}
 		
 		this.coherence = value.doubleValue();
 	}
-
+	
+	private double getNormalizedSizeReduction() {
 		
+		int minSize = this.semanticTypeCount;
+		int maxSize = this.semanticTypeCount * 2;
+		
+		//feature scaling: (x - min) / (max - min)
+		// here: x: reduction in size --- min reduction: 0 --- max reduction: maxSize - minSize 
+		return (double)(maxSize - this.getNodeCount()) / 
+				(double)(maxSize - minSize);
+	}
+	
+	private double getNormalizedConfidence() {
+		
+		return getConfidence();
+	}
+	
+	private double getHarmonicMean(double[] input) {
+		
+		double result = 0.0;
+		if (input == null)
+			return result;
+		
+		double min = 1E-6;
+		double sum = 0.0;
+		for (double d : input) {
+			if (d <= 0.0) d = min;
+			sum += 1.0 / d;
+		}
+		
+		if (sum == 0.0)
+			return result;
+		
+		result = (double) input.length / sum;
+		return result;
+		
+	}
+	
+	private double getArithmeticMean(double[] input) {
+		
+		double result = 0.0;
+		if (input == null)
+			return 0.0;
+		
+		double sum = 0.0;
+		for (double d : input) {
+			if (d < 0.0) d = 0.0;
+			sum += d;
+		}
+		
+		result = sum / (double)input.length;
+		return result;
+		
+	}
+	
 	private void computeScore() {
 		
-		double confidence = this.getConfidence();
-		double distnaceToMaxSize = (double) (this.maxNodeCount - this.getNodeCount());
+		double confidence = this.getNormalizedConfidence();
+		double sizeReduction = this.getNormalizedSizeReduction();
 		double coherence = this.getCoherence();
 		//int frequency = this.getFrequency();
 		
-		double alpha = 1.0;//WeightTuning.getInstance().getCoherenceFactor();
-		double beta = 0.5;//WeightTuning.getInstance().getSizeFactor();
-		double gamma = 0.8;//WeightTuning.getInstance().getConfidenceFactor();
+//		double alpha = 1.0;//WeightTuning.getInstance().getCoherenceFactor();
+//		double beta = 0.5;//WeightTuning.getInstance().getSizeFactor();
+//		double gamma = 0.8;//WeightTuning.getInstance().getConfidenceFactor();
+//		
+//		this.score = alpha * coherence + 
+//				beta * distanceToMaxSize + 
+//				gamma * confidence;
 		
-		this.score = alpha * coherence + 
-				beta * distnaceToMaxSize + 
-				gamma * confidence;
+		double[] measures = new double[3];
+		measures[0] = confidence;
+		measures[1] = sizeReduction;
+		measures[2] = coherence;
+		this.score = getHarmonicMean(measures);
+		this.score = getArithmeticMean(measures);
+
 	}
 
 	@Override
@@ -314,35 +402,52 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		else return 0;
 	}
 	
+	private static double roundTwoDecimals(double d) {
+        DecimalFormat twoDForm = new DecimalFormat("#.##");
+        return Double.valueOf(twoDForm.format(d));
+	}
+	
 	public String getScoreDetailsString() {
 //		this.computeCoherenceList();
 		StringBuffer sb = new StringBuffer();
 		
-		if (this.nodes != null)
-		for (Node n : this.nodes) {
-			if (n instanceof InternalNode)
-				sb.append(n.getLocalId());
-			else {
-				if (mappingToSourceColumns.containsKey((ColumnNode)n))
-					sb.append(mappingToSourceColumns.get((ColumnNode)n).getColumnName() );
-				else
-					sb.append( ((ColumnNode)n).getColumnName() );
-			}
-			sb.append("|");
-		}
+//		if (this.nodes != null)
+//		for (Node n : this.nodes) {
+//			if (n instanceof InternalNode)
+//				sb.append(n.getLocalId());
+//			else {
+//				if (mappingToSourceColumns.containsKey((ColumnNode)n))
+//					sb.append(mappingToSourceColumns.get((ColumnNode)n).getColumnName() );
+//				else
+//					sb.append( ((ColumnNode)n).getColumnName() );
+//			}
+//			sb.append("|");
+//		}
+//		sb.append("\n");
+
 		sb.append("\n");
 		sb.append("coherence list: ");
 		for (CoherenceItem ci : this.coherenceList) {
 			sb.append("(" + ci.getX() + "," + ci.getY() + ")");
 		}
+//		sb.append("\n");
+		sb.append("--- coherence value: " + this.coherence);
 		sb.append("\n");
-		sb.append("coherence value: " + this.coherence);
+		sb.append("size: " + this.getNodeCount() + ", max size: " + (this.semanticTypeCount * 2) + "---" + 
+				"normalized size reduction: " +  roundTwoDecimals(this.getNormalizedSizeReduction()) );
 		sb.append("\n");
-		sb.append("size: " + (double) (this.getNodeCount()));
+		sb.append("confidence list: (");
+		for (Double cf : this.confidenceList) {
+			if (cf != null)
+				sb.append( roundTwoDecimals(cf.doubleValue()) + ",");
+		}
+		sb.append(") --- ");
+		sb.append("normalized confidence: " + roundTwoDecimals(this.getNormalizedConfidence()));
 		sb.append("\n");
-		sb.append("total number of patterns: " + this.frequency);
+//		sb.append("total number of patterns: " + this.frequency);
+//		sb.append("\n");
+		sb.append("final score: " + roundTwoDecimals(this.getScore()) + " - [harmonic mean]");
 		sb.append("\n");
-		sb.append("final score: " + this.getScore());
 		return sb.toString();
 	}
 		
