@@ -215,7 +215,7 @@ function parse(data) {
 
             var tableDataContainer = $(worksheetPanel).children("div.table-data-container");
             if (tableDataContainer.length == 0) {
-                tableDataContainer = $("<div>").addClass("table-data-container").attr("id", element["tableId"]);
+                tableDataContainer = $("<div>").addClass("table-data-container").addClass("table-data-container-outermost").attr("id", element["tableId"]);
                 worksheetPanel.append(tableDataContainer);
             }
 
