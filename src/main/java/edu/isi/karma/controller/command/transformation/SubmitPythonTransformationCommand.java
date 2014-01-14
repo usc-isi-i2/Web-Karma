@@ -237,9 +237,6 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			if(command instanceof SubmitPythonTransformationCommand) {
 				SubmitPythonTransformationCommand pyCommand = (SubmitPythonTransformationCommand)command;
 				if(pyCommand.worksheetId.equals(this.worksheetId)) {
-					if(pyCommand.newColumnName.equals(this.newColumnName)) {
-						return command;
-					}
 					if(pyCommand.pythonNodeId.equals(this.pythonNodeId)) {
 						return command;
 					}
