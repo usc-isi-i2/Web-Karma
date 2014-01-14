@@ -511,3 +511,7 @@ span#applyHistoryButton {
 #setPropertiesDialog input[type=text] {
     width: 70%;
 }
+
+.tableDropdown .dropdown-menu {
+	text-align: left;
+}

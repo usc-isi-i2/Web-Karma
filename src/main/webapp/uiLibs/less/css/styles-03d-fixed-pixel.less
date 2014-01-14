@@ -357,6 +357,21 @@ body
     border-left: 0;
 }
 
+.wk-header-cell 
+{
+    min-height: @cell-font-size-px;
+    border-left-style: solid;
+    border-left-width: @cell-border-width;    
+    padding-left: @cell-left-right-padding;
+    padding-right: @cell-left-right-padding;
+    padding-top: @cell-top-bottom-padding;
+    padding-bottom: @cell-top-bottom-padding;
+   vertical-align: top;
+}
+
+.wk-header-cell:first-child {
+    border-left: 0;
+}
 
 .load-more
 {

@@ -7,12 +7,16 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	var options = [
 	        //Title, function to call, needs file upload       
 			[	"Add Column" , addColumn ],
-			[ "PyTransform" , pyTransform ],
-			[ "Invoke Service" , invokeService ],
 			[ "Rename", renameColumn ],
 			[ "Split Column", splitColumn ],
-			[ "Transform", transform]
-			[ "Show Chart", showChart]
+			[ "divider" , null ],
+			
+			[ "PyTransform" , pyTransform ],
+			[ "Transform", transform],
+			[ "divider" , null ],
+			
+			[ "Invoke Service" , invokeService ],
+			[ "Show Chart", showChart],
 			//[ "Apply R2RML Model" , applyR2RMLModel, true, "applyWorksheetHistory" ],
 			//[ "divider" , null ],
 			
@@ -26,7 +30,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 		
 	}
 	
-	function pyTranform() {
+	function pyTransform() {
 		
 	}
 	
@@ -51,6 +55,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	}
 	
 	this.generateJS = function() {
+		var dropdownId = "columnOptionsButton" + worksheetId + "_" + columnId;
 		var div = 
 			$("<div>")
 				.attr("id", "TableOptionsDiv")
@@ -61,7 +66,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 						.attr("href", "#")
 						.addClass("dropdown-toggle")
 						.addClass("ColumnTitle")
-						.attr("id", "columnOptionsButton" + worksheetId + "_" + columnId)
+						.attr("id", dropdownId)
 						.data("worksheetId", worksheetId)
 						.attr("data-toggle", "dropdown")
 						.text(columnTitle)
@@ -71,6 +76,8 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
                 
 
 		var ul = $("<ul>").addClass("dropdown-menu");
+		ul.attr("role", "menu")
+			.attr("aria-labelledby", dropdownId);
 		//console.log("There are " + options.length + " menu items");
 		for(var i=0; i<options.length; i++) {
 			var option = options[i];

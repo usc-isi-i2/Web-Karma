@@ -549,7 +549,7 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
     var columnWidths = [];
     $.each (columns, function (index, column) {
 
-        var td = $("<td>").addClass("wk-cell").attr("id", column.hNodeId);
+        var td = $("<td>").addClass("wk-header-cell").attr("id", column.hNodeId);
         var headerDiv = $("<div>").addClass(column["columnClass"]);
 
         var colWidthNumber = 0;
@@ -568,7 +568,8 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
         
         if (column["hasNestedTable"]) {
             var pElem = $("<div>")
-            				.addClass("wk-header wk-subtable-header")
+            				.addClass("wk-header")
+            				.addClass("wk-subtable-header")
 //            				.text(column["columnName"])
 //            				.mouseenter(showColumnOptionButton)
 //            				.mouseleave(hideColumnOptionButton);

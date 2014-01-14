@@ -87,6 +87,20 @@ and related projects, please see: http://www.isi.edu/integration
 				text-decoration: none;
 				color: black;
 			}
+			
+			.table-header-container a {
+				color: #CCCCCC;
+			}
+			
+			.table-header-container a:hover,  .table-header-container a:focus{
+				color: #AAAAAA;
+			}
+			
+			
+			.collapse.in {
+			    height: auto;  /* this style already exists in bootstrap.css */
+			    overflow: visible;  /* this one doesn't. Add it! */
+			}
 		</style>
 	</head>
 
