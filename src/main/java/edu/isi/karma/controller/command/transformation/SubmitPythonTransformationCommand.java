@@ -236,11 +236,13 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			Command command = commands.get(i);
 			if(command instanceof SubmitPythonTransformationCommand) {
 				SubmitPythonTransformationCommand pyCommand = (SubmitPythonTransformationCommand)command;
-				if(pyCommand.newColumnName.equals(this.newColumnName)) {
-					return command;
-				}
-				if(pyCommand.pythonNodeId.equals(this.pythonNodeId)) {
-					return command;
+				if(pyCommand.worksheetId.equals(this.worksheetId)) {
+					if(pyCommand.newColumnName.equals(this.newColumnName)) {
+						return command;
+					}
+					if(pyCommand.pythonNodeId.equals(this.pythonNodeId)) {
+						return command;
+					}
 				}
 			}
 		}
