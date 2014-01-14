@@ -48,6 +48,7 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
 		this.previousCommandId = previousCommandId;
 		this.targetHNodeId = targetHNodeId;
+		this.pythonNodeId = targetHNodeId;
 		logger.info("SubmitEditPythonTransformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode + ", prevId:" + previousCommandId);
 	}
 
