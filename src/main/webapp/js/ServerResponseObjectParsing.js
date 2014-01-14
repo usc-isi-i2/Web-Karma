@@ -166,7 +166,7 @@ function parse(data) {
                 $("tr", headersTable).addClass("deleteMe");
             }
 
-            var colWidths = addColumnHeadersRecurse(element["columns"], headersTable, true);
+            var colWidths = addColumnHeadersRecurse(element["worksheetId"], element["columns"], headersTable, true);
             var stylesheet = document.styleSheets[0];
 
             // Remove the previous rows if any
@@ -538,7 +538,7 @@ function parse(data) {
     }
 }
 
-function addColumnHeadersRecurse(columns, headersTable, isOdd) {
+function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
     var row = $("<tr>");
     if (isOdd) {
         row.addClass("wk-row-odd");
@@ -567,8 +567,12 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
         }
         
         if (column["hasNestedTable"]) {
-            var pElem = $("<div>").addClass("wk-header wk-subtable-header").text(column["columnName"])
-                .mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);
+            var pElem = $("<div>")
+            				.addClass("wk-header wk-subtable-header")
+//            				.text(column["columnName"])
+//            				.mouseenter(showColumnOptionButton)
+//            				.mouseleave(hideColumnOptionButton);
+            				.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"])).generateJS());
 
             var nestedTableContainer = $("<div>").addClass("table-container");
             var nestedTableHeaderContainer = $("<div>").addClass("table-header-container");
@@ -578,7 +582,7 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
             } else {
                 nestedTable.addClass("htable-odd");
             }
-            var nestedColumnWidths = addColumnHeadersRecurse(column["columns"], nestedTable, !isOdd);
+            var nestedColumnWidths = addColumnHeadersRecurse(worksheetId, column["columns"], nestedTable, !isOdd);
 
             var colAdded = 0;
             $.each(nestedColumnWidths, function(index2, colWidth){
@@ -596,7 +600,9 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
 
             headerDiv.append(pElem).append(nestedTableContainer.append(nestedTableHeaderContainer.append(nestedTable)));
         } else {
-            headerDiv.addClass("wk-header").text(column["columnName"]).mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);
+            headerDiv.addClass("wk-header")
+            	//.text(column["columnName"]).mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);
+            	.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"])).generateJS());
             // Pedro: limit cells to 30 chars wide. This should be smarter: if the table is not too wide, then allow more character.
             // If we impose the limit, we should set the CSS to wrap rather than use ... ellipsis.
             // We will need a smarter data structure so we can do two passes, first to compute the desired lenghts based on number of characters

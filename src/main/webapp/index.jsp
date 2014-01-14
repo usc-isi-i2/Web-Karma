@@ -159,16 +159,6 @@ and related projects, please see: http://www.isi.edu/integration
 		</div>
 	
 		
-		<div id="columnHeadingDropDownMenu" class="ui-corner-all" style="display: none">
-            <button id="addColumnButton">Add Column</button>
-            <button id="pyTransform">PyTransform</button>
-            <button id="invokeServiceButton">Invoke Service</button>
-            <button id="renameColumnButton">Rename</button>
-            <button id="splitByComma">Split Column</button>
-            <button id="cleanColumnButton">Transform</button>
-            <button id="showChartButton">Show Chart</button>
-            <button id="hideColumnButton" style="display: none">Hide</button>
-        </div>
         <div id="tableCellToolBarMenu" class="ui-corner-all" style="display: none">
             <button id="editCellButton">
                 Edit
@@ -873,6 +863,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/cleaning-charts.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/showModel.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/worksheetOptions.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/tableColumnOptions.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/util.js?<jsp:include page='version.jsp' />"></script>
          
         <script>
@@ -885,7 +876,7 @@ and related projects, please see: http://www.isi.edu/integration
                 styleAndAssignHandlersToTableCellMenu();
 
                 // Assign style and handlers to column heading menu
-                styleAndAssignHandlersToColumnHeadingMenu();
+                //styleAndAssignHandlersToColumnHeadingMenu();
 
                // Assign style and handler to the merge button
                 styleAndAssignHandlersToMergeButton();
