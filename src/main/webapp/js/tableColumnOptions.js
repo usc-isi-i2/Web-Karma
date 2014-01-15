@@ -43,7 +43,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	}
 	
 	function renameColumn() {
-		
+		RenameColumnDialog.getInstance().show(worksheetId, columnId);
 	}
 	
 	function splitColumn() {
@@ -143,7 +143,7 @@ var AddColumnDialog = (function() {
 			dialog.on('show.bs.modal', function (e) {
 				hideError();
                 $("input", dialog).val("");
-                $("input#columnName").focus();
+                $("#columnName", dialog).focus();
 			});
 			
 			//Initialize handler for Save button
@@ -155,11 +155,11 @@ var AddColumnDialog = (function() {
     	}
     	
 		function hideError() {
-			$("#addColumnError", dialog).hide();
+			$("div.error", dialog).hide();
 		}
 		
 		function showError() {
-			$("#addColumnError", dialog).show();
+			$("div.error", dialog).show();
 		}
         
         function saveDialog(e) {
@@ -167,7 +167,7 @@ var AddColumnDialog = (function() {
 	
 		    var newColumnValue = $.trim($("#columnName", dialog).val());
 		    var defaultValue = $.trim($("#defaultValue", dialog).val());
-
+		    
 		    var validationResult = true;
 		    if (!newColumnValue)
 		        validationResult = false;
@@ -221,6 +221,119 @@ var AddColumnDialog = (function() {
 		            function (xhr, textStatus) {
 		                alert("Error occured while removing semantic types!" + textStatus);
 		                hideLoading(info["worksheetId"]);
+		            }
+		    });
+        };
+        
+        function show(wsId, colId) {
+        	worksheetId = wsId;
+        	columnId = colId;
+            dialog.modal({keyboard:true, show:true});
+        };
+        
+        
+        return {	//Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    	
+    
+})();
+
+
+
+
+
+var RenameColumnDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#renameColumnDialog");
+    	var worksheetId, columnId;
+    	
+    	function init() {
+    		//Initialize what happens when we show the dialog
+			dialog.on('show.bs.modal', function (e) {
+				hideError();
+                $("input", dialog).val("");
+                $("#columnName", dialog).focus();
+			});
+			
+			//Initialize handler for Save button
+			//var me = this;
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e);
+			});
+    	}
+    	
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError() {
+			$("div.error", dialog).show();
+		}
+        
+        function saveDialog(e) {
+        	console.log("Save clicked");
+	
+		    var newColumnValue = $.trim($("#columnName", dialog).val());
+		   
+		    var validationResult = true;
+		    if (!newColumnValue)
+		        validationResult = false;
+		    // Check if the column name already exists
+		    var columnNames = getColumnHeadings(worksheetId);
+		    $.each(columnNames, function(index, columnName) {
+		        if (columnName == newColumnValue) {
+		            validationResult = false;
+		        }
+		    });
+		    if (!validationResult) {
+		    	showError();
+		        $("#columnName", dialog).focus();
+		        return false;
+		    }
+
+		    dialog.modal('hide');
+
+		    var info = new Object();
+		    var newInfo = [];   // for input parameters
+		    newInfo.push(getParamObject("worksheetId", worksheetId ,"worksheetId"));
+		    newInfo.push(getParamObject("hNodeId", columnId,"hNodeId"));
+		    newInfo.push(getParamObject("newColumnName", newColumnValue, "other"));
+		    newInfo.push(getParamObject("getAlignmentUpdate", ($("#svgDiv_" + worksheetId).length >0), "other"));
+		    info["newInfo"] = JSON.stringify(newInfo);
+		    info["workspaceId"] = $.workspaceGlobalInformation.id;
+		    info["command"] = "RenameColumnCommand";
+
+		    var returned = $.ajax({
+		        url: "RequestController",
+		        type: "POST",
+		        data : info,
+		        dataType : "json",
+		        complete :
+		            function (xhr, textStatus) {
+		                var json = $.parseJSON(xhr.responseText);
+		                parse(json);
+		            },
+		        error :
+		            function (xhr, textStatus) {
+		                $.sticky("Error occured while renaming column!");
 		            }
 		    });
         };

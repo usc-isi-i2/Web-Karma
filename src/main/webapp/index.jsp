@@ -169,7 +169,7 @@ and related projects, please see: http://www.isi.edu/integration
 		      <jsp:include page="serviceImport.jsp"></jsp:include>
 			  <jsp:include page="databaseImport.jsp"></jsp:include>
 			  <jsp:include page="reset.jsp"></jsp:include>
-			  <jsp:include page="addColumn.jsp"></jsp:include>
+			  <jsp:include page="tableColumnDialogs.jsp"></jsp:include>
 		</div>
 	
 		
@@ -588,12 +588,7 @@ and related projects, please see: http://www.isi.edu/integration
             </table>
         </div>
         
-        
-        <div id="renameColumnDiv" style="display: none">
-            <span class="smallSizedFont">Enter new column name:</span><br>
-            <input type="text" class="smallSizedFont" id="renameColumnNameInput" /><br/>
-            <span class="error smallSizedFont" style="display: none">Please enter a valid name!</span>
-        </div>
+       
         <div id="pyTransformDialog" style="display: none">
         	<input type="radio" name="pyTransformType" value="edit">
         		<label class="smallSizedFont">Change existing column:</label>

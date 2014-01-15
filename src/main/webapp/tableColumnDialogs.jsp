@@ -41,5 +41,32 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div class="modal fade" id="renameColumnDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Rename Column</h4>
+				  </div>
+				  <div class="modal-body">
+					<div class="form-group">
+						<label for="columnName">Enter new Column Name</label>
+						<input class="form-control" type="text" id="columnName" required>
+					</div>
+				
+					
+					<div class="error" style="display: none">Please enter a valid column name!</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Save</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
 </body>
 </html>
