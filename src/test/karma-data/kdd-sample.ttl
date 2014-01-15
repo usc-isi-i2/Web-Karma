@@ -1,0 +1,1293 @@
+@prefix DovetailOntoExt: <http://www.isi.edu/ontologies/DovetailOntoExt.owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix km-dev: <http://isi.edu/integration/karma/dev#> .
+
+_:node18dkhp77nx1 a km-dev:R2RMLMapping ;
+	km-dev:sourceName "KDD-03-B-Treasury-SDN-Lists" ;
+	km-dev:modelPublicationTime "1389037919543"^^xsd:long ;
+	km-dev:modelVersion "0.1" ;
+	km-dev:hasWorksheetHistory """[
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"addresslist\"},
+          {\"columnName\": \"addresslist__address1\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Address\",
+          \"FullType\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasStreetNumber\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"addresslist\"},
+          {\"columnName\": \"addresslist__city\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Address1\",
+          \"FullType\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasAddressCity\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"addresslist\"},
+          {\"columnName\": \"addresslist__country\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Address1\",
+          \"FullType\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasAddressCountry\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"addresslist\"},
+          {\"columnName\": \"addresslist__postal_code\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Address1\",
+          \"FullType\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasAddressZipCode\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"addresslist\"},
+          {\"columnName\": \"addresslist__state_or_province\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Address1\",
+          \"FullType\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasAddressStateOrProvince\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"akalist\"},
+          {\"columnName\": \"akalist__last_name\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Entity1\",
+          \"FullType\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasAlternateName\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SubmitPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"dovetail_akalist_fullname\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return getValue(\\\"akalist__first_name\\\") + \\\" \\\" + getValue(\\\"akalist__last_name\\\")\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"akalist\"},
+          {\"columnName\": \"akalist__last_name\"}
+        ]
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"UnassignSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"akalist\"},
+          {\"columnName\": \"akalist__last_name\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": []
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": true
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"akalist\"},
+          {\"columnName\": \"dovetail_akalist_fullname\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Entity1\",
+          \"FullType\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasAlternateName\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SubmitPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"dovetail_full_name\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return getValue(\\\"first_name\\\") + \\\" \\\" + getValue(\\\"last_name\\\")\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"first_name\"}
+        ]
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SubmitPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"dovetail_sdn_type\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"if getValue(\\\"sdn_type\\\") == \\\"Entity\\\":\\n    return \\\"http://www.sri.com/ontologies/DovetailOnto.owl#Organization\\\";\\nelif getValue(\\\"sdn_type\\\") == \\\"Individual\\\":\\n    return \\\"http://www.sri.com/ontologies/DovetailOnto.owl#Person\\\";\\nelif getValue(\\\"sdn_type\\\") == \\\"Vessel\\\":\\n    return \\\"http://www.sri.com/ontologies/DovetailOnto.owl#Vessel\\\";\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"sdn_type\"}
+        ]
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"dovetail_full_name\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Entity1\",
+          \"FullType\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasName\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetMetaPropertyCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\",
+        \"value\": \"isSubclassOfClass\"
+      },
+      {
+        \"name\": \"metaPropertyValue\",
+        \"type\": \"other\",
+        \"value\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Entity1\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"dovetail_sdn_type\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"citizenshiplist\"},
+          {\"columnName\": \"citizenshiplist__country\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Entity1\",
+          \"FullType\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasCitizenship\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"dateofbirthlist\"},
+          {\"columnName\": \"dateofbirthlist__date_of_birth\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Entity1\",
+          \"FullType\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasDateOfBirth\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"placeofbirthlist\"},
+          {\"columnName\": \"placeofbirthlist__main_entry\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Location1\",
+          \"FullType\": \"http://www.w3.org/2000/01/rdf-schema#label\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"vesselinfo_call_sign\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Entity1\",
+          \"FullType\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasVesselCallSign\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"vesselinfo_vessel_flag\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Entity1\",
+          \"FullType\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasVesselFlag\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"results\"},
+          {\"columnName\": \"vesselinfo_vessel_owner\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Organization1\",
+          \"FullType\": \"http://www.w3.org/2000/01/rdf-schema#label\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"ChangeInternalNodeLinksCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"initialEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"direction\": \"incoming\",
+          \"edgeId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasEntityRelation\",
+          \"edgeLabel\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasEntityRelation\",
+          \"edgeSource\": \"Address1\",
+          \"edgeSourceId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Address1\",
+          \"edgeTarget\": \"Entity1\",
+          \"edgeTargetId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Entity1\"
+        }]
+      },
+      {
+        \"name\": \"alignmentId\",
+        \"type\": \"other\",
+        \"value\": \"WSP1:WS2AL\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"newEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"edgeId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasLocation\",
+          \"edgeSourceId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Entity1\",
+          \"edgeTargetId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Address1\"
+        }]
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"ChangeInternalNodeLinksCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"initialEdges\",
+        \"type\": \"other\",
+        \"value\": [
+          {
+            \"direction\": \"incoming\",
+            \"edgeId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasLocation\",
+            \"edgeLabel\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasLocation\",
+            \"edgeSource\": \"Entity1\",
+            \"edgeSourceId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Entity1\",
+            \"edgeTarget\": \"Address1\",
+            \"edgeTargetId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Address1\"
+          },
+          {
+            \"direction\": \"incoming\",
+            \"edgeId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasEntityRelation\",
+            \"edgeLabel\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasEntityRelation\",
+            \"edgeSource\": \"Organization1\",
+            \"edgeSourceId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Organization1\",
+            \"edgeTarget\": \"Address1\",
+            \"edgeTargetId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Address1\"
+          },
+          {
+            \"direction\": \"outgoing\",
+            \"edgeId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasEntityRelation\",
+            \"edgeLabel\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasEntityRelation\",
+            \"edgeSource\": \"Address1\",
+            \"edgeSourceId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Address1\",
+            \"edgeTarget\": \"Location1\",
+            \"edgeTargetId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Location1\"
+          }
+        ]
+      },
+      {
+        \"name\": \"alignmentId\",
+        \"type\": \"other\",
+        \"value\": \"WSP1:WS2AL\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"newEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"edgeId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasLocation\",
+          \"edgeSourceId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Entity1\",
+          \"edgeTargetId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Address1\"
+        }]
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"ChangeInternalNodeLinksCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"initialEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"direction\": \"incoming\",
+          \"edgeId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasEntityRelation\",
+          \"edgeLabel\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasEntityRelation\",
+          \"edgeSource\": \"Address1\",
+          \"edgeSourceId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Address1\",
+          \"edgeTarget\": \"Location1\",
+          \"edgeTargetId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Location1\"
+        }]
+      },
+      {
+        \"name\": \"alignmentId\",
+        \"type\": \"other\",
+        \"value\": \"WSP1:WS2AL\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"newEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"edgeId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasPlaceOfBirth\",
+          \"edgeSourceId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Entity1\",
+          \"edgeTargetId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Location1\"
+        }]
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"ChangeInternalNodeLinksCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"initialEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"direction\": \"outgoing\",
+          \"edgeId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasEntityRelation\",
+          \"edgeLabel\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasEntityRelation\",
+          \"edgeSource\": \"Organization1\",
+          \"edgeSourceId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Organization1\",
+          \"edgeTarget\": \"Address1\",
+          \"edgeTargetId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Address1\"
+        }]
+      },
+      {
+        \"name\": \"alignmentId\",
+        \"type\": \"other\",
+        \"value\": \"WSP1:WS2AL\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"newEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"edgeId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#hasOwner\",
+          \"edgeSourceId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Entity1\",
+          \"edgeTargetId\": \"http://www.sri.com/ontologies/DovetailOnto.owl#Organization1\"
+        }]
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  }
+]
+""" .
+
+km-dev:TriplesMap_0b51a42a-740a-4d79-b6c0-82d20e6ba9a9 a rr:TriplesMap .
+
+_:node18dkhp77nx1 km-dev:hasTriplesMap km-dev:TriplesMap_0b51a42a-740a-4d79-b6c0-82d20e6ba9a9 .
+
+_:node18dkhp77nx2 rr:tableName "kdd-sample.json" .
+
+km-dev:TriplesMap_0b51a42a-740a-4d79-b6c0-82d20e6ba9a9 rr:logicalTable _:node18dkhp77nx2 ;
+	rr:subjectMap _:node18dkhp77nx3 .
+
+_:node18dkhp77nx3 km-dev:alignmentNodeId "http://www.sri.com/ontologies/DovetailOnto.owl#Address1" ;
+	rr:class <http://www.sri.com/ontologies/DovetailOnto.owl#Address> ;
+	rr:termType rr:BlankNode ;
+	km-dev:namePrefix "Address1" .
+
+_:node18dkhp77nx4 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#hasAddressCity> .
+
+_:node18dkhp77nx5 rr:column "[\"results\",\"addresslist\",\"addresslist__city\"]" ;
+	rr:datatype "" .
+
+_:node18dkhp77nx4 rr:objectMap _:node18dkhp77nx5 .
+
+km-dev:TriplesMap_0b51a42a-740a-4d79-b6c0-82d20e6ba9a9 rr:predicateObjectMap _:node18dkhp77nx4 .
+
+_:node18dkhp77nx6 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#hasAddressCountry> .
+
+_:node18dkhp77nx7 rr:column "[\"results\",\"addresslist\",\"addresslist__country\"]" ;
+	rr:datatype "" .
+
+_:node18dkhp77nx6 rr:objectMap _:node18dkhp77nx7 .
+
+km-dev:TriplesMap_0b51a42a-740a-4d79-b6c0-82d20e6ba9a9 rr:predicateObjectMap _:node18dkhp77nx6 .
+
+_:node18dkhp77nx8 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#hasAddressStateOrProvince> .
+
+_:node18dkhp77nx9 rr:column "[\"results\",\"addresslist\",\"addresslist__state_or_province\"]" ;
+	rr:datatype "" .
+
+_:node18dkhp77nx8 rr:objectMap _:node18dkhp77nx9 .
+
+km-dev:TriplesMap_0b51a42a-740a-4d79-b6c0-82d20e6ba9a9 rr:predicateObjectMap _:node18dkhp77nx8 .
+
+_:node18dkhp77nx10 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#hasAddressZipCode> .
+
+_:node18dkhp77nx11 rr:column "[\"results\",\"addresslist\",\"addresslist__postal_code\"]" ;
+	rr:datatype "" .
+
+_:node18dkhp77nx10 rr:objectMap _:node18dkhp77nx11 .
+
+km-dev:TriplesMap_0b51a42a-740a-4d79-b6c0-82d20e6ba9a9 rr:predicateObjectMap _:node18dkhp77nx10 .
+
+_:node18dkhp77nx12 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#hasStreetNumber> .
+
+_:node18dkhp77nx13 rr:column "[\"results\",\"addresslist\",\"addresslist__address1\"]" ;
+	rr:datatype "" .
+
+_:node18dkhp77nx12 rr:objectMap _:node18dkhp77nx13 .
+
+km-dev:TriplesMap_0b51a42a-740a-4d79-b6c0-82d20e6ba9a9 rr:predicateObjectMap _:node18dkhp77nx12 .
+
+_:node18dkhp77nx14 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#isLocatedIn> .
+
+km-dev:RefObjectMap_2f67f101-9b7d-423e-99da-35081a3014c7 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea .
+
+_:node18dkhp77nx14 rr:objectMap km-dev:RefObjectMap_2f67f101-9b7d-423e-99da-35081a3014c7 .
+
+km-dev:TriplesMap_0b51a42a-740a-4d79-b6c0-82d20e6ba9a9 rr:predicateObjectMap _:node18dkhp77nx14 .
+
+_:node18dkhp77nx15 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#isLocatedIn> .
+
+km-dev:RefObjectMap_e0c948f4-362b-4522-b57f-95794cce0a2f a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea .
+
+_:node18dkhp77nx15 rr:objectMap km-dev:RefObjectMap_e0c948f4-362b-4522-b57f-95794cce0a2f .
+
+km-dev:TriplesMap_0b51a42a-740a-4d79-b6c0-82d20e6ba9a9 rr:predicateObjectMap _:node18dkhp77nx15 .
+
+km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea a rr:TriplesMap .
+
+_:node18dkhp77nx1 km-dev:hasTriplesMap km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea .
+
+_:node18dkhp77nx16 rr:tableName "kdd-sample.json" .
+
+km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea rr:logicalTable _:node18dkhp77nx16 ;
+	rr:subjectMap _:node18dkhp77nx17 .
+
+_:node18dkhp77nx17 km-dev:alignmentNodeId "http://www.sri.com/ontologies/DovetailOnto.owl#Entity1" ;
+	rr:class <http://www.sri.com/ontologies/DovetailOnto.owl#Entity> .
+
+_:node18dkhp77nx18 rr:template "{\"[\"results\",\"dovetail_sdn_type\"]\"}" .
+
+_:node18dkhp77nx17 rr:class _:node18dkhp77nx18 ;
+	rr:termType rr:BlankNode ;
+	km-dev:namePrefix "Entity1" ;
+	a km-dev:steinerTreeRootNode .
+
+_:node18dkhp77nx19 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#hasAlternateName> .
+
+_:node18dkhp77nx20 rr:column "[\"results\",\"akalist\",\"dovetail_akalist_fullname\"]" ;
+	rr:datatype "" .
+
+_:node18dkhp77nx19 rr:objectMap _:node18dkhp77nx20 .
+
+km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea rr:predicateObjectMap _:node18dkhp77nx19 .
+
+_:node18dkhp77nx21 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#hasCitizenship> .
+
+_:node18dkhp77nx22 rr:column "[\"results\",\"citizenshiplist\",\"citizenshiplist__country\"]" ;
+	rr:datatype "" .
+
+_:node18dkhp77nx21 rr:objectMap _:node18dkhp77nx22 .
+
+km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea rr:predicateObjectMap _:node18dkhp77nx21 .
+
+_:node18dkhp77nx23 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#hasDateOfBirth> .
+
+_:node18dkhp77nx24 rr:column "[\"results\",\"dateofbirthlist\",\"dateofbirthlist__date_of_birth\"]" ;
+	rr:datatype "" .
+
+_:node18dkhp77nx23 rr:objectMap _:node18dkhp77nx24 .
+
+km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea rr:predicateObjectMap _:node18dkhp77nx23 .
+
+_:node18dkhp77nx25 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#hasLocation> .
+
+km-dev:RefObjectMap_9a1ef0d5-355b-482d-bf84-e03d5fc9ef12 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_0b51a42a-740a-4d79-b6c0-82d20e6ba9a9 .
+
+_:node18dkhp77nx25 rr:objectMap km-dev:RefObjectMap_9a1ef0d5-355b-482d-bf84-e03d5fc9ef12 .
+
+km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea rr:predicateObjectMap _:node18dkhp77nx25 .
+
+_:node18dkhp77nx26 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#hasName> .
+
+_:node18dkhp77nx27 rr:column "[\"results\",\"dovetail_full_name\"]" ;
+	rr:datatype "" .
+
+_:node18dkhp77nx26 rr:objectMap _:node18dkhp77nx27 .
+
+km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea rr:predicateObjectMap _:node18dkhp77nx26 .
+
+_:node18dkhp77nx28 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#hasOwner> .
+
+km-dev:RefObjectMap_ff9f9080-d0e7-4e67-8265-872ea3f9a3d5 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_6d0a33ce-92be-4d04-bae1-e88272c99760 .
+
+_:node18dkhp77nx28 rr:objectMap km-dev:RefObjectMap_ff9f9080-d0e7-4e67-8265-872ea3f9a3d5 .
+
+km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea rr:predicateObjectMap _:node18dkhp77nx28 .
+
+_:node18dkhp77nx29 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#hasPlaceOfBirth> .
+
+km-dev:RefObjectMap_f8fa1a20-478f-4968-8788-d5f59a8551c1 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_6f4273a9-dcb1-4a80-9ceb-642c73638a86 .
+
+_:node18dkhp77nx29 rr:objectMap km-dev:RefObjectMap_f8fa1a20-478f-4968-8788-d5f59a8551c1 .
+
+km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea rr:predicateObjectMap _:node18dkhp77nx29 .
+
+_:node18dkhp77nx30 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#hasVesselCallSign> .
+
+_:node18dkhp77nx31 rr:column "[\"results\",\"vesselinfo_call_sign\"]" ;
+	rr:datatype "" .
+
+_:node18dkhp77nx30 rr:objectMap _:node18dkhp77nx31 .
+
+km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea rr:predicateObjectMap _:node18dkhp77nx30 .
+
+_:node18dkhp77nx32 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#hasVesselFlag> .
+
+_:node18dkhp77nx33 rr:column "[\"results\",\"vesselinfo_vessel_flag\"]" ;
+	rr:datatype "" .
+
+_:node18dkhp77nx32 rr:objectMap _:node18dkhp77nx33 .
+
+km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea rr:predicateObjectMap _:node18dkhp77nx32 .
+
+km-dev:TriplesMap_6d0a33ce-92be-4d04-bae1-e88272c99760 a rr:TriplesMap .
+
+_:node18dkhp77nx1 km-dev:hasTriplesMap km-dev:TriplesMap_6d0a33ce-92be-4d04-bae1-e88272c99760 .
+
+_:node18dkhp77nx34 rr:tableName "kdd-sample.json" .
+
+km-dev:TriplesMap_6d0a33ce-92be-4d04-bae1-e88272c99760 rr:logicalTable _:node18dkhp77nx34 ;
+	rr:subjectMap _:node18dkhp77nx35 .
+
+_:node18dkhp77nx35 km-dev:alignmentNodeId "http://www.sri.com/ontologies/DovetailOnto.owl#Organization1" ;
+	rr:class <http://www.sri.com/ontologies/DovetailOnto.owl#Organization> ;
+	rr:termType rr:BlankNode ;
+	km-dev:namePrefix "Organization1" .
+
+_:node18dkhp77nx36 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#isOwnerOf> .
+
+km-dev:RefObjectMap_d06b434e-a9be-4892-8166-34d360cabfd0 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea .
+
+_:node18dkhp77nx36 rr:objectMap km-dev:RefObjectMap_d06b434e-a9be-4892-8166-34d360cabfd0 .
+
+km-dev:TriplesMap_6d0a33ce-92be-4d04-bae1-e88272c99760 rr:predicateObjectMap _:node18dkhp77nx36 .
+
+_:node18dkhp77nx37 rr:predicate <http://www.sri.com/ontologies/DovetailOnto.owl#isOwnerOf> .
+
+km-dev:RefObjectMap_433d0f4b-f84d-4c3a-9959-c15df4dcb6f6 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_0ceb0998-599a-4677-a791-41130fec6cea .
+
+_:node18dkhp77nx37 rr:objectMap km-dev:RefObjectMap_433d0f4b-f84d-4c3a-9959-c15df4dcb6f6 .
+
+km-dev:TriplesMap_6d0a33ce-92be-4d04-bae1-e88272c99760 rr:predicateObjectMap _:node18dkhp77nx37 .
+
+_:node18dkhp77nx38 rr:predicate rdfs:label .
+
+_:node18dkhp77nx39 rr:column "[\"results\",\"vesselinfo_vessel_owner\"]" ;
+	rr:datatype "" .
+
+_:node18dkhp77nx38 rr:objectMap _:node18dkhp77nx39 .
+
+km-dev:TriplesMap_6d0a33ce-92be-4d04-bae1-e88272c99760 rr:predicateObjectMap _:node18dkhp77nx38 .
+
+km-dev:TriplesMap_6f4273a9-dcb1-4a80-9ceb-642c73638a86 a rr:TriplesMap .
+
+_:node18dkhp77nx1 km-dev:hasTriplesMap km-dev:TriplesMap_6f4273a9-dcb1-4a80-9ceb-642c73638a86 .
+
+_:node18dkhp77nx40 rr:tableName "kdd-sample.json" .
+
+km-dev:TriplesMap_6f4273a9-dcb1-4a80-9ceb-642c73638a86 rr:logicalTable _:node18dkhp77nx40 ;
+	rr:subjectMap _:node18dkhp77nx41 .
+
+_:node18dkhp77nx41 km-dev:alignmentNodeId "http://www.sri.com/ontologies/DovetailOnto.owl#Location1" ;
+	rr:class <http://www.sri.com/ontologies/DovetailOnto.owl#Location> ;
+	rr:termType rr:BlankNode ;
+	km-dev:namePrefix "Location1" .
+
+_:node18dkhp77nx42 rr:predicate rdfs:label .
+
+_:node18dkhp77nx43 rr:column "[\"results\",\"placeofbirthlist\",\"placeofbirthlist__main_entry\"]" ;
+	rr:datatype "" .
+
+_:node18dkhp77nx42 rr:objectMap _:node18dkhp77nx43 .
+
+km-dev:TriplesMap_6f4273a9-dcb1-4a80-9ceb-642c73638a86 rr:predicateObjectMap _:node18dkhp77nx42 .

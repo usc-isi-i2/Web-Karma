@@ -297,7 +297,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		double normalizedCoherence;
 		for (CoherenceItem ci : this.coherenceList) {
 			
-			normalizedCoherence = (double)ci.getX() / (double)(this.semanticTypeCount * 2);
+			normalizedCoherence = (double)ci.getX() / (double)(this.getNodeCount());
 			normalizedCoherence *= 100;
 			normalizedCoherence = (double) ((int)normalizedCoherence);
 			

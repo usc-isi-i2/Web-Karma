@@ -1,0 +1,1322 @@
+{
+   "as-of": 1377199248938,
+   "results": [
+      {
+         "addresslist": [{
+            "addresslist__address1": "String",
+            "addresslist__address2": "String",
+            "addresslist__address3": "String",
+            "addresslist__city": "String",
+            "addresslist__country": "String",
+            "addresslist__postal_code": "String",
+            "addresslist__state_or_province": "String",
+            "addresslist__uid": "0"
+         }],
+         "akalist": [{
+            "akalist__category": "String",
+            "akalist__first_name": "String",
+            "akalist__last_name": "String",
+            "akalist__type": "String",
+            "akalist__uid": "0"
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": "String",
+            "citizenshiplist__main_entry": "false",
+            "citizenshiplist__uid": "0"
+         }],
+         "content_type": "String",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": "String",
+            "dateofbirthlist__main_entry": "false",
+            "dateofbirthlist__uid": "0"
+         }],
+         "first_name": "String",
+         "id": "String [Unique Key]",
+         "idlist": [{
+            "idlist__id_country": "String",
+            "idlist__id_expiration_date": "String",
+            "idlist__id_issue_date": "String",
+            "idlist__id_number": "String",
+            "idlist__id_type": "String",
+            "idlist__uid": "0"
+         }],
+         "last_name": "String",
+         "local_path": "String",
+         "nationalitylist": [{
+            "nationalitylist__country": "String",
+            "nationalitylist__main_entry": "false",
+            "nationalitylist__uid": "0"
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": "false",
+            "placeofbirthlist__place_of_birth": "String",
+            "placeofbirthlist__uid": "0"
+         }],
+         "programlist": [{"programlist__program": "String"}],
+         "remarks": "String",
+         "sdn_type": "String",
+         "title": "String",
+         "uid": "0",
+         "vesselinfo_call_sign": "String",
+         "vesselinfo_gross_registered_tonnage": "0",
+         "vesselinfo_tonnage": "0",
+         "vesselinfo_vessel_flag": "String",
+         "vesselinfo_vessel_owner": "String",
+         "vesselinfo_vessel_type": "String"
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "",
+            "addresslist__country": "Panama",
+            "addresslist__postal_code": "",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "7"
+         }],
+         "akalist": [{
+            "akalist__category": "strong",
+            "akalist__first_name": "",
+            "akalist__last_name": "ANAINSA",
+            "akalist__type": "a.k.a.",
+            "akalist__uid": "4"
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": null,
+         "id": "4f834676-8908-359e-921a-21e8eefc1acc",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "ABASTECEDORA NAVAL Y INDUSTRIAL, S.A.",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Entity",
+         "title": null,
+         "uid": "10",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "",
+            "addresslist__country": "Panama",
+            "addresslist__postal_code": "",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "12"
+         }],
+         "akalist": [{
+            "akalist__category": null,
+            "akalist__first_name": null,
+            "akalist__last_name": null,
+            "akalist__type": null,
+            "akalist__uid": null
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": "Nury de Jesus",
+         "id": "12543fbb-1d09-3026-980c-91a159778586",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "ABDELNUR",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Individual",
+         "title": null,
+         "uid": "15",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": null,
+            "addresslist__address2": null,
+            "addresslist__address3": null,
+            "addresslist__city": null,
+            "addresslist__country": null,
+            "addresslist__postal_code": null,
+            "addresslist__state_or_province": null,
+            "addresslist__uid": null
+         }],
+         "akalist": [{
+            "akalist__category": null,
+            "akalist__first_name": null,
+            "akalist__last_name": null,
+            "akalist__type": null,
+            "akalist__uid": null
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": null,
+         "id": "33a1c102-4e8d-3268-8349-7692603eac14",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "ACECHILLY",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Vessel",
+         "title": null,
+         "uid": "22",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": "Acechilly Navigation Co., Malta",
+         "vesselinfo_vessel_type": "Unknown vessel type"
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": null,
+            "addresslist__address2": null,
+            "addresslist__address3": null,
+            "addresslist__city": null,
+            "addresslist__country": null,
+            "addresslist__postal_code": null,
+            "addresslist__state_or_province": null,
+            "addresslist__uid": null
+         }],
+         "akalist": [{
+            "akalist__category": null,
+            "akalist__first_name": null,
+            "akalist__last_name": null,
+            "akalist__type": null,
+            "akalist__uid": null
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": null,
+         "id": "011739a0-170b-3e2e-9e5e-94d2e3a25d08",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "ACEFROSTY",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Vessel",
+         "title": null,
+         "uid": "24",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": "Acefrosty Shipping Co., Malta",
+         "vesselinfo_vessel_type": "Unknown vessel type"
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "171 Old Bakery Street",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "Valletta",
+            "addresslist__country": "Malta",
+            "addresslist__postal_code": "",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "16"
+         }],
+         "akalist": [{
+            "akalist__category": null,
+            "akalist__first_name": null,
+            "akalist__last_name": null,
+            "akalist__type": null,
+            "akalist__uid": null
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": null,
+         "id": "4219d629-4f61-31db-9511-2900657395c9",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "ACEFROSTY SHIPPING CO., LTD.",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Entity",
+         "title": null,
+         "uid": "25",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "Havana",
+            "addresslist__country": "Cuba",
+            "addresslist__postal_code": "",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "25"
+         }],
+         "akalist": [{
+            "akalist__category": "strong",
+            "akalist__first_name": "",
+            "akalist__last_name": "AERO-CARIBBEAN",
+            "akalist__type": "a.k.a.",
+            "akalist__uid": "12"
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": null,
+         "id": "fd8970a3-394b-3d2e-bfb5-a379d60806ed",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "AEROCARIBBEAN AIRLINES",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Entity",
+         "title": null,
+         "uid": "36",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "Managua",
+            "addresslist__country": "Nicaragua",
+            "addresslist__postal_code": "",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "27"
+         }],
+         "akalist": [{
+            "akalist__category": null,
+            "akalist__first_name": null,
+            "akalist__last_name": null,
+            "akalist__type": null,
+            "akalist__uid": null
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": null,
+         "id": "12a098a4-0d21-3c18-b580-8b3b95fe5ea1",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "AEROTAXI EJECUTIVO, S.A.",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Entity",
+         "title": null,
+         "uid": "39",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "Bal Harbour Shopping Center, Via Italia",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "Panama City",
+            "addresslist__country": "Panama",
+            "addresslist__postal_code": "",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "29"
+         }],
+         "akalist": [
+            {
+               "akalist__category": "strong",
+               "akalist__first_name": "",
+               "akalist__last_name": "VIAJES GUAMA TOURS",
+               "akalist__type": "a.k.a.",
+               "akalist__uid": "14"
+            },
+            {
+               "akalist__category": "strong",
+               "akalist__first_name": "",
+               "akalist__last_name": "GUAMATUR, S.A.",
+               "akalist__type": "a.k.a.",
+               "akalist__uid": "15"
+            },
+            {
+               "akalist__category": "strong",
+               "akalist__first_name": "",
+               "akalist__last_name": "GUAMA TOUR",
+               "akalist__type": "a.k.a.",
+               "akalist__uid": "16"
+            }
+         ],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": null,
+         "id": "e2473306-4cab-38a3-b061-a762b9defe7a",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "AGENCIA DE VIAJES GUAMA",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Entity",
+         "title": null,
+         "uid": "41",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "Avenida de Concha, Espina 8, E-28036",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "Madrid",
+            "addresslist__country": "Spain",
+            "addresslist__postal_code": "",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "41"
+         }],
+         "akalist": [{
+            "akalist__category": null,
+            "akalist__first_name": null,
+            "akalist__last_name": null,
+            "akalist__type": null,
+            "akalist__uid": null
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": "Raul",
+         "id": "e5445aa7-848c-3bc5-b32c-8e7932cfd8c5",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "AGUIAR",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Individual",
+         "title": "Director, Banco Nacional de Cuba",
+         "uid": "66",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": null,
+            "addresslist__address2": null,
+            "addresslist__address3": null,
+            "addresslist__city": null,
+            "addresslist__country": null,
+            "addresslist__postal_code": null,
+            "addresslist__state_or_province": null,
+            "addresslist__uid": null
+         }],
+         "akalist": [{
+            "akalist__category": null,
+            "akalist__first_name": null,
+            "akalist__last_name": null,
+            "akalist__type": null,
+            "akalist__uid": null
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": null,
+         "id": "4d6d8180-ebda-3b18-a3a3-40d62e97fc55",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "ALEGRIA DE PIO",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Vessel",
+         "title": null,
+         "uid": "137",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": "Naviera Maritima de Arosa, Spain",
+         "vesselinfo_vessel_type": "Unknown vessel type"
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "Milan",
+            "addresslist__country": "Italy",
+            "addresslist__postal_code": "",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "111"
+         }],
+         "akalist": [{
+            "akalist__category": null,
+            "akalist__first_name": null,
+            "akalist__last_name": null,
+            "akalist__type": null,
+            "akalist__uid": null
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": "Carlo Giovanni",
+         "id": "f241724e-02cc-3baf-82a7-2a4759be0e64",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "ALOARDI",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Individual",
+         "title": null,
+         "uid": "150",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "",
+            "addresslist__country": "Panama",
+            "addresslist__postal_code": "",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "117"
+         }],
+         "akalist": [{
+            "akalist__category": null,
+            "akalist__first_name": null,
+            "akalist__last_name": null,
+            "akalist__type": null,
+            "akalist__uid": null
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": "Manuel",
+         "id": "0757e1f0-7080-3c85-b87e-7972d85d2116",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "ALVAREZ AGUIRRE",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Individual",
+         "title": null,
+         "uid": "158",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "",
+            "addresslist__country": "Panama",
+            "addresslist__postal_code": "",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "128"
+         }],
+         "akalist": [{
+            "akalist__category": null,
+            "akalist__first_name": null,
+            "akalist__last_name": null,
+            "akalist__type": null,
+            "akalist__uid": null
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": "Alejandro Abood",
+         "id": "8c81d854-61c9-36d5-b0a5-6c07f34b0dba",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "ANGELINI",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Individual",
+         "title": null,
+         "uid": "172",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "Ibex House, The Minories",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "London",
+            "addresslist__country": "United Kingdom",
+            "addresslist__postal_code": "EC3N 1DY",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "129"
+         }],
+         "akalist": [{
+            "akalist__category": "strong",
+            "akalist__first_name": "",
+            "akalist__last_name": "AVIA IMPORT",
+            "akalist__type": "a.k.a.",
+            "akalist__uid": "57"
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": null,
+         "id": "d638ac03-af48-3d6e-a1b8-f519ba4d08c2",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "ANGLO-CARIBBEAN CO., LTD.",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Entity",
+         "title": null,
+         "uid": "173",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "60 South Street",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "Valletta",
+            "addresslist__country": "Malta",
+            "addresslist__postal_code": "",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "164"
+         }],
+         "akalist": [{
+            "akalist__category": null,
+            "akalist__first_name": null,
+            "akalist__last_name": null,
+            "akalist__type": null,
+            "akalist__uid": null
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": null,
+         "id": "b774e646-f283-3f30-b144-b74481eb86d4",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "ARION SHIPPING CO., LTD.",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Entity",
+         "title": null,
+         "uid": "224",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "Colon Free Zone",
+            "addresslist__country": "Panama",
+            "addresslist__postal_code": "",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "180"
+         }],
+         "akalist": [{
+            "akalist__category": null,
+            "akalist__first_name": null,
+            "akalist__last_name": null,
+            "akalist__type": null,
+            "akalist__uid": null
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": null,
+         "id": "ecccc308-7188-391f-a118-f41a2bc0eb45",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "AVALON, S.A.",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Entity",
+         "title": null,
+         "uid": "276",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [
+            {
+               "addresslist__address1": "Zweierstrasse 35",
+               "addresslist__address2": "",
+               "addresslist__address3": "",
+               "addresslist__city": "Zurich",
+               "addresslist__country": "Switzerland",
+               "addresslist__postal_code": "CH-8022",
+               "addresslist__state_or_province": "",
+               "addresslist__uid": "199"
+            },
+            {
+               "addresslist__address1": "Avenida de Concha Espina 8",
+               "addresslist__address2": "",
+               "addresslist__address3": "",
+               "addresslist__city": "Madrid",
+               "addresslist__country": "Spain",
+               "addresslist__postal_code": "E-28036",
+               "addresslist__state_or_province": "",
+               "addresslist__uid": "200"
+            },
+            {
+               "addresslist__address1": "Dai-Ichi Bldg. 6th Floor, 10-2 Nihombashi, 2-chome, Chuo-ku",
+               "addresslist__address2": "",
+               "addresslist__address3": "",
+               "addresslist__city": "Tokyo",
+               "addresslist__country": "Japan",
+               "addresslist__postal_code": "103",
+               "addresslist__state_or_province": "",
+               "addresslist__uid": "201"
+            },
+            {
+               "addresslist__address1": "Federico Boyd Avenue & 51 Street",
+               "addresslist__address2": "",
+               "addresslist__address3": "",
+               "addresslist__city": "Panama City",
+               "addresslist__country": "Panama",
+               "addresslist__postal_code": "",
+               "addresslist__state_or_province": "",
+               "addresslist__uid": "202"
+            }
+         ],
+         "akalist": [
+            {
+               "akalist__category": "strong",
+               "akalist__first_name": "",
+               "akalist__last_name": "BNC",
+               "akalist__type": "a.k.a.",
+               "akalist__uid": "219"
+            },
+            {
+               "akalist__category": "strong",
+               "akalist__first_name": "",
+               "akalist__last_name": "NATIONAL BANK OF CUBA",
+               "akalist__type": "a.k.a.",
+               "akalist__uid": "220"
+            }
+         ],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": null,
+         "id": "15b6aa36-0177-3827-b5fe-856e9d5a450e",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "BANCO NACIONAL DE CUBA",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Entity",
+         "title": null,
+         "uid": "306",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "",
+            "addresslist__country": "Panama",
+            "addresslist__postal_code": "",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "222"
+         }],
+         "akalist": [{
+            "akalist__category": null,
+            "akalist__first_name": null,
+            "akalist__last_name": null,
+            "akalist__type": null,
+            "akalist__uid": null
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": "Miguel",
+         "id": "5ea79358-9421-316f-90bc-eb349e77d868",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "BATISTA",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Individual",
+         "title": null,
+         "uid": "342",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      },
+      {
+         "addresslist": [{
+            "addresslist__address1": "24 Corner Regent and Kings Streets",
+            "addresslist__address2": "",
+            "addresslist__address3": "",
+            "addresslist__city": "Belize City",
+            "addresslist__country": "Belize",
+            "addresslist__postal_code": "",
+            "addresslist__state_or_province": "",
+            "addresslist__uid": "228"
+         }],
+         "akalist": [{
+            "akalist__category": null,
+            "akalist__first_name": null,
+            "akalist__last_name": null,
+            "akalist__type": null,
+            "akalist__uid": null
+         }],
+         "citizenshiplist": [{
+            "citizenshiplist__country": null,
+            "citizenshiplist__main_entry": null,
+            "citizenshiplist__uid": null
+         }],
+         "content_type": "application/xml",
+         "dateofbirthlist": [{
+            "dateofbirthlist__date_of_birth": null,
+            "dateofbirthlist__main_entry": null,
+            "dateofbirthlist__uid": null
+         }],
+         "first_name": null,
+         "id": "0479992a-0c40-3b8e-9155-b1107ba0bf28",
+         "idlist": [{
+            "idlist__id_country": null,
+            "idlist__id_expiration_date": null,
+            "idlist__id_issue_date": null,
+            "idlist__id_number": null,
+            "idlist__id_type": null,
+            "idlist__uid": null
+         }],
+         "last_name": "BELMEX IMPORT EXPORT CO., LTD.",
+         "local_path": "KDD-03-B-Treasury-SDN/SDN.XML",
+         "nationalitylist": [{
+            "nationalitylist__country": null,
+            "nationalitylist__main_entry": null,
+            "nationalitylist__uid": null
+         }],
+         "placeofbirthlist": [{
+            "placeofbirthlist__main_entry": null,
+            "placeofbirthlist__place_of_birth": null,
+            "placeofbirthlist__uid": null
+         }],
+         "programlist": [{"programlist__program": "CUBA"}],
+         "remarks": null,
+         "sdn_type": "Entity",
+         "title": null,
+         "uid": "350",
+         "vesselinfo_call_sign": null,
+         "vesselinfo_gross_registered_tonnage": null,
+         "vesselinfo_tonnage": null,
+         "vesselinfo_vessel_flag": null,
+         "vesselinfo_vessel_owner": null,
+         "vesselinfo_vessel_type": null
+      }
+   ]
+}
