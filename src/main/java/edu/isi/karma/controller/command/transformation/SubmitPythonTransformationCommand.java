@@ -29,9 +29,11 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommandFactory;
+import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -47,7 +49,7 @@ import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class SubmitPythonTransformationCommand extends MutatingPythonTransformationCommand {
-	
+	protected Command previousPythonTransformationCommand;
 	protected AddColumnCommand addColCmd;
 	protected ArrayList<String> originalColumnValues;
 	protected String pythonNodeId;
@@ -58,6 +60,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	public SubmitPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
 			String worksheetId, String hNodeId, String errorDefaultValue) {
 		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
+		logger.info("SubmitPythonTranformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
 		this.pythonNodeId = hNodeId;
 	}
 
@@ -92,6 +95,9 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
+		
+		
+		
 		// Invoke the add column command
 		logger.info("SubmitPythonTranformation: " + hNodeId + ":" + nodeId);
 		try
@@ -100,14 +106,16 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			if(null != newColumnNameHNode ) //Column name already exists
 			{
 				pythonNodeId = nodeId;
-				saveColumnValues(workspace);
+				
+				saveOrResetColumnValues(workspace, ctrl);
+			
 				logger.info("SubmitPythonTranformation: Tranform Existing Column" + hNodeId + ":" + nodeId);
 				UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
 						newColumnNameHNode, ctrl, nodeId);
 				return c;
 			}
 			
-			saveColumnValues(workspace);
+			saveOrResetColumnValues(workspace, ctrl);
 			
 			if (null == addColCmd) {
 				JSONArray addColumnInput = getAddColumnCommandInputJSON(hTableId);
@@ -144,6 +152,19 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		}
 	}
 
+	protected  void saveOrResetColumnValues(Workspace workspace, ExecutionController ctrl) {
+		this.previousPythonTransformationCommand = this.extractPreviousCommand(ctrl);
+		if(previousPythonTransformationCommand != null) {
+			SubmitPythonTransformationCommand prevCommand = (SubmitPythonTransformationCommand)previousPythonTransformationCommand;
+			//Previous python command exists, lets reset the values, and then start again
+			this.originalColumnValues = prevCommand.getOriginalColumnValues();
+			this.resetColumnValues(workspace);
+		} else {
+			saveColumnValues(workspace);
+		}
+		
+	}
+	
 	private JSONArray getAddColumnCommandInputJSON(String hTableId) throws JSONException {
 		JSONArray arr = new JSONArray();
 		arr.put(CommandInputJSONUtil.createJsonObject(AddColumnCommandFactory.Arguments.newColumnName.name(), newColumnName, ParameterType.other));
@@ -157,6 +178,19 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	public UpdateContainer undoIt(Workspace workspace) {
 		if(addColCmd != null) {
 			addColCmd.undoIt(workspace);
+		} else if(previousPythonTransformationCommand != null) {
+			try {
+				if(previousPythonTransformationCommand instanceof SubmitPythonTransformationCommand)
+				{
+					SubmitPythonTransformationCommand prevCommand = (SubmitPythonTransformationCommand)previousPythonTransformationCommand;
+					//Previous python command exists, lets reset the values, and then start again
+					prevCommand.resetColumnValues(workspace);
+				}
+					return previousPythonTransformationCommand.doIt(workspace);
+				} catch (CommandException e) {
+					return new UpdateContainer(new ErrorUpdate("Error occured while  applying previous Python transformation to the column."));
+				
+				}
 		} else if(this.originalColumnValues != null) {
 			resetColumnValues(workspace);
 		}
@@ -192,5 +226,24 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	
 	public ArrayList<String> getOriginalColumnValues() {
 		return this.originalColumnValues;
+	}
+	
+	protected Command extractPreviousCommand(ExecutionController ctrl) {
+
+		CommandHistory commandHistory = ctrl.getWorkspace().getCommandHistory();
+		ArrayList<Command> commands = commandHistory._getHistory();
+		for(int i = commands.size() -1 ; i>=0; i--) {
+			Command command = commands.get(i);
+			if(command instanceof SubmitPythonTransformationCommand) {
+				SubmitPythonTransformationCommand pyCommand = (SubmitPythonTransformationCommand)command;
+				if(pyCommand.worksheetId.equals(this.worksheetId)) {
+					if(pyCommand.pythonNodeId.equals(this.pythonNodeId)) {
+						return command;
+					}
+				}
+			}
+		}
+		
+		return null;
 	}
 }
