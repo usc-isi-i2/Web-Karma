@@ -9,12 +9,13 @@
 <div class="modal fade" id="importFromServiceDialog" tabindex="-1">
   <div class="modal-dialog">
 		<div class="modal-content">
+			<form class="bs-example bs-example-form" role="form">
 		     <div class="modal-header">
 			      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			       <h4 class="modal-title">Import From Service</h4>
 			  </div>
 			  <div class="modal-body">
-			        <form class="bs-example bs-example-form" role="form">
+			        
 			  			
 			        	
 						<div class="form-group">
@@ -46,14 +47,15 @@
 						</label>
 						
 						<div class="error" style="display: none" id="serviceErrorRow">Please provide values for both text fields!</div>
-					</form>
 					
 			  </div>
 			  <div class="modal-footer">
 			        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 			        <button type="submit" class="btn btn-primary" id="btnSave">Import</button>
 			  </div>
+			 </form>
 		</div><!-- /.modal-content -->
+		
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
