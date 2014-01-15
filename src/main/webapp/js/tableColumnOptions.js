@@ -27,7 +27,11 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	}
 	
 	function addColumn() {
+		hideDropdown();
 		
+		AddColumnDialog.getInstance().show(worksheetId, columnId);
+		
+	    return false;
 	}
 	
 	function pyTransform() {
@@ -43,7 +47,11 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	}
 	
 	function splitColumn() {
-		
+		hideDropdown();
+		var splitPanel = $("div#SplitByCommaColumnListPanel");
+        splitPanel.dialog({width: 300, height: 200
+            , buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": splitColumnByComma }});
+        return false;
 	}
 	
 	function transform() {
@@ -118,5 +126,129 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 		};
 		div.append(ul);
 		return div;
-	}
+	};
 };
+
+
+
+var AddColumnDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#addColumnDialog");
+    	var worksheetId, columnId;
+    	
+    	function init() {
+    		//Initialize what happens when we show the dialog
+			dialog.on('show.bs.modal', function (e) {
+				hideError();
+                $("input", dialog).val("");
+                $("input#columnName").focus();
+			});
+			
+			//Initialize handler for Save button
+			//var me = this;
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e);
+			});
+    	}
+    	
+		function hideError() {
+			$("#addColumnError", dialog).hide();
+		}
+		
+		function showError() {
+			$("#addColumnError", dialog).show();
+		}
+        
+        function saveDialog(e) {
+        	console.log("Save clicked");
+	
+		    var newColumnValue = $.trim($("#columnName", dialog).val());
+		    var defaultValue = $.trim($("#defaultValue", dialog).val());
+
+		    var validationResult = true;
+		    if (!newColumnValue)
+		        validationResult = false;
+		    // Check if the column name already exists
+		    var columnNames = getColumnHeadings(worksheetId);
+		    $.each(columnNames, function(index, columnName) {
+		        if (columnName == newColumnValue) {
+		            validationResult = false;
+		        }
+		    });
+		    if (!validationResult) {
+		    	showError();
+		        $("#columnName", dialog).focus();
+		        return false;
+		    }
+
+		    dialog.modal('hide');
+
+		    var info = new Object();
+		    info["worksheetId"] = worksheetId;
+		    info["workspaceId"] = $.workspaceGlobalInformation.id;
+		    info["hNodeId"] = columnId;
+		    info["hTableId"] = "";
+		    info["newColumnName"] = "new_column";
+		    info["command"] = "AddColumnCommand";
+
+		    var newInfo = [];	// Used for commands that take JSONArray as input
+		    newInfo.push(getParamObject("hNodeId", columnId,"hNodeId"));
+		    newInfo.push(getParamObject("hTableId", "","other"));
+		    newInfo.push(getParamObject("worksheetId", worksheetId,"worksheetId"));
+		    newInfo.push(getParamObject("newColumnName", newColumnValue,"other"));
+		    newInfo.push(getParamObject("defaultValue", defaultValue,"other"));
+		    info["newInfo"] = JSON.stringify(newInfo);
+
+		    //console.log(info["worksheetId"]);
+		    showLoading(info["worksheetId"]);
+
+		    var returned = $.ajax({
+		        url: "RequestController",
+		        type: "POST",
+		        data : info,
+		        dataType : "json",
+		        complete :
+		            function (xhr, textStatus) {
+		                //alert(xhr.responseText);
+		                var json = $.parseJSON(xhr.responseText);
+		                parse(json);
+		                hideLoading(info["worksheetId"]);
+		            },
+		        error :
+		            function (xhr, textStatus) {
+		                alert("Error occured while removing semantic types!" + textStatus);
+		                hideLoading(info["worksheetId"]);
+		            }
+		    });
+        };
+        
+        function show(wsId, colId) {
+        	worksheetId = wsId;
+        	columnId = colId;
+            dialog.modal({keyboard:true, show:true});
+        };
+        
+        
+        return {	//Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    	
+    
+})();

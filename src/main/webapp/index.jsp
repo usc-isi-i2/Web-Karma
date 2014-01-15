@@ -169,7 +169,7 @@ and related projects, please see: http://www.isi.edu/integration
 		      <jsp:include page="serviceImport.jsp"></jsp:include>
 			  <jsp:include page="databaseImport.jsp"></jsp:include>
 			  <jsp:include page="reset.jsp"></jsp:include>
-			  
+			  <jsp:include page="addColumn.jsp"></jsp:include>
 		</div>
 	
 		
@@ -614,24 +614,7 @@ and related projects, please see: http://www.isi.edu/integration
             <table id="pythonPreviewResultsTable" class="smallSizedFont" style="display: none"></table>
             <div id="pyTransformErrorWindow" style="display: none"></div>
         </div>
-        <div id="addNewColumnDialogDiv" style="display: none" class="smallSizedFont">
-            <table>
-                <tr>
-                    <td><span>Enter new column name:</span></td>
-                    <td><input type="text" id="addNewColumnNameInput" /></td>
-                </tr>
-                <tr>
-                    <td><span>Default Value:</span></td>
-                    <td><input type="text" id="addNewColumnDefaultValueInput" /></td>
-                </tr>
-                <tr>
-                    <td class="SRIDLink"><a href="SRID.html" target='_blank'>Click to see SRID List</a></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><span class="error" style="display: none">Please enter a unique column name!</span></td>
-                </tr>
-            </table>
-        </div>
+       
 
 		<div class="smallSizedFont" id="incomingOutgoingLinksDialog" style="display:none">
 			<div id="incomingOutgoingLinksBox" class="ui-corner-all">
