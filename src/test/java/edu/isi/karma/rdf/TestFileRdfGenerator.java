@@ -51,9 +51,9 @@ public class TestFileRdfGenerator {
 			int idx = rdf.indexOf("hasEventDate> \"2014-01-13\" .");
 			assertNotEquals(idx, -1);
 			
-			System.out.println("------------------------------------------");
-			System.out.println(rdf);
-			System.out.println("------------------------------------------");
+//			System.out.println("------------------------------------------");
+//			System.out.println(rdf);
+//			System.out.println("------------------------------------------");
 		} catch (Exception e) {
 			fail("Exception: " + e.getMessage());
 		}
@@ -86,9 +86,9 @@ public class TestFileRdfGenerator {
 			int idx = rdf.indexOf(triple);
 			assertNotEquals(idx, -1);
 			
-			System.out.println("------------------------------------------");
-			System.out.println(rdf);
-			System.out.println("------------------------------------------");
+//			System.out.println("------------------------------------------");
+//			System.out.println(rdf);
+//			System.out.println("------------------------------------------");
 		} catch (Exception e) {
 			fail("Exception: " + e.getMessage());
 		}
