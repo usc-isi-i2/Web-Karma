@@ -36,19 +36,16 @@ import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class SubmitEditPythonTransformationCommand extends SubmitPythonTransformationCommand {
 	
-	
-	private final String previousCommandId;
 	private final String targetHNodeId;
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitEditPythonTransformationCommand.class);
 
 	public SubmitEditPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
-			String worksheetId, String hNodeId, String errorDefaultValue, String previousCommandId, String targetHNodeId) {
+			String worksheetId, String hNodeId, String errorDefaultValue, String targetHNodeId) {
 		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
-		this.previousCommandId = previousCommandId;
 		this.targetHNodeId = targetHNodeId;
 		this.pythonNodeId = targetHNodeId;
-		logger.info("SubmitEditPythonTransformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode + ", prevId:" + previousCommandId);
+		logger.info("SubmitEditPythonTransformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
 	}
 
 	@Override
