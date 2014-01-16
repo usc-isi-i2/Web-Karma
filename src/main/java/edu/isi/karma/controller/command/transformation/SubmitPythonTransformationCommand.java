@@ -60,7 +60,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	public SubmitPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
 			String worksheetId, String hNodeId, String errorDefaultValue) {
 		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
-		logger.info("SubmitPythonTranformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
+		//logger.info("SubmitPythonTranformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
 		this.pythonNodeId = hNodeId;
 	}
 
@@ -96,8 +96,6 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
 		
-		
-		
 		// Invoke the add column command
 		logger.info("SubmitPythonTranformation: " + hNodeId + ":" + nodeId);
 		try
@@ -113,9 +111,9 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 				UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
 						newColumnNameHNode, ctrl, nodeId);
 				return c;
+			} else {
+				saveColumnValues(workspace);
 			}
-			
-			saveOrResetColumnValues(workspace, ctrl);
 			
 			if (null == addColCmd) {
 				JSONArray addColumnInput = getAddColumnCommandInputJSON(hTableId);
