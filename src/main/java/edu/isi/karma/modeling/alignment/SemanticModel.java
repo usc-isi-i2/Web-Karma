@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,6 +61,7 @@ public class SemanticModel {
 	protected DirectedWeightedMultigraph<Node, Link> graph;
 	protected List<ColumnNode> sourceColumns;
 	protected Map<ColumnNode, ColumnNode> mappingToSourceColumns;
+	protected final static int maxPathLengthForEvaluation = 2;
 	
 	public SemanticModel(
 			String id,
@@ -185,7 +185,7 @@ public class SemanticModel {
 		
 		Double distance = getDistance(baseModel);
 		
-		int maxLength = 2;
+		int maxLength = maxPathLengthForEvaluation;
 		List<GraphPath> basePaths = new LinkedList<GraphPath>();
 		List<GraphPath> modelPaths = new LinkedList<GraphPath>();
 		List<GraphPath> gpList;
@@ -447,21 +447,7 @@ public class SemanticModel {
 	}
 	
 	public void writeGraphviz(String filename, boolean showNodeMetaData, boolean showLinkMetaData) throws IOException {
-		
-		OutputStream out = new FileOutputStream(filename);
-		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
-		
-		graphViz.attr("fontcolor", "blue");
-		graphViz.attr("remincross", "true");
-		graphViz.attr("label", this.getDescription() == null ? "" : this.getDescription());
-//		graphViz.attr("page", "8.5,11");
-
-		org.kohsuke.graphviz.Graph gViz = GraphVizUtil.convertJGraphToGraphviz(this.graph, false, showNodeMetaData, showLinkMetaData);
-		gViz.attr("label", "model");
-		gViz.id("cluster");
-		graphViz.subGraph(gViz);
-		graphViz.writeTo(out);
-		out.close();
+		GraphVizUtil.exportSemanticModelToGraphviz(this, showNodeMetaData, showLinkMetaData, filename);
 	}
 	
 	public void writeJson(String filename) throws IOException {

@@ -33,6 +33,7 @@ import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
@@ -154,7 +155,7 @@ public class ModelLearningGraph {
 	
 	public void exportGraphviz() {
 		try {
-			GraphUtil.exportGraphviz(this.graphBuilder.getGraph(), "main graph", true, false, false, graphGraphvizName);
+			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), "main graph", true, false, false, graphGraphvizName);
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to graphviz!");
 		}
