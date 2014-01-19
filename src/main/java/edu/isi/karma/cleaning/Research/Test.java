@@ -5,9 +5,7 @@ import java.io.FileReader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
-
 import org.apache.mahout.math.Arrays;
-
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.cleaning.ExampleSelection;
 import edu.isi.karma.cleaning.InterpreterType;
@@ -17,24 +15,23 @@ import edu.isi.karma.cleaning.ProgramRule;
 import edu.isi.karma.cleaning.UtilTools;
 
 public class Test {
-	public static void test1()
-	{
+	public static void test1() {
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] x1 = {"<_START>50 x 40<_END>", "40"}; // 15th  element start.
-		String[] x2 = {"<_START>H: 23 1/4 in.<_END>", "23 1/4"};
-		String[] x3 = {"<_START>38 1/2 in.<_END>", "38 1/2"};
-		String[] x7 = {"<_START>27 x 54 in.<_END>", "54"}; // 15th  element start.
-		String[] x8 = {"<_START>35 3/4 x 29 7/8 in.<_END>", "29 7/8"};
-		String[] x9 = {"<_START>55 in.<_END>", "none"};
+		String[] x1 = { "<_START>50 x 40<_END>", "40" }; // 15th element start.
+		String[] x2 = { "<_START>H: 23 1/4 in.<_END>", "23 1/4" };
+		String[] x3 = { "<_START>38 1/2 in.<_END>", "38 1/2" };
+		String[] x7 = { "<_START>27 x 54 in.<_END>", "54" }; // 15th element
+																// start.
+		String[] x8 = { "<_START>35 3/4 x 29 7/8 in.<_END>", "29 7/8" };
+		String[] x9 = { "<_START>55 in.<_END>", "none" };
 		examples.add(x1);
 		examples.add(x2);
 		examples.add(x3);
 		examples.add(x7);
 		examples.add(x8);
-		examples.add(x9);	
-		for(String[] elem:examples)
-		{
-			System.out.println("Examples inputed: "+Arrays.toString(elem));
+		examples.add(x9);
+		for (String[] elem : examples) {
+			System.out.println("Examples inputed: " + Arrays.toString(elem));
 		}
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(examples);
@@ -44,17 +41,14 @@ public class Test {
 		InterpreterType rule = pr.getRuleForValue(val);
 		System.out.println(rule.execute(val));
 	}
-	//check whether it longest or shortest
-	public static boolean visible(HashMap<String, String[]> xHashMap,String Id)
-	{
+
+	// check whether it longest or shortest
+	public static boolean visible(HashMap<String, String[]> xHashMap, String Id) {
 		String[] pair = xHashMap.get(Id);
 		HashMap<String, String> tmp = new HashMap<String, String>();
-		try
-		{
+		try {
 			UtilTools.StringColorCode(pair[0], pair[1], tmp);
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			tmp.put("Org", pair[0]);
 			tmp.put("Tar", "ERROR");
 			tmp.put("Orgdis", pair[0]);
@@ -66,14 +60,11 @@ public class Test {
 		boolean lequalBefore = false;
 		boolean shortest = true;
 		boolean longest = true;
-		for (String[] elem : xHashMap.values())
-		{
+		for (String[] elem : xHashMap.values()) {
 			HashMap<String, String> t = new HashMap<String, String>();
-			try
-			{
+			try {
 				UtilTools.StringColorCode(elem[0], elem[1], t);
-			}
-			catch(Exception ex){
+			} catch (Exception ex) {
 				tmp.put("Org", elem[0]);
 				tmp.put("Tar", "ERROR");
 				tmp.put("Orgdis", elem[0]);
@@ -81,21 +72,20 @@ public class Test {
 			}
 			String tres = tmp.get("Tar");
 			int newl = tres.length();
-			if (newl >= length)
-			{
+			if (newl >= length) {
 				if (lequalBefore)
 					longest = false;
 				lequalBefore = true;
 			}
-			if (newl <=length)
-			{
+			if (newl <= length) {
 				if (sequalBefore)
 					shortest = false;
 				sequalBefore = true;
 			}
 		}
-		return (shortest || longest);		
+		return (shortest || longest);
 	}
+
 	public static void test4(String dirpath) {
 		HashMap<String, Vector<String>> records = new HashMap<String, Vector<String>>();
 		File nf = new File(dirpath);
@@ -107,12 +97,13 @@ public class Test {
 			Vector<String[]> examples = new Vector<String[]>();
 			Vector<String[]> addExamples = new Vector<String[]>();
 			Vector<String[]> entries = new Vector<String[]>();
-			try {				
+			try {
 				if (f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
-					MyLogger.logsth("========"+f.getName()+"============\n");
+					MyLogger.logsth("========" + f.getName() + "============\n");
 					HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
 					@SuppressWarnings("resource")
-					CSVReader cr = new CSVReader(new FileReader(f), ',','"','\0');
+					CSVReader cr = new CSVReader(new FileReader(f), ',', '"',
+							'\0');
 					String[] pair;
 					int index = 0;
 					Vector<String> vtmp = new Vector<String>();
@@ -121,7 +112,10 @@ public class Test {
 							break;
 						entries.add(pair);
 						vtmp.add(pair[0]);
-						String[] line = {pair[0],pair[1],"","","wrong"}; // org, tar, tarcode, label
+						String[] line = { pair[0], pair[1], "", "", "wrong" }; // org,
+																				// tar,
+																				// tarcode,
+																				// label
 						xHashMap.put(index + "", line);
 						index++;
 					}
@@ -130,7 +124,7 @@ public class Test {
 						continue;
 					ExampleSelection expsel = new ExampleSelection();
 					ExampleSelection.firsttime = true;
-					expsel.inite(xHashMap,null);
+					expsel.inite(xHashMap, null);
 					int target = Integer.parseInt(expsel.Choose());
 					String[] mt = {
 							"<_START>" + entries.get(target)[0] + "<_END>",
@@ -146,7 +140,8 @@ public class Test {
 						Vector<String> resultString = new Vector<String>();
 						xHashMap = new HashMap<String, String[]>();
 						ProgSynthesis psProgSynthesis = new ProgSynthesis();
-						psProgSynthesis.vocab = vob.toArray(new String[vob.size()]);
+						psProgSynthesis.vocab = vob.toArray(new String[vob
+								.size()]);
 						psProgSynthesis.inite(examples);
 						Vector<ProgramRule> pls = new Vector<ProgramRule>();
 						Collection<ProgramRule> ps = psProgSynthesis.run_main();
@@ -159,7 +154,7 @@ public class Test {
 						if (pls.size() == 0)
 							break;
 						long t1 = System.currentTimeMillis();
-						
+
 						for (int i = 0; i < pls.size(); i++) {
 							ProgramRule script = pls.get(i);
 							// System.out.println(script);
@@ -167,131 +162,139 @@ public class Test {
 							for (int j = 0; j < entries.size(); j++) {
 								InterpreterType worker = script
 										.getRuleForValue(entries.get(j)[0]);
-								String classlabel = script.getClassForValue(entries.get(j)[0]);
-								String tmps = worker.execute_debug(entries.get(j)[0]);
+								String classlabel = script
+										.getClassForValue(entries.get(j)[0]);
+								String tmps = worker.execute_debug(entries
+										.get(j)[0]);
 								HashMap<String, String> dict = new HashMap<String, String>();
-								UtilTools.StringColorCode(entries.get(j)[0], tmps, dict);
+								UtilTools.StringColorCode(entries.get(j)[0],
+										tmps, dict);
 								String s = dict.get("Tar");
-								res += s+"\n";
-								if (ConfigParameters.debug == 1)
-								{
+								res += s + "\n";
+								if (ConfigParameters.debug == 1) {
 									String indicator = "wrong";
 									if (s.compareTo(entries.get(j)[1]) == 0)
 										indicator = "correct";
-									System.out.println("result:   " + dict.get("Org")+"   "+dict.get("Tardis")+"    "+ indicator);
+									System.out.println("result:   "
+											+ dict.get("Org") + "   "
+											+ dict.get("Tardis") + "    "
+											+ indicator);
 								}
 								if (s == null || s.length() == 0) {
-									String[] ts = {"<_START>" + entries.get(j)[0] + "<_END>","",tmps,classlabel,"wrong"};
+									String[] ts = {
+											"<_START>" + entries.get(j)[0]
+													+ "<_END>", "", tmps,
+											classlabel, "wrong" };
 									xHashMap.put(j + "", ts);
 									wexam = ts;
-									checknumber ++;
+									checknumber++;
 								}
 								boolean isfind = false;
-								for(String[] exppair:examples)
-								{
-									if(exppair[0].compareTo("<_START>"+dict.get("Org")+"<_END>")==0)
-									{
-										String[] exp = {dict.get("Org"),tmps};
-										if(!expFeData.containsKey(classlabel))
-										{
+								for (String[] exppair : examples) {
+									if (exppair[0].compareTo("<_START>"
+											+ dict.get("Org") + "<_END>") == 0) {
+										String[] exp = { dict.get("Org"), tmps };
+										if (!expFeData.containsKey(classlabel)) {
 											Vector<String[]> vstr = new Vector<String[]>();
 											vstr.add(exp);
 											expFeData.put(classlabel, vstr);
-										}
-										else
-										{
+										} else {
 											expFeData.get(classlabel).add(exp);
 										}
 										isfind = true;
 									}
 								}
-								//update positive traing data with user specification
+								// update positive traing data with user
+								// specification
 								for (String[] tmpx : addExamples) {
-									if(tmpx[0].compareTo(dict.get("Org"))==0 && tmpx[1].compareTo(dict.get("Tar"))==0)
-									{
-										String[] exp = {dict.get("Org"),tmps};
-										if(!expFeData.containsKey(classlabel))
-										{
+									if (tmpx[0].compareTo(dict.get("Org")) == 0
+											&& tmpx[1].compareTo(dict
+													.get("Tar")) == 0) {
+										String[] exp = { dict.get("Org"), tmps };
+										if (!expFeData.containsKey(classlabel)) {
 											Vector<String[]> vstr = new Vector<String[]>();
 											vstr.add(exp);
 											expFeData.put(classlabel, vstr);
-										}
-										else
-										{
+										} else {
 											expFeData.get(classlabel).add(exp);
 										}
 										isfind = true;
 									}
 								}
 								if (!isfind) {
-									String[] ts = {"<_START>" + entries.get(j)[0] + "<_END>",s,tmps,classlabel,"right"};
-									if(s.compareTo(entries.get(j)[1]) != 0) 
-									{
+									String[] ts = {
+											"<_START>" + entries.get(j)[0]
+													+ "<_END>", s, tmps,
+											classlabel, "right" };
+									if (s.compareTo(entries.get(j)[1]) != 0) {
 										wexam = ts;
 										ts[4] = "wrong";
 									}
-									xHashMap.put(j + "", ts);			
+									xHashMap.put(j + "", ts);
 								}
 							}
 							if (wexam == null)
 								break;
 							resultString.add(res);
 						}
-						records.put(f.getName()+examples.size(), resultString);
+						records.put(f.getName() + examples.size(), resultString);
 						long t2 = System.currentTimeMillis();
-						
+
 						if (wexam != null) {
-							String[] wexp = new String[2];							
-							while(true)
-							{
+							String[] wexp = new String[2];
+							while (true) {
 								expsel = new ExampleSelection();
-								expsel.inite(xHashMap,expFeData);
+								expsel.inite(xHashMap, expFeData);
 								int e = Integer.parseInt(expsel.Choose());
-								///
-								System.out.println("Recommand Example: "+ Arrays.toString(xHashMap.get(""+e)));
-								///
-								if(xHashMap.get(""+e)[4].compareTo("right")!=0)
-								{
-									wexp[0] = "<_START>" + entries.get(e)[0] + "<_END>";
-									wexp[1] = 	entries.get(e)[1];
-									if(expsel.isDetectingQuestionableRecord)
-									{
-										iterAfterNoFatalError ++; 
-										//check whether this record is has the longest or shortest result
-										Boolean v = visible(xHashMap, ""+e);
-										if (v)
-										{
+								// /
+								System.out
+										.println("Recommand Example: "
+												+ Arrays.toString(xHashMap
+														.get("" + e)));
+								// /
+								if (xHashMap.get("" + e)[4].compareTo("right") != 0) {
+									wexp[0] = "<_START>" + entries.get(e)[0]
+											+ "<_END>";
+									wexp[1] = entries.get(e)[1];
+									if (expsel.isDetectingQuestionableRecord) {
+										iterAfterNoFatalError++;
+										// check whether this record is has the
+										// longest or shortest result
+										Boolean v = visible(xHashMap, "" + e);
+										if (v) {
 											isvisible += 1;
 										}
 									}
 									break;
-								}
-								else
-								{
-									//update positive training data
+								} else {
+									// update positive training data
 									addExamples.add(entries.get(e));
-									//update the rest dataset
-									xHashMap.remove(""+e);
+									// update the rest dataset
+									xHashMap.remove("" + e);
 								}
-								checknumber ++;
+								checknumber++;
 							}
 							examples.add(wexp);
 							FileStat fileStat = new FileStat(f.getName(),
 									psProgSynthesis.learnspan,
 									psProgSynthesis.genspan, (t2 - t1),
 									examples.size(), examples,
-									psProgSynthesis.ruleNo,checknumber,iterAfterNoFatalError, isvisible,pls.get(0).toString());
+									psProgSynthesis.ruleNo, checknumber,
+									iterAfterNoFatalError, isvisible, pls
+											.get(0).toString());
 							dCollection.addEntry(fileStat);
 						} else {
 							FileStat fileStat = new FileStat(f.getName(),
 									psProgSynthesis.learnspan,
 									psProgSynthesis.genspan, (t2 - t1),
 									examples.size(), examples,
-									psProgSynthesis.ruleNo,checknumber,iterAfterNoFatalError,isvisible, pls.get(0).toString());
+									psProgSynthesis.ruleNo, checknumber,
+									iterAfterNoFatalError, isvisible, pls
+											.get(0).toString());
 							dCollection.addEntry(fileStat);
 							break;
 						}
-						
+
 					}
 				}
 			} catch (Exception ex) {
@@ -300,21 +303,20 @@ public class Test {
 		}
 		dCollection.print();
 		dCollection.print1();
-		//hashResultPrint(records);
+		// hashResultPrint(records);
 	}
-	public static void hashResultPrint(HashMap<String, Vector<String>> res)
-	{
+
+	public static void hashResultPrint(HashMap<String, Vector<String>> res) {
 		String s = "";
-		for(String key:res.keySet())
-		{
-			s += "=============="+key+"=============\n";
-			for(String value: res.get(key))
-			{
-				s += value+"\n";
+		for (String key : res.keySet()) {
+			s += "==============" + key + "=============\n";
+			for (String value : res.get(key)) {
+				s += value + "\n";
 			}
 		}
-		System.out.println(""+s);
+		System.out.println("" + s);
 	}
+
 	public static void test0_sub(Vector<String[]> all, Vector<String[]> cand,
 			Vector<String[]> examples, int cnt) {
 		if (cand.size() <= 0) {
@@ -326,7 +328,7 @@ public class Test {
 				MinimalNumber = cnt;
 				Test.smalexamples = examples;
 			}
-			//System.out.println("returned");
+			// System.out.println("returned");
 			return;
 		}
 		for (int p = 0; p < cand.size(); p++) {
@@ -352,7 +354,7 @@ public class Test {
 					InterpreterType worker = script
 							.getRuleForValue(all.get(j)[0]);
 					String s = worker.execute(all.get(j)[0]);
-					//System.out.println("result:   " + s);
+					// System.out.println("result:   " + s);
 					if (s == null || s.length() == 0) {
 						wexam = all.get(j);
 						String[] ep = { "<_START>" + wexam[0] + "<_END>",
@@ -418,7 +420,7 @@ public class Test {
 								smalexamples.get(x)[0], smalexamples.get(x)[1]);
 					}
 					System.out.println("Smallest: " + str1);
-					//clear
+					// clear
 					Test.MaximalNumber = -1;
 					Test.larexamples = new Vector<String[]>();
 					Test.MinimalNumber = 200;
@@ -436,8 +438,8 @@ public class Test {
 		ConfigParameters cfg = new ConfigParameters();
 		cfg.initeParameters();
 		DataCollection.config = cfg.getString();
-		//Test.test0("/Users/bowu/Research/testdata/TestSingleFile");
+		// Test.test0("/Users/bowu/Research/testdata/TestSingleFile");
 		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		//Test.test1();
+		// Test.test1();
 	}
 }

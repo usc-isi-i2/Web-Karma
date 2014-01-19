@@ -50,8 +50,10 @@ public class RecordClassifier2 implements PartitionClassifierType {
 	OnlineLogisticRegression cf;
 	List<String> labels = new ArrayList<String>();
 	LogisticModelParameters lmp;
+
 	public RecordClassifier2() {
 	}
+
 	public RecordClassifier2(RecordFeatureSet rf) {
 		this.rf = rf;
 	}
