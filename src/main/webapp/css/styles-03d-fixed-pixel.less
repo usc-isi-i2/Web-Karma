@@ -197,20 +197,25 @@ body
     background-color: @table-background-color;
 }
 
+.table-data-container-outermost {
+   max-height: @max-top-table-height;
+   overflow-y: scroll;
+}
+   
 // The data part of a table is contained in a table-data-container that will
 // scroll separately from the headings.
 //
 .table-data-container {
-    max-height: @max-top-table-height;
-    overflow-y: scroll;
+   // max-height: @max-top-table-height;
+   // overflow-y: scroll;
     color: @value-color;
 }
 
 // Nested tables are smaller.
 //
 .table-data-container .table-data-container {
-    max-height: @max-nested-table-height;
-    overflow-y: scroll;
+  //  max-height: @max-nested-table-height;
+  //  overflow-y: scroll;
 }
 
 .table-data-container > .wk-table > tbody >tr:last-child {
