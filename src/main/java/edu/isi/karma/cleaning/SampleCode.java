@@ -32,31 +32,32 @@ import edu.isi.karma.rep.cleaning.TransformationExample;
 import edu.isi.karma.rep.cleaning.ValueCollection;
 
 public class SampleCode {
-	public static void main(String[] args)
-	{
-		//raw input data in hashmap. 
+	public static void main(String[] args) {
+		// raw input data in hashmap.
 		HashMap<String, String> data = new HashMap<String, String>();
 		data.put("id1", "1912-2001");
 		data.put("id2", "1860-1945");
 		data.put("id3", "1860-1945");
-		//use the hashmap to create valuecollect object
+		// use the hashmap to create valuecollect object
 		RamblerValueCollection rv = new RamblerValueCollection(data);
-		//create examples 
-		RamblerTransformationExample re = new RamblerTransformationExample("1912-2001", "1912", "id1");
+		// create examples
+		RamblerTransformationExample re = new RamblerTransformationExample(
+				"1912-2001", "1912", "id1");
 		Vector<TransformationExample> examples = new Vector<TransformationExample>();
 		examples.add(re);
-		//use the raw data and examples to create an input object 
-		RamblerTransformationInputs ri = new RamblerTransformationInputs(examples, rv);
-		//generate the output object
+		// use the raw data and examples to create an input object
+		RamblerTransformationInputs ri = new RamblerTransformationInputs(
+				examples, rv);
+		// generate the output object
 		RamblerTransformationOutput ro = new RamblerTransformationOutput(ri);
-		
-		//get the transformed value in JSON format
-		for(String ruleid:ro.getTransformations().keySet())
-		{
+
+		// get the transformed value in JSON format
+		for (String ruleid : ro.getTransformations().keySet()) {
 			ValueCollection vCollection = ro.getTransformedValues(ruleid);
-			System.out.println(""+vCollection.getJson());
+			System.out.println("" + vCollection.getJson());
 		}
-		// ro.getRecommandedNextExample() will return the id of recommended examples. 
+		// ro.getRecommandedNextExample() will return the id of recommended
+		// examples.
 		// this interface hasn't been implemented yet.
 	}
 }

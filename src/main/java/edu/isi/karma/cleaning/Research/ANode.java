@@ -22,6 +22,7 @@
 package edu.isi.karma.cleaning.Research;
 
 import java.util.Vector;
+
 //used in alignment
 public class ANode {
 	public Vector<Integer> orgPos = new Vector<Integer>();
@@ -29,43 +30,44 @@ public class ANode {
 	public Vector<Integer> length = new Vector<Integer>();
 	public Vector<String[]> exps = new Vector<String[]>();
 	public Vector<ANode> children = new Vector<ANode>();
-	public ANode(Vector<Integer> orgPos, Vector<Integer> tarPos, Vector<Integer>length, Vector<String[]> exps)
-	{
+
+	public ANode(Vector<Integer> orgPos, Vector<Integer> tarPos,
+			Vector<Integer> length, Vector<String[]> exps) {
 		this.orgPos = orgPos;
 		this.tarPos = tarPos;
 		this.length = length;
 		this.exps = exps;
 	}
-	public void addChild(ANode a)
-	{
+
+	public void addChild(ANode a) {
 		this.children.add(a);
 	}
-	//check whether current node valid based on
+
+	// check whether current node valid based on
 	// all copy node
 	// all constant node and same content
-	public boolean isvalid()
-	{
-		if(orgPos.size()<= 1)
+	public boolean isvalid() {
+		if (orgPos.size() <= 1)
 			return true;
-		for(int i=1; i<orgPos.size(); i++)
-		{
-			int value = orgPos.get(i)*orgPos.get(i-1);
-			if(value < 0)
+		for (int i = 1; i < orgPos.size(); i++) {
+			int value = orgPos.get(i) * orgPos.get(i - 1);
+			if (value < 0)
 				return false;
-			if(orgPos.get(i) <0)
-			{
-				String sub = this.exps.get(i)[1].substring(tarPos.get(i), tarPos.get(i)+length.get(i));
-				String presub = this.exps.get(i-1)[1].substring(tarPos.get(i-1), tarPos.get(i-1)+length.get(i-1));
-				if(sub.compareTo(presub)!=0)
-				{
+			if (orgPos.get(i) < 0) {
+				String sub = this.exps.get(i)[1].substring(tarPos.get(i),
+						tarPos.get(i) + length.get(i));
+				String presub = this.exps.get(i - 1)[1].substring(
+						tarPos.get(i - 1),
+						tarPos.get(i - 1) + length.get(i - 1));
+				if (sub.compareTo(presub) != 0) {
 					return false;
 				}
 			}
 		}
 		return true;
 	}
-	public void reorderChildren()
-	{
-		//reorder the children to accelerate the search.
+
+	public void reorderChildren() {
+		// reorder the children to accelerate the search.
 	}
 }

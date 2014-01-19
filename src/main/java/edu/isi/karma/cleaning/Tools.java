@@ -19,6 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 package edu.isi.karma.cleaning;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -44,24 +45,21 @@ public class Tools {
 						System.in));
 				String raw = null;
 				raw = br.readLine();
-				if (raw.compareTo("end")==0)
-				{
+				if (raw.compareTo("end") == 0) {
 					break;
 				}
 				System.out.print("Enter tar value\n");
 				// open up standard input
 				String tar = null;
 				tar = br.readLine();
-				
+
 				// learn the program
-				
-				String[] xStrings = {
-						"<_START>"+raw+"<_END>",
-						tar};
+
+				String[] xStrings = { "<_START>" + raw + "<_END>", tar };
 				examples.add(xStrings);
-				for(String[] elem:examples)
-				{
-					System.out.println("Examples inputed: "+Arrays.toString(elem));
+				for (String[] elem : examples) {
+					System.out.println("Examples inputed: "
+							+ Arrays.toString(elem));
 				}
 				ProgSynthesis psProgSynthesis = new ProgSynthesis();
 				psProgSynthesis.inite(examples);
@@ -80,15 +78,13 @@ public class Tools {
 					pair = pair.trim();
 					if (pair.length() == 0)
 						continue;
-					if( pair.charAt(0) == '\"')
-					{
+					if (pair.charAt(0) == '\"') {
 						pair = pair.substring(1);
 					}
-					if( pair.charAt(pair.length()-1) =='\"')
-					{
-						pair = pair.substring(0, pair.length()-1);
+					if (pair.charAt(pair.length() - 1) == '\"') {
+						pair = pair.substring(0, pair.length() - 1);
 					}
-					
+
 					InterpreterType rule = pr.getRuleForValue(pair);
 					String val = rule.execute(pair);
 					String[] elem = { pair, val };
@@ -101,31 +97,34 @@ public class Tools {
 			e.printStackTrace();
 		}
 	}
-	public void test1()
-	{
+
+	public void test1() {
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"<_START>Ruth Asawa<_END>", "Asawa, Ruth"};
-		String[] yStrings = {"<_START>Robert Boardman Howard<_END>", "Howard, Robert Boardman"};
-		//String[] zStrings = {"<_START>Artist unknown Salem, Massachusetts area<_END>","Artist unknown"};
+		String[] xStrings = { "<_START>Ruth Asawa<_END>", "Asawa, Ruth" };
+		String[] yStrings = { "<_START>Robert Boardman Howard<_END>",
+				"Howard, Robert Boardman" };
+		// String[] zStrings =
+		// {"<_START>Artist unknown Salem, Massachusetts area<_END>","Artist unknown"};
 		examples.add(xStrings);
 		examples.add(yStrings);
-		//examples.add(zStrings);
+		// examples.add(zStrings);
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(examples);
 		Collection<ProgramRule> ps = psProgSynthesis.run_main();
 		ProgramRule pr = ps.iterator().next();
-		System.out.println(""+pr.toString());
+		System.out.println("" + pr.toString());
 		String val = "J. B. Blunk";
 		InterpreterType rule = pr.getRuleForValue(val);
 		System.out.println(rule.execute(val));
 	}
+
 	public static void main(String[] args) {
 		ConfigParameters cfg = new ConfigParameters();
 		cfg.initeParameters();
 		DataCollection.config = cfg.getString();
 		Tools tools = new Tools();
 		tools.transformFile("/Users/bowu/Research/testdata/CSCI548_data/0_Data/raw/oakland_painting/Dimensions_painting.json.csv");
-		//tools.transformFile("/Users/bowu/Research/50newdata/tmp/example.csv");
-		//tools.test1();
+		// tools.transformFile("/Users/bowu/Research/50newdata/tmp/example.csv");
+		// tools.test1();
 	}
 }
