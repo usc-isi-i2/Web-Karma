@@ -21,42 +21,38 @@
 
 package edu.isi.karma.cleaning.QuestionableRecord;
 
-
 // reverse count feature
 public class Feature3 implements RecFeature {
 	int rcnt = 0;
 	String resString;
 	double weight = 1.0;
-	//calculate the number of reverse order
-	public Feature3(String res,double weight)
-	{
+
+	// calculate the number of reverse order
+	public Feature3(String res, double weight) {
 		this.resString = res;
 	}
-	public String getName()
-	{
+
+	public String getName() {
 		return resString;
 	}
+
 	@Override
 	public double computerScore() {
 		int pre = -1;
 		double cnt = 0;
-		for(int c=0; c<resString.length(); c++)
-		{
-			if(Character.isDigit(resString.charAt(c)))
-			{
-				if(pre != -1)
-				{
+		for (int c = 0; c < resString.length(); c++) {
+			if (Character.isDigit(resString.charAt(c))) {
+				if (pre != -1) {
 					pre = c;
 					continue;
 				}
-				if(c <pre)
-				{
+				if (c < pre) {
 					pre = c;
-					cnt ++;
+					cnt++;
 				}
 			}
 		}
-		return cnt*this.weight;
+		return cnt * this.weight;
 	}
 
 }
