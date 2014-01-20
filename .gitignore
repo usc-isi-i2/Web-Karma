@@ -67,3 +67,6 @@ nbactions.xml
 *.ttl
 
 *.rdf
+
+*.iml
+.idea

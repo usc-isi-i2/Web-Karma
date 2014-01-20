@@ -20,6 +20,48 @@
     	9.0-M0
     </geotools.version>
     <powermock.version>1.5.2</powermock.version>
+
+
+	  <!-- CUBRC versions -->
+	  <jena.core.version>2.7.0-incubating</jena.core.version>
+	  <jena.test.version>2.6.0</jena.test.version>
+	  <jena.arq.version>2.9.0-incubating</jena.arq.version>
+	  <jena.sdb.version>1.3.5</jena.sdb.version>
+	  <jena.tdb.version>0.9.0-incubating</jena.tdb.version>
+
+	  <jena.group>org.apache.jena</jena.group>
+	  <jena.core.artifact>jena-core</jena.core.artifact>
+	  <jena.arq.artifact>jena-arq</jena.arq.artifact>
+	  <jena.sdb.artifact>jena-sdb</jena.sdb.artifact>
+	  <jena.tdb.artifact>jena-tdb</jena.tdb.artifact>
+
+
+	  <apache.commons.lang.version>2.4</apache.commons.lang.version>
+	  <apache.commons.io.version>2.4</apache.commons.io.version>
+	  <apache.commons.compress.version>1.5</apache.commons.compress.version>
+	  <apache.commons.codec.version>1.8</apache.commons.codec.version>
+
+
+	  <apache.commons.lang3.version>3.1</apache.commons.lang3.version>
+	  <apache.commons.collections.version>3.2.1</apache.commons.collections.version>
+	  <apache.commons.math.version>2.2</apache.commons.math.version>
+	  <apache.oro.version>2.0.8</apache.oro.version>
+	  <apache.opennlp.version>1.5.3</apache.opennlp.version>
+
+	  <log4j.version>1.2.13</log4j.version>
+	  <slf4j.version>1.6.0</slf4j.version>
+	  <junit.version>4.11</junit.version>
+
+	  <mysql.connector.version>5.1.26</mysql.connector.version>
+	  <antlr.version>3.4</antlr.version>
+	  <jdom.version>1.1.2</jdom.version>
+
+	  <gson.version>2.2.2</gson.version>
+	  <httpcomponents.version>4.2.4</httpcomponents.version>
+	  <guava.version>11.0.2</guava.version>
+	  <hadoop.dist.mahout.version>0.7</hadoop.dist.mahout.version>
+	  <spring.version>3.2.4.RELEASE</spring.version>
+
   </properties>
   
   <repositories>
@@ -30,16 +72,26 @@
          <enabled>false</enabled>
       </snapshots>
  	</repository> -->
-    
- 	<repository>
-      <id>maven2-repository.dev.java.net</id>
-      <name>Java.net Maven 2 Repository</name>
-      <url>http://download.java.net/maven/2</url>
-      <layout>default</layout>
-      <snapshots>
-         <enabled>true</enabled>
-      </snapshots>
-      </repository>
+
+	  <repository>
+		  <id>central</id>
+		  <name>Central Maven Repository</name>
+		  <url>http://repo1.maven.org/maven2/</url>
+	  </repository>
+
+	  <repository>
+		  <id>java-net</id>
+		  <name>Maven Java Net Snapshots and Releases</name>
+		  <url>https://maven.java.net/content/groups/public/</url>
+		  <snapshots>
+			  <enabled>false</enabled>
+		  </snapshots>
+	  </repository>
+
+	  <repository>
+		  <id>cloudera-repo</id>
+		  <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+	  </repository>
       <repository>
             <id>osgeo</id>
             <name>Open Source Geospatial Foundation Repository</name>
@@ -91,17 +143,17 @@
   	<dependency>
 		<groupId>log4j</groupId>
 		<artifactId>log4j</artifactId>
-		<version>1.2.16</version>
+		<version>${log4j.version}</version>
 	</dependency>
 	<dependency>
 		<groupId>org.slf4j</groupId>
 		<artifactId>slf4j-api</artifactId>
-		<version>1.6.4</version>
+		<version>${slf4j.version}</version>
 	</dependency>
 	<dependency>
 		<groupId>org.slf4j</groupId>
 		<artifactId>slf4j-log4j12</artifactId>
-		<version>1.6.4</version>
+		<version>${slf4j.version}</version>
 	</dependency>
 	<dependency>
 			<groupId>net.sourceforge.jtds</groupId>
@@ -122,24 +174,30 @@
       <version>2.2.0-SNAPSHOT</version>
    </dependency>
    <dependency>
-    	<groupId>com.hp.hpl.jena</groupId>
-    	<artifactId>arq</artifactId>
-    	<version>2.8.8</version>
+    	<groupId>${jena.group}</groupId>
+    	<artifactId>${jena.arq.artifact}</artifactId>
+    	<version>${jena.arq.version}</version>
     </dependency>
     <dependency>
-    	<groupId>com.hp.hpl.jena</groupId>
-    	<artifactId>jena</artifactId>
-    	<version>2.6.4</version>
+    	<groupId>${jena.group}</groupId>
+    	<artifactId>${jena.core.artifact}</artifactId>
+    	<version>${jena.core.version}</version>
     </dependency>
     <dependency>
-    	<groupId>com.hp.hpl.jena</groupId>
-    	<artifactId>iri</artifactId>
-    	<version>0.8</version>
+    	<groupId>${jena.group}</groupId>
+    	<artifactId>jena-iri</artifactId>
+    	<version>1.0.0</version>
     </dependency>
     <dependency>
-    	<groupId>com.hp.hpl.jena</groupId>
-    	<artifactId>tdb</artifactId>
-    	<version>0.8.10</version>
+	    <groupId>org.apache.jena</groupId>
+	    <artifactId>jena-jdbc-driver-remote</artifactId>
+    	<version>1.0.0</version>
+
+    </dependency>
+    <dependency>
+    	<groupId>${jena.group}</groupId>
+    	<artifactId>${jena.tdb.artifact}</artifactId>
+    	<version>${jena.tdb.version}</version>
     </dependency>
     <dependency>
 		<groupId>net.sf.jgrapht</groupId>
@@ -149,7 +207,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -172,7 +230,7 @@
     <dependency>
     	<groupId>commons-io</groupId>
     	<artifactId>commons-io</artifactId>
-    	<version>2.0.1</version>
+    	<version>${apache.commons.io.version}</version>
     </dependency>
     <dependency>
     	<groupId>net.sf.opencsv</groupId>
@@ -182,17 +240,17 @@
     <dependency>
     	<groupId>mysql</groupId>
     	<artifactId>mysql-connector-java</artifactId>
-    	<version>5.1.17</version>
+    	<version>${mysql.connector.version}</version>
     </dependency>
     <dependency>
     	<groupId>org.antlr</groupId>
     	<artifactId>antlr</artifactId>
-    	<version>3.2</version>
+    	<version>${antlr.version}</version>
     </dependency>
         <dependency>
         	<groupId>org.jdom</groupId>
         	<artifactId>jdom</artifactId>
-        	<version>1.1.2</version>
+        	<version>${jdom.version}</version>
         	<exclusions>
         		<exclusion>
         			<artifactId>maven-cobertura-plugin</artifactId>
@@ -217,13 +275,12 @@
         <dependency>
         	<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.1</version>
+			<version>${apache.commons.lang3.version}</version>
         </dependency>
 		<dependency>
 		      <groupId>com.google.code.gson</groupId>
 		      <artifactId>gson</artifactId>
-		      <version>2.2.2</version>
-		      <scope>compile</scope>
+		      <version>${gson.version}</version>
 	    </dependency>
 		<dependency>
 	        <groupId>net.sf.json-lib</groupId>
@@ -246,12 +303,12 @@
         <dependency>
         	<groupId>org.apache.httpcomponents</groupId>
         	<artifactId>httpcore</artifactId>
-        	<version>4.2.2</version>
+        	<version>${httpcomponents.version}</version>
         </dependency>
         <dependency>
         	<groupId>org.apache.httpcomponents</groupId>
         	<artifactId>httpclient</artifactId>
-        	<version>4.2.2</version>
+        	<version>${httpcomponents.version}</version>
         </dependency>
 		<dependency>
 			<groupId>org.kohsuke</groupId>
@@ -261,12 +318,12 @@
 		<dependency>
 		    <groupId>com.google.guava</groupId>
 		    <artifactId>guava</artifactId>
-		    <version>14.0</version>
+		    <version>${guava.version}</version>
 		</dependency>
    		<dependency>
         	<groupId>org.apache.mahout</groupId>
         	<artifactId>mahout-core</artifactId>
-        	<version>0.5</version>
+        	<version>${hadoop.dist.mahout.version}</version>
     	</dependency>
     	<dependency>
       		<groupId>org.powermock</groupId>
@@ -370,7 +427,7 @@
 	  <dependency>
 		  <groupId>org.springframework</groupId>
 		  <artifactId>spring-core</artifactId>
-		  <version>3.0.3.RELEASE</version>
+		  <version>${spring.version}</version>
 	  </dependency>
 
   </dependencies>

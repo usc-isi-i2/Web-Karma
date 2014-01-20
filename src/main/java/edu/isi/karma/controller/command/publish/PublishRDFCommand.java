@@ -20,22 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.publish;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.hp.hpl.jena.db.DBConnection;
-import com.hp.hpl.jena.db.IDBConnection;
-import com.hp.hpl.jena.db.ModelRDB;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.ModelMaker;
-
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
@@ -53,6 +37,13 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class PublishRDFCommand extends Command {
 	private final String worksheetId;
@@ -252,7 +243,10 @@ public class PublishRDFCommand extends Command {
 		}
 	}
 
-	private void saveToStore(String rdfFileName) throws ClassNotFoundException, IOException {
+	private void saveToStore(String rdfFileName) throws ClassNotFoundException, IOException
+	{
+		throw new UnsupportedOperationException("broken in new version of jena!");
+/*
 		String M_DBDRIVER_CLASS = "com.mysql.jdbc.Driver";
 		// load the the driver class
 		Class.forName(M_DBDRIVER_CLASS);
@@ -268,6 +262,7 @@ public class PublishRDFCommand extends Command {
 		InputStream file = new FileInputStream(rdfFileName);
 		model.read(file,null,"N3");
 		file.close();
+*/
 	}
 
 	@Override

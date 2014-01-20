@@ -20,16 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.ontology;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
@@ -37,11 +27,15 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.alignment.Label;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 class OntologyCache {
 	
@@ -1078,6 +1072,7 @@ class OntologyCache {
 				}
 			}
 			
+/*
 			for (String domain : allDomainsUris) {
 				for (String range : allRangesUris) {
 					if (directDomainsUris.contains(domain) && directRangesUris.contains(range)) continue;
@@ -1089,6 +1084,7 @@ class OntologyCache {
 					temp.add(property.getURI());
 				}
 			}
+*/
 
 		}	
 
@@ -1182,8 +1178,8 @@ class OntologyCache {
 			
 			Set<String> directSuperPropertiesLocal = this.directSuperProperties.get(p).keySet();
 			Set<String> indirectSuperPropertiesLocal = this.indirectSuperProperties.get(p).keySet();
-			if (directSuperPropertiesLocal != null) allSuperPropertiesLocal.addAll(directSuperPropertiesLocal);
-			if (indirectSuperPropertiesLocal != null) allSuperPropertiesLocal.addAll(indirectSuperPropertiesLocal);
+/*			if (directSuperPropertiesLocal != null) allSuperPropertiesLocal.addAll(directSuperPropertiesLocal);
+			if (indirectSuperPropertiesLocal != null) allSuperPropertiesLocal.addAll(indirectSuperPropertiesLocal);*/
 			
 			if (allSuperPropertiesLocal.size() == 0) continue;
 			
@@ -1222,7 +1218,7 @@ class OntologyCache {
 						temp.add(superP);
 				}
 			}
-
+/*
 			for (String domain : allDomains) {
 				for (String range : allRanges) {
 					temp = domainRangeToIndirectProperties.get(domain + range);
@@ -1235,7 +1231,7 @@ class OntologyCache {
 							temp.add(superP);
 					}
 				}
-			}
+			}*/
 		}
 
 	}
@@ -1444,7 +1440,7 @@ class OntologyCache {
 				if (directProperties != null && directProperties.size() > 0) { 
 					this.connectedByDirectProperties.add(c1+c2);
 				}
-				indirectProperties = this.domainRangeToIndirectProperties.get(c1+c2);
+				indirectProperties = null; //this.domainRangeToIndirectProperties.get(c1+c2);
 				if (indirectProperties != null && indirectProperties.size() > 0) { 
 					this.connectedByIndirectProperties.add(c1+c2);
 				}

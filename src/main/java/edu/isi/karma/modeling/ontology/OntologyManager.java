@@ -373,7 +373,6 @@ public class OntologyManager
 	 * If third parameter is set to true, it also considers indirect subproperties.
 	 *
 	 * @param subPropertyUri
-	 * @param superClassUri
 	 * @param recursive
 	 *
 	 * @return
