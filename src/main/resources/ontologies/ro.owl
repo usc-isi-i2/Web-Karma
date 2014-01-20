@@ -1,0 +1,425 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
+    xmlns:oboContent="http://purl.org/obo/owl/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:obo="http://purl.org/obo/owl/obo#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:oban="http://purl.org/obo/oban/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="http://purl.org/obo/owl/ro">
+  <owl:Ontology rdf:about="">
+    <rdfs:comment>
+          This is an OWL translation of an ontology whose native representational form is .obo. The translation was performed using the oboInOwl xslt library. For details, see http://www.berkeleybop.org/obo-conv.cgi
+        </rdfs:comment>
+    <rdfs:label>relationship</rdfs:label>
+    <rdfs:comment>release version 1.01</rdfs:comment>
+    <rdfs:comment>cvs version $Revision: 1.5 $</rdfs:comment>
+    <rdfs:comment>&lt;p&gt;This ontology contains logical relations to be shared across the different OBO ontologies. Each OBO ontology is free to extend this set with relations specific to the biology within that ontology&lt;/p&gt;&lt;div class="notes"&gt;&lt;p&gt;In the definitions, variables c, d, ..., p, q, ... range over instances of continuants and processes respectively. C, D, ..., P, Q, ... range over the corresponding classes&lt;/p&gt;&lt;p&gt; For a discussion of instance-level relations and also of additional axioms needed to infer transitivity and other properties of the relations listed above see &lt;a href="http://genomebiology.com/2005/6/5/R46"&gt;http://genomebiology.com/2005/6/5/R46&lt;/a&gt; or the OBO relations page hosted at &lt;a href="http://obo.sourceforge.net/relationship"&gt;http://obo.sourceforge.net/relationship&lt;/a&gt;&lt;/div&gt;</rdfs:comment>
+    <oboInOwl:hasDefaultNamespace>relationship</oboInOwl:hasDefaultNamespace>
+    <oboInOwl:savedBy>cjm</oboInOwl:savedBy>
+  </owl:Ontology>
+  <owl:Class rdf:about="http://www.geneontology.org/formats/oboInOwl#DbXref"/>
+  <owl:Class rdf:about="http://www.geneontology.org/formats/oboInOwl#ObsoleteClass"/>
+  <owl:Class rdf:about="http://www.geneontology.org/formats/oboInOwl#Synonym"/>
+  <owl:Class rdf:about="http://www.geneontology.org/formats/oboInOwl#SynonymType"/>
+  <owl:Class rdf:about="http://www.geneontology.org/formats/oboInOwl#Definition"/>
+  <owl:Class rdf:about="http://www.geneontology.org/formats/oboInOwl#Subset"/>
+  <owl:ObjectProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#contained_in">
+    <oboInOwl:hasAlternativeId>OBO_REL:0000010</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <oboInOwl:hasDefinition>
+      <oboInOwl:Definition>
+        <oboInOwl:hasDbXref>
+          <oboInOwl:DbXref>
+            <oboInOwl:hasURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+            >http://purl.org/obo/owl/PMID#PMID_15892874</oboInOwl:hasURI>
+            <rdfs:label>PMID:15892874</rdfs:label>
+          </oboInOwl:DbXref>
+        </oboInOwl:hasDbXref>
+        <rdfs:label xml:lang="en">C contained_in C' if and only if: given any instance c that instantiates C at a time t, there is some c' such that: c' instantiates C' at time t and c located_in c' at t, and it is not the case that c *overlaps* c' at t. (c' is a conduit or cavity.)</rdfs:label>
+      </oboInOwl:Definition>
+    </oboInOwl:hasDefinition>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Containment obtains in each case between material and immaterial continuants, for instance: lung contained_in thoracic cavity; bladder contained_in pelvic cavity. Hence containment is not a transitive relation.    If c part_of c1 at t then we have also, by our definition and by the axioms of mereology applied to spatial regions, c located_in c1 at t. Thus, many examples of instance-level location relations for continuants are in fact cases of instance-level parthood. For material continuants location and parthood coincide. Containment is location not involving parthood, and arises only where some immaterial continuant is involved. To understand this relation, we first define overlap for continuants as follows:    c1 overlap c2 at t =def for some c, c part_of c1 at t and c part_of c2 at t. The containment relation on the instance level can then be defined (see definition):</rdfs:comment>
+    <owl:inverseOf>
+      <owl:ObjectProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#contains"/>
+    </owl:inverseOf>
+    <rdfs:label xml:lang="en">contained_in</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#adjacent_to">
+    <oboInOwl:hasAlternativeId>OBO_REL:0000012</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <oboInOwl:hasDefinition>
+      <oboInOwl:Definition>
+        <oboInOwl:hasDbXref>
+          <oboInOwl:DbXref>
+            <oboInOwl:hasURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+            >http://purl.org/obo/owl/PMID#PMID_15892874</oboInOwl:hasURI>
+            <rdfs:label>PMID:15892874</rdfs:label>
+          </oboInOwl:DbXref>
+        </oboInOwl:hasDbXref>
+        <rdfs:label xml:lang="en">C adjacent to C' if and only if: given any instance c that instantiates C at a time t, there is some c' such that: c' instantiates C' at time t and c and c' are in spatial proximity</rdfs:label>
+      </oboInOwl:Definition>
+    </oboInOwl:hasDefinition>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Note that adjacent_to as thus defined is not a symmetric relation, in contrast to its instance-level counterpart. For it can be the case that Cs are in general such as to be adjacent to instances of C1 while no analogous statement holds for C1s in general in relation to instances of C. Examples are: nuclear membrane adjacent_to cytoplasm; seminal vesicle adjacent_to urinary bladder; ovary adjacent_to parietal pelvic peritoneum</rdfs:comment>
+    <rdfs:label xml:lang="en">adjacent_to</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#relationship">
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#ObsoleteProperty"/>
+    </rdfs:subPropertyOf>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <oboInOwl:hasDefinition>
+      <oboInOwl:Definition>
+        <oboInOwl:hasDbXref>
+          <oboInOwl:DbXref>
+            <oboInOwl:hasURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+            >http://purl.org/obo/owl/GOC#GOC_cjm</oboInOwl:hasURI>
+            <rdfs:label>GOC:cjm</rdfs:label>
+          </oboInOwl:DbXref>
+        </oboInOwl:hasDbXref>
+        <rdfs:label xml:lang="en">A relationship between two classes (terms). Relationships between classes are expressed in terms of relations on underlying instances.</rdfs:label>
+      </oboInOwl:Definition>
+    </oboInOwl:hasDefinition>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >this relation was superfluous, so it has been obsoleted</rdfs:comment>
+    <rdfs:label xml:lang="en">relationship</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#has_agent">
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+    </rdfs:subPropertyOf>
+    <oboInOwl:hasAlternativeId>OBO_REL:0000021</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <oboInOwl:hasDefinition>
+      <oboInOwl:Definition>
+        <oboInOwl:hasDbXref>
+          <oboInOwl:DbXref>
+            <oboInOwl:hasURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+            >http://purl.org/obo/owl/PMID#PMID_15892874</oboInOwl:hasURI>
+            <rdfs:label>PMID:15892874</rdfs:label>
+          </oboInOwl:DbXref>
+        </oboInOwl:hasDbXref>
+        <rdfs:label xml:lang="en">As for has_participant, but with the additional condition that the component instance is causally active in the relevant process</rdfs:label>
+      </oboInOwl:Definition>
+    </oboInOwl:hasDefinition>
+    <owl:inverseOf>
+      <owl:ObjectProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#agent_in"/>
+    </owl:inverseOf>
+    <rdfs:label xml:lang="en">has_agent</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#contains">
+    <oboInOwl:hasAlternativeId>OBO_REL:0000011</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <owl:inverseOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+    <rdfs:label xml:lang="en">contains</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#has_participant">
+    <oboInOwl:hasAlternativeId>OBO_REL:0000019</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <oboInOwl:hasDefinition>
+      <oboInOwl:Definition>
+        <oboInOwl:hasDbXref>
+          <oboInOwl:DbXref>
+            <oboInOwl:hasURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+            >http://purl.org/obo/owl/PMID#PMID_15892874</oboInOwl:hasURI>
+            <rdfs:label>PMID:15892874</rdfs:label>
+          </oboInOwl:DbXref>
+        </oboInOwl:hasDbXref>
+        <rdfs:label xml:lang="en">P has_participant C if and only if: given any process p that instantiates P there is some continuant c, and some time t, such that: c instantiates C at t and c participates in p at t</rdfs:label>
+      </oboInOwl:Definition>
+    </oboInOwl:hasDefinition>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Has_participant is a primitive instance-level relation between a process, a continuant, and a time at which the continuant participates in some way in the process. The relation obtains, for example, when this particular process of oxygen exchange across this particular alveolar membrane has_participant this particular sample of hemoglobin at this particular time.</rdfs:comment>
+    <owl:inverseOf>
+      <owl:ObjectProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+    </owl:inverseOf>
+    <rdfs:label xml:lang="en">has_participant</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#participates_in">
+    <oboInOwl:hasAlternativeId>OBO_REL:0000020</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <owl:inverseOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+    <rdfs:label xml:lang="en">participates_in</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#transformed_into">
+    <rdfs:subPropertyOf rdf:resource="http://www.geneontology.org/formats/oboInOwl#ObsoleteProperty"/>
+    <oboInOwl:hasAlternativeId>OBO_REL:0000014</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Obsoleted</rdfs:comment>
+    <rdfs:label xml:lang="en">transformed_into</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#agent_in">
+    <rdfs:subPropertyOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+    <oboInOwl:hasAlternativeId>OBO_REL:0000022</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <owl:inverseOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_agent"/>
+    <rdfs:label xml:lang="en">agent_in</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#has_improper_part">
+    <rdfs:subPropertyOf>
+      <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+    </rdfs:subPropertyOf>
+    <rdfs:subPropertyOf rdf:resource="http://www.geneontology.org/formats/oboInOwl#ObsoleteProperty"/>
+    <oboInOwl:hasAlternativeId>OBO_REL:0000024</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >See reasons for obsoletion of improper_part_of</rdfs:comment>
+    <owl:inverseOf>
+      <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#improper_part_of"/>
+    </owl:inverseOf>
+    <rdfs:label xml:lang="en">has_improper_part</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#transformation_of">
+    <oboInOwl:hasAlternativeId>OBO_REL:0000013</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <oboInOwl:hasDefinition>
+      <oboInOwl:Definition>
+        <oboInOwl:hasDbXref>
+          <oboInOwl:DbXref>
+            <oboInOwl:hasURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+            >http://purl.org/obo/owl/PMID#PMID_15892874</oboInOwl:hasURI>
+            <rdfs:label>PMID:15892874</rdfs:label>
+          </oboInOwl:DbXref>
+        </oboInOwl:hasDbXref>
+        <rdfs:label xml:lang="en">Relation between two classes, in which instances retain their identity yet change their classification by virtue of some kind of transformation. Formally: C transformation_of C' if and only if given any c and any t, if c instantiates C at time t, then for some t', c instantiates C' at t' and t' earlier t, and there is no t2 such that c instantiates C at t2 and c instantiates C' at t2.</rdfs:label>
+      </oboInOwl:Definition>
+    </oboInOwl:hasDefinition>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >When an embryonic oenocyte (a type of insect cell) is transformed into a larval oenocyte, one and the same continuant entity preserves its identity while instantiating distinct classes at distinct times. The class-level relation transformation_of obtains between continuant classes C and C1 wherever each instance of the class C is such as to have existed at some earlier time as an instance of the distinct class C1 (see Figure 2 in paper). This relation is illustrated first of all at the molecular level of granularity by the relation between mature RNA and the pre-RNA from which it is processed, or between (UV-induced) thymine-dimer and thymine dinucleotide. At coarser levels of granularity it is illustrated by the transformations involved in the creation of red blood cells, for example, from reticulocyte to erythrocyte, and by processes of development, for example, from larva to pupa, or from (post-gastrular) embryo to fetus or from child to adult. It is also manifest in pathological transformations, for example, of normal colon into carcinomatous colon. In each such case, one and the same continuant entity instantiates distinct classes at different times in virtue of phenotypic changes.</rdfs:comment>
+    <rdfs:label xml:lang="en">transformation_of</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#proper_part_of">
+    <rdfs:subPropertyOf>
+      <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+    </rdfs:subPropertyOf>
+    <oboInOwl:hasAlternativeId>OBO_REL:0000006</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <oboInOwl:hasDefinition>
+      <oboInOwl:Definition>
+        <oboInOwl:hasDbXref>
+          <oboInOwl:DbXref>
+            <oboInOwl:hasURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+            >http://purl.org/obo/owl/PMID#PMID_15892874</oboInOwl:hasURI>
+            <rdfs:label>PMID:15892874</rdfs:label>
+          </oboInOwl:DbXref>
+        </oboInOwl:hasDbXref>
+        <rdfs:label xml:lang="en">As for part_of, with the additional constraint that subject and object are distinct</rdfs:label>
+      </oboInOwl:Definition>
+    </oboInOwl:hasDefinition>
+    <owl:inverseOf>
+      <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#has_proper_part"/>
+    </owl:inverseOf>
+    <rdfs:label xml:lang="en">proper_part_of</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#location_of">
+    <oboInOwl:hasAlternativeId>OBO_REL:0000009</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <owl:inverseOf>
+      <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#located_in"/>
+    </owl:inverseOf>
+    <rdfs:label xml:lang="en">location_of</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#has_integral_part">
+    <rdfs:subPropertyOf>
+      <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+    </rdfs:subPropertyOf>
+    <oboInOwl:hasAlternativeId>OBO_REL:0000005</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <owl:inverseOf>
+      <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#integral_part_of"/>
+    </owl:inverseOf>
+    <rdfs:label xml:lang="en">has_integral_part</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#precedes">
+    <oboInOwl:hasAlternativeId>OBO_REL:0000018</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <owl:inverseOf>
+      <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#preceded_by"/>
+    </owl:inverseOf>
+    <rdfs:label xml:lang="en">precedes</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#part_of">
+    <oboInOwl:hasAlternativeId>OBO_REL:0000002</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <oboInOwl:hasDefinition>
+      <oboInOwl:Definition>
+        <oboInOwl:hasDbXref>
+          <oboInOwl:DbXref>
+            <oboInOwl:hasURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+            >http://purl.org/obo/owl/PMID#PMID_15892874</oboInOwl:hasURI>
+            <rdfs:label>PMID:15892874</rdfs:label>
+          </oboInOwl:DbXref>
+        </oboInOwl:hasDbXref>
+        <rdfs:label xml:lang="en">For continuants: C part_of C' if and only if: given any c that instantiates C at a time t, there is some c' such that c' instantiates C' at time t, and c *part_of* c' at t. For processes: P part_of P' if and only if: given any p that instantiates P at a time t, there is some p' such that p' instantiates P' at time t, and p *part_of* p' at t. (Here *part_of* is the instance-level part-relation.)</rdfs:label>
+      </oboInOwl:Definition>
+    </oboInOwl:hasDefinition>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Parthood as a relation between instances: The primitive instance-level relation p part_of p1 is illustrated in assertions such as: this instance of rhodopsin mediated phototransduction part_of this instance of visual perception.    This relation satisfies at least the following standard axioms of mereology: reflexivity (for all p, p part_of p); anti-symmetry (for all p, p1, if p part_of p1 and p1 part_of p then p and p1 are identical); and transitivity (for all p, p1, p2, if p part_of p1 and p1 part_of p2, then p part_of p2). Analogous axioms hold also for parthood as a relation between spatial regions.    For parthood as a relation between continuants, these axioms need to be modified to take account of the incorporation of a temporal argument. Thus for example the axiom of transitivity for continuants will assert that if c part_of c1 at t and c1 part_of c2 at t, then also c part_of c2 at t.    Parthood as a relation between classes: To define part_of as a relation between classes we again need to distinguish the two cases of continuants and processes, even though the explicit reference to instants of time now falls away. For continuants, we have C part_of C1 if and only if any instance of C at any time is an instance-level part of some instance of C1 at that time, as for example in: cell nucleus part_ of cell.</rdfs:comment>
+    <owl:inverseOf>
+      <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+    </owl:inverseOf>
+    <rdfs:label xml:lang="en">part_of</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#derived_into">
+    <oboInOwl:hasAlternativeId>OBO_REL:0000016</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <owl:inverseOf>
+      <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#derives_from"/>
+    </owl:inverseOf>
+    <rdfs:label xml:lang="en">derived_into</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#integral_part_of">
+    <rdfs:subPropertyOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+    <oboInOwl:hasAlternativeId>OBO_REL:0000004</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <oboInOwl:hasDefinition>
+      <oboInOwl:Definition>
+        <oboInOwl:hasDbXref>
+          <oboInOwl:DbXref>
+            <oboInOwl:hasURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+            >http://purl.org/obo/owl/PMID#PMID_15892874</oboInOwl:hasURI>
+            <rdfs:label>PMID:15892874</rdfs:label>
+          </oboInOwl:DbXref>
+        </oboInOwl:hasDbXref>
+        <rdfs:label xml:lang="en">C integral_part_of C' if and only if: C part_of C' AND C' has_part C</rdfs:label>
+      </oboInOwl:Definition>
+    </oboInOwl:hasDefinition>
+    <owl:inverseOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_integral_part"/>
+    <rdfs:label xml:lang="en">integral_part_of</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#has_part">
+    <oboInOwl:hasAlternativeId>OBO_REL:0000003</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <owl:inverseOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+    <rdfs:label xml:lang="en">has_part</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#preceded_by">
+    <oboInOwl:hasAlternativeId>OBO_REL:0000017</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <oboInOwl:hasDefinition>
+      <oboInOwl:Definition>
+        <oboInOwl:hasDbXref>
+          <oboInOwl:DbXref>
+            <oboInOwl:hasURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+            >http://purl.org/obo/owl/PMID#PMID_15892874</oboInOwl:hasURI>
+            <rdfs:label>PMID:15892874</rdfs:label>
+          </oboInOwl:DbXref>
+        </oboInOwl:hasDbXref>
+        <rdfs:label xml:lang="en">P preceded_by P' if and only if: given any process p that instantiates P at a time t, there is some process p' such that p' instantiates P' at time t', and t' is earlier than t. </rdfs:label>
+      </oboInOwl:Definition>
+    </oboInOwl:hasDefinition>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >An example is: translation preceded_by transcription; aging preceded_by development (not however death preceded_by aging). Where derives_from links classes of continuants, preceded_by links classes of processes. Clearly, however, these two relations are not independent of each other. Thus if cells of type C1 derive_from cells of type C, then any cell division involving an instance of C1 in a given lineage is preceded_by cellular processes involving an instance of C.    The assertion P preceded_by P1 tells us something about Ps in general: that is, it tells us something about what happened earlier, given what we know about what happened later. Thus it does not provide information pointing in the opposite direction, concerning instances of P1 in general; that is, that each is such as to be succeeded by some instance of P. Note that an assertion to the effect that P preceded_by P1 is rather weak; it tells us little about the relations between the underlying instances in virtue of which the preceded_by relation obtains. Typically we will be interested in stronger relations, for example in the relation immediately_preceded_by, or in relations which combine preceded_by with a condition to the effect that the corresponding instances of P and P1 share participants, or that their participants are connected by relations of derivation, or (as a first step along the road to a treatment of causality) that the one process in some way affects (for example, initiates or regulates) the other.</rdfs:comment>
+    <owl:inverseOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#precedes"/>
+    <rdfs:label xml:lang="en">preceded_by</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#has_proper_part">
+    <rdfs:subPropertyOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+    <oboInOwl:hasAlternativeId>OBO_REL:0000007</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <owl:inverseOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#proper_part_of"/>
+    <rdfs:label xml:lang="en">has_proper_part</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#located_in">
+    <oboInOwl:hasAlternativeId>OBO_REL:0000008</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <oboInOwl:hasDefinition>
+      <oboInOwl:Definition>
+        <oboInOwl:hasDbXref>
+          <oboInOwl:DbXref>
+            <oboInOwl:hasURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+            >http://purl.org/obo/owl/PMID#PMID_15892874</oboInOwl:hasURI>
+            <rdfs:label>PMID:15892874</rdfs:label>
+          </oboInOwl:DbXref>
+        </oboInOwl:hasDbXref>
+        <rdfs:label xml:lang="en">C located_in C' if and only if: given any c that instantiates C at a time t, there is some c' such that: c' instantiates C' at time t and c *located_in* c'. (Here *located_in* is the instance-level location relation.)</rdfs:label>
+      </oboInOwl:Definition>
+    </oboInOwl:hasDefinition>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Location as a relation between instances: The primitive instance-level relation c located_in r at t reflects the fact that each continuant is at any given time associated with exactly one spatial region, namely its exact location. Following we can use this relation to define a further instance-level location relation - not between a continuant and the region which it exactly occupies, but rather between one continuant and another. c is located in c1, in this sense, whenever the spatial region occupied by c is part_of the spatial region occupied by c1.    Note that this relation comprehends both the relation of exact location between one continuant and another which obtains when r and r1 are identical (for example, when a portion of fluid exactly fills a cavity), as well as those sorts of inexact location relations which obtain, for example, between brain and head or between ovum and uterus</rdfs:comment>
+    <owl:inverseOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#location_of"/>
+    <rdfs:label xml:lang="en">located_in</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#improper_part_of">
+    <rdfs:subPropertyOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+    <rdfs:subPropertyOf rdf:resource="http://www.geneontology.org/formats/oboInOwl#ObsoleteProperty"/>
+    <oboInOwl:hasAlternativeId>OBO_REL:0000025</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <oboInOwl:hasDefinition>
+      <oboInOwl:Definition>
+        <oboInOwl:hasDbXref>
+          <oboInOwl:DbXref>
+            <oboInOwl:hasURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+            >http://purl.org/obo/owl/PMID#PMID_15892874</oboInOwl:hasURI>
+            <rdfs:label>PMID:15892874</rdfs:label>
+          </oboInOwl:DbXref>
+        </oboInOwl:hasDbXref>
+        <rdfs:label xml:lang="en">As for part_of, with the additional constraint that subject and object may be identical</rdfs:label>
+      </oboInOwl:Definition>
+    </oboInOwl:hasDefinition>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >OBSOLETE. The definition is "As for part_of, with the additional constraint that subject and object may be identical". However, part_of is already reflexive, therefore improper_part_of is identical to part_of. If read differently, as "improper_part_of is part_of but not proper_part_of",improper_part_of becomes identity. So, improper_part_of is either identical to part_of or to identity, and not an intuitive synonym for either of them. [Robert Hoehndorf]</rdfs:comment>
+    <owl:inverseOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_improper_part"/>
+    <rdfs:label xml:lang="en">improper_part_of</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:TransitiveProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#derives_from">
+    <oboInOwl:hasAlternativeId>OBO_REL:0000015</oboInOwl:hasAlternativeId>
+    <oboInOwl:hasOBONamespace>relationship</oboInOwl:hasOBONamespace>
+    <oboInOwl:hasExactSynonym>
+      <oboInOwl:Synonym>
+        <rdfs:label xml:lang="en">derived_from</rdfs:label>
+      </oboInOwl:Synonym>
+    </oboInOwl:hasExactSynonym>
+    <oboInOwl:hasDefinition>
+      <oboInOwl:Definition>
+        <oboInOwl:hasDbXref>
+          <oboInOwl:DbXref>
+            <oboInOwl:hasURI rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
+            >http://purl.org/obo/owl/PMID#PMID_15892874</oboInOwl:hasURI>
+            <rdfs:label>PMID:15892874</rdfs:label>
+          </oboInOwl:DbXref>
+        </oboInOwl:hasDbXref>
+        <rdfs:label xml:lang="en">Derivation on the instance level (*derives_from*) holds between distinct material continuants when one succeeds the other across a temporal divide in such a way that at least a biologically significant portion of the matter of the earlier continuant is inherited by the later. We say that one class C derives_from class C' if instances of C are connected to instances of C' via some chain of instance-level derivation relations. Example: osteocyte derives_from osteoblast. Formally: C derives_immediately_from C' if and only if: given any c and any t, if c instantiates C at time t, then there is some c' and some t', such that c' instantiates C' at t' and t' earlier-than t and c *derives_from* c'. C derives_from C' if and only if: there is an chain of immediate derivation relations connecting C to C'.</rdfs:label>
+      </oboInOwl:Definition>
+    </oboInOwl:hasDefinition>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Derivation as a relation between instances. The temporal relation of derivation is more complex. Transformation, on the instance level, is just the relation of identity: each adult is identical to some child existing at some earlier time. Derivation on the instance-level is a relation holding between non-identicals. More precisely, it holds between distinct material continuants when one succeeds the other across a temporal divide in such a way that at least a biologically significant portion of the matter of the earlier continuant is inherited by the later. Thus we will have axioms to the effect that from c derives_from c1 we can infer that c and c1 are not identical and that there is some instant of time t such that c1 exists only prior to and c only subsequent to t. We will also be able to infer that the spatial region occupied by c as it begins to exist at t overlaps with the spatial region occupied by c1 as it ceases to exist in the same instant.</rdfs:comment>
+    <owl:inverseOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#derived_into"/>
+    <rdfs:label xml:lang="en">derives_from</rdfs:label>
+  </owl:TransitiveProperty>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasDbXref"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasVersion"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#replacedBy"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#isCyclic"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasDefaultNamespace"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#savedBy"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasSynonymType"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasDate"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasBlueForceSynonym">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >has blue force synonym</rdfs:label>
+  </owl:AnnotationProperty>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasExactSynonym"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasNarrowSynonym"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#consider"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasRedForceSynonym">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >has red force synonym</rdfs:label>
+  </owl:AnnotationProperty>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#inSubset"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasSubset"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasURI"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasAlternativeId"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasOBONamespace"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasDefinition"/>
+  <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasSynonym"/>
+</rdf:RDF>
+
+<!-- Created with TopBraid -->
