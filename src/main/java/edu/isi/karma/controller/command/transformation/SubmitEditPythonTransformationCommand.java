@@ -24,7 +24,6 @@ package edu.isi.karma.controller.command.transformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -37,19 +36,16 @@ import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class SubmitEditPythonTransformationCommand extends SubmitPythonTransformationCommand {
 	
-	
-	private final String previousCommandId;
 	private final String targetHNodeId;
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitEditPythonTransformationCommand.class);
 
 	public SubmitEditPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
-			String worksheetId, String hNodeId, String errorDefaultValue, String previousCommandId, String targetHNodeId) {
+			String worksheetId, String hNodeId, String errorDefaultValue, String targetHNodeId) {
 		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
-		this.previousCommandId = previousCommandId;
 		this.targetHNodeId = targetHNodeId;
 		this.pythonNodeId = targetHNodeId;
-		logger.info("SubmitEditPythonTransformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode + ", prevId:" + previousCommandId);
+		logger.info("SubmitEditPythonTransformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
 	}
 
 	@Override

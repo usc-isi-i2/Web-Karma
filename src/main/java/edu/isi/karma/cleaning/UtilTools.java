@@ -11,34 +11,33 @@ import java.util.Vector;
 public class UtilTools {
 	public static int index = 0;
 	public static Vector<String> results = new Vector<String>();
-	public static Vector<Integer> getStringPos(int tokenpos,Vector<TNode> example)
-	{
+
+	public static Vector<Integer> getStringPos(int tokenpos,
+			Vector<TNode> example) {
 		Vector<Integer> poss = new Vector<Integer>();
-		if(tokenpos < 0)
+		if (tokenpos < 0)
 			return poss;
 		int pos = 0;
 		int strleng = 0;
-		for(int i=0;i<example.size();i++)
-		{
+		for (int i = 0; i < example.size(); i++) {
 			strleng += example.get(i).text.length();
 		}
-		for(int i = 0; i<tokenpos;i++)
-		{
+		for (int i = 0; i < tokenpos; i++) {
 			pos += example.get(i).text.length();
 		}
 		poss.add(pos); // forward position
-		poss.add(pos-strleng); // backward position
+		poss.add(pos - strleng); // backward position
 		return poss;
 	}
-	public static Vector<GrammarTreeNode> convertSegVector(Vector<Segment> x)
-	{
+
+	public static Vector<GrammarTreeNode> convertSegVector(Vector<Segment> x) {
 		Vector<GrammarTreeNode> res = new Vector<GrammarTreeNode>();
-		for(Segment e:x)
-		{
+		for (Segment e : x) {
 			res.add(e);
 		}
 		return res;
 	}
+
 	public static int multinominalSampler(double[] probs) {
 		Random r = new Random();
 		double x = r.nextDouble();
@@ -62,10 +61,10 @@ public class UtilTools {
 
 	public static String print(Vector<TNode> x) {
 		String str = "";
-		if(x == null)
+		if (x == null)
 			return "null";
 		for (TNode t : x)
-			if(t.text.compareTo("ANYTOK")==0)
+			if (t.text.compareTo("ANYTOK") == 0)
 				str += t.getType();
 			else
 				str += t.text;
@@ -89,8 +88,9 @@ public class UtilTools {
 		}
 		return true;
 	}
+
 	public static void StringColorCode(String org, String res,
-			HashMap<String, String> dict) throws Exception{
+			HashMap<String, String> dict) throws Exception {
 		int segmentCnt = 0;
 		Vector<int[]> allUpdates = new Vector<int[]>();
 		String pat = "((?<=\\{_L\\})|(?=\\{_L\\}))";
@@ -117,7 +117,7 @@ public class UtilTools {
 				if (str.indexOf("{_C}") != -1) {
 					String[] pos = str.split("\\{_C\\}");
 					int[] poses = { Integer.valueOf(pos[0]),
-							Integer.valueOf(pos[1]),segmentCnt};
+							Integer.valueOf(pos[1]), segmentCnt };
 					boolean findPos = false;
 					for (int i = 0; i < allUpdates.size(); i++) {
 						int[] cur = allUpdates.get(i);
@@ -127,8 +127,7 @@ public class UtilTools {
 							break; // avoid infinite adding
 						}
 					}
-					if(!findPos)
-					{
+					if (!findPos) {
 						allUpdates.add(poses);
 					}
 					String tarseg = org.substring(Integer.valueOf(pos[0]),
@@ -162,24 +161,22 @@ public class UtilTools {
 			}
 		}
 		int pre = 0;
-		for(int[] update:allUpdates)
-		{
-			if(update[0] >= pre)
-			{
-				orgdis += org.substring(pre,update[0]);
-				orgdis += String.format(
-						"<span class=\"a%d\">%s</span>", update[2],
-						org.substring(update[0],update[1]));
+		for (int[] update : allUpdates) {
+			if (update[0] >= pre) {
+				orgdis += org.substring(pre, update[0]);
+				orgdis += String.format("<span class=\"a%d\">%s</span>",
+						update[2], org.substring(update[0], update[1]));
 				pre = update[1];
 			}
 		}
-		if(org.length() > pre)
+		if (org.length() > pre)
 			orgdis += org.substring(pre);
 		dict.put("Org", org);
 		dict.put("Tar", tar);
 		dict.put("Orgdis", orgdis);
 		dict.put("Tardis", tardis);
 	}
+
 	public static String escape(String s) {
 		s = s.replaceAll("\\\\", "\\\\\\\\\\\\\\\\");
 		HashMap<String, String> dict = new HashMap<String, String>();
@@ -195,12 +192,14 @@ public class UtilTools {
 		dict.put("\\[", "\\\\[");
 		dict.put("\\/", "\\\\/");
 		dict.put("\\'", "\\\\'");
+		dict.put("\\|", "\\\\|");
 		dict.put("\\\"", "\\\\\"");
 		for (String key : dict.keySet()) {
 			s = s.replaceAll(key, dict.get(key));
 		}
 		return s;
 	}
+
 	public static Vector<TNode> subtokenseqs(int a, int b, Vector<TNode> org) {
 		Vector<TNode> xNodes = new Vector<TNode>();
 		if (a < 0 || b >= org.size() || a > b) {
@@ -218,57 +217,45 @@ public class UtilTools {
 		index = 0;
 	}
 
-	public static Vector<String> buildDict(Collection<String> data)
-	{
-		HashMap<String,Integer> mapHashSet = new HashMap<String, Integer>();
-		for(String pair:data)
-		{
+	public static Vector<String> buildDict(Collection<String> data) {
+		HashMap<String, Integer> mapHashSet = new HashMap<String, Integer>();
+		for (String pair : data) {
 			String s1 = pair;
-			if (s1.contains("<_START>"))
-			{
+			if (s1.contains("<_START>")) {
 				s1 = s1.replace("<_START>", "");
 			}
-			if (s1.contains("<_END>"))
-			{
+			if (s1.contains("<_END>")) {
 				s1 = s1.replace("<_END>", "");
 			}
 			Ruler r = new Ruler();
 			r.setNewInput(s1);
 			Vector<TNode> v = r.vec;
 			HashSet<String> curRow = new HashSet<String>();
-			for (TNode t : v)
-			{
+			for (TNode t : v) {
 				String k = t.text;
 				k = k.replaceAll("[0-9]+", "DIGITs");
-				if(k.trim().length() ==0)
+				if (k.trim().length() == 0)
 					continue;
-				//only consider K once in one row
-				if(curRow.contains(k))
-				{
+				// only consider K once in one row
+				if (curRow.contains(k)) {
 					continue;
-				}
-				else
-				{
+				} else {
 					curRow.add(k);
 				}
-				if (mapHashSet.containsKey(k))
-				{
-					mapHashSet.put(k,mapHashSet.get(k)+1);
-				}
-				else
-				{
-					mapHashSet.put(k,1);
+				if (mapHashSet.containsKey(k)) {
+					mapHashSet.put(k, mapHashSet.get(k) + 1);
+				} else {
+					mapHashSet.put(k, 1);
 				}
 			}
 		}
-		//prune infrequent terms
-		int thresdhold =5;
-		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet().iterator();
-		while(iter.hasNext())
-		{
+		// prune infrequent terms
+		int thresdhold = 5;
+		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet()
+				.iterator();
+		while (iter.hasNext()) {
 			Entry<String, Integer> e = iter.next();
-			if(e.getValue() < thresdhold)
-			{
+			if (e.getValue() < thresdhold) {
 				iter.remove();
 			}
 		}

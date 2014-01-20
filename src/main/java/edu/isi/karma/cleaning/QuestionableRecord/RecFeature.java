@@ -23,5 +23,6 @@ package edu.isi.karma.cleaning.QuestionableRecord;
 
 public interface RecFeature {
 	public double computerScore();
+
 	public String getName();
 }
