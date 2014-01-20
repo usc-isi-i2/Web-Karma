@@ -1,0 +1,478 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns="http://www.cubrc.org/ontologies/KDD/MidLevel/ITO/DocumentModel_ILM#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:ito="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#"
+  xml:base="http://www.cubrc.org/ontologies/KDD/MidLevel/ITO/DocumentModel_ILM">
+  <owl:Ontology rdf:about="">
+    <owl:imports rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology"/>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Created with TopBraid Composer</owl:versionInfo>
+  </owl:Ontology>
+  <owl:Class rdf:ID="ILM_ExternalArticle">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM External Article</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#Document"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_Review_ExcerptedHeading">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DocumentHeader"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Review Excerpted Heading</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="ILM_Review_ExcerptedContent"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_PublicationInformationParagraph">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ILM_CoverPage"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Publication Information Paragraph</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#Paragraph"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_ArticleReviewOrder">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#ArticleOrder"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Review Order</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_ArticleReviewNumber">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#ArticleNumber"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Review Number</rdfs:label>
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_a_ordinal_measurement_of"/>
+        <owl:someValuesFrom rdf:resource="#ILM_ArticleReviewOrder"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_Review_ReviewerAddedSection">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#SectionOfText"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Review Reviewer Added Section</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="ILM_Review_ReviewerAddedContent"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_JournalNameBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ILM_JournalName"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ILM_MainHeading"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Journal Name Bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#JournalNameBearer"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_ArticleReviewContentSection">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ILM_ArticleReview"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Review Content Section</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DocumentPart"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_ReviewersIntroduction">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ILM_ArticleReviewIntroduction"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Reviewer's Introduction</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DocumentPart"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_ArticleReferenceAuthorNameBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ILM_ArticleReferenceDataSet"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Reference Author Name Bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AIRSMidLevelOntology#PersonNameBearer"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ILM_ArticleReview">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ILM_Issue_ArticlesSection"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Review</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DocumentPart"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_quality"/>
+        <owl:someValuesFrom rdf:resource="#ILM_ArticleReviewOrder"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#ILM_CoverPage">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ILM_Issue"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Cover Page</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#Page"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_ArticleReference">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ILM_TableOfContents"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Reference</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DocumentPart"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ILM_JournalName">
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#Journal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designates"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Journal Name</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#JournalName"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_ArticleReferenceNumberBearer">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#ArticleNumberBearer"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Number Bearer</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="#ILM_ArticleReferenceDataSet"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+        <owl:someValuesFrom rdf:resource="#ILM_ArticleReviewNumber"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+        <owl:allValuesFrom rdf:resource="#ILM_ArticleReviewNumber"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+  </owl:Class>
+  <owl:Class rdf:about="#ILM_TableOfContents">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ILM_CoverPage"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Table of Contents</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#TableOfContents"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_ArticleReferencePublicationDateIdentifierBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="#ILM_ArticleReferenceDataSet"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Reference Publication Date Identifier Bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#PublicationDateIdentifierBearer"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ILM_Issue">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#JournalIssue"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Iraq Literature Monitor Issue</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_ArticleReferenceTitleBearer">
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class rdf:ID="ILM_ExternalArticleTitle"/>
+        </owl:allValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="#ILM_ExternalArticleTitle"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="#ILM_ArticleReferenceDataSet"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Reference Title Bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#JournalArticleTitleBearer"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_Issue_PublicationDateIdentifierBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="#ILM_MainHeading"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Issue Publication Date Identifier Bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#PublicationDateIdentifierBearer"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ILM_Issue_ArticlesSection">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ILM_Issue"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Issue Articles Section</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DocumentBody"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ILM_ExternalArticleTitle">
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ILM_ExternalArticle"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designates"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM External Article Title</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#JournalArticleTitle"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_ArticleReferenceSummaryParagraph">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ILM_ArticleReference"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Reference Summary Paragraph</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#Paragraph"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_JournalIssueNumber">
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ILM_Issue"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designates"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Journal Issue Number</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#JournalIssueNumber"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_ArticleReviewAuthorInformation">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ILM_ReviewersIntroduction"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Review Author Information</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DocumentPart"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_Review_ReviewerAddedHeading">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DocumentHeader"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Review Reviewer Added Heading</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#ILM_Review_ReviewerAddedContent"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#ILM_ArticleReferenceDataSet">
+    <rdfs:subClassOf>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Restriction>
+            <owl:someValuesFrom rdf:resource="#ILM_ArticleReference"/>
+            <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+          </owl:Restriction>
+          <owl:Restriction>
+            <owl:someValuesFrom>
+              <owl:Class rdf:about="#ILM_ArticleReviewIntroduction"/>
+            </owl:someValuesFrom>
+            <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+          </owl:Restriction>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Reference</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_ArticleReferencePublicationNameBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ILM_ArticleReferenceDataSet"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Reference Publication Name Bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DocumentNameBearer"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ILM_MainHeading">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ILM_Issue"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <owl:equivalentClass>
+      <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+          <owl:Restriction>
+            <owl:someValuesFrom rdf:resource="#ILM_JournalNameBearer"/>
+            <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+          </owl:Restriction>
+          <owl:Restriction>
+            <owl:someValuesFrom>
+              <owl:Class rdf:ID="ILM_JournalIssueNumberBearer"/>
+            </owl:someValuesFrom>
+            <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+          </owl:Restriction>
+          <owl:Restriction>
+            <owl:someValuesFrom rdf:resource="#ILM_Issue_PublicationDateIdentifierBearer"/>
+            <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+          </owl:Restriction>
+        </owl:intersectionOf>
+      </owl:Class>
+    </owl:equivalentClass>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Main Heading</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DocumentHeader"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_Review_ExcerptedSection">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#SectionOfText"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Review Excerpted Content</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#ILM_Review_ExcerptedContent"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#ILM_Review_ReviewerAddedContent">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ILM_ArticleReviewContentSection"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Review Reviewer Added Content</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DocumentPart"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ILM_Review_ExcerptedContent">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ILM_ExternalArticle"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_excerpted_from"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ILM_ArticleReviewContentSection"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Review Excerpted Content</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DocumentPart"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ILM_ArticleReviewExcerptInformation">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ILM_ReviewersIntroduction"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Review Excerpt Information</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DocumentPart"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ILM_ArticleReviewIntroduction">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Article Review Introduction</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DocumentPart"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ILM_JournalIssueNumberBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ILM_JournalIssueNumber"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ILM_MainHeading"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >ILM Journal Issue Number Bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#JournalIssueNumberBearer"/>
+  </owl:Class>
+  <ito:Journal rdf:ID="Iraq_Literature_Monitor">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Iraq Literature Monitor</rdfs:label>
+  </ito:Journal>
+</rdf:RDF>
+
+<!-- Created with TopBraid -->
