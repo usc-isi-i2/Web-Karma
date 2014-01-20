@@ -29,29 +29,28 @@ import edu.isi.karma.cleaning.TNode;
 public class Feature2 implements RecFeature {
 
 	public int type;
-	public Vector<TNode> xNodes =new Vector<TNode>();
+	public Vector<TNode> xNodes = new Vector<TNode>();
 	public double weight = 1.0;
-	public Feature2(int type,Vector<TNode> xNodes,double weight)
-	{
+
+	public Feature2(int type, Vector<TNode> xNodes, double weight) {
 		this.type = type;
 		this.xNodes = xNodes;
 		this.weight = weight;
 	}
-	public String getName()
-	{
-		return type+"";
+
+	public String getName() {
+		return type + "";
 	}
-	public double computerScore()
-	{
+
+	public double computerScore() {
 		double res = 0.0;
-		if(xNodes == null)
+		if (xNodes == null)
 			return 0.0;
-		for(TNode x:xNodes)
-		{
-			if(x.type == type)
+		for (TNode x : xNodes) {
+			if (x.type == type)
 				res += 1;
 		}
-		return res*weight;
+		return res * weight;
 	}
 
 }
