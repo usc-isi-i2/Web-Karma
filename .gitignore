@@ -1,3 +1,7 @@
+*.iml
+atlassian-ide-plugin.xml
+java_pid*.hprof
+
 bin
 target
 preloaded-library
@@ -39,7 +43,6 @@ src/main/webapp/publish/AutoOntology/*.*
 src/main/webapp/publish/R2RML/*.*
 src/main/webapp/publish/JSON/*.*
 src/main/webapp/publish/AlignmentGraph/*.*
-preloaded-ontologies/*
 src/main/webapp/RDF/*.rdf
 src/main/webapp/RDF/*.n3
 src/main/webapp/CRF_Models/*.txt

@@ -1,0 +1,1453 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
+    xmlns:geo="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#"
+    xmlns:quality="http://www.cubrc.org/ontologies/KDD/Mid/QualityOntology#"
+    xmlns:artifact="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#"
+    xmlns:airs="http://www.cubrc.org/ontologies/KDD/Mid/AIRSMidLevelOntology#"
+    xmlns:event="http://www.cubrc.org/ontologies/KDD/Mid/EventOntology#"
+    xmlns:ro="http://www.obofoundry.org/ro/ro.owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns="http://www.cubrc.org/ontologies/KDD/MidLevel/CTO/al-Banshiri_Instances#"
+    xmlns:info="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#"
+    xmlns:snap="http://www.ifomis.org/bfo/1.1/snap#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:time="http://www.cubrc.org/ontologies/KDD/Mid/TimeOntology#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:agent="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#"
+    xmlns:ero="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:cto="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#"
+    xmlns:span="http://www.ifomis.org/bfo/1.1/span#"
+  xml:base="http://www.cubrc.org/ontologies/KDD/MidLevel/CTO/al-Banshiri_Instances">
+  <owl:Ontology rdf:about="">
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Created with TopBraid Composer</owl:versionInfo>
+    <owl:imports rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology"/>
+  </owl:Ontology>
+  <geo:Route rdf:ID="Mujahidin_Supply_Line"/>
+  <info:InformationBearingEntity rdf:ID="al-Qaida_Cell_in_Sudan">
+    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#TerroristOrganization"/>
+  </info:InformationBearingEntity>
+  <time:MultiDayTemporalInterval rdf:ID="week_long_siege"/>
+  <info:InformationBearingEntity rdf:ID="al-Qaida_Cell_in_Yemen">
+    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#TerroristOrganization"/>
+  </info:InformationBearingEntity>
+  <agent:GroupOfPersons rdf:ID="Somalis"/>
+  <geo:Country rdf:ID="Uganda"/>
+  <artifact:GovernmentBuilding rdf:ID="US_Embassy_in_Tanzania"/>
+  <agent:GovernmentAgency rdf:ID="Soviet_Union_Military_Force"/>
+  <agent:Organization rdf:ID="United_Nations"/>
+  <agent:Organization rdf:ID="Relief_Agency"/>
+  <agent:CombatSkill rdf:ID="Rashidis_Combat_Skill"/>
+  <artifact:GovernmentBuilding rdf:ID="US_Embassy_in_Kenya"/>
+  <span:TemporalInterval rdf:ID="TemporalInterval_of_Rashidis_gain_of_GroupHouseAdmin_Role"/>
+  <agent:GroupOfPersons rdf:ID="Mujahidin"/>
+  <agent:SurveillanceSkill rdf:ID="Atefs_Surveillance_Skill"/>
+  <agent:Citizen rdf:ID="Muhammad_Matawi">
+    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+  </agent:Citizen>
+  <geo:Country rdf:ID="Tanzania"/>
+  <geo:CountryPart rdf:ID="Mwanza">
+    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#City"/>
+  </geo:CountryPart>
+  <agent:OrganizationFoundingMemberRole rdf:ID="Salims_Organization_Founding_Member_Role"/>
+  <geo:Country rdf:ID="Afghanistan"/>
+  <agent:FinancingSkill rdf:ID="bin_Ladins_Financing_Skill"/>
+  <agent:OrganizationFoundingMemberRole rdf:ID="bin__Ladins_Organization_Founding_Member_Role"/>
+  <geo:Subcontinent rdf:ID="East_Africa"/>
+  <agent:OrganizationOperativeRole rdf:ID="Bodyguard_of_bin_Ladin_Role"/>
+  <agent:NegotiationSkill rdf:ID="Rashidis_Negotiation_Skill"/>
+  <agent:OrganizationSkill rdf:ID="al-Rashidis_Operational_Planning_Skill"/>
+  <agent:PoliticalParty rdf:ID="National_Islamic_Front"/>
+  <agent:OrganizationLeaderRole rdf:ID="al-Nalfis_Organization_Leader_Role"/>
+  <event:ActOfCommanding rdf:ID="al_Rashidis_order_to_al-Fadl_to_train_Somali_Tribes"/>
+  <agent:LeadershipSkill rdf:ID="Rashidis_Leadership_Skill"/>
+  <event:TargetRole rdf:ID="US_Forces_in_Somalia_Target_Role"/>
+  <time:Decade rdf:ID="Decade_1980"/>
+  <geo:Valley rdf:ID="Panjshir_Valley"/>
+  <time:MultiYearTemporalInterval rdf:ID="Between_1993_and_1997"/>
+  <agent:OrganizationFoundingMemberRole rdf:ID="Julaidans_Organization_Founding_Member_Role"/>
+  <agent:CombatSkill rdf:ID="bin_Ladins_Combat_Skill"/>
+  <agent:LawEnforcementAgency rdf:ID="Egyptian_National_Police"/>
+  <geo:Subcontinent rdf:ID="Arabian_Peninsula"/>
+  <geo:CountryPart rdf:ID="Jalalabad">
+    <ro:has_part>
+      <geo:CityPart rdf:ID="Location_of_al-Qadisiyah_Training_Camp">
+        <ro:part_of>
+          <geo:Country rdf:ID="Pakistan">
+            <ro:has_part rdf:resource="#Location_of_al-Qadisiyah_Training_Camp"/>
+            <ro:has_part>
+              <geo:CountryPart rdf:ID="Location_of_al-Farouq_Terrorist_Training_Camp">
+                <ro:part_of rdf:resource="#Pakistan"/>
+                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#ProvincePart"/>
+                <ero:is_site_of>
+                  <event:ActOfAssociation rdf:ID="First_Recruits_allegiance_to_al-Qaida">
+                    <ro:has_participant>
+                      <agent:Citizen rdf:ID="Jamal_Ahmed_al-Fadl">
+                        <airs:receives>
+                          <event:ActOfCommanding rdf:ID="al_Rashidis_order_to_al-Fadl_to_assist_Somali_Tribes">
+                            <ro:has_participant>
+                              <agent:Agent rdf:ID="Ali_Amin_Ali_al-Rashidi">
+                                <ero:bearer_of>
+                                  <quality:ServiceRole rdf:ID="Rashidis_Building_And_Construction_Role">
+                                    <ero:inheres_in rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <ero:role_of rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#BuildingAndConstructionAgentRole"/>
+                                  </quality:ServiceRole>
+                                </ero:bearer_of>
+                                <ero:has_role>
+                                  <quality:LegalRole rdf:ID="Rashidis_Police_Officer_Role">
+                                    <ero:role_of rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <ro:participates_in>
+                                      <event:GainOfRole rdf:ID="Rashidis_GainOf_EgyptianNationalPoliceOfficer_Role">
+                                        <ro:has_participant rdf:resource="#Rashidis_Police_Officer_Role"/>
+                                        <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                      </event:GainOfRole>
+                                    </ro:participates_in>
+                                    <ro:participates_in>
+                                      <event:DecreaseOfRole rdf:ID="Rashidis_Loss_of_NationalPoliceOfficerRole">
+                                        <ero:occurs_on>
+                                          <span:TemporalInterval rdf:ID="TemporalInterval_Of_Rashidis_Loss_of_NationalPoliceOfficer_Role">
+                                            <ero:is_temporal_region_of rdf:resource="#Rashidis_Loss_of_NationalPoliceOfficerRole"/>
+                                            <time:interval_is_after>
+                                              <span:TemporalInterval rdf:ID="TemporalInterval_of_Sadats_Assassination">
+                                                <time:interval_is_before>
+                                                  <span:TemporalInterval rdf:ID="TemporalInterval_of_Rashidis_Arrest">
+                                                    <ero:is_temporal_region_of>
+                                                      <event:Arrest rdf:ID="al-Rashidis_Arrest">
+                                                        <ero:occurs_on rdf:resource="#TemporalInterval_of_Rashidis_Arrest"/>
+                                                        <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                                      </event:Arrest>
+                                                    </ero:is_temporal_region_of>
+                                                    <time:interval_is_after rdf:resource="#TemporalInterval_of_Sadats_Assassination"/>
+                                                  </span:TemporalInterval>
+                                                </time:interval_is_before>
+                                                <time:interval_is_before rdf:resource="#TemporalInterval_Of_Rashidis_Loss_of_NationalPoliceOfficer_Role"/>
+                                                <time:interval_during>
+                                                  <time:Month rdf:ID="October_1981">
+                                                    <time:interval_contains rdf:resource="#TemporalInterval_of_Sadats_Assassination"/>
+                                                    <ero:is_temporal_region_of>
+                                                      <event:Cause rdf:ID="Assassination_of_Anwar_al-Sadat">
+                                                        <ro:has_participant>
+                                                          <agent:Agent rdf:ID="Egyptian_National_Police_Officer">
+                                                            <ro:agent_in rdf:resource="#Assassination_of_Anwar_al-Sadat"/>
+                                                            <ro:part_of>
+                                                              <agent:GroupOfPersons rdf:ID="Assassins_of_Anwar_al-Sadat">
+    <ro:participates_in rdf:resource="#Assassination_of_Anwar_al-Sadat"/>
+    <ro:agent_in rdf:resource="#Assassination_of_Anwar_al-Sadat"/>
+    <ro:has_part rdf:resource="#Egyptian_National_Police_Officer"/>
+    <ro:has_part>
+      <agent:Agent rdf:ID="Abd_al-Hamid_Abd_al-Salam">
+        <agent:has_familial_relationship_to>
+          <agent:Citizen rdf:ID="Wife_of_Abd_al_Salam">
+            <agent:has_familial_relationship_to rdf:resource="#Abd_al-Hamid_Abd_al-Salam"/>
+            <agent:is_sibling_of>
+              <agent:Agent rdf:ID="Hafsah_Sad_Rashwan">
+                <ro:participates_in>
+                  <event:ActOfChangeOfResidence rdf:ID="al-Rashidis_Change_of_Residence_to_Omdurman">
+                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                    <ero:occurs_at>
+                      <geo:CountryPart rdf:ID="Omdurman">
+                        <ero:is_site_of rdf:resource="#al-Rashidis_Change_of_Residence_to_Omdurman"/>
+                        <ro:part_of>
+                          <geo:Country rdf:ID="Sudan">
+                            <ro:has_part rdf:resource="#Omdurman"/>
+                            <info:described_by>
+                              <info:DescriptiveInformationContentEntity rdf:ID="Objective_to_Exploit_ascendency_of_National_Islamic_Front_in_Sudan">
+                                <info:is_about rdf:resource="#Sudan"/>
+                                <info:describes rdf:resource="#Sudan"/>
+                                <ero:inheres_in>
+                                  <info:DescriptiveInformationBearingEntity rdf:ID="al-Qaida">
+                                    <ero:bearer_of>
+                                      <airs:ObjectiveToCreateSecureEnvironment rdf:ID="al-Qaida_Objective_to_make_Somalia_a_Stronghold">
+                                        <ero:inheres_in rdf:resource="#al-Qaida"/>
+                                        <info:is_about>
+                                          <geo:Country rdf:ID="Somalia">
+                                            <ro:part_of>
+                                              <geo:AreaOfOperations rdf:ID="al-Qaidas_Area_of_Operations">
+                                                <ero:bearer_of>
+                                                  <geo:AreaOfOperationsRole rdf:ID="al-Qaidas_AreaOfOperationsRole">
+                                                    <ero:inheres_in rdf:resource="#al-Qaidas_Area_of_Operations"/>
+                                                    <ro:participates_in>
+                                                      <event:IncreaseOfRole rdf:ID="IncreaseOf_al-Qaidas_Area_of_Operations_Role_to_Somalia">
+                                                        <ro:has_participant rdf:resource="#al-Qaidas_AreaOfOperationsRole"/>
+                                                        <ro:has_participant rdf:resource="#Somalia"/>
+                                                      </event:IncreaseOfRole>
+                                                    </ro:participates_in>
+                                                    <ero:role_of rdf:resource="#al-Qaidas_Area_of_Operations"/>
+                                                  </geo:AreaOfOperationsRole>
+                                                </ero:bearer_of>
+                                                <ero:has_role rdf:resource="#al-Qaidas_AreaOfOperationsRole"/>
+                                                <ro:has_part rdf:resource="#Somalia"/>
+                                              </geo:AreaOfOperations>
+                                            </ro:part_of>
+                                            <info:is_subject_of rdf:resource="#al-Qaida_Objective_to_make_Somalia_a_Stronghold"/>
+                                            <ro:part_of>
+                                              <geo:AreaOfOperations rdf:ID="US_Forces_Area_of_Operations">
+                                                <ero:bearer_of>
+                                                  <geo:AreaOfOperationsRole rdf:ID="US_Forces_in_Somalia_AreaOfOperations_Role">
+                                                    <ero:inheres_in rdf:resource="#US_Forces_Area_of_Operations"/>
+                                                    <ro:participates_in>
+                                                      <event:IncreaseOfRole rdf:ID="IncreaseOf_US_Forces_in_Somalia_Area_of_Operations_Role_to_Somalia">
+                                                        <ro:has_participant rdf:resource="#US_Forces_in_Somalia_AreaOfOperations_Role"/>
+                                                        <ro:has_participant rdf:resource="#Somalia"/>
+                                                      </event:IncreaseOfRole>
+                                                    </ro:participates_in>
+                                                    <ero:role_of rdf:resource="#US_Forces_Area_of_Operations"/>
+                                                  </geo:AreaOfOperationsRole>
+                                                </ero:bearer_of>
+                                                <ero:has_role rdf:resource="#US_Forces_in_Somalia_AreaOfOperations_Role"/>
+                                                <ro:has_part rdf:resource="#Somalia"/>
+                                              </geo:AreaOfOperations>
+                                            </ro:part_of>
+                                            <ro:participates_in rdf:resource="#IncreaseOf_al-Qaidas_Area_of_Operations_Role_to_Somalia"/>
+                                            <ro:participates_in rdf:resource="#IncreaseOf_US_Forces_in_Somalia_Area_of_Operations_Role_to_Somalia"/>
+                                          </geo:Country>
+                                        </info:is_about>
+                                      </airs:ObjectiveToCreateSecureEnvironment>
+                                    </ero:bearer_of>
+                                    <ero:bearer_of>
+                                      <airs:ObjectiveToDefeatEnemyForce rdf:ID="al-Qaidas_Objective_to_Target_US_Forces_in_Somalia">
+                                        <ero:is_output_of>
+                                          <event:ActOfMeeting rdf:ID="al-Rashidis_Meeting_with_Usama_bin_Ladin">
+                                            <ro:has_participant rdf:resource="#al-Qaidas_Objective_to_Target_US_Forces_in_Somalia"/>
+                                            <ero:has_output rdf:resource="#al-Qaidas_Objective_to_Target_US_Forces_in_Somalia"/>
+                                            <ero:occurs_on>
+                                              <span:TemporalInterval rdf:ID="TemporalInterval_of_Rashidis_Meeting_with_bin_Ladin">
+                                                <ero:is_temporal_region_of rdf:resource="#al-Rashidis_Meeting_with_Usama_bin_Ladin"/>
+                                                <time:interval_during>
+                                                  <time:MultiMonthTemporalInterval rdf:ID="Spring_1993">
+                                                    <time:interval_contains rdf:resource="#TemporalInterval_of_Rashidis_Meeting_with_bin_Ladin"/>
+                                                  </time:MultiMonthTemporalInterval>
+                                                </time:interval_during>
+                                              </span:TemporalInterval>
+                                            </ero:occurs_on>
+                                            <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                            <ro:has_participant>
+                                              <agent:Agent rdf:ID="Usama_bin_Ladin">
+                                                <ro:agent_in>
+                                                  <event:IntentionalAct rdf:ID="Establishment_of_Masada_Terrorist_Training_Camp">
+                                                    <ro:has_participant rdf:resource="#Usama_bin_Ladin"/>
+                                                    <ero:occurs_on>
+                                                      <span:TemporalInterval rdf:ID="TemporalInterval_of_Establishment_of_Masada_Training_Camp">
+                                                        <ero:is_temporal_region_of rdf:resource="#Establishment_of_Masada_Terrorist_Training_Camp"/>
+                                                        <time:interval_during>
+                                                          <time:Year rdf:ID="Year_1988">
+                                                            <time:interval_contains rdf:resource="#TemporalInterval_of_Establishment_of_Masada_Training_Camp"/>
+                                                          </time:Year>
+                                                        </time:interval_during>
+                                                      </span:TemporalInterval>
+                                                    </ero:occurs_on>
+                                                    <ro:has_agent rdf:resource="#Usama_bin_Ladin"/>
+                                                  </event:IntentionalAct>
+                                                </ro:agent_in>
+                                                <ro:participates_in rdf:resource="#Establishment_of_Masada_Terrorist_Training_Camp"/>
+                                                <ro:agent_in>
+                                                  <event:IntentionalAct rdf:ID="Battle_of_Jaji">
+                                                    <ro:has_participant>
+                                                      <agent:GroupOfPersons rdf:ID="Fifty_Foreign_Jihadists">
+                                                        <ro:participates_in rdf:resource="#Battle_of_Jaji"/>
+                                                        <ro:agent_in rdf:resource="#Battle_of_Jaji"/>
+                                                      </agent:GroupOfPersons>
+                                                    </ro:has_participant>
+                                                    <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                                    <ro:has_agent rdf:resource="#Fifty_Foreign_Jihadists"/>
+                                                    <ro:has_agent rdf:resource="#Usama_bin_Ladin"/>
+                                                    <ero:occurs_at>
+                                                      <geo:ProvincePart rdf:ID="Jaji">
+                                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#CountryPart"/>
+                                                        <ro:part_of rdf:resource="#Pakistan"/>
+                                                        <ero:is_site_of rdf:resource="#Battle_of_Jaji"/>
+                                                        <ro:part_of>
+                                                          <geo:CountryPart rdf:ID="Paktia">
+                                                            <ro:has_part rdf:resource="#Jaji"/>
+                                                            <ro:has_part rdf:resource="#Location_of_al-Farouq_Terrorist_Training_Camp"/>
+                                                            <ro:part_of rdf:resource="#Pakistan"/>
+                                                            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Province"/>
+                                                          </geo:CountryPart>
+                                                        </ro:part_of>
+                                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#City"/>
+                                                      </geo:ProvincePart>
+                                                    </ero:occurs_at>
+                                                    <ero:occurs_on>
+                                                      <time:Year rdf:ID="Year_1987">
+                                                        <ero:is_temporal_region_of rdf:resource="#Battle_of_Jaji"/>
+                                                      </time:Year>
+                                                    </ero:occurs_on>
+                                                    <ro:has_participant rdf:resource="#Usama_bin_Ladin"/>
+                                                    <ro:has_participant>
+                                                      <agent:GroupOfPersons rdf:ID="Two_Hundred_Soviet_Troops">
+                                                        <ro:has_part>
+                                                          <agent:Agent rdf:ID="Group_of_Spetsnaz">
+                                                            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Citizen"/>
+                                                            <ro:part_of rdf:resource="#Two_Hundred_Soviet_Troops"/>
+                                                            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#GroupOfPersons"/>
+                                                          </agent:Agent>
+                                                        </ro:has_part>
+                                                        <ro:agent_in rdf:resource="#Battle_of_Jaji"/>
+                                                        <ro:participates_in rdf:resource="#Battle_of_Jaji"/>
+                                                      </agent:GroupOfPersons>
+                                                    </ro:has_participant>
+                                                    <ro:has_agent rdf:resource="#Two_Hundred_Soviet_Troops"/>
+                                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                                  </event:IntentionalAct>
+                                                </ro:agent_in>
+                                                <ro:agent_in>
+                                                  <event:ActOfAssociation rdf:ID="al-Qaidas_Inception">
+                                                    <ro:has_agent>
+                                                      <agent:Agent rdf:ID="Mamdouh_Mahmud_Salim">
+                                                        <ro:agent_in rdf:resource="#al-Qaidas_Inception"/>
+                                                        <ro:participates_in rdf:resource="#al-Qaidas_Inception"/>
+                                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Citizen"/>
+                                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                                                      </agent:Agent>
+                                                    </ro:has_agent>
+                                                    <ro:has_participant>
+                                                      <agent:Agent rdf:ID="Wael_Julaidan">
+                                                        <ro:participates_in rdf:resource="#al-Qaidas_Inception"/>
+                                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Citizen"/>
+                                                        <ro:agent_in rdf:resource="#al-Qaidas_Inception"/>
+                                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                                                      </agent:Agent>
+                                                    </ro:has_participant>
+                                                    <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                                    <ro:has_agent rdf:resource="#Usama_bin_Ladin"/>
+                                                    <ero:occurs_on>
+                                                      <time:MultiDayTemporalInterval rdf:ID="August_17-20_1988">
+                                                        <ero:is_temporal_region_of rdf:resource="#al-Qaidas_Inception"/>
+                                                      </time:MultiDayTemporalInterval>
+                                                    </ero:occurs_on>
+                                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                                    <ro:has_participant rdf:resource="#Mamdouh_Mahmud_Salim"/>
+                                                    <ro:has_agent rdf:resource="#Wael_Julaidan"/>
+                                                    <ro:has_participant rdf:resource="#Usama_bin_Ladin"/>
+                                                  </event:ActOfAssociation>
+                                                </ro:agent_in>
+                                                <ro:participates_in rdf:resource="#al-Rashidis_Meeting_with_Usama_bin_Ladin"/>
+                                                <ro:participates_in rdf:resource="#al-Qaidas_Inception"/>
+                                                <ro:participates_in rdf:resource="#Battle_of_Jaji"/>
+                                                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Citizen"/>
+                                                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                                                <ro:participates_in rdf:resource="#First_Recruits_allegiance_to_al-Qaida"/>
+                                                <ro:participates_in>
+                                                  <event:ActOfEncounter rdf:ID="al-Rashidis_introduction_to_bin_Ladin">
+                                                    <ro:has_participant>
+                                                      <agent:Citizen rdf:ID="Ayman_al-Zawahiri">
+                                                        <ro:participates_in>
+                                                          <event:ActOfInterpersonalRelationship rdf:ID="Rashidis_Friendship_with_al-Zawahiri">
+                                                            <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                                            <ro:has_participant rdf:resource="#Ayman_al-Zawahiri"/>
+                                                            <ro:has_agent rdf:resource="#Ayman_al-Zawahiri"/>
+                                                            <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                                          </event:ActOfInterpersonalRelationship>
+                                                        </ro:participates_in>
+                                                        <ro:agent_in rdf:resource="#al-Rashidis_introduction_to_bin_Ladin"/>
+                                                        <ro:participates_in>
+                                                          <event:ActOfAssociation rdf:ID="al-Rashidis_Association_with_Egyptian_Islamic_Jihad">
+                                                            <ro:has_participant>
+                                                              <agent:Agent rdf:ID="Egyptian_Islamic_Jihad">
+    <agent:has_affiliate rdf:resource="#Abd_al-Hamid_Abd_al-Salam"/>
+    <agent:has_affiliate rdf:resource="#Egyptian_National_Police_Officer"/>
+    <ro:agent_in rdf:resource="#al-Rashidis_Association_with_Egyptian_Islamic_Jihad"/>
+    <info:designated_by>
+      <airs:OrganizationName rdf:ID="Egyptian_Islamic_Jihad_OrganizationName">
+        <info:is_about rdf:resource="#Egyptian_Islamic_Jihad"/>
+        <ero:inheres_in>
+          <airs:OrganizationNameBearer rdf:ID="Egyptian_Islamic_Jihad_NameBearer1">
+            <ero:bearer_of rdf:resource="#Egyptian_Islamic_Jihad_OrganizationName"/>
+            <info:has_text_value rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >Egyptian Islamic Jihad</info:has_text_value>
+          </airs:OrganizationNameBearer>
+        </ero:inheres_in>
+        <ero:inheres_in>
+          <airs:OrganizationNameBearer rdf:ID="Egyptian_Islamic_Jihad_NameBearer2">
+            <ero:bearer_of rdf:resource="#Egyptian_Islamic_Jihad_OrganizationName"/>
+            <info:has_text_value rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >al-Jihad</info:has_text_value>
+          </airs:OrganizationNameBearer>
+        </ero:inheres_in>
+        <info:designates rdf:resource="#Egyptian_Islamic_Jihad"/>
+      </airs:OrganizationName>
+    </info:designated_by>
+    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#InformationBearingEntity"/>
+    <info:is_subject_of rdf:resource="#Egyptian_Islamic_Jihad_OrganizationName"/>
+    <ro:participates_in rdf:resource="#al-Rashidis_Association_with_Egyptian_Islamic_Jihad"/>
+    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#TerroristOrganization"/>
+                                                              </agent:Agent>
+                                                            </ro:has_participant>
+                                                            <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                                            <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                                            <ro:has_agent rdf:resource="#Egyptian_Islamic_Jihad"/>
+                                                            <ro:has_participant rdf:resource="#Ayman_al-Zawahiri"/>
+                                                            <ro:has_participant>
+                                                              <agent:Citizen rdf:ID="Sayyid_Imam_al-Sharif">
+    <ro:participates_in rdf:resource="#al-Rashidis_Association_with_Egyptian_Islamic_Jihad"/>
+    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                                                              </agent:Citizen>
+                                                            </ro:has_participant>
+                                                            <ero:occurs_on>
+                                                              <span:TemporalInterval rdf:ID="TemporalInterval_of_al-Rashidis_Recruitment_into_EIJ">
+    <ero:is_temporal_region_of rdf:resource="#al-Rashidis_Association_with_Egyptian_Islamic_Jihad"/>
+    <time:interval_is_after>
+      <time:Year rdf:ID="Year_1986">
+        <time:interval_is_before rdf:resource="#TemporalInterval_of_al-Rashidis_Recruitment_into_EIJ"/>
+      </time:Year>
+    </time:interval_is_after>                                 </span:TemporalInterval>
+                                                            </ero:occurs_on>
+                                                          </event:ActOfAssociation>
+                                                        </ro:participates_in>
+                                                        <ro:agent_in rdf:resource="#Rashidis_Friendship_with_al-Zawahiri"/>
+                                                        <ro:participates_in rdf:resource="#al-Rashidis_introduction_to_bin_Ladin"/>
+                                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Agent"/>
+                                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                                                      </agent:Citizen>
+                                                    </ro:has_participant>
+                                                    <ro:has_agent rdf:resource="#Ayman_al-Zawahiri"/>
+                                                    <ro:has_participant rdf:resource="#Usama_bin_Ladin"/>
+                                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                                  </event:ActOfEncounter>
+                                                </ro:participates_in>
+                                              </agent:Agent>
+                                            </ro:has_participant>
+                                          </event:ActOfMeeting>
+                                        </ero:is_output_of>
+                                        <ro:participates_in rdf:resource="#al-Rashidis_Meeting_with_Usama_bin_Ladin"/>
+                                        <ero:inheres_in rdf:resource="#al-Qaida"/>
+                                        <info:is_about>
+                                          <agent:GroupOfPersons rdf:ID="US_Forces_in_Somalia">
+                                            <info:is_subject_of rdf:resource="#al-Qaidas_Objective_to_Target_US_Forces_in_Somalia"/>
+                                          </agent:GroupOfPersons>
+                                        </info:is_about>
+                                      </airs:ObjectiveToDefeatEnemyForce>
+                                    </ero:bearer_of>
+                                    <ero:bearer_of rdf:resource="#Objective_to_Exploit_ascendency_of_National_Islamic_Front_in_Sudan"/>
+                                    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#TerroristOrganization"/>
+                                  </info:DescriptiveInformationBearingEntity>
+                                </ero:inheres_in>
+                                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AIRSMidLevelOntology#ObjectiveToExpandAreaOfOperation"/>
+                              </info:DescriptiveInformationContentEntity>
+                            </info:described_by>
+                            <info:is_subject_of rdf:resource="#Objective_to_Exploit_ascendency_of_National_Islamic_Front_in_Sudan"/>
+                          </geo:Country>
+                        </ro:part_of>
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#City"/>
+                      </geo:CountryPart>
+                    </ero:occurs_at>
+                    <ero:occurs_on>
+                      <span:TemporalInterval rdf:ID="TemporalInterval_of_al-Rashidis_Change_of_Residence_to_Omdurman">
+                        <time:interval_is_before>
+                          <span:TemporalInterval rdf:ID="TemporalInterval_of_Rashidis_gain_of_Leadership_Role">
+                            <ero:is_temporal_region_of>
+                              <event:GainOfRole rdf:ID="Rashidis_GainOf_Leadership_of_Yemen_Cell">
+                                <ero:occurs_on rdf:resource="#TemporalInterval_of_Rashidis_gain_of_Leadership_Role"/>
+                                <ro:has_participant>
+                                  <agent:OrganizationLeaderRole rdf:ID="Rashidis_Organization_Leader_Role">
+                                    <ro:participates_in rdf:resource="#Rashidis_GainOf_Leadership_of_Yemen_Cell"/>
+                                    <ero:role_of rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <ero:inheres_in rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </agent:OrganizationLeaderRole>
+                                </ro:has_participant>
+                                <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                              </event:GainOfRole>
+                            </ero:is_temporal_region_of>
+                            <time:interval_is_after rdf:resource="#TemporalInterval_of_al-Rashidis_Change_of_Residence_to_Omdurman"/>
+                            <time:interval_during>
+                              <time:Year rdf:ID="Year_1993">
+                                <time:interval_contains rdf:resource="#TemporalInterval_of_Rashidis_gain_of_Leadership_Role"/>
+                                <time:interval_contains rdf:resource="#TemporalInterval_of_al-Rashidis_Change_of_Residence_to_Omdurman"/>
+                              </time:Year>
+                            </time:interval_during>
+                          </span:TemporalInterval>
+                        </time:interval_is_before>
+                        <ero:is_temporal_region_of rdf:resource="#al-Rashidis_Change_of_Residence_to_Omdurman"/>
+                        <time:interval_during rdf:resource="#Year_1993"/>
+                      </span:TemporalInterval>
+                    </ero:occurs_on>
+                    <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                    <ro:has_participant rdf:resource="#Hafsah_Sad_Rashwan"/>
+                  </event:ActOfChangeOfResidence>
+                </ro:participates_in>
+                <ro:participates_in>
+                  <event:ActOfChangeOfResidence rdf:ID="al-Rashidis_Change_of_Residence_to_Peshawar">
+                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                    <ero:occurs_at>
+                      <geo:CountryPart rdf:ID="Peshawar">
+                        <ero:is_site_of rdf:resource="#al-Rashidis_Change_of_Residence_to_Peshawar"/>
+                        <ro:part_of rdf:resource="#Pakistan"/>
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#City"/>
+                      </geo:CountryPart>
+                    </ero:occurs_at>
+                    <ro:has_participant rdf:resource="#Hafsah_Sad_Rashwan"/>
+                    <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                  </event:ActOfChangeOfResidence>
+                </ro:participates_in>
+                <agent:has_familial_relationship_to rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                <agent:is_sister_of rdf:resource="#Wife_of_Abd_al_Salam"/>
+                <agent:is_wife_of rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                <ro:participates_in>
+                  <event:ActOfChangeOfResidence rdf:ID="al-Rashidis_Change_of_Residence_to_Jeddah">
+                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                    <ero:occurs_at>
+                      <geo:CountryPart rdf:ID="Jeddah">
+                        <ero:is_site_of rdf:resource="#al-Rashidis_Change_of_Residence_to_Jeddah"/>
+                        <ero:is_site_of>
+                          <event:ActOfInhabitancy rdf:ID="al-Rashidi_Jeddah_Inhabitancy">
+                            <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                            <ero:occurs_on>
+                              <time:Month rdf:ID="Month_in_Jeddah">
+                                <ero:is_temporal_region_of rdf:resource="#al-Rashidi_Jeddah_Inhabitancy"/>
+                              </time:Month>
+                            </ero:occurs_on>
+                            <ero:occurs_at rdf:resource="#Jeddah"/>
+                            <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                            <ro:has_participant rdf:resource="#Hafsah_Sad_Rashwan"/>
+                            <ro:has_participant>
+                              <artifact:House rdf:ID="Bin_Ladin_Jeddah_House">
+                                <ro:participates_in rdf:resource="#al-Rashidi_Jeddah_Inhabitancy"/>
+                              </artifact:House>
+                            </ro:has_participant>
+                          </event:ActOfInhabitancy>
+                        </ero:is_site_of>
+                        <ro:part_of>
+                          <geo:Country rdf:ID="Saudi_Arabia">
+                            <ro:has_part rdf:resource="#Jeddah"/>
+                            <ro:has_part>
+                              <geo:CountryPart rdf:ID="Medina">
+                                <ero:is_site_of>
+                                  <event:ActOfChangeOfResidence rdf:ID="al-Rashidis_Change_of_Residence_to_Medina">
+                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <ero:occurs_at rdf:resource="#Medina"/>
+                                    <ro:has_participant rdf:resource="#Hafsah_Sad_Rashwan"/>
+                                    <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </event:ActOfChangeOfResidence>
+                                </ero:is_site_of>
+                                <ero:is_site_of>
+                                  <event:ActOfInhabitancy rdf:ID="al-Rashidi_Medina_Inhabitancy">
+                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <ero:occurs_at rdf:resource="#Medina"/>
+                                    <ero:occurs_on>
+                                      <time:MultiDayTemporalInterval rdf:ID="Ten_Days_in_Medina">
+                                        <time:interval_is_before>
+                                          <span:TemporalInterval rdf:ID="TemporalInterval_of_ThirdParty_Purchase_of_Tickets">
+                                            <ero:is_temporal_region_of>
+                                              <event:ActOfPurchasing rdf:ID="ThirdParty_ActOfPurchasing_Tickets">
+                                                <ro:has_participant>
+                                                  <artifact:InstrumentByFunction rdf:ID="Tickets_for_Rashidi_and_Family">
+                                                    <airs:is_used_by rdf:resource="#Hafsah_Sad_Rashwan"/>
+                                                    <airs:is_used_by rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                                    <ro:participates_in rdf:resource="#ThirdParty_ActOfPurchasing_Tickets"/>
+                                                  </artifact:InstrumentByFunction>
+                                                </ro:has_participant>
+                                                <ro:has_participant>
+                                                  <agent:Citizen rdf:ID="A_third_party">
+                                                    <ro:agent_in rdf:resource="#ThirdParty_ActOfPurchasing_Tickets"/>
+                                                    <ro:participates_in rdf:resource="#ThirdParty_ActOfPurchasing_Tickets"/>
+                                                    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Agent"/>
+                                                    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                                                  </agent:Citizen>
+                                                </ro:has_participant>
+                                                <ero:occurs_on rdf:resource="#TemporalInterval_of_ThirdParty_Purchase_of_Tickets"/>
+                                                <ro:has_agent rdf:resource="#A_third_party"/>
+                                              </event:ActOfPurchasing>
+                                            </ero:is_temporal_region_of>
+                                            <time:interval_is_after rdf:resource="#Ten_Days_in_Medina"/>
+                                          </span:TemporalInterval>
+                                        </time:interval_is_before>
+                                        <ero:is_temporal_region_of rdf:resource="#al-Rashidi_Medina_Inhabitancy"/>
+                                      </time:MultiDayTemporalInterval>
+                                    </ero:occurs_on>
+                                    <ro:has_participant rdf:resource="#Hafsah_Sad_Rashwan"/>
+                                    <ro:has_participant>
+                                      <artifact:House rdf:ID="Matawi_Medina_House">
+                                        <ro:participates_in rdf:resource="#al-Rashidi_Medina_Inhabitancy"/>
+                                      </artifact:House>
+                                    </ro:has_participant>
+                                    <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </event:ActOfInhabitancy>
+                                </ero:is_site_of>
+                                <ro:part_of rdf:resource="#Saudi_Arabia"/>
+                                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#City"/>
+                              </geo:CountryPart>
+                            </ro:has_part>
+                          </geo:Country>
+                        </ro:part_of>
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#City"/>
+                      </geo:CountryPart>
+                    </ero:occurs_at>
+                    <ro:has_participant rdf:resource="#Hafsah_Sad_Rashwan"/>
+                    <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                  </event:ActOfChangeOfResidence>
+                </ro:participates_in>
+                <agent:has_familial_relationship_to rdf:resource="#Wife_of_Abd_al_Salam"/>
+                <ro:participates_in>
+                  <event:ActOfChangeOfResidence rdf:ID="al-Rashidis_Change_of_Residence_to_Bayt_al-Shabab">
+                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                    <ero:occurs_on>
+                      <span:TemporalInterval rdf:ID="TemporalInterval_of_al-Rashidis_Change_of_Residence_to_Bayt_al-Shabab">
+                        <ero:is_temporal_region_of rdf:resource="#al-Rashidis_Change_of_Residence_to_Bayt_al-Shabab"/>
+                        <time:interval_during>
+                          <time:MultiMonthTemporalInterval rdf:ID="Late_1992">
+                            <time:interval_contains rdf:resource="#TemporalInterval_of_al-Rashidis_Change_of_Residence_to_Bayt_al-Shabab"/>
+                          </time:MultiMonthTemporalInterval>
+                        </time:interval_during>
+                      </span:TemporalInterval>
+                    </ero:occurs_on>
+                    <ro:has_participant rdf:resource="#Hafsah_Sad_Rashwan"/>
+                    <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                    <ero:occurs_at>
+                      <geo:CountryPart rdf:ID="Bayt_al-Shabab">
+                        <ero:is_site_of>
+                          <event:ActOfInhabitancy rdf:ID="al-Rashidi_Bayt_al-Shabab_Inhabitancy">
+                            <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                            <ro:has_participant rdf:resource="#Hafsah_Sad_Rashwan"/>
+                            <ero:occurs_on>
+                              <time:MultiMonthTemporalInterval rdf:ID="Ten_Months_in_Yemen">
+                                <ero:is_temporal_region_of rdf:resource="#al-Rashidi_Bayt_al-Shabab_Inhabitancy"/>
+                              </time:MultiMonthTemporalInterval>
+                            </ero:occurs_on>
+                            <ero:occurs_at rdf:resource="#Bayt_al-Shabab"/>
+                            <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                          </event:ActOfInhabitancy>
+                        </ero:is_site_of>
+                        <ero:is_site_of rdf:resource="#al-Rashidis_Change_of_Residence_to_Bayt_al-Shabab"/>
+                        <ro:part_of>
+                          <geo:Country rdf:ID="Yemen">
+                            <ro:has_part rdf:resource="#Bayt_al-Shabab"/>
+                          </geo:Country>
+                        </ro:part_of>
+                      </geo:CountryPart>
+                    </ero:occurs_at>
+                  </event:ActOfChangeOfResidence>
+                </ro:participates_in>
+                <agent:is_sibling_of rdf:resource="#Wife_of_Abd_al_Salam"/>
+                <airs:receives>
+                  <event:ActOfReporting rdf:ID="al-Zawahiris_brother_report_to_al-Rashidis_wife">
+                    <ro:has_participant rdf:resource="#Hafsah_Sad_Rashwan"/>
+                    <ro:has_participant>
+                      <agent:Citizen rdf:ID="Brother_of_Ayman_al-Zawahiri">
+                        <airs:sends rdf:resource="#al-Zawahiris_brother_report_to_al-Rashidis_wife"/>
+                        <ro:participates_in rdf:resource="#al-Zawahiris_brother_report_to_al-Rashidis_wife"/>
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Agent"/>
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                      </agent:Citizen>
+                    </ro:has_participant>
+                    <airs:has_sender rdf:resource="#Brother_of_Ayman_al-Zawahiri"/>
+                    <airs:has_recipient rdf:resource="#Hafsah_Sad_Rashwan"/>
+                  </event:ActOfReporting>
+                </airs:receives>
+                <ro:participates_in rdf:resource="#al-Rashidi_Jeddah_Inhabitancy"/>
+                <ro:participates_in rdf:resource="#al-Rashidis_Change_of_Residence_to_Medina"/>
+                <ro:participates_in rdf:resource="#al-Rashidi_Bayt_al-Shabab_Inhabitancy"/>
+                <ro:participates_in rdf:resource="#al-Rashidi_Medina_Inhabitancy"/>
+                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Citizen"/>
+                <airs:uses rdf:resource="#Tickets_for_Rashidi_and_Family"/>
+                <ro:participates_in>
+                  <event:Marriage rdf:ID="al-Rashidis_Marriage">
+                    <ero:occurs_on>
+                      <span:TemporalInterval rdf:ID="TemporalInterval_Rashidis_Marriage">
+                        <ero:is_temporal_region_of rdf:resource="#al-Rashidis_Marriage"/>
+                        <time:interval_during>
+                          <time:Year rdf:ID="Year_1983">
+                            <time:interval_contains rdf:resource="#TemporalInterval_Rashidis_Marriage"/>
+                          </time:Year>
+                        </time:interval_during>
+                      </span:TemporalInterval>
+                    </ero:occurs_on>
+                    <ro:has_participant rdf:resource="#Hafsah_Sad_Rashwan"/>
+                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                  </event:Marriage>
+                </ro:participates_in>
+                <agent:is_spouse_of rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                <ro:participates_in rdf:resource="#al-Zawahiris_brother_report_to_al-Rashidis_wife"/>
+              </agent:Agent>
+            </agent:is_sibling_of>
+            <agent:is_spouse_of rdf:resource="#Abd_al-Hamid_Abd_al-Salam"/>
+            <agent:has_familial_relationship_to rdf:resource="#Hafsah_Sad_Rashwan"/>
+            <agent:is_wife_of rdf:resource="#Abd_al-Hamid_Abd_al-Salam"/>
+            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+          </agent:Citizen>
+        </agent:has_familial_relationship_to>
+        <agent:is_husband_of rdf:resource="#Wife_of_Abd_al_Salam"/>
+        <ro:agent_in rdf:resource="#Assassination_of_Anwar_al-Sadat"/>
+        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Citizen"/>
+        <agent:is_affiliated_with rdf:resource="#Egyptian_Islamic_Jihad"/>
+        <ro:part_of rdf:resource="#Assassins_of_Anwar_al-Sadat"/>
+        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+        <agent:is_spouse_of rdf:resource="#Wife_of_Abd_al_Salam"/>
+        <ro:participates_in rdf:resource="#Assassination_of_Anwar_al-Sadat"/>
+      </agent:Agent>
+    </ro:has_part>                                            </agent:GroupOfPersons>
+                                                            </ro:part_of>
+                                                            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Citizen"/>
+                                                            <ro:participates_in rdf:resource="#Assassination_of_Anwar_al-Sadat"/>
+                                                            <agent:is_affiliated_with rdf:resource="#Egyptian_Islamic_Jihad"/>
+                                                            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                                                          </agent:Agent>
+                                                        </ro:has_participant>
+                                                        <ro:has_participant rdf:resource="#Assassins_of_Anwar_al-Sadat"/>
+                                                        <ro:has_participant rdf:resource="#Abd_al-Hamid_Abd_al-Salam"/>
+                                                        <ro:has_agent rdf:resource="#Assassins_of_Anwar_al-Sadat"/>
+                                                        <ro:has_participant>
+                                                          <agent:Citizen rdf:ID="Anwar_al-Sadat">
+                                                            <ro:participates_in rdf:resource="#Assassination_of_Anwar_al-Sadat"/>
+                                                            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                                                          </agent:Citizen>
+                                                        </ro:has_participant>
+                                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/EventOntology#ActOfAssassination"/>
+                                                        <ro:has_agent rdf:resource="#Abd_al-Hamid_Abd_al-Salam"/>
+                                                        <ro:has_agent rdf:resource="#Egyptian_National_Police_Officer"/>
+                                                        <ero:occurs_on rdf:resource="#October_1981"/>
+                                                      </event:Cause>
+                                                    </ero:is_temporal_region_of>
+                                                  </time:Month>
+                                                </time:interval_during>
+                                              </span:TemporalInterval>
+                                            </time:interval_is_after>
+                                          </span:TemporalInterval>
+                                        </ero:occurs_on>
+                                        <ro:has_participant rdf:resource="#Rashidis_Police_Officer_Role"/>
+                                        <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                      </event:DecreaseOfRole>
+                                    </ro:participates_in>
+                                    <ero:inheres_in rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#PoliceOfficerRole"/>
+                                  </quality:LegalRole>
+                                </ero:has_role>
+                                <ero:bearer_of>
+                                  <agent:OrganizationDeputyLeaderRole rdf:ID="Rashidis_Deputy_Leader_Role">
+                                    <ero:inheres_in rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <ero:role_of rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </agent:OrganizationDeputyLeaderRole>
+                                </ero:bearer_of>
+                                <ro:participates_in rdf:resource="#al-Rashidis_Change_of_Residence_to_Peshawar"/>
+                                <ro:agent_in rdf:resource="#Battle_of_Jaji"/>
+                                <ro:participates_in>
+                                  <event:Cause rdf:ID="Ferry_Accident">
+                                    <ero:is_cause_of>
+                                      <event:Effect rdf:ID="al-Rashidis_Death">
+                                        <ero:caused_by rdf:resource="#Ferry_Accident"/>
+                                        <ero:occurs_at>
+                                          <geo:GeospatialLocation rdf:ID="Location_of_Lake_Victoria">
+                                            <ero:is_site_of rdf:resource="#Ferry_Accident"/>
+                                            <ero:is_site_of rdf:resource="#al-Rashidis_Death"/>
+                                            <ero:is_site_of>
+                                              <event:Effect rdf:ID="Death_of_Ferry_Passengers">
+                                                <ro:has_participant>
+                                                  <cto:GroupOfCiviliansKilled rdf:ID="Group_Of_1000_Civilians_Killed">
+                                                    <ro:participates_in rdf:resource="#Death_of_Ferry_Passengers"/>
+                                                  </cto:GroupOfCiviliansKilled>
+                                                </ro:has_participant>
+                                                <ero:occurs_on>
+                                                  <time:Day rdf:ID="May_21_1996">
+                                                    <time:interval_is_before>
+                                                      <span:TemporalInterval rdf:ID="TemporalInterval_of_Atef_succeeding_Rashidi_as_Military_Commander">
+                                                        <ero:is_temporal_region_of>
+                                                          <event:GainOfRole rdf:ID="Atefs_GainOf_al-Qaida_Military_Commander_Role">
+                                                            <ro:has_participant>
+                                                              <agent:Agent rdf:ID="Muhammad_Atef">
+    <ero:has_role>
+      <agent:OrganizationMilitaryLeaderRole rdf:ID="Atefs_Military_Commander_Role">
+        <ero:role_of rdf:resource="#Muhammad_Atef"/>
+        <ero:inheres_in rdf:resource="#Muhammad_Atef"/>
+        <ro:participates_in rdf:resource="#Atefs_GainOf_al-Qaida_Military_Commander_Role"/>
+      </agent:OrganizationMilitaryLeaderRole>
+    </ero:has_role>
+    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#OrganizationMember"/>
+    <ero:bearer_of rdf:resource="#Atefs_Military_Commander_Role"/>
+    <ro:agent_in>
+      <event:ActOfReconnaissance rdf:ID="Muhammed_Atefs_Reconnaissance_Mission">
+        <ro:has_participant rdf:resource="#Muhammad_Atef"/>
+        <ro:has_agent rdf:resource="#Muhammad_Atef"/>
+      </event:ActOfReconnaissance>
+    </ro:agent_in>
+    <ro:participates_in>
+      <event:IntentionalAct rdf:ID="Establishment_of_Fishing_Business">
+        <ro:has_participant>
+          <agent:Citizen rdf:ID="Mohammed_Sadiq_Odeh">
+            <ro:agent_in rdf:resource="#Establishment_of_Fishing_Business"/>
+            <ro:participates_in rdf:resource="#Establishment_of_Fishing_Business"/>
+            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Agent"/>
+            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+          </agent:Citizen>
+        </ro:has_participant>
+        <ro:has_participant rdf:resource="#Muhammad_Atef"/>
+        <ero:has_output>
+          <agent:FrontOrganization rdf:ID="Fishing_Business">
+            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#InformationBearingEntity"/>
+            <ero:is_output_of rdf:resource="#Establishment_of_Fishing_Business"/>
+            <agent:is_affiliated_with>
+              <agent:GroupOfOrganizations rdf:ID="al-Qaidas_East_African_Cells">
+                <agent:has_affiliate>
+                  <agent:FrontOrganization rdf:ID="Tanzanite_King">
+                    <ero:has_function>
+                      <airs:OrganizationalObjective rdf:ID="Tanzanite_King_FundraisingSkill">
+                        <ero:inheres_in rdf:resource="#Tanzanite_King"/>
+                        <ero:function_of rdf:resource="#Tanzanite_King"/>
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#FundraisingSkill"/>
+                      </airs:OrganizationalObjective>
+                    </ero:has_function>
+                    <ero:has_function>
+                      <airs:OrganizationalObjective rdf:ID="Tanzanite_King_MoneyLaunderingSkill">
+                        <ero:inheres_in rdf:resource="#Tanzanite_King"/>
+                        <ero:function_of rdf:resource="#Tanzanite_King"/>
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#MoneyLaunderingSkill"/>
+                      </airs:OrganizationalObjective>
+                    </ero:has_function>
+                    <ro:participates_in>
+                      <event:IntentionalAct rdf:ID="Establishment_of_Tanzanite_King">
+                        <ro:has_participant rdf:resource="#Tanzanite_King"/>
+                        <ro:has_participant>
+                          <agent:OrganizationMember rdf:ID="Wadih_al-Hage">
+                            <ero:bearer_of>
+                              <agent:OrganizationFoundingMemberRole rdf:ID="al-Hages_Founding_Member_Role">
+                                <ero:role_of rdf:resource="#Wadih_al-Hage"/>
+                                <ero:inheres_in rdf:resource="#Wadih_al-Hage"/>
+                              </agent:OrganizationFoundingMemberRole>
+                            </ero:bearer_of>
+                            <agent:is_affiliated_with>
+                              <agent:Organization rdf:ID="Mercy_International_Relief_Agency">
+                                <agent:has_affiliate rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                <agent:has_affiliate rdf:resource="#Wadih_al-Hage"/>
+                                <ro:located_in>
+                                  <geo:Subcontinent rdf:ID="Horn_Of_Africa">
+                                    <ro:location_of>
+                                      <agent:Organization rdf:ID="Help_Africa_People">
+                                        <agent:has_affiliate rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                        <agent:has_affiliate rdf:resource="#Wadih_al-Hage"/>
+                                        <ro:located_in rdf:resource="#Horn_Of_Africa"/>
+                                      </agent:Organization>
+                                    </ro:location_of>
+                                    <ro:location_of rdf:resource="#Mercy_International_Relief_Agency"/>
+                                    <ro:part_of>
+                                      <geo:Continent rdf:ID="Africa">
+                                        <ro:has_part rdf:resource="#Horn_Of_Africa"/>
+                                      </geo:Continent>
+                                    </ro:part_of>
+                                  </geo:Subcontinent>
+                                </ro:located_in>
+                              </agent:Organization>
+                            </agent:is_affiliated_with>
+                            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Citizen"/>
+                            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Agent"/>
+                            <ero:has_role>
+                              <agent:OrganizationFacilitatorRole rdf:ID="al-Hages_Organization_Facilitator_Role">
+                                <ero:role_of rdf:resource="#Wadih_al-Hage"/>
+                                <ero:inheres_in rdf:resource="#Wadih_al-Hage"/>
+                              </agent:OrganizationFacilitatorRole>
+                            </ero:has_role>
+                            <ro:agent_in rdf:resource="#Establishment_of_Tanzanite_King"/>
+                            <ero:bearer_of rdf:resource="#al-Hages_Organization_Facilitator_Role"/>
+                            <ro:participates_in rdf:resource="#Establishment_of_Tanzanite_King"/>
+                            <ero:has_role rdf:resource="#al-Hages_Founding_Member_Role"/>
+                            <agent:is_affiliated_with rdf:resource="#Help_Africa_People"/>
+                          </agent:OrganizationMember>
+                        </ro:has_participant>
+                        <ero:has_output rdf:resource="#Tanzanite_King"/>
+                        <ero:occurs_on>
+                          <span:TemporalInterval rdf:ID="TemporalInterval_of_Establishment_of_Tanzanite_King">
+                            <ero:is_temporal_region_of rdf:resource="#Establishment_of_Tanzanite_King"/>
+                            <time:interval_during>
+                              <time:Year rdf:ID="Year_1994">
+                                <time:interval_contains>
+                                  <span:TemporalInterval rdf:ID="TemporalInterval_of_Establishment_of_Fishing_Business">
+                                    <ero:is_temporal_region_of rdf:resource="#Establishment_of_Fishing_Business"/>
+                                    <time:interval_during rdf:resource="#Year_1994"/>
+                                  </span:TemporalInterval>
+                                </time:interval_contains>
+                                <time:interval_contains rdf:resource="#TemporalInterval_of_Establishment_of_Tanzanite_King"/>
+                              </time:Year>
+                            </time:interval_during>
+                          </span:TemporalInterval>
+                        </ero:occurs_on>
+                        <ro:has_agent rdf:resource="#Wadih_al-Hage"/>
+                      </event:IntentionalAct>
+                    </ro:participates_in>
+                    <agent:is_affiliated_with rdf:resource="#al-Qaidas_East_African_Cells"/>
+                    <ero:bearer_of rdf:resource="#Tanzanite_King_MoneyLaunderingSkill"/>
+                    <ero:bearer_of>
+                      <airs:OrganizationalObjective rdf:ID="Tanzanite_King_RawMaterialExtractionRole">
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/QualityOntology#RawMaterialExtractionRole"/>
+                        <ero:inheres_in rdf:resource="#Tanzanite_King"/>
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#RawMaterialExtractionAgentRole"/>
+                      </airs:OrganizationalObjective>
+                    </ero:bearer_of>
+                    <ero:is_output_of rdf:resource="#Establishment_of_Tanzanite_King"/>
+                    <ero:bearer_of rdf:resource="#Tanzanite_King_FundraisingSkill"/>
+                    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#InformationBearingEntity"/>
+                    <agent:has_affiliate rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                  </agent:FrontOrganization>
+                </agent:has_affiliate>
+                <agent:has_affiliate>
+                  <info:InformationBearingEntity rdf:ID="Taheer_Ltd">
+                    <ero:has_function>
+                      <airs:OrganizationalObjective rdf:ID="Taheer_Ltd_FundraisingSkill">
+                        <ero:inheres_in rdf:resource="#Taheer_Ltd"/>
+                        <ero:function_of rdf:resource="#Taheer_Ltd"/>
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#FundraisingSkill"/>
+                      </airs:OrganizationalObjective>
+                    </ero:has_function>
+                    <ro:participates_in>
+                      <event:IntentionalAct rdf:ID="Establishment_of_Taheer_Ltd">
+                        <ro:has_participant rdf:resource="#Taheer_Ltd"/>
+                        <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                        <ero:has_output rdf:resource="#Taheer_Ltd"/>
+                        <ero:occurs_on>
+                          <span:TemporalInterval rdf:ID="TemporalInterval_of_Establishment_of_Taheer_Ltd">
+                            <ero:is_temporal_region_of rdf:resource="#Establishment_of_Taheer_Ltd"/>
+                          </span:TemporalInterval>
+                        </ero:occurs_on>
+                        <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                      </event:IntentionalAct>
+                    </ro:participates_in>
+                    <agent:is_affiliated_with rdf:resource="#al-Qaidas_East_African_Cells"/>
+                    <ero:bearer_of>
+                      <airs:OrganizationalObjective rdf:ID="Taheer_Ltd_MoneyLaunderingSkill">
+                        <ero:inheres_in rdf:resource="#Taheer_Ltd"/>
+                        <ero:function_of rdf:resource="#Taheer_Ltd"/>
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#MoneyLaunderingSkill"/>
+                      </airs:OrganizationalObjective>
+                    </ero:bearer_of>
+                    <ero:bearer_of>
+                      <airs:OrganizationalObjective rdf:ID="Taheer_Ltd_RawMaterialExtractionRole">
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/QualityOntology#RawMaterialExtractionRole"/>
+                        <ero:inheres_in rdf:resource="#Taheer_Ltd"/>
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#RawMaterialExtractionAgentRole"/>
+                      </airs:OrganizationalObjective>
+                    </ero:bearer_of>
+                    <ero:is_output_of rdf:resource="#Establishment_of_Taheer_Ltd"/>
+                    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#FrontOrganization"/>
+                    <ero:has_function rdf:resource="#Taheer_Ltd_MoneyLaunderingSkill"/>
+                    <ero:bearer_of rdf:resource="#Taheer_Ltd_FundraisingSkill"/>
+                  </info:InformationBearingEntity>
+                </agent:has_affiliate>
+                <agent:has_affiliate rdf:resource="#Fishing_Business"/>
+              </agent:GroupOfOrganizations>
+            </agent:is_affiliated_with>
+            <ero:bearer_of>
+              <airs:OrganizationalObjective rdf:ID="Fishing_Business_MoneyLaunderingSkill">
+                <ero:inheres_in rdf:resource="#Fishing_Business"/>
+                <ero:function_of rdf:resource="#Fishing_Business"/>
+                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#MoneyLaunderingSkill"/>
+              </airs:OrganizationalObjective>
+            </ero:bearer_of>
+            <ro:participates_in rdf:resource="#Establishment_of_Fishing_Business"/>
+            <ero:bearer_of>
+              <quality:AgriculturalRole rdf:ID="FishingBusiness_AgriculturalRole">
+                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AIRSMidLevelOntology#OrganizationalObjective"/>
+                <ero:inheres_in rdf:resource="#Fishing_Business"/>
+                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#AgriculturalAgentRole"/>
+              </quality:AgriculturalRole>
+            </ero:bearer_of>
+            <ero:has_function>
+              <airs:OrganizationalObjective rdf:ID="Fishing_Business_FundraisingSkill">
+                <ero:inheres_in rdf:resource="#Fishing_Business"/>
+                <ero:function_of rdf:resource="#Fishing_Business"/>
+                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#FundraisingSkill"/>
+              </airs:OrganizationalObjective>
+            </ero:has_function>
+            <ero:has_function rdf:resource="#Fishing_Business_MoneyLaunderingSkill"/>
+            <ero:bearer_of rdf:resource="#Fishing_Business_FundraisingSkill"/>
+          </agent:FrontOrganization>
+        </ero:has_output>
+        <ro:has_agent rdf:resource="#Muhammad_Atef"/>
+        <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+        <ero:occurs_at>
+          <geo:CountryPart rdf:ID="Mombassa">
+            <ero:is_site_of rdf:resource="#Establishment_of_Fishing_Business"/>
+            <ro:part_of>
+              <geo:Country rdf:ID="Kenya">
+                <ro:has_part rdf:resource="#Mombassa"/>
+              </geo:Country>
+            </ro:part_of>
+            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#City"/>
+          </geo:CountryPart>
+        </ero:occurs_at>
+        <ero:occurs_on rdf:resource="#TemporalInterval_of_Establishment_of_Fishing_Business"/>
+        <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+        <ro:has_participant rdf:resource="#Fishing_Business"/>
+        <ro:has_agent rdf:resource="#Mohammed_Sadiq_Odeh"/>
+      </event:IntentionalAct>
+    </ro:participates_in>
+    <ro:participates_in rdf:resource="#Atefs_GainOf_al-Qaida_Military_Commander_Role"/>
+    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Citizen"/>
+    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+    <ro:participates_in rdf:resource="#Muhammed_Atefs_Reconnaissance_Mission"/>
+    <ro:participates_in rdf:resource="#First_Recruits_allegiance_to_al-Qaida"/>
+    <ro:agent_in rdf:resource="#Establishment_of_Fishing_Business"/>
+                                                              </agent:Agent>
+                                                            </ro:has_participant>
+                                                            <ro:has_participant rdf:resource="#Atefs_Military_Commander_Role"/>
+                                                            <ero:occurs_on rdf:resource="#TemporalInterval_of_Atef_succeeding_Rashidi_as_Military_Commander"/>
+                                                          </event:GainOfRole>
+                                                        </ero:is_temporal_region_of>
+                                                        <time:interval_is_after rdf:resource="#May_21_1996"/>
+                                                      </span:TemporalInterval>
+                                                    </time:interval_is_before>
+                                                    <ero:is_temporal_region_of rdf:resource="#al-Rashidis_Death"/>
+                                                    <ero:is_temporal_region_of rdf:resource="#Ferry_Accident"/>
+                                                    <time:interval_is_before>
+                                                      <span:TemporalInterval rdf:ID="TemporalInterval_of_Zawahiris_brothers_report_to_Rashidis_wife">
+                                                        <time:interval_is_after rdf:resource="#May_21_1996"/>
+                                                      </span:TemporalInterval>
+                                                    </time:interval_is_before>
+                                                    <ero:is_temporal_region_of rdf:resource="#Death_of_Ferry_Passengers"/>
+                                                  </time:Day>
+                                                </ero:occurs_on>
+                                                <ero:occurs_at rdf:resource="#Location_of_Lake_Victoria"/>
+                                                <ero:caused_by rdf:resource="#Ferry_Accident"/>
+                                                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/EventOntology#Death"/>
+                                              </event:Effect>
+                                            </ero:is_site_of>
+                                            <ro:location_of>
+                                              <geo:Lake rdf:ID="Lake_Victoria">
+                                                <ro:located_in rdf:resource="#Location_of_Lake_Victoria"/>
+                                              </geo:Lake>
+                                            </ro:location_of>
+                                          </geo:GeospatialLocation>
+                                        </ero:occurs_at>
+                                        <ero:occurs_on rdf:resource="#May_21_1996"/>
+                                        <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/EventOntology#Death"/>
+                                      </event:Effect>
+                                    </ero:is_cause_of>
+                                    <ero:is_cause_of rdf:resource="#Death_of_Ferry_Passengers"/>
+                                    <ero:occurs_at rdf:resource="#Location_of_Lake_Victoria"/>
+                                    <ero:occurs_on rdf:resource="#May_21_1996"/>
+                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/EventOntology#UnintentionalAct"/>
+                                  </event:Cause>
+                                </ro:participates_in>
+                                <ro:participates_in rdf:resource="#al-Rashidi_Medina_Inhabitancy"/>
+                                <ro:agent_in rdf:resource="#Establishment_of_Fishing_Business"/>
+                                <agent:is_affiliated_with rdf:resource="#Help_Africa_People"/>
+                                <ero:has_role rdf:resource="#Rashidis_Organization_Leader_Role"/>
+                                <ro:agent_in rdf:resource="#al-Rashidi_Medina_Inhabitancy"/>
+                                <ero:bearer_of>
+                                  <agent:OrganizationFoundingMemberRole rdf:ID="Rashidis_Founding_Member_Role">
+                                    <ero:inheres_in rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <ero:role_of rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </agent:OrganizationFoundingMemberRole>
+                                </ero:bearer_of>
+                                <ero:has_role>
+                                  <agent:TerroristRole rdf:ID="Rashidi_Terrorist_Role">
+                                    <ero:inheres_in rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <ero:role_of rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </agent:TerroristRole>
+                                </ero:has_role>
+                                <agent:has_familial_relationship_to rdf:resource="#Hafsah_Sad_Rashwan"/>
+                                <info:is_subject_of>
+                                  <airs:PersonName rdf:ID="al-Rashidi_Person_Name">
+                                    <ero:inheres_in>
+                                      <airs:PersonNameBearer rdf:ID="al-Rashidi_PersonNameBearer">
+                                        <info:has_text_value rdf:datatype=
+                                        "http://www.w3.org/2001/XMLSchema#string"
+                                        >Ali Amin 'Ali al-Rashidi</info:has_text_value>
+                                        <ero:bearer_of rdf:resource="#al-Rashidi_Person_Name"/>
+                                      </airs:PersonNameBearer>
+                                    </ero:inheres_in>
+                                    <ero:inheres_in>
+                                      <airs:PersonPseudonymBearer rdf:ID="al-Rashidi_PersonPseudonymBearer_2">
+                                        <ero:bearer_of rdf:resource="#al-Rashidi_Person_Name"/>
+                                        <info:has_text_value rdf:datatype=
+                                        "http://www.w3.org/2001/XMLSchema#string"
+                                        >Abu 'Ubayda al-Banshiri</info:has_text_value>
+                                      </airs:PersonPseudonymBearer>
+                                    </ero:inheres_in>
+                                    <ero:inheres_in>
+                                      <airs:PersonPseudonymBearer rdf:ID="al-Rashidi_PersonPseudonymBearer_3">
+                                        <ero:bearer_of rdf:resource="#al-Rashidi_Person_Name"/>
+                                        <info:has_text_value rdf:datatype=
+                                        "http://www.w3.org/2001/XMLSchema#string"
+                                        >Aadil Habib</info:has_text_value>
+                                      </airs:PersonPseudonymBearer>
+                                    </ero:inheres_in>
+                                    <ero:inheres_in>
+                                      <airs:PersonPseudonymBearer rdf:ID="al-Rashidi_PersonPseudonymBearer1">
+                                        <info:has_text_value rdf:datatype=
+                                        "http://www.w3.org/2001/XMLSchema#string"
+                                        >Abu 'Ubayda</info:has_text_value>
+                                        <ero:bearer_of rdf:resource="#al-Rashidi_Person_Name"/>
+                                      </airs:PersonPseudonymBearer>
+                                    </ero:inheres_in>
+                                    <info:is_about rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <info:designates rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </airs:PersonName>
+                                </info:is_subject_of>
+                                <ro:participates_in rdf:resource="#Establishment_of_Fishing_Business"/>
+                                <ero:bearer_of rdf:resource="#Rashidi_Terrorist_Role"/>
+                                <agent:is_affiliated_with rdf:resource="#Mercy_International_Relief_Agency"/>
+                                <ro:agent_in rdf:resource="#al-Rashidi_Bayt_al-Shabab_Inhabitancy"/>
+                                <ro:participates_in>
+                                  <event:ActOfWarning rdf:ID="Rashidis_concern_regarding_Jihadist_Disputes">
+                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </event:ActOfWarning>
+                                </ro:participates_in>
+                                <airs:uses rdf:resource="#Tickets_for_Rashidi_and_Family"/>
+                                <ro:agent_in rdf:resource="#al-Rashidis_Change_of_Residence_to_Bayt_al-Shabab"/>
+                                <airs:uses>
+                                  <artifact:LegalInstrumentByFunction rdf:ID="Work_Contract_for_Relief_Agency_Employment">
+                                    <airs:is_used_by rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </artifact:LegalInstrumentByFunction>
+                                </airs:uses>
+                                <ro:agent_in rdf:resource="#al-Qaidas_Inception"/>
+                                <ro:participates_in>
+                                  <event:ActOfCommanding rdf:ID="al-Rashidis_order_to_al-Nalfi_move_Sudanese_Cell_to_Somalia.">
+                                    <ro:has_participant>
+                                      <agent:Agent rdf:ID="Mohamed_Suleiman_al-Nalfi">
+                                        <ro:participates_in rdf:resource="#al-Rashidis_order_to_al-Nalfi_move_Sudanese_Cell_to_Somalia."/>
+                                        <airs:receives rdf:resource="#al-Rashidis_order_to_al-Nalfi_move_Sudanese_Cell_to_Somalia."/>
+                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Citizen"/>
+                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                                      </agent:Agent>
+                                    </ro:has_participant>
+                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <airs:has_sender rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <airs:has_recipient rdf:resource="#Mohamed_Suleiman_al-Nalfi"/>
+                                  </event:ActOfCommanding>
+                                </ro:participates_in>
+                                <ro:participates_in rdf:resource="#Battle_of_Jaji"/>
+                                <airs:sends rdf:resource="#al_Rashidis_order_to_al-Fadl_to_assist_Somali_Tribes"/>
+                                <ro:participates_in rdf:resource="#al-Rashidis_introduction_to_bin_Ladin"/>
+                                <ro:agent_in rdf:resource="#Rashidis_concern_regarding_Jihadist_Disputes"/>
+                                <ro:participates_in>
+                                  <event:Birth rdf:ID="al-Rashidis_Birth">
+                                    <ero:occurs_at>
+                                      <geo:CountryPart rdf:ID="Cairo">
+                                        <ero:is_site_of rdf:resource="#al-Rashidis_Birth"/>
+                                        <ro:part_of>
+                                          <geo:Country rdf:ID="Egypt">
+                                            <ro:has_part rdf:resource="#Cairo"/>
+                                          </geo:Country>
+                                        </ro:part_of>
+                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#City"/>
+                                      </geo:CountryPart>
+                                    </ero:occurs_at>
+                                    <ero:occurs_on>
+                                      <span:TemporalInterval rdf:ID="TemporalInterval_Of_Rashidis_Birth">
+                                        <ero:is_temporal_region_of rdf:resource="#al-Rashidis_Birth"/>
+                                        <time:interval_during>
+                                          <time:Month rdf:ID="May_1950">
+                                            <time:interval_contains rdf:resource="#TemporalInterval_Of_Rashidis_Birth"/>
+                                          </time:Month>
+                                        </time:interval_during>
+                                      </span:TemporalInterval>
+                                    </ero:occurs_on>
+                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </event:Birth>
+                                </ro:participates_in>
+                                <ro:participates_in rdf:resource="#al-Rashidis_Change_of_Residence_to_Bayt_al-Shabab"/>
+                                <ro:part_of>
+                                  <agent:GroupOfPersons rdf:ID="Afghan_Mujahidin">
+                                    <ro:has_part rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </agent:GroupOfPersons>
+                                </ro:part_of>
+                                <ro:participates_in rdf:resource="#al-Rashidis_Change_of_Residence_to_Jeddah"/>
+                                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#PoliceOfficer"/>
+                                <airs:sends>
+                                  <event:ActOfCommanding rdf:ID="al_Rashidis_order_to_al-Fadl_to_go_to_Somalia">
+                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <ro:has_participant rdf:resource="#Jamal_Ahmed_al-Fadl"/>
+                                    <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <airs:has_sender rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <airs:has_recipient rdf:resource="#Jamal_Ahmed_al-Fadl"/>
+                                  </event:ActOfCommanding>
+                                </airs:sends>
+                                <ro:participates_in rdf:resource="#al_Rashidis_order_to_al-Fadl_to_go_to_Somalia"/>
+                                <ro:agent_in rdf:resource="#al-Rashidi_Jeddah_Inhabitancy"/>
+                                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Terrorist"/>
+                                <ro:agent_in rdf:resource="#al-Rashidis_Change_of_Residence_to_Medina"/>
+                                <ro:participates_in>
+                                  <event:ActOfTerroristTrainingAcquisition rdf:ID="al-Rashidis_Terrorist_Training_at_Sada_Camp">
+                                    <ro:has_participant>
+                                      <artifact:TerroristTrainingCamp rdf:ID="Sada_Terrorist_Training_Camp">
+                                        <oboInOwl:ObsoleteProperty>
+                                          <artifact:TerroristTrainingCamp rdf:ID="Masada_Terrorist_Training_Camp"/>
+                                        </oboInOwl:ObsoleteProperty>
+                                        <ro:participates_in rdf:resource="#al-Rashidis_Terrorist_Training_at_Sada_Camp"/>
+                                        <ro:located_in>
+                                          <geo:GeospatialLocation rdf:ID="Location_of_Sada_Training_Camp">
+                                            <ero:is_site_of rdf:resource="#al-Rashidis_Terrorist_Training_at_Sada_Camp"/>
+                                            <ro:location_of rdf:resource="#Sada_Terrorist_Training_Camp"/>
+                                          </geo:GeospatialLocation>
+                                        </ro:located_in>
+                                        <ro:transformed_into rdf:resource="#Masada_Terrorist_Training_Camp"/>
+                                      </artifact:TerroristTrainingCamp>
+                                    </ro:has_participant>
+                                    <ero:occurs_at rdf:resource="#Location_of_Sada_Training_Camp"/>
+                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </event:ActOfTerroristTrainingAcquisition>
+                                </ro:participates_in>
+                                <ro:participates_in rdf:resource="#al-Rashidis_Change_of_Residence_to_Omdurman"/>
+                                <airs:sends rdf:resource="#al-Rashidis_order_to_al-Nalfi_move_Sudanese_Cell_to_Somalia."/>
+                                <ro:agent_in>
+                                  <event:ActOfInterpersonalRelationship rdf:ID="Rashidis_Friendship_with_Massoud">
+                                    <ro:has_participant>
+                                      <agent:Agent rdf:ID="Ahmad_Shah_Massoud">
+                                        <ro:agent_in rdf:resource="#Rashidis_Friendship_with_Massoud"/>
+                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Citizen"/>
+                                        <ro:participates_in rdf:resource="#Rashidis_Friendship_with_Massoud"/>
+                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                                      </agent:Agent>
+                                    </ro:has_participant>
+                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <ro:has_agent rdf:resource="#Ahmad_Shah_Massoud"/>
+                                    <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </event:ActOfInterpersonalRelationship>
+                                </ro:agent_in>
+                                <ro:agent_in rdf:resource="#al-Rashidis_Association_with_Egyptian_Islamic_Jihad"/>
+                                <ro:agent_in rdf:resource="#Rashidis_Friendship_with_al-Zawahiri"/>
+                                <ro:agent_in rdf:resource="#al-Rashidis_Change_of_Residence_to_Omdurman"/>
+                                <ero:bearer_of rdf:resource="#Rashidis_Organization_Leader_Role"/>
+                                <ro:agent_in rdf:resource="#Establishment_of_Taheer_Ltd"/>
+                                <ro:participates_in rdf:resource="#al-Rashidis_Change_of_Residence_to_Medina"/>
+                                <ro:part_of>
+                                  <agent:GroupOfPersons rdf:ID="Foreign_Jihadists">
+                                    <agent:has_affiliate>
+                                      <agent:Organization rdf:ID="Maktab_al-Khidamat">
+                                        <agent:is_affiliated_with rdf:resource="#Foreign_Jihadists"/>
+                                      </agent:Organization>
+                                    </agent:has_affiliate>
+                                    <ro:has_part rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </agent:GroupOfPersons>
+                                </ro:part_of>
+                                <ro:participates_in>
+                                  <event:ActOfEmployment rdf:ID="Rashidis_Construction_Employment">
+                                    <ero:occurs_on>
+                                      <time:MultiMonthTemporalInterval rdf:ID="Two_Months_After_Marriage">
+                                        <ero:is_temporal_region_of rdf:resource="#Rashidis_Construction_Employment"/>
+                                      </time:MultiMonthTemporalInterval>
+                                    </ero:occurs_on>
+                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </event:ActOfEmployment>
+                                </ro:participates_in>
+                                <ro:agent_in rdf:resource="#al-Rashidis_Change_of_Residence_to_Jeddah"/>
+                                <agent:is_affiliated_with rdf:resource="#Tanzanite_King"/>
+                                <ro:participates_in rdf:resource="#al-Rashidis_Association_with_Egyptian_Islamic_Jihad"/>
+                                <ro:participates_in>
+                                  <event:ActOfTerroristTrainingInstruction rdf:ID="Rashidis_ActOfTerroristTrainingInstruction_to_Somalis">
+                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <ro:has_participant>
+                                      <agent:GroupOfOrganizations rdf:ID="Somali_Tribes">
+                                        <ro:participates_in rdf:resource="#Rashidis_ActOfTerroristTrainingInstruction_to_Somalis"/>
+                                      </agent:GroupOfOrganizations>
+                                    </ro:has_participant>
+                                    <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </event:ActOfTerroristTrainingInstruction>
+                                </ro:participates_in>
+                                <agent:is_husband_of rdf:resource="#Hafsah_Sad_Rashwan"/>
+                                <ro:agent_in rdf:resource="#al_Rashidis_order_to_al-Fadl_to_assist_Somali_Tribes"/>
+                                <ro:participates_in>
+                                  <event:Effect rdf:ID="Rashidis_GainOf_GroupHouseAdmin_Role">
+                                    <ero:caused_by>
+                                      <event:Cause rdf:ID="al-Rashidis_Jihad_against_the_Soviets">
+                                        <ero:is_cause_of>
+                                          <event:Effect rdf:ID="Rashidis_GainOf_TrainingLeader_Role">
+                                            <ero:caused_by rdf:resource="#al-Rashidis_Jihad_against_the_Soviets"/>
+                                            <ero:occurs_on>
+                                              <span:TemporalInterval rdf:ID="TemporalInterval_of_Rashidis_gain_of_TrainingLeader_Role">
+                                                <ero:is_temporal_region_of rdf:resource="#Rashidis_GainOf_TrainingLeader_Role"/>
+                                              </span:TemporalInterval>
+                                            </ero:occurs_on>
+                                            <ro:has_participant>
+                                              <agent:OrganizationLeaderRole rdf:ID="Rashidis_Training_Leader_Role">
+                                                <ro:participates_in rdf:resource="#Rashidis_GainOf_TrainingLeader_Role"/>
+                                              </agent:OrganizationLeaderRole>
+                                            </ro:has_participant>
+                                            <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                            <ro:has_participant>
+                                              <snap:ObjectAggregate rdf:ID="Terrorist_Training_Camps_Under_Rashidis_Charge">
+                                                <ro:participates_in rdf:resource="#Rashidis_GainOf_TrainingLeader_Role"/>
+                                              </snap:ObjectAggregate>
+                                            </ro:has_participant>
+                                            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/EventOntology#GainOfRole"/>
+                                          </event:Effect>
+                                        </ero:is_cause_of>
+                                        <ero:is_cause_of rdf:resource="#Rashidis_GainOf_GroupHouseAdmin_Role"/>
+                                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/EventOntology#ActOfMilitaryForce"/>
+                                      </event:Cause>
+                                    </ero:caused_by>
+                                    <ro:has_participant>
+                                      <artifact:ResidentialFacility rdf:ID="Hyderabad_Group_House">
+                                        <ro:participates_in rdf:resource="#Rashidis_GainOf_GroupHouseAdmin_Role"/>
+                                        <ro:located_in>
+                                          <geo:CityPart rdf:ID="Location_of_Hyderabad_Group_House">
+                                            <ro:part_of>
+                                              <geo:CountryPart rdf:ID="Hyderabad">
+                                                <ro:has_part rdf:resource="#Location_of_Hyderabad_Group_House"/>
+                                                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#City"/>
+                                              </geo:CountryPart>
+                                            </ro:part_of>
+                                            <ro:location_of rdf:resource="#Hyderabad_Group_House"/>
+                                            <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialLocation"/>
+                                          </geo:CityPart>
+                                        </ro:located_in>
+                                        <airs:is_used_by>
+                                          <agent:GroupOfPersons rdf:ID="Mujahidin_and_their_Families">
+                                            <airs:uses rdf:resource="#Hyderabad_Group_House"/>
+                                          </agent:GroupOfPersons>
+                                        </airs:is_used_by>
+                                      </artifact:ResidentialFacility>
+                                    </ro:has_participant>
+                                    <ro:has_participant>
+                                      <agent:OrganizationLeaderRole rdf:ID="Rashidis_Group_House_Administration_Role">
+                                        <ro:participates_in rdf:resource="#Rashidis_GainOf_GroupHouseAdmin_Role"/>
+                                      </agent:OrganizationLeaderRole>
+                                    </ro:has_participant>
+                                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/EventOntology#GainOfRole"/>
+                                  </event:Effect>
+                                </ro:participates_in>
+                                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#OrganizationMember"/>
+                                <ro:agent_in rdf:resource="#Rashidis_ActOfTerroristTrainingInstruction_to_Somalis"/>
+                                <ero:bearer_of rdf:resource="#Rashidis_Police_Officer_Role"/>
+                                <ro:agent_in rdf:resource="#al-Rashidis_order_to_al-Nalfi_move_Sudanese_Cell_to_Somalia."/>
+                                <ro:participates_in rdf:resource="#al-Rashidi_Jeddah_Inhabitancy"/>
+                                <ro:participates_in rdf:resource="#First_Recruits_allegiance_to_al-Qaida"/>
+                                <ro:participates_in rdf:resource="#Rashidis_Loss_of_NationalPoliceOfficerRole"/>
+                                <ro:participates_in rdf:resource="#Rashidis_GainOf_EgyptianNationalPoliceOfficer_Role"/>
+                                <ro:participates_in rdf:resource="#Establishment_of_Taheer_Ltd"/>
+                                <ro:participates_in rdf:resource="#al_Rashidis_order_to_al-Fadl_to_assist_Somali_Tribes"/>
+                                <ero:has_role rdf:resource="#Rashidis_Building_And_Construction_Role"/>
+                                <ro:participates_in rdf:resource="#Rashidis_Friendship_with_al-Zawahiri"/>
+                                <ro:participates_in rdf:resource="#al-Rashidis_Meeting_with_Usama_bin_Ladin"/>
+                                <info:designated_by rdf:resource="#al-Rashidi_Person_Name"/>
+                                <ro:participates_in rdf:resource="#Rashidis_GainOf_TrainingLeader_Role"/>
+                                <ero:has_role rdf:resource="#Rashidis_Deputy_Leader_Role"/>
+                                <ero:has_role rdf:resource="#Rashidis_Founding_Member_Role"/>
+                                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Citizen"/>
+                                <ro:participates_in rdf:resource="#Rashidis_GainOf_Leadership_of_Yemen_Cell"/>
+                                <ro:agent_in rdf:resource="#al-Rashidis_Change_of_Residence_to_Peshawar"/>
+                                <ro:participates_in rdf:resource="#al-Qaidas_Inception"/>
+                                <ro:agent_in rdf:resource="#al_Rashidis_order_to_al-Fadl_to_go_to_Somalia"/>
+                                <ro:participates_in rdf:resource="#Rashidis_Friendship_with_Massoud"/>
+                                <ro:participates_in rdf:resource="#al-Rashidis_Marriage"/>
+                                <ero:has_role>
+                                  <agent:OrganizationMilitaryLeaderRole rdf:ID="Rashidis_Military_Commander_Role">
+                                    <ero:inheres_in rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                    <ero:role_of rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                                  </agent:OrganizationMilitaryLeaderRole>
+                                </ero:has_role>
+                                <ero:bearer_of rdf:resource="#Rashidis_Military_Commander_Role"/>
+                                <agent:is_spouse_of rdf:resource="#Hafsah_Sad_Rashwan"/>
+                                <ro:participates_in rdf:resource="#al-Rashidis_Death"/>
+                                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                                <ro:participates_in rdf:resource="#al-Rashidi_Bayt_al-Shabab_Inhabitancy"/>
+                                <ro:participates_in rdf:resource="#al-Rashidis_Arrest"/>
+                              </agent:Agent>
+                            </ro:has_participant>
+                            <ro:has_participant rdf:resource="#Jamal_Ahmed_al-Fadl"/>
+                            <ro:has_agent rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                            <airs:has_sender rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                            <airs:has_recipient rdf:resource="#Jamal_Ahmed_al-Fadl"/>
+                          </event:ActOfCommanding>
+                        </airs:receives>
+                        <airs:receives rdf:resource="#al_Rashidis_order_to_al-Fadl_to_go_to_Somalia"/>
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Agent"/>
+                        <ro:participates_in rdf:resource="#al_Rashidis_order_to_al-Fadl_to_assist_Somali_Tribes"/>
+                        <ro:participates_in rdf:resource="#al_Rashidis_order_to_al-Fadl_to_go_to_Somalia"/>
+                        <ro:participates_in rdf:resource="#First_Recruits_allegiance_to_al-Qaida"/>
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                      </agent:Citizen>
+                    </ro:has_participant>
+                    <ero:occurs_on>
+                      <time:MultiMonthTemporalInterval rdf:ID="Late_1989">
+                        <ero:is_temporal_region_of rdf:resource="#First_Recruits_allegiance_to_al-Qaida"/>
+                      </time:MultiMonthTemporalInterval>
+                    </ero:occurs_on>
+                    <ero:occurs_at rdf:resource="#Location_of_al-Farouq_Terrorist_Training_Camp"/>
+                    <ro:has_participant>
+                      <agent:Citizen rdf:ID="Abu_Ayoub_al-Iraqi">
+                        <ro:participates_in rdf:resource="#First_Recruits_allegiance_to_al-Qaida"/>
+                        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                      </agent:Citizen>
+                    </ro:has_participant>
+                    <ro:has_participant rdf:resource="#Muhammad_Atef"/>
+                    <ro:has_participant>
+                      <agent:GroupOfPersons rdf:ID="al-Qaida_First_Recruits">
+                        <ro:participates_in rdf:resource="#First_Recruits_allegiance_to_al-Qaida"/>
+                        <ro:agent_in rdf:resource="#First_Recruits_allegiance_to_al-Qaida"/>
+                      </agent:GroupOfPersons>
+                    </ro:has_participant>
+                    <ro:has_participant rdf:resource="#Usama_bin_Ladin"/>
+                    <ro:has_participant rdf:resource="#Ali_Amin_Ali_al-Rashidi"/>
+                    <ro:has_agent rdf:resource="#al-Qaida_First_Recruits"/>
+                  </event:ActOfAssociation>
+                </ero:is_site_of>
+                <ro:location_of>
+                  <artifact:TerroristTrainingCamp rdf:ID="al-Farouq_Terrrorist_Training_Camp">
+                    <ro:located_in rdf:resource="#Location_of_al-Farouq_Terrorist_Training_Camp"/>
+                  </artifact:TerroristTrainingCamp>
+                </ro:location_of>
+                <ro:part_of rdf:resource="#Paktia"/>
+                <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialLocation"/>
+              </geo:CountryPart>
+            </ro:has_part>
+            <ro:has_part rdf:resource="#Paktia"/>
+            <ro:has_part rdf:resource="#Jalalabad"/>
+            <ro:has_part rdf:resource="#Jaji"/>
+            <ro:has_part rdf:resource="#Peshawar"/>
+          </geo:Country>
+        </ro:part_of>
+        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#CountryPart"/>
+        <ero:is_site_of>
+          <event:ActOfTerroristTrainingAcquisition rdf:ID="al-Rashidis_Terrorist_Training_at_al-Qadisiyah">
+            <ero:occurs_at rdf:resource="#Location_of_al-Qadisiyah_Training_Camp"/>
+          </event:ActOfTerroristTrainingAcquisition>
+        </ero:is_site_of>
+        <ro:part_of rdf:resource="#Jalalabad"/>
+        <ro:location_of>
+          <artifact:TerroristTrainingCamp rdf:ID="al-Qadisiyah_Terrorist_Training_Camp">
+            <ro:located_in rdf:resource="#Location_of_al-Qadisiyah_Training_Camp"/>
+          </artifact:TerroristTrainingCamp>
+        </ro:location_of>
+        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialLocation"/>
+      </geo:CityPart>
+    </ro:has_part>
+    <ro:part_of rdf:resource="#Pakistan"/>
+    <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#City"/>
+  </geo:CountryPart>
+  <event:GainOfGenericallyDependentContinuant rdf:ID="Senior_al-Qaida_Leaders_Plan_Move_to_Sudan">
+    <ro:has_participant>
+      <agent:GroupOfPersons rdf:ID="Senior_al-Qaida_Leaders">
+        <ro:participates_in rdf:resource="#Senior_al-Qaida_Leaders_Plan_Move_to_Sudan"/>
+        <ro:agent_in rdf:resource="#Senior_al-Qaida_Leaders_Plan_Move_to_Sudan"/>
+        <ero:aggregrate_bearer_of>
+          <info:Plan rdf:ID="Plan_to_move_al-Qaida_to_Sudan"/>
+        </ero:aggregrate_bearer_of>
+      </agent:GroupOfPersons>
+    </ro:has_participant>
+    <ro:has_agent rdf:resource="#Senior_al-Qaida_Leaders"/>
+    <ero:occurs_on>
+      <span:TemporalInterval rdf:ID="TemporalInterval_of_Plan_to_Move_al-Qaida_to_Sudan">
+        <ero:is_temporal_region_of rdf:resource="#Senior_al-Qaida_Leaders_Plan_Move_to_Sudan"/>
+        <time:interval_during>
+          <time:Year rdf:ID="Year_1990">
+            <time:interval_contains rdf:resource="#TemporalInterval_of_Plan_to_Move_al-Qaida_to_Sudan"/>
+          </time:Year>
+        </time:interval_during>
+      </span:TemporalInterval>
+    </ero:occurs_on>
+  </event:GainOfGenericallyDependentContinuant>
+  <agent:Organization rdf:ID="Arab_Mujahidin_Shura_Council">
+    <agent:has_affiliate>
+      <agent:Citizen rdf:ID="Arab_Mujahidin_Shura_Council_Member">
+        <agent:is_affiliated_with rdf:resource="#Arab_Mujahidin_Shura_Council"/>
+        <rdf:type rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+      </agent:Citizen>
+    </agent:has_affiliate>
+  </agent:Organization>
+  <span:TemporalInterval rdf:ID="TemporalInterval_of_Increase_of_US_Forces_Area_of_Operations_to_Somalia">
+    <time:interval_is_after>
+      <span:TemporalInterval rdf:ID="TemporalInterval_of_Increase_of_al-Qaidas_AreaOfOperations_role_to_Somalia">
+        <time:interval_is_before rdf:resource="#TemporalInterval_of_Increase_of_US_Forces_Area_of_Operations_to_Somalia"/>
+      </span:TemporalInterval>
+    </time:interval_is_after>
+  </span:TemporalInterval>
+</rdf:RDF>
+
+<!-- Created with TopBraid -->

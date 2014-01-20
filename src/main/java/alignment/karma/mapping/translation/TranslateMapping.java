@@ -1,5 +1,8 @@
 package alignment.karma.mapping.translation;
 
+import alignment.karma.mapping.translation.translations.d2rq.D2rqMapping;
+import alignment.karma.mapping.translation.translations.d2rq.EventMappingTranslations;
+import alignment.karma.mapping.translation.translations.d2rq.PersonMappingTranslations;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
@@ -35,9 +38,12 @@ public class TranslateMapping
 	public void produceD2RQMapping(Model model, Writer writer) {
 		d2rqMapping = new D2rqMapping(model);
 		//Person Mapping chains
-		PersonMappingTranslations.translatePersonMappings(model,d2rqMapping);
+		PersonMappingTranslations.translatePersonMappings(model, d2rqMapping);
 		//Organization Mapping Chains
+		//TODO
 		//Event Mapping Chains
+		EventMappingTranslations.translatEventMappings(model, d2rqMapping);
+		//write out mapping
 		d2rqMapping.writeD2rqMapping(writer);
 	}
 

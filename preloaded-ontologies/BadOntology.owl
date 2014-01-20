@@ -1,0 +1,572 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.cubrc.org/BO#"
+     xml:base="http://www.cubrc.org/BO"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://www.cubrc.org/BO"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.cubrc.org/BO#event_has_date -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#event_has_date">
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Event"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#EventDate"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/BO#event_properties"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/BO#event_has_description -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#event_has_description">
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Event"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#EventDescription"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/BO#event_properties"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/BO#event_has_location -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#event_has_location">
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Event"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#EventLocation"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/BO#event_properties"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/BO#event_participant -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#event_participant">
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Event"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#ParticipantOrganization"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#ParticipantPerson"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/BO#event_properties"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/BO#event_properties -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#event_properties"/>
+    
+
+
+    <!-- http://www.cubrc.org/BO#event_type_mention -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#event_type_mention">
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Event"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#EventType"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/BO#event_properties"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/BO#has_birth_date -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#has_birth_date">
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Birth"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#BirthDate"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/BO#person_dates"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/BO#has_birth_location -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#has_birth_location">
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Birth"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#BirthLocation"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/BO#person_locations"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/BO#has_death_date -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#has_death_date">
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Death"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#DeathDate"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/BO#person_dates"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/BO#has_death_location -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#has_death_location">
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Death"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#DeathLocation"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/BO#person_locations"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/BO#has_marrage_date -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#has_marrage_date">
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Marrage"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#MarrageDate"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/BO#person_dates"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/BO#has_marrage_location -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#has_marrage_location">
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Marrage"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#MarrageLocation"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/BO#person_locations"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/BO#person_dates -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#person_dates">
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/BO#person_properties"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/BO#person_locations -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#person_locations">
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/BO#person_properties"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/BO#person_properties -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/BO#person_properties">
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#AssociatePerson"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#Birth"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#Death"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#EyeColor"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#Father"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#HairColor"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#LanguageSkill"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#Marrage"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#Mother"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#Nationality"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Person"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#PersonDescription"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#PersonDocument"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#PersonHeight"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#PersonHome"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#PersonName"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#PersonPhoneNumber"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#PersonWeight"/>
+        <rdfs:range rdf:resource="http://www.cubrc.org/BO#Sex"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.cubrc.org/BO#has_value -->
+
+    <owl:DatatypeProperty rdf:about="http://www.cubrc.org/BO#has_value">
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#AssociatePerson"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#BirthDate"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#BirthLocation"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#DeathDate"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#DeathLocation"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#EventDate"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#EventDescription"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#EventLocation"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#EventType"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#EyeColor"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Father"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#HairColor"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#LanguageSkill"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#MarrageDate"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#MarrageLocation"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Mother"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Nationality"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#ParticipantOrganization"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#ParticipantPerson"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#PersonDescription"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#PersonDocument"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#PersonHeight"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#PersonName"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#PersonWeight"/>
+        <rdfs:domain rdf:resource="http://www.cubrc.org/BO#Sex"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.cubrc.org/BO#AssociatePerson -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#AssociatePerson">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#PersonAssociation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#Birth -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#Birth">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#LifeEvents"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#BirthDate -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#BirthDate">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Birth"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#BirthLocation -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#BirthLocation">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Birth"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#CommunicationDevices -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#CommunicationDevices">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Person"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#Death -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#Death">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#LifeEvents"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#DeathDate -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#DeathDate">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Death"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#DeathLocation -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#DeathLocation">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Death"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#Event -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#Event"/>
+    
+
+
+    <!-- http://www.cubrc.org/BO#EventDate -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#EventDate">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#EventDescription -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#EventDescription">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#EventLocation -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#EventLocation">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#EventParticipant -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#EventParticipant">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#EventType -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#EventType">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#EyeColor -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#EyeColor">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#PersonAttribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#FamilyPerson -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#FamilyPerson">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#PersonAssociation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#Father -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#Father">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#FamilyPerson"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#HairColor -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#HairColor">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#PersonAttribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#LanguageSkill -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#LanguageSkill">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#PersonSkill"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#LifeEvents -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#LifeEvents">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Person"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#Marrage -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#Marrage">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#LifeEvents"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#MarrageDate -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#MarrageDate">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Marrage"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#MarrageLocation -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#MarrageLocation">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Marrage"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#Mother -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#Mother">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#FamilyPerson"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#Nationality -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#Nationality">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#PersonAttribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#ParticipantOrganization -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#ParticipantOrganization">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#EventParticipant"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#ParticipantPerson -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#ParticipantPerson">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#EventParticipant"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#Person -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#Person"/>
+    
+
+
+    <!-- http://www.cubrc.org/BO#PersonAddresses -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#PersonAddresses">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Person"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#PersonAssociation -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#PersonAssociation">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Person"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#PersonAttribute -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#PersonAttribute">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Person"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#PersonDescription -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#PersonDescription">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Person"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#PersonDocument -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#PersonDocument">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#PersonIdentification"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#PersonHeight -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#PersonHeight">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#PersonAttribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#PersonHome -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#PersonHome">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#PersonAddresses"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#PersonIdentification -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#PersonIdentification">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Person"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#PersonName -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#PersonName">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#PersonIdentification"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#PersonPhoneNumber -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#PersonPhoneNumber">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#CommunicationDevices"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#PersonSkill -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#PersonSkill">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#Person"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#PersonWeight -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#PersonWeight">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#PersonAttribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/BO#Sex -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/BO#Sex">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/BO#PersonAttribute"/>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+
