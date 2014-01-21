@@ -77,7 +77,13 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	}
 	
 	function transform() {
-		
+		hideDropdown();
+		handleCleanColumnButton(worksheetId, columnId);
+		var cleaningPanel = $("div#ColumnCleaningPanel");
+		//$("button#cleanColumnButton").click(handleCleanColumnButton);
+		//$("button#cleanColumnButton").click(90);
+		$("button#generateCleaningRules", cleaningPanel).click(handleGenerateCleaningRulesButton);
+		return false;
 	}
 	
 	function showChart() {

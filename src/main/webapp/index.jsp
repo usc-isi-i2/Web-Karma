@@ -542,45 +542,7 @@ and related projects, please see: http://www.isi.edu/integration
                 </tr>
             </table>
         </div>
-        <div id="ColumnCleaningPanel" style="display: none">
-            <table >
-                <tbody>
-                    <tr>
-                        <td  valign="top" class="infotable">
-                            <table id="infoPanel" class="transform">
-                                <tbody>
-                                    <tr>
-                                        <td class="heading">Examples You Entered: </td>
-                                    </tr>
-                                    <tr class="infotable">
-                                        <td class="infotable">
-                                            <table id="examples" title="Previous Examples:" class="transform">
-
-                                            </table></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="heading">Recommended for Examining:</td>
-                                    </tr>
-                                    <tr class="infotable">
-                                        <td class="infotable">
-                                            <table id="recmd" title="Recommended Examples:" class="transform">
-
-                                            </table></td>
-                                    </tr>						
-                                </tbody>
-                            </table></td>
-                    </tr>
-                    <tr><td class="heading">All Records: </td></tr>
-                    <tr>
-                        <td>
-                            <table id="cleaningExamplesTable" class="transform">
-
-                            </table>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        
         
 
 		<div class="smallSizedFont" id="incomingOutgoingLinksDialog" style="display:none">

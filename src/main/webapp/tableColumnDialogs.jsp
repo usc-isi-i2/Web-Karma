@@ -157,6 +157,100 @@
 		</form>
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->     
+ 
+ 
+ <div class="modal fade" id="ColumnCleaningPanel" tabindex="-1">
+	<div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Transform Column</h4>
+				  </div>
+				  <div class="modal-body">
+				  	<div class="form-group">
+					    <div class="radio">
+					    	<div class="col-sm-5">
+							  <label>
+							    <input type="radio" name="pyTransformType" value="edit">
+							    Change existing column:
+						  	</label>
+						  	</div>
+						  	<div class="col-sm-6"><span id="pythonTransformEditColumnName"></span></div>
+						</div>
+						<div class="radio">
+							<div class="col-sm-5">
+							  <label>
+							    <input type="radio" name="pyTransformType" value="new">
+						    	Name of new column:
+						  		</label>
+						  	</div>
+						  	<div class="col-sm-6"><input class="form-control" type="text" id="pythonTransformNewColumnName" /></div>
+						</div>
+					</div>
+					<div class="error" style="display: none">Please provide a new unique column name!</div>
+					<br/>
+	            	<div id="transformCodeEditor"></div>
+					<br/>
+					<div class="form-group">
+						<label>
+							<div class="col-sm-5">On Error:</div>
+							<div class="col-sm-6"><input class="form-control" type="text" id="pythonTransformErrorDefaultValue" /></div>
+						</label>
+					</div>
+					<button type="button" class="btn btn-default" id="btnErrors">View Errors</button>
+					<button type="button" class="btn btn-default" id="btnPreview">Preview results for top 5 rows</button>
+					<br>
+            		<table id="pythonPreviewResultsTable" class="table table-striped table-condensed" style="display: none"></table>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Save</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->     
+ <div id="ColumnCleaningPanel" style="display: none">
+            <table >
+                <tbody>
+                    <tr>
+                        <td  valign="top" class="infotable">
+                            <table id="infoPanel" class="transform">
+                                <tbody>
+                                    <tr>
+                                        <td class="heading">Examples You Entered: </td>
+                                    </tr>
+                                    <tr class="infotable">
+                                        <td class="infotable">
+                                            <table id="examples" title="Previous Examples:" class="transform">
+
+                                            </table></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="heading">Recommended for Examining:</td>
+                                    </tr>
+                                    <tr class="infotable">
+                                        <td class="infotable">
+                                            <table id="recmd" title="Recommended Examples:" class="transform">
+
+                                            </table></td>
+                                    </tr>						
+                                </tbody>
+                            </table></td>
+                    </tr>
+                    <tr><td class="heading">All Records: </td></tr>
+                    <tr>
+                        <td>
+                            <table id="cleaningExamplesTable" class="transform">
+
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         
+               
 </body>
 </html>

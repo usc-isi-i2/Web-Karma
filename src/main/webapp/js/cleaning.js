@@ -171,14 +171,12 @@ function handleMultiColumnsDisplay() {
 	});
 }
 
-function handleCleanColumnButton() {
+function handleCleanColumnButton(worksheetId, columnId) {
 	var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
-	columnHeadingMenu.hide();
-
+	
 	// Get the values from the column to be cleaned
-	var selectedHNodeId = columnHeadingMenu.data("parentCellId");
+	var selectedHNodeId = columnId;
 	var tdTag = $("td#" + selectedHNodeId);
-	var worksheetId = tdTag.parents("div.Worksheet").attr("id");
 	var table = tdTag.parents("table.WorksheetTable");
 	var rows = $("thead tr", table);
 	var index = -1;
