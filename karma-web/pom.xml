@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+	<packaging>war</packaging>
+
+    <parent>
+        <groupId>edu.isi</groupId>
+        <artifactId>webkarma</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>karma-web</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>karma-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>net.sourceforge.jtds</groupId>
+			<artifactId>jtds</artifactId>
+			<version>1.2.5</version>
+			<scope>system</scope>
+			<!-- TODO-CUBRC fix this -->
+			<systemPath>${project.basedir}/../lib/jtds-1.2.5.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${jettyVersion}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+
+	<build>
+	<resources>
+		<resource>
+			<directory>src/main/config</directory>
+		</resource>
+		<resource>
+			<directory>src/main/resources</directory>
+		</resource>
+	</resources>
+	<plugins>
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-war-plugin</artifactId>
+		<version>2.4</version>
+		<configuration>
+			<archiveClasses>true</archiveClasses>
+
+			<webResources>
+				<resource>
+					<directory>src/main/webapp/</directory>
+				</resource>
+			</webResources>
+		</configuration>
+	</plugin>
+	<plugin>
+		<groupId>org.eclipse.jetty</groupId>
+		<artifactId>jetty-maven-plugin</artifactId>
+		<version>${jettyVersion}</version>
+		<configuration>
+			<systemProperties>
+				<systemProperty>
+					<name>log4j.configuration</name>
+					<value>log4j.properties</value>
+				</systemProperty>
+			</systemProperties>
+			<!--         		<jettyXml> -->
+			<!--         			jetty.xml -->
+			<!--         		</jettyXml> -->
+			<webApp>
+				<contextPath>/</contextPath>
+			</webApp>
+			<connectors>
+				<!-- work around file locking on windows -->
+				<connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
+					<port>8080</port>
+					<!-- this connector defaults to 1300 for some reason -->
+				</connector>
+			</connectors>
+			<contextHandlers>
+				<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+					<war>${project.basedir}/external_webapps/openrdf-workbench.war</war>
+					<contextPath>/openrdf-workbench</contextPath>
+				</contextHandler>
+				<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+					<war>${project.basedir}/external_webapps/openrdf-sesame.war</war>
+					<contextPath>/openrdf-sesame</contextPath>
+				</contextHandler>
+				<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+					<war>${project.basedir}/external_webapps/cleaningService.war</war>
+					<contextPath>/cleaningService</contextPath>
+				</contextHandler>
+			</contextHandlers>
+
+		</configuration>
+
+		<!-- change user/pwd in src/main/config/jettyrealm.properties -->
+		<!--  <configuration>
+		   <webAppConfig>
+			  <contextPath>/*</contextPath>
+			</webAppConfig>
+			<loginServices>
+			  <loginService implementation="org.eclipse.jetty.security.HashLoginService">
+				<name>TestRealm</name>
+				<config>${project.basedir}/src/main/config/jettyrealm.properties</config>
+			  </loginService>
+			</loginServices>
+		  </configuration>
+		-->
+	</plugin>
+	</plugins>
+	</build>
+</project>

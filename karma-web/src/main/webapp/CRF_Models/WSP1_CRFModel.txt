@@ -1,0 +1,21 @@
+1
+
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value
+1
+11 2000-02-09Z
+
+14
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value unit_place_digit_9 0.0
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value starting_digit_- 0.0
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value num_len_4 0.0
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value num_len_3 0.0
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value alpha_id_Z 0.0
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value before_decimal_len_4 0.0
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value alpha_length_1 0.0
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value starting_digit_2 0.0
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value before_decimal_len_3 0.0
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value after_decimal_len_0 0.0
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value starts_with_char_Z 0.0
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value all_capitalized_token 0.0
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value unit_place_digit_0 0.0
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value unit_place_digit_2 0.0

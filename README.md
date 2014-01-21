@@ -24,7 +24,7 @@ To start in logging mode (where all the logs are stored in the log folder), use 
 1. Model your source and publish it's model (the published models are located at `src/main/webapp/publish/R2RML/` inside the Karma directory).
 2. To generate RDF of a CSV/JSON/XML file, go to the top level Karma directory and run the following command from terminal:
 ```
-mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--sourcetype 
+mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--sourcetype
 <sourcetype> --filepath <filepath> --modelfilepath <modelfilepath> --outputfile <outputfile>"
 ```
 
