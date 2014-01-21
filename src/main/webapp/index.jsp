@@ -344,13 +344,7 @@ and related projects, please see: http://www.isi.edu/integration
             <br />
             <table id="AlternativeParentLinksTable"></table>
         </div>
-        <div id="SplitByCommaColumnListPanel" style="display: none">
-            <span class="smallSizedFont">Specify character delimiter:</span>
-            <input class="smallSizedFont" type="text" id="columnSplitDelimiter" value="," maxlength="5" size="5"/>
-            </br>
-            <span class="smallSizedFont">Enter "space" to use single space</span></br>
-            <span class="smallSizedFont">Enter "tab" to use tab</span>
-        </div>
+        
         <div id="tableCellMenuButtonDiv" style="display: none"></div>
         <div id="columnHeadingMenuButtonDiv" style="display: none"></div>
         <div id="confirmPublishRDFDialogBox" style="display: none">
@@ -588,28 +582,6 @@ and related projects, please see: http://www.isi.edu/integration
             </table>
         </div>
         
-       
-        <div id="pyTransformDialog" style="display: none">
-        	<input type="radio" name="pyTransformType" value="edit">
-        		<label class="smallSizedFont">Change existing column:</label>
-        		<span class="smallSizedFont" id="pythonTransformEditColumnName"></span>
-        	<br>
-        	<input type="radio" name="pyTransformType" value="new" checked="checked">
-            	<label class="smallSizedFont">Name of new column:</label>
-            	<input type="text" class="smallSizedFont" id="pythonTransformNewColumnName">
-            <br>
-            <span class="error smallSizedFont" style="display: none" id="pyTransformColumnNameError">Please provide a new unique column name!</span>
-            <br><br>
-            <div id="transformCodeEditor"></div>
-            <span class="smallSizedFont">On error:</span>
-            <input type="text" class="smallSizedFont" id="pythonTransformErrorDefaultValue">
-            <button id="pyTransformViewErrorButton"  style="margin-left: 20px;">View Errors</button>
-            <button id="previewPyTransformButton"  style="margin-left: 60px">Preview Results for Top 5 Rows</button>
-            <br>
-            <table id="pythonPreviewResultsTable" class="smallSizedFont" style="display: none"></table>
-            <div id="pyTransformErrorWindow" style="display: none"></div>
-        </div>
-       
 
 		<div class="smallSizedFont" id="incomingOutgoingLinksDialog" style="display:none">
 			<div id="incomingOutgoingLinksBox" class="ui-corner-all">
@@ -848,10 +820,8 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/alignment.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/fileImport.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/cleaning.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/services.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/d3-alignment-vis.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/reset-options.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/pytransform.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/cleaning-charts.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/showModel.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/worksheetOptions.js?<jsp:include page='version.jsp' />"></script>
@@ -866,15 +836,9 @@ and related projects, please see: http://www.isi.edu/integration
 
                 // Assign style and handlers to table cell menu
                 styleAndAssignHandlersToTableCellMenu();
-
-                // Assign style and handlers to column heading menu
-                //styleAndAssignHandlersToColumnHeadingMenu();
-
+               
                // Assign style and handler to the merge button
                 styleAndAssignHandlersToMergeButton();
-
-                // Assign style and handler to Python Transform windows elements (in pytransform.js)
-                styleAndAssignHandlersToPyTransformElements();
 
                 // Assign style and handler to select model for worksheet dialog (in showModel.js)
                 styleAndAssignHandlersToApplyModelDialog();

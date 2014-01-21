@@ -28,29 +28,51 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	
 	function addColumn() {
 		hideDropdown();
-		
 		AddColumnDialog.getInstance().show(worksheetId, columnId);
-		
 	    return false;
 	}
 	
 	function pyTransform() {
-		
+		hideDropdown();
+		PyTransformDialog.getInstance().show(worksheetId, columnId, columnTitle);
+	    return false;
 	}
 	
 	function invokeService() {
-		
+		var info = new Object();
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["worksheetId"] = worksheetId;
+        info["hNodeId"] = columnId;
+        info["command"] = "InvokeServiceCommand";
+        
+        showWaitingSignOnScreen();
+        var returned = $.ajax({
+            url: "RequestController", 
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete : 
+                function (xhr, textStatus) {
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideWaitingSignOnScreen();
+                },
+            error :
+                function (xhr, textStatus) {
+                    $.sticky("Error invoking services!");
+                }          
+        });
 	}
 	
 	function renameColumn() {
+		hideDropdown();
 		RenameColumnDialog.getInstance().show(worksheetId, columnId);
+		return false;
 	}
 	
 	function splitColumn() {
 		hideDropdown();
-		var splitPanel = $("div#SplitByCommaColumnListPanel");
-        splitPanel.dialog({width: 300, height: 200
-            , buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": splitColumnByComma }});
+		SplitColumnDialog.getInstance().show(worksheetId, columnId);
         return false;
 	}
 	
@@ -59,7 +81,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	}
 	
 	function showChart() {
-		
+		showChartForColumn(worksheetId, columnId);
 	}
 	
 	this.generateJS = function() {
@@ -341,6 +363,383 @@ var RenameColumnDialog = (function() {
         function show(wsId, colId) {
         	worksheetId = wsId;
         	columnId = colId;
+            dialog.modal({keyboard:true, show:true});
+        };
+        
+        
+        return {	//Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    	
+    
+})();
+
+
+var SplitColumnDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#splitColumnDialog");
+    	var worksheetId, columnId;
+    	
+    	function init() {
+    		//Initialize what happens when we show the dialog
+			dialog.on('show.bs.modal', function (e) {
+				hideError();
+                $("input", dialog).val("");
+                $("#columnSplitDelimiter", dialog).focus();
+			});
+			
+			//Initialize handler for Save button
+			//var me = this;
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e);
+			});
+    	}
+    	
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError() {
+			$("div.error", dialog).show();
+		}
+        
+        function saveDialog(e) {
+        	console.log("Save clicked");
+	
+		    var delimiter = $.trim($("#columnSplitDelimiter", dialog).val());
+		   
+		    var validationResult = true;
+		    if (!delimiter)
+		        validationResult = false;
+		    else if(delimiter != "space" && delimiter != "tab" && delimiter.length != 1)
+		    	validationResult = false;
+		    if (!validationResult) {
+		    	showError();
+		        $("#columnSplitDelimiter", dialog).focus();
+		        return false;
+		    }
+
+		    dialog.modal('hide');
+
+		    var info = new Object();
+		    info["worksheetId"] = worksheetId;
+		    info["workspaceId"] = $.workspaceGlobalInformation.id;
+		    info["hNodeId"] = columnId;
+		    info["delimiter"] = delimiter;
+		    info["command"] = "SplitByCommaCommand";
+
+		    var newInfo = [];
+		    newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+		    newInfo.push(getParamObject("hNodeId", columnId,"hNodeId"));
+		    newInfo.push(getParamObject("delimiter", delimiter, "other"));
+		    info["newInfo"] = JSON.stringify(newInfo);
+
+		    showLoading(info["worksheetId"]);
+		    var returned = $.ajax({
+		        url: "RequestController",
+		        type: "POST",
+		        data : info,
+		        dataType : "json",
+		        complete :
+		            function (xhr, textStatus) {
+		                // alert(xhr.responseText);
+		                var json = $.parseJSON(xhr.responseText);
+		                parse(json);
+		                hideLoading(info["worksheetId"]);
+		            },
+		        error :
+		            function (xhr, textStatus) {
+		                alert("Error occured while splitting a column by comma! " + textStatus);
+		                hideLoading(info["worksheetId"]);
+		            }
+		    });
+        };
+        
+        function show(wsId, colId) {
+        	worksheetId = wsId;
+        	columnId = colId;
+            dialog.modal({keyboard:true, show:true});
+        };
+        
+        
+        return {	//Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    	
+    
+})();
+
+
+
+
+var PyTransformDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#pyTransformDialog");
+    	var worksheetId, columnId, columnName;
+    	var editor;
+    	
+    	function init() {
+    		  editor = ace.edit("transformCodeEditor");
+    		  editor.setTheme("ace/theme/dreamweaver");
+    		  editor.getSession().setMode("ace/mode/python");
+    		  editor.getSession().setUseWrapMode(true);
+    		  editor.getSession().setValue("return getValue(\"state\")");
+    		    
+    		    
+    		//Initialize what happens when we show the dialog
+			dialog.on('show.bs.modal', function (e) {
+				hideError();
+				var hNode = $("td#" + columnId);
+               
+                if(hNode.data("pythonTransformation"))
+                	editor.getSession().setValue(hNode.data("pythonTransformation"));
+                else
+                	editor.getSession().setValue("return getValue(\"" + columnName + "\")");
+               
+                $("#pythonTransformEditColumnName").html(columnName);
+                $("#pythonTransformNewColumnName").val("");
+                //$("#pythonTransformNewColumnName").attr('disabled','disabled');
+                
+                $("#btnError", dialog).button('disable');
+                $("input").removeAttr('disabled');
+                $("#pythonPreviewResultsTable").hide();
+			});
+			
+			//Initialize handler for Save button
+			//var me = this;
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e);
+			});
+			
+			$('#btnError', dialog).on('click', function(event) {
+			     $("#pyTransformErrorWindow").show();
+			});
+			
+			$('#btnPreview', dialog).on('click', function(e) {
+				previewTransform();
+			});
+    	}
+    	
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError() {
+			$("div.error", dialog).show();
+		}
+        
+        function saveDialog(e) {
+        	console.log("Save clicked");
+        	var hNode = $("td#" + columnId);
+    	    
+        	var transformType = $('input:radio[name=pyTransformType]:checked').val();
+        	console.log("Got transform type: " + transformType);
+        	if(transformType == "edit") {
+        		if(hNode.data("columnDerivedFrom"))
+        			submitEditPythonTransform();
+        		else {
+        			//alert("We need to handle this extension of python transform");
+        			submitAddPythonTransform(true);
+        		}
+        	} else {
+        		submitAddPythonTransform(false);
+        	}
+        };
+        
+        function previewTransform() {
+        	var info = {};
+		    info["hNodeId"] = columnId;
+		    info["workspaceId"] = $.workspaceGlobalInformation.id;
+		    info["worksheetId"] = worksheetId;
+		    info["transformationCode"] = editor.getValue();
+		    info["errorDefaultValue"] = $("#pythonTransformErrorDefaultValue").val();
+		    info["command"] = "PreviewPythonTransformationResultsCommand";
+
+		    // Send the request
+		    $.ajax({
+		        url: "RequestController",
+		        type: "POST",
+		        data : info,
+		        dataType : "json",
+		        complete :
+		            function (xhr, textStatus) {
+		                var json = $.parseJSON(xhr.responseText);
+		                var previewTable = $("table#pythonPreviewResultsTable");
+		                $("tr",previewTable).remove();
+		                $.each(json["elements"], function(index, element) {
+		                    if(element["updateType"] == "PythonPreviewResultsUpdate") {
+		                        var result = element["result"];
+		                        $.each(result, function(index2, resVal){
+		                            previewTable.append($("<tr>").append($("<td>").text(resVal.value)));
+		                        });
+		                        $("div.pythonError", errorWindow).remove();
+		                        var errors = element["errors"];
+		                        if (errors.length > 0) {
+		                            $("#pyTransformViewErrorButton").button('enable');
+		                            var errorWindow = $("#pyTransformErrorWindow");
+		                            $.each(errors, function(index3, error){
+		                                var errorHtml = $("<div>").addClass("pythonError")
+		                                    .append($("<span>").addClass("pythonErrorRowNumber").text("Row: " + error.row)).append($("<br>"))
+		                                    .append($("<span>").addClass("pythonErrorText").text("Error: " + error["error"])).append($("<br>")).append($("<br>"));
+		                                errorWindow.append(errorHtml);
+		                            })
+		                        } else {
+		                            $("#pyTransformViewErrorButton").button('disable');
+		                        }
+		                    } else if(element["updateType"] == "KarmaError") {
+		                        $.sticky(element["Error"]);
+		                    }
+		                });
+		                previewTable.show();
+		            },
+		        error :
+		            function (xhr, textStatus) {
+		                alert("Error occured with fetching new rows! " + textStatus);
+		            }
+		    });
+        }
+        
+        function submitEditPythonTransform() {
+       	    var hNode = $("td#" + columnId);
+       	    var columnName = $("#pythonTransformEditColumnName").val();
+       	    
+       	    hide();
+       	    
+       	    var prevTransCode = hNode.data("pythonTransformation");
+       	    var newTransCode = 	editor.getValue();
+       	    
+       	    if(prevTransCode.trim() == newTransCode.trim()) {
+       	    	console.log("Code has not changed, we do not need to perform an edit");
+       	    	return;
+       	    }
+       	    
+       	
+           // prepare the JSON Object to be sent to the server
+           var info = {};
+           info["workspaceId"] = $.workspaceGlobalInformation.id;
+           info["command"] = "SubmitEditPythonTransformationCommand";
+
+           var newInfo = [];
+           newInfo.push(getParamObject("newColumnName",columnName, "other"));
+           newInfo.push(getParamObject("transformationCode", newTransCode, "other"));
+           newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+           newInfo.push(getParamObject("hNodeId", hNode.data("columnDerivedFrom"), "hNodeId"));
+           
+           newInfo.push(getParamObject("previousCommandId", hNode.data("previousCommandId"), "other"));
+           newInfo.push(getParamObject("errorDefaultValue", $("#pythonTransformErrorDefaultValue").val(), "other"));
+           newInfo.push(getParamObject("targetHNodeId", columnId, "hNodeId"));
+           info["newInfo"] = JSON.stringify(newInfo);
+
+           showLoading(worksheetId);
+           sendRequest(info, worksheetId);
+       }
+       
+        function submitAddPythonTransform(useExistingColumnName) {
+            var hNodeId = columnId;
+ 
+            var columnName = (useExistingColumnName == true)? $("#pythonTransformEditColumnName").html() : $("#pythonTransformNewColumnName").val();
+            // Validate new column name
+            var validationResult = true;
+            if (!columnName)
+                validationResult = false;
+            // Check if the column name already exists
+            if(!useExistingColumnName) {
+        	    var columnNames = getColumnHeadings(worksheetId);
+        	    $.each(columnNames, function(index, element) {
+        	        if ($.trim(element) == columnName) {
+        	            validationResult = false;
+        	        }
+        	    });
+            }
+            if (!validationResult) {
+                showError();
+                $("#pythonTransformNewColumnName").focus();
+                return false;
+            }
+
+            hide();
+            
+            // prepare the JSON Object to be sent to the server
+            var info = {};
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "SubmitPythonTransformationCommand";
+
+            var newInfo = [];
+            newInfo.push(getParamObject("newColumnName",columnName, "other"));
+            newInfo.push(getParamObject("transformationCode", editor.getValue(), "other"));
+            newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+            newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+            newInfo.push(getParamObject("errorDefaultValue", $("#pythonTransformErrorDefaultValue").val(), "other"));
+           // newInfo.push(getParamObject("useExistingColumnName", useExistingColumnName, "useExistingColumnName"));
+            info["newInfo"] = JSON.stringify(newInfo);
+
+            showLoading(worksheetId)
+            sendRequest(info, worksheetId);
+        }
+        
+        function sendRequest(info, worksheetId) {
+        	 // Send the request
+            $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        var json = $.parseJSON(xhr.responseText);
+                        parse(json);
+                        hideLoading(worksheetId);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured with fetching new rows! " + textStatus);
+                        hideLoading(worksheetId);
+                    }
+            });
+        }
+        
+        function hide() {
+        	dialog.modal('hide');
+        }
+        
+        function show(wsId, colId, colName) {
+        	worksheetId = wsId;
+        	columnId = colId;
+        	columnName = colName;
             dialog.modal({keyboard:true, show:true});
         };
         
