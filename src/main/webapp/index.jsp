@@ -348,18 +348,7 @@ and related projects, please see: http://www.isi.edu/integration
         
         <div id="tableCellMenuButtonDiv" style="display: none"></div>
         <div id="columnHeadingMenuButtonDiv" style="display: none"></div>
-       
-        
-        
-        <div id="FetchR2RMLModelDialogBox" style="display: none">
-            <span class="smallSizedFont">
-                <table>
-                    <tr><td>SPARQL End Point</td></tr>
-                    <tr><td><input type="text" id="txtR2RML_URL_fetch" value="" size="65"/></td></tr>
-                </table> 
-            </span>
-            <br />
-        </div>
+      
 
         <div id="drawBigChartId" style="display: none">
             <div id="bigChartTitle" ></div>
@@ -374,61 +363,7 @@ and related projects, please see: http://www.isi.edu/integration
             <span class="smallSizedFont" id="invokeDMServiceSpan">
             </span>
         </div>
-        <div id="PublishDatabaseDialogBox" style="display: none">
-            <div class="smallSizedFont" id="databaseInfo">
-                DB Type:
-                <select id="dbType">
-                    <option selected>MySQL</option>
-                    <option>SQLServer</option>
-                    <option>PostGIS</option>
-                </select>
-                <br>
-                <br>
-                <table>
-                    <tr>
-                        <td>Host Name</td>
-                        <td>Port</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <input type="text" id="hostName1" value="localhost" maxlength="100" size="20"/>
-                        </td>
-                        <td>
-                            <input type="text" id="port" value="" maxlength="100" size="20"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Database Name</td>
-                        <td>Table Name</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <input type="text" id="dbName1" value= "" maxlength="100" size="20"/>
-                        </td>
-                        <td>
-                            <input type="text" id="tableName" value="" maxlength="100" size="20"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>User Name</td>
-                        <td>Password</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <input type="text" id="userName1" value="root" maxlength="100" size="20"/>
-                        </td>
-                        <td>
-                            <input type="password" id="password1" value="" maxlength="100" size="20"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <br>
-            <input type="checkbox" id="overwriteTable"  onClick="overwriteTable();"/>
-            <label for="overwriteTable" class="smallSizedFont">Overwrite Table</label>
-            <input type="checkbox" id="insertTable" onClick="insertTable();"/>
-            <label for="insertTable" class="smallSizedFont">Insert in Table</label>
-        </div>
+        
         <div id="ColumnSelection" style="display: none">
             <table id="allcolumns">
                 <tr>

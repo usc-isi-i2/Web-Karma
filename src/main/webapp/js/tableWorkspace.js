@@ -164,34 +164,3 @@ function styleAndAssignHandlersToMergeButton() {
 }
 
 
-
-
-
-function renderR2RMLModels() {
-    var optionsDiv = $("div#WorksheetOptionsDiv");
-    $('#FetchR2RMLModelDialogBox').dialog("close");
-    var info = new Object();
-    info["worksheetId"] = optionsDiv.data("worksheetId");
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "FetchR2RMLModelsCommand";
-    info['tripleStoreUrl'] = $('#txtR2RML_URL_fetch').val();
-
-    var returned = $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        complete :
-            function (xhr, textStatus) {
-                var json = $.parseJSON(xhr.responseText);
-                parse(json);
-                hideLoading(info["worksheetId"]);
-            },
-        error :
-            function (xhr, textStatus) {
-                alert("Error occured while generating the automatic model!" + textStatus);
-                hideLoading(info["worksheetId"]);
-            }
-    });
-}
-

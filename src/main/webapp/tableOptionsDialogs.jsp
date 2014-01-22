@@ -200,6 +200,126 @@
 		</form>
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+
+<div class="modal fade" id="fetchModelDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Invoke Service</h4>
+				  </div>
+				  <div class="modal-body">
+					<div class="form-group">
+						<label for="txtR2RML_URL_fetch">SPARQL End Point</label>
+						<input class="form-control" type="text" id="txtR2RML_URL_fetch" required>
+					</div>
+					
+					<div class="error" style="display: none">Please enter an end point</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Fetch</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
       
+<div class="modal fade" id="publishDatabaseDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Export to Database</h4>
+				  </div>
+				  <div class="modal-body">
+						<div class="row">
+			        		<div class="col-sm-12">
+								<div class="form-group">
+									<label for="dbType1">Database Type</label>
+									<select id="dbType1" class="form-control">
+		                                <option>SQLServer</option>
+		                                <option>MySQL</option>
+		                                <option>Oracle</option>
+		                                <option>PostGIS</option>
+		                                <option>Sybase</option>
+		                            </select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="hostName1">Hostname</label>
+									<input type="text" id="hostName1" value="localhost" class="form-control" maxlength="40" size="10" placeholder='localhost' required/></div>
+							</div>
+			        		<div class="col-sm-6">
+			        			<div class="form-group">
+									<label for="port1">Port</label>
+									<input type="number" id="port1" value="" class="form-control" maxlength="6" size="5" required/>
+								</div>
+			        		</div>
+			        	</div>
+			        	<div class="row">
+				        		<div class="col-sm-6">
+				        			<div class="form-group">
+										<label for="userName1">Username</label>
+										<input type="text" id="userName1" value="root" class="form-control" maxlength="20" size="10" required/>
+									</div>
+				        		</div>
+				        		<div class="col-sm-6">
+				        			<div class="form-group">
+										<label for="password1">Password</label>
+										<input type="password" id="password1" value="" class="form-control" maxlength="20" size="10" required/>
+									</div>
+				        		</div>
+				        </div>
+				        <div class="row">
+				        		<div class="col-sm-6">
+				        			<div class="form-group">
+										<label for="dbName1">Database</label>
+	                            		<input type="text" id="dbName1" value="" class="form-control" maxlength="20" size="10" required/>
+	                        
+									</div>
+				        		</div>
+				        		<div class="col-sm-6">
+				        			<div class="form-group">
+										<label for="tableName1">Tablename</label>
+	                            		<input type="text" id="tableName1" value="" class="form-control" maxlength="20" size="10" required/>
+	                        
+									</div>
+				        		</div>
+			        		
+			        	</div>	<!--  end of row -->
+						
+						
+							<div class="radio">
+								<label>
+						    		<input type="radio" name="overwriteInstruction" value="overwrite">
+						    		Overwrite Table
+					  			</label>
+							</div>	
+							<div class="radio">
+								<label>
+						    		<input type="radio" name="overwriteInstruction" value="insert" checked>
+						    		Insert in Table
+					  			</label>
+							</div>
+						
+					<div class="error" style="display: none">Please enter all values</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Export</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+     
 </body>
 </html>

@@ -458,13 +458,16 @@ function parse(data) {
             var modelListRadioBtnGrp = $("#modelListRadioBtnGrp");
             modelListRadioBtnGrp.html('');
             var rows = element["models"]
-            for(var x in rows) {
-                modelListRadioBtnGrp.append('<input type="radio" name="group1" id="model_'+x+'" value="'+rows[x].url+'" /> <label for="model_'+x+'">'+rows[x].name+' ('+rows[x].url+') </label> <br />');
+            if(rows.length == 0) {
+            	alert("There are no models available");
+            } else {
+	            for(var x in rows) {
+	                modelListRadioBtnGrp.append('<input type="radio" name="group1" id="model_'+x+'" value="'+rows[x].url+'" /> <label for="model_'+x+'">'+rows[x].name+' ('+rows[x].url+') </label> <br />');
+	            }
+	            var modelListDiv = $('div#modelListDiv');
+	            modelListDiv.dialog({ title: 'Select a service',
+	                buttons: { "Cancel": function() { $(this).dialog("close"); }, "Select": submitSelectedModelNameToBeLoaded }, width: 300, height: 150 });
             }
-            var modelListDiv = $('div#modelListDiv');
-            modelListDiv.dialog({ title: 'Select a service',
-                buttons: { "Cancel": function() { $(this).dialog("close"); }, "Select": submitSelectedModelNameToBeLoaded }, width: 300, height: 150 });
-
         }
         else if(element["updateType"] == "InvokeDataMiningServiceUpdate") {
 

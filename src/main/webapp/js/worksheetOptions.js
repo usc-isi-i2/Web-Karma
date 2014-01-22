@@ -242,12 +242,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	function invokeService() {
 		console.log("Invoke Service " + worksheetTitle);
 		hideDropdown();
-		var dialog = $('#FetchR2RMLModelDialogBox');
-        $('#txtR2RML_URL_fetch').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-        dialog.dialog(
-            { title: 'SPARQL End point',
-                buttons: { "Cancel": function() { $(this).dialog("close"); },
-                    "Fetch": renderR2RMLModels }, width: 400, height: 170});
+		FetchModelDialog.getInstance().show(worksheetId);
 		return false;
 	}
 	
@@ -285,12 +280,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	
 	function exportToDatabase() {
 		hideDropdown();
-		 getDatabasePreferences();
-	        var dbDialogBox = $("div#PublishDatabaseDialogBox");
-	        dbDialogBox.data("worksheetId", worksheetId);
-	        // Show the dialog box
-	        dbDialogBox.dialog({width: 300
-	            , buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": publishDatabaseFunction }});
+		PublishDatabaseDialog.getInstance().show(worksheetId);
 		return false;
 	}
 	
