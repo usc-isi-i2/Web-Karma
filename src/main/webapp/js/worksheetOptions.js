@@ -162,51 +162,9 @@ function WorksheetOptions(wsId, wsTitle) {
 	function publishRDF() {
 		console.log("Publish RDF: " + worksheetTitle);
 		hideDropdown();
-		showHideRdfInfo();
-        getRDFPreferences();
-        window.rdfSPAQRLEndPoint = null;
-
-        var rdfDialogBox = $("div#PublishRDFDialogBox");
-
-        // get the graph uri for the worksheet
-        var info = new Object();
-        info["workspaceId"] = $.workspaceGlobalInformation.id;
-        info["command"] = "FetchExistingWorksheetPropertiesCommand";
-        info["worksheetId"] = worksheetId;
-
-        var returned = $.ajax({
-            url: "RequestController",
-            type: "POST",
-            data : info,
-            dataType : "json",
-            complete :
-                function (xhr, textStatus) {
-                    var json = $.parseJSON(xhr.responseText);
-                    var props = json["elements"][0]["properties"];
-
-                    // Set graph name
-                    if (props["graphName"] != null) {
-                        $("#rdfSPAQRLGraph").val(props["graphName"]);
-                    } else {
-                        $("#rdfSPAQRLGraph").val("");
-                    }
-                }
-        });
-        fetchGraphsFromTripleStore($("#rdfSPAQRLEndPoint").val());
-
-        // Show the dialog box
-        rdfDialogBox.dialog({width: 500, height:420, title:'Publish RDF',
-            buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": validateAndPublishRDF }});
-
-        // bind the change event for the sparqlEndPoint
-        $('input#rdfSPAQRLEndPoint').unbind('focusout');
-
-        $('input#rdfSPAQRLEndPoint').focusout(function(event){
-            if (window.rdfSPAQRLEndPoint != $('input#rdfSPAQRLEndPoint').val()) {
-                // get the list of repo
-                fetchGraphsFromTripleStore($("#rdfSPAQRLEndPoint").val());
-            }
-        });
+		
+		PublishRDFDialog.getInstance().show(worksheetId);
+		
 		return false;
 	}
 	
