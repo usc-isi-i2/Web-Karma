@@ -170,6 +170,7 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="databaseImport.jsp"></jsp:include>
 			  <jsp:include page="reset.jsp"></jsp:include>
 			  <jsp:include page="tableColumnDialogs.jsp"></jsp:include>
+			  <jsp:include page="tableOptionsDialogs.jsp"></jsp:include>
 		</div>
 	
 		
@@ -686,29 +687,7 @@ and related projects, please see: http://www.isi.edu/integration
 
             </table>
         </div>
-        <div id="setPropertiesDialog" style="display: none" class="smallSizedFont">
-            <div>
-                <br><label>Model Identifier:</label><input type="text" maxlength="100" id="graphNameInput"><br><br><br>
-            </div>
-
-            <input type="checkbox" id="serviceOptions"> <label for="serviceOptions">Set Service Options</label><br><br>
-
-            <div id="worksheetServiceOptions" style="display: none" class="smallSizedFont">
-                <label>Service URL:</label><input type="text" maxlength="80" id="serviceUrlInput"><br><br>
-                <label>Request method: </label>
-                <select class="smallSizedFont" id="serviceRequestMethod">
-                    <option value="GET">GET</option>
-                    <option value="POST">POST</option>
-                </select><br><br>
-
-                <div style="display: none" id="servicePostOptions">
-                    <input type="radio" id="invokePerRow" value="invokePerRow" name="serviceDataPostMethod" checked>
-                    <label for="invokePerRow">Invoke service one row at a time</label><br>
-                    <input type="radio" id="invokeWholeWorksheet" value="invokeWithWholeWorksheet" name="serviceDataPostMethod">
-                    <label for="invokeWholeWorksheet">Post whole worksheet</label>
-                </div>
-            </div>
-        </div>
+        
         <div id="showExistingModelDialog" style="display: none" class="smallSizedFont">
             <input type="radio" name="chooseModelGroup" value="matchingModels" id="chooseMatchingModels">
             <label for="chooseMatchingModels">Matching source name</label>
@@ -788,6 +767,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/showModel.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/worksheetOptions.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/tableColumnOptions.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/tableOptions.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/util.js?<jsp:include page='version.jsp' />"></script>
          
         <script>

@@ -63,21 +63,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	function setProperties() {
 		console.log("Set Properties: " + worksheetTitle);
 		hideDropdown();
-		
-		var settingsBox = $("div#setPropertiesDialog");
-
-        // Show the dialog box
-        settingsBox.dialog({width: 300, title: "Set Properties"
-            , buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": submitWorksheetProperties }});
-
-        // Close the service options
-        if ($('#worksheetServiceOptions').is(':visible')) {
-            $('#serviceOptions').trigger('click');
-        }
-
-        // Check for existing values
-        fetchExistingWorksheetOptions(worksheetId);
-        
+		SetPropertiesDialog.getInstance().show(worksheetId);
 		return false;
 	}
 	
