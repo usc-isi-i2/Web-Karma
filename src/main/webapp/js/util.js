@@ -48,3 +48,31 @@ function showWaitingSignOnScreen() {
 function hideWaitingSignOnScreen() {
     $("div#WaitingDiv").hide();
 }
+
+function testSparqlEndPoint(url, worksheetId) {
+	var info = new Object();
+	info["worksheetId"] = worksheetId;
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "TestSPARQLEndPointCommand";
+	info["tripleStoreUrl"] = url;
+	window.conncetionStat = false;
+	var returned = $.ajax({
+	   	url: "RequestController",
+	   	type: "POST",
+	   	data : info,
+	   	dataType : "json",
+	   	async : false,
+	   	complete :
+	   		function (xhr, textStatus) {
+	    		var json = $.parseJSON(xhr.responseText);
+	    		if(json['elements'] && json['elements'][0]['connectionStatus'] && json['elements'][0]['connectionStatus'] == 1) {
+	    			window.conncetionStat = true;
+	    		}
+		   	},
+		error :
+			function (xhr, textStatus) {
+	   			alert("Error occured while testing connection to sparql endpoint!" + textStatus);
+		   	}
+	});
+	return window.conncetionStat;
+}

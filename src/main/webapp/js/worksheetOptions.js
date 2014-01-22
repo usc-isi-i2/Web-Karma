@@ -171,7 +171,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	function publishModel(event) {
 		console.log("Publish Model: " + worksheetTitle);
 		hideDropdown();
-		handlePublishModelToStoreButton(event);
+		PublishModelDialog.getInstance().show(worksheetId);
 		return false;
 	}
 	

@@ -350,15 +350,7 @@ and related projects, please see: http://www.isi.edu/integration
         <div id="columnHeadingMenuButtonDiv" style="display: none"></div>
        
         
-        <div id="PublishR2RMLModelDialogBox" style="display: none">
-            <span class="smallSizedFont">
-                <table>
-                    <tr><td>SPARQL End Point</td></tr>
-                    <tr><td><input type="url" id="txtR2RML_URL" value="" size="65" required/></td></tr>
-                </table> 
-            </span>
-            <br />
-        </div>
+        
         <div id="FetchR2RMLModelDialogBox" style="display: none">
             <span class="smallSizedFont">
                 <table>

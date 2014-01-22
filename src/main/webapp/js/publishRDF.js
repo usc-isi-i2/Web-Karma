@@ -127,7 +127,7 @@ var PublishRDFDialog = (function() {
     			graphUri = $('#modelGraphList').val();
     		}
     		// validate the sparql endpoint
-    		if(!testSparqlEndPoint($("input#rdfSPAQRLEndPoint").val())) {
+    		if(!testSparqlEndPoint($("input#rdfSPAQRLEndPoint").val(), worksheetId)) {
     			alert("Invalid sparql end point. Could not establish connection.");
     			return;
     		}
@@ -306,34 +306,6 @@ var PublishRDFDialog = (function() {
     		});
     	}
     	
-    	function testSparqlEndPoint(url) {
-    		var info = new Object();
-    		info["worksheetId"] = worksheetId;
-    		info["workspaceId"] = $.workspaceGlobalInformation.id;
-    		info["command"] = "TestSPARQLEndPointCommand";
-    		info["tripleStoreUrl"] = url;
-    		window.conncetionStat = false;
-    		var returned = $.ajax({
-    		   	url: "RequestController",
-    		   	type: "POST",
-    		   	data : info,
-    		   	dataType : "json",
-    		   	async : false,
-    		   	complete :
-    		   		function (xhr, textStatus) {
-    		    		var json = $.parseJSON(xhr.responseText);
-    		    		if(json['elements'] && json['elements'][0]['connectionStatus'] && json['elements'][0]['connectionStatus'] == 1) {
-    		    			window.conncetionStat = true;
-    		    		}
-    			   	},
-    			error :
-    				function (xhr, textStatus) {
-    		   			alert("Error occured while testing connection to sparql endpoint!" + textStatus);
-    			   	}
-    		});
-    		return window.conncetionStat;
-    	}
-
     	function getUniqueGraphUri(graphUriTobeValidated) {
     		var info = new Object();
     		info["worksheetId"] = worksheetId;

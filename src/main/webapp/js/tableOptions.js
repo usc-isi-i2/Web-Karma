@@ -179,6 +179,102 @@ var SetPropertiesDialog = (function() {
     return {
     	getInstance : getInstance
     };
+})();
+
+
+
+var PublishModelDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#publishModelDialog");
+    	var worksheetId;
     	
+    	function init() {
+    		//Initialize what happens when we show the dialog
+    		dialog.on('show.bs.modal', function (e) {
+				hideError();
+				 $('#txtR2RML_URL').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+			});
+			
+			//Initialize handler for Save button
+			//var me = this;
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e);
+			});
+			
+			    
+    	}
+    	
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError() {
+			$("div.error", dialog).show();
+		}
+        
+        function saveDialog(e) {
+        	hide();
+        	 if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
+    	        alert("Invalid sparql end point. Could not establish connection.");
+    	        return;
+    	    }
+
+    	    var info = new Object();
+    	    info["worksheetId"] = worksheetId;
+    	    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    	    info["command"] = "GenerateR2RMLModelCommand";
+    	    info['tripleStoreUrl'] = $('#txtR2RML_URL').val();
+
+    	    showLoading(info["worksheetId"]);
+    	    var returned = $.ajax({
+    	        url: "RequestController",
+    	        type: "POST",
+    	        data : info,
+    	        dataType : "json",
+    	        complete :
+    	            function (xhr, textStatus) {
+    	                //alert(xhr.responseText);
+    	                var json = $.parseJSON(xhr.responseText);
+    	                parse(json);
+    	                hideLoading(info["worksheetId"]);
+    	            },
+    	        error :
+    	            function (xhr, textStatus) {
+    	                alert("Error occured while exporting CSV!" + textStatus);
+    	                hideLoading(info["worksheetId"]);
+    	            }
+    	    });
+        };
+        
+        function hide() {
+        	dialog.modal('hide');
+        }
+        
+        function show(wsId) {
+        	worksheetId = wsId;
+        	dialog.modal({keyboard:true, show:true});
+        };
+        
+        
+        return {	//Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
     
 })();
