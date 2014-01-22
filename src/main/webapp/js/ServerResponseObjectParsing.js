@@ -427,23 +427,11 @@ function parse(data) {
         }
         else if(element["updateType"] == "CleaningResultUpdate") {
             if(element["result"] != null) {
-                //var pdata = getVaritions(element["result"]);
                 if(element["result"][0] == null || element["result"][0]["top"].length==0) {
                     alert("Cannot find any transformations! ");
-                    //populateInfoPanel();
-                    //return;
                 }
-                var topCol = element["result"][0];
-                //var sndCol = element["result"][1];
-                //preprocessData(topCol, topCol["top"]);
-                preprocessData(topCol,topCol["top"])
-                $("div#columnHeadingDropDownMenu").data("topkeys",topCol["top"]);
-                $("div#columnHeadingDropDownMenu").data("results", element["result"]);
-                populateInfoPanel();
-                populateResult(topCol);
-                //var pdata = getVaritions(element["result"]);
-                //populateVariations(topCol["top"], sndCol["data"]);
-
+               
+                TransformColumnDialog.getInstance().handleCleaningResultUpdate(element["result"]);
             }
         }
         else if(element["updateType"] == "InfoUpdate") {

@@ -187,14 +187,22 @@ div.undoEditButton {
 button.closeButton{
 	float:right;
 	display: inline;
-	width: 15px;
-	height: 15px;
+	width: 20px;
+	height: 20px;
 }
 button.editbutton{
 	display:table-cell;
 	vertical-align: middle;
     text-align: center;
 	float:right;
-	width: 15px;
-	height: 15px;
+	width: 20px;
+	height: 20px;
+}
+.cleaningOverflowDiv {
+	max-height: 150px;
+	overflow: auto;
+}
+.cleaningOverflowDivLarge {
+	max-height: 450px;
+	overflow: auto;
 }
