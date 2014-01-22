@@ -13,6 +13,10 @@
 		<module>karma-not-common</module>
 		<module>karma-web</module>
 		<module>karma-offline</module>
+		<module>karma-jdbc</module>
+		<module>karma-crf</module>
+		<module>karma-util</module>
+		<module>karma-cleaning</module>
 	</modules>
 
 
@@ -165,10 +169,9 @@
 	<dependency>
 			<groupId>net.sourceforge.jtds</groupId>
 			<artifactId>jtds</artifactId>
-			<version>1.2.5</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/jtds-1.2.5.jar</systemPath>
+			<version>1.2.6</version>
 		</dependency>
+
 	<dependency>
 		<groupId>xml-apis</groupId>
 		<artifactId>xml-apis</artifactId>
@@ -302,9 +305,7 @@
 	        <groupId>net.sf.json-lib</groupId>
 	        <artifactId>json-lib</artifactId>
 	        <version>2.3</version>
-	        <type>jar</type>
 	        <classifier>jdk15</classifier>
-	        <scope>compile</scope>
 	    </dependency>
         <dependency>
               <groupId>uk.com.robust-it</groupId>

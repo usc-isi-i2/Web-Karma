@@ -1,22 +1,19 @@
 package edu.isi.karma.controller.command.worksheet;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class MultipleValueEditColumnCommandFactory extends CommandFactory implements JSONInputCommandFactory{
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+
+public class MultipleValueEditColumnCommandFactory extends JSONInputCommandFactory{
 	public enum Arguments {
 		hNodeID, worksheetId, rows, rowID, value
 	}

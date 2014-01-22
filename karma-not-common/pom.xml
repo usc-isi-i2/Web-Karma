@@ -19,6 +19,11 @@
 			<artifactId>karma-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>karma-jdbc</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 
 		<dependency>
@@ -53,11 +58,6 @@
 			<version>${geotools.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.python</groupId>
-			<artifactId>jython-standalone</artifactId>
-			<version>2.5.3</version>
-		</dependency>
-		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>${log4j.version}</version>
@@ -71,13 +71,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.jtds</groupId>
-			<artifactId>jtds</artifactId>
-			<version>1.2.5</version>
-			<scope>system</scope> <!-- TODO-CUBRC fix this -->
-			<systemPath>${project.basedir}/../lib/jtds-1.2.5.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>xml-apis</groupId>
@@ -119,7 +112,6 @@
 		<dependency>
 			<groupId>net.sf.jgrapht</groupId>
 			<artifactId>jgrapht</artifactId>
-			<version>0.8.3</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -142,19 +134,9 @@
 			<version>${apache.commons.io.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>net.sf.opencsv</groupId>
-			<artifactId>opencsv</artifactId>
-			<version>2.3</version>
-		</dependency>
-		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql.connector.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.antlr</groupId>
-			<artifactId>antlr</artifactId>
-			<version>${antlr.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jdom</groupId>
@@ -198,15 +180,6 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>${gson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.json-lib</groupId>
-			<artifactId>json-lib</artifactId>
-			<version>2.3</version>
-			<type>jar</type>
-			<classifier>jdk15</classifier>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>uk.com.robust-it</groupId>
@@ -231,7 +204,6 @@
 		<dependency>
 			<groupId>org.kohsuke</groupId>
 			<artifactId>graphviz-api</artifactId>
-			<version>1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>

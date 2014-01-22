@@ -20,22 +20,20 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class SetSemanticTypeCommandFactory extends CommandFactory implements JSONInputCommandFactory {
+import javax.servlet.http.HttpServletRequest;
+
+public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
 		worksheetId, hNodeId, isKey, SemanticTypesArray, trainAndShowUpdates, rdfLiteralType

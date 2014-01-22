@@ -20,19 +20,17 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
+import org.json.JSONArray;
+import org.json.JSONException;
 
-public class UnassignSemanticTypeCommandFactory extends CommandFactory implements JSONInputCommandFactory {
+import javax.servlet.http.HttpServletRequest;
+
+public class UnassignSemanticTypeCommandFactory extends JSONInputCommandFactory {
 	private enum Arguments {
 		hNodeId, worksheetId
 	}
