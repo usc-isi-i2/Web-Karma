@@ -348,9 +348,7 @@ and related projects, please see: http://www.isi.edu/integration
         
         <div id="tableCellMenuButtonDiv" style="display: none"></div>
         <div id="columnHeadingMenuButtonDiv" style="display: none"></div>
-        <div id="confirmPublishRDFDialogBox" style="display: none">
-            <span class="smallSizedFont"></span>
-        </div>
+       
         
         <div id="PublishR2RMLModelDialogBox" style="display: none">
             <span class="smallSizedFont">

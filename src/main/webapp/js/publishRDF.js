@@ -144,15 +144,17 @@ var PublishRDFDialog = (function() {
     			} 
     			var newUri = getUniqueGraphUri(graphUri);
     			if(graphUri != newUri) {
-    				var rdfDialogBox = $("div#confirmPublishRDFDialogBox");
-    				rdfDialogBox.find('span').html('The context you provided already exists. <br /> You can either publish to the same \
-    						context or use the one that is suggested below. <br /> ' + newUri);
-    				
-    				rdfDialogBox.dialog({ title:'Confirmation',  width: 700 , buttons: { 
-    						"Use Old": function() { publishRDFFunction(graphUri) },
-    						"Use New": function() { publishRDFFunction(newUri) },
-    						"Cancel": function() { $(this).dialog("close"); }
-    					}});
+    				showError("The context you provided already exists. Please either enter a different context name, " +
+    						"or select the context from the 'Use existing context' dropdown");
+//    				var rdfDialogBox = $("div#confirmPublishRDFDialogBox");
+//    				rdfDialogBox.find('span').html('The context you provided already exists. <br /> You can either publish to the same \
+//    						context or use the one that is suggested below. <br /> ' + newUri);
+//    				
+//    				rdfDialogBox.dialog({ title:'Confirmation',  width: 700 , buttons: { 
+//    						"Use Old": function() { publishRDFFunction(graphUri) },
+//    						"Use New": function() { publishRDFFunction(newUri) },
+//    						"Cancel": function() { $(this).dialog("close"); }
+//    					}});
     			}
     			else {
     				publishRDFFunction(graphUri);
@@ -365,8 +367,11 @@ var PublishRDFDialog = (function() {
 			$("div.error", dialog).hide();
 		}
 		
-		function showError() {
+		function showError(err) {
 			$("div.error", dialog).show();
+			if(err) {
+				$("div.error", dialog).text(err);
+			}
 		}
         
         
