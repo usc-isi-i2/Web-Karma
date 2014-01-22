@@ -16,7 +16,7 @@
 	    <dependency>
 		    <groupId>edu.isi</groupId>
 		    <artifactId>karma-common</artifactId>
-		    <version>0.0.1-SNAPSHOT</version>
+		    <version>${project.version}</version>
 	    </dependency>
 
 	    <dependency>
@@ -33,14 +33,10 @@
 	    </dependency>
 
 	    <dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi</artifactId>
-	    </dependency>
-
-	    <dependency>
-		    <groupId>org.apache.mahout.commons</groupId>
-		    <artifactId>commons-cli</artifactId>
-		    <version>2.0-mahout</version>
+		    <groupId>edu.isi</groupId>
+		    <artifactId>karma-jdbc</artifactId>
+		    <version>${project.version}</version>
+		    <optional>true</optional>
 	    </dependency>
 
 	    <dependency>

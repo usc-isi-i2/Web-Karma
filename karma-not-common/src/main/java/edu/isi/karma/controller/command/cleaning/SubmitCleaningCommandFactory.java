@@ -22,7 +22,6 @@
 package edu.isi.karma.controller.command.cleaning;
 
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.rep.Workspace;
@@ -32,7 +31,7 @@ import org.json.JSONException;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class SubmitCleaningCommandFactory extends CommandFactory implements JSONInputCommandFactory {
+public class SubmitCleaningCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
 		hNodeId, worksheetId, hTableId,examples

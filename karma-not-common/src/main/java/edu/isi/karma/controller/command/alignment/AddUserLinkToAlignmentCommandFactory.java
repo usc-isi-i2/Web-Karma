@@ -21,7 +21,6 @@
 package edu.isi.karma.controller.command.alignment;
 
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
@@ -31,7 +30,7 @@ import org.json.JSONException;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class AddUserLinkToAlignmentCommandFactory extends CommandFactory implements JSONInputCommandFactory {
+public class AddUserLinkToAlignmentCommandFactory extends JSONInputCommandFactory {
 	private enum Arguments {
 		edgeId, alignmentId, worksheetId
 	}

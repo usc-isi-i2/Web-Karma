@@ -20,14 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
@@ -38,8 +31,13 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.webserver.KarmaException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class ShowModelCommandFactory extends CommandFactory implements JSONInputCommandFactory {
+import javax.servlet.http.HttpServletRequest;
+
+public class ShowModelCommandFactory extends JSONInputCommandFactory {
 	
 
 	private enum Arguments {

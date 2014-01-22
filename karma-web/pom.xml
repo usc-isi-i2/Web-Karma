@@ -20,16 +20,6 @@
 			<version>${project.version}</version>
 		</dependency>
 
-
-		<dependency>
-			<groupId>net.sourceforge.jtds</groupId>
-			<artifactId>jtds</artifactId>
-			<version>1.2.5</version>
-			<scope>system</scope>
-			<!-- TODO-CUBRC fix this -->
-			<systemPath>${project.basedir}/../lib/jtds-1.2.5.jar</systemPath>
-		</dependency>
-
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
