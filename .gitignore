@@ -31,7 +31,7 @@ src/main/webapp/UserUploadedFiles/*
 
 SampleData
 CRF_Model.txt
-log/*
+*/log/*
 src/main/webapp/publish/KML/*.*
 src/main/webapp/publish/Source Description/*.*
 src/main/webapp/publish/History/*.*
