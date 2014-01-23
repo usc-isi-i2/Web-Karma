@@ -20,9 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
-import javax.servlet.http.HttpServletRequest;
-
 import edu.isi.karma.rep.Workspace;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class FetchGraphsFromTripleStoreCommandFactory extends CommandFactory {
 	private enum Arguments {
@@ -39,4 +39,9 @@ public class FetchGraphsFromTripleStoreCommandFactory extends CommandFactory {
 		return comm;
 	}
 
+	@Override
+	protected Class<? extends Command> getCorrespondingCommand()
+	{
+		return FetchGraphsFromTripleStoreCommand.class;
+	}
 }

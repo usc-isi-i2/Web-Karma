@@ -1,6 +1,6 @@
 package edu.isi.karma.controller.history;
 
-import edu.isi.karma.controller.command.Command.CommandTag;
+import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.history.CommandHistoryWriter.HistoryArguments;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.ServletContextParameterMap;

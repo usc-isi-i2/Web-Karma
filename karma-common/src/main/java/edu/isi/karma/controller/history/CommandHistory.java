@@ -24,9 +24,10 @@
 package edu.isi.karma.controller.history;
 
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.Command.CommandTag;
-import edu.isi.karma.controller.command.Command.CommandType;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.ICommand;
+import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -45,9 +46,9 @@ import java.util.*;
  */
 public class CommandHistory {
 
-	private final ArrayList<Command> history = new ArrayList<Command>();
+	private final List<ICommand> history = new ArrayList<ICommand>();
 
-	private final ArrayList<Command> redoStack = new ArrayList<Command>();
+	private final List<ICommand> redoStack = new ArrayList<ICommand>();
 
 	/**
 	 * If the last command was undo, and then we do a command that goes on the
@@ -69,12 +70,11 @@ public class CommandHistory {
 	public CommandHistory() {
 	}
 
-	public CommandHistory(ArrayList<Command> history,
-			ArrayList<Command> redoStack) {
-		for (Command c : history) {
+	public CommandHistory(List<ICommand> history, List<ICommand> redoStack) {
+		for (ICommand c : history) {
 			this.history.add(c);
 		}
-		for (Command c : redoStack) {
+		for (ICommand c : redoStack) {
 			this.redoStack.add(c);
 		}
 	}
@@ -87,11 +87,11 @@ public class CommandHistory {
 		return !redoStack.isEmpty();
 	}
 
-	public ArrayList<Command> _getHistory() {
+	public List<ICommand> _getHistory() {
 		return history;
 	}
 
-	public ArrayList<Command> _getRedoStack() {
+	public List<ICommand> _getRedoStack() {
 		return redoStack;
 	}
 
@@ -165,12 +165,12 @@ public class CommandHistory {
 	 */
 	public UpdateContainer undoOrRedoCommandsUntil(Workspace workspace,
 			String commandId) throws CommandException {
-		List<Command> commandsToUndo = getCommandsUntil(history, commandId);
+		List<ICommand> commandsToUndo = getCommandsUntil(history, commandId);
 		if (!commandsToUndo.isEmpty()) {
 			lastCommandWasUndo = true;
 			return undoCommands(workspace, commandsToUndo);
 		} else {
-			List<Command> commandsToRedo = getCommandsUntil(redoStack,
+			List<ICommand> commandsToRedo = getCommandsUntil(redoStack,
 					commandId);
 			if (!commandsToRedo.isEmpty()) {
 				return redoCommands(workspace, commandsToRedo);
@@ -189,10 +189,10 @@ public class CommandHistory {
 	 * @return UpdateContainer with the effects of all undone commands.
 	 */
 	private UpdateContainer undoCommands(Workspace workspace,
-			List<Command> commandsToUndo) {
+			List<ICommand> commandsToUndo) {
 
 		UpdateContainer effects = new UpdateContainer();
-		for (Command c : commandsToUndo) {
+		for (ICommand c : commandsToUndo) {
 			history.remove(c);
 			redoStack.add(c);
 			effects.append(c.undoIt(workspace));
@@ -209,11 +209,11 @@ public class CommandHistory {
 	 * @throws CommandException
 	 */
 	private UpdateContainer redoCommands(Workspace workspace,
-			List<Command> commandsToRedo) throws CommandException {
+			List<ICommand> commandsToRedo) throws CommandException {
 		if (!redoStack.isEmpty()) {
 
 			UpdateContainer effects = new UpdateContainer();
-			for (Command c : commandsToRedo) {
+			for (ICommand c : commandsToRedo) {
 				redoStack.remove(c);
 				history.add(c);
 				effects.append(c.doIt(workspace));
@@ -233,16 +233,16 @@ public class CommandHistory {
 	 *         command with the given id. If the command with the given id is
 	 *         not in the list, return the empty list.
 	 */
-	private List<Command> getCommandsUntil(ArrayList<Command> commands,
+	private List<ICommand> getCommandsUntil(List<ICommand> commands,
 			String commandId) {
 		if (commands.isEmpty()) {
 			return Collections.emptyList();
 		}
-		List<Command> result = new LinkedList<Command>();
+		List<ICommand> result = new LinkedList<ICommand>();
 		boolean foundCommand = false;
 		for (int i = commands.size() - 1; i >= 0; i--) {
-			Command c = commands.get(i);
-			if (c.getCommandType() == Command.CommandType.undoable) {
+			ICommand c = commands.get(i);
+			if (c.getCommandType() == CommandType.undoable) {
 				result.add(c);
 			}
 			if (c.getId().equals(commandId)) {
@@ -259,7 +259,7 @@ public class CommandHistory {
 
 	public void generateFullHistoryJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
-		Iterator<Command> histIt = history.iterator();
+		Iterator<ICommand> histIt = history.iterator();
 		while (histIt.hasNext()) {
 			histIt.next().generateJson(prefix, pw, vWorkspace,
 					Command.HistoryType.undo);
@@ -269,7 +269,7 @@ public class CommandHistory {
 		}
 
 		for(int i = redoStack.size()-1; i>=0; i--) {
-			Command redoComm = redoStack.get(i);
+			ICommand redoComm = redoStack.get(i);
 			redoComm.generateJson(prefix, pw, vWorkspace,
 					Command.HistoryType.redo);
 			if(i != 0)
@@ -278,17 +278,17 @@ public class CommandHistory {
 	}
 
 	public void removeCommands(CommandTag tag) {
-		List<Command> commandsToBeRemoved = new ArrayList<Command>();
-		for(Command command: history) {
+		List<ICommand> commandsToBeRemoved = new ArrayList<ICommand>();
+		for(ICommand command: history) {
 			if(command.hasTag(tag))
 				commandsToBeRemoved.add(command);
 		}
 		history.removeAll(commandsToBeRemoved);
 	}
 	
-	public Command getCommand(String commandId)
+	public ICommand getCommand(String commandId)
 	{
-		for(Command  c: this.history)
+		for(ICommand  c: this.history)
 		{
 			if(c.getId().equals(commandId))
 			{

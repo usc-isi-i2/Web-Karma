@@ -30,5 +30,15 @@
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>slf4j-log4j12</artifactId>
 	    </dependency>
+
+
+	    <dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi</artifactId>
+	    </dependency>
+	    <dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+	    </dependency>
     </dependencies>
 </project>

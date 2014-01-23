@@ -20,9 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
-import javax.servlet.http.HttpServletRequest;
-
 import edu.isi.karma.rep.Workspace;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class GetUniqueGraphUrlCommandFactory extends CommandFactory {
 	private enum Arguments {
@@ -40,4 +40,9 @@ public class GetUniqueGraphUrlCommandFactory extends CommandFactory {
 		return comm;
 	}
 
+	@Override
+	protected Class<? extends Command> getCorrespondingCommand()
+	{
+		return GetUniqueGraphUrlCommand.class;
+	}
 }

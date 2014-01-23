@@ -18,6 +18,8 @@
 		<artifactId>karma-crf</artifactId>
 		<version>${project.version}</version>
 	</dependency>
+
+
 	<dependency>
 		<groupId>edu.isi</groupId>
 		<artifactId>karma-cleaning</artifactId>
@@ -100,8 +102,6 @@
 	<dependency>
 		<groupId>javax.servlet</groupId>
 		<artifactId>javax.servlet-api</artifactId>
-		<version>3.0.1</version>
-		<scope>provided</scope>
 	</dependency>
 
 	<dependency>
@@ -118,7 +118,6 @@
 	<dependency>
 		<groupId>commons-httpclient</groupId>
 		<artifactId>commons-httpclient</artifactId>
-		<version>3.1</version>
 	</dependency>
 
 </dependencies>
