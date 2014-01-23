@@ -65,7 +65,7 @@ public class AddColumnCommandFactory extends JSONInputCommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return AddColumnCommand.class;
 	}

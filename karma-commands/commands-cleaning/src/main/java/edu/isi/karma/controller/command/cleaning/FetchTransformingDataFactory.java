@@ -19,7 +19,7 @@ public class FetchTransformingDataFactory extends CommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return FetchTransformingDataCommand.class;
 	}

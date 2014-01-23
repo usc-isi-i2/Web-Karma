@@ -43,7 +43,7 @@ public class ApplyHistoryFromR2RMLModelCommandFactory extends CommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return ApplyHistoryFromR2RMLModelCommand.class;
 	}

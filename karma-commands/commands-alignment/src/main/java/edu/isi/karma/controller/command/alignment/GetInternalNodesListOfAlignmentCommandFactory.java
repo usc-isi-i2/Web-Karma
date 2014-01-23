@@ -47,7 +47,7 @@ public class GetInternalNodesListOfAlignmentCommandFactory extends CommandFactor
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return GetInternalNodesListOfAlignmentCommand.class;
 	}

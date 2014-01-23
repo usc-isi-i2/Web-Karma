@@ -50,10 +50,11 @@ public abstract class CommandFactory<T> {
 		return workspace.getFactory().getNewId("C");
 	}
 
+	/* this is a hack to get around instanceof jsoninputcommandfactory */
 	public Command createCommand(JSONArray inputParamArr, Workspace workspace) throws JSONException, KarmaException
 	{
 		throw new UnsupportedOperationException("This is not supported on this command factory!");
 	}
 
-	protected abstract Class<? extends Command> getCorrespondingCommand();
+	public abstract Class<? extends Command> getCorrespondingCommand();
 }

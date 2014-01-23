@@ -44,7 +44,7 @@ public class ImportExcelFileCommandFactory extends CommandFactory {
     }
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return ImportExcelFileCommand.class;
 	}

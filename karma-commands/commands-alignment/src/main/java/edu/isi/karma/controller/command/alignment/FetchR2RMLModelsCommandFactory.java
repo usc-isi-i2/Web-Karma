@@ -40,7 +40,7 @@ public class FetchR2RMLModelsCommandFactory extends CommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return FetchR2RMLModelsCommand.class;
 	}

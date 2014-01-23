@@ -35,7 +35,7 @@ public class GetDataPropertyHierarchyCommandFactory extends CommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return GetDataPropertyHierarchyCommand.class;
 	}

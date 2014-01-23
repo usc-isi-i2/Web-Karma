@@ -20,7 +20,7 @@ public class PublishWorksheetHistoryCommandFactory extends CommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return PublishWorksheetHistoryCommand.class;
 	}

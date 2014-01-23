@@ -72,7 +72,7 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return SetMetaPropertyCommand.class;
 	}

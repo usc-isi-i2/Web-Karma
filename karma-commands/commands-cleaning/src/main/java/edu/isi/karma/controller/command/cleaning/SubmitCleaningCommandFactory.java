@@ -58,7 +58,7 @@ public class SubmitCleaningCommandFactory extends JSONInputCommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return SubmitCleaningCommand.class;
 	}

@@ -65,7 +65,7 @@ public class PublishRDFCommandFactory extends CommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return PublishRDFCommand.class;
 	}

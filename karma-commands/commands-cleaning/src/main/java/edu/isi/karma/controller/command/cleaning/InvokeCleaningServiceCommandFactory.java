@@ -55,7 +55,7 @@ public class InvokeCleaningServiceCommandFactory extends JSONInputCommandFactory
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return InvokeCleaningServiceCommand.class;
 	}

@@ -38,7 +38,7 @@ public class ImportOntologyCommandFactory extends CommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return ImportOntologyCommand.class;
 	}

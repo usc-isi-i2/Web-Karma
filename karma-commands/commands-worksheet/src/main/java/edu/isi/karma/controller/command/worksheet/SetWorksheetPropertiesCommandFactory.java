@@ -60,7 +60,7 @@ public class SetWorksheetPropertiesCommandFactory extends JSONInputCommandFactor
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return SetWorksheetPropertiesCommand.class;
 	}

@@ -58,7 +58,7 @@ public class SubmitPythonTransformationCommandFactory extends JSONInputCommandFa
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return SubmitPythonTransformationCommand.class;
 	}

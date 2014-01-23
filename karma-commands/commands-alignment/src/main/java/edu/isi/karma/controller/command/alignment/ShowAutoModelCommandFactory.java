@@ -121,7 +121,7 @@ public class ShowAutoModelCommandFactory extends JSONInputCommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return ShowAutoModelCommand.class;
 	}
