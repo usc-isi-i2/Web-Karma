@@ -1,7 +1,7 @@
 package edu.isi.karma.controller.history;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.Command.CommandTag;
+import edu.isi.karma.controller.command.ICommand;
+import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.rep.HNode;
@@ -16,36 +16,36 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CommandHistoryWriter {
-	private final ArrayList<Command> history;
+	private final List<ICommand> history;
 	private Workspace workspace;
 	
 	public enum HistoryArguments {
 		worksheetId, commandName, inputParameters, hNodeId, tags
 	}
 
-	public CommandHistoryWriter(ArrayList<Command> history, Workspace workspace) {
+	public CommandHistoryWriter(List<ICommand> history, Workspace workspace) {
 		this.history = history;
 		this.workspace = workspace;
 	}
 
 	public void writeHistoryPerWorksheet() throws JSONException {
-		HashMap<String, List<Command>> comMap = new HashMap<String, List<Command>>();
-		for(Command command : history) {
+		HashMap<String, List<ICommand>> comMap = new HashMap<String, List<ICommand>>();
+		for(ICommand command : history) {
 			if(command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
 					|| command.hasTag(CommandTag.Transformation))) {
 				JSONArray json = new JSONArray(command.getInputParameterJson());
 				String worksheetId = HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json);
 				String worksheetName = workspace.getWorksheet(worksheetId).getTitle(); 
 				if(comMap.get(worksheetName) == null)
-					comMap.put(worksheetName, new ArrayList<Command>());
+					comMap.put(worksheetName, new ArrayList<ICommand>());
 				comMap.get(worksheetName).add(command);
 			}
 		}
 		
 		for(String wkName : comMap.keySet()) {
-			List<Command> comms = comMap.get(wkName);
+			List<ICommand> comms = comMap.get(wkName);
 			JSONArray commArr = new JSONArray();
-			for(Command comm : comms) {
+			for(ICommand comm : comms) {
 				JSONObject commObj = new JSONObject();
 				commObj.put(HistoryArguments.commandName.name(), comm.getCommandName());
 				

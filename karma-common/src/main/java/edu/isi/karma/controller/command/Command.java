@@ -23,7 +23,6 @@
  */
 package edu.isi.karma.controller.command;
 
-import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Entity;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
@@ -42,46 +41,8 @@ import java.util.List;
  * @author szekely
  * 
  */
-public abstract class Command extends Entity {
-
-	public enum HistoryType {
-		undo, redo
-	}
-
-	public enum CommandType {
-		undoable, notUndoable, notInHistory
-	}
-
-	public enum JsonKeys {
-		commandId, title, description, commandType, historyType
-	}
-
-	/**
-	 * @return the internal name of this command. Used to communicate between
-	 *         the server and the browser.
-	 */
-	public abstract String getCommandName();
-
-	/**
-	 * @return the label shown in the user interface.
-	 */
-	public abstract String getTitle();
-
-	/**
-	 * @return a description of what the command does or did, if it was
-	 *         executed.
-	 */
-	public abstract String getDescription();
-
-	/**
-	 * @return the type of this command.
-	 */
-	public abstract CommandType getCommandType();
-
-	public abstract UpdateContainer doIt(Workspace workspace)
-			throws CommandException;
-
-	public abstract UpdateContainer undoIt(Workspace workspace);
+public abstract class Command extends Entity implements ICommand
+{
 
 	/**
 	 * Has this command been executed already?
@@ -109,34 +70,36 @@ public abstract class Command extends Entity {
 
 	private String inputParameterJson;
 
-	public enum CommandTag {
-		Modeling, Transformation, Cleaning, Integration, Import
-	}
-
 	protected Command(String id) {
 		super(id);
 	}
 
+	@Override
 	public boolean isExecuted() {
 		return isExecuted;
 	}
 
+	@Override
 	public void setExecuted(boolean isExecuted) {
 		this.isExecuted = isExecuted;
 	}
 
+	@Override
 	public boolean isSavedInHistory() {
 		return saveInHistory;
 	}
 
+	@Override
 	public void saveInHistory(boolean flag) {
 		this.saveInHistory = flag;
 	}
 
+	@Override
 	public void writeWorksheetHistoryAfterCommandExecutes(boolean flag) {
 		this.writeWorksheetHistoryAfterCommandExecutes = flag;
 	}
 
+	@Override
 	public boolean writeWorksheetHistoryAfterCommandExecutes() {
 		return this.writeWorksheetHistoryAfterCommandExecutes;
 	}
@@ -148,8 +111,9 @@ public abstract class Command extends Entity {
 	 * @param historyType
 	 *            of the lists where the command is, either undo or redo.
 	 */
+	@Override
 	public void generateJson(String prefix, PrintWriter pw,
-			VWorkspace vWorkspace, HistoryType historyType) {
+	                         VWorkspace vWorkspace, HistoryType historyType) {
 		pw.println(prefix + "{");
 		String newPref = prefix + "  ";
 		pw.println(newPref + JSONUtil.json(JsonKeys.commandId, getId()));
@@ -164,30 +128,37 @@ public abstract class Command extends Entity {
 		pw.println(prefix + "}");
 	}
 
+	@Override
 	public boolean hasTag(CommandTag tag) {
 		return tags.contains(tag);
 	}
 
+	@Override
 	public void addTag(CommandTag tag) {
 		tags.add(tag);
 	}
 
+	@Override
 	public String getInputParameterJson() {
 		return inputParameterJson;
 	}
 
+	@Override
 	public void setInputParameterJson(String inputParamJson) {
 		this.inputParameterJson = inputParamJson;
 	}
 
+	@Override
 	public List<CommandTag> getTags() {
 		return tags;
 	}
 
+	@Override
 	public boolean appendToHistory() {
 		return appendToHistory;
 	}
 
+	@Override
 	public void setAppendToHistory(boolean appendToHistory) {
 		this.appendToHistory = appendToHistory;
 	}

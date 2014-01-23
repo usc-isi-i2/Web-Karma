@@ -20,9 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
-import javax.servlet.http.HttpServletRequest;
-
 import edu.isi.karma.rep.Workspace;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class CloseWorkspaceCommandFactory extends CommandFactory {
 	
@@ -37,4 +37,9 @@ public class CloseWorkspaceCommandFactory extends CommandFactory {
 		return new CloseWorkspaceCommand(getNewId(workspace), workspaceId);
 	}
 
+	@Override
+	protected Class<? extends Command> getCorrespondingCommand()
+	{
+		return CloseWorkspaceCommand.class;
+	}
 }

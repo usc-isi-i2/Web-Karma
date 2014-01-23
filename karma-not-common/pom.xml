@@ -16,6 +16,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>edu.isi</groupId>
+			<artifactId>commands-common</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
 			<artifactId>karma-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -24,7 +30,6 @@
 			<artifactId>karma-jdbc</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>com.fasterxml.uuid</groupId>
@@ -36,26 +41,6 @@
 			<groupId>com.healthmarketscience.jackcess</groupId>
 			<artifactId>jackcess</artifactId>
 			<version>1.2.10</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-referencing</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-epsg-hsql</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-epsg-extension</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-shapefile</artifactId>
-			<version>${geotools.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -76,12 +61,6 @@
 			<groupId>xml-apis</groupId>
 			<artifactId>xml-apis</artifactId>
 			<version>1.4.01</version>
-		</dependency>
-		<!-- The Java API for KML -->
-		<dependency>
-			<groupId>de.micromata.jak</groupId>
-			<artifactId>JavaAPIforKml</artifactId>
-			<version>2.2.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>${jena.group}</groupId>
@@ -165,12 +144,10 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.8-beta5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>3.8-beta5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -230,8 +207,6 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<!--
@@ -275,7 +250,7 @@
 			<artifactId>kryo-serializers</artifactId>
 			<version>0.9</version>
 		</dependency>
-		-->
+		--><!--
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-repository</artifactId>
@@ -308,13 +283,13 @@
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-repository-http</artifactId>
 			<version>2.7.1</version>
-		</dependency>
-
+		</dependency>-->
+<!--
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-repository-sparql</artifactId>
 			<version>2.7.1</version>
-		</dependency>
+		</dependency>-->
 		<!-- Added by MVS -->
 		<dependency>
 			<groupId>org.springframework</groupId>

@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author szekely
  * 
  */
-public abstract class CommandFactory {
+public abstract class CommandFactory<T> {
 
 	public abstract Command createCommand(HttpServletRequest request,
 			Workspace workspace);
@@ -54,4 +54,6 @@ public abstract class CommandFactory {
 	{
 		throw new UnsupportedOperationException("This is not supported on this command factory!");
 	}
+
+	protected abstract Class<? extends Command> getCorrespondingCommand();
 }

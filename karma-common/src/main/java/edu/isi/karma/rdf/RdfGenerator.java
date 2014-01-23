@@ -21,8 +21,8 @@
 
 package edu.isi.karma.rdf;
 
-import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.kr2rml.KR2RMLMapping;
 import edu.isi.karma.modeling.ModelingConfiguration;

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+	<packaging>pom</packaging>
+	
+    <parent>
+        <groupId>edu.isi</groupId>
+        <artifactId>webkarma</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>karma-commands</artifactId>
+
+	<modules>
+		<module>commands-common</module>
+
+		<module>commands-alignment</module>
+		<module>commands-alignment-openrdf</module>
+		<module>commands-python</module>
+		<module>commands-import</module>
+		<module>commands-cleaning</module>
+		<module>commands-publish</module>
+		<module>commands-publish-jdbc</module>
+		<module>commands-worksheet</module>
+		<module>commands-update</module>
+		<module>commands-update-jdbc</module>
+		<module>commands-reconcilliation</module>
+	</modules>
+    
+</project>

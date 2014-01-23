@@ -28,7 +28,8 @@ package edu.isi.karma.rep;
  * @author szekely
  *
  */
-public abstract class Entity {
+public abstract class Entity implements IEntity
+{
 
 	protected final String id;
 
@@ -37,6 +38,7 @@ public abstract class Entity {
 		this.id = id;
 	}
 	
+	@Override
 	public String getId() {
 		return id;
 	}
