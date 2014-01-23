@@ -60,7 +60,7 @@ public class SplitByCommaCommandFactory extends JSONInputCommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return SplitByCommaCommand.class;
 	}

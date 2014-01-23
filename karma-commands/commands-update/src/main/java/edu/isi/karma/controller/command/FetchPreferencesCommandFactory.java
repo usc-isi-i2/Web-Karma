@@ -40,7 +40,7 @@ public class FetchPreferencesCommandFactory extends CommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return FetchPreferencesCommand.class;
 	}

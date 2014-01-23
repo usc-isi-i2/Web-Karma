@@ -27,6 +27,122 @@
 		</dependency>
 
 		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-alignment-openrdf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-cleaning</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-publish</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-publish-jdbc</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-python</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-reconcilliation</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-update</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-update-jdbc</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-worksheet</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+
+
+		<!--Import commands-->
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-csv</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-database</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-excel</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-file</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-ontology</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-json</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-spatial</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-xml</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!--External dependencies-->
+		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
 			<version>${jettyVersion}</version>
@@ -38,6 +154,30 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+
+
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+
 	</dependencies>
 
 

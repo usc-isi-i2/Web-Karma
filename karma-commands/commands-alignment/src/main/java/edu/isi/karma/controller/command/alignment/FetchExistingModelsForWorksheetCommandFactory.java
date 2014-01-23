@@ -40,7 +40,7 @@ public class FetchExistingModelsForWorksheetCommandFactory extends CommandFactor
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return FetchExistingModelsForWorksheetCommand.class;
 	}

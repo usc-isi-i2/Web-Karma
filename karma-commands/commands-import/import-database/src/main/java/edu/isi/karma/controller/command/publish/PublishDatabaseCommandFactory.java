@@ -58,7 +58,7 @@ public class PublishDatabaseCommandFactory extends CommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return PublishDatabaseCommand.class;
 	}

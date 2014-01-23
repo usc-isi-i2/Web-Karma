@@ -22,7 +22,6 @@
  */
 package edu.isi.karma.webserver;
 
-import com.google.common.base.Predicate;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
@@ -32,12 +31,13 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
 import org.json.JSONArray;
 import org.reflections.Reflections;
-import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * There is one ExecutionManager per user. In the HttpServlet implementation we
@@ -56,20 +56,39 @@ public class ExecutionController {
 
     public ExecutionController(Workspace workspace) {
         this.workspace = workspace;
-        initializeCommandFactoryMap();
+//        initializeCommandFactoryMap();
+	    dynamicallyBuildCommandFactoryMap();
     }
 
 	private void dynamicallyBuildCommandFactoryMap()
 	{
-		Predicate<String> filter = new FilterBuilder().include("org.reflections.TestModel\\$.*");
-		Reflections reflections;
 		// TODO
-/*		reflections = new Reflections(new ConfigurationBuilder()
-				                              .filterInputsBy(filter)
-				                              .setScanners(
-						                              new SubTypesScanner().filterResultsBy(filter))
-				                              .setUrls(Arrays.asList(ClasspathHelper.forClass(TestModel.class))))*/;
+		Reflections reflections = new Reflections("edu.isi.karma");
 
+		Set<Class<? extends CommandFactory>> subTypes =
+				reflections.getSubTypesOf(CommandFactory.class);
+
+		for (Class<? extends CommandFactory> subType : subTypes)
+		{
+			if(!Modifier.isAbstract(subType.getModifiers()) && !subType.isInterface())
+			try
+			{
+
+				CommandFactory commandFactory = subType.newInstance();
+				Class command = commandFactory.getCorrespondingCommand();
+
+				commandFactoryMap.put(command.getSimpleName(), commandFactory);
+			} catch (InstantiationException e)
+			{
+				logger.error("Error instantiating {} -- likely does not have no-arg constructor", subType);
+				e.printStackTrace();
+			} catch (IllegalAccessException e)
+			{
+				logger.error("Error instantiating {} -- likely does not have a public no-arg constructor", subType);
+			}
+		}
+
+		logger.info("Loaded {} possible commands", commandFactoryMap.size());
 	}
 
     private void initializeCommandFactoryMap() {
@@ -218,13 +237,16 @@ public class ExecutionController {
     public Command getCommand(HttpServletRequest request) {
         CommandFactory cf = commandFactoryMap.get(request.getParameter("command"));
         if (cf != null) {
-                try { // TODO this is a hack to get around instanceof jsoninputcommandfactory
-                    return cf.createCommand(new JSONArray(request.getParameter("newInfo")), workspace);
+                try {
+	                String newInfo = request.getParameter("newInfo");
+	                return cf.createCommand(newInfo == null ? null : new JSONArray(newInfo), workspace);
                 } catch (UnsupportedOperationException ignored)
                 {
 	                return cf.createCommand(request, workspace);
                 } catch (Exception e) {
-                    e.printStackTrace();
+	                logger.error(commandFactoryMap.toString());
+	                logger.error(request.toString());
+	                logger.error("Error getting command!!", e);
                     return null;
                 }
         } else {

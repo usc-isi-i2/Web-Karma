@@ -43,7 +43,7 @@ public class GenerateR2RMLModelCommandFactory extends CommandFactory {
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return GenerateR2RMLModelCommand.class;
 	}

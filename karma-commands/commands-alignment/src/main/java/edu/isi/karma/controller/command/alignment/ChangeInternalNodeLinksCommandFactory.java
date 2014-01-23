@@ -64,7 +64,7 @@ public class ChangeInternalNodeLinksCommandFactory extends JSONInputCommandFacto
 	}
 
 	@Override
-	protected Class<? extends Command> getCorrespondingCommand()
+	public Class<? extends Command> getCorrespondingCommand()
 	{
 		return ChangeInternalNodeLinksCommand.class;
 	}
