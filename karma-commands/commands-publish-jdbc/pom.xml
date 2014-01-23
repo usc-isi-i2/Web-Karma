@@ -17,18 +17,18 @@
 		<dependency>
 			<groupId>edu.isi</groupId>
 			<artifactId>commands-common</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>edu.isi</groupId>
 			<artifactId>karma-jdbc</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.isi</groupId>
 			<artifactId>commands-publish</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
     

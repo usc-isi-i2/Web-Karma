@@ -33,19 +33,6 @@
 			<groupId>com.healthmarketscience.jackcess</groupId>
 			<artifactId>jackcess</artifactId>
 		</dependency>
-
-		<!--
-
-				<dependency>
-					<groupId>edu.isi</groupId>
-					<artifactId>karma-jdbc</artifactId>
-					<version>0.0.1-SNAPSHOT</version>
-				</dependency>
-				<dependency>
-					<groupId>edu.isi</groupId>
-					<artifactId>commands-publish</artifactId>
-					<version>0.0.1-SNAPSHOT</version>
-				</dependency>-->
 	</dependencies>
 
 </project>

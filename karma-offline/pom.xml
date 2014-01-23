@@ -35,7 +35,6 @@
 	    <dependency>
 		    <groupId>edu.isi</groupId>
 		    <artifactId>karma-jdbc</artifactId>
-		    <version>${project.version}</version>
 		    <optional>true</optional>
 	    </dependency>
 
