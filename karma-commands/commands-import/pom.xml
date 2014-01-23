@@ -25,25 +25,4 @@
 		<module>import-xml</module>
 		<module>import-spatial</module>
 	</modules>
-    <dependencies>
-	    <dependency>
-		    <groupId>edu.isi</groupId>
-		    <artifactId>commands-common</artifactId>
-		    <version>${project.version}</version>
-	    </dependency>
-
-	    <dependency>
-		    <groupId>javax.servlet</groupId>
-		    <artifactId>javax.servlet-api</artifactId>
-	    </dependency>
-
-<!--
-	    <dependency>
-		    <groupId>edu.isi</groupId>
-		    <artifactId>commands-update</artifactId>
-		    <version>0.0.1-SNAPSHOT</version>
-	    </dependency>
--->
-
-    </dependencies>
 </project>

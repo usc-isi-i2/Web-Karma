@@ -37,22 +37,18 @@
 	<dependency>
 		<groupId>net.sf.opencsv</groupId>
 		<artifactId>opencsv</artifactId>
-		<version>2.3</version>
 	</dependency>
 	<dependency>
 		<groupId>org.antlr</groupId>
 		<artifactId>antlr</artifactId>
-		<version>${antlr.version}</version>
 	</dependency>
 	<dependency>
 		<groupId>org.python</groupId>
 		<artifactId>jython-standalone</artifactId>
-		<version>2.5.3</version>
 	</dependency>
 	<dependency> <!-- TODO modularize this out this is a big one -->
 		<groupId>org.apache.mahout</groupId>
 		<artifactId>mahout-core</artifactId>
-		<version>${hadoop.dist.mahout.version}</version>
 	</dependency>
 
 
