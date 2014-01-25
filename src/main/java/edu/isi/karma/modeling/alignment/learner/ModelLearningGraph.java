@@ -47,6 +47,7 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
 import edu.isi.karma.rep.alignment.SubClassLink;
+import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.RandomGUID;
 
 public class ModelLearningGraph {
@@ -272,4 +273,34 @@ public class ModelLearningGraph {
 		this.lastUpdateTime = System.currentTimeMillis();
 	}
 
+	public static void main(String[] args) {
+
+		/** Check if any ontology needs to be preloaded **/
+		String preloadedOntDir = "/Users/mohsen/Documents/Academic/ISI/_GIT/Web-Karma/preloaded-ontologies/";
+		File ontDir = new File(preloadedOntDir);
+		if (ontDir.exists()) {
+			File[] ontologies = ontDir.listFiles();
+			OntologyManager mgr = new OntologyManager();
+			for (File ontology: ontologies) {
+				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf")) {
+					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
+					try {
+						String encoding = EncodingDetector.detect(ontology);
+						mgr.doImport(ontology, encoding);
+					} catch (Exception t) {
+						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
+					}
+				}
+			}
+			// update the cache at the end when all files are added to the model
+			mgr.updateCache();
+			ModelLearningGraph.getInstance(mgr);
+			
+		} else {
+			logger.info("No directory for preloading ontologies exists.");
+		}
+
+
+		
+	}
 }
