@@ -170,7 +170,7 @@ public class GraphVizUtil {
 //				label = (uri == null || uri.trim().length() == 0?id:uri));
 				targetLabel = (targetLocalName == null || targetLocalName.trim().length() == 0?targetId:targetLocalName);
 				if (target instanceof ColumnNode) {
-					ColumnNode mappedColumn = mappingToSourceColumns.get(target);
+					ColumnNode mappedColumn = (mappingToSourceColumns == null) ? (ColumnNode)target : mappingToSourceColumns.get(target);
 					targetLabel = mappedColumn.getColumnName();
 				}
 				if (showNodeMetaData) 
