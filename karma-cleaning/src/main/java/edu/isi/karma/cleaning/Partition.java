@@ -1,9 +1,6 @@
 package edu.isi.karma.cleaning;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Vector;
+import java.util.*;
 
 
 public class Partition implements GrammarTreeNode {
@@ -75,14 +72,14 @@ public class Partition implements GrammarTreeNode {
 	public String getHashKey()
 	{
 		String s = "";
-		ArrayList<String> lines = new ArrayList<String>();
-		for(int i = 0; i<this.orgNodes.size(); i++)
+		List<String> lines = new ArrayList<String>();
+		for (int i = 0; i < this.orgNodes.size(); i++)
 		{
-			String line= UtilTools.print(this.orgNodes.get(i))+"   "+UtilTools.print(this.tarNodes.get(i))+"\n";
+			String line = UtilTools.print(this.orgNodes.get(i)) + "   " + UtilTools.print(this.tarNodes.get(i)) + "\n";
 			lines.add(line);
 		}
 		Collections.sort(lines);
-		for(String l:lines)
+		for (String l : lines)
 		{
 			s += l;
 		}
@@ -90,12 +87,12 @@ public class Partition implements GrammarTreeNode {
 	}
 	public String toString()
 	{
-		String s = "partition:"+this.label+"\n";
+		String s = "partition:" + this.label + "\n";
 		s += "Examples:\n";
-		ArrayList<String> lines = new ArrayList<String>();
-		for(int i = 0; i<this.orgNodes.size(); i++)
+		List<String> lines = new ArrayList<String>();
+		for (int i = 0; i < this.orgNodes.size(); i++)
 		{
-			String line= this.orgNodes.get(i).toString()+"   "+this.tarNodes.get(i).toString()+"\n";
+			String line = this.orgNodes.get(i).toString() + "   " + this.tarNodes.get(i).toString() + "\n";
 			lines.add(line);
 		}
 		Collections.sort(lines);

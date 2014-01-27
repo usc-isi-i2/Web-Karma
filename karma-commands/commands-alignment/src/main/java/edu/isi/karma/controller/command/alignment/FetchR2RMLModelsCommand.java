@@ -29,8 +29,8 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.rep.Workspace;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class FetchR2RMLModelsCommand extends Command {
 	
@@ -76,7 +76,7 @@ public class FetchR2RMLModelsCommand extends Command {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 
 		TripleStoreUtil utilObj = new TripleStoreUtil();
-		HashMap<String, ArrayList<String>> list = utilObj.fetchModelNames(this.tripleStoreUrl);
+		HashMap<String, List<String>> list = utilObj.fetchModelNames(this.tripleStoreUrl);
 		return new UpdateContainer(new FetchR2RMLUpdate(list.get("model_names"), list.get("model_urls")));
 	}
 

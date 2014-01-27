@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class CSVFileImport extends Import {
@@ -63,64 +64,71 @@ public class CSVFileImport extends Import {
     }
 
     @Override
-    public Worksheet generateWorksheet() throws IOException, KarmaException {
-        Table dataTable = getWorksheet().getDataTable();
+    public Worksheet generateWorksheet() throws IOException, KarmaException
+    {
+	    Table dataTable = getWorksheet().getDataTable();
 
-        // Prepare the reader for reading file line by line
-        
-        InputStreamReader isr = EncodingDetector.getInputStreamReader(csvFile, encoding);
-        
-        BufferedReader br = new BufferedReader(isr);
+	    // Prepare the reader for reading file line by line
 
+	    InputStreamReader isr = EncodingDetector.getInputStreamReader(csvFile, encoding);
 
-        // Index for row currently being read
-        int rowCount = 0;
-        ArrayList<String> hNodeIdList = new ArrayList<String>();
+	    BufferedReader br = new BufferedReader(isr);
 
-        // If no row is present for the column headers
-        if (headerRowIndex == 0) {
-            hNodeIdList = addEmptyHeaders(getWorksheet(), getFactory());
-            if (hNodeIdList == null || hNodeIdList.size() == 0) {
-                br.close();
-                throw new KarmaException("Error occured while counting header "
-                        + "nodes for the worksheet!");
-            }
-        }
+	    // Index for row currently being read
+	    int rowCount = 0;
+	    List<String> hNodeIdList = new ArrayList<String>();
 
-        // Populate the worksheet model
-        String line = null;
-        while ((line = br.readLine()) != null) {
-        	logger.debug("Read line: '" + line + "'");
-            // Check for the header row
-            if (rowCount + 1 == headerRowIndex) {
-                hNodeIdList = addHeaders(getWorksheet(), getFactory(), line);
-                rowCount++;
-                continue;
-            }
+	    // If no row is present for the column headers
+	    if (headerRowIndex == 0)
+	    {
+		    hNodeIdList = addEmptyHeaders(getWorksheet(), getFactory());
+		    if (hNodeIdList == null || hNodeIdList.size() == 0)
+		    {
+			    br.close();
+			    throw new KarmaException("Error occured while counting header "
+					                             + "nodes for the worksheet!");
+		    }
+	    }
 
-            // Populate the model with data rows
-            if (rowCount + 1 >= dataStartRowIndex) {
-                boolean added = addRow(getWorksheet(), getFactory(), line, hNodeIdList, dataTable);
-                if(added) {
-	                rowCount++;
-	               
-	                if(maxNumLines > 0 && (rowCount - dataStartRowIndex) >= maxNumLines-1) {
-	                	break;
-	                }
-                }
-                continue;
-            }
+	    // Populate the worksheet model
+	    String line = null;
+	    while ((line = br.readLine()) != null)
+	    {
+		    logger.debug("Read line: '" + line + "'");
+		    // Check for the header row
+		    if (rowCount + 1 == headerRowIndex)
+		    {
+			    hNodeIdList = addHeaders(getWorksheet(), getFactory(), line);
+			    rowCount++;
+			    continue;
+		    }
 
-            rowCount++;
-        }
-        br.close();
-        return getWorksheet();
+		    // Populate the model with data rows
+		    if (rowCount + 1 >= dataStartRowIndex)
+		    {
+			    boolean added = addRow(getWorksheet(), getFactory(), line, hNodeIdList, dataTable);
+			    if (added)
+			    {
+				    rowCount++;
+
+				    if (maxNumLines > 0 && (rowCount - dataStartRowIndex) >= maxNumLines - 1)
+				    {
+					    break;
+				    }
+			    }
+			    continue;
+		    }
+
+		    rowCount++;
+	    }
+	    br.close();
+	    return getWorksheet();
     }
 
-    private ArrayList<String> addHeaders(Worksheet worksheet, RepFactory fac,
+    private List<String> addHeaders(Worksheet worksheet, RepFactory fac,
             String line) throws IOException {
         HTable headers = worksheet.getHeaders();
-        ArrayList<String> headersList = new ArrayList<String>();
+        java.util.List<String> headersList = new ArrayList<String>();
         CSVReader reader = new CSVReader(new StringReader(line), delimiter,
                 quoteCharacter, escapeCharacter);
         String[] rowValues = null;
@@ -145,7 +153,7 @@ public class CSVFileImport extends Import {
     }
 
     private boolean addRow(Worksheet worksheet, RepFactory fac, String line,
-            ArrayList<String> hNodeIdList, Table dataTable) throws IOException {
+            List<String> hNodeIdList, Table dataTable) throws IOException {
         CSVReader reader = new CSVReader(new StringReader(line), delimiter,
                 quoteCharacter, escapeCharacter);
         String[] rowValues = null;
@@ -170,10 +178,10 @@ public class CSVFileImport extends Import {
         return true;
     }
 
-    private ArrayList<String> addEmptyHeaders(Worksheet worksheet,
+    private List<String> addEmptyHeaders(Worksheet worksheet,
             RepFactory fac) throws IOException {
         HTable headers = worksheet.getHeaders();
-        ArrayList<String> headersList = new ArrayList<String>();
+        List<String> headersList = new ArrayList<String>();
 
         Scanner scanner = null;
         scanner = new Scanner(csvFile);

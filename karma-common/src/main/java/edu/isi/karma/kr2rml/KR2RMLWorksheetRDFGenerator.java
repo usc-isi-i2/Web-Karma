@@ -6,6 +6,7 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.*;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -106,7 +107,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				generateTriplesForRow(row, rowTriplesSet, rowPredicatesCovered, predicatesFailed, predicatesSuccessful);
 
 				outWriter.println();
-				if (i++%2000 == 0)
+				if (++i%2000 == 0)
 					logger.info("Done processing " + i + " rows");
 				for (ReportMessage errMsg:predicatesFailed.values()){
 					this.errorReport.addReportMessage(errMsg);
@@ -483,7 +484,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		output.append(BLANK_NODE_PREFIX);
 
 		// Add the class node prefix
-		output.append(this.kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().get(subjMapid).replaceAll(":", "_"));
+		output.append(StringUtils.replaceChars(this.kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().get(subjMapid), ':', '_'));
 
 		// Add the node ids for tha columns covered
 		List<String> columnsCovered = this.kr2rmlMapping.getAuxInfo().getBlankNodesColumnCoverage().get(subjMapid);

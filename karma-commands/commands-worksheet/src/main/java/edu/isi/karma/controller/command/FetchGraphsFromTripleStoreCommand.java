@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class responsible for fetching all the graphs in the tripleStore
@@ -78,7 +78,7 @@ public class FetchGraphsFromTripleStoreCommand extends Command {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		TripleStoreUtil utilObj = new TripleStoreUtil();
-		final ArrayList<String> graphs = utilObj.getContexts(this.tripleStoreUrl);
+		final List<String> graphs = utilObj.getContexts(this.tripleStoreUrl);
 		if(graphs == null) {
 			return new UpdateContainer(new ErrorUpdate("Error occurred while fetching graphs!"));
 		}

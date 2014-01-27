@@ -20,6 +20,9 @@ public class PartitionClassifier {
 		{
 			dirpathString = "./src/main/scripts/Lib";
 		}
+
+		dirpathString = "scripts/Lib";
+
 		PythonInterpreter interpreter = new PythonInterpreter();
         //change the sys.path
 		interpreter.exec("import sys");

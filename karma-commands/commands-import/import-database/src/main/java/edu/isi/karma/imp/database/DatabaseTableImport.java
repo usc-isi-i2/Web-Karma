@@ -33,6 +33,7 @@ import edu.isi.karma.webserver.KarmaException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseTableImport extends Import {
 
@@ -87,43 +88,47 @@ public class DatabaseTableImport extends Import {
         return generateWorksheet(dbUtil, data);
     }
 
-    private Worksheet generateWorksheet(AbstractJDBCUtil dbUtil, ArrayList<ArrayList<String>> data) {
-        /**
-         * Add the headers *
-         */
-        HTable headers = getWorksheet().getHeaders();
-        ArrayList<String> headersList = new ArrayList<String>();
-        for (int i = 0; i < data.get(0).size(); i++) {
-            HNode hNode = null;
-            hNode = headers.addHNode(data.get(0).get(i), getWorksheet(), getFactory());
-            headersList.add(hNode.getId());
-        }
+    private Worksheet generateWorksheet(AbstractJDBCUtil dbUtil, ArrayList<ArrayList<String>> data)
+    {
+	    /**
+	     * Add the headers *
+	     */
+	    HTable headers = getWorksheet().getHeaders();
+	    List<String> headersList = new ArrayList<String>();
+	    for (int i = 0; i < data.get(0).size(); i++)
+	    {
+		    HNode hNode = null;
+		    hNode = headers.addHNode(data.get(0).get(i), getWorksheet(), getFactory());
+		    headersList.add(hNode.getId());
+	    }
 
-        /**
-         * Add the data *
-         */
-        Table dataTable = getWorksheet().getDataTable();
-        for (int i = 1; i < data.size(); i++) {
-            Row row = dataTable.addRow(getFactory());
-            ArrayList<String> rowData = data.get(i);
-            for (int j = 0; j < rowData.size(); j++) {
-                row.setValue(headersList.get(j), rowData.get(j), getFactory());
-            }
-        }
+	    /**
+	     * Add the data *
+	     */
+	    Table dataTable = getWorksheet().getDataTable();
+	    for (int i = 1; i < data.size(); i++)
+	    {
+		    Row row = dataTable.addRow(getFactory());
+		    ArrayList<String> rowData = data.get(i);
+		    for (int j = 0; j < rowData.size(); j++)
+		    {
+			    row.setValue(headersList.get(j), rowData.get(j), getFactory());
+		    }
+	    }
 
-        /**
-         * Save the db info in the source information part of worksheet's
-         * metadata *
-         */
-        SourceInformation srcInfo = new SourceInformation();
-        srcInfo.setAttributeValue(InfoAttribute.dbType, dbType.name());
-        srcInfo.setAttributeValue(InfoAttribute.hostname, hostname);
-        srcInfo.setAttributeValue(InfoAttribute.portnumber, String.valueOf(portnumber));
-        srcInfo.setAttributeValue(InfoAttribute.username, username);
-        srcInfo.setAttributeValue(InfoAttribute.dBorSIDName, dBorSIDName);
-        srcInfo.setAttributeValue(InfoAttribute.tableName, tableName);
-        getWorksheet().getMetadataContainer().setSourceInformation(srcInfo);
-        return getWorksheet();
+	    /**
+	     * Save the db info in the source information part of worksheet's
+	     * metadata *
+	     */
+	    SourceInformation srcInfo = new SourceInformation();
+	    srcInfo.setAttributeValue(InfoAttribute.dbType, dbType.name());
+	    srcInfo.setAttributeValue(InfoAttribute.hostname, hostname);
+	    srcInfo.setAttributeValue(InfoAttribute.portnumber, String.valueOf(portnumber));
+	    srcInfo.setAttributeValue(InfoAttribute.username, username);
+	    srcInfo.setAttributeValue(InfoAttribute.dBorSIDName, dBorSIDName);
+	    srcInfo.setAttributeValue(InfoAttribute.tableName, tableName);
+	    getWorksheet().getMetadataContainer().setSourceInformation(srcInfo);
+	    return getWorksheet();
     }
 
 }

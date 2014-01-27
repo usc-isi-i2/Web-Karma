@@ -23,9 +23,12 @@
 
 package edu.isi.karma.rdf;
 
-import edu.isi.karma.util.DBType;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import edu.isi.karma.common.JenaWritable;
 import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.util.DBType;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -42,7 +45,10 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.net.URL;
 import java.sql.SQLException;
 
@@ -117,7 +123,7 @@ public class OfflineRdfGenerator {
              * CREATE THE REQUIRED KARMA OBJECTS *
              */
             ServletContextParameterMap.setParameterValue(
-                    ContextParameter.USER_DIRECTORY_PATH, "src/main/webapp/");
+                    ContextParameter.USER_DIRECTORY_PATH, "config/");
             ServletContextParameterMap.setParameterValue(
                     ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
    
@@ -125,11 +131,14 @@ public class OfflineRdfGenerator {
             /**
              * PREPATRE THE OUTPUT OBJECTS *
              */
-            OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter pw = new PrintWriter(bw);
+//            OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
+//            BufferedWriter bw = new BufferedWriter(fw);
+	        Model model = ModelFactory.createDefaultModel();
+	        Writer bw = new JenaWritable(model);
+	        PrintWriter pw = new PrintWriter(bw);
 
-            /**
+	        long l = System.currentTimeMillis();
+	        /**
              * Generate RDF on the source type *
              */
             SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
@@ -141,7 +150,7 @@ public class OfflineRdfGenerator {
                 generateRdfFromFile(cl, inputType, modelURL, pw);
             }
             pw.close();
-            logger.info("done");
+            logger.info("done after {}", (System.currentTimeMillis() - l));
 
             logger.info("RDF published at: " + outputFilePath);
         } catch (Exception e) {
