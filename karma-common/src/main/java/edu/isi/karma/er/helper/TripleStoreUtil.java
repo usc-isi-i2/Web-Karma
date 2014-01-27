@@ -110,60 +110,70 @@ public class TripleStoreUtil {
 	 * This method check for the default karma repositories in the local server 
 	 * If not, it creates them
 	 * */
-	public static boolean initialize() {
-		
-		
+	public static boolean initialize()
+	{
+
 		boolean retVal = false;
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpGet httpget;
 		HttpResponse response;
 		HttpEntity entity;
-		ArrayList<String> repositories = new ArrayList<String>();
-		
-		try {
+		List<String> repositories = new ArrayList<String>();
+
+		try
+		{
 			// query the list of repositories
 			httpget = new HttpGet(defaultServerUrl);
 			httpget.setHeader("Accept", "application/sparql-results+json, */*;q=0.5");
 			response = httpclient.execute(httpget);
 			entity = response.getEntity();
-			if (entity != null) {
+			if (entity != null)
+			{
 				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
 				String s = buf.readLine();
-				StringBuffer line = new StringBuffer(); 
-				while(s != null) {
+				StringBuffer line = new StringBuffer();
+				while (s != null)
+				{
 					line.append(s);
 					s = buf.readLine();
 				}
-				JSONObject data = new  JSONObject(line.toString());
+				JSONObject data = new JSONObject(line.toString());
 				JSONArray repoList = data.getJSONObject("results").getJSONArray("bindings");
-				int count  = 0;
-				while(count < repoList.length()) {
+				int count = 0;
+				while (count < repoList.length())
+				{
 					JSONObject obj = repoList.getJSONObject(count++);
 					repositories.add(obj.optJSONObject("id").optString("value"));
 				}
 				// check for karama_models repo
-				if (!repositories.contains(karma_model_repo)) {
+				if (!repositories.contains(karma_model_repo))
+				{
 					logger.info("karma_models not found");
-					if (create_repo(karma_model_repo, "Karma default model repository", "native")) {
+					if (create_repo(karma_model_repo, "Karma default model repository", "native"))
+					{
 						retVal = true;
-					} else {
+					} else
+					{
 						logger.error("Could not create repository : " + karma_model_repo);
 						retVal = false;
 					}
 				}
 				// check for karama_data repo
-				if (!repositories.contains(karma_data_repo)) {
+				if (!repositories.contains(karma_data_repo))
+				{
 					logger.info("karma_data not found");
-					if (create_repo(karma_data_repo, "Karma default data repository", "native")) {
+					if (create_repo(karma_data_repo, "Karma default data repository", "native"))
+					{
 						retVal = true;
-					} else {
+					} else
+					{
 						logger.error("Could not create repository : " + karma_data_repo);
 						retVal = false;
 					}
 				}
 			}
-			
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -196,50 +206,59 @@ public class TripleStoreUtil {
 	 * This method fetches all the source names of the models from the triple store
 	 * @param TripleStoreURL : the triple store URL
 	 * */
-	public HashMap<String, ArrayList<String>> fetchModelNames(String TripleStoreURL) { 
-		if(TripleStoreURL == null || TripleStoreURL.isEmpty()) {
-			TripleStoreURL = defaultServerUrl + "/"  +karma_model_repo;
+	public HashMap<String, List<String>> fetchModelNames(String TripleStoreURL)
+	{
+		if (TripleStoreURL == null || TripleStoreURL.isEmpty())
+		{
+			TripleStoreURL = defaultServerUrl + "/" + karma_model_repo;
 		}
-		ArrayList<String> names = new ArrayList<String>();
-		ArrayList<String> urls = new ArrayList<String>();
-		
-		if(TripleStoreURL.charAt(TripleStoreURL.length() - 1) == '/') {
-			TripleStoreURL = TripleStoreURL.substring(0, TripleStoreURL.length()-2);
+		List<String> names = new ArrayList<String>();
+		List<String> urls = new ArrayList<String>();
+
+		if (TripleStoreURL.charAt(TripleStoreURL.length() - 1) == '/')
+		{
+			TripleStoreURL = TripleStoreURL.substring(0, TripleStoreURL.length() - 2);
 		}
 		logger.info("Repositoty URL : " + TripleStoreURL);
-		
+
 		// check the connection first
-		if (checkConnection(TripleStoreURL)) {
+		if (checkConnection(TripleStoreURL))
+		{
 			logger.info("Connection Test passed");
-		} else {
+		} else
+		{
 			logger.info("Failed connection test : " + TripleStoreURL);
 			return null;
 		}
-		
-		try {
+
+		try
+		{
 			String queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?y ?z where { ?x km-dev:sourceName ?y . ?x km-dev:serviceUrl ?z . } ORDER BY ?y ?z";
 			logger.debug("query: " + queryString);
-			
+
 			Map<String, String> formparams = new HashMap<String, String>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
-			String responseString =  HTTPUtil.executeHTTPPostRequest(TripleStoreURL, null, "application/sparql-results+json", formparams);
-			
-			if (responseString != null) {
+			String responseString = HTTPUtil.executeHTTPPostRequest(TripleStoreURL, null, "application/sparql-results+json", formparams);
+
+			if (responseString != null)
+			{
 				JSONObject models = new JSONObject(responseString);
 				JSONArray values = models.getJSONObject("results").getJSONArray("bindings");
 				int count = 0;
-				while(count < values.length()) {
+				while (count < values.length())
+				{
 					JSONObject o = values.getJSONObject(count++);
 					names.add(o.getJSONObject("y").getString("value"));
 					urls.add(o.getJSONObject("z").getString("value"));
 				}
 			}
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
-		HashMap<String, ArrayList<String>> values = new HashMap<String, ArrayList<String>>();
+		HashMap<String, List<String>> values = new HashMap<String, List<String>>();
 		values.put("model_names", names);
 		values.put("model_urls", urls);
 		return values;
@@ -490,38 +509,44 @@ public class TripleStoreUtil {
 	/**
 	 * This method fetches all the context from the given triplestore Url
 	 * */
-	public ArrayList<String> getContexts(String url) {
-		if(url==null || url.isEmpty()) {
+	public List<String> getContexts(String url)
+	{
+		if (url == null || url.isEmpty())
+		{
 			url = defaultModelsRepoUrl;
-		} 
+		}
 		url += "/contexts";
-		ArrayList<String> graphs = new ArrayList<String>();
-		
+		List<String> graphs = new ArrayList<String>();
+
 		String responseString;
-		try {
+		try
+		{
 			responseString = HTTPUtil.executeHTTPGetRequest(url, "application/sparql-results+json");
-			if (responseString != null) {
+			if (responseString != null)
+			{
 				JSONObject models = new JSONObject(responseString);
 				JSONArray values = models.getJSONObject("results").getJSONArray("bindings");
 				int count = 0;
-				while(count < values.length()) {
+				while (count < values.length())
+				{
 					JSONObject o = values.getJSONObject(count++);
 					graphs.add(o.getJSONObject("contextID").getString("value"));
 				}
 			}
-		} catch (Exception e) {
+		} catch (Exception e)
+		{
 			logger.error(e.getMessage());
 			e.printStackTrace();
 			graphs = null;
 		}
-		
+
 		return graphs;
 	}
 	
 	public boolean isUniqueGraphUri(String tripleStoreUrl, String graphUrl) {
 		logger.info("Checking for unique graphUri for url : " + graphUrl + " at endPoint : " + tripleStoreUrl);
 		boolean retVal = true;
-		ArrayList<String> urls = this.getContexts(tripleStoreUrl);
+		List<String> urls = this.getContexts(tripleStoreUrl);
 		if(urls == null ){
 			return false;
 		}

@@ -28,14 +28,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.util.List;
 
 public class FetchR2RMLUpdate extends AbstractUpdate {
 
 	private static Logger logger = LoggerFactory.getLogger(FetchR2RMLUpdate.class);
 	
-	private ArrayList<String> model_Names;
-	private ArrayList<String> model_Urls;
+	private List<String> model_Names;
+	private List<String> model_Urls;
 	
 	private enum JsonKeys {
 		models
@@ -45,7 +45,7 @@ public class FetchR2RMLUpdate extends AbstractUpdate {
 		FetchDataMiningModelsUpdate
 	}
 
-	public FetchR2RMLUpdate(ArrayList<String> names, ArrayList<String> urls)
+	public FetchR2RMLUpdate(List<String> names, List<String> urls)
 	{
 		this.model_Names = names;
 		this.model_Urls = urls;

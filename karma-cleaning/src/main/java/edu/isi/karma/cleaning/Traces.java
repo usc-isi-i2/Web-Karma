@@ -21,17 +21,21 @@ public class Traces implements GrammarTreeNode {
 		createTotalOrderVector();
 	}
 
-	public void createTotalOrderVector() {
-		ArrayList<Integer> xArrayList = new ArrayList<Integer>();
+	public void createTotalOrderVector()
+	{
+		List<Integer> xArrayList = new ArrayList<Integer>();
 		xArrayList.addAll(traceline.keySet());
 		xArrayList.addAll(loopline.keySet());
 		Integer[] a = new Integer[xArrayList.size()];
 		Arrays.sort(xArrayList.toArray(a));
-		for (Integer elem : a) {
-			if (loopline.get(elem) != null) {
+		for (Integer elem : a)
+		{
+			if (loopline.get(elem) != null)
+			{
 				totalOrderVector.addAll(loopline.get(elem).values());
 			}
-			if (traceline.get(elem) != null) {
+			if (traceline.get(elem) != null)
+			{
 				totalOrderVector.add(traceline.get(elem));
 			}
 		}

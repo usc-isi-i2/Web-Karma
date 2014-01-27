@@ -107,24 +107,27 @@ public class ShowModelCommand extends WorksheetCommand {
 					"Please align the worksheet before generating R2RML Model!"));
 		}
 
-		if (initialAlignment == null) {
+		if (initialAlignment == null)
+		{
 			initialAlignment = alignment.getAlignmentClone();
-			initialGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
-			
+			initialGraph = (DirectedWeightedMultigraph<Node, Link>) alignment.getGraph().clone();
+
 			columnNodes = new LinkedList<ColumnNode>();
 			columnsWithoutSemanticType = new HashSet<String>();
-			ArrayList<HNode> orderedNodeIds = new ArrayList<HNode>();
+			List<HNode> orderedNodeIds = new ArrayList<HNode>();
 			worksheet.getHeaders().getSortedLeafHNodes(orderedNodeIds);
 			if (orderedNodeIds != null)
-			for (int i = 0; i < orderedNodeIds.size(); i++) {
-				String hNodeId = orderedNodeIds.get(i).getId();
-				ColumnNode cn = alignment.getColumnNodeByHNodeId(hNodeId);
-				if (cn.getUserSelectedSemanticType() == null) { 
-					columnsWithoutSemanticType.add(hNodeId);
-					worksheet.getSemanticTypes().unassignColumnSemanticType(hNodeId);
+				for (int i = 0; i < orderedNodeIds.size(); i++)
+				{
+					String hNodeId = orderedNodeIds.get(i).getId();
+					ColumnNode cn = alignment.getColumnNodeByHNodeId(hNodeId);
+					if (cn.getUserSelectedSemanticType() == null)
+					{
+						columnsWithoutSemanticType.add(hNodeId);
+						worksheet.getSemanticTypes().unassignColumnSemanticType(hNodeId);
+					}
+					columnNodes.add(cn);
 				}
-				columnNodes.add(cn);
-			}
 		} else {
 		// Replace the current alignment with the old alignment
 			alignment = initialAlignment;

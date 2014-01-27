@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class CSVImportPreviewUpdate extends AbstractUpdate {
@@ -111,19 +112,22 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 			JSONArray dataRows = new JSONArray();
 			while (scanner.hasNextLine()) {
 				// Check for the header row
-				if (rowCount + 1 == headerRowIndex) {
+				if (rowCount + 1 == headerRowIndex)
+				{
 					String line = scanner.nextLine();
 					CSVReader reader = new CSVReader(new StringReader(line),
-							delimiter, quoteCharacter, escapeCharacter);
+					                                 delimiter, quoteCharacter, escapeCharacter);
 					String[] rowValues = reader.readNext();
-					ArrayList<String> headers = new ArrayList<String>();
-					if (rowValues == null || rowValues.length == 0) {
+					List<String> headers = new ArrayList<String>();
+					if (rowValues == null || rowValues.length == 0)
+					{
 						logger.error("No data found in the Header row!");
 						rowCount++;
 						scanner.nextLine();
 						continue;
 					}
-					for (String val : rowValues) {
+					for (String val : rowValues)
+					{
 						headers.add(val);
 					}
 					// Add the row index
@@ -139,25 +143,29 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 
 				// Check for the data rows. We choose the first five for preview
 				if (rowCount + 1 >= dataStartRowIndex
-						&& rowCount + 1 < dataStartRowIndex + 5) {
-					if (previewRowCounter++ > 5) {
+						&& rowCount + 1 < dataStartRowIndex + 5)
+				{
+					if (previewRowCounter++ > 5)
+					{
 						break;
 					}
 					String line = scanner.nextLine();
 					CSVReader reader = new CSVReader(new StringReader(line),
-							delimiter, quoteCharacter, escapeCharacter);
+					                                 delimiter, quoteCharacter, escapeCharacter);
 					String[] rowValues = reader.readNext();
-					ArrayList<String> vals = new ArrayList<String>();
-					if(rowValues != null) {
-						for (String val : rowValues) {
+					List<String> vals = new ArrayList<String>();
+					if (rowValues != null)
+					{
+						for (String val : rowValues)
+						{
 							vals.add(val);
 						}
-					} else 
+					} else
 						vals.add("");
 					// Add the row index
 					vals.add(0, Integer.toString(rowCount + 1));
 					reader.close();
-					
+
 					// Add to the data rows JSON
 					dataRows.put(vals);
 					rowCount++;

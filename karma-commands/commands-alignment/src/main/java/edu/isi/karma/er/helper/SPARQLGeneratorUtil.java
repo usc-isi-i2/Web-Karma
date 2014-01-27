@@ -50,46 +50,52 @@ public class SPARQLGeneratorUtil {
 	}
 	
 	
-	private String generate_sparql(TriplesMap node, String node_symbol, String graph) {
-		
-		ArrayList<Object> queue = new ArrayList<Object>();
+	private String generate_sparql(TriplesMap node, String node_symbol, String graph)
+	{
+
+		List<Object> queue = new ArrayList<Object>();
 		queue.add(node);
 		StringBuffer query = new StringBuffer();
 		this.var_count = 1;
 		this.prefix_list = new HashMap<String, String>();
 		this.select_params = new StringBuffer();
 		HashMap<TriplesMap, String> markedTriples = new HashMap<TriplesMap, String>();
-		
-		this.ParentMapingInfoList = new HashMap<String, SPARQLGeneratorUtil.ParentMapingInfo>();
-		
+
+		this.ParentMapingInfoList = new HashMap<String, ParentMapingInfo>();
+
 		HashMap<Predicate, String> predicateList = new HashMap<Predicate, String>();
-		
+
 		// using a BFS approach, we traverse the tree from the root node and add triples/predicates to the queue
-		while(queue.size() > 0) {
+		while (queue.size() > 0)
+		{
 			Object currentObj = queue.remove(0);
-			
+
 			// if this is a tripleMap, then add all its RefObjects to the queue
 			// for the predicates, add only the ones that satisfy the criteria of being <...hasValue>
-			if (currentObj instanceof TriplesMap) {
-				String var = "x"+var_count;
-				TriplesMap triple = (TriplesMap)currentObj;
+			if (currentObj instanceof TriplesMap)
+			{
+				String var = "x" + var_count;
+				TriplesMap triple = (TriplesMap) currentObj;
 				boolean foundHasValue = false;
 				List<PredicateObjectMap> predicates = triple.getPredicateObjectMaps();
-				
-				for (PredicateObjectMap p_map : predicates) {
-					
-					if(p_map.getObject().hasRefObjectMap()) {
+
+				for (PredicateObjectMap p_map : predicates)
+				{
+
+					if (p_map.getObject().hasRefObjectMap())
+					{
 						RefObjectMap objMap = p_map.getObject().getRefObjectMap();
 						queue.add(objMap.getParentTriplesMap());
-						
+
 						System.out.println(triple.getSubject().getId() + "  ---> " + objMap.getParentTriplesMap().getSubject().getId());
-						
+
 						// maintain a list of mapping properties between triples
-						ParentMapingInfoList.put(objMap.getParentTriplesMap().getSubject().getId(), 
-								new ParentMapingInfo(triple, p_map.getPredicate()));
-						
-					} else if(!foundHasValue) {
-						if(p_map.getPredicate().getTemplate().toString().equalsIgnoreCase("<http://www.opengis.net/gml/hasValue>")) {
+						ParentMapingInfoList.put(objMap.getParentTriplesMap().getSubject().getId(),
+						                         new ParentMapingInfo(triple, p_map.getPredicate()));
+					} else if (!foundHasValue)
+					{
+						if (p_map.getPredicate().getTemplate().toString().equalsIgnoreCase("<http://www.opengis.net/gml/hasValue>"))
+						{
 							queue.add(p_map.getPredicate());
 							predicateList.put(p_map.getPredicate(), var);
 							foundHasValue = true;
@@ -101,62 +107,68 @@ public class SPARQLGeneratorUtil {
 				// for its class type Eg. 
 				// Prefix pref1: <.../.../Input>
 				// x2 a pref1:
-				if (foundHasValue) {
+				if (foundHasValue)
+				{
 					markedTriples.put(triple, var);
 					String rdfsTypes = triple.getSubject().getRdfsType().get(0).toString();
-					this.prefix_list.put(rdfsTypes, "pref"+var_count);
-					query.append(" ?"+var + " a pref"+var_count+": .");
-					
+					this.prefix_list.put(rdfsTypes, "pref" + var_count);
+					query.append(" ?" + var + " a pref" + var_count + ": .");
+
 					// if the parent of this triple is also marked for the query
 					// then we add the relation to between triples to the query. Eg.
-					
+
 //					TriplesMap parentTriple = parent.get(triple.getSubject().getId());
 					ParentMapingInfo parentTriple = ParentMapingInfoList.get(triple.getSubject().getId());
-					
-					if( parentTriple != null && markedTriples.containsKey(parentTriple.parent)) {
+
+					if (parentTriple != null && markedTriples.containsKey(parentTriple.parent))
+					{
 						String predicate = parentTriple.predicate.getTemplate().toString();
 //						PredicateObjectMap parentPredicate = getPredicateBetweenTriples(triple, parentTriple);
-						if(predicate != null) {
-							query.append(" ?" + markedTriples.get(parentTriple.parent) + " " + 
-								predicate + " ?"+var + " . ");
-						} else {
+						if (predicate != null)
+						{
+							query.append(" ?" + markedTriples.get(parentTriple.parent) + " " +
+									             predicate + " ?" + var + " . ");
+						} else
+						{
 							System.out.println("predicate is null from parent : " + triple.getSubject().getRdfsType().toString());
 						}
 					}
-					
 				}
 				var_count++;
 			}
 			// if it is a predicate Object, create a variable in in the query string
-			else if (currentObj instanceof Predicate) {
-				Predicate predicate = (Predicate)currentObj;
+			else if (currentObj instanceof Predicate)
+			{
+				Predicate predicate = (Predicate) currentObj;
 				query.append(" ?" + predicateList.get(predicate)
-						+ " " + predicate.getTemplate() + " ?z"+ var_count + " . ");
+						             + " " + predicate.getTemplate() + " ?z" + var_count + " . ");
 				select_params.append(" ?z" + var_count);
 				var_count++;
-				
-			} 
+			}
 			// if this is a RefObject add the Child Triple to the queue
-			else if (currentObj instanceof RefObjectMap) {
-				RefObjectMap refObj = (RefObjectMap)currentObj;
+			else if (currentObj instanceof RefObjectMap)
+			{
+				RefObjectMap refObj = (RefObjectMap) currentObj;
 				TriplesMap t = refObj.getParentTriplesMap();
 				queue.add(t);
-				
 			}
 		}
-		
+
 		// generate the query from the list of prefix and the param lists
-		Iterator<String> itr =  this.prefix_list.keySet().iterator();
+		Iterator<String> itr = this.prefix_list.keySet().iterator();
 		StringBuffer sQuery = new StringBuffer();
-		while(itr.hasNext()) {
+		while (itr.hasNext())
+		{
 			String key = itr.next();
 			sQuery.append(" PREFIX ").append(this.prefix_list.get(key)).append(": ").append(key);
 		}
-		if(graph == null || graph.isEmpty()) {
+		if (graph == null || graph.isEmpty())
+		{
 			sQuery.append(" select ").append(select_params).append(" where { ").append(query.toString()).append(" } ");
-		} else {
+		} else
+		{
 			sQuery.append(" select ").append(select_params).append(" where { GRAPH <").append(graph)
-				.append("> { ").append(query.toString()).append(" } }");
+					.append("> { ").append(query.toString()).append(" } }");
 		}
 		System.out.println("Query : " + sQuery);
 		return sQuery.toString();

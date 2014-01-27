@@ -343,10 +343,11 @@ public class WorksheetR2RMLJenaModelParser {
 				String template = templNode.toString();
 				subjTemplTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
 						template);
-				
+
 			}
-			subjMap.setTemplate(subjTemplTermSet);
-			
+			if(subjTemplTermSet != null)
+				subjMap.setTemplate(subjTemplTermSet);
+
 			// Get the subject type
 			NodeIterator rdfTypesItr = model.listObjectsOfProperty(subjMapBlankRes, rrClassProp);
 			while (rdfTypesItr.hasNext()) {

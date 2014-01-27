@@ -4,7 +4,6 @@ Created on Aug 22, 2012
 @author: bowu
 '''
 from edu.isi.karma.cleaning import PartitionClassifierType
-from FeatureFactory import *
 import sys
 from NaiveBayes import *
 import pickle

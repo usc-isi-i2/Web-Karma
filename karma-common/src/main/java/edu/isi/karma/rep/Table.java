@@ -48,7 +48,7 @@ public class Table extends RepEntity {
 	private final String hTableId;
 
 	// My rows.
-	private final ArrayList<Row> rows = new ArrayList<Row>();
+	private List<Row> rows = new ArrayList<Row>();
 
 	// mariam
 	/**

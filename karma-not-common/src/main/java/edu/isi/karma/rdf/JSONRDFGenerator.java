@@ -91,7 +91,7 @@ public class JSONRDFGenerator extends RdfGenerator {
          * CREATE THE REQUIRED KARMA OBJECTS *
          */
         ServletContextParameterMap.setParameterValue(
-                ContextParameter.USER_DIRECTORY_PATH, "src/main/webapp/");
+                ContextParameter.USER_DIRECTORY_PATH, "src/main/config/");
         ServletContextParameterMap.setParameterValue(
                 ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
 
