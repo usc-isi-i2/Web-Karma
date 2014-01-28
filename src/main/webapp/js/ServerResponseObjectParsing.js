@@ -215,7 +215,7 @@ function parse(data) {
 
             var tableDataContainer = $(worksheetPanel).children("div.table-data-container");
             if (tableDataContainer.length == 0) {
-                tableDataContainer = $("<div>").addClass("table-data-container").attr("id", element["tableId"]);
+                tableDataContainer = $("<div>").addClass("table-data-container").addClass("table-data-container-outermost").attr("id", element["tableId"]);
                 worksheetPanel.append(tableDataContainer);
             }
 
@@ -632,6 +632,9 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
             var effectiveCharacterLength = Math.min(column.characterLength, 30);
             //colWidthNumber = Math.floor(column.characterLength * 12 * 0.75);
             colWidthNumber = Math.floor(effectiveCharacterLength * 12 * 0.75);
+            // Pedro: columns for URIs are often too wide. Need a smarter way to limit them.
+            // Would be good to narrow based on total space rather than unilateraly like the following statement.
+            colWidthNumber = Math.min(colWidthNumber,130);
         }
 
         var colWidth = {};

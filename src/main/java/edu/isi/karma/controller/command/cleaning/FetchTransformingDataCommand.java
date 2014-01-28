@@ -21,11 +21,13 @@ import edu.isi.karma.rep.Workspace;
 
 public class FetchTransformingDataCommand extends WorksheetCommand {
 
-	private static Logger logger = LoggerFactory.getLogger(FetchTransformingDataCommand.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(FetchTransformingDataCommand.class);
 	private final String hNodeId;
-	public FetchTransformingDataCommand(String id, String worksheetId, String hNodeId)
-	{
-		super(id,worksheetId);
+
+	public FetchTransformingDataCommand(String id, String worksheetId,
+			String hNodeId) {
+		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 
 	}
@@ -49,36 +51,33 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 	public CommandType getCommandType() {
 		return CommandType.notUndoable;
 	}
-	
-	public HashSet<Integer> obtainIndexs(int size)
-	{
+
+	public HashSet<Integer> obtainIndexs(int size) {
 		HashSet<Integer> inds = new HashSet<Integer>();
-		//select 30% or 50
-		int sample_size =size;
-		if(sample_size >=500)
-		{
+		// select 30% or 50
+		int sample_size = size;
+		if (sample_size >= 500) {
 			sample_size = 500;
-		}
-		else {
+		} else {
 			sample_size = size;
 		}
-		//Random rad = new Random();
+		// Random rad = new Random();
 		int cand = 0;
-		while( inds.size() <sample_size)
-		{
-			//int cand = rad.nextInt(size);
-			if(!inds.contains(cand))
-			{
+		while (inds.size() < sample_size) {
+			// int cand = rad.nextInt(size);
+			if (!inds.contains(cand)) {
 				inds.add(cand);
 			}
 			cand++;
 		}
 		return inds;
 	}
+
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
-		String Msg = String.format("begin, Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
+		String Msg = String.format("begin, Time,%d, Worksheet,%s",
+				System.currentTimeMillis(), worksheetId);
 		logger.info(Msg);
 		// Get the HNode
 		HashMap<String, HashMap<String, String>> rows = new HashMap<String, HashMap<String, String>>();
@@ -88,16 +87,15 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 			if (path.getLeaf().getId().equals(hNodeId)) {
 				selectedPath = path;
 			}
-		}	
-		//random nodes 
+		}
+		// random nodes
 		Collection<Node> nodes = new ArrayList<Node>();
-		wk.getDataTable().collectNodes(selectedPath, nodes);	
+		wk.getDataTable().collectNodes(selectedPath, nodes);
 		HashSet<Integer> indSet = this.obtainIndexs(nodes.size());
 		int index = 0;
 		for (Iterator<Node> iterator = nodes.iterator(); iterator.hasNext();) {
 			Node node = iterator.next();
-			if(indSet.contains(index))
-			{
+			if (indSet.contains(index)) {
 				String id = node.getId();
 				String originalVal = node.getValue().asString();
 				HashMap<String, String> x = new HashMap<String, String>();
@@ -107,11 +105,12 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 				x.put("Tardis", originalVal);
 				rows.put(id, x);
 			}
-			index ++;
+			index++;
 		}
-		Msg = String.format("end, Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
+		Msg = String.format("end, Time,%d, Worksheet,%s",
+				System.currentTimeMillis(), worksheetId);
 		logger.info(Msg);
-		return new UpdateContainer(new FetchResultUpdate(hNodeId,rows));
+		return new UpdateContainer(new FetchResultUpdate(hNodeId, rows));
 	}
 
 	@Override

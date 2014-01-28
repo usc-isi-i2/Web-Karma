@@ -13,44 +13,45 @@ public class Section implements GrammarTreeNode {
 	public Vector<String> tarStrings = new Vector<String>();
 	public static Interpretor itInterpretor = null;
 	public static final int supermode = 1;
-	public Section(Position[] p,Vector<String> orgStrings,Vector<String> tarStrings,boolean isinloop)
-	{
+
+	public Section(Position[] p, Vector<String> orgStrings,
+			Vector<String> tarStrings, boolean isinloop) {
 		pair = p;
 		this.orgStrings = orgStrings;
 		this.tarStrings = tarStrings;
-		if(itInterpretor==null)
-			itInterpretor =  new Interpretor();
-		/*if(supermode == 0)
-			this.createTotalOrderVector();*/
+		if (itInterpretor == null)
+			itInterpretor = new Interpretor();
+		/*
+		 * if(supermode == 0) this.createTotalOrderVector();
+		 */
 		this.reiniteRules();
 		this.isinloop = isinloop;
 	}
+
 	public String verifySpace() {
 		String rule = "";
 		this.pair[0].isinloop = this.isinloop;
 		this.pair[1].isinloop = this.isinloop;
 		long sec_time_limit = System.currentTimeMillis();
-		while(curState < this.rules.size())
-		{
-			if((System.currentTimeMillis()-sec_time_limit)/1000 > time_limit*1.0/5)
-			{
+		while (curState < this.rules.size()) {
+			if ((System.currentTimeMillis() - sec_time_limit) / 1000 > time_limit * 1.0 / 5) {
 				return "null";
 			}
 			String rule1 = this.pair[0].VerifySpace(rules.get(curState)[0]);
 			String rule2 = this.pair[1].VerifySpace(rules.get(curState)[1]);
-			curState ++;
+			curState++;
 			if (rule1.indexOf("null") == -1 && rule2.indexOf("null") == -1) {
 				rule = String.format("substr(value,%s,%s)", rule1, rule2);
 				return rule;
 			}
-			if(rule1.indexOf("null") != -1 && rule2.indexOf("null")!= -1)
-			{
+			if (rule1.indexOf("null") != -1 && rule2.indexOf("null") != -1) {
 				break;
 			}
 		}
 		return "null";
 
 	}
+
 	@Override
 	public String toProgram() {
 		// TODO Auto-generated method stub
@@ -59,37 +60,34 @@ public class Section implements GrammarTreeNode {
 
 	@Override
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
-		Section sec = (Section)a;
+		Section sec = (Section) a;
 		Position x = this.pair[0].mergewith(sec.pair[0]);
 		Position y = this.pair[1].mergewith(sec.pair[1]);
-		if(x== null || y == null)
+		if (x == null || y == null)
 			return null;
-		else
-		{
-			Position[] pa = {x,y};
+		else {
+			Position[] pa = { x, y };
 			boolean loop = this.isinloop || sec.isinloop;
 			Vector<String> strs = new Vector<String>();
 			Vector<String> tars = new Vector<String>();
-			if(this.orgStrings.size() == sec.orgStrings.size() && this.orgStrings.size() == 1 && this.orgStrings.get(0).compareTo(sec.orgStrings.get(0))==0)
-			{
+			if (this.orgStrings.size() == sec.orgStrings.size()
+					&& this.orgStrings.size() == 1
+					&& this.orgStrings.get(0).compareTo(sec.orgStrings.get(0)) == 0) {
 				// merge within one example. test the loop expression
 				//
 				strs.addAll(this.orgStrings);
-				tars.add(this.tarStrings.get(0)+sec.tarStrings.get(0));
+				tars.add(this.tarStrings.get(0) + sec.tarStrings.get(0));
 				loop = true;
-			}
-			else 
-			{
+			} else {
 				strs.addAll(this.orgStrings);
 				strs.addAll(sec.orgStrings);
 				tars.addAll(this.tarStrings);
 				tars.addAll(sec.tarStrings);
 			}
-			
-			
-			Section st = new Section(pa,strs,tars,loop);
+
+			Section st = new Section(pa, strs, tars, loop);
 			return st;
-			
+
 		}
 	}
 
@@ -101,40 +99,38 @@ public class Section implements GrammarTreeNode {
 	@Override
 	public double getScore() {
 		// TODO Auto-generated method stub
-		return this.pair[0].getScore()+this.pair[1].getScore();
+		return this.pair[0].getScore() + this.pair[1].getScore();
 	}
 
 	@Override
 	public String getrepString() {
 		// TODO Auto-generated method stub
-		return pair[0].getrepString()+pair[1].getrepString();
+		return pair[0].getrepString() + pair[1].getrepString();
 	}
 
 	@Override
 	public void createTotalOrderVector() {
-		for(int i = 0; i< pair[0].rules.size(); i++)
-		{
-			for(int j = 0; j< pair[1].rules.size(); j++)
-			{
-				int[] elem = {i,j};
+		for (int i = 0; i < pair[0].rules.size(); i++) {
+			for (int j = 0; j < pair[1].rules.size(); j++) {
+				int[] elem = { i, j };
 				rules.add(elem);
 			}
 		}
 	}
-	public void reiniteRules()
-	{
+
+	public void reiniteRules() {
 		Vector<Long> indexs = new Vector<Long>();
-		indexs.add((long)16);
-		indexs.add((long)16);
+		indexs.add((long) 16);
+		indexs.add((long) 16);
 		Vector<Vector<Integer>> configs = new Vector<Vector<Integer>>();
 		rules.clear();
 		getCrossIndex(indexs, 0, "", configs);
-		for(int i = 0; i<configs.size(); i++)
-		{
-			int[] elem = {configs.get(i).get(0),configs.get(i).get(1)};
+		for (int i = 0; i < configs.size(); i++) {
+			int[] elem = { configs.get(i).get(0), configs.get(i).get(1) };
 			rules.add(elem);
 		}
 	}
+
 	public void getCrossIndex(Vector<Long> indexs, int cur, String path,
 			Vector<Vector<Integer>> configs) {
 		String tpath = path;
@@ -157,38 +153,39 @@ public class Section implements GrammarTreeNode {
 			getCrossIndex(indexs, cur + 1, xtpath, configs);
 		}
 	}
+
 	@Override
 	public void emptyState() {
 		this.curState = 0;
 	}
-	public String getRule(long index)
-	{
-		if(index > this.rules.size())
+
+	public String getRule(long index) {
+		if (index > this.rules.size())
 			return "null";
 		String rule = "";
-		int[] loc = this.rules.get(((int)index));
+		int[] loc = this.rules.get(((int) index));
 		pair[0].isinloop = this.isinloop;
 		pair[1].isinloop = this.isinloop;
-		rule = String.format("substr(value,%s,%s)",pair[0].getRule(loc[0]),pair[1].getRule(loc[1]));
+		rule = String.format("substr(value,%s,%s)", pair[0].getRule(loc[0]),
+				pair[1].getRule(loc[1]));
 		return rule;
 	}
+
 	@Override
 	public long size() {
-		return pair[0].rules.size()*pair[1].rules.size();
+		return pair[0].rules.size() * pair[1].rules.size();
 	}
-	public String toString()
-	{
+
+	public String toString() {
 		String lp = "";
 		String rp = "";
-		if(pair[0]!=null)
-		{
+		if (pair[0] != null) {
 			lp = pair[0].toString();
 		}
-		if(pair[1]!=null)
-		{
+		if (pair[1] != null) {
 			rp = pair[1].toString();
 		}
-		return lp+rp;
+		return lp + rp;
 	}
 
 }
