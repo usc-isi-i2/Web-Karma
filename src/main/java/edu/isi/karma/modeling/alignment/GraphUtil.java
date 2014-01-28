@@ -22,19 +22,15 @@ package edu.isi.karma.modeling.alignment;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jgrapht.DirectedGraph;
@@ -323,60 +319,7 @@ public class GraphUtil {
 				treeToRootedTree(tree, target, outLink, visitedNodes, reversedLinks, removedLinks);
 			}
 		}
-	}
-	
-	public static void exportGraphviz(
-			DirectedWeightedMultigraph<Node, Link> graph, 
-			String label, 
-			boolean onlyAddPatterns,
-			boolean showNodeMetaData,
-			boolean showLinkMetaData,
-			String filename) throws IOException {
-		
-		logger.info("exporting the graph to graphviz ...");
-		
-		org.kohsuke.graphviz.Graph graphViz = 
-				GraphVizUtil.convertJGraphToGraphviz(graph, onlyAddPatterns, showNodeMetaData, showLinkMetaData);
-		graphViz.attr("fontcolor", "blue");
-		graphViz.attr("remincross", "true");
-		graphViz.attr("label", label == null ? "" : label);
-
-		OutputStream out = new FileOutputStream(filename);
-		graphViz.writeTo(out);
-
-		logger.info("export is done.");
 	}	
-	
-	public static void exportGraphviz(
-			Map<String, DirectedWeightedMultigraph<Node, Link>> models, 
-			String label,
-			String filename) throws FileNotFoundException {
-		
-		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
-		graphViz.attr("fontcolor", "blue");
-		graphViz.attr("remincross", "true");
-		graphViz.attr("label", label == null ? "" : label);
-		
-		org.kohsuke.graphviz.Graph cluster = null;
-		int counter = 0;
-		
-		boolean showLinkMetaData;
-		if (models != null) {
-			for(Entry<String,DirectedWeightedMultigraph<Node, Link>> entry : models.entrySet()) {
-				if (entry.getKey() == "1-correct model") showLinkMetaData = false; else showLinkMetaData = true;
-				cluster = GraphVizUtil.convertJGraphToGraphviz(entry.getValue(), false, true, showLinkMetaData);
-				cluster.id("cluster_" + counter);
-				cluster.attr("label", entry.getKey());
-				graphViz.subGraph(cluster);
-				counter++;
-			}
-		}
-
-		OutputStream out = new FileOutputStream(filename);
-		graphViz.writeTo(out);
-
-	}
-
 	
 	public static void exportJson(DirectedWeightedMultigraph<Node, Link> graph, String filename) throws IOException {
 		logger.info("exporting the graph to json ...");

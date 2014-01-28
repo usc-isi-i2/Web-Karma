@@ -24,7 +24,6 @@ package edu.isi.karma.controller.command.transformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -37,17 +36,16 @@ import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class SubmitEditPythonTransformationCommand extends SubmitPythonTransformationCommand {
 	
-	private Command previousPythonTransformationCommand;
-	private final String previousCommandId;
 	private final String targetHNodeId;
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitEditPythonTransformationCommand.class);
 
 	public SubmitEditPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
-			String worksheetId, String hNodeId, String errorDefaultValue, String previousCommandId, String targetHNodeId) {
+			String worksheetId, String hNodeId, String errorDefaultValue, String targetHNodeId) {
 		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
-		this.previousCommandId = previousCommandId;
 		this.targetHNodeId = targetHNodeId;
+		this.pythonNodeId = targetHNodeId;
+		logger.info("SubmitEditPythonTransformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
 	}
 
 	@Override
@@ -78,19 +76,8 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
 		
-		
-		
-		this.previousPythonTransformationCommand = ctrl.getWorkspace().getCommandHistory().getCommand(previousCommandId);
-		if(previousPythonTransformationCommand == null || !(previousPythonTransformationCommand instanceof SubmitPythonTransformationCommand) )
-		{
-			logger.info("Previous Python Transformation Command Doesn't exist!");
-			this.saveColumnValues(workspace);
-		} else {
-			SubmitPythonTransformationCommand prevCommand = (SubmitPythonTransformationCommand)previousPythonTransformationCommand;
-			//Previous python command exists, lets reset the values, and then start again
-			this.originalColumnValues = prevCommand.getOriginalColumnValues();
-			this.resetColumnValues(workspace);
-		}
+		//this.previousPythonTransformationCommand = ctrl.getWorkspace().getCommandHistory().getCommand(previousCommandId);
+		this.saveOrResetColumnValues(workspace, ctrl);
 		
 		try
 		{
@@ -121,7 +108,7 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 			return new UpdateContainer(new ErrorUpdate("Error occured while  applying previous Python transformation to the column."));
 		
 		}
-		
 	}
 
+	
 }

@@ -1,0 +1,464 @@
+@prefix skos: <http://www.w3.org/2008/05/skos#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix km-dev: <http://isi.edu/integration/karma/dev#> .
+
+_:node18e8hgnbix1 a km-dev:R2RMLMapping ;
+	km-dev:sourceName "cbev2.WebConAltNames.Table.csv" ;
+	km-dev:modelPublicationTime "1389708729715"^^xsd:long ;
+	km-dev:modelVersion "0.1" ;
+	km-dev:hasWorksheetHistory """[
+  {
+    \"commandName\": \"SubmitPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"PersonConstituent\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return getValue(\\\"ConstituentID\\\")\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"ConstituentID\"}]
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SubmitEditPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return \\\"http://collection.americanart.si.edu/id/person-constituent/\\\"+getValue(\\\"ConstituentID\\\")\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"PersonConstituent\"}]
+      },
+      {
+        \"name\": \"previousCommandId\",
+        \"type\": \"other\",
+        \"value\": \"C51259\"
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      },
+      {
+        \"name\": \"targetHNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"PersonConstituent\"}]
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SubmitPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"appellation\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return \\\"http://collection.americanart.si.edu/id/person-constituent/\\\"+getValue(\\\"ConstituentID\\\")+\\\"/appellation\\\"\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"PersonConstituent\"}]
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SetMetaPropertyCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\",
+        \"value\": \"isUriOfClass\"
+      },
+      {
+        \"name\": \"metaPropertyValue\",
+        \"type\": \"other\",
+        \"value\": \"http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"appellation\"}]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SubmitEditPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return \\\"http://collection.americanart.si.edu/id/person-constituent/\\\"+getValue(\\\"ConstituentID\\\")+\\\"/appellation\\\"\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"appellation\"}]
+      },
+      {
+        \"name\": \"previousCommandId\",
+        \"type\": \"other\",
+        \"value\": \"C58587\"
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      },
+      {
+        \"name\": \"targetHNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"appellation\"}]
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SubmitPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"NameLabel\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return getValue(\\\"FirstName\\\")+\\\" \\\"+getValue(\\\"LastName\\\")\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"appellation\"}]
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SetMetaPropertyCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\",
+        \"value\": \"isUriOfClass\"
+      },
+      {
+        \"name\": \"metaPropertyValue\",
+        \"type\": \"other\",
+        \"value\": \"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"PersonConstituent\"}]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"ChangeInternalNodeLinksCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"initialEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"direction\": \"incoming\",
+          \"edgeId\": \"http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of\",
+          \"edgeLabel\": \"http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of\",
+          \"edgeSource\": \"E82_Actor_Appellation1\",
+          \"edgeSourceId\": \"http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation1\",
+          \"edgeTarget\": \"E21_Person1\",
+          \"edgeTargetId\": \"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\"
+        }]
+      },
+      {
+        \"name\": \"alignmentId\",
+        \"type\": \"other\",
+        \"value\": \"WSP9:WS1AL\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"newEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"edgeId\": \"http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by\",
+          \"edgeSourceId\": \"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\",
+          \"edgeTargetId\": \"http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation1\"
+        }]
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"NameLabel\"}]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation1\",
+          \"FullType\": \"http://www.w3.org/2000/01/rdf-schema#label\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"NameType\"}]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation1\",
+          \"FullType\": \"http://www.cidoc-crm.org/cidoc-crm/P3_has_note\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  }
+]
+""" .
+
+km-dev:TriplesMap_cd2af32e-c4fa-40b6-a331-3f94e625baca a rr:TriplesMap .
+
+_:node18e8hgnbix1 km-dev:hasTriplesMap km-dev:TriplesMap_cd2af32e-c4fa-40b6-a331-3f94e625baca .
+
+_:node18e8hgnbix2 rr:tableName "cbev2.WebConAltNames.Table.csv" .
+
+km-dev:TriplesMap_cd2af32e-c4fa-40b6-a331-3f94e625baca rr:logicalTable _:node18e8hgnbix2 ;
+	rr:subjectMap _:node18e8hgnbix3 .
+
+_:node18e8hgnbix3 km-dev:alignmentNodeId "http://www.cidoc-crm.org/cidoc-crm/E21_Person1" ;
+	rr:class <http://www.cidoc-crm.org/cidoc-crm/E21_Person> ;
+	rr:template "{\"PersonConstituent\"}" ;
+	a km-dev:steinerTreeRootNode .
+
+_:node18e8hgnbix5 rr:predicate <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> .
+
+km-dev:RefObjectMap_e6a77cf0-401d-4f51-8d2c-02ad6d3e10a9 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_f03ac687-4af0-45f3-adf0-9e72ae13bfa4 .
+
+_:node18e8hgnbix5 rr:objectMap km-dev:RefObjectMap_e6a77cf0-401d-4f51-8d2c-02ad6d3e10a9 .
+
+km-dev:TriplesMap_cd2af32e-c4fa-40b6-a331-3f94e625baca rr:predicateObjectMap _:node18e8hgnbix5 .
+
+km-dev:TriplesMap_f03ac687-4af0-45f3-adf0-9e72ae13bfa4 a rr:TriplesMap .
+
+_:node18e8hgnbix1 km-dev:hasTriplesMap km-dev:TriplesMap_f03ac687-4af0-45f3-adf0-9e72ae13bfa4 .
+
+_:node18e8hgnbix6 rr:tableName "cbev2.WebConAltNames.Table.csv" .
+
+km-dev:TriplesMap_f03ac687-4af0-45f3-adf0-9e72ae13bfa4 rr:logicalTable _:node18e8hgnbix6 ;
+	rr:subjectMap _:node18e8hgnbix7 .
+
+_:node18e8hgnbix7 km-dev:alignmentNodeId "http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation1" ;
+	rr:class <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> ;
+	rr:template "{\"appellation\"}" .
+
+_:node18e8hgnbix9 rr:predicate <http://www.cidoc-crm.org/cidoc-crm/P3_has_note> .
+
+_:node18e8hgnbix10 rr:column "NameType" ;
+	rr:datatype "" .
+
+_:node18e8hgnbix9 rr:objectMap _:node18e8hgnbix10 .
+
+km-dev:TriplesMap_f03ac687-4af0-45f3-adf0-9e72ae13bfa4 rr:predicateObjectMap _:node18e8hgnbix9 .
+
+_:node18e8hgnbix11 rr:predicate rdfs:label .
+
+_:node18e8hgnbix12 rr:column "NameLabel" ;
+	rr:datatype "" .
+
+_:node18e8hgnbix11 rr:objectMap _:node18e8hgnbix12 .
+
+km-dev:TriplesMap_f03ac687-4af0-45f3-adf0-9e72ae13bfa4 rr:predicateObjectMap _:node18e8hgnbix11 .

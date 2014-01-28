@@ -20,9 +20,8 @@
  ******************************************************************************/
 package edu.isi.karma.cleaning;
 
-
 //type
-public class TNode{
+public class TNode {
 	public int color = -1;
 	public static final int MOVCOLOR = 0;
 	public static final int DELCOLOR = 1;
@@ -40,104 +39,82 @@ public class TNode{
 	public static final int ANYNUM = Integer.MAX_VALUE;
 	public int type;
 	public String text;
-	public TNode(int type, String text)
-	{
+
+	public TNode(int type, String text) {
 		this.type = type;
 		this.text = text;
 	}
-	public void setColor(int c)
-	{
+
+	public void setColor(int c) {
 		this.color = c;
 	}
-	public int getColor()
-	{
+
+	public int getColor() {
 		return color;
 	}
-	public String toString()
-	{
-		return "\""+text+"\"";
+
+	public String toString() {
+		return "\"" + text + "\"";
 	}
-	public String getType()
-	{
-		if(type == TNode.ANYTYP)
-		{
+
+	public String getType() {
+		if (type == TNode.ANYTYP) {
 			return "ANYTYP";
-		}
-		else if (type == TNode.WORD)
-		{
+		} else if (type == TNode.WORD) {
 			return "Word";
-		}
-		else if(type == TNode.NUMTYP)
-		{
+		} else if (type == TNode.NUMTYP) {
 			return "Number";
-		}
-		else if(type == TNode.SYBSTYP)
-		{
+		} else if (type == TNode.SYBSTYP) {
 			return "Symbol";
-		}
-		else if(type == TNode.BNKTYP)
-		{
+		} else if (type == TNode.BNKTYP) {
 			return "Blank";
-		}
-		else if(type == TNode.STARTTYP)
-		{
+		} else if (type == TNode.STARTTYP) {
 			return "START";
-		}
-		else if(type == TNode.ENDTYP)
-		{
+		} else if (type == TNode.ENDTYP) {
 			return "END";
-		}
-		else if(type == TNode.LWRDTYP)
-		{
+		} else if (type == TNode.LWRDTYP) {
 			return "LWD";
-		}
-		else if(type == TNode.UWRDTYP)
-		{
+		} else if (type == TNode.UWRDTYP) {
 			return "UWD";
-		}
-		else
-		{
-			return ""+(char)this.type;
+		} else {
+			return "" + (char) this.type;
 		}
 	}
-	public boolean sameNode(TNode t)
-	{
-		if(sameText(t)&&sameType(t))
-		{
+
+	public boolean sameNode(TNode t) {
+		if (sameText(t) && sameType(t)) {
 			return true;
 		}
 		return false;
 	}
-	public boolean sameText(TNode t)
-	{
-		if(this.text.compareTo(TNode.ANYTOK)==0||t.text.compareTo(TNode.ANYTOK)==0)
-		{
+
+	public boolean sameText(TNode t) {
+		if (this.text.compareTo(TNode.ANYTOK) == 0
+				|| t.text.compareTo(TNode.ANYTOK) == 0) {
 			return true;
 		}
-		if(this.text.compareTo(t.text)==0)
-		{
+		if (this.text.compareTo(t.text) == 0) {
 			return true;
 		}
 		return false;
 	}
-	public boolean sameType(TNode t)
-	{
-		if(this.type==TNode.ANYTYP || t.type == TNode.ANYTYP)
-		{
+
+	public boolean sameType(TNode t) {
+		if (this.type == TNode.ANYTYP || t.type == TNode.ANYTYP) {
 			return true;
 		}
-		if(this.type == t.type)
+		if (this.type == t.type)
 			return true;
 		return false;
 	}
-	public int mergableType(TNode t)
-	{
-		 
+
+	public int mergableType(TNode t) {
+
 		boolean res = this.sameType(t);
-		if(res)
+		if (res)
 			return this.type;
-		if((this.type == TNode.UWRDTYP || this.type == TNode.LWRDTYP || this.type == TNode.WORD) &&(t.type == TNode.LWRDTYP || t.type == TNode.UWRDTYP || t.type == TNode.WORD))
-		{
+		if ((this.type == TNode.UWRDTYP || this.type == TNode.LWRDTYP || this.type == TNode.WORD)
+				&& (t.type == TNode.LWRDTYP || t.type == TNode.UWRDTYP || t.type == TNode.WORD)) {
 			return TNode.WORD;
 		}
 		return -1;
