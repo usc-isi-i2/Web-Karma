@@ -1,0 +1,275 @@
+/*
+ * jsTree Proton theme 1.0
+ * Based on jsTree Apple theme
+ * Supported features: dots/no-dots, icons/no-icons, focused, loading
+ * Supported plugins: ui (hovered, clicked), checkbox, contextmenu, search
+ */
+.jstree.jstree-proton {
+  -webkit-font-smoothing: antialiased;
+  font-family: 'Titillium Web', sans-serif, Arial, sans-serif;
+  text-align: left;
+}
+.jstree.jstree-proton li,
+.jstree.jstree-proton ins {
+  background-image: url("d.png");
+  background-repeat: no-repeat;
+  background-color: transparent;
+  background-size: 108px 96px;
+}
+.jstree.jstree-proton li {
+  background-position: -90px 0;
+  background-repeat: repeat-y;
+  min-height: 24px;
+  font-size: 14px;
+  line-height: 24px;
+}
+.jstree.jstree-proton > ul > li:first-child {
+  padding-top: 5px;
+}
+.jstree.jstree-proton a > ins {
+  width: 18px;
+}
+.jstree.jstree-proton li.jstree-last {
+  background: transparent;
+}
+.jstree.jstree-proton .jstree-open > ins {
+  background-position: -72px 0;
+}
+.jstree.jstree-proton .jstree-open > a > ins {
+  background-position: -56px -37px;
+}
+.jstree.jstree-proton .jstree-open > a > ins.jstree-icon {
+  height: 14px;
+}
+.jstree.jstree-proton .jstree-closed > ins {
+  background-position: -54px 0;
+}
+.jstree.jstree-proton .jstree-leaf > ins {
+  background-position: -36px 0;
+}
+.jstree.jstree-proton a {
+  position: relative;
+  top: -6px;
+  max-width: 85%;
+  display: inline-block;
+  height: 24px;
+  padding: 4px 6px 3px;
+  font-size: 14px;
+  line-height: 15px;
+  vertical-align: middle;
+  border-radius: 3px;
+  color: inherit;
+  -webkit-transition: all 0.1s;
+  transition: all 0.1s;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.jstree.jstree-proton .jstree-hovered {
+  background: #76b6ec;
+  color: #fff;
+}
+.jstree.jstree-proton .jstree-clicked {
+  background: #3392e3;
+  color: #fff;
+}
+.jstree.jstree-proton .jstree-clicked > ins {
+  background-position: -74px -19px;
+}
+.jstree.jstree-proton a .jstree-icon {
+  background-position: -56px -19px;
+}
+.jstree.jstree-proton a.jstree-loading .jstree-icon {
+  background: url("throbber.gif") center center no-repeat !important;
+}
+.jstree.jstree-proton jstree-focused {
+  background: transparent;
+}
+.jstree.jstree-proton .jstree-no-dots li,
+.jstree.jstree-proton .jstree-no-dots .jstree-leaf > ins {
+  background: transparent;
+}
+.jstree.jstree-proton .jstree-no-dots .jstree-open > ins {
+  background-position: -18px 0;
+}
+.jstree.jstree-proton .jstree-no-dots .jstree-closed > ins {
+  background-position: 0 0;
+}
+.jstree.jstree-proton .jstree-no-icons a .jstree-icon {
+  display: none;
+}
+.jstree.jstree-proton .jstree-search {
+  font-style: italic;
+}
+.jstree.jstree-proton .jstree-no-icons .jstree-checkbox {
+  display: inline-block;
+}
+.jstree.jstree-proton .jstree-no-checkboxes .jstree-checkbox {
+  display: none !important;
+}
+.jstree.jstree-proton .jstree-checked > a > .jstree-checkbox {
+  background-position: -37px -19px;
+}
+.jstree.jstree-proton .jstree-unchecked > a > .jstree-checkbox {
+  background-position: -1px -19px;
+}
+.jstree.jstree-proton .jstree-undetermined > a > .jstree-checkbox {
+  background-position: -19px -19px;
+}
+.jstree.jstree-proton .jstree-checked > a > .checkbox:hover {
+  background-position: -37px -37px;
+}
+.jstree.jstree-proton .jstree-unchecked > a > .jstree-checkbox:hover {
+  background-position: -1px -37px;
+}
+.jstree.jstree-proton .jstree-undetermined > a > .jstree-checkbox:hover {
+  background-position: -19px -37px;
+}
+.jstree.jstree-proton.jstree li[rel="file"] > a > ins.jstree-icon {
+  background-image: url("file.png");
+  background-position: 0 0;
+  background-size: 18px 16px;
+}
+.jstree.jstree-proton #vakata-dragged {
+  font-size: 14px;
+  line-height: 24px;
+  opacity: 0.7;
+}
+.jstree.jstree-proton #vakata-dragged.jstree-proton ins {
+  background: transparent !important;
+}
+.jstree.jstree-proton #vakata-dragged.jstree-proton .jstree-ok {
+  background: url("d.png") -1px -54px no-repeat !important;
+  background-size: 108px 96px !important;
+}
+.jstree.jstree-proton #vakata-dragged.jstree-proton .jstree-invalid {
+  background: url("d.png") -18px -54px no-repeat !important;
+  background-size: 108px 96px !important;
+}
+.jstree.jstree-proton #jstree-marker.jstree-proton {
+  background: url("d.png") -40px -56px no-repeat !important;
+  background-size: 108px 96px !important;
+  text-indent: -100px;
+}
+.jstree.jstree-proton a.jstree-search {
+  color: aqua;
+}
+.jstree.jstree-proton .jstree-locked a {
+  color: silver;
+  cursor: default;
+}
+.jstree.jstree-proton #vakata-contextmenu.jstree-proton-context,
+.jstree.jstree-proton #vakata-contextmenu.jstree-proton-context li ul {
+  background: #f0f0f0;
+  border: 1px solid #979797;
+  -moz-box-shadow: 1px 1px 2px #999;
+  -webkit-box-shadow: 1px 1px 2px #999;
+  box-shadow: 1px 1px 2px #999;
+}
+.jstree.jstree-proton #vakata-contextmenu.jstree-proton-context a {
+  color: black;
+}
+.jstree.jstree-proton #vakata-contextmenu.jstree-proton-context a:hover,
+.jstree.jstree-proton #vakata-contextmenu.jstree-proton-context .vakata-hover > a {
+  padding: 0 5px;
+  background: #e8eff7;
+  border: 1px solid #aecff7;
+  color: black;
+  border-radius: 2px;
+}
+.jstree.jstree-proton #vakata-contextmenu.jstree-proton-context li.jstree-contextmenu-disabled a,
+.jstree.jstree-proton #vakata-contextmenu.jstree-proton-context li.jstree-contextmenu-disabled a:hover {
+  color: silver;
+  background: transparent;
+  border: 0;
+  padding: 1px 4px;
+}
+.jstree.jstree-proton #vakata-contextmenu.jstree-proton-context li.vakata-separator {
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  margin: 0;
+}
+.jstree.jstree-proton #vakata-contextmenu.jstree-proton-context li ul {
+  margin-left: -4px;
+}
+@media (max-width: 479px) {
+  .jstree.jstree-proton {
+    width: 100%;
+  }
+  .jstree.jstree-proton li {
+    background-image: none;
+  }
+  .jstree.jstree-proton ins {
+    background-size: 108px 96px;
+  }
+  .jstree.jstree-proton li {
+    padding: 6px 0;
+    border-top: 1px solid #eeeeee;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    margin-left: 0;
+  }
+  .jstree.jstree-proton .jstree-open {
+    background-color: #f7f7f7;
+    background-color: rgba(0, 0, 0, 0.02);
+    padding-bottom: 0 !important;
+  }
+  .jstree.jstree-proton .jstree-open li:last-child {
+    padding: 6px 0;
+  }
+  .jstree.jstree-proton .jstree-open + .jstree-open {
+    border-top: 1px solid #eeeeee;
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+  .jstree.jstree-proton > ul > .jstree-last {
+    border-bottom: 1px solid #eeeeee;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  .jstree.jstree-proton li.jstree-open > ul {
+    margin-top: 6px;
+  }
+  .jstree.jstree-proton li > ins {
+    position: relative;
+    top: 2px;
+    width: 21px;
+    height: 21px;
+  }
+  .jstree.jstree-proton a,
+  .jstree.jstree-proton .jstree-hovered,
+  .jstree.jstree-proton .jstree-clicked {
+    background-color: transparent;
+    color: inherit;
+    padding: 0 3px;
+    margin-left: 8px;
+    top: 3px;
+  }
+  .jstree.jstree-proton .jstree-leaf > ins {
+    background: transparent;
+  }
+  .jstree.jstree-proton .jstree-no-dots .jstree-closed > ins,
+  .jstree.jstree-proton .jstree-closed > ins {
+    background-position: -53px -54px;
+  }
+  .jstree.jstree-proton .jstree-no-dots .jstree-open > ins,
+  .jstree.jstree-proton .jstree-open > ins {
+    background-position: -53px -75px;
+  }
+  .jstree.jstree-proton > ul > li:first-child {
+    padding: 6px 0;
+  }
+  .jstree.jstree-proton > ul > li > ins {
+    margin-left: 15px;
+    margin-right: 5px;
+  }
+  .jstree.jstree-proton > ul > li > ul > li {
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+  .jstree.jstree-proton > ul > li > ul > li > ins {
+    margin-left: 48px;
+  }
+  .jstree.jstree-proton > ul > li > ul > li > ul > li {
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+  .jstree.jstree-proton > ul > li > ul > li > ul > li > ins {
+    margin-left: 72px;
+  }
+}

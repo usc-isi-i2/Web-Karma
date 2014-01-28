@@ -211,3 +211,8 @@ div.incomingOutgoingLinksSeparator {
 	width: 100%;
 	background: #AAAAAA;
 }
+div.separator {
+	height: 4px;
+	width: 100%;
+	background: #AAAAAA;
+}

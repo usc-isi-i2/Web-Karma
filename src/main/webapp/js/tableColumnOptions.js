@@ -5,7 +5,9 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	var columnId = wsColumnId;
 	
 	var options = [
-	        //Title, function to call, needs file upload       
+	        //Title, function to call, needs file upload     
+	        [ "Set Semantic Type", setSemanticType],
+	        [ "divider", null],
 			[	"Add Column" , addColumn ],
 			[ "Rename", renameColumn ],
 			[ "Split Column", splitColumn ],
@@ -24,6 +26,10 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	
 	function hideDropdown() {
 		$('.dropdown.open .dropdown-toggle').dropdown('toggle');
+	}
+	
+	function setSemanticType() {
+		SetSemanticTypeDialog.getInstance().show(worksheetId, columnId, columnTitle);
 	}
 	
 	function addColumn() {

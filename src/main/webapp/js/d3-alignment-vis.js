@@ -1677,8 +1677,8 @@ function displayIncomingOutgoingClasses(dataArray, treeDiv, otherTreeDiv, dataDi
                 "data" : dataArray
             },
             "themes" : {
-                "theme" : "apple",
-                "url": "uiLibs/jquery/css/jstree-themes/apple/style.css",
+                "theme" : "proton",
+                "url": "uiLibs/jquery/css/jstree-themes/proton/style.css",
                 "dots" : true,
                 "icons" : false
             },

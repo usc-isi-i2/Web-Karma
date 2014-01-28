@@ -171,6 +171,7 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="reset.jsp"></jsp:include>
 			  <jsp:include page="tableColumnDialogs.jsp"></jsp:include>
 			  <jsp:include page="tableOptionsDialogs.jsp"></jsp:include>
+			  <jsp:include page="semanticTypes.jsp"></jsp:include>
 		</div>
 	
 		
@@ -599,6 +600,8 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/tableColumnOptions.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/tableOptions.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/util.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/semanticTypes.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/classPropertyUI.js?<jsp:include page='version.jsp' />"></script>
          
         <script>
             $(function() {
