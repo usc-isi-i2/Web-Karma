@@ -34,7 +34,7 @@ public class KR2RMLWorksheetHistoryCompatibilityVerifier {
 		}
 		return isR2RMLCompatible;
 	}
-	private static boolean verify(
+	public static boolean verify(
 			Workspace workspace,  JSONArray commands) {
 		boolean isR2RMLCompatible = true;
 		if(null == commands || commands.length() == 0)

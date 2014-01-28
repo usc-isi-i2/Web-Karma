@@ -9,9 +9,7 @@ public class KR2RMLColumnNameFormatterFactory {
 		switch(sourceType)
 		{
 			case JSON:
-				return new KR2RMLJSONPathColumnNameFormatter();
 			case XML:
-				return new KR2RMLXPathColumnNameFormatter();
 			case DB:
 			case CSV:
 			default:

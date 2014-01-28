@@ -28,6 +28,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -37,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.history.HistoryJsonUtil;
+import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatterFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
@@ -56,6 +59,8 @@ import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURITokenizer;
 import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURIValidator;
 import edu.isi.karma.transformation.tokenizer.PythonTransformationToken;
@@ -108,10 +113,33 @@ public class KR2RMLMappingGenerator {
 		// Generate the R2RML data structures
 		generateMappingFromSteinerTree(generateInverse);
 		
-		getWorksheetHistory();
+		addWorksheetHistory();
+		addSourceType(worksheet);
+		addColumnNameFormatter();
+		determineIfMappingIsR2RMLCompatible(worksheet);
+	}
+
+	private void addSourceType(Worksheet worksheet) {
+		String sourceType = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.sourceType);
+		r2rmlMapping.setSourceType(SourceTypes.valueOf(sourceType));
+	}
+
+	private void determineIfMappingIsR2RMLCompatible(Worksheet worksheet2) {
+		
+		boolean isRMLCompatible = KR2RMLWorksheetHistoryCompatibilityVerifier.verify(workspace, r2rmlMapping.getWorksheetHistory());
+		r2rmlMapping.setRMLCompatible(isRMLCompatible);
+		if(isRMLCompatible && r2rmlMapping.getSourceType().equals(SourceTypes.DB))
+		{
+			r2rmlMapping.setR2RMLCompatible(true);
+		}
+	}
+
+	private void addColumnNameFormatter() {
+		
+		r2rmlMapping.setColumnNameFormatter(KR2RMLColumnNameFormatterFactory.getFormatter(r2rmlMapping.getSourceType()));
 	}
 	
-	private void getWorksheetHistory() {
+	private void addWorksheetHistory() {
 		String historyFilePath = HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(
 				worksheet.getTitle(), workspace.getCommandPreferencesId());
 		File historyFile = new File(historyFilePath);
@@ -154,8 +182,18 @@ public class KR2RMLMappingGenerator {
 		
 		// Calculate the nodes covered by each InternalNode
 		calculateColumnNodesCoveredByBlankNodes();
+		
+		addPrefixes();
 	}
 
+	private void addPrefixes()
+	{
+		Map<String, String> prefixMap = workspace.getOntologyManager().getPrefixMap(); 
+		for (Entry<String, String> entry :prefixMap.entrySet()) {
+			Prefix p = new Prefix(entry.getKey(), entry.getValue());
+			r2rmlMapping.addPrefix(p);
+		}
+	}
 	private void identifyBlankNodes() {
 		for (SubjectMap subjMap:r2rmlMapping.getSubjectMapIndex().values()) {
 			if (subjMap.getTemplate().getAllTerms().size() == 1 &&

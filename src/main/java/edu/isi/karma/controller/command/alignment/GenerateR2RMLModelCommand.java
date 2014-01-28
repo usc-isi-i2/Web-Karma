@@ -41,9 +41,9 @@ import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLMapping;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
-import edu.isi.karma.kr2rml.KR2RMLWorksheetHistoryCompatibilityVerifier;
-import edu.isi.karma.kr2rml.WorksheetModelWriter;
+import edu.isi.karma.kr2rml.KR2RMLMappingWriter;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
@@ -197,10 +197,11 @@ public class GenerateR2RMLModelCommand extends Command {
 			final ErrorReport errorReport = new ErrorReport();
 			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
-			boolean isR2RMLCompatible = KR2RMLWorksheetHistoryCompatibilityVerifier.verify(workspace, mappingGen.getKR2RMLMapping().getWorksheetHistory().toString());
-			if(!isR2RMLCompatible)
+			KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
+			
+			if(!mapping.isR2RMLCompatible())
 			{
-				uc.add(new InfoUpdate("The KR2RMLModel generated is not compatible with R2RML"));
+				uc.add(new InfoUpdate("The KR2RMLMapping generated is not compatible with R2RML"));
 			}
 			// Write the model
 			writeModel(workspace, workspace.getOntologyManager(), mappingGen, worksheet, modelFileLocalPath);
@@ -260,7 +261,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		File parentDir = f.getParentFile();
 		parentDir.mkdirs();
 		PrintWriter writer = new PrintWriter(f, "UTF-8");
-		WorksheetModelWriter modelWriter = new WorksheetModelWriter(writer, 
+		/*WorksheetModelWriter modelWriter = new WorksheetModelWriter(writer, 
 				workspace.getFactory(), ontMgr, worksheet, workspace);
 
 		// Writer worksheet properties such as Service URL
@@ -271,7 +272,11 @@ public class GenerateR2RMLModelCommand extends Command {
 		
 		// Write the R2RML mapping
 		modelWriter.writeR2RMLMapping(ontMgr, mappingGen);
-		modelWriter.close();
+		modelWriter.close();*/
+		KR2RMLMappingWriter mappingWriter = new KR2RMLMappingWriter();
+		mappingWriter.addR2RMLMapping(mappingGen.getKR2RMLMapping(), worksheet, workspace);
+		mappingWriter.writeR2RMLMapping(writer);
+		mappingWriter.close();
 		writer.flush();
 		writer.close();
 	}

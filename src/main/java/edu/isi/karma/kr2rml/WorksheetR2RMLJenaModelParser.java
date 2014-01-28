@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,9 +88,15 @@ public class WorksheetR2RMLJenaModelParser {
 			version = KR2RMLVersion.unknown;
 		}
 		KR2RMLMapping kr2rmlMapping = new KR2RMLMapping(id, version);
-
-		KR2RMLColumnNameFormatter formatter = getSourceType(mappingResource);
-		kr2rmlMapping.setColumnNameFormatter(formatter);
+		Map<String, String> prefixes = model.getNsPrefixMap();
+		for(Entry<String, String> prefix : prefixes.entrySet())
+		{
+			Prefix p = new Prefix(prefix.getKey(), prefix.getValue());
+			kr2rmlMapping.addPrefix(p);
+		}
+		
+		SourceTypes sourceType = getSourceType(mappingResource);
+		kr2rmlMapping.setColumnNameFormatter(KR2RMLColumnNameFormatterFactory.getFormatter(sourceType));
 		// Load any transformations on the worksheet if required
 		loadWorksheetHistory(mappingResource, kr2rmlMapping);
 		
@@ -103,7 +111,7 @@ public class WorksheetR2RMLJenaModelParser {
 		return kr2rmlMapping;
 	}
 	
-	private KR2RMLColumnNameFormatter getSourceType(Resource mappingResource)
+	private SourceTypes getSourceType(Resource mappingResource)
 	{
 		Property sourceNameProp = model.getProperty(Uris.KM_SOURCE_TYPE_URI);
 		Statement s = model.getProperty(mappingResource, sourceNameProp);
@@ -114,11 +122,11 @@ public class WorksheetR2RMLJenaModelParser {
 			if(node != null && node.isLiteral())
 			{
 				sourceType = node.asLiteral().getString();
-				return KR2RMLColumnNameFormatterFactory.getFormatter(SourceTypes.valueOf(sourceType));
+				return SourceTypes.valueOf(sourceType);
 			}
 		}
+		return SourceTypes.CSV;
 		
-		return KR2RMLColumnNameFormatterFactory.getFormatter(SourceTypes.CSV);
 		
 	}
     private Model loadSourceModelIntoJenaModel(URL modelURL) throws IOException {

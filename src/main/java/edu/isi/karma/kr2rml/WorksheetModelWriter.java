@@ -21,18 +21,13 @@
 
 package edu.isi.karma.kr2rml;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jetty.http.HttpMethod;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.BNode;
 import org.openrdf.model.Resource;
@@ -50,12 +45,6 @@ import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.Command.CommandTag;
-import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.controller.command.transformation.PythonTransformationCommand;
-import edu.isi.karma.controller.history.CommandHistoryWriter.HistoryArguments;
 import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatter;
 import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatterFactory;
 import edu.isi.karma.modeling.Namespaces;
@@ -68,12 +57,6 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
-import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURIValidator;
-import edu.isi.karma.util.EncodingDetector;
-import edu.isi.karma.util.FileUtil;
-import edu.isi.karma.webserver.ExecutionController;
-import edu.isi.karma.webserver.KarmaException;
-import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class WorksheetModelWriter {
 	
@@ -89,7 +72,6 @@ public class WorksheetModelWriter {
 	private ValueFactory f;
 	// Add a blank node of R2RML mapping
 	private Resource mappingRes;
-	private Workspace workspace;
 	private static Logger logger = LoggerFactory
 			.getLogger(WorksheetModelWriter.class);
 	
@@ -99,7 +81,6 @@ public class WorksheetModelWriter {
 		this.writer = writer;
 		this.factory = factory;
 		this.ontMgr = ontMgr;
-		this.workspace = workspace;
 		/** Initialize an in-memory sesame triple store **/
 		myRepository = new SailRepository(new MemoryStore());
 		myRepository.initialize();

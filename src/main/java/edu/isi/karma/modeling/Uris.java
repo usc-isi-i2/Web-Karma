@@ -83,4 +83,5 @@ public interface Uris {
 	
 	// Linking related URIs
 	public static final String KM_LINKING_MATCHES_URI = Namespaces.KARMA_DEV + "possibleLinkingMatches";
+
 }

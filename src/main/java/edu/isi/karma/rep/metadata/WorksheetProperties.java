@@ -29,7 +29,11 @@ import org.apache.commons.httpclient.util.URIUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.isi.karma.rep.ColumnMetadata.DataStructure;
+
 public class WorksheetProperties {
+	
+	private DataStructure worksheetDataStructure;
 	private Map<Property, String> propertyValueMap;
 	private boolean hasServiceProperties;
 	
@@ -83,5 +87,13 @@ public class WorksheetProperties {
 
 	public static String createDefaultGraphName(String worksheetTitle) throws URIException {
 		return DEFAULT_GRAPH_NAME_PREFIX + URIUtil.encodePath(worksheetTitle);
+	}
+
+	public DataStructure getWorksheetDataStructure() {
+		return worksheetDataStructure;
+	}
+
+	public void setWorksheetDataStructure(DataStructure worksheetDataStructure) {
+		this.worksheetDataStructure = worksheetDataStructure;
 	}
 }
