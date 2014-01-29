@@ -41,7 +41,7 @@ public class KR2RMLVersion implements Comparable<KR2RMLVersion>{
 		}
 		if(this.getMajor() == o.getMajor())
 		{
-			return this.getMinor() - o.getMajor();
+			return this.getMinor() - o.getMinor();
 		}
 		else
 		{

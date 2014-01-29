@@ -48,6 +48,10 @@ public class R2RMLMapping {
 		prefixes.add(prefix);
 	}
 	
+	public List<Prefix> getPrefixes()
+	{
+		return prefixes;
+	}
 	public R2RMLMappingIdentifier getId() {
 		return id;
 	}
