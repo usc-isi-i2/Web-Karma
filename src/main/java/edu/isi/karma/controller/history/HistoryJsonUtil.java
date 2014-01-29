@@ -49,7 +49,7 @@ public class HistoryJsonUtil {
 	}
 	
 	public static String getStringValue(String arg, JSONArray json) throws JSONException {
-		return getJSONObjectWithName(arg, json).getString(ClientJsonKeys.value.name());
+		return getJSONObjectWithName(arg, json).get(ClientJsonKeys.value.name()).toString();
 	}
 
 	public static boolean historyExists(String worksheetName, String vworkspacePreferenceId) {
