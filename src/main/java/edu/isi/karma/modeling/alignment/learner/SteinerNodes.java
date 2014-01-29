@@ -446,7 +446,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		sb.append("\n");
 //		sb.append("total number of patterns: " + this.frequency);
 //		sb.append("\n");
-		sb.append("final score: " + roundTwoDecimals(this.getScore()) + " - [harmonic mean]");
+		sb.append("final score: " + roundTwoDecimals(this.getScore()) + " - [arithmetic mean]");
 		sb.append("\n");
 		return sb.toString();
 	}
