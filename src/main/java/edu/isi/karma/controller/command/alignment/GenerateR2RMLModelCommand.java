@@ -261,18 +261,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		File parentDir = f.getParentFile();
 		parentDir.mkdirs();
 		PrintWriter writer = new PrintWriter(f, "UTF-8");
-		/*WorksheetModelWriter modelWriter = new WorksheetModelWriter(writer, 
-				workspace.getFactory(), ontMgr, worksheet, workspace);
 
-		// Writer worksheet properties such as Service URL
-		modelWriter.writeWorksheetProperties(worksheet);
-		
-		// Write the worksheet history
-		modelWriter.writeCompleteWorksheetHistory(mappingGen.getKR2RMLMapping());
-		
-		// Write the R2RML mapping
-		modelWriter.writeR2RMLMapping(ontMgr, mappingGen);
-		modelWriter.close();*/
 		KR2RMLMappingWriter mappingWriter = new KR2RMLMappingWriter();
 		mappingWriter.addR2RMLMapping(mappingGen.getKR2RMLMapping(), worksheet, workspace);
 		mappingWriter.writeR2RMLMapping(writer);

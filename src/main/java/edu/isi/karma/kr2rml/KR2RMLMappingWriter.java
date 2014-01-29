@@ -124,6 +124,7 @@ public class KR2RMLMappingWriter {
 		repoURIs.put(Uris.RR_LOGICAL_TABLE_URI, f.createURI(Uris.RR_LOGICAL_TABLE_URI));
 		repoURIs.put(Uris.RR_TABLENAME_URI, f.createURI(Uris.RR_TABLENAME_URI));
 		repoURIs.put(Uris.RR_CLASS_URI, f.createURI(Uris.RR_CLASS_URI));
+		repoURIs.put(Uris.RR_LITERAL_URI, f.createURI(Uris.RR_LITERAL_URI));
 		
 		repoURIs.put(Uris.KM_BLANK_NODE_PREFIX_URI, f.createURI(Uris.KM_BLANK_NODE_PREFIX_URI));
 		repoURIs.put(Uris.KM_NODE_ID_URI, f.createURI(Uris.KM_NODE_ID_URI));
@@ -352,6 +353,18 @@ public class KR2RMLMappingWriter {
 				
 				// Add the link b/w blank node and object map
 				con.add(pomBlankNode, repoURIs.get(Uris.RR_OBJECTMAP_URI), cnBnode);
+			}
+			else if(!objTermSet.isEmpty())
+			{
+				BNode cnBnode = f.createBNode();
+				// Print out the template for anything that isn't a blank node
+				Value templVal = f.createLiteral(objTermSet
+						.getR2rmlTemplateString(factory, columnNameFormatter));
+				con.add(cnBnode, repoURIs.get(Uris.RR_TEMPLATE_URI), templVal);
+				con.add(cnBnode, repoURIs.get(Uris.RR_TERM_TYPE_URI), repoURIs.get(Uris.RR_LITERAL_URI));
+				//Add the link b/w blank node and object map
+				con.add(pomBlankNode, repoURIs.get(Uris.RR_OBJECTMAP_URI), cnBnode);
+				
 			}
 		}
 	}
