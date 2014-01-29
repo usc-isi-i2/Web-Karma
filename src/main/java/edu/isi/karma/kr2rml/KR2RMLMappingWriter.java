@@ -152,11 +152,9 @@ public class KR2RMLMappingWriter {
 		try {
 			con.export(new TurtleWriter(writer));
 		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error occured while outputing R2RML mapping");
 		} catch (RDFHandlerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error occured while outputing R2RML mapping");
 		}
 	}
 
@@ -202,6 +200,15 @@ public class KR2RMLMappingWriter {
 		addLogicalSource(mapping, worksheet, trMap, trMapUri);
 	}
 
+	private void addLogicalSource(KR2RMLMapping mapping, Worksheet worksheet, TriplesMap tri, URI trMapUri)
+			throws RepositoryException {
+		// Add the Logical table information
+		BNode logTableBNode = f.createBNode();
+		
+		con.add(logTableBNode, repoURIs.get(Uris.RR_TABLENAME_URI), f.createLiteral(worksheet.getTitle()));
+		con.add(trMapUri, repoURIs.get(Uris.RR_LOGICAL_TABLE_URI), logTableBNode);
+
+	}
 	private void addSubjectMap(KR2RMLMapping mapping,
 			TriplesMap trMap,
 			URI trMapUri, Workspace workspace) throws RepositoryException {
@@ -261,79 +268,94 @@ public class KR2RMLMappingWriter {
 			KR2RMLMapping mapping, TriplesMap trMap,
 			URI trMapUri, Workspace workspace) throws RepositoryException {
 
-		KR2RMLColumnNameFormatter columnNameFormatter = mapping.getColumnNameFormatter();
-		RepFactory factory = workspace.getFactory();
 		// Add the predicate object maps
 		for (PredicateObjectMap pom:trMap.getPredicateObjectMaps()) {
-			BNode pomBlankNode = f.createBNode();
-			// Add the predicate
-			TemplateTermSet predTermSet = pom.getPredicate().getTemplate();
-			if (predTermSet.isSingleUriString()) {
-				URI predValUri = f.createURI(predTermSet
-						.getR2rmlTemplateString(factory, columnNameFormatter));
-				
-				// Skip the class instance special meta property
-				if (predValUri.stringValue().equals(Uris.CLASS_INSTANCE_LINK_URI)) continue;
-				
-				con.add(pomBlankNode, repoURIs.get(Uris.RR_PREDICATE_URI), predValUri);
-			} else {
-				Value predValLiteratl = f.createLiteral(predTermSet.
-						getR2rmlTemplateString(factory, columnNameFormatter));
-				con.add(pomBlankNode, repoURIs.get(Uris.RR_PREDICATE_URI), predValLiteratl);
-			}
-			
-			// Add the object: Could be RefObjectMap or simple object with column values
-			if (pom.getObject().hasRefObjectMap()) {
-				RefObjectMap rfMap = pom.getObject().getRefObjectMap();
-				URI rfUri = f.createURI(Namespaces.KARMA_DEV + rfMap.getId());
-				con.add(rfUri, RDF.TYPE, repoURIs.get(Uris.RR_REF_OBJECT_MAP_URI));
-				
-				TriplesMap prMap = rfMap.getParentTriplesMap();
-				URI prMapUri = f.createURI(Namespaces.KARMA_DEV + prMap.getId());
-				con.add(rfUri, repoURIs.get(Uris.RR_PARENT_TRIPLE_MAP_URI), prMapUri);
-				
-				// Add the RefObjectMap as the object map of current POMap
-				con.add(pomBlankNode, repoURIs.get(Uris.RR_OBJECTMAP_URI), rfUri);
-			} else {
-				TemplateTermSet objTermSet = pom.getObject().getTemplate();
-				TemplateTermSet rdfLiteralTypeTermSet = pom.getObject().getRdfLiteralType();
-					
-				if (objTermSet.isSingleColumnTerm()) {
-					BNode cnBnode = f.createBNode();
-					Value cnVal = f.createLiteral(objTermSet.
-							getColumnNameR2RMLRepresentation(factory, columnNameFormatter));
-					
-					con.add(cnBnode, repoURIs.get(Uris.RR_COLUMN_URI), cnVal);
-					
-					if (rdfLiteralTypeTermSet != null && rdfLiteralTypeTermSet.isSingleUriString()) {
-						String rdfLiteralTypeString = rdfLiteralTypeTermSet.
-								getR2rmlTemplateString(factory);
-						if(!rdfLiteralTypeString.isEmpty())
-						{
-							Value cnRdfLiteralType = f.createLiteral(rdfLiteralTypeString);
-							con.add(cnBnode, repoURIs.get(Uris.RR_DATATYPE_URI), cnRdfLiteralType);
-						}
-
-					}
-					
-					// Add the link b/w blank node and object map
-					con.add(pomBlankNode, repoURIs.get(Uris.RR_OBJECTMAP_URI), cnBnode);
-				}
-			}
-			con.add(trMapUri, repoURIs.get(Uris.RR_PRED_OBJ_MAP_URI), pomBlankNode);
+			addPredicateObjectMap(mapping, trMapUri, workspace, pom);
 		}
 	}
 
-	private void addLogicalSource(KR2RMLMapping mapping, Worksheet worksheet, TriplesMap tri, URI trMapUri)
+	private void addPredicateObjectMap(KR2RMLMapping mapping, URI trMapUri,
+			Workspace workspace, PredicateObjectMap pom)
 			throws RepositoryException {
-		// Add the Logical table information
-		BNode logTableBNode = f.createBNode();
+		KR2RMLColumnNameFormatter columnNameFormatter = mapping.getColumnNameFormatter();
+		RepFactory factory = workspace.getFactory();
+		BNode pomBlankNode = f.createBNode();
 		
-		con.add(logTableBNode, repoURIs.get(Uris.RR_TABLENAME_URI), f.createLiteral(worksheet.getTitle()));
-		con.add(trMapUri, repoURIs.get(Uris.RR_LOGICAL_TABLE_URI), logTableBNode);
-
+		boolean usablePredicate = addPredicate(pom, columnNameFormatter, factory, pomBlankNode);
+		if(!usablePredicate)
+		{
+			return;
+		}
 		
+		addObject(pom, columnNameFormatter, factory, pomBlankNode);
+		con.add(trMapUri, repoURIs.get(Uris.RR_PRED_OBJ_MAP_URI), pomBlankNode);
 	}
+	
+	private boolean addPredicate(PredicateObjectMap pom,
+			KR2RMLColumnNameFormatter columnNameFormatter, RepFactory factory,
+			BNode pomBlankNode) throws RepositoryException {
+		// Add the predicate
+		TemplateTermSet predTermSet = pom.getPredicate().getTemplate();
+		if (predTermSet.isSingleUriString()) {
+			URI predValUri = f.createURI(predTermSet
+					.getR2rmlTemplateString(factory, columnNameFormatter));
+			
+			// Skip the class instance special meta property
+			if (predValUri.stringValue().equals(Uris.CLASS_INSTANCE_LINK_URI))
+				return false;
+			
+			con.add(pomBlankNode, repoURIs.get(Uris.RR_PREDICATE_URI), predValUri);
+		} else {
+			Value predValLiteratl = f.createLiteral(predTermSet.
+					getR2rmlTemplateString(factory, columnNameFormatter));
+			con.add(pomBlankNode, repoURIs.get(Uris.RR_PREDICATE_URI), predValLiteratl);
+		}
+		return true;
+	}
+
+	private void addObject(PredicateObjectMap pom,
+			KR2RMLColumnNameFormatter columnNameFormatter, RepFactory factory,
+			BNode pomBlankNode) throws RepositoryException {
+		// Add the object: Could be RefObjectMap or simple object with column values
+		if (pom.getObject().hasRefObjectMap()) {
+			RefObjectMap rfMap = pom.getObject().getRefObjectMap();
+			URI rfUri = f.createURI(Namespaces.KARMA_DEV + rfMap.getId());
+			con.add(rfUri, RDF.TYPE, repoURIs.get(Uris.RR_REF_OBJECT_MAP_URI));
+			
+			TriplesMap prMap = rfMap.getParentTriplesMap();
+			URI prMapUri = f.createURI(Namespaces.KARMA_DEV + prMap.getId());
+			con.add(rfUri, repoURIs.get(Uris.RR_PARENT_TRIPLE_MAP_URI), prMapUri);
+			
+			// Add the RefObjectMap as the object map of current POMap
+			con.add(pomBlankNode, repoURIs.get(Uris.RR_OBJECTMAP_URI), rfUri);
+		} else {
+			TemplateTermSet objTermSet = pom.getObject().getTemplate();
+			TemplateTermSet rdfLiteralTypeTermSet = pom.getObject().getRdfLiteralType();
+				
+			if (objTermSet.isSingleColumnTerm()) {
+				BNode cnBnode = f.createBNode();
+				Value cnVal = f.createLiteral(objTermSet.
+						getColumnNameR2RMLRepresentation(factory, columnNameFormatter));
+				
+				con.add(cnBnode, repoURIs.get(Uris.RR_COLUMN_URI), cnVal);
+				
+				if (rdfLiteralTypeTermSet != null && rdfLiteralTypeTermSet.isSingleUriString()) {
+					String rdfLiteralTypeString = rdfLiteralTypeTermSet.
+							getR2rmlTemplateString(factory);
+					if(!rdfLiteralTypeString.isEmpty())
+					{
+						Value cnRdfLiteralType = f.createLiteral(rdfLiteralTypeString);
+						con.add(cnBnode, repoURIs.get(Uris.RR_DATATYPE_URI), cnRdfLiteralType);
+					}
+
+				}
+				
+				// Add the link b/w blank node and object map
+				con.add(pomBlankNode, repoURIs.get(Uris.RR_OBJECTMAP_URI), cnBnode);
+			}
+		}
+	}
+
 
 	public void close() throws RepositoryException {
 		myRepository.shutDown();
