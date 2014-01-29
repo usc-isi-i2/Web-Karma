@@ -40,6 +40,7 @@
 					<label>
 						Literal Type:
 							<select class="form-control" id="literalTypeSelect">
+								<option></option>
 								<option>xsd:string</option>
 		                        <option>xsd:boolean</option>
 		                        <option>xsd:decimal</option>
@@ -93,15 +94,15 @@
 						          <input type="checkbox" id="isUriOfClass">
 						       </span>
 							   <span class="input-group-addon">contains URI for node</span>
-						      <input type="text" class="form-control" id="isUriOfClassTextBox">
+						      <input type="text" class="form-control" id="isUriOfClassTextBox" autocomplete="off">
 						    </div><!-- /input-group -->
 	    
 	    					<div class="input-group form-group">
 						       <span class="input-group-addon">
-						          <input type="checkbox" id="isUriOfClass">
+						          <input type="checkbox" id="isSubclassOfClass">
 						       </span>
 							   <span class="input-group-addon">specifies class for node</span>
-						      <input type="text" class="form-control" id="isSubclassOfClassTextBox">
+						      <input type="text" class="form-control" id="isSubclassOfClassTextBox" autocomplete="off">
 						    </div><!-- /input-group -->
 						    
 						    <div class="input-group form-group">
@@ -109,7 +110,7 @@
 						          <input type="checkbox" id="isSpecializationForEdge">
 						       </span>
 							   <span class="input-group-addon">specifies specialization for edge</span>
-						      <input type="text" class="form-control" id="isSpecializationForEdgeTextBox">
+						      <input type="text" class="form-control" id="isSpecializationForEdgeTextBox" autocomplete="off">
 						    </div><!-- /input-group -->
 	                	</div>
                 	</div>

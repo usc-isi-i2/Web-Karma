@@ -215,4 +215,6 @@ div.separator {
 	height: 4px;
 	width: 100%;
 	background: #AAAAAA;
+	margin-top: 2px;
+	margin-bottom: 2px;
 }

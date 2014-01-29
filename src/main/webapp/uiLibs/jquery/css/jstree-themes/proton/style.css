@@ -49,7 +49,6 @@
 }
 .jstree.jstree-proton a {
   position: relative;
-  top: -6px;
   max-width: 85%;
   display: inline-block;
   height: 24px;
@@ -152,7 +151,10 @@
   text-indent: -100px;
 }
 .jstree.jstree-proton a.jstree-search {
-  color: aqua;
+  color: #199912;
+}
+.jstree.jstree-proton a.jstree-search.jstree-clicked{
+  color: #FFFFFF;
 }
 .jstree.jstree-proton .jstree-locked a {
   color: silver;

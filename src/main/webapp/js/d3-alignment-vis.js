@@ -548,9 +548,9 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             else
                 return d.width/2 * -1;
         }).on("click", function(d){
-            if(d["nodeType"] == "ColumnNode" || d.nodeType == "Unassigned")
-                changeSemanticType_d3(d, svg, d3.event);
-            else if(d["nodeType"] == "InternalNode") {
+            if(d["nodeType"] == "ColumnNode" || d.nodeType == "Unassigned") {
+                //changeSemanticType_d3(d, svg, d3.event);
+            } else if(d["nodeType"] == "InternalNode") {
                 d["targetNodeId"] = d["id"];
                 d.worksheetId = worksheetId;
                 d.alignmentId = $(svg).data("alignmentId");

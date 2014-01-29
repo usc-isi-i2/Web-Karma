@@ -200,145 +200,8 @@ and related projects, please see: http://www.isi.edu/integration
         <div id="tableCellEditDiv" style="display: none"></div>
         <div id="r2rmlModelNameDiv" style="display: none"> <textarea id="txtR2RMLModelName" style="width: 100%"> </textarea> </div>
         
-
-        
-
         <div id="ScrollHeadersPlaceholder"></div>
      
-      
-        <div id="ChangeSemanticTypesDialogBox" style="display: none">
-            <div id="CurrentSemanticTypesBox" class="ui-corner-all">
-                <span class="mediumSizedFont">Semantic types:</span>
-                <table id="currentSemanticTypesTable">
-                    <tr><td /><td /><td>Primary</td><td/>
-                    </tr>
-                </table>
-                <br />
-                <button id="addSemanticType">
-                    Add synonym semantic type
-                </button>
-                <br />
-                <input class="smallSizedFont" type="checkbox" id="chooseClassKey" />
-                <label for="chooseClassKey" class="smallSizedFont">Mark as key for the class.</label>
-                <br />
-                <div class="ui-widget" id="rdfTypeSelectDiv">
-                    <label class="smallSizedFont">Literal type: </label>
-                    <select class="smallSizedFont" id="rdfTypeSelect">
-                        <option>xsd:string</option>
-                        <option>xsd:boolean</option>
-                        <option>xsd:decimal</option>
-                        <option>xsd:integer</option>
-                        <option>xsd:double</option>
-                        <option>xsd:float</option>
-                        <option>xsd:time</option>
-                        <option>xsd:dateTime</option>
-                        <option>xsd:dateTimeStamp</option>
-                        <option>xsd:gYear</option>
-                        <option>xsd:gMonth</option>
-                        <option>xsd:gDay</option>
-                        <option>xsd:gYearMonth</option>
-                        <option>xsd:gMonthDay</option>
-                        <option>xsd:duration</option>
-                        <option>xsd:yearMonthDuration</option>
-                        <option>xsd:dayTimeDuration</option>
-                        <option>xsd:byte</option>
-                        <option>xsd:short</option>
-                        <option>xsd:int</option>
-                        <option>xsd:long</option>
-                        <option>xsd:unsignedByte</option>
-                        <option>xsd:unsignedShort</option>
-                        <option>xsd:unsignedInt</option>
-                        <option>xsd:unsignedLong</option>
-                        <option>xsd:positiveInteger</option>
-                        <option>xsd:nonNegativeInteger</option>
-                        <option>xsd:negativeInteger</option>
-                        <option>xsd:nonPositiveInteger</option>
-                        <option>xsd:hexBinary</option>
-                        <option>xsd:base64Binary</option>
-                        <option>xsd:anyURI</option>
-                        <option>xsd:language</option>
-                        <option>xsd:normalizedString</option>
-                        <option>xsd:token</option>
-                        <option>xsd:NMTOKEN</option>
-                        <option>xsd:Name</option>
-                        <option>xsd:NCName</option>
-                    </select>
-                </div>
-                <button id="semanticTypingAdvancedOptions">
-                    Advanced Options
-                </button>
-                <br />
-                <div id="semanticTypingAdvacedOptionsDiv" style="display: none">
-                    <table>
-                        <tr class="smallSizedFont">
-                            <td>
-                                <input type="checkbox" id="isUriOfClass">
-                                </input></td>
-                            <td style="text-align: right;">contains URI for node:</td>
-                            <td>
-                                <input type="text" id="isUriOfClassTextBox"/>
-                            </td>
-                        </tr>
-                        <tr class="smallSizedFont">
-                            <td>
-                                <input type="checkbox" id="isSubclassOfClass">
-                                </input></td>
-                            <td style="text-align: right;">specifies class for node:</td>
-                            <td>
-                                <input type="text" id="isSubclassOfClassTextBox"/>
-                            </td>
-                        </tr>
-                        <tr class="smallSizedFont">
-                            <td>
-                                <input type="checkbox" id="isSpecializationForEdge">
-                                </input></td>
-                            <td style="text-align: right;">specifies specialization for edge:</td>
-                            <td>
-                                <input type="text" id="isSpecializationForEdgeTextBox"/>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div class="ui-widget" id="SemanticTypeErrorWindow" style="display: none">
-                <br />
-                <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-                    <p>
-                        <span class="ui-icon ui-icon-alert"
-                              style="float: left; margin-right: .3em;"></span>
-                        <span id="SemanticTypeErrorWindowText"></span>
-                    </p>
-                    <br />
-                </div>
-                <br />
-            </div>
-        </div>
-        <div id="propertyOntologyBox" style="display: none">
-            <input id="filterPropertyByDomain" type="checkbox"/>
-            <label for="filterPropertyByDomain">Show properties with domain</label><span id="className" class="bold"></span>
-            <br />
-            <br />
-            <input type="text" id="propertyKeyword" maxlength="100" size="20"/>
-            <button id="propertySearch">
-                Search
-            </button>
-            <br />
-            <br />
-            <div id="propertyTree"></div>
-        </div>
-        <div id="classOntologyBox" style="display: none">
-            <input id="filterClassByDomain" type="checkbox"/>
-            <label for="filterClassByDomain">Show domains for property</label><span id="propertyName" class="italic"></span>
-            <br />
-            <br />
-            <input type="text" id="classKeyword" maxlength="100" size="20"/>
-            <button id="classSearch">
-                Search
-            </button>
-            <br />
-            <br />
-            <div id="classTree"></div>
-        </div>
         <div id="OntologyAlternativeLinksPanel" style="display: none">
             <span class="smallSizedFont">Choose parent relationship:</span>
             <br />
@@ -555,6 +418,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="uiLibs/jquery/js/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery-ui-1.10.3.custom.min.js"></script>
 		<script type="text/javascript" src="uiLibs/twitterBootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="uiLibs/twitterBootstrap/js/bootstrap3-typeahead.min.js"></script>
 		
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.tmpl.min.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.hoverIntent.js"></script>
@@ -607,7 +471,7 @@ and related projects, please see: http://www.isi.edu/integration
             $(function() {
 
                 // Attach handlers to the ontology options table
-                attachOntologyOptionsRadioButtonHandlers();
+                //attachOntologyOptionsRadioButtonHandlers();
 
                 // Assign style and handlers to table cell menu
                 styleAndAssignHandlersToTableCellMenu();
