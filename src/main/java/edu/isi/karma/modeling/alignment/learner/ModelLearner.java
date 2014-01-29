@@ -22,6 +22,7 @@
 package edu.isi.karma.modeling.alignment.learner;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -176,23 +177,26 @@ public class ModelLearner {
 				break;
 		}
 		
-		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
-		SortableSemanticModel current, previous;
-		if (sortableSemanticModels != null) {
-			Collections.sort(sortableSemanticModels);			
-			if (sortableSemanticModels.size() > 0)
-				uniqueModels.add(sortableSemanticModels.get(0));
-			for (int i = 1; i < sortableSemanticModels.size(); i++) {
-				current = sortableSemanticModels.get(i);
-				previous = sortableSemanticModels.get(i - 1);
-				if (current.getScore() == previous.getScore() && current.getCost() == previous.getCost())
-					continue;
-				uniqueModels.add(current);
-			}
-		}
-		
+		Collections.sort(sortableSemanticModels);
 		logger.info("results are ready ...");
-		return uniqueModels;
+		return sortableSemanticModels;
+		
+//		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
+//		SortableSemanticModel current, previous;
+//		if (sortableSemanticModels != null) {
+//			if (sortableSemanticModels.size() > 0)
+//				uniqueModels.add(sortableSemanticModels.get(0));
+//			for (int i = 1; i < sortableSemanticModels.size(); i++) {
+//				current = sortableSemanticModels.get(i);
+//				previous = sortableSemanticModels.get(i - 1);
+//				if (current.getScore() == previous.getScore() && current.getCost() == previous.getCost())
+//					continue;
+//				uniqueModels.add(current);
+//			}
+//		}
+//		
+//		logger.info("results are ready ...");
+//		return uniqueModels;
 
 	}
 	
@@ -613,6 +617,7 @@ public class ModelLearner {
 		if (columnNodes == null)
 			return;
 		
+		int numberOfCorrectSuggestions = 0;
 		for (ColumnNode cn : columnNodes) {
 			boolean found = false;
 			SemanticType userSelectedType = cn.getUserSelectedSemanticType();
@@ -627,9 +632,11 @@ public class ModelLearner {
 			double sumProbability = 0.0;
 			double maxProbability = 0.0;
 			double p;
-			for (SemanticType st : top4CrfSuggestions) {
+			for (int i = 0; i < top4CrfSuggestions.size(); i++) {
+				SemanticType st = top4CrfSuggestions.get(i);
 				if (userSelectedType != null &&
 					st.getCrfModelLabelString().equalsIgnoreCase(userSelectedType.getCrfModelLabelString())) {
+					if (i == 0) numberOfCorrectSuggestions ++;
 					found = true;
 					break;
 				} else {
@@ -656,11 +663,13 @@ public class ModelLearner {
 			
 			cn.setUserSelectedSemanticType(null);
 		}
+		
+		System.out.println(numberOfCorrectSuggestions);
 	}
 	
 	public static void main(String[] args) throws Exception {
 
-		//		String inputPath = Params.INPUT_DIR;
+//		String inputPath = Params.INPUT_DIR;
 		String outputPath = Params.OUTPUT_DIR;
 		String graphPath = Params.GRAPHS_DIR;
 		
@@ -676,23 +685,45 @@ public class ModelLearner {
 			ontologyManager.doImport(f, "UTF-8");
 		}
 		ontologyManager.updateCache();  
+
+		for (int i = 0; i < semanticModels.size(); i++) {
+			SemanticModel source = semanticModels.get(i);
+			int attributeCount = source.getColumnNodes().size();
+			int nodeCount = source.getGraph().vertexSet().size();
+			int linkCount = source.getGraph().edgeSet().size();
+			int datanodeCount = 0;
+			int classNodeCount = 0;
+			for (Node n : source.getGraph().vertexSet()) {
+				if (n instanceof InternalNode) classNodeCount++;
+				if (n instanceof ColumnNode) datanodeCount++;
+			}
+			System.out.println(attributeCount + "\t" + nodeCount + "\t" + linkCount + "\t" + classNodeCount + "\t" + datanodeCount);
+//			List<ColumnNode> columnNodes = source.getColumnNodes();
+//			updateCrfSemanticTypesForResearchEvaluation(columnNodes);
+
+		}
 		
 		ModelLearningGraph modelLearningGraph;
 		ModelLearner modelLearner;
 		
-		StringBuffer results = new StringBuffer();
 		boolean definitiveTypes = false;
-		boolean iterativeEvaluation = false;
+		boolean iterativeEvaluation = true;
 		int numberOfKnownModels;
+		String filePath = Params.RESULTS_DIR;
+		String filename = definitiveTypes ? "results,k,1.csv" : "results,k,4.csv"; 
+		PrintWriter resultFile = new PrintWriter(new File(filePath + filename));
 		
 		for (int i = 0; i < semanticModels.size(); i++) {
-//		int i = 1; {
+//		for (int i = 0; i <= 1; i++) {
+//		int i = 0; {
 			
+//			resultFile.flush();
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
 			
 			logger.info("======================================================");
-			logger.info(newSource.getName());
+			logger.info(newSource.getName() + "(#attributes:" + newSource.getColumnNodes().size() + ")");
+			System.out.println(newSource.getName() + "(#attributes:" + newSource.getColumnNodes().size() + ")");
 			logger.info("======================================================");
 
 			if (!iterativeEvaluation)
@@ -700,8 +731,9 @@ public class ModelLearner {
 			else
 				numberOfKnownModels = 0;
 
-			results.append("Source: " + newSource.getName());
-			results.append("\n");
+//			resultFile.println(newSource.getName() + "\t" + " ");
+			resultFile.println("s" + (i + 1) + "(" + newSource.getColumnNodes().size() + ")" + "\t" + " " + "\t" + " ");
+			resultFile.println("p \t r \t t");
 
 			while (numberOfKnownModels <= semanticModels.size() - 1) {
 				
@@ -721,6 +753,8 @@ public class ModelLearner {
 				List<ColumnNode> columnNodes = correctModel.getColumnNodes();
 				if (!definitiveTypes)
 					updateCrfSemanticTypesForResearchEvaluation(columnNodes);
+
+				long start = System.currentTimeMillis();
 
 				modelLearner = new ModelLearner(ontologyManager, columnNodes);
 				
@@ -747,7 +781,7 @@ public class ModelLearner {
 					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					// save graph to file
 					try {
-						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName);
+						//GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -761,7 +795,10 @@ public class ModelLearner {
 						hypothesisList.subList(0, ModelingConfiguration.getMaxCandidateModels()) : 
 						hypothesisList;
 				}
-	
+
+				long elapsedTimeMillis = System.currentTimeMillis() - start;
+				float elapsedTimeSec = elapsedTimeMillis/1000F;
+
 				// Updating the weights
 	//			WeightTuning.getInstance().updateWeights(hypothesisList, correctModel);
 				
@@ -792,38 +829,47 @@ public class ModelLearner {
 	
 						String label = "candidate" + k + 
 								m.getSteinerNodes().getScoreDetailsString() +
-								"-cost:" + roundTwoDecimals(m.getCost()) + 
-								"-distance:" + me.getDistance() + 
+								"cost:" + roundTwoDecimals(m.getCost()) + 
+//								"-distance:" + me.getDistance() + 
 								"-precision:" + me.getPrecision() + 
 								"-recall:" + me.getRecall();
 						
 						models.put(label, m);
 						
 						if (k == 0) { // first rank model
-							results.append("\t");
-							logger.info("Number of known models: " + numberOfKnownModels + ", precision: " + me.getPrecision() + ", recall: " + me.getRecall());
-							results.append("Number of known models: " + numberOfKnownModels + ", precision: " + me.getPrecision() + ", recall: " + me.getRecall());
-							results.append("\n");
+							System.out.println("number of known models: " + numberOfKnownModels +
+									", precision: " + me.getPrecision() + 
+									", recall: " + me.getRecall() + 
+									", time: " + elapsedTimeSec);
+							logger.info("number of known models: " + numberOfKnownModels +
+									", precision: " + me.getPrecision() + 
+									", recall: " + me.getRecall() + 
+									", time: " + elapsedTimeSec);
+//							resultFile.println("number of known models \t precision \t recall");
+//							resultFile.println(numberOfKnownModels + "\t" + me.getPrecision() + "\t" + me.getRecall());
+							resultFile.println(me.getPrecision() + "\t" + me.getRecall() + "\t" + elapsedTimeSec);
 						}
 					}
 				
-				if (!iterativeEvaluation) {
+				String outName = !iterativeEvaluation?
+						outputPath + semanticModels.get(newSourceIndex).getName() + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT : 
+							outputPath + semanticModels.get(newSourceIndex).getName() + ".knownModels=" + numberOfKnownModels + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT;
+
+//				if (!iterativeEvaluation) {
 					GraphVizUtil.exportSemanticModelsToGraphviz(
 							models, 
 							newSource.getName(),
-							outputPath + 
-							semanticModels.get(i).getName() +
-							(definitiveTypes ? "" : ".uncertaintypes") + 
-							Params.GRAPHVIS_OUT_DETAILS_FILE_EXT);
-				}
+							outName);
+//				}
 
 				numberOfKnownModels ++;
 
 			}
 			
+			resultFile.println("=======================================================");
 		}
 		
-		System.out.println(results.toString());
+		resultFile.close();
 	}
 	
 }
