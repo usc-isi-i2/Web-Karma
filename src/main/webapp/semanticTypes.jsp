@@ -39,47 +39,8 @@
 					
 					<label>
 						Literal Type:
-							<select class="form-control" id="literalTypeSelect">
-								<option></option>
-								<option>xsd:string</option>
-		                        <option>xsd:boolean</option>
-		                        <option>xsd:decimal</option>
-		                        <option>xsd:integer</option>
-		                        <option>xsd:double</option>
-		                        <option>xsd:float</option>
-		                        <option>xsd:time</option>
-		                        <option>xsd:dateTime</option>
-		                        <option>xsd:dateTimeStamp</option>
-		                        <option>xsd:gYear</option>
-		                        <option>xsd:gMonth</option>
-		                        <option>xsd:gDay</option>
-		                        <option>xsd:gYearMonth</option>
-		                        <option>xsd:gMonthDay</option>
-		                        <option>xsd:duration</option>
-		                        <option>xsd:yearMonthDuration</option>
-		                        <option>xsd:dayTimeDuration</option>
-		                        <option>xsd:byte</option>
-		                        <option>xsd:short</option>
-		                        <option>xsd:int</option>
-		                        <option>xsd:long</option>
-		                        <option>xsd:unsignedByte</option>
-		                        <option>xsd:unsignedShort</option>
-		                        <option>xsd:unsignedInt</option>
-		                        <option>xsd:unsignedLong</option>
-		                        <option>xsd:positiveInteger</option>
-		                        <option>xsd:nonNegativeInteger</option>
-		                        <option>xsd:negativeInteger</option>
-		                        <option>xsd:nonPositiveInteger</option>
-		                        <option>xsd:hexBinary</option>
-		                        <option>xsd:base64Binary</option>
-		                        <option>xsd:anyURI</option>
-		                        <option>xsd:language</option>
-		                        <option>xsd:normalizedString</option>
-		                        <option>xsd:token</option>
-		                        <option>xsd:NMTOKEN</option>
-		                        <option>xsd:Name</option>
-		                        <option>xsd:NCName</option>
-							</select>
+						<input type="text" class="form-control" id="literalTypeSelect" autocomplete="off">
+							
 					</label>
 						
 					<div class="row" style="padding-top:10px">
