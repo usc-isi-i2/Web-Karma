@@ -58,7 +58,6 @@ import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 
 public class KR2RMLMappingWriter {
 	
-	private RepFactory factory;
 	private Repository myRepository;
 	
 	// Internal instance variables
@@ -145,8 +144,6 @@ public class KR2RMLMappingWriter {
 		} catch (OpenRDFException e) {
 			logger.error("Error occured while generating RDF representation of R2RML data " +
 					"structures.", e);
-		} finally {
-			con.close();
 		}
 		return true;
 	}
@@ -179,19 +176,19 @@ public class KR2RMLMappingWriter {
 		List<TriplesMap> triplesMapList = mapping.getTriplesMapList();
 		/** Add all the triple maps **/
 		for (TriplesMap trMap:triplesMapList) {
-			addTripleMap(mapping, mappingRes, worksheet,
+			addTripleMap(mapping, mappingRes, worksheet, workspace,
 					trMap);
 		}
 	}
 
 	private void addTripleMap(KR2RMLMapping mapping, Resource mappingRes,
-			Worksheet worksheet, TriplesMap trMap) throws RepositoryException {
+			Worksheet worksheet, Workspace workspace, TriplesMap trMap) throws RepositoryException {
 		URI trMapUri = f.createURI(Namespaces.KARMA_DEV + trMap.getId());
 		addTripleMapMetadata(mapping, mappingRes, worksheet, trMap, trMapUri);
 		
-		addSubjectMap(mapping, trMap, trMapUri);
+		addSubjectMap(mapping, trMap, trMapUri, workspace);
 		
-		addPredicateObjectMaps(mapping, trMap, trMapUri);
+		addPredicateObjectMaps(mapping, trMap, trMapUri, workspace);
 	}
 
 	private void addTripleMapMetadata(KR2RMLMapping mapping, Resource mappingRes, Worksheet worksheet,
@@ -207,10 +204,10 @@ public class KR2RMLMappingWriter {
 
 	private void addSubjectMap(KR2RMLMapping mapping,
 			TriplesMap trMap,
-			URI trMapUri) throws RepositoryException {
+			URI trMapUri, Workspace workspace) throws RepositoryException {
 		
 		KR2RMLColumnNameFormatter columnNameFormatter = mapping.getColumnNameFormatter();
-		
+		RepFactory factory = workspace.getFactory();
 		// Add the subject map statements
 		SubjectMap sjMap = trMap.getSubject();
 		BNode sjBlankNode = f.createBNode();
@@ -262,9 +259,10 @@ public class KR2RMLMappingWriter {
 
 	private void addPredicateObjectMaps(
 			KR2RMLMapping mapping, TriplesMap trMap,
-			URI trMapUri) throws RepositoryException {
+			URI trMapUri, Workspace workspace) throws RepositoryException {
 
 		KR2RMLColumnNameFormatter columnNameFormatter = mapping.getColumnNameFormatter();
+		RepFactory factory = workspace.getFactory();
 		// Add the predicate object maps
 		for (PredicateObjectMap pom:trMap.getPredicateObjectMaps()) {
 			BNode pomBlankNode = f.createBNode();
