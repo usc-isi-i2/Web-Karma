@@ -279,22 +279,9 @@ public class KR2RMLMappingGenerator {
 							// Identify classInstance links to set the template
 							if (link instanceof ClassInstanceLink) {
 								
-								String pythonCommand = worksheet.getMetadataContainer().getColumnMetadata().getColumnPython(hNodeId);
-								List<PythonTransformationToken> tokens = PythonTransformationAsURITokenizer.tokenize(pythonCommand);
-								PythonTransformationAsURIValidator validator = new PythonTransformationAsURIValidator();
-								if(validator.validate(tokens))
-								{
-									subj.getTemplate().clear();
-									TemplateTermSet tts = this.transformationToTemplateTermSet.translate(tokens, hNodeId);
-									for(TemplateTerm term : tts.getAllTerms())
-									{
-										subj.getTemplate().addTemplateTermToSet(term);
-									}
-								}
-								else
-								{
-									subj.getTemplate().clear().addTemplateTermToSet(cnTerm);
-								}
+								TemplateTermSet tts = expandColumnTemplateTermForPyTransforms(
+									 hNodeId, cnTerm);
+								subj.setTemplate(tts);
 							}
 							
 							// Identify the isSubclassOfClass links to set the correct type
@@ -317,6 +304,24 @@ public class KR2RMLMappingGenerator {
 				}
 			}
 		}
+	}
+
+	private TemplateTermSet expandColumnTemplateTermForPyTransforms(
+			String hNodeId, ColumnTemplateTerm cnTerm) {
+		TemplateTermSet tts = null;
+		String pythonCommand = worksheet.getMetadataContainer().getColumnMetadata().getColumnPython(hNodeId);
+		List<PythonTransformationToken> tokens = PythonTransformationAsURITokenizer.tokenize(pythonCommand);
+		PythonTransformationAsURIValidator validator = new PythonTransformationAsURIValidator();
+		if(validator.validate(tokens))
+		{
+			tts = this.transformationToTemplateTermSet.translate(tokens, hNodeId);
+		}
+		else
+		{
+			tts = new TemplateTermSet();
+			tts.addTemplateTermToSet(cnTerm);
+		}
+		return tts;
 	}
 	
 	private void createPredicateObjectMaps(boolean generateInverse) {
@@ -379,9 +384,9 @@ public class KR2RMLMappingGenerator {
 						String hNodeId = cnode.getHNodeId();
 						String columnName = translator.getColumnNameForHNodeId(hNodeId);
 						ColumnTemplateTerm cnTerm = new ColumnTemplateTerm(columnName);
-						TemplateTermSet termSet = new TemplateTermSet();
-						termSet.addTemplateTermToSet(cnTerm);
-
+						TemplateTermSet termSet = expandColumnTemplateTermForPyTransforms(
+								hNodeId, cnTerm);
+						
 						String rdfLiteralUri = 	cnode.getRdfLiteralType() == null? "" : cnode.getRdfLiteralType().getUri();
 						StringTemplateTerm rdfLiteralTypeTerm = new StringTemplateTerm(rdfLiteralUri, true);
 						TemplateTermSet rdfLiteralTypeTermSet = new TemplateTermSet();

@@ -60,6 +60,7 @@ public interface Uris {
 	public static final String RR_TERM_TYPE_URI = Namespaces.RR + "termType";
 	public static final String RR_BLANK_NODE_URI = Namespaces.RR + "BlankNode";
 	public static final String RR_CLASS_URI = Namespaces.RR + "class";
+	public static final String RR_LITERAL_URI = Namespaces.RR + "Literal";
 	
 	public static final String KM_BLANK_NODE_PREFIX_URI = Namespaces.KARMA_DEV + "namePrefix";
 	public static final String KM_NODE_ID_URI = Namespaces.KARMA_DEV + "alignmentNodeId";
@@ -83,5 +84,6 @@ public interface Uris {
 	
 	// Linking related URIs
 	public static final String KM_LINKING_MATCHES_URI = Namespaces.KARMA_DEV + "possibleLinkingMatches";
+	
 
 }
