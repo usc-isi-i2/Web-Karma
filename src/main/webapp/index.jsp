@@ -101,6 +101,11 @@ and related projects, please see: http://www.isi.edu/integration
 			    height: auto;  /* this style already exists in bootstrap.css */
 			    overflow: visible;  /* this one doesn't. Add it! */
 			}
+			
+			#contextMenu {
+			  position: absolute;
+			  display:none;
+			}
 		</style>
 	</head>
 
@@ -172,6 +177,16 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="tableColumnDialogs.jsp"></jsp:include>
 			  <jsp:include page="tableOptionsDialogs.jsp"></jsp:include>
 			  <jsp:include page="semanticTypes.jsp"></jsp:include>
+			  
+			  <div id="contextMenu" class="dropdown clearfix">
+				    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:static;margin-bottom:5px;">
+				      <li><a tabindex="-1" href="#">Action</a></li>
+				      <li><a tabindex="-1" href="#">Another action</a></li>
+				      <li><a tabindex="-1" href="#">Something else here</a></li>
+				      <li class="divider"></li>
+				      <li><a tabindex="-1" href="#">Separated link</a></li>
+				    </ul>
+			</div>
 		</div>
 	
 		
@@ -541,7 +556,46 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript">
             $(document).ready(function(){
                 $("[data-toggle='tooltip']").tooltip();
-            })
+            });
+            
+            $(function() {
+            	  
+            	  var $contextMenu = $("#contextMenu");
+            	  var $rowClicked;
+            	  
+            	  $("body").on("click", "div svg text.LinkLabel", function(e) {
+            		  $rowClicked = $(this);  
+            	    $contextMenu.css({
+            	      display: "block",
+            	      left: e.pageX,
+            	      top: e.pageY
+            	    });
+            	    return false;
+            	  });
+            	  
+            	  $("body").on("click", "div svg g.InternalNode", function(e) {
+            		  $rowClicked = $(this);  
+            	    $contextMenu.css({
+            	      display: "block",
+            	      left: e.pageX,
+            	      top: e.pageY
+            	    });
+            	    return false;
+            	  });
+            	  
+            	  $contextMenu.on("click", "a", function () {
+            		    var message = "You clicked on the row '" + 
+            		        $rowClicked.children("*")[1].innerHTML + "'\n"
+            		    message += "And selected the menu item '" + $(this).text() + "'"
+            		    alert(message);
+            		    $contextMenu.hide();
+            		});
+            	  
+            	  $(document).click(function () {
+            		    $contextMenu.hide();
+            		});
+            	  
+            	});
         </script>
     </body>
 </html>

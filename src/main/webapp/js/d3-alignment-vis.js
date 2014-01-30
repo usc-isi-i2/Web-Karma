@@ -470,7 +470,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .attr("class", function(d) {
             return d["nodeType"];
         });
-        
+     
     node.append("text")
         .attr("dy", ".32em")
         .text(function(d) {
@@ -506,8 +506,6 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 d.alignmentId = $(svg).data("alignmentId");
                 showClassPopupMenu(d, this, d3.event);
             }
-
-        
         });
         
     node.insert("rect", "text")
@@ -583,19 +581,12 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 return d["width"]-5;
             }
         }).on("click", function(d){
-            if(d["nodeType"] == "InternalNode") {
-                var menu = $("div#modelingClassDropDownMenu");
-                menu.data("nodeId", d.id);
-                menu.data("worksheetId", worksheetId);
-                menu.css({"position":"absolute",
-                    "top":$(this).offset().top + 5,
-                    "left": $(this).offset().left + $(this).width()/2 - $(menu).width()/2}).show();
+        	if(d["nodeType"] == "InternalNode") {
+                d["targetNodeId"] = d["id"];
+                d.worksheetId = worksheetId;
+                d.alignmentId = $(svg).data("alignmentId");
+                showClassPopupMenu(d, this, d3.event);
             }
-        }).on("mouseout", function(d){
-            var timer = setTimeout(function() {
-                $("#modelingClassDropDownMenu").hide();
-            }, 700);
-            $("#modelingClassDropDownMenu").data("timer", timer);
         });
 
     /*** Check for collisions between labels and rectangles ***/
@@ -1461,15 +1452,15 @@ function populateLinksListFromServer() {
 }
 
 function showClassPopupMenu(d, classObj, event) {
-	var menu = $("div#modelingClassDropDownMenu");
-    menu.data("nodeId", d.id);
-    menu.data("nodeDomain", d.nodeDomain);
-    menu.data("nodeLabel", d.label);
-    menu.data("worksheetId", d.worksheetId);
-    menu.data("alignmentId", d.alignmentId);         
-    menu.css({"position":"absolute",
-        "top":$(classObj).offset().top + 5,
-        "left": event.clientX}).show(); // + $(this).width()/2 - $(menu).width()/2}).show();
+//	var menu = $("div#modelingClassDropDownMenu");
+//    menu.data("nodeId", d.id);
+//    menu.data("nodeDomain", d.nodeDomain);
+//    menu.data("nodeLabel", d.label);
+//    menu.data("worksheetId", d.worksheetId);
+//    menu.data("alignmentId", d.alignmentId);         
+//    menu.css({"position":"absolute",
+//        "top":$(classObj).offset().top + 5,
+//        "left": event.clientX}).show(); // + $(this).width()/2 - $(menu).width()/2}).show();
 }
 
 function showIncomingOutgoingDialog(linkType) {
