@@ -102,7 +102,7 @@ and related projects, please see: http://www.isi.edu/integration
 			    overflow: visible;  /* this one doesn't. Add it! */
 			}
 			
-			#contextMenu {
+			.contextMenu {
 			  position: absolute;
 			  display:none;
 			}
@@ -178,13 +178,13 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="tableOptionsDialogs.jsp"></jsp:include>
 			  <jsp:include page="semanticTypes.jsp"></jsp:include>
 			  
-			  <div id="contextMenu" class="dropdown clearfix">
-				    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:static;margin-bottom:5px;">
-				      <li><a tabindex="-1" href="#">Action</a></li>
-				      <li><a tabindex="-1" href="#">Another action</a></li>
-				      <li><a tabindex="-1" href="#">Something else here</a></li>
+			  <div id="classDropdownMenu" class="dropdown clearfix contextMenu">
+				    <ul class="dropdown-menu" role="menu" style="display:block;position:static;margin-bottom:5px;">
+				      <li><a tabindex="-1" href="#">Add Incoming Link</a></li>
+				      <li><a tabindex="-1" href="#">Add Outgoing Link</a></li>
 				      <li class="divider"></li>
-				      <li><a tabindex="-1" href="#">Separated link</a></li>
+				      <li><a tabindex="-1" href="#">Invoke Reconciliation Service</a></li>
+				      <li><a tabindex="-1" href="#">Invoke M/L Service</a></li>
 				    </ul>
 			</div>
 		</div>
@@ -481,6 +481,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/util.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/semanticTypes.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/classPropertyUI.js?<jsp:include page='version.jsp' />"></script>
+         <script type="text/javascript" src="js/classDropdown.js?<jsp:include page='version.jsp' />"></script>
          
         <script>
             $(function() {
