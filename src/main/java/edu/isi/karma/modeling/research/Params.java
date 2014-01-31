@@ -28,7 +28,7 @@ public class Params {
 	private static String DATASET_NAME = "ds3";
 	private static String ROOT_DIR = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-" + DATASET_NAME + "/";
 	
-	public static String ONTOLOGY_DIR = ROOT_DIR + "ontologies/";
+	public static String ONTOLOGY_DIR = ROOT_DIR + "ontology/";
 	
 	public static String INPUT_DIR = ROOT_DIR + "input/";
 	public static String OUTPUT_DIR = ROOT_DIR + "output/";
@@ -36,6 +36,7 @@ public class Params {
 	public static String GRAPHS_DIR = ROOT_DIR + "graph/";
 	public static String MODEL_DIR = ROOT_DIR + "model/";
 	public static String GRAPHVIS_DIR = ROOT_DIR + "graphviz/";
+	public static String RESULTS_DIR = ROOT_DIR + "result/";
 	
 	public static String GRAPH_FILE_EXT = ".graph.json";
 	

@@ -53,7 +53,7 @@ public class GetDomainsForDataPropertyCommand extends Command {
 			.getLogger(GetDomainsForDataPropertyCommand.class.getSimpleName());
 
 	public enum JsonKeys {
-		updateType, URI, metadata, data, URIorId
+		updateType, URI, metadata, data, URIorId, newIndex
 	}
 
 	public GetDomainsForDataPropertyCommand(String id, String uri, String worksheetId) {
@@ -126,6 +126,21 @@ public class GetDomainsForDataPropertyCommand extends Command {
 						metadataObject.put(JsonKeys.URIorId.name(), domain);
 						classObject.put(JsonKeys.metadata.name(), metadataObject);
 
+						int graphLastIndex = -1;
+						if (alignment != null) {
+							graphLastIndex = alignment.getLastIndexOfNodeUri(domainURI.getUri());
+						}
+						// If the node exists in graph but not in tree then use the graph node id
+						if (graphLastIndex != -1) {
+							if (!steinerTreeNodeIds.contains(domainURI.getUri() + graphLastIndex)) {
+								metadataObject.put(JsonKeys.newIndex.name(), 1);
+							} else {
+								metadataObject.put(JsonKeys.newIndex.name(), graphLastIndex+1);
+							}
+						} else {
+							metadataObject.put(JsonKeys.newIndex.name(), 1);
+						}
+						
 						dataArray.put(classObject);
 						
 						// Populate the graph nodes also
@@ -133,12 +148,14 @@ public class GetDomainsForDataPropertyCommand extends Command {
 							Set<Node> graphNodes = alignment.getNodesByUri(domain);
 							if (graphNodes != null && graphNodes.size() != 0) {
 								for (Node graphNode: graphNodes) {
-									JSONObject graphNodeObj = new JSONObject();
-									graphNodeObj.put(JsonKeys.data.name(), graphNode.getLocalId());
-									JSONObject metadataObject_gNode = new JSONObject();
-									metadataObject_gNode.put(JsonKeys.URIorId.name(), graphNode.getId());
-									graphNodeObj.put(JsonKeys.metadata.name(), metadataObject_gNode);
-									dataArray.put(graphNodeObj);
+									if (steinerTreeNodeIds.contains(graphNode.getId())) {
+										JSONObject graphNodeObj = new JSONObject();
+										graphNodeObj.put(JsonKeys.data.name(), graphNode.getDisplayId());
+										JSONObject metadataObject_gNode = new JSONObject();
+										metadataObject_gNode.put(JsonKeys.URIorId.name(), graphNode.getId());
+										graphNodeObj.put(JsonKeys.metadata.name(), metadataObject_gNode);
+										dataArray.put(graphNodeObj);
+									}
 								}
 							}
 						}
