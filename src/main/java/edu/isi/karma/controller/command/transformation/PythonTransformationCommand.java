@@ -185,4 +185,8 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		return c;
 	}
 
+	public String getTransformationCode()
+	{
+		return transformationCode;
+	}
 }

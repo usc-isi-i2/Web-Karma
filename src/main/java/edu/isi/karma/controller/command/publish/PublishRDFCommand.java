@@ -150,7 +150,7 @@ public class PublishRDFCommand extends Command {
 		
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
-		KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, 
+		KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, worksheet,
 				alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
 				Boolean.valueOf(addInverseProperties), errorReport);
 		

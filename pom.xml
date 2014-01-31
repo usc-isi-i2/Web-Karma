@@ -159,7 +159,7 @@
     <dependency>
     	<groupId>org.json</groupId>
     	<artifactId>json</artifactId>
-    	<version>20090211</version>
+    	<version>20131018</version>
     	<type>jar</type>
     	<scope>compile</scope>
     </dependency>
@@ -366,7 +366,6 @@
           <artifactId>juniversalchardet</artifactId>
           <version>1.0.3</version>
         </dependency>
-        
   </dependencies>
   
   <build>

@@ -26,6 +26,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,7 +43,10 @@ import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 
+import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatter;
+import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatterFactory;
 import edu.isi.karma.modeling.Uris;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.webserver.KarmaException;
 
 public class WorksheetR2RMLJenaModelParser {
@@ -83,7 +88,16 @@ public class WorksheetR2RMLJenaModelParser {
 			version = KR2RMLVersion.unknown;
 		}
 		KR2RMLMapping kr2rmlMapping = new KR2RMLMapping(id, version);
-		// Perform any transformations on the worksheet if required
+		Map<String, String> prefixes = model.getNsPrefixMap();
+		for(Entry<String, String> prefix : prefixes.entrySet())
+		{
+			Prefix p = new Prefix(prefix.getKey(), prefix.getValue());
+			kr2rmlMapping.addPrefix(p);
+		}
+		
+		SourceTypes sourceType = getSourceType(mappingResource);
+		kr2rmlMapping.setColumnNameFormatter(KR2RMLColumnNameFormatterFactory.getFormatter(sourceType));
+		// Load any transformations on the worksheet if required
 		loadWorksheetHistory(mappingResource, kr2rmlMapping);
 		
 		// Generate TriplesMap for each InternalNode in the tree
@@ -95,6 +109,25 @@ public class WorksheetR2RMLJenaModelParser {
 		// Calculate the nodes covered by each InternalNode
 		calculateColumnNodesCoveredByBlankNodes(kr2rmlMapping, subjectResources);
 		return kr2rmlMapping;
+	}
+	
+	private SourceTypes getSourceType(Resource mappingResource)
+	{
+		Property sourceNameProp = model.getProperty(Uris.KM_SOURCE_TYPE_URI);
+		Statement s = model.getProperty(mappingResource, sourceNameProp);
+		String sourceType = null;
+		if(s != null)
+		{
+			RDFNode node = s.getObject();
+			if(node != null && node.isLiteral())
+			{
+				sourceType = node.asLiteral().getString();
+				return SourceTypes.valueOf(sourceType);
+			}
+		}
+		return SourceTypes.CSV;
+		
+		
 	}
     private Model loadSourceModelIntoJenaModel(URL modelURL) throws IOException {
         // Create an empty Model
@@ -198,7 +231,7 @@ public class WorksheetR2RMLJenaModelParser {
 		Resource rfObjClassUri = model.getResource(Uris.RR_REF_OBJECT_MAP_URI);
 		Property parentTriplesMapProp = model.getProperty(Uris.RR_PARENT_TRIPLE_MAP_URI);
 		Property rdfTypeProp = model.getProperty(Uris.RDF_TYPE_URI);
-		
+		KR2RMLColumnNameFormatter formatter = kr2rmlMapping.getColumnNameFormatter();
 		TriplesMap trMap = kr2rmlMapping.getTriplesMapIndex().get(trMapRes.getURI());
 		if (trMap == null) {
 			logger.error("No Triples Map found for resource: " + trMapRes.getURI());
@@ -224,7 +257,7 @@ public class WorksheetR2RMLJenaModelParser {
 				} else {
 					pred.setTemplate(TemplateTermSetBuilder.
 							constructTemplateTermSetFromR2rmlTemplateString(
-									pomPredNode.toString()));
+									pomPredNode.toString(), formatter));
 				}
 			}
 			pom.setPredicate(pred);
@@ -268,7 +301,7 @@ public class WorksheetR2RMLJenaModelParser {
 						RDFNode colNode = objMapColStmts.next(); 
 						objMap = new ObjectMap(getNewObjectMapId(objectMapCounter++), 
 								TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlColumnString(
-										colNode.toString()), rdfLiteralTypeTermSet);
+										colNode.toString(), formatter), rdfLiteralTypeTermSet);
 					}
 					// Check if anything needs to be added to the columnNameToPredicateObjectMap Map
 					addColumnNameToPredObjectMapLink(objMap, pom, kr2rmlMapping);
@@ -281,9 +314,10 @@ public class WorksheetR2RMLJenaModelParser {
 	
 		// Try to add template to pom
 			TemplateTermSet subjTemplTermSet = trMap.getSubject().getTemplate();
-			if(subjTemplTermSet != null) {
+			if(subjTemplTermSet != null)
+			{
 				List<TemplateTerm> terms = subjTemplTermSet.getAllTerms();
-				if(terms != null && terms.size() == 1 && terms.get(0) instanceof ColumnTemplateTerm)
+				if(isValidTemplate(terms))
 				{
 					PredicateObjectMap pom = new PredicateObjectMap(trMap);
 					Predicate pred = new Predicate(Uris.CLASS_INSTANCE_LINK_URI + "-" + predicateIdCounter++);
@@ -298,8 +332,25 @@ public class WorksheetR2RMLJenaModelParser {
 					pom.setObject(objMap);
 					trMap.addPredicateObjectMap(pom);
 					addColumnNameToPredObjectMapLink(objMap, pom, kr2rmlMapping);
+					
 				}
 			}
+	}
+
+	private boolean isValidTemplate(List<TemplateTerm> terms) {
+		if(terms == null || terms.size() == 0)
+		{
+			return false;
+		}
+		
+		for(TemplateTerm term : terms)
+		{
+			if(term instanceof ColumnTemplateTerm)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private void addColumnNameToPredObjectMapLink(ObjectMap objMap, PredicateObjectMap pom, KR2RMLMapping kr2rmlMapping) {
@@ -312,13 +363,14 @@ public class WorksheetR2RMLJenaModelParser {
 		for (TemplateTerm term:objTermSet.getAllTerms()) {
 			if (term instanceof ColumnTemplateTerm) {
 				String columnName = term.getTemplateTermValue();
+				String columnNameWithoutFormatting = kr2rmlMapping.getColumnNameFormatter().getColumnNameWithoutFormatting(columnName);
 				List<PredicateObjectMap> existingPomList = kr2rmlMapping.getAuxInfo().
-						getColumnNameToPredObjLinks().get(columnName);  
+						getColumnNameToPredObjLinks().get(columnNameWithoutFormatting);  
 				if (existingPomList == null) {
 					existingPomList = new ArrayList<PredicateObjectMap>();
 				}
 				existingPomList.add(pom);
-				kr2rmlMapping.getAuxInfo().getColumnNameToPredObjLinks().put(columnName, existingPomList);
+				kr2rmlMapping.getAuxInfo().getColumnNameToPredObjLinks().put(columnNameWithoutFormatting, existingPomList);
 			}
 		}
 	}
@@ -352,7 +404,7 @@ public class WorksheetR2RMLJenaModelParser {
 				RDFNode templNode = templateItr.next();
 				String template = templNode.toString();
 				subjTemplTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
-						template);
+						template, kr2rmlMapping.getColumnNameFormatter());
 				
 			}
 			subjMap.setTemplate(subjTemplTermSet);

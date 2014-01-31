@@ -29,7 +29,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.imp.Import;
+import edu.isi.karma.rep.ColumnMetadata.DataStructure;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
@@ -46,6 +50,8 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.JSONUtil;
 
@@ -107,6 +113,7 @@ public class JsonImport extends Import {
 		numObjects = 0;
 		boolean importJson = false;
 		if (json instanceof JSONArray) {
+			getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.COLLECTION);
 			JSONArray a = (JSONArray) json;
 			for (int i = 0; i < a.length(); i++) {
 				addListElement(a.get(i), getWorksheet().getHeaders(),
@@ -116,6 +123,7 @@ public class JsonImport extends Import {
 			}
 			importJson = true;
 		} else if (json instanceof JSONObject) {
+			getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.OBJECT);
 			addKeysAndValues((JSONObject) json, getWorksheet().getHeaders(),
 					getWorksheet().getDataTable());
 			importJson = true;
@@ -123,7 +131,9 @@ public class JsonImport extends Import {
 
 		if (importJson)
 			writeJsonFile(json);
-		return getWorksheet();
+		Worksheet ws = getWorksheet();
+		ws.getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.JSON.toString());
+		return ws;
 	}
 
 	private static void writeJsonFile(Object o) {
@@ -132,7 +142,7 @@ public class JsonImport extends Import {
 
 	private void addObjectElement(String key, Object value, HTable headers,
 			Row row) throws JSONException {
-		HNode hNode = addHNode(headers, key);
+		HNode hNode = addHNode(headers, key, DataStructure.OBJECT);
 
 		String hNodeId = hNode.getId();
 
@@ -198,13 +208,22 @@ public class JsonImport extends Import {
 		// if(maxNumLines > 0 && numObjects >= maxNumLines)
 		// return;
 
-		@SuppressWarnings("unchecked")
-		Iterator<String> it = object.sortedKeys();
+		
+		Iterator<String> it = getSortedKeysIterator(object);
 		while (it.hasNext()) {
 			String nestedKey = it.next();
 			addObjectElement(nestedKey, object.get(nestedKey), nestedHTable,
 					nestedRow);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private Iterator<String> getSortedKeysIterator(JSONObject object) {
+		List<String> keys = new LinkedList<String>();
+		keys.addAll(object.keySet());
+		Collections.sort(keys);
+		Iterator<String> it = keys.iterator();
+		return it;
 	}
 
 	private void addListElement(Object listValue, HTable headers,
@@ -215,15 +234,14 @@ public class JsonImport extends Import {
 				numObjects++;
 
 				JSONObject o = (JSONObject) listValue;
-				@SuppressWarnings("unchecked")
-				Iterator<String> it = o.sortedKeys();
+				Iterator<String> it = getSortedKeysIterator(o);
 				while (it.hasNext()) {
 					String key = it.next();
 					addObjectElement(key, o.get(key), headers, row);
 				}
 			}
 		} else if (isPrimitiveValue(listValue)) {
-			HNode hNode = addHNode(headers, HTable.VALUES_COLUMN);
+			HNode hNode = addHNode(headers, HTable.VALUES_COLUMN, DataStructure.PRIMITIVE);
 			String hNodeId = hNode.getId();
 			Row row = dataTable.addRow(getFactory());
 			numObjects++;
@@ -246,7 +264,7 @@ public class JsonImport extends Import {
 			row.setValue(hNodeId, value, getFactory());
 		} else if (listValue instanceof JSONArray) {
 			if (maxNumLines <= 0 || numObjects < maxNumLines) {
-				HNode hNode = addHNode(headers, "nested array");
+				HNode hNode = addHNode(headers, "nested array", DataStructure.COLLECTION);
 				String hNodeId = hNode.getId();
 				Row row = dataTable.addRow(getFactory());
 				numObjects++;
@@ -296,10 +314,12 @@ public class JsonImport extends Import {
 		return ht;
 	}
 
-	private HNode addHNode(HTable headers, String key) {
+	private HNode addHNode(HTable headers, String key, DataStructure dataStructure) {
 		HNode hn = headers.getHNodeFromColumnName(key);
 		if (hn == null) {
 			hn = headers.addHNode(key, getWorksheet(), getFactory());
+			Worksheet ws = getWorksheet();
+			ws.getMetadataContainer().getColumnMetadata().addColumnDataStructure(hn.getId(), dataStructure);
 		}
 		return hn;
 	}
