@@ -164,6 +164,8 @@ function styleAndAssignHandlersToModelingVizElements() {
     });
 }
 
+
+//Called for every AlignmentSVGVisualizationUpdate
 function displayAlignmentTree_ForceKarmaLayout(json) {
     var worksheetId = json["worksheetId"];
     var mainWorksheetDiv = $("div#"+worksheetId);
@@ -499,14 +501,15 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 return this.getComputedTextLength();
         })
         .attr("x", function(d){ return this.getComputedTextLength()/2 * -1;})
-        .on("click", function(d){
-            if(d["nodeType"] == "InternalNode") {
-                d["targetNodeId"] = d["id"];
-                d.worksheetId = worksheetId;
-                d.alignmentId = $(svg).data("alignmentId");
-                showClassPopupMenu(d, this, d3.event);
-            }
-        });
+//        .on("click", function(d){
+//            if(d["nodeType"] == "InternalNode") {
+//                d["targetNodeId"] = d["id"];
+//                d.worksheetId = worksheetId;
+//                d.alignmentId = $(svg).data("alignmentId");
+//                showClassPopupMenu(d, this, d3.event);
+//            }
+//        })
+        ;
         
     node.insert("rect", "text")
         .attr("ry", 6)
@@ -545,18 +548,20 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             	return 0;
             else
                 return d.width/2 * -1;
-        }).on("click", function(d){
-            if(d["nodeType"] == "ColumnNode" || d.nodeType == "Unassigned") {
-                //changeSemanticType_d3(d, svg, d3.event);
-            } else if(d["nodeType"] == "InternalNode") {
-                d["targetNodeId"] = d["id"];
-                d.worksheetId = worksheetId;
-                d.alignmentId = $(svg).data("alignmentId");
-                showClassPopupMenu(d, this, d3.event);
-            }
-
-        
-        });
+        })
+//        .on("click", function(d){
+//            if(d["nodeType"] == "ColumnNode" || d.nodeType == "Unassigned") {
+//                //changeSemanticType_d3(d, svg, d3.event);
+//            } else if(d["nodeType"] == "InternalNode") {
+//                d["targetNodeId"] = d["id"];
+//                d.worksheetId = worksheetId;
+//                d.alignmentId = $(svg).data("alignmentId");
+//                showClassPopupMenu(d, this, d3.event);
+//            }
+//
+//        
+//        })
+        ;
 
     node.insert("path")
         .attr("d", function(d) {
@@ -580,14 +585,16 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             } else {
                 return d["width"]-5;
             }
-        }).on("click", function(d){
-        	if(d["nodeType"] == "InternalNode") {
-                d["targetNodeId"] = d["id"];
-                d.worksheetId = worksheetId;
-                d.alignmentId = $(svg).data("alignmentId");
-                showClassPopupMenu(d, this, d3.event);
-            }
-        });
+        })
+//        .on("click", function(d){
+//        	if(d["nodeType"] == "InternalNode") {
+//                d["targetNodeId"] = d["id"];
+//                d.worksheetId = worksheetId;
+//                d.alignmentId = $(svg).data("alignmentId");
+//                showClassPopupMenu(d, this, d3.event);
+//            }
+//        })
+        ;
 
     /*** Check for collisions between labels and rectangles ***/
     d3.selectAll("text.LinkLabel." + worksheetId)
@@ -1451,7 +1458,7 @@ function populateLinksListFromServer() {
     });
 }
 
-function showClassPopupMenu(d, classObj, event) {
+//function showClassPopupMenu(d, classObj, event) {
 //	var menu = $("div#modelingClassDropDownMenu");
 //    menu.data("nodeId", d.id);
 //    menu.data("nodeDomain", d.nodeDomain);
@@ -1461,7 +1468,7 @@ function showClassPopupMenu(d, classObj, event) {
 //    menu.css({"position":"absolute",
 //        "top":$(classObj).offset().top + 5,
 //        "left": event.clientX}).show(); // + $(this).width()/2 - $(menu).width()/2}).show();
-}
+//}
 
 function showIncomingOutgoingDialog(linkType) {
 	var linkTitle;

@@ -890,15 +890,6 @@ function getCurrentSelectedTypes() {
     return existingTypes;
 }
 
-function getParamObject(name, value, type) {
-    var param = new Object();
-    param["name"] = name;
-    param["value"] = value;
-    param["type"] = type;
-
-    return param;
-}
-
 function submitSemanticTypeChange() {
     var optionsDiv = $("#ChangeSemanticTypesDialogBox");
 

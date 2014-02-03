@@ -468,10 +468,9 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/pager.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/geospatial.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/databaseImportDialog.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/alignment.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/d3-alignment-vis.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/fileImport.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/cleaning.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/d3-alignment-vis.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/reset-options.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/cleaning-charts.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/showModel.js?<jsp:include page='version.jsp' />"></script>
@@ -486,9 +485,6 @@ and related projects, please see: http://www.isi.edu/integration
         <script>
             $(function() {
 
-                // Attach handlers to the ontology options table
-                //attachOntologyOptionsRadioButtonHandlers();
-
                 // Assign style and handlers to table cell menu
                 styleAndAssignHandlersToTableCellMenu();
                
@@ -498,9 +494,6 @@ and related projects, please see: http://www.isi.edu/integration
                 // Assign style and handler to select model for worksheet dialog (in showModel.js)
                 styleAndAssignHandlersToApplyModelDialog();
 
-                // Assign style and handler to the modeling class bubble options
-                styleAndAssignHandlersToModelingVizElements();
-              
                
                 // Clear the workspace when closing the window
                 $(window).bind("beforeunload", function() {
