@@ -153,8 +153,5 @@
     <servlet-mapping>
      <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>
      <url-pattern>/SpatialReferenceSystemService/*</url-pattern>
-  </servlet-mapping>
-
-
-
+  </servlet-mapping> 
 </web-app>

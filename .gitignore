@@ -17,23 +17,28 @@ temp/
 *.project
 *.pyc
 *.swp
+*.json
+*.dot
 
 lastJsonImport.json
 src/main/webapp/UserPrefs/*.json
 UserUploadedFiles
 src/main/webapp/UserUploadedFiles/*
-*.json
+
 SampleData
 CRF_Model.txt
 log/*
 src/main/webapp/publish/KML/*.*
 src/main/webapp/publish/Source Description/*.*
 src/main/webapp/publish/History/*.*
-src/main/webapp/publish/CSV/*.*
+src/main/webapp/publish/GRAPHVIZ/*.*
+src/main/webapp/publish/CSV/*
 src/main/webapp/publish/RDF/*.*
 src/main/webapp/publish/MDB/*.*
 src/main/webapp/publish/AutoOntology/*.*
 src/main/webapp/publish/R2RML/*.*
+src/main/webapp/publish/JSON/*.*
+src/main/webapp/publish/AlignmentGraph/*.*
 preloaded-ontologies/*
 src/main/webapp/RDF/*.rdf
 src/main/webapp/RDF/*.n3

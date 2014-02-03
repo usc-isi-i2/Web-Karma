@@ -294,6 +294,7 @@ public class DisplayModel {
 		}
 		
 		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes(true);
+		Set<ColumnNode> allColumnNodes = new HashSet<ColumnNode>();
 		
 		int i = getMaxLevel(true);
 		while (i >= 0) {
@@ -304,12 +305,13 @@ public class DisplayModel {
 					
 					if (n instanceof ColumnNode) {
 						this.nodesSpan.get(n).add((ColumnNode)n);
+						allColumnNodes.add((ColumnNode)n);
 						continue;
 					}
 					
 					List<Node> neighborsInLowerLevel = new ArrayList<Node>();
 					
-					// finding the nodes connected to n (incoming & outgoing) from a lower leve
+					// finding the nodes connected to n (incoming & outgoing) from a lower level
 					Set<Link> outgoingLinks = this.model.outgoingEdgesOf(n);
 					if (outgoingLinks != null && !outgoingLinks.isEmpty()) 
 						for (Link l : outgoingLinks) 
@@ -321,6 +323,11 @@ public class DisplayModel {
 						for (Link l : incomingLinks) 
 							if (nodesLevel.get(l.getSource()) > nodesLevel.get(n))
 								neighborsInLowerLevel.add(l.getSource());
+					
+					// To handle a dangling internal node: put it in a completely separate level
+					if (neighborsInLowerLevel == null || neighborsInLowerLevel.isEmpty()) {
+						this.nodesSpan.get(n).addAll(allColumnNodes);
+					}
 					
 					for (Node nn : neighborsInLowerLevel) {
 						if (nn instanceof ColumnNode) {

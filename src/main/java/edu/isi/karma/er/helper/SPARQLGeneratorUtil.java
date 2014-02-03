@@ -42,9 +42,6 @@ public class SPARQLGeneratorUtil {
 	private int var_count;
 	private HashMap<String, ParentMapingInfo> ParentMapingInfoList;
 	
-	private void SPARQLGeneratorUtil() {
-		this.var_count = 0;
-	}
 	// this 
 	private class ParentMapingInfo {
 		public TriplesMap parent;

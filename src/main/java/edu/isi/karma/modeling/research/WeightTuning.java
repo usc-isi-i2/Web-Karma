@@ -32,7 +32,8 @@ import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.Ordering;
 
-import edu.isi.karma.modeling.research.approach1.SortableSemanticModel;
+import edu.isi.karma.modeling.alignment.SemanticModel;
+import edu.isi.karma.modeling.alignment.learner.SortableSemanticModel;
 
 public class WeightTuning {
 
@@ -50,7 +51,7 @@ public class WeightTuning {
 		return instance;
 	}
 	
-	public WeightTuning() {
+	private WeightTuning() {
 		setDefaults(1.0, 1.0, 1.0);
 	}
 	
@@ -94,7 +95,7 @@ public class WeightTuning {
 
 		double distance = 0.0;
 		for (SortableSemanticModel sm : rankedSemanticModels) {
-			distance = correctModel.getDistance(sm);
+			distance = correctModel.evaluate(sm).getDistance();
 			modelDistance.put(sm, distance);
 		}
 		

@@ -38,6 +38,7 @@ import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
+import edu.isi.karma.modeling.alignment.learner.SemanticTypeMapping;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DisplayModel;
@@ -58,8 +59,8 @@ public class GraphBuilder {
 
 	static Logger logger = LoggerFactory.getLogger(GraphBuilder.class);
 
-	private DirectedWeightedMultigraph<Node, Link> graph;
-	private OntologyManager ontologyManager;
+	protected DirectedWeightedMultigraph<Node, Link> graph;
+	protected OntologyManager ontologyManager;
 	
 	private NodeIdFactory nodeIdFactory;
 	
@@ -67,8 +68,6 @@ public class GraphBuilder {
 	private HashSet<String> sourceToTargetLinkUris;
 	private HashSet<String> sourceToTargetConnectivity; 
 
-	private Node thingNode;
-	
 	// HashMaps
 	
 	private HashMap<String, Node> idToNodeMap;
@@ -84,9 +83,16 @@ public class GraphBuilder {
 	
 	private HashMap<String, Set<String>> uriClosure;
 
+	
+	// To be used in matching semantic types with graph nodes
+	private HashSet<String> modelIds;
+	private HashMap<String, Integer> linkCountMap;
+	private HashMap<String, Integer> nodeDataPropertyCount; // nodeId + dataPropertyUri --> count
+	private HashMap<String, Set<SemanticTypeMapping>> semanticTypeMatches; // nodeUri + dataPropertyUri --> SemanticType Mapping
+
 	// Constructor
 	
-	public GraphBuilder(OntologyManager ontologyManager, NodeIdFactory nodeIdFactory) { //, LinkIdFactory linkIdFactory) {
+	public GraphBuilder(OntologyManager ontologyManager, NodeIdFactory nodeIdFactory, boolean addThingNode) { //, LinkIdFactory linkIdFactory) {
 		
 		this.ontologyManager = ontologyManager;
 		this.nodeIdFactory = nodeIdFactory;
@@ -100,100 +106,51 @@ public class GraphBuilder {
 		this.statusToLinksMap = new HashMap<LinkStatus, Set<Link>>();
 		
 		this.uriClosure = new HashMap<String, Set<String>>();
-		
+
 		this.graph = new DirectedWeightedMultigraph<Node, Link>(Link.class);
 		
 		this.visitedSourceTargetPairs = new HashSet<String>();
 		this.sourceToTargetLinkUris = new HashSet<String>();
 		this.sourceToTargetConnectivity = new HashSet<String>();
 			
-		this.initialGraph();
+		this.modelIds = new HashSet<String>();
+		this.linkCountMap = new HashMap<String, Integer>();
+		this.nodeDataPropertyCount = new HashMap<String, Integer>();
+		this.semanticTypeMatches = new HashMap<String, Set<SemanticTypeMapping>>();
 		
-		logger.debug("initial graph has been created.");
+		if (addThingNode) 
+			this.initialGraph();
+		
 	}
 	
 	public GraphBuilder(OntologyManager ontologyManager, DirectedWeightedMultigraph<Node, Link> graph) {
 		
-		this.graph = graph;
-		this.ontologyManager = ontologyManager;
+		this(ontologyManager, new NodeIdFactory(), false);
+		if (graph == null)
+			return;
 		
-		this.idToNodeMap = new HashMap<String, Node>();
-		this.idToLinkMap = new HashMap<String, Link>();
-		this.uriToNodesMap = new HashMap<String, Set<Node>>();
-		this.uriToLinksMap = new HashMap<String, Set<Link>>();
-		this.typeToNodesMap = new HashMap<NodeType, Set<Node>>();
-		this.typeToLinksMap = new HashMap<LinkType, Set<Link>>();
-		this.statusToLinksMap = new HashMap<LinkStatus, Set<Link>>();
-		
-		this.visitedSourceTargetPairs = new HashSet<String>();
-		this.sourceToTargetLinkUris = new HashSet<String>();
-		this.sourceToTargetConnectivity = new HashSet<String>();
-
-		this.nodeIdFactory = new NodeIdFactory();
-		
-		for (Node node : this.graph.vertexSet()) {
+		for (Node node : graph.vertexSet()) {
 			
-			if (node instanceof InternalNode)
+			this.addNode(node);
+			// building NodeIdFactory
+			if (node.getLabel() != null) {
 				nodeIdFactory.getNodeId(node.getLabel().getUri());
-
-			this.idToNodeMap.put(node.getId(), node);
-			
-			Set<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
-			if (nodesWithSameUri == null) {
-				nodesWithSameUri = new HashSet<Node>();
-				uriToNodesMap.put(node.getLabel().getUri(), nodesWithSameUri);
-			}
-			nodesWithSameUri.add(node);
-			
-			Set<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
-			if (nodesWithSameType == null) {
-				nodesWithSameType = new HashSet<Node>();
-				typeToNodesMap.put(node.getType(), nodesWithSameType);
-			}
-			nodesWithSameType.add(node);
-						
+			}						
 		}
 		
 		Node source;
 		Node target;
 		
-		for (Link link : this.graph.edgeSet()) {
+		for (Link link : graph.edgeSet()) {
 			
 			source = link.getSource();
 			target = link.getTarget();
 			
-			this.idToLinkMap.put(link.getId(), link);
-			
-			Set<Link> linksWithSameUri = uriToLinksMap.get(link.getLabel().getUri());
-			if (linksWithSameUri == null) {
-				linksWithSameUri = new HashSet<Link>();
-				uriToLinksMap.put(link.getLabel().getUri(), linksWithSameUri);
-			}
-			linksWithSameUri.add(link);
-			
-			Set<Link> linksWithSameStatus = statusToLinksMap.get(link.getStatus());
-			if (linksWithSameStatus == null) {
-				linksWithSameStatus = new HashSet<Link>();
-				statusToLinksMap.put(link.getStatus(), linksWithSameUri);
-			}
-			linksWithSameStatus.add(link);
-			
-			
-			Set<Link> linksWithSameType = typeToLinksMap.get(link.getType());
-			if (linksWithSameType == null) {
-				linksWithSameType = new HashSet<Link>();
-				typeToLinksMap.put(link.getType(), linksWithSameType);
-			}
-			linksWithSameType.add(link);
-			
-			String key = source.getId() + target.getId() + link.getLabel().getUri();
-			sourceToTargetLinkUris.add(key);
-			
-			this.visitedSourceTargetPairs.add(source.getId() + target.getId());
+			double w = link.getWeight();
+			if (this.addLink(source, target, link))
+				changeLinkWeight(link, w);
 		}
-
-		this.uriClosure = new HashMap<String, Set<String>>();
-			
+		
 		logger.debug("graph has been loaded.");
 	}
 	
@@ -245,8 +202,20 @@ public class GraphBuilder {
 		return statusToLinksMap;
 	}
 	
-	public Node getThingNode() {
-		return thingNode;
+	public Set<String> getModelIds() {
+		return Collections.unmodifiableSet(modelIds);
+	}
+
+	public HashMap<String, Integer> getLinkCountMap() {
+		return linkCountMap;
+	}
+	
+	public HashMap<String, Integer> getNodeDataPropertyCount() {
+		return nodeDataPropertyCount;
+	}
+
+	public HashMap<String, Set<SemanticTypeMapping>> getSemanticTypeMatches() {
+		return semanticTypeMatches;
 	}
 
 	public void resetOntologyMaps() {
@@ -256,19 +225,19 @@ public class GraphBuilder {
 			computeUriClosure(uri);
 	}
 
-	public boolean addNode(Node node) {
+	public boolean addNodeAndUpdate(Node node) {
 		if (ModelingConfiguration.getManualAlignment()) {
-			return addNodeWithoutUpdatingGraph(node);
+			return addNode(node);
 		} else
-		return addNode(node, null);
+		return addNodeAndUpdate(node, null);
 	}
 
-	public boolean addNode(Node node, Set<Node> addedNodes) {
+	public boolean addNodeAndUpdate(Node node, Set<Node> addedNodes) {
 		
 		logger.debug("<enter");
 		if (addedNodes == null) addedNodes = new HashSet<Node>();
 
-		if (!addSingleNode(node))
+		if (!addNode(node))
 			return false;
 			
 		if (node instanceof InternalNode) {
@@ -312,12 +281,55 @@ public class GraphBuilder {
 		return true;
 	}
 	
-	public boolean addNodeWithoutUpdatingGraph(Node node) {
+	
+	public boolean addNode(Node node) {
 		
 		logger.debug("<enter");
 
-		if (!addSingleNode(node))
+		if (node == null) {
+			logger.error("The node is null.");
 			return false;
+		}
+		
+		if (idToNodeMap.get(node.getId()) != null) {
+			logger.error("The node with id=" + node.getId() + " already exists in the graph.");
+			return false;
+		}
+		
+		if (node instanceof InternalNode) {
+			String uri = node.getLabel().getUri();
+			Label label = this.ontologyManager.getUriLabel(uri);
+			if (label == null) {
+				logger.error("The resource " + uri + " does not exist in the ontology.");
+				return false;
+			}
+			node.getLabel().setNs(label.getNs());
+			node.getLabel().setPrefix(label.getPrefix());
+		}
+		
+		
+		this.graph.addVertex(node);
+		
+		this.idToNodeMap.put(node.getId(), node);
+		
+		Set<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
+		if (nodesWithSameUri == null) {
+			nodesWithSameUri = new HashSet<Node>();
+			uriToNodesMap.put(node.getLabel().getUri(), nodesWithSameUri);
+		}
+		nodesWithSameUri.add(node);
+		
+		Set<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
+		if (nodesWithSameType == null) {
+			nodesWithSameType = new HashSet<Node>();
+			typeToNodesMap.put(node.getType(), nodesWithSameType);
+		}
+		nodesWithSameType.add(node);
+		
+		if (node.getModelIds() != null)
+			this.modelIds.addAll(node.getModelIds());
+					
+		this.uriClosure.put(node.getLabel().getUri(), null);
 
 		logger.debug("exit>");		
 		return true;
@@ -333,23 +345,45 @@ public class GraphBuilder {
 		}
 		
 		if (this.idToLinkMap.containsKey(link.getId())) {
-			logger.debug("The link with id=" + link.getId() + " already exists in the graph");
+			logger.error("The link with id=" + link.getId() + " already exists in the graph");
 			return false;
 		}
 		
+		if (!this.idToNodeMap.containsKey(source.getId())) {
+			logger.error("The link source " + link.getSource().getId() + " does not exist in the graph");
+			return false;
+		}
+
+		if (!this.idToNodeMap.containsKey(target.getId())) {
+			logger.error("The link target " + link.getTarget().getId() + " does not exist in the graph");
+			return false;
+		}
+
 		String key = source.getId() + target.getId() + link.getLabel().getUri();
 		// check to see if the link is duplicate or not
 		if (sourceToTargetLinkUris.contains(key))
 		{
-			logger.debug("There is already a link with label " + link.getLabel().getUri() + 
+			logger.error("There is already a link with label " + link.getLabel().getUri() + 
 					" from " + source.getId() + " to " + target.getId());
 			return false;
 		}
 
+		String uri = link.getLabel().getUri();
+		Label label = this.ontologyManager.getUriLabel(uri);
+		if (label == null) {
+			logger.error("The resource " + uri + " does not exist in the ontology.");
+			return false;
+		}
+		link.getLabel().setNs(label.getNs());
+		link.getLabel().setPrefix(label.getPrefix());
+			
 		this.graph.addEdge(source, target, link);
 		
 		this.sourceToTargetConnectivity.add(source.getId() + target.getId());
 		this.sourceToTargetConnectivity.add(target.getId() + source.getId());
+		
+		this.visitedSourceTargetPairs.add(source.getId() + target.getId());
+		this.visitedSourceTargetPairs.add(target.getId() + source.getId());
 		
 		double w = 0.0;
 		if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct)
@@ -395,7 +429,29 @@ public class GraphBuilder {
 			}
 		}
 
-		sourceToTargetLinkUris.add(key);
+		if (source instanceof InternalNode && target instanceof ColumnNode) {
+			
+			key = source.getId() + link.getLabel().getUri();
+			Integer count = this.nodeDataPropertyCount.get(key);
+			if (count == null) this.nodeDataPropertyCount.put(key, 1);
+			else this.nodeDataPropertyCount.put(key, count.intValue() + 1);
+			
+			
+			key = source.getLabel().getUri() + link.getLabel().getUri();
+			Set<SemanticTypeMapping> SemanticTypeMappings = this.semanticTypeMatches.get(key);
+			if (SemanticTypeMappings == null) {
+				SemanticTypeMappings = new HashSet<SemanticTypeMapping>();
+				this.semanticTypeMatches.put(key, SemanticTypeMappings);
+			}
+			SemanticTypeMappings.add(new SemanticTypeMapping(null, null, (InternalNode)source, link, (ColumnNode)target));
+		}
+		
+		this.sourceToTargetLinkUris.add(key);
+		
+		if (link.getModelIds() != null)
+			this.modelIds.addAll(link.getModelIds());
+		
+		this.updateLinkCountMap(link);
 		
 		logger.debug("exit>");		
 		return true;
@@ -521,11 +577,7 @@ public class GraphBuilder {
 		return true;
 	}
 
-	public void updateGraph() {
-		updateGraph(null);
-	}
-	
-	public void updateGraph(Set<Node> addedNodes) {
+	public void addClosureAndLinksOfNodes(Set<InternalNode> internalNodes, Set<Node> addedNodes) {
 		
 		logger.debug("<enter");
 		if (addedNodes == null) addedNodes = new HashSet<Node>();
@@ -533,11 +585,11 @@ public class GraphBuilder {
 		long start = System.currentTimeMillis();
 		float elapsedTimeSec;
 
-		Set<Node> internalNodes = this.typeToNodesMap.get(NodeType.InternalNode);
 		if (internalNodes != null) {
 			Node[] nodes = internalNodes.toArray(new Node[0]);
-			for (Node node : nodes) 
-				addNodeClosure(node, addedNodes);
+			for (Node node : nodes)
+				if (this.idToNodeMap.containsKey(node.getId()))
+					addNodeClosure(node, addedNodes);
 		}
 
 		long addNodesClosure = System.currentTimeMillis();
@@ -556,6 +608,153 @@ public class GraphBuilder {
 		logger.debug("exit>");		
 	}
 	
+
+	public LinkFrequency getMoreFrequentLinkBetweenNodes(String sourceUri, String targetUri) {
+
+		List<String> possibleLinksFromSourceToTarget = new ArrayList<String>();
+
+		HashSet<String> objectPropertiesDirect;
+		HashSet<String> objectPropertiesIndirect;
+		HashSet<String> objectPropertiesWithOnlyDomain;
+		HashSet<String> objectPropertiesWithOnlyRange;
+		HashMap<String, Label> objectPropertiesWithoutDomainAndRange = 
+				ontologyManager.getObjectPropertiesWithoutDomainAndRange();
+
+		possibleLinksFromSourceToTarget.clear();
+
+		objectPropertiesDirect = ontologyManager.getObjectPropertiesDirect(sourceUri, targetUri);
+		if (objectPropertiesDirect != null) possibleLinksFromSourceToTarget.addAll(objectPropertiesDirect);
+
+		objectPropertiesIndirect = ontologyManager.getObjectPropertiesIndirect(sourceUri, targetUri);
+		if (objectPropertiesIndirect != null) possibleLinksFromSourceToTarget.addAll(objectPropertiesIndirect);
+
+		objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyDomain(sourceUri, targetUri);
+		if (objectPropertiesWithOnlyDomain != null) possibleLinksFromSourceToTarget.addAll(objectPropertiesWithOnlyDomain);
+
+		objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesWithOnlyRange(sourceUri, targetUri);
+		if (objectPropertiesWithOnlyRange != null) possibleLinksFromSourceToTarget.addAll(objectPropertiesWithOnlyRange);
+
+		if (ontologyManager.isSubClass(sourceUri, targetUri, true)) 
+			possibleLinksFromSourceToTarget.add(Uris.RDFS_SUBCLASS_URI);
+
+		if (objectPropertiesWithoutDomainAndRange != null) {
+			possibleLinksFromSourceToTarget.addAll(objectPropertiesWithoutDomainAndRange.keySet());
+		}
+		
+//		Collection<String> userLinks = this.sourceToTargetLinks.get(sourceUri + "---" + targetUri);
+//		if (userLinks != null) {
+//			for (String s : userLinks)
+//				possibleLinksFromSourceToTarget.add(s);
+//		}
+
+		String selectedLinkUri1 = null;
+		int maxCount1 = 0;
+
+		String selectedLinkUri2 = null;
+		int maxCount2 = 0;
+
+		String selectedLinkUri3 = null;
+		int maxCount3 = 0;
+
+		String selectedLinkUri4 = null;
+		int maxCount4 = 0;
+
+		String key;
+		
+		if (possibleLinksFromSourceToTarget != null  && possibleLinksFromSourceToTarget.size() > 0) {
+
+			for (String linkUri : possibleLinksFromSourceToTarget) {
+				key = "domain:" + sourceUri + ",link:" + linkUri + ",range:" + targetUri;
+				Integer count1 = this.linkCountMap.get(key);
+				if (count1 != null && count1.intValue() > maxCount1) {
+					maxCount1 = count1.intValue();
+					selectedLinkUri1 = linkUri;
+				}
+			}
+			
+			for (String linkUri : possibleLinksFromSourceToTarget) {
+				key = "range:" + targetUri + ",link:" + linkUri ;
+				Integer count2 = this.linkCountMap.get(key);
+				if (count2 != null && count2.intValue() > maxCount2) {
+					maxCount2 = count2.intValue();
+					selectedLinkUri2 = linkUri;
+				}
+			}
+			
+			for (String linkUri : possibleLinksFromSourceToTarget) {
+				key = "domain:" + sourceUri + ",link:" + linkUri;
+				Integer count3 = this.linkCountMap.get(key);
+				if (count3 != null && count3.intValue() > maxCount3) {
+					maxCount3 = count3.intValue();
+					selectedLinkUri3 = linkUri;
+				}
+			}
+
+			for (String linkUri : possibleLinksFromSourceToTarget) {
+				key = "link:" + linkUri;
+				Integer count4 = this.linkCountMap.get(key);
+				if (count4 != null && count4.intValue() > maxCount4) {
+					maxCount4 = count4.intValue();
+					selectedLinkUri4 = linkUri;
+				}
+			}
+
+		} else {
+			logger.error("Something is going wrong. There should be at least one possible object property between " +
+					sourceUri + " and " + targetUri);
+			return null;
+		}
+		
+		String selectedLinkUri;
+		int maxCount;
+		int type;
+
+		if (selectedLinkUri1 != null && selectedLinkUri1.trim().length() > 0) {
+			selectedLinkUri = selectedLinkUri1;
+			maxCount = maxCount1;
+			type = 1; // match domain and link and range
+		} else if (selectedLinkUri2 != null && selectedLinkUri2.trim().length() > 0) {
+			selectedLinkUri = selectedLinkUri2;
+			maxCount = maxCount2;
+			type = 2; // match link and range
+		} else if (selectedLinkUri3 != null && selectedLinkUri3.trim().length() > 0) {
+			selectedLinkUri = selectedLinkUri3;
+			maxCount = maxCount3;
+			type = 3; // match domain and link
+		} else if (selectedLinkUri4 != null && selectedLinkUri4.trim().length() > 0) {
+			selectedLinkUri = selectedLinkUri4;
+			maxCount = maxCount4;
+			type = 4; // match link label
+		} else {
+			if (objectPropertiesDirect != null && objectPropertiesDirect.size() > 0) {
+				selectedLinkUri = objectPropertiesDirect.iterator().next();
+				type = 5;
+			} else 	if (objectPropertiesIndirect != null && objectPropertiesIndirect.size() > 0) {
+				selectedLinkUri = objectPropertiesIndirect.iterator().next();
+				type = 6;
+			} else 	if (objectPropertiesWithOnlyDomain != null && objectPropertiesWithOnlyDomain.size() > 0) {
+				selectedLinkUri = objectPropertiesWithOnlyDomain.iterator().next();
+				type = 7;
+			} else 	if (objectPropertiesWithOnlyRange != null && objectPropertiesWithOnlyRange.size() > 0) {
+				selectedLinkUri = objectPropertiesWithOnlyRange.iterator().next();;
+				type = 8;
+			} else if (ontologyManager.isSubClass(sourceUri, targetUri, true)) {
+				selectedLinkUri = Uris.RDFS_SUBCLASS_URI;
+				type = 9;
+			} else {	// if (objectPropertiesWithoutDomainAndRange != null && objectPropertiesWithoutDomainAndRange.keySet().size() > 0) {
+				selectedLinkUri = new ArrayList<String>(objectPropertiesWithoutDomainAndRange.keySet()).get(0);
+				type = 10;
+			}
+
+			maxCount = 0;
+		} 
+		
+		LinkFrequency lf = new LinkFrequency(selectedLinkUri, type, maxCount);
+		
+		return lf;
+		
+	}
+	
 	// Private Methods
 	
 	private void initialGraph() {
@@ -566,47 +765,49 @@ public class GraphBuilder {
 		if (!ModelingConfiguration.getManualAlignment()) {
 			String id = nodeIdFactory.getNodeId(Uris.THING_URI);
 			Label label = new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL);
-			thingNode = new InternalNode(id, label);			
-			addSingleNode(thingNode);
+			Node thing = new InternalNode(id, label);
+			addNode(thing);
 		}
 		
 		logger.debug("exit>");
 	}
 
-	private boolean addSingleNode(Node node) {
-		
-		logger.debug("<enter");
+	private void updateLinkCountMap(Link link) {
 
-		if (node == null) {
-			logger.debug("The node is null.");
-			return false;
+		String key, sourceUri, targetUri, linkUri;
+		Integer count;
+		Node source, target;
+		
+		source = link.getSource();
+		target = link.getTarget();
+		
+		sourceUri = source.getLabel().getUri();
+		targetUri = target.getLabel().getUri();
+		linkUri = link.getLabel().getUri();
+
+//		if (link instanceof DataPropertyLink) return;
+
+		if (target instanceof InternalNode) {
+			key = "domain:" + sourceUri + ",link:" + linkUri + ",range:" + targetUri;
+			count = this.linkCountMap.get(key);
+			if (count == null) this.linkCountMap.put(key, 1);
+			else this.linkCountMap.put(key, count.intValue() + 1);
+			
+			key = "range:" + targetUri + ",link:" + linkUri ;
+			count = this.linkCountMap.get(key);
+			if (count == null) this.linkCountMap.put(key, 1);
+			else this.linkCountMap.put(key, count.intValue() + 1);
 		}
 		
-		if (idToNodeMap.get(node.getId()) != null) {
-			logger.debug("The node with id=" + node.getId() + " already exists in the graph.");
-			return false;
-		}
-		
-		this.graph.addVertex(node);
-		
-		this.idToNodeMap.put(node.getId(), node);
-		
-		Set<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
-		if (nodesWithSameUri == null) {
-			nodesWithSameUri = new HashSet<Node>();
-			uriToNodesMap.put(node.getLabel().getUri(), nodesWithSameUri);
-		}
-		nodesWithSameUri.add(node);
-		
-		Set<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
-		if (nodesWithSameType == null) {
-			nodesWithSameType = new HashSet<Node>();
-			typeToNodesMap.put(node.getType(), nodesWithSameType);
-		}
-		nodesWithSameType.add(node);
-					
-		logger.debug("exit>");		
-		return true;
+		key = "domain:" + sourceUri + ",link:" + linkUri;
+		count = this.linkCountMap.get(key);
+		if (count == null) this.linkCountMap.put(key, 1);
+		else this.linkCountMap.put(key, count.intValue() + 1);
+
+		key = "link:" + linkUri;
+		count = this.linkCountMap.get(key);
+		if (count == null) this.linkCountMap.put(key, 1);
+		else this.linkCountMap.put(key, count.intValue() + 1);
 	}
 
 	private HashSet<String> getUriDirectConnections(String uri) {
@@ -736,6 +937,8 @@ public class GraphBuilder {
 		if (newAddedNodes == null) newAddedNodes = new HashSet<Node>();
 		
 		String uri = node.getLabel().getUri();
+		if (this.uriClosure.get(uri) != null) // the closure is already computed and added to the graph.
+			return;
 
 		Set<String> uriClosure = computeUriClosure(uri);
 
@@ -744,10 +947,10 @@ public class GraphBuilder {
 			if (nodesOfSameUri == null || nodesOfSameUri.size() == 0) { // the internal node is not added to the graph before
 				Node nn = new InternalNode(nodeIdFactory.getNodeId(c), 
 						ontologyManager.getUriLabel(c));
-				if (addSingleNode(nn)) newAddedNodes.add(nn);
+				if (addNode(nn)) newAddedNodes.add(nn);
 			} 
 		}
-
+		
 		logger.debug("exit>");
 	}
 	
@@ -791,11 +994,6 @@ public class GraphBuilder {
 
 				sourceUri = source.getLabel().getUri();
 				targetUri = target.getLabel().getUri();
-				
-				if ((sourceUri.contains("Time") && targetUri.contains("Concept")) ||
-						(sourceUri.contains("Concept") && targetUri.contains("Time")))
-					logger.debug("debug1");
-
 
 				id = LinkIdFactory.getLinkId(Uris.PLAIN_LINK_URI, source.getId(), target.getId());
 				Label plainLinkLabel = new Label(Uris.PLAIN_LINK_URI);

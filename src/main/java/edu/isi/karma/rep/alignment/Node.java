@@ -37,7 +37,7 @@ public abstract class Node implements Comparable<Node> {
 	private String id;
 	private Label label;
 	private NodeType type;
-	private Set<String> patternIds;
+	private Set<String> modelIds;
 
 	public Node(String id, Label label, NodeType type) {
 		
@@ -61,7 +61,7 @@ public abstract class Node implements Comparable<Node> {
 		Label l = null;
 		this.label = new Label(l);
 		this.type = NodeType.None;
-		this.patternIds = new HashSet<String>();
+		this.modelIds = new HashSet<String>();
 	}
 	
 	public String getId() {
@@ -94,12 +94,12 @@ public abstract class Node implements Comparable<Node> {
 		return type;
 	}
 	
-	public Set<String> getPatternIds() {
-		return patternIds;
+	public Set<String> getModelIds() {
+		return modelIds;
 	}
 
-	public void setPatternIds(Set<String> patternIds) {
-		this.patternIds = patternIds;
+	public void setModelIds(Set<String> patternIds) {
+		this.modelIds = patternIds;
 	}
 
 	@Override

@@ -24,7 +24,6 @@ package edu.isi.karma.modeling.research;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.modeling.research.approach1.SemanticLabelType;
 
 public class SemanticLabel{
 

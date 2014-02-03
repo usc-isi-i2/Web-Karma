@@ -26,7 +26,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
-import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openrdf.repository.RepositoryException;
@@ -36,25 +35,25 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.publish.PublishRDFCommand;
-import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLMapping;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
-import edu.isi.karma.kr2rml.WorksheetModelWriter;
+import edu.isi.karma.kr2rml.KR2RMLMappingWriter;
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.alignment.SemanticModel;
+import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.research.Params;
-import edu.isi.karma.modeling.research.SemanticModel;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
@@ -124,7 +123,7 @@ public class GenerateR2RMLModelCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		
+		UpdateContainer uc = new UpdateContainer();
 		//save the preferences 
 		savePreferences(workspace);
 				
@@ -147,12 +146,34 @@ public class GenerateR2RMLModelCommand extends Command {
 					"Please align the worksheet before generating R2RML Model!"));
 		}
 		
-		// ****************************************************************
-		// mohsen: the following two lines are only for my own tests, please ignore it!
-		// ****************************************************************
-		if (Params.RESEARCH_MODE)
-			saveSemanticModelOnDisk(worksheet.getTitle(), alignment.getSteinerTree());
-		// ****************************************************************
+		// mohsen: my code to enable Karma to leran semantic models
+		// *****************************************************************************************
+		// *****************************************************************************************
+
+		SemanticModel semanticModel = new SemanticModel(worksheetName, alignment.getSteinerTree());
+		semanticModel.setName(worksheetName);
+		try {
+			semanticModel.writeJson(ModelingConfiguration.getModelsJsonDir() + 
+					semanticModel.getName() + 
+					".model.json");
+		} catch (Exception e) {
+			logger.error("error in exporting the model to JSON!");
+//			e.printStackTrace();
+		}
+		try {
+			semanticModel.writeGraphviz(ModelingConfiguration.getModelsGraphvizDir() + 
+					semanticModel.getName() + 
+					".model.dot", false, false);
+		} catch (Exception e) {
+			logger.error("error in exporting the model to GRAPHVIZ!");
+//			e.printStackTrace();
+		}
+
+		if (ModelingConfiguration.isLearnerEnabled())
+			ModelLearningGraph.getInstance(workspace.getOntologyManager()).addModelAndUpdateGraphJson(semanticModel);
+		
+		// *****************************************************************************************
+		// *****************************************************************************************
 
 		try {
 			// Get the namespace and prefix from the preferences
@@ -174,12 +195,16 @@ public class GenerateR2RMLModelCommand extends Command {
 			
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
-			OntologyManager ontMgr = workspace.getOntologyManager();
-			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(ontMgr, alignment, 
+			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
+			KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
 			
+			if(!mapping.isR2RMLCompatible())
+			{
+				uc.add(new InfoUpdate("The KR2RMLMapping generated is not compatible with R2RML"));
+			}
 			// Write the model
-			writeModel(workspace, ontMgr, mappingGen, worksheet, modelFileLocalPath);
+			writeModel(workspace, workspace.getOntologyManager(), mappingGen, worksheet, modelFileLocalPath);
 			
 			// Write the model to the triple store
 			TripleStoreUtil utilObj = new TripleStoreUtil();
@@ -197,7 +222,7 @@ public class GenerateR2RMLModelCommand extends Command {
 			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true);
 			if (result) {
 				logger.info("Saved model to triple store");
-				return new UpdateContainer(new AbstractUpdate() {
+				uc.add(new AbstractUpdate() {
 					public void generateJson(String prefix, PrintWriter pw,	
 							VWorkspace vWorkspace) {
 						JSONObject outputObject = new JSONObject();
@@ -211,13 +236,13 @@ public class GenerateR2RMLModelCommand extends Command {
 						}
 					}
 				});
+				return uc;
 			} 
 			
 			return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
 			
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
+			logger.error("Error occured while generating R2RML Model!", e);
 			return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
 		}
 	}
@@ -228,25 +253,6 @@ public class GenerateR2RMLModelCommand extends Command {
 		return null;
 	}
 	
-	private void saveSemanticModelOnDisk(String wkTitle, DirectedWeightedMultigraph<Node, Link> model) {
-		
-		if (model == null)
-			return;
-		
-		String exportDir = Params.MODEL_DIR;
-		try {
-			String name = wkTitle;
-			if (name != null && name.indexOf('.') != -1) {
-				name = name.substring(0, name.lastIndexOf('.'));
-			}
-			SemanticModel sm = new SemanticModel(name, model);
-			sm.writeJson(exportDir + name + Params.MODEL_MAIN_FILE_EXT);
-		} catch (Exception e1) {
-//			logger.error("Ignore this error message. this is just for my own test!");
-//			e1.printStackTrace();
-		}
-	}
-	
 	private void writeModel(Workspace workspace, OntologyManager ontMgr, 
 			KR2RMLMappingGenerator mappingGen, Worksheet worksheet, String modelFileLocalPath) 
 					throws RepositoryException, FileNotFoundException, 
@@ -255,20 +261,11 @@ public class GenerateR2RMLModelCommand extends Command {
 		File parentDir = f.getParentFile();
 		parentDir.mkdirs();
 		PrintWriter writer = new PrintWriter(f, "UTF-8");
-		WorksheetModelWriter modelWriter = new WorksheetModelWriter(writer, 
-				workspace.getFactory(), ontMgr, worksheet.getTitle());
 
-		// Writer worksheet properties such as Service URL
-		modelWriter.writeWorksheetProperties(worksheet);
-		
-		// Write the worksheet history
-		String historyFilePath = HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(
-				worksheet.getTitle(), workspace.getCommandPreferencesId());
-		modelWriter.writeCompleteWorksheetHistory(historyFilePath);
-		
-		// Write the R2RML mapping
-		modelWriter.writeR2RMLMapping(ontMgr, mappingGen);
-		modelWriter.close();
+		KR2RMLMappingWriter mappingWriter = new KR2RMLMappingWriter();
+		mappingWriter.addR2RMLMapping(mappingGen.getKR2RMLMapping(), worksheet, workspace);
+		mappingWriter.writeR2RMLMapping(writer);
+		mappingWriter.close();
 		writer.flush();
 		writer.close();
 	}

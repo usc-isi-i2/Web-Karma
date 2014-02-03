@@ -146,7 +146,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 				String transformedValue = pyHelper.getPyObjectValueAsString(output);
 				addTransformedValue(transformedRows, row, transformedValue);
 			} catch (PyException p) {
-				logger.error("error in evaluation python", p);
+				logger.error("error in evaluation python, skipping one row");
 				// Error occured in the Python method execution
 				addTransformedValue(transformedRows, row, errorDefaultValue);
 				addError(errorValues, row, counter, p.value);
@@ -185,4 +185,8 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		return c;
 	}
 
+	public String getTransformationCode()
+	{
+		return transformationCode;
+	}
 }

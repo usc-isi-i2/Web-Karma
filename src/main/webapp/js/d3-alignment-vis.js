@@ -431,11 +431,12 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 return d.target.x;
         })
         .attr("y", function(d) {
-            if(d.target.nodeType == "ColumnNode")
-                return ((d.source.y + d.target.y)/2 + 12);
-            if(d.source.nodeType == "FakeRoot")
-                return ((d.source.y + d.target.y)/2 - 4);
-            return ((d.source.y + d.target.y)/2 + 5);
+        	return d.target.y - 20;
+//            if(d.target.nodeType == "ColumnNode")
+//                return ((d.source.y + d.target.y)/2 + 12);
+//            if(d.source.nodeType == "FakeRoot")
+//                return ((d.source.y + d.target.y)/2 - 4);
+//            return ((d.source.y + d.target.y)/2 + 5);
         })
         .attr("transform", function(d) {
             var X = 0; var Y = 0;

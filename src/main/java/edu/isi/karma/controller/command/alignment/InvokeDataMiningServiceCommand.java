@@ -21,22 +21,9 @@
 
 package edu.isi.karma.controller.command.alignment;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +43,6 @@ import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.HTTPUtil;
@@ -125,45 +111,45 @@ public class InvokeDataMiningServiceCommand extends Command {
 	}
 	
 	// Pedro: this is not being used. Candidate for deletion.
-	//
-	private String fetch_data_temp() 
-	{
-		HttpClient httpclient = new DefaultHttpClient();
-		TripleStoreUtil utilObj = new TripleStoreUtil();
-		StringBuffer jsonString = new StringBuffer();
-		try {
-
-			JSONObject result = utilObj.fetch_data(this.modelContext, null);
-			logger.debug(result.toString());
-			
-			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-			formparams = new ArrayList<NameValuePair>();
-			formparams.add(new BasicNameValuePair("data", result.toString()));
-			
-			HttpPost httppost = new HttpPost("http://localhost:1234/consumejson");
-			httppost.setEntity(new UrlEncodedFormEntity(formparams, "UTF-8"));
-			HttpResponse response = httpclient.execute(httppost);
-
-			for(Header h : response.getAllHeaders()) {
-				logger.debug(h.getName() +  " : " + h.getValue());
-			}
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
-				String line = buf.readLine();
-				while(line != null) {
-					logger.debug(line);
-					jsonString.append(line);
-					line = buf.readLine();
-				}
-
-			}
-			return jsonString.toString();
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return "";
-	}
+	// Is this from Shrikanth?
+//	private String fetch_data_temp() 
+//	{
+//		HttpClient httpclient = new DefaultHttpClient();
+//		TripleStoreUtil utilObj = new TripleStoreUtil();
+//		StringBuffer jsonString = new StringBuffer();
+//		try {
+//
+//			JSONObject result = utilObj.fetch_data(this.modelContext, null);
+//			logger.debug(result.toString());
+//			
+//			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+//			formparams = new ArrayList<NameValuePair>();
+//			formparams.add(new BasicNameValuePair("data", result.toString()));
+//			
+//			HttpPost httppost = new HttpPost("http://localhost:1234/consumejson");
+//			httppost.setEntity(new UrlEncodedFormEntity(formparams, "UTF-8"));
+//			HttpResponse response = httpclient.execute(httppost);
+//
+//			for(Header h : response.getAllHeaders()) {
+//				logger.debug(h.getName() +  " : " + h.getValue());
+//			}
+//			HttpEntity entity = response.getEntity();
+//			if (entity != null) {
+//				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
+//				String line = buf.readLine();
+//				while(line != null) {
+//					logger.debug(line);
+//					jsonString.append(line);
+//					line = buf.readLine();
+//				}
+//
+//			}
+//			return jsonString.toString();
+//		} catch (Exception e) {
+//			logger.error(e.getMessage());
+//		}
+//		return "";
+//	}
 	
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
@@ -200,16 +186,14 @@ public class InvokeDataMiningServiceCommand extends Command {
 			Worksheet worksheet = workspace.getWorksheet(worksheetId);
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
-			OntologyManager ontMgr = workspace.getOntologyManager();
-			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(ontMgr, alignment, 
+			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
 			
 			SPARQLGeneratorUtil genObj = new SPARQLGeneratorUtil();
-			String query = genObj.get_query(mappingGen.getR2RMLMapping(), this.modelContext);
+			String query = genObj.get_query(mappingGen.getKR2RMLMapping(), this.modelContext);
 			
 			// execute the query on the triple store
-			TripleStoreUtil utilObj = new TripleStoreUtil();
-			String data = utilObj.invokeSparqlQuery(query, tripleStoreUrl, "application/sparql-results+json", null);
+			String data = TripleStoreUtil.invokeSparqlQuery(query, tripleStoreUrl, "application/sparql-results+json", null);
 
 			// prepare the input for the data mining service
 //			int row_num = 0;

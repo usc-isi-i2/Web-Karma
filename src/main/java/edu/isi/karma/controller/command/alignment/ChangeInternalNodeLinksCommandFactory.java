@@ -34,16 +34,15 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
-public class ChangeInternalNodeLinksCommandFactory extends CommandFactory 
-	implements JSONInputCommandFactory{
+public class ChangeInternalNodeLinksCommandFactory extends CommandFactory
+		implements JSONInputCommandFactory {
 
-	private enum Arguments {
+	enum Arguments {
 		initialEdges, alignmentId, worksheetId, newEdges
 	}
-	
+
 	@Override
-	public Command createCommand(HttpServletRequest request,
-			Workspace workspace) {
+	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 
 		return null;
 	}
@@ -51,16 +50,18 @@ public class ChangeInternalNodeLinksCommandFactory extends CommandFactory
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), 
-				inputJson);
+		String worksheetId = HistoryJsonUtil.getStringValue(
+				Arguments.worksheetId.name(), inputJson);
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				workspace.getId(), worksheetId);
-		JSONArray initialEdges = HistoryJsonUtil.getJSONArrayValue(Arguments.initialEdges.name(), 
-				inputJson);
-		JSONArray newEdges = HistoryJsonUtil.getJSONArrayValue(Arguments.newEdges.name(), inputJson);
-		
-		ChangeInternalNodeLinksCommand cmd = new ChangeInternalNodeLinksCommand(getNewId(workspace)
-				, worksheetId, alignmentId, initialEdges, newEdges);
+		JSONArray initialEdges = HistoryJsonUtil.getJSONArrayValue(
+				Arguments.initialEdges.name(), inputJson);
+		JSONArray newEdges = HistoryJsonUtil.getJSONArrayValue(
+				Arguments.newEdges.name(), inputJson);
+
+		ChangeInternalNodeLinksCommand cmd = new ChangeInternalNodeLinksCommand(
+				getNewId(workspace), worksheetId, alignmentId, initialEdges,
+				newEdges);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}

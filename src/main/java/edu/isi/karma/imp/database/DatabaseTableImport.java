@@ -34,6 +34,8 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.SourceInformation;
 import edu.isi.karma.rep.metadata.SourceInformation.InfoAttribute;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
 import edu.isi.karma.util.JDBCUtilFactory;
@@ -128,6 +130,7 @@ public class DatabaseTableImport extends Import {
         srcInfo.setAttributeValue(InfoAttribute.dBorSIDName, dBorSIDName);
         srcInfo.setAttributeValue(InfoAttribute.tableName, tableName);
         getWorksheet().getMetadataContainer().setSourceInformation(srcInfo);
+        getWorksheet().getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.DB.toString());
         return getWorksheet();
     }
 

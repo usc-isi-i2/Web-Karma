@@ -39,6 +39,7 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLMapping;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.ReportMessage;
@@ -113,13 +114,13 @@ public class PublishRDFCellCommand extends Command {
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
 			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(
-					workspace.getOntologyManager(), 
+					workspace, worksheet,
 					alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
 					false, errorReport);
-			
+			KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 					workspace.getFactory(), workspace.getOntologyManager(),
-					pw, mappingGen.getMappingAuxillaryInformation(), errorReport, false);
+					pw, mapping, errorReport, false);
 			
 			// Create empty data structures
 			Set<String> existingTopRowTriples = new HashSet<String>();

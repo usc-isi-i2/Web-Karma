@@ -317,14 +317,15 @@ function handleClassFilter() {
     if(uriProperty  != "" && uriProperty != "fakePropertyURI") {
         var info = new Object();
         info["workspaceId"] = $.workspaceGlobalInformation.id;
-
+        info["worksheetId"] = $("#ChangeSemanticTypesDialogBox").data("worksheetId");
+        
         if ($("input#filterClassByDomain").is(":checked")) {
             info["URI"] = uriProperty;
             info["command"] = "GetDomainsForDataPropertyCommand";
         } else {
             info["command"] = "GetOntologyClassHierarchyCommand";
         }
-
+        
         var returned = $.ajax({
             url: "RequestController",
             type: "POST",
@@ -755,11 +756,15 @@ function populateTreeHierarchy(dataArray, treeDiv , dialogBox, submitHandler) {
             },
             "plugins" : [ "themes", "json_data", "ui" ,"sort", "search"]
         }).bind("select_node.jstree", function (e, data) {
+        		var newIndex = -1, isExistingSteinerTreeNode =  false;
+        		if(data.rslt.obj.data("newIndex"))
+        			newIndex = data.rslt.obj.data("newIndex");
+        		if(data.rslt.obj.data("isExistingSteinerTreeNode"))
+        			isExistingSteinerTreeNode = data.rslt.obj.data("isExistingSteinerTreeNode")
                 dialogBox.data("URIorID",data.rslt.obj.data("URIorId"))
                     .data("label",data.rslt.obj.context.lastChild.wholeText)
-                    .data("index", data.rslt.obj.data("newIndex"))
-                    // .data("isExistingGraphNode", data.rslt.obj.data("isExistingGraphNode"))
-                    .data("isExistingSteinerTreeNode", data.rslt.obj.data("isExistingSteinerTreeNode"));
+                    .data("index", newIndex)
+                    .data("isExistingSteinerTreeNode", isExistingSteinerTreeNode);
                 var a = $.jstree._focused().get_selected();
                 $(treeDiv).jstree("open_node", a);
             });
@@ -800,7 +805,7 @@ function submitClassFromHierarchyWindow() {
         return false;
     }
 
-    if (!isExistingSteinerTreeNode) {
+    if (!isExistingSteinerTreeNode && indexToAdd != -1) {
         label += indexToAdd + " (add)";
     }
 

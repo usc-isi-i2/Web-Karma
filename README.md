@@ -1,12 +1,17 @@
 Karma: A Data Integration Tool
 ================================
 
+Karma needs **Java 1.7, Maven 3.0**. Download Java SE from [http://www.oracle.com/technetwork/java/javase/downloads/index.html](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+
+The Karma user guide is in the [wiki](https://github.com/InformationIntegrationGroup/Web-Karma/wiki).
+
+
 Karma is an information integration tool that enables users to quickly and easily integrate data from a variety of data sources including databases, spreadsheets, delimited text files, XML, JSON, KML and Web APIs. Users integrate information by modeling it according to an ontology of their choice using a graphical user interface that automates much of the process. Karma learns to recognize the mapping of data to ontology classes and then uses the ontology to propose a model that ties together these classes. Users then interact with the system to adjust the automatically generated model. During this process, users can transform the data as needed to normalize data expressed in different formats and to restructure it. Once the model is complete, users can published the integrated data as RDF or store it in a database.
 
 You can find useful tutorials on the project Website: [http://www.isi.edu/integration/karma/](http://www.isi.edu/integration/karma/)
 
 ## Installation and Setup ##
-System Requirements: Java 1.7, Maven 3.0 and above.
+System Requirements: **Java 1.7, Maven 3.0** and above.
 
 To run the jetty server, execute the following command from webkarma top directory:
 `mvn jetty:run`. Once the server has started point your browser to **http://localhost:8080/web-karma.html**. To start it on a port other than 8080 (e.g. Port number 9999) 
@@ -18,11 +23,11 @@ To start in logging mode (where all the logs are stored in the log folder), use 
 
 ## Frequently Asked Questions ##
 ### How to perform offline RDF generation for a data source using a published model? ###
-1. Model your source and publish it's model (the published models are located at `src/main/webapp/repository/sources/` inside the Karma directory).
+1. Model your source and publish it's model (the published models are located at `src/main/webapp/publish/R2RML/` inside the Karma directory).
 2. To generate RDF of a CSV/JSON/XML file, go to the top level Karma directory and run the following command from terminal:
 ```
-mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineDbRdfGenerator" -Dexec.args="--sourcetype 
-<sourcetype> --filepath <filepath> --modelfilepath <modelfilepath> --outputfile <outputfile>"
+mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--sourcetype 
+<sourcetype> --filepath <filepath> --modelfilepath <modelfilepath> --outputfile <outputfile>" -Dexec.classpathScope=compile
 ```
 
 	Valid argument values for sourcetype are: CSV, JSON, XML. Also, you need to escape the double quotes that go inside argument values. Example invocation for a JSON file:
@@ -31,22 +36,22 @@ mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.ar
 --sourcetype JSON 
 --filepath \"/Users/shubhamgupta/Documents/wikipedia.json\" 
 --modelfilepath \"/Users/shubhamgupta/Documents/model-wikipedia.n3\" 
---outputfile wikipedia-rdf.n3"
+--outputfile wikipedia-rdf.n3" -Dexec.classpathScope=compile
 ```
 3. To generate RDF of a database table, go to the top level Karma directory and run the following command from terminal:
 ```
-mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineDbRdfGenerator" -Dexec.args="--sourcetype DB
+mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--sourcetype DB
 --modelfilepath <modelfilepath> --outputfile <outputfile> --dbtype <dbtype> --hostname <hostname> 
---username <username> --password <password> --portnumber <portnumber> --dbname <dbname> --tablename <tablename>"
+--username <username> --password <password> --portnumber <portnumber> --dbname <dbname> --tablename <tablename>" -Dexec.classpathScope=compile
 ```
-	Valid argument values for `dbtype` are Oracle, MySQL, SQLServer, PostGIS. Example invocation:
+	Valid argument values for `dbtype` are Oracle, MySQL, SQLServer, PostGIS, Sybase. Example invocation:
 ```
 mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="
 --sourcetype DB --dbtype SQLServer 
---hostname www.example.org --username root 
---password secret --portnumber 1433 
---dbname dbpedia --tablename people 
---modelfilepath \"/Users/shubhamgupta/Documents/model-people.n3\" --outputfile tmp/dbtest.n3"
+--hostname example.com --username root --password secret 
+--portnumber 1433 --dbname Employees --tablename Person 
+--modelfilepath \"/Users/shubhamgupta/Documents/db-r2rml-model.ttl\"
+--outputfile db-rdf.n3" -Dexec.classpathScope=compile
 ```
 
 You can do `mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--help"` to get information about required arguments.

@@ -29,13 +29,13 @@ public class KR2RMLMappingAuxillaryInformation {
 	private TriplesMapGraph triplesMapGraph;
 	private Map<String, List<String>> blankNodesColumnCoverage;
 	private Map<String, String> blankNodesUriPrefixMap;
-	private Map<String, List<PredicateObjectMap>> hNodeIdToPredObjMLinks;
+	private Map<String, List<PredicateObjectMap>> columnNameToPredObjMLinks;
 	
 	public KR2RMLMappingAuxillaryInformation() {
 		this.triplesMapGraph = new TriplesMapGraph();
 		this.blankNodesUriPrefixMap = new HashMap<String, String>();
 		this.blankNodesColumnCoverage = new HashMap<String, List<String>>();
-		this.hNodeIdToPredObjMLinks = new HashMap<String, List<PredicateObjectMap>>();
+		this.columnNameToPredObjMLinks = new HashMap<String, List<PredicateObjectMap>>();
 	}
 
 	public TriplesMapGraph getTriplesMapGraph() {
@@ -50,7 +50,7 @@ public class KR2RMLMappingAuxillaryInformation {
 		return blankNodesUriPrefixMap;
 	}
 	
-	public Map<String, List<PredicateObjectMap>> getHNodeIdToPredObjLinks() {
-		return this.hNodeIdToPredObjMLinks;
+	public Map<String, List<PredicateObjectMap>> getColumnNameToPredObjLinks() {
+		return this.columnNameToPredObjMLinks;
 	}
 }

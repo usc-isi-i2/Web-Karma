@@ -42,7 +42,7 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 	private LinkType type;
 	private LinkStatus status;
 	private LinkKeyInfo keyInfo;
-	private Set<String> patternIds;
+	private Set<String> modelIds;
 	
 	public Link(String id, Label label, LinkType type) {
 		super();
@@ -82,7 +82,7 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		this.type = LinkType.None;
 		this.status = LinkStatus.Normal;
 		this.keyInfo = LinkKeyInfo.None;
-		this.patternIds = new HashSet<String>();
+		this.modelIds = new HashSet<String>();
 	}
 	
 	public String getId() {
@@ -143,12 +143,12 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		return super.getWeight();
 	}
 	
-	public Set<String> getPatternIds() {
-		return patternIds;
+	public Set<String> getModelIds() {
+		return modelIds;
 	}
 
-	public void setPatternIds(Set<String> patternIds) {
-		this.patternIds = patternIds;
+	public void setModelIds(Set<String> patternIds) {
+		this.modelIds = patternIds;
 	}
 	
 	@Override

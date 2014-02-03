@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
+import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -90,12 +91,12 @@ public class ModelReader {
 
 		try {
 
-//			semanticModels = importSemanticModelsFromSavedModels(Params.MODEL_DIR, ".main.model");
-			semanticModels = importSemanticModels(Params.INPUT_DIR);
+			semanticModels = importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
+//			semanticModels = importSemanticModels(Params.INPUT_DIR);
 			if (semanticModels != null) {
 				for (SemanticModel sm : semanticModels) {
 					sm.print();
-					sm.exportModelToGraphviz(Params.GRAPHVIS_DIR, Params.GRAPHVIS_MAIN_FILE_EXT);
+					sm.writeGraphviz(Params.GRAPHVIS_DIR + sm.getName() + Params.GRAPHVIS_MAIN_FILE_EXT, true, true);
 					sm.writeJson(Params.MODEL_DIR + sm.getName() + Params.MODEL_MAIN_FILE_EXT);
 					
 					// To test JsonReader and JsonWriter
@@ -386,7 +387,7 @@ public class ModelReader {
 			if (obj == null) {
 				if (objStr.startsWith(attPrefix)) {
 					id = new RandomGUID().toString();
-					obj = new ColumnNode(id, objStr, objStr, "", null);
+					obj = new ColumnNode(id, objStr, objStr, null, null);
 					SemanticType semanticType = new SemanticType(((ColumnNode)obj).getHNodeId(), 
 							new Label(predicateStr), 
 							subj.getLabel(), 

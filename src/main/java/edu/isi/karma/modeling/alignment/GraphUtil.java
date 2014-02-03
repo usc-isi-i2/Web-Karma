@@ -29,6 +29,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -71,21 +72,6 @@ public class GraphUtil {
 	private static Logger logger = LoggerFactory.getLogger(GraphUtil.class);
 	
 	// FIXME: change methods to get an Outputstream as input and write on it.
-	
-	public static Set<ColumnNode> getColumnNodes(
-			DirectedWeightedMultigraph<Node, Link> model) {
-
-		if (model == null)
-			return new HashSet<ColumnNode>();
-		
-		Set<ColumnNode> columnNodes = new HashSet<ColumnNode>();
-
-		for (Node n : model.vertexSet()) 
-			if (n instanceof ColumnNode)
-				columnNodes.add((ColumnNode)n);
-			
-		return columnNodes;
-	}
 	
 	public static void printVertex(Node node, StringBuffer sb) {
 		
@@ -163,7 +149,7 @@ public class GraphUtil {
 			printEdge(edge, sb);
 			sb.append("\n");
         }
-		sb.append("------------------------------------------");
+//		sb.append("------------------------------------------");
 		logger.debug(sb.toString());
 		
 	}
@@ -171,7 +157,7 @@ public class GraphUtil {
 	public static String graphToString(Graph<Node, Link> graph) {
 		
 		if (graph == null) {
-			logger.error("The input graph is null.");
+			logger.debug("The input graph is null.");
 			return "";
 		}		
 
@@ -183,43 +169,60 @@ public class GraphUtil {
 			sb.append(" - w=" + edge.getWeight());
 			sb.append("\n");
         }
-		sb.append("------------------------------------------");
+		//sb.append("------------------------------------------");
 		return sb.toString();
 		
 	}
 	
-//	public static void serialize(DirectedWeightedMultigraph<Node, Link> graph, String fileName) throws Exception
-//	{
-//		
-//		if (graph == null) {
-//			logger.error("The input graph is null.");
-//			return;
-//		}		
-//
-////		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-//		FileOutputStream f = new FileOutputStream(fileName);
-//		ObjectOutputStream out = new ObjectOutputStream(f);
-//
-//		out.writeObject(graph);
-//		out.flush();
-//		out.close();
-//	}
-//	
-//	@SuppressWarnings("unchecked")
-//	public static DirectedWeightedMultigraph<Node, Link> deserialize(String fileName) throws Exception
-//	{
-////		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-//		FileInputStream f = new FileInputStream(fileName);
-//        ObjectInputStream in = new ObjectInputStream(f);
-//
-//        Object obj  = in.readObject();
-//        in.close();
-//        
-//        if (obj instanceof DirectedWeightedMultigraph<?, ?>)
-//        	return (DirectedWeightedMultigraph<Node, Link>)obj;
-//        else 
-//        	return null;
-//	}
+	public static List<GraphPath> getPaths(DirectedWeightedMultigraph<Node, Link> g, int length) {
+		
+		List<GraphPath> graphPaths = 
+				new LinkedList<GraphPath>();
+
+		if (g == null)
+			return graphPaths;
+
+		for (Node n : g.vertexSet()) {
+			List<GraphPath> gpList = getOutgoingPaths(g, n, length);
+			if (gpList != null) graphPaths.addAll(gpList);
+		}
+
+		return graphPaths;
+		
+	}
+	
+	public static List<GraphPath> getOutgoingPaths(DirectedWeightedMultigraph<Node, Link> g, Node n, int length) {
+		
+		List<GraphPath> graphPaths = 
+				new LinkedList<GraphPath>();
+
+		if (g == null || n == null || length <= 0 || !g.vertexSet().contains(n))
+			return graphPaths;
+		
+		Set<Link> outgoingLinks =  g.outgoingEdgesOf(n);
+		if (outgoingLinks == null || outgoingLinks.isEmpty())
+			return graphPaths;
+		
+		for (Link l : outgoingLinks) {
+			List<GraphPath> nextGraphPaths = getOutgoingPaths(g, l.getTarget(), length - 1);
+			if (nextGraphPaths == null || nextGraphPaths.isEmpty()) {
+				GraphPath gp = new GraphPath();
+				gp.addLink(l);
+				if (gp.getLength() == length)
+					graphPaths.add(gp);
+			} else {
+				for (GraphPath p : nextGraphPaths) {
+					GraphPath gp = new GraphPath(p);
+					gp.addLinkToHead(l);
+					if (gp.getLength() == length)
+						graphPaths.add(gp);
+				}
+			}
+		}
+		
+		return graphPaths;
+		
+	}
 	
 	public static Set<Node> getOutNeighbors(DirectedWeightedMultigraph<Node, Link> g, Node n) {
 		
@@ -316,9 +319,10 @@ public class GraphUtil {
 				treeToRootedTree(tree, target, outLink, visitedNodes, reversedLinks, removedLinks);
 			}
 		}
-	}
+	}	
 	
 	public static void exportJson(DirectedWeightedMultigraph<Node, Link> graph, String filename) throws IOException {
+		logger.info("exporting the graph to json ...");
 		File file = new File(filename);
 		if (!file.exists()) {
 			file.createNewFile();
@@ -335,7 +339,7 @@ public class GraphUtil {
 	     } finally {
 			writer.close();
 		}
-		
+		logger.info("export is done.");
 	}
 	
 	public static DirectedWeightedMultigraph<Node, Link> importJson(String filename) throws IOException {
@@ -416,9 +420,9 @@ public class GraphUtil {
 			}
 		}
 		
-		writer.name("patternIds");
-		if (node.getPatternIds() == null) writer.value(nullStr);
-		else writePatternIds(writer, node.getPatternIds());
+		writer.name("modelIds");
+		if (node.getModelIds() == null) writer.value(nullStr);
+		else writeModelIds(writer, node.getModelIds());
 		writer.endObject();
 	}
 
@@ -444,8 +448,8 @@ public class GraphUtil {
 		}
 		writer.name("status").value(link.getStatus().toString());
 		writer.name("keyInfo").value(link.getKeyType().toString());
-		writer.name("patternIds");
-		writePatternIds(writer, link.getPatternIds());
+		writer.name("modelIds");
+		writeModelIds(writer, link.getModelIds());
 		writer.name("weight").value(link.getWeight());
 		writer.endObject();
 	}
@@ -457,10 +461,10 @@ public class GraphUtil {
 		
 		writer.beginObject();
 		writer.name("uri").value(label.getUri());
-		writer.name("ns").value(label.getNs());
-		writer.name("prefix").value(label.getPrefix());
-		writer.name("rdfsLabel").value(label.getRdfsLabel());
-		writer.name("rdfsComment").value(label.getRdfsComment());
+//		writer.name("ns").value(label.getNs());
+//		writer.name("prefix").value(label.getPrefix());
+//		writer.name("rdfsLabel").value(label.getRdfsLabel());
+//		writer.name("rdfsComment").value(label.getRdfsComment());
 		writer.endObject();
 	}
 	
@@ -485,13 +489,13 @@ public class GraphUtil {
 		writer.endObject();
 	}
 	
-	private static void writePatternIds(JsonWriter writer, Set<String> patternIds) throws IOException {
+	private static void writeModelIds(JsonWriter writer, Set<String> modelIds) throws IOException {
 		
-		if (patternIds == null)
+		if (modelIds == null)
 			return;
 		
 		writer.beginArray();
-		for (String s : patternIds)
+		for (String s : modelIds)
 			writer.value(s);
 		writer.endArray();
 	}
@@ -552,7 +556,7 @@ public class GraphUtil {
 		Label rdfLiteralType = null;
 		SemanticType userSelectedSemanticType = null;
 		List<SemanticType> crfSuggestedSemanticTypes = null;
-		Set<String> patternIds = null;
+		Set<String> modelIds = null;
 		
 		reader.beginObject();
 	    while (reader.hasNext()) {
@@ -579,8 +583,8 @@ public class GraphUtil {
 			    	crfSuggestedSemanticTypes.add(semanticType);
 				}
 		    	reader.endArray();				
-			} else if (key.equals("patternIds") && reader.peek() != JsonToken.NULL) {
-				patternIds = readPatternIds(reader);
+			} else if (key.equals("modelIds") && reader.peek() != JsonToken.NULL) {
+				modelIds = readModelIds(reader);
 			} else {
 				reader.skipValue();
 			}
@@ -595,7 +599,7 @@ public class GraphUtil {
     		((ColumnNode)n).setUserSelectedSemanticType(userSelectedSemanticType);
     		((ColumnNode)n).setCrfSuggestedSemanticTypes(crfSuggestedSemanticTypes);
     	}
-		n.setPatternIds(patternIds);
+		n.setModelIds(modelIds);
     	
     	return n;
 	}
@@ -610,7 +614,7 @@ public class GraphUtil {
 		String specializedLinkId = null;
 		LinkStatus status = null;
 		LinkKeyInfo keyInfo = null;
-		Set<String> patternIds = null;
+		Set<String> modelIds = null;
 		if (weight == null) weight = new Double[1];
 
 		reader.beginObject();
@@ -632,8 +636,8 @@ public class GraphUtil {
 				status = LinkStatus.valueOf(reader.nextString());
 			} else if (key.equals("keyInfo") && reader.peek() != JsonToken.NULL) {
 				keyInfo = LinkKeyInfo.valueOf(reader.nextString());
-			} else if (key.equals("patternIds") && reader.peek() != JsonToken.NULL) {
-				patternIds = readPatternIds(reader);
+			} else if (key.equals("modelIds") && reader.peek() != JsonToken.NULL) {
+				modelIds = readModelIds(reader);
 			} else if (key.equals("weight") && reader.peek() != JsonToken.NULL) {
 				weight[0] = new Double(reader.nextDouble());
 			} else {
@@ -664,7 +668,7 @@ public class GraphUtil {
     	}
     	
     	l.setStatus(status);
-    	l.setPatternIds(patternIds);
+    	l.setModelIds(modelIds);
     	return l;
 	}
 	
@@ -681,14 +685,14 @@ public class GraphUtil {
 	    	String key = reader.nextName();
 			if (key.equals("uri") && reader.peek() != JsonToken.NULL) {
 				uri = reader.nextString();
-			} else if (key.equals("ns") && reader.peek() != JsonToken.NULL) {
-				ns = reader.nextString();
-			} else if (key.equals("prefix") && reader.peek() != JsonToken.NULL) {
-				prefix = reader.nextString();
-			} else if (key.equals("rdfsLabel") && reader.peek() != JsonToken.NULL) {
-				rdfsLabel = reader.nextString();
-			} else if (key.equals("rdfsComment") && reader.peek() != JsonToken.NULL) {
-				rdfsComment = reader.nextString();
+//			} else if (key.equals("ns") && reader.peek() != JsonToken.NULL) {
+//				ns = reader.nextString();
+//			} else if (key.equals("prefix") && reader.peek() != JsonToken.NULL) {
+//				prefix = reader.nextString();
+//			} else if (key.equals("rdfsLabel") && reader.peek() != JsonToken.NULL) {
+//				rdfsLabel = reader.nextString();
+//			} else if (key.equals("rdfsComment") && reader.peek() != JsonToken.NULL) {
+//				rdfsComment = reader.nextString();
 			} else {
 			  reader.skipValue();
 			}
@@ -733,16 +737,16 @@ public class GraphUtil {
     	return semanticType;	
     }
 	
-	private static Set<String> readPatternIds(JsonReader reader) throws IOException {
+	private static Set<String> readModelIds(JsonReader reader) throws IOException {
 		
-		Set<String> patternIds = new HashSet<String>();
+		Set<String> modelIds = new HashSet<String>();
 		
 		reader.beginArray();
 	    while (reader.hasNext()) {
-	    	patternIds.add(reader.nextString());
+	    	modelIds.add(reader.nextString());
 		}
     	reader.endArray();
     	
-    	return patternIds;
+    	return modelIds;
 	}
 }
