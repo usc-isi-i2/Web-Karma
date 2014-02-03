@@ -553,44 +553,6 @@ and related projects, please see: http://www.isi.edu/integration
                 $("[data-toggle='tooltip']").tooltip();
             });
             
-            $(function() {
-            	  
-            	  var $contextMenu = $("#contextMenu");
-            	  var $rowClicked;
-            	  
-            	  $("body").on("click", "div svg text.LinkLabel", function(e) {
-            		  $rowClicked = $(this);  
-            	    $contextMenu.css({
-            	      display: "block",
-            	      left: e.pageX,
-            	      top: e.pageY
-            	    });
-            	    return false;
-            	  });
-            	  
-            	  $("body").on("click", "div svg g.InternalNode", function(e) {
-            		  $rowClicked = $(this);  
-            	    $contextMenu.css({
-            	      display: "block",
-            	      left: e.pageX,
-            	      top: e.pageY
-            	    });
-            	    return false;
-            	  });
-            	  
-            	  $contextMenu.on("click", "a", function () {
-            		    var message = "You clicked on the row '" + 
-            		        $rowClicked.children("*")[1].innerHTML + "'\n"
-            		    message += "And selected the menu item '" + $(this).text() + "'"
-            		    alert(message);
-            		    $contextMenu.hide();
-            		});
-            	  
-            	  $(document).click(function () {
-            		    $contextMenu.hide();
-            		});
-            	  
-            	});
         </script>
     </body>
 </html>

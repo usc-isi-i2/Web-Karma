@@ -61,7 +61,7 @@ g.ColumnNode:hover {
 /*	cursor: pointer; */
 }
 g.InternalNode:hover {
-/*	cursor: pointer; */
+	cursor: pointer;
 }
 
 g.Unassigned:hover {
