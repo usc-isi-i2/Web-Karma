@@ -96,6 +96,7 @@
 	                                <option>comma</option>
 	                                <option>tab</option>
 	                                <option>space</option>
+	                                <option>pipe</option>
 	                            </select>
 							</div>
 						</div>
