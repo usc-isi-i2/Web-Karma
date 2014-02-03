@@ -178,16 +178,6 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="tableColumnDialogs.jsp"></jsp:include>
 			  <jsp:include page="tableOptionsDialogs.jsp"></jsp:include>
 			  <jsp:include page="semanticTypes.jsp"></jsp:include>
-			  
-			  <div id="classDropdownMenu" class="dropdown clearfix contextMenu">
-				    <ul class="dropdown-menu" role="menu" style="display:block;position:static;margin-bottom:5px;">
-				      <li><a tabindex="-1" href="#">Add Incoming Link</a></li>
-				      <li><a tabindex="-1" href="#">Add Outgoing Link</a></li>
-				      <li class="divider"></li>
-				      <li><a tabindex="-1" href="#">Invoke Reconciliation Service</a></li>
-				      <li><a tabindex="-1" href="#">Invoke M/L Service</a></li>
-				    </ul>
-			</div>
 		</div>
 	
 		
@@ -485,7 +475,7 @@ and related projects, please see: http://www.isi.edu/integration
          
         <script>
             $(function() {
-
+				
                 // Assign style and handlers to table cell menu
                 styleAndAssignHandlersToTableCellMenu();
                
