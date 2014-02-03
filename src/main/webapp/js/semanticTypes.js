@@ -498,11 +498,7 @@ var SetSemanticTypeDialog = (function() {
 		                var json = $.parseJSON(xhr.responseText);
 		                var data = json.elements[0].data;
 		                $.each(data, function(index, clazz){
-		                	var index = clazz.metadata.newIndex;
-		                	var label = clazz.data + index + " (add)";
-		                	var id = clazz.metadata.URIorId + index;
-		                	var uri = clazz.metadata.URIorId;
-		                	result.push(ClassPropertyUI.getNodeObject(label, id, uri));
+		                	parseClassJSON(clazz, result);
 		                });
 		            },
 		        error :
@@ -511,6 +507,37 @@ var SetSemanticTypeDialog = (function() {
 		            }
 		    });
         	return result;
+        }
+        
+        function parseClassJSON(clazz, result) {
+        	var index = clazz.metadata.newIndex;
+        	var label = clazz.data;
+        	var id = clazz.metadata.URIorId;
+        	
+        	if(index) {
+        		label = label + index + " (add)";
+        		id = id + index;
+        	}
+        	
+        	var uri = clazz.metadata.URIorId;
+        	result.push(ClassPropertyUI.getNodeObject(label, id, uri));
+        	if(clazz.children) {
+        		$.each(clazz.children, function(index, clazzChild){
+                	parseClassJSON(clazzChild, result);
+                });
+        	}
+        }
+        
+        function parsePropertyJSON(prop, result) {
+        	var label = prop.data;
+        	var id = prop.metadata.URIorId;
+        	var uri = prop.metadata.URIorId;
+        	result.push(ClassPropertyUI.getNodeObject(label, id, uri));
+        	if(prop.children) {
+        		$.each(prop.children, function(index, propChild){
+        			parsePropertyJSON(propChild, result);
+                });
+        	}
         }
         
         function getPropertiesForClass(thisClass) {
@@ -536,10 +563,7 @@ var SetSemanticTypeDialog = (function() {
 		                var json = $.parseJSON(xhr.responseText);
 		                var data = json.elements[0].data;
 		                $.each(data, function(index, prop){
-		                	var label = prop.data;
-		                	var id = prop.metadata.URIorId;
-		                	var uri = prop.metadata.URIorId;
-		                	result.push(ClassPropertyUI.getNodeObject(label, id, uri));
+		                	parsePropertyJSON(prop, result);
 		                });
 		            },
 		        error :
@@ -569,11 +593,7 @@ var SetSemanticTypeDialog = (function() {
 		                var json = $.parseJSON(xhr.responseText);
 		                var data = json.elements[0].data;
 		                $.each(data, function(index, clazz){
-		                	var index = clazz.metadata.newIndex;
-		                	var label = clazz.data + index + " (add)";
-		                	var id = clazz.metadata.URIorId;
-		                	var uri = clazz.metadata.URIorId;
-		                	result.push(ClassPropertyUI.getNodeObject(label, id, uri));
+		                	parseClassJSON(clazz, result);
 		                });
 		            },
 		        error :
@@ -582,28 +602,6 @@ var SetSemanticTypeDialog = (function() {
 		            }
 		    });
         	return result;
-        	
-//        	var classMap = classAndPropertyListJson["elements"][0]["classMap"];
-//        	var classArrayLabels = [];
-//        	//[Object { nodeUri="http://lod.isi.edu/ontology/syllabus/Lecture", nodeId="http://lod.isi.edu/ontology/syllabus/Lecture1", nodeLabel="syll:Lecture1"}]
-//        	var uri, label, id;
-//        	$.each(classMap, function(index, clazz){
-//        		var found = false;
-//                for(var key in clazz) {
-//                    if(clazz.hasOwnProperty(key)) {
-//                        uri = clazz[key];
-//                        id = uri;
-//                        label = key;
-//                        found = true;
-//                        break;
-//                    }
-//                }
-//                if(found) {
-//                	classArrayLabels.push(ClassPropertyUI.getNodeObject(label, id, uri));
-//                }
-//            });
-//        	
-//        	return classArrayLabels;
         }
         
         function getClassLabels() {
@@ -622,27 +620,6 @@ var SetSemanticTypeDialog = (function() {
         }
         
         function getProperties() {
-//        	var propertyMap = classAndPropertyListJson["elements"][0]["propertyMap"];
-//        	var propertyArrayLabels = [];
-//        	//[Object { nodeUri="http://lod.isi.edu/ontology/syllabus/Lecture", nodeId="http://lod.isi.edu/ontology/syllabus/Lecture1", nodeLabel="syll:Lecture1"}]
-//        	
-//        	var uri, label, id;
-//        	$.each(propertyMap, function(index, prop){
-//        		var found = false;
-//                for(var key in prop) {
-//                    if(prop.hasOwnProperty(key)) {
-//                        uri = prop[key];
-//                        id = uri;
-//                        label = key;
-//                        found = true;
-//                        break;
-//                    }
-//                }
-//                if(found) {
-//                	propertyArrayLabels.push(ClassPropertyUI.getNodeObject(label, id, uri));
-//                }
-//            });
-//        	return propertyArrayLabels;
         	var info = new Object();
 		    info["workspaceId"] = $.workspaceGlobalInformation.id;
 		    info["command"] = "GetDataPropertyHierarchyCommand";

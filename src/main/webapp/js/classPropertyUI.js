@@ -99,6 +99,7 @@ function ClassPropertyUI(id,
 										.attr("type", "text")
 										.addClass("form-control")
 										.attr("id", id + "_classKeyword")
+										.attr("autocomplete", "off")
 										.val(defaultClassData.label)
 										.addClass("classInput")
 								);
@@ -112,6 +113,7 @@ function ClassPropertyUI(id,
 										.attr("type", "text")
 										.addClass("form-control")
 										.attr("id", id + "_propertyKeyword")
+										.attr("autocomplete", "off")
 										.val(defaultPropertyData.label)
 										.addClass("propertyInput")
 								);
@@ -163,7 +165,7 @@ function ClassPropertyUI(id,
 		
 		$(document).on('keyup', "#" + id + "_classKeyword",function(event){
 			 var keyword = $("#" + id + "_classKeyword").val();
-			 console.log("Class keyup: " + keyword);
+			 //console.log("Class keyup: " + keyword);
 			 $("div#" + id + "_classList1").jstree("search", keyword);
 			 $("div#" + id + "_classList2").jstree("search", keyword);
 			 
@@ -172,7 +174,7 @@ function ClassPropertyUI(id,
 		
 		$(document).on('keyup',  "#" + id + "_propertyKeyword", function(event) {
 			var keyword = $("#" + id + "_propertyKeyword").val();
-			 console.log("Property keyup: " + keyword);
+			 //console.log("Property keyup: " + keyword);
 			 $("div#" + id + "_propertyList1").jstree("search", keyword);
 			 $("div#" + id + "_propertyList2").jstree("search", keyword);
 		 });
