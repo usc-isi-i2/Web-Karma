@@ -502,14 +502,12 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 return this.getComputedTextLength();
         })
         .attr("x", function(d){ return this.getComputedTextLength()/2 * -1;})
-//        .on("click", function(d){
-//            if(d["nodeType"] == "InternalNode") {
-//                d["targetNodeId"] = d["id"];
-//                d.worksheetId = worksheetId;
-//                d.alignmentId = $(svg).data("alignmentId");
-//                showClassPopupMenu(d, this, d3.event);
-//            }
-//        })
+        .on("click", function(d){
+            if(d["nodeType"] == "InternalNode") {
+        		ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain,
+        				$(svg).data("alignmentId"), d3.event);
+            }
+        })
         ;
         
     node.insert("rect", "text")
@@ -550,18 +548,12 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             else
                 return d.width/2 * -1;
         })
-//        .on("click", function(d){
-//            if(d["nodeType"] == "ColumnNode" || d.nodeType == "Unassigned") {
-//                //changeSemanticType_d3(d, svg, d3.event);
-//            } else if(d["nodeType"] == "InternalNode") {
-//                d["targetNodeId"] = d["id"];
-//                d.worksheetId = worksheetId;
-//                d.alignmentId = $(svg).data("alignmentId");
-//                showClassPopupMenu(d, this, d3.event);
-//            }
-//
-//        
-//        })
+        .on("click", function(d){
+           if(d["nodeType"] == "InternalNode") {
+        	   ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain,
+        			   $(svg).data("alignmentId"), d3.event);
+            }
+        })
         ;
 
     node.insert("path")
@@ -587,14 +579,12 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 return d["width"]-5;
             }
         })
-//        .on("click", function(d){
-//        	if(d["nodeType"] == "InternalNode") {
-//                d["targetNodeId"] = d["id"];
-//                d.worksheetId = worksheetId;
-//                d.alignmentId = $(svg).data("alignmentId");
-//                showClassPopupMenu(d, this, d3.event);
-//            }
-//        })
+        .on("click", function(d){
+        	if(d["nodeType"] == "InternalNode") {
+        		ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain,
+        				$(svg).data("alignmentId"), d3.event);
+            }
+        })
         ;
 
     /*** Check for collisions between labels and rectangles ***/

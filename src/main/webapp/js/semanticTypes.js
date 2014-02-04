@@ -510,7 +510,15 @@ var SetSemanticTypeDialog = (function() {
         }
         
         function parseClassJSON(clazz, result) {
+        	var uri = clazz.metadata.URIorId;
         	var index = clazz.metadata.newIndex;
+        	
+        	if(clazz.metadata.isExistingSteinerTreeNode) {
+        		if(index) {
+        			uri = uri.substr(0, uri.lastIndexOf(index));
+        		}
+        		index = false;
+        	}
         	var label = clazz.data;
         	var id = clazz.metadata.URIorId;
         	
@@ -519,7 +527,7 @@ var SetSemanticTypeDialog = (function() {
         		id = id + index;
         	}
         	
-        	var uri = clazz.metadata.URIorId;
+        	
         	result.push(ClassPropertyUI.getNodeObject(label, id, uri));
         	if(clazz.children) {
         		$.each(clazz.children, function(index, clazzChild){
@@ -867,6 +875,368 @@ var SetSemanticTypeDialog = (function() {
         	columnId = colId;
         	columnTitle = colTitle;
         	dialog.modal({keyboard:true, show:true});
+        };
+        
+        
+        return {	//Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    
+})();
+
+
+
+var IncomingOutgoingLinksDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#incomingOutgoingLinksDialog");
+    	var worksheetId, columnId, alignmentId, linkType;
+    	var columnLabel, columnUri, columnDomain;
+    	
+    	var selectedClass, selectedProperty;
+    	
+    	function init() {
+    		//Initialize what happens when we show the dialog
+    		dialog.on('show.bs.modal', function (e) {
+				hideError();
+				selectedClass = {label:"", id:"", uri:""};
+				selectedProperty = {label:"", id:"", uri:""};
+				setLinkLabel();
+				
+				$("div.main", dialog).empty();
+				
+				var classPropertyUI = new ClassPropertyUI("incomingOutgoingLinksDialog_inner",  
+						getExistingClassNodes, getPropertyForClass, 
+						getAllClassNodes, getAllProperties,
+						true,
+						200);
+	            
+	            classPropertyUI.onClassSelect(selectClassInputValue);
+	            classPropertyUI.onPropertySelect(selectPropertyInputValue);
+	            classPropertyUI.setClassRefresh(false);
+	            
+				if(linkType == "incoming") {
+					classPropertyUI.setClassLabel("From Class");
+				} else {
+					classPropertyUI.setClassLabel("To Class");
+				}
+				
+				$("div.main", dialog).append(classPropertyUI.generateJS());
+				
+
+	        	$("#incomingOutgoingLinksDialog_title", dialog).text("Add " + linkType + 
+	        			" link for " + columnLabel);
+			});
+			
+			//Initialize handler for Save button
+			//var me = this;
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e);
+			});
+    	}
+    	
+    	function selectClassInputValue(clazz) {
+    		selectedClass = clazz;
+    		setLinkLabel();
+    	}
+    	
+    	function selectPropertyInputValue(prop) {
+    		selectedProperty = prop;
+    		setLinkLabel();
+    	}
+    	
+    	function setLinkLabel() {
+    		var direction = (linkType == "incoming")? "from" : "to";
+    		$("#finalLink", dialog).text("Add link '" + selectedProperty.label + "' "  + direction + " '" + selectedClass.label + "'");
+    	}
+    	
+    	function getExistingClassNodes() {
+    		var info = new Object();
+    	    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    	    info["command"] = "GetInternalNodesListOfAlignmentCommand";
+    	    info["alignmentId"] = alignmentId;
+    	    info["nodesRange"] = "existingTreeNodes"; //allGraphNodes";
+    	    var result = [];
+    	    var returned = $.ajax({
+    	        url: "RequestController",
+    	        type: "POST",
+    	        data : info,
+    	        dataType : "json",
+    	        async : false,
+    	        complete :
+    	            function (xhr, textStatus) {
+    	                var json = $.parseJSON(xhr.responseText);
+    	                result = parseClassList(json, true);
+    	            },
+    	        error :
+    	            function (xhr, textStatus) {
+    	                alert("Error occured while getting nodes list!");
+    	            }
+    	    });
+    	    return result;
+    	}
+    	
+    	
+    	function getAllClassNodes() {
+    		var info = new Object();
+    	    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    	    info["command"] = "GetInternalNodesListOfAlignmentCommand";
+    	    info["alignmentId"] = alignmentId;
+    	    
+            info["nodesRange"] = "allGraphNodes";
+            var result = [];
+            $.ajax({
+            	url: "RequestController",
+            	type: "POST",
+            	data: info,
+            	dataType: "json",
+            	async : false,
+            	complete: 
+            		function(xhr, textStatus) {
+            			var json = $.parseJSON(xhr.responseText);
+            			result = parseClassList(json, true);
+            		},
+            	error:
+            		function(xhr, textStatus) {
+            			alert("Error occured while getting nodes list!");
+            		}
+            });
+            return result;
+    	}
+    	
+    	function parseClassList(json, sortNodes) {
+    		var nodes = [];
+    		$.each(json["elements"], function(index, element) {
+    	        if(element["updateType"] == "InternalNodesList") {
+    	            if(sortNodes) {
+    		        	element["nodes"].sort(function(a,b) {
+    		                return a["nodeLabel"].toUpperCase().localeCompare(b["nodeLabel"].toUpperCase());
+    		            });
+    	            }
+    	            
+    	            $.each(element["nodes"], function(index2, node) {
+    	            	var nodeData = ClassPropertyUI.getNodeObject(node["nodeLabel"], node["nodeId"], node["nodeUri"]);
+    	            	nodes.push(nodeData);
+    	            });
+    	        }
+    	    });
+    		return nodes;
+    	}
+    	
+    	
+    	function getAllProperties() {
+    		var info = new Object();
+    	    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    	    info["command"] = "GetDataPropertyHierarchyCommand";
+    	    
+    	    var result = [];
+    	    var returned = $.ajax({
+    	        url: "RequestController",
+    	        type: "POST",
+    	        data : info,
+    	        dataType : "json",
+    	        async: false,
+    	        complete :
+    	            function (xhr, textStatus) {
+    	                var json = $.parseJSON(xhr.responseText);
+    	                result = parseDataPropertyList(json, true);
+    	            },
+    	        error :
+    	            function (xhr, textStatus) {
+    	                alert("Error occured while getting property list!");
+    	            }
+    	    });
+    	    return result;
+    	}
+    	
+    	function getPropertyForClass(selectedClass) {
+    		var info = new Object();
+    	    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    	    info["command"] = "GetLinksOfAlignmentCommand";
+    	    info["alignmentId"] = alignmentId;
+    	    var startNodeClass = columnDomain;
+    	    
+    	    info["linksRange"] = "linksWithDomainAndRange";
+    	    if(linkType == "incoming") {
+    	    	info["domain"] = selectedClass.uri;
+    	    	info["range"] = startNodeClass;
+    	    } else if(linkType == "outgoing") {
+    	    	info["domain"] = startNodeClass;
+    	    	info["range"] = selectedClass.uri;
+    	    }
+    	    var result = [];
+    	    var returned = $.ajax({
+    	        url: "RequestController",
+    	        type: "POST",
+    	        data : info,
+    	        dataType : "json",
+    	        async: false,
+    	        complete :
+    	            function (xhr, textStatus) {
+    	                var json = $.parseJSON(xhr.responseText);
+    	                result = parseDataPropertyList(json, true);
+    	            },
+    	        error :
+    	            function (xhr, textStatus) {
+    	                alert("Error occured while getting property list!");
+    	            }
+    	    });
+    	    return result;
+    	}
+    	
+    	function parseDataPropertyList(json, sortNodes) {
+    		var nodes = [];
+    		$.each(json["elements"], function(index, element) {
+    	        if(element["updateType"] == "DataPropertyListUpdate" || element["updateType"] == "DataPropertiesForClassUpdate") {
+    	            if(sortNodes) {
+    		        	element["data"].sort(function(a,b) {
+    		                return a["data"].toUpperCase().localeCompare(b["data"].toUpperCase());
+    		            });
+    	            }
+    	            
+    	            $.each(element["data"], function(index2, node) {
+    	            	var label = node.data;
+    	            	var uri = node.metadata.URIorId;
+    	            	var p = ClassPropertyUI.getNodeObject(label, uri, uri);
+    	            	nodes.push(p);
+    	            });
+    	        } else if(element["updateType"] == "LinksList") {
+    	        	 if(sortNodes) {
+    	 	        	element["edges"].sort(function(a,b) {
+    	 	                return a["edgeLabel"].toUpperCase().localeCompare(b["edgeLabel"].toUpperCase());
+    	 	            });
+    	             }
+    	             
+    	             $.each(element["edges"], function(index2, node) {
+    	            	 var p = ClassPropertyUI.getNodeObject(node["edgeLabel"], 
+    	            			 node["edgeId"], node["edgeId"]);
+    	             	 nodes.push(p);
+    	                 
+    	             });
+    	        }
+    	    });
+    		return nodes;
+    	}
+
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError(err) {
+			if(err) {
+				$("div.error", dialog).text(err);
+			}
+			$("div.error", dialog).show();
+		}
+        
+        function saveDialog(e) {
+        	var startNode = columnId;
+        	
+        	if(selectedClass.label == "") {
+        		showError("Please select the class");
+        		return false;
+        	}
+        	if(selectedProperty.label == "") {
+        		showError("Please select the property");
+        		return false;
+        	}
+        	
+        	 var info = new Object();
+        	 info["workspaceId"] = $.workspaceGlobalInformation.id;
+        	 info["command"] = "ChangeInternalNodeLinksCommand";
+
+        	 // Prepare the input for command
+        	 var newInfo = [];
+        	 
+        	// Put the old edge information
+        	var initialEdges = [];
+        	newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
+        	    
+        	newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
+        	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+        	 
+        	 // Put the new edge information
+        	 var newEdges = [];
+        	 var newEdgeObj = {};
+        	 
+        	 var source, target;
+        	 var property = selectedProperty.id;
+        	    
+        	if(linkType == "incoming") {
+        		target = startNode;
+        		source = selectedClass.id;
+        	} else if(linkType == "outgoing") {
+        		source = startNode;
+        		target = selectedClass.id;
+        	} else {
+        		alert("Invalid linkType: " + linkType);
+        		return;
+        	}
+        	
+        	newEdgeObj["edgeSourceId"] = source;
+            newEdgeObj["edgeTargetId"] = target;
+            newEdgeObj["edgeId"] = property;
+            newEdges.push(newEdgeObj);
+            
+        	newInfo.push(getParamObject("newEdges", newEdges, "other"));
+        	info["newInfo"] = JSON.stringify(newInfo);
+        	info["newEdges"] = newEdges;
+        	
+        	showLoading(worksheetId);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        var json = $.parseJSON(xhr.responseText);
+                        parse(json);
+                        hideLoading(worksheetId);
+                        hide();
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while getting nodes list!");
+                        hideLoading(worksheetId);
+                        hide();
+                    }
+            });
+        };
+        
+        function hide() {
+        	dialog.modal('hide');
+        }
+        
+        function show(wsId, colId, alignId,
+        		colLabel, colUri, colDomain, type) {
+        	worksheetId = wsId;
+        	columnId = colId;
+        	alignmentId = alignId;
+        	
+        	columnLabel = colLabel;
+        	columnUri = colUri;
+        	columnDomain = colDomain;
+        	
+        	linkType = type;
+        	dialog.modal({keyboard:true, show:true});
+        	
         };
         
         

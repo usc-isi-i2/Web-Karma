@@ -12,6 +12,11 @@ function ClassPropertyUI(id,
 	var defaultClassData = {"uri":"", "label":"", "id":""};
 	var defaultPropertyData = {"uri":"", "label":"", "id":""};
 	
+	var classLabel = "Class";
+	var propertyLabel = "Property";
+	var refreshClasses = true;
+	var refreshProperties = true
+	
 	function populateClassList(dataArray, list1, list2) {
 		console.log("PopulateClassList:" + dataArray.length);
 		if(dataArray.length == 0) {
@@ -40,8 +45,11 @@ function ClassPropertyUI(id,
 	                $(list2).jstree("deselect_all");
 	                $(list1).jstree("open_node", a);
 	                
-	                var properties = propertyFuncTop(classData);
-	                populatePropertyList(properties, propertyList1, propertyList2);
+	                if(refreshProperties) {
+	                	var properties = propertyFuncTop(classData);
+	                	populatePropertyList(properties, propertyList1, propertyList2);
+	                }
+	                
 	                $("#" + id + "_classKeyword").val(classData.label);
 	                
 	                if(classSelectorCallback != null)
@@ -77,8 +85,11 @@ function ClassPropertyUI(id,
 	                $(list2).jstree("deselect_all");
 	                $(list1).jstree("open_node", a);
 	                
-	                var classes = classFuncTop(propertyData);
-	                populateClassList(classes, classList1, classList2);
+	                if(refreshClasses) {
+		                var classes = classFuncTop(propertyData);
+		                populateClassList(classes, classList1, classList2);
+	                }
+	                
 	                $("#" + id + "_propertyKeyword").val(propertyData.label);
 	                if(propertySelectorCallback != null) {
 	                	propertySelectorCallback(propertyData);
@@ -87,13 +98,29 @@ function ClassPropertyUI(id,
 	    }
 	}
 	
+	this.setClassLabel = function(label) {
+		classLabel = label;
+	};
+	
+	this.setPropertyLabel = function(label) {
+		propertyLabel = label;
+	};
+	
+	this.setClassRefresh = function(refresh) {
+		refreshClasses = refresh;
+	};
+	
+	this.setPropertyRefresh = function(refresh) {
+		refreshProperties = refresh
+	};
+	
 	this.generateJS = function() {
 		classPropertyDiv = $("<div>").attr("id", id);
 		var classInputDiv = $("<div>")
 								.addClass("col-sm-6")
 								.addClass("form-group")
 								.append($("<label>")
-										.text("Class")
+										.text(classLabel)
 										.attr("for", id + "_classKeyword"))
 								.append($("<input>")
 										.attr("type", "text")
@@ -107,7 +134,7 @@ function ClassPropertyUI(id,
 								.addClass("col-sm-6")
 								.addClass("form-group")
 								.append($("<label>")
-										.text("Property")
+										.text(propertyLabel)
 										.attr("for", id + "_propertyKeyword"))
 								.append($("<input>")
 										.attr("type", "text")

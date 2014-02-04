@@ -6,6 +6,9 @@ var ClassDropdownMenu = (function() {
 	
     function PrivateConstructor() {
     	var menuId = "classDropdownMenu";
+    	var worksheetId, columnId;
+    	var columnUri, columnLabel, columnDomain, alignmentId;
+    	
     	var options = [
     		   	        //Title, function to call, needs file upload     
     		   	        [ "Add Incoming Link", addIncomingLink],
@@ -13,30 +16,67 @@ var ClassDropdownMenu = (function() {
     		   	        [ "divider" , null ],
     		   	        
     		   			[	"Invoke Reconciliation Service" , invokeReconciliationService ],
-    		   			[ "Invoke M/L Service", invokeMLService ],
+    		   		/*	[ "Invoke M/L Service", invokeMLService ], */
     		   			
     		   			
     		   	];
     	
     	function init() {
     		generateJS();
-			 
     	}
     	
     	function hide() {
     		$("#" + menuId).hide();
+    		$(document).off('click', hide);
     	}
     	
     	function addIncomingLink() {
     		console.log("addIncomingLink");
+    		IncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
+    				columnId, alignmentId,
+    				columnLabel, columnUri, columnDomain,
+    				"incoming");
     	};
     	
     	function addOutgoingLink() {
     		console.log("addOutgoingLink");
+    		IncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
+    				columnId, alignmentId,
+    				columnLabel, columnUri, columnDomain,
+    				"outgoing");
     	}
     	
     	function invokeReconciliationService() {
     		console.log("invokeReconciliationService");
+    		var info = new Object();
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "InvokeRubenReconciliationService";
+
+            var newInfo = [];
+            newInfo.push(getParamObject("alignmentNodeId", columnId, "other"));
+            newInfo.push(getParamObject("worksheetId", worksheetId, "other"));
+
+            info["newInfo"] = JSON.stringify(newInfo);
+
+            showLoading(worksheetId);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        parse(json);
+                        hideLoading(worksheetId);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while exporting CSV!" + textStatus);
+                        hideLoading(worksheetId);
+                    }
+            });
     	}
     	
     	function invokeMLService() {
@@ -77,28 +117,33 @@ var ClassDropdownMenu = (function() {
     		container.append(div);
     	}
     	
-    	function attach(nodeScript) {
-    		$("body").on("click", nodeScript, function(e) {
-    			//console.log("Click for opening Menu");
-				$("#" + menuId).css({
-			      display: "block",
-			      position: "absolute",
-			      left: e.pageX,
-			      top: e.pageY
-			    });
-			    return false;
-			  });
+    	function show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, p_columnDomain, p_alignmentId, event) {
+    		worksheetId = p_worksheetId;
+    		columnLabel = p_columnLabel;
+    		columnId = p_columnId;
+    		columnUri = p_columnUri;
+    		columnDomain = p_columnDomain;
+    		alignmentId = p_alignmentId;
     		
-    		 $(document).click(function () {
-				 hide();
-			  });
+    		
+    			//console.log("Click for opening Menu");
+			$("#" + menuId).css({
+		      display: "block",
+		      position: "absolute",
+		      left: event.pageX,
+		      top: event.pageY
+		    });
+			
+			window.setTimeout(function() {
+				$(document).on('click', hide);
+					 
+			}, 10);
         };
         
         
         return {	//Return back the public methods
-        	attach : attach,
-        	init : init,
-        	generateJS : generateJS
+        	show : show,
+        	init : init
         };
     };
 
@@ -109,23 +154,11 @@ var ClassDropdownMenu = (function() {
     	}
     	return instance;
     }
-   
-    function attach(nodeJS) {
-    	if(!instance) {
-    		getInstance();
-    	}
-    	instance.attach(nodeJS);
-    }
     
     return {
-    	getInstance : getInstance,
-    	attach : attach
+    	getInstance : getInstance
     };
     	
     
 })();
     	
-    	
-
-ClassDropdownMenu.getInstance().attach("div svg g.InternalNode");
-    

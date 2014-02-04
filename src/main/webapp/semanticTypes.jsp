@@ -89,5 +89,29 @@
 </div><!-- /.modal -->
 
 
+<div class="modal fade" id="incomingOutgoingLinksDialog" tabindex="-1">
+  <div class="modal-dialog">
+		<div class="modal-content">
+			<form class="bs-example bs-example-form" role="form">
+		     <div class="modal-header">
+			      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			       <h4 class="modal-title"><span id="incomingOutgoingLinksDialog_title"></span></h4>
+			  </div>
+			  <div class="modal-body">
+			  	
+			  		<div class="main"></div>
+                	<div id="finalLink" style="margin-top:10px"></div>
+					<div class="error" style="display: none">Please select the file format!</div>
+				
+			  </div>
+			  <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			        <button type="submit" class="btn btn-primary" id="btnSave">Save</button>
+			  </div>
+			 </form>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
         
 </body>
