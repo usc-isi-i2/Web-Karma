@@ -410,6 +410,7 @@ and related projects, please see: http://www.isi.edu/integration
 		</div>
 		<div id="columnHeadingDropDownMenu" class="ui-corner-all" style="display: none">
             <button id="addColumnButton">Add Column</button>
+            <button id="addRowButton">Add Row</button>
             <button id="pyTransform">PyTransform</button>
             <button id="invokeServiceButton">Invoke Service</button>
             <button id="renameColumnButton">Rename</button>
