@@ -80,6 +80,7 @@ public class CandidateSteinerSets {
 			
 			this.steinerSets.clear();
 			
+//			for (int i = 0; i < newSteinerNodes.size(); i++) // do not cut off
 			for (int i = 0; i < ModelingConfiguration.getMaxQueuedMappigs() && i < newSteinerNodes.size(); i++)
 				this.steinerSets.add(newSteinerNodes.get(i));
 
