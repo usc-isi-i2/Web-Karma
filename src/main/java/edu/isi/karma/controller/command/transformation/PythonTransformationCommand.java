@@ -146,13 +146,13 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 				String transformedValue = pyHelper.getPyObjectValueAsString(output);
 				addTransformedValue(transformedRows, row, transformedValue);
 			} catch (PyException p) {
-				logger.error("error in evaluation python, skipping one row");
+				logger.info("error in evaluation python, skipping one row");
 				// Error occured in the Python method execution
 				addTransformedValue(transformedRows, row, errorDefaultValue);
 				addError(errorValues, row, counter, p.value);
 			} catch (Exception t) {
 				// Error occured in the Python method execution
-				logger.debug("Error occured while transforming.", t);
+				logger.info("Error occured while transforming, using default value.", t);
 				rowToValueMap.put(row.getId(), errorDefaultValue);
 			}
 			if (limit != null && ++counter >= limit) {
