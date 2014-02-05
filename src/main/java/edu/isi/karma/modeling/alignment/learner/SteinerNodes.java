@@ -384,9 +384,10 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		measures[0] = confidence;
 		measures[1] = sizeReduction;
 		measures[2] = coherence;
+//		this.score = sizeReduction;
+//		this.score = coherence;
 		this.score = getHarmonicMean(measures);
 		this.score = getArithmeticMean(measures);
-
 	}
 
 	@Override
