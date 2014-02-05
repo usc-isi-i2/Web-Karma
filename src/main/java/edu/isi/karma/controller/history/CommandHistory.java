@@ -132,20 +132,21 @@ public class CommandHistory {
 		effects.append(command.doIt(workspace));
 		command.setExecuted(true);
 		
-		if(!ModelingConfiguration.getManualAlignment()) {
-			if (command.getCommandType() != CommandType.notInHistory) {
-				redoStack.clear();
-				
-				// Send the history before the command we just executed.
-				if (lastCommandWasUndo && !(command instanceof UndoRedoCommand)) {
-					effects.append(new UpdateContainer(new HistoryUpdate(this)));
-				}
-				lastCommandWasUndo = false;
-				
-				history.add(command);
-				effects.add(new HistoryAddCommandUpdate(command));
-			}
+		
+		if (command.getCommandType() != CommandType.notInHistory) {
+			redoStack.clear();
 			
+			// Send the history before the command we just executed.
+			if (lastCommandWasUndo && !(command instanceof UndoRedoCommand)) {
+				effects.append(new UpdateContainer(new HistoryUpdate(this)));
+			}
+			lastCommandWasUndo = false;
+			
+			history.add(command);
+			effects.add(new HistoryAddCommandUpdate(command));
+		}
+		
+		if(!ModelingConfiguration.getManualAlignment()) {
 			// Save the modeling commands
 			if (!(command instanceof ResetKarmaCommand)) {
 				CommandHistoryWriter chWriter = new CommandHistoryWriter(history, workspace);
