@@ -932,11 +932,7 @@ var IncomingOutgoingLinksDialog = (function() {
 	            classPropertyUI.onPropertySelect(selectPropertyInputValue);
 	            classPropertyUI.setClassRefresh(false);
 	            classPropertyUI.setClassHeadings("Classes in Model", "All Classes");
-	            if(linkType == "incoming") {
-	            	classPropertyUI.setPropertyHeadings("Properties in Domain", "All Properties");
-	            } else {
-	            	classPropertyUI.setPropertyHeadings("Properties in Range", "All Properties");
-	            }
+	            	classPropertyUI.setPropertyHeadings("Compatible Properties", "All Properties");
 	            
 				if(linkType == "incoming") {
 					classPropertyUI.setClassLabel("From Class");
