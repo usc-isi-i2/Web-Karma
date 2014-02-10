@@ -15,7 +15,9 @@ function ClassPropertyUI(id,
 	var classLabel = "Class";
 	var propertyLabel = "Property";
 	var refreshClasses = true;
-	var refreshProperties = true
+	var refreshProperties = true;
+	var textForClassList1 = "", textForClassList2 = "";
+	var textForPropertyList1 = "", textForPropertyList2 = "";
 	
 	function populateClassList(dataArray, list1, list2) {
 		console.log("PopulateClassList:" + dataArray.length);
@@ -29,7 +31,7 @@ function ClassPropertyUI(id,
 	            "themes" : {
 	                "theme" : "proton",
 	                "url": "uiLibs/jquery/css/jstree-themes/proton/style.css",
-	                "dots" : true,
+	                "dots" : false,
 	                "icons" : false
 	            },
 	            "search" : {
@@ -69,7 +71,7 @@ function ClassPropertyUI(id,
 	            "themes" : {
 	                "theme" : "proton",
 	                "url": "uiLibs/jquery/css/jstree-themes/proton/style.css",
-	                "dots" : true,
+	                "dots" : false,
 	                "icons" : false
 	            },
 	            "search" : {
@@ -157,22 +159,26 @@ function ClassPropertyUI(id,
 		
 		classPropertyDiv.append(row1);
 		
-		classList1 = $("<div>").attr("id", id + "_classList1").css("overflow","auto").css("max-height", maxHeight + "px");
-		classList2 = $("<div>").attr("id", id + "_classList2").css("overflow","auto").css("max-height", maxHeight + "px");;
-		propertyList1 = $("<div>").attr("id", id + "_propertyList1").css("overflow","auto").css("max-height", maxHeight + "px");;
-		propertyList2 = $("<div>").attr("id", id + "_propertyList2").css("overflow","auto").css("max-height", maxHeight + "px");;
+		classList1 = $("<div>").attr("id", id + "_classList1").css("overflow","auto").css("height", maxHeight + "px");
+		classList2 = $("<div>").attr("id", id + "_classList2").css("overflow","auto").css("height", maxHeight + "px");;
+		propertyList1 = $("<div>").attr("id", id + "_propertyList1").css("overflow","auto").css("height", maxHeight + "px");;
+		propertyList2 = $("<div>").attr("id", id + "_propertyList2").css("overflow","auto").css("height", maxHeight + "px");;
 		
 		var row2 =  $("<div>").addClass("row");
 		var classListDiv = $("<div>")
 								.addClass("col-sm-6")
+								.append($("<div>").addClass("separatorWithText").text(textForClassList1))
 								.append(classList1)
-								.append($("<div>").addClass("separator"))
+								.append($("<div>").addClass("separatorWithText").text(textForClassList2))
+								//.append($("<div>").addClass("separator"))
 								.append(classList2);
 						
 		var propertyListDiv = $("<div>")
 								.addClass("col-sm-6")
+								.append($("<div>").addClass("separatorWithText").text(textForPropertyList1))
 								.append(propertyList1)
-								.append($("<div>").addClass("separator"))
+								.append($("<div>").addClass("separatorWithText").text(textForPropertyList2))
+								//.append($("<div>").addClass("separator"))
 								.append(propertyList2);
 		if(isClassFirst) {
 			row2.append(classListDiv);
@@ -236,6 +242,16 @@ function ClassPropertyUI(id,
 		defaultPropertyData.label = label;
 		defaultPropertyData.id = id;
 		defaultPropertyData.uri = uri;
+	};
+	
+	this.setPropertyHeadings = function(heading1, heading2) {
+		textForPropertyList1 = heading1;
+		textForPropertyList2 = heading2;
+	};
+	
+	this.setClassHeadings = function(heading1, heading2) {
+		textForClassList1 = heading1;
+		textForClassList2 = heading2;
 	}
 };
 

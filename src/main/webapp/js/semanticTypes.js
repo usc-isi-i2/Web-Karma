@@ -706,7 +706,7 @@ var SetSemanticTypeDialog = (function() {
             		getClassesForProperty, getPropertiesForClass, 
             		getClasses, getProperties,
             		false,
-            		75);
+            		100);
             
             if($(parentTrTag).data("ResourceType") == "Class") {
                 var classLabel = $(parentTrTag).data("DisplayLabel");
@@ -722,6 +722,8 @@ var SetSemanticTypeDialog = (function() {
                classPropertyUI.setDefaultProperty(defaultProperty, defaultPropertyUri, defaultPropertyUri);
             }
             
+            classPropertyUI.setClassHeadings("Classes with Selected Property", "All Classes");
+            classPropertyUI.setPropertyHeadings("Properties of Selected Class", "All Properties");
             
             classPropertyUIDiv = classPropertyUI.generateJS();
             var editTr = $("<tr>").addClass("editRow")
@@ -929,6 +931,12 @@ var IncomingOutgoingLinksDialog = (function() {
 	            classPropertyUI.onClassSelect(selectClassInputValue);
 	            classPropertyUI.onPropertySelect(selectPropertyInputValue);
 	            classPropertyUI.setClassRefresh(false);
+	            classPropertyUI.setClassHeadings("Classes in Model", "All Classes");
+	            if(linkType == "incoming") {
+	            	classPropertyUI.setPropertyHeadings("Properties in Domain", "All Properties");
+	            } else {
+	            	classPropertyUI.setPropertyHeadings("Properties in Range", "All Properties");
+	            }
 	            
 				if(linkType == "incoming") {
 					classPropertyUI.setClassLabel("From Class");
@@ -962,8 +970,8 @@ var IncomingOutgoingLinksDialog = (function() {
     	}
     	
     	function setLinkLabel() {
-    		var direction = (linkType == "incoming")? "from" : "to";
-    		$("#finalLink", dialog).text("Add link '" + selectedProperty.label + "' "  + direction + " '" + selectedClass.label + "'");
+//    		var direction = (linkType == "incoming")? "from" : "to";
+//    		$("#finalLink", dialog).text("Add link '" + selectedProperty.label + "' "  + direction + " '" + selectedClass.label + "'");
     	}
     	
     	function getExistingClassNodes() {
@@ -1026,12 +1034,22 @@ var IncomingOutgoingLinksDialog = (function() {
     	        if(element["updateType"] == "InternalNodesList") {
     	            if(sortNodes) {
     		        	element["nodes"].sort(function(a,b) {
-    		                return a["nodeLabel"].toUpperCase().localeCompare(b["nodeLabel"].toUpperCase());
+    		        		var label1 = a["nodeLabel"];
+        	            	if(label1.indexOf(":") == -1)
+        	            		label1 = a["nodeUri"] + "/" + label1;
+        	            	var label2 = b["nodeLabel"];
+        	            	if(label2.indexOf(":") == -1)
+        	            		label2 = b["nodeUri"] + "/" + label2;
+        	            	
+    		                return label1.toUpperCase().localeCompare(label2.toUpperCase());
     		            });
     	            }
     	            
     	            $.each(element["nodes"], function(index2, node) {
-    	            	var nodeData = ClassPropertyUI.getNodeObject(node["nodeLabel"], node["nodeId"], node["nodeUri"]);
+    	            	var label = node["nodeLabel"];
+    	            	if(label.indexOf(":") == -1)
+    	            		label = node["nodeUri"] + "/" + label;
+    	            	var nodeData = ClassPropertyUI.getNodeObject(label, node["nodeId"], node["nodeUri"]);
     	            	nodes.push(nodeData);
     	            });
     	        }

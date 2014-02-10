@@ -49,7 +49,7 @@
 }
 .jstree.jstree-proton a {
   position: relative;
-  max-width: 85%;
+/*  max-width: 85%; */
   display: inline-block;
   height: 24px;
   padding: 4px 6px 3px;
@@ -60,7 +60,7 @@
   color: inherit;
   -webkit-transition: all 0.1s;
   transition: all 0.1s;
-  overflow: hidden;
+/*  overflow: hidden; */
   text-overflow: ellipsis;
   white-space: nowrap;
 }

@@ -100,7 +100,6 @@
 			  <div class="modal-body">
 			  	
 			  		<div class="main"></div>
-                	<div id="finalLink" style="margin-top:10px"></div>
 					<div class="error" style="display: none">Please select the file format!</div>
 				
 			  </div>

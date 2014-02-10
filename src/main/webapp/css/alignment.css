@@ -218,3 +218,11 @@ div.separator {
 	margin-top: 2px;
 	margin-bottom: 2px;
 }
+div.separatorWithText {
+	padding: 3px;
+	color: white;
+	width: 100%;
+	background: #AAAAAA;
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
