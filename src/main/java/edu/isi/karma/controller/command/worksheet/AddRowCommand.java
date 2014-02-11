@@ -107,6 +107,9 @@ public class AddRowCommand extends WorksheetCommand {
 			worksheet.addRow(workspace.getFactory());
 			UpdateContainer c =  new UpdateContainer();		
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			
+			/** Add the alignment update **/
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {
 			logger.error("Error in AddColumnCommand" + e.toString());
