@@ -448,7 +448,24 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             return "translate(" + (this.getComputedTextLength()/2 * -1) + ")";
             // return "translate(" + (this.getComputedTextLength()/2 * -1) + ") rotate(-8 " +X+","+Y+ ")";  
         }).on("click", function(d){
-            showAlternativeLinksDialog(d, svg, d3.event);
+            //showAlternativeLinksDialog(d, svg, d3.event);
+        	
+        	PropertyDropdownMenu.getInstance().show(
+        			$(svg).data("worksheetId"),
+        			$(svg).data("alignmentId"),
+        			d["id"],
+        			d["linkUri"],
+        			d["sourceNodeId"],
+        			d.source.nodeType,
+        			d.source.label,
+        			d.source.nodeDomain,
+        			d.source.id,
+        			d["targetNodeId"],
+        			d.target.nodeType,
+        			d.target.label,
+        			d.target.nodeDomain,
+        			d.target.id,
+        			d3.event);
         }).on("mouseover", function(d){
             d3.selectAll("g.InternalNode").each(function(d2,i) {
                 if(d2 == d.source) {
