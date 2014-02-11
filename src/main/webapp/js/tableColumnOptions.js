@@ -11,6 +11,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 			[	"Add Column" , addColumn ],
 			[ "Rename", renameColumn ],
 			[ "Split Column", splitColumn ],
+			[ "Add Row", addRow],
 			[ "divider" , null ],
 			
 			[ "PyTransform" , pyTransform ],
@@ -30,6 +31,44 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	
 	function setSemanticType() {
 		SetSemanticTypeDialog.getInstance().show(worksheetId, columnId, columnTitle);
+	}
+	
+	function addRow() {
+		var info = new Object();
+	    info["worksheetId"] = worksheetId;
+	    info["workspaceId"] = $.workspaceGlobalInformation.id;
+	    info["hNodeId"] = columnId;
+	    info["hTableId"] = "";
+	    info["command"] = "AddRowCommand";
+
+	    var newInfo = [];   // Used for commands that take JSONArray as input
+	    newInfo.push(getParamObject("hNodeId", columnId,"hNodeId"));
+	    newInfo.push(getParamObject("hTableId", "","other"));
+	    newInfo.push(getParamObject("worksheetId",worksheetId,"worksheetId"));
+	    
+	    info["newInfo"] = JSON.stringify(newInfo);
+
+	    //console.log(info["worksheetId"]);
+	    showLoading(info["worksheetId"]);
+
+	    var returned = $.ajax({
+	        url: "RequestController",
+	        type: "POST",
+	        data : info,
+	        dataType : "json",
+	        complete :
+	            function (xhr, textStatus) {
+	                //alert(xhr.responseText);
+	                var json = $.parseJSON(xhr.responseText);
+	                parse(json);
+	                hideLoading(info["worksheetId"]);
+	            },
+	        error :
+	            function (xhr, textStatus) {
+	                alert("Error occured while removing semantic types!" + textStatus);
+	                hideLoading(info["worksheetId"]);
+	            }
+	    });
 	}
 	
 	function addColumn() {
