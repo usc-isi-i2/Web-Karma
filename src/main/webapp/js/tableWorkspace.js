@@ -133,8 +133,6 @@ function hideTableCellMenuButton() {
 }
 
 
-
-
 function styleAndAssignHandlersToMergeButton() {
     $("button#mergeButton").button().click(function(){
         var info = new Object();

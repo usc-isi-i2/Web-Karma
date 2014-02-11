@@ -179,8 +179,7 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="tableOptionsDialogs.jsp"></jsp:include>
 			  <jsp:include page="semanticTypes.jsp"></jsp:include>
 		</div>
-	
-		
+
         <div id="tableCellToolBarMenu" class="ui-corner-all" style="display: none">
             <button id="editCellButton">
                 Edit

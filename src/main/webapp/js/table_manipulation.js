@@ -143,6 +143,48 @@ function submitAddNewColumn() {
     });
 }
 
+function submitAddNewRow() {
+    var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+    var selectedHNodeId = columnHeadingMenu.data("parentCellId");
+    var worksheetId = $("td#" + selectedHNodeId).parents("div.Worksheet").attr("id");
+
+    var info = new Object();
+    info["worksheetId"] = $("td#" + selectedHNodeId).parents("div.Worksheet").attr("id");
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["hNodeId"] = selectedHNodeId;
+    info["hTableId"] = "";
+    info["command"] = "AddRowCommand";
+
+    var newInfo = [];   // Used for commands that take JSONArray as input
+    newInfo.push(getParamObject("hNodeId", selectedHNodeId,"hNodeId"));
+    newInfo.push(getParamObject("hTableId", "","other"));
+    newInfo.push(getParamObject("worksheetId", $("td#" + selectedHNodeId).parents("div.Worksheet").attr("id"),"worksheetId"));
+    
+    info["newInfo"] = JSON.stringify(newInfo);
+
+    //console.log(info["worksheetId"]);
+    showLoading(info["worksheetId"]);
+
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                //alert(xhr.responseText);
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+                hideLoading(info["worksheetId"]);
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while removing semantic types!" + textStatus);
+                hideLoading(info["worksheetId"]);
+            }
+    });
+}
+
 function assignHandlersToRenameButton(event) {
     var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
     var hNodeId = columnHeadingMenu.data("parentCellId");
