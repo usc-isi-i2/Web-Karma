@@ -27,12 +27,6 @@ package edu.isi.karma.imp.json;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,12 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.ColumnMetadata.DataStructure;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HTable;
-import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
-import edu.isi.karma.rep.Row;
-import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
@@ -66,7 +55,7 @@ public class JsonImport extends Import {
 	private final Object json;
 	private int maxNumLines;
 	private int numObjects;
-	static JsonImportValues jiv;
+	
 	public JsonImport(Object json, String worksheetName, Workspace workspace,
 			String encoding, int maxNumLines) {
 		super(worksheetName, workspace, encoding);
@@ -108,7 +97,6 @@ public class JsonImport extends Import {
 		this.maxNumLines = maxNumLines;
 	}
 
-	@SuppressWarnings("static-access")
 	@Override
 	public Worksheet generateWorksheet() throws JSONException {
 		numObjects = 0;
@@ -117,7 +105,7 @@ public class JsonImport extends Import {
 			getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.COLLECTION);
 			JSONArray a = (JSONArray) json;
 			for (int i = 0; i < a.length(); i++) {
-				jiv.addListElement(a.get(i), getWorksheet().getHeaders(),
+				JsonImportValues.addListElement(a.get(i), getWorksheet().getHeaders(),
 						getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
 				if (maxNumLines > 0 && numObjects >= maxNumLines)
 					break;
@@ -125,7 +113,7 @@ public class JsonImport extends Import {
 			importJson = true;
 		} else if (json instanceof JSONObject) {
 			getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.OBJECT);
-			jiv.addKeysAndValues((JSONObject) json, getWorksheet().getHeaders(),
+			JsonImportValues.addKeysAndValues((JSONObject) json, getWorksheet().getHeaders(),
 					getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
 			importJson = true;
 		}
