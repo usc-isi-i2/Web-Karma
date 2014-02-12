@@ -27,6 +27,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 
 import org.junit.After;
@@ -34,6 +35,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
 import edu.isi.karma.util.EncodingDetector;
@@ -170,12 +174,27 @@ public class TestJSONRDFGenerator {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("kdd-sample-model", jsonData, true, pw);
+			boolean provnance = true;
+			
+			rdfGen.generateRDF("kdd-sample-model", jsonData, provnance, pw);
 			String rdf = sw.toString();
 
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("\n");
-			assertEquals(135, lines.length);
+			if(provnance) {
+				assertEquals(135, lines.length); //135 lines with provenance
+			} else {
+				assertEquals(120, lines.length); //120 lines with NO provenance
+			}
+			
+			System.out.println(rdf);
+			
+			Model model = ModelFactory.createDefaultModel();
+			if(provnance) {
+				//TODO: Not able to read Quads..
+			} else {
+				model.read(new StringReader(rdf), "http://test.isi.edu", "N3");
+			}
 		} catch (Exception e) {
 			fail("Execption: " + e.getMessage());
 		}
@@ -198,9 +217,8 @@ public class TestJSONRDFGenerator {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("kdd2", jsonData, true, pw);
+			rdfGen.generateRDF("kdd2", jsonData, false, pw);
 			String rdf = sw.toString();
-
 			assertNotEquals(rdf.length(), 0);
 		} catch (Exception e) {
 			fail("Execption: " + e.getMessage());
