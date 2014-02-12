@@ -47,20 +47,26 @@ var PropertyDropdownMenu = (function() {
     	function changeFrom() {
     		console.log("Change From");
 
-    		IncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
+    		var dialog = IncomingOutgoingLinksDialog.getInstance();
+    		dialog.show(worksheetId, 
     				targetNodeId, alignmentId,
     				targetLabel, targetId, targetDomain,
     				"incoming");
+    		dialog.setSelectedClass(sourceId);
+    		dialog.setSelectedProperty(propertyId);
     	}
     	
     	function changeTo() {
     		console.log("Change To");
     		
 
-    		IncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
+    		var dialog = IncomingOutgoingLinksDialog.getInstance();
+    		dilaog.show(worksheetId, 
     				sourceNodeId, alignmentId,
     				sourceLabel, sourceId, sourceDomain,
     				"outgoing");
+    		dialog.setSelectedClass(targetId);
+    		dialog.setSelectedProperty(propertyId);
     	}
     	
     	function generateJS() {

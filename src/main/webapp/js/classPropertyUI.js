@@ -113,7 +113,7 @@ function ClassPropertyUI(id,
 	};
 	
 	this.setPropertyRefresh = function(refresh) {
-		refreshProperties = refresh
+		refreshProperties = refresh;
 	};
 	
 	this.generateJS = function() {
@@ -232,16 +232,25 @@ function ClassPropertyUI(id,
 		return propertyData;
 	};
 	
-	this.setDefaultClass = function(label, id, uri) {
+	this.setDefaultClass = function(label, classId, uri) {
 		defaultClassData.label = label;
-		defaultClassData.id = id;
+		defaultClassData.id = classId;
 		defaultClassData.uri = uri;
+		
+		$("#" + id + "_classList2").bind("loaded.jstree", function (e, data) {
+            //$('#tree').jstree("select_node", '#ref565', true); 
+			console.log("Now select node:" + label + " in classList");
+			$("#" + id + "_classList2").jstree('select_node', label);
+		}); 
+		
 	};
 	
-	this.setDefaultProperty = function(label, id, uri) {
+	this.setDefaultProperty = function(label, propId, uri) {
 		defaultPropertyData.label = label;
-		defaultPropertyData.id = id;
+		defaultPropertyData.id = propId;
 		defaultPropertyData.uri = uri;
+		
+		//$("#" + id + "_propertyList2").jstree("select_node", propId);
 	};
 	
 	this.setPropertyHeadings = function(heading1, heading2) {
@@ -257,6 +266,10 @@ function ClassPropertyUI(id,
 
 //Static declarations
 ClassPropertyUI.getNodeObject = function(label, id, uri) {
-	var nodeData = {data:label, metadata:{"uri": uri, "id" : id}};
+	var nodeData = {data:{title:label, "id":label}, metadata:{"uri": uri, "id" : id}, attributes:{"id":label}};
 	return nodeData;
+};
+
+ClassPropertyUI.parseNodeObject = function(nodeData) {
+	return [nodeData.data.title, nodeData.metadata.id, nodeData.metadata.uri];
 };
