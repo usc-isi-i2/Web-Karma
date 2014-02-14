@@ -53,20 +53,18 @@ var PropertyDropdownMenu = (function() {
     				targetLabel, targetId, targetDomain,
     				"incoming");
     		dialog.setSelectedClass(sourceId);
-    		dialog.setSelectedProperty(propertyId);
+    		dialog.setSelectedProperty(propertyUri);
     	}
     	
     	function changeTo() {
     		console.log("Change To");
-    		
-
     		var dialog = IncomingOutgoingLinksDialog.getInstance();
-    		dilaog.show(worksheetId, 
+    		dialog.show(worksheetId, 
     				sourceNodeId, alignmentId,
     				sourceLabel, sourceId, sourceDomain,
     				"outgoing");
     		dialog.setSelectedClass(targetId);
-    		dialog.setSelectedProperty(propertyId);
+    		dialog.setSelectedProperty(propertyUri);
     	}
     	
     	function generateJS() {

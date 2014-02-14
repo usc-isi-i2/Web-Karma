@@ -669,6 +669,7 @@ var SetSemanticTypeDialog = (function() {
              $(".editButton", parentTrTag).show();
              $(".hideButton", parentTrTag).hide();
         }
+       
         function showSemanticTypeEditOptions() {
             var table = $("#semanticTypesTable");
             var parentTrTag = $(this).parents("tr");
@@ -701,13 +702,19 @@ var SetSemanticTypeDialog = (function() {
 
             // Remove any existing edit window open for other semantic type
             $("tr.editRow", table).remove();
-
+            var edittd = $("<td>").attr("colspan", "4");
+            var editTr = $("<tr>").addClass("editRow").append(edittd);
+            editTr.insertAfter(parentTrTag);
+            editTr.addClass("currentEditRow");
+            editTr.data("editRowObject", parentTrTag);
+            
             var classPropertyUI = new ClassPropertyUI("semanticTypeEdit", 
             		getClassesForProperty, getPropertiesForClass, 
             		getClasses, getProperties,
             		false,
             		100);
-            
+            classPropertyUI.setClassHeadings("Classes with Selected Property", "All Classes");
+            classPropertyUI.setPropertyHeadings("Properties of Selected Class", "All Properties");
             if($(parentTrTag).data("ResourceType") == "Class") {
                 var classLabel = $(parentTrTag).data("DisplayLabel");
                 var classUri = $(parentTrTag).data("FullType");
@@ -721,23 +728,10 @@ var SetSemanticTypeDialog = (function() {
                var defaultPropertyUri = $(parentTrTag).data("FullType");
                classPropertyUI.setDefaultProperty(defaultProperty, defaultPropertyUri, defaultPropertyUri);
             }
-            
-            classPropertyUI.setClassHeadings("Classes with Selected Property", "All Classes");
-            classPropertyUI.setPropertyHeadings("Properties of Selected Class", "All Properties");
-            
-            classPropertyUIDiv = classPropertyUI.generateJS();
-            var editTr = $("<tr>").addClass("editRow")
-            	.append($("<td>")
-            			.attr("colspan", "4")
-            			.append(classPropertyUIDiv)
-            	);
-            
+             
             classPropertyUI.onClassSelect(validateClassInputValue);
             classPropertyUI.onPropertySelect(validatePropertyInputValue);
-            
-            editTr.insertAfter(parentTrTag);
-            editTr.addClass("currentEditRow");
-            editTr.data("editRowObject", parentTrTag);
+            classPropertyUIDiv = classPropertyUI.generateJS(edittd, true);
         }
         
         function doesPropertyExist(inputVal) {
@@ -916,47 +910,49 @@ var IncomingOutgoingLinksDialog = (function() {
     	var classPropertyUI;
     	
     	function init() {
-    		//Initialize what happens when we show the dialog
-    		dialog.on('show.bs.modal', function (e) {
-				hideError();
-				selectedClass = {label:"", id:"", uri:""};
-				selectedProperty = {label:"", id:"", uri:""};
-				setLinkLabel();
-				
-				$("div.main", dialog).empty();
-				
-				classPropertyUI = new ClassPropertyUI("incomingOutgoingLinksDialog_inner",  
-						getExistingClassNodes, getPropertyForClass, 
-						getAllClassNodes, getAllProperties,
-						true,
-						200);
-	            
-	            classPropertyUI.onClassSelect(onSelectClassInputValue);
-	            classPropertyUI.onPropertySelect(onSelectPropertyInputValue);
-	            classPropertyUI.setClassRefresh(false);
-	            classPropertyUI.setClassHeadings("Classes in Model", "All Classes");
-	            	classPropertyUI.setPropertyHeadings("Compatible Properties", "All Properties");
-	            
-				if(linkType == "incoming") {
-					classPropertyUI.setClassLabel("From Class");
-				} else {
-					classPropertyUI.setClassLabel("To Class");
-				}
-				
-				$("div.main", dialog).append(classPropertyUI.generateJS());
-				
-
-	        	$("#incomingOutgoingLinksDialog_title", dialog).text("Add " + linkType + 
-	        			" link for " + columnLabel);
-			});
-			
-			//Initialize handler for Save button
-			//var me = this;
-			$('#btnSave', dialog).on('click', function (e) {
-				e.preventDefault();
-				saveDialog(e);
-			});
-    	}
+            selectedClass = {label:"", id:"", uri:""};
+            selectedProperty = {label:"", id:"", uri:""};
+            
+            classPropertyUI = new ClassPropertyUI("incomingOutgoingLinksDialog_inner",  
+                    getExistingClassNodes, getPropertyForClass, 
+                    getAllClassNodes, getAllProperties,
+                    true,
+                    200);
+            
+            classPropertyUI.onClassSelect(onSelectClassInputValue);
+            classPropertyUI.onPropertySelect(onSelectPropertyInputValue);
+            classPropertyUI.setClassRefresh(false);
+            classPropertyUI.setClassHeadings("Classes in Model", "All Classes");
+            classPropertyUI.setPropertyHeadings("Compatible Properties", "All Properties");
+            
+            //Initialize what happens when we show the dialog
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                
+                setLinkLabel();
+                classPropertyUI.setDefaultClass(selectedClass.label, selectedClass.id, selectedClass.uri);
+                classPropertyUI.setDefaultProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
+                
+                if(linkType == "incoming") {
+                    classPropertyUI.setClassLabel("From Class");
+                } else {
+                    classPropertyUI.setClassLabel("To Class");
+                }
+            
+                $("#incomingOutgoingLinksDialog_title", dialog).text("Add " + linkType + 
+                        " link for " + columnLabel);
+                
+                $("div.main", dialog).empty();
+                classPropertyUI.generateJS($("div.main", dialog), true);
+            });
+            
+            //Initialize handler for Save button
+            //var me = this;
+            $('#btnSave', dialog).on('click', function (e) {
+                e.preventDefault();
+                saveDialog(e);
+            });
+        }
     	
     	function setSelectedClass(id) {
     		if(allClasses) {
@@ -1294,11 +1290,21 @@ var IncomingOutgoingLinksDialog = (function() {
         };
         
         
-        return {	//Return back the public methods
-        	show : show,
-        	init : init,
-        	setSelectedClass : setSelectedClass,
-        	setSelectedProperty : setSelectedProperty
+        function showBlank(wsId, colId, alignId,
+                colLabel, colUri, colDomain, type) {
+            selectedClass = {label:"", id:"", uri:""};
+            selectedProperty = {label:"", id:"", uri:""};
+            show(wsId, colId, alignId,
+                    colLabel, colUri, colDomain, type);
+        };
+        
+        
+        return {    //Return back the public methods
+            show : show,
+            showBlank : showBlank,
+            init : init,
+            setSelectedClass : setSelectedClass,
+            setSelectedProperty : setSelectedProperty
         };
     };
 
