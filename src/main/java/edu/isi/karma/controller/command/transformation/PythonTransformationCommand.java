@@ -112,9 +112,17 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 		PythonTransformationHelper pyHelper = new PythonTransformationHelper();
 		Map<String, String> normalizedColumnNameMap = new HashMap<String, String>();
+		String trimmedTransformationCode = transformationCode.trim();
+		// Pedro: somehow we are getting empty statements, and these are causing
+		// exceptions.
+		if (trimmedTransformationCode.isEmpty()) {
+			trimmedTransformationCode = "return \"\"";
+			logger.info("Empty PyTransform statement in "
+					+ hNode.getColumnName());
+		}
 		String transformMethodStmt = pyHelper
 				.getPythonTransformMethodDefinitionState(worksheet,
-						transformationCode);
+						trimmedTransformationCode);
 		String defGetValueStmt = pyHelper
 				.getGetValueDefStatement(normalizedColumnNameMap);
 
@@ -124,6 +132,8 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 			hNodeIdToNormalizedColumnName.put(accHNode.getId(),
 					normalizedColumnNameMap.get(accHNode.getColumnName()));
 		}
+		logger.info("Executing PyTransform\n" + transformMethodStmt);
+
 		// Prepare the Python interpreter
 		PythonInterpreter interpreter = new PythonInterpreter();
 		interpreter.exec(pyHelper.getImportStatements());
