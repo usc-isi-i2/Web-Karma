@@ -119,6 +119,9 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 				generateRDFFromWorksheet(wk, workspace, mapping, pw);
 				logger.debug("Done for " + counter + " rows ..." );
 			    removeWorkspace(workspace);
+			    
+			    parserTest = new WorksheetR2RMLJenaModelParser(id);
+				mapping = parserTest.parse();
 			    workspace = initializeWorkspace();
 			    factory = workspace.getFactory();
 				wk = factory.createWorksheet(tablename, workspace, encoding);
