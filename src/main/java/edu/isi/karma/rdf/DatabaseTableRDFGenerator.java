@@ -92,7 +92,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		Connection conn = dbUtil.getConnection(hostname, portnumber, username, password, dBorSIDName);
 		conn.setAutoCommit(false);
-		String query = "Select * FROM " + tablename;
+		String query = "Select * FROM " + dbUtil.escapeTablename(tablename);
 		java.sql.Statement stmt = conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
 				java.sql.ResultSet.CONCUR_READ_ONLY);
 		stmt.setFetchSize(DATABASE_TABLE_FETCH_SIZE);

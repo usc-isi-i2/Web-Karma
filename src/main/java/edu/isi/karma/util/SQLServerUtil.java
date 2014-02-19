@@ -69,7 +69,7 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 		
 		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
 		Connection conn = getConnection(DRIVER, connectString);
-		String query = "Select TOP " + rowCount + " * from " + tableName;
+		String query = "Select TOP " + rowCount + " * from " + escapeTablename(tableName);
 		
 		Statement s = conn.createStatement();
 		ResultSet r = s.executeQuery(query);
@@ -94,6 +94,18 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 		return s;
 	}
 
+	@Override
+	public String escapeTablename(String name) {
+		int idx = name.indexOf(".");
+		if(idx != -1) {
+			String schema = name.substring(0, idx);
+			String tableName = name.substring(idx+1);
+			return "[" + schema + "].[" + tableName + "]";
+		}
+		
+		return "[" + name + "]";
+	}
+	
 	@Override
 	protected String getDriver() {
 		return DRIVER;

@@ -61,7 +61,7 @@ public class OracleUtil extends AbstractJDBCUtil {
 		Connection conn = getConnection(DRIVER, connectString);
 		
 		Statement s = conn.createStatement();
-		ResultSet r = s.executeQuery("select * from " + tableName + " where rownum < " + rowCount);
+		ResultSet r = s.executeQuery("select * from " + escapeTablename(tableName) + " where rownum < " + rowCount);
 
 		if (r == null) {
 			s.close();
@@ -83,6 +83,11 @@ public class OracleUtil extends AbstractJDBCUtil {
 		return s;
 	}
 
+	@Override
+	public String escapeTablename(String name) {
+		return "`" + name + "`";
+	}
+	
 	@Override
 	protected String getDriver() {
 		return DRIVER;

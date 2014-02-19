@@ -43,6 +43,8 @@ public abstract class AbstractJDBCUtil {
 
 	protected abstract String getDriver();
 	protected abstract String getConnectStringTemplate();
+	public abstract String escapeTablename(String name);
+	
 	/**
 	 * Enclose input string between escape chars specific for each type of DB.
 	 * @param name
