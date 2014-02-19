@@ -27,13 +27,21 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.query.DatasetFactory;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
 import edu.isi.karma.util.EncodingDetector;
@@ -158,43 +166,52 @@ public class TestJSONRDFGenerator {
 	 * {@link edu.isi.karma.rdf.JSONRDFGenerator#generateRDF(java.lang.String, java.lang.String, boolean, java.io.PrintWriter)}
 	 * .
 	 */
-//	@Test
-//	public void testKDDRDF() {
-//		try {
-//
-//			String filename = getTestDataFolder() + "/kdd-sample.json";
-//			System.out.println("Load json file: " + filename);
-//			String jsonData = EncodingDetector.getString(new File(filename),
-//					"utf-8");
-//
-//			StringWriter sw = new StringWriter();
-//			PrintWriter pw = new PrintWriter(sw);
-//
-//			boolean provnance = true;
-//			
-//			rdfGen.generateRDF("kdd-sample-model", jsonData, provnance, pw);
-//			String rdf = sw.toString();
-//
-//			assertNotEquals(rdf.length(), 0);
-//			String[] lines = rdf.split("\n");
-//			if(provnance) {
-//				assertEquals(135, lines.length); //135 lines with provenance
-//			} else {
-//				assertEquals(120, lines.length); //120 lines with NO provenance
-//			}
-//			
-//			System.out.println(rdf);
-//			
-//			Model model = ModelFactory.createDefaultModel();
-//			if(provnance) {
-//				//TODO: Not able to read Quads..
-//			} else {
-//				model.read(new StringReader(rdf), "http://test.isi.edu", "N3");
-//			}
-//		} catch (Exception e) {
-//			fail("Execption: " + e.getMessage());
-//		}
-//	}
+	@Test
+	public void testKDDRDF() {
+		try {
+
+			String filename = getTestDataFolder() + "/cs548-events.json";
+			System.out.println("Load json file: " + filename);
+			String jsonData = EncodingDetector.getString(new File(filename),
+					"utf-8");
+
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+
+			boolean provnance = true;
+			
+			rdfGen.generateRDF("cs548-events-model", jsonData, provnance, pw);
+			String rdf = sw.toString();
+
+			assertNotEquals(rdf.length(), 0);
+			String[] lines = rdf.split("\n");
+			if(provnance) {
+				//assertEquals(135, lines.length); //135 lines with provenance
+			} else {
+				assertEquals(120, lines.length); //120 lines with NO provenance
+			}
+			
+			System.out.println(rdf);
+			
+			Model model = ModelFactory.createDefaultModel();
+			Dataset ds = DatasetFactory.createMem();
+			if(provnance) {
+				RDFDataMgr.read(ds, new StringReader(rdf), "http://test.isi.edu", Lang.NQ);
+				java.util.Iterator<String> modelNames = ds.listNames();
+				long count = ds.getDefaultModel().size();
+				while(modelNames.hasNext())
+				{
+					count+=ds.getNamedModel(modelNames.next()).size();
+				}
+				System.out.println(count);
+				
+			} else {
+				model.read(new StringReader(rdf), "http://test.isi.edu", "N3");
+			}
+		} catch (Exception e) {
+			fail("Execption: " + e.getMessage());
+		}
+	}
 //	
 //	/**
 //	 * Test method for

@@ -30,11 +30,13 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.db.DBConnection;
-import com.hp.hpl.jena.db.IDBConnection;
-import com.hp.hpl.jena.db.ModelRDB;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.ModelMaker;
+import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.sdb.SDBFactory;
+import com.hp.hpl.jena.sdb.StoreDesc;
+import com.hp.hpl.jena.sdb.sql.SDBConnection;
+import com.hp.hpl.jena.sdb.store.DatabaseType;
+import com.hp.hpl.jena.sdb.store.LayoutType;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
@@ -257,14 +259,15 @@ public class PublishRDFCommand extends Command {
 		// load the the driver class
 		Class.forName(M_DBDRIVER_CLASS);
 		
-		String dbUrl = "jdbc:mysql://" + hostName + "/" + dbName;
 		// create a database connection
-		IDBConnection conn = new DBConnection(dbUrl, userName, password, "MySQL");
+		String jdbcURL = "jdbc:mysql://" + hostName + "/" + dbName;
+		StoreDesc storeDesc = new StoreDesc(LayoutType.LayoutSimple, DatabaseType.MySQL);
+		SDBConnection conn = new SDBConnection(jdbcURL, userName, password) ;
+		Dataset set = SDBFactory.connectDataset(conn, storeDesc);
+		//create a model with the given connection parameters
+		Model model = set.getNamedModel(modelName);
 		
-		// create a model maker with the given connection parameters
-		ModelMaker maker = ModelFactory.createModelRDBMaker(conn);
-		
-		ModelRDB model = (ModelRDB) maker.openModel(modelName);
+		//write data
 		InputStream file = new FileInputStream(rdfFileName);
 		model.read(file,null,"N3");
 		file.close();

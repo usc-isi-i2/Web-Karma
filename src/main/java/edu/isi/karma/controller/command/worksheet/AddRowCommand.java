@@ -20,29 +20,18 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.worksheet;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.update.AddColumnUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
-import edu.isi.karma.rep.Node;
-import edu.isi.karma.rep.Node.NodeStatus;
-import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.Util;
-import edu.isi.karma.webserver.KarmaException;
 
 /**
  * Adds a new column to the table with hTableId.
