@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -228,6 +229,7 @@ public class KR2RMLMappingGenerator {
 					
 					r2rmlMapping.getAuxInfo().getBlankNodesColumnCoverage().put(treeNode.getId(), columnsCovered);
 					r2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().put(treeNode.getId(), treeNode.getDisplayId());
+					r2rmlMapping.getAuxInfo().getSubjectMapIdToTemplateAnchor().put(treeNode.getId(), KR2RMLMappingAuxillaryInformation.findSubjectMapTemplateAnchor(columnsCovered));
 				}
 			}
 		}
@@ -296,6 +298,12 @@ public class KR2RMLMappingGenerator {
 									link.getKeyType() == LinkKeyInfo.PartOfKey) {
 								subj.getTemplate().addTemplateTermToSet(cnTerm);
 							}
+							List<String> columnsCovered = new LinkedList<String>();
+							for(TemplateTerm term : subj.getTemplate().getAllColumnNameTermElements())
+							{
+								columnsCovered.add(term.getTemplateTermValue());
+							}
+							r2rmlMapping.getAuxInfo().getSubjectMapIdToTemplateAnchor().put(subj.getId(), KR2RMLMappingAuxillaryInformation.findSubjectMapTemplateAnchor(columnsCovered));
 						} else {
 							logger.error("Target node of Class Instance link should always be a " +
 									"column node.");

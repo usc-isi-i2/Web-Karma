@@ -31,10 +31,12 @@ import java.util.Set;
 public class TriplesMapGraph {
 	private Set<TriplesMapLink> links;
 	private Map<String, List<TriplesMapLink>> neighboringTriplesMapCache;
+	private Map<String, TriplesMap> triplesMapIndex;
 	
 	public TriplesMapGraph() {
 		this.links = new HashSet<TriplesMapLink>();
 		this.neighboringTriplesMapCache = new HashMap<String, List<TriplesMapLink>>();
+		this.triplesMapIndex = new HashMap<String, TriplesMap>();
 	}
 
 	public Set<TriplesMapLink> getLinks() {
@@ -46,6 +48,20 @@ public class TriplesMapGraph {
 		updateCache(link);
 	}
 	
+	public static TriplesMapGraph mergeGraphs(TriplesMapGraph graphToMerge1, TriplesMapGraph graphToMerge2)
+	{
+		TriplesMapGraph newGraph = new TriplesMapGraph();
+		
+		for(TriplesMapLink link : graphToMerge1.getLinks())
+		{
+			newGraph.addLink(link);
+		}
+		for(TriplesMapLink link : graphToMerge2.getLinks())
+		{
+			newGraph.addLink(link);
+		}
+		return newGraph;
+	}
 	private void updateCache(TriplesMapLink link) {
 		// Add source neighboring links to the cache
 		List<TriplesMapLink> sourceNeighbouringLinks = neighboringTriplesMapCache.get(link.getSourceMap().getId());
@@ -53,6 +69,7 @@ public class TriplesMapGraph {
 			sourceNeighbouringLinks = new ArrayList<TriplesMapLink>();
 		}
 		sourceNeighbouringLinks.add(link);
+		triplesMapIndex.put(link.getSourceMap().getId(),link.getSourceMap());
 		neighboringTriplesMapCache.put(link.getSourceMap().getId(), sourceNeighbouringLinks);
 
 		// Add target neighboring links to the cache
@@ -61,6 +78,7 @@ public class TriplesMapGraph {
 			targetNeighbouringLinks = new ArrayList<TriplesMapLink>();
 		}
 		targetNeighbouringLinks.add(link);
+		triplesMapIndex.put(link.getTargetMap().getId(),link.getTargetMap());
 		neighboringTriplesMapCache.put(link.getTargetMap().getId(), targetNeighbouringLinks);
 	}
 	
@@ -70,4 +88,36 @@ public class TriplesMapGraph {
 		
 		return neighboringTriplesMapCache.get(triplesMapId);
 	}
+
+	public void removeLink(TriplesMapLink link) {
+		links.remove(link);
+		removeLinkFromCache(link, link.getTargetMap().getId());
+		removeLinkFromCache(link, link.getSourceMap().getId());
+	}
+
+	private void removeLinkFromCache(TriplesMapLink link, String mapId) {
+		List<TriplesMapLink> targetLinks = neighboringTriplesMapCache.get(mapId);
+		targetLinks.remove(link);
+		if(targetLinks.isEmpty())
+		{
+			neighboringTriplesMapCache.remove(targetLinks);
+			triplesMapIndex.remove(mapId);
+		}
+	}
+	
+	public Set<String> getTriplesMapIds()
+	{
+		return neighboringTriplesMapCache.keySet();
+	}
+	public String findRoot(RootStrategy strategy)
+	{
+		return strategy.findRoot(this);
+	}
+	
+	public TriplesMap getTriplesMap(String triplesMapId)
+	{
+		return this.triplesMapIndex.get(triplesMapId);
+	}
+	
+	
 }

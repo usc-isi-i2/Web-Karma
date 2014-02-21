@@ -26,6 +26,7 @@ package edu.isi.karma.rep;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -250,5 +251,32 @@ public class Row extends RepEntity implements Neighbor {
 					.getNeighborByColumnName(columnName, factory);
 		}
 		return null;
+	}
+
+	public void collectNodes(HNodePath path, Collection<Node> nodes) {
+		Node n = getNode(path.getFirst().getId());
+		if (n == null) {
+			return;
+		}
+		// Check if the path has only one HNode
+		if (path.getRest() == null || path.getRest().isEmpty()) {
+			nodes.add(n);
+			return;
+		}
+
+		// Check if the node has a nested table
+		if (n.hasNestedTable()) {
+			int numRows = n.getNestedTable().getNumRows();
+			if (numRows == 0)
+				return;
+
+			List<Row> rowsNestedTable = n.getNestedTable().getRows(0,
+					numRows);
+			if (rowsNestedTable != null && rowsNestedTable.size() != 0) {
+				n.getNestedTable().collectNodes(path.getRest(), nodes);
+				return;
+			}
+		}
+		
 	}
 }

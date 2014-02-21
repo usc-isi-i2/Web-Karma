@@ -25,17 +25,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openjena.atlas.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class KR2RMLMappingAuxillaryInformation {
+	private static Logger LOG = LoggerFactory.getLogger(KR2RMLMappingAuxillaryInformation.class);
 	private TriplesMapGraph triplesMapGraph;
 	private Map<String, List<String>> blankNodesColumnCoverage;
 	private Map<String, String> blankNodesUriPrefixMap;
 	private Map<String, List<PredicateObjectMap>> columnNameToPredObjMLinks;
+	private Map<String, String> subjectMapIdToTemplateAnchor;
 	
 	public KR2RMLMappingAuxillaryInformation() {
 		this.triplesMapGraph = new TriplesMapGraph();
 		this.blankNodesUriPrefixMap = new HashMap<String, String>();
 		this.blankNodesColumnCoverage = new HashMap<String, List<String>>();
 		this.columnNameToPredObjMLinks = new HashMap<String, List<PredicateObjectMap>>();
+		this.subjectMapIdToTemplateAnchor = new HashMap<String, String>();
 	}
 
 	public TriplesMapGraph getTriplesMapGraph() {
@@ -53,4 +60,41 @@ public class KR2RMLMappingAuxillaryInformation {
 	public Map<String, List<PredicateObjectMap>> getColumnNameToPredObjLinks() {
 		return this.columnNameToPredObjMLinks;
 	}
+	
+	public Map<String, String> getSubjectMapIdToTemplateAnchor() {
+		return subjectMapIdToTemplateAnchor;
+	}
+
+	//TODO move this
+	public static String findSubjectMapTemplateAnchor(
+			List<String> columnsCovered) {
+		int maxDepth = Integer.MIN_VALUE;
+		String anchor = null;
+		for(String column : columnsCovered)
+		{
+			int depth = 0;
+			depth = calculateColumnDepth(column, depth);
+			if(depth > maxDepth)
+			{
+				maxDepth = depth;
+				anchor = column;
+			}
+		}
+		LOG.info("found anchor " + anchor + " at " + maxDepth);
+		return anchor;
+	}
+
+	private static int calculateColumnDepth(String column, int depth) {
+		if(column.charAt(0) == '[')
+		{
+			for(int i = 0; i < column.length(); i++)
+			{
+				if(column.charAt(i) == ',')
+				{
+					depth++;
+				}
+			}
+		}
+		return depth;
+	}	
 }

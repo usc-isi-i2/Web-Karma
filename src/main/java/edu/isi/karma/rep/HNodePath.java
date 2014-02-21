@@ -140,4 +140,18 @@ public class HNodePath {
 		}
 		return result;
 	}
+	
+	public static HNodePath findCommon(HNodePath path1, HNodePath path2)
+	{
+		HNodePath newPath = new HNodePath();
+		HNodePath path1Temp = path1;
+		HNodePath path2Temp = path2;
+		while(path1Temp.getFirst() == path2Temp.getFirst())
+		{
+			newPath.addHNode(path1Temp.getFirst());
+			path1Temp = path1Temp.getRest();
+			path2Temp = path2Temp.getRest();
+		}
+		return newPath;
+	}
 }

@@ -29,8 +29,6 @@ public class R2RMLMapping {
 	private List<TriplesMap> triplesMapList = new ArrayList<TriplesMap>();
 	private List<Prefix> prefixes = new ArrayList<Prefix>();
 	private R2RMLMappingIdentifier id;
-//	private static Logger logger = LoggerFactory
-//			.getLogger(R2RMLMapping.class);
 	
 	public R2RMLMapping(R2RMLMappingIdentifier id) {
 		this.id = id;

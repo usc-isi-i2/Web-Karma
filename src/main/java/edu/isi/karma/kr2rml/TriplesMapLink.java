@@ -31,11 +31,13 @@ public class TriplesMapLink {
 	private final TriplesMap sourceMap;
 	private final TriplesMap targetMap;
 	private final PredicateObjectMap pom;
+	private boolean flip;
 	
 	public TriplesMapLink(TriplesMap sourceMap, TriplesMap targetMap, PredicateObjectMap pom) {
 		this.sourceMap = sourceMap;
 		this.targetMap = targetMap;
 		this.pom = pom;
+		flip = false;
 	}
 
 	public TriplesMap getTargetMap() {
@@ -48,5 +50,15 @@ public class TriplesMapLink {
 
 	public PredicateObjectMap getPredicateObjectMapLink() {
 		return pom;
+	}
+	
+	public boolean isFlipped()
+	{
+		return flip;
+	}
+	
+	public void setIsFlipped(boolean flip)
+	{
+		this.flip = flip;
 	}
 }

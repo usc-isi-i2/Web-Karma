@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -406,6 +407,12 @@ public class WorksheetR2RMLJenaModelParser {
 				String template = templNode.toString();
 				subjTemplTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
 						template, kr2rmlMapping.getColumnNameFormatter());
+				List<String> columnsCovered = new LinkedList<String>();
+				for(TemplateTerm term : subjTemplTermSet.getAllColumnNameTermElements())
+				{
+					columnsCovered.add(term.getTemplateTermValue());
+				}
+				kr2rmlMapping.getAuxInfo().getSubjectMapIdToTemplateAnchor().put(subjMap.getId(), KR2RMLMappingAuxillaryInformation.findSubjectMapTemplateAnchor(columnsCovered));
 				
 			}
 			subjMap.setTemplate(subjTemplTermSet);
@@ -497,7 +504,7 @@ public class WorksheetR2RMLJenaModelParser {
 				logger.debug("Adding columns for blank node" + subjMap.getId() + " List: " + 
 						columnsCovered);
 				kr2rmlMapping.getAuxInfo().getBlankNodesColumnCoverage().put(subjMap.getId(), columnsCovered);
-				
+				kr2rmlMapping.getAuxInfo().getSubjectMapIdToTemplateAnchor().put(subjMap.getId(), KR2RMLMappingAuxillaryInformation.findSubjectMapTemplateAnchor(columnsCovered));
 				// Get the blank node prefix
 				NodeIterator bnodePrefixItr = model.listObjectsOfProperty(blankNodeSubjRes, kmBnodePrefixProp);
 				while (bnodePrefixItr.hasNext()) {
@@ -506,6 +513,7 @@ public class WorksheetR2RMLJenaModelParser {
 				}
 			}
 		}
-	}	
+	}
+
 
 }

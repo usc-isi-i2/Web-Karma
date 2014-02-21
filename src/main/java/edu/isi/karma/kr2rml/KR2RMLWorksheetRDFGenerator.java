@@ -28,12 +28,16 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -45,6 +49,7 @@ import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
@@ -53,17 +58,17 @@ import edu.isi.karma.rep.Worksheet;
 
 public class KR2RMLWorksheetRDFGenerator {
 	
-	private RepFactory factory;
-	private Worksheet worksheet;
-	private String outputFileName;
-	private OntologyManager ontMgr;
-	private ErrorReport errorReport;
-	private boolean addColumnContextInformation;
-	private KR2RMLMapping kr2rmlMapping;
-	private KR2RMLMappingColumnNameHNodeTranslator translator;
-	private Map<String, String> prefixToNamespaceMap;
-	private Map<String, String> hNodeToContextUriMap;
-	private PrintWriter outWriter;
+	protected RepFactory factory;
+	protected Worksheet worksheet;
+	protected String outputFileName;
+	protected OntologyManager ontMgr;
+	protected ErrorReport errorReport;
+	protected boolean addColumnContextInformation;
+	protected KR2RMLMapping kr2rmlMapping;
+	protected KR2RMLMappingColumnNameHNodeTranslator translator;
+	protected Map<String, String> prefixToNamespaceMap;
+	protected Map<String, String> hNodeToContextUriMap;
+	protected PrintWriter outWriter;
 	
 	private Logger logger = LoggerFactory.getLogger(KR2RMLWorksheetRDFGenerator.class);
 	public static String BLANK_NODE_PREFIX = "_:";
@@ -83,6 +88,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.addColumnContextInformation = addColumnContextInformation;
 		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
 		populatePrefixToNamespaceMap();
+		
 	}
 	
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
@@ -106,6 +112,7 @@ public class KR2RMLWorksheetRDFGenerator {
 	
 	
 	public void generateRDF(boolean closeWriterAfterGeneration) throws IOException {
+		
 		// Prepare the output writer
 		BufferedWriter bw = null;
 		try {
@@ -123,8 +130,27 @@ public class KR2RMLWorksheetRDFGenerator {
 			// RDF Generation starts at the top level rows
 			ArrayList<Row> rows = this.worksheet.getDataTable().getRows(0, 
 					this.worksheet.getDataTable().getNumRows());
+			
+
+			
+			try{
+				//TODO move this out!
+				DFSTriplesMapGraphTreeifier treeifier = new DFSTriplesMapGraphTreeifier();
+				treeifier.treeify(kr2rmlMapping.getAuxInfo().getTriplesMapGraph(), new SteinerTreeRootStrategy(new WorksheetDepthTreeRootStrategy()));
+				
+			}catch (Exception e)
+			{
+				logger.error("unable to treeify!");
+			}
 			int i=1;
+			
 			for (Row row:rows) {
+				TriplesMapPlanExecutor e = new TriplesMapPlanExecutor();
+				TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(this, row);
+				TriplesMapPlan plan = g.generatePlan(kr2rmlMapping.getAuxInfo().getTriplesMapGraph());
+				e.execute(plan);
+				System.out.println(plan.triplesMapURIs);
+			
 				Set<String> rowTriplesSet = new HashSet<String>();
 				Set<String> rowPredicatesCovered = new HashSet<String>();
 				Set<String> predicatesSuccessful = new HashSet<String>();
@@ -641,6 +667,202 @@ public class KR2RMLWorksheetRDFGenerator {
 		
 		return colContextTriples;
 	}
+	
+
+	public class TriplesMapWorker implements Callable<Boolean> {
+	
+		private Logger LOG = LoggerFactory.getLogger(TriplesMapWorker.class);
+		protected List<CountDownLatch> dependentTriplesMapLatches;
+		protected CountDownLatch latch;
+		protected TriplesMap triplesMap;
+		protected Row r;
+		protected Map<String, List<String>> triplesMapURIs;
+		public TriplesMapWorker(TriplesMap triplesMap, CountDownLatch latch, Row r, Map<String, List<String>> triplesMapURIs)
+		{
+			this.latch = latch;
+			this.triplesMap = triplesMap;
+			this.dependentTriplesMapLatches = new LinkedList<CountDownLatch>();
+			this.r = r;
+			this.triplesMapURIs = triplesMapURIs;
+		}
+		public void addDependentTriplesMapLatch(CountDownLatch latch)
+		{
+			dependentTriplesMapLatches.add(latch);
+		}
+		
+		public void notifyDependentTriplesMapWorkers()
+		{
+			for(CountDownLatch latch : dependentTriplesMapLatches)
+			{
+				latch.countDown();
+			}
+		}
+		@Override
+		public Boolean call() throws HNodeNotFoundKarmaException, ValueNotFoundKarmaException, NoValueFoundInNodeException {
+			
+			List<String> URIs = new LinkedList<String>();
+			triplesMapURIs.put(triplesMap.getId(), URIs);
+			try{
+				latch.await();
+			}
+			catch (Exception e )
+			{
+				LOG.error("Error while waiting for dependent triple maps to process", e);
+				notifyDependentTriplesMapWorkers();
+				return false;
+			}
+			
+			String templateAnchor = kr2rmlMapping.getAuxInfo().getSubjectMapIdToTemplateAnchor().get(triplesMap.getSubject().getId());
+			String templateHNodeId = translator.getHNodeIdForColumnName(templateAnchor);
+			HNode templateHNode = factory.getHNode(templateHNodeId);
+			
+			
+			Collection<Node> nodes = new LinkedList<Node>();
+			r.collectNodes(templateHNode.getHNodePath(factory), nodes);
+			List<String> columnsCovered;
+			SubjectMap subjMap = triplesMap.getSubject();
+			if (subjMap.isBlankNode()) {
+				columnsCovered = kr2rmlMapping.getAuxInfo().getBlankNodesColumnCoverage().get(subjMap.getId());
+				
+
+				StringBuilder output = new StringBuilder();
+				// Add the blank namespace
+				output.append(BLANK_NODE_PREFIX);
+				
+				// Add the class node prefix
+				output.append(kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().get(triplesMap.getSubject().getId()).replaceAll(":", "_"));
+				LinkedList<Collection<Node>> allNodesCovered = gatherNodesForURI(columnsCovered);
+				URIs = generateURIsForBlankNodes(output, allNodesCovered);	
+			} else {
+				List<ColumnTemplateTerm> terms =  subjMap.getTemplate().getAllColumnNameTermElements();
+				columnsCovered = new LinkedList<String>();
+				for(ColumnTemplateTerm term : terms)
+				{
+					columnsCovered.add(term.getTemplateTermValue());
+				}
+				LinkedList<Collection<Node>> allNodesCovered = gatherNodesForURI(columnsCovered);
+				Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes = new HashMap<ColumnTemplateTerm, Collection<Node>>();
+				Iterator<ColumnTemplateTerm> termIterator = terms.iterator();
+				Iterator<Collection<Node>> nodesIterator = allNodesCovered.iterator();
+				while(termIterator.hasNext() && nodesIterator.hasNext())
+				{
+					columnsToNodes.put(termIterator.next(), nodesIterator.next());
+				}
+				StringBuilder output = new StringBuilder();
+				LinkedList<TemplateTerm> allTerms = new LinkedList<TemplateTerm>();
+				allTerms.addAll(subjMap.getTemplate().getAllTerms());
+				URIs = generateURIsForTemplates(output, allTerms, columnsToNodes);
+			}
+			
+			triplesMapURIs.put(triplesMap.getId(), URIs);
+			
+			LOG.info("Processing " + triplesMap.getId() + " " +triplesMap.getSubject().getId());
+			notifyDependentTriplesMapWorkers();
+			return true;
+		}
+		private List<String> generateURIsForTemplates(StringBuilder output,
+				List<TemplateTerm> terms,
+				Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes) {
+			List<String> uris = new LinkedList<String>();
+			
+			if(!terms.isEmpty())
+			{
+				List<TemplateTerm> tempTerms = new LinkedList<TemplateTerm>();
+				tempTerms.addAll(terms);
+				TemplateTerm term = tempTerms.remove(0);
+				boolean recurse = false;
+				if(!tempTerms.isEmpty())
+				{
+					recurse = true;
+				}
+					
+					if(term instanceof ColumnTemplateTerm)
+					{
+						for(Node node : columnsToNodes.get(term))
+						{
+							StringBuilder newPrefix = new StringBuilder(output);
+							newPrefix.append(node.getValue().asString());
+							if(recurse)
+							{
+								uris.addAll(generateURIsForTemplates(newPrefix, tempTerms, columnsToNodes));
+							}
+							else
+							{
+								uris.add(getExpandedAndNormalizedUri(newPrefix.toString()));
+							}
+						}
+					}
+					else
+					{
+						StringBuilder newPrefix = new StringBuilder(output);
+						newPrefix.append(term.getTemplateTermValue());
+						if(recurse)
+						{
+							generateURIsForTemplates(newPrefix, tempTerms, columnsToNodes);
+						}
+						else
+						{
+							uris.add(getExpandedAndNormalizedUri(newPrefix.toString()));
+						}
+					}
+				
+			}
+				
+			return uris;
+		}
+		private LinkedList<Collection<Node>> gatherNodesForURI(
+				List<String> columnsCovered) throws HNodeNotFoundKarmaException {
+			LinkedList<Collection<Node>> allNodesCovered = new LinkedList<Collection<Node>>();
+			for(String columnCovered: columnsCovered)
+			{
+				Collection<Node> nodesCovered = new LinkedList<Node>();
+				HNodePath columnCoveredPath = factory.getHNode(translator.getHNodeIdForColumnName(columnCovered)).getHNodePath(factory);
+				r.collectNodes(columnCoveredPath, nodesCovered);
+				allNodesCovered.add(nodesCovered);
+				//TODO what if there are no nodes.
+			}
+			return allNodesCovered;
+		}
+		public CountDownLatch getLatch() {
+			return latch;
+		}
+		
+		
+		public List<String> generateURIsForBlankNodes(StringBuilder prefix, LinkedList<Collection<Node>> allNodesCovered)
+		{
+			List<String> uris = new LinkedList<String>();
+			if(!allNodesCovered.isEmpty())
+			{
+				Collection<Node> nodesCovered = allNodesCovered.pop();
+				if(!allNodesCovered.isEmpty())
+				{
+					for(Node node : nodesCovered)
+					{
+						StringBuilder longerPrefix = new StringBuilder(prefix.toString());
+						longerPrefix.append("_");
+						longerPrefix.append(node.getId());
+						LinkedList<Collection<Node>> temp = new LinkedList<Collection<Node>>();
+						temp.addAll(allNodesCovered);
+						uris.addAll(generateURIsForBlankNodes(longerPrefix, temp));
+					}
+				}
+				else
+				{
+					String tempPrefix = prefix.toString();
+					for(Node node : nodesCovered)
+					{
+						//TODO this could probably be done earlier.
+						uris.add(getExpandedAndNormalizedUri(tempPrefix + "_" + node.getId()));
+					} 
+					return uris;
+				}
+			}
+			return uris;
+		}
+		
+		
+	}
+
 }
 
 class HNodeNotFoundKarmaException extends Exception {
@@ -691,3 +913,5 @@ class NoValueFoundInNodeException extends Exception{
 	    super(description);
 	}
 }
+
+

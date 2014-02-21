@@ -21,9 +21,30 @@
 
 package edu.isi.karma.kr2rml;
 
+import java.util.List;
+
+
 public class ColumnTemplateTerm extends TemplateTerm {
 	
 	public ColumnTemplateTerm(String termValue) {
 		super(termValue);
+	}
+
+	public int calculateColumnPathLength() {
+	
+		if(getTemplateTermValue() == null)
+			return 0;
+		String[] elements = getTemplateTermValue().split(",");
+		return elements.length;
+	}
+	
+	public static int calculateMaximumColumnPathLength(
+			List<ColumnTemplateTerm> columnTerms) {
+		int sourcePathLength = 0;
+		for(ColumnTemplateTerm term : columnTerms)
+		{
+			sourcePathLength = Math.max(sourcePathLength, term.calculateColumnPathLength());
+		}
+		return sourcePathLength;
 	}
 }
