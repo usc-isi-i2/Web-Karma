@@ -1311,6 +1311,7 @@ and related projects, please see: http://www.isi.edu/integration
         <div id="modelingClassDropDownMenu" class="ui-corner-all" style="display: none">
             <button id="invokeRubenReconciliationService">Invoke Reconciliation Service</button>
             <button id="invokeMachineLearningService">Invoke M/L Service</button>
+            <button id="generateJSON">Generate JSON</button>
         </div>
     </body>
 </html>

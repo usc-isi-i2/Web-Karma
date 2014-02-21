@@ -119,6 +119,8 @@ import edu.isi.karma.controller.command.publish.PublishCSVCommand;
 import edu.isi.karma.controller.command.publish.PublishCSVCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishDatabaseCommand;
 import edu.isi.karma.controller.command.publish.PublishDatabaseCommandFactory;
+import edu.isi.karma.controller.command.publish.PublishJSONCommand;
+import edu.isi.karma.controller.command.publish.PublishJSONCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommand;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishMDBCommand;
@@ -318,6 +320,8 @@ public class ExecutionController {
                 new InvokeDataMiningServiceCommandFactory());
         commandFactoryMap.put(InvokeRubenReconciliationService.class.getSimpleName(),
                 new InvokeRubenReconciliationServiceFactory());
+        commandFactoryMap.put(PublishJSONCommand.class.getSimpleName(),
+                new PublishJSONCommandFactory());
         commandFactoryMap.put(FetchGraphsFromTripleStoreCommand.class.getSimpleName(),
                 new FetchGraphsFromTripleStoreCommandFactory());
         commandFactoryMap.put(GetUniqueGraphUrlCommand.class.getSimpleName(),

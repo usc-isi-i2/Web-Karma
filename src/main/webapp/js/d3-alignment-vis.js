@@ -57,6 +57,39 @@ function styleAndAssignHandlersToModelingVizElements() {
         });
     });
 
+    $("#generateJSON").click(function() {
+        dropDownMenu.hide();
+
+        var info = new Object();
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "PublishJSONCommand";
+
+        var newInfo = [];
+        newInfo.push(getParamObject("alignmentNodeId", dropDownMenu.data("nodeId"), "other"));
+        newInfo.push(getParamObject("worksheetId", dropDownMenu.data("worksheetId"), "other"));
+
+        info["newInfo"] = JSON.stringify(newInfo);
+
+        showLoading(dropDownMenu.data("worksheetId"));
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(dropDownMenu.data("worksheetId"));
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while exporting CSV!" + textStatus);
+                    hideLoading(dropDownMenu.data("worksheetId"));
+                }
+        });
+    });
+
     // Adding mouse handlers to the div
     dropDownMenu.mouseenter(function() {
         if ($(this).data("timer") != null)
