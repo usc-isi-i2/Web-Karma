@@ -734,6 +734,8 @@ public class KR2RMLWorksheetRDFGenerator {
 				LinkedList<Collection<Node>> allNodesCovered = gatherNodesForURI(columnsCovered);
 				URIs = generateURIsForBlankNodes(output, allNodesCovered);	
 			} else {
+				LinkedList<TemplateTerm> allTerms = new LinkedList<TemplateTerm>();
+				allTerms.addAll(subjMap.getTemplate().getAllTerms());
 				List<ColumnTemplateTerm> terms =  subjMap.getTemplate().getAllColumnNameTermElements();
 				columnsCovered = new LinkedList<String>();
 				for(ColumnTemplateTerm term : terms)
@@ -749,13 +751,76 @@ public class KR2RMLWorksheetRDFGenerator {
 					columnsToNodes.put(termIterator.next(), nodesIterator.next());
 				}
 				StringBuilder output = new StringBuilder();
-				LinkedList<TemplateTerm> allTerms = new LinkedList<TemplateTerm>();
-				allTerms.addAll(subjMap.getTemplate().getAllTerms());
+				
 				URIs = generateURIsForTemplates(output, allTerms, columnsToNodes);
 			}
+			List<String> cleanedURIs = new LinkedList<String>();
+			for(String uri : URIs)
+			{
+				cleanedURIs.add(getExpandedAndNormalizedUri(uri));
+			}
+			triplesMapURIs.put(triplesMap.getId(), cleanedURIs);
 			
-			triplesMapURIs.put(triplesMap.getId(), URIs);
 			
+			List<TriplesMapLink> links = kr2rmlMapping.getAuxInfo().getTriplesMapGraph().getAllNeighboringTriplesMap(triplesMap.getId());
+			for(TriplesMapLink link : links) {
+				if(link.getSourceMap().getId().compareTo(triplesMap.getId()) ==0  && !link.isFlipped() ||
+						link.getTargetMap().getId().compareTo(triplesMap.getId()) == 0 && link.isFlipped())
+				{
+					PredicateObjectMap pom = link.getPredicateObjectMapLink();
+					
+					TriplesMap subjectTriplesMap = link.getSourceMap();
+					TriplesMap objectTriplesMap = link.getTargetMap();
+					
+					for(String subjectURI : triplesMapURIs.get(subjectTriplesMap.getId()))
+					{
+						for(String objectURI : triplesMapURIs.get(objectTriplesMap.getId()))
+						{
+							System.out.println(subjectURI + " " + pom.getPredicate().toString() + objectURI);
+						}
+						
+					}
+				}	
+			}
+			
+			for(PredicateObjectMap pom : triplesMap.getPredicateObjectMaps())
+				{
+					if(pom.getObject().hasRefObjectMap())
+					{
+						continue;
+					}
+					if(pom.getPredicate().toString().contains("classLink"))
+						continue;
+					ObjectMap objMap = pom.getObject();
+					LinkedList<TemplateTerm> allTerms = new LinkedList<TemplateTerm>();
+					allTerms.addAll(objMap.getTemplate().getAllTerms());
+					List<ColumnTemplateTerm> terms =  objMap.getTemplate().getAllColumnNameTermElements();
+					columnsCovered = new LinkedList<String>();
+					for(ColumnTemplateTerm term : terms)
+					{
+						columnsCovered.add(term.getTemplateTermValue());
+					}
+					LinkedList<Collection<Node>> allNodesCovered = gatherNodesForURI(columnsCovered);
+					Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes = new HashMap<ColumnTemplateTerm, Collection<Node>>();
+					Iterator<ColumnTemplateTerm> termIterator = terms.iterator();
+					Iterator<Collection<Node>> nodesIterator = allNodesCovered.iterator();
+					while(termIterator.hasNext() && nodesIterator.hasNext())
+					{
+						columnsToNodes.put(termIterator.next(), nodesIterator.next());
+					}
+					StringBuilder output = new StringBuilder();
+					
+					List<String> values = generateURIsForTemplates(output, allTerms, columnsToNodes);
+					for(String uri : cleanedURIs)
+					{
+						for(String value : values)
+						{
+							System.out.println(uri + " " +  pom.getPredicate().toString() + " " +  value);
+						}
+					}
+				}
+			
+				
 			LOG.info("Processing " + triplesMap.getId() + " " +triplesMap.getSubject().getId());
 			notifyDependentTriplesMapWorkers();
 			return true;
@@ -788,7 +853,7 @@ public class KR2RMLWorksheetRDFGenerator {
 							}
 							else
 							{
-								uris.add(getExpandedAndNormalizedUri(newPrefix.toString()));
+								uris.add(newPrefix.toString());
 							}
 						}
 					}
@@ -802,12 +867,12 @@ public class KR2RMLWorksheetRDFGenerator {
 						}
 						else
 						{
-							uris.add(getExpandedAndNormalizedUri(newPrefix.toString()));
+							uris.add(newPrefix.toString());
 						}
 					}
 				
 			}
-				
+		
 			return uris;
 		}
 		private LinkedList<Collection<Node>> gatherNodesForURI(
