@@ -29,13 +29,16 @@ import edu.isi.karma.rep.Workspace;
 
 public class InvokeDataMiningServiceCommandFactory extends CommandFactory {
 	private enum Arguments {
-		worksheetId, tripleStoreUrl, modelContext, dataMiningURL
+		worksheetId, tripleStoreUrl, modelContext, dataMiningURL, nodeId
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
+		if(request.getParameter("nodeId") != null) {
+			return new InvokeDataMiningServiceCommand(getNewId(workspace), worksheetId, request.getParameter(Arguments.nodeId.name()));
+		}
 		String url = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.modelContext.name());
 		String dmURL = request.getParameter(Arguments.dataMiningURL.name());
