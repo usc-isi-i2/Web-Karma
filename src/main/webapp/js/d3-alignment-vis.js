@@ -23,6 +23,35 @@ function styleAndAssignHandlersToModelingVizElements() {
     var dropDownMenu = $("div#modelingClassDropDownMenu");
     $("button", dropDownMenu).button();
 
+    $("#invokeMachineLearningService").click(function() {
+    	//console.log(getParamObject(dropDownMenu.data("worksheetId"), dropDownMenu.data("nodeId")));
+        var optionsDiv = $("div#WorksheetOptionsDiv");
+
+        var info = new Object();
+        info["worksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "InvokeDataMiningServiceCommand";
+        info['nodeId'] = dropDownMenu.data("nodeId");
+
+
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while invoking the selected service!" + textStatus);
+                }
+        });
+    });
+    
+    
     $("#invokeRubenReconciliationService").click(function() {
         console.log("I am clicked!!")
         dropDownMenu.hide();
