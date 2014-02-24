@@ -27,7 +27,6 @@ import java.io.IOException;
 
 import org.json.JSONException;
 
-import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.Preferences;
 
 /**
@@ -78,11 +77,11 @@ public class ViewPreferences extends Preferences{
 			int value) {
 		try {
 			json.getJSONObject("ViewPreferences").put(pref.name(), value);
-			FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
+			this.savePreferences();
 		} catch (JSONException e) {
 			logger.error("Error setting int value!", e);
 		} catch (IOException e) {
-			logger.error("Error writing the changed preferences to file!" + jsonFile.getName(), e);
+			logger.error("Error writing the changed preferences to file!", e);
 		}
 	}
 }

@@ -45,6 +45,10 @@ public class SemanticTypeMapping {
 		this.target = target;
 	}
 
+	public SemanticType getSemanticType() {
+		return semanticType;
+	}
+
 	public InternalNode getSource() {
 		return source;
 	}
