@@ -908,6 +908,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	var allClasses, allProperties;
     	
     	var classPropertyUI;
+    	var changeFromNode, changeToNode, changeLink;
     	
     	function init() {
             selectedClass = {label:"", id:"", uri:""};
@@ -933,15 +934,20 @@ var IncomingOutgoingLinksDialog = (function() {
                 classPropertyUI.setDefaultClass(selectedClass.label, selectedClass.id, selectedClass.uri);
                 classPropertyUI.setDefaultProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
                 
-                if(linkType == "incoming") {
+                if(linkType == "incoming" || linkType == "changeIncoming") {
                     classPropertyUI.setClassLabel("From Class");
                 } else {
                     classPropertyUI.setClassLabel("To Class");
                 }
             
-                $("#incomingOutgoingLinksDialog_title", dialog).text("Add " + linkType + 
+                if(linkType == "incoming" || linkType == "outgoing") {
+                	$("#incomingOutgoingLinksDialog_title", dialog).text("Add " + linkType + 
                         " link for " + columnLabel);
-                
+                } else if(linkType == "changeIncoming") {
+                	$("#incomingOutgoingLinksDialog_title", dialog).text("Change incoming link for " + columnLabel);
+                } else if(linkType == "changeOutgoing") {
+                	$("#incomingOutgoingLinksDialog_title", dialog).text("Change outgoing link for " + columnLabel);
+                }
                 $("div.main", dialog).empty();
                 classPropertyUI.generateJS($("div.main", dialog), true);
             });
@@ -978,7 +984,7 @@ var IncomingOutgoingLinksDialog = (function() {
     				var propElem = ClassPropertyUI.parseNodeObject(prop);
     				var propLbl = propElem[0];
     				var propId = propElem[1];
-    				var cpropUri = propElem[2];
+    				var propUri = propElem[2];
     				
     				if(propId == id) {
     					classPropertyUI.setDefaultProperty(propLbl, propId, propUri);
@@ -1216,6 +1222,14 @@ var IncomingOutgoingLinksDialog = (function() {
         	 
         	// Put the old edge information
         	var initialEdges = [];
+        	 if(linkType == "changeIncoming" || linkType == "changeOutgoing") {
+        	    var oldEdgeObj = {};
+        	    oldEdgeObj["edgeSourceId"] = changeFromNode;
+        	    oldEdgeObj["edgeTargetId"] = changeToNode;
+        	    oldEdgeObj["edgeId"] = changeLink;
+        	    initialEdges.push(oldEdgeObj);
+        	 }
+        	    
         	newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
         	    
         	newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
@@ -1228,10 +1242,10 @@ var IncomingOutgoingLinksDialog = (function() {
         	 var source, target;
         	 var property = selectedProperty.id;
         	    
-        	if(linkType == "incoming") {
+        	if(linkType == "incoming" || linkType == "changeIncoming") {
         		target = startNode;
         		source = selectedClass.id;
-        	} else if(linkType == "outgoing") {
+        	} else if(linkType == "outgoing" || linkType == "changeOutgoing") {
         		source = startNode;
         		target = selectedClass.id;
         	} else {
@@ -1275,7 +1289,7 @@ var IncomingOutgoingLinksDialog = (function() {
         }
         
         function show(wsId, colId, alignId,
-        		colLabel, colUri, colDomain, type) {
+        		colLabel, colUri, colDomain, type, changeFrom, changeTo, changeLinkUri) {
         	worksheetId = wsId;
         	columnId = colId;
         	alignmentId = alignId;
@@ -1287,6 +1301,11 @@ var IncomingOutgoingLinksDialog = (function() {
         	linkType = type;
         	dialog.modal({keyboard:true, show:true});
         	
+        	if(type == "changeIncoming" || type == "changeOutgoing") {
+        		changeFromNode = changeFrom;
+        		changeToNode = changeTo;
+        		changeLink = changeLinkUri;
+        	}
         };
         
         

@@ -40,7 +40,7 @@ function ClassPropertyUI(id,
 	            "plugins" : [ "themes", "json_data", "ui", "search"]
 	        })
 	        	.bind("select_node.jstree", function (e, data) {
-	                classData.label = data.rslt.obj.context.lastChild.wholeText;
+	                classData.label = data.rslt.obj.data("label");
 	                classData.uri = data.rslt.obj.data("uri");
 	                classData.id = data.rslt.obj.data("id");
 	                var a = $.jstree._focused().get_selected();
@@ -81,7 +81,7 @@ function ClassPropertyUI(id,
 	            "plugins" : [ "themes", "json_data", "ui", "search"]
 	        })
 	        	.bind("select_node.jstree", function (e, data) {
-	        		propertyData.label = data.rslt.obj.context.lastChild.wholeText;
+	        		propertyData.label = data.rslt.obj.data("label");
 	        		propertyData.uri = data.rslt.obj.data("uri");
 	        		propertyData.id = data.rslt.obj.data("id");
 	                var a = $.jstree._focused().get_selected();
@@ -217,18 +217,26 @@ function ClassPropertyUI(id,
 		
 		$("#" + id + "_classList2").on("loaded.jstree", function (e, data) {
 			console.log("classList2 jstree loaded");
-			var treeId = "#" + ClassPropertyUI.getNodeID(defaultClassData.label, defaultClassData.id, defaultClassData.uri);
-			console.log("Now select node:" + treeId + " in classList");
-			jQuery("#" + id + "_classList2").jstree('select_node', treeId, true, true);
-			$("#" + id + "_classKeyword").val(label);
+			$("#" + id + "_classKeyword").val(defaultClassData.label);
+			window.setTimeout(function() {
+				var treeId = "#" + ClassPropertyUI.getNodeID(defaultClassData.label, defaultClassData.id, defaultClassData.uri);
+				console.log("Now select node:" + treeId + " in classList");
+				jQuery("#" + id + "_classList2").jstree('select_node', treeId, false, false);
+				//jQuery("#" + id + "_classList2").jstree('scroll_to_node', treeId);
+			}, 500);
 		}); 
 		
 		$("#" + id + "_propertyList2").on("loaded.jstree", function (e, data) {
 			console.log("propertyList2 jstree loaded");
-			var treeId = "#" + ClassPropertyUI.getNodeID(defaultPropertyData.label, defaultPropertyData.id, defaultPropertyData.uri);
-			console.log("Now select node:" + treeId + " in propertyList");
-			jQuery("#" + id + "_propertyList2").jstree('select_node', treeId, true, true);
-			$("#" + id + "_propertyKeyword").val(label);
+			if(defaultPropertyData.label.length > 0) {
+				$("#" + id + "_propertyKeyword").val(defaultPropertyData.label);
+				window.setTimeout(function() {
+					var treeId = "#" + ClassPropertyUI.getNodeID(defaultPropertyData.label, defaultPropertyData.id, defaultPropertyData.uri);
+					console.log("Now select node:" + treeId + " in propertyList");
+					jQuery("#" + id + "_propertyList2").jstree('select_node', treeId, false, false);
+					//jQuery("#" + id + "_propertyList2").jstree('scroll_to_node', treeId);
+				}, 500);
+			}
 		}); 
 		
 		if(populateData) {
@@ -288,13 +296,13 @@ function ClassPropertyUI(id,
 ClassPropertyUI.getNodeObject = function(label, cId, uri) {
 	var treeId = ClassPropertyUI.getNodeID(label, cId, uri);
 	//var nodeData = {data:{title:label, "id":treeId}, metadata:{"uri": uri, "id" : id}, attributes:{"id":treeId}};
-	var nodeData = { attr: { id : treeId }, data: label, metadata:{"uri": uri, id : cId} } ;
+	var nodeData = { attr: { id : treeId }, data: label, metadata:{"uri": uri, id : cId, "label":label} } ;
 	return nodeData;
 };
 
 ClassPropertyUI.parseNodeObject = function(nodeData) {
 	//return [nodeData.data.title, nodeData.metadata.id, nodeData.metadata.uri];
-	return [nodeData.data, nodeData.metadata.id, nodeData.metadata.uri];
+	return [nodeData.metadata.label, nodeData.metadata.id, nodeData.metadata.uri];
 };
 
 ClassPropertyUI.getNodeID = function(label, id, uri) {

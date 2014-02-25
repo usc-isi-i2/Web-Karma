@@ -15,7 +15,7 @@ var PropertyDropdownMenu = (function() {
     	
     	var options = [
     		   	        //Title, function to call, needs file upload     
-    		   	        [ "Change Link", changeLink],
+    		   	       // [ "Change Link", changeLink],
     		   	        [ "Delete", deleteLink],
     		   	        ["divider", null],
     		   	        [ "Change From", changeFrom ],
@@ -32,16 +32,61 @@ var PropertyDropdownMenu = (function() {
     		$(document).off('click', hide);
     	}
     	
-    	function changeLink() {
-    		console.log("changeLink");
-    		IncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
-    				columnId, alignmentId,
-    				columnLabel, columnUri, columnDomain,
-    				"incoming");
-    	};
+//    	function changeLink() {
+//    		console.log("changeLink");
+//    		IncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
+//    				columnId, alignmentId,
+//    				columnLabel, columnUri, columnDomain,
+//    				"changeLink", sourceNodeId, targetNodeId, propertyUri);
+//    	};
     	
     	function deleteLink() {
     		console.log("deleteLink");
+    		if(confirm("Are you sure you wish to delete the link?")) {
+    			var info = new Object();
+	           	 info["workspaceId"] = $.workspaceGlobalInformation.id;
+	           	 info["command"] = "ChangeInternalNodeLinksCommand";
+	
+	           	 // Prepare the input for command
+	           	 var newInfo = [];
+	           	 
+	           	// Put the old edge information
+	           	var initialEdges = [];
+           	    var oldEdgeObj = {};
+           	    oldEdgeObj["edgeSourceId"] = sourceNodeId;
+           	    oldEdgeObj["edgeTargetId"] = targetNodeId;
+           	    oldEdgeObj["edgeId"] = propertyUri;
+           	    initialEdges.push(oldEdgeObj);
+	           	newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
+	           	
+	           	newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
+	           	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+	           	var newEdges = [];
+	           	newInfo.push(getParamObject("newEdges", newEdges, "other"));
+	        	info["newInfo"] = JSON.stringify(newInfo);
+	        	info["newEdges"] = newEdges;
+	        	
+	        	showLoading(worksheetId);
+	            var returned = $.ajax({
+	                url: "RequestController",
+	                type: "POST",
+	                data : info,
+	                dataType : "json",
+	                complete :
+	                    function (xhr, textStatus) {
+	                        var json = $.parseJSON(xhr.responseText);
+	                        parse(json);
+	                        hideLoading(worksheetId);
+	                        hide();
+	                    },
+	                error :
+	                    function (xhr, textStatus) {
+	                        alert("Error occured while getting nodes list!");
+	                        hideLoading(worksheetId);
+	                        hide();
+	                    }
+	            });
+    		}
     	}
     	
     	function changeFrom() {
@@ -51,7 +96,7 @@ var PropertyDropdownMenu = (function() {
     		dialog.show(worksheetId, 
     				targetNodeId, alignmentId,
     				targetLabel, targetId, targetDomain,
-    				"incoming");
+    				"changeIncoming", sourceNodeId, targetNodeId, propertyUri);
     		dialog.setSelectedClass(sourceId);
     		dialog.setSelectedProperty(propertyUri);
     	}
@@ -62,7 +107,7 @@ var PropertyDropdownMenu = (function() {
     		dialog.show(worksheetId, 
     				sourceNodeId, alignmentId,
     				sourceLabel, sourceId, sourceDomain,
-    				"outgoing");
+    				"changeOutgoing", sourceNodeId, targetNodeId, propertyUri);
     		dialog.setSelectedClass(targetId);
     		dialog.setSelectedProperty(propertyUri);
     	}
