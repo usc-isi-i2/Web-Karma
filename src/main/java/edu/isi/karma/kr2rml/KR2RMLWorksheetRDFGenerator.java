@@ -149,7 +149,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(this, row);
 				TriplesMapPlan plan = g.generatePlan(kr2rmlMapping.getAuxInfo().getTriplesMapGraph());
 				e.execute(plan);
-				System.out.println(plan.triplesMapURIs);
+				
 			
 				Set<String> rowTriplesSet = new HashSet<String>();
 				Set<String> rowPredicatesCovered = new HashSet<String>();
@@ -701,7 +701,9 @@ public class KR2RMLWorksheetRDFGenerator {
 		public Boolean call() throws HNodeNotFoundKarmaException, ValueNotFoundKarmaException, NoValueFoundInNodeException {
 			
 			List<String> URIs = new LinkedList<String>();
+			List<Subject> subjects = new LinkedList<Subject>();
 			triplesMapURIs.put(triplesMap.getId(), URIs);
+			Map<Node, Set<Subject>> stuffs = new HashMap<Node, Set<Subject>>();
 			try{
 				latch.await();
 			}
@@ -718,9 +720,12 @@ public class KR2RMLWorksheetRDFGenerator {
 			
 			
 			Collection<Node> nodes = new LinkedList<Node>();
-			r.collectNodes(templateHNode.getHNodePath(factory), nodes);
+			HNodePath templateHNodePath = templateHNode.getHNodePath(factory);
+			r.collectNodes(templateHNodePath, nodes);
 			List<String> columnsCovered;
+			List<HNodePath> columnsCoveredPaths = new LinkedList<HNodePath>();
 			SubjectMap subjMap = triplesMap.getSubject();
+			HNodePath commonTemplatePath = templateHNodePath;
 			if (subjMap.isBlankNode()) {
 				columnsCovered = kr2rmlMapping.getAuxInfo().getBlankNodesColumnCoverage().get(subjMap.getId());
 				
@@ -752,16 +757,55 @@ public class KR2RMLWorksheetRDFGenerator {
 				}
 				StringBuilder output = new StringBuilder();
 				
-				URIs = generateURIsForTemplates(output, allTerms, columnsToNodes);
+				subjects = generateSubjectsForTemplates(output, allTerms, columnsToNodes, new LinkedList<Node>(), true);
 			}
-			List<String> cleanedURIs = new LinkedList<String>();
-			for(String uri : URIs)
+			
+			for(String columnCovered : columnsCovered)
 			{
-				cleanedURIs.add(getExpandedAndNormalizedUri(uri));
+				HNodePath columnCoveredPath = factory.getHNode(translator.getHNodeIdForColumnName(columnCovered)).getHNodePath(factory);
+				columnsCoveredPaths.add(columnCoveredPath);
+				commonTemplatePath = HNodePath.findCommon(commonTemplatePath, columnCoveredPath);
 			}
-			triplesMapURIs.put(triplesMap.getId(), cleanedURIs);
+				
+			for(Subject subject : subjects)
+			{
+				URIs.add(subject.uri);
+				for(Node n : subject.references)
+				{
+					if(!stuffs.containsKey(n))
+					{
+						stuffs.put(n, new HashSet<Subject>());
+					}
+					Set<Subject> s = stuffs.get(n);
+					s.add(subject);
+				}
+			}
 			
 			
+			
+			// Generate triples for specifying the types
+			for (TemplateTermSet typeTerm:subjMap.getRdfsType()) {
+				if(typeTerm.getAllColumnNameTermElements().isEmpty())
+				{
+					for(Subject subject : subjects)
+					{
+						StringBuffer sb = new StringBuffer(subject.uri);
+						sb.append(" ");
+						sb.append("<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>");
+						sb.append(" ");
+						for(TemplateTerm term : typeTerm.getAllTerms())
+						{
+							sb.append(term.getTemplateTermValue());
+						}
+						//outWriter.println(sb);
+					}
+				}
+				else
+				{
+					//dynamic types
+				}
+			
+			}
 			List<TriplesMapLink> links = kr2rmlMapping.getAuxInfo().getTriplesMapGraph().getAllNeighboringTriplesMap(triplesMap.getId());
 			for(TriplesMapLink link : links) {
 				if(link.getSourceMap().getId().compareTo(triplesMap.getId()) ==0  && !link.isFlipped() ||
@@ -776,7 +820,7 @@ public class KR2RMLWorksheetRDFGenerator {
 					{
 						for(String objectURI : triplesMapURIs.get(objectTriplesMap.getId()))
 						{
-							System.out.println(subjectURI + " " + pom.getPredicate().toString() + objectURI);
+							//outWriter.println(subjectURI + " " + pom.getPredicate().toString() + objectURI);
 						}
 						
 					}
@@ -795,35 +839,175 @@ public class KR2RMLWorksheetRDFGenerator {
 					LinkedList<TemplateTerm> allTerms = new LinkedList<TemplateTerm>();
 					allTerms.addAll(objMap.getTemplate().getAllTerms());
 					List<ColumnTemplateTerm> terms =  objMap.getTemplate().getAllColumnNameTermElements();
-					columnsCovered = new LinkedList<String>();
+					// we got a literal
+					if(terms == null || terms.isEmpty())
+					{
+						
+					}
+					Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes = new HashMap<ColumnTemplateTerm, Collection<Node>>();
+					HNodePath objectTemplateCommonPath = null;
+					HNodePath currentObjectTemplatePath = null;
+					LinkedList<String> objectColumnsCovered = new LinkedList<String>();
+					LinkedList<HNodePath> objectTemplatePaths = new LinkedList<HNodePath>();
+					Integer maxDepth = null;
+					Map<ColumnTemplateTerm, HNodePath> termToReferenceSubjectPath = new HashMap<ColumnTemplateTerm, HNodePath>(); 
+					Map<ColumnTemplateTerm, HNodePath> termToReferenceObjectPath = new HashMap<ColumnTemplateTerm, HNodePath>();
 					for(ColumnTemplateTerm term : terms)
 					{
-						columnsCovered.add(term.getTemplateTermValue());
-					}
-					LinkedList<Collection<Node>> allNodesCovered = gatherNodesForURI(columnsCovered);
-					Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes = new HashMap<ColumnTemplateTerm, Collection<Node>>();
-					Iterator<ColumnTemplateTerm> termIterator = terms.iterator();
-					Iterator<Collection<Node>> nodesIterator = allNodesCovered.iterator();
-					while(termIterator.hasNext() && nodesIterator.hasNext())
-					{
-						columnsToNodes.put(termIterator.next(), nodesIterator.next());
-					}
-					StringBuilder output = new StringBuilder();
-					
-					List<String> values = generateURIsForTemplates(output, allTerms, columnsToNodes);
-					for(String uri : cleanedURIs)
-					{
-						for(String value : values)
+						String objectTemplateValue = term.getTemplateTermValue();
+						if(objectTemplateCommonPath == null)
 						{
-							System.out.println(uri + " " +  pom.getPredicate().toString() + " " +  value);
+							objectTemplateCommonPath = currentObjectTemplatePath = factory.getHNode(translator.getHNodeIdForColumnName(objectTemplateValue)).getHNodePath(factory);
+							maxDepth = objectTemplateCommonPath.length();
+						}
+						else
+						{
+							currentObjectTemplatePath = factory.getHNode(translator.getHNodeIdForColumnName(objectTemplateValue)).getHNodePath(factory);
+							objectTemplatePaths.add(currentObjectTemplatePath);
+							objectTemplateCommonPath = HNodePath.findCommon(objectTemplateCommonPath, currentObjectTemplatePath);
+							
+							maxDepth = Math.max(maxDepth, currentObjectTemplatePath.length());
+						}
+						objectColumnsCovered.add(objectTemplateValue);
+						//find the most in common path
+						int mostInCommonLength = -1;
+						HNodePath referencePath = null;
+						for(HNodePath columnCoveredPath : columnsCoveredPaths)
+						{
+								HNodePath commonPath = HNodePath.findCommon(columnCoveredPath, currentObjectTemplatePath);
+								if(commonPath.length() > mostInCommonLength)
+								{
+									referencePath = columnCoveredPath;
+									termToReferenceSubjectPath.put(term, referencePath);
+									termToReferenceObjectPath.put(term, currentObjectTemplatePath);
+								}
+							
+						}
+						
+					}
+					for(ColumnTemplateTerm term : terms)
+					{
+						if(termToReferenceSubjectPath.get(term).length() > termToReferenceObjectPath.get(term).length())
+						{
+							LinkedList<Node> objectNodes = new LinkedList<Node>();
+							r.collectNodes(termToReferenceObjectPath.get(term), objectNodes);
+							columnsToNodes.put(term, objectNodes);
 						}
 					}
+					
+						for(Subject subject : subjects)
+						{
+							for(Node node : subject.references)
+							{
+								for(ColumnTemplateTerm term : terms)
+								{
+									HNodePath referencePath = termToReferenceSubjectPath.get(term);
+									currentObjectTemplatePath = termToReferenceObjectPath.get(term);
+									HNodePath objectToLookUpPath = null;
+									if(referencePath.length() <= currentObjectTemplatePath.length())
+									{
+										objectToLookUpPath = HNodePath.removeCommon(currentObjectTemplatePath, referencePath);
+									}
+									else
+									{
+										continue;
+									}
+									if(node.getHNodeId() == referencePath.getLeaf().getId())
+									{
+										LinkedList<Node> objectNodes = new LinkedList<Node>();
+										if(referencePath.length() < currentObjectTemplatePath.length())
+										{
+											node.getNestedTable().collectNodes(objectToLookUpPath.getRest(), objectNodes);
+										}
+										else if(referencePath.length() == currentObjectTemplatePath.length())
+										{
+											node.getBelongsToRow().collectNodes(objectToLookUpPath, objectNodes);
+										}
+										columnsToNodes.put(term, objectNodes);
+									}
+								}
+							}
+							List<Subject> values = generateSubjectsForTemplates(new StringBuilder(""), allTerms, columnsToNodes, new LinkedList<Node>(), false);
+							for(Subject value: values)
+							{
+								//outWriter.println(subject.uri + " " +  pom.getPredicate().toString() + " " +  value.uri);
+							}
+						}
 				}
 			
 				
 			LOG.info("Processing " + triplesMap.getId() + " " +triplesMap.getSubject().getId());
 			notifyDependentTriplesMapWorkers();
 			return true;
+		}
+		private List<Subject> generateSubjectsForTemplates(StringBuilder output,
+				List<TemplateTerm> terms,
+				Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes, List<Node> references, boolean URIify) {
+			List<Subject> subjects = new LinkedList<Subject>();
+			
+			if(!terms.isEmpty())
+			{
+				List<TemplateTerm> tempTerms = new LinkedList<TemplateTerm>();
+				tempTerms.addAll(terms);
+				TemplateTerm term = tempTerms.remove(0);
+				boolean recurse = false;
+				if(!tempTerms.isEmpty())
+				{
+					recurse = true;
+				}
+					
+					if(term instanceof ColumnTemplateTerm)
+					{
+						for(Node node : columnsToNodes.get(term))
+						{
+							if(node.getValue().isEmptyValue())
+							{
+								continue;
+							}
+							StringBuilder newPrefix = new StringBuilder(output);
+							newPrefix.append(node.getValue().asString());
+
+							List<Node> newReferences = new LinkedList<Node>();
+							newReferences.addAll(references);
+							newReferences.add(node);
+							if(recurse)
+							{
+								subjects.addAll(generateSubjectsForTemplates(newPrefix, tempTerms, columnsToNodes, references, URIify));
+							}
+							else
+							{
+								String value = newPrefix.toString();
+								if(URIify)
+								{
+									value = getExpandedAndNormalizedUri(value);
+								}
+								subjects.add(new Subject(newReferences, value));
+							}
+						}
+					}
+					else
+					{
+						StringBuilder newPrefix = new StringBuilder(output);
+						newPrefix.append(term.getTemplateTermValue());
+						if(recurse)
+						{
+							subjects.addAll(generateSubjectsForTemplates(newPrefix, tempTerms, columnsToNodes, references, URIify));
+							//generateURIsForTemplates(newPrefix, tempTerms, columnsToNodes);
+						}
+						else
+						{
+							String value = newPrefix.toString();
+							if(URIify)
+							{
+								value = getExpandedAndNormalizedUri(value);
+							}
+							subjects.add(new Subject(references, value));
+						}
+					}
+				
+			}
+		
+			return subjects;
 		}
 		private List<String> generateURIsForTemplates(StringBuilder output,
 				List<TemplateTerm> terms,

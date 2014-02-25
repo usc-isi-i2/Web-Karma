@@ -146,12 +146,28 @@ public class HNodePath {
 		HNodePath newPath = new HNodePath();
 		HNodePath path1Temp = path1;
 		HNodePath path2Temp = path2;
-		while(path1Temp.getFirst() == path2Temp.getFirst())
+		while((path1Temp != null && path2Temp != null)  && (!path1Temp.isEmpty() && !path2Temp.isEmpty())&& path1Temp.getFirst() == path2Temp.getFirst())
 		{
 			newPath.addHNode(path1Temp.getFirst());
 			path1Temp = path1Temp.getRest();
 			path2Temp = path2Temp.getRest();
 		}
 		return newPath;
+	}
+	
+	public static HNodePath removeCommon(HNodePath target, HNodePath toRemove)
+	{
+		HNodePath path1Temp = target;
+		HNodePath path2Temp = toRemove;
+		while((path1Temp != null && path2Temp != null)  && (!path1Temp.isEmpty() && !path2Temp.isEmpty())&& path1Temp.getFirst() == path2Temp.getFirst())
+		{
+			path1Temp = path1Temp.getRest();
+			path2Temp = path2Temp.getRest();
+		}
+		return path1Temp;
+	}
+	public int length()
+	{
+		return hNodes.size();
 	}
 }
