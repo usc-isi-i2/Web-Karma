@@ -55,7 +55,6 @@ public class AddRowCommandFactory extends CommandFactory implements JSONInputCom
 		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hTableId = CommandInputJSONUtil.getStringValue(Arguments.hTableId.name(), inputJson);
-		
 		AddRowCommand rowCmd = new AddRowCommand(getNewId(workspace), worksheetId,
 				hTableId, hNodeID);
 		rowCmd.setInputParameterJson(inputJson.toString());

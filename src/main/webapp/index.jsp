@@ -635,6 +635,9 @@ and related projects, please see: http://www.isi.edu/integration
             <button href="#" id="showModel">
                 Show Model
             </button>
+            <button href="#" id="Fold">
+                Fold
+            </button>
             <button href="#" id="setWorksheetProperties">
                 Set properties
             </button>
@@ -1311,6 +1314,9 @@ and related projects, please see: http://www.isi.edu/integration
         <div id="modelingClassDropDownMenu" class="ui-corner-all" style="display: none">
             <button id="invokeRubenReconciliationService">Invoke Reconciliation Service</button>
             <button id="invokeMachineLearningService">Invoke M/L Service</button>
+        </div>
+        <div id="foldDialog" class="ui-corner-all" style="display: none">
+            <p> Select Columns: </p>
         </div>
     </body>
 </html>
