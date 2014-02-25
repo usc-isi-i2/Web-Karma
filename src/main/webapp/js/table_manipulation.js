@@ -153,31 +153,12 @@ function submitAddNewRow() {
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["hNodeId"] = selectedHNodeId;
     info["hTableId"] = "";
-    info["command"] = "FoldCommand";
-    var addValues;
-    addValues = [
-     {    
-          rowId:      "R4" ,
-          rowIdHash:  "<rowIdHash>", 
-          values: [     
-          {    
-            name:      "test" ,
-            value:     "val"
-          }]
-     }
-     ,
-     {    
-          rowId:      "R17",
-          rowIdHash:  "<rowIdHash>", 
-          values:     "test1"
-     }];
+    info["command"] = "AddRowCommand";
     // alert(addValues);
     var newInfo = [];   // Used for commands that take JSONArray as input
     newInfo.push(getParamObject("hNodeId", selectedHNodeId,"hNodeId"));
     newInfo.push(getParamObject("hTableId", "","other"));
     newInfo.push(getParamObject("worksheetId", $("td#" + selectedHNodeId).parents("div.Worksheet").attr("id"),"worksheetId"));
-    var a = JSON.stringify(addValues);
-    newInfo.push(getParamObject("AddValues", a ,"other"));
     //newInfo.push(getParamObject("AddValues",JSON.stringify(addValues), "array");
     info["newInfo"] = JSON.stringify(newInfo);
 

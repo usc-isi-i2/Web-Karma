@@ -167,6 +167,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
             var checkbox = checkboxes[i];
             checked.push(getParamObject("checked", checkbox['value'], "other"));    
         }
+        $('div#foldDialog').dialog("close");
         //console.log(checked);
         var info = new Object();
         info["worksheetId"] = optionsDiv.data("worksheetId");
