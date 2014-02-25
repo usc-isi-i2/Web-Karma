@@ -66,6 +66,10 @@ public class TemplateTermSetBuilder {
 		    	
 	    		startIndex = matcher.end();
 		      }
+	    	if(startIndex != templStr.length())
+	    	{
+	    		termSet.addTemplateTermToSet(new StringTemplateTerm(templStr.substring(startIndex)));
+	    	}
 	    } else {
 	    	termSet.addTemplateTermToSet(new StringTemplateTerm(templStr));
 	    }

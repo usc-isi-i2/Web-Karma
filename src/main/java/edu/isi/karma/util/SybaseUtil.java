@@ -99,5 +99,9 @@ public class SybaseUtil extends AbstractJDBCUtil {
 		return s;
 	}
 
+	@Override
+	public String escapeTablename(String name) {
+		return "`" + name + "`";
+	}
 
 }
