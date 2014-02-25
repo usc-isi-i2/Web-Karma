@@ -85,12 +85,12 @@ public class AddRowCommand extends WorksheetCommand {
 
 	@Override
 	public String getTitle() {
-		return "Add Row Column";
+		return "Add Row";
 	}
 
 	@Override
 	public String getDescription() {
-			return "";
+			return "New Row";
 	}
 
 	@Override

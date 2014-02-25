@@ -32,7 +32,7 @@ public class FoldCommandFactory extends CommandFactory implements JSONInputComma
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
 		/** Parse the input arguments and create proper data structures to be passed to the command **/
-		String hNodeID = "";
+		String hNodeID = null;
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hTableId = "";
 		//System.out.println(worksheetId);

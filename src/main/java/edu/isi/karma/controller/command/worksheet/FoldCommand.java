@@ -67,7 +67,11 @@ public class FoldCommand extends WorksheetCommand {
 
 	@Override
 	public String getDescription() {
-		return "";
+		String t = "";
+		for (HNode hnode : hnodes) {
+			t += hnode.getColumnName() + " ";
+		}
+		return "" + t;
 	}
 
 	@Override
@@ -82,9 +86,6 @@ public class FoldCommand extends WorksheetCommand {
 				worksheetId);
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
 		HTable htable =  worksheet.getHeaders();
-		ArrayList<HNode> tmp = new ArrayList<HNode>(htable.getHNodes());
-		hNodeId = tmp.get(tmp.size() - 1).getId();
-		System.out.println(hNodeId);
 		JSONArray checked = (JSONArray) JSONUtil.createJson(CommandInputJSONUtil.getStringValue("values", (JSONArray)para));
 		for (int i = 0; i < checked.length(); i++) {
 			JSONObject t = (checked.getJSONObject(i));

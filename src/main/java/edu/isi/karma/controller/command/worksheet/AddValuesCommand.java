@@ -129,8 +129,9 @@ public class AddValuesCommand extends WorksheetCommand{
 		if(hTableId==null || hTableId.isEmpty()){
 			//get table id based on the hNodeId
 			if(hNodeId==null)
-				throw new KarmaException("TableId and NodeId are empty. Can't add column.");
-			hTableId = workspace.getFactory().getHNode(hNodeId).getHTableId();
+				hTableId = worksheet.getHeaders().getId();
+			else
+				hTableId = workspace.getFactory().getHNode(hNodeId).getHTableId();
 		}
 		HTable hTable = workspace.getFactory().getHTable(hTableId);
 		if(hTable == null)
@@ -202,7 +203,7 @@ public class AddValuesCommand extends WorksheetCommand{
 		Table nestedTable = row.getNode(newHNodeId).getNestedTable();
 		for (int i = 0; i < array.length(); i++) {
 			JSONObject obj = (JSONObject)array.get(i);
-			System.out.println("JObject: " + obj);
+			//System.out.println("JObject: " + obj);
 			String name = obj.getString("name");
 			String value = obj.getString("value");
 			HNode h = nestedHTable.getHNodeFromColumnName(name);
