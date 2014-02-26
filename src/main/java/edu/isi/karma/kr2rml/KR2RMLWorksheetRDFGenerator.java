@@ -149,7 +149,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(this, row);
 				TriplesMapPlan plan = g.generatePlan(kr2rmlMapping.getAuxInfo().getTriplesMapGraph());
 				e.execute(plan);
-				
+				outWriter.println();
 			
 				Set<String> rowTriplesSet = new HashSet<String>();
 				Set<String> rowPredicatesCovered = new HashSet<String>();
@@ -789,15 +789,14 @@ public class KR2RMLWorksheetRDFGenerator {
 				{
 					for(Subject subject : subjects)
 					{
-						StringBuffer sb = new StringBuffer(subject.uri);
-						sb.append(" ");
-						sb.append("<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>");
-						sb.append(" ");
+						
+						//TODO dothis
+						StringBuffer sb = new StringBuffer();
 						for(TemplateTerm term : typeTerm.getAllTerms())
 						{
 							sb.append(term.getTemplateTermValue());
 						}
-						//outWriter.println(sb);
+						outWriter.println(constructTripleWithURIObject(subject.uri, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", sb.toString()));
 					}
 				}
 				else
@@ -820,7 +819,7 @@ public class KR2RMLWorksheetRDFGenerator {
 					{
 						for(String objectURI : triplesMapURIs.get(objectTriplesMap.getId()))
 						{
-							//outWriter.println(subjectURI + " " + pom.getPredicate().toString() + objectURI);
+							outWriter.println(constructTripleWithURIObject(subjectURI, pom.getPredicate().toString(), objectURI));
 						}
 						
 					}
@@ -930,7 +929,7 @@ public class KR2RMLWorksheetRDFGenerator {
 							List<Subject> values = generateSubjectsForTemplates(new StringBuilder(""), allTerms, columnsToNodes, new LinkedList<Node>(), false);
 							for(Subject value: values)
 							{
-								//outWriter.println(subject.uri + " " +  pom.getPredicate().toString() + " " +  value.uri);
+								outWriter.println(constructTripleWithLiteralObject(subject.uri, pom.getPredicate().toString(),  value.uri, pom.getObject().getRdfLiteralType().toString()));
 							}
 						}
 				}
@@ -1009,56 +1008,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		
 			return subjects;
 		}
-		private List<String> generateURIsForTemplates(StringBuilder output,
-				List<TemplateTerm> terms,
-				Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes) {
-			List<String> uris = new LinkedList<String>();
-			
-			if(!terms.isEmpty())
-			{
-				List<TemplateTerm> tempTerms = new LinkedList<TemplateTerm>();
-				tempTerms.addAll(terms);
-				TemplateTerm term = tempTerms.remove(0);
-				boolean recurse = false;
-				if(!tempTerms.isEmpty())
-				{
-					recurse = true;
-				}
-					
-					if(term instanceof ColumnTemplateTerm)
-					{
-						for(Node node : columnsToNodes.get(term))
-						{
-							StringBuilder newPrefix = new StringBuilder(output);
-							newPrefix.append(node.getValue().asString());
-							if(recurse)
-							{
-								uris.addAll(generateURIsForTemplates(newPrefix, tempTerms, columnsToNodes));
-							}
-							else
-							{
-								uris.add(newPrefix.toString());
-							}
-						}
-					}
-					else
-					{
-						StringBuilder newPrefix = new StringBuilder(output);
-						newPrefix.append(term.getTemplateTermValue());
-						if(recurse)
-						{
-							generateURIsForTemplates(newPrefix, tempTerms, columnsToNodes);
-						}
-						else
-						{
-							uris.add(newPrefix.toString());
-						}
-					}
-				
-			}
 		
-			return uris;
-		}
 		private LinkedList<Collection<Node>> gatherNodesForURI(
 				List<String> columnsCovered) throws HNodeNotFoundKarmaException {
 			LinkedList<Collection<Node>> allNodesCovered = new LinkedList<Collection<Node>>();

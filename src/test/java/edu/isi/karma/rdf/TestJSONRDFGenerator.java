@@ -114,12 +114,13 @@ public class TestJSONRDFGenerator {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("people-model", jsonData, true, pw);
+			rdfGen.generateRDF("people-model", jsonData, false, pw);
 			String rdf = sw.toString();
-
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("\n");
-			assertEquals(102, lines.length);
+			int count = lines.length + 1;
+			 
+			assertEquals(184, count);
 		} catch (Exception e) {
 			fail("Execption: " + e.getMessage());
 		}
@@ -142,12 +143,13 @@ public class TestJSONRDFGenerator {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("cs548-events-model", jsonData, true, pw);
+			rdfGen.generateRDF("cs548-events-model", jsonData, false, pw);
 			String rdf = sw.toString();
+			System.out.println(rdf);
 
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("\n");
-			assertEquals(234, lines.length);
+			assertEquals(212*2, lines.length+1);
 		} catch (Exception e) {
 			fail("Execption: " + e.getMessage());
 		}

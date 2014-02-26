@@ -915,15 +915,6 @@ _:node18ajn6hmcx18 rr:objectMap km-dev:RefObjectMap_391669f9-a168-4c4f-9c8d-5ddc
 
 km-dev:TriplesMap_cb7bdfc8-5781-4be8-8dcb-51d14139960b rr:predicateObjectMap _:node18ajn6hmcx18 .
 
-_:node18ajn6hmcx19 rr:predicate foaf:depicts .
-
-km-dev:RefObjectMap_5c1ae35f-13db-4451-ac5f-f9a987b31279 a rr:RefObjectMap ;
-	rr:parentTriplesMap km-dev:TriplesMap_70e7552c-4ac3-4e04-9aff-74f01a3b2e15 .
-
-_:node18ajn6hmcx19 rr:objectMap km-dev:RefObjectMap_5c1ae35f-13db-4451-ac5f-f9a987b31279 .
-
-km-dev:TriplesMap_cb7bdfc8-5781-4be8-8dcb-51d14139960b rr:predicateObjectMap _:node18ajn6hmcx19 .
-
 km-dev:TriplesMap_e263e656-5f96-4ff5-844e-56d585a24020 a rr:TriplesMap .
 
 _:node18ajn6hmcx1 km-dev:hasTriplesMap km-dev:TriplesMap_e263e656-5f96-4ff5-844e-56d585a24020 .
