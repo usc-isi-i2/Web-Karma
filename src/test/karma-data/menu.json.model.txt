@@ -1,0 +1,187 @@
+@prefix ns1: <status> .
+@prefix ns2: <schema-ext> .
+@prefix ns3: <ns4> .
+@prefix ns4: <owl2xml> .
+@prefix ns5: <schema> .
+@prefix ns6: <aac-ont> .
+@prefix ns7: <reg> .
+@prefix ns8: <rdf> .
+@prefix ns9: <foaf> .
+@prefix ns10: <dcterms> .
+@prefix ns11: <xsd> .
+@prefix ns12: <DOLCE-Lite> .
+@prefix ns13: <dcmitype> .
+@prefix ns14: <wgs84_pos> .
+@prefix ns15: <FRBRentitiesRDA> .
+@prefix ns16: <saam-ont> .
+@prefix ns17: <edm> .
+@prefix ns18: <wot> .
+@prefix ns19: <dc> .
+@prefix ns20: <grddl> .
+@prefix ns21: <ElementsGr2> .
+@prefix ns22: <skos> .
+@prefix ns23: <crm> .
+@prefix ns24: <ex> .
+@prefix ns25: <vs> .
+@prefix ns26: <frbr_core> .
+@prefix ns27: <owl> .
+@prefix ns28: <ore> .
+@prefix ns29: <abc> .
+@prefix ns30: <dcam> .
+@prefix ns31: <rdfg> .
+@prefix ns32: <dbpedia-owl> .
+@prefix ns33: <rdfs> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix km-dev: <http://isi.edu/integration/karma/dev#> .
+
+_:node18hnqgghsx1 a km-dev:R2RMLMapping ;
+	km-dev:sourceName "menu.json" ;
+	km-dev:modelPublicationTime "1393442701909"^^<http://www.w3.org/2001/XMLSchema#long> ;
+	km-dev:modelVersion "1.0" ;
+	km-dev:hasWorksheetHistory "[{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"document-type\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://purl.org/dc/terms/type\",\"Domain\":\"http://xmlns.com/foaf/0.1/Document\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"drink-info\"},{\"columnName\":\"drinks\"},{\"columnName\":\"values\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://dbpedia.org/ontology/description\",\"Domain\":\"http://dbpedia.org/ontology/Beverage\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"restaurant\"},{\"columnName\":\"location\"},{\"columnName\":\"lat\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.w3.org/2003/01/geo/wgs84_pos#lat\",\"Domain\":\"http://www.w3.org/2003/01/geo/wgs84_pos#Point\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"restaurant\"},{\"columnName\":\"location\"},{\"columnName\":\"lon\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.w3.org/2003/01/geo/wgs84_pos#long\",\"Domain\":\"http://www.w3.org/2003/01/geo/wgs84_pos#Point1\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"restaurant\"},{\"columnName\":\"name\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.w3.org/2000/01/rdf-schema#label\",\"Domain\":\"http://dbpedia.org/ontology/Restaurant\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://dbpedia.org/ontology/Restaurant1\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"restaurant\"},{\"columnName\":\"url\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"initialEdges\",\"value\":[],\"type\":\"other\"},{\"name\":\"alignmentId\",\"value\":\"WSP1:WS1AL\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"newEdges\",\"value\":[{\"edgeId\":\"http://www.w3.org/2003/01/geo/wgs84_pos#location\",\"edgeTargetId\":\"http://www.w3.org/2003/01/geo/wgs84_pos#Point1\",\"edgeSourceId\":\"http://dbpedia.org/ontology/Restaurant1\"}],\"type\":\"other\"}],\"commandName\":\"ChangeInternalNodeLinksCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"size-info\"},{\"columnName\":\"sizes\"},{\"columnName\":\"values\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://schema.org/servingSize\",\"Domain\":\"http://dbpedia.org/ontology/Beverage1\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"type-info\"},{\"columnName\":\"types\"},{\"columnName\":\"values\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.europeana.eu/schemas/edm/type\",\"Domain\":\"http://dbpedia.org/ontology/Beverage1\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"version\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.w3.org/2002/07/owl#versionInfo\",\"Domain\":\"http://xmlns.com/foaf/0.1/Document1\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"newColumnName\",\"value\":\"menu_uri\",\"type\":\"other\"},{\"name\":\"transformationCode\",\"value\":\"return getValue(\\\"webpage\\\").lower() + \\\"/\\\" + getValue(\\\"version\\\")\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"webpage\"}],\"type\":\"hNodeId\"},{\"name\":\"errorDefaultValue\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SubmitPythonTransformationCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://xmlns.com/foaf/0.1/Document1\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"menu_uri\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"initialEdges\",\"value\":[],\"type\":\"other\"},{\"name\":\"alignmentId\",\"value\":\"WSP1:WS1AL\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"newEdges\",\"value\":[{\"edgeId\":\"http://dbpedia.org/ontology/listItemOf\",\"edgeTargetId\":\"http://xmlns.com/foaf/0.1/Document1\",\"edgeSourceId\":\"http://dbpedia.org/ontology/Beverage1\"}],\"type\":\"other\"}],\"commandName\":\"ChangeInternalNodeLinksCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"initialEdges\",\"value\":[{\"edgeId\":\"http://dbpedia.org/ontology/listItemOf\",\"edgeLabel\":\"dbpedia-owl:listItemOf\",\"edgeSource\":\"dbpedia-owl:Beverage1\",\"direction\":\"incoming\",\"edgeTarget\":\"foaf:Document1\",\"edgeSourceId\":\"http://dbpedia.org/ontology/Beverage1\",\"edgeTargetId\":\"http://xmlns.com/foaf/0.1/Document1\"}],\"type\":\"other\"},{\"name\":\"alignmentId\",\"value\":\"WSP1:WS1AL\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"newEdges\",\"value\":[{\"edgeId\":\"http://dbpedia.org/ontology/listItemOf\",\"edgeTargetId\":\"http://xmlns.com/foaf/0.1/Document1\",\"edgeSourceId\":\"http://dbpedia.org/ontology/Beverage1\"},{\"edgeId\":\"http://www.openarchives.org/ore/terms/describes\",\"edgeTargetId\":\"http://dbpedia.org/ontology/Restaurant1\",\"edgeSourceId\":\"http://xmlns.com/foaf/0.1/Document1\"}],\"type\":\"other\"}],\"commandName\":\"ChangeInternalNodeLinksCommand\"}]" .
+
+km-dev:TriplesMap_1 a rr:TriplesMap .
+
+_:node18hnqgghsx1 km-dev:hasTriplesMap km-dev:TriplesMap_1 .
+
+_:node18hnqgghsx2 rr:tableName "menu.json" .
+
+km-dev:TriplesMap_1 rr:logicalTable _:node18hnqgghsx2 ;
+	rr:subjectMap _:node18hnqgghsx3 .
+
+_:node18hnqgghsx3 km-dev:alignmentNodeId "http://dbpedia.org/ontology/Beverage1" ;
+	rr:class <http://dbpedia.org/ontology/Beverage> ;
+	rr:termType rr:BlankNode ;
+	km-dev:namePrefix "dbpedia-owl:Beverage1" ;
+	a km-dev:steinerTreeRootNode .
+
+_:node18hnqgghsx4 rr:predicate <http://dbpedia.org/ontology/description> .
+
+_:node18hnqgghsx5 rr:column "[\"drink-info\",\"drinks\",\"values\"]" .
+
+_:node18hnqgghsx4 rr:objectMap _:node18hnqgghsx5 .
+
+km-dev:TriplesMap_1 rr:predicateObjectMap _:node18hnqgghsx4 .
+
+_:node18hnqgghsx6 rr:predicate <http://dbpedia.org/ontology/listItemOf> .
+
+km-dev:RefObjectMap_1 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_2 .
+
+_:node18hnqgghsx6 rr:objectMap km-dev:RefObjectMap_1 .
+
+km-dev:TriplesMap_1 rr:predicateObjectMap _:node18hnqgghsx6 .
+
+_:node18hnqgghsx7 rr:predicate <http://schema.org/servingSize> .
+
+_:node18hnqgghsx8 rr:column "[\"size-info\",\"sizes\",\"values\"]" .
+
+_:node18hnqgghsx7 rr:objectMap _:node18hnqgghsx8 .
+
+km-dev:TriplesMap_1 rr:predicateObjectMap _:node18hnqgghsx7 .
+
+_:node18hnqgghsx9 rr:predicate <http://www.europeana.eu/schemas/edm/type> .
+
+_:node18hnqgghsx10 rr:column "[\"type-info\",\"types\",\"values\"]" .
+
+_:node18hnqgghsx9 rr:objectMap _:node18hnqgghsx10 .
+
+km-dev:TriplesMap_1 rr:predicateObjectMap _:node18hnqgghsx9 .
+
+km-dev:TriplesMap_2 a rr:TriplesMap .
+
+_:node18hnqgghsx1 km-dev:hasTriplesMap km-dev:TriplesMap_2 .
+
+_:node18hnqgghsx11 rr:tableName "menu.json" .
+
+km-dev:TriplesMap_2 rr:logicalTable _:node18hnqgghsx11 ;
+	rr:subjectMap _:node18hnqgghsx12 .
+
+_:node18hnqgghsx12 km-dev:alignmentNodeId "http://xmlns.com/foaf/0.1/Document1" ;
+	rr:class <http://xmlns.com/foaf/0.1/Document> ;
+	rr:template "{menu_uri}" .
+
+_:node18hnqgghsx14 rr:predicate <http://purl.org/dc/terms/type> .
+
+_:node18hnqgghsx15 rr:column "document-type" .
+
+_:node18hnqgghsx14 rr:objectMap _:node18hnqgghsx15 .
+
+km-dev:TriplesMap_2 rr:predicateObjectMap _:node18hnqgghsx14 .
+
+_:node18hnqgghsx16 rr:predicate <http://www.openarchives.org/ore/terms/describes> .
+
+km-dev:RefObjectMap_2 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_3 .
+
+_:node18hnqgghsx16 rr:objectMap km-dev:RefObjectMap_2 .
+
+km-dev:TriplesMap_2 rr:predicateObjectMap _:node18hnqgghsx16 .
+
+_:node18hnqgghsx17 rr:predicate <http://www.w3.org/2002/07/owl#versionInfo> .
+
+_:node18hnqgghsx18 rr:column "version" .
+
+_:node18hnqgghsx17 rr:objectMap _:node18hnqgghsx18 .
+
+km-dev:TriplesMap_2 rr:predicateObjectMap _:node18hnqgghsx17 .
+
+km-dev:TriplesMap_3 a rr:TriplesMap .
+
+_:node18hnqgghsx1 km-dev:hasTriplesMap km-dev:TriplesMap_3 .
+
+_:node18hnqgghsx19 rr:tableName "menu.json" .
+
+km-dev:TriplesMap_3 rr:logicalTable _:node18hnqgghsx19 ;
+	rr:subjectMap _:node18hnqgghsx20 .
+
+_:node18hnqgghsx20 km-dev:alignmentNodeId "http://dbpedia.org/ontology/Restaurant1" ;
+	rr:class <http://dbpedia.org/ontology/Restaurant> ;
+	rr:template "{[\"restaurant\",\"url\"]}" .
+
+_:node18hnqgghsx22 rr:predicate <http://www.w3.org/2000/01/rdf-schema#label> .
+
+_:node18hnqgghsx23 rr:column "[\"restaurant\",\"name\"]" .
+
+_:node18hnqgghsx22 rr:objectMap _:node18hnqgghsx23 .
+
+km-dev:TriplesMap_3 rr:predicateObjectMap _:node18hnqgghsx22 .
+
+_:node18hnqgghsx24 rr:predicate <http://www.w3.org/2003/01/geo/wgs84_pos#location> .
+
+km-dev:RefObjectMap_3 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_4 .
+
+_:node18hnqgghsx24 rr:objectMap km-dev:RefObjectMap_3 .
+
+km-dev:TriplesMap_3 rr:predicateObjectMap _:node18hnqgghsx24 .
+
+km-dev:TriplesMap_4 a rr:TriplesMap .
+
+_:node18hnqgghsx1 km-dev:hasTriplesMap km-dev:TriplesMap_4 .
+
+_:node18hnqgghsx25 rr:tableName "menu.json" .
+
+km-dev:TriplesMap_4 rr:logicalTable _:node18hnqgghsx25 ;
+	rr:subjectMap _:node18hnqgghsx26 .
+
+_:node18hnqgghsx26 km-dev:alignmentNodeId "http://www.w3.org/2003/01/geo/wgs84_pos#Point1" ;
+	rr:class <http://www.w3.org/2003/01/geo/wgs84_pos#Point> ;
+	rr:termType rr:BlankNode ;
+	km-dev:namePrefix "wgs84_pos:Point1" .
+
+_:node18hnqgghsx27 rr:predicate <http://www.w3.org/2003/01/geo/wgs84_pos#lat> .
+
+_:node18hnqgghsx28 rr:column "[\"restaurant\",\"location\",\"lat\"]" .
+
+_:node18hnqgghsx27 rr:objectMap _:node18hnqgghsx28 .
+
+km-dev:TriplesMap_4 rr:predicateObjectMap _:node18hnqgghsx27 .
+
+_:node18hnqgghsx29 rr:predicate <http://www.w3.org/2003/01/geo/wgs84_pos#long> .
+
+_:node18hnqgghsx30 rr:column "[\"restaurant\",\"location\",\"lon\"]" .
+
+_:node18hnqgghsx29 rr:objectMap _:node18hnqgghsx30 .
+
+km-dev:TriplesMap_4 rr:predicateObjectMap _:node18hnqgghsx29 .

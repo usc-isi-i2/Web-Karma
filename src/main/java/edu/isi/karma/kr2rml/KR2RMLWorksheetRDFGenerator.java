@@ -712,7 +712,9 @@ public class KR2RMLWorksheetRDFGenerator {
 				notifyDependentTriplesMapWorkers();
 				return false;
 			}
-			
+			LOG.info("Processing " + triplesMap.getId() + " " +triplesMap.getSubject().getId());
+			try
+			{
 			String templateAnchor = kr2rmlMapping.getAuxInfo().getSubjectMapIdToTemplateAnchor().get(triplesMap.getSubject().getId());
 			String templateHNodeId = translator.getHNodeIdForColumnName(templateAnchor);
 			HNode templateHNode = factory.getHNode(templateHNodeId);
@@ -804,7 +806,7 @@ public class KR2RMLWorksheetRDFGenerator {
 						{
 							sb.append(term.getTemplateTermValue());
 						}
-						//outWriter.println(constructTripleWithURIObject(subject.uri, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", getExpandedAndNormalizedUri(sb.toString())));
+						System.out.println(constructTripleWithURIObject(subject.uri, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", getExpandedAndNormalizedUri(sb.toString())));
 					}
 				}
 				else
@@ -829,7 +831,7 @@ public class KR2RMLWorksheetRDFGenerator {
 						{
 							for(Subject predicate : predicates)
 							{
-								//outWriter.println(constructTripleWithURIObject(subject.getURI(), predicate.getURI(), objectSubject.getURI()));
+								System.out.println(constructTripleWithURIObject(subject.getURI(), predicate.getURI(), objectSubject.getURI()));
 							}
 						}
 						
@@ -839,13 +841,17 @@ public class KR2RMLWorksheetRDFGenerator {
 			
 			for(PredicateObjectMap pom : triplesMap.getPredicateObjectMaps())
 				{
+				LOG.info("Processing " + pom.toString());
 					if(pom.getObject().hasRefObjectMap())
 					{
+						LOG.info("Skipping " + pom.toString());
 						continue;
 					}
 					if(pom.getPredicate().toString().contains("classLink"))
+					{
+						LOG.info("Skipping " + pom.toString());
 						continue;
-					
+					}
 					List<Subject> predicates = generatePredicatesForPom(pom);
 					ObjectMap objMap = pom.getObject();
 					LinkedList<TemplateTerm> allTerms = new LinkedList<TemplateTerm>();
@@ -861,7 +867,7 @@ public class KR2RMLWorksheetRDFGenerator {
 							{
 								for(Subject predicate : predicates)
 								{
-									outWriter.println(constructTripleWithLiteralObject(subject.uri, predicate.getURI(),  value.uri, pom.getObject().getRdfLiteralType().toString()));
+									System.out.println(constructTripleWithLiteralObject(subject.uri, predicate.getURI(),  value.uri, pom.getObject().getRdfLiteralType().toString()));
 								}
 							}
 						}	
@@ -875,6 +881,7 @@ public class KR2RMLWorksheetRDFGenerator {
 					Integer maxDepth = null;
 					Map<ColumnTemplateTerm, HNodePath> termToReferenceSubjectPath = new HashMap<ColumnTemplateTerm, HNodePath>(); 
 					Map<ColumnTemplateTerm, HNodePath> termToReferenceObjectPath = new HashMap<ColumnTemplateTerm, HNodePath>();
+
 					for(ColumnTemplateTerm term : objectTemplateTerms)
 					{
 						String objectTemplateValue = term.getTemplateTermValue();
@@ -893,13 +900,15 @@ public class KR2RMLWorksheetRDFGenerator {
 						}
 						objectColumnsCovered.add(objectTemplateValue);
 						//find the most in common path
-						int mostInCommonLength = -1;
+						
 						HNodePath referencePath = null;
+						int mostInCommonLength = -1;
 						for(HNodePath columnCoveredPath : columnsCoveredPaths)
 						{
 								HNodePath commonPath = HNodePath.findCommon(columnCoveredPath, currentObjectTemplatePath);
 								if(commonPath.length() > mostInCommonLength)
 								{
+									mostInCommonLength = commonPath.length();
 									referencePath = columnCoveredPath;
 									termToReferenceSubjectPath.put(term, referencePath);
 									termToReferenceObjectPath.put(term, currentObjectTemplatePath);
@@ -916,6 +925,10 @@ public class KR2RMLWorksheetRDFGenerator {
 							r.collectNodes(termToReferenceObjectPath.get(term), objectNodes);
 							columnsToNodes.put(term, objectNodes);
 						}
+						else
+						{
+							System.out.println("why am i here?");
+						}
 					}
 					
 						for(Subject subject : subjects)
@@ -927,7 +940,19 @@ public class KR2RMLWorksheetRDFGenerator {
 									HNodePath referencePath = termToReferenceSubjectPath.get(term);
 									currentObjectTemplatePath = termToReferenceObjectPath.get(term);
 									HNodePath objectToLookUpPath = null;
-									if(referencePath.length() <= currentObjectTemplatePath.length())
+									if(referencePath.length() == currentObjectTemplatePath.length())
+									{
+										if(referencePath.getLeaf() == currentObjectTemplatePath.getLeaf())
+										{
+											objectToLookUpPath = new HNodePath();
+											objectToLookUpPath.addHNode(currentObjectTemplatePath.getLeaf());
+										}
+										else
+										{
+											objectToLookUpPath = HNodePath.removeCommon(currentObjectTemplatePath, referencePath);
+										}
+									}
+									else if(referencePath.length() <= currentObjectTemplatePath.length())
 									{
 										objectToLookUpPath = HNodePath.removeCommon(currentObjectTemplatePath, referencePath);
 									}
@@ -955,14 +980,18 @@ public class KR2RMLWorksheetRDFGenerator {
 							{
 								for(Subject predicate : predicates)
 								{
-									//outWriter.println(constructTripleWithLiteralObject(subject.uri, predicate.getURI(),  value.uri, pom.getObject().getRdfLiteralType().toString()));
+									System.out.println(constructTripleWithLiteralObject(subject.uri, predicate.getURI(),  value.uri, null));
 								}
 							}
 						}
 				}
-			
+			}
+			catch (Exception e)
+			{
+				LOG.error("Something went wrong", e );
+			}
 				
-			LOG.info("Processing " + triplesMap.getId() + " " +triplesMap.getSubject().getId());
+			LOG.info("Processed " + triplesMap.getId() + " " +triplesMap.getSubject().getId());
 			notifyDependentTriplesMapWorkers();
 			return true;
 		}
@@ -1021,7 +1050,7 @@ public class KR2RMLWorksheetRDFGenerator {
 							newReferences.add(node);
 							if(recurse)
 							{
-								subjects.addAll(generateSubjectsForTemplates(newPrefix, tempTerms, columnsToNodes, references, URIify, useNodeValue));
+								subjects.addAll(generateSubjectsForTemplates(newPrefix, tempTerms, columnsToNodes, newReferences, URIify, useNodeValue));
 							}
 							else
 							{

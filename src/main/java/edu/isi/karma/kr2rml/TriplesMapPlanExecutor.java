@@ -1,12 +1,12 @@
 package edu.isi.karma.kr2rml;
 
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+
+import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator.TriplesMapWorker;
 
 public class TriplesMapPlanExecutor {
 
@@ -14,18 +14,22 @@ public class TriplesMapPlanExecutor {
 	{
 		ExecutorService service = Executors.newFixedThreadPool(10);
 		try {
-			List<Future<Boolean>> results = service.invokeAll(plan.workers);
+			List<Future<Boolean>> results = new LinkedList<Future<Boolean>>();
+			for(TriplesMapWorker worker : plan.workers)
+			{
+				results.add(service.submit(worker));
+			}
 			for(Future<Boolean> result : results)
 			{
 				result.get();
-				//result.get(1000, TimeUnit.MILLISECONDS);
 			}
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
+		}
+		finally{
+			
+			service.shutdownNow();
+		}
 	}
 }
