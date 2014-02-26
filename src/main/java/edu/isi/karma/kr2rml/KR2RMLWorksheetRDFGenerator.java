@@ -804,7 +804,7 @@ public class KR2RMLWorksheetRDFGenerator {
 						{
 							sb.append(term.getTemplateTermValue());
 						}
-						outWriter.println(constructTripleWithURIObject(subject.uri, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", getExpandedAndNormalizedUri(sb.toString())));
+						//outWriter.println(constructTripleWithURIObject(subject.uri, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", getExpandedAndNormalizedUri(sb.toString())));
 					}
 				}
 				else
@@ -829,7 +829,7 @@ public class KR2RMLWorksheetRDFGenerator {
 						{
 							for(Subject predicate : predicates)
 							{
-								outWriter.println(constructTripleWithURIObject(subject.getURI(), predicate.getURI(), objectSubject.getURI()));
+								//outWriter.println(constructTripleWithURIObject(subject.getURI(), predicate.getURI(), objectSubject.getURI()));
 							}
 						}
 						
@@ -865,6 +865,7 @@ public class KR2RMLWorksheetRDFGenerator {
 								}
 							}
 						}	
+						continue;
 					}
 					Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes = new HashMap<ColumnTemplateTerm, Collection<Node>>();
 					HNodePath objectTemplateCommonPath = null;
@@ -954,7 +955,7 @@ public class KR2RMLWorksheetRDFGenerator {
 							{
 								for(Subject predicate : predicates)
 								{
-									outWriter.println(constructTripleWithLiteralObject(subject.uri, predicate.getURI(),  value.uri, pom.getObject().getRdfLiteralType().toString()));
+									//outWriter.println(constructTripleWithLiteralObject(subject.uri, predicate.getURI(),  value.uri, pom.getObject().getRdfLiteralType().toString()));
 								}
 							}
 						}

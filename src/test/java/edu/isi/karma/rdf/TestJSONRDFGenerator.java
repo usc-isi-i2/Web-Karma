@@ -116,12 +116,11 @@ public class TestJSONRDFGenerator {
 
 			rdfGen.generateRDF("people-model", jsonData, false, pw);
 			String rdf = sw.toString();
-			System.out.println(rdf);
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("\n");
 			int count = lines.length + 1;
 			 
-			assertEquals(184, count);
+			assertEquals(99, count);
 		} catch (Exception e) {
 			fail("Execption: " + e.getMessage());
 		}
@@ -146,11 +145,10 @@ public class TestJSONRDFGenerator {
 
 			rdfGen.generateRDF("cs548-events-model", jsonData, false, pw);
 			String rdf = sw.toString();
-			System.out.println(rdf);
 
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("\n");
-			assertEquals(212*2, lines.length+1);
+			assertEquals(213, lines.length+1);
 		} catch (Exception e) {
 			fail("Execption: " + e.getMessage());
 		}
