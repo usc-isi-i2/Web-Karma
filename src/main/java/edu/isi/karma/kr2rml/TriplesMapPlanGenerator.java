@@ -32,8 +32,8 @@ public class TriplesMapPlanGenerator {
 	public TriplesMapPlan generatePlan(TriplesMapForest tmf)
 	{
 		List<TriplesMapWorker> workers = new LinkedList<TriplesMapWorker>();
-		Map<String, List<String>>triplesMapURIs = new ConcurrentHashMap<String, List<String>>();
-		TriplesMapPlan plan = new TriplesMapPlan(workers, r, triplesMapURIs);
+		Map<String, List<Subject>>triplesMapSubjects = new ConcurrentHashMap<String, List<Subject>>();
+		TriplesMapPlan plan = new TriplesMapPlan(workers, r, triplesMapSubjects);
 		
 		List<TriplesMapGraph> graphs = tmf.getGraphs();
 		for(TriplesMapGraph graph : graphs)
@@ -46,8 +46,8 @@ public class TriplesMapPlanGenerator {
 	public TriplesMapPlan generatePlan(TriplesMapGraph graph)
 	{
 		List<TriplesMapWorker> workers = new LinkedList<TriplesMapWorker>();
-		Map<String, List<String>>triplesMapURIs = new ConcurrentHashMap<String, List<String>>();
-		TriplesMapPlan plan = new TriplesMapPlan(workers, r, triplesMapURIs);
+		Map<String, List<Subject>>triplesMapSubjects = new ConcurrentHashMap<String, List<Subject>>();
+		TriplesMapPlan plan = new TriplesMapPlan(workers, r, triplesMapSubjects);
 		workers.addAll(generatePlan(graph, plan));
 		return plan;
 	}
@@ -86,7 +86,7 @@ public class TriplesMapPlanGenerator {
 			}
 		}
 		//TODO this is garbage
-		TriplesMapWorker newWorker = generator.new TriplesMapWorker(map, new CountDownLatch(workersDependentOn.size()), r, plan.triplesMapURIs);
+		TriplesMapWorker newWorker = generator.new TriplesMapWorker(map, new CountDownLatch(workersDependentOn.size()), r, plan.triplesMapSubjects);
 		mapToWorker.put(map, newWorker);
 		
 		for(TriplesMapWorker worker : workersDependentOn)

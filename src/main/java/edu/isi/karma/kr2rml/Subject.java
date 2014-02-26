@@ -14,4 +14,14 @@ public class Subject {
 		this.references = references;
 		this.uri = uri;
 	}
+	
+	public String getURI()
+	{
+		return uri;
+	}
+	
+	public List<Node> getReferences()
+	{
+		return references;
+	}
 }

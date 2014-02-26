@@ -548,7 +548,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		uri = normalizeUri(uri);
 		
 		// Put angled brackets if required
-		if (!uri.startsWith(BLANK_NODE_PREFIX)) {
+		if (!uri.startsWith(BLANK_NODE_PREFIX) && !uri.startsWith("<") && !uri.endsWith(">")) {
 			uri = "<" + uri + ">";
 		}
 			
@@ -676,14 +676,14 @@ public class KR2RMLWorksheetRDFGenerator {
 		protected CountDownLatch latch;
 		protected TriplesMap triplesMap;
 		protected Row r;
-		protected Map<String, List<String>> triplesMapURIs;
-		public TriplesMapWorker(TriplesMap triplesMap, CountDownLatch latch, Row r, Map<String, List<String>> triplesMapURIs)
+		protected Map<String, List<Subject>> triplesMapSubjects;
+		public TriplesMapWorker(TriplesMap triplesMap, CountDownLatch latch, Row r, Map<String, List<Subject>> triplesMapSubjects)
 		{
 			this.latch = latch;
 			this.triplesMap = triplesMap;
 			this.dependentTriplesMapLatches = new LinkedList<CountDownLatch>();
 			this.r = r;
-			this.triplesMapURIs = triplesMapURIs;
+			this.triplesMapSubjects = triplesMapSubjects;
 		}
 		public void addDependentTriplesMapLatch(CountDownLatch latch)
 		{
@@ -700,9 +700,8 @@ public class KR2RMLWorksheetRDFGenerator {
 		@Override
 		public Boolean call() throws HNodeNotFoundKarmaException, ValueNotFoundKarmaException, NoValueFoundInNodeException {
 			
-			List<String> URIs = new LinkedList<String>();
 			List<Subject> subjects = new LinkedList<Subject>();
-			triplesMapURIs.put(triplesMap.getId(), URIs);
+			triplesMapSubjects.put(triplesMap.getId(), subjects);
 			Map<Node, Set<Subject>> stuffs = new HashMap<Node, Set<Subject>>();
 			try{
 				latch.await();
@@ -728,16 +727,26 @@ public class KR2RMLWorksheetRDFGenerator {
 			HNodePath commonTemplatePath = templateHNodePath;
 			if (subjMap.isBlankNode()) {
 				columnsCovered = kr2rmlMapping.getAuxInfo().getBlankNodesColumnCoverage().get(subjMap.getId());
-				
+				Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes = new HashMap<ColumnTemplateTerm, Collection<Node>>();
 
 				StringBuilder output = new StringBuilder();
-				// Add the blank namespace
-				output.append(BLANK_NODE_PREFIX);
 				
-				// Add the class node prefix
-				output.append(kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().get(triplesMap.getSubject().getId()).replaceAll(":", "_"));
+				TemplateTermSet terms = new TemplateTermSet();
+				terms.addTemplateTermToSet(new StringTemplateTerm(BLANK_NODE_PREFIX));
+				terms.addTemplateTermToSet(new StringTemplateTerm(kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().get(triplesMap.getSubject().getId()).replaceAll(":", "_")));
 				LinkedList<Collection<Node>> allNodesCovered = gatherNodesForURI(columnsCovered);
-				URIs = generateURIsForBlankNodes(output, allNodesCovered);	
+				Iterator<String> columnsCoveredIterator = columnsCovered.iterator();
+				Iterator<Collection<Node>> nodesIterator = allNodesCovered.iterator();
+				while(columnsCoveredIterator.hasNext() && nodesIterator.hasNext())
+				{
+					ColumnTemplateTerm term = new ColumnTemplateTerm(columnsCoveredIterator.next());
+					terms.addTemplateTermToSet(term);
+					columnsToNodes.put(term, nodesIterator.next());
+				}
+				LinkedList<TemplateTerm> allTerms = new LinkedList<TemplateTerm>();
+				allTerms.addAll(terms.getAllTerms());
+				subjects.addAll(generateSubjectsForTemplates(output, allTerms,columnsToNodes, new LinkedList<Node>(), true, false ));
+					
 			} else {
 				LinkedList<TemplateTerm> allTerms = new LinkedList<TemplateTerm>();
 				allTerms.addAll(subjMap.getTemplate().getAllTerms());
@@ -757,7 +766,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				}
 				StringBuilder output = new StringBuilder();
 				
-				subjects = generateSubjectsForTemplates(output, allTerms, columnsToNodes, new LinkedList<Node>(), true);
+				subjects.addAll(generateSubjectsForTemplates(output, allTerms, columnsToNodes, new LinkedList<Node>(), true, true));
 			}
 			
 			for(String columnCovered : columnsCovered)
@@ -769,7 +778,6 @@ public class KR2RMLWorksheetRDFGenerator {
 				
 			for(Subject subject : subjects)
 			{
-				URIs.add(subject.uri);
 				for(Node n : subject.references)
 				{
 					if(!stuffs.containsKey(n))
@@ -796,7 +804,7 @@ public class KR2RMLWorksheetRDFGenerator {
 						{
 							sb.append(term.getTemplateTermValue());
 						}
-						outWriter.println(constructTripleWithURIObject(subject.uri, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", sb.toString()));
+						outWriter.println(constructTripleWithURIObject(subject.uri, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", getExpandedAndNormalizedUri(sb.toString())));
 					}
 				}
 				else
@@ -811,15 +819,18 @@ public class KR2RMLWorksheetRDFGenerator {
 						link.getTargetMap().getId().compareTo(triplesMap.getId()) == 0 && link.isFlipped())
 				{
 					PredicateObjectMap pom = link.getPredicateObjectMapLink();
-					
+					List<Subject> predicates = generatePredicatesForPom(pom);
 					TriplesMap subjectTriplesMap = link.getSourceMap();
 					TriplesMap objectTriplesMap = link.getTargetMap();
 					
-					for(String subjectURI : triplesMapURIs.get(subjectTriplesMap.getId()))
+					for(Subject subject : triplesMapSubjects.get(subjectTriplesMap.getId()))
 					{
-						for(String objectURI : triplesMapURIs.get(objectTriplesMap.getId()))
+						for(Subject objectSubject : triplesMapSubjects.get(objectTriplesMap.getId()))
 						{
-							outWriter.println(constructTripleWithURIObject(subjectURI, pom.getPredicate().toString(), objectURI));
+							for(Subject predicate : predicates)
+							{
+								outWriter.println(constructTripleWithURIObject(subject.getURI(), predicate.getURI(), objectSubject.getURI()));
+							}
 						}
 						
 					}
@@ -834,14 +845,26 @@ public class KR2RMLWorksheetRDFGenerator {
 					}
 					if(pom.getPredicate().toString().contains("classLink"))
 						continue;
+					
+					List<Subject> predicates = generatePredicatesForPom(pom);
 					ObjectMap objMap = pom.getObject();
 					LinkedList<TemplateTerm> allTerms = new LinkedList<TemplateTerm>();
 					allTerms.addAll(objMap.getTemplate().getAllTerms());
-					List<ColumnTemplateTerm> terms =  objMap.getTemplate().getAllColumnNameTermElements();
+					List<ColumnTemplateTerm> objectTemplateTerms =  objMap.getTemplate().getAllColumnNameTermElements();
 					// we got a literal
-					if(terms == null || terms.isEmpty())
+					if(objectTemplateTerms == null || objectTemplateTerms.isEmpty())
 					{
-						
+						List<Subject> values = generateSubjectsForTemplates(new StringBuilder(""), allTerms, null, null, true, true);
+						for(Subject value: values)
+						{
+							for(Subject subject : subjects)
+							{
+								for(Subject predicate : predicates)
+								{
+									outWriter.println(constructTripleWithLiteralObject(subject.uri, predicate.getURI(),  value.uri, pom.getObject().getRdfLiteralType().toString()));
+								}
+							}
+						}	
 					}
 					Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes = new HashMap<ColumnTemplateTerm, Collection<Node>>();
 					HNodePath objectTemplateCommonPath = null;
@@ -851,7 +874,7 @@ public class KR2RMLWorksheetRDFGenerator {
 					Integer maxDepth = null;
 					Map<ColumnTemplateTerm, HNodePath> termToReferenceSubjectPath = new HashMap<ColumnTemplateTerm, HNodePath>(); 
 					Map<ColumnTemplateTerm, HNodePath> termToReferenceObjectPath = new HashMap<ColumnTemplateTerm, HNodePath>();
-					for(ColumnTemplateTerm term : terms)
+					for(ColumnTemplateTerm term : objectTemplateTerms)
 					{
 						String objectTemplateValue = term.getTemplateTermValue();
 						if(objectTemplateCommonPath == null)
@@ -884,7 +907,7 @@ public class KR2RMLWorksheetRDFGenerator {
 						}
 						
 					}
-					for(ColumnTemplateTerm term : terms)
+					for(ColumnTemplateTerm term : objectTemplateTerms)
 					{
 						if(termToReferenceSubjectPath.get(term).length() > termToReferenceObjectPath.get(term).length())
 						{
@@ -898,7 +921,7 @@ public class KR2RMLWorksheetRDFGenerator {
 						{
 							for(Node node : subject.references)
 							{
-								for(ColumnTemplateTerm term : terms)
+								for(ColumnTemplateTerm term : objectTemplateTerms)
 								{
 									HNodePath referencePath = termToReferenceSubjectPath.get(term);
 									currentObjectTemplatePath = termToReferenceObjectPath.get(term);
@@ -926,10 +949,13 @@ public class KR2RMLWorksheetRDFGenerator {
 									}
 								}
 							}
-							List<Subject> values = generateSubjectsForTemplates(new StringBuilder(""), allTerms, columnsToNodes, new LinkedList<Node>(), false);
+							List<Subject> values = generateSubjectsForTemplates(new StringBuilder(""), allTerms, columnsToNodes, new LinkedList<Node>(), false, true);
 							for(Subject value: values)
 							{
-								outWriter.println(constructTripleWithLiteralObject(subject.uri, pom.getPredicate().toString(),  value.uri, pom.getObject().getRdfLiteralType().toString()));
+								for(Subject predicate : predicates)
+								{
+									outWriter.println(constructTripleWithLiteralObject(subject.uri, predicate.getURI(),  value.uri, pom.getObject().getRdfLiteralType().toString()));
+								}
 							}
 						}
 				}
@@ -939,9 +965,25 @@ public class KR2RMLWorksheetRDFGenerator {
 			notifyDependentTriplesMapWorkers();
 			return true;
 		}
+		private List<Subject> generatePredicatesForPom(PredicateObjectMap pom) {
+			List<ColumnTemplateTerm> predicateTemplateTerms = pom.getPredicate().getTemplate().getAllColumnNameTermElements();
+			LinkedList<TemplateTerm> allPredicateTemplateTerms = new LinkedList<TemplateTerm>();
+			allPredicateTemplateTerms.addAll(pom.getPredicate().getTemplate().getAllTerms());
+			List<Subject> predicates = new LinkedList<Subject>();
+			if(predicateTemplateTerms == null || predicateTemplateTerms.isEmpty())
+			{
+				predicates = generateSubjectsForTemplates(new StringBuilder(""), allPredicateTemplateTerms, null, null, true, true);
+				
+			}
+			else
+			{
+				//dynamic predicates;
+			}
+			return predicates; 
+		}
 		private List<Subject> generateSubjectsForTemplates(StringBuilder output,
 				List<TemplateTerm> terms,
-				Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes, List<Node> references, boolean URIify) {
+				Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes, List<Node> references, boolean URIify, boolean useNodeValue) {
 			List<Subject> subjects = new LinkedList<Subject>();
 			
 			if(!terms.isEmpty())
@@ -959,19 +1001,26 @@ public class KR2RMLWorksheetRDFGenerator {
 					{
 						for(Node node : columnsToNodes.get(term))
 						{
-							if(node.getValue().isEmptyValue())
+							if(node.getValue().isEmptyValue() || node.getValue().asString().trim().isEmpty())
 							{
 								continue;
 							}
 							StringBuilder newPrefix = new StringBuilder(output);
-							newPrefix.append(node.getValue().asString());
+							if(useNodeValue)
+							{
+								newPrefix.append(node.getValue().asString());
+							}
+							else
+							{
+								newPrefix.append(node.getId());
+							}
 
 							List<Node> newReferences = new LinkedList<Node>();
 							newReferences.addAll(references);
 							newReferences.add(node);
 							if(recurse)
 							{
-								subjects.addAll(generateSubjectsForTemplates(newPrefix, tempTerms, columnsToNodes, references, URIify));
+								subjects.addAll(generateSubjectsForTemplates(newPrefix, tempTerms, columnsToNodes, references, URIify, useNodeValue));
 							}
 							else
 							{
@@ -990,8 +1039,7 @@ public class KR2RMLWorksheetRDFGenerator {
 						newPrefix.append(term.getTemplateTermValue());
 						if(recurse)
 						{
-							subjects.addAll(generateSubjectsForTemplates(newPrefix, tempTerms, columnsToNodes, references, URIify));
-							//generateURIsForTemplates(newPrefix, tempTerms, columnsToNodes);
+							subjects.addAll(generateSubjectsForTemplates(newPrefix, tempTerms, columnsToNodes, references, URIify, useNodeValue));
 						}
 						else
 						{

@@ -11,12 +11,12 @@ public class TriplesMapPlan {
 
 	Collection<TriplesMapWorker> workers;
 	Row r;
-	Map<String, List<String>> triplesMapURIs;
+	Map<String, List<Subject>> triplesMapSubjects;
 	
-	public TriplesMapPlan(Collection<TriplesMapWorker> workers, Row r, Map<String, List<String>>triplesMapURIs)
+	public TriplesMapPlan(Collection<TriplesMapWorker> workers, Row r, Map<String, List<Subject>>triplesMapSubjects)
 	{
 		this.workers = workers;
 		this.r = r;
-		this.triplesMapURIs = triplesMapURIs;
+		this.triplesMapSubjects = triplesMapSubjects;
 	}
 }
