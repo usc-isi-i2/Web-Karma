@@ -34,9 +34,13 @@ var PropertyDropdownMenu = (function() {
     	
     	function changeLink() {
     		console.log("changeLink");
-    		IncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
-    				columnId, alignmentId,
-    				columnLabel, columnUri, columnDomain,
+    		var dialog = IncomingOutgoingLinksDialog.getInstance();
+    		dialog.setSelectedFromClass(sourceId);
+    		dialog.setSelectedToClass(targetId);
+    		dialog.setSelectedProperty(propertyUri);
+    		dialog.show(worksheetId, 
+    				targetNodeId, alignmentId,
+    				targetLabel, targetId, targetDomain,
     				"changeLink", sourceNodeId, targetNodeId, propertyUri);
     	};
     	
@@ -93,23 +97,24 @@ var PropertyDropdownMenu = (function() {
     		console.log("Change From");
 
     		var dialog = IncomingOutgoingLinksDialog.getInstance();
+    		dialog.setSelectedFromClass(sourceId);
+    		dialog.setSelectedProperty(propertyUri);
     		dialog.show(worksheetId, 
     				targetNodeId, alignmentId,
     				targetLabel, targetId, targetDomain,
     				"changeIncoming", sourceNodeId, targetNodeId, propertyUri);
-    		dialog.setSelectedFromClass(sourceId);
-    		dialog.setSelectedProperty(propertyUri);
+    		
     	}
     	
     	function changeTo() {
     		console.log("Change To");
     		var dialog = IncomingOutgoingLinksDialog.getInstance();
+    		dialog.setSelectedToClass(targetId);
+    		dialog.setSelectedProperty(propertyUri);
     		dialog.show(worksheetId, 
     				sourceNodeId, alignmentId,
     				sourceLabel, sourceId, sourceDomain,
     				"changeOutgoing", sourceNodeId, targetNodeId, propertyUri);
-    		dialog.setSelectedToClass(targetId);
-    		dialog.setSelectedProperty(propertyUri);
     	}
     	
     	function generateJS() {

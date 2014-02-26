@@ -14,6 +14,7 @@ function ClassUI(id,
 	
 	function populateClassList(dataArray, list1, list2) {
 		console.log("PopulateClassList:" + dataArray.length);
+		var selectOnLoad = false;
 		if(dataArray.length == 0) {
 	        $(list1).html("<i>none</i>");
 	    } else {
@@ -42,8 +43,23 @@ function ClassUI(id,
 	                
 	                $("#" + id + "_classKeyword").val(classData.label);
 	                
-	                if(classSelectorCallback != null)
+	                if(!selectOnLoad && classSelectorCallback != null) {
 	                	classSelectorCallback(classData);
+	                }
+	                selectOnLoad = false;
+	            })
+	            .bind("loaded.jstree", function (e, data) {
+	            	console.log("loaded classlist: " + $(list1).attr("id"));
+	            	$("#" + id + "_classKeyword").val(defaultClassData.label);
+	    			window.setTimeout(function() {
+	    				if(defaultClassData.label.length > 0) {
+	    					var treeId = "#" + ClassUI.getNodeID(defaultClassData.label, defaultClassData.id, defaultClassData.uri);
+	    					console.log("Now select node:" + treeId + " in classList " + $(list1).attr("id"));
+	    					selectOnLoad = true;
+	    					$(list1).jstree('select_node', treeId, true, true);
+	    					//$(list1).jstree('scroll_to_node', treeId);
+	    				}
+	    			}, 500);
 	            })
 	            ;
 	    }
@@ -104,20 +120,6 @@ function ClassUI(id,
 		});
 		
 		mainDiv.append(classDiv);
-		
-		$("#" + id + "_classList2").on("loaded.jstree", function (e, data) {
-			console.log("classList2 jstree loaded");
-			$("#" + id + "_classKeyword").val(defaultClassData.label);
-			window.setTimeout(function() {
-				if(defaultClassData.label.length > 0) {
-					var treeId = "#" + ClassUI.getNodeID(defaultClassData.label, defaultClassData.id, defaultClassData.uri);
-					console.log("Now select node:" + treeId + " in classList");
-					jQuery("#" + id + "_classList2").jstree('select_node', treeId, false, false);
-				}
-				//jQuery("#" + id + "_classList2").jstree('scroll_to_node', treeId);
-			}, 500);
-		}); 
-		 
 		
 		if(populateData) {
 			this.populateClasses();

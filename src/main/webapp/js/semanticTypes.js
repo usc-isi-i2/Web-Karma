@@ -726,6 +726,7 @@ var SetSemanticTypeDialog = (function() {
                defaultClass = $(parentTrTag).data("DisplayDomainLabel");
                var classUri = $(parentTrTag).data("Domain");
                classUI.setDefaultClass(defaultClass, classUri, classUri);
+               propertyUI.setSelectedClass(defaultClass, classUri, classUri);
                var defaultProperty = $(parentTrTag).data("DisplayLabel");
                var defaultPropertyUri = $(parentTrTag).data("FullType");
                propertyUI.setDefaultProperty(defaultProperty, defaultPropertyUri, defaultPropertyUri);
@@ -923,7 +924,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	var columnLabel, columnUri, columnDomain;
     	
     	var selectedFromClass, selectedProperty, selectedToClass;
-    	var allClasses, allProperties;
+    	var allClasses, allProperties, selectedClasses, selectedProperties;
     	
     	var fromClassUI, propertyUI, toClassUI;
     	var changeFromNode, changeToNode, changeLink;
@@ -1022,6 +1023,7 @@ var IncomingOutgoingLinksDialog = (function() {
         }
     	
     	function setSelectedFromClass(id) {
+    		console.log("IncomingOutgoingLinksDialog:setSelectedFromClass:" + id);
     		if(allClasses) {
     			for(var i=0; i<allClasses.length; i++) {
     				var clazz = allClasses[i];
@@ -1031,7 +1033,21 @@ var IncomingOutgoingLinksDialog = (function() {
     				var clazzUri = clazzElem[2];
     				if(clazzId == id) {
     					fromClassUI.setDefaultClass(clazzLbl, clazzId, clazzUri);
-    					onSelectFromClassInputValue(clazz);
+    					onSelectFromClassInputValue({"uri":clazzUri, "label":clazzLbl, "id":clazzId});
+    					return;
+    				}
+    			}
+    		}
+    		if(selectedClasses) {
+    			for(var i=0; i<selectedClasses.length; i++) {
+    				var clazz = selectedClasses[i];
+    				var clazzElem = ClassUI.parseNodeObject(clazz);
+    				var clazzLbl = clazzElem[0];
+    				var clazzId = clazzElem[1];
+    				var clazzUri = clazzElem[2];
+    				if(clazzId == id) {
+    					fromClassUI.setDefaultClass(clazzLbl, clazzId, clazzUri);
+    					onSelectFromClassInputValue({"uri":clazzUri, "label":clazzLbl, "id":clazzId});
     					return;
     				}
     			}
@@ -1039,6 +1055,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	}
     	
     	function setSelectedToClass(id) {
+    		console.log("IncomingOutgoingLinksDialog:setSelectedToClass:" + id);
     		if(allClasses) {
     			for(var i=0; i<allClasses.length; i++) {
     				var clazz = allClasses[i];
@@ -1048,7 +1065,21 @@ var IncomingOutgoingLinksDialog = (function() {
     				var clazzUri = clazzElem[2];
     				if(clazzId == id) {
     					toClassUI.setDefaultClass(clazzLbl, clazzId, clazzUri);
-    					onSelectToClassInputValue(clazz);
+    					onSelectToClassInputValue({"uri":clazzUri, "label":clazzLbl, "id":clazzId});
+    					return;
+    				}
+    			}
+    		}
+    		if(selectedClasses) {
+    			for(var i=0; i<selectedClasses.length; i++) {
+    				var clazz = selectedClasses[i];
+    				var clazzElem = ClassUI.parseNodeObject(clazz);
+    				var clazzLbl = clazzElem[0];
+    				var clazzId = clazzElem[1];
+    				var clazzUri = clazzElem[2];
+    				if(clazzId == id) {
+    					toClassUI.setDefaultClass(clazzLbl, clazzId, clazzUri);
+    					onSelectToClassInputValue({"uri":clazzUri, "label":clazzLbl, "id":clazzId});
     					return;
     				}
     			}
@@ -1056,6 +1087,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	}
     	
     	function setSelectedProperty(id) {
+    		console.log("IncomingOutgoingLinksDialog:setSelectedProperty:" + id);
     		if(allProperties) {
     			for(var i=0; i<allProperties.length; i++) {
     				var prop = allProperties[i];
@@ -1066,7 +1098,24 @@ var IncomingOutgoingLinksDialog = (function() {
     				
     				if(propId == id) {
     					propertyUI.setDefaultProperty(propLbl, propId, propUri);
-    					onSelectPropertyInputValue(prop);
+    					onSelectPropertyInputValue({"uri":propUri, "label":propLbl, "id":propId});
+    					return;
+    				}
+    			}
+    		}
+    		if(selectedProperties) {
+    			for(var i=0; i<selectedProperties.length; i++) {
+    				var prop = selectedProperties[i];
+    				var propElem = PropertyUI.parseNodeObject(prop);
+    				var propLbl = propElem[0];
+    				var propId = propElem[1];
+    				var propUri = propElem[2];
+    				
+    				if(propId == id) {
+    					propertyUI.setDefaultProperty(propLbl, propId, propUri);
+    					if(dialog.hasClass('in')) { //dialog is shown
+    						onSelectPropertyInputValue({"uri":propUri, "label":propLbl, "id":propId});
+    					}
     					return;
     				}
     			}
@@ -1075,14 +1124,18 @@ var IncomingOutgoingLinksDialog = (function() {
     	
     	function onSelectFromClassInputValue(clazz) {
     		selectedFromClass = clazz;
-    		propertyUI.refreshPropertyDataTop(clazz.label, clazz.id, clazz.uri);
-    		setLinkLabel();
+    		if(dialog.hasClass('in'))  {
+	    		propertyUI.refreshPropertyDataTop(clazz.label, clazz.id, clazz.uri);
+	    		setLinkLabel();
+    		}
     	}
     	
     	function onSelectToClassInputValue(clazz) {
     		selectedToClass = clazz;
-    		propertyUI.refreshPropertyDataTop(clazz.label, clazz.id, clazz.uri);
-    		setLinkLabel();
+    		if(dialog.hasClass('in')) {
+	    		propertyUI.refreshPropertyDataTop(clazz.label, clazz.id, clazz.uri);
+	    		setLinkLabel();
+    		}
     	}
     	
     	function onSelectPropertyInputValue(prop) {
@@ -1112,6 +1165,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	            function (xhr, textStatus) {
     	                var json = $.parseJSON(xhr.responseText);
     	                result = parseClassList(json, true);
+    	                selectedClasses = result;
     	            },
     	        error :
     	            function (xhr, textStatus) {
@@ -1232,6 +1286,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	            function (xhr, textStatus) {
     	                var json = $.parseJSON(xhr.responseText);
     	                result = parseDataPropertyList(json, true);
+    	                selectedProperties = result;
     	            },
     	        error :
     	            function (xhr, textStatus) {
@@ -1339,7 +1394,7 @@ var IncomingOutgoingLinksDialog = (function() {
         	} else if(linkType == "outgoing" || linkType == "changeOutgoing") {
         		source = startNode;
         		target = selectedToClass.id;
-        	} else if(linkType == changeLink) {
+        	} else if(linkType == "changeLink") {
         		source = selectedFromClass.id;
         		target = selectedToClass.id;
         	} else {

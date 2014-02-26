@@ -11,6 +11,8 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 	
 	
 	function populatePropertyList(dataArray, list1, list2) {
+		var selectOnLoad = false;
+		
 		if(dataArray.length == 0) {
 	        $(list1).html("<i>none</i>");
 	    } else {
@@ -31,6 +33,7 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 	        })
 	        	.bind("select_node.jstree", function (e, data) {
 	        		propertyData.label = data.rslt.obj.data("label");
+	        		console.log("jstree:select_node.jstree:" + propertyData.label);
 	        		propertyData.uri = data.rslt.obj.data("uri");
 	        		propertyData.id = data.rslt.obj.data("id");
 	                var a = $.jstree._focused().get_selected();
@@ -38,10 +41,24 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 	                $(list1).jstree("open_node", a);
 	                
 	                $("#" + id + "_propertyKeyword").val(propertyData.label);
-	                if(propertySelectorCallback != null) {
+	                if(!selectOnLoad && propertySelectorCallback != null) {
 	                	propertySelectorCallback(propertyData);
 	                }
+	                selectOnLoad = false;
 	            })
+	            .bind("loaded.jstree", function(e,data) {
+	            	console.log("property jstree Type: " + $(list1).attr("id"));
+	            	$("#" + id + "_propertyKeyword").val(defaultPropertyData.label);
+	            	window.setTimeout(function() {
+						if(defaultPropertyData.label.length > 0) {
+							var treeId = "#" + PropertyUI.getNodeID(defaultPropertyData.label, defaultPropertyData.id, defaultPropertyData.uri);
+							console.log("Now select node:" + treeId + " in propertyList:" + $(list1).attr("id"));
+							selectOnLoad = true;
+							$(list1).jstree('select_node', treeId, true, true);
+							//$(list1).jstree('scroll_to_node', treeId);
+						}	
+					}, 500);
+				})
 	            ;
 	    }
 	}
@@ -107,25 +124,10 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 		
 		mainDiv.append(propertyDiv);
 		
-		
-		$("#" + id + "_propertyList2").on("loaded.jstree", function (e, data) {
-			console.log("propertyList2 jstree loaded");
-			if(defaultPropertyData.label.length > 0) {
-				$("#" + id + "_propertyKeyword").val(defaultPropertyData.label);
-				window.setTimeout(function() {
-					if(defaultPropertyData.label.length > 0) {
-						var treeId = "#" + PropertyUI.getNodeID(defaultPropertyData.label, defaultPropertyData.id, defaultPropertyData.uri);
-						console.log("Now select node:" + treeId + " in propertyList");
-						jQuery("#" + id + "_propertyList2").jstree('select_node', treeId, false, false);
-					}	
-					//jQuery("#" + id + "_propertyList2").jstree('scroll_to_node', treeId);
-				}, 500);
-			}
-		}); 
-		
 		if(populateData) {
 			this.populateProperties();
-		}
+		} 
+		
 		return propertyDiv;
 	};
 	
