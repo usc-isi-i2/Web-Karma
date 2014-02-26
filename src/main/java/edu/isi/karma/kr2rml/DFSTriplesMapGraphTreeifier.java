@@ -48,6 +48,12 @@ public class DFSTriplesMapGraphTreeifier implements TriplesMapGraphTreeifier {
 				String triplesMapId = ids.next();
 				List<TriplesMapLink> links = newGraph.getAllNeighboringTriplesMap(triplesMapId);
 				TriplesMap tm = newGraph.getTriplesMap(triplesMapId);
+				if(tm == null)
+				{
+					logger.info(triplesMapId + " was already spilled");
+					spilledTriplesMaps.add(triplesMapId);
+					continue;
+				}
 				if(links.size() <= 1 || allLinksAreIncoming(triplesMapId, links))
 				{
 					List<TriplesMapLink> tempLinks = new LinkedList<TriplesMapLink>();

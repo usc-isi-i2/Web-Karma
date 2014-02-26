@@ -120,7 +120,7 @@ public class TestJSONRDFGenerator {
 			String[] lines = rdf.split("\n");
 			int count = lines.length + 1;
 			 
-			assertEquals(99, count);
+			assertEquals(92, count);
 		} catch (Exception e) {
 			fail("Execption: " + e.getMessage());
 		}
@@ -148,7 +148,7 @@ public class TestJSONRDFGenerator {
 
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("\n");
-			assertEquals(213, lines.length+1);
+			assertEquals(212, lines.length+1);
 		} catch (Exception e) {
 			fail("Execption: " + e.getMessage());
 		}
