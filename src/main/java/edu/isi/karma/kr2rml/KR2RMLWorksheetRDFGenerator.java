@@ -149,7 +149,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(this, row);
 				TriplesMapPlan plan = g.generatePlan(kr2rmlMapping.getAuxInfo().getTriplesMapGraph());
 				e.execute(plan);
-				outWriter.println();
+				//outWriter.println();
 			
 				Set<String> rowTriplesSet = new HashSet<String>();
 				Set<String> rowPredicatesCovered = new HashSet<String>();
