@@ -771,8 +771,6 @@ public class ModelLearner {
 //				if (useCorrectType && numberOfCRFCandidates > 1)
 //					updateCrfSemanticTypesForResearchEvaluation(columnNodes);
 
-				long start = System.currentTimeMillis();
-
 				modelLearner = new ModelLearner(ontologyManager, columnNodes);
 				long start = System.currentTimeMillis();
 				

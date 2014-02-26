@@ -260,7 +260,11 @@ public class SPARQLGeneratorUtil {
 			else if (currentObj instanceof Predicate) {
 				Predicate predicate = (Predicate)currentObj;
 				String k = predicate.getTemplate().toString();
-				k = k.substring(k.lastIndexOf('#')+1, k.length()-1);
+				if(k.indexOf("#") > 0) {
+					k = k.substring(k.lastIndexOf('#')+1, k.length()-1);
+				} else {
+					k = k.substring(k.lastIndexOf('/')+1, k.length()-1);
+				}
 				query.append(" ?" + predicateList.get(predicate)
 //						+ " " + predicate.getTemplate() + " ?z"+ var_count + " . ");
 						+ " " + predicate.getTemplate() + " ?"+ k + " . ");
