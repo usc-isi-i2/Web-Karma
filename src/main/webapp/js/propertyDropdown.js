@@ -15,12 +15,12 @@ var PropertyDropdownMenu = (function() {
     	
     	var options = [
     		   	        //Title, function to call, needs file upload     
-    		   	       // [ "Change Link", changeLink],
+    		   	       // ,
     		   	        [ "Delete", deleteLink],
     		   	        ["divider", null],
     		   	        [ "Change From", changeFrom ],
     		   	        [ "Change To" , changeTo ],
-    		   	        
+    		   	        [ "Change Link", changeLink]
     		   	];
     	
     	function init() {
@@ -32,13 +32,13 @@ var PropertyDropdownMenu = (function() {
     		$(document).off('click', hide);
     	}
     	
-//    	function changeLink() {
-//    		console.log("changeLink");
-//    		IncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
-//    				columnId, alignmentId,
-//    				columnLabel, columnUri, columnDomain,
-//    				"changeLink", sourceNodeId, targetNodeId, propertyUri);
-//    	};
+    	function changeLink() {
+    		console.log("changeLink");
+    		IncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
+    				columnId, alignmentId,
+    				columnLabel, columnUri, columnDomain,
+    				"changeLink", sourceNodeId, targetNodeId, propertyUri);
+    	};
     	
     	function deleteLink() {
     		console.log("deleteLink");
@@ -97,7 +97,7 @@ var PropertyDropdownMenu = (function() {
     				targetNodeId, alignmentId,
     				targetLabel, targetId, targetDomain,
     				"changeIncoming", sourceNodeId, targetNodeId, propertyUri);
-    		dialog.setSelectedClass(sourceId);
+    		dialog.setSelectedFromClass(sourceId);
     		dialog.setSelectedProperty(propertyUri);
     	}
     	
@@ -108,7 +108,7 @@ var PropertyDropdownMenu = (function() {
     				sourceNodeId, alignmentId,
     				sourceLabel, sourceId, sourceDomain,
     				"changeOutgoing", sourceNodeId, targetNodeId, propertyUri);
-    		dialog.setSelectedClass(targetId);
+    		dialog.setSelectedToClass(targetId);
     		dialog.setSelectedProperty(propertyUri);
     	}
     	
