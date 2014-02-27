@@ -90,9 +90,8 @@ public class TestCSVFileRdfGenerator {
 
 				generateRdfFile(csvFile, modelFile, pw);
 
-				HashSet<String> standardSet = (HashSet<String>) getFileContent(standardRdfFile);
-				HashSet<String> generatedSet = (HashSet<String>) getHashSet(sw
-						.toString().split("\n"));
+				HashSet<String> standardSet =  getFileContent(standardRdfFile);
+				HashSet<String> generatedSet =  getHashSet(sw.toString().split("\n"));
 
 				if (!standardSet.containsAll(generatedSet)
 						|| !generatedSet.containsAll(standardSet)) {
@@ -169,8 +168,8 @@ public class TestCSVFileRdfGenerator {
 
 	}
 
-	private Set getHashSet(String[] array) {
-		Set<String> hashSet = new HashSet<String>();
+	private HashSet<String> getHashSet(String[] array) {
+		HashSet<String> hashSet = new HashSet<String>();
 		for (int i = 0; i < array.length; i++) {
 			String line = array[i].trim();
 			if (line.length() > 0)
@@ -179,8 +178,8 @@ public class TestCSVFileRdfGenerator {
 		return hashSet;
 	}
 
-	private Set getFileContent(File file) {
-		Set<String> hashSet = new HashSet<String>();
+	private HashSet<String> getFileContent(File file) {
+		HashSet<String> hashSet = new HashSet<String>();
 		try {
 			BufferedReader in = new BufferedReader(
 					new InputStreamReader(new FileInputStream(file), "UTF-8"));
