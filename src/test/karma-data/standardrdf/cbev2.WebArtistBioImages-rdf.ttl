@@ -1,0 +1,34 @@
+<person-institution/442> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<http://americanart.si.edu/images/1969/1969.163_1a.jpg> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E38_Image> .
+<person-institution/442> <http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation> <http://americanart.si.edu/images/1969/1969.163_1a.jpg> .
+<person-institution/442/images/filename> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation> .
+<http://americanart.si.edu/images/1969/1969.163_1a.jpg> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/442/images/filename> .
+<object/1969.163> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<http://americanart.si.edu/images/1969/1969.163_1a.jpg> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <object/1969.163> .
+<thesauri/mediaview/Permanent-Collection> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<http://americanart.si.edu/images/1969/1969.163_1a.jpg> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/mediaview/Permanent-Collection> .
+<http://americanart.si.edu/images/1969/1969.163_1a.jpg> <http://www.cidoc-crm.org/cidoc-crm/P3_has_note> "Eugenie Gershoy, <i>Arnold Blanch</i>, 1934, bronze, Smithsonian American Art Museum, Gift of Doris Lee Blanch 1969.163" .
+<person-institution/442/images/filename> <http://www.w3.org/2000/01/rdf-schema#label> "1969.163_1a.jpg" .
+
+<http://americanart.si.edu/images/luce/artists/aarons_george.jpg> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E38_Image> .
+<person-institution/2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/2> <http://collection.americanart.si.edu/id/ontologies#PE_has_main_representation> <http://americanart.si.edu/images/luce/artists/aarons_george.jpg> .
+<person-institution/2> <http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation> <http://americanart.si.edu/images/luce/artists/aarons_george.jpg> .
+<person-institution/2/images/filename> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation> .
+<http://americanart.si.edu/images/luce/artists/aarons_george.jpg> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/2/images/filename> .
+<thesauri/mediaview/Luce> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<http://americanart.si.edu/images/luce/artists/aarons_george.jpg> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/mediaview/Luce> .
+<http://americanart.si.edu/images/luce/artists/aarons_george.jpg> <http://www.cidoc-crm.org/cidoc-crm/P3_has_note> "George Aarons Archive, Courtesy the North Shore Arts Association." .
+<person-institution/2/images/filename> <http://www.w3.org/2000/01/rdf-schema#label> "aarons_george.jpg" .
+
+<http://americanart.si.edu/images/JuleyBio/J0001165_1b.jpg> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E38_Image> .
+<person-institution/23> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/23> <http://collection.americanart.si.edu/id/ontologies#PE_has_main_representation> <http://americanart.si.edu/images/JuleyBio/J0001165_1b.jpg> .
+<person-institution/23> <http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation> <http://americanart.si.edu/images/JuleyBio/J0001165_1b.jpg> .
+<person-institution/23/images/filename> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation> .
+<http://americanart.si.edu/images/JuleyBio/J0001165_1b.jpg> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/23/images/filename> .
+<thesauri/mediaview/Juley> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<http://americanart.si.edu/images/JuleyBio/J0001165_1b.jpg> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/mediaview/Juley> .
+<http://americanart.si.edu/images/JuleyBio/J0001165_1b.jpg> <http://www.cidoc-crm.org/cidoc-crm/P3_has_note> "Herbert Adams, Peter A. Juley & Son Collection, Smithsonian American Art Museum J0001165" .
+<person-institution/23/images/filename> <http://www.w3.org/2000/01/rdf-schema#label> "J0001165_1b.jpg" .
+
