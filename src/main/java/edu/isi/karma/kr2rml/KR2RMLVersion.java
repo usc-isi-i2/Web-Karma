@@ -23,7 +23,7 @@ public class KR2RMLVersion implements Comparable<KR2RMLVersion>{
 		{
 			throw new NullPointerException("No version to parse");
 		}
-		String[] components = version.split(".");
+		String[] components = version.split("\\.");
 		if(components.length < 2)
 		{
 			throw new IllegalArgumentException("Not enough components in version string " + version);
