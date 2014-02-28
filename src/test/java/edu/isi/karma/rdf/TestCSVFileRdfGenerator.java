@@ -33,7 +33,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -76,6 +75,7 @@ public class TestCSVFileRdfGenerator {
 					+ "\n");
 
 			File fileList[] = (new File(modelDirect)).listFiles();
+			
 			for (int i = 0; i < fileList.length; i++) {
 				File modelFile = fileList[i];
 				System.out.println("Load file: " + modelFile.getName());
@@ -84,14 +84,29 @@ public class TestCSVFileRdfGenerator {
 				File standardRdfFile = new File(standardRdfDirect + "/" + name
 						+ "-rdf.ttl");
 				File csvFile = new File(csvDirect + "/" + name + ".csv");
+				
+				if(!standardRdfFile.exists())
+				{
+					out.println(standardRdfFile+" doesn't  exist");
+					System.err.println(standardRdfFile+" doesn't  exist");
+					continue;
+				}
+				if(!csvFile.exists())
+				{
+					out.println(csvFile+" doesn't  exist");
+					System.err.println(csvFile+" doesn't  exist");
+					continue;
+				}
+					
 
-				StringWriter sw = new StringWriter();//generated RDF triples
+				StringWriter sw = new StringWriter();// generated RDF triples
 				PrintWriter pw = new PrintWriter(sw);
 
 				generateRdfFile(csvFile, modelFile, pw);
 
-				HashSet<String> standardSet =  getFileContent(standardRdfFile);
-				HashSet<String> generatedSet =  getHashSet(sw.toString().split("\n"));
+				HashSet<String> standardSet = getFileContent(standardRdfFile);
+				HashSet<String> generatedSet = getHashSet(sw.toString().split(
+						"\n"));
 
 				if (!standardSet.containsAll(generatedSet)
 						|| !generatedSet.containsAll(standardSet)) {
@@ -100,6 +115,7 @@ public class TestCSVFileRdfGenerator {
 							out);
 				} else {
 					out.println(modelFile.getName() + " is ok");
+					System.out.println(modelFile.getName() + " is ok");
 				}
 
 				pw.close();
@@ -113,22 +129,31 @@ public class TestCSVFileRdfGenerator {
 		}
 	}
 
-	
 	/**
-	 * @param standardSet the standard triples
-	 * @param generatedSet the generated triples 
-	 * @param modelName the model name
-	 * @param out records  the error message.
+	 * @param standardSet
+	 *            the standard triples
+	 * @param generatedSet
+	 *            the generated triples
+	 * @param modelName
+	 *            the model name
+	 * @param out
+	 *            records the error message.
 	 */
 	private void outputError(HashSet<String> standardSet,
 			HashSet<String> generatedSet, String modelName, PrintWriter out) {
 		for (String temp : standardSet)
 			if (!generatedSet.contains(temp))
+			{
 				out.println(modelName + " missing triple error:" + temp);
+				System.err.println(modelName + " missing triple error:" + temp);
+			}
 
 		for (String temp : generatedSet)
 			if (!standardSet.contains(temp))
+			{
 				out.println(modelName + " extra triple error:" + temp);
+				System.err.println(modelName + " extra triple error:" + temp);
+			}
 	}
 
 	private String getRootFolder() {
@@ -153,9 +178,10 @@ public class TestCSVFileRdfGenerator {
 	}
 
 	/**
-	 * @param csvFile 
+	 * @param csvFile
 	 * @param modelFile
-	 * @param pw stores generated RDF triples 
+	 * @param pw
+	 *            stores generated RDF triples
 	 * @throws Exception
 	 */
 	private void generateRdfFile(File csvFile, File modelFile, PrintWriter pw)
@@ -180,10 +206,11 @@ public class TestCSVFileRdfGenerator {
 
 	private HashSet<String> getFileContent(File file) {
 		HashSet<String> hashSet = new HashSet<String>();
+		
 		try {
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(new FileInputStream(file), "UTF-8"));
-            
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					new FileInputStream(file), "UTF-8"));
+
 			String line = in.readLine();
 			while (line != null) {
 				line = line.trim();
@@ -197,6 +224,5 @@ public class TestCSVFileRdfGenerator {
 			e.printStackTrace();
 		}
 		return hashSet;
-
-	}
+     }
 }
