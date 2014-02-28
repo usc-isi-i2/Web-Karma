@@ -108,6 +108,10 @@ public class PublishCSVCommand extends Command {
 			logger.error("CSV folder not found!", e);
 			return new UpdateContainer(new ErrorUpdate(
 					"Error occurred while exporting CSV file!"));
+		} catch(Exception e) {
+			logger.error("CSV Export Error", e);
+			return new UpdateContainer(new ErrorUpdate(
+					"Error occurred while exporting CSV file!"));
 		}
 		
 	}

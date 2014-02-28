@@ -24,14 +24,7 @@
 }
 #commandHistory{
 	background-color: #F0F0F0;
-	position:absolute;
-	top:10px;
-	left: 0px;
-	margin-bottom: 10px;
-	padding: 5px;
-	height:500px;
-	width: 250px;
-	margin-left: 10px;
+	min-height: 500px;
 	overflow:auto;
 }
 #titleCommand{
@@ -45,7 +38,7 @@
 }
 
 .CommandDiv.undo-state {
-	background-color: #3D3D3D;
+	background-color: #AFAFAF;
 	padding: 4px;
 	border: solid 1px;
 	border-color:white;

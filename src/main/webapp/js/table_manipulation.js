@@ -239,67 +239,6 @@ function submitRenameColumn(value, settings) {
 
 
 
-
-function handlePublishModelToStoreButton(event) {
-    var tableCellDiv = $("div#r2rmlModelNameDiv");
-    var positionArray = [event.clientX-150		// distance from left
-        , event.clientY-10];	// distance from top
-    $('#txtR2RMLModelName').val('');
-
-    var r2rmlDialogBox = $("div#PublishR2RMLModelDialogBox");
-    $('#txtR2RML_URL').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-    // Show the dialog box
-    r2rmlDialogBox.dialog({
-        width: 400,
-        title : "Publish Model",
-        buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": submitModelName },
-        resize: function(event, ui) {
-        }
-
-    });
-    /*
-     tableCellDiv.dialog({ title: 'R2RML Model Name',
-     buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitModelName }, width: 300, height: 150, position: positionArray});
-     */
-}
-
-function submitModelName(value, settings) {
-    $("div#PublishR2RMLModelDialogBox").dialog("close");
-
-    // validate the sparql endpoint
-    if(!testSparqlEndPoint($("input#txtR2RML_URL").val())) {
-        alert("Invalid sparql end point. Could not establish connection.");
-        return;
-    }
-
-    var info = new Object();
-    info["worksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GenerateR2RMLModelCommand";
-    info['tripleStoreUrl'] = $('#txtR2RML_URL').val();
-
-    showLoading(info["worksheetId"]);
-    var returned = $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        complete :
-            function (xhr, textStatus) {
-                //alert(xhr.responseText);
-                var json = $.parseJSON(xhr.responseText);
-                parse(json);
-                hideLoading(info["worksheetId"]);
-            },
-        error :
-            function (xhr, textStatus) {
-                alert("Error occured while exporting CSV!" + textStatus);
-                hideLoading(info["worksheetId"]);
-            }
-    });
-}
-
-
 function submitSelectedModelNameToBeLoaded() {
     $('div#modelListDiv').dialog("close");
     var optionsDiv = $("div#WorksheetOptionsDiv");

@@ -79,22 +79,7 @@ function parse(data) {
                     });
 
                     titleDiv
-                        .append($("<div>")
-                            .text(worksheet["title"])
-                            .addClass("tableTitleTextDiv"))
-                        .append($("<div>")
-                            .addClass("WorksheetOptionsButtonDiv")
-                            .attr("id", "optionsButton" + worksheet["worksheetId"])
-                            .data("worksheetId", worksheet["worksheetId"])
-                            .click(openWorksheetOptions).button({
-                                icons : {
-                                    primary : 'ui-icon-triangle-1-s'
-                                },
-                                text : false
-                            })
-                            .mouseleave(function() {
-                                $("#WorksheetOptionsDiv").hide();
-                            }))
+                        .append((new WorksheetOptions(worksheet["worksheetId"], worksheet["title"])).generateJS())
                         .append($("<div>")
                             .addClass("rightOptionsToolbar")
                             .append($("<div>")
@@ -121,6 +106,8 @@ function parse(data) {
                                 .click(showMapViewForWorksheet))
                             .append($("<div>")
                                 .addClass("showHideWorkSheet")
+                                .addClass("glyphicon")
+                                .addClass("glyphicon-chevron-up")		
                                 .attr("id", "hideShow" + worksheet["worksheetId"])
                                 .click(function() {
                                     $("div.svg-model", mainDiv).toggle(400);
@@ -132,29 +119,14 @@ function parse(data) {
                                     titleDiv.toggleClass("ui-corner-all");
 
                                     // Change the icon
-                                    if($(this).data("state") == "open") {
-                                        $(this).data("state", "close");
-                                        $(this).button({
-                                            icons : {
-                                                primary : 'ui-icon-plusthick'
-                                            },
-                                            text : false
-                                        });
-                                    } else if($(this).data("state") == "close") {
-                                        $(this).data("state", "open");
-                                        $(this).button({
-                                            icons : {
-                                                primary : 'ui-icon-minusthick'
-                                            },
-                                            text : false
-                                        });
+                                    if($(this).hasClass("glyphicon-chevron-up")) {
+                                    	$(this).removeClass("glyphicon-chevron-up");
+                                    	$(this).addClass("glyphicon-chevron-down");
+                                    } else {
+                                    	$(this).addClass("glyphicon-chevron-up");
+                                    	$(this).removeClass("glyphicon-chevron-down");
                                     }
-                                }).button({
-                                    icons : {
-                                        primary : 'ui-icon-minusthick'
-                                    },
-                                    text : false
-                                }).data("state", "open")
+                                })
                             )
                         );
                     mainDiv.append(titleDiv);
@@ -194,7 +166,7 @@ function parse(data) {
                 $("tr", headersTable).addClass("deleteMe");
             }
 
-            var colWidths = addColumnHeadersRecurse(element["columns"], headersTable, true);
+            var colWidths = addColumnHeadersRecurse(element["worksheetId"], element["columns"], headersTable, true);
             var stylesheet = document.styleSheets[0];
 
             // Remove the previous rows if any
@@ -380,7 +352,7 @@ function parse(data) {
                 .text("CSV")
                 .addClass("CSVDownloadLink  DownloadLink")
                 .attr("target", "_blank");
-            $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
             $.sticky("CSV file published");
         }
         else if(element["updateType"] == "PublishMDBUpdate") {
@@ -393,7 +365,7 @@ function parse(data) {
                 .text("ACCESS MDB")
                 .addClass("MDBDownloadLink  DownloadLink")
                 .attr("target", "_blank");
-            $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
             $.sticky("MDB file published");
         }
         else if(element["updateType"] == "PublishR2RMLUpdate") {
@@ -403,7 +375,7 @@ function parse(data) {
             var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
             hideLoading(element["worksheetId"]);
             var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("R2RML Model").addClass("R2RMLDownloadLink  DownloadLink").attr("target", "_blank");
-            $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
             $.sticky("R2RML Model published");
         }
         else if(element["updateType"] == "PublishSpatialDataUpdate") {
@@ -412,7 +384,7 @@ function parse(data) {
             // Remove existing link if any
             hideLoading(element["worksheetId"]);
             var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("SPATIAL DATA").addClass("SpatialDataDownloadLink  DownloadLink").attr("target", "_blank");
-            $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
             $.sticky("Spatial data published");
         }
         else if(element["updateType"] == "PublishRDFUpdate") {
@@ -421,7 +393,7 @@ function parse(data) {
             $("a.RdfDownloadLink", titleDiv).remove();
 
             var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("RDF").addClass("RdfDownloadLink  DownloadLink").attr("target", "_blank");
-            $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
 
             var errorArr = $.parseJSON(element["errorReport"]);
             if (errorArr && errorArr.length !=0) {
@@ -444,7 +416,7 @@ function parse(data) {
             $("a.HistoryDownloadLink", titleDiv).remove();
 
             var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("History").addClass("HistoryDownloadLink DownloadLink").attr("target", "_blank");
-            $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
         }
         else if(element["updateType"] == "PublishDatabaseUpdate") {
             if(element["numRowsNotInserted"] == 0) {
@@ -455,23 +427,11 @@ function parse(data) {
         }
         else if(element["updateType"] == "CleaningResultUpdate") {
             if(element["result"] != null) {
-                //var pdata = getVaritions(element["result"]);
                 if(element["result"][0] == null || element["result"][0]["top"].length==0) {
                     alert("Cannot find any transformations! ");
-                    //populateInfoPanel();
-                    //return;
                 }
-                var topCol = element["result"][0];
-                //var sndCol = element["result"][1];
-                //preprocessData(topCol, topCol["top"]);
-                preprocessData(topCol,topCol["top"])
-                $("div#columnHeadingDropDownMenu").data("topkeys",topCol["top"]);
-                $("div#columnHeadingDropDownMenu").data("results", element["result"]);
-                populateInfoPanel();
-                populateResult(topCol);
-                //var pdata = getVaritions(element["result"]);
-                //populateVariations(topCol["top"], sndCol["data"]);
-
+               
+                TransformColumnDialog.getInstance().handleCleaningResultUpdate(element["result"]);
             }
         }
         else if(element["updateType"] == "InfoUpdate") {
@@ -498,13 +458,16 @@ function parse(data) {
             var modelListRadioBtnGrp = $("#modelListRadioBtnGrp");
             modelListRadioBtnGrp.html('');
             var rows = element["models"]
-            for(var x in rows) {
-                modelListRadioBtnGrp.append('<input type="radio" name="group1" id="model_'+x+'" value="'+rows[x].url+'" /> <label for="model_'+x+'">'+rows[x].name+' ('+rows[x].url+') </label> <br />');
+            if(rows.length == 0) {
+            	alert("There are no models available");
+            } else {
+	            for(var x in rows) {
+	                modelListRadioBtnGrp.append('<input type="radio" name="group1" id="model_'+x+'" value="'+rows[x].url+'" /> <label for="model_'+x+'">'+rows[x].name+' ('+rows[x].url+') </label> <br />');
+	            }
+	            var modelListDiv = $('div#modelListDiv');
+	            modelListDiv.dialog({ title: 'Select a service',
+	                buttons: { "Cancel": function() { $(this).dialog("close"); }, "Select": submitSelectedModelNameToBeLoaded }, width: 300, height: 150 });
             }
-            var modelListDiv = $('div#modelListDiv');
-            modelListDiv.dialog({ title: 'Select a service',
-                buttons: { "Cancel": function() { $(this).dialog("close"); }, "Select": submitSelectedModelNameToBeLoaded }, width: 300, height: 150 });
-
         }
         else if(element["updateType"] == "InvokeDataMiningServiceUpdate") {
 
@@ -566,7 +529,7 @@ function parse(data) {
     }
 }
 
-function addColumnHeadersRecurse(columns, headersTable, isOdd) {
+function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
     var row = $("<tr>");
     if (isOdd) {
         row.addClass("wk-row-odd");
@@ -577,7 +540,7 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
     var columnWidths = [];
     $.each (columns, function (index, column) {
 
-        var td = $("<td>").addClass("wk-cell").attr("id", column.hNodeId);
+        var td = $("<td>").addClass("wk-header-cell").attr("id", column.hNodeId);
         var headerDiv = $("<div>").addClass(column["columnClass"]);
 
         var colWidthNumber = 0;
@@ -595,8 +558,13 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
         }
         
         if (column["hasNestedTable"]) {
-            var pElem = $("<div>").addClass("wk-header wk-subtable-header").text(column["columnName"])
-                .mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);
+            var pElem = $("<div>")
+            				.addClass("wk-header")
+            				.addClass("wk-subtable-header")
+//            				.text(column["columnName"])
+//            				.mouseenter(showColumnOptionButton)
+//            				.mouseleave(hideColumnOptionButton);
+            				.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"])).generateJS());
 
             var nestedTableContainer = $("<div>").addClass("table-container");
             var nestedTableHeaderContainer = $("<div>").addClass("table-header-container");
@@ -606,7 +574,7 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
             } else {
                 nestedTable.addClass("htable-odd");
             }
-            var nestedColumnWidths = addColumnHeadersRecurse(column["columns"], nestedTable, !isOdd);
+            var nestedColumnWidths = addColumnHeadersRecurse(worksheetId, column["columns"], nestedTable, !isOdd);
 
             var colAdded = 0;
             $.each(nestedColumnWidths, function(index2, colWidth){
@@ -624,7 +592,9 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
 
             headerDiv.append(pElem).append(nestedTableContainer.append(nestedTableHeaderContainer.append(nestedTable)));
         } else {
-            headerDiv.addClass("wk-header").text(column["columnName"]).mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);
+            headerDiv.addClass("wk-header")
+            	//.text(column["columnName"]).mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);
+            	.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"])).generateJS());
             // Pedro: limit cells to 30 chars wide. This should be smarter: if the table is not too wide, then allow more character.
             // If we impose the limit, we should set the CSS to wrap rather than use ... ellipsis.
             // We will need a smarter data structure so we can do two passes, first to compute the desired lenghts based on number of characters

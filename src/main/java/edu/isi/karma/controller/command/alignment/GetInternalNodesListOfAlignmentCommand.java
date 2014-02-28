@@ -48,7 +48,7 @@ public class GetInternalNodesListOfAlignmentCommand extends Command {
 	private String propertyName;
 	
 	private enum JsonKeys {
-		updateType, nodeLabel, nodeId, nodes
+		updateType, nodeLabel, nodeId, nodes, nodeUri
 	}
 	
 	public enum INTERNAL_NODES_RANGE {
@@ -122,6 +122,7 @@ public class GetInternalNodesListOfAlignmentCommand extends Command {
 						}
 						nodeObj.put(JsonKeys.nodeLabel.name(), nodeLabelStr);
 						nodeObj.put(JsonKeys.nodeId.name(), node.getId());
+						nodeObj.put(JsonKeys.nodeUri.name(), nodeLabel.getUri());
 						nodesArray.put(nodeObj);
 					}
 					

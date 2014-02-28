@@ -5,7 +5,10 @@ function showChartButtonHandler() {
 
 
     var worksheetId = $("td#" + hNodeId).parents("div.Worksheet").attr("id");
-
+    showChartForColumn(worksheetId, hNodeId);
+}
+    
+function showChartForColumn(worksheetId, hNodeId) {
 
     var info = new Object();
     var newInfo = [];   // for input parameters

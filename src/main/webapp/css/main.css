@@ -63,3 +63,10 @@ body {
 #rdfGenerationErrorWindow {
 	background: none repeat scroll 0 0 #EEEEEF;
 }
+
+#semanticTypeEdit_propertyList1 ins, #semanticTypeEdit_propertyList2 ins, #semanticTypeEdit_classList1 ins, #semanticTypeEdit_classList2 ins {
+	width: 1px;
+}
+ #incomingOutgoingLinksDialog_inner_classList1 ins, #incomingOutgoingLinksDialog_inner_classList2 ins, #incomingOutgoingLinksDialog_inner_propertyList1 ins, #incomingOutgoingLinksDialog_inner_propertyList2 ins {
+ 	width: 1px;
+ }

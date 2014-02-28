@@ -121,7 +121,8 @@ function submitModelForWorksheet() {
     info["sourceName"] = $("td.selected", table).data("sourceName");
     info["modelName"] = $("td.selected span", table).text();
 
-    optionsDiv.dialog("close");
+    if(isDialogInitialized(optionsDiv))
+    	optionsDiv.dialog("close");
     showLoading(info["worksheetId"]);
     var returned = $.ajax({
         url: "RequestController",
@@ -144,8 +145,9 @@ function submitModelForWorksheet() {
 
 function createNewModelForWorksheet() {
     var optionsDiv = $("#showExistingModelDialog");
-    optionsDiv.dialog("close");
-
+    if(isDialogInitialized(optionsDiv))
+    	optionsDiv.dialog("close");
+    
     var info = {};
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["command"] = "CreateNewModelCommand";
