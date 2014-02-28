@@ -92,7 +92,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		Connection conn = dbUtil.getConnection(hostname, portnumber, username, password, dBorSIDName);
 		conn.setAutoCommit(false);
-		String query = "Select * FROM " + tablename;
+		String query = "Select * FROM " + dbUtil.escapeTablename(tablename);
 		java.sql.Statement stmt = conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
 				java.sql.ResultSet.CONCUR_READ_ONLY);
 		stmt.setFetchSize(DATABASE_TABLE_FETCH_SIZE);
@@ -119,6 +119,9 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 				generateRDFFromWorksheet(wk, workspace, mapping, pw);
 				logger.debug("Done for " + counter + " rows ..." );
 			    removeWorkspace(workspace);
+			    
+			    parserTest = new WorksheetR2RMLJenaModelParser(id);
+				mapping = parserTest.parse();
 			    workspace = initializeWorkspace();
 			    factory = workspace.getFactory();
 				wk = factory.createWorksheet(tablename, workspace, encoding);

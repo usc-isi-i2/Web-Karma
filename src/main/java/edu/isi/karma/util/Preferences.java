@@ -26,10 +26,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -37,7 +39,7 @@ public abstract class Preferences {
 	/**
 	 * Pointer to the file where the preferences for each workspace is saved.
 	 */
-	protected File jsonFile;
+	private File jsonFile;
 	
 	/**
 	 * Id of the workspace. Each workspace has its own view preference object.
@@ -55,20 +57,24 @@ public abstract class Preferences {
 
 	private void populatePreferences() {
 		try {
-			jsonFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
-					"UserPrefs/" + preferencesId + ".json");
-			if(jsonFile.exists()){
-				// Populate from the existing preferences JSON file
-				json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
-				if(json == null) {
-					// If error occurred with preferences file, create a new one
-					logger.error("Preferences file corrupt! Creating new from template.");
-					createNewPreferencesFileFromTemplate();
-				}
+			if(ModelingConfiguration.getManualAlignment()) {
+				loadDefaultPreferences();
 			} else {
-				// Create a new JSON preference file using the template preferences file
-				createNewPreferencesFileFromTemplate();
-			} 
+				jsonFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
+						"UserPrefs/" + preferencesId + ".json");
+				if(jsonFile.exists()){
+					// Populate from the existing preferences JSON file
+					json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
+					if(json == null) {
+						// If error occurred with preferences file, create a new one
+						logger.error("Preferences file corrupt! Creating new from template.");
+						createNewPreferencesFileFromTemplate();
+					}
+				} else {
+					// Create a new JSON preference file using the template preferences file
+					createNewPreferencesFileFromTemplate();
+				} 
+			}
 		} catch(FileNotFoundException f) {
 			logger.error("Preferences file not found! ", f);
 		} catch (IOException e) {
@@ -83,5 +89,17 @@ public abstract class Preferences {
 				"UserPrefs/WorkspacePref.template");
 		FileUtil.copyFiles(jsonFile, template_file);
 		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
+	}
+	
+	private void loadDefaultPreferences() throws IOException {
+		jsonFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
+				"UserPrefs/WorkspacePref.template");
+		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
+	}
+	
+	protected void savePreferences() throws JSONException, IOException {
+		if(!ModelingConfiguration.getManualAlignment()) {
+			FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
+		}
 	}
 }

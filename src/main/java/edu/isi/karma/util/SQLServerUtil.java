@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class SQLServerUtil extends AbstractJDBCUtil {
 
@@ -49,8 +50,14 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 		//Pedro: 2012/12/03 comment out to enable loading Views in Karma (on behalf of Maria)
 		//ResultSet rs = dmd.getTables(null, null, null, new String[] {"TABLE"});
 		ResultSet rs = dmd.getTables(null, null, null, new String[] {"TABLE","VIEW"});
-		while (rs.next())
-			tableNames.add(rs.getString(3));
+		while (rs.next()) {
+			String tablename = rs.getString(3);
+			String schema = rs.getString(2);
+			if(schema != null && schema.length() > 0)
+				tableNames.add(schema + "." + tablename);
+			else
+				tableNames.add(tablename);
+		}
 		Collections.sort(tableNames);
 		return tableNames;
 	}
@@ -62,7 +69,7 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 		
 		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
 		Connection conn = getConnection(DRIVER, connectString);
-		String query = "Select TOP " + rowCount + " * from " + tableName;
+		String query = "Select TOP " + rowCount + " * from " + escapeTablename(tableName);
 		
 		Statement s = conn.createStatement();
 		ResultSet r = s.executeQuery(query);
@@ -88,6 +95,18 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 	}
 
 	@Override
+	public String escapeTablename(String name) {
+		int idx = name.indexOf(".");
+		if(idx != -1) {
+			String schema = name.substring(0, idx);
+			String tableName = name.substring(idx+1);
+			return "[" + schema + "].[" + tableName + "]";
+		}
+		
+		return "[" + name + "]";
+	}
+	
+	@Override
 	protected String getDriver() {
 		return DRIVER;
 	}
@@ -97,4 +116,53 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 		return CONNECT_STRING_TEMPLATE;
 	}
 
+	/**
+	 * Returns the names of the columns for the specified table
+	 * @param db
+	 * @param tableName
+	 * @param conn
+	 * @return
+	 * @throws SQLException
+	 */
+	public List<String> getColumnNames(String db, String tableName, Connection conn) throws SQLException
+	{
+		List<String> columnNames = new ArrayList<String>(10);
+		String schema = null;
+		int idx = tableName.indexOf(".");
+		if(idx != -1) {
+			schema = tableName.substring(0, idx);
+			tableName = tableName.substring(idx+1);
+		}
+		ResultSet rs = conn.getMetaData().getColumns(db, schema, tableName, null);
+		while(rs.next())
+		{
+			columnNames.add(rs.getString("COLUMN_NAME"));
+		}
+		return columnNames;
+	}
+
+	/**
+	 * Returns the column types for a given table.
+	 * @param tableName
+	 * @param conn
+	 * @return
+	 * 		column types for a given table.
+	 * @throws SQLException
+	 */
+	public List<String> getColumnTypes(String db, String tableName, Connection conn) throws SQLException
+	{
+		List<String> columnTypes = new ArrayList<String>(10);
+		String schema = null;
+		int idx = tableName.indexOf(".");
+		if(idx != -1) {
+			schema = tableName.substring(0, idx);
+			tableName = tableName.substring(idx+1);
+		}
+		ResultSet rs = conn.getMetaData().getColumns(db, schema, tableName, null);
+		while(rs.next())
+		{
+			columnTypes.add(rs.getString("TYPE_NAME"));
+		}
+		return columnTypes;
+	}
 }

@@ -629,13 +629,13 @@ public class KR2RMLWorksheetRDFGenerator {
 		String colUri = getColumnContextUri(hNodeId);
 		
 		// Generate the type
-		String typeTriple = constructTripleWithURIObject(colUri, Uris.RDF_TYPE_URI, 
-				Uris.PROV_ENTITY_URI);
+		String typeTriple = constructTripleWithURIObject("<" + colUri + ">", Uris.RDF_TYPE_URI, 
+				"<" + Uris.PROV_ENTITY_URI + ">");
 		colContextTriples.add(typeTriple);
 		
 		// Generate the label
 		HNode hNode = factory.getHNode(hNodeId);
-		String labelTriple = constructTripleWithLiteralObject(colUri, Uris.RDFS_LABEL_URI, 
+		String labelTriple = constructTripleWithLiteralObject("<" + colUri + ">", Uris.RDFS_LABEL_URI, 
 				hNode.getColumnName(), "");
 		colContextTriples.add(labelTriple);
 		

@@ -77,12 +77,6 @@ public class TestJSONRDFGenerator {
 				new File(getTestDataFolder() + "/cs548-events-model.ttl")
 						.toURI().toURL());
 		rdfGen.addModel(modelIdentifier);
-		
-		
-		modelIdentifier = new R2RMLMappingIdentifier("kdd-sample-model",
-				new File(getTestDataFolder() + "/kdd-sample.ttl")
-						.toURI().toURL());
-		rdfGen.addModel(modelIdentifier);
 	}
 
 	/**
@@ -148,33 +142,6 @@ public class TestJSONRDFGenerator {
 		}
 	}
 
-	/**
-	 * Test method for
-	 * {@link edu.isi.karma.rdf.JSONRDFGenerator#generateRDF(java.lang.String, java.lang.String, boolean, java.io.PrintWriter)}
-	 * .
-	 */
-	@Test
-	public void testKDDRDF() {
-		try {
-
-			String filename = getTestDataFolder() + "/kdd-sample.json";
-			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(filename),
-					"utf-8");
-
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-
-			rdfGen.generateRDF("kdd-sample-model", jsonData, true, pw);
-			String rdf = sw.toString();
-
-			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split("\n");
-			assertEquals(135, lines.length);
-		} catch (Exception e) {
-			fail("Execption: " + e.getMessage());
-		}
-	}
 	
 	private String getRootFolder() {
 		return getClass().getClassLoader().getResource(".").getPath()
