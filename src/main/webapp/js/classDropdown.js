@@ -16,6 +16,7 @@ var ClassDropdownMenu = (function() {
     		   	        [ "divider" , null ],
     		   	        
     		   			[	"Invoke Reconciliation Service" , invokeReconciliationService ],
+    		   			[ "Generate JSON", generateJson ],
     		   		/*	[ "Invoke M/L Service", invokeMLService ], */
     		   			
     		   			
@@ -28,6 +29,42 @@ var ClassDropdownMenu = (function() {
     	function hide() {
     		$("#" + menuId).hide();
     		$(document).off('click', hide);
+    	}
+    	
+    	function generateJson() {
+    		console.log("Generate JSON");
+    		hide();
+    		//Code to call the publishJSOnCommand
+    		var info = new Object();
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["worksheetId"] = worksheetId;
+            info["command"] = "PublishJSONCommand";
+
+            var newInfo = [];
+            newInfo.push(getParamObject("alignmentNodeId", alignmentId, "other"));
+            newInfo.push(getParamObject("worksheetId", worksheetId, "other"));
+
+            info["newInfo"] = JSON.stringify(newInfo);
+
+            showLoading(worksheetId);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        parse(json);
+                        hideLoading(worksheetId);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while publishing json" + textStatus);
+                        hideLoading(worksheetId);
+                    }
+            });
     	}
     	
     	function addIncomingLink() {
