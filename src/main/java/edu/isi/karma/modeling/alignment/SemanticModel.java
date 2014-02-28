@@ -27,18 +27,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
@@ -53,7 +50,6 @@ import com.google.common.math.BigIntegerMath;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import com.hp.hpl.jena.graph.impl.BaseGraphMaker;
 
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;

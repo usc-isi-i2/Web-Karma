@@ -105,7 +105,7 @@ public class TestJSONDagRDFGenerator {
 			String[] lines = rdf.split("\n");
 			int count = lines.length + 1;
 			 //This is not the correct count.  Just what the old rdf generator creates.
-			assertEquals(11, count);
+			assertEquals(195, count);
 		} catch (Exception e) {
 			fail("Execption: " + e.getMessage());
 		}

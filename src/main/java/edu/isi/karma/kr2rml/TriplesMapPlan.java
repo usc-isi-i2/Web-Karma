@@ -11,9 +11,9 @@ public class TriplesMapPlan {
 
 	Collection<TriplesMapWorker> workers;
 	Row r;
-	Map<String, List<Subject>> triplesMapSubjects;
+	Map<String, List<PopulatedTemplateTermSet>> triplesMapSubjects;
 	
-	public TriplesMapPlan(Collection<TriplesMapWorker> workers, Row r, Map<String, List<Subject>>triplesMapSubjects)
+	public TriplesMapPlan(Collection<TriplesMapWorker> workers, Row r, Map<String, List<PopulatedTemplateTermSet>>triplesMapSubjects)
 	{
 		this.workers = workers;
 		this.r = r;

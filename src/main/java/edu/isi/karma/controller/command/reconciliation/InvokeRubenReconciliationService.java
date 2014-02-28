@@ -50,6 +50,7 @@ import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.ReportMessage;
 import edu.isi.karma.kr2rml.TriplesMap;
+import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
@@ -169,7 +170,7 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 				// Sanity check
 				if (rdf == null || rdf.trim().isEmpty()) continue;
 				
-				String keyUri = rdfGen.normalizeUri(rdfGen.getTemplateTermSetPopulatedWithValues(node
+				String keyUri = URIFormatter.normalizeUri(rdfGen.getTemplateTermSetPopulatedWithValues(node
 						, trMap.getSubject().getTemplate()));
 				rowToUriMap.put(row, keyUri);
 				

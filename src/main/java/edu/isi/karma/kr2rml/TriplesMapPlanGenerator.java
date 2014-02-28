@@ -32,7 +32,7 @@ public class TriplesMapPlanGenerator {
 	public TriplesMapPlan generatePlan(TriplesMapForest tmf)
 	{
 		List<TriplesMapWorker> workers = new LinkedList<TriplesMapWorker>();
-		Map<String, List<Subject>>triplesMapSubjects = new ConcurrentHashMap<String, List<Subject>>();
+		Map<String, List<PopulatedTemplateTermSet>>triplesMapSubjects = new ConcurrentHashMap<String, List<PopulatedTemplateTermSet>>();
 		TriplesMapPlan plan = new TriplesMapPlan(workers, r, triplesMapSubjects);
 		
 		List<TriplesMapGraph> graphs = tmf.getGraphs();
@@ -46,7 +46,7 @@ public class TriplesMapPlanGenerator {
 	public TriplesMapPlan generatePlan(TriplesMapGraph graph)
 	{
 		List<TriplesMapWorker> workers = new LinkedList<TriplesMapWorker>();
-		Map<String, List<Subject>>triplesMapSubjects = new ConcurrentHashMap<String, List<Subject>>();
+		Map<String, List<PopulatedTemplateTermSet>>triplesMapSubjects = new ConcurrentHashMap<String, List<PopulatedTemplateTermSet>>();
 		TriplesMapPlan plan = new TriplesMapPlan(workers, r, triplesMapSubjects);
 		workers.addAll(generatePlan(graph, plan));
 		return plan;
