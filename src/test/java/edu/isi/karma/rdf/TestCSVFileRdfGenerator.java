@@ -36,6 +36,8 @@ import java.util.HashSet;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
@@ -53,7 +55,8 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
  * 
  */
 public class TestCSVFileRdfGenerator {
-
+	private static Logger logger = LoggerFactory.getLogger(TestCSVFileRdfGenerator.class);
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		initOfflineWorkspaceSettings();
@@ -78,7 +81,7 @@ public class TestCSVFileRdfGenerator {
 			
 			for (int i = 0; i < fileList.length; i++) {
 				File modelFile = fileList[i];
-				System.out.println("Load file: " + modelFile.getName());
+				logger.info("Load file: " + modelFile.getName());
 
 				String name = modelFile.getName().replace("-model.ttl", "");
 				File standardRdfFile = new File(standardRdfDirect + "/" + name
@@ -88,13 +91,13 @@ public class TestCSVFileRdfGenerator {
 				if(!standardRdfFile.exists())
 				{
 					out.println(standardRdfFile+" doesn't  exist");
-					System.err.println(standardRdfFile+" doesn't  exist");
+					logger.error(standardRdfFile+" doesn't  exist");
 					continue;
 				}
 				if(!csvFile.exists())
 				{
 					out.println(csvFile+" doesn't  exist");
-					System.err.println(csvFile+" doesn't  exist");
+					logger.error(csvFile+" doesn't  exist");
 					continue;
 				}
 					
@@ -115,7 +118,7 @@ public class TestCSVFileRdfGenerator {
 							out);
 				} else {
 					out.println(modelFile.getName() + " is ok");
-					System.out.println(modelFile.getName() + " is ok");
+					logger.info(modelFile.getName() + " is ok");
 				}
 
 				pw.close();
@@ -125,6 +128,7 @@ public class TestCSVFileRdfGenerator {
 			out.close();
 			assertEquals(tag, true);
 		} catch (Exception e) {
+			logger.error("Exception", e);
 			fail("Exception: " + e.getMessage());
 		}
 	}
@@ -145,14 +149,14 @@ public class TestCSVFileRdfGenerator {
 			if (!generatedSet.contains(temp))
 			{
 				out.println(modelName + " missing triple error:" + temp);
-				System.err.println(modelName + " missing triple error:" + temp);
+				logger.error(modelName + " missing triple error:" + temp);
 			}
 
 		for (String temp : generatedSet)
 			if (!standardSet.contains(temp))
 			{
 				out.println(modelName + " extra triple error:" + temp);
-				System.err.println(modelName + " extra triple error:" + temp);
+				logger.error(modelName + " extra triple error:" + temp);
 			}
 	}
 
@@ -222,6 +226,7 @@ public class TestCSVFileRdfGenerator {
 			in.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+			logger.error("Error getting file contents: " + file.getAbsolutePath());
 		}
 		return hashSet;
      }
