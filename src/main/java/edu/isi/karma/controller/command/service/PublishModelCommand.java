@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.model.serialization.DataSourceLoader;
 import edu.isi.karma.model.serialization.DataSourcePublisher;
@@ -133,13 +134,13 @@ public class PublishModelCommand extends Command{
 				WebServicePublisher servicePublisher = new WebServicePublisher(service);
 				servicePublisher.publish(Repository.Instance().LANG, true);
 				logger.info("Service model has successfully been published to repository: " + service.getId());
-				return new UpdateContainer(new ErrorUpdate(
+				return new UpdateContainer(new InfoUpdate(
 				"Service model has successfully been published to repository: " + service.getId()));
 			} else { //if (source != null) {
 				DataSourcePublisher sourcePublisher = new DataSourcePublisher(source, workspace.getFactory(), wk.getMetadataContainer().getSourceInformation());
 				sourcePublisher.publish(Repository.Instance().LANG, true);
 				logger.info("Source model has successfully been published to repository: " + source.getId());
-				return new UpdateContainer(new ErrorUpdate(
+				return new UpdateContainer(new InfoUpdate(
 				"Source model has successfully been published to repository: " + source.getId()));
 			}
 

@@ -66,6 +66,7 @@ public class PublishJSONCommand extends Command {
 		this.tripleStoreUrl = tripleStoreUrl;
 		this.graphUri = graphUri;
 		this.replaceContext = replace;
+
 	}
 
 	@Override
@@ -81,16 +82,15 @@ public class PublishJSONCommand extends Command {
 	@Override
 	public String getDescription() {
 		return this.worksheetName;
-	}
+		}
 
 	@Override
 	public CommandType getCommandType() {
 		return CommandType.notUndoable;
-	}
+		}
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		
 		logger.info("Entered PublishJSONCommand");
 		
 		//save the preferences 
@@ -159,6 +159,7 @@ public class PublishJSONCommand extends Command {
 	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
+
 	
 	private void savePreferences(Workspace workspace){
 		try{

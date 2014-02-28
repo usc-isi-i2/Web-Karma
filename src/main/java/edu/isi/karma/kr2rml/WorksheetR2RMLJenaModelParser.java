@@ -304,7 +304,8 @@ public class WorksheetR2RMLJenaModelParser {
 										colNode.toString(), formatter), rdfLiteralTypeTermSet);
 					}
 					// Check if anything needs to be added to the columnNameToPredicateObjectMap Map
-					addColumnNameToPredObjectMapLink(objMap, pom, kr2rmlMapping);
+					if(objMap != null)
+						addColumnNameToPredObjectMapLink(objMap, pom, kr2rmlMapping);
 				}
 			}
 			pom.setObject(objMap);

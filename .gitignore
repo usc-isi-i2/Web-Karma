@@ -59,6 +59,7 @@ bin/
 *.qix
 *.shp
 *.shx
+*.dot
 src/main/webapp/SpatialData/GET_OPENSTREETMAP.xml
 src/main/scripts/Lib/IDCTClassifier$py.class
 
@@ -67,3 +68,5 @@ nbactions.xml
 *.ttl
 
 *.rdf
+
+src/test/karma-data/testresult/testResult.txt

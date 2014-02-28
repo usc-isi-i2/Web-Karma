@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Workspace;
+
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -42,6 +43,7 @@ public class PublishJSONCommandFactory extends CommandFactory {
 				);
 		
 		return comm;
+
 	}
 
 }

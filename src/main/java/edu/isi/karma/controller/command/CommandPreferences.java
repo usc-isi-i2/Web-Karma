@@ -29,7 +29,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.Preferences;
 
 /**
@@ -72,7 +71,7 @@ public class CommandPreferences extends Preferences{
 				if(obj.getString("Command").equals(commandName)) {
 					obj.put("PreferenceValues", prefValues);
 					// Save the new preferences to the file
-					FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
+					this.savePreferences();
 					return;
 				}
 			}
@@ -85,7 +84,7 @@ public class CommandPreferences extends Preferences{
 			json.put("Commands", commArray);
 			
 			// Write the new preferences to the file
-			FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
+			this.savePreferences();
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
