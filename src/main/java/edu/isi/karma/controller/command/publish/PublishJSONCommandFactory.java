@@ -2,33 +2,46 @@ package edu.isi.karma.controller.command.publish;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class PublishJSONCommandFactory extends CommandFactory implements JSONInputCommandFactory {
+public class PublishJSONCommandFactory extends CommandFactory {
 	private enum Arguments {
-		worksheetId, alignmentNodeId
+		worksheetId, addInverseProperties, rdfPrefix, rdfNamespace, saveToStore,hostName,dbName,userName,password,modelName, 
+		tripleStoreUrl, graphUri, replaceContext
 	}
 
 	@Override
-	public Command createCommand(HttpServletRequest request, Workspace workspace) {
-		// Not needed
-		return null;
-	}
+	public Command createCommand(HttpServletRequest request,
+			Workspace workspace) {
+		String worksheetId = request.getParameter(Arguments.worksheetId
+				.name());
+		String addInverseProperties = request.getParameter(Arguments.addInverseProperties
+				.name());
+		String rdfPrefix = request.getParameter(Arguments.rdfPrefix
+				.name());
+		String rdfNamespace = request.getParameter(Arguments.rdfNamespace
+				.name());
 
-	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace) throws JSONException, KarmaException {
-		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
-		String alignmentNodeId = HistoryJsonUtil.getStringValue(Arguments.alignmentNodeId.name(), inputJson);
-		PublishJSONCommand comm = new PublishJSONCommand(getNewId(workspace), alignmentNodeId, worksheetId);
-		comm.setInputParameterJson(inputJson.toString());
+		PublishJSONCommand comm = new PublishJSONCommand(getNewId(workspace), worksheetId,
+				ServletContextParameterMap
+				.getParameterValue(ContextParameter.PUBLIC_RDF_ADDRESS),
+				rdfPrefix, rdfNamespace, addInverseProperties,
+				request.getParameter(Arguments.saveToStore.name()),
+				request.getParameter(Arguments.hostName.name()),
+				request.getParameter(Arguments.dbName.name()),
+				request.getParameter(Arguments.userName.name()),
+				request.getParameter(Arguments.password.name()),
+				request.getParameter(Arguments.modelName.name()),
+				request.getParameter(Arguments.tripleStoreUrl.name()),
+				request.getParameter(Arguments.graphUri.name()),
+				Boolean.parseBoolean(request.getParameter(Arguments.replaceContext.name()))
+				);
+		
 		return comm;
 	}
+
 }

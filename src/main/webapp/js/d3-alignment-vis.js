@@ -61,6 +61,7 @@ function styleAndAssignHandlersToModelingVizElements() {
         dropDownMenu.hide();
 
         var info = new Object();
+        info["worksheetId"] = dropDownMenu.data("worksheetId");
         info["workspaceId"] = $.workspaceGlobalInformation.id;
         info["command"] = "PublishJSONCommand";
 
