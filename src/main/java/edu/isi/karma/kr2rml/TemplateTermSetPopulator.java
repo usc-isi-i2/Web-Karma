@@ -71,6 +71,7 @@ public class TemplateTermSetPopulator {
 						}
 						else
 						{
+							newPrefix.append("_");
 							newPrefix.append(node.getId());
 						}
 

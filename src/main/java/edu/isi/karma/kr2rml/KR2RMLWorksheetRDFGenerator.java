@@ -552,7 +552,7 @@ public class KR2RMLWorksheetRDFGenerator {
 			dependentTriplesMapLatches.add(latch);
 		}
 		
-		public void notifyDependentTriplesMapWorkers()
+		private void notifyDependentTriplesMapWorkers()
 		{
 			for(CountDownLatch latch : dependentTriplesMapLatches)
 			{
@@ -564,7 +564,6 @@ public class KR2RMLWorksheetRDFGenerator {
 			
 			List<PopulatedTemplateTermSet> subjects = new LinkedList<PopulatedTemplateTermSet>();
 			triplesMapSubjects.put(triplesMap.getId(), subjects);
-			Map<Node, Set<PopulatedTemplateTermSet>> stuffs = new HashMap<Node, Set<PopulatedTemplateTermSet>>();
 			try{
 				latch.await();
 			}
@@ -577,82 +576,29 @@ public class KR2RMLWorksheetRDFGenerator {
 			LOG.info("Processing " + triplesMap.getId() + " " +triplesMap.getSubject().getId());
 			try
 			{
-			String templateAnchor = kr2rmlMapping.getAuxInfo().getSubjectMapIdToTemplateAnchor().get(triplesMap.getSubject().getId());
-			String templateHNodeId = translator.getHNodeIdForColumnName(templateAnchor);
-			HNode templateHNode = factory.getHNode(templateHNodeId);
 			
-			
-			Collection<Node> nodes = new LinkedList<Node>();
-			HNodePath templateHNodePath = templateHNode.getHNodePath(factory);
-			r.collectNodes(templateHNodePath, nodes);
-			List<String> columnsCovered;
-			List<HNodePath> columnsCoveredPaths = new LinkedList<HNodePath>();
+		
+			List<HNodePath> subjectMapTemplateColumnPaths = new LinkedList<HNodePath>();
 			SubjectMap subjMap = triplesMap.getSubject();
-			HNodePath commonTemplatePath = templateHNodePath;
+			TemplateTermSet subjMapTemplate = null;
+			TemplateTermSetPopulator subjectMapTTSPopulator = null;
 			if (subjMap.isBlankNode()) {
-				columnsCovered = kr2rmlMapping.getAuxInfo().getBlankNodesColumnCoverage().get(subjMap.getId());
-				Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes = new HashMap<ColumnTemplateTerm, Collection<Node>>();
-	
-				TemplateTermSet terms = new TemplateTermSet();
-				terms.addTemplateTermToSet(new StringTemplateTerm(Uris.BLANK_NODE_PREFIX));
-				terms.addTemplateTermToSet(new StringTemplateTerm(kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().get(triplesMap.getSubject().getId()).replaceAll(":", "_")));
-				LinkedList<Collection<Node>> allNodesCovered = gatherNodesForURI(columnsCovered);
-				Iterator<String> columnsCoveredIterator = columnsCovered.iterator();
-				Iterator<Collection<Node>> nodesIterator = allNodesCovered.iterator();
-				while(columnsCoveredIterator.hasNext() && nodesIterator.hasNext())
-				{
-					ColumnTemplateTerm term = new ColumnTemplateTerm(columnsCoveredIterator.next());
-					terms.addTemplateTermToSet(term);
-					columnsToNodes.put(term, nodesIterator.next());
-				}
-				LinkedList<TemplateTerm> allTerms = new LinkedList<TemplateTerm>();
-				allTerms.addAll(terms.getAllTerms());
-				TemplateTermSetPopulator ttsPopulator = new TemplateTermSetPopulator(terms, new StringBuilder(), uriFormatter, true, false);
-				subjects.addAll(ttsPopulator.generatePopulatedTemplates(columnsToNodes));
-					
+				List<String> columnsCovered  = kr2rmlMapping.getAuxInfo().getBlankNodesColumnCoverage().get(subjMap.getId());
+				subjMapTemplate = generateSubjectMapTemplateForBlankNode(columnsCovered);	
+				subjectMapTTSPopulator = new TemplateTermSetPopulator(subjMapTemplate, new StringBuilder(), uriFormatter, true, false);
 			} else {
-				LinkedList<TemplateTerm> allTerms = new LinkedList<TemplateTerm>();
-				allTerms.addAll(subjMap.getTemplate().getAllTerms());
-				List<ColumnTemplateTerm> terms =  subjMap.getTemplate().getAllColumnNameTermElements();
-				columnsCovered = new LinkedList<String>();
-				for(ColumnTemplateTerm term : terms)
-				{
-					columnsCovered.add(term.getTemplateTermValue());
-				}
-				LinkedList<Collection<Node>> allNodesCovered = gatherNodesForURI(columnsCovered);
-				Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes = new HashMap<ColumnTemplateTerm, Collection<Node>>();
-				Iterator<ColumnTemplateTerm> termIterator = terms.iterator();
-				Iterator<Collection<Node>> nodesIterator = allNodesCovered.iterator();
-				while(termIterator.hasNext() && nodesIterator.hasNext())
-				{
-					columnsToNodes.put(termIterator.next(), nodesIterator.next());
-				}
-				TemplateTermSetPopulator ttsPopulator = new TemplateTermSetPopulator(subjMap.getTemplate(), new StringBuilder(), uriFormatter);
-				subjects.addAll(ttsPopulator.generatePopulatedTemplates(columnsToNodes));
-				
+				subjMapTemplate = subjMap.getTemplate();
+				subjectMapTTSPopulator = new TemplateTermSetPopulator(subjMapTemplate, new StringBuilder(), uriFormatter);
 			}
 			
-			for(String columnCovered : columnsCovered)
+			for(ColumnTemplateTerm term : subjMapTemplate.getAllColumnNameTermElements())
 			{
-				HNodePath columnCoveredPath = factory.getHNode(translator.getHNodeIdForColumnName(columnCovered)).getHNodePath(factory);
-				columnsCoveredPaths.add(columnCoveredPath);
-				commonTemplatePath = HNodePath.findCommon(commonTemplatePath, columnCoveredPath);
-			}
-				
-			for(PopulatedTemplateTermSet subject : subjects)
-			{
-				for(Node n : subject.references)
-				{
-					if(!stuffs.containsKey(n))
-					{
-						stuffs.put(n, new HashSet<PopulatedTemplateTermSet>());
-					}
-					Set<PopulatedTemplateTermSet> s = stuffs.get(n);
-					s.add(subject);
-				}
+				subjectMapTemplateColumnPaths.add(factory.getHNode(translator.getHNodeIdForColumnName(term.getTemplateTermValue())).getHNodePath(factory));
 			}
 			
+			Map<ColumnTemplateTerm, Collection<Node>> subjectTemplateColumnsToNodes = gatherNodesForPopulatingSubjectMapTemplates(subjMapTemplate);
 			
+			subjects.addAll(subjectMapTTSPopulator.generatePopulatedTemplates(subjectTemplateColumnsToNodes));
 			
 			// Generate triples for specifying the types
 			for (TemplateTermSet typeTerm:subjMap.getRdfsType()) {
@@ -723,8 +669,8 @@ public class KR2RMLWorksheetRDFGenerator {
 					if(objectTemplateTerms == null || objectTemplateTerms.isEmpty())
 					{
 
-						TemplateTermSetPopulator ttsPopulator = new TemplateTermSetPopulator(objMap.getTemplate(), new StringBuilder(), uriFormatter);
-						List<PopulatedTemplateTermSet> values = ttsPopulator.generatePopulatedTemplates(null);
+						TemplateTermSetPopulator objectTemplatePopulator = new TemplateTermSetPopulator(objMap.getTemplate(), new StringBuilder(), uriFormatter);
+						List<PopulatedTemplateTermSet> values = objectTemplatePopulator.generatePopulatedTemplates(null);
 						for(PopulatedTemplateTermSet value: values)
 						{
 							for(PopulatedTemplateTermSet subject : subjects)
@@ -737,7 +683,7 @@ public class KR2RMLWorksheetRDFGenerator {
 						}	
 						continue;
 					}
-					Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes = new HashMap<ColumnTemplateTerm, Collection<Node>>();
+					Map<ColumnTemplateTerm, Collection<Node>> objectTemplateColumnsToNodes = new HashMap<ColumnTemplateTerm, Collection<Node>>();
 					HNodePath objectTemplateCommonPath = null;
 					HNodePath currentObjectTemplatePath = null;
 					LinkedList<String> objectColumnsCovered = new LinkedList<String>();
@@ -767,7 +713,7 @@ public class KR2RMLWorksheetRDFGenerator {
 						
 						HNodePath referencePath = null;
 						int mostInCommonLength = -1;
-						for(HNodePath columnCoveredPath : columnsCoveredPaths)
+						for(HNodePath columnCoveredPath : subjectMapTemplateColumnPaths)
 						{
 								HNodePath commonPath = HNodePath.findCommon(columnCoveredPath, currentObjectTemplatePath);
 								if(commonPath.length() > mostInCommonLength)
@@ -783,11 +729,12 @@ public class KR2RMLWorksheetRDFGenerator {
 					}
 					for(ColumnTemplateTerm term : objectTemplateTerms)
 					{
+						//Not sure this really captures upward links correctly.
 						if(termToReferenceSubjectPath.get(term).length() > termToReferenceObjectPath.get(term).length())
 						{
 							LinkedList<Node> objectNodes = new LinkedList<Node>();
 							r.collectNodes(termToReferenceObjectPath.get(term), objectNodes);
-							columnsToNodes.put(term, objectNodes);
+							objectTemplateColumnsToNodes.put(term, objectNodes);
 						}
 					}
 					
@@ -831,12 +778,12 @@ public class KR2RMLWorksheetRDFGenerator {
 										{
 											node.getBelongsToRow().collectNodes(objectToLookUpPath, objectNodes);
 										}
-										columnsToNodes.put(term, objectNodes);
+										objectTemplateColumnsToNodes.put(term, objectNodes);
 									}
 								}
 							}
-							TemplateTermSetPopulator ttsPopulator = new TemplateTermSetPopulator(objMap.getTemplate(), new StringBuilder(), uriFormatter, false, true);
-							List<PopulatedTemplateTermSet> values = ttsPopulator.generatePopulatedTemplates(columnsToNodes);
+							TemplateTermSetPopulator objectTemplatePopulator = new TemplateTermSetPopulator(objMap.getTemplate(), new StringBuilder(), uriFormatter, false, true);
+							List<PopulatedTemplateTermSet> values = objectTemplatePopulator.generatePopulatedTemplates(objectTemplateColumnsToNodes);
 					
 							for(PopulatedTemplateTermSet value: values)
 							{
@@ -857,6 +804,33 @@ public class KR2RMLWorksheetRDFGenerator {
 			notifyDependentTriplesMapWorkers();
 			return true;
 		}
+		private TemplateTermSet generateSubjectMapTemplateForBlankNode(
+				List<String> columnsCovered) {
+			TemplateTermSet subjectTerms = new TemplateTermSet();
+			subjectTerms.addTemplateTermToSet(new StringTemplateTerm(Uris.BLANK_NODE_PREFIX));
+			subjectTerms.addTemplateTermToSet(new StringTemplateTerm(kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().get(triplesMap.getSubject().getId()).replaceAll(":", "_")));
+			for(String columnCovered : columnsCovered)
+			{
+				ColumnTemplateTerm term = new ColumnTemplateTerm(columnCovered);
+				subjectTerms.addTemplateTermToSet(term);
+			}
+			return subjectTerms;
+		}
+		private Map<ColumnTemplateTerm, Collection<Node>> gatherNodesForPopulatingSubjectMapTemplates(
+				TemplateTermSet subjectTemplate)
+				throws HNodeNotFoundKarmaException {
+			List<ColumnTemplateTerm> terms =  subjectTemplate.getAllColumnNameTermElements();
+			
+			LinkedList<Collection<Node>> allNodesCovered = gatherNodesForURI(terms);
+			Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes = new HashMap<ColumnTemplateTerm, Collection<Node>>();
+			Iterator<ColumnTemplateTerm> termIterator = terms.iterator();
+			Iterator<Collection<Node>> nodesIterator = allNodesCovered.iterator();
+			while(termIterator.hasNext() && nodesIterator.hasNext())
+			{
+				columnsToNodes.put(termIterator.next(), nodesIterator.next());
+			}
+			return columnsToNodes;
+		}
 		private List<PopulatedTemplateTermSet> generatePredicatesForPom(PredicateObjectMap pom) {
 			List<ColumnTemplateTerm> predicateTemplateTerms = pom.getPredicate().getTemplate().getAllColumnNameTermElements();
 			LinkedList<TemplateTerm> allPredicateTemplateTerms = new LinkedList<TemplateTerm>();
@@ -876,12 +850,12 @@ public class KR2RMLWorksheetRDFGenerator {
 	
 		
 		private LinkedList<Collection<Node>> gatherNodesForURI(
-				List<String> columnsCovered) throws HNodeNotFoundKarmaException {
+				List<ColumnTemplateTerm> terms) throws HNodeNotFoundKarmaException {
 			LinkedList<Collection<Node>> allNodesCovered = new LinkedList<Collection<Node>>();
-			for(String columnCovered: columnsCovered)
+			for(ColumnTemplateTerm term: terms)
 			{
 				Collection<Node> nodesCovered = new LinkedList<Node>();
-				HNodePath columnCoveredPath = factory.getHNode(translator.getHNodeIdForColumnName(columnCovered)).getHNodePath(factory);
+				HNodePath columnCoveredPath = factory.getHNode(translator.getHNodeIdForColumnName(term.getTemplateTermValue())).getHNodePath(factory);
 				r.collectNodes(columnCoveredPath, nodesCovered);
 				allNodesCovered.add(nodesCovered);
 				//TODO what if there are no nodes.
