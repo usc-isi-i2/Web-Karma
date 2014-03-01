@@ -158,7 +158,76 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                 }
         });
     });
+    
+    function submitFold() {
+        var dialog = $('div#foldDialog');
+        var checkboxes = dialog.find(":checked");
+        var checked = [];
+        for (var i = 0; i < checkboxes.length; i++) {
+            var checkbox = checkboxes[i];
+            checked.push(getParamObject("checked", checkbox['value'], "other"));    
+        }
+        $('div#foldDialog').dialog("close");
+        //console.log(checked);
+        var info = new Object();
+        info["worksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "FoldCommand";
 
+        var newInfo = [];
+        newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "worksheetId"));
+        newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
+        info["newInfo"] = JSON.stringify(newInfo);
+
+        showLoading(info["worksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    console.log(json);
+                    parse(json);
+                    hideLoading(info["worksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while generating the automatic model!" + textStatus);
+                    hideLoading(info["worksheetId"]);
+                }
+        });
+    }
+
+    $("button#Fold").click(function(event) {
+        var worksheetId = optionsDiv.data("worksheetId");
+        var worksheetPanel = $("div.Worksheet#" + worksheetId);
+        var tableContainer = $("div.table-container", worksheetPanel);
+        var tableHeaderContainer = $("div.table-header-container", worksheetPanel);
+        var headersTable = $("table.wk-table", tableHeaderContainer);
+        var headersRow = $("tr.wk-row-odd", headersTable);
+        //console.log($('div#foldDialog').html());
+        $('div#foldDialog').empty();
+        headersRow.each(function (index, element) {
+            var a = element.children;
+            //console.log(a.length);
+            for (var i = 0; i < a.length; i++) {
+                var name = $("div", a[i]);
+                $('<label />', {text: name.html()}).appendTo($('div#foldDialog'));
+                $('<input />', { type: 'checkbox', id: 'selectcolumns', value: element.cells[i].id }).appendTo($('div#foldDialog'));
+                $("</br>").appendTo($('div#foldDialog'));
+            }
+        });
+         $('div#foldDialog').dialog({width: 540, height: 460, title:"Fold", resizable:true
+            , buttons: {
+            "Cancel": function() { $(this).dialog("close"); },
+            "Submit": submitFold}
+        });
+        //console.log(headersRow.html());
+        //var headersTable = $("tbody.tr.wk-table htable-odd", tableHeaderContainer);
+    });
 
     $("button#showR2RMLFromTripleStore").click(function(event) {
         var dialog = $('#FetchR2RMLModelDialogBox');
