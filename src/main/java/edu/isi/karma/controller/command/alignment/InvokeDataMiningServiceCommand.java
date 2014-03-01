@@ -220,8 +220,9 @@ public class InvokeDataMiningServiceCommand extends Command {
 			}
 			
 			// execute the query on the triple store
-			String data = TripleStoreUtil.invokeSparqlQuery(query, tripleStoreUrl, "application/sparql-results+json", null);
-
+			String data = TripleStoreUtil.invokeSparqlQuery(query, tripleStoreUrl, "text/csv", null);
+			data.replaceAll("\n", "<br />");
+			data.replaceAll("\r", "<br />");
 			// prepare the input for the data mining service
 //			int row_num = 0;
 			
@@ -229,10 +230,10 @@ public class InvokeDataMiningServiceCommand extends Command {
 			
 			// post the results 
 			//TODO : integrate the service with karma
-			Map<String, String> formParameters = new HashMap<String, String>();
-			formParameters.put("data", data);
-			String response = HTTPUtil.executeHTTPPostRequest("http://54.201.249.192:8081/consumejson", null, null, formParameters);
-			return new UpdateContainer(new InvokeDataMiningServiceUpdate(new JSONObject().put("data", response), 
+//			Map<String, String> formParameters = new HashMap<String, String>();
+//			formParameters.put("data", data);
+//			String response = HTTPUtil.executeHTTPPostRequest("http://54.201.249.192:8081/consumejson", null, null, formParameters);
+			return new UpdateContainer(new InvokeDataMiningServiceUpdate(new JSONObject().put("data", data), 
 					InvokeDataMiningServiceUpdate.DataPrcessingFormats.testFormat.name()));
 			
 		} catch (Exception e) {

@@ -508,7 +508,7 @@ function parse(data) {
         }
         else if(element["updateType"] == "InvokeDataMiningServiceUpdate") {
 
-            $('#invokeDMServiceSpan').html(elements['data']);
+        	$('#invokeDMServiceSpan').html(element['results']['data']);
             var modelListDiv = $('div#invokeDMServiceDiv');
             modelListDiv.dialog({ title: 'Results from data mining service',
                 buttons: { "Cancel": function() { $(this).dialog("close"); }  }, width: 300, height: 150 });
