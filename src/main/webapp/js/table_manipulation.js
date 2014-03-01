@@ -159,7 +159,7 @@ function submitAddNewRow() {
     newInfo.push(getParamObject("hNodeId", selectedHNodeId,"hNodeId"));
     newInfo.push(getParamObject("hTableId", "","other"));
     newInfo.push(getParamObject("worksheetId", $("td#" + selectedHNodeId).parents("div.Worksheet").attr("id"),"worksheetId"));
-    
+
     info["newInfo"] = JSON.stringify(newInfo);
 
     //console.log(info["worksheetId"]);
