@@ -1,0 +1,90 @@
+@prefix ns1: <crm> .
+@prefix ns2: <dc> .
+@prefix ns3: <dim> .
+@prefix ns4: <skos> .
+@prefix ns5: <qudt> .
+@prefix ns6: <rdf> .
+@prefix ns7: <foaf> .
+@prefix ns8: <cc> .
+@prefix ns9: <vs> .
+@prefix ns10: <owl> .
+@prefix ns11: <quantity> .
+@prefix ns12: <unit> .
+@prefix ns13: <dct> .
+@prefix ns14: <oecc> .
+@prefix ns15: <xsd> .
+@prefix ns16: <rdfs> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix km-dev: <http://isi.edu/integration/karma/dev#> .
+
+_:node18hqjkuacx1 a km-dev:R2RMLMapping ;
+	km-dev:sourceName "dbo.Thesauri_view.csv" ;
+	km-dev:modelPublicationTime "1393536170317"^^<http://www.w3.org/2001/XMLSchema#long> ;
+	km-dev:modelVersion "1.0" ;
+	km-dev:hasWorksheetHistory "[{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"newColumnName\",\"value\":\"Type_URI\",\"type\":\"other\"},{\"name\":\"transformationCode\",\"value\":\"type=getValue(\\\"TypeLabel\\\")\\ntype=type.replace(\\\" \\\",\\\"-\\\")\\nreturn getValue(\\\"InScheme\\\")+\\\"/\\\"+type\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"TypeLabel\"}],\"type\":\"hNodeId\"},{\"name\":\"errorDefaultValue\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SubmitPythonTransformationCommand\"},{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"newColumnName\",\"value\":\"InScheme_URI\",\"type\":\"other\"},{\"name\":\"transformationCode\",\"value\":\"return getValue(\\\"InScheme\\\")\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"InScheme\"}],\"type\":\"hNodeId\"},{\"name\":\"errorDefaultValue\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SubmitPythonTransformationCommand\"},{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"newColumnName\",\"value\":\"\",\"type\":\"other\"},{\"name\":\"transformationCode\",\"value\":\"type=getValue(\\\"TypeLabel\\\")\\ntype=type.replace(\\\" \\\",\\\"-\\\").replace(\\\"---\\\",\\\"-\\\")\\nreturn getValue(\\\"InScheme\\\")+\\\"/\\\"+type\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"Type_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"previousCommandId\",\"value\":\"C197\",\"type\":\"other\"},{\"name\":\"errorDefaultValue\",\"value\":\"\",\"type\":\"other\"},{\"name\":\"targetHNodeId\",\"value\":[{\"columnName\":\"Type_URI\"}],\"type\":\"hNodeId\"}],\"commandName\":\"SubmitEditPythonTransformationCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"Type_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"},{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"newColumnName\",\"value\":\"Type_same_URI\",\"type\":\"other\"},{\"name\":\"transformationCode\",\"value\":\"return getValue(\\\"Type_URI\\\")\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"Type_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"errorDefaultValue\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SubmitPythonTransformationCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://www.w3.org/2008/05/skos#ConceptScheme\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"InScheme_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://www.cidoc-crm.org/cidoc-crm/E28_Conceptual_Object1\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"Type_same_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://www.w3.org/2008/05/skos#Concept1\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"Type_same_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"TypeLabel\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.w3.org/2008/05/skos#prefLabel\",\"Domain\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type1\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"newColumnName\",\"value\":\"\",\"type\":\"other\"},{\"name\":\"transformationCode\",\"value\":\"type=getValue(\\\"TypeLabel\\\")\\ntype=type.replace(\\\" \\\",\\\"-\\\").replace(\\\"---\\\",\\\"-\\\").replace(\\\"/\\\",\\\"-\\\")\\nreturn getValue(\\\"InScheme\\\")+\\\"/\\\"+type\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"Type_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"previousCommandId\",\"value\":\"C229\",\"type\":\"other\"},{\"name\":\"errorDefaultValue\",\"value\":\"\",\"type\":\"other\"},{\"name\":\"targetHNodeId\",\"value\":[{\"columnName\":\"Type_URI\"}],\"type\":\"hNodeId\"}],\"commandName\":\"SubmitEditPythonTransformationCommand\"}]" .
+
+km-dev:TriplesMap_1 a rr:TriplesMap .
+
+_:node18hqjkuacx1 km-dev:hasTriplesMap km-dev:TriplesMap_1 .
+
+_:node18hqjkuacx2 rr:tableName "dbo.Thesauri_view.csv" .
+
+km-dev:TriplesMap_1 rr:logicalTable _:node18hqjkuacx2 ;
+	rr:subjectMap _:node18hqjkuacx3 .
+
+_:node18hqjkuacx3 km-dev:alignmentNodeId "http://www.cidoc-crm.org/cidoc-crm/E55_Type1" ;
+	rr:class <http://www.cidoc-crm.org/cidoc-crm/E55_Type> ;
+	rr:template "{Type_URI}" ;
+	a km-dev:steinerTreeRootNode .
+
+_:node18hqjkuacx5 rr:predicate <http://www.w3.org/2008/05/skos#inScheme> .
+
+km-dev:RefObjectMap_1 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_2 .
+
+_:node18hqjkuacx5 rr:objectMap km-dev:RefObjectMap_1 .
+
+km-dev:TriplesMap_1 rr:predicateObjectMap _:node18hqjkuacx5 .
+
+_:node18hqjkuacx6 rr:predicate <http://www.w3.org/2008/05/skos#prefLabel> .
+
+_:node18hqjkuacx7 rr:column "TypeLabel" .
+
+_:node18hqjkuacx6 rr:objectMap _:node18hqjkuacx7 .
+
+km-dev:TriplesMap_1 rr:predicateObjectMap _:node18hqjkuacx6 .
+
+km-dev:TriplesMap_2 a rr:TriplesMap .
+
+_:node18hqjkuacx1 km-dev:hasTriplesMap km-dev:TriplesMap_2 .
+
+_:node18hqjkuacx8 rr:tableName "dbo.Thesauri_view.csv" .
+
+km-dev:TriplesMap_2 rr:logicalTable _:node18hqjkuacx8 ;
+	rr:subjectMap _:node18hqjkuacx9 .
+
+_:node18hqjkuacx9 km-dev:alignmentNodeId "http://www.w3.org/2008/05/skos#ConceptScheme1" ;
+	rr:class <http://www.w3.org/2008/05/skos#ConceptScheme> ;
+	rr:template "{InScheme}" .
+
+km-dev:TriplesMap_3 a rr:TriplesMap .
+
+_:node18hqjkuacx1 km-dev:hasTriplesMap km-dev:TriplesMap_3 .
+
+_:node18hqjkuacx11 rr:tableName "dbo.Thesauri_view.csv" .
+
+km-dev:TriplesMap_3 rr:logicalTable _:node18hqjkuacx11 ;
+	rr:subjectMap _:node18hqjkuacx12 .
+
+_:node18hqjkuacx12 km-dev:alignmentNodeId "http://www.w3.org/2008/05/skos#Concept1" ;
+	rr:class <http://www.w3.org/2008/05/skos#Concept> ;
+	rr:template "{Type_URI}" .
+
+_:node18hqjkuacx14 rr:predicate <http://www.w3.org/2008/05/skos#topConceptOf> .
+
+km-dev:RefObjectMap_2 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_2 .
+
+_:node18hqjkuacx14 rr:objectMap km-dev:RefObjectMap_2 .
+
+km-dev:TriplesMap_3 rr:predicateObjectMap _:node18hqjkuacx14 .

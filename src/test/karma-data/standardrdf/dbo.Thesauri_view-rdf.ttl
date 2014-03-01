@@ -1,0 +1,77 @@
+<thesauri/code> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/code/Provisional> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/code/Provisional> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/code> .
+<thesauri/code/Provisional> <http://www.w3.org/2008/05/skos#prefLabel> "Provisional" .
+<thesauri/code/Provisional> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/code/Provisional> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/code> .
+
+<thesauri/code> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/code/Verified> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/code/Verified> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/code> .
+<thesauri/code/Verified> <http://www.w3.org/2008/05/skos#prefLabel> "Verified" .
+<thesauri/code/Verified> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/code/Verified> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/code> .
+
+<thesauri/nametype> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nametype/Pseudonym> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nametype/Pseudonym> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nametype> .
+<thesauri/nametype/Pseudonym> <http://www.w3.org/2008/05/skos#prefLabel> "Pseudonym" .
+<thesauri/nametype/Pseudonym> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nametype/Pseudonym> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nametype> .
+
+<thesauri/nametype> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nametype/Preferred-w-o-accents> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nametype/Preferred-w-o-accents> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nametype> .
+<thesauri/nametype/Preferred-w-o-accents> <http://www.w3.org/2008/05/skos#prefLabel> "Preferred w/o accents" .
+<thesauri/nametype/Preferred-w-o-accents> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nametype/Preferred-w-o-accents> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nametype> .
+
+<thesauri/role> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/role/Engraver> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/role/Engraver> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/role> .
+<thesauri/role/Engraver> <http://www.w3.org/2008/05/skos#prefLabel> "Engraver" .
+<thesauri/role/Engraver> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/role/Engraver> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/role> .
+
+<thesauri/role> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/role/Art-Director> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/role/Art-Director> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/role> .
+<thesauri/role/Art-Director> <http://www.w3.org/2008/05/skos#prefLabel> "Art Director" .
+<thesauri/role/Art-Director> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/role/Art-Director> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/role> .
+
+<thesauri/mediatype> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/mediatype/Digital-Image-Direct-Capture> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/mediatype/Digital-Image-Direct-Capture> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/mediatype> .
+<thesauri/mediatype/Digital-Image-Direct-Capture> <http://www.w3.org/2008/05/skos#prefLabel> "Digital Image - Direct Capture" .
+<thesauri/mediatype/Digital-Image-Direct-Capture> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/mediatype/Digital-Image-Direct-Capture> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/mediatype> .
+
+<thesauri/mediatype> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/mediatype/Digital-Image-from-Slide> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/mediatype/Digital-Image-from-Slide> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/mediatype> .
+<thesauri/mediatype/Digital-Image-from-Slide> <http://www.w3.org/2008/05/skos#prefLabel> "Digital Image - from Slide" .
+<thesauri/mediatype/Digital-Image-from-Slide> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/mediatype/Digital-Image-from-Slide> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/mediatype> .
+
+<thesauri/mediatype> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/mediatype/Slide> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/mediatype/Slide> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/mediatype> .
+<thesauri/mediatype/Slide> <http://www.w3.org/2008/05/skos#prefLabel> "Slide" .
+<thesauri/mediatype/Slide> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/mediatype/Slide> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/mediatype> .
+
+<thesauri/mediatype> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/mediatype/Black-and-White-Print> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/mediatype/Black-and-White-Print> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/mediatype> .
+<thesauri/mediatype/Black-and-White-Print> <http://www.w3.org/2008/05/skos#prefLabel> "Black and White Print" .
+<thesauri/mediatype/Black-and-White-Print> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/mediatype/Black-and-White-Print> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/mediatype> .
+
+<thesauri/mediatype> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/mediatype/Digital-Image-from-CT> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/mediatype/Digital-Image-from-CT> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/mediatype> .
+<thesauri/mediatype/Digital-Image-from-CT> <http://www.w3.org/2008/05/skos#prefLabel> "Digital Image - from CT" .
+<thesauri/mediatype/Digital-Image-from-CT> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/mediatype/Digital-Image-from-CT> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/mediatype> .
+
