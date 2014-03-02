@@ -72,6 +72,10 @@ public class TestJSONDagRDFGenerator {
 				"menu-model", new File(getTestDataFolder()
 						+ "/menu.json.model.txt").toURI().toURL());
 		rdfGen.addModel(modelIdentifier);
+		modelIdentifier = new R2RMLMappingIdentifier(
+				"menus-model", new File(getTestDataFolder()
+						+ "/menus.json.model.txt").toURI().toURL());
+		rdfGen.addModel(modelIdentifier);
 	
 	}
 
@@ -110,6 +114,34 @@ public class TestJSONDagRDFGenerator {
 		}
 	}
 
+	/**
+	 * Test method for
+	 * {@link edu.isi.karma.rdf.JSONRDFGenerator#generateRDF(java.lang.String, java.lang.String, boolean, java.io.PrintWriter)}
+	 * .
+	 */
+	@Test
+	public void testGenerateRDF2() {
+		try {
+
+			String filename = getTestDataFolder() + "/menus.json";
+			System.out.println("Load json file: " + filename);
+			String jsonData = EncodingDetector.getString(new File(filename),
+					"utf-8");
+
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+
+			rdfGen.generateRDF("menus-model", jsonData, false, pw);
+			String rdf = sw.toString();
+			System.out.println(rdf);
+			assertNotEquals(rdf.length(), 0);
+			String[] lines = rdf.split("\n");
+			int count = lines.length + 1;
+			assertEquals(191, count);
+		} catch (Exception e) {
+			fail("Execption: " + e.getMessage());
+		}
+	}
 	
 	private String getRootFolder() {
 		return getClass().getClassLoader().getResource(".").getPath()
