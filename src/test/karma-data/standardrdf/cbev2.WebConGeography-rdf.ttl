@@ -1,0 +1,42 @@
+<person-institution/26> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/26/birth> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E67_Birth> .
+<person-institution/26> <http://www.cidoc-crm.org/cidoc-crm/P98i_was_born> <person-institution/26/birth> .
+<thesauri/place/Kawehnoke_St-Regis-Reservation_Ontario_Canada> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E53_Place> .
+<person-institution/26/birth> <http://www.cidoc-crm.org/cidoc-crm/P7_took_place_at> <thesauri/place/Kawehnoke_St-Regis-Reservation_Ontario_Canada> .
+
+<person-institution/5747> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/5747/associateevent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E5_Event> .
+<person-institution/5747> <http://www.cidoc-crm.org/cidoc-crm/P69_is_associated_with> <person-institution/5747/associateevent> .
+<thesauri/place/Santa-Cruz_none_none_none> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E53_Place> .
+<person-institution/5747/associateevent> <http://www.cidoc-crm.org/cidoc-crm/P7_took_place_at> <thesauri/place/Santa-Cruz_none_none_none> .
+
+<person-institution/3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/3/death> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E69_Death> .
+<person-institution/3> <http://www.cidoc-crm.org/cidoc-crm/P100i_died_in> <person-institution/3/death> .
+<thesauri/place/London_none_none_England> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E53_Place> .
+<person-institution/3/death> <http://www.cidoc-crm.org/cidoc-crm/P7_took_place_at> <thesauri/place/London_none_none_England> .
+
+<person-institution/525> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<thesauri/place/Chillicothe_none_Ohio_United-States> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E53_Place> .
+<person-institution/525> <http://www.cidoc-crm.org/cidoc-crm/P74_has_current_or_former_residence> <thesauri/place/Chillicothe_none_Ohio_United-States> .
+
+<person-institution/30482> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+
+<person-institution/25> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/25/associateevent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E5_Event> .
+<person-institution/25> <http://www.cidoc-crm.org/cidoc-crm/P69_is_associated_with> <person-institution/25/associateevent> .
+<thesauri/place/Perry-County_Kentucky_United-States> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E53_Place> .
+<person-institution/25/associateevent> <http://www.cidoc-crm.org/cidoc-crm/P7_took_place_at> <thesauri/place/Perry-County_Kentucky_United-States> .
+
+<person-institution/7> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/7/associateevent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E5_Event> .
+<person-institution/7> <http://www.cidoc-crm.org/cidoc-crm/P69_is_associated_with> <person-institution/7/associateevent> .
+<thesauri/place/New-Hampshire_United-States> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E53_Place> .
+<person-institution/7/associateevent> <http://www.cidoc-crm.org/cidoc-crm/P7_took_place_at> <thesauri/place/New-Hampshire_United-States> .
+
+<person-institution/33> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/33/birth> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E67_Birth> .
+<person-institution/33> <http://www.cidoc-crm.org/cidoc-crm/P98i_was_born> <person-institution/33/birth> .
+<thesauri/place/England> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E53_Place> .
+<person-institution/33/birth> <http://www.cidoc-crm.org/cidoc-crm/P7_took_place_at> <thesauri/place/England> .
+
