@@ -180,5 +180,119 @@ public class SPARQLGeneratorUtil {
 		}
 		return generate_sparql(root_node, "x"+var_count, graph);
 	}
+	
+	public String get_query(TriplesMap root) {
+		
+		ArrayList<Object> queue = new ArrayList<Object>();
+		queue.add(root);
+		StringBuffer query = new StringBuffer();
+		this.var_count = 1;
+		this.prefix_list = new HashMap<String, String>();
+		this.select_params = new StringBuffer();
+		HashMap<TriplesMap, String> markedTriples = new HashMap<TriplesMap, String>();
+		
+		this.ParentMapingInfoList = new HashMap<String, SPARQLGeneratorUtil.ParentMapingInfo>();
+		
+		HashMap<Predicate, String> predicateList = new HashMap<Predicate, String>();
+		
+		// using a BFS approach, we traverse the tree from the root node and add triples/predicates to the queue
+		while(queue.size() > 0) {
+			Object currentObj = queue.remove(0);
+			
+			// if this is a tripleMap, then add all its RefObjects to the queue
+			// for the predicates, add only the ones that satisfy the criteria of being <...hasValue>
+			if (currentObj instanceof TriplesMap) {
+				String var = "x"+var_count;
+				TriplesMap triple = (TriplesMap)currentObj;
+				boolean foundHasValue = false;
+				List<PredicateObjectMap> predicates = triple.getPredicateObjectMaps();
+				
+				for (PredicateObjectMap p_map : predicates) {
+					
+					if(p_map.getObject().hasRefObjectMap()) {
+						RefObjectMap objMap = p_map.getObject().getRefObjectMap();
+						queue.add(objMap.getParentTriplesMap());
+						
+						System.out.println(triple.getSubject().getId() + "  ---> " + objMap.getParentTriplesMap().getSubject().getId());
+						
+						// maintain a list of mapping properties between triples
+						ParentMapingInfoList.put(objMap.getParentTriplesMap().getSubject().getId(), 
+								new ParentMapingInfo(triple, p_map.getPredicate()));
+						
+					} else {
+							queue.add(p_map.getPredicate());
+							predicateList.put(p_map.getPredicate(), var);
+							foundHasValue = true;
+					}
+				}
+				// if this triple is marked to be included in the query,
+				// we add it to the markedTriples list and add to the query string
+				// for its class type Eg. 
+				// Prefix pref1: <.../.../Input>
+				// x2 a pref1:
+				if (foundHasValue) {
+					markedTriples.put(triple, var);
+					String rdfsTypes = triple.getSubject().getRdfsType().get(0).toString();
+					this.prefix_list.put(rdfsTypes, "pref"+var_count);
+					query.append(" ?"+var + " a pref"+var_count+": .");
+					
+					// if the parent of this triple is also marked for the query
+					// then we add the relation to between triples to the query. Eg.
+					
+//					TriplesMap parentTriple = parent.get(triple.getSubject().getId());
+					ParentMapingInfo parentTriple = ParentMapingInfoList.get(triple.getSubject().getId());
+					
+					if( parentTriple != null && markedTriples.containsKey(parentTriple.parent)) {
+						String predicate = parentTriple.predicate.getTemplate().toString();
+//						PredicateObjectMap parentPredicate = getPredicateBetweenTriples(triple, parentTriple);
+						if(predicate != null) {
+							query.append(" ?" + markedTriples.get(parentTriple.parent) + " " + 
+								predicate + " ?"+var + " . ");
+						} else {
+							System.out.println("predicate is null from parent : " + triple.getSubject().getRdfsType().toString());
+						}
+					}
+					
+				}
+				var_count++;
+			}
+			// if it is a predicate Object, create a variable in in the query string
+			else if (currentObj instanceof Predicate) {
+				Predicate predicate = (Predicate)currentObj;
+				String k = predicate.getTemplate().toString();
+				if(k.indexOf("#") > 0) {
+					k = k.substring(k.lastIndexOf('#')+1, k.length()-1);
+				} else {
+					k = k.substring(k.lastIndexOf('/')+1, k.length()-1);
+				}
+				query.append(" ?" + predicateList.get(predicate)
+//						+ " " + predicate.getTemplate() + " ?z"+ var_count + " . ");
+						+ " " + predicate.getTemplate() + " ?"+ k + " . ");
+//				select_params.append(" ?z" + var_count);
+				select_params.append(" ?"+k);
+				var_count++;
+				
+			} 
+			// if this is a RefObject add the Child Triple to the queue
+			else if (currentObj instanceof RefObjectMap) {
+				RefObjectMap refObj = (RefObjectMap)currentObj;
+				TriplesMap t = refObj.getParentTriplesMap();
+				queue.add(t);
+				
+			}
+		}
+		
+		// generate the query from the list of prefix and the param lists
+		Iterator<String> itr =  this.prefix_list.keySet().iterator();
+		StringBuffer sQuery = new StringBuffer();
+		while(itr.hasNext()) {
+			String key = itr.next();
+			sQuery.append(" PREFIX ").append(this.prefix_list.get(key)).append(": ").append(key);
+		}
+		sQuery.append(" select ").append(select_params).append(" where { ").append(query.toString()).append(" } ");
+		System.out.println("Query : " + sQuery);
+		return sQuery.toString();
+	}
+	
 
 }

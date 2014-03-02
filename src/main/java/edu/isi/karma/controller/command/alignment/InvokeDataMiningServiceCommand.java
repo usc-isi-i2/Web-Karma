@@ -22,6 +22,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -39,6 +40,7 @@ import edu.isi.karma.er.helper.SPARQLGeneratorUtil;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
+import edu.isi.karma.kr2rml.TriplesMap;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -54,6 +56,7 @@ public class InvokeDataMiningServiceCommand extends Command {
 	private String tripleStoreUrl;
 	private String modelContext;
 	private String dataMiningURL;
+	private String nodeId;
 	
 	public String getDataMiningURL() {
 		return dataMiningURL;
@@ -88,6 +91,15 @@ public class InvokeDataMiningServiceCommand extends Command {
 		this.tripleStoreUrl = url;
 		this.modelContext = graph;
 		this.dataMiningURL = miningUrl;
+	}
+	
+	protected InvokeDataMiningServiceCommand(String id, String worksheetId, String nodeId ) {
+		super(id);
+		this.worksheetId = worksheetId;
+		this.nodeId = nodeId;
+		this.tripleStoreUrl = TripleStoreUtil.defaultDataRepoUrl;
+		this.modelContext = null;
+		this.dataMiningURL = null;
 	}
 
 	@Override
@@ -190,11 +202,27 @@ public class InvokeDataMiningServiceCommand extends Command {
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
 			
 			SPARQLGeneratorUtil genObj = new SPARQLGeneratorUtil();
-			String query = genObj.get_query(mappingGen.getKR2RMLMapping(), this.modelContext);
+			String query = "";
+			if(this.nodeId != null) {
+				
+				List<TriplesMap> triples = mappingGen.getKR2RMLMapping().getTriplesMapList();
+				TriplesMap root_node = null;
+				// get the root node first
+				for (TriplesMap row : triples) {
+					if (row.getSubject().getId().equalsIgnoreCase(this.nodeId) ) {
+						root_node = row;
+						break;
+					}
+				}
+				query = genObj.get_query(root_node);
+			} else {
+				query = genObj.get_query(mappingGen.getKR2RMLMapping(), this.modelContext);
+			}
 			
 			// execute the query on the triple store
-			String data = TripleStoreUtil.invokeSparqlQuery(query, tripleStoreUrl, "application/sparql-results+json", null);
-
+			String data = TripleStoreUtil.invokeSparqlQuery(query, tripleStoreUrl, "text/csv", null);
+			data.replaceAll("\n", "<br />");
+			data.replaceAll("\r", "<br />");
 			// prepare the input for the data mining service
 //			int row_num = 0;
 			
@@ -202,10 +230,10 @@ public class InvokeDataMiningServiceCommand extends Command {
 			
 			// post the results 
 			//TODO : integrate the service with karma
-			Map<String, String> formParameters = new HashMap<String, String>();
-			formParameters.put("data", data);
-			String response = HTTPUtil.executeHTTPPostRequest("http://localhost:1234/consumejson", null, null, formParameters);
-			return new UpdateContainer(new InvokeDataMiningServiceUpdate(new JSONObject().put("data", response), 
+//			Map<String, String> formParameters = new HashMap<String, String>();
+//			formParameters.put("data", data);
+//			String response = HTTPUtil.executeHTTPPostRequest("http://54.201.249.192:8081/consumejson", null, null, formParameters);
+			return new UpdateContainer(new InvokeDataMiningServiceUpdate(new JSONObject().put("data", data), 
 					InvokeDataMiningServiceUpdate.DataPrcessingFormats.testFormat.name()));
 			
 		} catch (Exception e) {

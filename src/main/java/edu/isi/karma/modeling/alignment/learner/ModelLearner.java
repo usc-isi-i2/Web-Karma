@@ -742,7 +742,6 @@ public class ModelLearner {
 
 //			resultFile.println(newSource.getName() + "\t" + " ");
 //			resultFile.println("s" + (i + 1) + "(" + newSource.getColumnNodes().size() + ")" + "\t" + " " + "\t" + " ");
-
 //			resultFile.println(newSource.getName() + "(" + newSource.getColumnNodes().size() + ")" + "\t" + " " + "\t" + " ");
 //			resultFile.println("p \t r \t t");
 
@@ -885,7 +884,6 @@ public class ModelLearner {
 				numberOfKnownModels ++;
 
 			}
-			
 //			resultFile.println("=======================================================");
 		}
 		for (StringBuffer s : resultsArray)
