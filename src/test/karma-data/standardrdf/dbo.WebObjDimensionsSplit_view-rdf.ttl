@@ -1,0 +1,90 @@
+<object/1950.4.38> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<object/1950.4.38/dimension/height/cm> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E54_Dimension> .
+<object/1950.4.38> <http://www.cidoc-crm.org/cidoc-crm/P43_has_dimension> <object/1950.4.38/dimension/height/cm> .
+<thesauri/dimension/height> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1950.4.38/dimension/height/cm> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/dimension/height> .
+<object/1950.4.38/dimension/height/cm> <http://www.cidoc-crm.org/cidoc-crm/P90_has_value> "6.985"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://qudt.org/vocab/unit#Centimeter> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E58_Measurement_Unit> .
+<object/1950.4.38/dimension/height/cm> <http://www.cidoc-crm.org/cidoc-crm/P91_has_unit> <http://qudt.org/vocab/unit#Centimeter> .
+
+<object/1962.8.76> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<object/1962.8.76/dimension/height/in> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E54_Dimension> .
+<object/1962.8.76> <http://www.cidoc-crm.org/cidoc-crm/P43_has_dimension> <object/1962.8.76/dimension/height/in> .
+<thesauri/dimension/height> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1962.8.76/dimension/height/in> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/dimension/height> .
+<object/1962.8.76/dimension/height/in> <http://www.cidoc-crm.org/cidoc-crm/P90_has_value> "22.875"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://qudt.org/vocab/unit#Inch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E58_Measurement_Unit> .
+<object/1962.8.76/dimension/height/in> <http://www.cidoc-crm.org/cidoc-crm/P91_has_unit> <http://qudt.org/vocab/unit#Inch> .
+
+<object/1986.65.304> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<object/1986.65.304/dimension/width/cm> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E54_Dimension> .
+<object/1986.65.304> <http://www.cidoc-crm.org/cidoc-crm/P43_has_dimension> <object/1986.65.304/dimension/width/cm> .
+<thesauri/dimension/width> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1986.65.304/dimension/width/cm> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/dimension/width> .
+<object/1986.65.304/dimension/width/cm> <http://www.cidoc-crm.org/cidoc-crm/P90_has_value> "111.76"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://qudt.org/vocab/unit#Centimeter> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E58_Measurement_Unit> .
+<object/1986.65.304/dimension/width/cm> <http://www.cidoc-crm.org/cidoc-crm/P91_has_unit> <http://qudt.org/vocab/unit#Centimeter> .
+
+<object/1962.8.76> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<object/1962.8.76/dimension/width/in> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E54_Dimension> .
+<object/1962.8.76> <http://www.cidoc-crm.org/cidoc-crm/P43_has_dimension> <object/1962.8.76/dimension/width/in> .
+<thesauri/dimension/width> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1962.8.76/dimension/width/in> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/dimension/width> .
+<object/1962.8.76/dimension/width/in> <http://www.cidoc-crm.org/cidoc-crm/P90_has_value> "16"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://qudt.org/vocab/unit#Inch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E58_Measurement_Unit> .
+<object/1962.8.76/dimension/width/in> <http://www.cidoc-crm.org/cidoc-crm/P91_has_unit> <http://qudt.org/vocab/unit#Inch> .
+
+<object/1969.11> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<object/1969.11/dimension/depth/cm> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E54_Dimension> .
+<object/1969.11> <http://www.cidoc-crm.org/cidoc-crm/P43_has_dimension> <object/1969.11/dimension/depth/cm> .
+<thesauri/dimension/depth> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1969.11/dimension/depth/cm> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/dimension/depth> .
+<object/1969.11/dimension/depth/cm> <http://www.cidoc-crm.org/cidoc-crm/P90_has_value> "32.0675"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://qudt.org/vocab/unit#Centimeter> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E58_Measurement_Unit> .
+<object/1969.11/dimension/depth/cm> <http://www.cidoc-crm.org/cidoc-crm/P91_has_unit> <http://qudt.org/vocab/unit#Centimeter> .
+
+<object/1969.11> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<object/1969.11/dimension/depth/in> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E54_Dimension> .
+<object/1969.11> <http://www.cidoc-crm.org/cidoc-crm/P43_has_dimension> <object/1969.11/dimension/depth/in> .
+<thesauri/dimension/depth> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1969.11/dimension/depth/in> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/dimension/depth> .
+<object/1969.11/dimension/depth/in> <http://www.cidoc-crm.org/cidoc-crm/P90_has_value> "12.625"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://qudt.org/vocab/unit#Inch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E58_Measurement_Unit> .
+<object/1969.11/dimension/depth/in> <http://www.cidoc-crm.org/cidoc-crm/P91_has_unit> <http://qudt.org/vocab/unit#Inch> .
+
+<object/1972.167.22> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<object/1972.167.22/dimension/diam/cm> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E54_Dimension> .
+<object/1972.167.22> <http://www.cidoc-crm.org/cidoc-crm/P43_has_dimension> <object/1972.167.22/dimension/diam/cm> .
+<thesauri/dimension/diam> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1972.167.22/dimension/diam/cm> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/dimension/diam> .
+<object/1972.167.22/dimension/diam/cm> <http://www.cidoc-crm.org/cidoc-crm/P90_has_value> "7.3025"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://qudt.org/vocab/unit#Centimeter> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E58_Measurement_Unit> .
+<object/1972.167.22/dimension/diam/cm> <http://www.cidoc-crm.org/cidoc-crm/P91_has_unit> <http://qudt.org/vocab/unit#Centimeter> .
+
+<object/1972.167.22> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<object/1972.167.22/dimension/diam/in> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E54_Dimension> .
+<object/1972.167.22> <http://www.cidoc-crm.org/cidoc-crm/P43_has_dimension> <object/1972.167.22/dimension/diam/in> .
+<thesauri/dimension/diam> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1972.167.22/dimension/diam/in> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/dimension/diam> .
+<object/1972.167.22/dimension/diam/in> <http://www.cidoc-crm.org/cidoc-crm/P90_has_value> "2.875"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://qudt.org/vocab/unit#Inch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E58_Measurement_Unit> .
+<object/1972.167.22/dimension/diam/in> <http://www.cidoc-crm.org/cidoc-crm/P91_has_unit> <http://qudt.org/vocab/unit#Inch> .
+
+<object/1968.7.1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<object/1968.7.1/dimension/len/cm> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E54_Dimension> .
+<object/1968.7.1> <http://www.cidoc-crm.org/cidoc-crm/P43_has_dimension> <object/1968.7.1/dimension/len/cm> .
+<thesauri/dimension/len> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1968.7.1/dimension/len/cm> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/dimension/len> .
+<object/1968.7.1/dimension/len/cm> <http://www.cidoc-crm.org/cidoc-crm/P90_has_value> "25.51938"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://qudt.org/vocab/unit#Centimeter> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E58_Measurement_Unit> .
+<object/1968.7.1/dimension/len/cm> <http://www.cidoc-crm.org/cidoc-crm/P91_has_unit> <http://qudt.org/vocab/unit#Centimeter> .
+
+<object/1968.7.1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<object/1968.7.1/dimension/len/in> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E54_Dimension> .
+<object/1968.7.1> <http://www.cidoc-crm.org/cidoc-crm/P43_has_dimension> <object/1968.7.1/dimension/len/in> .
+<thesauri/dimension/len> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1968.7.1/dimension/len/in> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/dimension/len> .
+<object/1968.7.1/dimension/len/in> <http://www.cidoc-crm.org/cidoc-crm/P90_has_value> "10.047"^^<http://www.w3.org/2001/XMLSchema#double> .
+<http://qudt.org/vocab/unit#Inch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E58_Measurement_Unit> .
+<object/1968.7.1/dimension/len/in> <http://www.cidoc-crm.org/cidoc-crm/P91_has_unit> <http://qudt.org/vocab/unit#Inch> .
+

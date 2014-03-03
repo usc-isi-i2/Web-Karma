@@ -231,6 +231,7 @@ public class WorksheetR2RMLJenaModelParser {
 		Resource rfObjClassUri = model.getResource(Uris.RR_REF_OBJECT_MAP_URI);
 		Property parentTriplesMapProp = model.getProperty(Uris.RR_PARENT_TRIPLE_MAP_URI);
 		Property rdfTypeProp = model.getProperty(Uris.RDF_TYPE_URI);
+		Property templateProp = model.getProperty(Uris.RR_TEMPLATE_URI);
 		KR2RMLColumnNameFormatter formatter = kr2rmlMapping.getColumnNameFormatter();
 		TriplesMap trMap = kr2rmlMapping.getTriplesMapIndex().get(trMapRes.getURI());
 		if (trMap == null) {
@@ -287,7 +288,6 @@ public class WorksheetR2RMLJenaModelParser {
 					}
 				} else {
 					NodeIterator objMapColStmts = model.listObjectsOfProperty(objNode, columnProp);
-					
 					// RDF Literal Type
 					Statement objMapRdfLiteralTypeStmt = model.getProperty(objNode, rdfLiteralTypeProp);
 					TemplateTermSet rdfLiteralTypeTermSet = null;
@@ -302,6 +302,20 @@ public class WorksheetR2RMLJenaModelParser {
 						objMap = new ObjectMap(getNewObjectMapId(objectMapCounter++), 
 								TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlColumnString(
 										colNode.toString(), formatter), rdfLiteralTypeTermSet);
+					}
+					if(objMap == null)
+					{
+						NodeIterator templateItr = model.listObjectsOfProperty(objNode, templateProp);
+						TemplateTermSet objTemplTermSet = null;
+						while (templateItr.hasNext()) {
+							RDFNode templNode = templateItr.next();
+							String template = templNode.toString();
+							objTemplTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
+								template, kr2rmlMapping.getColumnNameFormatter());
+						
+						}
+						objMap = new ObjectMap(getNewObjectMapId(objectMapCounter++), 
+								objTemplTermSet, rdfLiteralTypeTermSet);
 					}
 					// Check if anything needs to be added to the columnNameToPredicateObjectMap Map
 					if(objMap != null)
@@ -479,6 +493,12 @@ public class WorksheetR2RMLJenaModelParser {
 						List<PredicateObjectMap> poms = mytm.getPredicateObjectMaps();
 						for(PredicateObjectMap pom : poms )
 						{
+							ObjectMap objMap = pom.getObject();
+							if(objMap == null)
+							{
+								System.out.println("sufjan, we have a problem.");
+							}
+								
 							TemplateTermSet templateTermSet = pom.getObject().getTemplate();
 							if(templateTermSet != null)
 							{

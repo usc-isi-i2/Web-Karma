@@ -39,10 +39,12 @@ function showMapViewForWorksheet() {
                             var fileName = json["elements"][0]["fileName"];
                             $("div#tablesWorkspace").data("currentKMLFile", fileName);
                             var mapPanel = $("<div>").addClass("mapViewPanel").width(800).height(650).attr("id","map_canvas_" + worksheetId);
-                            var tableDiv = $("div#"+worksheetId+"TableDiv", worksheetPanel);
+                            var tableDiv = $("div.table-data-container", worksheetPanel);
                             mapPanel.insertAfter(tableDiv);
                             
                             google.earth.createInstance('map_canvas_'+worksheetId, initCB, failureCB);
+                            $("div#svgDiv_" + worksheetId, worksheetPanel).hide();
+                            $("div.table-container", worksheetPanel).hide();
                             
                             tableDiv.hide();
                             // Toggle the icon and state of the div
@@ -76,6 +78,9 @@ function showMapViewForWorksheet() {
     } else if (state == "map") {    // Change from map to table
         // Remove the map panel
         $("div.mapViewPanel", worksheetPanel).remove();
+        $("div#svgDiv_" + worksheetId, worksheetPanel).show();
+        $("div.table-container", worksheetPanel).show();
+        $("div.table-data-container", worksheetPanel).show();
         $("div#"+worksheetId + "TableDiv", worksheetPanel).show();
         $(this).data("state", "table").qtip({
            content: {
