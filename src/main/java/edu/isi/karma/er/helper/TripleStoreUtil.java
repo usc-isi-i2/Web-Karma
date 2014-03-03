@@ -456,37 +456,37 @@ public class TripleStoreUtil {
 	}
 	
 	
-	public org.json.JSONObject fetch_data(String graph, String tripleStoreUrl) throws ClientProtocolException, IOException, JSONException {
-		if (tripleStoreUrl == null || tripleStoreUrl.isEmpty()) {
-			tripleStoreUrl = defaultDataRepoUrl;
-		}
-		//JSONObject retVal = new JSONObject();
-		StringBuffer queryString = new StringBuffer();
-		queryString.append("SELECT ?x ?z ")
-			.append("WHERE { GRAPH <").append(graph.trim()).append("> { ")
-			.append("?x  ?p <http://isi.edu/integration/karma/ontologies/model/current/Input> . "
-				+ "?x  <http://isi.edu/integration/karma/ontologies/model/current/hasValue> ?z . } }");
-		
-		String sData = invokeSparqlQuery(queryString.toString(), tripleStoreUrl, "application/sparql-results+json", null);
-		if (sData == null | sData.isEmpty()) {
-			logger.error("Enpty response object from query : " + queryString.toString());
-		}
-		JSONObject data = new JSONObject(sData);
-		JSONArray d1 = data.getJSONObject("results").getJSONArray("bindings");
-		int count = 0;
-		HashMap<String, ArrayList<String>> results = new HashMap<String, ArrayList<String>>();
-		while(count < d1.length()) {
-			JSONObject obj = d1.getJSONObject(count++);
-			String key = obj.getJSONObject("x").getString("value");
-			String val = obj.getJSONObject("z").getString("value");
-			
-			if (!results.keySet().contains(key)) {
-				results.put(key, new ArrayList<String>());
-			} 
-			results.get(key).add(val);
-		}
-		return new JSONObject(results);
-	}
+//	public org.json.JSONObject fetch_data(String graph, String tripleStoreUrl) throws ClientProtocolException, IOException, JSONException {
+//		if (tripleStoreUrl == null || tripleStoreUrl.isEmpty()) {
+//			tripleStoreUrl = defaultDataRepoUrl;
+//		}
+//		//JSONObject retVal = new JSONObject();
+//		StringBuffer queryString = new StringBuffer();
+//		queryString.append("SELECT ?x ?z ")
+//			.append("WHERE { GRAPH <").append(graph.trim()).append("> { ")
+//			.append("?x  ?p <http://isi.edu/integration/karma/ontologies/model/current/Input> . "
+//				+ "?x  <http://isi.edu/integration/karma/ontologies/model/current/hasValue> ?z . } }");
+//		
+//		String sData = invokeSparqlQuery(queryString.toString(), tripleStoreUrl, "application/sparql-results+json", null);
+//		if (sData == null | sData.isEmpty()) {
+//			logger.error("Enpty response object from query : " + queryString.toString());
+//		}
+//		JSONObject data = new JSONObject(sData);
+//		JSONArray d1 = data.getJSONObject("results").getJSONArray("bindings");
+//		int count = 0;
+//		HashMap<String, ArrayList<String>> results = new HashMap<String, ArrayList<String>>();
+//		while(count < d1.length()) {
+//			JSONObject obj = d1.getJSONObject(count++);
+//			String key = obj.getJSONObject("x").getString("value");
+//			String val = obj.getJSONObject("z").getString("value");
+//			
+//			if (!results.keySet().contains(key)) {
+//				results.put(key, new ArrayList<String>());
+//			} 
+//			results.get(key).add(val);
+//		}
+//		return new JSONObject(results);
+//	}
 	
 	/**
 	 * This method fetches all the context from the given triplestore Url
