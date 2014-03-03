@@ -155,6 +155,8 @@ import edu.isi.karma.controller.command.worksheet.ApplyWorksheetHistoryCommand;
 import edu.isi.karma.controller.command.worksheet.ApplyWorksheetHistoryCommandFactory;
 import edu.isi.karma.controller.command.worksheet.EditCellCommand;
 import edu.isi.karma.controller.command.worksheet.EditCellCommandFactory;
+import edu.isi.karma.controller.command.worksheet.ExtractEntitiesCommand;
+import edu.isi.karma.controller.command.worksheet.ExtractEntitiesCommandFactory;
 import edu.isi.karma.controller.command.worksheet.FetchExistingWorksheetPropertiesCommand;
 import edu.isi.karma.controller.command.worksheet.FetchExistingWorksheetPropertiesCommandFactory;
 import edu.isi.karma.controller.command.worksheet.LoadAdditionalWorksheetRowsCommand;
@@ -326,6 +328,8 @@ public class ExecutionController {
                 new TestSPARQLEndPointCommandFactory());
         commandFactoryMap.put(LoadAdditionalWorksheetRowsCommand.class.getSimpleName(),
                 new LoadAdditionalWorksheetRowsCommandFactory());
+        commandFactoryMap.put(ExtractEntitiesCommand.class.getSimpleName(),
+                new ExtractEntitiesCommandFactory());
     }
 
     public Workspace getWorkspace() {
