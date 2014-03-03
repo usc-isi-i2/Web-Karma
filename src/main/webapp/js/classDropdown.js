@@ -32,7 +32,7 @@ var ClassDropdownMenu = (function() {
     	
     	function addIncomingLink() {
     		console.log("addIncomingLink");
-    		IncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
+    		IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId, 
     				columnId, alignmentId,
     				columnLabel, columnUri, columnDomain,
     				"incoming");
@@ -40,7 +40,7 @@ var ClassDropdownMenu = (function() {
     	
     	function addOutgoingLink() {
     		console.log("addOutgoingLink");
-    		IncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
+    		IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId, 
     				columnId, alignmentId,
     				columnLabel, columnUri, columnDomain,
     				"outgoing");

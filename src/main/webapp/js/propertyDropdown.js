@@ -15,12 +15,12 @@ var PropertyDropdownMenu = (function() {
     	
     	var options = [
     		   	        //Title, function to call, needs file upload     
-    		   	        [ "Change Link", changeLink],
+    		   	       // ,
     		   	        [ "Delete", deleteLink],
     		   	        ["divider", null],
     		   	        [ "Change From", changeFrom ],
     		   	        [ "Change To" , changeTo ],
-    		   	        
+    		   	        [ "Change Link", changeLink]
     		   	];
     	
     	function init() {
@@ -34,33 +34,87 @@ var PropertyDropdownMenu = (function() {
     	
     	function changeLink() {
     		console.log("changeLink");
-    		IncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
-    				columnId, alignmentId,
-    				columnLabel, columnUri, columnDomain,
-    				"incoming");
+    		var dialog = IncomingOutgoingLinksDialog.getInstance();
+    		dialog.setSelectedFromClass(sourceId);
+    		dialog.setSelectedToClass(targetId);
+    		dialog.setSelectedProperty(propertyUri);
+    		dialog.show(worksheetId, 
+    				targetNodeId, alignmentId,
+    				targetLabel, targetId, targetDomain,
+    				"changeLink", sourceNodeId, targetNodeId, propertyUri);
     	};
     	
     	function deleteLink() {
     		console.log("deleteLink");
+    		if(confirm("Are you sure you wish to delete the link?")) {
+    			var info = new Object();
+	           	 info["workspaceId"] = $.workspaceGlobalInformation.id;
+	           	 info["command"] = "ChangeInternalNodeLinksCommand";
+	
+	           	 // Prepare the input for command
+	           	 var newInfo = [];
+	           	 
+	           	// Put the old edge information
+	           	var initialEdges = [];
+           	    var oldEdgeObj = {};
+           	    oldEdgeObj["edgeSourceId"] = sourceNodeId;
+           	    oldEdgeObj["edgeTargetId"] = targetNodeId;
+           	    oldEdgeObj["edgeId"] = propertyUri;
+           	    initialEdges.push(oldEdgeObj);
+	           	newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
+	           	
+	           	newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
+	           	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+	           	var newEdges = [];
+	           	newInfo.push(getParamObject("newEdges", newEdges, "other"));
+	        	info["newInfo"] = JSON.stringify(newInfo);
+	        	info["newEdges"] = newEdges;
+	        	
+	        	showLoading(worksheetId);
+	            var returned = $.ajax({
+	                url: "RequestController",
+	                type: "POST",
+	                data : info,
+	                dataType : "json",
+	                complete :
+	                    function (xhr, textStatus) {
+	                        var json = $.parseJSON(xhr.responseText);
+	                        parse(json);
+	                        hideLoading(worksheetId);
+	                        hide();
+	                    },
+	                error :
+	                    function (xhr, textStatus) {
+	                        alert("Error occured while getting nodes list!");
+	                        hideLoading(worksheetId);
+	                        hide();
+	                    }
+	            });
+    		}
     	}
     	
     	function changeFrom() {
     		console.log("Change From");
 
-    		IncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
+    		var dialog = IncomingOutgoingLinksDialog.getInstance();
+    		dialog.setSelectedFromClass(sourceId);
+    		dialog.setSelectedProperty(propertyUri);
+    		dialog.show(worksheetId, 
     				targetNodeId, alignmentId,
     				targetLabel, targetId, targetDomain,
-    				"incoming");
+    				"changeIncoming", sourceNodeId, targetNodeId, propertyUri);
+    		
     	}
     	
     	function changeTo() {
     		console.log("Change To");
-    		
-
-    		IncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
+    		var dialog = IncomingOutgoingLinksDialog.getInstance();
+    		dialog.setSelectedToClass(targetId);
+    		dialog.setSelectedProperty(propertyUri);
+    		dialog.show(worksheetId, 
     				sourceNodeId, alignmentId,
     				sourceLabel, sourceId, sourceDomain,
-    				"outgoing");
+    				"changeOutgoing", sourceNodeId, targetNodeId, propertyUri);
     	}
     	
     	function generateJS() {

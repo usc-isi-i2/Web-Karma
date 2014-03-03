@@ -37,11 +37,14 @@ public class PythonTransformationAsURITokenizer {
 	public static List<PythonTransformationToken> tokenize(String transformationCode)
 	{	
 		 List<PythonTransformationToken> tokens = new  LinkedList<PythonTransformationToken>();
-		if(transformationCode == null || transformationCode.isEmpty() || !transformationCode.contains("return"))
+		if(transformationCode == null || transformationCode.isEmpty())
 		{	
 			return tokens;
 		}
-		
+		if(!transformationCode.contains(returnStatement) || transformationCode.trim().indexOf(returnStatement) != 0 )
+		{
+			return tokens;
+		}
 		String codeToParse =transformationCode.substring(transformationCode.indexOf(returnStatement) + returnStatement.length());
 	
 		StringTokenizer tokenizer = new StringTokenizer(codeToParse, "+");

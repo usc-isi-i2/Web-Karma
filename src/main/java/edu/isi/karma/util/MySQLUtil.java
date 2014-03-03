@@ -60,7 +60,7 @@ public class MySQLUtil extends AbstractJDBCUtil {
 		
 		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
 		Connection conn = getConnection(DRIVER, connectString);
-		String query = "Select * from " + tableName + " limit " + rowCount;
+		String query = "Select * from " + escapeTablename(tableName) + " limit " + rowCount;
 		
 		Statement s = conn.createStatement();
 		ResultSet r = s.executeQuery(query);
@@ -85,6 +85,11 @@ public class MySQLUtil extends AbstractJDBCUtil {
 		return s;
 	}
 
+	@Override
+	public String escapeTablename(String name) {
+		return "`" + name + "`";
+	}
+	
 	@Override
 	protected String getDriver() {
 		return DRIVER;

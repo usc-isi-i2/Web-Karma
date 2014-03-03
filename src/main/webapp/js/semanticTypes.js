@@ -8,6 +8,7 @@ var SetSemanticTypeDialog = (function() {
     	var columnTitle;
     	var existingTypes, selectedPrimaryRow, classAndPropertyListJson;
     	var classPropertyUIDiv;
+    	var classUI, propertyUI;
     	
     	function init() {
     		//Initialize what happens when we show the dialog
@@ -478,7 +479,7 @@ var SetSemanticTypeDialog = (function() {
         	//http://localhost:8080/RequestController?URI=http%3A%2F%2Fisi.edu%2Fintegration%2Fkarma%2Fdev%23classLink&"
         	//command=GetDomainsForDataPropertyCommand&workspaceId=WSP23
         	if(property.uri == null || property.uri == "")
-        		return;
+        		return [];
         	
         	var info = new Object();
 		    info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -528,7 +529,7 @@ var SetSemanticTypeDialog = (function() {
         	}
         	
         	
-        	result.push(ClassPropertyUI.getNodeObject(label, id, uri));
+        	result.push(ClassUI.getNodeObject(label, id, uri));
         	if(clazz.children) {
         		$.each(clazz.children, function(index, clazzChild){
                 	parseClassJSON(clazzChild, result);
@@ -540,7 +541,7 @@ var SetSemanticTypeDialog = (function() {
         	var label = prop.data;
         	var id = prop.metadata.URIorId;
         	var uri = prop.metadata.URIorId;
-        	result.push(ClassPropertyUI.getNodeObject(label, id, uri));
+        	result.push(PropertyUI.getNodeObject(label, id, uri));
         	if(prop.children) {
         		$.each(prop.children, function(index, propChild){
         			parsePropertyJSON(propChild, result);
@@ -550,7 +551,7 @@ var SetSemanticTypeDialog = (function() {
         
         function getPropertiesForClass(thisClass) {
         	if(thisClass.uri == null || thisClass.uri == "")
-        		return;
+        		return [];
         	
         	//http://localhost:8080/RequestController?URI=http%3A%2F%2Flod.isi.edu%2Fontology%2Fsyllabus%2FLecture1&command=GetDataPropertiesForClassCommand&workspaceId=WSP23
         	var info = new Object();
@@ -648,7 +649,7 @@ var SetSemanticTypeDialog = (function() {
 		                	var label = prop.data;
 		                	var id = prop.metadata.URIorId;
 		                	var uri = prop.metadata.URIorId;
-		                	result.push(ClassPropertyUI.getNodeObject(label, id, uri));
+		                	result.push(PropertyUI.getNodeObject(label, id, uri));
 		                });
 		            },
 		        error :
@@ -669,6 +670,7 @@ var SetSemanticTypeDialog = (function() {
              $(".editButton", parentTrTag).show();
              $(".hideButton", parentTrTag).hide();
         }
+       
         function showSemanticTypeEditOptions() {
             var table = $("#semanticTypesTable");
             var parentTrTag = $(this).parents("tr");
@@ -701,43 +703,48 @@ var SetSemanticTypeDialog = (function() {
 
             // Remove any existing edit window open for other semantic type
             $("tr.editRow", table).remove();
-
-            var classPropertyUI = new ClassPropertyUI("semanticTypeEdit", 
-            		getClassesForProperty, getPropertiesForClass, 
-            		getClasses, getProperties,
-            		false,
-            		100);
+            var edittd = $("<td>").attr("colspan", "4");
+            var editTr = $("<tr>").addClass("editRow").append(edittd);
+            editTr.insertAfter(parentTrTag);
+            editTr.addClass("currentEditRow");
+            editTr.data("editRowObject", parentTrTag);
             
+            classUI = new ClassUI("semanticTypeEditClass", getClassesForProperty, getClasses, 100);
+            propertyUI = new PropertyUI("semanticTypeEditProperty", getPropertiesForClass, getProperties, 100);
+            
+            classUI.setHeadings("Classes with Selected Property", "All Classes");
+            propertyUI.setHeadings("Properties of Selected Class", "All Properties");
+            
+           
             if($(parentTrTag).data("ResourceType") == "Class") {
                 var classLabel = $(parentTrTag).data("DisplayLabel");
                 var classUri = $(parentTrTag).data("FullType");
-                classPropertyUI.setDefaultClass(classLabel, classUri, classUri);
+                classUI.setDefaultClass(classLabel, classUri, classUri);
+                propertyUI.setSelectedClass(classLabel, classUri, classUri);
                 //defaultProperty = "";
             } else {
                defaultClass = $(parentTrTag).data("DisplayDomainLabel");
                var classUri = $(parentTrTag).data("Domain");
-               classPropertyUI.setDefaultClass(defaultClass, classUri, classUri);
+               classUI.setDefaultClass(defaultClass, classUri, classUri);
+               propertyUI.setSelectedClass(defaultClass, classUri, classUri);
                var defaultProperty = $(parentTrTag).data("DisplayLabel");
                var defaultPropertyUri = $(parentTrTag).data("FullType");
-               classPropertyUI.setDefaultProperty(defaultProperty, defaultPropertyUri, defaultPropertyUri);
+               propertyUI.setDefaultProperty(defaultProperty, defaultPropertyUri, defaultPropertyUri);
+               classUI.setSelectedProperty(defaultProperty, defaultPropertyUri, defaultPropertyUri);
             }
+             
+            classUI.onClassSelect(validateClassInputValue);
+            propertyUI.onPropertySelect(validatePropertyInputValue);
             
-            classPropertyUI.setClassHeadings("Classes with Selected Property", "All Classes");
-            classPropertyUI.setPropertyHeadings("Properties of Selected Class", "All Properties");
+            classPropertyUIDiv = $("<div>").addClass("row").attr("id", "semanticTypeEdit");
+            var classDiv = $("<div>").addClass("col-sm-6");
+            var propDiv = $("<div>").addClass("col-sm-6");
+            classPropertyUIDiv.append(propDiv);
+            classPropertyUIDiv.append(classDiv);
+            edittd.append(classPropertyUIDiv);
             
-            classPropertyUIDiv = classPropertyUI.generateJS();
-            var editTr = $("<tr>").addClass("editRow")
-            	.append($("<td>")
-            			.attr("colspan", "4")
-            			.append(classPropertyUIDiv)
-            	);
-            
-            classPropertyUI.onClassSelect(validateClassInputValue);
-            classPropertyUI.onPropertySelect(validatePropertyInputValue);
-            
-            editTr.insertAfter(parentTrTag);
-            editTr.addClass("currentEditRow");
-            editTr.data("editRowObject", parentTrTag);
+           classUI.generateJS(classDiv, true);
+           propertyUI.generateJS(propDiv, true);
         }
         
         function doesPropertyExist(inputVal) {
@@ -778,35 +785,38 @@ var SetSemanticTypeDialog = (function() {
                 return false;
             }
 
+            classUI.refreshClassDataTop(propertyData.label, propertyData.id, propertyData.uri);
+            
             var rowToChange = $(classPropertyUIDiv).parents("tr.editRow").data("editRowObject");
-            var displayLabel = "";
-
-            if($(rowToChange).data("ResourceType") == "Class") {
-                if($.trim(inputVal) == "")
-                    return false;
-                // existing fullType (which was a class) becomes the domain of the chosen data property. So changing from class sem type to data prop sem type
-                var domain = $(rowToChange).data("FullType");
-                var displayDomainLabel = $(rowToChange).data("DisplayLabel");
-                $(rowToChange).data("FullType",uri).data("DisplayLabel",properCasedKey)
-                    .data("Domain", domain).data("DisplayDomainLabel",displayDomainLabel)
-                    .data("ResourceType","DataProperty");
-
-                displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
-            } else {
-                // Special case when the property input box is empty (data property sem type changed to class sem type)
-                if($.trim(inputVal) == "" && $(rowToChange).data("Domain") != "") {
-                    var newFullType = $(rowToChange).data("Domain");
-                    var newDisplayLabel = $(rowToChange).data("DisplayDomainLabel");
-
-                    $(rowToChange).data("ResourceType", "Class").data("FullType",newFullType).data("DisplayLabel", newDisplayLabel).data("Domain","").data("DisplayDomainLabel","");
-                    displayLabel = $(rowToChange).data("DisplayLabel");
-                } else {
-                    $(rowToChange).data("FullType",uri).data("DisplayLabel",properCasedKey);
-                    displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
-                }
+            if(rowToChange != null) {
+	            var displayLabel = "";
+	
+	            if($(rowToChange).data("ResourceType") == "Class") {
+	                if($.trim(inputVal) == "")
+	                    return false;
+	                // existing fullType (which was a class) becomes the domain of the chosen data property. So changing from class sem type to data prop sem type
+	                var domain = $(rowToChange).data("FullType");
+	                var displayDomainLabel = $(rowToChange).data("DisplayLabel");
+	                $(rowToChange).data("FullType",uri).data("DisplayLabel",properCasedKey)
+	                    .data("Domain", domain).data("DisplayDomainLabel",displayDomainLabel)
+	                    .data("ResourceType","DataProperty");
+	
+	                displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
+	            } else {
+	                // Special case when the property input box is empty (data property sem type changed to class sem type)
+	                if($.trim(inputVal) == "" && $(rowToChange).data("Domain") != "") {
+	                    var newFullType = $(rowToChange).data("Domain");
+	                    var newDisplayLabel = $(rowToChange).data("DisplayDomainLabel");
+	
+	                    $(rowToChange).data("ResourceType", "Class").data("FullType",newFullType).data("DisplayLabel", newDisplayLabel).data("Domain","").data("DisplayDomainLabel","");
+	                    displayLabel = $(rowToChange).data("DisplayLabel");
+	                } else {
+	                    $(rowToChange).data("FullType",uri).data("DisplayLabel",properCasedKey);
+	                    displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
+	                }
+	            }
+	            $("label.displayLabel", rowToChange).html(displayLabel);
             }
-            $("label.displayLabel", rowToChange).html(displayLabel);
-
         }
 
         function doesClassExist(inputVal) {
@@ -846,24 +856,27 @@ var SetSemanticTypeDialog = (function() {
                 return false;
             }
             // Use the value in proper case as input value
-           
+           propertyUI.refreshPropertyDataTop(classData.label, classData.id, classData.uri);
+            
             if (updateLabels) {
                 var rowToChange = $(classPropertyUIDiv).parents("tr.editRow").data("editRowObject");
-                var displayLabel = "";
-                if($(rowToChange).data("ResourceType") == "Class") {
-                    $(rowToChange).data("FullType",uri).data("DisplayLabel",properCasedKey);
-                    displayLabel = $(rowToChange).data("DisplayLabel");
-                } else {
-                    // If no value has been input in the data property box, change from data property sem type to class sem type
-                    if($.trim($("input.propertyInput", classPropertyUIDiv).val()) == "") {
-                        $(rowToChange).data("ResourceType", "Class").data("FullType",uri).data("DisplayLabel",properCasedKey);
-                        displayLabel = $(rowToChange).data("DisplayLabel");
-                    } else {
-                        $(rowToChange).data("Domain",uri).data("DisplayDomainLabel",properCasedKey);
-                        displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
-                    }
+                if(rowToChange != null) {
+	                var displayLabel = "";
+	                if($(rowToChange).data("ResourceType") == "Class") {
+	                    $(rowToChange).data("FullType",uri).data("DisplayLabel",properCasedKey);
+	                    displayLabel = $(rowToChange).data("DisplayLabel");
+	                } else {
+	                    // If no value has been input in the data property box, change from data property sem type to class sem type
+	                    if($.trim($("input.propertyInput", classPropertyUIDiv).val()) == "") {
+	                        $(rowToChange).data("ResourceType", "Class").data("FullType",uri).data("DisplayLabel",properCasedKey);
+	                        displayLabel = $(rowToChange).data("DisplayLabel");
+	                    } else {
+	                        $(rowToChange).data("Domain",uri).data("DisplayDomainLabel",properCasedKey);
+	                        displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
+	                    }
+	                }
+	                $("label.displayLabel", rowToChange).html(displayLabel);
                 }
-                $("label.displayLabel", rowToChange).html(displayLabel);
             }
 
         }
@@ -910,57 +923,222 @@ var IncomingOutgoingLinksDialog = (function() {
     	var worksheetId, columnId, alignmentId, linkType;
     	var columnLabel, columnUri, columnDomain;
     	
-    	var selectedClass, selectedProperty;
+    	var selectedFromClass, selectedProperty, selectedToClass;
+    	var allClasses, allProperties, selectedClasses, selectedProperties;
+    	
+    	var fromClassUI, propertyUI, toClassUI;
+    	var changeFromNode, changeToNode, changeLink;
     	
     	function init() {
-    		//Initialize what happens when we show the dialog
-    		dialog.on('show.bs.modal', function (e) {
-				hideError();
-				selectedClass = {label:"", id:"", uri:""};
-				selectedProperty = {label:"", id:"", uri:""};
-				setLinkLabel();
-				
-				$("div.main", dialog).empty();
-				
-				var classPropertyUI = new ClassPropertyUI("incomingOutgoingLinksDialog_inner",  
-						getExistingClassNodes, getPropertyForClass, 
-						getAllClassNodes, getAllProperties,
-						true,
-						200);
-	            
-	            classPropertyUI.onClassSelect(selectClassInputValue);
-	            classPropertyUI.onPropertySelect(selectPropertyInputValue);
-	            classPropertyUI.setClassRefresh(false);
-	            classPropertyUI.setClassHeadings("Classes in Model", "All Classes");
-	            	classPropertyUI.setPropertyHeadings("Compatible Properties", "All Properties");
-	            
-				if(linkType == "incoming") {
-					classPropertyUI.setClassLabel("From Class");
-				} else {
-					classPropertyUI.setClassLabel("To Class");
-				}
-				
-				$("div.main", dialog).append(classPropertyUI.generateJS());
-				
-
-	        	$("#incomingOutgoingLinksDialog_title", dialog).text("Add " + linkType + 
-	        			" link for " + columnLabel);
-			});
-			
-			//Initialize handler for Save button
-			//var me = this;
-			$('#btnSave', dialog).on('click', function (e) {
-				e.preventDefault();
-				saveDialog(e);
-			});
+            selectedFromClass = {label:"", id:"", uri:""};
+            selectedToClass = {label:"", id:"", uri:""};
+            selectedProperty = {label:"", id:"", uri:""};
+            
+            fromClassUI = new ClassUI("incomingOutgoingLinksDialog_fromClass", getExistingClassNodes, getAllClassNodes, 200);
+            toClassUI = new ClassUI("incomingOutgoingLinksDialog_toClass", getExistingClassNodes, getAllClassNodes, 200);
+            propertyUI = new PropertyUI("incomingOutgoingLinksDialog_property", getPropertyForClass, getAllProperties, 200);
+            
+            fromClassUI.setHeadings("Classes in Model", "All Classes");
+            toClassUI.setHeadings("Classes in Model", "All Classes");
+            propertyUI.setHeadings("Compatible Properties", "All Properties");
+            
+            fromClassUI.setClassLabel("From Class");
+            toClassUI.setClassLabel("To Class");
+            
+            fromClassUI.onClassSelect(onSelectFromClassInputValue);
+            toClassUI.onClassSelect(onSelectToClassInputValue);
+            propertyUI.onPropertySelect(onSelectPropertyInputValue);
+            
+            
+            //Initialize what happens when we show the dialog
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                
+                setLinkLabel();
+                $("div.main", dialog).empty();
+                var row = $("<div>").addClass("row");
+                $("div.main", dialog).append(row);
+                if(linkType == "incoming" || linkType == "changeIncoming") {
+                	if(linkType == "incoming")
+                		$("#incomingOutgoingLinksDialog_title", dialog).text("Add incoming link for " + columnLabel);
+                	else
+                		$("#incomingOutgoingLinksDialog_title", dialog).text("Change incoming link for " + columnLabel);
+                	
+                	var classDiv = $("<div>").addClass("col-sm-6");
+                	row.append(classDiv);
+                	fromClassUI.setDefaultClass(selectedFromClass.label, selectedFromClass.id, selectedFromClass.uri);
+                	fromClassUI.setSelectedProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
+                	fromClassUI.generateJS(classDiv, true);
+                	
+                	var propertyDiv = $("<div>").addClass("col-sm-6");
+                	row.append(propertyDiv);
+                	propertyUI.setDefaultProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
+                	propertyUI.setSelectedClass(selectedFromClass.label, selectedFromClass.id, selectedFromClass.uri);
+                	propertyUI.generateJS(propertyDiv, true);
+                } else if(linkType == "outgoing" || linkType == "changeOutgoing") {
+                	if(linkType == "outgoing")
+                		$("#incomingOutgoingLinksDialog_title", dialog).text("Add outgoing link for " + columnLabel);
+                	else
+                		$("#incomingOutgoingLinksDialog_title", dialog).text("Change outgoing link for " + columnLabel);
+                	
+                	var classDiv = $("<div>").addClass("col-sm-6");
+                	row.append(classDiv);
+                	toClassUI.setDefaultClass(selectedToClass.label, selectedToClass.id, selectedToClass.uri);
+                	toClassUI.setSelectedProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
+                	toClassUI.generateJS(classDiv, true);
+                	
+                	var propertyDiv = $("<div>").addClass("col-sm-6");
+                	row.append(propertyDiv);
+                	propertyUI.setDefaultProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
+                	propertyUI.setSelectedClass(selectedToClass.label, selectedToClass.id, selectedToClass.uri);
+                	propertyUI.generateJS(propertyDiv, true);
+                } else if(linkType == "changeLink") {
+                	$("#incomingOutgoingLinksDialog_title", dialog).text("Change link");
+                	var classDiv1 = $("<div>").addClass("col-sm-4");
+                	row.append(classDiv1);
+                	fromClassUI.setDefaultClass(selectedFromClass.label, selectedFromClass.id, selectedFromClass.uri);
+                	fromClassUI.setSelectedProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
+                	fromClassUI.generateJS(classDiv1, true);
+                	
+                	var propertyDiv = $("<div>").addClass("col-sm-4");
+                	row.append(propertyDiv);
+                	propertyUI.setDefaultProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
+                	propertyUI.setSelectedClass(selectedFromClass.label, selectedFromClass.id, selectedFromClass.uri);
+                	propertyUI.generateJS(propertyDiv, true);
+                	
+                	var classDiv2 = $("<div>").addClass("col-sm-4");
+                	row.append(classDiv2);
+                	toClassUI.setDefaultClass(selectedToClass.label, selectedToClass.id, selectedToClass.uri);
+                	toClassUI.setSelectedProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
+                	toClassUI.generateJS(classDiv2, true);
+                }
+            });
+            
+            //Initialize handler for Save button
+            //var me = this;
+            $('#btnSave', dialog).on('click', function (e) {
+                e.preventDefault();
+                saveDialog(e);
+            });
+        }
+    	
+    	function setSelectedFromClass(id) {
+    		console.log("IncomingOutgoingLinksDialog:setSelectedFromClass:" + id);
+    		if(allClasses) {
+    			for(var i=0; i<allClasses.length; i++) {
+    				var clazz = allClasses[i];
+    				var clazzElem = ClassUI.parseNodeObject(clazz);
+    				var clazzLbl = clazzElem[0];
+    				var clazzId = clazzElem[1];
+    				var clazzUri = clazzElem[2];
+    				if(clazzId == id) {
+    					fromClassUI.setDefaultClass(clazzLbl, clazzId, clazzUri);
+    					onSelectFromClassInputValue({"uri":clazzUri, "label":clazzLbl, "id":clazzId});
+    					return;
+    				}
+    			}
+    		}
+    		if(selectedClasses) {
+    			for(var i=0; i<selectedClasses.length; i++) {
+    				var clazz = selectedClasses[i];
+    				var clazzElem = ClassUI.parseNodeObject(clazz);
+    				var clazzLbl = clazzElem[0];
+    				var clazzId = clazzElem[1];
+    				var clazzUri = clazzElem[2];
+    				if(clazzId == id) {
+    					fromClassUI.setDefaultClass(clazzLbl, clazzId, clazzUri);
+    					onSelectFromClassInputValue({"uri":clazzUri, "label":clazzLbl, "id":clazzId});
+    					return;
+    				}
+    			}
+    		}
     	}
     	
-    	function selectClassInputValue(clazz) {
-    		selectedClass = clazz;
-    		setLinkLabel();
+    	function setSelectedToClass(id) {
+    		console.log("IncomingOutgoingLinksDialog:setSelectedToClass:" + id);
+    		if(allClasses) {
+    			for(var i=0; i<allClasses.length; i++) {
+    				var clazz = allClasses[i];
+    				var clazzElem = ClassUI.parseNodeObject(clazz);
+    				var clazzLbl = clazzElem[0];
+    				var clazzId = clazzElem[1];
+    				var clazzUri = clazzElem[2];
+    				if(clazzId == id) {
+    					toClassUI.setDefaultClass(clazzLbl, clazzId, clazzUri);
+    					onSelectToClassInputValue({"uri":clazzUri, "label":clazzLbl, "id":clazzId});
+    					return;
+    				}
+    			}
+    		}
+    		if(selectedClasses) {
+    			for(var i=0; i<selectedClasses.length; i++) {
+    				var clazz = selectedClasses[i];
+    				var clazzElem = ClassUI.parseNodeObject(clazz);
+    				var clazzLbl = clazzElem[0];
+    				var clazzId = clazzElem[1];
+    				var clazzUri = clazzElem[2];
+    				if(clazzId == id) {
+    					toClassUI.setDefaultClass(clazzLbl, clazzId, clazzUri);
+    					onSelectToClassInputValue({"uri":clazzUri, "label":clazzLbl, "id":clazzId});
+    					return;
+    				}
+    			}
+    		}
     	}
     	
-    	function selectPropertyInputValue(prop) {
+    	function setSelectedProperty(id) {
+    		console.log("IncomingOutgoingLinksDialog:setSelectedProperty:" + id);
+    		if(allProperties) {
+    			for(var i=0; i<allProperties.length; i++) {
+    				var prop = allProperties[i];
+    				var propElem = PropertyUI.parseNodeObject(prop);
+    				var propLbl = propElem[0];
+    				var propId = propElem[1];
+    				var propUri = propElem[2];
+    				
+    				if(propId == id) {
+    					propertyUI.setDefaultProperty(propLbl, propId, propUri);
+    					onSelectPropertyInputValue({"uri":propUri, "label":propLbl, "id":propId});
+    					return;
+    				}
+    			}
+    		}
+    		if(selectedProperties) {
+    			for(var i=0; i<selectedProperties.length; i++) {
+    				var prop = selectedProperties[i];
+    				var propElem = PropertyUI.parseNodeObject(prop);
+    				var propLbl = propElem[0];
+    				var propId = propElem[1];
+    				var propUri = propElem[2];
+    				
+    				if(propId == id) {
+    					propertyUI.setDefaultProperty(propLbl, propId, propUri);
+    					if(dialog.hasClass('in')) { //dialog is shown
+    						onSelectPropertyInputValue({"uri":propUri, "label":propLbl, "id":propId});
+    					}
+    					return;
+    				}
+    			}
+    		}
+    	}
+    	
+    	function onSelectFromClassInputValue(clazz) {
+    		selectedFromClass = clazz;
+    		if(dialog.hasClass('in'))  {
+	    		propertyUI.refreshPropertyDataTop(clazz.label, clazz.id, clazz.uri);
+	    		setLinkLabel();
+    		}
+    	}
+    	
+    	function onSelectToClassInputValue(clazz) {
+    		selectedToClass = clazz;
+    		if(dialog.hasClass('in')) {
+	    		propertyUI.refreshPropertyDataTop(clazz.label, clazz.id, clazz.uri);
+	    		setLinkLabel();
+    		}
+    	}
+    	
+    	function onSelectPropertyInputValue(prop) {
     		selectedProperty = prop;
     		setLinkLabel();
     	}
@@ -987,6 +1165,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	            function (xhr, textStatus) {
     	                var json = $.parseJSON(xhr.responseText);
     	                result = parseClassList(json, true);
+    	                selectedClasses = result;
     	            },
     	        error :
     	            function (xhr, textStatus) {
@@ -1015,6 +1194,7 @@ var IncomingOutgoingLinksDialog = (function() {
             		function(xhr, textStatus) {
             			var json = $.parseJSON(xhr.responseText);
             			result = parseClassList(json, true);
+            			allClasses = result;
             		},
             	error:
             		function(xhr, textStatus) {
@@ -1045,7 +1225,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	            	var label = node["nodeLabel"];
     	            	if(label.indexOf(":") == -1)
     	            		label = node["nodeUri"] + "/" + label;
-    	            	var nodeData = ClassPropertyUI.getNodeObject(label, node["nodeId"], node["nodeUri"]);
+    	            	var nodeData = ClassUI.getNodeObject(label, node["nodeId"], node["nodeUri"]);
     	            	nodes.push(nodeData);
     	            });
     	        }
@@ -1070,6 +1250,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	            function (xhr, textStatus) {
     	                var json = $.parseJSON(xhr.responseText);
     	                result = parseDataPropertyList(json, true);
+    	                allProperties = result;
     	            },
     	        error :
     	            function (xhr, textStatus) {
@@ -1087,10 +1268,10 @@ var IncomingOutgoingLinksDialog = (function() {
     	    var startNodeClass = columnDomain;
     	    
     	    info["linksRange"] = "linksWithDomainAndRange";
-    	    if(linkType == "incoming") {
+    	    if(linkType == "incoming" || linkType == "changeIncoming" || linkType == "changeLink") {
     	    	info["domain"] = selectedClass.uri;
     	    	info["range"] = startNodeClass;
-    	    } else if(linkType == "outgoing") {
+    	    } else if(linkType == "outgoing" || linkType == "changeOutgoing") {
     	    	info["domain"] = startNodeClass;
     	    	info["range"] = selectedClass.uri;
     	    }
@@ -1105,6 +1286,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	            function (xhr, textStatus) {
     	                var json = $.parseJSON(xhr.responseText);
     	                result = parseDataPropertyList(json, true);
+    	                selectedProperties = result;
     	            },
     	        error :
     	            function (xhr, textStatus) {
@@ -1127,7 +1309,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	            $.each(element["data"], function(index2, node) {
     	            	var label = node.data;
     	            	var uri = node.metadata.URIorId;
-    	            	var p = ClassPropertyUI.getNodeObject(label, uri, uri);
+    	            	var p = PropertyUI.getNodeObject(label, uri, uri);
     	            	nodes.push(p);
     	            });
     	        } else if(element["updateType"] == "LinksList") {
@@ -1138,7 +1320,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	             }
     	             
     	             $.each(element["edges"], function(index2, node) {
-    	            	 var p = ClassPropertyUI.getNodeObject(node["edgeLabel"], 
+    	            	 var p = PropertyUI.getNodeObject(node["edgeLabel"], 
     	            			 node["edgeId"], node["edgeId"]);
     	             	 nodes.push(p);
     	                 
@@ -1162,8 +1344,14 @@ var IncomingOutgoingLinksDialog = (function() {
         function saveDialog(e) {
         	var startNode = columnId;
         	
-        	if(selectedClass.label == "") {
-        		showError("Please select the class");
+        	
+        	if(selectedFromClass.label == "" && (linkType == "incoming" || linkType == "changeIncoming" || linkType == "changeLink")) {
+        		showError("Please select the from class");
+        		return false;
+        	}
+        	
+        	if(selectedToClass.label == "" && (linkType == "outgoing" || linkType == "changeOutgoing" || linkType == "changeLink")) {
+        		showError("Please select the to class");
         		return false;
         	}
         	if(selectedProperty.label == "") {
@@ -1180,6 +1368,14 @@ var IncomingOutgoingLinksDialog = (function() {
         	 
         	// Put the old edge information
         	var initialEdges = [];
+        	 if(linkType == "changeIncoming" || linkType == "changeOutgoing" || linkType == "changeLink") {
+        	    var oldEdgeObj = {};
+        	    oldEdgeObj["edgeSourceId"] = changeFromNode;
+        	    oldEdgeObj["edgeTargetId"] = changeToNode;
+        	    oldEdgeObj["edgeId"] = changeLink;
+        	    initialEdges.push(oldEdgeObj);
+        	 }
+        	    
         	newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
         	    
         	newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
@@ -1192,12 +1388,15 @@ var IncomingOutgoingLinksDialog = (function() {
         	 var source, target;
         	 var property = selectedProperty.id;
         	    
-        	if(linkType == "incoming") {
+        	if(linkType == "incoming" || linkType == "changeIncoming") {
         		target = startNode;
-        		source = selectedClass.id;
-        	} else if(linkType == "outgoing") {
+        		source = selectedFromClass.id;
+        	} else if(linkType == "outgoing" || linkType == "changeOutgoing") {
         		source = startNode;
-        		target = selectedClass.id;
+        		target = selectedToClass.id;
+        	} else if(linkType == "changeLink") {
+        		source = selectedFromClass.id;
+        		target = selectedToClass.id;
         	} else {
         		alert("Invalid linkType: " + linkType);
         		return;
@@ -1239,7 +1438,7 @@ var IncomingOutgoingLinksDialog = (function() {
         }
         
         function show(wsId, colId, alignId,
-        		colLabel, colUri, colDomain, type) {
+        		colLabel, colUri, colDomain, type, changeFrom, changeTo, changeLinkUri) {
         	worksheetId = wsId;
         	columnId = colId;
         	alignmentId = alignId;
@@ -1251,12 +1450,31 @@ var IncomingOutgoingLinksDialog = (function() {
         	linkType = type;
         	dialog.modal({keyboard:true, show:true});
         	
+        	if(type == "changeIncoming" || type == "changeOutgoing" || type == "changeLink") {
+        		changeFromNode = changeFrom;
+        		changeToNode = changeTo;
+        		changeLink = changeLinkUri;
+        	}
         };
         
         
-        return {	//Return back the public methods
-        	show : show,
-        	init : init
+        function showBlank(wsId, colId, alignId,
+                colLabel, colUri, colDomain, type) {
+            selectedFromClass = {label:"", id:"", uri:""};
+            selectedToClass = {label:"", id:"", uri:""};
+            selectedProperty = {label:"", id:"", uri:""};
+            show(wsId, colId, alignId,
+                    colLabel, colUri, colDomain, type);
+        };
+        
+        
+        return {    //Return back the public methods
+            show : show,
+            showBlank : showBlank,
+            init : init,
+            setSelectedFromClass : setSelectedFromClass,
+            setSelectedToClass : setSelectedToClass,
+            setSelectedProperty : setSelectedProperty
         };
     };
 
