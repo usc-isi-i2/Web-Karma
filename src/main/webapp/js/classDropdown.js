@@ -14,7 +14,7 @@ var ClassDropdownMenu = (function() {
     		   	        [ "Add Incoming Link", addIncomingLink],
     		   	        [ "Add Outgoing Link", addOutgoingLink],
     		   	        [ "divider" , null ],
-    		   	        
+    		   	        [ "Export CSV" , exportCSV ],
     		   			[	"Invoke Reconciliation Service" , invokeReconciliationService ],
     		   		/*	[ "Invoke M/L Service", invokeMLService ], */
     		   			
@@ -45,6 +45,10 @@ var ClassDropdownMenu = (function() {
     				columnLabel, columnUri, columnDomain,
     				"outgoing");
     	}
+    	
+    	function exportCSV() {
+    		ExportCSVModelDialog.getInstance().show(worksheetId,alignmentId,columnId );
+    	};
     	
     	function invokeReconciliationService() {
     		console.log("invokeReconciliationService");

@@ -369,3 +369,215 @@ var FetchModelDialog = (function() {
     };
     
 })();
+
+
+
+
+
+var ExportCSVModelDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#exportCSVDialog");
+    	var worksheetId;
+    	var alignmentNodeId;
+    	var columnId;
+    	
+    	function init() {
+    		//Initialize what happens when we show the dialog
+    		dialog.on('show.bs.modal', function (e) {
+				hideError();
+				$("input#csvSPAQRLEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+				window.csvSPAQRLEndPoint = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_models';
+				fetchGraphsFromTripleStore(window.csvSPAQRLEndPoint, $("#csvModelGraphList"));
+				$('#csvDialogContent').show();
+				$('#csvDialogColumnList').html('');
+				$('#csvDialogColumnList').hide();
+				$('#btnExportCSV').hide();
+				
+				$('#csvDataDialogContent').hide();
+				
+			});
+    		
+			//Initialize handler for Save button
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				getColumnList();
+			});
+			
+			//Initialize handler for ExportCSV button
+			$('#btnExportCSV', dialog).on('click', function (e) {
+				performExportCSV();
+			});
+			
+			//Initialize change handler for sparql end point text box for url
+			$('input#csvSPAQRLEndPoint').on('focusout', function(event){
+				fetchGraphsFromTripleStore($("#csvSPAQRLEndPoint").val(), $("#csvModelGraphList"));
+	        });
+			
+			//Initialize change handler for sparql end point text box for url
+			$('input#csvDataEndPoint').on('focusout', function(event){
+				fetchGraphsFromTripleStore($("#csvDataEndPoint").val(), $("#csvDataGraphList"));
+	        });
+    	}
+    	
+    	// this method will fetch all the context (graphs) from the given endpoint
+    	// it takes in the url and the input element object
+    	function fetchGraphsFromTripleStore(url, modelGraphList) {
+    		
+    		var info = new Object();
+    		info["workspaceId"] = $.workspaceGlobalInformation.id;
+    		info["command"] = "FetchGraphsFromTripleStoreCommand";
+    		info["tripleStoreUrl"] = url;
+    		var returned = $.ajax({
+    		   	url: "RequestController", 
+    		   	type: "POST",
+    		   	data : info,
+    		   	dataType : "json",
+    		   	complete : 
+    		   		function (xhr, textStatus) {
+    		   			var json = $.parseJSON(xhr.responseText);
+    		   			graphs = [];
+    		   			if(json["elements"] && json["elements"][0]['graphs']) {
+    		   				graphs = json["elements"][0]['graphs'];
+    		   			}
+    		   			//var modelGraphList = $("#csvModelGraphList");
+    		   			modelGraphList.html('<option value="000">Select a graph</option>');
+    		   			for (var x in graphs) {
+    		   				modelGraphList.append('<option value="'+graphs[x]+'">'+graphs[x]+'</option>');
+    		   			}
+    			   	},
+    			error :
+    				function (xhr, textStatus) {
+    		   			alert("Error occurred with fetching graphs! " + textStatus);
+    			   	}		   
+    		});
+    	}
+    	
+    	
+    	function performExportCSV() {
+    		
+    		var graphUri = $('#csvDataGraphList').val().trim();
+    		graphUri = (graphUri == '000') ? '' : graphUri;
+    		
+    		var list = [];
+			$('#csv_columns').find('li').each(function(index){
+				list.push($(this).attr('name'));
+			});
+			
+    		var info = new Object();
+    		info["workspaceId"] = $.workspaceGlobalInformation.id;
+    		info["worksheetId"] = worksheetId;
+    		info["command"] = "ExportCSVCommand";
+    		info["rootNodeId"] = $('#csv_columns').attr('rel');
+    		info["tripleStoreUrl"] = $("#csvDataEndPoint").val();
+    		info["graphUrl"] =  graphUri ;
+    		info["columnList"] = list;
+    		
+    		var returned = $.ajax({
+    		   	url: "RequestController", 
+    		   	type: "POST",
+    		   	data : info,
+    		   	dataType : "json",
+    		   	complete : 
+    		   		function (xhr, textStatus) {
+    		   			var json = $.parseJSON(xhr.responseText);
+    		   			 
+    			   	},
+    			error :
+    				function (xhr, textStatus) {
+    		   			alert("Error occurred with fetching graphs! " + textStatus);
+    			   	}		   
+    		});
+    	}
+    	
+    	function initCSVDataDialog() {
+    		$("input#csvDataEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_data');
+    		var url2 = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_data';
+			fetchGraphsFromTripleStore(url2, $('#csvDataGraphList') );
+    		$('#csvDataDialogContent').show();
+    	}
+    	
+    	// this method will fetch the columns that are reachable from this node
+    	function getColumnList() {
+    		var graphUri = $('#csvModelGraphList').val().trim();
+    		graphUri = (graphUri == '000') ? '' : graphUri; 
+    		var info = new Object();
+    		info["workspaceId"] = $.workspaceGlobalInformation.id;
+    		info["worksheetId"] = worksheetId;
+    		info["command"] = "FetchColumnCommand";
+    		info["alignmentNodeId"] = alignmentNodeId;
+    		info["tripleStoreUrl"] = $("#csvSPAQRLEndPoint").val();
+    		info["graphUrl"] =  graphUri ;
+    		info["nodeId"] = columnId;
+    		var returned = $.ajax({
+    		   	url: "RequestController", 
+    		   	type: "POST",
+    		   	data : info,
+    		   	dataType : "json",
+    		   	complete : 
+    		   		function (xhr, textStatus) {
+    		   			var data = $.parseJSON(xhr.responseText);
+    		   			$('#csvDialogContent').hide();
+    		   			
+    		   			var ele = $('#csvDialogColumnList');
+    		   			var content = '<ol id="csv_columns" rel="'+data['elements'][0]['rootId']+'">';
+    		   			var list = data['elements'][0]['columns'];
+    		   			for(var x in list) {
+    		   				content += '<li style="padding=4px;" name="'+list[x]+'">'
+    		   					+list[x]+' &nbsp; <a class="icon-remove pull-right">X</a>' 
+    		   					+'</li>';
+    		   			}
+    		   			ele.html(content + '</ol>');
+    		   			ele.show();
+    		   			$("#csv_columns").delegate('a.icon-remove','click',function(event){
+    		   				$(this).parent().remove();
+    		   			});
+    		   			
+    		   			$('#btnExportCSV').show();
+    		   			$("#csv_columns").sortable();
+    		   			
+    		   			initCSVDataDialog();
+    		   	}	   
+    		});
+    	}
+    	
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError() {
+			$("div.error", dialog).show();
+		}
+        
+        function hide() {
+        	dialog.modal('hide');
+        }
+        
+        function show(wsId, algnId, colId) {
+        	worksheetId = wsId;
+        	alignmentNodeId = algnId;
+        	columnId = colId;
+        	dialog.modal({keyboard:true, show:true});
+        };
+        
+        
+        return {	//Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    
+})();
