@@ -97,7 +97,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 				workspace.getId());
 		
 		// Invoke the add column command
-		logger.info("SubmitPythonTranformation: " + hNodeId + ":" + nodeId);
+		logger.debug("SubmitPythonTranformation: " + hNodeId + ":" + nodeId);
 		try
 		{
 			HNode newColumnNameHNode = hTable.getHNodeFromColumnName(newColumnName);
@@ -107,7 +107,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 				
 				saveOrResetColumnValues(workspace, ctrl);
 			
-				logger.info("SubmitPythonTranformation: Tranform Existing Column" + hNodeId + ":" + nodeId);
+				logger.debug("SubmitPythonTranformation: Tranform Existing Column" + hNodeId + ":" + nodeId);
 				UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
 						newColumnNameHNode, ctrl, nodeId);
 				return c;
