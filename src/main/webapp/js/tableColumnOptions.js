@@ -13,7 +13,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 			[ "Split Column", splitColumn ],
 			[ "Add Row", addRow],
 			[ "divider" , null ],
-			
+			["Extract Entities",extractEntities],
 			[ "PyTransform" , pyTransform ],
 			[ "Transform", transform],
 			[ "divider" , null ],
@@ -75,6 +75,28 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 		hideDropdown();
 		AddColumnDialog.getInstance().show(worksheetId, columnId);
 	    return false;
+	}
+	
+	function extractEntities() {
+		var info = new Object();
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["worksheetId"] = worksheetId;
+        info["command"] = "ExtractEntitiesCommand";
+		var returned = $.ajax({
+    			   	url: "RequestController",
+    			   	type: "POST",
+    			   	data : info,
+    			   	dataType : "json",
+    			   	complete :
+    			   		function (xhr, textStatus) {
+    			    		var json = $.parseJSON(xhr.responseText);
+    			    		parse(json);
+    				   	},
+    				error :
+    					function (xhr, textStatus) {
+    			   			alert("Error occured while generating RDF!" + textStatus);
+    				   	}
+    			});	
 	}
 	
 	function pyTransform() {
