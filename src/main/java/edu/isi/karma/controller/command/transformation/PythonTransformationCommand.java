@@ -132,7 +132,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 			hNodeIdToNormalizedColumnName.put(accHNode.getId(),
 					normalizedColumnNameMap.get(accHNode.getColumnName()));
 		}
-		logger.info("Executing PyTransform\n" + transformMethodStmt);
+		logger.debug("Executing PyTransform\n" + transformMethodStmt);
 
 		// Prepare the Python interpreter
 		PythonInterpreter interpreter = new PythonInterpreter();
@@ -183,11 +183,11 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 			}
 		}
 		if (numRowsWithErrors > 0) {
-			logger.info("PyTransform errors in "
+			logger.debug("PyTransform errors in "
 					+ numRowsWithErrors
 					+ " rows. This could be normal when rows have unexpected values.");
 		}
-		logger.info("transform time "
+		logger.debug("transform time "
 				+ (System.currentTimeMillis() - starttime));
 	}
 

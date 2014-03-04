@@ -312,8 +312,13 @@ var FileOptionsDialog = (function() {
 				    				var json = $.parseJSON(xhr.responseText);
 				    		        parse(json);
 				    		        hideWaitingSignOnScreen();
-				    		        if(format !== "Ontology") 
-				    		        	showDialogToLoadModel(); //This is giving a JS error. Should go after conversion of this dialog to bootstrap
+				    		        if(format !== "Ontology")  {
+				    		        	var lastWorksheetLoaded = $("div.Worksheet").last();
+				    		        	if(lastWorksheetLoaded) {
+				    		        		var lastWorksheetId = lastWorksheetLoaded.attr("id");
+				    		        		ShowExistingModelDialog.getInstance().showIfNeeded(lastWorksheetId);
+				    		        	}
+				    		        }
 				    		        dialog.modal('hide');
 				    			}
 				    		}
