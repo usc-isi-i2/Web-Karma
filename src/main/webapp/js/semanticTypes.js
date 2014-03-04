@@ -475,142 +475,40 @@ var SetSemanticTypeDialog = (function() {
             }
         }
         
+        function getClasses() {
+        	var classes = getAllClasses(worksheetId);
+        	var result = [];
+	       	 $.each(classes, function(index, clazz){
+	       		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+	       	 });
+	       	return result;
+        }
+        
         function getClassesForProperty(property) {
-        	//http://localhost:8080/RequestController?URI=http%3A%2F%2Fisi.edu%2Fintegration%2Fkarma%2Fdev%23classLink&"
-        	//command=GetDomainsForDataPropertyCommand&workspaceId=WSP23
-        	if(property.uri == null || property.uri == "")
-        		return [];
-        	
-        	var info = new Object();
-		    info["workspaceId"] = $.workspaceGlobalInformation.id;
-		    info["command"] = "GetDomainsForDataPropertyCommand";
-		    info["worksheetId"] = worksheetId;
-		    info["URI"] = property.uri;
-		    
-		    var result = [];
-		    var returned = $.ajax({
-		        url: "RequestController",
-		        type: "POST",
-		        data : info,
-		        dataType : "json",
-		        async : false,
-		        complete :
-		            function (xhr, textStatus) {
-		                var json = $.parseJSON(xhr.responseText);
-		                var data = json.elements[0].data;
-		                $.each(data, function(index, clazz){
-		                	parseClassJSON(clazz, result);
-		                });
-		            },
-		        error :
-		            function (xhr, textStatus) {
-		                alert("Error occured while fetching classes for property " + property.label + ": " + textStatus);
-		            }
-		    });
+        	var classes = getAllClassesForProperty(worksheetId, property.uri);
+        	var result = [];
+        	 $.each(classes, function(index, clazz){
+        		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+        	 });
         	return result;
         }
-        
-        function parseClassJSON(clazz, result) {
-        	var uri = clazz.metadata.URIorId;
-        	var index = clazz.metadata.newIndex;
-        	
-        	if(clazz.metadata.isExistingSteinerTreeNode) {
-        		if(index) {
-        			uri = uri.substr(0, uri.lastIndexOf(index));
-        		}
-        		index = false;
-        	}
-        	var label = clazz.data;
-        	var id = clazz.metadata.URIorId;
-        	
-        	if(index) {
-        		label = label + index + " (add)";
-        		id = id + index;
-        	}
-        	
-        	
-        	result.push(ClassUI.getNodeObject(label, id, uri));
-        	if(clazz.children) {
-        		$.each(clazz.children, function(index, clazzChild){
-                	parseClassJSON(clazzChild, result);
-                });
-        	}
-        }
-        
-        function parsePropertyJSON(prop, result) {
-        	var label = prop.data;
-        	var id = prop.metadata.URIorId;
-        	var uri = prop.metadata.URIorId;
-        	result.push(PropertyUI.getNodeObject(label, id, uri));
-        	if(prop.children) {
-        		$.each(prop.children, function(index, propChild){
-        			parsePropertyJSON(propChild, result);
-                });
-        	}
+      
+        function getProperties() {
+        	var props = getAllProperties(worksheetId);
+        	var result = [];
+	       	 $.each(props, function(index, prop){
+	       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
+	       	 });
+	       	return result;
         }
         
         function getPropertiesForClass(thisClass) {
-        	if(thisClass.uri == null || thisClass.uri == "")
-        		return [];
-        	
-        	//http://localhost:8080/RequestController?URI=http%3A%2F%2Flod.isi.edu%2Fontology%2Fsyllabus%2FLecture1&command=GetDataPropertiesForClassCommand&workspaceId=WSP23
-        	var info = new Object();
-		    info["workspaceId"] = $.workspaceGlobalInformation.id;
-		    info["command"] = "GetDataPropertiesForClassCommand";
-		    info["worksheetId"] = worksheetId;
-		    info["URI"] = thisClass.uri;
-		    
-		    var result = [];
-		    var returned = $.ajax({
-		        url: "RequestController",
-		        type: "POST",
-		        data : info,
-		        dataType : "json",
-		        async : false,
-		        complete :
-		            function (xhr, textStatus) {
-		                var json = $.parseJSON(xhr.responseText);
-		                var data = json.elements[0].data;
-		                $.each(data, function(index, prop){
-		                	parsePropertyJSON(prop, result);
-		                });
-		            },
-		        error :
-		            function (xhr, textStatus) {
-		                alert("Error occured while fetching properties for " + thisClass.label + ": " + textStatus);
-		            }
-		    });
-        	return result;
-        }
-        
-        function getClasses() {
-        	//http://localhost:8080/RequestController?command=GetOntologyClassHierarchyCommand&worksheetId=WS1&workspaceId=WSP23
-        	var info = new Object();
-		    info["workspaceId"] = $.workspaceGlobalInformation.id;
-		    info["command"] = "GetOntologyClassHierarchyCommand";
-		    info["worksheetId"] = worksheetId;
-		    
-		    var result = [];
-		    var returned = $.ajax({
-		        url: "RequestController",
-		        type: "POST",
-		        data : info,
-		        dataType : "json",
-		        async : false,
-		        complete :
-		            function (xhr, textStatus) {
-		                var json = $.parseJSON(xhr.responseText);
-		                var data = json.elements[0].data;
-		                $.each(data, function(index, clazz){
-		                	parseClassJSON(clazz, result);
-		                });
-		            },
-		        error :
-		            function (xhr, textStatus) {
-		                alert("Error occured while fetching classes: " + textStatus);
-		            }
-		    });
-        	return result;
+        	var props = getAllPropertiesForClass(worksheetId, thisClass.uri);
+        	var result = [];
+	       	 $.each(props, function(index, prop){
+	       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
+	       	 });
+	       	return result;
         }
         
         function getClassLabels() {
@@ -626,38 +524,6 @@ var SetSemanticTypeDialog = (function() {
         
         function getPropertyLabels() {
         	return classAndPropertyListJson["elements"][0]["propertyList"];
-        }
-        
-        function getProperties() {
-        	var info = new Object();
-		    info["workspaceId"] = $.workspaceGlobalInformation.id;
-		    info["command"] = "GetDataPropertyHierarchyCommand";
-		    info["worksheetId"] = worksheetId;
-		    
-		    var result = [];
-		    var returned = $.ajax({
-		        url: "RequestController",
-		        type: "POST",
-		        data : info,
-		        dataType : "json",
-		        async : false,
-		        complete :
-		            function (xhr, textStatus) {
-		                var json = $.parseJSON(xhr.responseText);
-		                var data = json.elements[0].data;
-		                $.each(data, function(index, prop){
-		                	var label = prop.data;
-		                	var id = prop.metadata.URIorId;
-		                	var uri = prop.metadata.URIorId;
-		                	result.push(PropertyUI.getNodeObject(label, id, uri));
-		                });
-		            },
-		        error :
-		            function (xhr, textStatus) {
-		                alert("Error occured while fetching properties: " + textStatus);
-		            }
-		    });
-        	return result;
         }
         
         function hideSemanticTypeEditOptions() {
@@ -936,7 +802,7 @@ var IncomingOutgoingLinksDialog = (function() {
             
             fromClassUI = new ClassUI("incomingOutgoingLinksDialog_fromClass", getExistingClassNodes, getAllClassNodes, 200);
             toClassUI = new ClassUI("incomingOutgoingLinksDialog_toClass", getExistingClassNodes, getAllClassNodes, 200);
-            propertyUI = new PropertyUI("incomingOutgoingLinksDialog_property", getPropertyForClass, getAllProperties, 200);
+            propertyUI = new PropertyUI("incomingOutgoingLinksDialog_property", getPropertyForClass, getProperties, 200);
             
             fromClassUI.setHeadings("Classes in Model", "All Classes");
             toClassUI.setHeadings("Classes in Model", "All Classes");
@@ -1037,6 +903,11 @@ var IncomingOutgoingLinksDialog = (function() {
     					return;
     				}
     			}
+    		} else {
+    			window.setTimeout(function() {
+    				setSelectedFromClass(id);
+    			}, 100);
+    			return;
     		}
     		if(selectedClasses) {
     			for(var i=0; i<selectedClasses.length; i++) {
@@ -1051,6 +922,11 @@ var IncomingOutgoingLinksDialog = (function() {
     					return;
     				}
     			}
+    		} else {
+    			window.setTimeout(function() {
+    				setSelectedFromClass(id);
+    			}, 100);
+    			return;
     		}
     	}
     	
@@ -1069,6 +945,11 @@ var IncomingOutgoingLinksDialog = (function() {
     					return;
     				}
     			}
+    		} else {
+    			window.setTimeout(function() {
+    				setSelectedToClass(id);
+    			}, 100);
+    			return;
     		}
     		if(selectedClasses) {
     			for(var i=0; i<selectedClasses.length; i++) {
@@ -1083,6 +964,11 @@ var IncomingOutgoingLinksDialog = (function() {
     					return;
     				}
     			}
+    		} else {
+    			window.setTimeout(function() {
+    				setSelectedToClass(id);
+    			}, 100);
+    			return;
     		}
     	}
     	
@@ -1102,6 +988,11 @@ var IncomingOutgoingLinksDialog = (function() {
     					return;
     				}
     			}
+    		} else {
+    			window.setTimeout(function() {
+    				setSelectedProperty(id);
+    			}, 100);
+    			return;
     		}
     		if(selectedProperties) {
     			for(var i=0; i<selectedProperties.length; i++) {
@@ -1119,6 +1010,11 @@ var IncomingOutgoingLinksDialog = (function() {
     					return;
     				}
     			}
+    		} else {
+    			window.setTimeout(function() {
+    				setSelectedProperty(id);
+    			}, 100);
+    			return;
     		}
     	}
     	
@@ -1149,186 +1045,57 @@ var IncomingOutgoingLinksDialog = (function() {
     	}
     	
     	function getExistingClassNodes() {
-    		var info = new Object();
-    	    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    	    info["command"] = "GetInternalNodesListOfAlignmentCommand";
-    	    info["alignmentId"] = alignmentId;
-    	    info["nodesRange"] = "existingTreeNodes"; //allGraphNodes";
-    	    var result = [];
-    	    var returned = $.ajax({
-    	        url: "RequestController",
-    	        type: "POST",
-    	        data : info,
-    	        dataType : "json",
-    	        async : false,
-    	        complete :
-    	            function (xhr, textStatus) {
-    	                var json = $.parseJSON(xhr.responseText);
-    	                result = parseClassList(json, true);
-    	                selectedClasses = result;
-    	            },
-    	        error :
-    	            function (xhr, textStatus) {
-    	                alert("Error occured while getting nodes list!");
-    	            }
-    	    });
-    	    return result;
+    		var classes = getClassesInModel(alignmentId);
+        	var result = [];
+	       	 $.each(classes, function(index, clazz){
+	       		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+	       	 });
+	       	selectedClasses = result;
+	       	return result;
     	}
     	
     	
     	function getAllClassNodes() {
-    		var info = new Object();
-    	    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    	    info["command"] = "GetInternalNodesListOfAlignmentCommand";
-    	    info["alignmentId"] = alignmentId;
-    	    
-            info["nodesRange"] = "allGraphNodes";
-            var result = [];
-            $.ajax({
-            	url: "RequestController",
-            	type: "POST",
-            	data: info,
-            	dataType: "json",
-            	async : false,
-            	complete: 
-            		function(xhr, textStatus) {
-            			var json = $.parseJSON(xhr.responseText);
-            			result = parseClassList(json, true);
-            			allClasses = result;
-            		},
-            	error:
-            		function(xhr, textStatus) {
-            			alert("Error occured while getting nodes list!");
-            		}
-            });
-            return result;
+    		var classes = getAllClasses(worksheetId);
+        	var result = [];
+	       	 $.each(classes, function(index, clazz){
+	       		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+	       	 });
+	       	allClasses = result;
+	       	return result;
     	}
     	
-    	function parseClassList(json, sortNodes) {
-    		var nodes = [];
-    		$.each(json["elements"], function(index, element) {
-    	        if(element["updateType"] == "InternalNodesList") {
-    	            if(sortNodes) {
-    		        	element["nodes"].sort(function(a,b) {
-    		        		var label1 = a["nodeLabel"];
-        	            	if(label1.indexOf(":") == -1)
-        	            		label1 = a["nodeUri"] + "/" + label1;
-        	            	var label2 = b["nodeLabel"];
-        	            	if(label2.indexOf(":") == -1)
-        	            		label2 = b["nodeUri"] + "/" + label2;
-        	            	
-    		                return label1.toUpperCase().localeCompare(label2.toUpperCase());
-    		            });
-    	            }
-    	            
-    	            $.each(element["nodes"], function(index2, node) {
-    	            	var label = node["nodeLabel"];
-    	            	if(label.indexOf(":") == -1)
-    	            		label = node["nodeUri"] + "/" + label;
-    	            	var nodeData = ClassUI.getNodeObject(label, node["nodeId"], node["nodeUri"]);
-    	            	nodes.push(nodeData);
-    	            });
-    	        }
-    	    });
-    		return nodes;
-    	}
-    	
-    	
-    	function getAllProperties() {
-    		var info = new Object();
-    	    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    	    info["command"] = "GetDataPropertyHierarchyCommand";
-    	    
-    	    var result = [];
-    	    var returned = $.ajax({
-    	        url: "RequestController",
-    	        type: "POST",
-    	        data : info,
-    	        dataType : "json",
-    	        async: false,
-    	        complete :
-    	            function (xhr, textStatus) {
-    	                var json = $.parseJSON(xhr.responseText);
-    	                result = parseDataPropertyList(json, true);
-    	                allProperties = result;
-    	            },
-    	        error :
-    	            function (xhr, textStatus) {
-    	                alert("Error occured while getting property list!");
-    	            }
-    	    });
-    	    return result;
+    	function getProperties() {
+    		var props = getAllProperties(worksheetId);
+        	var result = [];
+	       	 $.each(props, function(index, prop){
+	       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
+	       	 });
+	       	allProperties = result;
+	       	return result;
     	}
     	
     	function getPropertyForClass(selectedClass) {
-    		var info = new Object();
-    	    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    	    info["command"] = "GetLinksOfAlignmentCommand";
-    	    info["alignmentId"] = alignmentId;
+    		var domain, range;
     	    var startNodeClass = columnDomain;
     	    
-    	    info["linksRange"] = "linksWithDomainAndRange";
     	    if(linkType == "incoming" || linkType == "changeIncoming" || linkType == "changeLink") {
-    	    	info["domain"] = selectedClass.uri;
-    	    	info["range"] = startNodeClass;
-    	    } else if(linkType == "outgoing" || linkType == "changeOutgoing") {
-    	    	info["domain"] = startNodeClass;
-    	    	info["range"] = selectedClass.uri;
+    	    	domain = selectedClass.uri;
+    	    	range = startNodeClass;
+    	    } else { //if(linkType == "outgoing" || linkType == "changeOutgoing") {
+    	    	domain = startNodeClass;
+    	    	range = selectedClass.uri;
     	    }
+    	    
+    	    var props = getAllPropertiesForDomainRange(alignmentId, domain, range);
     	    var result = [];
-    	    var returned = $.ajax({
-    	        url: "RequestController",
-    	        type: "POST",
-    	        data : info,
-    	        dataType : "json",
-    	        async: false,
-    	        complete :
-    	            function (xhr, textStatus) {
-    	                var json = $.parseJSON(xhr.responseText);
-    	                result = parseDataPropertyList(json, true);
-    	                selectedProperties = result;
-    	            },
-    	        error :
-    	            function (xhr, textStatus) {
-    	                alert("Error occured while getting property list!");
-    	            }
-    	    });
-    	    return result;
+	       	 $.each(props, function(index, prop){
+	       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
+	       	 });
+	       	selectedProperties = result;
+	       	return result;
     	}
     	
-    	function parseDataPropertyList(json, sortNodes) {
-    		var nodes = [];
-    		$.each(json["elements"], function(index, element) {
-    	        if(element["updateType"] == "DataPropertyListUpdate" || element["updateType"] == "DataPropertiesForClassUpdate") {
-    	            if(sortNodes) {
-    		        	element["data"].sort(function(a,b) {
-    		                return a["data"].toUpperCase().localeCompare(b["data"].toUpperCase());
-    		            });
-    	            }
-    	            
-    	            $.each(element["data"], function(index2, node) {
-    	            	var label = node.data;
-    	            	var uri = node.metadata.URIorId;
-    	            	var p = PropertyUI.getNodeObject(label, uri, uri);
-    	            	nodes.push(p);
-    	            });
-    	        } else if(element["updateType"] == "LinksList") {
-    	        	 if(sortNodes) {
-    	 	        	element["edges"].sort(function(a,b) {
-    	 	                return a["edgeLabel"].toUpperCase().localeCompare(b["edgeLabel"].toUpperCase());
-    	 	            });
-    	             }
-    	             
-    	             $.each(element["edges"], function(index2, node) {
-    	            	 var p = PropertyUI.getNodeObject(node["edgeLabel"], 
-    	            			 node["edgeId"], node["edgeId"]);
-    	             	 nodes.push(p);
-    	                 
-    	             });
-    	        }
-    	    });
-    		return nodes;
-    	}
 
 		function hideError() {
 			$("div.error", dialog).hide();
