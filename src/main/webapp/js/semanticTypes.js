@@ -860,23 +860,25 @@ var IncomingOutgoingLinksDialog = (function() {
                 	propertyUI.generateJS(propertyDiv, true);
                 } else if(linkType == "changeLink") {
                 	$("#incomingOutgoingLinksDialog_title", dialog).text("Change link");
-                	var classDiv1 = $("<div>").addClass("col-sm-4");
-                	row.append(classDiv1);
-                	fromClassUI.setDefaultClass(selectedFromClass.label, selectedFromClass.id, selectedFromClass.uri);
-                	fromClassUI.setSelectedProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
-                	fromClassUI.generateJS(classDiv1, true);
+                	getAllClassNodes();
+                	getExistingClassNodes();
+//                	var classDiv1 = $("<div>").addClass("col-sm-4");
+//                	row.append(classDiv1);
+//                	fromClassUI.setDefaultClass(selectedFromClass.label, selectedFromClass.id, selectedFromClass.uri);
+//                	fromClassUI.setSelectedProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
+//                	fromClassUI.generateJS(classDiv1, true);
                 	
-                	var propertyDiv = $("<div>").addClass("col-sm-4");
+                	var propertyDiv = $("<div>").addClass("col-sm-12");
                 	row.append(propertyDiv);
                 	propertyUI.setDefaultProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
                 	propertyUI.setSelectedClass(selectedFromClass.label, selectedFromClass.id, selectedFromClass.uri);
                 	propertyUI.generateJS(propertyDiv, true);
                 	
-                	var classDiv2 = $("<div>").addClass("col-sm-4");
-                	row.append(classDiv2);
-                	toClassUI.setDefaultClass(selectedToClass.label, selectedToClass.id, selectedToClass.uri);
-                	toClassUI.setSelectedProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
-                	toClassUI.generateJS(classDiv2, true);
+//                	var classDiv2 = $("<div>").addClass("col-sm-4");
+//                	row.append(classDiv2);
+//                	toClassUI.setDefaultClass(selectedToClass.label, selectedToClass.id, selectedToClass.uri);
+//                	toClassUI.setSelectedProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
+//                	toClassUI.generateJS(classDiv2, true);
                 }
             });
             
