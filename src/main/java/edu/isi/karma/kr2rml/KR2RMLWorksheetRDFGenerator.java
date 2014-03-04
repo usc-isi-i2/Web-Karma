@@ -579,6 +579,7 @@ public class KR2RMLWorksheetRDFGenerator {
 			
 		
 			List<HNodePath> subjectMapTemplateColumnPaths = new LinkedList<HNodePath>();
+			Map<ColumnTemplateTerm, HNodePath> subjectTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
 			SubjectMap subjMap = triplesMap.getSubject();
 			TemplateTermSet subjMapTemplate = null;
 			TemplateTermSetPopulator subjectMapTTSPopulator = null;
@@ -593,12 +594,12 @@ public class KR2RMLWorksheetRDFGenerator {
 			
 			for(ColumnTemplateTerm term : subjMapTemplate.getAllColumnNameTermElements())
 			{
-				subjectMapTemplateColumnPaths.add(factory.getHNode(translator.getHNodeIdForColumnName(term.getTemplateTermValue())).getHNodePath(factory));
+				HNodePath path = factory.getHNode(translator.getHNodeIdForColumnName(term.getTemplateTermValue())).getHNodePath(factory);
+				subjectMapTemplateColumnPaths.add(path);
+				subjectTermsToPaths.put(term, path);
 			}
 			
-			Map<ColumnTemplateTerm, Collection<Node>> subjectTemplateColumnsToNodes = gatherNodesForPopulatingSubjectMapTemplates(subjMapTemplate);
-			
-			subjects.addAll(subjectMapTTSPopulator.generatePopulatedTemplates(subjectTemplateColumnsToNodes));
+			subjects.addAll(subjectMapTTSPopulator.populate(r, subjectTermsToPaths));
 			
 			// Generate triples for specifying the types
 			for (TemplateTermSet typeTerm:subjMap.getRdfsType()) {

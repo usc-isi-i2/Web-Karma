@@ -105,6 +105,7 @@ public class TestJSONDagRDFGenerator {
 
 			rdfGen.generateRDF("menu-model", jsonData, false, pw);
 			String rdf = sw.toString();
+			System.out.println(rdf);
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("\n");
 			int count = lines.length + 1;

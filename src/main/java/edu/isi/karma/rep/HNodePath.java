@@ -86,6 +86,10 @@ public class HNodePath {
 		return new HNodePath(hNodes.subList(1, hNodes.size()));
 	}
 
+	public boolean contains(HNode hNode)
+	{
+		return hNodes.contains(hNode);
+	}
 	public String toString() {
 		StringBuffer b = new StringBuffer();
 		Iterator<HNode> it = hNodes.iterator();
