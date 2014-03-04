@@ -267,7 +267,11 @@ var DatabaseImportDialog = (function() {
     					if(flag != -1) {
     						parse(json);
     	    				alert("Table imported in the workspace!");
-    	    	    		showDialogToLoadModel();
+    	    				var lastWorksheetLoaded = $("div.Worksheet").last();
+	    		        	if(lastWorksheetLoaded) {
+	    		        		var lastWorksheetId = lastWorksheetLoaded.attr("id");
+	    		        		ShowExistingModelDialog.getInstance().showIfNeeded(lastWorksheetId);
+	    		        	}
     					}
     	    			
     			   	},

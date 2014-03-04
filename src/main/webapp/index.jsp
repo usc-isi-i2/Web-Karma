@@ -39,6 +39,7 @@ and related projects, please see: http://www.isi.edu/integration
        
         <link rel="stylesheet" type="text/css" href="./uiLibs/twitterBootstrap/css/bootstrap.min.css" media="screen">
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery-ui-themes/smoothness/jquery-ui.min.css" />
+        <link rel="stylesheet" type="text/css" href="./uiLibs/bootstrap3-editable/css/bootstrap-editable.css" />
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery.fileupload.css" />
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery.fileupload-ui.css" />
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery.qtip.min.css" />
@@ -106,6 +107,11 @@ and related projects, please see: http://www.isi.edu/integration
 			.contextMenu {
 			  position: absolute;
 			  display:none;
+			}
+			
+			/* Override for showing a dashed line below editable items */
+			.editable-click, a.editable-click, a.editable-click:hover {
+				border-bottom: 0px;
 			}
 		</style>
 	</head>
@@ -178,47 +184,30 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="tableColumnDialogs.jsp"></jsp:include>
 			  <jsp:include page="tableOptionsDialogs.jsp"></jsp:include>
 			  <jsp:include page="semanticTypes.jsp"></jsp:include>
+			  <jsp:include page="showModel.jsp"></jsp:include>
+			  
+			  
+			  <div class="modal fade" id="rdfGenerationErrorWindow" tabindex="-1">
+			  	<div class="modal-dialog">
+			  		<form class="bs-example bs-example-form" role="form">
+						<div class="modal-content">
+						     <div class="modal-header">
+							      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							       <h4 class="modal-title">RDF Generation Error Report</h4>
+							  </div>
+							  <div class="modal-body">
+								<div id="errrorText">&nbsp;</div>
+							  </div> <!-- /.modal-body -->
+						</div><!-- /.modal-content -->
+					</form>
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+
 		</div>
-
-        <div id="tableCellToolBarMenu" class="ui-corner-all" style="display: none">
-            <button id="editCellButton">
-                Edit
-            </button>
-            <button id="expandValueButton">
-                Expand
-            </button>
-        </div>
-        <div id="ExpandCellValueDialog" title="Cell Value" style="display: none">
-            <div id="cellExpandedValueDiv">
-                <span class="mediumSizedFont">Cell Value:</span>
-                <br />
-                <div id="cellExpandedValue"></div>
-            </div>
-            <br />
-            <div id="RDFValueDiv">
-                <span class="mediumSizedFont">RDF triples:</span>
-                <br />
-                <div id="rdfValue"></div>
-            </div>
-        </div>
-
-        
-        <div id="tableCellEditDiv" style="display: none"></div>
-        <div id="r2rmlModelNameDiv" style="display: none"> <textarea id="txtR2RMLModelName" style="width: 100%"> </textarea> </div>
-        
+ 
         <div id="ScrollHeadersPlaceholder"></div>
-       <div id="OntologyAlternativeLinksPanel" style="display: none">
-            <span class="smallSizedFont">Choose parent relationship:</span>
-            <br />
-            <input type="textarea" id="alternativeParentsTableFilter" class="DatabaseImportOption dbTableColumn" size="30"/>
-            <br />
-            <table id="AlternativeParentLinksTable"></table>
-        </div>
+       
         
-        <div id="tableCellMenuButtonDiv" style="display: none"></div>
-        <div id="columnHeadingMenuButtonDiv" style="display: none"></div>
-      
-
         <div id="drawBigChartId" style="display: none">
             <div id="bigChartTitle" ></div>
         </div>
@@ -242,80 +231,7 @@ and related projects, please see: http://www.isi.edu/integration
                 </tr>
             </table>
         </div>
-         
-        <div id="chooseNodeDialog" style="display: none">
-            <div id="entitiesFacetPanel" class="smallSizedFont">
-                Show
-                <input type="radio" name="chooseNodeGroup" value="existingNodes" id="chooseExistingNodes" checked>
-                <label for="chooseExistingNodes">Nodes in model</label>
-                <!--<input type="radio" name="chooseNodeGroup" value="domains" id="chooseDomain" disabled>-->
-                <!--<label for="chooseDomain">Domains of property</label><br>-->
-                <input type="radio" name="chooseNodeGroup" value="allNodes" id="chooseAllNodes">
-                <label for="chooseAllNodes">All nodes</label><br><br>
 
-                <span class="error" style="display: none">Please select a value!</span>
-            </div>
-            <label class="smallSizedFont">Search: </label><input type="text" id="nodesTableFilter" class="smallSizedFont" size="25"/><br>
-            <div id="entitiesListPanel" class="chooseNodeLinkPanel smallSizedFont">
-                <table id="nodesList">
-
-                </table>
-            </div>
-        </div>
-        <div id="chooseLinkDialog" style="display: none">
-            <div id="linksFacetPanel" class="smallSizedFont">
-                <input type="radio" name="chooseLinkGroup" value="existingLinks" id="chooseExistingLinks" disabled>
-                <label for="chooseExistingLinks">Compatible links</label>
-                <!--<input type="radio" name="chooseLinkGroup" value="domains" id="choosePropertyWithDomainAndRange" disabled>-->
-                <!--<label for="choosePropertyWithDomainAndRange">Property that links</label><br>-->
-                <input type="radio" name="chooseLinkGroup" value="allLinks" id="chooseAllLinks" checked>
-                <label for="chooseAllLinks">All possible links</label><br><br>
-
-                <span class="error" style="display: none">Please select a value!</span>
-            </div>
-            <label class="smallSizedFont">Search: </label><input type="text" id="linksTableFilter" class="smallSizedFont" size="25"/><br>
-            <div id="linksListPanel" class="chooseNodeLinkPanel smallSizedFont">
-                <table id="linksList">
-
-                </table>
-            </div>
-        </div>
-
-        <div id="rdfGenerationErrorWindow" style="display: none" class="smallSizedFont"></div>
-        <div id="alternativeLinkDialog" style="display: none" class="smallSizedFont">
-            <input type="radio" name="chooseLinkGroup" value="compatibleLinks" id="showCompatibleLinks">
-            <label for="showCompatibleLinks">Compatible links</label>
-            <input type="radio" name="chooseLinkGroup" value="allObjectProperties" id="showAllAlternativeLinks" checked>
-            <label for="showAllAlternativeLinks">All links</label><br><br>
-            <label class="smallSizedFont">Search: </label><input type="text" id="alternateLinksTableFilter" class="smallSizedFont" size="25"/><br>
-            <span class="error" style="display: none">Please select a value!</span><br>
-            <table id="alternativeLinksList">
-
-            </table>
-        </div>
-        
-        <div id="showExistingModelDialog" style="display: none" class="smallSizedFont">
-            <input type="radio" name="chooseModelGroup" value="matchingModels" id="chooseMatchingModels">
-            <label for="chooseMatchingModels">Matching source name</label>
-            <!--<input type="radio" name="chooseLinkGroup" value="domains" id="choosePropertyWithDomainAndRange" disabled>-->
-            <!--<label for="choosePropertyWithDomainAndRange">Property that links</label><br>-->
-            <input type="radio" name="chooseModelGroup" value="allModels" id="chooseAllModels" checked>
-            <label for="chooseAllModels">All models</label><br><br>
-
-            <div class="error" style="display: none">
-                <span class="error">Please select a model!</span>
-            </div>
-            <div class="italic noItems" style="display: none">
-                <span>none</span>
-            </div>
-
-            <div id="modelsListPanel" class="smallSizedFont">
-                <table id="modelsList">
-
-                </table>
-            </div>
-        </div>
-       
         
         <!--  Load all scripts last for faster page load -->
         
@@ -324,6 +240,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="uiLibs/jquery/js/jquery-ui-1.10.3.custom.min.js"></script>
 		<script type="text/javascript" src="uiLibs/twitterBootstrap/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="uiLibs/twitterBootstrap/js/bootstrap3-typeahead.min.js"></script>
+		<script type="text/javascript" src="uiLibs/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 		
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.tmpl.min.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.hoverIntent.js"></script>
@@ -332,7 +249,7 @@ and related projects, please see: http://www.isi.edu/integration
         <!-- 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script> -->
         <script type="text/javascript" src="https://www.google.com/jsapi?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script>
         <script type="text/javascript" src="uiLibs/sticky/js/sticky.min.js"></script>
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery.jeditable.js"></script>
+
         <script type="text/javascript" src="uiLibs/json/js/json2.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.cookie.js"></script>
         <script type="text/javascript" src="uiLibs/d3/js/d3.v2.min.js"></script>
@@ -376,17 +293,6 @@ and related projects, please see: http://www.isi.edu/integration
          
         <script>
             $(function() {
-				
-                // Assign style and handlers to table cell menu
-                styleAndAssignHandlersToTableCellMenu();
-               
-               // Assign style and handler to the merge button
-                styleAndAssignHandlersToMergeButton();
-
-                // Assign style and handler to select model for worksheet dialog (in showModel.js)
-                styleAndAssignHandlersToApplyModelDialog();
-
-               
                 // Clear the workspace when closing the window
                 $(window).bind("beforeunload", function() {
                     var info = new Object();
@@ -428,6 +334,15 @@ and related projects, please see: http://www.isi.edu/integration
 					}
 				});
                 $('#sparql_end_point_link').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/');
+                
+                $('body').delegate('.smallChart', 'click', function() {
+                    var pid = $(this).parent().attr('id');
+                    //console.log(pid);
+                    var chartTitle = drawBigChart(pid);
+                    var dialogBox = $("div#drawBigChartId");
+                    dialogBox.dialog({width: 550, title: chartTitle
+                        , buttons: { "Close": function() { $(this).dialog("close"); } }})
+                });
 			});
 		</script>
 		<script type="text/javascript">
