@@ -89,3 +89,6 @@ function getParamObject(name, value, type) {
 
 //Make All Modal Dialogs Resizeable
 $(".modal-dialog").resizable({ handles: "e, w" });
+$(".modal-dialog").draggable({
+    handle: ".modal-header"
+}); 

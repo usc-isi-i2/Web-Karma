@@ -266,6 +266,8 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .data(json.links)
         .enter().append("text")
         .text(function(d) {
+        	if(d.label == "classLink")
+        		return "uri";
             return d.label;
         })
         .attr("class", function(d) {
