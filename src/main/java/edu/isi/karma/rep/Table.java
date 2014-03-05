@@ -164,20 +164,22 @@ public class Table extends RepEntity {
 	 * @param nodes
 	 *            Collection of nodes that satisfy the path
 	 */
-	public void collectNodes(HNodePath path, Collection<Node> nodes) {
+	public boolean collectNodes(HNodePath path, Collection<Node> nodes) {
 		if (nodes == null) {
 			nodes = new ArrayList<Node>();
 		}
-		collectNodes(path, nodes, rows);
+		return collectNodes(path, nodes, rows);
 	}
 
-	private void collectNodes(HNodePath path, Collection<Node> nodes,
+	private boolean collectNodes(HNodePath path, Collection<Node> nodes,
 			List<Row> rows) {
+		boolean result = false;
 		for (Row r : rows) {
 			
-			r.collectNodes(path, nodes);
+			result |= r.collectNodes(path, nodes);
 
 		}
+		return result;
 	}
 
 	public void setCollectedNodeValues(HNodePath path, List<String> nodes,

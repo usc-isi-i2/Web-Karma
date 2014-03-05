@@ -4,8 +4,12 @@ import edu.isi.karma.rep.HNodePath;
 
 public class CommonParentRowColumnAffinity implements ColumnAffinity {
 
+	public static final ColumnAffinity INSTANCE = new CommonParentRowColumnAffinity();
 	private int distanceToParent;
-	
+	private CommonParentRowColumnAffinity()
+	{
+		
+	}
 	private CommonParentRowColumnAffinity(HNodePath a, HNodePath b)
 	{
 		distanceToParent = a.length() - HNodePath.findCommon(a, b).length();
@@ -45,5 +49,6 @@ public class CommonParentRowColumnAffinity implements ColumnAffinity {
 	{
 		return distanceToParent;
 	}
+	
 	
 }

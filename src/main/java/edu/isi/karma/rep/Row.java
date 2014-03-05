@@ -253,30 +253,44 @@ public class Row extends RepEntity implements Neighbor {
 		return null;
 	}
 
-	public void collectNodes(HNodePath path, Collection<Node> nodes) {
+	public boolean collectNodes(HNodePath path, Collection<Node> nodes) {
 		Node n = getNode(path.getFirst().getId());
 		if (n == null) {
-			return;
+			return false;
 		}
 		// Check if the path has only one HNode
 		if (path.getRest() == null || path.getRest().isEmpty()) {
 			nodes.add(n);
-			return;
+			return true;
 		}
 
 		// Check if the node has a nested table
+		HNodePath rest = path.getRest();
 		if (n.hasNestedTable()) {
 			int numRows = n.getNestedTable().getNumRows();
-			if (numRows == 0)
-				return;
-
-			List<Row> rowsNestedTable = n.getNestedTable().getRows(0,
-					numRows);
-			if (rowsNestedTable != null && rowsNestedTable.size() != 0) {
-				n.getNestedTable().collectNodes(path.getRest(), nodes);
-				return;
+			if (numRows != 0)
+			{
+				List<Row> rowsNestedTable = n.getNestedTable().getRows(0,
+						numRows);
+				if (rowsNestedTable != null && rowsNestedTable.size() != 0) {
+					
+					if(n.getNestedTable().getRows(0, 1).get(0).getNode(rest.getFirst().getId()) != null)
+					{
+						return n.getNestedTable().collectNodes(path.getRest(), nodes);
+					}
+				}
 			}
 		}
+		if(n.getBelongsToRow().getNode(rest.getFirst().getId()) != null)
+		{
+			return n.getBelongsToRow().collectNodes(rest, nodes);
+		}
+		
+		if(n.getBelongsToRow().getBelongsToTable().getNestedTableInNode() != null)
+		{
+			return n.getBelongsToRow().getBelongsToTable().getNestedTableInNode().getBelongsToRow().collectNodes(rest, nodes);
+		}
+		return false;
 		
 	}
 }

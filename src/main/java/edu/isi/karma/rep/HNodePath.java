@@ -26,6 +26,7 @@ package edu.isi.karma.rep;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * @author szekely
@@ -86,6 +87,16 @@ public class HNodePath {
 		return new HNodePath(hNodes.subList(1, hNodes.size()));
 	}
 
+	public HNodePath reverse() {
+		HNodePath reversedPath = new HNodePath();
+		ListIterator<HNode> pathIterator = hNodes.listIterator(hNodes.size());
+		
+		while(pathIterator.hasPrevious())
+		{
+			reversedPath.addHNode(pathIterator.previous());
+		}
+		return reversedPath;
+	}
 	public boolean contains(HNode hNode)
 	{
 		return hNodes.contains(hNode);
@@ -169,6 +180,46 @@ public class HNodePath {
 			path2Temp = path2Temp.getRest();
 		}
 		return path1Temp;
+	}
+	
+	public static HNodePath findPathBetweenLeavesWithCommonHead(HNodePath start, HNodePath finish)
+	{
+		HNodePath newPath = new HNodePath();
+		HNodePath commonPath = findCommon(start, finish);
+		if(commonPath.isEmpty())
+		{
+			//TODO throw an error?
+			return newPath;
+		}
+		else
+		{
+
+
+			HNodePath truncatedStartPath = removeCommon(start, commonPath);
+			HNodePath truncatedFinishPath = removeCommon(finish, commonPath);
+			//TODO one path is nested on the other
+			if(commonPath.getLeaf() == start.getLeaf() || commonPath.getLeaf() == finish.getLeaf())
+			{
+
+				if(truncatedStartPath.isEmpty())
+				{
+					newPath.addHNode(start.getLeaf());
+					newPath.addHNodePath(truncatedFinishPath);
+				}
+				else
+				{
+					newPath.addHNode(finish.getLeaf());
+					newPath.addHNodePath(truncatedStartPath.reverse());
+				}
+			}
+			else
+			{
+				newPath.addHNodePath(truncatedStartPath.reverse());
+				//newPath.addHNode(commonPath.getLeaf());
+				newPath.addHNodePath(truncatedFinishPath);
+			}
+		}
+		return newPath;
 	}
 	public int length()
 	{

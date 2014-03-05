@@ -14,12 +14,7 @@ public class DynamicTemplateTermSetPopulatorStrategy implements
 	public DynamicTemplateTermSetPopulatorStrategy(HNodePath targetPath, HNodePath parentPath)
 	{
 		relativePath = new HNodePath();
-		//
-		if(targetPath.contains(parentPath.getLeaf()))
-		{
-			relativePath.addHNode(parentPath.getLeaf());
-		}
-		relativePath.addHNodePath(HNodePath.removeCommon(targetPath, parentPath));
+		relativePath = HNodePath.findPathBetweenLeavesWithCommonHead(parentPath, targetPath);
 		
 	}
 	@Override

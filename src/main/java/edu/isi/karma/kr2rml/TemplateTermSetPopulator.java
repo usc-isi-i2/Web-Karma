@@ -104,6 +104,12 @@ public class TemplateTermSetPopulator {
 				if(dependentOnWorker != null)
 				{
 					TemplateTermSetPopulatorWorker worker = new TemplateTermSetPopulatorWorker(currentTerm,termToPath.get(currentTerm), new DynamicTemplateTermSetPopulatorStrategy(termToPath.get(currentTerm), dependentOnWorker.path));
+					if(workerDependencyPlaceholder.containsKey(currentTerm))
+					{
+						for(TemplateTermSetPopulatorWorker dependentWorker : workerDependencyPlaceholder.get(currentTerm)){
+							worker.addDependentWorker(dependentWorker);
+						}
+					}
 					dependentOnWorker.addDependentWorker(worker);
 					workers.put(currentTerm, worker);
 				}
@@ -113,8 +119,14 @@ public class TemplateTermSetPopulator {
 					{
 						workerDependencyPlaceholder.put(dependentTerm, new LinkedList<TemplateTermSetPopulatorWorker>());
 					}
-					List<TemplateTermSetPopulatorWorker> dependencyPlaceholder = workerDependencyPlaceholder.get(dependentTerm);
 					TemplateTermSetPopulatorWorker worker = new TemplateTermSetPopulatorWorker(currentTerm,termToPath.get(currentTerm), new DynamicTemplateTermSetPopulatorStrategy(termToPath.get(currentTerm), termToPath.get(dependentTerm)));
+					if(workerDependencyPlaceholder.containsKey(currentTerm))
+					{
+						for(TemplateTermSetPopulatorWorker dependentWorker : workerDependencyPlaceholder.get(currentTerm)){
+							worker.addDependentWorker(dependentWorker);
+						}
+					}
+					List<TemplateTermSetPopulatorWorker> dependencyPlaceholder = workerDependencyPlaceholder.get(dependentTerm);
 					dependencyPlaceholder.add(worker);
 					workers.put(currentTerm, worker);
 				}
@@ -150,6 +162,7 @@ public class TemplateTermSetPopulator {
 		affinities = new LinkedList<ColumnAffinity>();
 		affinities.add(RowColumnAffinity.INSTANCE);
 		affinities.add(ParentRowColumnAffinity.INSTANCE);
+		affinities.add(CommonParentRowColumnAffinity.INSTANCE);
 	}
 	private ColumnAffinity findAffinity(ColumnTemplateTerm currentTerm,
 			ColumnTemplateTerm comparisonTerm, Map<ColumnTemplateTerm, HNodePath> termToPath) {
@@ -182,11 +195,17 @@ public class TemplateTermSetPopulator {
 		{
 			StringBuilder uri = new StringBuilder();
 			List<Node> references = new LinkedList<Node>();
+			boolean termsSatisifed = true;
 			for(TemplateTerm term : terms)
 			{
 				if(term instanceof ColumnTemplateTerm)
 				{
 					Node n = partial.getValue((ColumnTemplateTerm)term);
+					if(n == null)
+					{
+						termsSatisifed = false;
+						break;
+					}
 					references.add(n);
 					if(useNodeValue)
 					{
@@ -203,12 +222,15 @@ public class TemplateTermSetPopulator {
 					uri.append(term.getTemplateTermValue());
 				}
 			}
+			if(termsSatisifed)
+			{
 			String value = uri.toString();
 			if(URIify)
 			{
 				value = formatter.getExpandedAndNormalizedUri(value);
 			}
 			templates.add(new PopulatedTemplateTermSet(originalTerms, references, value));
+			}
 			
 		}
 		return templates;
