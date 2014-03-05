@@ -65,12 +65,12 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 
 	@Override
 	public String getTitle() {
-		return "Apply History";
+		return "Apply R2RML Model";
 	}
 
 	@Override
 	public String getDescription() {
-		return null;
+		return r2rmlModelFile.getName();
 	}
 
 	@Override
