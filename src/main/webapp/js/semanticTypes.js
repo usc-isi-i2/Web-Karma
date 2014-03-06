@@ -802,7 +802,7 @@ var SetSemanticTypeDialog = (function() {
         	worksheetId = wsId;
         	columnId = colId;
         	columnTitle = colTitle;
-        	dialog.modal({keyboard:true, show:true});
+        	dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
         
         
@@ -1264,7 +1264,7 @@ var IncomingOutgoingLinksDialog = (function() {
         	columnDomain = colDomain;
         	
         	linkType = type;
-        	dialog.modal({keyboard:true, show:true});
+        	dialog.modal({keyboard:true, show:true, backdrop:'static'});
         	
         	if(type == "changeIncoming" || type == "changeOutgoing" || type == "changeLink") {
         		changeFromNode = changeFrom;

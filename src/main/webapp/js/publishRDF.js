@@ -353,7 +353,7 @@ var PublishRDFDialog = (function() {
         
         function show(wsId) {
         	worksheetId = wsId;
-        	dialog.modal({keyboard:true, show:true});
+        	dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
         
         

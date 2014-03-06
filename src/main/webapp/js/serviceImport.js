@@ -115,7 +115,7 @@ var ImportFromServiceDialog = (function() {
     	}
     	
     	function show(data) {
-             dialog.modal({keyboard:true, show:true});
+             dialog.modal({keyboard:true, show:true, backdrop:'static'});
          };
          
          

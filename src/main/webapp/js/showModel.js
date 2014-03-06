@@ -129,7 +129,7 @@ var ShowExistingModelDialog = (function() {
 		                            // Create new model by default if no model exists in the triple store
 		                            createNewModelForWorksheet();
 		                        } else {
-		                        	dialog.modal({keyboard:true, show:true});
+		                        	dialog.modal({keyboard:true, show:true, backdrop:'static'});
 		                            // Show a dialog box to ask user for applying an existing model
 		                            $.each(modelsList, function(index, model) {
 		                                var trTag = $("<tr>");

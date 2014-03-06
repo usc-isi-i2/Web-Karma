@@ -382,7 +382,7 @@ var TransformColumnDialog = (function() {
         function show(wsId, colId) {
         	worksheetId = wsId;
         	columnId = colId;
-            dialog.modal({keyboard:true, show:true});
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
         
         

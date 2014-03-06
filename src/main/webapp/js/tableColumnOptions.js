@@ -319,7 +319,7 @@ var AddColumnDialog = (function() {
         function show(wsId, colId) {
         	worksheetId = wsId;
         	columnId = colId;
-            dialog.modal({keyboard:true, show:true});
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
         
         
@@ -432,7 +432,7 @@ var RenameColumnDialog = (function() {
         function show(wsId, colId) {
         	worksheetId = wsId;
         	columnId = colId;
-            dialog.modal({keyboard:true, show:true});
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
         
         
@@ -544,7 +544,7 @@ var SplitColumnDialog = (function() {
         function show(wsId, colId) {
         	worksheetId = wsId;
         	columnId = colId;
-            dialog.modal({keyboard:true, show:true});
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
         
         
@@ -809,7 +809,7 @@ var PyTransformDialog = (function() {
         	worksheetId = wsId;
         	columnId = colId;
         	columnName = colName;
-            dialog.modal({keyboard:true, show:true});
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
         
         
