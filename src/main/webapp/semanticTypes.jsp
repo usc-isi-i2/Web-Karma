@@ -28,7 +28,6 @@
 			  		
 			  		
 			  		<button type="button" id="addType" class="btn btn-default">Add synonym Semantic Type</button>
-			  		
 			        
                 	<div class="checkbox">
 					  <label>
@@ -51,14 +50,6 @@
 					<div class="row">
 						<div id="semanticTypesAdvacedOptionsDiv" style="display: none; padding-top:10px" class="col-sm-12">
 							<div class="input-group form-group">
-						       <span class="input-group-addon">
-						          <input type="checkbox" id="isUriOfClass">
-						       </span>
-							   <span class="input-group-addon">contains URI for node</span>
-						      <input type="text" class="form-control" id="isUriOfClassTextBox" autocomplete="off">
-						    </div><!-- /input-group -->
-	    
-	    					<div class="input-group form-group">
 						       <span class="input-group-addon">
 						          <input type="checkbox" id="isSubclassOfClass">
 						       </span>
