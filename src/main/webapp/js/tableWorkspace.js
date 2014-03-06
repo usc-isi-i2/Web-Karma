@@ -215,9 +215,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
             //console.log(a.length);
             for (var i = 0; i < a.length; i++) {
                 var name = $("div", a[i]);
-                $('<label />', {text: name.html()}).appendTo($('div#foldDialog'));
-                $('<input />', { type: 'checkbox', id: 'selectcolumns', value: element.cells[i].id }).appendTo($('div#foldDialog'));
-                $("</br>").appendTo($('div#foldDialog'));
+                if (name.html().indexOf("td") == -1) {
+                    $('<label />', {text: name.html()}).appendTo($('div#foldDialog'));
+                    $('<input />', { type: 'checkbox', id: 'selectcolumns', value: element.cells[i].id }).appendTo($('div#foldDialog'));
+                    $("</br>").appendTo($('div#foldDialog'));
+                }
             }
         });
          $('div#foldDialog').dialog({width: 540, height: 460, title:"Fold", resizable:true
