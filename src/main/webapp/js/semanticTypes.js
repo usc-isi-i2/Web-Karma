@@ -41,8 +41,7 @@ var SetSemanticTypeDialog = (function() {
 			        // Take care of the special meta properties that are set through the advanced options
 			    	if (type["isMetaProperty"]) {
 			    		if (type["DisplayLabel"] == "km-dev:classLink") {
-			    			$("#isUriOfClass").prop('checked', true);
-			    			$("#isUriOfClassTextBox").val(type["DisplayDomainLabel"]);
+			    			addUriSemanticType(type["DisplayDomainLabel"], type["Domain"]);
 			    		} else if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
 			    			$("#isSubclassOfClass").prop('checked', true);
 			    			$("#isSubclassOfClassTextBox").val(type["DisplayDomainLabel"]);
@@ -60,6 +59,8 @@ var SetSemanticTypeDialog = (function() {
 			            addSemTypeObjectToCurrentTable(type, false, true);
 			        });
 			    }
+			    
+			    addEmptyUriSemanticType();
 			    
 			    // Get the whole list of classes and properties from the server for autocompletion
 			    var info = new Object();
@@ -121,7 +122,7 @@ var SetSemanticTypeDialog = (function() {
 				var propertyArray = getPropertyLabels();
 				
 				$('.typeahead').typeahead('destroy');
-				$("input#isUriOfClassTextBox", dialog).typeahead({ source:classArray});
+				
 				$("input#isSubclassOfClassTextBox", dialog).typeahead({ source:classArray});
 				$("input#isSpecializationForEdgeTextBox", dialog).typeahead({ source:propertyArray});
 			});
@@ -170,14 +171,6 @@ var SetSemanticTypeDialog = (function() {
 		}
         
 		function validate() {
-			if($("#isUriOfClass").prop("checked")) {
-				var foundObj = doesClassExist($("input#isUriOfClassTextBox", dialog).val());
-	        	if(!foundObj.found) {
-	        		showError("Class for 'contains URI for node' does not exist");
-	        		return false;
-	        	}
-			}
-			
 			if($("#isSubclassOfClass").prop("checked")) {
 	        	var foundObj = doesClassExist($("input#isSubclassOfClassTextBox", dialog).val());
 	        	if(!foundObj.found) {
@@ -229,7 +222,8 @@ var SetSemanticTypeDialog = (function() {
 		        var newType = new Object();
 		        newType["FullType"] = fullType;
 		        newType["Domain"] = domain;
-
+		        newType["DomainLabel"] = $(row).data("DisplayDomainLabel");
+		        
 		        // Check if it was chosen primary
 		        newType["isPrimary"] = $("input[name='isPrimaryGroup']:radio", $(row)).is(":checked");
 		        existingTypes.push(newType);
@@ -258,12 +252,14 @@ var SetSemanticTypeDialog = (function() {
             info["rdfLiteralType"] = $("#literalTypeSelect").val()
 
             // Check if any meta property (advanced options) was selected
-            if($("#isUriOfClass").prop("checked") || $("#isSubclassOfClass").prop("checked") || $("#isSubclassOfClass").prop("checked")) {
+            var semTypesArray = getCurrentSelectedTypes();
+            if($("#isSubclassOfClass").prop("checked") || $("#isSpecializationForEdge").prop("checked") || 
+            		(semTypesArray.length == 1 && semTypesArray[0]["FullType"] == "http://isi.edu/integration/karma/dev#classLink")) {
             	info["command"] = "SetMetaPropertyCommand";
             	var propValue;
             	
-            	if($("#isUriOfClass").prop("checked")) {
-					propValue = ($("input#isUriOfClassTextBox", dialog).val());
+            	if(semTypesArray.length == 1 && semTypesArray[0]["FullType"] == "http://isi.edu/integration/karma/dev#classLink") {
+					propValue = semTypesArray[0]["DomainLabel"] ;
 					info["metaPropertyName"] = "isUriOfClass";
 				} else if($("#isSubclassOfClass").prop("checked")) {
 		        	propValue = ($("input#isSubclassOfClassTextBox", dialog).val());
@@ -311,7 +307,7 @@ var SetSemanticTypeDialog = (function() {
                 }
                 
             } else {                // Get the JSON Array that captures all the currently selected semantic types
-                var semTypesArray = getCurrentSelectedTypes();
+                
                 if(semTypesArray == null || semTypesArray === false)
                     return false;
                 info["SemanticTypesArray"] = JSON.stringify(semTypesArray);
@@ -366,6 +362,28 @@ var SetSemanticTypeDialog = (function() {
             addSemTypeObjectToCurrentTable(fakeSemType, false, false);
         }
         
+        function addUriSemanticType(domainLabel, domain) {
+        	var type = new Object();
+            type["FullType"] = "http://isi.edu/integration/karma/dev#classLink";
+            type["Domain"] = domain;
+            type["DisplayLabel"] = "km-dev:classLink";
+            type["DisplayDomainLabel"] = domainLabel;
+            type["isPrimary"] = true;
+            // Add it to the table
+            addSemTypeObjectToCurrentTable(type, true, false);
+        }
+        
+        function addEmptyUriSemanticType() {
+            // Create a fake sem type object to how in the table
+            var fakeSemType = new Object();
+            fakeSemType["FullType"] = "http://isi.edu/integration/karma/dev#classLink";
+            fakeSemType["Domain"] = "fakeDomainURI";
+            fakeSemType["DisplayLabel"] = "km-dev:classLink";
+            fakeSemType["DisplayDomainLabel"] = "Class";
+            // Add it to the table
+            addSemTypeObjectToCurrentTable(fakeSemType, false, false);
+        }
+        
         function addSemTypeObjectToCurrentTable(semTypeObject, isSelected, isCrfModelSuggested) {
             var table = $("#semanticTypesTable");
 
@@ -383,10 +401,13 @@ var SetSemanticTypeDialog = (function() {
 
             // Add it to the table
             var displayLabel = "";
+            var property = semTypeObject["DisplayLabel"];
+            if(property == "km-dev:classLink")
+            	property = "uri";
             if(semTypeObject["Domain"].length == 0 || semTypeObject["Domain"] == "")
-                displayLabel = semTypeObject["DisplayLabel"];
+                displayLabel = property;
             else
-                displayLabel = "<span class='italic'>" + semTypeObject["DisplayLabel"] + "</span> of " + semTypeObject["DisplayDomainLabel"];
+                displayLabel = "<span class='italic'>" + property+ "</span> of " + semTypeObject["DisplayDomainLabel"];
 
             var trTag = $("<tr>").addClass("semTypeRow")
                 .data("FullType", semTypeObject["FullType"])
@@ -442,6 +463,7 @@ var SetSemanticTypeDialog = (function() {
         }
         
         function semanticTypesTableCheckBoxHandler() {
+        	console.log("semanticTypesTableCheckBoxHandler");
            // var existingTypesArray = existingTypes;
             var parentTr = $(this).parents("tr");
             var table = $("table#semanticTypesTable");
@@ -451,9 +473,22 @@ var SetSemanticTypeDialog = (function() {
 
             // If it was checked
             if($(this).is(':checked')) {
+            	//if(parentTr.data("DisplayLabel") == "km-dev:classLink"){
+                	var rows = $("tr.selected", table);
+                	for(var i=0; i<rows.length; i++) {
+                		var row = rows[i];
+                		if($(row).data("DisplayLabel") == "km-dev:classLink" || parentTr.data("DisplayLabel") == "km-dev:classLink") {
+                			 $("input[name='currentSemanticTypeCheckBoxGroup']:checkbox", row).prop('checked',false);
+                			 $("input[name='isPrimaryGroup']:radio", row).prop('checked',false);
+                			 $(row).removeClass("selected");
+                		}
+                		
+                	}
+                	$(this).prop('checked',true);
+                //}
                 parentTr.addClass("selected");
-
-                if($("tr.selected", table).length == 1)
+                var numRows = $("tr.selected", table).length;
+                if(numRows == 1)
                     $("input[name='isPrimaryGroup']:radio", parentTr).prop('checked',true);
             }
             // If it was unchecked
@@ -575,12 +610,18 @@ var SetSemanticTypeDialog = (function() {
             editTr.addClass("currentEditRow");
             editTr.data("editRowObject", parentTrTag);
             
-            classUI = new ClassUI("semanticTypeEditClass", getClassesForProperty, getClasses, 100);
+            var showPropertiesList = true;
+            var classFuncTop = getClassesForProperty, 
+            	classFuncBottom = getClasses;
+            if($(parentTrTag).data("DisplayLabel") == "km-dev:classLink") {
+            	showPropertiesList = false;
+            	classFuncTop = null;
+            }
+            classUI = new ClassUI("semanticTypeEditClass", classFuncTop, classFuncBottom, 100);
             propertyUI = new PropertyUI("semanticTypeEditProperty", getPropertiesForClass, getProperties, 100);
             
             classUI.setHeadings("Classes with Selected Property", "All Classes");
             propertyUI.setHeadings("Properties of Selected Class", "All Properties");
-            
            
             if($(parentTrTag).data("ResourceType") == "Class") {
                 var classLabel = $(parentTrTag).data("DisplayLabel");
@@ -605,12 +646,15 @@ var SetSemanticTypeDialog = (function() {
             classPropertyUIDiv = $("<div>").addClass("row").attr("id", "semanticTypeEdit");
             var classDiv = $("<div>").addClass("col-sm-6");
             var propDiv = $("<div>").addClass("col-sm-6");
+            
             classPropertyUIDiv.append(propDiv);
             classPropertyUIDiv.append(classDiv);
             edittd.append(classPropertyUIDiv);
             
            classUI.generateJS(classDiv, true);
-           propertyUI.generateJS(propDiv, true);
+           if(showPropertiesList) {
+        	   propertyUI.generateJS(propDiv, true);
+           }
         }
         
         function doesPropertyExist(inputVal) {
@@ -733,12 +777,15 @@ var SetSemanticTypeDialog = (function() {
 	                    displayLabel = $(rowToChange).data("DisplayLabel");
 	                } else {
 	                    // If no value has been input in the data property box, change from data property sem type to class sem type
-	                    if($.trim($("input.propertyInput", classPropertyUIDiv).val()) == "") {
+	                	var propertyOld = $(rowToChange).data("DisplayLabel");
+	                	if(propertyOld == "km-dev:classLink") propertyOld = "uri";
+	                	
+	                    if(propertyOld != "uri" && $.trim($("input.propertyInput", classPropertyUIDiv).val()) == "") {
 	                        $(rowToChange).data("ResourceType", "Class").data("FullType",uri).data("DisplayLabel",properCasedKey);
 	                        displayLabel = $(rowToChange).data("DisplayLabel");
 	                    } else {
 	                        $(rowToChange).data("Domain",uri).data("DisplayDomainLabel",properCasedKey);
-	                        displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
+	                        displayLabel = "<span class='italic'>" + propertyOld + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
 	                    }
 	                }
 	                $("label.displayLabel", rowToChange).html(displayLabel);
