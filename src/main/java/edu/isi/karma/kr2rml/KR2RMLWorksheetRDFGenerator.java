@@ -599,7 +599,8 @@ public class KR2RMLWorksheetRDFGenerator {
 				subjectTermsToPaths.put(term, path);
 			}
 			
-			subjects.addAll(subjectMapTTSPopulator.populate(r, subjectTermsToPaths));
+			TemplateTermSetPopulatorPlan plan = new TemplateTermSetPopulatorPlan(subjectTermsToPaths);
+			subjects.addAll(subjectMapTTSPopulator.populate(r, plan));
 			
 			// Generate triples for specifying the types
 			for (TemplateTermSet typeTerm:subjMap.getRdfsType()) {
@@ -817,21 +818,7 @@ public class KR2RMLWorksheetRDFGenerator {
 			}
 			return subjectTerms;
 		}
-		private Map<ColumnTemplateTerm, Collection<Node>> gatherNodesForPopulatingSubjectMapTemplates(
-				TemplateTermSet subjectTemplate)
-				throws HNodeNotFoundKarmaException {
-			List<ColumnTemplateTerm> terms =  subjectTemplate.getAllColumnNameTermElements();
-			
-			LinkedList<Collection<Node>> allNodesCovered = gatherNodesForURI(terms);
-			Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes = new HashMap<ColumnTemplateTerm, Collection<Node>>();
-			Iterator<ColumnTemplateTerm> termIterator = terms.iterator();
-			Iterator<Collection<Node>> nodesIterator = allNodesCovered.iterator();
-			while(termIterator.hasNext() && nodesIterator.hasNext())
-			{
-				columnsToNodes.put(termIterator.next(), nodesIterator.next());
-			}
-			return columnsToNodes;
-		}
+		
 		private List<PopulatedTemplateTermSet> generatePredicatesForPom(PredicateObjectMap pom) {
 			List<ColumnTemplateTerm> predicateTemplateTerms = pom.getPredicate().getTemplate().getAllColumnNameTermElements();
 			LinkedList<TemplateTerm> allPredicateTemplateTerms = new LinkedList<TemplateTerm>();
