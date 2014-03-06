@@ -225,9 +225,13 @@ function parse(data) {
             }
         }
         else if(element["updateType"] == "HistoryAddCommandUpdate") {
+        	var title = element.command.title;
+        	if(element.command.description.length > 0) {
+        		title = title + ": " + element.command.description;
+        	}
             var commandDiv = $("<div>").addClass("CommandDiv undo-state " + element.command.commandType).attr("id", element.command.commandId).css({
                 "position" : "relative"
-            }).append($("<div>").text(element.command.title + ": " + element.command.description)).append($("<div>").addClass("iconDiv").append($("<img>").attr("src", "images/edit_undo.png")).bind('click', clickUndoButton).qtip({
+            }).append($("<div>").text(title)).append($("<div>").addClass("iconDiv").append($("<img>").attr("src", "images/edit_undo.png")).bind('click', clickUndoButton).qtip({
                     content : {
                         text : 'Undo'
                     },
