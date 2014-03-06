@@ -102,77 +102,9 @@ function WorksheetOptions(wsId, wsTitle) {
 	}
 
 	function Fold () {
-        var worksheetPanel = $("div.Worksheet#" + worksheetId);
-        var tableContainer = $("div.table-container", worksheetPanel);
-        var tableHeaderContainer = $("div.table-header-container", worksheetPanel);
-        var headersTable = $("table.wk-table", tableHeaderContainer);
-        var headersRow = $("tr.wk-row-odd", headersTable);
-        //console.log(worksheetId);
-        //console.log($('div#foldDialog').html());
-        $('div#foldDialog').empty();
-        headersRow.each(function (index, element) {
-            var a = element.children;
-            
-            for (var i = 0; i < a.length; i++) {
-                var cell = $("div.tableDropdown", a[i]);
-                var name = $("a.dropdown-toggle", cell)
-                console.log(name.text());
-                if (name.html().indexOf("td") == -1) {
-                    $('<label />', {text: name.text()}).appendTo($('div#foldDialog'));
-                    $('<input />', { type: 'checkbox', id: 'selectcolumns', value: element.cells[i].id }).appendTo($('div#foldDialog'));
-                    $("</br>").appendTo($('div#foldDialog'));
-                }
-            }
-        });
-         $('div#foldDialog').dialog({width: 540, height: 460, title:"Fold", resizable:true
-            , buttons: {
-            "Cancel": function() { $(this).dialog("close"); },
-            "Submit": submitFold}
-        });
-        //console.log(headersRow.html());
-        //var headersTable = $("tbody.tr.wk-table htable-odd", tableHeaderContainer);
-    }
-
-	function submitFold() {
-        var dialog = $('div#foldDialog');
-        var checkboxes = dialog.find(":checked");
-        var checked = [];
-        for (var i = 0; i < checkboxes.length; i++) {
-            var checkbox = checkboxes[i];
-            checked.push(getParamObject("checked", checkbox['value'], "other"));    
-        }
-        $('div#foldDialog').dialog("close");
-        //console.log(checked);
-        var info = new Object();
-        info["worksheetId"] = worksheetId;
-        info["workspaceId"] = $.workspaceGlobalInformation.id;
-        info["command"] = "FoldCommand";
-
-        var newInfo = [];
-        newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-        newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
-        info["newInfo"] = JSON.stringify(newInfo);
-
-        showLoading(info["worksheetId"]);
-        var returned = $.ajax({
-            url: "RequestController",
-            type: "POST",
-            data : info,
-            dataType : "json",
-            complete :
-                function (xhr, textStatus) {
-                    //alert(xhr.responseText);
-                    var json = $.parseJSON(xhr.responseText);
-                    console.log(json);
-                    parse(json);
-                    hideLoading(info["worksheetId"]);
-                },
-            error :
-                function (xhr, textStatus) {
-                    alert("Error occured while generating the automatic model!" + textStatus);
-                    hideLoading(info["worksheetId"]);
-                }
-        });
+		console.log("Fold: " + worksheetTitle);
+		hideDropdown();
+		FoldDialog.getInstance().show(worksheetId);
     }
 	
 	function resetModel() {
