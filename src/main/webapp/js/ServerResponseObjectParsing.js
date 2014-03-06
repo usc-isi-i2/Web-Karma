@@ -20,7 +20,7 @@
  ******************************************************************************/
 
 function parse(data) {
-
+    console.log(data);
     $.workspaceGlobalInformation = {
         "id" : data["workspaceId"]
     }
@@ -630,8 +630,13 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
         } else {
             rowTr.addClass("wk-row-even");
         }
-
+        /*var dataDiv = $("<div>").width(30).height(30);
+        var checkbox = $('<input />', { type: 'checkbox', id: 'selectcolumns', value: "a" });
+        dataDiv.append(checkbox);
+        rowTr.append(dataDiv);*/
+        //console.log(.css(rows[0][0]["columnClass"]));
         // Loop through the values in a given row
+        console.log(rows);
         $.each(row, function(index2, cell){
             var td = $("<td>").addClass("wk-cell");
             var dataDiv = $("<div>");
@@ -673,8 +678,12 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
         			 mode: 'popup'
         				 
 		            });
+                /*var dataDiv2 = $("<div>").width(30).height(30).css({float:'left'});
+                var checkbox = $('<input />', { type: 'checkbox', id: 'selectcolumns', value: "a" });
+                dataDiv2.append(checkbox);
+                td.append(dataDiv2);  
+                td.addClass(cell["columnClass"]); */
             }
-
             rowTr.append(td.append(dataDiv));
         });
 
