@@ -43,6 +43,16 @@ public class TriplesMapGraph {
 		return links;
 	}
 
+	public void addTriplesMap(TriplesMap triplesMap)
+	{
+		triplesMapIndex.put(triplesMap.getId(), triplesMap);
+		List<TriplesMapLink> neighbouringLinks = neighboringTriplesMapCache.get(triplesMap.getId());
+		if (neighbouringLinks == null) {
+			neighbouringLinks = new ArrayList<TriplesMapLink>();
+			neighboringTriplesMapCache.put(triplesMap.getId(), neighbouringLinks);
+		}
+	}
+	
 	public void addLink(TriplesMapLink link) {
 		links.add(link);
 		updateCache(link);
@@ -100,14 +110,14 @@ public class TriplesMapGraph {
 		targetLinks.remove(link);
 		if(targetLinks.isEmpty())
 		{
-			neighboringTriplesMapCache.remove(targetLinks);
+			neighboringTriplesMapCache.remove(mapId);
 			triplesMapIndex.remove(mapId);
 		}
 	}
 	
 	public Set<String> getTriplesMapIds()
 	{
-		return neighboringTriplesMapCache.keySet();
+		return triplesMapIndex.keySet();
 	}
 	public String findRoot(RootStrategy strategy)
 	{
@@ -117,6 +127,22 @@ public class TriplesMapGraph {
 	public TriplesMap getTriplesMap(String triplesMapId)
 	{
 		return this.triplesMapIndex.get(triplesMapId);
+	}
+
+	public void removeTriplesMap(String triplesMapId) {
+		
+		List<TriplesMapLink> targetLinks = neighboringTriplesMapCache.get(triplesMapId);
+		if(targetLinks != null)
+		{
+			for(TriplesMapLink link : targetLinks)
+			{
+				removeLink(link);
+			}	
+		}
+		neighboringTriplesMapCache.remove(triplesMapId);
+		triplesMapIndex.remove(triplesMapId);
+		
+		
 	}
 	
 	

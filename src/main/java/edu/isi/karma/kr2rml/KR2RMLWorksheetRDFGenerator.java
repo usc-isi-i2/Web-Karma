@@ -593,7 +593,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				// Generate triples for specifying the types
 				for (TemplateTermSet typeTerm:subjMap.getRdfsType()) {
 					
-					generateSubjectPredicateObject(typeTerm, subjectMapTTSPopulator.originalTerms, subjects, rdfsType, subjectTermsToPaths);
+					generateSubjectPredicateObject(typeTerm, subjectMapTTSPopulator.originalTerms, subjects, rdfsType, subjectTermsToPaths, null);
 					
 				
 				}
@@ -659,10 +659,17 @@ public class KR2RMLWorksheetRDFGenerator {
 						LOG.info("Skipping " + pom.toString());
 						continue;
 					}
+					TemplateTermSet literalTemplate = pom.getObject().getRdfLiteralType();
+					String literalTemplateValue = null;
+					if(literalTemplate != null)
+					{
+						literalTemplateValue = generateStringValueForTemplate(literalTemplate);
+					}
+					
 					List<PopulatedTemplateTermSet> predicates = generatePredicatesForPom(pom);
 					ObjectMap objMap = pom.getObject();
 					TemplateTermSet objMapTemplate = objMap.getTemplate();
-					generateSubjectPredicateObject(objMapTemplate, subjectMapTTSPopulator.originalTerms, subjects, predicates, subjectTermsToPaths );
+					generateSubjectPredicateObject(objMapTemplate, subjectMapTTSPopulator.originalTerms, subjects, predicates, subjectTermsToPaths, literalTemplateValue);
 				}
 			
 			}
@@ -675,25 +682,12 @@ public class KR2RMLWorksheetRDFGenerator {
 			notifyDependentTriplesMapWorkers();
 			return true;
 		}
-		private void generateSubjectPredicateObject(TemplateTermSet objMapTemplate, TemplateTermSet subjectMapTemplate, List<PopulatedTemplateTermSet> subjects, List<PopulatedTemplateTermSet> predicates, Map<ColumnTemplateTerm,HNodePath>subjectTermsToPaths) throws HNodeNotFoundKarmaException {
+		private void generateSubjectPredicateObject(TemplateTermSet objMapTemplate, TemplateTermSet subjectMapTemplate, List<PopulatedTemplateTermSet> subjects, List<PopulatedTemplateTermSet> predicates, Map<ColumnTemplateTerm,HNodePath>subjectTermsToPaths, String literalTemplateValue) throws HNodeNotFoundKarmaException {
 			
 			// we have a literal
 			if(objMapTemplate.getAllColumnNameTermElements().isEmpty())
 			{
-				String objTemplateValue = "";
-				if(objMapTemplate.isSingleUriString())
-				{
-					objTemplateValue = uriFormatter.getExpandedAndNormalizedUri(objMapTemplate.getAllTerms().get(0).getTemplateTermValue());
-				}
-				else
-				{
-					StringBuilder sb = new StringBuilder();
-					for(TemplateTerm term : objMapTemplate.getAllTerms())
-					{
-						sb.append(term.getTemplateTermValue());
-					}
-					sb.toString();
-				}
+				String objTemplateValue = generateExpandedStringValueForTemplate(objMapTemplate);
 				
 				for(PopulatedTemplateTermSet subject : subjects)
 				{
@@ -735,11 +729,29 @@ public class KR2RMLWorksheetRDFGenerator {
 						for(PopulatedTemplateTermSet predicate : predicates)
 						{
 							
-							outWriter.outputTripleWithLiteralObject(subject.getURI(), predicate.getURI(), object.getURI(), null);
+							outWriter.outputTripleWithLiteralObject(subject.getURI(), predicate.getURI(), object.getURI(), literalTemplateValue);
 						}
 					}
 				}
 			}
+		}
+		private String generateExpandedStringValueForTemplate(
+				TemplateTermSet objMapTemplate) {
+			String objTemplateValue = generateStringValueForTemplate(objMapTemplate);
+			if(objMapTemplate.isSingleUriString())
+			{
+				objTemplateValue = uriFormatter.getExpandedAndNormalizedUri(objTemplateValue);
+			}
+			return objTemplateValue;
+		}
+		private String generateStringValueForTemplate(
+				TemplateTermSet objMapTemplate) {
+			StringBuilder sb = new StringBuilder();
+			for(TemplateTerm term : objMapTemplate.getAllTerms())
+			{
+				sb.append(term.getTemplateTermValue());
+			}
+			return sb.toString();
 		}
 		private TemplateTermSetPopulator generateTemplateTermSetPopulatorForSubjectMap(
 			

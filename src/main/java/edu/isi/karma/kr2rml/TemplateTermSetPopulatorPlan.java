@@ -23,8 +23,8 @@ public class TemplateTermSetPopulatorPlan {
 	protected LinkedList<ColumnTemplateTerm> columnTerms;
 	protected List<ColumnTemplateTerm> comparisonTerms;
 	
-	private static List<ColumnAffinity> affinities;
-	{
+	private static final List<ColumnAffinity> affinities;
+	static {
 		affinities = new LinkedList<ColumnAffinity>();
 		affinities.add(RowColumnAffinity.INSTANCE);
 		affinities.add(ParentRowColumnAffinity.INSTANCE);

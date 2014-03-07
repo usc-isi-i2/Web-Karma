@@ -84,6 +84,7 @@ public class DFSTriplesMapGraphTreeifier implements TriplesMapGraphTreeifier {
 						modifications = true;
 						spilledTriplesMaps.add(triplesMapId);
 						ids.remove();
+						newGraph.removeTriplesMap(triplesMapId);
 					}
 				}
 			}

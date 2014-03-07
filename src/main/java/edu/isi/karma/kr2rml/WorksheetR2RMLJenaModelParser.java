@@ -216,6 +216,7 @@ public class WorksheetR2RMLJenaModelParser {
 			TriplesMap trMap = new TriplesMap(trMapRes.getURI(), subjMap);
 			kr2rmlMapping.getTriplesMapIndex().put(trMapRes.getURI(), trMap);
 			kr2rmlMapping.addTriplesMap(trMap);
+			kr2rmlMapping.getAuxInfo().getTriplesMapGraph().addTriplesMap(trMap);
 		}
 		return subjectMapResources;
 	}
