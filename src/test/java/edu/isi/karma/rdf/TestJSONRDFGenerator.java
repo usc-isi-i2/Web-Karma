@@ -77,17 +77,6 @@ public class TestJSONRDFGenerator {
 				new File(getTestDataFolder() + "/cs548-events-model.ttl")
 						.toURI().toURL());
 		rdfGen.addModel(modelIdentifier);
-		
-		
-//		modelIdentifier = new R2RMLMappingIdentifier("kdd-sample-model",
-//				new File(getTestDataFolder() + "/kdd-sample.ttl")
-//						.toURI().toURL());
-//		rdfGen.addModel(modelIdentifier);
-//		
-//		modelIdentifier = new R2RMLMappingIdentifier("kdd2",
-//				new File(getTestDataFolder() + "/KDD-03-S-UN-Sanctions.ttl")
-//						.toURI().toURL());
-//		rdfGen.addModel(modelIdentifier);
 	}
 
 	/**
@@ -154,73 +143,6 @@ public class TestJSONRDFGenerator {
 		}
 	}
 
-	/**
-	 * Test method for
-	 * {@link edu.isi.karma.rdf.JSONRDFGenerator#generateRDF(java.lang.String, java.lang.String, boolean, java.io.PrintWriter)}
-	 * .
-	 */
-//	@Test
-//	public void testKDDRDF() {
-//		try {
-//
-//			String filename = getTestDataFolder() + "/kdd-sample.json";
-//			System.out.println("Load json file: " + filename);
-//			String jsonData = EncodingDetector.getString(new File(filename),
-//					"utf-8");
-//
-//			StringWriter sw = new StringWriter();
-//			PrintWriter pw = new PrintWriter(sw);
-//
-//			boolean provnance = true;
-//			
-//			rdfGen.generateRDF("kdd-sample-model", jsonData, provnance, pw);
-//			String rdf = sw.toString();
-//
-//			assertNotEquals(rdf.length(), 0);
-//			String[] lines = rdf.split("\n");
-//			if(provnance) {
-//				assertEquals(135, lines.length); //135 lines with provenance
-//			} else {
-//				assertEquals(120, lines.length); //120 lines with NO provenance
-//			}
-//			
-//			System.out.println(rdf);
-//			
-//			Model model = ModelFactory.createDefaultModel();
-//			if(provnance) {
-//				//TODO: Not able to read Quads..
-//			} else {
-//				model.read(new StringReader(rdf), "http://test.isi.edu", "N3");
-//			}
-//		} catch (Exception e) {
-//			fail("Execption: " + e.getMessage());
-//		}
-//	}
-//	
-//	/**
-//	 * Test method for
-//	 * {@link edu.isi.karma.rdf.JSONRDFGenerator#generateRDF(java.lang.String, java.lang.String, boolean, java.io.PrintWriter)}
-//	 * .
-//	 */
-//	@Test
-//	public void testKDDRDF2() {
-//		try {
-//
-//			String filename = getTestDataFolder() + "/KDD-03-S-UN-Sanctions.json";
-//			System.out.println("Load json file: " + filename);
-//			String jsonData = EncodingDetector.getString(new File(filename),
-//					"utf-8");
-//
-//			StringWriter sw = new StringWriter();
-//			PrintWriter pw = new PrintWriter(sw);
-//
-//			rdfGen.generateRDF("kdd2", jsonData, false, pw);
-//			String rdf = sw.toString();
-//			assertNotEquals(rdf.length(), 0);
-//		} catch (Exception e) {
-//			fail("Execption: " + e.getMessage());
-//		}
-//	}
 	
 	private String getRootFolder() {
 		return getClass().getClassLoader().getResource(".").getPath()
