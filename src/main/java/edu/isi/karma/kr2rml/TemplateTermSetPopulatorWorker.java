@@ -10,10 +10,10 @@ import edu.isi.karma.rep.Row;
 
 public class TemplateTermSetPopulatorWorker {
 
-	ColumnTemplateTerm term;
-	HNodePath path;
-	TemplateTermSetPopulatorStrategy strategy;
-	List<TemplateTermSetPopulatorWorker> dependentWorkers;
+	protected ColumnTemplateTerm term;
+	protected HNodePath path;
+	protected TemplateTermSetPopulatorStrategy strategy;
+	protected List<TemplateTermSetPopulatorWorker> dependentWorkers;
 	
 	public TemplateTermSetPopulatorWorker(	ColumnTemplateTerm term,
 	HNodePath path,
@@ -42,28 +42,37 @@ public class TemplateTermSetPopulatorWorker {
 		
 		for(Node n : nodes)
 		{
-			List<List<PartiallyPopulatedTermSet>> partialResults = new LinkedList<List<PartiallyPopulatedTermSet>>();
+			
 			PartiallyPopulatedTermSet newTermSet = new PartiallyPopulatedTermSet(term, n);
 			if(dependentWorkers.isEmpty())
 			{
 				results.add(newTermSet);
-				continue;
 			}
-			for(TemplateTermSetPopulatorWorker dependentWorker: dependentWorkers)
+			else
 			{
-				partialResults.add(dependentWorker.work(topRow, n.getBelongsToRow()));
-			}
-			
-			List<PartiallyPopulatedTermSet> combinedPartialResults = combinePartialResults(partialResults);
-			for(PartiallyPopulatedTermSet otherTermSet : combinedPartialResults)
-			{
-				results.add(PartiallyPopulatedTermSet.combine(newTermSet, otherTermSet));
+				List<PartiallyPopulatedTermSet> combinedPartialResults = work(
+						topRow, n);
+				for(PartiallyPopulatedTermSet otherTermSet : combinedPartialResults)
+				{
+					results.add(PartiallyPopulatedTermSet.combine(newTermSet, otherTermSet));
+				}
 			}
 		}
 		return results;
 	}
+
+	protected List<PartiallyPopulatedTermSet> work(Row topRow, Node n) {
+		List<List<PartiallyPopulatedTermSet>> partialResults = new LinkedList<List<PartiallyPopulatedTermSet>>();
+		for(TemplateTermSetPopulatorWorker dependentWorker: dependentWorkers)
+		{
+			partialResults.add(dependentWorker.work(topRow, n.getBelongsToRow()));
+		}
+		
+		List<PartiallyPopulatedTermSet> combinedPartialResults = combinePartialResults(partialResults);
+		return combinedPartialResults;
+	}
 	
-	protected List<PartiallyPopulatedTermSet> combinePartialResults(List<List<PartiallyPopulatedTermSet>> partialResults) {
+	protected static List<PartiallyPopulatedTermSet> combinePartialResults(List<List<PartiallyPopulatedTermSet>> partialResults) {
 		List<PartiallyPopulatedTermSet> combinedResults = new LinkedList<PartiallyPopulatedTermSet>();
 		
 		if(!partialResults.isEmpty())
@@ -92,7 +101,7 @@ public class TemplateTermSetPopulatorWorker {
 		return combinedResults;
 	}
 
-	private void combinePartialResults(
+	private static void combinePartialResults(
 			List<PartiallyPopulatedTermSet> combinedResults,
 			List<PartiallyPopulatedTermSet> left,
 			List<PartiallyPopulatedTermSet> right) {

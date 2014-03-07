@@ -1,6 +1,7 @@
 package edu.isi.karma.kr2rml;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class TemplateTermSetPopulator {
 		for(PartiallyPopulatedTermSet partial : partials)
 		{
 			StringBuilder uri = new StringBuilder();
-			List<Node> references = new LinkedList<Node>();
+			Map<ColumnTemplateTerm, Node> references = new HashMap<ColumnTemplateTerm, Node>();
 			boolean termsSatisifed = true;
 			for(TemplateTerm term : terms)
 			{
@@ -71,7 +72,7 @@ public class TemplateTermSetPopulator {
 						termsSatisifed = false;
 						break;
 					}
-					references.add(n);
+					references.put((ColumnTemplateTerm) term, n);
 					if(useNodeValue)
 					{
 						uri.append(n.getValue().asString());
@@ -102,10 +103,10 @@ public class TemplateTermSetPopulator {
 	}
 	public List<PopulatedTemplateTermSet> generatePopulatedTemplates(Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes)
 	{
-		return generateSubjectsForTemplates(columnsToNodes, baseTemplate, originalTerms.getAllTerms(),new LinkedList<Node>());
+		return generateSubjectsForTemplates(columnsToNodes, baseTemplate, originalTerms.getAllTerms(),new HashMap<ColumnTemplateTerm, Node>());
 	}
 	protected List<PopulatedTemplateTermSet> generateSubjectsForTemplates(Map<ColumnTemplateTerm, Collection<Node>> columnsToNodes, StringBuilder output,
-			List<TemplateTerm> terms, List<Node> references) {
+			List<TemplateTerm> terms,  Map<ColumnTemplateTerm, Node> references) {
 		List<PopulatedTemplateTermSet> subjects = new LinkedList<PopulatedTemplateTermSet>();
 		
 		if(!terms.isEmpty())
@@ -138,9 +139,9 @@ public class TemplateTermSetPopulator {
 							newPrefix.append(node.getId());
 						}
 
-						List<Node> newReferences = new LinkedList<Node>();
-						newReferences.addAll(references);
-						newReferences.add(node);
+						Map<ColumnTemplateTerm, Node> newReferences = new HashMap<ColumnTemplateTerm, Node>();
+						newReferences.putAll(references);
+						newReferences.put((ColumnTemplateTerm)term, node);
 						if(recurse)
 						{
 							subjects.addAll(generateSubjectsForTemplates(columnsToNodes, newPrefix, tempTerms, newReferences));

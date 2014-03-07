@@ -1,22 +1,27 @@
 package edu.isi.karma.kr2rml;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 
 public class TemplateTermSetPopulatorPlan {
 	
-	private Map<ColumnTemplateTerm, TemplateTermSetPopulatorWorker> independentWorkers = new HashMap<ColumnTemplateTerm, TemplateTermSetPopulatorWorker>();
-	private Map<ColumnTemplateTerm, TemplateTermSetPopulatorWorker> workers = new HashMap<ColumnTemplateTerm, TemplateTermSetPopulatorWorker>();
-	private Map<ColumnTemplateTerm, List<TemplateTermSetPopulatorWorker>> workerDependencyPlaceholder = new HashMap<ColumnTemplateTerm, List<TemplateTermSetPopulatorWorker>>();
-	private Map<ColumnTemplateTerm, HNodePath> termToPath;
-	private TemplateTermSetPopulatorWorker firstWorker;
-	private LinkedList<ColumnTemplateTerm> columnTerms;
-	private List<ColumnTemplateTerm> comparisonTerms;
+	protected Map<ColumnTemplateTerm, TemplateTermSetPopulatorWorker> independentWorkers = new HashMap<ColumnTemplateTerm, TemplateTermSetPopulatorWorker>();
+	protected Map<ColumnTemplateTerm, TemplateTermSetPopulatorWorker> workers = new HashMap<ColumnTemplateTerm, TemplateTermSetPopulatorWorker>();
+	protected Map<ColumnTemplateTerm, List<TemplateTermSetPopulatorWorker>> workerDependencyPlaceholder = new HashMap<ColumnTemplateTerm, List<TemplateTermSetPopulatorWorker>>();
+	protected Map<ColumnTemplateTerm, HNodePath> termToPath;
+	protected TemplateTermSetPopulatorWorker firstWorker;
+	protected LinkedList<ColumnTemplateTerm> columnTerms;
+	protected List<ColumnTemplateTerm> comparisonTerms;
 	
 	private static List<ColumnAffinity> affinities;
 	{
@@ -25,35 +30,84 @@ public class TemplateTermSetPopulatorPlan {
 		affinities.add(ParentRowColumnAffinity.INSTANCE);
 		affinities.add(CommonParentRowColumnAffinity.INSTANCE);
 	}	
-	public TemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath)
+	protected TemplateTermSetPopulatorPlan()
+	{
+		
+	}
+	public TemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath, Collection<ColumnTemplateTerm> columnTerms)
 	{
 		this.termToPath = termToPath;
 		this.columnTerms = new LinkedList<ColumnTemplateTerm>();
-		this.comparisonTerms = columnTerms;
-		this.columnTerms.addAll(termToPath.keySet());
+		this.comparisonTerms = this.columnTerms;
+		this.columnTerms.addAll(columnTerms);
+		this.firstWorker = null;
 		generate();
 	}
-			
-	public TemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath,
-			LinkedList<ColumnTemplateTerm> columnTerms,
-			List<ColumnTemplateTerm> comparisonTerms)
+	public TemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath, Collection<ColumnTemplateTerm> columnTerms, TemplateTermSetPopulatorWorker firstWorker)
 	{
-		this.comparisonTerms = comparisonTerms;
-		this.columnTerms = columnTerms;
 		this.termToPath = termToPath;
+		this.columnTerms = new LinkedList<ColumnTemplateTerm>();
+		this.comparisonTerms = this.columnTerms;
+		this.columnTerms.addAll(columnTerms);
+		this.firstWorker = firstWorker;
+		generate();
+	}	
+
+	public TemplateTermSetPopulatorPlan(
+			Map<ColumnTemplateTerm, HNodePath> termToPath,
+			LinkedList<ColumnTemplateTerm> columnTerms,
+			List<ColumnTemplateTerm> comparisonTerms) {
+		this.termToPath = termToPath;
+		this.columnTerms = columnTerms;
+		this.comparisonTerms = comparisonTerms;
+		this.firstWorker = null;
 		generate();
 	}
-	
+
+
 	private void generate()
 	{
-	
-		while(!columnTerms.isEmpty())
+		LinkedList<ColumnTemplateTerm> columnTermsLocal = new LinkedList<ColumnTemplateTerm>();
+		columnTermsLocal.addAll(columnTerms);
+		sortColumnTermsByHNodePathDepth(columnTermsLocal);
+		Map<ColumnTemplateTerm, ColumnTemplateTerm> termsToTermDependentOn = generateTermsToTermDependentOn(columnTermsLocal, columnTermsLocal);
+		
+		generateWorkers(termsToTermDependentOn);
+		findFirstWorker();
+		
+	}
+
+	protected void sortColumnTermsByHNodePathDepth(LinkedList<ColumnTemplateTerm> columnTerms) {
+		Collections.sort(columnTerms, new Comparator<ColumnTemplateTerm>(){
+
+			@Override
+			public int compare(ColumnTemplateTerm o1, ColumnTemplateTerm o2) {
+				
+				return -(o1.calculateColumnPathLength() - o2.calculateColumnPathLength());
+			}
+			
+		});
+	}
+
+	protected void generateWorkers(
+			Map<ColumnTemplateTerm, ColumnTemplateTerm> termsToTermDependentOn) {
+		for(Entry<ColumnTemplateTerm, ColumnTemplateTerm> termToTermDependentOn : termsToTermDependentOn.entrySet())
+		{
+			ColumnTemplateTerm currentTerm = termToTermDependentOn.getKey();
+			ColumnTemplateTerm dependentTerm = termToTermDependentOn.getValue();
+			generateWorker(currentTerm, dependentTerm);
+		}
+	}
+
+	protected Map<ColumnTemplateTerm, ColumnTemplateTerm> generateTermsToTermDependentOn(LinkedList<ColumnTemplateTerm> columnTermsLocal, List<ColumnTemplateTerm> comparisonTermsLocal) {
+		Map<ColumnTemplateTerm, ColumnTemplateTerm> termsToTermDependentOn = new HashMap<ColumnTemplateTerm, ColumnTemplateTerm>();
+		while(!columnTermsLocal.isEmpty())
 		{
 			
-			ColumnTemplateTerm currentTerm = columnTerms.pop();
+			ColumnTemplateTerm currentTerm = columnTermsLocal.pop();
 			ColumnAffinity closestAffinity = NoColumnAffinity.INSTANCE;
 			ColumnTemplateTerm dependentTerm = null;
-			for(ColumnTemplateTerm comparisonTerm : comparisonTerms)
+			for(ColumnTemplateTerm comparisonTerm : comparisonTermsLocal)
 			{
 				ColumnAffinity affinity = findAffinity(currentTerm, comparisonTerm, termToPath);
 				if(affinity.isCloserThan(closestAffinity))
@@ -62,12 +116,10 @@ public class TemplateTermSetPopulatorPlan {
 					dependentTerm = comparisonTerm;
 				}
 			}
-			
-			generateWorker(currentTerm, dependentTerm);
-			
+			termsToTermDependentOn.put(currentTerm, dependentTerm);
+
 		}
-		findFirstWorker();
-		
+		return termsToTermDependentOn;
 	}
 
 	private TemplateTermSetPopulatorWorker generateWorker(
@@ -90,12 +142,14 @@ public class TemplateTermSetPopulatorPlan {
 	private TemplateTermSetPopulatorStrategy generateStrategy(
 			ColumnTemplateTerm currentTerm, ColumnTemplateTerm dependentTerm) {
 		TemplateTermSetPopulatorStrategy strategy = null;
-		if(dependentTerm == null) 
+		if(dependentTerm == null && firstWorker == null) 
 		{
 			strategy = new MemoizedTemplateTermSetPopulatorStrategy(termToPath.get(currentTerm));
 		}
 		else
 		{
+			if(firstWorker!= null && dependentTerm == null)
+				dependentTerm = firstWorker.term;
 			strategy = new DynamicTemplateTermSetPopulatorStrategy(termToPath.get(currentTerm), termToPath.get(dependentTerm));
 		}
 		return strategy;
@@ -110,7 +164,14 @@ public class TemplateTermSetPopulatorPlan {
 		}
 		else
 		{
-			independentWorkers.put(currentTerm, worker);
+			if(firstWorker != null)
+			{
+				firstWorker.addDependentWorker(worker);
+			}
+			else
+			{
+				independentWorkers.put(currentTerm, worker);
+			}
 		}
 	}
 
@@ -139,8 +200,12 @@ public class TemplateTermSetPopulatorPlan {
 		dependencyPlaceholder.add(worker);
 	}
 
-	private void findFirstWorker() {
-		firstWorker = null;
+	protected void findFirstWorker() {
+		if(firstWorker != null)
+		{
+			return;
+		}
+		
 		TemplateTermSetPopulatorWorker previousWorker = null; 
 		for(TemplateTermSetPopulatorWorker worker : independentWorkers.values())
 		{
@@ -177,7 +242,15 @@ public class TemplateTermSetPopulatorPlan {
 	
 	public List<PartiallyPopulatedTermSet> execute(Row topRow)
 	{
-		return firstWorker.work(topRow); 
+		if(firstWorker != null)
+		{
+			return firstWorker.work(topRow);
+		}
+		return new LinkedList<PartiallyPopulatedTermSet>();
+	}
+	public List<PartiallyPopulatedTermSet> executeComplicated(Row topRow, Node value) {
+		return firstWorker.work(topRow, value);
+		
 	}
 	
 	

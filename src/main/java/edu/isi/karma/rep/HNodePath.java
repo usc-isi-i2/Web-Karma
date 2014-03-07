@@ -185,11 +185,23 @@ public class HNodePath {
 	public static HNodePath findPathBetweenLeavesWithCommonHead(HNodePath start, HNodePath finish)
 	{
 		HNodePath newPath = new HNodePath();
+
+		if(start == null || finish == null)
+		{
+			System.out.println("park it");
+		}
+		if(start.getLeaf() == finish.getLeaf())
+		{
+			newPath.addHNode(start.getLeaf());
+			return newPath;
+		}
+		
 		HNodePath commonPath = findCommon(start, finish);
 		if(commonPath.isEmpty())
 		{
-			//TODO throw an error?
-			return newPath;
+			newPath.addHNodePath(start.reverse());
+			//newPath.addHNode(commonPath.getLeaf());
+			newPath.addHNodePath(finish);
 		}
 		else
 		{

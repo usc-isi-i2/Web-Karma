@@ -1,16 +1,16 @@
 package edu.isi.karma.kr2rml;
 
-import java.util.List;
+import java.util.Map;
 
 import edu.isi.karma.rep.Node;
 
 public class PopulatedTemplateTermSet {
 
 	protected TemplateTermSet terms;
-	protected List<Node> references;
+	protected Map<ColumnTemplateTerm, Node> references;
 	protected String uri;
 	
-	public PopulatedTemplateTermSet(TemplateTermSet terms, List<Node> references, String uri)
+	public PopulatedTemplateTermSet(TemplateTermSet terms,  Map<ColumnTemplateTerm, Node> references, String uri)
 	{
 		this.terms = terms;
 		this.references = references;
@@ -27,7 +27,7 @@ public class PopulatedTemplateTermSet {
 		return uri;
 	}
 	
-	public List<Node> getReferences()
+	public  Map<ColumnTemplateTerm, Node> getReferences()
 	{
 		return references;
 	}
