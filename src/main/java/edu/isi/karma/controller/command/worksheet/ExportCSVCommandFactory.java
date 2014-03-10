@@ -21,11 +21,15 @@
 package edu.isi.karma.controller.command.worksheet;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,11 +55,13 @@ public class ExportCSVCommandFactory extends CommandFactory {
 		String graphUrl = request.getParameter(Arguments.graphUrl.name());
 		String nodeId = request.getParameter(Arguments.rootNodeId.name());
 		String colList = request.getParameter(Arguments.columnList.name());
-		ArrayList<String> cols = new ArrayList<String>();
+		ArrayList<String> cols = null;
 		try {
-			JSONArray arr = new JSONArray(colList);
-			for(int i=0; i<arr.length(); i++) {
-				cols.add(arr.getString(i));
+			
+			JSONObject arr = new JSONObject(colList);
+			cols = new ArrayList<String>(arr.keySet().size());
+			for(int i=0; i<arr.keySet().size(); i++) {
+				cols.add(i, arr.getString(String.valueOf(i)));
 			}
 		} catch (Exception e) {
 			logger.error("Error parsing column list",e);
