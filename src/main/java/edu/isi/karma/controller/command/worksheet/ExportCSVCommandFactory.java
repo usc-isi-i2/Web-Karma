@@ -42,7 +42,7 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class ExportCSVCommandFactory extends CommandFactory {
 
-	private static Logger logger = LoggerFactory.getLogger(ExportCSVCommand.class);
+	private static Logger logger = LoggerFactory.getLogger(ExportCSVCommandFactory.class);
 	public enum Arguments {
 		worksheetId, columnList, tripleStoreUrl, graphUrl, rootNodeId
 	}
