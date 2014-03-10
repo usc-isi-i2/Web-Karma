@@ -68,7 +68,7 @@ public class TestCSVFileRdfGenerator {
 
 		String direct = getTestDataFolder();
 		String csvDirect = direct + "/csv";
-		String modelDirect = direct + "/model_test";
+		String modelDirect = direct + "/model";
 		String standardRdfDirect = direct + "/standardrdf";
 		String resultFileName = direct + "/testresult/testResult.txt";
 
