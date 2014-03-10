@@ -87,7 +87,7 @@ a.icon-remove:hover {
 			<div class="modal-content">
 			     <div class="modal-header">
 				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				       <h4 class="modal-title">Export CSV</h4>
+				       <h4 class="modal-title" id="exportCSV_ModelTitle">Export CSV</h4>
 				  </div>
 				  <div class="modal-body">
 				  <div id="csvDialogColumnList">
