@@ -16,7 +16,7 @@ var ClassDropdownMenu = (function() {
     		   	        [ "divider" , null ],
     		   	        [ "Export CSV" , exportCSV ],
     		   			[	"Invoke Reconciliation Service" , invokeReconciliationService ],
-    		   		/*	[ "Invoke M/L Service", invokeMLService ], */
+    		   			[ "Invoke M/L Service", invokeMLService ],
     		   			
     		   			
     		   	];
@@ -47,7 +47,7 @@ var ClassDropdownMenu = (function() {
     	}
     	
     	function exportCSV() {
-    		ExportCSVModelDialog.getInstance().show(worksheetId,alignmentId,columnId );
+    		ExportCSVModelDialog.getInstance().show(worksheetId,alignmentId,columnId,"exportCSV");
     	};
     	
     	function invokeReconciliationService() {
@@ -84,7 +84,7 @@ var ClassDropdownMenu = (function() {
     	}
     	
     	function invokeMLService() {
-    		console.log("invokeMLService");
+    		ExportCSVModelDialog.getInstance().show(worksheetId,alignmentId,columnId,"invokeMLService");
     	}
     	
     	function generateJS() {
