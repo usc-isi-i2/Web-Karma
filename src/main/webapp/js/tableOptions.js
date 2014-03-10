@@ -387,23 +387,30 @@ var ExportCSVModelDialog = (function() {
     		//Initialize what happens when we show the dialog
     		dialog.on('show.bs.modal', function (e) {
 				hideError();
-				$("input#csvSPAQRLEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-				window.csvSPAQRLEndPoint = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_models';
-				fetchGraphsFromTripleStore(window.csvSPAQRLEndPoint, $("#csvModelGraphList"));
-				$('#csvDialogContent').show();
+				
+				var url2 = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_data';
+				$("input#csvDataEndPoint").val(url2);	    		
+				fetchGraphsFromTripleStore(url2, $('#csvDataGraphList') );
+				
+				//$("input#csvSPAQRLEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+				//window.csvSPAQRLEndPoint = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_models';
+				//fetchGraphsFromTripleStore(window.csvSPAQRLEndPoint, $("#csvModelGraphList"));
+				
+				getColumnList();
+				//$('#csvDialogContent').show();
 				$('#csvDialogColumnList').html('');
-				$('#csvDialogColumnList').hide();
-				$('#btnExportCSV').hide();
+				//$('#csvDialogColumnList').hide();
+				//$('#btnExportCSV').hide();
 				
 				$('#csvDataDialogContent').hide();
 				
 			});
     		
-			//Initialize handler for Save button
-			$('#btnSave', dialog).on('click', function (e) {
-				e.preventDefault();
-				getColumnList();
-			});
+//			//Initialize handler for Save button
+//			$('#btnSave', dialog).on('click', function (e) {
+//				e.preventDefault();
+//				getColumnList();
+//			});
 			
 			//Initialize handler for ExportCSV button
 			$('#btnExportCSV', dialog).on('click', function (e) {
@@ -442,9 +449,10 @@ var ExportCSVModelDialog = (function() {
     		   				graphs = json["elements"][0]['graphs'];
     		   			}
     		   			//var modelGraphList = $("#csvModelGraphList");
-    		   			modelGraphList.html('<option value="000">Select a graph</option>');
+    		   			modelGraphList.html('<option value="000">Current Worksheet</option>');
     		   			for (var x in graphs) {
-    		   				modelGraphList.append('<option value="'+graphs[x]+'">'+graphs[x]+'</option>');
+    		   				var str = graphs[x];
+    		   				modelGraphList.append('<option value="'+graphs[x]+'">'+str+'</option>');
     		   			}
     			   	},
     			error :
@@ -458,11 +466,11 @@ var ExportCSVModelDialog = (function() {
     	function performExportCSV() {
     		
     		var graphUri = $('#csvDataGraphList').val().trim();
-    		graphUri = (graphUri == '000') ? '' : graphUri;
+    		//graphUri = (graphUri == '000') ? '' : graphUri;
     		
-    		var list = [];
+    		var list = {};
 			$('#csv_columns').find('li').each(function(index){
-				list.push($(this).attr('name'));
+				list[index] = $(this).attr('name');
 			});
 			
     		var info = new Object();
@@ -472,7 +480,7 @@ var ExportCSVModelDialog = (function() {
     		info["rootNodeId"] = $('#csv_columns').attr('rel');
     		info["tripleStoreUrl"] = $("#csvDataEndPoint").val();
     		info["graphUrl"] =  graphUri ;
-    		info["columnList"] = list;
+    		info["columnList"] = JSON.stringify(list);
     		
     		var returned = $.ajax({
     		   	url: "RequestController", 
@@ -482,7 +490,8 @@ var ExportCSVModelDialog = (function() {
     		   	complete : 
     		   		function (xhr, textStatus) {
     		   			var json = $.parseJSON(xhr.responseText);
-    		   			 
+    		   			parse(json);
+    		   			hide();
     			   	},
     			error :
     				function (xhr, textStatus) {
@@ -500,15 +509,15 @@ var ExportCSVModelDialog = (function() {
     	
     	// this method will fetch the columns that are reachable from this node
     	function getColumnList() {
-    		var graphUri = $('#csvModelGraphList').val().trim();
-    		graphUri = (graphUri == '000') ? '' : graphUri; 
+//    		var graphUri = $('#csvModelGraphList').val().trim();
+//    		graphUri = (graphUri == '000') ? '' : graphUri; 
     		var info = new Object();
     		info["workspaceId"] = $.workspaceGlobalInformation.id;
     		info["worksheetId"] = worksheetId;
     		info["command"] = "FetchColumnCommand";
-    		info["alignmentNodeId"] = alignmentNodeId;
-    		info["tripleStoreUrl"] = $("#csvSPAQRLEndPoint").val();
-    		info["graphUrl"] =  graphUri ;
+//    		info["alignmentNodeId"] = alignmentNodeId;
+//    		info["tripleStoreUrl"] = $("#csvSPAQRLEndPoint").val();
+//    		info["graphUrl"] =  graphUri ;
     		info["nodeId"] = columnId;
     		var returned = $.ajax({
     		   	url: "RequestController", 
@@ -524,17 +533,25 @@ var ExportCSVModelDialog = (function() {
     		   			var content = '<ol id="csv_columns" rel="'+data['elements'][0]['rootId']+'">';
     		   			var list = data['elements'][0]['columns'];
     		   			for(var x in list) {
+    		   				var index = 0;
+    		   				var str = list[x];
+    		   				if(str.lastIndexOf('#') > 0 ) {
+    		   					index = str.lastIndexOf('#') + 1;
+    		   				} else if(str.lastIndexOf('/') > 0 ) {
+    		   					index = str.lastIndexOf('/') + 1;
+    		   				}
+    		   				str = str.substr(index, (str.length - index));
+    		   				
     		   				content += '<li style="padding=4px;" name="'+list[x]+'">'
-    		   					+list[x]+' &nbsp; <a class="icon-remove pull-right">X</a>' 
+    		   					+str+' &nbsp; <a class="icon-remove pull-right">X</a>' 
     		   					+'</li>';
     		   			}
     		   			ele.html(content + '</ol>');
-    		   			ele.show();
     		   			$("#csv_columns").delegate('a.icon-remove','click',function(event){
     		   				$(this).parent().remove();
     		   			});
     		   			
-    		   			$('#btnExportCSV').show();
+    		   			//$('#btnExportCSV').show();
     		   			$("#csv_columns").sortable();
     		   			
     		   			initCSVDataDialog();
