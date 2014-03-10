@@ -149,14 +149,24 @@ import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommandFactory;
 import edu.isi.karma.controller.command.worksheet.AddRowCommand;
 import edu.isi.karma.controller.command.worksheet.AddRowCommandFactory;
+import edu.isi.karma.controller.command.worksheet.AddValuesCommand;
+import edu.isi.karma.controller.command.worksheet.AddValuesCommandFactory;
 import edu.isi.karma.controller.command.worksheet.ApplyHistoryFromR2RMLModelCommand;
 import edu.isi.karma.controller.command.worksheet.ApplyHistoryFromR2RMLModelCommandFactory;
 import edu.isi.karma.controller.command.worksheet.ApplyWorksheetHistoryCommand;
 import edu.isi.karma.controller.command.worksheet.ApplyWorksheetHistoryCommandFactory;
 import edu.isi.karma.controller.command.worksheet.EditCellCommand;
 import edu.isi.karma.controller.command.worksheet.EditCellCommandFactory;
+import edu.isi.karma.controller.command.worksheet.ExtractEntitiesCommand;
+import edu.isi.karma.controller.command.worksheet.ExtractEntitiesCommandFactory;
+import edu.isi.karma.controller.command.worksheet.ExportCSVCommand;
+import edu.isi.karma.controller.command.worksheet.ExportCSVCommandFactory;
+import edu.isi.karma.controller.command.worksheet.FetchColumnCommand;
+import edu.isi.karma.controller.command.worksheet.FetchColumnCommandFactory;
 import edu.isi.karma.controller.command.worksheet.FetchExistingWorksheetPropertiesCommand;
 import edu.isi.karma.controller.command.worksheet.FetchExistingWorksheetPropertiesCommandFactory;
+import edu.isi.karma.controller.command.worksheet.FoldCommand;
+import edu.isi.karma.controller.command.worksheet.FoldCommandFactory;
 import edu.isi.karma.controller.command.worksheet.LoadAdditionalWorksheetRowsCommand;
 import edu.isi.karma.controller.command.worksheet.LoadAdditionalWorksheetRowsCommandFactory;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
@@ -246,6 +256,10 @@ public class ExecutionController {
                 new AddColumnCommandFactory());
         commandFactoryMap.put(AddRowCommand.class.getSimpleName(),
                 new AddRowCommandFactory());
+        commandFactoryMap.put(AddValuesCommand.class.getSimpleName(),
+                new AddValuesCommandFactory());
+        commandFactoryMap.put(FoldCommand.class.getSimpleName(),
+                new FoldCommandFactory());
         commandFactoryMap.put(PublishRDFCellCommand.class.getSimpleName(),
                 new PublishRDFCellCommandFactory());
         commandFactoryMap.put(FetchPreferencesCommand.class.getSimpleName(),
@@ -326,6 +340,12 @@ public class ExecutionController {
                 new TestSPARQLEndPointCommandFactory());
         commandFactoryMap.put(LoadAdditionalWorksheetRowsCommand.class.getSimpleName(),
                 new LoadAdditionalWorksheetRowsCommandFactory());
+        commandFactoryMap.put(ExtractEntitiesCommand.class.getSimpleName(),
+                new ExtractEntitiesCommandFactory());
+        commandFactoryMap.put(FetchColumnCommand.class.getSimpleName(),
+        		new FetchColumnCommandFactory());
+        commandFactoryMap.put(ExportCSVCommand.class.getSimpleName(),
+        		new ExportCSVCommandFactory());
     }
 
     public Workspace getWorkspace() {

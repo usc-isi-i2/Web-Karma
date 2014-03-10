@@ -76,3 +76,8 @@ button#resetButton {
 	right: 50px;
 	font-size: 20px;
 }
+
+
+.modal-wide {
+    width: 80%; /* respsonsive width */
+}

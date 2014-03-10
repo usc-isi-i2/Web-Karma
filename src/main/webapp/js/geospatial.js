@@ -67,7 +67,7 @@ function showMapViewForWorksheet() {
                         // Remove existing link if any
                         $("a.KMLDownloadLink", titleDiv).remove();
                         var downloadLink = $("<a>").attr("href",json["elements"][0]["localFileName"]).text("SPATIAL DATA").addClass("KMLDownloadLink DownloadLink").attr("target","_blank");
-                        $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+                        $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
                     }
                 },
             error :

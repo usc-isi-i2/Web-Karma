@@ -205,3 +205,24 @@ div.italic {
     margin-left: 20px;
     margin-bottom: 5px;
 }
+
+div.incomingOutgoingLinksSeparator {
+	height: 4px;
+	width: 100%;
+	background: #AAAAAA;
+}
+div.separator {
+	height: 4px;
+	width: 100%;
+	background: #AAAAAA;
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+div.separatorWithText {
+	padding: 3px;
+	color: white;
+	width: 100%;
+	background: #AAAAAA;
+	margin-top: 2px;
+	margin-bottom: 2px;
+}

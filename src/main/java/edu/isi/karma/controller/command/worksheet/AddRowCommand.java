@@ -85,12 +85,12 @@ public class AddRowCommand extends WorksheetCommand {
 
 	@Override
 	public String getTitle() {
-		return "Add Row Column";
+		return "Add Row";
 	}
 
 	@Override
 	public String getDescription() {
-			return "";
+			return "New Row";
 	}
 
 	@Override
@@ -107,6 +107,7 @@ public class AddRowCommand extends WorksheetCommand {
 			worksheet.addRow(workspace.getFactory());
 			UpdateContainer c =  new UpdateContainer();		
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {
 			logger.error("Error in AddColumnCommand" + e.toString());

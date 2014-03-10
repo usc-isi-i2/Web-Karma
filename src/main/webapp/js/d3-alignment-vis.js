@@ -19,118 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-function styleAndAssignHandlersToModelingVizElements() {
-    var dropDownMenu = $("div#modelingClassDropDownMenu");
-    $("button", dropDownMenu).button();
-
-    $("#invokeRubenReconciliationService").click(function() {
-        console.log("I am clicked!!")
-        dropDownMenu.hide();
-        var info = new Object();
-        info["workspaceId"] = $.workspaceGlobalInformation.id;
-        info["command"] = "InvokeRubenReconciliationService";
-
-        var newInfo = [];
-        newInfo.push(getParamObject("alignmentNodeId", dropDownMenu.data("nodeId"), "other"));
-        newInfo.push(getParamObject("worksheetId", dropDownMenu.data("worksheetId"), "other"));
-
-        info["newInfo"] = JSON.stringify(newInfo);
-
-        showLoading(dropDownMenu.data("worksheetId"));
-        var returned = $.ajax({
-            url: "RequestController",
-            type: "POST",
-            data : info,
-            dataType : "json",
-            complete :
-                function (xhr, textStatus) {
-                    //alert(xhr.responseText);
-                    var json = $.parseJSON(xhr.responseText);
-                    parse(json);
-                    hideLoading(dropDownMenu.data("worksheetId"));
-                },
-            error :
-                function (xhr, textStatus) {
-                    alert("Error occured while exporting CSV!" + textStatus);
-                    hideLoading(dropDownMenu.data("worksheetId"));
-                }
-        });
-    });
-
-    // Adding mouse handlers to the div
-    dropDownMenu.mouseenter(function() {
-        if ($(this).data("timer") != null)
-            clearTimeout($(this).data("timer"));
-        $(this).show();
-    });
-    dropDownMenu.mouseleave(function() {
-        var timer = setTimeout(function() {
-            $("#modelingClassDropDownMenu").hide();
-        }, 700);
-        $(this).data("timer", timer);
-    });
-
-    // Filter for the links
-    $("#linksTableFilter").keyup( function (event) {
-        // fire the above change event after every letter
-
-        //if esc is pressed or nothing is entered
-        if (event.keyCode == 27 || $(this).val() == '') {
-            //if esc is pressed we want to clear the value of search box
-            $(this).val('');
-
-            //we want each row to be visible because if nothing
-            //is entered then all rows are matched.
-            $('tr').removeClass('visible').show().addClass('visible');
-        }
-
-        //if there is text, lets filter
-        else {
-            filter('#linksList tr', $(this).val(), "edgeLabel");
-        }
-    });
-
-    // Filter for the nodes
-    $("#nodesTableFilter").keyup( function (event) {
-        // fire the above change event after every letter
-
-        //if esc is pressed or nothing is entered
-        if (event.keyCode == 27 || $(this).val() == '') {
-            //if esc is pressed we want to clear the value of search box
-            $(this).val('');
-
-            //we want each row to be visible because if nothing
-            //is entered then all rows are matched.
-            $('tr').removeClass('visible').show().addClass('visible');
-        }
-
-        //if there is text, lets filter
-        else {
-            filter('#nodesList tr', $(this).val(), "nodeLabel");
-        }
-    });
-
-    // Filter for the nodes
-    $("#alternateLinksTableFilter").keyup( function (event) {
-        // fire the above change event after every letter
-
-        //if esc is pressed or nothing is entered
-        if (event.keyCode == 27 || $(this).val() == '') {
-            //if esc is pressed we want to clear the value of search box
-            $(this).val('');
-
-            //we want each row to be visible because if nothing
-            //is entered then all rows are matched.
-            $('tr').removeClass('visible').show().addClass('visible');
-        }
-
-        //if there is text, lets filter
-        else {
-            filter('#alternativeLinksList tr', $(this).val(), "edgeLabel");
-        }
-    });
-}
-
+//Called for every AlignmentSVGVisualizationUpdate
 function displayAlignmentTree_ForceKarmaLayout(json) {
     var worksheetId = json["worksheetId"];
     var mainWorksheetDiv = $("div#"+worksheetId);
@@ -377,6 +266,8 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .data(json.links)
         .enter().append("text")
         .text(function(d) {
+        	if(d.label == "classLink")
+        		return "uri";
             return d.label;
         })
         .attr("class", function(d) {
@@ -413,7 +304,24 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             return "translate(" + (this.getComputedTextLength()/2 * -1) + ")";
             // return "translate(" + (this.getComputedTextLength()/2 * -1) + ") rotate(-8 " +X+","+Y+ ")";  
         }).on("click", function(d){
-            showAlternativeLinksDialog(d, svg, d3.event);
+            //showAlternativeLinksDialog(d, svg, d3.event);
+        	
+        	PropertyDropdownMenu.getInstance().show(
+        			$(svg).data("worksheetId"),
+        			$(svg).data("alignmentId"),
+        			d["id"],
+        			d["linkUri"],
+        			d["sourceNodeId"],
+        			d.source.nodeType,
+        			d.source.label,
+        			d.source.nodeDomain,
+        			d.source.id,
+        			d["targetNodeId"],
+        			d.target.nodeType,
+        			d.target.label,
+        			d.target.nodeDomain,
+        			d.target.id,
+        			d3.event);
         }).on("mouseover", function(d){
             d3.selectAll("g.InternalNode").each(function(d2,i) {
                 if(d2 == d.source) {
@@ -438,7 +346,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .attr("class", function(d) {
             return d["nodeType"];
         });
-        
+     
     node.append("text")
         .attr("dy", ".32em")
         .text(function(d) {
@@ -469,10 +377,11 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .attr("x", function(d){ return this.getComputedTextLength()/2 * -1;})
         .on("click", function(d){
             if(d["nodeType"] == "InternalNode") {
-                d["targetNodeId"] = d["id"];
-                showLinksForInternalNode(d, svg, d3.event);
+        		ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain,
+        				$(svg).data("alignmentId"), d3.event);
             }
-        });
+        })
+        ;
         
     node.insert("rect", "text")
         .attr("ry", 6)
@@ -511,14 +420,14 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             	return 0;
             else
                 return d.width/2 * -1;
-        }).on("click", function(d){
-            if(d["nodeType"] == "ColumnNode" || d.nodeType == "Unassigned")
-                changeSemanticType_d3(d, svg, d3.event);
-            else if(d["nodeType"] == "InternalNode") {
-                d["targetNodeId"] = d["id"];
-                showLinksForInternalNode(d, svg, d3.event);
+        })
+        .on("click", function(d){
+           if(d["nodeType"] == "InternalNode") {
+        	   ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain,
+        			   $(svg).data("alignmentId"), d3.event);
             }
-        });
+        })
+        ;
 
     node.insert("path")
         .attr("d", function(d) {
@@ -542,21 +451,14 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             } else {
                 return d["width"]-5;
             }
-        }).on("click", function(d){
-            if(d["nodeType"] == "InternalNode") {
-                var menu = $("div#modelingClassDropDownMenu");
-                menu.data("nodeId", d.id);
-                menu.data("worksheetId", worksheetId);
-                menu.css({"position":"absolute",
-                    "top":$(this).offset().top + 5,
-                    "left": $(this).offset().left + $(this).width()/2 - $(menu).width()/2}).show();
+        })
+        .on("click", function(d){
+        	if(d["nodeType"] == "InternalNode") {
+        		ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain,
+        				$(svg).data("alignmentId"), d3.event);
             }
-        }).on("mouseout", function(d){
-            var timer = setTimeout(function() {
-                $("#modelingClassDropDownMenu").hide();
-            }, 700);
-            $("#modelingClassDropDownMenu").data("timer", timer);
-        });
+        })
+        ;
 
     /*** Check for collisions between labels and rectangles ***/
     d3.selectAll("text.LinkLabel." + worksheetId)
@@ -1420,17 +1322,379 @@ function populateLinksListFromServer() {
     });
 }
 
+//function showClassPopupMenu(d, classObj, event) {
+//	var menu = $("div#modelingClassDropDownMenu");
+//    menu.data("nodeId", d.id);
+//    menu.data("nodeDomain", d.nodeDomain);
+//    menu.data("nodeLabel", d.label);
+//    menu.data("worksheetId", d.worksheetId);
+//    menu.data("alignmentId", d.alignmentId);         
+//    menu.css({"position":"absolute",
+//        "top":$(classObj).offset().top + 5,
+//        "left": event.clientX}).show(); // + $(this).width()/2 - $(menu).width()/2}).show();
+//}
+
+function showIncomingOutgoingDialog(linkType) {
+	var linkTitle;
+	var menuDiv = $("#modelingClassDropDownMenu");
+	
+	console.log("Link type::" + linkType)
+	if(linkType == "incoming") {
+		linkTitle = "Add Incoming Link for " + $(menuDiv).data("nodeLabel");
+		$("#incomingOutgoingLinksDirection").html("from");
+	} else if(linkType == "outgoing") {
+		linkTitle = "Add Outgoing Link for " + $(menuDiv).data("nodeLabel");
+		$("#incomingOutgoingLinksDirection").html("to");
+	} else if(linkType == "fromClass"){
+		linkTitle = "Change from Class";
+		$("#incomingOutgoingLinksDirection").html("from");
+	} else if(linkType == "toClass") {
+		linkTitle = "Change to Class";
+		$("#incomingOutgoingLinksDirection").html("to");
+	} else {
+		linkTitle = linkType;
+	}
+	
+	var optionsDiv = $("div#incomingOutgoingLinksDialog");
+	
+    optionsDiv.data("workspaceId", $.workspaceGlobalInformation.id);
+    optionsDiv.data("nodeId",  $(menuDiv).data("nodeId"));
+    optionsDiv.data("nodeDomain",  $(menuDiv).data("nodeDomain"));
+    optionsDiv.data("alignmentId",  $(menuDiv).data("alignmentId"));
+    optionsDiv.data("worksheetId", $(menuDiv).data("worksheetId"));
+    optionsDiv.data("linkType", linkType);
+    
+    //Add the nodes in model followed by other nodes in incomingOutgoingLinksClassTable
+    populateClassListFromServer(optionsDiv);
+	
+	//Add the compatible properties followed by all other properties in incomingOutgoingLinksPropertyTable
+    populatePropertyListFromServer(optionsDiv);
+    
+	optionsDiv.dialog({width: 550, 
+						height: 480, 
+						position: [200, 200], 
+						title: linkTitle,
+						buttons: { 
+								"Cancel": function() { $(this).dialog("close"); }, 
+								"Submit":submitIncomingOutgoingLinksDialog }});
+}
 
 
+function submitIncomingOutgoingLinksDialog() {
+	var dialog = $("div#incomingOutgoingLinksDialog");
+	var startNode = dialog.data("nodeId");
+	var linkType = dialog.data("linkType");
+	
+	var classDiv = $("#incomingOutgoingLinksClassData");
+	var propertyDiv = $("#incomingOutgoingLinksPropertyData");
+	
+	 var info = new Object();
+	 info["workspaceId"] = dialog.data("workspaceId");
+	 info["command"] = "ChangeInternalNodeLinksCommand";
+
+	 // Prepare the input for command
+	 var newInfo = [];
+	 
+	// Put the old edge information
+	var initialEdges = [];
+	newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
+	    
+	newInfo.push(getParamObject("alignmentId", dialog.data("alignmentId"), "other"));
+	newInfo.push(getParamObject("worksheetId", dialog.data("worksheetId"), "worksheetId"));
+	 
+	 // Put the new edge information
+	 var newEdges = [];
+	 var newEdgeObj = {};
+	 
+	 var source, target;
+	 var property = propertyDiv.data("id");
+	    
+	if(linkType == "incoming") {
+		target = startNode;
+		source = classDiv.data("id");
+	} else if(linkType == "outgoing") {
+		source = startNode;
+		target = classDiv.data("id");
+	} else {
+		alert("Invalid linkType: " + linkType);
+		return;
+	}
+	
+	newEdgeObj["edgeSourceId"] = source;
+    newEdgeObj["edgeTargetId"] = target;
+    newEdgeObj["edgeId"] = property;
+    newEdges.push(newEdgeObj);
+    
+	newInfo.push(getParamObject("newEdges", newEdges, "other"));
+	info["newInfo"] = JSON.stringify(newInfo);
+	info["newEdges"] = newEdges;
+	
+	showLoading(dialog.data("worksheetId"));
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+                hideLoading(dialog.data("worksheetId"));
+                dialog.dialog("close");
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while getting nodes list!");
+                hideLoading(dialog.data("worksheetId"));
+                dialog.dialog("close");
+            }
+    });
+}
+
+function populateClassListFromServer(dialog) {
+	var info = new Object();
+    info["workspaceId"] = dialog.data("workspaceId");
+    info["command"] = "GetInternalNodesListOfAlignmentCommand";
+    info["alignmentId"] = dialog.data("alignmentId");
+    info["nodesRange"] = "existingTreeNodes"; //allGraphNodes";
+    
+    $("#incomingOutgoingLinksClassData").data("label", "");
+    
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                var nodeModel = parseInternalNodeList(json, true);
+                
+                $("div#incomingOutgoingLinksErrorWindowBox").hide();
+                displayIncomingOutgoingClasses(nodeModel, $("#incomingOutgoingLinksClassDiv1"),
+                		$("#incomingOutgoingLinksClassDiv2"), $("#incomingOutgoingLinksClassData"), dialog);
+                
+                
+                //Now get all other nodes
+                info["nodesRange"] = "allGraphNodes";
+                $.ajax({
+                	url: "RequestController",
+                	type: "POST",
+                	data: info,
+                	dataType: "json",
+                	complete: 
+                		function(xhr, textStatus) {
+                			var json = $.parseJSON(xhr.responseText);
+                			var nodesInner = parseInternalNodeList(json, true);
+                			var nodeAll = [];
+                			$.each(nodesInner, function(index, node) {
+                				//console.log(node + ":" + nodeModel[0] + ": " + $.inArray(node, nodeModel));
+                				if($.inArray(node, nodeModel) == -1) {
+	                                nodeAll.push(node);
+                				}
+                            });
+                			displayIncomingOutgoingClasses(nodeAll, $("#incomingOutgoingLinksClassDiv2"), 
+                					$("#incomingOutgoingLinksClassDiv1"), $("#incomingOutgoingLinksClassData"), dialog);
+                		},
+                	error:
+                		function(xhr, textStatus) {
+                			alert("Error occured while getting nodes list!");
+                		}
+                });
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while getting nodes list!");
+            }
+    });
+}
+
+function parseInternalNodeList(json, sortNodes) {
+	var nodes = [];
+	$.each(json["elements"], function(index, element) {
+        if(element["updateType"] == "InternalNodesList") {
+            if(sortNodes) {
+	        	element["nodes"].sort(function(a,b) {
+	                return a["nodeLabel"].toUpperCase().localeCompare(b["nodeLabel"].toUpperCase());
+	            });
+            }
+            
+            $.each(element["nodes"], function(index2, node) {
+            	var nodeData = {data:node["nodeLabel"], metadata:{"uri": node["nodeUri"], "id" : node["nodeId"]}};
+            	nodes.push(nodeData);
+                
+            });
+        }
+    });
+	return nodes;
+}
 
 
+function displayIncomingOutgoingClasses(dataArray, treeDiv, otherTreeDiv, dataDiv, dialog) {
+	if(dataArray.length == 0) {
+        $(treeDiv).html("<i>none</i>");
+    } else {
+        $(treeDiv).jstree({
+            "json_data" : {
+                "data" : dataArray
+            },
+            "themes" : {
+                "theme" : "proton",
+                "url": "uiLibs/jquery/css/jstree-themes/proton/style.css",
+                "dots" : true,
+                "icons" : false
+            },
+            "search" : {
+                "show_only_matches": true
+            },
+            "plugins" : [ "themes", "json_data", "ui", "search"]
+        })
+        	.bind("select_node.jstree", function (e, data) {
+                dataDiv.data("label",data.rslt.obj.context.lastChild.wholeText);
+                dataDiv.data("uri",data.rslt.obj.data("uri"));
+                dataDiv.data("id", data.rslt.obj.data("id"))
+                var a = $.jstree._focused().get_selected();
+                $(otherTreeDiv).jstree("deselect_all");
+                $(treeDiv).jstree("open_node", a);
+                
+                refreshPropertyListFromServer(data.rslt.obj.data("uri"), dialog);
+            });
+
+    }
+}
 
 
+function populatePropertyListFromServer(dialog) {
+	var info = new Object();
+    info["workspaceId"] = dialog.data("workspaceId");
+    info["command"] = "GetDataPropertyHierarchyCommand";
+    
+    $("#incomingOutgoingLinksPropertyData").data("label", "");
+    $("#incomingOutgoingLinksPropertyDiv1").html("<i>&nbsp;</i>");
+    
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                var nodeModel = parseDataPropertyList(json, true);
+                
+                $("div#incomingOutgoingLinksErrorWindowBox").hide();
+                displayIncomingOutgoingProperty(nodeModel, $("#incomingOutgoingLinksPropertyDiv2"),
+                		$("#incomingOutgoingLinksPropertyDiv1"), $("#incomingOutgoingLinksPropertyData"));
+                
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while getting property list!");
+            }
+    });
+}
 
+function parseDataPropertyList(json, sortNodes) {
+	var nodes = [];
+	$.each(json["elements"], function(index, element) {
+        if(element["updateType"] == "DataPropertyListUpdate" || element["updateType"] == "DataPropertiesForClassUpdate") {
+            if(sortNodes) {
+	        	element["data"].sort(function(a,b) {
+	                return a["data"].toUpperCase().localeCompare(b["data"].toUpperCase());
+	            });
+            }
+            
+            $.each(element["data"], function(index2, node) {
+            	nodes.push(node["data"]);
+                
+            });
+        } else if(element["updateType"] == "LinksList") {
+        	 if(sortNodes) {
+ 	        	element["edges"].sort(function(a,b) {
+ 	                return a["edgeLabel"].toUpperCase().localeCompare(b["edgeLabel"].toUpperCase());
+ 	            });
+             }
+             
+             $.each(element["edges"], function(index2, node) {
+            	 var nodeData = {data:node["edgeLabel"], metadata:{"id": node["edgeId"]}};
+             	 nodes.push(nodeData);
+                 
+             });
+        }
+    });
+	return nodes;
+}
 
+function refreshPropertyListFromServer(selectedClass, dialog) {
+	//alert("Get compatibe properties for: " + selectedClass);
+	var info = new Object();
+    info["workspaceId"] = dialog.data("workspaceId");
+    info["command"] = "GetLinksOfAlignmentCommand";
+    info["alignmentId"] = dialog.data("alignmentId");
+    var linkType = dialog.data("linkType");
+    var startNodeClass = dialog.data("nodeDomain");
+    
+    info["linksRange"] = "linksWithDomainAndRange";
+    if(linkType == "incoming") {
+    	info["domain"] = selectedClass;
+    	info["range"] = startNodeClass;
+    } else if(linkType == "outgoing") {
+    	info["domain"] = startNodeClass;
+    	info["range"] = selectedClass;
+    }
+   // info["URI"] = selectedClass;
+    
+    //$("#incomingOutgoingLinksPropertyData").data("label", "");
+    $("#incomingOutgoingLinksPropertyDiv1").html("<i>&nbsp;</i>");
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                var nodeModel = parseDataPropertyList(json, true);
+                
+                $("div#incomingOutgoingLinksErrorWindowBox").hide();
+                displayIncomingOutgoingProperty(nodeModel, $("#incomingOutgoingLinksPropertyDiv1"),
+                		$("#incomingOutgoingLinksPropertyDiv2"), $("#incomingOutgoingLinksPropertyData"));
+                
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while getting property list!");
+            }
+    });
+}
 
+function displayIncomingOutgoingProperty(dataArray, treeDiv, otherTreeDiv, dataDiv) {
+	if(dataArray.length == 0) {
+        $(treeDiv).html("<i>none</i>");
+    } else {
+        $(treeDiv).jstree({
+            "json_data" : {
+                "data" : dataArray
+            },
+            "themes" : {
+                "theme" : "apple",
+                "url": "uiLibs/jquery/css/jstree-themes/apple/style.css",
+                "dots" : true,
+                "icons" : false
+            },
+            "search" : {
+                "show_only_matches": true
+            },
+            "plugins" : [ "themes", "json_data", "ui", "search"]
+        })
+        	.bind("select_node.jstree", function (e, data) {
+                dataDiv.data("label",data.rslt.obj.context.lastChild.wholeText);
+                dataDiv.data("id",data.rslt.obj.data("id"));
+                var a = $.jstree._focused().get_selected();
+                $(otherTreeDiv).jstree("deselect_all");
+                $(treeDiv).jstree("open_node", a);
+            });
 
-
-
-
+    }
+}
 

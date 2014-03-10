@@ -21,25 +21,54 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Workspace;
 
 public class InvokeDataMiningServiceCommandFactory extends CommandFactory {
+	
+	private static Logger logger = LoggerFactory.getLogger(InvokeDataMiningServiceCommandFactory.class);
 	private enum Arguments {
-		worksheetId, tripleStoreUrl, modelContext, dataMiningURL
+		worksheetId, dataMiningURL, csvFileName
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		String url = request.getParameter(Arguments.tripleStoreUrl.name());
-		String context = request.getParameter(Arguments.modelContext.name());
+		String csvFileName = request.getParameter(Arguments.csvFileName.name());
+		csvFileName = csvFileName.substring(csvFileName.lastIndexOf("/")+1, csvFileName.length());
+//		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
+//		String graphUrl = request.getParameter(Arguments.graphUrl.name());
+//		String nodeId = request.getParameter(Arguments.rootNodeId.name());
+//		String colList = request.getParameter(Arguments.columnList.name());
 		String dmURL = request.getParameter(Arguments.dataMiningURL.name());
-		return new InvokeDataMiningServiceCommand(getNewId(workspace), worksheetId, url, context, dmURL);
+		
+//		ArrayList<String> cols = null;
+//		try {
+//			
+//			JSONObject arr = new JSONObject(colList);
+//			cols = new ArrayList<String>(arr.keySet().size());
+//			for(int i=0; i<arr.keySet().size(); i++) {
+//				cols.add(i, arr.getString(String.valueOf(i)));
+//			}
+//		} catch (Exception e) {
+//			logger.error("Error parsing column list",e);
+//		}
+		
+		logger.info("dmUrl:"+dmURL);
+		logger.info("csv:"+csvFileName);
+		
+//		return new InvokeDataMiningServiceCommand(getNewId(workspace), worksheetId, url, graphUrl, dmURL);
+		return new InvokeDataMiningServiceCommand(getNewId(workspace), worksheetId, dmURL, csvFileName);
 	}
 
 }

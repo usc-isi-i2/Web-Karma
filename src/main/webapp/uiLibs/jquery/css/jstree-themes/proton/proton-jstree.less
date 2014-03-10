@@ -1,0 +1,293 @@
+/*
+ * jsTree Proton theme 1.0
+ * Based on jsTree Apple theme
+ * Supported features: dots/no-dots, icons/no-icons, focused, loading
+ * Supported plugins: ui (hovered, clicked), checkbox, contextmenu, search
+ */
+@jstree-theme-path : "";    // if you need to change img paths
+@line-height-jstree : 24px;
+.jstree.jstree-proton{
+    	-webkit-font-smoothing: antialiased;
+    	font-family: @font-family-sans-serif, Arial, sans-serif;
+        text-align: left;
+    li,
+    ins {
+    	background-image:url("@{jstree-theme-path}d.png");
+    	background-repeat:no-repeat;
+    	background-color:transparent;
+    	background-size: 108px 96px;
+    }
+    li {
+    	background-position:-90px 0;
+    	background-repeat:repeat-y;
+        min-height: @line-height-jstree;
+        line-height: @line-height-jstree;
+        font-size: @font-size-base;
+        line-height: @line-height-jstree;
+    }
+    > ul > li {
+        &:first-child{
+            padding-top: 5px;
+    	}
+    }
+    a > ins{
+        width: 18px;
+    }
+    li.jstree-last {
+    	background:transparent;
+    }
+    .jstree-open > ins {
+    	background-position:-72px 0;
+    }
+    .jstree-open > a > ins {
+        background-position:-56px -37px;
+        &.jstree-icon {
+            height: 14px;
+        }
+    }
+    .jstree-closed > ins {
+    	background-position:-54px 0;
+    }
+    .jstree-leaf > ins {
+    	background-position:-36px 0;
+    }
+    a{
+        position: relative;
+        top: -6px;
+        max-width: 85%;
+        display: inline-block;
+        height: @line-height-jstree;
+        padding: 4px 6px 3px;
+        font-size: @font-size-base;
+        line-height: @line-height-jstree - 9px;
+        vertical-align: middle;
+        border-radius: 3px;
+        color: inherit;
+        .transition(all 0.1s);
+        .text-overflow();
+    }
+    .jstree-hovered {
+        background: @brand-primary;
+        color: #fff;
+    }
+    .jstree-clicked {
+        background: darken(@brand-primary, 15%);
+        color: #fff;
+    }
+    .jstree-clicked > ins{
+        background-position:-74px -19px;
+    }
+    a .jstree-icon {
+    	background-position:-56px -19px;
+    }
+    a.jstree-loading .jstree-icon {
+    	background:url("@{jstree-theme-path}throbber.gif") center center no-repeat !important;
+    }
+    jstree-focused {
+    	background:transparent;
+    }
+    .jstree-no-dots li,
+    .jstree-no-dots .jstree-leaf > ins {
+    	background:transparent;
+    }
+    .jstree-no-dots .jstree-open > ins {
+    	background-position:-18px 0;
+    }
+    .jstree-no-dots .jstree-closed > ins {
+    	background-position:0 0;
+    }
+    .jstree-no-icons a .jstree-icon {
+    	display:none;
+    }
+    .jstree-search {
+    	font-style:italic;
+    }
+    .jstree-no-icons .jstree-checkbox {
+    	display:inline-block;
+    }
+    .jstree-no-checkboxes .jstree-checkbox {
+    	display:none !important;
+    }
+    .jstree-checked > a > .jstree-checkbox {
+    	background-position:-37px -19px;
+    }
+    .jstree-unchecked > a > .jstree-checkbox {
+    	background-position:-1px -19px;
+    }
+    .jstree-undetermined > a > .jstree-checkbox {
+    	background-position:-19px -19px;
+    }
+    .jstree-checked > a > .checkbox:hover {
+    	background-position:-37px -37px;
+    }
+    .jstree-unchecked > a > .jstree-checkbox:hover {
+    	background-position:-1px -37px;
+    }
+    .jstree-undetermined > a > .jstree-checkbox:hover {
+    	background-position:-19px -37px;
+    }
+    &.jstree li[rel="file"] > a > ins.jstree-icon {
+        background-image: url("@{jstree-theme-path}file.png");
+        background-position: 0 0;
+        background-size: 18px 16px;
+    }
+    #vakata-dragged {
+        font-size: @font-size-base;
+        line-height: @line-height-jstree;
+        opacity: 0.7;
+    }
+    #vakata-dragged.jstree-proton ins {
+        background:transparent !important;
+    }
+    #vakata-dragged.jstree-proton .jstree-ok {
+        background:url("@{jstree-theme-path}d.png") -1px -54px no-repeat !important;
+        background-size: 108px 96px !important;
+    }
+    #vakata-dragged.jstree-proton .jstree-invalid {
+        background:url("@{jstree-theme-path}d.png") -18px -54px no-repeat !important;
+        background-size: 108px 96px !important;
+    }
+    #jstree-marker.jstree-proton {
+        background:url("@{jstree-theme-path}d.png") -40px -56px no-repeat !important;
+        background-size: 108px 96px !important;
+        text-indent:-100px;
+    }
+    a.jstree-search {
+    	color:aqua;
+    }
+    .jstree-locked a {
+    	color:silver;
+    	cursor:default;
+    }
+    #vakata-contextmenu.jstree-proton-context,
+    #vakata-contextmenu.jstree-proton-context li ul {
+    	background:#f0f0f0;
+    	border:1px solid #979797;
+    	-moz-box-shadow: 1px 1px 2px #999;
+    	-webkit-box-shadow: 1px 1px 2px #999;
+    	box-shadow: 1px 1px 2px #999;
+    }
+    #vakata-contextmenu.jstree-proton-context li {
+    }
+    #vakata-contextmenu.jstree-proton-context a {
+    	color:black;
+    }
+    #vakata-contextmenu.jstree-proton-context a:hover,
+    #vakata-contextmenu.jstree-proton-context .vakata-hover > a {
+    	padding:0 5px;
+    	background:#e8eff7;
+    	border:1px solid #aecff7;
+    	color:black;
+    	border-radius:2px;
+    }
+    #vakata-contextmenu.jstree-proton-context li.jstree-contextmenu-disabled a,
+    #vakata-contextmenu.jstree-proton-context li.jstree-contextmenu-disabled a:hover {
+    	color:silver;
+    	background:transparent;
+    	border:0;
+    	padding:1px 4px;
+    }
+    #vakata-contextmenu.jstree-proton-context li.vakata-separator {
+    	background:white;
+    	border-top:1px solid #e0e0e0;
+    	margin:0;
+    }
+    #vakata-contextmenu.jstree-proton-context li ul {
+    	margin-left:-4px;
+    }
+
+
+    @mobile-break-point : (@screen-xs - 1px);
+    @media (max-width: @mobile-break-point) {
+        width: 100%;
+        
+        li {
+            background-image: none;
+        }
+        ins {
+            background-size: 108px 96px;
+        }
+        li{
+            padding: 6px 0;
+            border-top: 1px solid @panel-inner-border;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            margin-left: 0;
+        }
+        .jstree-open{
+            // border-top: 1px solid @panel-inner-border;
+            background-color: #f7f7f7;
+            background-color: rgba(0, 0, 0, 0.02);
+            padding-bottom: 0 !important;
+
+            li:last-child{
+                padding: 6px 0;
+            }
+            &+.jstree-open{
+                border-top: 1px solid @panel-inner-border;
+                background-color: rgba(0, 0, 0, 0.02);
+            }
+        }
+        > ul > .jstree-last{
+            border-bottom: 1px solid @panel-inner-border;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        li.jstree-open > ul{
+            margin-top: 6px;
+        }
+        li > ins{
+            position: relative;
+            top: 2px;
+            width: 21px;
+            height: 21px;
+        }
+
+        a, .jstree-hovered, .jstree-clicked{
+            background-color: transparent;
+            color: inherit;
+            padding: 0 3px;
+            margin-left: 8px;
+            top: 3px;
+        }
+        .jstree-leaf > ins{
+            background: transparent;
+        }
+
+        .jstree-no-dots .jstree-closed > ins,
+        .jstree-closed > ins {
+            background-position: -53px -54px;
+        }
+
+        .jstree-no-dots .jstree-open > ins,
+        .jstree-open > ins {
+            background-position: -53px -75px;
+        }
+
+        // INSET CONTROL
+        > ul > li {
+            &:first-child{
+                padding: 6px 0;
+            }
+            // root level
+            & > ins{
+                margin-left: 15px;
+                margin-right: 5px;
+            }
+
+            // 1st level
+            & > ul > li {
+                border-color: rgba(0, 0, 0, 0.1);
+                & > ins{
+                    margin-left: (@line-height-jstree *2);
+                }
+
+                // 2nd level
+                & > ul > li {
+                    border-color: rgba(0, 0, 0, 0.15);
+                    & > ins{
+                        margin-left: (@line-height-jstree *3);
+                    }
+                }
+            }
+        }
+    }   // @media end
+}   // .jstree.jstree-proton end
