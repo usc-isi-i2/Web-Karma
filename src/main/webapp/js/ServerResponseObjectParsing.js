@@ -511,6 +511,16 @@ function parse(data) {
                 loadMoreLink.text(additionalRecordsLeft + " additional records, load more...");
             }
         }
+        else if(element["updateType"] == "ExportCSVUpdate") {
+            // Remove existing link if any
+        	var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
+            $("a.CSVExportDownloadLink", titleDiv).remove();
+
+            hideLoading(element["worksheetId"]);
+            var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("CSV Export").addClass("CSVExportDownloadLink  DownloadLink").attr("target", "_blank");
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
+            $.sticky("CSV exported");
+        }
     });
     
     if(trivialErrors.length > 0) {
