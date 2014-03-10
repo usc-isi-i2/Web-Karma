@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -534,6 +535,29 @@ public class TripleStoreUtil {
 			}
 		}
 		return retVal;
+	}
+	
+	
+	
+	/**
+	 * This method clears all the statements from the given context
+	 * */
+	public static boolean clearContexts(String tripleStoreUrl, String graphUri) {
+		if(tripleStoreUrl==null || tripleStoreUrl.isEmpty() || graphUri==null || graphUri.isEmpty()) {
+			logger.error("Missing graphUri or tripleStoreUrl");
+			return false;
+		} 
+		
+		String responseString;
+		try {
+			String url = tripleStoreUrl+"/statements?graph="+URLEncoder.encode(graphUri,"UTF-8");
+			logger.info("Deleting from uri : " + url);
+			responseString = HTTPUtil.executeHTTPDeleteRequest(url);
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return false;
 	}
 	
 }
