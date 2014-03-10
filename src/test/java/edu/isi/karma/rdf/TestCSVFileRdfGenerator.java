@@ -39,7 +39,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -68,7 +68,7 @@ public class TestCSVFileRdfGenerator {
 
 		String direct = getTestDataFolder();
 		String csvDirect = direct + "/csv";
-		String modelDirect = direct + "/model";
+		String modelDirect = direct + "/model_test";
 		String standardRdfDirect = direct + "/standardrdf";
 		String resultFileName = direct + "/testresult/testResult.txt";
 

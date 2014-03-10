@@ -38,7 +38,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.SPARQLGeneratorUtil;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
-import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
+import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.alignment.Alignment;

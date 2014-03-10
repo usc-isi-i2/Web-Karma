@@ -33,21 +33,36 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.ErrorReport.Priority;
+import edu.isi.karma.kr2rml.exception.HNodeNotFoundKarmaException;
+import edu.isi.karma.kr2rml.exception.NoValueFoundInNodeException;
+import edu.isi.karma.kr2rml.exception.ValueNotFoundKarmaException;
+import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
+import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
+import edu.isi.karma.kr2rml.planning.DFSTriplesMapGraphTreeifier;
+import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
+import edu.isi.karma.kr2rml.planning.TriplesMap;
+import edu.isi.karma.kr2rml.planning.TriplesMapLink;
+import edu.isi.karma.kr2rml.planning.TriplesMapPlan;
+import edu.isi.karma.kr2rml.planning.TriplesMapPlanExecutor;
+import edu.isi.karma.kr2rml.planning.TriplesMapPlanGenerator;
+import edu.isi.karma.kr2rml.planning.TriplesMapWorkerPlan;
+import edu.isi.karma.kr2rml.planning.WorksheetDepthTreeRootStrategy;
+import edu.isi.karma.kr2rml.template.ColumnTemplateTerm;
+import edu.isi.karma.kr2rml.template.StringTemplateTerm;
+import edu.isi.karma.kr2rml.template.TemplateTerm;
+import edu.isi.karma.kr2rml.template.TemplateTermSet;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
@@ -64,7 +79,7 @@ public class KR2RMLWorksheetRDFGenerator {
 	protected boolean addColumnContextInformation;
 	protected KR2RMLMapping kr2rmlMapping;
 	protected KR2RMLMappingColumnNameHNodeTranslator translator;
-	protected Map<String, String> hNodeToContextUriMap;
+	protected ConcurrentHashMap<String, String> hNodeToContextUriMap;
 	protected KR2RMLRDFWriter outWriter;
 	
 	private Logger logger = LoggerFactory.getLogger(KR2RMLWorksheetRDFGenerator.class);
@@ -81,7 +96,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.outputFileName = outputFileName;
 		this.errorReport = errorReport;
 		this.uriFormatter = new URIFormatter(ontMgr, errorReport);
-		this.hNodeToContextUriMap = new HashMap<String, String>();
+		this.hNodeToContextUriMap = new ConcurrentHashMap<String, String>();
 		this.addColumnContextInformation = addColumnContextInformation;
 		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
 		
@@ -98,7 +113,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.errorReport = errorReport;
 		this.uriFormatter = new URIFormatter(ontMgr, errorReport);
 		this.outWriter = new N3KR2RMLRDFWriter(uriFormatter, writer);
-		this.hNodeToContextUriMap = new HashMap<String, String>();
+		this.hNodeToContextUriMap = new ConcurrentHashMap<String, String>();
 		this.addColumnContextInformation = addColumnContextInformation;
 		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
 		
@@ -140,19 +155,18 @@ public class KR2RMLWorksheetRDFGenerator {
 			}
 			int i=1;
 			
+			Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan = new HashMap<TriplesMap, TriplesMapWorkerPlan>() ;
+			for(TriplesMap triplesMap : kr2rmlMapping.getTriplesMapList())
+			{
+				TriplesMapWorkerPlan workerPlan = new TriplesMapWorkerPlan(factory, triplesMap, kr2rmlMapping, uriFormatter, translator,  addColumnContextInformation, hNodeToContextUriMap);
+				triplesMapToWorkerPlan.put(triplesMap, workerPlan);
+			}
 			for (Row row:rows) {
 				TriplesMapPlanExecutor e = new TriplesMapPlanExecutor();
-				TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(this, row);
+				TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(triplesMapToWorkerPlan, row, outWriter);
 				TriplesMapPlan plan = g.generatePlan(kr2rmlMapping.getAuxInfo().getTriplesMapGraph());
 				e.execute(plan);
-				//outWriter.println();
-			
-				Set<String> rowTriplesSet = new HashSet<String>();
-				Set<String> rowPredicatesCovered = new HashSet<String>();
-				Set<String> predicatesSuccessful = new HashSet<String>();
-				Map<String, ReportMessage> predicatesFailed = new HashMap<String,ReportMessage>();
-				//generateTriplesForRow(row, rowTriplesSet, rowPredicatesCovered, predicatesFailed, predicatesSuccessful);
-
+				
 				outWriter.finishRow();
 				if (i++%2000 == 0)
 					logger.info("Done processing " + i + " rows");
@@ -480,18 +494,6 @@ public class KR2RMLWorksheetRDFGenerator {
 		return output.toString();
 	}
 
-	
-	private String getColumnContextUri (String hNodeId) {
-		if (hNodeToContextUriMap.containsKey(hNodeId))
-			return hNodeToContextUriMap.get(hNodeId);
-		else {
-			String randomId = RandomStringUtils.randomAlphanumeric(10);
-			String uri = Namespaces.KARMA_DEV + randomId + "_" + hNodeId;
-			hNodeToContextUriMap.put(hNodeId, uri);
-			return uri;
-		}
-	}
-	
 	private void generateColumnProvenanceInformation() {
 		for (String hNodeId:hNodeToContextUriMap.keySet()) {
 			getColumnContextTriples(hNodeId);
@@ -512,6 +514,17 @@ public class KR2RMLWorksheetRDFGenerator {
 			}
 		}
 	}
+	protected String getColumnContextUri (String hNodeId) {
+		
+		if (hNodeToContextUriMap.containsKey(hNodeId))
+			return hNodeToContextUriMap.get(hNodeId);
+		else {
+			String randomId = RandomStringUtils.randomAlphanumeric(10);
+			String uri = Namespaces.KARMA_DEV + randomId + "_" + hNodeId;
+			hNodeToContextUriMap.put(hNodeId, uri);
+			return uri;
+		}
+	}
 	
 	private void getColumnContextTriples(String hNodeId) {
 		String colUri = getColumnContextUri(hNodeId);
@@ -530,339 +543,6 @@ public class KR2RMLWorksheetRDFGenerator {
 	}
 	
 
-	public class TriplesMapWorker implements Callable<Boolean> {
-	
-		private Logger LOG = LoggerFactory.getLogger(TriplesMapWorker.class);
-		protected List<CountDownLatch> dependentTriplesMapLatches;
-		protected CountDownLatch latch;
-		protected TriplesMap triplesMap;
-		protected Row r;
-		protected Map<String, List<PopulatedTemplateTermSet>> triplesMapSubjects;
-		public TriplesMapWorker(TriplesMap triplesMap, CountDownLatch latch, Row r, Map<String, List<PopulatedTemplateTermSet>> triplesMapSubjects)
-		{
-			this.latch = latch;
-			this.triplesMap = triplesMap;
-			this.dependentTriplesMapLatches = new LinkedList<CountDownLatch>();
-			this.r = r;
-			this.triplesMapSubjects = triplesMapSubjects;
-		}
-		public void addDependentTriplesMapLatch(CountDownLatch latch)
-		{
-			dependentTriplesMapLatches.add(latch);
-		}
-		
-		private void notifyDependentTriplesMapWorkers()
-		{
-			for(CountDownLatch latch : dependentTriplesMapLatches)
-			{
-				latch.countDown();
-			}
-		}
-		@Override
-		public Boolean call() throws HNodeNotFoundKarmaException, ValueNotFoundKarmaException, NoValueFoundInNodeException {
-			
-			List<PopulatedTemplateTermSet> subjects = new LinkedList<PopulatedTemplateTermSet>();
-			triplesMapSubjects.put(triplesMap.getId(), subjects);
-			try{
-				latch.await();
-			}
-			catch (Exception e )
-			{
-				LOG.error("Error while waiting for dependent triple maps to process", e);
-				notifyDependentTriplesMapWorkers();
-				return false;
-			}
-			LOG.info("Processing " + triplesMap.getId() + " " +triplesMap.getSubject().getId());
-			try
-			{
-			
-		
-			
-				Map<ColumnTemplateTerm, HNodePath> subjectTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
-				SubjectMap subjMap = triplesMap.getSubject();
-				TemplateTermSetPopulator subjectMapTTSPopulator = generateTemplateTermSetPopulatorForSubjectMap(subjMap);
-				populateTermsToPathForSubject(subjectTermsToPaths, subjectMapTTSPopulator.originalTerms);
-				TemplateTermSetPopulatorPlan plan = new TemplateTermSetPopulatorPlan(subjectTermsToPaths, subjectTermsToPaths.keySet());
-				subjects.addAll(subjectMapTTSPopulator.populate(r, plan));
-				
-				List<PopulatedTemplateTermSet> rdfsType = new LinkedList<PopulatedTemplateTermSet>();
-				TemplateTermSet rdfsTypeTerms = new TemplateTermSet();
-				rdfsTypeTerms.addTemplateTermToSet(new StringTemplateTerm(Uris.RDF_TYPE_URI));
-				PopulatedTemplateTermSet rdfsTypeTermSet = new PopulatedTemplateTermSet(rdfsTypeTerms, null, Uris.RDF_TYPE_URI);
-				rdfsType.add(rdfsTypeTermSet);
-				// Generate triples for specifying the types
-				for (TemplateTermSet typeTerm:subjMap.getRdfsType()) {
-					
-					generateSubjectPredicateObject(typeTerm, subjectMapTTSPopulator.originalTerms, subjects, rdfsType, subjectTermsToPaths, null);
-					
-				
-				}
-				List<TriplesMapLink> links = kr2rmlMapping.getAuxInfo().getTriplesMapGraph().getAllNeighboringTriplesMap(triplesMap.getId());
-				for(TriplesMapLink link : links) {
-					if(link.getSourceMap().getId().compareTo(triplesMap.getId()) ==0  && !link.isFlipped() ||
-							link.getTargetMap().getId().compareTo(triplesMap.getId()) == 0 && link.isFlipped())
-					{
-						PredicateObjectMap pom = link.getPredicateObjectMapLink();
-						List<PopulatedTemplateTermSet> predicates = generatePredicatesForPom(pom);
-						TriplesMap objectTriplesMap = null;
-						if(link.isFlipped())
-						{
-							objectTriplesMap = link.getSourceMap();
-						}
-						else
-						{
-							objectTriplesMap = link.getTargetMap();
-						}
-						
-						Map<ColumnTemplateTerm, HNodePath> combinedSubjectObjectTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
-						combinedSubjectObjectTermsToPaths.putAll(subjectTermsToPaths);
-						Map<ColumnTemplateTerm, HNodePath> objectTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
-						TemplateTermSetPopulator objectTemplateTermSetPopulator = generateTemplateTermSetPopulatorForSubjectMap(objectTriplesMap.getSubject());
-						populateTermsToPathForSubject(objectTermsToPaths, objectTemplateTermSetPopulator.originalTerms);
-						combinedSubjectObjectTermsToPaths.putAll(objectTermsToPaths);
-						LinkedList<ColumnTemplateTerm> objectColumnTerms = new LinkedList<ColumnTemplateTerm>();
-						objectColumnTerms.addAll(objectTemplateTermSetPopulator.originalTerms.getAllColumnNameTermElements());
-						ComplicatedTemplateTermSetPopulatorPlan complicatedPlan = new ComplicatedTemplateTermSetPopulatorPlan(combinedSubjectObjectTermsToPaths, objectColumnTerms, subjectMapTTSPopulator.originalTerms.getAllColumnNameTermElements());
-						Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> subjectsToObjects = complicatedPlan.execute(r, subjects);
-						for(Entry<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> subjectToObjects : subjectsToObjects.entrySet())
-						{
-							PopulatedTemplateTermSet subject = subjectToObjects.getKey();
-							List<PopulatedTemplateTermSet> objects = objectTemplateTermSetPopulator.generatePopulatedTemplatesFromPartials( subjectToObjects.getValue());
-							for(PopulatedTemplateTermSet object : objects )
-							{
-								for(PopulatedTemplateTermSet predicate : predicates)
-								{
-									if(!link.isFlipped())
-									{
-										outWriter.outputTripleWithURIObject(subject.getURI(), predicate.getURI(), object.getURI());
-									}
-									else
-									{
-										outWriter.outputTripleWithURIObject(object.getURI(), predicate.getURI(), subject.getURI());
-									}
-								}
-							}
-						}
-					}	
-				}
-				
-				for(PredicateObjectMap pom : triplesMap.getPredicateObjectMaps())
-				{
-					LOG.info("Processing " + pom.toString());
-					if(pom.getObject().hasRefObjectMap())
-					{
-						LOG.info("Skipping " + pom.toString());
-						continue;
-					}
-					if(pom.getPredicate().toString().contains("classLink"))
-					{
-						LOG.info("Skipping " + pom.toString());
-						continue;
-					}
-					TemplateTermSet literalTemplate = pom.getObject().getRdfLiteralType();
-					String literalTemplateValue = null;
-					if(literalTemplate != null)
-					{
-						literalTemplateValue = generateStringValueForTemplate(literalTemplate);
-					}
-					
-					List<PopulatedTemplateTermSet> predicates = generatePredicatesForPom(pom);
-					ObjectMap objMap = pom.getObject();
-					TemplateTermSet objMapTemplate = objMap.getTemplate();
-					generateSubjectPredicateObject(objMapTemplate, subjectMapTTSPopulator.originalTerms, subjects, predicates, subjectTermsToPaths, literalTemplateValue);
-				}
-			
-			}
-			catch (Exception e)
-			{
-				LOG.error("Something went wrong", e );
-			}
-				
-			LOG.info("Processed " + triplesMap.getId() + " " +triplesMap.getSubject().getId());
-			notifyDependentTriplesMapWorkers();
-			return true;
-		}
-		private void generateSubjectPredicateObject(TemplateTermSet objMapTemplate, TemplateTermSet subjectMapTemplate, List<PopulatedTemplateTermSet> subjects, List<PopulatedTemplateTermSet> predicates, Map<ColumnTemplateTerm,HNodePath>subjectTermsToPaths, String literalTemplateValue) throws HNodeNotFoundKarmaException {
-			
-			// we have a literal
-			if(objMapTemplate.getAllColumnNameTermElements().isEmpty())
-			{
-				String objTemplateValue = generateExpandedStringValueForTemplate(objMapTemplate);
-				
-				for(PopulatedTemplateTermSet subject : subjects)
-				{
-					for(PopulatedTemplateTermSet predicate : predicates)
-					{
-						if(!objMapTemplate.isSingleUriString())
-						{
-							outWriter.outputTripleWithLiteralObject(subject.getURI(), predicate.getURI(), objTemplateValue, null);
-						}
-						else
-						{
-							outWriter.outputTripleWithURIObject(subject.getURI(), predicate.getURI(), objTemplateValue);
-						}
-					}
-				}
-			}
-			else
-			{
-				LinkedList<TemplateTerm> allTerms = new LinkedList<TemplateTerm>();
-				allTerms.addAll(objMapTemplate.getAllTerms());
-	
-				TemplateTermSetPopulator objectTemplateTermSetPopulator = new TemplateTermSetPopulator(objMapTemplate, new StringBuilder(), uriFormatter, false, true);
-				Map<ColumnTemplateTerm, HNodePath> combinedSubjectObjectTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
-				combinedSubjectObjectTermsToPaths.putAll(subjectTermsToPaths);
-				Map<ColumnTemplateTerm, HNodePath> objectTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
-				
-				populateTermsToPathForSubject(objectTermsToPaths, objMapTemplate);
-				combinedSubjectObjectTermsToPaths.putAll(objectTermsToPaths);
-				LinkedList<ColumnTemplateTerm> objectColumnTerms = new LinkedList<ColumnTemplateTerm>();
-				objectColumnTerms.addAll(objectTemplateTermSetPopulator.originalTerms.getAllColumnNameTermElements());
-				ComplicatedTemplateTermSetPopulatorPlan complicatedPlan = new ComplicatedTemplateTermSetPopulatorPlan(combinedSubjectObjectTermsToPaths, objectColumnTerms, subjectMapTemplate.getAllColumnNameTermElements());
-				Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> subjectsToObjects = complicatedPlan.execute(r, subjects);
-				for(Entry<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> subjectToObjects : subjectsToObjects.entrySet())
-				{
-					PopulatedTemplateTermSet subject = subjectToObjects.getKey();
-					List<PopulatedTemplateTermSet> objects = objectTemplateTermSetPopulator.generatePopulatedTemplatesFromPartials( subjectToObjects.getValue());
-					for(PopulatedTemplateTermSet object : objects )
-					{
-						for(PopulatedTemplateTermSet predicate : predicates)
-						{
-							
-							outWriter.outputTripleWithLiteralObject(subject.getURI(), predicate.getURI(), object.getURI(), literalTemplateValue);
-						}
-					}
-				}
-			}
-		}
-		private String generateExpandedStringValueForTemplate(
-				TemplateTermSet objMapTemplate) {
-			String objTemplateValue = generateStringValueForTemplate(objMapTemplate);
-			if(objMapTemplate.isSingleUriString())
-			{
-				objTemplateValue = uriFormatter.getExpandedAndNormalizedUri(objTemplateValue);
-			}
-			return objTemplateValue;
-		}
-		private String generateStringValueForTemplate(
-				TemplateTermSet objMapTemplate) {
-			StringBuilder sb = new StringBuilder();
-			for(TemplateTerm term : objMapTemplate.getAllTerms())
-			{
-				sb.append(term.getTemplateTermValue());
-			}
-			return sb.toString();
-		}
-		private TemplateTermSetPopulator generateTemplateTermSetPopulatorForSubjectMap(
-			
-				SubjectMap subjMap) throws HNodeNotFoundKarmaException {
-			TemplateTermSet subjMapTemplate = null;
-			TemplateTermSetPopulator subjectMapTTSPopulator = null;
-			if (subjMap.isBlankNode()) {
-				List<String> columnsCovered  = kr2rmlMapping.getAuxInfo().getBlankNodesColumnCoverage().get(subjMap.getId());
-				subjMapTemplate = generateSubjectMapTemplateForBlankNode(subjMap, columnsCovered);	
-				subjectMapTTSPopulator = new TemplateTermSetPopulator(subjMapTemplate, new StringBuilder(), uriFormatter, true, false);
-			} else {
-				subjMapTemplate = subjMap.getTemplate();
-				subjectMapTTSPopulator = new TemplateTermSetPopulator(subjMapTemplate, new StringBuilder(), uriFormatter);
-			}
-			return subjectMapTTSPopulator;
-		}
-		private void populateTermsToPathForSubject(
-				Map<ColumnTemplateTerm, HNodePath> subjectTermsToPaths,
-				TemplateTermSet subjMapTemplate)
-				throws HNodeNotFoundKarmaException {
-			for(ColumnTemplateTerm term : subjMapTemplate.getAllColumnNameTermElements())
-			{
-				HNodePath path = factory.getHNode(translator.getHNodeIdForColumnName(term.getTemplateTermValue())).getHNodePath(factory);
-				subjectTermsToPaths.put(term, path);
-			}
-		}
-		private TemplateTermSet generateSubjectMapTemplateForBlankNode(SubjectMap subjectMap, 
-				List<String> columnsCovered) {
-			TemplateTermSet subjectTerms = new TemplateTermSet();
-			subjectTerms.addTemplateTermToSet(new StringTemplateTerm(Uris.BLANK_NODE_PREFIX));
-			subjectTerms.addTemplateTermToSet(new StringTemplateTerm(kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().get(subjectMap.getId()).replaceAll(":", "_")));
-			for(String columnCovered : columnsCovered)
-			{
-				ColumnTemplateTerm term = new ColumnTemplateTerm(columnCovered);
-				subjectTerms.addTemplateTermToSet(term);
-			}
-			return subjectTerms;
-		}
-		
-		private List<PopulatedTemplateTermSet> generatePredicatesForPom(PredicateObjectMap pom) {
-			List<ColumnTemplateTerm> predicateTemplateTerms = pom.getPredicate().getTemplate().getAllColumnNameTermElements();
-			LinkedList<TemplateTerm> allPredicateTemplateTerms = new LinkedList<TemplateTerm>();
-			allPredicateTemplateTerms.addAll(pom.getPredicate().getTemplate().getAllTerms());
-			List<PopulatedTemplateTermSet> predicates = new LinkedList<PopulatedTemplateTermSet>();
-			if(predicateTemplateTerms == null || predicateTemplateTerms.isEmpty())
-			{
-				TemplateTermSetPopulator ttsPopulator = new TemplateTermSetPopulator(pom.getPredicate().getTemplate(), new StringBuilder(), uriFormatter);
-				predicates = ttsPopulator.generatePopulatedTemplates(null);			
-			}
-			else
-			{
-				//dynamic predicates;
-			}
-			return predicates; 
-		}
-	
-		public CountDownLatch getLatch() {
-			return latch;
-		}
-		
-	}
-
-}
-
-class HNodeNotFoundKarmaException extends Exception {
-	private static final long serialVersionUID = 1L;
-	private String offendingColumnName;
-	
-	//constructor without parameters
-	public HNodeNotFoundKarmaException() {}
-
-	//constructor for exception description
-	public HNodeNotFoundKarmaException(String description, String offendingColumnName) {
-	    super(description);
-	    this.offendingColumnName = offendingColumnName;
-	}
-	
-	public String getOffendingColumn() {
-		return this.offendingColumnName;
-	}	
-}
-class ValueNotFoundKarmaException extends Exception{
-
-	private static final long serialVersionUID = 1L;
-	private String offendingColumnHNodeId;
-	
-	//constructor without parameters
-	public ValueNotFoundKarmaException() {}
-
-	//constructor for exception description
-	public ValueNotFoundKarmaException(String description, String offendingColumnHNodeId) {
-	    super(description);
-	    this.offendingColumnHNodeId = offendingColumnHNodeId;
-	}
-	
-	public String getOffendingColumnHNodeId() {
-		return this.offendingColumnHNodeId;
-	}
-}
-
-class NoValueFoundInNodeException extends Exception{
-
-	private static final long serialVersionUID = 1L;
-	
-	//constructor without parameters
-	public NoValueFoundInNodeException() {}
-
-	//constructor for exception description
-	public NoValueFoundInNodeException(String description) {
-	    super(description);
-	}
 }
 
 

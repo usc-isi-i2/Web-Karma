@@ -24,6 +24,8 @@ package edu.isi.karma.kr2rml;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.isi.karma.kr2rml.template.TemplateTermSet;
+
 public class SubjectMap extends TermMap {
 	
 	private NamedGraph graph;
