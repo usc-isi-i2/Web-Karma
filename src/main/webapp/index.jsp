@@ -109,9 +109,13 @@ and related projects, please see: http://www.isi.edu/integration
 			  display:none;
 			}
 			
-			/* Override for showing a dashed line below editable items */
+			/* Override for removing a dashed line below editable items */
 			.editable-click, a.editable-click, a.editable-click:hover {
 				border-bottom: 0px;
+			}
+			.editableform .form-control {
+			    /* width: auto; */
+			    width: 300px;
 			}
 		</style>
 	</head>

@@ -650,7 +650,7 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
         rowTr.append(dataDiv);*/
         //console.log(.css(rows[0][0]["columnClass"]));
         // Loop through the values in a given row
-        console.log(rows);
+        //console.log(rows);
         $.each(row, function(index2, cell){
             var td = $("<td>").addClass("wk-cell");
             var dataDiv = $("<div>");
@@ -689,8 +689,8 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
         				 submitTableCellEdit(worksheetId, cell["nodeId"], newValue);
         			 },
         			 showbuttons: 'bottom',
-        			 mode: 'popup'
-        				 
+        			 mode: 'popup',
+        			 inputclass: 'worksheetInputEdit'	 
 		            });
                 /*var dataDiv2 = $("<div>").width(30).height(30).css({float:'left'});
                 var checkbox = $('<input />', { type: 'checkbox', id: 'selectcolumns', value: "a" });
