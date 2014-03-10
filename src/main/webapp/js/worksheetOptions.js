@@ -9,6 +9,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			[ "Set Properties" , setProperties ],
 			[ "Show Auto Model" , showAutoModel ],
 			[ "Fold" , Fold ],
+			[ "Save RowID", saveRowID ], 
 			[ "Apply R2RML Model" , applyR2RMLModel, true, "applyWorksheetHistory" ],
 			[ "divider" , null ],
 			[ "Publish RDF" , publishRDF ],
@@ -106,6 +107,49 @@ function WorksheetOptions(wsId, wsTitle) {
 		hideDropdown();
 		FoldDialog.getInstance().show(worksheetId);
     }
+  function saveRowID () {
+		console.log("saveRowID: " + worksheetTitle);
+		hideDropdown();
+		var checked = [];
+		$(".selectRowID").each( function(index, checkbox) {
+			if (checkbox.checked) {
+				checked.push(getParamObject("selectedRowID", checkbox['value'], "other"));
+				console.log(checkbox['value']);
+			}
+		});
+		var info = new Object();
+	  info["worksheetId"] = worksheetId;
+	  info["workspaceId"] = $.workspaceGlobalInformation.id;
+	  info["command"] = "SaveRowIDCommand";
+
+	  var newInfo = [];
+	  newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+	  newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
+	  info["newInfo"] = JSON.stringify(newInfo);
+
+	  showLoading(info["worksheetId"]);
+	  var returned = $.ajax({
+	    url: "RequestController",
+	    type: "POST",
+	    data : info,
+	    dataType : "json",
+	    complete :
+	      function (xhr, textStatus) {
+	        //alert(xhr.responseText);
+	        var json = $.parseJSON(xhr.responseText);
+	        console.log(json);
+	        //parse(json);
+	        hideLoading(info["worksheetId"]);
+	    },
+	    error :
+	      function (xhr, textStatus) {
+	        alert("Error occured while generating the automatic model!" + textStatus);
+	        hideLoading(info["worksheetId"]);
+	      }
+	  });
+		//console.log(checked);
+		//FoldDialog.getInstance().show(worksheetId);
+  } 
 	
 	function resetModel() {
 		console.log("Reset Model: " + worksheetTitle);

@@ -664,7 +664,7 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
                 }
                 if (index2 == 0) {
                     var dataDiv2 = $("<div>").width(30).height(30);
-                    var checkbox = $('<input />', { type: 'checkbox', id: 'selectcolumns', value: cell["rowID"] });
+                    var checkbox = $('<input />', { type: 'checkbox', class: 'selectRowID', value: cell["rowID"] });
                     dataDiv2.append(checkbox);
                     dataDiv.append(dataDiv2); 
                 }
@@ -706,7 +706,7 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
                     console.log(width);
                     dataDiv3.css({width: width - 30, float: "right"});
                     var dataDiv2 = $("<div>").width(30).height(30).css({float:'left'});
-                    var checkbox = $('<input />', { type: 'checkbox', id: 'selectcolumns', value: cell["rowID"] });
+                    var checkbox = $('<input />', { type: 'checkbox', class: 'selectRowID', value: cell["rowID"] });
                     dataDiv2.append(checkbox);
                     dataDiv.append(dataDiv2); 
                 } 

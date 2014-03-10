@@ -265,10 +265,8 @@ and related projects, please see: http://www.isi.edu/integration
 		
         <!-- Home grown JavaScript files -->
         <script type="text/javascript" src="js/initWS.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/table_manipulation.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/ServerResponseObjectParsing.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/commandHistory.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/tableWorkspace.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/publishRDF.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/publishDatabase.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/serviceImport.js?<jsp:include page='version.jsp' />"></script>

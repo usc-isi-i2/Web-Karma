@@ -167,6 +167,8 @@ import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommandFactory;
 import edu.isi.karma.controller.command.worksheet.RenameColumnCommand;
 import edu.isi.karma.controller.command.worksheet.RenameColumnCommandFactory;
+import edu.isi.karma.controller.command.worksheet.SaveRowIDCommand;
+import edu.isi.karma.controller.command.worksheet.SaveRowIDCommandFactory;
 import edu.isi.karma.controller.command.worksheet.SetWorksheetPropertiesCommand;
 import edu.isi.karma.controller.command.worksheet.SetWorksheetPropertiesCommandFactory;
 import edu.isi.karma.controller.command.worksheet.SplitByCommaCommand;
@@ -254,6 +256,8 @@ public class ExecutionController {
                 new AddValuesCommandFactory());
         commandFactoryMap.put(FoldCommand.class.getSimpleName(),
                 new FoldCommandFactory());
+        commandFactoryMap.put(SaveRowIDCommand.class.getSimpleName(),
+                new SaveRowIDCommandFactory());
         commandFactoryMap.put(PublishRDFCellCommand.class.getSimpleName(),
                 new PublishRDFCellCommandFactory());
         commandFactoryMap.put(FetchPreferencesCommand.class.getSimpleName(),
