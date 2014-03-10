@@ -90,10 +90,10 @@ a.icon-remove:hover {
 				       <h4 class="modal-title">Export CSV</h4>
 				  </div>
 				  <div class="modal-body">
-				  <div id="csvDialogColumnList" style="display: none">
+				  <div id="csvDialogColumnList">
 				  
 				  </div>
-				  <div id="csvDialogContent">
+				  <!-- <div id="csvDialogContent">
 						<div class="form-group">
 							<label for="csvSPAQRLEndPoint">SPARQL End Point</label>
 							<input class="form-control" type="text" id="csvSPAQRLEndPoint" required url value="" maxlength="1000" />
@@ -103,9 +103,8 @@ a.icon-remove:hover {
 								<select id="csvModelGraphList">
 			                	</select>
 						</div>
-					</div>
-					<hr />
-					<div id="csvDataDialogContent" style="display: none">
+					</div> -->
+					<div id="csvDataDialogContent">
 						<div class="form-group" id="formDivSparql">
 							<label for="csvDataEndPoint">SPARQL End Point</label>
 							<input class="form-control" type="text" id="csvDataEndPoint" required url value="" maxlength="1000" />
@@ -120,8 +119,8 @@ a.icon-remove:hover {
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				        <button type="submit" class="btn btn-primary" id="btnSave">Fetch Columns</button>
-				        <button type="button" class="btn btn-info" id="btnExportCSV" style="display: none">Export</button>
+				        <!-- <button type="submit" class="btn btn-primary" id="btnSave">Fetch Columns</button> -->
+				        <button type="button" class="btn btn-primary" id="btnExportCSV">Export</button>
 				  </div> <!-- /.modal-footer -->
 			</div><!-- /.modal-content -->
 		</form>
