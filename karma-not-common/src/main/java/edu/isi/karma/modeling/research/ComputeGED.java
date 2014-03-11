@@ -22,6 +22,7 @@
 package edu.isi.karma.modeling.research;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,7 +30,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,11 +37,9 @@ import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
-import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.ModelEvaluation;
 import edu.isi.karma.modeling.alignment.SemanticModel;
-import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.Node;
 
 public class ComputeGED {
 
@@ -55,7 +53,18 @@ public class ComputeGED {
 	private static void computeGEDApp1() throws Exception {
 		
 		File ff = new File(Params.MODEL_DIR);
-		File[] files = ff.listFiles();
+		File[] files = ff.listFiles(new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File dir, String name) {
+				String lowercaseName = name.toLowerCase();
+				if (lowercaseName.contains(".model")) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		});
 		
 		SemanticModel mMain, 
 			mKarmaInitial, mKarmaFinal, 
@@ -65,7 +74,7 @@ public class ComputeGED {
 		
 		Function<File, String> sameService = new Function<File, String>() {
 		  @Override public String apply(final File s) {
-		    return s.getName().substring(0, s.getName().indexOf('.'));
+		    return s.getName().substring(0, s.getName().indexOf(".model"));
 		  }
 		};
 
@@ -108,11 +117,11 @@ public class ComputeGED {
 			if (mMain == null) continue;
 			String label; ModelEvaluation me;
 			
-			Map<String, DirectedWeightedMultigraph<Node, Link>> graphs = 
-					new TreeMap<String, DirectedWeightedMultigraph<Node,Link>>();
+			Map<String, SemanticModel> models = 
+					new TreeMap<String, SemanticModel>();
 			
 			label = "1- main";
-			graphs.put(label, mMain.getGraph());
+			models.put(label, mMain);
 
 			if (mKarmaInitial != null) {
 				me = mKarmaInitial.evaluate(mMain);
@@ -123,7 +132,7 @@ public class ComputeGED {
 						"-distance:" + me.getDistance() + 
 						"-precision:" + me.getPrecision() + 
 						"-recall:" + me.getRecall();
-				graphs.put(label, mKarmaInitial.getGraph());
+				models.put(label, mKarmaInitial);
 				countOfKarmaInitialModels++;
 			}
 			
@@ -136,7 +145,7 @@ public class ComputeGED {
 						"-distance:" + me.getDistance() + 
 						"-precision:" + me.getPrecision() + 
 						"-recall:" + me.getRecall();
-				graphs.put(label, mKarmaFinal.getGraph());
+				models.put(label, mKarmaFinal);
 				countOfKarmaFinalModels++;
 			}
 			
@@ -149,7 +158,7 @@ public class ComputeGED {
 						"-distance:" + me.getDistance() + 
 						"-precision:" + me.getPrecision() + 
 						"-recall:" + me.getRecall();
-				graphs.put(label, mApp1Rank1.getGraph());
+				models.put(label, mApp1Rank1);
 				countOfRank1Models++;
 			}
 			
@@ -162,7 +171,7 @@ public class ComputeGED {
 						"-distance:" + me.getDistance() + 
 						"-precision:" + me.getPrecision() + 
 						"-recall:" + me.getRecall();
-				graphs.put(label, mApp1Rank2.getGraph());
+				models.put(label, mApp1Rank2);
 				countOfRank2Models++;
 			}
 
@@ -175,11 +184,11 @@ public class ComputeGED {
 						"-distance:" + me.getDistance() + 
 						"-precision:" + me.getPrecision() + 
 						"-recall:" + me.getRecall();
-				graphs.put(label, mApp1Rank3.getGraph());
+				models.put(label, mApp1Rank3);
 				countOfRank3Models++;
 			}
 
-			GraphUtil.exportGraphviz(graphs, s, Params.OUTPUT_DIR + s + Params.GRAPHVIS_OUT_FILE_EXT);
+			GraphVizUtil.exportSemanticModelsToGraphviz(models, s, Params.OUTPUT_DIR + s + Params.GRAPHVIS_OUT_FILE_EXT);
 		}
 		
 		if (countOfKarmaInitialModels > 0) {

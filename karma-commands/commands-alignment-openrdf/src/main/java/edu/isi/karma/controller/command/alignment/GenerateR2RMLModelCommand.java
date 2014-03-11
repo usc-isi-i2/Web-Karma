@@ -28,13 +28,16 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
+import edu.isi.karma.controller.command.publish.PublishRDFCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLMapping;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
-import edu.isi.karma.kr2rml.WorksheetModelWriter;
+import edu.isi.karma.kr2rml.KR2RMLMappingWriter;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
@@ -121,7 +124,7 @@ public class GenerateR2RMLModelCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		
+		UpdateContainer uc = new UpdateContainer();
 		//save the preferences 
 		savePreferences(workspace);
 				
@@ -193,9 +196,14 @@ public class GenerateR2RMLModelCommand extends Command {
 			
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
-			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, alignment, 
+			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
+			KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
 			
+			if(!mapping.isR2RMLCompatible())
+			{
+				uc.add(new InfoUpdate("The KR2RMLMapping generated is not compatible with R2RML"));
+			}
 			// Write the model
 			writeModel(workspace, workspace.getOntologyManager(), mappingGen, worksheet, modelFileLocalPath);
 			
@@ -215,7 +223,7 @@ public class GenerateR2RMLModelCommand extends Command {
 			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true);
 			if (result) {
 				logger.info("Saved model to triple store");
-				return new UpdateContainer(new AbstractUpdate() {
+				uc.add(new AbstractUpdate() {
 					public void generateJson(String prefix, PrintWriter pw,	
 							VWorkspace vWorkspace) {
 						JSONObject outputObject = new JSONObject();
@@ -229,13 +237,13 @@ public class GenerateR2RMLModelCommand extends Command {
 						}
 					}
 				});
+				return uc;
 			} 
 			
 			return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
 			
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
+			logger.error("Error occured while generating R2RML Model!", e);
 			return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
 		}
 	}
@@ -254,20 +262,11 @@ public class GenerateR2RMLModelCommand extends Command {
 		File parentDir = f.getParentFile();
 		parentDir.mkdirs();
 		PrintWriter writer = new PrintWriter(f, "UTF-8");
-		WorksheetModelWriter modelWriter = new WorksheetModelWriter(writer, 
-				workspace.getFactory(), ontMgr, worksheet.getTitle());
 
-		// Writer worksheet properties such as Service URL
-		modelWriter.writeWorksheetProperties(worksheet);
-		
-		// Write the worksheet history
-		String historyFilePath = HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(
-				worksheet.getTitle(), workspace.getCommandPreferencesId());
-		modelWriter.writeCompleteWorksheetHistory(historyFilePath);
-		
-		// Write the R2RML mapping
-		modelWriter.writeR2RMLMapping(ontMgr, mappingGen);
-		modelWriter.close();
+		KR2RMLMappingWriter mappingWriter = new KR2RMLMappingWriter();
+		mappingWriter.addR2RMLMapping(mappingGen.getKR2RMLMapping(), worksheet, workspace);
+		mappingWriter.writeR2RMLMapping(writer);
+		mappingWriter.close();
 		writer.flush();
 		writer.close();
 

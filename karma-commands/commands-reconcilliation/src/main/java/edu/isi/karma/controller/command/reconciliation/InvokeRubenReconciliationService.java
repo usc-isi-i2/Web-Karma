@@ -99,7 +99,7 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
 		KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(
-				workspace, alignment, 
+				workspace, worksheet, alignment, 
 				worksheet.getSemanticTypes(), rdfPrefix, rdfNamespace,
 				true, errorReport);
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();

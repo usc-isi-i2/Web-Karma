@@ -48,89 +48,90 @@ public class SemanticTypePredictionThread implements Runnable {
 			return;
 		
 		for (HNodePath path : this.hNodePaths) {
-			
-			logger.debug("predict labels for the column " + path.getLeaf().getColumnName());
-
-			ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(worksheet,
-					path);
-			if (trainingExamples.size() == 0)
-				continue;
-
-			Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
-
-			// Prepare the column name feature
-			String columnName = path.getLeaf().getColumnName();
-			Collection<String> columnNameList = new ArrayList<String>();
-			columnNameList.add(columnName);
-			columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
-			
-			// // Prepare the table name feature
-			// String tableName = worksheetName;
-			// Collection<String> tableNameList = new ArrayList<String>();
-			// tableNameList.add(tableName);
-			// columnFeatures.put(ColumnFeature.TableName, tableNameList);
-
-			// Stores the probability scores
-			ArrayList<Double> scores = new ArrayList<Double>();
-			// Stores the predicted labels
-			ArrayList<String> labels = new ArrayList<String>();
-			boolean predictResult = crfModelHandler.predictLabelForExamples(
-					trainingExamples, 4, labels, scores, null, columnFeatures);
-			if (!predictResult) {
-				logger.debug("Error occured while predicting semantic type.");
-				continue;
-			}
-			if (labels.size() == 0) {
-				continue;
-			}
-
-			logger.debug("Examples: " + trainingExamples + " Type: " + labels
-					+ " ProbL " + scores);
-			
-			/** Remove the labels that are not in the ontology or are already used as the semantic type **/
-			List<String> removeLabels = new ArrayList<String>();
-			String domainUri, typeUri;
-			Label domain, type;
-			for (int i=0; i<labels.size(); i++) {
-				String label = labels.get(i);
-				/** Check if not in ontology **/
-				if (label.contains("|")) {
-					
-					domainUri = label.split("\\|")[0].trim();
-					typeUri = label.split("\\|")[1].trim();
-					
-					domain = ontologyManager.getUriLabel(domainUri);
-					type = ontologyManager.getUriLabel(typeUri);
-					
-					// Remove from the list if URI not present in the model
-					if (domain == null || type == null) {
-						removeLabels.add(label);
-						continue;
-					}
-									
-				} else {
-					domain = ontologyManager.getUriLabel(label);
-					// Remove from the list if URI not present in the model
-					if (domain == null) {
-						removeLabels.add(label);
-						continue;
+				
+			try {
+				logger.debug("predict labels for the column " + path.getLeaf().getColumnName());
+	
+				ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(worksheet,
+						path);
+				if (trainingExamples.size() == 0)
+					continue;
+	
+				Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
+	
+				// Prepare the column name feature
+				String columnName = path.getLeaf().getColumnName();
+				Collection<String> columnNameList = new ArrayList<String>();
+				columnNameList.add(columnName);
+				columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
+				
+				// // Prepare the table name feature
+				// String tableName = worksheetName;
+				// Collection<String> tableNameList = new ArrayList<String>();
+				// tableNameList.add(tableName);
+				// columnFeatures.put(ColumnFeature.TableName, tableNameList);
+	
+				// Stores the probability scores
+				ArrayList<Double> scores = new ArrayList<Double>();
+				// Stores the predicted labels
+				ArrayList<String> labels = new ArrayList<String>();
+				boolean predictResult = crfModelHandler.predictLabelForExamples(
+						trainingExamples, 4, labels, scores, null, columnFeatures);
+				if (!predictResult) {
+					logger.debug("Error occured while predicting semantic type.");
+					continue;
+				}
+				if (labels.size() == 0) {
+					continue;
+				}
+	
+				logger.debug("Examples: " + trainingExamples + " Type: " + labels
+						+ " ProbL " + scores);
+				
+				/** Remove the labels that are not in the ontology or are already used as the semantic type **/
+				List<String> removeLabels = new ArrayList<String>();
+				String domainUri, typeUri;
+				Label domain, type;
+				for (int i=0; i<labels.size(); i++) {
+					String label = labels.get(i);
+					/** Check if not in ontology **/
+					if (label.contains("|")) {
+						
+						domainUri = label.split("\\|")[0].trim();
+						typeUri = label.split("\\|")[1].trim();
+						
+						domain = ontologyManager.getUriLabel(domainUri);
+						type = ontologyManager.getUriLabel(typeUri);
+						
+						// Remove from the list if URI not present in the model
+						if (domain == null || type == null) {
+							removeLabels.add(label);
+							continue;
+						}
+										
+					} else {
+						domain = ontologyManager.getUriLabel(label);
+						// Remove from the list if URI not present in the model
+						if (domain == null) {
+							removeLabels.add(label);
+							continue;
+						}
 					}
 				}
-			}
-			for (String removeLabel : removeLabels) {
-				int idx = labels.indexOf(removeLabel);
-				labels.remove(removeLabel);
-				scores.remove(idx);
-			}
-			if (labels.size() == 0) {
-				return;
-			}
-
-			CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
-			worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(),
-					columnModel);
-		}
-		
+				for (String removeLabel : removeLabels) {
+					int idx = labels.indexOf(removeLabel);
+					labels.remove(removeLabel);
+					scores.remove(idx);
+				}
+				if (labels.size() == 0) {
+					continue;
+				}
+	
+				CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
+				worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(),
+						columnModel);
+			} catch (Exception e) {}
+		} 			
 		addSemanticTypesToColumnNodes();
 	}
 	

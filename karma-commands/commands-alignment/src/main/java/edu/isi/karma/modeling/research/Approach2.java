@@ -26,6 +26,13 @@ import com.google.common.collect.Multimap;
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.*;
+import edu.isi.karma.modeling.alignment.GraphBuilder;
+import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.GraphVizUtil;
+import edu.isi.karma.modeling.alignment.LinkIdFactory;
+import edu.isi.karma.modeling.alignment.NodeIdFactory;
+import edu.isi.karma.modeling.alignment.SemanticModel;
+import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.*;
 import edu.isi.karma.util.RandomGUID;
@@ -768,23 +775,23 @@ public class Approach2 {
 //			if (hypothesis == null)
 //				continue;
 			
-			Map<String, DirectedWeightedMultigraph<Node, Link>> graphs = 
-					new TreeMap<String, DirectedWeightedMultigraph<Node,Link>>();
+			Map<String, SemanticModel> models = 
+					new TreeMap<String, SemanticModel>();
 			
 			hypothesisModel.writeJson(Params.MODEL_DIR + newService.getName() + Params.MODEL_APP2_FILE_EXT);
 					
-			graphs.put("1-correct model", correctModel.getGraph());
+			models.put("1-correct model", correctModel);
 			if (hypothesisModel != null) {
 				double distance = correctModel.evaluate(hypothesisModel).getDistance();
 
 				String label = "distance:" + distance;
 					
-				graphs.put(label, hypothesisModel.getGraph());
+				models.put(label, hypothesisModel);
 			}
 			
-			GraphUtil.exportGraphviz(
-					graphs, 
-					newService.getDescription(),
+			GraphVizUtil.exportSemanticModelsToGraphviz(
+					models, 
+					newService.getName(),
 					outputPath + serviceModels.get(i).getName() + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT);
 			
 		}

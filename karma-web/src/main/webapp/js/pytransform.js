@@ -163,7 +163,7 @@ function submitEditPythonTransform() {
     newInfo.push(getParamObject("newColumnName",columnName, "other"));
     newInfo.push(getParamObject("transformationCode", newTransCode, "other"));
     newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-    newInfo.push(getParamObject("hNodeId", hNode.data("columnDerivedFrom"), "hNodeId"));
+    newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
     
     newInfo.push(getParamObject("previousCommandId", hNode.data("previousCommandId"), "other"));
     newInfo.push(getParamObject("errorDefaultValue", $("#pythonTransformErrorDefaultValue").val(), "other"));

@@ -34,25 +34,31 @@ import javax.servlet.http.HttpServletRequest;
 public class SubmitCleaningCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
-		hNodeId, worksheetId, hTableId,examples
+		hNodeId, worksheetId, hTableId, examples
 	}
+
 	@Override
-	public Command createCommand(HttpServletRequest request,
-			Workspace workspace) {
+	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String hNodeid = request.getParameter(Arguments.hNodeId.name());
 		String w = request.getParameter(Arguments.worksheetId.name());
 		String exps = request.getParameter(Arguments.examples.name());
-		
-		SubmitCleaningCommand sCleanningCommand = new SubmitCleaningCommand(getNewId(workspace), hNodeid, w, exps);
+
+		SubmitCleaningCommand sCleanningCommand = new SubmitCleaningCommand(
+				getNewId(workspace), hNodeid, w, exps);
 		return sCleanningCommand;
 	}
+
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
-		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
-		String examples = HistoryJsonUtil.getStringValue(Arguments.examples.name(), inputJson);
-		SubmitCleaningCommand comm = new SubmitCleaningCommand(getNewId(workspace), hNodeId, worksheetId, examples);
+		String hNodeId = HistoryJsonUtil.getStringValue(
+				Arguments.hNodeId.name(), inputJson);
+		String worksheetId = HistoryJsonUtil.getStringValue(
+				Arguments.worksheetId.name(), inputJson);
+		String examples = HistoryJsonUtil.getStringValue(
+				Arguments.examples.name(), inputJson);
+		SubmitCleaningCommand comm = new SubmitCleaningCommand(
+				getNewId(workspace), hNodeId, worksheetId, examples);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

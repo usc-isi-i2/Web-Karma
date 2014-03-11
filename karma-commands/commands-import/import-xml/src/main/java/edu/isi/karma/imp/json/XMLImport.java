@@ -15,8 +15,18 @@ import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import java.io.File;
 import java.io.IOException;
+
+import edu.isi.karma.imp.Import;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
+import edu.isi.karma.util.FileUtil;
+import edu.isi.karma.webserver.KarmaException;
+
 
 /**
  *
@@ -37,15 +47,17 @@ public class XMLImport extends Import {
             JSONObject json = XML.toJSONObject(fileContents);
             jsonImport = new JsonImport(json, this.getFactory(), this.getWorksheet(), maxNumLines);
         } catch (JSONException ex) {
-            logger.error("Error in populating the worksheet with XML");
+            logger.error("Error in populating the worksheet with XML", ex);
         } catch (IOException ex) {
-            logger.error("Error in reading the XML file");
+            logger.error("Error in reading the XML file", ex);
         }
     }
 
 
     @Override
     public Worksheet generateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException {
+        jsonImport.generateWorksheet();
+        getWorksheet().getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.XML.toString());
         return jsonImport.generateWorksheet();
     }
 

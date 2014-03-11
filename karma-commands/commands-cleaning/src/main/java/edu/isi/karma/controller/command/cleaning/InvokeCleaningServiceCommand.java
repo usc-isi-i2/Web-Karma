@@ -51,17 +51,26 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-/*
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
- */
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.update.AbstractUpdate;
+import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.view.VWorkspace;
 
 public class InvokeCleaningServiceCommand extends Command {
 	private String hNodeId;
 	private String worksheetId;
-//	private static Logger logger = LoggerFactory.getLogger(InvokeCleaningServiceCommand.class);
 
-	public InvokeCleaningServiceCommand(String id, String hNodeId, String worksheetId) {
+	// private static Logger logger =
+	// LoggerFactory.getLogger(InvokeCleaningServiceCommand.class);
+
+	public InvokeCleaningServiceCommand(String id, String hNodeId,
+			String worksheetId) {
 		super(id);
 		this.hNodeId = hNodeId;
 		this.worksheetId = worksheetId;
@@ -94,16 +103,16 @@ public class InvokeCleaningServiceCommand extends Command {
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {
-			if (path.getLeaf().getId().equals(hNodeId)) { 
+			if (path.getLeaf().getId().equals(hNodeId)) {
 				selectedPath = path;
 			}
 		}
 		Collection<Node> nodes = new ArrayList<Node>();
 		workspace.getFactory().getWorksheet(worksheetId).getDataTable()
-		.collectNodes(selectedPath, nodes);
-		
+				.collectNodes(selectedPath, nodes);
+
 		try {
-			JSONArray requestJsonArray = new JSONArray();  
+			JSONArray requestJsonArray = new JSONArray();
 			for (Node node : nodes) {
 				String id = node.getId();
 				String originalVal = node.getValue().asString();
@@ -116,48 +125,50 @@ public class InvokeCleaningServiceCommand extends Command {
 			String jsonString = null;
 			jsonString = requestJsonArray.toString();
 
-			//String url = "http://localhost:8080/cleaningService/IdentifyData";
+			// String url =
+			// "http://localhost:8080/cleaningService/IdentifyData";
 			String url = "http://localhost:8070/myWS/IdentifyData";
-			
-			HttpClient httpclient = new DefaultHttpClient(); 
+
+			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = null;
 			HttpResponse response = null;
 			HttpEntity entity;
 			StringBuffer out = new StringBuffer();
-			
-			URI u = null ;
-			u = new URI(url) ;
+
+			URI u = null;
+			u = new URI(url);
 			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-			formparams.add(new BasicNameValuePair("json",jsonString));
+			formparams.add(new BasicNameValuePair("json", jsonString));
 
 			httppost = new HttpPost(u);
 			httppost.setEntity(new UrlEncodedFormEntity(formparams, "UTF-8"));
 			response = httpclient.execute(httppost);
 			entity = response.getEntity();
 			if (entity != null) {
-				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
+				BufferedReader buf = new BufferedReader(new InputStreamReader(
+						entity.getContent()));
 				String line = buf.readLine();
-				while(line != null) {
+				while (line != null) {
 					out.append(line);
 					line = buf.readLine();
 				}
-			}	
-			//logger.trace(out.toString());
-			//logger.info("Connnection success : " + url + " Successful.");
-			final JSONObject data1  = new JSONObject(out.toString());
-			//logger.trace("Data--->" + data1);
+			}
+			// logger.trace(out.toString());
+			// logger.info("Connnection success : " + url + " Successful.");
+			final JSONObject data1 = new JSONObject(out.toString());
+			// logger.trace("Data--->" + data1);
 			return new UpdateContainer(new AbstractUpdate() {
 
 				@Override
 				public void generateJson(String prefix, PrintWriter pw,
 						VWorkspace vWorkspace) {
 					JSONObject response = new JSONObject();
-					//logger.trace("Reached here");
+					// logger.trace("Reached here");
 					try {
 						response.put("updateType", "CleaningServiceOutput");
 						response.put("chartData", data1);
-						response.put("hNodeId", hNodeId); 
-						//logger.trace(response.toString(4));
+						response.put("hNodeId", hNodeId);
+						// logger.trace(response.toString(4));
 					} catch (JSONException e) {
 						pw.print("Error");
 					}
@@ -169,7 +180,7 @@ public class InvokeCleaningServiceCommand extends Command {
 			e.printStackTrace();
 			return new UpdateContainer(new ErrorUpdate("Error!"));
 		}
-	} 
+	}
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {

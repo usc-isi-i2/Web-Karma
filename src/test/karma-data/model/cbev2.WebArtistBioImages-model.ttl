@@ -1,0 +1,164 @@
+@prefix ns1: <crm> .
+@prefix ns2: <dc> .
+@prefix ns3: <dim> .
+@prefix ns4: <skos> .
+@prefix ns5: <qudt> .
+@prefix ns6: <rdf> .
+@prefix ns7: <foaf> .
+@prefix ns8: <cc> .
+@prefix ns9: <vs> .
+@prefix ns10: <owl> .
+@prefix ns11: <quantity> .
+@prefix ns12: <unit> .
+@prefix ns13: <dct> .
+@prefix ns14: <oecc> .
+@prefix ns15: <xsd> .
+@prefix ns16: <rdfs> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix km-dev: <http://isi.edu/integration/karma/dev#> .
+
+_:node18hgvm6i0x1 a km-dev:R2RMLMapping ;
+	km-dev:sourceName "cbev2.WebArtistBioImages.csv" ;
+	km-dev:modelPublicationTime "1393213250138"^^<http://www.w3.org/2001/XMLSchema#long> ;
+	km-dev:modelVersion "1.0" ;
+	km-dev:hasWorksheetHistory "[{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"newColumnName\",\"value\":\"PersonInstitution_URI\",\"type\":\"other\"},{\"name\":\"transformationCode\",\"value\":\"return \\\"person-institution/\\\"+getValue(\\\"ConstituentID\\\")\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"ConstituentID\"}],\"type\":\"hNodeId\"},{\"name\":\"errorDefaultValue\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SubmitPythonTransformationCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"PersonInstitution_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"},{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"newColumnName\",\"value\":\"PersonImage_URI\",\"type\":\"other\"},{\"name\":\"transformationCode\",\"value\":\"media=getValue(\\\"MediaView\\\")\\r\\nif len(getValue(\\\"FileName\\\"))>1 and media.find(\\\"Collection\\\")>=0:\\r\\n    direct=getValue(\\\"ObjectNumber\\\")[0:4]\\r\\n    url=\\\"http://americanart.si.edu/images/\\\"+direct+\\\"/\\\"+getValue(\\\"FileName\\\")\\r\\nif len(getValue(\\\"FileName\\\"))>1 and media.find(\\\"Juley\\\")>=0:\\r\\n    url=\\\"http://americanart.si.edu/images/JuleyBio/\\\"+getValue(\\\"FileName\\\")\\r\\nif len(getValue(\\\"FileName\\\"))>1 and media.find(\\\"Luce\\\")>=0:\\r\\n    url=\\\"http://americanart.si.edu/images/luce/artists/\\\"+getValue(\\\"FileName\\\")\\r\\nreturn url\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"PersonInstitution_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"errorDefaultValue\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SubmitPythonTransformationCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"PersonImage_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"},{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"newColumnName\",\"value\":\"MainPersonImage_URI\",\"type\":\"other\"},{\"name\":\"transformationCode\",\"value\":\"if getValue(\\\"PrimaryDisplay\\\").find(\\\"1\\\")>=0:\\r\\n    return getValue(\\\"PersonImage_URI\\\")\\r\\nelse:\\r\\n    return \\\"\\\"\\r\\n\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"PersonImage_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"errorDefaultValue\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SubmitPythonTransformationCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"MainPersonImage_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"},{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"newColumnName\",\"value\":\"FileName_URI\",\"type\":\"other\"},{\"name\":\"transformationCode\",\"value\":\"return getValue(\\\"PersonInstitution_URI\\\")+\\\"/images/filename\\\"\\r\\n\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"FileName\"}],\"type\":\"hNodeId\"},{\"name\":\"errorDefaultValue\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SubmitPythonTransformationCommand\"},{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"newColumnName\",\"value\":\"MediaView_URI\",\"type\":\"other\"},{\"name\":\"transformationCode\",\"value\":\"type=getValue(\\\"MediaView\\\").replace(\\\" \\\",\\\"-\\\")\\r\\nreturn \\\"thesauri/mediaview/\\\"+type\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"MediaView\"}],\"type\":\"hNodeId\"},{\"name\":\"errorDefaultValue\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SubmitPythonTransformationCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation1\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"FileName_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type1\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"MediaView_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"},{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"newColumnName\",\"value\":\"Object_URI\",\"type\":\"other\"},{\"name\":\"transformationCode\",\"value\":\"if(len(getValue(\\\"ObjectNumber\\\"))>1):\\r\\n    return \\\"object/\\\"+getValue(\\\"ObjectNumber\\\")\\r\\nelse:\\r\\n    return \\\"\\\"  \",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"ObjectNumber\"}],\"type\":\"hNodeId\"},{\"name\":\"errorDefaultValue\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SubmitPythonTransformationCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object1\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"Object_URI\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"initialEdges\",\"value\":[{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of\",\"edgeLabel\":\"http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of\",\"direction\":\"outgoing\",\"edgeSource\":\"E21_Person1\",\"edgeTarget\":\"E55_Type1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type1\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of\",\"edgeLabel\":\"http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of\",\"direction\":\"outgoing\",\"edgeSource\":\"E21_Person1\",\"edgeTarget\":\"E75_Conceptual_Object_Appellation1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation1\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation\",\"edgeLabel\":\"http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation\",\"direction\":\"outgoing\",\"edgeSource\":\"E21_Person1\",\"edgeTarget\":\"E38_Image1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation\",\"edgeLabel\":\"http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation\",\"direction\":\"outgoing\",\"edgeSource\":\"E21_Person1\",\"edgeTarget\":\"E38_Image2\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image2\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P51i_is_former_or_current_owner_of\",\"edgeLabel\":\"http://www.cidoc-crm.org/cidoc-crm/P51i_is_former_or_current_owner_of\",\"direction\":\"outgoing\",\"edgeSource\":\"E21_Person1\",\"edgeTarget\":\"E22_Man-Made_Object1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object1\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\"}],\"type\":\"other\"},{\"name\":\"alignmentId\",\"value\":\"WSP1:WS1AL\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"newEdges\",\"value\":[{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type1\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation1\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\"},{\"edgeId\":\"http://collection.americanart.si.edu/id/ontologies#PE_has_main_representation\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image2\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P51i_is_former_or_current_owner_of\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object1\"}],\"type\":\"other\"}],\"commandName\":\"ChangeInternalNodeLinksCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"initialEdges\",\"value\":[{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation\",\"edgeLabel\":\"http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation\",\"direction\":\"incoming\",\"edgeSource\":\"E21_Person1\",\"edgeTarget\":\"E38_Image1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\"}],\"type\":\"other\"},{\"name\":\"alignmentId\",\"value\":\"WSP1:WS1AL\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"newEdges\",\"value\":[{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P2_has_type\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type1\"}],\"type\":\"other\"}],\"commandName\":\"ChangeInternalNodeLinksCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"initialEdges\",\"value\":[{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation\",\"edgeLabel\":\"http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation\",\"direction\":\"incoming\",\"edgeSource\":\"E21_Person1\",\"edgeTarget\":\"E38_Image1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P2_has_type\",\"edgeLabel\":\"http://www.cidoc-crm.org/cidoc-crm/P2_has_type\",\"direction\":\"outgoing\",\"edgeSource\":\"E38_Image1\",\"edgeTarget\":\"E55_Type1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type1\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\"}],\"type\":\"other\"},{\"name\":\"alignmentId\",\"value\":\"WSP1:WS1AL\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"newEdges\",\"value\":[{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P2_has_type\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type1\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P2_has_type\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object1\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation1\"}],\"type\":\"other\"}],\"commandName\":\"ChangeInternalNodeLinksCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"FileName\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"FullType\":\"http://www.w3.org/2000/01/rdf-schema#label\",\"isPrimary\":true,\"Domain\":\"http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation1\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"PublicCaption\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"FullType\":\"http://www.cidoc-crm.org/cidoc-crm/P3_has_note\",\"isPrimary\":true,\"Domain\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"initialEdges\",\"value\":[{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P2_has_type\",\"edgeLabel\":\"http://www.cidoc-crm.org/cidoc-crm/P2_has_type\",\"direction\":\"incoming\",\"edgeSource\":\"E38_Image1\",\"edgeTarget\":\"E22_Man-Made_Object1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object1\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P51i_is_former_or_current_owner_of\",\"edgeLabel\":\"http://www.cidoc-crm.org/cidoc-crm/P51i_is_former_or_current_owner_of\",\"direction\":\"incoming\",\"edgeSource\":\"E21_Person1\",\"edgeTarget\":\"E22_Man-Made_Object1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object1\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\"}],\"type\":\"other\"},{\"name\":\"alignmentId\",\"value\":\"WSP1:WS1AL\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"newEdges\",\"value\":[{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P2_has_type\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object1\"}],\"type\":\"other\"}],\"commandName\":\"ChangeInternalNodeLinksCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"initialEdges\",\"value\":[{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P2_has_type\",\"edgeLabel\":\"http://www.cidoc-crm.org/cidoc-crm/P2_has_type\",\"direction\":\"incoming\",\"edgeSource\":\"E38_Image1\",\"edgeTarget\":\"E55_Type1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type1\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of\",\"edgeLabel\":\"http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of\",\"direction\":\"incoming\",\"edgeSource\":\"E21_Person1\",\"edgeTarget\":\"E55_Type1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type1\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\"}],\"type\":\"other\"},{\"name\":\"alignmentId\",\"value\":\"WSP1:WS1AL\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"newEdges\",\"value\":[{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P2_has_type\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type1\"}],\"type\":\"other\"}],\"commandName\":\"ChangeInternalNodeLinksCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"initialEdges\",\"value\":[{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by\",\"edgeLabel\":\"http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by\",\"direction\":\"incoming\",\"edgeSource\":\"E38_Image1\",\"edgeTarget\":\"E75_Conceptual_Object_Appellation1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation1\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\"},{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of\",\"edgeLabel\":\"http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of\",\"direction\":\"incoming\",\"edgeSource\":\"E21_Person1\",\"edgeTarget\":\"E75_Conceptual_Object_Appellation1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation1\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E21_Person1\"}],\"type\":\"other\"},{\"name\":\"alignmentId\",\"value\":\"WSP1:WS1AL\",\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"newEdges\",\"value\":[{\"edgeId\":\"http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by\",\"edgeSourceId\":\"http://www.cidoc-crm.org/cidoc-crm/E38_Image1\",\"edgeTargetId\":\"http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation1\"}],\"type\":\"other\"}],\"commandName\":\"ChangeInternalNodeLinksCommand\"}]" .
+
+km-dev:TriplesMap_1 a rr:TriplesMap .
+
+_:node18hgvm6i0x1 km-dev:hasTriplesMap km-dev:TriplesMap_1 .
+
+_:node18hgvm6i0x2 rr:tableName "cbev2.WebArtistBioImages.csv" .
+
+km-dev:TriplesMap_1 rr:logicalTable _:node18hgvm6i0x2 ;
+	rr:subjectMap _:node18hgvm6i0x3 .
+
+_:node18hgvm6i0x3 km-dev:alignmentNodeId "http://www.cidoc-crm.org/cidoc-crm/E21_Person1" ;
+	rr:class <http://www.cidoc-crm.org/cidoc-crm/E21_Person> ;
+	rr:template "person-institution/{ConstituentID}" ;
+	a km-dev:steinerTreeRootNode .
+
+_:node18hgvm6i0x4 rr:predicate <http://collection.americanart.si.edu/id/ontologies#PE_has_main_representation> .
+
+km-dev:RefObjectMap_1 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_2 .
+
+_:node18hgvm6i0x4 rr:objectMap km-dev:RefObjectMap_1 .
+
+km-dev:TriplesMap_1 rr:predicateObjectMap _:node18hgvm6i0x4 .
+
+_:node18hgvm6i0x6 rr:predicate <http://www.cidoc-crm.org/cidoc-crm/P138i_has_representation> .
+
+km-dev:RefObjectMap_2 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_3 .
+
+_:node18hgvm6i0x6 rr:objectMap km-dev:RefObjectMap_2 .
+
+km-dev:TriplesMap_1 rr:predicateObjectMap _:node18hgvm6i0x6 .
+
+km-dev:TriplesMap_2 a rr:TriplesMap .
+
+_:node18hgvm6i0x1 km-dev:hasTriplesMap km-dev:TriplesMap_2 .
+
+_:node18hgvm6i0x7 rr:tableName "cbev2.WebArtistBioImages.csv" .
+
+km-dev:TriplesMap_2 rr:logicalTable _:node18hgvm6i0x7 ;
+	rr:subjectMap _:node18hgvm6i0x8 .
+
+_:node18hgvm6i0x8 km-dev:alignmentNodeId "http://www.cidoc-crm.org/cidoc-crm/E38_Image2" ;
+	rr:class <http://www.cidoc-crm.org/cidoc-crm/E38_Image> ;
+	rr:template "{MainPersonImage_URI}" .
+
+km-dev:TriplesMap_3 a rr:TriplesMap .
+
+_:node18hgvm6i0x1 km-dev:hasTriplesMap km-dev:TriplesMap_3 .
+
+_:node18hgvm6i0x10 rr:tableName "cbev2.WebArtistBioImages.csv" .
+
+km-dev:TriplesMap_3 rr:logicalTable _:node18hgvm6i0x10 ;
+	rr:subjectMap _:node18hgvm6i0x11 .
+
+_:node18hgvm6i0x11 km-dev:alignmentNodeId "http://www.cidoc-crm.org/cidoc-crm/E38_Image1" ;
+	rr:class <http://www.cidoc-crm.org/cidoc-crm/E38_Image> ;
+	rr:template "{PersonImage_URI}" .
+
+_:node18hgvm6i0x13 rr:predicate <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> .
+
+km-dev:RefObjectMap_3 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_5 .
+
+_:node18hgvm6i0x13 rr:objectMap km-dev:RefObjectMap_3 .
+
+km-dev:TriplesMap_3 rr:predicateObjectMap _:node18hgvm6i0x13 .
+
+_:node18hgvm6i0x14 rr:predicate <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> .
+
+km-dev:RefObjectMap_4 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_4 .
+
+_:node18hgvm6i0x14 rr:objectMap km-dev:RefObjectMap_4 .
+
+km-dev:TriplesMap_3 rr:predicateObjectMap _:node18hgvm6i0x14 .
+
+_:node18hgvm6i0x15 rr:predicate <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> .
+
+km-dev:RefObjectMap_5 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_6 .
+
+_:node18hgvm6i0x15 rr:objectMap km-dev:RefObjectMap_5 .
+
+km-dev:TriplesMap_3 rr:predicateObjectMap _:node18hgvm6i0x15 .
+
+_:node18hgvm6i0x16 rr:predicate <http://www.cidoc-crm.org/cidoc-crm/P3_has_note> .
+
+_:node18hgvm6i0x17 rr:column "PublicCaption" .
+
+_:node18hgvm6i0x16 rr:objectMap _:node18hgvm6i0x17 .
+
+km-dev:TriplesMap_3 rr:predicateObjectMap _:node18hgvm6i0x16 .
+
+km-dev:TriplesMap_4 a rr:TriplesMap .
+
+_:node18hgvm6i0x1 km-dev:hasTriplesMap km-dev:TriplesMap_4 .
+
+_:node18hgvm6i0x18 rr:tableName "cbev2.WebArtistBioImages.csv" .
+
+km-dev:TriplesMap_4 rr:logicalTable _:node18hgvm6i0x18 ;
+	rr:subjectMap _:node18hgvm6i0x19 .
+
+_:node18hgvm6i0x19 km-dev:alignmentNodeId "http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object1" ;
+	rr:class <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> ;
+	rr:template "{Object_URI}" .
+
+km-dev:TriplesMap_5 a rr:TriplesMap .
+
+_:node18hgvm6i0x1 km-dev:hasTriplesMap km-dev:TriplesMap_5 .
+
+_:node18hgvm6i0x21 rr:tableName "cbev2.WebArtistBioImages.csv" .
+
+km-dev:TriplesMap_5 rr:logicalTable _:node18hgvm6i0x21 ;
+	rr:subjectMap _:node18hgvm6i0x22 .
+
+_:node18hgvm6i0x22 km-dev:alignmentNodeId "http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation1" ;
+	rr:class <http://www.cidoc-crm.org/cidoc-crm/E75_Conceptual_Object_Appellation> ;
+	rr:template "{PersonInstitution_URI}/images/filename" .
+
+_:node18hgvm6i0x24 rr:predicate <http://www.w3.org/2000/01/rdf-schema#label> .
+
+_:node18hgvm6i0x25 rr:column "FileName" .
+
+_:node18hgvm6i0x24 rr:objectMap _:node18hgvm6i0x25 .
+
+km-dev:TriplesMap_5 rr:predicateObjectMap _:node18hgvm6i0x24 .
+
+km-dev:TriplesMap_6 a rr:TriplesMap .
+
+_:node18hgvm6i0x1 km-dev:hasTriplesMap km-dev:TriplesMap_6 .
+
+_:node18hgvm6i0x26 rr:tableName "cbev2.WebArtistBioImages.csv" .
+
+km-dev:TriplesMap_6 rr:logicalTable _:node18hgvm6i0x26 ;
+	rr:subjectMap _:node18hgvm6i0x27 .
+
+_:node18hgvm6i0x27 km-dev:alignmentNodeId "http://www.cidoc-crm.org/cidoc-crm/E55_Type1" ;
+	rr:class <http://www.cidoc-crm.org/cidoc-crm/E55_Type> ;
+	rr:template "{MediaView_URI}" .

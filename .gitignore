@@ -43,6 +43,7 @@ src/main/webapp/publish/AutoOntology/*.*
 src/main/webapp/publish/R2RML/*.*
 src/main/webapp/publish/JSON/*.*
 src/main/webapp/publish/AlignmentGraph/*.*
+preloaded-ontologies/*
 src/main/webapp/RDF/*.rdf
 src/main/webapp/RDF/*.n3
 */src/main/webapp/CRF_Models/*.txt
@@ -73,3 +74,4 @@ nbactions.xml
 
 *.iml
 .idea
+*/src/test/karma-data/testresult/testResult.txt

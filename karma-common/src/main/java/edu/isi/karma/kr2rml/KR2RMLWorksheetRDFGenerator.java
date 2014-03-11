@@ -14,6 +14,35 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.kr2rml.ErrorReport.Priority;
+import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.Uris;
+import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.Table;
+import edu.isi.karma.rep.Worksheet;
 
 /**
  * Class KR2RMLWorksheetRDFGenerator
@@ -29,10 +58,9 @@ public class KR2RMLWorksheetRDFGenerator {
 	private ErrorReport errorReport;
 	private boolean addColumnContextInformation;
 	private KR2RMLMapping kr2rmlMapping;
+	private KR2RMLMappingColumnNameHNodeTranslator translator;
 	private Map<String, String> prefixToNamespaceMap;
 	private Map<String, String> hNodeToContextUriMap;
-	private Map<String, String> columnNameToHNodeId;
-	private Map<String, String> hNodeIdToColumnName;
 	private PrintWriter outWriter;
 
 	private Logger logger = LoggerFactory.getLogger(KR2RMLWorksheetRDFGenerator.class);
@@ -51,10 +79,8 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.prefixToNamespaceMap = new HashMap<String, String>();
 		this.hNodeToContextUriMap = new HashMap<String, String>();
 		this.addColumnContextInformation = addColumnContextInformation;
-		this.columnNameToHNodeId = new HashMap<String,String>();
-		this.hNodeIdToColumnName = new HashMap<String,String>();
+		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
 		populatePrefixToNamespaceMap();
-		populateHNodeIdAndColumnNameMaps();
 	}
 
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory,
@@ -70,11 +96,9 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.prefixToNamespaceMap = new HashMap<String, String>();
 		this.hNodeToContextUriMap = new HashMap<String, String>();
 		this.addColumnContextInformation = addColumnContextInformation;
-		this.columnNameToHNodeId = new HashMap<String,String>();
-		this.hNodeIdToColumnName = new HashMap<String,String>();
+		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
 		populatePrefixToNamespaceMap();
 		populateHNodeIdAndColumnNameMaps();
-
 	}
 
 
@@ -161,7 +185,9 @@ public class KR2RMLWorksheetRDFGenerator {
 	public void generateTriplesForCell(Node node, Set<String> existingTopRowTriples,
 			String hNodeId, Set<String> predicatesCovered,
 			Map<String, ReportMessage> predicatesFailed, Set<String> predicatesSuccessful) {
-		List<PredicateObjectMap> pomList = this.kr2rmlMapping.getAuxInfo().getColumnNameToPredObjLinks().get(hNodeIdToColumnName.get(hNodeId));
+		
+		String columnName = translator.getColumnNameForHNodeId(hNodeId);
+		List<PredicateObjectMap> pomList = this.kr2rmlMapping.getAuxInfo().getColumnNameToPredObjLinks().get(columnName);
 		if (pomList == null || pomList.isEmpty())
 			return;
 
@@ -328,7 +354,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				if (templ.isSingleColumnTerm()) {
 					try
 					{
-						String hNodeId_val = getHNodeIdForColumnName(templ.getAllTerms().get(0).getTemplateTermValue());
+						String hNodeId_val = translator.getHNodeIdForColumnName(templ.getAllTerms().get(0).getTemplateTermValue());
 						String quad = constructQuadWithLiteralObject(subjUri, predicateUri, value,
 								rdfLiteralType, hNodeId_val);
 						if (!existingTopRowTriples.contains(quad)) {
@@ -491,7 +517,7 @@ public class KR2RMLWorksheetRDFGenerator {
 
 		if (columnsCovered != null && !columnsCovered.isEmpty()) {
 			for (int i=0; i<columnsCovered.size(); i++) {
-				String hNodeId = this.getHNodeIdForColumnName(columnsCovered.get(i));
+				String hNodeId = translator.getHNodeIdForColumnName(columnsCovered.get(i));
 				if (node.canReachNeighbor(hNodeId)) {
 					output.append("_" + node.getNeighbor(hNodeId).getId());
 				} else {
@@ -514,7 +540,7 @@ public class KR2RMLWorksheetRDFGenerator {
 			}
 			// Column template term
 			else if (term instanceof ColumnTemplateTerm) {
-				String hNodeId = this.getHNodeIdForColumnName(term.getTemplateTermValue());
+				String hNodeId = translator.getHNodeIdForColumnName(term.getTemplateTermValue());
 				if (node.canReachNeighbor(hNodeId)) {
 					Node neighborNode = node.getNeighbor(hNodeId);
 					if (neighborNode != null) {
@@ -661,13 +687,13 @@ public class KR2RMLWorksheetRDFGenerator {
 		String colUri = getColumnContextUri(hNodeId);
 
 		// Generate the type
-		String typeTriple = constructTripleWithURIObject(colUri, Uris.RDF_TYPE_URI,
-				Uris.PROV_ENTITY_URI);
+		String typeTriple = constructTripleWithURIObject("<" + colUri + ">", Uris.RDF_TYPE_URI, 
+				"<" + Uris.PROV_ENTITY_URI + ">");
 		colContextTriples.add(typeTriple);
 
 		// Generate the label
 		HNode hNode = factory.getHNode(hNodeId);
-		String labelTriple = constructTripleWithLiteralObject(colUri, Uris.RDFS_LABEL_URI,
+		String labelTriple = constructTripleWithLiteralObject("<" + colUri + ">", Uris.RDFS_LABEL_URI, 
 				hNode.getColumnName(), "");
 		colContextTriples.add(labelTriple);
 

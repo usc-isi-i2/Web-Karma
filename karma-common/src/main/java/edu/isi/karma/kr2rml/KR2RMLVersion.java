@@ -4,7 +4,7 @@ package edu.isi.karma.kr2rml;
 public class KR2RMLVersion implements Comparable<KR2RMLVersion>{
 
 	public static final KR2RMLVersion unknown = new KR2RMLVersion(0, 0);
-	public static final KR2RMLVersion current = new KR2RMLVersion(0, 1);
+	public static final KR2RMLVersion current = new KR2RMLVersion(1, 0);
 	
 	public final int major;
 	public final int minor;
@@ -23,7 +23,7 @@ public class KR2RMLVersion implements Comparable<KR2RMLVersion>{
 		{
 			throw new NullPointerException("No version to parse");
 		}
-		String[] components = version.split(".");
+		String[] components = version.split("\\.");
 		if(components.length < 2)
 		{
 			throw new IllegalArgumentException("Not enough components in version string " + version);
@@ -41,7 +41,7 @@ public class KR2RMLVersion implements Comparable<KR2RMLVersion>{
 		}
 		if(this.getMajor() == o.getMajor())
 		{
-			return this.getMinor() - o.getMajor();
+			return this.getMinor() - o.getMinor();
 		}
 		else
 		{

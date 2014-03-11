@@ -32,8 +32,8 @@ public class RecordTextFeature implements Feature {
 	public String text = "";
 	public Vector<TNode> nodes = new Vector<TNode>();
 	public String value = "";
-	public RecordTextFeature(String text,String value)
-	{
+
+	public RecordTextFeature(String text, String value) {
 		this.text = text;
 		this.value = value;
 		Ruler ruler = new Ruler();
@@ -41,21 +41,20 @@ public class RecordTextFeature implements Feature {
 		nodes = ruler.vec;
 		this.score = computeScore();
 	}
-	public double computeScore()
-	{
-		for(TNode t:nodes)
-		{
-			if(t.text.compareTo(text)==0)
-			{
+
+	public double computeScore() {
+		for (TNode t : nodes) {
+			if (t.text.compareTo(text) == 0) {
 				return 1;
 			}
 		}
 		return 0;
 	}
+
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
-		return "attr_"+text;
+		return "attr_" + text;
 	}
 
 	@Override

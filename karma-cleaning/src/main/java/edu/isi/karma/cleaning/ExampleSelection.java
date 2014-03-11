@@ -46,7 +46,7 @@ public class ExampleSelection {
 	public String Choose() {
 		String ID = "";
 		switch (way) {
-	case 1:
+		case 1:
 			ID = this.way1();
 			break;
 		case 2:
@@ -288,8 +288,7 @@ public class ExampleSelection {
 			double tmax = -1;
 			for (String key : this.testdata.keySet()) {
 				String trowid = out.getOutliers(testdata.get(key),
-						out.rVectors.get(key), tmax,
-						dictionary);
+						out.rVectors.get(key), tmax, dictionary);
 				tmax = out.currentMax;
 				if (trowid.length() > 0) {
 					row = trowid;

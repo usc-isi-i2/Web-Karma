@@ -21,15 +21,35 @@
 
 package edu.isi.karma.controller.command.service;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.rits.cloning.Cloner;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.ReplaceWorksheetUpdate;
+import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.*;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.metadata.MetadataContainer;
 import edu.isi.karma.rep.sources.InvocationManager;
 import edu.isi.karma.rep.sources.Table;
@@ -50,6 +70,8 @@ import java.util.List;
 public class InvokeServiceCommand extends WorksheetCommand {
 
 	private static Logger logger = LoggerFactory.getLogger(InvokeServiceCommand.class);
+	private Alignment initialAlignment = null;
+	private DirectedWeightedMultigraph<Node, Link> initialGraph = null;
 	private final String hNodeId;
 	
 	private Worksheet worksheetBeforeInvocation = null;
@@ -71,6 +93,19 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		// Clone the worksheet just before the invocation
 		Cloner cloner = new Cloner();
 		this.worksheetBeforeInvocation = cloner.deepClone(wk);
+		
+		OntologyManager ontMgr = workspace.getOntologyManager();
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		if (alignment == null) {
+			alignment = new Alignment(ontMgr);
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		}
+		
+		if (initialAlignment == null) {
+			initialAlignment = alignment.getAlignmentClone();
+			initialGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
+		}
 		
 		List<String> requestURLStrings = new ArrayList<String>();
 		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows());
@@ -126,7 +161,22 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			columnPaths.add(path);
 		}
 
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		
+		alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), wk.getId(), ontMgr);
+		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		UpdateContainer c = new UpdateContainer();
+		try {
+			// Add the visualization update
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.add(new SemanticTypesUpdate(wk, worksheetId, alignment));
+			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
+		} catch (Exception e) {
+			logger.error("Error occured while populating the worksheet with service data!", e);
+			return new UpdateContainer(new ErrorUpdate(
+					"Error occured while populating the worksheet with service data!"));
+		}
+
+		return c;
 		
 	}
 	
@@ -147,18 +197,43 @@ public class InvokeServiceCommand extends WorksheetCommand {
 	
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
+
+		Worksheet wk = workspace.getWorksheet(worksheetId);
+
 		UpdateContainer c = new UpdateContainer();
 		
 		// Create new vWorksheet using the new header order
-		List<HNodePath> columnPaths = new ArrayList<HNodePath>();
-		for (HNode node : worksheetBeforeInvocation.getHeaders().getSortedHNodes()) {
-			HNodePath path = new HNodePath(node);
-			columnPaths.add(path);
+//		List<HNodePath> columnPaths = new ArrayList<HNodePath>();
+//		for (HNode node : worksheetBeforeInvocation.getHeaders().getSortedHNodes()) {
+//			HNodePath path = new HNodePath(node);
+//			columnPaths.add(path);
+//		}
+		
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
+		Alignment alignment = initialAlignment;
+		alignment.setGraph(initialGraph);
+		alignment.align();
+		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		try {
+			// Add the visualization update
+			workspace.getFactory().replaceWorksheet(worksheetId, worksheetBeforeInvocation);
+			c.add(new ReplaceWorksheetUpdate(worksheetId, worksheetBeforeInvocation));
+			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.add(new SemanticTypesUpdate(wk, worksheetId, alignment));
+		} catch (Exception e) {
+			logger.error("Error occured while populating the worksheet with service data!", e);
+			return new UpdateContainer(new ErrorUpdate(
+					"Error occured while populating the worksheet with service data!"));
 		}
-		workspace.getFactory().replaceWorksheet(worksheetId, worksheetBeforeInvocation);
-		c.add(new ReplaceWorksheetUpdate(worksheetId, worksheetBeforeInvocation));
-		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId));
-	
+		
+//		workspace.getFactory().replaceWorksheet(worksheetId, worksheetBeforeInvocation);
+//		c.add(new ReplaceWorksheetUpdate(worksheetId, worksheetBeforeInvocation));
+//		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId));
+//		//c.add(new SemanticTypesUpdate(wk, worksheetId, alignment));
+//		c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
+
+		
 		return c;	
 	}
 

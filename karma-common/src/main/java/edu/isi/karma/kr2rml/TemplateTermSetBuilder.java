@@ -27,6 +27,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatter;
+import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatterFactory;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 
 public class TemplateTermSetBuilder {
 
@@ -34,9 +37,13 @@ public class TemplateTermSetBuilder {
 	
 	public static TemplateTermSet constructTemplateTermSetFromR2rmlTemplateString(
 			String templStr) throws JSONException {
+		return constructTemplateTermSetFromR2rmlTemplateString(templStr, KR2RMLColumnNameFormatterFactory.getFormatter(SourceTypes.CSV));
+	}
+	public static TemplateTermSet constructTemplateTermSetFromR2rmlTemplateString(
+			String templStr, KR2RMLColumnNameFormatter formatter) throws JSONException {
 		TemplateTermSet termSet = new TemplateTermSet();
 		
-		Pattern p = Pattern.compile("\\{\\\".*?\\\"\\}");
+		Pattern p = Pattern.compile("\\{\\\"?.*?\\\"?\\}");
 	    Matcher matcher = p.matcher(templStr);
 	    int startIndex = 0;
 	    
@@ -52,12 +59,16 @@ public class TemplateTermSetBuilder {
 		    	
 		    	String colTermVal = removeR2rmlFormatting(matcher.group());
 		    	logger.debug("Col name templ term: " + colTermVal);
-		    	termSet.addTemplateTermToSet(new ColumnTemplateTerm(colTermVal));
+		    	termSet.addTemplateTermToSet(new ColumnTemplateTerm(formatter.getColumnNameWithoutFormatting(colTermVal)));
 		    	
 		    	/**/
 		    	
 	    		startIndex = matcher.end();
 		      }
+	    	if(startIndex != templStr.length())
+	    	{
+	    		termSet.addTemplateTermToSet(new StringTemplateTerm(templStr.substring(startIndex)));
+	    	}
 	    } else {
 	    	termSet.addTemplateTermToSet(new StringTemplateTerm(templStr));
 	    }
@@ -67,10 +78,15 @@ public class TemplateTermSetBuilder {
 	
 	public static TemplateTermSet constructTemplateTermSetFromR2rmlColumnString(
 			String colTermVal) throws JSONException {
+		return constructTemplateTermSetFromR2rmlColumnString(colTermVal, KR2RMLColumnNameFormatterFactory.getFormatter(SourceTypes.CSV));
+	}
+	
+	public static TemplateTermSet constructTemplateTermSetFromR2rmlColumnString(
+			String colTermVal, KR2RMLColumnNameFormatter formatter) throws JSONException {
 		TemplateTermSet termSet = new TemplateTermSet();
 		
 		logger.debug("Column" + removeR2rmlFormatting(colTermVal));
-		termSet.addTemplateTermToSet(new ColumnTemplateTerm(colTermVal));
+		termSet.addTemplateTermToSet(new ColumnTemplateTerm(formatter.getColumnNameWithoutFormatting(colTermVal)));
 		
 		return termSet;
 	}
@@ -78,6 +94,8 @@ public class TemplateTermSetBuilder {
 	private static String removeR2rmlFormatting(String r2rmlColName) {
 		if (r2rmlColName.startsWith("{\"") && r2rmlColName.endsWith("\"}"))
 			return r2rmlColName.substring(2, r2rmlColName.length()-2);
+		else if (r2rmlColName.startsWith("{") && r2rmlColName.endsWith("}"))
+			return r2rmlColName.substring(1, r2rmlColName.length()-1);
 		else return r2rmlColName;
 	}
 }

@@ -44,8 +44,7 @@ public class Position implements GrammarTreeNode {
 
 	public void getString(Vector<TNode> x, int cur, String path, Double value,
 			HashMap<String, Double> smap, boolean isleft) {
-		if(fixedlength == 0)
-		{
+		if (fixedlength == 0) {
 			if (!smap.keySet().contains(path)) {
 				String res = UtilTools.escape(path);
 				if (!smap.containsKey(res) && res.length() != 0)
@@ -191,30 +190,25 @@ public class Position implements GrammarTreeNode {
 			String[] s1 = this.tarStrings.get(0).split(",");
 			String[] s2 = b.tarStrings.get(0).split(",");
 			HashSet<Integer> hset = new HashSet<Integer>();
-			for(int x=0; x<s1.length; x++)
-			{
+			for (int x = 0; x < s1.length; x++) {
 				int v = Integer.valueOf(s1[x]);
-				if(!hset.contains(v))
-				{
+				if (!hset.contains(v)) {
 					hset.add(v);
 				}
 			}
-			for(int x=0;x<s2.length;x++)
-			{
+			for (int x = 0; x < s2.length; x++) {
 				int v = Integer.valueOf(s2[x]);
-				if(!hset.contains(v))
-				{
+				if (!hset.contains(v)) {
 					hset.add(v);
 				}
 			}
-			SortedSet<Integer> poses = new TreeSet<Integer>(hset); 
+			SortedSet<Integer> poses = new TreeSet<Integer>(hset);
 			Iterator<Integer> iter = poses.iterator();
 			String rep = "";
-			while(iter.hasNext())
-			{
-				rep += iter.next()+",";
+			while (iter.hasNext()) {
+				rep += iter.next() + ",";
 			}
-			rep = rep.substring(0,rep.length()-1);
+			rep = rep.substring(0, rep.length() - 1);
 			bStrings.add(rep);
 		} else {
 			aStrings.addAll(this.orgStrings);
@@ -292,16 +286,15 @@ public class Position implements GrammarTreeNode {
 	public String VerifySpace(int itercnt) {
 		String rule = "null";
 		int ruleNo = 0;
-		while (ruleNo<this.rules.size()) {
+		while (ruleNo < this.rules.size()) {
 			rule = getRule(ruleNo);
 			ruleNo++;
-			//System.out.println("verifying..."+rule);
+			// System.out.println("verifying..."+rule);
 			if (isinloop) {
 				// replace the counter with number and verify it
-				if(rule.indexOf("counter")==-1)
-				{
+				if (rule.indexOf("counter") == -1) {
 					return "null";
-				}				
+				}
 				boolean isvalid = true;
 				for (int j = 0; j < this.orgStrings.size(); j++) {
 					int cnt = 1;
@@ -312,20 +305,21 @@ public class Position implements GrammarTreeNode {
 						ProgramRule programRule = new ProgramRule(tmpRule);
 						String val = programRule.transform(this.orgStrings
 								.get(j));
-						if(val.indexOf("None")!= -1)
+						if (val.indexOf("None") != -1)
 							break;
-						r += val+",";
-						cnt ++;
+						r += val + ",";
+						cnt++;
 					}
-					if(r.length()<=1)
+					if (r.length() <= 1)
 						return "null";
-					if (this.tarStrings.get(j).compareTo(r.substring(0,r.length()-1)) != 0) {
+					if (this.tarStrings.get(j).compareTo(
+							r.substring(0, r.length() - 1)) != 0) {
 						isvalid = false;
 						break;
 					}
 				}
 				if (isvalid) {
-					if(itercnt == 0)
+					if (itercnt == 0)
 						return rule;
 					else
 						itercnt--; // valid number - 1
@@ -334,16 +328,15 @@ public class Position implements GrammarTreeNode {
 			} else {
 				ProgramRule pr = new ProgramRule(rule);
 				boolean isValid = true;
-				for(int k=0; k<this.orgStrings.size(); k++)
-				{
-					String val = String.valueOf(pr.transform(this.orgStrings.get(k)));
-					if(this.tarStrings.get(k).compareTo(val)!=0)
-					{
+				for (int k = 0; k < this.orgStrings.size(); k++) {
+					String val = String.valueOf(pr.transform(this.orgStrings
+							.get(k)));
+					if (this.tarStrings.get(k).compareTo(val) != 0) {
 						isValid = false;
 					}
 				}
 				if (isValid) {
-					if(itercnt == 0)
+					if (itercnt == 0)
 						return rule;
 					else
 						itercnt--;
@@ -352,6 +345,7 @@ public class Position implements GrammarTreeNode {
 		}
 		return "null";
 	}
+
 	public void createTotalOrderVector() {
 		HashMap<String, Double> lMap = new HashMap<String, Double>();
 		HashMap<String, Double> rMap = new HashMap<String, Double>();
@@ -370,6 +364,8 @@ public class Position implements GrammarTreeNode {
 			rMap.put("ANY", 1.0);
 		}
 		String reString = "";
+		String reString2 = "";
+		String reString3 = "";
 		SortedMap<Double, Vector<String>> sortedMap = new TreeMap<Double, Vector<String>>();
 		String negString = "";
 		for (String a : lMap.keySet()) {
@@ -378,15 +374,23 @@ public class Position implements GrammarTreeNode {
 					continue;
 				Double key = lMap.get(a) + rMap.get(b);
 				reString = String.format(
-						"indexOf(value,\'%s\',\'%s\',counter)", a, b);
+						"indexOf(value,\'%s\',\'%s\',1*counter)", a, b);
+				reString2 = String.format(
+						"indexOf(value,\'%s\',\'%s\',2*counter)", a, b);
+				reString3 = String.format(
+						"indexOf(value,\'%s\',\'%s\',3*counter)", a, b);
 				negString = String.format(
-						"indexOf(value,\'%s\',\'%s\',-counter)", a, b);
+						"indexOf(value,\'%s\',\'%s\',-1*counter)", a, b);
 				if (sortedMap.containsKey(key)) {
 					sortedMap.get(key).add(reString);
+					sortedMap.get(key).add(reString2);
+					sortedMap.get(key).add(reString3);
 					sortedMap.get(key).add(negString);
 				} else {
 					Vector<String> svec = new Vector<String>();
 					svec.add(reString);
+					svec.add(reString2);
+					svec.add(reString3);
 					svec.add(negString);
 					sortedMap.put(key, svec);
 				}

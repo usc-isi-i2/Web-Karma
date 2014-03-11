@@ -323,4 +323,18 @@ public class HTable extends RepEntity {
 		}
 		return name;
 	}
+	
+	public HNode getNeighborByColumnName(String columnName, RepFactory f)
+	{
+		HNode result = this.getHNodeFromColumnName(columnName);
+		if(null != result)
+		{
+			return result;
+		}
+		if(this.parentHNode != null)
+		{
+			return parentHNode.getNeighborByColumnName(columnName, f);
+		}
+		return null;
+	}
 }

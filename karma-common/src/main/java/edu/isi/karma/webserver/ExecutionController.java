@@ -144,6 +144,8 @@ public class ExecutionController {
                 new PublishDatabaseCommandFactory());
         commandFactoryMap.put(AddColumnCommand.class.getSimpleName(),
                 new AddColumnCommandFactory());
+        commandFactoryMap.put(AddRowCommand.class.getSimpleName(),
+                new AddRowCommandFactory());
         commandFactoryMap.put(PublishRDFCellCommand.class.getSimpleName(),
                 new PublishRDFCellCommandFactory());
         commandFactoryMap.put(FetchPreferencesCommand.class.getSimpleName(),

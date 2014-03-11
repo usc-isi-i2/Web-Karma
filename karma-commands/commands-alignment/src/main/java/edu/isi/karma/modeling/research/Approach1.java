@@ -26,6 +26,14 @@ import com.google.common.collect.Multimap;
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.*;
+import edu.isi.karma.modeling.alignment.GraphBuilder;
+import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.GraphVizUtil;
+import edu.isi.karma.modeling.alignment.LinkIdFactory;
+import edu.isi.karma.modeling.alignment.NodeIdFactory;
+import edu.isi.karma.modeling.alignment.SemanticModel;
+import edu.isi.karma.modeling.alignment.SteinerTree;
+
 import edu.isi.karma.modeling.alignment.learner.CandidateSteinerSets;
 import edu.isi.karma.modeling.alignment.learner.SemanticTypeMapping;
 import edu.isi.karma.modeling.alignment.learner.SortableSemanticModel;
@@ -934,8 +942,8 @@ public class Approach1 {
 			// Updating the weights
 //			WeightTuning.getInstance().updateWeights(hypothesisList, correctModel);
 			
-			Map<String, DirectedWeightedMultigraph<Node, Link>> graphs = 
-					new TreeMap<String, DirectedWeightedMultigraph<Node,Link>>();
+			Map<String, SemanticModel> models = 
+					new TreeMap<String, SemanticModel>();
 			
 			if (topHypotheses != null)
 				for (int k = 0; k < topHypotheses.size() && k < 3; k++) {
@@ -950,7 +958,7 @@ public class Approach1 {
 					
 				}
 			
-			graphs.put("1-correct model", correctModel.getGraph());
+			models.put("1-correct model", correctModel);
 			if (topHypotheses != null)
 				for (int k = 0; k < topHypotheses.size(); k++) {
 					
@@ -962,12 +970,12 @@ public class Approach1 {
 							"--distance:" + distance +
 							"---" + m.getDescription();
 					
-					graphs.put(label, m.getGraph());
+					models.put(label, m);
 				}
 			
-			GraphUtil.exportGraphviz(
-					graphs, 
-					newSource.getDescription(),
+			GraphVizUtil.exportSemanticModelsToGraphviz(
+					models, 
+					newSource.getName(),
 					outputPath + semanticModels.get(i).getName() + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT);
 			
 		}
