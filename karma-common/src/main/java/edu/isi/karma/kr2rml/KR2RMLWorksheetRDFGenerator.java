@@ -14,35 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import edu.isi.karma.kr2rml.ErrorReport.Priority;
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.Node;
-import edu.isi.karma.rep.RepFactory;
-import edu.isi.karma.rep.Row;
-import edu.isi.karma.rep.Table;
-import edu.isi.karma.rep.Worksheet;
 
 /**
  * Class KR2RMLWorksheetRDFGenerator
@@ -388,27 +359,13 @@ public class KR2RMLWorksheetRDFGenerator {
 		{
 			try
 			{
-				getHNodeIdForColumnName(columnName);
+				translator.getHNodeIdForColumnName(columnName);
 			}
 			catch (HNodeNotFoundKarmaException ex)
 			{
 				logger.debug("Unable to find HNodeId for column name: " + columnName, ex);
 			}
 		}
-	}
-	private String getHNodeIdForColumnName(String templateTermValue) throws HNodeNotFoundKarmaException {
-		if(!this.columnNameToHNodeId.containsKey(templateTermValue))
-		{
-			try {
-				String hNodeId = translateColumnNameToHNodeId(templateTermValue);
-				columnNameToHNodeId.put(templateTermValue, hNodeId);
-				hNodeIdToColumnName.put(hNodeId, templateTermValue);
-
-			} catch (JSONException e) {
-				throw new HNodeNotFoundKarmaException("Unable to find HNodeId for column name", templateTermValue);
-			}
-		}
-		return this.columnNameToHNodeId.get(templateTermValue);
 	}
 
 	private String translateColumnNameToHNodeId(String colTermVal) throws JSONException

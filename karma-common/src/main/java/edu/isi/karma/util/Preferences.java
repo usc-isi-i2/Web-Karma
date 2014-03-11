@@ -21,14 +21,9 @@
 
 package edu.isi.karma.util;
 
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -39,15 +34,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import edu.isi.karma.modeling.ModelingConfiguration;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-
 public abstract class Preferences {
 	/**
 	 * Pointer to the file where the preferences for each workspace is saved.
 	 */
-	private File jsonFile;
+	protected File jsonFile;
 	
 	/**
 	 * Id of the workspace. Each workspace has its own view preference object.

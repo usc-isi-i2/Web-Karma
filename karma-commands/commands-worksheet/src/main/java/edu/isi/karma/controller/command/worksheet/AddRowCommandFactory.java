@@ -20,19 +20,17 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.worksheet;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
+import org.json.JSONArray;
+import org.json.JSONException;
 
-public class AddRowCommandFactory extends CommandFactory implements JSONInputCommandFactory {
+import javax.servlet.http.HttpServletRequest;
+
+public class AddRowCommandFactory extends JSONInputCommandFactory {
 
 	public enum Arguments {
 		worksheetId, hTableId, hNodeId, newColumnName, defaultValue
@@ -62,4 +60,9 @@ public class AddRowCommandFactory extends CommandFactory implements JSONInputCom
 		return rowCmd;
 	}
 
+	@Override
+	public Class<? extends Command> getCorrespondingCommand()
+	{
+		return AddRowCommand.class;
+	}
 }

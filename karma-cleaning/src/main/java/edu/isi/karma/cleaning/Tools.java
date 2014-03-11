@@ -20,16 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.cleaning;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.Vector;
-
-import org.apache.mahout.math.Arrays;
-
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.isi.karma.cleaning.Research.ConfigParameters;
 import edu.isi.karma.cleaning.Research.DataCollection;

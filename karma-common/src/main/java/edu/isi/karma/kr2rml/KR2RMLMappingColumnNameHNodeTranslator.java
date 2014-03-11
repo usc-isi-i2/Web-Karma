@@ -1,22 +1,21 @@
 package edu.isi.karma.kr2rml;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Worksheet;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HTable;
-import edu.isi.karma.rep.RepFactory;
-import edu.isi.karma.rep.Worksheet;
+import java.util.HashMap;
+import java.util.Map;
 
 public class KR2RMLMappingColumnNameHNodeTranslator {
 	
-	private static Logger logger = LoggerFactory.getLogger(KR2RMLMappingGenerator.class);
+	private static Logger logger = LoggerFactory.getLogger(KR2RMLMappingColumnNameHNodeTranslator.class);
 	
 	private RepFactory factory;
 	private Worksheet worksheet;
