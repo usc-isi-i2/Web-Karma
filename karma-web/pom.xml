@@ -67,6 +67,11 @@
 			<artifactId>commands-reconcilliation</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-publish-alignment-openrdf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>edu.isi</groupId>

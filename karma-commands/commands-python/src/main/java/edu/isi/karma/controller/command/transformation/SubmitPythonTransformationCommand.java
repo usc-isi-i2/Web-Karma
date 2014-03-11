@@ -21,17 +21,9 @@
 
 package edu.isi.karma.controller.command.transformation;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.ICommand;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommandFactory;
 import edu.isi.karma.controller.history.CommandHistory;
@@ -39,8 +31,7 @@ import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.*;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
@@ -51,9 +42,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class SubmitPythonTransformationCommand extends MutatingPythonTransformationCommand {
-	protected Command previousPythonTransformationCommand;
+	protected ICommand previousPythonTransformationCommand;
 	protected AddColumnCommand addColCmd;
 	protected ArrayList<String> originalColumnValues;
 	protected String pythonNodeId;
@@ -230,12 +222,12 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		return this.originalColumnValues;
 	}
 	
-	protected Command extractPreviousCommand(ExecutionController ctrl) {
+	protected ICommand extractPreviousCommand(ExecutionController ctrl) {
 
 		CommandHistory commandHistory = ctrl.getWorkspace().getCommandHistory();
-		ArrayList<Command> commands = commandHistory._getHistory();
+		List<ICommand> commands = commandHistory._getHistory();
 		for(int i = commands.size() -1 ; i>=0; i--) {
-			Command command = commands.get(i);
+			ICommand command = commands.get(i);
 			if(command instanceof SubmitPythonTransformationCommand) {
 				SubmitPythonTransformationCommand pyCommand = (SubmitPythonTransformationCommand)command;
 				if(pyCommand.worksheetId.equals(this.worksheetId)) {

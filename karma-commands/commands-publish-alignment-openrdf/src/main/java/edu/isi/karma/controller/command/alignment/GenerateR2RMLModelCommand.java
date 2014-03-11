@@ -27,8 +27,6 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.controller.command.publish.PublishRDFCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;

@@ -23,6 +23,7 @@
 		<module>commands-cleaning</module>
 		<module>commands-publish</module>
 		<module>commands-publish-jdbc</module>
+		<module>commands-publish-alignment-openrdf</module>
 		<module>commands-worksheet</module>
 		<module>commands-update</module>
 		<module>commands-update-jdbc</module>

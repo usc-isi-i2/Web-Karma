@@ -21,53 +21,13 @@
 
 package edu.isi.karma.kr2rml;
 
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.RepFactory;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.*;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.json.JSONArray;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatterFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.ClassInstanceLink;
-import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.ColumnSubClassLink;
-import edu.isi.karma.rep.alignment.DataPropertyLink;
-import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
-import edu.isi.karma.rep.alignment.DisplayModel;
-import edu.isi.karma.rep.alignment.InternalNode;
-import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.LinkKeyInfo;
-import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
-import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.rep.alignment.SemanticTypes;
-import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
+import edu.isi.karma.rep.alignment.*;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURITokenizer;
@@ -75,6 +35,17 @@ import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURIValidator
 import edu.isi.karma.transformation.tokenizer.PythonTransformationToken;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.FileUtil;
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.json.JSONArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class KR2RMLMappingGenerator {
 

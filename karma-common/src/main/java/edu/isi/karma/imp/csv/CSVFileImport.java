@@ -25,13 +25,6 @@ package edu.isi.karma.imp.csv;
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.*;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HTable;
-import edu.isi.karma.rep.RepFactory;
-import edu.isi.karma.rep.Row;
-import edu.isi.karma.rep.Table;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.util.EncodingDetector;
@@ -129,10 +122,10 @@ public class CSVFileImport extends Import {
         return getWorksheet();
     }
 
-    private List<String> addHeaders(Worksheet worksheet, RepFactory fac,
+    private ArrayList<String> addHeaders(Worksheet worksheet, RepFactory fac,
             String line) throws IOException {
         HTable headers = worksheet.getHeaders();
-        java.util.List<String> headersList = new ArrayList<String>();
+        ArrayList<String> headersList = new ArrayList<String>();
         CSVReader reader = new CSVReader(new StringReader(line), delimiter,
                 quoteCharacter, escapeCharacter);
         String[] rowValues = null;
@@ -182,10 +175,10 @@ public class CSVFileImport extends Import {
         return true;
     }
 
-    private List<String> addEmptyHeaders(Worksheet worksheet,
+    private ArrayList<String> addEmptyHeaders(Worksheet worksheet,
             RepFactory fac) throws IOException {
         HTable headers = worksheet.getHeaders();
-        List<String> headersList = new ArrayList<String>();
+        ArrayList<String> headersList = new ArrayList<String>();
 
         Scanner scanner = null;
         scanner = new Scanner(csvFile);
