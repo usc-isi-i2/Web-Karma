@@ -117,6 +117,10 @@ and related projects, please see: http://www.isi.edu/integration
 			    /* width: auto; */
 			    width: 300px;
 			}
+			
+			.editable-empty, .editable-empty:hover, .editable-empty:focus {
+				color: #cccccc;
+			}
 		</style>
 	</head>
 
@@ -294,6 +298,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/propertyUI.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/classDropdown.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/propertyDropdown.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/model-layout.js?<jsp:include page='version.jsp' />"></script>
          
         <script>
             $(function() {
