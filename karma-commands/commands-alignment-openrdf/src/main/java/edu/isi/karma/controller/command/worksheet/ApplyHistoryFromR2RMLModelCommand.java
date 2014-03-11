@@ -32,23 +32,28 @@ import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.Workspace;
 import org.json.JSONArray;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
+import org.json.JSONException;
 import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
-import org.openrdf.repository.sail.SailRepository;
-import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
-import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
+import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.InfoUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.kr2rml.KR2RMLMapping;
+import edu.isi.karma.kr2rml.KR2RMLVersion;
+import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.WorksheetR2RMLJenaModelParser;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.KarmaException;
 
 public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 	private final File r2rmlModelFile;
@@ -84,14 +89,18 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		UpdateContainer c = new UpdateContainer();
+		UpdateContainer rwu = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		if(rwu != null)
+		{
+			c.append(rwu);
+		}
 		
 		try {
-			String historyStr = extractHistoryFromModel();
-			if (historyStr.isEmpty()) {
+			JSONArray historyJson  = extractHistoryFromModel(workspace, c);
+			if (null == historyJson || historyJson.length() == 0) {
 				return new UpdateContainer(new ErrorUpdate("No history found in R2RML Model!"));
 			}
-			JSONArray historyJson = new JSONArray(historyStr);
 			WorksheetCommandHistoryExecutor histExecutor = new WorksheetCommandHistoryExecutor(
 					worksheetId, workspace);
 			UpdateContainer hc = histExecutor.executeAllCommands(historyJson);
@@ -110,25 +119,20 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 		return c;
 	}
 
-	private String extractHistoryFromModel() 
-			throws RepositoryException, RDFParseException, IOException {
-		Repository myRepository = new SailRepository(new MemoryStore());
-		myRepository.initialize();
-		RepositoryConnection con = myRepository.getConnection();
-		ValueFactory f = con.getValueFactory();
-		con.add(r2rmlModelFile, "", RDFFormat.TURTLE);
+	private JSONArray extractHistoryFromModel(Workspace workspace, UpdateContainer uc) 
+			throws RepositoryException, RDFParseException, IOException, JSONException, KarmaException {
 		
-		URI wkHistUri = f.createURI(Uris.KM_HAS_WORKSHEET_HISTORY_URI);
-		
-		RepositoryResult<Statement> wkHistStmts = con.getStatements(null, wkHistUri, 
-				null, false);
-		while (wkHistStmts.hasNext()) {
-			// Return the object value of the first history statement
-			Statement st = wkHistStmts.next();
-			Value histVal = st.getObject();
-			return histVal.stringValue();
+		Worksheet ws = workspace.getFactory().getWorksheet(worksheetId);
+		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(ws.getTitle(), r2rmlModelFile.toURI().toURL());
+		WorksheetR2RMLJenaModelParser parser = new WorksheetR2RMLJenaModelParser(id);
+		KR2RMLMapping mapping = parser.parse();
+		KR2RMLVersion version = mapping.getVersion();
+		if(version.compareTo(KR2RMLVersion.current) < 0)
+		{
+			uc.add(new InfoUpdate("Model version is " + version.toString() + ".  Current version is " + KR2RMLVersion.current.toString() + ".  Please publish it again."));
 		}
-		return "";
+		return mapping.getWorksheetHistory();
+		
 	}
 
 	@Override

@@ -35,11 +35,9 @@ import java.util.Set;
 public class CandidateSteinerSets {
 	
 	private static Logger logger = LoggerFactory.getLogger(CandidateSteinerSets.class);
-	private int maxNumberOfSteinerNodes;
 	private List<SteinerNodes> steinerSets;
 	
 	public CandidateSteinerSets(int maxNumberOfSteinerNodes) {
-		this.maxNumberOfSteinerNodes = maxNumberOfSteinerNodes;
 		this.steinerSets = new ArrayList<SteinerNodes>();
 	}
 	
@@ -59,7 +57,7 @@ public class CandidateSteinerSets {
 		
 		if (this.steinerSets.size() == 0) {
 			for (SemanticTypeMapping stm : mappings) {
-				SteinerNodes sn = new SteinerNodes(maxNumberOfSteinerNodes);
+				SteinerNodes sn = new SteinerNodes();
 				sn.addNodes(stm.getSourceColumn(), stm.getSource(), stm.getTarget(), stm.getConfidence());
 				this.steinerSets.add(sn);
 			}			
@@ -81,6 +79,7 @@ public class CandidateSteinerSets {
 			
 			this.steinerSets.clear();
 			
+//			for (int i = 0; i < newSteinerNodes.size(); i++) // do not cut off
 			for (int i = 0; i < ModelingConfiguration.getMaxQueuedMappigs() && i < newSteinerNodes.size(); i++)
 				this.steinerSets.add(newSteinerNodes.get(i));
 

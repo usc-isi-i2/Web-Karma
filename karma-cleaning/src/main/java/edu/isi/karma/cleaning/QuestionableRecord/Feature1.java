@@ -21,35 +21,36 @@
 
 package edu.isi.karma.cleaning.QuestionableRecord;
 
+import java.util.Vector;
+
 import edu.isi.karma.cleaning.TNode;
 
 import java.util.Vector;
 
 //counting text feature
-public class Feature1 implements RecFeature{
+public class Feature1 implements RecFeature {
 	public String target;
-	public Vector<TNode> xNodes =new Vector<TNode>();
+	public Vector<TNode> xNodes = new Vector<TNode>();
 	public double weight = 1.0;
-	public Feature1(String tar,Vector<TNode> xNodes,double weight)
-	{
+
+	public Feature1(String tar, Vector<TNode> xNodes, double weight) {
 		target = tar;
 		this.xNodes = xNodes;
 		this.weight = weight;
 	}
-	public String getName()
-	{
+
+	public String getName() {
 		return target;
 	}
-	public double computerScore()
-	{
+
+	public double computerScore() {
 		double res = 0.0;
-		if(xNodes == null)
+		if (xNodes == null)
 			return 0.0;
-		for(TNode x:xNodes)
-		{
-			if(x.text.compareTo(target)==0)
+		for (TNode x : xNodes) {
+			if (x.text.compareTo(target) == 0)
 				res += 1;
 		}
-		return res*this.weight;
+		return res * this.weight;
 	}
 }

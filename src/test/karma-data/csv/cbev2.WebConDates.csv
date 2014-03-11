@@ -1,0 +1,10 @@
+ConDateID,ConstituentID,DateDescription,DateBegSearch,DateEndSearch,Remarks,LoginID,EnteredDate,SysTimeStamp,DayBegSearch,DayEndSearch,MonthBegSearch,MonthEndSearch
+0,0,Birth Date,1896,0,,sa/Todd,44:30.,000000010002BAB3,6,,4,
+12,4,Birth Date,1888,0,,sa/Todd,49:04.,000000010002BC74,14,,10,
+32,10,Birth Date,1948,0,,sa/Todd,49:07.,000000010002BF2B,,,,
+1,0,Death Date,1980,0,,sa/Todd,44:30.,000000010002BAB6,,,,
+5,2,Death Date,1980,0,,sa/Todd,46:31.,0000000000972B81,24,,11,
+9,3,Death Date,1911,0,,sa/Todd,49:04.,000000010002BC0C,1,,8,
+45591,6492,Birth Date,1594,0,,perrys,08:16.,0x0000000000DCFC7D,,,6,
+126,37,Death Date,1922,0,,sa/Todd,49:23.,0x0000000000A7B1E7,,,9,
+45664,29436,Death date,0,2006,,beadleb,28:32.,0x0000000000E2D4D7,,18,,12

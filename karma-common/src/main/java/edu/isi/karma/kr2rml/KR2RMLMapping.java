@@ -5,6 +5,11 @@ import org.json.JSONArray;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
+
+import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatter;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
+
 public class KR2RMLMapping extends R2RMLMapping{
 	
 	private KR2RMLVersion version;
@@ -12,7 +17,10 @@ public class KR2RMLMapping extends R2RMLMapping{
 	private Map<String, SubjectMap> subjectMapIndex;
 	private Map<String, TriplesMap> triplesMapIndex;
 	private JSONArray worksheetHistory;
-	
+	private KR2RMLColumnNameFormatter formatter;
+	private boolean isR2RMLCompatible;
+	private boolean isRMLCompatible;
+	private SourceTypes sourceType; 
 	
 	public KR2RMLMapping(R2RMLMappingIdentifier id, KR2RMLVersion version)
 	{
@@ -48,4 +56,37 @@ public class KR2RMLMapping extends R2RMLMapping{
 		this.worksheetHistory = worksheetHistory;
 	}
 
+	public void setColumnNameFormatter(KR2RMLColumnNameFormatter formatter) {
+		this.formatter = formatter;
+	}
+	public KR2RMLColumnNameFormatter getColumnNameFormatter()
+	{
+		return formatter;
+	}
+
+	public boolean isR2RMLCompatible() {
+		return isR2RMLCompatible;
+	}
+
+	public boolean isRMLCompatible()
+	{
+		return isRMLCompatible;
+	}
+	
+	public void setR2RMLCompatible(boolean isR2RMLCompatible) {
+		this.isR2RMLCompatible = isR2RMLCompatible;
+	}
+
+	public void setRMLCompatible(boolean isRMLCompatible)
+	{
+		this.isRMLCompatible = isRMLCompatible;
+	}
+
+	public SourceTypes getSourceType() {
+		return sourceType;
+	}
+
+	public void setSourceType(SourceTypes sourceType) {
+		this.sourceType = sourceType;
+	}
 }

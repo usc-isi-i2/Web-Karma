@@ -32,7 +32,6 @@ import org.json.JSONException;
 import javax.servlet.http.HttpServletRequest;
 
 public class InvokeCleaningServiceCommandFactory extends JSONInputCommandFactory {
-	
 	private enum Arguments {
 		hNodeId, worksheetId, hTableID
 	}
@@ -46,10 +45,13 @@ public class InvokeCleaningServiceCommandFactory extends JSONInputCommandFactory
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
-		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
-		
-		InvokeCleaningServiceCommand comm = new InvokeCleaningServiceCommand(getNewId(workspace), hNodeId, worksheetId);
+		String hNodeId = HistoryJsonUtil.getStringValue(
+				Arguments.hNodeId.name(), inputJson);
+		String worksheetId = HistoryJsonUtil.getStringValue(
+				Arguments.worksheetId.name(), inputJson);
+
+		InvokeCleaningServiceCommand comm = new InvokeCleaningServiceCommand(
+				getNewId(workspace), hNodeId, worksheetId);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

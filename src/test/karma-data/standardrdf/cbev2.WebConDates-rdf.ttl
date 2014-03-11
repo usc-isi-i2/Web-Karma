@@ -1,0 +1,58 @@
+<person-institution/0> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/0/birth> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E67_Birth> .
+<person-institution/0> <http://www.cidoc-crm.org/cidoc-crm/P98i_was_born> <person-institution/0/birth> .
+<person-institution/0/birth/date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span> .
+<person-institution/0/birth/date> <http://www.cidoc-crm.org/cidoc-crm/P82_at_some_time_within> "1896/04/06" .
+<person-institution/0/birth> <http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span> <person-institution/0/birth/date> .
+
+<person-institution/4> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/4/birth> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E67_Birth> .
+<person-institution/4> <http://www.cidoc-crm.org/cidoc-crm/P98i_was_born> <person-institution/4/birth> .
+<person-institution/4/birth/date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span> .
+<person-institution/4/birth/date> <http://www.cidoc-crm.org/cidoc-crm/P82_at_some_time_within> "1888/10/14" .
+<person-institution/4/birth> <http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span> <person-institution/4/birth/date> .
+
+<person-institution/10> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/10/birth> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E67_Birth> .
+<person-institution/10> <http://www.cidoc-crm.org/cidoc-crm/P98i_was_born> <person-institution/10/birth> .
+<person-institution/10/birth/date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span> .
+<person-institution/10/birth/date> <http://www.cidoc-crm.org/cidoc-crm/P82_at_some_time_within> "1948" .
+<person-institution/10/birth> <http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span> <person-institution/10/birth/date> .
+
+<person-institution/0/death/date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span> .
+<person-institution/0/death/date> <http://www.cidoc-crm.org/cidoc-crm/P82_at_some_time_within> "1980" .
+<person-institution/0/death> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E69_Death> .
+<person-institution/0/death> <http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span> <person-institution/0/death/date> .
+<person-institution/0> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/0> <http://www.cidoc-crm.org/cidoc-crm/P100i_died_in> <person-institution/0/death> .
+
+<person-institution/2/death/date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span> .
+<person-institution/2/death/date> <http://www.cidoc-crm.org/cidoc-crm/P82_at_some_time_within> "1980" .
+<person-institution/2/death> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E69_Death> .
+<person-institution/2/death> <http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span> <person-institution/2/death/date> .
+<person-institution/2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/2> <http://www.cidoc-crm.org/cidoc-crm/P100i_died_in> <person-institution/2/death> .
+
+<person-institution/3/death/date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span> .
+<person-institution/3/death/date> <http://www.cidoc-crm.org/cidoc-crm/P82_at_some_time_within> "1911" .
+<person-institution/3/death> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E69_Death> .
+<person-institution/3/death> <http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span> <person-institution/3/death/date> .
+<person-institution/3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/3> <http://www.cidoc-crm.org/cidoc-crm/P100i_died_in> <person-institution/3/death> .
+
+<person-institution/6492> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/6492/birth> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E67_Birth> .
+<person-institution/6492> <http://www.cidoc-crm.org/cidoc-crm/P98i_was_born> <person-institution/6492/birth> .
+<person-institution/6492/birth/date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span> .
+<person-institution/6492/birth/date> <http://www.cidoc-crm.org/cidoc-crm/P82_at_some_time_within> "1594/06" .
+<person-institution/6492/birth> <http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span> <person-institution/6492/birth/date> .
+
+<person-institution/37/death/date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span> .
+<person-institution/37/death/date> <http://www.cidoc-crm.org/cidoc-crm/P82_at_some_time_within> "1922" .
+<person-institution/37/death> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E69_Death> .
+<person-institution/37/death> <http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span> <person-institution/37/death/date> .
+<person-institution/37> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/37> <http://www.cidoc-crm.org/cidoc-crm/P100i_died_in> <person-institution/37/death> .
+
+<person-institution/29436> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+

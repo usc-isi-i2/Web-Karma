@@ -25,6 +25,15 @@ package edu.isi.karma.imp.csv;
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.*;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.Table;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
 import org.slf4j.Logger;
@@ -64,65 +73,60 @@ public class CSVFileImport extends Import {
     }
 
     @Override
-    public Worksheet generateWorksheet() throws IOException, KarmaException
-    {
-	    Table dataTable = getWorksheet().getDataTable();
 
-	    // Prepare the reader for reading file line by line
+    public Worksheet generateWorksheet() throws IOException, KarmaException {
+        Table dataTable = getWorksheet().getDataTable();
 
-	    InputStreamReader isr = EncodingDetector.getInputStreamReader(csvFile, encoding);
+        // Prepare the reader for reading file line by line
+        
+        InputStreamReader isr = EncodingDetector.getInputStreamReader(csvFile, encoding);
+        
+        BufferedReader br = new BufferedReader(isr);
 
-	    BufferedReader br = new BufferedReader(isr);
 
-	    // Index for row currently being read
-	    int rowCount = 0;
-	    List<String> hNodeIdList = new ArrayList<String>();
+        // Index for row currently being read
+        int rowCount = 0;
+        ArrayList<String> hNodeIdList = new ArrayList<String>();
 
-	    // If no row is present for the column headers
-	    if (headerRowIndex == 0)
-	    {
-		    hNodeIdList = addEmptyHeaders(getWorksheet(), getFactory());
-		    if (hNodeIdList == null || hNodeIdList.size() == 0)
-		    {
-			    br.close();
-			    throw new KarmaException("Error occured while counting header "
-					                             + "nodes for the worksheet!");
-		    }
-	    }
+        // If no row is present for the column headers
+        if (headerRowIndex == 0) {
+            hNodeIdList = addEmptyHeaders(getWorksheet(), getFactory());
+            if (hNodeIdList == null || hNodeIdList.size() == 0) {
+                br.close();
+                throw new KarmaException("Error occured while counting header "
+                        + "nodes for the worksheet!");
+            }
+        }
 
-	    // Populate the worksheet model
-	    String line = null;
-	    while ((line = br.readLine()) != null)
-	    {
-		    logger.debug("Read line: '" + line + "'");
-		    // Check for the header row
-		    if (rowCount + 1 == headerRowIndex)
-		    {
-			    hNodeIdList = addHeaders(getWorksheet(), getFactory(), line);
-			    rowCount++;
-			    continue;
-		    }
+        // Populate the worksheet model
+        String line = null;
+        while ((line = br.readLine()) != null) {
+        	logger.debug("Read line: '" + line + "'");
+            // Check for the header row
+            if (rowCount + 1 == headerRowIndex) {
+                hNodeIdList = addHeaders(getWorksheet(), getFactory(), line);
+                rowCount++;
+                continue;
+            }
 
-		    // Populate the model with data rows
-		    if (rowCount + 1 >= dataStartRowIndex)
-		    {
-			    boolean added = addRow(getWorksheet(), getFactory(), line, hNodeIdList, dataTable);
-			    if (added)
-			    {
-				    rowCount++;
+            // Populate the model with data rows
+            if (rowCount + 1 >= dataStartRowIndex) {
+                boolean added = addRow(getWorksheet(), getFactory(), line, hNodeIdList, dataTable);
+                if(added) {
+	                rowCount++;
+	               
+	                if(maxNumLines > 0 && (rowCount - dataStartRowIndex) >= maxNumLines-1) {
+	                	break;
+	                }
+                }
+                continue;
+            }
 
-				    if (maxNumLines > 0 && (rowCount - dataStartRowIndex) >= maxNumLines - 1)
-				    {
-					    break;
-				    }
-			    }
-			    continue;
-		    }
-
-		    rowCount++;
-	    }
-	    br.close();
-	    return getWorksheet();
+            rowCount++;
+        }
+        br.close();
+        getWorksheet().getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.CSV.toString());
+        return getWorksheet();
     }
 
     private List<String> addHeaders(Worksheet worksheet, RepFactory fac,

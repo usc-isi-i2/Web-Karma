@@ -1,0 +1,6 @@
+ConstituentID,ObjectID,Maker,DisplayName,DisplayDate,DisplayOrder,Role,Prefix,Suffix,AlphaSort,Displayed,LastName,FirstName,NameTitle,allartists,objectnumber
+4017,2664,"Reynolds, Joshua",Sir Joshua Reynolds,"English, born Plympton, England 1723-died London, England 1792",2,Artist,Copy after ,,"Reynolds, Joshua",1,Reynolds,Joshua,Sir,Copy after Sir Joshua Reynolds,1946.3.14
+5251,26831,"Watkins, Carleton E.",Carleton E. Watkins,"born Oneonta, NY 1829-died Imola, CA 1916",2,Artist,Formerly attributed to,,"Watkins, Carleton E.",0,Watkins,Carleton E.,,Formerly attributed toCarleton E. Watkins,1974.30.5
+6629,6119,Suffolk Engraving Co.,Suffolk Engraving Co.,,3,Printer,,,Suffolk Engraving Co.,1,,,,          ,1988.5.8
+1083,6119,"Curtis, Edward S.",Edward S. Curtis,"born Whitewater, WI 1868-died Los Angeles, CA 1952",1,Artist,,,"Curtis, Edward S.",1,Curtis,Edward S.,,Edward S. Curtis,1988.5.8
+1083,6119,"Curtis, Edward S.",Edward S. Curtis,"born Whitewater, WI 1868-died Los Angeles, CA 1952",2,Publisher,,,"Curtis, Edward S.",1,Curtis,Edward S.,,          ,1988.5.8

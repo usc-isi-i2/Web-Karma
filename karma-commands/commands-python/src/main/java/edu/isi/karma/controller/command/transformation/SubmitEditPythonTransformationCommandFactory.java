@@ -50,10 +50,10 @@ public class SubmitEditPythonTransformationCommandFactory extends JSONInputComma
 		String code = HistoryJsonUtil.getStringValue(Arguments.transformationCode.name(), inputJson);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String errorDefaultValue = HistoryJsonUtil.getStringValue(Arguments.errorDefaultValue.name(), inputJson);
-		String previousCommandId = HistoryJsonUtil.getStringValue(Arguments.previousCommandId.name(), inputJson);
+		//String previousCommandId = HistoryJsonUtil.getStringValue(Arguments.previousCommandId.name(), inputJson);
 		String targetHNodeId = HistoryJsonUtil.getStringValue(Arguments.targetHNodeId.name(), inputJson);
 		SubmitEditPythonTransformationCommand comm = new SubmitEditPythonTransformationCommand(getNewId(workspace), 
-				newColumnName, code, worksheetId, hNodeId, errorDefaultValue, previousCommandId, targetHNodeId);
+				newColumnName, code, worksheetId, hNodeId, errorDefaultValue, targetHNodeId);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

@@ -142,7 +142,7 @@ public class WorksheetCommandHistoryExecutor {
 			
 			/*** Check the input parameter type and accordingly make changes ***/
 			if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeId) {
-				JSONArray hNodeJSONRep = new JSONArray(inpP.getString(ClientJsonKeys.value.name()));
+				JSONArray hNodeJSONRep = new JSONArray(inpP.get(ClientJsonKeys.value.name()).toString());
 				for (int j=0; j<hNodeJSONRep.length(); j++) {
 					JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
 					if(hTable == null) {

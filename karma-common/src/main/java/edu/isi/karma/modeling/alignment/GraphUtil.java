@@ -19,13 +19,27 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
-
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.alignment.*;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+>>>>>>> refs/remotes/origin/development:src/main/java/edu/isi/karma/modeling/alignment/GraphUtil.java
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
@@ -33,9 +47,32 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.*;
-import java.util.Map.Entry;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
+
+import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.alignment.ClassInstanceLink;
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSubClassLink;
+import edu.isi.karma.rep.alignment.DataPropertyLink;
+import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
+import edu.isi.karma.rep.alignment.DisplayModel;
+import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LinkKeyInfo;
+import edu.isi.karma.rep.alignment.LinkStatus;
+import edu.isi.karma.rep.alignment.LinkType;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
+import edu.isi.karma.rep.alignment.ObjectPropertyLink;
+import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
+import edu.isi.karma.rep.alignment.ObjectPropertyType;
+import edu.isi.karma.rep.alignment.PlainLink;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticType.Origin;
+import edu.isi.karma.rep.alignment.SubClassLink;
 
 public class GraphUtil {
 
@@ -290,59 +327,6 @@ public class GraphUtil {
 			}
 		}
 	}
-	
-	public static void exportGraphviz(
-			DirectedWeightedMultigraph<Node, Link> graph, 
-			String label, 
-			boolean onlyAddPatterns,
-			boolean showNodeMetaData,
-			boolean showLinkMetaData,
-			String filename) throws IOException {
-		
-		logger.info("exporting the graph to graphviz ...");
-		
-		org.kohsuke.graphviz.Graph graphViz = 
-				GraphVizUtil.convertJGraphToGraphviz(graph, onlyAddPatterns, showNodeMetaData, showLinkMetaData);
-		graphViz.attr("fontcolor", "blue");
-		graphViz.attr("remincross", "true");
-		graphViz.attr("label", label == null ? "" : label);
-
-		OutputStream out = new FileOutputStream(filename);
-		graphViz.writeTo(out);
-
-		logger.info("export is done.");
-	}	
-	
-	public static void exportGraphviz(
-			Map<String, DirectedWeightedMultigraph<Node, Link>> models, 
-			String label,
-			String filename) throws FileNotFoundException {
-		
-		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
-		graphViz.attr("fontcolor", "blue");
-		graphViz.attr("remincross", "true");
-		graphViz.attr("label", label == null ? "" : label);
-		
-		org.kohsuke.graphviz.Graph cluster = null;
-		int counter = 0;
-		
-		boolean showLinkMetaData;
-		if (models != null) {
-			for(Entry<String,DirectedWeightedMultigraph<Node, Link>> entry : models.entrySet()) {
-				if (entry.getKey() == "1-correct model") showLinkMetaData = false; else showLinkMetaData = true;
-				cluster = GraphVizUtil.convertJGraphToGraphviz(entry.getValue(), false, true, showLinkMetaData);
-				cluster.id("cluster_" + counter);
-				cluster.attr("label", entry.getKey());
-				graphViz.subGraph(cluster);
-				counter++;
-			}
-		}
-
-		OutputStream out = new FileOutputStream(filename);
-		graphViz.writeTo(out);
-
-	}
-
 	
 	public static void exportJson(DirectedWeightedMultigraph<Node, Link> graph, String filename) throws IOException {
 		logger.info("exporting the graph to json ...");

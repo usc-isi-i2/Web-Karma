@@ -21,11 +21,46 @@
 
 package edu.isi.karma.modeling.alignment;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
+import com.google.common.math.BigIntegerMath;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import edu.isi.karma.rep.alignment.*;
+import com.hp.hpl.jena.graph.impl.BaseGraphMaker;
+
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.SemanticType;
+
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
@@ -45,6 +80,7 @@ public class SemanticModel {
 	protected DirectedWeightedMultigraph<Node, Link> graph;
 	protected List<ColumnNode> sourceColumns;
 	protected Map<ColumnNode, ColumnNode> mappingToSourceColumns;
+	protected final static int maxPathLengthForEvaluation = 2;
 	
 	public SemanticModel(
 			String id,
@@ -166,9 +202,191 @@ public class SemanticModel {
 		if (baseModel == null || baseModel.getGraph() == null || this.getGraph() == null)
 			return new ModelEvaluation(null, null, null);
 		
+		NodeIdFactory nodeIdFactory = new NodeIdFactory();
+		HashMap<Node,String> baseNodeIds = new HashMap<Node,String>();
+		for (Node n : baseModel.getGraph().vertexSet()) {
+			if (n instanceof InternalNode)
+				baseNodeIds.put(n, nodeIdFactory.getNodeId(n.getLabel().getUri()));
+			else // n is a column node
+				baseNodeIds.put(n, n.getId());
+		}
+		
+		Set<String> baseTriples = getTriples(baseModel.getGraph(), baseNodeIds);
+		Set<String> targetTriples = null;
+		List<HashMap<Node,String>> targetNodeIdSets = getPossibleNodeIdSets();
+		if (targetNodeIdSets == null)
+			return null;
+		
+		double bestFMeasure = 0.0;
+		double bestPrecision = 0.0, bestRecall = 0.0;
+		double precision, recall, fmeasure;
+		for (HashMap<Node,String> targetNodeIds : targetNodeIdSets) {
+//			System.out.println("==============================");
+			targetTriples = getTriples(this.getGraph(), targetNodeIds);
+			precision = getPrecision(baseTriples, targetTriples);
+			recall = getRecall(baseTriples, targetTriples);
+			fmeasure = 2 * precision * recall / (precision + recall);
+			if (fmeasure > bestFMeasure) {
+				bestFMeasure = fmeasure;
+				bestPrecision = precision;
+				bestRecall = recall;
+			}
+		}
+		
+		return new ModelEvaluation(0.0, bestPrecision, bestRecall);
+	}
+	
+	private Set<String> getTriples(DirectedWeightedMultigraph<Node, Link> g, HashMap<Node,String> nodeIds) {
+		
+		String separator = "|";
+		Set<String> triples = new HashSet<String>();
+		if (g == null)
+			return triples;
+		
+		String s, p, o, triple;
+		for (Link l : g.edgeSet()) {
+			
+			s = nodeIds.get(l.getSource());
+			o = nodeIds.get(l.getTarget());
+			p = l.getLabel().getUri();
+			triple = s + separator + p + separator + o;
+//			System.out.println(triple);
+			triples.add(triple);
+		}
+		
+		return triples;
+	}
+	
+	private List<HashMap<Node,String>> getPossibleNodeIdSets() {
+		
+		DirectedWeightedMultigraph<Node, Link> g = this.getGraph();
+		List<HashMap<Node,String>> nodeIdSets = new ArrayList<HashMap<Node,String>>();
+		if (g == null)
+			return nodeIdSets;
+		
+		Set<Node> internalNodes = new HashSet<Node>();
+		for (Node n : g.vertexSet()) 
+			if (n instanceof InternalNode) 
+				internalNodes.add(n);
+
+		Set<Node> columnNodes = new HashSet<Node>();
+		for (Node n : g.vertexSet()) 
+			if (n instanceof ColumnNode) 
+				columnNodes.add(n);
+
+		Function<Node, String> sameUriNodes = new Function<Node, String>() {
+			  @Override public String apply(final Node n) {
+				  if (n == null || n.getLabel() == null)
+					  return null;
+				  return n.getLabel().getUri();
+			  }
+			};
+
+		Multimap<String, Node> index = Multimaps.index(internalNodes, sameUriNodes);	
+		int numberOfPossibleSets = 1;
+		for (String s : index.keySet()) {
+			Collection<Node> nodeGroup = index.get(s);
+			if (nodeGroup != null && !nodeGroup.isEmpty()) {
+				numberOfPossibleSets *= BigIntegerMath.factorial(nodeGroup.size()).intValue();
+			}
+		}
+//		System.out.println(numberOfPossibleSets);
+
+		for (int i = 0; i < numberOfPossibleSets; i++) {
+			HashMap<Node, String> nodeIds = new HashMap<Node,String>();
+			NodeIdFactory nodeIdFactory = new NodeIdFactory();
+			
+			for (Node n : columnNodes) {
+				ColumnNode cn = null;
+				if (this.mappingToSourceColumns != null && 
+						(cn = this.mappingToSourceColumns.get((ColumnNode)n)) != null) {
+					nodeIds.put(n, cn.getId());
+				} else {
+					nodeIds.put(n, n.getId());
+				}
+			}
+			
+			for (String s : index.keySet()) {
+				Collection<Node> nodeGroup = index.get(s);
+				if (nodeGroup != null && nodeGroup.size() == 1) {
+					Node n = nodeGroup.iterator().next();
+					nodeIds.put(n, nodeIdFactory.getNodeId(n.getLabel().getUri()));
+				}
+			}
+	
+			nodeIdSets.add(nodeIds);
+		}
+		
+//		List<Node> nodes = new ArrayList<Node>();
+//		List<Set<String>> idList = new ArrayList<Set<String>>(); 
+//		Set<List<String>> idProductSets = null;
+//		NodeIdFactory nodeIdFactory = new NodeIdFactory();
+//		for (String s : index.keySet()) {
+//			Collection<Node> nodeGroup = index.get(s);
+//			if (nodeGroup == null)
+//				continue;
+//			nodes.addAll(nodeGroup);
+//			Set<String> ids = new TreeSet<String>();
+//			for (Node n : nodeGroup) {
+//				ids.add(nodeIdFactory.getNodeId(n.getLabel().getUri()));
+//			}
+//			idList.add(ids);
+//			
+//		}
+//		if (idList != null)
+//			idProductSets = Sets.cartesianProduct(idList);
+//		
+//		int i = 0;
+//		for (List<String> ids : idProductSets) {
+//			for (Node n : nodes) System.out.println("node: " + n.getLabel().getUri());
+//			for (String id : ids) System.out.println("id: " + id);
+//
+//			for (int j = 0; j < ids.size() && j < nodes.size(); j++)
+//				nodeIdSets.get(i).put(nodes.get(j), ids.get(j));
+//			i++;
+//		}
+		
+		int interval = numberOfPossibleSets;
+		NodeIdFactory nodeIdFactory = new NodeIdFactory();
+		for (String s : index.keySet()) {
+			Collection<Node> nodeGroup = index.get(s);
+			if (nodeGroup != null && nodeGroup.size() > 1) {
+				Set<String> ids = new HashSet<String>();
+				List<Node> nodes = new ArrayList<Node>();
+				nodes.addAll(nodeGroup);
+				for (Node n : nodes)
+					ids.add(nodeIdFactory.getNodeId(n.getLabel().getUri()));
+
+				Collection<List<String>> permutations = Collections2.permutations(ids);
+				List<List<String>> permList = new ArrayList<List<String>>();
+				permList.addAll(permutations);
+				
+				interval = interval / nodeGroup.size();
+				List<String> perm;
+				int k = 0, count = 1;
+				for (int i = 0; i < nodeIdSets.size(); i++) {
+					HashMap<Node, String> nodeIds = nodeIdSets.get(i);
+					if (count > interval) { k = ++k % permList.size(); count = 1;}
+					perm = permList.get(k);
+					for (int j = 0; j < nodes.size(); j++)
+						nodeIds.put(nodes.get(j), perm.get(j));
+					count ++;
+				}
+			}
+		}
+
+		
+		return nodeIdSets;
+	}
+	
+	public ModelEvaluation evaluate_old(SemanticModel baseModel) {
+
+		if (baseModel == null || baseModel.getGraph() == null || this.getGraph() == null)
+			return new ModelEvaluation(null, null, null);
+		
 		Double distance = getDistance(baseModel);
 		
-		int maxLength = 2;
+		int maxLength = maxPathLengthForEvaluation;
 		List<GraphPath> basePaths = new LinkedList<GraphPath>();
 		List<GraphPath> modelPaths = new LinkedList<GraphPath>();
 		List<GraphPath> gpList;
@@ -430,21 +648,7 @@ public class SemanticModel {
 	}
 	
 	public void writeGraphviz(String filename, boolean showNodeMetaData, boolean showLinkMetaData) throws IOException {
-		
-		OutputStream out = new FileOutputStream(filename);
-		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
-		
-		graphViz.attr("fontcolor", "blue");
-		graphViz.attr("remincross", "true");
-		graphViz.attr("label", this.getDescription() == null ? "" : this.getDescription());
-//		graphViz.attr("page", "8.5,11");
-
-		org.kohsuke.graphviz.Graph gViz = GraphVizUtil.convertJGraphToGraphviz(this.graph, false, showNodeMetaData, showLinkMetaData);
-		gViz.attr("label", "model");
-		gViz.id("cluster");
-		graphViz.subGraph(gViz);
-		graphViz.writeTo(out);
-		out.close();
+		GraphVizUtil.exportSemanticModelToGraphviz(this, showNodeMetaData, showLinkMetaData, filename);
 	}
 	
 	public void writeJson(String filename) throws IOException {

@@ -216,4 +216,10 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 		}
 		return hNodeList;
 	}
+	
+	public HNode getNeighborByColumnName(String columnName, RepFactory f)
+	{
+		HTable hTable = f.getHTable(this.hTableId);
+		return hTable.getNeighborByColumnName(columnName, f);
+	}
 }

@@ -30,6 +30,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import edu.isi.karma.util.Preferences;
+>>>>>>> refs/remotes/origin/development:src/main/java/edu/isi/karma/controller/command/CommandPreferences.java
 
 /**
  * @author szekely
@@ -71,7 +73,7 @@ public class CommandPreferences extends Preferences{
 				if(obj.getString("Command").equals(commandName)) {
 					obj.put("PreferenceValues", prefValues);
 					// Save the new preferences to the file
-					FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
+					this.savePreferences();
 					return;
 				}
 			}
@@ -84,7 +86,7 @@ public class CommandPreferences extends Preferences{
 			json.put("Commands", commArray);
 			
 			// Write the new preferences to the file
-			FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
+			this.savePreferences();
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

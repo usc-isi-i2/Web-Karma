@@ -24,38 +24,34 @@ package edu.isi.karma.cleaning.features;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public class RecordPerFeatures implements Feature {
 
 	public String name = "";
 	public double score = 0.0;
 	public String value = "";
 	public String tar = "";
-	public RecordPerFeatures(String name, String value,String tar)
-	{
-		this.name = "attr_"+name;
+
+	public RecordPerFeatures(String name, String value, String tar) {
+		this.name = "attr_" + name;
 		this.value = value;
 		this.tar = tar;
 		this.score = this.computeScore();
 	}
-	public double computeScore()
-	{
+
+	public double computeScore() {
 		int cnt1 = 0;
 		Pattern p = Pattern.compile(tar);
 		Matcher m = p.matcher(this.value);
-		while(m.find())
-		{
+		while (m.find()) {
 			cnt1 += m.group().length();
 		}
-		if (value.length() != 0)
-		{
-			return cnt1*1.0/value.length();
-		}
-		else
-		{
+		if (value.length() != 0) {
+			return cnt1 * 1.0 / value.length();
+		} else {
 			return 10000;
 		}
 	}
+
 	@Override
 	public String getName() {
 		return name;

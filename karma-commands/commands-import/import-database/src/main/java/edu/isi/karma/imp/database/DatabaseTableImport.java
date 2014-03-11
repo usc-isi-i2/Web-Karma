@@ -26,6 +26,8 @@ import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.*;
 import edu.isi.karma.rep.metadata.SourceInformation;
 import edu.isi.karma.rep.metadata.SourceInformation.InfoAttribute;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.DBType;
 import edu.isi.karma.util.JDBCUtilFactory;
@@ -116,19 +118,20 @@ public class DatabaseTableImport extends Import {
 		    }
 	    }
 
-	    /**
-	     * Save the db info in the source information part of worksheet's
-	     * metadata *
-	     */
-	    SourceInformation srcInfo = new SourceInformation();
-	    srcInfo.setAttributeValue(InfoAttribute.dbType, dbType.name());
-	    srcInfo.setAttributeValue(InfoAttribute.hostname, hostname);
-	    srcInfo.setAttributeValue(InfoAttribute.portnumber, String.valueOf(portnumber));
-	    srcInfo.setAttributeValue(InfoAttribute.username, username);
-	    srcInfo.setAttributeValue(InfoAttribute.dBorSIDName, dBorSIDName);
-	    srcInfo.setAttributeValue(InfoAttribute.tableName, tableName);
-	    getWorksheet().getMetadataContainer().setSourceInformation(srcInfo);
-	    return getWorksheet();
+        /**
+         * Save the db info in the source information part of worksheet's
+         * metadata *
+         */
+        SourceInformation srcInfo = new SourceInformation();
+        srcInfo.setAttributeValue(InfoAttribute.dbType, dbType.name());
+        srcInfo.setAttributeValue(InfoAttribute.hostname, hostname);
+        srcInfo.setAttributeValue(InfoAttribute.portnumber, String.valueOf(portnumber));
+        srcInfo.setAttributeValue(InfoAttribute.username, username);
+        srcInfo.setAttributeValue(InfoAttribute.dBorSIDName, dBorSIDName);
+        srcInfo.setAttributeValue(InfoAttribute.tableName, tableName);
+        getWorksheet().getMetadataContainer().setSourceInformation(srcInfo);
+        getWorksheet().getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.DB.toString());
+        return getWorksheet();
     }
 
 }

@@ -24,6 +24,9 @@
 package edu.isi.karma.view;
 
 import edu.isi.karma.util.FileUtil;
+import java.io.IOException;
+
+import org.json.JSONException;
 import edu.isi.karma.util.Preferences;
 import org.json.JSONException;
 
@@ -77,7 +80,7 @@ public class ViewPreferences extends Preferences{
 			int value) {
 		try {
 			json.getJSONObject("ViewPreferences").put(pref.name(), value);
-			FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
+			this.savePreferences();
 		} catch (JSONException e) {
 			Preferences.logger.error("Error setting int value!", e);
 		} catch (IOException e) {

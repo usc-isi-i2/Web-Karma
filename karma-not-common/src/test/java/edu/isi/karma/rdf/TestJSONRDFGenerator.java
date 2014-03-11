@@ -65,6 +65,7 @@ public class TestJSONRDFGenerator {
 				"people-model", new File(getTestDataFolder()
 						+ "/people-model.ttl").toURI().toURL());
 		rdfGen.addModel(modelIdentifier);
+		
 		modelIdentifier = new R2RMLMappingIdentifier("cs548-events-model",
 				new File(getTestDataFolder() + "/cs548-events-model.ttl")
 						.toURI().toURL());
@@ -134,6 +135,7 @@ public class TestJSONRDFGenerator {
 		}
 	}
 
+	
 	private String getRootFolder() {
 		return getClass().getClassLoader().getResource(".").getPath()
 				+ "/../../";

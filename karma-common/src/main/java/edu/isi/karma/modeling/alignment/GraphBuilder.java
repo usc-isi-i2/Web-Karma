@@ -68,6 +68,7 @@ public class GraphBuilder
 	private HashMap<String, Integer> linkCountMap;
 	private HashMap<String, Integer> nodeDataPropertyCount; // nodeId + dataPropertyUri --> count
 	private HashMap<String, Set<SemanticTypeMapping>> semanticTypeMatches; // nodeUri + dataPropertyUri --> SemanticType Mapping
+	private int numberOfModelLinks = 0;
 
 	// Constructor
 
@@ -217,8 +218,11 @@ public class GraphBuilder
 		return semanticTypeMatches;
 	}
 
-	public void resetOntologyMaps()
-	{
+	public int getNumberOfModelLinks() {
+		return numberOfModelLinks;
+	}
+
+	public void resetOntologyMaps() {
 		String[] currentUris = this.uriClosure.keySet().toArray(new String[0]);
 		this.uriClosure.clear();
 		for (String uri : currentUris)
@@ -473,11 +477,13 @@ public class GraphBuilder
 		}
 
 		this.sourceToTargetLinkUris.add(key);
-
-		if (link.getModelIds() != null)
+		
+		if (link.getModelIds() != null) {
 			this.modelIds.addAll(link.getModelIds());
-
-		this.updateLinkCountMap(link);
+			this.numberOfModelLinks++;
+		}
+		
+				this.updateLinkCountMap(link);
 
 		logger.debug("exit>");
 		return true;

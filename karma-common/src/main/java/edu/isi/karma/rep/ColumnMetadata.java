@@ -35,6 +35,7 @@ public class ColumnMetadata {
 	private Map<String, String>			columnPythonTransform;
 	private Map<String, String>			columnPreviousCommandId;
 	private Map<String, String>			columnDerivedFrom;
+	private Map<String, DataStructure>  columnDataStructure;
 	
 	public ColumnMetadata() {
 		super();
@@ -45,6 +46,11 @@ public class ColumnMetadata {
 		this.columnPythonTransform  = new HashMap<String, String>();
 		this.columnPreviousCommandId = new HashMap<String, String>();
 		this.columnDerivedFrom = new HashMap<String, String>();
+		this.columnDataStructure = new HashMap<String, DataStructure>();
+	}
+	
+	public enum DataStructure {
+		PRIMITIVE, COLLECTION, OBJECT
 	}
 	
 	
@@ -83,6 +89,11 @@ public class ColumnMetadata {
 		return columnDerivedFrom.get(hNodeId);
 	}
 	
+	public DataStructure getColumnDataStructure(String hNodeId)
+	{
+		return columnDataStructure.get(hNodeId);
+	}
+	
 	public void addColumnPythonTransformation(String hNodeId, String pythonTransform)
 	{
 		columnPythonTransform.put(hNodeId, pythonTransform);
@@ -94,5 +105,10 @@ public class ColumnMetadata {
 	
 	public void addColumnDerivedFrom(String hNodeId, String sourceHNodeId) {
 		columnDerivedFrom.put(hNodeId, sourceHNodeId);		
+	}
+	
+	public void addColumnDataStructure(String hNodeId, DataStructure dataStructure)
+	{
+		columnDataStructure.put(hNodeId, dataStructure);
 	}
 }

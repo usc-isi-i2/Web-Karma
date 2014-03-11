@@ -27,60 +27,78 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
+import edu.isi.karma.cleaning.ProgSynthesis;
+import edu.isi.karma.cleaning.ProgramRule;
 
 public class RamblerTransformationOutput implements TransformationOutput {
 
 	private RamblerTransformationInputs input;
-	private HashMap<String,Transformation> transformations; 
+	private HashMap<String, Transformation> transformations;
 	public boolean nullRule = false;
-	public RamblerTransformationOutput(RamblerTransformationInputs input)
-	{
+
+	public RamblerTransformationOutput(RamblerTransformationInputs input) {
 		this.input = input;
-		transformations = new HashMap<String,Transformation>();
-		try {		
-			this.learnTransformation();
+		transformations = new HashMap<String, Transformation>();
+		ExecutorService executor = Executors.newFixedThreadPool(1);
+		final Future<?> worker = executor.submit(new Runnable() {
+			public void run() {
+				try {
+					learnTransformation();
+				} catch (Exception ex) {
+					throw new RuntimeException(ex);
+				}
+			}
+		});
+		try {
+			worker.get(30, TimeUnit.SECONDS);
 		} catch (Exception e) {
-			e.printStackTrace();
+			nullRule = true;
+			transformations.clear();
 		}
 	}
-	private void learnTransformation() throws Exception
-	{
-		Collection<TransformationExample> exs =  input.getExamples();
+
+	private void learnTransformation() throws Exception {
+		Collection<TransformationExample> exs = input.getExamples();
 		Vector<String[]> exps = new Vector<String[]>();
 		Iterator<TransformationExample> iter = exs.iterator();
-		while(iter.hasNext())
-		{
+		while (iter.hasNext()) {
 			TransformationExample t = iter.next();
-			String[] tmp = {t.getBefore(),t.getAfter()};
+			String[] tmp = { t.getBefore(), t.getAfter() };
 			exps.add(tmp);
 		}
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.vocab = this.input.getVocab();
 		psProgSynthesis.inite(exps);
-		Collection<ProgramRule> rules = psProgSynthesis.run_main();
-		if(rules == null ||rules.size() == 0)
-		{
+		// add time out here
+		Collection<ProgramRule> rules = null;
+		rules = psProgSynthesis.run_main();
+
+		if (rules == null || rules.size() == 0) {
 			ProgramRule r = new ProgramRule(ProgramRule.IDENTITY);
 			r.nullRule = true;
 			this.nullRule = true;
 			rules = new Vector<ProgramRule>();
 			rules.add(r);
-			//return;
+			// return;
 		}
 		Iterator<ProgramRule> iterator = rules.iterator();
-		while(iterator.hasNext())
-		{	
+		while (iterator.hasNext()) {
 			RamblerTransformation r = new RamblerTransformation(iterator.next());
-			if(!transformations.containsKey(r.signature))
-			{
+			if (!transformations.containsKey(r.signature)) {
 				transformations.put(r.signature, r);
 			}
 		}
-		//RamblerTransformation r = new RamblerTransformation(psProgSynthesis.getBestRule());
-		//transformations.put("BESTRULE",r);
+		// RamblerTransformation r = new
+		// RamblerTransformation(psProgSynthesis.getBestRule());
+		// transformations.put("BESTRULE",r);
 	}
-	public HashMap<String,Transformation> getTransformations() {
+
+	public HashMap<String, Transformation> getTransformations() {
 		// TODO Auto-generated method stub
 		return transformations;
 	}
@@ -91,16 +109,15 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		ValueCollection vo = new RamblerValueCollection();
 		Collection<String> keys = v.getNodeIDs();
 		Iterator<String> iter = keys.iterator();
-		while(iter.hasNext())
-		{
+		while (iter.hasNext()) {
 			String k = iter.next();
 			String val = v.getValue(k);
-			if(val.length() >0)
+			if (val.length() > 0)
 				val = t.transform(val);
 			else
 				val = "";
 			vo.setValue(k, val);
-			//logger.debug(k+","+val);
+			// logger.debug(k+","+val);
 		}
 		return vo;
 	}
@@ -108,6 +125,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 	public Collection<String> getRecommandedNextExample() {
 		return null;
 	}
+
 	@Override
 	public ValueCollection getTransformedValues_debug(String TransformationId) {
 		Transformation t = transformations.get(TransformationId);
@@ -115,25 +133,21 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		ValueCollection vo = new RamblerValueCollection();
 		Collection<String> keys = v.getNodeIDs();
 		Iterator<String> iter = keys.iterator();
-		while(iter.hasNext())
-		{
+		while (iter.hasNext()) {
 			String k = iter.next();
 			String orgval = v.getValue(k);
 			String cLabel = "";
 			String val = "";
-			if(orgval.length() >0)
-			{
+			if (orgval.length() > 0) {
 				val = t.transform_debug(orgval);
 				cLabel = t.getClassLabel(orgval);
-			}
-			else
-			{
+			} else {
 				val = "";
 				cLabel = t.getClassLabel(val);
 			}
 			vo.setValue(k, val);
 			vo.setKeyClass(k, cLabel);
-			//logger.debug(k+","+val);
+			// logger.debug(k+","+val);
 		}
 		return vo;
 	}

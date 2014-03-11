@@ -71,12 +71,12 @@ public class MAPFieldOnly {
 		exps = weightedFeatureFunctionSums(graph);
 		potentials = new LargeNumber[globalData.labels.size()] ;
 		totalPotential = new LargeNumber(0.0, 0) ;
-		for(int i=0;i<globalData.labels.size();i++) {
+		for(int i=0;i<exps.length;i++) {
 			potentials[i] = LargeNumber.makeLargeNumberUsingExponent(exps[i]) ;
 			totalPotential.plusEquals(potentials[i]) ;
 		}
-		prob = new double[globalData.labels.size()] ;
-		for(int i=0;i<globalData.labels.size();i++) {
+		prob = new double[exps.length] ;
+		for(int i=0;i<exps.length;i++) {
 			prob[i] = LargeNumber.divide(potentials[i], totalPotential) ;
 		}
 		return prob ;

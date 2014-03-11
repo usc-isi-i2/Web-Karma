@@ -110,7 +110,7 @@ public class PublishRDFCellCommand extends Command {
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
 			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(
-					workspace, 
+					workspace, worksheet,
 					alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
 					false, errorReport);
 			KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();

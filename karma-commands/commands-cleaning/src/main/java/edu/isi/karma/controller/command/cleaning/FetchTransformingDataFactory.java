@@ -11,11 +11,12 @@ public class FetchTransformingDataFactory extends CommandFactory {
 	private enum Arguments {
 		worksheetId, hNodeId
 	}
+
 	@Override
-	public Command createCommand(HttpServletRequest request,
-			Workspace workspace) {
+	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		return new FetchTransformingDataCommand(getNewId(workspace), getWorksheetId(request, workspace), hNodeId);
+		return new FetchTransformingDataCommand(getNewId(workspace),
+				getWorksheetId(request, workspace), hNodeId);
 	}
 
 	@Override
