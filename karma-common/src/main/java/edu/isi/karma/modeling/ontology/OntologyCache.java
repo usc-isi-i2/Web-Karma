@@ -1071,8 +1071,7 @@ public class OntologyCache {
 					temp.add(property.getURI());
 				}
 			}
-			
-/*
+
 			for (String domain : allDomainsUris) {
 				for (String range : allRangesUris) {
 					if (directDomainsUris.contains(domain) && directRangesUris.contains(range)) continue;
@@ -1084,7 +1083,6 @@ public class OntologyCache {
 					temp.add(property.getURI());
 				}
 			}
-*/
 
 		}	
 
@@ -1178,8 +1176,8 @@ public class OntologyCache {
 			
 			Set<String> directSuperPropertiesLocal = this.directSuperProperties.get(p).keySet();
 			Set<String> indirectSuperPropertiesLocal = this.indirectSuperProperties.get(p).keySet();
-/*			if (directSuperPropertiesLocal != null) allSuperPropertiesLocal.addAll(directSuperPropertiesLocal);
-			if (indirectSuperPropertiesLocal != null) allSuperPropertiesLocal.addAll(indirectSuperPropertiesLocal);*/
+			if (directSuperPropertiesLocal != null) allSuperPropertiesLocal.addAll(directSuperPropertiesLocal);
+			if (indirectSuperPropertiesLocal != null) allSuperPropertiesLocal.addAll(indirectSuperPropertiesLocal);
 			
 			if (allSuperPropertiesLocal.size() == 0) continue;
 			
@@ -1218,7 +1216,7 @@ public class OntologyCache {
 						temp.add(superP);
 				}
 			}
-/*
+
 			for (String domain : allDomains) {
 				for (String range : allRanges) {
 					temp = domainRangeToIndirectProperties.get(domain + range);
@@ -1231,7 +1229,7 @@ public class OntologyCache {
 							temp.add(superP);
 					}
 				}
-			}*/
+			}
 		}
 
 	}
@@ -1440,7 +1438,7 @@ public class OntologyCache {
 				if (directProperties != null && directProperties.size() > 0) { 
 					this.connectedByDirectProperties.add(c1+c2);
 				}
-				indirectProperties = null; //this.domainRangeToIndirectProperties.get(c1+c2);
+				indirectProperties = this.domainRangeToIndirectProperties.get(c1+c2);
 				if (indirectProperties != null && indirectProperties.size() > 0) { 
 					this.connectedByIndirectProperties.add(c1+c2);
 				}
