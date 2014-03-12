@@ -374,9 +374,17 @@ public class ModelLearner {
 		if (nodesWithSameUriOfDomain != null) { 
 			for (Node source : nodesWithSameUriOfDomain) {
 				count = this.graphBuilder.getNodeDataPropertyCount().get(source.getId() + propertyUri);
-//				if (count != null && count >= countOfSemanticType.intValue()) 
-				if (count != null && count >= 1) 
-					continue;
+
+				if (count != null) {
+					if (ModelingConfiguration.isMultipleSamePropertyPerNode()) {
+						if (count >= countOfSemanticType.intValue())
+							continue;
+					} else {
+						if (count >= 1) 
+							continue;
+					}
+				}
+				
 				
 				String nodeId = new RandomGUID().toString();
 				ColumnNode target = new ColumnNode(nodeId, nodeId, sourceColumn.getColumnName(), null);
@@ -587,64 +595,64 @@ public class ModelLearner {
         return Double.valueOf(twoDForm.format(d));
 	}
 
-	private static void updateCrfSemanticTypesForResearchEvaluation(List<ColumnNode> columnNodes) {
-		
-		if (columnNodes == null)
-			return;
-		
-		int numberOfAttributesWhoseTypeIsFirstCRFType = 0;
-		int numberOfAttributesWhoseTypeIsInCRFTypes = 0;
-		for (ColumnNode cn : columnNodes) {
-			boolean found = false;
-			SemanticType userSelectedType = cn.getUserSelectedSemanticType();
-			List<SemanticType> top4CrfSuggestions = cn.getTopKSuggestions(4);
-			List<SemanticType> crfSuggestions = cn.getCrfSuggestedSemanticTypes();
-			
-			if (crfSuggestions == null || crfSuggestions.isEmpty()) {
-				crfSuggestions = new ArrayList<SemanticType>();
-				cn.setCrfSuggestedSemanticTypes(crfSuggestions);
-			}
-
-			double sumProbability = 0.0;
-			double maxProbability = 0.0;
-			double p;
-			for (int i = 0; i < top4CrfSuggestions.size(); i++) {
-				SemanticType st = top4CrfSuggestions.get(i);
-				if (userSelectedType != null &&
-					st.getCrfModelLabelString().equalsIgnoreCase(userSelectedType.getCrfModelLabelString())) {
-					if (i == 0) numberOfAttributesWhoseTypeIsFirstCRFType ++;
-					found = true;
-					numberOfAttributesWhoseTypeIsInCRFTypes ++;
-					break;
-				} else {
-					p = st.getConfidenceScore() == null ? 0.0 : st.getConfidenceScore().doubleValue();
-					sumProbability += p;
-					if (p > maxProbability) maxProbability = p;
-				}
-			}
-			
-			p = (double) (sumProbability / 4.0);
-//			p = maxProbability;
-			
-			if (!found && userSelectedType != null) {
-				SemanticType newType = new SemanticType(
-						userSelectedType.getHNodeId(),
-						userSelectedType.getType(),
-						userSelectedType.getDomain(),
-						userSelectedType.getOrigin(),
-						p,
-						false
-						);
-				crfSuggestions.add(newType);
-			}
-			
-			cn.setUserSelectedSemanticType(null);
-		}
-		
-//		System.out.println(numberOfAttributesWhoseTypeIsInCRFTypes);
-		System.out.println("numberOfAttributesWhoseTypeIsFirstCRFType:" + numberOfAttributesWhoseTypeIsFirstCRFType);
-		System.out.println("numberOfAttributesWhoseTypeIsInCRFTypes: " + numberOfAttributesWhoseTypeIsInCRFTypes);
-	}
+//	private static void updateCrfSemanticTypesForResearchEvaluation(List<ColumnNode> columnNodes) {
+//		
+//		if (columnNodes == null)
+//			return;
+//		
+//		int numberOfAttributesWhoseTypeIsFirstCRFType = 0;
+//		int numberOfAttributesWhoseTypeIsInCRFTypes = 0;
+//		for (ColumnNode cn : columnNodes) {
+//			boolean found = false;
+//			SemanticType userSelectedType = cn.getUserSelectedSemanticType();
+//			List<SemanticType> top4CrfSuggestions = cn.getTopKSuggestions(4);
+//			List<SemanticType> crfSuggestions = cn.getCrfSuggestedSemanticTypes();
+//			
+//			if (crfSuggestions == null || crfSuggestions.isEmpty()) {
+//				crfSuggestions = new ArrayList<SemanticType>();
+//				cn.setCrfSuggestedSemanticTypes(crfSuggestions);
+//			}
+//
+//			double sumProbability = 0.0;
+//			double maxProbability = 0.0;
+//			double p;
+//			for (int i = 0; i < top4CrfSuggestions.size(); i++) {
+//				SemanticType st = top4CrfSuggestions.get(i);
+//				if (userSelectedType != null &&
+//					st.getCrfModelLabelString().equalsIgnoreCase(userSelectedType.getCrfModelLabelString())) {
+//					if (i == 0) numberOfAttributesWhoseTypeIsFirstCRFType ++;
+//					found = true;
+//					numberOfAttributesWhoseTypeIsInCRFTypes ++;
+//					break;
+//				} else {
+//					p = st.getConfidenceScore() == null ? 0.0 : st.getConfidenceScore().doubleValue();
+//					sumProbability += p;
+//					if (p > maxProbability) maxProbability = p;
+//				}
+//			}
+//			
+//			p = (double) (sumProbability / 4.0);
+////			p = maxProbability;
+//			
+//			if (!found && userSelectedType != null) {
+//				SemanticType newType = new SemanticType(
+//						userSelectedType.getHNodeId(),
+//						userSelectedType.getType(),
+//						userSelectedType.getDomain(),
+//						userSelectedType.getOrigin(),
+//						p,
+//						false
+//						);
+//				crfSuggestions.add(newType);
+//			}
+//			
+//			cn.setUserSelectedSemanticType(null);
+//		}
+//		
+////		System.out.println(numberOfAttributesWhoseTypeIsInCRFTypes);
+//		System.out.println("numberOfAttributesWhoseTypeIsFirstCRFType:" + numberOfAttributesWhoseTypeIsFirstCRFType);
+//		System.out.println("numberOfAttributesWhoseTypeIsInCRFTypes: " + numberOfAttributesWhoseTypeIsInCRFTypes);
+//	}
 	
 	public static void main(String[] args) throws Exception {
 
@@ -693,7 +701,7 @@ public class ModelLearner {
 		ModelLearningGraph modelLearningGraph;
 		ModelLearner modelLearner;
 		
-		boolean iterativeEvaluation = true;
+		boolean iterativeEvaluation = false;
 		boolean useCorrectType = true;
 		int numberOfCRFCandidates = 1;
 		int numberOfKnownModels;
