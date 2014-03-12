@@ -33,6 +33,11 @@
 	    </dependency>
 
 	    <dependency>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+	    </dependency>
+
+	    <dependency>
 		    <groupId>edu.isi</groupId>
 		    <artifactId>karma-jdbc</artifactId>
 		    <version>${project.version}</version>
