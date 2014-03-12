@@ -20,6 +20,8 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.publish;
 
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.ModelMaker;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -43,7 +45,13 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.db.DBConnection;
+import com.hp.hpl.jena.db.IDBConnection;
+import com.hp.hpl.jena.db.ModelRDB;
+
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 
 public class PublishRDFCommand extends Command {
@@ -238,9 +246,6 @@ public class PublishRDFCommand extends Command {
 
 	private void saveToStore(String rdfFileName) throws ClassNotFoundException, IOException
 	{
-		// TODO fix this!!!
-		throw new UnsupportedOperationException("broken in new version of jena!");
-/*
 		String M_DBDRIVER_CLASS = "com.mysql.jdbc.Driver";
 		// load the the driver class
 		Class.forName(M_DBDRIVER_CLASS);
@@ -256,7 +261,6 @@ public class PublishRDFCommand extends Command {
 		InputStream file = new FileInputStream(rdfFileName);
 		model.read(file,null,"N3");
 		file.close();
-*/
 	}
 
 	@Override

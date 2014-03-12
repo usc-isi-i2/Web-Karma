@@ -34,20 +34,16 @@
     </geotools.version>
     <powermock.version>1.5.2</powermock.version>
 
+	  <jena.core.version>2.6.4</jena.core.version>
+	  <jena.arq.version>2.8.8</jena.arq.version>
+	  <jena.tdb.version>0.8.10</jena.tdb.version>
+	  <jena.iri.version>0.8</jena.iri.version>
 
-	  <!-- CUBRC versions -->
-	  <jena.core.version>2.11.0</jena.core.version>
-	  <jena.arq.version>2.11.0</jena.arq.version>
-	  <jena.sdb.version>1.4.0</jena.sdb.version>
-	  <jena.tdb.version>1.0.0</jena.tdb.version>
-	  <jena.iri.version>1.0.0</jena.iri.version>
-
-	  <jena.group>org.apache.jena</jena.group>
-	  <jena.core.artifact>jena-core</jena.core.artifact>
-	  <jena.arq.artifact>jena-arq</jena.arq.artifact>
-	  <jena.sdb.artifact>jena-sdb</jena.sdb.artifact>
-	  <jena.tdb.artifact>jena-tdb</jena.tdb.artifact>
-	  <jena.iri.artifact>jena-iri</jena.iri.artifact>
+	  <jena.group>com.hp.hpl.jena</jena.group>
+	  <jena.core.artifact>jena</jena.core.artifact>
+	  <jena.arq.artifact>arq</jena.arq.artifact>
+	  <jena.tdb.artifact>tdb</jena.tdb.artifact>
+	  <jena.iri.artifact>iri</jena.iri.artifact>
 
 
 	  <apache.commons.lang.version>2.4</apache.commons.lang.version>
