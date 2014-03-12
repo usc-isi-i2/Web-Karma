@@ -21,8 +21,6 @@
 
 package edu.isi.karma.kr2rml;
 
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.RepFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

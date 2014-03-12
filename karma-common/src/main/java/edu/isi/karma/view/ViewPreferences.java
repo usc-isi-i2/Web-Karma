@@ -23,10 +23,6 @@
  */
 package edu.isi.karma.view;
 
-import edu.isi.karma.util.FileUtil;
-import java.io.IOException;
-
-import org.json.JSONException;
 import edu.isi.karma.util.Preferences;
 import org.json.JSONException;
 

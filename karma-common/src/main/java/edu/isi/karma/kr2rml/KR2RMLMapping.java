@@ -1,7 +1,5 @@
 package edu.isi.karma.kr2rml;
 
-import org.json.JSONArray;
-
 import java.util.HashMap;
 import java.util.Map;
 

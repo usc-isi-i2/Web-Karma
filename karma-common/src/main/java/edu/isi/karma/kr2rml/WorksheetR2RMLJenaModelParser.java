@@ -21,14 +21,6 @@
 
 package edu.isi.karma.kr2rml;
 
-import com.hp.hpl.jena.rdf.model.*;
-import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.webserver.KarmaException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.json.JSONArray;

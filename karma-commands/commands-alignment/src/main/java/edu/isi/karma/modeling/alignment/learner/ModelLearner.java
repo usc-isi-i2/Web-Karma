@@ -21,27 +21,12 @@
 
 package edu.isi.karma.modeling.alignment.learner;
 
-import java.io.File;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
-import org.jgrapht.UndirectedGraph;
-import org.jgrapht.graph.AsUndirectedGraph;
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.modeling.alignment.*;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;

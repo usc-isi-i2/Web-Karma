@@ -31,7 +31,6 @@ import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 import org.json.JSONException;
