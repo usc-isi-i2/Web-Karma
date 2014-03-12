@@ -1,7 +1,5 @@
 package edu.isi.karma.cleaning;
 
-import edu.isi.karma.cleaning.Research.ConfigParameters;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;

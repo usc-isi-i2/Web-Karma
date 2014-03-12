@@ -20,9 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.rep.cleaning;
 
-import edu.isi.karma.cleaning.ProgSynthesis;
-import edu.isi.karma.cleaning.ProgramRule;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;

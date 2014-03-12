@@ -25,7 +25,6 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.modeling.alignment.*;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;
@@ -44,9 +43,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
-//import com.google.common.base.Function;
-//import com.google.common.collect.Multimap;
-//import com.google.common.collect.Multimaps;
 
 public class Approach2 {
 

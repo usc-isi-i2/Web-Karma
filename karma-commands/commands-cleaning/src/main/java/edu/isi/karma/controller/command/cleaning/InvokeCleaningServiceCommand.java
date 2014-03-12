@@ -21,17 +21,7 @@
 
 package edu.isi.karma.controller.command.cleaning;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.update.AbstractUpdate;
-import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.rep.HNodePath;
-import edu.isi.karma.rep.Node;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.view.VWorkspace;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

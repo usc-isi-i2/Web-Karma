@@ -25,16 +25,7 @@
  */
 package edu.isi.karma.imp.json;
 
-import edu.isi.karma.imp.Import;
-import edu.isi.karma.rep.*;
-import edu.isi.karma.util.FileUtil;
-import edu.isi.karma.util.JSONUtil;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import org.json.JSONArray;

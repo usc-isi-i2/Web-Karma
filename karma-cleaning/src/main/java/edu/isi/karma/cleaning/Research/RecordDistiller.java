@@ -21,10 +21,6 @@
 
 package edu.isi.karma.cleaning.Research;
 
-import au.com.bytecode.opencsv.CSVReader;
-import edu.isi.karma.cleaning.Ruler;
-import edu.isi.karma.cleaning.TNode;
-
 import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
