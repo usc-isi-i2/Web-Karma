@@ -111,6 +111,11 @@
 		<groupId>net.sf.opencsv</groupId>
 		<artifactId>opencsv</artifactId>
 	</dependency>
+
+	<dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpclient</artifactId>
+	</dependency>
 	<dependency>
 		<groupId>commons-httpclient</groupId>
 		<artifactId>commons-httpclient</artifactId>

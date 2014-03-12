@@ -29,6 +29,7 @@ import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.model.*;
 import edu.isi.karma.rep.sources.*;
+import edu.isi.karma.rep.sources.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
