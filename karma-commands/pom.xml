@@ -27,7 +27,6 @@
 		<module>commands-worksheet</module>
 		<module>commands-update</module>
 		<module>commands-update-jdbc</module>
-		<module>commands-reconcilliation</module>
 	</modules>
     
 </project>
