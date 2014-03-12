@@ -221,6 +221,10 @@ public class ModelingConfiguration {
 		return learnerEnabled;
 	}
 
+	public static void setLearnerEnabled(Boolean learnerEnabled) {
+		ModelingConfiguration.learnerEnabled = learnerEnabled;
+	}
+
 	public static boolean isMultipleSamePropertyPerNode() {
 		if (multipleSamePropertyPerNode == null)
 			load();
