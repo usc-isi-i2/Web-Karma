@@ -40,12 +40,14 @@
 	  <jena.arq.version>2.11.0</jena.arq.version>
 	  <jena.sdb.version>1.4.0</jena.sdb.version>
 	  <jena.tdb.version>1.0.0</jena.tdb.version>
+	  <jena.iri.version>1.0.0</jena.iri.version>
 
 	  <jena.group>org.apache.jena</jena.group>
 	  <jena.core.artifact>jena-core</jena.core.artifact>
 	  <jena.arq.artifact>jena-arq</jena.arq.artifact>
 	  <jena.sdb.artifact>jena-sdb</jena.sdb.artifact>
 	  <jena.tdb.artifact>jena-tdb</jena.tdb.artifact>
+	  <jena.iri.artifact>jena-iri</jena.iri.artifact>
 
 
 	  <apache.commons.lang.version>2.4</apache.commons.lang.version>
@@ -195,8 +197,8 @@
     </dependency>
     <dependency>
     	<groupId>${jena.group}</groupId>
-    	<artifactId>jena-iri</artifactId>
-    	<version>1.0.0</version>
+    	<artifactId>${jena.iri.artifact}</artifactId>
+    	<version>${jena.iri.version}</version>
     </dependency>
     <dependency>
 	    <groupId>org.apache.jena</groupId>

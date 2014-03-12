@@ -70,7 +70,7 @@
 	</dependency>
 	<dependency>
 		<groupId>${jena.group}</groupId>
-		<artifactId>jena-iri</artifactId>
+		<artifactId>${jena.iri.artifact}</artifactId>
 	</dependency>
 	<dependency>
 		<groupId>com.google.code.gson</groupId>
