@@ -103,7 +103,7 @@ public class GetLinksOfAlignmentCommand extends Command {
 				linkList.put(link.getLabel().getUri(), link.getLabel());
 			}
 		} else if(linksRange == LINKS_RANGE.linksWithDomainAndRange) {
-			linkList = workspace.getOntologyManager().getPropertiesGivenDomainRange(domain, range, true);
+			linkList = workspace.getOntologyManager().getObjectPropertiesByDomainRange(domain, range, true);
 		}
 		final Map<String, Label> finalLinksSet = linkList;
 		
