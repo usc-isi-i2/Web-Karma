@@ -14,9 +14,9 @@ import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
 import edu.isi.karma.kr2rml.template.ColumnTemplateTerm;
 import edu.isi.karma.kr2rml.template.ComplicatedTemplateTermSetPopulatorPlan;
+import edu.isi.karma.kr2rml.template.ExtraComplicatedTemplateTermSetPopulator;
 import edu.isi.karma.kr2rml.template.PartiallyPopulatedTermSet;
 import edu.isi.karma.kr2rml.template.PopulatedTemplateTermSet;
-import edu.isi.karma.kr2rml.template.TemplateTerm;
 import edu.isi.karma.kr2rml.template.TemplateTermSet;
 import edu.isi.karma.kr2rml.template.TemplateTermSetPopulator;
 import edu.isi.karma.rep.HNodePath;
@@ -31,10 +31,11 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 		super(kr2rmlMapping, uriFormatter, factory, translator);
 	}
 
-	protected List<PopulatedTemplateTermSet> predicates;
 	protected ComplicatedTemplateTermSetPopulatorPlan complicatedPlan;
+	protected ExtraComplicatedTemplateTermSetPopulator predicatePlan;
 	protected Map<ColumnTemplateTerm, HNodePath> combinedSubjectObjectTermsToPaths ;
 	protected TemplateTermSetPopulator objectTemplateTermSetPopulator;
+	protected TemplateTermSetPopulator predicateTemplateTermSetPopulator;
 	protected boolean isFlipped = false;
 	protected boolean isLiteral;
 	protected String literalTemplateValue;
@@ -43,7 +44,7 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 			PredicateObjectMap pom,
 			Map<ColumnTemplateTerm, HNodePath> subjectTermsToPaths)
 			throws HNodeNotFoundKarmaException {
-		predicates = generatePredicatesForPom(pom);
+		
 		
 		combinedSubjectObjectTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
 		combinedSubjectObjectTermsToPaths.putAll(subjectTermsToPaths);
@@ -54,23 +55,17 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 		LinkedList<ColumnTemplateTerm> objectColumnTerms = new LinkedList<ColumnTemplateTerm>();
 		objectColumnTerms.addAll(objectTemplateTermSetPopulator.getTerms().getAllColumnNameTermElements());
 		complicatedPlan = new ComplicatedTemplateTermSetPopulatorPlan(combinedSubjectObjectTermsToPaths, objectColumnTerms, subjectMapTemplate.getAllColumnNameTermElements());
+		generatePredicatesForPom(pom);
 	}
 
-	private List<PopulatedTemplateTermSet> generatePredicatesForPom(PredicateObjectMap pom) {
-		List<ColumnTemplateTerm> predicateTemplateTerms = pom.getPredicate().getTemplate().getAllColumnNameTermElements();
-		LinkedList<TemplateTerm> allPredicateTemplateTerms = new LinkedList<TemplateTerm>();
-		allPredicateTemplateTerms.addAll(pom.getPredicate().getTemplate().getAllTerms());
-		List<PopulatedTemplateTermSet> predicates = new LinkedList<PopulatedTemplateTermSet>();
-		if(predicateTemplateTerms == null || predicateTemplateTerms.isEmpty())
-		{
-			TemplateTermSetPopulator ttsPopulator = new TemplateTermSetPopulator(pom.getPredicate().getTemplate(), new StringBuilder(), uriFormatter);
-			predicates = ttsPopulator.generatePopulatedTemplates(null);			
-		}
-		else
-		{
-			//dynamic predicates;
-		}
-		return predicates; 
+	private void generatePredicatesForPom(PredicateObjectMap pom) {
+		List<ColumnTemplateTerm> subjectAndObjectTemplateTerms = new LinkedList<ColumnTemplateTerm>();
+		subjectAndObjectTemplateTerms.addAll(this.combinedSubjectObjectTermsToPaths.keySet());
+		LinkedList<ColumnTemplateTerm> predicateColumnTemplateTerms = new LinkedList<ColumnTemplateTerm>();
+		predicateColumnTemplateTerms.addAll(pom.getPredicate().getTemplate().getAllColumnNameTermElements());
+		predicateTemplateTermSetPopulator = new TemplateTermSetPopulator(pom.getPredicate().getTemplate(), new StringBuilder(), uriFormatter, true, true);
+		predicatePlan = new ExtraComplicatedTemplateTermSetPopulator(combinedSubjectObjectTermsToPaths, predicateColumnTemplateTerms, subjectAndObjectTemplateTerms);
+		
 	}
 	
 	
@@ -81,7 +76,7 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 		return subjectsToObjects;
 	}
 	
-	public void outputTriples(KR2RMLRDFWriter outWriter, Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> subjectsToObjects)
+	public void outputTriples(KR2RMLRDFWriter outWriter, Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> subjectsToObjects, Row r)
 	{
 		for(Entry<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> subjectToObjects : subjectsToObjects.entrySet())
 		{
@@ -89,6 +84,7 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 			List<PopulatedTemplateTermSet> objects = objectTemplateTermSetPopulator.generatePopulatedTemplatesFromPartials( subjectToObjects.getValue());
 			for(PopulatedTemplateTermSet object : objects )
 			{
+				List<PopulatedTemplateTermSet> predicates = predicateTemplateTermSetPopulator.generatePopulatedTemplatesFromPartials(predicatePlan.execute(r, subject, object));
 				for(PopulatedTemplateTermSet predicate : predicates)
 				{
 					outputTriple(outWriter, subject, predicate, object);	

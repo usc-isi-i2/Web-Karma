@@ -40,7 +40,7 @@ public class DFSTriplesMapGraphTreeifier implements TriplesMapGraphTreeifier {
 		
 		while(modifications)
 		{
-			logger.info("starting a cleaning cycle");
+			logger.trace("starting a cleaning cycle");
 			modifications = false;
 			Iterator<String> ids = triplesMapsIds.iterator();
 			while(ids.hasNext())
@@ -50,7 +50,7 @@ public class DFSTriplesMapGraphTreeifier implements TriplesMapGraphTreeifier {
 				TriplesMap tm = newGraph.getTriplesMap(triplesMapId);
 				if(tm == null)
 				{
-					logger.info(triplesMapId + " was already spilled");
+					logger.debug(triplesMapId + " was already spilled");
 					spilledTriplesMaps.add(triplesMapId);
 					continue;
 				}
@@ -61,26 +61,26 @@ public class DFSTriplesMapGraphTreeifier implements TriplesMapGraphTreeifier {
 					// leave the root alone unless it's empty!
 					if(triplesMapId.compareTo(rootTriplesMapId) == 0)
 					{
-						logger.info("working on root");
+						logger.debug("working on root");
 						if(!links.isEmpty())
 							continue;
-						logger.info("root is being spilled");
+						logger.debug("root is being spilled");
 					}
 					
 					for(TriplesMapLink link : tempLinks)
 					{
 						newGraph.removeLink(link);
-						logger.info("Removing " + link.getPredicateObjectMapLink());
+						logger.debug("Removing " + link.getPredicateObjectMapLink());
 						if(link.getSourceMap().getId().compareTo(triplesMapId) == 0 && (triplesMapId.compareTo(rootTriplesMapId) != 0))
 						{
 							link.setIsFlipped(true);
-							logger.info("Flipping " + link.getPredicateObjectMapLink());
+							logger.debug("Flipping " + link.getPredicateObjectMapLink());
 						}
 						//what should we do with this?
 					}
 					if(links.isEmpty())
 					{
-						logger.info("Spilling " + tm.getSubject().getRdfsType()  + " " +triplesMapId);
+						logger.debug("Spilling " + tm.getSubject().getRdfsType()  + " " +triplesMapId);
 						modifications = true;
 						spilledTriplesMaps.add(triplesMapId);
 						ids.remove();
@@ -100,7 +100,7 @@ public class DFSTriplesMapGraphTreeifier implements TriplesMapGraphTreeifier {
 				return false;
 			}
 		}
-		logger.info("all links are in coming " + triplesMapId);
+		logger.debug("all links are in coming " + triplesMapId);
 		return true;
 	}
 
@@ -111,13 +111,7 @@ public class DFSTriplesMapGraphTreeifier implements TriplesMapGraphTreeifier {
 		List<String> nodesToVisit = new LinkedList<String>();
 		for(TriplesMapLink link : links)
 		{
-			/*if(link.getSourceMap().getId().compareTo(triplesMapId) != 0)
-			{
-				link.setIsFlipped(true);
-				logger.info("Flipping " + link.getPredicateObjectMapLink());
-			}*/
 			String nextNode = null;
-			//if(link.isFlipped())
 			if(link.getSourceMap().getId().compareTo(triplesMapId) == 0)
 			{
 				nextNode = link.getTargetMap().getId();
@@ -130,7 +124,7 @@ public class DFSTriplesMapGraphTreeifier implements TriplesMapGraphTreeifier {
 				if(!visited.contains(nextNode))
 				{
 					link.setIsFlipped(true);
-					logger.info("Flipping " + link.getPredicateObjectMapLink());
+					logger.debug("Flipping " + link.getPredicateObjectMapLink());
 				}
 			}
 			nodesToVisit.add(nextNode);

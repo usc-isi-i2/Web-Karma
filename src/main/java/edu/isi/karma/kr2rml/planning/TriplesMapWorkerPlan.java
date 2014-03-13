@@ -126,13 +126,13 @@ public class TriplesMapWorkerPlan {
 		
 		for(PredicateObjectMappingPlan internalLinkPlan : internalLinksPlans)
 		{
-			internalLinkPlan.outputTriples(outWriter, internalLinkPlan.execute(r, subjects));
+			internalLinkPlan.outputTriples(outWriter, internalLinkPlan.execute(r, subjects), r);
 		}
 		
 		for(PredicateObjectMappingPlan columnLinkPlan : columnLinksPlans)
 		{
 			
-			columnLinkPlan.outputTriples(outWriter, columnLinkPlan.execute(r, subjects));
+			columnLinkPlan.outputTriples(outWriter, columnLinkPlan.execute(r, subjects), r);
 		}
 	}
 }

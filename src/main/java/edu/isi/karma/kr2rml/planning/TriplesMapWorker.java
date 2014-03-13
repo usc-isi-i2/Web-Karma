@@ -63,7 +63,7 @@ public class TriplesMapWorker implements Callable<Boolean> {
 			notifyDependentTriplesMapWorkers();
 			return false;
 		}
-		LOG.info("Processing " + triplesMap.getId() + " " +triplesMap.getSubject().getId());
+		LOG.debug("Processing " + triplesMap.getId() + " " +triplesMap.getSubject().getId());
 		try
 		{
 		
@@ -75,7 +75,7 @@ public class TriplesMapWorker implements Callable<Boolean> {
 			LOG.error("Something went wrong", e );
 		}
 			
-		LOG.info("Processed " + triplesMap.getId() + " " +triplesMap.getSubject().getId());
+		LOG.debug("Processed " + triplesMap.getId() + " " +triplesMap.getSubject().getId());
 		notifyDependentTriplesMapWorkers();
 		return true;
 	}

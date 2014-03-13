@@ -82,7 +82,7 @@ public class KR2RMLMappingAuxillaryInformation {
 				anchor = column;
 			}
 		}
-		LOG.info("found anchor " + anchor + " at " + maxDepth);
+		LOG.debug("found anchor " + anchor + " at " + maxDepth);
 		return anchor;
 	}
 
