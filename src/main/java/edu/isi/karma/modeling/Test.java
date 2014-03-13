@@ -30,7 +30,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.util.EncodingDetector;
@@ -190,14 +190,14 @@ public class Test {
 		return semanticTypes;
 	}
 	
-	public static DirectedWeightedMultigraph<Node, Link> getVivoTree() {
+	public static DirectedWeightedMultigraph<Node, LabeledLink> getVivoTree() {
 		OntologyManager ontManagar = new OntologyManager();
 		loadOntologies(ontManagar);
 		Alignment alignment = new Alignment(ontManagar);
 		return alignment.getSteinerTree();
 	}
 
-	public static DirectedWeightedMultigraph<Node, Link> getGeoNamesNeighbourhoodTree() {
+	public static DirectedWeightedMultigraph<Node, LabeledLink> getGeoNamesNeighbourhoodTree() {
 		OntologyManager ontManagar = new OntologyManager();
 		loadOntologies(ontManagar);
 		
@@ -220,7 +220,7 @@ public class Test {
 
 		
 		Alignment alignment = new Alignment(ontManagar);
-		DirectedWeightedMultigraph<Node, Link> steinerTree = alignment.getSteinerTree();
+		DirectedWeightedMultigraph<Node, LabeledLink> steinerTree = alignment.getSteinerTree();
 		
 //		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name3");
 //		
@@ -230,7 +230,7 @@ public class Test {
 
 //		GraphUtil.printGraphSimple(alignment.getSteinerTree());
 		steinerTree = alignment.getSteinerTree();
-		System.out.println(GraphUtil.graphToString(alignment.getSteinerTree()));
+		System.out.println(GraphUtil.labeledGraphToString(alignment.getSteinerTree()));
 		return steinerTree;
 	}
 	

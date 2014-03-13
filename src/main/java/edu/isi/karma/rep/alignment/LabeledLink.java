@@ -23,74 +23,63 @@ package edu.isi.karma.rep.alignment;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jgrapht.graph.DefaultWeightedEdge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.rits.cloning.Cloner;
 
-import edu.isi.karma.util.RandomGUID;
 
-
-public abstract class Link extends DefaultWeightedEdge implements Comparable<Link> {
+public abstract class LabeledLink extends DefaultLink {
 	
 	private static final long serialVersionUID = 1L;
-	static Logger logger = LoggerFactory.getLogger(Link.class);
+	static Logger logger = LoggerFactory.getLogger(LabeledLink.class);
 
-	private String id;
 	private Label label;
-	private LinkType type;
 	private LinkStatus status;
 	private LinkKeyInfo keyInfo;
 	private Set<String> modelIds;
 	
-	public Link(String id, Label label, LinkType type) {
-		super();
-
-		this.init();
-		if (id != null && id.trim().length() > 0) this.id = id;
+	public LabeledLink(String id, Label label, LinkType type) {
+		super(id, type);
+		
+		init();
 		if (label != null) this.label = label;
-		if (type != null) this.type = type;
 	}
 	
-	public Link(String id, Label label, LinkType type, LinkKeyInfo keyInfo) {
-		super();
+	public LabeledLink(String id, Label label, LinkType type, LinkKeyInfo keyInfo) {
+		super(id, type);
 
 		this.init();
-		if (id != null && id.trim().length() > 0) this.id = id;
 		if (label != null) this.label = label;
-		if (type != null) this.type = type;
 		if (keyInfo != null) this.keyInfo = keyInfo;
 	}
 	
-	public Link(Link e) {
-		super();
+	public LabeledLink(LabeledLink e) {
+		super(e);
 		if (e == null) this.init();
 		else {
-			this.id = e.id;
 			this.label = e.label;
-			this.type = e.type;
 			this.status = e.status;
 			this.keyInfo = e.keyInfo;
 		}
 	}
 	
 	private void init() {
-		this.id = new RandomGUID().toString();
 		Label l = null;
 		this.label = new Label(l);
-		this.type = LinkType.None;
 		this.status = LinkStatus.Normal;
 		this.keyInfo = LinkKeyInfo.None;
 		this.modelIds = new HashSet<String>();
 	}
 	
-	public String getId() {
-		return this.id;
-	}
-	
 	public Label getLabel() {
 		return this.label;
+	}
+	
+	public String getUri() {
+		if (this.label != null)
+			return this.getLabel().getUri();
+		return null;
 	}
 	
 	public String getLocalId() {
@@ -110,10 +99,6 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		
 		return this.label.getPrefix() + ":" + this.getLocalId();
 	}
-
-	public LinkType getType() {
-		return type;
-	}
 	
 	public LinkStatus getStatus() {
 		return status;
@@ -130,18 +115,6 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 	public void setKeyType(LinkKeyInfo keyType) {
 		this.keyInfo = keyType;
 	}
-
-	public Node getSource() {
-		return (Node)super.getSource();
-	}
-
-	public Node getTarget() {
-		return (Node)super.getTarget();
-	}
-	
-	public double getWeight() {
-		return super.getWeight();
-	}
 	
 	public Set<String> getModelIds() {
 		return modelIds;
@@ -150,62 +123,11 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 	public void setModelIds(Set<String> patternIds) {
 		this.modelIds = patternIds;
 	}
-	
-	@Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj == null || obj.getClass() != this.getClass()) {
-            return false;
-        }
 
-        Link link = (Link) obj;
-        return this.id == link.getId();
-    }
-    
-    @Override
-    public int hashCode() {
-    	return this.getId().hashCode();
-    }
-
-    @Override
-    public int compareTo(Link link) {       
-        //compare id
-        return this.id.compareTo(link.getId());
-    }
-    
-    public Link clone() {
+    public LabeledLink clone() {
     	
     	Cloner cloner = new Cloner();
     	return cloner.deepClone(this);
-    	
-//    	Link link = null;
-//    	switch (this.type) {
-//			case None: 
-//				link = new SimpleLink(this.getId(), this.getLabel());
-//			case ClassInstanceLink: 
-//				link = new ClassInstanceLink(this.getId(), this.getKeyType()); 
-//			case ColumnSubClassLink: 
-//				link = new ColumnSubClassLink(this.getId());
-//			case DataPropertyLink: 
-//				if (this.getKeyType() == LinkKeyInfo.PartOfKey) 
-//					link = new DataPropertyLink(this.getId(), this.getLabel(), true);
-//				else
-//					link = new DataPropertyLink(this.getId(), this.getLabel());
-//			case DataPropertyOfColumnLink:  
-//				link = new DataPropertyOfColumnLink(this.getId(), ((DataPropertyOfColumnLink) this).getSpecializedColumnHNodeId());
-//			case ObjectPropertyLink: 
-//				link = new ObjectPropertyLink(this.getId(), this.getLabel());
-//			case SubClassLink: 
-//				link = new SubClassLink(this.getId());
-//		}
-//    	
-//    	if (link != null) 
-//			link.setStatus(this.getStatus());
-//    	else
-//    		logger.error("Cloning the link has been failed. Cannot identify the type of the link.");
-//		
-//    	return link;
     }
+
 }

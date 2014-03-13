@@ -23,22 +23,12 @@ package edu.isi.karma.rep.alignment;
 
 
 
-/**
- * SimpleNode does not have any type.   
- * @author mohsen
- *
- */
+public class CompactSubClassLink extends CompactLink {
 
-public class SimpleNode extends Node {
-	
-	/**
-	 * 
-	 */
-	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 
-	public SimpleNode(String id, Label label) {
-		super(id, label, NodeType.None);
+	public CompactSubClassLink(String id) {
+		super(id, LinkType.CompactSubClassLink);
 	}
-
+	
 }

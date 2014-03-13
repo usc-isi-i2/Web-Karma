@@ -23,20 +23,20 @@ package edu.isi.karma.modeling.alignment.learner;
 
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 
 public class SemanticTypeMapping {
 	
 	private SemanticType semanticType;
 	private InternalNode source;
-	private Link link;
+	private LabeledLink link;
 	private ColumnNode target;
 	private ColumnNode sourceColumn;
 	
 	public SemanticTypeMapping(ColumnNode sourceColumn, 
 			SemanticType semanticType, 
-			InternalNode source, Link link, 
+			InternalNode source, LabeledLink link, 
 			ColumnNode target) {
 		this.sourceColumn = sourceColumn;
 		this.semanticType = semanticType;
@@ -53,7 +53,7 @@ public class SemanticTypeMapping {
 		return source;
 	}
 
-	public Link getLink() {
+	public LabeledLink getLink() {
 		return link;
 	}
 

@@ -23,16 +23,16 @@ package edu.isi.karma.rep.alignment;
 
 import java.util.Comparator;
 
-public class LinkPriorityComparator implements Comparator<Link> {
+public class LinkPriorityComparator implements Comparator<LabeledLink> {
 
 	@Override
-	public int compare(Link o1, Link o2) {
+	public int compare(LabeledLink o1, LabeledLink o2) {
 		String p1 = getPriority(o1);
 		String p2 = getPriority(o2);
 		return p1.compareTo(p2);
 	}
 
-	private String getPriority(Link link) {
+	private String getPriority(LabeledLink link) {
 		if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct) return "0";
 		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Indirect) return "1";
 		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithOnlyDomain) return "2";

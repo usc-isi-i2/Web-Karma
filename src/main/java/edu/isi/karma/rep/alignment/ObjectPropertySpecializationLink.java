@@ -25,7 +25,7 @@ import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 
-public class ObjectPropertySpecializationLink extends Link {
+public class ObjectPropertySpecializationLink extends LabeledLink {
 	
 	private final String specializedLinkId;
 	private static final long serialVersionUID = 1L;

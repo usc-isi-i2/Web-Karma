@@ -38,7 +38,7 @@ import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
@@ -270,7 +270,7 @@ public class ModelReader {
 			
 			lr.close();
 
-			DirectedWeightedMultigraph<Node, Link> graph = buildGraphsFromStatements2(statements);
+			DirectedWeightedMultigraph<Node, LabeledLink> graph = buildGraphsFromStatements2(statements);
 
 			SemanticModel semanticModel = new SemanticModel(id, graph);
 			semanticModel.setName(name);
@@ -333,13 +333,13 @@ public class ModelReader {
 		return uri;
 	}
 	
-	private static DirectedWeightedMultigraph<Node, Link> buildGraphsFromStatements2(List<Statement> statements) {
+	private static DirectedWeightedMultigraph<Node, LabeledLink> buildGraphsFromStatements2(List<Statement> statements) {
 		
 		if (statements == null || statements.size() == 0)
 			return null;
 
-		DirectedWeightedMultigraph<Node, Link> graph = 
-				new DirectedWeightedMultigraph<Node, Link>(Link.class);
+		DirectedWeightedMultigraph<Node, LabeledLink> graph = 
+				new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
 		
 		// Assumption: there is only one rdf:type for each URI
 		HashMap<String, Node> uri2Classes = new HashMap<String, Node>();
@@ -406,7 +406,7 @@ public class ModelReader {
 				graph.addVertex(obj);
 			}
 			
-			Link e;
+			LabeledLink e;
 			if (obj instanceof InternalNode)
 				e = new ObjectPropertyLink(LinkIdFactory.getLinkId(predicateStr, subj.getId(), obj.getId()), new Label(predicateStr), ObjectPropertyType.None);
 			else

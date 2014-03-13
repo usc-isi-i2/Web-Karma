@@ -27,18 +27,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
@@ -53,11 +50,11 @@ import com.google.common.math.BigIntegerMath;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import com.hp.hpl.jena.graph.impl.BaseGraphMaker;
 
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
@@ -69,14 +66,14 @@ public class SemanticModel {
 	protected String id;
 	protected String name;
 	protected String description;
-	protected DirectedWeightedMultigraph<Node, Link> graph;
+	protected DirectedWeightedMultigraph<Node, LabeledLink> graph;
 	protected List<ColumnNode> sourceColumns;
 	protected Map<ColumnNode, ColumnNode> mappingToSourceColumns;
 	protected final static int maxPathLengthForEvaluation = 2;
 	
 	public SemanticModel(
 			String id,
-			DirectedWeightedMultigraph<Node, Link> graph) {
+			DirectedWeightedMultigraph<Node, LabeledLink> graph) {
 		this.id = id;
 		this.graph = graph;
 		this.sourceColumns = this.getColumnNodes();
@@ -88,7 +85,7 @@ public class SemanticModel {
 	
 	public SemanticModel(
 			String id,
-			DirectedWeightedMultigraph<Node, Link> graph,
+			DirectedWeightedMultigraph<Node, LabeledLink> graph,
 			List<ColumnNode> sourceColumns,
 			Map<ColumnNode, ColumnNode> mappingToSourceColumns) {
 		this.id = id;
@@ -126,7 +123,7 @@ public class SemanticModel {
 		this.description = description;
 	}
 
-	public DirectedWeightedMultigraph<Node, Link> getGraph() {
+	public DirectedWeightedMultigraph<Node, LabeledLink> getGraph() {
 		return graph;
 	}
 
@@ -171,9 +168,9 @@ public class SemanticModel {
 			
 			if (!this.sourceColumns.contains(cn)) continue;
 			
-			Set<Link> incomingLinks = this.graph.incomingEdgesOf(n);
+			Set<LabeledLink> incomingLinks = this.graph.incomingEdgesOf(n);
 			if (incomingLinks != null && incomingLinks.size() == 1) {
-				Link link = incomingLinks.toArray(new Link[0])[0];
+				LabeledLink link = incomingLinks.toArray(new LabeledLink[0])[0];
 				Node domain = link.getSource();
 				SemanticType st = new SemanticType(cn.getHNodeId(), link.getLabel(), domain.getLabel(), Origin.User, 1.0, false);
 				cn.setUserSelectedSemanticType(st);
@@ -186,7 +183,7 @@ public class SemanticModel {
 		logger.info("id: " + this.getId());
 		logger.info("name: " + this.getName());
 		logger.info("description: " + this.getDescription());
-		logger.info(GraphUtil.graphToString(this.graph));
+		logger.info(GraphUtil.labeledGraphToString(this.graph));
 	}
 
 	public ModelEvaluation evaluate(SemanticModel baseModel) {
@@ -198,7 +195,7 @@ public class SemanticModel {
 		HashMap<Node,String> baseNodeIds = new HashMap<Node,String>();
 		for (Node n : baseModel.getGraph().vertexSet()) {
 			if (n instanceof InternalNode)
-				baseNodeIds.put(n, nodeIdFactory.getNodeId(n.getLabel().getUri()));
+				baseNodeIds.put(n, nodeIdFactory.getNodeId(n.getUri()));
 			else // n is a column node
 				baseNodeIds.put(n, n.getId());
 		}
@@ -228,7 +225,7 @@ public class SemanticModel {
 		return new ModelEvaluation(0.0, bestPrecision, bestRecall);
 	}
 	
-	private Set<String> getTriples(DirectedWeightedMultigraph<Node, Link> g, HashMap<Node,String> nodeIds) {
+	private Set<String> getTriples(DirectedWeightedMultigraph<Node, LabeledLink> g, HashMap<Node,String> nodeIds) {
 		
 		String separator = "|";
 		Set<String> triples = new HashSet<String>();
@@ -236,7 +233,7 @@ public class SemanticModel {
 			return triples;
 		
 		String s, p, o, triple;
-		for (Link l : g.edgeSet()) {
+		for (LabeledLink l : g.edgeSet()) {
 			
 			s = nodeIds.get(l.getSource());
 			o = nodeIds.get(l.getTarget());
@@ -251,7 +248,7 @@ public class SemanticModel {
 	
 	private List<HashMap<Node,String>> getPossibleNodeIdSets() {
 		
-		DirectedWeightedMultigraph<Node, Link> g = this.getGraph();
+		DirectedWeightedMultigraph<Node, LabeledLink> g = this.getGraph();
 		List<HashMap<Node,String>> nodeIdSets = new ArrayList<HashMap<Node,String>>();
 		if (g == null)
 			return nodeIdSets;
@@ -384,9 +381,9 @@ public class SemanticModel {
 		List<GraphPath> gpList;
 		String pathStr;
 		for (int i = 1; i <= maxLength; i++) {
-			gpList = GraphUtil.getPaths(baseModel.graph, i);
+			gpList = GraphUtil.getPaths(GraphUtil.asDefaultGraph(baseModel.graph), i);
 			if (gpList != null) basePaths.addAll(gpList);
-			gpList = GraphUtil.getPaths(this.graph, i);
+			gpList = GraphUtil.getPaths(GraphUtil.asDefaultGraph(this.graph), i);
 			if (gpList != null) modelPaths.addAll(gpList);
 		}
 		Set<String> basePathString = new HashSet<String>();
@@ -433,19 +430,19 @@ public class SemanticModel {
 		str += gp.getStartNode().getLabel().getUri();
 		str += separator;
 		
-		for (Link l : gp.getLinks()) {
+		for (DefaultLink l : gp.getLinks()) {
 			
 			target = l.getTarget();
 			if (target == null)
 				return null;
 			
-			str += l.getLabel().getUri();
+			str += l.getUri();
 			str += separator;
 					
 			if (target instanceof InternalNode) {
 				if (target.getLabel() == null)
 					return null;
-				str += l.getLabel().getUri();
+				str += l.getUri();
 				str += separator;
 			}
 			
@@ -517,7 +514,7 @@ public class SemanticModel {
 		
 		// Adding the links to the maps
 		Node source, target;
-		for (Link l : mainModel.graph.edgeSet()) {			
+		for (LabeledLink l : mainModel.graph.edgeSet()) {			
 			source = l.getSource();
 			target = l.getTarget();
 			
@@ -541,7 +538,7 @@ public class SemanticModel {
 			if (links == null) { links = new HashSet<String>(); mainNodePairToLinks.put(sourceStr + targetStr, links); }
 			links.add(linkStr);
 		}
-		for (Link l : targetModel.graph.edgeSet()) {
+		for (LabeledLink l : targetModel.graph.edgeSet()) {
 			source = l.getSource();
 			target = l.getTarget();
 			
@@ -690,7 +687,7 @@ public class SemanticModel {
 		}
 		writer.name("graph");
 		if (this.graph == null) writer.value(nullStr);
-		else GraphUtil.writeGraph(this.graph, writer);
+		else GraphUtil.writeGraph(GraphUtil.asDefaultGraph(this.graph), writer);
 		writer.endObject();
 	}
 
@@ -742,7 +739,7 @@ public class SemanticModel {
 		String id = null;
 		String name = null;
 		String description = null;
-		DirectedWeightedMultigraph<Node, Link> graph = null;
+		DirectedWeightedMultigraph<Node, DefaultLink> graph = null;
 		List<ColumnNode> sourceColumns = null;
 		HashMap<String, ColumnNode> sourceColumnIds = null;
 
@@ -802,7 +799,7 @@ public class SemanticModel {
 			}
 		}
 
-    	SemanticModel semanticModel = new SemanticModel(id, graph, sourceColumns, mappingToSourceColumns);
+    	SemanticModel semanticModel = new SemanticModel(id, GraphUtil.asLabeledGraph(graph), sourceColumns, mappingToSourceColumns);
     	semanticModel.setName(name);
     	semanticModel.setDescription(description);
     	

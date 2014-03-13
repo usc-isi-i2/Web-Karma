@@ -21,22 +21,14 @@
 
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.Prefixes;
-import edu.isi.karma.modeling.Uris;
 
 
-public class SubClassLink extends LabeledLink {
+public abstract class CompactLink extends DefaultLink {
 
 	private static final long serialVersionUID = 1L;
-	private static final Label label = 
-			new Label(Uris.RDFS_SUBCLASS_URI, Namespaces.RDFS, Prefixes.RDFS);
 
-	public SubClassLink(String id) {
-		super(id, label, LinkType.SubClassLink);
+	public CompactLink(String id, LinkType type) {
+		super(id, type);
 	}
 	
-	public static Label getFixedLabel() {
-		return label;
-	}
 }

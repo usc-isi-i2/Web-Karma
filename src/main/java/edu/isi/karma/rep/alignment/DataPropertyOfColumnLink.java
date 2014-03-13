@@ -26,7 +26,7 @@ import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 
 
-public class DataPropertyOfColumnLink extends Link {
+public class DataPropertyOfColumnLink extends LabeledLink {
 
 	private final String specializedColumnHNodeId;
 	private static final long serialVersionUID = 1L;

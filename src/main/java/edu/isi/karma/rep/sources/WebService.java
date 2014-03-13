@@ -39,10 +39,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.ModelingConfiguration;
+import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.model.Argument;
@@ -338,7 +339,7 @@ public class WebService extends Source {
 
 	}
 	
-	public void updateModel(DirectedWeightedMultigraph<Node, Link> treeModel) {
+	public void updateModel(DirectedWeightedMultigraph<Node, LabeledLink> treeModel) {
 		
 		if (treeModel == null)
 			return;
@@ -399,7 +400,7 @@ public class WebService extends Source {
 		
 	}
 	
-	private Model getInputModel(DirectedWeightedMultigraph<Node, Link> treeModel, 
+	private Model getInputModel(DirectedWeightedMultigraph<Node, LabeledLink> treeModel, 
 			List<Node> inputNodes, List<String> inputModelVertexes, List<String> inputModelEdges,
 			HashMap<String, Argument> vertexIdToArgument) {
 
@@ -407,14 +408,17 @@ public class WebService extends Source {
 			return null;
 				
 		logger.debug("compute the steiner tree from the alignment tree with input nodes as steiner nodes ...");
-		UndirectedGraph<Node, Link> undirectedGraph = 
-			new AsUndirectedGraph<Node, Link>(treeModel);
+		UndirectedGraph<Node, LabeledLink> undirectedGraph = 
+			new AsUndirectedGraph<Node, LabeledLink>(treeModel);
 		List<Node> steinerNodes = inputNodes;
-		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
-
+		SteinerTree steinerTree = new SteinerTree(GraphUtil.asDefaultGraph(undirectedGraph), steinerNodes);
+		
 
 		Model m = new Model("inputModel");
-		for (Node n : steinerTree.getSteinerTree().vertexSet()) {
+		if (steinerTree == null || steinerTree.getLabeledSteinerTree() == null)
+			return m;
+		
+		for (Node n : steinerTree.getLabeledSteinerTree().vertexSet()) {
 			
 			inputModelVertexes.add(n.getId());
 			
@@ -430,8 +434,8 @@ public class WebService extends Source {
 			m.getAtoms().add(classAtom);
 		}
 		
-		for (Link e : steinerTree.getSteinerTree().edgeSet()) {
-			
+		for (LabeledLink e : steinerTree.getLabeledSteinerTree().edgeSet()) {
+
 			inputModelEdges.add(e.getId());
 			
 			if (vertexIdToArgument.get(e.getSource().getId()) == null || 
@@ -458,7 +462,7 @@ public class WebService extends Source {
 		return m;
 	}
 
-	private Model getOutputModel(DirectedWeightedMultigraph<Node, Link> treeModel, 
+	private Model getOutputModel(DirectedWeightedMultigraph<Node, LabeledLink> treeModel, 
 			List<String> inputModelVertexes, List<String> inputModelEdges,
 			HashMap<String, Argument> vertexIdToArgument) {
 
@@ -485,7 +489,7 @@ public class WebService extends Source {
 			m.getAtoms().add(classAtom);
 		}
 		
-		for (Link e : treeModel.edgeSet()) {
+		for (LabeledLink e : treeModel.edgeSet()) {
 			
 			if (inputModelEdges.indexOf(e.getId()) != -1)
 				continue;

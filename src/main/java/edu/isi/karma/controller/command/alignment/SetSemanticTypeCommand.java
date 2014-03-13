@@ -32,8 +32,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -46,8 +46,9 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
@@ -66,8 +67,8 @@ public class SetSemanticTypeCommand extends Command {
 	private SynonymSemanticTypes newSynonymTypes;
 	private final boolean isPartOfKey;
 	private Alignment oldAlignment;
-	private DirectedWeightedMultigraph<Node, Link> oldGraph;
-//	private Link newLink;
+	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
+//	private DefaultLink newLink;
 	
 	private SemanticType oldType;
 	private SemanticType newType;
@@ -122,7 +123,7 @@ public class SetSemanticTypeCommand extends Command {
 		
 		// Save the original alignment for undo
 		oldAlignment = alignment.getAlignmentClone();
-		oldGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
+		oldGraph = (DirectedWeightedMultigraph<Node, DefaultLink>)alignment.getGraph().clone();
 		
 		/*** Add the appropriate nodes and links in alignment graph ***/
 		List<SemanticType> typesList = new ArrayList<SemanticType>();
@@ -189,8 +190,8 @@ public class SetSemanticTypeCommand extends Command {
 				// Check if a semantic type already exists for the column
 				ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 				columnNode.setRdfLiteralType(rdfLiteralType);
-				List<Link> columnNodeIncomingLinks = alignment.getIncomingLinks(columnNode.getId());
-				Link oldIncomingLinkToColumnNode = null;
+				List<LabeledLink> columnNodeIncomingLinks = alignment.getIncomingLinks(columnNode.getId());
+				LabeledLink oldIncomingLinkToColumnNode = null;
 				Node oldDomainNode = null;
 				if (columnNodeIncomingLinks != null && !columnNodeIncomingLinks.isEmpty()) { // SemanticType already assigned
 					semanticTypeAlreadyExists = true;

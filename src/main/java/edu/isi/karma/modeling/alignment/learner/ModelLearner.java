@@ -51,15 +51,17 @@ import edu.isi.karma.modeling.alignment.ModelEvaluation;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.SteinerTree;
+import edu.isi.karma.modeling.alignment.TreePostProcess;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.ModelReader;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.SemanticType;
@@ -162,7 +164,7 @@ public class ModelLearner {
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
 			logger.debug("computing steiner tree for steiner nodes set " + count + " ...");
 			logger.debug(sn.getScoreDetailsString());
-			DirectedWeightedMultigraph<Node, Link> tree = computeSteinerTree(sn.getNodes());
+			DirectedWeightedMultigraph<Node, LabeledLink> tree = computeSteinerTree(sn.getNodes());
 			count ++;
 			if (tree != null) {
 				SemanticModel sm = new SemanticModel(new RandomGUID().toString(), 
@@ -201,7 +203,7 @@ public class ModelLearner {
 
 	}
 	
-	private DirectedWeightedMultigraph<Node, Link> computeSteinerTree(Set<Node> steinerNodes) {
+	private DirectedWeightedMultigraph<Node, LabeledLink> computeSteinerTree(Set<Node> steinerNodes) {
 		
 		if (steinerNodes == null || steinerNodes.size() == 0) {
 			logger.error("There is no steiner node.");
@@ -212,14 +214,14 @@ public class ModelLearner {
 		List<Node> steinerNodeList = new ArrayList<Node>(steinerNodes); 
 		
 		long start = System.currentTimeMillis();
-		UndirectedGraph<Node, Link> undirectedGraph = new AsUndirectedGraph<Node, Link>(this.graphBuilder.getGraph());
+		UndirectedGraph<Node, DefaultLink> undirectedGraph = new AsUndirectedGraph<Node, DefaultLink>(this.graphBuilder.getGraph());
 
 		logger.debug("computing steiner tree ...");
 		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodeList);
-		DirectedWeightedMultigraph<Node, Link> tree = 
-				(DirectedWeightedMultigraph<Node, Link>)GraphUtil.asDirectedGraph(steinerTree.getSteinerTree());
+		DirectedWeightedMultigraph<Node, LabeledLink> tree = new TreePostProcess(this.graphBuilder, steinerTree.getDefaultSteinerTree(), null, false).getTree();
+				//(DirectedWeightedMultigraph<Node, LabeledLink>)GraphUtil.asDirectedGraph(steinerTree.getDefaultSteinerTree());
 		
-		logger.debug(GraphUtil.graphToString(tree));
+		logger.debug(GraphUtil.labeledGraphToString(tree));
 		
 		long steinerTreeElapsedTimeMillis = System.currentTimeMillis() - start;
 		logger.debug("total number of nodes in steiner tree: " + tree.vertexSet().size());
@@ -408,7 +410,7 @@ public class ModelLearner {
 				addedNodes.add(target);
 				
 				String linkId = LinkIdFactory.getLinkId(propertyUri, source.getId(), target.getId());	
-				Link link = new DataPropertyLink(linkId, new Label(propertyUri), false);
+				LabeledLink link = new DataPropertyLink(linkId, new Label(propertyUri), false);
 				if (!this.graphBuilder.addLink(source, target, link)) continue;;
 				
 				SemanticTypeMapping mp = new SemanticTypeMapping(sourceColumn, semanticType, (InternalNode)source, link, target);
@@ -471,7 +473,7 @@ public class ModelLearner {
 		addedNodes.add(target);
 
 		String linkId = LinkIdFactory.getLinkId(propertyUri, source.getId(), target.getId());	
-		Link link;
+		LabeledLink link;
 		if (propertyUri.equalsIgnoreCase(ClassInstanceLink.getFixedLabel().getUri()))
 			link = new ClassInstanceLink(linkId);
 		else {
@@ -522,11 +524,11 @@ public class ModelLearner {
 	
 	private void updateWeights() {
 
-		List<Link> oldLinks = new ArrayList<Link>();
+		List<DefaultLink> oldLinks = new ArrayList<DefaultLink>();
 		
 		List<Node> sources = new ArrayList<Node>();
 		List<Node> targets = new ArrayList<Node>();
-		List<Link> newLinks = new ArrayList<Link>();
+		List<LabeledLink> newLinks = new ArrayList<LabeledLink>();
 		List<Double> weights = new ArrayList<Double>();
 		
 		HashMap<String, LinkFrequency> sourceTargetLinkFrequency = 
@@ -536,9 +538,9 @@ public class ModelLearner {
 		
 		String key, key1, key2;
 		String linkUri;
-		for (Link link : this.graphBuilder.getGraph().edgeSet()) {
-			linkUri = link.getLabel().getUri();
-			if (!linkUri.equalsIgnoreCase(Uris.PLAIN_LINK_URI)) {
+		for (DefaultLink link : this.graphBuilder.getGraph().edgeSet()) {
+			linkUri = link.getUri();
+			if (!linkUri.equalsIgnoreCase(Uris.DEFAULT_LINK_URI)) {
 				if (link.getTarget() instanceof InternalNode && !linkUri.equalsIgnoreCase(Uris.RDFS_SUBCLASS_URI)) {
 					key = "domain:" + link.getSource().getLabel().getUri() + ",link:" + linkUri + ",range:" + link.getTarget().getLabel().getUri();
 					Integer count = this.graphBuilder.getLinkCountMap().get(key);
@@ -595,10 +597,10 @@ public class ModelLearner {
 			oldLinks.add(link);
 		}
 		
-		for (Link link : oldLinks)
+		for (DefaultLink link : oldLinks)
 			this.graphBuilder.getGraph().removeEdge(link);
 		
-		Link newLink;
+		LabeledLink newLink;
 		for (int i = 0; i < newLinks.size(); i++) {
 			newLink = newLinks.get(i);
 			this.graphBuilder.addLink(sources.get(i), targets.get(i), newLink);
@@ -791,7 +793,7 @@ public class ModelLearner {
 					// read graph from file
 					try {
 						logger.info("loading the graph ...");
-						DirectedWeightedMultigraph<Node, Link> graph = GraphUtil.importJson(graphName);
+						DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
 						modelLearner.graphBuilder = new GraphBuilder(ontologyManager, graph);
 						modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					} catch (Exception e) {

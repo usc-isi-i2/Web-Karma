@@ -40,8 +40,8 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.DisplayModel;
-import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
@@ -52,7 +52,7 @@ import edu.isi.karma.view.VWorkspace;
 
 public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 	private final String worksheetId;
-	private final DirectedWeightedMultigraph<Node, Link> alignmentGraph;
+	private final DirectedWeightedMultigraph<Node, LabeledLink> alignmentGraph;
 	private final Alignment alignment;
 	
 	private static Logger logger = LoggerFactory.getLogger(AlignmentSVGVisualizationUpdate.class);
@@ -139,19 +139,20 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 						hNodeIdsAdded.add(cNode.getHNodeId());
 					}
 					JSONObject nodeObj = getNodeJsonObject(node.getLocalId(), node.getId(), node.getType().name()
-							, height, hNodeIdsCoveredByVertex, hNodeId, node.getLabel().getUri());
+							, height, hNodeIdsCoveredByVertex, hNodeId, node.getUri());
 					nodesArr.put(nodeObj);
 					verticesIndex.put(node, nodesIndexcounter++);
 				}
 				
 				/*** Add the links ***/
-				Set<Link> links = alignmentGraph.edgeSet();
-				for (Link link : links) {
+				Set<LabeledLink> links = alignmentGraph.edgeSet();
+				for (LabeledLink link : links) {
+					
 					Node source = link.getSource();
 					Integer sourceIndex = verticesIndex.get(source);
 					Node target = link.getTarget();
 					Integer targetIndex = verticesIndex.get(target);
-					Set<Link> outEdges = alignmentGraph.outgoingEdgesOf(target);
+					Set<LabeledLink> outEdges = alignmentGraph.outgoingEdgesOf(target);
 					
 					if(sourceIndex == null || targetIndex == null) {
 						logger.error("Edge vertex index not found!");

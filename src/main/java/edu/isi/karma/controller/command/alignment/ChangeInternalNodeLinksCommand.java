@@ -40,8 +40,9 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 
@@ -53,7 +54,7 @@ public class ChangeInternalNodeLinksCommand extends Command {
 
 	// Required for undo
 	private Alignment oldAlignment;
-	private DirectedWeightedMultigraph<Node, Link> oldGraph;
+	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 
 	private StringBuilder descStr = new StringBuilder();
 	private static Logger logger = LoggerFactory
@@ -108,7 +109,7 @@ public class ChangeInternalNodeLinksCommand extends Command {
 
 		// Save the original alignment for undo
 		oldAlignment = alignment.getAlignmentClone();
-		oldGraph = (DirectedWeightedMultigraph<Node, Link>) alignment
+		oldGraph = (DirectedWeightedMultigraph<Node, DefaultLink>) alignment
 				.getGraph().clone();
 
 		// First delete the links that are not present in newEdges and present
@@ -136,7 +137,7 @@ public class ChangeInternalNodeLinksCommand extends Command {
 
 			String linkId = LinkIdFactory
 					.getLinkId(edgeUri, sourceId, targetId);
-			Link newLink = alignment.getLinkById(linkId);
+			LabeledLink newLink = alignment.getLinkById(linkId);
 			if (newLink == null) {
 				Node sourceNode = alignment.getNodeById(sourceId);
 				if (sourceNode == null) {

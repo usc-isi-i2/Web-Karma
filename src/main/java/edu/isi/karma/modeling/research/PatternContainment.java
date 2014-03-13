@@ -31,46 +31,46 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import com.google.common.collect.Sets;
 
 import edu.isi.karma.rep.alignment.InternalNode;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 
 public class PatternContainment {
 
-	private DirectedWeightedMultigraph<Node, Link> mainGraph;
-	private DirectedWeightedMultigraph<Node, Link> newGraph;
+	private DirectedWeightedMultigraph<Node, LabeledLink> mainGraph;
+	private DirectedWeightedMultigraph<Node, LabeledLink> newGraph;
 	
-	public PatternContainment(DirectedWeightedMultigraph<Node, Link> mainGraph, 
-			DirectedWeightedMultigraph<Node, Link> newGraph) {
+	public PatternContainment(DirectedWeightedMultigraph<Node, LabeledLink> mainGraph, 
+			DirectedWeightedMultigraph<Node, LabeledLink> newGraph) {
 		this.mainGraph = mainGraph;
 		this.newGraph = newGraph;
 	}
 	
 	public boolean containedIn(Set<String> mappedNodes, Set<String> mappedLinks) {
 		
-		HashMap<String, List<Link>> mainLinks = new HashMap<String, List<Link>>();
-		HashMap<String, List<Link>> newLinks = new HashMap<String, List<Link>>();
+		HashMap<String, List<LabeledLink>> mainLinks = new HashMap<String, List<LabeledLink>>();
+		HashMap<String, List<LabeledLink>> newLinks = new HashMap<String, List<LabeledLink>>();
 		
-		for (Link e : mainGraph.edgeSet()) {
+		for (LabeledLink e : mainGraph.edgeSet()) {
 			String target = (e.getTarget() instanceof InternalNode)?e.getTarget().getLabel().getUri():"";
 			String key = e.getSource().getLabel().getUri() +
 					target + 
 					e.getLabel().getUri();
-			List<Link> links = mainLinks.get(key);
+			List<LabeledLink> links = mainLinks.get(key);
 			if (links == null) {
-				links = new ArrayList<Link>();
+				links = new ArrayList<LabeledLink>();
 				mainLinks.put(key, links);
 			}
 			links.add(e);
 		}
 
-		for (Link e : newGraph.edgeSet()) {
+		for (LabeledLink e : newGraph.edgeSet()) {
 			String target = (e.getTarget() instanceof InternalNode)?e.getTarget().getLabel().getUri():"";
 			String key = e.getSource().getLabel().getUri() +
 					target + 
 					e.getLabel().getUri();
-			List<Link> links = newLinks.get(key);
+			List<LabeledLink> links = newLinks.get(key);
 			if (links == null) {
-				links = new ArrayList<Link>();
+				links = new ArrayList<LabeledLink>();
 				newLinks.put(key, links);
 			}
 			links.add(e);
@@ -84,8 +84,8 @@ public class PatternContainment {
 		
 		if (sharedLinks.size() == newLinks.keySet().size()) {
 			for (String key : sharedLinks) {
-				List<Link> links = mainLinks.get(key);
-				for (Link l : links) {
+				List<LabeledLink> links = mainLinks.get(key);
+				for (LabeledLink l : links) {
 					mappedNodes.add(l.getSource().getId());
 					mappedNodes.add(l.getTarget().getId());
 					mappedLinks.add(l.getId());

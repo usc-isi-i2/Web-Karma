@@ -48,7 +48,7 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.metadata.MetadataContainer;
 import edu.isi.karma.rep.sources.InvocationManager;
@@ -64,7 +64,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 
 	private static Logger logger = LoggerFactory.getLogger(InvokeServiceCommand.class);
 	private Alignment initialAlignment = null;
-	private DirectedWeightedMultigraph<Node, Link> initialGraph = null;
+	private DirectedWeightedMultigraph<Node, DefaultLink> initialGraph = null;
 	private final String hNodeId;
 	
 	private Worksheet worksheetBeforeInvocation = null;
@@ -79,6 +79,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		return this.getClass().getSimpleName();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
@@ -97,7 +98,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		
 		if (initialAlignment == null) {
 			initialAlignment = alignment.getAlignmentClone();
-			initialGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
+			initialGraph = (DirectedWeightedMultigraph<Node, DefaultLink>)alignment.getGraph().clone();
 		}
 		
 		List<String> requestURLStrings = new ArrayList<String>();

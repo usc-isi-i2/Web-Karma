@@ -29,20 +29,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.ModelingParams;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.Node;
 
 public class GraphPreProcess {
 
 	static Logger logger = LoggerFactory.getLogger(GraphPreProcess.class);
 
-	DirectedWeightedMultigraph<Node, Link> gPrime;
-	Set<Link> linksPreferredByUI;
-	Set<Link> linksForcedByUser;
+	DirectedWeightedMultigraph<Node, DefaultLink> gPrime;
+	Set<LabeledLink> linksPreferredByUI;
+	Set<LabeledLink> linksForcedByUser;
 	
-	public GraphPreProcess(DirectedWeightedMultigraph<Node, Link> graph, 
-			Set<Link> linksPreferredByUI,
-			Set<Link> linksForcedByUser) {
+	public GraphPreProcess(DirectedWeightedMultigraph<Node, DefaultLink> graph, 
+			Set<LabeledLink> linksPreferredByUI,
+			Set<LabeledLink> linksForcedByUser) {
 		
 		this.linksPreferredByUI = linksPreferredByUI;
 		this.linksForcedByUser = linksForcedByUser;
@@ -52,8 +53,8 @@ public class GraphPreProcess {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private DirectedWeightedMultigraph<Node, Link> cloneGraph(DirectedWeightedMultigraph<Node, Link> graph) {
-		gPrime = (DirectedWeightedMultigraph<Node, Link>)graph.clone();
+	private DirectedWeightedMultigraph<Node, DefaultLink> cloneGraph(DirectedWeightedMultigraph<Node, DefaultLink> graph) {
+		gPrime = (DirectedWeightedMultigraph<Node, DefaultLink>)graph.clone();
 		return gPrime;
 	}
 	
@@ -62,11 +63,11 @@ public class GraphPreProcess {
 		logger.debug("<enter");
 
 		if (linksPreferredByUI != null) 
-			for (Link link : linksPreferredByUI) 
+			for (LabeledLink link : linksPreferredByUI) 
 				gPrime.setEdgeWeight(link, ModelingParams.PROPERTY_UI_PREFERRED_WEIGHT);
 				
 		if (linksForcedByUser != null) 
-			for (Link link : linksForcedByUser) {
+			for (LabeledLink link : linksForcedByUser) {
 				
 //				// removing all the links to target
 //				Set<Link> incomingLinks = gPrime.incomingEdgesOf(link.getTarget());
@@ -86,8 +87,8 @@ public class GraphPreProcess {
 //		GraphUtil.printGraph(gPrime);
 	}
 
-	public UndirectedGraph<Node, Link> getUndirectedGraph() {	
-		return  new AsUndirectedGraph<Node, Link>(this.gPrime);
+	public UndirectedGraph<Node, DefaultLink> getUndirectedGraph() {	
+		return  new AsUndirectedGraph<Node, DefaultLink>(this.gPrime);
 	}
 	
 }

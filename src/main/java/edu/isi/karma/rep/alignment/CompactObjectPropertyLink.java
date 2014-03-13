@@ -21,31 +21,21 @@
 
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.Uris;
 
 
 
-/**
- * SimpleLink does not have any type.   
- * @author mohsen
- *
- */
-
-public class PlainLink extends Link {
+public class CompactObjectPropertyLink extends CompactLink {
 
 	private static final long serialVersionUID = 1L;
-	private static final Label label = 
-			new Label(Uris.PLAIN_LINK_URI);
-
-	public PlainLink(String id) {
-		super(id, label, LinkType.None);
+	private ObjectPropertyType objectPropertyType;
+	
+	public CompactObjectPropertyLink(String id, ObjectPropertyType objectPropertyType) {
+		super(id, LinkType.CompactObjectPropertyLink);
+		this.objectPropertyType = objectPropertyType;
 	}
 
-	public PlainLink(String id, Label uri) {
-		super(id, uri, LinkType.None);
+	public ObjectPropertyType getObjectPropertyType() {
+		return objectPropertyType;
 	}
-
-	public static Label getFixedLabel() {
-		return label;
-	}
+	
 }

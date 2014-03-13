@@ -38,7 +38,7 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.view.VWorkspace;
 
@@ -84,8 +84,8 @@ public class GetCurrentLinksOfInternalNodeCommand extends Command {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		final Set<Link> incomingLinks = alignment.getCurrentIncomingLinksToNode(nodeId);
-		final Set<Link> outgoingLinks = alignment.getCurrentOutgoingLinksToNode(nodeId);
+		final Set<LabeledLink> incomingLinks = alignment.getCurrentIncomingLinksToNode(nodeId);
+		final Set<LabeledLink> outgoingLinks = alignment.getCurrentOutgoingLinksToNode(nodeId);
 		
 		UpdateContainer upd = new UpdateContainer(new AbstractUpdate() {
 			@Override
@@ -99,14 +99,14 @@ public class GetCurrentLinksOfInternalNodeCommand extends Command {
 					
 					/** Add the incoming links **/
 					if (incomingLinks != null && !incomingLinks.isEmpty()) {
-						for (Link inLink:incomingLinks) {
+						for (LabeledLink inLink:incomingLinks) {
 								addLink(inLink, LINK_DIRECTION.incoming, edgesArray);
 						}
 					}
 					
 					/** Add the outgoing links **/
 					if (outgoingLinks != null && !outgoingLinks.isEmpty()) {
-						for (Link outLink:outgoingLinks) {
+						for (LabeledLink outLink:outgoingLinks) {
 							if (!(outLink.getTarget() instanceof ColumnNode)) {
 								addLink(outLink, LINK_DIRECTION.outgoing, edgesArray);
 							}
@@ -120,7 +120,7 @@ public class GetCurrentLinksOfInternalNodeCommand extends Command {
 				}
 			}
 			
-			private void addLink(Link link, LINK_DIRECTION direction, JSONArray edgesArray) 
+			private void addLink(LabeledLink link, LINK_DIRECTION direction, JSONArray edgesArray) 
 					throws JSONException {
 				String linkLabel = link.getLabel().getDisplayName();
 				

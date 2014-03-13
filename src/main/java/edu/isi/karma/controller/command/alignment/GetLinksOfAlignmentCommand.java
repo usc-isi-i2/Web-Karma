@@ -38,7 +38,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetLinksOfAlignmentCommand extends Command {
@@ -97,9 +97,9 @@ public class GetLinksOfAlignmentCommand extends Command {
 					getOntologyManager().getObjectProperties();
 			
 		} else if (linksRange == LINKS_RANGE.existingLinks) {
-			Set<Link> linksSet = alignment.getSteinerTree().edgeSet();
+			Set<LabeledLink> linksSet = alignment.getSteinerTree().edgeSet();
 			linkList = new HashMap<String, Label>();
-			for (Link link: linksSet) {
+			for (LabeledLink link: linksSet) {
 				linkList.put(link.getLabel().getUri(), link.getLabel());
 			}
 		} else if(linksRange == LINKS_RANGE.linksWithDomainAndRange) {

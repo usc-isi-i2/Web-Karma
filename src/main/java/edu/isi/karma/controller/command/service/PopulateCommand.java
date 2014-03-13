@@ -48,7 +48,7 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.sources.Attribute;
 import edu.isi.karma.rep.sources.DataSource;
@@ -125,7 +125,7 @@ public class PopulateCommand extends WorksheetCommand{
 				"Error occured while populating the source. The alignment model is null."));
 		} 
 		
-		DirectedWeightedMultigraph<Node, Link> tree = al.getSteinerTree();
+		DirectedWeightedMultigraph<Node, LabeledLink> tree = al.getSteinerTree();
 			
 		if (tree == null) {
 			logger.error("The alignment tree is null.");
