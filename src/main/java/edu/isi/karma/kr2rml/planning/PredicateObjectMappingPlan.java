@@ -58,12 +58,19 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 		generatePredicatesForPom(pom);
 	}
 
-	private void generatePredicatesForPom(PredicateObjectMap pom) {
+	private void generatePredicatesForPom(PredicateObjectMap pom) throws HNodeNotFoundKarmaException {
 		List<ColumnTemplateTerm> subjectAndObjectTemplateTerms = new LinkedList<ColumnTemplateTerm>();
 		subjectAndObjectTemplateTerms.addAll(this.combinedSubjectObjectTermsToPaths.keySet());
 		LinkedList<ColumnTemplateTerm> predicateColumnTemplateTerms = new LinkedList<ColumnTemplateTerm>();
 		predicateColumnTemplateTerms.addAll(pom.getPredicate().getTemplate().getAllColumnNameTermElements());
 		predicateTemplateTermSetPopulator = new TemplateTermSetPopulator(pom.getPredicate().getTemplate(), new StringBuilder(), uriFormatter, true, true);
+		Map<ColumnTemplateTerm, HNodePath> combinedSubjectObjectPredicateTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
+		combinedSubjectObjectPredicateTermsToPaths.putAll(combinedSubjectObjectTermsToPaths);
+		Map<ColumnTemplateTerm, HNodePath> predicateTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
+		
+		populateTermsToPathForSubject(predicateTermsToPaths, pom.getPredicate().getTemplate());
+		combinedSubjectObjectTermsToPaths.putAll(predicateTermsToPaths);
+		
 		predicatePlan = new ExtraComplicatedTemplateTermSetPopulator(combinedSubjectObjectTermsToPaths, predicateColumnTemplateTerms, subjectAndObjectTemplateTerms);
 		
 	}

@@ -136,7 +136,7 @@ public class TestJSONDagRDFGenerator {
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("\n");
 			int count = lines.length + 1;
-			assertEquals(386, count);
+			assertEquals(412, count);
 		} catch (Exception e) {
 			fail("Execption: " + e.getMessage());
 		}

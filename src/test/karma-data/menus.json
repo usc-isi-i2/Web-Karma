@@ -13,12 +13,21 @@
 						lon: "-115.3"
 					},
 					url: "http://www.mcbronalds.com",
-					owner: {
-						title : "Mr.",
-						name : {
+					employee: {
+						class : "http://ex.com/employee",
+						title : "mister",
+						id : "22",
+						prefixes : ["http://ex.com/", "http://ex.biz/"],
+						aliases : [
+							{
 							first : "John",
 							last : "Smith"
-						}
+							},
+							{
+							first : "Bob",
+							last : "Brown"
+							}
+						]
 					}
 				},
 				size-info: {
@@ -49,12 +58,20 @@
 						lon: "-116.3"
 					},
 					url: "http://www.caffe.it",
-					owner: {
-						title : "Sig.a",
-						name : {
+					employee: {
+						class : "http://ex.it/proprietario",
+						title : "signora",
+						id : "1",
+						prefixes : ["http://ex.it/", "http://ex.fr/"],
+						aliases : [{
 							first : "Ada",
 							last : "Berlusconi"
+						},
+						{
+							first : "Maria",
+							last : "Marietta"
 						}
+						]
 					}
 				},
 				size-info: {
