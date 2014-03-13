@@ -62,6 +62,7 @@ LineLayout.prototype.addLink = function(id, from, to) {
 	var toGroupName = this.getGroupName(toNode, fromNode);
 	if ("internal" == fromNode.type) {
 		fromAnchor = this.addAnchorNode(fromNode, fromGroupName); 
+		fromAnchor.linkToPropId = id;
 		this.groups[fromGroupName].push(fromAnchor.id);
 		fromAnchor.groupId = fromGroupName;
 	}
@@ -72,6 +73,11 @@ LineLayout.prototype.addLink = function(id, from, to) {
 	}
 	fromAnchor.linkTo = toAnchor.id;
 	toAnchor.linkTo = fromAnchor.id;
+
+	this.links[id].fromAnchor = fromAnchor;
+	this.links[id].toAnchor = toAnchor;
+	this.links[id].fromNodeType = fromNode.type;
+	this.links[id].toNodeType = toNode.type;
 	this.addReverseMap(id, from, to);
 	return this;
 }
@@ -117,8 +123,12 @@ LineLayout.prototype.nodeCost = function(n) {
 	var n2 = this.nodes[n1.linkTo];
 	var x = Math.abs(n1.x - n2.x);
 	var y = Math.abs(n1.y - n2.y);
-	return x*x/(x*x + y*y); 
-}
+//	return x*x/(x*x + y*y); 
+	
+	var cos = x/Math.sqrt(x*x + y*y);
+	var cost = Math.exp(cos * 100);
+	return cost; 
+};
 
 
 /** 
@@ -130,7 +140,7 @@ LineLayout.prototype.groupCost = function(g) {
 	return this.groups[g].reduce(function(previous, x) { 
 		return previous + graph.nodeCost(x); 
 	}, 0);
-}
+};
 
 /** 
  * @param {String} g name of group. 
@@ -146,7 +156,9 @@ LineLayout.prototype.groupMaxCostNode = function(g) {
 			return (cost < graph.nodeCost(x)) ? x : previous;
 		}
 	}, null);
-}
+};
+
+
 
 /** 
  * Suppose n1 points to l1, and n2 points to l2. We may reduce the cost by
@@ -163,25 +175,35 @@ LineLayout.prototype.swapIfBetter = function(n1, n2, savings) {
 	var node2 = this.nodes[n2];
 	var l1 = node1.linkTo;
 	var l2 = node2.linkTo;
-
-	var currentCost = this.nodeCost(n1) + this.nodeCost(n2);
+	var l1PropId = node1.linkToPropId;
+	var l2PropId = node2.linkToPropId;
+	
+	var costn1 = this.nodeCost(n1);
+	var costn2 = this.nodeCost(n2);
+	var currentCost = costn1 + costn2;
+	
 	node1.linkTo = l2;
+	node1.linkToPropId = l2PropId;
 	this.nodes[l2].linkTo = n1;
 	node2.linkTo = l1;
+	node2.linkToPropId = l1PropId;
 	this.nodes[l1].linkTo = n2;
 	var newCost = this.nodeCost(n1) + this.nodeCost(n2);
 
-	var newSavings = currentCost - newCost
+	var newSavings = currentCost - newCost;
 	if (newSavings > savings) {
+		console.log("Swap nodes: " +  node1.id + "(" + costn1 + ") and " + node2.id + "(" + costn2 + ")");
 		return newSavings;
 	} else {
 		node1.linkTo = l1;
+		node1.linkToPropId = l1PropId;
 		this.nodes[l1].linkTo = n1;
 		node2.linkTo = l2;
+		node2.linkToPropId = l2PropId;
 		this.nodes[l2].linkTo = n2;		
 		return savings;
 	}
-}
+};
 
 /** 
  * Find the node with highest cost and do the swap that maximally reduces the cost of the group.
@@ -210,21 +232,112 @@ LineLayout.prototype.tryOneSwapInEachGroup = function() {
 		//console.log("key:"+g);
 		return previous + graph.doSwap(g);
 	}, 0);
-}
+};
 
 /** 
  * Iterate tryOneSwapInEachGroup until no savings can be achieved.
  * @param {Graph} graph is the whole graph.
  */
 LineLayout.prototype.optimizeGroups = function() {
-	var savings = this.tryOneSwapInEachGroup();
-	while (savings > 0) {
+	do {
 		savings = this.tryOneSwapInEachGroup();
-	}
+		console.log("tried swap, savings: " + savings);
+	} while (savings > 0);
+	
+	var me = this;
+	$.each(this.nodes, function(index, node){
+		if(node.type == "anchor") {
+			var linkid = node.linkToPropId;
+			if(linkid) {
+				var link = me.links[linkid];
+				link.fromAnchor = node;
+				link.toAnchor = me.nodes[node.linkTo];
+			}
+		}
+	});
+	
+	console.log(this);
 	return this;
-}
+};
 
- 
+
+/**
+ * Get the X1 position for the link
+ * @param: id of the link used in the addLink call
+ */
+LineLayout.prototype.getLinkX1 = function(id) {
+	var link = this.links[id];
+	var fromAnchor = link.fromAnchor;
+	return fromAnchor.x;
+};
+
+/**
+ * Get theY1 position for the link
+ * @param: id of the link used in the addLink call
+ */
+LineLayout.prototype.getLinkY1 = function(id) {
+	var link = this.links[id];
+	var fromAnchor = link.fromAnchor;
+	return fromAnchor.y;
+};
+
+/**
+ * Get the X2 position for the link
+ * @param: id of the link used in the addLink call
+ */
+LineLayout.prototype.getLinkX2 = function(id) {
+	var link = this.links[id];
+	var toAnchor = link.toAnchor;
+	return toAnchor.x;
+};
+
+/**
+ * Get the Y2 position for the link
+ * @param: id of the link used in the addLink call
+ */
+LineLayout.prototype.getLinkY2 = function(id) {
+	var link = this.links[id];
+	var toAnchor = link.toAnchor;
+	return toAnchor.y;
+};
+
+LineLayout.prototype.getLinkSlope = function(id) {
+	var link = this.links[id];
+	var x1 = link.fromAnchor.x,
+		y1 = link.fromAnchor.y,
+		x2 = link.toAnchor.x,
+		y2 = link.toAnchor.y;
+	
+	if(x1 == x2) 
+		return 10000;
+	
+	var s = (y1 - y2) / (x1 - x2);
+    
+    return s;
+};
+
+LineLayout.prototype.getLinkLabelPosition = function(id) {
+	var link = this.links[id];
+	
+	//y = mx + b
+	var m = this.getLinkSlope(id);
+	//b = y - mx
+	var b = link.toAnchor.y - (m * link.toAnchor.x);
+	
+	//Now calculate the new point on the line
+	var y = link.toAnchor.y;
+	if(link.toNodeType == "column") {
+		y = y + 12;
+	} else {
+		if(link.fromAnchor.y > y)
+			y = y + 20;
+		else
+			y = y - 20;
+	}
+	var x = (y - b) / m;
+	return [x, y];
+};
+
 /**********************************************************
  * 
  * How to use this
@@ -289,27 +402,28 @@ LineLayout.prototype.optimizeGroups = function() {
 
 //optimizeGroups(graph1);
 
-var ll1 = new LineLayout();
-ll1
-	.addInternalNode("i1", 3, 10, 31, 40, 3)
-	.addInternalNode("i2", 2, 60, 21, 30, 3)
-	.addInternalNode("i3", 1, 60, 11, 20, 3)
-	.addColumnNode("c1", 10, 0)
-	.addColumnNode("c2", 50, 0)
-	.addColumnNode("c3", 70, 0)
-	.addColumnNode("c4", 90, 0)
+//var ll1 = new LineLayout();
+//ll1
+//	.addInternalNode("i1", 3, 10, 31, 40, 3)
+//	.addInternalNode("i2", 2, 60, 21, 30, 3)
+//	.addInternalNode("i3", 1, 60, 11, 20, 3)
+//	.addColumnNode("c1", 10, 0)
+//	.addColumnNode("c2", 50, 0)
+//	.addColumnNode("c3", 70, 0)
+//	.addColumnNode("c4", 90, 0)
+//
+//	.addLink("l1", "i1", "i3")
+//	.addLink("l2", "i2", "i1")
+//	.addLink("l3", "i2", "i3")
+//	.addLink("l4", "i3", "c1")
+//	.addLink("l5", "i3", "c2")
+//	.addLink("l6", "i2", "c3")
+//	.addLink("l7", "i2", "c4")
+//
+//	.assignAnchorCoordinates()
+//
+//	.optimizeGroups();
+//	;
+//
+//console.log(ll1);
 
-	.addLink("l1", "i1", "i3")
-	.addLink("l2", "i2", "i1")
-	.addLink("l3", "i2", "i3")
-	.addLink("l4", "i3", "c1")
-	.addLink("l5", "i3", "c2")
-	.addLink("l6", "i2", "c3")
-	.addLink("l7", "i2", "c4")
-
-	.assignAnchorCoordinates()
-
-	.optimizeGroups();
-	;
-
-console.log(ll1);
