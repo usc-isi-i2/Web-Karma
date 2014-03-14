@@ -355,6 +355,18 @@ function parse(data) {
             $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
             $.sticky("CSV file published");
         }
+        else if(element["updateType"] == "PublishJSONUpdate") {
+            $("a.JSONDownloadLink", titleDiv).remove();
+            var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
+            // Remove existing link if any
+            hideLoading(element["worksheetId"]);
+            var downloadLink = $("<a>").attr("href", element["fileUrl"])
+                .text("JSON")
+                .addClass("JSONDownloadLink  DownloadLink")
+                .attr("target", "_blank");
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
+            $.sticky("JSON file published");
+        }
         else if(element["updateType"] == "PublishMDBUpdate") {
             $("a.MDBDownloadLink", titleDiv).remove();
             var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");

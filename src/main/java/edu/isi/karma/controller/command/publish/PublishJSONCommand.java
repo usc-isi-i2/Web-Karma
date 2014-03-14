@@ -1,6 +1,8 @@
 package edu.isi.karma.controller.command.publish;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,13 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.command.Command.CommandTag;
-import edu.isi.karma.controller.command.Command.CommandType;
-import edu.isi.karma.controller.command.publish.PublishRDFCommand.PreferencesKeys;
-import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.InfoUpdate;
+import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.imp.json.JsonExport;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMapping;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
@@ -25,12 +23,12 @@ import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.TriplesMap;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import edu.isi.karma.view.VWorkspace;
 
 public class PublishJSONCommand extends WorksheetCommand {
 
@@ -38,6 +36,10 @@ public class PublishJSONCommand extends WorksheetCommand {
 	private final String alignmentNodeId;
 	private String rdfPrefix;
 	private String rdfNamespace;
+	
+	private enum JsonKeys {
+		updateType, fileUrl, worksheetId
+	}
     
 	public PublishJSONCommand(String id, String alignmentNodeId, String worksheetId) {
 		super(id, worksheetId);
@@ -86,7 +88,7 @@ public class PublishJSONCommand extends WorksheetCommand {
 				worksheet.getSemanticTypes(), rdfPrefix, rdfNamespace,
 				true, errorReport);
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
-		TriplesMap triplesMap = mapping.getTriplesMapIndex().get(alignmentNodeId);
+//		TriplesMap triplesMap = mapping.getTriplesMapIndex().get(alignmentNodeId);
 
 		logger.debug(mapping.toString());
 		
@@ -97,7 +99,7 @@ public class PublishJSONCommand extends WorksheetCommand {
 
 		//*** Extract list of TripleMaps *************************************************************************************************/
 		List<TriplesMap> triplesMapList = mapping.getTriplesMapList();
-//		TriplesMap triplesMap = triplesMapList.get(0);
+		TriplesMap triplesMap = triplesMapList.get(2);
 		logger.info("Size: " + Integer.toString(triplesMapList.size()));
 
 		
@@ -110,22 +112,71 @@ public class PublishJSONCommand extends WorksheetCommand {
 			JSONObject obj = new JSONObject();
 			Iterator<PredicateObjectMap> it = triplesMap.getPredicateObjectMaps().iterator();
 			
+			if (it == null) {
+				logger.info("Iterator is null");
+				break;
+			} else {
+				logger.info("Iterator is NOT null");
+				logger.info("No. of PredObjMap: " + triplesMap.getPredicateObjectMaps().size());
+			}
+			
 			while (it.hasNext()) {
+				logger.info("Entered while");
 				PredicateObjectMap predicateObjectMap = it.next();
+				logger.info("Got predObjMap");
 				String objectId = predicateObjectMap.getObject().getId();
+//				predicateObjectMap.getObject().
+				logger.info("Got objectId: " + objectId);
+				
+				String key = predicateObjectMap.getPredicate().getTemplate().toString();
+				logger.info("Got key");
+				
+				Collection<Node> nodes = row.getNodes();
+				for (Node node:nodes) {
+					logger.info(node.getHNodeId() + ": " + node.getValue().asString());
+				}
+				
+				String value = row.getNode(objectId).getValue().asString();
+				logger.info("Got value");
+				
 				obj.put(predicateObjectMap.getPredicate().getTemplate().toString(), row.getNode(objectId).getValue().asString());
+				logger.info("Put object");
 			}
 
+			logger.info("Done with while loop");
 			JSONObjectsList.add(obj);
 		}
 		
 		logger.info("No. of JSON objects: " + JSONObjectsList.size());
 		logger.info(JSONObjectsList.toString());
 
-		// Prepare the output container
-		UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
-		c.add(new InfoUpdate("JSON generation complete"));
-		return c;
+//		// Prepare the output container
+//		UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+//		c.add(new InfoUpdate("JSON generation complete"));
+//		return c;
+		
+		JsonExport jsonExport = new JsonExport(worksheet);
+		final String fileName = jsonExport.publishJSON(JSONObjectsList.toString());
+		
+		return new UpdateContainer(new AbstractUpdate() {
+			
+			@Override
+			public void generateJson(String prefix, PrintWriter pw,	VWorkspace vWorkspace) {
+				JSONObject outputObject = new JSONObject();
+				try {
+					outputObject.put(JsonKeys.updateType.name(),
+							"PublishJSONUpdate");
+					outputObject.put(JsonKeys.fileUrl.name(),
+							fileName);
+					outputObject.put(JsonKeys.worksheetId.name(),
+							worksheetId);
+					pw.println(outputObject.toString(4));
+					
+				} catch (JSONException e) {
+					logger.error("Error occured while generating JSON!");
+				}
+			}
+		});
 	}
 
 	@Override
