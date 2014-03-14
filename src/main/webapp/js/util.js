@@ -228,7 +228,7 @@ function parseClassJSON(clazz, result, allLabels) {
 	}
 }
 
-function getAllProperties(worksheetId) {
+function getAllDataProperties(worksheetId) {
 	var info = new Object();
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["command"] = "GetDataPropertyHierarchyCommand";
@@ -263,6 +263,45 @@ function getAllProperties(worksheetId) {
     	lastLabel = item.label;
     });
 	return uniques;
+}
+
+function getAllObjectProperties(alignmentId) {
+	var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "GetLinksOfAlignmentCommand";
+    info["alignmentId"] = alignmentId;
+    
+    info["linksRange"] = "allObjectProperties";
+    
+    var result = [];
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        async: false,
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                $.each(json["elements"], function(index, element) {
+        	        if(element["updateType"] == "DataPropertyListUpdate" || element["updateType"] == "DataPropertiesForClassUpdate") {
+        	            $.each(element["data"], function(index2, node) {
+        	            	result.push({"label":node.data, "id":node.metadata.URIorId, "uri":node.metadata.URIorId});
+        	            });
+        	        } else if(element["updateType"] == "LinksList") {
+        	        	 $.each(element["edges"], function(index2, node) {
+        	        		 result.push({"label":node["edgeLabel"], "id":node["edgeId"], "uri":node["edgeId"]});
+        	             });
+        	        }
+        	    });
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while getting property list!");
+            }
+    });
+    sortClassPropertyNodes(result);
+    return result;
 }
 
 function getAllPropertiesForClass(worksheetId, classUri) {
