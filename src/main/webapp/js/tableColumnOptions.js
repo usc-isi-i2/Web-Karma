@@ -81,6 +81,8 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 		var info = new Object();
         info["workspaceId"] = $.workspaceGlobalInformation.id;
         info["worksheetId"] = worksheetId;
+		info["hNodeId"] = columnId;
+	    info["hTableId"] = "";
         info["command"] = "ExtractEntitiesCommand";
 		var returned = $.ajax({
     			   	url: "RequestController",

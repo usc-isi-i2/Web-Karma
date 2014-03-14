@@ -28,6 +28,7 @@ import org.json.JSONException;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.command.worksheet.FoldCommandFactory.Arguments;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
@@ -41,8 +42,11 @@ public class ExtractEntitiesCommandFactory extends CommandFactory {
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
-				String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		return new ExtractEntitiesCommand(getNewId(workspace), worksheetId);
+		String hNodeId = request.getParameter(Arguments.hNodeId.name());
+		String hTableId = request.getParameter(Arguments.hTableId.name());
+		String worksheetId = request.getParameter(Arguments.worksheetId.name());
+		return new ExtractEntitiesCommand(getNewId(workspace), worksheetId, 
+				hTableId, hNodeId);
 	}
 
 
