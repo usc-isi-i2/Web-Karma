@@ -108,7 +108,7 @@ var FileFormatSelectionDialog = (function() {
         	var fileName = data.files[0].name;
             dialog.data("fileName", fileName);
             dialog.data("formData", data);
-            dialog.modal({keyboard:true, show:true});
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
         
         
@@ -312,8 +312,13 @@ var FileOptionsDialog = (function() {
 				    				var json = $.parseJSON(xhr.responseText);
 				    		        parse(json);
 				    		        hideWaitingSignOnScreen();
-				    		        if(format !== "Ontology") 
-				    		        	showDialogToLoadModel(); //This is giving a JS error. Should go after conversion of this dialog to bootstrap
+				    		        if(format !== "Ontology")  {
+				    		        	var lastWorksheetLoaded = $("div.Worksheet").last();
+				    		        	if(lastWorksheetLoaded) {
+				    		        		var lastWorksheetId = lastWorksheetLoaded.attr("id");
+				    		        		ShowExistingModelDialog.getInstance().showIfNeeded(lastWorksheetId);
+				    		        	}
+				    		        }
 				    		        dialog.modal('hide');
 				    			}
 				    		}
@@ -329,7 +334,7 @@ var FileOptionsDialog = (function() {
         	dialog.data("format", format);
         	showOptions(data);
             
-            dialog.modal({keyboard:true, show:true});
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
 		}
 		
 		return {

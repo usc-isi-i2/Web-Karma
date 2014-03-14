@@ -2,7 +2,18 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
 
+#csv_columns li:hover {
+	cursor: pointer;
+	color: red;
+}
+a.icon-remove:hover {
+	cursor: pointer;
+	font-weight:  bold;
+}
+
+</style>
 </head>
 <body>
 
@@ -68,6 +79,53 @@
 </div><!-- /.modal -->
 
 
+
+
+<div class="modal fade" id="exportCSVDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title" id="exportCSV_ModelTitle">Export CSV</h4>
+				  </div>
+				  <div class="modal-body">
+				  <div id="csvDialogColumnList">
+				  
+				  </div>
+				  <!-- <div id="csvDialogContent">
+						<div class="form-group">
+							<label for="csvSPAQRLEndPoint">SPARQL End Point</label>
+							<input class="form-control" type="text" id="csvSPAQRLEndPoint" required url value="" maxlength="1000" />
+						</div>
+						<div class="form-group">
+								<label for="csvModelGraphList">Graph</label>
+								<select id="csvModelGraphList">
+			                	</select>
+						</div>
+					</div> -->
+					<div id="csvDataDialogContent">
+						<div class="form-group" id="formDivSparql">
+							<label for="csvDataEndPoint">SPARQL End Point</label>
+							<input class="form-control" type="text" id="csvDataEndPoint" required url value="" maxlength="1000" />
+						</div>
+						<div class="form-group" id="formDivGraphs">
+								<label for="csvDataGraphList">Graph</label>
+								<select id="csvDataGraphList">
+			                	</select>
+						</div>
+					</div>
+					<div class="error" style="display: none">Please enter all valid url</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <!-- <button type="submit" class="btn btn-primary" id="btnSave">Fetch Columns</button> -->
+				        <button type="button" class="btn btn-primary" id="btnExportCSV">Export</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 
 
@@ -320,6 +378,28 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-     
+
+<div class="modal fade" id="foldDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Fold</h4>
+				  </div>
+				  <div class="modal-body">
+						<h4>Select Columns:</h4>
+						<div id="foldDialogColumns"></div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Submit</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+             
 </body>
 </html>

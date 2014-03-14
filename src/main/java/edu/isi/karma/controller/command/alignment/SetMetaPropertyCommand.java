@@ -51,8 +51,9 @@ import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
@@ -72,7 +73,7 @@ public class SetMetaPropertyCommand extends Command {
 	private CRFColumnModel oldColumnModel;
 	private SynonymSemanticTypes oldSynonymTypes;
 	private Alignment oldAlignment;
-	private DirectedWeightedMultigraph<Node, Link> oldGraph;
+	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 	private SemanticType oldType;
 	private SemanticType newType;
 
@@ -133,7 +134,7 @@ public class SetMetaPropertyCommand extends Command {
 
 		// Save the original alignment for undo
 		oldAlignment = alignment.getAlignmentClone();
-		oldGraph = (DirectedWeightedMultigraph<Node, Link>) alignment
+		oldGraph = (DirectedWeightedMultigraph<Node, DefaultLink>) alignment
 				.getGraph().clone();
 
 		/*** Add the appropriate nodes and links in alignment graph ***/
@@ -143,9 +144,9 @@ public class SetMetaPropertyCommand extends Command {
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 		columnNode.setRdfLiteralType(rdfLiteralType);
 		boolean semanticTypeAlreadyExists = false;
-		Link oldIncomingLinkToColumnNode = null;
+		LabeledLink oldIncomingLinkToColumnNode = null;
 		Node oldDomainNode = null;
-		List<Link> columnNodeIncomingLinks = alignment
+		List<LabeledLink> columnNodeIncomingLinks = alignment
 				.getIncomingLinks(columnNode.getId());
 		if (columnNodeIncomingLinks != null
 				&& !columnNodeIncomingLinks.isEmpty()) { // SemanticType already
@@ -184,9 +185,9 @@ public class SetMetaPropertyCommand extends Command {
 					SemanticType.Origin.User, 1.0, false);
 		} else if (metaPropertyName
 				.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
-			Link propertyLink = alignment.getLinkById(metaPropertyValue);
+			LabeledLink propertyLink = alignment.getLinkById(metaPropertyValue);
 			if (propertyLink == null) {
-				String errorMessage = "Error while specializing a link. The Link '"
+				String errorMessage = "Error while specializing a link. The DefaultLink '"
 						+ metaPropertyValue
 						+ "' should already be in the alignment, but it is not.";
 				logger.error(errorMessage);
@@ -293,7 +294,7 @@ public class SetMetaPropertyCommand extends Command {
 		return c;
 	}
 
-	private void clearOldSemanticTypeLink(Link oldIncomingLinkToColumnNode,
+	private void clearOldSemanticTypeLink(LabeledLink oldIncomingLinkToColumnNode,
 			Node oldDomainNode, Alignment alignment, Node newDomainNode) {
 		alignment.removeLink(oldIncomingLinkToColumnNode.getId());
 		// if (oldDomainNode != newDomainNode)

@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
 import edu.isi.karma.util.EncodingDetector;
@@ -57,7 +58,9 @@ public class OfflineRdfGenerator {
 
     public static void main(String[] args) {
     	
-        Group options = createCommandLineOptions();
+        ModelingConfiguration.setLearnerEnabled(false); // disable automatic learning
+    	
+    	Group options = createCommandLineOptions();
         Parser parser = new Parser();
         parser.setGroup(options);
 

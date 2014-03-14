@@ -52,7 +52,7 @@ function ClassUI(id,
 	            	console.log("loaded classlist: " + $(list1).attr("id"));
 	            	$("#" + id + "_classKeyword").val(defaultClassData.label);
 	    			window.setTimeout(function() {
-	    				if(defaultClassData.label.length > 0) {
+	    				if(defaultClassData.label.length > 0 && defaultClassData.label != "Class") {
 	    					var treeId = "#" + ClassUI.getNodeID(defaultClassData.label, defaultClassData.id, defaultClassData.uri);
 	    					console.log("Now select node:" + treeId + " in classList " + $(list1).attr("id"));
 	    					selectOnLoad = true;
@@ -99,13 +99,16 @@ function ClassUI(id,
 		classList2 = $("<div>").attr("id", id + "_classList2").addClass(id + "_classList2").css("overflow","auto").css("height", maxHeight + "px");;
 			
 		var row2 =  $("<div>").addClass("row");
-		var classListDiv = $("<div>")
-								.addClass("col-sm-12")
-								.append($("<div>").addClass("separatorWithText").text(textForClassList1))
-								.append(classList1)
-								.append($("<div>").addClass("separatorWithText").text(textForClassList2))
-								//.append($("<div>").addClass("separator"))
-								.append(classList2);
+		var classListDiv = $("<div>").addClass("col-sm-12");
+		
+		if(classFuncTop != null)
+			classListDiv.append($("<div>").addClass("separatorWithText").text(textForClassList1))
+						.append(classList1);
+		
+		if(classFuncBottom != null)
+			classListDiv.append($("<div>").addClass("separatorWithText").text(textForClassList2))
+						//.append($("<div>").addClass("separator"))
+						.append(classList2);
 						
 		
 		row2.append(classListDiv);
@@ -128,8 +131,10 @@ function ClassUI(id,
 	};
 	
 	this.populateClasses = function() {
-		populateClassList(classFuncTop(selectedPropertyData), classList1, classList2);
-		populateClassList(classFuncBottom(selectedPropertyData), classList2, classList1);
+		if(classFuncTop != null)
+			populateClassList(classFuncTop(selectedPropertyData), classList1, classList2);
+		if(classFuncBottom != null)
+			populateClassList(classFuncBottom(selectedPropertyData), classList2, classList1);
 	};
 	
 	this.refreshClassDataTop = function(label, classId, uri) {

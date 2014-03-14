@@ -42,12 +42,12 @@ public class DisplayModel {
 
 	private static Logger logger = LoggerFactory.getLogger(DisplayModel.class);
 
-	private DirectedWeightedMultigraph<Node, Link> model;
+	private DirectedWeightedMultigraph<Node, LabeledLink> model;
 	private HashMap<Node, Integer> nodesLevel;
 	private HashMap<Node, Set<ColumnNode>> nodesSpan;
 	private HTable hTable;
 	
-	public DisplayModel(DirectedWeightedMultigraph<Node, Link> model) {
+	public DisplayModel(DirectedWeightedMultigraph<Node, LabeledLink> model) {
 		this.model = model;
 		this.nodesLevel = new HashMap<Node, Integer>();
 		this.nodesSpan = new HashMap<Node, Set<ColumnNode>>();
@@ -57,7 +57,7 @@ public class DisplayModel {
 		computeNodeSpan();
 	}
 	
-	public DisplayModel(DirectedWeightedMultigraph<Node, Link> model, HTable hTable) {
+	public DisplayModel(DirectedWeightedMultigraph<Node, LabeledLink> model, HTable hTable) {
 		this.model = model;
 		this.nodesLevel = new HashMap<Node, Integer>();
 		this.nodesSpan = new HashMap<Node, Set<ColumnNode>>();
@@ -77,7 +77,7 @@ public class DisplayModel {
 		logger.debug("finished leveling the model.");
 	}
 
-	public DirectedWeightedMultigraph<Node, Link> getModel() {
+	public DirectedWeightedMultigraph<Node, LabeledLink> getModel() {
 		return model;
 	}
 
@@ -89,18 +89,18 @@ public class DisplayModel {
 		return nodesSpan;
 	}
 
-	private static HashMap<Node, Integer> inDegreeInSet(DirectedWeightedMultigraph<Node, Link> g, 
+	private static HashMap<Node, Integer> inDegreeInSet(DirectedWeightedMultigraph<Node, LabeledLink> g, 
 			Set<Node> nodes, boolean includeSelfLinks) {
 		
 		HashMap<Node, Integer> nodeToInDegree = new HashMap<Node, Integer>();
 		if (g == null || nodes == null) return nodeToInDegree;
 		for (Node n : nodes) {
-			Set<Link> incomingLinks = g.incomingEdgesOf(n);
+			Set<LabeledLink> incomingLinks = g.incomingEdgesOf(n);
 			if (incomingLinks == null || incomingLinks.size() == 0) {
 				nodeToInDegree.put(n, 0);
 			} else {
 				int count = 0;
-				for (Link l : incomingLinks) {
+				for (LabeledLink l : incomingLinks) {
 					if (includeSelfLinks) {
 						if (nodes.contains(l.getSource())) count++;
 					} else {
@@ -113,18 +113,18 @@ public class DisplayModel {
 		return nodeToInDegree;
 	}
 	
-	private static HashMap<Node, Integer> outDegreeInSet(DirectedWeightedMultigraph<Node, Link> g, 
+	private static HashMap<Node, Integer> outDegreeInSet(DirectedWeightedMultigraph<Node, LabeledLink> g, 
 			Set<Node> nodes, boolean includeSelfLinks) {
 		
 		HashMap<Node, Integer> nodeToOutDegree = new HashMap<Node, Integer>();
 		if (g == null || nodes == null) return nodeToOutDegree;
 		for (Node n : nodes) {
-			Set<Link> outgoingLinks = g.outgoingEdgesOf(n);
+			Set<LabeledLink> outgoingLinks = g.outgoingEdgesOf(n);
 			if (outgoingLinks == null || outgoingLinks.size() == 0) {
 				nodeToOutDegree.put(n, 0);
 			} else {
 				int count = 0;
-				for (Link l : outgoingLinks) {
+				for (LabeledLink l : outgoingLinks) {
 					if (includeSelfLinks) {
 						if (nodes.contains(l.getSource())) count++;
 					} else {
@@ -162,7 +162,7 @@ public class DisplayModel {
 				
 				while (!q.isEmpty()) {
 					Node v = q.remove();
-					Set<Node> neighbors = GraphUtil.getOutNeighbors(this.model, v);
+					Set<Node> neighbors = GraphUtil.getOutNeighbors(GraphUtil.asDefaultGraph(this.model), v);
 					for (Node w : neighbors) {
 						if (!markedNodes.contains(w)) {
 							markedNodes.add(w);
@@ -312,15 +312,15 @@ public class DisplayModel {
 					List<Node> neighborsInLowerLevel = new ArrayList<Node>();
 					
 					// finding the nodes connected to n (incoming & outgoing) from a lower level
-					Set<Link> outgoingLinks = this.model.outgoingEdgesOf(n);
+					Set<LabeledLink> outgoingLinks = this.model.outgoingEdgesOf(n);
 					if (outgoingLinks != null && !outgoingLinks.isEmpty()) 
-						for (Link l : outgoingLinks) 
+						for (LabeledLink l : outgoingLinks) 
 							if (nodesLevel.get(l.getTarget()) > nodesLevel.get(n))
 								neighborsInLowerLevel.add(l.getTarget());
 					
-					Set<Link> incomingLinks = this.model.incomingEdgesOf(n);
+					Set<LabeledLink> incomingLinks = this.model.incomingEdgesOf(n);
 					if (incomingLinks != null && !incomingLinks.isEmpty()) 
-						for (Link l : incomingLinks) 
+						for (LabeledLink l : incomingLinks) 
 							if (nodesLevel.get(l.getSource()) > nodesLevel.get(n))
 								neighborsInLowerLevel.add(l.getSource());
 					

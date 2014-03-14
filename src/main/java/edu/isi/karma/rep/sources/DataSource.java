@@ -32,8 +32,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.model.Argument;
@@ -67,7 +67,7 @@ public class DataSource extends Source {
 		attIdToAttMap = new HashMap<String, Attribute>();
 	}
 	
-	public DataSource(String name, DirectedWeightedMultigraph<Node, Link> treeModel) {
+	public DataSource(String name, DirectedWeightedMultigraph<Node, LabeledLink> treeModel) {
 		super(new RandomGUID().toString());
 		this.setName(name);
 		variables = new ArrayList<String>();
@@ -76,7 +76,7 @@ public class DataSource extends Source {
 		this.updateModel(treeModel);
 	}
 	
-	public DataSource(DirectedWeightedMultigraph<Node, Link> treeModel) {
+	public DataSource(DirectedWeightedMultigraph<Node, LabeledLink> treeModel) {
 		super(new RandomGUID().toString());
 		variables = new ArrayList<String>();
 		attributes = new ArrayList<Attribute>();
@@ -126,7 +126,7 @@ public class DataSource extends Source {
 		this.variables = variables;
 	}
 	
-	private void updateModel(DirectedWeightedMultigraph<Node, Link> treeModel) {
+	private void updateModel(DirectedWeightedMultigraph<Node, LabeledLink> treeModel) {
 		
 		if (treeModel == null)
 			return;
@@ -171,7 +171,7 @@ public class DataSource extends Source {
 			m.getAtoms().add(classAtom);
 		}
 		
-		for (Link e : treeModel.edgeSet()) {
+		for (LabeledLink e : treeModel.edgeSet()) {
 			
 			if (vertexIdToArgument.get(e.getSource().getId()) == null || 
 					vertexIdToArgument.get(e.getTarget().getId()) == null)

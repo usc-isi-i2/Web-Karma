@@ -37,6 +37,7 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.jgrapht.graph.WeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,12 +49,15 @@ import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
+import edu.isi.karma.rep.alignment.CompactObjectPropertyLink;
+import edu.isi.karma.rep.alignment.CompactSubClassLink;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.DisplayModel;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.LinkType;
@@ -62,7 +66,6 @@ import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
-import edu.isi.karma.rep.alignment.PlainLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.rep.alignment.SubClassLink;
@@ -70,69 +73,101 @@ import edu.isi.karma.rep.alignment.SubClassLink;
 public class GraphUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(GraphUtil.class);
-	
-	// FIXME: change methods to get an Outputstream as input and write on it.
-	
-	public static void printVertex(Node node, StringBuffer sb) {
-		
-		if (node == null) {
-			sb.append("node is null.");
-			return;
-		}
-		
-		sb.append("(");
-		sb.append( node.getLocalId());
-//    	sb.append( vertex.getID());
-		sb.append(", ");
-		if (node instanceof ColumnNode)
-			sb.append( ((ColumnNode)node).getColumnName());
-		else
-			sb.append(node.getLabel().getLocalName());
-		sb.append(", ");
-		sb.append(node.getType().toString());
-		sb.append(")");
-	}
-	
-	public static void printEdge(Link link, StringBuffer sb) {
-		
-		if (link == null) {
-			sb.append("link is null.");
-			return;
-		}
-		
-		sb.append("(");
-    	sb.append( link.getLocalId());
-    	sb.append(", ");
-    	sb.append(link.getLabel().getLocalName());
-    	sb.append(", ");
-    	sb.append(link.getType().toString());
-    	sb.append(", ");
-    	sb.append(link.getWeight());
-    	sb.append(") - From ");
-    	printVertex(link.getSource(), sb);
-    	sb.append(" To ");
-    	printVertex(link.getTarget(), sb);
-	}
 
-	public static DirectedGraph<Node, Link> asDirectedGraph(UndirectedGraph<Node, Link> undirectedGraph) {
+	public static DirectedGraph<Node, DefaultLink> asDirectedGraph(UndirectedGraph<Node, DefaultLink> undirectedGraph) {
 		
 		if (undirectedGraph == null) {
 			logger.debug("graph is null.");
 			return null;
 		}		
 
-		DirectedGraph<Node, Link> g = new DirectedWeightedMultigraph<Node, Link>(Link.class);
+		DirectedGraph<Node, DefaultLink> g = new DirectedWeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
 		
 		for (Node v : undirectedGraph.vertexSet())
 			g.addVertex(v);
 		
-		for (Link e: undirectedGraph.edgeSet())
+		for (DefaultLink e: undirectedGraph.edgeSet())
+			g.addEdge(e.getSource(), e.getTarget(), e);
+		
+		return g;
+	}
+
+	
+	public static DirectedWeightedMultigraph<Node, DefaultLink> asDefaultGraph(DirectedWeightedMultigraph<Node, LabeledLink> graph) {
+		
+		if (graph == null) {
+			logger.debug("graph is null.");
+			return null;
+		}		
+
+		DirectedWeightedMultigraph<Node, DefaultLink> g = new DirectedWeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
+		
+		for (Node v : graph.vertexSet())
+			g.addVertex(v);
+		
+		for (DefaultLink e: graph.edgeSet())
 			g.addEdge(e.getSource(), e.getTarget(), e);
 		
 		return g;
 	}
 	
-	public static void printGraph(Graph<Node, Link> graph) {
+	public static DirectedWeightedMultigraph<Node, LabeledLink> asLabeledGraph(DirectedWeightedMultigraph<Node, DefaultLink> graph) {
+		
+		if (graph == null) {
+			logger.debug("graph is null.");
+			return null;
+		}		
+
+		DirectedWeightedMultigraph<Node, LabeledLink> g = new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
+		
+		for (Node v : graph.vertexSet())
+			g.addVertex(v);
+		
+		for (DefaultLink e: graph.edgeSet())
+			if (e instanceof LabeledLink)
+				g.addEdge(e.getSource(), e.getTarget(), (LabeledLink)e);
+		
+		return g;
+	}
+	
+	public static UndirectedGraph<Node, DefaultLink> asDefaultGraph(UndirectedGraph<Node, LabeledLink> graph) {
+		
+		if (graph == null) {
+			logger.debug("graph is null.");
+			return null;
+		}		
+
+		UndirectedGraph<Node, DefaultLink> g = new WeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
+		
+		for (Node v : graph.vertexSet())
+			g.addVertex(v);
+		
+		for (DefaultLink e: graph.edgeSet())
+			g.addEdge(e.getSource(), e.getTarget(), e);
+		
+		return g;
+	}
+	
+	public static WeightedMultigraph<Node, LabeledLink> asLabeledGraph(WeightedMultigraph<Node, DefaultLink> graph) {
+		
+		if (graph == null) {
+			logger.debug("graph is null.");
+			return null;
+		}		
+
+		WeightedMultigraph<Node, LabeledLink> g = new WeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
+		
+		for (Node v : graph.vertexSet())
+			g.addVertex(v);
+		
+		for (DefaultLink e: graph.edgeSet())
+			if (e instanceof LabeledLink)
+				g.addEdge(e.getSource(), e.getTarget(), (LabeledLink)e);
+		
+		return g;
+	}
+	
+	public static void printGraph(Graph<Node, DefaultLink> graph) {
 		
 		if (graph == null) {
 			logger.debug("graph is null.");
@@ -140,21 +175,24 @@ public class GraphUtil {
 		}		
 		StringBuffer sb = new StringBuffer();
 		sb.append("*** Nodes ***");
-		for (Node vertex : graph.vertexSet()) {
-			printVertex(vertex, sb);
+		for (Node n : graph.vertexSet()) {
+			sb.append(n.getLocalId());
 			sb.append("\n");
         }
 		sb.append("*** Links ***");
-		for (Link edge : graph.edgeSet()) {
-			printEdge(edge, sb);
+		for (DefaultLink link : graph.edgeSet()) {
+			sb.append(link.getId());
+			sb.append(", ");
+			sb.append(link.getType().toString());
+			sb.append(", ");
+			sb.append(link.getWeight());
 			sb.append("\n");
         }
 //		sb.append("------------------------------------------");
 		logger.debug(sb.toString());
-		
 	}
 	
-	public static String graphToString(Graph<Node, Link> graph) {
+	public static String defaultGraphToString(Graph<Node, DefaultLink> graph) {
 		
 		if (graph == null) {
 			logger.debug("The input graph is null.");
@@ -162,7 +200,26 @@ public class GraphUtil {
 		}		
 
 		StringBuffer sb = new StringBuffer();
-		for (Link edge : graph.edgeSet()) {
+		for (DefaultLink edge : graph.edgeSet()) {
+			sb.append("(");
+			sb.append(edge.getId());
+			sb.append(" - w=" + edge.getWeight());
+			sb.append("\n");
+        }
+		//sb.append("------------------------------------------");
+		return sb.toString();
+		
+	}
+	
+	public static String labeledGraphToString(Graph<Node, LabeledLink> graph) {
+		
+		if (graph == null) {
+			logger.debug("The input graph is null.");
+			return "";
+		}		
+
+		StringBuffer sb = new StringBuffer();
+		for (LabeledLink edge : graph.edgeSet()) {
 			sb.append("(");
 			sb.append(edge.getId());
 			sb.append(" - status=" + edge.getStatus().name());
@@ -174,7 +231,7 @@ public class GraphUtil {
 		
 	}
 	
-	public static List<GraphPath> getPaths(DirectedWeightedMultigraph<Node, Link> g, int length) {
+	public static List<GraphPath> getPaths(DirectedGraph<Node, DefaultLink> g, int length) {
 		
 		List<GraphPath> graphPaths = 
 				new LinkedList<GraphPath>();
@@ -191,7 +248,7 @@ public class GraphUtil {
 		
 	}
 	
-	public static List<GraphPath> getOutgoingPaths(DirectedWeightedMultigraph<Node, Link> g, Node n, int length) {
+	public static List<GraphPath> getOutgoingPaths(DirectedGraph<Node, DefaultLink> g, Node n, int length) {
 		
 		List<GraphPath> graphPaths = 
 				new LinkedList<GraphPath>();
@@ -199,11 +256,11 @@ public class GraphUtil {
 		if (g == null || n == null || length <= 0 || !g.vertexSet().contains(n))
 			return graphPaths;
 		
-		Set<Link> outgoingLinks =  g.outgoingEdgesOf(n);
+		Set<DefaultLink> outgoingLinks =  g.outgoingEdgesOf(n);
 		if (outgoingLinks == null || outgoingLinks.isEmpty())
 			return graphPaths;
 		
-		for (Link l : outgoingLinks) {
+		for (DefaultLink l : outgoingLinks) {
 			List<GraphPath> nextGraphPaths = getOutgoingPaths(g, l.getTarget(), length - 1);
 			if (nextGraphPaths == null || nextGraphPaths.isEmpty()) {
 				GraphPath gp = new GraphPath();
@@ -224,15 +281,16 @@ public class GraphUtil {
 		
 	}
 	
-	public static Set<Node> getOutNeighbors(DirectedWeightedMultigraph<Node, Link> g, Node n) {
+	public static Set<Node> getOutNeighbors(DirectedGraph<Node, DefaultLink> g, Node n) {
 		
 		Set<Node> neighbors = new HashSet<Node>();
 		if (g == null || n == null || !g.vertexSet().contains(n))
 			return neighbors;
 		
-		Set<Link> outgoingLinks = g.outgoingEdgesOf(n);
+		
+		Set<DefaultLink> outgoingLinks = g.outgoingEdgesOf(n);
 		if (outgoingLinks != null) {
-			for (Link l : outgoingLinks) {
+			for (DefaultLink l : outgoingLinks) {
 				neighbors.add(l.getTarget());
 			}
 		}
@@ -240,15 +298,15 @@ public class GraphUtil {
 		return neighbors;
 	}
 
-	public static Set<Node> getInNeighbors(DirectedWeightedMultigraph<Node, Link> g, Node n) {
+	public static Set<Node> getInNeighbors(DirectedGraph<Node, DefaultLink> g, Node n) {
 		
 		Set<Node> neighbors = new HashSet<Node>();
 		if (g == null || n == null || !g.vertexSet().contains(n))
 			return neighbors;
 		
-		Set<Link> incomingLinks = g.incomingEdgesOf(n);
+		Set<DefaultLink> incomingLinks = g.incomingEdgesOf(n);
 		if (incomingLinks != null) {
-			for (Link l : incomingLinks) {
+			for (DefaultLink l : incomingLinks) {
 				neighbors.add(l.getSource());
 			}
 		}
@@ -256,14 +314,14 @@ public class GraphUtil {
 		return neighbors;
 	}
 	
-	public static DisplayModel getDisplayModel(DirectedWeightedMultigraph<Node, Link> g, HTable hTable) {
+	public static DisplayModel getDisplayModel(DirectedWeightedMultigraph<Node, LabeledLink> g, HTable hTable) {
 		DisplayModel displayModel = new DisplayModel(g, hTable);
 		return displayModel;
 	}
 
 	public static void treeToRootedTree(
-			DirectedWeightedMultigraph<Node, Link> tree, 
-			Node node, Link e, 
+			DirectedWeightedMultigraph<Node, DefaultLink> tree, 
+			Node node, LabeledLink e, 
 			Set<Node> visitedNodes, 
 			Set<String> reversedLinks, 
 			Set<String> removedLinks) {
@@ -278,10 +336,10 @@ public class GraphUtil {
 		
 		Node source, target;
 		
-		Set<Link> incomingLinks = tree.incomingEdgesOf(node);
+		Set<DefaultLink> incomingLinks = tree.incomingEdgesOf(node);
 		if (incomingLinks != null) {
-			Link[] incomingLinksArr = incomingLinks.toArray(new Link[0]);
-			for (Link inLink : incomingLinksArr) {
+			LabeledLink[] incomingLinksArr = incomingLinks.toArray(new LabeledLink[0]);
+			for (LabeledLink inLink : incomingLinksArr) {
 				
 				source = inLink.getSource();
 				target = inLink.getTarget();
@@ -293,7 +351,7 @@ public class GraphUtil {
 				// removeEdge method should always be called before addEdge because the new edge has the same id
 				// and JGraph does not add the duplicate link
 //				Label label = new Label(inLink.getLabel().getUri(), inLink.getLabel().getNs(), inLink.getLabel().getPrefix());
-				Link reverseLink = inLink.clone(); //new Link(inLink.getId(), label);
+				LabeledLink reverseLink = inLink.clone(); //new Link(inLink.getId(), label);
 				tree.removeEdge(inLink);
 				tree.addEdge(target, source, reverseLink);
 				tree.setEdgeWeight(reverseLink, inLink.getWeight());
@@ -303,14 +361,14 @@ public class GraphUtil {
 			}
 		}
 
-		Set<Link> outgoingLinks = tree.outgoingEdgesOf(node);
+		Set<DefaultLink> outgoingLinks = tree.outgoingEdgesOf(node);
 
 		if (outgoingLinks == null)
 			return;
 		
 		
-		Link[] outgoingLinksArr = outgoingLinks.toArray(new Link[0]);
-		for (Link outLink : outgoingLinksArr) {
+		LabeledLink[] outgoingLinksArr = outgoingLinks.toArray(new LabeledLink[0]);
+		for (LabeledLink outLink : outgoingLinksArr) {
 			target = outLink.getTarget();
 			if (visitedNodes.contains(target)) {
 				tree.removeEdge(outLink);
@@ -321,7 +379,7 @@ public class GraphUtil {
 		}
 	}	
 	
-	public static void exportJson(DirectedWeightedMultigraph<Node, Link> graph, String filename) throws IOException {
+	public static void exportJson(DirectedWeightedMultigraph<Node, DefaultLink> graph, String filename) throws IOException {
 		logger.info("exporting the graph to json ...");
 		File file = new File(filename);
 		if (!file.exists()) {
@@ -342,7 +400,7 @@ public class GraphUtil {
 		logger.info("export is done.");
 	}
 	
-	public static DirectedWeightedMultigraph<Node, Link> importJson(String filename) throws IOException {
+	public static DirectedWeightedMultigraph<Node, DefaultLink> importJson(String filename) throws IOException {
 
 		File file = new File(filename);
 		if (!file.exists()) {
@@ -362,7 +420,7 @@ public class GraphUtil {
 	    }
 	}
 	
-	public static void writeGraph(DirectedWeightedMultigraph<Node, Link> graph, JsonWriter writer) throws IOException {
+	public static void writeGraph(DirectedWeightedMultigraph<Node, DefaultLink> graph, JsonWriter writer) throws IOException {
 		
 		writer.beginObject();
 
@@ -376,7 +434,7 @@ public class GraphUtil {
 		writer.name("links");
 		writer.beginArray();
 		if (graph != null)
-			for (Link l : graph.edgeSet())
+			for (DefaultLink l : graph.edgeSet())
 				writeLink(writer, l);
 		writer.endArray();
 		
@@ -426,7 +484,7 @@ public class GraphUtil {
 		writer.endObject();
 	}
 
-	private static void writeLink(JsonWriter writer, Link link) throws IOException {
+	private static void writeLink(JsonWriter writer, DefaultLink link) throws IOException {
 		
 		if (link == null)
 			return;
@@ -435,22 +493,27 @@ public class GraphUtil {
 
 		writer.beginObject();
 		writer.name("id").value(link.getId());
-		writer.name("label");
-		if (link.getLabel() == null) writer.value(nullStr);
-		else writeLabel(writer, link.getLabel());
-		writer.name("type").value(link.getType().toString());
-		if (link instanceof DataPropertyOfColumnLink)
-			writer.name("hNodeId").value( ((DataPropertyOfColumnLink)link).getSpecializedColumnHNodeId());
-		if (link instanceof ObjectPropertyLink)
-			writer.name("objectPropertyType").value( ((ObjectPropertyLink)link).getObjectPropertyType().toString());
-		if (link instanceof ObjectPropertySpecializationLink) {
-			writer.name("specializedLink").value(((ObjectPropertySpecializationLink)link).getSpecializedLinkId());
-		}
-		writer.name("status").value(link.getStatus().toString());
-		writer.name("keyInfo").value(link.getKeyType().toString());
-		writer.name("modelIds");
-		writeModelIds(writer, link.getModelIds());
 		writer.name("weight").value(link.getWeight());
+		writer.name("type").value(link.getType().toString());
+		if (link instanceof CompactObjectPropertyLink)
+			writer.name("objectPropertyType").value( ((CompactObjectPropertyLink)link).getObjectPropertyType().toString());
+		else if (link instanceof LabeledLink) {
+			LabeledLink l = (LabeledLink)link;
+			writer.name("label");
+			if (l.getLabel() == null) writer.value(nullStr);
+			else writeLabel(writer, l.getLabel());
+			if (l instanceof DataPropertyOfColumnLink)
+				writer.name("hNodeId").value( ((DataPropertyOfColumnLink)l).getSpecializedColumnHNodeId());
+			if (l instanceof ObjectPropertyLink)
+				writer.name("objectPropertyType").value( ((ObjectPropertyLink)l).getObjectPropertyType().toString());
+			if (l instanceof ObjectPropertySpecializationLink) {
+				writer.name("specializedLink").value(((ObjectPropertySpecializationLink)l).getSpecializedLinkId());
+			}
+			writer.name("status").value(l.getStatus().toString());
+			writer.name("keyInfo").value(l.getKeyType().toString());
+			writer.name("modelIds");
+			writeModelIds(writer, l.getModelIds());
+		}
 		writer.endObject();
 	}
 	
@@ -500,13 +563,13 @@ public class GraphUtil {
 		writer.endArray();
 	}
 	
-	public static DirectedWeightedMultigraph<Node, Link> readGraph(JsonReader reader) throws IOException {
+	public static DirectedWeightedMultigraph<Node, DefaultLink> readGraph(JsonReader reader) throws IOException {
 		
-		DirectedWeightedMultigraph<Node, Link> graph = 
-				new DirectedWeightedMultigraph<Node, Link>(Link.class);
+		DirectedWeightedMultigraph<Node, DefaultLink> graph = 
+				new DirectedWeightedMultigraph<Node, DefaultLink>(LabeledLink.class);
 		
 		Node n, source, target;
-		Link l;
+		DefaultLink l;
 		Double[] weight = new Double[1];
 		HashMap<String, Node> idToNodes = new HashMap<String, Node>();
 		
@@ -604,7 +667,7 @@ public class GraphUtil {
     	return n;
 	}
 	
-	private static Link readLink(JsonReader reader, Double[] weight) throws IOException {
+	private static DefaultLink readLink(JsonReader reader, Double[] weight) throws IOException {
 		
 		String id = null;
 		Label label = null;
@@ -646,7 +709,7 @@ public class GraphUtil {
 		}
     	reader.endObject();
     	
-    	Link l = null;
+    	DefaultLink l = null;
     	if (type == LinkType.ClassInstanceLink) {
     		l = new ClassInstanceLink(id, keyInfo);
     	} else if (type == LinkType.ColumnSubClassLink) {
@@ -661,14 +724,18 @@ public class GraphUtil {
     		l = new ObjectPropertySpecializationLink(hNodeId, specializedLinkId);
     	} else if (type == LinkType.SubClassLink) {
     		l = new SubClassLink(id);
-    	} else if (type == LinkType.PlainLink) {
-    		l = new PlainLink(id, label);
+    	} else if (type == LinkType.ColumnSubClassLink) {
+    		l = new CompactSubClassLink(id);
+    	} else if (type == LinkType.CompactObjectPropertyLink) {
+    		l = new CompactObjectPropertyLink(id, objectPropertyType);
     	} else {
-    		l = new PlainLink(id, label);
+    		l = new CompactObjectPropertyLink(id, objectPropertyType);
     	}
     	
-    	l.setStatus(status);
-    	l.setModelIds(modelIds);
+    	if (l instanceof LabeledLink) {
+	    	((LabeledLink)l).setStatus(status);
+	    	((LabeledLink)l).setModelIds(modelIds);
+    	}
     	return l;
 	}
 	

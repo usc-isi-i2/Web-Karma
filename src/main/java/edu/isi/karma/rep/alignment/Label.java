@@ -88,7 +88,6 @@ public class Label implements Serializable {
 		this.prefix = prefix;
 	}
 
-
 	public String getUri() {
 		return uri;
 	}

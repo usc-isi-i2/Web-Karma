@@ -41,7 +41,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.metadata.MetadataContainer;
 import edu.isi.karma.rep.sources.DataSource;
@@ -106,7 +106,7 @@ public class PublishModelCommand extends Command{
 					"Error occured while publishing the source. The alignment model is null."));
 		} 
 		
-		DirectedWeightedMultigraph<Node, Link> tree = null;
+		DirectedWeightedMultigraph<Node, LabeledLink> tree = null;
 		if (al != null) 
 			tree = al.getSteinerTree();
 		

@@ -20,7 +20,7 @@
  ******************************************************************************/
 
 function parse(data) {
-
+    console.log(data);
     $.workspaceGlobalInformation = {
         "id" : data["workspaceId"]
     }
@@ -206,7 +206,7 @@ function parse(data) {
                 }
             }
 
-            addWorksheetDataRecurse(element["rows"], dataTable, true);
+            addWorksheetDataRecurse(element["worksheetId"], element["rows"], dataTable, true);
 
             // Delete the old rows
             $(tBody).children("tr.deleteMe").remove();
@@ -225,9 +225,13 @@ function parse(data) {
             }
         }
         else if(element["updateType"] == "HistoryAddCommandUpdate") {
+        	var title = element.command.title;
+        	if(element.command.description.length > 0) {
+        		title = title + ": " + element.command.description;
+        	}
             var commandDiv = $("<div>").addClass("CommandDiv undo-state " + element.command.commandType).attr("id", element.command.commandId).css({
                 "position" : "relative"
-            }).append($("<div>").text(element.command.title + ": " + element.command.description)).append($("<div>").addClass("iconDiv").append($("<img>").attr("src", "images/edit_undo.png")).bind('click', clickUndoButton).qtip({
+            }).append($("<div>").text(title)).append($("<div>").addClass("iconDiv").append($("<img>").attr("src", "images/edit_undo.png")).bind('click', clickUndoButton).qtip({
                     content : {
                         text : 'Undo'
                     },
@@ -398,16 +402,17 @@ function parse(data) {
             var errorArr = $.parseJSON(element["errorReport"]);
             if (errorArr && errorArr.length !=0) {
                 var errorWindow = $("#rdfGenerationErrorWindow");
-                errorWindow.empty();
+                var txt = $("#errrorText", errorWindow);
+                txt.empty();
 
                 $.each(errorArr, function(index, errorMessage){
-                    errorWindow.append("<b>Error # " + (index+1) + "</b><br>");
-                    errorWindow.append("<b>Description:</b> " + errorMessage.title + "<br>");
-                    errorWindow.append("<b>Reason:</b> " + errorMessage.description + "<br>");
-                    errorWindow.append("<hr>")
+                	txt.append("<b>Error # " + (index+1) + "</b><br>");
+                	txt.append("<b>Description:</b> " + errorMessage.title + "<br>");
+                	txt.append("<b>Reason:</b> " + errorMessage.description + "<br>");
+                	txt.append("<hr>")
                 });
 
-                errorWindow.dialog({title: "RDF Generation Error Report", width: 900});
+                errorWindow.modal({keyboard:true, show:true});
             }
         }
         else if(element["updateType"] == "PublishWorksheetHistoryUpdate") {
@@ -493,7 +498,7 @@ function parse(data) {
         }
         else if(element["updateType"] == "AdditionalRowsUpdate") {
             var dataTable = $("div#" + element.tableId + " > table.wk-table");
-            addWorksheetDataRecurse(element.rows, dataTable, true);
+            addWorksheetDataRecurse(element["worksheetId"], element.rows, dataTable, true);
 
             // Update the number of additional records left
             var additionalRecordsLeft = element.additionalRowsCount;
@@ -506,25 +511,36 @@ function parse(data) {
                 loadMoreLink.text(additionalRecordsLeft + " additional records, load more...");
             }
         }
+        else if(element["updateType"] == "ExportCSVUpdate") {
+            // Remove existing link if any
+        	var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
+            $("a.CSVExportDownloadLink", titleDiv).remove();
+
+            hideLoading(element["worksheetId"]);
+            var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("CSV Export").addClass("CSVExportDownloadLink  DownloadLink").attr("target", "_blank");
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
+            $.sticky("CSV exported");
+        }
     });
     
     if(trivialErrors.length > 0) {
        var errorWindow = $("#rdfGenerationErrorWindow");
-       errorWindow.empty();
+       var txt = $("#errrorText", errorWindow);
+       txt.empty();
 
        var errExists = [];
         $.each(trivialErrors, function(index, errorMessage) {
         	if(errExists[errorMessage]) {
         		//do nothing
         	} else {
-        		errorWindow.append("<b>Error # " + (index+1) + "</b><br>");
-        		errorWindow.append("<b>Description:</b> " + errorMessage + "<br>");
-        		errorWindow.append("<hr>");
+        		txt.append("<b>Error # " + (index+1) + "</b><br>");
+        		txt.append("<b>Description:</b> " + errorMessage + "<br>");
+        		txt.append("<hr>");
         		errExists[errorMessage] = true;
         	}
         });
 
-        errorWindow.dialog({title: "Error Report", width: 900});
+        errorWindow.modal({keyboard:true, show:true});
         
     }
 }
@@ -619,7 +635,7 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
     return columnWidths;
 }
 
-function addWorksheetDataRecurse(rows, dataTable, isOdd) {
+function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
     // Loop through the rows
     $.each (rows, function (index, row) {
         var rowTr = $("<tr>");
@@ -628,8 +644,13 @@ function addWorksheetDataRecurse(rows, dataTable, isOdd) {
         } else {
             rowTr.addClass("wk-row-even");
         }
-
+        /*var dataDiv = $("<div>").width(30).height(30);
+        var checkbox = $('<input />', { type: 'checkbox', id: 'selectcolumns', value: "a" });
+        dataDiv.append(checkbox);
+        rowTr.append(dataDiv);*/
+        //console.log(.css(rows[0][0]["columnClass"]));
         // Loop through the values in a given row
+        //console.log(rows);
         $.each(row, function(index2, cell){
             var td = $("<td>").addClass("wk-cell");
             var dataDiv = $("<div>");
@@ -638,7 +659,7 @@ function addWorksheetDataRecurse(rows, dataTable, isOdd) {
                 var nestedTableDataContainer = $("<div>").addClass("table-data-container").attr("id", cell["tableId"]);
                 var nestedTable = $("<table>").addClass("wk-table");
 
-                addWorksheetDataRecurse(cell["nestedRows"], nestedTable, !isOdd);
+                addWorksheetDataRecurse(worksheetId, cell["nestedRows"], nestedTable, !isOdd);
 
                 var additionalRowsAvail = cell["additionalRowsCount"];
 
@@ -658,14 +679,81 @@ function addWorksheetDataRecurse(rows, dataTable, isOdd) {
                 dataDiv.text(cell["displayValue"])
                     .attr('id', cell["nodeId"])
                     .data("expandedValue", cell["expandedValue"])
-                    .mouseenter(showTableCellMenuButton)
-                    .mouseleave(hideTableCellMenuButton);
+                    .attr("title", cell["expandedValue"]) //for tooltip
+                    ;
+                
+        		dataDiv.editable({
+        			 type: 'text',
+        			 success: function(response, newValue) {
+        				 console.log("Set new value:" + newValue);
+        				 submitTableCellEdit(worksheetId, cell["nodeId"], newValue);
+        			 },
+        			 showbuttons: 'bottom',
+        			 mode: 'popup',
+        			 inputclass: 'worksheetInputEdit'	 
+		            });
+                /*var dataDiv2 = $("<div>").width(30).height(30).css({float:'left'});
+                var checkbox = $('<input />', { type: 'checkbox', id: 'selectcolumns', value: "a" });
+                dataDiv2.append(checkbox);
+                td.append(dataDiv2);  
+                td.addClass(cell["columnClass"]); */
             }
-
             rowTr.append(td.append(dataDiv));
         });
 
         dataTable.append(rowTr);
     });
     return;
+}
+
+function submitTableCellEdit(worksheetId, nodeId, value) {
+    var edits = new Object();
+    edits["value"] = value;
+    edits["command"] = "EditCellCommand";
+    edits["nodeId"] = nodeId;
+    edits["worksheetId"] = worksheetId;
+    edits["workspaceId"] = $.workspaceGlobalInformation.id;
+
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : edits,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+            }
+    });
+}
+
+
+function submitSelectedModelNameToBeLoaded() {
+    $('div#modelListDiv').dialog("close");
+    var optionsDiv = $("div#WorksheetOptionsDiv");
+    var value = $("#modelListRadioBtnGrp").find("input:checked");
+
+    var info = new Object();
+    info["worksheetId"] = optionsDiv.data("worksheetId");
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "InvokeDataMiningServiceCommand";
+    info['modelContext'] = value.val();
+    info['dataMiningURL'] = value.attr('rel');
+
+
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while invoking the selected service!" + textStatus);
+            }
+    });
 }

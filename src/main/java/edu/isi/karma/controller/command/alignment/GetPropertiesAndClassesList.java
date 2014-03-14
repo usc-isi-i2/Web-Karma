@@ -1,7 +1,9 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -19,9 +21,9 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
@@ -86,7 +88,7 @@ public class GetPropertiesAndClassesList extends Command {
 			Set<String> steinerTreeNodeIds = new HashSet<String>();
 			if (alignment != null && !alignment.isEmpty()) {
 //				Set<Node> nodes = alignment.getGraphNodes();
-				DirectedWeightedMultigraph<Node, Link> steinerTree = alignment.getSteinerTree(); 
+				DirectedWeightedMultigraph<Node, LabeledLink> steinerTree = alignment.getSteinerTree(); 
 				for (Node node: steinerTree.vertexSet()) {
 					if (node.getType() == NodeType.InternalNode) {
 //						String nodeDisplayLabel = (node.getLabel().getPrefix() != null && (!node.getLabel().getPrefix().equals(""))) ?
@@ -104,15 +106,20 @@ public class GetPropertiesAndClassesList extends Command {
 					}
 				}
 				
+				List<LabeledLink> specializedLinks = new ArrayList<LabeledLink>();
+				Set<LabeledLink> temp = null;
+				temp = alignment.getLinksByType(LinkType.DataPropertyLink);
+				if (temp != null) specializedLinks.addAll(temp);
+				for (LabeledLink link:steinerTree.edgeSet()) 
+					if (link instanceof ObjectPropertyLink)
+						specializedLinks.add(link);
+				
 				// Store the data property links for specialized edge link options
-				for (Link link:alignment.getGraphLinks()) {
-					if (link instanceof DataPropertyLink || (link instanceof ObjectPropertyLink
-							&& steinerTree.edgeSet().contains(link))) {
-						JSONObject linkObj = new JSONObject();
-						linkObj.put(JsonKeys.label.name(), link.getLocalId());
-						linkObj.put(JsonKeys.id.name(), link.getId());
-						existingPropertyInstances.put(linkObj);
-					}
+				for (LabeledLink link:specializedLinks) {
+					JSONObject linkObj = new JSONObject();
+					linkObj.put(JsonKeys.label.name(), link.getLocalId());
+					linkObj.put(JsonKeys.id.name(), link.getId());
+					existingPropertyInstances.put(linkObj);
 				}
 			}
 			

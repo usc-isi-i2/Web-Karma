@@ -32,8 +32,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -43,7 +43,8 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
@@ -56,7 +57,7 @@ public class UnassignSemanticTypeCommand extends Command {
 	private String columnName;
 	private SemanticType oldSemanticType;
 	private Alignment oldAlignment;
-	private DirectedWeightedMultigraph<Node, Link> oldGraph;
+	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(UnassignSemanticTypeCommand.class);
@@ -102,18 +103,18 @@ public class UnassignSemanticTypeCommand extends Command {
 		// Save the original alignment for undo
 		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
 		oldAlignment = alignment.getAlignmentClone();
-		oldGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
+		oldGraph = (DirectedWeightedMultigraph<Node, DefaultLink>)alignment.getGraph().clone();
 		
 		// Remove it from the alignment
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 		if (columnNode != null) {
-			Set<Link> links =  alignment.getCurrentIncomingLinksToNode(columnNode.getId());
+			Set<LabeledLink> links =  alignment.getCurrentIncomingLinksToNode(columnNode.getId());
 			if(links == null)
 			{
 				logger.error("No semantic type to unassign!");
 				return new UpdateContainer(new ErrorUpdate("No semantic type to unassign!"));
 			}
-			Link currentLink = links.iterator().next();
+			LabeledLink currentLink = links.iterator().next();
 //			String domainNodeId = currentLink.getSource().getId();
 			// Remove the existing link
 			alignment.removeLink(currentLink.getId());

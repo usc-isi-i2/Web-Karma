@@ -25,35 +25,35 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.Node;
 
 public class GraphPath {
 	
-	private List<Link> edgeList;
+	private List<DefaultLink> edgeList;
 	private Node startNode, endNode;
 	
 	
 	public GraphPath() {
-		this.edgeList = new LinkedList<Link>();
+		this.edgeList = new LinkedList<DefaultLink>();
 		this.startNode = null;
 		this.endNode = null;
 	}
 	
 	public GraphPath(GraphPath gp) {
-		this.edgeList = new LinkedList<Link>();
-		for (Link l : gp.getLinks())
+		this.edgeList = new LinkedList<DefaultLink>();
+		for (DefaultLink l : gp.getLinks())
 			this.addLink(l);
 	}
 	
-	public void addLink(Link e) {
+	public void addLink(DefaultLink e) {
 		if (this.edgeList.isEmpty())
 			this.startNode = e.getSource();
 		this.edgeList.add(e);
 		this.endNode = e.getTarget();
 	}
 	
-	public void addLinkToHead(Link e) {
+	public void addLinkToHead(DefaultLink e) {
 		if (this.edgeList.isEmpty())
 			this.endNode = e.getTarget();
 		this.edgeList.add(0, e);
@@ -68,7 +68,7 @@ public class GraphPath {
 		return this.endNode;
 	}
 
-	public List<Link> getLinks() {
+	public List<DefaultLink> getLinks() {
 		return Collections.unmodifiableList(this.edgeList);
 	}
 	
@@ -86,9 +86,9 @@ public class GraphPath {
 		if (this.startNode != null)
 			key += this.startNode.getLocalId();
 		
-		for (Link l : this.edgeList) {
+		for (DefaultLink l : this.edgeList) {
 			key += "<";
-			key += l.getLabel().getUri();
+			key += l.getUri();
 			key += ">";
 			if (l.getTarget() != null) key += l.getTarget().getLocalId();
 		}

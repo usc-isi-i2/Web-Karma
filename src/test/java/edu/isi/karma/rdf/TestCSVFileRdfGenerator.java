@@ -33,10 +33,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
@@ -54,7 +55,8 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
  * 
  */
 public class TestCSVFileRdfGenerator {
-
+	private static Logger logger = LoggerFactory.getLogger(TestCSVFileRdfGenerator.class);
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		initOfflineWorkspaceSettings();
@@ -76,22 +78,38 @@ public class TestCSVFileRdfGenerator {
 					+ "\n");
 
 			File fileList[] = (new File(modelDirect)).listFiles();
+			
 			for (int i = 0; i < fileList.length; i++) {
 				File modelFile = fileList[i];
-				System.out.println("Load file: " + modelFile.getName());
+				logger.info("Load file: " + modelFile.getName());
 
 				String name = modelFile.getName().replace("-model.ttl", "");
 				File standardRdfFile = new File(standardRdfDirect + "/" + name
 						+ "-rdf.ttl");
 				File csvFile = new File(csvDirect + "/" + name + ".csv");
+				
+				if(!standardRdfFile.exists())
+				{
+					out.println(standardRdfFile+" doesn't  exist");
+					logger.error(standardRdfFile+" doesn't  exist");
+					continue;
+				}
+				if(!csvFile.exists())
+				{
+					out.println(csvFile+" doesn't  exist");
+					logger.error(csvFile+" doesn't  exist");
+					continue;
+				}
+					
 
-				StringWriter sw = new StringWriter();//generated RDF triples
+				StringWriter sw = new StringWriter();// generated RDF triples
 				PrintWriter pw = new PrintWriter(sw);
 
 				generateRdfFile(csvFile, modelFile, pw);
 
-				HashSet<String> standardSet =  getFileContent(standardRdfFile);
-				HashSet<String> generatedSet =  getHashSet(sw.toString().split("\n"));
+				HashSet<String> standardSet = getFileContent(standardRdfFile);
+				HashSet<String> generatedSet = getHashSet(sw.toString().split(
+						"\n"));
 
 				if (!standardSet.containsAll(generatedSet)
 						|| !generatedSet.containsAll(standardSet)) {
@@ -100,6 +118,7 @@ public class TestCSVFileRdfGenerator {
 							out);
 				} else {
 					out.println(modelFile.getName() + " is ok");
+					logger.info(modelFile.getName() + " is ok");
 				}
 
 				pw.close();
@@ -109,26 +128,36 @@ public class TestCSVFileRdfGenerator {
 			out.close();
 			assertEquals(tag, true);
 		} catch (Exception e) {
+			logger.error("Exception", e);
 			fail("Exception: " + e.getMessage());
 		}
 	}
 
-	
 	/**
-	 * @param standardSet the standard triples
-	 * @param generatedSet the generated triples 
-	 * @param modelName the model name
-	 * @param out records  the error message.
+	 * @param standardSet
+	 *            the standard triples
+	 * @param generatedSet
+	 *            the generated triples
+	 * @param modelName
+	 *            the model name
+	 * @param out
+	 *            records the error message.
 	 */
 	private void outputError(HashSet<String> standardSet,
 			HashSet<String> generatedSet, String modelName, PrintWriter out) {
 		for (String temp : standardSet)
 			if (!generatedSet.contains(temp))
+			{
 				out.println(modelName + " missing triple error:" + temp);
+				logger.error(modelName + " missing triple error:" + temp);
+			}
 
 		for (String temp : generatedSet)
 			if (!standardSet.contains(temp))
+			{
 				out.println(modelName + " extra triple error:" + temp);
+				logger.error(modelName + " extra triple error:" + temp);
+			}
 	}
 
 	private String getRootFolder() {
@@ -153,9 +182,10 @@ public class TestCSVFileRdfGenerator {
 	}
 
 	/**
-	 * @param csvFile 
+	 * @param csvFile
 	 * @param modelFile
-	 * @param pw stores generated RDF triples 
+	 * @param pw
+	 *            stores generated RDF triples
 	 * @throws Exception
 	 */
 	private void generateRdfFile(File csvFile, File modelFile, PrintWriter pw)
@@ -180,10 +210,11 @@ public class TestCSVFileRdfGenerator {
 
 	private HashSet<String> getFileContent(File file) {
 		HashSet<String> hashSet = new HashSet<String>();
+		
 		try {
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(new FileInputStream(file), "UTF-8"));
-            
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					new FileInputStream(file), "UTF-8"));
+
 			String line = in.readLine();
 			while (line != null) {
 				line = line.trim();
@@ -195,8 +226,8 @@ public class TestCSVFileRdfGenerator {
 			in.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+			logger.error("Error getting file contents: " + file.getAbsolutePath());
 		}
 		return hashSet;
-
-	}
+     }
 }

@@ -8,7 +8,6 @@ function WorksheetOptions(wsId, wsTitle) {
 			[	"Show Model" , showModel ],
 			[ "Set Properties" , setProperties ],
 			[ "Show Auto Model" , showAutoModel ],
-			//[ "Reset Model" , resetModel ],
 			[ "Apply R2RML Model" , applyR2RMLModel, true, "applyWorksheetHistory" ],
 			[ "divider" , null ],
 			[ "Publish RDF" , publishRDF ],
@@ -22,6 +21,8 @@ function WorksheetOptions(wsId, wsTitle) {
 			["Export to Database", exportToDatabase],
 			["Export to MDB", exportToMDB],
 			["Export to SpatialData", exportToSpatial],
+			["divider", null],
+			[ "Fold" , Fold ]
 	];
 	
 	function hideDropdown() {
@@ -100,6 +101,12 @@ function WorksheetOptions(wsId, wsTitle) {
         });
 		return false;
 	}
+
+	function Fold () {
+		console.log("Fold: " + worksheetTitle);
+		hideDropdown();
+		FoldDialog.getInstance().show(worksheetId);
+    }
 	
 	function resetModel() {
 		console.log("Reset Model: " + worksheetTitle);

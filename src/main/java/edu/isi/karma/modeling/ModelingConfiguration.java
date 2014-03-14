@@ -53,6 +53,7 @@ public class ModelingConfiguration {
     private static Integer maxQueuedMappigs;
     
     private static Boolean learnerEnabled;
+    private static Boolean multipleSamePropertyPerNode;
 
 	public static void load() {
         try {
@@ -87,6 +88,9 @@ public class ModelingConfiguration {
 
             if(modelingProperties.getProperty("learner.enabled") != null)
             	learnerEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learner.enabled"));
+
+            if(modelingProperties.getProperty("multiple.same.property.per.node") != null)
+            	multipleSamePropertyPerNode = Boolean.parseBoolean(modelingProperties.getProperty("multiple.same.property.per.node"));
 
             modelsJsonDir = modelingProperties.getProperty("models.json.dir");
             modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir");
@@ -217,6 +221,16 @@ public class ModelingConfiguration {
 		return learnerEnabled;
 	}
 
+	public static void setLearnerEnabled(Boolean learnerEnabled) {
+		ModelingConfiguration.learnerEnabled = learnerEnabled;
+	}
+
+	public static boolean isMultipleSamePropertyPerNode() {
+		if (multipleSamePropertyPerNode == null)
+			load();
+		return multipleSamePropertyPerNode;
+	}
+	
 	public static void setManualAlignment(Boolean newManualAlignment)
 	{
 		manualAlignment = newManualAlignment;

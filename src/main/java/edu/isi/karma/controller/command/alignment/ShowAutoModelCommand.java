@@ -48,7 +48,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 
@@ -122,7 +122,7 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 			String columnName = hNode.getColumnName().trim().replaceAll(" ", "_");
 			ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNode.getId());
 			
-			List<Link> columnNodeIncomingLinks = alignment.getIncomingLinks(columnNode.getId());
+			List<LabeledLink> columnNodeIncomingLinks = alignment.getIncomingLinks(columnNode.getId());
 			if (columnNodeIncomingLinks == null || columnNodeIncomingLinks.isEmpty()) { // SemanticType not yet assigned
 				Label propertyLabel = new Label(ns + columnName, ns, "karma");
 				alignment.addDataPropertyLink(classNode, columnNode, propertyLabel, false);

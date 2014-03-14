@@ -19,152 +19,6 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-function styleAndAssignHandlersToModelingVizElements() {
-    var dropDownMenu = $("div#modelingClassDropDownMenu");
-    $("button", dropDownMenu).button();
-
-    $("#addNodeIncomingLink").click(function() {
-    	console.log("Add Incoming Link");
-    	showIncomingOutgoingDialog("incoming");
-//    	showLinksForInternalNode(d, svg, d3.event);
-    });
-    
-    $("#incomingOutgoingClassKeyword").keyup(function(event) {
-        if(event.keyCode == 13){
-            $("#incomingOutgoingClassSearch").click();
-        }
-    });
-    $("#incomingOutgoingPropertyKeyword").keyup(function(event) {
-        if(event.keyCode == 13){
-            $("#incomingOutgoingPropertySearch").click();
-        }
-    });
-    
-    
-    $("#incomingOutgoingClassSearch").button().click(function(){
-        $("div#incomingOutgoingLinksClassDiv1").jstree("search", $("#incomingOutgoingClassKeyword").val());
-        $("div#incomingOutgoingLinksClassDiv2").jstree("search", $("#incomingOutgoingClassKeyword").val());
-    });
-    $("#incomingOutgoingPropertySearch").button().click(function(){
-        $("div#incomingOutgoingLinksPropertyDiv1").jstree("search", $("#incomingOutgoingPropertyKeyword").val());
-        $("div#incomingOutgoingLinksPropertyDiv2").jstree("search", $("#incomingOutgoingPropertyKeyword").val());
-    });
-    
-    
-    $("#addNodeOutgoingLink").click(function() {
-    	console.log("Add Outgoing Link");
-    	showIncomingOutgoingDialog("outgoing");
-    });
-    
-    $("#invokeRubenReconciliationService").click(function() {
-        console.log("I am clicked!!")
-        dropDownMenu.hide();
-        var info = new Object();
-        info["workspaceId"] = $.workspaceGlobalInformation.id;
-        info["command"] = "InvokeRubenReconciliationService";
-
-        var newInfo = [];
-        newInfo.push(getParamObject("alignmentNodeId", dropDownMenu.data("nodeId"), "other"));
-        newInfo.push(getParamObject("worksheetId", dropDownMenu.data("worksheetId"), "other"));
-
-        info["newInfo"] = JSON.stringify(newInfo);
-
-        showLoading(dropDownMenu.data("worksheetId"));
-        var returned = $.ajax({
-            url: "RequestController",
-            type: "POST",
-            data : info,
-            dataType : "json",
-            complete :
-                function (xhr, textStatus) {
-                    //alert(xhr.responseText);
-                    var json = $.parseJSON(xhr.responseText);
-                    parse(json);
-                    hideLoading(dropDownMenu.data("worksheetId"));
-                },
-            error :
-                function (xhr, textStatus) {
-                    alert("Error occured while exporting CSV!" + textStatus);
-                    hideLoading(dropDownMenu.data("worksheetId"));
-                }
-        });
-    });
-
-    // Adding mouse handlers to the div
-    dropDownMenu.mouseenter(function() {
-        if ($(this).data("timer") != null)
-            clearTimeout($(this).data("timer"));
-        $(this).show();
-    });
-    dropDownMenu.mouseleave(function() {
-        var timer = setTimeout(function() {
-            $("#modelingClassDropDownMenu").hide();
-        }, 700);
-        $(this).data("timer", timer);
-    });
-
-    // Filter for the links
-    $("#linksTableFilter").keyup( function (event) {
-        // fire the above change event after every letter
-
-        //if esc is pressed or nothing is entered
-        if (event.keyCode == 27 || $(this).val() == '') {
-            //if esc is pressed we want to clear the value of search box
-            $(this).val('');
-
-            //we want each row to be visible because if nothing
-            //is entered then all rows are matched.
-            $('tr').removeClass('visible').show().addClass('visible');
-        }
-
-        //if there is text, lets filter
-        else {
-            filter('#linksList tr', $(this).val(), "edgeLabel");
-        }
-    });
-
-    // Filter for the nodes
-    $("#nodesTableFilter").keyup( function (event) {
-        // fire the above change event after every letter
-
-        //if esc is pressed or nothing is entered
-        if (event.keyCode == 27 || $(this).val() == '') {
-            //if esc is pressed we want to clear the value of search box
-            $(this).val('');
-
-            //we want each row to be visible because if nothing
-            //is entered then all rows are matched.
-            $('tr').removeClass('visible').show().addClass('visible');
-        }
-
-        //if there is text, lets filter
-        else {
-            filter('#nodesList tr', $(this).val(), "nodeLabel");
-        }
-    });
-
-    // Filter for the nodes
-    $("#alternateLinksTableFilter").keyup( function (event) {
-        // fire the above change event after every letter
-
-        //if esc is pressed or nothing is entered
-        if (event.keyCode == 27 || $(this).val() == '') {
-            //if esc is pressed we want to clear the value of search box
-            $(this).val('');
-
-            //we want each row to be visible because if nothing
-            //is entered then all rows are matched.
-            $('tr').removeClass('visible').show().addClass('visible');
-        }
-
-        //if there is text, lets filter
-        else {
-            filter('#alternativeLinksList tr', $(this).val(), "edgeLabel");
-        }
-    });
-}
-
-
 //Called for every AlignmentSVGVisualizationUpdate
 function displayAlignmentTree_ForceKarmaLayout(json) {
     var worksheetId = json["worksheetId"];
@@ -290,6 +144,29 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         }
     });
     
+    var lineLayout = new LineLayout();
+    $.each(json["nodes"], function(index, node){
+    	if(node.nodeType == "ColumnNode") {
+    		//console.log("Add Column Node: " + node.id + " " + node.x + "," + (h - node.y));
+    		lineLayout.addColumnNode(node.id, node.x, h - node.y);
+    	} else if(node.nodeType == "InternalNode") {
+    		var level = node.height;
+    		var width = node.width;
+    		var height = 20; //node.y;
+    		var left = node.x - (width/2); //node.x is the center point of the node
+    		var top = level * (height + 30);
+    		
+    		//console.log("Add Internal Node: " + node.id + " " + level + " " + left + "," + top + "," + width + "," + height);
+    		lineLayout.addInternalNode(node.id, level, left, top, width, height);
+    	}
+    });
+    
+    $.each(json["links"], function(index, link){
+    	lineLayout.addLink(link.id, link.sourceNodeId, link.targetNodeId);
+    });
+    
+    lineLayout.assignAnchorCoordinates();
+    lineLayout.optimizeGroups();
     
     var force = self.force = d3.layout.force()
         .nodes(json.nodes)
@@ -335,83 +212,36 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     
   //Now, let us try to get straight line links
     link.attr("x1", function(d) {
-        if (d.linkType == "horizontalDataPropertyLink") {
-        	return d.source.x;
-        }
-        
-        var x1;
-        if(d.source.y > d.target.y)
-            x1 = d.source.x;
-        else
-            x1 = d.target.x;
-        
-        var tx1 = d.target.x - d.target.width/2;
-        var tx2 = d.target.x + d.target.width/2;
-        var sx1 = d.source.x - d.source.width/2;
-        var sx2 = d.source.x + d.source.width/2;
-        
-        d.calculateOverlap = 0;
-        
-        if(!(x1 >= sx1 && x1 <=sx2)) {
-        	d.calculateOverlap = 1;
-        	x1 = getOverlappingCenter(sx1, sx2, tx1, tx2);
-        	d.overlapx = x1;
-        }
-        
-        var x2;
-        if(d.source.y > d.target.y)
-            x2 = d.source.x;
-        else
-            x2 = d.target.x;
-        
-        if(!(x2 >= tx1 && x2 <=tx2)) {
-        	d.calculateOverlap = 1;
-        	x1 = getOverlappingCenter(sx1, sx2, tx1, tx2);
-        	d.overlapx = x1;
-        }
-        
-        
-        return x1;
+    	return lineLayout.getLinkX1(d.id);
     })
     .attr("y1", function(d) {
     	if (d.linkType == "DataPropertyOfColumnLink" || d.linkType == "ObjectPropertySpecializationLink") {
     		return d.source.y + 18;
     	}
-    	return d.source.y; 
+    	return d.source.y + 10; //Height is 20 
     })
     .attr("x2", function(d) {
-    	if (d.linkType == "horizontalDataPropertyLink") {
-        	return d.target.x;
-        }
+    	  return lineLayout.getLinkX2(d.id);
+    })
+    .attr("y2", function(d) { 
     	
-    	if(d.calculateOverlap) {
-    		return d.overlapx;
+    	if(d.target.nodeType == "InternalNode") {
+    		var slope = Math.abs(lineLayout.getLinkSlope(d.id));
+        	//console.log(d.source.id + "->" + d.target.id + ": slope=" + slope);
+        	if(slope <= 0.2) return d.target.y - 10;
+        	if(slope <= 1.0) return d.target.y - 5;
     	}
     	
-    	var x2;
-        if(d.source.y > d.target.y)
-            x2 = d.source.x;
-        else
-            x2 = d.target.x; 
-        
-        var minX2 = d.target.x - d.target.width/2;
-        var maxX2 = d.target.x + d.target.width/2;
-        
-        if(!(x2 >= minX2 && x2 <=maxX2)) {
-        	//Arrow is not wihin the box now
-        	console.log("x2 of Arrow not in limits: " + x2 + ", Source:" + d.source.x + "," + d.source.width 
-        			+ " Target:" + d.target.x + "," + d.target.y);
-        	x2 = d.target.x;
-        }
-        return x2;
-    })
-    .attr("y2", function(d) { return d.target.y; });
+    	return d.target.y; 
+    });
     
     //Hanlde drawing of the link labels
     svg.selectAll("text")
         .data(json.links)
         .enter().append("text")
         .text(function(d) {
+        	if(d.label == "classLink")
+        		return "uri";
             return d.label;
         })
         .attr("class", function(d) {
@@ -421,22 +251,10 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 return "LinkLabel FakeRootLink "+worksheetId;
         })
         .attr("x", function(d) {
-        	if(d.calculateOverlap) {
-        		return d.overlapx;
-        	}
-        	
-            if(d.source.y > d.target.y)
-                return d.source.x;
-            else
-                return d.target.x;
+        	return lineLayout.getLinkLabelPosition(d.id)[0];
         })
         .attr("y", function(d) {
-        	return d.target.y - 20;
-//            if(d.target.nodeType == "ColumnNode")
-//                return ((d.source.y + d.target.y)/2 + 12);
-//            if(d.source.nodeType == "FakeRoot")
-//                return ((d.source.y + d.target.y)/2 - 4);
-//            return ((d.source.y + d.target.y)/2 + 5);
+        	return h - lineLayout.getLinkLabelPosition(d.id)[1];
         })
         .attr("transform", function(d) {
             var X = 0; var Y = 0;
@@ -688,13 +506,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             });
         });
     
-//    $("text.LinkLabel").qtip({content: {text: "Edit Relationship"}});
-    // $("g.ColumnNode, g.Unassigned").qtip({content: {text: "Change Semantic Type"}});
-//    $("g.InternalNode").qtip({content: {text: "Add Parent Relationship"}});
     
-    
-    
-
     node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
     
     $(window).resize(function() {

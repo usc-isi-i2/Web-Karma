@@ -37,7 +37,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetAlternativeLinksCommand extends Command {
@@ -95,9 +95,9 @@ public class GetAlternativeLinksCommand extends Command {
 			
 		} else if (linksRange == ALTERNATIVE_LINKS_RANGE.compatibleLinks) {
 			
-			List<Link> compatibleLinks = alignment.getLinks(sourceNodeId, targetNodeId);
+			List<LabeledLink> compatibleLinks = alignment.getLinks(sourceNodeId, targetNodeId);
 			if (compatibleLinks != null) {
-				for (Link link : compatibleLinks) {
+				for (LabeledLink link : compatibleLinks) {
 					if (link.getLabel() != null)
 						linkList.put(link.getLabel().getUri(), link.getLabel());
 				}

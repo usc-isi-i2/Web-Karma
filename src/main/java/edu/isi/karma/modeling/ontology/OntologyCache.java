@@ -143,18 +143,18 @@ class OntologyCache {
 		this.loadClasses();
 		this.loadProperties();
 		
-		logger.debug("number of classes:" + classes.size());
-		logger.debug("number of all properties:" + properties.size());
-		logger.debug("number of data properties:" + dataProperties.size() );
-		logger.debug("number of object properties:" + objectProperties.size() );
+		logger.info("number of classes:" + classes.size());
+		logger.info("number of all properties:" + properties.size());
+		logger.info("number of data properties:" + dataProperties.size() );
+		logger.info("number of object properties:" + objectProperties.size() );
 		// A = number of all properties including rdf:Property 
 		// B = number of properties defined as Data Property
 		// C = number of properties defined as Object Property
 		// properties = A
 		// dataproperties = A - C
 		// objectproperties = A - B
-		logger.debug("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
-		logger.debug("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
+		logger.info("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
+		logger.info("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
 
 		// create a hierarchy of classes and properties of the model
 		this.buildClassHierarchy(classHierarchy);
@@ -512,7 +512,7 @@ class OntologyCache {
 		this.properties.put(Uris.COLUMN_SUBCLASS_LINK_URI, new Label(Uris.COLUMN_SUBCLASS_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
 		this.properties.put(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI, new Label(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
 		this.properties.put(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI, new Label(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
-		this.properties.put(Uris.PLAIN_LINK_URI, new Label(Uris.PLAIN_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
+		this.properties.put(Uris.DEFAULT_LINK_URI, new Label(Uris.DEFAULT_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
 		
 		ExtendedIterator<OntProperty> itrP = ontHandler.getOntModel().listAllOntProperties();
 		

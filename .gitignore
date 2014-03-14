@@ -69,4 +69,6 @@ nbactions.xml
 
 *.rdf
 
+Thumbs.db
+
 src/test/karma-data/testresult/testResult.txt

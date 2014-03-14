@@ -21,57 +21,44 @@
 
 package edu.isi.karma.modeling.alignment.learner;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import edu.isi.karma.modeling.alignment.SemanticModel;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 
 public class SortableSemanticModel extends SemanticModel
 	implements Comparable<SortableSemanticModel>{
 	
 	private double cost;
-	private List<Coherence> coherence;
 	private SteinerNodes steinerNodes;
 	
 	// the number of patterns shared among all the links 
 	// private int frequency;
 	
-	private class Coherence implements Comparable<Coherence>{
-
-		private int linkCount;
-		private int patternFrequency;
-		
-		public Coherence(int linkCount,int patternFrequency) {
-			this.linkCount = linkCount;
-			this.patternFrequency = patternFrequency;
-		}
-		
-		@Override
-		public int compareTo(Coherence c) {
-			if (c == null)
-				return 1;
-			else if (this.linkCount > c.linkCount)
-				return 1;
-			else if (this.linkCount < c.linkCount)
-				return -1;
-			else if (this.patternFrequency > c.patternFrequency)
-				return 1;
-			else if (this.patternFrequency < c.patternFrequency)
-				return -1;
-			else
-				return 0;
-		}
-	}
+//	private class Coherence implements Comparable<Coherence>{
+//
+//		private int linkCount;
+//		private int patternFrequency;
+//		
+//		public Coherence(int linkCount,int patternFrequency) {
+//			this.linkCount = linkCount;
+//			this.patternFrequency = patternFrequency;
+//		}
+//		
+//		@Override
+//		public int compareTo(Coherence c) {
+//			if (c == null)
+//				return 1;
+//			else if (this.linkCount > c.linkCount)
+//				return 1;
+//			else if (this.linkCount < c.linkCount)
+//				return -1;
+//			else if (this.patternFrequency > c.patternFrequency)
+//				return 1;
+//			else if (this.patternFrequency < c.patternFrequency)
+//				return -1;
+//			else
+//				return 0;
+//		}
+//	}
 
 //	private List<Integer> cohesion;
 	
@@ -85,7 +72,7 @@ public class SortableSemanticModel extends SemanticModel
 			this.cost = this.computeCost();
 //			this.frequency = this.computeFrequency();
 //			this.cohesion = this.computeCohesion();
-			this.coherence = this.computeCoherence();
+//			this.coherence = this.computeCoherence();
 		}
 	}
 	
@@ -97,7 +84,7 @@ public class SortableSemanticModel extends SemanticModel
 			this.cost = this.computeCost();
 //			this.frequency = this.computeFrequency();
 //			this.cohesion = this.computeCohesion();
-			this.coherence = this.computeCoherence();
+//			this.coherence = this.computeCoherence();
 		}
 	}
 
@@ -117,33 +104,33 @@ public class SortableSemanticModel extends SemanticModel
 		return this.steinerNodes;
 	}
 	
-	public String getEdgeCoherenceString() {
-		String s = "";
-		for (Coherence c : this.coherence)
-			s += "(" + c.linkCount + "," + c.patternFrequency + ")";
-		return s;
-	}
+//	public String getEdgeCoherenceString() {
+//		String s = "";
+//		for (Coherence c : this.coherence)
+//			s += "(" + c.linkCount + "," + c.patternFrequency + ")";
+//		return s;
+//	}
 	
-	private static double roundTwoDecimals(double d) {
-        DecimalFormat twoDForm = new DecimalFormat("#.##");
-        return Double.valueOf(twoDForm.format(d));
-	}
+//	private static double roundTwoDecimals(double d) {
+//        DecimalFormat twoDForm = new DecimalFormat("#.##");
+//        return Double.valueOf(twoDForm.format(d));
+//	}
 	
-	public String getDescription() {
-		String s = "";
-		
-		s += "coherence: ";
-		for (CoherenceItem ci : this.getSteinerNodes().getCoherenceList())
-			s += "(" + ci.getX() + "," + ci.getY() + ")";
-		s += " --- ";
-		
-		s += "score: " + this.steinerNodes.getScore();
-		s += " --- ";
-		
-		s += "cost: " + roundTwoDecimals(this.getCost());
-
-		return s;
-	}
+//	public String getDescription() {
+//		String s = "";
+//		
+//		s += "coherence: ";
+//		for (CoherenceItem ci : this.getSteinerNodes().getCoherenceList())
+//			s += "(" + ci.getX() + "," + ci.getY() + ")";
+//		s += " --- ";
+//		
+//		s += "score: " + this.steinerNodes.getScore();
+//		s += " --- ";
+//		
+//		s += "cost: " + roundTwoDecimals(this.getCost());
+//
+//		return s;
+//	}
 	
 //	public int getFrequency() {
 //		return frequency;
@@ -158,7 +145,7 @@ public class SortableSemanticModel extends SemanticModel
 	
 	private double computeCost() {
 		double cost = 0.0;
-		for (Link e : this.graph.edgeSet()) {
+		for (LabeledLink e : this.graph.edgeSet()) {
 			cost += e.getWeight();
 		}
 		return cost;
@@ -189,76 +176,76 @@ public class SortableSemanticModel extends SemanticModel
 //		return commonPatterns.size();
 //	}
 	
-	private List<Coherence> computeCoherence() {
-		
-		if (this.graph == null || this.graph.edgeSet().size() == 0)
-			return null;
-		  
-		List<Coherence> coherence = new ArrayList<Coherence>();
-
-		List<String> patternIds = new ArrayList<String>();
-		HashMap<String, HashSet<String>> patternToLinks = new HashMap<String, HashSet<String>>();
-		HashMap<String, Integer> patternToFrequency = new HashMap<String, Integer>();
-		
-		for (Link e : this.graph.edgeSet()) 
-			for (String s : e.getModelIds()) {
-				
-				if (!patternIds.contains(s))
-					patternIds.add(s);
-				
-				patternToFrequency.put(s, 1);
-				
-				HashSet<String> links = patternToLinks.get(s);
-				if (links == null) {
-					links = new HashSet<String>();
-					patternToLinks.put(s, links);
-				}
-				links.add(e.getId());
-			}
-		
-		int size1, size2, size3;
-		String p1, p2;
-		for (int i = 0; i < patternIds.size() - 1; i++) {
-			p1 = patternIds.get(i);
-			if (!patternToLinks.containsKey(p1)) continue;
-			size1 = patternToLinks.get(p1).size();
-			for (int j = i + 1; j < patternIds.size(); j++) {
-				p2 = patternIds.get(j);
-				if (!patternToLinks.containsKey(p1)) continue;
-				if (!patternToLinks.containsKey(p2)) continue;
-				size2 = patternToLinks.get(p2).size();
-				
-				Set<String> shared = Sets.intersection(patternToLinks.get(p1), patternToLinks.get(p2));
-				if (shared == null) continue;
-				
-				size3 = shared.size();
-				if (size3 < size2 && size3 < size1) continue;
-				else if (size3 == size1 && size3 < size2) {
-					patternToLinks.remove(p1);
-					patternToFrequency.remove(p1);
-				} else if (size3 == size2 && size3 < size1) { 
-					patternToLinks.remove(p2);
-					patternToFrequency.remove(p2);
-				} else if (size3 == size1 && size3 == size2) {
-					Integer count = patternToFrequency.get(p1);
-					patternToFrequency.put(p1, count + 1);
-					patternToLinks.remove(p2);
-					patternToFrequency.remove(p2);
-				}
-			}
-		}
-		
-		for (Entry<String, HashSet<String>> entry : patternToLinks.entrySet()) {
-			Coherence c = new Coherence(entry.getValue().size(), patternToFrequency.get(entry.getKey()).intValue());
-			coherence.add(c);
-		}
-		
-		Collections.sort(coherence);
-		coherence = Lists.reverse(coherence);
-		
-		return coherence;
-
-	}
+//	private List<Coherence> computeCoherence() {
+//		
+//		if (this.graph == null || this.graph.edgeSet().size() == 0)
+//			return null;
+//		  
+//		List<Coherence> coherence = new ArrayList<Coherence>();
+//
+//		List<String> patternIds = new ArrayList<String>();
+//		HashMap<String, HashSet<String>> patternToLinks = new HashMap<String, HashSet<String>>();
+//		HashMap<String, Integer> patternToFrequency = new HashMap<String, Integer>();
+//		
+//		for (Link e : this.graph.edgeSet()) 
+//			for (String s : e.getModelIds()) {
+//				
+//				if (!patternIds.contains(s))
+//					patternIds.add(s);
+//				
+//				patternToFrequency.put(s, 1);
+//				
+//				HashSet<String> links = patternToLinks.get(s);
+//				if (links == null) {
+//					links = new HashSet<String>();
+//					patternToLinks.put(s, links);
+//				}
+//				links.add(e.getId());
+//			}
+//		
+//		int size1, size2, size3;
+//		String p1, p2;
+//		for (int i = 0; i < patternIds.size() - 1; i++) {
+//			p1 = patternIds.get(i);
+//			if (!patternToLinks.containsKey(p1)) continue;
+//			size1 = patternToLinks.get(p1).size();
+//			for (int j = i + 1; j < patternIds.size(); j++) {
+//				p2 = patternIds.get(j);
+//				if (!patternToLinks.containsKey(p1)) continue;
+//				if (!patternToLinks.containsKey(p2)) continue;
+//				size2 = patternToLinks.get(p2).size();
+//				
+//				Set<String> shared = Sets.intersection(patternToLinks.get(p1), patternToLinks.get(p2));
+//				if (shared == null) continue;
+//				
+//				size3 = shared.size();
+//				if (size3 < size2 && size3 < size1) continue;
+//				else if (size3 == size1 && size3 < size2) {
+//					patternToLinks.remove(p1);
+//					patternToFrequency.remove(p1);
+//				} else if (size3 == size2 && size3 < size1) { 
+//					patternToLinks.remove(p2);
+//					patternToFrequency.remove(p2);
+//				} else if (size3 == size1 && size3 == size2) {
+//					Integer count = patternToFrequency.get(p1);
+//					patternToFrequency.put(p1, count + 1);
+//					patternToLinks.remove(p2);
+//					patternToFrequency.remove(p2);
+//				}
+//			}
+//		}
+//		
+//		for (Entry<String, HashSet<String>> entry : patternToLinks.entrySet()) {
+//			Coherence c = new Coherence(entry.getValue().size(), patternToFrequency.get(entry.getKey()).intValue());
+//			coherence.add(c);
+//		}
+//		
+//		Collections.sort(coherence);
+//		coherence = Lists.reverse(coherence);
+//		
+//		return coherence;
+//
+//	}
 	
 //	private List<Integer> computeCohesion() {
 //		
@@ -343,68 +330,5 @@ public class SortableSemanticModel extends SemanticModel
 			return 0;
 		}
 	}
-	
-//	@Override
-//	public int compareTo(RankedModel m) {
-//		
-//		int k = compareCoherence(this.coherence, m.coherence);
-//		if (k > 0)
-//			return -1;
-//		else if (k < 0)
-//			return 1;
-//		else if (this.cost < m.cost)
-//			return -1;
-//		else if (m.cost < this.cost)
-//			return 1;
-//		else {
-//			return 0;
-//		}
-//	}
-	
-//	@Override
-//	public int compareTo(RankedModel m) {
-//		
-//		if (this.cost < m.cost)
-//			return -1;
-//		else if (m.cost < this.cost)
-//			return 1;
-//		else {
-//			int k = compareCoherence(this.coherence, m.coherence);
-//			if (k > 0)
-//				return -1;
-//			else if (k < 0)
-//				return 1;
-//			else if (this.cost < m.cost)
-//				return -1;
-//			else if (m.cost < this.cost)
-//				return 1;
-//			else {
-//				return 0;
-//			}
-//		}
-//	}
-	
-//	@Override
-//	public int compareTo(RankedModel m) {
-//		
-//		if (this.frequency > m.getFrequency())
-//			return -1;
-//		else if (m.getFrequency() > this.frequency)
-//			return 1;
-//		else {
-//			int k = compareCohesions(this.cohesion, m.cohesion);
-//			if (k > 0)
-//				return -1;
-//			else if (k < 0)
-//				return 1;
-//			else if (this.cost < m.cost)
-//				return -1;
-//			else if (m.cost < this.cost)
-//				return 1;
-//			else {
-//				return 0;
-//			}
-//		}
-//	}
-	
+
 }
