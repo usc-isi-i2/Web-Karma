@@ -106,8 +106,9 @@ public class FoldCommand extends WorksheetCommand {
 				String name = hnode.getColumnName();
 				String value = node.getValue().asString();
 				JSONObject obj = new JSONObject();
-				obj.put("values", name + ":" + value);
-				t.put(obj);
+				obj.put("values", value);
+				obj.put("names", name);
+				t.put(obj);			
 			}
 			JSONObject obj = new JSONObject();
 			obj.put("rowId", id);

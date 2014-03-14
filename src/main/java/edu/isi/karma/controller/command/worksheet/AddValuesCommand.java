@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.worksheet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -214,7 +215,7 @@ public class AddValuesCommand extends WorksheetCommand{
 					worksheet, factory);
 		Table nestedTable = row.getNode(newHNodeId).getNestedTable();
 		Row r = nestedTable.addRow(factory);
-		for (Object key : obj.keySet()) {
+		for (Object key : new TreeSet<Object>(obj.keySet())) {
 			Object value = obj.get(key.toString());
 			HNode h = nestedHTable.getHNodeFromColumnName(key.toString());		
 			if ( h == null)

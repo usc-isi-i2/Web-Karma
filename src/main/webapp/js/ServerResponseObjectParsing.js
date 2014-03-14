@@ -656,7 +656,7 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
             var dataDiv = $("<div>");
 
             if (cell["hasNestedTable"]) {
-                var nestedTableDataContainer = $("<div>").addClass("table-data-container").attr("id", cell["tableId"]);
+                var nestedTableDataContainer = $("<div>").addClass("table-data-container");
                 var nestedTable = $("<table>").addClass("wk-table");
 
                 addWorksheetDataRecurse(worksheetId, cell["nestedRows"], nestedTable, !isOdd);
@@ -672,17 +672,24 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
                 } else {
                     nestedTableDataContainer.append(nestedTable);
                 }
-
+                /*if (index2 == 0) {
+                    var dataDiv2 = $("<div>").width(30).height(30);
+                    var checkbox = $('<input />', { type: 'checkbox', class: 'selectRowID', value: cell["rowID"] });
+                    dataDiv2.append(checkbox);
+                    dataDiv.append(dataDiv2); 
+                }*/
                 dataDiv.append(nestedTableDataContainer);
             } else {
-                dataDiv.addClass("wk-value").addClass(cell["columnClass"]);
-                dataDiv.text(cell["displayValue"])
+                var dataDiv3 = $("<div>").addClass("wk-value");
+                //console.log(stylesheet)
+                dataDiv.addClass(cell["columnClass"]);
+                dataDiv3.text(cell["displayValue"])
                     .attr('id', cell["nodeId"])
                     .data("expandedValue", cell["expandedValue"])
                     .attr("title", cell["expandedValue"]) //for tooltip
                     ;
                 
-        		dataDiv.editable({
+        		dataDiv3.editable({
         			 type: 'text',
         			 success: function(response, newValue) {
         				 console.log("Set new value:" + newValue);
@@ -692,11 +699,29 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
         			 mode: 'popup',
         			 inputclass: 'worksheetInputEdit'	 
 		            });
-                /*var dataDiv2 = $("<div>").width(30).height(30).css({float:'left'});
-                var checkbox = $('<input />', { type: 'checkbox', id: 'selectcolumns', value: "a" });
-                dataDiv2.append(checkbox);
-                td.append(dataDiv2);  
-                td.addClass(cell["columnClass"]); */
+                /*if (index2 == 0) {
+                    var stylesheet = document.styleSheets[0];
+                    var width = 0;
+                    for (i = 0; i < stylesheet.cssRules.length; i++) {
+                        if (stylesheet.cssRules[i].selectorText == "." + cell["columnClass"])
+                            var str = stylesheet.cssRules[i].style['width'];
+                            if (typeof(str) == "string") {
+                                str = str.substring(0, str.indexOf("px"));
+                                //console.log(str);
+                                width = parseInt(str);
+                                break;
+                            }
+
+                    }
+                    console.log(width);
+                    dataDiv3.css({width: width - 30, float: "right"});
+                    var dataDiv2 = $("<div>").width(30).height(30).css({float:'left'});
+                    var checkbox = $('<input />', { type: 'checkbox', class: 'selectRowID', value: cell["rowID"] });
+                    dataDiv2.append(checkbox);
+                    dataDiv.append(dataDiv2); 
+                } */
+                dataDiv.append(dataDiv3);
+                td.addClass(cell["columnClass"]); 
             }
             rowTr.append(td.append(dataDiv));
         });
