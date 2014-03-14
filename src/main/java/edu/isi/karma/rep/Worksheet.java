@@ -42,6 +42,7 @@ public class Worksheet extends RepEntity {
     private FullCRFModel crfModel = new FullCRFModel();
     private MetadataContainer metadataContainer;
     private String encoding;
+    private Object jsonAnnotation = null;
     
     @Override
     public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {
@@ -196,6 +197,14 @@ public class Worksheet extends RepEntity {
         }
 
         return true;
+    }
+    
+    public void setJsonAnnotation(Object json) {
+    	this.jsonAnnotation = json;
+    }
+    
+    public Object getJsonAnnotation() {
+    	return this.jsonAnnotation;
     }
 
 }
