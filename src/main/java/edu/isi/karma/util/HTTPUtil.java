@@ -24,6 +24,7 @@ package edu.isi.karma.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -93,7 +95,7 @@ public class HTTPUtil {
 		HttpEntity entity = response.getEntity();
 		StringBuilder responseString = new StringBuilder();
 		if (entity != null) {
-			BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
+			BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent(),"UTF-8"));
 			
 			String line = buf.readLine();
 			while(line != null) {
@@ -112,6 +114,28 @@ public class HTTPUtil {
 		if(acceptContentType != null && !acceptContentType.isEmpty()) {
 			request.setHeader(HTTP_HEADERS.Accept.name(), acceptContentType);
 		}
+		HttpResponse response = httpClient.execute(request);
+		
+		// Parse the response and store it in a String
+		HttpEntity entity = response.getEntity();
+		StringBuilder responseString = new StringBuilder();
+		if (entity != null) {
+			BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
+			
+			String line = buf.readLine();
+			while(line != null) {
+				responseString.append(line);
+				line = buf.readLine();
+			}
+		}
+		return responseString.toString();
+	}
+	
+	public static String executeHTTPDeleteRequest(String uri) 
+			throws ClientProtocolException, IOException {
+		HttpClient httpClient = new DefaultHttpClient();
+		
+		HttpDelete request = new HttpDelete(uri);
 		HttpResponse response = httpClient.execute(request);
 		
 		// Parse the response and store it in a String

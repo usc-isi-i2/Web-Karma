@@ -511,6 +511,16 @@ function parse(data) {
                 loadMoreLink.text(additionalRecordsLeft + " additional records, load more...");
             }
         }
+        else if(element["updateType"] == "ExportCSVUpdate") {
+            // Remove existing link if any
+        	var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
+            $("a.CSVExportDownloadLink", titleDiv).remove();
+
+            hideLoading(element["worksheetId"]);
+            var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("CSV Export").addClass("CSVExportDownloadLink  DownloadLink").attr("target", "_blank");
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
+            $.sticky("CSV exported");
+        }
     });
     
     if(trivialErrors.length > 0) {
@@ -662,12 +672,12 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
                 } else {
                     nestedTableDataContainer.append(nestedTable);
                 }
-                if (index2 == 0) {
+                /*if (index2 == 0) {
                     var dataDiv2 = $("<div>").width(30).height(30);
                     var checkbox = $('<input />', { type: 'checkbox', class: 'selectRowID', value: cell["rowID"] });
                     dataDiv2.append(checkbox);
                     dataDiv.append(dataDiv2); 
-                }
+                }*/
                 dataDiv.append(nestedTableDataContainer);
             } else {
                 var dataDiv3 = $("<div>").addClass("wk-value");
@@ -689,7 +699,7 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
         			 mode: 'popup'
         				 
 		            });
-                if (index2 == 0) {
+                /*if (index2 == 0) {
                     var stylesheet = document.styleSheets[0];
                     var width = 0;
                     for (i = 0; i < stylesheet.cssRules.length; i++) {
@@ -709,7 +719,7 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
                     var checkbox = $('<input />', { type: 'checkbox', class: 'selectRowID', value: cell["rowID"] });
                     dataDiv2.append(checkbox);
                     dataDiv.append(dataDiv2); 
-                } 
+                } */
                 dataDiv.append(dataDiv3);
                 td.addClass(cell["columnClass"]); 
             }

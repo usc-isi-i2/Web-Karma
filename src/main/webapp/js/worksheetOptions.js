@@ -8,8 +8,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			[	"Show Model" , showModel ],
 			[ "Set Properties" , setProperties ],
 			[ "Show Auto Model" , showAutoModel ],
-			[ "Fold" , Fold ],
-			[ "Save RowID", saveRowID ], 
+		//	[ "Save RowID", saveRowID ], 
 			[ "Apply R2RML Model" , applyR2RMLModel, true, "applyWorksheetHistory" ],
 			[ "divider" , null ],
 			[ "Publish RDF" , publishRDF ],
@@ -23,6 +22,8 @@ function WorksheetOptions(wsId, wsTitle) {
 			["Export to Database", exportToDatabase],
 			["Export to MDB", exportToMDB],
 			["Export to SpatialData", exportToSpatial],
+			["divider", null],
+			[ "Fold" , Fold ]
 	];
 	
 	function hideDropdown() {
