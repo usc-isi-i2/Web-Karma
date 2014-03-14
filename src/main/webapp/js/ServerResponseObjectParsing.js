@@ -20,7 +20,6 @@
  ******************************************************************************/
 
 function parse(data) {
-    console.log(data);
     $.workspaceGlobalInformation = {
         "id" : data["workspaceId"]
     }

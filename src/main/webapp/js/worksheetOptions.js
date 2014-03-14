@@ -185,9 +185,9 @@ function WorksheetOptions(wsId, wsTitle) {
 	function applyR2RMLModel() {
 		console.log("Apply R2RMl Model: " + worksheetTitle);
 		//hideDropdown();
-		$("#applyWorksheetHistory").fileupload({
+		$("#applyWorksheetHistory_" + worksheetId).fileupload({
 	        add : function (e, data) {
-	            $("#applyWorksheetHistory").fileupload({
+	            $("#applyWorksheetHistory_" + worksheetId).fileupload({
 	                url: "RequestController?workspaceId=" + $.workspaceGlobalInformation.id +
 	                    "&command=ApplyHistoryFromR2RMLModelCommand&worksheetId=" + worksheetId
 	            });
@@ -206,7 +206,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	        },
 	        dropZone: null
 	    });
-		$('#applyWorksheetHistory').fileupload('option', 'redirect', window.location.href.replace(/\/[^\/]*$/, '/cors/result.html?%s'));
+		$('#applyWorksheetHistory_' + worksheetId).fileupload('option', 'redirect', window.location.href.replace(/\/[^\/]*$/, '/cors/result.html?%s'));
 		return false;
 	}
 	
@@ -439,7 +439,7 @@ function WorksheetOptions(wsId, wsTitle) {
 					//<form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form>
 					a.addClass("fileinput-button");
 					var form = $("<form>")
-								.attr("id", option[3])
+								.attr("id", option[3] + "_" + worksheetId)
 								.attr("action", "ImportFileCommand")
 								.attr("method", "POST")
 								.attr("enctype", "multipart/form-data")
