@@ -4,13 +4,13 @@ import java.util.Set;
 
 import edu.isi.karma.kr2rml.template.ColumnTemplateTerm;
 
-public class WorksheetDepthTreeRootStrategy extends RootStrategy {
+public class WorksheetDepthRootStrategy extends RootStrategy {
 
-	public WorksheetDepthTreeRootStrategy()
+	public WorksheetDepthRootStrategy()
 	{
 		super();
 	}
-	public WorksheetDepthTreeRootStrategy(
+	public WorksheetDepthRootStrategy(
 			RootStrategy backupStrategy) {
 		super(backupStrategy);
 	}

@@ -6,10 +6,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.ErrorReport.Priority;
+import edu.isi.karma.kr2rml.ReportMessage;
+
 public class TriplesMapPlanExecutor {
 
-	public void execute(TriplesMapPlan plan)
+	private static Logger LOG = LoggerFactory.getLogger(TriplesMapPlanExecutor.class);
+	
+	public ErrorReport execute(TriplesMapPlan plan)
 	{
+		ErrorReport errorReport = new ErrorReport();
 		ExecutorService service = Executors.newFixedThreadPool(10);
 		try {
 			List<Future<Boolean>> results = new LinkedList<Future<Boolean>>();
@@ -22,12 +32,22 @@ public class TriplesMapPlanExecutor {
 				result.get();
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Unable to finish executing plan", e);
+			errorReport.addReportMessage(new ReportMessage("Triples Map Plan Execution Error", e.getMessage(), Priority.high));
 		}
 		finally{
 			
-			service.shutdownNow();
+			List<Runnable> unfinishedWorkers = service.shutdownNow();
+			for(Runnable unfinishedWorker : unfinishedWorkers)
+			{
+				if(unfinishedWorker instanceof TriplesMapWorker)
+				{
+					TriplesMapWorker unfinishedTriplesMapWorker = (TriplesMapWorker) unfinishedWorker;
+					errorReport.addReportMessage(new ReportMessage("Triples Map Plan Execution Error", unfinishedTriplesMapWorker.toString() + " was unable to complete", Priority.high));
+				}
+			}
+			
 		}
+		return errorReport;
 	}
 }

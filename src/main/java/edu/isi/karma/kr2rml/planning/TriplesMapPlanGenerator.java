@@ -32,7 +32,7 @@ public class TriplesMapPlanGenerator {
 		this.outWriter = outWriter;
 	}
 
-	public TriplesMapPlan generatePlan(TriplesMapForest tmf)
+	public TriplesMapPlan generatePlan(TriplesMapGraphMerger tmf)
 	{
 		List<TriplesMapWorker> workers = new LinkedList<TriplesMapWorker>();
 		Map<String, List<PopulatedTemplateTermSet>>triplesMapSubjects = new ConcurrentHashMap<String, List<PopulatedTemplateTermSet>>();
@@ -58,7 +58,7 @@ public class TriplesMapPlanGenerator {
 	{
 		//add strategy
 		Map<TriplesMap, TriplesMapWorker> mapToWorker = new HashMap<TriplesMap, TriplesMapWorker>();
-		String triplesMapId = graph.findRoot(new SteinerTreeRootStrategy(new WorksheetDepthTreeRootStrategy()));
+		String triplesMapId = graph.findRoot(new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
 		TriplesMap map = graph.getTriplesMap(triplesMapId);
 		generateTriplesMapWorker(mapToWorker, graph, map, plan);
 		return mapToWorker.values();

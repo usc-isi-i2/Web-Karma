@@ -52,6 +52,19 @@ public class ErrorReport {
 		reports.add(errMsg);
 	}
 	
+	public static ErrorReport merge(ErrorReport first, ErrorReport second)
+	{
+		ErrorReport newReport = new ErrorReport();
+		for(ReportMessage msg : first.reports)
+		{
+			newReport.addReportMessage(msg);
+		}
+		for(ReportMessage otherMsg :second.reports)
+		{
+			newReport.addReportMessage(otherMsg);
+		}
+		return newReport;
+	}
 	public String toJSONString() throws JSONException {
 		JSONArray repArr = new JSONArray();
 		for (ReportMessage rep:reports) {

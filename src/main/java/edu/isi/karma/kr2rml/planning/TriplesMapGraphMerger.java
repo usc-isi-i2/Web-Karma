@@ -4,11 +4,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TriplesMapForest {
+public class TriplesMapGraphMerger {
 
 	List<TriplesMapGraph> graphs;
 	
-	public TriplesMapForest()
+	public TriplesMapGraphMerger()
 	{
 		graphs = new LinkedList<TriplesMapGraph>();
 	}

@@ -103,15 +103,15 @@ public class TriplesMapWorkerPlan {
 		
 		for(PredicateObjectMap pom : triplesMap.getPredicateObjectMaps())
 		{
-			LOG.info("Processing " + pom.toString());
+			LOG.debug("Processing " + pom.toString());
 			if(pom.getObject().hasRefObjectMap())
 			{
-				LOG.info("Skipping " + pom.toString());
+				LOG.debug("Skipping " + pom.toString());
 				continue;
 			}
 			if(pom.getPredicate().toString().contains("classLink"))
 			{
-				LOG.info("Skipping " + pom.toString());
+				LOG.debug("Skipping " + pom.toString());
 				continue;
 			}
 			PredicateObjectMappingPlan pomPlan = new ColumnPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, subjectMapPlan.getSubjectTermsToPaths(), kr2rmlMapping,uriFormatter, factory, translator, hNodeToContextUriMap, generateContext);

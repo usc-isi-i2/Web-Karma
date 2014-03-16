@@ -9,14 +9,24 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DFSTriplesMapGraphTreeifier implements TriplesMapGraphTreeifier {
+public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 	
-	private static Logger logger = LoggerFactory.getLogger(DFSTriplesMapGraphTreeifier.class);
+	private static Logger logger = LoggerFactory.getLogger(DFSTriplesMapGraphDAGifier.class);
 	@Override
-	public List<String> treeify(TriplesMapGraph graph, RootStrategy rootStrategy) {
+	public List<String> dagify(TriplesMapGraph graph, RootStrategy rootStrategy) {
 	
 		HashSet<String> triplesMapsIds = new HashSet<String>();
 
+		if(graph.getTriplesMapIds().size() == 0)
+		{
+			return new LinkedList<String>();
+		}
+		if(graph.getTriplesMapIds().size() == 1)
+		{
+			List<String> results = new LinkedList<String>();
+			results.addAll(graph.getTriplesMapIds());
+			return results;
+		}
 		TriplesMapGraph newGraph = copyGraph(graph, triplesMapsIds);
 		
 		String rootTriplesMapId = newGraph.findRoot(rootStrategy);

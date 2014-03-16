@@ -46,7 +46,7 @@ import edu.isi.karma.kr2rml.exception.NoValueFoundInNodeException;
 import edu.isi.karma.kr2rml.exception.ValueNotFoundKarmaException;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
-import edu.isi.karma.kr2rml.planning.DFSTriplesMapGraphTreeifier;
+import edu.isi.karma.kr2rml.planning.DFSTriplesMapGraphDAGifier;
 import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
 import edu.isi.karma.kr2rml.planning.TriplesMapLink;
@@ -54,7 +54,7 @@ import edu.isi.karma.kr2rml.planning.TriplesMapPlan;
 import edu.isi.karma.kr2rml.planning.TriplesMapPlanExecutor;
 import edu.isi.karma.kr2rml.planning.TriplesMapPlanGenerator;
 import edu.isi.karma.kr2rml.planning.TriplesMapWorkerPlan;
-import edu.isi.karma.kr2rml.planning.WorksheetDepthTreeRootStrategy;
+import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
 import edu.isi.karma.kr2rml.template.ColumnTemplateTerm;
 import edu.isi.karma.kr2rml.template.StringTemplateTerm;
 import edu.isi.karma.kr2rml.template.TemplateTerm;
@@ -146,12 +146,12 @@ public class KR2RMLWorksheetRDFGenerator {
 			
 			try{
 				//TODO move this out!
-				DFSTriplesMapGraphTreeifier treeifier = new DFSTriplesMapGraphTreeifier();
-				treeifier.treeify(kr2rmlMapping.getAuxInfo().getTriplesMapGraph(), new SteinerTreeRootStrategy(new WorksheetDepthTreeRootStrategy()));
+				DFSTriplesMapGraphDAGifier treeifier = new DFSTriplesMapGraphDAGifier();
+				treeifier.dagify(kr2rmlMapping.getAuxInfo().getTriplesMapGraph(), new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
 				
 			}catch (Exception e)
 			{
-				logger.error("unable to treeify!");
+				logger.error("unable to treeify!", e);
 			}
 			int i=1;
 			
@@ -165,14 +165,11 @@ public class KR2RMLWorksheetRDFGenerator {
 				TriplesMapPlanExecutor e = new TriplesMapPlanExecutor();
 				TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(triplesMapToWorkerPlan, row, outWriter);
 				TriplesMapPlan plan = g.generatePlan(kr2rmlMapping.getAuxInfo().getTriplesMapGraph());
-				e.execute(plan);
-				
+				errorReport = ErrorReport.merge(errorReport, e.execute(plan));
 				outWriter.finishRow();
 				if (i++%2000 == 0)
 					logger.info("Done processing " + i + " rows");
-			/*	for (ReportMessage errMsg:predicatesFailed.values()){
-					this.errorReport.addReportMessage(errMsg);
-				}*/
+	
 			}
 			
 			// Generate column provenance information if required

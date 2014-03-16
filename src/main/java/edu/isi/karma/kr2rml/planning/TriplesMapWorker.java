@@ -84,5 +84,16 @@ public class TriplesMapWorker implements Callable<Boolean> {
 	public CountDownLatch getLatch() {
 		return latch;
 	}
-	
+
+	@Override
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append("TriplesMapWorker: ");
+		sb.append("row = ");
+		sb.append(r.getId());
+		sb.append("triplesMap = ");
+		sb.append(triplesMap.getId());
+		return sb.toString();
+	}
 }
