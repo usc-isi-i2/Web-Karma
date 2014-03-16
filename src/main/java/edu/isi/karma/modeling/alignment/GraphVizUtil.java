@@ -30,12 +30,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 
@@ -80,7 +82,7 @@ public class GraphVizUtil {
 	}
 	
 	private static org.kohsuke.graphviz.Graph convertToGraphviz(
-			DirectedWeightedMultigraph<Node, Link> graph, 
+			DirectedGraph<Node, DefaultLink> graph, 
 			Map<ColumnNode, ColumnNode> mappingToSourceColumns,
 			boolean onlyAddPatterns,
 			boolean showNodeMetaData,
@@ -127,10 +129,14 @@ public class GraphVizUtil {
 		
 		HashMap<Node, org.kohsuke.graphviz.Node> nodeIndex = new HashMap<Node, org.kohsuke.graphviz.Node>();
 		
-		for (Link e : graph.edgeSet()) {
+		for (DefaultLink e : graph.edgeSet()) {
 			
+			Set<String> modelIds = null;
+			if (e instanceof LabeledLink) {
+				modelIds = ((LabeledLink)e).getModelIds();
+			}
 			if (onlyAddPatterns)
-				if (e.getModelIds() == null || e.getModelIds().isEmpty())
+				if (modelIds == null || modelIds.isEmpty())
 					continue;
 			
 			Node source = e.getSource();
@@ -191,7 +197,7 @@ public class GraphVizUtil {
 			org.kohsuke.graphviz.Edge edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
 			
 			String edgeId = e.getId();
-			String edgeUri = e.getLabel().getUri();
+			String edgeUri = e.getUri();
 			String edgeLocalName = getLocalName(edgeUri);
 			String edgeLabel = (edgeLocalName == null?edgeId:edgeLocalName);
 
@@ -199,7 +205,7 @@ public class GraphVizUtil {
 				edgeLabel += metaDataSeparator;
 				edgeLabel += "w=" + roundTwoDecimals(e.getWeight());
 				edgeLabel += metaDataSeparator;
-				edgeLabel += getModelIds(e.getModelIds());
+				edgeLabel += getModelIds(modelIds);
 			}
 
 			edge.attr("label", edgeLabel);
@@ -212,7 +218,7 @@ public class GraphVizUtil {
 	}
 
 	public static void exportJGraphToGraphviz(
-			DirectedWeightedMultigraph<Node, Link> graph, 
+			DirectedWeightedMultigraph<Node, DefaultLink> graph, 
 			String label, 
 			boolean onlyAddPatterns,
 			boolean showNodeMetaData,
@@ -248,7 +254,7 @@ public class GraphVizUtil {
 //		graphViz.attr("page", "8.5,11");
 
 		org.kohsuke.graphviz.Graph gViz = 
-				convertToGraphviz(model.getGraph(), model.getMappingToSourceColumns(), false, showNodeMetaData, showLinkMetaData);
+				convertToGraphviz(GraphUtil.asDefaultGraph(model.getGraph()), model.getMappingToSourceColumns(), false, showNodeMetaData, showLinkMetaData);
 		gViz.attr("label", "model");
 		gViz.id("cluster");
 		graphViz.subGraph(gViz);
@@ -280,7 +286,7 @@ public class GraphVizUtil {
 					showNodeMetaData = true;
 					showLinkMetaData = true;
 				}
-				cluster = GraphVizUtil.convertToGraphviz(entry.getValue().getGraph(), 
+				cluster = GraphVizUtil.convertToGraphviz(GraphUtil.asDefaultGraph(entry.getValue().getGraph()), 
 						entry.getValue().getMappingToSourceColumns(), false, showNodeMetaData, showLinkMetaData);
 				cluster.id("cluster_" + counter);
 				cluster.attr("label", entry.getKey());

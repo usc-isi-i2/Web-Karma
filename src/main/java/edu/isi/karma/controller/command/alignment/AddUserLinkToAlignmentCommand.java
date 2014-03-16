@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -37,7 +37,8 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 
@@ -47,7 +48,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 	private final String edgeId;
 	private final String alignmentId;
 	private Alignment 	 oldAlignment;
-	private DirectedWeightedMultigraph<Node, Link> oldGraph;
+	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 	private String edgeLabel;
 	
 	// private String edgeLabel;
@@ -70,7 +71,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 
 	@Override
 	public String getTitle() {
-		return "Add User Link";
+		return "Add User DefaultLink";
 	}
 
 	@Override
@@ -89,20 +90,20 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		if(alignment == null || alignment.getGraphLinks().size() == 0) {
+		if(alignment == null || alignment.isEmpty()) {
 			logger.error("Alignment cannot be null before calling this command since the alignment is created while " +
 					"setting the semantic types.");
 			return new UpdateContainer(new ErrorUpdate("Error occured while generating the model for the source."));
 		}
 		// Save the original alignment for undo
 		oldAlignment = alignment.getAlignmentClone();
-		oldGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
+		oldGraph = (DirectedWeightedMultigraph<Node, DefaultLink>)alignment.getGraph().clone();
 		
 		// Set the other links to the target node to normal
 		LinkIdFactory.getLinkTargetId(edgeId);
-		Set<Link> currentLinks = alignment.getCurrentIncomingLinksToNode(LinkIdFactory.getLinkTargetId(edgeId));
+		Set<LabeledLink> currentLinks = alignment.getCurrentIncomingLinksToNode(LinkIdFactory.getLinkTargetId(edgeId));
 		if (currentLinks != null && !currentLinks.isEmpty()) {
-			for (Link currentLink: currentLinks) {
+			for (LabeledLink currentLink: currentLinks) {
 				//if (currentLink.getSource().getId().equals(newLink.getSource().getId()))
 					alignment.changeLinkStatus(currentLink.getId(), LinkStatus.Normal);
 			}

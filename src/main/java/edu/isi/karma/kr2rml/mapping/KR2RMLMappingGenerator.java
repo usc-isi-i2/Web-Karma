@@ -69,7 +69,7 @@ import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.DisplayModel;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
@@ -94,7 +94,7 @@ public class KR2RMLMappingGenerator {
 	private PythonTransformationToTemplateTermSetBuilder transformationToTemplateTermSet;
 	private final Node steinerTreeRoot;
 	private SemanticTypes semanticTypes;
-	private DirectedWeightedMultigraph<Node, Link> alignmentGraph;
+	private DirectedWeightedMultigraph<Node, LabeledLink> alignmentGraph;
 	private Worksheet worksheet;
 	private Workspace workspace; 
 	
@@ -231,8 +231,8 @@ public class KR2RMLMappingGenerator {
 				
 				if (subjMap.isBlankNode()) {
 					List<String> columnsCovered = new ArrayList<String>();
-					Set<Link> links = dm.getModel().outgoingEdgesOf(treeNode);
-					Iterator<Link> linkIterator = links.iterator();
+					Set<LabeledLink> links = dm.getModel().outgoingEdgesOf(treeNode);
+					Iterator<LabeledLink> linkIterator = links.iterator();
 					while(linkIterator.hasNext())
 					{
 						Node n = linkIterator.next().getTarget();	
@@ -282,9 +282,9 @@ public class KR2RMLMappingGenerator {
 				subj.addRdfsType(typeTermSet);
 				r2rmlMapping.getSubjectMapIndex().put(node.getId(), subj);
 				
-				
-				Set<Link> outgoingLinks = alignmentGraph.outgoingEdgesOf(node);
-				for (Link link:outgoingLinks) {
+
+				Set<LabeledLink> outgoingLinks = alignmentGraph.outgoingEdgesOf(node);
+				for (LabeledLink link:outgoingLinks) {
 					
 					if (link instanceof ClassInstanceLink || link instanceof ColumnSubClassLink
 							|| (link instanceof DataPropertyLink && 
@@ -359,8 +359,8 @@ public class KR2RMLMappingGenerator {
 				TriplesMap subjTrMap = r2rmlMapping.getTriplesMapIndex().get(node.getId());
 				
 				// Create the predicate object map for each outgoing link
-				Set<Link> outgoingEdges = alignmentGraph.outgoingEdgesOf(node);
-				for (Link olink:outgoingEdges) {
+				Set<LabeledLink> outgoingEdges = alignmentGraph.outgoingEdgesOf(node);
+				for (LabeledLink olink:outgoingEdges) {
 					if (olink instanceof ObjectPropertySpecializationLink 
 							|| olink instanceof DataPropertyOfColumnLink  
 							|| olink instanceof ColumnSubClassLink)
@@ -381,7 +381,7 @@ public class KR2RMLMappingGenerator {
 						Predicate pred = new Predicate(olink.getId());
 						
 						// Check if a specialization link exists
-						Link specializedEdge = getSpecializationLinkIfExists(olink, node);
+						LabeledLink specializedEdge = getSpecializationLinkIfExists(olink, node);
 						if (specializedEdge != null) {
 							Node specializedEdgeTarget = specializedEdge.getTarget();
 							if (specializedEdgeTarget instanceof ColumnNode) {
@@ -425,7 +425,7 @@ public class KR2RMLMappingGenerator {
 						Predicate pred = new Predicate(olink.getId());
 						
 						// Check if a specialization link exists
-						Link specializedEdge = getSpecializationLinkIfExists(olink, node);
+						LabeledLink specializedEdge = getSpecializationLinkIfExists(olink, node);
 						if (specializedEdge != null) {
 							Node specializedEdgeTarget = specializedEdge.getTarget();
 							if (specializedEdgeTarget instanceof ColumnNode) {
@@ -504,7 +504,7 @@ public class KR2RMLMappingGenerator {
 	}
 
 	private void addInversePropertyIfExists(SubjectMap subjMap,
-			PredicateObjectMap poMap, Link olink, TriplesMap subjTrMap) {
+			PredicateObjectMap poMap, LabeledLink olink, TriplesMap subjTrMap) {
 		String propUri = olink.getLabel().getUri();
 		//this can happen if propertyName is not an Object property; it could be a subclass
 		if (!ontMgr.isObjectProperty(propUri))
@@ -551,9 +551,9 @@ public class KR2RMLMappingGenerator {
 		}
 	}
 
-	private Link getSpecializationLinkIfExists(Link link, Node sourceNode) {
-		Set<Link> outgoingEdges = this.alignmentGraph.outgoingEdgesOf(sourceNode);
-		for (Link olink:outgoingEdges) {
+	private LabeledLink getSpecializationLinkIfExists(LabeledLink link, Node sourceNode) {
+		Set<LabeledLink> outgoingEdges = this.alignmentGraph.outgoingEdgesOf(sourceNode);
+		for (LabeledLink olink:outgoingEdges) {
 			// Check for the object property specialization
 			if (olink instanceof ObjectPropertySpecializationLink ) {
 				String splLinkId = ((ObjectPropertySpecializationLink) olink).getId();

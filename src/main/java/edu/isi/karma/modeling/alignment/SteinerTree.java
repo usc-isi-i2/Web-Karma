@@ -34,9 +34,9 @@ import org.jgrapht.graph.WeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.PlainLink;
 
 /**
  * The approach is taken from the paper "A fast algorithm for steiner trees" by L. Kou et. al.
@@ -47,11 +47,11 @@ public class SteinerTree {
 	
 	static Logger logger = LoggerFactory.getLogger(SteinerTree.class);
 
-	UndirectedGraph<Node, Link> graph;
-	WeightedMultigraph<Node, Link> tree;
+	UndirectedGraph<Node, DefaultLink> graph;
+	WeightedMultigraph<Node, DefaultLink> tree;
 	List<Node> steinerNodes;
 	
-	public SteinerTree(UndirectedGraph<Node, Link> graph, List<Node> steinerNodes) {
+	public SteinerTree(UndirectedGraph<Node, DefaultLink> graph, List<Node> steinerNodes) {
 		this.graph = graph;
 		this.steinerNodes = steinerNodes;
 		
@@ -62,21 +62,21 @@ public class SteinerTree {
 	 * Construct the complete undirected distance graph G1=(V1,EI,d1) from G and S.
 	 * @return
 	 */
-	private Pseudograph<Node, Link> step1() {
+	private Pseudograph<Node, DefaultLink> step1() {
 		
 		logger.debug("<enter");
 
-		Pseudograph<Node, Link> g = 
-			new Pseudograph<Node, Link>(Link.class);
+		Pseudograph<Node, DefaultLink> g = 
+			new Pseudograph<Node, DefaultLink>(DefaultLink.class);
 		
 		for (Node n : this.steinerNodes) {
 			g.addVertex(n);
 		}
 		
-		BellmanFordShortestPath<Node, Link> path;
+		BellmanFordShortestPath<Node, DefaultLink> path;
 		
 		for (Node n1 : this.steinerNodes) {
-			path = new BellmanFordShortestPath<Node, Link>(this.graph, n1);
+			path = new BellmanFordShortestPath<Node, DefaultLink>(this.graph, n1);
 			
 			for (Node n2 : this.steinerNodes) {
 				
@@ -86,7 +86,7 @@ public class SteinerTree {
 				if (g.containsEdge(n1, n2))
 					continue;
 				
-				Link e = new PlainLink(null, null);
+				DefaultLink e = new DefaultLink();
 				g.addEdge(n1, n2, e);
 				g.setEdgeWeight(e, path.getCost(n2));
 				
@@ -105,28 +105,28 @@ public class SteinerTree {
 	 * @param g1
 	 * @return
 	 */
-	private WeightedMultigraph<Node, Link> step2(Pseudograph<Node, Link> g1) {
+	private WeightedMultigraph<Node, DefaultLink> step2(Pseudograph<Node, DefaultLink> g1) {
 
 		logger.debug("<enter");
 
-		KruskalMinimumSpanningTree<Node, Link> mst =
-            new KruskalMinimumSpanningTree<Node, Link>(g1);
+		KruskalMinimumSpanningTree<Node, DefaultLink> mst =
+            new KruskalMinimumSpanningTree<Node, DefaultLink>(g1);
 
 //    	logger.debug("Total MST Cost: " + mst.getSpanningTreeCost());
 
-        Set<Link> edges = mst.getEdgeSet();
+        Set<DefaultLink> edges = mst.getEdgeSet();
 
-		WeightedMultigraph<Node, Link> g2 = 
-			new WeightedMultigraph<Node, Link>(Link.class);
+		WeightedMultigraph<Node, DefaultLink> g2 = 
+			new WeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
 		
-		List<Link> edgesSortedById = new ArrayList<Link>();
+		List<DefaultLink> edgesSortedById = new ArrayList<DefaultLink>();
 		
-		for (Link e : edges) 
+		for (DefaultLink e : edges) 
 			edgesSortedById.add(e);
 		
 		Collections.sort(edgesSortedById);
 		
-		for (Link edge : edgesSortedById) {
+		for (DefaultLink edge : edgesSortedById) {
 			g2.addVertex(edge.getSource());
 			g2.addVertex(edge.getTarget());
 			g2.addEdge( edge.getSource(), edge.getTarget(), edge); 
@@ -143,24 +143,24 @@ public class SteinerTree {
 	 * @param g2
 	 * @return
 	 */
-	private WeightedMultigraph<Node, Link> step3(WeightedMultigraph<Node, Link> g2) {
+	private WeightedMultigraph<Node, DefaultLink> step3(WeightedMultigraph<Node, DefaultLink> g2) {
 		
 		logger.debug("<enter");
 
-		WeightedMultigraph<Node, Link> g3 = 
-			new WeightedMultigraph<Node, Link>(Link.class);
+		WeightedMultigraph<Node, DefaultLink> g3 = 
+			new WeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
 		
-		Set<Link> edges = g2.edgeSet();
-		DijkstraShortestPath<Node, Link> path;
+		Set<DefaultLink> edges = g2.edgeSet();
+		DijkstraShortestPath<Node, DefaultLink> path;
 		
 		Node source, target;
 		
-		for (Link edge : edges) {
+		for (DefaultLink edge : edges) {
 			source = edge.getSource();
 			target = edge.getTarget();
 			
-			path = new DijkstraShortestPath<Node, Link>(this.graph, source, target);
-			List<Link> pathEdges = path.getPathEdgeList();
+			path = new DijkstraShortestPath<Node, DefaultLink>(this.graph, source, target);
+			List<DefaultLink> pathEdges = path.getPathEdgeList();
 			
 			if (pathEdges == null)
 				continue;
@@ -193,28 +193,28 @@ public class SteinerTree {
 	 * @param g3
 	 * @return
 	 */
-	private WeightedMultigraph<Node, Link> step4(WeightedMultigraph<Node, Link> g3) {
+	private WeightedMultigraph<Node, DefaultLink> step4(WeightedMultigraph<Node, DefaultLink> g3) {
 
 		logger.debug("<enter");
 
-		KruskalMinimumSpanningTree<Node, Link> mst =
-            new KruskalMinimumSpanningTree<Node, Link>(g3);
+		KruskalMinimumSpanningTree<Node, DefaultLink> mst =
+            new KruskalMinimumSpanningTree<Node, DefaultLink>(g3);
 
 //    	logger.debug("Total MST Cost: " + mst.getSpanningTreeCost());
 
-        Set<Link> edges = mst.getEdgeSet();
+        Set<DefaultLink> edges = mst.getEdgeSet();
 
-		WeightedMultigraph<Node, Link> g4 = 
-			new WeightedMultigraph<Node, Link>(Link.class);
+		WeightedMultigraph<Node, DefaultLink> g4 = 
+			new WeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
 		
-		List<Link> edgesSortedById = new ArrayList<Link>();
+		List<DefaultLink> edgesSortedById = new ArrayList<DefaultLink>();
 		
-		for (Link e : edges) 
+		for (DefaultLink e : edges) 
 			edgesSortedById.add(e);
 		
 		Collections.sort(edgesSortedById);
 		
-		for (Link edge : edgesSortedById) {
+		for (DefaultLink edge : edgesSortedById) {
 			g4.addVertex(edge.getSource());
 			g4.addVertex(edge.getTarget());
 			g4.addEdge( edge.getSource(), edge.getTarget(), edge); 
@@ -231,11 +231,11 @@ public class SteinerTree {
 	 * @param g4
 	 * @return
 	 */
-	private WeightedMultigraph<Node, Link> step5(WeightedMultigraph<Node, Link> g4) {
+	private WeightedMultigraph<Node, DefaultLink> step5(WeightedMultigraph<Node, DefaultLink> g4) {
 		
 		logger.debug("<enter");
 
-		WeightedMultigraph<Node, Link> g5 = g4; 
+		WeightedMultigraph<Node, DefaultLink> g5 = g4; 
 
 		List<Node> nonSteinerLeaves = new ArrayList<Node>();
 		
@@ -250,7 +250,7 @@ public class SteinerTree {
 		for (int i = 0; i < nonSteinerLeaves.size(); i++) {
 			source = nonSteinerLeaves.get(i);
 			do {
-				Link e = g5.edgesOf(source).toArray(new Link[0])[0];
+				DefaultLink e = g5.edgesOf(source).toArray(new DefaultLink[0])[0];
 				target = this.graph.getEdgeTarget(e);
 				
 				// this should not happen, but just in case of ...
@@ -273,39 +273,39 @@ public class SteinerTree {
 		logger.debug("<enter");
 
 		logger.debug("step1 ...");
-		Pseudograph<Node, Link> g1 = step1();
+		Pseudograph<Node, DefaultLink> g1 = step1();
 //		logger.info("after doing step 1 ....................................................................");
 //		GraphUtil.printGraphSimple(g1);
 //		GraphUtil.printGraph(g1);
 		
 		if (g1.vertexSet().size() < 2) {
-			this.tree = new WeightedMultigraph<Node, Link>(Link.class);
+			this.tree = new WeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
 			for (Node n : g1.vertexSet()) this.tree.addVertex(n);
 			return;
 		}
 		
 		logger.debug("step2 ...");
-		WeightedMultigraph<Node, Link> g2 = step2(g1);
+		WeightedMultigraph<Node, DefaultLink> g2 = step2(g1);
 //		logger.info("after doing step 2 ....................................................................");
 //		GraphUtil.printGraphSimple(g2);
 //		GraphUtil.printGraph(g2);
 
 		
 		logger.debug("step3 ...");
-		WeightedMultigraph<Node, Link> g3 = step3(g2);
+		WeightedMultigraph<Node, DefaultLink> g3 = step3(g2);
 //		logger.info("after doing step 3 ....................................................................");
 //		GraphUtil.printGraphSimple(g3);
 //		GraphUtil.printGraph(g3);
 		
 		logger.debug("step4 ...");
-		WeightedMultigraph<Node, Link> g4 = step4(g3);
+		WeightedMultigraph<Node, DefaultLink> g4 = step4(g3);
 //		logger.info("after doing step 4 ....................................................................");
 //		GraphUtil.printGraphSimple(g4);
 //		GraphUtil.printGraph(g4);
 
 		
 		logger.debug("step5 ...");
-		WeightedMultigraph<Node, Link> g5 = step5(g4);
+		WeightedMultigraph<Node, DefaultLink> g5 = step5(g4);
 //		logger.info("after doing step 5 ....................................................................");
 //		GraphUtil.printGraphSimple(g5);
 //		GraphUtil.printGraph(g5);
@@ -315,8 +315,12 @@ public class SteinerTree {
 
 	}
 	
-	public WeightedMultigraph<Node, Link> getSteinerTree() {
+	public WeightedMultigraph<Node, DefaultLink> getDefaultSteinerTree() {
 		return this.tree;
+	}
+	
+	public WeightedMultigraph<Node, LabeledLink> getLabeledSteinerTree() {
+		return GraphUtil.asLabeledGraph(this.tree);
 	}
 	
 //	public static void main(String[] args) {

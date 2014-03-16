@@ -25,26 +25,28 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.jgrapht.graph.WeightedMultigraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.CompactLink;
+import edu.isi.karma.rep.alignment.CompactObjectPropertyLink;
+import edu.isi.karma.rep.alignment.CompactSubClassLink;
+import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkPriorityComparator;
 import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.ObjectPropertyLink;
-import edu.isi.karma.rep.alignment.SubClassLink;
 
 public class TreePostProcess {
 	
 	static Logger logger = LoggerFactory.getLogger(TreePostProcess.class);
 
 	private GraphBuilder graphBuilder;
-	private DirectedWeightedMultigraph<Node, Link> tree;
+	private DirectedWeightedMultigraph<Node, DefaultLink> tree;
 	private Node root = null;
 //	private List<Node> dangledVertexList;
 
@@ -52,21 +54,23 @@ public class TreePostProcess {
 	
 	public TreePostProcess(
 			GraphBuilder graphBuilder,
-			WeightedMultigraph<Node, Link> tree, 
-			Set<Link> newLinks) {
+			UndirectedGraph<Node, DefaultLink> tree, 
+			Set<LabeledLink> newLinks,
+			boolean findRoot) {
 		
 		this.graphBuilder = graphBuilder;
-		this.tree = (DirectedWeightedMultigraph<Node, Link>)GraphUtil.asDirectedGraph(tree);
+		this.tree = (DirectedWeightedMultigraph<Node, DefaultLink>)GraphUtil.asDirectedGraph(tree);
 		buildOutputTree();
 		addLinks(newLinks);
-		selectRoot(findPossibleRoots());
+		if (findRoot)
+			selectRoot(findPossibleRoots());
 
 	}
 	
 	// Public Methods
 	
-	public DirectedWeightedMultigraph<Node, Link> getTree() {
-		return this.tree;
+	public DirectedWeightedMultigraph<Node, LabeledLink> getTree() {
+		return (DirectedWeightedMultigraph<Node, LabeledLink>)GraphUtil.asLabeledGraph(this.tree);
 	}
 	
 	public Node getRoot() {
@@ -93,8 +97,8 @@ public class TreePostProcess {
 		List<Integer> reachableNodesList = new ArrayList<Integer>();
 		
 		for (Node v: this.tree.vertexSet()) {
-			BreadthFirstIterator<Node, Link> i = 
-				new BreadthFirstIterator<Node, Link>(this.tree, v);
+			BreadthFirstIterator<Node, DefaultLink> i = 
+				new BreadthFirstIterator<Node, DefaultLink>(this.tree, v);
 			
 			reachableNodes = -1;
 			while (i.hasNext()) {
@@ -127,74 +131,73 @@ public class TreePostProcess {
 		this.root = possibleRoots.get(0);
 	}
 
-	private DirectedWeightedMultigraph<Node, Link> buildOutputTree() {
+	private void buildOutputTree() {
 		
 		String sourceId, targetId;
-		Link[] links = tree.edgeSet().toArray(new Link[0]);
+		DefaultLink[] links = tree.edgeSet().toArray(new DefaultLink[0]);
 		String linkSourceId;//, linkTargetId;
 
-		List<Link> temp1 = null;
-		List<Link> temp2 = null;
-		List<Link> possibleLinks = new ArrayList<Link>();
+		List<LabeledLink> temp1 = null;
+		List<LabeledLink> temp2 = null;
+		List<LabeledLink> possibleLinks = new ArrayList<LabeledLink>();
 		
-		for (Link link : links) {
-			if (!(link.getLabel().getUri().equalsIgnoreCase(Uris.PLAIN_LINK_URI))) continue;
+		for (DefaultLink link : links) {
+			if (link instanceof CompactLink) {
 			
-			// links from source to target
-			sourceId = link.getSource().getId();
-			targetId = link.getTarget().getId();
-			
-			possibleLinks.clear();
-			
-			if (link instanceof SubClassLink) {
-				temp1 = this.graphBuilder.getPossibleLinks(sourceId, targetId, LinkType.SubClassLink, null);
-				temp2 = this.graphBuilder.getPossibleLinks(targetId, sourceId, LinkType.SubClassLink, null);
-			} else if (link instanceof ObjectPropertyLink) {
-				temp1 = this.graphBuilder.getPossibleLinks(sourceId, targetId, 
-						LinkType.ObjectPropertyLink, ((ObjectPropertyLink) link).getObjectPropertyType());
-				temp2 = this.graphBuilder.getPossibleLinks(targetId, sourceId, 
-						LinkType.ObjectPropertyLink, ((ObjectPropertyLink) link).getObjectPropertyType());
-			}
-			if (temp1 != null) possibleLinks.addAll(temp1);
-			if (temp2 != null) possibleLinks.addAll(temp2);
-
-			Collections.sort(possibleLinks, new LinkPriorityComparator());
-			if (possibleLinks.size() > 0) {
+				// links from source to target
+				sourceId = link.getSource().getId();
+				targetId = link.getTarget().getId();
 				
-				// pick the first one 
-				Link newLink = possibleLinks.get(0);
+				possibleLinks.clear();
 				
-				linkSourceId = LinkIdFactory.getLinkSourceId(newLink.getId());
-				//linkTargetId = LinkIdFactory.getLinkTargetId(newLink.getId());
-				
-				if (linkSourceId.equals(sourceId)) {
-					tree.addEdge(link.getSource(), link.getTarget(), newLink);
-					this.graphBuilder.addLink(link.getSource(), link.getTarget(), newLink);
-				} else {
-					tree.addEdge(link.getTarget(), link.getSource(), newLink);
-					this.graphBuilder.addLink(link.getTarget(), link.getSource(), newLink);
+				if (link instanceof CompactSubClassLink) {
+					temp1 = this.graphBuilder.getPossibleLinks(sourceId, targetId, LinkType.SubClassLink, null);
+					temp2 = this.graphBuilder.getPossibleLinks(targetId, sourceId, LinkType.SubClassLink, null);
+				} else if (link instanceof CompactObjectPropertyLink) {
+					temp1 = this.graphBuilder.getPossibleLinks(sourceId, targetId, 
+							LinkType.ObjectPropertyLink, ((CompactObjectPropertyLink) link).getObjectPropertyType());
+					temp2 = this.graphBuilder.getPossibleLinks(targetId, sourceId, 
+							LinkType.ObjectPropertyLink, ((CompactObjectPropertyLink) link).getObjectPropertyType());
 				}
-				
-				tree.removeEdge(link);
-				this.graphBuilder.removeLink(link);
-
-			} else {
-				logger.error("Something is going wrong. " +
-						"There should be at least one possible object property between " +
-						link.getSource().getLabel().getUri() + 
-						" and " + link.getTarget().getLabel().getUri());
-				return null;
+				if (temp1 != null) possibleLinks.addAll(temp1);
+				if (temp2 != null) possibleLinks.addAll(temp2);
+	
+				Collections.sort(possibleLinks, new LinkPriorityComparator());
+				if (possibleLinks.size() > 0) {
+					
+					// pick the first one 
+					LabeledLink newLink = possibleLinks.get(0);
+					
+					linkSourceId = LinkIdFactory.getLinkSourceId(newLink.getId());
+					//linkTargetId = LinkIdFactory.getLinkTargetId(newLink.getId());
+					
+					if (linkSourceId.equals(sourceId)) {
+						tree.addEdge(link.getSource(), link.getTarget(), newLink);
+						this.graphBuilder.addLink(link.getSource(), link.getTarget(), newLink);
+					} else {
+						tree.addEdge(link.getTarget(), link.getSource(), newLink);
+						this.graphBuilder.addLink(link.getTarget(), link.getSource(), newLink);
+					}
+					
+					tree.removeEdge(link);
+					this.graphBuilder.removeLink(link);
+	
+				} else {
+					logger.error("Something is going wrong. " +
+							"There should be at least one possible object property between " +
+							link.getSource().getLabel().getUri() + 
+							" and " + link.getTarget().getLabel().getUri());
+					return;
+				}
 			}
 		}
-		
-		return tree;
 	}
 	
-	private void addLinks(Set<Link> links) {
+	private void addLinks(Set<LabeledLink> links) {
 		if (links == null)
 			return;
 		
-		for (Link link : links) {
+		for (LabeledLink link : links) {
 			if (!this.tree.containsEdge(link) &&
 					this.tree.containsVertex(link.getSource()) &&
 					this.tree.containsVertex(link.getTarget())) {

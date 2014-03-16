@@ -33,7 +33,8 @@ public interface Uris {
 	public static final String RDFS_VALUE_URI = Namespaces.RDFS + "value";
 
 	// Karma Internal URIs
-	public static final String PLAIN_LINK_URI = Namespaces.KARMA_DEV + "plainLink"; 
+	public static final String DEFAULT_LINK_URI = Namespaces.KARMA_DEV + "defaultLink"; 
+	public static final String DEFAULT_NODE_URI = Namespaces.KARMA_DEV + "defaultNode"; 
 //	public static final String OBJECT_PROPERTY_DIRECT_LINK_URI = Namespaces.KARMA_DEV + "objectPropertyDirectLink"; 
 //	public static final String OBJECT_PROPERTY_INDIRECT_LINK_URI = Namespaces.KARMA_DEV + "objectPropertyIndirectLink"; 
 //	public static final String OBJECT_PROPERTY_WITH_ONLY_DOMAIN_LINK_URI = Namespaces.KARMA_DEV + "objectPropertyWithOnlyDomainLink"; 

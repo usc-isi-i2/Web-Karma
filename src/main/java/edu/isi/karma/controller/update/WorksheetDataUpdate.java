@@ -48,7 +48,7 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 	
 	private enum JsonKeys {
 		worksheetId, rows, columnName, characterLength, hasNestedTable, columnClass,
-		displayValue, expandedValue, nestedRows, additionalRowsCount, tableId, nodeId
+		displayValue, expandedValue, nestedRows, additionalRowsCount, tableId, nodeId, rowID
 	}
 
 	public WorksheetDataUpdate(String worksheetId) {
@@ -117,7 +117,7 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 				nodeObj.put(JsonKeys.columnClass.name(), 
 						WorksheetHeadersUpdate.getColumnClass(hNodeId));
 				nodeObj.put(JsonKeys.nodeId.name(), node.getId());
-				
+				nodeObj.put(JsonKeys.rowID.name(), row.getId());
 				if (node.hasNestedTable()) {
 					nodeObj.put(JsonKeys.hasNestedTable.name(), true);
 					Table nestedTable = node.getNestedTable();

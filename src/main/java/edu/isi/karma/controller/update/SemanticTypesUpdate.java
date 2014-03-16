@@ -42,7 +42,7 @@ import edu.isi.karma.rep.alignment.ColumnSubClassLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
@@ -222,9 +222,9 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 				|| type.getUri().equals(ColumnSubClassLink.getFixedLabel().getUri()));
 		if (case1)
 			return true;
-		Set<Link> incomingLinks = alignment.getCurrentIncomingLinksToNode(alignmentColumnNode.getId());
+		Set<LabeledLink> incomingLinks = alignment.getCurrentIncomingLinksToNode(alignmentColumnNode.getId());
 		if (incomingLinks != null && !incomingLinks.isEmpty()) {
-			Link incomingLink = incomingLinks.iterator().next();
+			LabeledLink incomingLink = incomingLinks.iterator().next();
 			if (incomingLink != null && (incomingLink instanceof ClassInstanceLink) 
 					&& incomingLink.getKeyType().equals(LinkKeyInfo.UriOfInstance))
 				return true;
@@ -238,9 +238,9 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		if (alignmentColumnNodes == null)
 			return hNodeIdToDomainNodeMap;
 		for (Node cNode : alignmentColumnNodes) {
-			Set<Link> incomingLinks = alignment.getCurrentIncomingLinksToNode(cNode.getId());
+			Set<LabeledLink> incomingLinks = alignment.getCurrentIncomingLinksToNode(cNode.getId());
 			if (incomingLinks != null && !incomingLinks.isEmpty()) {
-				Link incomingLink = alignment.getCurrentIncomingLinksToNode(cNode.getId()).iterator().next();
+				LabeledLink incomingLink = alignment.getCurrentIncomingLinksToNode(cNode.getId()).iterator().next();
 				if (incomingLink!= null && incomingLink.getSource() instanceof InternalNode) {
 					hNodeIdToDomainNodeMap.put(((ColumnNode)cNode).getHNodeId()
 							, (InternalNode)incomingLink.getSource());

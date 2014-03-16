@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.rits.cloning.Cloner;
 
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.util.RandomGUID;
 
 public abstract class Node implements Comparable<Node> {
@@ -70,6 +71,12 @@ public abstract class Node implements Comparable<Node> {
 	
 	public Label getLabel() {
 		return this.label;
+	}
+	
+	public String getUri() {
+		if (this.label != null)
+			return this.getLabel().getUri();
+		return Uris.DEFAULT_NODE_URI;
 	}
 	
 	public String getLocalId() {

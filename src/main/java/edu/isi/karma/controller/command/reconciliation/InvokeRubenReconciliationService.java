@@ -68,7 +68,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.util.HTTPUtil;
 
@@ -312,7 +312,7 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 	}
 
 	private String getKeyColumnHNodeIdForAlignmentNode(Alignment alignment) {
-		for (Link outgoingLink:alignment.getCurrentOutgoingLinksToNode(alignmentNodeId)) {
+		for (LabeledLink outgoingLink:alignment.getCurrentOutgoingLinksToNode(alignmentNodeId)) {
 			// Column contains uris for the internal node
 			if (outgoingLink instanceof ClassInstanceLink 
 					&& (outgoingLink.getKeyType() == LinkKeyInfo.UriOfInstance 

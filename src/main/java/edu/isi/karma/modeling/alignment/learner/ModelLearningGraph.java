@@ -40,9 +40,10 @@ import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
@@ -97,7 +98,7 @@ public class ModelLearningGraph {
 			this.initializeFromJsonRepository();
 		} else {
 			logger.info("loading the alignment graph ...");
-			DirectedWeightedMultigraph<Node, Link> graph =
+			DirectedWeightedMultigraph<Node, DefaultLink> graph =
 					GraphUtil.importJson(graphJsonName);
 			this.graphBuilder = new GraphBuilder(ontologyManager, graph);
 			this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
@@ -196,7 +197,7 @@ public class ModelLearningGraph {
 		
 		visitedNodes = new HashMap<Node, Node>();
 	
-		for (Link e : model.getGraph().edgeSet()) {
+		for (LabeledLink e : model.getGraph().edgeSet()) {
 
 			source = e.getSource();
 			target = e.getTarget();
@@ -244,7 +245,7 @@ public class ModelLearningGraph {
 				visitedNodes.put(target, n2);
 			}
 
-			Link link;
+			LabeledLink link;
 			String id = LinkIdFactory.getLinkId(e.getLabel().getUri(), n1.getId(), n2.getId());	
 			if (e instanceof DataPropertyLink) 
 				link = new DataPropertyLink(id, e.getLabel(), false);

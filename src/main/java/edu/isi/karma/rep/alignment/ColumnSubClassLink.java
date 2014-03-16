@@ -26,7 +26,7 @@ import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 
 
-public class ColumnSubClassLink extends Link {
+public class ColumnSubClassLink extends LabeledLink {
 
 	private static final long serialVersionUID = 1L;
 	private static final Label label = 

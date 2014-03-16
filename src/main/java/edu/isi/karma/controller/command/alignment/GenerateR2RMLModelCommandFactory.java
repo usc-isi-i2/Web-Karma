@@ -23,9 +23,12 @@ package edu.isi.karma.controller.command.alignment;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONException;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.KarmaException;
 
 public class GenerateR2RMLModelCommandFactory extends CommandFactory {
 	
@@ -34,11 +37,15 @@ public class GenerateR2RMLModelCommandFactory extends CommandFactory {
 	}
 
 	@Override
-	public Command createCommand(HttpServletRequest request,
-			Workspace workspace) {
+	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.graphContext.name());
+		return new GenerateR2RMLModelCommand(getNewId(workspace), worksheetId, tripleStoreUrl, context);
+	}
+	
+	public Command createCommand(Workspace workspace, String worksheetId, String tripleStoreUrl, String context)
+			throws JSONException, KarmaException {
 		return new GenerateR2RMLModelCommand(getNewId(workspace), worksheetId, tripleStoreUrl, context);
 	}
 

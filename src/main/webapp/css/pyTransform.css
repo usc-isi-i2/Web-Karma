@@ -21,7 +21,7 @@
 
 #transformCodeEditor {
     position: relative;
-    width: 500px;
+   /* width: 500px; */
     height: 100px;
     border: 1px solid #DDD;
     border-radius: 4px;

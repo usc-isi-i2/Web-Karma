@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -456,37 +457,37 @@ public class TripleStoreUtil {
 	}
 	
 	
-	public org.json.JSONObject fetch_data(String graph, String tripleStoreUrl) throws ClientProtocolException, IOException, JSONException {
-		if (tripleStoreUrl == null || tripleStoreUrl.isEmpty()) {
-			tripleStoreUrl = defaultDataRepoUrl;
-		}
-		//JSONObject retVal = new JSONObject();
-		StringBuffer queryString = new StringBuffer();
-		queryString.append("SELECT ?x ?z ")
-			.append("WHERE { GRAPH <").append(graph.trim()).append("> { ")
-			.append("?x  ?p <http://isi.edu/integration/karma/ontologies/model/current/Input> . "
-				+ "?x  <http://isi.edu/integration/karma/ontologies/model/current/hasValue> ?z . } }");
-		
-		String sData = invokeSparqlQuery(queryString.toString(), tripleStoreUrl, "application/sparql-results+json", null);
-		if (sData == null | sData.isEmpty()) {
-			logger.error("Enpty response object from query : " + queryString.toString());
-		}
-		JSONObject data = new JSONObject(sData);
-		JSONArray d1 = data.getJSONObject("results").getJSONArray("bindings");
-		int count = 0;
-		HashMap<String, ArrayList<String>> results = new HashMap<String, ArrayList<String>>();
-		while(count < d1.length()) {
-			JSONObject obj = d1.getJSONObject(count++);
-			String key = obj.getJSONObject("x").getString("value");
-			String val = obj.getJSONObject("z").getString("value");
-			
-			if (!results.keySet().contains(key)) {
-				results.put(key, new ArrayList<String>());
-			} 
-			results.get(key).add(val);
-		}
-		return new JSONObject(results);
-	}
+//	public org.json.JSONObject fetch_data(String graph, String tripleStoreUrl) throws ClientProtocolException, IOException, JSONException {
+//		if (tripleStoreUrl == null || tripleStoreUrl.isEmpty()) {
+//			tripleStoreUrl = defaultDataRepoUrl;
+//		}
+//		//JSONObject retVal = new JSONObject();
+//		StringBuffer queryString = new StringBuffer();
+//		queryString.append("SELECT ?x ?z ")
+//			.append("WHERE { GRAPH <").append(graph.trim()).append("> { ")
+//			.append("?x  ?p <http://isi.edu/integration/karma/ontologies/model/current/Input> . "
+//				+ "?x  <http://isi.edu/integration/karma/ontologies/model/current/hasValue> ?z . } }");
+//		
+//		String sData = invokeSparqlQuery(queryString.toString(), tripleStoreUrl, "application/sparql-results+json", null);
+//		if (sData == null | sData.isEmpty()) {
+//			logger.error("Enpty response object from query : " + queryString.toString());
+//		}
+//		JSONObject data = new JSONObject(sData);
+//		JSONArray d1 = data.getJSONObject("results").getJSONArray("bindings");
+//		int count = 0;
+//		HashMap<String, ArrayList<String>> results = new HashMap<String, ArrayList<String>>();
+//		while(count < d1.length()) {
+//			JSONObject obj = d1.getJSONObject(count++);
+//			String key = obj.getJSONObject("x").getString("value");
+//			String val = obj.getJSONObject("z").getString("value");
+//			
+//			if (!results.keySet().contains(key)) {
+//				results.put(key, new ArrayList<String>());
+//			} 
+//			results.get(key).add(val);
+//		}
+//		return new JSONObject(results);
+//	}
 	
 	/**
 	 * This method fetches all the context from the given triplestore Url
@@ -534,6 +535,29 @@ public class TripleStoreUtil {
 			}
 		}
 		return retVal;
+	}
+	
+	
+	
+	/**
+	 * This method clears all the statements from the given context
+	 * */
+	public static boolean clearContexts(String tripleStoreUrl, String graphUri) {
+		if(tripleStoreUrl==null || tripleStoreUrl.isEmpty() || graphUri==null || graphUri.isEmpty()) {
+			logger.error("Missing graphUri or tripleStoreUrl");
+			return false;
+		} 
+		
+		String responseString;
+		try {
+			String url = tripleStoreUrl+"/statements?graph="+URLEncoder.encode(graphUri,"UTF-8");
+			logger.info("Deleting from uri : " + url);
+			responseString = HTTPUtil.executeHTTPDeleteRequest(url);
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return false;
 	}
 	
 }

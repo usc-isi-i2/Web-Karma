@@ -193,11 +193,11 @@ public class OntologyManager  {
 		else if (getObjectPropertiesIndirect(sourceUri, targetUri) != null &&
 			getObjectPropertiesIndirect(sourceUri, targetUri).contains(linkUri))
 				return ObjectPropertyType.Indirect;
-		else if (getObjectPropertiesWithOnlyDomain(sourceUri, targetUri) != null &&
-			getObjectPropertiesWithOnlyDomain(sourceUri, targetUri).contains(linkUri))
+		else if (getObjectPropertiesWithOnlyDomain(sourceUri) != null &&
+			getObjectPropertiesWithOnlyDomain(sourceUri).contains(linkUri))
 				return ObjectPropertyType.WithOnlyDomain;
-		else if (getObjectPropertiesWithOnlyRange(sourceUri, targetUri) != null &&
-			getObjectPropertiesWithOnlyRange(sourceUri, targetUri).contains(linkUri))
+		else if (getObjectPropertiesWithOnlyRange(targetUri) != null &&
+			getObjectPropertiesWithOnlyRange(targetUri).contains(linkUri))
 				return ObjectPropertyType.WithOnlyRange;
 		else if (getObjectPropertiesWithoutDomainAndRange() != null &&
 			getObjectPropertiesWithoutDomainAndRange().keySet().contains(linkUri))
@@ -253,13 +253,13 @@ public class OntologyManager  {
 				linkUris.add(s);
 		}		
 
-		objectPropertiesWithOnlyDomain = getObjectPropertiesWithOnlyDomain(sourceUri, targetUri);
+		objectPropertiesWithOnlyDomain = getObjectPropertiesWithOnlyDomain(sourceUri);
 		if (objectPropertiesWithOnlyDomain != null) {
 			for (String s : objectPropertiesWithOnlyDomain)
 				linkUris.add(s);
 		}	
 	
-		objectPropertiesWithOnlyRange = getObjectPropertiesWithOnlyRange(sourceUri, targetUri);
+		objectPropertiesWithOnlyRange = getObjectPropertiesWithOnlyRange(targetUri);
 		if (objectPropertiesWithOnlyRange != null) {
 			for (String s : objectPropertiesWithOnlyRange)
 				linkUris.add(s);
@@ -403,6 +403,126 @@ public class OntologyManager  {
 		return results;
 	}
 	
+	/**
+	 * This method takes @param domainUri and rangeClassUri and for returns all links/properties with this domain & range
+	 * If @param recursive is true, it also returns the children of the domains.
+	 * @param domainUri
+	 * @param rangeUri
+	 * @param recursive
+	 * @return
+	 */
+	public Map<String, Label> getObjectPropertiesByDomainRange(String domainUri, String rangeUri, boolean recursive) {
+		
+		if(domainUri == null || domainUri.length() == 0)
+			return this.getObjectPropertiesByRange(rangeUri, recursive);
+		
+		if(rangeUri == null || rangeUri.length() == 0)
+			return this.getObjectPropertiesByDomain(domainUri, recursive);
+		
+		HashSet<String> objectProperties = ontCache.getDirectInObjectProperties().get(rangeUri);
+		if(recursive) {
+			HashSet<String> propRecursive = ontCache.getIndirectInObjectProperties().get(rangeUri);
+			if(propRecursive != null)
+				objectProperties.addAll(propRecursive);
+		}
+		HashMap<String, Label> results = new HashMap<String, Label>();
+		HashSet<String> direct = null;
+		HashSet<String> indirect = null;
+		
+		if (objectProperties == null)
+			return results;
+		
+		for (String op : objectProperties) {
+			boolean propAdded = false;
+			direct = ontCache.getPropertyDirectDomains().get(op);
+			if (direct != null) {
+				for(String directDomain : direct) {
+					if(directDomain.equals(domainUri)) {
+						results.put(op, ontCache.getPropertyLabel(op));
+						propAdded = true;
+						break;
+					}
+				}
+				//results.addAll(direct);
+			}
+			if(propAdded)
+				continue;
+			if (recursive) indirect = ontCache.getPropertyIndirectDomains().get(op);
+			if (indirect != null) {
+				//results.addAll(indirect);
+				for(String indirectDomain : indirect) {
+					if(indirectDomain.equals(domainUri)) {
+						results.put(op, ontCache.getPropertyLabel(op));
+						propAdded = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		return results;
+	}
+	
+	public Map<String, Label> getObjectPropertiesByDomain(String domainUri, boolean recursive) {
+		
+		HashSet<String> objectProperties = ontCache.getDirectOutObjectProperties().get(domainUri);
+		if(recursive) {
+			HashSet<String> propRecursive = ontCache.getIndirectOutObjectProperties().get(domainUri);
+			if(propRecursive != null)
+				objectProperties.addAll(propRecursive);
+		}
+		HashMap<String, Label> results = new HashMap<String, Label>();
+		
+		if (objectProperties == null)
+			return results;
+		
+		for (String op : objectProperties) {
+			results.put(op, ontCache.getPropertyLabel(op));
+		}
+		
+		return results;
+	}
+	
+	public Map<String, Label> getObjectPropertiesByRange(String rangeUri, boolean recursive) {
+		
+		HashSet<String> objectProperties = ontCache.getDirectInObjectProperties().get(rangeUri);
+		if(recursive) {
+			HashSet<String> propRecursive = ontCache.getIndirectInObjectProperties().get(rangeUri);
+			if(propRecursive != null)
+				objectProperties.addAll(propRecursive);
+		}
+		HashMap<String, Label> results = new HashMap<String, Label>();
+		
+		if (objectProperties == null)
+			return results;
+		
+		for (String op : objectProperties) {
+			results.put(op, ontCache.getPropertyLabel(op));
+		}
+		
+		return results;
+	}
+	
+	public Map<String, Label> getDataPropertiesByDomain(String domainUri, boolean recursive) {
+		
+		HashSet<String> dataProperties = ontCache.getDirectOutDataProperties().get(domainUri);
+		if(recursive) {
+			HashSet<String> propRecursive = ontCache.getIndirectOutDataProperties().get(domainUri);
+			if(propRecursive != null)
+				dataProperties.addAll(propRecursive);
+		}
+		HashMap<String, Label> results = new HashMap<String, Label>();
+		
+		if (dataProperties == null)
+			return results;
+		
+		for (String op : dataProperties) {
+			results.put(op, ontCache.getPropertyLabel(op));
+		}
+		
+		return results;
+	}
+	
 	public Map<String, String> getPrefixMap () {
 		Map<String, String> nsMap = ontHandler.getOntModel().getNsPrefixMap();
 		Map<String, String> prefixMap = new HashMap<String, String>();
@@ -539,21 +659,21 @@ public class OntologyManager  {
 		return this.ontCache.getDomainRangeToIndirectProperties().get(sourceUri + targetUri);
 	}
 
-	public HashSet<String> getObjectPropertiesWithOnlyDomain(String sourceUri, String targetUri) {
+	public HashSet<String> getObjectPropertiesWithOnlyDomain(String domainUri) {
 		
-		if (sourceUri == null || targetUri == null) return null;
+		if (domainUri == null) return null;
 		
 		HashSet<String> directOutProperties;
 		HashSet<String> indirectOutProperties;
 		HashSet<String> results = new HashSet<String>();
 
-		directOutProperties = this.ontCache.getDirectOutObjectProperties().get(sourceUri);
+		directOutProperties = this.ontCache.getDirectOutObjectProperties().get(domainUri);
 		if (directOutProperties != null)
 			for (String s : directOutProperties) 
 				if (this.ontCache.getObjectPropertiesWithOnlyDomain().containsKey(s)) 
 					results.add(s);
 
-		indirectOutProperties = this.ontCache.getIndirectOutObjectProperties().get(sourceUri);
+		indirectOutProperties = this.ontCache.getIndirectOutObjectProperties().get(domainUri);
 		if (indirectOutProperties != null) 
 			for (String s : indirectOutProperties) 
 				if (this.ontCache.getObjectPropertiesWithOnlyDomain().containsKey(s)) 
@@ -562,21 +682,21 @@ public class OntologyManager  {
 		return results;
 	}
 
-	public HashSet<String> getObjectPropertiesWithOnlyRange(String sourceUri, String targetUri) {
+	public HashSet<String> getObjectPropertiesWithOnlyRange(String rangeUri) {
 		
-		if (sourceUri == null || targetUri == null) return null;
+		if (rangeUri == null) return null;
 		
 		HashSet<String> directInProperties;
 		HashSet<String> indirectInProperties;
 		HashSet<String> results = new HashSet<String>();
 		
-		directInProperties = this.ontCache.getDirectInObjectProperties().get(targetUri);
+		directInProperties = this.ontCache.getDirectInObjectProperties().get(rangeUri);
 		if (directInProperties != null)
 			for (String s : directInProperties) 
 				if (this.ontCache.getObjectPropertiesWithOnlyRange().containsKey(s)) 
 					results.add(s);
 
-		indirectInProperties = this.ontCache.getIndirectInObjectProperties().get(targetUri);
+		indirectInProperties = this.ontCache.getIndirectInObjectProperties().get(rangeUri);
 		if (indirectInProperties != null) 
 			for (String s : indirectInProperties) 
 				if (this.ontCache.getObjectPropertiesWithOnlyRange().containsKey(s)) 

@@ -58,8 +58,9 @@ import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
@@ -71,7 +72,7 @@ public class ShowModelCommand extends WorksheetCommand {
 
 	private String worksheetName;
 	private Alignment initialAlignment = null;
-	private DirectedWeightedMultigraph<Node, Link> initialGraph = null;
+	private DirectedWeightedMultigraph<Node, DefaultLink> initialGraph = null;
 	private List<ColumnNode> columnNodes;
 	private Set<String> columnsWithoutSemanticType = null;
 //	private final boolean addVWorksheetUpdate;
@@ -131,7 +132,7 @@ public class ShowModelCommand extends WorksheetCommand {
 
 		if (initialAlignment == null) {
 			initialAlignment = alignment.getAlignmentClone();
-			initialGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
+			initialGraph = (DirectedWeightedMultigraph<Node, DefaultLink>)alignment.getGraph().clone();
 			
 			columnNodes = new LinkedList<ColumnNode>();
 			columnsWithoutSemanticType = new HashSet<String>();
@@ -159,7 +160,7 @@ public class ShowModelCommand extends WorksheetCommand {
 		modelLearner.learn();
 		SemanticModel model = modelLearner.getModel();
 		
-		logger.info(GraphUtil.graphToString(model.getGraph()));
+		logger.info(GraphUtil.labeledGraphToString(model.getGraph()));
 		
 		HashSet<String> alignmentNodeUris = new HashSet<String>();
 		HashMap<Node, Node> modelToAlignmentNode = new HashMap<Node, Node>();
@@ -168,7 +169,7 @@ public class ShowModelCommand extends WorksheetCommand {
 			String uri;
 			for (Node n : model.getGraph().vertexSet()) {
 				if (n instanceof InternalNode) {
-					uri = n.getLabel().getUri();
+					uri = n.getUri();
 					InternalNode iNode;
 					
 					if (alignmentNodeUris.contains(uri)) {
@@ -190,20 +191,23 @@ public class ShowModelCommand extends WorksheetCommand {
 			}
 			
 			Node source, target;
-			for (Link l : model.getGraph().edgeSet()) {
+			for (LabeledLink l : model.getGraph().edgeSet()) {
 				
 				if (!(l.getSource() instanceof InternalNode)) {
 					logger.error("column node cannot have an outgoing link!");
-					continue;
+					return new UpdateContainer(new ErrorUpdate(
+							"Error occured while generating the model for the source. " +
+							"A column node cannot have an outgoing link."));
 				}
 
+				
 				source = modelToAlignmentNode.get(l.getSource());
 				target = modelToAlignmentNode.get(l.getTarget());
 				
 				if (source == null || target == null)
 					continue;
 
-				Link newLink = null;
+				LabeledLink newLink = null;
 				if (l instanceof DataPropertyLink)
 					newLink = alignment.addDataPropertyLink(source, target, l.getLabel(), false);
 				else if (l instanceof ObjectPropertyLink)
