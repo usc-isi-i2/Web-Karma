@@ -169,7 +169,7 @@ public class KR2RMLMappingWriter {
 	private void addPrefixes(KR2RMLMapping mapping) throws RepositoryException {
 		for (Prefix p : mapping.getPrefixes())
 		{
-			con.setNamespace(p.getPrefix(), p.getNamespace());
+			con.setNamespace(p.getNamespace(), p.getPrefix());
 		}
 		con.setNamespace(Prefixes.RR, Namespaces.RR);
 		con.setNamespace(Prefixes.KARMA_DEV, Namespaces.KARMA_DEV);
