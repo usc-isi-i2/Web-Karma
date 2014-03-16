@@ -5,7 +5,7 @@ public class SteinerTreeRootStrategy extends RootStrategy {
 
 	public SteinerTreeRootStrategy()
 	{
-		super();
+		super(new RootStrategy());
 	}
 	public SteinerTreeRootStrategy(
 			RootStrategy backupStrategy) {

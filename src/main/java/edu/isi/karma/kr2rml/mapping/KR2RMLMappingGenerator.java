@@ -260,6 +260,7 @@ public class KR2RMLMappingGenerator {
 				TriplesMap trMap = new TriplesMap(getNewTriplesMapId(), subjMap);
 				r2rmlMapping.getTriplesMapIndex().put(node.getId(), trMap);
 				this.r2rmlMapping.addTriplesMap(trMap);
+				r2rmlMapping.getAuxInfo().getTriplesMapGraph().addTriplesMap(trMap);
 			}
 		}
 	}
@@ -280,6 +281,7 @@ public class KR2RMLMappingGenerator {
 				typeTermSet.addTemplateTermToSet(typeTerm);
 				subj.addRdfsType(typeTermSet);
 				r2rmlMapping.getSubjectMapIndex().put(node.getId(), subj);
+				
 				
 				Set<Link> outgoingLinks = alignmentGraph.outgoingEdgesOf(node);
 				for (Link link:outgoingLinks) {

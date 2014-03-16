@@ -28,12 +28,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author szekely
  * 
  */
 public class HNodePath {
 
+	private static final Logger LOG = LoggerFactory.getLogger(HNodePath.class);
 	private List<HNode> hNodes = new LinkedList<HNode>();
 
 	public HNodePath() {
@@ -188,7 +192,8 @@ public class HNodePath {
 
 		if(start == null || finish == null)
 		{
-			System.out.println("park it");
+			LOG.error("Attempted to find path between null path");
+			return newPath;
 		}
 		if(start.getLeaf() == finish.getLeaf())
 		{
@@ -200,7 +205,6 @@ public class HNodePath {
 		if(commonPath.isEmpty())
 		{
 			newPath.addHNodePath(start.reverse());
-			//newPath.addHNode(commonPath.getLeaf());
 			newPath.addHNodePath(finish);
 		}
 		else
@@ -227,7 +231,6 @@ public class HNodePath {
 			else
 			{
 				newPath.addHNodePath(truncatedStartPath.reverse());
-				//newPath.addHNode(commonPath.getLeaf());
 				newPath.addHNodePath(truncatedFinishPath);
 			}
 		}

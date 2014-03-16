@@ -43,15 +43,17 @@ public class ErrorReport {
 		this.reports = new HashSet<ReportMessage>();
 	}
 	
-	public ReportMessage createReportMessage(String title, String description, Priority priority) {
-		ReportMessage rep = new ReportMessage(title, description, priority);
-		return rep;
-	}
-	
 	public void addReportMessage(ReportMessage errMsg) {
 		reports.add(errMsg);
 	}
 	
+	public void combine(ErrorReport other)
+	{
+		for(ReportMessage msg : other.reports)
+		{
+			reports.add(msg);
+		}
+	}
 	public static ErrorReport merge(ErrorReport first, ErrorReport second)
 	{
 		ErrorReport newReport = new ErrorReport();

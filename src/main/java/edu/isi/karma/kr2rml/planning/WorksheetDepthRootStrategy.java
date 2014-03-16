@@ -8,7 +8,7 @@ public class WorksheetDepthRootStrategy extends RootStrategy {
 
 	public WorksheetDepthRootStrategy()
 	{
-		super();
+		super(new RootStrategy());
 	}
 	public WorksheetDepthRootStrategy(
 			RootStrategy backupStrategy) {

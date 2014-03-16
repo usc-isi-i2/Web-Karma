@@ -145,13 +145,14 @@ public class KR2RMLWorksheetRDFGenerator {
 
 			
 			try{
-				//TODO move this out!
-				DFSTriplesMapGraphDAGifier treeifier = new DFSTriplesMapGraphDAGifier();
-				treeifier.dagify(kr2rmlMapping.getAuxInfo().getTriplesMapGraph(), new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
+				DFSTriplesMapGraphDAGifier dagifier = new DFSTriplesMapGraphDAGifier();
+				dagifier.dagify(kr2rmlMapping.getAuxInfo().getTriplesMapGraph(), new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
 				
 			}catch (Exception e)
 			{
-				logger.error("unable to treeify!", e);
+				logger.error("Unable to find DAG for RDF Generation!", e);
+				throw new Exception("Unable to find DAG for RDF Generation!", e);
+				
 			}
 			int i=1;
 			
@@ -165,7 +166,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				TriplesMapPlanExecutor e = new TriplesMapPlanExecutor();
 				TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(triplesMapToWorkerPlan, row, outWriter);
 				TriplesMapPlan plan = g.generatePlan(kr2rmlMapping.getAuxInfo().getTriplesMapGraph());
-				errorReport = ErrorReport.merge(errorReport, e.execute(plan));
+				errorReport.combine(e.execute(plan));
 				outWriter.finishRow();
 				if (i++%2000 == 0)
 					logger.info("Done processing " + i + " rows");
@@ -180,6 +181,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		} catch (Exception e)
 		{
 			logger.error("Unable to generate RDF: ", e);
+			errorReport.addReportMessage(new ReportMessage("General RDF Generation Error", e.getMessage(), Priority.high));
 		}
 		finally {
 			if (closeWriterAfterGeneration) {
