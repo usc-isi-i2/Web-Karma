@@ -142,6 +142,11 @@ function parse(data) {
                 }
             });
         }
+        else if(element["updateType"] == "WorksheetDeleteUpdate") {
+        	var worksheetPanel = $("div.Worksheet#" + element["worksheetId"]);
+        	worksheetPanel.remove();
+            $.sticky("Worksheet deleted");
+        }
         else if(element["updateType"] == "WorksheetHeadersUpdate") {
             var worksheetPanel = $("div.Worksheet#" + element["worksheetId"]);
 
@@ -520,6 +525,7 @@ function parse(data) {
             $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
             $.sticky("CSV exported");
         }
+        
     });
     
     if(trivialErrors.length > 0) {

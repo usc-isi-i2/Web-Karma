@@ -155,6 +155,8 @@ import edu.isi.karma.controller.command.worksheet.ApplyHistoryFromR2RMLModelComm
 import edu.isi.karma.controller.command.worksheet.ApplyHistoryFromR2RMLModelCommandFactory;
 import edu.isi.karma.controller.command.worksheet.ApplyWorksheetHistoryCommand;
 import edu.isi.karma.controller.command.worksheet.ApplyWorksheetHistoryCommandFactory;
+import edu.isi.karma.controller.command.worksheet.DeleteWorksheetCommand;
+import edu.isi.karma.controller.command.worksheet.DeleteWorksheetCommandFactory;
 import edu.isi.karma.controller.command.worksheet.EditCellCommand;
 import edu.isi.karma.controller.command.worksheet.EditCellCommandFactory;
 import edu.isi.karma.controller.command.worksheet.FetchExistingWorksheetPropertiesCommand;
@@ -342,6 +344,8 @@ public class ExecutionController {
                 new LoadAdditionalWorksheetRowsCommandFactory());
         commandFactoryMap.put(RefreshSVGAlignmentCommand.class.getSimpleName(), 
         		new RefreshSVGAligmentCommandFactory());
+        commandFactoryMap.put(DeleteWorksheetCommand.class.getSimpleName(), 
+        		new DeleteWorksheetCommandFactory());
     }
 
     public Workspace getWorkspace() {

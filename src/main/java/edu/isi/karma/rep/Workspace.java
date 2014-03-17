@@ -95,6 +95,12 @@ public class Workspace extends Entity {
 		worksheets.put(worksheet.getId(), worksheet);
 	}
 
+	public void removeWorksheet(String id) {
+		Worksheet ws = worksheets.get(id);
+		ws = null;
+		this.worksheets.remove(id);
+	}
+	
 	public Worksheet getWorksheet(String id) {
 		return worksheets.get(id);
 	}

@@ -24,7 +24,8 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"Export to MDB", func:exportToMDB},
 			{name:"Export to SpatialData", func:exportToSpatial},
 			{name:"divider"},
-			{name:"Fold" , func:Fold}
+			{name:"Fold" , func:Fold},
+			{name:"Delete", func:deleteWorksheet},
 	];
 	
 	function hideDropdown() {
@@ -43,6 +44,36 @@ function WorksheetOptions(wsId, wsTitle) {
 		return checkbox.checked;
 	}
 	
+	function deleteWorksheet() {
+		if(confirm("Are you sure you wish to delete the worksheet? \nYou cannot undo this operation")) {
+			hideDropdown();
+			var info = new Object();
+	        info["worksheetId"] = worksheetId;
+	        info["workspaceId"] = $.workspaceGlobalInformation.id;
+	        info["command"] = "DeleteWorksheetCommand";
+
+	        showLoading(info["worksheetId"]);
+	        var returned = $.ajax({
+	            url: "RequestController",
+	            type: "POST",
+	            data : info,
+	            dataType : "json",
+	            complete :
+	                function (xhr, textStatus) {
+	                    var json = $.parseJSON(xhr.responseText);
+	                    parse(json);
+	                    hideLoading(info["worksheetId"]);
+	                },
+	            error :
+	                function (xhr, textStatus) {
+	                    alert("Error deleting worksheet" + textStatus);
+	                    hideLoading(info["worksheetId"]);
+	                }
+	        });
+		}
+		return false;
+	}
+	
 	function viewStraightLineModel(event) {
 		var isChecked = getCheckboxState(event);
 		
@@ -50,6 +81,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		worksheetOptionsDiv.data("viewStraightLineModel", isChecked);
 		
 		refreshAlignmentTree(worksheetId);
+		return false;
 	}
 	
 	function showModel() {

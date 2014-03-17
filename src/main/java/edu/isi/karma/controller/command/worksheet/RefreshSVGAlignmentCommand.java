@@ -18,8 +18,7 @@ public class RefreshSVGAlignmentCommand extends WorksheetCommand {
 	
 	@Override
 	public String getCommandName() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getClass().getSimpleName();
 	}
 
 	@Override
