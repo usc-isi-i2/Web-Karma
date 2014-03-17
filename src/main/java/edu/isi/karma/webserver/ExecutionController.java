@@ -165,6 +165,8 @@ import edu.isi.karma.controller.command.worksheet.LoadAdditionalWorksheetRowsCom
 import edu.isi.karma.controller.command.worksheet.LoadAdditionalWorksheetRowsCommandFactory;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommandFactory;
+import edu.isi.karma.controller.command.worksheet.RefreshSVGAligmentCommandFactory;
+import edu.isi.karma.controller.command.worksheet.RefreshSVGAlignmentCommand;
 import edu.isi.karma.controller.command.worksheet.RenameColumnCommand;
 import edu.isi.karma.controller.command.worksheet.RenameColumnCommandFactory;
 import edu.isi.karma.controller.command.worksheet.SaveRowIDCommand;
@@ -338,6 +340,8 @@ public class ExecutionController {
                 new TestSPARQLEndPointCommandFactory());
         commandFactoryMap.put(LoadAdditionalWorksheetRowsCommand.class.getSimpleName(),
                 new LoadAdditionalWorksheetRowsCommandFactory());
+        commandFactoryMap.put(RefreshSVGAlignmentCommand.class.getSimpleName(), 
+        		new RefreshSVGAligmentCommandFactory());
     }
 
     public Workspace getWorkspace() {

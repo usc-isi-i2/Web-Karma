@@ -2,33 +2,56 @@ function WorksheetOptions(wsId, wsTitle) {
 	 
 	var worksheetId = wsId;
 	var worksheetTitle = wsTitle;
+	var worksheetOptionsDiv;
 	
 	var options = [
-	        //Title, function to call, needs file upload       
-			[	"Show Model" , showModel ],
-			[ "Set Properties" , setProperties ],
-			[ "Show Auto Model" , showAutoModel ],
-		//	[ "Save RowID", saveRowID ], 
-			[ "Apply R2RML Model" , applyR2RMLModel, true, "applyWorksheetHistory" ],
-			[ "divider" , null ],
-			[ "Publish RDF" , publishRDF ],
-			[ "Publish Model" , publishModel ],
-			["Publish Service Model", publishServiceModel],
-			[ "divider" , null ],
-			["Populate Source", populateSource],
-			["Invoke Service", invokeService],
-			[ "divider" , null ],
-			["Export to CSV", exportToCSV],
-			["Export to Database", exportToDatabase],
-			["Export to MDB", exportToMDB],
-			["Export to SpatialData", exportToSpatial],
-			["divider", null],
-			[ "Fold" , Fold ]
+	        {name:"View model using straight lines", func:viewStraightLineModel, showCheckbox:true},
+	        {name:"divider"},
+	        {name:"Show Model" , func:showModel},
+			{name:"Set Properties", func:setProperties},
+			{name:"Show Auto Model", func:showAutoModel},
+			{name:"Apply R2RML Model" , func:applyR2RMLModel, useFileUpload:true, uploadDiv:"applyWorksheetHistory"},
+			{name:"divider"},
+			{name:"Publish RDF" , func:publishRDF},
+			{name:"Publish Model" , func:publishModel},
+			{name:"Publish Service Model", func:publishServiceModel},
+			{name:"divider"},
+			{name:"Populate Source", func:populateSource},
+			{name:"Invoke Service", func:invokeService},
+			{name:"divider"},
+			{name:"Export to CSV", func:exportToCSV},
+			{name:"Export to Database", func:exportToDatabase},
+			{name:"Export to MDB", func:exportToMDB},
+			{name:"Export to SpatialData", func:exportToSpatial},
+			{name:"divider"},
+			{name:"Fold" , func:Fold}
 	];
 	
 	function hideDropdown() {
 		$('.dropdown.open .dropdown-toggle').dropdown('toggle');
 	}
+	
+	function getCheckboxState(event) {
+		var target = event.target;
+		var checkbox;
+		if(target.localName == "input") {
+			checkbox = target;
+		} else {
+			checkbox = $("input[type='checkbox']", target)[0];
+			$(checkbox).prop('checked', !checkbox.checked);
+		}
+		return checkbox.checked;
+	}
+	
+	function viewStraightLineModel(event) {
+		var isChecked = getCheckboxState(event);
+		
+		console.log("viewStraightLineModel: " + isChecked);
+		worksheetOptionsDiv.data("viewStraightLineModel", isChecked);
+		
+		refreshAlignmentTree(worksheetId);
+	}
+	
 	function showModel() {
 		console.log("SHow Model: " + worksheetTitle);
 		hideDropdown();
@@ -423,23 +446,22 @@ function WorksheetOptions(wsId, wsTitle) {
 		//console.log("There are " + options.length + " menu items");
 		for(var i=0; i<options.length; i++) {
 			var option = options[i];
-			var needFile = false;
-			if(option.length > 2 && option[2] == true)
-				needFile = true;
+			var needFile = option.useFileUpload;
+			
 			var li = $("<li>");
 			//console.log("Got option" +  option);
-			var title = option[0];
+			var title = option.name;
 			if(title == "divider")
 				li.addClass("divider");
 			else {
-				var func = option[1];
+				var func = option.func;
 				var a = $("<a>")
 						.attr("href", "#");
 				if(needFile) {
 					//<form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form>
 					a.addClass("fileinput-button");
 					var form = $("<form>")
-								.attr("id", option[3] + "_" + worksheetId)
+								.attr("id", option.uploadDiv + "_" + worksheetId)
 								.attr("action", "ImportFileCommand")
 								.attr("method", "POST")
 								.attr("enctype", "multipart/form-data")
@@ -451,14 +473,23 @@ function WorksheetOptions(wsId, wsTitle) {
 					a.append(form);
 					window.setTimeout(func, 1000);
 				} else {
-					a.text(title);
-					a.click(func);
+					if(option.showCheckbox) {
+						var checkbox = $("<input>").attr("type", "checkbox");
+						var label = $("<span>").append(checkbox).append("&nbsp;").append(title);
+						a.append(label);
+						a.click(func);
+					} else {
+						a.text(title);
+						a.click(func);
+					}
+					
 				}
 				li.append(a);
 			}
 			ul.append(li);
 		};
 		div.append(ul);
+		worksheetOptionsDiv = div;
 		return div;
 	}
 	
