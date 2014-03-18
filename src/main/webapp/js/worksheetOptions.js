@@ -76,10 +76,10 @@ function WorksheetOptions(wsId, wsTitle) {
 	
 	function viewStraightLineModel(event) {
 		var isChecked = getCheckboxState(event);
-		
 		console.log("viewStraightLineModel: " + isChecked);
 		worksheetOptionsDiv.data("viewStraightLineModel", isChecked);
 		
+		hideDropdown();
 		refreshAlignmentTree(worksheetId);
 		return false;
 	}
