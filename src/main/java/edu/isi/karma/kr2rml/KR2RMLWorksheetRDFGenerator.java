@@ -155,7 +155,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				
 			}
 			int i=1;
-			
+			TriplesMapPlanExecutor e = new TriplesMapPlanExecutor();
 			Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan = new HashMap<TriplesMap, TriplesMapWorkerPlan>() ;
 			for(TriplesMap triplesMap : kr2rmlMapping.getTriplesMapList())
 			{
@@ -163,7 +163,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				triplesMapToWorkerPlan.put(triplesMap, workerPlan);
 			}
 			for (Row row:rows) {
-				TriplesMapPlanExecutor e = new TriplesMapPlanExecutor();
+				
 				TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(triplesMapToWorkerPlan, row, outWriter);
 				TriplesMapPlan plan = g.generatePlan(kr2rmlMapping.getAuxInfo().getTriplesMapGraph());
 				errorReport.combine(e.execute(plan));
@@ -172,7 +172,7 @@ public class KR2RMLWorksheetRDFGenerator {
 					logger.info("Done processing " + i + " rows");
 	
 			}
-			
+			e.shutdown(errorReport);
 			// Generate column provenance information if required
 			if (addColumnContextInformation) {
 				generateColumnProvenanceInformation();
