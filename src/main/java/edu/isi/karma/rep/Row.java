@@ -26,6 +26,7 @@ package edu.isi.karma.rep;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -250,5 +251,46 @@ public class Row extends RepEntity implements Neighbor {
 					.getNeighborByColumnName(columnName, factory);
 		}
 		return null;
+	}
+
+	public boolean collectNodes(HNodePath path, Collection<Node> nodes) {
+		Node n = getNode(path.getFirst().getId());
+		if (n == null) {
+			return false;
+		}
+		// Check if the path has only one HNode
+		if (path.getRest() == null || path.getRest().isEmpty()) {
+			nodes.add(n);
+			return true;
+		}
+
+		// Check if the node has a nested table
+		HNodePath rest = path.getRest();
+		if (n.hasNestedTable()) {
+			int numRows = n.getNestedTable().getNumRows();
+			if (numRows != 0)
+			{
+				List<Row> rowsNestedTable = n.getNestedTable().getRows(0,
+						numRows);
+				if (rowsNestedTable != null && rowsNestedTable.size() != 0) {
+					
+					if(n.getNestedTable().getRows(0, 1).get(0).getNode(rest.getFirst().getId()) != null)
+					{
+						return n.getNestedTable().collectNodes(path.getRest(), nodes);
+					}
+				}
+			}
+		}
+		if(n.getBelongsToRow().getNode(rest.getFirst().getId()) != null)
+		{
+			return n.getBelongsToRow().collectNodes(rest, nodes);
+		}
+		
+		if(n.getBelongsToRow().getBelongsToTable().getNestedTableInNode() != null)
+		{
+			return n.getBelongsToRow().getBelongsToTable().getNestedTableInNode().getBelongsToRow().collectNodes(rest, nodes);
+		}
+		return false;
+		
 	}
 }

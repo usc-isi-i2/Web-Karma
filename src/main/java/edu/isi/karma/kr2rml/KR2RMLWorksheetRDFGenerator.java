@@ -34,13 +34,31 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.ErrorReport.Priority;
+import edu.isi.karma.kr2rml.exception.HNodeNotFoundKarmaException;
+import edu.isi.karma.kr2rml.exception.NoValueFoundInNodeException;
+import edu.isi.karma.kr2rml.exception.ValueNotFoundKarmaException;
+import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
+import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
+import edu.isi.karma.kr2rml.planning.DFSTriplesMapGraphDAGifier;
+import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
+import edu.isi.karma.kr2rml.planning.TriplesMap;
+import edu.isi.karma.kr2rml.planning.TriplesMapLink;
+import edu.isi.karma.kr2rml.planning.TriplesMapPlan;
+import edu.isi.karma.kr2rml.planning.TriplesMapPlanExecutor;
+import edu.isi.karma.kr2rml.planning.TriplesMapPlanGenerator;
+import edu.isi.karma.kr2rml.planning.TriplesMapWorkerPlan;
+import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
+import edu.isi.karma.kr2rml.template.ColumnTemplateTerm;
+import edu.isi.karma.kr2rml.template.StringTemplateTerm;
+import edu.isi.karma.kr2rml.template.TemplateTerm;
+import edu.isi.karma.kr2rml.template.TemplateTermSet;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -53,20 +71,19 @@ import edu.isi.karma.rep.Worksheet;
 
 public class KR2RMLWorksheetRDFGenerator {
 	
-	private RepFactory factory;
-	private Worksheet worksheet;
-	private String outputFileName;
-	private OntologyManager ontMgr;
-	private ErrorReport errorReport;
-	private boolean addColumnContextInformation;
-	private KR2RMLMapping kr2rmlMapping;
-	private KR2RMLMappingColumnNameHNodeTranslator translator;
-	private Map<String, String> prefixToNamespaceMap;
-	private Map<String, String> hNodeToContextUriMap;
-	private PrintWriter outWriter;
+	protected RepFactory factory;
+	protected Worksheet worksheet;
+	protected String outputFileName;
+	protected OntologyManager ontMgr;
+	protected ErrorReport errorReport;
+	protected boolean addColumnContextInformation;
+	protected KR2RMLMapping kr2rmlMapping;
+	protected KR2RMLMappingColumnNameHNodeTranslator translator;
+	protected ConcurrentHashMap<String, String> hNodeToContextUriMap;
+	protected KR2RMLRDFWriter outWriter;
 	
 	private Logger logger = LoggerFactory.getLogger(KR2RMLWorksheetRDFGenerator.class);
-	public static String BLANK_NODE_PREFIX = "_:";
+	private URIFormatter uriFormatter;
 
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
 			OntologyManager ontMgr, String outputFileName, boolean addColumnContextInformation, 
@@ -78,11 +95,11 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.worksheet = worksheet;
 		this.outputFileName = outputFileName;
 		this.errorReport = errorReport;
-		this.prefixToNamespaceMap = new HashMap<String, String>();
-		this.hNodeToContextUriMap = new HashMap<String, String>();
+		this.uriFormatter = new URIFormatter(ontMgr, errorReport);
+		this.hNodeToContextUriMap = new ConcurrentHashMap<String, String>();
 		this.addColumnContextInformation = addColumnContextInformation;
 		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
-		populatePrefixToNamespaceMap();
+		
 	}
 	
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
@@ -93,19 +110,20 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.kr2rmlMapping = kr2rmlMapping;
 		this.factory = factory;
 		this.worksheet = worksheet;
-		this.outWriter = writer;;
 		this.errorReport = errorReport;
-		this.prefixToNamespaceMap = new HashMap<String, String>();
-		this.hNodeToContextUriMap = new HashMap<String, String>();
+		this.uriFormatter = new URIFormatter(ontMgr, errorReport);
+		this.outWriter = new N3KR2RMLRDFWriter(uriFormatter, writer);
+		this.hNodeToContextUriMap = new ConcurrentHashMap<String, String>();
 		this.addColumnContextInformation = addColumnContextInformation;
 		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
-		populatePrefixToNamespaceMap();
+		
 	
 	}
 	
 	
 	
 	public void generateRDF(boolean closeWriterAfterGeneration) throws IOException {
+		
 		// Prepare the output writer
 		BufferedWriter bw = null;
 		try {
@@ -115,28 +133,44 @@ public class KR2RMLWorksheetRDFGenerator {
 				parentDir.mkdirs();
 				bw = new BufferedWriter(
 						new OutputStreamWriter(new FileOutputStream(f),"UTF-8"));
-				outWriter = new PrintWriter (bw);
+				outWriter = new N3KR2RMLRDFWriter(uriFormatter, new PrintWriter (bw));
 			} else if (this.outWriter == null && this.outputFileName == null) {
-				outWriter = new PrintWriter (System.out);			
+				outWriter = new N3KR2RMLRDFWriter(uriFormatter, new PrintWriter (System.out));			
 			}
 			
 			// RDF Generation starts at the top level rows
 			ArrayList<Row> rows = this.worksheet.getDataTable().getRows(0, 
 					this.worksheet.getDataTable().getNumRows());
-			int i=1;
-			for (Row row:rows) {
-				Set<String> rowTriplesSet = new HashSet<String>();
-				Set<String> rowPredicatesCovered = new HashSet<String>();
-				Set<String> predicatesSuccessful = new HashSet<String>();
-				Map<String, ReportMessage> predicatesFailed = new HashMap<String,ReportMessage>();
-				generateTriplesForRow(row, rowTriplesSet, rowPredicatesCovered, predicatesFailed, predicatesSuccessful);
+			
 
-				outWriter.println();
+			
+			try{
+				DFSTriplesMapGraphDAGifier dagifier = new DFSTriplesMapGraphDAGifier();
+				dagifier.dagify(kr2rmlMapping.getAuxInfo().getTriplesMapGraph(), new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
+				
+			}catch (Exception e)
+			{
+				logger.error("Unable to find DAG for RDF Generation!", e);
+				throw new Exception("Unable to find DAG for RDF Generation!", e);
+				
+			}
+			int i=1;
+			
+			Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan = new HashMap<TriplesMap, TriplesMapWorkerPlan>() ;
+			for(TriplesMap triplesMap : kr2rmlMapping.getTriplesMapList())
+			{
+				TriplesMapWorkerPlan workerPlan = new TriplesMapWorkerPlan(factory, triplesMap, kr2rmlMapping, uriFormatter, translator,  addColumnContextInformation, hNodeToContextUriMap);
+				triplesMapToWorkerPlan.put(triplesMap, workerPlan);
+			}
+			for (Row row:rows) {
+				TriplesMapPlanExecutor e = new TriplesMapPlanExecutor();
+				TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(triplesMapToWorkerPlan, row, outWriter);
+				TriplesMapPlan plan = g.generatePlan(kr2rmlMapping.getAuxInfo().getTriplesMapGraph());
+				errorReport.combine(e.execute(plan));
+				outWriter.finishRow();
 				if (i++%2000 == 0)
 					logger.info("Done processing " + i + " rows");
-				for (ReportMessage errMsg:predicatesFailed.values()){
-					this.errorReport.addReportMessage(errMsg);
-				}
+	
 			}
 			
 			// Generate column provenance information if required
@@ -147,6 +181,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		} catch (Exception e)
 		{
 			logger.error("Unable to generate RDF: ", e);
+			errorReport.addReportMessage(new ReportMessage("General RDF Generation Error", e.getMessage(), Priority.high));
 		}
 		finally {
 			if (closeWriterAfterGeneration) {
@@ -266,7 +301,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		// Generate the predicate RDF
 		String predicateUri = "";
 		try {
-			predicateUri = normalizeUri(getTemplateTermSetPopulatedWithValues(node,  
+			predicateUri = URIFormatter.normalizeUri(getTemplateTermSetPopulatedWithValues(node,  
 					pom.getPredicate().getTemplate()));
 			if (predicateUri.equals(Uris.CLASS_INSTANCE_LINK_URI) 
 					|| predicateUri.equals(Uris.COLUMN_SUBCLASS_LINK_URI)) {
@@ -316,11 +351,8 @@ public class KR2RMLWorksheetRDFGenerator {
 				return;
 			}
 			
-			String triple = constructTripleWithURIObject(subjUri, predicateUri, objUri);
-			if (!existingTopRowTriples.contains(triple)) {
-				outWriter.println(triple);
-				existingTopRowTriples.add(triple);
-			}
+			outWriter.outputTripleWithURIObject(subjUri, predicateUri, objUri);
+			
 		} 
 		// Data Property
 		else {
@@ -356,12 +388,7 @@ public class KR2RMLWorksheetRDFGenerator {
 					try
 					{
 						String hNodeId_val = translator.getHNodeIdForColumnName(templ.getAllTerms().get(0).getTemplateTermValue());
-						String quad = constructQuadWithLiteralObject(subjUri, predicateUri, value,
-								rdfLiteralType, hNodeId_val);
-						if (!existingTopRowTriples.contains(quad)) {
-							existingTopRowTriples.add(quad);
-							outWriter.println(quad);
-						}
+						outWriter.outputQuadWithLiteralObject(subjUri, predicateUri, value, rdfLiteralType, getColumnContextUri(hNodeId_val));
 					}
 					catch(HNodeNotFoundKarmaException he)
 					{
@@ -370,11 +397,7 @@ public class KR2RMLWorksheetRDFGenerator {
 					}
 				}
 			} else {
-				String triple = constructTripleWithLiteralObject(subjUri, predicateUri, value, rdfLiteralType);
-				if (!existingTopRowTriples.contains(triple)) {
-					existingTopRowTriples.add(triple);
-					outWriter.println(triple);
-				}
+				outWriter.outputTripleWithLiteralObject(subjUri, predicateUri, value, rdfLiteralType);
 			}
 		}
 		predicatesCovered.add(pom.getPredicate().getId());
@@ -394,54 +417,22 @@ public class KR2RMLWorksheetRDFGenerator {
 		// Generate URI for subject
 		String uri = "";
 		if (subjMap.isBlankNode()) {
-			uri = getExpandedAndNormalizedUri(getBlankNodeUri(subjMap.getId(), node));
+			uri = uriFormatter.getExpandedAndNormalizedUri(getBlankNodeUri(subjMap.getId(), node));
 		} else {
-			uri = getExpandedAndNormalizedUri(getTemplateTermSetPopulatedWithValues(node,
+			uri = uriFormatter.getExpandedAndNormalizedUri(getTemplateTermSetPopulatedWithValues(node,
 					subjMap.getTemplate()));
 		}
 		
 		// Generate triples for specifying the types
 		for (TemplateTermSet typeTerm:subjMap.getRdfsType()) {
-			String typeUri = getExpandedAndNormalizedUri(getTemplateTermSetPopulatedWithValues(
+			String typeUri = uriFormatter.getExpandedAndNormalizedUri(getTemplateTermSetPopulatedWithValues(
 					node, typeTerm));
-			String triple = constructTripleWithURIObject(uri, Uris.RDF_TYPE_URI, typeUri);
-			if (!existingTopRowTriples.contains(triple)) {
-				existingTopRowTriples.add(triple);
-				outWriter.println(triple);
-			}
+			outWriter.outputTripleWithURIObject(uri, Uris.RDF_TYPE_URI, typeUri);
+			
 		}
 		return uri;
 	}
 	
-	private String constructTripleWithURIObject(String subjUri, String predicateUri, String objectUri) {
-		return subjUri + " " 
-				+ getExpandedAndNormalizedUri(predicateUri) + " " 
-				+ objectUri + " .";
-	}
-	
-	private String constructTripleWithLiteralObject(String subjUri, String predicateUri, String value, 
-			String literalType) {
-		// Use Apache Commons to escape the value
-		value = StringEscapeUtils.escapeJava(value);
-		
-		// Add the RDF literal type to the literal if present
-		if (literalType != null && !literalType.equals("")) {
-			return subjUri + " " + getExpandedAndNormalizedUri(predicateUri) + " \"" + value + 
-					"\"" + "^^<" + literalType + "> .";
-		}
-		return subjUri + " " + getExpandedAndNormalizedUri(predicateUri) + " \"" + value + "\" .";
-	}
-	
-	private String constructQuadWithLiteralObject(String subjUri, String predicateUri, 
-			String value, String literalType, String valueHNodeId) {
-		String triple = constructTripleWithLiteralObject(subjUri, predicateUri, value, literalType);
-		String columnContextUri = getColumnContextUri(valueHNodeId);
-		if (triple.length() > 2)
-			return triple.substring(0, triple.length()-1) + "<" + columnContextUri + "> ." ;
-		else
-			return "";
-	}
-
 	
 
 	private String getBlankNodeUri(String subjMapid, Node node) 
@@ -449,7 +440,7 @@ public class KR2RMLWorksheetRDFGenerator {
 
 		StringBuilder output = new StringBuilder();
 		// Add the blank namespace
-		output.append(BLANK_NODE_PREFIX);
+		output.append(Uris.BLANK_NODE_PREFIX);
 		
 		// Add the class node prefix
 		output.append(this.kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().get(subjMapid).replaceAll(":", "_"));
@@ -501,93 +492,29 @@ public class KR2RMLWorksheetRDFGenerator {
 		}
 		return output.toString();
 	}
-	
-	private String getExpandedAndNormalizedUri(String uri) {
-		// Check if the predicate contains a predicate.
-		if (!uri.startsWith("http:") && uri.contains(":")) {
-			// Replace the prefix with proper namespace by looking into the ontology manager
-			String prefix = uri.substring(0, uri.indexOf(":"));
-			
-			String namespace = this.prefixToNamespaceMap.get(prefix);
-			if (namespace == null || namespace.isEmpty()) {
-				this.errorReport.createReportMessage("Error creating predicate's URI: " + uri, 
-						"No namespace found for the prefix: " + prefix, Priority.high);
-//				logger.error("No namespace found for the predicate prefix: " + prefix);
-			} else {
-				uri = namespace + uri.substring(uri.indexOf(":")+1);
-			}
-		}
-		
-		// Remove all unwanted characters
-		uri = normalizeUri(uri);
-		
-		// Put angled brackets if required
-		if (!uri.startsWith(BLANK_NODE_PREFIX)) {
-			uri = "<" + uri + ">";
-		}
-			
-		return uri;
-	}
-	
-	public String normalizeUri(String inputUri) {
 
-		boolean foundIssue = false;
-		StringBuilder sb = new StringBuilder();
+	private void generateColumnProvenanceInformation() {
+		for (String hNodeId:hNodeToContextUriMap.keySet()) {
+			getColumnContextTriples(hNodeId);
+			
+			
+			// Generate wasDerivedFrom property if required
+			HNode hNode = factory.getHNode(hNodeId);
+			if (hNode.isDerivedFromAnotherColumn()) {
+				HNode originalHNode = factory.getHNode(hNode.getOriginalColumnHNodeId());
+				if (originalHNode != null) {
+					getColumnContextTriples(originalHNode.getId());
+					
+					outWriter.outputTripleWithURIObject(
+							hNodeToContextUriMap.get(hNodeId), Uris.PROV_WAS_DERIVED_FROM_URI, 
+							getColumnContextUri(originalHNode.getId()));
+					
+				}
+			}
+		}
+	}
+	protected String getColumnContextUri (String hNodeId) {
 		
-		for(int i = 0; i < inputUri.length(); i++)
-		{
-			char value = inputUri.charAt(i);
-			if(value == ' ')
-			{
-				if(!foundIssue)
-				{
-					foundIssue = true;
-					sb.append(inputUri.substring(0, i));
-				}
-				
-				continue;
-			}
-			else if(value == ',' || value == '`' || value == '\'' )
-			{
-				if(!foundIssue)
-				{
-					foundIssue = true;
-					sb.append(inputUri.substring(0, i));
-				}
-				else
-				{
-					sb.append('_');
-				}
-			}
-			else
-			{
-				if(foundIssue)
-				{
-					sb.append(value);
-				}
-			}
-		}
-		if(foundIssue)
-		{
-			return sb.toString();
-		}
-		else
-		{
-			return inputUri;
-		}
-	}
-	
-	
-	
-	private void populatePrefixToNamespaceMap() {
-		Map<String, String> prefixMapOntMgr = this.ontMgr.getPrefixMap(); 
-		for (String ns:prefixMapOntMgr.keySet()) {
-			String prefix = prefixMapOntMgr.get(ns);
-			this.prefixToNamespaceMap.put(prefix, ns);
-		}
-	}
-	
-	private String getColumnContextUri (String hNodeId) {
 		if (hNodeToContextUriMap.containsKey(hNodeId))
 			return hNodeToContextUriMap.get(hNodeId);
 		else {
@@ -598,96 +525,23 @@ public class KR2RMLWorksheetRDFGenerator {
 		}
 	}
 	
-	private void generateColumnProvenanceInformation() {
-		for (String hNodeId:hNodeToContextUriMap.keySet()) {
-			List<String> columnTriples = getColumnContextTriples(hNodeId);
-			for (String triple:columnTriples) {
-				outWriter.println(triple);
-			}
-			
-			// Generate wasDerivedFrom property if required
-			HNode hNode = factory.getHNode(hNodeId);
-			if (hNode.isDerivedFromAnotherColumn()) {
-				HNode originalHNode = factory.getHNode(hNode.getOriginalColumnHNodeId());
-				if (originalHNode != null) {
-					columnTriples = getColumnContextTriples(originalHNode.getId());
-					for (String triple:columnTriples) {
-						outWriter.println(triple);
-					}
-					
-					String derivedFromTriple = constructTripleWithURIObject(
-							hNodeToContextUriMap.get(hNodeId), Uris.PROV_WAS_DERIVED_FROM_URI, 
-							getColumnContextUri(originalHNode.getId()));
-					outWriter.println(derivedFromTriple);
-				}
-			}
-		}
-	}
-	
-	private List<String> getColumnContextTriples(String hNodeId) {
-		List<String> colContextTriples = new ArrayList<String>();
+	private void getColumnContextTriples(String hNodeId) {
 		String colUri = getColumnContextUri(hNodeId);
 		
 		// Generate the type
-		String typeTriple = constructTripleWithURIObject("<" + colUri + ">", Uris.RDF_TYPE_URI, 
+		outWriter.outputTripleWithURIObject("<" + colUri + ">", Uris.RDF_TYPE_URI, 
 				"<" + Uris.PROV_ENTITY_URI + ">");
-		colContextTriples.add(typeTriple);
+		
 		
 		// Generate the label
 		HNode hNode = factory.getHNode(hNodeId);
-		String labelTriple = constructTripleWithLiteralObject("<" + colUri + ">", Uris.RDFS_LABEL_URI, 
+		outWriter.outputTripleWithLiteralObject("<" + colUri + ">", Uris.RDFS_LABEL_URI, 
 				hNode.getColumnName(), "");
-		colContextTriples.add(labelTriple);
 		
-		return colContextTriples;
+		
 	}
+	
+
 }
 
-class HNodeNotFoundKarmaException extends Exception {
-	private static final long serialVersionUID = 1L;
-	private String offendingColumnName;
-	
-	//constructor without parameters
-	public HNodeNotFoundKarmaException() {}
 
-	//constructor for exception description
-	public HNodeNotFoundKarmaException(String description, String offendingColumnName) {
-	    super(description);
-	    this.offendingColumnName = offendingColumnName;
-	}
-	
-	public String getOffendingColumn() {
-		return this.offendingColumnName;
-	}	
-}
-class ValueNotFoundKarmaException extends Exception{
-
-	private static final long serialVersionUID = 1L;
-	private String offendingColumnHNodeId;
-	
-	//constructor without parameters
-	public ValueNotFoundKarmaException() {}
-
-	//constructor for exception description
-	public ValueNotFoundKarmaException(String description, String offendingColumnHNodeId) {
-	    super(description);
-	    this.offendingColumnHNodeId = offendingColumnHNodeId;
-	}
-	
-	public String getOffendingColumnHNodeId() {
-		return this.offendingColumnHNodeId;
-	}
-}
-
-class NoValueFoundInNodeException extends Exception{
-
-	private static final long serialVersionUID = 1L;
-	
-	//constructor without parameters
-	public NoValueFoundInNodeException() {}
-
-	//constructor for exception description
-	public NoValueFoundInNodeException(String description) {
-	    super(description);
-	}
-}

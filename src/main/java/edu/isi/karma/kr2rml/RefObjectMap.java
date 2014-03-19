@@ -21,6 +21,8 @@
 
 package edu.isi.karma.kr2rml;
 
+import edu.isi.karma.kr2rml.planning.TriplesMap;
+
 public class RefObjectMap {
 	
 	private final String id;

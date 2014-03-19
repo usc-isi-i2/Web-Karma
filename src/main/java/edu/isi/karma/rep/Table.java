@@ -164,42 +164,22 @@ public class Table extends RepEntity {
 	 * @param nodes
 	 *            Collection of nodes that satisfy the path
 	 */
-	public void collectNodes(HNodePath path, Collection<Node> nodes) {
+	public boolean collectNodes(HNodePath path, Collection<Node> nodes) {
 		if (nodes == null) {
 			nodes = new ArrayList<Node>();
 		}
-		collectNodes(path, nodes, rows);
+		return collectNodes(path, nodes, rows);
 	}
 
-	private void collectNodes(HNodePath path, Collection<Node> nodes,
+	private boolean collectNodes(HNodePath path, Collection<Node> nodes,
 			List<Row> rows) {
-		RowIterator: for (Row r : rows) {
-
-			Node n = r.getNode(path.getFirst().getId());
-			if (n == null) {
-				continue RowIterator;
-			}
-			// Check if the path has only one HNode
-			if (path.getRest() == null || path.getRest().isEmpty()) {
-				nodes.add(n);
-				continue RowIterator;
-			}
-
-			// Check if the node has a nested table
-			if (n.hasNestedTable()) {
-				int numRows = n.getNestedTable().getNumRows();
-				if (numRows == 0)
-					continue RowIterator;
-
-				List<Row> rowsNestedTable = n.getNestedTable().getRows(0,
-						numRows);
-				if (rowsNestedTable != null && rowsNestedTable.size() != 0) {
-					collectNodes(path.getRest(), nodes, rowsNestedTable);
-					continue RowIterator;
-				}
-			}
+		boolean result = false;
+		for (Row r : rows) {
+			
+			result |= r.collectNodes(path, nodes);
 
 		}
+		return result;
 	}
 
 	public void setCollectedNodeValues(HNodePath path, List<String> nodes,

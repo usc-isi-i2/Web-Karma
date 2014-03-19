@@ -35,7 +35,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.util.EncodingDetector;
 
 /**
@@ -105,10 +105,12 @@ public class TestJSONRDFGenerator {
 
 			rdfGen.generateRDF("people-model", jsonData, true, pw);
 			String rdf = sw.toString();
-
+			System.out.println(rdf);
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("\n");
-			assertEquals(102, lines.length);
+			int count = lines.length;
+			 
+			assertEquals(102, count);
 		} catch (Exception e) {
 			fail("Execption: " + e.getMessage());
 		}
@@ -133,10 +135,9 @@ public class TestJSONRDFGenerator {
 
 			rdfGen.generateRDF("cs548-events-model", jsonData, true, pw);
 			String rdf = sw.toString();
-
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("\n");
-			assertEquals(234, lines.length);
+			assertEquals(238, lines.length);
 		} catch (Exception e) {
 			fail("Execption: " + e.getMessage());
 		}

@@ -45,11 +45,12 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
-import edu.isi.karma.kr2rml.KR2RMLMapping;
-import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.ReportMessage;
-import edu.isi.karma.kr2rml.TriplesMap;
+import edu.isi.karma.kr2rml.URIFormatter;
+import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
+import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
+import edu.isi.karma.kr2rml.planning.TriplesMap;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
@@ -169,7 +170,7 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 				// Sanity check
 				if (rdf == null || rdf.trim().isEmpty()) continue;
 				
-				String keyUri = rdfGen.normalizeUri(rdfGen.getTemplateTermSetPopulatedWithValues(node
+				String keyUri = URIFormatter.normalizeUri(rdfGen.getTemplateTermSetPopulatedWithValues(node
 						, trMap.getSubject().getTemplate()));
 				rowToUriMap.put(row, keyUri);
 				

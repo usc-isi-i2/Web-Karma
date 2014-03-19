@@ -21,6 +21,8 @@
 
 package edu.isi.karma.kr2rml;
 
+import edu.isi.karma.kr2rml.template.TemplateTermSet;
+
 public class TermMap {
 	
 	private final String id;
