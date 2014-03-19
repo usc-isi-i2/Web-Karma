@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.jetty.util.ConcurrentHashSet;
 
 public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 
@@ -17,13 +18,13 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 	{
 		this.outWriter = new PrintWriter(outputStream);
 		this.uriFormatter = uriFormatter;
-		generatedTriples = new HashSet<String>();
+		generatedTriples = new ConcurrentHashSet<String>();
 	}
 	public N3KR2RMLRDFWriter(URIFormatter uriFormatter, PrintWriter writer)
 	{
 		this.outWriter =writer;
 		this.uriFormatter = uriFormatter;
-		generatedTriples = new HashSet<String>();
+		generatedTriples = new ConcurrentHashSet<String>();
 	}
 	
 	private void outputTriple(String triple)
@@ -83,7 +84,7 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 	public void finishRow()
 	{
 		outWriter.println("");
-		generatedTriples = new HashSet<String>();
+		generatedTriples = new ConcurrentHashSet<String>();
 	}
 	@Override
 	public void flush() {
