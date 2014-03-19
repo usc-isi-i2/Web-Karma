@@ -7,9 +7,9 @@
 <object/1988.16/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P30_transferred_custody_of> <object/1988.16> .
 <object/1988.16/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P24_transferred_title_of> <object/1988.16> .
 <thesauri/classification/GraphicArts> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
-<object/1988.16> <http://collection.americanart.si.edu/id/ontologies#PE_object_mainclass> <thesauri/classification/GraphicArts> .
+<object/1988.16> <http://collection.americanart.si.edu/id/ontologies/PE_object_mainclass> <thesauri/classification/GraphicArts> .
 <thesauri/classification/Print> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
-<object/1988.16> <http://collection.americanart.si.edu/id/ontologies#PE_object_subsclass> <thesauri/classification/Print> .
+<object/1988.16> <http://collection.americanart.si.edu/id/ontologies/PE_object_subsclass> <thesauri/classification/Print> .
 <object/1988.16> <http://collection.americanart.si.edu/id/ontologies/PE_medium_description> "etching and monotype on paper" .
 <object/1988.16/title> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E35_Title> .
 <object/1988.16> <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> <object/1988.16/title> .
@@ -24,7 +24,7 @@
 <object/1988.16> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <object/1988.16/objnum> .
 <object/1988.16> <http://www.cidoc-crm.org/cidoc-crm/P52_has_current_owner> <the-american-art-museum> .
 <object/1988.16> <http://www.cidoc-crm.org/cidoc-crm/P50_has_current_keeper> <the-american-art-museum> .
-<object/1988.16/copyright> <http://www.cidoc-crm.org/cidoc-crm/P3_has_note> "? 1988, K. Achepol" .
+<object/1988.16/copyright> <http://www.cidoc-crm.org/cidoc-crm/P3_has_note> "\u00A9 1988, K. Achepol" .
 <thesauri/identifier/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
 <object/1988.16/id> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/identifier/id> .
 <object/1988.16/id> <http://www.w3.org/2000/01/rdf-schema#label> "65" .
@@ -35,7 +35,7 @@
 
 <object/1985.66.177> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
 <thesauri/classification/Painting> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
-<object/1985.66.177> <http://collection.americanart.si.edu/id/ontologies#PE_object_mainclass> <thesauri/classification/Painting> .
+<object/1985.66.177> <http://collection.americanart.si.edu/id/ontologies/PE_object_mainclass> <thesauri/classification/Painting> .
 <object/1985.66.177/title> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E35_Title> .
 <object/1985.66.177> <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> <object/1985.66.177/title> .
 <object/1985.66.177/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
@@ -55,7 +55,7 @@
 
 <object/VR.1998.84.50A-F> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
 <thesauri/classification/Painting> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
-<object/VR.1998.84.50A-F> <http://collection.americanart.si.edu/id/ontologies#PE_object_mainclass> <thesauri/classification/Painting> .
+<object/VR.1998.84.50A-F> <http://collection.americanart.si.edu/id/ontologies/PE_object_mainclass> <thesauri/classification/Painting> .
 <object/VR.1998.84.50A-F> <http://collection.americanart.si.edu/id/ontologies/PE_medium_description> "pen and colored inks on cardboard encased in plastic sleeves with metal gromets and leather ties" .
 <object/VR.1998.84.50A-F/title> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E35_Title> .
 <object/VR.1998.84.50A-F> <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> <object/VR.1998.84.50A-F/title> .
@@ -83,7 +83,7 @@
 <object/L.1968.84.1/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P30_transferred_custody_of> <object/L.1968.84.1> .
 <object/L.1968.84.1/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P24_transferred_title_of> <object/L.1968.84.1> .
 <thesauri/classification/Painting> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
-<object/L.1968.84.1> <http://collection.americanart.si.edu/id/ontologies#PE_object_mainclass> <thesauri/classification/Painting> .
+<object/L.1968.84.1> <http://collection.americanart.si.edu/id/ontologies/PE_object_mainclass> <thesauri/classification/Painting> .
 <object/L.1968.84.1> <http://collection.americanart.si.edu/id/ontologies/PE_medium_description> "oil on canvas mounted on aluminum" .
 <object/L.1968.84.1/title> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E35_Title> .
 <object/L.1968.84.1> <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> <object/L.1968.84.1/title> .
@@ -113,7 +113,7 @@
 <object/2009.NJP.VID.1/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P30_transferred_custody_of> <object/2009.NJP.VID.1> .
 <object/2009.NJP.VID.1/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P24_transferred_title_of> <object/2009.NJP.VID.1> .
 <thesauri/classification/MediaArts> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
-<object/2009.NJP.VID.1> <http://collection.americanart.si.edu/id/ontologies#PE_object_mainclass> <thesauri/classification/MediaArts> .
+<object/2009.NJP.VID.1> <http://collection.americanart.si.edu/id/ontologies/PE_object_mainclass> <thesauri/classification/MediaArts> .
 <object/2009.NJP.VID.1> <http://collection.americanart.si.edu/id/ontologies/PE_medium_description> "single-channel video, color, sound; 80:00 minutes" .
 <object/2009.NJP.VID.1/title> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E35_Title> .
 <object/2009.NJP.VID.1> <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> <object/2009.NJP.VID.1/title> .

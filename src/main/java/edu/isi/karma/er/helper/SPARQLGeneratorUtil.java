@@ -28,9 +28,9 @@ import java.util.List;
 
 import edu.isi.karma.kr2rml.Predicate;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
-import edu.isi.karma.kr2rml.R2RMLMapping;
 import edu.isi.karma.kr2rml.RefObjectMap;
-import edu.isi.karma.kr2rml.TriplesMap;
+import edu.isi.karma.kr2rml.mapping.R2RMLMapping;
+import edu.isi.karma.kr2rml.planning.TriplesMap;
 
 /*
  * Pedro: This code needs an author. Who wrote this?

@@ -39,8 +39,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -194,7 +195,8 @@ public class TestCSVFileRdfGenerator {
 		FileRdfGenerator rdfGen = new FileRdfGenerator();
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
 				"schedule-model", modelFile.toURI().toURL());
-		rdfGen.generateRdf("csv", modelIdentifier, pw, csvFile, "utf-8", 0);
+		String encoding = EncodingDetector.detect(csvFile);
+		rdfGen.generateRdf("csv", modelIdentifier, pw, csvFile, encoding, 0);
 
 	}
 
@@ -212,8 +214,9 @@ public class TestCSVFileRdfGenerator {
 		HashSet<String> hashSet = new HashSet<String>();
 		
 		try {
+			String encoding = EncodingDetector.detect(file);
 			BufferedReader in = new BufferedReader(new InputStreamReader(
-					new FileInputStream(file), "UTF-8"));
+					new FileInputStream(file), encoding));
 
 			String line = in.readLine();
 			while (line != null) {

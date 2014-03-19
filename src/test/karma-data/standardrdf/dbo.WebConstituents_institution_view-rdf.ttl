@@ -20,7 +20,7 @@
 
 <thesauri/nationality/American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
 <person-institution/3550> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body> .
-<person-institution/3550> <http://collection.americanart.si.edu/id/ontologies#PE_probably_is_current_or_former_member_of> <thesauri/nationality/American> .
+<person-institution/3550> <http://collection.americanart.si.edu/id/ontologies/PE_probably_is_current_or_former_member_of> <thesauri/nationality/American> .
 <person-institution/3550/appellation/displayname> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
 <person-institution/3550> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/3550/appellation/displayname> .
 <person-institution/3550/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .

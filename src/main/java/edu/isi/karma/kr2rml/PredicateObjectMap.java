@@ -21,6 +21,8 @@
 
 package edu.isi.karma.kr2rml;
 
+import edu.isi.karma.kr2rml.planning.TriplesMap;
+
 public class PredicateObjectMap {
 	
 	// Parent TriplesMap. Useful for traversal

@@ -1868,15 +1868,6 @@ _:node18b0jn3llx52 rr:objectMap km-dev:RefObjectMap_0b8155d0-ceb3-4a5a-a8f4-ddc7
 
 km-dev:TriplesMap_795f536c-58ca-4817-9797-5789a404cad9 rr:predicateObjectMap _:node18b0jn3llx52 .
 
-_:node18b0jn3llx53 rr:predicate vivo:prerequisiteFor .
-
-km-dev:RefObjectMap_14154b95-d486-4dee-99c3-9fd69f524ede a rr:RefObjectMap ;
-	rr:parentTriplesMap km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 .
-
-_:node18b0jn3llx53 rr:objectMap km-dev:RefObjectMap_14154b95-d486-4dee-99c3-9fd69f524ede .
-
-km-dev:TriplesMap_795f536c-58ca-4817-9797-5789a404cad9 rr:predicateObjectMap _:node18b0jn3llx53 .
-
 _:node18b0jn3llx55 rr:predicate rdfs:label .
 
 _:node18b0jn3llx56 rr:column "[\"prerequisites\",\"values\"]" ;

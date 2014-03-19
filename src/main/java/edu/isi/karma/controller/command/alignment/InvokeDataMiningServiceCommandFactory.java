@@ -21,11 +21,8 @@
 
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.ArrayList;
-
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
