@@ -1281,12 +1281,12 @@ var IncomingOutgoingLinksDialog = (function() {
         
         
         function showBlank(wsId, colId, alignId,
-                colLabel, colUri, colDomain, type) {
+                colLabel, colUri, colDomain, colType, type) {
             selectedFromClass = {label:"", id:"", uri:""};
             selectedToClass = {label:"", id:"", uri:""};
             selectedProperty = {label:"", id:"", uri:""};
             show(wsId, colId, alignId,
-                    colLabel, colUri, colDomain, type);
+                    colLabel, colUri, colDomain, colType, type);
         };
         
         
