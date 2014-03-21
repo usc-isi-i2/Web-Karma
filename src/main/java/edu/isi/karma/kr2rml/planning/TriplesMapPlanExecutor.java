@@ -17,16 +17,18 @@ import edu.isi.karma.kr2rml.ReportMessage;
 public class TriplesMapPlanExecutor {
 
 	private static Logger LOG = LoggerFactory.getLogger(TriplesMapPlanExecutor.class);
-	ExecutorService service = Executors.newFixedThreadPool(10);
+	private ExecutorService service = Executors.newFixedThreadPool(10);
 	public ErrorReport execute(TriplesMapPlan plan)
 	{
 		ErrorReport errorReport = new ErrorReport();
+		//TODO Handle exceptions/waiting for results better
 		try {
 			List<Future<Boolean>> results = new LinkedList<Future<Boolean>>();
 			for(TriplesMapWorker worker : plan.workers)
 			{
 				results.add(service.submit(worker));
 			}
+
 			for(Future<Boolean> result : results)
 			{
 				result.get(1, TimeUnit.MINUTES);
