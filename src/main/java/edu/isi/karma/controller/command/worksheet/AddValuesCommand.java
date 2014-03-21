@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.worksheet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,17 +16,16 @@ import edu.isi.karma.controller.update.AddColumnUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.imp.json.JsonImportValues;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
@@ -214,7 +214,7 @@ public class AddValuesCommand extends WorksheetCommand{
 					worksheet, factory);
 		Table nestedTable = row.getNode(newHNodeId).getNestedTable();
 		Row r = nestedTable.addRow(factory);
-		for (Object key : obj.keySet()) {
+		for (Object key : new TreeSet<Object>(obj.keySet())) {
 			Object value = obj.get(key.toString());
 			HNode h = nestedHTable.getHNodeFromColumnName(key.toString());		
 			if ( h == null)

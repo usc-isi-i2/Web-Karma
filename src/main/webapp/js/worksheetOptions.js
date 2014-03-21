@@ -2,32 +2,95 @@ function WorksheetOptions(wsId, wsTitle) {
 	 
 	var worksheetId = wsId;
 	var worksheetTitle = wsTitle;
+	var worksheetOptionsDiv;
 	
 	var options = [
-	        //Title, function to call, needs file upload       
-			[	"Show Model" , showModel ],
-			[ "Set Properties" , setProperties ],
-			[ "Show Auto Model" , showAutoModel ],
-			[ "Apply R2RML Model" , applyR2RMLModel, true, "applyWorksheetHistory" ],
-			[ "divider" , null ],
-			[ "Publish RDF" , publishRDF ],
-			[ "Publish Model" , publishModel ],
-			["Publish Service Model", publishServiceModel],
-			[ "divider" , null ],
-			["Populate Source", populateSource],
-			["Invoke Service", invokeService],
-			[ "divider" , null ],
-			["Export to CSV", exportToCSV],
-			["Export to Database", exportToDatabase],
-			["Export to MDB", exportToMDB],
-			["Export to SpatialData", exportToSpatial],
-			["divider", null],
-			[ "Fold" , Fold ]
+	        {name:"View model using straight lines", func:viewStraightLineModel, showCheckbox:true, defaultChecked:true, initFunc:initStrightLineModel},
+	        {name:"divider"},
+	        {name:"Show Model" , func:showModel},
+			{name:"Set Properties", func:setProperties},
+			{name:"Show Auto Model", func:showAutoModel},
+			{name:"Apply R2RML Model" , func:applyR2RMLModel, useFileUpload:true, uploadDiv:"applyWorksheetHistory"},
+			{name:"divider"},
+			{name:"Publish RDF" , func:publishRDF},
+			{name:"Publish Model" , func:publishModel},
+			{name:"Publish Service Model", func:publishServiceModel},
+			{name:"divider"},
+			{name:"Populate Source", func:populateSource},
+			{name:"Invoke Service", func:invokeService},
+			{name:"divider"},
+			{name:"Export to CSV", func:exportToCSV},
+			{name:"Export to Database", func:exportToDatabase},
+			{name:"Export to MDB", func:exportToMDB},
+			{name:"Export to SpatialData", func:exportToSpatial},
+			{name:"divider"},
+			{name:"Fold" , func:Fold},
+			{name:"Delete", func:deleteWorksheet},
 	];
 	
 	function hideDropdown() {
 		$('.dropdown.open .dropdown-toggle').dropdown('toggle');
 	}
+	
+	function getCheckboxState(event) {
+		var target = event.target;
+		var checkbox;
+		if(target.localName == "input") {
+			checkbox = target;
+		} else {
+			checkbox = $("input[type='checkbox']", target)[0];
+			$(checkbox).prop('checked', !checkbox.checked);
+		}
+		return checkbox.checked;
+	}
+	
+	function deleteWorksheet() {
+		if(confirm("Are you sure you wish to delete the worksheet? \nYou cannot undo this operation")) {
+			hideDropdown();
+			var info = new Object();
+	        info["worksheetId"] = worksheetId;
+	        info["workspaceId"] = $.workspaceGlobalInformation.id;
+	        info["command"] = "DeleteWorksheetCommand";
+
+	        showLoading(info["worksheetId"]);
+	        var returned = $.ajax({
+	            url: "RequestController",
+	            type: "POST",
+	            data : info,
+	            dataType : "json",
+	            complete :
+	                function (xhr, textStatus) {
+	                    var json = $.parseJSON(xhr.responseText);
+	                    parse(json);
+	                    hideLoading(info["worksheetId"]);
+	                },
+	            error :
+	                function (xhr, textStatus) {
+	                    alert("Error deleting worksheet" + textStatus);
+	                    hideLoading(info["worksheetId"]);
+	                }
+	        });
+		}
+		return false;
+	}
+	
+	function viewStraightLineModel(event) {
+		var isChecked = getCheckboxState(event);
+		console.log("viewStraightLineModel: " + isChecked);
+		worksheetOptionsDiv.data("viewStraightLineModel", isChecked);
+		
+		hideDropdown();
+		refreshAlignmentTree(worksheetId);
+		return false;
+	}
+	
+	function initStrightLineModel() {
+		if(worksheetOptionsDiv)
+			worksheetOptionsDiv.data("viewStraightLineModel", true);
+		else
+			window.setTimeout(initStrightLineModel, 100);
+	}
+
 	function showModel() {
 		console.log("SHow Model: " + worksheetTitle);
 		hideDropdown();
@@ -107,6 +170,49 @@ function WorksheetOptions(wsId, wsTitle) {
 		hideDropdown();
 		FoldDialog.getInstance().show(worksheetId);
     }
+  function saveRowID () {
+		console.log("saveRowID: " + worksheetTitle);
+		hideDropdown();
+		var checked = [];
+		$(".selectRowID").each( function(index, checkbox) {
+			if (checkbox.checked) {
+				checked.push(getParamObject("selectedRowID", checkbox['value'], "other"));
+				console.log(checkbox['value']);
+			}
+		});
+		var info = new Object();
+	  info["worksheetId"] = worksheetId;
+	  info["workspaceId"] = $.workspaceGlobalInformation.id;
+	  info["command"] = "SaveRowIDCommand";
+
+	  var newInfo = [];
+	  newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+	  newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
+	  info["newInfo"] = JSON.stringify(newInfo);
+
+	  showLoading(info["worksheetId"]);
+	  var returned = $.ajax({
+	    url: "RequestController",
+	    type: "POST",
+	    data : info,
+	    dataType : "json",
+	    complete :
+	      function (xhr, textStatus) {
+	        //alert(xhr.responseText);
+	        var json = $.parseJSON(xhr.responseText);
+	        console.log(json);
+	        //parse(json);
+	        hideLoading(info["worksheetId"]);
+	    },
+	    error :
+	      function (xhr, textStatus) {
+	        alert("Error occured while generating the automatic model!" + textStatus);
+	        hideLoading(info["worksheetId"]);
+	      }
+	  });
+		//console.log(checked);
+		//FoldDialog.getInstance().show(worksheetId);
+  } 
 	
 	function resetModel() {
 		console.log("Reset Model: " + worksheetTitle);
@@ -141,9 +247,9 @@ function WorksheetOptions(wsId, wsTitle) {
 	function applyR2RMLModel() {
 		console.log("Apply R2RMl Model: " + worksheetTitle);
 		//hideDropdown();
-		$("#applyWorksheetHistory").fileupload({
+		$("#applyWorksheetHistory_" + worksheetId).fileupload({
 	        add : function (e, data) {
-	            $("#applyWorksheetHistory").fileupload({
+	            $("#applyWorksheetHistory_" + worksheetId).fileupload({
 	                url: "RequestController?workspaceId=" + $.workspaceGlobalInformation.id +
 	                    "&command=ApplyHistoryFromR2RMLModelCommand&worksheetId=" + worksheetId
 	            });
@@ -162,7 +268,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	        },
 	        dropZone: null
 	    });
-		$('#applyWorksheetHistory').fileupload('option', 'redirect', window.location.href.replace(/\/[^\/]*$/, '/cors/result.html?%s'));
+		$('#applyWorksheetHistory_' + worksheetId).fileupload('option', 'redirect', window.location.href.replace(/\/[^\/]*$/, '/cors/result.html?%s'));
 		return false;
 	}
 	
@@ -379,23 +485,22 @@ function WorksheetOptions(wsId, wsTitle) {
 		//console.log("There are " + options.length + " menu items");
 		for(var i=0; i<options.length; i++) {
 			var option = options[i];
-			var needFile = false;
-			if(option.length > 2 && option[2] == true)
-				needFile = true;
+			var needFile = option.useFileUpload;
+			
 			var li = $("<li>");
 			//console.log("Got option" +  option);
-			var title = option[0];
+			var title = option.name;
 			if(title == "divider")
 				li.addClass("divider");
 			else {
-				var func = option[1];
+				var func = option.func;
 				var a = $("<a>")
 						.attr("href", "#");
 				if(needFile) {
 					//<form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form>
 					a.addClass("fileinput-button");
 					var form = $("<form>")
-								.attr("id", option[3])
+								.attr("id", option.uploadDiv + "_" + worksheetId)
 								.attr("action", "ImportFileCommand")
 								.attr("method", "POST")
 								.attr("enctype", "multipart/form-data")
@@ -407,14 +512,27 @@ function WorksheetOptions(wsId, wsTitle) {
 					a.append(form);
 					window.setTimeout(func, 1000);
 				} else {
-					a.text(title);
-					a.click(func);
+					if(option.showCheckbox) {
+						var checkbox = $("<input>").attr("type", "checkbox");
+						if(option.defaultChecked)
+							checkbox.attr("checked","checked");
+						var label = $("<span>").append(checkbox).append("&nbsp;").append(title);
+						a.append(label);
+						a.click(func);
+					} else {
+						a.text(title);
+						a.click(func);
+					}
+					
 				}
 				li.append(a);
 			}
+			if(option.initFunc)
+				option.initFunc();
 			ul.append(li);
 		};
 		div.append(ul);
+		worksheetOptionsDiv = div;
 		return div;
 	}
 	

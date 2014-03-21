@@ -258,7 +258,7 @@ var SetSemanticTypeDialog = (function() {
             	info["command"] = "SetMetaPropertyCommand";
             	var propValue;
             	
-            	if(semTypesArray.length == 1 && semTypesArray[0]["FullType"] == "http://isi.edu/integration/karma/dev#classLink") {
+            	if(semTypesArray != null && semTypesArray.length == 1 && semTypesArray[0]["FullType"] == "http://isi.edu/integration/karma/dev#classLink") {
 					propValue = semTypesArray[0]["DomainLabel"] ;
 					info["metaPropertyName"] = "isUriOfClass";
 				} else if($("#isSubclassOfClass").prop("checked")) {
@@ -529,7 +529,7 @@ var SetSemanticTypeDialog = (function() {
         }
       
         function getProperties() {
-        	var props = getAllProperties(worksheetId);
+        	var props = getAllDataProperties(worksheetId);
         	var result = [];
 	       	 $.each(props, function(index, prop){
 	       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
@@ -834,7 +834,7 @@ var IncomingOutgoingLinksDialog = (function() {
     function PrivateConstructor() {
     	var dialog = $("#incomingOutgoingLinksDialog");
     	var worksheetId, columnId, alignmentId, linkType;
-    	var columnLabel, columnUri, columnDomain;
+    	var columnLabel, columnUri, columnDomain, columnType;
     	
     	var selectedFromClass, selectedProperty, selectedToClass;
     	var allClasses, allProperties, selectedClasses, selectedProperties;
@@ -1115,7 +1115,11 @@ var IncomingOutgoingLinksDialog = (function() {
     	}
     	
     	function getProperties() {
-    		var props = getAllProperties(worksheetId);
+    		var props
+    		if(columnType == "ColumnNode")
+    			props = getAllDataProperties(worksheetId);
+    		else
+    			props = getAllObjectProperties(alignmentId);
         	var result = [];
 	       	 $.each(props, function(index, prop){
 	       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
@@ -1127,7 +1131,8 @@ var IncomingOutgoingLinksDialog = (function() {
     	function getPropertyForClass(selectedClass) {
     		var domain, range;
     	    var startNodeClass = columnDomain;
-    	    
+    	    if(columnType == "ColumnNode")
+    	    	startNodeClass = "";
     	    if(linkType == "incoming" || linkType == "changeIncoming" || linkType == "changeLink") {
     	    	domain = selectedClass.uri;
     	    	range = startNodeClass;
@@ -1254,7 +1259,7 @@ var IncomingOutgoingLinksDialog = (function() {
         }
         
         function show(wsId, colId, alignId,
-        		colLabel, colUri, colDomain, type, changeFrom, changeTo, changeLinkUri) {
+        		colLabel, colUri, colDomain, colType, type, changeFrom, changeTo, changeLinkUri) {
         	worksheetId = wsId;
         	columnId = colId;
         	alignmentId = alignId;
@@ -1262,6 +1267,7 @@ var IncomingOutgoingLinksDialog = (function() {
         	columnLabel = colLabel;
         	columnUri = colUri;
         	columnDomain = colDomain;
+        	columnType = colType;
         	
         	linkType = type;
         	dialog.modal({keyboard:true, show:true, backdrop:'static'});
@@ -1275,12 +1281,12 @@ var IncomingOutgoingLinksDialog = (function() {
         
         
         function showBlank(wsId, colId, alignId,
-                colLabel, colUri, colDomain, type) {
+                colLabel, colUri, colDomain, colType, type) {
             selectedFromClass = {label:"", id:"", uri:""};
             selectedToClass = {label:"", id:"", uri:""};
             selectedProperty = {label:"", id:"", uri:""};
             show(wsId, colId, alignId,
-                    colLabel, colUri, colDomain, type);
+                    colLabel, colUri, colDomain, colType, type);
         };
         
         

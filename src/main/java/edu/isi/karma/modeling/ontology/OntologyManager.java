@@ -413,6 +413,12 @@ public class OntologyManager  {
 	 */
 	public Map<String, Label> getObjectPropertiesByDomainRange(String domainUri, String rangeUri, boolean recursive) {
 		
+		if(domainUri == null || domainUri.length() == 0)
+			return this.getObjectPropertiesByRange(rangeUri, recursive);
+		
+		if(rangeUri == null || rangeUri.length() == 0)
+			return this.getObjectPropertiesByDomain(domainUri, recursive);
+		
 		HashSet<String> objectProperties = ontCache.getDirectInObjectProperties().get(rangeUri);
 		if(recursive) {
 			HashSet<String> propRecursive = ontCache.getIndirectInObjectProperties().get(rangeUri);

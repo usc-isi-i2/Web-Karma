@@ -2,7 +2,6 @@ package edu.isi.karma.controller.command.worksheet;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,14 +11,11 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.command.Command.CommandTag;
-import edu.isi.karma.controller.command.Command.CommandType;
-import edu.isi.karma.controller.command.worksheet.FoldCommandFactory.Arguments;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
@@ -106,8 +102,9 @@ public class FoldCommand extends WorksheetCommand {
 				String name = hnode.getColumnName();
 				String value = node.getValue().asString();
 				JSONObject obj = new JSONObject();
-				obj.put("values", name + ":" + value);
-				t.put(obj);
+				obj.put("values", value);
+				obj.put("names", name);
+				t.put(obj);			
 			}
 			JSONObject obj = new JSONObject();
 			obj.put("rowId", id);

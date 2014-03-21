@@ -23,6 +23,7 @@ package edu.isi.karma.modeling;
 
 public interface Uris {
 
+	public static final String BLANK_NODE_PREFIX = "_:";
 	public static final String THING_URI = Namespaces.OWL + "Thing"; 
 	public static final String RDFS_SUBCLASS_URI = Namespaces.RDFS + "subClassOf"; 
 	public static final String RDF_TYPE_URI = Namespaces.RDF + "type"; 

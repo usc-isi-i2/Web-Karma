@@ -56,6 +56,14 @@ public class RepFactory {
 		}
 	}
 
+	public void removeWorksheet(String id) {
+		if(worksheets.containsKey(id)) {
+			Worksheet worksheet = worksheets.get(id);
+			hTables.remove(worksheet.getHeaders().id);
+			worksheets.remove(id);
+		}
+	}
+	
 	public String getNewId(String prefix) {
 		return prefix + id++;
 	}

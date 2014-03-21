@@ -10,8 +10,8 @@ var PropertyDropdownMenu = (function() {
     	var alignmentId;
     	var propertyId;
     	var propertyUri;
-    	var sourceNodeId, sourceLabel, sourceDomain, sourceId;
-    	var targetNodeId, targetLabel, targetDomain, targetId;
+    	var sourceNodeId, sourceLabel, sourceDomain, sourceId, sourceNodeType;
+    	var targetNodeId, targetLabel, targetDomain, targetId, targetNodeType;
     	
     	var options = [
     		   	        //Title, function to call, needs file upload     
@@ -40,7 +40,7 @@ var PropertyDropdownMenu = (function() {
     		dialog.setSelectedProperty(propertyUri);
     		dialog.show(worksheetId, 
     				targetNodeId, alignmentId,
-    				targetLabel, targetId, targetDomain,
+    				targetLabel, targetId, targetDomain, targetNodeType,
     				"changeLink", sourceNodeId, targetNodeId, propertyUri);
     	};
     	
@@ -101,7 +101,7 @@ var PropertyDropdownMenu = (function() {
     		dialog.setSelectedProperty(propertyUri);
     		dialog.show(worksheetId, 
     				targetNodeId, alignmentId,
-    				targetLabel, targetId, targetDomain,
+    				targetLabel, targetId, targetDomain, targetNodeType,
     				"changeIncoming", sourceNodeId, targetNodeId, propertyUri);
     		
     	}
@@ -113,7 +113,7 @@ var PropertyDropdownMenu = (function() {
     		dialog.setSelectedProperty(propertyUri);
     		dialog.show(worksheetId, 
     				sourceNodeId, alignmentId,
-    				sourceLabel, sourceId, sourceDomain,
+    				sourceLabel, sourceId, sourceDomain, sourceNodeType,
     				"changeOutgoing", sourceNodeId, targetNodeId, propertyUri);
     	}
     	
@@ -175,12 +175,25 @@ var PropertyDropdownMenu = (function() {
     		targetDomain = p_targetDomain;
     		targetId = p_targetId;
     		
+    		sourceNodeType = p_sourceNodeType;
+    		targetNodeType = p_targetNodeType;
+    		
     		if(p_sourceNodeType == "ColumnNode") {
-    			disableItem(3);
+    			for(var i=0; i<options.length; i++) {
+    				if(options[i][0] == "Change From") {
+    					disableItem(i);
+    					break;
+    				}
+    			}
     		}
     		
     		if(p_targetNodeType == "ColumnNode") {
-    			disableItem(4);
+    			for(var i=0; i<options.length; i++) {
+    				if(options[i][0] == "Change To") {
+    					disableItem(i);
+    					break;
+    				}
+    			}
     		}
     			//console.log("Click for opening Menu");
 			$("#" + menuId).css({

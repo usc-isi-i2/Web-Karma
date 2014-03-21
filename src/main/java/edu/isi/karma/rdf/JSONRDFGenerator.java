@@ -10,10 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.kr2rml.ErrorReport;
-import edu.isi.karma.kr2rml.KR2RMLMapping;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
-import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
-import edu.isi.karma.kr2rml.WorksheetR2RMLJenaModelParser;
+import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;

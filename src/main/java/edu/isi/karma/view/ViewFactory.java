@@ -90,6 +90,10 @@ public class ViewFactory {
 		vw.setTableId2TablePager(vwPager);
 	}
 
+	public void removeWorksheet(String vWorksheetId) {
+		vWorksheets.remove(vWorksheetId);
+	}
+	
 	public Collection<VWorksheet> getVWorksheets()
 	{
 		return vWorksheets.values();

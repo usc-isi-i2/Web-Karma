@@ -155,14 +155,10 @@ import edu.isi.karma.controller.command.worksheet.ApplyHistoryFromR2RMLModelComm
 import edu.isi.karma.controller.command.worksheet.ApplyHistoryFromR2RMLModelCommandFactory;
 import edu.isi.karma.controller.command.worksheet.ApplyWorksheetHistoryCommand;
 import edu.isi.karma.controller.command.worksheet.ApplyWorksheetHistoryCommandFactory;
+import edu.isi.karma.controller.command.worksheet.DeleteWorksheetCommand;
+import edu.isi.karma.controller.command.worksheet.DeleteWorksheetCommandFactory;
 import edu.isi.karma.controller.command.worksheet.EditCellCommand;
 import edu.isi.karma.controller.command.worksheet.EditCellCommandFactory;
-import edu.isi.karma.controller.command.worksheet.ExtractEntitiesCommand;
-import edu.isi.karma.controller.command.worksheet.ExtractEntitiesCommandFactory;
-import edu.isi.karma.controller.command.worksheet.ExportCSVCommand;
-import edu.isi.karma.controller.command.worksheet.ExportCSVCommandFactory;
-import edu.isi.karma.controller.command.worksheet.FetchColumnCommand;
-import edu.isi.karma.controller.command.worksheet.FetchColumnCommandFactory;
 import edu.isi.karma.controller.command.worksheet.FetchExistingWorksheetPropertiesCommand;
 import edu.isi.karma.controller.command.worksheet.FetchExistingWorksheetPropertiesCommandFactory;
 import edu.isi.karma.controller.command.worksheet.FoldCommand;
@@ -171,8 +167,12 @@ import edu.isi.karma.controller.command.worksheet.LoadAdditionalWorksheetRowsCom
 import edu.isi.karma.controller.command.worksheet.LoadAdditionalWorksheetRowsCommandFactory;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommandFactory;
+import edu.isi.karma.controller.command.worksheet.RefreshSVGAligmentCommandFactory;
+import edu.isi.karma.controller.command.worksheet.RefreshSVGAlignmentCommand;
 import edu.isi.karma.controller.command.worksheet.RenameColumnCommand;
 import edu.isi.karma.controller.command.worksheet.RenameColumnCommandFactory;
+import edu.isi.karma.controller.command.worksheet.SaveRowIDCommand;
+import edu.isi.karma.controller.command.worksheet.SaveRowIDCommandFactory;
 import edu.isi.karma.controller.command.worksheet.SetWorksheetPropertiesCommand;
 import edu.isi.karma.controller.command.worksheet.SetWorksheetPropertiesCommandFactory;
 import edu.isi.karma.controller.command.worksheet.SplitByCommaCommand;
@@ -260,6 +260,8 @@ public class ExecutionController {
                 new AddValuesCommandFactory());
         commandFactoryMap.put(FoldCommand.class.getSimpleName(),
                 new FoldCommandFactory());
+        commandFactoryMap.put(SaveRowIDCommand.class.getSimpleName(),
+                new SaveRowIDCommandFactory());
         commandFactoryMap.put(PublishRDFCellCommand.class.getSimpleName(),
                 new PublishRDFCellCommandFactory());
         commandFactoryMap.put(FetchPreferencesCommand.class.getSimpleName(),
@@ -340,12 +342,10 @@ public class ExecutionController {
                 new TestSPARQLEndPointCommandFactory());
         commandFactoryMap.put(LoadAdditionalWorksheetRowsCommand.class.getSimpleName(),
                 new LoadAdditionalWorksheetRowsCommandFactory());
-        commandFactoryMap.put(ExtractEntitiesCommand.class.getSimpleName(),
-                new ExtractEntitiesCommandFactory());
-        commandFactoryMap.put(FetchColumnCommand.class.getSimpleName(),
-        		new FetchColumnCommandFactory());
-        commandFactoryMap.put(ExportCSVCommand.class.getSimpleName(),
-        		new ExportCSVCommandFactory());
+        commandFactoryMap.put(RefreshSVGAlignmentCommand.class.getSimpleName(), 
+        		new RefreshSVGAligmentCommandFactory());
+        commandFactoryMap.put(DeleteWorksheetCommand.class.getSimpleName(), 
+        		new DeleteWorksheetCommandFactory());
     }
 
     public Workspace getWorkspace() {

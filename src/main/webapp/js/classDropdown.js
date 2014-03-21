@@ -71,7 +71,7 @@ var ClassDropdownMenu = (function() {
     		console.log("addIncomingLink");
     		IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId, 
     				columnId, alignmentId,
-    				columnLabel, columnUri, columnDomain,
+    				columnLabel, columnUri, columnDomain, "InternalNode",
     				"incoming");
     	};
     	
@@ -79,7 +79,7 @@ var ClassDropdownMenu = (function() {
     		console.log("addOutgoingLink");
     		IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId, 
     				columnId, alignmentId,
-    				columnLabel, columnUri, columnDomain,
+    				columnLabel, columnUri, columnDomain, "InternalNode",
     				"outgoing");
     	}
     	

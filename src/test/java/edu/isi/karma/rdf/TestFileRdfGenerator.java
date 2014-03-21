@@ -9,7 +9,7 @@ import java.io.StringWriter;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
