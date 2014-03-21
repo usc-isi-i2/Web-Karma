@@ -92,6 +92,10 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 	@Override
 	public void flush() {
 		LOG.debug("Flushing writer");
+		for(String value : generatedTriples)
+		{
+			outWriter.println(value);
+		}
 		outWriter.flush();
 		LOG.debug("Flushed writer");
 		
