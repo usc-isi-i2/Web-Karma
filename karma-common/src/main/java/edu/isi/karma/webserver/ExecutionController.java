@@ -1,24 +1,18 @@
-/**
- * *****************************************************************************
- * Copyright 2012 University of Southern California
+/*
+ * Copyright (c) 2014 CUBRC, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *               http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- * This code was developed by the Information Integration Group as part of the
- * Karma project at the Information Sciences Institute of the University of
- * Southern California. For more information, publications, and related
- * projects, please see: http://www.isi.edu/integration
- * ****************************************************************************
  */
 package edu.isi.karma.webserver;
 
@@ -62,7 +56,6 @@ public class ExecutionController {
 
 	private void dynamicallyBuildCommandFactoryMap()
 	{
-		// TODO
 		Reflections reflections = new Reflections("edu.isi.karma");
 
 		Set<Class<? extends CommandFactory>> subTypes =
@@ -90,143 +83,6 @@ public class ExecutionController {
 
 		logger.info("Loaded {} possible commands", commandFactoryMap.size());
 	}
-
-    private void initializeCommandFactoryMap() {
-        // TODO: there must be a way to do this using Reflection with all
-        // subclasses of CommandFactory.
-       /* commandFactoryMap.put(EditCellCommand.class.getSimpleName(),
-                new EditCellCommandFactory());
-        commandFactoryMap.put(UndoRedoCommand.class.getSimpleName(),
-                new UndoRedoCommandFactory());
-        commandFactoryMap.put(ImportJSONFileCommand.class.getSimpleName(),
-                new ImportJSONFileCommandFactory());
-        commandFactoryMap.put(ImportCSVFileCommand.class.getSimpleName(),
-                new ImportCSVFileCommandFactory());
-        commandFactoryMap.put(ImportDatabaseTableCommand.class.getSimpleName(),
-                new ImportDatabaseTableCommandFactory());
-        commandFactoryMap.put(ImportXMLFileCommand.class.getSimpleName(),
-                new ImportXMLFileCommandFactory());
-        commandFactoryMap.put(GetOntologyClassHierarchyCommand.class.getSimpleName(),
-                new GetOntologyClassHierarchyCommandFactory());
-        commandFactoryMap.put(GetDataPropertyHierarchyCommand.class.getSimpleName(),
-                new GetDataPropertyHierarchyCommandFactory());
-        commandFactoryMap.put(SetSemanticTypeCommand.class.getSimpleName(),
-                new SetSemanticTypeCommandFactory());
-        commandFactoryMap.put(ImportOntologyCommand.class.getSimpleName(),
-                new ImportOntologyCommandFactory());
-        commandFactoryMap.put(GetDomainsForDataPropertyCommand.class.getSimpleName(),
-                new GetDomainsForDataPropertyCommandFactory());
-        commandFactoryMap.put(GetDataPropertiesForClassCommand.class.getSimpleName(),
-                new GetDataPropertiesForClassCommandFactory());
-        commandFactoryMap.put(GetAlternativeLinksCommand.class.getSimpleName(),
-                new GetAlternativeLinksCommandFactory());
-        commandFactoryMap.put(AddUserLinkToAlignmentCommand.class.getSimpleName(),
-                new AddUserLinkToAlignmentCommandFactory());
-        commandFactoryMap.put(UnassignSemanticTypeCommand.class.getSimpleName(),
-                new UnassignSemanticTypeCommandFactory());
-        commandFactoryMap.put(ShowModelCommand.class.getSimpleName(),
-                new ShowModelCommandFactory());
-        commandFactoryMap.put(ShowAutoModelCommand.class.getSimpleName(),
-                new ShowAutoModelCommandFactory());
-        commandFactoryMap.put(SplitByCommaCommand.class.getSimpleName(),
-                new SplitByCommaCommandFactory());
-        commandFactoryMap.put(CloseWorkspaceCommand.class.getSimpleName(),
-                new CloseWorkspaceCommandFactory());
-        commandFactoryMap.put(PublishKMLLayerCommand.class.getSimpleName(),
-                new PublishKMLLayerCommandFactory());
-        commandFactoryMap.put(ImportExcelFileCommand.class.getSimpleName(),
-                new ImportExcelFileCommandFactory());
-        commandFactoryMap.put(ImportServiceCommand.class.getSimpleName(),
-                new ImportServiceCommandFactory());
-        commandFactoryMap.put(PublishRDFCommand.class.getSimpleName(),
-                new PublishRDFCommandFactory());
-        commandFactoryMap.put(PublishDatabaseCommand.class.getSimpleName(),
-                new PublishDatabaseCommandFactory());
-        commandFactoryMap.put(AddColumnCommand.class.getSimpleName(),
-                new AddColumnCommandFactory());
-        commandFactoryMap.put(AddRowCommand.class.getSimpleName(),
-                new AddRowCommandFactory());
-        commandFactoryMap.put(PublishRDFCellCommand.class.getSimpleName(),
-                new PublishRDFCellCommandFactory());
-        commandFactoryMap.put(FetchPreferencesCommand.class.getSimpleName(),
-                new FetchPreferencesCommandFactory());
-        commandFactoryMap.put(GenerateCleaningRulesCommand.class.getSimpleName(),
-                new GenerateCleaningRulesCommandFactory());
-        commandFactoryMap.put(InvokeServiceCommand.class.getSimpleName(),
-                new InvokeServiceCommandFactory());
-        commandFactoryMap.put(GetPropertiesAndClassesList.class.getSimpleName(),
-                new GetPropertiesAndClassesListCommandFactory());
-        commandFactoryMap.put(PublishModelCommand.class.getSimpleName(),
-                new PublishModelCommandFactory());
-        commandFactoryMap.put(PopulateCommand.class.getSimpleName(),
-                new PopulateCommandFactory());
-        commandFactoryMap.put(PublishWorksheetHistoryCommand.class.getSimpleName(),
-                new PublishWorksheetHistoryCommandFactory());
-        commandFactoryMap.put(ApplyWorksheetHistoryCommand.class.getSimpleName(),
-                new ApplyWorksheetHistoryCommandFactory());
-        commandFactoryMap.put(PublishCSVCommand.class.getSimpleName(),
-                new PublishCSVCommandFactory());
-        commandFactoryMap.put(SetMetaPropertyCommand.class.getSimpleName(),
-                new SetMetaPropertyCommandFactory());
-        commandFactoryMap.put(ResetKarmaCommand.class.getSimpleName(),
-                new ResetKarmaCommandFactory());
-        commandFactoryMap.put(FetchTransformingDataCommand.class.getSimpleName(),
-                new FetchTransformingDataFactory());
-        commandFactoryMap.put(MultipleValueEditColumnCommand.class.getSimpleName(),
-                new MultipleValueEditColumnCommandFactory());
-        commandFactoryMap.put(SubmitCleaningCommand.class.getSimpleName(),
-                new SubmitCleaningCommandFactory());
-        commandFactoryMap.put(RenameColumnCommand.class.getSimpleName(),
-                new RenameColumnCommandFactory());
-        commandFactoryMap.put(PublishMDBCommand.class.getSimpleName(),
-                new PublishMDBCommandFactory());
-        commandFactoryMap.put(PublishSpatialDataCommand.class.getSimpleName(),
-                new PublishSpatialDataCommandFactory());
-        commandFactoryMap.put(PreviewPythonTransformationResultsCommand.class.getSimpleName(),
-                new PreviewPythonTransformationResultsCommandFactory());
-        commandFactoryMap.put(SubmitPythonTransformationCommand.class.getSimpleName(),
-                new SubmitPythonTransformationCommandFactory());
-        commandFactoryMap.put(SubmitEditPythonTransformationCommand.class.getSimpleName(), 
-        		new SubmitEditPythonTransformationCommandFactory());
-        commandFactoryMap.put(GenerateR2RMLModelCommand.class.getSimpleName(),
-                new GenerateR2RMLModelCommandFactory());
-        commandFactoryMap.put(ApplyHistoryFromR2RMLModelCommand.class.getSimpleName(),
-                new ApplyHistoryFromR2RMLModelCommandFactory());
-        commandFactoryMap.put(GetCurrentLinksOfInternalNodeCommand.class.getSimpleName(),
-                new GetCurrentLinksOfInternalNodeCommandFactory());
-        commandFactoryMap.put(GetInternalNodesListOfAlignmentCommand.class.getSimpleName(),
-                new GetInternalNodesListOfAlignmentCommandFactory());
-        commandFactoryMap.put(GetLinksOfAlignmentCommand.class.getSimpleName(),
-                new GetLinksOfAlignmentCommandFactory());
-        commandFactoryMap.put(ChangeInternalNodeLinksCommand.class.getSimpleName(),
-                new ChangeInternalNodeLinksCommandFactory());
-        commandFactoryMap.put(InvokeCleaningServiceCommand.class.getSimpleName(),
-                new InvokeCleaningServiceCommandFactory());
-        commandFactoryMap.put(SetWorksheetPropertiesCommand.class.getSimpleName(),
-                new SetWorksheetPropertiesCommandFactory());
-        commandFactoryMap.put(FetchExistingWorksheetPropertiesCommand.class.getSimpleName(),
-                new FetchExistingWorksheetPropertiesCommandFactory());
-        commandFactoryMap.put(FetchR2RMLModelsCommand.class.getSimpleName(),
-                new FetchR2RMLModelsCommandFactory());
-        commandFactoryMap.put(FetchExistingModelsForWorksheetCommand.class.getSimpleName(),
-                new FetchExistingModelsForWorksheetCommandFactory());
-        commandFactoryMap.put(ApplyModelFromTripleStoreCommand.class.getSimpleName(),
-                new ApplyModelFromTripleStoreCommandFactory());
-        commandFactoryMap.put(CreateNewModelCommand.class.getSimpleName(),
-                new CreateNewModelCommandFactory());
-        commandFactoryMap.put(InvokeDataMiningServiceCommand.class.getSimpleName(),
-                new InvokeDataMiningServiceCommandFactory());
-        commandFactoryMap.put(InvokeRubenReconciliationService.class.getSimpleName(),
-                new InvokeRubenReconciliationServiceFactory());
-        commandFactoryMap.put(FetchGraphsFromTripleStoreCommand.class.getSimpleName(),
-                new FetchGraphsFromTripleStoreCommandFactory());
-        commandFactoryMap.put(GetUniqueGraphUrlCommand.class.getSimpleName(),
-                new GetUniqueGraphUrlCommandFactory());
-        commandFactoryMap.put(TestSPARQLEndPointCommand.class.getSimpleName(),
-                new TestSPARQLEndPointCommandFactory());
-        commandFactoryMap.put(LoadAdditionalWorksheetRowsCommand.class.getSimpleName(),
-                new LoadAdditionalWorksheetRowsCommandFactory());*/
-    }
 
     public Workspace getWorkspace() {
         return workspace;
@@ -270,7 +126,6 @@ public class ExecutionController {
                     updateContainer = workspace.getCommandHistory().doCommand(command, workspace);
                 }
 
-               //logger.info(responseJson);
                 return updateContainer;
             } catch (CommandException e) {
                 logger.error(
