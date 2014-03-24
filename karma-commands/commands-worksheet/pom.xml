@@ -10,9 +10,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>edu.isi</groupId>
     <artifactId>commands-worksheet</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
 
     <dependencies>
 	    <dependency>
@@ -28,6 +26,11 @@
 	    <dependency>
 		    <groupId>edu.isi</groupId>
 		    <artifactId>commands-update</artifactId>
+		    <version>${project.version}</version>
+	    </dependency>
+	    <dependency>
+		    <groupId>edu.isi</groupId>
+		    <artifactId>karma-util</artifactId>
 		    <version>${project.version}</version>
 	    </dependency>
     </dependencies>

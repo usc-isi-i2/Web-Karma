@@ -1,15 +1,10 @@
 package edu.isi.karma.kr2rml;
 
-import java.util.List;
-
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.RepFactory;
-import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURITokenizer;
-import edu.isi.karma.transformation.tokenizer.PythonTransformationColumnToken;
-import edu.isi.karma.transformation.tokenizer.PythonTransformationInvalidToken;
-import edu.isi.karma.transformation.tokenizer.PythonTransformationStringToken;
-import edu.isi.karma.transformation.tokenizer.PythonTransformationToken;
-import edu.isi.karma.transformation.tokenizer.PythonTransformationTokenVistor;
+import edu.isi.karma.transformation.tokenizer.*;
+
+import java.util.List;
 
 public class PythonTransformationToTemplateTermSetBuilder extends PythonTransformationTokenVistor{
 
