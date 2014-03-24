@@ -21,9 +21,6 @@
 
 package edu.isi.karma.controller.command.alignment;
 
-import alignment.karma.mapping.translation.TranslateMapping;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -57,7 +54,10 @@ import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 public class GenerateR2RMLModelCommand extends Command {
 	
@@ -267,14 +267,6 @@ public class GenerateR2RMLModelCommand extends Command {
 		mappingWriter.close();
 		writer.flush();
 		writer.close();
-
-		Model model = ModelFactory.createDefaultModel();
-		InputStream stringInputStream = new FileInputStream(f);
-		model.read(stringInputStream,null,"TTL");
-		File d2rqFile = new File(f.getParentFile().getParentFile().getPath()+"/D2RQ/"+f.getName());
-		d2rqFile.getParentFile().mkdirs();
-		PrintWriter d2RqWriter = new PrintWriter(d2rqFile, "UTF-8");
-		new TranslateMapping().produceD2RQMapping(model,d2RqWriter);
 	}
 
 	
