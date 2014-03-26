@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>edu.isi</groupId>
+        <artifactId>webkarma</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>karma-common</artifactId>
+
+<dependencies>
+	<dependency>
+		<groupId>edu.isi</groupId>
+		<artifactId>karma-crf</artifactId>
+		<version>${project.version}</version>
+	</dependency>
+
+
+	<dependency>
+		<groupId>edu.isi</groupId>
+		<artifactId>karma-cleaning</artifactId>
+		<version>${project.version}</version>
+	</dependency>
+
+
+	<dependency>
+		<groupId>log4j</groupId>
+		<artifactId>log4j</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-api</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-log4j12</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>commons-io</groupId>
+		<artifactId>commons-io</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>com.googlecode.juniversalchardet</groupId>
+		<artifactId>juniversalchardet</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>net.sf.json-lib</groupId>
+		<artifactId>json-lib</artifactId>
+		<classifier>jdk15</classifier>
+	</dependency>
+
+	<dependency>
+		<groupId>${jena.group}</groupId>
+		<artifactId>${jena.arq.artifact}</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>${jena.group}</groupId>
+		<artifactId>${jena.core.artifact}</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>${jena.group}</groupId>
+		<artifactId>${jena.tdb.artifact}</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>${jena.group}</groupId>
+		<artifactId>${jena.iri.artifact}</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>com.google.code.gson</groupId>
+		<artifactId>gson</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.json</groupId>
+		<artifactId>json</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>commons-fileupload</groupId>
+		<artifactId>commons-fileupload</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>uk.com.robust-it</groupId>
+		<artifactId>cloning</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>net.sf.jgrapht</groupId>
+		<artifactId>jgrapht</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.kohsuke</groupId>
+		<artifactId>graphviz-api</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>javax.servlet</groupId>
+		<artifactId>javax.servlet-api</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>org.reflections</groupId>
+		<artifactId>reflections</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>net.sf.opencsv</groupId>
+		<artifactId>opencsv</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpclient</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>commons-httpclient</groupId>
+		<artifactId>commons-httpclient</artifactId>
+	</dependency>
+
+</dependencies>
+
+</project>

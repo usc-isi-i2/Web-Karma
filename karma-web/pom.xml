@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+	<packaging>war</packaging>
+
+    <parent>
+        <groupId>edu.isi</groupId>
+        <artifactId>webkarma</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>karma-web</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>karma-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-alignment</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-alignment-openrdf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-cleaning</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-publish</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-publish-jdbc</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-python</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-publish-alignment-openrdf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-update</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-update-jdbc</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-worksheet</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+
+
+		<!--Import commands-->
+
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-csv</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-database</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-excel</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-file</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-ontology</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-json</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-spatial</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-xml</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!--External dependencies-->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${jettyVersion}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+
+	</dependencies>
+
+
+	<build>
+	<resources>
+		<resource>
+			<directory>src/main/config</directory>
+		</resource>
+		<resource>
+			<directory>src/main/resources</directory>
+		</resource>
+	</resources>
+	<plugins>
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-war-plugin</artifactId>
+		<version>2.4</version>
+		<configuration>
+			<archiveClasses>true</archiveClasses>
+
+			<webResources>
+				<resource>
+					<directory>src/main/webapp/</directory>
+				</resource>
+			</webResources>
+		</configuration>
+	</plugin>
+	<plugin>
+		<groupId>org.eclipse.jetty</groupId>
+		<artifactId>jetty-maven-plugin</artifactId>
+		<version>${jettyVersion}</version>
+		<configuration>
+			<systemProperties>
+				<systemProperty>
+					<name>log4j.configuration</name>
+					<value>log4j.properties</value>
+				</systemProperty>
+			</systemProperties>
+			<!--         		<jettyXml> -->
+			<!--         			jetty.xml -->
+			<!--         		</jettyXml> -->
+			<webApp>
+				<contextPath>/</contextPath>
+			</webApp>
+			<connectors>
+				<!-- work around file locking on windows -->
+				<connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
+					<port>8080</port>
+					<!-- this connector defaults to 1300 for some reason -->
+				</connector>
+			</connectors>
+			<contextHandlers>
+				<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+					<war>${project.basedir}/external_webapps/openrdf-workbench.war</war>
+					<contextPath>/openrdf-workbench</contextPath>
+				</contextHandler>
+				<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+					<war>${project.basedir}/external_webapps/openrdf-sesame.war</war>
+					<contextPath>/openrdf-sesame</contextPath>
+				</contextHandler>
+				<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+					<war>${project.basedir}/external_webapps/cleaningService.war</war>
+					<contextPath>/cleaningService</contextPath>
+				</contextHandler>
+			</contextHandlers>
+
+		</configuration>
+
+		<!-- change user/pwd in src/main/config/jettyrealm.properties -->
+		<!--  <configuration>
+		   <webAppConfig>
+			  <contextPath>/*</contextPath>
+			</webAppConfig>
+			<loginServices>
+			  <loginService implementation="org.eclipse.jetty.security.HashLoginService">
+				<name>TestRealm</name>
+				<config>${project.basedir}/src/main/config/jettyrealm.properties</config>
+			  </loginService>
+			</loginServices>
+		  </configuration>
+		-->
+	</plugin>
+	</plugins>
+	</build>
+</project>
