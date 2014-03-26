@@ -32,10 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-import edu.isi.karma.util.HTTPUtil;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -56,15 +52,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import edu.isi.karma.util.HTTPUtil;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 
 public class TripleStoreUtil {
 	

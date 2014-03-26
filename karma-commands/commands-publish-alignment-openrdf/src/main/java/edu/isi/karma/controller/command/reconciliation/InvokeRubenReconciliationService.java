@@ -21,6 +21,22 @@
 
 package edu.isi.karma.controller.command.reconciliation;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
+import org.apache.http.client.ClientProtocolException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -29,7 +45,6 @@ import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.TripleStoreUtil;
-
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.ReportMessage;
@@ -37,14 +52,15 @@ import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
-
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.rep.*;
+import edu.isi.karma.rep.CellValue;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Node.NodeStatus;
-
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
@@ -55,19 +71,7 @@ import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
-
 import edu.isi.karma.util.HTTPUtil;
-import org.apache.http.client.ClientProtocolException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.*;
 
 public class InvokeRubenReconciliationService extends WorksheetCommand {
 	private static Logger logger = LoggerFactory.getLogger(InvokeRubenReconciliationService.class);

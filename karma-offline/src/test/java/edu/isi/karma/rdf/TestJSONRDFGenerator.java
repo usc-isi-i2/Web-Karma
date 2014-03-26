@@ -21,14 +21,13 @@
 
 package edu.isi.karma.rdf;
 
-import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
-import edu.isi.karma.util.EncodingDetector;
-import org.junit.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,8 +37,6 @@ import org.junit.Test;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.util.EncodingDetector;
-
-import static org.junit.Assert.*;
 
 
 /**

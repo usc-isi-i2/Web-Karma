@@ -26,13 +26,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONException;
 
-
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class GenerateR2RMLModelCommandFactory extends CommandFactory {
 	

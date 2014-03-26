@@ -18,7 +18,11 @@
 			<artifactId>commands-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-update</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>

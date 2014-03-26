@@ -21,19 +21,19 @@
 
 package edu.isi.karma.kr2rml;
 
-import edu.isi.karma.common.HttpMethods;
-import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatter;
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.Prefixes;
-import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.rep.RepFactory;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.metadata.WorksheetProperties;
-import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import java.io.PrintWriter;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.json.JSONException;
 import org.openrdf.OpenRDFException;
-import org.openrdf.model.*;
+import org.openrdf.model.BNode;
+import org.openrdf.model.Resource;
+import org.openrdf.model.URI;
+import org.openrdf.model.Value;
+import org.openrdf.model.ValueFactory;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -45,11 +45,19 @@ import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import edu.isi.karma.common.HttpMethods;
+import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatter;
+import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
+import edu.isi.karma.kr2rml.planning.TriplesMap;
+import edu.isi.karma.kr2rml.template.TemplateTermSet;
+import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.Prefixes;
+import edu.isi.karma.modeling.Uris;
+import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.WorksheetProperties;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 
 public class KR2RMLMappingWriter {
 	
@@ -157,7 +165,7 @@ public class KR2RMLMappingWriter {
 	private void addPrefixes(KR2RMLMapping mapping) throws RepositoryException {
 		for (Prefix p : mapping.getPrefixes())
 		{
-			con.setNamespace(p.getPrefix(), p.getNamespace());
+			con.setNamespace(p.getNamespace(), p.getPrefix());
 		}
 		con.setNamespace(Prefixes.RR, Namespaces.RR);
 		con.setNamespace(Prefixes.KARMA_DEV, Namespaces.KARMA_DEV);

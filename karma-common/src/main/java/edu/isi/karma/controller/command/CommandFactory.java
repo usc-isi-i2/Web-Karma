@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author szekely
  * 
  */
-public abstract class CommandFactory<T> {
+public abstract class CommandFactory {
 
 	public abstract Command createCommand(HttpServletRequest request,
 			Workspace workspace);

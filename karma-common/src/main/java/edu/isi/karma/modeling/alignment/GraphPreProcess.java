@@ -20,22 +20,18 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
-import edu.isi.karma.modeling.ModelingParams;
-import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.Node;
+import java.util.Set;
+
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import edu.isi.karma.modeling.ModelingParams;
-import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
-
-import java.util.Set;
 
 
 public class GraphPreProcess {

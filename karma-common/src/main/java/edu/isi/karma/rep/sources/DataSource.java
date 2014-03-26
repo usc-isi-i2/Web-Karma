@@ -21,19 +21,19 @@
 
 package edu.isi.karma.rep.sources;
 
-import edu.isi.karma.modeling.ModelingConfiguration;
-import edu.isi.karma.rep.alignment.*;
-import edu.isi.karma.rep.model.*;
-import edu.isi.karma.util.RandomGUID;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.model.Argument;
@@ -42,11 +42,6 @@ import edu.isi.karma.rep.model.ClassAtom;
 import edu.isi.karma.rep.model.IndividualPropertyAtom;
 import edu.isi.karma.rep.model.Model;
 import edu.isi.karma.util.RandomGUID;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 
 public class DataSource extends Source {
 

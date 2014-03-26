@@ -20,11 +20,19 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-
 import edu.isi.karma.controller.command.CommandType;
-
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -37,26 +45,16 @@ import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
-
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
+import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 
 public class SetSemanticTypeCommand extends Command {
 

@@ -11,9 +11,7 @@ temp/
 .project
 .classpath
 .idea/
-.settings/*
-.settings/org.eclipse.core.resources.prefs
-.settings/org.eclipse.wst.validation.prefs 
+.settings/
 
 *.class
 *py.class

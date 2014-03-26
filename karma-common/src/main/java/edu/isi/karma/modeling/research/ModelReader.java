@@ -20,13 +20,6 @@
  ******************************************************************************/
 
 package edu.isi.karma.modeling.research;
-import edu.isi.karma.modeling.alignment.LinkIdFactory;
-import edu.isi.karma.modeling.alignment.SemanticModel;
-import edu.isi.karma.rep.alignment.*;
-import edu.isi.karma.rep.alignment.SemanticType.Origin;
-import edu.isi.karma.util.RandomGUID;
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -36,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 

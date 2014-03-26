@@ -21,13 +21,12 @@
 
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.LinkIdFactory;
-import edu.isi.karma.rep.HNodePath;
-import edu.isi.karma.rep.alignment.*;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,8 +40,8 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
-import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.DisplayModel;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
@@ -50,11 +49,6 @@ import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 	private final String worksheetId;

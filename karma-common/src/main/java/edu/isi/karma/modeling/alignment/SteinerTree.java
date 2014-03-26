@@ -20,9 +20,11 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
-import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.PlainLink;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.BellmanFordShortestPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -32,15 +34,9 @@ import org.jgrapht.graph.WeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 /**
  * The approach is taken from the paper "A fast algorithm for steiner trees" by L. Kou et. al.

@@ -19,12 +19,19 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
-import edu.isi.karma.rep.HTable;
-import edu.isi.karma.rep.alignment.*;
-import edu.isi.karma.rep.alignment.SemanticType.Origin;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
@@ -32,7 +39,6 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -62,9 +68,6 @@ import edu.isi.karma.rep.alignment.ObjectPropertyType;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.rep.alignment.SubClassLink;
-
-import java.io.*;
-import java.util.*;
 
 public class GraphUtil {
 

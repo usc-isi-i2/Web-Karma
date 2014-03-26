@@ -38,29 +38,15 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import edu.isi.karma.controller.update.AbstractUpdate;
-
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.publish.PublishRDFCommandPreferencesKeys;
-
+import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
-
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-
-import edu.isi.karma.util.HTTPUtil;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class InvokeDataMiningServiceCommand extends Command {
 	private static Logger logger = LoggerFactory.getLogger(InvokeDataMiningServiceCommand.class);

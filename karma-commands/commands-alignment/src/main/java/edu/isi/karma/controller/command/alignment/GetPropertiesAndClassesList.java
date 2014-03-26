@@ -14,7 +14,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -24,25 +23,13 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
-
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
-
 import edu.isi.karma.view.VWorkspace;
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.PrintWriter;
-import java.util.HashSet;
-import java.util.Set;
 
 public class GetPropertiesAndClassesList extends Command {
 

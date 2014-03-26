@@ -23,16 +23,13 @@
 
 package edu.isi.karma.rdf;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import edu.isi.karma.common.JenaWritable;
-import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
-import edu.isi.karma.util.DBType;
-import edu.isi.karma.util.EncodingDetector;
-import edu.isi.karma.webserver.KarmaException;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.net.URL;
+import java.sql.SQLException;
+
 import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.Group;
 import org.apache.commons.cli2.Option;
@@ -45,21 +42,18 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+
+import edu.isi.karma.common.JenaWritable;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
-import edu.isi.karma.util.AbstractJDBCUtil.DBType;
+import edu.isi.karma.util.DBType;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.net.URL;
-import java.sql.SQLException;
 
 public class OfflineRdfGenerator {
 

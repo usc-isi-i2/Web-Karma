@@ -29,21 +29,12 @@ package edu.isi.karma.imp.json;
 import java.io.File;
 import java.io.IOException;
 
-
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.ColumnMetadata.DataStructure;
 import edu.isi.karma.rep.RepFactory;

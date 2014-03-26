@@ -21,6 +21,17 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.openrdf.repository.RepositoryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -30,9 +41,9 @@ import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLMappingWriter;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
-import edu.isi.karma.kr2rml.mapping.KR2RMLMappingWriter;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
@@ -48,16 +59,6 @@ import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.openrdf.repository.RepositoryException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 
 public class GenerateR2RMLModelCommand extends Command {
 	

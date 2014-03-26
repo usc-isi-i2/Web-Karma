@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import com.rits.cloning.Cloner;
 
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.ReplaceWorksheetUpdate;

@@ -21,17 +21,23 @@
 
 package edu.isi.karma.rep.sources;
 
-import edu.isi.karma.common.HttpMethods;
-import edu.isi.karma.modeling.ModelingConfiguration;
-import edu.isi.karma.modeling.alignment.SteinerTree;
-import edu.isi.karma.rep.alignment.*;
-import edu.isi.karma.rep.model.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.common.HttpMethods;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.SteinerTree;
@@ -45,12 +51,6 @@ import edu.isi.karma.rep.model.ArgumentType;
 import edu.isi.karma.rep.model.ClassAtom;
 import edu.isi.karma.rep.model.IndividualPropertyAtom;
 import edu.isi.karma.rep.model.Model;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.*;
-import java.util.regex.Pattern;
 
 public class WebService extends Source {
 	

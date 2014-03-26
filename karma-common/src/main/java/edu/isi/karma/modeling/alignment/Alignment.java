@@ -20,11 +20,13 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
-import com.rits.cloning.Cloner;
-import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.ontology.OntologyUpdateListener;
-import edu.isi.karma.rep.alignment.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
@@ -41,10 +43,10 @@ import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
-import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkPriorityComparator;
 import edu.isi.karma.rep.alignment.LinkStatus;

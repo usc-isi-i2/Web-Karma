@@ -22,15 +22,8 @@
 package edu.isi.karma.modeling.alignment.learner;
 
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.rep.alignment.LabeledLink;
-
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.Map.Entry;
 
 public class SortableSemanticModel extends SemanticModel
 	implements Comparable<SortableSemanticModel>{

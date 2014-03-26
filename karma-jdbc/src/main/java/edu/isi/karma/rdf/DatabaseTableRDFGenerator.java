@@ -21,16 +21,6 @@
 
 package edu.isi.karma.rdf;
 
-import edu.isi.karma.kr2rml.*;
-import edu.isi.karma.rep.*;
-import edu.isi.karma.util.AbstractJDBCUtil;
-import edu.isi.karma.util.DBType;
-import edu.isi.karma.util.JDBCUtilFactory;
-import edu.isi.karma.webserver.KarmaException;
-import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -39,7 +29,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -58,7 +47,7 @@ import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.AbstractJDBCUtil;
-import edu.isi.karma.util.AbstractJDBCUtil.DBType;
+import edu.isi.karma.util.DBType;
 import edu.isi.karma.util.JDBCUtilFactory;
 import edu.isi.karma.webserver.KarmaException;
 

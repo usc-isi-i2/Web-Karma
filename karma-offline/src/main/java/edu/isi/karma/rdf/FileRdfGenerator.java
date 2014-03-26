@@ -21,31 +21,30 @@
 
 package edu.isi.karma.rdf;
 
-import edu.isi.karma.imp.Import;
-import edu.isi.karma.imp.csv.CSVFileImport;
-import edu.isi.karma.imp.json.JsonImport;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 
-import edu.isi.karma.kr2rml.ErrorReport;
-import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
-import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
-import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
-
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.FileUtil;
-import edu.isi.karma.util.JSONUtil;
-import edu.isi.karma.webserver.KarmaException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import edu.isi.karma.imp.Import;
+import edu.isi.karma.imp.csv.CSVFileImport;
+import edu.isi.karma.imp.json.JsonImport;
+import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
+import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.FileUtil;
+import edu.isi.karma.util.JSONUtil;
+import edu.isi.karma.webserver.KarmaException;
 
 public class FileRdfGenerator extends RdfGenerator {
 

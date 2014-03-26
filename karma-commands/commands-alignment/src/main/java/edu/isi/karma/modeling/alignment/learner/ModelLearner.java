@@ -21,8 +21,23 @@
 
 package edu.isi.karma.modeling.alignment.learner;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.graph.AsUndirectedGraph;
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.ModelingParams;
@@ -40,7 +55,6 @@ import edu.isi.karma.modeling.alignment.TreePostProcess;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.ModelReader;
 import edu.isi.karma.modeling.research.Params;
-
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
@@ -51,17 +65,9 @@ import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.SemanticType;
-
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
+import edu.isi.karma.rep.alignment.SubClassLink;
 import edu.isi.karma.util.RandomGUID;
-import org.jgrapht.UndirectedGraph;
-import org.jgrapht.graph.AsUndirectedGraph;
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.util.*;
 
 public class ModelLearner {
 

@@ -20,19 +20,16 @@
  ******************************************************************************/
 package edu.isi.karma.rep.alignment;
 
-import com.rits.cloning.Cloner;
-import edu.isi.karma.util.RandomGUID;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import com.rits.cloning.Cloner;
 
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.util.RandomGUID;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public abstract class Node implements Comparable<Node> {
 
