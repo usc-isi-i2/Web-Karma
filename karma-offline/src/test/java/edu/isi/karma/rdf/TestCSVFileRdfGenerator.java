@@ -26,12 +26,11 @@ import static org.junit.Assert.fail;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Date;
+import java.net.URL;
 import java.util.HashSet;
 
 import org.junit.BeforeClass;
@@ -67,37 +66,37 @@ public class TestCSVFileRdfGenerator {
 	public void testScheduleRDFPyTranform() {
 		boolean tag = true;
 
-		String direct = getTestDataFolder();
-		String csvDirect = direct + "/csv";
-		String modelDirect = direct + "/model";
-		String standardRdfDirect = direct + "/standardrdf";
-		String resultFileName = direct + "/testresult/testResult.txt";
+		
+		String csvDirect = "csv";
+		String modelDirect = "model";
+		String standardRdfDirect = "standardrdf";
+		//String resultFileName = "testresult/testResult.txt";
 
 		try {
-			PrintWriter out = new PrintWriter(new FileWriter(resultFileName));
-			out.println("The test was carried out at " + new Date().toString()
-					+ "\n");
+		//	PrintWriter out = new PrintWriter(new FileWriter(resultFileName));
+			//out.println("The test was carried out at " + new Date().toString()
+				//	+ "\n");
 
-			File fileList[] = (new File(modelDirect)).listFiles();
+			File fileList[] = (new File(getTestResource(modelDirect).getFile()).listFiles());
 			
 			for (int i = 0; i < fileList.length; i++) {
 				File modelFile = fileList[i];
 				logger.info("Load file: " + modelFile.getName());
 
 				String name = modelFile.getName().replace("-model.ttl", "");
-				File standardRdfFile = new File(standardRdfDirect + "/" + name
-						+ "-rdf.ttl");
-				File csvFile = new File(csvDirect + "/" + name + ".csv");
+				File standardRdfFile = new File(getTestResource(standardRdfDirect + "/" + name
+						+ "-rdf.ttl").getFile());
+				File csvFile = new File(getTestResource(csvDirect + "/" + name + ".csv").getFile());
 				
 				if(!standardRdfFile.exists())
 				{
-					out.println(standardRdfFile+" doesn't  exist");
+				//	out.println(standardRdfFile+" doesn't  exist");
 					logger.error(standardRdfFile+" doesn't  exist");
 					continue;
 				}
 				if(!csvFile.exists())
 				{
-					out.println(csvFile+" doesn't  exist");
+					//out.println(csvFile+" doesn't  exist");
 					logger.error(csvFile+" doesn't  exist");
 					continue;
 				}
@@ -115,18 +114,17 @@ public class TestCSVFileRdfGenerator {
 				if (!standardSet.containsAll(generatedSet)
 						|| !generatedSet.containsAll(standardSet)) {
 					tag = false;
-					outputError(standardSet, generatedSet, modelFile.getName(),
-							out);
+					outputError(standardSet, generatedSet, modelFile.getName());
 				} else {
-					out.println(modelFile.getName() + " is ok");
+				//	out.println(modelFile.getName() + " is ok");
 					logger.info(modelFile.getName() + " is ok");
 				}
 
 				pw.close();
-				out.flush();
+			//	out.flush();
 
 			}
-			out.close();
+		//	out.close();
 			assertEquals(tag, true);
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -145,30 +143,22 @@ public class TestCSVFileRdfGenerator {
 	 *            records the error message.
 	 */
 	private void outputError(HashSet<String> standardSet,
-			HashSet<String> generatedSet, String modelName, PrintWriter out) {
+			HashSet<String> generatedSet, String modelName) {
 		for (String temp : standardSet)
 			if (!generatedSet.contains(temp))
 			{
-				out.println(modelName + " missing triple error:" + temp);
+			//	out.println(modelName + " missing triple error:" + temp);
 				logger.error(modelName + " missing triple error:" + temp);
 			}
 
 		for (String temp : generatedSet)
 			if (!standardSet.contains(temp))
 			{
-				out.println(modelName + " extra triple error:" + temp);
+				//out.println(modelName + " extra triple error:" + temp);
 				logger.error(modelName + " extra triple error:" + temp);
 			}
 	}
 
-	private String getRootFolder() {
-		return getClass().getClassLoader().getResource(".").getPath()
-				+ "/../../";
-	}
-
-	private String getTestDataFolder() {
-		return getRootFolder() + "src/test/karma-data";
-	}
 
 	private static void initOfflineWorkspaceSettings() {
 		/**
@@ -233,4 +223,10 @@ public class TestCSVFileRdfGenerator {
 		}
 		return hashSet;
      }
+	
+
+	private URL getTestResource(String name)
+	{
+		return getClass().getClassLoader().getResource(name);
+	}
 }

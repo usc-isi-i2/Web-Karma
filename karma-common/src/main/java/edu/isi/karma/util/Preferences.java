@@ -84,15 +84,15 @@ public abstract class Preferences {
 	
 	private void createNewPreferencesFileFromTemplate() throws IOException {
 		jsonFile.createNewFile();
-		File template_file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
-				"UserPrefs/WorkspacePref.template");
+		File template_file = new File(getClass().getClassLoader().getResource(
+				"WorkspacePref.template").getFile());
 		FileUtil.copyFiles(jsonFile, template_file);
 		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
 	}
 	
 	private void loadDefaultPreferences() throws IOException {
-		jsonFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
-				"UserPrefs/WorkspacePref.template");
+		jsonFile = new File(getClass().getClassLoader().getResource(
+				"WorkspacePref.template").getFile());
 		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
 	}
 	

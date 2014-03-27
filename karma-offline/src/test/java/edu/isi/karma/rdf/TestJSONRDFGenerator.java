@@ -28,6 +28,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -70,13 +71,13 @@ public class TestJSONRDFGenerator {
 
 		// Add the models in
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
-				"people-model", new File(getTestDataFolder()
-						+ "/people-model.ttl").toURI().toURL());
+				"people-model", getTestResource(
+						 "people-model.ttl"));
 		rdfGen.addModel(modelIdentifier);
 		
 		modelIdentifier = new R2RMLMappingIdentifier("cs548-events-model",
-				new File(getTestDataFolder() + "/cs548-events-model.ttl")
-						.toURI().toURL());
+				 getTestResource("cs548-events-model.ttl")
+						);
 		rdfGen.addModel(modelIdentifier);
 	}
 
@@ -96,9 +97,9 @@ public class TestJSONRDFGenerator {
 	public void testGenerateRDF1() {
 		try {
 
-			String filename = getTestDataFolder() + "/people.json";
+			String filename = "people.json";
 			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(filename),
+			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).getFile()),
 					"utf-8");
 
 			StringWriter sw = new StringWriter();
@@ -126,9 +127,9 @@ public class TestJSONRDFGenerator {
 	public void testGenerateRDF2() {
 		try {
 
-			String filename = getTestDataFolder() + "/cs548-events.json";
+			String filename = "cs548-events.json";
 			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(filename),
+			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).getFile()),
 					"utf-8");
 
 			StringWriter sw = new StringWriter();
@@ -144,13 +145,8 @@ public class TestJSONRDFGenerator {
 		}
 	}
 
-	
-	private String getRootFolder() {
-		return getClass().getClassLoader().getResource(".").getPath()
-				+ "/../../";
-	}
-
-	private String getTestDataFolder() {
-		return getRootFolder() + "src/test/resources/karma-data";
+	private URL getTestResource(String name)
+	{
+		return getClass().getClassLoader().getResource(name);
 	}
 }
