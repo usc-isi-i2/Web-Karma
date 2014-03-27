@@ -16,22 +16,25 @@
  */
 package edu.isi.karma.webserver;
 
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Workspace;
-import org.json.JSONArray;
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Set;
 
 /**
  * There is one ExecutionManager per user. In the HttpServlet implementation we
@@ -78,6 +81,10 @@ public class ExecutionController {
 			} catch (IllegalAccessException e)
 			{
 				logger.error("Error instantiating {} -- likely does not have a public no-arg constructor", subType);
+			}
+			catch (Exception e)
+			{
+				logger.error("we got a problem");
 			}
 		}
 

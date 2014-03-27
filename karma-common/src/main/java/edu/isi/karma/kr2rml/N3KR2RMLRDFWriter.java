@@ -31,7 +31,7 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 	
 	private void outputTriple(String triple)
 	{
-		generatedTriples.put(triple, null);
+		generatedTriples.put(triple, "");
 	}
 	@Override
 	public void outputTripleWithURIObject(String subjUri, String predicateUri, String objectUri)

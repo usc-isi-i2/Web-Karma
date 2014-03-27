@@ -21,13 +21,12 @@
 
 package edu.isi.karma.modeling;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.ResourceBundle;
 
 public class ModelingConfiguration {
 
@@ -111,13 +110,9 @@ public class ModelingConfiguration {
 	private static Properties loadParams(String file)
             throws IOException {
         Properties prop = new Properties();
-        ResourceBundle bundle = ResourceBundle.getBundle(file);
-        Enumeration<String> enumeration = bundle.getKeys();
-        String key;
-        while (enumeration.hasMoreElements()) {
-            key = (String) enumeration.nextElement();
-            prop.put(key, bundle.getObject(key));
-        }
+        URL modeling = ModelingConfiguration.class.getClassLoader().getResource("modeling.properties");
+        prop.load(modeling.openStream());
+      
         return prop;
     }
 	

@@ -1,10 +1,13 @@
 package edu.isi.karma.rdf;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,17 +33,16 @@ public class TestFileRdfGenerator {
 	public void testScheduleRDFPyTranform() {
 		try {
 
-			String filename = getTestDataFolder() + "/schedule.csv";
+			String filename = "schedule.csv";
 			System.out.println("Load file: " + filename);
 			
 			FileRdfGenerator rdfGen = new FileRdfGenerator();
 			R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
-					"schedule-model", new File(getTestDataFolder()
-							+ "/schedule-model.txt").toURI().toURL());
+					"schedule-model", getTestResource("schedule-model.txt"));
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			
-			rdfGen.generateRdf("csv", modelIdentifier, pw, new File(filename), 
+			rdfGen.generateRdf("csv", modelIdentifier, pw, new File(getTestResource(filename).getFile()), 
 					"utf-8", 0);
 			
 			String rdf = sw.toString();
@@ -64,17 +66,16 @@ public class TestFileRdfGenerator {
 	public void testCWeb2RDFPyTransform() {
 		//
 		try {
-			String filename = getTestDataFolder() + "/cbev2.WebConAltNames.csv";
+			String filename = "cbev2.WebConAltNames.csv";
 			System.out.println("Load file: " + filename);
 			
 			FileRdfGenerator rdfGen = new FileRdfGenerator();
 			R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
-					"cbev2.WebConAltNames-model", new File(getTestDataFolder()
-							+ "/cbev2.WebConAltNames-model.ttl").toURI().toURL());
+					"cbev2.WebConAltNames-model", getTestResource("cbev2.WebConAltNames-model.ttl"));
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			
-			rdfGen.generateRdf("csv", modelIdentifier, pw, new File(filename), 
+			rdfGen.generateRdf("csv", modelIdentifier, pw, new File(getTestResource(filename).getFile()), 
 					"utf-8", 0);
 			
 			String rdf = sw.toString();
@@ -94,13 +95,9 @@ public class TestFileRdfGenerator {
 		}
 	}
 
-	private String getRootFolder() {
-		return getClass().getClassLoader().getResource(".").getPath()
-				+ "/../../";
-	}
-
-	private String getTestDataFolder() {
-		return getRootFolder() + "src/test/karma-data";
+	private URL getTestResource(String name)
+	{
+		return getClass().getClassLoader().getResource(name);
 	}
 	
 	private static void initOfflineWorkspaceSettings() {

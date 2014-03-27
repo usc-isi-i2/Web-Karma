@@ -27,6 +27,7 @@
 		<module>commands-worksheet</module>
 		<module>commands-update</module>
 		<module>commands-update-jdbc</module>
+		<module>commands-include</module>
 	</modules>
     
 </project>

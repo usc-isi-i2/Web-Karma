@@ -22,123 +22,9 @@
 
 		<dependency>
 			<groupId>edu.isi</groupId>
-			<artifactId>commands-alignment</artifactId>
+			<artifactId>commands-include</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>commands-alignment-openrdf</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>commands-cleaning</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>commands-common</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>commands-publish</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>commands-publish-jdbc</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>commands-python</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>commands-publish-alignment-openrdf</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>commands-update</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>commands-update-jdbc</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>commands-worksheet</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-
-
-		<!--Import commands-->
-
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>import-common</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>import-csv</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>import-database</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>import-excel</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>import-file</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>import-ontology</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>import-json</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>import-service</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>import-spatial</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>import-xml</artifactId>
-			<version>${project.version}</version>
+			<type>pom</type>
 		</dependency>
 
 		<!--External dependencies-->
@@ -177,11 +63,17 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-
+<dependency>
+	<groupId>de.micromata.jak</groupId>
+	<artifactId>JavaAPIforKml</artifactId>
+	<version>2.2.0</version>
+</dependency>
+            
 	</dependencies>
 
 
 	<build>
+	
 	<resources>
 		<resource>
 			<directory>src/main/config</directory>
@@ -260,6 +152,37 @@
 		  </configuration>
 		-->
 	</plugin>
+	
 	</plugins>
 	</build>
+	
+	<profiles>
+  <!-- With this profile, jetty will run during the "test" phase -->
+  <profile>
+    <id>jetty-run</id>
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.mortbay.jetty</groupId>
+          <artifactId>jetty-maven-plugin</artifactId>
+          <version>7.1.6.v20100715</version>
+          <configuration>
+            <webAppSourceDirectory>
+              ${project.build.directory}/${project.build.finalName}
+            </webAppSourceDirectory>
+          </configuration>
+          <executions>
+            <execution>
+              <id>jetty-run</id>
+              <phase>test</phase>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </build>
+  </profile>
+</profiles>
 </project>

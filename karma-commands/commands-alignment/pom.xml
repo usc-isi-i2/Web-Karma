@@ -10,9 +10,8 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>edu.isi</groupId>
     <artifactId>commands-alignment</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+
 
 
 	<dependencies>

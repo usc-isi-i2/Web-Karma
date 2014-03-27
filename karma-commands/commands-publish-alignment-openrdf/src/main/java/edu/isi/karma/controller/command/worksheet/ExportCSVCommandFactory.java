@@ -63,8 +63,8 @@ public class ExportCSVCommandFactory extends CommandFactory {
 
 	@Override
 	public Class getCorrespondingCommand() {
-		// TODO Auto-generated method stub
-		return null;
+	
+		return ExportCSVCommand.class;
 	}
 
 }
