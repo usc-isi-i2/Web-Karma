@@ -2,6 +2,9 @@ package edu.isi.karma.metadata;
 
 import java.io.File;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -10,6 +13,8 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 public abstract class KarmaUserMetadata {
 
 	protected Workspace workspace;
+	private static final Logger logger = LoggerFactory.getLogger(KarmaUserMetadata.class);
+	
 	public KarmaUserMetadata(Workspace workspace) throws KarmaException
 	{
 		this.workspace = workspace;
@@ -18,6 +23,7 @@ public abstract class KarmaUserMetadata {
 	public abstract void setup() throws KarmaException;
 	protected abstract ContextParameter getDirectoryContextParameter();
 	protected abstract String getDirectoryPath();
+	
 	protected void createDirectoryForMetadata(ContextParameter parameter, String directory) throws KarmaException {
 		
 		String metadataDirPath = ServletContextParameterMap.getParameterValue(parameter);
@@ -27,15 +33,18 @@ public abstract class KarmaUserMetadata {
 			metadataDirPath = userDirPath + directory;
 			ServletContextParameterMap.setParameterValue(parameter, metadataDirPath);
 		}
+		logger.info("Set parameter: " + parameter + " -> " + metadataDirPath);
 		File metadataDir = new File(metadataDirPath);
 		if(metadataDir.exists() && !metadataDir.isDirectory())
 		{
-			throw new KarmaException("Directory provided for crf models is actually a file!");
+			logger.error("Directory provided for " + parameter + " is actually a file!");
+			throw new KarmaException("Directory provided for " + parameter + " is actually a file!");
 		}
 		if(!metadataDir.exists())
 		{
 			if(!metadataDir.mkdirs())
 			{
+				logger.error("Unable to create directory for metadata: " + parameter);
 				throw new KarmaException("Unable to create directory for metadata! " + parameter.name());
 			}
 		}

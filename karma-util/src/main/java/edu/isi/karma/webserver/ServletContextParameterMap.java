@@ -53,6 +53,7 @@ public class ServletContextParameterMap {
 			logger.info("KARMA_USER_HOME not set.  Defaulting to {user.home}/.karma");
 			File newKarmaDir = new File(System.getProperty("user.home") + "/.karma");
 			karmaDir = newKarmaDir.getAbsolutePath() + "/";
+			logger.info("Karma home: " + karmaDir);
 		}
 		setParameterValue(ContextParameter.USER_DIRECTORY_PATH, karmaDir);
 	}

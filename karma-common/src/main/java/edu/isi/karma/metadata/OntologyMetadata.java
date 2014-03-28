@@ -23,10 +23,12 @@ public class OntologyMetadata extends KarmaUserMetadata {
 	}
 	@Override
 	public void setup() throws KarmaException{
+		logger.info("Start OntologyMetadata.setup");
 		OntologyManager ontologyManager = workspace.getOntologyManager();
 		/** Check if any ontology needs to be preloaded **/
 		String preloadedOntDir = ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.PRELOADED_ONTOLOGY_DIRECTORY);
 		File ontDir = new File(preloadedOntDir);
+		logger.info("Load ontologies from " + preloadedOntDir);
 		if (ontDir.exists()) {
 			File[] ontologies = ontDir.listFiles();
 			for (File ontology: ontologies) {

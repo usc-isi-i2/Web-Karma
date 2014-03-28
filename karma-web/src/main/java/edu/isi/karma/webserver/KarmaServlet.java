@@ -91,7 +91,7 @@ public class KarmaServlet extends HttpServlet {
 		WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
 		VWorkspaceRegistry.getInstance().registerVWorkspace(workspace.getId(), vwsp);
 		
-		
+		logger.info("Start Metadata Setup");
 		try {
 			userMetadataManager.register(new CRFModelMetadata(workspace));
 			userMetadataManager.register(new OntologyMetadata(workspace));

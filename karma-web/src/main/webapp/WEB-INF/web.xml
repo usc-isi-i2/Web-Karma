@@ -69,10 +69,6 @@
 		<param-value>100</param-value>
 	</context-param>
   <context-param>
-		<param-name>USER_DIRECTORY_PATH</param-name>
-		<param-value>src/main/webapp/</param-value>
-  </context-param>
-  <context-param>
 		<param-name>PYTHON_SCRIPTS_DIRECTORY</param-name>
 		<param-value>./src/main/scripts/Lib</param-value>
   </context-param>
@@ -80,10 +76,6 @@
   <context-param>
 		<param-name>MSFT</param-name>
 		<param-value>False</param-value>
-  </context-param>
-  <context-param>
-		<param-name>PRELOADED_ONTOLOGY_DIRECTORY</param-name>
-		<param-value>preloaded-ontologies</param-value>
   </context-param>
   <context-param>
     <param-name>PYTHON_SCRIPTS_DIRECTORY</param-name>
