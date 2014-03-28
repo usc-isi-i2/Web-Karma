@@ -20,33 +20,37 @@
  ******************************************************************************/
 package edu.isi.karma.webserver;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.modeling.ModelingConfiguration;
-import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphLoaderThread;
-import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.metadata.CRFModelMetadata;
+import edu.isi.karma.metadata.GraphVizMetadata;
+import edu.isi.karma.metadata.JSONModelsMetadata;
+import edu.isi.karma.metadata.KarmaUserMetadataManager;
+import edu.isi.karma.metadata.ModelLearnerMetadata;
+import edu.isi.karma.metadata.OntologyMetadata;
+import edu.isi.karma.metadata.UserPreferencesMetadata;
+import edu.isi.karma.metadata.WorksheetHistoryMetadata;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.rep.metadata.Tag;
 import edu.isi.karma.rep.metadata.TagsContainer.Color;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
-import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.VWorkspaceRegistry;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 public class KarmaServlet extends HttpServlet {
 	private enum Arguments {
@@ -59,73 +63,44 @@ public class KarmaServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		
+		KarmaUserMetadataManager userMetadataManager = null;
+		try {
+			userMetadataManager = new KarmaUserMetadataManager();
+			userMetadataManager.register(new UserPreferencesMetadata());
+			userMetadataManager.register(new WorksheetHistoryMetadata());
+		} catch (KarmaException e) {
+			logger.error("Unable to complete Karma set up: ", e);
+		}
 		/* Check if any workspace id is set in cookies. */
 		boolean hasWorkspaceCookieId = request.getParameter(Arguments.hasPreferenceId.name()).equals("true");
 		Workspace workspace = null;
 		VWorkspace vwsp = null;
-		File crfModelFile = null;
+		
 		
 		/* If set, pick the right preferences and CRF Model file */
 		if(hasWorkspaceCookieId) {
 			String cachedWorkspaceId = request.getParameter(Arguments.workspacePreferencesId.name());
-			
 			workspace = WorkspaceManager.getInstance().createWorkspaceWithPreferencesId(cachedWorkspaceId);
 			vwsp = new VWorkspace(workspace, cachedWorkspaceId);
-			crfModelFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
-					"CRF_Models/"+cachedWorkspaceId+"_CRFModel.txt");
 		} else {
 			workspace = WorkspaceManager.getInstance().createWorkspace();
 			vwsp = new VWorkspace(workspace);
-			crfModelFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
-					"CRF_Models/"+workspace.getId()+"_CRFModel.txt");
 		}
-		/* Read and populate CRF Model from a file */
-		if(!crfModelFile.exists())
-			crfModelFile.createNewFile();
-		boolean result = workspace.getCrfModelHandler().readModelFromFile(crfModelFile.getAbsolutePath());
-		if (!result)
-			logger.error("Error occured while reading CRF Model!");
-		
+
+		workspace.setUserMetadataManager(userMetadataManager);
 		WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
 		VWorkspaceRegistry.getInstance().registerVWorkspace(workspace.getId(), vwsp);
-		OntologyManager ontologyManager = workspace.getOntologyManager();
-		/** Check if any ontology needs to be preloaded **/
-		String preloadedOntDir = ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.PRELOADED_ONTOLOGY_DIRECTORY);
-		File ontDir = new File(preloadedOntDir);
-		if (ontDir.exists()) {
-			File[] ontologies = ontDir.listFiles();
-			for (File ontology: ontologies) {
-				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf") || ontology.getName().endsWith(".xml")) {
-					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
-					try {
-						String encoding = EncodingDetector.detect(ontology);
-						ontologyManager.doImport(ontology, encoding);
-					} catch (Exception t) {
-						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
-					}
-				}
-			}
-			// update the cache at the end when all files are added to the model
-			ontologyManager.updateCache();
-		} else {
-			logger.info("No directory for preloading ontologies exists.");
+		
+		
+		try {
+			userMetadataManager.register(new CRFModelMetadata(workspace));
+			userMetadataManager.register(new OntologyMetadata(workspace));
+			userMetadataManager.register(new JSONModelsMetadata(workspace));
+			userMetadataManager.register(new GraphVizMetadata(workspace));
+			userMetadataManager.register(new ModelLearnerMetadata(workspace));
+		} catch (KarmaException e) {
+			logger.error("Unable to complete Karma set up: ", e);
 		}
-		
-		if (ModelingConfiguration.isLearnerEnabled())
-			new ModelLearningGraphLoaderThread(ontologyManager).run();
-
-		// Loading a CSV file in each workspace
-//		File file = new File("./SampleData/CSV/Nation_Data.csv");
-//		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
-//		try {
-//			imp.generateWorksheet();
-//		} catch (KarmaException e) {
-//			e.printStackTrace();
-//		}
-		
-		// Loading a JSON file in each workspace
-//		SampleDataFactory.createFromJsonTextFile(workspace,"./SampleData/JSON/Hierarchical_Dataset.json");
 
 		// Initialize the Outlier tag
 		Tag outlierTag = new Tag(TagName.Outlier, Color.Red);

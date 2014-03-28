@@ -62,7 +62,7 @@ public class ExportCSVCommandFactory extends CommandFactory {
 	}
 
 	@Override
-	public Class getCorrespondingCommand() {
+	public Class<? extends Command> getCorrespondingCommand() {
 	
 		return ExportCSVCommand.class;
 	}

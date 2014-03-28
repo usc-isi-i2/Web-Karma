@@ -325,6 +325,11 @@ public class CRFModelHandler {
 			List<double[]> exampleProbabilities,
 			Map<ColumnFeature, Collection<String>> columnFeatures
 			) {
+		
+		if(!isCRFModelHandlerEnabled())
+		{
+			return false;
+		}
 		ArrayList<ArrayList<Double>> exampleProbabilitiesFullList ;
 		MAPFieldOnly MAPPredictor ;
 		double[] columnProbabilities ;
@@ -1140,6 +1145,16 @@ public class CRFModelHandler {
 			parts.addAll(tmpParts);
 		}
 		return true;
+	}
+	
+	private static boolean isEnabled = false;
+	public static void setCRFModelHandlerEnabled(boolean enabled)
+	{
+		isEnabled = enabled;	
+	}
+	public static boolean isCRFModelHandlerEnabled()
+	{
+		return isEnabled;
 	}
 
 } // end of class CRFModelHandlerNew

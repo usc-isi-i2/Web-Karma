@@ -153,7 +153,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		SemanticModel semanticModel = new SemanticModel(worksheetName, alignment.getSteinerTree());
 		semanticModel.setName(worksheetName);
 		try {
-			semanticModel.writeJson(ModelingConfiguration.getModelsJsonDir() + 
+			semanticModel.writeJson(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_MODELS_DIR) + 
 					semanticModel.getName() + 
 					".model.json");
 		} catch (Exception e) {
@@ -161,7 +161,7 @@ public class GenerateR2RMLModelCommand extends Command {
 //			e.printStackTrace();
 		}
 		try {
-			semanticModel.writeGraphviz(ModelingConfiguration.getModelsGraphvizDir() + 
+			semanticModel.writeGraphviz(ServletContextParameterMap.getParameterValue(ContextParameter.GRAPHVIZ_DIRECTORY) + 
 					semanticModel.getName() + 
 					".model.dot", false, false);
 		} catch (Exception e) {

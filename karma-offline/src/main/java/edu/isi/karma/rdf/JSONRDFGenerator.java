@@ -1,27 +1,23 @@
 package edu.isi.karma.rdf;
 
-import edu.isi.karma.imp.json.JsonImport;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 
+import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
-
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.KarmaException;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
 
 
 //If running in offline mode, need to set manual.alignment=true in modeling.peoperties
@@ -53,7 +49,6 @@ public class JSONRDFGenerator extends RdfGenerator {
 	public void generateRDF(String sourceName, String jsonData, boolean addProvenance, PrintWriter pw) throws KarmaException, JSONException, IOException {
 		logger.debug("Generating rdf for " + sourceName);
 		Workspace workspace = initializeWorkspace();
-		initOfflineWorkspaceSettings(workspace);
 		
 		R2RMLMappingIdentifier id = this.modelIdentifiers.get(sourceName);
 		if(id == null) {
@@ -92,16 +87,5 @@ public class JSONRDFGenerator extends RdfGenerator {
 		return parser;
 	}
 	
-	private void initOfflineWorkspaceSettings(Workspace workspace) {
-		/**
-         * CREATE THE REQUIRED KARMA OBJECTS *
-         */
-        ServletContextParameterMap.setParameterValue(
-                ContextParameter.USER_DIRECTORY_PATH, "src/main/config/");
-        ServletContextParameterMap.setParameterValue(
-                ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
-
-        SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
-	}
 
 }

@@ -57,8 +57,7 @@ public class HistoryJsonUtil {
 	}
 	
 	public static String constructWorksheetHistoryJsonFilePath (String worksheetName, String vworkspacePreferenceId) {
-		return ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
-				"publish/History/" + constructWorksheetHistoryJsonFileName(worksheetName, vworkspacePreferenceId);
+		return ServletContextParameterMap.getParameterValue(ContextParameter.WORKSHEET_HISTORY_DIRECTORY)  + constructWorksheetHistoryJsonFileName(worksheetName, vworkspacePreferenceId);
 	}
 	
 	public static String constructWorksheetHistoryJsonFileName (String worksheetName, String vworkspacePreferenceId) {

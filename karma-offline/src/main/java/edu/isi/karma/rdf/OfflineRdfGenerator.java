@@ -47,13 +47,13 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import edu.isi.karma.common.JenaWritable;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.metadata.KarmaUserMetadataManager;
+import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.util.DBType;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class OfflineRdfGenerator {
 
@@ -124,14 +124,8 @@ public class OfflineRdfGenerator {
                 return;
             }
 
-            /**
-             * CREATE THE REQUIRED KARMA OBJECTS *
-             */
-            ServletContextParameterMap.setParameterValue(
-                    ContextParameter.USER_DIRECTORY_PATH, "config/");
-            ServletContextParameterMap.setParameterValue(
-                    ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
-   
+            KarmaUserMetadataManager userMetadataManager = new KarmaUserMetadataManager();
+            userMetadataManager.register(new UserPreferencesMetadata());
 
             /**
              * PREPATRE THE OUTPUT OBJECTS *

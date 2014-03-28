@@ -59,8 +59,8 @@ public abstract class Preferences {
 			if(ModelingConfiguration.getManualAlignment()) {
 				loadDefaultPreferences();
 			} else {
-				jsonFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
-						"UserPrefs/" + preferencesId + ".json");
+				jsonFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_PREFERENCES_DIRECTORY) + 
+						  preferencesId + ".json");
 				if(jsonFile.exists()){
 					// Populate from the existing preferences JSON file
 					json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
@@ -83,6 +83,7 @@ public abstract class Preferences {
 
 	
 	private void createNewPreferencesFileFromTemplate() throws IOException {
+
 		jsonFile.createNewFile();
 		File template_file = new File(getClass().getClassLoader().getResource(
 				"WorkspacePref.template").getFile());

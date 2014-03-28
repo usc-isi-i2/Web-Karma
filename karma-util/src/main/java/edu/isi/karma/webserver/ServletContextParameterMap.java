@@ -20,13 +20,17 @@
  ******************************************************************************/
 package edu.isi.karma.webserver;
 
+import java.io.File;
 import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServletContextParameterMap {
 	private static HashMap<ContextParameter, String> valuesMap = new HashMap<ContextParameter, String>();
 
-//	private static Logger logger = LoggerFactory
-//			.getLogger(ServletContextParameterMap.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(ServletContextParameterMap.class);
 
 	public enum ContextParameter {
 		PUBLIC_RDF_ADDRESS,PUBLIC_KML_ADDRESS, 
@@ -37,9 +41,21 @@ public class ServletContextParameterMap {
 		PRELOADED_ONTOLOGY_DIRECTORY, POLYGON_CLASS, SRID_PROPERTY, 
 		SRID_CLASS, AUTO_MODEL_URI, PYTHON_SCRIPTS_DIRECTORY,
 		KML_CUSTOMIZATION_CLASS, KML_CATEGORY_PROPERTY,KML_LABEL_PROPERTY,
-		CLEANING_SERVICE_URL, JETTY_PORT, JETTY_HOST
+		CLEANING_SERVICE_URL, JETTY_PORT, JETTY_HOST, CRF_MODEL_DIRECTORY, ALIGNMENT_GRAPH_DIRECTORY, USER_PREFERENCES_DIRECTORY, GRAPHVIZ_DIRECTORY, JSON_MODELS_DIR, WORKSHEET_HISTORY_DIRECTORY
 	}
 
+	static {
+		
+		// Find a safe place to store preferences
+		String karmaDir = System.getenv("KARMA_USER_HOME");
+		if(karmaDir == null)
+		{
+			logger.info("KARMA_USER_HOME not set.  Defaulting to {user.home}/.karma");
+			File newKarmaDir = new File(System.getProperty("user.home") + "/.karma");
+			karmaDir = newKarmaDir.getAbsolutePath() + "/";
+		}
+		setParameterValue(ContextParameter.USER_DIRECTORY_PATH, karmaDir);
+	}
 	public static void setParameterValue(ContextParameter param, String value) {
 		valuesMap.put(param, value);
 	}

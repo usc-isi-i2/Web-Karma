@@ -24,13 +24,14 @@ package edu.isi.karma.modeling.alignment;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.Set;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,11 +40,6 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-
-import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Set;
 
 public class GraphVizUtil {
 

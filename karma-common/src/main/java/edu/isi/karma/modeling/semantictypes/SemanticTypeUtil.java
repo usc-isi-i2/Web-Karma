@@ -51,10 +51,21 @@ public class SemanticTypeUtil {
 
 	private static boolean isSemanticTypeTrainingEnabled = true;
 	
-	private final static int TRAINING_EXAMPLE_MAX_COUNT = Integer
-			.parseInt(ServletContextParameterMap
-					.getParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT));
-
+	private final static int TRAINING_EXAMPLE_MAX_COUNT ;
+	static {
+		int temp = 200;
+		try
+		{
+			temp = Integer
+				.parseInt(ServletContextParameterMap
+						.getParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT));
+		}
+		catch (Exception e)
+		{
+		}
+		
+		TRAINING_EXAMPLE_MAX_COUNT = temp;
+	}
 	/**
 	 * Prepares and returns a collection of training examples to be used in
 	 * semantic types training. Parameter TRAINING_EXAMPLE_MAX_COUNT specifies

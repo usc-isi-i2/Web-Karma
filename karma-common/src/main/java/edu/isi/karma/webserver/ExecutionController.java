@@ -33,7 +33,6 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Workspace;
 
 /**
@@ -53,7 +52,6 @@ public class ExecutionController {
 
     public ExecutionController(Workspace workspace) {
         this.workspace = workspace;
-//        initializeCommandFactoryMap();
 	    dynamicallyBuildCommandFactoryMap();
     }
 
@@ -71,7 +69,7 @@ public class ExecutionController {
 			{
 
 				CommandFactory commandFactory = subType.newInstance();
-				Class command = commandFactory.getCorrespondingCommand();
+				Class<? extends Command> command = commandFactory.getCorrespondingCommand();
 
 				commandFactoryMap.put(command.getSimpleName(), commandFactory);
 			} catch (InstantiationException e)

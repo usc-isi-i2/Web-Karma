@@ -21,7 +21,14 @@
 
 package edu.isi.karma.modeling.alignment.learner;
 
-import edu.isi.karma.modeling.ModelingConfiguration;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
@@ -42,13 +49,8 @@ import edu.isi.karma.rep.alignment.ObjectPropertyType;
 import edu.isi.karma.rep.alignment.SubClassLink;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.RandomGUID;
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ModelLearningGraph {
 
@@ -60,16 +62,21 @@ public class ModelLearningGraph {
 	private NodeIdFactory nodeIdFactory; 
 	private long lastUpdateTime;
 	
-	private static final String graphJsonName = ModelingConfiguration.getAlignmentGraphDir() + "graph.json";
-	private static final String graphGraphvizName = ModelingConfiguration.getAlignmentGraphDir() + "graph.dot";
+	private static final String getGraphJsonName()
+	{
+		return ServletContextParameterMap.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY) + "graph.json";
+	}
+	private static final String getGraphGraphvizName()
+	{
+		return ServletContextParameterMap.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY) + "graph.dot";
+	}
 
 	public static synchronized ModelLearningGraph getInstance(OntologyManager ontologyManager) {
 		if (instance == null || !ontologyManager.equals(instance.ontologyManager)) {
 			try {
 				instance = new ModelLearningGraph(ontologyManager);
 			} catch (IOException e) {
-				logger.error("error in importing the main learning graph!");			
-				e.printStackTrace();
+				logger.error("error in importing the main learning graph!", e);
 				return null;
 			}
 		}
@@ -92,13 +99,13 @@ public class ModelLearningGraph {
 		
 		this.ontologyManager = ontologyManager;
 		
-		File file = new File(graphJsonName);
+		File file = new File(getGraphJsonName());
 		if (!file.exists()) {
 			this.initializeFromJsonRepository();
 		} else {
 			logger.info("loading the alignment graph ...");
 			DirectedWeightedMultigraph<Node, DefaultLink> graph =
-					GraphUtil.importJson(graphJsonName);
+					GraphUtil.importJson(getGraphJsonName());
 			this.graphBuilder = new GraphBuilder(ontologyManager, graph);
 			this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 			logger.info("loading is done!");
@@ -128,7 +135,7 @@ public class ModelLearningGraph {
 		this.nodeIdFactory = new NodeIdFactory();
 		this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
 
-		File ff = new File(ModelingConfiguration.getModelsJsonDir());
+		File ff = new File(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_MODELS_DIR));
 		File[] files = ff.listFiles();
 		
 		for (File f : files) {
@@ -148,7 +155,7 @@ public class ModelLearningGraph {
 	
 	public void exportJson() {
 		try {
-			GraphUtil.exportJson(this.graphBuilder.getGraph(), graphJsonName);
+			GraphUtil.exportJson(this.graphBuilder.getGraph(), getGraphJsonName());
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to json!");
 		}
@@ -156,7 +163,7 @@ public class ModelLearningGraph {
 	
 	public void exportGraphviz() {
 		try {
-			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), "main graph", true, false, false, graphGraphvizName);
+			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), "main graph", true, false, false, getGraphGraphvizName());
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to graphviz!");
 		}

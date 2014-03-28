@@ -45,9 +45,7 @@ public class GetLinksOfAlignmentCommand extends Command {
 	
 	private final String alignmentId;
 	private final LINKS_RANGE linksRange;
-	@SuppressWarnings("unused")
 	private final String domain;
-	@SuppressWarnings("unused")
 	private final String range;
 	
 	private enum JsonKeys {
