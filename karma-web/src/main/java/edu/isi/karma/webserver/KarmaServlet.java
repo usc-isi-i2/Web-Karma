@@ -38,9 +38,11 @@ import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.metadata.CRFModelMetadata;
 import edu.isi.karma.metadata.GraphVizMetadata;
 import edu.isi.karma.metadata.JSONModelsMetadata;
-import edu.isi.karma.metadata.KarmaUserMetadataManager;
+import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.ModelLearnerMetadata;
 import edu.isi.karma.metadata.OntologyMetadata;
+import edu.isi.karma.metadata.R2RMLMetadata;
+import edu.isi.karma.metadata.RDFMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.metadata.WorksheetHistoryMetadata;
 import edu.isi.karma.rep.Worksheet;
@@ -63,11 +65,11 @@ public class KarmaServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		KarmaUserMetadataManager userMetadataManager = null;
+		KarmaMetadataManager metadataManager = null;
 		try {
-			userMetadataManager = new KarmaUserMetadataManager();
-			userMetadataManager.register(new UserPreferencesMetadata());
-			userMetadataManager.register(new WorksheetHistoryMetadata());
+			metadataManager = new KarmaMetadataManager();
+			metadataManager.register(new UserPreferencesMetadata());
+			metadataManager.register(new WorksheetHistoryMetadata());
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}
@@ -87,17 +89,19 @@ public class KarmaServlet extends HttpServlet {
 			vwsp = new VWorkspace(workspace);
 		}
 
-		workspace.setUserMetadataManager(userMetadataManager);
+		workspace.setMetadataManager(metadataManager);
 		WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
 		VWorkspaceRegistry.getInstance().registerVWorkspace(workspace.getId(), vwsp);
 		
 		logger.info("Start Metadata Setup");
 		try {
-			userMetadataManager.register(new CRFModelMetadata(workspace));
-			userMetadataManager.register(new OntologyMetadata(workspace));
-			userMetadataManager.register(new JSONModelsMetadata(workspace));
-			userMetadataManager.register(new GraphVizMetadata(workspace));
-			userMetadataManager.register(new ModelLearnerMetadata(workspace));
+			metadataManager.register(new CRFModelMetadata(workspace));
+			metadataManager.register(new OntologyMetadata(workspace));
+			metadataManager.register(new JSONModelsMetadata(workspace));
+			metadataManager.register(new GraphVizMetadata(workspace));
+			metadataManager.register(new ModelLearnerMetadata(workspace));
+			metadataManager.register(new R2RMLMetadata(workspace));
+			metadataManager.register(new RDFMetadata(workspace));
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}

@@ -44,6 +44,8 @@ import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMappingWriter;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
+import edu.isi.karma.metadata.KarmaMetadata;
+import edu.isi.karma.metadata.StandardPublishMetadataTypes;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
@@ -134,7 +136,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		final String modelFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
 				this.worksheetName +  "-model.ttl"; 
 		final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
-				ContextParameter.USER_DIRECTORY_PATH) +  "publish/R2RML/" + modelFileName;
+				ContextParameter.R2RML_PUBLISH_DIR) +  modelFileName;
 
 		// Get the alignment for this Worksheet
 		Alignment alignment = AlignmentManager.Instance().getAlignment(AlignmentManager.
@@ -220,6 +222,7 @@ public class GenerateR2RMLModelCommand extends Command {
 			}
 			
 			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true);
+			
 			if (result) {
 				logger.info("Saved model to triple store");
 				uc.add(new AbstractUpdate() {
@@ -228,7 +231,9 @@ public class GenerateR2RMLModelCommand extends Command {
 						JSONObject outputObject = new JSONObject();
 						try {
 							outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
-							outputObject.put(JsonKeys.fileUrl.name(), "publish/R2RML/" + modelFileName);
+							
+							outputObject.put(JsonKeys.fileUrl.name(), ServletContextParameterMap.getParameterValue(
+									ContextParameter.R2RML_PUBLISH_RELATIVE_DIR) + modelFileName);
 							outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
 							pw.println(outputObject.toString());
 						} catch (JSONException e) {
@@ -258,6 +263,7 @@ public class GenerateR2RMLModelCommand extends Command {
 					throws RepositoryException, FileNotFoundException,
 							UnsupportedEncodingException, JSONException {
 		File f = new File(modelFileLocalPath);
+		logger.info("Write file:" + modelFileLocalPath);
 		File parentDir = f.getParentFile();
 		parentDir.mkdirs();
 		PrintWriter writer = new PrintWriter(f, "UTF-8");

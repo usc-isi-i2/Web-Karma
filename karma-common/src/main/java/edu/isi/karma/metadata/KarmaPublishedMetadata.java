@@ -10,23 +10,24 @@ import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public abstract class KarmaUserMetadata extends KarmaMetadata{
+public abstract class KarmaPublishedMetadata extends KarmaMetadata {
 
 	private static final Logger logger = LoggerFactory.getLogger(KarmaUserMetadata.class);
 	
-	public KarmaUserMetadata(Workspace workspace) throws KarmaException
+	public KarmaPublishedMetadata(Workspace workspace) throws KarmaException
 	{
 		super(workspace);
 	}
-	
+
 	protected void createDirectoryForMetadata(ContextParameter parameter, String directory) throws KarmaException {
 		
 		String metadataDirPath = ServletContextParameterMap.getParameterValue(parameter);
 		if(metadataDirPath == null || metadataDirPath.isEmpty())
 		{
-			String userDirPath = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH);
+			String userDirPath = ServletContextParameterMap.getParameterValue(ContextParameter.WEBAPP_PATH) + "/publish/";
 			metadataDirPath = userDirPath + directory;
 			ServletContextParameterMap.setParameterValue(parameter, metadataDirPath);
+			ServletContextParameterMap.setParameterValue(getRelativeDirectoryContextParameter(), "/publish/" + directory);
 		}
 		logger.info("Set parameter: " + parameter + " -> " + metadataDirPath);
 		File metadataDir = new File(metadataDirPath);
@@ -43,6 +44,9 @@ public abstract class KarmaUserMetadata extends KarmaMetadata{
 				throw new KarmaException("Unable to create directory for metadata! " + parameter.name());
 			}
 		}
+	
 	}
+	
+	protected abstract ContextParameter getRelativeDirectoryContextParameter();
 	
 }

@@ -8,13 +8,13 @@ import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class KarmaUserMetadataManager {
+public class KarmaMetadataManager {
 
-	private Map<KarmaUserMetadataType, KarmaUserMetadata> metadataTypes;
-	public KarmaUserMetadataManager() throws KarmaException
+	private Map<KarmaMetadataType, KarmaMetadata> metadataTypes;
+	public KarmaMetadataManager() throws KarmaException
 	{
 		createDirectoryForMetadata();
-		metadataTypes = new HashMap<KarmaUserMetadataType, KarmaUserMetadata>();
+		metadataTypes = new HashMap<KarmaMetadataType, KarmaMetadata>();
 		
 	}
 	private void createDirectoryForMetadata() throws KarmaException {
@@ -33,14 +33,15 @@ public class KarmaUserMetadataManager {
 			}
 		}
 	}
-	public void register(KarmaUserMetadata metadata) throws KarmaException
+	public void register(KarmaMetadata metadata) throws KarmaException
 	{
 		metadata.setup();
 		metadataTypes.put(metadata.getType(), metadata);
 	}
 	
-	public boolean isMetadataSupported(KarmaUserMetadataType type)
+	public boolean isMetadataSupported(KarmaMetadataType type)
 	{
 		return metadataTypes.containsKey(type);
 	}
+
 }

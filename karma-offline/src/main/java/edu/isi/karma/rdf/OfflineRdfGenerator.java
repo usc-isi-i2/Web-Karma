@@ -47,7 +47,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import edu.isi.karma.common.JenaWritable;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.metadata.KarmaUserMetadataManager;
+import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
@@ -124,7 +124,7 @@ public class OfflineRdfGenerator {
                 return;
             }
 
-            KarmaUserMetadataManager userMetadataManager = new KarmaUserMetadataManager();
+            KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
             userMetadataManager.register(new UserPreferencesMetadata());
 
             /**

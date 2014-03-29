@@ -26,10 +26,11 @@ public class WorksheetHistoryMetadata extends KarmaUserMetadata{
 
 	@Override
 	protected String getDirectoryPath() {
-		return "publish/History/";
+		return "history/";
 	}
+	
 	@Override
-	public KarmaUserMetadataType getType() {
+	public KarmaMetadataType getType() {
 		return StandardUserMetadataTypes.WORKSHEET_HISTORY;
 	}
 }

@@ -94,7 +94,7 @@ public class FetchColumnCommand extends WorksheetCommand {
 			final String modelFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
 					worksheetName +  "-model.ttl"; 
 			final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
-					ContextParameter.USER_DIRECTORY_PATH) +  "publish/R2RML/" + modelFileName;
+					ContextParameter.R2RML_PUBLISH_DIR) + modelFileName;
 			File f = new File(modelFileLocalPath);
 			
 			String graphName = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.graphName);

@@ -58,7 +58,7 @@ public class CRFModelMetadata extends KarmaUserMetadata {
 	}
 
 	@Override
-	public KarmaUserMetadataType getType() {
+	public KarmaMetadataType getType() {
 		return StandardUserMetadataTypes.CRF_MODEL;
 	}
 

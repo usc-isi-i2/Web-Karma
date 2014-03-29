@@ -33,7 +33,7 @@ public class ModelLearnerMetadata extends KarmaUserMetadata {
 	}
 
 	@Override
-	public KarmaUserMetadataType getType() {
+	public KarmaMetadataType getType() {
 		return StandardUserMetadataTypes.MODEL_LEARNER;
 	}
 }

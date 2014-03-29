@@ -22,7 +22,7 @@ package edu.isi.karma.rep;
 
 import edu.isi.karma.controller.command.CommandPreferences;
 import edu.isi.karma.controller.history.CommandHistory;
-import edu.isi.karma.metadata.KarmaUserMetadataManager;
+import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.metadata.TagsContainer;
@@ -74,7 +74,7 @@ public class Workspace extends Entity {
 
 	private final String commandPreferencesId;
 
-	private KarmaUserMetadataManager userMetadataManager;
+	private KarmaMetadataManager metadataManager;
 	/**
 	 * In the future we may need to keep track of user info.
 	 */
@@ -140,13 +140,13 @@ public class Workspace extends Entity {
 		return commandPreferencesId;
 	}
 
-	public void setUserMetadataManager(
-			KarmaUserMetadataManager userMetadataManager) {
-		this.userMetadataManager = userMetadataManager;
+	public void setMetadataManager(
+			KarmaMetadataManager metadataManager) {
+		this.metadataManager = metadataManager;
 		
 	}
-	public KarmaUserMetadataManager getUserMetadataManager()
+	public KarmaMetadataManager getMetadataManager()
 	{
-		return this.userMetadataManager;
+		return this.metadataManager;
 	}
 }

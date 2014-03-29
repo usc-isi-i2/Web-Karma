@@ -58,7 +58,7 @@ public class OntologyMetadata extends KarmaUserMetadata {
 		return "preloaded-ontologies";
 	}
 	@Override
-	public KarmaUserMetadataType getType() {
+	public KarmaMetadataType getType() {
 		return StandardUserMetadataTypes.ONTOLOGY;
 	}
 }

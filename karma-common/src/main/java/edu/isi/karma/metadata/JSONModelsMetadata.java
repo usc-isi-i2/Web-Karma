@@ -28,7 +28,7 @@ public class JSONModelsMetadata extends KarmaUserMetadata {
 		return ModelingConfiguration.getModelsJsonDir();
 	}
 	@Override
-	public KarmaUserMetadataType getType() {
+	public KarmaMetadataType getType() {
 		return StandardUserMetadataTypes.JSON_MODELS;
 	}
 }

@@ -30,7 +30,7 @@ public class UserPreferencesMetadata extends KarmaUserMetadata{
 	}
 
 	@Override
-	public KarmaUserMetadataType getType() {
+	public KarmaMetadataType getType() {
 		return StandardUserMetadataTypes.USER_PREFERENCES;
 	}
 }

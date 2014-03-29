@@ -69,10 +69,13 @@
 		<param-value>100</param-value>
 	</context-param>
   <context-param>
-		<param-name>PYTHON_SCRIPTS_DIRECTORY</param-name>
+  		<param-name>PYTHON_SCRIPTS_DIRECTORY</param-name>
 		<param-value>./src/main/scripts/Lib</param-value>
   </context-param>
-
+  <context-param>
+		<param-name>WEBAPP_PATH</param-name>
+		<param-value>src/main/webapp</param-value>
+  </context-param>
   <context-param>
 		<param-name>MSFT</param-name>
 		<param-value>False</param-value>
