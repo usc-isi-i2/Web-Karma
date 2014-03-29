@@ -1,5 +1,6 @@
 package edu.isi.karma.controller.command.worksheet;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -83,13 +84,16 @@ public class FoldCommand extends WorksheetCommand {
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
 		HTable htable =  worksheet.getHeaders();
 		hnodes.clear();
+		//List<String> HNodeIds = new ArrayList<String>();
 		JSONArray checked = (JSONArray) JSONUtil.createJson(CommandInputJSONUtil.getStringValue("values", (JSONArray)para));
 		for (int i = 0; i < checked.length(); i++) {
 			JSONObject t = (checked.getJSONObject(i));
 			hnodes.add(htable.getHNode((String) t.get("value")));
 		}
-		
+		//System.out.println("HNodeID: " + htable.getHNodeIdFromColumnName("homeworks"));
+		//HNodeIds.add(htable.getHNodeIdFromColumnName("homeworks"));
 		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows());
+		//HashValueManager.getHashValue(rows.get(0), HNodeIds);
 		//hnodes.add(htable.getHNode("HN5"));
 		//hnodes.add(htable.getHNode("HN7"));
 		JSONArray array = new JSONArray();

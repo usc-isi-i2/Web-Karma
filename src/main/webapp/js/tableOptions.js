@@ -763,7 +763,7 @@ var FoldDialog = (function() {
 	        var info = new Object();
 	        info["worksheetId"] = worksheetId;
 	        info["workspaceId"] = $.workspaceGlobalInformation.id;
-	        info["command"] = "FoldCommand";
+	        info["command"] = "UnfoldCommand";
 
 	        var newInfo = [];
 	        newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
