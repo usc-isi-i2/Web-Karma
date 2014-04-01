@@ -247,6 +247,12 @@ public class TemplateTermSetPopulatorPlan {
 	
 	public List<PartiallyPopulatedTermSet> execute(Row topRow)
 	{
+		if(columnTerms == null || columnTerms.isEmpty())
+		{
+			List<PartiallyPopulatedTermSet> predicates = new LinkedList<PartiallyPopulatedTermSet>();
+			predicates.add(new PartiallyPopulatedTermSet());
+			return predicates;
+		}
 		if(firstWorker != null)
 		{
 			return firstWorker.work(topRow);

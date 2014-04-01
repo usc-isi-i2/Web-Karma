@@ -1,6 +1,15 @@
 Karma: A Data Integration Tool
 ================================
 
+## News
+We released version 2.000 of Karma with many changes, new GUI, new RDF generator and many bug fixes.
+
+> **Important note: we had a mishap in the repository, so if you have a clone from a previous version you cannot update it to the new version. You need to delete your existing clone and get a fresh clone from the repo.** 
+
+Remember save your `preloaded-ontologies` and copy them back to the new clone.
+
+We moved the semantic types to the menus in the columns. They are not in the little red and black circles.
+
 Karma needs **Java 1.7, Maven 3.0**. Download Java SE from [http://www.oracle.com/technetwork/java/javase/downloads/index.html](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
 The Karma user guide is in the [wiki](https://github.com/InformationIntegrationGroup/Web-Karma/wiki).

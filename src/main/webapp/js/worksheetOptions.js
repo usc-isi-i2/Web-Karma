@@ -5,7 +5,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	var worksheetOptionsDiv;
 	
 	var options = [
-	        {name:"View model using straight lines", func:viewStraightLineModel, showCheckbox:true},
+	        {name:"View model using straight lines", func:viewStraightLineModel, showCheckbox:true, defaultChecked:true, initFunc:initStrightLineModel},
 	        {name:"divider"},
 	        {name:"Show Model" , func:showModel},
 			{name:"Set Properties", func:setProperties},
@@ -85,6 +85,13 @@ function WorksheetOptions(wsId, wsTitle) {
 		return false;
 	}
 	
+	function initStrightLineModel() {
+		if(worksheetOptionsDiv)
+			worksheetOptionsDiv.data("viewStraightLineModel", true);
+		else
+			window.setTimeout(initStrightLineModel, 100);
+	}
+
 	function showModel() {
 		console.log("SHow Model: " + worksheetTitle);
 		hideDropdown();
@@ -513,6 +520,8 @@ function WorksheetOptions(wsId, wsTitle) {
 				} else {
 					if(option.showCheckbox) {
 						var checkbox = $("<input>").attr("type", "checkbox");
+						if(option.defaultChecked)
+							checkbox.attr("checked","checked");
 						var label = $("<span>").append(checkbox).append("&nbsp;").append(title);
 						a.append(label);
 						a.click(func);
@@ -524,6 +533,8 @@ function WorksheetOptions(wsId, wsTitle) {
 				}
 				li.append(a);
 			}
+			if(option.initFunc)
+				option.initFunc();
 			ul.append(li);
 		};
 		div.append(ul);

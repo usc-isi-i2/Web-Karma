@@ -2,14 +2,16 @@ package edu.isi.karma.kr2rml;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.jetty.util.ConcurrentHashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 
+	private static final Logger LOG = LoggerFactory.getLogger(N3KR2RMLRDFWriter.class);
 	protected URIFormatter uriFormatter;
 	protected PrintWriter outWriter;
 	protected Set<String> generatedTriples;
@@ -29,10 +31,7 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 	
 	private void outputTriple(String triple)
 	{
-		if(generatedTriples.add(triple))
-		{
-			outWriter.println(triple);
-		}
+		generatedTriples.add(triple);
 	}
 	@Override
 	public void outputTripleWithURIObject(String subjUri, String predicateUri, String objectUri)
@@ -83,12 +82,22 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 	@Override
 	public void finishRow()
 	{
+		for(String value : generatedTriples)
+		{
+			outWriter.println(value);
+		}
 		outWriter.println("");
 		generatedTriples = new ConcurrentHashSet<String>();
 	}
 	@Override
 	public void flush() {
+		LOG.debug("Flushing writer");
+		for(String value : generatedTriples)
+		{
+			outWriter.println(value);
+		}
 		outWriter.flush();
+		LOG.debug("Flushed writer");
 		
 	}
 	@Override

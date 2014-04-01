@@ -1,0 +1,106 @@
+<thesauri/nationality/American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nationality> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nationality/American> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nationality> .
+<thesauri/nationality/American> <http://www.w3.org/2008/05/skos#prefLabel> "American" .
+<thesauri/nationality/American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<thesauri/nationality/American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nationality/American> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nationality> .
+
+<thesauri/nationality/American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nationality> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nationality/American> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nationality> .
+<thesauri/nationality/American> <http://www.w3.org/2008/05/skos#prefLabel> "American" .
+<thesauri/nationality/American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<thesauri/nationality/American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nationality/American> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nationality> .
+
+<thesauri/nationality/Australian> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nationality> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nationality/Australian> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nationality> .
+<thesauri/nationality/Australian> <http://www.w3.org/2008/05/skos#prefLabel> "Australian" .
+<thesauri/nationality/Australian> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<thesauri/nationality/Australian> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nationality/Australian> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nationality> .
+
+<thesauri/nationality/Austrian> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nationality> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nationality/Austrian> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nationality> .
+<thesauri/nationality/Austrian> <http://www.w3.org/2008/05/skos#prefLabel> "Austrian" .
+<thesauri/nationality/Austrian> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<thesauri/nationality/Austrian> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nationality/Austrian> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nationality> .
+
+<thesauri/nationality/Austrian> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nationality> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nationality/Austrian> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nationality> .
+<thesauri/nationality/Austrian> <http://www.w3.org/2008/05/skos#prefLabel> "Austrian" .
+<thesauri/nationality/Austrian> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<thesauri/nationality/Austrian> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nationality/Austrian> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nationality> .
+
+<thesauri/nationality/German-and-French> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nationality> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nationality/German-and-French> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nationality> .
+<thesauri/nationality/German-and-French> <http://www.w3.org/2008/05/skos#prefLabel> "German and French" .
+<thesauri/nationality/German-and-French> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<thesauri/nationality/German-and-French> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nationality/German-and-French> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nationality> .
+
+<thesauri/nationality/Italian-or-Spanish> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nationality> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nationality/Italian-or-Spanish> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nationality> .
+<thesauri/nationality/Italian-or-Spanish> <http://www.w3.org/2008/05/skos#prefLabel> "Italian or Spanish" .
+<thesauri/nationality/Italian-or-Spanish> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<thesauri/nationality/Italian-or-Spanish> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nationality/Italian-or-Spanish> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nationality> .
+
+<thesauri/nationality/Italian-Swiss> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nationality> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nationality/Italian-Swiss> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nationality> .
+<thesauri/nationality/Italian-Swiss> <http://www.w3.org/2008/05/skos#prefLabel> "Italian-Swiss" .
+<thesauri/nationality/Italian-Swiss> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<thesauri/nationality/Italian-Swiss> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nationality/Italian-Swiss> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nationality> .
+
+<thesauri/nationality/Puerto-Rican> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nationality> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nationality/Puerto-Rican> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nationality> .
+<thesauri/nationality/Puerto-Rican> <http://www.w3.org/2008/05/skos#prefLabel> "Puerto Rican" .
+<thesauri/nationality/Puerto-Rican> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<thesauri/nationality/Puerto-Rican> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nationality/Puerto-Rican> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nationality> .
+
+<thesauri/nationality/South-African> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nationality> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nationality/South-African> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nationality> .
+<thesauri/nationality/South-African> <http://www.w3.org/2008/05/skos#prefLabel> "South African" .
+<thesauri/nationality/South-African> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<thesauri/nationality/South-African> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nationality/South-African> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nationality> .
+
+<thesauri/nationality/South-American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nationality> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nationality/South-American> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nationality> .
+<thesauri/nationality/South-American> <http://www.w3.org/2008/05/skos#prefLabel> "South American" .
+<thesauri/nationality/South-American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<thesauri/nationality/South-American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nationality/South-American> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nationality> .
+
+<thesauri/nationality/Spanish> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nationality> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nationality/Spanish> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nationality> .
+<thesauri/nationality/Spanish> <http://www.w3.org/2008/05/skos#prefLabel> "Spanish" .
+<thesauri/nationality/Spanish> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<thesauri/nationality/Spanish> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nationality/Spanish> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nationality> .
+
+<thesauri/nationality/Spanish-New-Spain> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<thesauri/nationality> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+<thesauri/nationality/Spanish-New-Spain> <http://www.w3.org/2008/05/skos#inScheme> <thesauri/nationality> .
+<thesauri/nationality/Spanish-New-Spain> <http://www.w3.org/2008/05/skos#prefLabel> "Spanish (New Spain)" .
+<thesauri/nationality/Spanish-New-Spain> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<thesauri/nationality/Spanish-New-Spain> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#Concept> .
+<thesauri/nationality/Spanish-New-Spain> <http://www.w3.org/2008/05/skos#topConceptOf> <thesauri/nationality> .
+
+<thesauri/nationality> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2008/05/skos#ConceptScheme> .
+
