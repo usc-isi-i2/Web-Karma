@@ -110,22 +110,22 @@ public class UnfoldCommand extends WorksheetCommand {
 		}
 		newht.addHNode("Keys", newws, factory);
 		newht.addHNode("Values", newws, factory);
-		Row firstrow = newws.addRow(factory);
+		
 		HTable newKeyTable = newht.getHNodeFromColumnName("Keys").addNestedTable("Table for keys", newws, factory);
 		HTable newValueTable = newht.getHNodeFromColumnName("Values").addNestedTable("Table for values", newws, factory);
-		newValueTable.addHNode("Values", newws, factory);
-		HTable newValueNestedTable = newValueTable.getHNodeFromColumnName("Values").addNestedTable("Table for nested values", newws, factory);
+		//newValueTable.addHNode("Values", newws, factory);
+		//HTable newValueNestedTable = newValueTable.getHNodeFromColumnName("Values").addNestedTable("Table for nested values", newws, factory);
 		cloneHTable(oldht, newKeyTable, newws, factory, keyhnodes);
-		cloneHTable(oldht, newValueNestedTable, newws, factory, valuehnodes);
+		cloneHTable(oldht, newValueTable, newws, factory, valuehnodes);
 		for (String key : hash.keySet()) {
 			//System.out.println("key: " + hash.get(key));
 			ArrayList<String> r = hash.get(key);
-			cloneDataTable(getRow(rows, r.get(0)), firstrow.getNeighborByColumnName("Keys", factory).getNestedTable(), oldws.getHeaders(), newKeyTable, keyhnodes, factory);
-			Row lastRow = firstrow.getNeighborByColumnName("Values", factory).getNestedTable().addRow(factory);
+			Row firstrow = newws.addRow(factory);
+			Row lastRow = cloneDataTable(getRow(rows, r.get(0)), firstrow.getNeighborByColumnName("Keys", factory).getNestedTable(), oldws.getHeaders(), newKeyTable, keyhnodes, factory);
 			for (String rowid : r) {
 				Row cur = getRow(rows, rowid);
 				Table dataTable = lastRow.getNeighborByColumnName("Values", factory).getNestedTable();
-				cloneDataTable(cur, dataTable, oldws.getHeaders(), newValueNestedTable, valuehnodes, factory);
+				cloneDataTable(cur, dataTable, oldws.getHeaders(), newValueTable, valuehnodes, factory);
 			}
 		}
 		//cloneDataTable(oldws.getDataTable(), firstrow.getNeighborByColumnName("Keys", factory).getNestedTable(), oldws.getHeaders(), newKeyTable, keyhnodes, factory);
