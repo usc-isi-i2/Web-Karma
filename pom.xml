@@ -3,25 +3,77 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.isi</groupId>
   <artifactId>webkarma</artifactId>
-  <packaging>war</packaging>
+  <packaging>pom</packaging>
   <version>0.0.1-SNAPSHOT</version>
   <name>ISI Karma Maven Webapp</name>
   <url>http://maven.apache.org</url>
-  
-  <properties>
+
+	<modules>
+		<module>karma-common</module>
+		<module>karma-not-common</module>
+		<module>karma-web</module>
+		<module>karma-offline</module>
+		<module>karma-jdbc</module>
+		<module>karma-crf</module>
+		<module>karma-util</module>
+		<module>karma-cleaning</module>
+		<module>karma-commands</module>
+	</modules>
+
+
+	<properties>
     <jettyVersion>9.0.5.v20130815</jettyVersion>
     <project.build.sourceEncoding>
       UTF-8
     </project.build.sourceEncoding>
-    <project.reporting.outputEncoding>  
+    <project.reporting.outputEncoding>
       UTF-8
     </project.reporting.outputEncoding>
     <geotools.version>
     	9.0-M0
     </geotools.version>
     <powermock.version>1.5.2</powermock.version>
+
+	  <jena.core.version>2.6.4</jena.core.version>
+	  <jena.arq.version>2.8.8</jena.arq.version>
+	  <jena.tdb.version>0.8.10</jena.tdb.version>
+	  <jena.iri.version>0.8</jena.iri.version>
+
+	  <jena.group>com.hp.hpl.jena</jena.group>
+	  <jena.core.artifact>jena</jena.core.artifact>
+	  <jena.arq.artifact>arq</jena.arq.artifact>
+	  <jena.tdb.artifact>tdb</jena.tdb.artifact>
+	  <jena.iri.artifact>iri</jena.iri.artifact>
+
+
+	  <apache.commons.lang.version>2.4</apache.commons.lang.version>
+	  <apache.commons.io.version>2.4</apache.commons.io.version>
+	  <apache.commons.compress.version>1.5</apache.commons.compress.version>
+	  <apache.commons.codec.version>1.8</apache.commons.codec.version>
+
+
+	  <apache.commons.lang3.version>3.1</apache.commons.lang3.version>
+	  <apache.commons.collections.version>3.2.1</apache.commons.collections.version>
+	  <apache.commons.math.version>2.2</apache.commons.math.version>
+	  <apache.oro.version>2.0.8</apache.oro.version>
+	  <apache.opennlp.version>1.5.3</apache.opennlp.version>
+
+	  <log4j.version>1.2.13</log4j.version>
+	  <slf4j.version>1.6.0</slf4j.version>
+	  <junit.version>4.11</junit.version>
+
+	  <mysql.connector.version>5.1.26</mysql.connector.version>
+	  <antlr.version>3.4</antlr.version>
+	  <jdom.version>1.1.2</jdom.version>
+
+	  <gson.version>2.2.2</gson.version>
+	  <httpcomponents.version>4.2.4</httpcomponents.version>
+	  <guava.version>13.0.1</guava.version>
+	  <hadoop.dist.mahout.version>0.7</hadoop.dist.mahout.version>
+	  <spring.version>3.2.4.RELEASE</spring.version>
+
   </properties>
-  
+
   <repositories>
     <!-- <repository>
       <id>JGraphT Repository</id>
@@ -30,16 +82,26 @@
          <enabled>false</enabled>
       </snapshots>
  	</repository> -->
-    
- 	<repository>
-      <id>maven2-repository.dev.java.net</id>
-      <name>Java.net Maven 2 Repository</name>
-      <url>http://download.java.net/maven/2</url>
-      <layout>default</layout>
-      <snapshots>
-         <enabled>true</enabled>
-      </snapshots>
-      </repository>
+
+	  <repository>
+		  <id>central</id>
+		  <name>Central Maven Repository</name>
+		  <url>http://repo1.maven.org/maven2/</url>
+	  </repository>
+
+	  <repository>
+		  <id>java-net</id>
+		  <name>Maven Java Net Snapshots and Releases</name>
+		  <url>https://maven.java.net/content/groups/public/</url>
+		  <snapshots>
+			  <enabled>false</enabled>
+		  </snapshots>
+	  </repository>
+
+	  <repository>
+		  <id>cloudera-repo</id>
+		  <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+	  </repository>
       <repository>
         <id>maven2.maven.org</id>
         <url>http://repo1.maven.org/maven2/</url>
@@ -50,13 +112,13 @@
             <url>http://download.osgeo.org/webdav/geotools/</url>
       </repository>
    </repositories>
-  <dependencies>
+  <dependencyManagement><dependencies>
   <dependency>
 	<groupId>com.fasterxml.uuid</groupId>
 	<artifactId>java-uuid-generator</artifactId>
 	<version>3.1.3</version>
 </dependency>
-            
+
   <dependency>
 	<groupId>com.healthmarketscience.jackcess</groupId>
 	<artifactId>jackcess</artifactId>
@@ -90,29 +152,28 @@
   	<dependency>
 		<groupId>log4j</groupId>
 		<artifactId>log4j</artifactId>
-		<version>1.2.16</version>
+		<version>${log4j.version}</version>
 	</dependency>
 	<dependency>
 		<groupId>org.slf4j</groupId>
 		<artifactId>slf4j-api</artifactId>
-		<version>1.6.4</version>
+		<version>${slf4j.version}</version>
 	</dependency>
 	<dependency>
 		<groupId>org.slf4j</groupId>
 		<artifactId>slf4j-log4j12</artifactId>
-		<version>1.6.4</version>
+		<version>${slf4j.version}</version>
 	</dependency>
 	<dependency>
 			<groupId>net.sourceforge.jtds</groupId>
 			<artifactId>jtds</artifactId>
-			<version>1.2.5</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/jtds-1.2.5.jar</systemPath>
+			<version>1.2.6</version>
 		</dependency>
+
 	<dependency>
 		<groupId>xml-apis</groupId>
 		<artifactId>xml-apis</artifactId>
-		<version>1.0.b2</version>
+		<version>1.4.01</version>
 	</dependency>
     <!-- The Java API for KML -->
    <dependency>
@@ -121,24 +182,30 @@
       <version>2.2.0-SNAPSHOT</version>
    </dependency>
    <dependency>
-    	<groupId>com.hp.hpl.jena</groupId>
-    	<artifactId>arq</artifactId>
-    	<version>2.8.8</version>
+    	<groupId>${jena.group}</groupId>
+    	<artifactId>${jena.arq.artifact}</artifactId>
+    	<version>${jena.arq.version}</version>
     </dependency>
     <dependency>
-    	<groupId>com.hp.hpl.jena</groupId>
-    	<artifactId>jena</artifactId>
-    	<version>2.6.4</version>
+    	<groupId>${jena.group}</groupId>
+    	<artifactId>${jena.core.artifact}</artifactId>
+    	<version>${jena.core.version}</version>
     </dependency>
     <dependency>
-    	<groupId>com.hp.hpl.jena</groupId>
-    	<artifactId>iri</artifactId>
-    	<version>0.8</version>
+    	<groupId>${jena.group}</groupId>
+    	<artifactId>${jena.iri.artifact}</artifactId>
+    	<version>${jena.iri.version}</version>
     </dependency>
     <dependency>
-    	<groupId>com.hp.hpl.jena</groupId>
-    	<artifactId>tdb</artifactId>
-    	<version>0.8.10</version>
+	    <groupId>org.apache.jena</groupId>
+	    <artifactId>jena-jdbc-driver-remote</artifactId>
+    	<version>1.0.0</version>
+
+    </dependency>
+    <dependency>
+    	<groupId>${jena.group}</groupId>
+    	<artifactId>${jena.tdb.artifact}</artifactId>
+    	<version>${jena.tdb.version}</version>
     </dependency>
     <dependency>
 		<groupId>net.sf.jgrapht</groupId>
@@ -148,7 +215,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -171,27 +238,33 @@
     <dependency>
     	<groupId>commons-io</groupId>
     	<artifactId>commons-io</artifactId>
-    	<version>2.0.1</version>
+    	<version>${apache.commons.io.version}</version>
     </dependency>
     <dependency>
     	<groupId>net.sf.opencsv</groupId>
     	<artifactId>opencsv</artifactId>
     	<version>2.3</version>
     </dependency>
+
+	  <dependency>
+		  <groupId>commons-httpclient</groupId>
+		  <artifactId>commons-httpclient</artifactId>
+		  <version>3.1</version>
+	  </dependency>
     <dependency>
     	<groupId>mysql</groupId>
     	<artifactId>mysql-connector-java</artifactId>
-    	<version>5.1.17</version>
+    	<version>${mysql.connector.version}</version>
     </dependency>
     <dependency>
     	<groupId>org.antlr</groupId>
     	<artifactId>antlr</artifactId>
-    	<version>3.2</version>
+    	<version>${antlr.version}</version>
     </dependency>
         <dependency>
         	<groupId>org.jdom</groupId>
         	<artifactId>jdom</artifactId>
-        	<version>1.1.2</version>
+        	<version>${jdom.version}</version>
         	<exclusions>
         		<exclusion>
         			<artifactId>maven-cobertura-plugin</artifactId>
@@ -201,8 +274,17 @@
         			<artifactId>maven-findbugs-plugin</artifactId>
         			<groupId>maven-plugins</groupId>
         		</exclusion>
+		        <exclusion>
+			        <artifactId>com.ibm.icu</artifactId>
+			        <groupId>icu4j</groupId>
+		        </exclusion>
         	</exclusions>
         </dependency>
+	  <dependency>
+		  <groupId>com.ibm.icu</groupId>
+		  <artifactId>icu4j</artifactId>
+		  <version>51.1</version>
+	  </dependency>
         <dependency>
         	<groupId>org.apache.poi</groupId>
         	<artifactId>poi</artifactId>
@@ -213,24 +295,22 @@
         	<artifactId>poi-ooxml</artifactId>
         	<version>3.8-beta5</version>
         </dependency>
+   
         <dependency>
         	<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.1</version>
+			<version>${apache.commons.lang3.version}</version>
         </dependency>
 		<dependency>
 		      <groupId>com.google.code.gson</groupId>
 		      <artifactId>gson</artifactId>
-		      <version>2.2.2</version>
-		      <scope>compile</scope>
+		      <version>${gson.version}</version>
 	    </dependency>
 		<dependency>
 	        <groupId>net.sf.json-lib</groupId>
 	        <artifactId>json-lib</artifactId>
 	        <version>2.3</version>
-	        <type>jar</type>
 	        <classifier>jdk15</classifier>
-	        <scope>compile</scope>
 	    </dependency>
         <dependency>
               <groupId>uk.com.robust-it</groupId>
@@ -245,12 +325,12 @@
         <dependency>
         	<groupId>org.apache.httpcomponents</groupId>
         	<artifactId>httpcore</artifactId>
-        	<version>4.2.2</version>
+        	<version>${httpcomponents.version}</version>
         </dependency>
         <dependency>
         	<groupId>org.apache.httpcomponents</groupId>
         	<artifactId>httpclient</artifactId>
-        	<version>4.2.2</version>
+        	<version>${httpcomponents.version}</version>
         </dependency>
 		<dependency>
 			<groupId>org.kohsuke</groupId>
@@ -260,12 +340,12 @@
 		<dependency>
 		    <groupId>com.google.guava</groupId>
 		    <artifactId>guava</artifactId>
-		    <version>14.0</version>
+		    <version>${guava.version}</version>
 		</dependency>
    		<dependency>
         	<groupId>org.apache.mahout</groupId>
         	<artifactId>mahout-core</artifactId>
-        	<version>0.5</version>
+        	<version>${hadoop.dist.mahout.version}</version>
     	</dependency>
     	<dependency>
       		<groupId>org.powermock</groupId>
@@ -279,48 +359,62 @@
 	      	<version>${powermock.version}</version>
 	      	<scope>test</scope>
    		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>com.esotericsoftware.kryo</groupId>
-			<artifactId>kryo</artifactId>
-			<version>2.21</version>
-		</dependency>
-		<dependency>
-			<groupId>com.dyuproject.protostuff</groupId>
-			<artifactId>protostuff-api</artifactId>
-			<version>1.0.7</version>
-		</dependency>
-		<dependency>
-			<groupId>com.dyuproject.protostuff</groupId>
-			<artifactId>protostuff-core</artifactId>
-			<version>1.0.7</version>
-		</dependency>
-		<dependency>
-			<groupId>com.dyuproject.protostuff</groupId>
-			<artifactId>protostuff-runtime</artifactId>
-			<version>1.0.7</version>
-		</dependency>
-		<dependency>
-			<groupId>com.dyuproject.protostuff</groupId>
-			<artifactId>protostuff-collectionschema</artifactId>
-			<version>1.0.7</version>
-		</dependency>   
-		<dependency>
-			<groupId>com.dyuproject.protostuff</groupId>
-			<artifactId>protostuff-compiler</artifactId>
-			<version>1.0.7</version>
-		</dependency>   
-		<dependency>
-			<groupId>org.apache.thrift</groupId>
-			<artifactId>libthrift</artifactId>
-			<version>0.9.0</version>
-		</dependency>
-		<dependency>
-			<groupId>de.javakaffee</groupId>
-			<artifactId>kryo-serializers</artifactId>
-			<version>0.9</version>
-		</dependency>
-		-->
+
+	  <dependency>
+		  <groupId>javax.servlet</groupId>
+		  <artifactId>javax.servlet-api</artifactId>
+		  <version>3.0.1</version>
+	  </dependency>
+
+	  <dependency>
+		  <groupId>org.reflections</groupId>
+		  <artifactId>reflections</artifactId>
+		  <version>0.9.8</version>
+	  </dependency>
+
+
+	  <!--
+	<dependency>
+		<groupId>com.esotericsoftware.kryo</groupId>
+		<artifactId>kryo</artifactId>
+		<version>2.21</version>
+	</dependency>
+	<dependency>
+		<groupId>com.dyuproject.protostuff</groupId>
+		<artifactId>protostuff-api</artifactId>
+		<version>1.0.7</version>
+	</dependency>
+	<dependency>
+		<groupId>com.dyuproject.protostuff</groupId>
+		<artifactId>protostuff-core</artifactId>
+		<version>1.0.7</version>
+	</dependency>
+	<dependency>
+		<groupId>com.dyuproject.protostuff</groupId>
+		<artifactId>protostuff-runtime</artifactId>
+		<version>1.0.7</version>
+	</dependency>
+	<dependency>
+		<groupId>com.dyuproject.protostuff</groupId>
+		<artifactId>protostuff-collectionschema</artifactId>
+		<version>1.0.7</version>
+	</dependency>
+	<dependency>
+		<groupId>com.dyuproject.protostuff</groupId>
+		<artifactId>protostuff-compiler</artifactId>
+		<version>1.0.7</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.thrift</groupId>
+		<artifactId>libthrift</artifactId>
+		<version>0.9.0</version>
+	</dependency>
+	<dependency>
+		<groupId>de.javakaffee</groupId>
+		<artifactId>kryo-serializers</artifactId>
+		<version>0.9</version>
+	</dependency>
+	-->
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-repository</artifactId>
@@ -348,17 +442,17 @@
 			<artifactId>sesame-rio-turtle</artifactId>
 			<version>2.7.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-repository-http</artifactId>
 			<version>2.7.1</version>
 		</dependency>
-		
-		<dependency> 
-		  <groupId>org.openrdf.sesame</groupId> 
-		  <artifactId>sesame-repository-sparql</artifactId> 
-		  <version>2.7.1</version>
+
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-repository-sparql</artifactId>
+			<version>2.7.1</version>
 		</dependency>
 		<!-- Added by MVS -->
         <dependency>
@@ -366,108 +460,61 @@
           <artifactId>juniversalchardet</artifactId>
           <version>1.0.3</version>
         </dependency>
-  </dependencies>
-  
-  <build>
-    <resources>
-        <resource>
-            <directory>src/main/config</directory>
-        </resource>
-    </resources>
-    <plugins>
-      	<plugin>
-        	<groupId>org.eclipse.jetty</groupId>
-        	<artifactId>jetty-maven-plugin</artifactId>
-        	<version>${jettyVersion}</version>
-        	<configuration>
-        	<systemProperties>
-            <systemProperty>
-                <name>log4j.configuration</name>
-                <value>log4j.properties</value>
-            </systemProperty>
-         </systemProperties>
-<!--         		<jettyXml> -->
-<!--         			jetty.xml -->
-<!--         		</jettyXml> -->
-	        	<webApp>
-			      <contextPath>/</contextPath>
-			    </webApp>
-			    <connectors>
-					<!-- work around file locking on windows -->
-					<connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
-						<port>8080</port><!-- this connector defaults to 1300 for some reason -->
-					</connector>
-        		</connectors>
-			    <contextHandlers>
-			      <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
-			        <war>${project.basedir}/external_webapps/openrdf-workbench.war</war>
-			        <contextPath>/openrdf-workbench</contextPath>
-			      </contextHandler>
-			      <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
-			        <war>${project.basedir}/external_webapps/openrdf-sesame.war</war>
-			        <contextPath>/openrdf-sesame</contextPath>
-			      </contextHandler>
-			      <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
-			        <war>${project.basedir}/external_webapps/cleaningService.war</war>
-			        <contextPath>/cleaningService</contextPath>
-			      </contextHandler>
-			    </contextHandlers>
-		    
-	        </configuration>
-	        
-<!-- change user/pwd in src/main/config/jettyrealm.properties -->
-<!--  <configuration>
-   <webAppConfig>
-      <contextPath>/*</contextPath>
-    </webAppConfig>
-    <loginServices>
-      <loginService implementation="org.eclipse.jetty.security.HashLoginService">
-        <name>TestRealm</name>
-        <config>${project.basedir}/src/main/config/jettyrealm.properties</config>
-      </loginService>
-    </loginServices>
-  </configuration>
--->
-      	</plugin>
-      	<plugin>
-	        <groupId>org.apache.maven.plugins</groupId>
-	        <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
-	        <configuration>
-	          <source>1.7</source>
-	          <target>1.7</target>
-	        </configuration>
-	    </plugin>
-      <!--
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.1</version>
-        <executions>
-          <execution><goals><goal>java</goal></goals></execution>
-        </executions>
-        <configuration>
-          <mainClass>edu.isi.karma.webserver.ServerStart</mainClass>
-        </configuration>
+	  <dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-core</artifactId>
+		  <version>${spring.version}</version>
+	  </dependency></dependencies>
+	</dependencyManagement>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/config</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		    <plugin>
+            <groupId>org.codehaus.gmaven</groupId>
+            <artifactId>gmaven-plugin</artifactId>
+            <version>1.3</version>
+        <dependencies>
+                <dependency>
+                    <groupId>org.reflections</groupId>
+                    <artifactId>reflections</artifactId>
+                    <version>0.9.8</version>
+                </dependency>
+            </dependencies>
+        
       </plugin>
-    -->
-    
-	<plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-war-plugin</artifactId>
-		<version>2.4</version>
-		<configuration>
-        <archiveClasses>true</archiveClasses>
-       
-			<webResources>
-				<resource>
-					<directory>src/main/webapp/</directory>
-				</resource>
-			</webResources>
-		</configuration>
-	</plugin>
-       
-    </plugins>
-  </build>
-  
+			
+			<!--
+			  <plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+				  <execution><goals><goal>java</goal></goals></execution>
+				</executions>
+				<configuration>
+				  <mainClass>edu.isi.karma.webserver.ServerStart</mainClass>
+				</configuration>
+			  </plugin>
+			-->
+
+
+		</plugins>
+	</build>
 </project>
