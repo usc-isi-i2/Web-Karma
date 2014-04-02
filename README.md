@@ -29,6 +29,20 @@ To run the jetty server, execute the following command from webkarma top directo
 To start in logging mode (where all the logs are stored in the log folder), use the following command to start the server:
 	`mvn -Dslf4j=false -Dlog4j.configuration=file:./config/log4j.properties jetty:run`
 
+## Installation and Setup for Development Version ##
+System Requirements: **Java 1.7, Maven 3.0** and above.
+
+To compile the code run
+`mvn clean install`
+
+Now, to run the web version of karma:
+`cd karma-web`
+`mvn jetty:run`
+
+Once the server has started point your browser to **http://localhost:8080/web-karma.html**. To start it on a port other than 8080 (e.g. Port number 9999) 
+`mvn -Djetty.port=9999 jetty:run`
+
+The development version is now split into different projects. Each project has its own pom.xml and can be imported into Eclipse.
 
 ## Frequently Asked Questions ##
 ### How to perform offline RDF generation for a data source using a published model? ###
