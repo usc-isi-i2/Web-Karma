@@ -2,8 +2,8 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 	var propertyDiv;
 	var propertyList1, propertyList2;
 	var propertySelectorCallback = null;
-	var propertyData = {};
-	var defaultPropertyData = {"uri":"", "label":"", "id":""};
+	var propertyData = {"uri":"", "label":"", "id":""};
+	
 	var selectedClassData = {"uri":"", "label":"", "id":""};
 	
 	var propertyLabel = "Property";
@@ -48,10 +48,12 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 	            })
 	            .bind("loaded.jstree", function(e,data) {
 	            	console.log("property jstree Type: " + $(list1).attr("id"));
-	            	$("#" + id + "_propertyKeyword").val(defaultPropertyData.label);
+	            	if(propertyData.label.length > 0) {
+	            		$("#" + id + "_propertyKeyword").val(propertyData.label);
+	            	}
 	            	window.setTimeout(function() {
-						if(defaultPropertyData.label.length > 0) {
-							var treeId = "#" + PropertyUI.getNodeID(defaultPropertyData.label, defaultPropertyData.id, defaultPropertyData.uri);
+						if(propertyData.label.length > 0) {
+							var treeId = "#" + PropertyUI.getNodeID(propertyData.label, propertyData.id, propertyData.uri);
 							console.log("Now select node:" + treeId + " in propertyList:" + $(list1).attr("id"));
 							selectOnLoad = true;
 							$(list1).jstree('select_node', treeId, true, true);
@@ -96,7 +98,7 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 										.addClass("form-control")
 										.attr("id", id + "_propertyKeyword")
 										.attr("autocomplete", "off")
-										.val(defaultPropertyData.label)
+										.val(propertyData.label)
 										.addClass("propertyInput")
 								);
 		
@@ -160,9 +162,9 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 
 	this.setDefaultProperty = function(label, propId, uri) {
 		console.log("propertyUI:setDefaultProperty:" + label + "," + propId + "," + uri);
-		defaultPropertyData.label = label;
-		defaultPropertyData.id = propId;
-		defaultPropertyData.uri = uri;
+		propertyData.label = label;
+		propertyData.id = propId;
+		propertyData.uri = uri;
 	};
 	
 	this.setSelectedClass = function(label, classId, uri) {

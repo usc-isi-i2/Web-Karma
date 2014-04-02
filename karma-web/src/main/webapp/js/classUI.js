@@ -5,8 +5,7 @@ function ClassUI(id,
 	var classList1, classList2;
 	
 	var classSelectorCallback = null;
-	var classData = {};
-	var defaultClassData = {"uri":"", "label":"", "id":""};
+	var classData = {"uri":"", "label":"", "id":""};
 	var selectedPropertyData = {"uri":"", "label":"", "id":""};
 	
 	var classLabel = "Class";
@@ -50,10 +49,12 @@ function ClassUI(id,
 	            })
 	            .bind("loaded.jstree", function (e, data) {
 	            	console.log("loaded classlist: " + $(list1).attr("id"));
-	            	$("#" + id + "_classKeyword").val(defaultClassData.label);
+	            	if(classData.label.length > 0 && classData.label != "Class") {
+	            		$("#" + id + "_classKeyword").val(classData.label);
+	            	}
 	    			window.setTimeout(function() {
-	    				if(defaultClassData.label.length > 0 && defaultClassData.label != "Class") {
-	    					var treeId = "#" + ClassUI.getNodeID(defaultClassData.label, defaultClassData.id, defaultClassData.uri);
+	    				if(classData.label.length > 0 && classData.label != "Class") {
+	    					var treeId = "#" + ClassUI.getNodeID(classData.label, classData.id, classData.uri);
 	    					console.log("Now select node:" + treeId + " in classList " + $(list1).attr("id"));
 	    					selectOnLoad = true;
 	    					$(list1).jstree('select_node', treeId, true, true);
@@ -91,7 +92,7 @@ function ClassUI(id,
 										.addClass("form-control")
 										.attr("id", id + "_classKeyword")
 										.attr("autocomplete", "off")
-										.val(defaultClassData.label)
+										.val(classData.label)
 										.addClass("classInput")
 								);
 		
@@ -163,9 +164,9 @@ function ClassUI(id,
 	
 	this.setDefaultClass = function(label, classId, uri) {
 		console.log("classUI:setDefaultClass:" + label + "," + classId + "," + uri);
-		defaultClassData.label = label;
-		defaultClassData.id = classId;
-		defaultClassData.uri = uri;
+		classData.label = label;
+		classData.id = classId;
+		classData.uri = uri;
 	};
 	
 	this.setSelectedProperty = function(label, propId, uri) {
