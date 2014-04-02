@@ -134,7 +134,7 @@ public class SetSemanticTypeCommand extends Command {
 				
 				// For property semantic types, domain uri goes to "domainValue" and link uri goes to "fullTypeValue".
 				// For class semantic type, class uri goes "fullTypeValue" and "domainValue" is empty.
-				String domainValue = type.getString(ClientJsonKeys.Domain.name());
+				String domainValue = type.getString(ClientJsonKeys.DomainId.name());
 				String fullTypeValue = type.getString(ClientJsonKeys.FullType.name());
 //				logger.trace("FULL TYPE:" + type.getString(ClientJsonKeys.FullType.name()));
 //				logger.trace("Domain: " + type.getString(ClientJsonKeys.Domain.name()));
@@ -173,17 +173,7 @@ public class SetSemanticTypeCommand extends Command {
 //						continue;
 //					}
 					if (label == null) {
-						int len = domainValue.length(); 
-						if ((len > 1) && Character.isDigit(domainValue.charAt(len-1))) {
-							String newDomainValue = domainValue.substring(0, len-1);
-							label = ontMgr.getUriLabel(newDomainValue);
-						}
-						// If still node is not found
-						if (label == null) {
-							logger.error("No graph node found for the node: " + domainValue);
-							return new UpdateContainer(new ErrorUpdate("" +
-									"Error occured while setting semantic type!"));
-						}
+						label = new Label(type.getString(ClientJsonKeys.DomainUri.name()));
 					}
 					domain = alignment.addInternalNode(label);
 				}

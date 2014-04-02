@@ -59,7 +59,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 
 	public enum JsonKeys {
 		HNodeId, FullType, ConfidenceLevel, Origin, FullCRFModel, DisplayLabel, 
-		DisplayDomainLabel, Domain, SemanticTypesArray, isPrimary, isPartOfKey, 
+		DisplayDomainLabel, DomainId, DomainUri, SemanticTypesArray, isPrimary, isPartOfKey, 
 		Types, isMetaProperty, rdfLiteralType
 	}
 
@@ -132,22 +132,17 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 //							(domainNode.getLabel().getPrefix() + ":" + domainNode.getLocalId()) : domainNode.getLocalId();
 					if (!type.isClass()) {
 						writer
-							.key(JsonKeys.FullType.name())
-							.value(type.getType().getUri())
-							.key(JsonKeys.DisplayLabel.name())
-							.value(type.getType().getDisplayName())
-							.key(JsonKeys.Domain.name())
-							.value(domainNode.getId())
-							.key(JsonKeys.DisplayDomainLabel.name())
-							.value(domainNode.getDisplayId());
+							.key(JsonKeys.FullType.name()).value(type.getType().getUri())
+							.key(JsonKeys.DisplayLabel.name()).value(type.getType().getDisplayName())
+							.key(JsonKeys.DomainId.name()).value(domainNode.getId())
+							.key(JsonKeys.DomainUri.name()).value(domainNode.getUri())
+							.key(JsonKeys.DisplayDomainLabel.name()).value(domainNode.getDisplayId());
 					} else {
 						writer
-							.key(JsonKeys.FullType.name())
-							.value(domainNode.getId())
-							.key(JsonKeys.DisplayLabel.name())
-							.value(domainNode.getDisplayId())
-							.key(JsonKeys.Domain.name())
-							.value("")
+							.key(JsonKeys.FullType.name()).value(domainNode.getId())
+							.key(JsonKeys.DisplayLabel.name()).value(domainNode.getDisplayId())
+							.key(JsonKeys.DomainId.name()).value("")
+							.key(JsonKeys.DomainUri.name()).value("")
 							.key(JsonKeys.DisplayDomainLabel.name())
 							.value("");
 					}
@@ -180,13 +175,13 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 									.key(JsonKeys.isPrimary.name())
 									.value(false);
 							if (!synType.isClass()) {
-								writer.key(JsonKeys.Domain.name())
-									.value(synType.getDomain().getUri())
+								writer.key(JsonKeys.DomainUri.name()).value(synType.getDomain().getUri())
+									.key(JsonKeys.DomainId.name()).value("")
 									.key(JsonKeys.DisplayDomainLabel.name())
 									.value(synType.getDomain().getDisplayName());
 							} else {
-								writer.key(JsonKeys.Domain.name())
-									.value("")
+								writer.key(JsonKeys.DomainId.name()).value("")
+									.key(JsonKeys.DomainUri.name()).value("")
 									.key(JsonKeys.DisplayDomainLabel.name())
 									.value("");
 							}

@@ -100,7 +100,7 @@ public class ShowAutoModelCommandFactory extends JSONInputCommandFactory {
 
 			SemanticType type = null;
 			String domain = (String) value
-					.get(SemanticType.ClientJsonKeys.Domain.name());
+					.get(SemanticType.ClientJsonKeys.DomainUri.name());
 			String fullType = (String) value
 					.get(SemanticType.ClientJsonKeys.FullType.name());
 			boolean isPrimary = (Boolean) value

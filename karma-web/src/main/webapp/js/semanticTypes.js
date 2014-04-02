@@ -41,7 +41,7 @@ var SetSemanticTypeDialog = (function() {
 			        // Take care of the special meta properties that are set through the advanced options
 			    	if (type["isMetaProperty"]) {
 			    		if (type["DisplayLabel"] == "km-dev:classLink") {
-			    			addUriSemanticType(type["DisplayDomainLabel"], type["Domain"]);
+			    			addUriSemanticType(type["DisplayDomainLabel"], type["DomainUri"], type["DomainId"]);
 			    		} else if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
 			    			$("#isSubclassOfClass").prop('checked', true);
 			    			$("#isSubclassOfClassTextBox").val(type["DisplayDomainLabel"]);
@@ -198,10 +198,11 @@ var SetSemanticTypeDialog = (function() {
 		    // Loop through each selected row in the table
 		    $.each($("tr.selected.semTypeRow",table), function(index, row){
 		        var fullType = $(row).data("FullType");
-		        var domain = $(row).data("Domain");
+		        var domainUri = $(row).data("DomainUri");
+		        var domainId = $(row).data("DomainId");
 
 		        // Check if the user selected a fake semantic type object
-		        if(domain == "fakeDomainURI" || fullType == "fakePropertyURI") {
+		        if(domainUri == "fakeDomainURI" || fullType == "fakePropertyURI") {
 		            $(row).addClass("fixMe");
 		           showError("Semantic type not valid!");
 		            notValid = true;
@@ -210,7 +211,7 @@ var SetSemanticTypeDialog = (function() {
 		        // Check if the type already exists (like the user had same type in a previous row)
 		        var exists = false;
 		        $.each(existingTypes, function(index2, type){
-		            if(type["Domain"] == domain && fullType == type["FullType"]) {
+		            if(type["DomainUri"] == domainUri && fullType == type["FullType"]) {
 		                exists = true;
 		                return false;
 		            }
@@ -221,7 +222,8 @@ var SetSemanticTypeDialog = (function() {
 		        // Create a new object and push it into the array
 		        var newType = new Object();
 		        newType["FullType"] = fullType;
-		        newType["Domain"] = domain;
+		        newType["DomainUri"] = domainUri;
+		        newType["DomainId"] = domainId;
 		        newType["DomainLabel"] = $(row).data("DisplayDomainLabel");
 		        
 		        // Check if it was chosen primary
@@ -355,17 +357,19 @@ var SetSemanticTypeDialog = (function() {
             // Create a fake sem type object to how in the table
             var fakeSemType = new Object();
             fakeSemType["FullType"] = "fakePropertyURI";
-            fakeSemType["Domain"] = "fakeDomainURI";
+            fakeSemType["DomainUri"] = "fakeDomainURI";
+            fakeSemType["DomainId"] = "fakeDomainID";
             fakeSemType["DisplayLabel"] = "property";
             fakeSemType["DisplayDomainLabel"] = "Class";
             // Add it to the table
             addSemTypeObjectToCurrentTable(fakeSemType, false, false);
         }
         
-        function addUriSemanticType(domainLabel, domain) {
+        function addUriSemanticType(domainLabel, domainUri, domainId) {
         	var type = new Object();
             type["FullType"] = "http://isi.edu/integration/karma/dev#classLink";
-            type["Domain"] = domain;
+            type["DomainId"] = domainId;
+            type["DomainUri"] = domainUri;
             type["DisplayLabel"] = "km-dev:classLink";
             type["DisplayDomainLabel"] = domainLabel;
             type["isPrimary"] = true;
@@ -377,7 +381,8 @@ var SetSemanticTypeDialog = (function() {
             // Create a fake sem type object to how in the table
             var fakeSemType = new Object();
             fakeSemType["FullType"] = "http://isi.edu/integration/karma/dev#classLink";
-            fakeSemType["Domain"] = "fakeDomainURI";
+            fakeSemType["DomainUri"] = "fakeDomainURI";
+            fakeSemType["DomainId"] = "fakeDomainID";
             fakeSemType["DisplayLabel"] = "km-dev:classLink";
             fakeSemType["DisplayDomainLabel"] = "Class";
             // Add it to the table
@@ -390,9 +395,9 @@ var SetSemanticTypeDialog = (function() {
             // Check if it is eligible to be added to the table
             var isValid = true;
             $.each($("tr", table), function(index, row){
-                if($(row).data("FullType") == semTypeObject["FullType"] && $(row).data("Domain") == semTypeObject["Domain"]) {
+                if($(row).data("FullType") == semTypeObject["FullType"] && $(row).data("DomainUri") == semTypeObject["DomainUri"]) {
                     // We allow multiple fake semantic type objects to be added
-                    if(!(semTypeObject["FullType"] == "fakePropertyURI" && semTypeObject["Domain"] == "fakeDomainURI"))
+                    if(!(semTypeObject["FullType"] == "fakePropertyURI" && semTypeObject["DomainUri"] == "fakeDomainURI"))
                         isValid = false;
                 }
             });
@@ -404,14 +409,15 @@ var SetSemanticTypeDialog = (function() {
             var property = semTypeObject["DisplayLabel"];
             if(property == "km-dev:classLink")
             	property = "uri";
-            if(semTypeObject["Domain"].length == 0 || semTypeObject["Domain"] == "")
+            if(semTypeObject["DomainUri"].length == 0 || semTypeObject["DomainUri"] == "")
                 displayLabel = property;
             else
                 displayLabel = "<span class='italic'>" + property+ "</span> of " + semTypeObject["DisplayDomainLabel"];
 
             var trTag = $("<tr>").addClass("semTypeRow")
                 .data("FullType", semTypeObject["FullType"])
-                .data("Domain", semTypeObject["Domain"])
+                .data("DomainUri", semTypeObject["DomainUri"])
+                .data("DomainId", semTypeObject["DomainId"])
                 .data("DisplayDomainLabel", semTypeObject["DisplayDomainLabel"])
                 .data("DisplayLabel", semTypeObject["DisplayLabel"])
                 .append($("<td>").append($("<input>")
@@ -454,7 +460,7 @@ var SetSemanticTypeDialog = (function() {
                 $("input#chooseClassKey").attr("checked", true);
             }
 
-            if(semTypeObject["Domain"].length == 0 || semTypeObject["Domain"] == "")
+            if(semTypeObject["DomainUri"].length == 0 || semTypeObject["DomainUri"] == "")
                 trTag.data("ResourceType", "Class");
             else
                 trTag.data("ResourceType", "DataProperty");
@@ -625,13 +631,13 @@ var SetSemanticTypeDialog = (function() {
            
             if($(parentTrTag).data("ResourceType") == "Class") {
                 var classLabel = $(parentTrTag).data("DisplayLabel");
-                var classUri = $(parentTrTag).data("FullType");
+                var classUri = $(parentTrTag).data("DomainUri");
                 classUI.setDefaultClass(classLabel, classUri, classUri);
                 propertyUI.setSelectedClass(classLabel, classUri, classUri);
                 //defaultProperty = "";
             } else {
                defaultClass = $(parentTrTag).data("DisplayDomainLabel");
-               var classUri = $(parentTrTag).data("Domain");
+               var classUri = $(parentTrTag).data("DomainUri");
                classUI.setDefaultClass(defaultClass, classUri, classUri);
                propertyUI.setSelectedClass(defaultClass, classUri, classUri);
                var defaultProperty = $(parentTrTag).data("DisplayLabel");
@@ -708,17 +714,17 @@ var SetSemanticTypeDialog = (function() {
 	                var domain = $(rowToChange).data("FullType");
 	                var displayDomainLabel = $(rowToChange).data("DisplayLabel");
 	                $(rowToChange).data("FullType",uri).data("DisplayLabel",properCasedKey)
-	                    .data("Domain", domain).data("DisplayDomainLabel",displayDomainLabel)
+	                    .data("DomainId", domain).data("DisplayDomainLabel",displayDomainLabel)
 	                    .data("ResourceType","DataProperty");
 	
 	                displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
 	            } else {
 	                // Special case when the property input box is empty (data property sem type changed to class sem type)
-	                if($.trim(inputVal) == "" && $(rowToChange).data("Domain") != "") {
-	                    var newFullType = $(rowToChange).data("Domain");
+	                if($.trim(inputVal) == "" && $(rowToChange).data("DomainId") != "") {
+	                    var newFullType = $(rowToChange).data("DomainId");
 	                    var newDisplayLabel = $(rowToChange).data("DisplayDomainLabel");
 	
-	                    $(rowToChange).data("ResourceType", "Class").data("FullType",newFullType).data("DisplayLabel", newDisplayLabel).data("Domain","").data("DisplayDomainLabel","");
+	                    $(rowToChange).data("ResourceType", "Class").data("FullType",newFullType).data("DisplayLabel", newDisplayLabel).data("DomainId","").data("DomainUri","").data("DisplayDomainLabel","");
 	                    displayLabel = $(rowToChange).data("DisplayLabel");
 	                } else {
 	                    $(rowToChange).data("FullType",uri).data("DisplayLabel",properCasedKey);
@@ -784,7 +790,7 @@ var SetSemanticTypeDialog = (function() {
 	                        $(rowToChange).data("ResourceType", "Class").data("FullType",uri).data("DisplayLabel",properCasedKey);
 	                        displayLabel = $(rowToChange).data("DisplayLabel");
 	                    } else {
-	                        $(rowToChange).data("Domain",uri).data("DisplayDomainLabel",properCasedKey);
+	                        $(rowToChange).data("DomainUri",uri).data("DomainId", foundObj.uri).data("DisplayDomainLabel",properCasedKey);
 	                        displayLabel = "<span class='italic'>" + propertyOld + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
 	                    }
 	                }
@@ -1164,7 +1170,7 @@ var IncomingOutgoingLinksDialog = (function() {
         
         function saveDialog(e) {
         	var startNode = columnId;
-        	
+        	var startNodeUri = columnUri;
         	
         	if(selectedFromClass.label == "" && (linkType == "incoming" || linkType == "changeIncoming" || linkType == "changeLink")) {
         		showError("Please select the from class");
@@ -1206,25 +1212,33 @@ var IncomingOutgoingLinksDialog = (function() {
         	 var newEdges = [];
         	 var newEdgeObj = {};
         	 
-        	 var source, target;
+        	 var source, target, sourceUri, targetUri;
         	 var property = selectedProperty.id;
         	    
         	if(linkType == "incoming" || linkType == "changeIncoming") {
         		target = startNode;
+        		targetUri = startNodeUri;
         		source = selectedFromClass.id;
+        		sourceUri = selectedFromClass.uri;
         	} else if(linkType == "outgoing" || linkType == "changeOutgoing") {
         		source = startNode;
+        		sourceUri = startNodeUri;
         		target = selectedToClass.id;
+        		targetUri = selectedToClass.uri;
         	} else if(linkType == "changeLink") {
         		source = selectedFromClass.id;
+        		sourceUri = selectedFromClass.uri;
         		target = selectedToClass.id;
+        		targetUri = selectedToClass.uri;
         	} else {
         		alert("Invalid linkType: " + linkType);
         		return;
         	}
         	
         	newEdgeObj["edgeSourceId"] = source;
+        	newEdgeObj["edgeSourceUri"] = sourceUri;
             newEdgeObj["edgeTargetId"] = target;
+            newEdgeObj["edgeTargetUri"] = targetUri;
             newEdgeObj["edgeId"] = property;
             newEdges.push(newEdgeObj);
             

@@ -51,7 +51,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 	}
 	
 	public enum ClientJsonKeys {
-		isPrimary, Domain, FullType
+		isPrimary, DomainUri, DomainId, FullType
 	}
 	
 	public SemanticType(String hNodeId, Label type, Label domain, Origin origin, Double probability, boolean isPartOfKey) {
@@ -130,9 +130,9 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 		JSONObject typeObj = new JSONObject();
 		typeObj.put(ClientJsonKeys.FullType.name(), type.getUri());
 		if(isClass())
-			typeObj.put(ClientJsonKeys.Domain.name(), "");
+			typeObj.put(ClientJsonKeys.DomainUri.name(), "");
 		else
-			typeObj.put(ClientJsonKeys.Domain.name(), domain.getUri());
+			typeObj.put(ClientJsonKeys.DomainUri.name(), domain.getUri());
 		typeObj.put(ClientJsonKeys.isPrimary.name(), isPartOfKey);
 		return typeObj;
 	}

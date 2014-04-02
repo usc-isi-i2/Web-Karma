@@ -47,7 +47,7 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 	private static Logger logger = LoggerFactory.getLogger(OntologyHierarchyUpdate.class.getSimpleName());
 	
 	private enum JsonKeys {
-		data, URIorId, metadata, children, isExistingGraphNode, newIndex, isExistingSteinerTreeNode
+		data, uri, id, metadata, children, isExistingGraphNode, newIndex, isExistingSteinerTreeNode
 	}
 	
 	public OntologyHierarchyUpdate(OntologyTreeNode rootNode, String updateType, 
@@ -107,7 +107,7 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 		Label resourceUri = node.getLabel();
 		
 		resourceObject.put(JsonKeys.children.name(), childrenArray);
-		resourceObject.put(JsonKeys.data.name(), resourceUri.getDisplayName());
+		
 		JSONObject metadataObject = new JSONObject();
 		int graphLastIndex = -1;
 		if (addSteinerTreeNodesAsChildren && alignment != null) {
@@ -116,21 +116,31 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 		// If the node exists in graph but not in tree then use the graph node id
 		if (graphLastIndex != -1) {
 			if (!steinerTreeNodeIds.contains(node.getLabel().getUri() + graphLastIndex)) {
-				metadataObject.put(JsonKeys.URIorId.name(), node.getLabel().getUri() + graphLastIndex);
+				metadataObject.put(JsonKeys.uri.name(), node.getLabel().getUri());
+				metadataObject.put(JsonKeys.id.name(), node.getLabel().getUri() + graphLastIndex);
 //				metadataObject.put(JsonKeys.isExistingGraphNode.name(), true);
 				metadataObject.put(JsonKeys.isExistingSteinerTreeNode.name(), false);
 				metadataObject.put(JsonKeys.newIndex.name(), 1);
+				graphLastIndex = 1;
 			} else {
-				metadataObject.put(JsonKeys.URIorId.name(), node.getLabel().getUri());
+				metadataObject.put(JsonKeys.uri.name(), node.getLabel().getUri());
 //				metadataObject.put(JsonKeys.isExistingGraphNode.name(), false);
 				metadataObject.put(JsonKeys.isExistingSteinerTreeNode.name(), false);
 				metadataObject.put(JsonKeys.newIndex.name(), graphLastIndex+1);
+				graphLastIndex = graphLastIndex + 1;
 			}
 		} else {
-			metadataObject.put(JsonKeys.URIorId.name(), node.getLabel().getUri());
+			metadataObject.put(JsonKeys.uri.name(), node.getLabel().getUri());
 //			metadataObject.put(JsonKeys.isExistingGraphNode.name(), false);
 			metadataObject.put(JsonKeys.newIndex.name(), 1);
 			metadataObject.put(JsonKeys.isExistingSteinerTreeNode.name(), false);
+			graphLastIndex = 1;
+		}
+		
+		if(addSteinerTreeNodesAsChildren) {
+			resourceObject.put(JsonKeys.data.name(), resourceUri.getDisplayName() + graphLastIndex + " (add)");
+		} else {
+			resourceObject.put(JsonKeys.data.name(), resourceUri.getDisplayName());
 		}
 		resourceObject.put(JsonKeys.metadata.name(), metadataObject);
 		
@@ -146,7 +156,8 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 					JSONObject graphNodeObj = new JSONObject();
 					graphNodeObj.put(JsonKeys.data.name(), graphNode.getDisplayId());
 					JSONObject metadataObject = new JSONObject();
-					metadataObject.put(JsonKeys.URIorId.name(), graphNode.getId());
+					metadataObject.put(JsonKeys.uri.name(), graphNode.getUri());
+					metadataObject.put(JsonKeys.id.name(), graphNode.getId());
 //					metadataObject.put(JsonKeys.isExistingGraphNode.name(), true);
 					metadataObject.put(JsonKeys.isExistingSteinerTreeNode.name(), true);
 					metadataObject.put(JsonKeys.newIndex.name(), 1);

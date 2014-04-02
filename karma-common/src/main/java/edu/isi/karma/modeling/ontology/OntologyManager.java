@@ -412,7 +412,7 @@ public class OntologyManager  {
 	 * @return
 	 */
 	public Map<String, Label> getObjectPropertiesByDomainRange(String domainUri, String rangeUri, boolean recursive) {
-		
+		logger.debug("getObjectPropertiesByDomainRange:" + domainUri + "," + rangeUri + "," + ontCache);
 		if(domainUri == null || domainUri.length() == 0)
 			return this.getObjectPropertiesByRange(rangeUri, recursive);
 		
@@ -422,13 +422,18 @@ public class OntologyManager  {
 		HashSet<String> objectProperties = ontCache.getDirectInObjectProperties().get(rangeUri);
 		if(recursive) {
 			HashSet<String> propRecursive = ontCache.getIndirectInObjectProperties().get(rangeUri);
-			if(propRecursive != null)
-				objectProperties.addAll(propRecursive);
+			if(propRecursive != null) {
+				if(objectProperties != null)
+					objectProperties.addAll(propRecursive);
+				else
+					objectProperties = propRecursive;
+			}
 		}
 		HashMap<String, Label> results = new HashMap<String, Label>();
 		HashSet<String> direct = null;
 		HashSet<String> indirect = null;
 		
+		logger.debug("Got object properties:" + objectProperties);
 		if (objectProperties == null)
 			return results;
 		
@@ -460,6 +465,7 @@ public class OntologyManager  {
 			}
 		}
 		
+		logger.info("got back " + results.size() + " results");
 		return results;
 	}
 	

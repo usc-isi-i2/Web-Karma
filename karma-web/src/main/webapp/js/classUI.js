@@ -57,6 +57,10 @@ function ClassUI(id,
 	    					console.log("Now select node:" + treeId + " in classList " + $(list1).attr("id"));
 	    					selectOnLoad = true;
 	    					$(list1).jstree('select_node', treeId, true, true);
+	    					
+	    					window.setTimeout(function() {
+								selectOnLoad = false;
+							}, 500);
 	    					//$(list1).jstree('scroll_to_node', treeId);
 	    				}
 	    			}, 500);
@@ -138,6 +142,7 @@ function ClassUI(id,
 	};
 	
 	this.refreshClassDataTop = function(label, classId, uri) {
+		console.log("classsUI.refreshClassDataTop:" + label + "," + classId + "," + uri);
 		this.setSelectedProperty(label, classId, uri);
 		populateClassList(classFuncTop(selectedPropertyData), classList1, classList2);
 	};
@@ -157,14 +162,16 @@ function ClassUI(id,
 	
 	
 	this.setDefaultClass = function(label, classId, uri) {
+		console.log("classUI:setDefaultClass:" + label + "," + classId + "," + uri);
 		defaultClassData.label = label;
 		defaultClassData.id = classId;
 		defaultClassData.uri = uri;
 	};
 	
-	this.setSelectedProperty = function(label, classId, uri) {
+	this.setSelectedProperty = function(label, propId, uri) {
+		console.log("classUI:setSelectedProperty:" + label + "," + propId + "," + uri);
 		selectedPropertyData.label = label;
-		selectedPropertyData.id = classId;
+		selectedPropertyData.id = propId;
 		selectedPropertyData.uri = uri;
 	};
 	

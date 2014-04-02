@@ -32,9 +32,12 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.view.VWorkspace;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -55,6 +58,9 @@ public class GetLinksOfAlignmentCommand extends Command {
 	public enum LINKS_RANGE {
 		existingLinks, linksWithDomainAndRange, allObjectProperties;
 	}
+	
+	private final Logger logger = LoggerFactory.getLogger(this.getClass()
+			.getSimpleName());
 	
 	public GetLinksOfAlignmentCommand(String id, String alignmentId,
 			LINKS_RANGE linksRange, String domain, String range) {
@@ -89,6 +95,7 @@ public class GetLinksOfAlignmentCommand extends Command {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		Map<String, Label> linkList = new HashMap<String, Label>();
+		logger.debug("GetLinksOfAlignmentGraph:" + linksRange + ":" + domain + "," + range);
 		
 		if (linksRange == LINKS_RANGE.allObjectProperties) {
 			linkList = workspace.
@@ -103,6 +110,7 @@ public class GetLinksOfAlignmentCommand extends Command {
 		} else if(linksRange == LINKS_RANGE.linksWithDomainAndRange) {
 			linkList = workspace.getOntologyManager().getObjectPropertiesByDomainRange(domain, range, true);
 		}
+		logger.debug("Got back " + linkList.size() + " results");
 		final Map<String, Label> finalLinksSet = linkList;
 		
 		UpdateContainer upd = new UpdateContainer(new AbstractUpdate() {
@@ -130,7 +138,8 @@ public class GetLinksOfAlignmentCommand extends Command {
 					
 					obj.put(JsonKeys.edges.name(), nodesArray);
 					pw.println(obj.toString());
-				} catch (JSONException e) {
+				} catch (Exception e) {
+					logger.error("Exception:", e);
 					e.printStackTrace();
 				}
 			}

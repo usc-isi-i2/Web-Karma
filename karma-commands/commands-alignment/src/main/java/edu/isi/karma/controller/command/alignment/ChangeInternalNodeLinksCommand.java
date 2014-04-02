@@ -61,7 +61,7 @@ public class ChangeInternalNodeLinksCommand extends Command {
 			.getLogger(ChangeInternalNodeLinksCommand.class);
 
 	private enum JsonKeys {
-		edgeSourceId, edgeId, edgeTargetId
+		edgeSourceId, edgeId, edgeTargetId, edgeSourceUri, edgeTargetUri
 	}
 
 	public ChangeInternalNodeLinksCommand(String id, String worksheetId,
@@ -134,19 +134,28 @@ public class ChangeInternalNodeLinksCommand extends Command {
 			String sourceId = newEdge.getString(JsonKeys.edgeSourceId.name());
 			String targetId = newEdge.getString(JsonKeys.edgeTargetId.name());
 			String edgeUri = newEdge.getString(JsonKeys.edgeId.name());
-
+			String sourceUri = newEdge.getString(JsonKeys.edgeSourceUri.name());
+			String targetUri = newEdge.getString(JsonKeys.edgeTargetUri.name());
+			
 			String linkId = LinkIdFactory
 					.getLinkId(edgeUri, sourceId, targetId);
 			LabeledLink newLink = alignment.getLinkById(linkId);
 			if (newLink == null) {
 				Node sourceNode = alignment.getNodeById(sourceId);
 				if (sourceNode == null) {
+					sourceNode = alignment.addInternalNode(new Label(sourceUri));
+				}
+				
+				if(sourceNode == null) {
 					String errorMessage = "Error while adding new links: the new link goes FROM node '"
 							+ sourceId
 							+ "', but this node is NOT in the alignment.";
 					logger.error(errorMessage);
 				}
 				Node targetNode = alignment.getNodeById(targetId);
+				if(targetNode == null) {
+					targetNode = alignment.addInternalNode(new Label(targetUri));
+				}
 				if (targetNode == null) {
 					String errorMessage = "Error while adding new links: the new link goes TO node '"
 							+ targetId

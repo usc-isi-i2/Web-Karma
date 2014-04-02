@@ -66,7 +66,7 @@ public class ShowModelCommandFactory extends JSONInputCommandFactory {
 			JSONObject value = (JSONObject) typeObj.get(ClientJsonKeys.value.name());
 			
 			SemanticType type = null;
-			String domain = (String) value.get(SemanticType.ClientJsonKeys.Domain.name());
+			String domain = (String) value.get(SemanticType.ClientJsonKeys.DomainUri.name());
 			String fullType = (String) value.get(SemanticType.ClientJsonKeys.FullType.name());
 			boolean isPrimary = (Boolean) value.get(SemanticType.ClientJsonKeys.isPrimary.name());
 			

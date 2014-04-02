@@ -203,22 +203,10 @@ function getClassesInModel(alignmentId) {
 
 
 function parseClassJSON(clazz, result, allLabels) {
-	var uri = clazz.metadata.URIorId;
-	var index = clazz.metadata.newIndex;
-	
-	if(clazz.metadata.isExistingSteinerTreeNode) {
-		if(index) {
-			uri = uri.substr(0, uri.lastIndexOf(index));
-		}
-		index = false;
-	}
+	var uri = clazz.metadata.uri;
+	var id = clazz.metadata.id;
 	var label = clazz.data;
-	var id = clazz.metadata.URIorId;
 	
-	if(index) {
-		label = label + index + " (add)";
-		id = id + index;
-	}
 	var node = {"label":label, "id":id, "uri":uri};
 	result.push(node);
 	if(clazz.children) {
@@ -389,8 +377,14 @@ function getAllPropertiesForDomainRange(alignmentId, domain, range) {
 
 function parsePropertyJSON(prop, result) {
 	var label = prop.data;
-	var id = prop.metadata.URIorId;
-	var uri = prop.metadata.URIorId;
+	var uri;
+	if(prop.metadata.URIorId) {
+		uri = prop.metadata.URIorId;
+	} else {
+		uri = prop.metadata.uri;
+	}
+	var id = uri;
+	
 	var node = {"label":label, "id":id, "uri":uri};
 	result.push(node);
 	if(prop.children) {

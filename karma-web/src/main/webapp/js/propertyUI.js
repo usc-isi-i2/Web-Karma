@@ -33,7 +33,7 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 	        })
 	        	.bind("select_node.jstree", function (e, data) {
 	        		propertyData.label = data.rslt.obj.data("label");
-	        		console.log("jstree:select_node.jstree:" + propertyData.label);
+	        		console.log("jstree:select_node.jstree:" + propertyData.label + ":" + selectOnLoad + ":" + (propertySelectorCallback != null));
 	        		propertyData.uri = data.rslt.obj.data("uri");
 	        		propertyData.id = data.rslt.obj.data("id");
 	                var a = $.jstree._focused().get_selected();
@@ -55,6 +55,10 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 							console.log("Now select node:" + treeId + " in propertyList:" + $(list1).attr("id"));
 							selectOnLoad = true;
 							$(list1).jstree('select_node', treeId, true, true);
+							
+							window.setTimeout(function() {
+								selectOnLoad = false;
+							}, 500);
 							//$(list1).jstree('scroll_to_node', treeId);
 						}	
 					}, 500);
@@ -155,12 +159,14 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 	};
 
 	this.setDefaultProperty = function(label, propId, uri) {
+		console.log("propertyUI:setDefaultProperty:" + label + "," + propId + "," + uri);
 		defaultPropertyData.label = label;
 		defaultPropertyData.id = propId;
 		defaultPropertyData.uri = uri;
 	};
 	
 	this.setSelectedClass = function(label, classId, uri) {
+		console.log("propertyUI:setSelectedClass:" + label + "," + classId + "," + uri);
 		selectedClassData.label = label;
 		selectedClassData.id = classId;
 		selectedClassData.uri = uri;
