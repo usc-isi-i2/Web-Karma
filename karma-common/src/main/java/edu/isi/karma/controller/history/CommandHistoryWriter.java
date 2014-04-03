@@ -29,6 +29,10 @@ public class CommandHistoryWriter {
 	}
 
 	public void writeHistoryPerWorksheet() throws JSONException {
+		if(!isHistoryEnabled)
+		{
+			return;
+		}
 		HashMap<String, List<ICommand>> comMap = new HashMap<String, List<ICommand>>();
 		for(ICommand command : history) {
 			if(command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
@@ -80,4 +84,14 @@ public class CommandHistoryWriter {
 		}
 	}
 	
+	private static boolean isHistoryEnabled = false;
+	public static boolean isHistoryEnabled()
+	{
+		return isHistoryEnabled;
+	}
+	
+	public static void setIsHistoryEnabled(boolean isHistoryEnabled)
+	{
+		CommandHistoryWriter.isHistoryEnabled = isHistoryEnabled;
+	}
 }

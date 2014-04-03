@@ -44,8 +44,6 @@ import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMappingWriter;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
-import edu.isi.karma.metadata.KarmaMetadata;
-import edu.isi.karma.metadata.StandardPublishMetadataTypes;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;

@@ -1,5 +1,6 @@
 package edu.isi.karma.metadata;
 
+import edu.isi.karma.controller.history.CommandHistoryWriter;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -15,7 +16,7 @@ public class WorksheetHistoryMetadata extends KarmaUserMetadata{
 
 	@Override
 	public void setup() throws KarmaException {
-		
+		CommandHistoryWriter.setIsHistoryEnabled(true);
 	}
 
 	@Override

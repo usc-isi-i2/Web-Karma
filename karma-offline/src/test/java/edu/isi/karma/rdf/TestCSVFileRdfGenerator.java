@@ -33,16 +33,12 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.HashSet;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.util.EncodingDetector;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 /**
  * The class is used for test. There are csv files, model files and standard RDF
@@ -56,11 +52,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
  */
 public class TestCSVFileRdfGenerator {
 	private static Logger logger = LoggerFactory.getLogger(TestCSVFileRdfGenerator.class);
-	
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		initOfflineWorkspaceSettings();
-	}
+
 
 	@Test
 	public void testScheduleRDFPyTranform() {
@@ -70,13 +62,9 @@ public class TestCSVFileRdfGenerator {
 		String csvDirect = "csv";
 		String modelDirect = "model";
 		String standardRdfDirect = "standardrdf";
-		//String resultFileName = "testresult/testResult.txt";
-
+	
 		try {
-		//	PrintWriter out = new PrintWriter(new FileWriter(resultFileName));
-			//out.println("The test was carried out at " + new Date().toString()
-				//	+ "\n");
-
+	
 			File fileList[] = (new File(getTestResource(modelDirect).getFile()).listFiles());
 			
 			for (int i = 0; i < fileList.length; i++) {
@@ -90,13 +78,11 @@ public class TestCSVFileRdfGenerator {
 				
 				if(!standardRdfFile.exists())
 				{
-				//	out.println(standardRdfFile+" doesn't  exist");
 					logger.error(standardRdfFile+" doesn't  exist");
 					continue;
 				}
 				if(!csvFile.exists())
 				{
-					//out.println(csvFile+" doesn't  exist");
 					logger.error(csvFile+" doesn't  exist");
 					continue;
 				}
@@ -116,15 +102,12 @@ public class TestCSVFileRdfGenerator {
 					tag = false;
 					outputError(standardSet, generatedSet, modelFile.getName());
 				} else {
-				//	out.println(modelFile.getName() + " is ok");
 					logger.info(modelFile.getName() + " is ok");
 				}
 
 				pw.close();
-			//	out.flush();
-
+		
 			}
-		//	out.close();
 			assertEquals(tag, true);
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -147,29 +130,14 @@ public class TestCSVFileRdfGenerator {
 		for (String temp : standardSet)
 			if (!generatedSet.contains(temp))
 			{
-			//	out.println(modelName + " missing triple error:" + temp);
 				logger.error(modelName + " missing triple error:" + temp);
 			}
 
 		for (String temp : generatedSet)
 			if (!standardSet.contains(temp))
 			{
-				//out.println(modelName + " extra triple error:" + temp);
 				logger.error(modelName + " extra triple error:" + temp);
 			}
-	}
-
-
-	private static void initOfflineWorkspaceSettings() {
-		/**
-		 * CREATE THE REQUIRED KARMA OBJECTS *
-		 */
-		ServletContextParameterMap.setParameterValue(
-				ContextParameter.USER_DIRECTORY_PATH, "src/main/webapp/");
-		ServletContextParameterMap.setParameterValue(
-				ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
-
-		SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
 	}
 
 	/**
