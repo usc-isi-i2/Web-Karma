@@ -105,8 +105,8 @@ public class InvokeDataMiningServiceCommand extends Command {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) {
 		
-		final String csvFileLocalPath = ServletContextParameterMap.getParameterValue(
-				ContextParameter.USER_DIRECTORY_PATH) +  "publish/CSV/" + this.csvFileName;
+		final String csvFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  
+				this.csvFileName;;
 		
 		try {
 			
