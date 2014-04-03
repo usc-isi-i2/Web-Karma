@@ -406,6 +406,9 @@ public class SPARQLGeneratorUtil {
 			}
 			previous = markedTriples.get(parentTriple.parent);
 			parentTriple = this.ParentMapingInfoList.get(parentTriple.parent.getSubject().getId());
+			if(parentTriple == null) {
+				break;
+			}
 			var1 = markedTriples.get(parentTriple.parent);
 //			if(markedTriples.containsKey(parentTriple.parent)) {
 //				markedParent = true;
