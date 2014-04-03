@@ -25,6 +25,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,7 +63,7 @@ public class ExportCSVCommand extends WorksheetCommand {
 	private String tripleStoreUrl;
 	private String graphUrl;
 	private String generatedRDFFileName = null;
-	private final ArrayList<String> columnList;
+	private final ArrayList<HashMap<String, String>> columnList;
 	
 	private static Logger logger = LoggerFactory.getLogger(ExportCSVCommand.class);
 	
@@ -77,7 +79,7 @@ public class ExportCSVCommand extends WorksheetCommand {
 	 * @param graph
 	 * @param nodes
 	 * */
-	protected ExportCSVCommand(String id, String worksheetId, String rootNode, String sparqlUrl, String graph, ArrayList<String> nodes ) {
+	protected ExportCSVCommand(String id, String worksheetId, String rootNode, String sparqlUrl, String graph, ArrayList<HashMap<String, String>> nodes ) {
 		super(id, worksheetId);
 		this.rootNodeId = rootNode;
 		this.tripleStoreUrl = sparqlUrl;
@@ -92,7 +94,7 @@ public class ExportCSVCommand extends WorksheetCommand {
 
 	@Override
 	public String getTitle() {
-		return "Fetch Columns";
+		return "Export CSV Command";
 	}
 
 	@Override
@@ -115,9 +117,9 @@ public class ExportCSVCommand extends WorksheetCommand {
 		
 		// Prepare the model file path and names
 		final String csvFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
-				worksheet.getTitle() +  "-data-csv-export"+".csv"; 
-		final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
-				ContextParameter.USER_DIRECTORY_PATH) +  "publish/CSV/" + csvFileName;
+				worksheet.getTitle().replaceAll("\\.", "_") +  "-export"+".csv"; 
+		final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  
+				csvFileName;
 
 		HashMap<String, String> result = 
 				ExportCSVUtil.generateCSVFile(workspace, this.worksheetId, this.rootNodeId, this.columnList, this.graphUrl, this.tripleStoreUrl, modelFileLocalPath);
@@ -138,7 +140,8 @@ public class ExportCSVCommand extends WorksheetCommand {
 					JSONObject outputObject = new JSONObject();
 					try {
 						outputObject.put(JsonKeys.updateType.name(), "ExportCSVUpdate");
-						outputObject.put(JsonKeys.fileUrl.name(), "publish/CSV/" + csvFileName);
+						outputObject.put(JsonKeys.fileUrl.name(), 
+								ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_RELATIVE_DIR) + csvFileName);
 						outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
 						pw.println(outputObject.toString());
 					} catch (JSONException e) {
@@ -171,8 +174,9 @@ public class ExportCSVCommand extends WorksheetCommand {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy-kkmmssS");
 		String ts = sdf.format(Calendar.getInstance().getTime());
 		final String rdfFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + ts+ ".ttl";
-		generatedRDFFileName = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +  
-			"publish/RDF/" + rdfFileName;
+		
+		generatedRDFFileName = ServletContextParameterMap.getParameterValue(ContextParameter.RDF_PUBLISH_DIR) + rdfFileName;
+		
 		final String graphUri = "http://localhost/"+workspace.getCommandPreferencesId() + "/" + worksheetId + "/" + ts;
 
 		logger.info("Generating RDF for current worksheet - " + rdfFileName);
@@ -212,9 +216,11 @@ public class ExportCSVCommand extends WorksheetCommand {
 		
 		TripleStoreUtil utilObj = new TripleStoreUtil();
 		boolean result = utilObj.saveToStore(generatedRDFFileName, utilObj.defaultDataRepoUrl, graphUri, true);
+		// if we the RDF is generated correctly, then we dont need to retur an UpdateContainer
+		// hence we return null
 		if(result) {
 			logger.info("Saved rdf to store");
-			this.graphUrl = "http://localhost/"+ts;
+			this.graphUrl = graphUri;
 			this.tripleStoreUrl = utilObj.defaultDataRepoUrl;
 		} else {
 			logger.error("Falied to store rdf to karma_data store");
