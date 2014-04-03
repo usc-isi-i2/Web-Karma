@@ -407,6 +407,8 @@ var ExportCSVModelDialog = (function() {
 				if (operatingMode === "invokeMLService") {
 					$('#exportCSV_ModelTitle').html('Invoke Machine Learning Service');
 					$('#btnExportCSV', dialog).html('Invoke');
+					$('div.formDivDMUrl', dialog).show();
+					
 					//Initialize handler for ExportCSV button
 					$('#btnExportCSV', dialog).on('click', function (e) {
 						performInvokeMLService();
@@ -415,6 +417,8 @@ var ExportCSVModelDialog = (function() {
 				} else {
 					$('#exportCSV_ModelTitle').html('Export CSV');
 					$('#btnExportCSV', dialog).html('Export');
+					$('div.formDivDMUrl', dialog).hide();
+					
 					//Initialize handler for ExportCSV button
 					$('#btnExportCSV', dialog).on('click', function (e) {
 						performExportCSV();
@@ -490,7 +494,8 @@ var ExportCSVModelDialog = (function() {
     		
     		var list = {};
 			$('#csv_columns').find('li').each(function(index){
-				list[index] = $(this).attr('name');
+				list[index] = {'name' : $(this).attr('rel'), 'url':$(this).attr('name') };
+//				list[index] = $(this).attr('name');
 			});
 			
     		var info = new Object();
@@ -513,13 +518,18 @@ var ExportCSVModelDialog = (function() {
     		   			
     		   			var fileName = json["elements"][0]['fileUrl'];
     		   			
+    		   			var dmURL = $('#dataMiningUrl').val().trim();
+    		   			if(dmURL.length < 2) {
+    		   				dmURL = 'http://localhost:8088/train';
+    		   			}
     		   			var info = new Object();
     		    		info["workspaceId"] = $.workspaceGlobalInformation.id;
     		    		info["worksheetId"] = worksheetId;
     		    		info["command"] = "InvokeDataMiningServiceCommand";
 //    		    		info["dataMiningURL"] = 'http://54.201.249.192:8081/train';
-    		    		info["dataMiningURL"] = 'http://localhost:8080/train';
+    		    		info["dataMiningURL"] = dmURL;
     		    		info["csvFileName"] = fileName;
+    		    		info["isTestingPhase"] = $('#testingService').is(':checked');
     		    		
     		    		
     		    		$.ajax({
@@ -533,7 +543,11 @@ var ExportCSVModelDialog = (function() {
     		    		   			if(json["elements"][0]['updateType'] && json["elements"][0]['updateType']=="KarmaError") {
     		    		   				alert("Error while invoking service");
     		    		   				hide();
-    		    		   			} else {
+    		    		   			} else if(json["elements"][0]['isTestingPhase'] && json["elements"][0]['isTestingPhase'] == true) {
+    		    		   				$('#DMresults').html(json["elements"][0]['results']);
+    		    		   				$('#DMresults').show();
+    		    		   			}
+    		    		   			else {
     		    		   				var model_name = json["elements"][0]['model_name'];
     		    		   				hide();
     		    		   				alert('Model Name: '+model_name);
@@ -561,7 +575,7 @@ var ExportCSVModelDialog = (function() {
     		
     		var list = {};
 			$('#csv_columns').find('li').each(function(index){
-				list[index] = $(this).attr('name');
+				list[index] = {'name' : $(this).attr('rel'), 'url':$(this).attr('name') };
 			});
 			
     		var info = new Object();
@@ -624,17 +638,17 @@ var ExportCSVModelDialog = (function() {
     		   			var content = '<ol id="csv_columns" rel="'+data['elements'][0]['rootId']+'">';
     		   			var list = data['elements'][0]['columns'];
     		   			for(var x in list) {
-    		   				var index = 0;
-    		   				var str = list[x];
-    		   				if(str.lastIndexOf('#') > 0 ) {
-    		   					index = str.lastIndexOf('#') + 1;
-    		   				} else if(str.lastIndexOf('/') > 0 ) {
-    		   					index = str.lastIndexOf('/') + 1;
-    		   				}
-    		   				str = str.substr(index, (str.length - index));
-    		   				
-    		   				content += '<li style="padding=4px;" name="'+list[x]+'">'
-    		   					+str+' &nbsp; <a class="icon-remove pull-right">X</a>' 
+//    		   				var index = 0;
+//    		   				var str = list[x];
+//    		   				if(str.lastIndexOf('#') > 0 ) {
+//    		   					index = str.lastIndexOf('#') + 1;
+//    		   				} else if(str.lastIndexOf('/') > 0 ) {
+//    		   					index = str.lastIndexOf('/') + 1;
+//    		   				}
+//    		   				str = str.substr(index, (str.length - index));
+//    		   				
+    		   				content += '<li style="padding=4px;" name="'+list[x]['url']+'" rel="'+list[x]['name']+'">'
+    		   					+ list[x]['name']+' &nbsp; <a class="icon-remove pull-right">X</a>'  
     		   					+'</li>';
     		   			}
     		   			ele.html(content + '</ol>');
