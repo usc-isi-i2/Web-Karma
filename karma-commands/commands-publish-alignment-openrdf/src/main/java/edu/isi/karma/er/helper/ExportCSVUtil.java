@@ -58,14 +58,14 @@ public class ExportCSVUtil {
 	 * @param workspace The Workspace object used to generate the KR2RML model
 	 * @param worksheetId
 	 * @param rootNodeId The root Node Id from where the csv is to be generated
-	 * @param columnList An ArrayList of strings that has the list of columns to be fetched. These columns are identified by their complete URL as defined in the ontology. <br /> If null then all the columns are fetched
+	 * @param columnList An ArrayList<HashMap<String, String>> that has the list of columns to be fetched. These columns are identified by their complete URL as defined in the ontology. <br /> If null then all the columns are fetched
 	 * @param graphUrl The context/graph from where the columns of the models are to be fetched
 	 * 
 	 * @return HashMap<String, String> of the format 'Query: <the sparql query' or 'Error: <The error message>' 
 	 * */
 	
 	public static HashMap<String, String> generateCSVQuery(Workspace workspace, final String worksheetId, final String rootNodeId,
-			final ArrayList<String> columnList, final String graphUrl) {
+			final ArrayList<HashMap<String, String>> columnList, final String graphUrl) {
 	
 		HashMap<String, String> retVal = new HashMap<String, String>();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
@@ -146,7 +146,7 @@ public class ExportCSVUtil {
 	 * */
 	
 	public static HashMap<String, String> generateCSVFile(Workspace workspace, final String worksheetId, final String rootNodeId,
-			final ArrayList<String> columnList, final String graphUrl, final String tripleStoreUrl, final String csvFilePath) {
+			final ArrayList<HashMap<String, String>> columnList, final String graphUrl, final String tripleStoreUrl, final String csvFilePath) {
 		HashMap<String, String> retVal = new HashMap<String, String>();
 		HashMap<String, String> query = generateCSVQuery(workspace, worksheetId, rootNodeId, columnList, graphUrl);
 		try {
@@ -168,7 +168,7 @@ public class ExportCSVUtil {
 			JSONArray rows = jsonData.getJSONObject("results").getJSONArray("bindings");
 			// write the header
 			for(int j=0;j<headers.length();j++) {
-				writer.write(headers.getString(j).replaceAll("\"", "\\\""));
+//				writer.write(headers.getString(j).replaceAll("\"", "\\\""));
 				if(j < headers.length()-1) {
 					writer.write(",");
 				}
@@ -178,7 +178,8 @@ public class ExportCSVUtil {
 				writer.write("\n");
 				for(int j=0;j<headers.length();j++) {
 					try {
-						writer.write("\"" + rows.optJSONObject(i).optJSONObject(headers.getString(j)).optString("value").replaceAll("\"", "\\\"") + "\"");
+//						writer.write("\"" + rows.optJSONObject(i).optJSONObject(headers.getString(j)).optString("value").replaceAll("\"", "\\\"") + "\"");
+						writer.write(rows.optJSONObject(i).optJSONObject(headers.getString(j)).optString("value").replaceAll("\"", "\\\""));
 						if(j < headers.length()-1) {
 							writer.write(",");
 						}
@@ -191,6 +192,7 @@ public class ExportCSVUtil {
 			logger.info("Fetching data from triple store in csv format : " + tripleStoreUrl);
 //			String data = TripleStoreUtil.invokeSparqlQuery(query.get("Query"), tripleStoreUrl, "text/csv", null);
 			
+			writer.write("\n");
 			writer.flush();
 			writer.close();
 			logger.info("Writing CSV file :" + csvFilePath);
