@@ -177,8 +177,8 @@ import edu.isi.karma.controller.command.worksheet.SetWorksheetPropertiesCommand;
 import edu.isi.karma.controller.command.worksheet.SetWorksheetPropertiesCommandFactory;
 import edu.isi.karma.controller.command.worksheet.SplitByCommaCommand;
 import edu.isi.karma.controller.command.worksheet.SplitByCommaCommandFactory;
-import edu.isi.karma.controller.command.worksheet.UnfoldCommand;
-import edu.isi.karma.controller.command.worksheet.UnfoldCommandFactory;
+import edu.isi.karma.controller.command.worksheet.GroupByCommand;
+import edu.isi.karma.controller.command.worksheet.GroupByCommandFactory;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
@@ -262,8 +262,8 @@ public class ExecutionController {
                 new AddValuesCommandFactory());
         commandFactoryMap.put(FoldCommand.class.getSimpleName(),
                 new FoldCommandFactory());
-        commandFactoryMap.put(UnfoldCommand.class.getSimpleName(),
-                new UnfoldCommandFactory());
+        commandFactoryMap.put(GroupByCommand.class.getSimpleName(),
+                new GroupByCommandFactory());
         commandFactoryMap.put(SaveRowIDCommand.class.getSimpleName(),
                 new SaveRowIDCommandFactory());
         commandFactoryMap.put(PublishRDFCellCommand.class.getSimpleName(),

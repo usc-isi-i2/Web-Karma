@@ -27,7 +27,7 @@ import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
 
-public class UnfoldCommand extends WorksheetCommand {
+public class GroupByCommand extends WorksheetCommand {
 	//if null add column at beginning of table
 	//add column to this table
 	Command cmd;
@@ -37,13 +37,13 @@ public class UnfoldCommand extends WorksheetCommand {
 	private String newHNodeId;
 
 	private static Logger logger = LoggerFactory
-			.getLogger(UnfoldCommand.class);
+			.getLogger(GroupByCommand.class);
 
 	public enum JsonKeys {
 		updateType, hNodeId, worksheetId
 	}
 
-	protected UnfoldCommand(String id,String worksheetId, 
+	protected GroupByCommand(String id,String worksheetId, 
 			String hTableId, String hNodeId) {
 		super(id, worksheetId);
 		addTag(CommandTag.Transformation);
@@ -51,17 +51,17 @@ public class UnfoldCommand extends WorksheetCommand {
 
 	@Override
 	public String getCommandName() {
-		return UnfoldCommand.class.getSimpleName();
+		return GroupByCommand.class.getSimpleName();
 	}
 
 	@Override
 	public String getTitle() {
-		return "Unfold";
+		return "GroupBy";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Unfold";
+		return "GroupBy";
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class UnfoldCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		RepFactory factory = workspace.getFactory();
 		Worksheet oldws = workspace.getWorksheet(worksheetId);
-		Worksheet newws = factory.createWorksheet("Unfold: " + oldws.getTitle(), workspace, oldws.getEncoding());
+		Worksheet newws = factory.createWorksheet("GroupBy: " + oldws.getTitle(), workspace, oldws.getEncoding());
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
 		HTable oldht =  oldws.getHeaders();
 		HTable newht =  newws.getHeaders();

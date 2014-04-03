@@ -400,17 +400,17 @@ a.icon-remove:hover {
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div class="modal fade" id="unfoldDialog" tabindex="-1">
+<div class="modal fade" id="groupByDialog" tabindex="-1">
   <div class="modal-dialog">
   		<form class="bs-example bs-example-form" role="form">
 			<div class="modal-content">
 			     <div class="modal-header">
 				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				       <h4 class="modal-title">Unfold</h4>
+				       <h4 class="modal-title">Group By</h4>
 				  </div>
 				  <div class="modal-body">
 						<h4>Select Columns:</h4>
-						<div id="unfoldDialogColumns"></div>
+						<div id="groupByDialogColumns"></div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

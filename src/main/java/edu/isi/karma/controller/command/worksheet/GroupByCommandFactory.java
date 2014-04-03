@@ -12,7 +12,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
 
-public class UnfoldCommandFactory extends CommandFactory implements JSONInputCommandFactory {
+public class GroupByCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 
 	public enum Arguments {
 		worksheetId, hTableId, hNodeId, newColumnName, defaultValue
@@ -24,7 +24,7 @@ public class UnfoldCommandFactory extends CommandFactory implements JSONInputCom
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String hTableId = request.getParameter(Arguments.hTableId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		return new UnfoldCommand(getNewId(workspace), worksheetId, 
+		return new GroupByCommand(getNewId(workspace), worksheetId, 
 				hTableId, hNodeId);
 	}
 
@@ -36,7 +36,7 @@ public class UnfoldCommandFactory extends CommandFactory implements JSONInputCom
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hTableId = "";
 		//System.out.println(worksheetId);
-		UnfoldCommand unfoldCmd = new UnfoldCommand(getNewId(workspace), worksheetId,
+		GroupByCommand unfoldCmd = new GroupByCommand(getNewId(workspace), worksheetId,
 				hTableId, hNodeID);
 		unfoldCmd.setInputParameterJson(inputJson.toString());
 		return unfoldCmd;

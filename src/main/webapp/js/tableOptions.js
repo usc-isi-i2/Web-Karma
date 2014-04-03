@@ -824,11 +824,11 @@ var FoldDialog = (function() {
 })();
 
 
-var UnfoldDialog = (function() {
+var GroupByDialog = (function() {
     var instance = null;
 
     function PrivateConstructor() {
-        var dialog = $("#unfoldDialog");
+        var dialog = $("#groupByDialog");
         var worksheetId;
         
         function init() {
@@ -840,7 +840,7 @@ var UnfoldDialog = (function() {
                 var headersTable = $("table.wk-table", tableHeaderContainer);
                 var headersRow = $("tr.wk-row-odd", headersTable);
                 
-                var dialogContent = $("#unfoldDialogColumns", dialog);
+                var dialogContent = $("#groupByDialogColumns", dialog);
                 dialogContent.empty();
                 
                 headersRow.each(function (index, element) {
@@ -895,7 +895,7 @@ var UnfoldDialog = (function() {
             var info = new Object();
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "UnfoldCommand";
+            info["command"] = "GroupByCommand";
 
             var newInfo = [];
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
