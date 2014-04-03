@@ -168,7 +168,7 @@ public class ExportCSVUtil {
 			JSONArray rows = jsonData.getJSONObject("results").getJSONArray("bindings");
 			// write the header
 			for(int j=0;j<headers.length();j++) {
-//				writer.write(headers.getString(j).replaceAll("\"", "\\\""));
+				writer.write(headers.getString(j).replaceAll("\"", "\\\""));
 				if(j < headers.length()-1) {
 					writer.write(",");
 				}
