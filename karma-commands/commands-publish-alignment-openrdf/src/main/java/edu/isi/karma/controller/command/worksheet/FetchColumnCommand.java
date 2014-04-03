@@ -22,6 +22,10 @@ package edu.isi.karma.controller.command.worksheet;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -90,23 +94,29 @@ public class FetchColumnCommand extends WorksheetCommand {
 		String worksheetName = worksheet.getTitle();
 		try {
 
-			// check if the model is published
+			// preparing model file name
 			final String modelFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
-					worksheetName +  "-model.ttl"; 
+					worksheetName +  "-model.ttl";
 			final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
 					ContextParameter.R2RML_PUBLISH_DIR) + modelFileName;
+			
 			File f = new File(modelFileLocalPath);
 			
+			// preparing the graphUri where the model is published in the triple store
 			String graphName = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.graphName);
+			if(graphName == null || graphName.isEmpty()) {
+				SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy-kkmmssS");
+				String ts = sdf.format(Calendar.getInstance().getTime());
+				graphName = "http://localhost/"+workspace.getCommandPreferencesId() + "/" + worksheetId + "/model/" + ts;
+				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.graphName, graphName);
+			}
 			
+			// If the model is not published, publish it!
 			if(!f.exists() || !f.isFile()) {
-				// Prepare the model file path and names
 				GenerateR2RMLModelCommandFactory factory = new GenerateR2RMLModelCommandFactory();
 				GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, graphName);
 				cmd.doIt(workspace);
 			}
-			
-			// check if the model is published
 			
 			TripleStoreUtil tUtil = new TripleStoreUtil();
 			StringBuffer query = new StringBuffer("prefix rr: <http://www.w3.org/ns/r2rml#> prefix km-dev: <http://isi.edu/integration/karma/dev#> ");
@@ -133,7 +143,7 @@ public class FetchColumnCommand extends WorksheetCommand {
 				}
 			 * */
 			
-			query.append("select distinct ?class where { ");
+			query.append("select distinct ?class ?column where { ");
 			if(graphName != null && !graphName.trim().isEmpty()) {
 				query.append(" graph  <" + graphName + "> { ");
 			}
@@ -144,7 +154,8 @@ public class FetchColumnCommand extends WorksheetCommand {
 				.append("?x1 rr:subjectMap/km-dev:alignmentNodeId \"")
 				.append(this.nodeId)
 				.append("\" . ?x1 (rr:predicateObjectMap/rr:objectMap/rr:parentTriplesMap)* ?x2 .")
-				.append(" ?x2 rr:predicateObjectMap/rr:objectMap/rr:column ?column . ?x2 rr:predicateObjectMap/rr:predicate ?class .")
+				.append(" ?x2 rr:predicateObjectMap ?x3 . ")
+				.append(" ?x3 rr:objectMap/rr:column ?column . ?x3 rr:predicate ?class .")
 				.append(" } }");
 			if(graphName != null && !graphName.trim().isEmpty()) {
 				query.append(" } ");
@@ -155,27 +166,42 @@ public class FetchColumnCommand extends WorksheetCommand {
 			if (sData == null | sData.isEmpty()) {
 				logger.error("Empty response object from query : " + query);
 			}
-			JSONArray cols = new JSONArray();
+			HashMap<String,String> cols = new HashMap<String,String>();
 			try {
 				JSONObject obj1 = new JSONObject(sData);
 				JSONArray arr = obj1.getJSONObject("results").getJSONArray("bindings");
 				for(int i=0; i<arr.length(); i++) {
-					cols.put(arr.getJSONObject(i).getJSONObject("class").getString("value"));
+					String colName = arr.getJSONObject(i).getJSONObject("column").getString("value");
+					String colValue = arr.getJSONObject(i).getJSONObject("class").getString("value");
+					if(cols.containsKey(colName)) {
+						logger.error("Duplicate Column <-> property mapping. " + colName + " <=> " + colValue);
+					} else {
+						cols.put(colName, colValue);
+					}
 				}
 			} catch (Exception e2) {
 				logger.error("Error in parsing json response", e2);
 			}
 			
-			logger.info("Columns fetched : " + sData);
-			final JSONArray columns = cols;
+			logger.info("Total Columns fetched : " + cols.size());
+			final HashMap<String,String> columns = cols;
 			return new UpdateContainer(new AbstractUpdate() {
 				
 				@Override
 				public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
 					JSONObject obj = new JSONObject();
 					try {
+						Iterator<String> itr =  columns.keySet().iterator();
+						JSONArray colList = new JSONArray();
+						while(itr.hasNext()) {
+							JSONObject o = new JSONObject();
+							String k = itr.next();
+							o.put("name", k);
+							o.put("url", columns.get(k));
+							colList.put(o);
+						}
 						obj.put("updateType", "FetchColumnUpdate");
-						obj.put("columns", columns);
+						obj.put("columns", colList);
 						obj.put("rootId", nodeId);
 						pw.println(obj.toString());
 					} catch (JSONException e) {

@@ -25,6 +25,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.Predicate;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
@@ -32,17 +37,17 @@ import edu.isi.karma.kr2rml.RefObjectMap;
 import edu.isi.karma.kr2rml.mapping.R2RMLMapping;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
 
-/*
- * Pedro: This code needs an author. Who wrote this?
- */
+/**
+ * @author shri
+ * */
 public class SPARQLGeneratorUtil {
 	
+	private static Logger logger = LoggerFactory.getLogger(SPARQLGeneratorUtil.class);
 	private StringBuffer select_params;
 	private HashMap<String, String> prefix_list;
 	private int var_count;
 	private HashMap<String, ParentMapingInfo> ParentMapingInfoList;
 	
-	// this 
 	private class ParentMapingInfo {
 		public TriplesMap parent;
 		public Predicate predicate;
@@ -82,11 +87,13 @@ public class SPARQLGeneratorUtil {
 				
 				for (PredicateObjectMap p_map : predicates) {
 					
+					// if there are tripleMaps linked to the current tripleMap, then
+					// we need to save their relation/linkage between them
 					if(p_map.getObject().hasRefObjectMap()) {
 						RefObjectMap objMap = p_map.getObject().getRefObjectMap();
 						queue.add(objMap.getParentTriplesMap());
 						
-						System.out.println(triple.getSubject().getId() + "  ---> " + objMap.getParentTriplesMap().getSubject().getId());
+						logger.info(triple.getSubject().getId() + "  ---> " + objMap.getParentTriplesMap().getSubject().getId());
 						
 						// maintain a list of mapping properties between triples
 						ParentMapingInfoList.put(objMap.getParentTriplesMap().getSubject().getId(), 
@@ -124,7 +131,7 @@ public class SPARQLGeneratorUtil {
 							query.append(" ?" + markedTriples.get(parentTriple.parent) + " " + 
 								predicate + " ?"+var + " . ");
 						} else {
-							System.out.println("predicate is null from parent : " + triple.getSubject().getRdfsType().toString());
+							logger.error("predicate is null from parent : " + triple.getSubject().getRdfsType().toString());
 						}
 					}
 					
@@ -162,7 +169,7 @@ public class SPARQLGeneratorUtil {
 			sQuery.append(" select ").append(select_params).append(" where { GRAPH <").append(graph)
 				.append("> { ").append(query.toString()).append(" } }");
 		}
-		System.out.println("Query : " + sQuery);
+		logger.info("Genreated Query : " + sQuery);
 		return sQuery.toString();
 	}
 	
@@ -182,12 +189,8 @@ public class SPARQLGeneratorUtil {
 	}
 	
 	
-	public String get_query(TriplesMap root, ArrayList<String> columns) {
+	public String get_query(TriplesMap root, ArrayList<HashMap<String, String>> columns) {
 		return get_query(root, columns, false);
-	}
-	
-	public String get_query(TriplesMap root, boolean distinct_query) {
-		return get_query(root, null, distinct_query);
 	}
 	
 	/**
@@ -198,7 +201,7 @@ public class SPARQLGeneratorUtil {
 	 * @param columns This ArrayList<String> has the list of columns to be fetched. These columns are identifyed by their complete URL as defined in the ontology. <br /> 
 	 * For example: <http://isi.edu/integration/karma/ontologies/model/accelerometer#AccelerometerReading>. Now there may exists many instance of a class in within the same ontology. 
 	 * */
-	public String get_query(TriplesMap root, ArrayList<String> columns, boolean distinct_query) {
+	public String get_query(TriplesMap root, ArrayList<HashMap<String, String>> columns, boolean distinct_query) {
 		
 		ArrayList<Object> queue = new ArrayList<Object>();
 		queue.add(root);
@@ -209,20 +212,24 @@ public class SPARQLGeneratorUtil {
 		ArrayList<String> select_param = new ArrayList<String>();
 		HashMap<TriplesMap, String> markedTriples = new HashMap<TriplesMap, String>();
 		
+		ArrayList<String> visited_columns = new ArrayList<String>();
 		this.ParentMapingInfoList = new HashMap<String, SPARQLGeneratorUtil.ParentMapingInfo>();
 		
 		// save the column predicate url and the column name to be dislayed
 		HashMap<Predicate, String> predicateList = new HashMap<Predicate, String>();
 		HashMap<String, String> columnList = new HashMap<String, String>();
 		if(columns != null && columns.size() > 0) {
-			for (String k : columns) {
-				int index = 0;
-				if(k.indexOf("#") > 0) {
-					index = k.lastIndexOf('#')+1;
-				} else if(k.indexOf("/") > 0) {
-					index = k.lastIndexOf('/')+1;
-				}
-				columnList.put(k, k.substring(index, k.length()));
+//			for (String k : columns) {
+//				int index = 0;
+//				if(k.indexOf("#") > 0) {
+//					index = k.lastIndexOf('#')+1;
+//				} else if(k.indexOf("/") > 0) {
+//					index = k.lastIndexOf('/')+1;
+//				}
+//				columnList.put(k, k.substring(index, k.length()));
+//			}
+			for(HashMap<String, String> col : columns) {
+				columnList.put(col.get("name"), col.get("url"));
 			}
 		}
 		
@@ -244,7 +251,7 @@ public class SPARQLGeneratorUtil {
 						RefObjectMap objMap = p_map.getObject().getRefObjectMap();
 						queue.add(objMap.getParentTriplesMap());
 						
-						System.out.println(triple.getSubject().getId() + "  ---> " + objMap.getParentTriplesMap().getSubject().getId());
+						logger.info(triple.getSubject().getId() + "  ---> " + objMap.getParentTriplesMap().getSubject().getId());
 						
 						// maintain a list of mapping properties between triples
 						ParentMapingInfoList.put(objMap.getParentTriplesMap().getSubject().getId(), 
@@ -270,19 +277,28 @@ public class SPARQLGeneratorUtil {
 					// if the parent of this triple is also marked for the query
 					// then we add the relation to between triples to the query. Eg.
 					
-	//					TriplesMap parentTriple = parent.get(triple.getSubject().getId());
+//					TriplesMap parentTriple = parent.get(triple.getSubject().getId());
 					ParentMapingInfo parentTriple = ParentMapingInfoList.get(triple.getSubject().getId());
 					
-					if( parentTriple != null && markedTriples.containsKey(parentTriple.parent)) {
-						String predicate = parentTriple.predicate.getTemplate().toString();
-	//						PredicateObjectMap parentPredicate = getPredicateBetweenTriples(triple, parentTriple);
-						if(predicate != null) {
-							query.append(" ?" + markedTriples.get(parentTriple.parent) + " " + 
-								predicate + " ?"+var + " . ");
-						} else {
-							System.out.println("predicate is null from parent : " + triple.getSubject().getRdfsType().toString());
+					// from the current node, keep poping out till we reach the last node in the 
+					// parent map to see if any of the parents are connected
+					if(parentTriple != null) {
+						String sq = checkParentMarked(triple, markedTriples, var);
+						if (sq.length() > 1) {
+							query.append(sq);
 						}
+						
 					}
+//					if( parentTriple != null && markedTriples.containsKey(parentTriple.parent)) {
+//						String predicate = parentTriple.predicate.getTemplate().toString();
+////						PredicateObjectMap parentPredicate = getPredicateBetweenTriples(triple, parentTriple);
+//						if(predicate != null) {
+//							query.append(" ?" + markedTriples.get(parentTriple.parent) + " " + 
+//								predicate + " ?"+var + " . ");
+//						} else {
+//							System.out.println("predicate is null from parent : " + triple.getSubject().getRdfsType().toString());
+//						}
+//					}
 					
 				}
 				var_count++;
@@ -293,14 +309,33 @@ public class SPARQLGeneratorUtil {
 				String k = predicate.getTemplate().toString();
 				k = k.replace('<', ' ').replace('>', ' ').trim();
 				if(columns != null && columns.size() > 0) {
-					if(columnList.containsKey(k)) {
+//					if(columnList.containsKey(k)) {
+					if(columnList.containsValue(k)) {
+						Iterator<String> itr = columnList.keySet().iterator();
+						while(itr.hasNext()) {
+							String cName = itr.next();
+							if(columnList.get(cName).equals(k) && !visited_columns.contains(cName)) {
+								// get the column name from the end of this url - either the last '/' or the '#'
+								query.append(" ?" + predicateList.get(predicate))
+								.append(" ")
+								.append(predicate.getTemplate())
+								.append(" ?")
+								.append(cName + " . ");
+								//columnList.remove(cName);
+								visited_columns.add(cName);
+								var_count++;
+								break;
+							}
+						}	
 						// get the column name from the end of this url - either the last '/' or the '#'
-						query.append(" ?" + predicateList.get(predicate))
-							.append(" ")
-							.append(predicate.getTemplate())
-							.append(" ?")
-							.append(columnList.get(k) + " . ");
-						var_count++;
+//						query.append(" ?" + predicateList.get(predicate))
+//							.append(" ")
+//							.append(predicate.getTemplate())
+//							.append(" ?")
+//							.append(columnList.get(k) + " . ");
+//						var_count++;
+					} else {
+						logger.info("ColumnList does not contain : " + k + " " + currentObj);
 					}
 				} else {
 					int index = 0;
@@ -339,12 +374,54 @@ public class SPARQLGeneratorUtil {
 		if(distinct_query) {
 			sQuery.append(" distinct ");
 		}
-		for (String s : columns) {
-			sQuery.append(" ?"+columnList.get(s));
+		for (HashMap<String, String> s : columns) {
+				sQuery.append(" ?"+s.get("name"));
 		}
 		sQuery.append(" where { ").append(query.toString()).append(" } ");
-		System.out.println("Query : " + sQuery);
+		logger.info("Generated Query : " + sQuery);
 		return sQuery.toString();
 	 }
+	
+	private String checkParentMarked(TriplesMap triple, HashMap<TriplesMap, String> markedTriples, String var1) {
+		Stack<String> stk = new Stack<String>(); 
+		ParentMapingInfo parentTriple = this.ParentMapingInfoList.get(triple.getSubject().getId());
+		boolean markedParent = false;
+		int count = 1;
+		String previous = var1;
+		while(parentTriple!=null) {
+			String predicate = parentTriple.predicate.getTemplate().toString();
+
+			if(markedTriples.get(parentTriple.parent) == null) {
+				
+				markedTriples.put(parentTriple.parent, "Z"+count);
+				String rdfsTypes = parentTriple.parent.getSubject().getRdfsType().get(0).toString();
+				this.prefix_list.put("pref"+"Z"+count, rdfsTypes);
+				stk.push(" ?Z"+count + " a pref"+"Z"+count+": .");
+				stk.push(" ?" + markedTriples.get(parentTriple.parent) + " " +  predicate + " ?"+previous + " . ");
+			} else {
+				stk.push(" ?" + markedTriples.get(parentTriple.parent) + " " + 
+						predicate + " ?"+previous + " . ");
+				markedParent = true;
+				break;
+			}
+			previous = markedTriples.get(parentTriple.parent);
+			parentTriple = this.ParentMapingInfoList.get(parentTriple.parent.getSubject().getId());
+			if(parentTriple == null) {
+				break;
+			}
+			var1 = markedTriples.get(parentTriple.parent);
+//			if(markedTriples.containsKey(parentTriple.parent)) {
+//				markedParent = true;
+//				stk.push(" ?" + markedTriples.get(parentTriple.parent) + " " + 
+//						predicate + " ?"+var1 + " . ");
+//				break;
+//			}
+		}
+		 
+		if (markedParent) {
+			return StringUtils.join(stk," ");
+		}
+		return "";
+	}
 
 }
