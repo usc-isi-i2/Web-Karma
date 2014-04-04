@@ -81,7 +81,7 @@ public class ImportExcelFileCommand extends ImportFileCommand implements IPrevie
         ToCSV csvConverter = new ToCSV();
         try {
             csvConverter.convertExcelToCSV(getFile().getAbsolutePath(),
-                    ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "publish/CSV");
+            		ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR));
         } catch (Exception e) {
             String message = "Error occured while converting the Excel file to CSV file.";
             logger.error(message, e);
