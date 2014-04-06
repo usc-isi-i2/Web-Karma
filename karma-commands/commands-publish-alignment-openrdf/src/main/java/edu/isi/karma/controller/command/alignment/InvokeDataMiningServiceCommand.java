@@ -22,10 +22,13 @@
 package edu.isi.karma.controller.command.alignment;
 
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -33,18 +36,21 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.imp.Import;
+import edu.isi.karma.imp.csv.CSVFileImport;
+import edu.isi.karma.imp.json.JsonImport;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -110,9 +116,6 @@ public class InvokeDataMiningServiceCommand extends Command {
 		
 		try {
 			
-			// post the results 
-			//TODO : integrate the service with karma
-			
 			// Prepare the headers
 			HttpPost httpPost = new HttpPost(this.dataMiningURL);
 	
@@ -127,39 +130,85 @@ public class InvokeDataMiningServiceCommand extends Command {
 			// Parse the response and store it in a String
 			HttpEntity entity = response.getEntity();
 			StringBuilder responseString = new StringBuilder();
+			String line;
 			if (entity != null) {
 				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent(),"UTF-8"));
 				
-				String line = buf.readLine();
-				while(line != null) {
-					responseString.append(line);
-					line = buf.readLine();
-				}
+            	while((line  = buf.readLine()) != null) {
+            		responseString.append(line);
+                }
 			}
-			logger.info(responseString.toString());
-			final String modelFileName = responseString.toString(); 
 			UpdateContainer uc = new UpdateContainer();
-			uc.add(new AbstractUpdate() {
-				public void generateJson(String prefix, PrintWriter pw,	
-						VWorkspace vWorkspace) {
-					JSONObject outputObject = new JSONObject();
-					try {
-						outputObject.put("updateType", "InvokeDataMiningServiceUpdate");
-						outputObject.put("model_name", modelFileName);
-						if(isTestingPhase) {
-							JSONObject obj = new JSONObject(modelFileName);
-								outputObject.put("results", obj);
-								outputObject.put("isTestingPhase", true);
-							}
-							else {
-								outputObject.put("model_name", modelFileName);
-							}
-						pw.println(outputObject.toString());
-					} catch (JSONException e) {
-						logger.error("Error occured while generating JSON!");
-					}
-				}
-			});
+			
+			JSONObject resutsJson = new JSONObject(responseString.toString());
+			Import impJson = new JsonImport(responseString.toString(), resutsJson.optString("model_name", "results_"+this.csvFileName), workspace, "UTF-8", -1);
+            Worksheet wsht = impJson.generateWorksheet();
+            Worksheet wsht2, wsht3;
+            logger.info("Creating worksheet with json : " + wsht.getId());
+            uc.add(new WorksheetListUpdate());
+            uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
+            
+            if(resutsJson.has("ConfusionMatrixPath")) {
+            // get the matrix file 
+	            try {
+	            	BufferedInputStream buf;
+	            	byte[] buffer = new byte[10240];
+	            	final String fileName = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) + 
+	            			resutsJson.optString("ConfusionMatrixFileName"); // "martix_"+System.nanoTime();
+	            	FileOutputStream fw = new FileOutputStream(fileName);
+	            	// get the file from the service
+	            	URL url = new URL(resutsJson.optString("ConfusionMatrixPath"));
+	            	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	            	conn.setRequestMethod("GET");
+	            	buf = new BufferedInputStream(conn.getInputStream());
+	            	for (int length = 0; (length = buf.read(buffer)) > 0;) {
+	            		fw.write(buffer, 0, length);
+	                }
+	            	fw.close();
+	            	buf.close();
+	            	logger.info("Created : " + fileName);
+	            	Import impCSV = new CSVFileImport(1, 2, ',', ' ', "UTF-8", -1, new File(fileName), workspace);
+	            	wsht2 = impCSV.generateWorksheet();
+	                uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht2.getId()));
+	                new File(fileName).delete();
+	
+	            } catch (Exception e1) {
+	            	logger.error(e1.getMessage(), e1);
+	            }
+            }
+            
+            
+            if(resutsJson.has("PredictionPath")) {
+                // get the matrix file 
+    	            try {
+    	            	BufferedInputStream buf;
+    	            	byte[] buffer = new byte[10240];
+    	            	final String fileName = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) + 
+    	            			resutsJson.optString("PredictionFileName"); // "martix_"+System.nanoTime();
+    	            	FileOutputStream fw = new FileOutputStream(fileName);
+    	            	// get the file from the service
+    	            	URL url = new URL(resutsJson.optString("PredictionPath"));
+    	            	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    	            	conn.setRequestMethod("GET");
+    	            	buf = new BufferedInputStream(conn.getInputStream());
+    	            	for (int length = 0; (length = buf.read(buffer)) > 0;) {
+    	            		fw.write(buffer, 0, length);
+    	                }
+    	            	fw.close();
+    	            	buf.close();
+    	            	logger.info("Created : " + fileName);
+    	            	Import impCSV = new CSVFileImport(1, 2, ',', ' ', "UTF-8", -1, new File(fileName), workspace);
+    	            	wsht3 = impCSV.generateWorksheet();
+    	            	logger.info(wsht3.getHeaders().toString());
+    	                uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht3.getId()));
+    	                new File(fileName).delete();
+    	
+    	            } catch (Exception e1) {
+    	            	logger.error(e1.getMessage(), e1);
+    	            }
+                }
+            
+            
 			return uc;
 					
 		} catch (Exception e) {

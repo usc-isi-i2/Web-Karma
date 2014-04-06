@@ -490,12 +490,10 @@ var ExportCSVModelDialog = (function() {
     	function performInvokeMLService() {
     		
     		var graphUri = $('#csvDataGraphList').val().trim();
-    		//graphUri = (graphUri == '000') ? '' : graphUri;
     		
     		var list = {};
 			$('#csv_columns').find('li').each(function(index){
 				list[index] = {'name' : $(this).attr('rel'), 'url':$(this).attr('name') };
-//				list[index] = $(this).attr('name');
 			});
 			
     		var info = new Object();
@@ -526,7 +524,6 @@ var ExportCSVModelDialog = (function() {
     		    		info["workspaceId"] = $.workspaceGlobalInformation.id;
     		    		info["worksheetId"] = worksheetId;
     		    		info["command"] = "InvokeDataMiningServiceCommand";
-//    		    		info["dataMiningURL"] = 'http://54.201.249.192:8081/train';
     		    		info["dataMiningURL"] = dmURL;
     		    		info["csvFileName"] = fileName;
     		    		info["isTestingPhase"] = $('#testingService').is(':checked');
@@ -540,18 +537,22 @@ var ExportCSVModelDialog = (function() {
     		    		   	complete : 
     		    		   		function (xhr, textStatus) {
     		    		   			var json = $.parseJSON(xhr.responseText);
-    		    		   			if(json["elements"][0]['updateType'] && json["elements"][0]['updateType']=="KarmaError") {
-    		    		   				alert("Error while invoking service");
-    		    		   				hide();
-    		    		   			} else if(json["elements"][0]['isTestingPhase'] && json["elements"][0]['isTestingPhase'] == true) {
-    		    		   				$('#DMresults').html(json["elements"][0]['results']);
-    		    		   				$('#DMresults').show();
-    		    		   			}
-    		    		   			else {
-    		    		   				var model_name = json["elements"][0]['model_name'];
-    		    		   				hide();
-    		    		   				alert('Model Name: '+model_name);
-    		    		   			}
+    		    		   			parse(json);
+    		    		   			hide();
+    		    		   			alert("This results are loaded in a new worksheet");
+//    		    		   			if(json["elements"][0]['updateType'] && json["elements"][0]['updateType']=="KarmaError") {
+//    		    		   				alert("Error while invoking service");
+//    		    		   				hide();
+//    		    		   			} else if(json["elements"][0]['status'] && json["elements"][0]['status'] == true) {
+//    		    		   				hide();
+////    		    		   				$('#DMresults').html(json["elements"][0]['results']);
+////    		    		   				$('#DMresults').show();
+//    		    		   			}
+//    		    		   			else {
+//    		    		   				var model_name = json["elements"][0]['model_name'];
+//    		    		   				hide();
+//    		    		   				alert('Model Name: '+model_name);
+//    		    		   			}
     		    		   			
     		    			   	},
     		    			error :
