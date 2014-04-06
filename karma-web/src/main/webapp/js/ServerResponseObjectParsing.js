@@ -480,10 +480,7 @@ function parse(data) {
         }
         else if(element["updateType"] == "InvokeDataMiningServiceUpdate") {
 
-            $('#invokeDMServiceSpan').html(elements['data']);
-            var modelListDiv = $('div#invokeDMServiceDiv');
-            modelListDiv.dialog({ title: 'Results from data mining service',
-                buttons: { "Cancel": function() { $(this).dialog("close"); }  }, width: 300, height: 150 });
+        	alert("This results are loaded in a new worksheet");
         }
         else if(element["updateType"] == "CleaningServiceOutput") {
             //console.log(element);
