@@ -50,7 +50,7 @@ import edu.isi.karma.util.EncodingDetector;
  * @author Wan Jing 2014-02-26
  * 
  */
-public class TestCSVFileRdfGenerator {
+public class TestCSVFileRdfGenerator extends TestRdfGenerator {
 	private static Logger logger = LoggerFactory.getLogger(TestCSVFileRdfGenerator.class);
 
 

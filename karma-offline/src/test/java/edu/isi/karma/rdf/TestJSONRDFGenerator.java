@@ -46,17 +46,11 @@ import edu.isi.karma.util.EncodingDetector;
  * @author dipsy
  * 
  */
-public class TestJSONRDFGenerator {
+public class TestJSONRDFGenerator extends TestRdfGenerator{
 
 	JSONRDFGenerator rdfGen;
 	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGenerator.class);
 	
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
 
 	/**
 	 * @throws java.lang.Exception

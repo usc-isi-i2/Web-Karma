@@ -13,21 +13,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.metadata.KarmaMetadataManager;
+import edu.isi.karma.metadata.PythonTransformationMetadata;
+import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 
-public class TestFileRdfGenerator {
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		initOfflineWorkspaceSettings();
-	}
-	
+public class TestFileRdfGenerator extends TestRdfGenerator{
 	
 	@Test
 	public void testScheduleRDFPyTranform() {
@@ -100,15 +94,4 @@ public class TestFileRdfGenerator {
 		return getClass().getClassLoader().getResource(name);
 	}
 	
-	private static void initOfflineWorkspaceSettings() {
-		/**
-         * CREATE THE REQUIRED KARMA OBJECTS *
-         */
-        ServletContextParameterMap.setParameterValue(
-                ContextParameter.USER_DIRECTORY_PATH, "src/main/webapp/");
-        ServletContextParameterMap.setParameterValue(
-                ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
-
-        SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
-	}
 }

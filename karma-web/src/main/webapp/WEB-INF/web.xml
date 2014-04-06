@@ -70,7 +70,7 @@
 	</context-param>
   <context-param>
   		<param-name>PYTHON_SCRIPTS_DIRECTORY</param-name>
-		<param-value>./src/main/scripts/Lib</param-value>
+		<param-value>./src/main/resources/scripts/Lib</param-value>
   </context-param>
   <context-param>
 		<param-name>WEBAPP_PATH</param-name>
@@ -79,10 +79,6 @@
   <context-param>
 		<param-name>MSFT</param-name>
 		<param-value>False</param-value>
-  </context-param>
-  <context-param>
-    <param-name>PYTHON_SCRIPTS_DIRECTORY</param-name>
-    <param-value>./src/main/scripts/Lib</param-value>
   </context-param>
   <context-param>
     <param-name>CLEANING_SERVICE_URL</param-name>
