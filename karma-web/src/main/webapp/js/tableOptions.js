@@ -910,7 +910,7 @@ var GroupByDialog = (function() {
             var info = new Object();
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "GroupByCommand";
+            info["command"] = "UnfoldCommand";
 
             var newInfo = [];
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
