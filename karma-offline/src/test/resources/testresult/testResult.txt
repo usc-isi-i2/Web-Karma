@@ -1,0 +1,15 @@
+The test was carried out at Mon Mar 24 11:28:25 PDT 2014
+
+cbev2.WebArtistBio-model.ttl is ok
+cbev2.WebArtistBioImages-model.ttl is ok
+cbev2.WebConAltNames-model.ttl is ok
+cbev2.WebConDates-model.ttl is ok
+cbev2.WebConGeography-model.ttl is ok
+cbev2.WebObjDescription-model.ttl is ok
+cbev2.WebObjectImages-model.ttl is ok
+dbo.Nationality_view-model.ttl is ok
+dbo.Place_view-model.ttl is ok
+dbo.Thesauri_view-model.ttl is ok
+dbo.WebConstituents_person_view-model.ttl is ok
+dbo.WebMakers_view-model.ttl is ok
+dbo.WebObjDimensionsSplit_view-model.ttl is ok

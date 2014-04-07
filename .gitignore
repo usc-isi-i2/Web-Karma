@@ -1,3 +1,7 @@
+*.iml
+atlassian-ide-plugin.xml
+java_pid*.hprof
+
 bin
 target
 preloaded-library
@@ -7,9 +11,7 @@ temp/
 .project
 .classpath
 .idea/
-.settings/*
-.settings/org.eclipse.core.resources.prefs
-.settings/org.eclipse.wst.validation.prefs 
+.settings/
 
 *.class
 *py.class
@@ -27,12 +29,12 @@ src/main/webapp/UserUploadedFiles/*
 
 SampleData
 CRF_Model.txt
-log/*
+*/log/*
 src/main/webapp/publish/KML/*.*
 src/main/webapp/publish/Source Description/*.*
 src/main/webapp/publish/History/*.*
 src/main/webapp/publish/GRAPHVIZ/*.*
-src/main/webapp/publish/CSV/*
+src/main/webapp/publish/CSV/*.*
 src/main/webapp/publish/RDF/*.*
 src/main/webapp/publish/MDB/*.*
 src/main/webapp/publish/AutoOntology/*.*
@@ -42,7 +44,7 @@ src/main/webapp/publish/AlignmentGraph/*.*
 preloaded-ontologies/*
 src/main/webapp/RDF/*.rdf
 src/main/webapp/RDF/*.n3
-src/main/webapp/CRF_Models/*.txt
+*/src/main/webapp/CRF_Models/*.txt
 src/main/webapp/repository/dataset/*.*
 src/main/webapp/repository/services/*.*
 src/main/webapp/repository/sources/*.*
@@ -70,5 +72,6 @@ nbactions.xml
 *.rdf
 
 Thumbs.db
-
-src/test/karma-data/testresult/testResult.txt
+*.iml
+.idea
+*/src/test/karma-data/testresult/testResult.txt
