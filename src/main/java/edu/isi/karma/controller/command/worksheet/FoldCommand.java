@@ -121,10 +121,9 @@ public class FoldCommand extends WorksheetCommand {
 		obj.put("value", array.toString());
 		obj.put("type", "other");
 		input.put(obj);
-		//System.out.println(array.toString());
 		try{
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
-			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId);
+			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId, "test");
 			cmd.doIt(workspace);
 			UpdateContainer c =  new UpdateContainer();		
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
