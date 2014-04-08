@@ -21,9 +21,11 @@
 			  	
 			  		<div class="form-group">
 				  		<B>Semantic Types:</B>
-				  		<table id="semanticTypesTable" class="table table-striped table-condensed">
-				  			<tr><th /><th /><th>Primary</th><th/></tr>
-			  			</table>
+				  		<div id="semanticTypesTableDiv">
+					  		<table id="semanticTypesTable" class="table table-striped table-condensed">
+					  			<tr><th /><th /><th>Primary</th><th/></tr>
+				  			</table>
+				  		</div>
 			  		</div>
 			  		
 			  		

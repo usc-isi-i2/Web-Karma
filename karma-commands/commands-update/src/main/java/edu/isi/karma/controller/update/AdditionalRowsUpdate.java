@@ -64,7 +64,8 @@ public class AdditionalRowsUpdate extends AbstractUpdate {
 		
 		try {
 			JSONArray rowsJson = upd.getRowsJsonArray(additionalRows, vWorksheet, 
-					vWorkspace.getRepFactory(), vWorkspace.getPreferences().getIntViewPreferenceValue(
+							vWorksheet.getHeaderViewNodes(),
+							vWorkspace.getPreferences().getIntViewPreferenceValue(
 							ViewPreference.maxCharactersInCell));
 			
 			JSONObject responseObj = new JSONObject();
