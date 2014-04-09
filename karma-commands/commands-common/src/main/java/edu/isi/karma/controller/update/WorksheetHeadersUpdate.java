@@ -21,18 +21,18 @@
 
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.rep.ColumnMetadata;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HTable;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
+import java.io.PrintWriter;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.PrintWriter;
-import java.util.List;
+import edu.isi.karma.rep.ColumnMetadata;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.view.VHNode;
+import edu.isi.karma.view.VWorksheet;
+import edu.isi.karma.view.VWorkspace;
 
 public class WorksheetHeadersUpdate extends AbstractUpdate {
 
@@ -60,9 +60,9 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 			
 			Worksheet wk = vWorksheet.getWorksheet();
 			ColumnMetadata colMeta = wk.getMetadataContainer().getColumnMetadata();
-			HTable headers = wk.getHeaders();
+			List<VHNode> viewHeaders = vWorksheet.getHeaderViewNodes();
 			
-			JSONArray columns = getColumnsJsonArray(headers, colMeta);
+			JSONArray columns = getColumnsJsonArray(viewHeaders, colMeta);
 			response.put(JsonKeys.columns.name(), columns);
 			
 			pw.println(response.toString());
@@ -71,18 +71,19 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 		}
 	}
 
-	private JSONArray getColumnsJsonArray(HTable headers, ColumnMetadata colMeta) throws JSONException {
+	private JSONArray getColumnsJsonArray(List<VHNode> viewHeaders, ColumnMetadata colMeta) throws JSONException {
 		JSONArray colArr = new JSONArray();
 		
-		List<HNode> hNodes = headers.getSortedHNodes();
-		for (HNode hNode:hNodes) {
-			colArr.put(getColumnJsonObject(hNode, colMeta));
+		for (VHNode hNode:viewHeaders) {
+			if(hNode.isVisible()) {
+				colArr.put(getColumnJsonObject(hNode, colMeta));
+			}
 		}
 		
 		return colArr;
 	}
 	
-	private JSONObject getColumnJsonObject(HNode hNode, ColumnMetadata colMeta) throws JSONException {
+	private JSONObject getColumnJsonObject(VHNode hNode, ColumnMetadata colMeta) throws JSONException {
 		JSONObject hNodeObj = new JSONObject();
 		String columnName = hNode.getColumnName();
 		
@@ -99,8 +100,8 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 		if (hNode.hasNestedTable()) {
 			hNodeObj.put(JsonKeys.hasNestedTable.name(), true);
 			
-			HTable nestedTable = hNode.getNestedTable();
-			hNodeObj.put(JsonKeys.columns.name(), getColumnsJsonArray(nestedTable, colMeta));
+			List<VHNode> nestedHeaders = hNode.getNestedNodes();
+			hNodeObj.put(JsonKeys.columns.name(), getColumnsJsonArray(nestedHeaders, colMeta));
 		} else {
 			hNodeObj.put(JsonKeys.hasNestedTable.name(), false);
 		}

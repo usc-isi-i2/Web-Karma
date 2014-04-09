@@ -21,7 +21,7 @@
 
 #tablesWorkspace {
 
-	overflow: auto;
+/*	overflow: auto; */
 	min-height: 450px;
 }
 
@@ -514,4 +514,9 @@ span#applyHistoryButton {
 
 .tableDropdown .dropdown-menu {
 	text-align: left;
+}
+
+#organizeColumns_body {
+	max-height: 400px;
+    overflow: auto;
 }

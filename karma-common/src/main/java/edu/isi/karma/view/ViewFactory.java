@@ -79,9 +79,13 @@ public class ViewFactory {
 	public void updateWorksheet(String vWorksheetId, Worksheet worksheet, List<HNodePath> columns,
 			VWorkspace vWorkspace) {
 		// Grab reference to the pager in the old worksheet
-		Map<String, TablePager> vwPager = getVWorksheet(vWorksheetId).getTableId2TablePager();
+		VWorksheet oldVWorksheet = getVWorksheet(vWorksheetId);
+		Map<String, TablePager> vwPager = oldVWorksheet.getTableId2TablePager();
+		ArrayList<VHNode> orderedViewNodes = oldVWorksheet.getHeaderViewNodes();
 		
 		VWorksheet vw = new VWorksheet(vWorksheetId, worksheet, columns, vWorkspace);
+		vw.updateHeaderViewNodes(orderedViewNodes);
+		
 		vWorksheets.put(vWorksheetId, vw);
 		vw.setTableId2TablePager(vwPager);
 	}

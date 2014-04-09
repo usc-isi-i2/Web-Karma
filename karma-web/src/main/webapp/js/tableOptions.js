@@ -838,7 +838,6 @@ var FoldDialog = (function() {
     };
 })();
 
-
 var GroupByDialog = (function() {
     var instance = null;
 
@@ -950,7 +949,6 @@ var GroupByDialog = (function() {
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
         
-        
         return {    //Return back the public methods
             show : show,
             init : init
@@ -968,4 +966,191 @@ var GroupByDialog = (function() {
     return {
         getInstance : getInstance
     };
+})();
+
+
+var OrganizeColumnsDialog = (function() {
+    var instance = null;
+    
+    function PrivateConstructor() {
+    	var dialog = $("#organizeColumnsDialog");
+    	var _worksheetId;
+
+    	
+    	function init() {
+    		//Initialize what happens when we show the dialog
+			dialog.on('show.bs.modal', function (e) {
+				$(".error").hide();
+				
+				var wsColumnsJson = getAllWorksheetHeaders();
+				console.log(window.JSON.stringify(wsColumnsJson));
+				
+                var columns = $('#organizeColumns_body', dialog);
+                var nestableDiv = $("#nestable", columns);
+                nestableDiv.empty();
+                createColumnList(wsColumnsJson, nestableDiv, true);
+                nestableDiv.nestable({
+                    group: 1
+                })
+//                .on("change", function(e) {
+//                	var list   = e.length ? e : $(e.target);
+//                    if (window.JSON) {
+//                        console.log(window.JSON.stringify(list.nestable('serialize')));
+//                    } else {
+//                       alert('JSON browser support required for this functionality.');
+//                    }
+//                })
+                ;
+			});
+			
+			//Initialize handler for Save button
+			//var me = this;
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e);
+                dialog.modal('hide');
+			});
+    	}
+    	
+    	function getAllWorksheetHeaders() {
+    		//console.log(checked);
+	        var info = new Object();
+	        info["worksheetId"] = _worksheetId;
+	        info["workspaceId"] = $.workspaceGlobalInformation.id;
+	        info["command"] = "GetAllWorksheetHeadersCommand";
+	        
+	        showLoading(info["worksheetId"]);
+	        var headers = [];
+	        var returned = $.ajax({
+	            url: "RequestController",
+	            type: "POST",
+	            data : info,
+	            dataType : "json",
+	            async : false,
+	            complete :
+	                function (xhr, textStatus) {
+		            	var json = $.parseJSON(xhr.responseText);
+		            	var updates = json.elements;
+		            	for(var i=0; i<updates.length; i++) {
+		            		var update = updates[i];
+		                	if(update.updateType == "AllWorksheetHeadersUpdate") {
+		                		headers = update.columns;
+		                		break;
+		                	}
+		                }
+	                    hideLoading(info["worksheetId"]);
+	                },
+	            error :
+	                function (xhr, textStatus) {
+	                    alert("Error occured while getting worksheet headers!" + textStatus);
+	                    hideLoading(info["worksheetId"]);
+	                }
+	        });
+	        return headers;
+    	}
+    	
+		function createColumnList(json, outer, parentVisible) {
+			var list = $("<ol>").addClass("dd-list");
+			outer.append(list);
+			$.each(json, function(i, element) {
+				var li = $("<li>").addClass("dd-item")
+							.attr("data-name", element.name)
+							.attr("data-id", element.id)
+							.attr("data-visible", element.visible)
+							.attr("data-hideable", element.hideable)
+							.attr("data-toggle", "tooltip")
+							.attr("data-placement", "auto bottom")
+							;
+				var eye = $("<span>").addClass("glyphicon").css("margin-right", "5px");
+				if(element.visible) {
+					eye.addClass("glyphicon-eye-open")
+				} else {
+					eye.addClass("glyphicon-eye-close");
+				}
+				var eyeOuter = $("<span>");
+				eyeOuter.append(eye);
+				var div = $("<div>").addClass("dd-handle").append(eyeOuter).append(element.name);
+				if(!element.visible) {
+					div.addClass("dd-handle-hide");
+					li.attr("title", element.name)
+					li.addClass("dd-item-hidden");
+				}
+				if(!element.hideable) {
+					eye.css("color", "#DDDDDD");
+					eye.addClass("glyphicon-noclick");
+				}
+				
+				list.append(li);
+				li.append(div);
+			
+				if(element.children) {
+					if(element.children.length > 0)
+						createColumnList(element.children, li, element.visible);
+				}
+			});
+		
+			$(".dd-item-hidden").tooltip(); //activate the bootstrap tooltip
+		}
+		
+        function saveDialog(e) {
+        	console.log("Save clicked");
+        	var columns = $('#organizeColumns_body', dialog);
+            var nestableDiv = $("#nestable", columns);
+            var columnsJson = nestableDiv.nestable('serialize');
+            
+            var info = new Object();
+		    info["worksheetId"] = _worksheetId;
+		    info["workspaceId"] = $.workspaceGlobalInformation.id;
+		    info["command"] = "OrganizeColumnsCommand";
+
+		    var newInfo = [];
+		    newInfo.push(getParamObject("worksheetId", _worksheetId, "worksheetId"));
+		    newInfo.push(getParamObject("orderedColumns", columnsJson, "orderedColumns"));
+		    info["newInfo"] = JSON.stringify(newInfo);
+
+		    showLoading(info["worksheetId"]);
+		    var returned = $.ajax({
+		        url: "RequestController",
+		        type: "POST",
+		        data : info,
+		        dataType : "json",
+		        complete :
+		            function (xhr, textStatus) {
+		                // alert(xhr.responseText);
+		                var json = $.parseJSON(xhr.responseText);
+		                parse(json);
+		                hideLoading(info["worksheetId"]);
+		            },
+		        error :
+		            function (xhr, textStatus) {
+		                alert("Error occured while organizing columns " + textStatus);
+		                hideLoading(info["worksheetId"]);
+		            }
+		    });
+		    
+        };
+        
+        function show(worksheetId) {
+        	_worksheetId = worksheetId;
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        return {	//Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    	
 })();

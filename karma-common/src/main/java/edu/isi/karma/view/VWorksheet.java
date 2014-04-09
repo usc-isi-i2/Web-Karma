@@ -20,8 +20,11 @@
  ******************************************************************************/
 package edu.isi.karma.view;
 
+
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.rep.Worksheet;
@@ -29,9 +32,15 @@ import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VWorksheet extends ViewEntity {
 
@@ -57,13 +66,16 @@ public class VWorksheet extends ViewEntity {
 	 * columns appear.
 	 */
 	
-	private final List<HNodePath> columns;
+	//private final List<HNodePath> columns;
 
+	private ArrayList<VHNode> headerViewNodes;
+	
 	/**
 	 * The maximum number of rows to show in the nested tables.
 	 */
 	private int maxRowsToShowInNestedTables;
 
+	private static Logger logger = LoggerFactory.getLogger(VWorksheet.class);
 
 	/**
 	 * We create a TablePager for the top level table and every nested table we
@@ -75,7 +87,7 @@ public class VWorksheet extends ViewEntity {
 			VWorkspace vWorkspace) {
 		super(id);
 		this.worksheet = worksheet;
-		this.columns = columns;
+		//this.columns = columns;
 		this.maxRowsToShowInNestedTables = vWorkspace.getPreferences()
 				.getIntViewPreferenceValue(
 						ViewPreference.maxRowsToShowInNestedTables);
@@ -84,8 +96,30 @@ public class VWorksheet extends ViewEntity {
 		getTablePager(worksheet.getDataTable(),
 				vWorkspace.getPreferences().getIntViewPreferenceValue(
 						ViewPreference.defaultRowsToShowInTopTables));
+		
+		
+		this.headerViewNodes = initHeaderViewNodes(worksheet.getHeaders());
 	}
 
+	
+	private ArrayList<VHNode> initHeaderViewNodes(HTable table) {
+		ArrayList<VHNode> vNodes = new ArrayList<>();
+		for(String hNodeId : table.getOrderedNodeIds()) {
+			HNode node = table.getHNode(hNodeId);
+			VHNode vNode = new VHNode(node.getId(), node.getColumnName());
+			if(node.hasNestedTable()) {
+				HTable nestedTable = node.getNestedTable();
+				ArrayList<VHNode> nestedNodes = initHeaderViewNodes(nestedTable);
+				for(VHNode nestedVNode : nestedNodes) {
+					vNode.addNestedNode(nestedVNode);
+				}
+			}
+			vNodes.add(vNode);
+		}
+		return vNodes;
+	}
+	
+	
 	private TablePager getTablePager(Table table, int size) {
 		TablePager tp = tableId2TablePager.get(table.getId());
 		if (tp != null) {
@@ -150,9 +184,185 @@ public class VWorksheet extends ViewEntity {
 	public void setMaxRowsToShowInNestedTables(int maxRowsToShowInNestedTables) {
 		this.maxRowsToShowInNestedTables = maxRowsToShowInNestedTables;
 	}
+	
+	public ArrayList<VHNode> getHeaderViewNodes() {
+		return this.headerViewNodes;
+	}
+	
+	public ArrayList<String> getHeaderVisibleNodes() {
+		return getVisibleViewNodes(this.headerViewNodes);
+	}
+	
+	private ArrayList<String> getVisibleViewNodes(ArrayList<VHNode> list) {
+		ArrayList<String> visibleNodeIds = new ArrayList<>();
+		for(VHNode node : list) {
+			if(node.isVisible()) {
+				visibleNodeIds.add(node.getId());
+				visibleNodeIds.addAll(getVisibleViewNodes(node.getNestedNodes()));
+			}
+		}
+		return visibleNodeIds;
+	}
+	
+//	public ArrayList<VHNode> getHeaderViewNodes(String id) {
+//		if(id.equals(worksheet.getHeaders().getId()))
+//			return this.headerViewNodes;
+//		
+//		return getChildHeaderNodes(this.headerViewNodes, id);
+//	}
+//	
+//	private ArrayList<VHNode> getChildHeaderNodes(ArrayList<VHNode> vNodes, String id) {
+//		ArrayList<VHNode> children = null;
+//		for(VHNode node : vNodes) {
+//			if(node.getId().equals(id)) {
+//				children = node.getNestedNodes();
+//				break;
+//			}
+//			
+//			if(node.hasNestedTable()) {
+//				ArrayList<VHNode> matchingChild = getChildHeaderNodes(node.getNestedNodes(), id);
+//				if(matchingChild != null) {
+//					children = matchingChild;
+//					break;
+//				}
+//			}
+//		}
+//		return children;
+//	}
+//	
+	public boolean isHeaderNodeVisible(String hnodeId) {
+		return getHeaderVisibleNodes().contains(hnodeId);
+	}
 
-	public List<HNodePath> getColumns() {
-		return columns;
+	
+	private ArrayList<VHNode> generateOrganizedColumns(JSONArray columns) {
+		ArrayList<VHNode> vNodes = new ArrayList<>();
+		
+		for(int i=0; i<columns.length(); i++) {
+			JSONObject column = columns.getJSONObject(i);
+			
+			VHNode vNode = new VHNode(column.getString("id"), column.getString("name"));
+			vNode.setVisible(column.getBoolean("visible"));
+			if(column.has("children")) {
+				ArrayList<VHNode> nestedNodes = generateOrganizedColumns(column.getJSONArray("children"));
+				for(VHNode nestedVNode : nestedNodes) {
+					vNode.addNestedNode(nestedVNode);
+				}
+			}
+			vNodes.add(vNode);
+			
+		}
+		
+		return vNodes;
+	}
+	
+	public void organizeColumns(JSONArray columns) {
+		this.headerViewNodes = generateOrganizedColumns(columns);
+	}
+	
+	public void organizeColumns(ArrayList<VHNode> columns) {
+		this.headerViewNodes.clear();
+		this.headerViewNodes.addAll(columns);
+	}
+	
+	public void updateHeaderViewNodes(ArrayList<VHNode> oldOrderedNodes) {
+		
+		ArrayList<String> oldPaths = new ArrayList<>();
+		for(VHNode node : oldOrderedNodes)
+			oldPaths.addAll(node.getAllPaths());
+		
+		ArrayList<String> newPaths = new ArrayList<>();
+		for(VHNode node : this.headerViewNodes)
+			newPaths.addAll(node.getAllPaths());
+		
+		//1/. Get all paths in old that are not in new
+		ArrayList<String> pathsToDel = new ArrayList<>();
+		for(String oldPath : oldPaths) {
+			if(!newPaths.contains(oldPath)) {
+				pathsToDel.add(oldPath);
+			}
+		}
+		
+		//2. Get all paths in new that are not in old
+		ArrayList<String> pathsToAdd = new ArrayList<>();
+		for(int i=0; i<newPaths.size(); i++) {
+			String newPath = newPaths.get(i);
+			if(!oldPaths.contains(newPath)) {
+				String after = newPaths.get(i-1);
+				pathsToAdd.add(newPath + "$$" + after);
+			}
+		}
+		
+		ArrayList<VHNode> allNodes = new ArrayList<>();
+		allNodes.addAll(oldOrderedNodes);
+		this.headerViewNodes = allNodes;
+		
+		for(String path : pathsToDel) {
+			deleteHeaderViewPath(this.headerViewNodes, path);
+		}
+		
+		for(String path : pathsToAdd) {
+			addHeaderViewPath(path);
+		}
+	}
+	
+	private void addHeaderViewPath(String path) {
+		int after = path.indexOf("$$");
+		String afterPath = path.substring(after + 2);
+		path = path.substring(0, after);
+		
+		int idx = path.indexOf("/");
+		String pathStart = path, pathEnd = null;
+		if(idx != -1) {
+			pathStart = path.substring(0, idx);
+			pathEnd = path.substring(idx+1);
+		}
+		
+		ArrayList<VHNode> parentList = this.headerViewNodes;
+		if(pathEnd != null) {
+			VHNode parentNode = VHNode.getVHNodeFromPath(pathStart, this.headerViewNodes);
+			parentList = parentNode.getNestedNodes();
+			pathStart = pathEnd;
+		}
+		
+		idx = pathStart.indexOf(":");
+		String id = pathStart.substring(0, idx);
+		String name = pathStart.substring(idx+1);
+		VHNode newNode = new VHNode(id, name);
+		
+		int insertIdx = -1;
+		idx = afterPath.lastIndexOf("/");
+		if(idx != -1)
+			afterPath = afterPath.substring(idx + 1);
+		for(int i=0; i<parentList.size(); i++) {
+			VHNode node = parentList.get(i);
+			if(node.getNodePathSignature().equals(afterPath)) {
+				insertIdx = i;
+				break;
+			}
+		}
+		parentList.add(insertIdx+1, newNode);
+	}
+	
+	private void deleteHeaderViewPath(ArrayList<VHNode> nodes, String path) {
+		int idx = path.indexOf("/");
+		String pathStart = path, pathEnd = null;
+		if(idx != -1) {
+			pathStart = path.substring(0, idx);
+			pathEnd = path.substring(idx+1);
+		}
+		
+		for(VHNode node : nodes) {
+			if(node.getNodePathSignature().equals(pathStart)) {
+				if(pathEnd == null) {
+					nodes.remove(node);
+				} else {
+					deleteHeaderViewPath(node.getNestedNodes(), pathEnd);
+				}
+				break;
+			}
+			
+		}
 	}
 	
 	public void generateWorksheetListJson(String prefix, PrintWriter pw) {

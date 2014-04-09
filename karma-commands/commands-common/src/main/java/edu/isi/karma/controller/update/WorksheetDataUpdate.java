@@ -21,18 +21,24 @@
 
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.rep.*;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.view.ViewPreferences.ViewPreference;
+import java.io.PrintWriter;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
-import java.util.List;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.Table;
+import edu.isi.karma.rep.TablePager;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.view.VHNode;
+import edu.isi.karma.view.VWorksheet;
+import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.ViewPreferences.ViewPreference;
 
 public class WorksheetDataUpdate extends AbstractUpdate {
 	
@@ -63,8 +69,9 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 			Table dataTable = wk.getDataTable();
 			TablePager pager = vWorksheet.getTopTablePager();
 			
-			JSONArray rows = getRowsUsingPager(dataTable, vWorkspace.getRepFactory(), 
-					pager, vWorksheet, vWorkspace.getPreferences().getIntViewPreferenceValue(
+			JSONArray rows = getRowsUsingPager(
+							pager, vWorksheet,
+							vWorksheet.getHeaderViewNodes(), vWorkspace.getPreferences().getIntViewPreferenceValue(
 							ViewPreference.maxCharactersInCell));
 			int rowsLeft = dataTable.getNumRows() - rows.length();
 			rowsLeft = rowsLeft < 0 ? 0 : rowsLeft;
@@ -79,61 +86,54 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 		}
 	}
 
-	private JSONArray getRowsUsingPager(Table dataTable, RepFactory repFactory, 
-			TablePager pager, VWorksheet vWorksheet, int maxDataDisplayLength) throws JSONException {
-		return getRowsJsonArray(pager.getRows(), vWorksheet, repFactory, maxDataDisplayLength);
+	private JSONArray getRowsUsingPager(TablePager pager, VWorksheet vWorksheet, List<VHNode> orderedHnodeIds, int maxDataDisplayLength) throws JSONException {
+		return getRowsJsonArray(pager.getRows(),vWorksheet,  orderedHnodeIds, maxDataDisplayLength);
 	}
 	
-	public JSONArray getRowsJsonArray(List<Row> rows, VWorksheet vWorksheet, RepFactory repFactory,
+	public JSONArray getRowsJsonArray(List<Row> rows, VWorksheet vWorksheet, List<VHNode> orderedHnodeIds, 
 			int maxDataDisplayLength) throws JSONException {
 		JSONArray rowsArr = new JSONArray();
 		
-		HTable hTable = null;
-		List<String> orderedHnodeIds = null;
+//		HTable hTable = null;
+		
 		for (Row row:rows) {
 			JSONArray rowValueArray = new JSONArray();
+		
 			
-			// Get the HTable so that we get the values in the correct order of columns
-			if (hTable == null) {
-				String hTableId = row.getBelongsToTable().getHTableId();
-				hTable = repFactory.getHTable(hTableId);
-				if (hTable == null) {
-					logger.error("No HTable found for a row. This should not happen!");
-					continue;
+			for (VHNode vNode : orderedHnodeIds) {
+				if(vNode.isVisible()) {
+					Node rowNode = row.getNode(vNode.getId());
+					JSONObject nodeObj = new JSONObject();
+					nodeObj.put(JsonKeys.columnClass.name(), 
+							WorksheetHeadersUpdate.getColumnClass(vNode.getId()));
+					nodeObj.put(JsonKeys.nodeId.name(), rowNode.getId());
+					nodeObj.put(JsonKeys.rowID.name(), row.getId());
+					if (vNode.hasNestedTable()) {
+						nodeObj.put(JsonKeys.hasNestedTable.name(), true);
+						Table nestedTable = rowNode.getNestedTable();
+						JSONArray nestedTableRows = getRowsUsingPager( 
+								vWorksheet.getNestedTablePager(nestedTable), 
+								vWorksheet,
+								vNode.getNestedNodes(), 
+								maxDataDisplayLength);
+						nodeObj.put(JsonKeys.nestedRows.name(), nestedTableRows);
+						nodeObj.put(JsonKeys.tableId.name(), rowNode.getNestedTable().getId());
+						
+						int rowsLeft = nestedTable.getNumRows() - nestedTableRows.length();
+						rowsLeft = rowsLeft < 0 ? 0 : rowsLeft;
+						nodeObj.put(JsonKeys.additionalRowsCount.name(), rowsLeft);
+						
+					} else {
+						String nodeVal = rowNode.getValue().asString();
+						nodeVal = (nodeVal == null) ? "" : nodeVal;
+						String displayVal = (nodeVal.length() > maxDataDisplayLength) 
+								? nodeVal.substring(0, maxDataDisplayLength) + "..." : nodeVal;
+						nodeObj.put(JsonKeys.displayValue.name(), displayVal);
+						nodeObj.put(JsonKeys.expandedValue.name(), nodeVal);
+						nodeObj.put(JsonKeys.hasNestedTable.name(), false);
+					}
+					rowValueArray.put(nodeObj);
 				}
-				orderedHnodeIds = hTable.getOrderedNodeIds();
-			}
-			
-			for (String hNodeId : orderedHnodeIds) {
-				Node node = row.getNode(hNodeId);
-				JSONObject nodeObj = new JSONObject();
-				nodeObj.put(JsonKeys.columnClass.name(), 
-						WorksheetHeadersUpdate.getColumnClass(hNodeId));
-				nodeObj.put(JsonKeys.nodeId.name(), node.getId());
-				nodeObj.put(JsonKeys.rowID.name(), row.getId());
-				if (node.hasNestedTable()) {
-					nodeObj.put(JsonKeys.hasNestedTable.name(), true);
-					Table nestedTable = node.getNestedTable();
-					JSONArray nestedTableRows = getRowsUsingPager(nestedTable, repFactory, 
-							vWorksheet.getNestedTablePager(nestedTable), vWorksheet, 
-							maxDataDisplayLength);
-					nodeObj.put(JsonKeys.nestedRows.name(), nestedTableRows);
-					nodeObj.put(JsonKeys.tableId.name(), node.getNestedTable().getId());
-					
-					int rowsLeft = nestedTable.getNumRows() - nestedTableRows.length();
-					rowsLeft = rowsLeft < 0 ? 0 : rowsLeft;
-					nodeObj.put(JsonKeys.additionalRowsCount.name(), rowsLeft);
-					
-				} else {
-					String nodeVal = node.getValue().asString();
-					nodeVal = (nodeVal == null) ? "" : nodeVal;
-					String displayVal = (nodeVal.length() > maxDataDisplayLength) 
-							? nodeVal.substring(0, maxDataDisplayLength) + "..." : nodeVal;
-					nodeObj.put(JsonKeys.displayValue.name(), displayVal);
-					nodeObj.put(JsonKeys.expandedValue.name(), nodeVal);
-					nodeObj.put(JsonKeys.hasNestedTable.name(), false);
-				}
-				rowValueArray.put(nodeObj);
 			}
 			rowsArr.put(rowValueArray);
 		}

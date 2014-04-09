@@ -79,10 +79,8 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
 		VWorksheet vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
-		List<String> hNodeIdList = new ArrayList<String>();
-		List<HNodePath> columns = vWorksheet.getColumns();
-		for(HNodePath path:columns)
-			hNodeIdList.add(path.getLeaf().getId());
+		List<String> hNodeIdList = vWorksheet.getHeaderVisibleNodes();
+		
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				vWorkspace.getWorkspace().getId(), vWorksheet.getWorksheetId());
 		

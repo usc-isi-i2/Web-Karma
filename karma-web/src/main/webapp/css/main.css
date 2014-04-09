@@ -70,3 +70,8 @@ body {
  #incomingOutgoingLinksDialog_inner_classList1 ins, #incomingOutgoingLinksDialog_inner_classList2 ins, #incomingOutgoingLinksDialog_inner_propertyList1 ins, #incomingOutgoingLinksDialog_inner_propertyList2 ins {
  	width: 1px;
  }
+ 
+ #semanticTypesTableDiv {
+ 	overflow: auto;
+ 	max-height: 200px;
+ }

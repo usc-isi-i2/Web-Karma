@@ -75,3 +75,5 @@ Thumbs.db
 *.iml
 .idea
 */src/test/karma-data/testresult/testResult.txt
+
+*.sh

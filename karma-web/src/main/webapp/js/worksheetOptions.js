@@ -6,6 +6,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	
 	var options = [
 	        {name:"View model using straight lines", func:viewStraightLineModel, showCheckbox:true, defaultChecked:true, initFunc:initStrightLineModel},
+	        {name:"Organize Columns", func:organizeColumns},
 	        {name:"divider"},
 	        {name:"Show Model" , func:showModel},
 			{name:"Set Properties", func:setProperties},
@@ -43,6 +44,12 @@ function WorksheetOptions(wsId, wsTitle) {
 			$(checkbox).prop('checked', !checkbox.checked);
 		}
 		return checkbox.checked;
+	}
+	
+	function organizeColumns() {
+		hideDropdown();
+		OrganizeColumnsDialog.getInstance().show(worksheetId);
+		return false;
 	}
 	
 	function deleteWorksheet() {
