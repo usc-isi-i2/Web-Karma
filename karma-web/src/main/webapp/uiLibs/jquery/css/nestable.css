@@ -23,7 +23,7 @@ html .cf { zoom: 1; }
 
 .dd-item,
 .dd-empty,
-.dd-placeholder { display: block; position: relative; margin: 0; padding: 0; min-height: 20px; font-size: 13px; line-height: 20px; }
+.dd-placeholder { display: block; position: relative; margin: 0; padding: 0; font-size: 13px; line-height: 20px; }
 
 .dd-handle { display: block; margin: 2px 0; padding: 1px 10px; color: #333; text-decoration: none; font-weight: bold; border: 1px solid #ccc;
     background: #fafafa;
@@ -35,6 +35,11 @@ html .cf { zoom: 1; }
     box-sizing: border-box; -moz-box-sizing: border-box;
 }
 .dd-handle:hover { color: #2ea8e5; background: #fff; }
+
+.dd-handle-hide { height: 1px; color: transparent; }
+.dd-handle-hide > span { display : none; }
+.dd-handle-hide:hover { color: transparent; }
+
 
 .dd-item > button { display: block; position: relative; cursor: pointer; float: left; width: 25px; height: 20px; margin: 5px 0; padding: 0; text-indent: 100%; white-space: nowrap; overflow: hidden; border: 0; background: transparent; font-size: 12px; line-height: 1; text-align: center; font-weight: bold; }
 .dd-item > button:before { content: '+'; display: block; position: absolute; width: 100%; text-align: center; text-indent: 0; }

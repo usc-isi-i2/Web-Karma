@@ -100,19 +100,20 @@
 					var isGray = styleNode.css("background-color") == "rgb(128, 128, 128)";
 					var curVis = curNode.data("visible");
 					
+					//curNode -> li
+					var divNode = curNode.children().first();
+					
 					if(curVis) {
+						divNode.removeClass("dd-handle-hide");
+						curNode.removeClass("dd-item-hidden");
+						curNode.attr("title", "");
 						//curNode.children("div").first().css("color", "#000000");
 						if(styleNode[0].className == "glyphicon glyphicon-eye-close")	styleNode.removeClass("glyphicon glyphicon-eye-close").addClass("glyphicon glyphicon-eye-open");
-//						if(!parVis || parGra) {
-//							styleNode.css("background-color", "gray"); 
-//							curNode.data("hideable", false);
-//						}
-//						else {
-//							curNode.data("hideable", true);
-//							if(isGray)	styleNode.css("background-color", "transparent"); 
-//						}
 					}
 					else {
+						divNode.addClass("dd-handle-hide");
+						curNode.addClass("dd-item-hidden");
+						curNode.attr("title", divNode.text());
 						//curNode.children("div").first().css("color", "#DDDDDD");
 						if(styleNode[0].className == "glyphicon glyphicon-eye-open")	styleNode.removeClass("glyphicon glyphicon-eye-open").addClass("glyphicon glyphicon-eye-close");
 						if(isGray)	styleNode.css("background-color", "transparent"); 
@@ -129,21 +130,33 @@
 						}
 					}
 				}
+				
 			};
 	
             var onStartEvent = function(e)
             {
                 var handle = $(e.target);
 				var x = handle[0].className;
-				if(handle[0].className == "glyphicon glyphicon-eye-open" || handle[0].className == "glyphicon glyphicon-eye-close") {
+				if(handle[0].className == "glyphicon glyphicon-eye-open" || 
+						handle[0].className == "glyphicon glyphicon-eye-close") {
 					var curNode = handle.parent().parent().parent();
 					
 					dealWithNode(curNode, true);
+					$('.dd-item-hidden').tooltip('destroy')
+					$(".dd-item-hidden").tooltip();
+					$("#nestable.dd").trigger('change');
+					return;
+				}
+				if(handle[0].className == "dd-handle dd-handle-hide") {
+					var curNode = handle.parent();
+					
+					dealWithNode(curNode, true);
+					$('.dd-item-hidden').tooltip('destroy')
+					$(".dd-item-hidden").tooltip();
 					
 					$("#nestable.dd").trigger('change');
 					return;
 				}
-				
                 if (!handle.hasClass(list.options.handleClass)) {
                     if (handle.closest('.' + list.options.noDragClass).length) {
                         return;
@@ -294,7 +307,8 @@
             mouse.startY = mouse.lastY = e.pageY;
 
             this.dragRootEl = this.el;
-
+            this.dragScrollEl = this.dragRootEl.parent();
+            
             this.dragEl = $(document.createElement(this.options.listNodeName)).addClass(this.options.listClass + ' ' + this.options.dragClass);
             this.dragEl.css('width', dragItem.width());
 
@@ -309,6 +323,7 @@
                 'left' : e.pageX - mouse.offsetX,
                 'top'  : e.pageY - mouse.offsetY
             });
+            
             // total depth of dragging item
             var i, depth,
                 items = this.dragEl.find(this.options.itemNodeName);
@@ -356,6 +371,13 @@
             // distance mouse moved between events
             mouse.distX = mouse.nowX - mouse.lastX;
             mouse.distY = mouse.nowY - mouse.lastY;
+            
+            var lastScroll = this.dragScrollEl.scrollTop();
+            var newScroll = lastScroll + mouse.distY;
+            //console.log("Set scrollTop: " + lastScroll + ":" + newScroll);
+            
+            this.dragScrollEl.scrollTop(newScroll);
+            
             // direction mouse was moving
             mouse.lastDirX = mouse.dirX;
             mouse.lastDirY = mouse.dirY;

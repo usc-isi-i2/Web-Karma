@@ -1058,6 +1058,8 @@ var OrganizeColumnsDialog = (function() {
 							.attr("data-id", element.id)
 							.attr("data-visible", element.visible)
 							.attr("data-hideable", element.hideable)
+							.attr("data-toggle", "tooltip")
+							.attr("data-placement", "auto bottom")
 							;
 				var eye = $("<span>").addClass("glyphicon").css("margin-right", "5px");
 				if(element.visible) {
@@ -1068,7 +1070,11 @@ var OrganizeColumnsDialog = (function() {
 				var eyeOuter = $("<span>");
 				eyeOuter.append(eye);
 				var div = $("<div>").addClass("dd-handle").append(eyeOuter).append(element.name);
-				
+				if(!element.visible) {
+					div.addClass("dd-handle-hide");
+					li.attr("title", element.name)
+					li.addClass("dd-item-hidden");
+				}
 				if(!element.hideable) {
 					eye.css("color", "#DDDDDD");
 					eye.addClass("glyphicon-noclick");
@@ -1082,7 +1088,8 @@ var OrganizeColumnsDialog = (function() {
 						createColumnList(element.children, li, element.visible);
 				}
 			});
-			
+		
+			$(".dd-item-hidden").tooltip(); //activate the bootstrap tooltip
 		}
 		
         function saveDialog(e) {
