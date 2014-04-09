@@ -76,7 +76,10 @@ public class KarmaServlet extends HttpServlet {
 			logger.error("Unable to complete Karma set up: ", e);
 		}
 		/* Check if any workspace id is set in cookies. */
-		boolean hasWorkspaceCookieId = request.getParameter(Arguments.hasPreferenceId.name()).equals("true");
+		boolean hasWorkspaceCookieId = false;
+		String hasPrefId = request.getParameter(Arguments.hasPreferenceId.name());
+		if(hasPrefId != null && hasPrefId.equals("true"))
+			hasWorkspaceCookieId = true;
 		Workspace workspace = null;
 		VWorkspace vwsp = null;
 		
