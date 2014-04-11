@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research;
+package edu.isi.karma.reserach.alignment;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
