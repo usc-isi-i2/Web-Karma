@@ -211,7 +211,8 @@
                     items.each(function()
                     {
                         var li   = $(this),
-                            item = $.extend({}, li.data()),
+                            //item = $.extend({}, li.data()),
+                        	item = $.extend({}, {"id": li.data("id"), "name": li.data("name"), "visible": li.data("visible"), "hideable":  li.data("hideable")});
                             sub  = li.children(list.options.listNodeName);
                         if (sub.length) {
                             item.children = step(sub, depth + 1);

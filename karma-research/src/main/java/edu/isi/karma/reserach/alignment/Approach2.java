@@ -1,3 +1,4 @@
+package edu.isi.karma.reserach.alignment;
 
 ///*******************************************************************************
 // * Copyright 2012 University of Southern California
