@@ -308,7 +308,6 @@
             mouse.startY = mouse.lastY = e.pageY;
 
             this.dragRootEl = this.el;
-            this.dragScrollEl = this.dragRootEl.parent();
             
             this.dragEl = $(document.createElement(this.options.listNodeName)).addClass(this.options.listClass + ' ' + this.options.dragClass);
             this.dragEl.css('width', dragItem.width());
@@ -334,6 +333,7 @@
                     this.dragDepth = depth;
                 }
             }
+           
         },
 
         dragStop: function(e)
@@ -373,11 +373,12 @@
             mouse.distX = mouse.nowX - mouse.lastX;
             mouse.distY = mouse.nowY - mouse.lastY;
             
-            var lastScroll = this.dragScrollEl.scrollTop();
-            var newScroll = lastScroll + mouse.distY;
-            //console.log("Set scrollTop: " + lastScroll + ":" + newScroll);
-            
-            this.dragScrollEl.scrollTop(newScroll);
+            var w = this.el.height();
+            var newScroll = e.screenY - this.el.offset().top - w/2;
+
+//            console.log("Set scrollTop: " + newScroll + "=>" + mouse.lastY + ":" + mouse.nowY + ", "  + e.pageY + ":" + mouse.offsetY);
+            if(newScroll < 0) newScroll = 0;
+            this.dragRootEl.scrollTop(newScroll);
             
             // direction mouse was moving
             mouse.lastDirX = mouse.dirX;
