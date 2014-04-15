@@ -21,6 +21,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 			[ "Invoke Service" , invokeService ],
 			[ "Show Chart", showChart],
 			["Group By", GroupBy], 
+			["Unfold", Unfold] 
 			//[ "Apply R2RML Model" , applyR2RMLModel, true, "applyWorksheetHistory" ],
 			//[ "divider" , null ],
 			
@@ -160,6 +161,12 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 		//console.log("Group By: " + worksheetTitle);
 		hideDropdown();
 		GroupByDialog.getInstance().show(worksheetId, columnId);
+  }
+
+  function Unfold () {
+		//console.log("Group By: " + worksheetTitle);
+		hideDropdown();
+		UnfoldDialog.getInstance().show(worksheetId, columnId);
   }
 	
 	this.generateJS = function() {
@@ -881,7 +888,7 @@ var GroupByDialog = (function() {
             var info = new Object();
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "UnfoldCommand";
+            info["command"] = "GroupByCommand";
 
             var newInfo = [];
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
@@ -962,6 +969,148 @@ var GroupByDialog = (function() {
                       					.attr("type", "checkbox")
                                 .attr("id", "selectcolumns")
                                 .attr("value", id);
+                  label.append(input);
+                  row.append(label);
+                  dialogContent.append(row);
+                }
+            });
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        return {    //Return back the public methods
+            show : show,
+            init : init
+        };
+    };
+
+    function getInstance() {
+        if( ! instance ) {
+            instance = new PrivateConstructor();
+            instance.init();
+        }
+        return instance;
+    }
+   
+    return {
+        getInstance : getInstance
+    };
+})();
+
+var UnfoldDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+        var dialog = $("#unfoldDialog");
+        var worksheetId, columnId;
+        function init() {
+            
+            //Initialize handler for Save button
+            //var me = this;
+            $('#btnSave', dialog).on('click', function (e) {
+                e.preventDefault();
+                saveDialog(e);
+            });    
+        }
+        
+        function hideError() {
+            $("div.error", dialog).hide();
+        }
+        
+        function showError() {
+            $("div.error", dialog).show();
+        }
+        
+        function saveDialog(e) {
+            console.log("Save clicked");
+            
+            var checkboxes = dialog.find(":checked");
+            var checked = checkboxes[0];
+            
+            //console.log(checked);
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "UnfoldCommand";
+            var newInfo = [];
+            newInfo.push(getParamObject("keyhNodeId", columnId, "other"));
+            newInfo.push(getParamObject("valuehNodeId", checked['value'], "other"));
+            newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+            info["newInfo"] = JSON.stringify(newInfo);
+            showLoading(info["worksheetId"]);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        console.log(json);
+                        parse(json);
+                        hideLoading(info["worksheetId"]);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while generating the automatic model!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            });
+            
+            hide();
+        };
+        
+        function hide() {
+            dialog.modal('hide');
+        }
+        function getHeaders() {
+        	var info = new Object();
+	        info["worksheetId"] = worksheetId;
+	        info["workspaceId"] = $.workspaceGlobalInformation.id;
+	        info["hNodeId"] = columnId;
+	        info["command"] = "GetHeadersCommand";
+	        var headers;
+	        var returned = $.ajax({
+	            url: "RequestController",
+	            type: "POST",
+	            data : info,
+	            dataType : "json",
+	            async : false,
+	            complete :
+	                function (xhr, textStatus) {
+		            	var json = $.parseJSON(xhr.responseText);
+		            	headers = json.elements[0];
+	                },
+	            error :
+	                function (xhr, textStatus) {
+	                    alert("Error occured while getting worksheet headers!" + textStatus);
+	                    hideLoading(info["worksheetId"]);
+	                }
+	        });
+	        return headers;
+        }
+        function show(wsId, cId) {
+            worksheetId = wsId;
+            columnId = cId;
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                var dialogContent = $("#unfoldDialogColumns", dialog);
+                dialogContent.empty();
+                var headers = getHeaders();
+                //console.log(headers);
+                for (var i = 0; i < headers.length; i++) {
+
+                	var columnName = headers[i].ColumnName;
+                	var id = headers[i].HNodeId;
+                	//console.log(columnName);
+                	//console.log(id);
+                	var row = $("<div>").addClass("checkbox");
+                  var label = $("<label>").text(columnName);
+                  var input = $("<input>")
+                      					.attr("type", "radio")
+                                .attr("id", "selectcolumns")
+                                .attr("value", id)
+                                .attr("name", "unfoldColumn");
                   label.append(input);
                   row.append(label);
                   dialogContent.append(row);

@@ -127,8 +127,8 @@ public class FoldCommand extends WorksheetCommand {
 			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId, "test");
 			cmd.doIt(workspace);
 			UpdateContainer c =  new UpdateContainer();		
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
-			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+			//c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			//c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {
 			logger.error("Error in FoldCommand" + e.toString());

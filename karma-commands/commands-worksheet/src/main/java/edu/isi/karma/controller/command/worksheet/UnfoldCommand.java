@@ -2,6 +2,7 @@ package edu.isi.karma.controller.command.worksheet;
 
 import java.util.*;
 
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,8 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.util.CommandInputJSONUtil;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
 
 public class UnfoldCommand extends WorksheetCommand {
@@ -74,14 +77,18 @@ public class UnfoldCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Object para = JSONUtil.createJson(this.getInputParameterJson());
+		String keyHNodeid = CommandInputJSONUtil.getStringValue("keyhNodeId", (JSONArray)para);
+		String valueHNodeid = CommandInputJSONUtil.getStringValue("valuehNodeId", (JSONArray)para);
+		System.out.println(keyHNodeid + " " + valueHNodeid);
 		RepFactory factory = workspace.getFactory();
 		Worksheet oldws = workspace.getWorksheet(
 				worksheetId);	
 		Worksheet newws = factory.createWorksheet("Unfold: " + oldws.getTitle(), workspace, oldws.getEncoding());
 		ArrayList<HNode> topHNodes = new ArrayList<HNode>(oldws.getHeaders().getHNodes());
 		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows());
-		HNode key = topHNodes.get(0);
-		HNode value = topHNodes.get(1);
+		HNode key = oldws.getHeaders().getHNode(keyHNodeid);
+		HNode value = oldws.getHeaders().getHNode(valueHNodeid);
 		List<HNode> hnodes = new ArrayList<HNode>();
 		for (HNode h : topHNodes) {
 			if (h.getId().compareTo(value.getId()) != 0 && h.getId().compareTo(key.getId()) != 0)
