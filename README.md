@@ -23,7 +23,7 @@ You can find useful tutorials on the project Website: [http://www.isi.edu/integr
 System Requirements: **Java 1.7, Maven 3.0** and above.
 
 To run the jetty server, execute the following command from webkarma top directory:
-`mvn jetty:run`. Once the server has started point your browser to **http://localhost:8080/web-karma.html**. To start it on a port other than 8080 (e.g. Port number 9999) 
+`mvn jetty:run`. Once the server has started point your browser to **http://localhost:8080**. To start it on a port other than 8080 (e.g. Port number 9999) 
 `mvn -Djetty.port=9999 jetty:run`
 
 To start in logging mode (where all the logs are stored in the log folder), use the following command to start the server:
