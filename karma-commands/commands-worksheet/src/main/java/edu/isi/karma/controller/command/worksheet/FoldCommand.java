@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.worksheet;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -32,7 +33,7 @@ public class FoldCommand extends WorksheetCommand {
 	//add column to this table
 	private String hTableId;
 	Command cmd;
-	private Collection<HNode> hnodes = new ArrayList<HNode>();
+	private List<HNode> hnodes = new ArrayList<HNode>();
 	//the id of the new column that was created
 	//needed for undo
 	private String newHNodeId;
@@ -124,6 +125,7 @@ public class FoldCommand extends WorksheetCommand {
 		input.put(obj);
 		try{
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
+			//hNodeId = hnodes.get(0).getId();
 			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId, "test");
 			cmd.doIt(workspace);
 			UpdateContainer c =  new UpdateContainer();		

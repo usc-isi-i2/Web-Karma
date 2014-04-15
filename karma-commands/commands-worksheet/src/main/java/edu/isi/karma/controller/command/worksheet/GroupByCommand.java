@@ -116,17 +116,17 @@ public class GroupByCommand extends WorksheetCommand {
 		HTable newValueTable = newht.getHNodeFromColumnName("Values").addNestedTable("Table for values", newws, factory);
 		//newValueTable.addHNode("Values", newws, factory);
 		//HTable newValueNestedTable = newValueTable.getHNodeFromColumnName("Values").addNestedTable("Table for nested values", newws, factory);
-		cloneHTable(oldht, newKeyTable, newws, factory, keyhnodes);
-		cloneHTable(oldht, newValueTable, newws, factory, valuehnodes);
+		CloneTableUtils.cloneHTable(oldht, newKeyTable, newws, factory, keyhnodes);
+		CloneTableUtils.cloneHTable(oldht, newValueTable, newws, factory, valuehnodes);
 		for (String key : hash.keySet()) {
 			//System.out.println("key: " + hash.get(key));
 			ArrayList<String> r = hash.get(key);
 			Row firstrow = newws.addRow(factory);
-			Row lastRow = cloneDataTable(getRow(rows, r.get(0)), firstrow.getNeighborByColumnName("Keys", factory).getNestedTable(), oldws.getHeaders(), newKeyTable, keyhnodes, factory);
+			Row lastRow = CloneTableUtils.cloneDataTable(CloneTableUtils.getRow(rows, r.get(0)), firstrow.getNeighborByColumnName("Keys", factory).getNestedTable(), oldws.getHeaders(), newKeyTable, keyhnodes, factory);
 			for (String rowid : r) {
-				Row cur = getRow(rows, rowid);
+				Row cur = CloneTableUtils.getRow(rows, rowid);
 				Table dataTable = lastRow.getNeighborByColumnName("Values", factory).getNestedTable();
-				cloneDataTable(cur, dataTable, oldws.getHeaders(), newValueTable, valuehnodes, factory);
+				CloneTableUtils.cloneDataTable(cur, dataTable, oldws.getHeaders(), newValueTable, valuehnodes, factory);
 			}
 		}
 		//cloneDataTable(oldws.getDataTable(), firstrow.getNeighborByColumnName("Keys", factory).getNestedTable(), oldws.getHeaders(), newKeyTable, keyhnodes, factory);
@@ -159,58 +159,6 @@ public class GroupByCommand extends WorksheetCommand {
 		return newHNodeId;
 	}
 
-	private void cloneHTable(HTable oldht, HTable newht, Worksheet newws, RepFactory factory, List<HNode> hnodes) {
-		Collections.sort(hnodes);
-		for (HNode hnode : hnodes) {
-			HNode newhnode = newht.addHNode(hnode.getColumnName(), newws, factory);
-			if (hnode.hasNestedTable()) {
-				HTable oldnested = hnode.getNestedTable();
-				HTable newnested = newhnode.addNestedTable(hnode.getNestedTable().getTableName(), newws, factory);		
-				cloneHTable(oldnested, newnested, newws, factory, new ArrayList<HNode>(oldnested.getHNodes()));
-			}
-		}
-	}
-
-	private Row cloneDataTable(Row oldRow, Table newDataTable, HTable oldHTable, HTable newHTable, List<HNode> hnodes, RepFactory factory) {
-		Row newrow = newDataTable.addRow(factory);
-		for (HNode hnode : hnodes) {
-			HNode newHNode = newHTable.getHNodeFromColumnName(hnode.getColumnName());
-			Node oldNode = oldRow.getNode(hnode.getId());
-			Node newNode = newrow.getNode(newHNode.getId());
-			if (!oldNode.hasNestedTable()) {
-				newNode.setValue(oldNode.getValue(), oldNode.getStatus(), factory);
-			}
-			else {					
-				cloneDataTable(oldNode.getNestedTable(), newNode.getNestedTable(), hnode.getNestedTable(), newHNode.getNestedTable(), hnode.getNestedTable().getSortedHNodes(), factory);
-			}
-		}
-		return newrow;
-	}
-
-	private void cloneDataTable(Table oldDataTable, Table newDataTable, HTable oldHTable, HTable newHTable, List<HNode> hnodes, RepFactory factory) {
-		ArrayList<Row> rows = oldDataTable.getRows(0, oldDataTable.getNumRows());
-		for (Row row : rows) {
-			Row newrow = newDataTable.addRow(factory);
-			for (HNode hnode : hnodes) {
-				HNode newHNode = newHTable.getHNodeFromColumnName(hnode.getColumnName());
-				Node oldNode = row.getNode(hnode.getId());
-				Node newNode = newrow.getNode(newHNode.getId());
-				if (!oldNode.hasNestedTable()) {
-					newNode.setValue(oldNode.getValue(), oldNode.getStatus(), factory);
-				}
-				else {					
-					cloneDataTable(oldNode.getNestedTable(), newNode.getNestedTable(), hnode.getNestedTable(), newHNode.getNestedTable(), hnode.getNestedTable().getSortedHNodes(), factory);
-				}
-			}
-		}
-	}
-
-	private Row getRow(List<Row> rows, String rowID) {
-		for (Row row : rows) {
-			if (row.getId().compareTo(rowID) == 0)
-				return row;
-		}
-		return null;
-	}
+	
 
 }

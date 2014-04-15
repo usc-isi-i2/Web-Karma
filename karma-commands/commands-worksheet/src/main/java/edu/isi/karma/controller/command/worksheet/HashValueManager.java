@@ -78,5 +78,17 @@ public class HashValueManager {
 	public static void purgeHashTable() {
 		hashTable.clear();
 	}
+	
+	public static String getHashValue(Worksheet worksheet, String NodeId) {
+		Table dataTable = worksheet.getDataTable();
+		for (Row row : dataTable.getRows(0, dataTable.getNumRows())) {
+			for (Node node : row.getNodes()) {
+				if (node.getId().compareTo(NodeId) == 0) {
+					return DigestUtils.shaHex(node.getValue().asString());
+				}
+			}
+		}
+		return null;
+	}
 
 }

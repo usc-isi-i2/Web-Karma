@@ -288,8 +288,13 @@ public class VWorksheet extends ViewEntity {
 		for(int i=0; i<newPaths.size(); i++) {
 			String newPath = newPaths.get(i);
 			if(!oldPaths.contains(newPath)) {
-				String after = newPaths.get(i-1);
-				pathsToAdd.add(newPath + "$$" + after);
+				if (i != 0) {
+					String after = newPaths.get(i-1);
+					pathsToAdd.add(newPath + "$$" + after);
+				}
+				else {
+					pathsToAdd.add(newPath + "$$" + "null");
+				}
 			}
 		}
 		
