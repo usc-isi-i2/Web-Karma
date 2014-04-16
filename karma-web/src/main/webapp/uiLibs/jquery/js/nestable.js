@@ -89,7 +89,7 @@
                 }
             });
 
-			var dealWithNode = function(curNode, clickNode) {
+			var dealWithNode = function(curNode, clickNode, parentInvisble) {
 				var hideable = curNode.data("hideable");
 				if(hideable) {
 					var isRoot = curNode.parent().parent()[0].className == "dd";
@@ -100,20 +100,31 @@
 					var isGray = styleNode.css("background-color") == "rgb(128, 128, 128)";
 					var curVis = curNode.data("visible");
 					
-					//curNode -> li
-					var divNode = curNode.children().first();
+					if(parentInvisble)
+						parVis = false;
 					
-					if(curVis) {
-						divNode.removeClass("dd-handle-hide");
-						curNode.removeClass("dd-item-hidden");
-						curNode.attr("title", "");
+					//curNode -> li
+					var divNode = $(curNode.find('div')[0]);
+					
+					divNode.removeClass("dd-handle-hide");
+					divNode.removeClass("dd-handle-hide-all");
+					curNode.removeClass("dd-item-hidden");
+					curNode.removeClass("dd-item-hidden-all");
+					curNode.attr("title", "");
+					
+					if(curVis && parVis) {
 						//curNode.children("div").first().css("color", "#000000");
 						if(styleNode[0].className == "glyphicon glyphicon-eye-close")	styleNode.removeClass("glyphicon glyphicon-eye-close").addClass("glyphicon glyphicon-eye-open");
 					}
 					else {
-						divNode.addClass("dd-handle-hide");
-						curNode.addClass("dd-item-hidden");
-						curNode.attr("title", divNode.text());
+						if(parVis) {
+							divNode.addClass("dd-handle-hide");
+							curNode.addClass("dd-item-hidden");
+							curNode.attr("title", divNode.text());
+						} else {
+							divNode.addClass("dd-handle-hide-all");
+							curNode.addClass("dd-item-hidden-all");
+						}
 						//curNode.children("div").first().css("color", "#DDDDDD");
 						if(styleNode[0].className == "glyphicon glyphicon-eye-open")	styleNode.removeClass("glyphicon glyphicon-eye-open").addClass("glyphicon glyphicon-eye-close");
 						if(isGray)	styleNode.css("background-color", "transparent"); 
@@ -122,11 +133,11 @@
 					var node = null;
 					if(curNode.children("ol").length > 0) {
 						var len = curNode.children("ol").children().length;
-						for(var i = 0; i < curNode.children("ol").children().length; i ++) {
+						for(var i = 0; i < len; i ++) {
 							var x = curNode.children("ol").children().first();
-							if(node == null)	node = curNode.children("ol").children().first();
+							if(node == null)	node = x;
 							else 	node = node.next();
-							dealWithNode(node, false);
+							dealWithNode(node, false, !parVis);
 						}
 					}
 				}
@@ -141,8 +152,12 @@
 						handle[0].className == "glyphicon glyphicon-eye-close") {
 					var curNode = handle.parent().parent().parent();
 					
+					$(".dd-item-hidden").each(function( index ) {
+						$(this).tooltip('destroy');
+					});
+					
 					dealWithNode(curNode, true);
-					$('.dd-item-hidden').tooltip('destroy')
+					
 					$(".dd-item-hidden").tooltip();
 					$("#nestable.dd").trigger('change');
 					return;
@@ -150,8 +165,12 @@
 				if(handle[0].className == "dd-handle dd-handle-hide") {
 					var curNode = handle.parent();
 					
+					$(".dd-item-hidden").each(function( index ) {
+						$(this).tooltip('destroy');
+					});
+					
 					dealWithNode(curNode, true);
-					$('.dd-item-hidden').tooltip('destroy')
+					
 					$(".dd-item-hidden").tooltip();
 					
 					$("#nestable.dd").trigger('change');

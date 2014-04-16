@@ -40,6 +40,9 @@ html .cf { zoom: 1; }
 .dd-handle-hide > span { display : none; }
 .dd-handle-hide:hover { color: transparent; }
 
+.dd-handle-hide-all { display: none }
+.dd-handle-hide-all > span { display : none; }
+.dd-handle-hide-all:hover { color: transparent; }
 
 .dd-item > button { display: block; position: relative; cursor: pointer; float: left; width: 25px; height: 20px; margin: 5px 0; padding: 0; text-indent: 100%; white-space: nowrap; overflow: hidden; border: 0; background: transparent; font-size: 12px; line-height: 1; text-align: center; font-weight: bold; }
 .dd-item > button:before { content: '+'; display: block; position: absolute; width: 100%; text-align: center; text-indent: 0; }
@@ -121,3 +124,6 @@ html .cf { zoom: 1; }
 }
 .dd3-handle:before { content: '≡'; display: block; position: absolute; left: 0; top: 3px; width: 100%; text-align: center; text-indent: 0; color: #fff; font-size: 20px; font-weight: normal; }
 .dd3-handle:hover { background: #ddd; }
+
+.dd-item-hidden > button {display: none}
+.dd-item-hidden-all > button {display:none}
