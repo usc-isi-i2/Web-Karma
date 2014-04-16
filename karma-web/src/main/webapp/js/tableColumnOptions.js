@@ -883,7 +883,10 @@ var GroupByDialog = (function() {
                 var checkbox = checkboxes[i];
                 checked.push(getParamObject("checked", checkbox['value'], "other"));    
             }
-            
+            if (checked.length == 0) {
+            	hide();
+            	return;
+            }
             //console.log(checked);
             var info = new Object();
             info["worksheetId"] = worksheetId;
@@ -1024,6 +1027,10 @@ var UnfoldDialog = (function() {
             console.log("Save clicked");
             
             var checkboxes = dialog.find(":checked");
+            if (checkboxes.length == 0) {
+            	hide();
+            	return;
+            }
             var checked = checkboxes[0];
             
             //console.log(checked);

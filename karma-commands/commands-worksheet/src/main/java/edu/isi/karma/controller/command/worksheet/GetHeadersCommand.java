@@ -54,7 +54,9 @@ public class GetHeadersCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		HTable ht = getHTable(worksheet.getHeaders(), hNodeId);
+		HTable ht = worksheet.getHeaders();
+		if (hNodeId.compareTo("") != 0)
+			ht = getHTable(worksheet.getHeaders(), hNodeId);
 		final JSONArray array = new JSONArray();
 		for (HNode hn : ht.getHNodes()) {
 			JSONObject obj = new JSONObject();

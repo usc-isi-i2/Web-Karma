@@ -714,40 +714,7 @@ var FoldDialog = (function() {
     	var dialog = $("#foldDialog");
     	var worksheetId;
     	
-    	function init() {
-    		//Initialize what happens when we show the dialog
-    		dialog.on('show.bs.modal', function (e) {
-				hideError();
-				var worksheetPanel = $("div.Worksheet#" + worksheetId);
-		        var tableHeaderContainer = $("div.table-header-container", worksheetPanel);
-		        var headersTable = $("table.wk-table", tableHeaderContainer);
-		        var headersRow = $("tr.wk-row-odd", headersTable);
-		        
-		        var dialogContent = $("#foldDialogColumns", dialog);
-		        dialogContent.empty();
-		        
-			    headersRow.each(function (index, element) {
-		            var a = element.children;
-		            
-		            for (var i = 0; i < a.length; i++) {
-		                var cell = $("div.tableDropdown", a[i]);
-		                var name = $("a.dropdown-toggle", cell)
-		                console.log(name.text());
-		                if (name.html().indexOf("td") == -1) {
-		                	var row = $("<div>").addClass("checkbox");
-		                	var label = $("<label>").text(name.text());
-		                	var input = $("<input>")
-											.attr("type", "checkbox")
-											.attr("id", "selectcolumns")
-											.attr("value", element.cells[i].id);
-		                	label.append(input);
-		                	row.append(label);
-		                	dialogContent.append(row);
-		                }
-		            }
-		        });
-			});
-			
+    	function init() {			
 			//Initialize handler for Save button
 			//var me = this;
 			$('#btnSave', dialog).on('click', function (e) {
@@ -755,6 +722,33 @@ var FoldDialog = (function() {
 				saveDialog(e);
 			});    
     	}
+
+        function getHeaders() {
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["hNodeId"] = "";
+            info["command"] = "GetHeadersCommand";
+            var headers;
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                async : false,
+                complete :
+                    function (xhr, textStatus) {
+                        var json = $.parseJSON(xhr.responseText);
+                        headers = json.elements[0];
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while getting worksheet headers!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            });
+            return headers;
+        }
     	
 		function hideError() {
 			$("div.error", dialog).hide();
@@ -773,7 +767,10 @@ var FoldDialog = (function() {
 	            var checkbox = checkboxes[i];
 	            checked.push(getParamObject("checked", checkbox['value'], "other"));    
 	        }
-	        
+	        if (checked.length == 0) {
+                hide();
+                return;
+            }
 	        //console.log(checked);
 	        var info = new Object();
 	        info["worksheetId"] = worksheetId;
@@ -815,6 +812,29 @@ var FoldDialog = (function() {
         
         function show(wsId) {
         	worksheetId = wsId;
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                var dialogContent = $("#foldDialogColumns", dialog);
+                dialogContent.empty();
+                var headers = getHeaders();
+                //console.log(headers);
+                for (var i = 0; i < headers.length; i++) {
+
+                    var columnName = headers[i].ColumnName;
+                    var id = headers[i].HNodeId;
+                    //console.log(columnName);
+                    //console.log(id);
+                    var row = $("<div>").addClass("checkbox");
+                  var label = $("<label>").text(columnName);
+                  var input = $("<input>")
+                                        .attr("type", "checkbox")
+                                .attr("id", "selectcolumns")
+                                .attr("value", id)
+                  label.append(input);
+                  row.append(label);
+                  dialogContent.append(row);
+                }
+            });
         	dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
         

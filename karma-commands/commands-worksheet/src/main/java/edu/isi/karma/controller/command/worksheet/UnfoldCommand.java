@@ -15,8 +15,10 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.Node;
@@ -90,9 +92,12 @@ public class UnfoldCommand extends WorksheetCommand {
 		HNode key = oldws.getHeaders().getHNode(keyHNodeid);
 		HNode value = oldws.getHeaders().getHNode(valueHNodeid);
 		List<HNode> hnodes = new ArrayList<HNode>();
+		List<String> hnodeIds = new ArrayList<String>();
 		for (HNode h : topHNodes) {
-			if (h.getId().compareTo(value.getId()) != 0 && h.getId().compareTo(key.getId()) != 0)
+			if (h.getId().compareTo(value.getId()) != 0 && h.getId().compareTo(key.getId()) != 0) {
 				hnodes.add(h);
+				hnodeIds.add(h.getId());
+			}
 		}
 		CloneTableUtils.cloneHTable(oldws.getHeaders(), newws.getHeaders(), newws, factory, hnodes);
 		Map<String, String> keyMapping = new HashMap<String, String>();
@@ -103,17 +108,43 @@ public class UnfoldCommand extends WorksheetCommand {
 		}
 		for (String mapkey : keyMapping.keySet()) {
 			HNode n = newws.getHeaders().addHNode(keyMapping.get(mapkey), newws, factory);
+			HTable ht = n.addNestedTable("values", newws, factory);
+			ht.addHNode("Values", newws, factory);
 			HNodeidMapping.put(keyMapping.get(mapkey), n.getId());
 		}
 		
+		Map<String, ArrayList<String>> hash = new TreeMap<String, ArrayList<String>>();
 		for (Row row : rows) {
+			String hashValue = HashValueManager.getHashValue(row, hnodeIds);
+			ArrayList<String> ids = hash.get(hashValue);
+			if (ids == null)
+				ids = new ArrayList<String>();
+			ids.add(row.getId());
+			hash.put(hashValue, ids);
+			//System.out.println("Hash: " + HashValueManager.getHashValue(row, hnodeIDs));
+		}
+		
+		for (String hashKey : hash.keySet()) {
+			ArrayList<String> r = hash.get(hashKey);
+			Row lastRow = CloneTableUtils.cloneDataTable(CloneTableUtils.getRow(rows, r.get(0)), newws.getDataTable(), oldws.getHeaders(), newws.getHeaders(), hnodes, factory);
+			for (String rowid : r) {
+				Row cur = CloneTableUtils.getRow(rows, rowid);
+				String newId = HNodeidMapping.get(cur.getNode(key.getId()).getValue().asString());
+				Node newnode = lastRow.getNode(newId);
+				Node oldnode = cur.getNode(value.getId());
+				Row tmprow = newnode.getNestedTable().addRow(factory);
+				tmprow.getNeighborByColumnName("Values", factory).setValue(oldnode.getValue().asString(), oldnode.getStatus(), factory);
+				//newnode.setValue(oldnode.getValue().asString(), oldnode.getStatus(), factory);
+			}
+		}
+		/*for (Row row : rows) {
 			Row newrow = CloneTableUtils.cloneDataTable(row, newws.getDataTable(), oldws.getHeaders(), newws.getHeaders(), hnodes, factory);
 			String newId = HNodeidMapping.get(row.getNode(key.getId()).getValue().asString());
 			Node newnode = newrow.getNode(newId);
 			Node oldnode = row.getNode(value.getId());
 			newnode.setValue(oldnode.getValue().asString(), oldnode.getStatus(), factory);
 			
-		}
+		}*/
 		try{
 			UpdateContainer c =  new UpdateContainer();
 			c.add(new WorksheetListUpdate());
