@@ -374,6 +374,7 @@ public class KR2RMLMappingWriter {
 
 
 	public void close() throws RepositoryException {
+		con.close();
 		myRepository.shutDown();
 	}
 
