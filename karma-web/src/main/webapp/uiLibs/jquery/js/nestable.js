@@ -327,6 +327,10 @@
             // total depth of dragging item
             var i, depth,
                 items = this.dragEl.find(this.options.itemNodeName);
+            this.totalNumListItems = this.el.find('li').size();
+            this.elAbsolutePos = {};
+            this.elAbsolutePos.x = this.el.offset().left;
+            this.elAbsolutePos.y = this.el.offset().top;
             for (i = 0; i < items.length; i++) {
                 depth = $(items[i]).parents(this.options.listNodeName).length;
                 if (depth > this.dragDepth) {
@@ -374,11 +378,22 @@
             mouse.distY = mouse.nowY - mouse.lastY;
             
             var w = this.el.height();
-            var newScroll = e.screenY - this.el.offset().top - w/2;
+            var pos = e.pageY - this.elAbsolutePos.y;
+            var scrollBy = parseFloat(w) / this.totalNumListItems;
+            
+            //if pos is near the end, scroll a bit towards the bottom
+            //console.log("pos:" + pos + ">" + (w  - 0.15*w) + " <" + (0 + 0.15*w));
+            if(pos > (w  - 0.15*w))
+            	this.dragRootEl.scrollTop(this.dragRootEl.scrollTop() + scrollBy);
+            else if(pos < (0 + 0.15*w)) //if pos is neat the beginning, scroll a bit towards the top
+            	this.dragRootEl.scrollTop(this.dragRootEl.scrollTop() - scrollBy);
+            
+            
+            //var newScroll = e.screenY - this.el.offset().top - w/2;
 
 //            console.log("Set scrollTop: " + newScroll + "=>" + mouse.lastY + ":" + mouse.nowY + ", "  + e.pageY + ":" + mouse.offsetY);
-            if(newScroll < 0) newScroll = 0;
-            this.dragRootEl.scrollTop(newScroll);
+            //if(newScroll < 0) newScroll = 0;
+            //this.dragRootEl.scrollTop(newScroll);
             
             // direction mouse was moving
             mouse.lastDirX = mouse.dirX;
