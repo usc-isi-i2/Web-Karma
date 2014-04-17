@@ -23,8 +23,11 @@
 
 package edu.isi.karma.rdf;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URL;
@@ -132,10 +135,10 @@ public class OfflineRdfGenerator {
             /**
              * PREPATRE THE OUTPUT OBJECTS *
              */
-//            OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
-//            BufferedWriter bw = new BufferedWriter(fw);
-	        Model model = ModelFactory.createDefaultModel();
-	        Writer bw = new JenaWritable(model);
+            OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
+            BufferedWriter bw = new BufferedWriter(fw);
+//	        Model model = ModelFactory.createDefaultModel();
+//	        Writer bw = new JenaWritable(model);
 	        PrintWriter pw = new PrintWriter(bw);
 
 	        long l = System.currentTimeMillis();
