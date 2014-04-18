@@ -193,6 +193,32 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->     
 
+<div class="modal fade" id="extractEntitiesDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Extract Entities</h4>
+				  </div>
+				  <div class="modal-body">
+					<div class="form-group">
+						<label for="extractionService_URL">URL for Extraction Service</label>
+						<input class="form-control" type="text" id="extractionService_URL" required>
+					</div>
+					
+					<div class="error" style="display: none">Please enter a URL</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">OK</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
         
                
 </body>

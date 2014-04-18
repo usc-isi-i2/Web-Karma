@@ -60,15 +60,19 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 	private String hNodeId;
 	// add column to this table
 	private String hTableId;
+	
+	//URL for Extraction Service as input by the user
+	private String extractionURL;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(ExtractEntitiesCommand.class);
 
 	protected ExtractEntitiesCommand(String id, String worksheetId,
-			String hTableId, String hNodeId) {
+			String hTableId, String hNodeId, String extractionURL) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
+		this.extractionURL = extractionURL;
 		addTag(CommandTag.Transformation);
 	}
 
@@ -96,6 +100,7 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		System.out.println("in do it");
+		System.out.println(extractionURL);
 
 		ArrayList<Row> rows = worksheet.getDataTable().getRows(0,
 				worksheet.getDataTable().getNumRows());
@@ -122,7 +127,9 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 		// POST Request to ExtractEntities API.
 		try {
 
-			String url = "http://karmanlp.isi.edu:8080/ExtractionService/myresource";
+			//String url = "http://karmanlp.isi.edu:8080/ExtractionService/myresource";
+			String url = extractionURL;
+			
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
