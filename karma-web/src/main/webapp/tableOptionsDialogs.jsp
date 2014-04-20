@@ -117,13 +117,7 @@ a.icon-remove:hover {
 					</div>
 					<div class="form-group formDivDMUrl" style="display: none">
 						<label for="dataMiningUrl">Data Mining URL</label>
-							<input class="form-control" type="text" id="dataMiningUrl" required url value="" maxlength="1000" />
-						</div>
-						<div class="form-group formDivDMUrl" style="display: none">
-							<label>
-					    		<input type="checkbox" id="testingService" name="group1"  value="append">
-					    		Evaluation Phase
-				  			</label>
+							<input class="form-control" type="url" id="dataMiningUrl" required url value="" maxlength="1000" />
 						</div>
 						<div id="DMresults" style="display: none"></div>
 					<div class="error" style="display: none">Please enter all valid url</div>
