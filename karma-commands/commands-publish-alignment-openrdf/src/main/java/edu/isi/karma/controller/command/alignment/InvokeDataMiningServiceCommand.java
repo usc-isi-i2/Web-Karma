@@ -29,7 +29,10 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -63,7 +66,6 @@ public class InvokeDataMiningServiceCommand extends Command {
 	
 	private final String csvFileName;
 	private String dataMiningURL;
-	private boolean isTestingPhase;
 	
 	public String getDataMiningURL() {
 		return dataMiningURL;
@@ -80,12 +82,11 @@ public class InvokeDataMiningServiceCommand extends Command {
 	 * @param csvFileName
 	 * @param isTesting A boolean flag to identify if it is the training or testing phase
 	 * */
-	protected InvokeDataMiningServiceCommand(String id, String worksheetId, String miningUrl, String fileName, boolean isTesting) {
+	protected InvokeDataMiningServiceCommand(String id, String worksheetId, String miningUrl, String fileName) {
 		super(id);
 		this.worksheetId = worksheetId;
 		this.dataMiningURL = miningUrl;
 		this.csvFileName = fileName;
-		this.isTestingPhase = isTesting;
 	}
 
 	@Override
@@ -108,12 +109,82 @@ public class InvokeDataMiningServiceCommand extends Command {
 		return CommandType.notUndoable;
 	}
 	
+	private UpdateContainer processCSV(HttpEntity entity, Workspace workspace) {
+		UpdateContainer uc = null;
+		try {
+        	BufferedInputStream buf;
+        	byte[] buffer = new byte[10240];
+        	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy_HmsS");
+        	String ts = sdf.format(Calendar.getInstance().getTime());
+        	final String fName = "table_service_results_"+ts;
+        	final String fileName = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) + fName; 
+        	FileOutputStream fw = new FileOutputStream(fileName);
+        	// get the file from the service
+        	buf = new BufferedInputStream(entity.getContent());
+        	for (int length = 0; (length = buf.read(buffer)) > 0;) {
+        		fw.write(buffer, 0, length);
+            }
+        	fw.close();
+        	buf.close();
+        	logger.info("Created : " + fileName);
+        	Import impCSV = new CSVFileImport(1, 2, ',', ' ', "UTF-8", -1, new File(fileName), workspace);
+        	Worksheet wsht = impCSV.generateWorksheet();
+        	uc = new UpdateContainer();
+            uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
+            new File(fileName).delete();
+
+        } catch (Exception e1) {
+        	logger.error(e1.getMessage(), e1);
+        	uc = new UpdateContainer(new ErrorUpdate(e1.getMessage()));
+        }
+		return uc;
+		
+	}
+	
+	
+	private UpdateContainer processJSON(HttpEntity entity, Workspace workspace) {
+		UpdateContainer uc = null;
+		try {
+        	BufferedInputStream buf;
+        	byte[] buffer = new byte[10240];
+        	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy_HmsS");
+        	String ts = sdf.format(Calendar.getInstance().getTime());
+        	final String fName = "table_service_results_"+ts;
+        	final String fileName = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  fName;
+        	FileOutputStream fw = new FileOutputStream(fileName);
+        	// get the file from the service
+        	buf = new BufferedInputStream(entity.getContent());
+        	for (int length = 0; (length = buf.read(buffer)) > 0;) {
+        		fw.write(buffer, 0, length);
+            }
+        	fw.close();
+        	buf.close();
+        	
+			Import impJson = new JsonImport(new File(fileName), fName, workspace, "UTF-8", -1);
+            Worksheet wsht = impJson.generateWorksheet();
+            Worksheet wsht2, wsht3;
+            logger.info("Creating worksheet with json : " + wsht.getId());
+            uc = new UpdateContainer();
+            uc.add(new WorksheetListUpdate());
+            uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
+        	
+        	logger.info("Created : " + fileName);
+            new File(fileName).delete();
+
+        } catch (Exception e1) {
+        	logger.error(e1.getMessage(), e1);
+        	uc = new UpdateContainer(new ErrorUpdate(e1.getMessage()));
+        }
+		return uc;
+		
+	}
+	
 	@Override
 	public UpdateContainer doIt(Workspace workspace) {
 		
 		final String csvFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  
-				this.csvFileName;;
-		
+				this.csvFileName;
+		UpdateContainer uc = new UpdateContainer();
 		try {
 			
 			// Prepare the headers
@@ -129,92 +200,23 @@ public class InvokeDataMiningServiceCommand extends Command {
 			
 			// Parse the response and store it in a String
 			HttpEntity entity = response.getEntity();
-			StringBuilder responseString = new StringBuilder();
-			String line;
-			if (entity != null) {
-				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent(),"UTF-8"));
-				
-            	while((line  = buf.readLine()) != null) {
-            		responseString.append(line);
-                }
-			}
-			UpdateContainer uc = new UpdateContainer();
+			Header contentTypeHeader = entity.getContentType();
+			String contentType = contentTypeHeader.getValue();
 			
-			JSONObject resutsJson = new JSONObject(responseString.toString());
-			Import impJson = new JsonImport(responseString.toString(), resutsJson.optString("model_name", "results_"+this.csvFileName), workspace, "UTF-8", -1);
-            Worksheet wsht = impJson.generateWorksheet();
-            Worksheet wsht2, wsht3;
-            logger.info("Creating worksheet with json : " + wsht.getId());
-            uc.add(new WorksheetListUpdate());
-            uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
-            
-            if(resutsJson.has("ConfusionMatrixPath")) {
-            // get the matrix file 
-	            try {
-	            	BufferedInputStream buf;
-	            	byte[] buffer = new byte[10240];
-	            	final String fileName = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) + 
-	            			resutsJson.optString("ConfusionMatrixFileName"); // "martix_"+System.nanoTime();
-	            	FileOutputStream fw = new FileOutputStream(fileName);
-	            	// get the file from the service
-	            	URL url = new URL(resutsJson.optString("ConfusionMatrixPath"));
-	            	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	            	conn.setRequestMethod("GET");
-	            	buf = new BufferedInputStream(conn.getInputStream());
-	            	for (int length = 0; (length = buf.read(buffer)) > 0;) {
-	            		fw.write(buffer, 0, length);
-	                }
-	            	fw.close();
-	            	buf.close();
-	            	logger.info("Created : " + fileName);
-	            	Import impCSV = new CSVFileImport(1, 2, ',', ' ', "UTF-8", -1, new File(fileName), workspace);
-	            	wsht2 = impCSV.generateWorksheet();
-	                uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht2.getId()));
-	                new File(fileName).delete();
-	
-	            } catch (Exception e1) {
-	            	logger.error(e1.getMessage(), e1);
-	            }
-            }
-            
-            
-            if(resutsJson.has("PredictionPath")) {
-                // get the matrix file 
-    	            try {
-    	            	BufferedInputStream buf;
-    	            	byte[] buffer = new byte[10240];
-    	            	final String fileName = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) + 
-    	            			resutsJson.optString("PredictionFileName"); // "martix_"+System.nanoTime();
-    	            	FileOutputStream fw = new FileOutputStream(fileName);
-    	            	// get the file from the service
-    	            	URL url = new URL(resutsJson.optString("PredictionPath"));
-    	            	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-    	            	conn.setRequestMethod("GET");
-    	            	buf = new BufferedInputStream(conn.getInputStream());
-    	            	for (int length = 0; (length = buf.read(buffer)) > 0;) {
-    	            		fw.write(buffer, 0, length);
-    	                }
-    	            	fw.close();
-    	            	buf.close();
-    	            	logger.info("Created : " + fileName);
-    	            	Import impCSV = new CSVFileImport(1, 2, ',', ' ', "UTF-8", -1, new File(fileName), workspace);
-    	            	wsht3 = impCSV.generateWorksheet();
-    	            	logger.info(wsht3.getHeaders().toString());
-    	                uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht3.getId()));
-    	                new File(fileName).delete();
-    	
-    	            } catch (Exception e1) {
-    	            	logger.error(e1.getMessage(), e1);
-    	            }
-                }
-            
-            
-			return uc;
+			
+			if(contentType.equalsIgnoreCase("application/json")) {
+				uc = processJSON(entity, workspace);
+			} else if(contentType.equalsIgnoreCase("text/csv")) {
+				uc = processCSV(entity, workspace);
+			} else {
+				uc = new UpdateContainer(new ErrorUpdate("Could not parse content type : " + contentType));
+			}
 					
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return new UpdateContainer(new ErrorUpdate("Error !"));
+			uc = new UpdateContainer(new ErrorUpdate("Error ! " + e.getMessage()));
 		}
+		return uc;
 
 	}
 	
