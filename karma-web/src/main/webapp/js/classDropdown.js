@@ -15,8 +15,8 @@ var ClassDropdownMenu = (function() {
     		   	        [ "Add Outgoing Link", addOutgoingLink],
     		   	        [ "divider" , null ],
     		   	        [ "Export CSV" , exportCSV ],
-    		   			[	"Invoke Reconciliation Service" , invokeReconciliationService ],
-    		   			[ "Invoke M/L Service", invokeMLService ],
+    		   			[ "Invoke Reconciliation Service" , invokeReconciliationService ],
+    		   			[ "Invoke Table Service", invokeMLService ],
     		   			
     		   			
     		   	];

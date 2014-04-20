@@ -116,6 +116,15 @@ public class FetchColumnCommand extends WorksheetCommand {
 				GenerateR2RMLModelCommandFactory factory = new GenerateR2RMLModelCommandFactory();
 				GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, graphName);
 				cmd.doIt(workspace);
+			} else {
+				// if the model was published 30 min ago, publish it again, just to be sure
+				long diff = Calendar.getInstance().getTimeInMillis() - f.lastModified();
+				if((diff / 1000L / 60L) > 30) {
+					f.delete();
+					GenerateR2RMLModelCommandFactory factory = new GenerateR2RMLModelCommandFactory();
+					GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, graphName);
+					cmd.doIt(workspace);
+				}
 			}
 			
 			TripleStoreUtil tUtil = new TripleStoreUtil();
