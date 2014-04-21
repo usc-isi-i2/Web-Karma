@@ -895,6 +895,7 @@ var GroupByDialog = (function() {
 
             var newInfo = [];
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+		    		newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
             newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
             info["newInfo"] = JSON.stringify(newInfo);
 

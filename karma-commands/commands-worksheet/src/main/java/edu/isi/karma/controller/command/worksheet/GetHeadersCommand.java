@@ -56,7 +56,7 @@ public class GetHeadersCommand extends WorksheetCommand {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		HTable ht = worksheet.getHeaders();
 		if (hNodeId.compareTo("") != 0)
-			ht = getHTable(worksheet.getHeaders(), hNodeId);
+			ht = CloneTableUtils.getHTable(worksheet.getHeaders(), hNodeId);
 		final JSONArray array = new JSONArray();
 		for (HNode hn : ht.getHNodes()) {
 			JSONObject obj = new JSONObject();
@@ -85,17 +85,5 @@ public class GetHeadersCommand extends WorksheetCommand {
 		return null;
 	}
 	
-	private HTable getHTable(HTable ht, String HNodeId) {
-		for (HNode hn : ht.getHNodes()) {
-			if (hn.getId().compareTo(HNodeId) == 0)
-				return ht;
-			if (hn.hasNestedTable()) {
-				HTable tmp = getHTable(hn.getNestedTable(), HNodeId);
-				if (tmp != null)
-					return tmp;
-			}		
-		}
-		return null;
-	}
 
 }

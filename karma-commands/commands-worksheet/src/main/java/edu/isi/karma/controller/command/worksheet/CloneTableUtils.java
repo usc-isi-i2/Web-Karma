@@ -67,5 +67,36 @@ public class CloneTableUtils {
 		}
 		return null;
 	}
+	
+	public static HTable getHTable(HTable ht, String HNodeId) {
+		for (HNode hn : ht.getHNodes()) {
+			if (hn.getId().compareTo(HNodeId) == 0)
+				return ht;
+			if (hn.hasNestedTable()) {
+				HTable tmp = getHTable(hn.getNestedTable(), HNodeId);
+				if (tmp != null)
+					return tmp;
+			}		
+		}
+		return null;
+	}
+	
+	public static Table getDatatable(Table dt, HTable ht) {
+		if (dt == null)
+			return null;
+		if (dt.getHTableId().compareTo(ht.getId()) == 0)
+			return dt;
+		else {
+			Table t = null;
+			for (Row row : dt.getRows(0, dt.getNumRows())) {
+				for (Node n : row.getNodes()) {
+					t = getDatatable(n.getNestedTable(), ht);
+					if (t != null)
+						return t;
+				}
+			}
+		}
+		return null;
+	}
 
 }
