@@ -32,13 +32,18 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.Charset;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
@@ -55,15 +60,19 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 	private String hNodeId;
 	// add column to this table
 	private String hTableId;
+	
+	//URL for Extraction Service as input by the user
+	private String extractionURL;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(ExtractEntitiesCommand.class);
 
 	protected ExtractEntitiesCommand(String id, String worksheetId,
-			String hTableId, String hNodeId) {
+			String hTableId, String hNodeId, String extractionURL) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
+		this.extractionURL = extractionURL;
 		addTag(CommandTag.Transformation);
 	}
 
@@ -91,12 +100,13 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		System.out.println("in do it");
+		System.out.println(extractionURL);
 
 		ArrayList<Row> rows = worksheet.getDataTable().getRows(0,
 				worksheet.getDataTable().getNumRows());
 
 		JSONArray array = new JSONArray();
-		Command cmd;
+		AddValuesCommand cmd;
 		StringBuffer extractions;
 
 		for (Row row : rows) {
@@ -109,7 +119,7 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 
 			// Needs to be replaced by rowHash. Not sure how to compute/fetch
 			// rowHash.
-			obj.put("rowHash", id);
+			obj.put("rowId", id);
 			obj.put("text", value);
 			array.put(obj);
 		}
@@ -117,7 +127,9 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 		// POST Request to ExtractEntities API.
 		try {
 
-			String url = "http://localhost:8080/myapp/myresource";
+			//String url = "http://karmanlp.isi.edu:8080/ExtractionService/myresource";
+			String url = extractionURL;
+			
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -125,9 +137,11 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 			con.setRequestMethod("POST");
 			con.setRequestProperty("Accept", "application/json");
 			con.setRequestProperty("Content-Type", "application/json");
+			con.setRequestProperty("charset","utf-8");
 
 			// POST content. JSON String
 			String urlParameters = array.toString();
+			urlParameters = new String(urlParameters.getBytes(Charset.forName("UTF-8")), Charset.forName("ISO-8859-1"));
 
 			// Send POST request
 			con.setDoOutput(true);
@@ -164,9 +178,7 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 				.toString());
 
 		//Final Data for AddValuesCommand
-		JSONArray people = new JSONArray();
-		JSONArray dates = new JSONArray();
-		JSONArray places = new JSONArray();
+		JSONArray rowData = new JSONArray();
 
 		// index for result iteration
 		int index = 0;
@@ -185,46 +197,42 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 				JSONArray datesValues = new JSONArray();
 				JSONArray placesValues = new JSONArray();
 				
+				JSONObject extractionValues = new JSONObject();
+				
 				for(int i=0; i<peopleExtract.length(); i++) {
-					peopleValues.put(new JSONObject().put("People", ((JSONObject) peopleExtract.get(i)).getString("extraction"))); 
+					peopleValues.put(new JSONObject().put("extraction", ((JSONObject) peopleExtract.get(i)).getString("extraction"))); 
 				}
 								
 				for(int i=0; i<datesExtract.length(); i++) {
-					datesValues.put(new JSONObject().put("Dates", ((JSONObject) datesExtract.get(i)).getString("extraction"))); 
+					datesValues.put(new JSONObject().put("extraction", ((JSONObject) datesExtract.get(i)).getString("extraction"))); 
 				}
 				
 				for(int i=0; i<placesExtract.length(); i++) {
-					placesValues.put(new JSONObject().put("Places", ((JSONObject) placesExtract.get(i)).getString("extraction"))); 
+					placesValues.put(new JSONObject().put("extraction", ((JSONObject) placesExtract.get(i)).getString("extraction"))); 
 				}
 				
+				extractionValues.put("People", peopleValues);
+				extractionValues.put("Dates", datesValues);
+				extractionValues.put("Places", placesValues);
 				
-				JSONObject peopleObj = new JSONObject();
-				peopleObj.put("rowId",row.getId());
-				peopleObj.put("values", peopleValues);
+				JSONObject extractionsObj = new JSONObject();
+				extractionsObj.put("extractions", extractionValues);
 				
-				JSONObject datesObj = new JSONObject();
-				datesObj.put("rowId",row.getId());
-				datesObj.put("values", datesValues);
-				
-				JSONObject placesObj = new JSONObject();
-				placesObj.put("rowId",row.getId());
-				placesObj.put("values", placesValues);
-				
-				people.put(peopleObj);
-				dates.put(datesObj);
-				places.put(placesObj);
-				
+				JSONObject rowDataObject = new JSONObject();
+				rowDataObject.put("values", extractionsObj);
+				rowDataObject.put("rowId", row.getId());
+				rowData.put(rowDataObject);
 			}
 		}
 
-		JSONObject peopleAddObj = new JSONObject();
-		peopleAddObj.put("name", "AddValues");
-		peopleAddObj.put("value", people.toString());
-		peopleAddObj.put("type", "other");
-		JSONArray peopleInput = new JSONArray();
-		peopleInput.put(peopleAddObj);
+		JSONObject addValuesObj = new JSONObject();
+		addValuesObj.put("name", "AddValues");
+		addValuesObj.put("value", rowData.toString());
+		addValuesObj.put("type", "other");
+		JSONArray addValues = new JSONArray();
+		addValues.put(addValuesObj);
 
-		JSONObject datesAddObj = new JSONObject();
+/*		JSONObject datesAddObj = new JSONObject();
 		datesAddObj.put("name", "AddValues");
 		datesAddObj.put("value", dates.toString());
 		datesAddObj.put("type", "other");
@@ -237,32 +245,31 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 		placesAddObj.put("type", "other");
 		JSONArray placesInput = new JSONArray();
 		placesInput.put(placesAddObj);
+	*/	
+		System.out.println(JSONUtil.prettyPrintJson(addValues.toString()));
 
 		
 		try {
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
-			cmd = factory.createCommand(placesInput, workspace, hNodeId, worksheetId,
+			cmd = (AddValuesCommand) factory.createCommand(addValues, workspace, hNodeId, worksheetId,
 					hTableId);
-			cmd.doIt(workspace);
-
-			cmd = factory.createCommand(datesInput, workspace, hNodeId, worksheetId,
-					hTableId);
-			cmd.doIt(workspace);
-
-			cmd = factory.createCommand(peopleInput, workspace, hNodeId, worksheetId,
-					hTableId);
-			cmd.doIt(workspace);
 			
-			UpdateContainer c = new UpdateContainer();
+			HNode hnode = worksheet.getHeaders().getHNode(hNodeId);
+			cmd.setColumnName(hnode.getColumnName()+" Extractions");
+			cmd.doIt(workspace);
+
+			UpdateContainer c = new UpdateContainer(new InfoUpdate("Extracted Entities"));
 			c.append(WorksheetUpdateFactory
 					.createRegenerateWorksheetUpdates(worksheetId));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+			//c.append(new InfoUpdate("Extracted Entities"));
 			return c;
 		} catch (Exception e) {
 			logger.error("Error in ExtractEntitiesCommand" + e.toString());
 			Util.logException(logger, e);
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
+
 
 		// return new UpdateContainer(new InfoUpdate("Extracted Entities"));
 
