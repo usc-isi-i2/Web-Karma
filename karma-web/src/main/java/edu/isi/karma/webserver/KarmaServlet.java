@@ -86,9 +86,6 @@ public class KarmaServlet extends HttpServlet {
 		Workspace workspace = null;
 		VWorkspace vwsp = null;
 		
-		//Add file based saver for alignment
-		AlignmentManager.Instance().addAlignmentSaver(new R2RMLAlignmentFileSaver(workspace));
-				
 		/* If set, pick the right preferences and CRF Model file */
 		if(hasWorkspaceCookieId) {
 			String cachedWorkspaceId = request.getParameter(Arguments.workspacePreferencesId.name());
@@ -118,6 +115,9 @@ public class KarmaServlet extends HttpServlet {
 			logger.error("Unable to complete Karma set up: ", e);
 		}
 
+		//Add file based saver for alignment
+		AlignmentManager.Instance().addAlignmentSaver(new R2RMLAlignmentFileSaver(workspace));
+						
 		// Initialize the Outlier tag
 		Tag outlierTag = new Tag(TagName.Outlier, Color.Red);
 		workspace.getTagsContainer().addTag(outlierTag);
