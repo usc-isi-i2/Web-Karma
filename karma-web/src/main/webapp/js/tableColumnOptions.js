@@ -5,14 +5,16 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	var columnId = wsColumnId;
 	
 	var options = [
-	        //Title, function to call, needs file upload     
+	        // Title, function to call, needs file upload
 	        [ "Set Semantic Type", setSemanticType],
 	        [ "divider", null],
-			[	"Add Column" , addColumn ],
+
+	        [	"Add Column" , addColumn ],
 			[ "Rename", renameColumn ],
 			[ "Split Column", splitColumn ],
 			[ "Add Row", addRow],
 			[ "divider" , null ],
+			
 			["Extract Entities",extractEntities],
 			[ "PyTransform" , pyTransform ],
 			[ "Transform", transform],
@@ -20,11 +22,10 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 			
 			[ "Invoke Service" , invokeService ],
 			[ "Show Chart", showChart],
+
+			[ "divider" , null ],
 			["Group By", GroupBy], 
 			["Unfold", Unfold] 
-			//[ "Apply R2RML Model" , applyR2RMLModel, true, "applyWorksheetHistory" ],
-			//[ "divider" , null ],
-			
 	];
 	
 	function hideDropdown() {
@@ -50,7 +51,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	    
 	    info["newInfo"] = JSON.stringify(newInfo);
 
-	    //console.log(info["worksheetId"]);
+	    // console.log(info["worksheetId"]);
 	    showLoading(info["worksheetId"]);
 
 	    var returned = $.ajax({
@@ -60,7 +61,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	        dataType : "json",
 	        complete :
 	            function (xhr, textStatus) {
-	                //alert(xhr.responseText);
+	                // alert(xhr.responseText);
 	                var json = $.parseJSON(xhr.responseText);
 	                parse(json);
 	                hideLoading(info["worksheetId"]);
@@ -79,28 +80,11 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	    return false;
 	}
 	
+	
 	function extractEntities() {
-		var info = new Object();
-        info["workspaceId"] = $.workspaceGlobalInformation.id;
-        info["worksheetId"] = worksheetId;
-		info["hNodeId"] = columnId;
-	    info["hTableId"] = "";
-        info["command"] = "ExtractEntitiesCommand";
-		var returned = $.ajax({
-    			   	url: "RequestController",
-    			   	type: "POST",
-    			   	data : info,
-    			   	dataType : "json",
-    			   	complete :
-    			   		function (xhr, textStatus) {
-    			    		var json = $.parseJSON(xhr.responseText);
-    			    		parse(json);
-    				   	},
-    				error :
-    					function (xhr, textStatus) {
-    			   			alert("Error occured while generating RDF!" + textStatus);
-    				   	}
-    			});	
+		hideDropdown();
+		ExtractEntitiesDialog.getInstance().show(worksheetId, columnId);
+        return false;
 	}
 	
 	function pyTransform() {
@@ -193,14 +177,14 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 		var ul = $("<ul>").addClass("dropdown-menu");
 		ul.attr("role", "menu")
 			.attr("aria-labelledby", dropdownId);
-		//console.log("There are " + options.length + " menu items");
+		// console.log("There are " + options.length + " menu items");
 		for(var i=0; i<options.length; i++) {
 			var option = options[i];
 			var needFile = false;
 			if(option.length > 2 && option[2] == true)
 				needFile = true;
 			var li = $("<li>");
-			//console.log("Got option" +  option);
+			// console.log("Got option" + option);
 			var title = option[0];
 			if(title == "divider")
 				li.addClass("divider");
@@ -209,7 +193,9 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 				var a = $("<a>")
 						.attr("href", "#");
 				if(needFile) {
-					//<form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form>
+					// <form id="fileupload" action="ImportFileCommand"
+					// method="POST" enctype="multipart/form-data">From
+					// File<input type="file" name="files[]" multiple></form>
 					a.addClass("fileinput-button");
 					var form = $("<form>")
 								.attr("id", option[3])
@@ -246,15 +232,15 @@ var AddColumnDialog = (function() {
     	var worksheetId, columnId;
     	
     	function init() {
-    		//Initialize what happens when we show the dialog
+    		// Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function (e) {
 				hideError();
                 $("input", dialog).val("");
                 $("#columnName", dialog).focus();
 			});
 			
-			//Initialize handler for Save button
-			//var me = this;
+			// Initialize handler for Save button
+			// var me = this;
 			$('#btnSave', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
@@ -301,7 +287,8 @@ var AddColumnDialog = (function() {
 		    info["newColumnName"] = "new_column";
 		    info["command"] = "AddColumnCommand";
 
-		    var newInfo = [];	// Used for commands that take JSONArray as input
+		    var newInfo = [];	// Used for commands that take JSONArray as
+								// input
 		    newInfo.push(getParamObject("hNodeId", columnId,"hNodeId"));
 		    newInfo.push(getParamObject("hTableId", "","other"));
 		    newInfo.push(getParamObject("worksheetId", worksheetId,"worksheetId"));
@@ -309,7 +296,7 @@ var AddColumnDialog = (function() {
 		    newInfo.push(getParamObject("defaultValue", defaultValue,"other"));
 		    info["newInfo"] = JSON.stringify(newInfo);
 
-		    //console.log(info["worksheetId"]);
+		    // console.log(info["worksheetId"]);
 		    showLoading(info["worksheetId"]);
 
 		    var returned = $.ajax({
@@ -319,7 +306,7 @@ var AddColumnDialog = (function() {
 		        dataType : "json",
 		        complete :
 		            function (xhr, textStatus) {
-		                //alert(xhr.responseText);
+		                // alert(xhr.responseText);
 		                var json = $.parseJSON(xhr.responseText);
 		                parse(json);
 		                hideLoading(info["worksheetId"]);
@@ -339,7 +326,7 @@ var AddColumnDialog = (function() {
         };
         
         
-        return {	//Return back the public methods
+        return {	// Return back the public methods
         	show : show,
         	init : init
         };
@@ -372,15 +359,15 @@ var RenameColumnDialog = (function() {
     	var worksheetId, columnId;
     	
     	function init() {
-    		//Initialize what happens when we show the dialog
+    		// Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function (e) {
 				hideError();
                 $("input", dialog).val("");
                 $("#columnName", dialog).focus();
 			});
 			
-			//Initialize handler for Save button
-			//var me = this;
+			// Initialize handler for Save button
+			// var me = this;
 			$('#btnSave', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
@@ -452,7 +439,7 @@ var RenameColumnDialog = (function() {
         };
         
         
-        return {	//Return back the public methods
+        return {	// Return back the public methods
         	show : show,
         	init : init
         };
@@ -482,15 +469,15 @@ var SplitColumnDialog = (function() {
     	var worksheetId, columnId;
     	
     	function init() {
-    		//Initialize what happens when we show the dialog
+    		// Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function (e) {
 				hideError();
                 $("input", dialog).val("");
                 $("#columnSplitDelimiter", dialog).focus();
 			});
 			
-			//Initialize handler for Save button
-			//var me = this;
+			// Initialize handler for Save button
+			// var me = this;
 			$('#btnSave', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
@@ -564,7 +551,7 @@ var SplitColumnDialog = (function() {
         };
         
         
-        return {	//Return back the public methods
+        return {	// Return back the public methods
         	show : show,
         	init : init
         };
@@ -604,7 +591,7 @@ var PyTransformDialog = (function() {
     		  editor.getSession().setValue("return getValue(\"state\")");
     		    
     		    
-    		//Initialize what happens when we show the dialog
+    		// Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function (e) {
 				hideError();
 				var hNode = $("td#" + columnId);
@@ -616,15 +603,15 @@ var PyTransformDialog = (function() {
                
                 $("#pythonTransformEditColumnName").html(columnName);
                 $("#pythonTransformNewColumnName").val("");
-                //$("#pythonTransformNewColumnName").attr('disabled','disabled');
+                // $("#pythonTransformNewColumnName").attr('disabled','disabled');
                 
                 $("#btnError", dialog).button('disable');
                 $("input").removeAttr('disabled');
                 $("#pythonPreviewResultsTable").hide();
 			});
 			
-			//Initialize handler for Save button
-			//var me = this;
+			// Initialize handler for Save button
+			// var me = this;
 			$('#btnSave', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
@@ -657,7 +644,8 @@ var PyTransformDialog = (function() {
         		if(hNode.data("columnDerivedFrom"))
         			submitEditPythonTransform();
         		else {
-        			//alert("We need to handle this extension of python transform");
+        			// alert("We need to handle this extension of python
+					// transform");
         			submitAddPythonTransform(true);
         		}
         	} else {
@@ -789,7 +777,8 @@ var PyTransformDialog = (function() {
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
             newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
             newInfo.push(getParamObject("errorDefaultValue", $("#pythonTransformErrorDefaultValue").val(), "other"));
-           // newInfo.push(getParamObject("useExistingColumnName", useExistingColumnName, "useExistingColumnName"));
+           // newInfo.push(getParamObject("useExistingColumnName",
+			// useExistingColumnName, "useExistingColumnName"));
             info["newInfo"] = JSON.stringify(newInfo);
 
             showLoading(worksheetId)
@@ -829,7 +818,7 @@ var PyTransformDialog = (function() {
         };
         
         
-        return {	//Return back the public methods
+        return {	// Return back the public methods
         	show : show,
         	init : init
         };
@@ -849,6 +838,101 @@ var PyTransformDialog = (function() {
     	
     
 })();
+
+var ExtractEntitiesDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#extractEntitiesDialog");
+    	var worksheetId, columnId;
+    
+    	function init() {
+    		// Initialize what happens when we show the dialog
+			dialog.on('show.bs.modal', function (e) {
+				console.log("dialog displayed");
+				hideError();
+                $('#extractionService_URL').val("");
+			});
+			
+			// Initialize handler for Save button
+			// var me = this;
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e);
+				console.log("dialog hidden after save");
+			});
+    	}
+				
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError() {
+			$("div.error", dialog).show();
+		}
+        
+        function saveDialog(e) {
+        	console.log("Save clicked");
+    		var info = new Object();
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["worksheetId"] = worksheetId;
+    		info["hNodeId"] = columnId;
+    	    info["hTableId"] = "";
+            info["command"] = "ExtractEntitiesCommand";
+            info["extractionURL"] = $('#extractionService_URL').val();
+            
+		    dialog.modal('hide');
+
+		    // console.log(info["worksheetId"]);
+		    showLoading(info["worksheetId"]);
+
+		    var returned = $.ajax({
+			   	url: "RequestController",
+			   	type: "POST",
+			   	data : info,
+			   	dataType : "json",
+			   	complete :
+			   		function (xhr, textStatus) {
+			    		var json = $.parseJSON(xhr.responseText);
+			    		parse(json);
+			    		hideLoading(info["worksheetId"]);
+				   	},
+				error :
+					function (xhr, textStatus) {
+			   			alert("Error occured while extracting entities!" + textStatus);
+			   			hideLoading(info["worksheetId"]);
+				   	}
+			});	
+        };
+        
+        function show(wsId, colId) {
+        	worksheetId = wsId;
+        	columnId = colId;
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        
+        return {	// Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    	
+    
+})();
+
 
 var GroupByDialog = (function() {
     var instance = null;
@@ -1145,3 +1229,4 @@ var UnfoldDialog = (function() {
         getInstance : getInstance
     };
 })();
+

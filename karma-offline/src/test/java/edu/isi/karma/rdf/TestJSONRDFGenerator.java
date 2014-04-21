@@ -96,7 +96,7 @@ public class TestJSONRDFGenerator extends TestRdfGenerator{
 
 			String filename = "people.json";
 			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).getFile()),
+			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
 					"utf-8");
 
 			StringWriter sw = new StringWriter();
@@ -127,7 +127,7 @@ public class TestJSONRDFGenerator extends TestRdfGenerator{
 
 			String filename = "cs548-events.json";
 			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).getFile()),
+			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
 					"utf-8");
 
 			StringWriter sw = new StringWriter();

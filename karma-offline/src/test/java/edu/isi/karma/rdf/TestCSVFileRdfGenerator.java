@@ -65,7 +65,7 @@ public class TestCSVFileRdfGenerator extends TestRdfGenerator {
 	
 		try {
 	
-			File fileList[] = (new File(getTestResource(modelDirect).getFile()).listFiles());
+			File fileList[] = (new File(getTestResource(modelDirect).toURI()).listFiles());
 			
 			for (int i = 0; i < fileList.length; i++) {
 				File modelFile = fileList[i];
@@ -73,8 +73,8 @@ public class TestCSVFileRdfGenerator extends TestRdfGenerator {
 
 				String name = modelFile.getName().replace("-model.ttl", "");
 				File standardRdfFile = new File(getTestResource(standardRdfDirect + "/" + name
-						+ "-rdf.ttl").getFile());
-				File csvFile = new File(getTestResource(csvDirect + "/" + name + ".csv").getFile());
+						+ "-rdf.ttl").toURI());
+				File csvFile = new File(getTestResource(csvDirect + "/" + name + ".csv").toURI());
 				
 				if(!standardRdfFile.exists())
 				{
