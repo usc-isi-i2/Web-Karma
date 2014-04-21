@@ -30,18 +30,20 @@ import edu.isi.karma.rep.alignment.SemanticType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class AlignmentManager {
 	private static HashMap<String, Alignment> alignmentMap = null;
 	private static AlignmentManager _InternalInstance = null;
-	
+	private static HashSet<IAlignmentSaver> alignmentSavers = null;
 	public static AlignmentManager Instance()
 	{
 		if (_InternalInstance == null)
 		{
 			_InternalInstance = new AlignmentManager();
 			alignmentMap = new HashMap<String, Alignment>();
+			alignmentSavers = new HashSet<IAlignmentSaver>();
 		}
 		return _InternalInstance;
 	}
@@ -54,11 +56,25 @@ public class AlignmentManager {
 		return alignmentMap.get(alignmentId);
 	}
 	
+	public String getAlignmentId(Alignment alignment) {
+		for(String id: alignmentMap.keySet()) {
+			if(alignmentMap.get(id) == alignment)
+				return id;
+		}
+		return null;
+	}
+	
 	public Alignment getAlignment(String workspaceId, String worksheetId) {
 		String alignmentId = constructAlignmentId(workspaceId, worksheetId);
 		return getAlignment(alignmentId);
 	}
 
+	public void addAlignmentSaver(IAlignmentSaver saver) {
+		alignmentSavers.add(saver);
+		for(Alignment alignment : alignmentMap.values())
+			alignment.addSaver(saver);
+	}
+	
 	public Alignment getAlignmentOrCreateIt(String workspaceId, String worksheetId, OntologyManager ontologyManager){
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				workspaceId, worksheetId);
@@ -70,6 +86,8 @@ public class AlignmentManager {
 		
 		if (alignment == null) {
 			alignment = new Alignment(ontologyManager);
+			for(IAlignmentSaver saver : alignmentSavers)
+				alignment.addSaver(saver);
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
 	
@@ -110,5 +128,24 @@ public class AlignmentManager {
 	
 	public String constructAlignmentId(String workspaceId, String worksheetId) {
 		return workspaceId + ":" + worksheetId + "AL";
+	}
+	
+	public String getWorkspaceId(Alignment align) {
+		String id = getAlignmentId(align);
+		if(id != null) {
+			int idx = id.indexOf(":");
+			id = id.substring(0, idx);
+		}
+		return id;
+	}
+	
+	public String getWorksheetId(Alignment align) {
+		String id = getAlignmentId(align);
+		if(id != null) {
+			int idx = id.indexOf(":");
+			int endIdx = id.indexOf("AL", idx);
+			id = id.substring(idx+1, endIdx);
+		}
+		return id;
 	}
 }

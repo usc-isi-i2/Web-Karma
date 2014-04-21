@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.alignment.R2RMLAlignmentFileSaver;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -47,6 +48,7 @@ import edu.isi.karma.metadata.R2RMLMetadata;
 import edu.isi.karma.metadata.RDFMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.metadata.WorksheetHistoryMetadata;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -75,6 +77,7 @@ public class KarmaServlet extends HttpServlet {
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}
+		
 		/* Check if any workspace id is set in cookies. */
 		boolean hasWorkspaceCookieId = false;
 		String hasPrefId = request.getParameter(Arguments.hasPreferenceId.name());
@@ -83,7 +86,9 @@ public class KarmaServlet extends HttpServlet {
 		Workspace workspace = null;
 		VWorkspace vwsp = null;
 		
-		
+		//Add file based saver for alignment
+		AlignmentManager.Instance().addAlignmentSaver(new R2RMLAlignmentFileSaver(workspace));
+				
 		/* If set, pick the right preferences and CRF Model file */
 		if(hasWorkspaceCookieId) {
 			String cachedWorkspaceId = request.getParameter(Arguments.workspacePreferencesId.name());
