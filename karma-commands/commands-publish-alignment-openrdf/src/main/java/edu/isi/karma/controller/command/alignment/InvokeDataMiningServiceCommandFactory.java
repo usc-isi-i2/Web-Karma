@@ -37,7 +37,7 @@ public class InvokeDataMiningServiceCommandFactory extends CommandFactory {
 	
 	private static Logger logger = LoggerFactory.getLogger(InvokeDataMiningServiceCommandFactory.class);
 	private enum Arguments {
-		worksheetId, dataMiningURL, csvFileName, isTestingPhase
+		worksheetId, dataMiningURL, csvFileName
 	}
 	
 	@Override
@@ -47,11 +47,10 @@ public class InvokeDataMiningServiceCommandFactory extends CommandFactory {
 		String csvFileName = request.getParameter(Arguments.csvFileName.name());
 		csvFileName = csvFileName.substring(csvFileName.lastIndexOf("/")+1, csvFileName.length());
 		String dmURL = request.getParameter(Arguments.dataMiningURL.name());
-		boolean isTesting =Boolean.getBoolean(request.getParameter(Arguments.isTestingPhase.name()).toString());
 		
 		logger.info("dmUrl:"+dmURL + " csv:"+csvFileName);
 		
-		return new InvokeDataMiningServiceCommand(getNewId(workspace), worksheetId, dmURL, csvFileName, isTesting);
+		return new InvokeDataMiningServiceCommand(getNewId(workspace), worksheetId, dmURL, csvFileName);
 	}
 
 	@Override

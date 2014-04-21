@@ -392,46 +392,8 @@ var ExportCSVModelDialog = (function() {
     		//Initialize what happens when we show the dialog
     		dialog.on('show.bs.modal', function (e) {
 				hideError();
+				$("body").css("cursor", "auto");
 				
-				var url2 = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_data';
-				$("input#csvDataEndPoint").val(url2);	    		
-				fetchGraphsFromTripleStore(url2, $('#csvDataGraphList') );
-				
-				//$("input#csvSPAQRLEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-				//window.csvSPAQRLEndPoint = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_models';
-				//fetchGraphsFromTripleStore(window.csvSPAQRLEndPoint, $("#csvModelGraphList"));
-				
-				//Initialize handler for ExportCSV button
-				$('#btnExportCSV', dialog).unbind('click');
-				
-				if (operatingMode === "invokeMLService") {
-					$('#exportCSV_ModelTitle').html('Invoke Machine Learning Service');
-					$('#btnExportCSV', dialog).html('Invoke');
-					$('div.formDivDMUrl', dialog).show();
-					
-					//Initialize handler for ExportCSV button
-					$('#btnExportCSV', dialog).on('click', function (e) {
-						performInvokeMLService();
-					});
-					
-				} else {
-					$('#exportCSV_ModelTitle').html('Export CSV');
-					$('#btnExportCSV', dialog).html('Export');
-					$('div.formDivDMUrl', dialog).hide();
-					
-					//Initialize handler for ExportCSV button
-					$('#btnExportCSV', dialog).on('click', function (e) {
-						performExportCSV();
-					});
-				}
-				
-				getColumnList();
-				//$('#csvDialogContent').show();
-				$('#csvDialogColumnList').html('');
-				//$('#csvDialogColumnList').hide();
-				//$('#btnExportCSV').hide();
-				
-				$('#csvDataDialogContent').hide();
 				
 			});
     		
@@ -467,6 +429,7 @@ var ExportCSVModelDialog = (function() {
     		   	dataType : "json",
     		   	complete : 
     		   		function (xhr, textStatus) {
+                        console.log("got graphs ..");
     		   			var json = $.parseJSON(xhr.responseText);
     		   			graphs = [];
     		   			if(json["elements"] && json["elements"][0]['graphs']) {
@@ -526,7 +489,6 @@ var ExportCSVModelDialog = (function() {
     		    		info["command"] = "InvokeDataMiningServiceCommand";
     		    		info["dataMiningURL"] = dmURL;
     		    		info["csvFileName"] = fileName;
-    		    		info["isTestingPhase"] = $('#testingService').is(':checked');
     		    		
     		    		
     		    		$.ajax({
@@ -611,12 +573,15 @@ var ExportCSVModelDialog = (function() {
     		var url2 = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_data';
 			fetchGraphsFromTripleStore(url2, $('#csvDataGraphList') );
     		$('#csvDataDialogContent').show();
+            console.log("initCSVDataDialog..");
+            
     	}
     	
     	// this method will fetch the columns that are reachable from this node
-    	function getColumnList() {
+    	function getColumnList(showCallback, dialog) {
 //    		var graphUri = $('#csvModelGraphList').val().trim();
 //    		graphUri = (graphUri == '000') ? '' : graphUri; 
+            console.log("getting columns ..");
     		var info = new Object();
     		info["workspaceId"] = $.workspaceGlobalInformation.id;
     		info["worksheetId"] = worksheetId;
@@ -651,6 +616,7 @@ var ExportCSVModelDialog = (function() {
     		   				content += '<li style="padding=4px;" name="'+list[x]['url']+'" rel="'+list[x]['name']+'">'
     		   					+ list[x]['name']+' &nbsp; <a class="icon-remove pull-right">X</a>'  
     		   					+'</li>';
+                            console.log("done fetching columns..");
     		   			}
     		   			ele.html(content + '</ol>');
     		   			$("#csv_columns").delegate('a.icon-remove','click',function(event){
@@ -661,6 +627,7 @@ var ExportCSVModelDialog = (function() {
     		   			$("#csv_columns").sortable();
     		   			
     		   			initCSVDataDialog();
+                        showCallback(dialog);
     		   	}	   
     		});
     	}
@@ -682,7 +649,62 @@ var ExportCSVModelDialog = (function() {
         	alignmentNodeId = algnId;
         	columnId = colId;
         	operatingMode = mode;
-        	dialog.modal({keyboard:true, show:true, backdrop:'static'});
+
+            // here we need to get the list of columns before showing the dialog
+            $("body").css("cursor", "progress");
+
+            console.log("showing modal..");
+
+            // var url2 = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_data';
+            // $("input#csvDataEndPoint").val(url2);               
+            // fetchGraphsFromTripleStore(url2, $('#csvDataGraphList') );
+            
+            //$("input#csvSPAQRLEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+            //window.csvSPAQRLEndPoint = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_models';
+            //fetchGraphsFromTripleStore(window.csvSPAQRLEndPoint, $("#csvModelGraphList"));
+            
+            //Initialize handler for ExportCSV button
+            $('#btnExportCSV', dialog).unbind('click');
+            
+            if (operatingMode === "invokeMLService") {
+                $('#exportCSV_ModelTitle').html('Invoke Table Service');
+                $('#btnExportCSV', dialog).html('Invoke');
+                $('div.formDivDMUrl', dialog).show();
+                
+                //Initialize handler for ExportCSV button
+                $('#btnExportCSV', dialog).on('click', function (e) {
+                    performInvokeMLService();
+                });
+                
+            } else {
+                $('#exportCSV_ModelTitle').html('Export CSV');
+                $('#btnExportCSV', dialog).html('Export');
+                $('div.formDivDMUrl', dialog).hide();
+                
+                //Initialize handler for ExportCSV button
+                $('#btnExportCSV', dialog).on('click', function (e) {
+                    performExportCSV();
+                });
+            }
+            
+            $('#csvDialogColumnList').html('');
+            $('#csvDataDialogContent').hide();
+
+            var showDialog = function(dialog){
+                console.log("callback....executing......");
+                dialog.modal({keyboard:true, show:true, backdrop:'static'});
+            };
+
+            getColumnList(showDialog, dialog);
+            //$('#csvDialogContent').show();
+            
+            //$('#csvDialogColumnList').hide();
+            //$('#btnExportCSV').hide();
+            
+            
+
+
+        	
         };
         
         
