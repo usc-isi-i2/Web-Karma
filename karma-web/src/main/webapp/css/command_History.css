@@ -1,0 +1,81 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
+
+#commHistoryAndWorkspace{
+	position:relative;
+}
+#commandHistory{
+	background-color: #F0F0F0;
+	min-height: 500px;
+	overflow:auto;
+}
+#titleCommand{
+	background-color: #050505;
+	font-family: Arial, sans-serif;
+	font-size: 18px;
+	color: white;
+	margin-bottom:8px;
+	text-align: center;
+	padding: 5px;
+}
+
+.CommandDiv.undo-state {
+	background-color: #AFAFAF;
+	padding: 4px;
+	border: solid 1px;
+	border-color:white;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+	color: white;
+}
+.CommandDiv.undoselected {
+	background-color: #ADADAD;
+}
+
+.CommandDiv.redo-state {
+	background-color: #ADADAD;
+	padding: 4px;
+	border: solid 1px;
+	border-color:white;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+	color: white;
+}
+
+.CommandDiv.redoselected {
+	background-color: #3D3D3D;
+}
+
+.CommandDiv.notUndoable {
+	background-color: black;
+}
+.iconDiv img {
+	height: 20px; 
+	width:20px;
+}
+
+.iconDiv {
+	position: absolute;
+	top:2px; 
+	right:3px; 
+	visibility: hidden;
+	cursor: pointer;
+}

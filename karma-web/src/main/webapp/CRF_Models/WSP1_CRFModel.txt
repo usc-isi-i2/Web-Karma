@@ -1,0 +1,30 @@
+2
+
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value
+1
+11 2000-02-09Z
+
+http://www.cubrc.org/BO#BirthDate|http://isi.edu/integration/karma/dev#classLink
+1
+4 1126
+
+19
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value unit_place_digit_9 0.6232024781968982
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value starting_digit_- 0.6232024781968982
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value num_len_4 -0.32119755395830335
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value num_len_3 0.6232024781968982
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value alpha_id_Z 0.6232024781968982
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value before_decimal_len_4 -0.32119755395830335
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value alpha_length_1 0.6232024781968982
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value starting_digit_2 0.6232024781968982
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value before_decimal_len_3 0.6232024781968982
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value after_decimal_len_0 -0.32119755395830335
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value starts_with_char_Z 0.6232024781968982
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value all_capitalized_token 0.6232024781968982
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value unit_place_digit_0 0.6232024781968982
+http://www.cubrc.org/BO#DeathDate|http://www.cubrc.org/BO#has_value unit_place_digit_2 0.6232024781968982
+http://www.cubrc.org/BO#BirthDate|http://isi.edu/integration/karma/dev#classLink unit_place_digit_6 0.9444000321552016
+http://www.cubrc.org/BO#BirthDate|http://isi.edu/integration/karma/dev#classLink before_decimal_len_4 0.3211975539583032
+http://www.cubrc.org/BO#BirthDate|http://isi.edu/integration/karma/dev#classLink starting_digit_1 0.9444000321552016
+http://www.cubrc.org/BO#BirthDate|http://isi.edu/integration/karma/dev#classLink after_decimal_len_0 0.3211975539583032
+http://www.cubrc.org/BO#BirthDate|http://isi.edu/integration/karma/dev#classLink num_len_4 0.3211975539583032

@@ -22,19 +22,33 @@ You can find useful tutorials on the project Website: [http://www.isi.edu/integr
 ## Installation and Setup ##
 System Requirements: **Java 1.7, Maven 3.0** and above.
 
-To run the jetty server, execute the following command from webkarma top directory:
-`mvn jetty:run`. Once the server has started point your browser to **http://localhost:8080**. To start it on a port other than 8080 (e.g. Port number 9999) 
+To compile the code run this from the root folder of Web-Karma:
+`mvn clean install`
+
+Now, to run the web version of karma:
+```
+cd karma-web
+mvn jetty:run
+```
+
+Once the server has started point your browser to **http://localhost:8080/**. To start it on a port other than 8080 (e.g. Port number 9999) 
+
 `mvn -Djetty.port=9999 jetty:run`
 
 To start in logging mode (where all the logs are stored in the log folder), use the following command to start the server:
 	`mvn -Dslf4j=false -Dlog4j.configuration=file:./config/log4j.properties jetty:run`
-
+	
+- The development version is now split into different projects. Each project has its own pom.xml and can be imported into Eclipse.
+- Karma now stores all user settings in {user.home}/karma folder. You can change this default location by setting the KARMA_USER_HOME environment variable
+- The preloaded-ontologies and UserPrefs user settings are all under the {user.home}/karma folder
+- All published data (models, rdf) is under karma-web/src/main/webapp/publish folder
 
 ## Frequently Asked Questions ##
 ### How to perform offline RDF generation for a data source using a published model? ###
 1. Model your source and publish it's model (the published models are located at `src/main/webapp/publish/R2RML/` inside the Karma directory).
 2. To generate RDF of a CSV/JSON/XML file, go to the top level Karma directory and run the following command from terminal:
 ```
+cd karma-offline
 mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--sourcetype 
 <sourcetype> --filepath <filepath> --modelfilepath <modelfilepath> --outputfile <outputfile>" -Dexec.classpathScope=compile
 ```
@@ -49,6 +63,7 @@ mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.ar
 ```
 3. To generate RDF of a database table, go to the top level Karma directory and run the following command from terminal:
 ```
+cd karma-offline
 mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--sourcetype DB
 --modelfilepath <modelfilepath> --outputfile <outputfile> --dbtype <dbtype> --hostname <hostname> 
 --username <username> --password <password> --portnumber <portnumber> --dbname <dbname> --tablename <tablename>" -Dexec.classpathScope=compile

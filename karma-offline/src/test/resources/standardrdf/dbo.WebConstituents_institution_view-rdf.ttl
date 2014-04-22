@@ -1,0 +1,88 @@
+<person-institution/863> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body> .
+<thesauri/nationality/American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<person-institution/863> <http://www.cidoc-crm.org/cidoc-crm/P107i_is_current_or_former_member_of> <thesauri/nationality/American> .
+<person-institution/863/appellation/displayname> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/863> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/863/appellation/displayname> .
+<person-institution/863/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<person-institution/863> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <person-institution/863/id> .
+<person-institution/863/birth> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence> .
+<person-institution/863> <http://www.cidoc-crm.org/cidoc-crm/P92i_was_brought_into_existence_by> <person-institution/863/birth> .
+<person-institution/863/death> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E64_End_of_Existence> .
+<person-institution/863> <http://www.cidoc-crm.org/cidoc-crm/P93i_was_taken_out_of_existence_by> <person-institution/863/death> .
+<person-institution/863/id> <http://www.w3.org/2000/01/rdf-schema#label> "863" .
+<person-institution/863/appellation/displayname> <http://www.w3.org/2000/01/rdf-schema#label> "Childs and Inman" .
+<person-institution/863/birth/date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span> .
+<person-institution/863/birth/date> <http://www.cidoc-crm.org/cidoc-crm/P82_at_some_time_within> "1730" .
+<person-institution/863/birth> <http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span> <person-institution/863/birth/date> .
+<person-institution/863/death/date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span> .
+<person-institution/863/death> <http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span> <person-institution/863/death/date> .
+<person-institution/863/death/date> <http://www.cidoc-crm.org/cidoc-crm/P82_at_some_time_within> "1935" .
+
+<thesauri/nationality/American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<person-institution/3550> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body> .
+<person-institution/3550> <http://collection.americanart.si.edu/id/ontologies/PE_probably_is_current_or_former_member_of> <thesauri/nationality/American> .
+<person-institution/3550/appellation/displayname> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/3550> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/3550/appellation/displayname> .
+<person-institution/3550/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<person-institution/3550> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <person-institution/3550/id> .
+<person-institution/3550/birth> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence> .
+<person-institution/3550> <http://www.cidoc-crm.org/cidoc-crm/P92i_was_brought_into_existence_by> <person-institution/3550/birth> .
+<person-institution/3550/death> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E64_End_of_Existence> .
+<person-institution/3550> <http://www.cidoc-crm.org/cidoc-crm/P93i_was_taken_out_of_existence_by> <person-institution/3550/death> .
+<person-institution/3550/id> <http://www.w3.org/2000/01/rdf-schema#label> "3550" .
+<person-institution/3550/appellation/displayname> <http://www.w3.org/2000/01/rdf-schema#label> "H. F. Nielson and Co." .
+<person-institution/3550/birth/date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span> .
+<person-institution/3550/birth/date> <http://www.cidoc-crm.org/cidoc-crm/P82_at_some_time_within> "1826" .
+<person-institution/3550/birth> <http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span> <person-institution/3550/birth/date> .
+<person-institution/3550/death/date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span> .
+<person-institution/3550/death> <http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span> <person-institution/3550/death/date> .
+<person-institution/3550/death/date> <http://www.cidoc-crm.org/cidoc-crm/P82_at_some_time_within> "1926" .
+
+<person-institution/3719> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body> .
+<thesauri/nationality/American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<person-institution/3719> <http://www.cidoc-crm.org/cidoc-crm/P107i_is_current_or_former_member_of> <thesauri/nationality/American> .
+<person-institution/3719/appellation/displayname> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/3719> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/3719/appellation/displayname> .
+<person-institution/3719/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<person-institution/3719> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <person-institution/3719/id> .
+<person-institution/3719/id> <http://www.w3.org/2000/01/rdf-schema#label> "3719" .
+<person-institution/3719/appellation/displayname> <http://www.w3.org/2000/01/rdf-schema#label> "Peale Museum" .
+
+<person-institution/2057> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body> .
+<thesauri/nationality/American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<person-institution/2057> <http://www.cidoc-crm.org/cidoc-crm/P107i_is_current_or_former_member_of> <thesauri/nationality/American> .
+<person-institution/2057/appellation/displayname> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/2057> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/2057/appellation/displayname> .
+<person-institution/2057/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<person-institution/2057> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <person-institution/2057/id> .
+<person-institution/2057/id> <http://www.w3.org/2000/01/rdf-schema#label> "2057" .
+<person-institution/2057/appellation/displayname> <http://www.w3.org/2000/01/rdf-schema#label> "Handex Corporation" .
+
+<person-institution/3644> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body> .
+<person-institution/3644/appellation/displayname> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/3644> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/3644/appellation/displayname> .
+<person-institution/3644/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<person-institution/3644> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <person-institution/3644/id> .
+<person-institution/3644/id> <http://www.w3.org/2000/01/rdf-schema#label> "3644" .
+<person-institution/3644/appellation/displayname> <http://www.w3.org/2000/01/rdf-schema#label> "James R. Osgood and Co." .
+
+<person-institution/3646> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body> .
+<thesauri/nationality/English> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<person-institution/3646> <http://www.cidoc-crm.org/cidoc-crm/P107i_is_current_or_former_member_of> <thesauri/nationality/English> .
+<person-institution/3646/appellation/displayname> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/3646> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/3646/appellation/displayname> .
+<person-institution/3646/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<person-institution/3646> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <person-institution/3646/id> .
+<person-institution/3646/birth> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E63_Beginning_of_Existence> .
+<person-institution/3646> <http://www.cidoc-crm.org/cidoc-crm/P92i_was_brought_into_existence_by> <person-institution/3646/birth> .
+<person-institution/3646/death> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E64_End_of_Existence> .
+<person-institution/3646> <http://www.cidoc-crm.org/cidoc-crm/P93i_was_taken_out_of_existence_by> <person-institution/3646/death> .
+<person-institution/3646/id> <http://www.w3.org/2000/01/rdf-schema#label> "3646" .
+<person-institution/3646/appellation/displayname> <http://www.w3.org/2000/01/rdf-schema#label> "F & C Osler" .
+<person-institution/3646/birth/date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span> .
+<person-institution/3646/birth/date> <http://www.cidoc-crm.org/cidoc-crm/P82_at_some_time_within> "1807" .
+<person-institution/3646/birth> <http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span> <person-institution/3646/birth/date> .
+<person-institution/3646/death/date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span> .
+<person-institution/3646/death> <http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span> <person-institution/3646/death/date> .
+<person-institution/3646/death/date> <http://www.cidoc-crm.org/cidoc-crm/P82_at_some_time_within> "1976" .
+

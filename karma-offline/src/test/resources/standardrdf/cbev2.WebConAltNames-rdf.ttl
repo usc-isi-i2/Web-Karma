@@ -1,0 +1,81 @@
+<person-institution/9071/appelletion/Married-Name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/9071/appelletion/Married-Name> <http://collection.americanart.si.edu/id/ontologies/PE_firstname> "Herbert H." .
+<thesauri/nametype/Married-Name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<person-institution/9071/appelletion/Married-Name> <http://collection.americanart.si.edu/id/ontologies/PE_has_type_name> <thesauri/nametype/Married-Name> .
+<person-institution/9071/appelletion/Married-Name> <http://collection.americanart.si.edu/id/ontologies/PE_lastname> "Bechtold" .
+<person-institution/9071/appelletion/Married-Name> <http://collection.americanart.si.edu/id/ontologies/PE_nametitle> "Mrs." .
+<person-institution/9071/appelletion/Married-Name> <http://collection.americanart.si.edu/id/ontologies/PE_suffix> "Sr." .
+<person-institution/9071/appelletion/Married-Name> <http://www.w3.org/2000/01/rdf-schema#label> "Mrs. Herbert H. Bechtold Sr." .
+<person-institution/9071> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/9071> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/9071/appelletion/Married-Name> .
+
+<person-institution/2185/appelletion/Pseudonym> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<thesauri/nametype/Pseudonym> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<person-institution/2185/appelletion/Pseudonym> <http://collection.americanart.si.edu/id/ontologies/PE_has_type_name> <thesauri/nametype/Pseudonym> .
+<person-institution/2185/appelletion/Pseudonym> <http://collection.americanart.si.edu/id/ontologies/PE_lastname> "Tico" .
+<person-institution/2185/appelletion/Pseudonym> <http://www.w3.org/2000/01/rdf-schema#label> " Tico" .
+<person-institution/2185> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/2185> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/2185/appelletion/Pseudonym> .
+
+<person-institution/5451/appelletion/Variant-Name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<thesauri/nametype/Variant-Name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<person-institution/5451/appelletion/Variant-Name> <http://collection.americanart.si.edu/id/ontologies/PE_has_type_name> <thesauri/nametype/Variant-Name> .
+<person-institution/5451> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/5451> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/5451/appelletion/Variant-Name> .
+
+<person-institution/2/appelletion/Birth-or-Maiden-Name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/2/appelletion/Birth-or-Maiden-Name> <http://collection.americanart.si.edu/id/ontologies/PE_firstname> "George Manuel" .
+<thesauri/nametype/Birth-or-Maiden-Name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<person-institution/2/appelletion/Birth-or-Maiden-Name> <http://collection.americanart.si.edu/id/ontologies/PE_has_type_name> <thesauri/nametype/Birth-or-Maiden-Name> .
+<person-institution/2/appelletion/Birth-or-Maiden-Name> <http://collection.americanart.si.edu/id/ontologies/PE_lastname> "Aarons" .
+<person-institution/2/appelletion/Birth-or-Maiden-Name> <http://www.w3.org/2000/01/rdf-schema#label> " George Manuel Aarons" .
+<person-institution/2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/2> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/2/appelletion/Birth-or-Maiden-Name> .
+
+<person-institution/16131/appelletion/Later-Name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/16131/appelletion/Later-Name> <http://collection.americanart.si.edu/id/ontologies/PE_firstname> "Tom" .
+<thesauri/nametype/Later-Name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<person-institution/16131/appelletion/Later-Name> <http://collection.americanart.si.edu/id/ontologies/PE_has_type_name> <thesauri/nametype/Later-Name> .
+<person-institution/16131/appelletion/Later-Name> <http://collection.americanart.si.edu/id/ontologies/PE_lastname> "Brody" .
+<person-institution/16131/appelletion/Later-Name> <http://collection.americanart.si.edu/id/ontologies/PE_nametitle> "Mrs." .
+<person-institution/16131/appelletion/Later-Name> <http://www.w3.org/2000/01/rdf-schema#label> "Mrs. Tom Brody" .
+<person-institution/16131> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/16131> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/16131/appelletion/Later-Name> .
+
+<person-institution/27748/appelletion/former-name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/27748/appelletion/former-name> <http://collection.americanart.si.edu/id/ontologies/PE_firstname> "Susan" .
+<thesauri/nametype/former-name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<person-institution/27748/appelletion/former-name> <http://collection.americanart.si.edu/id/ontologies/PE_has_type_name> <thesauri/nametype/former-name> .
+<person-institution/27748/appelletion/former-name> <http://collection.americanart.si.edu/id/ontologies/PE_lastname> "Wilchens" .
+<person-institution/27748/appelletion/former-name> <http://www.w3.org/2000/01/rdf-schema#label> " Susan Wilchens" .
+<person-institution/27748> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/27748> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/27748/appelletion/former-name> .
+
+<person-institution/7109/appelletion/Preferred-w-o-accents> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/7109/appelletion/Preferred-w-o-accents> <http://collection.americanart.si.edu/id/ontologies/PE_firstname> "Amado M." .
+<thesauri/nametype/Preferred-w-o-accents> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<person-institution/7109/appelletion/Preferred-w-o-accents> <http://collection.americanart.si.edu/id/ontologies/PE_has_type_name> <thesauri/nametype/Preferred-w-o-accents> .
+<person-institution/7109/appelletion/Preferred-w-o-accents> <http://collection.americanart.si.edu/id/ontologies/PE_lastname> "Pena" .
+<person-institution/7109/appelletion/Preferred-w-o-accents> <http://collection.americanart.si.edu/id/ontologies/PE_suffix> "Jr." .
+<person-institution/7109/appelletion/Preferred-w-o-accents> <http://www.w3.org/2000/01/rdf-schema#label> " Amado M. Pena Jr." .
+<person-institution/7109> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/7109> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/7109/appelletion/Preferred-w-o-accents> .
+
+<person-institution/770/appelletion/Conferred-Name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/770/appelletion/Conferred-Name> <http://collection.americanart.si.edu/id/ontologies/PE_firstname> "Mary Stevenson" .
+<thesauri/nametype/Conferred-Name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<person-institution/770/appelletion/Conferred-Name> <http://collection.americanart.si.edu/id/ontologies/PE_has_type_name> <thesauri/nametype/Conferred-Name> .
+<person-institution/770/appelletion/Conferred-Name> <http://collection.americanart.si.edu/id/ontologies/PE_lastname> "Cassatt" .
+<person-institution/770/appelletion/Conferred-Name> <http://www.w3.org/2000/01/rdf-schema#label> " Mary Stevenson Cassatt" .
+<person-institution/770> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/770> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/770/appelletion/Conferred-Name> .
+
+<person-institution/24465/appelletion/NEA-application-name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/24465/appelletion/NEA-application-name> <http://collection.americanart.si.edu/id/ontologies/PE_firstname> "Richard" .
+<thesauri/nametype/NEA-application-name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<person-institution/24465/appelletion/NEA-application-name> <http://collection.americanart.si.edu/id/ontologies/PE_has_type_name> <thesauri/nametype/NEA-application-name> .
+<person-institution/24465/appelletion/NEA-application-name> <http://collection.americanart.si.edu/id/ontologies/PE_lastname> "Yarde" .
+<person-institution/24465/appelletion/NEA-application-name> <http://www.w3.org/2000/01/rdf-schema#label> " Richard Yarde" .
+<person-institution/24465> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/24465> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/24465/appelletion/NEA-application-name> .
+
