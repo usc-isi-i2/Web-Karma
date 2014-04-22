@@ -106,7 +106,7 @@ public class TestJSONRDFGenerator extends TestRdfGenerator{
 			String rdf = sw.toString();
 			System.out.println(rdf);
 			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split("\n");
+			String[] lines = rdf.split(System.getProperty("line.separator"));
 			int count = lines.length;
 			 
 			assertEquals(102, count);
@@ -136,7 +136,7 @@ public class TestJSONRDFGenerator extends TestRdfGenerator{
 			rdfGen.generateRDF("cs548-events-model", jsonData, true, pw);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split("\n");
+			String[] lines = rdf.split(System.getProperty("line.separator"));
 			assertEquals(238, lines.length);
 		} catch (Exception e) {
 			logger.error("testGenerateRDF1 failed:", e);

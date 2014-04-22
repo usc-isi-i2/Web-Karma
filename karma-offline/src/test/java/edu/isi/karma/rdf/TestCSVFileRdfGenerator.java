@@ -95,7 +95,7 @@ public class TestCSVFileRdfGenerator extends TestRdfGenerator {
 
 				HashSet<String> standardSet = getFileContent(standardRdfFile);
 				HashSet<String> generatedSet = getHashSet(sw.toString().split(
-						"\n"));
+						System.getProperty("line.separator")));
 
 				if (!standardSet.containsAll(generatedSet)
 						|| !generatedSet.containsAll(standardSet)) {

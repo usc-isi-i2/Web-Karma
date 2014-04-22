@@ -107,7 +107,7 @@ public class TestJSONDagRDFGenerator extends TestRdfGenerator{
 			rdfGen.generateRDF("menu-model", jsonData, false, pw);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split("\n");
+			String[] lines = rdf.split(System.getProperty("line.separator"));
 			int count = lines.length + 1;
 			assertEquals(191, count);
 		} catch (Exception e) {
@@ -135,7 +135,7 @@ public class TestJSONDagRDFGenerator extends TestRdfGenerator{
 			rdfGen.generateRDF("menus-model", jsonData, false, pw);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split("\n");
+			String[] lines = rdf.split(System.getProperty("line.separator"));
 			int count = lines.length + 1;
 			assertEquals(412, count);
 		} catch (Exception e) {

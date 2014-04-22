@@ -41,7 +41,7 @@ public class TestFileRdfGenerator extends TestRdfGenerator{
 			
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split("\n");
+			String[] lines = rdf.split(System.getProperty("line.separator"));
 			assertEquals(275, lines.length);
 			
 			int idx = rdf.indexOf("hasEventDate> \"2014-01-13\" .");
@@ -74,7 +74,7 @@ public class TestFileRdfGenerator extends TestRdfGenerator{
 			
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split("\n");
+			String[] lines = rdf.split(System.getProperty("line.separator"));
 			assertEquals(599, lines.length);
 			
 			String triple = "<http://collection.americanart.si.edu/id/person-constituent/2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person>";

@@ -112,7 +112,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		
 		
 		interpreter.exec(pyHelper.getImportStatements());
-		importUserScripts(interpreter);
+		//importUserScripts(interpreter);
 		interpreter.exec(pyHelper.getGetValueDefStatement());
 		interpreter.exec(pyHelper.getVDefStatement());
 		interpreter.exec(transformMethodStmt);
