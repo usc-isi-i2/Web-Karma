@@ -316,18 +316,17 @@ public class VWorksheet extends ViewEntity {
 		String afterPath = path.substring(after + 2);
 		path = path.substring(0, after);
 		
-		int idx = path.indexOf("/");
-		String pathStart = path, pathEnd = null;
-		if(idx != -1) {
-			pathStart = path.substring(0, idx);
-			pathEnd = path.substring(idx+1);
-		}
-		
 		ArrayList<VHNode> parentList = this.headerViewNodes;
-		if(pathEnd != null) {
-			VHNode parentNode = VHNode.getVHNodeFromPath(pathStart, this.headerViewNodes);
+		int idx;
+		
+		String pathStart = path;
+		
+		if((idx = pathStart.lastIndexOf("/")) != -1) {
+			String parentSig = path.substring(0, idx);
+			pathStart = path.substring(idx+1);
+		
+			VHNode parentNode = VHNode.getVHNodeFromPath(parentSig, this.headerViewNodes);
 			parentList = parentNode.getNestedNodes();
-			pathStart = pathEnd;
 		}
 		
 		idx = pathStart.indexOf(":");
