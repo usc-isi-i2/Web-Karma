@@ -116,7 +116,7 @@ public class KarmaServlet extends HttpServlet {
 		}
 
 		//Add file based saver for alignment
-		AlignmentManager.Instance().addAlignmentSaver(new R2RMLAlignmentFileSaver(workspace));
+		//AlignmentManager.Instance().addAlignmentSaver(new R2RMLAlignmentFileSaver(workspace));
 						
 		// Initialize the Outlier tag
 		Tag outlierTag = new Tag(TagName.Outlier, Color.Red);

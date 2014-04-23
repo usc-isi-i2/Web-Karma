@@ -1,5 +1,7 @@
 package edu.isi.karma.metadata;
 
+import java.io.File;
+
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -26,7 +28,7 @@ public class UserPreferencesMetadata extends KarmaUserMetadata{
 
 	@Override
 	protected String getDirectoryPath() {
-		return "UserPrefs/";
+		return "UserPrefs"+File.separator;
 	}
 
 	@Override
