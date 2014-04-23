@@ -226,9 +226,11 @@ public class AddValuesCommand extends WorksheetCommand{
 		Row r = nestedTable.addRow(factory);
 		for (Object key : new TreeSet<Object>(obj.keySet())) {
 			Object value = obj.get(key.toString());
-			HNode h = nestedHTable.getHNodeFromColumnName(key.toString());		
-			if ( h == null)
+			HNode h = nestedHTable.getHNodeFromColumnName(key.toString());
+			if ( h == null) {		
 				h = nestedHTable.addHNode(key.toString(), worksheet, factory);
+			}
+				//
 			if (value instanceof String)
 				r.getNode(h.getId()).setValue((String)value, NodeStatus.original, factory);
 			if (value instanceof JSONObject)
