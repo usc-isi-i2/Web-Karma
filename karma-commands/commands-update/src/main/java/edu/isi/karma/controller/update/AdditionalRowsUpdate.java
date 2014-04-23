@@ -23,9 +23,12 @@ package edu.isi.karma.controller.update;
 
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.TablePager;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.view.VHNode;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdditionalRowsUpdate extends AbstractUpdate {
@@ -63,11 +67,15 @@ public class AdditionalRowsUpdate extends AbstractUpdate {
 		WorksheetDataUpdate upd = new WorksheetDataUpdate(vWorksheet.getId());
 		
 		try {
-			JSONArray rowsJson = upd.getRowsJsonArray(additionalRows, vWorksheet, 
-							vWorksheet.getHeaderViewNodes(),
+			JSONArray rowsJson = new JSONArray();
+			if(additionalRows.size()  > 0) {
+				Row row = additionalRows.get(0);
+				ArrayList<VHNode> nodeList = getNestedNodeList(row, vWorksheet.getHeaderViewNodes());
+				rowsJson = upd.getRowsJsonArray(additionalRows, vWorksheet, 
+							nodeList,
 							vWorkspace.getPreferences().getIntViewPreferenceValue(
 							ViewPreference.maxCharactersInCell));
-			
+			}
 			JSONObject responseObj = new JSONObject();
 			responseObj.put(JsonKeys.tableId.name(), tableId);
 			responseObj.put(JsonKeys.rows.name(), rowsJson);
@@ -83,4 +91,18 @@ public class AdditionalRowsUpdate extends AbstractUpdate {
 
 	}
 
+	private ArrayList<VHNode> getNestedNodeList(Row row, ArrayList<VHNode> nodeList) {
+		for (VHNode vNode : nodeList) {
+			if(vNode.isVisible()) {
+				Node rowNode = row.getNode(vNode.getId());
+				if(rowNode != null)
+					return nodeList;
+				
+				if (vNode.hasNestedTable()) {
+					return getNestedNodeList(row, vNode.getNestedNodes());
+				}
+			}
+		}
+		return null;
+	}
 }
