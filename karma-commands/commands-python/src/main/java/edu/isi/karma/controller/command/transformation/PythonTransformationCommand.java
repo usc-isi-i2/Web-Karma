@@ -112,7 +112,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		
 		
 		interpreter.exec(pyHelper.getImportStatements());
-		//importUserScripts(interpreter);
+		importUserScripts(interpreter);
 		interpreter.exec(pyHelper.getGetValueDefStatement());
 		interpreter.exec(pyHelper.getVDefStatement());
 		interpreter.exec(transformMethodStmt);
@@ -175,7 +175,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
 		if (dirpathString != null && dirpathString.compareTo("") != 0) {
 			interpreter.exec("import sys");
-			interpreter.exec("sys.path.append('" + dirpathString + "')");
+			interpreter.exec("sys.path.append('" + dirpathString.replace('\\','/') + "')");
 			interpreter.exec("from karma.transformation import *");
 		}
 	}

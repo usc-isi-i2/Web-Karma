@@ -60,9 +60,9 @@ public class ServletContextParameterMap {
 		String karmaDir = System.getenv("KARMA_USER_HOME");
 		if(karmaDir == null)
 		{
-			logger.info("KARMA_USER_HOME not set.  Defaulting to {user.home}/karma");
-			File newKarmaDir = new File(System.getProperty("user.home") + "/karma");
-			karmaDir = newKarmaDir.getAbsolutePath() + "/";
+			logger.info("KARMA_USER_HOME not set.  Defaulting to {user.home" + File.separator + "karma");
+			File newKarmaDir = new File(System.getProperty("user.home") + File.separator + "karma");
+			karmaDir = newKarmaDir.getAbsolutePath() + File.separator;
 			logger.info("Karma home: " + karmaDir);
 		}
 		setParameterValue(ContextParameter.USER_DIRECTORY_PATH, karmaDir);
