@@ -658,7 +658,7 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
             var dataDiv = $("<div>");
 
             if (cell["hasNestedTable"]) {
-                var nestedTableDataContainer = $("<div>").addClass("table-data-container");
+                var nestedTableDataContainer = $("<div>").addClass("table-data-container").attr("id", cell["tableId"]);
                 var nestedTable = $("<table>").addClass("wk-table");
 
                 addWorksheetDataRecurse(worksheetId, cell["nestedRows"], nestedTable, !isOdd);
