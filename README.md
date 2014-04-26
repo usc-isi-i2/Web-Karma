@@ -3,26 +3,29 @@ Karma: A Data Integration Tool
 
 **22 April 2014:** We released version 2.000 of Karma with many changes, new GUI, new RDF generator and many bug fixes. 
 
-### Quick tidbits for our current users:
+## Quick tidbits for our current users:
 - Installation script changed: after download, run `mvn clean install` in the download folder.
 - Command to run Karma changed: `cd karma-web; mvn jetty:run`
-- `preloaded-ontologies` moved. The installation script will create a `karma` folder for you in your home direcotry and the `preloaded-ontologies` are there.
+- `preloaded-ontologies` moved. The installation script will create a `karma` folder for you in your home directory and the `preloaded-ontologies` are there.
 - Command to define semantic types moved: it is not in the red/black circles anymore. This command is now in the column menu.
 
 More details in the [wiki](https://github.com/InformationIntegrationGroup/Web-Karma/wiki)
 
 > **Important note: we had a mishap in the repository, so if you have a clone from a previous version you cannot update it to the new version. You need to delete your existing clone and get a fresh clone from the repo.** 
 
-### Important dependencies
+## Important dependencies
 Karma needs **Java 1.7, Maven 3.0**. Download Java SE from [http://www.oracle.com/technetwork/java/javase/downloads/index.html](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
-### What is Karma?
+## What is Karma?
 
 Karma is an information integration tool that enables users to quickly and easily integrate data from a variety of data sources including databases, spreadsheets, delimited text files, XML, JSON, KML and Web APIs. Users integrate information by modeling it according to an ontology of their choice using a graphical user interface that automates much of the process. Karma learns to recognize the mapping of data to ontology classes and then uses the ontology to propose a model that ties together these classes. Users then interact with the system to adjust the automatically generated model. During this process, users can transform the data as needed to normalize data expressed in different formats and to restructure it. Once the model is complete, users can published the integrated data as RDF or store it in a database.
 
 You can find useful tutorials on the project Website: [http://www.isi.edu/integration/karma/](http://www.isi.edu/integration/karma/)
 
 ## Installation and Setup ##
+
+Look in the Wiki [https://github.com/InformationIntegrationGroup/Web-Karma/wiki/Installation](Installation)
+
 System Requirements: **Java 1.7, Maven 3.0** and above.
 
 To compile the code run this from the root folder of Web-Karma:
