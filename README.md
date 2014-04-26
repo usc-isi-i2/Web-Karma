@@ -24,7 +24,7 @@ You can find useful tutorials on the project Website: [http://www.isi.edu/integr
 
 ## Installation and Setup ##
 
-Look in the Wiki [https://github.com/InformationIntegrationGroup/Web-Karma/wiki/Installation](Installation)
+Look in the Wiki [Installation](https://github.com/InformationIntegrationGroup/Web-Karma/wiki/Installation)
 
 System Requirements: **Java 1.7, Maven 3.0** and above.
 
