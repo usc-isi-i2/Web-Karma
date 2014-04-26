@@ -26,20 +26,6 @@ You can find useful tutorials on the project Website: [http://www.isi.edu/integr
 
 Look in the Wiki [Installation](https://github.com/InformationIntegrationGroup/Web-Karma/wiki/Installation)
 
-System Requirements: **Java 1.7, Maven 3.0** and above.
-
-To compile the code run this from the root folder of Web-Karma:
-`mvn clean install`
-
-Now, to run the web version of karma:
-```
-cd karma-web
-mvn jetty:run
-```
-
-Once the server has started point your browser to **http://localhost:8080/**. To start it on a port other than 8080 (e.g. Port number 9999) 
-
-`mvn -Djetty.port=9999 jetty:run`
 
 To start in logging mode (where all the logs are stored in the log folder), use the following command to start the server:
 	`mvn -Dslf4j=false -Dlog4j.configuration=file:./config/log4j.properties jetty:run`
