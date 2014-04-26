@@ -159,9 +159,9 @@ public class UnfoldCommand extends WorksheetCommand {
 				keyMapping.put(HashValueManager.getHashValue(oldws, n.getId()), n.getValue().asString());
 			}
 			for (String mapkey : keyMapping.keySet()) {
-				HNode hn = newHT.getHNodeFromColumnName(keyMapping.get(mapkey));
+				HNode hn = newHT.getHNodeFromColumnName(keyMapping.get(mapkey).toLowerCase());
 				if (hn == null) {
-					HNode n = newHT.addHNode(keyMapping.get(mapkey), oldws, factory);
+					HNode n = newHT.addHNode(keyMapping.get(mapkey).toLowerCase(), oldws, factory);
 					HTable htt = n.addNestedTable("values", oldws, factory);
 					htt.addHNode("Values", oldws, factory);
 					HNodeidMapping.put(keyMapping.get(mapkey), n.getId());
