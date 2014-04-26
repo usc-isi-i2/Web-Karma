@@ -168,8 +168,14 @@ public class GroupByCommand extends WorksheetCommand {
 
 	private void groupByNestedTable(Worksheet oldws, Workspace workspace, HTable ht, List<String> hnodeIDs, List<HNode> keyhnodes, List<HNode> valuehnodes, RepFactory factory) {
 		HTable parentHT = ht.getParentHNode().getHTable(factory);
-		Table parentTable = CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT);
-		ArrayList<Row> parentRows = parentTable.getRows(0, parentTable.getNumRows());
+		List<Table> parentTables = new ArrayList<Table>();
+		CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT,parentTables);
+		ArrayList<Row> parentRows = new ArrayList<Row>();
+		for (Table tmp : parentTables) {
+			for (Row row : tmp.getRows(0, tmp.getNumRows())) {
+				parentRows.add(row);
+			}
+		}
 		HNode newNode = parentHT.addHNode(parentHT.getNewColumnName("GroupBy"), oldws, factory);
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
 		CloneTableUtils.cloneHTable(ht, newht, oldws, factory, keyhnodes);

@@ -84,22 +84,19 @@ public class CloneTableUtils {
 		return null;
 	}
 
-	public static Table getDatatable(Table dt, HTable ht) {
+	public static void getDatatable(Table dt, HTable ht, List<Table> parentTables) {
 		if (dt == null)
-			return null;
+			return;
 		if (dt.getHTableId().compareTo(ht.getId()) == 0)
-			return dt;
+			parentTables.add(dt);
 		else {
 			Table t = null;
 			for (Row row : dt.getRows(0, dt.getNumRows())) {
 				for (Node n : row.getNodes()) {
-					t = getDatatable(n.getNestedTable(), ht);
-					if (t != null)
-						return t;
+					getDatatable(n.getNestedTable(), ht, parentTables);
 				}
 			}
 		}
-		return null;
 	}
 
 	public static Object cloneNodeToJSON(HNode hn, Node node) {

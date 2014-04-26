@@ -91,7 +91,11 @@ public class UnfoldCommand extends WorksheetCommand {
 		if (ht == oldws.getHeaders())
 			newws = unfoldTopLevel(oldws, keyHNodeid, valueHNodeid, workspace, factory);
 		else {
+			try {
 			unfoldNestedLevel(oldws, ht, keyHNodeid, valueHNodeid, factory);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 		try{
 			UpdateContainer c =  new UpdateContainer();
@@ -116,8 +120,15 @@ public class UnfoldCommand extends WorksheetCommand {
 	private void unfoldNestedLevel(Worksheet oldws, HTable ht, String keyHNodeid, String valueHNodeid, RepFactory factory) {
 		ArrayList<HNode> topHNodes = new ArrayList<HNode>(ht.getHNodes());
 		HTable parentHT = ht.getParentHNode().getHTable(factory);
-		Table parentTable = CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT);
-		ArrayList<Row> parentRows = parentTable.getRows(0, parentTable.getNumRows());
+		List<Table> parentTables = new ArrayList<Table>();
+		CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT,parentTables);
+		ArrayList<Row> parentRows = new ArrayList<Row>();
+		for (Table tmp : parentTables) {
+			for (Row row : tmp.getRows(0, tmp.getNumRows())) {
+				parentRows.add(row);
+			}
+		}
+		//ArrayList<Row> parentRows = parentTable.getRows(0, parentTable.getNumRows());
 		HNode newNode = parentHT.addHNode("Unfold: " + ht.getHNode(keyHNodeid).getColumnName(), oldws, factory);
 		HTable newHT = newNode.addNestedTable("Unfold: " + ht.getHNode(keyHNodeid).getColumnName(), oldws, factory);
 		HNode key = ht.getHNode(keyHNodeid);
@@ -131,10 +142,11 @@ public class UnfoldCommand extends WorksheetCommand {
 			}
 		}
 		CloneTableUtils.cloneHTable(ht, newHT, oldws, factory, hnodes);
+		System.out.println("size of parent row: " + parentRows.size());
 		for (Row parentRow: parentRows) {
 			Table t = null;
 			for (Node node : parentRow.getNodes()) {
-				if (node.getNestedTable().getHTableId().compareTo(ht.getId()) == 0) {
+				if (node.hasNestedTable() && node.getNestedTable().getHTableId().compareTo(ht.getId()) == 0) {
 					t = node.getNestedTable();
 					break;
 				}	
