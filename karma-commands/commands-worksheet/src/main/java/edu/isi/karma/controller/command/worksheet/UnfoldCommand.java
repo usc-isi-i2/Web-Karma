@@ -142,7 +142,6 @@ public class UnfoldCommand extends WorksheetCommand {
 			}
 		}
 		CloneTableUtils.cloneHTable(ht, newHT, oldws, factory, hnodes);
-		System.out.println("size of parent row: " + parentRows.size());
 		for (Row parentRow: parentRows) {
 			Table t = null;
 			for (Node node : parentRow.getNodes()) {
@@ -159,9 +158,9 @@ public class UnfoldCommand extends WorksheetCommand {
 				keyMapping.put(HashValueManager.getHashValue(oldws, n.getId()), n.getValue().asString());
 			}
 			for (String mapkey : keyMapping.keySet()) {
-				HNode hn = newHT.getHNodeFromColumnName(keyMapping.get(mapkey).toLowerCase());
+				HNode hn = newHT.getHNodeFromColumnName(keyMapping.get(mapkey).toLowerCase().replace('/', '_'));
 				if (hn == null) {
-					HNode n = newHT.addHNode(keyMapping.get(mapkey).toLowerCase(), oldws, factory);
+					HNode n = newHT.addHNode(keyMapping.get(mapkey).toLowerCase().replace('/', '_'), oldws, factory);
 					HTable htt = n.addNestedTable("values", oldws, factory);
 					htt.addHNode("Values", oldws, factory);
 					HNodeidMapping.put(keyMapping.get(mapkey), n.getId());
