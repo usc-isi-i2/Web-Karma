@@ -3,7 +3,7 @@ Karma: A Data Integration Tool
 
 **22 April 2014:** We released version 2.000 of Karma with many changes, new GUI, new RDF generator and many bug fixes. 
 
-## Quick tidbits for our current users
+## Quick Tidbits for Our Current Users
 - Installation script changed: after download, run `mvn clean install` in the download folder.
 - Command to run Karma changed: `cd karma-web; mvn jetty:run`
 - `preloaded-ontologies` moved. The installation script will create a `karma` folder for you in your home directory and the `preloaded-ontologies` are there.
@@ -13,7 +13,7 @@ More details in the [wiki](https://github.com/InformationIntegrationGroup/Web-Ka
 
 > **Important note: we had a mishap in the repository, so if you have a clone from a previous version you cannot update it to the new version. You need to delete your existing clone and get a fresh clone from the repo.** 
 
-## Important dependencies
+## Important Dependencies
 Karma needs **Java 1.7, Maven 3.0**. Download Java SE from [http://www.oracle.com/technetwork/java/javase/downloads/index.html](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
 ## What is Karma?
