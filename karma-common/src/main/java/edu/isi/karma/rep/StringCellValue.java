@@ -41,7 +41,7 @@ public class StringCellValue extends CellValue {
 
 	public StringCellValue(String value) {
 		super();
-		this.value = value;
+		this.value = value != null ? value : "";
 	}
 
 }

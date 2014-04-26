@@ -70,8 +70,15 @@ public class PythonTransformationHelper {
 		methodStmt.append("def getValue(columnName):\n");
 		methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
 		methodStmt.append("	node = factory.getNode(nodeid)\n");
-		methodStmt.append("	return node.getNeighborByColumnName(columnName, factory).getValue().asString()");
-
+		methodStmt.append("	targetNode = node.getNeighborByColumnName(columnName, factory)\n");
+		methodStmt.append("	if targetNode is not None:\n");
+		methodStmt.append("		value = targetNode.getValue()\n");
+		methodStmt.append("		if value is not None:\n");
+		methodStmt.append("			valueAsString = value.asString()\n");
+		methodStmt.append("			if valueAsString is not None:\n");
+		methodStmt.append("				return valueAsString\n");
+		methodStmt.append("	return ''\n");
+		
 		return methodStmt.toString();
 	}
 	

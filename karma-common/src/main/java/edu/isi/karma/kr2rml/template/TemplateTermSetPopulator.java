@@ -70,7 +70,7 @@ public class TemplateTermSetPopulator {
 				if(term instanceof ColumnTemplateTerm)
 				{
 					Node n = partial.getValue((ColumnTemplateTerm)term);
-					if(n == null || n.getValue().isEmptyValue() || n.getValue().asString().trim().isEmpty())
+					if(n == null || n.getValue() == null || n.getValue().asString() == null || n.getValue().isEmptyValue() || n.getValue().asString().trim().isEmpty())
 					{
 						termsSatisifed = false;
 						break;
