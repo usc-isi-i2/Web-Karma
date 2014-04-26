@@ -3,7 +3,7 @@ Karma: A Data Integration Tool
 
 **22 April 2014:** We released version 2.000 of Karma with many changes, new GUI, new RDF generator and many bug fixes. 
 
-## Quick tidbits for our current users:
+## Quick tidbits for our current users
 - Installation script changed: after download, run `mvn clean install` in the download folder.
 - Command to run Karma changed: `cd karma-web; mvn jetty:run`
 - `preloaded-ontologies` moved. The installation script will create a `karma` folder for you in your home directory and the `preloaded-ontologies` are there.
