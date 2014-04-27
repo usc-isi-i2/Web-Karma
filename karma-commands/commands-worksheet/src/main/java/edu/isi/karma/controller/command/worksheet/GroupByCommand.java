@@ -185,7 +185,7 @@ public class GroupByCommand extends WorksheetCommand {
 		for (Row parentRow : parentRows) {
 			Table t = null;
 			for (Node node : parentRow.getNodes()) {
-				if (node.getNestedTable().getHTableId().compareTo(ht.getId()) == 0) {
+				if (node.hasNestedTable() && node.getNestedTable().getHTableId().compareTo(ht.getId()) == 0) {
 					t = node.getNestedTable();
 					break;
 				}	
