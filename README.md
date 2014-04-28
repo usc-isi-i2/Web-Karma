@@ -11,7 +11,7 @@ Karma: A Data Integration Tool
 
 More details in the [wiki](https://github.com/InformationIntegrationGroup/Web-Karma/wiki)
 
-> **Important note: we had a mishap in the repository, so if you have a clone from a previous version you cannot update it to the new version. You need to delete your existing clone and get a fresh clone from the repo.** 
+> **Important note: on 15 March 2014 we had a mishap in the repository, so if you have a clone from a previous version you cannot update it to the new version. You need to delete your existing clone and get a fresh clone from the repo.** 
 
 ## Important Dependencies
 Karma needs **Java 1.7, Maven 3.0**. Download Java SE from [http://www.oracle.com/technetwork/java/javase/downloads/index.html](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
@@ -25,12 +25,6 @@ You can find useful tutorials on the project Website: [http://www.isi.edu/integr
 ## Installation and Setup ##
 
 Look in the Wiki [Installation](https://github.com/InformationIntegrationGroup/Web-Karma/wiki/Installation)
-
-	
-
-- Karma now stores all user settings in {user.home}/karma folder. You can change this default location by setting the KARMA_USER_HOME environment variable
-- The preloaded-ontologies and UserPrefs user settings are all under the {user.home}/karma folder
-- All published data (models, rdf) is under karma-web/src/main/webapp/publish folder
 
 ## Frequently Asked Questions ##
 ### How to perform offline RDF generation for a data source using a published model? ###
