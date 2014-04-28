@@ -31,6 +31,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
@@ -714,25 +716,57 @@ public class OntologyManager  {
 	public boolean isConnectedByDirectProperty(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return false;
-		return this.ontCache.getConnectedByDirectProperties().contains(sourceUri + targetUri);
+//		return this.ontCache.getConnectedByDirectProperties().contains(sourceUri + targetUri);
+		HashSet<String> directProperties = this.ontCache.getDomainRangeToDirectProperties().get(sourceUri+targetUri);
+		if (directProperties != null && directProperties.size() > 0) { 
+			return true;
+		}
+		return false;
 	}
 
 	public boolean isConnectedByIndirectProperty(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return false;
-		return this.ontCache.getConnectedByIndirectProperties().contains(sourceUri + targetUri);
+//		return this.ontCache.getConnectedByIndirectProperties().contains(sourceUri + targetUri);
+		HashSet<String> indirectProperties = this.ontCache.getDomainRangeToIndirectProperties().get(sourceUri+targetUri);
+		if (indirectProperties != null && indirectProperties.size() > 0) { 
+			return true;
+		}
+		return false;
 	}
 
 	public boolean isConnectedByDomainlessProperty(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return false;
-		return this.ontCache.getConnectedByDomainlessProperties().contains(sourceUri + targetUri);
+//		return this.ontCache.getConnectedByDomainlessProperties().contains(sourceUri + targetUri);
+		HashSet<String> directInProperties = this.ontCache.getDirectInObjectProperties().get(targetUri);
+		if (directInProperties != null) {
+			if (!Sets.intersection(this.ontCache.getObjectPropertiesWithOnlyRange().keySet(), directInProperties).isEmpty())
+				return true;
+		}
+		HashSet<String> indirectInProperties = this.ontCache.getIndirectInObjectProperties().get(targetUri);
+		if (indirectInProperties != null) {
+			if (!Sets.intersection(this.ontCache.getObjectPropertiesWithOnlyRange().keySet(), indirectInProperties).isEmpty())
+				return true;
+		}
+		return false;
 	}
 
 	public boolean isConnectedByRangelessProperty(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return false;
-		return this.ontCache.getConnectedByRangelessProperties().contains(sourceUri + targetUri);
+//		return this.ontCache.getConnectedByRangelessProperties().contains(sourceUri + targetUri);
+		HashSet<String> directOutProperties = this.ontCache.getDirectOutObjectProperties().get(sourceUri);
+		if (directOutProperties != null) {
+			if (!Sets.intersection(this.ontCache.getObjectPropertiesWithOnlyDomain().keySet(), directOutProperties).isEmpty())
+				return true;
+		}
+		HashSet<String> indirectOutProperties = this.ontCache.getIndirectOutObjectProperties().get(sourceUri);
+		if (indirectOutProperties != null) {
+			if (!Sets.intersection(this.ontCache.getObjectPropertiesWithOnlyDomain().keySet(), indirectOutProperties).isEmpty())
+				return true;
+		}
+		return false;
 	}
 	
 	public boolean isConnectedByDomainlessAndRangelessProperty(String sourceUri, String targetUri) {
