@@ -26,7 +26,9 @@ package edu.isi.karma.research.lod;
 //package virtuoso.sesame.driver;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -61,12 +63,17 @@ import org.openrdf.repository.RepositoryResult;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandler;
 import org.openrdf.rio.ntriples.NTriplesWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import virtuoso.jdbc4.VirtuosoExtendedString;
 import virtuoso.jdbc4.VirtuosoRdfBox;
 import virtuoso.sesame2.driver.VirtuosoRepository;
+import edu.isi.karma.modeling.research.Params;
 
 public class VirtuosoTest {
+
+	private static Logger logger = LoggerFactory.getLogger(VirtuosoTest.class);
 
 	public static final String VIRTUOSO_INSTANCE = "fusionRepository.isi.edu";
 	public static final int VIRTUOSO_PORT = 1111;
@@ -111,27 +118,98 @@ public class VirtuosoTest {
 		Repository repository = new VirtuosoRepository("jdbc:virtuoso://" + sa[0] + ":" + 
 					sa[1]+ "/charset=UTF-8/log_enable=2", sa[2], sa[3]);
 
-		try {
+		String filePath = Params.RESULTS_DIR;
+		String filename = "test.csv"; 
 
+		try {
+			PrintWriter resultFile = new PrintWriter(new File(filePath + filename));
 			RepositoryConnection con = repository.getConnection();
 			try {
-				String queryString = "SELECT DISTINCT ?x  ?p ?y FROM <http://europeana.eu> WHERE {?x ?p ?y} LIMIT 1000";
+				
+				long start = System.currentTimeMillis();
+
+//				String queryString = "SELECT DISTINCT ?x  ?p ?y FROM <http://europeana.eu> WHERE {?x ?p ?y} LIMIT 1000";
+				
+//				String queryString = 
+//						"SELECT DISTINCT ?c1 ?p ?c2 (COUNT(?p) as ?count) " +
+//						"FROM <http://europeana.eu> " +
+//						"WHERE { ?x rdf:type ?c1. " +
+//								"?y rdf:type ?c2. " +
+//								"?x ?p ?y. " +
+////								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
+////								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
+////								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
+////								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
+////								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2002/07/owl#\")) " +
+////								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2002/07/owl#\")) +
+//						"} " +
+//						"GROUP BY ?c1 ?p ?c2";
+				
+//				String queryString = 
+//						"SELECT DISTINCT ?c1 ?p (COUNT(?p) as ?count) " +
+//						"FROM <http://europeana.eu> " +
+//						"WHERE { ?x rdf:type ?c1. " +
+//								"?x ?p ?y. " +
+//								"FILTER isLiteral(?y). " +
+////								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
+////								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
+////								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
+////								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
+////								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2002/07/owl#\")) " +
+////								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2002/07/owl#\")) +
+//						"} " +
+//						"GROUP BY ?c1 ?p";
+				
+				String queryString = 
+						"SELECT DISTINCT ?p " +
+						"FROM <http://europeana.eu> " +
+						"WHERE {  " +
+								"?c1 <http://purl.org/dc/elements/1.1/creator> ?p. " +
+								"FILTER isLiteral(?p). " +
+//								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
+//								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
+//								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
+//								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
+//								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2002/07/owl#\")) " +
+//								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2002/07/owl#\")) +
+						"} " +
+						"LIMIT 10";
+
+				
+				System.out.println(queryString);
+				
 				TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
 				TupleQueryResult result = tupleQuery.evaluate();
 				try {
-					
 					while (result.hasNext()) {
 						BindingSet bindingSet = result.next();
-						   Value valueOfX = bindingSet.getValue("x");
-						   Value valueOfY = bindingSet.getValue("y");
-						   Value valueOfP = bindingSet.getValue("p");
-						   // do something interesting with the query variable values here
+						Value valueOfC1 = bindingSet.getValue("c1");
+						Value valueOfP = bindingSet.getValue("p");
+						Value valueOfC2 = bindingSet.getValue("c2");
+						Value valueOfCount = bindingSet.getValue("count");
+						// do something interesting with the query variable values here
 						   
-						   System.out.println(valueOfX.stringValue());
-						   System.out.println(valueOfP.stringValue());
-						   System.out.println(valueOfY.stringValue());
+						if (valueOfC1 != null) {
+							System.out.println(valueOfC1.stringValue());
+							resultFile.print(valueOfC1.stringValue() + "\t");
+						}
+						if (valueOfP != null) {
+							System.out.println(valueOfP.stringValue());
+							resultFile.print(valueOfP.stringValue() + "\t");
+						}
+						if (valueOfC2 != null) {
+							System.out.println(valueOfC2.stringValue());
+							resultFile.print(valueOfC2.stringValue() + "\t");
+						}
+						if (valueOfCount != null) {
+							System.out.println(valueOfCount.stringValue());
+							resultFile.print(valueOfCount.stringValue() + "\n");
+						}
+						   
 					}  
 				} finally {
+					long responseTime = System.currentTimeMillis() - start;
+					logger.info("response time: " + (responseTime/1000F));
 					result.close();
 				}
 
@@ -142,11 +220,15 @@ public class VirtuosoTest {
 				e1.printStackTrace();
 			} finally {
 				con.close();
+				resultFile.close();
 			}
 
 		}
 		catch (RepositoryException e) {
 			   // handle exception
+		} catch (FileNotFoundException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
 		}
 		
 		

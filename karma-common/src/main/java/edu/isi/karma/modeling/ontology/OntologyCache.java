@@ -113,10 +113,10 @@ public class OntologyCache {
 //	private HashMap<String, List<DomainRangePair>> domainRangePairsOfRangelessProperties;
 	
 	// hashmap: class1 + class2 -> boolean (if c1 is connected to c2)
-	private HashSet<String> connectedByDirectProperties;
-	private HashSet<String> connectedByIndirectProperties;
-	private HashSet<String> connectedByDomainlessProperties;
-	private HashSet<String> connectedByRangelessProperties;
+//	private HashSet<String> connectedByDirectProperties;
+//	private HashSet<String> connectedByIndirectProperties;
+//	private HashSet<String> connectedByDomainlessProperties;
+//	private HashSet<String> connectedByRangelessProperties;
 
 	// public methods
 	
@@ -151,39 +151,54 @@ public class OntologyCache {
 		logger.info("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
 
 		// create a hierarchy of classes and properties of the model
+		logger.info("build class hierarchy ...");
 		this.buildClassHierarchy(classHierarchy);
+		logger.info("build object property hierarchy ...");
 		this.buildDataPropertyHierarchy(dataPropertyHierarchy);
+		logger.info("build data property hierarchy ...");
 		this.buildObjectPropertyHierarchy(objectPropertyHierarchy);
 		
+
 		// build hashmaps for indirect subclass and subproperty relationships
+		logger.info("build subclass hashmaps ...");
 		this.buildSubClassesMaps();
+		logger.info("build superclass hashmaps ...");
 		this.buildSuperClassesMaps();
+		logger.info("build subproperty hashmaps ...");
 		this.buildSubPropertiesMaps();
+		logger.info("build superproperty hashmaps ...");
 		this.buildSuperPropertiesMaps();
 
 		// build hashmaps to include inverse(Of) properties
+		logger.info("build inverse property hashmap ...");
 		this.buildInverseProperties();
 		
 		// build some hashmaps that will be used in alignment
+		logger.info("build data property hashmaps ...");
 		this.buildDataPropertiesMaps();
+		logger.info("build object property hashmaps ...");
 		this.buildObjectPropertiesMaps();
 		// update hashmaps to include the subproperty relations  
+		logger.info("apply subproperty definitions ...");
 		this.updateMapsWithSubpropertyDefinitions();
 		
 		// classify different types of properties
+		logger.info("classify properties ...");
 		this.classifyProperties();
 
 		// build connectivity hashmaps
-		this.buildConnectivityMaps();
+//		logger.info("build connectivity hashmaps ...");
+//		this.buildConnectivityMaps();
 		
 		// build hashmaps to speed up adding links to the graph
 //		this.buildObjectPropertyDomainRangeMap();
 		
 		// add some common properties like rdfs:label, rdfs:comment, ...
+		logger.info("add rdfs label/comment/value ...");
 		this.addPropertiesOfRDFVocabulary();
 		
 		float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
-		logger.debug("time to build the ontology cache: " + elapsedTimeSec);
+		logger.info("time to build the ontology cache: " + elapsedTimeSec);
 	}
 
 	private void allocateDataStructures() {
@@ -242,10 +257,10 @@ public class OntologyCache {
 //		this.domainRangePairsOfDomainlessProperties = new HashMap<String, List<DomainRangePair>>();
 //		this.domainRangePairsOfRangelessProperties = new HashMap<String, List<DomainRangePair>>();
 
-		this.connectedByDirectProperties = new HashSet<String>();
-		this.connectedByIndirectProperties = new HashSet<String>();
-		this.connectedByDomainlessProperties = new HashSet<String>();
-		this.connectedByRangelessProperties = new HashSet<String>();
+//		this.connectedByDirectProperties = new HashSet<String>();
+//		this.connectedByIndirectProperties = new HashSet<String>();
+//		this.connectedByDomainlessProperties = new HashSet<String>();
+//		this.connectedByRangelessProperties = new HashSet<String>();
 	}
 	
 	public HashMap<String, Label> getClasses() {
@@ -432,21 +447,21 @@ public class OntologyCache {
 //		return domainRangePairsOfRangelessProperties;
 //	}
 
-	public HashSet<String> getConnectedByDirectProperties() {
-		return connectedByDirectProperties;
-	}
-
-	public HashSet<String> getConnectedByIndirectProperties() {
-		return connectedByIndirectProperties;
-	}
-
-	public HashSet<String> getConnectedByDomainlessProperties() {
-		return connectedByDomainlessProperties;
-	}
-
-	public HashSet<String> getConnectedByRangelessProperties() {
-		return connectedByRangelessProperties;
-	}
+//	public HashSet<String> getConnectedByDirectProperties() {
+//		return connectedByDirectProperties;
+//	}
+//
+//	public HashSet<String> getConnectedByIndirectProperties() {
+//		return connectedByIndirectProperties;
+//	}
+//
+//	public HashSet<String> getConnectedByDomainlessProperties() {
+//		return connectedByDomainlessProperties;
+//	}
+//
+//	public HashSet<String> getConnectedByRangelessProperties() {
+//		return connectedByRangelessProperties;
+//	}
 
 	public Label getUriLabel(String uri) {
 		Label label = this.classes.get(uri);
@@ -931,12 +946,13 @@ public class OntologyCache {
 		OntResource d;
 		OntResource r;
 		
+//		int count = 0;
 		for (String propertyUri : this.objectProperties.keySet()) {
 
 			OntProperty property = this.ontHandler.getOntModel().getOntProperty(propertyUri);
 			if (!property.isURIResource())
 				continue;
-			
+						
 			directDomains = new HashSet<OntResource>();
 			directDomainsUris = new HashSet<String>();
 			indirectDomainsUris = new HashSet<String>();
@@ -947,6 +963,11 @@ public class OntologyCache {
 			indirectRangesUris = new HashSet<String>();
 			allRanges = new HashSet<OntResource>();
 			allRangesUris = new HashSet<String>();
+			
+//			count ++;
+//			if (count % 1000 == 0)
+//				System.gc();
+
 			
 			// direct domain
 			ExtendedIterator<? extends OntResource> itrDomains = property.listDomain();
@@ -1206,7 +1227,7 @@ public class OntologyCache {
 					indirectOutObjectProperties.put(d,  temp);
 				}
 				for (String superP : allSuperPropertiesLocal) {
-						temp.add(superP);
+					temp.add(superP);
 				}
 			}
 
@@ -1217,7 +1238,7 @@ public class OntologyCache {
 					indirectInObjectProperties.put(r,  temp);
 				}
 				for (String superP : allSuperPropertiesLocal) {
-						temp.add(superP);
+					temp.add(superP);
 				}
 			}
 
@@ -1417,121 +1438,126 @@ public class OntologyCache {
 		}
 }
 	
-	private void buildConnectivityMaps() {
-		
-		List<String> classList = new ArrayList<String>(this.classes.keySet());
-		
-		HashSet<String> directProperties;
-		HashSet<String> indirectProperties;
-		HashSet<String> directOutProperties;
-		HashSet<String> directInProperties;
-		HashSet<String> indirectOutProperties;
-		HashSet<String> indirectInProperties;
-		boolean foundDomainlessProperty;
-		boolean foundRangelessProperty;
-		
-		for (int i = 0; i < classList.size(); i++) {
-			String c1 = classList.get(i);
-			for (int j = 0; j < classList.size(); j++) {
-				String c2 = classList.get(j);
-				
-//				if (c1.equals(c2))
-//					continue;
-				
-				directProperties = this.domainRangeToDirectProperties.get(c1+c2);
-				if (directProperties != null && directProperties.size() > 0) { 
-					this.connectedByDirectProperties.add(c1+c2);
-				}
-				indirectProperties = this.domainRangeToIndirectProperties.get(c1+c2);
-				if (indirectProperties != null && indirectProperties.size() > 0) { 
-					this.connectedByIndirectProperties.add(c1+c2);
-				}
-				
-				// domainless property
-				
-				foundDomainlessProperty = false;
-				directInProperties = this.directInObjectProperties.get(c1);
-				if (directInProperties != null) {
-					for (String s : directInProperties) 
-						if (this.objectPropertiesWithOnlyRange.containsKey(s)) {
-							foundDomainlessProperty = true;
-							break;
-						}
-				}
-				if (!foundDomainlessProperty) {
-					directInProperties = this.directInObjectProperties.get(c2);
-					if (directInProperties != null)
-						for (String s : directInProperties) 
-							if (this.objectPropertiesWithOnlyRange.containsKey(s)) {
-								foundDomainlessProperty = true;
-								break;
-							}			
-				}
-				if (!foundDomainlessProperty) {
-					indirectInProperties = this.indirectInObjectProperties.get(c1);
-					if (indirectInProperties != null)
-						for (String s : indirectInProperties) 
-							if (this.objectPropertiesWithOnlyRange.containsKey(s)) {
-								foundDomainlessProperty = true;
-								break;
-							}
-				}
-				if (!foundDomainlessProperty) {
-					indirectInProperties = this.indirectInObjectProperties.get(c2);
-					if (indirectInProperties != null)
-						for (String s : indirectInProperties) 
-							if (this.objectPropertiesWithOnlyRange.containsKey(s)) {
-								foundDomainlessProperty = true;
-								break;
-							}
-				}
-				
-				// rangeless property
-				
-				foundRangelessProperty = false;
-				directOutProperties = this.directOutObjectProperties.get(c1);
-				if (directOutProperties != null) {
-					for (String s : directOutProperties) 
-						if (this.objectPropertiesWithOnlyDomain.containsKey(s)) {
-							foundRangelessProperty = true;
-							break;
-						}
-				}
-				if (!foundRangelessProperty) {
-					directOutProperties = this.directOutObjectProperties.get(c2);
-					if (directOutProperties != null)
-						for (String s : directOutProperties) 
-							if (this.objectPropertiesWithOnlyDomain.containsKey(s)) {
-								foundRangelessProperty = true;
-								break;
-							}
-				}
-				if (!foundRangelessProperty) {
-					indirectOutProperties = this.indirectOutObjectProperties.get(c1);
-					if (indirectOutProperties != null)
-						for (String s : indirectOutProperties) 
-							if (this.objectPropertiesWithOnlyDomain.containsKey(s)) {
-								foundRangelessProperty = true;
-								break;
-							}
-				}
-				if (!foundRangelessProperty) {
-					indirectOutProperties = this.indirectOutObjectProperties.get(c2);
-					if (indirectOutProperties != null)
-						for (String s : indirectOutProperties) 
-							if (this.objectPropertiesWithOnlyDomain.containsKey(s)) {
-								foundRangelessProperty = true;
-								break;
-							}
-				}				
-				
-				if (foundRangelessProperty) { 
-					this.connectedByRangelessProperties.add(c1+c2);
-				}
-				if (foundDomainlessProperty) { 
-					this.connectedByDomainlessProperties.add(c1+c2);
-				}
-			}
-		}
-	}
+//	private void buildConnectivityMaps() {
+//		
+//		List<String> classList = new ArrayList<String>(this.classes.keySet());
+//		
+//		HashSet<String> directProperties;
+//		HashSet<String> indirectProperties;
+//		HashSet<String> directOutProperties;
+//		HashSet<String> directInProperties;
+//		HashSet<String> indirectOutProperties;
+//		HashSet<String> indirectInProperties;
+//		boolean foundDomainlessProperty;
+//		boolean foundRangelessProperty;
+//		
+//		int count = 0;
+//		for (int i = 0; i < classList.size(); i++) {
+//			String c1 = classList.get(i);
+//			for (int j = 0; j < classList.size(); j++) {
+//				String c2 = classList.get(j);
+//				
+//				count ++;
+//				if (count % 1000000 == 0 ) {
+//					System.gc();
+//				}
+////				if (c1.equals(c2))
+////					continue;
+//				
+//				directProperties = this.domainRangeToDirectProperties.get(c1+c2);
+//				if (directProperties != null && directProperties.size() > 0) { 
+//					this.connectedByDirectProperties.add(c1+c2);
+//				}
+//				indirectProperties = this.domainRangeToIndirectProperties.get(c1+c2);
+//				if (indirectProperties != null && indirectProperties.size() > 0) { 
+//					this.connectedByIndirectProperties.add(c1+c2);
+//				}
+//				
+//				// domainless property
+//				
+//				foundDomainlessProperty = false;
+//				directInProperties = this.directInObjectProperties.get(c1);
+//				if (directInProperties != null) {
+//					for (String s : directInProperties) 
+//						if (this.objectPropertiesWithOnlyRange.containsKey(s)) {
+//							foundDomainlessProperty = true;
+//							break;
+//						}
+//				}
+//				if (!foundDomainlessProperty) {
+//					directInProperties = this.directInObjectProperties.get(c2);
+//					if (directInProperties != null)
+//						for (String s : directInProperties) 
+//							if (this.objectPropertiesWithOnlyRange.containsKey(s)) {
+//								foundDomainlessProperty = true;
+//								break;
+//							}			
+//				}
+//				if (!foundDomainlessProperty) {
+//					indirectInProperties = this.indirectInObjectProperties.get(c1);
+//					if (indirectInProperties != null)
+//						for (String s : indirectInProperties) 
+//							if (this.objectPropertiesWithOnlyRange.containsKey(s)) {
+//								foundDomainlessProperty = true;
+//								break;
+//							}
+//				}
+//				if (!foundDomainlessProperty) {
+//					indirectInProperties = this.indirectInObjectProperties.get(c2);
+//					if (indirectInProperties != null)
+//						for (String s : indirectInProperties) 
+//							if (this.objectPropertiesWithOnlyRange.containsKey(s)) {
+//								foundDomainlessProperty = true;
+//								break;
+//							}
+//				}
+//				
+//				// rangeless property
+//				
+//				foundRangelessProperty = false;
+//				directOutProperties = this.directOutObjectProperties.get(c1);
+//				if (directOutProperties != null) {
+//					for (String s : directOutProperties) 
+//						if (this.objectPropertiesWithOnlyDomain.containsKey(s)) {
+//							foundRangelessProperty = true;
+//							break;
+//						}
+//				}
+//				if (!foundRangelessProperty) {
+//					directOutProperties = this.directOutObjectProperties.get(c2);
+//					if (directOutProperties != null)
+//						for (String s : directOutProperties) 
+//							if (this.objectPropertiesWithOnlyDomain.containsKey(s)) {
+//								foundRangelessProperty = true;
+//								break;
+//							}
+//				}
+//				if (!foundRangelessProperty) {
+//					indirectOutProperties = this.indirectOutObjectProperties.get(c1);
+//					if (indirectOutProperties != null)
+//						for (String s : indirectOutProperties) 
+//							if (this.objectPropertiesWithOnlyDomain.containsKey(s)) {
+//								foundRangelessProperty = true;
+//								break;
+//							}
+//				}
+//				if (!foundRangelessProperty) {
+//					indirectOutProperties = this.indirectOutObjectProperties.get(c2);
+//					if (indirectOutProperties != null)
+//						for (String s : indirectOutProperties) 
+//							if (this.objectPropertiesWithOnlyDomain.containsKey(s)) {
+//								foundRangelessProperty = true;
+//								break;
+//							}
+//				}				
+//				
+//				if (foundRangelessProperty) { 
+//					this.connectedByRangelessProperties.add(c1+c2);
+//				}
+//				if (foundDomainlessProperty) { 
+//					this.connectedByDomainlessProperties.add(c1+c2);
+//				}
+//			}
+//		}
+//	}
 }
