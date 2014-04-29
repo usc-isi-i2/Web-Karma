@@ -443,7 +443,7 @@ a.icon-remove:hover {
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				        <button type="submit" class="btn btn-default" id="btnNo">No, just Export as CSV</button>
+				        <button type="submit" class="btn btn-default" id="btnNo">No, just Export as JSON</button>
 				        <button type="submit" class="btn btn-primary" id="btnYes">Yes, Import as Worksheet</button>
 				  </div> <!-- /.modal-footer -->
 			</div><!-- /.modal-content -->
