@@ -429,5 +429,27 @@ a.icon-remove:hover {
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
              
+<div class="modal fade" id="publishJSONDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Save as JSON</h4>
+				  </div>
+				  <div class="modal-body">
+					Would you like to also import the JSON as a new Worksheet?
+					<div class="error" style="display: none">Error</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-default" id="btnNo">No, just Export as CSV</button>
+				        <button type="submit" class="btn btn-primary" id="btnYes">Yes, Import as Worksheet</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 </body>
 </html>

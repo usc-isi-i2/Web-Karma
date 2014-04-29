@@ -16,6 +16,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"Publish RDF" , func:publishRDF},
 			{name:"Publish Model" , func:publishModel},
 			{name:"Publish Service Model", func:publishServiceModel},
+			{name:"Save as JSON", func:saveAsJson},
 			{name:"divider"},
 			{name:"Populate Source", func:populateSource},
 			{name:"Invoke Service", func:invokeService},
@@ -463,6 +464,13 @@ function WorksheetOptions(wsId, wsTitle) {
                     hideLoading(info["worksheetId"]);
                 }
         });
+		return false;
+	}
+	
+	function saveAsJson() {
+		console.log("Save as json");
+		hideDropdown();
+		PublishJSONDialog.getInstance().show(worksheetId);
 		return false;
 	}
 	

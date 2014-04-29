@@ -32,13 +32,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.alignment.R2RMLAlignmentFileSaver;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.metadata.CRFModelMetadata;
 import edu.isi.karma.metadata.CSVMetadata;
 import edu.isi.karma.metadata.GraphVizMetadata;
+import edu.isi.karma.metadata.JSONMetadata;
 import edu.isi.karma.metadata.JSONModelsMetadata;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.ModelLearnerMetadata;
@@ -48,7 +48,6 @@ import edu.isi.karma.metadata.R2RMLMetadata;
 import edu.isi.karma.metadata.RDFMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.metadata.WorksheetHistoryMetadata;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -111,6 +110,7 @@ public class KarmaServlet extends HttpServlet {
 			metadataManager.register(new R2RMLMetadata(workspace));
 			metadataManager.register(new RDFMetadata(workspace));
 			metadataManager.register(new CSVMetadata(workspace));
+			metadataManager.register(new JSONMetadata(workspace));
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}

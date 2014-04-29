@@ -427,6 +427,14 @@ function parse(data) {
             var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("History").addClass("HistoryDownloadLink DownloadLink").attr("target", "_blank");
             $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
         }
+        else if(element["updateType"] == "PublishJSONUpdate") {
+            var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
+            // Remove existing link if any
+            $("a.JSONDownloadLink", titleDiv).remove();
+
+            var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("JSON").addClass("JSONDownloadLink DownloadLink").attr("target", "_blank");
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
+        }
         else if(element["updateType"] == "PublishDatabaseUpdate") {
             if(element["numRowsNotInserted"] == 0) {
                 $.sticky("Data saved successfully!");
