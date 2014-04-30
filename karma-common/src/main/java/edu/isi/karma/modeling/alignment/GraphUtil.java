@@ -727,8 +727,11 @@ public class GraphUtil {
     		l = new CompactSubClassLink(id);
     	} else if (type == LinkType.CompactObjectPropertyLink) {
     		l = new CompactObjectPropertyLink(id, objectPropertyType);
+    	} else if (type == LinkType.CompactSubClassLink) {
+    		l = new CompactSubClassLink(id);
     	} else {
-    		l = new CompactObjectPropertyLink(id, objectPropertyType);
+    		logger.error("cannot instanciate a link from the type: " + type.toString());
+    		return null;
     	}
     	
     	if (l instanceof LabeledLink) {
@@ -741,10 +744,10 @@ public class GraphUtil {
 	private static Label readLabel(JsonReader reader) throws IOException {
 		
 		String uri = null;
-		String ns = null;
-		String prefix = null;
-		String rdfsComment = null;
-		String rdfsLabel = null;
+//		String ns = null;
+//		String prefix = null;
+//		String rdfsComment = null;
+//		String rdfsLabel = null;
 		
 		reader.beginObject();
 	    while (reader.hasNext()) {
@@ -765,7 +768,8 @@ public class GraphUtil {
 		}
     	reader.endObject();
     	
-    	Label label = new Label(uri, ns, prefix, rdfsLabel, rdfsComment);
+//    	Label label = new Label(uri, ns, prefix, rdfsLabel, rdfsComment);
+    	Label label = new Label(uri);
     	return label;
 	}
 	
