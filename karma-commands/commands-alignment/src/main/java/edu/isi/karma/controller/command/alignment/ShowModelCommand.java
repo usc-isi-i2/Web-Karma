@@ -20,22 +20,39 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
-import edu.isi.karma.controller.update.*;
+import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
+import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.SemanticTypesUpdate;
+import edu.isi.karma.controller.update.TagsUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.learner.ModelLearner;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
@@ -50,15 +67,6 @@ import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SubClassLink;
-
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 
 public class ShowModelCommand extends WorksheetCommand {
@@ -120,7 +128,7 @@ public class ShowModelCommand extends WorksheetCommand {
 		if (alignment == null) {
 			logger.info("Alignment is NULL for " + worksheetId);
 			return new UpdateContainer(new ErrorUpdate(
-					"Please align the worksheet before generating R2RML Model!"));
+					"Alignment is NULL for " + worksheetId));
 		}
 
 		if (initialAlignment == null)
@@ -154,10 +162,14 @@ public class ShowModelCommand extends WorksheetCommand {
 		}
 
 		ModelLearner modelLearner = new ModelLearner(ontologyManager, columnNodes);
-		modelLearner.learn();
 		SemanticModel model = modelLearner.getModel();
+		if (model == null) {
+			logger.error("could not learn any model for this source!");
+			return new UpdateContainer(new ErrorUpdate(
+					"Error occured while generating a semantic model for the source."));
+		}
 		
-		logger.info(GraphUtil.labeledGraphToString(model.getGraph()));
+//		logger.info(GraphUtil.labeledGraphToString(model.getGraph()));
 		
 		HashSet<String> alignmentNodeUris = new HashSet<String>();
 		HashMap<Node, Node> modelToAlignmentNode = new HashMap<Node, Node>();

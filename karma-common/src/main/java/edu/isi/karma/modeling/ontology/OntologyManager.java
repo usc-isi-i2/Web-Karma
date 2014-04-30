@@ -471,6 +471,7 @@ public class OntologyManager  {
 		return results;
 	}
 	
+	
 	public Map<String, Label> getObjectPropertiesByDomain(String domainUri, boolean recursive) {
 		
 		HashSet<String> objectProperties = ontCache.getDirectOutObjectProperties().get(domainUri);
@@ -616,44 +617,44 @@ public class OntologyManager  {
 
 	}
 
-	/**
-	 * This function takes a class uri and returns the datatype properties who have this class in their domain. 
-	 * If second parameter set to True, it also returns the datatype properties inherited from parents of the given class.
-	 * @param domainUri
-	 * @param inheritance
-	 * @return
-	 */
-	public HashSet<String> getDataPropertiesOfClass(String domainUri, boolean inheritance) {
-
-		HashSet<String> direct = ontCache.getDirectOutDataProperties().get(domainUri);
-		if (!inheritance) return direct;
-		
-		HashSet<String> all = new HashSet<String>();
-		HashSet<String> indirect = ontCache.getIndirectOutDataProperties().get(domainUri);
-		if (direct != null) all.addAll(direct);
-		if (indirect != null) all.addAll(indirect);
-		return all;
-
-	}
-
-	/**
-	 * This function takes a class uri and returns the object properties who have this class in their domain. 
-	 * If second parameter set to True, it also returns the object properties inherited from parents of the given class.
-	 * @param domainUri
-	 * @param inheritance
-	 * @return
-	 */
-	public HashSet<String> getObjectPropertiesOfClass(String domainUri, boolean inheritance) {
-
-		HashSet<String> direct = ontCache.getDirectOutObjectProperties().get(domainUri);
-		if (!inheritance) return direct;
-		
-		HashSet<String> all = new HashSet<String>();
-		HashSet<String> indirect = ontCache.getIndirectOutObjectProperties().get(domainUri);
-		if (direct != null) all.addAll(direct);
-		if (indirect != null) all.addAll(indirect);
-		return all;
-	}
+//	/**
+//	 * This function takes a class uri and returns the datatype properties who have this class in their domain. 
+//	 * If second parameter set to True, it also returns the datatype properties inherited from parents of the given class.
+//	 * @param domainUri
+//	 * @param inheritance
+//	 * @return
+//	 */
+//	public HashSet<String> getDataPropertiesOfClass(String domainUri, boolean inheritance) {
+//
+//		HashSet<String> direct = ontCache.getDirectOutDataProperties().get(domainUri);
+//		if (!inheritance) return direct;
+//		
+//		HashSet<String> all = new HashSet<String>();
+//		HashSet<String> indirect = ontCache.getIndirectOutDataProperties().get(domainUri);
+//		if (direct != null) all.addAll(direct);
+//		if (indirect != null) all.addAll(indirect);
+//		return all;
+//
+//	}
+//
+//	/**
+//	 * This function takes a class uri and returns the object properties who have this class in their domain. 
+//	 * If second parameter set to True, it also returns the object properties inherited from parents of the given class.
+//	 * @param domainUri
+//	 * @param inheritance
+//	 * @return
+//	 */
+//	public HashSet<String> getObjectPropertiesOfClass(String domainUri, boolean inheritance) {
+//
+//		HashSet<String> direct = ontCache.getDirectOutObjectProperties().get(domainUri);
+//		if (!inheritance) return direct;
+//		
+//		HashSet<String> all = new HashSet<String>();
+//		HashSet<String> indirect = ontCache.getIndirectOutObjectProperties().get(domainUri);
+//		if (direct != null) all.addAll(direct);
+//		if (indirect != null) all.addAll(indirect);
+//		return all;
+//	}
 	
 	public HashSet<String> getObjectPropertiesDirect(String sourceUri, String targetUri) {
 		
