@@ -473,19 +473,18 @@ public class OntologyManager  {
 	
 	
 	public Map<String, Label> getObjectPropertiesByDomain(String domainUri, boolean recursive) {
-		
+		HashSet<String> all = new HashSet<String>();
 		HashSet<String> objectProperties = ontCache.getDirectOutObjectProperties().get(domainUri);
+		if(objectProperties != null)
+			all.addAll(objectProperties);
 		if(recursive) {
 			HashSet<String> propRecursive = ontCache.getIndirectOutObjectProperties().get(domainUri);
 			if(propRecursive != null)
-				objectProperties.addAll(propRecursive);
+				all.addAll(propRecursive);
 		}
 		HashMap<String, Label> results = new HashMap<String, Label>();
 		
-		if (objectProperties == null)
-			return results;
-		
-		for (String op : objectProperties) {
+		for (String op : all) {
 			results.put(op, ontCache.getPropertyLabel(op));
 		}
 		
@@ -493,19 +492,18 @@ public class OntologyManager  {
 	}
 	
 	public Map<String, Label> getObjectPropertiesByRange(String rangeUri, boolean recursive) {
-		
+		HashSet<String> all = new HashSet<String>();
 		HashSet<String> objectProperties = ontCache.getDirectInObjectProperties().get(rangeUri);
+		if(objectProperties != null)
+			all.addAll(objectProperties);
 		if(recursive) {
 			HashSet<String> propRecursive = ontCache.getIndirectInObjectProperties().get(rangeUri);
 			if(propRecursive != null)
-				objectProperties.addAll(propRecursive);
+				all.addAll(propRecursive);
 		}
 		HashMap<String, Label> results = new HashMap<String, Label>();
 		
-		if (objectProperties == null)
-			return results;
-		
-		for (String op : objectProperties) {
+		for (String op : all) {
 			results.put(op, ontCache.getPropertyLabel(op));
 		}
 		
@@ -513,19 +511,18 @@ public class OntologyManager  {
 	}
 	
 	public Map<String, Label> getDataPropertiesByDomain(String domainUri, boolean recursive) {
-		
+		HashSet<String> all = new HashSet<String>();
 		HashSet<String> dataProperties = ontCache.getDirectOutDataProperties().get(domainUri);
+		if(dataProperties != null)
+			all.addAll(dataProperties);
 		if(recursive) {
 			HashSet<String> propRecursive = ontCache.getIndirectOutDataProperties().get(domainUri);
 			if(propRecursive != null)
-				dataProperties.addAll(propRecursive);
+				all.addAll(propRecursive);
 		}
 		HashMap<String, Label> results = new HashMap<String, Label>();
 		
-		if (dataProperties == null)
-			return results;
-		
-		for (String op : dataProperties) {
+		for (String op : all) {
 			results.put(op, ontCache.getPropertyLabel(op));
 		}
 		

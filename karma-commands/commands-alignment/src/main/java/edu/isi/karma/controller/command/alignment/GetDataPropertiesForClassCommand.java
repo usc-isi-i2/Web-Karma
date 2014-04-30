@@ -78,8 +78,7 @@ public class GetDataPropertiesForClassCommand extends Command {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		final OntologyManager ontMgr = workspace.getOntologyManager();
-		final Map<String, Label> properties = ontMgr.getDataPropertiesByDomain(classURI, true);
-
+		
 		// Generate and return the JSON
 		return new UpdateContainer(new AbstractUpdate() {
 			@Override
@@ -87,6 +86,7 @@ public class GetDataPropertiesForClassCommand extends Command {
 					VWorkspace vWorkspace) {
 				JSONObject outputObject = new JSONObject();
 				try {
+					Map<String, Label> properties = ontMgr.getDataPropertiesByDomain(classURI, true);
 					outputObject.put(JsonKeys.updateType.name(), "DataPropertiesForClassUpdate");
 
 					JSONArray dataArray = new JSONArray();
@@ -107,8 +107,8 @@ public class GetDataPropertiesForClassCommand extends Command {
 					outputObject.put(JsonKeys.data.name(), dataArray);
 
 					pw.println(outputObject.toString());
-				} catch (JSONException e) {
-					logger.error("Error occured while generating JSON!");
+				} catch (Exception e) {
+					logger.error("Error occured while generating JSON!", e);
 				}
 			}
 		});
