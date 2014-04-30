@@ -2,7 +2,6 @@ package edu.isi.karma.controller.command.worksheet;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -106,9 +105,14 @@ public class FoldCommand extends WorksheetCommand {
 			for (HNode hnode : hnodes) {
 				Node node = row.getNode(hnode.getId());
 				String name = hnode.getColumnName();
-				String value = node.getValue().asString();
+				Object value = CloneTableUtils.cloneNodeToJSON(hnode, node);
 				JSONObject obj = new JSONObject();
-				obj.put("values", value);
+				JSONObject obj2 = new JSONObject();
+				if (value instanceof String)
+					obj2.put("values", value);
+				else
+					obj2.put(worksheet.getHeaders().getNewColumnName("nested"), value);
+				obj.put("values", obj2);
 				obj.put("names", name);
 				t.put(obj);			
 			}

@@ -91,7 +91,11 @@ public class UnfoldCommand extends WorksheetCommand {
 		if (ht == oldws.getHeaders())
 			newws = unfoldTopLevel(oldws, keyHNodeid, valueHNodeid, workspace, factory);
 		else {
+			try {
 			unfoldNestedLevel(oldws, ht, keyHNodeid, valueHNodeid, factory);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 		try{
 			UpdateContainer c =  new UpdateContainer();
@@ -116,8 +120,15 @@ public class UnfoldCommand extends WorksheetCommand {
 	private void unfoldNestedLevel(Worksheet oldws, HTable ht, String keyHNodeid, String valueHNodeid, RepFactory factory) {
 		ArrayList<HNode> topHNodes = new ArrayList<HNode>(ht.getHNodes());
 		HTable parentHT = ht.getParentHNode().getHTable(factory);
-		Table parentTable = CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT);
-		ArrayList<Row> parentRows = parentTable.getRows(0, parentTable.getNumRows());
+		List<Table> parentTables = new ArrayList<Table>();
+		CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT,parentTables);
+		ArrayList<Row> parentRows = new ArrayList<Row>();
+		for (Table tmp : parentTables) {
+			for (Row row : tmp.getRows(0, tmp.getNumRows())) {
+				parentRows.add(row);
+			}
+		}
+		//ArrayList<Row> parentRows = parentTable.getRows(0, parentTable.getNumRows());
 		HNode newNode = parentHT.addHNode("Unfold: " + ht.getHNode(keyHNodeid).getColumnName(), oldws, factory);
 		HTable newHT = newNode.addNestedTable("Unfold: " + ht.getHNode(keyHNodeid).getColumnName(), oldws, factory);
 		HNode key = ht.getHNode(keyHNodeid);
@@ -134,7 +145,7 @@ public class UnfoldCommand extends WorksheetCommand {
 		for (Row parentRow: parentRows) {
 			Table t = null;
 			for (Node node : parentRow.getNodes()) {
-				if (node.getNestedTable().getHTableId().compareTo(ht.getId()) == 0) {
+				if (node.hasNestedTable() && node.getNestedTable().getHTableId().compareTo(ht.getId()) == 0) {
 					t = node.getNestedTable();
 					break;
 				}	
@@ -147,9 +158,9 @@ public class UnfoldCommand extends WorksheetCommand {
 				keyMapping.put(HashValueManager.getHashValue(oldws, n.getId()), n.getValue().asString());
 			}
 			for (String mapkey : keyMapping.keySet()) {
-				HNode hn = newHT.getHNodeFromColumnName(keyMapping.get(mapkey));
+				HNode hn = newHT.getHNodeFromColumnName(keyMapping.get(mapkey).toLowerCase().replace('/', '_'));
 				if (hn == null) {
-					HNode n = newHT.addHNode(keyMapping.get(mapkey), oldws, factory);
+					HNode n = newHT.addHNode(keyMapping.get(mapkey).toLowerCase().replace('/', '_'), oldws, factory);
 					HTable htt = n.addNestedTable("values", oldws, factory);
 					htt.addHNode("Values", oldws, factory);
 					HNodeidMapping.put(keyMapping.get(mapkey), n.getId());

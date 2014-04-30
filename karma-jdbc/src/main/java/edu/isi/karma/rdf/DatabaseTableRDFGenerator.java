@@ -144,6 +144,10 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 					}
 					val = "SQLException";
 				}
+				if(null == val)
+				{
+					val = "";
+				}
 				row.setValue(headersList.get(i-1), val, factory);
 			}
 			counter++;

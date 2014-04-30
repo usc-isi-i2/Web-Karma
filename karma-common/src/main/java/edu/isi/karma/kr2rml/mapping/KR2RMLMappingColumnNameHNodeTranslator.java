@@ -129,6 +129,10 @@ public class KR2RMLMappingColumnNameHNodeTranslator {
     		}
     	} else {
     		HNode hNode = hTable.getHNodeFromColumnName(colTermVal);
+			if(hNode == null) {
+				logger.error("Error retrieving column: " + colTermVal);
+				return null;
+			}
     		logger.debug("Column" +colTermVal);
     		return hNode.getId();
     	}
