@@ -1213,7 +1213,7 @@ var UnfoldDialog = (function() {
                 	var id = headers[i].HNodeId;
                 	//console.log(columnName);
                 	//console.log(id);
-                	var row = $("<div>").addClass("checkbox");
+                	var row = $("<div>").addClass("radio");
                   var label = $("<label>").text(columnName);
                   var input = $("<input>")
                       					.attr("type", "radio")
