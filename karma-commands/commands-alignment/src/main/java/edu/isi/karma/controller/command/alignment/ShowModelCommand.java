@@ -61,6 +61,7 @@ import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
@@ -218,7 +219,7 @@ public class ShowModelCommand extends WorksheetCommand {
 
 				LabeledLink newLink = null;
 				if (l instanceof DataPropertyLink)
-					newLink = alignment.addDataPropertyLink(source, target, l.getLabel(), false);
+					newLink = alignment.addDataPropertyLink(source, target, l.getLabel(), l.getKeyType() == LinkKeyInfo.PartOfKey? true : false);
 				else if (l instanceof ObjectPropertyLink)
 					newLink = alignment.addObjectPropertyLink(source, target, l.getLabel());
 				else if (l instanceof SubClassLink)
@@ -231,6 +232,10 @@ public class ShowModelCommand extends WorksheetCommand {
 					newLink = alignment.addDataPropertyOfColumnLink(source, target, ((DataPropertyOfColumnLink)l).getSpecializedColumnHNodeId());
 				else if (l instanceof ObjectPropertySpecializationLink)
 					newLink = alignment.addObjectPropertySpecializationLink(source, target, ((ObjectPropertySpecializationLink)l).getSpecializedLinkId());
+				else {
+		    		logger.error("cannot instanciate a link from the type: " + l.getType().toString());
+		    		continue;
+				}
 				
 				if (newLink == null) // link already exist
 					continue;

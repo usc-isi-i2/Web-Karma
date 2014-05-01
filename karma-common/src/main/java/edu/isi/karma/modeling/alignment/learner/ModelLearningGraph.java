@@ -37,15 +37,19 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSubClassLink;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
+import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
-import edu.isi.karma.rep.alignment.ObjectPropertyType;
+import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SubClassLink;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.RandomGUID;
@@ -250,17 +254,27 @@ public class ModelLearningGraph {
 
 				visitedNodes.put(target, n2);
 			}
-
+			
 			LabeledLink link;
 			String id = LinkIdFactory.getLinkId(e.getLabel().getUri(), n1.getId(), n2.getId());	
 			if (e instanceof DataPropertyLink) 
-				link = new DataPropertyLink(id, e.getLabel(), false);
+				link = new DataPropertyLink(id, e.getLabel(), e.getKeyType() == LinkKeyInfo.PartOfKey? true : false);
 			else if (e instanceof ObjectPropertyLink)
 				link = new ObjectPropertyLink(id, e.getLabel(), ((ObjectPropertyLink)e).getObjectPropertyType());
 			else if (e instanceof SubClassLink)
 				link = new SubClassLink(id);
-			else
-				link = new ObjectPropertyLink(id, e.getLabel(), ObjectPropertyType.None); 
+			else if (e instanceof ClassInstanceLink)
+				link = new ClassInstanceLink(id, e.getKeyType());
+			else if (e instanceof ColumnSubClassLink)
+				link = new ColumnSubClassLink(id);
+			else if (e instanceof DataPropertyOfColumnLink)
+				link = new DataPropertyOfColumnLink(id, ((DataPropertyOfColumnLink)e).getSpecializedColumnHNodeId());
+			else if (e instanceof ObjectPropertySpecializationLink)
+				link = new ObjectPropertySpecializationLink(id, ((ObjectPropertySpecializationLink)e).getSpecializedLinkId());
+			else {
+	    		logger.error("cannot instanciate a link from the type: " + e.getType().toString());
+	    		continue;
+			}
 			
 			
 			link.getModelIds().add(modelId);

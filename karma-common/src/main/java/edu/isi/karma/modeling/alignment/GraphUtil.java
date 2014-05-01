@@ -723,8 +723,6 @@ public class GraphUtil {
     		l = new ObjectPropertySpecializationLink(hNodeId, specializedLinkId);
     	} else if (type == LinkType.SubClassLink) {
     		l = new SubClassLink(id);
-    	} else if (type == LinkType.ColumnSubClassLink) {
-    		l = new CompactSubClassLink(id);
     	} else if (type == LinkType.CompactObjectPropertyLink) {
     		l = new CompactObjectPropertyLink(id, objectPropertyType);
     	} else if (type == LinkType.CompactSubClassLink) {
