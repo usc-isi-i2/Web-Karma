@@ -50,7 +50,11 @@ public class ModelingConfiguration {
     
     private static Integer maxCandidateModels;
     private static Integer maxQueuedMappigs;
-    
+
+    private static Double scoringConfidenceCoefficient;
+    private static Double scoringCoherenceSCoefficient;
+    private static Double scoringSizeCoefficient;
+
     private static Boolean learnerEnabled;
     private static Boolean multipleSamePropertyPerNode;
 
@@ -100,6 +104,16 @@ public class ModelingConfiguration {
 
             if(modelingProperties.getProperty("max.candidate.models") != null)
             	maxCandidateModels = Integer.parseInt(modelingProperties.getProperty("max.candidate.models"));
+            
+            if(modelingProperties.getProperty("scoring.confidence.coefficient") != null)
+            	scoringConfidenceCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.confidence.coefficient"));
+
+            if(modelingProperties.getProperty("scoring.coherence.coefficient") != null)
+            	scoringCoherenceSCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.coherence.coefficient"));
+
+            if(modelingProperties.getProperty("scoring.size.coefficient") != null)
+            	scoringSizeCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.size.coefficient"));
+
 
         } catch (IOException e) {
             logger.error("Error occured while reading config file ...");
@@ -208,6 +222,24 @@ public class ModelingConfiguration {
 		if (maxQueuedMappigs == null)
 			load();
 		return maxQueuedMappigs;
+	}
+
+	public static Double getScoringConfidenceCoefficient() {
+		if (scoringConfidenceCoefficient == null)
+			load();
+		return scoringConfidenceCoefficient;
+	}
+
+	public static Double getScoringCoherenceSCoefficient() {
+		if (scoringCoherenceSCoefficient == null)
+			load();
+		return scoringCoherenceSCoefficient;
+	}
+
+	public static Double getScoringSizeCoefficient() {
+		if (scoringSizeCoefficient == null)
+			load();
+		return scoringSizeCoefficient;
 	}
 
 	public static boolean isLearnerEnabled() {
