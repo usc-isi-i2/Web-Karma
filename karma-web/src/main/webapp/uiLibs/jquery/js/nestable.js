@@ -532,7 +532,10 @@
             } else {
                 if (typeof params === 'string' && typeof plugin[params] === 'function') {
                     retval = plugin[params]();
+                } else {
+                	plugin.init();
                 }
+                
             }
         });
 

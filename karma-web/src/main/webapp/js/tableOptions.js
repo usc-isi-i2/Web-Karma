@@ -981,7 +981,10 @@ var OrganizeColumnsDialog = (function() {
 				var eyeOuter = $("<span>");
 				eyeOuter.append(eye);
 				var div = $("<div>").addClass("dd-handle").append(eyeOuter).append(element.name);
-				if(!element.visible) {
+				if(!parentVisible) {
+					div.addClass("dd-handle-hide-all");
+					li.addClass("dd-item-hidden-all");
+				} else if(!element.visible) {
 					div.addClass("dd-handle-hide");
 					li.attr("title", element.name)
 					li.addClass("dd-item-hidden");
@@ -996,7 +999,7 @@ var OrganizeColumnsDialog = (function() {
 			
 				if(element.children) {
 					if(element.children.length > 0)
-						createColumnList(element.children, li, element.visible);
+						createColumnList(element.children, li, element.visible && parentVisible);
 				}
 			});
 		
