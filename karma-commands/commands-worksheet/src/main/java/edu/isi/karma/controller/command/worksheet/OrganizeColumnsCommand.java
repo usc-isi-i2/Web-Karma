@@ -25,6 +25,8 @@ public class OrganizeColumnsCommand extends WorksheetCommand {
 		super(id, worksheetId);
 		this.workspaceId = workspaceId;
 		this.orderedColumns = orderedColumns;
+		
+		addTag(CommandTag.Transformation);
 	}
 
 	@Override
