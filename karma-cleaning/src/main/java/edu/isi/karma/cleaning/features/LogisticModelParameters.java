@@ -112,7 +112,6 @@ public class LogisticModelParameters implements Writable {
 	 * @throws IOException
 	 *             If there is an error opening or closing the file.
 	 */
-	@SuppressWarnings("deprecation")
 	public static LogisticModelParameters loadFrom(File in) throws IOException {
 		InputStream input = new FileInputStream(in);
 		try {
