@@ -144,19 +144,32 @@ public class PublishReportCommand extends Command {
 		
 				if(commandName.equalsIgnoreCase("SubmitPythonTransformationCommand") || commandName.equalsIgnoreCase("SubmitEditPythonTransformationCommand")) {
 					String code = HistoryJsonUtil.getStringValue("transformationCode", inputParamArr);
-					JSONArray columnNames = HistoryJsonUtil.getJSONArrayValue("hNodeId", inputParamArr);
-					String columnName = "";
-					String sep = "";
-					for(int j=0; j<columnNames.length(); j++) {
-						JSONObject columnNameObj = columnNames.getJSONObject(j);
-						String name =columnNameObj.getString("columnName");
-						columnName += sep + name;
-						sep = " --> ";
+					String columnName = HistoryJsonUtil.getStringValue("newColumnName", inputParamArr);
+					if ("".equals(columnName)) {
+						JSONArray columnNames = HistoryJsonUtil.getJSONArrayValue("targetHNodeId", inputParamArr);				
+						for(int j=0; j<columnNames.length(); j++) {
+							JSONObject columnNameObj = columnNames.getJSONObject(j);
+							columnName =columnNameObj.getString("columnName");
+						}
 					}
-					pw.println("**" + columnName + "**");
-					pw.println("``` python");
+					pw.println("#### _" + columnName + "_");
+					
+					//Pedro: throw-away code, ought to have a better way to construct column paths.
+					JSONArray hNodeIdArray = HistoryJsonUtil.getJSONArrayValue("hNodeId", inputParamArr);
+ 					String invocationColumnName = "";
+ 					String sep = "";
+ 					for(int j=0; j<hNodeIdArray.length(); j++) {
+ 						JSONObject columnNameObj = hNodeIdArray.getJSONObject(j);
+ 						String name =columnNameObj.getString("columnName");
+ 						invocationColumnName += sep + name;
+ 						sep = " / ";
+ 					}
+ 					pw.println("From column: _" + invocationColumnName + "_");
+					
+					pw.println(">``` python");
 					pw.println(code);
 					pw.println("```");
+					pw.println();
 				}
 			}
 		}
@@ -166,8 +179,8 @@ public class PublishReportCommand extends Command {
 	
 	private void writeSemanticTypes(Workspace workspace, Worksheet worksheet, PrintWriter pw) {
 		
-		pw.println("| _Column_ | _Property_ | _Class_ |");
-		pw.println("|  -------- | --------- | ------- |");
+		pw.println("| Column | Property | Class |");
+		pw.println("|  ----- | -------- | ----- |");
 
 		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheet.getId());
 		if(alignment != null) {
@@ -181,18 +194,19 @@ public class PublishReportCommand extends Command {
 						 for(LabeledLink link : links) {
 							 String property = link.getLabel().getUri();
 							 String classname = link.getSource().getId();
-							 pw.println("| `" + columnName + "` | `" + property + "` | `" + classname + "`|");
+							 pw.println("| _" + columnName + "_ | `" + property + "` | `" + classname + "`|");
 						 }
 					 }
 				 }
 			 }
 		}
+		pw.println();
 	}
 	
 	private void writeLinks(Workspace workspace, Worksheet worksheet, PrintWriter pw) {
 		
-		pw.println("| _From_ | _Property_ | _To_ |");
-		pw.println("|  -------- | --------- | ------- |");
+		pw.println("| From | Property | To |");
+		pw.println("|  --- | -------- | ---|");
 		
 		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheet.getId());
 		if(alignment != null) {
