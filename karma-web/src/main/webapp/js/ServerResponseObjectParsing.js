@@ -435,6 +435,14 @@ function parse(data) {
             var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("JSON").addClass("JSONDownloadLink DownloadLink").attr("target", "_blank");
             $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
         }
+        else if(element["updateType"] == "PublishReportUpdate") {
+            var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
+            // Remove existing link if any
+            $("a.ReportDownloadLink", titleDiv).remove();
+
+            var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("Report").addClass("ReportDownloadLink DownloadLink").attr("target", "_blank");
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
+        }
         else if(element["updateType"] == "PublishDatabaseUpdate") {
             if(element["numRowsNotInserted"] == 0) {
                 $.sticky("Data saved successfully!");

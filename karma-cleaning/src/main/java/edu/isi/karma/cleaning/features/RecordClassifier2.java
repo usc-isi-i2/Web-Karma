@@ -52,7 +52,7 @@ public class RecordClassifier2 implements PartitionClassifierType {
 		this.rf = rf;
 	}
 
-	@SuppressWarnings({ "deprecation" })
+	@SuppressWarnings({ })
 	public OnlineLogisticRegression train(
 			HashMap<String, Vector<String>> traindata) throws Exception {
 		String csvTrainFile = "./target/tmp/csvtrain.csv";

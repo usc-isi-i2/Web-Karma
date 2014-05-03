@@ -20,6 +20,16 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.ontology;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
@@ -27,15 +37,11 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.alignment.Label;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
-import java.util.Map.Entry;
 
 public class OntologyCache {
 	
@@ -150,15 +156,6 @@ public class OntologyCache {
 		logger.info("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
 		logger.info("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
 
-		// create a hierarchy of classes and properties of the model
-		logger.info("build class hierarchy ...");
-		this.buildClassHierarchy(classHierarchy);
-		logger.info("build object property hierarchy ...");
-		this.buildDataPropertyHierarchy(dataPropertyHierarchy);
-		logger.info("build data property hierarchy ...");
-		this.buildObjectPropertyHierarchy(objectPropertyHierarchy);
-		
-
 		// build hashmaps for indirect subclass and subproperty relationships
 		logger.info("build subclass hashmaps ...");
 		this.buildSubClassesMaps();
@@ -169,6 +166,15 @@ public class OntologyCache {
 		logger.info("build superproperty hashmaps ...");
 		this.buildSuperPropertiesMaps();
 
+		// create a hierarchy of classes and properties of the model
+		logger.info("build class hierarchy ...");
+		this.buildClassHierarchy(classHierarchy);
+		logger.info("build object property hierarchy ...");
+		this.buildDataPropertyHierarchy(dataPropertyHierarchy);
+		logger.info("build data property hierarchy ...");
+		this.buildObjectPropertyHierarchy(objectPropertyHierarchy);
+		
+		
 		// build hashmaps to include inverse(Of) properties
 		logger.info("build inverse property hashmap ...");
 		this.buildInverseProperties();
@@ -546,7 +552,11 @@ public class OntologyCache {
 
 			if (p.isObjectProperty() || !p.isDatatypeProperty())
 			{
-				if (!objectProperties.containsKey(p.getURI()))
+				if (p.getRange() != null && p.getRange().hasURI(Namespaces.RDFS + "Literal")) { 
+					if (!dataProperties.containsKey(p.getURI())) {
+						dataProperties.put(p.getURI(), ontHandler.getResourceLabel(p));
+					}
+				} else if (!objectProperties.containsKey(p.getURI()))
 					objectProperties.put(p.getURI(), ontHandler.getResourceLabel(p));
 			}
 		}
@@ -554,7 +564,7 @@ public class OntologyCache {
 	
 	private boolean isTopLevelClass(String c) {
 		
-		Set<String> superClasses = this.ontHandler.getSuperClasses(c, false).keySet();
+		Set<String> superClasses = this.directSuperClasses.get(c).keySet();
 
 		if (superClasses == null || superClasses.isEmpty())
 			return true;
@@ -581,7 +591,7 @@ public class OntologyCache {
 			}
 		} else {
 			HashMap<String, Label> subClasses = 
-					this.ontHandler.getSubClasses(node.getLabel().getUri(), false);
+					this.directSubClasses.get(node.getLabel().getUri());
 
 			for (String s : subClasses.keySet()) {
 				Label label = subClasses.get(s);
@@ -594,26 +604,26 @@ public class OntologyCache {
 		node.setChildren(children);
 	}
 	
-	private boolean isTopLevelProperty(String property) {
+	private boolean isTopLevelDataProperty(String property) {
 		
-		Set<String> superProperties = this.ontHandler.getSuperProperties(property, false).keySet();
+		Set<String> superProperties = this.directSuperProperties.get(property).keySet();
 
 		if (superProperties == null || superProperties.isEmpty())
 			return true;
 		
 		for (String s : superProperties)
-			if (this.properties.containsKey(s))
+			if (this.dataProperties.containsKey(s))
 				return false;
 		
 		return true;
 	}
 	
 	private void buildDataPropertyHierarchy(OntologyTreeNode node) {
-		
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
 			for (String s : this.dataProperties.keySet()) {
-				if (isTopLevelProperty(s)) {
+				
+				if (isTopLevelDataProperty(s)) {
 					Label label = this.dataProperties.get(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					buildDataPropertyHierarchy(childNode);
@@ -622,7 +632,7 @@ public class OntologyCache {
 			}
 		} else {
 			HashMap<String, Label> subProperties = 
-					this.ontHandler.getSubProperties(node.getLabel().getUri(), false);
+					this.directSubProperties.get(node.getLabel().getUri());
 
 			if (subProperties != null)
 				for (String s : subProperties.keySet()) {
@@ -636,12 +646,26 @@ public class OntologyCache {
 		node.setChildren(children);	
 	}
 	
+	private boolean isTopLevelObjectProperty(String property) {
+		
+		Set<String> superProperties = this.directSuperProperties.get(property).keySet();
+
+		if (superProperties == null || superProperties.isEmpty())
+			return true;
+		
+		for (String s : superProperties)
+			if (this.objectProperties.containsKey(s))
+				return false;
+		
+		return true;
+	}
+	
 	private void buildObjectPropertyHierarchy(OntologyTreeNode node) {
 		
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
 			for (String s : this.objectProperties.keySet()) {
-				if (isTopLevelProperty(s)) {
+				if (isTopLevelObjectProperty(s)) {
 					Label label = this.objectProperties.get(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					buildObjectPropertyHierarchy(childNode);
@@ -650,7 +674,7 @@ public class OntologyCache {
 			}
 		} else {
 			HashMap<String, Label> subProperties = 
-					this.ontHandler.getSubProperties(node.getLabel().getUri(), false);
+					this.directSubProperties.get(node.getLabel().getUri());
 
 			if (subProperties != null)
 				for (String s : subProperties.keySet()) {
