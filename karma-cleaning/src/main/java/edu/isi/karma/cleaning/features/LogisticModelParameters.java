@@ -21,6 +21,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
+
 import org.apache.hadoop.io.Writable;
 import org.apache.mahout.classifier.sgd.CsvRecordFactory;
 import org.apache.mahout.classifier.sgd.L1;
@@ -76,6 +77,7 @@ public class LogisticModelParameters implements Writable {
 	 * 
 	 * @return The newly allocated OnlineLogisticRegression object
 	 */
+	@SuppressWarnings("resource")
 	public OnlineLogisticRegression createRegression() {
 		if (lr == null) {
 			lr = new OnlineLogisticRegression(getMaxTargetCategories(),
