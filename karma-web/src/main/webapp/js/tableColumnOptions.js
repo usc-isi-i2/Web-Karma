@@ -861,6 +861,10 @@ var ExtractEntitiesDialog = (function() {
 
     function PrivateConstructor() {
     	var dialog = $("#extractEntitiesDialog");
+    	var entitySelDialog = $("#extractionCapabilitiesDialog");
+    	// hidden by default
+    	entitySelDialog.modal('hide');
+    	
     	var worksheetId, columnId;
     
     	function init() {
@@ -903,6 +907,78 @@ var ExtractEntitiesDialog = (function() {
 		    // console.log(info["worksheetId"]);
 		    showLoading(info["worksheetId"]);
 
+		    var userSelResp = $.ajax({
+			   	url: $('#extractionService_URL').val() + "/getCapabilities",
+			   	type: "GET",   	
+			   	dataType : "json",
+			   	contentType : "text/plain",
+			      crossDomain: true,		   	
+			   	complete :
+			   		function (xhr, textStatus) {
+			   			console.log(xhr.responseText);
+			    		var jsonresp = $.parseJSON(xhr.responseText);
+	
+			    		var dialogContent = $("#userSelection", entitySelDialog);
+				        dialogContent.empty();
+				        
+			    		$.each(jsonresp, function(index,data) {
+			    			var row = $("<div>").addClass("checkbox");
+			    			var label = $("<label>").text(data.capability);
+			    			var input = $("<input>")
+											.attr("type", "checkbox")
+											.attr("id", "selectentities")
+											.attr("value", data.capability);
+		                	label.append(input);
+		                	row.append(label);
+		                	dialogContent.append(row);
+			    		   });
+			    		
+			    		//Initialize handler for Save button
+						//var me = this;
+						$('#btnSave', entitySelDialog).on('click', function (e) {
+							e.preventDefault();
+							saveUserSelDialog(e, info);
+						});
+			    		
+				    	//display user selection dialog
+	                	entitySelDialog.modal('show');
+	                	console.log("User selection dialog displayed");
+	            
+			    		hideLoading(info["worksheetId"]);
+				   	},
+				error :
+					function (xhr, textStatus) {
+						console.log("error");
+			   			alert("Error occured while getting capabilities from the specified service:" + textStatus);
+			   			hideLoading(info["worksheetId"]);
+				   	}
+			});
+		    
+        };
+        
+        function saveUserSelDialog(e, info) {
+        	console.log("Save clicked");
+        	var userSelection = "";
+        	
+        	var checkboxes = entitySelDialog.find(":checked");
+	        var checked = [];
+	        for (var i = 0; i < checkboxes.length - 1; i++) {
+	            var checkbox = checkboxes[i];
+	            userSelection = userSelection + checkbox.value + ",";    
+	        }
+	        
+	        if(checkboxes.length>0) {
+	        	userSelection = userSelection + checkboxes[checkboxes.length - 1].value;
+	        }
+	        
+	        entitySelDialog.modal('hide');
+
+		    // console.log(info["worksheetId"]);
+		    showLoading(info["worksheetId"]);
+
+	        console.log("User selection: " + userSelection);
+	        info["entitiesToBeExt"] = userSelection;
+        	
 		    var returned = $.ajax({
 			   	url: "RequestController",
 			   	type: "POST",
@@ -920,6 +996,7 @@ var ExtractEntitiesDialog = (function() {
 			   			hideLoading(info["worksheetId"]);
 				   	}
 			});	
+
         };
         
         function show(wsId, colId) {
