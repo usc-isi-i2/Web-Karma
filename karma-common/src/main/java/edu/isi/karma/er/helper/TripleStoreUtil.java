@@ -277,9 +277,8 @@ public class TripleStoreUtil {
 			String context, boolean replaceFlag, boolean deleteSrcFile,
 			String rdfType, String baseURL) {
 		boolean retVal = false;
-//		URI uri = null;
-//		StringBuilder urlString = new StringBuilder();
 		HttpResponse response = null;
+
 		// check the connection first
 		if (checkConnection(tripleStoreURL)) {
 			logger.info("Connection Test passed");
@@ -294,7 +293,6 @@ public class TripleStoreUtil {
 		tripleStoreURL += "statements";
 		try {
 			URIBuilder builder = new URIBuilder(tripleStoreURL);
-//			urlString = new StringBuilder(new URIBuilder(tripleStoreURL).build().toString());
 
 			// initialize the http entity
 			HttpClient httpclient = new DefaultHttpClient();
@@ -330,9 +328,6 @@ public class TripleStoreUtil {
 //				}
 				builder.setParameter("context", "<" + context + ">");
 			}
-//			urlString.append("?").append("context=<")
-//			.append(new URIBuilder(context).build().toString())
-//			.append(">");
 			
 			// preapring the base URL
 			if (baseURL != null && !baseURL.trim().isEmpty()) {
@@ -352,21 +347,11 @@ public class TripleStoreUtil {
 //					baseURL = baseURL.substring(0, baseURL.length()-1);
 //				}
 				
-				
-//				if(urlString.indexOf("?") < 1)  {
-//					urlString.append("?");
-//				} else {
-//					urlString.append("&");
-//				}
-//				urlString.append("baseURI=<")
-//				.append(new URIBuilder(baseURL).build().toString())
-//				.append(">");
 				builder.setParameter("baseURI", "<" + baseURL + ">");
 			} else {
 				logger.info("Empty baseURL");
 			}
 			
-//			URIBuilder builder = new URIBuilder(urlString.toString());
 			
 			// check if we need to specify the context
 			if (!replaceFlag) {
@@ -380,8 +365,6 @@ public class TripleStoreUtil {
 				// executing the http request
 				response = httpclient.execute(httpPost);
 			} else {
-//				builder.setParameter("baseURI", "<" + context + ">");
-//				uri = builder.build();
 
 				// we use HttpPut to replace the context
 				logger.info("Using PUT to save rdf to triple store");
@@ -393,7 +376,6 @@ public class TripleStoreUtil {
 				response = httpclient.execute(httpput);
 			}
 
-//			logger.info("request url : " + urlString.toString());
 			logger.info("request url : " + builder.build().toString());
 			logger.info("StatusCode: "
 					+ response.getStatusLine().getStatusCode());
@@ -554,43 +536,6 @@ public class TripleStoreUtil {
 		return retVal;
 	}
 
-	// public org.json.JSONObject fetch_data(String graph, String
-	// tripleStoreUrl) throws ClientProtocolException, IOException,
-	// JSONException {
-	// if (tripleStoreUrl == null || tripleStoreUrl.isEmpty()) {
-	// tripleStoreUrl = defaultDataRepoUrl;
-	// }
-	// //JSONObject retVal = new JSONObject();
-	// StringBuffer queryString = new StringBuffer();
-	// queryString.append("SELECT ?x ?z ")
-	// .append("WHERE { GRAPH <").append(graph.trim()).append("> { ")
-	// .append("?x  ?p <http://isi.edu/integration/karma/ontologies/model/current/Input> . "
-	// +
-	// "?x  <http://isi.edu/integration/karma/ontologies/model/current/hasValue> ?z . } }");
-	//
-	// String sData = invokeSparqlQuery(queryString.toString(), tripleStoreUrl,
-	// "application/sparql-results+json", null);
-	// if (sData == null | sData.isEmpty()) {
-	// logger.error("Enpty response object from query : " +
-	// queryString.toString());
-	// }
-	// JSONObject data = new JSONObject(sData);
-	// JSONArray d1 = data.getJSONObject("results").getJSONArray("bindings");
-	// int count = 0;
-	// HashMap<String, ArrayList<String>> results = new HashMap<String,
-	// ArrayList<String>>();
-	// while(count < d1.length()) {
-	// JSONObject obj = d1.getJSONObject(count++);
-	// String key = obj.getJSONObject("x").getString("value");
-	// String val = obj.getJSONObject("z").getString("value");
-	//
-	// if (!results.keySet().contains(key)) {
-	// results.put(key, new ArrayList<String>());
-	// }
-	// results.get(key).add(val);
-	// }
-	// return new JSONObject(results);
-	// }
 
 	/**
 	 * This method fetches all the context from the given triplestore Url
