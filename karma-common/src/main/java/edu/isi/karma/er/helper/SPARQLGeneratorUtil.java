@@ -209,7 +209,7 @@ public class SPARQLGeneratorUtil {
 		this.var_count = 1;
 		this.prefix_list = new HashMap<String, String>();
 		this.select_params = new StringBuffer();
-		ArrayList<String> select_param = new ArrayList<String>();
+//		ArrayList<String> select_param = new ArrayList<String>();
 		HashMap<TriplesMap, String> markedTriples = new HashMap<TriplesMap, String>();
 		
 		ArrayList<String> visited_columns = new ArrayList<String>();

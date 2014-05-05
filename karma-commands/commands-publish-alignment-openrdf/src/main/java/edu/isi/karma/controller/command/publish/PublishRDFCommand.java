@@ -183,7 +183,7 @@ public class PublishRDFCommand extends Command {
 			}
 			logger.info("tripleStoreURl : " + tripleStoreUrl);
 			TripleStoreUtil utilObj = new TripleStoreUtil();
-			boolean result = utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext);
+			boolean result = utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext, this.rdfSourceNamespace);
 			if(result) {
 				logger.info("Saved rdf to store");
 			} else {
