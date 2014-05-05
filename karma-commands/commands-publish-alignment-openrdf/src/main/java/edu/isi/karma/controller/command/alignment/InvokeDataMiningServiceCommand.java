@@ -126,7 +126,7 @@ public class InvokeDataMiningServiceCommand extends Command {
             }
         	fw.close();
         	buf.close();
-        	logger.info("Created : " + fileName);
+        	logger.info("Created : " + fileName + " by worksheet Id : " +  this.worksheetId) ;
         	Import impCSV = new CSVFileImport(1, 2, ',', ' ', "UTF-8", -1, new File(fileName), workspace);
         	Worksheet wsht = impCSV.generateWorksheet();
         	uc = new UpdateContainer();
@@ -162,7 +162,7 @@ public class InvokeDataMiningServiceCommand extends Command {
         	
 			Import impJson = new JsonImport(new File(fileName), fName, workspace, "UTF-8", -1);
             Worksheet wsht = impJson.generateWorksheet();
-            Worksheet wsht2, wsht3;
+//            Worksheet wsht2, wsht3;
             logger.info("Creating worksheet with json : " + wsht.getId());
             uc = new UpdateContainer();
             uc.add(new WorksheetListUpdate());

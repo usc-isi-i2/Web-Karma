@@ -144,7 +144,7 @@ a.icon-remove:hover {
 				  </div>
 				  <div class="modal-body">
 					<div class="form-group">
-						<label for="rdfNamespace">RDF Namespace</label>
+						<label for="rdfNamespace">Base URI</label>
 						<input class="form-control" type="text" id="rdfNamespace" required value="http://localhost:8080/source/" maxlength="100">
 					</div>
 					<div class="form-group">
@@ -152,28 +152,28 @@ a.icon-remove:hover {
 						<input class="form-control" type="text" id="rdfPrefix" required value="s" maxlength="100">
 					</div>
 					<div class="form-group">
-						<label for="rdfSPAQRLEndPoint">SPARQL End Point</label>
+						<label for="rdfSPAQRLEndPoint">Sparql End Point</label>
 						<input class="form-control" type="text" id="rdfSPAQRLEndPoint" required value="" maxlength="100">
 					</div>
 					<div class="form-group">
-							<label for="modelGraphList">Use existing context</label>
+							<label for="modelGraphList">RDF Graphs</label>
 							<select id="modelGraphList">
 		                	</select>
 					</div>
 					<div class="form-group">
-						<label id="labelFor_rdfSPAQRLGraph" for="rdfSPAQRLGraph">Create new context</label>
+						<label id="labelFor_rdfSPAQRLGraph" for="rdfSPAQRLGraph">Create New Graph</label>
 						<input class="form-control" type="text" id="rdfSPAQRLGraph" required value="" maxlength="100">
 					</div>	
 					<div class="radio">
 						<label>
 				    		<input type="radio" id="graphReplace_1" name="group1"  value="replace">
-				    		Replace existing data in context
+				    		Replace Existing Data
 			  			</label>
 			  		</div>
 			  		<div class="radio">
 			  			<label>
 				    		<input type="radio" id="graphReplace_2" name="group1" checked value="append">
-				    		Append to context
+				    		Append
 			  			</label>
 					</div>	
 					

@@ -213,13 +213,13 @@ public class ExportCSVCommand extends WorksheetCommand {
 		}
 		
 		TripleStoreUtil utilObj = new TripleStoreUtil();
-		boolean result = utilObj.saveToStore(generatedRDFFileName, utilObj.defaultDataRepoUrl, graphUri, true);
+		boolean result = utilObj.saveToStore(generatedRDFFileName, TripleStoreUtil.defaultDataRepoUrl, graphUri, true, null);
 		// if we the RDF is generated correctly, then we dont need to retur an UpdateContainer
 		// hence we return null
 		if(result) {
 			logger.info("Saved rdf to store");
 			this.graphUrl = graphUri;
-			this.tripleStoreUrl = utilObj.defaultDataRepoUrl;
+			this.tripleStoreUrl = TripleStoreUtil.defaultDataRepoUrl;
 		} else {
 			logger.error("Falied to store rdf to karma_data store");
 			return new UpdateContainer(new ErrorUpdate("Error: Failed to store RDF to the triple store"));

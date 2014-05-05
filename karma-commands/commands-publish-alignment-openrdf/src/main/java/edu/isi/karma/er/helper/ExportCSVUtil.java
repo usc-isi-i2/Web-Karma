@@ -174,7 +174,7 @@ public class ExportCSVUtil {
 				}
 			}
 			for(int i=0;i<rows.length();i++) {
-				JSONObject obj = rows.getJSONObject(i);
+//				JSONObject obj = rows.getJSONObject(i);
 				writer.write("\n");
 				for(int j=0;j<headers.length();j++) {
 					try {
