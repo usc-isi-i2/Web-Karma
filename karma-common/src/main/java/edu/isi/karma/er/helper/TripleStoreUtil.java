@@ -269,14 +269,16 @@ public class TripleStoreUtil {
 	 * @param rdfType
 	 *            : The RDF type based on which the headers for the request are
 	 *            set
+	 * @param baseURL
+	 *            : Specifies the base URI to resolve any relative URIs found in uploaded data against
 	 * 
 	 * */
 	private boolean saveToStore(String filePath, String tripleStoreURL,
 			String context, boolean replaceFlag, boolean deleteSrcFile,
-			String rdfType) {
+			String rdfType, String baseURL) {
 		boolean retVal = false;
-		URI uri = null;
 		HttpResponse response = null;
+
 		// check the connection first
 		if (checkConnection(tripleStoreURL)) {
 			logger.info("Connection Test passed");
@@ -302,41 +304,79 @@ public class TripleStoreUtil {
 			FileEntity entity = new FileEntity(file, ContentType.create(
 					mime_types.get(rdfType), "UTF-8"));
 
+			
+			// preparing the context for the rdf
+			if (context == null || context.isEmpty()) {
+				logger.info("Empty context");
+				context = "null";
+			} else {
+				context = context.trim();
+//				if(context.indexOf('<') == 0){
+//					context = context.substring(1);
+//				}
+//				if(context.indexOf('>') == context.length()-1 ){
+//					context = context.substring(0, context.length()-1);
+//				}
+				context.replaceAll(">", "");
+				context.replaceAll("<", "");
+				
+//				if(context.indexOf('<') != 0){
+//					context = "<" + context;
+//				}
+//				if(context.indexOf('>') != context.length()-1 ){
+//					context += ">";
+//				}
+				builder.setParameter("context", "<" + context + ">");
+			}
+			
+			// preapring the base URL
+			if (baseURL != null && !baseURL.trim().isEmpty()) {
+				baseURL = baseURL.trim();
+//				if(baseURL.indexOf('<') != 0){
+//					baseURL = "<" + baseURL;
+//				}
+//				if(baseURL.indexOf('>') != baseURL.length()-1 ){
+//					baseURL += ">	";
+//				}
+				baseURL.replaceAll(">", "");
+				baseURL.replaceAll("<", "");
+//				if(baseURL.indexOf('<') == 0){
+//					baseURL = baseURL.substring(1);
+//				}
+//				if(baseURL.indexOf('>') == baseURL.length()-1 ){
+//					baseURL = baseURL.substring(0, baseURL.length()-1);
+//				}
+				
+				builder.setParameter("baseURI", "<" + baseURL + ">");
+			} else {
+				logger.info("Empty baseURL");
+			}
+			
+			
 			// check if we need to specify the context
 			if (!replaceFlag) {
-				if (context == null || context.isEmpty()) {
-					context = "null";
-				} else {
-					context = "<" + context + ">";
-					builder.setParameter("baseURI", "<" + context + ">");
-				}
-				builder.setParameter("context", context);
-
-				// as we dont have the context or we want to append to context
 				// we use HttpPost over HttpPut, for put will replace the entire
 				// repo with an empty graph
 				logger.info("Using POST to save rdf to triple store");
-				uri = builder.build();
-				HttpPost httpPost = new HttpPost(uri);
+//				uri = builder.build();
+				HttpPost httpPost = new HttpPost(builder.build());
 				httpPost.setEntity(entity);
 
 				// executing the http request
 				response = httpclient.execute(httpPost);
 			} else {
-				builder.setParameter("context", "<" + context + ">");
-				builder.setParameter("baseURI", "<" + context + ">");
-				uri = builder.build();
 
 				// we use HttpPut to replace the context
 				logger.info("Using PUT to save rdf to triple store");
-				HttpPut httpput = new HttpPut(uri);
+				HttpPut httpput = new HttpPut(builder.build());
+//				HttpPut httpput = new HttpPut(urlString.toString());
 				httpput.setEntity(entity);
 
 				// executing the http request
 				response = httpclient.execute(httpput);
 			}
 
-			logger.info("request url : " + uri.toString());
+			logger.info("request url : " + builder.build().toString());
 			logger.info("StatusCode: "
 					+ response.getStatusLine().getStatusCode());
 			int code = response.getStatusLine().getStatusCode();
@@ -364,12 +404,14 @@ public class TripleStoreUtil {
 	 * @param replaceFlag
 	 *            : Whether to replace the contents of the graph deleteSrcFile
 	 *            default : false rdfType default: Turtle
+	 * @param baseUri
+	 *            : The graph context for the RDF
 	 * 
 	 * */
 	public boolean saveToStore(String filePath, String tripleStoreURL,
-			String context, boolean replaceFlag) {
+			String context, boolean replaceFlag, String baseUri) {
 		return saveToStore(filePath, tripleStoreURL, context, replaceFlag,
-				false);
+				false, baseUri);
 	}
 
 	/**
@@ -384,7 +426,7 @@ public class TripleStoreUtil {
 	 * */
 	public boolean saveToStore(String fileUrl) {
 		return saveToStore(fileUrl, defaultServerUrl + "/" + karma_model_repo,
-				null, true);
+				null, true, null);
 	}
 
 	/**
@@ -403,9 +445,9 @@ public class TripleStoreUtil {
 	 * 
 	 * */
 	public boolean saveToStore(String filePath, String tripleStoreURL,
-			String context, boolean replaceFlag, boolean deleteSrcFile) {
+			String context, boolean replaceFlag, boolean deleteSrcFile, String baseUri) {
 		return saveToStore(filePath, tripleStoreURL, context, replaceFlag,
-				deleteSrcFile, RDF_Types.Turtle.name());
+				deleteSrcFile, RDF_Types.Turtle.name(), baseUri);
 	}
 
 	/**
@@ -494,43 +536,6 @@ public class TripleStoreUtil {
 		return retVal;
 	}
 
-	// public org.json.JSONObject fetch_data(String graph, String
-	// tripleStoreUrl) throws ClientProtocolException, IOException,
-	// JSONException {
-	// if (tripleStoreUrl == null || tripleStoreUrl.isEmpty()) {
-	// tripleStoreUrl = defaultDataRepoUrl;
-	// }
-	// //JSONObject retVal = new JSONObject();
-	// StringBuffer queryString = new StringBuffer();
-	// queryString.append("SELECT ?x ?z ")
-	// .append("WHERE { GRAPH <").append(graph.trim()).append("> { ")
-	// .append("?x  ?p <http://isi.edu/integration/karma/ontologies/model/current/Input> . "
-	// +
-	// "?x  <http://isi.edu/integration/karma/ontologies/model/current/hasValue> ?z . } }");
-	//
-	// String sData = invokeSparqlQuery(queryString.toString(), tripleStoreUrl,
-	// "application/sparql-results+json", null);
-	// if (sData == null | sData.isEmpty()) {
-	// logger.error("Enpty response object from query : " +
-	// queryString.toString());
-	// }
-	// JSONObject data = new JSONObject(sData);
-	// JSONArray d1 = data.getJSONObject("results").getJSONArray("bindings");
-	// int count = 0;
-	// HashMap<String, ArrayList<String>> results = new HashMap<String,
-	// ArrayList<String>>();
-	// while(count < d1.length()) {
-	// JSONObject obj = d1.getJSONObject(count++);
-	// String key = obj.getJSONObject("x").getString("value");
-	// String val = obj.getJSONObject("z").getString("value");
-	//
-	// if (!results.keySet().contains(key)) {
-	// results.put(key, new ArrayList<String>());
-	// }
-	// results.get(key).add(val);
-	// }
-	// return new JSONObject(results);
-	// }
 
 	/**
 	 * This method fetches all the context from the given triplestore Url

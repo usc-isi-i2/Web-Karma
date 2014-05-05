@@ -127,7 +127,7 @@ public class FetchColumnCommand extends WorksheetCommand {
 				}
 			}
 			
-			TripleStoreUtil tUtil = new TripleStoreUtil();
+//			TripleStoreUtil tUtil = new TripleStoreUtil();
 			StringBuffer query = new StringBuffer("prefix rr: <http://www.w3.org/ns/r2rml#> prefix km-dev: <http://isi.edu/integration/karma/dev#> ");
 	
 			
