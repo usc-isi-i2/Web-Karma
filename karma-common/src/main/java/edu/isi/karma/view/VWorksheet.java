@@ -39,8 +39,7 @@ import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class VWorksheet extends ViewEntity {
 
@@ -75,7 +74,6 @@ public class VWorksheet extends ViewEntity {
 	 */
 	private int maxRowsToShowInNestedTables;
 
-	private static Logger logger = LoggerFactory.getLogger(VWorksheet.class);
 
 	/**
 	 * We create a TablePager for the top level table and every nested table we
@@ -199,6 +197,24 @@ public class VWorksheet extends ViewEntity {
 			if(node.isVisible()) {
 				visibleNodeIds.add(node.getId());
 				visibleNodeIds.addAll(getVisibleViewNodes(node.getNestedNodes()));
+			}
+		}
+		return visibleNodeIds;
+	}
+	
+	public ArrayList<String> getHeaderVisibleLeafNodes() {
+		return getHeaderVisibleLeafNodes(this.headerViewNodes);
+	}
+	
+	private ArrayList<String> getHeaderVisibleLeafNodes(ArrayList<VHNode> list) {
+		ArrayList<String> visibleNodeIds = new ArrayList<>();
+		for(VHNode node : list) {
+			if(node.isVisible()) {
+				if(node.hasNestedTable()) {
+					visibleNodeIds.addAll(getHeaderVisibleLeafNodes(node.getNestedNodes()));
+				} else {
+					visibleNodeIds.add(node.getId());
+				}
 			}
 		}
 		return visibleNodeIds;

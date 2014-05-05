@@ -41,6 +41,8 @@ src/main/webapp/publish/AutoOntology/*.*
 src/main/webapp/publish/R2RML/*.*
 src/main/webapp/publish/JSON/*.*
 src/main/webapp/publish/AlignmentGraph/*.*
+karma-web/src/main/webapp/publish/REPORT/*.*
+
 preloaded-ontologies/*
 src/main/webapp/RDF/*.rdf
 src/main/webapp/RDF/*.n3
@@ -77,3 +79,4 @@ Thumbs.db
 */src/test/karma-data/testresult/testResult.txt
 
 *.sh
+

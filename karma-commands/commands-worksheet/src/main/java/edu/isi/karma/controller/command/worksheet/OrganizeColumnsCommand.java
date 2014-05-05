@@ -25,6 +25,8 @@ public class OrganizeColumnsCommand extends WorksheetCommand {
 		super(id, worksheetId);
 		this.workspaceId = workspaceId;
 		this.orderedColumns = orderedColumns;
+		
+		addTag(CommandTag.Transformation);
 	}
 
 	@Override
@@ -52,7 +54,7 @@ public class OrganizeColumnsCommand extends WorksheetCommand {
 		orderColumns(orderedColumns);
 		
 		UpdateContainer c =  new UpdateContainer();
-		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(worksheetId));
+		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		
 		return c;
@@ -64,7 +66,7 @@ public class OrganizeColumnsCommand extends WorksheetCommand {
 			orderColumns(prevOrderedColumns);
 		}
 		UpdateContainer c =  new UpdateContainer();
-		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(worksheetId));
+		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

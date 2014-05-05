@@ -1132,7 +1132,10 @@ var OrganizeColumnsDialog = (function() {
 				var eyeOuter = $("<span>");
 				eyeOuter.append(eye);
 				var div = $("<div>").addClass("dd-handle").append(eyeOuter).append(element.name);
-				if(!element.visible) {
+				if(!parentVisible) {
+					div.addClass("dd-handle-hide-all");
+					li.addClass("dd-item-hidden-all");
+				} else if(!element.visible) {
 					div.addClass("dd-handle-hide");
 					li.attr("title", element.name)
 					li.addClass("dd-item-hidden");
@@ -1147,7 +1150,7 @@ var OrganizeColumnsDialog = (function() {
 			
 				if(element.children) {
 					if(element.children.length > 0)
-						createColumnList(element.children, li, element.visible);
+						createColumnList(element.children, li, element.visible && parentVisible);
 				}
 			});
 		
@@ -1215,4 +1218,100 @@ var OrganizeColumnsDialog = (function() {
     	getInstance : getInstance
     };
     	
+})();
+
+
+
+var PublishJSONDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#publishJSONDialog");
+    	var worksheetId;
+    	
+    	function init() {
+    		//Initialize what happens when we show the dialog
+    		dialog.on('show.bs.modal', function (e) {
+				hideError();
+			});
+			
+			//Initialize handler for Save button
+			//var me = this;
+			$('#btnYes', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e, true);
+			});
+			$('#btnNo', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e, false);
+			});
+			    
+    	}
+    	
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError() {
+			$("div.error", dialog).show();
+		}
+        
+        function saveDialog(e, importAsWorksheet) {
+        	hide();
+        	
+        	var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["importAsWorksheet"] = importAsWorksheet;
+            info["command"] = "PublishJSONCommand";
+
+            showLoading(info["worksheetId"]);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        parse(json);
+                        hideLoading(info["worksheetId"]);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while exporting spatial data!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            });
+        };
+        
+        function hide() {
+        	dialog.modal('hide');
+        }
+        
+        function show(wsId) {
+        	worksheetId = wsId;
+        	dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        
+        return {	//Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    
 })();

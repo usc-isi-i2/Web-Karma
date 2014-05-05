@@ -427,6 +427,22 @@ function parse(data) {
             var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("History").addClass("HistoryDownloadLink DownloadLink").attr("target", "_blank");
             $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
         }
+        else if(element["updateType"] == "PublishJSONUpdate") {
+            var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
+            // Remove existing link if any
+            $("a.JSONDownloadLink", titleDiv).remove();
+
+            var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("JSON").addClass("JSONDownloadLink DownloadLink").attr("target", "_blank");
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
+        }
+        else if(element["updateType"] == "PublishReportUpdate") {
+            var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
+            // Remove existing link if any
+            $("a.ReportDownloadLink", titleDiv).remove();
+
+            var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("Report").addClass("ReportDownloadLink DownloadLink").attr("target", "_blank");
+            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
+        }
         else if(element["updateType"] == "PublishDatabaseUpdate") {
             if(element["numRowsNotInserted"] == 0) {
                 $.sticky("Data saved successfully!");
@@ -582,7 +598,7 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 //            				.text(column["columnName"])
 //            				.mouseenter(showColumnOptionButton)
 //            				.mouseleave(hideColumnOptionButton);
-            				.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"])).generateJS());
+            				.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"], false)).generateJS());
 
             var nestedTableContainer = $("<div>").addClass("table-container");
             var nestedTableHeaderContainer = $("<div>").addClass("table-header-container");
@@ -612,7 +628,7 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
         } else {
             headerDiv.addClass("wk-header")
             	//.text(column["columnName"]).mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);
-            	.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"])).generateJS());
+            	.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"], true)).generateJS());
             // Pedro: limit cells to 30 chars wide. This should be smarter: if the table is not too wide, then allow more character.
             // If we impose the limit, we should set the CSS to wrap rather than use ... ellipsis.
             // We will need a smarter data structure so we can do two passes, first to compute the desired lenghts based on number of characters
@@ -681,6 +697,7 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
                     dataDiv.append(dataDiv2); 
                 }*/
                 dataDiv.append(nestedTableDataContainer);
+                dataDiv.addClass(cell["columnClass"]);
             } else {
                 var dataDiv3 = $("<div>").addClass("wk-value");
                 //console.log(stylesheet)

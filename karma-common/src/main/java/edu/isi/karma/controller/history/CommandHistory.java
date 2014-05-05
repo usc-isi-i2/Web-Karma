@@ -298,4 +298,13 @@ public class CommandHistory {
 		return null;
 			
 	}
+	
+	public List<ICommand> getCommands(CommandTag tag) {
+		List<ICommand> retCommands = new ArrayList<ICommand>();
+		for(ICommand command: history) {
+			if(command.hasTag(tag))
+				retCommands.add(command);
+		}
+		return retCommands;
+	}
 }

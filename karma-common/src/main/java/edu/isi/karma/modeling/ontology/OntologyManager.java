@@ -31,6 +31,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
@@ -469,20 +471,20 @@ public class OntologyManager  {
 		return results;
 	}
 	
+	
 	public Map<String, Label> getObjectPropertiesByDomain(String domainUri, boolean recursive) {
-		
+		HashSet<String> all = new HashSet<String>();
 		HashSet<String> objectProperties = ontCache.getDirectOutObjectProperties().get(domainUri);
+		if(objectProperties != null)
+			all.addAll(objectProperties);
 		if(recursive) {
 			HashSet<String> propRecursive = ontCache.getIndirectOutObjectProperties().get(domainUri);
 			if(propRecursive != null)
-				objectProperties.addAll(propRecursive);
+				all.addAll(propRecursive);
 		}
 		HashMap<String, Label> results = new HashMap<String, Label>();
 		
-		if (objectProperties == null)
-			return results;
-		
-		for (String op : objectProperties) {
+		for (String op : all) {
 			results.put(op, ontCache.getPropertyLabel(op));
 		}
 		
@@ -490,19 +492,18 @@ public class OntologyManager  {
 	}
 	
 	public Map<String, Label> getObjectPropertiesByRange(String rangeUri, boolean recursive) {
-		
+		HashSet<String> all = new HashSet<String>();
 		HashSet<String> objectProperties = ontCache.getDirectInObjectProperties().get(rangeUri);
+		if(objectProperties != null)
+			all.addAll(objectProperties);
 		if(recursive) {
 			HashSet<String> propRecursive = ontCache.getIndirectInObjectProperties().get(rangeUri);
 			if(propRecursive != null)
-				objectProperties.addAll(propRecursive);
+				all.addAll(propRecursive);
 		}
 		HashMap<String, Label> results = new HashMap<String, Label>();
 		
-		if (objectProperties == null)
-			return results;
-		
-		for (String op : objectProperties) {
+		for (String op : all) {
 			results.put(op, ontCache.getPropertyLabel(op));
 		}
 		
@@ -510,19 +511,18 @@ public class OntologyManager  {
 	}
 	
 	public Map<String, Label> getDataPropertiesByDomain(String domainUri, boolean recursive) {
-		
+		HashSet<String> all = new HashSet<String>();
 		HashSet<String> dataProperties = ontCache.getDirectOutDataProperties().get(domainUri);
+		if(dataProperties != null)
+			all.addAll(dataProperties);
 		if(recursive) {
 			HashSet<String> propRecursive = ontCache.getIndirectOutDataProperties().get(domainUri);
 			if(propRecursive != null)
-				dataProperties.addAll(propRecursive);
+				all.addAll(propRecursive);
 		}
 		HashMap<String, Label> results = new HashMap<String, Label>();
 		
-		if (dataProperties == null)
-			return results;
-		
-		for (String op : dataProperties) {
+		for (String op : all) {
 			results.put(op, ontCache.getPropertyLabel(op));
 		}
 		
@@ -614,44 +614,44 @@ public class OntologyManager  {
 
 	}
 
-	/**
-	 * This function takes a class uri and returns the datatype properties who have this class in their domain. 
-	 * If second parameter set to True, it also returns the datatype properties inherited from parents of the given class.
-	 * @param domainUri
-	 * @param inheritance
-	 * @return
-	 */
-	public HashSet<String> getDataPropertiesOfClass(String domainUri, boolean inheritance) {
-
-		HashSet<String> direct = ontCache.getDirectOutDataProperties().get(domainUri);
-		if (!inheritance) return direct;
-		
-		HashSet<String> all = new HashSet<String>();
-		HashSet<String> indirect = ontCache.getIndirectOutDataProperties().get(domainUri);
-		if (direct != null) all.addAll(direct);
-		if (indirect != null) all.addAll(indirect);
-		return all;
-
-	}
-
-	/**
-	 * This function takes a class uri and returns the object properties who have this class in their domain. 
-	 * If second parameter set to True, it also returns the object properties inherited from parents of the given class.
-	 * @param domainUri
-	 * @param inheritance
-	 * @return
-	 */
-	public HashSet<String> getObjectPropertiesOfClass(String domainUri, boolean inheritance) {
-
-		HashSet<String> direct = ontCache.getDirectOutObjectProperties().get(domainUri);
-		if (!inheritance) return direct;
-		
-		HashSet<String> all = new HashSet<String>();
-		HashSet<String> indirect = ontCache.getIndirectOutObjectProperties().get(domainUri);
-		if (direct != null) all.addAll(direct);
-		if (indirect != null) all.addAll(indirect);
-		return all;
-	}
+//	/**
+//	 * This function takes a class uri and returns the datatype properties who have this class in their domain. 
+//	 * If second parameter set to True, it also returns the datatype properties inherited from parents of the given class.
+//	 * @param domainUri
+//	 * @param inheritance
+//	 * @return
+//	 */
+//	public HashSet<String> getDataPropertiesOfClass(String domainUri, boolean inheritance) {
+//
+//		HashSet<String> direct = ontCache.getDirectOutDataProperties().get(domainUri);
+//		if (!inheritance) return direct;
+//		
+//		HashSet<String> all = new HashSet<String>();
+//		HashSet<String> indirect = ontCache.getIndirectOutDataProperties().get(domainUri);
+//		if (direct != null) all.addAll(direct);
+//		if (indirect != null) all.addAll(indirect);
+//		return all;
+//
+//	}
+//
+//	/**
+//	 * This function takes a class uri and returns the object properties who have this class in their domain. 
+//	 * If second parameter set to True, it also returns the object properties inherited from parents of the given class.
+//	 * @param domainUri
+//	 * @param inheritance
+//	 * @return
+//	 */
+//	public HashSet<String> getObjectPropertiesOfClass(String domainUri, boolean inheritance) {
+//
+//		HashSet<String> direct = ontCache.getDirectOutObjectProperties().get(domainUri);
+//		if (!inheritance) return direct;
+//		
+//		HashSet<String> all = new HashSet<String>();
+//		HashSet<String> indirect = ontCache.getIndirectOutObjectProperties().get(domainUri);
+//		if (direct != null) all.addAll(direct);
+//		if (indirect != null) all.addAll(indirect);
+//		return all;
+//	}
 	
 	public HashSet<String> getObjectPropertiesDirect(String sourceUri, String targetUri) {
 		
@@ -714,25 +714,57 @@ public class OntologyManager  {
 	public boolean isConnectedByDirectProperty(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return false;
-		return this.ontCache.getConnectedByDirectProperties().contains(sourceUri + targetUri);
+//		return this.ontCache.getConnectedByDirectProperties().contains(sourceUri + targetUri);
+		HashSet<String> directProperties = this.ontCache.getDomainRangeToDirectProperties().get(sourceUri+targetUri);
+		if (directProperties != null && directProperties.size() > 0) { 
+			return true;
+		}
+		return false;
 	}
 
 	public boolean isConnectedByIndirectProperty(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return false;
-		return this.ontCache.getConnectedByIndirectProperties().contains(sourceUri + targetUri);
+//		return this.ontCache.getConnectedByIndirectProperties().contains(sourceUri + targetUri);
+		HashSet<String> indirectProperties = this.ontCache.getDomainRangeToIndirectProperties().get(sourceUri+targetUri);
+		if (indirectProperties != null && indirectProperties.size() > 0) { 
+			return true;
+		}
+		return false;
 	}
 
 	public boolean isConnectedByDomainlessProperty(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return false;
-		return this.ontCache.getConnectedByDomainlessProperties().contains(sourceUri + targetUri);
+//		return this.ontCache.getConnectedByDomainlessProperties().contains(sourceUri + targetUri);
+		HashSet<String> directInProperties = this.ontCache.getDirectInObjectProperties().get(targetUri);
+		if (directInProperties != null) {
+			if (!Sets.intersection(this.ontCache.getObjectPropertiesWithOnlyRange().keySet(), directInProperties).isEmpty())
+				return true;
+		}
+		HashSet<String> indirectInProperties = this.ontCache.getIndirectInObjectProperties().get(targetUri);
+		if (indirectInProperties != null) {
+			if (!Sets.intersection(this.ontCache.getObjectPropertiesWithOnlyRange().keySet(), indirectInProperties).isEmpty())
+				return true;
+		}
+		return false;
 	}
 
 	public boolean isConnectedByRangelessProperty(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return false;
-		return this.ontCache.getConnectedByRangelessProperties().contains(sourceUri + targetUri);
+//		return this.ontCache.getConnectedByRangelessProperties().contains(sourceUri + targetUri);
+		HashSet<String> directOutProperties = this.ontCache.getDirectOutObjectProperties().get(sourceUri);
+		if (directOutProperties != null) {
+			if (!Sets.intersection(this.ontCache.getObjectPropertiesWithOnlyDomain().keySet(), directOutProperties).isEmpty())
+				return true;
+		}
+		HashSet<String> indirectOutProperties = this.ontCache.getIndirectOutObjectProperties().get(sourceUri);
+		if (indirectOutProperties != null) {
+			if (!Sets.intersection(this.ontCache.getObjectPropertiesWithOnlyDomain().keySet(), indirectOutProperties).isEmpty())
+				return true;
+		}
+		return false;
 	}
 	
 	public boolean isConnectedByDomainlessAndRangelessProperty(String sourceUri, String targetUri) {

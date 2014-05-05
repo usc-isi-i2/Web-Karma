@@ -127,8 +127,6 @@ public class RequestController extends HttpServlet {
             		updateContainer.applyUpdates(vWorkspace);
             		responseString = updateContainer.generateJson(vWorkspace);
             	} catch(Exception e) {
-            		e.printStackTrace();
-            		System.out.println("falihfldsakfh");
             		UpdateContainer updateContainer = new UpdateContainer();
             		updateContainer.add(new ErrorUpdate("Error: " + e.getMessage()));
             		responseString = updateContainer.generateJson(vWorkspace);

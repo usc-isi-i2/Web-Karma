@@ -119,7 +119,7 @@ var SetSemanticTypeDialog = (function() {
 				$("#semanticTypesAdvacedOptionsDiv").toggle();
 				
 				var classArray = getClassLabels();
-				var propertyArray = getPropertyLabels();
+				var propertyArray = getPropertyInstanceLabels();
 				
 				$('.typeahead').typeahead('destroy');
 				
@@ -180,7 +180,7 @@ var SetSemanticTypeDialog = (function() {
 			}
 			
 			if($("#isSpecializationForEdge").prop("checked")) {
-				var foundObj = doesClassExist($("input#isSpecializationForEdgeTextBox", dialog).val());
+				var foundObj = doesExistingPropertyExist($("input#isSpecializationForEdgeTextBox", dialog).val());
 	        	if(!foundObj.found) {
 	        	   showError("Property for 'specifies specialization for edge' does not exist");
 	        	   return false;
@@ -567,6 +567,17 @@ var SetSemanticTypeDialog = (function() {
         	return classAndPropertyListJson["elements"][0]["propertyList"];
         }
         
+        function getPropertyInstanceLabels() {
+        	var existingLinksMap = classAndPropertyListJson["elements"][0]["existingDataPropertyInstances"];
+        	var arr = [];
+        	//arr.push("test--test2--test");
+        	$.each(existingLinksMap, function(index, prop) {
+            	arr.push(prop["label"]);
+            	
+            });
+            return arr;
+        }
+        
         function hideSemanticTypeEditOptions() {
         	var table = $("#semanticTypesTable");
         	var parentTrTag = $(this).parents("tr");
@@ -661,6 +672,19 @@ var SetSemanticTypeDialog = (function() {
            if(showPropertiesList) {
         	   propertyUI.generateJS(propDiv, true);
            }
+        }
+        
+        function doesExistingPropertyExist(propValue) {
+        	var existingLinksMap = classAndPropertyListJson["elements"][0]["existingDataPropertyInstances"];
+        	var found = false;
+        	var id = "";
+            $.each(existingLinksMap, function(index, prop) {
+                if (prop["label"] == propValue) {
+                    id = prop["id"];
+                    found = true;
+                }
+            });
+            return {"found": found, "id": id};
         }
         
         function doesPropertyExist(inputVal) {

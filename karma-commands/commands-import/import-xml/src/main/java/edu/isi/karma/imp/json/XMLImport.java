@@ -53,7 +53,7 @@ public class XMLImport extends Import {
     public Worksheet generateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException {
         jsonImport.generateWorksheet();
         getWorksheet().getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.XML.toString());
-        return jsonImport.generateWorksheet();
+        return jsonImport.getWorksheet();
     }
 
 }
