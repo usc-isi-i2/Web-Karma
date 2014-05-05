@@ -43,6 +43,7 @@ import edu.isi.karma.util.Util;
  */
 public class AddRowCommand extends WorksheetCommand {
 	//if null add column at beginning of table
+	@SuppressWarnings("unused")
 	private final String hNodeId;
 	//add column to this table
 	private String hTableId;

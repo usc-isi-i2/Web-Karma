@@ -166,14 +166,14 @@ public class AddValuesCommand extends WorksheetCommand{
 		//add as first column in the table if hNodeId is null
 		//HNode ndid = currentTable.addNewHNodeAfter(null, vWorkspace.getRepFactory(), newColumnName, worksheet,true);
 		if (array != null) {
-			populateRowsWithDefaultValues(worksheet, workspace.getFactory(), array);
+			populateRowsWithDefaultValues(worksheet, workspace.getFactory(), array, hTable);
 		}
 		//save the new hNodeId for undo
 
 		return ndid;
 	}
 
-	private void populateRowsWithDefaultValues(Worksheet worksheet, RepFactory factory, JSONArray array) {
+	private void populateRowsWithDefaultValues(Worksheet worksheet, RepFactory factory, JSONArray array, HTable htable) {
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {
@@ -194,10 +194,10 @@ public class AddValuesCommand extends WorksheetCommand{
 							addValues(node, value, factory);
 						}
 						else if (t instanceof JSONObject) {
-							addJSONObjectValues((JSONObject)t, worksheet, worksheet.getHeaders(), factory, node.getBelongsToRow(), newHNodeId);
+							addJSONObjectValues((JSONObject)t, worksheet, htable, factory, node.getBelongsToRow(), newHNodeId);
 						}
 						else if (t instanceof JSONArray) {
-							addJSONArrayValues((JSONArray)t, worksheet, worksheet.getHeaders(), factory, node.getBelongsToRow(), newHNodeId);
+							addJSONArrayValues((JSONArray)t, worksheet, htable, factory, node.getBelongsToRow(), newHNodeId);
 						}
 					}
 				}
@@ -213,10 +213,8 @@ public class AddValuesCommand extends WorksheetCommand{
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void addJSONObjectValues(JSONObject obj, Worksheet worksheet, HTable htable, RepFactory factory, Row row, String newHNodeId) {
-		for (HNode h : htable.getHNodes()) {
-			System.out.println(h.getColumnName());
-		}
 		HNode ndid = htable.getHNode(newHNodeId);
 		HTable nestedHTable = ndid.getNestedTable();
 		if (nestedHTable == null)

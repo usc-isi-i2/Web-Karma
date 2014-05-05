@@ -19,7 +19,9 @@ import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
@@ -79,11 +81,15 @@ public class FoldCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		//System.out.println("here");
+		RepFactory Repfactory = workspace.getFactory();
 		Worksheet worksheet = workspace.getWorksheet(
 				worksheetId);
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
-		HTable htable =  worksheet.getHeaders();
+		HTable htable;
+		if (hNodeId.compareTo("") != 0)
+			htable = CloneTableUtils.getHTable(worksheet.getHeaders(), hNodeId);
+		else
+			htable = worksheet.getHeaders();
 		hnodes.clear();
 		//List<String> HNodeIds = new ArrayList<String>();
 		JSONArray checked = (JSONArray) JSONUtil.createJson(CommandInputJSONUtil.getStringValue("values", (JSONArray)para));
@@ -91,9 +97,35 @@ public class FoldCommand extends WorksheetCommand {
 			JSONObject t = (checked.getJSONObject(i));
 			hnodes.add(htable.getHNode((String) t.get("value")));
 		}
+		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows());
+		if (htable != worksheet.getHeaders()) {
+			HTable parentHT = htable.getParentHNode().getHTable(Repfactory);
+			List<Table> parentTables = new ArrayList<Table>();
+			CloneTableUtils.getDatatable(worksheet.getDataTable(), parentHT,parentTables);
+			ArrayList<Row> parentRows = new ArrayList<Row>();
+			rows.clear();
+			for (Table tmp : parentTables) {
+				for (Row row : tmp.getRows(0, tmp.getNumRows())) {
+					parentRows.add(row);
+				}
+			}
+			for (Row parentRow : parentRows) {
+				Table t = null;
+				for (Node node : parentRow.getNodes()) {
+					if (node.hasNestedTable() && node.getNestedTable().getHTableId().compareTo(htable.getId()) == 0) {
+						t = node.getNestedTable();
+						break;
+					}	
+				}
+				ArrayList<Row> tmpRows = t.getRows(0, t.getNumRows());
+				for (Row r : tmpRows) {
+					rows.add(r);
+				}
+			}
+		}
 		//System.out.println("HNodeID: " + htable.getHNodeIdFromColumnName("homeworks"));
 		//HNodeIds.add(htable.getHNodeIdFromColumnName("homeworks"));
-		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows());
+		
 		//HashValueManager.getHashValue(rows.get(0), HNodeIds);
 		//hnodes.add(htable.getHNode("HN5"));
 		//hnodes.add(htable.getHNode("HN7"));

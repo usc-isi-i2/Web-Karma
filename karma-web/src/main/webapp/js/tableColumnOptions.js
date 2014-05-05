@@ -24,7 +24,8 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	               {name:"divider" , leafOnly:true},
 	               
 	               {name:"Group By", func:GroupBy, leafOnly:false},
-	               {name:"Unfold", func:Unfold, leafOnly:false},
+	               {name:"Unfold", func:Unfold, leafOnly:false}, 
+	               {name:"Fold", func:Fold, leafOnly:false}
 	];
 	
 	function hideDropdown() {
@@ -150,6 +151,12 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 		//console.log("Group By: " + worksheetTitle);
 		hideDropdown();
 		UnfoldDialog.getInstance().show(worksheetId, columnId);
+  }
+
+  function Fold () {
+		//console.log("Group By: " + worksheetTitle);
+		hideDropdown();
+		FoldDialog2.getInstance().show(worksheetId, columnId);
   }
 	
 	this.generateJS = function() {
@@ -1214,6 +1221,7 @@ var UnfoldDialog = (function() {
                 dialogContent.empty();
                 var headers = getHeaders();
                 //console.log(headers);
+
                 for (var i = 0; i < headers.length; i++) {
 
                 	var columnName = headers[i].ColumnName;
@@ -1254,3 +1262,160 @@ var UnfoldDialog = (function() {
     };
 })();
 
+var FoldDialog2 = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#foldDialog2");
+    	var worksheetId, columnId;
+    	
+    	function init() {			
+			//Initialize handler for Save button
+			//var me = this;
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e);
+			});    
+    	}
+
+        function getHeaders() {
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["hNodeId"] = columnId;
+            info["commandName"] = "Fold";
+            info["command"] = "GetHeadersCommand";
+            var headers;
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                async : false,
+                complete :
+                    function (xhr, textStatus) {
+                        var json = $.parseJSON(xhr.responseText);
+                        headers = json.elements[0];
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while getting worksheet headers!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            });
+            return headers;
+        }
+    	
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError() {
+			$("div.error", dialog).show();
+		}
+		
+        function saveDialog(e) {
+        	console.log("Save clicked");
+        	
+        	var checkboxes = dialog.find(":checked");
+	        var checked = [];
+	        for (var i = 0; i < checkboxes.length; i++) {
+	            var checkbox = checkboxes[i];
+	            checked.push(getParamObject("checked", checkbox['value'], "other"));    
+	        }
+	        if (checked.length == 0) {
+                hide();
+                return;
+            }
+	        //console.log(checked);
+	        var info = new Object();
+	        info["worksheetId"] = worksheetId;
+	        info["workspaceId"] = $.workspaceGlobalInformation.id;
+	        info["command"] = "FoldCommand";
+
+	        var newInfo = [];
+	        newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+	        newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
+	        newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
+	        info["newInfo"] = JSON.stringify(newInfo);
+
+	        showLoading(info["worksheetId"]);
+	        var returned = $.ajax({
+	            url: "RequestController",
+	            type: "POST",
+	            data : info,
+	            dataType : "json",
+	            complete :
+	                function (xhr, textStatus) {
+	                    //alert(xhr.responseText);
+	                    var json = $.parseJSON(xhr.responseText);
+	                    console.log(json);
+	                    parse(json);
+	                    hideLoading(info["worksheetId"]);
+	                },
+	            error :
+	                function (xhr, textStatus) {
+	                    alert("Error occured while generating the automatic model!" + textStatus);
+	                    hideLoading(info["worksheetId"]);
+	                }
+	        });
+	        
+    	    hide();
+        };
+        
+        function hide() {
+        	dialog.modal('hide');
+        }
+        
+        function show(wsId, cId) {
+        	worksheetId = wsId;
+        	columnId = cId;
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                var dialogContent = $("#foldDialogColumns", dialog);
+                dialogContent.empty();
+                var headers = getHeaders();
+                if (!headers) {
+                	hide();
+                	return;
+                }
+                //console.log(headers);
+                for (var i = 0; i < headers.length; i++) {
+
+                    var columnName = headers[i].ColumnName;
+                    var id = headers[i].HNodeId;
+                    //console.log(columnName);
+                    //console.log(id);
+                    var row = $("<div>").addClass("checkbox");
+                  var label = $("<label>").text(columnName);
+                  var input = $("<input>")
+                                        .attr("type", "checkbox")
+                                .attr("id", "selectcolumns")
+                                .attr("value", id)
+                  label.append(input);
+                  row.append(label);
+                  dialogContent.append(row);
+                }
+            });
+        	dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        
+        return {	//Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+})();

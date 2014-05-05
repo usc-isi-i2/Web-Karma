@@ -802,6 +802,7 @@ var FoldDialog = (function() {
 
 	        var newInfo = [];
 	        newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+            newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
 	        newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
 	        info["newInfo"] = JSON.stringify(newInfo);
 
@@ -885,7 +886,7 @@ var GroupByDialog2 = (function() {
     var instance = null;
 
     function PrivateConstructor() {
-        var dialog = $("#groupByDialog");
+        var dialog = $("#groupByDialog2");
         var worksheetId;
         function init() {
             
@@ -926,7 +927,7 @@ var GroupByDialog2 = (function() {
 
             var newInfo = [];
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-                    newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
+            newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
             newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
             info["newInfo"] = JSON.stringify(newInfo);
 
