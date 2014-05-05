@@ -979,7 +979,7 @@ var GroupByDialog = (function() {
 
             var newInfo = [];
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-		    		newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
+		    		newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
             newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
             info["newInfo"] = JSON.stringify(newInfo);
 
@@ -1015,6 +1015,7 @@ var GroupByDialog = (function() {
 	        info["worksheetId"] = worksheetId;
 	        info["workspaceId"] = $.workspaceGlobalInformation.id;
 	        info["hNodeId"] = columnId;
+	        info["commandName"] = "GroupBy"
 	        info["command"] = "GetHeadersCommand";
 	        var headers;
 	        var returned = $.ajax({
@@ -1044,6 +1045,11 @@ var GroupByDialog = (function() {
                 var dialogContent = $("#groupByDialogColumns", dialog);
                 dialogContent.empty();
                 var headers = getHeaders();
+                console.log(headers);
+                if (!headers) {
+                	hide();
+                	return;
+                }
                 //console.log(headers);
                 for (var i = 0; i < headers.length; i++) {
 
@@ -1160,6 +1166,7 @@ var UnfoldDialog = (function() {
 	        info["worksheetId"] = worksheetId;
 	        info["workspaceId"] = $.workspaceGlobalInformation.id;
 	        info["hNodeId"] = columnId;
+	        info["commandName"] = "Unfold"
 	        info["command"] = "GetHeadersCommand";
 	        var headers;
 	        var returned = $.ajax({

@@ -23,11 +23,13 @@ import edu.isi.karma.view.VWorkspace;
 
 public class GetHeadersCommand extends WorksheetCommand {
 	private String hNodeId;
+	private String commandName;
 	private static Logger logger = LoggerFactory
 			.getLogger(FoldCommand.class);
-	protected GetHeadersCommand(String id, String worksheetId, String hNodeId) {
+	protected GetHeadersCommand(String id, String worksheetId, String hNodeId, String commandName) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
+		this.commandName = commandName;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -55,8 +57,16 @@ public class GetHeadersCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		HTable ht = worksheet.getHeaders();
-		if (hNodeId.compareTo("") != 0)
-			ht = CloneTableUtils.getHTable(worksheet.getHeaders(), hNodeId);
+		if (hNodeId.compareTo("") != 0) {
+			HTable parentHT = CloneTableUtils.getHTable(worksheet.getHeaders(), hNodeId);
+			if (commandName.compareTo("GroupBy") == 0)
+				ht = CloneTableUtils.getChildHTable(parentHT, parentHT.getId(), false);
+			else
+				ht = parentHT;
+		}
+		if (ht == null) {
+			return new UpdateContainer();
+		}
 		final JSONArray array = new JSONArray();
 		for (HNode hn : ht.getHNodes()) {
 			JSONObject obj = new JSONObject();

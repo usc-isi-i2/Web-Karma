@@ -80,7 +80,11 @@ public class GroupByCommand extends WorksheetCommand {
 		List<HNode> keyhnodes = new ArrayList<HNode>();
 		List<HNode> valuehnodes = new ArrayList<HNode>();
 		JSONArray checked = (JSONArray) JSONUtil.createJson(CommandInputJSONUtil.getStringValue("values", (JSONArray)para));
-		HTable ht = CloneTableUtils.getHTable(oldws.getHeaders(), hNodeId);
+		HTable ht;
+		if (hNodeId.compareTo("") != 0)
+			ht = CloneTableUtils.getHTable(oldws.getHeaders(), hNodeId);
+		else
+			ht = oldws.getHeaders();
 		for (int i = 0; i < checked.length(); i++) {
 			JSONObject t = (checked.getJSONObject(i));
 			hnodeIDs.add((String) t.get("value"));

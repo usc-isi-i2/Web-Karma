@@ -10,7 +10,8 @@ public class GetHeadersCommandFactory extends CommandFactory {
 
 	public enum Arguments {
 		worksheetId,
-		hNodeId;
+		hNodeId,
+		commandName;
 	}
 
 
@@ -18,7 +19,8 @@ public class GetHeadersCommandFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		return new GetHeadersCommand(getNewId(workspace), worksheetId, hNodeId);
+		String commandName = request.getParameter(Arguments.commandName.name());
+		return new GetHeadersCommand(getNewId(workspace), worksheetId, hNodeId, commandName);
 	}
 
 	@Override
