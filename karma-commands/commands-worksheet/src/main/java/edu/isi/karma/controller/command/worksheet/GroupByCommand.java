@@ -80,7 +80,12 @@ public class GroupByCommand extends WorksheetCommand {
 		List<HNode> keyhnodes = new ArrayList<HNode>();
 		List<HNode> valuehnodes = new ArrayList<HNode>();
 		JSONArray checked = (JSONArray) JSONUtil.createJson(CommandInputJSONUtil.getStringValue("values", (JSONArray)para));
-		HTable ht = CloneTableUtils.getHTable(oldws.getHeaders(), hNodeId);
+		HTable ht;
+		//System.out.println("here" + hNodeId);
+		if (hNodeId.compareTo("") != 0)
+			ht = CloneTableUtils.getHTable(oldws.getHeaders(), hNodeId);
+		else
+			ht = oldws.getHeaders();
 		for (int i = 0; i < checked.length(); i++) {
 			JSONObject t = (checked.getJSONObject(i));
 			hnodeIDs.add((String) t.get("value"));
@@ -185,7 +190,7 @@ public class GroupByCommand extends WorksheetCommand {
 		for (Row parentRow : parentRows) {
 			Table t = null;
 			for (Node node : parentRow.getNodes()) {
-				if (node.getNestedTable().getHTableId().compareTo(ht.getId()) == 0) {
+				if (node.hasNestedTable() && node.getNestedTable().getHTableId().compareTo(ht.getId()) == 0) {
 					t = node.getNestedTable();
 					break;
 				}	

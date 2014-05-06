@@ -182,7 +182,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 	private void importUserScripts(PythonInterpreter interpreter) {
 		String dirpathString = ServletContextParameterMap
-				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY)+ "karma" + File.separator + "transformation";
+				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
 		
 		if (dirpathString != null && dirpathString.compareTo("") != 0) {
 			File f = new File(dirpathString);

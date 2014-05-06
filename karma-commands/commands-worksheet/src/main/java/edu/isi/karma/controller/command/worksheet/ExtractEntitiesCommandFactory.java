@@ -29,7 +29,7 @@ import edu.isi.karma.rep.Workspace;
 public class ExtractEntitiesCommandFactory extends CommandFactory {
 
 	public enum Arguments {
-		worksheetId, hTableId, hNodeId, newColumnName, defaultValue, extractionURL
+		worksheetId, hTableId, hNodeId, newColumnName, defaultValue, extractionURL, entitiesToBeExt
 	}
 	
 	@Override
@@ -39,9 +39,10 @@ public class ExtractEntitiesCommandFactory extends CommandFactory {
 		String hTableId = request.getParameter(Arguments.hTableId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String extractionURL = request.getParameter(Arguments.extractionURL.name());
+		String entitiesToBeExt = request.getParameter(Arguments.entitiesToBeExt.name());
 		
 		return new ExtractEntitiesCommand(getNewId(workspace), worksheetId, 
-				hTableId, hNodeId, extractionURL);
+				hTableId, hNodeId, extractionURL, entitiesToBeExt);
 	}
 
 	@Override

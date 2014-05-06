@@ -28,14 +28,10 @@ import edu.isi.karma.util.Util;
 
 public class UnfoldCommand extends WorksheetCommand {
 
-	private String hNodeId;
 	//add column to this table
-	private String hTableId;
 	Command cmd;
-	private Collection<HNode> hnodes = new ArrayList<HNode>();
 	//the id of the new column that was created
 	//needed for undo
-	private String newHNodeId;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(FoldCommand.class);
@@ -47,8 +43,6 @@ public class UnfoldCommand extends WorksheetCommand {
 	protected UnfoldCommand(String id, String worksheetId, 
 			String hTableId, String hNodeId) {
 		super(id, worksheetId);
-		this.hNodeId = hNodeId;
-		this.hTableId = hTableId;
 
 		addTag(CommandTag.Transformation);
 	}
@@ -82,7 +76,6 @@ public class UnfoldCommand extends WorksheetCommand {
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
 		String keyHNodeid = CommandInputJSONUtil.getStringValue("keyhNodeId", (JSONArray)para);
 		String valueHNodeid = CommandInputJSONUtil.getStringValue("valuehNodeId", (JSONArray)para);
-		System.out.println(keyHNodeid + " " + valueHNodeid);
 		RepFactory factory = workspace.getFactory();
 		Worksheet oldws = workspace.getWorksheet(
 				worksheetId);
@@ -188,7 +181,6 @@ public class UnfoldCommand extends WorksheetCommand {
 					String newId = HNodeidMapping.get(cur.getNode(key.getId()).getValue().asString());
 					Node newnode = lastRow.getNode(newId);
 					Node oldnode = cur.getNode(value.getId());
-					System.out.println("values: " + oldnode.getValue().asString());
 					Row tmprow = newnode.getNestedTable().addRow(factory);
 					tmprow.getNeighborByColumnName("Values", factory).setValue(oldnode.getValue().asString(), oldnode.getStatus(), factory);
 					//newnode.setValue(oldnode.getValue().asString(), oldnode.getStatus(), factory);
@@ -234,7 +226,6 @@ public class UnfoldCommand extends WorksheetCommand {
 				ids = new ArrayList<String>();
 			ids.add(row.getId());
 			hash.put(hashValue, ids);
-			//System.out.println("Hash: " + HashValueManager.getHashValue(row, hnodeIDs));
 		}
 
 		for (String hashKey : hash.keySet()) {

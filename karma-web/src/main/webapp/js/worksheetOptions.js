@@ -28,6 +28,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"Export to SpatialData", func:exportToSpatial},
 			{name:"divider"},
 			{name:"Fold" , func:Fold},
+			{name:"GroupBy" , func:GroupBy}, 
 			{name:"Delete", func:deleteWorksheet},
 	];
 	
@@ -205,6 +206,12 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("Fold: " + worksheetTitle);
 		hideDropdown();
 		FoldDialog.getInstance().show(worksheetId);
+    }
+
+    function GroupBy () {
+		console.log("GroupBy: " + worksheetTitle);
+		hideDropdown();
+		GroupByDialog2.getInstance().show(worksheetId);
     }
   function saveRowID () {
 		console.log("saveRowID: " + worksheetTitle);

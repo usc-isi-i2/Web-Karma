@@ -4,7 +4,6 @@ import java.io.File;
 
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
-import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PythonTransformationMetadata extends KarmaUserMetadata {
@@ -22,21 +21,6 @@ public class PythonTransformationMetadata extends KarmaUserMetadata {
 	
 	@Override
 	public void setup() throws KarmaException {
-		String directory = ServletContextParameterMap.getParameterValue(getDirectoryContextParameter());
-		StringBuilder transformationDirectoryBuilder = new StringBuilder();
-		
-		transformationDirectoryBuilder.append(directory);
-		transformationDirectoryBuilder.append(File.separator);
-		transformationDirectoryBuilder.append("karma");
-		transformationDirectoryBuilder.append(File.separator);
-		String karmaDirectory = transformationDirectoryBuilder.toString();
-		transformationDirectoryBuilder.append("transformation");
-		transformationDirectoryBuilder.append(File.separator);
-		String transformationDirectory = transformationDirectoryBuilder.toString();
-		createDirectory(transformationDirectory);
-		createFile(directory + "__init__.py");
-		createFile(karmaDirectory + "__init__.py");
-		createFile(transformationDirectory + "__init__.py");
 		
 	}
 
