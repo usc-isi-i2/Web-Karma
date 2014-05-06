@@ -72,6 +72,7 @@ import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.util.HTTPUtil;
+import edu.isi.karma.webserver.KarmaException;
 
 public class InvokeRubenReconciliationService extends WorksheetCommand {
 	private static Logger logger = LoggerFactory.getLogger(InvokeRubenReconciliationService.class);
@@ -121,10 +122,20 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 		
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
-		KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(
-				workspace, worksheet, alignment, 
-				worksheet.getSemanticTypes(), rdfPrefix, rdfNamespace,
+
+		KR2RMLMappingGenerator mappingGen = null;
+		
+		try{
+			mappingGen = new KR2RMLMappingGenerator(workspace, worksheet,
+		
+				alignment, worksheet.getSemanticTypes(), rdfPrefix, rdfNamespace, 
 				true, errorReport);
+		}
+		catch (KarmaException e)
+		{
+			logger.error("Unable to generate mapping for Ruben Reconciliation Service!", e);
+			return new UpdateContainer(new ErrorUpdate("Unable to generate mapping for Ruben Reconciliation Service!: " + e.getMessage()));
+		}
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
 		TriplesMap trMap = mapping.getTriplesMapIndex().get(alignmentNodeId);
 		
