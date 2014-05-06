@@ -67,6 +67,10 @@ public class ServletContextParameterMap {
 			karmaDir = newKarmaDir.getAbsolutePath() + File.separator;
 			logger.info("Karma home: " + karmaDir);
 		}
+		if(!karmaDir.endsWith(File.separator))
+		{
+			karmaDir += File.separator;
+		}
 		setParameterValue(ContextParameter.USER_DIRECTORY_PATH, karmaDir);
 	}
 	public static void setParameterValue(ContextParameter param, String value) {
