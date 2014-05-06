@@ -33,10 +33,8 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
-import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
@@ -168,11 +166,6 @@ public class GenerateR2RMLModelCommand extends Command {
 		try {
 			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
 			fileSaver.saveAlignment(alignment, modelFileName);
-			KR2RMLMapping mapping = fileSaver.getMappings();
-			if(!mapping.isR2RMLCompatible())
-			{
-				uc.add(new InfoUpdate("The KR2RMLMapping generated is not compatible with R2RML"));
-			}
 			
 			// Write the model to the triple store
 			TripleStoreUtil utilObj = new TripleStoreUtil();
