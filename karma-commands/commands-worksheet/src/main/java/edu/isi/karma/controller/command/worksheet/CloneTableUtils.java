@@ -83,6 +83,19 @@ public class CloneTableUtils {
 		}
 		return null;
 	}
+	
+	public static HTable getChildHTable(HTable ht, String HTableId, boolean result) {
+		if (ht.getId().compareTo(HTableId) == 0 && result)
+			return ht;
+		for (HNode hn : ht.getHNodes()) {
+			if (hn.hasNestedTable()) {
+				HTable tmp = getChildHTable(hn.getNestedTable(), hn.getNestedTable().getId(), true);
+				if (tmp != null)
+					return tmp;
+			}		
+		}
+		return null;
+	}
 
 	public static void getDatatable(Table dt, HTable ht, List<Table> parentTables) {
 		if (dt == null)

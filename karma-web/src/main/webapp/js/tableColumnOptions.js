@@ -1,31 +1,31 @@
-function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
+function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	 
 	var worksheetId = wsId;
 	var columnTitle = wsColumnTitle;
 	var columnId = wsColumnId;
 	
 	var options = [
-	        // Title, function to call, needs file upload
-	        [ "Set Semantic Type", setSemanticType],
-	        [ "divider", null],
+	               {name:"Set Semantic Type", func:setSemanticType, leafOnly:true},
+	               {name:"divider", leafOnly:true},
 
-	        [	"Add Column" , addColumn ],
-			[ "Rename", renameColumn ],
-			[ "Split Column", splitColumn ],
-			[ "Add Row", addRow],
-			[ "divider" , null ],
+	               {name:"Add Column", func:addColumn, leafOnly:false},
+	               {name:"Rename", func:renameColumn, leafOnly:true},
+	               {name:"Split Column", func:splitColumn, leafOnly:true},
+	               {name:"Add Row", func:addRow, leafOnly:false},
+	               {name:"divider" , leafOnly:false},
 			
-			["Extract Entities",extractEntities],
-			[ "PyTransform" , pyTransform ],
-			[ "Transform", transform],
-			[ "divider" , null ],
+	               {name:"Extract Entities", func:extractEntities, leafOnly:true},
+	               {name:"PyTransform" , func:pyTransform, leafOnly:true},
+	              // {name:"Transform", func:transform, leafOnly:true},
+	               {name:"divider" , leafOnly:true},
 			
-			[ "Invoke Service" , invokeService ],
-			[ "Show Chart", showChart],
-
-			[ "divider" , null ],
-			["Group By", GroupBy], 
-			["Unfold", Unfold] 
+	               {name:"Invoke Service" , func:invokeService, leafOnly:true},
+	               {name:"Show Chart", func:showChart, leafOnly:true},
+	               {name:"divider" , leafOnly:true},
+	               
+	               {name:"Group By", func:GroupBy, leafOnly:false},
+	               {name:"Unfold", func:Unfold, leafOnly:false}, 
+	               {name:"Fold", func:Fold, leafOnly:false}
 	];
 	
 	function hideDropdown() {
@@ -152,53 +152,65 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 		hideDropdown();
 		UnfoldDialog.getInstance().show(worksheetId, columnId);
   }
+
+  function Fold () {
+		//console.log("Group By: " + worksheetTitle);
+		hideDropdown();
+		FoldDialog2.getInstance().show(worksheetId, columnId);
+  }
 	
 	this.generateJS = function() {
 		var dropdownId = "columnOptionsButton" + worksheetId + "_" + columnId;
+		var span = $("<span>")
+						.attr("display", "inline-block")
+						.addClass("tableDropdown")
+						.addClass("dropdown")
+						.append($("<a>")
+							.attr("href", "#")
+							.addClass("dropdown-toggle")
+							.addClass("ColumnTitle")
+							.attr("id", dropdownId)
+							.data("worksheetId", worksheetId)
+							.attr("data-toggle", "dropdown")
+							.text(columnTitle)
+							.append($("<span>").addClass("caret")
+							)
+						);
+		
 		var div = 
 			$("<div>")
 				.attr("id", "TableOptionsDiv")
 				.data("worksheetId", worksheetId)
-				.addClass("tableDropdown")
-				.addClass("dropdown")
-				.append($("<a>")
-						.attr("href", "#")
-						.addClass("dropdown-toggle")
-						.addClass("ColumnTitle")
-						.attr("id", dropdownId)
-						.data("worksheetId", worksheetId)
-						.attr("data-toggle", "dropdown")
-						.text(columnTitle)
-						.append($("<span>").addClass("caret")
-						)
-				);
-                
-
+				.append(span)
+				;     
+		
 		var ul = $("<ul>").addClass("dropdown-menu");
 		ul.attr("role", "menu")
 			.attr("aria-labelledby", dropdownId);
 		// console.log("There are " + options.length + " menu items");
 		for(var i=0; i<options.length; i++) {
 			var option = options[i];
-			var needFile = false;
-			if(option.length > 2 && option[2] == true)
-				needFile = true;
+			
+			if(option.leafOnly ==true && isLeafNode == false) {
+				continue;
+			}
+			
+			var needFile = option.useFileUpload;
+			
 			var li = $("<li>");
-			// console.log("Got option" + option);
-			var title = option[0];
+			//console.log("Got option" +  option);
+			var title = option.name;
 			if(title == "divider")
 				li.addClass("divider");
 			else {
-				var func = option[1];
+				var func = option.func;
 				var a = $("<a>")
 						.attr("href", "#");
 				if(needFile) {
-					// <form id="fileupload" action="ImportFileCommand"
-					// method="POST" enctype="multipart/form-data">From
-					// File<input type="file" name="files[]" multiple></form>
+					//<form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form>
 					a.addClass("fileinput-button");
 					var form = $("<form>")
-								.attr("id", option[3])
+								.attr("id", option.uploadDiv + "_" + worksheetId)
 								.attr("action", "ImportFileCommand")
 								.attr("method", "POST")
 								.attr("enctype", "multipart/form-data")
@@ -210,14 +222,26 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 					a.append(form);
 					window.setTimeout(func, 1000);
 				} else {
-					a.text(title);
-					a.click(func);
+					if(option.showCheckbox) {
+						var checkbox = $("<input>").attr("type", "checkbox");
+						if(option.defaultChecked)
+							checkbox.attr("checked","checked");
+						var label = $("<span>").append(checkbox).append("&nbsp;").append(title);
+						a.append(label);
+						a.click(func);
+					} else {
+						a.text(title);
+						a.click(func);
+					}
+					
 				}
 				li.append(a);
 			}
+			if(option.initFunc)
+				option.initFunc();
 			ul.append(li);
 		};
-		div.append(ul);
+		span.append(ul);
 		return div;
 	};
 };
@@ -844,6 +868,10 @@ var ExtractEntitiesDialog = (function() {
 
     function PrivateConstructor() {
     	var dialog = $("#extractEntitiesDialog");
+    	var entitySelDialog = $("#extractionCapabilitiesDialog");
+    	// hidden by default
+    	entitySelDialog.modal('hide');
+    	
     	var worksheetId, columnId;
     
     	function init() {
@@ -886,6 +914,78 @@ var ExtractEntitiesDialog = (function() {
 		    // console.log(info["worksheetId"]);
 		    showLoading(info["worksheetId"]);
 
+		    var userSelResp = $.ajax({
+			   	url: $('#extractionService_URL').val() + "/getCapabilities",
+			   	type: "GET",   	
+			   	dataType : "json",
+			   	contentType : "text/plain",
+			      crossDomain: true,		   	
+			   	complete :
+			   		function (xhr, textStatus) {
+			   			console.log(xhr.responseText);
+			    		var jsonresp = $.parseJSON(xhr.responseText);
+	
+			    		var dialogContent = $("#userSelection", entitySelDialog);
+				        dialogContent.empty();
+				        
+			    		$.each(jsonresp, function(index,data) {
+			    			var row = $("<div>").addClass("checkbox");
+			    			var label = $("<label>").text(data.capability);
+			    			var input = $("<input>")
+											.attr("type", "checkbox")
+											.attr("id", "selectentities")
+											.attr("value", data.capability);
+		                	label.append(input);
+		                	row.append(label);
+		                	dialogContent.append(row);
+			    		   });
+			    		
+			    		//Initialize handler for Save button
+						//var me = this;
+						$('#btnSave', entitySelDialog).on('click', function (e) {
+							e.preventDefault();
+							saveUserSelDialog(e, info);
+						});
+			    		
+				    	//display user selection dialog
+	                	entitySelDialog.modal('show');
+	                	console.log("User selection dialog displayed");
+	            
+			    		hideLoading(info["worksheetId"]);
+				   	},
+				error :
+					function (xhr, textStatus) {
+						console.log("error");
+			   			alert("Error occured while getting capabilities from the specified service:" + textStatus);
+			   			hideLoading(info["worksheetId"]);
+				   	}
+			});
+		    
+        };
+        
+        function saveUserSelDialog(e, info) {
+        	console.log("Save clicked");
+        	var userSelection = "";
+        	
+        	var checkboxes = entitySelDialog.find(":checked");
+	        var checked = [];
+	        for (var i = 0; i < checkboxes.length - 1; i++) {
+	            var checkbox = checkboxes[i];
+	            userSelection = userSelection + checkbox.value + ",";    
+	        }
+	        
+	        if(checkboxes.length>0) {
+	        	userSelection = userSelection + checkboxes[checkboxes.length - 1].value;
+	        }
+	        
+	        entitySelDialog.modal('hide');
+
+		    // console.log(info["worksheetId"]);
+		    showLoading(info["worksheetId"]);
+
+	        console.log("User selection: " + userSelection);
+	        info["entitiesToBeExt"] = userSelection;
+        	
 		    var returned = $.ajax({
 			   	url: "RequestController",
 			   	type: "POST",
@@ -903,6 +1003,7 @@ var ExtractEntitiesDialog = (function() {
 			   			hideLoading(info["worksheetId"]);
 				   	}
 			});	
+
         };
         
         function show(wsId, colId) {
@@ -979,7 +1080,7 @@ var GroupByDialog = (function() {
 
             var newInfo = [];
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-		    		newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
+		    		newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
             newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
             info["newInfo"] = JSON.stringify(newInfo);
 
@@ -1015,6 +1116,7 @@ var GroupByDialog = (function() {
 	        info["worksheetId"] = worksheetId;
 	        info["workspaceId"] = $.workspaceGlobalInformation.id;
 	        info["hNodeId"] = columnId;
+	        info["commandName"] = "GroupBy"
 	        info["command"] = "GetHeadersCommand";
 	        var headers;
 	        var returned = $.ajax({
@@ -1044,6 +1146,11 @@ var GroupByDialog = (function() {
                 var dialogContent = $("#groupByDialogColumns", dialog);
                 dialogContent.empty();
                 var headers = getHeaders();
+                console.log(headers);
+                if (!headers) {
+                	hide();
+                	return;
+                }
                 //console.log(headers);
                 for (var i = 0; i < headers.length; i++) {
 
@@ -1160,6 +1267,7 @@ var UnfoldDialog = (function() {
 	        info["worksheetId"] = worksheetId;
 	        info["workspaceId"] = $.workspaceGlobalInformation.id;
 	        info["hNodeId"] = columnId;
+	        info["commandName"] = "Unfold"
 	        info["command"] = "GetHeadersCommand";
 	        var headers;
 	        var returned = $.ajax({
@@ -1190,13 +1298,14 @@ var UnfoldDialog = (function() {
                 dialogContent.empty();
                 var headers = getHeaders();
                 //console.log(headers);
+
                 for (var i = 0; i < headers.length; i++) {
 
                 	var columnName = headers[i].ColumnName;
                 	var id = headers[i].HNodeId;
                 	//console.log(columnName);
                 	//console.log(id);
-                	var row = $("<div>").addClass("checkbox");
+                	var row = $("<div>").addClass("radio");
                   var label = $("<label>").text(columnName);
                   var input = $("<input>")
                       					.attr("type", "radio")
@@ -1230,3 +1339,160 @@ var UnfoldDialog = (function() {
     };
 })();
 
+var FoldDialog2 = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#foldDialog2");
+    	var worksheetId, columnId;
+    	
+    	function init() {			
+			//Initialize handler for Save button
+			//var me = this;
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e);
+			});    
+    	}
+
+        function getHeaders() {
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["hNodeId"] = columnId;
+            info["commandName"] = "Fold";
+            info["command"] = "GetHeadersCommand";
+            var headers;
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                async : false,
+                complete :
+                    function (xhr, textStatus) {
+                        var json = $.parseJSON(xhr.responseText);
+                        headers = json.elements[0];
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while getting worksheet headers!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            });
+            return headers;
+        }
+    	
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError() {
+			$("div.error", dialog).show();
+		}
+		
+        function saveDialog(e) {
+        	console.log("Save clicked");
+        	
+        	var checkboxes = dialog.find(":checked");
+	        var checked = [];
+	        for (var i = 0; i < checkboxes.length; i++) {
+	            var checkbox = checkboxes[i];
+	            checked.push(getParamObject("checked", checkbox['value'], "other"));    
+	        }
+	        if (checked.length == 0) {
+                hide();
+                return;
+            }
+	        //console.log(checked);
+	        var info = new Object();
+	        info["worksheetId"] = worksheetId;
+	        info["workspaceId"] = $.workspaceGlobalInformation.id;
+	        info["command"] = "FoldCommand";
+
+	        var newInfo = [];
+	        newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+	        newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
+	        newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
+	        info["newInfo"] = JSON.stringify(newInfo);
+
+	        showLoading(info["worksheetId"]);
+	        var returned = $.ajax({
+	            url: "RequestController",
+	            type: "POST",
+	            data : info,
+	            dataType : "json",
+	            complete :
+	                function (xhr, textStatus) {
+	                    //alert(xhr.responseText);
+	                    var json = $.parseJSON(xhr.responseText);
+	                    console.log(json);
+	                    parse(json);
+	                    hideLoading(info["worksheetId"]);
+	                },
+	            error :
+	                function (xhr, textStatus) {
+	                    alert("Error occured while generating the automatic model!" + textStatus);
+	                    hideLoading(info["worksheetId"]);
+	                }
+	        });
+	        
+    	    hide();
+        };
+        
+        function hide() {
+        	dialog.modal('hide');
+        }
+        
+        function show(wsId, cId) {
+        	worksheetId = wsId;
+        	columnId = cId;
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                var dialogContent = $("#foldDialogColumns", dialog);
+                dialogContent.empty();
+                var headers = getHeaders();
+                if (!headers) {
+                	hide();
+                	return;
+                }
+                //console.log(headers);
+                for (var i = 0; i < headers.length; i++) {
+
+                    var columnName = headers[i].ColumnName;
+                    var id = headers[i].HNodeId;
+                    //console.log(columnName);
+                    //console.log(id);
+                    var row = $("<div>").addClass("checkbox");
+                  var label = $("<label>").text(columnName);
+                  var input = $("<input>")
+                                        .attr("type", "checkbox")
+                                .attr("id", "selectcolumns")
+                                .attr("value", id)
+                  label.append(input);
+                  row.append(label);
+                  dialogContent.append(row);
+                }
+            });
+        	dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        
+        return {	//Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+})();

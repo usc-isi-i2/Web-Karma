@@ -144,7 +144,7 @@ a.icon-remove:hover {
 				  </div>
 				  <div class="modal-body">
 					<div class="form-group">
-						<label for="rdfNamespace">RDF Namespace</label>
+						<label for="rdfNamespace">Base URI</label>
 						<input class="form-control" type="text" id="rdfNamespace" required value="http://localhost:8080/source/" maxlength="100">
 					</div>
 					<div class="form-group">
@@ -152,28 +152,28 @@ a.icon-remove:hover {
 						<input class="form-control" type="text" id="rdfPrefix" required value="s" maxlength="100">
 					</div>
 					<div class="form-group">
-						<label for="rdfSPAQRLEndPoint">SPARQL End Point</label>
+						<label for="rdfSPAQRLEndPoint">Sparql End Point</label>
 						<input class="form-control" type="text" id="rdfSPAQRLEndPoint" required value="" maxlength="100">
 					</div>
 					<div class="form-group">
-							<label for="modelGraphList">Use existing context</label>
+							<label for="modelGraphList">RDF Graphs</label>
 							<select id="modelGraphList">
 		                	</select>
 					</div>
 					<div class="form-group">
-						<label id="labelFor_rdfSPAQRLGraph" for="rdfSPAQRLGraph">Create new context</label>
+						<label id="labelFor_rdfSPAQRLGraph" for="rdfSPAQRLGraph">Create New Graph</label>
 						<input class="form-control" type="text" id="rdfSPAQRLGraph" required value="" maxlength="100">
 					</div>	
 					<div class="radio">
 						<label>
 				    		<input type="radio" id="graphReplace_1" name="group1"  value="replace">
-				    		Replace existing data in context
+				    		Replace Existing Data
 			  			</label>
 			  		</div>
 			  		<div class="radio">
 			  			<label>
 				    		<input type="radio" id="graphReplace_2" name="group1" checked value="append">
-				    		Append to context
+				    		Append
 			  			</label>
 					</div>	
 					
@@ -404,6 +404,27 @@ a.icon-remove:hover {
 		</form>
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<div class="modal fade" id="groupByDialog2" tabindex="-1">
+	 <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				      <h4 class="modal-title">Group By</h4>
+				  </div>
+				  <div class="modal-body">
+						<h4>Select Columns:</h4>
+						<div id="groupByDialogColumns"></div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Submit</button>
+				   </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->   
 
 <div class="modal fade" id="organizeColumnsDialog" tabindex="-1">
   <div class="modal-dialog">

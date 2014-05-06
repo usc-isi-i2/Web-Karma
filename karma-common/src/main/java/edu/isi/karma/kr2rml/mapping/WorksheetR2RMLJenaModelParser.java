@@ -492,7 +492,7 @@ public class WorksheetR2RMLJenaModelParser {
 		return subjMap;
 	}
 
-	private void calculateColumnNodesCoveredByBlankNodes(KR2RMLMapping kr2rmlMapping, List<Resource> subjectMapResources) throws JSONException {
+	private void calculateColumnNodesCoveredByBlankNodes(KR2RMLMapping kr2rmlMapping, List<Resource> subjectMapResources) throws JSONException, KarmaException {
 		Property termTypeProp = model.getProperty(Uris.RR_TERM_TYPE_URI);
 		Resource blankNodeRes = model.getResource(Uris.RR_BLANK_NODE_URI);
 		Property kmBnodePrefixProp = model.getProperty(Uris.KM_BLANK_NODE_PREFIX_URI);
@@ -503,8 +503,15 @@ public class WorksheetR2RMLJenaModelParser {
 			if (model.contains(subjMapRes, termTypeProp, blankNodeRes)) {
 				List<String> columnsCovered = new ArrayList<String>();
 				Resource blankNodeSubjRes = blankNodeSubjMapItr.next();
+				
 				SubjectMap subjMap = kr2rmlMapping.getSubjectMapIndex().get(blankNodeSubjRes.getId().getLabelString());
 				subjMap.setAsBlankNode(true);
+				NodeIterator bnodePrefixItr = model.listObjectsOfProperty(blankNodeSubjRes, kmBnodePrefixProp);
+				while (bnodePrefixItr.hasNext()) {
+					kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().put(subjMap.getId(), 
+							bnodePrefixItr.next().toString());
+				}
+				
 				TriplesMap mytm = null;
 				for(TriplesMap tm : kr2rmlMapping.getTriplesMapList())
 				{
@@ -518,7 +525,7 @@ public class WorksheetR2RMLJenaModelParser {
 							ObjectMap objMap = pom.getObject();
 							if(objMap == null)
 							{
-								System.out.println("sufjan, we have a problem.");
+								logger.error("Unable to find object map for pom :" + pom.toString());
 							}
 								
 							TemplateTermSet templateTermSet = pom.getObject().getTemplate();
@@ -531,21 +538,22 @@ public class WorksheetR2RMLJenaModelParser {
 								}
 							}
 						}
+						
+						if(columnsCovered.isEmpty())
+						{
+							String blankNodeUriPrefix = kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().get(subjMap.getId());
+							//throw new KarmaException("You need to define a URI for "+blankNodeUriPrefix+ ".");
+						}
 						break;
 					}
 				}
-				
-			
+		
 				logger.debug("Adding columns for blank node" + subjMap.getId() + " List: " + 
 						columnsCovered);
 				kr2rmlMapping.getAuxInfo().getBlankNodesColumnCoverage().put(subjMap.getId(), columnsCovered);
 				kr2rmlMapping.getAuxInfo().getSubjectMapIdToTemplateAnchor().put(subjMap.getId(), KR2RMLMappingAuxillaryInformation.findSubjectMapTemplateAnchor(columnsCovered));
 				// Get the blank node prefix
-				NodeIterator bnodePrefixItr = model.listObjectsOfProperty(blankNodeSubjRes, kmBnodePrefixProp);
-				while (bnodePrefixItr.hasNext()) {
-					kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().put(subjMap.getId(), 
-							bnodePrefixItr.next().toString());
-				}
+				
 			}
 		}
 	}

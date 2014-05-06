@@ -83,6 +83,7 @@ import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURIValidator
 import edu.isi.karma.transformation.tokenizer.PythonTransformationToken;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.FileUtil;
+import edu.isi.karma.webserver.KarmaException;
 
 public class KR2RMLMappingGenerator {
 
@@ -108,7 +109,7 @@ public class KR2RMLMappingGenerator {
 	
 	public KR2RMLMappingGenerator(Workspace workspace, Worksheet worksheet, Alignment alignment, 
 			SemanticTypes semanticTypes, String sourcePrefix, String sourceNamespace, 
-			boolean generateInverse, ErrorReport errorReport) {
+			boolean generateInverse, ErrorReport errorReport) throws KarmaException{
 
 		this.workspace = workspace;
 		this.worksheet = worksheet;
@@ -184,7 +185,7 @@ public class KR2RMLMappingGenerator {
 		return this.r2rmlMapping;
 	}
 
-	private void generateMappingFromSteinerTree(boolean generateInverse) {
+	private void generateMappingFromSteinerTree(boolean generateInverse) throws KarmaException {
 		// Generate TriplesMap for each InternalNode in the tree
 		createSubjectMaps();
 		
@@ -222,7 +223,7 @@ public class KR2RMLMappingGenerator {
 		}
 	}
 	
-	private void calculateColumnNodesCoveredByBlankNodes() {
+	private void calculateColumnNodesCoveredByBlankNodes() throws KarmaException {
 		DisplayModel dm = new DisplayModel(alignmentGraph);
 		
 		for (Node treeNode:alignmentGraph.vertexSet()) {
@@ -242,7 +243,10 @@ public class KR2RMLMappingGenerator {
 							columnsCovered.add(columnName);
 						}
 					}
-					
+					if(columnsCovered.isEmpty())
+					{
+						//throw new KarmaException("You need to define a URI for "+treeNode.getDisplayId()+ ".");
+					}
 					r2rmlMapping.getAuxInfo().getBlankNodesColumnCoverage().put(treeNode.getId(), columnsCovered);
 					r2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().put(treeNode.getId(), treeNode.getDisplayId());
 					r2rmlMapping.getAuxInfo().getSubjectMapIdToTemplateAnchor().put(treeNode.getId(), KR2RMLMappingAuxillaryInformation.findSubjectMapTemplateAnchor(columnsCovered));

@@ -20,6 +20,15 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
+import java.io.PrintWriter;
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -29,14 +38,6 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.view.VWorkspace;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.PrintWriter;
-import java.util.HashSet;
 
 public class GetDataPropertiesForClassCommand extends Command {
 
@@ -77,8 +78,7 @@ public class GetDataPropertiesForClassCommand extends Command {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		final OntologyManager ontMgr = workspace.getOntologyManager();
-		final HashSet<String> properties = ontMgr.getDataPropertiesOfClass(classURI, true);
-
+		
 		// Generate and return the JSON
 		return new UpdateContainer(new AbstractUpdate() {
 			@Override
@@ -86,20 +86,20 @@ public class GetDataPropertiesForClassCommand extends Command {
 					VWorkspace vWorkspace) {
 				JSONObject outputObject = new JSONObject();
 				try {
+					Map<String, Label> properties = ontMgr.getDataPropertiesByDomain(classURI, true);
 					outputObject.put(JsonKeys.updateType.name(), "DataPropertiesForClassUpdate");
 
 					JSONArray dataArray = new JSONArray();
 
-					for (String domain : properties) {
+					for (Label domain : properties.values()) {
 						JSONObject classObject = new JSONObject();
 
-						Label domainURI = ontMgr.getUriLabel(domain);
-						if (domainURI == null)
+						if (domain == null)
 							continue;
 						
-						classObject.put(JsonKeys.data.name(), domainURI.getDisplayName());
+						classObject.put(JsonKeys.data.name(), domain.getDisplayName());
 						JSONObject metadataObject = new JSONObject();
-						metadataObject.put(JsonKeys.URIorId.name(), domain);
+						metadataObject.put(JsonKeys.URIorId.name(), domain.getUri());
 						classObject.put(JsonKeys.metadata.name(), metadataObject);
 
 						dataArray.put(classObject);
@@ -107,8 +107,8 @@ public class GetDataPropertiesForClassCommand extends Command {
 					outputObject.put(JsonKeys.data.name(), dataArray);
 
 					pw.println(outputObject.toString());
-				} catch (JSONException e) {
-					logger.error("Error occured while generating JSON!");
+				} catch (Exception e) {
+					logger.error("Error occured while generating JSON!", e);
 				}
 			}
 		});

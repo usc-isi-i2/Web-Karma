@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
-import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.DisplayModel;
@@ -79,7 +78,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
 		VWorksheet vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
-		List<String> hNodeIdList = vWorksheet.getHeaderVisibleNodes();
+		List<String> hNodeIdList = vWorksheet.getHeaderVisibleLeafNodes();
 		
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				vWorkspace.getWorkspace().getId(), vWorksheet.getWorksheetId());

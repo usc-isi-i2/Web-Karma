@@ -293,7 +293,7 @@ function getAllObjectProperties(alignmentId) {
 }
 
 function getAllPropertiesForClass(worksheetId, classUri) {
-	if(classUri == null || classUri == "")
+	if(classUri == null || classUri == "" || classUri == "fakeDomainURI")
 		return [];
 	
 	//http://localhost:8080/RequestController?URI=http%3A%2F%2Flod.isi.edu%2Fontology%2Fsyllabus%2FLecture1&command=GetDataPropertiesForClassCommand&workspaceId=WSP23

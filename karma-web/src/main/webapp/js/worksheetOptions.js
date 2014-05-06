@@ -16,6 +16,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"Publish RDF" , func:publishRDF},
 			{name:"Publish Model" , func:publishModel},
 			{name:"Publish Service Model", func:publishServiceModel},
+			{name:"Publish Report", func:publishReport},
 			{name:"Save as JSON", func:saveAsJson},
 			{name:"divider"},
 			{name:"Populate Source", func:populateSource},
@@ -27,6 +28,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"Export to SpatialData", func:exportToSpatial},
 			{name:"divider"},
 			{name:"Fold" , func:Fold},
+			{name:"GroupBy" , func:GroupBy}, 
 			{name:"Delete", func:deleteWorksheet},
 	];
 	
@@ -52,6 +54,33 @@ function WorksheetOptions(wsId, wsTitle) {
 		return false;
 	}
 	
+	function publishReport() {
+		hideDropdown();
+		var info = new Object();
+        info["worksheetId"] = worksheetId;
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "PublishReportCommand";
+
+        showLoading(info["worksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["worksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error publishing report" + textStatus);
+                    hideLoading(info["worksheetId"]);
+                }
+        });
+        return false;
+	}
 	function deleteWorksheet() {
 		if(confirm("Are you sure you wish to delete the worksheet? \nYou cannot undo this operation")) {
 			hideDropdown();
@@ -177,6 +206,12 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("Fold: " + worksheetTitle);
 		hideDropdown();
 		FoldDialog.getInstance().show(worksheetId);
+    }
+
+    function GroupBy () {
+		console.log("GroupBy: " + worksheetTitle);
+		hideDropdown();
+		GroupByDialog2.getInstance().show(worksheetId);
     }
   function saveRowID () {
 		console.log("saveRowID: " + worksheetTitle);

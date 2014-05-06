@@ -37,6 +37,8 @@ import java.util.Vector;
 import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Node;
@@ -371,18 +373,18 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		double coherence = this.getCoherence();
 		//int frequency = this.getFrequency();
 		
-//		double alpha = 1.0;//WeightTuning.getInstance().getCoherenceFactor();
-//		double beta = 0.5;//WeightTuning.getInstance().getSizeFactor();
-//		double gamma = 0.8;//WeightTuning.getInstance().getConfidenceFactor();
+		double alpha = ModelingConfiguration.getScoringConfidenceCoefficient();
+		double beta = ModelingConfiguration.getScoringCoherenceSCoefficient();
+		double gamma = ModelingConfiguration.getScoringSizeCoefficient();
 //		
 //		this.score = alpha * coherence + 
 //				beta * distanceToMaxSize + 
 //				gamma * confidence;
 		
 		double[] measures = new double[3];
-		measures[0] = confidence;
-		measures[1] = sizeReduction;
-		measures[2] = coherence;
+		measures[0] = alpha * confidence;
+		measures[1] = beta * coherence;
+		measures[2] = gamma * sizeReduction;
 //		this.score = sizeReduction;
 //		this.score = coherence;
 //		this.score = confidence;

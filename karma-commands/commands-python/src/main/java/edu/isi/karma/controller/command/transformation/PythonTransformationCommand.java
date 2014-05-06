@@ -21,15 +21,12 @@
 
 package edu.isi.karma.controller.command.transformation;
 
-import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommandFactory;
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.rep.*;
-import edu.isi.karma.transformation.PythonTransformationHelper;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,7 +38,20 @@ import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommandFactory;
+import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.transformation.PythonTransformationHelper;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public abstract class PythonTransformationCommand extends WorksheetCommand {
 
@@ -173,10 +183,19 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 	private void importUserScripts(PythonInterpreter interpreter) {
 		String dirpathString = ServletContextParameterMap
 				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
+		
 		if (dirpathString != null && dirpathString.compareTo("") != 0) {
-			interpreter.exec("import sys");
-			interpreter.exec("sys.path.append('" + dirpathString.replace('\\','/') + "')");
-			interpreter.exec("from karma.transformation import *");
+			File f = new File(dirpathString);
+			String[] scripts = f.list(new FilenameFilter(){
+
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.endsWith(".py");
+				}});
+			for(String script : scripts)
+			{
+				interpreter.execfile(dirpathString  + File.separator + script);
+			}
 		}
 	}
 

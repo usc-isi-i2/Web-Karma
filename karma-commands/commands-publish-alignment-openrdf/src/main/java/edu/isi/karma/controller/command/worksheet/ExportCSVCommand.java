@@ -49,6 +49,7 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -193,8 +194,19 @@ public class ExportCSVCommand extends WorksheetCommand {
 		
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
-		KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, worksheet,
-				alignment, worksheet.getSemanticTypes(), "s", graphUri, false, errorReport);
+		KR2RMLMappingGenerator mappingGen = null;
+		
+		try{
+			mappingGen = new KR2RMLMappingGenerator(workspace, worksheet,
+		
+				alignment, worksheet.getSemanticTypes(), "s", graphUri, 
+				false, errorReport);
+		}
+		catch (KarmaException e)
+		{
+			logger.error("Error occured while exporting CSV!", e);
+			return new UpdateContainer(new ErrorUpdate("Error occured while exporting CSV: " + e.getMessage()));
+		}
 				
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
 		logger.debug(mapping.toString());
@@ -213,13 +225,13 @@ public class ExportCSVCommand extends WorksheetCommand {
 		}
 		
 		TripleStoreUtil utilObj = new TripleStoreUtil();
-		boolean result = utilObj.saveToStore(generatedRDFFileName, utilObj.defaultDataRepoUrl, graphUri, true);
+		boolean result = utilObj.saveToStore(generatedRDFFileName, TripleStoreUtil.defaultDataRepoUrl, graphUri, true, null);
 		// if we the RDF is generated correctly, then we dont need to retur an UpdateContainer
 		// hence we return null
 		if(result) {
 			logger.info("Saved rdf to store");
 			this.graphUrl = graphUri;
-			this.tripleStoreUrl = utilObj.defaultDataRepoUrl;
+			this.tripleStoreUrl = TripleStoreUtil.defaultDataRepoUrl;
 		} else {
 			logger.error("Falied to store rdf to karma_data store");
 			return new UpdateContainer(new ErrorUpdate("Error: Failed to store RDF to the triple store"));

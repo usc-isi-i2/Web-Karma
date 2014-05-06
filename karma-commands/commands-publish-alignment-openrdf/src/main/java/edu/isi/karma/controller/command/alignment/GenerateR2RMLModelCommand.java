@@ -21,14 +21,10 @@
 
 package edu.isi.karma.controller.command.alignment;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,21 +33,13 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
-import edu.isi.karma.kr2rml.ErrorReport;
-import edu.isi.karma.kr2rml.KR2RMLMappingWriter;
-import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
-import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
 import edu.isi.karma.modeling.ModelingConfiguration;
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
@@ -178,11 +166,6 @@ public class GenerateR2RMLModelCommand extends Command {
 		try {
 			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
 			fileSaver.saveAlignment(alignment, modelFileName);
-			KR2RMLMapping mapping = fileSaver.getMappings();
-			if(!mapping.isR2RMLCompatible())
-			{
-				uc.add(new InfoUpdate("The KR2RMLMapping generated is not compatible with R2RML"));
-			}
 			
 			// Write the model to the triple store
 			TripleStoreUtil utilObj = new TripleStoreUtil();
@@ -197,7 +180,7 @@ public class GenerateR2RMLModelCommand extends Command {
 				graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
 			}
 			
-			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true);
+			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true, null);
 			
 			if (result) {
 				logger.info("Saved model to triple store");
