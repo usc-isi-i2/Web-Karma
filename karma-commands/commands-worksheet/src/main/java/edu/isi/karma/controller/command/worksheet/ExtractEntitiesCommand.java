@@ -26,6 +26,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Arrays;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -63,16 +65,20 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 	
 	//URL for Extraction Service as input by the user
 	private String extractionURL;
+	//Entities that the user wants to extract
+	private String entitiesToBeExt;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(ExtractEntitiesCommand.class);
 
 	protected ExtractEntitiesCommand(String id, String worksheetId,
-			String hTableId, String hNodeId, String extractionURL) {
+			String hTableId, String hNodeId, String extractionURL, String entitiesToBeExt) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		this.extractionURL = extractionURL;
+		this.entitiesToBeExt = entitiesToBeExt;
+		
 		addTag(CommandTag.Transformation);
 	}
 
@@ -102,6 +108,11 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 		System.out.println("in do it");
 		System.out.println(extractionURL);
 
+		String[] entities = entitiesToBeExt.split(",");
+		HashSet<String> entitiesReqd = new HashSet<String>();
+		
+		entitiesReqd.addAll(Arrays.asList(entities));
+		
 		ArrayList<Row> rows = worksheet.getDataTable().getRows(0,
 				worksheet.getDataTable().getNumRows());
 
@@ -117,8 +128,6 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 			JSONObject obj = new JSONObject();
 			System.out.println(value);
 
-			// Needs to be replaced by rowHash. Not sure how to compute/fetch
-			// rowHash.
 			obj.put("rowId", id);
 			obj.put("text", value);
 			array.put(obj);
@@ -189,31 +198,53 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 				JSONObject extraction = (JSONObject) result.getJSONObject(index++).get("extractions");
 				System.out.println("test1");
 				
-				JSONArray peopleExtract = (JSONArray) extraction.get("people");
-				JSONArray datesExtract = (JSONArray) extraction.get("dates");
-				JSONArray placesExtract = (JSONArray) extraction.get("places");
-				
-				JSONArray peopleValues = new JSONArray();
-				JSONArray datesValues = new JSONArray();
-				JSONArray placesValues = new JSONArray();
-				
 				JSONObject extractionValues = new JSONObject();
 				
-				for(int i=0; i<peopleExtract.length(); i++) {
-					peopleValues.put(new JSONObject().put("extraction", ((JSONObject) peopleExtract.get(i)).getString("extraction"))); 
-				}
-								
-				for(int i=0; i<datesExtract.length(); i++) {
-					datesValues.put(new JSONObject().put("extraction", ((JSONObject) datesExtract.get(i)).getString("extraction"))); 
-				}
+				//Check if the user wants People entities
+				if(entitiesReqd.contains("People")) {
+				//***Extracting People***
+				JSONArray peopleExtract = (JSONArray) extraction.get("people");
+				JSONArray peopleValues = new JSONArray();
 				
-				for(int i=0; i<placesExtract.length(); i++) {
-					placesValues.put(new JSONObject().put("extraction", ((JSONObject) placesExtract.get(i)).getString("extraction"))); 
+				
+				for(int i=0; i<peopleExtract.length(); i++) {
+					peopleValues.put(new JSONObject().put("extraction", ((JSONObject)peopleExtract.get(i)).getString("extraction"))); 
 				}
 				
 				extractionValues.put("People", peopleValues);
-				extractionValues.put("Dates", datesValues);
+				}
+								
+				
+				//Check if the user wants Places entities
+				if(entitiesReqd.contains("Places")) {
+				//***Extracting Places***
+				
+				JSONArray placesExtract = (JSONArray) extraction.get("places");
+				JSONArray placesValues = new JSONArray();
+				
+				
+				for(int i=0; i<placesExtract.length(); i++) {
+					placesValues.put(new JSONObject().put("extraction", ((JSONObject)placesExtract.get(i)).getString("extraction"))); 
+				}
+				
+				
 				extractionValues.put("Places", placesValues);
+				}
+				
+				//Check if the user wants Date entities
+				if(entitiesReqd.contains("Dates")) {
+				//***Extracting People***
+				
+				JSONArray datesExtract = (JSONArray) extraction.get("dates");
+				JSONArray datesValues = new JSONArray();
+					
+				
+				for(int i=0; i<datesExtract.length(); i++) {
+					datesValues.put(new JSONObject().put("extraction", ((JSONObject)datesExtract.get(i)).getString("extraction"))); 
+				}
+				
+				extractionValues.put("Dates", datesValues);
+				}
 				
 				JSONObject extractionsObj = new JSONObject();
 				extractionsObj.put("extractions", extractionValues);
@@ -232,20 +263,6 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 		JSONArray addValues = new JSONArray();
 		addValues.put(addValuesObj);
 
-/*		JSONObject datesAddObj = new JSONObject();
-		datesAddObj.put("name", "AddValues");
-		datesAddObj.put("value", dates.toString());
-		datesAddObj.put("type", "other");
-		JSONArray datesInput = new JSONArray();
-		datesInput.put(datesAddObj);
-
-		JSONObject placesAddObj = new JSONObject();
-		placesAddObj.put("name", "AddValues");
-		placesAddObj.put("value", places.toString());
-		placesAddObj.put("type", "other");
-		JSONArray placesInput = new JSONArray();
-		placesInput.put(placesAddObj);
-	*/	
 		System.out.println(JSONUtil.prettyPrintJson(addValues.toString()));
 
 		
