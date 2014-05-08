@@ -70,12 +70,13 @@ public class Alignment implements OntologyUpdateListener {
 	private Node root = null;
 	
 	private NodeIdFactory nodeIdFactory;
+	private HashSet<IAlignmentSaver> savers;
 	
 	public Alignment(OntologyManager ontologyManager) {
 
 		this.ontologyManager = ontologyManager;
 		this.nodeIdFactory = new NodeIdFactory();
-
+		this.savers = new HashSet<IAlignmentSaver>();
 		this.ontologyManager.subscribeListener(this);
 
 		logger.debug("building initial graph ...");
@@ -573,6 +574,8 @@ public class Alignment implements OntologyUpdateListener {
 			logger.debug("total number of edges in steiner tree: " + this.steinerTree.edgeSet().size());
 		}
 		logger.debug("time to compute steiner tree: " + elapsedTimeSec);
+		
+		this.saveAlignment();
 	}
 
 	@Override
@@ -581,5 +584,18 @@ public class Alignment implements OntologyUpdateListener {
 		
 	}
 	
+	private void saveAlignment() {
+		for(IAlignmentSaver saver : savers) {
+			try {
+				saver.saveAlignment(this);
+			} catch(Exception e) {
+				logger.error("Error saving alignment", e);
+			}
+		}
+	}
+	
+	public void addSaver(IAlignmentSaver saver) {
+		this.savers.add(saver);
+	}
 	
 }

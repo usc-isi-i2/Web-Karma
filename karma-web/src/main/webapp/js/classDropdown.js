@@ -15,8 +15,9 @@ var ClassDropdownMenu = (function() {
     		   	        [ "Add Outgoing Link", addOutgoingLink],
     		   	        [ "divider" , null ],
     		   	        [ "Export CSV" , exportCSV ],
-    		   			[	"Invoke Reconciliation Service" , invokeReconciliationService ],
-    		   			[ "Invoke M/L Service", invokeMLService ],
+    		   	        [ "Export JSON" , exportJSON ],
+    		   			[ "Invoke Reconciliation Service" , invokeReconciliationService ],
+    		   			[ "Invoke Table Service", invokeMLService ],
     		   			
     		   			
     		   	];
@@ -50,6 +51,39 @@ var ClassDropdownMenu = (function() {
     		ExportCSVModelDialog.getInstance().show(worksheetId,alignmentId,columnId,"exportCSV");
     	};
     	
+    	function exportJSON() {
+    		console.log("exportJSON");
+    		var info = new Object();
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "ExportJSONCommand";
+
+            var newInfo = [];
+            newInfo.push(getParamObject("alignmentNodeId", columnId, "other"));
+            newInfo.push(getParamObject("worksheetId", worksheetId, "other"));
+
+            info["newInfo"] = JSON.stringify(newInfo);
+
+            showLoading(worksheetId);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        parse(json);
+                        hideLoading(worksheetId);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while exporting JSON!" + textStatus);
+                        hideLoading(worksheetId);
+                    }
+            });
+    	}
+
     	function invokeReconciliationService() {
     		console.log("invokeReconciliationService");
     		var info = new Object();

@@ -392,46 +392,8 @@ var ExportCSVModelDialog = (function() {
     		//Initialize what happens when we show the dialog
     		dialog.on('show.bs.modal', function (e) {
 				hideError();
+				$("body").css("cursor", "auto");
 				
-				var url2 = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_data';
-				$("input#csvDataEndPoint").val(url2);	    		
-				fetchGraphsFromTripleStore(url2, $('#csvDataGraphList') );
-				
-				//$("input#csvSPAQRLEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-				//window.csvSPAQRLEndPoint = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_models';
-				//fetchGraphsFromTripleStore(window.csvSPAQRLEndPoint, $("#csvModelGraphList"));
-				
-				//Initialize handler for ExportCSV button
-				$('#btnExportCSV', dialog).unbind('click');
-				
-				if (operatingMode === "invokeMLService") {
-					$('#exportCSV_ModelTitle').html('Invoke Machine Learning Service');
-					$('#btnExportCSV', dialog).html('Invoke');
-					$('div.formDivDMUrl', dialog).show();
-					
-					//Initialize handler for ExportCSV button
-					$('#btnExportCSV', dialog).on('click', function (e) {
-						performInvokeMLService();
-					});
-					
-				} else {
-					$('#exportCSV_ModelTitle').html('Export CSV');
-					$('#btnExportCSV', dialog).html('Export');
-					$('div.formDivDMUrl', dialog).hide();
-					
-					//Initialize handler for ExportCSV button
-					$('#btnExportCSV', dialog).on('click', function (e) {
-						performExportCSV();
-					});
-				}
-				
-				getColumnList();
-				//$('#csvDialogContent').show();
-				$('#csvDialogColumnList').html('');
-				//$('#csvDialogColumnList').hide();
-				//$('#btnExportCSV').hide();
-				
-				$('#csvDataDialogContent').hide();
 				
 			});
     		
@@ -467,6 +429,7 @@ var ExportCSVModelDialog = (function() {
     		   	dataType : "json",
     		   	complete : 
     		   		function (xhr, textStatus) {
+                        console.log("got graphs ..");
     		   			var json = $.parseJSON(xhr.responseText);
     		   			graphs = [];
     		   			if(json["elements"] && json["elements"][0]['graphs']) {
@@ -490,12 +453,10 @@ var ExportCSVModelDialog = (function() {
     	function performInvokeMLService() {
     		
     		var graphUri = $('#csvDataGraphList').val().trim();
-    		//graphUri = (graphUri == '000') ? '' : graphUri;
     		
     		var list = {};
 			$('#csv_columns').find('li').each(function(index){
 				list[index] = {'name' : $(this).attr('rel'), 'url':$(this).attr('name') };
-//				list[index] = $(this).attr('name');
 			});
 			
     		var info = new Object();
@@ -526,10 +487,8 @@ var ExportCSVModelDialog = (function() {
     		    		info["workspaceId"] = $.workspaceGlobalInformation.id;
     		    		info["worksheetId"] = worksheetId;
     		    		info["command"] = "InvokeDataMiningServiceCommand";
-//    		    		info["dataMiningURL"] = 'http://54.201.249.192:8081/train';
     		    		info["dataMiningURL"] = dmURL;
     		    		info["csvFileName"] = fileName;
-    		    		info["isTestingPhase"] = $('#testingService').is(':checked');
     		    		
     		    		
     		    		$.ajax({
@@ -540,18 +499,22 @@ var ExportCSVModelDialog = (function() {
     		    		   	complete : 
     		    		   		function (xhr, textStatus) {
     		    		   			var json = $.parseJSON(xhr.responseText);
-    		    		   			if(json["elements"][0]['updateType'] && json["elements"][0]['updateType']=="KarmaError") {
-    		    		   				alert("Error while invoking service");
-    		    		   				hide();
-    		    		   			} else if(json["elements"][0]['isTestingPhase'] && json["elements"][0]['isTestingPhase'] == true) {
-    		    		   				$('#DMresults').html(json["elements"][0]['results']);
-    		    		   				$('#DMresults').show();
-    		    		   			}
-    		    		   			else {
-    		    		   				var model_name = json["elements"][0]['model_name'];
-    		    		   				hide();
-    		    		   				alert('Model Name: '+model_name);
-    		    		   			}
+    		    		   			parse(json);
+    		    		   			hide();
+    		    		   			alert("This results are loaded in a new worksheet");
+//    		    		   			if(json["elements"][0]['updateType'] && json["elements"][0]['updateType']=="KarmaError") {
+//    		    		   				alert("Error while invoking service");
+//    		    		   				hide();
+//    		    		   			} else if(json["elements"][0]['status'] && json["elements"][0]['status'] == true) {
+//    		    		   				hide();
+////    		    		   				$('#DMresults').html(json["elements"][0]['results']);
+////    		    		   				$('#DMresults').show();
+//    		    		   			}
+//    		    		   			else {
+//    		    		   				var model_name = json["elements"][0]['model_name'];
+//    		    		   				hide();
+//    		    		   				alert('Model Name: '+model_name);
+//    		    		   			}
     		    		   			
     		    			   	},
     		    			error :
@@ -610,12 +573,15 @@ var ExportCSVModelDialog = (function() {
     		var url2 = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_data';
 			fetchGraphsFromTripleStore(url2, $('#csvDataGraphList') );
     		$('#csvDataDialogContent').show();
+            console.log("initCSVDataDialog..");
+            
     	}
     	
     	// this method will fetch the columns that are reachable from this node
-    	function getColumnList() {
+    	function getColumnList(showCallback, dialog) {
 //    		var graphUri = $('#csvModelGraphList').val().trim();
 //    		graphUri = (graphUri == '000') ? '' : graphUri; 
+            console.log("getting columns ..");
     		var info = new Object();
     		info["workspaceId"] = $.workspaceGlobalInformation.id;
     		info["worksheetId"] = worksheetId;
@@ -650,6 +616,7 @@ var ExportCSVModelDialog = (function() {
     		   				content += '<li style="padding=4px;" name="'+list[x]['url']+'" rel="'+list[x]['name']+'">'
     		   					+ list[x]['name']+' &nbsp; <a class="icon-remove pull-right">X</a>'  
     		   					+'</li>';
+                            console.log("done fetching columns..");
     		   			}
     		   			ele.html(content + '</ol>');
     		   			$("#csv_columns").delegate('a.icon-remove','click',function(event){
@@ -660,6 +627,7 @@ var ExportCSVModelDialog = (function() {
     		   			$("#csv_columns").sortable();
     		   			
     		   			initCSVDataDialog();
+                        showCallback(dialog);
     		   	}	   
     		});
     	}
@@ -681,7 +649,62 @@ var ExportCSVModelDialog = (function() {
         	alignmentNodeId = algnId;
         	columnId = colId;
         	operatingMode = mode;
-        	dialog.modal({keyboard:true, show:true, backdrop:'static'});
+
+            // here we need to get the list of columns before showing the dialog
+            $("body").css("cursor", "progress");
+
+            console.log("showing modal..");
+
+            // var url2 = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_data';
+            // $("input#csvDataEndPoint").val(url2);               
+            // fetchGraphsFromTripleStore(url2, $('#csvDataGraphList') );
+            
+            //$("input#csvSPAQRLEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+            //window.csvSPAQRLEndPoint = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_models';
+            //fetchGraphsFromTripleStore(window.csvSPAQRLEndPoint, $("#csvModelGraphList"));
+            
+            //Initialize handler for ExportCSV button
+            $('#btnExportCSV', dialog).unbind('click');
+            
+            if (operatingMode === "invokeMLService") {
+                $('#exportCSV_ModelTitle').html('Invoke Table Service');
+                $('#btnExportCSV', dialog).html('Invoke');
+                $('div.formDivDMUrl', dialog).show();
+                
+                //Initialize handler for ExportCSV button
+                $('#btnExportCSV', dialog).on('click', function (e) {
+                    performInvokeMLService();
+                });
+                
+            } else {
+                $('#exportCSV_ModelTitle').html('Export CSV');
+                $('#btnExportCSV', dialog).html('Export');
+                $('div.formDivDMUrl', dialog).hide();
+                
+                //Initialize handler for ExportCSV button
+                $('#btnExportCSV', dialog).on('click', function (e) {
+                    performExportCSV();
+                });
+            }
+            
+            $('#csvDialogColumnList').html('');
+            $('#csvDataDialogContent').hide();
+
+            var showDialog = function(dialog){
+                console.log("callback....executing......");
+                dialog.modal({keyboard:true, show:true, backdrop:'static'});
+            };
+
+            getColumnList(showDialog, dialog);
+            //$('#csvDialogContent').show();
+            
+            //$('#csvDialogColumnList').hide();
+            //$('#btnExportCSV').hide();
+            
+            
+
+
+        	
         };
         
         
@@ -713,40 +736,7 @@ var FoldDialog = (function() {
     	var dialog = $("#foldDialog");
     	var worksheetId;
     	
-    	function init() {
-    		//Initialize what happens when we show the dialog
-    		dialog.on('show.bs.modal', function (e) {
-				hideError();
-				var worksheetPanel = $("div.Worksheet#" + worksheetId);
-		        var tableHeaderContainer = $("div.table-header-container", worksheetPanel);
-		        var headersTable = $("table.wk-table", tableHeaderContainer);
-		        var headersRow = $("tr.wk-row-odd", headersTable);
-		        
-		        var dialogContent = $("#foldDialogColumns", dialog);
-		        dialogContent.empty();
-		        
-			    headersRow.each(function (index, element) {
-		            var a = element.children;
-		            
-		            for (var i = 0; i < a.length; i++) {
-		                var cell = $("div.tableDropdown", a[i]);
-		                var name = $("a.dropdown-toggle", cell)
-		                console.log(name.text());
-		                if (name.html().indexOf("td") == -1) {
-		                	var row = $("<div>").addClass("checkbox");
-		                	var label = $("<label>").text(name.text());
-		                	var input = $("<input>")
-											.attr("type", "checkbox")
-											.attr("id", "selectcolumns")
-											.attr("value", element.cells[i].id);
-		                	label.append(input);
-		                	row.append(label);
-		                	dialogContent.append(row);
-		                }
-		            }
-		        });
-			});
-			
+    	function init() {			
 			//Initialize handler for Save button
 			//var me = this;
 			$('#btnSave', dialog).on('click', function (e) {
@@ -754,6 +744,33 @@ var FoldDialog = (function() {
 				saveDialog(e);
 			});    
     	}
+
+        function getHeaders() {
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["hNodeId"] = "";
+            info["command"] = "GetHeadersCommand";
+            var headers;
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                async : false,
+                complete :
+                    function (xhr, textStatus) {
+                        var json = $.parseJSON(xhr.responseText);
+                        headers = json.elements[0];
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while getting worksheet headers!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            });
+            return headers;
+        }
     	
 		function hideError() {
 			$("div.error", dialog).hide();
@@ -772,7 +789,10 @@ var FoldDialog = (function() {
 	            var checkbox = checkboxes[i];
 	            checked.push(getParamObject("checked", checkbox['value'], "other"));    
 	        }
-	        
+	        if (checked.length == 0) {
+                hide();
+                return;
+            }
 	        //console.log(checked);
 	        var info = new Object();
 	        info["worksheetId"] = worksheetId;
@@ -814,6 +834,29 @@ var FoldDialog = (function() {
         
         function show(wsId) {
         	worksheetId = wsId;
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                var dialogContent = $("#foldDialogColumns", dialog);
+                dialogContent.empty();
+                var headers = getHeaders();
+                //console.log(headers);
+                for (var i = 0; i < headers.length; i++) {
+
+                    var columnName = headers[i].ColumnName;
+                    var id = headers[i].HNodeId;
+                    //console.log(columnName);
+                    //console.log(id);
+                    var row = $("<div>").addClass("checkbox");
+                  var label = $("<label>").text(columnName);
+                  var input = $("<input>")
+                                        .attr("type", "checkbox")
+                                .attr("id", "selectcolumns")
+                                .attr("value", id)
+                  label.append(input);
+                  row.append(label);
+                  dialogContent.append(row);
+                }
+            });
         	dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
         
@@ -835,4 +878,286 @@ var FoldDialog = (function() {
     return {
     	getInstance : getInstance
     };
+})();
+
+var OrganizeColumnsDialog = (function() {
+    var instance = null;
+    
+    function PrivateConstructor() {
+    	var dialog = $("#organizeColumnsDialog");
+    	var _worksheetId;
+
+    	
+    	function init() {
+    		//Initialize what happens when we show the dialog
+			dialog.on('show.bs.modal', function (e) {
+				$(".error").hide();
+				
+				var wsColumnsJson = getAllWorksheetHeaders();
+				console.log(window.JSON.stringify(wsColumnsJson));
+				
+                var columns = $('#organizeColumns_body', dialog);
+                var nestableDiv = $("#nestable", columns);
+                nestableDiv.empty();
+                createColumnList(wsColumnsJson, nestableDiv, true);
+                nestableDiv.nestable({
+                    group: 1
+                })
+//                .on("change", function(e) {
+//                	var list   = e.length ? e : $(e.target);
+//                    if (window.JSON) {
+//                        console.log(window.JSON.stringify(list.nestable('serialize')));
+//                    } else {
+//                       alert('JSON browser support required for this functionality.');
+//                    }
+//                })
+                ;
+			});
+			
+			//Initialize handler for Save button
+			//var me = this;
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e);
+                dialog.modal('hide');
+			});
+    	}
+    	
+    	function getAllWorksheetHeaders() {
+    		//console.log(checked);
+	        var info = new Object();
+	        info["worksheetId"] = _worksheetId;
+	        info["workspaceId"] = $.workspaceGlobalInformation.id;
+	        info["command"] = "GetAllWorksheetHeadersCommand";
+	        
+	        showLoading(info["worksheetId"]);
+	        var headers = [];
+	        var returned = $.ajax({
+	            url: "RequestController",
+	            type: "POST",
+	            data : info,
+	            dataType : "json",
+	            async : false,
+	            complete :
+	                function (xhr, textStatus) {
+		            	var json = $.parseJSON(xhr.responseText);
+		            	var updates = json.elements;
+		            	for(var i=0; i<updates.length; i++) {
+		            		var update = updates[i];
+		                	if(update.updateType == "AllWorksheetHeadersUpdate") {
+		                		headers = update.columns;
+		                		break;
+		                	}
+		                }
+	                    hideLoading(info["worksheetId"]);
+	                },
+	            error :
+	                function (xhr, textStatus) {
+	                    alert("Error occured while getting worksheet headers!" + textStatus);
+	                    hideLoading(info["worksheetId"]);
+	                }
+	        });
+	        return headers;
+    	}
+    	
+		function createColumnList(json, outer, parentVisible) {
+			var list = $("<ol>").addClass("dd-list");
+			outer.append(list);
+			$.each(json, function(i, element) {
+				var li = $("<li>").addClass("dd-item")
+							.attr("data-name", element.name)
+							.attr("data-id", element.id)
+							.attr("data-visible", element.visible)
+							.attr("data-hideable", element.hideable)
+							.attr("data-toggle", "tooltip")
+							.attr("data-placement", "auto bottom")
+							;
+				var eye = $("<span>").addClass("glyphicon").css("margin-right", "5px");
+				if(element.visible) {
+					eye.addClass("glyphicon-eye-open")
+				} else {
+					eye.addClass("glyphicon-eye-close");
+				}
+				var eyeOuter = $("<span>");
+				eyeOuter.append(eye);
+				var div = $("<div>").addClass("dd-handle").append(eyeOuter).append(element.name);
+				if(!element.visible) {
+					div.addClass("dd-handle-hide");
+					li.attr("title", element.name)
+					li.addClass("dd-item-hidden");
+				}
+				if(!element.hideable) {
+					eye.css("color", "#DDDDDD");
+					eye.addClass("glyphicon-noclick");
+				}
+				
+				list.append(li);
+				li.append(div);
+			
+				if(element.children) {
+					if(element.children.length > 0)
+						createColumnList(element.children, li, element.visible);
+				}
+			});
+		
+			$(".dd-item-hidden").tooltip(); //activate the bootstrap tooltip
+		}
+		
+        function saveDialog(e) {
+        	console.log("Save clicked");
+        	var columns = $('#organizeColumns_body', dialog);
+            var nestableDiv = $("#nestable", columns);
+            var columnsJson = nestableDiv.nestable('serialize');
+            
+            var info = new Object();
+		    info["worksheetId"] = _worksheetId;
+		    info["workspaceId"] = $.workspaceGlobalInformation.id;
+		    info["command"] = "OrganizeColumnsCommand";
+
+		    var newInfo = [];
+		    newInfo.push(getParamObject("worksheetId", _worksheetId, "worksheetId"));
+		    newInfo.push(getParamObject("orderedColumns", columnsJson, "orderedColumns"));
+		    info["newInfo"] = JSON.stringify(newInfo);
+
+		    showLoading(info["worksheetId"]);
+		    var returned = $.ajax({
+		        url: "RequestController",
+		        type: "POST",
+		        data : info,
+		        dataType : "json",
+		        complete :
+		            function (xhr, textStatus) {
+		                // alert(xhr.responseText);
+		                var json = $.parseJSON(xhr.responseText);
+		                parse(json);
+		                hideLoading(info["worksheetId"]);
+		            },
+		        error :
+		            function (xhr, textStatus) {
+		                alert("Error occured while organizing columns " + textStatus);
+		                hideLoading(info["worksheetId"]);
+		            }
+		    });
+		    
+        };
+        
+        function show(worksheetId) {
+        	_worksheetId = worksheetId;
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        return {	//Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    	
+})();
+
+
+
+var PublishJSONDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#publishJSONDialog");
+    	var worksheetId;
+    	
+    	function init() {
+    		//Initialize what happens when we show the dialog
+    		dialog.on('show.bs.modal', function (e) {
+				hideError();
+			});
+			
+			//Initialize handler for Save button
+			//var me = this;
+			$('#btnYes', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e, true);
+			});
+			$('#btnNo', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e, false);
+			});
+			    
+    	}
+    	
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError() {
+			$("div.error", dialog).show();
+		}
+        
+        function saveDialog(e, importAsWorksheet) {
+        	hide();
+        	
+        	var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["importAsWorksheet"] = importAsWorksheet;
+            info["command"] = "PublishJSONCommand";
+
+            showLoading(info["worksheetId"]);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        parse(json);
+                        hideLoading(info["worksheetId"]);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while exporting spatial data!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            });
+        };
+        
+        function hide() {
+        	dialog.modal('hide');
+        }
+        
+        function show(wsId) {
+        	worksheetId = wsId;
+        	dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        
+        return {	//Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    
 })();

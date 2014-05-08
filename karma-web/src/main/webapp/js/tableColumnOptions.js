@@ -1,28 +1,30 @@
-function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
+function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	 
 	var worksheetId = wsId;
 	var columnTitle = wsColumnTitle;
 	var columnId = wsColumnId;
 	
 	var options = [
-	        //Title, function to call, needs file upload     
-	        [ "Set Semantic Type", setSemanticType],
-	        [ "divider", null],
-			[	"Add Column" , addColumn ],
-			[ "Rename", renameColumn ],
-			[ "Split Column", splitColumn ],
-			[ "Add Row", addRow],
-			[ "divider" , null ],
-			["Extract Entities",extractEntities],
-			[ "PyTransform" , pyTransform ],
-			[ "Transform", transform],
-			[ "divider" , null ],
+	               {name:"Set Semantic Type", func:setSemanticType, leafOnly:true},
+	               {name:"divider", leafOnly:true},
+
+	               {name:"Add Column", func:addColumn, leafOnly:false},
+	               {name:"Rename", func:renameColumn, leafOnly:true},
+	               {name:"Split Column", func:splitColumn, leafOnly:true},
+	               {name:"Add Row", func:addRow, leafOnly:false},
+	               {name:"divider" , leafOnly:false},
 			
-			[ "Invoke Service" , invokeService ],
-			[ "Show Chart", showChart],
-			//[ "Apply R2RML Model" , applyR2RMLModel, true, "applyWorksheetHistory" ],
-			//[ "divider" , null ],
+	               {name:"Extract Entities", func:extractEntities, leafOnly:true},
+	               {name:"PyTransform" , func:pyTransform, leafOnly:true},
+	               {name:"Transform", func:transform, leafOnly:true},
+	               {name:"divider" , leafOnly:true},
 			
+	               {name:"Invoke Service" , func:invokeService, leafOnly:true},
+	               {name:"Show Chart", func:showChart, leafOnly:true},
+	               {name:"divider" , leafOnly:true},
+	               
+	               {name:"Group By", func:GroupBy, leafOnly:false},
+	               {name:"Unfold", func:Unfold, leafOnly:false},
 	];
 	
 	function hideDropdown() {
@@ -48,7 +50,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	    
 	    info["newInfo"] = JSON.stringify(newInfo);
 
-	    //console.log(info["worksheetId"]);
+	    // console.log(info["worksheetId"]);
 	    showLoading(info["worksheetId"]);
 
 	    var returned = $.ajax({
@@ -58,7 +60,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	        dataType : "json",
 	        complete :
 	            function (xhr, textStatus) {
-	                //alert(xhr.responseText);
+	                // alert(xhr.responseText);
 	                var json = $.parseJSON(xhr.responseText);
 	                parse(json);
 	                hideLoading(info["worksheetId"]);
@@ -77,28 +79,11 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	    return false;
 	}
 	
+	
 	function extractEntities() {
-		var info = new Object();
-        info["workspaceId"] = $.workspaceGlobalInformation.id;
-        info["worksheetId"] = worksheetId;
-		info["hNodeId"] = columnId;
-	    info["hTableId"] = "";
-        info["command"] = "ExtractEntitiesCommand";
-		var returned = $.ajax({
-    			   	url: "RequestController",
-    			   	type: "POST",
-    			   	data : info,
-    			   	dataType : "json",
-    			   	complete :
-    			   		function (xhr, textStatus) {
-    			    		var json = $.parseJSON(xhr.responseText);
-    			    		parse(json);
-    				   	},
-    				error :
-    					function (xhr, textStatus) {
-    			   			alert("Error occured while generating RDF!" + textStatus);
-    				   	}
-    			});	
+		hideDropdown();
+		ExtractEntitiesDialog.getInstance().show(worksheetId, columnId);
+        return false;
 	}
 	
 	function pyTransform() {
@@ -154,51 +139,71 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 	function showChart() {
 		showChartForColumn(worksheetId, columnId);
 	}
+
+	function GroupBy () {
+		//console.log("Group By: " + worksheetTitle);
+		hideDropdown();
+		GroupByDialog.getInstance().show(worksheetId, columnId);
+  }
+
+  function Unfold () {
+		//console.log("Group By: " + worksheetTitle);
+		hideDropdown();
+		UnfoldDialog.getInstance().show(worksheetId, columnId);
+  }
 	
 	this.generateJS = function() {
 		var dropdownId = "columnOptionsButton" + worksheetId + "_" + columnId;
+		var span = $("<span>")
+						.attr("display", "inline-block")
+						.addClass("tableDropdown")
+						.addClass("dropdown")
+						.append($("<a>")
+							.attr("href", "#")
+							.addClass("dropdown-toggle")
+							.addClass("ColumnTitle")
+							.attr("id", dropdownId)
+							.data("worksheetId", worksheetId)
+							.attr("data-toggle", "dropdown")
+							.text(columnTitle)
+							.append($("<span>").addClass("caret")
+							)
+						);
+		
 		var div = 
 			$("<div>")
 				.attr("id", "TableOptionsDiv")
 				.data("worksheetId", worksheetId)
-				.addClass("tableDropdown")
-				.addClass("dropdown")
-				.append($("<a>")
-						.attr("href", "#")
-						.addClass("dropdown-toggle")
-						.addClass("ColumnTitle")
-						.attr("id", dropdownId)
-						.data("worksheetId", worksheetId)
-						.attr("data-toggle", "dropdown")
-						.text(columnTitle)
-						.append($("<span>").addClass("caret")
-						)
-				);
-                
-
+				.append(span)
+				;     
+		
 		var ul = $("<ul>").addClass("dropdown-menu");
 		ul.attr("role", "menu")
 			.attr("aria-labelledby", dropdownId);
-		//console.log("There are " + options.length + " menu items");
+		// console.log("There are " + options.length + " menu items");
 		for(var i=0; i<options.length; i++) {
 			var option = options[i];
-			var needFile = false;
-			if(option.length > 2 && option[2] == true)
-				needFile = true;
+			
+			if(option.leafOnly ==true && isLeafNode == false) {
+				continue;
+			}
+			
+			var needFile = option.useFileUpload;
+			
 			var li = $("<li>");
 			//console.log("Got option" +  option);
-			var title = option[0];
+			var title = option.name;
 			if(title == "divider")
 				li.addClass("divider");
 			else {
-				var func = option[1];
+				var func = option.func;
 				var a = $("<a>")
 						.attr("href", "#");
 				if(needFile) {
 					//<form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form>
 					a.addClass("fileinput-button");
 					var form = $("<form>")
-								.attr("id", option[3])
+								.attr("id", option.uploadDiv + "_" + worksheetId)
 								.attr("action", "ImportFileCommand")
 								.attr("method", "POST")
 								.attr("enctype", "multipart/form-data")
@@ -210,14 +215,26 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle) {
 					a.append(form);
 					window.setTimeout(func, 1000);
 				} else {
-					a.text(title);
-					a.click(func);
+					if(option.showCheckbox) {
+						var checkbox = $("<input>").attr("type", "checkbox");
+						if(option.defaultChecked)
+							checkbox.attr("checked","checked");
+						var label = $("<span>").append(checkbox).append("&nbsp;").append(title);
+						a.append(label);
+						a.click(func);
+					} else {
+						a.text(title);
+						a.click(func);
+					}
+					
 				}
 				li.append(a);
 			}
+			if(option.initFunc)
+				option.initFunc();
 			ul.append(li);
 		};
-		div.append(ul);
+		span.append(ul);
 		return div;
 	};
 };
@@ -232,15 +249,15 @@ var AddColumnDialog = (function() {
     	var worksheetId, columnId;
     	
     	function init() {
-    		//Initialize what happens when we show the dialog
+    		// Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function (e) {
 				hideError();
                 $("input", dialog).val("");
                 $("#columnName", dialog).focus();
 			});
 			
-			//Initialize handler for Save button
-			//var me = this;
+			// Initialize handler for Save button
+			// var me = this;
 			$('#btnSave', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
@@ -287,7 +304,8 @@ var AddColumnDialog = (function() {
 		    info["newColumnName"] = "new_column";
 		    info["command"] = "AddColumnCommand";
 
-		    var newInfo = [];	// Used for commands that take JSONArray as input
+		    var newInfo = [];	// Used for commands that take JSONArray as
+								// input
 		    newInfo.push(getParamObject("hNodeId", columnId,"hNodeId"));
 		    newInfo.push(getParamObject("hTableId", "","other"));
 		    newInfo.push(getParamObject("worksheetId", worksheetId,"worksheetId"));
@@ -295,7 +313,7 @@ var AddColumnDialog = (function() {
 		    newInfo.push(getParamObject("defaultValue", defaultValue,"other"));
 		    info["newInfo"] = JSON.stringify(newInfo);
 
-		    //console.log(info["worksheetId"]);
+		    // console.log(info["worksheetId"]);
 		    showLoading(info["worksheetId"]);
 
 		    var returned = $.ajax({
@@ -305,7 +323,7 @@ var AddColumnDialog = (function() {
 		        dataType : "json",
 		        complete :
 		            function (xhr, textStatus) {
-		                //alert(xhr.responseText);
+		                // alert(xhr.responseText);
 		                var json = $.parseJSON(xhr.responseText);
 		                parse(json);
 		                hideLoading(info["worksheetId"]);
@@ -325,7 +343,7 @@ var AddColumnDialog = (function() {
         };
         
         
-        return {	//Return back the public methods
+        return {	// Return back the public methods
         	show : show,
         	init : init
         };
@@ -358,15 +376,15 @@ var RenameColumnDialog = (function() {
     	var worksheetId, columnId;
     	
     	function init() {
-    		//Initialize what happens when we show the dialog
+    		// Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function (e) {
 				hideError();
                 $("input", dialog).val("");
                 $("#columnName", dialog).focus();
 			});
 			
-			//Initialize handler for Save button
-			//var me = this;
+			// Initialize handler for Save button
+			// var me = this;
 			$('#btnSave', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
@@ -438,7 +456,7 @@ var RenameColumnDialog = (function() {
         };
         
         
-        return {	//Return back the public methods
+        return {	// Return back the public methods
         	show : show,
         	init : init
         };
@@ -468,15 +486,15 @@ var SplitColumnDialog = (function() {
     	var worksheetId, columnId;
     	
     	function init() {
-    		//Initialize what happens when we show the dialog
+    		// Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function (e) {
 				hideError();
                 $("input", dialog).val("");
                 $("#columnSplitDelimiter", dialog).focus();
 			});
 			
-			//Initialize handler for Save button
-			//var me = this;
+			// Initialize handler for Save button
+			// var me = this;
 			$('#btnSave', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
@@ -550,7 +568,7 @@ var SplitColumnDialog = (function() {
         };
         
         
-        return {	//Return back the public methods
+        return {	// Return back the public methods
         	show : show,
         	init : init
         };
@@ -590,7 +608,7 @@ var PyTransformDialog = (function() {
     		  editor.getSession().setValue("return getValue(\"state\")");
     		    
     		    
-    		//Initialize what happens when we show the dialog
+    		// Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function (e) {
 				hideError();
 				var hNode = $("td#" + columnId);
@@ -602,15 +620,15 @@ var PyTransformDialog = (function() {
                
                 $("#pythonTransformEditColumnName").html(columnName);
                 $("#pythonTransformNewColumnName").val("");
-                //$("#pythonTransformNewColumnName").attr('disabled','disabled');
+                // $("#pythonTransformNewColumnName").attr('disabled','disabled');
                 
                 $("#btnError", dialog).button('disable');
                 $("input").removeAttr('disabled');
                 $("#pythonPreviewResultsTable").hide();
 			});
 			
-			//Initialize handler for Save button
-			//var me = this;
+			// Initialize handler for Save button
+			// var me = this;
 			$('#btnSave', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
@@ -643,7 +661,8 @@ var PyTransformDialog = (function() {
         		if(hNode.data("columnDerivedFrom"))
         			submitEditPythonTransform();
         		else {
-        			//alert("We need to handle this extension of python transform");
+        			// alert("We need to handle this extension of python
+					// transform");
         			submitAddPythonTransform(true);
         		}
         	} else {
@@ -775,7 +794,8 @@ var PyTransformDialog = (function() {
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
             newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
             newInfo.push(getParamObject("errorDefaultValue", $("#pythonTransformErrorDefaultValue").val(), "other"));
-           // newInfo.push(getParamObject("useExistingColumnName", useExistingColumnName, "useExistingColumnName"));
+           // newInfo.push(getParamObject("useExistingColumnName",
+			// useExistingColumnName, "useExistingColumnName"));
             info["newInfo"] = JSON.stringify(newInfo);
 
             showLoading(worksheetId)
@@ -815,7 +835,7 @@ var PyTransformDialog = (function() {
         };
         
         
-        return {	//Return back the public methods
+        return {	// Return back the public methods
         	show : show,
         	init : init
         };
@@ -835,3 +855,395 @@ var PyTransformDialog = (function() {
     	
     
 })();
+
+var ExtractEntitiesDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#extractEntitiesDialog");
+    	var worksheetId, columnId;
+    
+    	function init() {
+    		// Initialize what happens when we show the dialog
+			dialog.on('show.bs.modal', function (e) {
+				console.log("dialog displayed");
+				hideError();
+                $('#extractionService_URL').val("");
+			});
+			
+			// Initialize handler for Save button
+			// var me = this;
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e);
+				console.log("dialog hidden after save");
+			});
+    	}
+				
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError() {
+			$("div.error", dialog).show();
+		}
+        
+        function saveDialog(e) {
+        	console.log("Save clicked");
+    		var info = new Object();
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["worksheetId"] = worksheetId;
+    		info["hNodeId"] = columnId;
+    	    info["hTableId"] = "";
+            info["command"] = "ExtractEntitiesCommand";
+            info["extractionURL"] = $('#extractionService_URL').val();
+            
+		    dialog.modal('hide');
+
+		    // console.log(info["worksheetId"]);
+		    showLoading(info["worksheetId"]);
+
+		    var returned = $.ajax({
+			   	url: "RequestController",
+			   	type: "POST",
+			   	data : info,
+			   	dataType : "json",
+			   	complete :
+			   		function (xhr, textStatus) {
+			    		var json = $.parseJSON(xhr.responseText);
+			    		parse(json);
+			    		hideLoading(info["worksheetId"]);
+				   	},
+				error :
+					function (xhr, textStatus) {
+			   			alert("Error occured while extracting entities!" + textStatus);
+			   			hideLoading(info["worksheetId"]);
+				   	}
+			});	
+        };
+        
+        function show(wsId, colId) {
+        	worksheetId = wsId;
+        	columnId = colId;
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        
+        return {	// Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    	
+    
+})();
+
+
+var GroupByDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+        var dialog = $("#groupByDialog");
+        var worksheetId, columnId;
+        function init() {
+            
+            //Initialize handler for Save button
+            //var me = this;
+            $('#btnSave', dialog).on('click', function (e) {
+                e.preventDefault();
+                saveDialog(e);
+            });    
+        }
+        
+        function hideError() {
+            $("div.error", dialog).hide();
+        }
+        
+        function showError() {
+            $("div.error", dialog).show();
+        }
+        
+        function saveDialog(e) {
+            console.log("Save clicked");
+            
+            var checkboxes = dialog.find(":checked");
+            var checked = [];
+            for (var i = 0; i < checkboxes.length; i++) {
+                var checkbox = checkboxes[i];
+                checked.push(getParamObject("checked", checkbox['value'], "other"));    
+            }
+            if (checked.length == 0) {
+            	hide();
+            	return;
+            }
+            //console.log(checked);
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "GroupByCommand";
+
+            var newInfo = [];
+            newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+		    		newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
+            newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
+            info["newInfo"] = JSON.stringify(newInfo);
+
+            showLoading(info["worksheetId"]);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        console.log(json);
+                        parse(json);
+                        hideLoading(info["worksheetId"]);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while generating the automatic model!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            });
+            
+            hide();
+        };
+        
+        function hide() {
+            dialog.modal('hide');
+        }
+        function getHeaders() {
+        	var info = new Object();
+	        info["worksheetId"] = worksheetId;
+	        info["workspaceId"] = $.workspaceGlobalInformation.id;
+	        info["hNodeId"] = columnId;
+	        info["command"] = "GetHeadersCommand";
+	        var headers;
+	        var returned = $.ajax({
+	            url: "RequestController",
+	            type: "POST",
+	            data : info,
+	            dataType : "json",
+	            async : false,
+	            complete :
+	                function (xhr, textStatus) {
+		            	var json = $.parseJSON(xhr.responseText);
+		            	headers = json.elements[0];
+	                },
+	            error :
+	                function (xhr, textStatus) {
+	                    alert("Error occured while getting worksheet headers!" + textStatus);
+	                    hideLoading(info["worksheetId"]);
+	                }
+	        });
+	        return headers;
+        }
+        function show(wsId, cId) {
+            worksheetId = wsId;
+            columnId = cId;
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                var dialogContent = $("#groupByDialogColumns", dialog);
+                dialogContent.empty();
+                var headers = getHeaders();
+                //console.log(headers);
+                for (var i = 0; i < headers.length; i++) {
+
+                	var columnName = headers[i].ColumnName;
+                	var id = headers[i].HNodeId;
+                	//console.log(columnName);
+                	//console.log(id);
+                	var row = $("<div>").addClass("checkbox");
+                  var label = $("<label>").text(columnName);
+                  var input = $("<input>")
+                      					.attr("type", "checkbox")
+                                .attr("id", "selectcolumns")
+                                .attr("value", id);
+                  label.append(input);
+                  row.append(label);
+                  dialogContent.append(row);
+                }
+            });
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        return {    //Return back the public methods
+            show : show,
+            init : init
+        };
+    };
+
+    function getInstance() {
+        if( ! instance ) {
+            instance = new PrivateConstructor();
+            instance.init();
+        }
+        return instance;
+    }
+   
+    return {
+        getInstance : getInstance
+    };
+})();
+
+var UnfoldDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+        var dialog = $("#unfoldDialog");
+        var worksheetId, columnId;
+        function init() {
+            
+            //Initialize handler for Save button
+            //var me = this;
+            $('#btnSave', dialog).on('click', function (e) {
+                e.preventDefault();
+                saveDialog(e);
+            });    
+        }
+        
+        function hideError() {
+            $("div.error", dialog).hide();
+        }
+        
+        function showError() {
+            $("div.error", dialog).show();
+        }
+        
+        function saveDialog(e) {
+            console.log("Save clicked");
+            
+            var checkboxes = dialog.find(":checked");
+            if (checkboxes.length == 0) {
+            	hide();
+            	return;
+            }
+            var checked = checkboxes[0];
+            
+            //console.log(checked);
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "UnfoldCommand";
+            var newInfo = [];
+            newInfo.push(getParamObject("keyhNodeId", columnId, "other"));
+            newInfo.push(getParamObject("valuehNodeId", checked['value'], "other"));
+            newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+            info["newInfo"] = JSON.stringify(newInfo);
+            showLoading(info["worksheetId"]);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        console.log(json);
+                        parse(json);
+                        hideLoading(info["worksheetId"]);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while generating the automatic model!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            });
+            
+            hide();
+        };
+        
+        function hide() {
+            dialog.modal('hide');
+        }
+        function getHeaders() {
+        	var info = new Object();
+	        info["worksheetId"] = worksheetId;
+	        info["workspaceId"] = $.workspaceGlobalInformation.id;
+	        info["hNodeId"] = columnId;
+	        info["command"] = "GetHeadersCommand";
+	        var headers;
+	        var returned = $.ajax({
+	            url: "RequestController",
+	            type: "POST",
+	            data : info,
+	            dataType : "json",
+	            async : false,
+	            complete :
+	                function (xhr, textStatus) {
+		            	var json = $.parseJSON(xhr.responseText);
+		            	headers = json.elements[0];
+	                },
+	            error :
+	                function (xhr, textStatus) {
+	                    alert("Error occured while getting worksheet headers!" + textStatus);
+	                    hideLoading(info["worksheetId"]);
+	                }
+	        });
+	        return headers;
+        }
+        function show(wsId, cId) {
+            worksheetId = wsId;
+            columnId = cId;
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                var dialogContent = $("#unfoldDialogColumns", dialog);
+                dialogContent.empty();
+                var headers = getHeaders();
+                //console.log(headers);
+                for (var i = 0; i < headers.length; i++) {
+
+                	var columnName = headers[i].ColumnName;
+                	var id = headers[i].HNodeId;
+                	//console.log(columnName);
+                	//console.log(id);
+                	var row = $("<div>").addClass("radio");
+                  var label = $("<label>").text(columnName);
+                  var input = $("<input>")
+                      					.attr("type", "radio")
+                                .attr("id", "selectcolumns")
+                                .attr("value", id)
+                                .attr("name", "unfoldColumn");
+                  label.append(input);
+                  row.append(label);
+                  dialogContent.append(row);
+                }
+            });
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        return {    //Return back the public methods
+            show : show,
+            init : init
+        };
+    };
+
+    function getInstance() {
+        if( ! instance ) {
+            instance = new PrivateConstructor();
+            instance.init();
+        }
+        return instance;
+    }
+   
+    return {
+        getInstance : getInstance
+    };
+})();
+

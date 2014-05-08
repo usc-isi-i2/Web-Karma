@@ -38,10 +38,12 @@ import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.metadata.CRFModelMetadata;
 import edu.isi.karma.metadata.CSVMetadata;
 import edu.isi.karma.metadata.GraphVizMetadata;
+import edu.isi.karma.metadata.JSONMetadata;
 import edu.isi.karma.metadata.JSONModelsMetadata;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.ModelLearnerMetadata;
 import edu.isi.karma.metadata.OntologyMetadata;
+import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.R2RMLMetadata;
 import edu.isi.karma.metadata.RDFMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
@@ -74,11 +76,14 @@ public class KarmaServlet extends HttpServlet {
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}
+		
 		/* Check if any workspace id is set in cookies. */
-		boolean hasWorkspaceCookieId = request.getParameter(Arguments.hasPreferenceId.name()).equals("true");
+		boolean hasWorkspaceCookieId = false;
+		String hasPrefId = request.getParameter(Arguments.hasPreferenceId.name());
+		if(hasPrefId != null && hasPrefId.equals("true"))
+			hasWorkspaceCookieId = true;
 		Workspace workspace = null;
 		VWorkspace vwsp = null;
-		
 		
 		/* If set, pick the right preferences and CRF Model file */
 		if(hasWorkspaceCookieId) {
@@ -99,15 +104,20 @@ public class KarmaServlet extends HttpServlet {
 			metadataManager.register(new CRFModelMetadata(workspace));
 			metadataManager.register(new OntologyMetadata(workspace));
 			metadataManager.register(new JSONModelsMetadata(workspace));
+			metadataManager.register(new PythonTransformationMetadata(workspace));
 			metadataManager.register(new GraphVizMetadata(workspace));
 			metadataManager.register(new ModelLearnerMetadata(workspace));
 			metadataManager.register(new R2RMLMetadata(workspace));
 			metadataManager.register(new RDFMetadata(workspace));
 			metadataManager.register(new CSVMetadata(workspace));
+			metadataManager.register(new JSONMetadata(workspace));
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}
 
+		//Add file based saver for alignment
+		//AlignmentManager.Instance().addAlignmentSaver(new R2RMLAlignmentFileSaver(workspace));
+						
 		// Initialize the Outlier tag
 		Tag outlierTag = new Tag(TagName.Outlier, Color.Red);
 		workspace.getTagsContainer().addTag(outlierTag);

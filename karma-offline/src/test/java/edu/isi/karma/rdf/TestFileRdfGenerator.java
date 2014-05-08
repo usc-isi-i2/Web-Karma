@@ -13,21 +13,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.metadata.KarmaMetadataManager;
+import edu.isi.karma.metadata.PythonTransformationMetadata;
+import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 
-public class TestFileRdfGenerator {
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		initOfflineWorkspaceSettings();
-	}
-	
+public class TestFileRdfGenerator extends TestRdfGenerator{
 	
 	@Test
 	public void testScheduleRDFPyTranform() {
@@ -42,12 +36,12 @@ public class TestFileRdfGenerator {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			
-			rdfGen.generateRdf("csv", modelIdentifier, pw, new File(getTestResource(filename).getFile()), 
+			rdfGen.generateRdf("csv", modelIdentifier, pw, new File(getTestResource(filename).toURI()), 
 					"utf-8", 0);
 			
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split("\n");
+			String[] lines = rdf.split(System.getProperty("line.separator"));
 			assertEquals(275, lines.length);
 			
 			int idx = rdf.indexOf("hasEventDate> \"2014-01-13\" .");
@@ -75,12 +69,12 @@ public class TestFileRdfGenerator {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			
-			rdfGen.generateRdf("csv", modelIdentifier, pw, new File(getTestResource(filename).getFile()), 
+			rdfGen.generateRdf("csv", modelIdentifier, pw, new File(getTestResource(filename).toURI()), 
 					"utf-8", 0);
 			
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split("\n");
+			String[] lines = rdf.split(System.getProperty("line.separator"));
 			assertEquals(599, lines.length);
 			
 			String triple = "<http://collection.americanart.si.edu/id/person-constituent/2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person>";
@@ -100,15 +94,4 @@ public class TestFileRdfGenerator {
 		return getClass().getClassLoader().getResource(name);
 	}
 	
-	private static void initOfflineWorkspaceSettings() {
-		/**
-         * CREATE THE REQUIRED KARMA OBJECTS *
-         */
-        ServletContextParameterMap.setParameterValue(
-                ContextParameter.USER_DIRECTORY_PATH, "src/main/webapp/");
-        ServletContextParameterMap.setParameterValue(
-                ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
-
-        SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
-	}
 }

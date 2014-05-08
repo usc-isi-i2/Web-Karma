@@ -176,35 +176,13 @@ public class GenerateR2RMLModelCommand extends Command {
 		// *****************************************************************************************
 
 		try {
-			// Get the namespace and prefix from the preferences
-			String namespace = "";
-			String prefix = "";
-			JSONObject prefObject = workspace.getCommandPreferences().getCommandPreferencesJSONObject(
-					"PublishRDFCommand"+"Preferences");
-			if (prefObject != null) {
-				namespace = prefObject.getString(PreferencesKeys.rdfNamespace.name());
-				prefix = prefObject.getString(PreferencesKeys.rdfPrefix.name());
-				namespace = ((namespace == null) || (namespace.equals(""))) ? 
-						Namespaces.KARMA_DEV : namespace;
-				prefix = ((prefix == null) || (prefix.equals(""))) ? 
-						Prefixes.KARMA_DEV : prefix;
-			} else {
-				namespace = Namespaces.KARMA_DEV;
-				prefix = Prefixes.KARMA_DEV;
-			}
-			
-			// Generate the KR2RML data structures for the RDF generation
-			final ErrorReport errorReport = new ErrorReport();
-			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
-					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
-			KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
-			
+			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
+			fileSaver.saveAlignment(alignment, modelFileName);
+			KR2RMLMapping mapping = fileSaver.getMappings();
 			if(!mapping.isR2RMLCompatible())
 			{
 				uc.add(new InfoUpdate("The KR2RMLMapping generated is not compatible with R2RML"));
 			}
-			// Write the model
-			writeModel(workspace, workspace.getOntologyManager(), mappingGen, worksheet, modelFileLocalPath);
 			
 			// Write the model to the triple store
 			TripleStoreUtil utilObj = new TripleStoreUtil();
@@ -256,23 +234,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		return null;
 	}
 	
-	private void writeModel(Workspace workspace, OntologyManager ontMgr, 
-			KR2RMLMappingGenerator mappingGen, Worksheet worksheet, String modelFileLocalPath) 
-					throws RepositoryException, FileNotFoundException,
-							UnsupportedEncodingException, JSONException {
-		File f = new File(modelFileLocalPath);
-		logger.info("Write file:" + modelFileLocalPath);
-		File parentDir = f.getParentFile();
-		parentDir.mkdirs();
-		PrintWriter writer = new PrintWriter(f, "UTF-8");
-
-		KR2RMLMappingWriter mappingWriter = new KR2RMLMappingWriter();
-		mappingWriter.addR2RMLMapping(mappingGen.getKR2RMLMapping(), worksheet, workspace);
-		mappingWriter.writeR2RMLMapping(writer);
-		mappingWriter.close();
-		writer.flush();
-		writer.close();
-	}
+	
 
 	
 	private void savePreferences(Workspace workspace){

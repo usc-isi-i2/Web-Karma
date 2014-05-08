@@ -50,7 +50,7 @@ import edu.isi.karma.util.EncodingDetector;
  * @author Wan Jing 2014-02-26
  * 
  */
-public class TestCSVFileRdfGenerator {
+public class TestCSVFileRdfGenerator extends TestRdfGenerator {
 	private static Logger logger = LoggerFactory.getLogger(TestCSVFileRdfGenerator.class);
 
 
@@ -65,7 +65,7 @@ public class TestCSVFileRdfGenerator {
 	
 		try {
 	
-			File fileList[] = (new File(getTestResource(modelDirect).getFile()).listFiles());
+			File fileList[] = (new File(getTestResource(modelDirect).toURI()).listFiles());
 			
 			for (int i = 0; i < fileList.length; i++) {
 				File modelFile = fileList[i];
@@ -73,8 +73,8 @@ public class TestCSVFileRdfGenerator {
 
 				String name = modelFile.getName().replace("-model.ttl", "");
 				File standardRdfFile = new File(getTestResource(standardRdfDirect + "/" + name
-						+ "-rdf.ttl").getFile());
-				File csvFile = new File(getTestResource(csvDirect + "/" + name + ".csv").getFile());
+						+ "-rdf.ttl").toURI());
+				File csvFile = new File(getTestResource(csvDirect + "/" + name + ".csv").toURI());
 				
 				if(!standardRdfFile.exists())
 				{
@@ -91,11 +91,11 @@ public class TestCSVFileRdfGenerator {
 				StringWriter sw = new StringWriter();// generated RDF triples
 				PrintWriter pw = new PrintWriter(sw);
 
-				generateRdfFile(csvFile, modelFile, pw);
+				generateRdfFile("csv", csvFile, modelFile, pw);
 
 				HashSet<String> standardSet = getFileContent(standardRdfFile);
 				HashSet<String> generatedSet = getHashSet(sw.toString().split(
-						"\n"));
+						System.getProperty("line.separator")));
 
 				if (!standardSet.containsAll(generatedSet)
 						|| !generatedSet.containsAll(standardSet)) {
@@ -139,59 +139,6 @@ public class TestCSVFileRdfGenerator {
 				logger.error(modelName + " extra triple error:" + temp);
 			}
 	}
-
-	/**
-	 * @param csvFile
-	 * @param modelFile
-	 * @param pw
-	 *            stores generated RDF triples
-	 * @throws Exception
-	 */
-	private void generateRdfFile(File csvFile, File modelFile, PrintWriter pw)
-			throws Exception {
-
-		FileRdfGenerator rdfGen = new FileRdfGenerator();
-		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
-				"schedule-model", modelFile.toURI().toURL());
-		String encoding = EncodingDetector.detect(csvFile);
-		rdfGen.generateRdf("csv", modelIdentifier, pw, csvFile, encoding, 0);
-
-	}
-
-	private HashSet<String> getHashSet(String[] array) {
-		HashSet<String> hashSet = new HashSet<String>();
-		for (int i = 0; i < array.length; i++) {
-			String line = array[i].trim();
-			if (line.length() > 0)
-				hashSet.add(line);
-		}
-		return hashSet;
-	}
-
-	private HashSet<String> getFileContent(File file) {
-		HashSet<String> hashSet = new HashSet<String>();
-		
-		try {
-			String encoding = EncodingDetector.detect(file);
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					new FileInputStream(file), encoding));
-
-			String line = in.readLine();
-			while (line != null) {
-				line = line.trim();
-				if (line.length() > 0)
-					hashSet.add(line);
-
-				line = in.readLine();
-			}
-			in.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			logger.error("Error getting file contents: " + file.getAbsolutePath());
-		}
-		return hashSet;
-     }
-	
 
 	private URL getTestResource(String name)
 	{

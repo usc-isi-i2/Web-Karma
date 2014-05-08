@@ -44,6 +44,17 @@ public class AddValuesCommandFactory extends JSONInputCommandFactory{
 		AddValuesCommand valCmd = new AddValuesCommand(getNewId(workspace), worksheetId,
 				hTableId, hNodeID);
 		valCmd.setInputParameterJson(inputJson.toString());
+		valCmd.setColumnName("");
+		return valCmd;
+	}
+	
+	
+	public Command createCommand(JSONArray inputJson, Workspace workspace, String hNodeID, String worksheetId, String hTableId, String newColumnName)
+			throws JSONException, KarmaException {
+		AddValuesCommand valCmd = new AddValuesCommand(getNewId(workspace), worksheetId,
+				hTableId, hNodeID);
+		valCmd.setInputParameterJson(inputJson.toString());
+		valCmd.setColumnName(newColumnName);
 		return valCmd;
 	}
 

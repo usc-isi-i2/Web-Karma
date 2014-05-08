@@ -33,11 +33,11 @@ import java.net.URL;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.kr2rml.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.util.EncodingDetector;
 
@@ -46,17 +46,11 @@ import edu.isi.karma.util.EncodingDetector;
  * @author dipsy
  * 
  */
-public class TestJSONRDFGenerator {
+public class TestJSONRDFGenerator extends TestRdfGenerator{
 
 	JSONRDFGenerator rdfGen;
 	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGenerator.class);
 	
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
 
 	/**
 	 * @throws java.lang.Exception
@@ -102,7 +96,7 @@ public class TestJSONRDFGenerator {
 
 			String filename = "people.json";
 			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).getFile()),
+			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
 					"utf-8");
 
 			StringWriter sw = new StringWriter();
@@ -112,7 +106,33 @@ public class TestJSONRDFGenerator {
 			String rdf = sw.toString();
 			System.out.println(rdf);
 			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split("\n");
+			String[] lines = rdf.split(System.getProperty("line.separator"));
+			int count = lines.length;
+			 
+			assertEquals(102, count);
+		} catch (Exception e) {
+			logger.error("testGenerateRDF1 failed:", e);
+			fail("Execption: " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGenerateJSON1() {
+		try {
+
+			String filename = "people.json";
+			System.out.println("Load json file: " + filename);
+			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
+					"utf-8");
+
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(pw);
+			rdfGen.generateRDF("people-model", jsonData, true, writer);
+			String rdf = sw.toString();
+			System.out.println(rdf);
+			assertNotEquals(rdf.length(), 0);
+			String[] lines = rdf.split(System.getProperty("line.separator"));
 			int count = lines.length;
 			 
 			assertEquals(102, count);
@@ -133,7 +153,7 @@ public class TestJSONRDFGenerator {
 
 			String filename = "cs548-events.json";
 			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).getFile()),
+			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
 					"utf-8");
 
 			StringWriter sw = new StringWriter();
@@ -142,7 +162,7 @@ public class TestJSONRDFGenerator {
 			rdfGen.generateRDF("cs548-events-model", jsonData, true, pw);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split("\n");
+			String[] lines = rdf.split(System.getProperty("line.separator"));
 			assertEquals(238, lines.length);
 		} catch (Exception e) {
 			logger.error("testGenerateRDF1 failed:", e);

@@ -24,6 +24,7 @@ package edu.isi.karma.util;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public abstract class Preferences {
 	/**
@@ -78,22 +80,24 @@ public abstract class Preferences {
 			logger.error("Preferences file not found! ", f);
 		} catch (IOException e) {
 			logger.error("Error occured while creating preferences file!", e);
+		} catch (URISyntaxException e) {
+			logger.error("Error occured while creating preferences file!", e);
 		}
 	}
 
 	
-	private void createNewPreferencesFileFromTemplate() throws IOException {
+	private void createNewPreferencesFileFromTemplate() throws IOException, URISyntaxException {
 
 		jsonFile.createNewFile();
 		File template_file = new File(getClass().getClassLoader().getResource(
-				"WorkspacePref.template").getFile());
+				"WorkspacePref.template").toURI());
 		FileUtil.copyFiles(jsonFile, template_file);
 		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
 	}
 	
-	private void loadDefaultPreferences() throws IOException {
+	private void loadDefaultPreferences() throws IOException, URISyntaxException {
 		jsonFile = new File(getClass().getClassLoader().getResource(
-				"WorkspacePref.template").getFile());
+				"WorkspacePref.template").toURI());
 		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
 	}
 	

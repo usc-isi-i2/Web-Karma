@@ -1170,6 +1170,9 @@ public class GraphBuilder {
 			logger.info("No directory for preloading ontologies exists.");
 		}
 		
+//		if (true)
+//			return;
+		
 		DirectedWeightedMultigraph<Node, DefaultLink> g = new 
 				DirectedWeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
 		

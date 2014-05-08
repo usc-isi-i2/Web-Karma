@@ -22,29 +22,38 @@
 package edu.isi.karma.controller.command.alignment;
 
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.imp.Import;
+import edu.isi.karma.imp.csv.CSVFileImport;
+import edu.isi.karma.imp.json.JsonImport;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -57,7 +66,6 @@ public class InvokeDataMiningServiceCommand extends Command {
 	
 	private final String csvFileName;
 	private String dataMiningURL;
-	private boolean isTestingPhase;
 	
 	public String getDataMiningURL() {
 		return dataMiningURL;
@@ -74,12 +82,11 @@ public class InvokeDataMiningServiceCommand extends Command {
 	 * @param csvFileName
 	 * @param isTesting A boolean flag to identify if it is the training or testing phase
 	 * */
-	protected InvokeDataMiningServiceCommand(String id, String worksheetId, String miningUrl, String fileName, boolean isTesting) {
+	protected InvokeDataMiningServiceCommand(String id, String worksheetId, String miningUrl, String fileName) {
 		super(id);
 		this.worksheetId = worksheetId;
 		this.dataMiningURL = miningUrl;
 		this.csvFileName = fileName;
-		this.isTestingPhase = isTesting;
 	}
 
 	@Override
@@ -102,16 +109,83 @@ public class InvokeDataMiningServiceCommand extends Command {
 		return CommandType.notUndoable;
 	}
 	
+	private UpdateContainer processCSV(HttpEntity entity, Workspace workspace) {
+		UpdateContainer uc = null;
+		try {
+        	BufferedInputStream buf;
+        	byte[] buffer = new byte[10240];
+        	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy_HmsS");
+        	String ts = sdf.format(Calendar.getInstance().getTime());
+        	final String fName = "table_service_results_"+ts;
+        	final String fileName = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) + fName; 
+        	FileOutputStream fw = new FileOutputStream(fileName);
+        	// get the file from the service
+        	buf = new BufferedInputStream(entity.getContent());
+        	for (int length = 0; (length = buf.read(buffer)) > 0;) {
+        		fw.write(buffer, 0, length);
+            }
+        	fw.close();
+        	buf.close();
+        	logger.info("Created : " + fileName);
+        	Import impCSV = new CSVFileImport(1, 2, ',', ' ', "UTF-8", -1, new File(fileName), workspace);
+        	Worksheet wsht = impCSV.generateWorksheet();
+        	uc = new UpdateContainer();
+            uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
+            new File(fileName).delete();
+
+        } catch (Exception e1) {
+        	logger.error(e1.getMessage(), e1);
+        	uc = new UpdateContainer(new ErrorUpdate(e1.getMessage()));
+        }
+		return uc;
+		
+	}
+	
+	
+	private UpdateContainer processJSON(HttpEntity entity, Workspace workspace) {
+		UpdateContainer uc = null;
+		try {
+        	BufferedInputStream buf;
+        	byte[] buffer = new byte[10240];
+        	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy_HmsS");
+        	String ts = sdf.format(Calendar.getInstance().getTime());
+        	final String fName = "table_service_results_"+ts;
+        	final String fileName = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  fName;
+        	FileOutputStream fw = new FileOutputStream(fileName);
+        	// get the file from the service
+        	buf = new BufferedInputStream(entity.getContent());
+        	for (int length = 0; (length = buf.read(buffer)) > 0;) {
+        		fw.write(buffer, 0, length);
+            }
+        	fw.close();
+        	buf.close();
+        	
+			Import impJson = new JsonImport(new File(fileName), fName, workspace, "UTF-8", -1);
+            Worksheet wsht = impJson.generateWorksheet();
+            Worksheet wsht2, wsht3;
+            logger.info("Creating worksheet with json : " + wsht.getId());
+            uc = new UpdateContainer();
+            uc.add(new WorksheetListUpdate());
+            uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
+        	
+        	logger.info("Created : " + fileName);
+            new File(fileName).delete();
+
+        } catch (Exception e1) {
+        	logger.error(e1.getMessage(), e1);
+        	uc = new UpdateContainer(new ErrorUpdate(e1.getMessage()));
+        }
+		return uc;
+		
+	}
+	
 	@Override
 	public UpdateContainer doIt(Workspace workspace) {
 		
 		final String csvFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  
-				this.csvFileName;;
-		
+				this.csvFileName;
+		UpdateContainer uc = new UpdateContainer();
 		try {
-			
-			// post the results 
-			//TODO : integrate the service with karma
 			
 			// Prepare the headers
 			HttpPost httpPost = new HttpPost(this.dataMiningURL);
@@ -126,46 +200,23 @@ public class InvokeDataMiningServiceCommand extends Command {
 			
 			// Parse the response and store it in a String
 			HttpEntity entity = response.getEntity();
-			StringBuilder responseString = new StringBuilder();
-			if (entity != null) {
-				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent(),"UTF-8"));
-				
-				String line = buf.readLine();
-				while(line != null) {
-					responseString.append(line);
-					line = buf.readLine();
-				}
+			Header contentTypeHeader = entity.getContentType();
+			String contentType = contentTypeHeader.getValue();
+			
+			
+			if(contentType.equalsIgnoreCase("application/json")) {
+				uc = processJSON(entity, workspace);
+			} else if(contentType.equalsIgnoreCase("text/csv")) {
+				uc = processCSV(entity, workspace);
+			} else {
+				uc = new UpdateContainer(new ErrorUpdate("Could not parse content type : " + contentType));
 			}
-			logger.info(responseString.toString());
-			final String modelFileName = responseString.toString(); 
-			UpdateContainer uc = new UpdateContainer();
-			uc.add(new AbstractUpdate() {
-				public void generateJson(String prefix, PrintWriter pw,	
-						VWorkspace vWorkspace) {
-					JSONObject outputObject = new JSONObject();
-					try {
-						outputObject.put("updateType", "InvokeDataMiningServiceUpdate");
-						outputObject.put("model_name", modelFileName);
-						if(isTestingPhase) {
-							JSONObject obj = new JSONObject(modelFileName);
-								outputObject.put("results", obj);
-								outputObject.put("isTestingPhase", true);
-							}
-							else {
-								outputObject.put("model_name", modelFileName);
-							}
-						pw.println(outputObject.toString());
-					} catch (JSONException e) {
-						logger.error("Error occured while generating JSON!");
-					}
-				}
-			});
-			return uc;
 					
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			return new UpdateContainer(new ErrorUpdate("Error !"));
+			uc = new UpdateContainer(new ErrorUpdate("Error ! " + e.getMessage()));
 		}
+		return uc;
 
 	}
 	

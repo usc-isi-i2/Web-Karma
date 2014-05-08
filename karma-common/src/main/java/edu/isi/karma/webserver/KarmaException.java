@@ -31,15 +31,12 @@ public class KarmaException extends Exception {
 	 */
 	private static final long serialVersionUID = -6578670561260489674L;
 
-	private final String message;
 	
 	public KarmaException(String message) {
-		super();
-		this.message = message;
+		super(message);
 	}
-
-	public String getMessage() {
-		return message;
+	public KarmaException(String message, Throwable throwable)
+	{
+		super(message, throwable);
 	}
-	
 }

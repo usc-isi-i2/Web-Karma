@@ -1,7 +1,8 @@
 package edu.isi.karma.controller.command.worksheet;
 
+
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,7 +32,7 @@ public class FoldCommand extends WorksheetCommand {
 	//add column to this table
 	private String hTableId;
 	Command cmd;
-	private Collection<HNode> hnodes = new ArrayList<HNode>();
+	private List<HNode> hnodes = new ArrayList<HNode>();
 	//the id of the new column that was created
 	//needed for undo
 	private String newHNodeId;
@@ -84,13 +85,16 @@ public class FoldCommand extends WorksheetCommand {
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
 		HTable htable =  worksheet.getHeaders();
 		hnodes.clear();
+		//List<String> HNodeIds = new ArrayList<String>();
 		JSONArray checked = (JSONArray) JSONUtil.createJson(CommandInputJSONUtil.getStringValue("values", (JSONArray)para));
 		for (int i = 0; i < checked.length(); i++) {
 			JSONObject t = (checked.getJSONObject(i));
 			hnodes.add(htable.getHNode((String) t.get("value")));
 		}
-		
+		//System.out.println("HNodeID: " + htable.getHNodeIdFromColumnName("homeworks"));
+		//HNodeIds.add(htable.getHNodeIdFromColumnName("homeworks"));
 		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows());
+		//HashValueManager.getHashValue(rows.get(0), HNodeIds);
 		//hnodes.add(htable.getHNode("HN5"));
 		//hnodes.add(htable.getHNode("HN7"));
 		JSONArray array = new JSONArray();
@@ -101,9 +105,14 @@ public class FoldCommand extends WorksheetCommand {
 			for (HNode hnode : hnodes) {
 				Node node = row.getNode(hnode.getId());
 				String name = hnode.getColumnName();
-				String value = node.getValue().asString();
+				Object value = CloneTableUtils.cloneNodeToJSON(hnode, node);
 				JSONObject obj = new JSONObject();
-				obj.put("values", value);
+				JSONObject obj2 = new JSONObject();
+				if (value instanceof String)
+					obj2.put("values", value);
+				else
+					obj2.put(worksheet.getHeaders().getNewColumnName("nested"), value);
+				obj.put("values", obj2);
 				obj.put("names", name);
 				t.put(obj);			
 			}
@@ -118,10 +127,10 @@ public class FoldCommand extends WorksheetCommand {
 		obj.put("value", array.toString());
 		obj.put("type", "other");
 		input.put(obj);
-		//System.out.println(array.toString());
 		try{
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
-			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId);
+			//hNodeId = hnodes.get(0).getId();
+			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId, worksheet.getHeaders().getNewColumnName("fold"));
 			cmd.doIt(workspace);
 			UpdateContainer c =  new UpdateContainer();		
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));

@@ -28,6 +28,9 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.*;
 import edu.isi.karma.transformation.PythonTransformationHelper;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,22 +90,8 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 			Worksheet worksheet, RepFactory f, HNode hNode,
 			JSONArray transformedRows, JSONArray errorValues, Integer limit)
 			throws JSONException {
-		List<HNode> accessibleHNodes = f.getHNode(hNodeId)
-				.getHNodesAccessibleList(f);
-		List<HNode> nodesWithNestedTable = new ArrayList<HNode>();
-		Map<String, String> hNodeIdtoColumnNameMap = new HashMap<String, String>();
-		for (HNode accessibleHNode : accessibleHNodes) {
-			if (accessibleHNode.hasNestedTable()) {
-				nodesWithNestedTable.add(accessibleHNode);
-			} else {
-				hNodeIdtoColumnNameMap.put(accessibleHNode.getId(),
-						accessibleHNode.getColumnName());
-			}
-		}
-		accessibleHNodes.removeAll(nodesWithNestedTable);
 
 		PythonTransformationHelper pyHelper = new PythonTransformationHelper();
-		Map<String, String> normalizedColumnNameMap = new HashMap<String, String>();
 		String trimmedTransformationCode = transformationCode.trim();
 		// Pedro: somehow we are getting empty statements, and these are causing
 		// exceptions.
@@ -114,21 +103,18 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		String transformMethodStmt = pyHelper
 				.getPythonTransformMethodDefinitionState(worksheet,
 						trimmedTransformationCode);
-		String defGetValueStmt = pyHelper
-				.getGetValueDefStatement(normalizedColumnNameMap);
 
-		// Create a map from hNodeId to normalized column name
-		Map<String, String> hNodeIdToNormalizedColumnName = new HashMap<String, String>();
-		for (HNode accHNode : accessibleHNodes) {
-			hNodeIdToNormalizedColumnName.put(accHNode.getId(),
-					normalizedColumnNameMap.get(accHNode.getColumnName()));
-		}
+		
 		logger.debug("Executing PyTransform\n" + transformMethodStmt);
 
 		// Prepare the Python interpreter
 		PythonInterpreter interpreter = new PythonInterpreter();
+		
+		
 		interpreter.exec(pyHelper.getImportStatements());
-		interpreter.exec(defGetValueStmt);
+		importUserScripts(interpreter);
+		interpreter.exec(pyHelper.getGetValueDefStatement());
+		interpreter.exec(pyHelper.getVDefStatement());
 		interpreter.exec(transformMethodStmt);
 
 		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet
@@ -140,6 +126,9 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		int counter = 0;
 		long starttime = System.currentTimeMillis();
 		// Go through all nodes collected for the column with given hNodeId
+		
+		interpreter.set("workspaceid", workspace.getId());
+		
 		PyCode py = interpreter.compile("transform(nodeid)");
 
 		int numRowsWithErrors = 0;
@@ -148,7 +137,6 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 			Row row = node.getBelongsToRow();
 
 			interpreter.set("nodeid", node.getId());
-			interpreter.set("workspaceid", workspace.getId());
 
 			try {
 				PyObject output = interpreter.eval(py);
@@ -156,7 +144,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 						.getPyObjectValueAsString(output);
 				addTransformedValue(transformedRows, row, transformedValue);
 			} catch (PyException p) {
-				logger.debug("error in evaluation python, skipping one row");
+				logger.info("error in evaluation python, skipping one row");
 				numRowsWithErrors++;
 				// Error occured in the Python method execution
 				addTransformedValue(transformedRows, row, errorDefaultValue);
@@ -180,6 +168,16 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		}
 		logger.debug("transform time "
 				+ (System.currentTimeMillis() - starttime));
+	}
+
+	private void importUserScripts(PythonInterpreter interpreter) {
+		String dirpathString = ServletContextParameterMap
+				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
+		if (dirpathString != null && dirpathString.compareTo("") != 0) {
+			interpreter.exec("import sys");
+			interpreter.exec("sys.path.append('" + dirpathString.replace('\\','/') + "')");
+			interpreter.exec("from karma.transformation import *");
+		}
 	}
 
 	private void addError(JSONArray errorValues, Row row, int counter,

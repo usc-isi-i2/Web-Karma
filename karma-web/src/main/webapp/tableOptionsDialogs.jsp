@@ -117,13 +117,7 @@ a.icon-remove:hover {
 					</div>
 					<div class="form-group formDivDMUrl" style="display: none">
 						<label for="dataMiningUrl">Data Mining URL</label>
-							<input class="form-control" type="text" id="dataMiningUrl" required url value="" maxlength="1000" />
-						</div>
-						<div class="form-group formDivDMUrl" style="display: none">
-							<label>
-					    		<input type="checkbox" id="testingService" name="group1"  value="append">
-					    		Evaluation Phase
-				  			</label>
+							<input class="form-control" type="url" id="dataMiningUrl" required url value="" maxlength="1000" />
 						</div>
 						<div id="DMresults" style="display: none"></div>
 					<div class="error" style="display: none">Please enter all valid url</div>
@@ -411,6 +405,51 @@ a.icon-remove:hover {
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div class="modal fade" id="organizeColumnsDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Organize Columns</h4>
+				  </div>
+				  <div class="modal-body">
+					<div id="organizeColumns_body" class="cf nestable-lists">
+						<div class="dd" id="nestable">
+						</div>
+					</div>
+					<div class="error" style="display: none">Error</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Save</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
              
+<div class="modal fade" id="publishJSONDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Save as JSON</h4>
+				  </div>
+				  <div class="modal-body">
+					Would you like to also import the JSON as a new Worksheet?
+					<div class="error" style="display: none">Error</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-default" id="btnNo">No, just Export as JSON</button>
+				        <button type="submit" class="btn btn-primary" id="btnYes">Yes, Import as Worksheet</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 </body>
 </html>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>edu.isi</groupId>
+        <artifactId>webkarma</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>karma-research</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>karma-util</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>edu.isi</groupId>
+		    <artifactId>karma-common</artifactId>
+		    <version>${project.version}</version>
+	    </dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+
+
+        <dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>2.12.0-rc2</version>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-repository</artifactId>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-repository-sail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame</artifactId>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-sail-memory</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-rio-turtle</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-repository-http</artifactId>
+		</dependency>
+		
+		<dependency>
+    		<groupId>virtuoso</groupId>
+    		<artifactId>jdbc</artifactId>
+    		<version>0.9.2</version>
+    		<scope>system</scope>
+    		<systemPath>${project.basedir}/lib/virtjdbc4.jar</systemPath>
+		</dependency>
+	
+			<dependency>
+    		<groupId>virtuoso</groupId>
+    		<artifactId>sesame</artifactId>
+    		<version>0.9.2</version>
+    		<scope>system</scope>
+    		<systemPath>${project.basedir}/lib/virt_sesame2.jar</systemPath>
+		</dependency>
+		
+	</dependencies>
+
+    
+</project>

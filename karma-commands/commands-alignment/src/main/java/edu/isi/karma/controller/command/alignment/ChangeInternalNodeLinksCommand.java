@@ -134,15 +134,18 @@ public class ChangeInternalNodeLinksCommand extends Command {
 			String sourceId = newEdge.getString(JsonKeys.edgeSourceId.name());
 			String targetId = newEdge.getString(JsonKeys.edgeTargetId.name());
 			String edgeUri = newEdge.getString(JsonKeys.edgeId.name());
-			String sourceUri = newEdge.getString(JsonKeys.edgeSourceUri.name());
-			String targetUri = newEdge.getString(JsonKeys.edgeTargetUri.name());
+			String sourceUri = null, targetUri = null;
+			if(newEdge.has(JsonKeys.edgeSourceUri.name()))
+				sourceUri = newEdge.getString(JsonKeys.edgeSourceUri.name());
+			if(newEdge.has(JsonKeys.edgeTargetUri.name()))
+				targetUri = newEdge.getString(JsonKeys.edgeTargetUri.name());
 			
 			String linkId = LinkIdFactory
 					.getLinkId(edgeUri, sourceId, targetId);
 			LabeledLink newLink = alignment.getLinkById(linkId);
 			if (newLink == null) {
 				Node sourceNode = alignment.getNodeById(sourceId);
-				if (sourceNode == null) {
+				if (sourceNode == null && sourceUri != null) {
 					sourceNode = alignment.addInternalNode(new Label(sourceUri));
 				}
 				
@@ -153,7 +156,7 @@ public class ChangeInternalNodeLinksCommand extends Command {
 					logger.error(errorMessage);
 				}
 				Node targetNode = alignment.getNodeById(targetId);
-				if(targetNode == null) {
+				if(targetNode == null && targetUri != null) {
 					targetNode = alignment.addInternalNode(new Label(targetUri));
 				}
 				if (targetNode == null) {

@@ -51,7 +51,8 @@ public class ServletContextParameterMap {
 		WORKSHEET_HISTORY_DIRECTORY, WORKSHEET_HISTORY_RELATIVE_DIRECTORY,
 		R2RML_PUBLISH_DIR, R2RML_PUBLISH_RELATIVE_DIR,
 		RDF_PUBLISH_DIR, RDF_PUBLISH_RELATIVE_DIR,
-		CSV_PUBLISH_DIR, CSV_PUBLISH_RELATIVE_DIR
+		CSV_PUBLISH_DIR, CSV_PUBLISH_RELATIVE_DIR, USER_PYTHON_SCRIPTS_DIRECTORY,
+		JSON_PUBLISH_DIR, JSON_PUBLISH_RELATIVE_DIR,
 	}
 
 	static {
@@ -60,9 +61,9 @@ public class ServletContextParameterMap {
 		String karmaDir = System.getenv("KARMA_USER_HOME");
 		if(karmaDir == null)
 		{
-			logger.info("KARMA_USER_HOME not set.  Defaulting to {user.home}/.karma");
-			File newKarmaDir = new File(System.getProperty("user.home") + "/.karma");
-			karmaDir = newKarmaDir.getAbsolutePath() + "/";
+			logger.info("KARMA_USER_HOME not set.  Defaulting to {user.home" + File.separator + "karma");
+			File newKarmaDir = new File(System.getProperty("user.home") + File.separator + "karma");
+			karmaDir = newKarmaDir.getAbsolutePath() + File.separator;
 			logger.info("Karma home: " + karmaDir);
 		}
 		setParameterValue(ContextParameter.USER_DIRECTORY_PATH, karmaDir);

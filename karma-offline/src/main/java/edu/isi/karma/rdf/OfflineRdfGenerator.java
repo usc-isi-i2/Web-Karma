@@ -23,8 +23,11 @@
 
 package edu.isi.karma.rdf;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URL;
@@ -48,6 +51,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import edu.isi.karma.common.JenaWritable;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.metadata.KarmaMetadataManager;
+import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
@@ -126,14 +130,15 @@ public class OfflineRdfGenerator {
 
             KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
             userMetadataManager.register(new UserPreferencesMetadata());
+            userMetadataManager.register(new PythonTransformationMetadata());
 
             /**
              * PREPATRE THE OUTPUT OBJECTS *
              */
-//            OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
-//            BufferedWriter bw = new BufferedWriter(fw);
-	        Model model = ModelFactory.createDefaultModel();
-	        Writer bw = new JenaWritable(model);
+            OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
+            BufferedWriter bw = new BufferedWriter(fw);
+//	        Model model = ModelFactory.createDefaultModel();
+//	        Writer bw = new JenaWritable(model);
 	        PrintWriter pw = new PrintWriter(bw);
 
 	        long l = System.currentTimeMillis();

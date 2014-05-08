@@ -6,6 +6,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	
 	var options = [
 	        {name:"View model using straight lines", func:viewStraightLineModel, showCheckbox:true, defaultChecked:true, initFunc:initStrightLineModel},
+	        {name:"Organize Columns", func:organizeColumns},
 	        {name:"divider"},
 	        {name:"Show Model" , func:showModel},
 			{name:"Set Properties", func:setProperties},
@@ -15,6 +16,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"Publish RDF" , func:publishRDF},
 			{name:"Publish Model" , func:publishModel},
 			{name:"Publish Service Model", func:publishServiceModel},
+			{name:"Save as JSON", func:saveAsJson},
 			{name:"divider"},
 			{name:"Populate Source", func:populateSource},
 			{name:"Invoke Service", func:invokeService},
@@ -42,6 +44,12 @@ function WorksheetOptions(wsId, wsTitle) {
 			$(checkbox).prop('checked', !checkbox.checked);
 		}
 		return checkbox.checked;
+	}
+	
+	function organizeColumns() {
+		hideDropdown();
+		OrganizeColumnsDialog.getInstance().show(worksheetId);
+		return false;
 	}
 	
 	function deleteWorksheet() {
@@ -456,6 +464,13 @@ function WorksheetOptions(wsId, wsTitle) {
                     hideLoading(info["worksheetId"]);
                 }
         });
+		return false;
+	}
+	
+	function saveAsJson() {
+		console.log("Save as json");
+		hideDropdown();
+		PublishJSONDialog.getInstance().show(worksheetId);
 		return false;
 	}
 	

@@ -38,8 +38,8 @@ To start in logging mode (where all the logs are stored in the log folder), use 
 	`mvn -Dslf4j=false -Dlog4j.configuration=file:./config/log4j.properties jetty:run`
 	
 - The development version is now split into different projects. Each project has its own pom.xml and can be imported into Eclipse.
-- Karma now stores all user settings in {user.home}/.karma folder. You can change this default location by setting the KARMA_USER_HOME environment variable
-- The preloaded-ontologies and UserPrefs user settings are all under the {user.home}/.karma folder
+- Karma now stores all user settings in {user.home}/karma folder. You can change this default location by setting the KARMA_USER_HOME environment variable
+- The preloaded-ontologies and UserPrefs user settings are all under the {user.home}/karma folder
 - All published data (models, rdf) is under karma-web/src/main/webapp/publish folder
 
 ## Frequently Asked Questions ##

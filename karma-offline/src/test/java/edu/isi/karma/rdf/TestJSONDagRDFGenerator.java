@@ -43,23 +43,9 @@ import edu.isi.karma.util.EncodingDetector;
  * @author dipsy
  * 
  */
-public class TestJSONDagRDFGenerator {
+public class TestJSONDagRDFGenerator extends TestRdfGenerator{
 
 	JSONRDFGenerator rdfGen;
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
 
 	/**
 	 * @throws java.lang.Exception
@@ -98,7 +84,7 @@ public class TestJSONDagRDFGenerator {
 
 			String filename = "menu.json";
 			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).getFile()),
+			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
 					"utf-8");
 
 			StringWriter sw = new StringWriter();
@@ -107,7 +93,7 @@ public class TestJSONDagRDFGenerator {
 			rdfGen.generateRDF("menu-model", jsonData, false, pw);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split("\n");
+			String[] lines = rdf.split(System.getProperty("line.separator"));
 			int count = lines.length + 1;
 			assertEquals(191, count);
 		} catch (Exception e) {
@@ -126,7 +112,7 @@ public class TestJSONDagRDFGenerator {
 
 			String filename = "menus.json";
 			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).getFile()),
+			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
 					"utf-8");
 
 			StringWriter sw = new StringWriter();
@@ -135,7 +121,7 @@ public class TestJSONDagRDFGenerator {
 			rdfGen.generateRDF("menus-model", jsonData, false, pw);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split("\n");
+			String[] lines = rdf.split(System.getProperty("line.separator"));
 			int count = lines.length + 1;
 			assertEquals(412, count);
 		} catch (Exception e) {

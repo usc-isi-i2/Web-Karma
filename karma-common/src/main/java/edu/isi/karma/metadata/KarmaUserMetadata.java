@@ -1,6 +1,7 @@
 package edu.isi.karma.metadata;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,20 +30,44 @@ public abstract class KarmaUserMetadata extends KarmaMetadata{
 			ServletContextParameterMap.setParameterValue(parameter, metadataDirPath);
 		}
 		logger.info("Set parameter: " + parameter + " -> " + metadataDirPath);
+		try{ 
+		
+			createDirectory(metadataDirPath);
+		}
+		catch(KarmaException  e)
+		{
+			logger.error("Unable to create directory for " + parameter.name());
+			throw new KarmaException("Unable to create directory for " + parameter.name(), e);
+		}
+	}
+
+	protected void createDirectory(
+			String metadataDirPath) throws KarmaException {
 		File metadataDir = new File(metadataDirPath);
 		if(metadataDir.exists() && !metadataDir.isDirectory())
 		{
-			logger.error("Directory provided for " + parameter + " is actually a file!");
-			throw new KarmaException("Directory provided for " + parameter + " is actually a file!");
+			throw new KarmaException("Directory provided is actually a file!" + metadataDirPath);
 		}
 		if(!metadataDir.exists())
 		{
 			if(!metadataDir.mkdirs())
 			{
-				logger.error("Unable to create directory for metadata: " + parameter);
-				throw new KarmaException("Unable to create directory for metadata! " + parameter.name());
+				throw new KarmaException("Unable to create directory for metadata! " + metadataDirPath);
 			}
 		}
 	}
-	
+	protected void createFile(
+			String metadataFilePath) throws KarmaException {
+		File metadataFile = new File(metadataFilePath);
+		if(!metadataFile.exists())
+		{
+			try{
+				metadataFile.createNewFile();
+			}
+			catch (IOException e)
+			{
+				throw new KarmaException("Unable to create directory for metadata! " + metadataFilePath, e);
+			}
+		}
+	}
 }

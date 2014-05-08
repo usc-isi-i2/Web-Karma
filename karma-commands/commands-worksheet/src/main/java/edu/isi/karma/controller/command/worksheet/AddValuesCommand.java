@@ -42,6 +42,8 @@ public class AddValuesCommand extends WorksheetCommand{
 	//the id of the new column that was created
 	//needed for undo
 	private String newHNodeId;
+	
+	private String newColumnName = "";
 
 	private static Logger logger = LoggerFactory
 			.getLogger(AddValuesCommand.class);
@@ -93,7 +95,7 @@ public class AddValuesCommand extends WorksheetCommand{
 				Object t = JSONUtil.createJson(addValues);
 				if (t instanceof JSONArray) {
 					JSONArray a = (JSONArray) t;
-					ndid = addColumn(workspace, worksheet, "", a);
+					ndid = addColumn(workspace, worksheet, newColumnName, a);
 				}
 			}
 			UpdateContainer c =  new UpdateContainer(new AddColumnUpdate(newHNodeId, worksheetId));		
@@ -126,6 +128,10 @@ public class AddValuesCommand extends WorksheetCommand{
 
 	public String getNewHNodeId() {
 		return newHNodeId;
+	}
+	
+	public void setColumnName(String name) {
+		this.newColumnName = name;
 	}
 
 	private HNode addColumn(Workspace workspace, Worksheet worksheet, String newColumnName, JSONArray array) throws KarmaException {
@@ -188,10 +194,10 @@ public class AddValuesCommand extends WorksheetCommand{
 							addValues(node, value, factory);
 						}
 						else if (t instanceof JSONObject) {
-							addJSONObjectValues((JSONObject)t, worksheet, factory, node.getBelongsToRow(), newHNodeId);
+							addJSONObjectValues((JSONObject)t, worksheet, worksheet.getHeaders(), factory, node.getBelongsToRow(), newHNodeId);
 						}
 						else if (t instanceof JSONArray) {
-							addJSONArrayValues((JSONArray)t, worksheet, factory, node.getBelongsToRow(), newHNodeId);
+							addJSONArrayValues((JSONArray)t, worksheet, worksheet.getHeaders(), factory, node.getBelongsToRow(), newHNodeId);
 						}
 					}
 				}
@@ -200,15 +206,18 @@ public class AddValuesCommand extends WorksheetCommand{
 		}
 	}
 
-	private void addJSONArrayValues(JSONArray array, Worksheet worksheet, RepFactory factory, Row row, String newHNodeId) {
+	private void addJSONArrayValues(JSONArray array, Worksheet worksheet, HTable htable, RepFactory factory, Row row, String newHNodeId) {
 		for (int i = 0; i < array.length(); i++) {
 			JSONObject obj = (JSONObject)array.get(i);
-			addJSONObjectValues(obj, worksheet, factory, row, newHNodeId);
+			addJSONObjectValues(obj, worksheet, htable, factory, row, newHNodeId);
 		}
 	}
 	
-	private void addJSONObjectValues(JSONObject obj, Worksheet worksheet, RepFactory factory, Row row, String newHNodeId) {
-		HNode ndid = worksheet.getHeaders().getHNode(newHNodeId);
+	private void addJSONObjectValues(JSONObject obj, Worksheet worksheet, HTable htable, RepFactory factory, Row row, String newHNodeId) {
+		for (HNode h : htable.getHNodes()) {
+			System.out.println(h.getColumnName());
+		}
+		HNode ndid = htable.getHNode(newHNodeId);
 		HTable nestedHTable = ndid.getNestedTable();
 		if (nestedHTable == null)
 			nestedHTable = ndid.addNestedTable("Table for test",
@@ -217,15 +226,17 @@ public class AddValuesCommand extends WorksheetCommand{
 		Row r = nestedTable.addRow(factory);
 		for (Object key : new TreeSet<Object>(obj.keySet())) {
 			Object value = obj.get(key.toString());
-			HNode h = nestedHTable.getHNodeFromColumnName(key.toString());		
-			if ( h == null)
+			HNode h = nestedHTable.getHNodeFromColumnName(key.toString());
+			if ( h == null) {		
 				h = nestedHTable.addHNode(key.toString(), worksheet, factory);
+			}
+				//
 			if (value instanceof String)
 				r.getNode(h.getId()).setValue((String)value, NodeStatus.original, factory);
 			if (value instanceof JSONObject)
-				addJSONObjectValues((JSONObject)value, worksheet, factory, r, h.getId());
-			if (value instanceof JSONArray)
-				addJSONArrayValues((JSONArray) value, worksheet,factory,r, h.getId());
+				addJSONObjectValues((JSONObject)value, worksheet, nestedHTable, factory, r, h.getId());
+			if (value instanceof JSONArray) 
+				addJSONArrayValues((JSONArray) value, worksheet, nestedHTable, factory,r, h.getId());
 		}
 	}
 	

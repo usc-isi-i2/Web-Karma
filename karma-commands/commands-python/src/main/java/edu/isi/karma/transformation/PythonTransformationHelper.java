@@ -21,14 +21,10 @@
 
 package edu.isi.karma.transformation;
 
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.Worksheet;
 import org.python.core.PyObject;
 import org.python.core.PyType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import edu.isi.karma.rep.Worksheet;
 
 public class PythonTransformationHelper {
 	public String getPyObjectValueAsString(PyObject obj) {
@@ -53,29 +49,6 @@ public class PythonTransformationHelper {
 		importStmt.append("import edu.isi.karma.rep.RepFactory\n");
 		return importStmt.toString();
 	}
-
-	
-	public String getPythonClassCreationStatement(Worksheet worksheet, 
-			Map<String,String> normalizedColumnNamesMap, List<HNode> accessibleHNodes) {
-		
-		StringBuilder pyClass = new StringBuilder();
-		pyClass.append("class " + normalizeString(worksheet.getTitle()) + ":\n");
-		pyClass.append("\tdef __init__(self");
-		
-		List<String> propertyNames = new ArrayList<String>();
-		for (HNode hNode: accessibleHNodes) {
-			String propertyName = normalizeString(hNode.getColumnName());
-			normalizedColumnNamesMap.put(hNode.getColumnName(), propertyName);
-			pyClass.append("," + propertyName);
-			propertyNames.add(propertyName);
-		}
-		
-		pyClass.append("):\n");
-		for (String propertyName:propertyNames) {
-			pyClass.append("\t\tself."+propertyName + " = " +propertyName +"\n");
-		}
-		return pyClass.toString();
-	}
 	
 	public String normalizeString(String string) {
 		return string.replaceAll(" ", "").replaceAll("[^\\p{L}\\p{N}]","");
@@ -92,28 +65,27 @@ public class PythonTransformationHelper {
 	}
 
 
-	public String getColumnNameDictionaryStatement(Map<String, String> columnNameMap) {
-		StringBuilder dictStmt = new StringBuilder();
-		dictStmt.append("columnNameMap = {");
-		int counter = 0;
-		for (String columnName:columnNameMap.keySet()) {
-			if (counter != 0)
-				dictStmt.append(",");
-			dictStmt.append("\"" + columnName + "\":\"" + columnNameMap.get(columnName).replaceAll("\"", "\\\\\"") + "\"");
-			counter++;
-		}
-		dictStmt.append("}");
-		return dictStmt.toString();
-	}
-
-
-	public String getGetValueDefStatement(Map<String, String> columnNameMap) {
+	public String getGetValueDefStatement() {
 		StringBuilder methodStmt = new StringBuilder();
 		methodStmt.append("def getValue(columnName):\n");
 		methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
 		methodStmt.append("	node = factory.getNode(nodeid)\n");
-		methodStmt.append("	return node.getNeighborByColumnName(columnName, factory).getValue().asString()");
-
+		methodStmt.append("	targetNode = node.getNeighborByColumnName(columnName, factory)\n");
+		methodStmt.append("	if targetNode is not None:\n");
+		methodStmt.append("		value = targetNode.getValue()\n");
+		methodStmt.append("		if value is not None:\n");
+		methodStmt.append("			valueAsString = value.asString()\n");
+		methodStmt.append("			if valueAsString is not None:\n");
+		methodStmt.append("				return valueAsString\n");
+		methodStmt.append("	return ''\n");
+		
+		return methodStmt.toString();
+	}
+	
+	public String getVDefStatement()
+	{
+		StringBuilder methodStmt = new StringBuilder();
+		methodStmt.append("def v(columnName):\n\treturn getValue(columnName)\n");
 		return methodStmt.toString();
 	}
 }

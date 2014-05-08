@@ -110,6 +110,8 @@ public class ModelLearner {
 		if (hypothesisList != null && !hypothesisList.isEmpty()) {
 			SortableSemanticModel m = hypothesisList.get(0);
 			this.semanticModel = new SemanticModel(m);
+		} else {
+			this.semanticModel = null;
 		}
 	}
 	
@@ -144,7 +146,9 @@ public class ModelLearner {
 		logger.info("finding candidate steiner sets ... ");
 		CandidateSteinerSets candidateSteinerSets = getCandidateSteinerSets(columnNodes, useCorrectTypes, numberOfCRFCandidates, addedNodes);
 		
-		if (candidateSteinerSets == null) {
+		if (candidateSteinerSets == null || 
+				candidateSteinerSets.getSteinerSets() == null || 
+				candidateSteinerSets.getSteinerSets().isEmpty()) {
 			logger.error("there is no candidate set of steiner nodes.");
 			return null;
 		}
@@ -282,10 +286,12 @@ public class ModelLearner {
 			candidateSemanticTypes = columnSemanticTypes.get(n);
 			if (candidateSemanticTypes == null) continue;
 			
-			logger.debug("===== Column: " + n.getColumnName());
+			logger.info("===== Column: " + n.getColumnName());
 
 			Set<SemanticTypeMapping> semanticTypeMappings = new HashSet<SemanticTypeMapping>();
 			for (SemanticType semanticType: candidateSemanticTypes) {
+				
+				logger.info("\t===== Semantic Type: " + semanticType.getCrfModelLabelString());
 				
 				if (semanticType == null || 
 						semanticType.getDomain() == null ||
@@ -296,13 +302,16 @@ public class ModelLearner {
 				Integer countOfSemanticType = semanticTypesCount.get(domainUri + propertyUri);
 
 				tempSemanticTypeMappings = findSemanticTypeInGraph(n, semanticType, semanticTypesCount, addedNodes);
+//				logger.info("number of matches for semantic type: " +  
+//					 + (tempSemanticTypeMappings == null ? 0 : tempSemanticTypeMappings.size()));
 
 				if (tempSemanticTypeMappings != null) 
 					semanticTypeMappings.addAll(tempSemanticTypeMappings);
 				
-				if (tempSemanticTypeMappings == null || tempSemanticTypeMappings.size() < countOfSemanticType) // No struct in graph is matched with the semantic type, we add a new struct to the graph
+				int countOfMatches = tempSemanticTypeMappings == null ? 0 : tempSemanticTypeMappings.size();
+				if (countOfMatches < countOfSemanticType) // No struct in graph is matched with the semantic type, we add a new struct to the graph
 				{
-					for (int i = 0; i < countOfSemanticType; i++) {
+					for (int i = 0; i < countOfSemanticType - countOfMatches; i++) {
 						SemanticTypeMapping mp = addSemanticTypeStruct(n, semanticType, addedNodes);
 						if (mp != null)
 							semanticTypeMappings.add(mp);
@@ -385,16 +394,17 @@ public class ModelLearner {
 			}
 		}
 		
-		logger.debug("adding data property to found internal nodes ...");
+		logger.debug("adding data property to the found internal nodes ...");
 		
 		Integer count;
+		boolean allowMultipleSamePropertiesPerNode = ModelingConfiguration.isMultipleSamePropertyPerNode();
 		Set<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(domainUri);
 		if (nodesWithSameUriOfDomain != null) { 
 			for (Node source : nodesWithSameUriOfDomain) {
 				count = this.graphBuilder.getNodeDataPropertyCount().get(source.getId() + propertyUri);
 
 				if (count != null) {
-					if (ModelingConfiguration.isMultipleSamePropertyPerNode()) {
+					if (allowMultipleSamePropertiesPerNode) {
 						if (count >= countOfSemanticType.intValue())
 							continue;
 					} else {
