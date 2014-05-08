@@ -2,20 +2,25 @@ package edu.isi.karma.kr2rml;
 
 import java.io.PrintWriter;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONObject;
 
 public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
-	
+
+	protected boolean firstObject = true;
 	protected PrintWriter outWriter;
 	protected Map<String, JSONObject> generatedObjects;
+	protected Map<String, JSONObject> rootObjects = new ConcurrentHashMap<String, JSONObject>();
 
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter) {
 		this.outWriter = outWriter;
 		generatedObjects = new ConcurrentHashMap<String, JSONObject>();
+		
+		outWriter.println("[");
 	}
-	
+
 	@Override
 	public void outputTripleWithURIObject(String subjUri, String predicateUri,
 			String objectUri) {
@@ -34,7 +39,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	public void outputQuadWithLiteralObject(String subjUri,
 			String predicateUri, String value, String literalType, String graph) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private void checkAndAddsubjUri(String subjUri) {
@@ -42,6 +47,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			JSONObject object = new JSONObject();
 			object.put("uri", subjUri);
 			generatedObjects.put(subjUri, object);
+			rootObjects.put(subjUri, object);
 		}
 	}
 
@@ -56,8 +62,8 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			JSONObject object1 = generatedObjects.get(subjUri);
 			JSONObject object2 = generatedObjects.get(objectUri);
 			object1.put(predicateUri, object2);
-			generatedObjects.put(subjUri, object1);
-			generatedObjects.remove(objectUri);
+			//			generatedObjects.put(subjUri, object1);
+			rootObjects.remove(objectUri);
 		} else {
 			addLiteralObject(subjUri, predicateUri, objectUri);
 		}
@@ -65,20 +71,28 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 
 	@Override
 	public void finishRow() {
-		// TODO Auto-generated method stub
-		
+		for(JSONObject value : rootObjects.values())
+		{
+			if (!firstObject) {
+				outWriter.println(",");
+			}
+			firstObject = false;
+			outWriter.print(value.toString(4));
+		}
+		outWriter.println("");
+		generatedObjects = new ConcurrentHashMap<String, JSONObject>();
+		rootObjects = new ConcurrentHashMap<String, JSONObject>();		
 	}
 
 	@Override
 	public void flush() {
-		// TODO Auto-generated method stub
-		
+		finishRow();
+		outWriter.flush();
 	}
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-		
+		outWriter.print("]");
+		outWriter.close();
 	}
-
 }
