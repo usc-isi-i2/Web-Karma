@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,12 +31,12 @@ import edu.isi.karma.kr2rml.planning.TriplesMap;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.KarmaException;
 
 public class ExportJSONCommand extends WorksheetCommand {
 
@@ -83,7 +82,6 @@ public class ExportJSONCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		logger.info("Entered ExportJSONCommand");
 		
-		RepFactory f = workspace.getFactory();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				AlignmentManager.Instance().constructAlignmentId(workspace.getId(),
@@ -94,10 +92,17 @@ public class ExportJSONCommand extends WorksheetCommand {
 		
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
-		KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(
-				workspace, worksheet, alignment, 
-				worksheet.getSemanticTypes(), rdfPrefix, rdfNamespace,
-				true, errorReport);
+		KR2RMLMappingGenerator mappingGen = null;
+		try {
+			mappingGen = new KR2RMLMappingGenerator(
+					workspace, worksheet, alignment, 
+					worksheet.getSemanticTypes(), rdfPrefix, rdfNamespace,
+					true, errorReport);
+		} catch (KarmaException e)
+		{
+			logger.error("Error occured while generating RDF!", e);
+			return new UpdateContainer(new ErrorUpdate("Error occured while generating RDF: " + e.getMessage()));
+		}
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
 //		TriplesMap triplesMap = mapping.getTriplesMapIndex().get(alignmentNodeId);
 
@@ -127,9 +132,8 @@ public class ExportJSONCommand extends WorksheetCommand {
 				PredicateObjectMap predicateObjectMap = it.next();
 				String objectId = predicateObjectMap.getObject().getId();
 				String key = predicateObjectMap.getPredicate().getTemplate().toString();
-				Collection<Node> nodes = row.getNodes();
 				String value = row.getNode(objectId).getValue().asString();
-				obj.put(predicateObjectMap.getPredicate().getTemplate().toString(), row.getNode(objectId).getValue().asString());
+				obj.put(key, value);
 			}
 			JSONArray.put(obj);
 		}
