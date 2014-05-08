@@ -103,6 +103,23 @@ public class KR2RMLWorksheetRDFGenerator {
 	}
 
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
+			OntologyManager ontMgr, KR2RMLRDFWriter writer, boolean addColumnContextInformation, 
+			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport) {
+		super();
+		this.ontMgr = ontMgr;
+		this.kr2rmlMapping = kr2rmlMapping;
+		this.factory = factory;
+		this.worksheet = worksheet;
+		this.outWriter = writer;
+		this.errorReport = errorReport;
+		this.uriFormatter = new URIFormatter(ontMgr, errorReport);
+		this.hNodeToContextUriMap = new ConcurrentHashMap<String, String>();
+		this.addColumnContextInformation = addColumnContextInformation;
+		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
+
+	}
+
+	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
 			OntologyManager ontMgr, PrintWriter writer, KR2RMLMapping kr2rmlMapping,  
 			ErrorReport errorReport, boolean addColumnContextInformation) {
 		super();

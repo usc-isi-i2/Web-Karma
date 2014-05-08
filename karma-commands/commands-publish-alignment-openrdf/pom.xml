@@ -24,6 +24,13 @@
 			<artifactId>commands-python</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>2.11.4</version>
+		</dependency>
+		
 	</dependencies>
     
 </project>
