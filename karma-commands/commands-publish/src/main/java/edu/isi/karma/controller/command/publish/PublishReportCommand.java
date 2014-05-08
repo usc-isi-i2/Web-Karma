@@ -3,15 +3,11 @@ package edu.isi.karma.controller.command.publish;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
@@ -22,7 +18,8 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.history.CommandHistoryWriter.HistoryArguments;
+import edu.isi.karma.controller.history.CommandHistory;
+import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
@@ -36,8 +33,6 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
-import edu.isi.karma.util.EncodingDetector;
-import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -136,17 +131,16 @@ public class PublishReportCommand extends Command {
 	}
 
 	private void writePyTransforms(Workspace workspace, Worksheet worksheet, PrintWriter pw) throws IOException {
-		String historyFilePath = HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(
-				worksheet.getTitle(), workspace.getCommandPreferencesId());
-		File historyFile = new File(historyFilePath);
 		
 		//Map for py transforms, so only the latest pyTransform for a column gets written
 		LinkedHashMap<String, String> pyTransformMap = new LinkedHashMap<>();
 		String linebreak = System.getProperty("line.separator");
-		if (historyFile.exists()) {
-			String encoding = EncodingDetector.detect(historyFile);
-			String historyJsonStr = FileUtil.readFileContentsToString(historyFile, encoding);
-			JSONArray history = new JSONArray(historyJsonStr);
+		
+		String historyFile = CommandHistory.getHistorySaver(workspace.getId()).getHistoryFilepath(worksheetId);
+		try {
+			
+		
+			JSONArray history = CommandHistory.getHistorySaver(workspace.getId()).loadHistory(historyFile);
 			
 			for(int i=0; i<history.length(); i++) {
 				JSONObject command = history.getJSONObject(i);
@@ -169,24 +163,26 @@ public class PublishReportCommand extends Command {
 					
 					//Pedro: throw-away code, ought to have a better way to construct column paths.
 					JSONArray hNodeIdArray = HistoryJsonUtil.getJSONArrayValue("hNodeId", inputParamArr);
- 					String invocationColumnName = "";
- 					String sep = "";
- 					for(int j=0; j<hNodeIdArray.length(); j++) {
- 						JSONObject columnNameObj = hNodeIdArray.getJSONObject(j);
- 						String name =columnNameObj.getString("columnName");
- 						invocationColumnName += sep + name;
- 						sep = " / ";
- 					}
- 					pyTransform.append("From column: _" + invocationColumnName + "_").append(linebreak);
+					String invocationColumnName = "";
+					String sep = "";
+					for(int j=0; j<hNodeIdArray.length(); j++) {
+						JSONObject columnNameObj = hNodeIdArray.getJSONObject(j);
+						String name =columnNameObj.getString("columnName");
+						invocationColumnName += sep + name;
+						sep = " / ";
+					}
+					pyTransform.append("From column: _" + invocationColumnName + "_").append(linebreak);
 					
- 					pyTransform.append(">``` python").append(linebreak);
- 					pyTransform.append(code).append(linebreak);
- 					pyTransform.append("```").append(linebreak);
- 					pyTransform.append(linebreak);
- 					
- 					pyTransformMap.put(columnName, pyTransform.toString());
+					pyTransform.append(">``` python").append(linebreak);
+					pyTransform.append(code).append(linebreak);
+					pyTransform.append("```").append(linebreak);
+					pyTransform.append(linebreak);
+					
+					pyTransformMap.put(columnName, pyTransform.toString());
 				}
 			}
+		} catch(Exception e) {
+			logger.error("Error reading history file:" + historyFile);
 		}
 		
 		//Now get all transforms from the map and write them to the writer

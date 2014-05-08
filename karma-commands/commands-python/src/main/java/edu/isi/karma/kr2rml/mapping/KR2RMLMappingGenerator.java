@@ -21,8 +21,6 @@
 
 package edu.isi.karma.kr2rml.mapping;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -39,6 +37,7 @@ import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLVersion;
@@ -81,8 +80,6 @@ import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURITokenizer;
 import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURIValidator;
 import edu.isi.karma.transformation.tokenizer.PythonTransformationToken;
-import edu.isi.karma.util.EncodingDetector;
-import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.webserver.KarmaException;
 
 public class KR2RMLMappingGenerator {
@@ -110,6 +107,12 @@ public class KR2RMLMappingGenerator {
 	public KR2RMLMappingGenerator(Workspace workspace, Worksheet worksheet, Alignment alignment, 
 			SemanticTypes semanticTypes, String sourcePrefix, String sourceNamespace, 
 			boolean generateInverse, ErrorReport errorReport) throws KarmaException{
+		this(workspace, worksheet, alignment, semanticTypes, sourcePrefix, sourceNamespace, generateInverse, null, errorReport);
+	}
+	
+	public KR2RMLMappingGenerator(Workspace workspace, Worksheet worksheet, Alignment alignment, 
+			SemanticTypes semanticTypes, String sourcePrefix, String sourceNamespace, 
+			boolean generateInverse, JSONArray history, ErrorReport errorReport) throws KarmaException{
 
 		this.workspace = workspace;
 		this.worksheet = worksheet;
@@ -131,7 +134,7 @@ public class KR2RMLMappingGenerator {
 		// Generate the R2RML data structures
 		generateMappingFromSteinerTree(generateInverse);
 		
-		addWorksheetHistory();
+		addWorksheetHistory(history);
 		addSourceType(worksheet);
 		addColumnNameFormatter();
 		determineIfMappingIsR2RMLCompatible(worksheet);
@@ -157,23 +160,23 @@ public class KR2RMLMappingGenerator {
 		r2rmlMapping.setColumnNameFormatter(KR2RMLColumnNameFormatterFactory.getFormatter(r2rmlMapping.getSourceType()));
 	}
 	
-	private void addWorksheetHistory() {
-		String historyFilePath = HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(
-				worksheet.getTitle(), workspace.getCommandPreferencesId());
-		File historyFile = new File(historyFilePath);
-		if (!historyFile.exists()) {
-			logger.error("Worksheet history file not found! Can't write worksheet history " +
-					"into R2RML model. Path:" + historyFile.getAbsolutePath());
-			return;
-		}
-		try {
-			String encoding = EncodingDetector.detect(historyFile);
-			String historyJsonStr = FileUtil.readFileContentsToString(historyFile, encoding);
-			r2rmlMapping.setWorksheetHistory(new JSONArray(historyJsonStr));
-		}
-		catch(IOException e)
-		{
-			logger.error("Unable to read worksheet history from file");
+	private void addWorksheetHistory(JSONArray history) {
+		if(history != null) {
+			r2rmlMapping.setWorksheetHistory(history);
+		} else {
+			String filename = CommandHistory.getHistorySaver(workspace.getId()).getHistoryFilepath(worksheet.getId());
+			if(!HistoryJsonUtil.historyExists(workspace.getId(), worksheet.getId())) {
+				logger.error("Worksheet history file not found! Can't write worksheet history " +
+						"into R2RML model. Path:" + filename);
+				return;
+			}
+			
+			try {
+				JSONArray historyArr = CommandHistory.getHistorySaver(workspace.getId()).loadHistory(filename);
+				r2rmlMapping.setWorksheetHistory(historyArr);
+			} catch(Exception e) {
+				logger.error("Unable to read worksheet history from file: " + filename);
+			}
 		}
 	}
 

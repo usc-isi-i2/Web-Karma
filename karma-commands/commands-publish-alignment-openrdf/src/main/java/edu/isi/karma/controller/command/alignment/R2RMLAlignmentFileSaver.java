@@ -4,14 +4,25 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
+import org.openrdf.model.URI;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.RepositoryResult;
+import org.openrdf.repository.sail.SailRepository;
+import org.openrdf.repository.sail.SailRepositoryConnection;
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.openrdf.model.Statement;
+import org.openrdf.model.impl.URIImpl;
 
 import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommand.PreferencesKeys;
+import edu.isi.karma.controller.history.IHistorySaver;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMappingWriter;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
@@ -24,19 +35,21 @@ import edu.isi.karma.modeling.alignment.IAlignmentSaver;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.WorkspaceManager;
+import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class R2RMLAlignmentFileSaver implements IAlignmentSaver {
+public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(R2RMLAlignmentFileSaver.class);
 	private KR2RMLMappingGenerator alignmentMappingGenerator = null;
 	private String namespace;
 	private String prefix;
+	private Workspace workspace;
 	
 	public R2RMLAlignmentFileSaver(Workspace workspace) {
+		this.workspace = workspace;
 		JSONObject prefObject = workspace.getCommandPreferences().getCommandPreferencesJSONObject(
 				"PublishRDFCommand"+"Preferences");
 		if (prefObject != null) {
@@ -54,23 +67,31 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver {
 	
 	@Override
 	public void saveAlignment(Alignment alignment) throws Exception {
-		saveAlignment(alignment, null);
+		saveAlignment(alignment, null, null);
 	}
 	
-	public void saveAlignment(Alignment alignment, String modelFilename) throws Exception {
+	public void saveAlignment(Alignment alignment, JSONArray history)  throws Exception {
+		saveAlignment(alignment, history, null);
+	}
+	
+	public void saveAlignment(Alignment alignment, String modelFilename)  throws Exception {
+		saveAlignment(alignment, null, modelFilename);
+	}
+	
+	public void saveAlignment(Alignment alignment, JSONArray history, String modelFilename) throws Exception {
 		long start = System.currentTimeMillis();
 		
 		String workspaceId = AlignmentManager.Instance().getWorkspaceId(alignment);
 		String worksheetId = AlignmentManager.Instance().getWorksheetId(alignment);
 		
-		Workspace workspace = WorkspaceManager.getInstance().getWorkspace(workspaceId);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		
-		if(modelFilename == null)
-			modelFilename = workspace.getCommandPreferencesId() + worksheetId + "-" + 
-				worksheet.getTitle() +  "-auto-model.ttl"; 
-		final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
-				ContextParameter.R2RML_PUBLISH_DIR) +  modelFilename;
+		if(modelFilename == null) {
+			modelFilename = getHistoryFilepath(worksheetId);
+		} else {
+			modelFilename = ServletContextParameterMap.getParameterValue(
+					ContextParameter.R2RML_PUBLISH_DIR) + modelFilename;
+		}
 		
 		long end1 = System.currentTimeMillis();
 		logger.info("Time to get alignment info for saving: " + (end1-start) + "msec");
@@ -78,13 +99,14 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver {
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
 		alignmentMappingGenerator = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
-				worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
+					worksheet.getSemanticTypes(), prefix, namespace, true, history, errorReport);
+		
 		long end2 = System.currentTimeMillis();
 		logger.info("Time to generate mappings:" + (end2-end1) + "msec");
 		
 		// Write the model
-		writeModel(workspace, workspace.getOntologyManager(), alignmentMappingGenerator, worksheet, modelFileLocalPath);
-		logger.info("Alignment for " + workspaceId + ":" + worksheetId + " saved to file: " + modelFileLocalPath);
+		writeModel(workspace, workspace.getOntologyManager(), alignmentMappingGenerator, worksheet, modelFilename);
+		logger.info("Alignment for " + workspaceId + ":" + worksheetId + " saved to file: " + modelFilename);
 		long end3 = System.currentTimeMillis();
 		logger.info("Time to write to file:" + (end3-end2) + "msec");
 	}
@@ -109,4 +131,43 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver {
 		writer.flush();
 		writer.close();
 	}
+
+	@Override
+	public String getHistoryFilepath(String worksheetId) {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		String modelFilename = workspace.getCommandPreferencesId() + worksheetId + "-" + 
+				worksheet.getTitle() +  "-auto-model.ttl"; 
+		String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
+				ContextParameter.R2RML_PUBLISH_DIR) +  modelFilename;
+		return modelFileLocalPath;
+	}
+	
+	@Override
+	public void saveHistory(String workspaceId, String worksheetId,
+			JSONArray history) throws Exception {
+		Alignment alignment = AlignmentManager.Instance().getAlignment(workspaceId, worksheetId);
+		this.saveAlignment(alignment, history);
+		
+	}
+
+	@Override
+	public JSONArray loadHistory(String filename) throws Exception {
+		File file = new File(filename);
+//		String encoding = EncodingDetector.detect(file);
+//		String contents = EncodingDetector.getString(file, encoding);
+		
+		SailRepository myRepository = new SailRepository(new MemoryStore());
+		myRepository.initialize();
+		SailRepositoryConnection con = myRepository.getConnection();
+		con.add(file, "", RDFFormat.TURTLE);
+		
+		RepositoryResult<Statement> result = con.getStatements(null, new URIImpl("http://isi.edu/integration/karma/dev#hasWorksheetHistory"), null, false);
+		if(result.hasNext()) {
+			Statement stmt = result.next();
+			String history = stmt.getObject().stringValue();
+			return new JSONArray(history);
+		}
+		return new JSONArray();
+	}
+
 }

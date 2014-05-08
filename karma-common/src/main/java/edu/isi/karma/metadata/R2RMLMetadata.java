@@ -4,7 +4,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class R2RMLMetadata extends KarmaPublishedMetadata {
+public class R2RMLMetadata extends KarmaUserMetadata {
 
 	public R2RMLMetadata(Workspace workspace) throws KarmaException {
 		super(workspace);
@@ -20,11 +20,7 @@ public class R2RMLMetadata extends KarmaPublishedMetadata {
 	protected ContextParameter getDirectoryContextParameter() {
 		return ContextParameter.R2RML_PUBLISH_DIR;
 	}
-
-	@Override
-	protected ContextParameter getRelativeDirectoryContextParameter() {
-		return ContextParameter.R2RML_PUBLISH_RELATIVE_DIR;
-	}
+	
 	
 	@Override
 	protected String getDirectoryPath() {

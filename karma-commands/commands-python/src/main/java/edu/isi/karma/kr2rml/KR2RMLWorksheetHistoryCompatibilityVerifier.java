@@ -5,12 +5,13 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.command.transformation.PythonTransformationCommand;
-import edu.isi.karma.controller.history.CommandHistoryWriter.HistoryArguments;
+import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURIValidator;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.WorkspaceRegistry;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
