@@ -3,6 +3,13 @@ package edu.isi.karma.controller.command.publish;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -25,6 +32,7 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
@@ -44,8 +52,7 @@ public class PublishReportCommand extends Command {
 	private String worksheetName;
 	
 	// Logger object
-	private static Logger logger = LoggerFactory
-			.getLogger(PublishReportCommand.class.getSimpleName());
+	private static Logger logger = LoggerFactory.getLogger(PublishReportCommand.class);
 
 	public PublishReportCommand(String id, String worksheetId) {
 		super(id);
@@ -132,6 +139,10 @@ public class PublishReportCommand extends Command {
 		String historyFilePath = HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(
 				worksheet.getTitle(), workspace.getCommandPreferencesId());
 		File historyFile = new File(historyFilePath);
+		
+		//Map for py transforms, so only the latest pyTransform for a column gets written
+		LinkedHashMap<String, String> pyTransformMap = new LinkedHashMap<>();
+		String linebreak = System.getProperty("line.separator");
 		if (historyFile.exists()) {
 			String encoding = EncodingDetector.detect(historyFile);
 			String historyJsonStr = FileUtil.readFileContentsToString(historyFile, encoding);
@@ -152,7 +163,9 @@ public class PublishReportCommand extends Command {
 							columnName =columnNameObj.getString("columnName");
 						}
 					}
-					pw.println("#### _" + columnName + "_");
+					
+					StringBuffer pyTransform = new StringBuffer("#### _" + columnName + "_");
+					pyTransform.append(linebreak);
 					
 					//Pedro: throw-away code, ought to have a better way to construct column paths.
 					JSONArray hNodeIdArray = HistoryJsonUtil.getJSONArrayValue("hNodeId", inputParamArr);
@@ -164,14 +177,21 @@ public class PublishReportCommand extends Command {
  						invocationColumnName += sep + name;
  						sep = " / ";
  					}
- 					pw.println("From column: _" + invocationColumnName + "_");
+ 					pyTransform.append("From column: _" + invocationColumnName + "_").append(linebreak);
 					
-					pw.println(">``` python");
-					pw.println(code);
-					pw.println("```");
-					pw.println();
+ 					pyTransform.append(">``` python").append(linebreak);
+ 					pyTransform.append(code).append(linebreak);
+ 					pyTransform.append("```").append(linebreak);
+ 					pyTransform.append(linebreak);
+ 					
+ 					pyTransformMap.put(columnName, pyTransform.toString());
 				}
 			}
+		}
+		
+		//Now get all transforms from the map and write them to the writer
+		for(String columnName : pyTransformMap.keySet()) {
+			pw.print(pyTransformMap.get(columnName));
 		}
 	}
 	
@@ -184,16 +204,25 @@ public class PublishReportCommand extends Command {
 
 		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheet.getId());
 		if(alignment != null) {
-			 Set<Node> columnNodes = alignment.getNodesByType(NodeType.ColumnNode);
+			 List<Node> columnNodes = Arrays.asList(alignment.getNodesByType(NodeType.ColumnNode).toArray(new Node[0]));
+			 Collections.sort(columnNodes, new Comparator<Node>() {
+					@Override
+					public int compare(Node n1, Node n2) {
+						String l1name = getClassName(n1);
+						String l2name = getClassName(n2);
+						return l1name.compareTo(l2name);
+					}
+				});
+			 
 			 if(columnNodes != null) {
 				 for(Node node : columnNodes) {
 					 if(node instanceof ColumnNode) {
 						 ColumnNode columnNode = (ColumnNode)node;
-						 String columnName = columnNode.getColumnName();
+						 String columnName = getClassName(columnNode);
 						 List<LabeledLink> links = alignment.getIncomingLinks(node.getId());
 						 for(LabeledLink link : links) {
-							 String property = link.getLabel().getUri();
-							 String classname = link.getSource().getId();
+							 String property = getPropertyName(link.getLabel());
+							 String classname = getClassName(link.getSource());
 							 pw.println("| _" + columnName + "_ | `" + property + "` | `" + classname + "`|");
 						 }
 					 }
@@ -212,22 +241,43 @@ public class PublishReportCommand extends Command {
 		if(alignment != null) {
 			DirectedWeightedMultigraph<Node, LabeledLink> alignmentGraph = alignment.getSteinerTree();
 			if(alignmentGraph != null) {
-				Set<LabeledLink> links = alignmentGraph.edgeSet();
-				for (LabeledLink link : links) {
-					Node source = link.getSource();
-					Node target = link.getTarget();
-					String property = link.getLabel().getUri();
+				List<LabeledLink> links = Arrays.asList(alignmentGraph.edgeSet().toArray(new LabeledLink[0]));
+				Collections.sort(links, new Comparator<LabeledLink>() {
+					@Override
+					public int compare(LabeledLink l1, LabeledLink l2) {
+						String l1name = getClassName(l1.getSource());
+						String l2name = getClassName(l2.getSource());
+						return l1name.compareTo(l2name);
+					}
 					
+				});
+				for (LabeledLink link : links) {
+					Node target = link.getTarget();
 					if(target instanceof ColumnNode) { //ALready covered in semantic types
 						continue;
 					}
-					String to = target.getDisplayId();
-					String from = (source instanceof ColumnNode) ? ((ColumnNode)source).getColumnName() : source.getDisplayId();
+					
+					Node source = link.getSource();
+					String property = getPropertyName(link.getLabel());
+					String to = getClassName(target);
+					String from = getClassName(source);
 					
 					pw.println("| `" + from + "` | `" + property + "` | `" + to + "`|");
 				}
 			}
 		}
+	}
+	
+	private String getClassName(Node node) {
+		String name =  (node instanceof ColumnNode) ? ((ColumnNode)node).getColumnName() : node.getDisplayId();
+		return name;
+	}
+	
+	private String getPropertyName(Label label) {
+		String name = label.getDisplayName();
+		if(name.equals("km-dev:classLink"))
+			name = "uri";
+		return name;
 	}
 	
 	@Override

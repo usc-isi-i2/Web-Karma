@@ -542,7 +542,7 @@ public class WorksheetR2RMLJenaModelParser {
 						if(columnsCovered.isEmpty())
 						{
 							String blankNodeUriPrefix = kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().get(subjMap.getId());
-							throw new KarmaException("You need to define a URI for "+blankNodeUriPrefix+ ".");
+							//throw new KarmaException("You need to define a URI for "+blankNodeUriPrefix+ ".");
 						}
 						break;
 					}

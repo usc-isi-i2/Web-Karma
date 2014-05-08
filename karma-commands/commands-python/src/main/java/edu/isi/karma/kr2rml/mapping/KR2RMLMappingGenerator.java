@@ -245,7 +245,7 @@ public class KR2RMLMappingGenerator {
 					}
 					if(columnsCovered.isEmpty())
 					{
-						throw new KarmaException("You need to define a URI for "+treeNode.getDisplayId()+ ".");
+						//throw new KarmaException("You need to define a URI for "+treeNode.getDisplayId()+ ".");
 					}
 					r2rmlMapping.getAuxInfo().getBlankNodesColumnCoverage().put(treeNode.getId(), columnsCovered);
 					r2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().put(treeNode.getId(), treeNode.getDisplayId());
