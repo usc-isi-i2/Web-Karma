@@ -153,69 +153,72 @@ var TransformColumnDialog = (function() {
 		}
 
 		function populateResult(rdata) {
-			var examples = cleaningExamples;
-			var cleaningTable = $("table#cleaningExamplesTable");
-			transformedResult = new Object();
+			try {
+				var examples = cleaningExamples;
+				var cleaningTable = $("table#cleaningExamplesTable");
+				transformedResult = new Object();
 
-			// Remove the old results
-			$("td.ruleResultsValue_rest", cleaningTable).remove();
-			$("tr.suggestion", cleaningTable).remove();
-			//$("td.ruleResultsValue_begin", cleaningTable).remove();
+				// Remove the old results
+				$("td.ruleResultsValue_rest", cleaningTable).remove();
+				$("tr.suggestion", cleaningTable).remove();
+				//$("td.ruleResultsValue_begin", cleaningTable).remove();
 
-			var data = rdata["data"];
-			$.each(data, function(nodeId, xval) {
-				var trTag = $("tr#" + nodeId + "_cl_row");
-				if(trTag != null) {
-					transformedResult[nodeId] = xval;
-					if(xval == $("div#" + nodeId).text()) {
-						$("div#" + nodeId).attr("class", "cleanExampleDiv");
-						//return true;
-					}
-					$("td.ruleResultsValue_begin", trTag).remove();
-					$("#" + nodeId + "_origVal", trTag).html(xval["Orgdis"]).data("CellValue", xval["Org"]);
-					trTag.append($("<td>").addClass("ruleResultsValue_begin").attr("id", nodeId + "_transformed").append($("<table>").append($("<tr>").append($("<td>").addClass("noinnerBorder").append($("<div>").data("nodeId", nodeId)// set the original value for the example
-					.data("cellValue", xval["Tar"]).addClass("cleanExampleDiv").html(xval["Tardis"])//set the result here
-					.attr("id", nodeId))).append($("<td>").addClass("noBorder").append($("<button>").addClass("editbutton").addClass("ui-icon").addClass("ui-icon-pencil").button({
-						icons : {
-							//	primary : "ui-icon-pencil"
-						},
-						text : false
-					}).attr("id", "edit_" + nodeId).click(function() {
-						$("div", $(this).parent().prev()).html(xval["Tar"]);
-						$("div", $(this).parent().prev()).trigger("edit");
-					}))))))
-					$("div#" + nodeId, trTag).editable(function(value, settings) {
-						var tmpnodeId = nodeId;
-						if(nodeId.indexOf("suggestion") >= 0) {
-							tmpnodeId = nodeId.substring(0, nodeId.indexOf("_suggestion"));
-							$("div#" + tmpnodeId).text(value);
+				var data = rdata["data"];
+				$.each(data, function(nodeId, xval) {
+					var trTag = $("tr#" + nodeId + "_cl_row");
+					if(trTag != null) {
+						transformedResult[nodeId] = xval;
+						if(xval == $("div#" + nodeId).text()) {
+							$("div#" + nodeId).attr("class", "cleanExampleDiv");
+							//return true;
 						}
-						var editDiv = $("div#" + nodeId);
-						examples.push({
-							"nodeId" : tmpnodeId,
-							"before" : $("tr#" + tmpnodeId + "_cl_row").data("originalVal"),
-							"after" : value
-						});
-						$("div#" + nodeId).text(value);
-						xval["Tardis"] = value;
-						updateResult();
-						var trs = $("td#" + nodeId + "_transformed tr");
-						//call the update result function
-						return (value);
-					}, {
-						type : 'textarea',
-						submit : 'OK',
-						cancel : 'Cancel',
-						width : 400,
-						callback : function() {
-							$(this).html(xval["Tardis"]);
-						},
-						onblur : 'ignore',
-						event : "edit"
-					})
-				}
-			});
-
+						$("td.ruleResultsValue_begin", trTag).remove();
+						$("#" + nodeId + "_origVal", trTag).html(xval["Orgdis"]).data("CellValue", xval["Org"]);
+						trTag.append($("<td>").addClass("ruleResultsValue_begin").attr("id", nodeId + "_transformed").append($("<table>").append($("<tr>").append($("<td>").addClass("noinnerBorder").append($("<div>").data("nodeId", nodeId)// set the original value for the example
+						.data("cellValue", xval["Tar"]).addClass("cleanExampleDiv").html(xval["Tardis"])//set the result here
+						.attr("id", nodeId))).append($("<td>").addClass("noBorder").append($("<button>").addClass("editbutton").addClass("ui-icon").addClass("ui-icon-pencil").button({
+							icons : {
+								//	primary : "ui-icon-pencil"
+							},
+							text : false
+						}).attr("id", "edit_" + nodeId).click(function() {
+							$("div", $(this).parent().prev()).html(xval["Tar"]);
+							$("div", $(this).parent().prev()).trigger("edit");
+						}))))))
+						$("div#" + nodeId, trTag).editable(function(value, settings) {
+							var tmpnodeId = nodeId;
+							if(nodeId.indexOf("suggestion") >= 0) {
+								tmpnodeId = nodeId.substring(0, nodeId.indexOf("_suggestion"));
+								$("div#" + tmpnodeId).text(value);
+							}
+							var editDiv = $("div#" + nodeId);
+							examples.push({
+								"nodeId" : tmpnodeId,
+								"before" : $("tr#" + tmpnodeId + "_cl_row").data("originalVal"),
+								"after" : value
+							});
+							$("div#" + nodeId).text(value);
+							xval["Tardis"] = value;
+							updateResult();
+							var trs = $("td#" + nodeId + "_transformed tr");
+							//call the update result function
+							return (value);
+						}, {
+							type : 'textarea',
+							submit : 'OK',
+							cancel : 'Cancel',
+							width : 400,
+							callback : function() {
+								$(this).html(xval["Tardis"]);
+							},
+							onblur : 'ignore',
+							event : "edit"
+						})
+					}
+				});
+			} catch(err) {
+				console.log(err.message)
+			}
 		}
 
 		function updateResult() {

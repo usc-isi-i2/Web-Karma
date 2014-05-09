@@ -26,11 +26,10 @@ table.transform {
 	width: 680px;
 }
 
-/*table.info{
-	border:none;
+td#info{
 	font-size: 12px;
 	width: 680px;
-}*/
+}
 table.transform td.contentNoBorder{
 	border:none;
 }
@@ -113,6 +112,12 @@ table.transform td.cleaningTableHeading {
 	font-weight: 900;
 	padding-bottom:4px;
 }
+
+div.transformColumnDialog{
+	width: 700;
+}
+
+
 span.ins {
 	background:#F7BE81;
 }

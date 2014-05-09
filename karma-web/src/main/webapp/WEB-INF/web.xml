@@ -70,7 +70,7 @@
 	</context-param>
   <context-param>
   		<param-name>PYTHON_SCRIPTS_DIRECTORY</param-name>
-		<param-value>./src/main/resources/scripts/Lib</param-value>
+		<param-value>../karma-cleaning/src/main/resources/scripts/Lib</param-value>
   </context-param>
   <context-param>
 		<param-name>WEBAPP_PATH</param-name>

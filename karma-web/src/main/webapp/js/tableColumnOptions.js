@@ -16,7 +16,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 			
 	               {name:"Extract Entities", func:extractEntities, leafOnly:true},
 	               {name:"PyTransform" , func:pyTransform, leafOnly:true},
-	              // {name:"Transform", func:transform, leafOnly:true},
+	               {name:"Transform", func:transform, leafOnly:true},
 	               {name:"divider" , leafOnly:true},
 			
 	               {name:"Invoke Service" , func:invokeService, leafOnly:true},

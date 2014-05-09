@@ -36,6 +36,7 @@ import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.cleaning.*;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -194,7 +195,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			vb_cnt ++;
 		}
 		Vector<String> vob = UtilTools.buildDict(v);
-		inputs.setVocab(new String[vob.size()]);
+		inputs.setVocab(vob.toArray(new String[vob.size()]));
 		while (iterNum < 1 && !results) // try to find an program within iterNum
 		{
 			rtf = new RamblerTransformationOutput(inputs);
