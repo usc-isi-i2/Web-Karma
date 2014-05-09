@@ -1,6 +1,7 @@
 Karma: A Data Integration Tool
 ================================
 
+** 08 May 2014:** Check out the [step by step Karma tutorial.](https://github.com/InformationIntegrationGroup/karma-step-by-step)
 **22 April 2014:** We released version 2.000 of Karma with many changes, new GUI, new RDF generator and many bug fixes. 
 
 ## Quick Tidbits for Our Current Users
