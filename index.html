@@ -1,38 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Web-Karma : Information Integration Tool" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Web-Karma by InformationIntegrationGroup</title>
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Web-Karma</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
-
   <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Web-Karma</h1>
+        <p class="header">Information Integration Tool</p>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/InformationIntegrationGroup/Web-Karma">View on GitHub</a>
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/InformationIntegrationGroup/Web-Karma/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/InformationIntegrationGroup/Web-Karma/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/InformationIntegrationGroup/Web-Karma">View On GitHub</a></li>
+        </ul>
 
-          <h1 id="project_title">Web-Karma</h1>
-          <h2 id="project_tagline">Information Integration Tool</h2>
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/InformationIntegrationGroup">InformationIntegrationGroup</a></p>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/InformationIntegrationGroup/Web-Karma/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/InformationIntegrationGroup/Web-Karma/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
+      </header>
+      <section>
         <h1>
 <a name="karma-a-data-integration-tool" class="anchor" href="#karma-a-data-integration-tool"><span class="octicon octicon-link"></span></a>Karma: A Data Integration Tool</h1>
+
+<p><strong>08 May 2014:</strong> Check out the <a href="https://github.com/InformationIntegrationGroup/karma-step-by-step">step by step Karma tutorial.</a></p>
+
+<p><strong>22 April 2014:</strong> We released version 2.000 of Karma with many changes, new GUI, new RDF generator and many bug fixes. </p>
+
+<h2>
+<a name="quick-tidbits-for-our-current-users" class="anchor" href="#quick-tidbits-for-our-current-users"><span class="octicon octicon-link"></span></a>Quick Tidbits for Our Current Users</h2>
+
+<ul>
+<li>Installation script changed: after download, run <code>mvn clean install</code> in the download folder.</li>
+<li>Command to run Karma changed: <code>cd karma-web; mvn jetty:run</code>
+</li>
+<li>
+<code>preloaded-ontologies</code> moved. The installation script will create a <code>karma</code> folder for you in your home directory and the <code>preloaded-ontologies</code> are there.</li>
+<li>Command to define semantic types moved: it is not in the red/black circles anymore. This command is now in the column menu.</li>
+</ul><p>More details in the <a href="https://github.com/InformationIntegrationGroup/Web-Karma/wiki">wiki</a></p>
+
+<blockquote>
+<p><strong>Important note: on 15 March 2014 we had a mishap in the repository, so if you have a clone from a previous version you cannot update it to the new version. You need to delete your existing clone and get a fresh clone from the repo.</strong> </p>
+</blockquote>
+
+<h2>
+<a name="important-dependencies" class="anchor" href="#important-dependencies"><span class="octicon octicon-link"></span></a>Important Dependencies</h2>
+
+<p>Karma needs <strong>Java 1.7, Maven 3.0</strong>. Download Java SE from <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">http://www.oracle.com/technetwork/java/javase/downloads/index.html</a></p>
+
+<h2>
+<a name="what-is-karma" class="anchor" href="#what-is-karma"><span class="octicon octicon-link"></span></a>What is Karma?</h2>
 
 <p>Karma is an information integration tool that enables users to quickly and easily integrate data from a variety of data sources including databases, spreadsheets, delimited text files, XML, JSON, KML and Web APIs. Users integrate information by modeling it according to an ontology of their choice using a graphical user interface that automates much of the process. Karma learns to recognize the mapping of data to ontology classes and then uses the ontology to propose a model that ties together these classes. Users then interact with the system to adjust the automatically generated model. During this process, users can transform the data as needed to normalize data expressed in different formats and to restructure it. Once the model is complete, users can published the integrated data as RDF or store it in a database.</p>
 
@@ -41,14 +68,7 @@
 <h2>
 <a name="installation-and-setup" class="anchor" href="#installation-and-setup"><span class="octicon octicon-link"></span></a>Installation and Setup</h2>
 
-<p>System Requirements: Java 1.7, Maven 3.0 and above.</p>
-
-<p>To run the jetty server, execute the following command from webkarma top directory:
-<code>mvn jetty:run</code>. Once the server has started point your browser to <strong>http://localhost:8080/web-karma.html</strong>. To start it on a port other than 8080 (e.g. Port number 9999) 
-<code>mvn -Djetty.port=9999 jetty:run</code></p>
-
-<p>To start in logging mode (where all the logs are stored in the log folder), use the following command to start the server:
-    <code>mvn -Dslf4j=false -Dlog4j.configuration=file:./config/log4j.properties jetty:run</code></p>
+<p>Look in the Wiki <a href="https://github.com/InformationIntegrationGroup/Web-Karma/wiki/Installation">Installation</a></p>
 
 <h2>
 <a name="frequently-asked-questions" class="anchor" href="#frequently-asked-questions"><span class="octicon octicon-link"></span></a>Frequently Asked Questions</h2>
@@ -57,48 +77,49 @@
 <a name="how-to-perform-offline-rdf-generation-for-a-data-source-using-a-published-model" class="anchor" href="#how-to-perform-offline-rdf-generation-for-a-data-source-using-a-published-model"><span class="octicon octicon-link"></span></a>How to perform offline RDF generation for a data source using a published model?</h3>
 
 <ol>
-<li>Model your source and publish it's model (the published models are located at <code>src/main/webapp/repository/sources/</code> inside the Karma directory).</li>
-<li>
-<p>To generate RDF of a CSV/JSON/XML file, go to the top level Karma directory and run the following command from terminal:</p>
-
-<pre><code>mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineDbRdfGenerator" -Dexec.args="--sourcetype 
-&lt;sourcetype&gt; --filepath &lt;filepath&gt; --modelfilepath &lt;modelfilepath&gt; --outputfile &lt;outputfile&gt;"
+<li>Model your source and publish it's model (the published models are located at <code>src/main/webapp/publish/R2RML/</code> inside the Karma directory).</li>
+<li>To generate RDF of a CSV/JSON/XML file, go to the top level Karma directory and run the following command from terminal:</li>
+</ol><pre><code>cd karma-offline
+mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--sourcetype 
+&lt;sourcetype&gt; --filepath &lt;filepath&gt; --modelfilepath &lt;modelfilepath&gt; --outputfile &lt;outputfile&gt;" -Dexec.classpathScope=compile
 </code></pre>
 
-<p>Valid argument values for sourcetype are: CSV, JSON, XML. Also, you need to escape the double quotes that go inside argument values. Example invocation for a JSON file:</p>
+<pre><code>Valid argument values for sourcetype are: CSV, JSON, XML. Also, you need to escape the double quotes that go inside argument values. Example invocation for a JSON file:
+</code></pre>
 
 <pre><code>mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="
 --sourcetype JSON 
 --filepath \"/Users/shubhamgupta/Documents/wikipedia.json\" 
 --modelfilepath \"/Users/shubhamgupta/Documents/model-wikipedia.n3\" 
---outputfile wikipedia-rdf.n3"
+--outputfile wikipedia-rdf.n3" -Dexec.classpathScope=compile
 </code></pre>
-</li>
-<li>
-<p>To generate RDF of a database table, go to the top level Karma directory and run the following command from terminal:</p>
 
-<pre><code>mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineDbRdfGenerator" -Dexec.args="--sourcetype DB
+<ol>
+<li>To generate RDF of a database table, go to the top level Karma directory and run the following command from terminal:</li>
+</ol><pre><code>cd karma-offline
+mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--sourcetype DB
 --modelfilepath &lt;modelfilepath&gt; --outputfile &lt;outputfile&gt; --dbtype &lt;dbtype&gt; --hostname &lt;hostname&gt; 
---username &lt;username&gt; --password &lt;password&gt; --portnumber &lt;portnumber&gt; --dbname &lt;dbname&gt; --tablename &lt;tablename&gt;"
+--username &lt;username&gt; --password &lt;password&gt; --portnumber &lt;portnumber&gt; --dbname &lt;dbname&gt; --tablename &lt;tablename&gt;" -Dexec.classpathScope=compile
 </code></pre>
 
-<p>Valid argument values for <code>dbtype</code> are Oracle, MySQL, SQLServer, PostGIS. Example invocation:</p>
+<pre><code>Valid argument values for `dbtype` are Oracle, MySQL, SQLServer, PostGIS, Sybase. Example invocation:
+</code></pre>
 
 <pre><code>mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="
 --sourcetype DB --dbtype SQLServer 
---hostname www.example.org --username root 
---password secret --portnumber 1433 
---dbname dbpedia --tablename people 
---modelfilepath \"/Users/shubhamgupta/Documents/model-people.n3\" --outputfile tmp/dbtest.n3"
+--hostname example.com --username root --password secret 
+--portnumber 1433 --dbname Employees --tablename Person 
+--modelfilepath \"/Users/shubhamgupta/Documents/db-r2rml-model.ttl\"
+--outputfile db-rdf.n3" -Dexec.classpathScope=compile
 </code></pre>
-</li>
-</ol><p>You can do <code>mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--help"</code> to get information about required arguments.</p>
+
+<p>You can do <code>mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--help"</code> to get information about required arguments.</p>
 
 <h3>
 <a name="how-to-set-up-password-protection-for-accessing-karma" class="anchor" href="#how-to-set-up-password-protection-for-accessing-karma"><span class="octicon octicon-link"></span></a>How to set up password protection for accessing Karma?</h3>
 
 <ul>
-<li>in /config/jettyrealm.properties change user/password (if you wish)</li>
+<li>in /src/main/config/jettyrealm.properties change user/password (if you wish)</li>
 <li>in /src/main/webapp/WEB-INF/web.xml uncomment security section at the end of the file</li>
 <li>in pom.xml uncomment security section (search for loginServices)</li>
 </ul><h3>
@@ -122,17 +143,11 @@
 
 <p>Make sure that the filename mentioned in the <code>systemPath</code> element matches with your downloaded JAR file.</p>
       </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Web-Karma maintained by <a href="https://github.com/InformationIntegrationGroup">InformationIntegrationGroup</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      <footer>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
       </footer>
     </div>
-
-    
-
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
   </body>
 </html>
