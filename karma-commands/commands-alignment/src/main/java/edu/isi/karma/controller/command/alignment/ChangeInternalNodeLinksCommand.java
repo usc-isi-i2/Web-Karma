@@ -131,49 +131,68 @@ public class ChangeInternalNodeLinksCommand extends Command {
 		for (int j = 0; j < newEdges.length(); j++) {
 			JSONObject newEdge = newEdges.getJSONObject(j);
 
-			String sourceId = newEdge.getString(JsonKeys.edgeSourceId.name());
-			String targetId = newEdge.getString(JsonKeys.edgeTargetId.name());
+			String sourceId = newEdge.has(JsonKeys.edgeSourceId.name()) ? newEdge.getString(JsonKeys.edgeSourceId.name()) : null;
+			String targetId = newEdge.has(JsonKeys.edgeTargetId.name()) ? newEdge.getString(JsonKeys.edgeTargetId.name()) : null;
 			String edgeUri = newEdge.getString(JsonKeys.edgeId.name());
-			String sourceUri = null, targetUri = null;
-			if(newEdge.has(JsonKeys.edgeSourceUri.name()))
-				sourceUri = newEdge.getString(JsonKeys.edgeSourceUri.name());
-			if(newEdge.has(JsonKeys.edgeTargetUri.name()))
-				targetUri = newEdge.getString(JsonKeys.edgeTargetUri.name());
+			String sourceUri = newEdge.has(JsonKeys.edgeSourceUri.name()) ? newEdge.getString(JsonKeys.edgeSourceUri.name()) : null;
+			String targetUri = newEdge.has(JsonKeys.edgeTargetUri.name()) ? newEdge.getString(JsonKeys.edgeTargetUri.name()) : null;
 			
-			String linkId = LinkIdFactory
-					.getLinkId(edgeUri, sourceId, targetId);
-			LabeledLink newLink = alignment.getLinkById(linkId);
-			if (newLink == null) {
-				Node sourceNode = alignment.getNodeById(sourceId);
-				if (sourceNode == null && sourceUri != null) {
-					sourceNode = alignment.addInternalNode(new Label(sourceUri));
-				}
-				
-				if(sourceNode == null) {
-					String errorMessage = "Error while adding new links: the new link goes FROM node '"
-							+ sourceId
-							+ "', but this node is NOT in the alignment.";
-					logger.error(errorMessage);
-				}
-				Node targetNode = alignment.getNodeById(targetId);
-				if(targetNode == null && targetUri != null) {
-					targetNode = alignment.addInternalNode(new Label(targetUri));
-				}
-				if (targetNode == null) {
-					String errorMessage = "Error while adding new links: the new link goes TO node '"
-							+ targetId
-							+ "', but this node is NOT in the alignment.";
-					logger.error(errorMessage);
-				}
-				Label linkLabel = ontMgr.getUriLabel(edgeUri);
-
-				newLink = alignment.addObjectPropertyLink(sourceNode,
-						targetNode, linkLabel);
-				alignment.changeLinkStatus(newLink.getId(),
-						LinkStatus.ForcedByUser);
+			Node sourceNode = null;
+			if (sourceId == null && sourceUri != null) {
+				sourceNode = alignment.addInternalNode(new Label(sourceUri));
 			} else {
-				alignment.changeLinkStatus(linkId, LinkStatus.ForcedByUser);
+				sourceNode = alignment.getNodeById(sourceId);
 			}
+			
+			Node targetNode = null;
+			if (targetId == null && targetUri != null) {
+				targetNode = alignment.addInternalNode(new Label(targetUri));
+			} else {
+				targetNode = alignment.getNodeById(targetId);
+			}
+
+			Label linkLabel = ontMgr.getUriLabel(edgeUri);
+
+			LabeledLink newLink = alignment.addObjectPropertyLink(sourceNode,
+					targetNode, linkLabel);
+			alignment.changeLinkStatus(newLink.getId(),
+					LinkStatus.ForcedByUser);
+
+			
+//			String linkId = LinkIdFactory
+//					.getLinkId(edgeUri, sourceId, targetId);
+//			LabeledLink newLink = alignment.getLinkById(linkId);
+//			if (newLink == null) {
+//				Node sourceNode = alignment.getNodeById(sourceId);
+//				if (sourceNode == null && sourceUri != null) {
+//					sourceNode = alignment.addInternalNode(new Label(sourceUri));
+//				}
+//				
+//				if(sourceNode == null) {
+//					String errorMessage = "Error while adding new links: the new link goes FROM node '"
+//							+ sourceId
+//							+ "', but this node is NOT in the alignment.";
+//					logger.error(errorMessage);
+//				}
+//				Node targetNode = alignment.getNodeById(targetId);
+//				if(targetNode == null && targetUri != null) {
+//					targetNode = alignment.addInternalNode(new Label(targetUri));
+//				}
+//				if (targetNode == null) {
+//					String errorMessage = "Error while adding new links: the new link goes TO node '"
+//							+ targetId
+//							+ "', but this node is NOT in the alignment.";
+//					logger.error(errorMessage);
+//				}
+//				Label linkLabel = ontMgr.getUriLabel(edgeUri);
+//
+//				newLink = alignment.addObjectPropertyLink(sourceNode,
+//						targetNode, linkLabel);
+//				alignment.changeLinkStatus(newLink.getId(),
+//						LinkStatus.ForcedByUser);
+//			} else {
+//				alignment.changeLinkStatus(linkId, LinkStatus.ForcedByUser);
+//			}
 			// Add info to description string
 			if (j == newEdges.length() - 1) {
 				descStr.append(newLink.getLabel().getDisplayName());
@@ -186,25 +205,25 @@ public class ChangeInternalNodeLinksCommand extends Command {
 	private void deleteLinks(Alignment alignment) throws JSONException {
 		for (int i = 0; i < initialEdges.length(); i++) {
 			JSONObject initialEdge = initialEdges.getJSONObject(i);
-			boolean exists = false;
+//			boolean exists = false;
+//
+//			for (int j = 0; j < newEdges.length(); j++) {
+//				JSONObject newEdge = newEdges.getJSONObject(j);
+//				if (newEdge.has(JsonKeys.edgeSourceId.name()) && (initialEdge.getString(JsonKeys.edgeSourceId.name())
+//						.equals(newEdge.getString(JsonKeys.edgeSourceId.name())))
+//
+//						&& (newEdge.has(JsonKeys.edgeTargetId.name()) && initialEdge.getString(JsonKeys.edgeTargetId.name())
+//								.equals(newEdge.getString(JsonKeys.edgeTargetId
+//										.name())))
+//
+//						&& initialEdge.getString(JsonKeys.edgeId.name())
+//								.equals(newEdge.getString(JsonKeys.edgeId
+//										.name()))) {
+//					exists = true;
+//				}
+//			}
 
-			for (int j = 0; j < newEdges.length(); j++) {
-				JSONObject newEdge = newEdges.getJSONObject(j);
-				if ((initialEdge.getString(JsonKeys.edgeSourceId.name())
-						.equals(newEdge.getString(JsonKeys.edgeSourceId.name())))
-
-						&& (initialEdge.getString(JsonKeys.edgeTargetId.name())
-								.equals(newEdge.getString(JsonKeys.edgeTargetId
-										.name())))
-
-						&& initialEdge.getString(JsonKeys.edgeId.name())
-								.equals(newEdge.getString(JsonKeys.edgeId
-										.name()))) {
-					exists = true;
-				}
-			}
-
-			if (!exists) {
+//			if (!exists) {
 				String linkId = LinkIdFactory.getLinkId(
 						initialEdge.getString(JsonKeys.edgeId.name()),
 						initialEdge.getString(JsonKeys.edgeSourceId.name()),
@@ -212,7 +231,7 @@ public class ChangeInternalNodeLinksCommand extends Command {
 
 				// alignment.changeLinkStatus(linkId, LinkStatus.Normal);
 				alignment.removeLink(linkId);
-			}
+//			}
 		}
 	}
 
