@@ -614,7 +614,10 @@ var PyTransformDialog = (function() {
     		  editor.getSession().setUseWrapMode(true);
     		  editor.getSession().setValue("return getValue(\"state\")");
     		    
-    		    
+    		  dialog.on("resize", function(event, ui) {
+    			  editor.resize();
+    		  });
+    		  
     		// Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function (e) {
 				hideError();

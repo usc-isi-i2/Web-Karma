@@ -33,6 +33,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.modeling.ModelingConfiguration;
@@ -184,22 +185,7 @@ public class GenerateR2RMLModelCommand extends Command {
 			
 			if (result) {
 				logger.info("Saved model to triple store");
-				uc.add(new AbstractUpdate() {
-					public void generateJson(String prefix, PrintWriter pw,	
-							VWorkspace vWorkspace) {
-						JSONObject outputObject = new JSONObject();
-						try {
-							outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
-							
-							outputObject.put(JsonKeys.fileUrl.name(), ServletContextParameterMap.getParameterValue(
-									ContextParameter.R2RML_PUBLISH_RELATIVE_DIR) + modelFileName);
-							outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
-							pw.println(outputObject.toString());
-						} catch (JSONException e) {
-							logger.error("Error occured while generating JSON!");
-						}
-					}
-				});
+				uc.add(new InfoUpdate("R2RML sucessfully saved to KARMA_USER_HOME/R2RML/" + modelFileName));
 				return uc;
 			} 
 			

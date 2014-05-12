@@ -32,7 +32,11 @@ public class OntologyMetadata extends KarmaUserMetadata {
 		if (ontDir.exists()) {
 			File[] ontologies = ontDir.listFiles();
 			for (File ontology: ontologies) {
-				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf") || ontology.getName().endsWith(".xml")) {
+				if (ontology.getName().endsWith(".owl") || 
+						ontology.getName().endsWith(".rdf") || 
+						ontology.getName().endsWith(".n3") || 
+						ontology.getName().endsWith(".ttl") || 
+						ontology.getName().endsWith(".xml")) {
 					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
 					try {
 						String encoding = EncodingDetector.detect(ontology);
@@ -40,6 +44,8 @@ public class OntologyMetadata extends KarmaUserMetadata {
 					} catch (Exception t) {
 						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
 					}
+				} else {
+					logger.error ("the file: " + ontology.getAbsolutePath() + " does not have proper format: xml/rdf/n3/ttl/owl");
 				}
 			}
 			// update the cache at the end when all files are added to the model

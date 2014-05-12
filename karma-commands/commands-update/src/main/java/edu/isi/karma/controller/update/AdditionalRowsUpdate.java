@@ -92,6 +92,7 @@ public class AdditionalRowsUpdate extends AbstractUpdate {
 	}
 
 	private ArrayList<VHNode> getNestedNodeList(Row row, ArrayList<VHNode> nodeList) {
+		ArrayList<VHNode> result = null;
 		for (VHNode vNode : nodeList) {
 			if(vNode.isVisible()) {
 				Node rowNode = row.getNode(vNode.getId());
@@ -99,10 +100,12 @@ public class AdditionalRowsUpdate extends AbstractUpdate {
 					return nodeList;
 				
 				if (vNode.hasNestedTable()) {
-					return getNestedNodeList(row, vNode.getNestedNodes());
+					result =  getNestedNodeList(row, vNode.getNestedNodes());
+					if(result != null)
+						break;
 				}
 			}
 		}
-		return null;
+		return result;
 	}
 }
