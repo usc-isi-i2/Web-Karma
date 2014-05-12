@@ -251,7 +251,6 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.cookie.js"></script>
         <script type="text/javascript" src="uiLibs/d3/js/d3.v2.min.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.iframe-transport.js"></script>
-	<script type="text/javascript" src="uiLibs/jquery/js/jquery.iframe-transport.js"></script>
         <script type="text/javascript" src="uiLibs/ace/js/ace.js" charset="utf-8"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload-ui.js"></script>
