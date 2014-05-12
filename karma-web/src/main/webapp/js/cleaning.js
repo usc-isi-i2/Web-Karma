@@ -151,7 +151,10 @@ var TransformColumnDialog = (function() {
 			});
 			return json;
 		}
-
+		function editable() 
+		{
+			
+		}
 		function populateResult(rdata) {
 			try {
 				var examples = cleaningExamples;
@@ -176,44 +179,42 @@ var TransformColumnDialog = (function() {
 						$("#" + nodeId + "_origVal", trTag).html(xval["Orgdis"]).data("CellValue", xval["Org"]);
 						trTag.append($("<td>").addClass("ruleResultsValue_begin").attr("id", nodeId + "_transformed").append($("<table>").append($("<tr>").append($("<td>").addClass("noinnerBorder").append($("<div>").data("nodeId", nodeId)// set the original value for the example
 						.data("cellValue", xval["Tar"]).addClass("cleanExampleDiv").html(xval["Tardis"])//set the result here
-						.attr("id", nodeId))).append($("<td>").addClass("noBorder").append($("<button>").addClass("editbutton").addClass("ui-icon").addClass("ui-icon-pencil").button({
-							icons : {
-								//	primary : "ui-icon-pencil"
-							},
-							text : false
-						}).attr("id", "edit_" + nodeId).click(function() {
-							$("div", $(this).parent().prev()).html(xval["Tar"]);
-							$("div", $(this).parent().prev()).trigger("edit");
-						}))))))
-						$("div#" + nodeId, trTag).editable(function(value, settings) {
-							var tmpnodeId = nodeId;
-							if(nodeId.indexOf("suggestion") >= 0) {
-								tmpnodeId = nodeId.substring(0, nodeId.indexOf("_suggestion"));
-								$("div#" + tmpnodeId).text(value);
-							}
-							var editDiv = $("div#" + nodeId);
-							examples.push({
-								"nodeId" : tmpnodeId,
-								"before" : $("tr#" + tmpnodeId + "_cl_row").data("originalVal"),
-								"after" : value
-							});
-							$("div#" + nodeId).text(value);
-							xval["Tardis"] = value;
-							updateResult();
-							var trs = $("td#" + nodeId + "_transformed tr");
-							//call the update result function
-							return (value);
-						}, {
-							type : 'textarea',
-							submit : 'OK',
-							cancel : 'Cancel',
-							width : 400,
-							callback : function() {
-								$(this).html(xval["Tardis"]);
-							},
-							onblur : 'ignore',
-							event : "edit"
-						})
+						.attr("id", nodeId))).append($("<td>").addClass("noBorder")))))
+						$("div#" + nodeId, trTag).dblclick(function() {
+							$(this).html(xval["Tar"]);
+							//$(this).off('click');
+							$(this).editable(function(value, settings) {
+								var tmpnodeId = nodeId;
+								$("div", $(this).parent().prev()).html(xval["Tar"]);
+								if(nodeId.indexOf("suggestion") >= 0) {
+									tmpnodeId = nodeId.substring(0, nodeId.indexOf("_suggestion"));
+									$("div#" + tmpnodeId).text(value);
+								}
+								var editDiv = $("div#" + nodeId);
+								examples.push({
+									"nodeId" : tmpnodeId,
+									"before" : $("tr#" + tmpnodeId + "_cl_row").data("originalVal"),
+									"after" : value
+								});
+								$("div#" + nodeId).text(value);
+								xval["Tardis"] = value;
+								updateResult();
+								var trs = $("td#" + nodeId + "_transformed tr");
+								//call the update result function
+								return (value);
+							}, {
+								type : 'textarea',
+								submit : 'OK',
+								cancel : 'Cancel',
+								width : 300,
+								callback : function() {
+									$(this).html(xval["Tardis"]);
+								},
+								onblur : 'ignore',
+								event : "edit"
+							})
+							$(this).trigger('edit');
+						});
 					}
 				});
 			} catch(err) {
