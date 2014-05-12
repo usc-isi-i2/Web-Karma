@@ -72,6 +72,31 @@ public class MySQLUtil extends AbstractJDBCUtil {
 		s.close();
 		return vals;
 	}
+	
+	@Override
+	public ArrayList<ArrayList<String>> getSQLQueryDataForLimitedRows(DBType dbType,
+			String hostname, int portnumber, String username, String password,
+			String query, String dBorSIDName, int rowCount) throws SQLException, ClassNotFoundException {
+		
+		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
+		Connection conn = getConnection(DRIVER, connectString);
+		if(query.toLowerCase().indexOf(" limit ") == -1) //Add limit only if it doesnt exist, else sql will be invalid
+			query = query + " limit " + rowCount;
+		
+		Statement s = conn.createStatement();
+		ResultSet r = s.executeQuery(query);
+
+		if (r == null) {
+			s.close();
+			return null;
+		}
+		
+		ArrayList<ArrayList<String>> vals = parseResultSetIntoArrayListOfRows(r);
+		
+		r.close();
+		s.close();
+		return vals;
+	}
 
 	@Override
 	public String prepareName(String name) {

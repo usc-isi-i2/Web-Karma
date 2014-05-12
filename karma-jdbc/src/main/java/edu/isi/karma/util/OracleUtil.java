@@ -76,6 +76,32 @@ public class OracleUtil extends AbstractJDBCUtil {
 	}
 	
 	@Override
+	public ArrayList<ArrayList<String>> getSQLQueryDataForLimitedRows(DBType dbType,
+			String hostname, int portnumber, String username, String password,
+			String query, String dBorSIDName, int rowCount)
+			throws SQLException, ClassNotFoundException {
+		
+		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
+		Connection conn = getConnection(DRIVER, connectString);
+		
+		Statement s = conn.createStatement();
+		if(query.toLowerCase().indexOf(" where rownum") == -1) //Add limit only if it doesnt exist, else sql will be invalid
+			query = query + " where rownum < " + rowCount;
+		ResultSet r = s.executeQuery(query);
+
+		if (r == null) {
+			s.close();
+			return null;
+		}
+		
+		ArrayList<ArrayList<String>> vals = parseResultSetIntoArrayListOfRows(r);
+		
+		r.close();
+		s.close();
+		return vals;
+	}
+	
+	@Override
 	public String prepareName(String name) {
 		String s = name;
 		s = name.replace('-', '_');

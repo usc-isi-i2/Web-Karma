@@ -45,7 +45,9 @@ public abstract class AbstractJDBCUtil {
 	public abstract ArrayList<ArrayList<String>> getDataForLimitedRows(DBType dbType,
 			String hostname, int portnumber, String username, String password,
 			String tableName, String dBorSIDName, int rowCount) throws SQLException, ClassNotFoundException;
-
+	public abstract ArrayList<ArrayList<String>> getSQLQueryDataForLimitedRows(DBType dbType,
+			String hostname, int portnumber, String username, String password,
+			String query, String dBorSIDName, int rowCount) throws SQLException, ClassNotFoundException;
 
 	public abstract ArrayList<String> getListOfTables(Connection conn) throws SQLException, ClassNotFoundException;
 
@@ -99,6 +101,31 @@ public abstract class AbstractJDBCUtil {
 
 	public ArrayList<ArrayList<String>> getDataForTable(Connection conn, String tableName) throws SQLException {
 		String query = "SELECT * FROM " + tableName;
+		Statement s = conn.createStatement();
+		ResultSet r = s.executeQuery(query);
+
+		if (r == null) {
+			s.close();
+			return null;
+		}
+		
+		ArrayList<ArrayList<String>> vals = parseResultSetIntoArrayListOfRows(r);
+		
+		r.close();
+		s.close();
+		return vals;
+	}
+	
+
+	public ArrayList<ArrayList<String>> getDataForQuery(DBType dbType, String hostname,
+			int portnumber, String username, String password, String tableName, String dBorSIDName)
+			throws SQLException, ClassNotFoundException {
+
+		Connection conn = getConnection(hostname, portnumber, username, password, dBorSIDName);
+		return getDataForQuery(conn, tableName);
+	}
+	
+	ArrayList<ArrayList<String>> getDataForQuery(Connection conn, String query) throws SQLException {
 		Statement s = conn.createStatement();
 		ResultSet r = s.executeQuery(query);
 
