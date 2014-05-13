@@ -24,10 +24,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PostGISUtil extends AbstractJDBCUtil {
 
-	//private static Logger logger = LoggerFactory
-	//.getLogger(MySQLUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(PostGISUtil.class);
 
 	static final String DRIVER = 
 		"org.postgresql.Driver";
@@ -57,7 +59,7 @@ public class PostGISUtil extends AbstractJDBCUtil {
 		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
 		Connection conn = getConnection(DRIVER, connectString);
 		String query = "Select * from " + escapeTablename(tableName) + " limit " + rowCount;
-		
+		logger.info("Execute:" + query);
 		Statement s = conn.createStatement();
 		ResultSet r = s.executeQuery(query);
 
@@ -84,7 +86,7 @@ public class PostGISUtil extends AbstractJDBCUtil {
 		
 		if(query.toLowerCase().indexOf(" limit ") == -1) //Add limit only if it doesnt exist, else sql will be invalid
 			query = query + " limit " + rowCount;
-		
+		logger.info("Execute:" + query);
 		Statement s = conn.createStatement();
 		ResultSet r = s.executeQuery(query);
 

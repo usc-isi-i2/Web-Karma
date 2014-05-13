@@ -70,7 +70,7 @@ public class SybaseUtil extends AbstractJDBCUtil {
 	
 		Connection conn = getConnection(hostname, portnumber, username, password, dBorSIDName);
 		String query = "Select top " + rowCount + " * from " + tableName;
-		
+		logger.info("Execute:" + query);
 		Statement s = conn.createStatement();
 		ResultSet r = s.executeQuery(query);
 
@@ -94,10 +94,10 @@ public class SybaseUtil extends AbstractJDBCUtil {
 		Connection conn = getConnection(hostname, portnumber, username, password, dBorSIDName);
 		if(query.toUpperCase().indexOf("SELECT TOP") == -1) { //Add limit only if it doesnt exist, else sql will be invalid
 			int idx = query.toUpperCase().indexOf("SELECT");
-			query = query.substring(idx+1);
+			query = query.substring(idx+6);
 			query = "SELECT TOP " + rowCount + query;
 		}
-		
+		logger.info("Execute:" + query);
 		Statement s = conn.createStatement();
 		ResultSet r = s.executeQuery(query);
 

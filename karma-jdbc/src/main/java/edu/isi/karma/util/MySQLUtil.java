@@ -24,10 +24,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class MySQLUtil extends AbstractJDBCUtil {
 
-	//private static Logger logger = LoggerFactory
-	//.getLogger(MySQLUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(MySQLUtil.class);
 
 	static final String DRIVER = 
 		"com.mysql.jdbc.Driver";
@@ -58,6 +60,7 @@ public class MySQLUtil extends AbstractJDBCUtil {
 		Connection conn = getConnection(DRIVER, connectString);
 		String query = "Select * from " + escapeTablename(tableName) + " limit " + rowCount;
 		
+		logger.info("Execute:" + query);
 		Statement s = conn.createStatement();
 		ResultSet r = s.executeQuery(query);
 
@@ -83,6 +86,7 @@ public class MySQLUtil extends AbstractJDBCUtil {
 		if(query.toLowerCase().indexOf(" limit ") == -1) //Add limit only if it doesnt exist, else sql will be invalid
 			query = query + " limit " + rowCount;
 		
+		logger.info("Execute:" + query);
 		Statement s = conn.createStatement();
 		ResultSet r = s.executeQuery(query);
 

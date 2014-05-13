@@ -27,7 +27,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class OracleUtil extends AbstractJDBCUtil {
+	
+	private static Logger logger = LoggerFactory.getLogger(OracleUtil.class);
 	
 	static final String DRIVER = 
 		"oracle.jdbc.driver.OracleDriver";
@@ -61,8 +66,11 @@ public class OracleUtil extends AbstractJDBCUtil {
 		Connection conn = getConnection(DRIVER, connectString);
 		
 		Statement s = conn.createStatement();
-		ResultSet r = s.executeQuery("select * from " + escapeTablename(tableName) + " where rownum < " + rowCount);
-
+		
+		String query = "select * from " + escapeTablename(tableName) + " where rownum < " + rowCount;
+		logger.info("Execute:" + query);
+		ResultSet r = s.executeQuery(query);
+		
 		if (r == null) {
 			s.close();
 			return null;
@@ -87,6 +95,8 @@ public class OracleUtil extends AbstractJDBCUtil {
 		Statement s = conn.createStatement();
 		if(query.toLowerCase().indexOf(" where rownum") == -1) //Add limit only if it doesnt exist, else sql will be invalid
 			query = query + " where rownum < " + rowCount;
+		logger.info("Execute:" + query);
+		
 		ResultSet r = s.executeQuery(query);
 
 		if (r == null) {
