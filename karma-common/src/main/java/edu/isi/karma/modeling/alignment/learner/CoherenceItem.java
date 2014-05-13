@@ -42,14 +42,14 @@ public class CoherenceItem implements Comparable<CoherenceItem>{
 	@Override
 	public int compareTo(CoherenceItem o) {
 		if (this.x > o.x)
-			return -1;
-		else if (this.x < o.x)
 			return 1;
+		else if (this.x < o.x)
+			return -1;
 		else {
 			if (this.y > o.y)
-				return -1;
-			else if (this.y < o.y)
 				return 1;
+			else if (this.y < o.y)
+				return -1;
 			else
 				return 0;
 		}

@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -16,8 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.GraphBuilder;
+import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
+import edu.isi.karma.modeling.alignment.learner.ModelLearner;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ColumnNode;
@@ -94,10 +96,30 @@ public class BuildGraphFromLOD {
 			e.printStackTrace();
 		}
 		
-		addObjectPrpertiesTriplesToGraph(objectPropertiesTriples);
-		addDataPrpertiesTriplesToGraph(dataPropertiesTriples);
+		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
+		addObjectPrpertiesTriplesToGraph(objectPropertiesTriples, addedNodes);
+		addDataPrpertiesTriplesToGraph(dataPropertiesTriples, addedNodes);
+		
+		try {
+			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), "LOD Graph", false, true, true, Params.GRAPHS_DIR + "graph1.dot");
+		} catch (Exception e) {
+			logger.error("error in exporting the alignment graph to graphviz!");
+		}
+
+		this.graphBuilder.addClosureAndLinksOfNodes(addedNodes, null);
+		
+		try {
+			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), "LOD Graph", false, true, true, Params.GRAPHS_DIR + "graph2.dot");
+		} catch (Exception e) {
+			logger.error("error in exporting the alignment graph to graphviz!");
+		}
+
 		logger.info("finished.");
 		
+	}
+	
+	public GraphBuilder getGraphBuilder() {
+		return this.graphBuilder;
 	}
 	
 	private List<Triple> readObjectProperties(String objectPropertiesFile) throws IOException {
@@ -152,9 +174,8 @@ public class BuildGraphFromLOD {
 		
 	}
 
-	private void addObjectPrpertiesTriplesToGraph(List<Triple> objectPropertiesTriples) {
+	private void addObjectPrpertiesTriplesToGraph(List<Triple> objectPropertiesTriples, Set<InternalNode> addedNodes) {
 		
-		HashMap<String, Node> visitedNodes = new HashMap<String, Node>();
 		String subjectUri = "";
 		String predicateUri = "";
 		String objectUri = "";
@@ -184,6 +205,7 @@ public class BuildGraphFromLOD {
 					id = this.nodeIdFactory.getNodeId(subjectUri);
 					node = new InternalNode(id, new Label(subjectUri));
 					if (this.graphBuilder.addNode(node)) {
+						addedNodes.add((InternalNode)node);
 						n1 = node;
 					} else {
 						continue;
@@ -192,11 +214,12 @@ public class BuildGraphFromLOD {
 					n1 = nodes.iterator().next();
 				}
 				
-				nodes = this.graphBuilder.getUriToNodesMap().get(subjectUri);
+				nodes = this.graphBuilder.getUriToNodesMap().get(objectUri);
 				if (nodes == null || nodes.isEmpty()) {
 					id = this.nodeIdFactory.getNodeId(objectUri);
 					node = new InternalNode(id, new Label(objectUri));
 					if (this.graphBuilder.addNode(node)) {
+						addedNodes.add((InternalNode)node);
 						n2 = node;
 					} else {
 						continue;
@@ -208,14 +231,15 @@ public class BuildGraphFromLOD {
 				id = LinkIdFactory.getLinkId(predicateUri, n1.getId(), n2.getId());	
 				link = new ObjectPropertyLink(id, new Label(predicateUri), ObjectPropertyType.None);
 				if (this.graphBuilder.addLink(n1, n2, link)) {
-					this.graphBuilder.changeLinkWeight(link, 1 - ((double)linkFrequency / (double)countOfObjectProperties));
+//					this.graphBuilder.changeLinkWeight(link, 1 - ((double)linkFrequency / (double)countOfObjectProperties));
+					this.graphBuilder.changeLinkWeight(link, countOfObjectProperties - linkFrequency);
 				}
 
 			}
 		}
 	}
 	
-	private void addDataPrpertiesTriplesToGraph(List<Triple> dataPropertiesTriples) {
+	private void addDataPrpertiesTriplesToGraph(List<Triple> dataPropertiesTriples, Set<InternalNode> addedNodes) {
 		
 		String subjectUri = "";
 		String predicateUri = "";
@@ -244,6 +268,7 @@ public class BuildGraphFromLOD {
 					id = this.nodeIdFactory.getNodeId(subjectUri);
 					node = new InternalNode(id, new Label(subjectUri));
 					if (this.graphBuilder.addNode(node)) {
+						addedNodes.add((InternalNode)node);
 						n1 = node;
 					} else {
 						continue;
@@ -263,7 +288,8 @@ public class BuildGraphFromLOD {
 				id = LinkIdFactory.getLinkId(predicateUri, n1.getId(), n2.getId());	
 				link = new DataPropertyLink(id, new Label(predicateUri));
 				if (this.graphBuilder.addLink(n1, n2, link)) {
-					this.graphBuilder.changeLinkWeight(link, 1 - ((double)linkFrequency / (double)countOfDataProperties));
+//					this.graphBuilder.changeLinkWeight(link, 1 - ((double)linkFrequency / (double)countOfDataProperties));
+					this.graphBuilder.changeLinkWeight(link, countOfDataProperties - linkFrequency);
 				}
 			}
 		}
@@ -282,6 +308,9 @@ public class BuildGraphFromLOD {
 		BuildGraphFromLOD b = new BuildGraphFromLOD(ontologyManager, 
 				Params.LOD_OBJECT_PROPERIES_FILE, 
 				Params.LOD_DATA_PROPERIES_FILE);
+		
+		// FIXME
+		ModelLearner modelLearner = new ModelLearner(b.getGraphBuilder(), null);
 		
 		
 	}

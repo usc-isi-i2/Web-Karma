@@ -317,8 +317,8 @@ public class SortableSemanticModel extends SemanticModel
 	@Override
 	public int compareTo(SortableSemanticModel m) {
 		
-		double score1 = this.getSteinerNodes().getScore();
-		double score2 = m.getSteinerNodes().getScore();
+		double score1 = this.getScore();
+		double score2 = m.getScore();
 		if (score1 > score2)
 			return -1;
 		else if (score1 < score2)

@@ -1,18 +1,14 @@
 package edu.isi.karma.controller.history;
 
-import edu.isi.karma.controller.command.ICommand.CommandTag;
-import edu.isi.karma.controller.history.CommandHistoryWriter.HistoryArguments;
-import edu.isi.karma.util.JSONUtil;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import java.io.File;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.List;
+import edu.isi.karma.controller.command.ICommand.CommandTag;
+import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 
 public class HistoryJsonUtil {
 	
@@ -51,19 +47,6 @@ public class HistoryJsonUtil {
 		return getJSONObjectWithName(arg, json).get(ClientJsonKeys.value.name()).toString();
 	}
 
-	public static boolean historyExists(String worksheetName, String vworkspacePreferenceId) {
-		File histFile = new File(constructWorksheetHistoryJsonFilePath(worksheetName, vworkspacePreferenceId));
-		return histFile.exists();
-	}
-	
-	public static String constructWorksheetHistoryJsonFilePath (String worksheetName, String vworkspacePreferenceId) {
-		return ServletContextParameterMap.getParameterValue(ContextParameter.WORKSHEET_HISTORY_DIRECTORY)  + constructWorksheetHistoryJsonFileName(worksheetName, vworkspacePreferenceId);
-	}
-	
-	public static String constructWorksheetHistoryJsonFileName (String worksheetName, String vworkspacePreferenceId) {
-		return vworkspacePreferenceId + "_" + worksheetName.replaceAll("[\\./]", "") + ".json";
-	}
-
 	public static boolean setArgumentValue(String name, Object value,
 			JSONArray inputJson) throws JSONException {
 		JSONObject obj = getJSONObjectWithName(name, inputJson);
@@ -73,8 +56,13 @@ public class HistoryJsonUtil {
 		}
 		return false;
 	}
-
-
+	
+	public static boolean historyExists(String workspaceId, String worksheetId) {
+		String filename = CommandHistory.getHistorySaver(workspaceId).getHistoryFilepath(worksheetId);
+		File file = new File(filename);
+		return file.exists();
+	}
+	
 	public static JSONArray filterCommandsByTag(List<CommandTag> filters,
 			 JSONArray historyJson)
 			throws JSONException {
@@ -106,8 +94,4 @@ public class HistoryJsonUtil {
 		return commandsJSON;
 	}
 	
-	public static JSONArray readCommandsFromFile(File historyFile) 
-			throws JSONException, FileNotFoundException {
-		return (JSONArray) JSONUtil.createJson(new FileReader(historyFile));
-	}
 }

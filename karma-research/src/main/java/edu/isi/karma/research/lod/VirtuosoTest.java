@@ -76,7 +76,7 @@ public class VirtuosoTest {
 	private static Logger logger = LoggerFactory.getLogger(VirtuosoTest.class);
 
 	public static final String VIRTUOSO_INSTANCE = "fusionRepository.isi.edu";
-	public static final int VIRTUOSO_PORT = 1111;
+	public static final int VIRTUOSO_PORT = 1120;  // Web UI: 8990
 	public static final String VIRTUOSO_USERNAME = "dba";
 	public static final String VIRTUOSO_PASSWORD = "dba";
 
@@ -105,76 +105,29 @@ public class VirtuosoTest {
 		System.out.println("PASSED:" + PASSED + " FAILED:" + FAILED);
 	}
 
-	public static void main(String[] args) {
+	private static void extractObjectProperties(Repository repository, String GraphIRI, String filename) {
 		
-		String[] sa = new String[4];
-		sa[0] = VIRTUOSO_INSTANCE;
-		sa[1] = VIRTUOSO_PORT + "";
-		sa[2] = VIRTUOSO_USERNAME;
-		sa[3] = VIRTUOSO_PASSWORD;
-		for (int i = 0; i < sa.length && i < args.length; i++) {
-			sa[i] = args[i];
-		}
-		Repository repository = new VirtuosoRepository("jdbc:virtuoso://" + sa[0] + ":" + 
-					sa[1]+ "/charset=UTF-8/log_enable=2", sa[2], sa[3]);
-
-		String filePath = Params.RESULTS_DIR;
-		String filename = "test.csv"; 
-
 		try {
-			PrintWriter resultFile = new PrintWriter(new File(filePath + filename));
+			PrintWriter resultFile = new PrintWriter(new File(filename));
 			RepositoryConnection con = repository.getConnection();
 			try {
 				
 				long start = System.currentTimeMillis();
 
-//				String queryString = "SELECT DISTINCT ?x  ?p ?y FROM <http://europeana.eu> WHERE {?x ?p ?y} LIMIT 1000";
-				
-//				String queryString = 
-//						"SELECT DISTINCT ?c1 ?p ?c2 (COUNT(?p) as ?count) " +
-//						"FROM <http://europeana.eu> " +
-//						"WHERE { ?x rdf:type ?c1. " +
-//								"?y rdf:type ?c2. " +
-//								"?x ?p ?y. " +
-////								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
-////								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
-////								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
-////								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
-////								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2002/07/owl#\")) " +
-////								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2002/07/owl#\")) +
-//						"} " +
-//						"GROUP BY ?c1 ?p ?c2";
-				
-//				String queryString = 
-//						"SELECT DISTINCT ?c1 ?p (COUNT(?p) as ?count) " +
-//						"FROM <http://europeana.eu> " +
-//						"WHERE { ?x rdf:type ?c1. " +
-//								"?x ?p ?y. " +
-//								"FILTER isLiteral(?y). " +
-////								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
-////								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
-////								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
-////								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
-////								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2002/07/owl#\")) " +
-////								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2002/07/owl#\")) +
-//						"} " +
-//						"GROUP BY ?c1 ?p";
-				
 				String queryString = 
-						"SELECT DISTINCT ?p " +
-						"FROM <http://europeana.eu> " +
-						"WHERE {  " +
-								"?c1 <http://purl.org/dc/elements/1.1/creator> ?p. " +
-								"FILTER isLiteral(?p). " +
-//								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
-//								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
-//								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
-//								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
-//								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2002/07/owl#\")) " +
-//								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2002/07/owl#\")) +
+						"SELECT DISTINCT ?c1 ?p ?c2 (COUNT(?p) as ?count) " +
+						"FROM <" + GraphIRI + "> " +
+						"WHERE { ?x rdf:type ?c1. " +
+								"?y rdf:type ?c2. " +
+								"?x ?p ?y. " +
+								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
+								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
+								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
+								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
+								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2002/07/owl#\")) " +
+								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2002/07/owl#\")) " +
 						"} " +
-						"LIMIT 10";
-
+						"GROUP BY ?c1 ?p ?c2";
 				
 				System.out.println(queryString);
 				
@@ -187,25 +140,25 @@ public class VirtuosoTest {
 						Value valueOfP = bindingSet.getValue("p");
 						Value valueOfC2 = bindingSet.getValue("c2");
 						Value valueOfCount = bindingSet.getValue("count");
-						// do something interesting with the query variable values here
-						   
+
 						if (valueOfC1 != null) {
-							System.out.println(valueOfC1.stringValue());
-							resultFile.print(valueOfC1.stringValue() + "\t");
+							System.out.print(valueOfC1.stringValue() + "\t");
+							resultFile.print(valueOfC1.stringValue() + ",");
 						}
 						if (valueOfP != null) {
-							System.out.println(valueOfP.stringValue());
-							resultFile.print(valueOfP.stringValue() + "\t");
+							System.out.println(valueOfP.stringValue() + "\t");
+							resultFile.print(valueOfP.stringValue() + ",");
 						}
 						if (valueOfC2 != null) {
-							System.out.println(valueOfC2.stringValue());
-							resultFile.print(valueOfC2.stringValue() + "\t");
+							System.out.println(valueOfC2.stringValue() + "\t");
+							resultFile.print(valueOfC2.stringValue() + ",");
 						}
 						if (valueOfCount != null) {
-							System.out.println(valueOfCount.stringValue());
-							resultFile.print(valueOfCount.stringValue() + "\n");
+							System.out.println(valueOfCount.stringValue() + "\t");
+							resultFile.print(valueOfCount.stringValue());
 						}
-						   
+						System.out.println();
+						resultFile.print("\n");
 					}  
 				} finally {
 					long responseTime = System.currentTimeMillis() - start;
@@ -230,8 +183,101 @@ public class VirtuosoTest {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
+
+	}
+	
+	private static void extractDataProperties(Repository repository, String GraphIRI, String filename) {
 		
+		try {
+			PrintWriter resultFile = new PrintWriter(new File(filename));
+			RepositoryConnection con = repository.getConnection();
+			try {
+				
+				long start = System.currentTimeMillis();
+				
+				String queryString = 
+						"SELECT DISTINCT ?c ?p (COUNT(?p) as ?count) " +
+						"FROM <" + GraphIRI + "> " +
+						"WHERE { ?x rdf:type ?c. " +
+								"?x ?p ?y. " +
+								"FILTER isLiteral(?y). " +
+								"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
+								"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
+								"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/2002/07/owl#\")) " +
+						"} " +
+						"GROUP BY ?c ?p";
+				
+				System.out.println(queryString);
+				
+				TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
+				TupleQueryResult result = tupleQuery.evaluate();
+				try {
+					while (result.hasNext()) {
+						BindingSet bindingSet = result.next();
+						Value valueOfC = bindingSet.getValue("c");
+						Value valueOfP = bindingSet.getValue("p");
+						Value valueOfCount = bindingSet.getValue("count");
+
+						if (valueOfC != null) {
+							System.out.print(valueOfC.stringValue() + "\t");
+							resultFile.print(valueOfC.stringValue() + ",");
+						}
+						if (valueOfP != null) {
+							System.out.println(valueOfP.stringValue() + "\t");
+							resultFile.print(valueOfP.stringValue() + ",");
+						}
+						if (valueOfCount != null) {
+							System.out.println(valueOfCount.stringValue() + "\t");
+							resultFile.print(valueOfCount.stringValue());
+						}
+						System.out.println();
+						resultFile.print("\n");
+					}  
+				} finally {
+					long responseTime = System.currentTimeMillis() - start;
+					logger.info("response time: " + (responseTime/1000F));
+					result.close();
+				}
+
+			} catch (MalformedQueryException e) {
+				e.printStackTrace();
+			} catch (QueryEvaluationException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} finally {
+				con.close();
+				resultFile.close();
+			}
+
+		}
+		catch (RepositoryException e) {
+			   // handle exception
+		} catch (FileNotFoundException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+
+	}
+	
+	public static void main(String[] args) {
 		
+		String[] sa = new String[4];
+		sa[0] = VIRTUOSO_INSTANCE;
+		sa[1] = VIRTUOSO_PORT + "";
+		sa[2] = VIRTUOSO_USERNAME;
+		sa[3] = VIRTUOSO_PASSWORD;
+		for (int i = 0; i < sa.length && i < args.length; i++) {
+			sa[i] = args[i];
+		}
+		Repository repository = new VirtuosoRepository("jdbc:virtuoso://" + sa[0] + ":" + 
+					sa[1]+ "/charset=UTF-8/log_enable=2", sa[2], sa[3]);
+
+//		extractObjectProperties(repository, "http://europeana.eu", Params.LOD_OBJECT_PROPERIES_FILE);
+//		extractDataProperties(repository, "http://europeana.eu", Params.LOD_DATA_PROPERIES_FILE);
+
+		extractObjectProperties(repository, "http://amsterdammuseum.nl", Params.LOD_OBJECT_PROPERIES_FILE);
+		extractDataProperties(repository, "http://amsterdammuseum.nl", Params.LOD_DATA_PROPERIES_FILE);
+
 	}
 	
 	public static void main_original(String[] args) {

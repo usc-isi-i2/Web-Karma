@@ -32,6 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.alignment.R2RMLAlignmentFileSaver;
+import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -48,7 +50,6 @@ import edu.isi.karma.metadata.R2RMLMetadata;
 import edu.isi.karma.metadata.RDFMetadata;
 import edu.isi.karma.metadata.ReportMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
-import edu.isi.karma.metadata.WorksheetHistoryMetadata;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -73,7 +74,6 @@ public class KarmaServlet extends HttpServlet {
 		try {
 			metadataManager = new KarmaMetadataManager();
 			metadataManager.register(new UserPreferencesMetadata());
-			metadataManager.register(new WorksheetHistoryMetadata());
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}
@@ -117,8 +117,8 @@ public class KarmaServlet extends HttpServlet {
 			logger.error("Unable to complete Karma set up: ", e);
 		}
 
-		//Add file based saver for alignment
-		//AlignmentManager.Instance().addAlignmentSaver(new R2RMLAlignmentFileSaver(workspace));
+		CommandHistory.setIsHistoryEnabled(true);
+		CommandHistory.setHistorySaver(workspace.getId(), new R2RMLAlignmentFileSaver(workspace));
 						
 		// Initialize the Outlier tag
 		Tag outlierTag = new Tag(TagName.Outlier, Color.Red);

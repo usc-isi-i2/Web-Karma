@@ -30,20 +30,17 @@ import edu.isi.karma.rep.alignment.SemanticType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 public class AlignmentManager {
 	private static HashMap<String, Alignment> alignmentMap = null;
 	private static AlignmentManager _InternalInstance = null;
-	private static HashSet<IAlignmentSaver> alignmentSavers = null;
 	public static AlignmentManager Instance()
 	{
 		if (_InternalInstance == null)
 		{
 			_InternalInstance = new AlignmentManager();
 			alignmentMap = new HashMap<String, Alignment>();
-			alignmentSavers = new HashSet<IAlignmentSaver>();
 		}
 		return _InternalInstance;
 	}
@@ -69,11 +66,6 @@ public class AlignmentManager {
 		return getAlignment(alignmentId);
 	}
 
-	public void addAlignmentSaver(IAlignmentSaver saver) {
-		alignmentSavers.add(saver);
-		for(Alignment alignment : alignmentMap.values())
-			alignment.addSaver(saver);
-	}
 	
 	public Alignment getAlignmentOrCreateIt(String workspaceId, String worksheetId, OntologyManager ontologyManager){
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
@@ -86,8 +78,6 @@ public class AlignmentManager {
 		
 		if (alignment == null) {
 			alignment = new Alignment(ontologyManager);
-			for(IAlignmentSaver saver : alignmentSavers)
-				alignment.addSaver(saver);
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
 	

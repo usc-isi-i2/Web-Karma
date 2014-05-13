@@ -70,7 +70,7 @@ public class SybaseUtil extends AbstractJDBCUtil {
 	
 		Connection conn = getConnection(hostname, portnumber, username, password, dBorSIDName);
 		String query = "Select top " + rowCount + " * from " + tableName;
-		
+		logger.info("Execute:" + query);
 		Statement s = conn.createStatement();
 		ResultSet r = s.executeQuery(query);
 
@@ -86,6 +86,33 @@ public class SybaseUtil extends AbstractJDBCUtil {
 		return vals;
 	}
 
+	@Override
+	public ArrayList<ArrayList<String>> getSQLQueryDataForLimitedRows(DBType dbType,
+			String hostname, int portnumber, String username, String password,
+			String query, String dBorSIDName, int rowCount) throws SQLException, ClassNotFoundException {
+		
+		Connection conn = getConnection(hostname, portnumber, username, password, dBorSIDName);
+		if(query.toUpperCase().indexOf("SELECT TOP") == -1) { //Add limit only if it doesnt exist, else sql will be invalid
+			int idx = query.toUpperCase().indexOf("SELECT");
+			query = query.substring(idx+6);
+			query = "SELECT TOP " + rowCount + query;
+		}
+		logger.info("Execute:" + query);
+		Statement s = conn.createStatement();
+		ResultSet r = s.executeQuery(query);
+
+		if (r == null) {
+			s.close();
+			return null;
+		}
+		
+		ArrayList<ArrayList<String>> vals = parseResultSetIntoArrayListOfRows(r);
+		
+		r.close();
+		s.close();
+		return vals;
+	}
+	
 	@Override
 	public String prepareName(String name) {
 		String s = name;

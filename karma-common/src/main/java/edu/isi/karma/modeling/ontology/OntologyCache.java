@@ -200,8 +200,8 @@ public class OntologyCache {
 //		this.buildObjectPropertyDomainRangeMap();
 		
 		// add some common properties like rdfs:label, rdfs:comment, ...
-		logger.info("add rdfs label/comment/value ...");
-		this.addPropertiesOfRDFVocabulary();
+//		logger.info("add rdfs label/comment/value ...");
+//		this.addPropertiesOfRDFVocabulary();
 		
 		float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
 		logger.info("time to build the ontology cache: " + elapsedTimeSec);
@@ -517,12 +517,17 @@ public class OntologyCache {
 	private void loadProperties() {
 
 		this.properties.put(Uris.RDF_TYPE_URI, new Label(Uris.RDF_TYPE_URI, Namespaces.RDF, Prefixes.RDF));
-		
+		this.properties.put(Uris.RDF_VALUE_URI, new Label(Uris.RDF_VALUE_URI, Namespaces.RDF, Prefixes.RDF));
 		this.properties.put(Uris.RDFS_SUBCLASS_URI, new Label(Uris.RDFS_SUBCLASS_URI, Namespaces.RDFS, Prefixes.RDFS));
 		this.properties.put(Uris.RDFS_LABEL_URI, new Label(Uris.RDFS_LABEL_URI, Namespaces.RDFS, Prefixes.RDFS));
 		this.properties.put(Uris.RDFS_COMMENT_URI, new Label(Uris.RDFS_COMMENT_URI, Namespaces.RDFS, Prefixes.RDFS));
-		this.properties.put(Uris.RDFS_VALUE_URI, new Label(Uris.RDFS_VALUE_URI, Namespaces.RDFS, Prefixes.RDFS));
-		
+
+		this.objectProperties.put(Uris.RDF_TYPE_URI, new Label(Uris.RDF_TYPE_URI, Namespaces.RDF, Prefixes.RDF));
+		this.objectProperties.put(Uris.RDF_VALUE_URI, new Label(Uris.RDF_VALUE_URI, Namespaces.RDF, Prefixes.RDF));
+		this.objectProperties.put(Uris.RDFS_SUBCLASS_URI, new Label(Uris.RDFS_SUBCLASS_URI, Namespaces.RDFS, Prefixes.RDFS));
+		this.dataProperties.put(Uris.RDFS_LABEL_URI, new Label(Uris.RDFS_LABEL_URI, Namespaces.RDFS, Prefixes.RDFS));
+		this.dataProperties.put(Uris.RDFS_COMMENT_URI, new Label(Uris.RDFS_COMMENT_URI, Namespaces.RDFS, Prefixes.RDFS));
+
 		this.properties.put(Uris.CLASS_INSTANCE_LINK_URI, new Label(Uris.CLASS_INSTANCE_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
 		this.properties.put(Uris.COLUMN_SUBCLASS_LINK_URI, new Label(Uris.COLUMN_SUBCLASS_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
 		this.properties.put(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI, new Label(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
@@ -540,7 +545,7 @@ public class OntologyCache {
 			
 //			if (p.isAnnotationProperty())
 //				continue;
-			
+
 			if (!properties.containsKey(p.getURI()))
 				properties.put(p.getURI(), ontHandler.getResourceLabel(p));
 			
@@ -622,7 +627,6 @@ public class OntologyCache {
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
 			for (String s : this.dataProperties.keySet()) {
-				
 				if (isTopLevelDataProperty(s)) {
 					Label label = this.dataProperties.get(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
@@ -859,7 +863,7 @@ public class OntologyCache {
 			allRangesUris = new HashSet<String>();
 			
 			OntProperty property = this.ontHandler.getOntModel().getOntProperty(propertyUri);
-			if (!property.isURIResource())
+			if (property == null || !property.isURIResource())
 				continue;
 			
 			// direct domain
@@ -974,7 +978,7 @@ public class OntologyCache {
 		for (String propertyUri : this.objectProperties.keySet()) {
 
 			OntProperty property = this.ontHandler.getOntModel().getOntProperty(propertyUri);
-			if (!property.isURIResource())
+			if (property == null || !property.isURIResource())
 				continue;
 						
 			directDomains = new HashSet<OntResource>();
@@ -1172,46 +1176,69 @@ public class OntologyCache {
 //		}
 //	}
 	
-	private void addPropertiesOfRDFVocabulary() {
-		
-		List<String> uris = new ArrayList<String>();
-		
-		uris.add(Uris.RDFS_LABEL_URI);
-		uris.add(Uris.RDFS_COMMENT_URI);
-		uris.add(Uris.RDFS_VALUE_URI);
-		
-		HashSet<String> temp;
-		
-		ontHandler.getOntModel().setNsPrefix(Prefixes.RDF, Namespaces.RDF);
-		ontHandler.getOntModel().setNsPrefix(Prefixes.RDFS, Namespaces.RDFS);
-		
-		for (String uri : uris) 
-			ontHandler.getOntModel().createDatatypeProperty(uri);
-
-		
-		// add label, value, comment property to the properties of all the classes
-		for (String s : this.classes.keySet()) {
-			temp = indirectOutDataProperties.get(s);
-			if (temp == null) {
-				temp = new HashSet<String>();
-				indirectOutDataProperties.put(s, temp);
-			}
-			for (String uri : uris)
-				temp.add(uri);
-		}
-
-		// add uris to properties hashmap
-		for (String uri : uris) {
-			temp = propertyIndirectDomains.get(uri);
-			if (temp == null) {
-				temp = new HashSet<String>();
-				propertyIndirectDomains.put(uri, temp);
-			}
-			for (String s : this.classes.keySet())
-				temp.add(s);
-		}
-		
-	}
+//	private void addPropertiesOfRDFVocabulary() {
+//		
+//		List<String> uris = new ArrayList<String>();
+//		
+//		uris.add(Uris.RDFS_LABEL_URI);
+//		uris.add(Uris.RDFS_COMMENT_URI);
+//		uris.add(Uris.RDF_VALUE_URI);
+//		
+//		HashSet<String> temp;
+//		HashSet<String> temp1;
+//		HashSet<String> temp2;
+//		HashSet<String> temp3;
+//		
+//		ontHandler.getOntModel().setNsPrefix(Prefixes.RDF, Namespaces.RDF);
+//		ontHandler.getOntModel().setNsPrefix(Prefixes.RDFS, Namespaces.RDFS);
+//		
+//		ontHandler.getOntModel().createDatatypeProperty(Uris.RDFS_COMMENT_URI);
+//		ontHandler.getOntModel().createDatatypeProperty(Uris.RDFS_LABEL_URI);
+//		ontHandler.getOntModel().createObjectProperty(Uris.RDF_VALUE_URI);
+//
+//		// add label, value, comment property to the properties of all the classes
+//		for (String s : this.classes.keySet()) {
+//			temp1 = indirectOutDataProperties.get(s);
+//			temp2 = indirectOutObjectProperties.get(s);
+//			temp3 = indirectInObjectProperties.get(s);
+//			if (temp1 == null) {
+//				temp1 = new HashSet<String>();
+//				indirectOutDataProperties.put(s, temp1);
+//			}
+//			if (temp2 == null) {
+//				temp2 = new HashSet<String>();
+//				indirectOutObjectProperties.put(s, temp2);
+//			}
+//			if (temp3 == null) {
+//				temp3 = new HashSet<String>();
+//				indirectInObjectProperties.put(s, temp3);
+//			}
+//			temp1.add(Uris.RDFS_LABEL_URI);
+//			temp1.add(Uris.RDFS_COMMENT_URI);
+//			temp2.add(Uris.RDF_VALUE_URI);
+//			temp3.add(Uris.RDF_VALUE_URI);
+//		}
+//
+//		// add uris to properties hashmap
+//		for (String uri : uris) {
+//			temp = propertyIndirectDomains.get(uri);
+//			if (temp == null) {
+//				temp = new HashSet<String>();
+//				propertyIndirectDomains.put(uri, temp);
+//			}
+//			for (String s : this.classes.keySet())
+//				temp.add(s);
+//		}
+//
+//		temp = propertyIndirectRanges.get(Uris.RDF_VALUE_URI);
+//		if (temp == null) {
+//			temp = new HashSet<String>();
+//			propertyIndirectRanges.put(Uris.RDF_VALUE_URI, temp);
+//		}
+//		for (String s : this.classes.keySet())
+//			temp.add(s);
+//		
+//	}
 	
 	private void updateMapsWithSubpropertyDefinitions() {
 		

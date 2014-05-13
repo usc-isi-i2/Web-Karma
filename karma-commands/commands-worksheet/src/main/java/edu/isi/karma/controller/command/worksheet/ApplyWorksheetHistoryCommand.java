@@ -3,13 +3,14 @@ package edu.isi.karma.controller.command.worksheet;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.history.HistoryJsonUtil;
+import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.Workspace;
+
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class ApplyWorksheetHistoryCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		
 		try {
-			JSONArray historyJSON = HistoryJsonUtil.readCommandsFromFile(historyFile);
+			JSONArray historyJSON = CommandHistory.getHistorySaver(workspace.getId()).loadHistory(historyFile.getAbsolutePath());
 			WorksheetCommandHistoryExecutor histExecutor = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
 			histExecutor.executeAllCommands(historyJSON);
 		} catch (Exception e) {

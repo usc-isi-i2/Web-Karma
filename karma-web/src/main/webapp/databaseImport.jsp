@@ -103,5 +103,80 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
         
+<div class="modal fade" id="sqlImportDialog" tabindex="-1">
+  <div class="modal-dialog modal-wide">
+		<div class="modal-content">
+		     <div class="modal-header">
+			      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			       <h4 class="modal-title">Import Using SQL</h4>
+			  </div>
+			  <div class="modal-body">
+			  		<form class="bs-example bs-example-form" role="form">
+			  			
+			        	<div class="row">
+			        		<div class="col-sm-2">
+								<div class="form-group">
+									<label for="databaseTypeSelector">Database Type</label>
+									<select id="databaseTypeSelector" class="form-control DatabaseImportOption">
+		                                <option>SQLServer</option>
+		                                <option>MySQL</option>
+		                                <option>Oracle</option>
+		                                <option>PostGIS</option>
+		                                <option>Sybase</option>
+		                            </select>
+								</div>
+							</div>
+							<div class="col-sm-10">
+								<div class="col-sm-2">
+									<div class="form-group">
+										<label for="DatabaseHostName">Hostname</label>
+										<input type="text" id="DatabaseHostName" value="localhost" class="form-control DatabaseImportOption" maxlength="40" size="10" placeholder='localhost' required/></div>
+								</div>
+				        		<div class="col-sm-2">
+				        			<div class="form-group">
+										<label for="DatabasePortNumber">Port</label>
+										<input type="number" id="DatabasePortNumber" value="" class="form-control DatabaseImportOption" maxlength="6" size="5" required/>
+									</div>
+				        		</div>
+				        		<div class="col-sm-2">
+				        			<div class="form-group">
+										<label for="DatabaseUsername">Username</label>
+										<input type="text" id="DatabaseUsername" value="" class="form-control DatabaseImportOption" maxlength="20" size="10" required/>
+									</div>
+				        		</div>
+				        		<div class="col-sm-2">
+				        			<div class="form-group">
+										<label for="DatabasePassword">Password</label>
+										<input type="password" id="DatabasePassword" value="" class="form-control DatabaseImportOption" maxlength="20" size="10" required/>
+									</div>
+				        		</div>
+				        		<div class="col-sm-2">
+				        			<div class="form-group">
+										<label for="DatabaseName" id="lblDatabase">Database</label>
+	                            		<input type="text" id="DatabaseName" value="" class="form-control DatabaseImportOption" maxlength="20" size="10" required/>
+	                        
+									</div>
+				        		</div>
+			        		</div>
+			        	</div>	<!--  end of row -->
+			        	<div id="row">
+			        		<div class="form-group">
+			        			<label for="DatabaseQuery">SQL Query</label>
+			        			<textarea rows="4" style="width:100%" id="DatabaseQuery" class="form-control DatabaseImportOption" required>
+			        			</textarea>
+			        		</div>
+			        	</div>
+					</form>
+
+					<div id="databaseImportError" class="error"></div>
+			
+			  </div>
+			  <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			        <button type="submit" class="btn btn-primary" id="btnImport">Import</button>
+			  </div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 </body>
 </html>

@@ -80,6 +80,8 @@ public class ModelLearner {
 	private SemanticModel semanticModel = null;
 	private long lastUpdateTimeOfGraph;
 	private ModelLearningGraph modelLearningGraph = null;
+	private boolean useAlignmentGraphBuiltFromKnownModels = false;
+//	private boolean useAlignmentGraphBuiltFromLOD = false;
 
 	public ModelLearner(OntologyManager ontologyManager, List<ColumnNode> columnNodes) {
 		if (ontologyManager == null || 
@@ -88,9 +90,24 @@ public class ModelLearner {
 			logger.error("cannot instanciate model learner!");
 			return;
 		}
+		this.useAlignmentGraphBuiltFromKnownModels = true;
 		this.ontologyManager = ontologyManager;
 		this.columnNodes = columnNodes;
 		this.init();
+	}
+	
+	public ModelLearner(GraphBuilder graphBuilder, List<ColumnNode> columnNodes) {
+		if (graphBuilder == null || 
+				columnNodes == null || 
+				columnNodes.isEmpty()) {
+			logger.error("cannot instanciate model learner!");
+			return;
+		}
+//		this.useAlignmentGraphBuiltFromLOD = true;
+		this.columnNodes = columnNodes;
+		this.graphBuilder = graphBuilder;
+		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
+		this.ontologyManager = this.graphBuilder.getOntologyManager();
 	}
 
 	public SemanticModel getModel() {
@@ -102,7 +119,7 @@ public class ModelLearner {
 	
 	public void learn() {
 		
-		if (!isGraphUpToDate()) {
+		if (this.useAlignmentGraphBuiltFromKnownModels && !isGraphUpToDate()) {
 			init();
 		}
 		
@@ -730,8 +747,8 @@ public class ModelLearner {
 		ModelLearner modelLearner;
 		
 		boolean iterativeEvaluation = false;
-		boolean useCorrectType = true;
-		int numberOfCRFCandidates = 1;
+		boolean useCorrectType = false;
+		int numberOfCRFCandidates = 4;
 		int numberOfKnownModels;
 		String filePath = Params.RESULTS_DIR;
 		String filename = "results,k=" + numberOfCRFCandidates + ".csv"; 
@@ -744,7 +761,7 @@ public class ModelLearner {
 		
 		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 3; {
+//		int i = 20; {
 			
 //			resultFile.flush();
 			int newSourceIndex = i;

@@ -31,7 +31,7 @@ public interface Uris {
 	public static final String RDFS_CLASS_URI = Namespaces.RDFS + "Class";
 	public static final String RDFS_LABEL_URI = Namespaces.RDFS + "label";
 	public static final String RDFS_COMMENT_URI = Namespaces.RDFS + "comment";
-	public static final String RDFS_VALUE_URI = Namespaces.RDFS + "value";
+	public static final String RDF_VALUE_URI = Namespaces.RDF + "value";
 
 	// Karma Internal URIs
 	public static final String DEFAULT_LINK_URI = Namespaces.KARMA_DEV + "defaultLink"; 
