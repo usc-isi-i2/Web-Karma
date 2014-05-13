@@ -81,6 +81,34 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 		s.close();
 		return vals;
 	}
+	
+	@Override
+	public ArrayList<ArrayList<String>> getSQLQueryDataForLimitedRows(DBType dbType,
+			String hostname, int portnumber, String username, String password,
+			String query, String dBorSIDName, int rowCount) throws SQLException, ClassNotFoundException {
+		
+		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
+		Connection conn = getConnection(DRIVER, connectString);
+		if(query.toUpperCase().indexOf("SELECT TOP") == -1) { //Add limit only if it doesnt exist, else sql will be invalid
+			int idx = query.toUpperCase().indexOf("SELECT");
+			query = query.substring(idx+1);
+			query = "SELECT TOP " + rowCount + query;
+		}
+		Statement s = conn.createStatement();
+		ResultSet r = s.executeQuery(query);
+
+		if (r == null) {
+			s.close();
+			return null;
+		}
+		
+		ArrayList<ArrayList<String>> vals = parseResultSetIntoArrayListOfRows(r);
+		
+		r.close();
+		s.close();
+		return vals;
+	}
+	
 
 	@Override
 	public String prepareName(String name) {

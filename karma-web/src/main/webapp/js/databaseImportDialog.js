@@ -40,7 +40,7 @@ var DatabaseImportDialog = (function() {
     		});
     		
     		$("#databaseTypeSelector", dialog).change(function(){
-    			if($("#databaseTypeSelector option:selected").text() == "Oracle") {
+    			if($("#databaseTypeSelector option:selected", dialog).text() == "Oracle") {
     				$("#lblDatabase", dialog).text("SID/Service Name");
     			} else {
     				$("#lblDatabase", dialog).text("Database");
@@ -82,27 +82,27 @@ var DatabaseImportDialog = (function() {
     	}
     	
     	function validate() {
-    		if($.trim($("#DatabaseHostName").val()) == "" || $.trim($("#DatabasePortNumber").val()) == ""
-    			|| $.trim($("#DatabaseUsername").val()) == "" || $.trim($("#DatabasePassword").val()) == ""
-    			|| $.trim($("#DatabaseName").val()) == "") {
+    		if($.trim($("#DatabaseHostName", dialog).val()) == "" || $.trim($("#DatabasePortNumber", dialog).val()) == ""
+    			|| $.trim($("#DatabaseUsername", dialog).val()) == "" || $.trim($("#DatabasePassword", dialog).val()) == ""
+    			|| $.trim($("#DatabaseName", dialog).val()) == "") {
     			return "No field can be left empty!";
-    			$("#DatabaseImportErrorWindow").show();
-    		} else if (!isNumeric($.trim($("#DatabasePortNumber").val()))) {
+    		} else if (!isNumeric($.trim($("#DatabasePortNumber", dialog).val()))) {
     			return "Port number should be positive whole number!";
-    			$("#DatabaseImportErrorWindow").show();
     		} 
     		return null;
     	}
     	
     	function hideErrorMsg() {
-    		$("#databaseImportError").html("");
+    		$("#databaseImportError", dialog).html("");
+    		$("#databaseImportError", dialog).hide();
     	}
     	function showErrorMsg(msg) {
-    		$("#databaseImportError").html(msg);
+    		$("#databaseImportError", dialog).html(msg);
+    		$("#databaseImportError", dialog).show();
     	}
     	
     	function getSavedPreferences() {
-    		var table = $("#DatabaseTablesList table");
+    		var table = $("#DatabaseTablesList table", dialog);
     		$("tr", table).remove();
     		
     		var info = new Object();
@@ -124,11 +124,11 @@ var DatabaseImportDialog = (function() {
     		    				dialog.data("commandId", commandId);
     		    				
     		    				if(element["PreferenceValues"]) {
-    		    					$("#databaseTypeSelector").val(element["PreferenceValues"]["dbType"]);
-    		    					$("#DatabaseHostName").val(element["PreferenceValues"]["hostname"]);
-    		    					$("#DatabasePortNumber").val(element["PreferenceValues"]["portnumber"]);
-    		    					$("#DatabaseUsername").val(element["PreferenceValues"]["username"]);
-    		    					$("#DatabaseName").val(element["PreferenceValues"]["dBorSIDName"]);
+    		    					$("#databaseTypeSelector", dialog).val(element["PreferenceValues"]["dbType"]);
+    		    					$("#DatabaseHostName", dialog).val(element["PreferenceValues"]["hostname"]);
+    		    					$("#DatabasePortNumber", dialog).val(element["PreferenceValues"]["portnumber"]);
+    		    					$("#DatabaseUsername", dialog).val(element["PreferenceValues"]["username"]);
+    		    					$("#DatabaseName", dialog).val(element["PreferenceValues"]["dBorSIDName"]);
     		    				}
     		    			}
     		    		});
@@ -143,12 +143,12 @@ var DatabaseImportDialog = (function() {
     	function generateTableList() {
     		// Prepare the data to be sent to the server	
     		var info = new Object();
-    		info["dBType"] = $("#databaseTypeSelector option:selected").text();
-    		info["hostname"] = $.trim($("#DatabaseHostName").val());
-    		info["portNumber"] = $.trim($("#DatabasePortNumber").val());
-    		info["username"] = $.trim($("#DatabaseUsername").val());
-    		info["password"] = $.trim($("#DatabasePassword").val());
-    		info["dBorSIDName"] = $.trim($("#DatabaseName").val());
+    		info["dBType"] = $("#databaseTypeSelector option:selected", dialog).text();
+    		info["hostname"] = $.trim($("#DatabaseHostName"), dialog.val());
+    		info["portNumber"] = $.trim($("#DatabasePortNumber", dialog).val());
+    		info["username"] = $.trim($("#DatabaseUsername", dialog).val());
+    		info["password"] = $.trim($("#DatabasePassword", dialog).val());
+    		info["dBorSIDName"] = $.trim($("#DatabaseName", dialog).val());
     		info["workspaceId"] = $.workspaceGlobalInformation.id;
     		info["commandId"] = dialog.data("commandId");
     		info["command"] = "ImportDatabaseTableCommand";
@@ -175,8 +175,8 @@ var DatabaseImportDialog = (function() {
 		    				$("tr", table).remove();
 		    				
 		    				// Clear the existing table preview if any
-		    				$("#previewDiv table tr").remove();
-		    				$("#dbPreviewTableName").text("");
+		    				$("#previewDiv table tr", dialog).remove();
+		    				$("#dbPreviewTableName", dialog).text("");
 		    				
 		    				table.data("commandId", json["elements"][0]["commandId"]);
 		    				$.each(json["elements"][0]["TableList"][0] , function(index, value) {
@@ -311,9 +311,9 @@ var DatabaseImportDialog = (function() {
 
     	function handleDBTablePreviewResponse (json) {
     		$("#previewDiv table tr", dialog).remove();
-    		$("#dbPreviewTableName").text("");
+    		$("#dbPreviewTableName", dialog).text("");
     		if(json["elements"][0]["updateType"] == "ImportDatabaseTablePreview") {
-    			var table = $("#previewDiv table");
+    			var table = $("#previewDiv table", dialog);
     			
     			// Add the headers
     			var headerTR = $("<tr>");
@@ -336,13 +336,13 @@ var DatabaseImportDialog = (function() {
     				});
     				table.append(tr);
     			});
-    			$("#dbPreviewTableName").text("Preview of " + 
+    			$("#dbPreviewTableName", dialog).text("Preview of " + 
     				json["elements"][0]["tableName"] + " (Only Top 10 rows shown)");
     		}
     	} 
 
     	function showDatabaseImportError(json) {
-    		$("#listAndPreview").hide();
+    		$("#listAndPreview", dialog).hide();
     		
     		$.each(json["elements"], function(index, element) {
     			if( element["updateType"] == "KarmaError") {
@@ -383,7 +383,210 @@ var DatabaseImportDialog = (function() {
 
 
 
+$(document).on("click", "#importSQLButton", function() {
+	console.log("Import Using SQL");
+	SQLImportDialog.getInstance().show();
+});
 
+var SQLImportDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#sqlImportDialog");
+    	
+    	function init() {
+    		dialog.on('show.bs.modal', function (e) {
+    			$("#DatabasePassword", dialog).val("");
+    			$("#databaseImportError", dialog).html("");
+    			getSavedPreferences();
+    		});
+    		
+    		$("#databaseTypeSelector", dialog).change(function(){
+    			if($("#databaseTypeSelector option:selected", dialog).text() == "Oracle") {
+    				$("#lblDatabase", dialog).text("SID/Service Name");
+    			} else {
+    				$("#lblDatabase", dialog).text("Database");
+    			}
+    		});
+    		
+    		
+    		$('#btnImport', dialog).on('click', function (e) {
+				e.preventDefault();
+				hideErrorMsg();
+				var err = validate();
+				if(err != null) {
+					showErrorMsg(err);
+					return false;
+				}
+				sendImportRequest();
+			});
+    	}
+    	
+    	function validate() {
+    		if($.trim($("#DatabaseHostName", dialog).val()) == "" || $.trim($("#DatabasePortNumber", dialog).val()) == ""
+    			|| $.trim($("#DatabaseUsername", dialog).val()) == "" || $.trim($("#DatabasePassword", dialog).val()) == ""
+    			|| $.trim($("#DatabaseName", dialog).val()) == "") {
+    			return "No field can be left empty!";
+    		} else if (!isNumeric($.trim($("#DatabasePortNumber", dialog).val()))) {
+    			return "Port number should be positive whole number!";
+    		} 
+    		return null;
+    	}
+    	
+    	function hideErrorMsg() {
+    		$("#databaseImportError", dialog).html("");
+    		$("#databaseImportError", dialog).hide();
+    	}
+    	function showErrorMsg(msg) {
+    		$("#databaseImportError", dialog).html(msg);
+    		$("#databaseImportError", dialog).show();
+    	}
+    	
+    	function getSavedPreferences() {
+    		var info = new Object();
+    		info["workspaceId"] = $.workspaceGlobalInformation.id;
+    		info["command"] = "ImportSQLCommand";
+    		info["interactionType"] = "getPreferencesValues";
+    		
+    		var returned = $.ajax({
+    		   	url: "RequestController", 
+    		   	type: "POST",
+    		   	data : info,
+    		   	dataType : "json",
+    		   	complete : 
+    		   		function (xhr, textStatus) {
+    		   			var json = $.parseJSON(xhr.responseText);
+    		    		$.each(json["elements"], function(index, element) {
+    		    			if(element["updateType"] == "ImportSQLCommandPreferences") {
+    		    				var commandId = element["commandId"];
+    		    				dialog.data("commandId", commandId);
+    		    				
+    		    				if(element["PreferenceValues"]) {
+    		    					$("#databaseTypeSelector", dialog).val(element["PreferenceValues"]["dbType"]);
+    		    					$("#DatabaseHostName", dialog).val(element["PreferenceValues"]["hostname"]);
+    		    					$("#DatabasePortNumber", dialog).val(element["PreferenceValues"]["portnumber"]);
+    		    					$("#DatabaseUsername", dialog).val(element["PreferenceValues"]["username"]);
+    		    					$("#DatabaseName", dialog).val(element["PreferenceValues"]["dBorSIDName"]);
+    		    					$("#DatabaseQuery", dialog).val(element["PreferenceValues"]["query"]);
+    		    				}
+    		    			}
+    		    		});
+    			   	},
+    			error :
+    				function (xhr, textStatus) {
+    		   			alert("Error occured with fetching new rows! " + textStatus);
+    			   	}		   
+    		});
+    	}
+    	
+    	//filter results
+    	function filter(selector, query, dataAttribute) {
+    	      query = $.trim(query); //trim white space
+    	      query = query.replace(/ /gi, '|'); //add OR for regex query
+    	    
+    	        
+    	      $(selector).each(function() {
+    	        ($(this).data(dataAttribute).search(new RegExp(query, "i")) < 0) 
+    	            ? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
+    	      });
+    	}
+
+    	function isNumeric(input){
+    	    return /^ *[0-9]+ *$/.test(input);
+    	}
+    	
+    	function sendImportRequest() {
+    		var info = new Object();
+    		info["workspaceId"] = $.workspaceGlobalInformation.id;
+    		info["command"] = "ImportSQLCommand";
+    		info["interactionType"] = "importSQL";
+    		info["commandId"] = dialog.data("commandId");
+    		info["execute"] = true;
+    		
+    		info["dBType"] = $("#databaseTypeSelector option:selected", dialog).text();
+    		info["hostname"] = $.trim($("#DatabaseHostName", dialog).val());
+    		info["portNumber"] = $.trim($("#DatabasePortNumber", dialog).val());
+    		info["username"] = $.trim($("#DatabaseUsername", dialog).val());
+    		info["password"] = $.trim($("#DatabasePassword", dialog).val());
+    		info["dBorSIDName"] = $.trim($("#DatabaseName", dialog).val());
+    		info["query"] = $.trim($("#DatabaseQuery", dialog).val());
+    		
+    		var returned = $.ajax({
+    		   	url: "RequestController", 
+    		   	type: "POST",
+    		   	data : info,
+    		   	dataType : "json",
+    		   	complete : 
+    		   		function (xhr, textStatus) {
+    		   			//alert(xhr.responseText);
+    		   			var json = $.parseJSON(xhr.responseText);
+    		   			var flag = 0;
+    		   			$.each(json["elements"], function(index, element) {
+    		   				if( element["updateType"] == "KarmaError") {
+    		    				showDatabaseImportError(json);
+    		    				getSavedPreferences();	//Get this again to get the latest command Id
+    		    				flag = -1;
+    		    			}
+    					});
+    					
+    					if(flag != -1) {
+    						parse(json);
+    						hide();
+    	    				//alert("Data using the SQL query imported in the workspace!");
+    	    				var lastWorksheetLoaded = $("div.Worksheet").last();
+	    		        	if(lastWorksheetLoaded) {
+	    		        		var lastWorksheetId = lastWorksheetLoaded.attr("id");
+	    		        		ShowExistingModelDialog.getInstance().showIfNeeded(lastWorksheetId);
+	    		        	}
+    					}
+    	    			
+    			   	},
+    			error :
+    				function (xhr, textStatus) {
+    		   			alert("Error occured with fetching new rows! " + textStatus);
+    			   	}		   
+    		});
+    	}
+
+    	function showDatabaseImportError(json) {
+    		$.each(json["elements"], function(index, element) {
+    			if( element["updateType"] == "KarmaError") {
+    				showErrorMsg(element["Error"]);
+    			}
+    				
+    		});
+    		
+    	}
+    	
+    	function hide() {
+    		dialog.modal('hide');
+    	}
+    	
+    	function show(data) {
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        
+        return {	//Return back the public methods
+        	show : show,
+        	init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    	
+    
+})();
 
 
 

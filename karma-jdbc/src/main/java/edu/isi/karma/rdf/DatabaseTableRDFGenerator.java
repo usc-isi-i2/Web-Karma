@@ -61,13 +61,12 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 	private String username;
 	private String password;
 	private String dBorSIDName;
-	private String tablename;
 	private String encoding;
 	private static int DATABASE_TABLE_FETCH_SIZE = 10000;
 	
 	public DatabaseTableRDFGenerator(DBType dbType, String hostname,
 			int portnumber, String username, String password,
-			String dBorSIDName, String tablename, String encoding) {
+			String dBorSIDName, String encoding) {
 		super();
 		this.dbType = dbType;
 		this.hostname = hostname;
@@ -75,7 +74,6 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		this.username = username;
 		this.password = password;
 		this.dBorSIDName = dBorSIDName;
-		this.tablename = tablename;
 		this.encoding = encoding;
 	}
 	
@@ -83,8 +81,24 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 	 * Only warn about SQL exception once. //Pedro //TODO: this whole code is copy-pasted
 	 */
 	private static boolean warnedSqlException = false;
-	public void generateRDF(PrintWriter pw, R2RMLMappingIdentifier id)
+	
+	public void generateRDFFromSQL(String query, PrintWriter pw, R2RMLMappingIdentifier id)
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
+		String wkname = query.replace(" ", "_");
+		if(wkname.length() > 100)
+			wkname = wkname.substring(0, 99) + "...";
+		generateRDF(wkname, query, pw, id);
+	}
+	
+	public void generateRDFFromTable(String tablename, PrintWriter pw, R2RMLMappingIdentifier id)
+			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
+		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
+		String query = "Select * FROM " + dbUtil.escapeTablename(tablename);
+		generateRDF(tablename, query, pw, id);
+	}
+
+	private void generateRDF(String wkname, String query, PrintWriter pw, R2RMLMappingIdentifier id) 
+			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException{
 		logger.debug("Generating RDF...");
 
 		WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(id);
@@ -93,7 +107,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		Connection conn = dbUtil.getConnection(hostname, portnumber, username, password, dBorSIDName);
 		conn.setAutoCommit(false);
-		String query = "Select * FROM " + dbUtil.escapeTablename(tablename);
+		
 		java.sql.Statement stmt = conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
 				java.sql.ResultSet.CONCUR_READ_ONLY);
 		stmt.setFetchSize(DATABASE_TABLE_FETCH_SIZE);
@@ -102,14 +116,16 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		ResultSetMetaData meta = r.getMetaData();;
 		
 		// Get the column names
-		
-		List<String> columnNames = dbUtil.getColumnNames(dBorSIDName, tablename, conn);
+		List<String> columnNames = new ArrayList<>();
+		for (int i = 1; i <= meta.getColumnCount(); i++) {
+			columnNames.add(meta.getColumnName(i));
+		}
 		
 		// Prepare required Karma objects
 	     Workspace workspace = initializeWorkspace();
  	
 		RepFactory factory = workspace.getFactory();
-		Worksheet wk = factory.createWorksheet(tablename, workspace, encoding);
+		Worksheet wk = factory.createWorksheet(wkname, workspace, encoding);
 		List<String> headersList = addHeaders(wk, columnNames, factory);
 		
 		int counter = 0;
@@ -125,7 +141,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 				mapping = parserTest.parse();
 			    workspace = initializeWorkspace();
 			    factory = workspace.getFactory();
-				wk = factory.createWorksheet(tablename, workspace, encoding);
+				wk = factory.createWorksheet(wkname, workspace, encoding);
 				headersList = addHeaders(wk, columnNames, factory);
 				
 			}
@@ -161,7 +177,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		stmt.close();
 		logger.debug("done");
 	}
-
+	
 	private void generateRDFFromWorksheet(Worksheet wk, 
 			Workspace workspace, KR2RMLMapping mapping, PrintWriter pw) 
 					throws IOException, JSONException, KarmaException {

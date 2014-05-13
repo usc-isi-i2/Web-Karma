@@ -132,10 +132,11 @@ and related projects, please see: http://www.isi.edu/integration
 		            <li class="dropdown">
 		              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Import <b class="caret"></b></a>
 		              <ul class="dropdown-menu">
-		                <li><a href="#" id="importDatabaseTableButton">Database Table</a></li>
+		                  <li><a href="#" id="importDatabaseTableButton">Database Table</a></li>
+		                  <li><a href="#" id="importSQLButton">Using SQL</a></li>
 		                  <li><a href="#" id="importFromServiceButton" >From Service</a></li>
 		                  <li><a href="#" class="fileinput-button"><form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form></a></li>
-		                </ul>
+		              </ul>
 		            </li>
 		            <li><a href="#" id="resetButton" data-html='true' title='Delete all saved files,<br/>use with care!' data-toggle='tooltip' data-placement='bottom'>Reset ...</a></li>
 		            <li>

@@ -10,7 +10,7 @@ public class SourceInformation {
 	
 	public enum InfoAttribute {
 		/*** Database source information attributes ***/
-		dbType, hostname, portnumber, username, dBorSIDName, tableName
+		dbType, hostname, portnumber, username, dBorSIDName, tableName, query
 	}
 	
 	public Map<InfoAttribute, String> getAttributeValueMap() {
@@ -25,7 +25,9 @@ public class SourceInformation {
 		InfoAttribute[] attrArr = {InfoAttribute.dbType, 
 				InfoAttribute.hostname, InfoAttribute.portnumber, 
 				InfoAttribute.username, InfoAttribute.dBorSIDName, 
-				InfoAttribute.tableName};
+				InfoAttribute.tableName,
+				InfoAttribute.query,
+		};
 		return Arrays.asList(attrArr);
 	}
 }
