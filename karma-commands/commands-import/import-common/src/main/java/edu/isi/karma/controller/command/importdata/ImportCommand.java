@@ -54,11 +54,10 @@ public abstract class ImportCommand extends Command {
 
     @Override
     public UpdateContainer doIt(Workspace workspace) throws CommandException {
-        Import imp = createImport(workspace);
-
         UpdateContainer c = new UpdateContainer();
 
         try {
+        	Import imp = createImport(workspace);
             Worksheet wsht = imp.generateWorksheet();
 
             if (hasRevisionId()) {
@@ -71,7 +70,7 @@ public abstract class ImportCommand extends Command {
         } catch (JSONException | IOException | KarmaException | NullPointerException | ClassNotFoundException e) {
             logger.error("Error occured while generating worksheet from " + getTitle() + "!", e);
             return new UpdateContainer(new ErrorUpdate(
-                    "Error occured while importing file."));
+                    "Error occured during import: " + e.getMessage()));
         }
 
         return c;

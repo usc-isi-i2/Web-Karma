@@ -21,7 +21,6 @@
 
 package edu.isi.karma.modeling.alignment.learner;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Vector;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
@@ -50,53 +48,33 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	
 	private Set<Node> nodes;
 	private Map<ColumnNode, ColumnNode> mappingToSourceColumns;
-	private List<Double> confidenceList;
-	private List<CoherenceItem> coherenceList;
-	private double confidence;
-	private double coherence;
-	private int frequency;
+	private Confidence confidence;
+	private Coherence coherence;
+//	private int frequency;
 	private double score;
-	private int semanticTypeCount;
-	
-//	class ValueComparator implements Comparator<String> {
-//
-//	    Map<String, Set<Node>> base;
-//	    public ValueComparator(Map<String, Set<Node>> base) {
-//	        this.base = base;
-//	    }
-//
-//	    public int compare(String a, String b) {
-//	        if (base.get(a).size() > base.get(b).size()) 
-//	            return 1;
-//	        else if (base.get(a).size() < base.get(b).size()) 
-//		            return -1;
-//	        else
-//	            return 0;
-//	    }
-//	}
+	private int semanticTypesCount;
+	private int nonModelNodesCount; // nodes that do not belong to any pattern
+
 	
 	public SteinerNodes() {
 		this.nodes = new HashSet<Node>();
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
-		this.semanticTypeCount = 0;
-		this.confidenceList = new Vector<Double>();
-		this.coherenceList = new ArrayList<CoherenceItem>();
-		this.frequency = 0;
-//		this.confidence = 1.0;
-		this.confidence = 0.0;
-		this.coherence = 0.0;
+		this.semanticTypesCount = 0;
+		this.confidence = new Confidence();
+		this.coherence = new Coherence();
+		this.nonModelNodesCount = 0;
+//		this.frequency = 0;
 		this.score = 0.0;
 	}
 	
 	public SteinerNodes(SteinerNodes steinerNodes) {
 		this.nodes = new HashSet<Node>(steinerNodes.getNodes());
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>(steinerNodes.getMappingToSourceColumns());
-		this.confidenceList = new Vector<Double>(steinerNodes.getConfidenceVector());
-		this.coherenceList = new ArrayList<CoherenceItem>(steinerNodes.getCoherenceList());
-		this.frequency = steinerNodes.getFrequency();
-		this.confidence = steinerNodes.getConfidence();
-		this.coherence = steinerNodes.getCoherence();
-		this.semanticTypeCount = steinerNodes.getSemanticTypeCount();
+		this.confidence = new Confidence(steinerNodes.getConfidence());
+		this.coherence = new Coherence(steinerNodes.getCoherence());
+//		this.frequency = steinerNodes.getFrequency();
+		this.semanticTypesCount = steinerNodes.getSemanticTypesCount();
+		this.nonModelNodesCount = steinerNodes.getNonModelNodesCount();
 		this.score = steinerNodes.getScore();
 	}
 	
@@ -108,8 +86,8 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		return mappingToSourceColumns;
 	}
 
-	public int getSemanticTypeCount() {
-		return semanticTypeCount;
+	public int getSemanticTypesCount() {
+		return semanticTypesCount;
 	}
 
 	public boolean addNodes(ColumnNode sourceColumn, InternalNode n1, ColumnNode n2, double confidence) {
@@ -117,24 +95,29 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		if (this.nodes.contains(n1) && this.nodes.contains(n2))
 			return false;
 		
-		this.semanticTypeCount ++;
+		this.semanticTypesCount ++;
 		
-		this.nodes.add(n1);
-		this.nodes.add(n2);
-		
-		this.mappingToSourceColumns.put(n2, sourceColumn);
-				
+		if (!this.nodes.contains(n1)) {
+			this.nodes.add(n1);
+			if (n1.getModelIds() == null || n1.getModelIds().isEmpty())
+				this.nonModelNodesCount ++;
+		}
+		if (!this.nodes.contains(n2)) {
+			this.nodes.add(n2);
+			this.mappingToSourceColumns.put(n2, sourceColumn);
+			if (n2.getModelIds() == null || n2.getModelIds().isEmpty())
+				this.nonModelNodesCount ++;
+		}
+
 		if (confidence <= 0 || confidence > 1)
 			confidence = MIN_CONFIDENCE;
 		
-		this.confidenceList.add(confidence);
+		this.confidence.addValue(confidence);
 		
-		this.frequency += n1.getModelIds() == null ? 0 : n1.getModelIds().size();
-		this.frequency += n2.getModelIds() == null ? 0 : n2.getModelIds().size();
+//		this.frequency += n1.getModelIds() == null ? 0 : n1.getModelIds().size();
+//		this.frequency += n2.getModelIds() == null ? 0 : n2.getModelIds().size();
 		
-		this.computeCoherenceList();
-		this.computeCoherenceValue();
-		this.computeConfidenceValue();
+		this.computeCoherence();
 		
 		this.computeScore();
 		
@@ -142,33 +125,29 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		
 	}
 	
-	public List<Double> getConfidenceVector() {
-		return Collections.unmodifiableList(this.confidenceList);
+	public Confidence getConfidence() {
+		return this.confidence;
 	}
 	
-	public int getNodeCount() {
+	public int getNodesCount() {
 		return this.nodes.size();
+	}
+	
+	public int getNonModelNodesCount() {
+		return this.nonModelNodesCount;
 	}
 	
 	public double getScore() {
 		return this.score;
 	}
 	
-	public List<CoherenceItem> getCoherenceList() {
-		return Collections.unmodifiableList(this.coherenceList);
+	public Coherence getCoherence() {
+		return this.coherence;
 	}
 	
-	public int getFrequency() {
-		return frequency;
-	}
-	
-	public double getConfidence() {
-		return confidence;
-	}
-
-	public double getCoherence() {
-		return coherence;
-	}
+//	public int getFrequency() {
+//		return frequency;
+//	}
 	
 //	private int computeFrequency() {
 //		int frequency = 0;
@@ -193,24 +172,9 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 //		
 //		return confidence;
 //	}
+
 	
-	private void computeConfidenceValue() {
-		
-		double sum = 0.0;
-		double mult = 1.0;
-		int count = 0;
-		for (Double d : this.confidenceList) {
-			if (d != null) {
-				count ++;
-				sum += d.doubleValue();
-				mult *= d == 0.0? 0.1 : d.doubleValue();
-			}
-		}
-		this.confidence = mult;
-		this.confidence = sum / (double)count;
-	}
-	
-	private void computeCoherenceList() {
+	private void computeCoherence() {
 		
 		if (nodes == null || nodes.size() == 0)
 			return;
@@ -272,82 +236,53 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		Multimap<String, String> index =
 			Multimaps.index(listOfNodesLargestPatterns, stringEqualiy);
 		
-		this.coherenceList.clear();
 		int x, y;
+		this.coherence = new Coherence(this.getNodesCount());
 		for (String s : index.keySet()) {
 			if (s.trim().length() == 0)
 				continue;
 			x = index.get(s).size();
 			y = x > 0 ? index.get(s).iterator().next().length() / guidSize : 0; 
 			CoherenceItem ci = new CoherenceItem(x, y);
-			this.coherenceList.add(ci);
+			this.coherence.addItem(ci);
 		}
-		
-		Collections.sort(this.coherenceList);
 		
 	}
 	
-	private void computeCoherenceValue() {
-		
-		BigDecimal value = BigDecimal.ZERO;
-		
-		BigDecimal denominator = BigDecimal.ONE;
-		BigDecimal factor = new BigDecimal(100);
-		BigDecimal b;
-		
-		double normalizedCoherence;
-		for (CoherenceItem ci : this.coherenceList) {
-			
-			normalizedCoherence = (double)ci.getX() / (double)(this.getNodeCount());
-			normalizedCoherence *= 100;
-			normalizedCoherence = (double) ((int)normalizedCoherence);
-			
-			denominator = denominator.multiply(factor);
-			b = new BigDecimal(normalizedCoherence);
-//			b = new BigDecimal(ci.getDouble());
-			b= b.divide(denominator);
-			value = value.add(b);
-		}
-		
-		this.coherence = value.doubleValue();
-	}
 	
-	private double getNormalizedSizeReduction() {
+	private double getSizeReduction() {
 		
-		int minSize = this.semanticTypeCount;
-		int maxSize = this.semanticTypeCount * 2;
+		int minSize = this.semanticTypesCount;
+		int maxSize = this.semanticTypesCount * 2;
 		
 		//feature scaling: (x - min) / (max - min)
 		// here: x: reduction in size --- min reduction: 0 --- max reduction: maxSize - minSize 
-		return (double)(maxSize - this.getNodeCount()) / 
+		return (double)(maxSize - this.getNodesCount()) / 
 				(double)(maxSize - minSize);
+		
 	}
+
 	
-	private double getNormalizedConfidence() {
-		
-		return getConfidence();
-	}
-	
-	private double getHarmonicMean(double[] input) {
-		
-		double result = 0.0;
-		if (input == null)
-			return result;
-		
-		double min = 1E-6;
-		double sum = 0.0;
-		for (double d : input) {
-			if (d <= 0.0) d = min;
-			sum += 1.0 / d;
-		}
-		
-		if (sum == 0.0)
-			return result;
-		
-		result = (double) input.length / sum;
-		return result;
-		
-	}
+//	private double getHarmonicMean(double[] input) {
+//		
+//		double result = 0.0;
+//		if (input == null)
+//			return result;
+//		
+//		double min = 1E-6;
+//		double sum = 0.0;
+//		for (double d : input) {
+//			if (d <= 0.0) d = min;
+//			sum += 1.0 / d;
+//		}
+//		
+//		if (sum == 0.0)
+//			return result;
+//		
+//		result = (double) input.length / sum;
+//		return result;
+//		
+//	}
 	
 	private double getArithmeticMean(double[] input) {
 		
@@ -368,9 +303,9 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	
 	private void computeScore() {
 		
-		double confidence = this.getNormalizedConfidence();
-		double sizeReduction = this.getNormalizedSizeReduction();
-		double coherence = this.getCoherence();
+		double confidence = this.confidence.getConfidenceValue();
+		double sizeReduction = this.getSizeReduction();
+		double coherence = this.coherence.getCoherenceValue();
 		//int frequency = this.getFrequency();
 		
 		double alpha = ModelingConfiguration.getScoringConfidenceCoefficient();
@@ -388,7 +323,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 //		this.score = sizeReduction;
 //		this.score = coherence;
 //		this.score = confidence;
-		this.score = getHarmonicMean(measures);
+//		this.score = getHarmonicMean(measures);
 		this.score = getArithmeticMean(measures);
 	}
 
@@ -405,11 +340,12 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		else return 0;
 	}
 	
+	
 	private static double roundTwoDecimals(double d) {
         DecimalFormat twoDForm = new DecimalFormat("#.##");
         return Double.valueOf(twoDForm.format(d));
-	}
-	
+	}	
+
 	public String getScoreDetailsString() {
 //		this.computeCoherenceList();
 		StringBuffer sb = new StringBuffer();
@@ -430,22 +366,22 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 
 		sb.append("\n");
 		sb.append("coherence list: ");
-		for (CoherenceItem ci : this.coherenceList) {
+		for (CoherenceItem ci : this.coherence.getItems()) {
 			sb.append("(" + ci.getX() + "," + ci.getY() + ")");
 		}
 //		sb.append("\n");
-		sb.append("--- coherence value: " + this.coherence);
+		sb.append("--- coherence value: " + this.coherence.getCoherenceValue());
 		sb.append("\n");
-		sb.append("size: " + this.getNodeCount() + ", max size: " + (this.semanticTypeCount * 2) + "---" + 
-				"normalized size reduction: " +  roundTwoDecimals(this.getNormalizedSizeReduction()) );
+		sb.append("size: " + this.getNodesCount() + ", max size: " + (this.semanticTypesCount * 2) + "---" + 
+				"size reduction: " +  roundTwoDecimals(this.getSizeReduction()) );
 		sb.append("\n");
 		sb.append("confidence list: (");
-		for (Double cf : this.confidenceList) {
+		for (Double cf : this.confidence.getValues()) {
 			if (cf != null)
 				sb.append( roundTwoDecimals(cf.doubleValue()) + ",");
 		}
 		sb.append(") --- ");
-		sb.append("normalized confidence: " + roundTwoDecimals(this.getNormalizedConfidence()));
+		sb.append("confidence: " + roundTwoDecimals(this.confidence.getConfidenceValue()));
 		sb.append("\n");
 //		sb.append("total number of patterns: " + this.frequency);
 //		sb.append("\n");

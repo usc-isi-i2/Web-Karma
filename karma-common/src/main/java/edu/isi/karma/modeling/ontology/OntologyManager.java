@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
+import com.google.common.io.Files;
 
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.alignment.Label;
@@ -105,7 +106,12 @@ public class OntologyManager  {
 		
 		try {
 			InputStreamReader s = EncodingDetector.getInputStreamReader(sourceFile, encoding);
-			ontHandler.getOntModel().read(s, null);
+			if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("N3"))
+				ontHandler.getOntModel().read(s, null, "N3");
+			else if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("TTL"))
+				ontHandler.getOntModel().read(s, null, "TURTLE");
+			else
+				ontHandler.getOntModel().read(s, null); // default lang = "RDF/XML"
 		} catch (Throwable t) {
 			logger.error("Error reading the OWL ontology file!", t);
 			return false;
@@ -138,7 +144,12 @@ public class OntologyManager  {
 		
 		try {
 			InputStreamReader s = EncodingDetector.getInputStreamReader(sourceFile, encoding);
-			ontHandler.getOntModel().read(s, null);
+			if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("N3"))
+				ontHandler.getOntModel().read(s, null, "N3");
+			else if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("TTL"))
+				ontHandler.getOntModel().read(s, null, "TURTLE");
+			else
+				ontHandler.getOntModel().read(s, null); // default lang = "RDF/XML"
 		} catch (Throwable t) {
 			logger.error("Error reading the OWL ontology file!", t);
 			return false;

@@ -3,13 +3,14 @@ package edu.isi.karma.controller.command.publish;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -55,10 +56,10 @@ public class PublishWorksheetHistoryCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		final String wkName = worksheet.getTitle();
-		final String wsPreferenceId = workspace.getCommandPreferencesId();
-		if(!HistoryJsonUtil.historyExists(wkName, wsPreferenceId)) {
+		
+		final String workspaceId = workspace.getId();
+		
+		if(!HistoryJsonUtil.historyExists(workspaceId, worksheetId)) {
 			return new UpdateContainer(new ErrorUpdate("No history exists for the worksheet!"));
 		}
 		
@@ -73,6 +74,7 @@ public class PublishWorksheetHistoryCommand extends Command {
 //			return new UpdateContainer(new ErrorUpdate("Error occured while publishing history for worksheet!"));
 //		}
 		
+		
 		return new UpdateContainer(new AbstractUpdate() {
 			@Override
 			public void generateJson(String prefix, PrintWriter pw,
@@ -82,7 +84,7 @@ public class PublishWorksheetHistoryCommand extends Command {
 					outputObject.put(JsonKeys.updateType.name(),
 							"PublishWorksheetHistoryUpdate");
 					outputObject.put(JsonKeys.fileUrl.name(),
-							"publish/History/" + HistoryJsonUtil.constructWorksheetHistoryJsonFileName(wkName, wsPreferenceId));
+							CommandHistory.getHistorySaver(workspaceId).getHistoryFilepath(worksheetId));
 					outputObject.put(JsonKeys.worksheetId.name(),
 							worksheetId);
 					pw.println(outputObject.toString(4));

@@ -34,6 +34,7 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.view.VWorkspace;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,7 +54,7 @@ public class GetDomainsForDataPropertyCommand extends Command {
 			.getLogger(GetDomainsForDataPropertyCommand.class.getSimpleName());
 
 	public enum JsonKeys {
-		updateType, URI, metadata, data, URIorId, newIndex
+		updateType, uri, metadata, data, id, newIndex
 	}
 
 	public GetDomainsForDataPropertyCommand(String id, String uri, String worksheetId) {
@@ -120,10 +121,10 @@ public class GetDomainsForDataPropertyCommand extends Command {
 						Label domainURI = ontMgr.getUriLabel(domain);
 						if(domainURI == null)
 							continue;
-						classObject.put(JsonKeys.data.name(), domainURI.getDisplayName());
 
 						JSONObject metadataObject = new JSONObject();
-						metadataObject.put(JsonKeys.URIorId.name(), domain);
+						metadataObject.put(JsonKeys.uri.name(), domain);
+						
 						classObject.put(JsonKeys.metadata.name(), metadataObject);
 
 						int graphLastIndex = -1;
@@ -134,12 +135,20 @@ public class GetDomainsForDataPropertyCommand extends Command {
 						if (graphLastIndex != -1) {
 							if (!steinerTreeNodeIds.contains(domainURI.getUri() + graphLastIndex)) {
 								metadataObject.put(JsonKeys.newIndex.name(), 1);
+								classObject.put(JsonKeys.data.name(), domainURI.getDisplayName() + "1 (add)");
+								metadataObject.put(JsonKeys.id.name(), domain + "1");
 							} else {
 								metadataObject.put(JsonKeys.newIndex.name(), graphLastIndex+1);
+								classObject.put(JsonKeys.data.name(), domainURI.getDisplayName() + (graphLastIndex+1) + " (add)");
+								metadataObject.put(JsonKeys.id.name(), domain + (graphLastIndex+1));
 							}
 						} else {
 							metadataObject.put(JsonKeys.newIndex.name(), 1);
+							classObject.put(JsonKeys.data.name(), domainURI.getDisplayName() + "1 (add)");
+							metadataObject.put(JsonKeys.id.name(), domain + "1");
 						}
+						
+						
 						
 						dataArray.put(classObject);
 						
@@ -152,7 +161,8 @@ public class GetDomainsForDataPropertyCommand extends Command {
 										JSONObject graphNodeObj = new JSONObject();
 										graphNodeObj.put(JsonKeys.data.name(), graphNode.getDisplayId());
 										JSONObject metadataObject_gNode = new JSONObject();
-										metadataObject_gNode.put(JsonKeys.URIorId.name(), graphNode.getId());
+										metadataObject_gNode.put(JsonKeys.uri.name(), graphNode.getUri());
+										metadataObject_gNode.put(JsonKeys.id.name(), graphNode.getId());
 										graphNodeObj.put(JsonKeys.metadata.name(), metadataObject_gNode);
 										dataArray.put(graphNodeObj);
 									}
@@ -170,6 +180,7 @@ public class GetDomainsForDataPropertyCommand extends Command {
 			}
 		});
 	}
+	
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {

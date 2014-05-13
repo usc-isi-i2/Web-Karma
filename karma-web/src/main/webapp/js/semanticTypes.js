@@ -93,10 +93,6 @@ var SetSemanticTypeDialog = (function() {
 			                    ((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo.length == 0)) ||
 			                    ((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo["Labels"].length == 0))) {
 			                    addEmptySemanticType();
-			                    $("table#semanticTypesTable input").prop("checked", true);
-			                    $("table#semanticTypesTable tr.semTypeRow").addClass("selected");
-			                    selectedPrimaryRow = $("table#semanticTypesTable tr.semTypeRow");
-			                    $("table#semanticTypesTable tr td button").click();
 			                }
 			            },
 			        error :

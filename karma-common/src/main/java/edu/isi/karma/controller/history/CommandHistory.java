@@ -28,12 +28,17 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.ICommand;
 import edu.isi.karma.controller.command.ICommand.CommandTag;
+import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
+import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
-import org.json.JSONException;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +72,12 @@ public class CommandHistory {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
+	private static HashMap<String, IHistorySaver> historySavers = new HashMap<>();
+	
+	public enum HistoryArguments {
+		worksheetId, commandName, inputParameters, hNodeId, tags
+	}
+	
 	public CommandHistory() {
 	}
 
@@ -140,10 +151,11 @@ public class CommandHistory {
 		
 		// Save the modeling commands
 		if (!(instanceOf(command, "ResetKarmaCommand"))) {
-			CommandHistoryWriter chWriter = new CommandHistoryWriter(history, workspace);
 			try {
-				chWriter.writeHistoryPerWorksheet();
-			} catch (JSONException e) {
+				if(isHistoryWriteEnabled && historySavers.get(workspace.getId()) != null) {
+					writeHistoryPerWorksheet(workspace, historySavers.get(workspace.getId()));
+				}
+			} catch (Exception e) {
 				logger.error("Error occured while writing history!" , e);
 				e.printStackTrace();
 			}
@@ -151,6 +163,59 @@ public class CommandHistory {
 		return effects;
 	}
 
+	private void writeHistoryPerWorksheet(Workspace workspace, IHistorySaver historySaver) throws Exception {
+		String workspaceId = workspace.getId();
+		HashMap<String, JSONArray> comMap = new HashMap<String, JSONArray>();
+		for(ICommand command : history) {
+			if(command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
+					|| command.hasTag(CommandTag.Transformation))) {
+				JSONArray json = new JSONArray(command.getInputParameterJson());
+				String worksheetId = HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json);
+				//String worksheetName = workspace.getWorksheet(worksheetId).getTitle(); 
+				if(comMap.get(worksheetId) == null)
+					comMap.put(worksheetId, new JSONArray());
+				comMap.get(worksheetId).put(getCommandJSON(workspace, command));
+			}
+		}
+		
+		for(String worksheetId : comMap.keySet()) {
+			JSONArray comms = comMap.get(worksheetId);
+			historySaver.saveHistory(workspaceId, worksheetId, comms);
+		}
+	}
+
+	
+	public JSONObject getCommandJSON(Workspace workspace, ICommand comm) {
+		JSONObject commObj = new JSONObject();
+		commObj.put(HistoryArguments.commandName.name(), comm.getCommandName());
+		
+		// Populate the tags
+		JSONArray tagsArr = new JSONArray();
+		for (CommandTag tag : comm.getTags())
+			tagsArr.put(tag.name());
+		commObj.put(HistoryArguments.tags.name(), tagsArr);
+		
+		JSONArray inputArr = new JSONArray(comm.getInputParameterJson());
+		for (int i = 0; i < inputArr.length(); i++) {
+			JSONObject inpP = inputArr.getJSONObject(i);
+			
+			/*** Check the input parameter type and accordingly make changes ***/
+			if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeId) {
+				String hNodeId = inpP.getString(ClientJsonKeys.value.name());
+				HNode node = workspace.getFactory().getHNode(hNodeId);
+				JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(workspace.getFactory());
+				inpP.put(ClientJsonKeys.value.name(), hNodeRepresentation);
+			
+			} else if (HistoryJsonUtil.getParameterType(inpP) == ParameterType.worksheetId) {
+				inpP.put(ClientJsonKeys.value.name(), "W");
+			} else {
+				// do nothing
+			}
+		}
+		commObj.put(HistoryArguments.inputParameters.name(), inputArr);
+		return commObj;
+	}
+	
 	private boolean instanceOf(Object o, String className) { // TODO this is a hack, but instanceof doesn't really seem appropriate here
 		return o.getClass().getName().toLowerCase().contains(className.toLowerCase());
 	}
@@ -306,5 +371,25 @@ public class CommandHistory {
 				retCommands.add(command);
 		}
 		return retCommands;
+	}
+	
+	
+	private static boolean isHistoryWriteEnabled = false;
+	public static boolean isHistoryEnabled()
+	{
+		return isHistoryWriteEnabled;
+	}
+	
+	public static void setIsHistoryEnabled(boolean isHistoryWriteEnabled)
+	{
+		CommandHistory.isHistoryWriteEnabled = isHistoryWriteEnabled;
+	}
+	
+	public static void setHistorySaver(String workspaceId, IHistorySaver saver) {
+		historySavers.put(workspaceId, saver);
+	}
+	
+	public static IHistorySaver getHistorySaver(String workspaceId) {
+		return historySavers.get(workspaceId);
 	}
 }

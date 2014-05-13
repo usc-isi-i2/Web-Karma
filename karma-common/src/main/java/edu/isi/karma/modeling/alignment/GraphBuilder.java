@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -45,7 +44,6 @@ import edu.isi.karma.rep.alignment.CompactLink;
 import edu.isi.karma.rep.alignment.CompactObjectPropertyLink;
 import edu.isi.karma.rep.alignment.CompactSubClassLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
-import edu.isi.karma.rep.alignment.DisplayModel;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
@@ -1148,13 +1146,17 @@ public class GraphBuilder {
 		logger.info(Integer.class.getFields()[0].getName());
 		
 		/** Check if any ontology needs to be preloaded **/
-		String preloadedOntDir = "/Users/mohsen/Documents/Academic/ISI/_GIT/Web-Karma/preloaded-ontologies/";
+		String preloadedOntDir = "/Users/mohsen/karma/preloaded-ontologies/";
 		File ontDir = new File(preloadedOntDir);
 		if (ontDir.exists()) {
 			File[] ontologies = ontDir.listFiles();
 			OntologyManager mgr = new OntologyManager();
 			for (File ontology: ontologies) {
-				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf")) {
+				if (ontology.getName().endsWith(".owl") || 
+						ontology.getName().endsWith(".rdf") || 
+						ontology.getName().endsWith(".n3") || 
+						ontology.getName().endsWith(".ttl") || 
+						ontology.getName().endsWith(".xml")) {
 					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
 					try {
 						String encoding = EncodingDetector.detect(ontology);
@@ -1162,6 +1164,8 @@ public class GraphBuilder {
 					} catch (Exception t) {
 						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
 					}
+				} else {
+					logger.error ("the file: " + ontology.getAbsolutePath() + " does not have proper format: xml/rdf/n3/ttl/owl");
 				}
 			}
 			// update the cache at the end when all files are added to the model
@@ -1169,59 +1173,56 @@ public class GraphBuilder {
 		} else {
 			logger.info("No directory for preloading ontologies exists.");
 		}
-		
-//		if (true)
-//			return;
-		
-		DirectedWeightedMultigraph<Node, DefaultLink> g = new 
-				DirectedWeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
-		
-		Node n1 = new InternalNode("n1", null);
-		Node n2 = new InternalNode("n2", null);
-		Node n3 = new InternalNode("n3", null);
-		Node n4 = new InternalNode("n4", null);
-		Node n8 = new ColumnNode("n8", "h1", "B", null);
-		Node n9 = new ColumnNode("n9", "h2", "B", null);
-		
-		DefaultLink l1 = new ObjectPropertyLink("e1", null, ObjectPropertyType.None);
-		DefaultLink l2 = new ObjectPropertyLink("e2", null, ObjectPropertyType.None);
-		DefaultLink l3 = new ObjectPropertyLink("e3", null, ObjectPropertyType.None);
-		DefaultLink l4 = new ObjectPropertyLink("e4", null, ObjectPropertyType.None);
-		DefaultLink l5 = new ObjectPropertyLink("e5", null, ObjectPropertyType.None);
-		DefaultLink l6 = new ObjectPropertyLink("e6", null, ObjectPropertyType.None);
-//		Link l7 = new ObjectPropertyLink("e7", null);
-//		Link l8 = new DataPropertyLink("e8", null);
-//		Link l9 = new DataPropertyLink("e9", null);
-		
-		g.addVertex(n1);
-		g.addVertex(n2);
-		g.addVertex(n3);
-		g.addVertex(n4);
-		g.addVertex(n8);
-		g.addVertex(n9);
-		
-		g.addEdge(n1, n2, l1);
-		g.addEdge(n1, n3, l2);
-		g.addEdge(n2, n3, l6);
-		g.addEdge(n2, n4, l3);
-		g.addEdge(n4, n8, l4);
-		g.addEdge(n3, n9, l5);
-		
-		GraphUtil.printGraph(g);
-		
-		DisplayModel dm = new DisplayModel(GraphUtil.asLabeledGraph(g));
-		HashMap<Node, Integer> nodeLevels = dm.getNodesLevel();
-		for (Node n : g.vertexSet())
-			logger.info(n.getId() + " --- " + nodeLevels.get(n));
-		
-		HashMap<Node, Set<ColumnNode>> coveredColumnNodes = dm.getNodesSpan();
-		
-		logger.info("Internal Nodes Coverage ...");
-		for (Entry<Node, Set<ColumnNode>> entry : coveredColumnNodes.entrySet()) {
-			logger.info(entry.getKey().getId());
-			for (Node n : entry.getValue())
-				logger.info("-----" + n.getId());
-		}
+				
+//		DirectedWeightedMultigraph<Node, DefaultLink> g = new 
+//				DirectedWeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
+//		
+//		Node n1 = new InternalNode("n1", null);
+//		Node n2 = new InternalNode("n2", null);
+//		Node n3 = new InternalNode("n3", null);
+//		Node n4 = new InternalNode("n4", null);
+//		Node n8 = new ColumnNode("n8", "h1", "B", null);
+//		Node n9 = new ColumnNode("n9", "h2", "B", null);
+//		
+//		DefaultLink l1 = new ObjectPropertyLink("e1", null, ObjectPropertyType.None);
+//		DefaultLink l2 = new ObjectPropertyLink("e2", null, ObjectPropertyType.None);
+//		DefaultLink l3 = new ObjectPropertyLink("e3", null, ObjectPropertyType.None);
+//		DefaultLink l4 = new ObjectPropertyLink("e4", null, ObjectPropertyType.None);
+//		DefaultLink l5 = new ObjectPropertyLink("e5", null, ObjectPropertyType.None);
+//		DefaultLink l6 = new ObjectPropertyLink("e6", null, ObjectPropertyType.None);
+////		Link l7 = new ObjectPropertyLink("e7", null);
+////		Link l8 = new DataPropertyLink("e8", null);
+////		Link l9 = new DataPropertyLink("e9", null);
+//		
+//		g.addVertex(n1);
+//		g.addVertex(n2);
+//		g.addVertex(n3);
+//		g.addVertex(n4);
+//		g.addVertex(n8);
+//		g.addVertex(n9);
+//		
+//		g.addEdge(n1, n2, l1);
+//		g.addEdge(n1, n3, l2);
+//		g.addEdge(n2, n3, l6);
+//		g.addEdge(n2, n4, l3);
+//		g.addEdge(n4, n8, l4);
+//		g.addEdge(n3, n9, l5);
+//		
+//		GraphUtil.printGraph(g);
+//		
+//		DisplayModel dm = new DisplayModel(GraphUtil.asLabeledGraph(g));
+//		HashMap<Node, Integer> nodeLevels = dm.getNodesLevel();
+//		for (Node n : g.vertexSet())
+//			logger.info(n.getId() + " --- " + nodeLevels.get(n));
+//		
+//		HashMap<Node, Set<ColumnNode>> coveredColumnNodes = dm.getNodesSpan();
+//		
+//		logger.info("Internal Nodes Coverage ...");
+//		for (Entry<Node, Set<ColumnNode>> entry : coveredColumnNodes.entrySet()) {
+//			logger.info(entry.getKey().getId());
+//			for (Node n : entry.getValue())
+//				logger.info("-----" + n.getId());
+//		}
 		
 //		GraphUtil.serialize(g, "test");
 //		DirectedWeightedMultigraph<Node, Link> gprime = GraphUtil.deserialize("test");
