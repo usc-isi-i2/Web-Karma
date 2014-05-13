@@ -863,7 +863,7 @@ public class OntologyCache {
 			allRangesUris = new HashSet<String>();
 			
 			OntProperty property = this.ontHandler.getOntModel().getOntProperty(propertyUri);
-			if (!property.isURIResource())
+			if (property == null || !property.isURIResource())
 				continue;
 			
 			// direct domain
@@ -978,7 +978,7 @@ public class OntologyCache {
 		for (String propertyUri : this.objectProperties.keySet()) {
 
 			OntProperty property = this.ontHandler.getOntModel().getOntProperty(propertyUri);
-			if (!property.isURIResource())
+			if (property == null || !property.isURIResource())
 				continue;
 						
 			directDomains = new HashSet<OntResource>();
