@@ -144,7 +144,7 @@ var DatabaseImportDialog = (function() {
     		// Prepare the data to be sent to the server	
     		var info = new Object();
     		info["dBType"] = $("#databaseTypeSelector option:selected", dialog).text();
-    		info["hostname"] = $.trim($("#DatabaseHostName"), dialog.val());
+    		info["hostname"] = $.trim($("#DatabaseHostName", dialog).val());
     		info["portNumber"] = $.trim($("#DatabasePortNumber", dialog).val());
     		info["username"] = $.trim($("#DatabaseUsername", dialog).val());
     		info["password"] = $.trim($("#DatabasePassword", dialog).val());
