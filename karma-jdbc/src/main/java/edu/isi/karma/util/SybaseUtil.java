@@ -123,7 +123,7 @@ public class SybaseUtil extends AbstractJDBCUtil {
 
 	@Override
 	public String escapeTablename(String name) {
-		return "`" + name + "`";
+		return "[" + name + "]";
 	}
 
 }

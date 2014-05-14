@@ -1,3 +1,5 @@
+<%@page import="edu.isi.karma.config.UIConfiguration"%>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
@@ -110,6 +112,7 @@ and related projects, please see: http://www.isi.edu/integration
 				color: #cccccc;
 			}
 		</style>
+	
 	</head>
 
 	<body>
@@ -229,7 +232,8 @@ and related projects, please see: http://www.isi.edu/integration
             </table>
         </div>
 
-        
+		
+		
         <!--  Load all scripts last for faster page load -->
         
         <!-- Third Party JavaScript files		 -->
@@ -244,8 +248,14 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.hoverIntent.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.jstree.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.qtip.min.js"></script>
-        <!-- 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script> -->
+        
+        <%
+        if(UIConfiguration.Instance().isGoogleEarthEnabled()) {
+        %>
         <script type="text/javascript" src="https://www.google.com/jsapi?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script>
+        <%
+        }
+        %>
         <script type="text/javascript" src="uiLibs/sticky/js/sticky.min.js"></script>
 
         <script type="text/javascript" src="uiLibs/json/js/json2.js"></script>
@@ -253,10 +263,10 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="uiLibs/d3/js/d3.v2.min.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.iframe-transport.js"></script>
         <script type="text/javascript" src="uiLibs/ace/js/ace.js" charset="utf-8"></script>
-
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload-ui.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload-jquery-ui.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.jeditable.js"></script>
         <script type="text/javascript" src="uiLibs/locale/js/locale.js"></script>
         <script type="text/javascript" src="uiLibs/less/js/less-1.4.1.min.js"></script>
         <script type="text/javascript" src="uiLibs/modernizr/js/modernizr.custom.59953.js"></script>
@@ -289,6 +299,8 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/model-layout.js?<jsp:include page='version.jsp' />"></script>
          
         <script>
+        	var googleEarthEnabled = <%=UIConfiguration.Instance().isGoogleEarthEnabled()%>;
+        	
             $(function() {
                 // Clear the workspace when closing the window
                 $(window).bind("beforeunload", function() {
@@ -343,9 +355,12 @@ and related projects, please see: http://www.isi.edu/integration
 			});
 		</script>
 		<script type="text/javascript">
-			google.load("earth", "1", {
-				"callback" : earthCallback
-			});
+			if(googleEarthEnabled) {
+				google.load("earth", "1", {
+					"callback" : earthCallback
+				});
+			}
+			
 			function earthCallback() {
 				// alert("Earth namespace loaded!");
 			}

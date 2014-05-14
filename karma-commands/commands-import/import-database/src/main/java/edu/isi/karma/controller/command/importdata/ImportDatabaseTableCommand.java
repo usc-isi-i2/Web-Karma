@@ -32,6 +32,8 @@ import edu.isi.karma.util.DBType;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONObject;
+
 public class ImportDatabaseTableCommand extends ImportCommand implements IPreviewable {
     // Database Type
 
@@ -56,6 +58,10 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
         generateTableList, importTable, getPreferencesValues, previewTable
     }
 
+    private enum PreferenceKeys {
+    	dbType, hostname, portnumber, username, dBorSIDName;
+    }
+    
     protected ImportDatabaseTableCommand(String id) {
         super(id);
     }
@@ -187,6 +193,15 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
 
     @Override
     protected Import createImport(Workspace workspace) {
+    	JSONObject prefObject = new JSONObject();
+		prefObject.put(PreferenceKeys.dBorSIDName.name(), dBorSIDName);
+		prefObject.put(PreferenceKeys.dbType.name(), dbType);
+		prefObject.put(PreferenceKeys.hostname.name(), hostname);
+		prefObject.put(PreferenceKeys.portnumber.name(), portnumber);
+		prefObject.put(PreferenceKeys.username.name(), username);
+		workspace.getCommandPreferences().setCommandPreferences(
+				ImportDatabaseTableCommand.class.getSimpleName() + "Preferences", prefObject);
+		
         return new DatabaseTableImport(
                     dbType, hostname, portnumber, username, password, dBorSIDName,
                     tableName, workspace, "");

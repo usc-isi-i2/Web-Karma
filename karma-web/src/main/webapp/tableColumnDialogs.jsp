@@ -186,7 +186,7 @@
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				        <button type="submit" class="btn btn-primary" id="btnSave">Transform</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Submit</button>
 				  </div> <!-- /.modal-footer -->
 			</div><!-- /.modal-content -->
 		</form>

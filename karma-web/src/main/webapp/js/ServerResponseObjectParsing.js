@@ -77,6 +77,28 @@ function parse(data) {
                         $("div#columnHeadingMenuButtonDiv").hide();
                     });
 
+                    var mapDiv = $("<div>").addClass("toggleMapView");
+                    if(googleEarthEnabled) {
+                    	mapDiv
+                    		.append($("<img>")
+	                            .attr("src", "images/google-earth-32.png"))
+	                        .qtip({
+	                            content : {
+	                                text : 'View on map'
+	                            },
+	                            position : {
+	                                my : 'top center', // Position my top left...
+	                                at : 'bottom center', // at the bottom right of...
+	                            },
+	                            style : {
+	                                classes : 'ui-tooltip-light ui-tooltip-shadow'
+	                            }
+	                        })
+	                        .data("worksheetId", worksheet["worksheetId"])
+	                        .data("state", "table")
+	                        .click(showMapViewForWorksheet);
+                    }
+                    
                     titleDiv
                         .append((new WorksheetOptions(worksheet["worksheetId"], worksheet["title"])).generateJS())
                         .append($("<div>")
@@ -84,25 +106,7 @@ function parse(data) {
                             .append($("<div>")
                                 .addClass("showEncoding")
                                 .text(worksheet["encoding"]))
-                            .append($("<div>")
-                                .addClass("toggleMapView")
-                                .append($("<img>")
-                                    .attr("src", "images/google-earth-32.png"))
-                                .qtip({
-                                    content : {
-                                        text : 'View on map'
-                                    },
-                                    position : {
-                                        my : 'top center', // Position my top left...
-                                        at : 'bottom center', // at the bottom right of...
-                                    },
-                                    style : {
-                                        classes : 'ui-tooltip-light ui-tooltip-shadow'
-                                    }
-                                })
-                                .data("worksheetId", worksheet["worksheetId"])
-                                .data("state", "table")
-                                .click(showMapViewForWorksheet))
+                            .append(mapDiv)
                             .append($("<div>")
                                 .addClass("showHideWorkSheet")
                                 .addClass("glyphicon")

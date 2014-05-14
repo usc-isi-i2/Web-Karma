@@ -534,7 +534,7 @@
         onblur     : 'cancel',
         loadtype   : 'GET',
         loadtext   : 'Loading...',
-        placeholder: '',
+        placeholder: 'Click to edit',
         loaddata   : {},
         submitdata : {},
         ajaxoptions: {}
