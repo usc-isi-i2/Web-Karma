@@ -24,10 +24,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PostGISUtil extends AbstractJDBCUtil {
 
-	//private static Logger logger = LoggerFactory
-	//.getLogger(MySQLUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(PostGISUtil.class);
 
 	static final String DRIVER = 
 		"org.postgresql.Driver";
@@ -57,7 +59,34 @@ public class PostGISUtil extends AbstractJDBCUtil {
 		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
 		Connection conn = getConnection(DRIVER, connectString);
 		String query = "Select * from " + escapeTablename(tableName) + " limit " + rowCount;
+		logger.info("Execute:" + query);
+		Statement s = conn.createStatement();
+		ResultSet r = s.executeQuery(query);
+
+		if (r == null) {
+			s.close();
+			return null;
+		}
 		
+		ArrayList<ArrayList<String>> vals = parseResultSetIntoArrayListOfRows(r);
+		
+		r.close();
+		s.close();
+		return vals;
+	}
+	
+
+	@Override
+	public ArrayList<ArrayList<String>> getSQLQueryDataForLimitedRows(DBType dbType,
+			String hostname, int portnumber, String username, String password,
+			String query, String dBorSIDName, int rowCount) throws SQLException, ClassNotFoundException {
+		
+		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
+		Connection conn = getConnection(DRIVER, connectString);
+		
+		if(query.toLowerCase().indexOf(" limit ") == -1) //Add limit only if it doesnt exist, else sql will be invalid
+			query = query + " limit " + rowCount;
+		logger.info("Execute:" + query);
 		Statement s = conn.createStatement();
 		ResultSet r = s.executeQuery(query);
 

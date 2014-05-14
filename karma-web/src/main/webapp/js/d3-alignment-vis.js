@@ -601,6 +601,13 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
          }, 500, worksheetId);
     });
     
+    window.setTimeout(function() {
+    	 if($(mainWorksheetDiv).data("svgVis") != null) {
+    	     var w = $("div#svgDiv_"+worksheetId).width();
+    	     svg.attr("width", w);
+    	   }
+    	 
+    }, 100);
     
 }
 

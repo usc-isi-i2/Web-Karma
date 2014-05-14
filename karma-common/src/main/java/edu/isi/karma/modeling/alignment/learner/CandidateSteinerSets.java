@@ -22,6 +22,8 @@
 package edu.isi.karma.modeling.alignment.learner;
 
 import edu.isi.karma.modeling.ModelingConfiguration;
+import edu.isi.karma.rep.alignment.Node;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +76,8 @@ public class CandidateSteinerSets {
 				}
 			}
 			
+//			this.steinerSets = getTopKSteinerSets(newSteinerNodes, ModelingConfiguration.getMaxQueuedMappigs());
+			
 			// sort Steiner nodes based on their score
 			Collections.sort(newSteinerNodes);
 			
@@ -84,10 +88,58 @@ public class CandidateSteinerSets {
 				this.steinerSets.add(newSteinerNodes.get(i));
 
 		}
-		
 		for (SteinerNodes sn : this.steinerSets) {
 			logger.debug(sn.getScoreDetailsString());
 		}
 		logger.debug("***************************************************************");
+	}
+	
+	@SuppressWarnings("unused")
+	private List<SteinerNodes> getTopKSteinerSets(List<SteinerNodes> steinerSets, int k) {
+		
+//		If the points are already sorted by one of the coordinates (say the x-coordinate), this can be done in O(n) as follows:
+//
+//			Process the points from the largest x-coordinate.
+//			As you go through them, keep track of the largest y-coordinate.
+//			If the current point's y-coordinate is smaller than the largest y-coordinate thus far, it's dominated by another point. Otherwise, it's not dominated, so add it to the output.
+		
+		logger.info("number of steiner sets before computing pareto optimal: " + steinerSets.size());
+		
+		List<SteinerNodes> paretoFrontierSteinerSets = 
+				new ArrayList<SteinerNodes>();
+		
+		if (steinerSets == null || steinerSets.isEmpty() || k <= 0)
+			return paretoFrontierSteinerSets;
+		
+		Collections.sort(steinerSets, Collections.reverseOrder(new SteinerNodesCoherenceComparator()));
+		
+		SteinerNodes sn = steinerSets.get(0);
+		paretoFrontierSteinerSets.add(sn);
+		double largestObservedConfidence = sn.getConfidence().getConfidenceValue();
+		
+		for (int i = 1; i < steinerSets.size(); i++) {
+			sn = steinerSets.get(i);
+//			System.out.println(sn.getScoreDetailsString());
+			if (sn.getConfidence().getConfidenceValue() < largestObservedConfidence)
+				continue;
+			
+			largestObservedConfidence = sn.getConfidence().getConfidenceValue();
+			
+			paretoFrontierSteinerSets.add(sn);
+		}
+		
+		logger.info("number of steiner sets after computing pareto optimal: " + paretoFrontierSteinerSets.size());
+
+		List<SteinerNodes> results = new ArrayList<SteinerNodes>();
+		for (int i = 0; i < ModelingConfiguration.getMaxQueuedMappigs() && i < paretoFrontierSteinerSets.size(); i++) {
+			if (i == 0) {
+				System.out.println(paretoFrontierSteinerSets.get(i).getScoreDetailsString());
+				for (Node n : paretoFrontierSteinerSets.get(i).getNodes())
+					System.out.println(n.getId());
+			}
+			results.add(paretoFrontierSteinerSets.get(i));
+		}
+
+		return results;
 	}
 }

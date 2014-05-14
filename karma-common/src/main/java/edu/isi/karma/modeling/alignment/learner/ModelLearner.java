@@ -747,8 +747,8 @@ public class ModelLearner {
 		ModelLearner modelLearner;
 		
 		boolean iterativeEvaluation = false;
-		boolean useCorrectType = true;
-		int numberOfCRFCandidates = 1;
+		boolean useCorrectType = false;
+		int numberOfCRFCandidates = 4;
 		int numberOfKnownModels;
 		String filePath = Params.RESULTS_DIR;
 		String filename = "results,k=" + numberOfCRFCandidates + ".csv"; 
@@ -761,7 +761,7 @@ public class ModelLearner {
 		
 		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 3; {
+//		int i = 20; {
 			
 //			resultFile.flush();
 			int newSourceIndex = i;

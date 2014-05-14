@@ -1278,6 +1278,11 @@ var PublishJSONDialog = (function() {
                         var json = $.parseJSON(xhr.responseText);
                         parse(json);
                         hideLoading(info["worksheetId"]);
+                        var lastWorksheetLoaded = $("div.Worksheet").last();
+    		        	if(lastWorksheetLoaded) {
+    		        		var lastWorksheetId = lastWorksheetLoaded.attr("id");
+    		        		ShowExistingModelDialog.getInstance().showIfNeeded(lastWorksheetId);
+    		        	}
                     },
                 error :
                     function (xhr, textStatus) {

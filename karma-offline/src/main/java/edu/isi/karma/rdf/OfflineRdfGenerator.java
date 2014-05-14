@@ -29,7 +29,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.net.URL;
 import java.sql.SQLException;
 
@@ -45,10 +44,6 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-
-import edu.isi.karma.common.JenaWritable;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
@@ -122,9 +117,11 @@ public class OfflineRdfGenerator {
             if (!inputType.equalsIgnoreCase("DB")
                     && !inputType.equalsIgnoreCase("CSV")
                     && !inputType.equalsIgnoreCase("XML")
-                    && !inputType.equalsIgnoreCase("JSON")) {
+                    && !inputType.equalsIgnoreCase("JSON")
+                    && !inputType.equalsIgnoreCase("SQL")
+                    ) {
                 logger.error("Invalid source type: " + inputType
-                        + ". Please choose from: DB, CSV, XML, JSON.");
+                        + ". Please choose from: DB, SQL, CSV, XML, JSON.");
                 return;
             }
 
@@ -147,8 +144,8 @@ public class OfflineRdfGenerator {
              */
             SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
             // Database table
-            if (inputType.equals("DB")) {
-                generateRdfFromDatabaseTable(cl, modelURL, pw);
+            if (inputType.equals("DB") || inputType.equals("SQL")) {
+                generateRdfFromDatabaseTable(inputType, cl, modelURL, pw);
             } // File based worksheets such as JSON, XML, CSV
             else {
                 generateRdfFromFile(cl, inputType, modelURL, pw);
@@ -162,7 +159,7 @@ public class OfflineRdfGenerator {
         }
     }
 
-	private static void generateRdfFromDatabaseTable(CommandLine cl, URL modelURL,
+	private static void generateRdfFromDatabaseTable(String inputType, CommandLine cl, URL modelURL,
 			PrintWriter pw) throws IOException, JSONException, KarmaException,
 			SQLException, ClassNotFoundException {
 		String dbtypeStr = (String) cl.getValue("--dbtype");
@@ -183,16 +180,24 @@ public class OfflineRdfGenerator {
 		}
 		String dBorSIDName = (String) cl.getValue("--dbname");
 		String tablename = (String) cl.getValue("--tablename");
-
+		String queryFile = (String) cl.getValue("--queryfile");
+		
 		// Validate the arguments
 		if (dbtypeStr == null || dbtypeStr.equals("") || hostname == null
 		        || hostname.equals("") || username == null || username.equals("")
 		        || password == null || password.equals("") || dBorSIDName == null
-		        || dBorSIDName.equals("") || tablename == null || tablename.equals("")
-		        || tablename == null || tablename.equals("")) {
-		    logger.error("A mandatory value is missing for fetching data from "
+		        || dBorSIDName.equals("") 
+		        || (inputType.equals("DB") && (tablename == null || tablename.equals("")))
+		        || (inputType.equals("SQL") && (queryFile == null || queryFile.equals("")))
+		        ) {
+			if(inputType.equals("DB"))
+				logger.error("A mandatory value is missing for fetching data from "
 		            + "a database. Please provide argument values for dbtype, hostname, "
 		            + "username, password, portnumber, dbname and tablename.");
+			else
+				logger.error("A mandatory value is missing for fetching data from "
+			            + "a database. Please provide argument values for dbtype, hostname, "
+			            + "username, password, portnumber, dbname and queryfile.");
 		    pw.close();
 		    return;
 		}
@@ -204,11 +209,19 @@ public class OfflineRdfGenerator {
 		    pw.close();
 		    return;
 		}
-		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
-		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
-		        hostname, portnumber, username, password, dBorSIDName, tablename, encoding);
 		
-		dbRdfGen.generateRDF(pw, id);
+		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
+		        hostname, portnumber, username, password, dBorSIDName, encoding);
+		if(inputType.equals("DB")) {
+			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
+			dbRdfGen.generateRDFFromTable(tablename, pw, id);
+		} else {
+			File file = new File(queryFile);
+			String queryFileEncoding = EncodingDetector.detect(file);
+			String query = EncodingDetector.getString(file, queryFileEncoding);
+			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(modelURL.toString(), modelURL);
+			dbRdfGen.generateRDFFromSQL(query, pw, id);
+		}
         pw.flush();
 	}
 
@@ -254,7 +267,7 @@ public class OfflineRdfGenerator {
         Group options =
                 gbuilder
                 .withName("options")
-                .withOption(buildOption("sourcetype", "type of source. Valid values: DB, CSV, JSON, XML", "sourcetype", obuilder, abuilder))
+                .withOption(buildOption("sourcetype", "type of source. Valid values: DB, SQL, CSV, JSON, XML", "sourcetype", obuilder, abuilder))
                 .withOption(buildOption("filepath", "location of the input file", "filepath", obuilder, abuilder))
                 .withOption(buildOption("modelfilepath", "location of the model file", "modelfilepath", obuilder, abuilder))
                 .withOption(buildOption("modelurl", "location of the model", "modelurl", obuilder, abuilder))
@@ -267,6 +280,7 @@ public class OfflineRdfGenerator {
                 .withOption(buildOption("portnumber", "portnumber for database connection", "portnumber", obuilder, abuilder))
                 .withOption(buildOption("dbname", "database or SID name for database connection", "dbname", obuilder, abuilder))
                 .withOption(buildOption("tablename", "hostname for database connection", "tablename", obuilder, abuilder))
+                .withOption(buildOption("queryfile", "query file for loading data", "queryfile", obuilder, abuilder))
                 .withOption(obuilder
                 .withLongName("help")
                 .withDescription("print this message")
