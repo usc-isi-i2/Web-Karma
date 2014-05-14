@@ -2,6 +2,8 @@ package edu.isi.karma.controller.command.importdata;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONObject;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.update.ErrorUpdate;
@@ -32,6 +34,9 @@ public class ImportSQLCommand extends ImportCommand implements IPreviewable {
     private String query;
     private InteractionType requestedInteractionType;
  
+    private enum PreferenceKeys {
+    	dbType, hostname, portnumber, username, dBorSIDName, query;
+    }
     protected enum InteractionType {
 
         importSQL, getPreferencesValues, previewSQL
@@ -163,6 +168,16 @@ public class ImportSQLCommand extends ImportCommand implements IPreviewable {
 
     @Override
     protected Import createImport(Workspace workspace) {
+    	JSONObject prefObject = new JSONObject();
+		prefObject.put(PreferenceKeys.dBorSIDName.name(), dBorSIDName);
+		prefObject.put(PreferenceKeys.dbType.name(), dbType);
+		prefObject.put(PreferenceKeys.hostname.name(), hostname);
+		prefObject.put(PreferenceKeys.portnumber.name(), portnumber);
+		prefObject.put(PreferenceKeys.query.name(), query);
+		prefObject.put(PreferenceKeys.username.name(), username);
+		workspace.getCommandPreferences().setCommandPreferences(
+				ImportSQLCommand.class.getSimpleName() + "Preferences", prefObject);
+		
         return new SQLImport(
                     dbType, hostname, portnumber, username, password, dBorSIDName,
                     query, workspace, "");
