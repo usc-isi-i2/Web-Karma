@@ -105,7 +105,6 @@ public class KR2RMLWorksheetRDFGenerator {
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
 			OntologyManager ontMgr, KR2RMLRDFWriter writer, boolean addColumnContextInformation, 
 			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport) {
-		super();
 		this.ontMgr = ontMgr;
 		this.kr2rmlMapping = kr2rmlMapping;
 		this.factory = factory;

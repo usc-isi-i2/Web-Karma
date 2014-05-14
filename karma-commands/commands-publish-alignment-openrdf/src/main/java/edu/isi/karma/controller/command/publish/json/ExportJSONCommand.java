@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.worksheet.ExportCSVCommand.JsonKeys;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -38,6 +39,8 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ExportJSONCommand extends WorksheetCommand {
 
@@ -45,8 +48,6 @@ public class ExportJSONCommand extends WorksheetCommand {
 	private final String alignmentNodeId;
 	private String rdfPrefix;
 	private String rdfNamespace;
-	private RepFactory factory;
-	private OntologyManager ontMgr;
 
 	private enum JsonKeys {
 		updateType, fileUrl, worksheetId
@@ -82,13 +83,14 @@ public class ExportJSONCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		logger.info("Entered ExportJSONCommand");
+
 		
 		RepFactory f = workspace.getFactory();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				AlignmentManager.Instance().constructAlignmentId(workspace.getId(),
 						worksheetId));
-	
+		OntologyManager ontMgr = workspace.getOntologyManager();
 		// Set the prefix and namespace to be used while generating RDF
 		fetchRdfPrefixAndNamespaceFromPreferences(workspace);
 		
@@ -142,14 +144,18 @@ public class ExportJSONCommand extends WorksheetCommand {
 		//c.add(new InfoUpdate("JSON generation complete"));
 		
 		JsonExport jsonExport = new JsonExport(worksheet);
-		final String fileName = jsonExport.publishJSON(JSONArray.toString(4));
+//		final String fileName = jsonExport.publishJSON(JSONArray.toString(4));
 		
 		// create JSONKR2RMLRDFWriter
+		final String jsonFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
+				worksheet.getTitle().replaceAll("\\.", "_") +  "-export"+".json"; 
+		final String jsonFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_DIR) +  
+				jsonFileName;
 		PrintWriter printWriter;
 		try {
-			printWriter = new PrintWriter(fileName);
+			printWriter = new PrintWriter(jsonFileLocalPath);
 			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(printWriter);
-			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, factory, ontMgr, writer, false, mapping, errorReport);
+			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, ontMgr, writer, false, mapping, errorReport);
 			try {
 				generator.generateRDF(true);
 				logger.info("RDF written to file.");
@@ -182,8 +188,8 @@ public class ExportJSONCommand extends WorksheetCommand {
 				try {
 					outputObject.put(JsonKeys.updateType.name(),
 							"PublishJSONUpdate");
-					outputObject.put(JsonKeys.fileUrl.name(),
-							fileName);
+					outputObject.put(JsonKeys.fileUrl.name(), 
+							ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR) + jsonFileName);
 					outputObject.put(JsonKeys.worksheetId.name(),
 							worksheetId);
 					pw.println(outputObject.toString(4));

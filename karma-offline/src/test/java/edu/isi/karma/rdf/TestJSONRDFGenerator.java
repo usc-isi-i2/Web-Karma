@@ -128,7 +128,7 @@ public class TestJSONRDFGenerator extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(pw);
-			rdfGen.generateRDF("people-model", jsonData, true, writer);
+			rdfGen.generateRDF("people-model", jsonData, false, writer);
 			String rdf = sw.toString();
 			System.out.println(rdf);
 			assertNotEquals(rdf.length(), 0);
