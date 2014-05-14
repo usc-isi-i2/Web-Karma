@@ -29,11 +29,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.cleaning.ProgSynthesis;
 import edu.isi.karma.cleaning.ProgramRule;
 
 public class RamblerTransformationOutput implements TransformationOutput {
-
+	private static Logger logger = LoggerFactory.getLogger(RamblerTransformationOutput.class);
 	private RamblerTransformationInputs input;
 	private HashMap<String, Transformation> transformations;
 	public boolean nullRule = false;
@@ -47,16 +50,17 @@ public class RamblerTransformationOutput implements TransformationOutput {
 				try {
 					learnTransformation();
 				} catch (Exception ex) {
-					throw new RuntimeException(ex);
+					logger.error(ex.toString());
 				}
 			}
 		});
 		try {
-			worker.get(30, TimeUnit.SECONDS);
+			worker.get(3000, TimeUnit.SECONDS);
 		} catch (Exception e) {
 			nullRule = true;
 			transformations.clear();
 		}
+		
 	}
 
 	private void learnTransformation() throws Exception {
