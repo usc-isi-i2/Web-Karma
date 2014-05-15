@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.command.worksheet.ExportCSVCommand.JsonKeys;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -29,7 +28,11 @@ import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
+import edu.isi.karma.kr2rml.planning.RootStrategy;
+import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
+import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
+import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -145,7 +148,21 @@ public class ExportJSONCommand extends WorksheetCommand {
 		
 		JsonExport jsonExport = new JsonExport(worksheet);
 //		final String fileName = jsonExport.publishJSON(JSONArray.toString(4));
-		
+		String rootTriplesMapId = null;
+		for(TriplesMap map: triplesMapList)
+		{
+			if(map.getSubject().getId().compareTo(alignmentNodeId) == 0)
+			{
+				rootTriplesMapId = map.getId();
+				break;
+			}
+		}
+		if(null == rootTriplesMapId)
+		{
+			String errmsg ="Invalid alignment id " + alignmentNodeId;
+			logger.error(errmsg);
+			return new UpdateContainer(new ErrorUpdate("Error occured while searching for root for JSON: " +errmsg));
+		}
 		// create JSONKR2RMLRDFWriter
 		final String jsonFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
 				worksheet.getTitle().replaceAll("\\.", "_") +  "-export"+".json"; 
@@ -155,7 +172,8 @@ public class ExportJSONCommand extends WorksheetCommand {
 		try {
 			printWriter = new PrintWriter(jsonFileLocalPath);
 			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(printWriter);
-			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, ontMgr, writer, false, mapping, errorReport);
+			RootStrategy strategy = new UserSpecifiedRootStrategy(rootTriplesMapId, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
+			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, ontMgr, writer, false, strategy, mapping, errorReport);
 			try {
 				generator.generateRDF(true);
 				logger.info("RDF written to file.");
@@ -163,6 +181,7 @@ public class ExportJSONCommand extends WorksheetCommand {
 				logger.error("Error occured while generating RDF!", e1);
 				return new UpdateContainer(new ErrorUpdate("Error occured while generating RDF: " + e1.getMessage()));
 			}
+			printWriter.close();
 		} catch (FileNotFoundException e) {
 			logger.error("File Not found", e);
 			return new UpdateContainer(new ErrorUpdate("File Not found while generating RDF: " + e.getMessage()));

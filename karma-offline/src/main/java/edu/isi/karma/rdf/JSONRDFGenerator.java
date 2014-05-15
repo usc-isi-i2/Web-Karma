@@ -77,7 +77,7 @@ public class JSONRDFGenerator extends RdfGenerator {
 		
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
 		        workspace.getFactory(), workspace.getOntologyManager(), pw,
-		        addProvenance, mapping, errorReport);
+		        addProvenance, null, mapping, errorReport);
 		rdfGen.generateRDF(true);
 		removeWorkspace(workspace);
 		logger.debug("Generated rdf for " + sourceName);
