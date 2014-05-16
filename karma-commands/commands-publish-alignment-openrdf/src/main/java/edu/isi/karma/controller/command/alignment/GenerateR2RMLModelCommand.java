@@ -166,7 +166,7 @@ public class GenerateR2RMLModelCommand extends Command {
 
 		try {
 			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
-			fileSaver.saveAlignment(alignment, modelFileName);
+			fileSaver.saveAlignment(alignment, modelFileLocalPath);
 			
 			// Write the model to the triple store
 			TripleStoreUtil utilObj = new TripleStoreUtil();
@@ -185,7 +185,22 @@ public class GenerateR2RMLModelCommand extends Command {
 			
 			if (result) {
 				logger.info("Saved model to triple store");
-				uc.add(new InfoUpdate("R2RML sucessfully saved to KARMA_USER_HOME/R2RML/" + modelFileName));
+				uc.add(new AbstractUpdate() {
+					public void generateJson(String prefix, PrintWriter pw,	
+							VWorkspace vWorkspace) {
+						JSONObject outputObject = new JSONObject();
+						try {
+							outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
+							
+							outputObject.put(JsonKeys.fileUrl.name(), ServletContextParameterMap.getParameterValue(
+									ContextParameter.R2RML_PUBLISH_RELATIVE_DIR) + modelFileName);
+							outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
+							pw.println(outputObject.toString());
+						} catch (JSONException e) {
+							logger.error("Error occured while generating JSON!");
+						}
+					}
+				});
 				return uc;
 			} 
 			
