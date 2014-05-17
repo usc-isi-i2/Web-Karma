@@ -38,8 +38,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	@Override
 	public void outputQuadWithLiteralObject(String subjUri,
 			String predicateUri, String value, String literalType, String graph) {
-		// TODO Auto-generated method stub
-
+		outputTripleWithLiteralObject(subjUri, predicateUri, value, literalType);
 	}
 
 	private void checkAndAddsubjUri(String subjUri) {

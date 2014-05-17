@@ -23,13 +23,13 @@ public class JsonExport {
 	}
 
 	public String publishJSON(String json) {
-		String outputFile = "publish/JSON/" + worksheet.getTitle() + ".json";
+		String outputFile = worksheet.getTitle() + ".json";
 
 		try {
 	        Writer outUTF8=null;
 			try {
 				outUTF8 = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +outputFile), "UTF8"));
+						new FileOutputStream(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_DIR) +outputFile), "UTF8"));
 				outUTF8.append(json);
 	    		outUTF8.flush();
 	    		outUTF8.close();

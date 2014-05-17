@@ -47,6 +47,7 @@ import edu.isi.karma.kr2rml.exception.ValueNotFoundKarmaException;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
 import edu.isi.karma.kr2rml.planning.DFSTriplesMapGraphDAGifier;
+import edu.isi.karma.kr2rml.planning.RootStrategy;
 import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
 import edu.isi.karma.kr2rml.planning.TriplesMapLink;
@@ -84,6 +85,7 @@ public class KR2RMLWorksheetRDFGenerator {
 
 	private Logger logger = LoggerFactory.getLogger(KR2RMLWorksheetRDFGenerator.class);
 	private URIFormatter uriFormatter;
+	private RootStrategy strategy;
 
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
 			OntologyManager ontMgr, String outputFileName, boolean addColumnContextInformation, 
@@ -103,9 +105,8 @@ public class KR2RMLWorksheetRDFGenerator {
 	}
 
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
-			OntologyManager ontMgr, KR2RMLRDFWriter writer, boolean addColumnContextInformation, 
+			OntologyManager ontMgr, KR2RMLRDFWriter writer, boolean addColumnContextInformation,RootStrategy strategy, 
 			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport) {
-		super();
 		this.ontMgr = ontMgr;
 		this.kr2rmlMapping = kr2rmlMapping;
 		this.factory = factory;
@@ -116,11 +117,12 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.hNodeToContextUriMap = new ConcurrentHashMap<String, String>();
 		this.addColumnContextInformation = addColumnContextInformation;
 		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
+		this.strategy = strategy;
 
 	}
 
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
-			OntologyManager ontMgr, PrintWriter writer, KR2RMLMapping kr2rmlMapping,  
+			OntologyManager ontMgr, PrintWriter writer, KR2RMLMapping kr2rmlMapping,   
 			ErrorReport errorReport, boolean addColumnContextInformation) {
 		super();
 		this.ontMgr = ontMgr;
@@ -133,7 +135,6 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.hNodeToContextUriMap = new ConcurrentHashMap<String, String>();
 		this.addColumnContextInformation = addColumnContextInformation;
 		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
-
 
 	}
 
@@ -163,7 +164,12 @@ public class KR2RMLWorksheetRDFGenerator {
 
 			try{
 				DFSTriplesMapGraphDAGifier dagifier = new DFSTriplesMapGraphDAGifier();
-				dagifier.dagify(kr2rmlMapping.getAuxInfo().getTriplesMapGraph(), new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
+				if(null == strategy)
+				{
+					strategy =new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy());
+				
+				}
+				dagifier.dagify(kr2rmlMapping.getAuxInfo().getTriplesMapGraph(), strategy);
 
 			}catch (Exception e)
 			{
