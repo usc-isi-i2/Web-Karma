@@ -244,7 +244,7 @@ public class WorksheetR2RMLJenaModelParser {
 		Property objectMapProp = model.getProperty(Uris.RR_OBJECTMAP_URI);
 		Property columnProp = model.getProperty(Uris.RR_COLUMN_URI);
 		Property rdfLiteralTypeProp = model.getProperty(Uris.RR_DATATYPE_URI);
-		Resource rfObjClassUri = model.getResource(Uris.RR_REF_OBJECT_MAP_URI);
+		Resource rfObjClassUri = model.getResource(Uris.RR_REF_OBJECT_MAP_CLASS_URI);
 		Property parentTriplesMapProp = model.getProperty(Uris.RR_PARENT_TRIPLE_MAP_URI);
 		Property rdfTypeProp = model.getProperty(Uris.RDF_TYPE_URI);
 		Property templateProp = model.getProperty(Uris.RR_TEMPLATE_URI);

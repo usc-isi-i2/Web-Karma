@@ -4,7 +4,7 @@ package edu.isi.karma.kr2rml;
 public class KR2RMLVersion implements Comparable<KR2RMLVersion>{
 
 	public static final KR2RMLVersion unknown = new KR2RMLVersion(0, 0);
-	public static final KR2RMLVersion current = new KR2RMLVersion(1, 0);
+	public static final KR2RMLVersion current = new KR2RMLVersion(1, 1);
 	
 	public final int major;
 	public final int minor;

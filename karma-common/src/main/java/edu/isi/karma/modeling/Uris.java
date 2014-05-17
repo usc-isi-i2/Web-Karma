@@ -49,6 +49,9 @@ public interface Uris {
 	
 	// R2RML Vocabulary URIs
 	public static final String RR_TRIPLESMAP_CLASS_URI = Namespaces.RR + "TriplesMap";
+	public static final String RR_SUBJECTMAP_CLASS_URI = Namespaces.RR+ "SubjectMap";
+	public static final String RR_PREDICATEOBJECTMAP_CLASS_URI = Namespaces.RR+ "PredicateObjectMap";
+	public static final String RR_OBJECTMAP_CLASS_URI = Namespaces.RR+ "ObjectMap";
 	public static final String RR_SUBJECTMAP_URI = Namespaces.RR + "subjectMap";
 	public static final String RR_TABLENAME_URI = Namespaces.RR + "tableName";
 	public static final String RR_TEMPLATE_URI = Namespaces.RR + "template";
@@ -58,7 +61,7 @@ public interface Uris {
 	public static final String RR_COLUMN_URI = Namespaces.RR + "column";
 	public static final String RR_DATATYPE_URI = Namespaces.RR + "datatype";
 	public static final String RR_LOGICAL_TABLE_URI = Namespaces.RR + "logicalTable";
-	public static final String RR_REF_OBJECT_MAP_URI = Namespaces.RR + "RefObjectMap";
+	public static final String RR_REF_OBJECT_MAP_CLASS_URI = Namespaces.RR + "RefObjectMap";
 	public static final String RR_PARENT_TRIPLE_MAP_URI = Namespaces.RR + "parentTriplesMap";
 	public static final String RR_TERM_TYPE_URI = Namespaces.RR + "termType";
 	public static final String RR_BLANK_NODE_URI = Namespaces.RR + "BlankNode";
