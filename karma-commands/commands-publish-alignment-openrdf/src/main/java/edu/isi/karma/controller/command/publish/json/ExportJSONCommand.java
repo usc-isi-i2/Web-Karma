@@ -115,37 +115,9 @@ public class ExportJSONCommand extends WorksheetCommand {
 		logger.debug(mapping.toString());
 		
 		//****************************************************************************************************/
-		logger.info(mapping.toString());
-		logger.info("Got the mapping");
-
 		//*** Extract list of TripleMaps *************************************************************************************************/
 		List<TriplesMap> triplesMapList = mapping.getTriplesMapList();
-		TriplesMap triplesMap = triplesMapList.get(3);
-		logger.info("Size: " + Integer.toString(triplesMapList.size()));
-
 		
-		//****************************************************************************************************/
-		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows());
-		logger.info("Rows: " + Integer.toString(rows.size()));
-		
-		JSONArray JSONArray = new JSONArray();
-		
-		for (Row row:rows) {
-			JSONObject obj = new JSONObject();
-			Iterator<PredicateObjectMap> it = triplesMap.getPredicateObjectMaps().iterator();
-			
-			while (it.hasNext()) {
-				PredicateObjectMap predicateObjectMap = it.next();
-				String objectId = predicateObjectMap.getObject().getId();
-				String key = predicateObjectMap.getPredicate().getTemplate().toString();
-				String value = row.getNode(objectId).getValue().asString();
-				obj.put(key, value);
-			}
-			JSONArray.put(obj);
-		}
-		
-		logger.info("No. of JSON objects: " + JSONArray.length());
-		logger.info(JSONArray.toString());
 
 		String rootTriplesMapId = null;
 		for(TriplesMap map: triplesMapList)
@@ -186,18 +158,12 @@ public class ExportJSONCommand extends WorksheetCommand {
 			return new UpdateContainer(new ErrorUpdate("File Not found while generating RDF: " + e.getMessage()));
 		}
 		
-		ExportMongoDBUtil mongo = new ExportMongoDBUtil();
+	//	ExportMongoDBUtil mongo = new ExportMongoDBUtil();
 		try {
-			mongo.publishMongoDB(JSONArray);
+		//	mongo.publishMongoDB(JSONArray);
 		} catch (Exception e) {
 			logger.error("Error inserting into MongoDB." + e.getMessage());
-		}
-//		try {
-//			mongo.publishMongoDB(fileName);
-//		} catch (IOException e) {
-//			logger.error("Error inserting into MongoDB." + e.getMessage());
-//		}
-		
+		}		
 		return new UpdateContainer(new AbstractUpdate() {
 			
 			@Override

@@ -92,9 +92,9 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 					{
 						logger.debug("Spilling " + tm.getSubject().getRdfsType()  + " " +triplesMapId);
 						modifications = true;
-						spilledTriplesMaps.add(triplesMapId);
+						List<String> removedTriplesMaps = newGraph.removeTriplesMap(triplesMapId);
+						spilledTriplesMaps.addAll(removedTriplesMaps);
 						ids.remove();
-						newGraph.removeTriplesMap(triplesMapId);
 					}
 				}
 			}

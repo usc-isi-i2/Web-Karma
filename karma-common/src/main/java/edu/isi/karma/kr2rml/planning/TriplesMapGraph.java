@@ -24,6 +24,7 @@ package edu.isi.karma.kr2rml.planning;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -99,20 +100,25 @@ public class TriplesMapGraph {
 		return neighboringTriplesMapCache.get(triplesMapId);
 	}
 
-	public void removeLink(TriplesMapLink link) {
+	public List<String> removeLink(TriplesMapLink link) {
+		List<String> removedTriplesMaps = new LinkedList<String>();
 		links.remove(link);
-		removeLinkFromCache(link, link.getTargetMap().getId());
-		removeLinkFromCache(link, link.getSourceMap().getId());
+		removedTriplesMaps.addAll(removeLinkFromCache(link, link.getTargetMap().getId()));
+		removedTriplesMaps.addAll(removeLinkFromCache(link, link.getSourceMap().getId()));
+		return removedTriplesMaps;
 	}
 
-	private void removeLinkFromCache(TriplesMapLink link, String mapId) {
+	private List<String> removeLinkFromCache(TriplesMapLink link, String mapId) {
+		List<String> removedTriplesMaps = new LinkedList<String>();
 		List<TriplesMapLink> targetLinks = neighboringTriplesMapCache.get(mapId);
 		targetLinks.remove(link);
 		if(targetLinks.isEmpty())
 		{
 			neighboringTriplesMapCache.remove(mapId);
 			triplesMapIndex.remove(mapId);
+			removedTriplesMaps.add(mapId);
 		}
+		return removedTriplesMaps;
 	}
 	
 	public Set<String> getTriplesMapIds()
@@ -129,19 +135,21 @@ public class TriplesMapGraph {
 		return this.triplesMapIndex.get(triplesMapId);
 	}
 
-	public void removeTriplesMap(String triplesMapId) {
+	public List<String> removeTriplesMap(String triplesMapId) {
 		
+		List<String> removedTriplesMaps = new LinkedList<String>();
 		List<TriplesMapLink> targetLinks = neighboringTriplesMapCache.get(triplesMapId);
 		if(targetLinks != null)
 		{
 			for(TriplesMapLink link : targetLinks)
 			{
-				removeLink(link);
+				removedTriplesMaps.addAll(removeLink(link));
 			}	
 		}
 		neighboringTriplesMapCache.remove(triplesMapId);
 		triplesMapIndex.remove(triplesMapId);
 		
+		return removedTriplesMaps;
 		
 	}
 	
