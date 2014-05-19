@@ -29,6 +29,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"divider"},
 			{name:"Fold" , func:Fold},
 			{name:"GroupBy" , func:GroupBy}, 
+			{name:"Glue" , func:Glue}, 
 			{name:"Delete", func:deleteWorksheet},
 	];
 	
@@ -212,6 +213,11 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("GroupBy: " + worksheetTitle);
 		hideDropdown();
 		GroupByDialog2.getInstance().show(worksheetId);
+    }
+    function Glue () {
+		console.log("Glue: " + worksheetTitle);
+		hideDropdown();
+		GlueDialog2.getInstance().show(worksheetId);
     }
   function saveRowID () {
 		console.log("saveRowID: " + worksheetTitle);

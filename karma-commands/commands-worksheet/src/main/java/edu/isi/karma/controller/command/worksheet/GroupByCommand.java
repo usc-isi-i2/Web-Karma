@@ -35,7 +35,6 @@ public class GroupByCommand extends WorksheetCommand {
 	//private 
 	//the id of the new column that was created
 	//needed for undo
-	private String newHNodeId;
 	private String hNodeId;
 	private static Logger logger = LoggerFactory
 			.getLogger(GroupByCommand.class);
@@ -129,11 +128,6 @@ public class GroupByCommand extends WorksheetCommand {
 		//currentTable.removeHNode(newHNodeId, worksheet);
 		//c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return null;
-	}
-
-
-	public String getNewHNodeId() {
-		return newHNodeId;
 	}
 
 	private Worksheet groupByTopLevel(Worksheet oldws, Workspace workspace, List<String> hnodeIDs, List<HNode> keyhnodes, List<HNode> valuehnodes, RepFactory factory) {

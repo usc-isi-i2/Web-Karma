@@ -11,40 +11,40 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
 
-public class GroupByCommandFactory extends JSONInputCommandFactory {
+public class GlueCommandFactory extends JSONInputCommandFactory{
 
 	public enum Arguments {
 		worksheetId, hTableId, hNodeId, newColumnName, defaultValue
 	}
 	
 	@Override
-	public Command createCommand(HttpServletRequest request,
-			Workspace workspace) {
-		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String hTableId = request.getParameter(Arguments.hTableId.name());
-		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		return new GroupByCommand(getNewId(workspace), worksheetId, 
-				hTableId, hNodeId);
-	}
-
-	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-		/** Parse the input arguments and create proper data structures to be passed to the command **/
+		// TODO Auto-generated method stub
 		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hTableId = "";
 		//System.out.println(worksheetId);
-		GroupByCommand unfoldCmd = new GroupByCommand(getNewId(workspace), worksheetId,
+		GlueCommand glueCmd = new GlueCommand(getNewId(workspace), worksheetId,
 				hTableId, hNodeID);
-		unfoldCmd.setInputParameterJson(inputJson.toString());
-		return unfoldCmd;
+		glueCmd.setInputParameterJson(inputJson.toString());
+		return glueCmd;
+	}
+
+	@Override
+	public Command createCommand(HttpServletRequest request, Workspace workspace) {
+		// TODO Auto-generated method stub
+		String hNodeId = request.getParameter(Arguments.hNodeId.name());
+		String hTableId = request.getParameter(Arguments.hTableId.name());
+		String worksheetId = request.getParameter(Arguments.worksheetId.name());
+		return new GlueCommand(getNewId(workspace), worksheetId, 
+				hTableId, hNodeId);
 	}
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand() {
 		// TODO Auto-generated method stub
-		return GroupByCommand.class;
+		return GlueCommand.class;
 	}
 
 }
