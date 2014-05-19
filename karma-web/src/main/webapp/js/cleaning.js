@@ -151,10 +151,7 @@ var TransformColumnDialog = (function() {
 			});
 			return json;
 		}
-		function editable() 
-		{
-			
-		}
+		
 		function populateResult(rdata) {
 			try {
 				var examples = cleaningExamples;
@@ -177,46 +174,49 @@ var TransformColumnDialog = (function() {
 						}
 						$("td.ruleResultsValue_begin", trTag).remove();
 						$("#" + nodeId + "_origVal", trTag).html(xval["Orgdis"]).data("CellValue", xval["Org"]);
-						trTag.append($("<td>").addClass("ruleResultsValue_begin").attr("id", nodeId + "_transformed").append($("<table>").append($("<tr>").append($("<td>").addClass("noinnerBorder").append($("<div>").data("nodeId", nodeId)// set the original value for the example
-						.data("cellValue", xval["Tar"]).addClass("cleanExampleDiv").html(xval["Tardis"])//set the result here
-						.attr("id", nodeId))).append($("<td>").addClass("noBorder")))))
-						$("div#" + nodeId, trTag).dblclick(function() {
-							$(this).html(xval["Tar"]);
-							//$(this).off('click');
-							$(this).editable(function(value, settings) {
-								var tmpnodeId = nodeId;
-								$("div", $(this).parent().prev()).html(xval["Tar"]);
-								if(nodeId.indexOf("suggestion") >= 0) {
-									tmpnodeId = nodeId.substring(0, nodeId.indexOf("_suggestion"));
-									$("div#" + tmpnodeId).text(value);
-								}
-								var editDiv = $("div#" + nodeId);
-								examples.push({
-									"nodeId" : tmpnodeId,
-									"before" : $("tr#" + tmpnodeId + "_cl_row").data("originalVal"),
-									"after" : value
-								});
-								$("div#" + nodeId).text(value);
-								xval["Tardis"] = value;
-								updateResult();
-								var trs = $("td#" + nodeId + "_transformed tr");
-								//call the update result function
-								return (value);
-							}, {
-								type : 'textarea',
-								submit : 'OK',
-								cancel : 'Cancel',
-								width : 300,
-								callback : function() {
-									$(this).html(xval["Tardis"]);
-								},
-								onblur : 'ignore',
-								event : "edit"
-							})
-							$(this).trigger('edit');
-						});
+						var cleaningRes = xval["Tardis"];
+						if(cleaningRes == "<span class=\"ins\"></span>")
+							cleaningRes = "";
+						trTag.append(
+								$("<td>").addClass("ruleResultsValue_begin").attr("id", nodeId + "_transformed")
+									.append($("<table>")
+											.append($("<tr>")
+													.append($("<td>").addClass("noinnerBorder")
+															.append($("<div>").data("nodeId", nodeId)// set the original value for the example
+																	.data("cellValue", xval["Tar"])
+																	.addClass("cleanExampleDiv")
+																	.html(cleaningRes)//set the result here
+																	.attr("id", nodeId)))
+													.append($("<td>").addClass("noBorder")))));
+						
+						console.log($("div#" + nodeId).text() + ":" + xval["Tardis"]);
+						$("div#" + nodeId, trTag).editable({
+		        			 type: 'text',
+		        			 success: function(response, value) {
+		        				 	console.log("Set new value:" + value);
+		        				 	var tmpnodeId = nodeId;
+									$("div", $(this).parent().prev()).html(xval["Tar"]);
+									if(nodeId.indexOf("suggestion") >= 0) {
+										tmpnodeId = nodeId.substring(0, nodeId.indexOf("_suggestion"));
+										$("div#" + tmpnodeId).text(value);
+									}
+									var editDiv = $("div#" + nodeId);
+									examples.push({
+										"nodeId" : tmpnodeId,
+										"before" : $("tr#" + tmpnodeId + "_cl_row").data("originalVal"),
+										"after" : value
+									});
+									$("div#" + nodeId).text(value);
+									xval["Tardis"] = value;
+									updateResult();
+		        			 },
+		        			 showbuttons: 'bottom',
+		        			 mode: 'popup',
+		        			 inputclass: 'worksheetInputEdit'	 
+				            });
 					}
 				});
+				
 			} catch(err) {
 				console.log(err.message)
 			}

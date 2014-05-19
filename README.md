@@ -35,7 +35,7 @@ Look in the Wiki [Installation](https://github.com/InformationIntegrationGroup/W
 ```
 cd karma-offline
 mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--sourcetype 
-<sourcetype> --filepath <filepath> --modelfilepath <modelfilepath> --outputfile <outputfile>" -Dexec.classpathScope=compile
+<sourcetype> --filepath <filepath> --modelfilepath <modelfilepath> --sourcename <sourcename> --outputfile <outputfile>" -Dexec.classpathScope=compile
 ```
 
 	Valid argument values for sourcetype are: CSV, JSON, XML. Also, you need to escape the double quotes that go inside argument values. Example invocation for a JSON file:
@@ -43,7 +43,8 @@ mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.ar
 mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="
 --sourcetype JSON 
 --filepath \"/Users/shubhamgupta/Documents/wikipedia.json\" 
---modelfilepath \"/Users/shubhamgupta/Documents/model-wikipedia.n3\" 
+--modelfilepath \"/Users/shubhamgupta/Documents/model-wikipedia.n3\"
+--sourcename wikipedia
 --outputfile wikipedia-rdf.n3" -Dexec.classpathScope=compile
 ```
 3. To generate RDF of a database table, go to the top level Karma directory and run the following command from terminal:

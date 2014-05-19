@@ -62,7 +62,6 @@
 	  <slf4j.version>1.6.0</slf4j.version>
 	  <junit.version>4.11</junit.version>
 
-	  <mysql.connector.version>5.1.26</mysql.connector.version>
 	  <antlr.version>3.4</antlr.version>
 	  <jdom.version>1.1.2</jdom.version>
 
@@ -251,11 +250,7 @@
 		  <artifactId>commons-httpclient</artifactId>
 		  <version>3.1</version>
 	  </dependency>
-    <dependency>
-    	<groupId>mysql</groupId>
-    	<artifactId>mysql-connector-java</artifactId>
-    	<version>${mysql.connector.version}</version>
-    </dependency>
+
     <dependency>
     	<groupId>org.antlr</groupId>
     	<artifactId>antlr</artifactId>
