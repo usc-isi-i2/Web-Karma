@@ -172,7 +172,8 @@ var FileOptionsDialog = (function() {
     	}
     	
     	function reset() {
-			 $("#delimiterSelector :nth-child(1)", dialog).attr('selected', 'selected');
+			  $("#delimiterSelector :first-child", dialog).attr('selected', 'selected');
+			  $("#delimiterSelector :first-child", dialog).prop('selected', 'selected');
 			  $("#headerStartIndex", dialog).val("1");
 			  $("#startRowIndex", dialog).val("2");
 			  $("#textQualifier", dialog).val("\"");
