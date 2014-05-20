@@ -1,0 +1,21 @@
+_:foaf_Person1_N85_N86_N84 <http://xmlns.com/foaf/0.1/firstName> "Frank" .
+_:foaf_Person1_N85_N86_N84 <http://xmlns.com/foaf/0.1/lastName> "Yin" .
+_:foaf_Person1_N85_N86_N84 <http://xmlns.com/foaf/0.1/myersBriggs> "97" .
+_:foaf_Person1_N85_N86_N84 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
+
+_:foaf_Person1_N89_N90_N88 <http://xmlns.com/foaf/0.1/myersBriggs> "77" .
+_:foaf_Person1_N89_N90_N88 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
+_:foaf_Person1_N89_N90_N88 <http://xmlns.com/foaf/0.1/lastName> "Sam" .
+_:foaf_Person1_N89_N90_N88 <http://xmlns.com/foaf/0.1/firstName> "Lee" .
+
+_:foaf_Person1_N93_N94_N92 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
+_:foaf_Person1_N93_N94_N92 <http://xmlns.com/foaf/0.1/lastName> "Mary" .
+_:foaf_Person1_N93_N94_N92 <http://xmlns.com/foaf/0.1/firstName> "Frank" .
+_:foaf_Person1_N93_N94_N92 <http://xmlns.com/foaf/0.1/myersBriggs> "32" .
+
+_:foaf_Person1_N97_N98_N96 <http://xmlns.com/foaf/0.1/lastName> "Zoe" .
+_:foaf_Person1_N97_N98_N96 <http://xmlns.com/foaf/0.1/myersBriggs> "58" .
+_:foaf_Person1_N97_N98_N96 <http://xmlns.com/foaf/0.1/firstName> "Frank" .
+_:foaf_Person1_N97_N98_N96 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
+
+
