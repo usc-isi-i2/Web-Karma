@@ -118,7 +118,7 @@ public class GlueCommand extends WorksheetCommand {
 				parentRows.add(row);
 			}
 		}
-		HNode newNode = parentHT.addHNode(parentHT.getNewColumnName("Glue"), oldws, factory);
+		HNode newNode = ht.addHNode(ht.getNewColumnName("Glue"), oldws, factory);
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
 		List<HNode> childHNodes = new ArrayList<HNode>();
 		for (HNode hnode : hnodes) {
@@ -129,6 +129,7 @@ public class GlueCommand extends WorksheetCommand {
 			}
 		}
 		CloneTableUtils.cloneHTable(ht, newht, oldws, factory, childHNodes);
+
 		for (Row parentRow : parentRows) {
 			Table t = null;
 			for (Node node : parentRow.getNodes()) {
@@ -137,9 +138,9 @@ public class GlueCommand extends WorksheetCommand {
 					break;
 				}	
 			}
-			Table nestedTable = parentRow.getNeighbor(newNode.getId()).getNestedTable();
 			ArrayList<Row> rows = t.getRows(0, t.getNumRows());
 			for (Row row : rows) {
+				Table nestedTable = row.getNeighbor(newNode.getId()).getNestedTable();
 				Row newRow = nestedTable.addRow(factory);
 				for (HNode hnode : hnodes) {
 					if (!hnode.hasNestedTable())

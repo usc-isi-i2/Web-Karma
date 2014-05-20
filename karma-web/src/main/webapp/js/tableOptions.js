@@ -788,7 +788,7 @@ var FoldDialog = (function() {
 	        var checked = [];
 	        for (var i = 0; i < checkboxes.length; i++) {
 	            var checkbox = checkboxes[i];
-	            checked.push(getParamObject("checked", checkbox['value'], "other"));    
+	            checked.push(getParamObject("checked", checkbox['value'], "hNodeId"));    
 	        }
 	        if (checked.length == 0) {
                 hide();
@@ -803,7 +803,7 @@ var FoldDialog = (function() {
 	        var newInfo = [];
 	        newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
             newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
-	        newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
+	        newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"));
 	        info["newInfo"] = JSON.stringify(newInfo);
 
 	        showLoading(info["worksheetId"]);
@@ -913,7 +913,7 @@ var GroupByDialog2 = (function() {
             var checked = [];
             for (var i = 0; i < checkboxes.length; i++) {
                 var checkbox = checkboxes[i];
-                checked.push(getParamObject("checked", checkbox['value'], "other"));    
+                checked.push(getParamObject("checked", checkbox['value'], "hNodeId"));    
             }
             if (checked.length == 0) {
                 hide();
@@ -928,7 +928,7 @@ var GroupByDialog2 = (function() {
             var newInfo = [];
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
             newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
-            newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
+            newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"));
             info["newInfo"] = JSON.stringify(newInfo);
 
             showLoading(info["worksheetId"]);
@@ -1063,7 +1063,7 @@ var GlueDialog2 = (function() {
             var checked = [];
             for (var i = 0; i < checkboxes.length; i++) {
                 var checkbox = checkboxes[i];
-                checked.push(getParamObject("checked", checkbox['value'], "other"));    
+                checked.push(getParamObject("checked", checkbox['value'], "hNodeId"));    
             }
             if (checked.length == 0) {
                 hide();
@@ -1078,7 +1078,7 @@ var GlueDialog2 = (function() {
             var newInfo = [];
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
             newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
-            newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
+            newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"));
             info["newInfo"] = JSON.stringify(newInfo);
 
             showLoading(info["worksheetId"]);

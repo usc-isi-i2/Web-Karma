@@ -1076,7 +1076,7 @@ var GroupByDialog = (function() {
             var checked = [];
             for (var i = 0; i < checkboxes.length; i++) {
                 var checkbox = checkboxes[i];
-                checked.push(getParamObject("checked", checkbox['value'], "other"));    
+                checked.push(getParamObject("checked", checkbox['value'], "hNodeId"));    
             }
             if (checked.length == 0) {
             	hide();
@@ -1091,7 +1091,7 @@ var GroupByDialog = (function() {
             var newInfo = [];
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
 		    		newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
-            newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
+            newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"));
             info["newInfo"] = JSON.stringify(newInfo);
 
             showLoading(info["worksheetId"]);
@@ -1241,8 +1241,8 @@ var UnfoldDialog = (function() {
             info["workspaceId"] = $.workspaceGlobalInformation.id;
             info["command"] = "UnfoldCommand";
             var newInfo = [];
-            newInfo.push(getParamObject("keyhNodeId", columnId, "other"));
-            newInfo.push(getParamObject("valuehNodeId", checked['value'], "other"));
+            newInfo.push(getParamObject("keyhNodeId", columnId, "hNodeId"));
+            newInfo.push(getParamObject("valuehNodeId", checked['value'], "hNodeId"));
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
             info["newInfo"] = JSON.stringify(newInfo);
             showLoading(info["worksheetId"]);
@@ -1408,7 +1408,7 @@ var FoldDialog2 = (function() {
 	        var checked = [];
 	        for (var i = 0; i < checkboxes.length; i++) {
 	            var checkbox = checkboxes[i];
-	            checked.push(getParamObject("checked", checkbox['value'], "other"));    
+	            checked.push(getParamObject("checked", checkbox['value'], "hNodeId"));    
 	        }
 	        if (checked.length == 0) {
                 hide();
@@ -1422,7 +1422,7 @@ var FoldDialog2 = (function() {
 
 	        var newInfo = [];
 	        newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-	        newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
+	        newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"));
 	        newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
 	        info["newInfo"] = JSON.stringify(newInfo);
 
@@ -1539,7 +1539,7 @@ var GlueDialog = (function() {
             var checked = [];
             for (var i = 0; i < checkboxes.length; i++) {
                 var checkbox = checkboxes[i];
-                checked.push(getParamObject("checked", checkbox['value'], "other"));    
+                checked.push(getParamObject("checked", checkbox['value'], "hNodeId"));    
             }
             if (checked.length == 0) {
             	hide();
@@ -1554,7 +1554,7 @@ var GlueDialog = (function() {
             var newInfo = [];
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
 		    		newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
-            newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
+            newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"));
             info["newInfo"] = JSON.stringify(newInfo);
 
             showLoading(info["worksheetId"]);
