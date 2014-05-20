@@ -106,7 +106,7 @@ public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
 			 
 			assertEquals(33, count);
 		} catch (Exception e) {
-			logger.error("testGlue1 failed:", e);
+			logger.error("testGlueNested failed:", e);
 			fail("Execption: " + e.getMessage());
 		}
 	}
@@ -132,7 +132,7 @@ public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
 			 
 			assertEquals(19, count);
 		} catch (Exception e) {
-			logger.error("testGlue1 failed:", e);
+			logger.error("testGlueTop failed:", e);
 			fail("Execption: " + e.getMessage());
 		}
 	}
