@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommand.JsonKeys;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -23,8 +22,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 
 public class SaveR2RMLModelCommand extends Command{
 
@@ -32,7 +30,7 @@ public class SaveR2RMLModelCommand extends Command{
 	private String tripleStoreUrl;
 	private String graphContext;
 	private String worksheetId;
-	private static Logger logger = LoggerFactory.getLogger(GenerateR2RMLModelCommand.class);
+	private static Logger logger = LoggerFactory.getLogger(SaveR2RMLModelCommand.class);
 
 	protected SaveR2RMLModelCommand(String id, String worksheetId, String modelUrl, String url, String context) {
 		super(id);

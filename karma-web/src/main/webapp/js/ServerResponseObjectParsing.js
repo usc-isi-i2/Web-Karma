@@ -390,6 +390,10 @@ function parse(data) {
             $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
             $.sticky("R2RML Model published");
         }
+        else if(element["updateType"] == "ClearGraph") {
+            // Remove existing link if any
+            $.sticky("R2RML Model cleared");
+        }
         else if(element["updateType"] == "PublishSpatialDataUpdate") {
             $("a.SpatialDataDownloadLink", titleDiv).remove();
             var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");

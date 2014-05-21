@@ -608,11 +608,13 @@ public class TripleStoreUtil {
 
 		String responseString;
 		try {
-			String url = tripleStoreUrl + "/statements?graph="
+			String url = tripleStoreUrl + "/statements?context="
 					+ URLEncoder.encode(graphUri, "UTF-8");
 			logger.info("Deleting from uri : " + url);
 			responseString = HTTPUtil.executeHTTPDeleteRequest(url);
+			System.out.println(responseString);
 			logger.info("Response=" + responseString);
+			return true;
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
