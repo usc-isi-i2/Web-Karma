@@ -290,7 +290,7 @@ var saveModelDialog = (function() {
             //Initialize what happens when we show the dialog
             dialog.on('show.bs.modal', function (e) {
                 hideError();
-                 $('#txtR2RML_URL').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+                 $('#txtR2RML_URL_Save').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
             });
             
             //Initialize handler for Save button
@@ -322,9 +322,9 @@ var saveModelDialog = (function() {
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
             info["command"] = "SaveR2RMLModelCommand";
-            info['tripleStoreUrl'] = $('#txtR2RML_URL').val();
-            info['modelUrl'] = $('#txtModel_URL').val();
-            info['graphContext'] = $('#txtGraph_URL').val();
+            info['tripleStoreUrl'] = $('#txtR2RML_URL_Save').val();
+            info['modelUrl'] = $('#txtModel_URL_Save').val();
+            info['graphContext'] = $('#txtGraph_URL_Save').val();
             showLoading(info["worksheetId"]);
             var returned = $.ajax({
                 url: "RequestController",
@@ -387,7 +387,7 @@ var clearModelDialog = (function() {
             //Initialize what happens when we show the dialog
             dialog.on('show.bs.modal', function (e) {
                 hideError();
-                 $('#txtR2RML_URL').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+                 $('#txtR2RML_URL_Clear').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
             });
             
             //Initialize handler for Save button
