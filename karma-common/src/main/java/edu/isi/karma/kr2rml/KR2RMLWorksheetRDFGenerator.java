@@ -161,7 +161,7 @@ public class KR2RMLWorksheetRDFGenerator {
 					this.worksheet.getDataTable().getNumRows());
 
 
-
+			List<String> triplesMapsProcessingOrder = new LinkedList<String>(); 
 			try{
 				DFSTriplesMapGraphDAGifier dagifier = new DFSTriplesMapGraphDAGifier();
 				if(null == strategy)
@@ -169,7 +169,7 @@ public class KR2RMLWorksheetRDFGenerator {
 					strategy =new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy());
 				
 				}
-				dagifier.dagify(kr2rmlMapping.getAuxInfo().getTriplesMapGraph(), strategy);
+				triplesMapsProcessingOrder = dagifier.dagify(kr2rmlMapping.getAuxInfo().getTriplesMapGraph(), strategy);
 
 			}catch (Exception e)
 			{
@@ -188,7 +188,7 @@ public class KR2RMLWorksheetRDFGenerator {
 			for (Row row:rows) {
 
 				TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(triplesMapToWorkerPlan, row, outWriter);
-				TriplesMapPlan plan = g.generatePlan(kr2rmlMapping.getAuxInfo().getTriplesMapGraph());
+				TriplesMapPlan plan = g.generatePlan(kr2rmlMapping.getAuxInfo().getTriplesMapGraph(), triplesMapsProcessingOrder);
 				errorReport.combine(e.execute(plan));
 				outWriter.finishRow();
 				if (i++%2000 == 0)

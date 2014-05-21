@@ -41,27 +41,35 @@ public class TriplesMapPlanGenerator {
 		List<TriplesMapGraph> graphs = tmf.getGraphs();
 		for(TriplesMapGraph graph : graphs)
 		{
-			workers.addAll(generatePlan(graph, plan));
+			//This can end up in deadlock.
+			workers.addAll(generatePlan(graph, plan).values());
 		}
 		return plan;
 	}
 
-	public TriplesMapPlan generatePlan(TriplesMapGraph graph)
+	public TriplesMapPlan generatePlan(TriplesMapGraph graph, List<String> triplesMapProcessingOrder)
 	{
 		List<TriplesMapWorker> workers = new LinkedList<TriplesMapWorker>();
 		Map<String, List<PopulatedTemplateTermSet>>triplesMapSubjects = new ConcurrentHashMap<String, List<PopulatedTemplateTermSet>>();
 		TriplesMapPlan plan = new TriplesMapPlan(workers, r, triplesMapSubjects);
-		workers.addAll(generatePlan(graph, plan));
+		Map<TriplesMap, TriplesMapWorker> mapToWorker = generatePlan(graph, plan);
+		for(String triplesMapId : triplesMapProcessingOrder)
+		{
+			TriplesMap map = graph.getTriplesMap(triplesMapId);
+			TriplesMapWorker worker = mapToWorker.get(map);
+			workers.add(worker);
+		}
+		
 		return plan;
 	}
-	private Collection<TriplesMapWorker> generatePlan(TriplesMapGraph graph, TriplesMapPlan plan)
+	private Map<TriplesMap, TriplesMapWorker> generatePlan(TriplesMapGraph graph, TriplesMapPlan plan)
 	{
 		//add strategy
 		Map<TriplesMap, TriplesMapWorker> mapToWorker = new HashMap<TriplesMap, TriplesMapWorker>();
 		String triplesMapId = graph.findRoot(new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
 		TriplesMap map = graph.getTriplesMap(triplesMapId);
 		generateTriplesMapWorker(mapToWorker, graph, map, plan);
-		return mapToWorker.values();
+		return mapToWorker;
 	}
 	private void generateTriplesMapWorker(
 			Map<TriplesMap, TriplesMapWorker> mapToWorker,

@@ -9,9 +9,9 @@ import edu.isi.karma.rep.Row;
 
 public class TriplesMapPlan {
 
-	Collection<TriplesMapWorker> workers;
-	Row r;
-	Map<String, List<PopulatedTemplateTermSet>> triplesMapSubjects;
+	protected Collection<TriplesMapWorker> workers;
+	protected Row r;
+	protected Map<String, List<PopulatedTemplateTermSet>> triplesMapSubjects;
 	
 	public TriplesMapPlan(Collection<TriplesMapWorker> workers, Row r, Map<String, List<PopulatedTemplateTermSet>>triplesMapSubjects)
 	{
