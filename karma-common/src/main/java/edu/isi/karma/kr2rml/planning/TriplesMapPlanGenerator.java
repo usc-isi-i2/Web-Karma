@@ -1,6 +1,5 @@
 package edu.isi.karma.kr2rml.planning;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -57,7 +56,16 @@ public class TriplesMapPlanGenerator {
 		{
 			TriplesMap map = graph.getTriplesMap(triplesMapId);
 			TriplesMapWorker worker = mapToWorker.get(map);
-			workers.add(worker);
+			if(worker != null)
+			{
+				workers.add(worker);
+			}
+			else
+			{
+				LOG.error("Graph is disconnected from " + triplesMapId );
+			}
+			
+			
 		}
 		
 		return plan;
