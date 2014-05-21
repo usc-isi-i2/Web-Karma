@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.alignment.SaveR2RMLModelCommand.JsonKeys;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
@@ -166,45 +167,24 @@ public class GenerateR2RMLModelCommand extends Command {
 
 		try {
 			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
-			fileSaver.saveAlignment(alignment, modelFileLocalPath);
-			
-			// Write the model to the triple store
-			TripleStoreUtil utilObj = new TripleStoreUtil();
+			fileSaver.saveAlignment(alignment, modelFileLocalPath);			 
+			uc.add(new AbstractUpdate() {
+				public void generateJson(String prefix, PrintWriter pw,	
+						VWorkspace vWorkspace) {
+					JSONObject outputObject = new JSONObject();
+					try {
+						outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
 
-			// Get the graph name from properties
-			String graphName = worksheet.getMetadataContainer().getWorksheetProperties()
-					.getPropertyValue(Property.graphName);
-			if (graphName == null || graphName.isEmpty()) {
-				// Set to default
-				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
-						Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
-				graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
-			}
-			
-			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true, null);
-			
-			if (result) {
-				logger.info("Saved model to triple store");
-				uc.add(new AbstractUpdate() {
-					public void generateJson(String prefix, PrintWriter pw,	
-							VWorkspace vWorkspace) {
-						JSONObject outputObject = new JSONObject();
-						try {
-							outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
-							
-							outputObject.put(JsonKeys.fileUrl.name(), ServletContextParameterMap.getParameterValue(
-									ContextParameter.R2RML_PUBLISH_RELATIVE_DIR) + modelFileName);
-							outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
-							pw.println(outputObject.toString());
-						} catch (JSONException e) {
-							logger.error("Error occured while generating JSON!");
-						}
+						outputObject.put(JsonKeys.fileUrl.name(), ServletContextParameterMap.getParameterValue(
+								ContextParameter.R2RML_PUBLISH_RELATIVE_DIR) + modelFileName);
+						outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
+						pw.println(outputObject.toString());
+					} catch (JSONException e) {
+						logger.error("Error occured while generating JSON!");
 					}
-				});
-				return uc;
-			} 
-			
-			return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
+				}
+			});
+			return uc;
 			
 		} catch (Exception e) {
 			logger.error("Error occured while generating R2RML Model!", e);

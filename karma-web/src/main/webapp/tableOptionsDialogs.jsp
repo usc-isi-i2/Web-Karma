@@ -264,6 +264,41 @@ a.icon-remove:hover {
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div class="modal fade" id="saveModelDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Save Model</h4>
+				  </div>
+				  <div class="modal-body">
+					<div class="form-group">
+						<label for="txtR2RML_URL">Model URL</label>
+						<input class="form-control" type="text" id="txtModel_URL" required>
+					</div>
+
+					<div class="form-group">
+						<label for="txtR2RML_URL">Graph Name</label>
+						<input class="form-control" type="text" id="txtGraph_URL" required>
+					</div>
+
+					<div class="form-group">
+						<label for="txtR2RML_URL">SPARQL End Point</label>
+						<input class="form-control" type="text" id="txtR2RML_URL" required>
+					</div>
+					
+					<div class="error" style="display: none">Please enter an end point</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Publish</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 
 <div class="modal fade" id="fetchModelDialog" tabindex="-1">
   <div class="modal-dialog">

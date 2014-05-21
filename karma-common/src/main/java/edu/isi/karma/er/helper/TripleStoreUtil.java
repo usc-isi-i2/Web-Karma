@@ -273,7 +273,7 @@ public class TripleStoreUtil {
 	 *            : Specifies the base URI to resolve any relative URIs found in uploaded data against
 	 * 
 	 * */
-	private boolean saveToStore(String filePath, String tripleStoreURL,
+	private boolean saveToStore(File file, String tripleStoreURL,
 			String context, boolean replaceFlag, boolean deleteSrcFile,
 			String rdfType, String baseURL) {
 		boolean retVal = false;
@@ -296,7 +296,7 @@ public class TripleStoreUtil {
 
 			// initialize the http entity
 			HttpClient httpclient = new DefaultHttpClient();
-			File file = new File(filePath);
+//			File file = new File(filePath);
 			if (mime_types.get(rdfType) == null) {
 				throw new Exception("Could not find spefied rdf type: "
 						+ rdfType);
@@ -413,6 +413,14 @@ public class TripleStoreUtil {
 		return saveToStore(filePath, tripleStoreURL, context, replaceFlag,
 				false, baseUri);
 	}
+	
+	public boolean saveToStore(File file, String tripleStoreURL,
+			String context, boolean replaceFlag, String baseUri) {
+		return saveToStore(file, tripleStoreURL, context, replaceFlag,
+				false, RDF_Types.Turtle.name(), baseUri);
+	}
+	
+	
 
 	/**
 	 * @param fileUrl
@@ -446,7 +454,7 @@ public class TripleStoreUtil {
 	 * */
 	public boolean saveToStore(String filePath, String tripleStoreURL,
 			String context, boolean replaceFlag, boolean deleteSrcFile, String baseUri) {
-		return saveToStore(filePath, tripleStoreURL, context, replaceFlag,
+		return saveToStore(new File(filePath), tripleStoreURL, context, replaceFlag,
 				deleteSrcFile, RDF_Types.Turtle.name(), baseUri);
 	}
 
