@@ -93,6 +93,11 @@
 	</servlet>
 	
 	<servlet>
+		<servlet-name>R2RMLMappingServlet</servlet-name>
+		<servlet-class>edu.isi.karma.webserver.R2RMLMappingServlet</servlet-class>
+	</servlet>
+	
+	<servlet>
     <servlet-name>KMLFileTransferHandler</servlet-name>
     <servlet-class>edu.isi.karma.webserver.KMLFileTransferHandler</servlet-class>
   </servlet>
@@ -122,6 +127,15 @@
     <url-pattern>/KarmaServlet</url-pattern>
   </servlet-mapping>
   
+  <servlet-mapping>
+  	<servlet-name>R2RMLMappingServlet</servlet-name>
+  	<url-pattern>/R2RMLMapping/Local</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+  	<servlet-name>R2RMLMappingServlet</servlet-name>
+  	<url-pattern>/R2RMLMapping/Local/*</url-pattern>
+  </servlet-mapping>
   
   <servlet-mapping>
     <servlet-name>requestController</servlet-name>

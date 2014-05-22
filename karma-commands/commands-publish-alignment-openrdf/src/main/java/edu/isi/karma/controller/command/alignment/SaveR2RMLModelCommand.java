@@ -3,8 +3,10 @@ package edu.isi.karma.controller.command.alignment;
 import java.io.File;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.Scanner;
 
 import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -30,21 +32,24 @@ public class SaveR2RMLModelCommand extends Command{
 	private String tripleStoreUrl;
 	private String graphContext;
 	private String worksheetId;
+	private String collection;
+	private final String graphBaseUrl = "http://localhost/worksheets/";
 	private static Logger logger = LoggerFactory.getLogger(SaveR2RMLModelCommand.class);
 
-	protected SaveR2RMLModelCommand(String id, String worksheetId, String modelUrl, String url, String context) {
+	protected SaveR2RMLModelCommand(String id, String worksheetId, String modelUrl, String url, String context, String collection) {
 		super(id);
 		this.modelUrl = modelUrl;
 		this.tripleStoreUrl = url;
 		this.graphContext = context;
 		this.worksheetId = worksheetId;
+		this.collection = collection;
 	}
 
-	
+
 	public enum JsonKeys {
 		updateType, fileUrl, worksheetId
 	}
-	
+
 	@Override
 	public String getCommandName() {
 		return this.getClass().getSimpleName();
@@ -69,10 +74,85 @@ public class SaveR2RMLModelCommand extends Command{
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		UpdateContainer uc = new UpdateContainer();
-		TripleStoreUtil utilObj = new TripleStoreUtil();
+		if (collection.compareTo("Collection") == 0) {
+			try {
+				URL url = new URL(modelUrl);
+				Scanner in = new Scanner(url.openStream());
+				JSONArray array = new JSONArray(in.nextLine());
+				in.close();
+				boolean result = true;
+				for (int i = 0; i < array.length(); i++) {
+					JSONObject obj = array.getJSONObject(i);
+					String modelUrl = obj.getString("url");
+					String filename = modelUrl.substring(modelUrl.indexOf('-') + 1);
+					int location = filename.indexOf("-auto-model.ttl");
+					if (location == -1)
+						location = filename.indexOf("-model.ttl");
+					filename = filename.substring(0, location);
+					result &= saveMapping(worksheet, modelUrl, graphBaseUrl + filename);
+					//System.out.println("here: " + graphBaseUrl + filename);
+				}
+				if (result) {
+					logger.info("Saved collection to triple store");
+					uc.add(new AbstractUpdate() {
+						public void generateJson(String prefix, PrintWriter pw,	
+								VWorkspace vWorkspace) {
+							JSONObject outputObject = new JSONObject();
+							try {
+								outputObject.put(JsonKeys.updateType.name(), "SaveCollection");								
+								pw.println(outputObject.toString());
+							} catch (JSONException e) {
+								e.printStackTrace();
+								logger.error("Error occured while generating JSON!");
+							}
+						}
+					});
+					return uc;
+				}
+			}catch(Exception e) {
+				System.out.println("here");
+				e.printStackTrace();
+				logger.error("Error occured while generating R2RML Model!");
+				return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
+			}
+			
+		}
+		else {
+			boolean result = saveMapping(worksheet, modelUrl, graphContext);
+			if (result) {
+				logger.info("Saved model to triple store");
+				uc.add(new AbstractUpdate() {
+					public void generateJson(String prefix, PrintWriter pw,	
+							VWorkspace vWorkspace) {
+						JSONObject outputObject = new JSONObject();
+						try {
+							outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
+
+							outputObject.put(JsonKeys.fileUrl.name(), modelUrl);
+							outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
+							pw.println(outputObject.toString());
+						} catch (JSONException e) {
+							e.printStackTrace();
+							logger.error("Error occured while generating JSON!");
+						}
+					}
+				});
+				return uc;
+			}
+		}
+		logger.error("Error occured while generating R2RML Model!");
+		return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
+	}
+
+	@Override
+	public UpdateContainer undoIt(Workspace workspace) {
+		return null;
+	}
+
+	private boolean saveMapping(Worksheet worksheet, String modelUrl, String graphContext) {
 		try {
-			// Get the graph name from properties
-			String graphName = (this.graphContext.compareTo("") == 0) ? worksheet.getMetadataContainer().getWorksheetProperties()
+			TripleStoreUtil utilObj = new TripleStoreUtil();
+			String graphName = (graphContext.compareTo("") == 0) ? worksheet.getMetadataContainer().getWorksheetProperties()
 					.getPropertyValue(Property.graphName) : graphContext;
 					if (graphName == null || graphName.isEmpty()) {
 						// Set to default
@@ -84,39 +164,9 @@ public class SaveR2RMLModelCommand extends Command{
 					File file = new File("tmp.ttl");	
 					FileUtils.copyURLToFile(url, file);
 					boolean result = utilObj.saveToStore(file, tripleStoreUrl, graphName, true, null);
-
-					if (result) {
-						logger.info("Saved model to triple store");
-						uc.add(new AbstractUpdate() {
-							public void generateJson(String prefix, PrintWriter pw,	
-									VWorkspace vWorkspace) {
-								JSONObject outputObject = new JSONObject();
-								try {
-									outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
-
-									outputObject.put(JsonKeys.fileUrl.name(), modelUrl);
-									outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
-									pw.println(outputObject.toString());
-								} catch (JSONException e) {
-									e.printStackTrace();
-									logger.error("Error occured while generating JSON!");
-								}
-							}
-						});
-						return uc;
-					}
+					return result;
 		}catch (Exception e) {
-			logger.error("Error occured while generating R2RML Model!", e);
-			e.printStackTrace();
-			return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
+			return false;
 		}
-		return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
 	}
-
-	@Override
-	public UpdateContainer undoIt(Workspace workspace) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

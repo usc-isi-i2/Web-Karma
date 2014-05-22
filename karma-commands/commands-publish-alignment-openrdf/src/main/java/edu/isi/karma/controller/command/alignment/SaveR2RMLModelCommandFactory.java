@@ -9,7 +9,7 @@ import edu.isi.karma.rep.Workspace;
 public class SaveR2RMLModelCommandFactory extends CommandFactory{
 
 	private enum Arguments {
-		worksheetId, modelUrl, tripleStoreUrl, graphContext
+		worksheetId, modelUrl, tripleStoreUrl, graphContext, collection
 	}
 
 	@Override
@@ -18,7 +18,8 @@ public class SaveR2RMLModelCommandFactory extends CommandFactory{
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.graphContext.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		return new SaveR2RMLModelCommand(getNewId(workspace), worksheetId, modelUrl, tripleStoreUrl, context);
+		String collection = request.getParameter(Arguments.collection.name());
+		return new SaveR2RMLModelCommand(getNewId(workspace), worksheetId, modelUrl, tripleStoreUrl, context, collection);
 	}
 
 	@Override

@@ -274,10 +274,13 @@ a.icon-remove:hover {
 				  </div>
 				  <div class="modal-body">
 					<div class="form-group">
+						<input class="form-control" type="radio" id="buttonCollection_Save" value="Collection" name="buttonCollection_Save">Collection
+						<input class="form-control" type="radio" id="buttonCollection_Save" value="URL" name="buttonCollection_Save">URL
+					</div>
+					<div class="form-group">
 						<label for="txtR2RML_URL">Model URL</label>
 						<input class="form-control" type="text" id="txtModel_URL_Save" required>
 					</div>
-
 					<div class="form-group">
 						<label for="txtR2RML_URL">Graph Name</label>
 						<input class="form-control" type="text" id="txtGraph_URL_Save" required>

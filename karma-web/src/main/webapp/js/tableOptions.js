@@ -313,18 +313,21 @@ var saveModelDialog = (function() {
         
         function saveDialog(e) {
             hide();
-             if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
-                alert("Invalid sparql end point. Could not establish connection.");
-                return;
-            }
+            //  if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
+            //     alert("Invalid sparql end point. Could not establish connection.");
+            //     return;
+            // }
 
             var info = new Object();
+            var checkboxes = dialog.find(":checked");
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
             info["command"] = "SaveR2RMLModelCommand";
             info['tripleStoreUrl'] = $('#txtR2RML_URL_Save').val();
             info['modelUrl'] = $('#txtModel_URL_Save').val();
             info['graphContext'] = $('#txtGraph_URL_Save').val();
+            info['collection'] = checkboxes[0]['value'];
+            console.log(info['collection']);
             showLoading(info["worksheetId"]);
             var returned = $.ajax({
                 url: "RequestController",
@@ -410,10 +413,10 @@ var clearModelDialog = (function() {
         
         function saveDialog(e) {
             hide();
-             if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
-                alert("Invalid sparql end point. Could not establish connection.");
-                return;
-            }
+            //  if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
+            //     alert("Invalid sparql end point. Could not establish connection.");
+            //     return;
+            // }
 
             var info = new Object();
             info["worksheetId"] = worksheetId;
