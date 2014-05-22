@@ -20,7 +20,7 @@ public class TriplesMapPlanGenerator {
 	private static Logger LOG = LoggerFactory.getLogger(TriplesMapPlanGenerator.class);
 	
 	private Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan;
-	private Set<TriplesMap> visitedMaps = new HashSet<TriplesMap>();
+	private Set<String> unprocessedTriplesMapsIds = new HashSet<String>();
 	private Row r;
 	private KR2RMLRDFWriter outWriter;
 	
@@ -72,18 +72,31 @@ public class TriplesMapPlanGenerator {
 	}
 	private Map<TriplesMap, TriplesMapWorker> generatePlan(TriplesMapGraph graph, TriplesMapPlan plan)
 	{
+		unprocessedTriplesMapsIds.addAll(graph.getTriplesMapIds());
 		//add strategy
 		Map<TriplesMap, TriplesMapWorker> mapToWorker = new HashMap<TriplesMap, TriplesMapWorker>();
 		String triplesMapId = graph.findRoot(new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
-		TriplesMap map = graph.getTriplesMap(triplesMapId);
-		generateTriplesMapWorker(mapToWorker, graph, map, plan);
+		
+		do
+		{
+			if(triplesMapId == null)
+			{
+				triplesMapId = unprocessedTriplesMapsIds.iterator().next();
+			}
+			TriplesMap map = graph.getTriplesMap(triplesMapId);
+			generateTriplesMapWorker(mapToWorker, graph, map, plan);	
+			triplesMapId = null;
+		}
+		while(!unprocessedTriplesMapsIds.isEmpty());
+
+		
 		return mapToWorker;
 	}
 	private void generateTriplesMapWorker(
 			Map<TriplesMap, TriplesMapWorker> mapToWorker,
 			TriplesMapGraph graph, TriplesMap map, TriplesMapPlan plan) {
 		
-		if(!visitedMaps.add(map))
+		if(!unprocessedTriplesMapsIds.remove(map.getId()))
 		{
 			LOG.error("already visited " + map.toString());
 			return;

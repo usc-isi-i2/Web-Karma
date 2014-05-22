@@ -58,7 +58,7 @@ public class TriplesMapWorkerPlan {
 		
 		internalLinksPlans = new LinkedList<PredicateObjectMappingPlan>();
 		
-		List<TriplesMapLink> links = kr2rmlMapping.getAuxInfo().getTriplesMapGraph().getAllNeighboringTriplesMap(triplesMap.getId());
+		List<TriplesMapLink> links = kr2rmlMapping.getAuxInfo().getTriplesMapGraph().getTriplesMapGraph(triplesMap.getId()).getAllNeighboringTriplesMap(triplesMap.getId());
 		for(TriplesMapLink link : links) {
 			if(link.getSourceMap().getId().compareTo(triplesMap.getId()) ==0  && !link.isFlipped() ||
 					link.getTargetMap().getId().compareTo(triplesMap.getId()) == 0 && link.isFlipped())

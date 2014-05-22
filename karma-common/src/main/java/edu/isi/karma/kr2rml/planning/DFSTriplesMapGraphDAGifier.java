@@ -52,7 +52,7 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 		boolean modifications = true;
 		List<String> spilledTriplesMaps = new LinkedList<String>();
 		
-		while(modifications)
+		while(triplesMapsIds.size() > 0 && modifications)
 		{
 			logger.trace("starting a cleaning cycle");
 			modifications = false;
@@ -103,6 +103,7 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 						spilledTriplesMaps.addAll(removedTriplesMaps);
 						ids.remove();
 					}
+					modifications = true;
 				}
 			}
 		}
@@ -112,7 +113,7 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 	private boolean allLinksAreIncoming(String triplesMapId, List<TriplesMapLink> links) {
 		for(TriplesMapLink link : links)
 		{
-			if(link.getSourceMap().getId().compareTo(triplesMapId) == 0 || link.isFlipped())
+			if(link.getSourceMap().getId().compareTo(triplesMapId) == 0 && !link.isFlipped())
 			{
 				return false;
 			}

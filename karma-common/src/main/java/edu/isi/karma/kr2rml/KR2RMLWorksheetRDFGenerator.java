@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -50,6 +51,7 @@ import edu.isi.karma.kr2rml.planning.DFSTriplesMapGraphDAGifier;
 import edu.isi.karma.kr2rml.planning.RootStrategy;
 import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
+import edu.isi.karma.kr2rml.planning.TriplesMapGraph;
 import edu.isi.karma.kr2rml.planning.TriplesMapLink;
 import edu.isi.karma.kr2rml.planning.TriplesMapPlan;
 import edu.isi.karma.kr2rml.planning.TriplesMapPlanExecutor;
@@ -161,21 +163,26 @@ public class KR2RMLWorksheetRDFGenerator {
 					this.worksheet.getDataTable().getNumRows());
 
 
-			List<String> triplesMapsProcessingOrder = new LinkedList<String>(); 
-			try{
-				DFSTriplesMapGraphDAGifier dagifier = new DFSTriplesMapGraphDAGifier();
-				if(null == strategy)
-				{
-					strategy =new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy());
-				
-				}
-				triplesMapsProcessingOrder = dagifier.dagify(kr2rmlMapping.getAuxInfo().getTriplesMapGraph(), strategy);
-
-			}catch (Exception e)
+			
+			Map<TriplesMapGraph, List<String>> graphTriplesMapsProcessingOrder = new HashMap<TriplesMapGraph, List<String>>();
+			for(TriplesMapGraph graph : kr2rmlMapping.getAuxInfo().getTriplesMapGraph().getGraphs())
 			{
-				logger.error("Unable to find DAG for RDF Generation!", e);
-				throw new Exception("Unable to find DAG for RDF Generation!", e);
-
+				try{
+					DFSTriplesMapGraphDAGifier dagifier = new DFSTriplesMapGraphDAGifier();
+					if(null == strategy)
+					{
+						strategy =new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy());
+					
+					}
+					List<String> triplesMapsProcessingOrder = new LinkedList<String>();
+					triplesMapsProcessingOrder = dagifier.dagify(graph, strategy);
+					graphTriplesMapsProcessingOrder.put(graph, triplesMapsProcessingOrder);
+				}catch (Exception e)
+				{
+					logger.error("Unable to find DAG for RDF Generation!", e);
+					throw new Exception("Unable to find DAG for RDF Generation!", e);
+	
+				}
 			}
 			int i=1;
 			TriplesMapPlanExecutor e = new TriplesMapPlanExecutor();
@@ -186,10 +193,12 @@ public class KR2RMLWorksheetRDFGenerator {
 				triplesMapToWorkerPlan.put(triplesMap, workerPlan);
 			}
 			for (Row row:rows) {
-
-				TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(triplesMapToWorkerPlan, row, outWriter);
-				TriplesMapPlan plan = g.generatePlan(kr2rmlMapping.getAuxInfo().getTriplesMapGraph(), triplesMapsProcessingOrder);
-				errorReport.combine(e.execute(plan));
+				for(Entry<TriplesMapGraph, List<String>> entry : graphTriplesMapsProcessingOrder.entrySet())
+				{
+					TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(triplesMapToWorkerPlan, row, outWriter);
+					TriplesMapPlan plan = g.generatePlan(entry.getKey(), entry.getValue());
+					errorReport.combine(e.execute(plan));
+				}
 				outWriter.finishRow();
 				if (i++%2000 == 0)
 					logger.info("Done processing " + i + " rows");
@@ -273,7 +282,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				dontAddNeighboringMaps = true;
 			}
 
-			List<TriplesMapLink> neighboringLinks = this.kr2rmlMapping.getAuxInfo().getTriplesMapGraph()
+			List<TriplesMapLink> neighboringLinks = this.kr2rmlMapping.getAuxInfo().getTriplesMapGraph().getTriplesMapGraph(trMap.getId())
 					.getAllNeighboringTriplesMap(trMap.getId());
 
 			for (TriplesMapLink trMapLink:neighboringLinks) {

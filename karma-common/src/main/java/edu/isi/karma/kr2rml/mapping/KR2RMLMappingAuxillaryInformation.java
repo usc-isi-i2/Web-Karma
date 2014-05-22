@@ -29,26 +29,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.PredicateObjectMap;
-import edu.isi.karma.kr2rml.planning.TriplesMapGraph;
+import edu.isi.karma.kr2rml.planning.TriplesMapGraphMerger;
 
 public class KR2RMLMappingAuxillaryInformation {
 	private static Logger LOG = LoggerFactory.getLogger(KR2RMLMappingAuxillaryInformation.class);
-	private TriplesMapGraph triplesMapGraph;
+	private TriplesMapGraphMerger triplesMapGraphMerger;
 	private Map<String, List<String>> blankNodesColumnCoverage;
 	private Map<String, String> blankNodesUriPrefixMap;
 	private Map<String, List<PredicateObjectMap>> columnNameToPredObjMLinks;
 	private Map<String, String> subjectMapIdToTemplateAnchor;
 	
 	public KR2RMLMappingAuxillaryInformation() {
-		this.triplesMapGraph = new TriplesMapGraph();
+		this.triplesMapGraphMerger = new TriplesMapGraphMerger();
 		this.blankNodesUriPrefixMap = new HashMap<String, String>();
 		this.blankNodesColumnCoverage = new HashMap<String, List<String>>();
 		this.columnNameToPredObjMLinks = new HashMap<String, List<PredicateObjectMap>>();
 		this.subjectMapIdToTemplateAnchor = new HashMap<String, String>();
 	}
 
-	public TriplesMapGraph getTriplesMapGraph() {
-		return triplesMapGraph;
+	public TriplesMapGraphMerger getTriplesMapGraph() {
+		return triplesMapGraphMerger;
 	}
 
 	public Map<String, List<String>> getBlankNodesColumnCoverage() {
