@@ -10,11 +10,11 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 
-public class ComplicatedTemplateTermSetPopulatorPlan extends
+public class SinglyAnchoredTemplateTermSetPopulatorPlan extends
 		TemplateTermSetPopulatorPlan {
 	
 	Map<ColumnTemplateTerm, TemplateTermSetPopulatorPlan> nestedPlans;
-	public ComplicatedTemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath,
+	public SinglyAnchoredTemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath,
 			LinkedList<ColumnTemplateTerm> columnTerms,
 			List<ColumnTemplateTerm> comparisonTerms)
 	{

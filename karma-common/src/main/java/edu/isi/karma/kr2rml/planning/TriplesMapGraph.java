@@ -146,6 +146,10 @@ public class TriplesMapGraph {
 				removedTriplesMaps.addAll(removeLink(link));
 			}	
 		}
+		else
+		{
+			removedTriplesMaps.add(triplesMapId);
+		}
 		neighboringTriplesMapCache.remove(triplesMapId);
 		triplesMapIndex.remove(triplesMapId);
 		

@@ -1,6 +1,5 @@
 package edu.isi.karma.kr2rml.planning;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -21,7 +20,7 @@ public class TriplesMapPlanGenerator {
 	private static Logger LOG = LoggerFactory.getLogger(TriplesMapPlanGenerator.class);
 	
 	private Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan;
-	private Set<TriplesMap> visitedMaps = new HashSet<TriplesMap>();
+	private Set<String> unprocessedTriplesMapsIds = new HashSet<String>();
 	private Row r;
 	private KR2RMLRDFWriter outWriter;
 	
@@ -41,33 +40,63 @@ public class TriplesMapPlanGenerator {
 		List<TriplesMapGraph> graphs = tmf.getGraphs();
 		for(TriplesMapGraph graph : graphs)
 		{
-			workers.addAll(generatePlan(graph, plan));
+			//This can end up in deadlock.
+			workers.addAll(generatePlan(graph, plan).values());
 		}
 		return plan;
 	}
 
-	public TriplesMapPlan generatePlan(TriplesMapGraph graph)
+	public TriplesMapPlan generatePlan(TriplesMapGraph graph, List<String> triplesMapProcessingOrder)
 	{
 		List<TriplesMapWorker> workers = new LinkedList<TriplesMapWorker>();
 		Map<String, List<PopulatedTemplateTermSet>>triplesMapSubjects = new ConcurrentHashMap<String, List<PopulatedTemplateTermSet>>();
 		TriplesMapPlan plan = new TriplesMapPlan(workers, r, triplesMapSubjects);
-		workers.addAll(generatePlan(graph, plan));
+		Map<TriplesMap, TriplesMapWorker> mapToWorker = generatePlan(graph, plan);
+		for(String triplesMapId : triplesMapProcessingOrder)
+		{
+			TriplesMap map = graph.getTriplesMap(triplesMapId);
+			TriplesMapWorker worker = mapToWorker.get(map);
+			if(worker != null)
+			{
+				workers.add(worker);
+			}
+			else
+			{
+				LOG.error("Graph is disconnected from " + triplesMapId );
+			}
+			
+			
+		}
+		
 		return plan;
 	}
-	private Collection<TriplesMapWorker> generatePlan(TriplesMapGraph graph, TriplesMapPlan plan)
+	private Map<TriplesMap, TriplesMapWorker> generatePlan(TriplesMapGraph graph, TriplesMapPlan plan)
 	{
+		unprocessedTriplesMapsIds.addAll(graph.getTriplesMapIds());
 		//add strategy
 		Map<TriplesMap, TriplesMapWorker> mapToWorker = new HashMap<TriplesMap, TriplesMapWorker>();
 		String triplesMapId = graph.findRoot(new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
-		TriplesMap map = graph.getTriplesMap(triplesMapId);
-		generateTriplesMapWorker(mapToWorker, graph, map, plan);
-		return mapToWorker.values();
+		
+		do
+		{
+			if(triplesMapId == null)
+			{
+				triplesMapId = unprocessedTriplesMapsIds.iterator().next();
+			}
+			TriplesMap map = graph.getTriplesMap(triplesMapId);
+			generateTriplesMapWorker(mapToWorker, graph, map, plan);	
+			triplesMapId = null;
+		}
+		while(!unprocessedTriplesMapsIds.isEmpty());
+
+		
+		return mapToWorker;
 	}
 	private void generateTriplesMapWorker(
 			Map<TriplesMap, TriplesMapWorker> mapToWorker,
 			TriplesMapGraph graph, TriplesMap map, TriplesMapPlan plan) {
 		
-		if(!visitedMaps.add(map))
+		if(!unprocessedTriplesMapsIds.remove(map.getId()))
 		{
 			LOG.error("already visited " + map.toString());
 			return;

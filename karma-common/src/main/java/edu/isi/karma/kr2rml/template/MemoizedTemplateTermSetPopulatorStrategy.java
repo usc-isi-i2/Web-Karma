@@ -20,13 +20,23 @@ public class MemoizedTemplateTermSetPopulatorStrategy implements
 	@Override
 	public Collection<Node> getNodes(Row topRow, Row currentRow) 
 	{
-		if(nodes == null || topRow != this.topRow)
+		try
 		{
-			nodes = new LinkedList<Node>();
-			topRow.collectNodes(path, nodes);
-			this.topRow = topRow;
+			synchronized(this)
+			{
+				if(nodes == null || topRow != this.topRow)
+				{
+					nodes = new LinkedList<Node>();
+					topRow.collectNodes(path, nodes);
+					this.topRow = topRow;
+				}
+			}
+			return nodes;
 		}
-		return nodes;
+		catch (Exception e)
+		{
+			throw e;
+		}
 	}
 
 }

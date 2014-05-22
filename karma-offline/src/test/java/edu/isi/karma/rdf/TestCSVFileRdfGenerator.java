@@ -23,11 +23,8 @@ package edu.isi.karma.rdf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.FilenameFilter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
@@ -36,9 +33,6 @@ import java.util.HashSet;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.util.EncodingDetector;
 
 /**
  * The class is used for test. There are csv files, model files and standard RDF
@@ -65,7 +59,15 @@ public class TestCSVFileRdfGenerator extends TestRdfGenerator {
 	
 		try {
 	
-			File fileList[] = (new File(getTestResource(modelDirect).toURI()).listFiles());
+			File fileList[] = (new File(getTestResource(modelDirect).toURI()).listFiles(new FilenameFilter(){
+
+				@Override
+				public boolean accept(File dir, String name) {
+
+					return !name.startsWith(".") && name.endsWith(".ttl");
+				}
+				
+			}));
 			
 			for (int i = 0; i < fileList.length; i++) {
 				File modelFile = fileList[i];
