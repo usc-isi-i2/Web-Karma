@@ -196,6 +196,75 @@ public class TripleStoreUtil {
 	}
 
 	/**
+	 * PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?z ?y ?x where { ?a km-dev:sourceName ?y . ?a a km-dev:R2RMLMapping . ?a owl:sameAs ?z . ?a km-dev:modelPublicationTime ?x} ORDER BY ?z ?y ?x
+	 */
+	/**
+	 * This method fetches all the source names of the models from the triple
+	 * store
+	 * 
+	 * @param TripleStoreURL
+	 *            : the triple store URL
+	 * */
+	public HashMap<String, List<String>> getMappingsWithMetadata(String TripleStoreURL, String context) {
+		if (TripleStoreURL == null || TripleStoreURL.isEmpty()) {
+			TripleStoreURL = defaultServerUrl + "/" + karma_model_repo;
+		}
+		List<String> times = new ArrayList<String>();
+		List<String> names = new ArrayList<String>();
+		List<String> urls = new ArrayList<String>();
+
+		if (TripleStoreURL.charAt(TripleStoreURL.length() - 1) == '/') {
+			TripleStoreURL = TripleStoreURL.substring(0,
+					TripleStoreURL.length() - 2);
+		}
+		logger.info("Repositoty URL : " + TripleStoreURL);
+
+		// check the connection first
+		if (checkConnection(TripleStoreURL)) {
+			logger.info("Connection Test passed");
+		} else {
+			logger.info("Failed connection test : " + TripleStoreURL);
+			return null;
+		}
+
+		try {
+			String queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?z ?y ?x where { ?a km-dev:sourceName ?y . ?a a km-dev:R2RMLMapping . ?a owl:sameAs ?z . ?a km-dev:modelPublicationTime ?x} ORDER BY ?z ?y ?x";
+			logger.debug("query: " + queryString);
+
+			Map<String, String> formparams = new HashMap<String, String>();
+			formparams.put("query", queryString);
+			formparams.put("queryLn", "SPARQL");
+			if(context != null && !context.isEmpty())
+			{
+				formparams.put("context", context);
+			}
+			String responseString = HTTPUtil.executeHTTPPostRequest(
+					TripleStoreURL, null, "application/sparql-results+json",
+					formparams);
+
+			if (responseString != null) {
+				JSONObject models = new JSONObject(responseString);
+				JSONArray values = models.getJSONObject("results")
+						.getJSONArray("bindings");
+				int count = 0;
+				while (count < values.length()) {
+					JSONObject o = values.getJSONObject(count++);
+					times.add(o.getJSONObject("x").getString("value"));
+					names.add(o.getJSONObject("y").getString("value"));
+					urls.add(o.getJSONObject("z").getString("value"));
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		HashMap<String, List<String>> values = new HashMap<String, List<String>>();
+		values.put("model_publishtimes", times);
+		values.put("model_names", names);
+		values.put("model_urls", urls);
+		return values;
+	}
+	/**
 	 * This method fetches all the source names of the models from the triple
 	 * store
 	 * 

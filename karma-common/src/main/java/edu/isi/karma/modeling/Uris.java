@@ -33,6 +33,7 @@ public interface Uris {
 	public static final String RDFS_COMMENT_URI = Namespaces.RDFS + "comment";
 	public static final String RDF_VALUE_URI = Namespaces.RDF + "value";
 
+	public static final String OWL_SAMEAS_URI = Namespaces.OWL + "sameAs";
 	// Karma Internal URIs
 	public static final String DEFAULT_LINK_URI = Namespaces.KARMA_DEV + "defaultLink"; 
 	public static final String DEFAULT_NODE_URI = Namespaces.KARMA_DEV + "defaultNode"; 

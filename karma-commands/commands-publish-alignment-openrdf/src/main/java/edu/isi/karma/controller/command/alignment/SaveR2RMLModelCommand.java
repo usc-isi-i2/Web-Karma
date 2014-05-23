@@ -1,8 +1,10 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.commons.io.FileUtils;
@@ -12,6 +14,12 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.ResIterator;
+import com.hp.hpl.jena.rdf.model.Resource;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -19,10 +27,11 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
+import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
-import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 
 
@@ -153,16 +162,28 @@ public class SaveR2RMLModelCommand extends Command{
 		try {
 			TripleStoreUtil utilObj = new TripleStoreUtil();
 			String graphName = (graphContext.compareTo("") == 0) ? worksheet.getMetadataContainer().getWorksheetProperties()
-					.getPropertyValue(Property.graphName) : graphContext;
+					.getPropertyValue(WorksheetProperties.Property.graphName) : graphContext;
 					if (graphName == null || graphName.isEmpty()) {
 						// Set to default
 						worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
-								Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
+								WorksheetProperties.Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
 						graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
 					}
 					URL url = new URL(modelUrl);
 					File file = new File("tmp.ttl");	
 					FileUtils.copyURLToFile(url, file);
+					Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(file.toURI().toURL());
+					Property rdfTypeProp = model.getProperty(Uris.RDF_TYPE_URI);
+					
+					RDFNode node = model.getResource(Uris.KM_R2RML_MAPPING_URI);
+					ResIterator res = model.listResourcesWithProperty(rdfTypeProp, node);
+					List<Resource> resList = res.toList();
+					for(Resource r: resList)
+					{
+						model.add(r, model.getProperty(Uris.OWL_SAMEAS_URI), model.getResource(url.toString()));
+					}
+					model.write(new FileOutputStream(file),"TTL");
+					model.close();
 					boolean result = utilObj.saveToStore(file, tripleStoreUrl, graphName, true, null);
 					return result;
 		}catch (Exception e) {

@@ -144,7 +144,7 @@ public class WorksheetR2RMLJenaModelParser {
 		
 		
 	}
-    private Model loadSourceModelIntoJenaModel(URL modelURL) throws IOException {
+    public static Model loadSourceModelIntoJenaModel(URL modelURL) throws IOException {
         // Create an empty Model
         Model model = ModelFactory.createDefaultModel();
         InputStream s = modelURL.openStream();
