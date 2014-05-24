@@ -207,7 +207,7 @@ public class TripleStoreUtil {
 	 * */
 	public HashMap<String, List<String>> getMappingsWithMetadata(String TripleStoreURL, String context) {
 		if (TripleStoreURL == null || TripleStoreURL.isEmpty()) {
-			TripleStoreURL = defaultServerUrl + "/" + karma_model_repo;
+			TripleStoreURL = defaultServerUrl + "/" + karma_model_repo + "/" + "statements";
 		}
 		List<String> times = new ArrayList<String>();
 		List<String> names = new ArrayList<String>();
@@ -231,13 +231,11 @@ public class TripleStoreUtil {
 			String queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?z ?y ?x where { ?a km-dev:sourceName ?y . ?a a km-dev:R2RMLMapping . ?a owl:sameAs ?z . ?a km-dev:modelPublicationTime ?x} ORDER BY ?z ?y ?x";
 			logger.debug("query: " + queryString);
 
+			
 			Map<String, String> formparams = new HashMap<String, String>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
-			if(context != null && !context.isEmpty())
-			{
-				formparams.put("context", context);
-			}
+			
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					TripleStoreURL, null, "application/sparql-results+json",
 					formparams);
