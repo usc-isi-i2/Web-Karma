@@ -1,14 +1,11 @@
 package edu.isi.karma.controller.command.alignment;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.List;
 import java.util.Scanner;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -122,8 +119,8 @@ public class SaveR2RMLModelCommand extends Command{
 			}catch(Exception e) {
 				System.out.println("here");
 				e.printStackTrace();
-				logger.error("Error occured while generating R2RML Model!");
-				return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
+				logger.error("Error occured while saving R2RML Model!");
+				return new UpdateContainer(new ErrorUpdate("Error occured while saving R2RML model!"));
 			}
 			
 		}
@@ -150,8 +147,8 @@ public class SaveR2RMLModelCommand extends Command{
 				return uc;
 			}
 		}
-		logger.error("Error occured while generating R2RML Model!");
-		return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
+		logger.error("Error occured while saving R2RML Model!");
+		return new UpdateContainer(new ErrorUpdate("Error occured while saving R2RML model!"));
 	}
 
 	@Override
