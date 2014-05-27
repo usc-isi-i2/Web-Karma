@@ -14,6 +14,7 @@ import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 
 public class ApplyModelFromURLCommand extends WorksheetCommand{
 
@@ -57,6 +58,7 @@ public class ApplyModelFromURLCommand extends WorksheetCommand{
 			FileUtils.copyURLToFile(url, file);
 			Command cmd = factory.createCommandFromFile(worksheetId, file, workspace);
 			UpdateContainer uc = cmd.doIt(workspace);
+			workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelUrl, URL);
 			file.delete();
 			return uc;
 		}catch(Exception e) {

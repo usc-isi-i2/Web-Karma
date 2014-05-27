@@ -47,10 +47,12 @@ import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -159,6 +161,9 @@ public class PublishRDFCommand extends Command {
 		}
 		
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
+		String url = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelUrl);
+		System.out.println(url);
+		
 		logger.debug(mapping.toString());
 		
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
@@ -196,6 +201,25 @@ public class PublishRDFCommand extends Command {
 			logger.info("tripleStoreURl : " + tripleStoreUrl);
 			TripleStoreUtil utilObj = new TripleStoreUtil();
 			boolean result = utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext, this.rdfSourceNamespace);
+			if (!url.isEmpty() && url.compareTo("") != 0) {
+				TripleStoreUtil util = new TripleStoreUtil();
+				StringBuilder sb = new StringBuilder();
+				url = url.trim();
+				if(!url.startsWith("<"))
+				{
+					sb.append("<");
+				}
+				sb.append(url);
+				if(!url.endsWith(">"))
+				{
+					sb.append(">");
+				}
+				sb.append(" <");
+				sb.append( Uris.MODEL_HAS_DATA_URI);
+				sb.append("> \"true\" .\n");
+				String input = sb.toString();
+				result &= util.saveToStore(input, tripleStoreUrl, this.graphUri, this.rdfSourceNamespace);
+			}
 			if(result) {
 				logger.info("Saved rdf to store");
 			} else {
