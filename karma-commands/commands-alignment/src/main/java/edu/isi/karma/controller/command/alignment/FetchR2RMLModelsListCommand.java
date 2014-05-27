@@ -13,6 +13,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.update.AbstractUpdate;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.rep.Workspace;
@@ -57,6 +58,8 @@ public class FetchR2RMLModelsListCommand extends Command{
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		TripleStoreUtil utilObj = new TripleStoreUtil();
+		try
+		{
 		final HashMap<String, List<String>> list = utilObj.getMappingsWithMetadata(TripleStoreUrl, context);
 		return new UpdateContainer(new AbstractUpdate() {
 			
@@ -83,6 +86,11 @@ public class FetchR2RMLModelsListCommand extends Command{
 				}
 			}
 		});
+		}
+		catch(Exception e)
+		{
+			return new UpdateContainer(new ErrorUpdate("Unable to get mappings with metadata: "+ e.getMessage()));
+		}
 	}
 
 	@Override

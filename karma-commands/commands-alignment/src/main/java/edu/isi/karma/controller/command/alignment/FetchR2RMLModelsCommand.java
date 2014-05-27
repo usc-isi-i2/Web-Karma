@@ -21,16 +21,17 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.HashMap;
+import java.util.List;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.FetchR2RMLUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.rep.Workspace;
-
-import java.util.HashMap;
-import java.util.List;
 
 public class FetchR2RMLModelsCommand extends Command {
 	
@@ -76,8 +77,15 @@ public class FetchR2RMLModelsCommand extends Command {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 
 		TripleStoreUtil utilObj = new TripleStoreUtil();
-		HashMap<String, List<String>> list = utilObj.fetchModelNames(this.tripleStoreUrl);
-		return new UpdateContainer(new FetchR2RMLUpdate(list.get("model_names"), list.get("model_urls")));
+		try
+		{
+			HashMap<String, List<String>> list = utilObj.fetchModelNames(this.tripleStoreUrl);
+			return new UpdateContainer(new FetchR2RMLUpdate(list.get("model_names"), list.get("model_urls")));
+		}
+		catch (Exception e)
+		{
+			return new UpdateContainer(new ErrorUpdate("Unable to fetch R2RML models: " + e.getMessage()));
+		}
 	}
 
 	@Override
