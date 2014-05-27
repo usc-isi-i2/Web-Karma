@@ -53,12 +53,18 @@ public class CloneTableUtils {
 	
 	public static void cloneDataTableExistingRow(Row oldRow, Row newRow, Table newDataTable, HTable oldHTable, HTable newHTable, List<HNode> hnodes, RepFactory factory) {
 		for (HNode hnode : hnodes) {
-			HNode newHNode = newHTable.getHNodeFromColumnName(hnode.getColumnName());
-			if (newHNode == null)
-				continue;
+			HNode newHNode = null;
 			Node oldNode = oldRow.getNode(hnode.getId());
-			Node newNode = newRow.getNode(newHNode.getId());
+			Node newNode = null;
+			for (HNode hn : newHTable.getHNodes()) {
+				if (hn.getColumnName().compareTo(hnode.getColumnName()) == 0 && !newRow.getNode(hn.getId()).hasNestedTable() && newRow.getNode(hn.getId()).getValue().asString().compareTo("") == 0) {
+					newHNode = hn;
+					newNode = newRow.getNode(hn.getId());
+				}
+			}
 			if (oldNode == null)
+				continue;
+			if (newHNode == null)
 				continue;
 			if (!oldNode.hasNestedTable()) {
 				newNode.setValue(oldNode.getValue(), oldNode.getStatus(), factory);
@@ -127,7 +133,6 @@ public class CloneTableUtils {
 		if (dt.getHTableId().compareTo(ht.getId()) == 0)
 			parentTables.add(dt);
 		else {
-			Table t = null;
 			for (Row row : dt.getRows(0, dt.getNumRows())) {
 				for (Node n : row.getNodes()) {
 					getDatatable(n.getNestedTable(), ht, parentTables);
