@@ -53,6 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.util.HTTPUtil;
+import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 
 public class TripleStoreUtil {
@@ -167,7 +168,6 @@ public class TripleStoreUtil {
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			e.printStackTrace();
 		}
 		return retVal;
 	}
@@ -195,9 +195,67 @@ public class TripleStoreUtil {
 		return retval;
 	}
 
-	/**
-	 * PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?z ?y ?x where { ?a km-dev:sourceName ?y . ?a a km-dev:R2RMLMapping . ?a owl:sameAs ?z . ?a km-dev:modelPublicationTime ?x} ORDER BY ?z ?y ?x
-	 */
+	public boolean testURIExists(String tripleStoreURL, String context, String uri) throws KarmaException
+	{
+		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
+		testTripleStoreConnection(tripleStoreURL);
+
+		try {
+			
+			String queryString = null;
+			if (context.isEmpty() || context.compareTo("") == 0)
+			{
+				queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> ASK { {"+ uri +" ?y ?z .} union { ?x ?y "+uri+" }} ";
+			}
+			else
+			{
+				queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> ASK FROM " + context + " { {"+ uri +" ?y ?z .} union { ?x ?y "+uri+" }} ";
+			}
+			logger.debug("query: " + queryString);
+
+			
+			Map<String, String> formparams = new HashMap<String, String>();
+			formparams.put("query", queryString);
+			formparams.put("queryLn", "SPARQL");
+			
+			String responseString = HTTPUtil.executeHTTPPostRequest(
+					tripleStoreURL, null, "application/sparql-results+json",
+					formparams);
+
+			if (responseString != null) {
+				JSONObject askResult = new JSONObject(responseString);
+				return askResult.getBoolean("boolean");
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		
+		return false;
+	}
+
+	private void testTripleStoreConnection(String tripleStoreURL)
+			throws KarmaException {
+		// check the connection first
+		if (checkConnection(tripleStoreURL)) {
+			logger.info("Connection Test passed");
+		} else {
+			logger.info("Failed connection test : " + tripleStoreURL);
+			throw new KarmaException("Failed connect test : " + tripleStoreURL);
+		}
+	}
+
+	private String normalizeTripleStoreURL(String tripleStoreURL) {
+		if (tripleStoreURL == null || tripleStoreURL.isEmpty()) {
+			tripleStoreURL = defaultServerUrl + "/" + karma_model_repo + "/" + "statements";
+		}
+		
+		if (tripleStoreURL.charAt(tripleStoreURL.length() - 1) == '/') {
+			tripleStoreURL = tripleStoreURL.substring(0,
+					tripleStoreURL.length() - 2);
+		}
+		logger.info("Repository URL : " + tripleStoreURL);
+		return tripleStoreURL;
+	}
 	/**
 	 * This method fetches all the source names of the models from the triple
 	 * store
@@ -205,27 +263,14 @@ public class TripleStoreUtil {
 	 * @param TripleStoreURL
 	 *            : the triple store URL
 	 * */
-	public HashMap<String, List<String>> getMappingsWithMetadata(String TripleStoreURL, String context) {
-		if (TripleStoreURL == null || TripleStoreURL.isEmpty()) {
-			TripleStoreURL = defaultServerUrl + "/" + karma_model_repo + "/" + "statements";
-		}
+	public HashMap<String, List<String>> getMappingsWithMetadata(String TripleStoreURL, String context) throws KarmaException {
+
+		TripleStoreURL = normalizeTripleStoreURL(TripleStoreURL);
+		testTripleStoreConnection(TripleStoreURL);
+		
 		List<String> times = new ArrayList<String>();
 		List<String> names = new ArrayList<String>();
 		List<String> urls = new ArrayList<String>();
-
-		if (TripleStoreURL.charAt(TripleStoreURL.length() - 1) == '/') {
-			TripleStoreURL = TripleStoreURL.substring(0,
-					TripleStoreURL.length() - 2);
-		}
-		logger.info("Repositoty URL : " + TripleStoreURL);
-
-		// check the connection first
-		if (checkConnection(TripleStoreURL)) {
-			logger.info("Connection Test passed");
-		} else {
-			logger.info("Failed connection test : " + TripleStoreURL);
-			return null;
-		}
 
 		try {
 			
@@ -259,7 +304,6 @@ public class TripleStoreUtil {
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			e.printStackTrace();
 		}
 		HashMap<String, List<String>> values = new HashMap<String, List<String>>();
 		values.put("model_publishtimes", times);
@@ -274,27 +318,14 @@ public class TripleStoreUtil {
 	 * @param TripleStoreURL
 	 *            : the triple store URL
 	 * */
-	public HashMap<String, List<String>> fetchModelNames(String TripleStoreURL) {
-		if (TripleStoreURL == null || TripleStoreURL.isEmpty()) {
-			TripleStoreURL = defaultServerUrl + "/" + karma_model_repo;
-		}
+	public HashMap<String, List<String>> fetchModelNames(String TripleStoreURL) throws KarmaException {
+
 		List<String> names = new ArrayList<String>();
 		List<String> urls = new ArrayList<String>();
 
-		if (TripleStoreURL.charAt(TripleStoreURL.length() - 1) == '/') {
-			TripleStoreURL = TripleStoreURL.substring(0,
-					TripleStoreURL.length() - 2);
-		}
-		logger.info("Repositoty URL : " + TripleStoreURL);
-
-		// check the connection first
-		if (checkConnection(TripleStoreURL)) {
-			logger.info("Connection Test passed");
-		} else {
-			logger.info("Failed connection test : " + TripleStoreURL);
-			return null;
-		}
-
+		TripleStoreURL = normalizeTripleStoreURL(TripleStoreURL);
+		testTripleStoreConnection(TripleStoreURL);
+		
 		try {
 			String queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?y ?z where { ?x km-dev:sourceName ?y . ?x km-dev:serviceUrl ?z . } ORDER BY ?y ?z";
 			logger.debug("query: " + queryString);
@@ -347,18 +378,13 @@ public class TripleStoreUtil {
 	 * */
 	private boolean saveToStore(HttpEntity entity, String tripleStoreURL,
 			String context, boolean replaceFlag, 
-			String rdfType, String baseURL) {
+			String rdfType, String baseURL) throws KarmaException {
 		boolean retVal = false;
 		HttpResponse response = null;
 
-		// check the connection first
-		if (checkConnection(tripleStoreURL)) {
-			logger.info("Connection Test passed");
-		} else {
-			logger.info("Failed connection test url : " + tripleStoreURL);
-			return retVal;
-		}
-
+		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
+		testTripleStoreConnection(tripleStoreURL);
+		
 		if (tripleStoreURL.charAt(tripleStoreURL.length() - 1) != '/') {
 			tripleStoreURL += "/";
 		}
@@ -380,42 +406,16 @@ public class TripleStoreUtil {
 				context = "null";
 			} else {
 				context = context.trim();
-//				if(context.indexOf('<') == 0){
-//					context = context.substring(1);
-//				}
-//				if(context.indexOf('>') == context.length()-1 ){
-//					context = context.substring(0, context.length()-1);
-//				}
 				context.replaceAll(">", "");
 				context.replaceAll("<", "");
-				
-//				if(context.indexOf('<') != 0){
-//					context = "<" + context;
-//				}
-//				if(context.indexOf('>') != context.length()-1 ){
-//					context += ">";
-//				}
 				builder.setParameter("context", "<" + context + ">");
 			}
 			
 			// preapring the base URL
 			if (baseURL != null && !baseURL.trim().isEmpty()) {
 				baseURL = baseURL.trim();
-//				if(baseURL.indexOf('<') != 0){
-//					baseURL = "<" + baseURL;
-//				}
-//				if(baseURL.indexOf('>') != baseURL.length()-1 ){
-//					baseURL += ">	";
-//				}
 				baseURL.replaceAll(">", "");
 				baseURL.replaceAll("<", "");
-//				if(baseURL.indexOf('<') == 0){
-//					baseURL = baseURL.substring(1);
-//				}
-//				if(baseURL.indexOf('>') == baseURL.length()-1 ){
-//					baseURL = baseURL.substring(0, baseURL.length()-1);
-//				}
-				
 				builder.setParameter("baseURI", "<" + baseURL + ">");
 			} else {
 				logger.info("Empty baseURL");
@@ -427,7 +427,6 @@ public class TripleStoreUtil {
 				// we use HttpPost over HttpPut, for put will replace the entire
 				// repo with an empty graph
 				logger.info("Using POST to save rdf to triple store");
-//				uri = builder.build();
 				HttpPost httpPost = new HttpPost(builder.build());
 				httpPost.setEntity(entity);
 
@@ -438,7 +437,6 @@ public class TripleStoreUtil {
 				// we use HttpPut to replace the context
 				logger.info("Using PUT to save rdf to triple store");
 				HttpPut httpput = new HttpPut(builder.build());
-//				HttpPut httpput = new HttpPut(urlString.toString());
 				httpput.setEntity(entity);
 
 				// executing the http request
@@ -475,7 +473,7 @@ public class TripleStoreUtil {
 	 * 
 	 * */
 	public boolean saveToStore(String filePath, String tripleStoreURL,
-			String context, boolean replaceFlag, String baseUri) {
+			String context, boolean replaceFlag, String baseUri) throws KarmaException{
 		File file = new File(filePath);
 		FileEntity entity = new FileEntity(file, ContentType.create(
 				mime_types.get(RDF_Types.Turtle.name()), "UTF-8"));
@@ -484,7 +482,7 @@ public class TripleStoreUtil {
 	}
 	
 	public boolean saveToStore(String input, String tripleStoreURL,
-			String context, String baseUri) {
+			String context, String baseUri)  throws KarmaException{
 		StringEntity entity = new StringEntity(input, ContentType.create(mime_types.get(RDF_Types.Turtle.name())));
 		return saveToStore(entity, tripleStoreURL, context, false,
 				RDF_Types.Turtle.name(), baseUri);
