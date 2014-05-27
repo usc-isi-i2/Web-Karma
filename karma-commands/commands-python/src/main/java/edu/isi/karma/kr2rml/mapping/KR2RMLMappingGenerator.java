@@ -584,11 +584,11 @@ public class KR2RMLMappingGenerator {
 	
 	
 	private String getNewRefObjectMapId() {
-		return REFOBJECT_MAP_PREFIX + "_" + refObjectMapId++;
+		return REFOBJECT_MAP_PREFIX + "_" + UUID.randomUUID();
 	}
 	
 	private String getNewTriplesMapId() {
-		return TRIPLES_MAP_PREFIX + "_" + tripleMapId++;
+		return TRIPLES_MAP_PREFIX + "_" + UUID.randomUUID();
 	}
 	
 }
