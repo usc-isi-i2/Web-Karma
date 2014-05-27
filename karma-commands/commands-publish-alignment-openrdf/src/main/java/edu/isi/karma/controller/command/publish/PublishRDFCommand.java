@@ -161,8 +161,6 @@ public class PublishRDFCommand extends Command {
 		}
 		
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
-		String url = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelUrl);
-		System.out.println(url);
 		
 		logger.debug(mapping.toString());
 		
@@ -200,8 +198,9 @@ public class PublishRDFCommand extends Command {
 			}
 			logger.info("tripleStoreURl : " + tripleStoreUrl);
 			TripleStoreUtil utilObj = new TripleStoreUtil();
+			String url = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelUrl);
 			boolean result = utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext, this.rdfSourceNamespace);
-			if (!url.isEmpty() && url.compareTo("") != 0) {
+			if (!url.isEmpty() && url.compareTo("") != 0 && utilObj.testURIExists(TripleStoreUtil.defaultModelsRepoUrl, "", url)) {
 				TripleStoreUtil util = new TripleStoreUtil();
 				StringBuilder sb = new StringBuilder();
 				url = url.trim();

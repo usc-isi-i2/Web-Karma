@@ -205,11 +205,11 @@ public class TripleStoreUtil {
 			String queryString = null;
 			if (context.isEmpty() || context.compareTo("") == 0)
 			{
-				queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> ASK { {"+ uri +" ?y ?z .} union { ?x ?y "+uri+" }} ";
+				queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> ASK { {<"+ uri +"> ?y ?z .} union { ?x ?y <"+uri+"> }} ";
 			}
 			else
 			{
-				queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> ASK FROM " + context + " { {"+ uri +" ?y ?z .} union { ?x ?y "+uri+" }} ";
+				queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> ASK FROM " + context + " { {<"+ uri +"> ?y ?z .} union { ?x ?y <"+uri+"> }} ";
 			}
 			logger.debug("query: " + queryString);
 
