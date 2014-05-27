@@ -25,7 +25,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +43,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -228,7 +228,12 @@ public class TripleStoreUtil {
 		}
 
 		try {
-			String queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?z ?y ?x where { ?a km-dev:sourceName ?y . ?a a km-dev:R2RMLMapping . ?a owl:sameAs ?z . ?a km-dev:modelPublicationTime ?x} ORDER BY ?z ?y ?x";
+			
+			String queryString = null;
+			if (context.isEmpty() || context.compareTo("") == 0)
+				queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?z ?y ?x where { ?a km-dev:sourceName ?y . ?a a km-dev:R2RMLMapping . ?a owl:sameAs ?z . ?a km-dev:modelPublicationTime ?x} ORDER BY ?z ?y ?x";
+			else
+				queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?z ?y ?x FROM " + context + " where { ?a km-dev:sourceName ?y . ?a a km-dev:R2RMLMapping . ?a owl:sameAs ?z . ?a km-dev:modelPublicationTime ?x} ORDER BY ?z ?y ?x";
 			logger.debug("query: " + queryString);
 
 			
@@ -340,8 +345,8 @@ public class TripleStoreUtil {
 	 *            : Specifies the base URI to resolve any relative URIs found in uploaded data against
 	 * 
 	 * */
-	private boolean saveToStore(File file, String tripleStoreURL,
-			String context, boolean replaceFlag, boolean deleteSrcFile,
+	private boolean saveToStore(HttpEntity entity, String tripleStoreURL,
+			String context, boolean replaceFlag, 
 			String rdfType, String baseURL) {
 		boolean retVal = false;
 		HttpResponse response = null;
@@ -368,9 +373,6 @@ public class TripleStoreUtil {
 				throw new Exception("Could not find spefied rdf type: "
 						+ rdfType);
 			}
-			FileEntity entity = new FileEntity(file, ContentType.create(
-					mime_types.get(rdfType), "UTF-8"));
-
 			
 			// preparing the context for the rdf
 			if (context == null || context.isEmpty()) {
@@ -450,9 +452,6 @@ public class TripleStoreUtil {
 			if (code >= 200 && code < 300) {
 				retVal = true;
 			}
-			if (deleteSrcFile) {
-				file.delete();
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getClass().getName() + " : " + e.getMessage());
@@ -477,52 +476,18 @@ public class TripleStoreUtil {
 	 * */
 	public boolean saveToStore(String filePath, String tripleStoreURL,
 			String context, boolean replaceFlag, String baseUri) {
-		return saveToStore(filePath, tripleStoreURL, context, replaceFlag,
-				false, baseUri);
+		File file = new File(filePath);
+		FileEntity entity = new FileEntity(file, ContentType.create(
+				mime_types.get(RDF_Types.Turtle.name()), "UTF-8"));
+		return saveToStore(entity, tripleStoreURL, context, replaceFlag,
+				RDF_Types.Turtle.name(), baseUri);
 	}
 	
-	public boolean saveToStore(File file, String tripleStoreURL,
-			String context, boolean replaceFlag, String baseUri) {
-		return saveToStore(file, tripleStoreURL, context, replaceFlag,
-				false, RDF_Types.Turtle.name(), baseUri);
-	}
-	
-	
-
-	/**
-	 * @param fileUrl
-	 *            : the url of the file from where the RDF is read
-	 * 
-	 *            Default_Parameters <br />
-	 *            tripleStoreURL : the local triple store URL context : null
-	 *            rdfType : Turtle deleteSrcFile : False (will retain the source
-	 *            file) replaceFlag : true
-	 * 
-	 * */
-	public boolean saveToStore(String fileUrl) {
-		return saveToStore(fileUrl, defaultServerUrl + "/" + karma_model_repo,
-				null, true, null);
-	}
-
-	/**
-	 * @param filePath
-	 *            : the url of the file from where the RDF is read
-	 * @param tripleStoreURL
-	 *            : the triple store URL
-	 * @param context
-	 *            : The graph context for the RDF
-	 * @param replaceFlag
-	 *            : Whether to replace the contents of the graph
-	 * @param deleteSrcFile
-	 *            : Whether to delete the source R2RML file or not
-	 * 
-	 *            rdfType default : Turtle
-	 * 
-	 * */
-	public boolean saveToStore(String filePath, String tripleStoreURL,
-			String context, boolean replaceFlag, boolean deleteSrcFile, String baseUri) {
-		return saveToStore(new File(filePath), tripleStoreURL, context, replaceFlag,
-				deleteSrcFile, RDF_Types.Turtle.name(), baseUri);
+	public boolean saveToStore(String input, String tripleStoreURL,
+			String context, String baseUri) {
+		StringEntity entity = new StringEntity(input, ContentType.create(mime_types.get(RDF_Types.Turtle.name())));
+		return saveToStore(entity, tripleStoreURL, context, false,
+				RDF_Types.Turtle.name(), baseUri);
 	}
 
 	/**

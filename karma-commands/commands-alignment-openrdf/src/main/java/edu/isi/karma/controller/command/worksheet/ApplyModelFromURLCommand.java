@@ -56,7 +56,9 @@ public class ApplyModelFromURLCommand extends WorksheetCommand{
 			File file = new File("tmp.ttl");	
 			FileUtils.copyURLToFile(url, file);
 			Command cmd = factory.createCommandFromFile(worksheetId, file, workspace);
-			return cmd.doIt(workspace);
+			UpdateContainer uc = cmd.doIt(workspace);
+			file.delete();
+			return uc;
 		}catch(Exception e) {
 			String msg = "Error occured while applying history!";
 			logger.error(msg, e);

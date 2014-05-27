@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.alignment;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.List;
 import java.util.Scanner;
@@ -170,9 +171,8 @@ public class SaveR2RMLModelCommand extends Command{
 						graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
 					}
 					URL url = new URL(modelUrl);
-					File file = new File("tmp.ttl");	
-					FileUtils.copyURLToFile(url, file);
-					Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(file.toURI().toURL());
+					StringWriter test = new StringWriter();
+					Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(url);
 					Property rdfTypeProp = model.getProperty(Uris.RDF_TYPE_URI);
 					
 					RDFNode node = model.getResource(Uris.KM_R2RML_MAPPING_URI);
@@ -182,9 +182,11 @@ public class SaveR2RMLModelCommand extends Command{
 					{
 						model.add(r, model.getProperty(Uris.OWL_SAMEAS_URI), model.getResource(url.toString()));
 					}
-					model.write(new FileOutputStream(file),"TTL");
+					model.write(test,"TTL");
 					model.close();
-					boolean result = utilObj.saveToStore(file, tripleStoreUrl, graphName, true, null);
+					String content = test.getBuffer().toString();
+					test.close();
+					boolean result = utilObj.saveToStore(content, tripleStoreUrl, graphName, null);
 					return result;
 		}catch (Exception e) {
 			return false;
