@@ -421,7 +421,7 @@ var clearModelDialog = (function() {
             var info = new Object();
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "ClearTrippleStoreCommand";
+            info["command"] = "ClearTripleStoreCommand";
             info['tripleStoreUrl'] = $('#txtR2RML_URL_Clear').val();
             info['graphContext'] = $('#txtGraph_URL_Clear').val();
             console.log(info['graphContext']);

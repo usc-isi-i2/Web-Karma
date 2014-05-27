@@ -6,13 +6,13 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Workspace;
 
-public class ClearTrippleStoreCommandFactory extends CommandFactory{
+public class ClearTripleStoreCommandFactory extends CommandFactory{
 
 	private enum Arguments {
 		modelUrl, tripleStoreUrl, graphContext
 	}
 	
-	public ClearTrippleStoreCommandFactory() {
+	public ClearTripleStoreCommandFactory() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -20,13 +20,13 @@ public class ClearTrippleStoreCommandFactory extends CommandFactory{
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.graphContext.name());
-		return new ClearTrippleStoreCommand(getNewId(workspace), tripleStoreUrl, context);
+		return new ClearTripleStoreCommand(getNewId(workspace), tripleStoreUrl, context);
 	}
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand() {
 		// TODO Auto-generated method stub
-		return ClearTrippleStoreCommand.class;
+		return ClearTripleStoreCommand.class;
 	}
 
 }

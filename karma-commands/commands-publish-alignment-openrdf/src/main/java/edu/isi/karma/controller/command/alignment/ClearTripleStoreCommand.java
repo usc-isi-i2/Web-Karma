@@ -17,10 +17,10 @@ import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
-public class ClearTrippleStoreCommand extends Command{
+public class ClearTripleStoreCommand extends Command{
 	private String tripleStoreUrl;
 	private String graphUrl;
-	public ClearTrippleStoreCommand(String id, String tripleStoreUrl, String context) {
+	public ClearTripleStoreCommand(String id, String tripleStoreUrl, String context) {
 		super(id);
 		this.tripleStoreUrl = tripleStoreUrl;
 		this.graphUrl = context;
@@ -55,7 +55,7 @@ public class ClearTrippleStoreCommand extends Command{
 		return CommandType.notUndoable;
 	}
 
-	private static Logger logger = LoggerFactory.getLogger(ClearTrippleStoreCommand.class);
+	private static Logger logger = LoggerFactory.getLogger(ClearTripleStoreCommand.class);
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
