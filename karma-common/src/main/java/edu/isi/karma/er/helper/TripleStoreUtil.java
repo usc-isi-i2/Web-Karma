@@ -28,6 +28,7 @@ import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -231,6 +232,71 @@ public class TripleStoreUtil {
 		}
 		
 		return false;
+	}
+	
+	public HashMap<String, List<String>> getPredicatesForTriplesMapsWithSameClass(String tripleStoreURL, String context, String classToMatch) throws KarmaException
+	{
+		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
+		testTripleStoreConnection(tripleStoreURL);
+		
+		List<String> predicates = new LinkedList<String>();
+		List<String> matchingTriplesMaps = new LinkedList<String>();
+
+		try {
+
+			StringBuilder query = new StringBuilder();
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
+			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
+			query.append("SELECT ?predicate (group_concat(?y; separator = \",\") as ?triplesMaps )\n");
+			
+			if (context.isEmpty() || context.compareTo("") == 0)
+			{
+				query.append("FROM ");
+				query.append(context);
+				query.append("\n");
+			}
+			query.append("{\n");
+			query.append("?x owl:sameAs ?aaa . \n"); 
+			query.append("?aaa km-dev:hasData \"true\"\n"); 
+			query.append("?x km-dev:hasTriplesMap ?y .\n");
+			query.append("?y rr:subjectMap ?z .\n");
+			query.append("?z rr:class ");
+			query.append(classToMatch);
+			query.append(" .\n");
+			query.append("?y rr:predicateObjectMap ?bbb . \n");
+			query.append("?bbb rr:predicate ?predicates .} GROUP BY ?predicates \n");
+			
+			String queryString = query.toString();
+			logger.debug("query: " + queryString);
+
+			
+			Map<String, String> formparams = new HashMap<String, String>();
+			formparams.put("query", queryString);
+			formparams.put("queryLn", "SPARQL");
+			
+			String responseString = HTTPUtil.executeHTTPPostRequest(
+					tripleStoreURL, null, "application/sparql-results+json",
+					formparams);
+
+			if (responseString != null) {
+				JSONObject models = new JSONObject(responseString);
+				JSONArray values = models.getJSONObject("results")
+						.getJSONArray("bindings");
+				int count = 0;
+				while (count < values.length()) {
+					JSONObject o = values.getJSONObject(count++);
+					predicates.add(o.getJSONObject("predicate").getString("value"));
+					matchingTriplesMaps.add(o.getJSONObject("triplesMaps").getString("value"));
+				
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		HashMap<String, List<String>> values = new HashMap<String, List<String>>();
+		values.put("predicate", predicates);
+		values.put("triplesMaps", matchingTriplesMaps);
+		return values;
 	}
 
 	private void testTripleStoreConnection(String tripleStoreURL)
