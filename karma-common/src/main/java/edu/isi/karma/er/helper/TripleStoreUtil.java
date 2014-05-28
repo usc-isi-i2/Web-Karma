@@ -183,7 +183,7 @@ public class TripleStoreUtil {
 			logger.info(url);
 			String response = HTTPUtil.executeHTTPGetRequest(url, null);
 			try {
-				int i = Integer.parseInt(response);
+				int i = Integer.parseInt(response.trim());
 				logger.debug("Connnection to repo : " + url
 						+ " Successful.\t Size : " + i);
 				retval = true;
@@ -246,11 +246,11 @@ public class TripleStoreUtil {
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
 			query.append("CONSTRUCT { ?s ?p ?o }\n");
 			
-			if (context.isEmpty() || context.compareTo("") == 0)
+			if (!context.isEmpty() && context.compareTo("") != 0)
 			{
-				query.append("FROM ");
+				query.append("FROM <");
 				query.append(context);
-				query.append("\n");
+				query.append(">\n");
 			}
 			query.append("{\n");
 			query.append("{\n");
@@ -311,9 +311,9 @@ public class TripleStoreUtil {
 			
 			if (context.isEmpty() || context.compareTo("") == 0)
 			{
-				query.append("FROM ");
+				query.append("FROM <");
 				query.append(context);
-				query.append("\n");
+				query.append(">\n");
 			}
 			query.append("{\n");
 			query.append("?x owl:sameAs ?aaa . \n"); 
@@ -608,9 +608,9 @@ public class TripleStoreUtil {
 	}
 	
 	public boolean saveToStore(String input, String tripleStoreURL,
-			String context, String baseUri)  throws KarmaException{
+			String context, Boolean replaceFlag, String baseUri)  throws KarmaException{
 		StringEntity entity = new StringEntity(input, ContentType.create(mime_types.get(RDF_Types.Turtle.name())));
-		return saveToStore(entity, tripleStoreURL, context, false,
+		return saveToStore(entity, tripleStoreURL, context, replaceFlag,
 				RDF_Types.Turtle.name(), baseUri);
 	}
 
