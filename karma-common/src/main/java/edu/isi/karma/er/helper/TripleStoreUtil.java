@@ -248,9 +248,9 @@ public class TripleStoreUtil {
 			
 			if (!context.isEmpty() && context.compareTo("") != 0)
 			{
-				query.append("FROM ");
+				query.append("FROM <");
 				query.append(context);
-				query.append("\n");
+				query.append(">\n");
 			}
 			query.append("{\n");
 			query.append("{\n");
@@ -311,9 +311,9 @@ public class TripleStoreUtil {
 			
 			if (context.isEmpty() || context.compareTo("") == 0)
 			{
-				query.append("FROM ");
+				query.append("FROM <");
 				query.append(context);
-				query.append("\n");
+				query.append(">\n");
 			}
 			query.append("{\n");
 			query.append("?x owl:sameAs ?aaa . \n"); 

@@ -19,6 +19,7 @@ import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 public class ApplyModelFromURLCommand extends WorksheetCommand{
 
 	private String URL;
+	private static final String baseUrl = "http://localhost:8080/R2RMLMapping/local/repository/";
 	private static Logger logger = LoggerFactory.getLogger(ApplyModelFromURLCommand.class);
 	public ApplyModelFromURLCommand(String id, String worksheetId, String URL) {
 		super(id, worksheetId);
@@ -53,7 +54,7 @@ public class ApplyModelFromURLCommand extends WorksheetCommand{
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		ApplyHistoryFromR2RMLModelCommandFactory factory = new ApplyHistoryFromR2RMLModelCommandFactory();
 		try {
-			URL url = new URL(URL);
+			URL url = new URL(ApplyModelFromURLCommand.baseUrl + URL);
 			File file = new File("tmp.ttl");	
 			FileUtils.copyURLToFile(url, file);
 			Command cmd = factory.createCommandFromFile(worksheetId, file, workspace);
