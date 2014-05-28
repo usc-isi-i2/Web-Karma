@@ -21,6 +21,8 @@ public class ApplyModelFromURLCommand extends WorksheetCommand{
 	private String modelURL;
 	private String modelContext;
 	private String modelRepository;
+	private static final String baseUrl = "http://localhost:8080/R2RMLMapping/local/repository/";
+
 	private static Logger logger = LoggerFactory.getLogger(ApplyModelFromURLCommand.class);
 	public ApplyModelFromURLCommand(String id, String worksheetId, String modelURL, String modelContext, String modelRepository) {
 		super(id, worksheetId);
@@ -31,25 +33,21 @@ public class ApplyModelFromURLCommand extends WorksheetCommand{
 
 	@Override
 	public String getCommandName() {
-		// TODO Auto-generated method stub
 		return ApplyModelFromURLCommand.class.getSimpleName();
 	}
 
 	@Override
 	public String getTitle() {
-		// TODO Auto-generated method stub
 		return "Apply Models";
 	}
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
 		return modelURL;
 	}
 
 	@Override
 	public CommandType getCommandType() {
-		// TODO Auto-generated method stub
 		return CommandType.notUndoable;
 	}
 
@@ -57,7 +55,10 @@ public class ApplyModelFromURLCommand extends WorksheetCommand{
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		ApplyHistoryFromR2RMLModelCommandFactory factory = new ApplyHistoryFromR2RMLModelCommandFactory();
 		try {
-			URL url = new URL(modelURL);
+
+			String context = (modelContext != null && !modelContext.isEmpty()? (modelContext + "/") : "");
+			URL url = new URL(ApplyModelFromURLCommand.baseUrl + context + modelURL);
+
 			File file = new File("tmp.ttl");	
 			FileUtils.copyURLToFile(url, file);
 			Command cmd = factory.createCommandFromFile(worksheetId, file, workspace);

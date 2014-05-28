@@ -183,7 +183,7 @@ public class SaveR2RMLModelCommand extends Command{
 					model.close();
 					String content = test.getBuffer().toString();
 					test.close();
-					boolean result = utilObj.saveToStore(content, tripleStoreUrl, graphName, null);
+					boolean result = utilObj.saveToStore(content, tripleStoreUrl, graphName, new Boolean(true), null);
 					return result;
 		}catch (Exception e) {
 			return false;

@@ -32,7 +32,7 @@ public class R2RMLMappingServlet extends HttpServlet{
 			for (int i = 0; i < contents.length; i++) {
 				if (FilenameUtils.getExtension(contents[i].getName()).compareTo("ttl") == 0) {
 					JSONObject obj = new JSONObject();
-					obj.put("url", serverAddress + "/R2RMLMapping/Local/" + contents[i].getName());
+					obj.put("url", serverAddress + "/R2RMLMapping/local/" + contents[i].getName());
 					array.put(obj);
 				}
 			}

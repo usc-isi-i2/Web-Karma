@@ -220,7 +220,8 @@ public class PublishRDFCommand extends Command {
 				String modelRepoUrl = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelRepository);
 				modelRepoUrl = modelRepoUrl == null || modelRepoUrl.isEmpty()? TripleStoreUtil.defaultModelsRepoUrl : modelRepoUrl;
 				String modelContext = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelContext);
-				result &= util.saveToStore(input, modelRepoUrl, modelContext, this.rdfSourceNamespace);
+				result &= util.saveToStore(input, modelRepoUrl, modelContext, new Boolean(this.replaceContext), this.rdfSourceNamespace);
+
 			}
 			if(result) {
 				logger.info("Saved rdf to store");
