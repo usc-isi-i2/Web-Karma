@@ -515,7 +515,9 @@ var applyModelDialog = (function() {
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
             info["command"] = "ApplyModelFromURLCommand";
-            info['graphContext'] = checked['value'];
+            info['modelRepository'] = $('#txtR2RML_URL_Fetch').val();
+            info['modelContext'] = $('#txtGraph_URL_Fetch').val();
+            info['modelUrl'] = checked['value'];
             console.log(info['graphContext']);
             showLoading(info["worksheetId"]);
             var returned = $.ajax({

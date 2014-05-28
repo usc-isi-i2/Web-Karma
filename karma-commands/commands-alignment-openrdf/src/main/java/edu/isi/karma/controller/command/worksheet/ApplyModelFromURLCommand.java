@@ -18,11 +18,15 @@ import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 
 public class ApplyModelFromURLCommand extends WorksheetCommand{
 
-	private String URL;
+	private String modelURL;
+	private String modelContext;
+	private String modelRepository;
 	private static Logger logger = LoggerFactory.getLogger(ApplyModelFromURLCommand.class);
-	public ApplyModelFromURLCommand(String id, String worksheetId, String URL) {
+	public ApplyModelFromURLCommand(String id, String worksheetId, String modelURL, String modelContext, String modelRepository) {
 		super(id, worksheetId);
-		this.URL = URL;
+		this.modelURL = modelURL;
+		this.modelContext = modelContext;
+		this.modelRepository = modelRepository;
 	}
 
 	@Override
@@ -40,7 +44,7 @@ public class ApplyModelFromURLCommand extends WorksheetCommand{
 	@Override
 	public String getDescription() {
 		// TODO Auto-generated method stub
-		return URL;
+		return modelURL;
 	}
 
 	@Override
@@ -53,12 +57,14 @@ public class ApplyModelFromURLCommand extends WorksheetCommand{
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		ApplyHistoryFromR2RMLModelCommandFactory factory = new ApplyHistoryFromR2RMLModelCommandFactory();
 		try {
-			URL url = new URL(URL);
+			URL url = new URL(modelURL);
 			File file = new File("tmp.ttl");	
 			FileUtils.copyURLToFile(url, file);
 			Command cmd = factory.createCommandFromFile(worksheetId, file, workspace);
 			UpdateContainer uc = cmd.doIt(workspace);
-			workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelUrl, URL);
+			workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelUrl, modelURL);
+			workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelContext, modelContext);
+			workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelRepository, modelRepository);
 			file.delete();
 			return uc;
 		}catch(Exception e) {
