@@ -234,6 +234,66 @@ public class TripleStoreUtil {
 		return false;
 	}
 	
+	public String getMappingFromTripleStore(String tripleStoreURL, String context, String mappingURI) throws KarmaException
+	{
+		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
+		testTripleStoreConnection(tripleStoreURL);
+	
+		try {
+
+			StringBuilder query = new StringBuilder();
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
+			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
+			query.append("CONSTRUCT { ?s ?p ?o }\n");
+			
+			if (context.isEmpty() || context.compareTo("") == 0)
+			{
+				query.append("FROM ");
+				query.append(context);
+				query.append("\n");
+			}
+			query.append("{\n");
+			query.append("{\n");
+			query.append("?mapping owl:sameAs ");
+			query.append("<");
+			query.append(mappingURI);
+			query.append(">");
+			query.append(" . \n"); 
+			query.append("?s ?p ?o .\n");
+			query.append("?s a ?type . \n");
+			query.append("FILTER (?type in (rr:TriplesMap, rr:SubjectMap,  rr:ObjectMap,  rr:LogicalTable, rr:PredicateObjectMap )) .\n");
+			query.append("}\n");
+			query.append("UNION\n{\n");
+			query.append("?s ?p ?o .\n");
+			query.append("?s owl:sameAs ");
+			query.append("<");
+			query.append(mappingURI);
+			query.append(">");
+			query.append(" . \n"); 
+			
+			query.append("}\n");
+			query.append("}\n");
+			
+			String queryString = query.toString();
+			logger.debug("query: " + queryString);
+
+			
+			Map<String, String> formparams = new HashMap<String, String>();
+			formparams.put("query", queryString);
+			formparams.put("queryLn", "SPARQL");
+			
+			String responseString = HTTPUtil.executeHTTPPostRequest(
+					tripleStoreURL, null, mime_types.get(RDF_Types.N3.name()),
+					formparams);
+
+			if (responseString != null) {
+				return responseString;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return "";
+	}
 	public HashMap<String, List<String>> getPredicatesForTriplesMapsWithSameClass(String tripleStoreURL, String context, String classToMatch) throws KarmaException
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
