@@ -105,5 +105,44 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-        
+ <div class="modal fade" id="manageIncomingOutgoingLinksDialog" tabindex="-1">
+  <div class="modal-dialog modal-medium">
+		<div class="modal-content">
+			<form class="bs-example bs-example-form" role="form">
+		     <div class="modal-header">
+			      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			       <h4 class="modal-title">Incoming-Outgoing Links for: <span id="columnName"></span></h4>
+			  </div>
+			  <div class="modal-body">
+			  	
+			  		<div class="form-group">
+			  			<B>Incoming Links:</B>
+			  			<div id="incomingLinksDiv">
+					  		<table id="incomingLinksTable" class="table table-striped table-condensed">
+				  			</table>
+				  		</div>
+				  	</div>
+			  			
+			  		<div class="form-group">
+			  			<B>Outgoing Links:</B>
+			  			<div id="outgoingLinksDiv">
+					  		<table id="outgoingLinksTable" class="table table-striped table-condensed">
+				  			</table>
+				  		</div>
+				  	</div>
+				  	
+				  	<div class="error" style="display: none">Please select the file format!</div>
+				  	
+			  </div>
+			  <div class="modal-footer">
+			  		<button type="button" class="btn btn-default" id="btnAddIncomingLink">Add Incoming Link</button>
+				  	<button type="button" class="btn btn-default" id="btnAddOutgoingLink">Add Outgoing Link</button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			        <button type="submit" class="btn btn-primary" id="btnSave">Save</button>
+			  </div>
+			 </form>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+       
 </body>

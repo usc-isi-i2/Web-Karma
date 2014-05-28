@@ -75,3 +75,17 @@ body {
  	overflow: auto;
  	max-height: 500px;
  }
+ 
+ .bold {
+ 	font-weight: bold;
+ }
+
+ #incomingLinksDiv {
+ 	max-height: 400px;
+ 	overflow: auto;
+ }
+ 
+ #outgoingLinksDiv {
+ 	max-height: 400px;
+ 	overflow: auto;
+ }

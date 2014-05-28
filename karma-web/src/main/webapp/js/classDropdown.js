@@ -13,6 +13,7 @@ var ClassDropdownMenu = (function() {
     		   	        //Title, function to call, needs file upload     
     		   	        [ "Add Incoming Link", addIncomingLink],
     		   	        [ "Add Outgoing Link", addOutgoingLink],
+    		   	        [ "Manage Links", manageLinks],
     		   	        [ "divider" , null ],
     		   	        [ "Export CSV" , exportCSV ],
     		   	        [ "Export JSON" , exportJSON ],
@@ -29,6 +30,13 @@ var ClassDropdownMenu = (function() {
     	function hide() {
     		$("#" + menuId).hide();
     		$(document).off('click', hide);
+    	}
+    	
+    	function manageLinks() {
+    		console.log("showIncomingOutgoingLinks");
+    		ManageIncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
+    				columnId, alignmentId,
+    				columnLabel, columnUri, columnDomain, "InternalNode");
     	}
     	
     	function addIncomingLink() {

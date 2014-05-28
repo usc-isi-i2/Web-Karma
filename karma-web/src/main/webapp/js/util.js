@@ -407,6 +407,44 @@ function sortClassPropertyNodes(nodes) {
     });
 }
 
+function getAllLinksForNode(worksheetId, alignmentId, nodeId) {
+	var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "GetCurrentLinksOfInternalNodeCommand";
+    info["worksheetId"] = worksheetId;
+    info["alignmentId"] = alignmentId;
+    info["nodeId"] = nodeId;
+    var result = [];
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        async : false,
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                $.each(json["elements"], function(index, element) {
+                    if(element["updateType"] == "GetCurrentLinks") {
+                    	$.each(element["edges"], function(index2, node) {
+                    		var source = {"id":node["edgeSourceId"], "label":node["edgeSource"], "uri":node["edgeSourceUri"]};
+                    		var target = {"id":node["edgeTargetId"], "label":node["edgeTarget"], "uri":node["edgeTargetUri"]};
+                    		var prop = {"id":node["edgeId"], "label":node["edgeLabel"]};
+                    		var link = {"type":node["direction"], "source":source, "target":target, "property":prop};
+                        	
+                        	result.push(link);
+                        });
+                    }
+                });
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while getting nodes list!");
+            }
+    });
+    return result;
+}
+
 //Make All Modal Dialogs Resizeable
 $(".modal-dialog").resizable({ handles: "e, w" });
 $(".modal-dialog").draggable({

@@ -81,3 +81,7 @@ button#resetButton {
 .modal-wide {
     width: 80%; /* respsonsive width */
 }
+
+.modal-medium {
+    width: 60%;
+}
