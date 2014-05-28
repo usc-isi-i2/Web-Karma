@@ -117,6 +117,7 @@ public class KR2RMLMappingWriter {
 		repoURIs.put(Uris.RR_PREDICATEOBJECTMAP_CLASS_URI, f.createURI(Uris.RR_PREDICATEOBJECTMAP_CLASS_URI));
 		repoURIs.put(Uris.RR_REF_OBJECT_MAP_CLASS_URI, f.createURI(Uris.RR_REF_OBJECT_MAP_CLASS_URI));
 		repoURIs.put(Uris.RR_OBJECTMAP_CLASS_URI, f.createURI(Uris.RR_OBJECTMAP_CLASS_URI));
+		repoURIs.put(Uris.RR_LOGICAL_TABLE_CLASS_URI, f.createURI(Uris.RR_LOGICAL_TABLE_CLASS_URI));
 		repoURIs.put(Uris.RR_TEMPLATE_URI, f.createURI(Uris.RR_TEMPLATE_URI));
 		repoURIs.put(Uris.RR_SUBJECTMAP_URI, f.createURI(Uris.RR_SUBJECTMAP_URI));
 		repoURIs.put(Uris.RR_PREDICATE_URI, f.createURI(Uris.RR_PREDICATE_URI));
@@ -136,6 +137,11 @@ public class KR2RMLMappingWriter {
 		repoURIs.put(Uris.KM_NODE_ID_URI, f.createURI(Uris.KM_NODE_ID_URI));
 		repoURIs.put(Uris.KM_STEINER_TREE_ROOT_NODE, f.createURI(Uris.KM_STEINER_TREE_ROOT_NODE));
 		repoURIs.put(Uris.KM_HAS_TRIPLES_MAP_URI, f.createURI(Uris.KM_HAS_TRIPLES_MAP_URI));
+		repoURIs.put(Uris.KM_HAS_OBJECT_MAP_URI, f.createURI(Uris.KM_HAS_OBJECT_MAP_URI));
+		repoURIs.put(Uris.KM_HAS_PREDICATE_OBJECT_MAP_URI, f.createURI(Uris.KM_HAS_PREDICATE_OBJECT_MAP_URI));
+		repoURIs.put(Uris.KM_HAS_SUBJECT_MAP_URI, f.createURI(Uris.KM_HAS_SUBJECT_MAP_URI));
+		repoURIs.put(Uris.KM_HAS_LOGICAL_TABLE_URI, f.createURI(Uris.KM_HAS_LOGICAL_TABLE_URI));
+		repoURIs.put(Uris.KM_IS_PART_OF_MAPPING_URI, f.createURI(Uris.KM_IS_PART_OF_MAPPING_URI));
 		
 	}
 
@@ -191,7 +197,7 @@ public class KR2RMLMappingWriter {
 		URI trMapUri = f.createURI(Namespaces.KARMA_DEV + trMap.getId());
 		addTripleMapMetadata(mapping, mappingRes, worksheet, trMap, trMapUri);
 		
-		addSubjectMap(mapping, trMap, trMapUri, workspace);
+		addSubjectMap(mapping, mappingRes, trMap, trMapUri, workspace);
 		
 		addPredicateObjectMaps(mapping, trMap, trMapUri, workspace);
 	}
@@ -203,21 +209,26 @@ public class KR2RMLMappingWriter {
 		con.add(trMapUri, RDF.TYPE, repoURIs.get(Uris.RR_TRIPLESMAP_CLASS_URI));
 		// Associate it with the source mapping URI
 		con.add(mappingRes, repoURIs.get(Uris.KM_HAS_TRIPLES_MAP_URI), trMapUri);
+		con.add(trMapUri, repoURIs.get(Uris.KM_IS_PART_OF_MAPPING_URI), mappingRes);
 		
-		addLogicalSource(mapping, worksheet, trMap, trMapUri);
+		addLogicalSource(mapping, worksheet, mappingRes, trMapUri);
 	}
 
-	private void addLogicalSource(KR2RMLMapping mapping, Worksheet worksheet, TriplesMap tri, URI trMapUri)
+	private void addLogicalSource(KR2RMLMapping mapping, Worksheet worksheet, Resource mappingRes, URI trMapUri)
 			throws RepositoryException {
 		// Add the Logical table information
 		BNode logTableBNode = f.createBNode();
 		
 		con.add(logTableBNode, repoURIs.get(Uris.RR_TABLENAME_URI), f.createLiteral(worksheet.getTitle()));
+		con.add(logTableBNode, RDF.TYPE, repoURIs.get(Uris.RR_LOGICAL_TABLE_CLASS_URI));
+		con.add(logTableBNode, repoURIs.get(Uris.KM_IS_PART_OF_MAPPING_URI), mappingRes);
+		con.add(mappingRes, repoURIs.get(Uris.KM_HAS_LOGICAL_TABLE_URI), logTableBNode);
 		con.add(trMapUri, repoURIs.get(Uris.RR_LOGICAL_TABLE_URI), logTableBNode);
 
 	}
+	
 	private void addSubjectMap(KR2RMLMapping mapping,
-			TriplesMap trMap,
+			Resource mappingRes, TriplesMap trMap,
 			URI trMapUri, Workspace workspace) throws RepositoryException {
 		
 		KR2RMLColumnNameFormatter columnNameFormatter = mapping.getColumnNameFormatter();
@@ -226,7 +237,8 @@ public class KR2RMLMappingWriter {
 		SubjectMap sjMap = trMap.getSubject();
 		BNode sjBlankNode = f.createBNode();
 		con.add(trMapUri, repoURIs.get(Uris.RR_SUBJECTMAP_URI), sjBlankNode);
-
+		con.add(mappingRes, repoURIs.get(Uris.KM_HAS_SUBJECT_MAP_URI), sjBlankNode);
+		con.add(sjBlankNode, repoURIs.get(Uris.KM_IS_PART_OF_MAPPING_URI), mappingRes);
 		// Add the subject map type statement
 		con.add(sjBlankNode, RDF.TYPE, repoURIs.get(Uris.RR_SUBJECTMAP_CLASS_URI));
 		
