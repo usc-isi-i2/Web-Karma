@@ -48,7 +48,7 @@ public class GetCurrentLinksOfInternalNodeCommand extends Command {
 
 	private enum JsonKeys {
 		updateType, edgeLabel, edgeId, edgeSource, edgeTarget, 
-		edges, direction, edgeSourceId, edgeTargetId
+		edges, direction, edgeSourceId, edgeTargetId, edgeSourceUri, edgeTargetUri
 	}
 	
 	private enum LINK_DIRECTION {
@@ -131,8 +131,10 @@ public class GetCurrentLinksOfInternalNodeCommand extends Command {
 				
 				String edgeSourceLabel = edgeSource.getDisplayId();
 				String edgeSourceId = edgeSource.getId();
+				String edgeSourceUri = edgeSource.getUri();
 				String edgeTargetLabel = edgeTarget.getDisplayId();
 				String edgeTargetId = edgeTarget.getId();
+				String edgeTargetUri = edgeTarget.getUri();
 				
 				Label srcNodeLabel = edgeSource.getLabel();
 				if (srcNodeLabel.getUri() !=null && srcNodeLabel.getNs() != null 
@@ -150,9 +152,11 @@ public class GetCurrentLinksOfInternalNodeCommand extends Command {
 				edgeObj.put(JsonKeys.edgeLabel.name(), linkLabel);
 				edgeObj.put(JsonKeys.edgeSource.name(), edgeSourceLabel);
 				edgeObj.put(JsonKeys.edgeSourceId.name(), edgeSourceId);
+				edgeObj.put(JsonKeys.edgeSourceUri.name(), edgeSourceUri);
 				edgeObj.put(JsonKeys.direction.name(), direction.name());
 				edgeObj.put(JsonKeys.edgeTarget.name(), edgeTargetLabel);
 				edgeObj.put(JsonKeys.edgeTargetId.name(), edgeTargetId);
+				edgeObj.put(JsonKeys.edgeTargetUri.name(), edgeTargetUri);
 				edgesArray.put(edgeObj);
 			}
 		});
