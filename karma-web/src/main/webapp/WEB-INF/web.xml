@@ -121,6 +121,10 @@
      <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>
      <servlet-class>edu.isi.karma.webserver.SpatialReferenceSystemServiceHandler</servlet-class>
     </servlet>
+  <servlet>
+  	<servlet-name>R2RMLMappingTripleStoreServlet</servlet-name>
+  	<servlet-class>edu.isi.karma.webserver.R2RMLMappingTripleStoreServlet</servlet-class>
+  </servlet>
     
   <servlet-mapping>
     <servlet-name>KarmaServlet</servlet-name>
@@ -129,13 +133,20 @@
   
   <servlet-mapping>
   	<servlet-name>R2RMLMappingServlet</servlet-name>
-  	<url-pattern>/R2RMLMapping/Local</url-pattern>
+  	<url-pattern>/R2RMLMapping/local</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+  	<servlet-name>R2RMLMappingTripleStoreServlet</servlet-name>
+  	<url-pattern>/R2RMLMapping/local/repository/*</url-pattern>
   </servlet-mapping>
   
   <servlet-mapping>
   	<servlet-name>R2RMLMappingServlet</servlet-name>
-  	<url-pattern>/R2RMLMapping/Local/*</url-pattern>
+  	<url-pattern>/R2RMLMapping/local/*</url-pattern>
   </servlet-mapping>
+  
+  
   
   <servlet-mapping>
     <servlet-name>requestController</servlet-name>

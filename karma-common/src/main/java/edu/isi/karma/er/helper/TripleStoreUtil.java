@@ -608,9 +608,9 @@ public class TripleStoreUtil {
 	}
 	
 	public boolean saveToStore(String input, String tripleStoreURL,
-			String context, String baseUri)  throws KarmaException{
+			String context, Boolean replaceFlag, String baseUri)  throws KarmaException{
 		StringEntity entity = new StringEntity(input, ContentType.create(mime_types.get(RDF_Types.Turtle.name())));
-		return saveToStore(entity, tripleStoreURL, context, false,
+		return saveToStore(entity, tripleStoreURL, context, replaceFlag,
 				RDF_Types.Turtle.name(), baseUri);
 	}
 
