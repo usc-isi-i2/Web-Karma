@@ -200,7 +200,7 @@ public class PublishRDFCommand extends Command {
 			TripleStoreUtil utilObj = new TripleStoreUtil();
 			String url = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelUrl);
 			boolean result = utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext, this.rdfSourceNamespace);
-			if (!url.isEmpty() && url.compareTo("") != 0 && utilObj.testURIExists(TripleStoreUtil.defaultModelsRepoUrl, "", url)) {
+			if (url != null && !url.isEmpty() && url.compareTo("") != 0 && utilObj.testURIExists(TripleStoreUtil.defaultModelsRepoUrl, "", url)) {
 				TripleStoreUtil util = new TripleStoreUtil();
 				StringBuilder sb = new StringBuilder();
 				url = url.trim();
