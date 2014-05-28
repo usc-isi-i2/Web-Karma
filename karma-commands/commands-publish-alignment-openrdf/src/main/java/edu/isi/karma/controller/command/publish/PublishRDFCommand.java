@@ -217,7 +217,7 @@ public class PublishRDFCommand extends Command {
 				sb.append( Uris.MODEL_HAS_DATA_URI);
 				sb.append("> \"true\" .\n");
 				String input = sb.toString();
-				result &= util.saveToStore(input, tripleStoreUrl, this.graphUri, this.rdfSourceNamespace);
+				result &= util.saveToStore(input, TripleStoreUtil.defaultModelsRepoUrl, this.graphUri, this.rdfSourceNamespace);
 			}
 			if(result) {
 				logger.info("Saved rdf to store");
