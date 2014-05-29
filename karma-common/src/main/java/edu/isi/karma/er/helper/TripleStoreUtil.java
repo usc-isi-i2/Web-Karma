@@ -203,15 +203,16 @@ public class TripleStoreUtil {
 
 		try {
 			
-			String queryString = null;
-			if (context.isEmpty() || context.compareTo("") == 0)
-			{
-				queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> ASK { {<"+ uri +"> ?y ?z .} union { ?x ?y <"+uri+"> }} ";
-			}
-			else
-			{
-				queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> ASK FROM " + context + " { {<"+ uri +"> ?y ?z .} union { ?x ?y <"+uri+"> }} ";
-			}
+			StringBuilder query = new StringBuilder();
+			
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#> ASK ");
+			injectContext(context, query);
+			query.append(" { { ");
+			formatURI(uri,query);
+			query.append(" ?y ?z .} union { ?x ?y ");
+			formatURI(uri,query);
+			query.append(" } } ");
+			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
 			
@@ -250,9 +251,7 @@ public class TripleStoreUtil {
 			query.append("{\n");
 			query.append("{\n");
 			query.append("?mapping owl:sameAs ");
-			query.append("<");
-			query.append(mappingURI);
-			query.append(">");
+			formatURI(mappingURI, query);
 			query.append(" . \n"); 
 			query.append("?s ?p ?o .\n");
 			query.append("?s a ?type . \n");
@@ -261,9 +260,7 @@ public class TripleStoreUtil {
 			query.append("UNION\n{\n");
 			query.append("?s ?p ?o .\n");
 			query.append("?s owl:sameAs ");
-			query.append("<");
-			query.append(mappingURI);
-			query.append(">");
+			formatURI(mappingURI, query);
 			query.append(" . \n"); 
 			
 			query.append("}\n");
@@ -294,17 +291,21 @@ public class TripleStoreUtil {
 		if (!context.isEmpty() && context.compareTo("") != 0)
 		{
 			query.append("FROM ");
-			context = context.trim();
-			if(!context.startsWith("<"))
-			{
-				query.append("<");
-			}
-			query.append(context);
-			if(!context.endsWith(">"))
-			{
-				query.append(">");
-			}
+			formatURI(context, query);
 			query.append("\n");
+		}
+	}
+
+	private void formatURI(String uri, StringBuilder query) {
+		uri = uri.trim();
+		if(!uri.startsWith("<"))
+		{
+			query.append("<");
+		}
+		query.append(uri);
+		if(!uri.endsWith(">"))
+		{
+			query.append(">");
 		}
 	}
 	public HashMap<String, List<String>> getPredicatesForTriplesMapsWithSameClass(String tripleStoreURL, String context, String classToMatch) throws KarmaException
