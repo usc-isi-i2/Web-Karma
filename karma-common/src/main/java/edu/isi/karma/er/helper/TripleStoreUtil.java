@@ -203,15 +203,16 @@ public class TripleStoreUtil {
 
 		try {
 			
-			String queryString = null;
-			if (context.isEmpty() || context.compareTo("") == 0)
-			{
-				queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> ASK { {<"+ uri +"> ?y ?z .} union { ?x ?y <"+uri+"> }} ";
-			}
-			else
-			{
-				queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> ASK FROM " + context + " { {<"+ uri +"> ?y ?z .} union { ?x ?y <"+uri+"> }} ";
-			}
+			StringBuilder query = new StringBuilder();
+			
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#> ASK ");
+			injectContext(context, query);
+			query.append(" { { ");
+			formatURI(uri,query);
+			query.append(" ?y ?z .} union { ?x ?y ");
+			formatURI(uri,query);
+			query.append(" } } ");
+			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
 			
@@ -246,18 +247,11 @@ public class TripleStoreUtil {
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
 			query.append("CONSTRUCT { ?s ?p ?o }\n");
 			
-			if (!context.isEmpty() && context.compareTo("") != 0)
-			{
-				query.append("FROM <");
-				query.append(context);
-				query.append(">\n");
-			}
+			injectContext(context, query);
 			query.append("{\n");
 			query.append("{\n");
 			query.append("?mapping owl:sameAs ");
-			query.append("<");
-			query.append(mappingURI);
-			query.append(">");
+			formatURI(mappingURI, query);
 			query.append(" . \n"); 
 			query.append("?s ?p ?o .\n");
 			query.append("?s a ?type . \n");
@@ -266,9 +260,7 @@ public class TripleStoreUtil {
 			query.append("UNION\n{\n");
 			query.append("?s ?p ?o .\n");
 			query.append("?s owl:sameAs ");
-			query.append("<");
-			query.append(mappingURI);
-			query.append(">");
+			formatURI(mappingURI, query);
 			query.append(" . \n"); 
 			
 			query.append("}\n");
@@ -294,6 +286,28 @@ public class TripleStoreUtil {
 		}
 		return "";
 	}
+
+	private void injectContext(String context, StringBuilder query) {
+		if (!context.isEmpty() && context.compareTo("") != 0)
+		{
+			query.append("FROM ");
+			formatURI(context, query);
+			query.append("\n");
+		}
+	}
+
+	private void formatURI(String uri, StringBuilder query) {
+		uri = uri.trim();
+		if(!uri.startsWith("<"))
+		{
+			query.append("<");
+		}
+		query.append(uri);
+		if(!uri.endsWith(">"))
+		{
+			query.append(">");
+		}
+	}
 	public HashMap<String, List<String>> getPredicatesForTriplesMapsWithSameClass(String tripleStoreURL, String context, String classToMatch) throws KarmaException
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
@@ -307,14 +321,8 @@ public class TripleStoreUtil {
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			query.append("SELECT ?predicate (group_concat(?y; separator = \",\") as ?triplesMaps )\n");
-			
-			if (!context.isEmpty() && context.compareTo("") != 0)
-			{
-				query.append("FROM <");
-				query.append(context);
-				query.append(">\n");
-			}
+			query.append("SELECT ?predicate (group_concat(?y; separator = \",\") as ?triplesMaps )\n");			
+			injectContext(context, query);
 			query.append("{\n");
 			query.append("?x owl:sameAs ?aaa . \n"); 
 			query.append("?aaa km-dev:hasData \"true\" .\n"); 
@@ -400,11 +408,11 @@ public class TripleStoreUtil {
 
 		try {
 			
-			String queryString = null;
-			if (context.isEmpty() || context.compareTo("") == 0)
-				queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?z ?y ?x where { ?a km-dev:sourceName ?y . ?a a km-dev:R2RMLMapping . ?a owl:sameAs ?z . ?a km-dev:modelPublicationTime ?x} ORDER BY ?z ?y ?x";
-			else
-				queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?z ?y ?x FROM " + context + " where { ?a km-dev:sourceName ?y . ?a a km-dev:R2RMLMapping . ?a owl:sameAs ?z . ?a km-dev:modelPublicationTime ?x} ORDER BY ?z ?y ?x";
+			StringBuilder query = new StringBuilder();
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?z ?y ?x ");
+			injectContext(context, query);
+			query.append(" where { ?a km-dev:sourceName ?y . ?a a km-dev:R2RMLMapping . ?a owl:sameAs ?z . ?a km-dev:modelPublicationTime ?x} ORDER BY ?z ?y ?x");
+			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
 			
