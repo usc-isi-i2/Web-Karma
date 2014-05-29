@@ -21,12 +21,15 @@
 package edu.isi.karma.webserver;
 
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -51,12 +54,15 @@ public class ServerStart extends HttpServlet {
 			String param = params.nextElement().toString();
 			if (validParams.contains(param)) {
 				ContextParameter mapParam = ContextParameter.valueOf(param);
-
-				ServletContextParameterMap.setParameterValue(mapParam,
-						ctx.getInitParameter(param));
+				String value = ctx.getInitParameter(param);
+				ServletContextParameterMap.setParameterValue(mapParam, value);
 			}
 		}
 
+		String contextPath = ctx.getRealPath(File.separator);
+		logger.info("Got base path:" + contextPath);
+		ServletContextParameterMap.setParameterValue(ContextParameter.WEBAPP_PATH, contextPath);
+		
 		logger.info("************");
 		logger.info("Server start servlet initialized successfully..");
 		logger.info("***********");
