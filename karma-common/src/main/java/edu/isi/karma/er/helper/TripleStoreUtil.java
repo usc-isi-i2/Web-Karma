@@ -321,7 +321,7 @@ public class TripleStoreUtil {
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			query.append("SELECT ?predicate (group_concat(?y; separator = \",\") as ?triplesMaps )\n");			
+			query.append("SELECT ?predicates (group_concat(?y; separator = \",\") as ?triplesMaps )\n");			
 			injectContext(context, query);
 			query.append("{\n");
 			query.append("?x owl:sameAs ?aaa . \n"); 
@@ -353,7 +353,7 @@ public class TripleStoreUtil {
 				int count = 0;
 				while (count < values.length()) {
 					JSONObject o = values.getJSONObject(count++);
-					predicates.add(o.getJSONObject("predicate").getString("value"));
+					predicates.add(o.getJSONObject("predicates").getString("value"));
 					matchingTriplesMaps.add(o.getJSONObject("triplesMaps").getString("value"));
 				
 				}
@@ -405,13 +405,13 @@ public class TripleStoreUtil {
 		List<String> times = new ArrayList<String>();
 		List<String> names = new ArrayList<String>();
 		List<String> urls = new ArrayList<String>();
-
+		List<String> contexts = new ArrayList<String>();
 		try {
 			
 			StringBuilder query = new StringBuilder();
-			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?z ?y ?x ");
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?z ?y ?x ?src");
 			injectContext(context, query);
-			query.append(" where { ?a km-dev:sourceName ?y . ?a a km-dev:R2RMLMapping . ?a owl:sameAs ?z . ?a km-dev:modelPublicationTime ?x} ORDER BY ?z ?y ?x");
+			query.append(" where  { GRAPH ?src {?a km-dev:sourceName ?y . ?a a km-dev:R2RMLMapping . ?a owl:sameAs ?z . ?a km-dev:modelPublicationTime ?x}} ORDER BY ?z ?y ?x ?src");
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
@@ -434,6 +434,7 @@ public class TripleStoreUtil {
 					times.add(o.getJSONObject("x").getString("value"));
 					names.add(o.getJSONObject("y").getString("value"));
 					urls.add(o.getJSONObject("z").getString("value"));
+					contexts.add(o.getJSONObject("src").getString("value"));
 				}
 			}
 		} catch (Exception e) {
@@ -443,6 +444,7 @@ public class TripleStoreUtil {
 		values.put("model_publishtimes", times);
 		values.put("model_names", names);
 		values.put("model_urls", urls);
+		values.put("model_contexts", contexts);
 		return values;
 	}
 	/**

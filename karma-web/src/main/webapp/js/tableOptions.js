@@ -516,9 +516,9 @@ var applyModelDialog = (function() {
             info["workspaceId"] = $.workspaceGlobalInformation.id;
             info["command"] = "ApplyModelFromURLCommand";
             info['modelRepository'] = $('#txtR2RML_URL_Fetch').val();
-            info['modelContext'] = $('#txtGraph_URL_Fetch').val();
+            info['modelContext'] = checked['src'];
             info['modelUrl'] = checked['value'];
-            console.log(info['graphContext']);
+            console.log(checked['src']);
             showLoading(info["worksheetId"]);
             var returned = $.ajax({
                 url: "RequestController",
@@ -556,6 +556,7 @@ var applyModelDialog = (function() {
                     var time = new Date(json[i].publishTime*1);
                     console.log(json[i].publishTime);
                     var url = json[i].url;
+                    var context = json[i].context;
                     console.log(name);
                     console.log(url);
                     var row = $("<div>").addClass("radio");
@@ -564,7 +565,8 @@ var applyModelDialog = (function() {
                                         .attr("type", "radio")
                                 .attr("id", "selectcolumns")
                                 .attr("value", url)
-                                .attr("name", "selectGraphs");
+                                .attr("name", "selectGraphs")
+                                .attr("src", context);
                     label.append(input);
                     row.append(label);
                     dialogContent.append(row);
