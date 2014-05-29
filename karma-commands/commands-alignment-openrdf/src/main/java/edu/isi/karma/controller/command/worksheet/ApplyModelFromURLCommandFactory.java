@@ -9,13 +9,15 @@ import edu.isi.karma.rep.Workspace;
 public class ApplyModelFromURLCommandFactory extends CommandFactory{
 
 	private enum Arguments {
-		worksheetId, graphContext
+		worksheetId, modelUrl, modelContext, modelRepository
 	}
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		String context = request.getParameter(Arguments.graphContext.name());
-		return new ApplyModelFromURLCommand(getNewId(workspace), worksheetId, context);
+		String modelUrl = request.getParameter(Arguments.modelUrl.name());
+		String modelContext = request.getParameter(Arguments.modelContext.name());
+		String modelRepository = request.getParameter(Arguments.modelRepository.name());
+		return new ApplyModelFromURLCommand(getNewId(workspace), worksheetId, modelUrl, modelContext,modelRepository);
 	}
 
 	@Override
