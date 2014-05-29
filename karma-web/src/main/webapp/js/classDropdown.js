@@ -52,30 +52,8 @@ var ClassDropdownMenu = (function() {
             console.log(columnLabel);
             console.log(columnDomain);
             console.log(columnUri);
-            showLoading(worksheetId);
-            var info = new Object();
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "SearchForDataToAugmentCommand";
-            info["alignmentId"] = alignmentId;
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                complete :
-                    function (xhr, textStatus) {
-                        var json = $.parseJSON(xhr.responseText);
-                        parse(json);
-                        hideLoading(worksheetId);
-                        hide();
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while getting nodes list!");
-                        hideLoading(worksheetId);
-                        hide();
-                    }
-            });
+            searchDataDialog.getInstance().show(worksheetId, 
+                    columnDomain);
         }
     	
     	function addOutgoingLink() {

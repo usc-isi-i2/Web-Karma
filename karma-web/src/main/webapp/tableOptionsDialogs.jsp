@@ -333,24 +333,24 @@ a.icon-remove:hover {
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div class="modal fade" id="fetchModelListDialog" tabindex="-1">
+<div class="modal fade" id="searchDataDialog" tabindex="-1">
   <div class="modal-dialog">
   		<form class="bs-example bs-example-form" role="form">
 			<div class="modal-content">
 			     <div class="modal-header">
 				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				       <h4 class="modal-title">Fetch Model</h4>
+				       <h4 class="modal-title">Search For Data To Augment</h4>
 				  </div>
 				  <div class="modal-body">
 
 					<div class="form-group">
 						<label for="txtR2RML_URL">Context Name</label>
-						<input class="form-control" type="text" id="txtGraph_URL_Fetch" required>
+						<input class="form-control" type="text" id="txtGraph_URL_Search" required>
 					</div>
 
 					<div class="form-group">
 						<label for="txtR2RML_URL">SPARQL End Point</label>
-						<input class="form-control" type="text" id="txtR2RML_URL_Fetch" required>
+						<input class="form-control" type="text" id="txtR2RML_URL_Search" required>
 					</div>
 					
 					<div class="error" style="display: none">Please enter an end point</div>

@@ -309,7 +309,7 @@ public class TripleStoreUtil {
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
 			query.append("SELECT ?predicate (group_concat(?y; separator = \",\") as ?triplesMaps )\n");
 			
-			if (context.isEmpty() || context.compareTo("") == 0)
+			if (!context.isEmpty() && context.compareTo("") != 0)
 			{
 				query.append("FROM <");
 				query.append(context);
@@ -317,7 +317,7 @@ public class TripleStoreUtil {
 			}
 			query.append("{\n");
 			query.append("?x owl:sameAs ?aaa . \n"); 
-			query.append("?aaa km-dev:hasData \"true\"\n"); 
+			query.append("?aaa km-dev:hasData \"true\" .\n"); 
 			query.append("?x km-dev:hasTriplesMap ?y .\n");
 			query.append("?y rr:subjectMap ?z .\n");
 			query.append("?z rr:class ");

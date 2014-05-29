@@ -551,7 +551,8 @@ var applyModelDialog = (function() {
                 //console.log(headers);
                 for (var i = 0; i < json.length; i++) {
                     var name = json[i]['name'];
-                    var time = new Date(json[i].publishTime*1000);
+                    var time = new Date(json[i].publishTime*1);
+                    console.log(json[i].publishTime);
                     var url = json[i].url;
                     console.log(name);
                     console.log(url);

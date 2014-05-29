@@ -1725,3 +1725,105 @@ var ManageIncomingOutgoingLinksDialog = (function() {
     };
     
 })();
+
+var searchDataDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+        var dialog = $("#searchDataDialog");
+        var worksheetId, columnDomain;
+        
+        function init() {
+            //Initialize what happens when we show the dialog
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                 $('#txtR2RML_URL_Search').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+            });
+            
+            //Initialize handler for Save button
+            //var me = this;
+            $('#btnSave', dialog).on('click', function (e) {
+                e.preventDefault();
+                saveDialog(e);
+            });
+            
+                
+        }
+        
+        function hideError() {
+            $("div.error", dialog).hide();
+        }
+        
+        function showError() {
+            $("div.error", dialog).show();
+        }
+        
+        function saveDialog(e) {
+            hide();
+            //  if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
+            //     alert("Invalid sparql end point. Could not establish connection.");
+            //     return;
+            // }
+
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info['tripleStoreUrl'] = $('#txtR2RML_URL_Search').val();
+            info['context'] = $('#txtGraph_URL_Search').val();
+            info["command"] = "SearchForDataToAugmentCommand";
+            info["nodeUri"] = columnDomain;
+            console.log(info['graphContext']);
+            //showLoading(info["worksheetId"]);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        json = json.elements[0];
+                        console.log(json);
+                        //parse(json);
+                        hideLoading(info["worksheetId"]);
+                        applyModelDialog.getInstance().show(worksheetId, json);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while Fetching Models!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            });
+        };
+        
+        function hide() {
+            dialog.modal('hide');
+        }
+        
+        function show(wsId, colDomain) {
+            worksheetId = wsId;
+            columnDomain = colDomain;
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        
+        return {    //Return back the public methods
+            show : show,
+            init : init
+        };
+    };
+
+    function getInstance() {
+        if( ! instance ) {
+            instance = new PrivateConstructor();
+            instance.init();
+        }
+        return instance;
+    }
+   
+    return {
+        getInstance : getInstance
+    };
+    
+})();
