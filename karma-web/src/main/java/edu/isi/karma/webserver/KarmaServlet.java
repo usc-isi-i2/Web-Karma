@@ -47,6 +47,7 @@ import edu.isi.karma.metadata.ModelLearnerMetadata;
 import edu.isi.karma.metadata.OntologyMetadata;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.R2RMLMetadata;
+import edu.isi.karma.metadata.R2RMLPublishedMetadata;
 import edu.isi.karma.metadata.RDFMetadata;
 import edu.isi.karma.metadata.ReportMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
@@ -109,6 +110,7 @@ public class KarmaServlet extends HttpServlet {
 			metadataManager.register(new GraphVizMetadata(workspace));
 			metadataManager.register(new ModelLearnerMetadata(workspace));
 			metadataManager.register(new R2RMLMetadata(workspace));
+			metadataManager.register(new R2RMLPublishedMetadata(workspace));
 			metadataManager.register(new RDFMetadata(workspace));
 			metadataManager.register(new CSVMetadata(workspace));
 			metadataManager.register(new JSONMetadata(workspace));

@@ -25,10 +25,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +44,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -53,6 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.util.HTTPUtil;
+import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 
 public class TripleStoreUtil {
@@ -167,7 +169,6 @@ public class TripleStoreUtil {
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			e.printStackTrace();
 		}
 		return retVal;
 	}
@@ -182,7 +183,7 @@ public class TripleStoreUtil {
 			logger.info(url);
 			String response = HTTPUtil.executeHTTPGetRequest(url, null);
 			try {
-				int i = Integer.parseInt(response);
+				int i = Integer.parseInt(response.trim());
 				logger.debug("Connnection to repo : " + url
 						+ " Successful.\t Size : " + i);
 				retval = true;
@@ -195,6 +196,201 @@ public class TripleStoreUtil {
 		return retval;
 	}
 
+	public boolean testURIExists(String tripleStoreURL, String context, String uri) throws KarmaException
+	{
+		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
+		testTripleStoreConnection(tripleStoreURL);
+
+		try {
+			
+			StringBuilder query = new StringBuilder();
+			
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#> ASK ");
+			injectContext(context, query);
+			query.append(" { { ");
+			formatURI(uri,query);
+			query.append(" ?y ?z .} union { ?x ?y ");
+			formatURI(uri,query);
+			query.append(" } } ");
+			String queryString = query.toString();
+			logger.debug("query: " + queryString);
+
+			
+			Map<String, String> formparams = new HashMap<String, String>();
+			formparams.put("query", queryString);
+			formparams.put("queryLn", "SPARQL");
+			
+			String responseString = HTTPUtil.executeHTTPPostRequest(
+					tripleStoreURL, null, "application/sparql-results+json",
+					formparams);
+
+			if (responseString != null) {
+				JSONObject askResult = new JSONObject(responseString);
+				return askResult.getBoolean("boolean");
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		
+		return false;
+	}
+	
+	public String getMappingFromTripleStore(String tripleStoreURL, String context, String mappingURI) throws KarmaException
+	{
+		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
+		testTripleStoreConnection(tripleStoreURL);
+	
+		try {
+
+			StringBuilder query = new StringBuilder();
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
+			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
+			query.append("CONSTRUCT { ?s ?p ?o }\n");
+			
+			injectContext(context, query);
+			query.append("{\n");
+			query.append("{\n");
+			query.append("?mapping owl:sameAs ");
+			formatURI(mappingURI, query);
+			query.append(" . \n"); 
+			query.append("?s ?p ?o .\n");
+			query.append("?s a ?type . \n");
+			query.append("FILTER (?type in (rr:TriplesMap, rr:SubjectMap,  rr:ObjectMap,  rr:LogicalTable, rr:PredicateObjectMap )) .\n");
+			query.append("}\n");
+			query.append("UNION\n{\n");
+			query.append("?s ?p ?o .\n");
+			query.append("?s owl:sameAs ");
+			formatURI(mappingURI, query);
+			query.append(" . \n"); 
+			
+			query.append("}\n");
+			query.append("}\n");
+			
+			String queryString = query.toString();
+			logger.debug("query: " + queryString);
+
+			
+			Map<String, String> formparams = new HashMap<String, String>();
+			formparams.put("query", queryString);
+			formparams.put("queryLn", "SPARQL");
+			
+			String responseString = HTTPUtil.executeHTTPPostRequest(
+					tripleStoreURL, null, mime_types.get(RDF_Types.N3.name()),
+					formparams);
+
+			if (responseString != null) {
+				return responseString;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return "";
+	}
+
+	private void injectContext(String context, StringBuilder query) {
+		if (!context.isEmpty() && context.compareTo("") != 0)
+		{
+			query.append("FROM ");
+			formatURI(context, query);
+			query.append("\n");
+		}
+	}
+
+	private void formatURI(String uri, StringBuilder query) {
+		uri = uri.trim();
+		if(!uri.startsWith("<"))
+		{
+			query.append("<");
+		}
+		query.append(uri);
+		if(!uri.endsWith(">"))
+		{
+			query.append(">");
+		}
+	}
+	public HashMap<String, List<String>> getPredicatesForTriplesMapsWithSameClass(String tripleStoreURL, String context, String classToMatch) throws KarmaException
+	{
+		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
+		testTripleStoreConnection(tripleStoreURL);
+		
+		List<String> predicates = new LinkedList<String>();
+		List<String> matchingTriplesMaps = new LinkedList<String>();
+
+		try {
+
+			StringBuilder query = new StringBuilder();
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
+			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
+			query.append("SELECT ?predicate (group_concat(?y; separator = \",\") as ?triplesMaps )\n");
+			
+			injectContext(context, query);
+			query.append("{\n");
+			query.append("?x owl:sameAs ?aaa . \n"); 
+			query.append("?aaa km-dev:hasData \"true\"\n"); 
+			query.append("?x km-dev:hasTriplesMap ?y .\n");
+			query.append("?y rr:subjectMap ?z .\n");
+			query.append("?z rr:class ");
+			query.append(classToMatch);
+			query.append(" .\n");
+			query.append("?y rr:predicateObjectMap ?bbb . \n");
+			query.append("?bbb rr:predicate ?predicates .} GROUP BY ?predicates \n");
+			
+			String queryString = query.toString();
+			logger.debug("query: " + queryString);
+
+			
+			Map<String, String> formparams = new HashMap<String, String>();
+			formparams.put("query", queryString);
+			formparams.put("queryLn", "SPARQL");
+			
+			String responseString = HTTPUtil.executeHTTPPostRequest(
+					tripleStoreURL, null, "application/sparql-results+json",
+					formparams);
+
+			if (responseString != null) {
+				JSONObject models = new JSONObject(responseString);
+				JSONArray values = models.getJSONObject("results")
+						.getJSONArray("bindings");
+				int count = 0;
+				while (count < values.length()) {
+					JSONObject o = values.getJSONObject(count++);
+					predicates.add(o.getJSONObject("predicate").getString("value"));
+					matchingTriplesMaps.add(o.getJSONObject("triplesMaps").getString("value"));
+				
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		HashMap<String, List<String>> values = new HashMap<String, List<String>>();
+		values.put("predicate", predicates);
+		values.put("triplesMaps", matchingTriplesMaps);
+		return values;
+	}
+
+	private void testTripleStoreConnection(String tripleStoreURL)
+			throws KarmaException {
+		// check the connection first
+		if (checkConnection(tripleStoreURL)) {
+			logger.info("Connection Test passed");
+		} else {
+			logger.info("Failed connection test : " + tripleStoreURL);
+			throw new KarmaException("Failed connect test : " + tripleStoreURL);
+		}
+	}
+
+	private String normalizeTripleStoreURL(String tripleStoreURL) {
+		if (tripleStoreURL == null || tripleStoreURL.isEmpty()) {
+			tripleStoreURL = defaultServerUrl + "/" + karma_model_repo + "/" + "statements";
+		}
+		
+		if (tripleStoreURL.charAt(tripleStoreURL.length() - 1) == '/') {
+			tripleStoreURL = tripleStoreURL.substring(0,
+					tripleStoreURL.length() - 2);
+		}
+		logger.info("Repository URL : " + tripleStoreURL);
+		return tripleStoreURL;
+	}
 	/**
 	 * This method fetches all the source names of the models from the triple
 	 * store
@@ -202,27 +398,69 @@ public class TripleStoreUtil {
 	 * @param TripleStoreURL
 	 *            : the triple store URL
 	 * */
-	public HashMap<String, List<String>> fetchModelNames(String TripleStoreURL) {
-		if (TripleStoreURL == null || TripleStoreURL.isEmpty()) {
-			TripleStoreURL = defaultServerUrl + "/" + karma_model_repo;
-		}
+	public HashMap<String, List<String>> getMappingsWithMetadata(String TripleStoreURL, String context) throws KarmaException {
+
+		TripleStoreURL = normalizeTripleStoreURL(TripleStoreURL);
+		testTripleStoreConnection(TripleStoreURL);
+		
+		List<String> times = new ArrayList<String>();
 		List<String> names = new ArrayList<String>();
 		List<String> urls = new ArrayList<String>();
 
-		if (TripleStoreURL.charAt(TripleStoreURL.length() - 1) == '/') {
-			TripleStoreURL = TripleStoreURL.substring(0,
-					TripleStoreURL.length() - 2);
-		}
-		logger.info("Repositoty URL : " + TripleStoreURL);
+		try {
+			
+			StringBuilder query = new StringBuilder();
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?z ?y ?x ");
+			injectContext(context, query);
+			query.append(" where { ?a km-dev:sourceName ?y . ?a a km-dev:R2RMLMapping . ?a owl:sameAs ?z . ?a km-dev:modelPublicationTime ?x} ORDER BY ?z ?y ?x");
+			String queryString = query.toString();
+			logger.debug("query: " + queryString);
 
-		// check the connection first
-		if (checkConnection(TripleStoreURL)) {
-			logger.info("Connection Test passed");
-		} else {
-			logger.info("Failed connection test : " + TripleStoreURL);
-			return null;
-		}
+			
+			Map<String, String> formparams = new HashMap<String, String>();
+			formparams.put("query", queryString);
+			formparams.put("queryLn", "SPARQL");
+			
+			String responseString = HTTPUtil.executeHTTPPostRequest(
+					TripleStoreURL, null, "application/sparql-results+json",
+					formparams);
 
+			if (responseString != null) {
+				JSONObject models = new JSONObject(responseString);
+				JSONArray values = models.getJSONObject("results")
+						.getJSONArray("bindings");
+				int count = 0;
+				while (count < values.length()) {
+					JSONObject o = values.getJSONObject(count++);
+					times.add(o.getJSONObject("x").getString("value"));
+					names.add(o.getJSONObject("y").getString("value"));
+					urls.add(o.getJSONObject("z").getString("value"));
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		HashMap<String, List<String>> values = new HashMap<String, List<String>>();
+		values.put("model_publishtimes", times);
+		values.put("model_names", names);
+		values.put("model_urls", urls);
+		return values;
+	}
+	/**
+	 * This method fetches all the source names of the models from the triple
+	 * store
+	 * 
+	 * @param TripleStoreURL
+	 *            : the triple store URL
+	 * */
+	public HashMap<String, List<String>> fetchModelNames(String TripleStoreURL) throws KarmaException {
+
+		List<String> names = new ArrayList<String>();
+		List<String> urls = new ArrayList<String>();
+
+		TripleStoreURL = normalizeTripleStoreURL(TripleStoreURL);
+		testTripleStoreConnection(TripleStoreURL);
+		
 		try {
 			String queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?y ?z where { ?x km-dev:sourceName ?y . ?x km-dev:serviceUrl ?z . } ORDER BY ?y ?z";
 			logger.debug("query: " + queryString);
@@ -273,20 +511,15 @@ public class TripleStoreUtil {
 	 *            : Specifies the base URI to resolve any relative URIs found in uploaded data against
 	 * 
 	 * */
-	private boolean saveToStore(String filePath, String tripleStoreURL,
-			String context, boolean replaceFlag, boolean deleteSrcFile,
-			String rdfType, String baseURL) {
+	private boolean saveToStore(HttpEntity entity, String tripleStoreURL,
+			String context, boolean replaceFlag, 
+			String rdfType, String baseURL) throws KarmaException {
 		boolean retVal = false;
 		HttpResponse response = null;
 
-		// check the connection first
-		if (checkConnection(tripleStoreURL)) {
-			logger.info("Connection Test passed");
-		} else {
-			logger.info("Failed connection test url : " + tripleStoreURL);
-			return retVal;
-		}
-
+		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
+		testTripleStoreConnection(tripleStoreURL);
+		
 		if (tripleStoreURL.charAt(tripleStoreURL.length() - 1) != '/') {
 			tripleStoreURL += "/";
 		}
@@ -296,14 +529,11 @@ public class TripleStoreUtil {
 
 			// initialize the http entity
 			HttpClient httpclient = new DefaultHttpClient();
-			File file = new File(filePath);
+//			File file = new File(filePath);
 			if (mime_types.get(rdfType) == null) {
 				throw new Exception("Could not find spefied rdf type: "
 						+ rdfType);
 			}
-			FileEntity entity = new FileEntity(file, ContentType.create(
-					mime_types.get(rdfType), "UTF-8"));
-
 			
 			// preparing the context for the rdf
 			if (context == null || context.isEmpty()) {
@@ -311,42 +541,16 @@ public class TripleStoreUtil {
 				context = "null";
 			} else {
 				context = context.trim();
-//				if(context.indexOf('<') == 0){
-//					context = context.substring(1);
-//				}
-//				if(context.indexOf('>') == context.length()-1 ){
-//					context = context.substring(0, context.length()-1);
-//				}
 				context.replaceAll(">", "");
 				context.replaceAll("<", "");
-				
-//				if(context.indexOf('<') != 0){
-//					context = "<" + context;
-//				}
-//				if(context.indexOf('>') != context.length()-1 ){
-//					context += ">";
-//				}
 				builder.setParameter("context", "<" + context + ">");
 			}
 			
 			// preapring the base URL
 			if (baseURL != null && !baseURL.trim().isEmpty()) {
 				baseURL = baseURL.trim();
-//				if(baseURL.indexOf('<') != 0){
-//					baseURL = "<" + baseURL;
-//				}
-//				if(baseURL.indexOf('>') != baseURL.length()-1 ){
-//					baseURL += ">	";
-//				}
 				baseURL.replaceAll(">", "");
 				baseURL.replaceAll("<", "");
-//				if(baseURL.indexOf('<') == 0){
-//					baseURL = baseURL.substring(1);
-//				}
-//				if(baseURL.indexOf('>') == baseURL.length()-1 ){
-//					baseURL = baseURL.substring(0, baseURL.length()-1);
-//				}
-				
 				builder.setParameter("baseURI", "<" + baseURL + ">");
 			} else {
 				logger.info("Empty baseURL");
@@ -358,7 +562,6 @@ public class TripleStoreUtil {
 				// we use HttpPost over HttpPut, for put will replace the entire
 				// repo with an empty graph
 				logger.info("Using POST to save rdf to triple store");
-//				uri = builder.build();
 				HttpPost httpPost = new HttpPost(builder.build());
 				httpPost.setEntity(entity);
 
@@ -369,7 +572,6 @@ public class TripleStoreUtil {
 				// we use HttpPut to replace the context
 				logger.info("Using PUT to save rdf to triple store");
 				HttpPut httpput = new HttpPut(builder.build());
-//				HttpPut httpput = new HttpPut(urlString.toString());
 				httpput.setEntity(entity);
 
 				// executing the http request
@@ -382,9 +584,6 @@ public class TripleStoreUtil {
 			int code = response.getStatusLine().getStatusCode();
 			if (code >= 200 && code < 300) {
 				retVal = true;
-			}
-			if (deleteSrcFile) {
-				file.delete();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -409,45 +608,19 @@ public class TripleStoreUtil {
 	 * 
 	 * */
 	public boolean saveToStore(String filePath, String tripleStoreURL,
-			String context, boolean replaceFlag, String baseUri) {
-		return saveToStore(filePath, tripleStoreURL, context, replaceFlag,
-				false, baseUri);
+			String context, boolean replaceFlag, String baseUri) throws KarmaException{
+		File file = new File(filePath);
+		FileEntity entity = new FileEntity(file, ContentType.create(
+				mime_types.get(RDF_Types.Turtle.name()), "UTF-8"));
+		return saveToStore(entity, tripleStoreURL, context, replaceFlag,
+				RDF_Types.Turtle.name(), baseUri);
 	}
-
-	/**
-	 * @param fileUrl
-	 *            : the url of the file from where the RDF is read
-	 * 
-	 *            Default_Parameters <br />
-	 *            tripleStoreURL : the local triple store URL context : null
-	 *            rdfType : Turtle deleteSrcFile : False (will retain the source
-	 *            file) replaceFlag : true
-	 * 
-	 * */
-	public boolean saveToStore(String fileUrl) {
-		return saveToStore(fileUrl, defaultServerUrl + "/" + karma_model_repo,
-				null, true, null);
-	}
-
-	/**
-	 * @param filePath
-	 *            : the url of the file from where the RDF is read
-	 * @param tripleStoreURL
-	 *            : the triple store URL
-	 * @param context
-	 *            : The graph context for the RDF
-	 * @param replaceFlag
-	 *            : Whether to replace the contents of the graph
-	 * @param deleteSrcFile
-	 *            : Whether to delete the source R2RML file or not
-	 * 
-	 *            rdfType default : Turtle
-	 * 
-	 * */
-	public boolean saveToStore(String filePath, String tripleStoreURL,
-			String context, boolean replaceFlag, boolean deleteSrcFile, String baseUri) {
-		return saveToStore(filePath, tripleStoreURL, context, replaceFlag,
-				deleteSrcFile, RDF_Types.Turtle.name(), baseUri);
+	
+	public boolean saveToStore(String input, String tripleStoreURL,
+			String context, Boolean replaceFlag, String baseUri)  throws KarmaException{
+		StringEntity entity = new StringEntity(input, ContentType.create(mime_types.get(RDF_Types.Turtle.name())));
+		return saveToStore(entity, tripleStoreURL, context, replaceFlag,
+				RDF_Types.Turtle.name(), baseUri);
 	}
 
 	/**
@@ -600,11 +773,13 @@ public class TripleStoreUtil {
 
 		String responseString;
 		try {
-			String url = tripleStoreUrl + "/statements?graph="
+			String url = tripleStoreUrl + "/statements?context="
 					+ URLEncoder.encode(graphUri, "UTF-8");
 			logger.info("Deleting from uri : " + url);
 			responseString = HTTPUtil.executeHTTPDeleteRequest(url);
+			System.out.println(responseString);
 			logger.info("Response=" + responseString);
+			return true;
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

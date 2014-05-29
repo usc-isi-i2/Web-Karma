@@ -18,9 +18,8 @@ public class R2RMLMetadata extends KarmaUserMetadata {
 
 	@Override
 	protected ContextParameter getDirectoryContextParameter() {
-		return ContextParameter.R2RML_PUBLISH_DIR;
+		return ContextParameter.R2RML_USER_DIR;
 	}
-	
 	
 	@Override
 	protected String getDirectoryPath() {
@@ -31,6 +30,9 @@ public class R2RMLMetadata extends KarmaUserMetadata {
 	public KarmaMetadataType getType() {
 		return StandardPublishMetadataTypes.R2RML_MODEL;
 	}
+
+
+	
 
 
 	

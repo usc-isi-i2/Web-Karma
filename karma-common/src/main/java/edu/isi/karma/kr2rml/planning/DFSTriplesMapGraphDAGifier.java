@@ -40,6 +40,10 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 		
 		dfs(newGraph, rootTriplesMapId);
 		spilledNodes.addAll(cleanGraph(triplesMapsIds, newGraph, rootTriplesMapId));
+		if(!triplesMapsIds.isEmpty())
+		{
+			logger.error("Unable to create DAG for the following nodes: "+ triplesMapsIds.toString());
+		}
 		return spilledNodes;
 	}
 
@@ -48,7 +52,7 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 		boolean modifications = true;
 		List<String> spilledTriplesMaps = new LinkedList<String>();
 		
-		while(modifications)
+		while(triplesMapsIds.size() > 0 && modifications)
 		{
 			logger.trace("starting a cleaning cycle");
 			modifications = false;
@@ -62,6 +66,8 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 				{
 					logger.debug(triplesMapId + " was already spilled");
 					spilledTriplesMaps.add(triplesMapId);
+					ids.remove();
+					modifications = true;
 					continue;
 				}
 				if(links.size() <= 1 || allLinksAreIncoming(triplesMapId, links))
@@ -79,23 +85,25 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 					
 					for(TriplesMapLink link : tempLinks)
 					{
-						newGraph.removeLink(link);
 						logger.debug("Removing " + link.getPredicateObjectMapLink());
+						newGraph.removeLink(link);
+						
 						if(link.getSourceMap().getId().compareTo(triplesMapId) == 0 && (triplesMapId.compareTo(rootTriplesMapId) != 0))
 						{
 							link.setIsFlipped(true);
 							logger.debug("Flipping " + link.getPredicateObjectMapLink());
 						}
-						//what should we do with this?
 					}
 					if(links.isEmpty())
 					{
 						logger.debug("Spilling " + tm.getSubject().getRdfsType()  + " " +triplesMapId);
 						modifications = true;
-						spilledTriplesMaps.add(triplesMapId);
+						List<String> removedTriplesMaps = newGraph.removeTriplesMap(triplesMapId);
+						
+						spilledTriplesMaps.addAll(removedTriplesMaps);
 						ids.remove();
-						newGraph.removeTriplesMap(triplesMapId);
 					}
+					modifications = true;
 				}
 			}
 		}
@@ -105,7 +113,7 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 	private boolean allLinksAreIncoming(String triplesMapId, List<TriplesMapLink> links) {
 		for(TriplesMapLink link : links)
 		{
-			if(link.getSourceMap().getId().compareTo(triplesMapId) != 0 || link.isFlipped())
+			if(link.getSourceMap().getId().compareTo(triplesMapId) == 0 && !link.isFlipped())
 			{
 				return false;
 			}

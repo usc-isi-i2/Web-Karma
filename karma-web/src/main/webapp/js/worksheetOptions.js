@@ -15,6 +15,9 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"divider"},
 			{name:"Publish RDF" , func:publishRDF},
 			{name:"Publish Model" , func:publishModel},
+			//{name:"Save Model" , func:saveModel},
+			//{name:"Clear Model" , func:clearModel},
+			//{name:"Fetch Model" , func:fetchModel},
 			{name:"Publish Service Model", func:publishServiceModel},
 			{name:"Publish Report", func:publishReport},
 			{name:"Save as JSON", func:saveAsJson},
@@ -29,6 +32,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"divider"},
 			{name:"Fold" , func:Fold},
 			{name:"GroupBy" , func:GroupBy}, 
+			{name:"Glue" , func:Glue}, 
 			{name:"Delete", func:deleteWorksheet},
 	];
 	
@@ -213,6 +217,11 @@ function WorksheetOptions(wsId, wsTitle) {
 		hideDropdown();
 		GroupByDialog2.getInstance().show(worksheetId);
     }
+    function Glue () {
+		console.log("Glue: " + worksheetTitle);
+		hideDropdown();
+		GlueDialog2.getInstance().show(worksheetId);
+    }
   function saveRowID () {
 		console.log("saveRowID: " + worksheetTitle);
 		hideDropdown();
@@ -328,6 +337,27 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("Publish Model: " + worksheetTitle);
 		hideDropdown();
 		PublishModelDialog.getInstance().show(worksheetId);
+		return false;
+	}
+
+	function saveModel(event) {
+		console.log("Save Model: " + worksheetTitle);
+		hideDropdown();
+		saveModelDialog.getInstance().show(worksheetId);
+		return false;
+	}
+
+	function clearModel(event) {
+		console.log("Clear Model: " + worksheetTitle);
+		hideDropdown();
+		clearModelDialog.getInstance().show(worksheetId);
+		return false;
+	}
+
+	function fetchModel(event) {
+		console.log("Fetch Model: " + worksheetTitle);
+		hideDropdown();
+		fetchModelListDialog.getInstance().show(worksheetId);
 		return false;
 	}
 	

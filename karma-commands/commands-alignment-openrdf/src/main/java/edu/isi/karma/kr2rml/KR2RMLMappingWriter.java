@@ -113,13 +113,17 @@ public class KR2RMLMappingWriter {
 		repoURIs.put(Uris.KM_MODEL_PUBLICATION_TIME_URI, f.createURI(Uris.KM_MODEL_PUBLICATION_TIME_URI));
 		
 		repoURIs.put(Uris.RR_TRIPLESMAP_CLASS_URI, f.createURI(Uris.RR_TRIPLESMAP_CLASS_URI));
+		repoURIs.put(Uris.RR_SUBJECTMAP_CLASS_URI, f.createURI(Uris.RR_SUBJECTMAP_CLASS_URI));
+		repoURIs.put(Uris.RR_PREDICATEOBJECTMAP_CLASS_URI, f.createURI(Uris.RR_PREDICATEOBJECTMAP_CLASS_URI));
+		repoURIs.put(Uris.RR_REF_OBJECT_MAP_CLASS_URI, f.createURI(Uris.RR_REF_OBJECT_MAP_CLASS_URI));
+		repoURIs.put(Uris.RR_OBJECTMAP_CLASS_URI, f.createURI(Uris.RR_OBJECTMAP_CLASS_URI));
+		repoURIs.put(Uris.RR_LOGICAL_TABLE_CLASS_URI, f.createURI(Uris.RR_LOGICAL_TABLE_CLASS_URI));
 		repoURIs.put(Uris.RR_TEMPLATE_URI, f.createURI(Uris.RR_TEMPLATE_URI));
 		repoURIs.put(Uris.RR_SUBJECTMAP_URI, f.createURI(Uris.RR_SUBJECTMAP_URI));
 		repoURIs.put(Uris.RR_PREDICATE_URI, f.createURI(Uris.RR_PREDICATE_URI));
 		repoURIs.put(Uris.RR_OBJECTMAP_URI, f.createURI(Uris.RR_OBJECTMAP_URI));
 		repoURIs.put(Uris.RR_COLUMN_URI, f.createURI(Uris.RR_COLUMN_URI));
 		repoURIs.put(Uris.RR_DATATYPE_URI, f.createURI(Uris.RR_DATATYPE_URI));
-		repoURIs.put(Uris.RR_REF_OBJECT_MAP_URI, f.createURI(Uris.RR_REF_OBJECT_MAP_URI));
 		repoURIs.put(Uris.RR_PARENT_TRIPLE_MAP_URI, f.createURI(Uris.RR_PARENT_TRIPLE_MAP_URI));
 		repoURIs.put(Uris.RR_PRED_OBJ_MAP_URI, f.createURI(Uris.RR_PRED_OBJ_MAP_URI));
 		repoURIs.put(Uris.RR_BLANK_NODE_URI, f.createURI(Uris.RR_BLANK_NODE_URI));
@@ -133,6 +137,11 @@ public class KR2RMLMappingWriter {
 		repoURIs.put(Uris.KM_NODE_ID_URI, f.createURI(Uris.KM_NODE_ID_URI));
 		repoURIs.put(Uris.KM_STEINER_TREE_ROOT_NODE, f.createURI(Uris.KM_STEINER_TREE_ROOT_NODE));
 		repoURIs.put(Uris.KM_HAS_TRIPLES_MAP_URI, f.createURI(Uris.KM_HAS_TRIPLES_MAP_URI));
+		repoURIs.put(Uris.KM_HAS_OBJECT_MAP_URI, f.createURI(Uris.KM_HAS_OBJECT_MAP_URI));
+		repoURIs.put(Uris.KM_HAS_PREDICATE_OBJECT_MAP_URI, f.createURI(Uris.KM_HAS_PREDICATE_OBJECT_MAP_URI));
+		repoURIs.put(Uris.KM_HAS_SUBJECT_MAP_URI, f.createURI(Uris.KM_HAS_SUBJECT_MAP_URI));
+		repoURIs.put(Uris.KM_HAS_LOGICAL_TABLE_URI, f.createURI(Uris.KM_HAS_LOGICAL_TABLE_URI));
+		repoURIs.put(Uris.KM_IS_PART_OF_MAPPING_URI, f.createURI(Uris.KM_IS_PART_OF_MAPPING_URI));
 		
 	}
 
@@ -188,9 +197,9 @@ public class KR2RMLMappingWriter {
 		URI trMapUri = f.createURI(Namespaces.KARMA_DEV + trMap.getId());
 		addTripleMapMetadata(mapping, mappingRes, worksheet, trMap, trMapUri);
 		
-		addSubjectMap(mapping, trMap, trMapUri, workspace);
+		addSubjectMap(mapping, mappingRes, trMap, trMapUri, workspace);
 		
-		addPredicateObjectMaps(mapping, trMap, trMapUri, workspace);
+		addPredicateObjectMaps(mapping, mappingRes, trMap, trMapUri, workspace);
 	}
 
 	private void addTripleMapMetadata(KR2RMLMapping mapping, Resource mappingRes, Worksheet worksheet,
@@ -200,21 +209,26 @@ public class KR2RMLMappingWriter {
 		con.add(trMapUri, RDF.TYPE, repoURIs.get(Uris.RR_TRIPLESMAP_CLASS_URI));
 		// Associate it with the source mapping URI
 		con.add(mappingRes, repoURIs.get(Uris.KM_HAS_TRIPLES_MAP_URI), trMapUri);
+		con.add(trMapUri, repoURIs.get(Uris.KM_IS_PART_OF_MAPPING_URI), mappingRes);
 		
-		addLogicalSource(mapping, worksheet, trMap, trMapUri);
+		addLogicalSource(mapping, worksheet, mappingRes, trMapUri);
 	}
 
-	private void addLogicalSource(KR2RMLMapping mapping, Worksheet worksheet, TriplesMap tri, URI trMapUri)
+	private void addLogicalSource(KR2RMLMapping mapping, Worksheet worksheet, Resource mappingRes, URI trMapUri)
 			throws RepositoryException {
 		// Add the Logical table information
 		BNode logTableBNode = f.createBNode();
 		
 		con.add(logTableBNode, repoURIs.get(Uris.RR_TABLENAME_URI), f.createLiteral(worksheet.getTitle()));
+		con.add(logTableBNode, RDF.TYPE, repoURIs.get(Uris.RR_LOGICAL_TABLE_CLASS_URI));
+		con.add(logTableBNode, repoURIs.get(Uris.KM_IS_PART_OF_MAPPING_URI), mappingRes);
+		con.add(mappingRes, repoURIs.get(Uris.KM_HAS_LOGICAL_TABLE_URI), logTableBNode);
 		con.add(trMapUri, repoURIs.get(Uris.RR_LOGICAL_TABLE_URI), logTableBNode);
 
 	}
+	
 	private void addSubjectMap(KR2RMLMapping mapping,
-			TriplesMap trMap,
+			Resource mappingRes, TriplesMap trMap,
 			URI trMapUri, Workspace workspace) throws RepositoryException {
 		
 		KR2RMLColumnNameFormatter columnNameFormatter = mapping.getColumnNameFormatter();
@@ -223,7 +237,11 @@ public class KR2RMLMappingWriter {
 		SubjectMap sjMap = trMap.getSubject();
 		BNode sjBlankNode = f.createBNode();
 		con.add(trMapUri, repoURIs.get(Uris.RR_SUBJECTMAP_URI), sjBlankNode);
-
+		con.add(mappingRes, repoURIs.get(Uris.KM_HAS_SUBJECT_MAP_URI), sjBlankNode);
+		con.add(sjBlankNode, repoURIs.get(Uris.KM_IS_PART_OF_MAPPING_URI), mappingRes);
+		// Add the subject map type statement
+		con.add(sjBlankNode, RDF.TYPE, repoURIs.get(Uris.RR_SUBJECTMAP_CLASS_URI));
+		
 		// Add the node id for the subject
 		Value nodeIdVal = f.createLiteral(sjMap.getId());
 		con.add(sjBlankNode, repoURIs.get(Uris.KM_NODE_ID_URI), nodeIdVal);
@@ -269,16 +287,16 @@ public class KR2RMLMappingWriter {
 
 
 	private void addPredicateObjectMaps(
-			KR2RMLMapping mapping, TriplesMap trMap,
+			KR2RMLMapping mapping, Resource mappingRes, TriplesMap trMap,
 			URI trMapUri, Workspace workspace) throws RepositoryException {
 
 		// Add the predicate object maps
 		for (PredicateObjectMap pom:trMap.getPredicateObjectMaps()) {
-			addPredicateObjectMap(mapping, trMapUri, workspace, pom);
+			addPredicateObjectMap(mapping, mappingRes, trMapUri, workspace, pom);
 		}
 	}
 
-	private void addPredicateObjectMap(KR2RMLMapping mapping, URI trMapUri,
+	private void addPredicateObjectMap(KR2RMLMapping mapping, Resource mappingRes, URI trMapUri,
 			Workspace workspace, PredicateObjectMap pom)
 			throws RepositoryException {
 		KR2RMLColumnNameFormatter columnNameFormatter = mapping.getColumnNameFormatter();
@@ -291,8 +309,13 @@ public class KR2RMLMappingWriter {
 			return;
 		}
 		
-		addObject(pom, columnNameFormatter, factory, pomBlankNode);
+		addObject(mappingRes, pom, columnNameFormatter, factory, pomBlankNode);
 		con.add(trMapUri, repoURIs.get(Uris.RR_PRED_OBJ_MAP_URI), pomBlankNode);
+		// Add the predicate object map type statement
+		con.add(pomBlankNode, RDF.TYPE, repoURIs.get(Uris.RR_PREDICATEOBJECTMAP_CLASS_URI));
+		con.add(pomBlankNode, repoURIs.get(Uris.KM_IS_PART_OF_MAPPING_URI), mappingRes);
+		con.add(mappingRes, repoURIs.get(Uris.KM_HAS_PREDICATE_OBJECT_MAP_URI), pomBlankNode);
+		
 	}
 	
 	private boolean addPredicate(PredicateObjectMap pom,
@@ -317,19 +340,21 @@ public class KR2RMLMappingWriter {
 		return true;
 	}
 
-	private void addObject(PredicateObjectMap pom,
+	private void addObject(Resource mappingRes, PredicateObjectMap pom,
 			KR2RMLColumnNameFormatter columnNameFormatter, RepFactory factory,
 			BNode pomBlankNode) throws RepositoryException {
 		// Add the object: Could be RefObjectMap or simple object with column values
 		if (pom.getObject().hasRefObjectMap()) {
 			RefObjectMap rfMap = pom.getObject().getRefObjectMap();
 			URI rfUri = f.createURI(Namespaces.KARMA_DEV + rfMap.getId());
-			con.add(rfUri, RDF.TYPE, repoURIs.get(Uris.RR_REF_OBJECT_MAP_URI));
+			con.add(rfUri, RDF.TYPE, repoURIs.get(Uris.RR_REF_OBJECT_MAP_CLASS_URI));
+			con.add(rfUri, RDF.TYPE, repoURIs.get(Uris.RR_OBJECTMAP_CLASS_URI));
 			
 			TriplesMap prMap = rfMap.getParentTriplesMap();
 			URI prMapUri = f.createURI(Namespaces.KARMA_DEV + prMap.getId());
 			con.add(rfUri, repoURIs.get(Uris.RR_PARENT_TRIPLE_MAP_URI), prMapUri);
-			
+			con.add(rfUri, repoURIs.get(Uris.KM_IS_PART_OF_MAPPING_URI), mappingRes);
+			con.add(mappingRes, repoURIs.get(Uris.KM_HAS_OBJECT_MAP_URI), rfUri);
 			// Add the RefObjectMap as the object map of current POMap
 			con.add(pomBlankNode, repoURIs.get(Uris.RR_OBJECTMAP_URI), rfUri);
 		} else {
@@ -342,7 +367,7 @@ public class KR2RMLMappingWriter {
 						getColumnNameR2RMLRepresentation(factory, columnNameFormatter));
 				
 				con.add(cnBnode, repoURIs.get(Uris.RR_COLUMN_URI), cnVal);
-				
+				con.add(cnBnode, RDF.TYPE, repoURIs.get(Uris.RR_OBJECTMAP_CLASS_URI));
 				if (rdfLiteralTypeTermSet != null && rdfLiteralTypeTermSet.isSingleUriString()) {
 					String rdfLiteralTypeString = rdfLiteralTypeTermSet.
 							getR2rmlTemplateString(factory);
@@ -353,6 +378,8 @@ public class KR2RMLMappingWriter {
 					}
 
 				}
+				con.add(cnBnode, repoURIs.get(Uris.KM_IS_PART_OF_MAPPING_URI), mappingRes);
+				con.add(mappingRes, repoURIs.get(Uris.KM_HAS_OBJECT_MAP_URI), cnBnode);
 				
 				// Add the link b/w blank node and object map
 				con.add(pomBlankNode, repoURIs.get(Uris.RR_OBJECTMAP_URI), cnBnode);
@@ -365,6 +392,10 @@ public class KR2RMLMappingWriter {
 						.getR2rmlTemplateString(factory, columnNameFormatter));
 				con.add(cnBnode, repoURIs.get(Uris.RR_TEMPLATE_URI), templVal);
 				con.add(cnBnode, repoURIs.get(Uris.RR_TERM_TYPE_URI), repoURIs.get(Uris.RR_LITERAL_URI));
+				con.add(cnBnode, RDF.TYPE, repoURIs.get(Uris.RR_OBJECTMAP_CLASS_URI));
+				con.add(cnBnode, repoURIs.get(Uris.KM_IS_PART_OF_MAPPING_URI), mappingRes);
+				con.add(mappingRes, repoURIs.get(Uris.KM_HAS_OBJECT_MAP_URI), cnBnode);
+				
 				//Add the link b/w blank node and object map
 				con.add(pomBlankNode, repoURIs.get(Uris.RR_OBJECTMAP_URI), cnBnode);
 				

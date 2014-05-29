@@ -13,6 +13,8 @@ var ClassDropdownMenu = (function() {
     		   	        //Title, function to call, needs file upload     
     		   	        [ "Add Incoming Link", addIncomingLink],
     		   	        [ "Add Outgoing Link", addOutgoingLink],
+    		   	        [ "Manage Links", manageLinks],
+                        [ "Search For Data To Augment", searchData], 
     		   	        [ "divider" , null ],
     		   	        [ "Export CSV" , exportCSV ],
     		   	        [ "Export JSON" , exportJSON ],
@@ -31,6 +33,13 @@ var ClassDropdownMenu = (function() {
     		$(document).off('click', hide);
     	}
     	
+    	function manageLinks() {
+    		console.log("showIncomingOutgoingLinks");
+    		ManageIncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
+    				columnId, alignmentId,
+    				columnLabel, columnUri, columnDomain, "InternalNode");
+    	}
+    	
     	function addIncomingLink() {
     		console.log("addIncomingLink");
     		IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId, 
@@ -38,6 +47,36 @@ var ClassDropdownMenu = (function() {
     				columnLabel, columnUri, columnDomain, "InternalNode",
     				"incoming");
     	};
+
+        function searchData() {
+            console.log(columnLabel);
+            console.log(columnDomain);
+            console.log(columnUri);
+            showLoading(worksheetId);
+            var info = new Object();
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "SearchForDataToAugmentCommand";
+            info["alignmentId"] = alignmentId;
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        var json = $.parseJSON(xhr.responseText);
+                        parse(json);
+                        hideLoading(worksheetId);
+                        hide();
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while getting nodes list!");
+                        hideLoading(worksheetId);
+                        hide();
+                    }
+            });
+        }
     	
     	function addOutgoingLink() {
     		console.log("addOutgoingLink");

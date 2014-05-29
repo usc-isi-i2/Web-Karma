@@ -39,7 +39,7 @@ public class WorksheetProperties {
 	public static String DEFAULT_GRAPH_NAME_PREFIX = "http://localhost/worksheets/";
 	
 	public enum Property {
-		serviceRequestMethod, serviceDataPostMethod, graphName, serviceUrl, hasServiceProperties, sourceType
+		serviceRequestMethod, serviceDataPostMethod, graphName, serviceUrl, hasServiceProperties, sourceType, modelUrl, modelRepository, modelContext
 	}
 	
 	public enum SourceTypes {
@@ -51,7 +51,7 @@ public class WorksheetProperties {
 	}
 
 	public void setPropertyValue(Property property, String value) {
-		propertyValueMap.put(property, value);
+		propertyValueMap.put(property, value != null ? value: "");
 	}
 	
 	public String getPropertyValue(Property property) {

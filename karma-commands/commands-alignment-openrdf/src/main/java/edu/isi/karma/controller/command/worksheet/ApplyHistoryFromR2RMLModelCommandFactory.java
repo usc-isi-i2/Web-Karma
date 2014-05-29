@@ -41,6 +41,11 @@ public class ApplyHistoryFromR2RMLModelCommandFactory extends CommandFactory {
 		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
 		return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), uploadedFile, worksheetId);
 	}
+	
+	public Command createCommandFromFile(String worksheetId, File uploadedFile,
+			Workspace workspace) {
+		return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), uploadedFile, worksheetId);
+	}
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand()

@@ -13,6 +13,24 @@ public class TriplesMapGraphMerger {
 		graphs = new LinkedList<TriplesMapGraph>();
 	}
 	
+	public TriplesMapGraph getTriplesMapGraph(String triplesMapId)
+	{
+		for(TriplesMapGraph graph : graphs)
+		{
+			if(graph.getTriplesMapIds().contains(triplesMapId))
+			{
+				return graph;
+			}
+		}
+		return null;
+	}
+	public void addTriplesMap(TriplesMap triplesMap)
+	{
+		TriplesMapGraph graph = new TriplesMapGraph();
+		graph.addTriplesMap(triplesMap);
+		graphs.add(graph);
+		return;
+	}
 	public void addLink(TriplesMapLink link)
 	{
 		if(graphs.isEmpty())
@@ -40,6 +58,7 @@ public class TriplesMapGraphMerger {
 		TriplesMapGraph graphToMerge = null;
 		while(iter.hasNext())
 		{
+			graphToMerge = iter.next();
 			mergedGraph = TriplesMapGraph.mergeGraphs(mergedGraph, graphToMerge);
 		}
 		mergedGraph.addLink(link);

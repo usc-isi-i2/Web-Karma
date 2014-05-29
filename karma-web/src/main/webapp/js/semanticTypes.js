@@ -1,3 +1,11 @@
+/**
+ * ==================================================================================================================
+ * 
+ * 				Diloag to Set the Semantic Type of a column node
+ * 
+ * ==================================================================================================================
+ */
+
 var SetSemanticTypeDialog = (function() {
     var instance = null;
 
@@ -852,7 +860,13 @@ var SetSemanticTypeDialog = (function() {
     
 })();
 
-
+/**
+ * ==================================================================================================================
+ * 
+ * 				Diloag to Add an Incoming / Outgoing Link for to Change a Link
+ * 
+ * ==================================================================================================================
+ */
 
 var IncomingOutgoingLinksDialog = (function() {
     var instance = null;
@@ -1331,6 +1345,370 @@ var IncomingOutgoingLinksDialog = (function() {
             setSelectedFromClass : setSelectedFromClass,
             setSelectedToClass : setSelectedToClass,
             setSelectedProperty : setSelectedProperty
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    
+})();
+
+
+/**
+ * ==================================================================================================================
+ * 
+ * 				Diloag to Manage all Incoming/Outgoing links of a Node
+ * 
+ * ==================================================================================================================
+ */
+var ManageIncomingOutgoingLinksDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#manageIncomingOutgoingLinksDialog");
+    	var worksheetId, columnId, alignmentId, linkType;
+    	var columnLabel, columnUri, columnDomain, columnType;
+    	var initialLinks;
+    	
+    	var classUI, propertyUI, editLink, classPropertyUIDiv;
+    	
+    	function init() {
+            
+            //Initialize what happens when we show the dialog
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                
+                $("#incomingLinksTable tr", dialog).remove();
+                $("#outgoingLinksTable tr", dialog).remove();
+                
+                $("#columnName", dialog).text(columnLabel);
+                
+                initialLinks = getAllLinksForNode(worksheetId, alignmentId, columnUri);
+                $.each(initialLinks, function(index2, link) {
+                	addLink(link);
+                });
+            });
+            
+            
+            $('#btnSave', dialog).on('click', function (e) {
+                e.preventDefault();
+                saveDialog(e);
+            });
+            
+            $('#btnAddIncomingLink', dialog).on('click', function (e) {
+                e.preventDefault();
+                addIncomingLink(e);
+            });
+            
+            $('#btnAddOutgoingLink', dialog).on('click', function (e) {
+                e.preventDefault();
+                addOutgoingLink(e);
+            });
+        }
+
+    	function addLink(link) {
+    		var table = (link.type == "incoming")? $("#incomingLinksTable") : $("#outgoingLinksTable");
+    		var trTag = $("<tr>");
+    		table.append(trTag);
+    		var direction = (link.type == "incoming") ? "from" : "to";
+    		var classLabel = (link.type == "incoming") ? link.source.label : link.target.label;
+    		
+    		trTag.data("link", $.extend(true, {}, link)) // deep copy)
+				.append($("<td>").append(direction).css("width","5%"))
+				.append($("<td>").addClass("bold").append(classLabel).css("width","40%"))
+				.append($("<td>").append("via").css("width","5%"))
+				.append($("<td>").addClass("bold").append(link.property.label).css("width","40%"))
+				.append($("<td>").css("width","5%")
+						.append($("<button>").attr("type", "button").addClass("btn").addClass("btn-default").text("Delete").click(deleteLink))
+						)
+    			.append($("<td>").css("width","5%")
+	            		.append($("<button>").attr("type", "button").addClass("btn").addClass("editButton").addClass("btn-default").text("Edit").click(editLink))
+	            		.append($("<button>").attr("type", "button").addClass("btn").addClass("hideButton").css("display","none").addClass("btn-default").text("Hide").click(hideEditOptions))
+	            		);
+    		
+    	}
+    	
+    	function setRowData(row, link) {
+    		var classLabel = (link.type == "incoming") ? link.source.label : link.target.label;
+    		$("td:nth-child(2)", row).text(classLabel);
+    		$("td:nth-child(4)", row).text(link.property.label);
+    	}
+    	
+    	function deleteLink() {
+    		var parentTrTag = $(this).parents("tr");
+    		parentTrTag.remove();
+    	}
+    	
+    	function editLink() {
+    		var parentTrTag = $(this).parents("tr");
+    		$(".editButton", parentTrTag).hide();
+            $(".hideButton", parentTrTag).show();
+            
+            var link = $(parentTrTag).data("link");
+            
+            var table = parentTrTag.parents("table");
+            $("tr.editRow", table).remove();
+            var edittd = $("<td>").attr("colspan", "5");
+            var editTr = $("<tr>").addClass("editRow").append(edittd);
+            editTr.insertAfter(parentTrTag);
+            editTr.addClass("currentEditRow");
+            editTr.data("editRowObject", parentTrTag);
+            
+            classPropertyUIDiv = $("<div>").addClass("row").attr("id", "linkEdit");
+            var classDiv = $("<div>").addClass("col-sm-6");
+            var propDiv = $("<div>").addClass("col-sm-6");
+            classPropertyUIDiv.append(classDiv);
+            classPropertyUIDiv.append(propDiv);
+            edittd.append(classPropertyUIDiv);
+            
+            classUI = new ClassUI("showIncomingOutgoingLinksDialog_class", getExistingClassNodes, getAllClassNodes, 100);
+            propertyUI = new PropertyUI("showIncomingOutgoingLinksDialog_property", getPropertyForClass, getProperties, 100);
+            classUI.setHeadings("Classes in Model", "All Classes");
+            propertyUI.setHeadings("Compatible Properties", "All Properties");
+            classUI.onClassSelect(validateClassInputValue);
+            propertyUI.onPropertySelect(validatePropertyInputValue);
+            
+            var clazz = (link.type == "incoming") ? link.source : link.target;
+            classUI.setDefaultClass(clazz.label, clazz.id, clazz.uri)
+            classUI.setSelectedProperty(link.property.label, link.property.id, link.property.uri);
+            classUI.generateJS(classDiv, true);
+          
+            propertyUI.setDefaultProperty(link.property.label, link.property.id, link.property.uri);
+            propertyUI.setSelectedClass(clazz.label, clazz.id, clazz.uri);
+            propertyUI.generateJS(propDiv, true);
+           
+    	}
+    	
+    	function hideEditOptions() {
+    		var parentTrTag = $(this).parents("tr");
+        	var table = parentTrTag.parents("table");
+        	 $("tr", table).removeClass('currentEditRow');
+             $("td.CRFSuggestedText", parentTrTag).text("");
+             $("tr.editRow", table).remove();
+             
+             $(".editButton", parentTrTag).show();
+             $(".hideButton", parentTrTag).hide();
+    	}
+    	
+    	function getExistingClassNodes() {
+    		var classes = getClassesInModel(alignmentId);
+        	var result = [];
+	       	 $.each(classes, function(index, clazz){
+	       		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+	       	 });
+	       	return result;
+    	}
+    	
+    	
+    	function getAllClassNodes() {
+    		var classes = getAllClasses(worksheetId);
+        	var result = [];
+	       	 $.each(classes, function(index, clazz){
+	       		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+	       	 });
+	       	return result;
+    	}
+    	
+    	function getProperties() {
+    		var props
+    		if(columnType == "ColumnNode")
+    			props = getAllDataProperties(worksheetId);
+    		else
+    			props = getAllObjectProperties(alignmentId);
+        	var result = [];
+	       	 $.each(props, function(index, prop){
+	       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
+	       	 });
+	       	return result;
+    	}
+    	
+    	function getPropertyForClass(selectedClass) {
+    		var domain, range;
+    	    var startNodeClass = columnDomain;
+    	    if(columnType == "ColumnNode")
+    	    	startNodeClass = "";
+    	    if(editLink.type == "incoming") {
+    	    	domain = selectedClass.uri;
+    	    	range = startNodeClass;
+    	    } else { //if(linkType == "outgoing" || linkType == "changeOutgoing") {
+    	    	domain = startNodeClass;
+    	    	range = selectedClass.uri;
+    	    }
+    	    
+    	    var props = getAllPropertiesForDomainRange(alignmentId, domain, range);
+    	    var result = [];
+	       	 $.each(props, function(index, prop){
+	       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
+	       	 });
+	       	selectedProperties = result;
+	       	return result;
+    	}
+    	
+    	function validatePropertyInputValue(propertyData) {
+        	classUI.refreshClassDataTop(propertyData.label, propertyData.id, propertyData.uri);
+            var rowToChange = $(classPropertyUIDiv).parents("tr.editRow").data("editRowObject");
+            if(rowToChange != null) {
+            	var link = rowToChange.data("link");
+            	link.property = propertyData;
+            	setRowData(rowToChange, link);
+            }
+        }
+    	
+    	function validateClassInputValue(classData) {
+        	propertyUI.refreshPropertyDataTop(classData.label, classData.id, classData.uri);
+        	 var rowToChange = $(classPropertyUIDiv).parents("tr.editRow").data("editRowObject");
+             if(rowToChange != null) {
+             	var link = rowToChange.data("link");
+             	if(link.type == "incoming")
+             		link.source = classData;
+             	else
+             		link.target = classData;
+             	setRowData(rowToChange, link);
+             }
+        }
+    	
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError(err) {
+			if(err) {
+				$("div.error", dialog).text(err);
+			}
+			$("div.error", dialog).show();
+		}
+        
+        function saveDialog(e) {
+        	 var info = new Object();
+        	 info["workspaceId"] = $.workspaceGlobalInformation.id;
+        	 info["command"] = "ChangeInternalNodeLinksCommand";
+
+        	 // Prepare the input for command
+        	 var newInfo = [];
+        	 
+        	// Put the old edge information
+        	var initialEdges = [];
+        	$.each(initialLinks, function(index2, link) {
+	        	var oldEdgeObj = {};
+	    	    oldEdgeObj["edgeSourceId"] = link.source.id;
+	    	    oldEdgeObj["edgeTargetId"] = link.target.id;
+	    	    oldEdgeObj["edgeId"] = link.property.id;
+	    	    initialEdges.push(oldEdgeObj);
+        	});
+        	newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
+    	    
+        	newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
+        	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+        	
+        	var newEdges = [];
+        	
+        	var tables = [
+        	              $("#incomingLinksTable"),
+        	              $("#outgoingLinksTable")
+        	             ];
+        	var newValidated = true;
+        	
+        	$.each(tables, function(idx, table) {
+        		$.each($("tr",table), function(index, row){
+        			var newEdgeObj = {};
+        			var link = $(row).data("link");
+        			if(link) {
+        				if(link.source.id == "FakeId" || link.target.id == "FakeId") {
+        					alert("Please select a Class");
+        					newValidated = false;
+        					return false;
+        				}
+        				if(link.property.id == "FakeId") {
+        					alert("Please select a property");
+        					newValidated = false;
+        					return false;
+        				}
+	                	newEdgeObj["edgeSourceId"] = link.source.id
+	                	newEdgeObj["edgeSourceUri"] = link.source.uri;
+	                    newEdgeObj["edgeTargetId"] = link.target.id
+	                    newEdgeObj["edgeTargetUri"] = link.target.uri;
+	                    newEdgeObj["edgeId"] = link.property.id;
+	                    newEdges.push(newEdgeObj);
+        				
+        			}
+            	});
+        	});
+            
+        	if(!newValidated)
+        		return;
+        	
+            newInfo.push(getParamObject("newEdges", newEdges, "other"));
+        	info["newInfo"] = JSON.stringify(newInfo);
+        	info["newEdges"] = newEdges;
+        	
+        	showLoading(worksheetId);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        var json = $.parseJSON(xhr.responseText);
+                        parse(json);
+                        hideLoading(worksheetId);
+                        hide();
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while getting nodes list!");
+                        hideLoading(worksheetId);
+                        hide();
+                    }
+            });
+        };
+        
+        function addIncomingLink(e) {
+        	var source = {"id":"FakeId", "label":"Class", "uri":"FakeURI"};
+        	var target = {"id":columnUri, "label":columnLabel, "uri":columnDomain};
+    		var prop = {"id":"FakeId", "label":"property"};
+    		var link = {"type":"incoming", "source":source, "target":target, "property":prop};
+    		addLink(link);
+        }
+        
+        function addOutgoingLink(e) {
+        	var source = {"id":columnUri, "label":columnLabel, "uri":columnDomain};
+        	var target = {"id":"FakeId", "label":"Class", "uri":"FakeURI"};
+    		var prop = {"id":"FakeId", "label":"property"};
+    		var link = {"type":"outgoing", "source":source, "target":target, "property":prop};
+    		addLink(link);
+        }
+        
+        function hide() {
+        	dialog.modal('hide');
+        }
+        
+       
+        function show(wsId, colId, alignId,
+        		colLabel, colUri, colDomain, colType) {
+        	worksheetId = wsId;
+        	columnId = colId;
+        	alignmentId = alignId;
+        	
+        	columnLabel = colLabel;
+        	columnUri = colUri;
+        	columnDomain = colDomain;
+        	columnType = colType;
+        	dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        return {    //Return back the public methods
+            show : show,
+            init : init
         };
     };
 

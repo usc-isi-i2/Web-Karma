@@ -97,6 +97,7 @@
 	                                <option>tab</option>
 	                                <option>space</option>
 	                                <option>pipe</option>
+	                                <option>semicolon</option>
 	                            </select>
 							</div>
 						</div>

@@ -57,7 +57,7 @@ public class GetHeadersCommand extends WorksheetCommand {
 		HTable ht = worksheet.getHeaders();
 		if (hNodeId.compareTo("") != 0) {
 			HTable parentHT = CloneTableUtils.getHTable(worksheet.getHeaders(), hNodeId);
-			if (commandName.compareTo("GroupBy") == 0 || commandName.compareTo("Fold") == 0)
+			if (commandName.compareTo("GroupBy") == 0 || commandName.compareTo("Fold") == 0 || commandName.compareTo("Glue") == 0)
 				ht = CloneTableUtils.getChildHTable(parentHT, parentHT.getId(), false);
 			else
 				ht = parentHT;

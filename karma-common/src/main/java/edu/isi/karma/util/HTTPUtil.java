@@ -99,6 +99,7 @@ public class HTTPUtil {
 			String line = buf.readLine();
 			while(line != null) {
 				responseString.append(line);
+				responseString.append('\n');
 				line = buf.readLine();
 			}
 		}
@@ -124,6 +125,7 @@ public class HTTPUtil {
 			String line = buf.readLine();
 			while(line != null) {
 				responseString.append(line);
+				responseString.append('\n');
 				line = buf.readLine();
 			}
 		}
@@ -146,6 +148,7 @@ public class HTTPUtil {
 			String line = buf.readLine();
 			while(line != null) {
 				responseString.append(line);
+				responseString.append('\n');
 				line = buf.readLine();
 			}
 		}

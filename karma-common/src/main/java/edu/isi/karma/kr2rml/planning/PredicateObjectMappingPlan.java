@@ -13,8 +13,8 @@ import edu.isi.karma.kr2rml.exception.HNodeNotFoundKarmaException;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
 import edu.isi.karma.kr2rml.template.ColumnTemplateTerm;
-import edu.isi.karma.kr2rml.template.ComplicatedTemplateTermSetPopulatorPlan;
-import edu.isi.karma.kr2rml.template.ExtraComplicatedTemplateTermSetPopulator;
+import edu.isi.karma.kr2rml.template.SinglyAnchoredTemplateTermSetPopulatorPlan;
+import edu.isi.karma.kr2rml.template.DoublyAnchoredTemplateTermSetPopulator;
 import edu.isi.karma.kr2rml.template.PartiallyPopulatedTermSet;
 import edu.isi.karma.kr2rml.template.PopulatedTemplateTermSet;
 import edu.isi.karma.kr2rml.template.TemplateTermSet;
@@ -31,8 +31,8 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 		super(kr2rmlMapping, uriFormatter, factory, translator);
 	}
 
-	protected ComplicatedTemplateTermSetPopulatorPlan complicatedPlan;
-	protected ExtraComplicatedTemplateTermSetPopulator predicatePlan;
+	protected SinglyAnchoredTemplateTermSetPopulatorPlan complicatedPlan;
+	protected DoublyAnchoredTemplateTermSetPopulator predicatePlan;
 	protected Map<ColumnTemplateTerm, HNodePath> combinedSubjectObjectTermsToPaths ;
 	protected TemplateTermSetPopulator objectTemplateTermSetPopulator;
 	protected TemplateTermSetPopulator predicateTemplateTermSetPopulator;
@@ -54,7 +54,7 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 		combinedSubjectObjectTermsToPaths.putAll(objectTermsToPaths);
 		LinkedList<ColumnTemplateTerm> objectColumnTerms = new LinkedList<ColumnTemplateTerm>();
 		objectColumnTerms.addAll(objectTemplateTermSetPopulator.getTerms().getAllColumnNameTermElements());
-		complicatedPlan = new ComplicatedTemplateTermSetPopulatorPlan(combinedSubjectObjectTermsToPaths, objectColumnTerms, subjectMapTemplate.getAllColumnNameTermElements());
+		complicatedPlan = new SinglyAnchoredTemplateTermSetPopulatorPlan(combinedSubjectObjectTermsToPaths, objectColumnTerms, subjectMapTemplate.getAllColumnNameTermElements());
 		generatePredicatesForPom(pom);
 	}
 
@@ -71,7 +71,7 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 		populateTermsToPathForSubject(predicateTermsToPaths, pom.getPredicate().getTemplate());
 		combinedSubjectObjectTermsToPaths.putAll(predicateTermsToPaths);
 		
-		predicatePlan = new ExtraComplicatedTemplateTermSetPopulator(combinedSubjectObjectTermsToPaths, predicateColumnTemplateTerms, subjectAndObjectTemplateTerms);
+		predicatePlan = new DoublyAnchoredTemplateTermSetPopulator(combinedSubjectObjectTermsToPaths, predicateColumnTemplateTerms, subjectAndObjectTemplateTerms);
 		
 	}
 	

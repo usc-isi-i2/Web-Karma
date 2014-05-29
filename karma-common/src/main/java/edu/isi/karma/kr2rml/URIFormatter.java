@@ -22,7 +22,7 @@ public class URIFormatter {
 	}
 	public String getExpandedAndNormalizedUri(String uri) {
 		// Check if the predicate contains a predicate.
-		if (!uri.startsWith("<") && !uri.startsWith("http:") && uri.contains(":") && !uri.startsWith("_:")) {
+		if (!uri.startsWith("<") && !uri.startsWith("http:") && !uri.startsWith("https:") && uri.contains(":") && !uri.startsWith("_:")) {
 			// Replace the prefix with proper namespace by looking into the ontology manager
 			String prefix = uri.substring(0, uri.indexOf(":"));
 			

@@ -35,6 +35,7 @@ import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
 
 import org.json.JSONArray;
@@ -200,7 +201,17 @@ public class CommandHistory {
 			JSONObject inpP = inputArr.getJSONObject(i);
 			
 			/*** Check the input parameter type and accordingly make changes ***/
-			if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeId) {
+			if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeIdList) {
+				JSONArray hnodes = (JSONArray) JSONUtil.createJson(inpP.getString(ClientJsonKeys.value.name()));
+				for (int j = 0; j < hnodes.length(); j++) {
+					JSONObject obj = (JSONObject)hnodes.get(j);
+					String hNodeId = obj.getString(ClientJsonKeys.value.name());
+					HNode node = workspace.getFactory().getHNode(hNodeId);
+					JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(workspace.getFactory());
+					obj.put(ClientJsonKeys.value.name(), hNodeRepresentation);
+				}
+				inpP.put(ClientJsonKeys.value.name(), hnodes);
+			}else if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeId) {
 				String hNodeId = inpP.getString(ClientJsonKeys.value.name());
 				HNode node = workspace.getFactory().getHNode(hNodeId);
 				JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(workspace.getFactory());

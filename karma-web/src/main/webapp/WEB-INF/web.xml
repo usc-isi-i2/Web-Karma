@@ -73,10 +73,6 @@
 		<param-value>../karma-cleaning/src/main/resources/scripts/Lib</param-value>
   </context-param>
   <context-param>
-		<param-name>WEBAPP_PATH</param-name>
-		<param-value>src/main/webapp</param-value>
-  </context-param>
-  <context-param>
 		<param-name>MSFT</param-name>
 		<param-value>False</param-value>
   </context-param>
@@ -90,6 +86,11 @@
     	<servlet-name>ServletStart</servlet-name>
     	<servlet-class>edu.isi.karma.webserver.ServerStart</servlet-class>
 		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>R2RMLMappingServlet</servlet-name>
+		<servlet-class>edu.isi.karma.webserver.R2RMLMappingServlet</servlet-class>
 	</servlet>
 	
 	<servlet>
@@ -116,11 +117,31 @@
      <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>
      <servlet-class>edu.isi.karma.webserver.SpatialReferenceSystemServiceHandler</servlet-class>
     </servlet>
+  <servlet>
+  	<servlet-name>R2RMLMappingTripleStoreServlet</servlet-name>
+  	<servlet-class>edu.isi.karma.webserver.R2RMLMappingTripleStoreServlet</servlet-class>
+  </servlet>
     
   <servlet-mapping>
     <servlet-name>KarmaServlet</servlet-name>
     <url-pattern>/KarmaServlet</url-pattern>
   </servlet-mapping>
+  
+  <servlet-mapping>
+  	<servlet-name>R2RMLMappingServlet</servlet-name>
+  	<url-pattern>/R2RMLMapping/local</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+  	<servlet-name>R2RMLMappingTripleStoreServlet</servlet-name>
+  	<url-pattern>/R2RMLMapping/local/repository/*</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+  	<servlet-name>R2RMLMappingServlet</servlet-name>
+  	<url-pattern>/R2RMLMapping/local/*</url-pattern>
+  </servlet-mapping>
+  
   
   
   <servlet-mapping>

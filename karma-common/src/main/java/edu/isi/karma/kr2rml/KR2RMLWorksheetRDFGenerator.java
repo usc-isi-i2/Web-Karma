@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,8 +48,10 @@ import edu.isi.karma.kr2rml.exception.ValueNotFoundKarmaException;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
 import edu.isi.karma.kr2rml.planning.DFSTriplesMapGraphDAGifier;
+import edu.isi.karma.kr2rml.planning.RootStrategy;
 import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
+import edu.isi.karma.kr2rml.planning.TriplesMapGraph;
 import edu.isi.karma.kr2rml.planning.TriplesMapLink;
 import edu.isi.karma.kr2rml.planning.TriplesMapPlan;
 import edu.isi.karma.kr2rml.planning.TriplesMapPlanExecutor;
@@ -84,6 +87,7 @@ public class KR2RMLWorksheetRDFGenerator {
 
 	private Logger logger = LoggerFactory.getLogger(KR2RMLWorksheetRDFGenerator.class);
 	private URIFormatter uriFormatter;
+	private RootStrategy strategy;
 
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
 			OntologyManager ontMgr, String outputFileName, boolean addColumnContextInformation, 
@@ -103,9 +107,8 @@ public class KR2RMLWorksheetRDFGenerator {
 	}
 
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
-			OntologyManager ontMgr, KR2RMLRDFWriter writer, boolean addColumnContextInformation, 
+			OntologyManager ontMgr, KR2RMLRDFWriter writer, boolean addColumnContextInformation,RootStrategy strategy, 
 			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport) {
-		super();
 		this.ontMgr = ontMgr;
 		this.kr2rmlMapping = kr2rmlMapping;
 		this.factory = factory;
@@ -116,11 +119,12 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.hNodeToContextUriMap = new ConcurrentHashMap<String, String>();
 		this.addColumnContextInformation = addColumnContextInformation;
 		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
+		this.strategy = strategy;
 
 	}
 
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
-			OntologyManager ontMgr, PrintWriter writer, KR2RMLMapping kr2rmlMapping,  
+			OntologyManager ontMgr, PrintWriter writer, KR2RMLMapping kr2rmlMapping,   
 			ErrorReport errorReport, boolean addColumnContextInformation) {
 		super();
 		this.ontMgr = ontMgr;
@@ -133,7 +137,6 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.hNodeToContextUriMap = new ConcurrentHashMap<String, String>();
 		this.addColumnContextInformation = addColumnContextInformation;
 		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
-
 
 	}
 
@@ -160,16 +163,26 @@ public class KR2RMLWorksheetRDFGenerator {
 					this.worksheet.getDataTable().getNumRows());
 
 
-
-			try{
-				DFSTriplesMapGraphDAGifier dagifier = new DFSTriplesMapGraphDAGifier();
-				dagifier.dagify(kr2rmlMapping.getAuxInfo().getTriplesMapGraph(), new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
-
-			}catch (Exception e)
+			
+			Map<TriplesMapGraph, List<String>> graphTriplesMapsProcessingOrder = new HashMap<TriplesMapGraph, List<String>>();
+			for(TriplesMapGraph graph : kr2rmlMapping.getAuxInfo().getTriplesMapGraph().getGraphs())
 			{
-				logger.error("Unable to find DAG for RDF Generation!", e);
-				throw new Exception("Unable to find DAG for RDF Generation!", e);
-
+				try{
+					DFSTriplesMapGraphDAGifier dagifier = new DFSTriplesMapGraphDAGifier();
+					if(null == strategy)
+					{
+						strategy =new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy());
+					
+					}
+					List<String> triplesMapsProcessingOrder = new LinkedList<String>();
+					triplesMapsProcessingOrder = dagifier.dagify(graph, strategy);
+					graphTriplesMapsProcessingOrder.put(graph, triplesMapsProcessingOrder);
+				}catch (Exception e)
+				{
+					logger.error("Unable to find DAG for RDF Generation!", e);
+					throw new Exception("Unable to find DAG for RDF Generation!", e);
+	
+				}
 			}
 			int i=1;
 			TriplesMapPlanExecutor e = new TriplesMapPlanExecutor();
@@ -180,10 +193,12 @@ public class KR2RMLWorksheetRDFGenerator {
 				triplesMapToWorkerPlan.put(triplesMap, workerPlan);
 			}
 			for (Row row:rows) {
-
-				TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(triplesMapToWorkerPlan, row, outWriter);
-				TriplesMapPlan plan = g.generatePlan(kr2rmlMapping.getAuxInfo().getTriplesMapGraph());
-				errorReport.combine(e.execute(plan));
+				for(Entry<TriplesMapGraph, List<String>> entry : graphTriplesMapsProcessingOrder.entrySet())
+				{
+					TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(triplesMapToWorkerPlan, row, outWriter);
+					TriplesMapPlan plan = g.generatePlan(entry.getKey(), entry.getValue());
+					errorReport.combine(e.execute(plan));
+				}
 				outWriter.finishRow();
 				if (i++%2000 == 0)
 					logger.info("Done processing " + i + " rows");
@@ -267,7 +282,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				dontAddNeighboringMaps = true;
 			}
 
-			List<TriplesMapLink> neighboringLinks = this.kr2rmlMapping.getAuxInfo().getTriplesMapGraph()
+			List<TriplesMapLink> neighboringLinks = this.kr2rmlMapping.getAuxInfo().getTriplesMapGraph().getTriplesMapGraph(trMap.getId())
 					.getAllNeighboringTriplesMap(trMap.getId());
 
 			for (TriplesMapLink trMapLink:neighboringLinks) {

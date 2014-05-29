@@ -225,7 +225,15 @@ public class ExportCSVCommand extends WorksheetCommand {
 		}
 		
 		TripleStoreUtil utilObj = new TripleStoreUtil();
-		boolean result = utilObj.saveToStore(generatedRDFFileName, TripleStoreUtil.defaultDataRepoUrl, graphUri, true, null);
+		
+		boolean result = false;
+		try{
+			utilObj.saveToStore(generatedRDFFileName, TripleStoreUtil.defaultDataRepoUrl, graphUri, true, null);
+		}
+		catch(Exception e)
+		{
+			result = false;
+		}
 		// if we the RDF is generated correctly, then we dont need to retur an UpdateContainer
 		// hence we return null
 		if(result) {

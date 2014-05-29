@@ -27,7 +27,11 @@ import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
+import edu.isi.karma.kr2rml.planning.RootStrategy;
+import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
+import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
+import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -37,6 +41,8 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ExportJSONCommand extends WorksheetCommand {
 
@@ -44,8 +50,6 @@ public class ExportJSONCommand extends WorksheetCommand {
 	private final String alignmentNodeId;
 	private String rdfPrefix;
 	private String rdfNamespace;
-	private RepFactory factory;
-	private OntologyManager ontMgr;
 
 	private enum JsonKeys {
 		updateType, fileUrl, worksheetId
@@ -81,12 +85,14 @@ public class ExportJSONCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		logger.info("Entered ExportJSONCommand");
+
 		
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		RepFactory f = workspace.getFactory();
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				AlignmentManager.Instance().constructAlignmentId(workspace.getId(),
 						worksheetId));
-	
+		OntologyManager ontMgr = workspace.getOntologyManager();
 		// Set the prefix and namespace to be used while generating RDF
 		fetchRdfPrefixAndNamespaceFromPreferences(workspace);
 		
@@ -109,51 +115,36 @@ public class ExportJSONCommand extends WorksheetCommand {
 		logger.debug(mapping.toString());
 		
 		//****************************************************************************************************/
-		logger.info(mapping.toString());
-		logger.info("Got the mapping");
-
 		//*** Extract list of TripleMaps *************************************************************************************************/
 		List<TriplesMap> triplesMapList = mapping.getTriplesMapList();
-		TriplesMap triplesMap = triplesMapList.get(3);
-		logger.info("Size: " + Integer.toString(triplesMapList.size()));
+		
 
-		
-		//****************************************************************************************************/
-		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows());
-		logger.info("Rows: " + Integer.toString(rows.size()));
-		
-		JSONArray JSONArray = new JSONArray();
-		
-		for (Row row:rows) {
-			JSONObject obj = new JSONObject();
-			Iterator<PredicateObjectMap> it = triplesMap.getPredicateObjectMaps().iterator();
-			
-			while (it.hasNext()) {
-				PredicateObjectMap predicateObjectMap = it.next();
-				String objectId = predicateObjectMap.getObject().getId();
-				String key = predicateObjectMap.getPredicate().getTemplate().toString();
-				String value = row.getNode(objectId).getValue().asString();
-				obj.put(key, value);
+		String rootTriplesMapId = null;
+		for(TriplesMap map: triplesMapList)
+		{
+			if(map.getSubject().getId().compareTo(alignmentNodeId) == 0)
+			{
+				rootTriplesMapId = map.getId();
+				break;
 			}
-			JSONArray.put(obj);
 		}
-		
-		logger.info("No. of JSON objects: " + JSONArray.length());
-		logger.info(JSONArray.toString());
-
-		// Prepare the output container
-		//UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
-		//c.add(new InfoUpdate("JSON generation complete"));
-		
-		JsonExport jsonExport = new JsonExport(worksheet);
-		final String fileName = jsonExport.publishJSON(JSONArray.toString(4));
-		
+		if(null == rootTriplesMapId)
+		{
+			String errmsg ="Invalid alignment id " + alignmentNodeId;
+			logger.error(errmsg);
+			return new UpdateContainer(new ErrorUpdate("Error occured while searching for root for JSON: " +errmsg));
+		}
 		// create JSONKR2RMLRDFWriter
+		final String jsonFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
+				worksheet.getTitle().replaceAll("\\.", "_") +  "-export"+".json"; 
+		final String jsonFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_DIR) +  
+				jsonFileName;
 		PrintWriter printWriter;
 		try {
-			printWriter = new PrintWriter(fileName);
+			printWriter = new PrintWriter(jsonFileLocalPath);
 			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(printWriter);
-			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, factory, ontMgr, writer, false, mapping, errorReport);
+			RootStrategy strategy = new UserSpecifiedRootStrategy(rootTriplesMapId, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
+			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, ontMgr, writer, false, strategy, mapping, errorReport);
 			try {
 				generator.generateRDF(true);
 				logger.info("RDF written to file.");
@@ -161,23 +152,18 @@ public class ExportJSONCommand extends WorksheetCommand {
 				logger.error("Error occured while generating RDF!", e1);
 				return new UpdateContainer(new ErrorUpdate("Error occured while generating RDF: " + e1.getMessage()));
 			}
+			printWriter.close();
 		} catch (FileNotFoundException e) {
 			logger.error("File Not found", e);
 			return new UpdateContainer(new ErrorUpdate("File Not found while generating RDF: " + e.getMessage()));
 		}
 		
-		ExportMongoDBUtil mongo = new ExportMongoDBUtil();
+	//	ExportMongoDBUtil mongo = new ExportMongoDBUtil();
 		try {
-			mongo.publishMongoDB(JSONArray);
+		//	mongo.publishMongoDB(JSONArray);
 		} catch (Exception e) {
 			logger.error("Error inserting into MongoDB." + e.getMessage());
-		}
-//		try {
-//			mongo.publishMongoDB(fileName);
-//		} catch (IOException e) {
-//			logger.error("Error inserting into MongoDB." + e.getMessage());
-//		}
-		
+		}		
 		return new UpdateContainer(new AbstractUpdate() {
 			
 			@Override
@@ -186,8 +172,8 @@ public class ExportJSONCommand extends WorksheetCommand {
 				try {
 					outputObject.put(JsonKeys.updateType.name(),
 							"PublishJSONUpdate");
-					outputObject.put(JsonKeys.fileUrl.name(),
-							fileName);
+					outputObject.put(JsonKeys.fileUrl.name(), 
+							ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR) + jsonFileName);
 					outputObject.put(JsonKeys.worksheetId.name(),
 							worksheetId);
 					pw.println(outputObject.toString(4));

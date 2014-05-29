@@ -85,10 +85,7 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		
 		if(modelFilename == null) {
 			modelFilename = getHistoryFilepath(worksheetId);
-		} else {
-			modelFilename = ServletContextParameterMap.getParameterValue(
-					ContextParameter.R2RML_PUBLISH_DIR) + modelFilename;
-		}
+		} 
 		
 		long end1 = System.currentTimeMillis();
 		logger.info("Time to get alignment info for saving: " + (end1-start) + "msec");
@@ -135,7 +132,7 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		String modelFilename = workspace.getCommandPreferencesId() + worksheetId + "-" + 
 				worksheet.getTitle() +  "-auto-model.ttl"; 
 		String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
-				ContextParameter.R2RML_PUBLISH_DIR) +  modelFilename;
+				ContextParameter.R2RML_USER_DIR) +  modelFilename;
 		return modelFileLocalPath;
 	}
 	

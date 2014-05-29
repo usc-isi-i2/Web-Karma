@@ -569,9 +569,18 @@ public class OntologyCache {
 	
 	private boolean isTopLevelClass(String c) {
 		
+		// returns TRUE if the class s is an immediate node after THING in the class hierarchy
+		
+//		if (c.equalsIgnoreCase(Uris.THING_URI))
+//			return true;
+		
 		Set<String> superClasses = this.directSuperClasses.get(c).keySet();
 
 		if (superClasses == null || superClasses.isEmpty())
+			return true;
+		
+		if (superClasses.size() == 1 &&
+				superClasses.iterator().next().equalsIgnoreCase(Uris.THING_URI))
 			return true;
 		
 		for (String s : superClasses)
@@ -586,7 +595,7 @@ public class OntologyCache {
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
 			for (String s : this.classes.keySet()) {
-				if (s.equalsIgnoreCase(Uris.THING_URI)) continue;
+//				if (s.equalsIgnoreCase(Uris.THING_URI)) continue;
 				if (isTopLevelClass(s)) {
 					Label label = this.classes.get(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
@@ -735,12 +744,14 @@ public class OntologyCache {
 		
 		for (String superclass : this.directSubClasses.keySet()) {
 			Set<String> subClasses = this.directSubClasses.get(superclass).keySet();
+			if (subClasses != null)
 			for (String subclass : subClasses)
 				this.directSubclassSuperclassPairs.add(new SubclassSuperclassPair(subclass, superclass));
 		}
 		
 		for (String superclass : this.indirectSubClasses.keySet()) {
 			Set<String> subClasses = this.indirectSubClasses.get(superclass).keySet();
+			if (subClasses != null)
 			for (String subclass : subClasses)
 				this.indirectSubclassSuperclassPairs.add(new SubclassSuperclassPair(subclass, superclass));
 		}
@@ -770,7 +781,11 @@ public class OntologyCache {
 		for (String c : this.indirectSuperClasses.keySet()) {
 			
 			HashMap<String, Label> superClasses = this.indirectSuperClasses.get(c);
-			if (superClasses != null && !superClasses.containsKey(Uris.THING_URI))
+			if (superClasses == null) {
+				superClasses = new HashMap<String, Label>();
+				this.indirectSuperClasses.put(c, superClasses); 
+			}
+			if (!c.equalsIgnoreCase(Uris.THING_URI) && !superClasses.containsKey(Uris.THING_URI))
 				superClasses.put(Uris.THING_URI, new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL));
 		}
 		

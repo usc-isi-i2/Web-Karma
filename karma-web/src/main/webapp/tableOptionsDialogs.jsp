@@ -264,6 +264,126 @@ a.icon-remove:hover {
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div class="modal fade" id="saveModelDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Save Model</h4>
+				  </div>
+				  <div class="modal-body">
+					<div class="form-group">
+						<input class="form-control" type="radio" id="buttonCollection_Save" value="Collection" name="buttonCollection_Save">Collection
+						<input class="form-control" type="radio" id="buttonCollection_Save" value="URL" name="buttonCollection_Save" checked="checked">URL
+					</div>
+					<div class="form-group">
+						<label for="txtR2RML_URL">Model URL</label>
+						<input class="form-control" type="text" id="txtModel_URL_Save" required>
+					</div>
+					<div class="form-group">
+						<label for="txtR2RML_URL">Graph Name</label>
+						<input class="form-control" type="text" id="txtGraph_URL_Save" required>
+					</div>
+
+					<div class="form-group">
+						<label for="txtR2RML_URL">SPARQL End Point</label>
+						<input class="form-control" type="text" id="txtR2RML_URL_Save" required>
+					</div>
+					
+					<div class="error" style="display: none">Please enter an end point</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Publish</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="clearModelDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Clear Model</h4>
+				  </div>
+				  <div class="modal-body">
+
+					<div class="form-group">
+						<label for="txtR2RML_URL">Graph Name</label>
+						<input class="form-control" type="text" id="txtGraph_URL_Clear" required>
+					</div>
+
+					<div class="form-group">
+						<label for="txtR2RML_URL">SPARQL End Point</label>
+						<input class="form-control" type="text" id="txtR2RML_URL_Clear" required>
+					</div>
+					
+					<div class="error" style="display: none">Please enter an end point</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Publish</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="fetchModelListDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Fetch Model</h4>
+				  </div>
+				  <div class="modal-body">
+
+					<div class="form-group">
+						<label for="txtR2RML_URL">Context Name</label>
+						<input class="form-control" type="text" id="txtGraph_URL_Fetch" required>
+					</div>
+
+					<div class="form-group">
+						<label for="txtR2RML_URL">SPARQL End Point</label>
+						<input class="form-control" type="text" id="txtR2RML_URL_Fetch" required>
+					</div>
+					
+					<div class="error" style="display: none">Please enter an end point</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Next</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="applyModelDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Apply Model</h4>
+				  </div>
+				  <div class="modal-body">
+				  	<h4>Select Graphs:</h4>
+						<div id="applyModelDialogColumns"></div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Apply</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <div class="modal fade" id="fetchModelDialog" tabindex="-1">
   <div class="modal-dialog">
@@ -404,6 +524,27 @@ a.icon-remove:hover {
 		</form>
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<div class="modal fade" id="glueDialog2" tabindex="-1">
+	 <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				      <h4 class="modal-title">Glue</h4>
+				  </div>
+				  <div class="modal-body">
+						<h4>Select Columns:</h4>
+						<div id="glueDialogColumns"></div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Submit</button>
+				   </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->   
 
 <div class="modal fade" id="groupByDialog2" tabindex="-1">
 	 <div class="modal-dialog">

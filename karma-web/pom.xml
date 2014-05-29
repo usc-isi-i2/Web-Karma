@@ -63,97 +63,99 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-<dependency>
-	<groupId>de.micromata.jak</groupId>
-	<artifactId>JavaAPIforKml</artifactId>
-	<version>2.2.0</version>
-</dependency>
+		
+		<dependency>
+			<groupId>de.micromata.jak</groupId>
+			<artifactId>JavaAPIforKml</artifactId>
+			<version>2.2.0</version>
+		</dependency>
             
 	</dependencies>
 
 
 	<build>
 	
-	<resources>
-		<resource>
-			<directory>src/main/config</directory>
-		</resource>
-		<resource>
-			<directory>src/main/resources</directory>
-		</resource>
-	</resources>
-	<plugins>
-	<plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-war-plugin</artifactId>
-		<version>2.4</version>
-		<configuration>
-			<archiveClasses>true</archiveClasses>
+		<resources>
+			<resource>
+				<directory>src/main/config</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archiveClasses>true</archiveClasses>
 
-			<webResources>
-				<resource>
-					<directory>src/main/webapp/</directory>
-				</resource>
-			</webResources>
-		</configuration>
-	</plugin>
-	<plugin>
-		<groupId>org.eclipse.jetty</groupId>
-		<artifactId>jetty-maven-plugin</artifactId>
-		<version>${jettyVersion}</version>
-		<configuration>
-			<systemProperties>
-				<systemProperty>
-					<name>log4j.configuration</name>
-					<value>log4j.properties</value>
-				</systemProperty>
-			</systemProperties>
-			<!--         		<jettyXml> -->
-			<!--         			jetty.xml -->
-			<!--         		</jettyXml> -->
-			<webApp>
-				<contextPath>/</contextPath>
-			</webApp>
-			<connectors>
-				<!-- work around file locking on windows -->
-				<connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
-					<port>8080</port>
-					<!-- this connector defaults to 1300 for some reason -->
-				</connector>
-			</connectors>
-			<contextHandlers>
-				<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
-					<war>${project.basedir}/external_webapps/openrdf-workbench.war</war>
-					<contextPath>/openrdf-workbench</contextPath>
-				</contextHandler>
-				<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
-					<war>${project.basedir}/external_webapps/openrdf-sesame.war</war>
-					<contextPath>/openrdf-sesame</contextPath>
-				</contextHandler>
-				<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
-					<war>${project.basedir}/external_webapps/cleaningService.war</war>
-					<contextPath>/cleaningService</contextPath>
-				</contextHandler>
-			</contextHandlers>
+					<webResources>
+						<resource>
+							<directory>src/main/webapp/</directory>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
 
-		</configuration>
+			<!-- Configuration for Jetty -->
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>${jettyVersion}</version>
+				<configuration>
+					<systemProperties>
+						<systemProperty>
+							<name>log4j.configuration</name>
+							<value>log4j.properties</value>
+						</systemProperty>
+					</systemProperties>
+					<!--         		<jettyXml> -->
+					<!--         			jetty.xml -->
+					<!--         		</jettyXml> -->
+					<webApp>
+						<contextPath>/</contextPath>
+					</webApp>
+					<connectors>
+						<!-- work around file locking on windows -->
+						<connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
+							<port>8080</port>
+							<!-- this connector defaults to 1300 for some reason -->
+						</connector>
+					</connectors>
+					<contextHandlers>
+						<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+							<war>${project.basedir}/external_webapps/openrdf-workbench.war</war>
+							<contextPath>/openrdf-workbench</contextPath>
+						</contextHandler>
+						<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+							<war>${project.basedir}/external_webapps/openrdf-sesame.war</war>
+							<contextPath>/openrdf-sesame</contextPath>
+						</contextHandler>
+						<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+							<war>${project.basedir}/external_webapps/cleaningService.war</war>
+							<contextPath>/cleaningService</contextPath>
+						</contextHandler>
+					</contextHandlers>
 
-		<!-- change user/pwd in src/main/config/jettyrealm.properties -->
-		<!--  <configuration>
-		   <webAppConfig>
-			  <contextPath>/*</contextPath>
-			</webAppConfig>
-			<loginServices>
-			  <loginService implementation="org.eclipse.jetty.security.HashLoginService">
-				<name>TestRealm</name>
-				<config>${project.basedir}/src/main/config/jettyrealm.properties</config>
-			  </loginService>
-			</loginServices>
-		  </configuration>
-		-->
-	</plugin>
-	
-	</plugins>
+				</configuration>
+
+				<!-- change user/pwd in src/main/config/jettyrealm.properties -->
+				<!--  <configuration>
+				   <webAppConfig>
+					  <contextPath>/*</contextPath>
+					</webAppConfig>
+					<loginServices>
+					  <loginService implementation="org.eclipse.jetty.security.HashLoginService">
+						<name>TestRealm</name>
+						<config>${project.basedir}/src/main/config/jettyrealm.properties</config>
+					  </loginService>
+					</loginServices>
+				  </configuration>
+				-->
+			</plugin>
+		</plugins>
 	</build>
 	
 	<profiles>
@@ -184,5 +186,77 @@
       </plugins>
     </build>
   </profile>
+
+  <profile>
+	<id>tomcat-deploy</id>
+	<build>
+  		<plugins>
+	  		<!-- Configuration for Tomcat -->
+	  		<!--
+    		Add a corresponding server block to your $M2_HOME/conf/settings.xml:
+
+			<server>
+			    <id>TomcatServer</id>
+			    <username>myusername</username>
+			    <password>mypassword</password>
+			</server>
+
+	  		-->
+			<plugin>
+		        <groupId>org.codehaus.mojo</groupId>
+		  		<artifactId>tomcat-maven-plugin</artifactId>
+				<configuration>
+						<server>TomcatServer</server>
+						<path>/</path>
+						<url>http://localhost:8080/manager/text</url>
+						<update>true</update>
+					</configuration>
+
+					<executions>
+							<execution>
+		  					<id>cleaningService</id>
+		  					<phase>package</phase>
+								<goals><goal>deploy</goal></goals>
+		  					<configuration>
+			  					<server>TomcatServer</server>
+			  					<path>/cleaningService</path>
+			  					<url>http://localhost:8080/manager/text</url>
+			  					<warFile>${project.basedir}/external_webapps/cleaningService.war</warFile>
+			  					<update>true</update>
+			  				</configuration>
+		  				</execution>
+		  				<execution>
+		  					<id>openrdfworkbench</id>
+		  					<phase>package</phase>
+								<goals><goal>deploy</goal></goals>
+		  					<configuration>
+			  					<server>TomcatServer</server>
+			  					<path>/openrdf-workbench</path>
+			  					<url>http://localhost:8080/manager/text</url>
+			  					<warFile>${project.basedir}/external_webapps/openrdf-workbench.war</warFile>
+			  					<update>true</update>
+			  				</configuration>
+		  				</execution>
+		  				<execution>
+		  					<id>openrdfsesame</id>
+		  					<phase>package</phase>
+								<goals><goal>deploy</goal></goals>
+		  					<configuration>
+			  					<server>TomcatServer</server>
+			  					<path>/openrdf-sesame</path>
+			  					<url>http://localhost:8080/manager/text</url>
+			  					<warFile>${project.basedir}/external_webapps/openrdf-sesame.war</warFile>
+			  					<update>true</update>
+			  				</configuration>
+		  				</execution>
+		  		</executions>
+		    </plugin>
+		</plugins>
+	</build>
+  </profile>
 </profiles>
+
+<distributionManagement>
+		<repository></repository>
+	</distributionManagement>
 </project>

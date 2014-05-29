@@ -33,6 +33,7 @@ public interface Uris {
 	public static final String RDFS_COMMENT_URI = Namespaces.RDFS + "comment";
 	public static final String RDF_VALUE_URI = Namespaces.RDF + "value";
 
+	public static final String OWL_SAMEAS_URI = Namespaces.OWL + "sameAs";
 	// Karma Internal URIs
 	public static final String DEFAULT_LINK_URI = Namespaces.KARMA_DEV + "defaultLink"; 
 	public static final String DEFAULT_NODE_URI = Namespaces.KARMA_DEV + "defaultNode"; 
@@ -44,11 +45,16 @@ public interface Uris {
 	
 	public static final String CLASS_INSTANCE_LINK_URI = Namespaces.KARMA_DEV + "classLink"; 
 	public static final String COLUMN_SUBCLASS_LINK_URI = Namespaces.KARMA_DEV + "columnSubClassOfLink"; 
+	public static final String MODEL_HAS_DATA_URI = Namespaces.KARMA_DEV + "hasData"; 
 	public static final String DATAPROPERTY_OF_COLUMN_LINK_URI = Namespaces.KARMA_DEV + "dataPropertyOfColumnLink";
 	public static final String OBJECTPROPERTY_SPECIALIZATION_LINK_URI = Namespaces.KARMA_DEV + "objectPropertySpecialization";
 	
 	// R2RML Vocabulary URIs
 	public static final String RR_TRIPLESMAP_CLASS_URI = Namespaces.RR + "TriplesMap";
+	public static final String RR_SUBJECTMAP_CLASS_URI = Namespaces.RR+ "SubjectMap";
+	public static final String RR_PREDICATEOBJECTMAP_CLASS_URI = Namespaces.RR+ "PredicateObjectMap";
+	public static final String RR_OBJECTMAP_CLASS_URI = Namespaces.RR+ "ObjectMap";
+	public static final String RR_LOGICAL_TABLE_CLASS_URI = Namespaces.RR + "LogicalTable";
 	public static final String RR_SUBJECTMAP_URI = Namespaces.RR + "subjectMap";
 	public static final String RR_TABLENAME_URI = Namespaces.RR + "tableName";
 	public static final String RR_TEMPLATE_URI = Namespaces.RR + "template";
@@ -58,7 +64,7 @@ public interface Uris {
 	public static final String RR_COLUMN_URI = Namespaces.RR + "column";
 	public static final String RR_DATATYPE_URI = Namespaces.RR + "datatype";
 	public static final String RR_LOGICAL_TABLE_URI = Namespaces.RR + "logicalTable";
-	public static final String RR_REF_OBJECT_MAP_URI = Namespaces.RR + "RefObjectMap";
+	public static final String RR_REF_OBJECT_MAP_CLASS_URI = Namespaces.RR + "RefObjectMap";
 	public static final String RR_PARENT_TRIPLE_MAP_URI = Namespaces.RR + "parentTriplesMap";
 	public static final String RR_TERM_TYPE_URI = Namespaces.RR + "termType";
 	public static final String RR_BLANK_NODE_URI = Namespaces.RR + "BlankNode";
@@ -71,6 +77,11 @@ public interface Uris {
 	public static final String KM_STEINER_TREE_ROOT_NODE = Namespaces.KARMA_DEV + "steinerTreeRootNode";
 	public static final String KM_SOURCE_NAME_URI = Namespaces.KARMA_DEV + "sourceName";
 	public static final String KM_HAS_TRIPLES_MAP_URI = Namespaces.KARMA_DEV + "hasTriplesMap";
+	public static final String KM_HAS_SUBJECT_MAP_URI = Namespaces.KARMA_DEV + "hasSubjectMap";
+	public static final String KM_HAS_OBJECT_MAP_URI = Namespaces.KARMA_DEV + "hasObjectMap";
+	public static final String KM_HAS_PREDICATE_OBJECT_MAP_URI = Namespaces.KARMA_DEV + "hasPredicateObjectMap";
+	public static final String KM_HAS_LOGICAL_TABLE_URI = Namespaces.KARMA_DEV + "hasLogicalTable";
+	public static final String KM_IS_PART_OF_MAPPING_URI = Namespaces.KARMA_DEV + "isPartOfMapping";
 	public static final String KM_HAS_WORKSHEET_HISTORY_URI = Namespaces.KARMA_DEV + "hasWorksheetHistory";
 	public static final String KM_MODEL_PUBLICATION_TIME_URI = Namespaces.KARMA_DEV + "modelPublicationTime";
 	public static final String KM_MODEL_VERSION_URI = Namespaces.KARMA_DEV + "modelVersion";

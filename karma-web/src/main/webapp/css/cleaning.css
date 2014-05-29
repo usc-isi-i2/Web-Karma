@@ -58,7 +58,8 @@ span.a9 {
 div.cleanExampleDiv {
 /*	border: solid #8C8C8C 1px;*/
 	display: block;
-	min-height: 12px;
+	min-height: 16px;
+    min-width: 70px;
 	padding-left: 2px;
 }
 

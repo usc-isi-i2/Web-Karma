@@ -139,6 +139,8 @@ public class ImportCSVFileCommand extends ImportFileCommand implements
 			setDelimiter(' ');
 		} else if (request.getParameter("delimiter").equals("pipe")) {
 			setDelimiter('|');
+		} else if (request.getParameter("delimiter").equals("semicolon")) {
+			setDelimiter(';');
 		} else {
 			// TODO What to do with manual text delimiter
 		}
