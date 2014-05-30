@@ -53,7 +53,7 @@ var ClassDropdownMenu = (function() {
             console.log(columnDomain);
             console.log(columnUri);
             searchDataDialog.getInstance().show(worksheetId, 
-                    columnDomain);
+                    columnDomain, columnUri, alignmentId);
         }
     	
     	function addOutgoingLink() {

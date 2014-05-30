@@ -1731,7 +1731,7 @@ var searchDataDialog = (function() {
 
     function PrivateConstructor() {
         var dialog = $("#searchDataDialog");
-        var worksheetId, columnDomain;
+        var worksheetId, columnDomain, columnUri, alignmentId;
         
         function init() {
             //Initialize what happens when we show the dialog
@@ -1787,12 +1787,12 @@ var searchDataDialog = (function() {
                         console.log(json);
                         //parse(json);
                         //hideLoading(info["worksheetId"]);
-                        augmentDataDialog.getInstance().show(worksheetId, json);
+                        augmentDataDialog.getInstance().show(worksheetId, json, columnUri, alignmentId);
                     },
                 error :
                     function (xhr, textStatus) {
                         alert("Error occured while Fetching Models!" + textStatus);
-                        hideLoading(info["worksheetId"]);
+                        //hideLoading(info["worksheetId"]);
                     }
             });
         };
@@ -1801,9 +1801,11 @@ var searchDataDialog = (function() {
             dialog.modal('hide');
         }
         
-        function show(wsId, colDomain) {
+        function show(wsId, colDomain, colUri, Alnid) {
             worksheetId = wsId;
             columnDomain = colDomain;
+            columnUri = colUri;
+            alignmentId = Alnid;
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
         
@@ -1833,7 +1835,7 @@ var augmentDataDialog = (function() {
 
     function PrivateConstructor() {
         var dialog = $("#augmentDataDialog");
-        var worksheetId;
+        var worksheetId, columnUri, alignmentId;
         
         function init() {
             //Initialize what happens when we show the dialog
@@ -1862,17 +1864,32 @@ var augmentDataDialog = (function() {
         
         function saveDialog(e) {
             hide();
-            //  if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
-            //     alert("Invalid sparql end point. Could not establish connection.");
-            //     return;
-            // }
-
+            var checkboxes = dialog.find(":checked");
+            if (checkboxes.length == 0) {
+                hide();
+                return;
+            }
+            var predicates = [];
+            var triplesMap = [];
+            for (var i = 0; i < checkboxes.length; i++) {
+	            var checkbox = checkboxes[i];
+	            var t1 = new Object();
+	            var t2 = new Object();
+	            t1['predicate'] = checkbox['src'];
+	            t2['tripleMap'] = checkbox['value'];
+	            predicates.push(t1);    
+	            triplesMap.push(t2);
+	        	}
             var info = new Object();
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info['predicate'] = checked['src'];
-            info['triplesMap'] = checked['value'];
+            info['predicate'] = JSON.stringify(predicates);
+            info['triplesMap'] = JSON.stringify(triplesMap);
+            info['columnUri'] = columnUri;
+            info['alignmentId'] = alignmentId;
             info["command"] = "AugmentDataCommand";
+            console.log(info['predicate']);
+            console.log(info['triplesMap']);
             //showLoading(info["worksheetId"]);
             var returned = $.ajax({
                 url: "RequestController",
@@ -1901,8 +1918,13 @@ var augmentDataDialog = (function() {
             dialog.modal('hide');
         }
         
-        function show(wsId, json) {
+        function show(wsId, json, colUri, Alnid) {
             worksheetId = wsId;
+            columnUri = colUri;
+            alignmentId = Alnid;
+            console.log(json);
+            if (json.length == 0)
+            	return;
             dialog.on('show.bs.modal', function (e) {
                 hideError();
                 var dialogContent = $("#augmentDataDialogColumns", dialog);
@@ -1912,13 +1934,13 @@ var augmentDataDialog = (function() {
                     var predicate = json[i]['predicate'];
                     var tripleMap = json[i]['tripleMap'];
                     var tmp = tripleMap.split(",");
-                    var row = $("<div>").addClass("radio");
+                    var row = $("<div>").addClass("checkbox");
                     var label = $("<label>").text(predicate + " " + tmp.length);
                     var input = $("<input>")
-                                        .attr("type", "radio")
-                                .attr("id", "selectcolumns")
+                                        .attr("type", "checkbox")
+                                .attr("id", "selectPredicates")
                                 .attr("value", tripleMap)
-                                .attr("name", "selectGraphs")
+                                .attr("name", "selectPredicates")
                                 .attr("src", predicate);
                     label.append(input);
                     row.append(label);
