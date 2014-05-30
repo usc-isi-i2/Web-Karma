@@ -253,7 +253,7 @@ public class TripleStoreUtil {
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			query.append("SELECT ?s ?p ?p\n");			
+			query.append("SELECT ?s ?p ?o\n");			
 			injectContext(context, query);
 			query.append("{\n");
 			query.append("VALUES ?s { ");
@@ -361,7 +361,7 @@ public class TripleStoreUtil {
 	}
 
 	private void injectContext(String context, StringBuilder query) {
-		if (!context.isEmpty() && context.compareTo("") != 0)
+		if (null != context && !context.trim().isEmpty())
 		{
 			query.append("FROM ");
 			formatURI(context, query);

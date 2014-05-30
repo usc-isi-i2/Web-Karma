@@ -20,6 +20,7 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.HashValueManager;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
