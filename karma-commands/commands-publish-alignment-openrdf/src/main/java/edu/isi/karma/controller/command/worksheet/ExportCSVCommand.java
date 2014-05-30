@@ -35,6 +35,7 @@ import com.ibm.icu.text.SimpleDateFormat;
 
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.publish.PublishRDFCommandPreferencesKeys;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -228,7 +229,12 @@ public class ExportCSVCommand extends WorksheetCommand {
 		
 		boolean result = false;
 		try{
-			utilObj.saveToStore(generatedRDFFileName, TripleStoreUtil.defaultDataRepoUrl, graphUri, true, null);
+			JSONObject pref = workspace.getCommandPreferences().getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
+			String rdfNamespace = "";
+			if(pref != null) {
+				rdfNamespace = pref.optString(PublishRDFCommandPreferencesKeys.rdfNamespace.name());
+			}
+			result = utilObj.saveToStore(generatedRDFFileName, TripleStoreUtil.defaultDataRepoUrl, graphUri, true, rdfNamespace);
 		}
 		catch(Exception e)
 		{
