@@ -311,6 +311,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	        },
 	        done: function(e, data) {
 	            $("div.fileupload-progress").hide();
+	            console.log(data);
 	            parse(data.result);
 	            hideLoading(worksheetId);
 	        },

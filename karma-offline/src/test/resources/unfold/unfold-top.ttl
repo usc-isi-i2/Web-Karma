@@ -1,0 +1,24 @@
+_:crm_E42_Identifier1_N8 <http://www.w3.org/2000/01/rdf-schema#label> "97" .
+_:crm_E55_Type1_N6 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "Frank" .
+_:crm_E55_Type1_N6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+_:crm_E42_Identifier1_N8 <http://www.cidoc-crm.org/cidoc-crm/P1i_identifies> _:crm_E55_Type1_N6 .
+_:crm_E42_Identifier1_N8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+
+_:crm_E42_Identifier1_N12 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+_:crm_E42_Identifier1_N12 <http://www.w3.org/2000/01/rdf-schema#label> "77" .
+_:crm_E55_Type1_N14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+_:crm_E55_Type1_N14 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "Lee" .
+_:crm_E42_Identifier1_N12 <http://www.cidoc-crm.org/cidoc-crm/P1i_identifies> _:crm_E55_Type1_N14 .
+
+_:crm_E42_Identifier1_N16 <http://www.w3.org/2000/01/rdf-schema#label> "32" .
+_:crm_E55_Type1_N18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+_:crm_E42_Identifier1_N16 <http://www.cidoc-crm.org/cidoc-crm/P1i_identifies> _:crm_E55_Type1_N18 .
+_:crm_E55_Type1_N18 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "Mary" .
+_:crm_E42_Identifier1_N16 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+
+_:crm_E55_Type1_N22 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+_:crm_E42_Identifier1_N20 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+_:crm_E42_Identifier1_N20 <http://www.cidoc-crm.org/cidoc-crm/P1i_identifies> _:crm_E55_Type1_N22 .
+_:crm_E42_Identifier1_N20 <http://www.w3.org/2000/01/rdf-schema#label> "58" .
+_:crm_E55_Type1_N22 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "Frank" .
+

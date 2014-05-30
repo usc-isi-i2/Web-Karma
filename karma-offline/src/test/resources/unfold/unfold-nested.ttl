@@ -1,0 +1,26 @@
+_:crm_E55_Type1_N29_N24 <http://www.w3.org/2008/05/skos#prefLabel> "77" .
+_:crm_E55_Type1_N37_N32 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "Frank" .
+_:crm_E55_Type1_N37_N32 <http://www.w3.org/2008/05/skos#prefLabel> "32" .
+_:crm_E55_Type1_N29_N24 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "Lee" .
+_:crm_E55_Type1_N16_N20 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+_:crm_E55_Type1_N45_N40 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "Frank" .
+_:crm_E55_Type1_N45_N40 <http://www.w3.org/2008/05/skos#prefLabel> "58" .
+_:crm_E55_Type1_N37_N32 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+_:crm_E55_Type1_N16_N20 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "Frank" .
+_:crm_E55_Type1_N45_N40 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+_:crm_E55_Type1_N29_N24 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+_:crm_E55_Type1_N16_N20 <http://www.w3.org/2008/05/skos#prefLabel> "97" .
+
+_:crm_E55_Type1_N56_N51 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+_:crm_E55_Type1_N72_N67 <http://www.w3.org/2008/05/skos#prefLabel> "82" .
+_:crm_E55_Type1_N72_N67 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+_:crm_E55_Type1_N56_N51 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "John" .
+_:crm_E55_Type1_N80_N75 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+_:crm_E55_Type1_N80_N75 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "David" .
+_:crm_E55_Type1_N72_N67 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "John" .
+_:crm_E55_Type1_N80_N75 <http://www.w3.org/2008/05/skos#prefLabel> "28" .
+_:crm_E55_Type1_N56_N51 <http://www.w3.org/2008/05/skos#prefLabel> "67" .
+_:crm_E55_Type1_N64_N59 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "Mary" .
+_:crm_E55_Type1_N64_N59 <http://www.w3.org/2008/05/skos#prefLabel> "79" .
+_:crm_E55_Type1_N64_N59 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+

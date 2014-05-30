@@ -22,6 +22,7 @@
 package edu.isi.karma.controller.command.worksheet;
 
 import edu.isi.karma.controller.command.CommandType;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.openrdf.repository.RepositoryException;
@@ -31,17 +32,22 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.kr2rml.KR2RMLVersion;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
@@ -81,6 +87,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
+		c.add(new WorksheetListUpdate());
 		UpdateContainer rwu = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
 		if(rwu != null)
 		{
@@ -104,8 +111,16 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 		}
 		
 		// Add worksheet updates that could have resulted out of the transformation commands
-		
-		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));		
+		for (Worksheet newws : workspace.getWorksheets()) {
+			if (newws.getId().compareTo(worksheetId) != 0) {
+				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId()));
+				Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), newws.getId(), workspace.getOntologyManager());
+				SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(newws.getId()), workspace
+						.getCrfModelHandler(), workspace.getOntologyManager());
+				c.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(newws.getId(), workspace, alignment));
+			}
+		}
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));	
 		c.add(new InfoUpdate("Model successfully applied!"));
 		return c;
 	}

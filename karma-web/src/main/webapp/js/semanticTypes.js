@@ -40,6 +40,7 @@ var SetSemanticTypeDialog = (function() {
 			    // This is tha JSON array which is changed when the user adds/changes through GUI and is submitted to the server.
 			    var tdTag = $("td#"+ columnId); 
 			    var typeJsonObject = $(tdTag).data("typesJsonObject");
+			    console.log(typeJsonObject);
 			    existingTypes = typeJsonObject["SemanticTypesArray"];
 			    
 			    var CRFInfo = typeJsonObject["FullCRFModel"];

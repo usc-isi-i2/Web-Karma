@@ -45,10 +45,10 @@ import edu.isi.karma.util.EncodingDetector;
  * @author dipsy
  * 
  */
-public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
+public class TestJSONRDFGeneratorWithFold extends TestRdfGenerator{
 
 	JSONRDFGenerator rdfGen;
-	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGeneratorWithGlue.class);
+	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGeneratorWithFold.class);
 	
 
 	/**
@@ -67,12 +67,12 @@ public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
 
 		// Add the models in
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
-				"glue-nested-model", getTestResource(
-						 "glue/glue-nested-model.ttl"));
+				"fold-top-model", getTestResource(
+						 "fold/fold-top-model.ttl"));
 		rdfGen.addModel(modelIdentifier);
 		modelIdentifier = new R2RMLMappingIdentifier(
-				"glue-top-model", getTestResource(
-						 "glue/glue-top-model.ttl"));
+				"fold-nested-model", getTestResource(
+						 "fold/fold-nested-model.ttl"));
 		rdfGen.addModel(modelIdentifier);
 		
 	}
@@ -85,10 +85,10 @@ public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
 	}
 
 	@Test
-	public void testGlueNested() {
+	public void testFoldNested() {
 		try {
 
-			String filename = "glue/glue-nested.json";
+			String filename = "fold/fold-nested.json";
 			System.out.println("Load json file: " + filename);
 			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
 					"utf-8");
@@ -96,25 +96,25 @@ public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("glue-nested-model", jsonData, false, pw);
+			rdfGen.generateRDF("fold-nested-model", jsonData, false, pw);
 			String rdf = sw.toString();
 			
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split(System.getProperty("line.separator"));
 			int count = lines.length;
 			 
-			assertEquals(33, count);
+			assertEquals(49, count);
 		} catch (Exception e) {
-			logger.error("testGlueNested failed:", e);
+			logger.error("testFoldNested failed:", e);
 			fail("Execption: " + e.getMessage());
 		}
 	}
 	
 	@Test
-	public void testGlueTop() {
+	public void testFoldTop() {
 		try {
 
-			String filename = "glue/glue-top.json";
+			String filename = "fold/fold-top.json";
 			System.out.println("Load json file: " + filename);
 			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
 					"utf-8");
@@ -122,16 +122,16 @@ public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("glue-top-model", jsonData, false, pw);
+			rdfGen.generateRDF("fold-top-model", jsonData, false, pw);
 			String rdf = sw.toString();
 			
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split(System.getProperty("line.separator"));
 			int count = lines.length;
 			 
-			assertEquals(19, count);
+			assertEquals(15, count);
 		} catch (Exception e) {
-			logger.error("testGlueTop failed:", e);
+			logger.error("testFoldTop failed:", e);
 			fail("Execption: " + e.getMessage());
 		}
 	}
