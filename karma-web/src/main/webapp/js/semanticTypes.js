@@ -1891,7 +1891,7 @@ var augmentDataDialog = (function() {
             info["command"] = "AugmentDataCommand";
             console.log(info['predicate']);
             console.log(info['triplesMap']);
-            //showLoading(info["worksheetId"]);
+            showLoading(info["worksheetId"]);
             var returned = $.ajax({
                 url: "RequestController",
                 type: "POST",
@@ -1901,10 +1901,9 @@ var augmentDataDialog = (function() {
                     function (xhr, textStatus) {
                         //alert(xhr.responseText);
                         var json = $.parseJSON(xhr.responseText);
-                        json = json.elements[0];
                         console.log(json);
-                        //parse(json);
-                        //hideLoading(info["worksheetId"]);
+                        parse(json);
+                        hideLoading(info["worksheetId"]);
                         //applyModelDialog.getInstance().show(worksheetId, json);
                     },
                 error :

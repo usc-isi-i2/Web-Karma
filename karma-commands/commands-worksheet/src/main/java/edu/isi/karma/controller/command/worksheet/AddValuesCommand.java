@@ -108,6 +108,7 @@ public class AddValuesCommand extends WorksheetCommand{
 		} catch (Exception e) {
 			logger.error("Error in AddColumnCommand" + e.toString());
 			Util.logException(logger, e);
+			e.printStackTrace();
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
 	}
