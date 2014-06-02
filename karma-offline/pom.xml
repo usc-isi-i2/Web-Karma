@@ -55,6 +55,27 @@
 	<artifactId>JavaAPIforKml</artifactId>
 	<version>2.2.0</version>
 </dependency>
+<dependency>
+    <groupId>org.apache.tika</groupId>
+    <artifactId>tika-core</artifactId>
+    <version>1.5</version>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.tika</groupId>
+    <artifactId>tika-parsers</artifactId>
+    <version>1.5</version>
+  </dependency>
+  <dependency>
+    <groupId>jaxen</groupId>
+    <artifactId>jaxen</artifactId>
+    <version>1.1.1</version>
+    <exclusions>
+        <exclusion>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
 	    <dependency>
 		    <groupId>org.json</groupId>
 		    <artifactId>json</artifactId>

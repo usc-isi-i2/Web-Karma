@@ -48,7 +48,7 @@ import edu.isi.karma.util.EncodingDetector;
  */
 public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
 
-	JSONRDFGenerator rdfGen;
+	GenericRDFGenerator rdfGen;
 	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGeneratorWithGlue.class);
 	
 

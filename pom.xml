@@ -18,6 +18,7 @@
 		<module>karma-util</module>
 		<module>karma-cleaning</module>
 		<module>karma-commands</module>
+		<module>karma-mr</module>
 	</modules>
 
 
@@ -68,7 +69,7 @@
 	  <gson.version>2.2.2</gson.version>
 	  <httpcomponents.version>4.2.4</httpcomponents.version>
 	  <guava.version>13.0.1</guava.version>
-	  <hadoop.dist.mahout.version>0.7</hadoop.dist.mahout.version>
+	  <hadoop.dist.mahout.version>0.9</hadoop.dist.mahout.version>
 	  <spring.version>3.2.4.RELEASE</spring.version>
 
   </properties>

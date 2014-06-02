@@ -22,6 +22,14 @@
  */
 package edu.isi.karma.controller.command.importdata;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.update.CSVImportPreviewUpdate;
@@ -30,11 +38,6 @@ import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 
 public class ImportCSVFileCommand extends ImportFileCommand implements
 		IPreviewable {
@@ -112,8 +115,15 @@ public class ImportCSVFileCommand extends ImportFileCommand implements
 
 	@Override
 	protected Import createImport(Workspace workspace) {
+		try{
 		return new CSVFileImport(headerRowIndex, dataStartRowIndex, delimiter,
 				quoteCharacter, encoding, maxNumLines, getFile(), workspace);
+		}
+		catch(IOException e)
+		{
+			logger.error("Unable to import csv file: " + e.getMessage());
+			return null;
+		}
 	}
 
 	@Override
