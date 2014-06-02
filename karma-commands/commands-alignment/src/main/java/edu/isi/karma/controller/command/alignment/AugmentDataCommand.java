@@ -15,6 +15,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.worksheet.AddValuesCommandFactory;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.CloneTableUtils;
@@ -118,15 +119,15 @@ public class AugmentDataCommand extends WorksheetCommand{
 			System.out.println(results);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new UpdateContainer();
+			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
 		List<String> resultSubjects = results.get("resultSubjects");
 		List<String> resultPredicates = results.get("resultPredicates");
-		List<String> resultObjects = results.get("resultObjects");
-		String predicate = "";
-		JSONArray array = null;
+		List<String> resultObjects = results.get("resultObjects");		
 		AddValuesCommandFactory addFactory = new AddValuesCommandFactory();
 		for (int i = 0; i < resultPredicates.size(); i++) {
+			String predicate = resultPredicates.get(i);
+			JSONArray array = new JSONArray();
 			JSONObject obj = new JSONObject();
 			JSONObject obj2 = new JSONObject();
 			String subject = resultSubjects.get(i);
@@ -134,30 +135,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 			obj2.put("rowId", SubjectURIToRowId.get(subject));
 			obj2.put("rowIdHash", "");
 			obj2.put("values", obj);
-			if (predicate.compareTo(resultPredicates.get(i)) != 0) {
-				if (!predicate.isEmpty()) {
-					JSONArray input = new JSONArray();
-					JSONObject obj3 = new JSONObject();
-					obj3.put("name", "AddValues");
-					obj3.put("value", array.toString());
-					obj3.put("type", "other");
-					input.put(obj3);
-					try {
-						c.append(addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), predicate.substring(predicate.lastIndexOf("/") + 1)).doIt(workspace));
-					} catch(Exception e) {
-						e.printStackTrace();
-					}
-				}
-				array = new JSONArray();
-				predicate = resultPredicates.get(i);
-				array.put(obj2);
-			}
-			else {
-				array.put(obj2);
-			}
-
-		}
-		if (array.length() != 0) {
+			array.put(obj2);
 			JSONArray input = new JSONArray();
 			JSONObject obj3 = new JSONObject();
 			obj3.put("name", "AddValues");
@@ -165,12 +143,15 @@ public class AugmentDataCommand extends WorksheetCommand{
 			obj3.put("type", "other");
 			input.put(obj3);
 			try {
-				c.append(addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), predicate.substring(predicate.lastIndexOf("/") + 1)).doIt(workspace));
+				addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), predicate.substring(predicate.lastIndexOf("/") + 1)).doIt(workspace);
 			} catch(Exception e) {
 				e.printStackTrace();
+				return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 			}
+
 		}
-		
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}
 
