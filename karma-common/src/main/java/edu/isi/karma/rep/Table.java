@@ -86,6 +86,10 @@ public class Table extends RepEntity {
 		r.setBelongsToTable(this);
 		return r;
 	}
+	
+	public boolean removeRow(Row r) {
+		return rows.remove(r);
+	}
 
 	public int getNumRows() {
 		return rows.size();

@@ -14,7 +14,9 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.worksheet.AddValuesCommand;
 import edu.isi.karma.controller.command.worksheet.AddValuesCommandFactory;
+import edu.isi.karma.controller.update.AddColumnUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -143,7 +145,9 @@ public class AugmentDataCommand extends WorksheetCommand{
 			obj3.put("type", "other");
 			input.put(obj3);
 			try {
-				addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), predicate.substring(predicate.lastIndexOf("/") + 1)).doIt(workspace);
+				AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), predicate.substring(predicate.lastIndexOf("/") + 1));
+				command.doIt(workspace);
+				hNodeId = command.getNewHNodeId();
 			} catch(Exception e) {
 				e.printStackTrace();
 				return new UpdateContainer(new ErrorUpdate(e.getMessage()));

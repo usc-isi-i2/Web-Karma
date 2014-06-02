@@ -208,7 +208,7 @@ public class AddValuesCommand extends WorksheetCommand{
 						Object t = obj.get("values");
 						if (t instanceof String) {
 							String value = (String)t;
-							addValues(node, value, factory);
+							addValues(node, value, factory, null);
 						}
 						else if (t instanceof JSONObject) {
 							addJSONObjectValues((JSONObject)t, worksheet, htable, factory, node.getBelongsToRow(), newHNodeId);
@@ -223,15 +223,17 @@ public class AddValuesCommand extends WorksheetCommand{
 		}
 	}
 
-	private void addJSONArrayValues(JSONArray array, Worksheet worksheet, HTable htable, RepFactory factory, Row row, String newHNodeId) {
+	private boolean addJSONArrayValues(JSONArray array, Worksheet worksheet, HTable htable, RepFactory factory, Row row, String newHNodeId) {
+		boolean flag = false;
 		for (int i = 0; i < array.length(); i++) {
 			JSONObject obj = (JSONObject)array.get(i);
-			addJSONObjectValues(obj, worksheet, htable, factory, row, newHNodeId);
+			flag |= addJSONObjectValues(obj, worksheet, htable, factory, row, newHNodeId);
 		}
+		return flag;
 	}
 
 	@SuppressWarnings("unchecked")
-	private void addJSONObjectValues(JSONObject obj, Worksheet worksheet, HTable htable, RepFactory factory, Row row, String newHNodeId) {
+	private boolean addJSONObjectValues(JSONObject obj, Worksheet worksheet, HTable htable, RepFactory factory, Row row, String newHNodeId) {
 		HNode ndid = htable.getHNode(newHNodeId);
 		HTable nestedHTable = ndid.getNestedTable();
 		if (nestedHTable == null)
@@ -239,6 +241,7 @@ public class AddValuesCommand extends WorksheetCommand{
 					worksheet, factory);
 		Table nestedTable = row.getNode(newHNodeId).getNestedTable();
 		Row r = nestedTable.addRow(factory);
+		boolean flag = false;
 		for (Object key : new TreeSet<Object>(obj.keySet())) {
 			Object value = obj.get(key.toString());
 			HNode h = nestedHTable.getHNodeFromColumnName(key.toString());
@@ -247,16 +250,31 @@ public class AddValuesCommand extends WorksheetCommand{
 			}
 			//
 			if (value instanceof String)
-				r.getNode(h.getId()).setValue((String)value, NodeStatus.original, factory);
+				flag |= addValues(r.getNode(h.getId()), (String)value, factory, nestedTable);
 			if (value instanceof JSONObject)
-				addJSONObjectValues((JSONObject)value, worksheet, nestedHTable, factory, r, h.getId());
+				flag |= addJSONObjectValues((JSONObject)value, worksheet, nestedHTable, factory, r, h.getId());
 			if (value instanceof JSONArray) 
-				addJSONArrayValues((JSONArray) value, worksheet, nestedHTable, factory,r, h.getId());
+				flag |= addJSONArrayValues((JSONArray) value, worksheet, nestedHTable, factory,r, h.getId());
 		}
+		if (!flag)
+			nestedTable.removeRow(r);
+		return flag;
 	}
 
-	private void addValues(Node node, String value, RepFactory factory) {
-		node.setValue(value, NodeStatus.original, factory);
+	private boolean addValues(Node node, String value, RepFactory factory, Table table) {
+		boolean flag = true;
+		if (table != null) {
+			for (Row r : table.getRows(0, table.getNumRows())) {
+				Node n = r.getNeighbor(node.getHNodeId());
+				if (n.getValue() != null && n.getValue().asString().compareTo(value) == 0) { 
+					flag = false;
+					break;
+				}
+			}
+		}
+		if (flag)
+			node.setValue(value, NodeStatus.original, factory);
+		return flag;
 	}
 
 }
