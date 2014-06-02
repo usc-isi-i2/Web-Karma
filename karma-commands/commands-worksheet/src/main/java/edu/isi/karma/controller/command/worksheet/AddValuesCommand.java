@@ -82,7 +82,6 @@ public class AddValuesCommand extends WorksheetCommand{
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		System.out.println("here");
 		Worksheet worksheet = workspace.getWorksheet(
 				worksheetId);
 		Object para = JSONUtil.createJson(this.getInputParameterJson());

@@ -118,7 +118,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 		}
 		try{
 			results = util.getObjectsForSubjectsAndPredicates(modelRepoUrl, null, subjects , predicates);
-			System.out.println(results);
+			//System.out.println(results);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
