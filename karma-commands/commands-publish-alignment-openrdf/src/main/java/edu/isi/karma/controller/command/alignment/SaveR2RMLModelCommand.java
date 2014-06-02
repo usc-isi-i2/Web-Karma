@@ -133,7 +133,7 @@ public class SaveR2RMLModelCommand extends Command{
 							VWorkspace vWorkspace) {
 						JSONObject outputObject = new JSONObject();
 						try {
-							outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
+							outputObject.put(JsonKeys.updateType.name(), "SaveModel");
 
 							outputObject.put(JsonKeys.fileUrl.name(), modelUrl);
 							outputObject.put(JsonKeys.worksheetId.name(), worksheetId);

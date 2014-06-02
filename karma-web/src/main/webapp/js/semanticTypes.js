@@ -1792,7 +1792,7 @@ var searchDataDialog = (function() {
                     },
                 error :
                     function (xhr, textStatus) {
-                        alert("Error occured while Fetching Models!" + textStatus);
+                        alert("Error occured while Searching Models!" + textStatus);
                         //hideLoading(info["worksheetId"]);
                     }
             });
@@ -1908,7 +1908,7 @@ var augmentDataDialog = (function() {
                     },
                 error :
                     function (xhr, textStatus) {
-                        alert("Error occured while Fetching Models!" + textStatus);
+                        alert("Error occured while Augmenting Models!" + textStatus);
                         hideLoading(info["worksheetId"]);
                     }
             });
@@ -1923,8 +1923,10 @@ var augmentDataDialog = (function() {
             columnUri = colUri;
             alignmentId = Alnid;
             console.log(json);
-            if (json.length == 0)
+            if (json.length == 0) {
+            	alert("No data to augment!");
             	return;
+            }
             dialog.on('show.bs.modal', function (e) {
                 hideError();
                 var dialogContent = $("#augmentDataDialogColumns", dialog);
