@@ -27,7 +27,7 @@ public abstract class KarmaPublishedMetadata extends KarmaMetadata {
 			String userDirPath = ServletContextParameterMap.getParameterValue(ContextParameter.WEBAPP_PATH) + "/publish/";
 			metadataDirPath = userDirPath + directory;
 			ServletContextParameterMap.setParameterValue(parameter, metadataDirPath);
-			ServletContextParameterMap.setParameterValue(getRelativeDirectoryContextParameter(), "/publish/" + directory);
+			ServletContextParameterMap.setParameterValue(getRelativeDirectoryContextParameter(), "publish/" + directory);
 		}
 		logger.info("Set parameter: " + parameter + " -> " + metadataDirPath);
 		File metadataDir = new File(metadataDirPath);
