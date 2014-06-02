@@ -94,13 +94,17 @@ public class AugmentDataCommand extends WorksheetCommand{
 		List<Table> dataTables = new ArrayList<Table>();
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), factory.getHTable(hnode.getHTableId()), dataTables);
 		Map<String, String> rowHashToSubjectURI = new HashMap<String, String>();
-		Map<String, String> SubjectURIToRowId = new HashMap<String, String>();
+		Map<String, List<String>> SubjectURIToRowId = new HashMap<String, List<String>>();
 		for(Table t : dataTables) {
 			for(Row r : t.getRows(0, t.getNumRows())) {
 				Node n = r.getNode(hNodeId);
 				if(n != null && n.getValue() != null && !n.getValue().isEmptyValue() && n.getValue().asString() != null && !n.getValue().asString().trim().isEmpty() ) {
 					rowHashToSubjectURI.put(HashValueManager.getHashValue(r, hNodeIds), n.getValue().asString());
-					SubjectURIToRowId.put(n.getValue().asString(), r.getId());
+
+					if (SubjectURIToRowId.get(n.getValue().asString()) == null)
+						SubjectURIToRowId.put(n.getValue().asString(), new ArrayList<String>());
+					List<String> rowIds = SubjectURIToRowId.get(n.getValue().asString());	
+					rowIds.add(r.getId());
 				}
 			}
 		}
@@ -128,29 +132,32 @@ public class AugmentDataCommand extends WorksheetCommand{
 		List<String> resultObjects = results.get("resultObjects");		
 		AddValuesCommandFactory addFactory = new AddValuesCommandFactory();
 		for (int i = 0; i < resultPredicates.size(); i++) {
-			String predicate = resultPredicates.get(i);
-			JSONArray array = new JSONArray();
-			JSONObject obj = new JSONObject();
-			JSONObject obj2 = new JSONObject();
 			String subject = resultSubjects.get(i);
-			obj.put("values", resultObjects.get(i));
-			obj2.put("rowId", SubjectURIToRowId.get(subject));
-			obj2.put("rowIdHash", "");
-			obj2.put("values", obj);
-			array.put(obj2);
-			JSONArray input = new JSONArray();
-			JSONObject obj3 = new JSONObject();
-			obj3.put("name", "AddValues");
-			obj3.put("value", array.toString());
-			obj3.put("type", "other");
-			input.put(obj3);
-			try {
-				AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), predicate.substring(predicate.lastIndexOf("/") + 1));
-				command.doIt(workspace);
-				hNodeId = command.getNewHNodeId();
-			} catch(Exception e) {
-				e.printStackTrace();
-				return new UpdateContainer(new ErrorUpdate(e.getMessage()));
+			List<String> rowIds = SubjectURIToRowId.get(subject);
+			for (String RowId : rowIds) {
+				String predicate = resultPredicates.get(i);
+				JSONArray array = new JSONArray();
+				JSONObject obj = new JSONObject();
+				JSONObject obj2 = new JSONObject();
+				obj.put("values", resultObjects.get(i));
+				obj2.put("rowId", RowId);
+				obj2.put("rowIdHash", "");
+				obj2.put("values", obj);
+				array.put(obj2);
+				JSONArray input = new JSONArray();
+				JSONObject obj3 = new JSONObject();
+				obj3.put("name", "AddValues");
+				obj3.put("value", array.toString());
+				obj3.put("type", "other");
+				input.put(obj3);
+				try {
+					AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), predicate.substring(predicate.lastIndexOf("/") + 1));
+					command.doIt(workspace);
+					hNodeId = command.getNewHNodeId();
+				} catch(Exception e) {
+					e.printStackTrace();
+					return new UpdateContainer(new ErrorUpdate(e.getMessage()));
+				}
 			}
 
 		}
