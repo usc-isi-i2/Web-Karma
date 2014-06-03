@@ -70,7 +70,7 @@ public class SaveR2RMLModelCommand extends Command{
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.notUndoable;
+		return CommandType.notInHistory;
 	}
 
 	@Override

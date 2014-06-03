@@ -57,7 +57,7 @@ public class ClearTripleStoreCommand extends Command{
 	@Override
 	public CommandType getCommandType() {
 		// TODO Auto-generated method stub
-		return CommandType.notUndoable;
+		return CommandType.notInHistory;
 	}
 
 	private static Logger logger = LoggerFactory.getLogger(ClearTripleStoreCommand.class);
