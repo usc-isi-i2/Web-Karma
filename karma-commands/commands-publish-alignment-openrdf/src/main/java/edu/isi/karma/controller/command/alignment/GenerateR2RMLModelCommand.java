@@ -53,8 +53,6 @@ public class GenerateR2RMLModelCommand extends Command {
 	
 	private final String worksheetId;
 	private String worksheetName;
-	private String tripleStoreUrl;
-	private String graphContext;
 	
 	private static Logger logger = LoggerFactory.getLogger(GenerateR2RMLModelCommand.class);
 	
@@ -66,27 +64,9 @@ public class GenerateR2RMLModelCommand extends Command {
 		rdfPrefix, rdfNamespace, modelSparqlEndPoint
 	}
 	
-	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String context) {
+	protected GenerateR2RMLModelCommand(String id, String worksheetId) {
 		super(id);
 		this.worksheetId = worksheetId;
-		this.tripleStoreUrl = url;
-		this.graphContext = context;
-	}
-
-	public String getTripleStoreUrl() {
-		return tripleStoreUrl;
-	}
-
-	public void setTripleStoreUrl(String tripleStoreUrl) {
-		this.tripleStoreUrl = tripleStoreUrl;
-	}
-	
-	public String getGraphContext() {
-		return graphContext;
-	}
-
-	public void setGraphContext(String graphContext) {
-		this.graphContext = graphContext;
 	}
 
 	@Override
@@ -203,7 +183,6 @@ public class GenerateR2RMLModelCommand extends Command {
 	private void savePreferences(Workspace workspace){
 		try{
 			JSONObject prefObject = new JSONObject();
-			prefObject.put(PreferencesKeys.modelSparqlEndPoint.name(), tripleStoreUrl);
 			workspace.getCommandPreferences().setCommandPreferences(
 					"GenerateR2RMLModelCommandPreferences", prefObject);
 			

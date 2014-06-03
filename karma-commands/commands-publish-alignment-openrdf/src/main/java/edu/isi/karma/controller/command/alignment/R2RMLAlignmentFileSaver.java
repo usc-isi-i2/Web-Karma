@@ -83,7 +83,7 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		
-		if(modelFilename == null) {
+		if(modelFilename == null && worksheet != null) {
 			modelFilename = getHistoryFilepath(worksheetId);
 		} 
 		

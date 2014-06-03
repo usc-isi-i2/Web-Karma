@@ -27,9 +27,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.view.VWorkspace;
 
 
@@ -38,17 +36,15 @@ public class SaveR2RMLModelCommand extends Command{
 	private String modelUrl;
 	private String tripleStoreUrl;
 	private String graphContext;
-	private String worksheetId;
 	private String collection;
-	private final String graphBaseUrl = "http://localhost/worksheets/";
+	private String graphBaseUrl = "";
 	private static Logger logger = LoggerFactory.getLogger(SaveR2RMLModelCommand.class);
 
-	protected SaveR2RMLModelCommand(String id, String worksheetId, String modelUrl, String url, String context, String collection) {
+	protected SaveR2RMLModelCommand(String id, String modelUrl, String url, String context, String collection) {
 		super(id);
 		this.modelUrl = modelUrl;
 		this.tripleStoreUrl = url;
 		this.graphContext = context;
-		this.worksheetId = worksheetId;
 		this.collection = collection;
 	}
 
@@ -79,11 +75,11 @@ public class SaveR2RMLModelCommand extends Command{
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		UpdateContainer uc = new UpdateContainer();
 		if (collection.compareTo("Collection") == 0) {
 			try {
 				URL url = new URL(modelUrl);
+				graphBaseUrl = url.getProtocol() + "://" + url.getHost() + "/worksheets/";
 				Scanner in = new Scanner(url.openStream());
 				JSONArray array = new JSONArray(in.nextLine());
 				in.close();
@@ -96,7 +92,7 @@ public class SaveR2RMLModelCommand extends Command{
 					if (location == -1)
 						location = filename.indexOf("-model.ttl");
 					filename = filename.substring(0, location);
-					result &= saveMapping(worksheet, modelUrl, graphBaseUrl + filename);
+					result &= saveMapping(modelUrl, graphBaseUrl + filename);
 					//System.out.println("here: " + graphBaseUrl + filename);
 				}
 				if (result) {
@@ -122,10 +118,10 @@ public class SaveR2RMLModelCommand extends Command{
 				logger.error("Error occured while saving R2RML Model!");
 				return new UpdateContainer(new ErrorUpdate("Error occured while saving R2RML model!"));
 			}
-			
+
 		}
 		else {
-			boolean result = saveMapping(worksheet, modelUrl, graphContext);
+			boolean result = saveMapping(modelUrl, graphContext);
 			if (result) {
 				logger.info("Saved model to triple store");
 				uc.add(new AbstractUpdate() {
@@ -134,9 +130,6 @@ public class SaveR2RMLModelCommand extends Command{
 						JSONObject outputObject = new JSONObject();
 						try {
 							outputObject.put(JsonKeys.updateType.name(), "SaveModel");
-
-							outputObject.put(JsonKeys.fileUrl.name(), modelUrl);
-							outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
 							pw.println(outputObject.toString());
 						} catch (JSONException e) {
 							e.printStackTrace();
@@ -156,35 +149,29 @@ public class SaveR2RMLModelCommand extends Command{
 		return null;
 	}
 
-	private boolean saveMapping(Worksheet worksheet, String modelUrl, String graphContext) {
+	private boolean saveMapping(String modelUrl, String graphContext) {
 		try {
 			TripleStoreUtil utilObj = new TripleStoreUtil();
-			String graphName = (graphContext.compareTo("") == 0) ? worksheet.getMetadataContainer().getWorksheetProperties()
-					.getPropertyValue(WorksheetProperties.Property.graphName) : graphContext;
-					if (graphName == null || graphName.isEmpty()) {
-						// Set to default
-						worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
-								WorksheetProperties.Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
-						graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
-					}
-					URL url = new URL(modelUrl);
-					StringWriter test = new StringWriter();
-					Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(url);
-					Property rdfTypeProp = model.getProperty(Uris.RDF_TYPE_URI);
-					
-					RDFNode node = model.getResource(Uris.KM_R2RML_MAPPING_URI);
-					ResIterator res = model.listResourcesWithProperty(rdfTypeProp, node);
-					List<Resource> resList = res.toList();
-					for(Resource r: resList)
-					{
-						model.add(r, model.getProperty(Uris.OWL_SAMEAS_URI), model.getResource(url.toString()));
-					}
-					model.write(test,"TTL");
-					model.close();
-					String content = test.getBuffer().toString();
-					test.close();
-					boolean result = utilObj.saveToStore(content, tripleStoreUrl, graphName, new Boolean(true), null);
-					return result;
+			if (graphContext == null || graphContext.trim().compareTo("") == 0)
+				return false;
+			URL url = new URL(modelUrl);
+			StringWriter test = new StringWriter();
+			Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(url);
+			Property rdfTypeProp = model.getProperty(Uris.RDF_TYPE_URI);
+
+			RDFNode node = model.getResource(Uris.KM_R2RML_MAPPING_URI);
+			ResIterator res = model.listResourcesWithProperty(rdfTypeProp, node);
+			List<Resource> resList = res.toList();
+			for(Resource r: resList)
+			{
+				model.add(r, model.getProperty(Uris.OWL_SAMEAS_URI), model.getResource(url.toString()));
+			}
+			model.write(test,"TTL");
+			model.close();
+			String content = test.getBuffer().toString();
+			test.close();
+			boolean result = utilObj.saveToStore(content, tripleStoreUrl, graphContext, new Boolean(true), null);
+			return result;
 		}catch (Exception e) {
 			return false;
 		}

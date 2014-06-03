@@ -139,6 +139,8 @@ and related projects, please see: http://www.isi.edu/integration
 		                  <li><a href="#" id="importSQLButton">Using SQL</a></li>
 		                  <li><a href="#" id="importFromServiceButton" >From Service</a></li>
 		                  <li><a href="#" class="fileinput-button"><form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form></a></li>
+		                  <li><a href="#" id="saveModelButton">Save Model</a></li>
+		                  <li><a href="#" id="clearModelButton">Clear Model</a></li>
 		              </ul>
 		            </li>
 		            <li><a href="#" id="resetButton" data-html='true' title='Delete all saved files,<br/>use with care!' data-toggle='tooltip' data-placement='bottom'>Reset ...</a></li>
@@ -185,7 +187,7 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="tableOptionsDialogs.jsp"></jsp:include>
 			  <jsp:include page="semanticTypes.jsp"></jsp:include>
 			  <jsp:include page="showModel.jsp"></jsp:include>
-			  
+			  <jsp:include page="model.jsp"></jsp:include>
 			  
 			  <div class="modal fade" id="rdfGenerationErrorWindow" tabindex="-1">
 			  	<div class="modal-dialog">
@@ -296,6 +298,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/classDropdown.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/propertyDropdown.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/model-layout.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/model.js?<jsp:include page='version.jsp' />"></script>
          
         <script>
         	var googleEarthEnabled = <%=UIConfiguration.Instance().isGoogleEarthEnabled()%>;

@@ -10,13 +10,11 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.worksheet.AddValuesCommand;
 import edu.isi.karma.controller.command.worksheet.AddValuesCommandFactory;
-import edu.isi.karma.controller.update.AddColumnUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -24,7 +22,6 @@ import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HashValueManager;
 import edu.isi.karma.rep.Node;
@@ -38,14 +35,12 @@ import edu.isi.karma.rep.alignment.LinkKeyInfo;
 
 public class AugmentDataCommand extends WorksheetCommand{
 	private String predicate;
-	private String triplesMap;
 	private String columnUri;
 	private String alignmentId;
 
 	public AugmentDataCommand(String id, String worksheetId, String columnUri, String alignmentId, String predicate, String triplesMap) {
 		super(id, worksheetId);
 		this.predicate = predicate;
-		this.triplesMap = triplesMap;
 		this.columnUri = columnUri;
 		this.alignmentId = alignmentId;
 	}

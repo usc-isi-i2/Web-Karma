@@ -15,8 +15,6 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"divider"},
 			{name:"Publish RDF" , func:publishRDF},
 			{name:"Publish Model" , func:publishModel},
-			{name:"Save Model" , func:saveModel},
-			{name:"Clear Model" , func:clearModel},
 			{name:"Fetch Model" , func:fetchModel},
 			{name:"Publish Service Model", func:publishServiceModel},
 			{name:"Publish Report", func:publishReport},
@@ -338,20 +336,6 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("Publish Model: " + worksheetTitle);
 		hideDropdown();
 		PublishModelDialog.getInstance().show(worksheetId);
-		return false;
-	}
-
-	function saveModel(event) {
-		console.log("Save Model: " + worksheetTitle);
-		hideDropdown();
-		saveModelDialog.getInstance().show(worksheetId);
-		return false;
-	}
-
-	function clearModel(event) {
-		console.log("Clear Model: " + worksheetTitle);
-		hideDropdown();
-		clearModelDialog.getInstance().show(worksheetId);
 		return false;
 	}
 

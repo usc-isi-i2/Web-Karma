@@ -1110,7 +1110,7 @@ var GroupByDialog = (function() {
                     },
                 error :
                     function (xhr, textStatus) {
-                        alert("Error occured while generating the automatic model!" + textStatus);
+                        alert("Error occured while grouping by!" + textStatus);
                         hideLoading(info["worksheetId"]);
                     }
             });
@@ -1261,7 +1261,7 @@ var UnfoldDialog = (function() {
                     },
                 error :
                     function (xhr, textStatus) {
-                        alert("Error occured while generating the automatic model!" + textStatus);
+                        alert("Error occured while unfolding!" + textStatus);
                         hideLoading(info["worksheetId"]);
                     }
             });
@@ -1442,7 +1442,7 @@ var FoldDialog2 = (function() {
 	                },
 	            error :
 	                function (xhr, textStatus) {
-	                    alert("Error occured while generating the automatic model!" + textStatus);
+	                    alert("Error occured while folding!" + textStatus);
 	                    hideLoading(info["worksheetId"]);
 	                }
 	        });
@@ -1573,7 +1573,7 @@ var GlueDialog = (function() {
                     },
                 error :
                     function (xhr, textStatus) {
-                        alert("Error occured while generating the automatic model!" + textStatus);
+                        alert("Error occured while gluing!" + textStatus);
                         hideLoading(info["worksheetId"]);
                     }
             });

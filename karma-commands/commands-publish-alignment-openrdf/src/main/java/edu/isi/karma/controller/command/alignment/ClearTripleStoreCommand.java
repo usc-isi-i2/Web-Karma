@@ -23,7 +23,12 @@ public class ClearTripleStoreCommand extends Command{
 	public ClearTripleStoreCommand(String id, String tripleStoreUrl, String context) {
 		super(id);
 		this.tripleStoreUrl = tripleStoreUrl;
-		this.graphUrl = context;
+		if (context != null && !context.trim().isEmpty()) {
+			context = context.trim();
+			context.replaceAll(">", "");
+			context.replaceAll("<", "");
+		}
+		this.graphUrl = "<" + context + ">";
 	}
 
 	
@@ -59,8 +64,7 @@ public class ClearTripleStoreCommand extends Command{
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		System.out.println(tripleStoreUrl);
-		System.out.println(graphUrl); 
+		
 		boolean result = TripleStoreUtil.clearContexts(tripleStoreUrl, graphUrl);
 		if (!result) {
 			return new UpdateContainer(new ErrorUpdate("Error occured while clearing R2RML model!"));

@@ -400,12 +400,6 @@ function parse(data) {
         }
         else if(element["updateType"] == "SaveModel") {
             // Remove existing link if any
-            $("a.R2RMLDownloadLink", titleDiv).remove();
-
-            var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
-            hideLoading(element["worksheetId"]);
-            var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("R2RML Model").addClass("R2RMLDownloadLink  DownloadLink").attr("target", "_blank");
-            $("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
             $.sticky("R2RML Model saved");
         }
         else if(element["updateType"] == "PublishSpatialDataUpdate") {
