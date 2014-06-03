@@ -95,17 +95,20 @@ public class DatabaseTablesListUpdate extends AbstractUpdate {
 			pw.print(jsonStr.toString());
 
 		} catch (SQLException e) {
-			// TODO Send error update
 			e.printStackTrace();
 			String message = e.getMessage().replaceAll("\n", "")
 					.replaceAll("\"", "\\\"");
 			ErrorUpdate er = new ErrorUpdate(message);
 			er.generateJson(prefix, pw, vWorkspace);
 		} catch (ClassNotFoundException e) {
-			// TODO Send error update
 			e.printStackTrace();
+			ErrorUpdate er = new ErrorUpdate("The driver for " + dbType + " was not found. Please add the driver to the path and try again");
+			er.generateJson(prefix, pw, vWorkspace);
 		} catch (JSONException e) {
-			// TODO Send Error update
+			String message = e.getMessage().replaceAll("\n", "")
+					.replaceAll("\"", "\\\"");
+			ErrorUpdate er = new ErrorUpdate(message);
+			er.generateJson(prefix, pw, vWorkspace);
 			e.printStackTrace();
 		}
 	}
