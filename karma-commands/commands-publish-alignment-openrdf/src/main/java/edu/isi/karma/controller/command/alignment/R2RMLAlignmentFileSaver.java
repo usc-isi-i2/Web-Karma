@@ -92,14 +92,16 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
-		alignmentMappingGenerator = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
+		if (worksheet != null)
+			alignmentMappingGenerator = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, history, errorReport);
 		
 		long end2 = System.currentTimeMillis();
 		logger.info("Time to generate mappings:" + (end2-end1) + "msec");
 		
 		// Write the model
-		writeModel(workspace, workspace.getOntologyManager(), alignmentMappingGenerator, worksheet, modelFilename);
+		if (modelFilename != null && !modelFilename.trim().isEmpty())
+			writeModel(workspace, workspace.getOntologyManager(), alignmentMappingGenerator, worksheet, modelFilename);
 		logger.info("Alignment for " + workspaceId + ":" + worksheetId + " saved to file: " + modelFilename);
 		long end3 = System.currentTimeMillis();
 		logger.info("Time to write to file:" + (end3-end2) + "msec");
