@@ -86,18 +86,30 @@ public abstract class Preferences {
 	}
 
 	
+	private File loadWorkspacePrefTemplateFile() {
+		File template_file = null;
+		try {
+			template_file = new File(getClass().getClassLoader().getResource(
+					"WorkspacePref.template").toURI());
+		} catch (Exception e) {
+			logger.debug("Unable to load WorkspacePref.template as a resource, trying file system in " + System.getProperty("user.dir"));
+			// file is not accessible when deployed in a war file so check working dir
+			template_file = new File("WorkspacePref.template");
+		}
+		return template_file;
+	}
+
+
 	private void createNewPreferencesFileFromTemplate() throws IOException, URISyntaxException {
 
 		jsonFile.createNewFile();
-		File template_file = new File(getClass().getClassLoader().getResource(
-				"WorkspacePref.template").toURI());
+		File template_file = loadWorkspacePrefTemplateFile();
 		FileUtil.copyFiles(jsonFile, template_file);
 		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
 	}
 	
 	private void loadDefaultPreferences() throws IOException, URISyntaxException {
-		jsonFile = new File(getClass().getClassLoader().getResource(
-				"WorkspacePref.template").toURI());
+		jsonFile = loadWorkspacePrefTemplateFile();
 		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
 	}
 	

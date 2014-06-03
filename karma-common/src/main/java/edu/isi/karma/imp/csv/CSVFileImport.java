@@ -75,13 +75,12 @@ public class CSVFileImport extends Import {
         InputStreamReader isr = EncodingDetector.getInputStreamReader(csvFile, encoding);
         
         BufferedReader br = new BufferedReader(isr);
-
-
-        // Index for row currently being read
+        
+        //Index for row currently being read
         int rowCount = 0;
         ArrayList<String> hNodeIdList = new ArrayList<String>();
-
-        // If no row is present for the column headers
+        
+        //If no row is present for the column headers
         if (headerRowIndex == 0) {
             hNodeIdList = addEmptyHeaders(getWorksheet(), getFactory());
             if (hNodeIdList == null || hNodeIdList.size() == 0) {
@@ -90,21 +89,17 @@ public class CSVFileImport extends Import {
                         + "nodes for the worksheet!");
             }
         }
-
-        // Populate the worksheet model
-        String line = null;
-        while ((line = br.readLine()) != null) {
-        	logger.debug("Read line: '" + line + "'");
-            // Check for the header row
-            if (rowCount + 1 == headerRowIndex) {
-                hNodeIdList = addHeaders(getWorksheet(), getFactory(), line);
+        
+        CSVReader reader = new CSVReader(br, delimiter,
+                quoteCharacter, escapeCharacter);
+        String[] rowValues = reader.readNext();;
+        
+        while(rowValues != null && rowValues.length > 0) {
+        	if (rowCount + 1 == headerRowIndex) {
+                hNodeIdList = addHeaders(getWorksheet(), getFactory(), rowValues);
                 rowCount++;
-                continue;
-            }
-
-            // Populate the model with data rows
-            if (rowCount + 1 >= dataStartRowIndex) {
-                boolean added = addRow(getWorksheet(), getFactory(), line, hNodeIdList, dataTable);
+            } else if (rowCount + 1 >= dataStartRowIndex) {
+                boolean added = addRow(getWorksheet(), getFactory(), rowValues, hNodeIdList, dataTable);
                 if(added) {
 	                rowCount++;
 	               
@@ -112,27 +107,22 @@ public class CSVFileImport extends Import {
 	                	break;
 	                }
                 }
-                continue;
-            }
-
-            rowCount++;
+            }            
+        	rowValues = reader.readNext();
         }
+
+        reader.close();
         br.close();
         getWorksheet().getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.CSV.toString());
         return getWorksheet();
     }
 
     private ArrayList<String> addHeaders(Worksheet worksheet, RepFactory fac,
-            String line) throws IOException {
+            String[] rowValues) throws IOException {
         HTable headers = worksheet.getHeaders();
         ArrayList<String> headersList = new ArrayList<String>();
-        CSVReader reader = new CSVReader(new StringReader(line), delimiter,
-                quoteCharacter, escapeCharacter);
-        String[] rowValues = null;
-        rowValues = reader.readNext();
-
+        
         if (rowValues == null || rowValues.length == 0) {
-            reader.close();
             return addEmptyHeaders(worksheet, fac);
         }
 
@@ -145,18 +135,13 @@ public class CSVFileImport extends Import {
             }
             headersList.add(hNode.getId());
         }
-        reader.close();
         return headersList;
     }
 
-    private boolean addRow(Worksheet worksheet, RepFactory fac, String line,
+    private boolean addRow(Worksheet worksheet, RepFactory fac, String[] rowValues,
             List<String> hNodeIdList, Table dataTable) throws IOException {
-        CSVReader reader = new CSVReader(new StringReader(line), delimiter,
-                quoteCharacter, escapeCharacter);
-        String[] rowValues = null;
-        rowValues = reader.readNext();
+       
         if (rowValues == null || rowValues.length == 0) {
-            reader.close();
             return false;
         }
 
@@ -171,7 +156,6 @@ public class CSVFileImport extends Import {
                 logger.error("More data elements detected in the row than number of headers!");
             }
         }
-        reader.close();
         return true;
     }
 
