@@ -77,11 +77,6 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		this.encoding = encoding;
 	}
 	
-	/*
-	 * Only warn about SQL exception once. //Pedro //TODO: this whole code is copy-pasted
-	 */
-	private static boolean warnedSqlException = false;
-	
 	public void generateRDFFromSQL(String query, PrintWriter pw, R2RMLMappingIdentifier id)
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
 		String wkname = query.replace(" ", "_");
@@ -130,7 +125,8 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		
 		int counter = 0;
 		
-		while (r.next()) {
+		ArrayList<String> rowValues = null;
+		while ((rowValues = dbUtil.parseResultSetRow(r)) != null) {
 			// Generate RDF and create a new worksheet for every DATABASE_TABLE_FETCH_SIZE rows
 			if(counter%DATABASE_TABLE_FETCH_SIZE == 0 && counter != 0) {
 				generateRDFFromWorksheet(wk, workspace, mapping, pw);
@@ -149,23 +145,10 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 			/** Add the data **/
 	        Table dataTable = wk.getDataTable();
 	        Row row = dataTable.addRow(factory);
-			for (int i = 1; i <= meta.getColumnCount(); i++) {
-				String val;
-				try {
-					val = r.getString(i);
-				} catch (SQLException e) {
-					if (!warnedSqlException) {
-						//logger.warn(e.getMessage());
-						warnedSqlException = true;
-					}
-					val = "SQLException";
-				}
-				if(null == val)
-				{
-					val = "";
-				}
-				row.setValue(headersList.get(i-1), val, factory);
-			}
+	        for(int i=0; i<rowValues.size(); i++) {
+	        	row.setValue(headersList.get(i), rowValues.get(i), factory);
+	        }
+			
 			counter++;
 		}
 		

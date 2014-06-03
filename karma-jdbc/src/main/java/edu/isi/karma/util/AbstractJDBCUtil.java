@@ -141,6 +141,8 @@ public abstract class AbstractJDBCUtil {
 		return vals;
 	}
 	
+	
+	
 	/*
 	 * Only warn about SQL exception once. //Pedro
 	 */
@@ -159,7 +161,17 @@ public abstract class AbstractJDBCUtil {
 		vals.add(columnNamesRow);
 		
 		// Add an ArrayList for each row
-		while (r.next()) {
+		ArrayList<String> row = null;
+		while ((row = parseResultSetRow(r)) != null) {
+			vals.add(row);
+		}
+		
+		return vals;
+	}
+	
+	public ArrayList<String> parseResultSetRow(ResultSet r) throws SQLException {
+		if(r.next()) {
+			ResultSetMetaData meta = r.getMetaData();
 			ArrayList<String> row = new ArrayList<String>();
 			for (int i = 1; i <= meta.getColumnCount(); i++) {
 
@@ -175,9 +187,9 @@ public abstract class AbstractJDBCUtil {
 				}
 				row.add(val);
 			}
-			vals.add(row);
+			return row;
 		}
-		return vals;
+		return null;
 	}
 	
 	/**
