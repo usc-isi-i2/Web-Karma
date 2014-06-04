@@ -274,14 +274,24 @@ var applyModelDialog = (function() {
     function PrivateConstructor() {
         var dialog = $("#applyModelDialog");
         var worksheetId;
-        
-        function init() {
+        var availableModels;
+        var filteredModels;
+        var filterDialog = $("#modelFilterDialog");
+        function init(json) {
             $('#btnSave', dialog).on('click', function (e) {
                 e.preventDefault();
                 saveDialog(e);
             });
-            
-                
+            availableModels = json;
+            filteredModels = availableModels;    
+            $('#btnClose', dialog).on('click', function (e) {
+                e.preventDefault();
+                closeDialog(e);
+            });
+            $('#btnCancel', dialog).on('click', function (e) {
+                e.preventDefault();
+                closeDialog(e);
+            });           
         }
         
         function hideError() {
@@ -298,6 +308,7 @@ var applyModelDialog = (function() {
             //     alert("Invalid sparql end point. Could not establish connection.");
             //     return;
             // }
+            console.log("here");
             var checkboxes = dialog.find(":checked");
             if (checkboxes.length == 0) {
                 hide();
@@ -331,19 +342,94 @@ var applyModelDialog = (function() {
                         hideLoading(info["worksheetId"]);
                     }
             });
+            instance = undefined;
         };
         
         function hide() {
             dialog.modal('hide');
         }
+
+        function showFilterDialog(e) {
+            console.log(dialog);
+            dialog.hide();
+            console.log("showFilterDialog");
+            var filterName = e.currentTarget['value'];
+            console.log(filterName);
+            filterDialog.modal({keyboard:true, show:true, backdrop:'static'});
+            filterDialog.show();
+            $('#btnSave', filterDialog).on('click', function (e) {
+                e.preventDefault();
+                applyFilter(e, filterName);
+            });
+            $('#btnCancel', filterDialog).on('click', function (e) {
+                e.preventDefault();
+                cancelFilter(e);
+            });
+        };
+
+        function applyFilter(e, filterName) {
+            console.log("applyFilter");
+            console.log(filterName);
+            var tmp = [];
+            var filterText = $('#txtFilter').val();
+            console.log(filterText);
+            for (var i = 0; i < availableModels.length; i++) {
+                var name = availableModels[i]['name'];
+                var time = new Date(availableModels[i].publishTime*1).toDateString();
+                var url = availableModels[i].url;
+                var context = availableModels[i].context;
+                if (filterName === "File Name" && name.indexOf(filterText) > -1)
+                    tmp.push(availableModels[i]);
+                if (filterName === "Publish Time" && time.indexOf(filterText) > -1)
+                    tmp.push(availableModels[i]);
+                if (filterName === "URL" && url.indexOf(filterText) > -1)
+                    tmp.push(availableModels[i]);
+            }
+            filteredModels = tmp;
+            instance.show(worksheetId);
+            dialog.show();
+        };
+
+        function cancelFilter(e) {
+            console.log("cancelFilter");
+            instance.show(worksheetId);
+            dialog.show();
+        };
+
+        function closeDialog(e) {
+            console.log("closeDialog");
+            instance = undefined;
+        };
         
-        function show(wsId, json) {
+        function show(wsId) {
             worksheetId = wsId;
             dialog.on('show.bs.modal', function (e) {
                 hideError();
                 var dialogContent = $("#applyModelDialogColumns", dialog);
                 dialogContent.empty();
-                //console.log(headers);
+                var div = $("<div>").css("display","table-row");
+                var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");
+                var label = $("<button>").text("Filter")
+                        .addClass("btn btn-primary")
+                        .attr("id","btnFilterName")
+                        .attr("value","File Name");
+                row.append(label);
+                div.append(row);
+                var row = $("<div>").css("width", "100px").css("float", "left").css("padding", "25px");;
+                var label = $("<button>").text("Filter")
+                        .addClass("btn btn-primary")
+                        .attr("id","btnFilterPublishTime")
+                        .attr("value","Publish Time");
+                row.append(label);
+                div.append(row);
+                var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");;
+                var label = $("<button>").text("Filter")
+                        .addClass("btn btn-primary")
+                        .attr("id","btnFilterURL")
+                        .attr("value","URL");
+                row.append(label);
+                div.append(row);
+                dialogContent.append(div);
                 var div = $("<div>").css("display","table-row");
                 var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");
                 var label = $("<label>").text("File Name");
@@ -358,11 +444,23 @@ var applyModelDialog = (function() {
                 row.append(label);
                 div.append(row);
                 dialogContent.append(div);
-                for (var i = 0; i < json.length; i++) {
-                    var name = json[i]['name'];
-                    var time = new Date(json[i].publishTime*1).toDateString();
-                    var url = json[i].url;
-                    var context = json[i].context;
+                $('#btnFilterName', dialog).on('click', function (e) {
+                    e.preventDefault();
+                    showFilterDialog(e);
+                });
+                $('#btnFilterPublishTime', dialog).on('click', function (e) {
+                    e.preventDefault();
+                    showFilterDialog(e);
+                });
+                $('#btnFilterURL', dialog).on('click', function (e) {
+                    e.preventDefault();
+                    showFilterDialog(e);
+                });
+                for (var i = 0; i < filteredModels.length; i++) {
+                    var name = filteredModels[i]['name'];
+                    var time = new Date(filteredModels[i].publishTime*1).toDateString();
+                    var url = filteredModels[i].url;
+                    var context = filteredModels[i].context;
                     var div = $("<div>").css("display","table-row");
                     var row = $("<div>").css("width", "150px").css("overflow", "hidden").css("float", "left").css("padding", "25px");;
                     var label = $("<label>").text(name);
@@ -398,10 +496,10 @@ var applyModelDialog = (function() {
         };
     };
 
-    function getInstance() {
+    function getInstance(json) {
         if( ! instance ) {
             instance = new PrivateConstructor();
-            instance.init();
+            instance.init(json);
         }
         return instance;
     }
@@ -467,7 +565,7 @@ var fetchModelListDialog = (function() {
                         console.log(json);
                         //parse(json);
                         hideLoading(info["worksheetId"]);
-                        applyModelDialog.getInstance().show(worksheetId, json);
+                        applyModelDialog.getInstance(json).show(worksheetId);
                     },
                 error :
                     function (xhr, textStatus) {

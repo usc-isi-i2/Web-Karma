@@ -516,7 +516,7 @@ a.icon-remove:hover {
   		<form class="bs-example bs-example-form" role="form">
 			<div class="modal-content">
 			     <div class="modal-header">
-				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btnClose">&times;</button>
 				       <h4 class="modal-title">Apply Model</h4>
 				  </div>
 				  <div class="modal-body">
@@ -524,7 +524,7 @@ a.icon-remove:hover {
 						<div id="applyModelDialogColumns" style="max-height: 400px; overflow: auto;"></div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
-				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="button" class="btn btn-default" data-dismiss="modal" id="btnCancel">Cancel</button>
 				        <button type="submit" class="btn btn-primary" id="btnSave">Apply</button>
 				  </div> <!-- /.modal-footer -->
 			</div><!-- /.modal-content -->
