@@ -51,6 +51,14 @@ public class HTTPUtil {
 	}
 	
 	public static String executeHTTPPostRequest(String serviceURL, String contentType, 
+			String acceptContentType, HttpEntity entity) 
+					throws ClientProtocolException, IOException {
+		HttpPost httpPost = new HttpPost(serviceURL);
+		httpPost.setEntity(entity);
+		return invokeHTTPRequest(httpPost, contentType, acceptContentType);
+	}
+	
+	public static String executeHTTPPostRequest(String serviceURL, String contentType, 
 			String acceptContentType, Map<String, String> formParameters) 
 					throws ClientProtocolException, IOException {
 		
@@ -60,10 +68,7 @@ public class HTTPUtil {
 			formParams.add(new BasicNameValuePair(param, formParameters.get(param)));
 		}
 		
-		// Prepare the headers
-		HttpPost httpPost = new HttpPost(serviceURL);
-		httpPost.setEntity(new UrlEncodedFormEntity(formParams, "UTF-8"));
-		return invokeHTTPRequest(httpPost, contentType, acceptContentType);
+		return executeHTTPPostRequest(serviceURL, contentType, acceptContentType, new UrlEncodedFormEntity(formParams, "UTF-8"));
 	}
 	
 	public static String executeHTTPPostRequest(String serviceURL, String contentType, 

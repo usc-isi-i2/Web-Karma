@@ -141,6 +141,10 @@
 							<war>${project.basedir}/external_webapps/cleaningService.war</war>
 							<contextPath>/cleaningService</contextPath>
 						</contextHandler>
+						<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+							<war>${project.basedir}/external_webapps/cluster-1.0.war</war>
+							<contextPath>/clusterService</contextPath>
+						</contextHandler>
 					</contextHandlers>
 
 				</configuration>
@@ -222,7 +226,7 @@
 					</configuration>
 
 					<executions>
-							<execution>
+						<execution>
 		  					<id>cleaningService</id>
 		  					<phase>package</phase>
 								<goals><goal>deploy</goal></goals>
@@ -231,6 +235,18 @@
 			  					<path>/cleaningService</path>
 			  					<url>http://localhost:8080/manager/text</url>
 			  					<warFile>${project.basedir}/external_webapps/cleaningService.war</warFile>
+			  					<update>true</update>
+			  				</configuration>
+		  				</execution>
+		  				<execution>
+		  					<id>clusterService</id>
+		  					<phase>package</phase>
+								<goals><goal>deploy</goal></goals>
+		  					<configuration>
+			  					<server>TomcatServer</server>
+			  					<path>/clusterService</path>
+			  					<url>http://localhost:8080/manager/text</url>
+			  					<warFile>${project.basedir}/external_webapps/cluster-1.0.war</warFile>
 			  					<update>true</update>
 			  				</configuration>
 		  				</execution>

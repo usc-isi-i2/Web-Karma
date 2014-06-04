@@ -80,7 +80,10 @@
     <param-name>CLEANING_SERVICE_URL</param-name>
     <param-value>/cleaningService/IdentifyData</param-value>
   </context-param>
-
+  <context-param>
+    <param-name>CLUSTER_SERVICE_URL</param-name>
+    <param-value>/clusterService/cluster/post</param-value>
+  </context-param>
   
   	<servlet>
     	<servlet-name>ServletStart</servlet-name>
