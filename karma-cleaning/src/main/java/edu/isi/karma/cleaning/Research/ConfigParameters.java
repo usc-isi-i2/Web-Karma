@@ -21,24 +21,52 @@
 
 package edu.isi.karma.cleaning.Research;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Properties;
+
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ConfigParameters {
 	public static int debug = 0;
 	Properties properties = new Properties();
 	String res = "";
 
+	private static final String newLine = System.getProperty("line.separator").toString();
+	private String defaultTransformationProperties  = "cxt_size: 3" + newLine + 
+														"debug:1" + newLine + 
+														"temp_cap: 3096" + newLine + 
+														"time_limit: 3" + newLine + 
+														"iter_end: 400" + newLine + 
+														"exmp_sel: 7" + newLine + 
+														"supermode:1" + newLine + 
+														"fixedlength:0" + newLine;
+														
 	public ConfigParameters() {
 	}
 
 	public void initeParameters() {
 		// load property file and initialize the parameters;
+		
 		try {
+			
+			File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/transformation.properties");
+			if(!file.exists()) {
+				file.createNewFile();
+				OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+		        BufferedWriter bw = new BufferedWriter(fw);
+		        PrintWriter outWriter = new PrintWriter(bw);
+		        outWriter.println(defaultTransformationProperties);
+		        outWriter.close();
+			}
 			// load a properties file
-			properties.load(new FileInputStream(
-					"./src/main/config/transformation.properties"));
+			properties.load(new FileInputStream(file));
 			// get the property value and print it out
 			// Segment.cxtsize_limit =
 			// Integer.parseInt(properties.getProperty("cxt_size").trim());

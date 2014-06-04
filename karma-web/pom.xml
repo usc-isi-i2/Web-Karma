@@ -82,6 +82,10 @@
 			<resource>
 				<directory>src/main/resources</directory>
 			</resource>
+			<resource>
+				<directory>src/main/webapp/resources</directory>
+			</resource>
+			
 		</resources>
 		<plugins>
 			<plugin>
@@ -90,7 +94,7 @@
 				<version>2.4</version>
 				<configuration>
 					<archiveClasses>true</archiveClasses>
-
+					<addClasspath>true</addClasspath>
 					<webResources>
 						<resource>
 							<directory>src/main/webapp/</directory>
@@ -212,7 +216,7 @@
 		  		<artifactId>tomcat-maven-plugin</artifactId>
 				<configuration>
 						<server>TomcatServer</server>
-						<path>/karma</path>
+						<path>/</path>
 						<url>http://localhost:8080/manager/text</url>
 						<update>true</update>
 					</configuration>

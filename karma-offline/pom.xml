@@ -49,7 +49,7 @@
 		    <version>${project.version}</version>
 		    <optional>true</optional>
 	    </dependency>
-
+		
 <dependency>
 	<groupId>de.micromata.jak</groupId>
 	<artifactId>JavaAPIforKml</artifactId>
@@ -61,4 +61,15 @@
 	    </dependency>
 
     </dependencies>
+
+    <build>
+		<resources>
+			<resource>
+				<directory>src/main/config</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+	</build>
 </project>
