@@ -87,12 +87,16 @@ public class SaveR2RMLModelCommand extends Command{
 				for (int i = 0; i < array.length(); i++) {
 					JSONObject obj = array.getJSONObject(i);
 					String modelUrl = obj.getString("url");
-					String filename = modelUrl.substring(modelUrl.indexOf('-') + 1);
-					int location = filename.indexOf("-auto-model.ttl");
-					if (location == -1)
-						location = filename.indexOf("-model.ttl");
-					filename = filename.substring(0, location);
-					result &= saveMapping(modelUrl, graphBaseUrl + filename);
+					String context = graphContext;
+					if (context == null || context.trim().isEmpty()) {
+						String filename = modelUrl.substring(modelUrl.indexOf('-') + 1);
+						int location = filename.indexOf("-auto-model.ttl");
+						if (location == -1)
+							location = filename.indexOf("-model.ttl");
+						filename = filename.substring(0, location);
+						context = graphBaseUrl + filename;
+					}
+					result &= saveMapping(modelUrl, context);
 					//System.out.println("here: " + graphBaseUrl + filename);
 				}
 				if (result) {

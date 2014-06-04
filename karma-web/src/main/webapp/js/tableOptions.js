@@ -344,25 +344,48 @@ var applyModelDialog = (function() {
                 var dialogContent = $("#applyModelDialogColumns", dialog);
                 dialogContent.empty();
                 //console.log(headers);
+                var div = $("<div>").css("display","table-row");
+                var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");
+                var label = $("<label>").text("File Name");
+                row.append(label);
+                div.append(row);
+                var row = $("<div>").css("width", "100px").css("float", "left").css("padding", "25px");;
+                var label = $("<label>").text("Publish Time");
+                row.append(label);
+                div.append(row);
+                var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");;
+                var label = $("<label>").text("URL");
+                row.append(label);
+                div.append(row);
+                dialogContent.append(div);
                 for (var i = 0; i < json.length; i++) {
                     var name = json[i]['name'];
-                    var time = new Date(json[i].publishTime*1);
-                    console.log(json[i].publishTime);
+                    var time = new Date(json[i].publishTime*1).toDateString();
                     var url = json[i].url;
                     var context = json[i].context;
-                    console.log(name);
-                    console.log(url);
-                    var row = $("<div>").addClass("radio");
-                    var label = $("<label>").text(name + " " + url + " " + time.toDateString());
-                    var input = $("<input>")
-                                        .attr("type", "radio")
+                    var div = $("<div>").css("display","table-row");
+                    var row = $("<div>").css("width", "150px").css("overflow", "hidden").css("float", "left").css("padding", "25px");;
+                    var label = $("<label>").text(name);
+                    row.append(label);
+                    div.append(row);
+                    var row = $("<div>").css("width", "100px").css("overflow", "hidden").css("float", "left").css("padding", "25px");;
+                    var label = $("<label>").text(time);
+                    row.append(label);
+                    div.append(row);
+                    var row = $("<div>").css("width", "150px").css("overflow", "hidden").css("float", "left").css("padding", "25px");;
+                    var label = $("<label>").text(url);
+                    row.append(label);
+                    div.append(row);
+                    var row = $("<div>").css("overflow", "hidden").css("float", "left").css("padding", "25px");;
+                    var label = $("<input>")
+                                .attr("type", "radio")
                                 .attr("id", "selectcolumns")
                                 .attr("value", url)
                                 .attr("name", "selectGraphs")
                                 .attr("src", context);
-                    label.append(input);
                     row.append(label);
-                    dialogContent.append(row);
+                    div.append(row);
+                    dialogContent.append(div);
                 }
             });
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
@@ -397,11 +420,6 @@ var fetchModelListDialog = (function() {
         var worksheetId;
         
         function init() {
-            //Initialize what happens when we show the dialog
-            dialog.on('show.bs.modal', function (e) {
-                hideError();
-                 $('#txtR2RML_URL_Fetch').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-            });
             
             //Initialize handler for Save button
             //var me = this;
@@ -432,7 +450,7 @@ var fetchModelListDialog = (function() {
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
             info["command"] = "FetchR2RMLModelsListCommand";
-            info['tripleStoreUrl'] = $('#txtR2RML_URL_Fetch').val();
+            info['tripleStoreUrl'] = $('#txtModel_URL').val();
             info['graphContext'] = $('#txtGraph_URL_Fetch').val();
             console.log(info['graphContext']);
             showLoading(info["worksheetId"]);

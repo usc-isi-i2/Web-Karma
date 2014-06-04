@@ -497,16 +497,10 @@ a.icon-remove:hover {
 				  <div class="modal-body">
 
 					<div class="form-group">
-						<label for="txtR2RML_URL">Context Name</label>
+						<label for="txtR2RML_URL">Collection</label>
 						<input class="form-control" type="text" id="txtGraph_URL_Fetch" required>
 					</div>
 
-					<div class="form-group">
-						<label for="txtR2RML_URL">SPARQL End Point</label>
-						<input class="form-control" type="text" id="txtR2RML_URL_Fetch" required>
-					</div>
-					
-					<div class="error" style="display: none">Please enter an end point</div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -527,7 +521,7 @@ a.icon-remove:hover {
 				  </div>
 				  <div class="modal-body">
 				  	<h4>Select Model:</h4>
-						<div id="applyModelDialogColumns"></div>
+						<div id="applyModelDialogColumns" style="max-height: 400px; overflow: auto;"></div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

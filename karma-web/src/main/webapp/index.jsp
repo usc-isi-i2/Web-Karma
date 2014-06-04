@@ -139,11 +139,11 @@ and related projects, please see: http://www.isi.edu/integration
 		                  <li><a href="#" id="importSQLButton">Using SQL</a></li>
 		                  <li><a href="#" id="importFromServiceButton" >From Service</a></li>
 		                  <li><a href="#" class="fileinput-button"><form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form></a></li>
-		                  <li><a href="#" id="saveModelButton">Save Model</a></li>
-		                  <li><a href="#" id="clearModelButton">Clear Model</a></li>
 		              </ul>
 		            </li>
 		            <li><a href="#" id="resetButton" data-html='true' title='Delete all saved files,<br/>use with care!' data-toggle='tooltip' data-placement='bottom'>Reset ...</a></li>
+		            <li><a href="#" id="modelManagerButton" data-html='true' data-toggle='tooltip' data-placement='bottom'>Manage Models</a></li>
+
 		            <li>
 		            		<div class="span5 fileupload-progress fade">
 								<!-- The global progress bar -->
@@ -154,6 +154,7 @@ and related projects, please see: http://www.isi.edu/integration
 								<div class="progress-extended">
 									&nbsp;
 								</div>
+								
 							</div>
 		            	
 		            </li>
@@ -164,8 +165,20 @@ and related projects, please see: http://www.isi.edu/integration
 			        <li><a target="_blank" href="" id="sparql_end_point_link" title='Open RDF workbench in a new window' data-toggle='tooltip' data-placement='bottom'>OpenRDF</a></li>
 		          </ul>
 		        </div>
+		        
 		      </div> <!--  end of navbar -->
-		      
+		       <div class="row">
+		       	<div class="col-sm-2">
+		            	<div class="form-group">
+										<label for="txtModel_URL">Model Repository URL</label>
+										<input class="form-control" type="text" id="txtModel_URL" required>
+									</div>
+		            	<div class="form-group">
+										<label for="txtData_URL">Data Repository URL</label>
+										<input class="form-control" type="text" id="txtData_URL" required>
+									</div>
+							</div>
+						</div>
 		      <div class="row">
 			      <div id="commHistoryAndWorkspace">
 			      	<div class="col-sm-2">
