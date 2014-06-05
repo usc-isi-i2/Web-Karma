@@ -14,7 +14,7 @@ var ClassDropdownMenu = (function() {
     		   	        [ "Add Incoming Link", addIncomingLink],
     		   	        [ "Add Outgoing Link", addOutgoingLink],
     		   	        [ "Manage Links", manageLinks],
-                        [ "Search For Data To Augment", searchData], 
+                        [ "Augment Data", searchData], 
     		   	        [ "divider" , null ],
     		   	        [ "Export CSV" , exportCSV ],
     		   	        [ "Export JSON" , exportJSON ],

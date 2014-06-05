@@ -1,0 +1,43 @@
+.FileNameProperty {
+	width: 100px;
+	float: left;
+	padding: 5px;
+}
+
+.PublishTimeProperty {
+	width: 100px;
+	float: left;
+	padding: 5px;
+}
+
+.URLProperty {
+	width: 150px;
+	float: left;
+	padding: 5px;
+}
+
+.ContextProperty {
+	width: 180px;
+	float: left;
+	padding: 5px;
+}
+
+.FileNameButtonProperty {
+	width: 95px;
+	float: left;
+}
+
+.PublishTimeButtonProperty {
+	width: 95px;
+	float: left;
+}
+
+.URLButtonProperty {
+	width: 145px;
+	float: left;
+}
+
+.ContextButtonProperty {
+	width: 175px;
+	float: left;
+}
