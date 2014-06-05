@@ -50,6 +50,7 @@ import edu.isi.karma.metadata.R2RMLMetadata;
 import edu.isi.karma.metadata.R2RMLPublishedMetadata;
 import edu.isi.karma.metadata.RDFMetadata;
 import edu.isi.karma.metadata.ReportMetadata;
+import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -75,6 +76,7 @@ public class KarmaServlet extends HttpServlet {
 		try {
 			metadataManager = new KarmaMetadataManager();
 			metadataManager.register(new UserPreferencesMetadata());
+			metadataManager.register(new UserConfigMetadata());
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}

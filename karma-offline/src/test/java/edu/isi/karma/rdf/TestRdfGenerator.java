@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
+import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.util.EncodingDetector;
 
@@ -28,6 +29,7 @@ public abstract class TestRdfGenerator {
 
         KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
         userMetadataManager.register(new UserPreferencesMetadata());
+        userMetadataManager.register(new UserConfigMetadata());
         userMetadataManager.register(new PythonTransformationMetadata());
 	}
 
