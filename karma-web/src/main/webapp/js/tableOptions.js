@@ -546,7 +546,6 @@ var applyModelDialog = (function() {
             instance = new PrivateConstructor();
             instance.init();
         }
-        instance.init();
         return instance;
     }
    
