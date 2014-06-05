@@ -18,7 +18,7 @@ var ClassDropdownMenu = (function() {
     		   	        [ "divider" , null ],
     		   	        [ "Export CSV" , exportCSV ],
     		   	        [ "Export JSON" , exportJSON ],
-    		   			[ "Invoke Reconciliation Service" , invokeReconciliationService ],
+    		   			//[ "Invoke Reconciliation Service" , invokeReconciliationService ],
     		   			[ "Invoke Table Service", invokeMLService ],
     		   			
     		   			

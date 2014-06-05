@@ -27,7 +27,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.http.client.ClientProtocolException;
@@ -47,7 +46,6 @@ import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
-import edu.isi.karma.kr2rml.ReportMessage;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
@@ -74,6 +72,7 @@ import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.util.HTTPUtil;
 import edu.isi.karma.webserver.KarmaException;
 
+@Deprecated
 public class InvokeRubenReconciliationService extends WorksheetCommand {
 	private static Logger logger = LoggerFactory.getLogger(InvokeRubenReconciliationService.class);
 	private final String alignmentNodeId;
@@ -109,9 +108,17 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 		return CommandType.notUndoable;
 	}
 
+	public boolean isDeprecated()
+	{
+		return true;
+	}
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		RepFactory f = workspace.getFactory();
+		if(isDeprecated())
+		{
+			return new UpdateContainer(new ErrorUpdate("Ruben Reconciliation Service is not currently supported!"));
+		}
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				AlignmentManager.Instance().constructAlignmentId(workspace.getId(),
@@ -174,8 +181,8 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 						workspace.getFactory(), workspace.getOntologyManager(),
 						pw, mapping, errorReport, false);
 				
-				rdfGen.generateTriplesForRow(row, new HashSet<String>(), new HashSet<String>(),
-						new HashMap<String, ReportMessage>(), new HashSet<String>());
+				//rdfGen.generateTriplesForRow(row, new HashSet<String>(), new HashSet<String>(),
+					//	new HashMap<String, ReportMessage>(), new HashSet<String>());
 				
 				pw.flush();
 				String rdf = outRdf.toString();
