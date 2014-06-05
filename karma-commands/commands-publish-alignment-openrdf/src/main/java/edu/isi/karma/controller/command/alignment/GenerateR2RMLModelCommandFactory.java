@@ -34,18 +34,24 @@ import edu.isi.karma.webserver.KarmaException;
 public class GenerateR2RMLModelCommandFactory extends CommandFactory {
 	
 	private enum Arguments {
-		worksheetId, addInverseProperties, rdfPrefix, rdfNamespace, tripleStoreUrl, graphContext
+		worksheetId, addInverseProperties, rdfPrefix, rdfNamespace, tripleStoreUrl, graphContext, localTripleStoreUrl
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		return new GenerateR2RMLModelCommand(getNewId(workspace), worksheetId);
+		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
+		String context = request.getParameter(Arguments.graphContext.name());
+		String localTripleStoreUrl = request.getParameter(Arguments.localTripleStoreUrl.name());
+		String RESTserverAddress = "http://" + request.getServerName() + ":" + request.getServerPort(); 
+		GenerateR2RMLModelCommand cmd = new GenerateR2RMLModelCommand(getNewId(workspace), worksheetId, tripleStoreUrl, localTripleStoreUrl, context);
+		cmd.setRESTserverAddress(RESTserverAddress);
+		return cmd;
 	}
 	
-	public Command createCommand(Workspace workspace, String worksheetId)
+	public Command createCommand(Workspace workspace, String worksheetId, String tripleStoreUrl, String context)
 			throws JSONException, KarmaException {
-		return new GenerateR2RMLModelCommand(getNewId(workspace), worksheetId);
+		return new GenerateR2RMLModelCommand(getNewId(workspace), worksheetId, tripleStoreUrl, context, null);
 	}
 
 	@Override

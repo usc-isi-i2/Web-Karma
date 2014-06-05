@@ -248,6 +248,11 @@ a.icon-remove:hover {
 				       <h4 class="modal-title">Publish Model</h4>
 				  </div>
 				  <div class="modal-body">
+				  	<div class="form-group">
+							<label for="txtR2RML_URL">SPARQL End Point</label>
+							<input class="form-control" type="text" id="txtR2RML_URL" required>
+						</div>
+						<div class="error" style="display: none">Please enter an end point</div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -491,15 +496,20 @@ a.icon-remove:hover {
   		<form class="bs-example bs-example-form" role="form">
 			<div class="modal-content">
 			     <div class="modal-header">
-				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btnClose">&times;</button>
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				       <h4 class="modal-title">Apply Model From URL</h4>
 				  </div>
 				  <div class="modal-body">
+				  	<div style="border-bottom: solid black; bottom-padding: 5px;">
+				  		<button type="button" class="btn btn-primary" id="btnClearFilter">Clear Filters</button>
+				  		<div style="padding: 10px;"></div>
+				  	</div>
 				  	<h4>Select Model:</h4>
-						<div id="applyModelDialogColumns" style="max-height: 400px; overflow: auto;"></div>
+				  	<div id="applyModelDialogHeaders"></div>
+						<div id="applyModelDialogColumns" style="max-height: 300px; overflow: auto;"></div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
-				        <button type="button" class="btn btn-default" data-dismiss="modal" id="btnCancel">Cancel</button>
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 				        <button type="submit" class="btn btn-primary" id="btnSave">Apply</button>
 				  </div> <!-- /.modal-footer -->
 			</div><!-- /.modal-content -->

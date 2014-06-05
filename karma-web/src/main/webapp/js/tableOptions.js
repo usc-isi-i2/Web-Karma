@@ -191,7 +191,11 @@ var PublishModelDialog = (function() {
     	var worksheetId;
     	
     	function init() {
-			
+            //Initialize what happens when we show the dialog
+			dialog.on('show.bs.modal', function (e) {
+                hideError();
+                 $('#txtR2RML_URL').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+            });
 			//Initialize handler for Save button
 			//var me = this;
 			$('#btnSave', dialog).on('click', function (e) {
@@ -217,7 +221,8 @@ var PublishModelDialog = (function() {
     	    info["worksheetId"] = worksheetId;
     	    info["workspaceId"] = $.workspaceGlobalInformation.id;
     	    info["command"] = "GenerateR2RMLModelCommand";
-
+            info['tripleStoreUrl'] = $('#txtR2RML_URL').val();
+            info['localTripleStoreUrl'] = $('#txtModel_URL').val();
     	    showLoading(info["worksheetId"]);
     	    var returned = $.ajax({
     	        url: "RequestController",
@@ -277,163 +282,20 @@ var applyModelDialog = (function() {
         var availableModels;
         var filteredModels;
         var filterDialog = $("#modelFilterDialog");
+        var filterName;
         function init() {
-            var info = new Object();
-            info["worksheetId"] = worksheetId;
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "FetchR2RMLModelsListCommand";
-            info['tripleStoreUrl'] = $('#txtModel_URL').val();
-            info['graphContext'] = "";
-            console.log(info['graphContext']);
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                async: false,
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        json = json.elements[0];
-                        console.log(json);
-                        //parse(json);
-                        availableModels = json;
-                        filteredModels = availableModels;
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while Fetching Models!" + textStatus);
-                        hideLoading(info["worksheetId"]);
-                    }
-            });
+            refresh();
             $('#btnSave', dialog).on('click', function (e) {
                 e.preventDefault();
                 saveDialog(e);
-            });   
-            $('#btnClose', dialog).on('click', function (e) {
-                e.preventDefault();
-                closeDialog(e);
             });
-            $('#btnCancel', dialog).on('click', function (e) {
-                e.preventDefault();
-                closeDialog(e);
-            });           
-        }
-        
-        function hideError() {
-            $("div.error", dialog).hide();
-        }
-        
-        function showError() {
-            $("div.error", dialog).show();
-        }
-        
-        function saveDialog(e) {
-            hide();
-
-            console.log("here");
-            var checkboxes = dialog.find(":checked");
-            if (checkboxes.length == 0) {
-                hide();
-                return;
-            }
-            var checked = checkboxes[0];
-            var info = new Object();
-            info["worksheetId"] = worksheetId;
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "ApplyModelFromURLCommand";
-            info['modelRepository'] = $('#txtR2RML_URL_Fetch').val();
-            info['modelContext'] = checked['src'];
-            info['modelUrl'] = checked['value'];
-            console.log(checked['src']);
-            showLoading(info["worksheetId"]);
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        parse(json);
-                        hideLoading(info["worksheetId"]);
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while applying models!" + textStatus);
-                        hideLoading(info["worksheetId"]);
-                    }
+            $('#btnClearFilter', dialog).on('click', function (e) {
+                filteredModels = availableModels;
+                instance.show(worksheetId);
             });
-            instance = undefined;
-        };
-        
-        function hide() {
-            dialog.modal('hide');
-        }
-
-        function showFilterDialog(e) {
-            console.log(dialog);
-            dialog.hide();
-            console.log("showFilterDialog");
-            var filterName = e.currentTarget['value'];
-            console.log(filterName);
-            filterDialog.modal({keyboard:true, show:true, backdrop:'static'});
-            filterDialog.show();
-            $('#btnSave', filterDialog).on('click', function (e) {
-                e.preventDefault();
-                applyFilter(e, filterName);
-            });
-            $('#btnCancel', filterDialog).on('click', function (e) {
-                e.preventDefault();
-                cancelFilter(e);
-            });
-        };
-
-        function applyFilter(e, filterName) {
-            console.log("applyFilter");
-            console.log(filterName);
-            var tmp = [];
-            var filterText = $('#txtFilter').val();
-            console.log(filterText);
-            for (var i = 0; i < availableModels.length; i++) {
-                var name = availableModels[i]['name'];
-                var time = new Date(availableModels[i].publishTime*1).toDateString();
-                var url = availableModels[i].url;
-                var context = availableModels[i].context;
-                if (filterName === "File Name" && name.indexOf(filterText) > -1)
-                    tmp.push(availableModels[i]);
-                if (filterName === "Publish Time" && time.indexOf(filterText) > -1)
-                    tmp.push(availableModels[i]);
-                if (filterName === "URL" && url.indexOf(filterText) > -1)
-                    tmp.push(availableModels[i]);
-                if (filterName === "Context" && context.indexOf(filterText) > -1)
-                    tmp.push(availableModels[i]);
-            }
-            filteredModels = tmp;
-            instance.show(worksheetId);
-            dialog.show();
-        };
-
-        function cancelFilter(e) {
-            console.log("cancelFilter");
-            instance.show(worksheetId);
-            dialog.show();
-        };
-
-        function closeDialog(e) {
-            console.log("closeDialog");
-            instance = undefined;
-        };
-        
-        function show(wsId) {
-            worksheetId = wsId;
-            dialog.on('show.bs.modal', function (e) {
-                hideError();
-                var dialogContent = $("#applyModelDialogColumns", dialog);
-                dialogContent.empty();
-                var div = $("<div>").css("display","table-row");
+            var dialogContent = $("#applyModelDialogHeaders", dialog);
+            dialogContent.empty();
+            var div = $("<div>").css("display","table-row");
                 var row = $("<div>").addClass("FileNameProperty");
                 var label = $("<button>").text("Filter")
                         .addClass("btn btn-primary FileNameButtonProperty")
@@ -497,6 +359,148 @@ var applyModelDialog = (function() {
                     e.preventDefault();
                     showFilterDialog(e);
                 });
+                $('#btnSave', filterDialog).on('click', function (e) {
+                    e.preventDefault();
+                    applyFilter(e);
+                });
+                $('#btnCancel', filterDialog).on('click', function (e) {
+                    e.preventDefault();
+                    cancelFilter(e);
+                });      
+        }
+        function refresh() {
+            console.log("refresh");
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "FetchR2RMLModelsListCommand";
+            info['tripleStoreUrl'] = $('#txtModel_URL').val();
+            info['graphContext'] = "";
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                async: false,
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        json = json.elements[0];
+                        console.log(json);
+                        //parse(json);
+                        availableModels = json;
+                        filteredModels = availableModels;
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while Fetching Models!" + textStatus);
+                    }
+            });
+        }
+        function hideError() {
+            $("div.error", dialog).hide();
+        }
+        
+        function showError() {
+            $("div.error", dialog).show();
+        }
+        
+        function saveDialog(e) {
+            hide();
+
+            console.log("here");
+            var checkboxes = dialog.find(":checked");
+            if (checkboxes.length == 0) {
+                hide();
+                return;
+            }
+            var checked = checkboxes[0];
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "ApplyModelFromURLCommand";
+            info['modelRepository'] = $('#txtR2RML_URL_Fetch').val();
+            info['modelContext'] = checked['src'];
+            info['modelUrl'] = checked['value'];
+            console.log(checked['src']);
+            showLoading(info["worksheetId"]);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        parse(json);
+                        hideLoading(info["worksheetId"]);
+                        refresh();
+
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while applying models!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                        refresh();
+                    }
+            });
+        };
+        
+        function hide() {
+            dialog.modal('hide');
+        }
+
+        function showFilterDialog(e) {
+            dialog.modal('hide');
+            console.log("showFilterDialog");
+            filterName = e.currentTarget['value'];
+            console.log(filterName);
+            $('#txtFilter').val("");
+            filterDialog.modal({keyboard:true, show:true, backdrop:'static'});
+            filterDialog.show();
+        };
+
+        function applyFilter(e) {
+            console.log("applyFilter");
+            console.log(filterName);
+            var tmp = [];
+            var filterText = $('#txtFilter').val();
+            console.log(filterText);
+            for (var i = 0; i < filteredModels.length; i++) {
+                var name = filteredModels[i]['name'];
+                var time = new Date(filteredModels[i].publishTime*1).toDateString();
+                var url = filteredModels[i].url;
+                var context = filteredModels[i].context;
+                if (filterName === "File Name" && name.indexOf(filterText) > -1)
+                    tmp.push(filteredModels[i]);
+                if (filterName === "Publish Time" && time.indexOf(filterText) > -1)
+                    tmp.push(filteredModels[i]);
+                if (filterName === "URL" && url.indexOf(filterText) > -1)
+                    tmp.push(filteredModels[i]);
+                if (filterName === "Context" && context.indexOf(filterText) > -1)
+                    tmp.push(filteredModels[i]);
+            }
+            console.log(tmp);
+            filteredModels = tmp;
+            instance.show(worksheetId);
+            dialog.show();
+        };
+
+        function cancelFilter(e) {
+            console.log("cancelFilter");
+            instance.show(worksheetId);
+            dialog.show();
+        };
+        
+        function show(wsId) {
+            worksheetId = wsId;
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                var dialogContent = $("#applyModelDialogColumns", dialog);
+                dialogContent.empty();
+                
                 for (var i = 0; i < filteredModels.length; i++) {
                     var name = filteredModels[i]['name'];
                     var time = new Date(filteredModels[i].publishTime*1).toDateString();
@@ -537,7 +541,8 @@ var applyModelDialog = (function() {
         
         return {    //Return back the public methods
             show : show,
-            init : init
+            init : init,
+            refresh: refresh
         };
     };
 
@@ -546,7 +551,7 @@ var applyModelDialog = (function() {
             instance = new PrivateConstructor();
             instance.init();
         }
-        instance.init();
+        instance.refresh();
         return instance;
     }
    

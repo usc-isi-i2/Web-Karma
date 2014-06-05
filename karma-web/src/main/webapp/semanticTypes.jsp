@@ -160,12 +160,6 @@
 						<input class="form-control" type="text" id="txtGraph_URL_Search" required>
 					</div>
 
-					<div class="form-group">
-						<label for="txtR2RML_URL">SPARQL End Point</label>
-						<input class="form-control" type="text" id="txtR2RML_URL_Search" required>
-					</div>
-					
-					<div class="error" style="display: none">Please enter an end point</div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

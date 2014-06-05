@@ -20,6 +20,10 @@ public class SaveR2RMLModelCommandFactory extends CommandFactory{
 		String collection = request.getParameter(Arguments.collection.name());
 		return new SaveR2RMLModelCommand(getNewId(workspace), modelUrl, tripleStoreUrl, context, collection);
 	}
+	
+	public SaveR2RMLModelCommand createCommand(Workspace workspace, String modelUrl, String tripleStoreUrl, String context, String collection) {
+		return new SaveR2RMLModelCommand(getNewId(workspace), modelUrl, tripleStoreUrl, context, collection);
+	}
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand() {

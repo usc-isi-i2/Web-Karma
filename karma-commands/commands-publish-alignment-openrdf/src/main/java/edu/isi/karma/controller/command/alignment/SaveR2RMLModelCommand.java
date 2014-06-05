@@ -38,6 +38,7 @@ public class SaveR2RMLModelCommand extends Command{
 	private String graphContext;
 	private String collection;
 	private String graphBaseUrl = "";
+	private boolean successful;
 	private static Logger logger = LoggerFactory.getLogger(SaveR2RMLModelCommand.class);
 
 	protected SaveR2RMLModelCommand(String id, String modelUrl, String url, String context, String collection) {
@@ -46,6 +47,7 @@ public class SaveR2RMLModelCommand extends Command{
 		this.tripleStoreUrl = url;
 		this.graphContext = context;
 		this.collection = collection;
+		successful = false;
 	}
 
 
@@ -71,6 +73,10 @@ public class SaveR2RMLModelCommand extends Command{
 	@Override
 	public CommandType getCommandType() {
 		return CommandType.notInHistory;
+	}
+	
+	public boolean getSuccessful() {
+		return successful;
 	}
 
 	@Override
@@ -114,6 +120,7 @@ public class SaveR2RMLModelCommand extends Command{
 							}
 						}
 					});
+					successful = result;
 					return uc;
 				}
 			}catch(Exception e) {
@@ -141,6 +148,7 @@ public class SaveR2RMLModelCommand extends Command{
 						}
 					}
 				});
+				successful = result;
 				return uc;
 			}
 		}

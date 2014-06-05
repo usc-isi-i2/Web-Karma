@@ -1735,11 +1735,6 @@ var searchDataDialog = (function() {
         var worksheetId, columnDomain, columnUri, alignmentId;
         
         function init() {
-            //Initialize what happens when we show the dialog
-            dialog.on('show.bs.modal', function (e) {
-                hideError();
-                 $('#txtR2RML_URL_Search').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-            });
             
             //Initialize handler for Save button
             //var me = this;
@@ -1769,7 +1764,7 @@ var searchDataDialog = (function() {
             var info = new Object();
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info['tripleStoreUrl'] = $('#txtR2RML_URL_Search').val();
+            info['tripleStoreUrl'] = $('#txtModel_URL').val();
             info['context'] = $('#txtGraph_URL_Search').val();
             info["command"] = "SearchForDataToAugmentCommand";
             info["nodeUri"] = columnDomain;

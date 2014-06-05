@@ -194,125 +194,11 @@ var modelManagerDialog = (function() {
         var filterDialog = $("#modelFilterDialog");
         var availableModels;
         var filteredModels;
+        var filterName;
         function init() {
             //Initialize what happens when we show the dialog
-            var info = new Object();
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "FetchR2RMLModelsListCommand";
-            info['tripleStoreUrl'] = $('#txtModel_URL').val();
-            info['graphContext'] = "";
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                async : false,
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        json = json.elements[0];
-                        console.log(json);
-                        availableModels = json;
-                        filteredModels = availableModels;
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while Fetching Models!" + textStatus);
-                        hideLoading(info["worksheetId"]);
-                    }
-            });
-            $('#btnClose', dialog).on('click', function (e) {
-                e.preventDefault();
-                closeDialog(e);
-            });
-
-            $('#btnLoadModel', dialog).on('click', function (e) {
-                e.preventDefault();
-                hide();
-                saveModelDialog.getInstance().show();
-            });
-
-            $('#btnClearModel', dialog).on('click', function (e) {
-                e.preventDefault();
-                hide();
-                clearModelDialog.getInstance().show();
-            });
-            //Initialize handler for Save button
-            //var me = this;
-
-            
-                
-        }
-        
-        function hideError() {
-            $("div.error", dialog).hide();
-        }
-        
-        function showError() {
-            $("div.error", dialog).show();
-        }
-        
-        function showFilterDialog(e) {
-            console.log(dialog);
-            dialog.hide();
-            console.log("showFilterDialog");
-            var filterName = e.currentTarget['value'];
-            console.log(filterName);
-            filterDialog.modal({keyboard:true, show:true, backdrop:'static'});
-            filterDialog.show();
-            $('#btnSave', filterDialog).on('click', function (e) {
-                e.preventDefault();
-                applyFilter(e, filterName);
-            });
-            $('#btnCancel', filterDialog).on('click', function (e) {
-                e.preventDefault();
-                cancelFilter(e);
-            });
-        };
-
-        function applyFilter(e, filterName) {
-            console.log("applyFilter");
-            console.log(filterName);
-            var tmp = [];
-            var filterText = $('#txtFilter').val();
-            console.log(filterText);
-            for (var i = 0; i < availableModels.length; i++) {
-                var name = availableModels[i]['name'];
-                var time = new Date(availableModels[i].publishTime*1).toDateString();
-                var url = availableModels[i].url;
-                var context = availableModels[i].context;
-                if (filterName === "File Name" && name.indexOf(filterText) > -1)
-                    tmp.push(availableModels[i]);
-                if (filterName === "Publish Time" && time.indexOf(filterText) > -1)
-                    tmp.push(availableModels[i]);
-                if (filterName === "URL" && url.indexOf(filterText) > -1)
-                    tmp.push(availableModels[i]);
-                if (filterName === "Context" && context.indexOf(filterText) > -1)
-                    tmp.push(availableModels[i]);
-            }
-            filteredModels = tmp;
-            instance.show();
-            dialog.show();
-        };
-
-        function cancelFilter(e) {
-            console.log("cancelFilter");
-            instance.show();
-            dialog.show();
-        };
-
-        function closeDialog(e) {
-            console.log("closeDialog");
-            instance = undefined;
-        };
-        
-        function hide() {
-            dialog.modal('hide');
-        }
-        
-        function show() {
-            var dialogContent = $("#modelManagerDialogColumns", dialog);
+            refresh();
+            var dialogContent = $("#modelManagerDialogHeaders", dialog);
             dialogContent.empty();
             var div = $("<div>").css("display","table-row")
             var row = $("<div>").addClass("FileNameProperty");
@@ -378,6 +264,119 @@ var modelManagerDialog = (function() {
                 e.preventDefault();
                 showFilterDialog(e);
             });
+            $('#btnLoadModel', dialog).on('click', function (e) {
+                e.preventDefault();
+                hide();
+                saveModelDialog.getInstance().show();
+            });
+
+            $('#btnClearModel', dialog).on('click', function (e) {
+                e.preventDefault();
+                hide();
+                clearModelDialog.getInstance().show();
+            });
+            $('#btnSave', filterDialog).on('click', function (e) {
+                e.preventDefault();
+                applyFilter(e);
+            });
+            $('#btnCancel', filterDialog).on('click', function (e) {
+                e.preventDefault();
+                cancelFilter(e);
+            });
+
+            $('#btnClearFilter', dialog).on('click', function (e) {
+                filteredModels = availableModels;
+                instance.show();
+            });   
+                
+        }
+        
+        function refresh() {
+            var info = new Object();
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "FetchR2RMLModelsListCommand";
+            info['tripleStoreUrl'] = $('#txtModel_URL').val();
+            info['graphContext'] = "";
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                async : false,
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        json = json.elements[0];
+                        console.log(json);
+                        availableModels = json;
+                        filteredModels = availableModels;
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while Fetching Models!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            });
+        }
+
+        function hideError() {
+            $("div.error", dialog).hide();
+        }
+        
+        function showError() {
+            $("div.error", dialog).show();
+        }
+        
+        function showFilterDialog(e) {
+            dialog.modal('hide');
+            console.log("showFilterDialog");
+            filterName = e.currentTarget['value'];
+            console.log(filterName);
+            $('#txtFilter').val("");
+            filterDialog.modal({keyboard:true, show:true, backdrop:'static'});
+            filterDialog.show();
+            
+        };
+
+        function applyFilter(e) {
+            console.log("applyFilter");
+            console.log(filterName);
+            var tmp = [];
+            var filterText = $('#txtFilter').val();
+            console.log(filterText);
+            for (var i = 0; i < filteredModels.length; i++) {
+                var name = filteredModels[i]['name'];
+                var time = new Date(filteredModels[i].publishTime*1).toDateString();
+                var url = filteredModels[i].url;
+                var context = filteredModels[i].context;
+                if (filterName === "File Name" && name.indexOf(filterText) > -1)
+                    tmp.push(filteredModels[i]);
+                if (filterName === "Publish Time" && time.indexOf(filterText) > -1)
+                    tmp.push(filteredModels[i]);
+                if (filterName === "URL" && url.indexOf(filterText) > -1)
+                    tmp.push(filteredModels[i]);
+                if (filterName === "Context" && context.indexOf(filterText) > -1)
+                    tmp.push(filteredModels[i]);
+            }
+            filteredModels = tmp;
+            instance.show();
+            dialog.show();
+        };
+
+        function cancelFilter(e) {
+            console.log("cancelFilter");
+            instance.show();
+            dialog.show();
+        };
+        
+        function hide() {
+            dialog.modal('hide');
+        }
+        
+        function show() {
+            var dialogContent = $("#modelManagerDialogColumns", dialog);
+            dialogContent.empty();
             for (var i = 0; i < filteredModels.length; i++) {
                 var name = filteredModels[i]['name'];
                 var time = new Date(filteredModels[i].publishTime*1).toDateString();
@@ -408,7 +407,8 @@ var modelManagerDialog = (function() {
         
         return {    //Return back the public methods
             show : show,
-            init : init
+            init : init,
+            refresh: refresh
         };
     };
 
@@ -417,7 +417,8 @@ var modelManagerDialog = (function() {
             instance = new PrivateConstructor();
             instance.init();
         }
-        instance.init();
+        console.log(instance);
+        instance.refresh();
         return instance;
     }
    

@@ -80,16 +80,18 @@ a.icon-remove:hover {
   		<form class="bs-example bs-example-form" role="form">
 			<div class="modal-content">
 			     <div class="modal-header">
-				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btnClose">&times;</button>
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				       <h4 class="modal-title">Model Manager</h4>
 				  </div>
 				  <div class="modal-body">
 				  	<div style="border-bottom: solid black; bottom-padding: 5px;">
 				  		<button type="button" class="btn btn-primary" id="btnLoadModel">Load Models</button>
 				  		<button type="button" class="btn btn-primary" id="btnClearModel">Clear Models</button>
+				  		<button type="button" class="btn btn-primary" id="btnClearFilter">Clear Filters</button>
 				  		<div style="padding: 10px;"></div>
 				  	</div>
-						<div id="modelManagerDialogColumns" style="max-height: 400px; overflow: auto;"></div>
+				  	<div id="modelManagerDialogHeaders"></div>
+						<div id="modelManagerDialogColumns" style="max-height: 300px; overflow: auto;"></div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				  </div> <!-- /.modal-footer -->
