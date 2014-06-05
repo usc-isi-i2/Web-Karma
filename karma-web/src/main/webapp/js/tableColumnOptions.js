@@ -17,8 +17,8 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	               {name:"Extract Entities", func:extractEntities, leafOnly:true},
 	               {name:"PyTransform" , func:pyTransform, leafOnly:true},
 	               {name:"Transform", func:transform, leafOnly:true},
-	               {name:"Generate Cluster Values", func:clusterValues, leafOnly:true},
-	               {name:"Merge Cluster Values", func:mergeValues, leafOnly:true},
+	               //{name:"Generate Cluster Values", func:clusterValues, leafOnly:true},
+	               //{name:"Merge Cluster Values", func:mergeValues, leafOnly:true},
 	               {name:"divider" , leafOnly:true},
 			
 	               {name:"Invoke Service" , func:invokeService, leafOnly:true},

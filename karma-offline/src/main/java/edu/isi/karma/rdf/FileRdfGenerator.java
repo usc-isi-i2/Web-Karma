@@ -21,16 +21,29 @@
 
 package edu.isi.karma.rdf;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.apache.tika.detect.DefaultDetector;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
+import org.apache.tika.mime.MediaTypeRegistry;
+import org.apache.tika.mime.MimeTypes;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.sax.BodyContentHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.csv.CSVFileImport;
@@ -54,24 +67,116 @@ public class FileRdfGenerator extends RdfGenerator {
             Workspace workspace, String encoding, int maxNumLines) throws JSONException, IOException, KarmaException, ClassNotFoundException {
         Worksheet worksheet = null;
 
-        if (inputType.equalsIgnoreCase("JSON")) {
-            FileReader reader = new FileReader(inputFile);
-            Object json = JSONUtil.createJson(reader);
-            JsonImport imp = new JsonImport(json, inputFile.getName(), workspace, encoding, maxNumLines);
-            worksheet = imp.generateWorksheet();
-        } else if (inputType.equalsIgnoreCase("XML")) {
-            String fileContents = FileUtil.readFileContentsToString(inputFile, encoding);
-            JSONObject json = XML.toJSONObject(fileContents);
-            JsonImport imp = new JsonImport(json, inputFile.getName(), workspace, encoding, maxNumLines);
-            worksheet = imp.generateWorksheet();
-        } else if (inputType.equalsIgnoreCase("CSV")) {
-            Import fileImport = new CSVFileImport(1, 2, ',', '\"', encoding, -1, inputFile, workspace);
-
-            worksheet = fileImport.generateWorksheet();
+        if(inputType == null)
+        {
+        	 worksheet = generateWorksheetFromUnknownFileType(inputFile,
+ 					workspace, encoding, maxNumLines, worksheet);
         }
-
+        else if (inputType.equalsIgnoreCase("JSON")) {
+            worksheet = generateWorksheetFromJSONFile(inputFile, workspace,
+					encoding, maxNumLines);
+        } else if (inputType.equalsIgnoreCase("XML")) {
+            worksheet = generateWorksheetFromXMLFile(inputFile, workspace,
+					encoding, maxNumLines);
+        } else if (inputType.equalsIgnoreCase("CSV")) {
+            worksheet = generateWorksheetFromDelimitedFile(inputFile, workspace,
+					encoding);
+        }
+        else
+        {
+        	   worksheet = generateWorksheetFromUnknownFileType(inputFile,
+					workspace, encoding, maxNumLines, worksheet);
+        }
+        if(worksheet == null)
+        {
+        	throw new KarmaException("Content type unrecognized");
+        }
         return worksheet;
     }
+
+	private Worksheet generateWorksheetFromUnknownFileType(File inputFile,
+			Workspace workspace, String encoding, int maxNumLines,
+			Worksheet worksheet) throws FileNotFoundException, IOException,
+			KarmaException, ClassNotFoundException {
+		
+		   Metadata metadata = new Metadata();
+		   metadata.set(Metadata.RESOURCE_NAME_KEY, inputFile.getName());
+		   BufferedInputStream is = new BufferedInputStream(new FileInputStream(inputFile));
+		   DefaultDetector detector = new DefaultDetector();
+		   MediaType type = detector.detect(is, metadata);
+		   
+		   ContentHandler contenthandler = new BodyContentHandler();  
+		   AutoDetectParser parser = new AutoDetectParser();
+		   try {
+			parser.parse(is, contenthandler,  metadata);
+			} catch (SAXException | TikaException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+		   MediaTypeRegistry registry =MimeTypes.getDefaultMimeTypes().getMediaTypeRegistry();
+		   registry.addSuperType(new MediaType("text","csv"), new MediaType("text","plain"));
+		   MediaType parsedType = MediaType.parse(metadata.get(Metadata.CONTENT_TYPE));
+		   
+		   if(registry.isSpecializationOf(registry.normalize(type), registry.normalize(parsedType).getBaseType()))
+		   {
+			   metadata.set(Metadata.CONTENT_TYPE, type.toString());
+		   }
+		   logger.info("Detected " + metadata.get(Metadata.CONTENT_TYPE));
+		   String[] contentType = metadata.get(Metadata.CONTENT_TYPE).split(";");
+		   switch(contentType[0])
+		   {
+		   	case "application/json":{
+		   		
+		   	  worksheet = generateWorksheetFromJSONFile(inputFile, workspace,
+					encoding, maxNumLines);
+		   	  break;
+		   	}
+		   	case "application/xml":{
+		        worksheet = generateWorksheetFromXMLFile(inputFile, workspace,
+						encoding, maxNumLines);
+		     	  break;
+		     	}
+		   	case "text/csv":{
+		        worksheet = generateWorksheetFromDelimitedFile(inputFile, workspace,
+						encoding);
+		   	  break;
+		   	}
+		   }
+		return worksheet;
+	}
+
+	private Worksheet generateWorksheetFromDelimitedFile(File inputFile,
+			Workspace workspace, String encoding) throws IOException,
+			KarmaException, ClassNotFoundException {
+		Worksheet worksheet;
+		Import fileImport = new CSVFileImport(1, 2, ',', '\"', encoding, -1, inputFile, workspace);
+
+		worksheet = fileImport.generateWorksheet();
+		return worksheet;
+	}
+
+	private Worksheet generateWorksheetFromXMLFile(File inputFile,
+			Workspace workspace, String encoding, int maxNumLines)
+			throws IOException {
+		Worksheet worksheet;
+		String fileContents = FileUtil.readFileContentsToString(inputFile, encoding);
+		JSONObject json = XML.toJSONObject(fileContents);
+		JsonImport imp = new JsonImport(json, inputFile.getName(), workspace, encoding, maxNumLines);
+		worksheet = imp.generateWorksheet();
+		return worksheet;
+	}
+
+	private Worksheet generateWorksheetFromJSONFile(File inputFile,
+			Workspace workspace, String encoding, int maxNumLines)
+			throws FileNotFoundException {
+		Worksheet worksheet;
+		FileReader reader = new FileReader(inputFile);
+		Object json = JSONUtil.createJson(reader);
+		JsonImport imp = new JsonImport(json, inputFile.getName(), workspace, encoding, maxNumLines);
+		worksheet = imp.generateWorksheet();
+		return worksheet;
+	}
 
 	public void generateRdf(String inputType, R2RMLMappingIdentifier id,
 			 PrintWriter pw, File inputFile, String encoding, int maxNumLines)
