@@ -3,6 +3,8 @@ package edu.isi.karma.cleaning;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -10,14 +12,22 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 public class Interpretor {
 	private PyObject interpreterClass;
 
+	private static Logger logger = LoggerFactory.getLogger(Interpretor.class);
 	public Interpretor() {
 		PythonInterpreter interpreter = new PythonInterpreter();
-		// change the sys.path
-		String dirpathString = ServletContextParameterMap
-				.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY);
-		if (dirpathString.compareTo("") == 0) {
-			dirpathString = "./src/main/resources/scripts/Lib";
-		}
+		
+		String dirpathString = ServletContextParameterMap.getParameterValue(ContextParameter.WEBAPP_PATH) + 
+									"/" + ServletContextParameterMap
+									.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY);
+		
+									;
+		if(dirpathString == null || dirpathString.toString().length() == 0) {
+			dirpathString = "resources/" + ServletContextParameterMap
+					.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY) ;
+		} 
+		
+		logger.info("Setting Python Scripts Directory for karma-cleaning: " + dirpathString);
+		
 		interpreter.exec("import sys");
 		// /Users/bowu/projects/IDCT/src/edu/isi/karma/cleaning
 		interpreter.exec("sys.path.append('" + dirpathString + "')");

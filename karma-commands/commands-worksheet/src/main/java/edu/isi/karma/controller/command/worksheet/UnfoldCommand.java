@@ -14,6 +14,10 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.er.helper.CloneTableUtils;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
@@ -22,6 +26,7 @@ import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
@@ -50,7 +55,7 @@ public class UnfoldCommand extends WorksheetCommand {
 	@Override
 	public String getCommandName() {
 		// TODO Auto-generated method stub
-		return "Unfold";
+		return this.getClass().getSimpleName();
 	}
 
 	@Override
@@ -93,9 +98,15 @@ public class UnfoldCommand extends WorksheetCommand {
 		try{
 			UpdateContainer c =  new UpdateContainer();
 			c.add(new WorksheetListUpdate());
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId()));
-			if (newws != null)
-				c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(newws.getId()));
+			if (newws == null)
+				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId()));
+			if (newws != null) {
+				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId()));
+				Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), newws.getId(), workspace.getOntologyManager());
+				SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(newws.getId()), workspace
+						.getCrfModelHandler(), workspace.getOntologyManager());
+				c.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(newws.getId(), workspace, alignment));
+			}
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {
@@ -135,6 +146,7 @@ public class UnfoldCommand extends WorksheetCommand {
 			}
 		}
 		CloneTableUtils.cloneHTable(ht, newHT, oldws, factory, hnodes);
+		List<Row> resultRows = new ArrayList<Row>();
 		for (Row parentRow: parentRows) {
 			Table t = null;
 			for (Node node : parentRow.getNodes()) {
@@ -185,13 +197,24 @@ public class UnfoldCommand extends WorksheetCommand {
 					tmprow.getNeighborByColumnName("Values", factory).setValue(oldnode.getValue().asString(), oldnode.getStatus(), factory);
 					//newnode.setValue(oldnode.getValue().asString(), oldnode.getStatus(), factory);
 				}
+				resultRows.add(lastRow);
 			}
 		}
-
+		for (Row tmpRow : resultRows) {
+			for (Node node : tmpRow.getNodes()) {
+				if (node.hasNestedTable()) {
+					Table tmpTable = node.getNestedTable();
+					if (tmpTable.getNumRows() == 0) {
+						tmpTable.addRow(factory);
+					}
+				}
+			}
+		}
 
 	}
 	private Worksheet unfoldTopLevel(Worksheet oldws, String keyHNodeid, String valueHNodeid, Workspace workspace, RepFactory factory) {
 		Worksheet newws = factory.createWorksheet("Unfold: " + oldws.getTitle(), workspace, oldws.getEncoding());
+		newws.getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, oldws.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.sourceType));
 		ArrayList<HNode> topHNodes = new ArrayList<HNode>(oldws.getHeaders().getHNodes());
 		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows());
 		HNode key = oldws.getHeaders().getHNode(keyHNodeid);
@@ -227,7 +250,7 @@ public class UnfoldCommand extends WorksheetCommand {
 			ids.add(row.getId());
 			hash.put(hashValue, ids);
 		}
-
+		List<Row> resultRows = new ArrayList<Row>();
 		for (String hashKey : hash.keySet()) {
 			ArrayList<String> r = hash.get(hashKey);
 			Row lastRow = CloneTableUtils.cloneDataTable(CloneTableUtils.getRow(rows, r.get(0)), newws.getDataTable(), oldws.getHeaders(), newws.getHeaders(), hnodes, factory);
@@ -239,6 +262,17 @@ public class UnfoldCommand extends WorksheetCommand {
 				Row tmprow = newnode.getNestedTable().addRow(factory);
 				tmprow.getNeighborByColumnName("Values", factory).setValue(oldnode.getValue().asString(), oldnode.getStatus(), factory);
 				//newnode.setValue(oldnode.getValue().asString(), oldnode.getStatus(), factory);
+			}
+			resultRows.add(lastRow);
+		}
+		for (Row tmpRow : resultRows) {
+			for (Node node : tmpRow.getNodes()) {
+				if (node.hasNestedTable()) {
+					Table tmpTable = node.getNestedTable();
+					if (tmpTable.getNumRows() == 0) {
+						tmpTable.addRow(factory);
+					}
+				}
 			}
 		}
 		return newws;

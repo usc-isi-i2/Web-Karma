@@ -70,7 +70,7 @@
 	</context-param>
   <context-param>
   		<param-name>PYTHON_SCRIPTS_DIRECTORY</param-name>
-		<param-value>../karma-cleaning/src/main/resources/scripts/Lib</param-value>
+		<param-value>resources/pythonCleaningScripts</param-value>
   </context-param>
   <context-param>
 		<param-name>MSFT</param-name>
@@ -80,7 +80,10 @@
     <param-name>CLEANING_SERVICE_URL</param-name>
     <param-value>/cleaningService/IdentifyData</param-value>
   </context-param>
-
+  <context-param>
+    <param-name>CLUSTER_SERVICE_URL</param-name>
+    <param-value>/clusterService/cluster/post</param-value>
+  </context-param>
   
   	<servlet>
     	<servlet-name>ServletStart</servlet-name>

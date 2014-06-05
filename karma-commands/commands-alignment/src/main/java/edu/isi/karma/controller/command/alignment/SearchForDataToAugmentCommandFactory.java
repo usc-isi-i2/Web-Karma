@@ -9,16 +9,15 @@ import edu.isi.karma.rep.Workspace;
 public class SearchForDataToAugmentCommandFactory extends CommandFactory{
 
 	private enum Arguments {
-		tripleStoreUrl, context, nodeType, alignmentId
+		tripleStoreUrl, context, nodeUri, alignmentId
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String url = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.context.name());
-		String nodeType = request.getParameter(Arguments.nodeType.name());
-		String alignmentId = request.getParameter(Arguments.alignmentId.name());
-		return new SearchForDataToAugmentCommand(getNewId(workspace), url, context, nodeType, alignmentId);
+		String nodeUri = request.getParameter(Arguments.nodeUri.name());
+		return new SearchForDataToAugmentCommand(getNewId(workspace), url, context, nodeUri);
 	}
 
 	@Override

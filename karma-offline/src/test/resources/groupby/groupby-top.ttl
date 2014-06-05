@@ -1,0 +1,17 @@
+_:crm_E55_Type1_N11_N13 <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> "Yin" .
+_:crm_E55_Type1_N11_N13 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "Frank" .
+_:crm_E55_Type1_N11_N13 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+
+_:crm_E55_Type1_N30_N31 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+_:crm_E55_Type1_N30_N31 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "Lee" .
+_:crm_E55_Type1_N30_N31 <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> "Sam" .
+
+_:crm_E55_Type1_N41_N42 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "Frank" .
+_:crm_E55_Type1_N41_N42 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+_:crm_E55_Type1_N41_N42 <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> "Mary" .
+
+_:crm_E55_Type1_N52_N53 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+_:crm_E55_Type1_N52_N53 <http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of> "Frank" .
+_:crm_E55_Type1_N52_N53 <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> "Zoe" .
+
+

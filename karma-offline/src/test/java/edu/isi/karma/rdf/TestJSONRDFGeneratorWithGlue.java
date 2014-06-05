@@ -37,7 +37,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.kr2rml.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.util.EncodingDetector;
 

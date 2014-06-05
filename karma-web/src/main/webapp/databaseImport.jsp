@@ -40,7 +40,7 @@
 				        		<div class="col-sm-2">
 				        			<div class="form-group">
 										<label for="DatabasePortNumber">Port</label>
-										<input type="number" id="DatabasePortNumber" value="" class="form-control DatabaseImportOption" maxlength="6" size="5" required/>
+										<input type="text" id="DatabasePortNumber" value="" class="form-control DatabaseImportOption" maxlength="6" size="5" required/>
 									</div>
 				        		</div>
 				        		<div class="col-sm-2">

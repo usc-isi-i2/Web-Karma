@@ -68,6 +68,7 @@ public class FetchR2RMLModelsListCommand extends Command{
 				List<String> model_Names = list.get("model_names");
 				List<String> model_Urls = list.get("model_urls");
 				List<String> model_Times = list.get("model_publishtimes");
+				List<String> model_Contexts = list.get("model_contexts");
 				JSONArray list = new JSONArray();
 				try {
 					int count = 0;
@@ -76,6 +77,7 @@ public class FetchR2RMLModelsListCommand extends Command{
 						obj.put("name", model_Names.get(count));
 						obj.put("url",  model_Urls.get(count));
 						obj.put("publishTime", model_Times.get(count));
+						obj.put("context", model_Contexts.get(count));
 						count++;
 						list.put(obj);
 						

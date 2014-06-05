@@ -9,16 +9,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.metadata.KarmaMetadataManager;
-import edu.isi.karma.metadata.PythonTransformationMetadata;
-import edu.isi.karma.metadata.UserPreferencesMetadata;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 
 public class TestFileRdfGenerator extends TestRdfGenerator{

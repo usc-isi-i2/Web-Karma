@@ -16,6 +16,10 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.er.helper.CloneTableUtils;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
@@ -24,6 +28,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
@@ -109,9 +114,17 @@ public class GroupByCommand extends WorksheetCommand {
 		try{
 			UpdateContainer c =  new UpdateContainer();
 			c.add(new WorksheetListUpdate());
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId()));
-			if (newws != null)
-				c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(newws.getId()));
+			if (newws == null)
+				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId()));
+			if (newws != null) {
+				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId()));
+				//c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(newws.getId()));
+				Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), newws.getId(), workspace.getOntologyManager());
+				SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(newws.getId()), workspace
+						.getCrfModelHandler(), workspace.getOntologyManager());
+				c.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(newws.getId(), workspace, alignment));
+			}
+			//c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(oldws.getId()));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {
@@ -132,6 +145,7 @@ public class GroupByCommand extends WorksheetCommand {
 
 	private Worksheet groupByTopLevel(Worksheet oldws, Workspace workspace, List<String> hnodeIDs, List<HNode> keyhnodes, List<HNode> valuehnodes, RepFactory factory) {
 		Worksheet newws = factory.createWorksheet("GroupBy: " + oldws.getTitle(), workspace, oldws.getEncoding());
+		newws.getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, oldws.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.sourceType));
 		HTable newht =  newws.getHeaders();
 		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows());
 		HTable oldht =  oldws.getHeaders();

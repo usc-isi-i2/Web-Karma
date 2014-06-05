@@ -13,6 +13,7 @@ import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Worksheet;

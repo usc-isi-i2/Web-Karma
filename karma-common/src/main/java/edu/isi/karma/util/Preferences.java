@@ -51,6 +51,15 @@ public abstract class Preferences {
 	
 	protected static Logger logger = LoggerFactory.getLogger(Preferences.class.getSimpleName());
 
+	private String defaultWorkspaceTemplate = "{ " +
+	    "\"ViewPreferences\": { " +
+	    "    \"maxCharactersInHeader\": 10, " +
+	    "    \"maxCharactersInCell\": 200, " + 
+	    "    \"maxRowsToShowInNestedTables\": 20, " +
+		"	\"defaultRowsToShowInTopTables\":150 " + 
+	    "}" +
+	 "}";
+	
 	public Preferences(String preferencesId) {
 		this.preferencesId = preferencesId;
 		populatePreferences();
@@ -86,19 +95,29 @@ public abstract class Preferences {
 	}
 
 	
-	private void createNewPreferencesFileFromTemplate() throws IOException, URISyntaxException {
+	private File loadWorkspacePrefTemplateFile() throws IOException {
+		File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + 
+				  "/WorkspacePref.template");
+		if(!file.exists()) {
+			JSONObject json = new JSONObject(defaultWorkspaceTemplate);
+			file.createNewFile();
+			FileUtil.writePrettyPrintedJSONObjectToFile(json, file);
+		}
+		return file;
+	}
 
+	private void createNewPreferencesFileFromTemplate() throws IOException, URISyntaxException {
 		jsonFile.createNewFile();
-		File template_file = new File(getClass().getClassLoader().getResource(
-				"WorkspacePref.template").toURI());
-		FileUtil.copyFiles(jsonFile, template_file);
-		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
+		
+		File templateFile = loadWorkspacePrefTemplateFile();
+		json = new JSONObject(FileUtil.readFileContentsToString(templateFile, "UTF-8"));
+		FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
 	}
 	
 	private void loadDefaultPreferences() throws IOException, URISyntaxException {
-		jsonFile = new File(getClass().getClassLoader().getResource(
-				"WorkspacePref.template").toURI());
-		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
+		jsonFile = loadWorkspacePrefTemplateFile();
+		String templateStr = FileUtil.readFileContentsToString(jsonFile, "UTF-8");
+		json = new JSONObject(templateStr);
 	}
 	
 	protected void savePreferences() throws JSONException, IOException {

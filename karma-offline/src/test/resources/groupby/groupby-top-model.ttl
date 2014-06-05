@@ -1,0 +1,84 @@
+@prefix edan-ont: <http://collection.edan.si.edu/ontologies/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dim: <http://data.nasa.gov/qudt/owl/dimension#> .
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix skos: <http://www.w3.org/2008/05/skos#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix qudt: <http://data.nasa.gov/qudt/owl/qudt#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix cc: <http://creativecommons.org/ns#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix quantity: <http://data.nasa.gov/qudt/owl/quantity#> .
+@prefix unit: <http://data.nasa.gov/qudt/owl/unit#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix oecc: <http://www.oegov.org/models/common/cc#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix km-dev: <http://isi.edu/integration/karma/dev#> .
+
+_:node18p7b115sx1 a km-dev:R2RMLMapping ;
+	km-dev:sourceName "test2.json" ;
+	km-dev:modelPublicationTime "1401479529661"^^xsd:long ;
+	km-dev:modelVersion "1.3" ;
+	km-dev:hasWorksheetHistory "[{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"subject\"}],\"type\":\"hNodeId\"},{\"name\":\"values\",\"value\":[{\"name\":\"checked\",\"value\":[{\"columnName\":\"subject\"}],\"type\":\"hNodeId\"}],\"type\":\"hNodeIdList\"}],\"commandName\":\"GroupByCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"name\"},{\"columnName\":\"First\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of\",\"DomainLabel\":\"crm:E55_Type1 (add)\",\"DomainId\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type1\",\"DomainUri\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"name\"},{\"columnName\":\"Last\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.cidoc-crm.org/cidoc-crm/P102_has_title\",\"DomainLabel\":\"crm:E55_Type1\",\"DomainId\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type1\",\"DomainUri\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"}]" .
+
+km-dev:TriplesMap_193882fe-5637-4b69-abb8-0b4221a82542 a rr:TriplesMap .
+
+_:node18p7b115sx1 km-dev:hasTriplesMap km-dev:TriplesMap_193882fe-5637-4b69-abb8-0b4221a82542 .
+
+km-dev:TriplesMap_193882fe-5637-4b69-abb8-0b4221a82542 km-dev:isPartOfMapping _:node18p7b115sx1 .
+
+_:node18p7b115sx2 rr:tableName "test2.json" ;
+	a rr:LogicalTable ;
+	km-dev:isPartOfMapping _:node18p7b115sx1 .
+
+_:node18p7b115sx1 km-dev:hasLogicalTable _:node18p7b115sx2 .
+
+km-dev:TriplesMap_193882fe-5637-4b69-abb8-0b4221a82542 rr:logicalTable _:node18p7b115sx2 ;
+	rr:subjectMap _:node18p7b115sx3 .
+
+_:node18p7b115sx1 km-dev:hasSubjectMap _:node18p7b115sx3 .
+
+_:node18p7b115sx3 km-dev:isPartOfMapping _:node18p7b115sx1 ;
+	a rr:SubjectMap ;
+	km-dev:alignmentNodeId "http://www.cidoc-crm.org/cidoc-crm/E55_Type1" ;
+	rr:class crm:E55_Type ;
+	rr:termType rr:BlankNode ;
+	km-dev:namePrefix "crm:E55_Type1" ;
+	a km-dev:steinerTreeRootNode .
+
+_:node18p7b115sx4 rr:predicate crm:P101i_was_use_of .
+
+_:node18p7b115sx5 rr:column "[\"name\",\"First\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18p7b115sx1 .
+
+_:node18p7b115sx1 km-dev:hasObjectMap _:node18p7b115sx5 .
+
+_:node18p7b115sx4 rr:objectMap _:node18p7b115sx5 .
+
+km-dev:TriplesMap_193882fe-5637-4b69-abb8-0b4221a82542 rr:predicateObjectMap _:node18p7b115sx4 .
+
+_:node18p7b115sx4 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18p7b115sx1 .
+
+_:node18p7b115sx1 km-dev:hasPredicateObjectMap _:node18p7b115sx4 .
+
+_:node18p7b115sx6 rr:predicate crm:P102_has_title .
+
+_:node18p7b115sx7 rr:column "[\"name\",\"Last\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18p7b115sx1 .
+
+_:node18p7b115sx1 km-dev:hasObjectMap _:node18p7b115sx7 .
+
+_:node18p7b115sx6 rr:objectMap _:node18p7b115sx7 .
+
+km-dev:TriplesMap_193882fe-5637-4b69-abb8-0b4221a82542 rr:predicateObjectMap _:node18p7b115sx6 .
+
+_:node18p7b115sx6 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18p7b115sx1 .
+
+_:node18p7b115sx1 km-dev:hasPredicateObjectMap _:node18p7b115sx6 .

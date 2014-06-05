@@ -66,6 +66,10 @@ public class RequestController extends HttpServlet {
             ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL,
                     host + ":" + port
                     + ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL));
+            
+            ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL,
+                    host + ":" + port
+                    + ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL));
         }
 
         String workspaceId = request.getParameter("workspaceId");

@@ -40,6 +40,7 @@ var SetSemanticTypeDialog = (function() {
 			    // This is tha JSON array which is changed when the user adds/changes through GUI and is submitted to the server.
 			    var tdTag = $("td#"+ columnId); 
 			    var typeJsonObject = $(tdTag).data("typesJsonObject");
+			    console.log(typeJsonObject);
 			    existingTypes = typeJsonObject["SemanticTypesArray"];
 			    
 			    var CRFInfo = typeJsonObject["FullCRFModel"];
@@ -1722,6 +1723,251 @@ var ManageIncomingOutgoingLinksDialog = (function() {
    
     return {
     	getInstance : getInstance
+    };
+    
+})();
+
+var searchDataDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+        var dialog = $("#searchDataDialog");
+        var worksheetId, columnDomain, columnUri, alignmentId;
+        
+        function init() {
+            //Initialize what happens when we show the dialog
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                 $('#txtR2RML_URL_Search').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+            });
+            
+            //Initialize handler for Save button
+            //var me = this;
+            $('#btnSave', dialog).on('click', function (e) {
+                e.preventDefault();
+                saveDialog(e);
+            });
+            
+                
+        }
+        
+        function hideError() {
+            $("div.error", dialog).hide();
+        }
+        
+        function showError() {
+            $("div.error", dialog).show();
+        }
+        
+        function saveDialog(e) {
+            hide();
+            //  if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
+            //     alert("Invalid sparql end point. Could not establish connection.");
+            //     return;
+            // }
+
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info['tripleStoreUrl'] = $('#txtR2RML_URL_Search').val();
+            info['context'] = $('#txtGraph_URL_Search').val();
+            info["command"] = "SearchForDataToAugmentCommand";
+            info["nodeUri"] = columnDomain;
+            console.log(info['graphContext']);
+            //showLoading(info["worksheetId"]);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        json = json.elements[0];
+                        console.log(json);
+                        //parse(json);
+                        //hideLoading(info["worksheetId"]);
+                        augmentDataDialog.getInstance().show(worksheetId, json, columnUri, alignmentId);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while Fetching Models!" + textStatus);
+                        //hideLoading(info["worksheetId"]);
+                    }
+            });
+        };
+        
+        function hide() {
+            dialog.modal('hide');
+        }
+        
+        function show(wsId, colDomain, colUri, Alnid) {
+            worksheetId = wsId;
+            columnDomain = colDomain;
+            columnUri = colUri;
+            alignmentId = Alnid;
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        
+        return {    //Return back the public methods
+            show : show,
+            init : init
+        };
+    };
+
+    function getInstance() {
+        if( ! instance ) {
+            instance = new PrivateConstructor();
+            instance.init();
+        }
+        return instance;
+    }
+   
+    return {
+        getInstance : getInstance
+    };
+    
+})();
+
+var augmentDataDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+        var dialog = $("#augmentDataDialog");
+        var worksheetId, columnUri, alignmentId;
+        
+        function init() {
+            //Initialize what happens when we show the dialog
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                 $('#txtR2RML_URL_Search').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+            });
+            
+            //Initialize handler for Save button
+            //var me = this;
+            $('#btnSave', dialog).on('click', function (e) {
+                e.preventDefault();
+                saveDialog(e);
+            });
+            
+                
+        }
+        
+        function hideError() {
+            $("div.error", dialog).hide();
+        }
+        
+        function showError() {
+            $("div.error", dialog).show();
+        }
+        
+        function saveDialog(e) {
+            hide();
+            var checkboxes = dialog.find(":checked");
+            if (checkboxes.length == 0) {
+                hide();
+                return;
+            }
+            var predicates = [];
+            var triplesMap = [];
+            for (var i = 0; i < checkboxes.length; i++) {
+	            var checkbox = checkboxes[i];
+	            var t1 = new Object();
+	            var t2 = new Object();
+	            t1['predicate'] = checkbox['src'];
+	            t2['tripleMap'] = checkbox['value'];
+	            predicates.push(t1);    
+	            triplesMap.push(t2);
+	        	}
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info['predicate'] = JSON.stringify(predicates);
+            info['triplesMap'] = JSON.stringify(triplesMap);
+            info['columnUri'] = columnUri;
+            info['alignmentId'] = alignmentId;
+            info["command"] = "AugmentDataCommand";
+            console.log(info['predicate']);
+            console.log(info['triplesMap']);
+            //showLoading(info["worksheetId"]);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        json = json.elements[0];
+                        console.log(json);
+                        //parse(json);
+                        //hideLoading(info["worksheetId"]);
+                        //applyModelDialog.getInstance().show(worksheetId, json);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while Fetching Models!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            });
+        };
+        
+        function hide() {
+            dialog.modal('hide');
+        }
+        
+        function show(wsId, json, colUri, Alnid) {
+            worksheetId = wsId;
+            columnUri = colUri;
+            alignmentId = Alnid;
+            console.log(json);
+            if (json.length == 0)
+            	return;
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                var dialogContent = $("#augmentDataDialogColumns", dialog);
+                dialogContent.empty();
+                //console.log(headers);
+                for (var i = 0; i < json.length; i++) {
+                    var predicate = json[i]['predicate'];
+                    var tripleMap = json[i]['tripleMap'];
+                    var tmp = tripleMap.split(",");
+                    var row = $("<div>").addClass("checkbox");
+                    var label = $("<label>").text(predicate + " " + tmp.length);
+                    var input = $("<input>")
+                                        .attr("type", "checkbox")
+                                .attr("id", "selectPredicates")
+                                .attr("value", tripleMap)
+                                .attr("name", "selectPredicates")
+                                .attr("src", predicate);
+                    label.append(input);
+                    row.append(label);
+                    dialogContent.append(row);
+                }
+            });
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        
+        return {    //Return back the public methods
+            show : show,
+            init : init
+        };
+    };
+
+    function getInstance() {
+        if( ! instance ) {
+            instance = new PrivateConstructor();
+            instance.init();
+        }
+        return instance;
+    }
+   
+    return {
+        getInstance : getInstance
     };
     
 })();

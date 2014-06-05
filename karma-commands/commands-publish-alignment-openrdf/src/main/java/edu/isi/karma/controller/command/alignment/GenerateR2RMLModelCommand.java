@@ -36,7 +36,6 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
