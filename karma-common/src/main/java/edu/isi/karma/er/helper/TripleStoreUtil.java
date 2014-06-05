@@ -54,6 +54,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.util.HTTPUtil;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -308,6 +309,76 @@ public class TripleStoreUtil {
 		return results;
 	}
 	
+	public void deleteMappingFromTripleStore(String tripleStoreURL, String context, String mappingURI) throws KarmaException
+	{
+		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL) + "/statements";
+		testTripleStoreConnection(tripleStoreURL);
+
+		try {
+
+			StringBuilder query = new StringBuilder();
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
+			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
+			if (null != context && !context.trim().isEmpty())
+			{
+				query.append("WITH ");
+				formatURI(context, query);
+				query.append("\n");
+			}
+			query.append("DELETE { ?s ?p ?o } \n");
+			query.append("WHERE\n");
+			injectMapping(mappingURI, query);
+			
+			String queryString = query.toString();
+			logger.debug("query: " + queryString);
+
+			
+			Map<String, String> formparams = new HashMap<String, String>();
+			formparams.put("update", queryString);
+			
+			String responseString = HTTPUtil.executeHTTPPostRequest(
+					tripleStoreURL, null, mime_types.get(RDF_Types.N3.name()),
+					formparams);
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+	}
+
+	private void injectMapping(String mappingURI, StringBuilder query) {
+		query.append("{\n");
+		injectType(mappingURI, query, Uris.RR_TRIPLESMAP_CLASS_URI, Uris.KM_HAS_TRIPLES_MAP_URI);
+		injectType(mappingURI, query, Uris.RR_SUBJECTMAP_CLASS_URI, Uris.KM_HAS_SUBJECT_MAP_URI);
+		injectType(mappingURI, query, Uris.RR_PREDICATEOBJECTMAP_CLASS_URI, Uris.KM_HAS_PREDICATE_OBJECT_MAP_URI);
+		injectType(mappingURI, query, Uris.RR_OBJECTMAP_CLASS_URI, Uris.KM_HAS_OBJECT_MAP_URI);
+		injectType(mappingURI, query, Uris.RR_LOGICAL_TABLE_CLASS_URI, Uris.KM_HAS_LOGICAL_TABLE_URI);
+		
+		query.append("{\n");
+		query.append("?s ?p ?o .\n");
+		query.append("?s owl:sameAs ");
+		formatURI(mappingURI, query);
+		query.append(" . \n"); 
+		
+		query.append("}\n");
+		query.append("}\n");
+	}
+
+	private void injectType(String mappingURI, StringBuilder query,
+			String type, String hasType) {
+		query.append("{\n");
+		query.append("?s a <");
+		query.append(type);
+		query.append("> . \n");
+		query.append("?mapping <");
+		query.append(hasType);
+		query.append("> ?s . \n");
+		query.append("?mapping owl:sameAs ");
+		formatURI(mappingURI, query);
+		query.append(" .\n");
+		query.append("?s ?p ?o . \n");
+		query.append("}\n");
+		query.append("UNION\n");
+	}
 	public String getMappingFromTripleStore(String tripleStoreURL, String context, String mappingURI) throws KarmaException
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
@@ -321,23 +392,7 @@ public class TripleStoreUtil {
 			query.append("CONSTRUCT { ?s ?p ?o }\n");
 			
 			injectContext(context, query);
-			query.append("{\n");
-			query.append("{\n");
-			query.append("?mapping owl:sameAs ");
-			formatURI(mappingURI, query);
-			query.append(" . \n"); 
-			query.append("?s ?p ?o .\n");
-			query.append("?s a ?type . \n");
-			query.append("FILTER (?type in (rr:TriplesMap, rr:SubjectMap,  rr:ObjectMap,  rr:LogicalTable, rr:PredicateObjectMap )) .\n");
-			query.append("}\n");
-			query.append("UNION\n{\n");
-			query.append("?s ?p ?o .\n");
-			query.append("?s owl:sameAs ");
-			formatURI(mappingURI, query);
-			query.append(" . \n"); 
-			
-			query.append("}\n");
-			query.append("}\n");
+			injectMapping(mappingURI, query);
 			
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);

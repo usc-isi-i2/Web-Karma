@@ -21,6 +21,7 @@
 
 package edu.isi.karma.rdf;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -29,7 +30,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 
-import org.apache.hadoop.util.bloom.BloomFilter;
 import org.apache.hadoop.util.bloom.Key;
 import org.json.JSONObject;
 import org.junit.After;
@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.BloomFilterKR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
 import edu.isi.karma.kr2rml.TriplesMapBloomFilterManager;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.util.EncodingDetector;
@@ -110,9 +111,9 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 			rdfGen.generateRDF("people-model", jsonData, false, bfWriter);
 			String base64EncodedBloomFilterManager = bfsw.toString();
 			TriplesMapBloomFilterManager manager = new TriplesMapBloomFilterManager(new JSONObject(base64EncodedBloomFilterManager));
-			BloomFilter bf = manager.getBloomFilter("http://isi.edu/integration/karma/dev#TriplesMap_cb7bdfc8-5781-4be8-8dcb-51d14139960b");
+			KR2RMLBloomFilter bf = manager.getBloomFilter("http://isi.edu/integration/karma/dev#TriplesMap_cb7bdfc8-5781-4be8-8dcb-51d14139960b");
 			Key k = new Key(("<https://lh4.googleusercontent.com/-uonc-uQiTGw/AAAAAAAAAAI/AAAAAAAAATk/V_iGc4e8Vwk/photo.jpg?sz=80>").getBytes());
-			
+			assertEquals(7, bf.estimateNumberOfHashedValues());
 			assertTrue(bf.membershipTest(k));
 			
 			
