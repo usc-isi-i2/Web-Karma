@@ -42,9 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.ErrorReport.Priority;
-import edu.isi.karma.kr2rml.exception.HNodeNotFoundKarmaException;
-import edu.isi.karma.kr2rml.exception.NoValueFoundInNodeException;
-import edu.isi.karma.kr2rml.exception.ValueNotFoundKarmaException;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
 import edu.isi.karma.kr2rml.planning.DFSTriplesMapGraphDAGifier;
@@ -57,15 +54,10 @@ import edu.isi.karma.kr2rml.planning.TriplesMapPlanExecutor;
 import edu.isi.karma.kr2rml.planning.TriplesMapPlanGenerator;
 import edu.isi.karma.kr2rml.planning.TriplesMapWorkerPlan;
 import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
-import edu.isi.karma.kr2rml.template.ColumnTemplateTerm;
-import edu.isi.karma.kr2rml.template.StringTemplateTerm;
-import edu.isi.karma.kr2rml.template.TemplateTerm;
-import edu.isi.karma.kr2rml.template.TemplateTermSet;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
@@ -225,36 +217,6 @@ public class KR2RMLWorksheetRDFGenerator {
 		// An attempt to prevent an occasional error that occurs on Windows platform
 		// The requested operation cannot be performed on a file with a user-mapped section open
 		System.gc();
-	}
-
-	public String getTemplateTermSetPopulatedWithValues(Node node, 
-			TemplateTermSet termSet) throws ValueNotFoundKarmaException, NoValueFoundInNodeException, HNodeNotFoundKarmaException {
-		StringBuilder output = new StringBuilder();
-		for (TemplateTerm term:termSet.getAllTerms()) {
-			// String template term
-			if (term instanceof StringTemplateTerm) {
-				output.append(term.getTemplateTermValue());
-			} 
-			// Column template term
-			else if (term instanceof ColumnTemplateTerm) {
-				String hNodeId = translator.getHNodeIdForColumnName(term.getTemplateTermValue());
-				if (node.canReachNeighbor(hNodeId)) {
-					Node neighborNode = node.getNeighbor(hNodeId);
-					if (neighborNode != null) {
-						if (neighborNode.getValue().asString() == null 
-								|| neighborNode.getValue().asString().equals("")) {
-							throw new NoValueFoundInNodeException();
-						}
-						output.append(neighborNode.getValue().asString());
-					}
-				} else {
-					String columnName = this.factory.getHNode(hNodeId).getColumnName();
-					throw new ValueNotFoundKarmaException("Could not retrieve value of column: " + 
-							columnName + ".", hNodeId);
-				}
-			}
-		}
-		return output.toString();
 	}
 
 	private void generateColumnProvenanceInformation() {
