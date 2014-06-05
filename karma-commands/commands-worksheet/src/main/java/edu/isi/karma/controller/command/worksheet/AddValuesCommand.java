@@ -44,7 +44,7 @@ public class AddValuesCommand extends WorksheetCommand{
 	private String newHNodeId;
 
 	private String newColumnName = "";
-
+	private boolean isNewNode;
 	private static Logger logger = LoggerFactory
 			.getLogger(AddValuesCommand.class);
 
@@ -57,6 +57,7 @@ public class AddValuesCommand extends WorksheetCommand{
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
+		isNewNode = false;
 		addTag(CommandTag.Transformation);
 	}
 
@@ -129,6 +130,10 @@ public class AddValuesCommand extends WorksheetCommand{
 	public String getNewHNodeId() {
 		return newHNodeId;
 	}
+	
+	public boolean isNewNode() {
+		return isNewNode;
+	}
 
 	public void setColumnName(String name) {
 		this.newColumnName = name;
@@ -155,11 +160,15 @@ public class AddValuesCommand extends WorksheetCommand{
 		if (newColumnName != null && !newColumnName.trim().isEmpty()) {
 			if (hTable.getHNodeFromColumnName(newColumnName) != null)
 				ndid = hTable.getHNodeFromColumnName(newColumnName);
-			else
+			else {
 				ndid = hTable.addNewHNodeAfter(hNodeId, workspace.getFactory(), newColumnName, worksheet,true);
+				isNewNode = true;
+			}
 		}
-		else
+		else {
 			ndid = hTable.addNewHNodeAfter(hNodeId, workspace.getFactory(), newColumnName, worksheet,true);
+			isNewNode = true;
+		}
 		if(ndid == null)
 		{
 			logger.error("Unable to add new HNode!");

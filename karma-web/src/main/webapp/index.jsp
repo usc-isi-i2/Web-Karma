@@ -63,6 +63,7 @@ and related projects, please see: http://www.isi.edu/integration
         <link rel="stylesheet" type="text/css" href="./css/main.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/pyTransform.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/cleaningChart.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/model.css?<jsp:include page='version.jsp' />" />
       
 		<style type="text/css">
 			div.sticky {
@@ -167,21 +168,18 @@ and related projects, please see: http://www.isi.edu/integration
 		        </div>
 		        
 		      </div> <!--  end of navbar -->
-		       <div class="row">
-		       	<div class="col-sm-2">
-		            	<div class="form-group">
-										<label for="txtModel_URL">Model Repository URL</label>
-										<input class="form-control" type="text" id="txtModel_URL" required>
-									</div>
-		            	<div class="form-group">
-										<label for="txtData_URL">Data Repository URL</label>
-										<input class="form-control" type="text" id="txtData_URL" required>
-									</div>
-							</div>
-						</div>
+
 		      <div class="row">
 			      <div id="commHistoryAndWorkspace">
 			      	<div class="col-sm-2">
+			      		<div class="form-group">
+										<label for="txtModel_URL">Model Repository URL</label>
+										<input class="form-control" type="text" id="txtModel_URL" required>
+								</div>
+		            <div class="form-group">
+										<label for="txtData_URL">Data Repository URL</label>
+										<input class="form-control" type="text" id="txtData_URL" required>
+								</div>
 				      	<div class="ui-corner-top" id="commandHistory">
 				      		<div id="titleCommand" class="ui-corner-top"><span>Command History</span></div>
 				      	</div>

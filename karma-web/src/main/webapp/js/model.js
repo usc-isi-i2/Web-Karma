@@ -314,50 +314,50 @@ var modelManagerDialog = (function() {
         function show() {
             var dialogContent = $("#modelManagerDialogColumns", dialog);
             dialogContent.empty();
-            var div = $("<div>").css("display","table-row");
-            var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");
+            var div = $("<div>").css("display","table-row")
+            var row = $("<div>").addClass("FileNameProperty");
             var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary")
+                        .addClass("btn btn-primary FileNameButtonProperty")
                         .attr("id","btnFilterName")
                         .attr("value","File Name");
             row.append(label);
             div.append(row);
-            var row = $("<div>").css("width", "100px").css("float", "left").css("padding", "25px");;
+            var row = $("<div>").addClass("PublishTimeProperty");
             var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary")
+                        .addClass("btn btn-primary PublishTimeButtonProperty")
                         .attr("id","btnFilterPublishTime")
                         .attr("value","Publish Time");
             row.append(label);
             div.append(row);
-            var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");;
+            var row = $("<div>").addClass("URLProperty");
             var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary")
+                        .addClass("btn btn-primary URLButtonProperty")
                         .attr("id","btnFilterURL")
                         .attr("value","URL");
             row.append(label);
             div.append(row);
-            var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");;
+            var row = $("<div>").addClass("ContextProperty");
             var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary")
+                        .addClass("btn btn-primary ContextButtonProperty")
                         .attr("id","btnFilterContext")
                         .attr("value","Context");
             row.append(label);
             div.append(row);
             dialogContent.append(div);
             var div = $("<div>").css("display","table-row");
-            var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");
+            var row = $("<div>").addClass("FileNameProperty");
             var label = $("<label>").text("File Name");
             row.append(label);
             div.append(row);
-            var row = $("<div>").css("width", "100px").css("float", "left").css("padding", "25px");;
+            var row = $("<div>").addClass("PublishTimeProperty");
             var label = $("<label>").text("Publish Time");
             row.append(label);
             div.append(row);
-            var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");;
+            var row = $("<div>").addClass("URLProperty");
             var label = $("<label>").text("URL");
             row.append(label);
             div.append(row);
-            var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");;
+            var row = $("<div>").addClass("ContextProperty");
             var label = $("<label>").text("Context");
             row.append(label);
             div.append(row);
@@ -384,20 +384,20 @@ var modelManagerDialog = (function() {
                 var url = filteredModels[i].url;
                 var context = filteredModels[i].context;
                 var div = $("<div>").css("display","table-row");
-                var row = $("<div>").css("width", "150px").css("overflow", "hidden").css("float", "left").css("padding", "25px");;
-                var label = $("<label>").text(name);
+                var row = $("<div>").addClass("FileNameProperty").css("overflow", "scroll");
+                var label = $("<label>").text(name).css("overflow", "scroll");
                 row.append(label);
                 div.append(row);
-                var row = $("<div>").css("width", "100px").css("overflow", "hidden").css("float", "left").css("padding", "25px");;
-                var label = $("<label>").text(time);
+                var row = $("<div>").addClass("PublishTimeProperty").css("overflow", "scroll");
+                var label = $("<label>").text(time).css("overflow", "scroll");
                 row.append(label);
                 div.append(row);
-                var row = $("<div>").css("width", "150px").css("overflow", "hidden").css("float", "left").css("padding", "25px");;
-                var label = $("<label>").text(url);
+                var row = $("<div>").addClass("URLProperty").css("overflow", "scroll");
+                var label = $("<label>").text(url).css("overflow", "scroll");
                 row.append(label);
                 div.append(row);
-                var row = $("<div>").css("width", "150px").css("overflow", "hidden").css("float", "left").css("padding", "25px");;
-                var label = $("<label>").text(context);
+                var row = $("<div>").addClass("ContextProperty").css("overflow", "scroll");
+                var label = $("<label>").text(context).css("overflow", "scroll");
                 row.append(label);
                 div.append(row);
                 dialogContent.append(div);
@@ -417,6 +417,7 @@ var modelManagerDialog = (function() {
             instance = new PrivateConstructor();
             instance.init();
         }
+        instance.init();
         return instance;
     }
    

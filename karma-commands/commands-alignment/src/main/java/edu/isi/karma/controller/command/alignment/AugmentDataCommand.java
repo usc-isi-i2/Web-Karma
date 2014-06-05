@@ -10,6 +10,7 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -32,6 +33,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
+import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 
 public class AugmentDataCommand extends WorksheetCommand{
 	private String predicate;
@@ -129,6 +131,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 		for (int i = 0; i < resultPredicates.size(); i++) {
 			String subject = resultSubjects.get(i);
 			List<String> rowIds = SubjectURIToRowId.get(subject);
+			boolean isNewNode = false;
 			for (String RowId : rowIds) {
 				String predicate = resultPredicates.get(i);
 				JSONArray array = new JSONArray();
@@ -148,14 +151,36 @@ public class AugmentDataCommand extends WorksheetCommand{
 				try {
 					AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), predicate.substring(predicate.lastIndexOf("/") + 1));
 					command.doIt(workspace);
+					isNewNode |= command.isNewNode();
 					hNodeId = command.getNewHNodeId();
+
+
 				} catch(Exception e) {
 					e.printStackTrace();
 					return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 				}
 			}
+			if (isNewNode) {
+				HNode tableHNode =workspace.getFactory().getHNode(hNodeId);
+				String nestedHNodeId = tableHNode.getNestedTable().getHNodeIdFromColumnName("values");
+				SetSemanticTypeCommandFactory sstFactory = new SetSemanticTypeCommandFactory();
+				JSONArray semanticTypesArray = new JSONArray();
+				JSONObject semanticType = new JSONObject();
+				edu.isi.karma.rep.alignment.Node n = alignment.getNodeById(columnUri);
+				semanticType.put(ClientJsonKeys.FullType.name(), resultPredicates.get(i));
+				semanticType.put(ClientJsonKeys.isPrimary.name(), "true");
+				semanticType.put(ClientJsonKeys.DomainId.name(), n.getId());
+				semanticType.put(ClientJsonKeys.DomainUri.name(), n.getUri());
+
+
+				semanticTypesArray.put(semanticType);
+				Command sstCommand = sstFactory.createCommand(workspace, worksheetId, nestedHNodeId, false, semanticTypesArray, false, "");
+				sstCommand.doIt(workspace);
+			}
 
 		}
+
+
 		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;

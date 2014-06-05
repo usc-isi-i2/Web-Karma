@@ -84,8 +84,11 @@ a.icon-remove:hover {
 				       <h4 class="modal-title">Model Manager</h4>
 				  </div>
 				  <div class="modal-body">
-				  	<button type="button" class="btn btn-primary" id="btnLoadModel">Load Models</button>
-				  	<button type="button" class="btn btn-primary" id="btnClearModel">Clear Models</button>
+				  	<div style="border-bottom: solid black; bottom-padding: 5px;">
+				  		<button type="button" class="btn btn-primary" id="btnLoadModel">Load Models</button>
+				  		<button type="button" class="btn btn-primary" id="btnClearModel">Clear Models</button>
+				  		<div style="padding: 10px;"></div>
+				  	</div>
 						<div id="modelManagerDialogColumns" style="max-height: 400px; overflow: auto;"></div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">

@@ -277,13 +277,40 @@ var applyModelDialog = (function() {
         var availableModels;
         var filteredModels;
         var filterDialog = $("#modelFilterDialog");
-        function init(json) {
+        function init() {
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "FetchR2RMLModelsListCommand";
+            info['tripleStoreUrl'] = $('#txtModel_URL').val();
+            info['graphContext'] = "";
+            console.log(info['graphContext']);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                async: false,
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        json = json.elements[0];
+                        console.log(json);
+                        //parse(json);
+                        availableModels = json;
+                        filteredModels = availableModels;
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while Fetching Models!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            });
             $('#btnSave', dialog).on('click', function (e) {
                 e.preventDefault();
                 saveDialog(e);
-            });
-            availableModels = json;
-            filteredModels = availableModels;    
+            });   
             $('#btnClose', dialog).on('click', function (e) {
                 e.preventDefault();
                 closeDialog(e);
@@ -304,10 +331,7 @@ var applyModelDialog = (function() {
         
         function saveDialog(e) {
             hide();
-            //  if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
-            //     alert("Invalid sparql end point. Could not establish connection.");
-            //     return;
-            // }
+
             console.log("here");
             var checkboxes = dialog.find(":checked");
             if (checkboxes.length == 0) {
@@ -384,6 +408,8 @@ var applyModelDialog = (function() {
                     tmp.push(availableModels[i]);
                 if (filterName === "URL" && url.indexOf(filterText) > -1)
                     tmp.push(availableModels[i]);
+                if (filterName === "Context" && context.indexOf(filterText) > -1)
+                    tmp.push(availableModels[i]);
             }
             filteredModels = tmp;
             instance.show(worksheetId);
@@ -408,39 +434,50 @@ var applyModelDialog = (function() {
                 var dialogContent = $("#applyModelDialogColumns", dialog);
                 dialogContent.empty();
                 var div = $("<div>").css("display","table-row");
-                var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");
+                var row = $("<div>").addClass("FileNameProperty");
                 var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary")
+                        .addClass("btn btn-primary FileNameButtonProperty")
                         .attr("id","btnFilterName")
                         .attr("value","File Name");
                 row.append(label);
                 div.append(row);
-                var row = $("<div>").css("width", "100px").css("float", "left").css("padding", "25px");;
+                var row = $("<div>").addClass("PublishTimeProperty");
                 var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary")
+                        .addClass("btn btn-primary PublishTimeButtonProperty")
                         .attr("id","btnFilterPublishTime")
                         .attr("value","Publish Time");
                 row.append(label);
                 div.append(row);
-                var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");;
+                var row = $("<div>").addClass("URLProperty");
                 var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary")
+                        .addClass("btn btn-primary URLButtonProperty")
                         .attr("id","btnFilterURL")
                         .attr("value","URL");
                 row.append(label);
                 div.append(row);
+                var row = $("<div>").addClass("ContextProperty");
+                var label = $("<button>").text("Filter")
+                        .addClass("btn btn-primary ContextButtonProperty")
+                        .attr("id","btnFilterContext")
+                        .attr("value","Context");
+                row.append(label);
+                div.append(row);
                 dialogContent.append(div);
                 var div = $("<div>").css("display","table-row");
-                var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");
+                var row = $("<div>").addClass("FileNameProperty");
                 var label = $("<label>").text("File Name");
                 row.append(label);
                 div.append(row);
-                var row = $("<div>").css("width", "100px").css("float", "left").css("padding", "25px");;
+                var row = $("<div>").addClass("PublishTimeProperty");
                 var label = $("<label>").text("Publish Time");
                 row.append(label);
                 div.append(row);
-                var row = $("<div>").css("width", "150px").css("float", "left").css("padding", "25px");;
+                var row = $("<div>").addClass("URLProperty");
                 var label = $("<label>").text("URL");
+                row.append(label);
+                div.append(row);
+                var row = $("<div>").addClass("ContextProperty");
+                var label = $("<label>").text("Context");
                 row.append(label);
                 div.append(row);
                 dialogContent.append(div);
@@ -456,25 +493,33 @@ var applyModelDialog = (function() {
                     e.preventDefault();
                     showFilterDialog(e);
                 });
+                $('#btnFilterContext', dialog).on('click', function (e) {
+                    e.preventDefault();
+                    showFilterDialog(e);
+                });
                 for (var i = 0; i < filteredModels.length; i++) {
                     var name = filteredModels[i]['name'];
                     var time = new Date(filteredModels[i].publishTime*1).toDateString();
                     var url = filteredModels[i].url;
                     var context = filteredModels[i].context;
                     var div = $("<div>").css("display","table-row");
-                    var row = $("<div>").css("width", "150px").css("overflow", "hidden").css("float", "left").css("padding", "25px");;
-                    var label = $("<label>").text(name);
+                    var row = $("<div>").css("overflow", "scroll").addClass("FileNameProperty");
+                    var label = $("<label>").text(name).css("overflow", "scroll");
                     row.append(label);
                     div.append(row);
-                    var row = $("<div>").css("width", "100px").css("overflow", "hidden").css("float", "left").css("padding", "25px");;
-                    var label = $("<label>").text(time);
+                    var row = $("<div>").css("overflow", "scroll").addClass("PublishTimeProperty");
+                    var label = $("<label>").text(time).css("overflow", "scroll");
                     row.append(label);
                     div.append(row);
-                    var row = $("<div>").css("width", "150px").css("overflow", "hidden").css("float", "left").css("padding", "25px");;
-                    var label = $("<label>").text(url);
+                    var row = $("<div>").css("overflow", "scroll").addClass("URLProperty");
+                    var label = $("<label>").text(url).css("overflow", "scroll");
                     row.append(label);
                     div.append(row);
-                    var row = $("<div>").css("overflow", "hidden").css("float", "left").css("padding", "25px");;
+                    var row = $("<div>").css("overflow", "scroll").addClass("ContextProperty");
+                    var label = $("<label>").text(context).css("overflow", "scroll");
+                    row.append(label);
+                    div.append(row);
+                    var row = $("<div>").css("float", "left").css("padding", "5px");;
                     var label = $("<input>")
                                 .attr("type", "radio")
                                 .attr("id", "selectcolumns")
@@ -496,106 +541,12 @@ var applyModelDialog = (function() {
         };
     };
 
-    function getInstance(json) {
-        if( ! instance ) {
-            instance = new PrivateConstructor();
-            instance.init(json);
-        }
-        return instance;
-    }
-   
-    return {
-        getInstance : getInstance
-    };
-    
-})();
-
-var fetchModelListDialog = (function() {
-    var instance = null;
-
-    function PrivateConstructor() {
-        var dialog = $("#fetchModelListDialog");
-        var worksheetId;
-        
-        function init() {
-            
-            //Initialize handler for Save button
-            //var me = this;
-            $('#btnSave', dialog).on('click', function (e) {
-                e.preventDefault();
-                saveDialog(e);
-            });
-            
-                
-        }
-        
-        function hideError() {
-            $("div.error", dialog).hide();
-        }
-        
-        function showError() {
-            $("div.error", dialog).show();
-        }
-        
-        function saveDialog(e) {
-            hide();
-            //  if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
-            //     alert("Invalid sparql end point. Could not establish connection.");
-            //     return;
-            // }
-
-            var info = new Object();
-            info["worksheetId"] = worksheetId;
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "FetchR2RMLModelsListCommand";
-            info['tripleStoreUrl'] = $('#txtModel_URL').val();
-            info['graphContext'] = $('#txtGraph_URL_Fetch').val();
-            console.log(info['graphContext']);
-            showLoading(info["worksheetId"]);
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        json = json.elements[0];
-                        console.log(json);
-                        //parse(json);
-                        hideLoading(info["worksheetId"]);
-                        applyModelDialog.getInstance(json).show(worksheetId);
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while Fetching Models!" + textStatus);
-                        hideLoading(info["worksheetId"]);
-                    }
-            });
-        };
-        
-        function hide() {
-            dialog.modal('hide');
-        }
-        
-        function show(wsId) {
-            worksheetId = wsId;
-            dialog.modal({keyboard:true, show:true, backdrop:'static'});
-        };
-        
-        
-        return {    //Return back the public methods
-            show : show,
-            init : init
-        };
-    };
-
     function getInstance() {
         if( ! instance ) {
             instance = new PrivateConstructor();
             instance.init();
         }
+        instance.init();
         return instance;
     }
    
@@ -604,7 +555,6 @@ var fetchModelListDialog = (function() {
     };
     
 })();
-
 
 var FetchModelDialog = (function() {
     var instance = null;
