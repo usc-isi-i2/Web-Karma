@@ -43,7 +43,7 @@ import edu.isi.karma.util.EncodingDetector;
  */
 public class TestJSONDagRDFGenerator extends TestRdfGenerator{
 
-	JSONRDFGenerator rdfGen;
+	GenericRDFGenerator rdfGen;
 
 	/**
 	 * @throws java.lang.Exception

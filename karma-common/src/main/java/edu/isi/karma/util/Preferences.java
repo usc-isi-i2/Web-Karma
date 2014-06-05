@@ -51,6 +51,15 @@ public abstract class Preferences {
 	
 	protected static Logger logger = LoggerFactory.getLogger(Preferences.class.getSimpleName());
 
+	private String defaultWorkspaceTemplate = "{ " +
+	    "\"ViewPreferences\": { " +
+	    "    \"maxCharactersInHeader\": 10, " +
+	    "    \"maxCharactersInCell\": 200, " + 
+	    "    \"maxRowsToShowInNestedTables\": 20, " +
+		"	\"defaultRowsToShowInTopTables\":150 " + 
+	    "}" +
+	 "}";
+	
 	public Preferences(String preferencesId) {
 		this.preferencesId = preferencesId;
 		populatePreferences();
@@ -86,31 +95,29 @@ public abstract class Preferences {
 	}
 
 	
-	private File loadWorkspacePrefTemplateFile() {
-		File template_file = null;
-		try {
-			template_file = new File(getClass().getClassLoader().getResource(
-					"WorkspacePref.template").toURI());
-		} catch (Exception e) {
-			logger.debug("Unable to load WorkspacePref.template as a resource, trying file system in " + System.getProperty("user.dir"));
-			// file is not accessible when deployed in a war file so check working dir
-			template_file = new File("WorkspacePref.template");
+	private File loadWorkspacePrefTemplateFile() throws IOException {
+		File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + 
+				  "/WorkspacePref.template");
+		if(!file.exists()) {
+			JSONObject json = new JSONObject(defaultWorkspaceTemplate);
+			file.createNewFile();
+			FileUtil.writePrettyPrintedJSONObjectToFile(json, file);
 		}
-		return template_file;
+		return file;
 	}
 
-
 	private void createNewPreferencesFileFromTemplate() throws IOException, URISyntaxException {
-
 		jsonFile.createNewFile();
-		File template_file = loadWorkspacePrefTemplateFile();
-		FileUtil.copyFiles(jsonFile, template_file);
-		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
+		
+		File templateFile = loadWorkspacePrefTemplateFile();
+		json = new JSONObject(FileUtil.readFileContentsToString(templateFile, "UTF-8"));
+		FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
 	}
 	
 	private void loadDefaultPreferences() throws IOException, URISyntaxException {
 		jsonFile = loadWorkspacePrefTemplateFile();
-		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
+		String templateStr = FileUtil.readFileContentsToString(jsonFile, "UTF-8");
+		json = new JSONObject(templateStr);
 	}
 	
 	protected void savePreferences() throws JSONException, IOException {

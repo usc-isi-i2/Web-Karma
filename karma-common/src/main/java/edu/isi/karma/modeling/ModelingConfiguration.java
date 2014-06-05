@@ -21,12 +21,21 @@
 
 package edu.isi.karma.modeling;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ModelingConfiguration {
 
@@ -58,9 +67,55 @@ public class ModelingConfiguration {
     private static Boolean learnerEnabled;
     private static Boolean multipleSamePropertyPerNode;
 
+    private static final String newLine = System.getProperty("line.separator").toString();
+    private static String defaultModelingProperties = 
+    		"##########################################################################################" + newLine + 
+			"#" + newLine + 
+			"# Graph Builder" + newLine + 
+			"#" + newLine + 
+			"##########################################################################################" + newLine + 
+			"manual.alignment=false" + newLine + 
+			"" + newLine + 
+			"node.closure=true" + newLine + 
+			"" + newLine + 
+			"properties.direct=true" + newLine + 
+			"properties.indirect=true" + newLine + 
+			"properties.subclass=true" + newLine + 
+			"properties.with.only.domain=true" + newLine + 
+			"properties.with.only.range=true" + newLine + 
+			"properties.without.domain.range=false" + newLine + 
+			"" + newLine + 
+			"##########################################################################################" + newLine + 
+			"#" + newLine + 
+			"# Prefixes" + newLine + 
+			"#" + newLine + 
+			"##########################################################################################" + newLine + 
+			"karma.source.prefix=http://isi.edu/integration/karma/sources/" + newLine + 
+			"karma.service.prefix=http://isi.edu/integration/karma/services/" + newLine + 
+			"" + newLine + 
+			"##########################################################################################" + newLine + 
+			"#" + newLine + 
+			"# Model Learner" + newLine + 
+			"#" + newLine + 
+			"##########################################################################################" + newLine + 
+			"learner.enabled=true" + newLine + 
+			"" + newLine + 
+			"max.queued.mappings=100" + newLine + 
+			"max.candidate.models=5" + newLine + 
+			"multiple.same.property.per.node=true" + newLine + 
+			"" + newLine + 
+			"# scoring coefficients, should be in range [0..1]" + newLine + 
+			"scoring.confidence.coefficient=1.0" + newLine + 
+			"scoring.coherence.coefficient=1.0" + newLine + 
+			"scoring.size.coefficient=1.0" + newLine + 
+			"" + newLine + 
+			"models.json.dir=JSON/" + newLine + 
+			"models.graphviz.dir=GRAPHVIZ/" + newLine + 
+			"alignment.graph.dir=AlignmentGraph/" + newLine;
+    
 	public static void load() {
         try {
-            Properties modelingProperties = loadParams("modeling");
+            Properties modelingProperties = loadParams();
 
             if(modelingProperties.getProperty("manual.alignment") != null)
             	manualAlignment = Boolean.parseBoolean(modelingProperties.getProperty("manual.alignment"));
@@ -121,11 +176,25 @@ public class ModelingConfiguration {
         }
     }
 	
-	private static Properties loadParams(String file)
+	private static Properties loadParams()
             throws IOException {
         Properties prop = new Properties();
-        URL modeling = ModelingConfiguration.class.getClassLoader().getResource("modeling.properties");
-        prop.load(modeling.openStream());
+        
+        File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
+        logger.info("Load modeling.properties: " + file.getAbsolutePath() + ":" + file.exists());
+		if(!file.exists()) {
+			file.createNewFile();
+			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+	        BufferedWriter bw = new BufferedWriter(fw);
+	        logger.info(defaultModelingProperties);
+	        bw.write(defaultModelingProperties);
+	        bw.close();
+	        logger.info("Written default properties to modeling.properties");
+		}
+		
+		 prop.load(new FileInputStream(file));
+		logger.info("Done Loading modeling.properties");
+       
       
         return prop;
     }
@@ -143,6 +212,7 @@ public class ModelingConfiguration {
 	public static Boolean getManualAlignment() {
 		if (manualAlignment == null)
 			load();
+		logger.info("Manual Alignment:" + manualAlignment);
 		return manualAlignment;
 	}
 

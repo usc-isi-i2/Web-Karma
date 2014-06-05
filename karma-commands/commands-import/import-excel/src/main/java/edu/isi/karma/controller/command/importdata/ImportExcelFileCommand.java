@@ -93,11 +93,12 @@ public class ImportExcelFileCommand extends ImportFileCommand implements IPrevie
         // Each sheet is written to a separate CSV file
         if (!csvFiles.isEmpty()) {
             for (File csvFile : csvFiles) {
-            	//this.encoding = EncodingDetector.detect(csvFile);
-                Import imp = new CSVFileImport(1, 2, ',', '"', encoding, maxNumLines, csvFile,
-                        workspace);
+
 
                 try {
+                	//this.encoding = EncodingDetector.detect(csvFile);
+                    Import imp = new CSVFileImport(1, 2, ',', '"', encoding, maxNumLines, csvFile,
+                            workspace);
                     Worksheet wsht = imp.generateWorksheet();
 
                     if (hasRevisionId()) {

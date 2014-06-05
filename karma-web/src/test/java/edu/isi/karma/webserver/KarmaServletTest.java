@@ -73,7 +73,7 @@ public class KarmaServletTest {
         Mockito.when(this.request.getHeader("Cache-Control")).thenReturn("max-age=0");
         Mockito.when(this.request.getHeader("Connection")).thenReturn("keep-alive");
         Mockito.when(this.request.getHeader("Host")).thenReturn("localhost:8080");
-        Mockito.when(this.request.getHeader("Referer")).thenReturn("http://localhost:8080/web-karma.html");
+        Mockito.when(this.request.getHeader("Referer")).thenReturn("http://localhost:8080");
         this.response = PowerMockito.mock(HttpServletResponse.class);
         this.writer = PowerMockito.mock(PrintWriter.class);
         Mockito.when(response.getWriter()).thenReturn(writer);

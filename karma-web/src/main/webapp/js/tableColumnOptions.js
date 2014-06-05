@@ -17,6 +17,8 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	               {name:"Extract Entities", func:extractEntities, leafOnly:true},
 	               {name:"PyTransform" , func:pyTransform, leafOnly:true},
 	               {name:"Transform", func:transform, leafOnly:true},
+	               {name:"Generate Cluster Values", func:clusterValues, leafOnly:true},
+	               {name:"Merge Cluster Values", func:mergeValues, leafOnly:true},
 	               {name:"divider" , leafOnly:true},
 			
 	               {name:"Invoke Service" , func:invokeService, leafOnly:true},
@@ -37,6 +39,24 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 		SetSemanticTypeDialog.getInstance().show(worksheetId, columnId, columnTitle);
 	}
 	
+	function clusterValues() {
+		hideDropdown();
+		//alert("reached here yo");
+		//ClusterValuesDialog.getInstance().show(worksheetId, columnId);
+		ClusterValues(worksheetId, columnId);
+	    return false;
+	}
+	
+	function mergeValues() {
+		hideDropdown();
+		//alert("reached here merging");
+		//mergeValuesProcess.getInstance().show(worksheetId, columnId);
+		MergeValues(worksheetId, columnId);
+	    return false;
+	}
+	
+	
+
 	function addRow() {
 		var info = new Object();
 	    info["worksheetId"] = worksheetId;
@@ -1663,4 +1683,74 @@ var GlueDialog = (function() {
         getInstance : getInstance
     };
 })();
+
+
+function ClusterValues(worksheetId, columnId) {
+	
+	var hNodeId = columnId;
+	var info = {};
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "GenerateClusterValuesCommand";
+	
+    var newInfo = [];
+    newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+    newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+   
+    info["newInfo"] = JSON.stringify(newInfo);
+	//alert("sending"+info);
+	showLoading(worksheetId);
+			 $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        var json = $.parseJSON(xhr.responseText);
+                        parse(json);
+						//alert("returned"+json);
+                        hideLoading(worksheetId);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured with fetching new rows! " + textStatus);
+                        hideLoading(worksheetId);
+                    }
+            });
+}
+
+function MergeValues(worksheetId, columnId) {
+	
+	var hNodeId = columnId;
+	var info = {};
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "MergeClusterValuesCommand";
+	
+    var newInfo = [];
+    newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+    newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+   
+    info["newInfo"] = JSON.stringify(newInfo);
+    showLoading(worksheetId);
+	//alert("sending"+info);
+			
+			 $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        var json = $.parseJSON(xhr.responseText);	
+                        parse(json);
+						//alert("returned"+json);
+                        hideLoading(worksheetId);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured with fetching new rows! " + textStatus);
+                        hideLoading(worksheetId);
+                    }
+            });
+}
 
