@@ -78,6 +78,34 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 		else
 			return "";
 	}
+	@Override
+	public void outputTripleWithURIObject(String subjTriplesMapId,
+			String subjUri, String predicateUri,
+			String objectUri) {
+		outputTripleWithURIObject(subjUri, predicateUri, objectUri);
+		
+	}
+	@Override
+	public void outputTripleWithURIObject(String subjTriplesMapId,
+			String subjUri, String predicateUri, String objTriplesMapId,
+			String objectUri) {
+		outputTripleWithURIObject(subjUri, predicateUri, objectUri);
+		
+	}
+	@Override
+	public void outputTripleWithLiteralObject(String subjTriplesMapId,
+			String subjUri, String predicateUri, String value,
+			String literalType) {
+		outputTripleWithLiteralObject(subjUri, predicateUri, value, literalType);
+		
+	}
+	@Override
+	public void outputQuadWithLiteralObject(String subjTriplesMapId,
+			String subjUri, String predicateUri, String value,
+			String literalType, String graph) {
+		outputQuadWithLiteralObject(subjUri, predicateUri, value, literalType, graph);
+
+	}
 	
 	@Override
 	public void finishRow()
@@ -105,5 +133,6 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 		outWriter.close();
 		
 	}
+
 
 }

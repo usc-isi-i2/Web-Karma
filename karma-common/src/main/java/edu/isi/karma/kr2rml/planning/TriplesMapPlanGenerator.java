@@ -22,13 +22,13 @@ public class TriplesMapPlanGenerator {
 	private Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan;
 	private Set<String> unprocessedTriplesMapsIds = new HashSet<String>();
 	private Row r;
-	private KR2RMLRDFWriter outWriter;
+	private List<KR2RMLRDFWriter> outWriters;
 	
-	public TriplesMapPlanGenerator(Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan, Row r, KR2RMLRDFWriter outWriter) {
+	public TriplesMapPlanGenerator(Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan, Row r, List<KR2RMLRDFWriter> outWriters) {
 		
 		this.triplesMapToWorkerPlan = triplesMapToWorkerPlan;
 		this.r = r;
-		this.outWriter = outWriter;
+		this.outWriters = outWriters;
 	}
 
 	public TriplesMapPlan generatePlan(TriplesMapGraphMerger tmf)
@@ -117,7 +117,7 @@ public class TriplesMapPlanGenerator {
 				workersDependentOn.add(mapToWorker.get(mapDependedOn));
 			}
 		}
-		TriplesMapWorker newWorker = new TriplesMapWorker(map, new CountDownLatch(workersDependentOn.size()), r, triplesMapToWorkerPlan.get(map), outWriter);
+		TriplesMapWorker newWorker = new TriplesMapWorker(map, new CountDownLatch(workersDependentOn.size()), r, triplesMapToWorkerPlan.get(map), outWriters);
 		mapToWorker.put(map, newWorker);
 		
 		for(TriplesMapWorker worker : workersDependentOn)
