@@ -3,7 +3,9 @@ package edu.isi.karma.rdf;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
@@ -38,21 +40,21 @@ public abstract class GenericRDFGenerator extends RdfGenerator {
 		this.modelIdentifiers.put(modelIdentifier.getName(), modelIdentifier);
 	}
 
-	public void generateRDF(String sourceName, String data, boolean addProvenance,
+	public void generateRDF(String modelName, String sourceName, String data, boolean addProvenance,
 			KR2RMLRDFWriter pw) throws KarmaException, JSONException, IOException {
 				logger.debug("Generating rdf for " + sourceName);
 				Workspace workspace = initializeWorkspace();
 				
-				generateRDF(sourceName, data, addProvenance, pw, workspace);
+				generateRDF(modelName, sourceName, data, addProvenance, pw, workspace);
 				logger.debug("Generated rdf for " + sourceName);
 			}
 
-	private void generateRDF(String sourceName, String data,
+	private void generateRDF(String modelName, String sourceName, String data,
 			boolean addProvenance, KR2RMLRDFWriter pw, Workspace workspace)
 			throws KarmaException, IOException {
-		R2RMLMappingIdentifier id = this.modelIdentifiers.get(sourceName);
+		R2RMLMappingIdentifier id = this.modelIdentifiers.get(modelName);
 		if(id == null) {
-			throw new KarmaException("Cannot generate RDF. Model named " + sourceName + " does not exist");
+			throw new KarmaException("Cannot generate RDF. Model named " + modelName + " does not exist");
 		}
 		
 		Worksheet worksheet = generateWorksheet(sourceName, IOUtils.toInputStream(data),
@@ -82,7 +84,7 @@ public abstract class GenericRDFGenerator extends RdfGenerator {
 	protected abstract Worksheet generateWorksheet(String sourceName, InputStream data,
 			Workspace workspace, int maxNumLines) throws IOException, KarmaException ;
 
-	public void generateRDF(String sourceName, String data, boolean addProvenance,
+	public void generateRDF(String modelName, String sourceName, String data, boolean addProvenance,
 			PrintWriter pw) throws KarmaException, JSONException, IOException {
 		
 		logger.debug("Generating rdf for " + sourceName);
@@ -92,7 +94,7 @@ public abstract class GenericRDFGenerator extends RdfGenerator {
 				
 		URIFormatter uriFormatter = new URIFormatter(workspace.getOntologyManager(), errorReport);
 		KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
-		generateRDF(sourceName, data, addProvenance, outWriter, workspace);
+		generateRDF(modelName, sourceName, data, addProvenance, outWriter, workspace);
 		logger.debug("Generated rdf for " + sourceName);
 		
 	}
@@ -102,5 +104,9 @@ public abstract class GenericRDFGenerator extends RdfGenerator {
 		this.readModelParsers.put(modelIdentifier.getName(), parser);
 		return parser;
 	}
-
+	
+	public Map<String, R2RMLMappingIdentifier> getModels()
+	{
+		return Collections.unmodifiableMap(modelIdentifiers);
+	}
 }

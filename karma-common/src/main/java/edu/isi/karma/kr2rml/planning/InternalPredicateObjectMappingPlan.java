@@ -35,7 +35,7 @@ public class InternalPredicateObjectMappingPlan extends
 	
 		if(isFlipped)
 		{
-			outWriter.outputTripleWithURIObject(pom.getObject().getRefObjectMap().getParentTriplesMap().getId(), object.getURI(), predicate.getURI(),pom.getTriplesMap().getId(),  subject.getURI());
+			outWriter.outputTripleWithURIObject(pom.getTriplesMap().getId(), object.getURI(), predicate.getURI(),pom.getObject().getRefObjectMap().getParentTriplesMap().getId(),  subject.getURI());
 		}
 		else
 		{

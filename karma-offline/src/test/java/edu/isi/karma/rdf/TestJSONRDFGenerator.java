@@ -102,7 +102,7 @@ public class TestJSONRDFGenerator extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("people-model", jsonData, true, pw);
+			rdfGen.generateRDF("people-model", filename, jsonData, true, pw);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split(System.getProperty("line.separator"));
@@ -127,7 +127,7 @@ public class TestJSONRDFGenerator extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(pw);
-			rdfGen.generateRDF("people-model", jsonData, false, writer);
+			rdfGen.generateRDF("people-model", filename, jsonData, false, writer);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("(\r\n|\n)");
@@ -157,7 +157,7 @@ public class TestJSONRDFGenerator extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("cs548-events-model", jsonData, true, pw);
+			rdfGen.generateRDF("cs548-events-model", filename, jsonData, true, pw);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split(System.getProperty("line.separator"));

@@ -96,7 +96,7 @@ public class TestJSONRDFGeneratorWithUnfold extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("unfold-nested-model", jsonData, false, pw);
+			rdfGen.generateRDF("unfold-nested-model", filename, jsonData, false, pw);
 			String rdf = sw.toString();
 			
 			assertNotEquals(rdf.length(), 0);
@@ -122,7 +122,7 @@ public class TestJSONRDFGeneratorWithUnfold extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("unfold-top-model", jsonData, false, pw);
+			rdfGen.generateRDF("unfold-top-model", filename, jsonData, false, pw);
 			String rdf = sw.toString();
 			
 			assertNotEquals(rdf.length(), 0);

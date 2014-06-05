@@ -2,14 +2,17 @@ package edu.isi.karma.kr2rml;
 
 import java.io.PrintWriter;
 
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+
 
 public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 
-	TriplesMapBloomFilterManager bloomFilterManager;
-	PrintWriter output;
-	public BloomFilterKR2RMLRDFWriter(PrintWriter output)
+	protected TriplesMapBloomFilterManager bloomFilterManager;
+	protected PrintWriter output;
+	
+	public BloomFilterKR2RMLRDFWriter(PrintWriter output, R2RMLMappingIdentifier mappingIdentifer)
 	{
-		bloomFilterManager = new TriplesMapBloomFilterManager();
+		bloomFilterManager = new TriplesMapBloomFilterManager(mappingIdentifer);
 		this.output = output;
 	}
 	

@@ -13,13 +13,16 @@ import org.apache.hadoop.util.bloom.Key;
 import org.apache.hadoop.util.hash.Hash;
 import org.json.JSONObject;
 
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+
 public class TriplesMapBloomFilterManager {
 
-	ConcurrentHashMap<String, KR2RMLBloomFilter> triplesMapsIdToBloomFilter;
-	
-	public TriplesMapBloomFilterManager()
+	protected ConcurrentHashMap<String, KR2RMLBloomFilter> triplesMapsIdToBloomFilter;
+	protected R2RMLMappingIdentifier mappingIdentifier;
+	public TriplesMapBloomFilterManager(R2RMLMappingIdentifier mappingIdentifier)
 	{
 		triplesMapsIdToBloomFilter = new ConcurrentHashMap<String, KR2RMLBloomFilter>();
+		this.mappingIdentifier = mappingIdentifier;
 	}
 	public TriplesMapBloomFilterManager(JSONObject serializedManager) throws IOException
 	{
@@ -34,6 +37,7 @@ public class TriplesMapBloomFilterManager {
 			bf.readFields(new ObjectInputStream(new ByteArrayInputStream(serializedBloomFilter)));
 			triplesMapsIdToBloomFilter.put(triplesMapsId, bf);
 		}
+		this.mappingIdentifier = new R2RMLMappingIdentifier(serializedManager.getJSONObject("mappingIdentifier"));
 	}
 	
 	public KR2RMLBloomFilter getBloomFilter(String triplesMapId)
@@ -79,6 +83,7 @@ public class TriplesMapBloomFilterManager {
 			
 		}
 		filters.put("triplesMapsIds", triplesMapsIds.toString());
+		filters.put("mappingIdentifier", mappingIdentifier.toJSON());
 		return filters;
 	}
 }

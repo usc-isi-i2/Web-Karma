@@ -88,7 +88,7 @@ public class TestJSONDagRDFGenerator extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("menu-model", jsonData, false, pw);
+			rdfGen.generateRDF("menu-model", filename, jsonData, false, pw);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split(System.getProperty("line.separator"));
@@ -116,7 +116,7 @@ public class TestJSONDagRDFGenerator extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("menus-model", jsonData, false, pw);
+			rdfGen.generateRDF("menus-model", filename, jsonData, false, pw);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split(System.getProperty("line.separator"));
