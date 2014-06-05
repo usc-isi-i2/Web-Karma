@@ -164,12 +164,13 @@ public class PublishRDFCommand extends Command {
 		
 		logger.debug(mapping.toString());
 		
-		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
+
+		// Generate the RDF using KR2RML data structures
+		try {
+			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 				workspace.getFactory(), workspace.getOntologyManager(),
 				rdfFileLocalPath, false, mapping, errorReport);
 		
-		// Generate the RDF using KR2RML data structures
-		try {
 			rdfGen.generateRDF(true);
 			logger.info("RDF written to file: " + rdfFileLocalPath);
 			if(saveToStore){

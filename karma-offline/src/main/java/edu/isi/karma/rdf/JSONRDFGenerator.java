@@ -2,7 +2,10 @@ package edu.isi.karma.rdf;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -45,6 +48,10 @@ public class JSONRDFGenerator extends RdfGenerator {
 	
 	public void addModel(R2RMLMappingIdentifier modelIdentifier) {
 		this.modelIdentifiers.put(modelIdentifier.getName(), modelIdentifier);
+	}
+	public Map<String, R2RMLMappingIdentifier> getModels()
+	{
+		return Collections.unmodifiableMap(modelIdentifiers);
 	}
 
 	public void generateRDF(String sourceName, String jsonData, boolean addProvenance, KR2RMLRDFWriter pw) throws KarmaException, JSONException, IOException {

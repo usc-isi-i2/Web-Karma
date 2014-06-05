@@ -2,7 +2,6 @@ package edu.isi.karma.kr2rml;
 
 import java.io.PrintWriter;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONObject;
@@ -94,4 +93,38 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 		outWriter.print("]");
 		outWriter.close();
 	}
+
+	@Override
+	public void outputTripleWithURIObject(String subjTriplesMapId,
+			String subjUri, String predicateUri,
+			String objectUri) {
+		outputTripleWithURIObject(subjUri, predicateUri, objectUri);
+		
+	}
+	
+	@Override
+	public void outputTripleWithURIObject(String subjTriplesMapId,
+			String subjUri, String predicateUri, String objTriplesMapId,
+			String objectUri) {
+		outputTripleWithURIObject(subjUri, predicateUri, objectUri);
+		
+	}
+
+	
+	@Override
+	public void outputTripleWithLiteralObject(String subjTriplesMapId,
+			String subjUri, String predicateUri, String value,
+			String literalType) {
+		outputTripleWithLiteralObject(subjUri, predicateUri, value, value);
+		
+	}
+
+	@Override
+	public void outputQuadWithLiteralObject(String subjTriplesMapId,
+			String subjUri, String predicateUri, String value,
+			String literalType, String graph) {
+		outputQuadWithLiteralObject(subjUri, predicateUri, value, literalType, graph);
+		
+	}
+
 }

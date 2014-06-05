@@ -119,20 +119,20 @@ public class TriplesMapWorkerPlan {
 		}
 	}
 	
-	public void execute(Row r, KR2RMLRDFWriter outWriter)
+	public void execute(Row r, List<KR2RMLRDFWriter> outWriters)
 	{
 
 		List<PopulatedTemplateTermSet> subjects = subjectMapPlan.execute(r);
 		
 		for(PredicateObjectMappingPlan internalLinkPlan : internalLinksPlans)
 		{
-			internalLinkPlan.outputTriples(outWriter, internalLinkPlan.execute(r, subjects), r);
+			internalLinkPlan.outputTriples(outWriters, internalLinkPlan.execute(r, subjects), r);
 		}
 		
 		for(PredicateObjectMappingPlan columnLinkPlan : columnLinksPlans)
 		{
 			
-			columnLinkPlan.outputTriples(outWriter, columnLinkPlan.execute(r, subjects), r);
+			columnLinkPlan.outputTriples(outWriters, columnLinkPlan.execute(r, subjects), r);
 		}
 	}
 }
