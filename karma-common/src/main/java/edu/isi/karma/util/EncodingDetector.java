@@ -59,6 +59,12 @@ public class EncodingDetector {
         return DEFAULT_ENCODING;
     }
 
+    public static InputStreamReader getInputStreamReader(InputStream is, String encoding) throws IOException {
+        
+        logger.info("Reading stream: using encoding: " + encoding);
+        BOMInputStream bis = new BOMInputStream(is); //So that we can remove the BOM
+        return new InputStreamReader(bis, encoding);
+    }
     public static InputStreamReader getInputStreamReader(File file, String encoding) throws IOException {
         
         FileInputStream fis = new FileInputStream(file);
