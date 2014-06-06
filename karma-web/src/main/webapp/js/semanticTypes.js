@@ -1889,6 +1889,7 @@ var augmentDataDialog = (function() {
             info['triplesMap'] = JSON.stringify(triplesMap);
             info['otherClass'] = JSON.stringify(otherClass);
             info['columnUri'] = columnUri;
+            info['tripleStoreUrl'] = $('#txtData_URL').val();
             info['alignmentId'] = alignmentId;
             info["command"] = "AugmentDataCommand";
             console.log(info['predicate']);

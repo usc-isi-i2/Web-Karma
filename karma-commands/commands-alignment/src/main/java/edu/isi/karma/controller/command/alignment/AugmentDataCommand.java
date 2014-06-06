@@ -42,13 +42,14 @@ public class AugmentDataCommand extends WorksheetCommand{
 	private String columnUri;
 	private String alignmentId;
 	private String otherClass;
-	
-	public AugmentDataCommand(String id, String worksheetId, String columnUri, String alignmentId, String predicate, String triplesMap, String otherClass) {
+	private String dataRepoUrl;
+	public AugmentDataCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String alignmentId, String predicate, String triplesMap, String otherClass) {
 		super(id, worksheetId);
 		this.predicate = predicate;
 		this.columnUri = columnUri;
 		this.alignmentId = alignmentId;
 		this.otherClass = otherClass;
+		this.dataRepoUrl = dataRepoUrl;
 	}
 
 	@Override
@@ -111,7 +112,6 @@ public class AugmentDataCommand extends WorksheetCommand{
 		}
 		TripleStoreUtil util = new TripleStoreUtil();
 
-		String modelRepoUrl =TripleStoreUtil.defaultDataRepoUrl ;
 		//String modelContext = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelContext);
 		List<String> subjects = new LinkedList<String>();
 		subjects.addAll(rowHashToSubjectURI.values());
@@ -126,7 +126,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 		}
 		
 		try{
-			results = util.getObjectsForSubjectsAndPredicates(modelRepoUrl, null, subjects , predicates, otherClasses);
+			results = util.getObjectsForSubjectsAndPredicates(dataRepoUrl, null, subjects , predicates, otherClasses);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
