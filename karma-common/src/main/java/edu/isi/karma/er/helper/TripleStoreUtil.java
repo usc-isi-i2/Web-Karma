@@ -367,6 +367,7 @@ public class TripleStoreUtil {
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					tripleStoreURL, null, mime_types.get(RDF_Types.N3.name()),
 					formparams);
+			System.out.println(responseString);
 			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -380,7 +381,7 @@ public class TripleStoreUtil {
 		injectType(mappingURI, query, Uris.RR_PREDICATEOBJECTMAP_CLASS_URI, Uris.KM_HAS_PREDICATE_OBJECT_MAP_URI);
 		injectType(mappingURI, query, Uris.RR_OBJECTMAP_CLASS_URI, Uris.KM_HAS_OBJECT_MAP_URI);
 		injectType(mappingURI, query, Uris.RR_LOGICAL_TABLE_CLASS_URI, Uris.KM_HAS_LOGICAL_TABLE_URI);
-		
+		injectType(mappingURI, query, Uris.RR_TEMPLATE_URI, Uris.RR_CLASS_URI, Uris.KM_HAS_SUBJECT_MAP_URI);
 		query.append("{\n");
 		query.append("?s ?p ?o .\n");
 		query.append("?s owl:sameAs ");
@@ -407,6 +408,27 @@ public class TripleStoreUtil {
 		query.append("}\n");
 		query.append("UNION\n");
 	}
+	
+	private void injectType(String mappingURI, StringBuilder query,
+			String type, String hasType, String hasType2) {
+		query.append("{\n");
+		query.append("?s <");
+		query.append(type);
+		query.append("> ?a . \n");
+		query.append("?mapping2 <");
+		query.append(hasType);
+		query.append("> ?s . \n");
+		query.append("?mapping <");
+		query.append(hasType2);
+		query.append("> ?mapping2 . \n");
+		query.append("?mapping owl:sameAs ");
+		formatURI(mappingURI, query);
+		query.append(" .\n");
+		query.append("?s ?p ?o . \n");
+		query.append("}\n");
+		query.append("UNION\n");
+	}
+	
 	public String getMappingFromTripleStore(String tripleStoreURL, String context, String mappingURI) throws KarmaException
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);

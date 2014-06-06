@@ -186,89 +186,6 @@ var clearModelDialog = (function() {
     
 })();
 
-var deleteModelDialog = (function() {
-    var instance = null;
-
-    function PrivateConstructor() {
-        var dialog = $("#deleteModelDialog");
-        
-        function init() {
-            
-            //Initialize handler for Save button
-            //var me = this;
-            $('#btnSave', dialog).on('click', function (e) {
-                e.preventDefault();
-                saveDialog(e);
-            });
-            
-                
-        }
-        
-        function hideError() {
-            $("div.error", dialog).hide();
-        }
-        
-        function showError() {
-            $("div.error", dialog).show();
-        }
-        
-        function saveDialog(e) {
-            hide();
-
-            var info = new Object();
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "DeleteModelFromTripleStoreCommand";
-            info['tripleStoreUrl'] = $('#txtModel_URL').val();
-            info['graphContext'] = $('#txtGraph_URL_Delete').val();
-            info['mappingURI'] = $('#txtModel_URL_Delete').val();
-            console.log(info['graphContext']);
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        parse(json);
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while clearing model!" + textStatus);
-                    }
-            });
-        };
-        
-        function hide() {
-            dialog.modal('hide');
-        }
-        
-        function show() {
-            dialog.modal({keyboard:true, show:true, backdrop:'static'});
-        };
-        
-        
-        return {    //Return back the public methods
-            show : show,
-            init : init
-        };
-    };
-
-    function getInstance() {
-        if( ! instance ) {
-            instance = new PrivateConstructor();
-            instance.init();
-        }
-        return instance;
-    }
-   
-    return {
-        getInstance : getInstance
-    };
-    
-})();
-
 var modelManagerDialog = (function() {
     var instance = null;
 
@@ -359,11 +276,6 @@ var modelManagerDialog = (function() {
                 clearModelDialog.getInstance().show();
             });
 
-            $('#btnDeleteModel', dialog).on('click', function (e) {
-                e.preventDefault();
-                hide();
-                deleteModelDialog.getInstance().show();
-            });
             $('#btnSave', filterDialog).on('click', function (e) {
                 e.preventDefault();
                 applyFilter(e);
@@ -466,12 +378,13 @@ var modelManagerDialog = (function() {
         function deleteModel(e) {
             e.preventDefault();
             console.log(e['currentTarget']['value']);
+            var tmpJSON = jQuery.parseJSON(e['currentTarget']['value']);
             var info = new Object();
             info["workspaceId"] = $.workspaceGlobalInformation.id;
             info["command"] = "DeleteModelFromTripleStoreCommand";
             info['tripleStoreUrl'] = $('#txtModel_URL').val();
-            info['graphContext'] = "";
-            info['mappingURI'] = e['currentTarget']['value'];
+            info['graphContext'] = tmpJSON['context'];
+            info['mappingURI'] = tmpJSON['url'];
             console.log(info['graphContext']);
             var returned = $.ajax({
                 url: "RequestController",
@@ -496,6 +409,32 @@ var modelManagerDialog = (function() {
         function refreshModel(e) {
             e.preventDefault();
             console.log(e['currentTarget']['value']);
+            var tmpJSON = jQuery.parseJSON(e['currentTarget']['value']);
+            var info = new Object();
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "RefreshModelFromTripleStoreCommand";
+            info['tripleStoreUrl'] = $('#txtModel_URL').val();
+            info['graphContext'] = tmpJSON['context'];
+            info['mappingURI'] = tmpJSON['url'];
+            console.log(info['graphContext']);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        refresh();
+                        instance.show();
+                        //parse(json);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while clearing model!" + textStatus);
+                    }
+            });
         }
 
         function show() {
@@ -523,11 +462,14 @@ var modelManagerDialog = (function() {
                 var label = $("<label>").text(context).css("overflow", "scroll");
                 row.append(label);
                 div.append(row);
+                var tmp = new Object();
+                tmp['url'] = url;
+                tmp['context'] = context;
                 var row = $("<div>").addClass("DeleteProperty");
                 var label = $("<button>").text("Delete")
                             .addClass("btn btn-primary DeleteButtonProperty")
                             .attr("id","btnDeleteModel")
-                            .attr("value", url)
+                            .attr("value", JSON.stringify(tmp))
                             .on('click', deleteModel);
                 row.append(label);
                 div.append(row);
@@ -535,7 +477,7 @@ var modelManagerDialog = (function() {
                 var label = $("<button>").text("Refresh")
                             .addClass("btn btn-primary RefreshButtonProperty")
                             .attr("id","btnRefreshModel")
-                            .attr("value", url)
+                            .attr("value", JSON.stringify(tmp))
                             .on('click', refreshModel);
                 row.append(label);
                 div.append(row);
