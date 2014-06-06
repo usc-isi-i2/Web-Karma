@@ -60,7 +60,7 @@ public class ChangeInternalNodeLinksCommand extends Command {
 	private static Logger logger = LoggerFactory
 			.getLogger(ChangeInternalNodeLinksCommand.class);
 
-	private enum JsonKeys {
+	public enum JsonKeys {
 		edgeSourceId, edgeId, edgeTargetId, edgeSourceUri, edgeTargetUri
 	}
 
@@ -98,7 +98,7 @@ public class ChangeInternalNodeLinksCommand extends Command {
 	@SuppressWarnings("unchecked")
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		logCommand(logger, workspace);
+//		logCommand(logger, workspace);
 		// String alignmentId =
 		// AlignmentManager.Instance().constructAlignmentId(workspace.getId(),
 		// worksheetId);

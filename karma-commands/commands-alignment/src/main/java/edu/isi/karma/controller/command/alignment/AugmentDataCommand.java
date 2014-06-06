@@ -2,6 +2,7 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.er.helper.TripleStoreUtil;
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
@@ -132,7 +134,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 		List<String> resultSubjects = results.get("resultSubjects");
 		List<String> resultPredicates = results.get("resultPredicates");
 		List<String> resultObjects = results.get("resultObjects");
-		//List<String> resultClass = results.get("resultClass");
+		List<String> resultClass = results.get("resultClasses");
 		AddValuesCommandFactory addFactory = new AddValuesCommandFactory();
 		
 		for (int i = 0; i < resultPredicates.size(); i++) {
@@ -174,15 +176,46 @@ public class AugmentDataCommand extends WorksheetCommand{
 				JSONArray semanticTypesArray = new JSONArray();
 				JSONObject semanticType = new JSONObject();
 				edu.isi.karma.rep.alignment.Node n = alignment.getNodeById(columnUri);
-				semanticType.put(ClientJsonKeys.FullType.name(), resultPredicates.get(i));
+				
 				semanticType.put(ClientJsonKeys.isPrimary.name(), "true");
-				semanticType.put(ClientJsonKeys.DomainId.name(), n.getId());
-				semanticType.put(ClientJsonKeys.DomainUri.name(), n.getUri());
+				Set<edu.isi.karma.rep.alignment.Node> oldNodes = new HashSet<edu.isi.karma.rep.alignment.Node>(); 
+				if(resultClass.get(i).trim().isEmpty())
+				{
+					semanticType.put(ClientJsonKeys.DomainId.name(), n.getId());
+					semanticType.put(ClientJsonKeys.FullType.name(), resultPredicates.get(i));
+					semanticType.put(ClientJsonKeys.DomainUri.name(), n.getUri());
+				}
+				else
+				{
+					oldNodes.addAll( alignment.getNodesByUri(resultClass.get(i)));
+					semanticType.put(ClientJsonKeys.DomainId.name(), resultClass.get(i));
+					semanticType.put(ClientJsonKeys.FullType.name(), Uris.CLASS_INSTANCE_LINK_URI);
+				}
 
 
 				semanticTypesArray.put(semanticType);
 				Command sstCommand = sstFactory.createCommand(workspace, worksheetId, nestedHNodeId, false, semanticTypesArray, false, "");
 				sstCommand.doIt(workspace);
+				if(!resultClass.get(i).trim().isEmpty())
+				{
+					ChangeInternalNodeLinksCommandFactory cinlcf = new ChangeInternalNodeLinksCommandFactory();
+					JSONArray newEdges = new JSONArray();
+					JSONObject newEdge = new JSONObject();
+					String sourceId = n.getId();
+					Set<edu.isi.karma.rep.alignment.Node> tempnodes = new HashSet<edu.isi.karma.rep.alignment.Node>();
+					tempnodes.addAll(alignment.getNodesByUri(resultClass.get(i)));
+					tempnodes.removeAll(oldNodes);
+					
+					String targetId = tempnodes.iterator().next().getId();
+					String edgeUri = resultPredicates.get(i);
+					
+					newEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeSourceId.name(), sourceId);
+					newEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeTargetId.name(), targetId);
+					newEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeId.name(), edgeUri);
+					newEdges.put(newEdge);
+					Command changeInternalNodeLinksCommand = cinlcf.createCommand(worksheetId, alignmentId, new JSONArray(), newEdges, workspace);
+					changeInternalNodeLinksCommand.doIt(workspace);
+				}
 			}
 
 		}

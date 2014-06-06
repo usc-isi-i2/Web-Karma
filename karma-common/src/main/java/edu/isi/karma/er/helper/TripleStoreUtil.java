@@ -237,7 +237,7 @@ public class TripleStoreUtil {
 		return false;
 	}
 	
-	public Map<String, List<String>> getObjectsForSubjectsAndPredicates(String tripleStoreURL, String context, List<String> subjects, List<String> predicates, List<String> otherClass) throws KarmaException
+	public Map<String, List<String>> getObjectsForSubjectsAndPredicates(String tripleStoreURL, String context, List<String> subjects, List<String> predicates, List<String> otherClasses) throws KarmaException
 	{
 	
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
@@ -256,7 +256,7 @@ public class TripleStoreUtil {
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			query.append("SELECT ?s ?p ?o\n");			
+			query.append("SELECT ?s ?p ?o ?filteredtype\n");			
 			injectContext(context, query);
 			query.append("{\n");
 			query.append("VALUES ?s { ");
@@ -266,20 +266,38 @@ public class TripleStoreUtil {
 				query.append(" ");
 			}
 			query.append("}\n");
-			query.append("FILTER (?p IN ( ");
 			Iterator<String> predicateIterator = predicates.iterator();
+			Iterator<String> otherClassIterator = otherClasses.iterator();
+			
+			
 			String predicate;
-			while(predicateIterator.hasNext())
+			String otherClass;
+			while(predicateIterator.hasNext() && otherClassIterator.hasNext())
 			{
+				query.append("{\n");
 				predicate = predicateIterator.next();
+				otherClass = otherClassIterator.next();
+				query.append("?s ");
 				formatURI(predicate, query);
-				if(predicateIterator.hasNext())
+				query.append(" ?o .\n");
+				if(!otherClass.trim().isEmpty())
 				{
-					query.append(", ");
+					query.append("BIND ( ");
+					formatURI(otherClass, query);
+					
+					query.append("AS ?filteredtype )\n");
+					query.append("?o a ?filteredtype .\n");
+					
+				}
+				query.append("}\n");
+				if(predicateIterator.hasNext() && otherClassIterator.hasNext())
+				{
+					query.append("UNION \n");
 				}
 			}
-			query.append("))");
-			query.append("?s ?p ?o .\n}\n");
+			query.append("?s ?p ?o .\n");
+
+			query.append("}\n");
 			
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
@@ -303,7 +321,14 @@ public class TripleStoreUtil {
 					resultSubjects.add(o.getJSONObject("s").getString("value"));
 					resultPredicates.add(o.getJSONObject("p").getString("value"));
 					resultObjects.add(o.getJSONObject("o").getString("value"));
-					resultClasses.add("");
+					if(o.has("filteredtype"))
+					{
+						resultClasses.add(o.getJSONObject("filteredtype").getString("value"));
+					}
+					else
+					{
+						resultClasses.add("");
+					}
 				}
 			}
 		} catch (Exception e) {
