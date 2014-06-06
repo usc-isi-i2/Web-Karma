@@ -166,20 +166,22 @@ and related projects, please see: http://www.isi.edu/integration
 			        <li><a target="_blank" href="" id="sparql_end_point_link" title='Open RDF workbench in a new window' data-toggle='tooltip' data-placement='bottom'>OpenRDF</a></li>
 		          </ul>
 		        </div>
-		        
+		        <div class="nav navbar-nav">
+		        <div class="form-group" style="float:left; width: 300px; padding-right: 10px;">
+										<label for="txtModel_URL">Model Repository URL</label>
+										<input class="form-control" type="text" id="txtModel_URL" required>
+						</div>
+		        <div class="form-group" style="float:left; width: 300px; padding-left: 10px;">
+								<label for="txtData_URL">Data Repository URL</label>
+								<input class="form-control" type="text" id="txtData_URL" required>
+						</div>
+						</div>
 		      </div> <!--  end of navbar -->
 
 		      <div class="row">
 			      <div id="commHistoryAndWorkspace">
 			      	<div class="col-sm-2">
-			      		<div class="form-group">
-										<label for="txtModel_URL">Model Repository URL</label>
-										<input class="form-control" type="text" id="txtModel_URL" required>
-								</div>
-		            <div class="form-group">
-										<label for="txtData_URL">Data Repository URL</label>
-										<input class="form-control" type="text" id="txtData_URL" required>
-								</div>
+			      		
 				      	<div class="ui-corner-top" id="commandHistory">
 				      		<div id="titleCommand" class="ui-corner-top"><span>Command History</span></div>
 				      	</div>

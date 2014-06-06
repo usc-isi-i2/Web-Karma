@@ -1,8 +1,6 @@
 package edu.isi.karma.er.helper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,6 +26,21 @@ public class CloneTableUtils {
 			}
 		}
 	}
+	
+	public static Map<String, String> cloneHTable(HTable oldht, HTable newht, Worksheet newws, RepFactory factory, List<HNode> hnodes, boolean isFirst) {
+		Collections.sort(hnodes);
+		Map<String, String> tmp = new HashMap<String, String>();
+		for (HNode hnode : hnodes) {
+			HNode newhnode = newht.addHNode(hnode.getColumnName(), newws, factory);
+			tmp.put(hnode.getId(), newhnode.getId());
+			if (hnode.hasNestedTable()) {
+				HTable oldnested = hnode.getNestedTable();
+				HTable newnested = newhnode.addNestedTable(hnode.getNestedTable().getTableName(), newws, factory);		
+				cloneHTable(oldnested, newnested, newws, factory, new ArrayList<HNode>(oldnested.getHNodes()), false);
+			}
+		}
+		return tmp;
+	}
 
 	public static Row cloneDataTable(Row oldRow, Table newDataTable, HTable oldHTable, HTable newHTable, List<HNode> hnodes, RepFactory factory) {
 		Row newrow = newDataTable.addRow(factory);
@@ -51,20 +64,12 @@ public class CloneTableUtils {
 		return newrow;
 	}
 	
-	public static void cloneDataTableExistingRow(Row oldRow, Row newRow, Table newDataTable, HTable oldHTable, HTable newHTable, List<HNode> hnodes, RepFactory factory) {
+	public static void cloneDataTableExistingRow(Row oldRow, Row newRow, Table newDataTable, HTable oldHTable, HTable newHTable, List<HNode> hnodes, RepFactory factory, Map<String, String> mapping) {
 		for (HNode hnode : hnodes) {
-			HNode newHNode = null;
+			HNode newHNode = factory.getHNode(mapping.get(hnode.getId()));
 			Node oldNode = oldRow.getNode(hnode.getId());
-			Node newNode = null;
-			for (HNode hn : newHTable.getHNodes()) {
-				if (hn.getColumnName().compareTo(hnode.getColumnName()) == 0 && !newRow.getNode(hn.getId()).hasNestedTable() && newRow.getNode(hn.getId()).getValue().asString().compareTo("") == 0) {
-					newHNode = hn;
-					newNode = newRow.getNode(hn.getId());
-				}
-			}
+			Node newNode = newRow.getNode(newHNode.getId());
 			if (oldNode == null)
-				continue;
-			if (newHNode == null)
 				continue;
 			if (!oldNode.hasNestedTable()) {
 				newNode.setValue(oldNode.getValue(), oldNode.getStatus(), factory);

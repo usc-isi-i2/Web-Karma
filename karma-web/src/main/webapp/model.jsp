@@ -30,11 +30,11 @@ a.icon-remove:hover {
 						<input class="form-control" type="radio" id="buttonCollection_Save" value="URL" name="buttonCollection_Save" checked="checked">URL
 					</div>
 					<div class="form-group">
-						<label for="txtR2RML_URL">Model URL</label>
+						<label for="txtModel_URL_Save">Model URL</label>
 						<input class="form-control" type="text" id="txtModel_URL_Save" required>
 					</div>
 					<div class="form-group">
-						<label for="txtR2RML_URL">Collection</label>
+						<label for="txtGraph_URL_Save">Collection</label>
 						<input class="form-control" type="text" id="txtGraph_URL_Save" required>
 					</div>
 					
@@ -60,7 +60,7 @@ a.icon-remove:hover {
 				  <div class="modal-body">
 
 					<div class="form-group">
-						<label for="txtR2RML_URL">Collection</label>
+						<label for="txtGraph_URL_Clear">Collection</label>
 						<input class="form-control" type="text" id="txtGraph_URL_Clear" required>
 					</div>
 					
@@ -75,10 +75,41 @@ a.icon-remove:hover {
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div class="modal fade" id="modelManagerDialog" tabindex="-1">
+<div class="modal fade" id="deleteModelDialog" tabindex="-1">
   <div class="modal-dialog">
   		<form class="bs-example bs-example-form" role="form">
 			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Delete Model</h4>
+				  </div>
+				  <div class="modal-body">
+
+					<div class="form-group">
+						<label for="txtModel_URL_Delete">Model URI</label>
+						<input class="form-control" type="text" id="txtModel_URL_Delete" required>
+					</div>
+
+					<div class="form-group">
+						<label for="txtGraph_URL_Delete">Collection</label>
+						<input class="form-control" type="text" id="txtGraph_URL_Delete" required>
+					</div>
+					
+					<div class="error" style="display: none">Please enter an end point</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Delete</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="modelManagerDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content" style="width: 750px;">
 			     <div class="modal-header">
 				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				       <h4 class="modal-title">Model Manager</h4>
@@ -87,6 +118,7 @@ a.icon-remove:hover {
 				  	<div style="border-bottom: solid black; bottom-padding: 5px;">
 				  		<button type="button" class="btn btn-primary" id="btnLoadModel">Load Models</button>
 				  		<button type="button" class="btn btn-primary" id="btnClearModel">Clear Models</button>
+				  		<button type="button" class="btn btn-primary" id="btnDeleteModel">Delete Model</button>
 				  		<button type="button" class="btn btn-primary" id="btnClearFilter">Clear Filters</button>
 				  		<div style="padding: 10px;"></div>
 				  	</div>

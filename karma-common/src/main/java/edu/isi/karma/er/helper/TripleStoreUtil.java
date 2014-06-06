@@ -311,8 +311,8 @@ public class TripleStoreUtil {
 	
 	public void deleteMappingFromTripleStore(String tripleStoreURL, String context, String mappingURI) throws KarmaException
 	{
-		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL) + "/statements";
 		testTripleStoreConnection(tripleStoreURL);
+		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL) + "/statements";
 
 		try {
 

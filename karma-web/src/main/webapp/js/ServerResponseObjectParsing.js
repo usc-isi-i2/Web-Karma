@@ -394,6 +394,10 @@ function parse(data) {
             // Remove existing link if any
             $.sticky("R2RML Model cleared");
         }
+        else if(element["updateType"] == "DeleteModel") {
+            // Remove existing link if any
+            $.sticky("R2RML Model deleted");
+        }
         else if(element["updateType"] == "SaveCollection") {
             // Remove existing link if any
             $.sticky("R2RML Model Collection saved");
