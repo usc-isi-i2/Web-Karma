@@ -906,7 +906,6 @@ public class TripleStoreUtil {
 					+ URLEncoder.encode(graphUri, "UTF-8");
 			logger.info("Deleting from uri : " + url);
 			responseString = HTTPUtil.executeHTTPDeleteRequest(url);
-			System.out.println(responseString);
 			logger.info("Response=" + responseString);
 			return true;
 

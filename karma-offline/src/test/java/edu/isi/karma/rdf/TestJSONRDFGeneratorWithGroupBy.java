@@ -96,7 +96,7 @@ public class TestJSONRDFGeneratorWithGroupBy extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("groupby-nested-model", jsonData, false, pw);
+			rdfGen.generateRDF("groupby-nested-model", filename, jsonData, false, pw);
 			String rdf = sw.toString();
 			
 			assertNotEquals(rdf.length(), 0);
@@ -122,7 +122,7 @@ public class TestJSONRDFGeneratorWithGroupBy extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("groupby-top-model", jsonData, false, pw);
+			rdfGen.generateRDF("groupby-top-model", filename, jsonData, false, pw);
 			String rdf = sw.toString();
 			
 			assertNotEquals(rdf.length(), 0);

@@ -2,13 +2,10 @@ package edu.isi.karma.rdf;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 
 import edu.isi.karma.imp.json.JsonImport;
-import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
@@ -25,16 +22,6 @@ public class JSONRDFGenerator extends GenericRDFGenerator {
 		}
 		return instance;
 	}
-	
-	public void addModel(R2RMLMappingIdentifier modelIdentifier) {
-		this.modelIdentifiers.put(modelIdentifier.getName(), modelIdentifier);
-	}
-
-	public Map<String, R2RMLMappingIdentifier> getModels()
-	{
-		return Collections.unmodifiableMap(modelIdentifiers);
-	}
-
 
 	private JSONRDFGenerator() {
 		

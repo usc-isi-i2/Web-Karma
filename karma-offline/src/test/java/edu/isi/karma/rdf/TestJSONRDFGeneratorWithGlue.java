@@ -96,7 +96,7 @@ public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("glue-nested-model", jsonData, false, pw);
+			rdfGen.generateRDF("glue-nested-model", filename, jsonData, false, pw);
 			String rdf = sw.toString();
 			
 			assertNotEquals(rdf.length(), 0);
@@ -122,7 +122,7 @@ public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 
-			rdfGen.generateRDF("glue-top-model", jsonData, false, pw);
+			rdfGen.generateRDF("glue-top-model", filename, jsonData, false, pw);
 			String rdf = sw.toString();
 			
 			assertNotEquals(rdf.length(), 0);

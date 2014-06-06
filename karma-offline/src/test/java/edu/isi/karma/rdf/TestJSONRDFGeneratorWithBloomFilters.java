@@ -26,11 +26,14 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.apache.hadoop.util.bloom.Key;
+import org.apache.hadoop.util.hash.Hash;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -44,6 +47,7 @@ import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
 import edu.isi.karma.kr2rml.TriplesMapBloomFilterManager;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.util.EncodingDetector;
+import edu.isi.karma.webserver.KarmaException;
 
 
 /**
@@ -52,7 +56,7 @@ import edu.isi.karma.util.EncodingDetector;
  */
 public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 
-	JSONRDFGenerator rdfGen;
+	GenericRDFGenerator rdfGen;
 	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGeneratorWithBloomFilters.class);
 	
 
@@ -68,7 +72,7 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 	 */
 	@Before
 	public void setUp() throws Exception {
-		rdfGen = JSONRDFGenerator.getInstance();
+		rdfGen = new ContentDetectingRDFGenerator();
 
 		// Add the models in
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
@@ -76,8 +80,8 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 						 "people-model.ttl"));
 		rdfGen.addModel(modelIdentifier);
 		
-		modelIdentifier = new R2RMLMappingIdentifier("cs548-events-model",
-				 getTestResource("cs548-events-model.ttl")
+		modelIdentifier = new R2RMLMappingIdentifier("schedule-model",
+				 getTestResource("schedule-model.txt")
 						);
 		rdfGen.addModel(modelIdentifier);
 	}
@@ -98,29 +102,65 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 	public void testGenerateRDF1() {
 		try {
 
-			String filename = "people.json";
-			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
-					"utf-8");
-
-			StringWriter bfsw = new StringWriter();
-			PrintWriter bfpw = new PrintWriter(bfsw);
-
+			TriplesMapBloomFilterManager peopleBloomFilterManager = getBloomFilterManagerForSource("people.json","people-model");
+			TriplesMapBloomFilterManager scheduleBloomFilterManager = getBloomFilterManagerForSource("schedule.csv","schedule-model");
+			KR2RMLBloomFilter peoplePersonBF = peopleBloomFilterManager.getBloomFilter("http://isi.edu/integration/karma/dev#TriplesMap_4bdfba89-18e8-48d1-82dd-6c1a52679c96");
+			Key k = new Key(("<http://lod.isi.edu/cs548/person/Slepicka>").getBytes());
+			assertTrue(peoplePersonBF.membershipTest(k));
+			k = new Key(("<http://lod.isi.edu/cs548/person/Taheriyan>").getBytes());
+			assertTrue(peoplePersonBF.membershipTest(k));
+			k = new Key(("<http://lod.isi.edu/cs548/person/Kozareva>").getBytes());
+			assertTrue(peoplePersonBF.membershipTest(k));
+			k = new Key(("<http://lod.isi.edu/cs548/person/Ambite>").getBytes());
+			assertTrue(peoplePersonBF.membershipTest(k));
+			k = new Key(("<http://lod.isi.edu/cs548/person/Szekely>").getBytes());
+			assertTrue(peoplePersonBF.membershipTest(k));
+			k = new Key(("<http://lod.isi.edu/cs548/person/Knoblock>").getBytes());
+			assertTrue(peoplePersonBF.membershipTest(k));
+			k = new Key(("<http://lod.isi.edu/cs548/person/Wu>").getBytes());
+			assertTrue(peoplePersonBF.membershipTest(k));
+			assertEquals(7, peoplePersonBF.estimateNumberOfHashedValues());
+			KR2RMLBloomFilter schedulePersonBF = scheduleBloomFilterManager.getBloomFilter("http://isi.edu/integration/karma/dev#TriplesMap_eaaccd56-f0d2-433d-b832-3f7e21dc5ad4");
+			k = new Key(("<http://lod.isi.edu/cs548/person/Slepicka>").getBytes());
+			assertTrue(schedulePersonBF.membershipTest(k));
+			k = new Key(("<http://lod.isi.edu/cs548/person/Taheriyan>").getBytes());
+			assertTrue(schedulePersonBF.membershipTest(k));
+			k = new Key(("<http://lod.isi.edu/cs548/person/Ambite>").getBytes());
+			assertTrue(schedulePersonBF.membershipTest(k));
+			k = new Key(("<http://lod.isi.edu/cs548/person/Szekely>").getBytes());
+			assertTrue(schedulePersonBF.membershipTest(k));
+			k = new Key(("<http://lod.isi.edu/cs548/person/Knoblock>").getBytes());
+			assertTrue(schedulePersonBF.membershipTest(k));
+			assertEquals(5, schedulePersonBF.estimateNumberOfHashedValues());
 			
-			BloomFilterKR2RMLRDFWriter bfWriter = new BloomFilterKR2RMLRDFWriter(bfpw);
-			rdfGen.generateRDF("people-model", jsonData, false, bfWriter);
-			String base64EncodedBloomFilterManager = bfsw.toString();
-			TriplesMapBloomFilterManager manager = new TriplesMapBloomFilterManager(new JSONObject(base64EncodedBloomFilterManager));
-			KR2RMLBloomFilter bf = manager.getBloomFilter("http://isi.edu/integration/karma/dev#TriplesMap_cb7bdfc8-5781-4be8-8dcb-51d14139960b");
-			Key k = new Key(("<https://lh4.googleusercontent.com/-uonc-uQiTGw/AAAAAAAAAAI/AAAAAAAAATk/V_iGc4e8Vwk/photo.jpg?sz=80>").getBytes());
-			assertEquals(7, bf.estimateNumberOfHashedValues());
-			assertTrue(bf.membershipTest(k));
+			KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(1000000,8,Hash.JENKINS_HASH);
+			intersectionBF.or(peoplePersonBF);
+			intersectionBF.and(schedulePersonBF);
+			assertEquals(5, intersectionBF.estimateNumberOfHashedValues());
+			
 			
 			
 		} catch (Exception e) {
 			logger.error("testGenerateRDF1 failed:", e);
 			fail("Execption: " + e.getMessage());
 		}
+	}
+
+	private TriplesMapBloomFilterManager getBloomFilterManagerForSource(String inputFileName, String modelName)
+			throws IOException, URISyntaxException, KarmaException {
+
+		System.out.println("Load file: " + inputFileName);
+		String data = EncodingDetector.getString(new File(getTestResource(inputFileName).toURI()),
+				"utf-8");
+
+		StringWriter bfsw = new StringWriter();
+		PrintWriter bfpw = new PrintWriter(bfsw);
+
+		
+		BloomFilterKR2RMLRDFWriter bfWriter = new BloomFilterKR2RMLRDFWriter(bfpw, rdfGen.getModels().get(modelName));
+		rdfGen.generateRDF(modelName, inputFileName, data, false, bfWriter);
+		String base64EncodedBloomFilterManager = bfsw.toString();
+		return new TriplesMapBloomFilterManager(new JSONObject(base64EncodedBloomFilterManager));
 	}
 
 
