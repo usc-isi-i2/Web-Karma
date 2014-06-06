@@ -3,7 +3,6 @@ package edu.isi.karma.controller.command.worksheet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -129,7 +128,7 @@ public class GlueCommand extends WorksheetCommand {
 				}
 			}
 		}
-		CloneTableUtils.cloneHTable(ht, newht, oldws, factory, childHNodes);
+		Map<String, String> mapping = CloneTableUtils.cloneHTable(ht, newht, oldws, factory, childHNodes, true);
 
 		for (Row parentRow : parentRows) {
 			Table t = null;
@@ -142,13 +141,25 @@ public class GlueCommand extends WorksheetCommand {
 			ArrayList<Row> rows = t.getRows(0, t.getNumRows());
 			for (Row row : rows) {
 				Table nestedTable = row.getNeighbor(newNode.getId()).getNestedTable();
-				Row newRow = nestedTable.addRow(factory);
+				int max = 0;
 				for (HNode hnode : hnodes) {
 					if (!hnode.hasNestedTable())
 						continue;
 					Node tmp = row.getNeighbor(hnode.getId());
+					if (tmp.getNestedTable().getNumRows() > max)
+						max = tmp.getNestedTable().getNumRows();
+				}
+				List<Row> newRows = new ArrayList<Row>();
+				for (int i = 0; i < max; i++)
+					newRows.add(nestedTable.addRow(factory));
+				for (HNode hnode : hnodes) {
+					if (!hnode.hasNestedTable())
+						continue;
+					Node tmp = row.getNeighbor(hnode.getId());
+					int i = 0;
 					for (Row nestedRow : tmp.getNestedTable().getRows(0, tmp.getNestedTable().getNumRows())) {
-						CloneTableUtils.cloneDataTableExistingRow(nestedRow, newRow, nestedTable, hnode.getNestedTable(), newht, childHNodes, factory);
+						CloneTableUtils.cloneDataTableExistingRow(nestedRow, newRows.get(i), nestedTable, hnode.getNestedTable(), newht, childHNodes, factory, mapping);
+						i++;
 					}
 				}
 			}
@@ -168,17 +179,30 @@ public class GlueCommand extends WorksheetCommand {
 				}
 			}
 		}
-		CloneTableUtils.cloneHTable(oldws.getHeaders(), newht, oldws, factory, childHNodes);
+		Map<String, String> mapping = CloneTableUtils.cloneHTable(oldws.getHeaders(), newht, oldws, factory, childHNodes, true);
 		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows());
 		for (Row row : rows) {
 			Table nestedTable = row.getNeighbor(newNode.getId()).getNestedTable();
-			Row newRow = nestedTable.addRow(factory);
+			int max = 0;
 			for (HNode hnode : hnodes) {
 				if (!hnode.hasNestedTable())
 					continue;
 				Node tmp = row.getNeighbor(hnode.getId());
+				if (tmp.getNestedTable().getNumRows() > max) {
+					max = tmp.getNestedTable().getNumRows();
+				}
+			}
+			List<Row> newRows = new ArrayList<Row>();
+			for (int i = 0; i < max; i++)
+				newRows.add(nestedTable.addRow(factory));
+			for (HNode hnode : hnodes) {
+				if (!hnode.hasNestedTable())
+					continue;
+				Node tmp = row.getNeighbor(hnode.getId());
+				int i = 0;
 				for (Row nestedRow : tmp.getNestedTable().getRows(0, tmp.getNestedTable().getNumRows())) {
-					CloneTableUtils.cloneDataTableExistingRow(nestedRow, newRow, nestedTable, hnode.getNestedTable(), newht, childHNodes, factory);
+					CloneTableUtils.cloneDataTableExistingRow(nestedRow, newRows.get(i), nestedTable, hnode.getNestedTable(), newht, childHNodes, factory, mapping);
+					i++;
 				}
 			}
 		}
