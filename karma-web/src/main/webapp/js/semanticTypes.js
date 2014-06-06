@@ -1867,20 +1867,27 @@ var augmentDataDialog = (function() {
             }
             var predicates = [];
             var triplesMap = [];
+            var otherClass = [];
             for (var i = 0; i < checkboxes.length; i++) {
 	            var checkbox = checkboxes[i];
 	            var t1 = new Object();
 	            var t2 = new Object();
+	            var t3 = new Object();
+	            var tripleMapAndOtherClass = checkbox['value'];
+				var values = tripleMapAndOtherClass.split(',');
 	            t1['predicate'] = checkbox['src'];
 	            t2['tripleMap'] = checkbox['value'];
+	            t3['otherClass'] = values.length > 1? values[1]: "";
 	            predicates.push(t1);    
 	            triplesMap.push(t2);
+	            otherClass.push(t3);
 	        	}
             var info = new Object();
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
             info['predicate'] = JSON.stringify(predicates);
             info['triplesMap'] = JSON.stringify(triplesMap);
+            info['otherClass'] = JSON.stringify(otherClass);
             info['columnUri'] = columnUri;
             info['alignmentId'] = alignmentId;
             info["command"] = "AugmentDataCommand";
@@ -1930,15 +1937,16 @@ var augmentDataDialog = (function() {
                 for (var i = 0; i < json.length; i++) {
                     var predicate = json[i]['predicate'];
                     var tripleMap = json[i]['tripleMap'];
+                    var otherClass = json[i]['otherClass'];
                     var tmp = tripleMap.split(",");
                     var row = $("<div>").addClass("checkbox");
-                    var label = $("<label>").text(predicate + " " + tmp.length);
+                    var label = $("<label>").text(predicate + " " +otherClass + " "+ tmp.length);
                     var input = $("<input>")
                                         .attr("type", "checkbox")
                                 .attr("id", "selectPredicates")
-                                .attr("value", tripleMap)
+                                .attr("value", tripleMap + (otherClass === ""? "": (',' + otherClass)))
                                 .attr("name", "selectPredicates")
-                                .attr("src", predicate);
+                                .attr("src", predicate)
                     label.append(input);
                     row.append(label);
                     dialogContent.append(row);

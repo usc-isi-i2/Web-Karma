@@ -39,12 +39,14 @@ public class AugmentDataCommand extends WorksheetCommand{
 	private String predicate;
 	private String columnUri;
 	private String alignmentId;
-
-	public AugmentDataCommand(String id, String worksheetId, String columnUri, String alignmentId, String predicate, String triplesMap) {
+	private String otherClass;
+	
+	public AugmentDataCommand(String id, String worksheetId, String columnUri, String alignmentId, String predicate, String triplesMap, String otherClass) {
 		super(id, worksheetId);
 		this.predicate = predicate;
 		this.columnUri = columnUri;
 		this.alignmentId = alignmentId;
+		this.otherClass = otherClass;
 	}
 
 	@Override
@@ -112,21 +114,27 @@ public class AugmentDataCommand extends WorksheetCommand{
 		List<String> subjects = new LinkedList<String>();
 		subjects.addAll(rowHashToSubjectURI.values());
 		JSONArray predicatesarray = new JSONArray(predicate);
+		JSONArray otherClassarray = new JSONArray(otherClass);
 		List<String> predicates = new LinkedList<String>();
+		List<String> otherClasses = new LinkedList<String>();
 		Map<String, List<String>> results = null;
 		for(int i = 0; i < predicatesarray.length(); i++) {
 			predicates.add(predicatesarray.getJSONObject(i).getString("predicate"));
+			otherClasses.add(otherClassarray.getJSONObject(i).getString("otherClass"));
 		}
+		
 		try{
-			results = util.getObjectsForSubjectsAndPredicates(modelRepoUrl, null, subjects , predicates);
+			results = util.getObjectsForSubjectsAndPredicates(modelRepoUrl, null, subjects , predicates, otherClasses);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
 		List<String> resultSubjects = results.get("resultSubjects");
 		List<String> resultPredicates = results.get("resultPredicates");
-		List<String> resultObjects = results.get("resultObjects");		
+		List<String> resultObjects = results.get("resultObjects");
+		//List<String> resultClass = results.get("resultClass");
 		AddValuesCommandFactory addFactory = new AddValuesCommandFactory();
+		
 		for (int i = 0; i < resultPredicates.size(); i++) {
 			String subject = resultSubjects.get(i);
 			List<String> rowIds = SubjectURIToRowId.get(subject);

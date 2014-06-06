@@ -9,7 +9,7 @@ import edu.isi.karma.rep.Workspace;
 public class AugmentDataCommandFactory extends CommandFactory{
 	
 	private enum Arguments {
-		worksheetId, predicate, triplesMap, alignmentId, columnUri
+		worksheetId, predicate, triplesMap, alignmentId, columnUri, otherClass
 	}
 
 	@Override
@@ -20,12 +20,13 @@ public class AugmentDataCommandFactory extends CommandFactory{
 		String triplesMap = request.getParameter(Arguments.triplesMap.name());
 		String alignmentId = request.getParameter(Arguments.alignmentId.name());
 		String columnUri = request.getParameter(Arguments.columnUri.name());
-		return new AugmentDataCommand(getNewId(workspace), worksheetId, columnUri, alignmentId, predicate, triplesMap);
+		String otherClass = request.getParameter(Arguments.otherClass.name());
+		return new AugmentDataCommand(getNewId(workspace), worksheetId, columnUri, alignmentId, predicate, triplesMap, otherClass);
 	}
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand() {
-		// TODO Auto-generated method stub
+		// 
 		return AugmentDataCommand.class;
 	}
 

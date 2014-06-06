@@ -237,7 +237,7 @@ public class TripleStoreUtil {
 		return false;
 	}
 	
-	public Map<String, List<String>> getObjectsForSubjectsAndPredicates(String tripleStoreURL, String context, List<String> subjects, List<String> predicates) throws KarmaException
+	public Map<String, List<String>> getObjectsForSubjectsAndPredicates(String tripleStoreURL, String context, List<String> subjects, List<String> predicates, List<String> otherClass) throws KarmaException
 	{
 	
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
@@ -246,9 +246,11 @@ public class TripleStoreUtil {
 		List<String> resultSubjects = new LinkedList<String>();
 		List<String> resultPredicates = new LinkedList<String>();
 		List<String> resultObjects = new LinkedList<String>();
+		List<String> resultClasses = new LinkedList<String>();
 		results.put("resultSubjects", resultSubjects);
 		results.put("resultPredicates", resultPredicates);
 		results.put("resultObjects", resultObjects);
+		results.put("resultClasses", resultClasses);
 		try {
 
 			StringBuilder query = new StringBuilder();
@@ -301,6 +303,7 @@ public class TripleStoreUtil {
 					resultSubjects.add(o.getJSONObject("s").getString("value"));
 					resultPredicates.add(o.getJSONObject("p").getString("value"));
 					resultObjects.add(o.getJSONObject("o").getString("value"));
+					resultClasses.add("");
 				}
 			}
 		} catch (Exception e) {
@@ -443,24 +446,32 @@ public class TripleStoreUtil {
 		
 		List<String> predicates = new LinkedList<String>();
 		List<String> matchingTriplesMaps = new LinkedList<String>();
-
+		List<String> otherClasses = new LinkedList<String>();
 		try {
 
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			query.append("SELECT ?predicates (group_concat(?y; separator = \",\") as ?triplesMaps )\n");			
+			query.append("SELECT ?predicates ?otherClass (group_concat(?triplesMap; separator = \",\") as ?triplesMaps )\n");			
 			injectContext(context, query);
 			query.append("{\n");
-			query.append("?x owl:sameAs ?aaa . \n"); 
-			query.append("?aaa km-dev:hasData \"true\" .\n"); 
-			query.append("?x km-dev:hasTriplesMap ?y .\n");
-			query.append("?y rr:subjectMap ?z .\n");
-			query.append("?z rr:class ");
+			query.append("?mapping owl:sameAs ?mappingURI . \n"); 
+			query.append("?mappingURI km-dev:hasData \"true\" .\n"); 
+			query.append("?mapping km-dev:hasTriplesMap ?triplesMap .\n");
+			query.append("?triplesMap rr:subjectMap ?subjectMap .\n");
+			query.append("?subjectMap rr:class ");
 			query.append(classToMatch);
 			query.append(" .\n");
-			query.append("?y rr:predicateObjectMap ?bbb . \n");
-			query.append("?bbb rr:predicate ?predicates .} GROUP BY ?predicates \n");
+			query.append("?triplesMap rr:predicateObjectMap ?pom . \n");
+			query.append("?pom rr:predicate ?predicates . \n");
+			query.append("OPTIONAL \n");
+			query.append("{\n");
+			query.append("?pom rr:objectMap ?objectMap .\n");
+			query.append("?objectMap rr:parentTriplesMap ?parentTriplesMap .\n");
+			query.append("?parentTriplesMap rr:subjectMap ?otherSubjectMap .\n");
+			query.append("?otherSubjectMap rr:class ?otherClass .\n");
+			query.append("}\n}\n");
+			query.append("GROUP BY ?predicates ?otherClass\n");
 			
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
@@ -483,7 +494,14 @@ public class TripleStoreUtil {
 					JSONObject o = values.getJSONObject(count++);
 					predicates.add(o.getJSONObject("predicates").getString("value"));
 					matchingTriplesMaps.add(o.getJSONObject("triplesMaps").getString("value"));
-				
+					if(o.has("otherClass"))
+					{
+						otherClasses.add(o.getJSONObject("otherClass").getString("value"));
+					}
+					else
+					{
+						otherClasses.add("");
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -492,6 +510,7 @@ public class TripleStoreUtil {
 		HashMap<String, List<String>> values = new HashMap<String, List<String>>();
 		values.put("predicate", predicates);
 		values.put("triplesMaps", matchingTriplesMaps);
+		values.put("otherClass", otherClasses);
 		return values;
 	}
 

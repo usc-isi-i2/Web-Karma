@@ -2,6 +2,7 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -13,11 +14,6 @@ import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
@@ -74,10 +70,17 @@ public class SearchForDataToAugmentCommand extends Command{
 		final JSONArray array = new JSONArray();
 		List<String> triplesMaps = result.get("triplesMaps");
 		List<String> predicate = result.get("predicate");
-		for (int i = 0; i < predicate.size(); i++) {
+		List<String> otherClass = result.get("otherClass");
+		Iterator<String> triplesMapsItr = triplesMaps.iterator();
+		Iterator<String> predicateItr = predicate.iterator();
+		Iterator<String> otherClassItr = otherClass.iterator();
+		
+		while(triplesMapsItr.hasNext() && predicateItr.hasNext() && otherClassItr.hasNext())
+		{
 			JSONObject obj = new JSONObject();
-			obj.put("predicate", predicate.get(i));
-			obj.put("tripleMap", triplesMaps.get(i));
+			obj.put("predicate", predicateItr.next());
+			obj.put("tripleMap", triplesMapsItr.next());
+			obj.put("otherClass", otherClassItr.next());
 			array.put(obj);
 		}
 		return new UpdateContainer(new AbstractUpdate() {
