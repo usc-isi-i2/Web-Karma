@@ -199,6 +199,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 				if(!resultClass.get(i).trim().isEmpty())
 				{
 					ChangeInternalNodeLinksCommandFactory cinlcf = new ChangeInternalNodeLinksCommandFactory();
+					SetMetaPropertyCommandFactory smpcf = new SetMetaPropertyCommandFactory();
 					JSONArray newEdges = new JSONArray();
 					JSONObject newEdge = new JSONObject();
 					String sourceId = n.getId();
@@ -215,6 +216,8 @@ public class AugmentDataCommand extends WorksheetCommand{
 					newEdges.put(newEdge);
 					Command changeInternalNodeLinksCommand = cinlcf.createCommand(worksheetId, alignmentId, new JSONArray(), newEdges, workspace);
 					changeInternalNodeLinksCommand.doIt(workspace);
+					Command setMetaDataCommand = smpcf.createCommand(workspace, nestedHNodeId, worksheetId, "isUriOfClass", targetId, "");
+					setMetaDataCommand.doIt(workspace);
 				}
 			}
 

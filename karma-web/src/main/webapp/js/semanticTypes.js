@@ -333,7 +333,7 @@ var SetSemanticTypeDialog = (function() {
             newInfo.push(getParamObject("rdfLiteralType", $("#literalTypeSelect").val(), "other"));
             info["newInfo"] = JSON.stringify(newInfo);
 
-
+            console.log(info);
             showLoading(info["worksheetId"]);
             var returned = $.ajax({
                 url: "RequestController",
@@ -1873,11 +1873,11 @@ var augmentDataDialog = (function() {
 	            var t1 = new Object();
 	            var t2 = new Object();
 	            var t3 = new Object();
-	            var tripleMapAndOtherClass = checkbox['value'];
-				var values = tripleMapAndOtherClass.split(';');
+	            console.log(checkbox['value']);
+	            var tmpJSON = jQuery.parseJSON(checkbox['value']);
 	            t1['predicate'] = checkbox['src'];
-	            t2['tripleMap'] = checkbox['value'];
-	            t3['otherClass'] = values.length > 1? values[1]: "";
+	            t2['tripleMap'] = tmpJSON['tripleMap'];
+	            t3['otherClass'] = tmpJSON['otherClass'];
 	            predicates.push(t1);    
 	            triplesMap.push(t2);
 	            otherClass.push(t3);
@@ -1938,13 +1938,16 @@ var augmentDataDialog = (function() {
                     var predicate = json[i]['predicate'];
                     var tripleMap = json[i]['tripleMap'];
                     var otherClass = json[i]['otherClass'];
+                    var value = new Object();
+                    value['tripleMap'] = tripleMap;
+                    value['otherClass'] = otherClass;
                     var tmp = tripleMap.split(",");
                     var row = $("<div>").addClass("checkbox");
                     var label = $("<label>").text(predicate + " " +otherClass + " "+ tmp.length);
                     var input = $("<input>")
                                         .attr("type", "checkbox")
                                 .attr("id", "selectPredicates")
-                                .attr("value", tripleMap + (otherClass === ""? "": (';' + otherClass)))
+                                .attr("value", JSON.stringify(value))
                                 .attr("name", "selectPredicates")
                                 .attr("src", predicate)
                     label.append(input);
