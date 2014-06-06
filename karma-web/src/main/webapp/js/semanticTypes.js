@@ -1874,7 +1874,7 @@ var augmentDataDialog = (function() {
 	            var t2 = new Object();
 	            var t3 = new Object();
 	            var tripleMapAndOtherClass = checkbox['value'];
-				var values = tripleMapAndOtherClass.split(',');
+				var values = tripleMapAndOtherClass.split(';');
 	            t1['predicate'] = checkbox['src'];
 	            t2['tripleMap'] = checkbox['value'];
 	            t3['otherClass'] = values.length > 1? values[1]: "";
@@ -1944,7 +1944,7 @@ var augmentDataDialog = (function() {
                     var input = $("<input>")
                                         .attr("type", "checkbox")
                                 .attr("id", "selectPredicates")
-                                .attr("value", tripleMap + (otherClass === ""? "": (',' + otherClass)))
+                                .attr("value", tripleMap + (otherClass === ""? "": (';' + otherClass)))
                                 .attr("name", "selectPredicates")
                                 .attr("src", predicate)
                     label.append(input);
