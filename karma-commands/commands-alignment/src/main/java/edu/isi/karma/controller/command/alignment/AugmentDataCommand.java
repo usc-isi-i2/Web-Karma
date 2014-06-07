@@ -43,13 +43,15 @@ public class AugmentDataCommand extends WorksheetCommand{
 	private String alignmentId;
 	private String otherClass;
 	private String dataRepoUrl;
-	public AugmentDataCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String alignmentId, String predicate, String triplesMap, String otherClass) {
+	private String hNodeId;
+	public AugmentDataCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicate, String triplesMap, String otherClass, String hNodeId) {
 		super(id, worksheetId);
 		this.predicate = predicate;
 		this.columnUri = columnUri;
-		this.alignmentId = alignmentId;
 		this.otherClass = otherClass;
 		this.dataRepoUrl = dataRepoUrl;
+		this.hNodeId = hNodeId;
+		addTag(CommandTag.Transformation);
 	}
 
 	@Override
@@ -79,17 +81,11 @@ public class AugmentDataCommand extends WorksheetCommand{
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		// TODO Auto-generated method stub
-		UpdateContainer c =  new UpdateContainer();		
+		UpdateContainer c =  new UpdateContainer();
+		alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		RepFactory factory = workspace.getFactory();
 		Worksheet worksheet = factory.getWorksheet(worksheetId);
-		Set<LabeledLink> tmp = alignment.getCurrentOutgoingLinksToNode(columnUri);
-		String hNodeId = null;
-		for (LabeledLink link : tmp) {
-			if (link.getKeyType() == LinkKeyInfo.UriOfInstance) {
-				hNodeId = link.getTarget().getId();
-			}
-		}
 		HNode hnode = factory.getHNode(hNodeId);
 		List<String> hNodeIds = new LinkedList<String>();
 		hNodeIds.add(hNodeId);
@@ -169,7 +165,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 					return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 				}
 			}
-			if (isNewNode) {
+			if (isNewNode && alignment.GetTreeRoot() != null) {
 				HNode tableHNode =workspace.getFactory().getHNode(hNodeId);
 				String nestedHNodeId = tableHNode.getNestedTable().getHNodeIdFromColumnName("values");
 				SetSemanticTypeCommandFactory sstFactory = new SetSemanticTypeCommandFactory();

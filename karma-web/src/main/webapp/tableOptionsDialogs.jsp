@@ -497,7 +497,7 @@ a.icon-remove:hover {
 			<div class="modal-content">
 			     <div class="modal-header">
 				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				       <h4 class="modal-title">Apply Model From URL</h4>
+				       <h4 class="modal-title">Apply Model From Repository</h4>
 				  </div>
 				  <div class="modal-body">
 				  	<div style="border-bottom: solid black; bottom-padding: 5px;">

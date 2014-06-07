@@ -15,7 +15,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"divider"},
 			{name:"Publish RDF" , func:publishRDF},
 			{name:"Publish Model" , func:publishModel},
-			{name:"Apply Model from URL" , func:applyModel},
+			{name:"Apply Model from Repository" , func:applyModel},
 			{name:"Publish Service Model", func:publishServiceModel},
 			{name:"Publish Report", func:publishReport},
 			{name:"Save as JSON", func:saveAsJson},

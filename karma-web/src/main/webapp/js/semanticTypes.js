@@ -1882,18 +1882,47 @@ var augmentDataDialog = (function() {
 	            triplesMap.push(t2);
 	            otherClass.push(t3);
 	        	}
+	        	var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["alignmentId"] = alignmentId;
+            info["columnUri"] = columnUri;
+            info["command"] = "FetchHNodeIdFromAlignmentCommand";
+            var hNodeId;
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                async: false,
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        //json = $.parseJSON();
+                        hNodeId = json.elements[0]['HNodeId'];
+                        console.log(hNodeId);
+                        //applyModelDialog.getInstance().show(worksheetId, json);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while fetching alignment!" + textStatus);
+                        //hideLoading(info["worksheetId"]);
+                    }
+            });
             var info = new Object();
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info['predicate'] = JSON.stringify(predicates);
-            info['triplesMap'] = JSON.stringify(triplesMap);
-            info['otherClass'] = JSON.stringify(otherClass);
-            info['columnUri'] = columnUri;
-            info['tripleStoreUrl'] = $('#txtData_URL').val();
-            info['alignmentId'] = alignmentId;
             info["command"] = "AugmentDataCommand";
-            console.log(info['predicate']);
-            console.log(info['triplesMap']);
+            var newInfo = [];
+            newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+            newInfo.push(getParamObject("predicate", JSON.stringify(predicates), "other"));
+            newInfo.push(getParamObject("triplesMap", JSON.stringify(triplesMap), "other"));
+            newInfo.push(getParamObject("otherClass", JSON.stringify(otherClass), "other"));
+            newInfo.push(getParamObject("columnUri", columnUri, "other"));
+            newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').val(), "other"));
+            newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+            info["newInfo"] = JSON.stringify(newInfo);
             showLoading(info["worksheetId"]);
             var returned = $.ajax({
                 url: "RequestController",

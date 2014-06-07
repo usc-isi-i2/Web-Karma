@@ -156,7 +156,7 @@
 				  <div class="modal-body">
 
 					<div class="form-group">
-						<label for="txtR2RML_URL">Context Name</label>
+						<label for="txtR2RML_URL">Collection</label>
 						<input class="form-control" type="text" id="txtGraph_URL_Search" required>
 					</div>
 
