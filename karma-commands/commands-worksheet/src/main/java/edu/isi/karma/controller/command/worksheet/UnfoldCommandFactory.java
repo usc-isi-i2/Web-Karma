@@ -20,23 +20,17 @@ public class UnfoldCommandFactory extends JSONInputCommandFactory{
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-		String hNodeID = null;
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
-		String hTableId = "";
 		//System.out.println(worksheetId);
-		UnfoldCommand unfoldCmd = new UnfoldCommand(getNewId(workspace), worksheetId,
-				hTableId, hNodeID);
+		UnfoldCommand unfoldCmd = new UnfoldCommand(getNewId(workspace), worksheetId);
 		unfoldCmd.setInputParameterJson(inputJson.toString());
 		return unfoldCmd;
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
-		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String hTableId = request.getParameter(Arguments.hTableId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		return new UnfoldCommand(getNewId(workspace), worksheetId, 
-				hTableId, hNodeId);
+		return new UnfoldCommand(getNewId(workspace), worksheetId);
 	}
 
 	@Override

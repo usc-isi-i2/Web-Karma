@@ -6,12 +6,12 @@ import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetDeleteUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.CloneTableUtils;
@@ -34,9 +34,10 @@ import edu.isi.karma.util.Util;
 public class UnfoldCommand extends WorksheetCommand {
 
 	//add column to this table
-	Command cmd;
 	//the id of the new column that was created
 	//needed for undo
+	private String newWorksheetId;
+	private String newHNodeId;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(FoldCommand.class);
@@ -45,10 +46,10 @@ public class UnfoldCommand extends WorksheetCommand {
 		updateType, hNodeId, worksheetId
 	}
 
-	protected UnfoldCommand(String id, String worksheetId, 
-			String hTableId, String hNodeId) {
+	protected UnfoldCommand(String id, String worksheetId) {
 		super(id, worksheetId);
-
+		newWorksheetId = null;
+		newHNodeId = null;
 		addTag(CommandTag.Transformation);
 	}
 
@@ -73,7 +74,7 @@ public class UnfoldCommand extends WorksheetCommand {
 	@Override
 	public CommandType getCommandType() {
 		// TODO Auto-generated method stub
-		return CommandType.notUndoable;
+		return CommandType.undoable;
 	}
 
 	@Override
@@ -86,8 +87,10 @@ public class UnfoldCommand extends WorksheetCommand {
 				worksheetId);
 		Worksheet newws = null;
 		HTable ht = CloneTableUtils.getHTable(oldws.getHeaders(), keyHNodeid);
-		if (ht == oldws.getHeaders())
+		if (ht == oldws.getHeaders()) {
 			newws = unfoldTopLevel(oldws, keyHNodeid, valueHNodeid, workspace, factory);
+			this.newWorksheetId = newws.getId();
+		}
 		else {
 			try {
 			unfoldNestedLevel(oldws, ht, keyHNodeid, valueHNodeid, factory);
@@ -118,8 +121,24 @@ public class UnfoldCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		// TODO Auto-generated method stub
-		return null;
+		UpdateContainer c = new UpdateContainer();
+		if (this.newWorksheetId != null) {
+			workspace.removeWorksheet(newWorksheetId);
+			workspace.getFactory().removeWorksheet(newWorksheetId);
+			c.add(new WorksheetListUpdate());
+			c.add(new WorksheetDeleteUpdate(newWorksheetId));
+		}
+		if (this.newHNodeId != null) {
+			Worksheet worksheet = workspace.getWorksheet(worksheetId);
+			HNode ndid = workspace.getFactory().getHNode(newHNodeId);
+			HTable currentTable = workspace.getFactory().getHTable(ndid.getHTableId());
+			ndid.removeNestedTable();
+			//remove the new column
+			currentTable.removeHNode(newHNodeId, worksheet);
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		}
+		return c;
 	}
 	private void unfoldNestedLevel(Worksheet oldws, HTable ht, String keyHNodeid, String valueHNodeid, RepFactory factory) {
 		ArrayList<HNode> topHNodes = new ArrayList<HNode>(ht.getHNodes());
@@ -134,6 +153,7 @@ public class UnfoldCommand extends WorksheetCommand {
 		}
 		//ArrayList<Row> parentRows = parentTable.getRows(0, parentTable.getNumRows());
 		HNode newNode = parentHT.addHNode("Unfold: " + ht.getHNode(keyHNodeid).getColumnName(), oldws, factory);
+		this.newHNodeId = newNode.getId();
 		HTable newHT = newNode.addNestedTable("Unfold: " + ht.getHNode(keyHNodeid).getColumnName(), oldws, factory);
 		HNode key = ht.getHNode(keyHNodeid);
 		HNode value = ht.getHNode(valueHNodeid);
