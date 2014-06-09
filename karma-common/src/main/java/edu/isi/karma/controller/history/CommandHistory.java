@@ -211,7 +211,20 @@ public class CommandHistory {
 					obj.put(ClientJsonKeys.value.name(), hNodeRepresentation);
 				}
 				inpP.put(ClientJsonKeys.value.name(), hnodes);
-			}else if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeId) {
+			} else if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.orderedColumns) {
+				Object tmp = inpP.get(ClientJsonKeys.value.name());
+				JSONArray hnodes = (JSONArray) JSONUtil.createJson(tmp.toString());
+				for (int j = 0; j < hnodes.length(); j++) {
+					JSONObject obj = (JSONObject)hnodes.get(j);
+					String hNodeId = obj.getString(ClientJsonKeys.id.name());
+					HNode node = workspace.getFactory().getHNode(hNodeId);
+					JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(workspace.getFactory());
+					obj.put(ClientJsonKeys.id.name(), hNodeRepresentation);
+					if (obj.has(ClientJsonKeys.children.name()))
+						obj.put(ClientJsonKeys.children.name(), parseChildren(obj.get(ClientJsonKeys.children.name()).toString(), workspace));
+				}
+				inpP.put(ClientJsonKeys.value.name(), hnodes);
+			} else if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeId) {
 				String hNodeId = inpP.getString(ClientJsonKeys.value.name());
 				HNode node = workspace.getFactory().getHNode(hNodeId);
 				JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(workspace.getFactory());
@@ -229,6 +242,20 @@ public class CommandHistory {
 	
 	private boolean instanceOf(Object o, String className) { // TODO this is a hack, but instanceof doesn't really seem appropriate here
 		return o.getClass().getName().toLowerCase().contains(className.toLowerCase());
+	}
+	
+	private String parseChildren(String inputJSON, Workspace workspace) {
+		JSONArray array = (JSONArray) JSONUtil.createJson(inputJSON);
+		for (int i = 0; i < array.length(); i++) {
+			JSONObject obj = array.getJSONObject(i);
+			String hNodeId = obj.getString(ClientJsonKeys.id.name());
+			HNode node = workspace.getFactory().getHNode(hNodeId);
+			JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(workspace.getFactory());
+			obj.put(ClientJsonKeys.id.name(), hNodeRepresentation);
+			if (obj.has(ClientJsonKeys.children.name()))
+				obj.put(ClientJsonKeys.children.name(), parseChildren(obj.get(ClientJsonKeys.children.name()).toString(), workspace));
+		}
+		return array.toString();
 	}
 
 	/**

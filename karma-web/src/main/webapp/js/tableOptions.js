@@ -1602,7 +1602,7 @@ var OrganizeColumnsDialog = (function() {
 
 		    var newInfo = [];
 		    newInfo.push(getParamObject("worksheetId", _worksheetId, "worksheetId"));
-		    newInfo.push(getParamObject("orderedColumns", columnsJson, "orderedColumns"));
+		    newInfo.push(getParamObject("orderedColumns", JSON.stringify(columnsJson), "orderedColumns"));
 		    info["newInfo"] = JSON.stringify(newInfo);
             console.log(info);
 		    showLoading(info["worksheetId"]);

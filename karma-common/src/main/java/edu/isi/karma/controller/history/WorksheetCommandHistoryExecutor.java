@@ -214,7 +214,64 @@ public class WorksheetCommandHistoryExecutor {
 				}
 				inpP.put(ClientJsonKeys.value.name(), hNodes.toString());
 			}
+			else if (HistoryJsonUtil.getParameterType(inpP) == ParameterType.orderedColumns) {
+				JSONArray hNodes = new JSONArray(inpP.get(ClientJsonKeys.value.name()).toString());
+				for (int k = 0; k < hNodes.length(); k++) {
+					JSONObject hnodeJSON = hNodes.getJSONObject(k);
+					JSONArray hNodeJSONRep = new JSONArray(hnodeJSON.get(ClientJsonKeys.id.name()).toString());
+					processHNodeId(hNodeJSONRep, hTable, commandName, hnodeJSON);
+					if (hnodeJSON.has(ClientJsonKeys.children.name())) {
+						JSONArray children = new JSONArray(hnodeJSON.get(ClientJsonKeys.children.name()).toString());
+						hnodeJSON.put(ClientJsonKeys.children.name(), processChildren(children, hTable, commandName));
+					}
+					
+				}
+				inpP.put(ClientJsonKeys.value.name(), hNodes.toString());
+			}
 		}
 		return null;
+	}
+	
+	private boolean processHNodeId(JSONArray hNodeJSONRep, HTable hTable, String commandName, JSONObject hnodeJSON) {
+		for (int j=0; j<hNodeJSONRep.length(); j++) {
+			JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
+			if(hTable == null) {
+				return false;
+			}
+			String nameObjColumnName = cNameObj.getString("columnName");
+			logger.debug("Column being normalized: "+ nameObjColumnName);
+			HNode node = hTable.getHNodeFromColumnName(nameObjColumnName);
+			if(node == null && !ignoreIfBeforeColumnDoesntExist(commandName)) { //Because add column can happen even if the column after which it is to be added is not present
+				logger.info("null HNode " + nameObjColumnName + " while normalizing JSON input for the command " + commandName);
+				return false;
+			}
+
+			if (j == hNodeJSONRep.length()-1) {		// Found!
+				if(node != null)
+					hnodeJSON.put(ClientJsonKeys.id.name(), node.getId());
+				else {
+					//Get the id of the last node in the table
+					ArrayList<String> allNodeIds = hTable.getOrderedNodeIds();
+					String lastNodeId = allNodeIds.get(allNodeIds.size()-1);
+					hnodeJSON.put(ClientJsonKeys.id.name(), lastNodeId);
+				}
+				hTable = workspace.
+						getWorksheet(worksheetId).getHeaders();
+			} else if(node != null) {
+				hTable = node.getNestedTable();
+			}
+		}
+		return true;
+	}
+	private JSONArray processChildren(JSONArray children, HTable hTable, String commandName) {
+		for (int i = 0; i < children.length(); i++) {
+			JSONObject obj = children.getJSONObject(i);
+			JSONArray array = new JSONArray(obj.get(ClientJsonKeys.id.name()).toString());
+			processHNodeId(array, hTable, commandName, obj);
+			if (obj.has(ClientJsonKeys.children.name())) {
+				obj.put(ClientJsonKeys.children.name(), processChildren(new JSONArray(obj.get(ClientJsonKeys.children.name()).toString()), hTable, commandName));
+			}
+		}
+		return children;
 	}
 }

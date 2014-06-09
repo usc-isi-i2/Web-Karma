@@ -180,7 +180,7 @@
 				  </div>
 				  <div class="modal-body">
 				  	<h4>Select Predicates:</h4>
-						<div id="augmentDataDialogColumns"></div>
+						<div id="augmentDataDialogColumns" style = "max-height: 300px; overflow: auto;"></div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
