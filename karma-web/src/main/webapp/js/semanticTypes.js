@@ -1964,25 +1964,65 @@ var augmentDataDialog = (function() {
                 var dialogContent = $("#augmentDataDialogColumns", dialog);
                 dialogContent.empty();
                 //console.log(headers);
+                var div = $("<div>").css("display","table-row");
+                var row = $("<div>").addClass("PredicateProperty");
+                var label = $("<label>").text("Predicate");
+                row.append(label);
+                div.append(row);
+                var row = $("<div>").addClass("OtherClassProperty");
+                var label = $("<label>").text("Other Class");
+                row.append(label);
+                div.append(row);
+                var row = $("<div>").addClass("DataCountProperty");
+                var label = $("<label>").text("Data Occurrence");
+                row.append(label);
+                div.append(row);
+                dialogContent.append(div);
                 for (var i = 0; i < json.length; i++) {
                     var predicate = json[i]['predicate'];
                     var tripleMap = json[i]['tripleMap'];
                     var otherClass = json[i]['otherClass'];
+                    console.log(otherClass);
+                    var tmp = tripleMap.split(",");
                     var value = new Object();
                     value['tripleMap'] = tripleMap;
                     value['otherClass'] = otherClass;
-                    var tmp = tripleMap.split(",");
-                    var row = $("<div>").addClass("checkbox");
-                    var label = $("<label>").text(predicate + " " +otherClass + " "+ tmp.length);
-                    var input = $("<input>")
-                                        .attr("type", "checkbox")
+                    var div = $("<div>").css("display","table-row");
+                    var row = $("<div>").css("overflow", "scroll").addClass("PredicateProperty");
+                    var label = $("<label>").text(predicate.substring(predicate.lastIndexOf("/") + 1)).css("overflow", "scroll");
+                    row.append(label);
+                    div.append(row);
+                    var row = $("<div>").css("overflow", "scroll").addClass("OtherClassProperty");
+                    var label;
+                    if (otherClass != undefined && otherClass != "")
+                    	label = $("<label>").text(otherClass.substring(otherClass.lastIndexOf("/") + 1)).css("overflow", "scroll");
+                    else
+                    	label = $("<label>").text(" ").css("overflow", "scroll");
+                    row.append(label);
+                    div.append(row);
+                    var row = $("<div>").css("overflow", "scroll").addClass("DataCountProperty");
+                    var label = $("<label>").text(tmp.length).css("overflow", "scroll");
+                    row.append(label);
+                    div.append(row);
+                    var row = $("<div>").css("float", "left").css("padding", "5px");;
+                    var label = $("<input>")
+                                .attr("type", "checkbox")
                                 .attr("id", "selectPredicates")
                                 .attr("value", JSON.stringify(value))
                                 .attr("name", "selectPredicates")
-                                .attr("src", predicate)
-                    label.append(input);
+                                .attr("src", predicate);
                     row.append(label);
-                    dialogContent.append(row);
+                    div.append(row);
+                    dialogContent.append(div);
+                    // var tmp = tripleMap.split(",");
+                    // var row = $("<div>").addClass("checkbox");
+                    // var label = $("<label>").text(predicate + " " +otherClass + " "+ tmp.length);
+                    // var input = $("<input>")
+                    //                     .attr("type", "checkbox")
+                    //             .attr("id", "selectPredicates")
+                    //             .attr("value", JSON.stringify(value))
+                    //             .attr("name", "selectPredicates")
+                    //             .attr("src", predicate)
                 }
             });
             dialog.modal({keyboard:true, show:true, backdrop:'static'});

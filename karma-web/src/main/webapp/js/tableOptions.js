@@ -1604,7 +1604,7 @@ var OrganizeColumnsDialog = (function() {
 		    newInfo.push(getParamObject("worksheetId", _worksheetId, "worksheetId"));
 		    newInfo.push(getParamObject("orderedColumns", columnsJson, "orderedColumns"));
 		    info["newInfo"] = JSON.stringify(newInfo);
-
+            console.log(info);
 		    showLoading(info["worksheetId"]);
 		    var returned = $.ajax({
 		        url: "RequestController",

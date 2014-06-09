@@ -561,7 +561,7 @@ public class TripleStoreUtil {
 		return values;
 	}
 
-	private void testTripleStoreConnection(String tripleStoreURL)
+	public void testTripleStoreConnection(String tripleStoreURL)
 			throws KarmaException {
 		// check the connection first
 		if (checkConnection(tripleStoreURL)) {

@@ -1,0 +1,17 @@
+.PredicateProperty {
+	width: 180px;
+	float: left;
+	padding: 5px;
+}
+
+.OtherClassProperty {
+	width: 180px;
+	float: left;
+	padding: 5px;
+}
+
+.DataCountProperty {
+	width: 150px;
+	float: left;
+	padding: 5px;
+}

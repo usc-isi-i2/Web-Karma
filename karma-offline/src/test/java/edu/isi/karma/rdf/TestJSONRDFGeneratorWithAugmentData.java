@@ -85,6 +85,11 @@ public class TestJSONRDFGeneratorWithAugmentData extends TestRdfGenerator{
 	public void testAugmentData() {
 		TripleStoreUtil util = new TripleStoreUtil();
 		try {
+			util.testTripleStoreConnection("http://localhost:8080" + TripleStoreUtil.defaultDataRepoUrl.substring(1));
+		}catch(Exception e) {
+			return;
+		}
+		try {
 
 			String filename = "augmentdata/schedule.json";
 			System.out.println("Load csv file: " + filename);
