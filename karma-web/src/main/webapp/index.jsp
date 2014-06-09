@@ -187,13 +187,13 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="showModel.jsp"></jsp:include>
 			  
 			  
-			  <div class="modal fade" id="rdfGenerationErrorWindow" tabindex="-1">
+			  <div class="modal fade" id="karmaErrorWindow" tabindex="-1">
 			  	<div class="modal-dialog">
 			  		<form class="bs-example bs-example-form" role="form">
 						<div class="modal-content">
 						     <div class="modal-header">
 							      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-							       <h4 class="modal-title">RDF Generation Error Report</h4>
+							       <h4 class="modal-title">Error Report</h4>
 							  </div>
 							  <div class="modal-body">
 								<div id="errrorText">&nbsp;</div>

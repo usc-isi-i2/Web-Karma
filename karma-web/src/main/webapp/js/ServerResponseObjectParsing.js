@@ -417,7 +417,7 @@ function parse(data) {
 
             var errorArr = $.parseJSON(element["errorReport"]);
             if (errorArr && errorArr.length !=0) {
-                var errorWindow = $("#rdfGenerationErrorWindow");
+                var errorWindow = $("#karmaErrorWindow");
                 var txt = $("#errrorText", errorWindow);
                 txt.empty();
 
@@ -554,22 +554,28 @@ function parse(data) {
     });
     
     if(trivialErrors.length > 0) {
-       var errorWindow = $("#rdfGenerationErrorWindow");
+       var errorWindow = $("#karmaErrorWindow");
        var txt = $("#errrorText", errorWindow);
        txt.empty();
 
        var errExists = [];
-        $.each(trivialErrors, function(index, errorMessage) {
-        	if(errExists[errorMessage]) {
-        		//do nothing
-        	} else {
-        		txt.append("<b>Error # " + (index+1) + "</b><br>");
-        		txt.append("<b>Description:</b> " + errorMessage + "<br>");
-        		txt.append("<hr>");
-        		errExists[errorMessage] = true;
-        	}
-        });
-
+       if(trivialErrors.length == 1) {
+    	   errorMessage = trivialErrors[0]
+    	   txt.append(errorMessage + "<br>");
+    	   errExists[errorMessage] = true;
+       } else {
+	        $.each(trivialErrors, function(index, errorMessage) {
+	        	if(errExists[errorMessage]) {
+	        		//do nothing
+	        	} else {
+	        		txt.append("<b>Error # " + (index+1) + "</b><br>");
+	        		txt.append("<b>Description:</b> " + errorMessage + "<br>");
+	        		txt.append("<hr>");
+	        		errExists[errorMessage] = true;
+	        	}
+	        });
+       }
+       
         errorWindow.modal({keyboard:true, show:true});
         
     }
