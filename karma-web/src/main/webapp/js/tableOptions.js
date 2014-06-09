@@ -281,7 +281,7 @@ var applyModelDialog = (function() {
         var worksheetId;
         var availableModels;
         var filteredModels;
-        var filterDialog = $("#modelFilterDialog");
+        var filterDialog = $("#applyModelFilterDialog");
         var filterName;
         function init() {
             refresh();
@@ -457,7 +457,7 @@ var applyModelDialog = (function() {
             console.log("showFilterDialog");
             filterName = e.currentTarget['value'];
             console.log(filterName);
-            $('#txtFilter').val("");
+            $('#txtFilterApplyModel').val("");
             filterDialog.modal({keyboard:true, show:true, backdrop:'static'});
             filterDialog.show();
         };
@@ -466,7 +466,7 @@ var applyModelDialog = (function() {
             console.log("applyFilter");
             console.log(filterName);
             var tmp = [];
-            var filterText = $('#txtFilter').val();
+            var filterText = $('#txtFilterApplyModel').val();
             console.log(filterText);
             for (var i = 0; i < filteredModels.length; i++) {
                 var name = filteredModels[i]['name'];

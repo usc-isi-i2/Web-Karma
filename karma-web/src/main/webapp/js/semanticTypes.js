@@ -1783,7 +1783,7 @@ var searchDataDialog = (function() {
                         console.log(json);
                         //parse(json);
                         //hideLoading(info["worksheetId"]);
-                        augmentDataDialog.getInstance().show(worksheetId, json, columnUri, alignmentId);
+                        augmentDataDialog.getInstance(json).show(worksheetId, columnUri, alignmentId);
                     },
                 error :
                     function (xhr, textStatus) {
@@ -1828,18 +1828,81 @@ var searchDataDialog = (function() {
 
 var augmentDataDialog = (function() {
     var instance = null;
-
+    var available;
+    var filtered;
+    var filterName;
     function PrivateConstructor() {
         var dialog = $("#augmentDataDialog");
+        var filterDialog = $("#augmentDataFilterDialog");
         var worksheetId, columnUri, alignmentId;
         
-        function init() {
+        function init(json) {
             //Initialize what happens when we show the dialog
-            dialog.on('show.bs.modal', function (e) {
-                hideError();
-                 $('#txtR2RML_URL_Search').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+          	var dialogContent = $("#augmentDataDialogHeaders", dialog);
+          	dialogContent.empty();
+          	var div = $("<div>").css("display","table-row")
+            var row = $("<div>").addClass("PredicateProperty");
+            var label = $("<button>").text("Filter")
+                        .addClass("btn btn-primary PredicateButtonProperty")
+                        .attr("id","btnFilterPredicate")
+                        .attr("value","Predicate");
+            row.append(label);
+            div.append(row);
+            var row = $("<div>").addClass("OtherClassProperty");
+            var label = $("<button>").text("Filter")
+                        .addClass("btn btn-primary OtherClassButtonProperty")
+                        .attr("id","btnFilterOtherClass")
+                        .attr("value","Other Class");
+            row.append(label);
+            div.append(row);
+            var row = $("<div>").addClass("DataCountProperty");
+            var label = $("<button>").text("Filter")
+                        .addClass("btn btn-primary DataCountButtonProperty")
+                        .attr("id","btnFilterDataCount")
+                        .attr("value","Data Count");
+            row.append(label);
+            div.append(row);
+            dialogContent.append(div);
+           	var div = $("<div>").css("display","table-row");
+           	var row = $("<div>").addClass("PredicateProperty");
+           	var label = $("<label>").text("Predicate");
+           	row.append(label);
+           	div.append(row);
+           	var row = $("<div>").addClass("OtherClassProperty");
+           	var label = $("<label>").text("Other Class");
+           	row.append(label);
+           	div.append(row);
+           	var row = $("<div>").addClass("DataCountProperty");
+           	var label = $("<label>").text("Data Occurrence");
+           	row.append(label);
+           	div.append(row);
+           	dialogContent.append(div);
+            $('#btnFilterPredicate', dialog).on('click', function (e) {
+                e.preventDefault();
+                showFilterDialog(e);
             });
-            
+            $('#btnFilterOtherClass', dialog).on('click', function (e) {
+                e.preventDefault();
+                showFilterDialog(e);
+            });
+            $('#btnFilterDataCount', dialog).on('click', function (e) {
+                e.preventDefault();
+                showFilterDialog(e);
+            });
+            $('#btnClearFilter', dialog).on('click', function (e) {
+                filtered = available;
+                instance.show(worksheetId, columnUri, alignmentId);
+            });
+            $('#btnSave', filterDialog).on('click', function (e) {
+                e.preventDefault();
+                applyFilter(e);
+            });
+            $('#btnCancel', filterDialog).on('click', function (e) {
+                e.preventDefault();
+                cancelFilter(e);
+            }); 
+            available = json;
+            filtered = json
             //Initialize handler for Save button
             //var me = this;
             $('#btnSave', dialog).on('click', function (e) {
@@ -1849,6 +1912,52 @@ var augmentDataDialog = (function() {
             
                 
         }
+
+        function showFilterDialog(e) {
+            dialog.modal('hide');
+            console.log("showFilterDialog");
+            filterName = e.currentTarget['value'];
+            console.log(filterName);
+            $('#txtFilterAugment').val("");
+            filterDialog.modal({keyboard:true, show:true, backdrop:'static'});
+            filterDialog.show();
+            
+        };
+
+        function applyFilter(e) {
+            console.log("applyFilter");
+            console.log(filterName);
+            var tmp = [];
+            var filterText = $('#txtFilterAugment').val();
+            console.log(filterText);
+            for (var i = 0; i < filtered.length; i++) {
+                var predicate = filtered[i]['predicate'];
+                var otherClass = filtered[i]['otherClass'];
+                var tripleMap = filtered[i]['tripleMap'];
+                var tmp2 = tripleMap.split(",");
+                predicate = predicate.substring(predicate.lastIndexOf("/") + 1);
+                otherClass = otherClass.substring(otherClass.lastIndexOf("/") + 1);
+                console.log(tmp2);
+                if (filterName === "Predicate" && predicate.toLowerCase().indexOf(filterText.toLowerCase()) > -1)
+                    tmp.push(filtered[i]);
+                if (filterName === "Other Class" && otherClass.toLowerCase().indexOf(filterText.toLowerCase()) > -1)
+                    tmp.push(filtered[i]);
+                if (!isNaN(filterText)) {
+                	if (filterName === "Data Count" && tmp2.length > filterText)
+                    tmp.push(filtered[i]);
+                }
+
+            }
+            filtered = tmp;
+            instance.show(worksheetId, columnUri, alignmentId);
+            dialog.show();
+        };
+
+        function cancelFilter(e) {
+            console.log("cancelFilter");
+            instance.show(worksheetId, columnUri, alignmentId);
+            dialog.show();
+        };
         
         function hideError() {
             $("div.error", dialog).hide();
@@ -1950,38 +2059,23 @@ var augmentDataDialog = (function() {
             dialog.modal('hide');
         }
         
-        function show(wsId, json, colUri, Alnid) {
+        function show(wsId, colUri, Alnid) {
             worksheetId = wsId;
             columnUri = colUri;
             alignmentId = Alnid;
-            console.log(json);
-            if (json.length == 0) {
+            console.log(available);
+            if (available.length == 0) {
             	alert("No data to augment!");
             	return;
             }
             dialog.on('show.bs.modal', function (e) {
                 hideError();
                 var dialogContent = $("#augmentDataDialogColumns", dialog);
-                dialogContent.empty();
-                //console.log(headers);
-                var div = $("<div>").css("display","table-row");
-                var row = $("<div>").addClass("PredicateProperty");
-                var label = $("<label>").text("Predicate");
-                row.append(label);
-                div.append(row);
-                var row = $("<div>").addClass("OtherClassProperty");
-                var label = $("<label>").text("Other Class");
-                row.append(label);
-                div.append(row);
-                var row = $("<div>").addClass("DataCountProperty");
-                var label = $("<label>").text("Data Occurrence");
-                row.append(label);
-                div.append(row);
-                dialogContent.append(div);
-                for (var i = 0; i < json.length; i++) {
-                    var predicate = json[i]['predicate'];
-                    var tripleMap = json[i]['tripleMap'];
-                    var otherClass = json[i]['otherClass'];
+          			dialogContent.empty();
+                for (var i = 0; i < filtered.length; i++) {
+                    var predicate = filtered[i]['predicate'];
+                    var tripleMap = filtered[i]['tripleMap'];
+                    var otherClass = filtered[i]['otherClass'];
                     console.log(otherClass);
                     var tmp = tripleMap.split(",");
                     var value = new Object();
@@ -2014,15 +2108,6 @@ var augmentDataDialog = (function() {
                     row.append(label);
                     div.append(row);
                     dialogContent.append(div);
-                    // var tmp = tripleMap.split(",");
-                    // var row = $("<div>").addClass("checkbox");
-                    // var label = $("<label>").text(predicate + " " +otherClass + " "+ tmp.length);
-                    // var input = $("<input>")
-                    //                     .attr("type", "checkbox")
-                    //             .attr("id", "selectPredicates")
-                    //             .attr("value", JSON.stringify(value))
-                    //             .attr("name", "selectPredicates")
-                    //             .attr("src", predicate)
                 }
             });
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
@@ -2035,10 +2120,10 @@ var augmentDataDialog = (function() {
         };
     };
 
-    function getInstance() {
+    function getInstance(json) {
         if( ! instance ) {
             instance = new PrivateConstructor();
-            instance.init();
+            instance.init(json);
         }
         return instance;
     }

@@ -15,3 +15,18 @@
 	float: left;
 	padding: 5px;
 }
+
+.PredicateButtonProperty {
+	width: 175px;
+	float: left;
+}
+
+.OtherClassButtonProperty {
+	width: 175px;
+	float: left;
+}
+
+.DataCountButtonProperty {
+	width: 145px;
+	float: left;
+}
