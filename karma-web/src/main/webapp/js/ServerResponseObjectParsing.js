@@ -48,17 +48,21 @@ function parse(data) {
     
     /* Always add the charts from cleaning service in end, so pushing that CleaningServiceUpdate in the end of updates array (if present) */
     // Identify the index
-    var cleaningUpdateIndex = -1;
+    var cleaningUpdates = new Array();
+    var dataElements = new Array();
     $.each(data["elements"], function(i, element) {
         if(element["updateType"] == "WorksheetCleaningUpdate") {
-            cleaningUpdateIndex = i;
+        	cleaningUpdates.push(element);
+        } else {
+        	dataElements.push(element);
         }
     });
-    // Move it to the end
-    if (cleaningUpdateIndex != -1) {
-        var cleaningUpdate = data["elements"].splice(cleaningUpdateIndex, 1)[0];
-        data["elements"].push(cleaningUpdate);
-    }
+    data["elements"] = dataElements;
+    // Move cleaning updates to the end
+    $.each(cleaningUpdates, function(i, update) {
+    	data["elements"].push(update);
+    });
+   
 
     // Loop through each update from the server and take required action for the GUI
     $.each(data["elements"], function(i, element) {
@@ -560,7 +564,7 @@ function parse(data) {
 
        var errExists = [];
        if(trivialErrors.length == 1) {
-    	   errorMessage = trivialErrors[0]
+    	   errorMessage = trivialErrors[0];
     	   txt.append(errorMessage + "<br>");
     	   errExists[errorMessage] = true;
        } else {
