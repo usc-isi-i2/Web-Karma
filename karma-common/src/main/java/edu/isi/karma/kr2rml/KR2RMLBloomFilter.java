@@ -27,13 +27,10 @@ public class KR2RMLBloomFilter extends BloomFilter {
 	public int estimateNumberOfHashedValues()
 	{
 		int num = 0;
-		int setBits = 0;
 		try {
 			BitSet bits = (BitSet)bitsField.get(this);
 
-			for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i+1)) {
-				setBits++;
-			 }
+			int setBits = bits.cardinality();
 			double N = this.getVectorSize();
 			int k = this.nbHash;
 			num = (int)(-(N * Math.log(1 - (setBits / N))) / (double)k);
