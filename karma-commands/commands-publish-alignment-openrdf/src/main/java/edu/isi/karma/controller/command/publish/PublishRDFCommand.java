@@ -20,10 +20,19 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.publish;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.db.DBConnection;
 import com.hp.hpl.jena.db.IDBConnection;
 import com.hp.hpl.jena.db.ModelRDB;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
 
@@ -43,10 +53,16 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
+import edu.isi.karma.kr2rml.BloomFilterKR2RMLWriter;
 import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
+import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
@@ -147,6 +163,7 @@ public class PublishRDFCommand extends Command {
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
 		KR2RMLMappingGenerator mappingGen = null;
+		String url = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelUrl);
 		
 		try{
 			mappingGen = new KR2RMLMappingGenerator(workspace, worksheet,
@@ -161,15 +178,32 @@ public class PublishRDFCommand extends Command {
 		}
 		
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
-		
+		if (url != null && !url.isEmpty() && url.compareTo("") != 0) {
+			try {
+				Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(new URL(url));
+				R2RMLMappingIdentifier identifier = new R2RMLMappingIdentifier(mapping.getId().getName(), new URL(url));
+				WorksheetR2RMLJenaModelParser parser = new WorksheetR2RMLJenaModelParser(model, identifier);
+				mapping = parser.parse();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		logger.debug(mapping.toString());
 		
-
+		StringWriter sw = new StringWriter();
 		// Generate the RDF using KR2RML data structures
 		try {
+			List<KR2RMLRDFWriter> writers = new ArrayList<KR2RMLRDFWriter>();
+			File f = new File(rdfFileLocalPath);
+			File parentDir = f.getParentFile();
+			parentDir.mkdirs();
+			BufferedWriter bw = new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(f),"UTF-8"));
+			writers.add(new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), new PrintWriter (bw)));
+			writers.add(new BloomFilterKR2RMLWriter(new PrintWriter(sw), mapping.getId()));
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 				workspace.getFactory(), workspace.getOntologyManager(),
-				rdfFileLocalPath, false, mapping, errorReport);
+				writers, false, mapping, errorReport);
 		
 			rdfGen.generateRDF(true);
 			logger.info("RDF written to file: " + rdfFileLocalPath);
@@ -199,7 +233,7 @@ public class PublishRDFCommand extends Command {
 			}
 			logger.info("tripleStoreURl : " + tripleStoreUrl);
 			TripleStoreUtil utilObj = new TripleStoreUtil();
-			String url = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelUrl);
+			
 			boolean result = utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext, this.rdfSourceNamespace);
 			if (url != null && !url.isEmpty() && url.compareTo("") != 0 && utilObj.testURIExists(TripleStoreUtil.defaultModelsRepoUrl, "", url)) {
 				TripleStoreUtil util = new TripleStoreUtil();
@@ -222,6 +256,8 @@ public class PublishRDFCommand extends Command {
 				modelRepoUrl = modelRepoUrl == null || modelRepoUrl.isEmpty()? TripleStoreUtil.defaultModelsRepoUrl : modelRepoUrl;
 				String modelContext = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelContext);
 				result &= util.saveToStore(input, modelRepoUrl, modelContext, new Boolean(this.replaceContext), this.rdfSourceNamespace);
+				if (sw.toString().compareTo("") != 0)
+					result &= util.saveToStore(sw.toString(), modelRepoUrl, modelContext, new Boolean(this.replaceContext), this.rdfSourceNamespace);
 
 			}
 			if(result) {

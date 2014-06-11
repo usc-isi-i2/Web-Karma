@@ -561,6 +561,60 @@ public class TripleStoreUtil {
 		return values;
 	}
 
+	public List<String> getBloomFiltersForTriplesMaps(String tripleStoreURL, String context, List<String> tripleMaps) throws KarmaException
+	{
+		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
+		testTripleStoreConnection(tripleStoreURL);
+		
+		List<String> bloomfilters = new LinkedList<String>();
+		try {
+
+			StringBuilder query = new StringBuilder();
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
+			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
+			query.append("SELECT ?bf \n");			
+			injectContext(context, query);
+			query.append("WHERE \n{\n");
+			Iterator<String> iterator = tripleMaps.iterator();
+			while(iterator.hasNext()) {
+				query.append("{\n<");
+				query.append(iterator.next());
+				query.append("> <");
+				query.append(Uris.KM_HAS_BLOOMFILTER);
+				if (iterator.hasNext())
+					query.append("> ?bf . \n} UNION \n");
+				else
+					query.append("> ?bf . \n} \n");
+			}
+			query.append("}\n");
+			
+			String queryString = query.toString();
+			logger.debug("query: " + queryString);
+
+			
+			Map<String, String> formparams = new HashMap<String, String>();
+			formparams.put("query", queryString);
+			formparams.put("queryLn", "SPARQL");
+			
+			String responseString = HTTPUtil.executeHTTPPostRequest(
+					tripleStoreURL, null, "application/sparql-results+json",
+					formparams);
+			if (responseString != null) {
+				JSONObject models = new JSONObject(responseString);
+				JSONArray values = models.getJSONObject("results")
+						.getJSONArray("bindings");
+				int count = 0;
+				while (count < values.length()) {
+					JSONObject o = values.getJSONObject(count++);
+					bloomfilters.add(o.getJSONObject("bf").getString("value"));
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return bloomfilters;
+	}
+	
 	public void testTripleStoreConnection(String tripleStoreURL)
 			throws KarmaException {
 		// check the connection first

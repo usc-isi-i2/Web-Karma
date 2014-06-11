@@ -14,6 +14,8 @@ import org.apache.hadoop.util.hash.Hash;
 import org.json.JSONObject;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.Uris;
 
 public class TriplesMapBloomFilterManager {
 
@@ -86,4 +88,31 @@ public class TriplesMapBloomFilterManager {
 		filters.put("mappingIdentifier", mappingIdentifier.toJSON());
 		return filters;
 	}
+	public String toRDF()
+	{
+		StringBuilder builder = new StringBuilder();
+		for(Entry<String, KR2RMLBloomFilter> entry : triplesMapsIdToBloomFilter.entrySet())
+		{
+			KR2RMLBloomFilter bf = entry.getValue();
+			String key = entry.getKey();
+			builder.append("<");
+			builder.append(key);
+			builder.append("> <");
+			builder.append(Uris.KM_HAS_BLOOMFILTER);
+			builder.append("> \"");
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(bf.getVectorSize() + 1000);
+			ObjectOutputStream dout;
+			try {
+				dout = new ObjectOutputStream(baos);
+				bf.write(dout);
+				dout.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}		
+			builder.append(Base64.encodeBase64String(baos.toByteArray()));
+			builder.append("\" . \n");
+		}
+		return builder.toString();
+	}
+	
 }

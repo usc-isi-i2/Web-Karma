@@ -52,14 +52,7 @@ public class FetchHNodeIdFromAlignmentCommand extends Command{
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		Set<LabeledLink> tmp = alignment.getCurrentOutgoingLinksToNode(columnUri);
-		String hNodeId = null;
-		for (LabeledLink link : tmp) {
-			if (link.getKeyType() == LinkKeyInfo.UriOfInstance) {
-				hNodeId = link.getTarget().getId();
-			}
-		}
+		String hNodeId = gethNodeId(alignmentId, columnUri);
 		final String copy = hNodeId;
 		return new UpdateContainer(new AbstractUpdate() {
 			
@@ -71,7 +64,19 @@ public class FetchHNodeIdFromAlignmentCommand extends Command{
 			}
 		});
 	}
-
+	
+	public static String gethNodeId(String alignmentId, String columnUri) {
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		Set<LabeledLink> tmp = alignment.getCurrentOutgoingLinksToNode(columnUri);
+		String hNodeId = null;
+		for (LabeledLink link : tmp) {
+			if (link.getKeyType() == LinkKeyInfo.UriOfInstance) {
+				hNodeId = link.getTarget().getId();
+			}
+		}
+		return hNodeId;
+	}
+	
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		// TODO Auto-generated method stub

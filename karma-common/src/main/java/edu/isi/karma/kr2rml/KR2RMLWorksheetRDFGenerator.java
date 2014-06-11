@@ -104,7 +104,7 @@ public class KR2RMLWorksheetRDFGenerator {
 	}
 
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
-			OntologyManager ontMgr, List<KR2RMLRDFWriter> writers, boolean addColumnContextInformation,RootStrategy strategy, 
+			OntologyManager ontMgr, List<KR2RMLRDFWriter> writers, boolean addColumnContextInformation,  
 			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport) {
 		initializeMemberVariables(worksheet, factory, ontMgr, outputFileName,
 				addColumnContextInformation, kr2rmlMapping, errorReport);

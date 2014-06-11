@@ -76,6 +76,11 @@ public class WorksheetR2RMLJenaModelParser {
 	{
 		this.id = id;
 	}
+	
+	public WorksheetR2RMLJenaModelParser(Model model, R2RMLMappingIdentifier id) throws JSONException, KarmaException 
+	{
+		this.id = id;
+	}
 
 	public KR2RMLMapping parse() throws IOException, KarmaException, JSONException
 	{

@@ -1768,6 +1768,7 @@ var searchDataDialog = (function() {
             info['context'] = $('#txtGraph_URL_Search').val();
             info["command"] = "SearchForDataToAugmentCommand";
             info["nodeUri"] = columnDomain;
+            info["columnUri"] = columnUri;
             console.log(info['graphContext']);
             //showLoading(info["worksheetId"]);
             var returned = $.ajax({
@@ -1873,7 +1874,7 @@ var augmentDataDialog = (function() {
            	row.append(label);
            	div.append(row);
            	var row = $("<div>").addClass("DataCountProperty");
-           	var label = $("<label>").text("Data Occurrence");
+           	var label = $("<label>").text("Occurrence Probability");
            	row.append(label);
            	div.append(row);
            	dialogContent.append(div);
@@ -1902,7 +1903,7 @@ var augmentDataDialog = (function() {
                 cancelFilter(e);
             }); 
             available = json;
-            filtered = json
+            filtered = json;
             //Initialize handler for Save button
             //var me = this;
             $('#btnSave', dialog).on('click', function (e) {
@@ -1933,17 +1934,15 @@ var augmentDataDialog = (function() {
             for (var i = 0; i < filtered.length; i++) {
                 var predicate = filtered[i]['predicate'];
                 var otherClass = filtered[i]['otherClass'];
-                var tripleMap = filtered[i]['tripleMap'];
-                var tmp2 = tripleMap.split(",");
+                var probability = filtered[i]['probability'];
                 predicate = predicate.substring(predicate.lastIndexOf("/") + 1);
                 otherClass = otherClass.substring(otherClass.lastIndexOf("/") + 1);
-                console.log(tmp2);
                 if (filterName === "Predicate" && predicate.toLowerCase().indexOf(filterText.toLowerCase()) > -1)
                     tmp.push(filtered[i]);
                 if (filterName === "Other Class" && otherClass.toLowerCase().indexOf(filterText.toLowerCase()) > -1)
                     tmp.push(filtered[i]);
                 if (!isNaN(filterText)) {
-                	if (filterName === "Data Count" && tmp2.length > filterText)
+                	if (filterName === "Data Count" && probability*100.0 > filterText)
                     tmp.push(filtered[i]);
                 }
 
@@ -1975,20 +1974,14 @@ var augmentDataDialog = (function() {
                 return;
             }
             var predicates = [];
-            var triplesMap = [];
             var otherClass = [];
             for (var i = 0; i < checkboxes.length; i++) {
 	            var checkbox = checkboxes[i];
 	            var t1 = new Object();
-	            var t2 = new Object();
 	            var t3 = new Object();
-	            console.log(checkbox['value']);
-	            var tmpJSON = jQuery.parseJSON(checkbox['value']);
 	            t1['predicate'] = checkbox['src'];
-	            t2['tripleMap'] = tmpJSON['tripleMap'];
-	            t3['otherClass'] = tmpJSON['otherClass'];
+	            t3['otherClass'] = checkbox['value'];
 	            predicates.push(t1);    
-	            triplesMap.push(t2);
 	            otherClass.push(t3);
 	        	}
 	        	var info = new Object();
@@ -2026,7 +2019,6 @@ var augmentDataDialog = (function() {
             var newInfo = [];
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
             newInfo.push(getParamObject("predicate", JSON.stringify(predicates), "other"));
-            newInfo.push(getParamObject("triplesMap", JSON.stringify(triplesMap), "other"));
             newInfo.push(getParamObject("otherClass", JSON.stringify(otherClass), "other"));
             newInfo.push(getParamObject("columnUri", columnUri, "other"));
             newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').val(), "other"));
@@ -2074,13 +2066,9 @@ var augmentDataDialog = (function() {
           			dialogContent.empty();
                 for (var i = 0; i < filtered.length; i++) {
                     var predicate = filtered[i]['predicate'];
-                    var tripleMap = filtered[i]['tripleMap'];
+                    var probability = filtered[i]['probability'];
                     var otherClass = filtered[i]['otherClass'];
-                    console.log(otherClass);
-                    var tmp = tripleMap.split(",");
-                    var value = new Object();
-                    value['tripleMap'] = tripleMap;
-                    value['otherClass'] = otherClass;
+                    console.log(probability);
                     var div = $("<div>").css("display","table-row");
                     var row = $("<div>").css("overflow", "scroll").addClass("PredicateProperty");
                     var label = $("<label>").text(predicate.substring(predicate.lastIndexOf("/") + 1)).css("overflow", "scroll");
@@ -2095,14 +2083,14 @@ var augmentDataDialog = (function() {
                     row.append(label);
                     div.append(row);
                     var row = $("<div>").css("overflow", "scroll").addClass("DataCountProperty");
-                    var label = $("<label>").text(tmp.length).css("overflow", "scroll");
+                    var label = $("<label>").text(probability*100.0 + "%").css("overflow", "scroll");
                     row.append(label);
                     div.append(row);
                     var row = $("<div>").css("float", "left").css("padding", "5px");;
                     var label = $("<input>")
                                 .attr("type", "checkbox")
                                 .attr("id", "selectPredicates")
-                                .attr("value", JSON.stringify(value))
+                                .attr("value", otherClass)
                                 .attr("name", "selectPredicates")
                                 .attr("src", predicate);
                     row.append(label);
@@ -2125,6 +2113,8 @@ var augmentDataDialog = (function() {
             instance = new PrivateConstructor();
             instance.init(json);
         }
+        available = json;
+        filtered = json;
         return instance;
     }
    
