@@ -12,6 +12,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"Set Properties", func:setProperties},
 			{name:"Show Auto Model", func:showAutoModel},
 			{name:"Apply R2RML Model" , func:applyR2RMLModel, useFileUpload:true, uploadDiv:"applyWorksheetHistory"},
+			{name:"Add Node", func:addNode},
 			{name:"divider"},
 			{name:"Publish RDF" , func:publishRDF},
 			{name:"Publish Model" , func:publishModel},
@@ -540,6 +541,13 @@ function WorksheetOptions(wsId, wsTitle) {
 		return false;
 	}
 	
+	function addNode() {
+		console.log("Add Node");
+		hideDropdown();
+		AddNodeDialog.getInstance().show(worksheetId);
+		return false;
+	}
+	
 	this.generateJS = function() {
 		var div = 
 			$("<div>")
@@ -615,7 +623,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		div.append(ul);
 		worksheetOptionsDiv = div;
 		return div;
-	}
+	};
 	
 	
 }

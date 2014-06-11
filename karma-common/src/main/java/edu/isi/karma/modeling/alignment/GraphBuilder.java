@@ -83,6 +83,7 @@ public class GraphBuilder {
 	
 	private HashMap<String, Set<String>> uriClosure;
 
+	private Set<Node> forcedAddedNodes;
 	
 	// To be used in matching semantic types with graph nodes
 	private HashSet<String> modelIds;
@@ -117,6 +118,7 @@ public class GraphBuilder {
 		this.nodeDataPropertyCount = new HashMap<String, Integer>();
 		this.semanticTypeMatches = new HashMap<String, Set<SemanticTypeMapping>>();
 		
+		this.forcedAddedNodes = new HashSet<Node>();
 		if (addThingNode) 
 			this.initialGraph();
 		
@@ -306,6 +308,8 @@ public class GraphBuilder {
 			node.getLabel().setPrefix(label.getPrefix());
 		}
 		
+		if(node.isForceAddedByUser())
+			this.forcedAddedNodes.add(node);
 		
 		this.graph.addVertex(node);
 		
@@ -332,6 +336,10 @@ public class GraphBuilder {
 
 		logger.debug("exit>");		
 		return true;
+	}
+	
+	public Set<Node> getNodesForceAddedByUser() {
+		return this.forcedAddedNodes;
 	}
 	
 	public boolean addLink(Node source, Node target, DefaultLink link) {

@@ -134,6 +134,10 @@ public class Alignment implements OntologyUpdateListener {
 		return this.graphBuilder.getTypeToNodesMap().get(type);
 	}
 	
+	public Set<Node> getNodesForceAddedByUser() {
+		return this.graphBuilder.getNodesForceAddedByUser();
+	}
+	
 	public LabeledLink getLinkById(String linkId) {
 		return this.graphBuilder.getIdToLinkMap().get(linkId);
 	}
@@ -192,6 +196,14 @@ public class Alignment implements OntologyUpdateListener {
 		InternalNode node = new InternalNode(id, label);
 		if (this.graphBuilder.addNodeAndUpdate(node)) return node;
 		return null;	
+	}
+	
+	public InternalNode addForcedInternalNode(Label label) {
+		String id = nodeIdFactory.getNodeId(label.getUri());
+		InternalNode node = new InternalNode(id, label);
+		node.setForceAddedByUser(true);
+		if (this.graphBuilder.addNodeAndUpdate(node)) return node;
+		return null;
 	}
 	
 	// AddLink methods
@@ -489,7 +501,7 @@ public class Alignment implements OntologyUpdateListener {
 	
 	// FIXME: What if a column node has more than one domain?
 	private List<Node> computeSteinerNodes() {
-		List<Node> steinerNodes = new ArrayList<Node>();
+		Set<Node> steinerNodes = new HashSet<Node>();
 		
 		// Add column nodes and their domain
 		Set<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
@@ -508,6 +520,11 @@ public class Alignment implements OntologyUpdateListener {
 			}
 		}
 
+		Set<Node> forcedAddedNodes = this.getNodesForceAddedByUser();
+		for (Node n : forcedAddedNodes) {
+			steinerNodes.add(n);
+		}
+		
 		// Add source and target of the links forced by the user
 		Set<LabeledLink> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
 		if (linksForcedByUser != null) {
@@ -521,7 +538,9 @@ public class Alignment implements OntologyUpdateListener {
 			}
 		}
 		
-		return steinerNodes;
+		ArrayList<Node> result = new ArrayList<>();
+		result.addAll(steinerNodes);
+		return result;
 	}
 	
 	public void align() {

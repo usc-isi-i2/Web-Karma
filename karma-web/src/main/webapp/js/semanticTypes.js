@@ -1971,3 +1971,143 @@ var augmentDataDialog = (function() {
     };
     
 })();
+
+
+
+
+/**
+ * ==================================================================================================================
+ * 
+ * 				Diloag to add a New Node
+ * 
+ * ==================================================================================================================
+ */
+var AddNodeDialog = (function() {
+    var instance = null;
+
+    function PrivateConstructor() {
+    	var dialog = $("#addNodeDialog");
+    	var worksheetId;
+    	
+    	var classUI;
+    	var selectedClass;
+    	
+    	function init() {
+            
+            //Initialize what happens when we show the dialog
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                
+                $(".main", dialog).empty();
+                var classDiv = $("<div>");
+                $(".main", dialog).append(classDiv);
+                
+                classUI = new ClassUI("addNewNode_class", null, getAllClassNodes, 300);
+                classUI.setHeadings("Classes in Model", "All Classes");
+                classUI.onClassSelect(validateClassInputValue);
+                classUI.generateJS(classDiv, true);
+            });
+            
+            
+            $('#btnSave', dialog).on('click', function (e) {
+                e.preventDefault();
+                saveDialog(e);
+            });
+        }
+
+    	function getAllClassNodes() {
+    		var classes = getAllClasses(worksheetId);
+        	var result = [];
+	       	 $.each(classes, function(index, clazz){
+	       		 if(clazz.id) {
+	       			 
+	       		 } else { //Only add nodes with no ids. Those dont exist and hence can be added
+	       			 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+	       		 }
+	       	 });
+	       	return result;
+    	}
+    	
+    	
+    	function validateClassInputValue(classData) {
+    		selectedClass = classData;
+        }
+    	
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError(err) {
+			if(err) {
+				$("div.error", dialog).text(err);
+			}
+			$("div.error", dialog).show();
+		}
+        
+        function saveDialog(e) {
+        	 var info = new Object();
+             info["workspaceId"] = $.workspaceGlobalInformation.id;
+             var newInfo = [];
+             var label = selectedClass.label;
+             if(label.length > 6) {
+            	 label = label.substring(0, label.length-6);
+             }   
+         	 newInfo.push(getParamObject("label", label, "other"));
+         	 newInfo.push(getParamObject("uri", selectedClass.uri, "other"));
+         	 newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+         	 
+             info["newInfo"] = JSON.stringify(newInfo);
+             info["command"] = "AddNodeCommand";
+             showLoading(worksheetId);
+             var returned = $.ajax({
+                 url: "RequestController",
+                 type: "POST",
+                 data : info,
+                 dataType : "json",
+                 complete :
+                     function (xhr, textStatus) {
+                         var json = $.parseJSON(xhr.responseText);
+                         parse(json);
+                         hideLoading(worksheetId);
+                         hide();
+                     },
+                 error :
+                     function (xhr, textStatus) {
+                         alert("Error occured while adding the node!");
+                         hideLoading(worksheetId);
+                         hide();
+                     }
+             });
+        };
+        
+        
+        
+        function hide() {
+        	dialog.modal('hide');
+        }
+        
+       
+        function show(wsId) {
+        	worksheetId = wsId;
+        	dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        return {    //Return back the public methods
+            show : show,
+            init : init
+        };
+    };
+
+    function getInstance() {
+    	if( ! instance ) {
+    		instance = new PrivateConstructor();
+    		instance.init();
+    	}
+    	return instance;
+    }
+   
+    return {
+    	getInstance : getInstance
+    };
+    
+})();

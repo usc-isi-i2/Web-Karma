@@ -39,7 +39,8 @@ public abstract class Node implements Comparable<Node> {
 	private Label label;
 	private NodeType type;
 	private Set<String> modelIds;
-
+	private boolean isForceAddedByUser;
+	
 	public Node(String id, Label label, NodeType type) {
 		
 		this.init();
@@ -133,6 +134,14 @@ public abstract class Node implements Comparable<Node> {
         return this.id.compareTo(node.getId());
     }
 
+    public boolean isForceAddedByUser() {
+    	return isForceAddedByUser;
+    }
+    
+    public void setForceAddedByUser(boolean value) {
+    	isForceAddedByUser = value;
+    }
+    
     public Node clone() {
 
     	Cloner cloner = new Cloner();
