@@ -73,10 +73,11 @@ public class KarmaServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		KarmaMetadataManager metadataManager = null;
+		UpdateContainer updateContainer = new  UpdateContainer();
 		try {
 			metadataManager = new KarmaMetadataManager();
-			metadataManager.register(new UserPreferencesMetadata());
-			metadataManager.register(new UserConfigMetadata());
+			metadataManager.register(new UserPreferencesMetadata(), updateContainer);
+			metadataManager.register(new UserConfigMetadata(), updateContainer);
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}
@@ -105,18 +106,18 @@ public class KarmaServlet extends HttpServlet {
 		
 		logger.info("Start Metadata Setup");
 		try {
-			metadataManager.register(new CRFModelMetadata(workspace));
-			metadataManager.register(new OntologyMetadata(workspace));
-			metadataManager.register(new JSONModelsMetadata(workspace));
-			metadataManager.register(new PythonTransformationMetadata(workspace));
-			metadataManager.register(new GraphVizMetadata(workspace));
-			metadataManager.register(new ModelLearnerMetadata(workspace));
-			metadataManager.register(new R2RMLMetadata(workspace));
-			metadataManager.register(new R2RMLPublishedMetadata(workspace));
-			metadataManager.register(new RDFMetadata(workspace));
-			metadataManager.register(new CSVMetadata(workspace));
-			metadataManager.register(new JSONMetadata(workspace));
-			metadataManager.register(new ReportMetadata(workspace));
+			metadataManager.register(new CRFModelMetadata(workspace), updateContainer);
+			metadataManager.register(new OntologyMetadata(workspace), updateContainer);
+			metadataManager.register(new JSONModelsMetadata(workspace), updateContainer);
+			metadataManager.register(new PythonTransformationMetadata(workspace), updateContainer);
+			metadataManager.register(new GraphVizMetadata(workspace), updateContainer);
+			metadataManager.register(new ModelLearnerMetadata(workspace), updateContainer);
+			metadataManager.register(new R2RMLMetadata(workspace), updateContainer);
+			metadataManager.register(new R2RMLPublishedMetadata(workspace), updateContainer);
+			metadataManager.register(new RDFMetadata(workspace), updateContainer);
+			metadataManager.register(new CSVMetadata(workspace), updateContainer);
+			metadataManager.register(new JSONMetadata(workspace), updateContainer);
+			metadataManager.register(new ReportMetadata(workspace), updateContainer);
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}
@@ -129,18 +130,16 @@ public class KarmaServlet extends HttpServlet {
 		workspace.getTagsContainer().addTag(outlierTag);
 
 		// Put all created worksheet models in the view.
-
-		UpdateContainer c = new UpdateContainer();
-		c.add(new WorksheetListUpdate());
+		updateContainer.add(new WorksheetListUpdate());
 		
 		for (Worksheet w : vwsp.getWorkspace().getWorksheets()) {
-			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(w.getId())); 
+			updateContainer.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(w.getId())); 
 		}
 
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
-		c.applyUpdates(vwsp);
-		c.generateJson("", pw, vwsp);
+		updateContainer.applyUpdates(vwsp);
+		updateContainer.generateJson("", pw, vwsp);
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.getWriter().println(sw.toString());

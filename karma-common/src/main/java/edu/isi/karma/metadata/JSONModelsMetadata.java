@@ -1,5 +1,6 @@
 package edu.isi.karma.metadata;
 
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
@@ -14,7 +15,7 @@ public class JSONModelsMetadata extends KarmaUserMetadata {
 	}
 	
 	@Override
-	public void setup() {
+	public void setup(UpdateContainer uc) {
 	
 	}
 

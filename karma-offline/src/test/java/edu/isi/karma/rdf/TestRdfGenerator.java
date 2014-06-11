@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
@@ -28,9 +29,10 @@ public abstract class TestRdfGenerator {
 	public static void setUpBeforeClass() throws Exception {
 
         KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
-        userMetadataManager.register(new UserPreferencesMetadata());
-        userMetadataManager.register(new UserConfigMetadata());
-        userMetadataManager.register(new PythonTransformationMetadata());
+        UpdateContainer uc = new UpdateContainer();
+        userMetadataManager.register(new UserPreferencesMetadata(), uc);
+        userMetadataManager.register(new UserConfigMetadata(), uc);
+        userMetadataManager.register(new PythonTransformationMetadata(), uc);
 	}
 
 

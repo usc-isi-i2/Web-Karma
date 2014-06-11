@@ -26,16 +26,19 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ImportPropertiesUpdate;
+import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.view.VWorkspace;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.File;
 import java.io.PrintWriter;
 
@@ -83,18 +86,24 @@ public class ImportOntologyCommand extends ImportFileCommand implements IPreview
 
 
         logger.debug("Loading ontology: " + getFile().getAbsolutePath());
-        final boolean success = ontManager.doImportAndUpdateCache(getFile(), encoding);
-        logger.debug("Done loading ontology: " + getFile().getAbsolutePath());
-        return new UpdateContainer(new AbstractUpdate() {
-            @Override
-            public void generateJson(String prefix, PrintWriter pw,
-                    VWorkspace vWorkspace) {
-                pw.println("{");
-                pw.println("	\"" + GenericJsonKeys.updateType.name() + "\": \"" + ImportOntologyCommand.class.getSimpleName() + "\",");
-                pw.println("	\"" + JsonKeys.Import.name() + "\":" + success);
-                pw.println("}");
-            }
-        });
+        try {
+	        final boolean success = ontManager.doImportAndUpdateCache(getFile(), encoding);
+	        logger.debug("Done loading ontology: " + getFile().getAbsolutePath());
+	        return new UpdateContainer(new AbstractUpdate() {
+	            @Override
+	            public void generateJson(String prefix, PrintWriter pw,
+	                    VWorkspace vWorkspace) {
+	                pw.println("{");
+	                pw.println("	\"" + GenericJsonKeys.updateType.name() + "\": \"" + ImportOntologyCommand.class.getSimpleName() + "\",");
+	                pw.println("	\"" + JsonKeys.Import.name() + "\":" + success);
+	                pw.println("}");
+	            }
+	        });
+        } catch(Exception e) {
+        	UpdateContainer uc = new UpdateContainer();
+        	uc.add(new TrivialErrorUpdate("Error importing Ontology " + getFile().getName()));
+        	return uc;
+        }
     }
     
     @Override

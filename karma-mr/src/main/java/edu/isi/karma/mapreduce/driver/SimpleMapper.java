@@ -11,6 +11,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
@@ -36,9 +37,10 @@ public class SimpleMapper extends Mapper<Text, Text, Text, Text>{
 			
 	        KarmaMetadataManager userMetadataManager;
 			userMetadataManager = new KarmaMetadataManager();
-	        userMetadataManager.register(new UserPreferencesMetadata());
-	        userMetadataManager.register(new UserConfigMetadata());
-	        userMetadataManager.register(new PythonTransformationMetadata());
+			UpdateContainer uc = new UpdateContainer();
+	        userMetadataManager.register(new UserPreferencesMetadata(), uc);
+	        userMetadataManager.register(new UserConfigMetadata(), uc);
+	        userMetadataManager.register(new PythonTransformationMetadata(), uc);
 	        
 	        String modelUri = context.getConfiguration().get("model.uri");
 	        generator = new ContentDetectingRDFGenerator();

@@ -6,6 +6,8 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.update.TrivialErrorUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
@@ -21,7 +23,7 @@ public class CRFModelMetadata extends KarmaUserMetadata {
 	}
 	
 	@Override
-	public void setup() throws KarmaException {
+	public void setup(UpdateContainer uc) {
 		File crfModelFile = null;
 		crfModelFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.CRF_MODEL_DIRECTORY) + 
 				workspace.getId()+"_CRFModel.txt");
@@ -31,7 +33,8 @@ public class CRFModelMetadata extends KarmaUserMetadata {
 			try {
 				crfModelFile.createNewFile();
 			} catch (IOException e) {
-				throw new KarmaException("Unable to create CRF Model file at " + crfModelFile.getAbsolutePath());
+				uc.add(new TrivialErrorUpdate("Unable to create CRF Model file at " + crfModelFile.getAbsolutePath()));
+				return;
 			}
 		}
 		boolean result = workspace.getCrfModelHandler().readModelFromFile(crfModelFile.getAbsolutePath());

@@ -115,12 +115,13 @@ public class GenerateClusterValuesCommand extends Command {
 			if(worksheet.getJsonAnnotation() != null )
 			{
 				JSONObject jsonAnnotationCluster = new JSONObject (worksheet.getJsonAnnotation().toString());
-				
-				DeleteWorksheetCommand deleteWorkseet = new DeleteWorksheetCommand(id, jsonAnnotationCluster.get("ClusterId").toString() );
-				deleteWorkseet.doIt(workspace);
+				String clusterWorksheetId = jsonAnnotationCluster.get("ClusterId").toString();
+				if(workspace.getWorksheet(clusterWorksheetId) != null) {
+					DeleteWorksheetCommand deleteWorkseet = new DeleteWorksheetCommand(id, clusterWorksheetId );
+					deleteWorkseet.doIt(workspace);
+					c.add(new WorksheetDeleteUpdate(clusterWorksheetId));
+				}
 				jsonAnnotationCluster.remove("cluster");
-				c.add(new WorksheetDeleteUpdate(jsonAnnotationCluster.get("ClusterId").toString()));
-				
 			}
 			
 			JSONObject ClusterAnnotation = new JSONObject();

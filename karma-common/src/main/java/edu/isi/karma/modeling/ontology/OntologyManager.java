@@ -21,6 +21,7 @@
 package edu.isi.karma.modeling.ontology;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,7 +91,7 @@ public class OntologyManager  {
 			o.ontologyModelUpdated();
 	}
 	
-	public boolean doImportAndUpdateCache(File sourceFile, String encoding) {
+	public boolean doImportAndUpdateCache(File sourceFile, String encoding) throws IOException {
 
 		if (sourceFile == null) {
 			logger.debug("input file is null.");
@@ -104,18 +105,15 @@ public class OntologyManager  {
 			return false;
 		}
 		
-		try {
-			InputStreamReader s = EncodingDetector.getInputStreamReader(sourceFile, encoding);
-			if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("N3"))
-				ontHandler.getOntModel().read(s, null, "N3");
-			else if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("TTL"))
-				ontHandler.getOntModel().read(s, null, "TURTLE");
-			else
-				ontHandler.getOntModel().read(s, null); // default lang = "RDF/XML"
-		} catch (Throwable t) {
-			logger.error("Error reading the OWL ontology file!", t);
-			return false;
-		}
+		
+		InputStreamReader s = EncodingDetector.getInputStreamReader(sourceFile, encoding);
+		if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("N3"))
+			ontHandler.getOntModel().read(s, null, "N3");
+		else if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("TTL"))
+			ontHandler.getOntModel().read(s, null, "TURTLE");
+		else
+			ontHandler.getOntModel().read(s, null); // default lang = "RDF/XML"
+		
 		
 		// update the cache
 		ontCache = new OntologyCache(ontHandler);
@@ -128,7 +126,7 @@ public class OntologyManager  {
 		return true;
 	}
 	
-	public boolean doImport(File sourceFile, String encoding) {
+	public boolean doImport(File sourceFile, String encoding) throws IOException {
 
 		if (sourceFile == null) {
 			logger.debug("input file is null.");
@@ -142,18 +140,15 @@ public class OntologyManager  {
 			return false;
 		}
 		
-		try {
-			InputStreamReader s = EncodingDetector.getInputStreamReader(sourceFile, encoding);
-			if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("N3"))
-				ontHandler.getOntModel().read(s, null, "N3");
-			else if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("TTL"))
-				ontHandler.getOntModel().read(s, null, "TURTLE");
-			else
-				ontHandler.getOntModel().read(s, null); // default lang = "RDF/XML"
-		} catch (Throwable t) {
-			logger.error("Error reading the OWL ontology file!", t);
-			return false;
-		}
+		
+		InputStreamReader s = EncodingDetector.getInputStreamReader(sourceFile, encoding);
+		if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("N3"))
+			ontHandler.getOntModel().read(s, null, "N3");
+		else if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("TTL"))
+			ontHandler.getOntModel().read(s, null, "TURTLE");
+		else
+			ontHandler.getOntModel().read(s, null); // default lang = "RDF/XML"
+		
 		
 		// notify listeners
 		this.notifyListeners();

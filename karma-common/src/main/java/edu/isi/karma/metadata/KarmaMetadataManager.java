@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -33,9 +34,9 @@ public class KarmaMetadataManager {
 			}
 		}
 	}
-	public void register(KarmaMetadata metadata) throws KarmaException
+	public void register(KarmaMetadata metadata, UpdateContainer uc) throws KarmaException
 	{
-		metadata.setup();
+		metadata.setup(uc);
 		metadataTypes.put(metadata.getType(), metadata);
 	}
 	

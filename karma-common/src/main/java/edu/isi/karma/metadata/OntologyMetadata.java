@@ -5,6 +5,8 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.update.TrivialErrorUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Workspace;
@@ -21,8 +23,9 @@ public class OntologyMetadata extends KarmaUserMetadata {
 	{
 		super(workspace);
 	}
+	
 	@Override
-	public void setup() throws KarmaException{
+	public void setup(UpdateContainer uc) {
 		logger.info("Start OntologyMetadata.setup");
 		OntologyManager ontologyManager = workspace.getOntologyManager();
 		/** Check if any ontology needs to be preloaded **/
@@ -32,6 +35,9 @@ public class OntologyMetadata extends KarmaUserMetadata {
 		if (ontDir.exists()) {
 			File[] ontologies = ontDir.listFiles();
 			for (File ontology: ontologies) {
+				if(ontology.getName().startsWith(".")) {
+					continue; //Ignore . files
+				}
 				if (ontology.getName().endsWith(".owl") || 
 						ontology.getName().endsWith(".rdf") || 
 						ontology.getName().endsWith(".n3") || 
@@ -43,9 +49,11 @@ public class OntologyMetadata extends KarmaUserMetadata {
 						ontologyManager.doImport(ontology, encoding);
 					} catch (Exception t) {
 						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
+						uc.add(new TrivialErrorUpdate("Error loading ontology: " + ontology.getAbsolutePath()));
 					}
 				} else {
 					logger.error ("the file: " + ontology.getAbsolutePath() + " does not have proper format: xml/rdf/n3/ttl/owl");
+					uc.add(new TrivialErrorUpdate("Error loading ontology: " + ontology.getAbsolutePath() + ". The file does not have proper format: xml/rdf/n3/ttl/owl"));
 				}
 			}
 			// update the cache at the end when all files are added to the model
@@ -55,6 +63,7 @@ public class OntologyMetadata extends KarmaUserMetadata {
 		}
 		SemanticTypeUtil.setSemanticTypeTrainingStatus(true);
 	}
+	
 	@Override
 	protected ContextParameter getDirectoryContextParameter() {
 		return ContextParameter.PRELOADED_ONTOLOGY_DIRECTORY;
