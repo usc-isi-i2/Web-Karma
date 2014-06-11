@@ -164,7 +164,10 @@ public class PublishRDFCommand extends Command {
 		final ErrorReport errorReport = new ErrorReport();
 		KR2RMLMappingGenerator mappingGen = null;
 		String url = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelUrl);
-		
+		String modelContext = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelContext);
+		TripleStoreUtil utilObj = new TripleStoreUtil();
+		String modelRepoUrl = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelRepository);
+		modelRepoUrl = modelRepoUrl == null || modelRepoUrl.isEmpty()? TripleStoreUtil.defaultModelsRepoUrl : modelRepoUrl;
 		try{
 			mappingGen = new KR2RMLMappingGenerator(workspace, worksheet,
 		
@@ -178,9 +181,14 @@ public class PublishRDFCommand extends Command {
 		}
 		
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
-		if (url != null && !url.isEmpty() && url.compareTo("") != 0) {
+		if (url != null && !url.trim().isEmpty() && modelContext != null && !modelContext.trim().isEmpty()) {
 			try {
-				Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(new URL(url));
+				File tmp = new File("tmp");
+				PrintWriter pw = new PrintWriter(tmp);
+				pw.println(utilObj.getMappingFromTripleStore(modelRepoUrl, modelContext, url));
+				pw.close();
+				Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(tmp.toURI().toURL());
+				tmp.delete();
 				R2RMLMappingIdentifier identifier = new R2RMLMappingIdentifier(mapping.getId().getName(), new URL(url));
 				WorksheetR2RMLJenaModelParser parser = new WorksheetR2RMLJenaModelParser(model, identifier);
 				mapping = parser.parse();
@@ -232,7 +240,7 @@ public class PublishRDFCommand extends Command {
 				tripleStoreUrl = TripleStoreUtil.defaultDataRepoUrl;
 			}
 			logger.info("tripleStoreURl : " + tripleStoreUrl);
-			TripleStoreUtil utilObj = new TripleStoreUtil();
+			
 			
 			boolean result = utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext, this.rdfSourceNamespace);
 			if (url != null && !url.isEmpty() && url.compareTo("") != 0 && utilObj.testURIExists(TripleStoreUtil.defaultModelsRepoUrl, "", url)) {
@@ -252,9 +260,8 @@ public class PublishRDFCommand extends Command {
 				sb.append( Uris.MODEL_HAS_DATA_URI);
 				sb.append("> \"true\" .\n");
 				String input = sb.toString();
-				String modelRepoUrl = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelRepository);
-				modelRepoUrl = modelRepoUrl == null || modelRepoUrl.isEmpty()? TripleStoreUtil.defaultModelsRepoUrl : modelRepoUrl;
-				String modelContext = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelContext);
+				
+				
 				result &= util.saveToStore(input, modelRepoUrl, modelContext, new Boolean(this.replaceContext), this.rdfSourceNamespace);
 				if (sw.toString().compareTo("") != 0)
 					result &= util.saveToStore(sw.toString(), modelRepoUrl, modelContext, new Boolean(this.replaceContext), this.rdfSourceNamespace);
