@@ -27,7 +27,6 @@ import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HashValueManager;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
@@ -84,7 +83,8 @@ public class SearchForDataToAugmentCommand extends Command{
 		TripleStoreUtil util = new TripleStoreUtil();
 		HashMap<String, List<String>> result = null;
 		nodeUri = nodeUri.trim();
-		nodeUri = "<" + nodeUri + ">";
+		StringBuilder builder = new StringBuilder();
+		nodeUri = builder.append("<").append(nodeUri).append(">").toString();
 		try {
 			result = util.getPredicatesForTriplesMapsWithSameClass(tripleStoreUrl, context, nodeUri);
 		} catch (KarmaException e) {
@@ -109,7 +109,8 @@ public class SearchForDataToAugmentCommand extends Command{
 				Node n = r.getNode(hNodeId);
 				if(n != null && n.getValue() != null && !n.getValue().isEmptyValue() && n.getValue().asString() != null && !n.getValue().asString().trim().isEmpty() ) {
 					String value = n.getValue().asString().trim();
-					value = "<" + value + ">"; //String builder
+					builder = new StringBuilder();
+					value = builder.append("<").append(value).append(">").toString(); //String builder
 					uriSet.add(value);
 					uris.add(new Key(value.getBytes()));
 				}

@@ -115,6 +115,7 @@ public class AddValuesCommand extends WorksheetCommand{
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
+		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		HTable currentTable = workspace.getFactory().getHTable(hTableId);
@@ -122,8 +123,9 @@ public class AddValuesCommand extends WorksheetCommand{
 		ndid.removeNestedTable();
 		//remove the new column
 		currentTable.removeHNode(newHNodeId, worksheet);
-
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		return c;
 	}
 
 
