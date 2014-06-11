@@ -239,7 +239,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 		UpdateContainer c =  new UpdateContainer();
 		while (!appliedCommands.isEmpty()) {
 			Command command = appliedCommands.pop();
-			c.append(command.undoIt(workspace));
+			command.undoIt(workspace);
 		}
 		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));

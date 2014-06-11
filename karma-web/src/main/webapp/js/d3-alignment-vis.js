@@ -32,7 +32,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     var w = 0;
     var levelHeight = 50;
     if($(mainWorksheetDiv).data("svgVis") != null) {
-        w = $("div#svgDiv_"+worksheetId).width();
+        //w = $("div#svgDiv_"+worksheetId).width();
         $("div#svgDiv_"+worksheetId).remove();
     }
     
