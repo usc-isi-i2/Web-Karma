@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,8 +34,6 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 
 public class AugmentDataCommand extends WorksheetCommand{
@@ -44,6 +43,8 @@ public class AugmentDataCommand extends WorksheetCommand{
 	private String otherClass;
 	private String dataRepoUrl;
 	private String hNodeId;
+	private String newhNodeId;
+	Stack<Command> appliedCommands;
 	public AugmentDataCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicate, String triplesMap, String otherClass, String hNodeId) {
 		super(id, worksheetId);
 		this.predicate = predicate;
@@ -51,6 +52,8 @@ public class AugmentDataCommand extends WorksheetCommand{
 		this.otherClass = otherClass;
 		this.dataRepoUrl = dataRepoUrl;
 		this.hNodeId = hNodeId;
+		newhNodeId = hNodeId;
+		appliedCommands = new Stack<Command>();
 		addTag(CommandTag.Transformation);
 	}
 
@@ -75,12 +78,13 @@ public class AugmentDataCommand extends WorksheetCommand{
 	@Override
 	public CommandType getCommandType() {
 		// TODO Auto-generated method stub
-		return CommandType.notUndoable;
+		return CommandType.undoable;
 	}
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		// TODO Auto-generated method stub
+		appliedCommands.clear();
 		UpdateContainer c =  new UpdateContainer();
 		alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
@@ -157,7 +161,9 @@ public class AugmentDataCommand extends WorksheetCommand{
 					AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), predicate.substring(predicate.lastIndexOf("/") + 1));
 					command.doIt(workspace);
 					isNewNode |= command.isNewNode();
-					hNodeId = command.getNewHNodeId();
+					if (command.isNewNode())
+						appliedCommands.push(command);
+					newhNodeId = command.getNewHNodeId();
 
 
 				} catch(Exception e) {
@@ -166,7 +172,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 				}
 			}
 			if (isNewNode && alignment.GetTreeRoot() != null) {
-				HNode tableHNode =workspace.getFactory().getHNode(hNodeId);
+				HNode tableHNode =workspace.getFactory().getHNode(newhNodeId);
 				String nestedHNodeId = tableHNode.getNestedTable().getHNodeIdFromColumnName("values");
 				SetSemanticTypeCommandFactory sstFactory = new SetSemanticTypeCommandFactory();
 				JSONArray semanticTypesArray = new JSONArray();
@@ -191,6 +197,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 
 				semanticTypesArray.put(semanticType);
 				Command sstCommand = sstFactory.createCommand(workspace, worksheetId, nestedHNodeId, false, semanticTypesArray, false, "");
+				appliedCommands.push(sstCommand);
 				sstCommand.doIt(workspace);
 				if(!resultClass.get(i).trim().isEmpty())
 				{
@@ -212,8 +219,10 @@ public class AugmentDataCommand extends WorksheetCommand{
 					newEdges.put(newEdge);
 					Command changeInternalNodeLinksCommand = cinlcf.createCommand(worksheetId, alignmentId, new JSONArray(), newEdges, workspace);
 					changeInternalNodeLinksCommand.doIt(workspace);
+					appliedCommands.push(changeInternalNodeLinksCommand);
 					Command setMetaDataCommand = smpcf.createCommand(workspace, nestedHNodeId, worksheetId, "isUriOfClass", targetId, "");
 					setMetaDataCommand.doIt(workspace);
+					appliedCommands.push(setMetaDataCommand);
 				}
 			}
 
@@ -227,8 +236,14 @@ public class AugmentDataCommand extends WorksheetCommand{
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		// TODO Auto-generated method stub
-		return null;
+		UpdateContainer c =  new UpdateContainer();
+		while (!appliedCommands.isEmpty()) {
+			Command command = appliedCommands.pop();
+			c.append(command.undoIt(workspace));
+		}
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		return c;
 	}
 
 }

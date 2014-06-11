@@ -63,10 +63,12 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
        
         var extremeLeftX = Number.MAX_VALUE;
         var extremeRightX = Number.MIN_VALUE;
+        var inside = false;
         $.each(hNodeList, function(index2, hNode){
             var hNodeTD = $("td#"+hNode);
 
-            if(hNodeTD != null) {
+            if(hNodeTD != null && $(hNodeTD).offset() != undefined) {
+                inside = true;
                 var leftX = $(hNodeTD).offset().left - tableLeftOffset;
                 var rightX = $(hNodeTD).offset().left - tableLeftOffset + $(hNodeTD).width();
                 if(leftX < extremeLeftX)
@@ -76,7 +78,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             }
         });
         
-        if(hNodeList.length != 0) {
+        if(hNodeList.length != 0 && inside) {
 	        // Add 18 to account for the padding in cells
 	        var width = extremeRightX - extremeLeftX + 18;
 	        node["width"] = width;

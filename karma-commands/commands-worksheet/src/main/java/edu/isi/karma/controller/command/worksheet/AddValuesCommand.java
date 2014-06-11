@@ -118,7 +118,7 @@ public class AddValuesCommand extends WorksheetCommand{
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		HTable currentTable = workspace.getFactory().getHTable(hTableId);
-		HNode ndid = worksheet.getHeaders().getHNode(newHNodeId);
+		HNode ndid = workspace.getFactory().getHNode(newHNodeId);
 		ndid.removeNestedTable();
 		//remove the new column
 		currentTable.removeHNode(newHNodeId, worksheet);
