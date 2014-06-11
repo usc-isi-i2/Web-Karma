@@ -28,7 +28,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	               {name:"Group By", func:GroupBy, leafOnly:false},
 	               {name:"Unfold", func:Unfold, leafOnly:false}, 
 	               {name:"Fold", func:Fold, leafOnly:false}, 
-	               {name:"Glue", func:Glue, leafOnly:false}
+	               {name:"Glue Columns", func:Glue, leafOnly:false}
 	];
 	
 	function hideDropdown() {

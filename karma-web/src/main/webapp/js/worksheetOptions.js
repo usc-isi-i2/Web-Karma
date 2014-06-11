@@ -30,7 +30,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"divider"},
 			{name:"Fold" , func:Fold},
 			{name:"GroupBy" , func:GroupBy}, 
-			{name:"Glue" , func:Glue}, 
+			{name:"Glue Columns" , func:Glue}, 
 			{name:"Delete", func:deleteWorksheet},
 	];
 	
