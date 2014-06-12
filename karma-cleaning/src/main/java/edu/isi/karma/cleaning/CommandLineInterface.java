@@ -71,9 +71,7 @@ public class CommandLineInterface {
 		//arg3 json file of the transformed result
 		String path3 = args[2];
 		CommandLineInterface cmdInterface = new CommandLineInterface();
-		System.out.println(""+String.format("%s,%s, %s", path1, path2, path3));
 		cmdInterface.Run(path1, path2, path3);
-		System.out.println("Done...");
 		System.exit(0);
 	}
 
