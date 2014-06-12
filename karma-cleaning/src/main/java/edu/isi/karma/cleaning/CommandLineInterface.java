@@ -40,19 +40,19 @@ public class CommandLineInterface {
 					datadict.put(line[0], line[1]);
 				}
 			}
-			System.out.println(""+datadict.toString());
+			//System.out.println(""+datadict.toString());
 			RamblerValueCollection rv = new RamblerValueCollection(datadict);
 			cr2.close();
-			System.out.println(""+examples.toString());
+			//System.out.println(""+examples.toString());
 			RamblerTransformationInputs ri = new RamblerTransformationInputs(examples, rv);
 			RamblerTransformationOutput ro = new RamblerTransformationOutput(ri);
 			BufferedWriter cr3 = new BufferedWriter(new FileWriter(res));
-			System.out.println("Transformation keyset: "+ro.getTransformations().keySet());
+			//System.out.println("Transformation keyset: "+ro.getTransformations().keySet());
 			for (String ruleid : ro.getTransformations().keySet()) {
 				System.out.println(""+ruleid);
 				ValueCollection vCollection = ro.getTransformedValues(ruleid);
 				String r = vCollection.getJson().toString();
-				System.out.println("The result: "+r);
+				//System.out.println("The result: "+r);
 				cr3.write(r);
 			}
 			cr3.flush();

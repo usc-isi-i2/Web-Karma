@@ -21,11 +21,10 @@ public class Interpretor {
 									.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY);
 		
 									;
-		if(dirpathString == null || dirpathString.toString().length() == 0) {
-			dirpathString = "resources/" + ServletContextParameterMap
-					.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY) ;
+		if(dirpathString == null || dirpathString.toString().length() <= 1) {
+			dirpathString = "../karma-web/src/main/webapp/resources/pythonCleaningscripts";
 		} 
-		
+		System.out.println("Working Directory = " +System.getProperty("user.dir"));
 		logger.info("Setting Python Scripts Directory for karma-cleaning: " + dirpathString);
 		
 		interpreter.exec("import sys");
