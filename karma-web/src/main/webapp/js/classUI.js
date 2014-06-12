@@ -13,32 +13,32 @@ function ClassUI(id,
 	
 	function populateClassList(dataArray, list1, list2) {
 		console.log("PopulateClassList:" + dataArray.length);
+		console.log(dataArray);
+		
 		var selectOnLoad = false;
 		if(dataArray.length == 0) {
 	        $(list1).html("<i>none</i>");
 	    } else {
 	        $(list1).jstree({
-	            "json_data" : {
-	                "data" : dataArray
-	            },
-	            "themes" : {
-	                "theme" : "proton",
-	                "url": "uiLibs/jquery/css/jstree-themes/proton/style.css",
-	                "dots" : false,
-	                "icons" : false
+	            "core" : {
+	                "data" : dataArray,
+	                "multiple" : false,
+	                "animation" : 0
 	            },
 	            "search" : {
-	                "show_only_matches": true
+	                "show_only_matches": true,
+	                "fuzzy" : false
 	            },
-	            "plugins" : [ "themes", "json_data", "ui", "search"]
+	            "plugins" : [ "search", "wholerow"]
 	        })
 	        	.bind("select_node.jstree", function (e, data) {
-	                classData.label = data.rslt.obj.data("label");
-	                classData.uri = data.rslt.obj.data("uri");
-	                classData.id = data.rslt.obj.data("id");
-	                var a = $.jstree._focused().get_selected();
+	        		var selectedNodeData = data.node.original;
+	                classData.label = selectedNodeData.text;
+	                classData.uri = selectedNodeData.metadata.uri;
+	                classData.id = selectedNodeData.metadata.id;
+	                //var a = $.jstree._focused().get_selected();
 	                $(list2).jstree("deselect_all");
-	                $(list1).jstree("open_node", a);
+	                $(list1).jstree("open_node", data.node);
 	                
 	                $("#" + id + "_classKeyword").val(classData.label);
 	                
@@ -68,6 +68,15 @@ function ClassUI(id,
 	            })
 	            ;
 	    }
+		
+//		$(list1).jstree({ 'core' : {
+//		    'data' : [
+//		       { "id" : "ajson1", "parent" : "#", "text" : "Simple root node" },
+//		       { "id" : "ajson2", "parent" : "#", "text" : "Root node 2" },
+//		       { "id" : "ajson3", "parent" : "ajson2", "text" : "Child 1" },
+//		       { "id" : "ajson4", "parent" : "ajson2", "text" : "Child 2" },
+//		    ]
+//		} });
 	}
 	
 	this.setClassLabel = function(label) {
@@ -185,8 +194,8 @@ function ClassUI(id,
 //Static declarations
 ClassUI.getNodeObject = function(label, cId, uri) {
 	var treeId = ClassUI.getNodeID(label, cId, uri);
-	//var nodeData = {data:{title:label, "id":treeId}, metadata:{"uri": uri, "id" : id}, attributes:{"id":treeId}};
-	var nodeData = { attr: { id : treeId }, data: label, metadata:{"uri": uri, id : cId, "label":label} } ;
+	var nodeData = { "id" : treeId, "parent" : "#", "text" : label, metadata:{"uri": uri, id : cId, "label":label} };
+	//var nodeData = { attr: { id : treeId }, data: label, metadata:{"uri": uri, id : cId, "label":label} } ;
 	return nodeData;
 };
 

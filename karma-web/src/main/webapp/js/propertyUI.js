@@ -12,33 +12,31 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 	
 	function populatePropertyList(dataArray, list1, list2) {
 		var selectOnLoad = false;
+		console.log("PopulatePropertyList:" + dataArray.length);
 		
 		if(dataArray.length == 0) {
 	        $(list1).html("<i>none</i>");
 	    } else {
 	        $(list1).jstree({
-	            "json_data" : {
-	                "data" : dataArray
-	            },
-	            "themes" : {
-	                "theme" : "proton",
-	                "url": "uiLibs/jquery/css/jstree-themes/proton/style.css",
-	                "dots" : false,
-	                "icons" : false
+	        	"core" : {
+	                "data" : dataArray,
+	                "multiple" : false,
+	                "animation" : 0
 	            },
 	            "search" : {
-	                "show_only_matches": true
+	                "show_only_matches": true,
+	                "fuzzy": false
 	            },
-	            "plugins" : [ "themes", "json_data", "ui", "search"]
+	            "plugins" : [ "search", "wholerow"]
 	        })
 	        	.bind("select_node.jstree", function (e, data) {
-	        		propertyData.label = data.rslt.obj.data("label");
-	        		console.log("jstree:select_node.jstree:" + propertyData.label + ":" + selectOnLoad + ":" + (propertySelectorCallback != null));
-	        		propertyData.uri = data.rslt.obj.data("uri");
-	        		propertyData.id = data.rslt.obj.data("id");
-	                var a = $.jstree._focused().get_selected();
+	        		var selectedNodeData = data.node.original;
+	        		propertyData.label =selectedNodeData.text;
+	        		propertyData.uri = selectedNodeData.metadata.uri;
+	        		propertyData.id = selectedNodeData.metadata.id;
+	               
 	                $(list2).jstree("deselect_all");
-	                $(list1).jstree("open_node", a);
+	                $(list1).jstree("open_node",data.node);
 	                
 	                $("#" + id + "_propertyKeyword").val(propertyData.label);
 	                if(!selectOnLoad && propertySelectorCallback != null) {
@@ -184,8 +182,9 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 //Static declarations
 PropertyUI.getNodeObject = function(label, cId, uri) {
 	var treeId = PropertyUI.getNodeID(label, cId, uri);
-	//var nodeData = {data:{title:label, "id":treeId}, metadata:{"uri": uri, "id" : id}, attributes:{"id":treeId}};
-	var nodeData = { attr: { id : treeId }, data: label, metadata:{"uri": uri, id : cId, "label":label} } ;
+	
+	var nodeData = { "id" : treeId, "parent" : "#", "text" : label, metadata:{"uri": uri, id : cId, "label":label} };
+//	var nodeData = { attr: { id : treeId }, data: label, metadata:{"uri": uri, id : cId, "label":label} } ;
 	return nodeData;
 };
 

@@ -48,6 +48,7 @@ and related projects, please see: http://www.isi.edu/integration
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/nestable.css" />
         <link rel="stylesheet" type="text/css" href="./uiLibs/sticky/css/sticky.min.css" />
         <link rel="stylesheet/less" type="text/css" href="./uiLibs/less/css/styles-03d-fixed-pixel.less" />
+        <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jstree-themes/default/style.css" />
         
         <link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/command_History.css?<jsp:include page='version.jsp' />" />
@@ -111,6 +112,7 @@ and related projects, please see: http://www.isi.edu/integration
 			.editable-empty, .editable-empty:hover, .editable-empty:focus {
 				color: #cccccc;
 			}
+			
 		</style>
 	
 	</head>
