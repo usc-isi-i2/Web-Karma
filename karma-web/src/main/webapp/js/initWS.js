@@ -8,6 +8,7 @@ if($.cookie("workspacePreferencesId") != null) {
     bootupURL += "&hasPreferenceId=" + false;
 }
 
+$("div#WaitingDiv").show();
 window.setTimeout(function() {
 	$.ajax({
 		  dataType: "json",
@@ -25,6 +26,7 @@ window.setTimeout(function() {
 	              });
 	        
 	          parse(data);
+	          $("div#WaitingDiv").hide();
 	          console.log("done bootup");
 	      },
 	    error: function() {
