@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -561,23 +562,27 @@ public class TripleStoreUtil {
 		return values;
 	}
 
-	public List<String> getBloomFiltersForTriplesMaps(String tripleStoreURL, String context, List<String> tripleMaps) throws KarmaException
+	public Map<String, String> getBloomFiltersForTriplesMaps(String tripleStoreURL, String context, Collection<String> tripleMaps) throws KarmaException
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
 		
-		List<String> bloomfilters = new LinkedList<String>();
+		Map<String, String> bloomfilters = new HashMap<String, String>();
 		try {
 
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			query.append("SELECT ?bf \n");			
+			query.append("SELECT ?bf ?s \n");			
 			injectContext(context, query);
 			query.append("WHERE \n{\n");
 			Iterator<String> iterator = tripleMaps.iterator();
 			while(iterator.hasNext()) {
-				query.append("{\n<");
+				query.append("{");
+				query.append("\n ?s <");
+				query.append(Uris.KM_HAS_BLOOMFILTER);
+				query.append("> ?bf . ");
+				query.append("\n<");
 				query.append(iterator.next());
 				query.append("> <");
 				query.append(Uris.KM_HAS_BLOOMFILTER);
@@ -606,7 +611,7 @@ public class TripleStoreUtil {
 				int count = 0;
 				while (count < values.length()) {
 					JSONObject o = values.getJSONObject(count++);
-					bloomfilters.add(o.getJSONObject("bf").getString("value"));
+					bloomfilters.put(o.getJSONObject("s").getString("value"), o.getJSONObject("bf").getString("value"));
 				}
 			}
 		} catch (Exception e) {

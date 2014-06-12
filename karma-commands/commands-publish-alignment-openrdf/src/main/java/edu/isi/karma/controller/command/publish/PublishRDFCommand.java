@@ -21,18 +21,29 @@
 package edu.isi.karma.controller.command.publish;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
+import org.apache.commons.codec.binary.Base64;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -52,8 +63,9 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
-import edu.isi.karma.kr2rml.BloomFilterKR2RMLWriter;
+import edu.isi.karma.kr2rml.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
 import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
@@ -137,13 +149,13 @@ public class PublishRDFCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		
+
 		//save the preferences 
 		savePreferences(workspace);
 
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		this.worksheetName = worksheet.getTitle();
-		
+
 		// Prepare the file path and names
 		final String rdfFileName = workspace.getCommandPreferencesId() + worksheetId + ".ttl"; 
 		final String rdfFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.RDF_PUBLISH_DIR) +  
@@ -152,13 +164,13 @@ public class PublishRDFCommand extends Command {
 		// Get the alignment for this worksheet
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId));
-		
+
 		if (alignment == null) {
 			logger.info("Alignment is NULL for " + worksheetId);
 			return new UpdateContainer(new ErrorUpdate(
 					"Please align the worksheet before generating RDF!"));
 		}
-		
+
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
 		KR2RMLMappingGenerator mappingGen = null;
@@ -167,18 +179,19 @@ public class PublishRDFCommand extends Command {
 		TripleStoreUtil utilObj = new TripleStoreUtil();
 		String modelRepoUrl = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelRepository);
 		modelRepoUrl = modelRepoUrl == null || modelRepoUrl.isEmpty()? TripleStoreUtil.defaultModelsRepoUrl : modelRepoUrl;
+		Map<String, String> bloomfilterMapping = new HashMap<String, String>();
 		try{
 			mappingGen = new KR2RMLMappingGenerator(workspace, worksheet,
-		
-				alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
-				Boolean.valueOf(addInverseProperties), errorReport);
+
+					alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
+					Boolean.valueOf(addInverseProperties), errorReport);
 		}
 		catch (KarmaException e)
 		{
 			logger.error("Error occured while generating RDF!", e);
 			return new UpdateContainer(new ErrorUpdate("Error occured while generating RDF: " + e.getMessage()));
 		}
-		
+
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
 		if (url != null && !url.trim().isEmpty() && modelContext != null && !modelContext.trim().isEmpty()) {
 			try {
@@ -196,7 +209,7 @@ public class PublishRDFCommand extends Command {
 			}
 		}
 		logger.debug(mapping.toString());
-		
+
 		StringWriter sw = new StringWriter();
 		// Generate the RDF using KR2RML data structures
 		try {
@@ -207,11 +220,11 @@ public class PublishRDFCommand extends Command {
 			BufferedWriter bw = new BufferedWriter(
 					new OutputStreamWriter(new FileOutputStream(f),"UTF-8"));
 			writers.add(new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), new PrintWriter (bw)));
-			writers.add(new BloomFilterKR2RMLWriter(new PrintWriter(sw), mapping.getId()));
+			writers.add(new BloomFilterKR2RMLRDFWriter(new PrintWriter(sw), mapping.getId()));
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
-				workspace.getFactory(), workspace.getOntologyManager(),
-				writers, false, mapping, errorReport);
-		
+					workspace.getFactory(), workspace.getOntologyManager(),
+					writers, false, mapping, errorReport);
+
 			rdfGen.generateRDF(true);
 			logger.info("RDF written to file: " + rdfFileLocalPath);
 			if(saveToStore){
@@ -219,28 +232,55 @@ public class PublishRDFCommand extends Command {
 				logger.info("Using Jena DB:" + hostName + "/"+dbName + " user="+userName);
 				saveToStore(rdfFileLocalPath);
 			}
+			JSONObject obj = new JSONObject(sw.toString());
+			Set<String> triplemaps = new HashSet<String>(Arrays.asList(obj.getString("triplesMapsIds").split(",")));
+			bloomfilterMapping.putAll(utilObj.getBloomFiltersForTriplesMaps(modelRepoUrl, modelContext, triplemaps));
+			for (String tripleUri : triplemaps) {
+				String value = obj.getString(tripleUri);
+				byte[] serializedBloomFilter = Base64.decodeBase64(value);
+				KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
+				bf.readFields(new ObjectInputStream(new ByteArrayInputStream(serializedBloomFilter)));
+				String oldValue = bloomfilterMapping.get(tripleUri);
+				if (oldValue != null) {
+					byte[] serializedBloomFilter2 = Base64.decodeBase64(oldValue);
+					KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
+					bf2.readFields(new ObjectInputStream(new ByteArrayInputStream(serializedBloomFilter2)));
+					bf.or(bf2);
+				}
+				ByteArrayOutputStream baos = new ByteArrayOutputStream(bf.getVectorSize() + 1000);
+				ObjectOutputStream dout;
+				try {
+					dout = new ObjectOutputStream(baos);
+					bf.write(dout);
+					dout.flush();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}		
+				bloomfilterMapping.put(tripleUri, Base64.encodeBase64String(baos.toByteArray()));
+			}
 		} catch (Exception e1) {
 			logger.error("Error occured while generating RDF!", e1);
 			return new UpdateContainer(new ErrorUpdate("Error occured while generating RDF: " + e1.getMessage()));
 		}
+		String rdf = toRDF(bloomfilterMapping);
 		try {
-			
+
 			// Get the graph name from properties if empty graph uri 
-//			String graphName = worksheet.getMetadataContainer().getWorksheetProperties()
-//					.getPropertyValue(Property.graphName);
-//			if (this.graphUri == null || this.graphUri.isEmpty()) {
-//				// Set to default
-//				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
-//						Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
-//				this.graphUri = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
-//			}
-			
+			//			String graphName = worksheet.getMetadataContainer().getWorksheetProperties()
+			//					.getPropertyValue(Property.graphName);
+			//			if (this.graphUri == null || this.graphUri.isEmpty()) {
+			//				// Set to default
+			//				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+			//						Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
+			//				this.graphUri = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
+			//			}
+
 			if (tripleStoreUrl == null || tripleStoreUrl.isEmpty()) {
 				tripleStoreUrl = TripleStoreUtil.defaultDataRepoUrl;
 			}
 			logger.info("tripleStoreURl : " + tripleStoreUrl);
-			
-			
+
+
 			boolean result = utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext, this.rdfSourceNamespace);
 			if (url != null && !url.isEmpty() && url.compareTo("") != 0 && utilObj.testURIExists(TripleStoreUtil.defaultModelsRepoUrl, "", url)) {
 				TripleStoreUtil util = new TripleStoreUtil();
@@ -259,11 +299,11 @@ public class PublishRDFCommand extends Command {
 				sb.append( Uris.MODEL_HAS_DATA_URI);
 				sb.append("> \"true\" .\n");
 				String input = sb.toString();
-				
-				
-				result &= util.saveToStore(input, modelRepoUrl, modelContext, new Boolean(this.replaceContext), this.rdfSourceNamespace);
-				if (sw.toString().compareTo("") != 0)
-					result &= util.saveToStore(sw.toString(), modelRepoUrl, modelContext, new Boolean(this.replaceContext), this.rdfSourceNamespace);
+
+
+				result &= util.saveToStore(input, modelRepoUrl, modelContext, new Boolean(false), this.rdfSourceNamespace);
+				if (rdf.trim().compareTo("") != 0)
+					result &= util.saveToStore(rdf, modelRepoUrl, modelContext, new Boolean(false), this.rdfSourceNamespace);
 
 			}
 			if(result) {
@@ -277,7 +317,7 @@ public class PublishRDFCommand extends Command {
 			e.printStackTrace();
 			return new UpdateContainer(new ErrorUpdate("Error occured while generating RDF: " + e.getMessage()));
 		}
-		
+
 		try {
 			return new UpdateContainer(new AbstractUpdate() {
 				public void generateJson(String prefix, PrintWriter pw,
@@ -314,14 +354,14 @@ public class PublishRDFCommand extends Command {
 			prefObject.put(PublishRDFCommandPreferencesKeys.rdfSparqlEndPoint.name(), tripleStoreUrl);
 			workspace.getCommandPreferences().setCommandPreferences(
 					"PublishRDFCommandPreferences", prefObject);
-			
+
 			/*
 			logger.debug("I Saved .....");
 			ViewPreferences prefs = vWorkspace.getPreferences();
 			JSONObject prefObject1 = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
 			logger.debug("I Saved ....."+prefObject1);
 			 */
-			
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -332,18 +372,36 @@ public class PublishRDFCommand extends Command {
 		String M_DBDRIVER_CLASS = "com.mysql.jdbc.Driver";
 		// load the the driver class
 		Class.forName(M_DBDRIVER_CLASS);
-		
+
 		String dbUrl = "jdbc:mysql://" + hostName + "/" + dbName;
 		// create a database connection
 		IDBConnection conn = new DBConnection(dbUrl, userName, password, "MySQL");
-		
+
 		// create a model maker with the given connection parameters
 		ModelMaker maker = ModelFactory.createModelRDBMaker(conn);
-		
+
 		ModelRDB model = (ModelRDB) maker.openModel(modelName);
 		InputStream file = new FileInputStream(rdfFileName);
 		model.read(file,null,"N3");
 		file.close();
+	}
+	
+	private String toRDF(Map<String, String> bloomfilters)
+	{
+		StringBuilder builder = new StringBuilder();
+		for(Entry<String, String> entry : bloomfilters.entrySet())
+		{
+			String bf = entry.getValue();
+			String key = entry.getKey();
+			builder.append("<");
+			builder.append(key);
+			builder.append("> <");
+			builder.append(Uris.KM_HAS_BLOOMFILTER);
+			builder.append("> \"");
+			builder.append(bf);
+			builder.append("\" . \n");
+		}
+		return builder.toString();
 	}
 
 	@Override

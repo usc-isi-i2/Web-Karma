@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
@@ -42,6 +43,7 @@ public class SearchForDataToAugmentCommand extends Command{
 	private String nodeUri;
 	private String worksheetId;
 	private String columnUri;
+	private final Integer limit = 100;
 	public SearchForDataToAugmentCommand(String id, String url, String context, String nodeUri, String worksheetId, String columnUri) {
 		super(id);
 		this.tripleStoreUrl = url;
@@ -116,17 +118,31 @@ public class SearchForDataToAugmentCommand extends Command{
 				}
 			}
 		}
+		Set<String> maps = new HashSet<String>();
+		Map<String, String> bloomfilterMapping = new HashMap<String, String>();
+		try{
+			for (String tripleMap : triplesMaps) {
+				List<String> triplemaps = new ArrayList<String>(Arrays.asList(tripleMap.split(",")));
+				maps.addAll(triplemaps);
+				if (maps.size() > limit) {
+					bloomfilterMapping.putAll(util.getBloomFiltersForTriplesMaps(tripleStoreUrl, context, maps));
+					maps = new HashSet<String>();
+				}
+			}
+			if (maps.size() > 0)
+				bloomfilterMapping.putAll(util.getBloomFiltersForTriplesMaps(tripleStoreUrl, context, maps));
+		} catch (KarmaException e1) {
+			e1.printStackTrace();
+		}
 		while(triplesMapsItr.hasNext() && predicateItr.hasNext() && otherClassItr.hasNext())
 		{
 			JSONObject obj = new JSONObject();
 			String tripleMap = triplesMapsItr.next();
 			List<String> triplemaps = new ArrayList<String>(Arrays.asList(tripleMap.split(",")));
-			
-			List<String> values = null;
 			try {
-				values = util.getBloomFiltersForTriplesMaps(tripleStoreUrl, context, triplemaps);
 				KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(1000000,8,Hash.JENKINS_HASH);
-				for (String value : values) {
+				for (String triplemap : triplemaps) {
+					String value = bloomfilterMapping.get(triplemap);
 					byte[] serializedBloomFilter = Base64.decodeBase64(value);
 					KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
 					bf.readFields(new ObjectInputStream(new ByteArrayInputStream(serializedBloomFilter)));
@@ -144,7 +160,7 @@ public class SearchForDataToAugmentCommand extends Command{
 			}
 		}
 		return new UpdateContainer(new AbstractUpdate() {
-			
+
 			@Override
 			public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
 				pw.print(array.toString());

@@ -14,7 +14,6 @@ import org.apache.hadoop.util.hash.Hash;
 import org.json.JSONObject;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Uris;
 
 public class TriplesMapBloomFilterManager {
