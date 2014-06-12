@@ -108,6 +108,8 @@ public class GetClassesCommand extends Command {
 						if (nodeLabel.getUri() !=null && nodeLabel.getNs() != null 
 								&& nodeLabel.getUri().equalsIgnoreCase(nodeLabel.getNs())) {
 							nodeLabelStr = node.getId();
+						} else if(nodeLabel.getPrefix() == null && nodeLabel.getUri() != null) {
+							nodeLabelStr = nodeLabel.getUri() + "/" + nodeLabelStr;
 						}
 						nodeObj.put(JsonKeys.nodeLabel.name(), nodeLabelStr);
 						nodeObj.put(JsonKeys.nodeId.name(), node.getId());

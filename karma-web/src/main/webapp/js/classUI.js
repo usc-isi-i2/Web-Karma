@@ -128,11 +128,17 @@ function ClassUI(id,
 		row2.append(classListDiv);
 		classDiv.append(row2);
 		
+		var searchTimer = null;
 		$(document).on('keyup', "#" + id + "_classKeyword",function(event){
-			 var keyword = $("#" + id + "_classKeyword").val();
-			 //console.log("Class keyup: " + keyword);
-			 $("div#" + id + "_classList1").jstree("search", keyword);
-			 $("div#" + id + "_classList2").jstree("search", keyword);
+			if(searchTimer != null)
+				window.clearTimeout(searchTimer);
+			var searchTimer = window.setTimeout(function() {
+				var keyword = $("#" + id + "_classKeyword").val();
+				 //console.log("Class keyup: " + keyword);
+				 $("div#" + id + "_classList1").jstree("search", keyword);
+				 $("div#" + id + "_classList2").jstree("search", keyword);
+			}, 1000); //Wait 1 secs before searching
+			 
 			 
 		});
 		

@@ -119,11 +119,16 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 		row2.append(propertyListDiv);
 		propertyDiv.append(row2);
 		
+		var searchTimer = null;
 		$(document).on('keyup',  "#" + id + "_propertyKeyword", function(event) {
-			var keyword = $("#" + id + "_propertyKeyword").val();
-			 //console.log("Property keyup: " + keyword);
-			 $("div#" + id + "_propertyList1").jstree("search", keyword);
-			 $("div#" + id + "_propertyList2").jstree("search", keyword);
+			if(searchTimer != null)
+				window.clearTimeout(searchTimer);
+			var searchTimer = window.setTimeout(function() {
+				var keyword = $("#" + id + "_propertyKeyword").val();
+				 //console.log("Property keyup: " + keyword);
+				 $("div#" + id + "_propertyList1").jstree("search", keyword);
+				 $("div#" + id + "_propertyList2").jstree("search", keyword);
+			}, 1000); //Wait 1 secs before searching
 		 });
 		
 		mainDiv.append(propertyDiv);
