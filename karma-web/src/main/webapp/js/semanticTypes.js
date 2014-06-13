@@ -1993,10 +1993,11 @@ var AddNodeDialog = (function() {
         	var result = [];
 	       	 $.each(classes, function(index, clazz){
 	       		 if(clazz.id) {
-	       			 
-	       		 } else { //Only add nodes with no ids. Those dont exist and hence can be added
-	       			 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+	       			 if(!clazz.id.match(/ \(add\)$/))
+	       				 return;
 	       		 }
+	       		result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+	       		 
 	       	 });
 	       	return result;
     	}

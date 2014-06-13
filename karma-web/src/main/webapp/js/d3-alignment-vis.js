@@ -86,7 +86,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	        if(node["nodeType"] == "FakeRoot")
 	            node["y"] += 15;
 	        node["x"] = extremeLeftX + width/2;
-        }
+        } 
     });
     
     
@@ -118,6 +118,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         		}
         	});
        
+        	
 	        var extremeLeftX = Number.MAX_VALUE;
 	        var extremeRightX = Number.MIN_VALUE;
 	        $.each(linkList, function(index2, hNodeIdx){
@@ -132,9 +133,15 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	            if(rightX > extremeRightX)
 	                extremeRightX = rightX;
 	        });
-	        //console.log("HNode:" + node["id"] + " has " + linkList.length + " links");
-	        //console.log("left, right: " + extremeLeftX + ":" + extremeRightX);
-	        
+		        //console.log("HNode:" + node["id"] + " has " + linkList.length + " links");
+		        //console.log("left, right: " + extremeLeftX + ":" + extremeRightX);
+	       if(extremeLeftX == Number.MAX_VALUE) {
+	    	   extremeLeftX = 10;
+	       }
+	       if(extremeRightX == Number.MIN_VALUE) {
+	    	   extremeRightX = 230;
+	       }
+		   
 	        var width = extremeRightX - extremeLeftX + 18;
 	        node["width"] = width;
 	        node["y"] = h - ((node["height"] * levelHeight));
@@ -143,7 +150,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	        if(node["nodeType"] == "FakeRoot")
 	            node["y"] += 15;
 	        node["x"] = extremeLeftX + width/2;
-	        
+        	
 	        //console.log("x:" + node["x"] + ", y:" + node["y"] + ", width:" + node["width"]);
         }
     });

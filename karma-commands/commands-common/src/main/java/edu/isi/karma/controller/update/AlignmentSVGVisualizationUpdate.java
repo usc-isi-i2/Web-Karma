@@ -116,7 +116,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 				int nodesIndexcounter = 0;
 				for (Node node : nodes) {
 					/** Get info about the nodes that this node covers or sits above **/
-					int height = maxTreeHeight - nodeHeightsMap.get(node);
+					int height = nodeHeightsMap.get(node);
 					
 					/** Add the hnode ids of the columns that this vertex covers **/
 					JSONArray hNodeIdsCoveredByVertex = new JSONArray();

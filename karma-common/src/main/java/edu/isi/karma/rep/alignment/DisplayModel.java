@@ -24,6 +24,7 @@ package edu.isi.karma.rep.alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
+
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,30 @@ public class DisplayModel {
 		
 //		printLevels();
 //		printSpans();
+		
+		
+		//1. Now get the nodes that have no node spans. These are unconnected nodes.
+		List<Node> spanNodes = new ArrayList<>();
+		List<Node> noSpanNodes = new ArrayList<>();
+		int maxLevel = getMaxLevel(true);
+		
+		for(Node n : nodesSpan.keySet()) {
+			if(nodesSpan.get(n).size() == 0) {
+				noSpanNodes.add(n);
+			} else {
+				spanNodes.add(n);
+			}
+			nodesLevel.put(n, maxLevel - nodesLevel.get(n));
+		}
+		
+		maxLevel = getMaxLevel(spanNodes);
+		if(maxLevel == 0) maxLevel++;
+		for(Node n : noSpanNodes) {
+			nodesLevel.put(n, nodesLevel.get(n)+maxLevel);
+		}
+		
+		printLevels();
+		printSpans();
 		
 		logger.debug("finished leveling the model.");
 	}
@@ -268,6 +293,18 @@ public class DisplayModel {
 				if (entry.getValue().intValue() > maxLevel) 
 					maxLevel = entry.getValue().intValue();
 			}
+		}
+		
+		return maxLevel;
+	}
+	
+	private int getMaxLevel(List<Node> nodes) {
+		int maxLevel = 0;
+
+		for (Node node : nodes) {
+			int level = nodesLevel.get(node);
+			if (level > maxLevel) 
+				maxLevel = level;
 		}
 		
 		return maxLevel;
