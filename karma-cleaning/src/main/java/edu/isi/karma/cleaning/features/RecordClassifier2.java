@@ -55,7 +55,7 @@ public class RecordClassifier2 implements PartitionClassifierType {
 	@SuppressWarnings({ })
 	public OnlineLogisticRegression train(
 			HashMap<String, Vector<String>> traindata) throws Exception {
-		String csvTrainFile = "./target/tmp/csvtrain.csv";
+		String csvTrainFile = "./target/csvtrain.csv";
 		Data2Features.Traindata2CSV(traindata, csvTrainFile, rf);
 		lmp = new LogisticModelParameters();
 		lmp.setTargetVariable("label");

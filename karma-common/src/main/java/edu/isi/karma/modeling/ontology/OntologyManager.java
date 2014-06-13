@@ -214,17 +214,17 @@ public class OntologyManager  {
 			return ObjectPropertyType.None;
 	}
 	
-	public OntologyTreeNode getClassHierarchy() {
-		return this.ontCache.getClassHierarchy();
-	}
+//	public OntologyTreeNode getClassHierarchy() {
+//		return this.ontCache.getClassHierarchy();
+//	}
 
-	public OntologyTreeNode getObjectPropertyHierarchy() {
-		return this.ontCache.getObjectPropertyHierarchy();
-	}
-
-	public OntologyTreeNode getDataPropertyHierarchy() {
-		return this.ontCache.getDataPropertyHierarchy();
-	}
+//	public OntologyTreeNode getObjectPropertyHierarchy() {
+//		return this.ontCache.getObjectPropertyHierarchy();
+//	}
+//
+//	public OntologyTreeNode getDataPropertyHierarchy() {
+//		return this.ontCache.getDataPropertyHierarchy();
+//	}
 	
 	public Label getUriLabel(String uri) {
 		return this.ontCache.getUriLabel(uri);
