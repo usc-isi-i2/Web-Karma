@@ -15,28 +15,21 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 		console.log("PopulatePropertyList:" + dataArray.length);
 		
 		if(dataArray.length == 0) {
+			$(list1).jstree("destroy");
 	        $(list1).html("<i>none</i>");
 	    } else {
-	        $(list1).jstree({
-	        	"core" : {
-	                "data" : dataArray,
-	                "multiple" : false,
-	                "animation" : 0
-	            },
-	            "search" : {
-	                "show_only_matches": true,
-	                "fuzzy": false
-	            },
-	            "plugins" : [ "search", "wholerow"]
-	        })
-	        	.bind("select_node.jstree", function (e, data) {
+	    	$(list1).jstree("destroy");
+	        $(list1)
+	        	.on("select_node.jstree", function (e, data) {
 	        		var selectedNodeData = data.node.original;
 	        		propertyData.label =selectedNodeData.text;
 	        		propertyData.uri = selectedNodeData.metadata.uri;
 	        		propertyData.id = selectedNodeData.metadata.id;
 	               
+	        		var treeId = PropertyUI.getNodeID(propertyData.label, propertyData.id, propertyData.uri);
+	                $(list1).jstree('open_node', treeId); //Open node will scroll to that pos
+	                
 	                $(list2).jstree("deselect_all");
-	                $(list1).jstree("open_node",data.node);
 	                
 	                $("#" + id + "_propertyKeyword").val(propertyData.label);
 	                if(!selectOnLoad && propertySelectorCallback != null) {
@@ -44,17 +37,18 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 	                }
 	                selectOnLoad = false;
 	            })
-	            .bind("loaded.jstree", function(e,data) {
+	            .on("loaded.jstree", function(e,data) {
 	            	console.log("property jstree Type: " + $(list1).attr("id"));
 	            	if(propertyData.label.length > 0) {
 	            		$("#" + id + "_propertyKeyword").val(propertyData.label);
 	            	}
 	            	window.setTimeout(function() {
 						if(propertyData.label.length > 0) {
-							var treeId = "#" + PropertyUI.getNodeID(propertyData.label, propertyData.id, propertyData.uri);
+							var treeId = PropertyUI.getNodeID(propertyData.label, propertyData.id, propertyData.uri);
 							console.log("Now select node:" + treeId + " in propertyList:" + $(list1).attr("id"));
 							selectOnLoad = true;
-							$(list1).jstree('select_node', treeId, true, true);
+							
+							$(list1).jstree('select_node', treeId);
 							
 							window.setTimeout(function() {
 								selectOnLoad = false;
@@ -63,15 +57,31 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 						}	
 					}, 500);
 				})
+				.jstree({
+		        	"core" : {
+		                "data" : dataArray,
+		                "multiple" : false,
+		                "animation" : 0,
+		                'check_callback' : function (operation, node, node_parent, node_position, more) {
+		                    // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+		                    // in case of 'rename_node' node_position is filled with the new node name
+		                    //return operation === 'rename_node' ? true : false;
+		                	return true;
+		                }
+		            },
+		            "search" : {
+		                "show_only_matches": true,
+		                "fuzzy": false
+		            },
+		            "plugins" : [ "search", "wholerow"]
+		        })
 	            ;
 	    }
 	}
 	
-	
 	this.setPropertyLabel = function(label) {
 		propertyLabel = label;
 	};
-	
 	
 	this.setPropertyRefresh = function(refresh) {
 		refreshProperties = refresh;

@@ -517,13 +517,16 @@
 		 */
 		teardown : function () {
 			this.unbind();
-			this.element
-				.removeClass('jstree')
-				.removeData('jstree')
-				.find("[class^='jstree']")
-					.addBack()
-					.attr("class", function () { return this.className.replace(/jstree[^ ]*|$/ig,''); });
-			this.element = null;
+			if(this.element != null) {
+				this.element
+					.removeClass('jstree')
+					.removeData('jstree')
+					.find("[class^='jstree']")
+						.addBack()
+						.attr("class", function () { return this.className.replace(/jstree[^ ]*|$/ig,''); });
+				this.element = null;
+			}
+			
 		},
 		/**
 		 * bind all events. Used internally.
@@ -683,7 +686,8 @@
 		 * @name unbind()
 		 */
 		unbind : function () {
-			this.element.off('.jstree');
+			if(this.element != null)
+				this.element.off('.jstree');
 			$(document).off('.jstree-' + this._id);
 		},
 		/**

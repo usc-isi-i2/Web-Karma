@@ -13,33 +13,25 @@ function ClassUI(id,
 	
 	function populateClassList(dataArray, list1, list2) {
 		console.log("PopulateClassList:" + dataArray.length);
-		console.log(dataArray);
+		//console.log(dataArray);
 		
 		var selectOnLoad = false;
 		if(dataArray.length == 0) {
+			$(list1).jstree("destroy");
 	        $(list1).html("<i>none</i>");
 	    } else {
-	        $(list1).jstree({
-	            "core" : {
-	                "data" : dataArray,
-	                "multiple" : false,
-	                "animation" : 0
-	            },
-	            "search" : {
-	                "show_only_matches": true,
-	                "fuzzy" : false
-	            },
-	            "plugins" : [ "search", "wholerow"]
-	        })
-	        	.bind("select_node.jstree", function (e, data) {
+	    	$(list1).jstree("destroy");
+	        $(list1)
+	        	.on("select_node.jstree", function (e, data) {
 	        		var selectedNodeData = data.node.original;
 	                classData.label = selectedNodeData.text;
 	                classData.uri = selectedNodeData.metadata.uri;
 	                classData.id = selectedNodeData.metadata.id;
-	                //var a = $.jstree._focused().get_selected();
-	                $(list2).jstree("deselect_all");
-	                $(list1).jstree("open_node", data.node);
 	                
+	                var treeId = ClassUI.getNodeID(classData.label, classData.id, classData.uri);
+	                $(list1).jstree('open_node', treeId); //Open node will scroll to that pos
+
+	                $(list2).jstree("deselect_all");
 	                $("#" + id + "_classKeyword").val(classData.label);
 	                
 	                if(!selectOnLoad && classSelectorCallback != null) {
@@ -47,17 +39,18 @@ function ClassUI(id,
 	                }
 	                selectOnLoad = false;
 	            })
-	            .bind("loaded.jstree", function (e, data) {
+	            .on("loaded.jstree", function (e, data) {
 	            	console.log("loaded classlist: " + $(list1).attr("id"));
 	            	if(classData.label.length > 0 && classData.label != "Class") {
 	            		$("#" + id + "_classKeyword").val(classData.label);
 	            	}
 	    			window.setTimeout(function() {
 	    				if(classData.label.length > 0 && classData.label != "Class") {
-	    					var treeId = "#" + ClassUI.getNodeID(classData.label, classData.id, classData.uri);
+	    					var treeId = ClassUI.getNodeID(classData.label, classData.id, classData.uri);
 	    					console.log("Now select node:" + treeId + " in classList " + $(list1).attr("id"));
 	    					selectOnLoad = true;
-	    					$(list1).jstree('select_node', treeId, true, true);
+	    					
+	    					$(list1).jstree('select_node', treeId);
 	    					
 	    					window.setTimeout(function() {
 								selectOnLoad = false;
@@ -66,17 +59,26 @@ function ClassUI(id,
 	    				}
 	    			}, 500);
 	            })
+	            .jstree({
+		            "core" : {
+		                "data" : dataArray,
+		                "multiple" : false,
+		                "animation" : 0,
+		                'check_callback' : function (operation, node, node_parent, node_position, more) {
+		                    // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+		                    // in case of 'rename_node' node_position is filled with the new node name
+		                    //return operation === 'rename_node' ? true : false;
+		                	return true;
+		                }
+		            },
+		            "search" : {
+		                "show_only_matches": true,
+		                "fuzzy" : false
+		            },
+		            "plugins" : [ "search", "wholerow"]
+		        })
 	            ;
 	    }
-		
-//		$(list1).jstree({ 'core' : {
-//		    'data' : [
-//		       { "id" : "ajson1", "parent" : "#", "text" : "Simple root node" },
-//		       { "id" : "ajson2", "parent" : "#", "text" : "Root node 2" },
-//		       { "id" : "ajson3", "parent" : "ajson2", "text" : "Child 1" },
-//		       { "id" : "ajson4", "parent" : "ajson2", "text" : "Child 2" },
-//		    ]
-//		} });
 	}
 	
 	this.setClassLabel = function(label) {
