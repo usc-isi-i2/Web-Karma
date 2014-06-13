@@ -12,33 +12,24 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 	
 	function populatePropertyList(dataArray, list1, list2) {
 		var selectOnLoad = false;
+		console.log("PopulatePropertyList:" + dataArray.length);
 		
 		if(dataArray.length == 0) {
+			$(list1).jstree("destroy");
 	        $(list1).html("<i>none</i>");
 	    } else {
-	        $(list1).jstree({
-	            "json_data" : {
-	                "data" : dataArray
-	            },
-	            "themes" : {
-	                "theme" : "proton",
-	                "url": "uiLibs/jquery/css/jstree-themes/proton/style.css",
-	                "dots" : false,
-	                "icons" : false
-	            },
-	            "search" : {
-	                "show_only_matches": true
-	            },
-	            "plugins" : [ "themes", "json_data", "ui", "search"]
-	        })
-	        	.bind("select_node.jstree", function (e, data) {
-	        		propertyData.label = data.rslt.obj.data("label");
-	        		console.log("jstree:select_node.jstree:" + propertyData.label + ":" + selectOnLoad + ":" + (propertySelectorCallback != null));
-	        		propertyData.uri = data.rslt.obj.data("uri");
-	        		propertyData.id = data.rslt.obj.data("id");
-	                var a = $.jstree._focused().get_selected();
+	    	$(list1).jstree("destroy");
+	        $(list1)
+	        	.on("select_node.jstree", function (e, data) {
+	        		var selectedNodeData = data.node.original;
+	        		propertyData.label =selectedNodeData.text;
+	        		propertyData.uri = selectedNodeData.metadata.uri;
+	        		propertyData.id = selectedNodeData.metadata.id;
+	               
+	        		var treeId = PropertyUI.getNodeID(propertyData.label, propertyData.id, propertyData.uri);
+	                $(list1).jstree('open_node', treeId); //Open node will scroll to that pos
+	                
 	                $(list2).jstree("deselect_all");
-	                $(list1).jstree("open_node", a);
 	                
 	                $("#" + id + "_propertyKeyword").val(propertyData.label);
 	                if(!selectOnLoad && propertySelectorCallback != null) {
@@ -46,17 +37,18 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 	                }
 	                selectOnLoad = false;
 	            })
-	            .bind("loaded.jstree", function(e,data) {
+	            .on("loaded.jstree", function(e,data) {
 	            	console.log("property jstree Type: " + $(list1).attr("id"));
 	            	if(propertyData.label.length > 0) {
 	            		$("#" + id + "_propertyKeyword").val(propertyData.label);
 	            	}
 	            	window.setTimeout(function() {
 						if(propertyData.label.length > 0) {
-							var treeId = "#" + PropertyUI.getNodeID(propertyData.label, propertyData.id, propertyData.uri);
+							var treeId = PropertyUI.getNodeID(propertyData.label, propertyData.id, propertyData.uri);
 							console.log("Now select node:" + treeId + " in propertyList:" + $(list1).attr("id"));
 							selectOnLoad = true;
-							$(list1).jstree('select_node', treeId, true, true);
+							
+							$(list1).jstree('select_node', treeId);
 							
 							window.setTimeout(function() {
 								selectOnLoad = false;
@@ -65,15 +57,31 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 						}	
 					}, 500);
 				})
+				.jstree({
+		        	"core" : {
+		                "data" : dataArray,
+		                "multiple" : false,
+		                "animation" : 0,
+		                'check_callback' : function (operation, node, node_parent, node_position, more) {
+		                    // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+		                    // in case of 'rename_node' node_position is filled with the new node name
+		                    //return operation === 'rename_node' ? true : false;
+		                	return true;
+		                }
+		            },
+		            "search" : {
+		                "show_only_matches": true,
+		                "fuzzy": false
+		            },
+		            "plugins" : [ "search", "wholerow"]
+		        })
 	            ;
 	    }
 	}
 	
-	
 	this.setPropertyLabel = function(label) {
 		propertyLabel = label;
 	};
-	
 	
 	this.setPropertyRefresh = function(refresh) {
 		refreshProperties = refresh;
@@ -121,11 +129,16 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 		row2.append(propertyListDiv);
 		propertyDiv.append(row2);
 		
+		var searchTimer = null;
 		$(document).on('keyup',  "#" + id + "_propertyKeyword", function(event) {
-			var keyword = $("#" + id + "_propertyKeyword").val();
-			 //console.log("Property keyup: " + keyword);
-			 $("div#" + id + "_propertyList1").jstree("search", keyword);
-			 $("div#" + id + "_propertyList2").jstree("search", keyword);
+			if(searchTimer != null)
+				window.clearTimeout(searchTimer);
+			var searchTimer = window.setTimeout(function() {
+				var keyword = $("#" + id + "_propertyKeyword").val();
+				 //console.log("Property keyup: " + keyword);
+				 $("div#" + id + "_propertyList1").jstree("search", keyword);
+				 $("div#" + id + "_propertyList2").jstree("search", keyword);
+			}, 1000); //Wait 1 secs before searching
 		 });
 		
 		mainDiv.append(propertyDiv);
@@ -184,8 +197,9 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 //Static declarations
 PropertyUI.getNodeObject = function(label, cId, uri) {
 	var treeId = PropertyUI.getNodeID(label, cId, uri);
-	//var nodeData = {data:{title:label, "id":treeId}, metadata:{"uri": uri, "id" : id}, attributes:{"id":treeId}};
-	var nodeData = { attr: { id : treeId }, data: label, metadata:{"uri": uri, id : cId, "label":label} } ;
+	
+	var nodeData = { "id" : treeId, "parent" : "#", "text" : label, metadata:{"uri": uri, id : cId, "label":label} };
+//	var nodeData = { attr: { id : treeId }, data: label, metadata:{"uri": uri, id : cId, "label":label} } ;
 	return nodeData;
 };
 
