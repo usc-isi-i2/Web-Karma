@@ -47,15 +47,19 @@ public class ExecutionController {
 
     private static Logger logger = LoggerFactory
             .getLogger(ExecutionController.class);
-    private final HashMap<String, CommandFactory> commandFactoryMap = new HashMap<String, CommandFactory>();
+    private static final HashMap<String, CommandFactory> commandFactoryMap = new HashMap<String, CommandFactory>();
     private final Workspace workspace;
 
+    static{
+    	dynamicallyBuildCommandFactoryMap();
+    }
+    
     public ExecutionController(Workspace workspace) {
         this.workspace = workspace;
-	    dynamicallyBuildCommandFactoryMap();
+	    
     }
 
-	private void dynamicallyBuildCommandFactoryMap()
+	private static void dynamicallyBuildCommandFactoryMap()
 	{
 		Reflections reflections = new Reflections("edu.isi.karma");
 

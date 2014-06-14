@@ -27,8 +27,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.URL;
 import java.util.Properties;
 
 import org.slf4j.Logger;

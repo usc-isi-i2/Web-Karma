@@ -201,6 +201,14 @@
   		<plugins>
 	  		<!-- Configuration for Tomcat -->
 	  		<!--
+
+	  		For Tomcat, add the following roles and user to the conf/tomcat-users.xml file as follows
+	  		<role rolename="manager-gui"/>
+ 			<role rolename="manager-script"/>
+ 			<user username="myusername" password="mypassword" roles="manager-gui,manager-script"/>
+
+			Start (or restart) your Tomcat instance to pick up the user configuration changes
+
     		Add a corresponding server block to your $M2_HOME/conf/settings.xml:
 
 			<server>

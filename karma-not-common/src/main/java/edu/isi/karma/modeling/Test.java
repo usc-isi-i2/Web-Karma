@@ -56,7 +56,11 @@ public class Test {
 		
 		for (int i = 1; i < 2; i++) {
 			String encoding = EncodingDetector.detect(f[i]);
-			ontManager.doImportAndUpdateCache(f[i], encoding);
+			try {
+				ontManager.doImportAndUpdateCache(f[i], encoding);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

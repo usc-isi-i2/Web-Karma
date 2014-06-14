@@ -181,8 +181,10 @@ public class FoldCommand extends WorksheetCommand {
 		cmd.undoIt(workspace);
 		//remove the new column
 		//currentTable.removeHNode(newHNodeId, worksheet);
-
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		UpdateContainer c =  new UpdateContainer();		
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		return c;
 	}
 
 

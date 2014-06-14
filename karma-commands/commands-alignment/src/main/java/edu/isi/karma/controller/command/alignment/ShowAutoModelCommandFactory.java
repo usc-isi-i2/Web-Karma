@@ -82,9 +82,13 @@ public class ShowAutoModelCommandFactory extends JSONInputCommandFactory {
 		File autoOtologyFile = new File(path);
 		logger.info("Loading ontology: " + autoOtologyFile.getAbsolutePath());
 		String encoding = EncodingDetector.detect(autoOtologyFile);
-		ontMgr.doImportAndUpdateCache(autoOtologyFile, encoding);
-		logger.info("Done loading ontology: "
-				+ autoOtologyFile.getAbsolutePath());
+		try {
+			ontMgr.doImportAndUpdateCache(autoOtologyFile, encoding);
+			logger.info("Done loading ontology: "
+					+ autoOtologyFile.getAbsolutePath());
+		} catch(Exception e) {
+			logger.error("Error importing auto ontology file: " + autoOtologyFile.getAbsolutePath());
+		}
 		
 		ShowAutoModelCommand comm = new ShowAutoModelCommand(
 				getNewId(workspace), worksheet.getId());

@@ -48,6 +48,7 @@ and related projects, please see: http://www.isi.edu/integration
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/nestable.css" />
         <link rel="stylesheet" type="text/css" href="./uiLibs/sticky/css/sticky.min.css" />
         <link rel="stylesheet/less" type="text/css" href="./uiLibs/less/css/styles-03d-fixed-pixel.less" />
+        <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jstree-themes/default/style.css" />
         
         <link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/command_History.css?<jsp:include page='version.jsp' />" />
@@ -111,6 +112,7 @@ and related projects, please see: http://www.isi.edu/integration
 			.editable-empty, .editable-empty:hover, .editable-empty:focus {
 				color: #cccccc;
 			}
+			
 		</style>
 	
 	</head>
@@ -187,13 +189,13 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="showModel.jsp"></jsp:include>
 			  
 			  
-			  <div class="modal fade" id="rdfGenerationErrorWindow" tabindex="-1">
+			  <div class="modal fade" id="karmaErrorWindow" tabindex="-1">
 			  	<div class="modal-dialog">
 			  		<form class="bs-example bs-example-form" role="form">
 						<div class="modal-content">
 						     <div class="modal-header">
 							      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-							       <h4 class="modal-title">RDF Generation Error Report</h4>
+							       <h4 class="modal-title">Error Report</h4>
 							  </div>
 							  <div class="modal-body">
 								<div id="errrorText">&nbsp;</div>
@@ -232,7 +234,11 @@ and related projects, please see: http://www.isi.edu/integration
             </table>
         </div>
 
-		
+		<div id="WaitingDiv" style="display:none; position:absolute;left:0px; top:0px;width:100%; height:100%" class="waitingDiv">
+			<div style="width:10px;height:50px">&nbsp;</div>
+			<div>Loading Workspace..</div>
+            <img src="images/ajax-loader.gif" />
+		</div>
 		
         <!--  Load all scripts last for faster page load -->
         

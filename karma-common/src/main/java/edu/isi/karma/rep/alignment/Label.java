@@ -134,4 +134,14 @@ public class Label implements Serializable {
 		return rdfsComment;
 	}
 
+	@Override
+	public String toString() {
+		return this.getUri() + "," + this.getDisplayName();
+	}
+	
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+	
 }

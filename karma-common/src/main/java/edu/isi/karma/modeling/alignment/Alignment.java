@@ -210,8 +210,18 @@ public class Alignment implements OntologyUpdateListener {
             String id = LinkIdFactory.getLinkId(label.getUri(), source.getId(), target.getId());        
             ObjectPropertyLink link = new ObjectPropertyLink(id, label, 
             		this.graphBuilder.getOntologyManager().getObjectPropertyType(source.getLabel().getUri(), target.getLabel().getUri(), label.getUri()));
-            if (this.graphBuilder.addLink(source, target, link)) return link;
-            return null;        
+            if (this.graphBuilder.addLink(source, target, link)) 
+            {
+            	return link;
+            }
+            else if(this.graphBuilder.getIdToLinkMap().containsKey(link.getId()))
+            {
+            	return (ObjectPropertyLink) this.graphBuilder.getIdToLinkMap().get(link.getId());
+            }
+            else
+            {
+            	return null;
+            }
     }
 	
 	// Probably we don't need this function in the interface to GUI

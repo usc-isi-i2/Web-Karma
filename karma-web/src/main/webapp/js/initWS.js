@@ -8,26 +8,31 @@ if($.cookie("workspacePreferencesId") != null) {
     bootupURL += "&hasPreferenceId=" + false;
 }
 
-$.ajax({
-	  dataType: "json",
-	  url: bootupURL,
-	  async: false,
-	  success: function(data) {
-		  $.workspaceGlobalInformation = {
-			"id" : data["workspaceId"]
-		  };
-
-          // Set the preferences workspace cookie if null
-          if($.cookie("workspacePreferencesId") == null)
-              $.cookie("workspacePreferencesId", $.workspaceGlobalInformation.id, {
-                  expires : 7000
-              });
-        
-          console.log("done bootup");
-      },
-    error: function() {
-    	alert("Trouble connecting to server!");
-    }
-});
+$("div#WaitingDiv").show();
+window.setTimeout(function() {
+	$.ajax({
+		  dataType: "json",
+		  url: bootupURL,
+		  async: false,
+		  success: function(data) {
+			  $.workspaceGlobalInformation = {
+				"id" : data["workspaceId"]
+			  };
+	
+	          // Set the preferences workspace cookie if null
+	          if($.cookie("workspacePreferencesId") == null)
+	              $.cookie("workspacePreferencesId", $.workspaceGlobalInformation.id, {
+	                  expires : 7000
+	              });
+	        
+	          parse(data);
+	          $("div#WaitingDiv").hide();
+	          console.log("done bootup");
+	      },
+	    error: function() {
+	    	alert("Trouble connecting to server!");
+	    }
+	});
+}, 10);
             
           

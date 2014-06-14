@@ -56,7 +56,7 @@ function testSparqlEndPoint(url, worksheetId) {
 	info["command"] = "TestSPARQLEndPointCommand";
 	info["tripleStoreUrl"] = url;
 	window.conncetionStat = false;
-	var returned = $.ajax({
+	$.ajax({
 	   	url: "RequestController",
 	   	type: "POST",
 	   	data : info,
@@ -89,11 +89,12 @@ function getParamObject(name, value, type) {
 function getAllClasses(worksheetId) {
 	var info = new Object();
     info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetOntologyClassHierarchyCommand";
+    info["command"] = "GetClassesCommand";
+    info["nodesRange"] = "allClasses";
     info["worksheetId"] = worksheetId;
     
     var result = [];
-    var returned = $.ajax({
+    $.ajax({
         url: "RequestController",
         type: "POST",
         data : info,
@@ -102,7 +103,7 @@ function getAllClasses(worksheetId) {
         complete :
             function (xhr, textStatus) {
                 var json = $.parseJSON(xhr.responseText);
-                var data = json.elements[0].data;
+                var data = json.elements[0].nodes;
                 $.each(data, function(index, clazz){
                 	parseClassJSON(clazz, result);
                 });
@@ -129,12 +130,13 @@ function getAllClassesForProperty(worksheetId, propertyUri) {
 	
 	var info = new Object();
     info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetDomainsForDataPropertyCommand";
+    info["command"] = "GetClassesCommand";
+    info["nodesRange"] = "classesWithProperty";
     info["worksheetId"] = worksheetId;
-    info["URI"] = propertyUri;
+    info["propertyURI"] = propertyUri;
     
     var result = [];
-    var returned = $.ajax({
+    $.ajax({
         url: "RequestController",
         type: "POST",
         data : info,
@@ -143,7 +145,7 @@ function getAllClassesForProperty(worksheetId, propertyUri) {
         complete :
             function (xhr, textStatus) {
                 var json = $.parseJSON(xhr.responseText);
-                var data = json.elements[0].data;
+                var data = json.elements[0].nodes;
                 $.each(data, function(index, clazz){
                 	parseClassJSON(clazz, result);
                 });
@@ -164,34 +166,27 @@ function getAllClassesForProperty(worksheetId, propertyUri) {
 	return uniques;
 }
 
-function getClassesInModel(alignmentId) {
+function getClassesInModel(worksheetId) {
 	var info = new Object();
+	info["command"] = "GetClassesCommand";
     info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetInternalNodesListOfAlignmentCommand";
-    info["alignmentId"] = alignmentId;
-    info["nodesRange"] = "existingTreeNodes"; //allGraphNodes";
+    info["worksheetId"] = worksheetId;
+    info["nodesRange"] = "classesInModel";
     var result = [];
-    var returned = $.ajax({
+    $.ajax({
         url: "RequestController",
         type: "POST",
         data : info,
         dataType : "json",
         async : false,
         complete :
-            function (xhr, textStatus) {
-                var json = $.parseJSON(xhr.responseText);
-                $.each(json["elements"], function(index, element) {
-                    if(element["updateType"] == "InternalNodesList") {
-                    	$.each(element["nodes"], function(index2, node) {
-                        	var label = node["nodeLabel"];
-                        	if(label.indexOf(":") == -1)
-                        		label = node["nodeUri"] + "/" + label;
-                        	var nodeData = {"label":label, "id":node["nodeId"], "uri":node["nodeUri"]};
-                        	result.push(nodeData);
-                        });
-                    }
-                });
-            },
+        	function (xhr, textStatus) {
+	            var json = $.parseJSON(xhr.responseText);
+	            var data = json.elements[0].nodes;
+	            $.each(data, function(index, clazz){
+	            	parseClassJSON(clazz, result);
+	            });
+        	},
         error :
             function (xhr, textStatus) {
                 alert("Error occured while getting nodes list!");
@@ -203,27 +198,28 @@ function getClassesInModel(alignmentId) {
 
 
 function parseClassJSON(clazz, result, allLabels) {
-	var uri = clazz.metadata.uri;
-	var id = clazz.metadata.id;
-	var label = clazz.data;
+	var uri = clazz.nodeUri;
+	var id = clazz.nodeId;
+	var label = clazz.nodeLabel;
 	
 	var node = {"label":label, "id":id, "uri":uri};
 	result.push(node);
-	if(clazz.children) {
-		$.each(clazz.children, function(index, clazzChild){
-        	parseClassJSON(clazzChild, result, allLabels);
-        });
-	}
+//	if(clazz.children) {
+//		$.each(clazz.children, function(index, clazzChild){
+//        	parseClassJSON(clazzChild, result, allLabels);
+//        });
+//	}
 }
 
 function getAllDataProperties(worksheetId) {
 	var info = new Object();
     info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetDataPropertyHierarchyCommand";
+    info["command"] = "GetPropertiesCommand";
+    info["propertiesRange"] = "allDataProperties";
     info["worksheetId"] = worksheetId;
     
     var result = [];
-    var returned = $.ajax({
+    $.ajax({
         url: "RequestController",
         type: "POST",
         data : info,
@@ -232,7 +228,7 @@ function getAllDataProperties(worksheetId) {
         complete :
             function (xhr, textStatus) {
                 var json = $.parseJSON(xhr.responseText);
-                var data = json.elements[0].data;
+                var data = json.elements[0].properties;
                 $.each(data, function(index, prop){
                 	parsePropertyJSON(prop, result);
                 });
@@ -243,68 +239,18 @@ function getAllDataProperties(worksheetId) {
             }
     });
     sortClassPropertyNodes(result);
-    var lastLabel = "";
-    var uniques = [];
-    $.each(result, function(index, item){
-    	if(item.label != lastLabel)
-    		uniques.push(item);
-    	lastLabel = item.label;
-    });
-	return uniques;
+	return result;
 }
 
-function getAllObjectProperties(alignmentId) {
+function getAllObjectProperties(worksheetId) {
 	var info = new Object();
     info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetLinksOfAlignmentCommand";
-    info["alignmentId"] = alignmentId;
-    
-    info["linksRange"] = "allObjectProperties";
-    
-    var result = [];
-    var returned = $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        async: false,
-        complete :
-            function (xhr, textStatus) {
-                var json = $.parseJSON(xhr.responseText);
-                $.each(json["elements"], function(index, element) {
-        	        if(element["updateType"] == "DataPropertyListUpdate" || element["updateType"] == "DataPropertiesForClassUpdate") {
-        	            $.each(element["data"], function(index2, node) {
-        	            	result.push({"label":node.data, "id":node.metadata.URIorId, "uri":node.metadata.URIorId});
-        	            });
-        	        } else if(element["updateType"] == "LinksList") {
-        	        	 $.each(element["edges"], function(index2, node) {
-        	        		 result.push({"label":node["edgeLabel"], "id":node["edgeId"], "uri":node["edgeId"]});
-        	             });
-        	        }
-        	    });
-            },
-        error :
-            function (xhr, textStatus) {
-                alert("Error occured while getting property list!");
-            }
-    });
-    sortClassPropertyNodes(result);
-    return result;
-}
-
-function getAllPropertiesForClass(worksheetId, classUri) {
-	if(classUri == null || classUri == "" || classUri == "fakeDomainURI")
-		return [];
-	
-	//http://localhost:8080/RequestController?URI=http%3A%2F%2Flod.isi.edu%2Fontology%2Fsyllabus%2FLecture1&command=GetDataPropertiesForClassCommand&workspaceId=WSP23
-	var info = new Object();
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetDataPropertiesForClassCommand";
+    info["command"] = "GetPropertiesCommand";
+    info["propertiesRange"] = "allObjectProperties";
     info["worksheetId"] = worksheetId;
-    info["URI"] = classUri;
     
     var result = [];
-    var returned = $.ajax({
+    $.ajax({
         url: "RequestController",
         type: "POST",
         data : info,
@@ -313,85 +259,127 @@ function getAllPropertiesForClass(worksheetId, classUri) {
         complete :
             function (xhr, textStatus) {
                 var json = $.parseJSON(xhr.responseText);
-                var data = json.elements[0].data;
+                var data = json.elements[0].properties;
                 $.each(data, function(index, prop){
                 	parsePropertyJSON(prop, result);
                 });
             },
         error :
             function (xhr, textStatus) {
-                alert("Error occured while fetching properties for " + thisClass.label + ": " + textStatus);
+                alert("Error occured while fetching properties: " + textStatus);
             }
     });
     sortClassPropertyNodes(result);
-    var lastLabel = "";
-    var uniques = [];
-    $.each(result, function(index, item){
-    	if(item.label != lastLabel)
-    		uniques.push(item);
-    	lastLabel = item.label;
-    });
-	return uniques;
+	return result;
 }
 
-function getAllPropertiesForDomainRange(alignmentId, domain, range) {
+function getAllExistingProperties(worksheetId) {
 	var info = new Object();
     info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetLinksOfAlignmentCommand";
-    info["alignmentId"] = alignmentId;
-    
-    info["linksRange"] = "linksWithDomainAndRange";
-    info["domain"] = domain;
-    info["range"] = range;
+    info["command"] = "GetPropertiesCommand";
+    info["propertiesRange"] = "existingProperties";
+    info["worksheetId"] = worksheetId;
     
     var result = [];
-    var returned = $.ajax({
+    $.ajax({
         url: "RequestController",
         type: "POST",
         data : info,
         dataType : "json",
-        async: false,
+        async : false,
         complete :
             function (xhr, textStatus) {
                 var json = $.parseJSON(xhr.responseText);
-                $.each(json["elements"], function(index, element) {
-        	        if(element["updateType"] == "DataPropertyListUpdate" || element["updateType"] == "DataPropertiesForClassUpdate") {
-        	            $.each(element["data"], function(index2, node) {
-        	            	result.push({"label":node.data, "id":node.metadata.URIorId, "uri":node.metadata.URIorId});
-        	            });
-        	        } else if(element["updateType"] == "LinksList") {
-        	        	 $.each(element["edges"], function(index2, node) {
-        	        		 result.push({"label":node["edgeLabel"], "id":node["edgeId"], "uri":node["edgeId"]});
-        	             });
-        	        }
-        	    });
+                var data = json.elements[0].properties;
+                $.each(data, function(index, prop){
+                	parsePropertyJSON(prop, result);
+                });
             },
         error :
             function (xhr, textStatus) {
-                alert("Error occured while getting property list!");
+                alert("Error occured while fetching properties: " + textStatus);
             }
     });
     sortClassPropertyNodes(result);
-    return result;
+	return result;
+}
+
+function getAllPropertiesForClass(worksheetId, classUri) {
+	if(classUri == null || classUri == "" || classUri == "fakeDomainURI")
+		return [];
+	
+	var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "GetPropertiesCommand";
+    info["propertiesRange"] = "dataPropertiesForClass";
+    info["classURI"] = classUri;
+    info["worksheetId"] = worksheetId;
+    
+    var result = [];
+    $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        async : false,
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                var data = json.elements[0].properties;
+                $.each(data, function(index, prop){
+                	parsePropertyJSON(prop, result);
+                });
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while fetching properties: " + textStatus);
+            }
+    });
+    sortClassPropertyNodes(result);
+	return result;
+}
+
+function getAllPropertiesForDomainRange(worksheetId, domainUri, rangeUri) {
+	var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "GetPropertiesCommand";
+    info["propertiesRange"] = "propertiesWithDomainRange";
+    info["domainURI"] = domainUri;
+    info["rangeURI"] = rangeUri;
+    info["worksheetId"] = worksheetId;
+    
+    var result = [];
+    $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        async : false,
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                var data = json.elements[0].properties;
+                $.each(data, function(index, prop){
+                	parsePropertyJSON(prop, result);
+                });
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while fetching properties: " + textStatus);
+            }
+    });
+    sortClassPropertyNodes(result);
+	return result;
 }
 
 function parsePropertyJSON(prop, result) {
-	var label = prop.data;
-	var uri;
-	if(prop.metadata.URIorId) {
-		uri = prop.metadata.URIorId;
-	} else {
-		uri = prop.metadata.uri;
-	}
-	var id = uri;
-	
-	var node = {"label":label, "id":id, "uri":uri};
+	var node = {"label":prop.label, "id":prop.id, "uri":prop.uri};
 	result.push(node);
-	if(prop.children) {
-		$.each(prop.children, function(index, propChild){
-			parsePropertyJSON(propChild, result);
-        });
-	}
+//	if(prop.children) {
+//		$.each(prop.children, function(index, propChild){
+//			parsePropertyJSON(propChild, result);
+//        });
+//	}
 }
 
 function sortClassPropertyNodes(nodes) {
@@ -415,7 +403,7 @@ function getAllLinksForNode(worksheetId, alignmentId, nodeId) {
     info["alignmentId"] = alignmentId;
     info["nodeId"] = nodeId;
     var result = [];
-    var returned = $.ajax({
+    $.ajax({
         url: "RequestController",
         type: "POST",
         data : info,

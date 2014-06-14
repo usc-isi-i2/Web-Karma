@@ -2,6 +2,7 @@ package edu.isi.karma.metadata;
 
 import java.io.File;
 
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -20,7 +21,7 @@ public class PythonTransformationMetadata extends KarmaUserMetadata {
 	}
 	
 	@Override
-	public void setup() throws KarmaException {
+	public void setup(UpdateContainer uc) {
 		
 	}
 

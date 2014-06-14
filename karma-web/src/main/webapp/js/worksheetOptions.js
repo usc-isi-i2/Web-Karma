@@ -15,9 +15,9 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"divider"},
 			{name:"Publish RDF" , func:publishRDF},
 			{name:"Publish Model" , func:publishModel},
-			{name:"Save Model" , func:saveModel},
-			{name:"Clear Model" , func:clearModel},
-			{name:"Fetch Model" , func:fetchModel},
+			//{name:"Save Model" , func:saveModel},
+			//{name:"Clear Model" , func:clearModel},
+			//{name:"Fetch Model" , func:fetchModel},
 			{name:"Publish Service Model", func:publishServiceModel},
 			{name:"Publish Report", func:publishReport},
 			{name:"Save as JSON", func:saveAsJson},
@@ -32,7 +32,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"divider"},
 			{name:"Fold" , func:Fold},
 			{name:"GroupBy" , func:GroupBy}, 
-			{name:"Glue" , func:Glue}, 
+			{name:"Glue Columns" , func:Glue}, 
 			{name:"Delete", func:deleteWorksheet},
 	];
 	

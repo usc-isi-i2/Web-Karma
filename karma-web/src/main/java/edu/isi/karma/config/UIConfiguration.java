@@ -12,6 +12,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.webserver.KarmaException;
@@ -47,7 +48,7 @@ public class UIConfiguration {
         	if(userConfigDir == null || userConfigDir.length() == 0) {
 				try {
 					KarmaMetadataManager mgr = new KarmaMetadataManager();
-					mgr.register(new UserConfigMetadata());
+					mgr.register(new UserConfigMetadata(), new UpdateContainer());
 				} catch (KarmaException e) {
 					logger.error("Could not register with KarmaMetadataManager", e);
 				}
