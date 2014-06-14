@@ -286,7 +286,7 @@ public class TripleStoreUtil {
 					query.append("BIND ( ");
 					formatURI(otherClass, query);
 					
-					query.append("AS ?filteredtype )\n");
+					query.append(" AS ?filteredtype )\n");
 					query.append("?o a ?filteredtype .\n");
 					
 				}
@@ -500,7 +500,7 @@ public class TripleStoreUtil {
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			query.append("SELECT ?predicates ?otherClass (group_concat(?triplesMap; separator = \",\") as ?triplesMaps )\n");			
+			query.append("SELECT ?predicates ?otherClass (group_concat(?pom; separator = \",\") as ?triplesMaps )\n");			
 			injectContext(context, query);
 			query.append("{\n");
 			query.append("?mapping owl:sameAs ?mappingURI . \n"); 

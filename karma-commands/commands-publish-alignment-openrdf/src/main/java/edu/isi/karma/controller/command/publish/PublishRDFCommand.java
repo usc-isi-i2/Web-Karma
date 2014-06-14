@@ -228,7 +228,7 @@ public class PublishRDFCommand extends Command {
 				saveToStore(rdfFileLocalPath);
 			}
 			JSONObject obj = new JSONObject(sw.toString());
-			Set<String> triplemaps = new HashSet<String>(Arrays.asList(obj.getString("triplesMapsIds").split(",")));
+			Set<String> triplemaps = new HashSet<String>(Arrays.asList(obj.getString("ids").split(",")));
 			bloomfilterMapping.putAll(utilObj.getBloomFiltersForTriplesMaps(modelRepoUrl, modelContext, triplemaps));
 			for (String tripleUri : triplemaps) {
 				String serializedBloomFilter = obj.getString(tripleUri);

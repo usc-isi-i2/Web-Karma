@@ -19,6 +19,7 @@ import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
 import edu.isi.karma.kr2rml.template.PopulatedTemplateTermSet;
 import edu.isi.karma.kr2rml.template.StringTemplateTerm;
 import edu.isi.karma.kr2rml.template.TemplateTermSet;
+import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
@@ -90,7 +91,7 @@ public class TriplesMapWorkerPlan {
 		// Generate triples for specifying the types
 		for (TemplateTermSet typeTerm:triplesMap.getSubject().getRdfsType()) {
 			
-			PredicateObjectMap pom = new PredicateObjectMap(PredicateObjectMap.getNewId(),triplesMap);
+			PredicateObjectMap pom = new PredicateObjectMap(Prefixes.KARMA_DEV + PredicateObjectMap.getNewId(),triplesMap);
 			pom.setObject(new ObjectMap(factory.getNewId("objectmap"), typeTerm, null));
 			Predicate typePredicate = new Predicate(factory.getNewId("predicate"));
 			TemplateTermSet typeTemplate = new TemplateTermSet();
