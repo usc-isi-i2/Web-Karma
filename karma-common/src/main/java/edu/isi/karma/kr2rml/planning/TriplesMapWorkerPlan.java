@@ -90,7 +90,7 @@ public class TriplesMapWorkerPlan {
 		// Generate triples for specifying the types
 		for (TemplateTermSet typeTerm:triplesMap.getSubject().getRdfsType()) {
 			
-			PredicateObjectMap pom = new PredicateObjectMap(triplesMap);
+			PredicateObjectMap pom = new PredicateObjectMap(PredicateObjectMap.getNewId(),triplesMap);
 			pom.setObject(new ObjectMap(factory.getNewId("objectmap"), typeTerm, null));
 			Predicate typePredicate = new Predicate(factory.getNewId("predicate"));
 			TemplateTermSet typeTemplate = new TemplateTermSet();

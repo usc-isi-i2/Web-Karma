@@ -96,7 +96,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 
 	@Override
 	public void outputTripleWithURIObject(String subjTriplesMapId,
-			String subjUri, String predicateUri,
+			String subjUri, String predicateObjectMapId, String predicateUri,
 			String objectUri) {
 		outputTripleWithURIObject(subjUri, predicateUri, objectUri);
 		
@@ -104,7 +104,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	
 	@Override
 	public void outputTripleWithURIObject(String subjTriplesMapId,
-			String subjUri, String predicateUri, String objTriplesMapId,
+			String subjUri, String predicateObjectMapId, String predicateUri, String objTriplesMapId,
 			String objectUri) {
 		outputTripleWithURIObject(subjUri, predicateUri, objectUri);
 		
@@ -113,7 +113,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	
 	@Override
 	public void outputTripleWithLiteralObject(String subjTriplesMapId,
-			String subjUri, String predicateUri, String value,
+			String subjUri, String predicateObjectMapId, String predicateUri, String value,
 			String literalType) {
 		outputTripleWithLiteralObject(subjUri, predicateUri, value, value);
 		
@@ -121,7 +121,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 
 	@Override
 	public void outputQuadWithLiteralObject(String subjTriplesMapId,
-			String subjUri, String predicateUri, String value,
+			String subjUri, String predicateObjectMapId, String predicateUri, String value,
 			String literalType, String graph) {
 		outputQuadWithLiteralObject(subjUri, predicateUri, value, literalType, graph);
 		

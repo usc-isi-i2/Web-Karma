@@ -13,44 +13,44 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.modeling.Uris;
 
-public class TriplesMapBloomFilterManager {
+public class KR2RMLBloomFilterManager {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TriplesMapBloomFilterManager.class);
-	protected ConcurrentHashMap<String, KR2RMLBloomFilter> triplesMapsIdToBloomFilter;
+	private static final Logger LOG = LoggerFactory.getLogger(KR2RMLBloomFilterManager.class);
+	protected ConcurrentHashMap<String, KR2RMLBloomFilter> idToBloomFilter;
 	protected R2RMLMappingIdentifier mappingIdentifier;
-	public TriplesMapBloomFilterManager(R2RMLMappingIdentifier mappingIdentifier)
+	public KR2RMLBloomFilterManager(R2RMLMappingIdentifier mappingIdentifier)
 	{
-		triplesMapsIdToBloomFilter = new ConcurrentHashMap<String, KR2RMLBloomFilter>();
+		idToBloomFilter = new ConcurrentHashMap<String, KR2RMLBloomFilter>();
 		this.mappingIdentifier = mappingIdentifier;
 	}
-	public TriplesMapBloomFilterManager(JSONObject serializedManager) throws IOException
+	public KR2RMLBloomFilterManager(JSONObject serializedManager) throws IOException
 	{
-		triplesMapsIdToBloomFilter = new ConcurrentHashMap<String, KR2RMLBloomFilter>();
-		String triplesMapsIdsConcatenated = serializedManager.getString("triplesMapsIds");
-		String[] triplesMapsIds = triplesMapsIdsConcatenated.split(",");
-		for(String triplesMapsId : triplesMapsIds)
+		idToBloomFilter = new ConcurrentHashMap<String, KR2RMLBloomFilter>();
+		String idsConcatenated = serializedManager.getString("ids");
+		String[] ids = idsConcatenated.split(",");
+		for(String id : ids)
 		{
-			String base64EncodedBloomFilter = serializedManager.getString(triplesMapsId);
+			String base64EncodedBloomFilter = serializedManager.getString(id);
 			KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
 			bf.populateFromCompressedAndBase64EncodedString(base64EncodedBloomFilter);
-			triplesMapsIdToBloomFilter.put(triplesMapsId, bf);
+			idToBloomFilter.put(id, bf);
 		}
 		this.mappingIdentifier = new R2RMLMappingIdentifier(serializedManager.getJSONObject("mappingIdentifier"));
 	}
 	
-	public KR2RMLBloomFilter getBloomFilter(String triplesMapId)
+	public KR2RMLBloomFilter getBloomFilter(String id)
 	{
-		return triplesMapsIdToBloomFilter.get(triplesMapId);
+		return idToBloomFilter.get(id);
 	}
-	public void addUriToBloomFilter(String subjTriplesMapId, String subjUri) {
+	public void addUriToBloomFilter(String id, String uri) {
 		KR2RMLBloomFilter bf = null;
-		if(!triplesMapsIdToBloomFilter.containsKey(subjTriplesMapId))
+		if(!idToBloomFilter.containsKey(id))
 		{
-			triplesMapsIdToBloomFilter.putIfAbsent(subjTriplesMapId, new KR2RMLBloomFilter(1000000, 8,Hash.JENKINS_HASH));
+			idToBloomFilter.putIfAbsent(id, new KR2RMLBloomFilter(1000000, 8,Hash.JENKINS_HASH));
 		}
-		bf = triplesMapsIdToBloomFilter.get(subjTriplesMapId);
+		bf = idToBloomFilter.get(id);
 		
-		Key k = new Key(subjUri.getBytes());
+		Key k = new Key(uri.getBytes());
 		bf.add(k);
 		return;
 	}
@@ -58,8 +58,8 @@ public class TriplesMapBloomFilterManager {
 	public JSONObject toJSON()
 	{
 		JSONObject filters = new JSONObject();
-		StringBuffer triplesMapsIds = new StringBuffer(); 
-		for(Entry<String, KR2RMLBloomFilter> entry : triplesMapsIdToBloomFilter.entrySet())
+		StringBuffer ids = new StringBuffer(); 
+		for(Entry<String, KR2RMLBloomFilter> entry : idToBloomFilter.entrySet())
 		{
 			String key = entry.getKey();
 			KR2RMLBloomFilter bf = entry.getValue();
@@ -71,25 +71,25 @@ public class TriplesMapBloomFilterManager {
 			}
 			catch (IOException e)
 			{
-				LOG.error("Unable to append bloom filter for triples map: " +key);
+				LOG.error("Unable to append bloom filter for id: " +key);
 				continue;
 			}
-			if(triplesMapsIds.length() != 0)
+			if(ids.length() != 0)
 			{
-				triplesMapsIds.append(",");
+				ids.append(",");
 			}
-			triplesMapsIds.append(entry.getKey());
+			ids.append(entry.getKey());
 			
 			
 		}
-		filters.put("triplesMapsIds", triplesMapsIds.toString());
+		filters.put("ids", ids.toString());
 		filters.put("mappingIdentifier", mappingIdentifier.toJSON());
 		return filters;
 	}
 	public String toRDF()
 	{
 		StringBuilder builder = new StringBuilder();
-		for(Entry<String, KR2RMLBloomFilter> entry : triplesMapsIdToBloomFilter.entrySet())
+		for(Entry<String, KR2RMLBloomFilter> entry : idToBloomFilter.entrySet())
 		{
 			KR2RMLBloomFilter bf = entry.getValue();
 			String key = entry.getKey();
@@ -106,7 +106,7 @@ public class TriplesMapBloomFilterManager {
 			}
 			catch (IOException e)
 			{
-				LOG.error("Unable to append bloom filter for triples map: " + key);
+				LOG.error("Unable to append bloom filter for id: " + key);
 				continue;
 			}
 			tripleBuilder.append("\" . \n");

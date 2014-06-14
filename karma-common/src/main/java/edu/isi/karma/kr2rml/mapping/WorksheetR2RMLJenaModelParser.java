@@ -263,7 +263,7 @@ public class WorksheetR2RMLJenaModelParser {
 		while (predObjItr.hasNext()) {
 			Resource pomBlankNode = predObjItr.next().asResource();
 			// Create the PredicateObjectMap object for current POM
-			PredicateObjectMap pom = new PredicateObjectMap(trMap);
+			PredicateObjectMap pom = new PredicateObjectMap(pomBlankNode.getURI(), trMap);
 			
 			// Get the predicate for the POM
 			Predicate pred = null;
@@ -355,7 +355,7 @@ public class WorksheetR2RMLJenaModelParser {
 				List<TemplateTerm> terms = subjTemplTermSet.getAllTerms();
 				if(isValidTemplate(terms))
 				{
-					PredicateObjectMap pom = new PredicateObjectMap(trMap);
+					PredicateObjectMap pom = new PredicateObjectMap(PredicateObjectMap.getNewId(),trMap);
 					Predicate pred = new Predicate(Uris.CLASS_INSTANCE_LINK_URI + "-" + predicateIdCounter++);
 					pred.getTemplate().addTemplateTermToSet(
 							new StringTemplateTerm(Uris.CLASS_INSTANCE_LINK_URI, true));

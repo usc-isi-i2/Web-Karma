@@ -7,12 +7,12 @@ import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 
 public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 
-	protected TriplesMapBloomFilterManager bloomFilterManager;
+	protected KR2RMLBloomFilterManager bloomFilterManager;
 	protected PrintWriter output;
 	
 	public BloomFilterKR2RMLRDFWriter(PrintWriter output, R2RMLMappingIdentifier mappingIdentifer)
 	{
-		bloomFilterManager = new TriplesMapBloomFilterManager(mappingIdentifer);
+		bloomFilterManager = new KR2RMLBloomFilterManager(mappingIdentifer);
 		this.output = output;
 	}
 	
@@ -24,17 +24,19 @@ public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 
 	@Override
 	public void outputTripleWithURIObject(String subjTriplesMapId,
-			String subjUri, String predicateUri,
+			String subjUri, String predicateObjectMapId, String predicateUri,
 			String objectUri) {
 		bloomFilterManager.addUriToBloomFilter(subjTriplesMapId, subjUri);
+		bloomFilterManager.addUriToBloomFilter(predicateObjectMapId, subjUri);
 
 	}
 	
 	@Override
 	public void outputTripleWithURIObject(String subjTriplesMapId,
-			String subjUri, String predicateUri, String objTriplesMapId,
+			String subjUri, String predicateObjectMapId, String predicateUri, String objTriplesMapId,
 			String objectUri) {
 		bloomFilterManager.addUriToBloomFilter(subjTriplesMapId, subjUri);
+		bloomFilterManager.addUriToBloomFilter(predicateObjectMapId, subjUri);
 
 	}
 
@@ -49,9 +51,10 @@ public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 
 	@Override
 	public void outputTripleWithLiteralObject(String subjTriplesMapId,
-			String subjUri, String predicateUri, String value,
+			String subjUri, String predicateObjectMapId, String predicateUri, String value,
 			String literalType) {
 		bloomFilterManager.addUriToBloomFilter(subjTriplesMapId, subjUri);
+		bloomFilterManager.addUriToBloomFilter(predicateObjectMapId, subjUri);
 
 	}
 
@@ -64,9 +67,10 @@ public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 
 	@Override
 	public void outputQuadWithLiteralObject(String subjTriplesMapId,
-			String subjUri, String predicateUri, String value,
+			String subjUri, String predicateObjectMapId, String predicateUri, String value,
 			String literalType, String graph) {
 		bloomFilterManager.addUriToBloomFilter(subjTriplesMapId, subjUri);
+		bloomFilterManager.addUriToBloomFilter(predicateObjectMapId, subjUri);
 
 	}
 
