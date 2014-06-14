@@ -1,23 +1,21 @@
 package edu.isi.karma.kr2rml;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.hadoop.util.bloom.Key;
 import org.apache.hadoop.util.hash.Hash;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.modeling.Uris;
 
 public class TriplesMapBloomFilterManager {
 
+	private static final Logger LOG = LoggerFactory.getLogger(TriplesMapBloomFilterManager.class);
 	protected ConcurrentHashMap<String, KR2RMLBloomFilter> triplesMapsIdToBloomFilter;
 	protected R2RMLMappingIdentifier mappingIdentifier;
 	public TriplesMapBloomFilterManager(R2RMLMappingIdentifier mappingIdentifier)
@@ -33,9 +31,8 @@ public class TriplesMapBloomFilterManager {
 		for(String triplesMapsId : triplesMapsIds)
 		{
 			String base64EncodedBloomFilter = serializedManager.getString(triplesMapsId);
-			byte[] serializedBloomFilter = Base64.decodeBase64(base64EncodedBloomFilter);
 			KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
-			bf.readFields(new ObjectInputStream(new ByteArrayInputStream(serializedBloomFilter)));
+			bf.populateFromCompressedAndBase64EncodedString(base64EncodedBloomFilter);
 			triplesMapsIdToBloomFilter.put(triplesMapsId, bf);
 		}
 		this.mappingIdentifier = new R2RMLMappingIdentifier(serializedManager.getJSONObject("mappingIdentifier"));
@@ -64,23 +61,25 @@ public class TriplesMapBloomFilterManager {
 		StringBuffer triplesMapsIds = new StringBuffer(); 
 		for(Entry<String, KR2RMLBloomFilter> entry : triplesMapsIdToBloomFilter.entrySet())
 		{
+			String key = entry.getKey();
 			KR2RMLBloomFilter bf = entry.getValue();
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(bf.getVectorSize() + 1000);
 			
-			try {
-				ObjectOutputStream dout = new ObjectOutputStream(baos);
-				bf.write(dout);
-				dout.flush();
-				filters.put(entry.getKey(), Base64.encodeBase64String(baos.toByteArray()));
-				
-			} catch (IOException e) {
-				e.printStackTrace();
+			try
+			{
+				String base64EncodedCompressedSerializedBloomFilter = bf.compressAndBase64Encode();
+				filters.put(key, base64EncodedCompressedSerializedBloomFilter);
+			}
+			catch (IOException e)
+			{
+				LOG.error("Unable to append bloom filter for triples map: " +key);
+				continue;
 			}
 			if(triplesMapsIds.length() != 0)
 			{
 				triplesMapsIds.append(",");
 			}
 			triplesMapsIds.append(entry.getKey());
+			
 			
 		}
 		filters.put("triplesMapsIds", triplesMapsIds.toString());
@@ -94,22 +93,24 @@ public class TriplesMapBloomFilterManager {
 		{
 			KR2RMLBloomFilter bf = entry.getValue();
 			String key = entry.getKey();
-			builder.append("<");
-			builder.append(key);
-			builder.append("> <");
-			builder.append(Uris.KM_HAS_BLOOMFILTER);
-			builder.append("> \"");
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(bf.getVectorSize() + 1000);
-			ObjectOutputStream dout;
-			try {
-				dout = new ObjectOutputStream(baos);
-				bf.write(dout);
-				dout.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}		
-			builder.append(Base64.encodeBase64String(baos.toByteArray()));
-			builder.append("\" . \n");
+			StringBuilder tripleBuilder = new StringBuilder();
+			tripleBuilder.append("<");
+			tripleBuilder.append(key);
+			tripleBuilder.append("> <");
+			tripleBuilder.append(Uris.KM_HAS_BLOOMFILTER);
+			tripleBuilder.append("> \"");
+			try
+			{
+			String base64EncodedCompressedSerializedBloomFilter = bf.compressAndBase64Encode();
+				tripleBuilder.append(base64EncodedCompressedSerializedBloomFilter);
+			}
+			catch (IOException e)
+			{
+				LOG.error("Unable to append bloom filter for triples map: " + key);
+				continue;
+			}
+			tripleBuilder.append("\" . \n");
+			builder.append(tripleBuilder);
 		}
 		return builder.toString();
 	}

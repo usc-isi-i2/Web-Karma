@@ -21,15 +21,11 @@
 package edu.isi.karma.controller.command.publish;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -40,10 +36,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import org.apache.commons.codec.binary.Base64;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -236,27 +231,16 @@ public class PublishRDFCommand extends Command {
 			Set<String> triplemaps = new HashSet<String>(Arrays.asList(obj.getString("triplesMapsIds").split(",")));
 			bloomfilterMapping.putAll(utilObj.getBloomFiltersForTriplesMaps(modelRepoUrl, modelContext, triplemaps));
 			for (String tripleUri : triplemaps) {
-				String value = obj.getString(tripleUri);
-				byte[] serializedBloomFilter = Base64.decodeBase64(value);
+				String serializedBloomFilter = obj.getString(tripleUri);
 				KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
-				bf.readFields(new ObjectInputStream(new ByteArrayInputStream(serializedBloomFilter)));
-				String oldValue = bloomfilterMapping.get(tripleUri);
-				if (oldValue != null) {
-					byte[] serializedBloomFilter2 = Base64.decodeBase64(oldValue);
+				bf.populateFromCompressedAndBase64EncodedString(serializedBloomFilter);
+				String oldserializedBloomFilter = bloomfilterMapping.get(tripleUri);
+				if (oldserializedBloomFilter != null) {
 					KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
-					bf2.readFields(new ObjectInputStream(new ByteArrayInputStream(serializedBloomFilter2)));
+					bf2.populateFromCompressedAndBase64EncodedString(oldserializedBloomFilter);
 					bf.or(bf2);
 				}
-				ByteArrayOutputStream baos = new ByteArrayOutputStream(bf.getVectorSize() + 1000);
-				ObjectOutputStream dout;
-				try {
-					dout = new ObjectOutputStream(baos);
-					bf.write(dout);
-					dout.flush();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}		
-				bloomfilterMapping.put(tripleUri, Base64.encodeBase64String(baos.toByteArray()));
+				bloomfilterMapping.put(tripleUri, bf.compressAndBase64Encode());
 			}
 		} catch (Exception e1) {
 			logger.error("Error occured while generating RDF!", e1);
