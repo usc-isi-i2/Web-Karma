@@ -229,7 +229,7 @@ public class PublishRDFCommand extends Command {
 			}
 			JSONObject obj = new JSONObject(sw.toString());
 			Set<String> triplemaps = new HashSet<String>(Arrays.asList(obj.getString("ids").split(",")));
-			bloomfilterMapping.putAll(utilObj.getBloomFiltersForTriplesMaps(modelRepoUrl, modelContext, triplemaps));
+			bloomfilterMapping.putAll(utilObj.getBloomFiltersForMaps(modelRepoUrl, modelContext, triplemaps));
 			for (String tripleUri : triplemaps) {
 				String serializedBloomFilter = obj.getString(tripleUri);
 				KR2RMLBloomFilter bf = new KR2RMLBloomFilter();

@@ -105,22 +105,22 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 
 			KR2RMLBloomFilterManager peopleBloomFilterManager = getBloomFilterManagerForSource("people.json","people-model");
 			KR2RMLBloomFilterManager scheduleBloomFilterManager = getBloomFilterManagerForSource("schedule.csv","schedule-model");
-			KR2RMLBloomFilter peoplePersonBF = peopleBloomFilterManager.getBloomFilter("http://isi.edu/integration/karma/dev#PredicateObjectMap_1941470a-1dfb-4716-803b-5f07a4af90fd");
+			KR2RMLBloomFilter peoplePersonWithTwitterIdBF = peopleBloomFilterManager.getBloomFilter("http://isi.edu/integration/karma/dev#PredicateObjectMap_1941470a-1dfb-4716-803b-5f07a4af90fd");
 			Key k = new Key(("<http://lod.isi.edu/cs548/person/Slepicka>").getBytes());
-			assertFalse(peoplePersonBF.membershipTest(k));
+			assertFalse(peoplePersonWithTwitterIdBF.membershipTest(k));
 			k = new Key(("<http://lod.isi.edu/cs548/person/Taheriyan>").getBytes());
-			assertTrue(peoplePersonBF.membershipTest(k));
+			assertTrue(peoplePersonWithTwitterIdBF.membershipTest(k));
 			k = new Key(("<http://lod.isi.edu/cs548/person/Kozareva>").getBytes());
-			assertFalse(peoplePersonBF.membershipTest(k));
+			assertFalse(peoplePersonWithTwitterIdBF.membershipTest(k));
 			k = new Key(("<http://lod.isi.edu/cs548/person/Ambite>").getBytes());
-			assertFalse(peoplePersonBF.membershipTest(k));
+			assertFalse(peoplePersonWithTwitterIdBF.membershipTest(k));
 			k = new Key(("<http://lod.isi.edu/cs548/person/Szekely>").getBytes());
-			assertTrue(peoplePersonBF.membershipTest(k));
+			assertTrue(peoplePersonWithTwitterIdBF.membershipTest(k));
 			k = new Key(("<http://lod.isi.edu/cs548/person/Knoblock>").getBytes());
-			assertTrue(peoplePersonBF.membershipTest(k));
+			assertTrue(peoplePersonWithTwitterIdBF.membershipTest(k));
 			k = new Key(("<http://lod.isi.edu/cs548/person/Wu>").getBytes());
-			assertFalse(peoplePersonBF.membershipTest(k));
-			assertEquals(3, peoplePersonBF.estimateNumberOfHashedValues());
+			assertFalse(peoplePersonWithTwitterIdBF.membershipTest(k));
+			assertEquals(3, peoplePersonWithTwitterIdBF.estimateNumberOfHashedValues());
 			KR2RMLBloomFilter schedulePersonBF = scheduleBloomFilterManager.getBloomFilter("http://isi.edu/integration/karma/dev#TriplesMap_413a6176-d893-45aa-b1c2-6661b5c491ab");
 			k = new Key(("<http://lod.isi.edu/cs548/person/Slepicka>").getBytes());
 			assertTrue(schedulePersonBF.membershipTest(k));
@@ -135,11 +135,18 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 			assertEquals(5, schedulePersonBF.estimateNumberOfHashedValues());
 			
 			KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(1000000,8,Hash.JENKINS_HASH);
-			intersectionBF.or(peoplePersonBF);
+			intersectionBF.or(peoplePersonWithTwitterIdBF);
 			intersectionBF.and(schedulePersonBF);
 			assertEquals(3, intersectionBF.estimateNumberOfHashedValues());
 			
+			KR2RMLBloomFilter hasInstructorBF = scheduleBloomFilterManager.getBloomFilter("http://isi.edu/integration/karma/dev#RefObjectMap_bb82f923-2953-4bd4-bc7b-d1196e05dbf6");
 			
+			k = new Key(("<http://lod.isi.edu/cs548/person/Szekely>").getBytes());
+			assertTrue(hasInstructorBF.membershipTest(k));
+			intersectionBF = new KR2RMLBloomFilter(1000000,8,Hash.JENKINS_HASH);
+			intersectionBF.or(hasInstructorBF);
+			intersectionBF.and(peoplePersonWithTwitterIdBF);
+			assertEquals(3, intersectionBF.estimateNumberOfHashedValues());
 			
 		} catch (Exception e) {
 			logger.error("testGenerateRDF1 failed:", e);

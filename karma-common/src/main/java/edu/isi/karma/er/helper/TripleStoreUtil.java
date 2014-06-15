@@ -487,20 +487,21 @@ public class TripleStoreUtil {
 			query.append(">");
 		}
 	}
-	public HashMap<String, List<String>> getPredicatesForTriplesMapsWithSameClass(String tripleStoreURL, String context, String classToMatch) throws KarmaException
+	
+	public HashMap<String, List<String>> getPredicatesForParentTriplesMapsWithSameClass(String tripleStoreURL, String context, String classToMatch) throws KarmaException
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
 		
 		List<String> predicates = new LinkedList<String>();
-		List<String> matchingTriplesMaps = new LinkedList<String>();
+		List<String> matchingRefObjMaps = new LinkedList<String>();
 		List<String> otherClasses = new LinkedList<String>();
 		try {
 
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			query.append("SELECT ?predicates ?otherClass (group_concat(?pom; separator = \",\") as ?triplesMaps )\n");			
+			query.append("SELECT ?predicates ?otherClass (group_concat(?refObjMap; separator = \",\") as ?refObjMaps )\n");			
 			injectContext(context, query);
 			query.append("{\n");
 			query.append("?mapping owl:sameAs ?mappingURI . \n"); 
@@ -510,16 +511,15 @@ public class TripleStoreUtil {
 			query.append("?subjectMap rr:class ");
 			query.append(classToMatch);
 			query.append(" .\n");
-			query.append("?triplesMap rr:predicateObjectMap ?pom . \n");
-			query.append("?pom rr:predicate ?predicates . \n");
-			query.append("OPTIONAL \n");
-			query.append("{\n");
-			query.append("?pom rr:objectMap ?objectMap .\n");
-			query.append("?objectMap rr:parentTriplesMap ?parentTriplesMap .\n");
-			query.append("?parentTriplesMap rr:subjectMap ?otherSubjectMap .\n");
+			query.append("?refObjMap rr:parentTriplesMap ?triplesMap .\n");
+			query.append("?pom rr:objectMap ?refObjMap .\n");
+			query.append("?otherTriplesMap rr:predicateObjectMap ?pom .\n"); 
+			query.append("?otherTriplesMap rr:subjectMap ?otherSubjectMap .\n");
 			query.append("?otherSubjectMap rr:class ?otherClass .\n");
-			query.append("}\n}\n");
-			query.append("GROUP BY ?predicates ?otherClass\n");
+			query.append("FILTER NOT EXISTS { ?otherClass rr:template ?z }\n");
+			query.append("?pom rr:predicate ?predicate .\n");
+			query.append("}\n");
+			query.append("GROUP BY ?predicate ?otherClass\n");
 			
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
@@ -541,7 +541,7 @@ public class TripleStoreUtil {
 				while (count < values.length()) {
 					JSONObject o = values.getJSONObject(count++);
 					predicates.add(o.getJSONObject("predicates").getString("value"));
-					matchingTriplesMaps.add(o.getJSONObject("triplesMaps").getString("value"));
+					matchingRefObjMaps.add(o.getJSONObject("refObjMaps").getString("value"));
 					if(o.has("otherClass"))
 					{
 						otherClasses.add(o.getJSONObject("otherClass").getString("value"));
@@ -556,13 +556,89 @@ public class TripleStoreUtil {
 			logger.error(e.getMessage());
 		}
 		HashMap<String, List<String>> values = new HashMap<String, List<String>>();
-		values.put("predicate", predicates);
-		values.put("triplesMaps", matchingTriplesMaps);
-		values.put("otherClass", otherClasses);
+		values.put("predicates", predicates);
+		values.put("refObjectMaps", matchingRefObjMaps);
+		values.put("otherClasses", otherClasses);
+		return values;
+	}
+	
+	
+	public HashMap<String, List<String>> getPredicatesForTriplesMapsWithSameClass(String tripleStoreURL, String context, String classToMatch) throws KarmaException
+	{
+		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
+		testTripleStoreConnection(tripleStoreURL);
+		
+		List<String> predicates = new LinkedList<String>();
+		List<String> matchingPOMs = new LinkedList<String>();
+		List<String> otherClasses = new LinkedList<String>();
+		try {
+
+			StringBuilder query = new StringBuilder();
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
+			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
+			query.append("SELECT ?predicate ?otherClass (group_concat(?pom; separator = \",\") as ?poms )\n");			
+			injectContext(context, query);
+			query.append("{\n");
+			query.append("?mapping owl:sameAs ?mappingURI . \n"); 
+			query.append("?mappingURI km-dev:hasData \"true\" .\n"); 
+			query.append("?mapping km-dev:hasTriplesMap ?triplesMap .\n");
+			query.append("?triplesMap rr:subjectMap ?subjectMap .\n");
+			query.append("?subjectMap rr:class ");
+			query.append(classToMatch);
+			query.append(" .\n");
+			query.append("?triplesMap rr:predicateObjectMap ?pom . \n");
+			query.append("?pom rr:predicate ?predicate . \n");
+			query.append("OPTIONAL \n");
+			query.append("{\n");
+			query.append("?pom rr:objectMap ?objectMap .\n");
+			query.append("?objectMap rr:parentTriplesMap ?parentTriplesMap .\n");
+			query.append("?parentTriplesMap rr:subjectMap ?otherSubjectMap .\n");
+			query.append("?otherSubjectMap rr:class ?otherClass .\n");
+			query.append("}\n}\n");
+			query.append("GROUP BY ?predicate ?otherClass\n");
+			
+			String queryString = query.toString();
+			logger.debug("query: " + queryString);
+
+			
+			Map<String, String> formparams = new HashMap<String, String>();
+			formparams.put("query", queryString);
+			formparams.put("queryLn", "SPARQL");
+			
+			String responseString = HTTPUtil.executeHTTPPostRequest(
+					tripleStoreURL, null, "application/sparql-results+json",
+					formparams);
+
+			if (responseString != null) {
+				JSONObject models = new JSONObject(responseString);
+				JSONArray values = models.getJSONObject("results")
+						.getJSONArray("bindings");
+				int count = 0;
+				while (count < values.length()) {
+					JSONObject o = values.getJSONObject(count++);
+					predicates.add(o.getJSONObject("predicate").getString("value"));
+					matchingPOMs.add(o.getJSONObject("poms").getString("value"));
+					if(o.has("otherClass"))
+					{
+						otherClasses.add(o.getJSONObject("otherClass").getString("value"));
+					}
+					else
+					{
+						otherClasses.add("");
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		HashMap<String, List<String>> values = new HashMap<String, List<String>>();
+		values.put("predicates", predicates);
+		values.put("predicateObjectMaps", matchingPOMs);
+		values.put("otherClasses", otherClasses);
 		return values;
 	}
 
-	public Map<String, String> getBloomFiltersForTriplesMaps(String tripleStoreURL, String context, Collection<String> tripleMaps) throws KarmaException
+	public Map<String, String> getBloomFiltersForMaps(String tripleStoreURL, String context, Collection<String> maps) throws KarmaException
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
@@ -576,7 +652,7 @@ public class TripleStoreUtil {
 			query.append("SELECT ?bf ?s \n");			
 			injectContext(context, query);
 			query.append("WHERE \n{\n");
-			Iterator<String> iterator = tripleMaps.iterator();
+			Iterator<String> iterator = maps.iterator();
 			while(iterator.hasNext()) {
 				query.append("{");
 				query.append("\n ?s <");

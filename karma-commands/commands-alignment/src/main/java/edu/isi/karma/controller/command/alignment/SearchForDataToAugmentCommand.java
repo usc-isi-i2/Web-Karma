@@ -89,12 +89,12 @@ public class SearchForDataToAugmentCommand extends Command{
 			LOG.error("Unable to find predicates for triples maps with same class as: " + nodeUri, e);
 		}
 		final JSONArray array = new JSONArray();
-		List<String> triplesMaps = result.get("triplesMaps");
-		List<String> predicate = result.get("predicate");
-		List<String> otherClass = result.get("otherClass");
-		Iterator<String> triplesMapsItr = triplesMaps.iterator();
-		Iterator<String> predicateItr = predicate.iterator();
-		Iterator<String> otherClassItr = otherClass.iterator();
+		List<String> concatenatedPredicateObjectMapsList = result.get("predicateObjectMaps");
+		List<String> predicates = result.get("predicates");
+		List<String> otherClasses = result.get("otherClasses");
+		Iterator<String> concatenatedPredicateObjectMapsListItr = concatenatedPredicateObjectMapsList.iterator();
+		Iterator<String> predicatesItr = predicates.iterator();
+		Iterator<String> otherClassesItr = otherClasses.iterator();
 		String hNodeId = FetchHNodeIdFromAlignmentCommand.gethNodeId(AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId), columnUri);
 		HNode hnode = factory.getHNode(hNodeId);
 		List<Table> dataTables = new ArrayList<Table>();
@@ -116,27 +116,27 @@ public class SearchForDataToAugmentCommand extends Command{
 		Set<String> maps = new HashSet<String>();
 		Map<String, String> bloomfilterMapping = new HashMap<String, String>();
 		try{
-			for (String tripleMap : triplesMaps) {
-				List<String> triplemaps = new ArrayList<String>(Arrays.asList(tripleMap.split(",")));
-				maps.addAll(triplemaps);
+			for (String concatenatedPredicateObjectMaps : concatenatedPredicateObjectMapsList) {
+				List<String> predicateObjectMaps = new ArrayList<String>(Arrays.asList(concatenatedPredicateObjectMaps.split(",")));
+				maps.addAll(predicateObjectMaps);
 				if (maps.size() > limit) {
-					bloomfilterMapping.putAll(util.getBloomFiltersForTriplesMaps(tripleStoreUrl, context, maps));
+					bloomfilterMapping.putAll(util.getBloomFiltersForMaps(tripleStoreUrl, context, maps));
 					maps = new HashSet<String>();
 				}
 			}
 			if (maps.size() > 0)
-				bloomfilterMapping.putAll(util.getBloomFiltersForTriplesMaps(tripleStoreUrl, context, maps));
+				bloomfilterMapping.putAll(util.getBloomFiltersForMaps(tripleStoreUrl, context, maps));
 		} catch (KarmaException e1) {
 			e1.printStackTrace();
 		}
-		while(triplesMapsItr.hasNext() && predicateItr.hasNext() && otherClassItr.hasNext())
+		while(concatenatedPredicateObjectMapsListItr.hasNext() && predicatesItr.hasNext() && otherClassesItr.hasNext())
 		{
 			JSONObject obj = new JSONObject();
-			String tripleMap = triplesMapsItr.next();
-			List<String> triplemaps = new ArrayList<String>(Arrays.asList(tripleMap.split(",")));
+			String concatenatedPredicateObjectMaps = concatenatedPredicateObjectMapsListItr.next();
+			List<String> predicateObjectMaps = new ArrayList<String>(Arrays.asList(concatenatedPredicateObjectMaps.split(",")));
 			try {
 				KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(1000000,8,Hash.JENKINS_HASH);
-				for (String triplemap : triplemaps) {
+				for (String triplemap : predicateObjectMaps) {
 					String serializedBloomFilter = bloomfilterMapping.get(triplemap);
 					KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
 					bf.populateFromCompressedAndBase64EncodedString(serializedBloomFilter);
@@ -144,8 +144,8 @@ public class SearchForDataToAugmentCommand extends Command{
 				}
 				intersectionBF.and(uris);
 				double probability = intersectionBF.estimateNumberOfHashedValues()/(uriSet.size()*1.0);
-				obj.put("predicate", predicateItr.next());
-				obj.put("otherClass", otherClassItr.next());
+				obj.put("predicate", predicatesItr.next());
+				obj.put("otherClass", otherClassesItr.next());
 				obj.put("probability", String.format("%.4f", probability));
 				array.put(obj);
 			} catch (Exception e) {
