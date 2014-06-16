@@ -1959,6 +1959,7 @@ var AugmentDataDialog = (function() {
             newInfo.push(getParamObject("columnUri", columnUri, "other"));
             newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
             newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+            newInfo.push(getParamObject("incoming", "false", "other"));
             info["newInfo"] = JSON.stringify(newInfo);
             showLoading(info["worksheetId"]);
             var returned = $.ajax({
@@ -2299,7 +2300,7 @@ var AugmentDataIncomingDialog = (function() {
             var info = new Object();
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "AugmentDataIncomingCommand";
+            info["command"] = "AugmentDataCommand";
             var newInfo = [];
             newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
             newInfo.push(getParamObject("predicate", JSON.stringify(predicates), "other"));
@@ -2307,6 +2308,7 @@ var AugmentDataIncomingDialog = (function() {
             newInfo.push(getParamObject("columnUri", columnUri, "other"));
             newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
             newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+            newInfo.push(getParamObject("incoming", "true", "other"));
             info["newInfo"] = JSON.stringify(newInfo);
             showLoading(info["worksheetId"]);
             var returned = $.ajax({

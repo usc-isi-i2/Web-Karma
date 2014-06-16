@@ -14,7 +14,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 	
 	private enum Arguments {
-		worksheetId, predicate, triplesMap, alignmentId, columnUri, otherClass, tripleStoreUrl, hNodeId
+		worksheetId, predicate, triplesMap, alignmentId, columnUri, otherClass, tripleStoreUrl, hNodeId, incoming
 	}
 
 	@Override
@@ -27,7 +27,8 @@ public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 		String otherClass = request.getParameter(Arguments.otherClass.name());
 		String dataRepoUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		return new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, triplesMap, otherClass, hNodeId);
+		String incoming = request.getParameter(Arguments.incoming.name());
+		return new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, triplesMap, otherClass, hNodeId, Boolean.parseBoolean(incoming));
 	}
 
 	@Override
@@ -46,7 +47,8 @@ public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 		String otherClass = CommandInputJSONUtil.getStringValue(Arguments.otherClass.name(), inputJson);
 		String dataRepoUrl = CommandInputJSONUtil.getStringValue(Arguments.tripleStoreUrl.name(), inputJson);
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
-		AugmentDataCommand cmd = new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, triplesMap, otherClass, hNodeId);
+		String incoming = CommandInputJSONUtil.getStringValue(Arguments.incoming.name(), inputJson);
+		AugmentDataCommand cmd = new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, triplesMap, otherClass, hNodeId, Boolean.parseBoolean(incoming));
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
