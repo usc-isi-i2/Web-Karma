@@ -138,7 +138,7 @@ public class AugmentDataIncomingCommand extends WorksheetCommand{
 			List<String> rowIds = SubjectURIToRowId.get(subject);
 			boolean isNewNode = false;
 			for (String RowId : rowIds) {
-				String predicate = resultPredicates.get(i);
+				String otherClass = resultClass.get(i);
 				JSONArray array = new JSONArray();
 				JSONObject obj = new JSONObject();
 				JSONObject obj2 = new JSONObject();
@@ -154,7 +154,7 @@ public class AugmentDataIncomingCommand extends WorksheetCommand{
 				obj3.put("type", "other");
 				input.put(obj3);
 				try {
-					AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), predicate.substring(predicate.lastIndexOf("/") + 1));
+					AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), otherClass.substring(otherClass.lastIndexOf("/") + 1));
 					command.doIt(workspace);
 					isNewNode |= command.isNewNode();
 					if (command.isNewNode())
