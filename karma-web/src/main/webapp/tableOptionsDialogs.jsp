@@ -179,10 +179,16 @@ a.icon-remove:hover {
 					
 					<div class="checkbox">
 						<label>
-				    		<input type="checkbox" id="addInverseProperties" unchecked>
+				    		<input type="checkbox" id="addInverseProperties" unchecked></input>
 				    		Add Inverse Properties
 			  			</label>
 					</div>	
+					<div class="checkbox">
+						<label>
+				    		<input type="checkbox" id="generateBloomFilters" unchecked></input>
+				    		Generate Bloom Filters
+			  			</label>
+					</div>
 					
 					<div id="rdfStoreInfo">
 						<div class="form-group">

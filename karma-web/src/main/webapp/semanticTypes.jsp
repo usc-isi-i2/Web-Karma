@@ -165,5 +165,27 @@
 		</form>
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<div class="modal fade" id="augmentDataIncomingDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title" id="augmentIncomingHeader">Augment Data2</h4>
+				  </div>
+				  <div class="modal-body">
+				  	<h4>Select Predicates:</h4>
+				  	<div id="augmentDataIncomingDialogHeaders"></div>
+						<div id="augmentDataIncomingDialogColumns" style = "max-height: 300px; overflow: auto;"></div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Submit</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
        
 </body>

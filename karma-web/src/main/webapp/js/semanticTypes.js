@@ -2074,3 +2074,351 @@ var AugmentDataDialog = (function() {
     };
     
 })();
+
+var AugmentDataIncomingDialog = (function() {
+    var instance = null;
+    var available;
+    var filtered;
+    function PrivateConstructor() {
+        var dialog = $("#augmentDataIncomingDialog");
+        var worksheetId, columnUri, alignmentId, columnDomain;
+        var invertedClasses = {};
+        function initVariable(wsId, colDomain, colUri, Alnid) {
+        	worksheetId = wsId;
+        	columnUri = colUri;
+        	alignmentId = Alnid;
+        	columnDomain = colDomain;
+
+        }
+
+        function refresh() {
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info['tripleStoreUrl'] = $('#txtModel_URL').html();
+            info['context'] = "";
+            info["command"] = "SearchForDataToAugmentIncomingCommand";
+            info["nodeUri"] = columnDomain;
+            info["columnUri"] = columnUri;
+            console.log(info['graphContext']);
+            var returnJSON;
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                async: false,
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        json = json.elements[0];
+                        console.log(json);
+                        returnJSON = json;
+                        //hideLoading(info["worksheetId"]);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while Searching Models!" + textStatus);
+                        //hideLoading(info["worksheetId"]);
+                    }
+            });
+            return returnJSON;
+        };
+
+        function init() {
+            //Initialize what happens when we show the dialog
+            var classes = getAllClasses(worksheetId);
+            var props = getAllDataProperties(worksheetId)
+            $.each(classes, function(index, type) {
+            	//console.log(type);
+            	invertedClasses[type['uri']] = type['label'].substring(0, type['label'].indexOf(":"));
+            });
+            $.each(props, function(index, type) {
+            	//console.log(type);
+            	invertedClasses[type['uri']] = type['label'].substring(0, type['label'].indexOf(":"));
+            });
+
+          	var dialogContent = $("#augmentDataIncomingDialogHeaders", dialog);
+          	dialogContent.empty();
+          	var table = $("<table>");
+            var tr = $("<tr>");
+            var td = $("<td>")
+                     .addClass("CheckboxProperty");
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("PredicateProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterPredicate")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("OtherClassProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterOtherClass")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("DataCountProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterDataCount")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            table.append(tr);
+            var tr = $("<tr>");
+            var td = $("<td>").addClass("CheckboxProperty");
+            tr.append(td);
+            var td = $("<td>").addClass("PredicateProperty");
+            var label = $("<label>").text("Predicate");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>").addClass("OtherClassProperty");
+            var label = $("<label>").text("Other Class");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>").addClass("DataCountProperty");
+            var label = $("<label>").text("Occurrence Probability");
+            td.append(label);
+            tr.append(td);
+            table.append(tr);
+            dialogContent.append(table);
+          	
+            $('#txtFilterPredicate', dialog).on('keyup', applyFilter);
+
+            $('#txtFilterOtherClass', dialog).on('keyup', applyFilter);
+
+            $('#txtFilterDataCount', dialog).on('keyup', applyFilter);
+
+            $('#btnSave', dialog).on('click', function (e) {
+                e.preventDefault();
+                saveDialog(e);
+            });
+            
+                
+        }
+
+        function applyFilter(e) {
+            console.log("applyFilter");
+            var tmp = [];
+            var filterPredicate = $('#txtFilterPredicate').val();
+            var filterOtherClass = $('#txtFilterOtherClass').val();
+            var filterProbability = $('#txtFilterDataCount').val();
+            if (!filterPredicate && !filterOtherClass && !filterProbability) {
+                filtered = available;
+                instance.show();
+                return;
+            }
+            for (var i = 0; i < available.length; i++) {
+                var predicate = available[i]['predicate'];
+                if (invertedClasses[predicate] != undefined)
+                	predicate = invertedClasses[predicate] + ":" + predicate.substring(predicate.lastIndexOf("/") + 1);
+                else
+                	predicate = predicate.substring(predicate.lastIndexOf("/") + 1);
+                predicate = predicate.toLowerCase();
+                var probability = available[i]['probability'];
+                var otherClass = available[i]['otherClass'];
+                if (invertedClasses[otherClass] != undefined)
+                	otherClass = invertedClasses[otherClass] + ":" + otherClass.substring(otherClass.lastIndexOf("/") + 1);
+                else
+                	otherClass = otherClass.substring(otherClass.lastIndexOf("/") + 1);
+                otherClass = otherClass.toLowerCase();
+                if (predicate.indexOf(filterPredicate) > -1 && filterPredicate != "") {
+                    tmp.push(available[i]);
+                }
+                else if (otherClass.indexOf(filterOtherClass) > -1 && filterOtherClass != "") {
+                    tmp.push(available[i]);
+                }
+                else if (probability * 100 > filterProbability && filterProbability != "") {
+                    tmp.push(available[i]);
+                }
+            }
+            filtered = tmp;
+            instance.show();
+        };
+        
+        function hideError() {
+            $("div.error", dialog).hide();
+        }
+        
+        function showError() {
+            $("div.error", dialog).show();
+        }
+        
+        function saveDialog(e) {
+            hide();
+            var checkboxes = dialog.find(":checked");
+            if (checkboxes.length == 0) {
+                hide();
+                return;
+            }
+            var predicates = [];
+            var otherClass = [];
+            for (var i = 0; i < checkboxes.length; i++) {
+	            var checkbox = checkboxes[i];
+	            var t1 = new Object();
+	            var t3 = new Object();
+	            t1['predicate'] = checkbox['src'];
+	            t3['otherClass'] = checkbox['value'];
+	            predicates.push(t1);    
+	            otherClass.push(t3);
+	        	}
+	        	var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["alignmentId"] = alignmentId;
+            info["columnUri"] = columnUri;
+            info["command"] = "FetchHNodeIdFromAlignmentCommand";
+            var hNodeId;
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                async: false,
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        //json = $.parseJSON();
+                        hNodeId = json.elements[0]['HNodeId'];
+                        console.log(hNodeId);
+                        //applyModelDialog.getInstance().show(worksheetId, json);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while fetching alignment!" + textStatus);
+                        //hideLoading(info["worksheetId"]);
+                    }
+            });
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "AugmentDataIncomingCommand";
+            var newInfo = [];
+            newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+            newInfo.push(getParamObject("predicate", JSON.stringify(predicates), "other"));
+            newInfo.push(getParamObject("otherClass", JSON.stringify(otherClass), "other"));
+            newInfo.push(getParamObject("columnUri", columnUri, "other"));
+            newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
+            newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+            info["newInfo"] = JSON.stringify(newInfo);
+            showLoading(info["worksheetId"]);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        console.log(json);
+                        parse(json);
+                        hideLoading(info["worksheetId"]);
+                        //applyModelDialog.getInstance().show(worksheetId, json);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while Augmenting Models!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            });
+        };
+        
+        function hide() {
+            dialog.modal('hide');
+        }
+        
+        function show() {
+            if (available.length == 0) {
+            	alert("No data to augment!");
+            	return;
+            }
+
+            dialog.on('show.bs.modal', function (e) {
+                hideError();
+                var dialogContent = $("#augmentDataIncomingDialogColumns", dialog);
+                var header = $("#augmentIncomingHeader", dialog);
+                var type = invertedClasses[columnDomain];
+                if (type == undefined) 
+                	type = columnUri.substring(columnUri.lastIndexOf("/") + 1);
+                else
+                	type = type + ":" + columnUri.substring(columnUri.lastIndexOf("/") + 1);
+                header.text("Augment data for " + type);
+          			dialogContent.empty();
+          			var table = $("<table>")
+                        .addClass("table table-striped table-condensed");
+                for (var i = 0; i < filtered.length; i++) {
+                    var predicate = filtered[i]['predicate'];
+                    var probability = filtered[i]['probability'];
+                    var otherClass = filtered[i]['otherClass'];
+                    var tr = $("<tr>");
+                    var td = $("<td>")
+                                .addClass("CheckboxProperty");
+                    var checkbox = $("<input>")
+                               .attr("type", "checkbox")                           
+                               .attr("id", "selectPredicates")
+                               .attr("value", otherClass)
+                               .attr("src", predicate);
+                    td.append(checkbox);
+                    tr.append(td);
+                    var td = $("<td>")
+                            .css("overflow", "scroll")
+                            .addClass("PredicateProperty");
+                    var name = invertedClasses[predicate] == undefined ? "" : (invertedClasses[predicate] + ":");
+                    var label = $("<label>").text(name + predicate.substring(predicate.lastIndexOf("/") + 1)).css("overflow", "scroll");
+                    td.append(label);
+                    tr.append(td);
+                    var td = $("<td>")
+                            .css("overflow", "scroll")
+                            .addClass("OtherClassProperty");
+                    name = invertedClasses[otherClass] == undefined ? "" : (invertedClasses[otherClass] + ":");
+                    var label = $("<label>").text(name + otherClass.substring(otherClass.lastIndexOf("/") + 1)).css("overflow", "scroll");
+                    td.append(label);
+                    tr.append(td);
+                    var td = $("<td>")
+                            .css("overflow", "scroll")
+                            .addClass("DataCountProperty");
+                    var label = $("<label>").text(probability*100.0 + "%").css("overflow", "scroll");
+                    td.append(label);
+                    tr.append(td);
+                    table.append(tr);    
+                    dialogContent.append(table);
+                }
+            });
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        };
+        
+        
+        return {    //Return back the public methods
+            show : show,
+            init : init,
+            initVariable : initVariable,
+            refresh : refresh
+        };
+    };
+
+    function getInstance(wsId, colDomain, colUri, Alnid) {
+    		console.log("instance");
+        if( ! instance ) {
+            instance = new PrivateConstructor();
+            instance.init();
+        }
+        instance.initVariable(wsId, colDomain, colUri, Alnid);
+        var json = instance.refresh();
+        available = json;
+        filtered = json;
+        return instance;
+    }
+   
+    return {
+        getInstance : getInstance
+    };
+    
+})();

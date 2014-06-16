@@ -338,6 +338,106 @@ public class TripleStoreUtil {
 		return results;
 	}
 	
+	public Map<String, List<String>> getSubjectsForPredicatesAndObjects(String tripleStoreURL, String context, List<String> subjects, List<String> predicates, List<String> otherClasses) throws KarmaException
+	{
+	
+		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
+		testTripleStoreConnection(tripleStoreURL);
+		Map<String, List<String>> results = new HashMap<String,List<String>>();
+		List<String> resultSubjects = new LinkedList<String>();
+		List<String> resultPredicates = new LinkedList<String>();
+		List<String> resultObjects = new LinkedList<String>();
+		List<String> resultClasses = new LinkedList<String>();
+		results.put("resultSubjects", resultSubjects);
+		results.put("resultPredicates", resultPredicates);
+		results.put("resultObjects", resultObjects);
+		results.put("resultClasses", resultClasses);
+		try {
+
+			StringBuilder query = new StringBuilder();
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
+			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
+			query.append("SELECT ?s ?p ?o ?filteredtype\n");			
+			injectContext(context, query);
+			query.append("{\n");
+			query.append("VALUES ?o { ");
+			for(String subject : subjects)
+			{
+				formatURI(subject, query);
+				query.append(" ");
+			}
+			query.append("}\n");
+			Iterator<String> predicateIterator = predicates.iterator();
+			Iterator<String> otherClassIterator = otherClasses.iterator();
+			
+			
+			String predicate;
+			String otherClass;
+			while(predicateIterator.hasNext() && otherClassIterator.hasNext())
+			{
+				query.append("{\n");
+				predicate = predicateIterator.next();
+				otherClass = otherClassIterator.next();
+				query.append("?s ");
+				formatURI(predicate, query);
+				query.append(" ?o .\n");
+				if(!otherClass.trim().isEmpty())
+				{
+					query.append("BIND ( ");
+					formatURI(otherClass, query);
+					
+					query.append(" AS ?filteredtype )\n");
+					query.append("?s a ?filteredtype .\n");
+					
+				}
+				query.append("}\n");
+				if(predicateIterator.hasNext() && otherClassIterator.hasNext())
+				{
+					query.append("UNION \n");
+				}
+			}
+			query.append("?s ?p ?o .\n");
+
+			query.append("}\n");
+			
+			String queryString = query.toString();
+			logger.debug("query: " + queryString);
+
+			
+			Map<String, String> formparams = new HashMap<String, String>();
+			formparams.put("query", queryString);
+			formparams.put("queryLn", "SPARQL");
+			
+			String responseString = HTTPUtil.executeHTTPPostRequest(
+					tripleStoreURL, null, "application/sparql-results+json",
+					formparams);
+
+			if (responseString != null) {
+				JSONObject models = new JSONObject(responseString);
+				JSONArray values = models.getJSONObject("results")
+						.getJSONArray("bindings");
+				int count = 0;
+				while (count < values.length()) {
+					JSONObject o = values.getJSONObject(count++);
+					resultSubjects.add(o.getJSONObject("s").getString("value"));
+					resultPredicates.add(o.getJSONObject("p").getString("value"));
+					resultObjects.add(o.getJSONObject("o").getString("value"));
+					if(o.has("filteredtype"))
+					{
+						resultClasses.add(o.getJSONObject("filteredtype").getString("value"));
+					}
+					else
+					{
+						resultClasses.add("");
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}	
+		return results;
+	}
+	
 	public void deleteMappingFromTripleStore(String tripleStoreURL, String context, String mappingURI) throws KarmaException
 	{
 		testTripleStoreConnection(tripleStoreURL);
@@ -501,7 +601,7 @@ public class TripleStoreUtil {
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			query.append("SELECT ?predicates ?otherClass (group_concat(?refObjMap; separator = \",\") as ?refObjMaps )\n");			
+			query.append("SELECT ?predicate ?otherClass (group_concat(?refObjMap; separator = \",\") as ?refObjMaps )\n");			
 			injectContext(context, query);
 			query.append("{\n");
 			query.append("?mapping owl:sameAs ?mappingURI . \n"); 
@@ -540,7 +640,7 @@ public class TripleStoreUtil {
 				int count = 0;
 				while (count < values.length()) {
 					JSONObject o = values.getJSONObject(count++);
-					predicates.add(o.getJSONObject("predicates").getString("value"));
+					predicates.add(o.getJSONObject("predicate").getString("value"));
 					matchingRefObjMaps.add(o.getJSONObject("refObjMaps").getString("value"));
 					if(o.has("otherClass"))
 					{

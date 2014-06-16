@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 public class PublishRDFCommandFactory extends CommandFactory {
 	private enum Arguments {
 		worksheetId, addInverseProperties, rdfPrefix, rdfNamespace, saveToStore,hostName,dbName,userName,password,modelName, 
-		tripleStoreUrl, graphUri, replaceContext
+		tripleStoreUrl, graphUri, replaceContext, generateBloomFilters
 	}
 
 	@Override
@@ -58,7 +58,8 @@ public class PublishRDFCommandFactory extends CommandFactory {
 				request.getParameter(Arguments.modelName.name()),
 				request.getParameter(Arguments.tripleStoreUrl.name()),
 				request.getParameter(Arguments.graphUri.name()),
-				Boolean.parseBoolean(request.getParameter(Arguments.replaceContext.name()))
+				Boolean.parseBoolean(request.getParameter(Arguments.replaceContext.name())), 
+				Boolean.parseBoolean(request.getParameter(Arguments.generateBloomFilters.name()))
 				);
 		
 		return comm;

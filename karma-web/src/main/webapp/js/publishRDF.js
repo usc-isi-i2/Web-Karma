@@ -183,6 +183,7 @@ var PublishRDFDialog = (function() {
     		info["tripleStoreUrl"] = $("input#rdfSPAQRLEndPoint").val();
     		info["graphUri"] = graphUri;
     		info["replaceContext"] = $('#modelGraphList').val();
+            info["generateBloomFilters"] = $("input#generateBloomFilters").is(":checked");
 
     		if( $("input#saveToRDFStore").is(":checked")) {
     			publishRDFToStore(info);

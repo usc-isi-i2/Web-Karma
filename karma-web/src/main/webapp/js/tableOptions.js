@@ -475,6 +475,7 @@ var applyModelDialog = (function() {
                     var checkbox = $("<input>")
                                .attr("type", "radio")                           
                                .attr("id", "modelManagerCheckbox")
+                               .attr("name", "modelManagerCheckbox")
                                .attr("value", context)
                                .attr("src", url);
                     td.append(checkbox);
