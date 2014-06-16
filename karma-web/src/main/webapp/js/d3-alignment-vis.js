@@ -92,7 +92,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     
   //Take into account where hNodesCovered is empty as this node does
     //not anchor to anything in the table
-    
+    var floatsAtLevel = [];
     $.each(json["nodes"], function(index, node){
         node["fixed"] = true;
         var hNodeList = node["hNodesCovered"];
@@ -135,14 +135,21 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	        });
 		        //console.log("HNode:" + node["id"] + " has " + linkList.length + " links");
 		        //console.log("left, right: " + extremeLeftX + ":" + extremeRightX);
+	        node["floating"] = false;
 	       if(extremeLeftX == Number.MAX_VALUE) {
 	    	   extremeLeftX = 10;
+	    	   node["floating"] = true;
 	       }
 	       if(extremeRightX == Number.MIN_VALUE) {
 	    	   extremeRightX = 230;
+	    	   node["floating"] = true;
 	       }
 		   
 	        var width = extremeRightX - extremeLeftX + 18;
+	        var arr = floatsAtLevel[node["height"]];
+	        if(arr) {
+	        	extremeLeft += (500 * arr.length);
+	        }
 	        node["width"] = width;
 	        node["y"] = h - ((node["height"] * levelHeight));
 	        if(node["nodeType"] == "ColumnNode" || node["nodeType"] == "Unassigned")
@@ -151,8 +158,66 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	            node["y"] += 15;
 	        node["x"] = extremeLeftX + width/2;
         	
+	        if(node["floating"]) {
+	        	if(floatsAtLevel[node["height"]]) {
+	        		
+	        	} else {
+	        		floatsAtLevel[node["height"]] = [];
+	        	}
+	        	floatsAtLevel[node["height"]].push(node);
+	        }
 	        //console.log("x:" + node["x"] + ", y:" + node["y"] + ", width:" + node["width"]);
         }
+    });
+    
+    //For Floating Nodes, the width still needs to be determined after we fix the initial widths
+    $.each(json["nodes"], function(index, node){
+    	if(node["floating"]) {
+    		var linkList = [];
+        	$.each(json["links"], function(index2, link) {
+        		var source = link["source"];
+        		if(typeof source == "object")
+        			source = source["index"];
+        		var target = link["target"];
+        		if(typeof target == "object")
+        			target = target["index"];
+        		
+        		if(source == index) {
+        			linkList.push(target);
+        		} else if(target == index) {
+        			linkList.push(source);
+        		}
+        	});
+       
+        	
+	        var extremeLeftX = Number.MAX_VALUE;
+	        var extremeRightX = Number.MIN_VALUE;
+	        $.each(linkList, function(index2, hNodeIdx){
+	            var nodeConnect = json["nodes"][hNodeIdx];
+	            var width = nodeConnect["width"];
+	            var x = nodeConnect["x"];
+	            //var y = nodeConnect["y"];
+	            var leftX = x - (width/2);
+	            var rightX = x + (width/2);
+	            if(leftX < extremeLeftX)
+	                extremeLeftX = leftX;
+	            if(rightX > extremeRightX)
+	                extremeRightX = rightX;
+	        });
+		        //console.log("HNode:" + node["id"] + " has " + linkList.length + " links");
+		        //console.log("left, right: " + extremeLeftX + ":" + extremeRightX);
+	        node["floating"] = false;
+	        if(extremeLeftX != Number.MAX_VALUE && extremeRightX != Number.MIN_VALUE) {
+		        var width = extremeRightX - extremeLeftX + 18;
+		        node["width"] = width;
+		        node["y"] = h - ((node["height"] * levelHeight));
+		        if(node["nodeType"] == "ColumnNode" || node["nodeType"] == "Unassigned")
+		            node["y"] -= 5;
+		        if(node["nodeType"] == "FakeRoot")
+		            node["y"] += 15;
+		        node["x"] = extremeLeftX + width/2;
+	        }
+    	}
     });
     
     var lineLayout;

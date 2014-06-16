@@ -182,12 +182,17 @@ public class DisplayModel {
 					Node v = q.remove();
 					Set<Node> neighbors = GraphUtil.getOutNeighbors(GraphUtil.asDefaultGraph(this.model), v);
 					for (Node w : neighbors) {
-						if (!markedNodes.contains(w)) {
-							markedNodes.add(w);
-							int level = nodesLevel.get(v).intValue() + 1;
+						int level = nodesLevel.get(v).intValue() + 1;
+						boolean levelChanged = false;
+						if(!nodesLevel.containsKey(w) || nodesLevel.get(w) < level) {
 							nodesLevel.put(w, level);
-							q.add(w);
+							levelChanged = true;
 						}
+						
+						markedNodes.add(w);
+						if(levelChanged)
+							q.add(w);
+						
 					}
 				}
 			}
