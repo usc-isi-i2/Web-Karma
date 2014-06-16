@@ -301,26 +301,27 @@ public class KR2RMLMappingWriter {
 			throws RepositoryException {
 		KR2RMLColumnNameFormatter columnNameFormatter = mapping.getColumnNameFormatter();
 		RepFactory factory = workspace.getFactory();
-		BNode pomBlankNode = f.createBNode();
+		URI pomUri = f.createURI(Namespaces.KARMA_DEV + pom.getId());
+		//BNode pomBlankNode = f.createBNode();
 		
-		boolean usablePredicate = addPredicate(pom, columnNameFormatter, factory, pomBlankNode);
+		boolean usablePredicate = addPredicate(pom, columnNameFormatter, factory, pomUri);
 		if(!usablePredicate)
 		{
 			return;
 		}
 		
-		addObject(mappingRes, pom, columnNameFormatter, factory, pomBlankNode);
-		con.add(trMapUri, repoURIs.get(Uris.RR_PRED_OBJ_MAP_URI), pomBlankNode);
+		addObject(mappingRes, pom, columnNameFormatter, factory, pomUri);
+		con.add(trMapUri, repoURIs.get(Uris.RR_PRED_OBJ_MAP_URI), pomUri);
 		// Add the predicate object map type statement
-		con.add(pomBlankNode, RDF.TYPE, repoURIs.get(Uris.RR_PREDICATEOBJECTMAP_CLASS_URI));
-		con.add(pomBlankNode, repoURIs.get(Uris.KM_IS_PART_OF_MAPPING_URI), mappingRes);
-		con.add(mappingRes, repoURIs.get(Uris.KM_HAS_PREDICATE_OBJECT_MAP_URI), pomBlankNode);
+		con.add(pomUri, RDF.TYPE, repoURIs.get(Uris.RR_PREDICATEOBJECTMAP_CLASS_URI));
+		con.add(pomUri, repoURIs.get(Uris.KM_IS_PART_OF_MAPPING_URI), mappingRes);
+		con.add(mappingRes, repoURIs.get(Uris.KM_HAS_PREDICATE_OBJECT_MAP_URI), pomUri);
 		
 	}
 	
 	private boolean addPredicate(PredicateObjectMap pom,
 			KR2RMLColumnNameFormatter columnNameFormatter, RepFactory factory,
-			BNode pomBlankNode) throws RepositoryException {
+			URI pomUri) throws RepositoryException {
 		// Add the predicate
 		TemplateTermSet predTermSet = pom.getPredicate().getTemplate();
 		if (predTermSet.isSingleUriString()) {
@@ -331,18 +332,18 @@ public class KR2RMLMappingWriter {
 			if (predValUri.stringValue().equals(Uris.CLASS_INSTANCE_LINK_URI))
 				return false;
 			
-			con.add(pomBlankNode, repoURIs.get(Uris.RR_PREDICATE_URI), predValUri);
+			con.add(pomUri, repoURIs.get(Uris.RR_PREDICATE_URI), predValUri);
 		} else {
 			Value predValLiteratl = f.createLiteral(predTermSet.
 					getR2rmlTemplateString(factory, columnNameFormatter));
-			con.add(pomBlankNode, repoURIs.get(Uris.RR_PREDICATE_URI), predValLiteratl);
+			con.add(pomUri, repoURIs.get(Uris.RR_PREDICATE_URI), predValLiteratl);
 		}
 		return true;
 	}
 
 	private void addObject(Resource mappingRes, PredicateObjectMap pom,
 			KR2RMLColumnNameFormatter columnNameFormatter, RepFactory factory,
-			BNode pomBlankNode) throws RepositoryException {
+			URI pomUri) throws RepositoryException {
 		// Add the object: Could be RefObjectMap or simple object with column values
 		if (pom.getObject().hasRefObjectMap()) {
 			RefObjectMap rfMap = pom.getObject().getRefObjectMap();
@@ -356,7 +357,7 @@ public class KR2RMLMappingWriter {
 			con.add(rfUri, repoURIs.get(Uris.KM_IS_PART_OF_MAPPING_URI), mappingRes);
 			con.add(mappingRes, repoURIs.get(Uris.KM_HAS_OBJECT_MAP_URI), rfUri);
 			// Add the RefObjectMap as the object map of current POMap
-			con.add(pomBlankNode, repoURIs.get(Uris.RR_OBJECTMAP_URI), rfUri);
+			con.add(pomUri, repoURIs.get(Uris.RR_OBJECTMAP_URI), rfUri);
 		} else {
 			TemplateTermSet objTermSet = pom.getObject().getTemplate();
 			TemplateTermSet rdfLiteralTypeTermSet = pom.getObject().getRdfLiteralType();
@@ -382,7 +383,7 @@ public class KR2RMLMappingWriter {
 				con.add(mappingRes, repoURIs.get(Uris.KM_HAS_OBJECT_MAP_URI), cnBnode);
 				
 				// Add the link b/w blank node and object map
-				con.add(pomBlankNode, repoURIs.get(Uris.RR_OBJECTMAP_URI), cnBnode);
+				con.add(pomUri, repoURIs.get(Uris.RR_OBJECTMAP_URI), cnBnode);
 			}
 			else if(!objTermSet.isEmpty())
 			{
@@ -397,7 +398,7 @@ public class KR2RMLMappingWriter {
 				con.add(mappingRes, repoURIs.get(Uris.KM_HAS_OBJECT_MAP_URI), cnBnode);
 				
 				//Add the link b/w blank node and object map
-				con.add(pomBlankNode, repoURIs.get(Uris.RR_OBJECTMAP_URI), cnBnode);
+				con.add(pomUri, repoURIs.get(Uris.RR_OBJECTMAP_URI), cnBnode);
 				
 			}
 		}

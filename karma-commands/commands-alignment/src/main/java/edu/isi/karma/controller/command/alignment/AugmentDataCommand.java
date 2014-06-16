@@ -59,25 +59,21 @@ public class AugmentDataCommand extends WorksheetCommand{
 
 	@Override
 	public String getCommandName() {
-		// TODO Auto-generated method stub
 		return this.getClass().getSimpleName();
 	}
 
 	@Override
 	public String getTitle() {
-		// TODO Auto-generated method stub
 		return "Augment Data";
 	}
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public CommandType getCommandType() {
-		// TODO Auto-generated method stub
 		return CommandType.undoable;
 	}
 

@@ -3,16 +3,18 @@ package edu.isi.karma.kr2rml;
 import java.io.PrintWriter;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.planning.TriplesMap;
+import edu.isi.karma.modeling.Uris;
 
 
 public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 
-	protected TriplesMapBloomFilterManager bloomFilterManager;
+	protected KR2RMLBloomFilterManager bloomFilterManager;
 	protected PrintWriter output;
-	
+	private final static String formattedTypeURI = "<" + Uris.RDF_TYPE_URI +">";
 	public BloomFilterKR2RMLRDFWriter(PrintWriter output, R2RMLMappingIdentifier mappingIdentifer)
 	{
-		bloomFilterManager = new TriplesMapBloomFilterManager(mappingIdentifer);
+		bloomFilterManager = new KR2RMLBloomFilterManager(mappingIdentifer);
 		this.output = output;
 	}
 	
@@ -23,18 +25,31 @@ public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 	}
 
 	@Override
-	public void outputTripleWithURIObject(String subjTriplesMapId,
-			String subjUri, String predicateUri,
+	public void outputTripleWithURIObject(TriplesMap subjTriplesMap,
+			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri,
 			String objectUri) {
-		bloomFilterManager.addUriToBloomFilter(subjTriplesMapId, subjUri);
+
+		bloomFilterManager.addUriToBloomFilter(subjTriplesMap.getId(), subjUri);
+		if(predicateUri.equalsIgnoreCase(formattedTypeURI))
+		{
+			return;
+		}
+		bloomFilterManager.addUriToBloomFilter(predicateObjectMap.getId(), subjUri);
 
 	}
 	
 	@Override
-	public void outputTripleWithURIObject(String subjTriplesMapId,
-			String subjUri, String predicateUri, String objTriplesMapId,
+	public void outputTripleWithURIObject(TriplesMap subjTriplesMap,
+			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, TriplesMap objTriplesMap,
 			String objectUri) {
-		bloomFilterManager.addUriToBloomFilter(subjTriplesMapId, subjUri);
+
+		bloomFilterManager.addUriToBloomFilter(subjTriplesMap.getId(), subjUri);
+		if(predicateUri.equalsIgnoreCase(formattedTypeURI))
+		{
+			return;
+		}
+		bloomFilterManager.addUriToBloomFilter(predicateObjectMap.getId(), subjUri);
+		bloomFilterManager.addUriToBloomFilter(predicateObjectMap.getObject().getRefObjectMap().getId(), objectUri);
 
 	}
 
@@ -48,10 +63,16 @@ public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 	}
 
 	@Override
-	public void outputTripleWithLiteralObject(String subjTriplesMapId,
-			String subjUri, String predicateUri, String value,
+	public void outputTripleWithLiteralObject(TriplesMap subjTriplesMap,
+			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, String value,
 			String literalType) {
-		bloomFilterManager.addUriToBloomFilter(subjTriplesMapId, subjUri);
+
+		bloomFilterManager.addUriToBloomFilter(subjTriplesMap.getId(), subjUri);
+		if(predicateUri.equalsIgnoreCase(formattedTypeURI))
+		{
+			return;
+		}
+		bloomFilterManager.addUriToBloomFilter(predicateObjectMap.getId(), subjUri);
 
 	}
 
@@ -63,10 +84,16 @@ public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 	}
 
 	@Override
-	public void outputQuadWithLiteralObject(String subjTriplesMapId,
-			String subjUri, String predicateUri, String value,
+	public void outputQuadWithLiteralObject(TriplesMap subjTriplesMap,
+			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, String value,
 			String literalType, String graph) {
-		bloomFilterManager.addUriToBloomFilter(subjTriplesMapId, subjUri);
+
+		bloomFilterManager.addUriToBloomFilter(subjTriplesMap.getId(), subjUri);
+		if(predicateUri.equalsIgnoreCase(formattedTypeURI))
+		{
+			return;
+		}
+		bloomFilterManager.addUriToBloomFilter(predicateObjectMap.getId(), subjUri);
 
 	}
 

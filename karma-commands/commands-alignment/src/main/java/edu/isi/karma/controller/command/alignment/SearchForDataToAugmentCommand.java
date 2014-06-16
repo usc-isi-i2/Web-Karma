@@ -1,7 +1,5 @@
 package edu.isi.karma.controller.command.alignment;
 
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,11 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.hadoop.util.bloom.Key;
 import org.apache.hadoop.util.hash.Hash;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
@@ -38,6 +37,7 @@ import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class SearchForDataToAugmentCommand extends Command{
+	private static final Logger LOG = LoggerFactory.getLogger(SearchForDataToAugmentCommand.class);
 	private String tripleStoreUrl;
 	private String context;
 	private String nodeUri;
@@ -55,31 +55,27 @@ public class SearchForDataToAugmentCommand extends Command{
 
 	@Override
 	public String getCommandName() {
-		// TODO Auto-generated method stub
 		return this.getClass().getSimpleName();
 	}
 
 	@Override
 	public String getTitle() {
-		// TODO Auto-generated method stub
 		return "Search For Data To Augment";
 	}
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public CommandType getCommandType() {
-		// TODO Auto-generated method stub
 		return CommandType.notInHistory;
 	}
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		// TODO Auto-generated method stub
+	
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		RepFactory factory = workspace.getFactory();
 		TripleStoreUtil util = new TripleStoreUtil();
@@ -90,16 +86,15 @@ public class SearchForDataToAugmentCommand extends Command{
 		try {
 			result = util.getPredicatesForTriplesMapsWithSameClass(tripleStoreUrl, context, nodeUri);
 		} catch (KarmaException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			LOG.error("Unable to find predicates for triples maps with same class as: " + nodeUri, e);
 		}
 		final JSONArray array = new JSONArray();
-		List<String> triplesMaps = result.get("triplesMaps");
-		List<String> predicate = result.get("predicate");
-		List<String> otherClass = result.get("otherClass");
-		Iterator<String> triplesMapsItr = triplesMaps.iterator();
-		Iterator<String> predicateItr = predicate.iterator();
-		Iterator<String> otherClassItr = otherClass.iterator();
+		List<String> concatenatedPredicateObjectMapsList = result.get("predicateObjectMaps");
+		List<String> predicates = result.get("predicates");
+		List<String> otherClasses = result.get("otherClasses");
+		Iterator<String> concatenatedPredicateObjectMapsListItr = concatenatedPredicateObjectMapsList.iterator();
+		Iterator<String> predicatesItr = predicates.iterator();
+		Iterator<String> otherClassesItr = otherClasses.iterator();
 		String hNodeId = FetchHNodeIdFromAlignmentCommand.gethNodeId(AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId), columnUri);
 		HNode hnode = factory.getHNode(hNodeId);
 		List<Table> dataTables = new ArrayList<Table>();
@@ -121,42 +116,40 @@ public class SearchForDataToAugmentCommand extends Command{
 		Set<String> maps = new HashSet<String>();
 		Map<String, String> bloomfilterMapping = new HashMap<String, String>();
 		try{
-			for (String tripleMap : triplesMaps) {
-				List<String> triplemaps = new ArrayList<String>(Arrays.asList(tripleMap.split(",")));
-				maps.addAll(triplemaps);
+			for (String concatenatedPredicateObjectMaps : concatenatedPredicateObjectMapsList) {
+				List<String> predicateObjectMaps = new ArrayList<String>(Arrays.asList(concatenatedPredicateObjectMaps.split(",")));
+				maps.addAll(predicateObjectMaps);
 				if (maps.size() > limit) {
-					bloomfilterMapping.putAll(util.getBloomFiltersForTriplesMaps(tripleStoreUrl, context, maps));
+					bloomfilterMapping.putAll(util.getBloomFiltersForMaps(tripleStoreUrl, context, maps));
 					maps = new HashSet<String>();
 				}
 			}
 			if (maps.size() > 0)
-				bloomfilterMapping.putAll(util.getBloomFiltersForTriplesMaps(tripleStoreUrl, context, maps));
+				bloomfilterMapping.putAll(util.getBloomFiltersForMaps(tripleStoreUrl, context, maps));
 		} catch (KarmaException e1) {
 			e1.printStackTrace();
 		}
-		while(triplesMapsItr.hasNext() && predicateItr.hasNext() && otherClassItr.hasNext())
+		while(concatenatedPredicateObjectMapsListItr.hasNext() && predicatesItr.hasNext() && otherClassesItr.hasNext())
 		{
 			JSONObject obj = new JSONObject();
-			String tripleMap = triplesMapsItr.next();
-			List<String> triplemaps = new ArrayList<String>(Arrays.asList(tripleMap.split(",")));
+			String concatenatedPredicateObjectMaps = concatenatedPredicateObjectMapsListItr.next();
+			List<String> predicateObjectMaps = new ArrayList<String>(Arrays.asList(concatenatedPredicateObjectMaps.split(",")));
 			try {
 				KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(1000000,8,Hash.JENKINS_HASH);
-				for (String triplemap : triplemaps) {
-					String value = bloomfilterMapping.get(triplemap);
-					byte[] serializedBloomFilter = Base64.decodeBase64(value);
+				for (String triplemap : predicateObjectMaps) {
+					String serializedBloomFilter = bloomfilterMapping.get(triplemap);
 					KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
-					bf.readFields(new ObjectInputStream(new ByteArrayInputStream(serializedBloomFilter)));
+					bf.populateFromCompressedAndBase64EncodedString(serializedBloomFilter);
 					intersectionBF.or(bf);
 				}
 				intersectionBF.and(uris);
 				double probability = intersectionBF.estimateNumberOfHashedValues()/(uriSet.size()*1.0);
-				obj.put("predicate", predicateItr.next());
-				obj.put("otherClass", otherClassItr.next());
+				obj.put("predicate", predicatesItr.next());
+				obj.put("otherClass", otherClassesItr.next());
 				obj.put("probability", String.format("%.4f", probability));
 				array.put(obj);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOG.error("Unable to process bloom filter: " + e.getMessage());
 			}
 		}
 		return new UpdateContainer(new AbstractUpdate() {
@@ -170,7 +163,6 @@ public class SearchForDataToAugmentCommand extends Command{
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

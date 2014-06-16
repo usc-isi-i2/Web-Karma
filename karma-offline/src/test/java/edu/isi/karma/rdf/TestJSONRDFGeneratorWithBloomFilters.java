@@ -22,6 +22,7 @@
 package edu.isi.karma.rdf;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
-import edu.isi.karma.kr2rml.TriplesMapBloomFilterManager;
+import edu.isi.karma.kr2rml.KR2RMLBloomFilterManager;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
@@ -102,25 +103,25 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 	public void testGenerateRDF1() {
 		try {
 
-			TriplesMapBloomFilterManager peopleBloomFilterManager = getBloomFilterManagerForSource("people.json","people-model");
-			TriplesMapBloomFilterManager scheduleBloomFilterManager = getBloomFilterManagerForSource("schedule.csv","schedule-model");
-			KR2RMLBloomFilter peoplePersonBF = peopleBloomFilterManager.getBloomFilter("http://isi.edu/integration/karma/dev#TriplesMap_4bdfba89-18e8-48d1-82dd-6c1a52679c96");
+			KR2RMLBloomFilterManager peopleBloomFilterManager = getBloomFilterManagerForSource("people.json","people-model");
+			KR2RMLBloomFilterManager scheduleBloomFilterManager = getBloomFilterManagerForSource("schedule.csv","schedule-model");
+			KR2RMLBloomFilter peoplePersonWithTwitterIdBF = peopleBloomFilterManager.getBloomFilter("http://isi.edu/integration/karma/dev#PredicateObjectMap_1941470a-1dfb-4716-803b-5f07a4af90fd");
 			Key k = new Key(("<http://lod.isi.edu/cs548/person/Slepicka>").getBytes());
-			assertTrue(peoplePersonBF.membershipTest(k));
+			assertFalse(peoplePersonWithTwitterIdBF.membershipTest(k));
 			k = new Key(("<http://lod.isi.edu/cs548/person/Taheriyan>").getBytes());
-			assertTrue(peoplePersonBF.membershipTest(k));
+			assertTrue(peoplePersonWithTwitterIdBF.membershipTest(k));
 			k = new Key(("<http://lod.isi.edu/cs548/person/Kozareva>").getBytes());
-			assertTrue(peoplePersonBF.membershipTest(k));
+			assertFalse(peoplePersonWithTwitterIdBF.membershipTest(k));
 			k = new Key(("<http://lod.isi.edu/cs548/person/Ambite>").getBytes());
-			assertTrue(peoplePersonBF.membershipTest(k));
+			assertFalse(peoplePersonWithTwitterIdBF.membershipTest(k));
 			k = new Key(("<http://lod.isi.edu/cs548/person/Szekely>").getBytes());
-			assertTrue(peoplePersonBF.membershipTest(k));
+			assertTrue(peoplePersonWithTwitterIdBF.membershipTest(k));
 			k = new Key(("<http://lod.isi.edu/cs548/person/Knoblock>").getBytes());
-			assertTrue(peoplePersonBF.membershipTest(k));
+			assertTrue(peoplePersonWithTwitterIdBF.membershipTest(k));
 			k = new Key(("<http://lod.isi.edu/cs548/person/Wu>").getBytes());
-			assertTrue(peoplePersonBF.membershipTest(k));
-			assertEquals(7, peoplePersonBF.estimateNumberOfHashedValues());
-			KR2RMLBloomFilter schedulePersonBF = scheduleBloomFilterManager.getBloomFilter("http://isi.edu/integration/karma/dev#TriplesMap_eaaccd56-f0d2-433d-b832-3f7e21dc5ad4");
+			assertFalse(peoplePersonWithTwitterIdBF.membershipTest(k));
+			assertEquals(3, peoplePersonWithTwitterIdBF.estimateNumberOfHashedValues());
+			KR2RMLBloomFilter schedulePersonBF = scheduleBloomFilterManager.getBloomFilter("http://isi.edu/integration/karma/dev#TriplesMap_413a6176-d893-45aa-b1c2-6661b5c491ab");
 			k = new Key(("<http://lod.isi.edu/cs548/person/Slepicka>").getBytes());
 			assertTrue(schedulePersonBF.membershipTest(k));
 			k = new Key(("<http://lod.isi.edu/cs548/person/Taheriyan>").getBytes());
@@ -134,11 +135,18 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 			assertEquals(5, schedulePersonBF.estimateNumberOfHashedValues());
 			
 			KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(1000000,8,Hash.JENKINS_HASH);
-			intersectionBF.or(peoplePersonBF);
+			intersectionBF.or(peoplePersonWithTwitterIdBF);
 			intersectionBF.and(schedulePersonBF);
-			assertEquals(5, intersectionBF.estimateNumberOfHashedValues());
+			assertEquals(3, intersectionBF.estimateNumberOfHashedValues());
 			
+			KR2RMLBloomFilter hasInstructorBF = scheduleBloomFilterManager.getBloomFilter("http://isi.edu/integration/karma/dev#RefObjectMap_bb82f923-2953-4bd4-bc7b-d1196e05dbf6");
 			
+			k = new Key(("<http://lod.isi.edu/cs548/person/Szekely>").getBytes());
+			assertTrue(hasInstructorBF.membershipTest(k));
+			intersectionBF = new KR2RMLBloomFilter(1000000,8,Hash.JENKINS_HASH);
+			intersectionBF.or(hasInstructorBF);
+			intersectionBF.and(peoplePersonWithTwitterIdBF);
+			assertEquals(3, intersectionBF.estimateNumberOfHashedValues());
 			
 		} catch (Exception e) {
 			logger.error("testGenerateRDF1 failed:", e);
@@ -146,7 +154,7 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 		}
 	}
 
-	private TriplesMapBloomFilterManager getBloomFilterManagerForSource(String inputFileName, String modelName)
+	private KR2RMLBloomFilterManager getBloomFilterManagerForSource(String inputFileName, String modelName)
 			throws IOException, URISyntaxException, KarmaException {
 
 		System.out.println("Load file: " + inputFileName);
@@ -160,7 +168,7 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 		BloomFilterKR2RMLRDFWriter bfWriter = new BloomFilterKR2RMLRDFWriter(bfpw, rdfGen.getModels().get(modelName));
 		rdfGen.generateRDF(modelName, inputFileName, data, false, bfWriter);
 		String base64EncodedBloomFilterManager = bfsw.toString();
-		return new TriplesMapBloomFilterManager(new JSONObject(base64EncodedBloomFilterManager));
+		return new KR2RMLBloomFilterManager(new JSONObject(base64EncodedBloomFilterManager));
 	}
 
 
