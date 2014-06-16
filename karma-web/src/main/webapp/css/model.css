@@ -1,65 +1,20 @@
 .FileNameProperty {
 	width: 100px;
 	float: left;
-	padding: 5px;
 }
 
 .PublishTimeProperty {
-	width: 100px;
+	width: 200px;
 	float: left;
-	padding: 5px;
 }
 
 .URLProperty {
-	width: 150px;
-	float: left;
-	padding: 5px;
-}
-
-.ContextProperty {
-	width: 180px;
-	float: left;
-	padding: 5px;
-}
-
-.DeleteProperty {
-	width: 100;
-	float: left;
-	padding: 5px;
-}
-
-.RefreshProperty {
-	width: 100;
-	float: left;
-	padding: 5px;
-}
-
-.FileNameButtonProperty {
-	width: 95px;
+	width: 200px;
 	float: left;
 }
 
-.PublishTimeButtonProperty {
-	width: 95px;
+.CheckboxProperty {
+	width: 25px;
 	float: left;
 }
 
-.URLButtonProperty {
-	width: 145px;
-	float: left;
-}
-
-.ContextButtonProperty {
-	width: 175px;
-	float: left;
-}
-
-.DeleteButtonProperty {
-	width: 95;
-	float: left;
-}
-
-.RefreshButtonProperty {
-	width: 95;
-	float: left;
-}

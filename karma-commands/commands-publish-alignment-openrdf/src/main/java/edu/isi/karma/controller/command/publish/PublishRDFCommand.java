@@ -212,6 +212,7 @@ public class PublishRDFCommand extends Command {
 
 		StringWriter sw = new StringWriter();
 		// Generate the RDF using KR2RML data structures
+		long start = 0;
 		try {
 			List<KR2RMLRDFWriter> writers = new ArrayList<KR2RMLRDFWriter>();
 			File f = new File(rdfFileLocalPath);
@@ -232,6 +233,7 @@ public class PublishRDFCommand extends Command {
 				logger.info("Using Jena DB:" + hostName + "/"+dbName + " user="+userName);
 				saveToStore(rdfFileLocalPath);
 			}
+			start = System.currentTimeMillis();
 			JSONObject obj = new JSONObject(sw.toString());
 			Set<String> triplemaps = new HashSet<String>(Arrays.asList(obj.getString("triplesMapsIds").split(",")));
 			bloomfilterMapping.putAll(utilObj.getBloomFiltersForTriplesMaps(modelRepoUrl, modelContext, triplemaps));
@@ -304,7 +306,8 @@ public class PublishRDFCommand extends Command {
 				result &= util.saveToStore(input, modelRepoUrl, modelContext, new Boolean(false), this.rdfSourceNamespace);
 				if (rdf.trim().compareTo("") != 0)
 					result &= util.saveToStore(rdf, modelRepoUrl, modelContext, new Boolean(false), this.rdfSourceNamespace);
-
+				long end = System.currentTimeMillis();
+				System.out.println("execution time: " + (end - start) + "node total: " + bloomfilterMapping.size());
 			}
 			if(result) {
 				logger.info("Saved rdf to store");

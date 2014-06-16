@@ -51,8 +51,9 @@ var ClassDropdownMenu = (function() {
             console.log(columnLabel);
             console.log(columnDomain);
             console.log(columnUri);
-            searchDataDialog.getInstance().show(worksheetId, 
-                    columnDomain, columnUri, alignmentId);
+            console.log(AugmentDataDialog);
+            AugmentDataDialog.getInstance(worksheetId, 
+                    columnDomain, columnUri, alignmentId).show();
         }
     	
     	function addOutgoingLink() {

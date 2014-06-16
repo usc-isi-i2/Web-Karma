@@ -78,68 +78,21 @@ a.icon-remove:hover {
 <div class="modal fade" id="modelManagerDialog" tabindex="-1">
   <div class="modal-dialog">
   		<form class="bs-example bs-example-form" role="form">
-			<div class="modal-content" style="width: 750px;">
+			<div class="modal-content">
 			     <div class="modal-header">
 				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				       <h4 class="modal-title">Model Manager</h4>
 				  </div>
 				  <div class="modal-body">
-				  	<div style="border-bottom: solid black; bottom-padding: 5px;">
-				  		<button type="button" class="btn btn-primary" id="btnLoadModel">Load Models</button>
-				  		<button type="button" class="btn btn-primary" id="btnClearModel">Clear Models</button>
-				  		<button type="button" class="btn btn-primary" id="btnClearFilter">Clear Filters</button>
-				  		<div style="padding: 10px;"></div>
-				  	</div>
 				  	<div id="modelManagerDialogHeaders"></div>
 						<div id="modelManagerDialogColumns" style="max-height: 300px; overflow: auto;"></div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
-				  </div> <!-- /.modal-footer -->
-			</div><!-- /.modal-content -->
-		</form>
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<div class="modal fade" id="modelFilterDialog" tabindex="-1">
-  <div class="modal-dialog">
-  		<form class="bs-example bs-example-form" role="form">
-			<div class="modal-content">
-			     <div class="modal-header">
-				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				       <h4 class="modal-title">Apply Filter</h4>
-				  </div>
-				  <div class="modal-body">
-						<div class="form-group">
-							<label for="txtFilter">Filter</label>
-							<input class="form-control" type="text" id="txtFilter" required>
-						</div>
-				  </div> <!-- /.modal-body -->
-				  <div class="modal-footer">
-				  	<button type="button" class="btn btn-default" data-dismiss="modal" id="btnCancel">Cancel</button>
-				    <button type="submit" class="btn btn-primary" data-dismiss="modal" id="btnSave">Apply</button>
-				  </div> <!-- /.modal-footer -->
-			</div><!-- /.modal-content -->
-		</form>
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<div class="modal fade" id="applyModelFilterDialog" tabindex="-1">
-  <div class="modal-dialog">
-  		<form class="bs-example bs-example-form" role="form">
-			<div class="modal-content">
-			     <div class="modal-header">
-				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				       <h4 class="modal-title">Apply Filter</h4>
-				  </div>
-				  <div class="modal-body">
-						<div class="form-group">
-							<label for="txtFilterApplyModel">Filter</label>
-							<input class="form-control" type="text" id="txtFilterApplyModel" required>
-						</div>
-				  </div> <!-- /.modal-body -->
-				  <div class="modal-footer">
-				  	<button type="button" class="btn btn-default" data-dismiss="modal" id="btnCancel">Cancel</button>
-				    <button type="submit" class="btn btn-primary" data-dismiss="modal" id="btnSave">Apply</button>
+				  		<button type="button" class="btn btn-default" id="btnLoadModel">Load Models</button>
+				  		<button type="button" class="btn btn-default" id="btnClearModel">Clear Models</button>
+				  		<button type="button" class="btn btn-default" id="btnDeleteModel">Delete Models</button>
+				  		<button type="button" class="btn btn-default" id="btnRefreshModel">Refresh Models</button>
+				  		<button type="button" class="btn btn-primary" class="close" data-dismiss="modal" style="padding: 5px;">Cancel</button>
 				  </div> <!-- /.modal-footer -->
 			</div><!-- /.modal-content -->
 		</form>

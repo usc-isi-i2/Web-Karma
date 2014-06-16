@@ -169,12 +169,12 @@ and related projects, please see: http://www.isi.edu/integration
 		        </div>
 		        <div class="nav navbar-nav">
 		        <div class="form-group" style="float:left; width: 500px; padding-right: 10px;">
-										<label for="txtModel_URL">Model Repository URL</label>
-										<input class="form-control" type="text" id="txtModel_URL" required>
+										<label for="txtModel_URL">Model Repository Endpoint</label>
+										<label class="edit" id="txtModel_URL"></label>
 						</div>
 		        <div class="form-group" style="float:left; width: 500px; padding-left: 10px;">
-								<label for="txtData_URL">Data Repository URL</label>
-								<input class="form-control" type="text" id="txtData_URL" required>
+								<label for="txtData_URL">Data Repository Endpoint</label>
+								<label class="edit" id="txtData_URL"></label>
 						</div>
 						</div>
 		      </div> <!--  end of navbar -->

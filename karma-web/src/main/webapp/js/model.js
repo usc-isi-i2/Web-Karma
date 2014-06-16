@@ -3,8 +3,27 @@ $(document).on("click", "#modelManagerButton", function() {
     modelManagerDialog.getInstance().show();
 });
 
-$('#txtModel_URL').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-$('#txtData_URL').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_data');
+$('#txtModel_URL').text('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+$('#txtData_URL').text('http://'+window.location.host + '/openrdf-sesame/repositories/karma_data');
+$('#txtData_URL').editable({
+    type: 'text',
+    pk: 1,
+    success: function(response, newValue) {
+        console.log("Set new value:" + newValue);
+        $('#txtData_URL').text(newValue);
+    },
+    title: 'Enter Data Endpoint'
+});
+
+$('#txtModel_URL').editable({
+    type: 'text',
+    pk: 1,
+    success: function(response, newValue) {
+        console.log("Set new value:" + newValue);
+        $('#txtModel_URL').text(newValue);
+    },
+    title: 'Enter Model Endpoint'
+});
 
 var saveModelDialog = (function() {
     var instance = null;
@@ -52,7 +71,7 @@ var saveModelDialog = (function() {
             
             info["workspaceId"] = $.workspaceGlobalInformation.id;
             info["command"] = "SaveR2RMLModelCommand";
-            info['tripleStoreUrl'] = $('#txtModel_URL').val();
+            info['tripleStoreUrl'] = $('#txtModel_URL').html();
             info['modelUrl'] = $('#txtModel_URL_Save').val();
             info['graphContext'] = $('#txtGraph_URL_Save').val();
             info['collection'] = checkboxes[0]['value'];
@@ -136,7 +155,7 @@ var clearModelDialog = (function() {
             var info = new Object();
             info["workspaceId"] = $.workspaceGlobalInformation.id;
             info["command"] = "ClearTripleStoreCommand";
-            info['tripleStoreUrl'] = $('#txtModel_URL').val();
+            info['tripleStoreUrl'] = $('#txtModel_URL').html();
             info['graphContext'] = $('#txtGraph_URL_Clear').val();
             console.log(info['graphContext']);
             var returned = $.ajax({
@@ -191,84 +210,71 @@ var modelManagerDialog = (function() {
 
     function PrivateConstructor() {
         var dialog = $("#modelManagerDialog");
-        var filterDialog = $("#modelFilterDialog");
         var availableModels;
         var filteredModels;
-        var filterName;
         function init() {
             //Initialize what happens when we show the dialog
             refresh();
             var dialogContent = $("#modelManagerDialogHeaders", dialog);
             dialogContent.empty();
-            var div = $("<div>").css("display","table-row")
-            var row = $("<div>").addClass("FileNameProperty");
-            var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary FileNameButtonProperty")
-                        .attr("id","btnFilterName")
-                        .attr("value","File Name");
-            row.append(label);
-            div.append(row);
-            var row = $("<div>").addClass("PublishTimeProperty");
-            var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary PublishTimeButtonProperty")
-                        .attr("id","btnFilterPublishTime")
-                        .attr("value","Publish Time");
-            row.append(label);
-            div.append(row);
-            var row = $("<div>").addClass("URLProperty");
-            var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary URLButtonProperty")
-                        .attr("id","btnFilterURL")
-                        .attr("value","URL");
-            row.append(label);
-            div.append(row);
-            var row = $("<div>").addClass("ContextProperty");
-            var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary ContextButtonProperty")
-                        .attr("id","btnFilterContext")
-                        .attr("value","Context");
-            row.append(label);
-            div.append(row);
-            dialogContent.append(div);
-            var div = $("<div>").css("display","table-row");
-            var row = $("<div>").addClass("FileNameProperty");
+            var table = $("<table>");
+            var tr = $("<tr>");
+            var td = $("<td>")
+                     .addClass("CheckboxProperty");
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("FileNameProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterFileName")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("PublishTimeProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterPublishTime")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("URLProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterURL")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            table.append(tr);
+            var tr = $("<tr>");
+            var td = $("<td>").addClass("CheckboxProperty");
+            tr.append(td);
+            var td = $("<td>").addClass("FileNameProperty");
             var label = $("<label>").text("File Name");
-            row.append(label);
-            div.append(row);
-            var row = $("<div>").addClass("PublishTimeProperty");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>").addClass("PublishTimeProperty");
             var label = $("<label>").text("Publish Time");
-            row.append(label);
-            div.append(row);
-            var row = $("<div>").addClass("URLProperty");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>").addClass("URLProperty");
             var label = $("<label>").text("URL");
-            row.append(label);
-            div.append(row);
-            var row = $("<div>").addClass("ContextProperty");
-            var label = $("<label>").text("Context");
-            row.append(label);
-            div.append(row);
-            dialogContent.append(div);
-            $('#btnFilterName', dialog).on('click', function (e) {
-                e.preventDefault();
-                showFilterDialog(e);
-            });
-             $('#btnFilterPublishTime', dialog).on('click', function (e) {
-                e.preventDefault();
-                showFilterDialog(e);
-            });
-            $('#btnFilterURL', dialog).on('click', function (e) {
-                e.preventDefault();
-                showFilterDialog(e);
-            });
-            $('#btnFilterContext', dialog).on('click', function (e) {
-                e.preventDefault();
-                showFilterDialog(e);
-            });
+            td.append(label);
+            tr.append(td);
+            table.append(tr);
+            dialogContent.append(table);
             $('#btnLoadModel', dialog).on('click', function (e) {
                 e.preventDefault();
                 hide();
                 saveModelDialog.getInstance().show();
             });
+
+            $('#txtFilterFileName', dialog).on('keyup', applyFilter);
+
+            $('#txtFilterPublishTime', dialog).on('keyup', applyFilter);
+
+            $('#txtFilterURL', dialog).on('keyup', applyFilter);
 
             $('#btnClearModel', dialog).on('click', function (e) {
                 e.preventDefault();
@@ -276,19 +282,13 @@ var modelManagerDialog = (function() {
                 clearModelDialog.getInstance().show();
             });
 
-            $('#btnSave', filterDialog).on('click', function (e) {
-                e.preventDefault();
-                applyFilter(e);
-            });
-            $('#btnCancel', filterDialog).on('click', function (e) {
-                e.preventDefault();
-                cancelFilter(e);
-            });
+            $('#btnDeleteModel', dialog)
+                .on('click', deleteModel)
+                .attr("disabled", "disabled");
 
-            $('#btnClearFilter', dialog).on('click', function (e) {
-                filteredModels = availableModels;
-                instance.show();
-            });   
+            $('#btnRefreshModel', dialog)
+                .on('click', refreshModel)
+                .attr("disabled", "disabled");
                 
         }
         
@@ -296,7 +296,7 @@ var modelManagerDialog = (function() {
             var info = new Object();
             info["workspaceId"] = $.workspaceGlobalInformation.id;
             info["command"] = "FetchR2RMLModelsListCommand";
-            info['tripleStoreUrl'] = $('#txtModel_URL').val();
+            info['tripleStoreUrl'] = $('#txtModel_URL').html();
             info['graphContext'] = "";
             var returned = $.ajax({
                 url: "RequestController",
@@ -328,47 +328,34 @@ var modelManagerDialog = (function() {
         function showError() {
             $("div.error", dialog).show();
         }
-        
-        function showFilterDialog(e) {
-            dialog.modal('hide');
-            console.log("showFilterDialog");
-            filterName = e.currentTarget['value'];
-            console.log(filterName);
-            $('#txtFilter').val("");
-            filterDialog.modal({keyboard:true, show:true, backdrop:'static'});
-            filterDialog.show();
-            
-        };
 
         function applyFilter(e) {
             console.log("applyFilter");
-            console.log(filterName);
             var tmp = [];
-            var filterText = $('#txtFilter').val();
-            console.log(filterText);
-            for (var i = 0; i < filteredModels.length; i++) {
-                var name = filteredModels[i]['name'];
-                var time = new Date(filteredModels[i].publishTime*1).toDateString();
-                var url = filteredModels[i].url;
-                var context = filteredModels[i].context;
-                if (filterName === "File Name" && name.indexOf(filterText) > -1)
-                    tmp.push(filteredModels[i]);
-                if (filterName === "Publish Time" && time.indexOf(filterText) > -1)
-                    tmp.push(filteredModels[i]);
-                if (filterName === "URL" && url.indexOf(filterText) > -1)
-                    tmp.push(filteredModels[i]);
-                if (filterName === "Context" && context.indexOf(filterText) > -1)
-                    tmp.push(filteredModels[i]);
+            var filterFilename = $('#txtFilterFileName').val();
+            var filterTime = $('#txtFilterPublishTime').val();
+            var filterURL = $('#txtFilterURL').val();
+            if (!filterFilename && !filterTime && !filterURL) {
+                filteredModels = availableModels;
+                instance.show();
+                return;
+            }
+            for (var i = 0; i < availableModels.length; i++) {
+                var name = availableModels[i]['name'].toLowerCase();
+                var time = new Date(availableModels[i].publishTime*1).toDateString().toLowerCase();
+                var url = availableModels[i].url.toLowerCase();
+                if (name.indexOf(filterFilename) > -1 && filterFilename != "") {
+                    tmp.push(availableModels[i]);
+                }
+                else if (time.indexOf(filterTime) > -1 && filterTime != "") {
+                    tmp.push(availableModels[i]);
+                }
+                else if (url.indexOf(filterURL) > -1 && filterURL != "") {
+                    tmp.push(availableModels[i]);
+                }
             }
             filteredModels = tmp;
             instance.show();
-            dialog.show();
-        };
-
-        function cancelFilter(e) {
-            console.log("cancelFilter");
-            instance.show();
-            dialog.show();
         };
         
         function hide() {
@@ -377,112 +364,135 @@ var modelManagerDialog = (function() {
         
         function deleteModel(e) {
             e.preventDefault();
-            console.log(e['currentTarget']['value']);
-            var tmpJSON = jQuery.parseJSON(e['currentTarget']['value']);
-            var info = new Object();
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "DeleteModelFromTripleStoreCommand";
-            info['tripleStoreUrl'] = $('#txtModel_URL').val();
-            info['graphContext'] = tmpJSON['context'];
-            info['mappingURI'] = tmpJSON['url'];
-            console.log(info['graphContext']);
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                complete :
-                    function (xhr, textStatus) {
+            var checkboxes = dialog.find(":checked");
+            for (var i = 0; i < checkboxes.length; i++) {
+                var checkbox = checkboxes[i];
+                var info = new Object();
+                info["workspaceId"] = $.workspaceGlobalInformation.id;
+                info["command"] = "DeleteModelFromTripleStoreCommand";
+                info['tripleStoreUrl'] = $('#txtModel_URL').html();
+                info['graphContext'] = checkbox['value'];
+                info['mappingURI'] = checkbox['src'];
+                console.log(info['graphContext']);
+                console.log(info['mappingURI']);
+                var returned = $.ajax({
+                    url: "RequestController",
+                    type: "POST",
+                    data : info,
+                    dataType : "json",
+                    async: false,
+                    complete :
+                        function (xhr, textStatus) {
                         //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        refresh();
-                        instance.show();
+                            var json = $.parseJSON(xhr.responseText);
                         //parse(json);
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while clearing model!" + textStatus);
-                    }
-            });
+                        },
+                    error :
+                        function (xhr, textStatus) {
+                            alert("Error occured while clearing model!" + textStatus);
+                        }
+                });
+            }       
+            refresh();
+            instance.show();    
         }
 
         function refreshModel(e) {
             e.preventDefault();
-            console.log(e['currentTarget']['value']);
-            var tmpJSON = jQuery.parseJSON(e['currentTarget']['value']);
-            var info = new Object();
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "RefreshModelFromTripleStoreCommand";
-            info['tripleStoreUrl'] = $('#txtModel_URL').val();
-            info['graphContext'] = tmpJSON['context'];
-            info['mappingURI'] = tmpJSON['url'];
-            console.log(info['graphContext']);
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                complete :
+            var checkboxes = dialog.find(":checked");
+            for (var i = 0; i < checkboxes.length; i++) {
+                var checkbox = checkboxes[i];
+                var info = new Object();
+                info["workspaceId"] = $.workspaceGlobalInformation.id;
+                info["command"] = "RefreshModelFromTripleStoreCommand";
+                info['tripleStoreUrl'] = $('#txtModel_URL').html();
+                info['graphContext'] = checkbox['value'];
+                info['mappingURI'] = checkbox['src'];
+                console.log(info['graphContext']);
+                console.log(info['mappingURI']);
+                var returned = $.ajax({
+                    url: "RequestController",
+                    type: "POST",
+                    data : info,
+                    dataType : "json",
+                    async: false,
+                    complete :
                     function (xhr, textStatus) {
                         //alert(xhr.responseText);
                         var json = $.parseJSON(xhr.responseText);
-                        refresh();
-                        instance.show();
                         //parse(json);
                     },
-                error :
+                    error :
                     function (xhr, textStatus) {
                         alert("Error occured while clearing model!" + textStatus);
                     }
-            });
+                });
+            }
+            refresh();
+            instance.show();      
+        }
+
+        function disableButton(e) {
+            var checkboxes = dialog.find(":checked");
+            if (checkboxes.length == 0) {
+                $('#btnDeleteModel', dialog)
+                    .attr("disabled", "disabled");
+
+                $('#btnRefreshModel', dialog)
+                    .attr("disabled", "disabled");
+            }
+            else {
+                $('#btnDeleteModel', dialog)
+                    .removeAttr("disabled");
+
+                $('#btnRefreshModel', dialog)
+                    .removeAttr("disabled");
+            }
         }
 
         function show() {
             var dialogContent = $("#modelManagerDialogColumns", dialog);
             dialogContent.empty();
-            for (var i = 0; i < filteredModels.length; i++) {
+            var table = $("<table>")
+                        .addClass("table table-striped table-condensed");
+            console.log(filteredModels.length);
+            for (var i = 0; i < filteredModels.length; i++) {                
                 var name = filteredModels[i]['name'];
                 var time = new Date(filteredModels[i].publishTime*1).toDateString();
                 var url = filteredModels[i].url;
                 var context = filteredModels[i].context;
-                var div = $("<div>").css("display","table-row");
-                var row = $("<div>").addClass("FileNameProperty").css("overflow", "scroll");
+                var tr = $("<tr>");
+                var td = $("<td>")
+                         .addClass("CheckboxProperty");
+                var checkbox = $("<input>")
+                               .attr("type", "checkbox")                           
+                               .attr("id", "modelManagerCheckbox")
+                               .attr("value", context)
+                               .attr("src", url)
+                               .change(disableButton);
+                td.append(checkbox);
+                tr.append(td);
+                var td = $("<td>")
+                         .css("overflow", "scroll")
+                         .addClass("FileNameProperty");;
                 var label = $("<label>").text(name).css("overflow", "scroll");
-                row.append(label);
-                div.append(row);
-                var row = $("<div>").addClass("PublishTimeProperty").css("overflow", "scroll");
+                td.append(label);
+                tr.append(td);
+                var td = $("<td>")
+                         .css("overflow", "scroll")
+                         .addClass("PublishTimeProperty");;
                 var label = $("<label>").text(time).css("overflow", "scroll");
-                row.append(label);
-                div.append(row);
-                var row = $("<div>").addClass("URLProperty").css("overflow", "scroll");
+                td.append(label);
+                tr.append(td);
+                var td = $("<td>")
+                         .css("overflow", "scroll")
+                         .addClass("URLProperty");;
                 var label = $("<label>").text(url).css("overflow", "scroll");
-                row.append(label);
-                div.append(row);
-                var row = $("<div>").addClass("ContextProperty").css("overflow", "scroll");
-                var label = $("<label>").text(context).css("overflow", "scroll");
-                row.append(label);
-                div.append(row);
-                var tmp = new Object();
-                tmp['url'] = url;
-                tmp['context'] = context;
-                var row = $("<div>").addClass("DeleteProperty");
-                var label = $("<button>").text("Delete")
-                            .addClass("btn btn-primary DeleteButtonProperty")
-                            .attr("id","btnDeleteModel")
-                            .attr("value", JSON.stringify(tmp))
-                            .on('click', deleteModel);
-                row.append(label);
-                div.append(row);
-                var row = $("<div>").addClass("RefreshProperty");
-                var label = $("<button>").text("Refresh")
-                            .addClass("btn btn-primary RefreshButtonProperty")
-                            .attr("id","btnRefreshModel")
-                            .attr("value", JSON.stringify(tmp))
-                            .on('click', refreshModel);
-                row.append(label);
-                div.append(row);
-                dialogContent.append(div);                
+                td.append(label);
+                tr.append(td);
+                table.append(tr);    
             }
+            dialogContent.append(table);
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
         

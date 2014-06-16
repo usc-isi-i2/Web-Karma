@@ -144,44 +144,15 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div class="modal fade" id="searchDataDialog" tabindex="-1">
-  <div class="modal-dialog">
-  		<form class="bs-example bs-example-form" role="form">
-			<div class="modal-content">
-			     <div class="modal-header">
-				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				       <h4 class="modal-title">Search For Data To Augment</h4>
-				  </div>
-				  <div class="modal-body">
-
-					<div class="form-group">
-						<label for="txtR2RML_URL">Collection</label>
-						<input class="form-control" type="text" id="txtGraph_URL_Search" required>
-					</div>
-
-				  </div> <!-- /.modal-body -->
-				  <div class="modal-footer">
-				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				        <button type="submit" class="btn btn-primary" id="btnSave">Next</button>
-				  </div> <!-- /.modal-footer -->
-			</div><!-- /.modal-content -->
-		</form>
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
 <div class="modal fade" id="augmentDataDialog" tabindex="-1">
   <div class="modal-dialog">
   		<form class="bs-example bs-example-form" role="form">
 			<div class="modal-content">
 			     <div class="modal-header">
 				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				       <h4 class="modal-title">Augment Data</h4>
+				       <h4 class="modal-title" id="augmentHeader">Augment Data</h4>
 				  </div>
 				  <div class="modal-body">
-				  	<div style="border-bottom: solid black; bottom-padding: 5px;">
-				  		<button type="button" class="btn btn-primary" id="btnClearFilter">Clear Filters</button>
-				  		<div style="padding: 10px;"></div>
-				  	</div>
 				  	<h4>Select Predicates:</h4>
 				  	<div id="augmentDataDialogHeaders"></div>
 						<div id="augmentDataDialogColumns" style = "max-height: 300px; overflow: auto;"></div>
@@ -189,29 +160,6 @@
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 				        <button type="submit" class="btn btn-primary" id="btnSave">Submit</button>
-				  </div> <!-- /.modal-footer -->
-			</div><!-- /.modal-content -->
-		</form>
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<div class="modal fade" id="augmentDataFilterDialog" tabindex="-1">
-  <div class="modal-dialog">
-  		<form class="bs-example bs-example-form" role="form">
-			<div class="modal-content">
-			     <div class="modal-header">
-				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				       <h4 class="modal-title">Apply Filter</h4>
-				  </div>
-				  <div class="modal-body">
-						<div class="form-group">
-							<label for="txtFilterAugment">Filter</label>
-							<input class="form-control" type="text" id="txtFilterAugment" required>
-						</div>
-				  </div> <!-- /.modal-body -->
-				  <div class="modal-footer">
-				  	<button type="button" class="btn btn-default" data-dismiss="modal" id="btnCancel">Cancel</button>
-				    <button type="submit" class="btn btn-primary" data-dismiss="modal" id="btnSave">Apply</button>
 				  </div> <!-- /.modal-footer -->
 			</div><!-- /.modal-content -->
 		</form>

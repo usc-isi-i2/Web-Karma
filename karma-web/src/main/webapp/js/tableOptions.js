@@ -222,7 +222,7 @@ var PublishModelDialog = (function() {
     	    info["workspaceId"] = $.workspaceGlobalInformation.id;
     	    info["command"] = "GenerateR2RMLModelCommand";
             info['tripleStoreUrl'] = $('#txtR2RML_URL').val();
-            info['localTripleStoreUrl'] = $('#txtModel_URL').val();
+            info['localTripleStoreUrl'] = $('#txtModel_URL').html();
     	    showLoading(info["worksheetId"]);
     	    var returned = $.ajax({
     	        url: "RequestController",
@@ -281,92 +281,67 @@ var applyModelDialog = (function() {
         var worksheetId;
         var availableModels;
         var filteredModels;
-        var filterDialog = $("#applyModelFilterDialog");
-        var filterName;
         function init() {
             refresh();
             $('#btnSave', dialog).on('click', function (e) {
                 e.preventDefault();
                 saveDialog(e);
             });
-            $('#btnClearFilter', dialog).on('click', function (e) {
-                filteredModels = availableModels;
-                instance.show(worksheetId);
-            });
             var dialogContent = $("#applyModelDialogHeaders", dialog);
             dialogContent.empty();
-            var div = $("<div>").css("display","table-row");
-                var row = $("<div>").addClass("FileNameProperty");
-                var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary FileNameButtonProperty")
-                        .attr("id","btnFilterName")
-                        .attr("value","File Name");
-                row.append(label);
-                div.append(row);
-                var row = $("<div>").addClass("PublishTimeProperty");
-                var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary PublishTimeButtonProperty")
-                        .attr("id","btnFilterPublishTime")
-                        .attr("value","Publish Time");
-                row.append(label);
-                div.append(row);
-                var row = $("<div>").addClass("URLProperty");
-                var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary URLButtonProperty")
-                        .attr("id","btnFilterURL")
-                        .attr("value","URL");
-                row.append(label);
-                div.append(row);
-                var row = $("<div>").addClass("ContextProperty");
-                var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary ContextButtonProperty")
-                        .attr("id","btnFilterContext")
-                        .attr("value","Context");
-                row.append(label);
-                div.append(row);
-                dialogContent.append(div);
-                var div = $("<div>").css("display","table-row");
-                var row = $("<div>").addClass("FileNameProperty");
-                var label = $("<label>").text("File Name");
-                row.append(label);
-                div.append(row);
-                var row = $("<div>").addClass("PublishTimeProperty");
-                var label = $("<label>").text("Publish Time");
-                row.append(label);
-                div.append(row);
-                var row = $("<div>").addClass("URLProperty");
-                var label = $("<label>").text("URL");
-                row.append(label);
-                div.append(row);
-                var row = $("<div>").addClass("ContextProperty");
-                var label = $("<label>").text("Context");
-                row.append(label);
-                div.append(row);
-                dialogContent.append(div);
-                $('#btnFilterName', dialog).on('click', function (e) {
-                    e.preventDefault();
-                    showFilterDialog(e);
-                });
-                $('#btnFilterPublishTime', dialog).on('click', function (e) {
-                    e.preventDefault();
-                    showFilterDialog(e);
-                });
-                $('#btnFilterURL', dialog).on('click', function (e) {
-                    e.preventDefault();
-                    showFilterDialog(e);
-                });
-                $('#btnFilterContext', dialog).on('click', function (e) {
-                    e.preventDefault();
-                    showFilterDialog(e);
-                });
-                $('#btnSave', filterDialog).on('click', function (e) {
-                    e.preventDefault();
-                    applyFilter(e);
-                });
-                $('#btnCancel', filterDialog).on('click', function (e) {
-                    e.preventDefault();
-                    cancelFilter(e);
-                });      
+            var table = $("<table>");
+            var tr = $("<tr>");
+            var td = $("<td>")
+                     .addClass("CheckboxProperty");
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("FileNameProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterFileName_Apply")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("PublishTimeProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterPublishTime_Apply")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("URLProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterURL_Apply")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            table.append(tr);
+            var tr = $("<tr>");
+            var td = $("<td>").addClass("CheckboxProperty");
+            tr.append(td);
+            var td = $("<td>").addClass("FileNameProperty");
+            var label = $("<label>").text("File Name");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>").addClass("PublishTimeProperty");
+            var label = $("<label>").text("Publish Time");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>").addClass("URLProperty");
+            var label = $("<label>").text("URL");
+            td.append(label);
+            tr.append(td);
+            table.append(tr);
+            dialogContent.append(table);
+            $('#txtFilterFileName_Apply', dialog).on('keyup', applyFilter);
+
+            $('#txtFilterPublishTime_Apply', dialog).on('keyup', applyFilter);
+
+            $('#txtFilterURL_Apply', dialog).on('keyup', applyFilter);
+
         }
         function refresh() {
             console.log("refresh");
@@ -374,7 +349,7 @@ var applyModelDialog = (function() {
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
             info["command"] = "FetchR2RMLModelsListCommand";
-            info['tripleStoreUrl'] = $('#txtModel_URL').val();
+            info['tripleStoreUrl'] = $('#txtModel_URL').html();
             info['graphContext'] = "";
             var returned = $.ajax({
                 url: "RequestController",
@@ -420,10 +395,10 @@ var applyModelDialog = (function() {
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
             info["command"] = "ApplyModelFromURLCommand";
-            info['modelRepository'] = $('#txtR2RML_URL_Fetch').val();
-            info['modelContext'] = checked['src'];
-            info['modelUrl'] = checked['value'];
-            console.log(checked['src']);
+            info['modelRepository'] = $('#txtModel_URL').html();
+            info['modelContext'] = checked['value'];
+            info['modelUrl'] = checked['src'];
+            console.log(info["worksheetId"]);
             showLoading(info["worksheetId"]);
             var returned = $.ajax({
                 url: "RequestController",
@@ -452,46 +427,33 @@ var applyModelDialog = (function() {
             dialog.modal('hide');
         }
 
-        function showFilterDialog(e) {
-            dialog.modal('hide');
-            console.log("showFilterDialog");
-            filterName = e.currentTarget['value'];
-            console.log(filterName);
-            $('#txtFilterApplyModel').val("");
-            filterDialog.modal({keyboard:true, show:true, backdrop:'static'});
-            filterDialog.show();
-        };
-
         function applyFilter(e) {
             console.log("applyFilter");
-            console.log(filterName);
             var tmp = [];
-            var filterText = $('#txtFilterApplyModel').val();
-            console.log(filterText);
-            for (var i = 0; i < filteredModels.length; i++) {
-                var name = filteredModels[i]['name'];
-                var time = new Date(filteredModels[i].publishTime*1).toDateString();
-                var url = filteredModels[i].url;
-                var context = filteredModels[i].context;
-                if (filterName === "File Name" && name.indexOf(filterText) > -1)
-                    tmp.push(filteredModels[i]);
-                if (filterName === "Publish Time" && time.indexOf(filterText) > -1)
-                    tmp.push(filteredModels[i]);
-                if (filterName === "URL" && url.indexOf(filterText) > -1)
-                    tmp.push(filteredModels[i]);
-                if (filterName === "Context" && context.indexOf(filterText) > -1)
-                    tmp.push(filteredModels[i]);
+            var filterFilename = $('#txtFilterFileName_Apply').val();
+            var filterTime = $('#txtFilterPublishTime_Apply').val();
+            var filterURL = $('#txtFilterURL_Apply').val();
+            if (!filterFilename && !filterTime && !filterURL) {
+                filteredModels = availableModels;
+                instance.show(worksheetId);
+                return;
             }
-            console.log(tmp);
+            for (var i = 0; i < availableModels.length; i++) {
+                var name = availableModels[i]['name'].toLowerCase();
+                var time = new Date(availableModels[i].publishTime*1).toDateString().toLowerCase();
+                var url = availableModels[i].url.toLowerCase();
+                if (name.indexOf(filterFilename) > -1 && filterFilename != "") {
+                    tmp.push(availableModels[i]);
+                }
+                else if (time.indexOf(filterTime) > -1 && filterTime != "") {
+                    tmp.push(availableModels[i]);
+                }
+                else if (url.indexOf(filterURL) > -1 && filterURL != "") {
+                    tmp.push(availableModels[i]);
+                }
+            }
             filteredModels = tmp;
             instance.show(worksheetId);
-            dialog.show();
-        };
-
-        function cancelFilter(e) {
-            console.log("cancelFilter");
-            instance.show(worksheetId);
-            dialog.show();
         };
         
         function show(wsId) {
@@ -500,40 +462,44 @@ var applyModelDialog = (function() {
                 hideError();
                 var dialogContent = $("#applyModelDialogColumns", dialog);
                 dialogContent.empty();
-                
+                var table = $("<table>")
+                        .addClass("table table-striped table-condensed");
                 for (var i = 0; i < filteredModels.length; i++) {
                     var name = filteredModels[i]['name'];
                     var time = new Date(filteredModels[i].publishTime*1).toDateString();
                     var url = filteredModels[i].url;
                     var context = filteredModels[i].context;
-                    var div = $("<div>").css("display","table-row");
-                    var row = $("<div>").css("overflow", "scroll").addClass("FileNameProperty");
+                    var tr = $("<tr>");
+                    var td = $("<td>")
+                                .addClass("CheckboxProperty");
+                    var checkbox = $("<input>")
+                               .attr("type", "radio")                           
+                               .attr("id", "modelManagerCheckbox")
+                               .attr("value", context)
+                               .attr("src", url);
+                    td.append(checkbox);
+                    tr.append(td);
+                    var td = $("<td>")
+                            .css("overflow", "scroll")
+                            .addClass("FileNameProperty");;
                     var label = $("<label>").text(name).css("overflow", "scroll");
-                    row.append(label);
-                    div.append(row);
-                    var row = $("<div>").css("overflow", "scroll").addClass("PublishTimeProperty");
+                    td.append(label);
+                    tr.append(td);
+                    var td = $("<td>")
+                            .css("overflow", "scroll")
+                            .addClass("PublishTimeProperty");;
                     var label = $("<label>").text(time).css("overflow", "scroll");
-                    row.append(label);
-                    div.append(row);
-                    var row = $("<div>").css("overflow", "scroll").addClass("URLProperty");
+                    td.append(label);
+                    tr.append(td);
+                    var td = $("<td>")
+                            .css("overflow", "scroll")
+                            .addClass("URLProperty");;
                     var label = $("<label>").text(url).css("overflow", "scroll");
-                    row.append(label);
-                    div.append(row);
-                    var row = $("<div>").css("overflow", "scroll").addClass("ContextProperty");
-                    var label = $("<label>").text(context).css("overflow", "scroll");
-                    row.append(label);
-                    div.append(row);
-                    var row = $("<div>").css("float", "left").css("padding", "5px");;
-                    var label = $("<input>")
-                                .attr("type", "radio")
-                                .attr("id", "selectcolumns")
-                                .attr("value", url)
-                                .attr("name", "selectGraphs")
-                                .attr("src", context);
-                    row.append(label);
-                    div.append(row);
-                    dialogContent.append(div);
+                    td.append(label);
+                    tr.append(td);
+                    table.append(tr);    
                 }
+                dialogContent.append(table);
             });
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };

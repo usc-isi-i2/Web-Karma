@@ -500,10 +500,6 @@ a.icon-remove:hover {
 				       <h4 class="modal-title">Apply Model From Repository</h4>
 				  </div>
 				  <div class="modal-body">
-				  	<div style="border-bottom: solid black; bottom-padding: 5px;">
-				  		<button type="button" class="btn btn-primary" id="btnClearFilter">Clear Filters</button>
-				  		<div style="padding: 10px;"></div>
-				  	</div>
 				  	<h4>Select Model:</h4>
 				  	<div id="applyModelDialogHeaders"></div>
 						<div id="applyModelDialogColumns" style="max-height: 300px; overflow: auto;"></div>

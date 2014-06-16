@@ -1727,64 +1727,47 @@ var ManageIncomingOutgoingLinksDialog = (function() {
     
 })();
 
-var searchDataDialog = (function() {
+var AugmentDataDialog = (function() {
     var instance = null;
-
+    var available;
+    var filtered;
     function PrivateConstructor() {
-        var dialog = $("#searchDataDialog");
-        var worksheetId, columnDomain, columnUri, alignmentId;
-        
-        function init() {
-            
-            //Initialize handler for Save button
-            //var me = this;
-            $('#btnSave', dialog).on('click', function (e) {
-                e.preventDefault();
-                saveDialog(e);
-            });
-            
-                
-        }
-        
-        function hideError() {
-            $("div.error", dialog).hide();
-        }
-        
-        function showError() {
-            $("div.error", dialog).show();
-        }
-        
-        function saveDialog(e) {
-            hide();
-            //  if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
-            //     alert("Invalid sparql end point. Could not establish connection.");
-            //     return;
-            // }
+        var dialog = $("#augmentDataDialog");
+        var worksheetId, columnUri, alignmentId, columnDomain;
+        var invertedClasses = {};
+        function initVariable(wsId, colDomain, colUri, Alnid) {
+        	worksheetId = wsId;
+        	columnUri = colUri;
+        	alignmentId = Alnid;
+        	columnDomain = colDomain;
 
+        }
+
+        function refresh() {
             var info = new Object();
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info['tripleStoreUrl'] = $('#txtModel_URL').val();
-            info['context'] = $('#txtGraph_URL_Search').val();
+            info['tripleStoreUrl'] = $('#txtModel_URL').html();
+            info['context'] = "";
             info["command"] = "SearchForDataToAugmentCommand";
             info["nodeUri"] = columnDomain;
             info["columnUri"] = columnUri;
             console.log(info['graphContext']);
-            //showLoading(info["worksheetId"]);
+            var returnJSON;
             var returned = $.ajax({
                 url: "RequestController",
                 type: "POST",
                 data : info,
                 dataType : "json",
+                async: false,
                 complete :
                     function (xhr, textStatus) {
                         //alert(xhr.responseText);
                         var json = $.parseJSON(xhr.responseText);
                         json = json.elements[0];
                         console.log(json);
-                        //parse(json);
+                        returnJSON = json;
                         //hideLoading(info["worksheetId"]);
-                        augmentDataDialog.getInstance(json).show(worksheetId, columnUri, alignmentId);
                     },
                 error :
                     function (xhr, textStatus) {
@@ -1792,120 +1775,78 @@ var searchDataDialog = (function() {
                         //hideLoading(info["worksheetId"]);
                     }
             });
+            return returnJSON;
         };
-        
-        function hide() {
-            dialog.modal('hide');
-        }
-        
-        function show(wsId, colDomain, colUri, Alnid) {
-            worksheetId = wsId;
-            columnDomain = colDomain;
-            columnUri = colUri;
-            alignmentId = Alnid;
-            dialog.modal({keyboard:true, show:true, backdrop:'static'});
-        };
-        
-        
-        return {    //Return back the public methods
-            show : show,
-            init : init
-        };
-    };
 
-    function getInstance() {
-        if( ! instance ) {
-            instance = new PrivateConstructor();
-            instance.init();
-        }
-        return instance;
-    }
-   
-    return {
-        getInstance : getInstance
-    };
-    
-})();
-
-var augmentDataDialog = (function() {
-    var instance = null;
-    var available;
-    var filtered;
-    var filterName;
-    function PrivateConstructor() {
-        var dialog = $("#augmentDataDialog");
-        var filterDialog = $("#augmentDataFilterDialog");
-        var worksheetId, columnUri, alignmentId;
-        
-        function init(json) {
+        function init() {
             //Initialize what happens when we show the dialog
+            var classes = getAllClasses(worksheetId);
+            var props = getAllDataProperties(worksheetId)
+            $.each(classes, function(index, type) {
+            	//console.log(type);
+            	invertedClasses[type['uri']] = type['label'].substring(0, type['label'].indexOf(":"));
+            });
+            $.each(props, function(index, type) {
+            	//console.log(type);
+            	invertedClasses[type['uri']] = type['label'].substring(0, type['label'].indexOf(":"));
+            });
+
           	var dialogContent = $("#augmentDataDialogHeaders", dialog);
           	dialogContent.empty();
-          	var div = $("<div>").css("display","table-row")
-            var row = $("<div>").addClass("PredicateProperty");
-            var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary PredicateButtonProperty")
-                        .attr("id","btnFilterPredicate")
-                        .attr("value","Predicate");
-            row.append(label);
-            div.append(row);
-            var row = $("<div>").addClass("OtherClassProperty");
-            var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary OtherClassButtonProperty")
-                        .attr("id","btnFilterOtherClass")
-                        .attr("value","Other Class");
-            row.append(label);
-            div.append(row);
-            var row = $("<div>").addClass("DataCountProperty");
-            var label = $("<button>").text("Filter")
-                        .addClass("btn btn-primary DataCountButtonProperty")
-                        .attr("id","btnFilterDataCount")
-                        .attr("value","Data Count");
-            row.append(label);
-            div.append(row);
-            dialogContent.append(div);
-           	var div = $("<div>").css("display","table-row");
-           	var row = $("<div>").addClass("PredicateProperty");
-           	var label = $("<label>").text("Predicate");
-           	row.append(label);
-           	div.append(row);
-           	var row = $("<div>").addClass("OtherClassProperty");
-           	var label = $("<label>").text("Other Class");
-           	row.append(label);
-           	div.append(row);
-           	var row = $("<div>").addClass("DataCountProperty");
-           	var label = $("<label>").text("Occurrence Probability");
-           	row.append(label);
-           	div.append(row);
-           	dialogContent.append(div);
-            $('#btnFilterPredicate', dialog).on('click', function (e) {
-                e.preventDefault();
-                showFilterDialog(e);
-            });
-            $('#btnFilterOtherClass', dialog).on('click', function (e) {
-                e.preventDefault();
-                showFilterDialog(e);
-            });
-            $('#btnFilterDataCount', dialog).on('click', function (e) {
-                e.preventDefault();
-                showFilterDialog(e);
-            });
-            $('#btnClearFilter', dialog).on('click', function (e) {
-                filtered = available;
-                instance.show(worksheetId, columnUri, alignmentId);
-            });
-            $('#btnSave', filterDialog).on('click', function (e) {
-                e.preventDefault();
-                applyFilter(e);
-            });
-            $('#btnCancel', filterDialog).on('click', function (e) {
-                e.preventDefault();
-                cancelFilter(e);
-            }); 
-            available = json;
-            filtered = json;
-            //Initialize handler for Save button
-            //var me = this;
+          	var table = $("<table>");
+            var tr = $("<tr>");
+            var td = $("<td>")
+                     .addClass("CheckboxProperty");
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("PredicateProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterPredicate")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("OtherClassProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterOtherClass")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("DataCountProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterDataCount")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            table.append(tr);
+            var tr = $("<tr>");
+            var td = $("<td>").addClass("CheckboxProperty");
+            tr.append(td);
+            var td = $("<td>").addClass("PredicateProperty");
+            var label = $("<label>").text("Predicate");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>").addClass("OtherClassProperty");
+            var label = $("<label>").text("Other Class");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>").addClass("DataCountProperty");
+            var label = $("<label>").text("Occurrence Probability");
+            td.append(label);
+            tr.append(td);
+            table.append(tr);
+            dialogContent.append(table);
+          	
+            $('#txtFilterPredicate', dialog).on('keyup', applyFilter);
+
+            $('#txtFilterOtherClass', dialog).on('keyup', applyFilter);
+
+            $('#txtFilterDataCount', dialog).on('keyup', applyFilter);
+
             $('#btnSave', dialog).on('click', function (e) {
                 e.preventDefault();
                 saveDialog(e);
@@ -1914,48 +1855,43 @@ var augmentDataDialog = (function() {
                 
         }
 
-        function showFilterDialog(e) {
-            dialog.modal('hide');
-            console.log("showFilterDialog");
-            filterName = e.currentTarget['value'];
-            console.log(filterName);
-            $('#txtFilterAugment').val("");
-            filterDialog.modal({keyboard:true, show:true, backdrop:'static'});
-            filterDialog.show();
-            
-        };
-
         function applyFilter(e) {
             console.log("applyFilter");
-            console.log(filterName);
             var tmp = [];
-            var filterText = $('#txtFilterAugment').val();
-            console.log(filterText);
-            for (var i = 0; i < filtered.length; i++) {
-                var predicate = filtered[i]['predicate'];
-                var otherClass = filtered[i]['otherClass'];
-                var probability = filtered[i]['probability'];
-                predicate = predicate.substring(predicate.lastIndexOf("/") + 1);
-                otherClass = otherClass.substring(otherClass.lastIndexOf("/") + 1);
-                if (filterName === "Predicate" && predicate.toLowerCase().indexOf(filterText.toLowerCase()) > -1)
-                    tmp.push(filtered[i]);
-                if (filterName === "Other Class" && otherClass.toLowerCase().indexOf(filterText.toLowerCase()) > -1)
-                    tmp.push(filtered[i]);
-                if (!isNaN(filterText)) {
-                	if (filterName === "Data Count" && probability*100.0 > filterText)
-                    tmp.push(filtered[i]);
+            var filterPredicate = $('#txtFilterPredicate').val();
+            var filterOtherClass = $('#txtFilterOtherClass').val();
+            var filterProbability = $('#txtFilterDataCount').val();
+            if (!filterPredicate && !filterOtherClass && !filterProbability) {
+                filtered = available;
+                instance.show();
+                return;
+            }
+            for (var i = 0; i < available.length; i++) {
+                var predicate = available[i]['predicate'];
+                if (invertedClasses[predicate] != undefined)
+                	predicate = invertedClasses[predicate] + ":" + predicate.substring(predicate.lastIndexOf("/") + 1);
+                else
+                	predicate = predicate.substring(predicate.lastIndexOf("/") + 1);
+                predicate = predicate.toLowerCase();
+                var probability = available[i]['probability'];
+                var otherClass = available[i]['otherClass'];
+                if (invertedClasses[otherClass] != undefined)
+                	otherClass = invertedClasses[otherClass] + ":" + otherClass.substring(otherClass.lastIndexOf("/") + 1);
+                else
+                	otherClass = otherClass.substring(otherClass.lastIndexOf("/") + 1);
+                otherClass = otherClass.toLowerCase();
+                if (predicate.indexOf(filterPredicate) > -1 && filterPredicate != "") {
+                    tmp.push(available[i]);
                 }
-
+                else if (otherClass.indexOf(filterOtherClass) > -1 && filterOtherClass != "") {
+                    tmp.push(available[i]);
+                }
+                else if (probability * 100 > filterProbability && filterProbability != "") {
+                    tmp.push(available[i]);
+                }
             }
             filtered = tmp;
-            instance.show(worksheetId, columnUri, alignmentId);
-            dialog.show();
-        };
-
-        function cancelFilter(e) {
-            console.log("cancelFilter");
-            instance.show(worksheetId, columnUri, alignmentId);
-            dialog.show();
+            instance.show();
         };
         
         function hideError() {
@@ -2021,7 +1957,7 @@ var augmentDataDialog = (function() {
             newInfo.push(getParamObject("predicate", JSON.stringify(predicates), "other"));
             newInfo.push(getParamObject("otherClass", JSON.stringify(otherClass), "other"));
             newInfo.push(getParamObject("columnUri", columnUri, "other"));
-            newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').val(), "other"));
+            newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
             newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
             info["newInfo"] = JSON.stringify(newInfo);
             showLoading(info["worksheetId"]);
@@ -2051,51 +1987,61 @@ var augmentDataDialog = (function() {
             dialog.modal('hide');
         }
         
-        function show(wsId, colUri, Alnid) {
-            worksheetId = wsId;
-            columnUri = colUri;
-            alignmentId = Alnid;
-            console.log(available);
+        function show() {
             if (available.length == 0) {
             	alert("No data to augment!");
             	return;
             }
+
             dialog.on('show.bs.modal', function (e) {
                 hideError();
                 var dialogContent = $("#augmentDataDialogColumns", dialog);
+                var header = $("#augmentHeader", dialog);
+                var type = invertedClasses[columnDomain];
+                if (type == undefined) 
+                	type = columnUri.substring(columnUri.lastIndexOf("/") + 1);
+                else
+                	type = type + ":" + columnUri.substring(columnUri.lastIndexOf("/") + 1);
+                header.text("Augment data for " + type);
           			dialogContent.empty();
+          			var table = $("<table>")
+                        .addClass("table table-striped table-condensed");
                 for (var i = 0; i < filtered.length; i++) {
                     var predicate = filtered[i]['predicate'];
                     var probability = filtered[i]['probability'];
                     var otherClass = filtered[i]['otherClass'];
-                    console.log(probability);
-                    var div = $("<div>").css("display","table-row");
-                    var row = $("<div>").css("overflow", "scroll").addClass("PredicateProperty");
-                    var label = $("<label>").text(predicate.substring(predicate.lastIndexOf("/") + 1)).css("overflow", "scroll");
-                    row.append(label);
-                    div.append(row);
-                    var row = $("<div>").css("overflow", "scroll").addClass("OtherClassProperty");
-                    var label;
-                    if (otherClass != undefined && otherClass != "")
-                    	label = $("<label>").text(otherClass.substring(otherClass.lastIndexOf("/") + 1)).css("overflow", "scroll");
-                    else
-                    	label = $("<label>").text(" ").css("overflow", "scroll");
-                    row.append(label);
-                    div.append(row);
-                    var row = $("<div>").css("overflow", "scroll").addClass("DataCountProperty");
+                    var tr = $("<tr>");
+                    var td = $("<td>")
+                                .addClass("CheckboxProperty");
+                    var checkbox = $("<input>")
+                               .attr("type", "checkbox")                           
+                               .attr("id", "selectPredicates")
+                               .attr("value", otherClass)
+                               .attr("src", predicate);
+                    td.append(checkbox);
+                    tr.append(td);
+                    var td = $("<td>")
+                            .css("overflow", "scroll")
+                            .addClass("PredicateProperty");
+                    var name = invertedClasses[predicate] == undefined ? "" : (invertedClasses[predicate] + ":");
+                    var label = $("<label>").text(name + predicate.substring(predicate.lastIndexOf("/") + 1)).css("overflow", "scroll");
+                    td.append(label);
+                    tr.append(td);
+                    var td = $("<td>")
+                            .css("overflow", "scroll")
+                            .addClass("OtherClassProperty");
+                    name = invertedClasses[otherClass] == undefined ? "" : (invertedClasses[otherClass] + ":");
+                    var label = $("<label>").text(name + otherClass.substring(otherClass.lastIndexOf("/") + 1)).css("overflow", "scroll");
+                    td.append(label);
+                    tr.append(td);
+                    var td = $("<td>")
+                            .css("overflow", "scroll")
+                            .addClass("DataCountProperty");
                     var label = $("<label>").text(probability*100.0 + "%").css("overflow", "scroll");
-                    row.append(label);
-                    div.append(row);
-                    var row = $("<div>").css("float", "left").css("padding", "5px");;
-                    var label = $("<input>")
-                                .attr("type", "checkbox")
-                                .attr("id", "selectPredicates")
-                                .attr("value", otherClass)
-                                .attr("name", "selectPredicates")
-                                .attr("src", predicate);
-                    row.append(label);
-                    div.append(row);
-                    dialogContent.append(div);
+                    td.append(label);
+                    tr.append(td);
+                    table.append(tr);    
+                    dialogContent.append(table);
                 }
             });
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
@@ -2104,15 +2050,20 @@ var augmentDataDialog = (function() {
         
         return {    //Return back the public methods
             show : show,
-            init : init
+            init : init,
+            initVariable : initVariable,
+            refresh : refresh
         };
     };
 
-    function getInstance(json) {
+    function getInstance(wsId, colDomain, colUri, Alnid) {
+    		console.log("instance");
         if( ! instance ) {
             instance = new PrivateConstructor();
-            instance.init(json);
+            instance.init();
         }
+        instance.initVariable(wsId, colDomain, colUri, Alnid);
+        var json = instance.refresh();
         available = json;
         filtered = json;
         return instance;
