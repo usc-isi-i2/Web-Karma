@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -24,10 +25,19 @@ public class UIConfiguration {
 
 	private static UIConfiguration instance = null;
 	private boolean googleEarthEnabled = true;
+	private int maxLoadedClasses=1000;
+	private int maxLoadedProperties=1000;
 	private static Logger logger = LoggerFactory.getLogger(UIConfiguration.class);
 	
 	private static final String newLine = System.getProperty("line.separator").toString();
-	private static String defaultUIProperties = "google.earth.enabled=true" + newLine;
+	
+	private static String propGoogleEarthEnabled = "google.earth.enabled=true";
+	private static String propMaxLoadedClasses = "max.loaded.classes=1000";
+	private static String propMaxLoadedProperties = "max.loaded.properties=1000";
+	private static String defaultUIProperties = propGoogleEarthEnabled + newLine
+											  + propMaxLoadedClasses + newLine
+											  + propMaxLoadedProperties + newLine
+			;
 	
 	public static UIConfiguration Instance() {
 		if(instance == null)
@@ -68,7 +78,25 @@ public class UIConfiguration {
     		uiProperties.load(new FileInputStream(file));
 			
 			googleEarthEnabled = Boolean.parseBoolean(uiProperties.getProperty("google.earth.enabled"));
+			String sMax = uiProperties.getProperty("max.loaded.classes");
+			if(sMax != null)
+				maxLoadedClasses = Integer.parseInt(sMax);
+			else {
+				//need to add this property to the end
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+				out.println(propMaxLoadedClasses);
+				out.close();
+			}
 			
+			sMax = uiProperties.getProperty("max.loaded.properties");
+			if(sMax != null)
+				maxLoadedProperties = Integer.parseInt(sMax);
+			else {
+				//need to add this property to the end
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+				out.println(propMaxLoadedProperties);
+				out.close();
+			}
 		} catch (IOException e) {
 			logger.error("Could not load ui.properties, using defaults", e);
 		}
@@ -76,5 +104,13 @@ public class UIConfiguration {
 	
 	public boolean isGoogleEarthEnabled() {
 		return googleEarthEnabled;
+	}
+	
+	public int getMaxClassesToLoad() {
+		return maxLoadedClasses;
+	}
+	
+	public int getMaxPropertiesToLoad() {
+		return maxLoadedProperties;
 	}
 }
