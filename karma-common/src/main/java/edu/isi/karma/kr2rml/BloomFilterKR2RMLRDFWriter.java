@@ -11,11 +11,13 @@ public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 
 	protected KR2RMLBloomFilterManager bloomFilterManager;
 	protected PrintWriter output;
+	protected boolean isRDF;
 	private final static String formattedTypeURI = "<" + Uris.RDF_TYPE_URI +">";
-	public BloomFilterKR2RMLRDFWriter(PrintWriter output, R2RMLMappingIdentifier mappingIdentifer)
+	public BloomFilterKR2RMLRDFWriter(PrintWriter output, R2RMLMappingIdentifier mappingIdentifer, boolean isRDF)
 	{
 		bloomFilterManager = new KR2RMLBloomFilterManager(mappingIdentifer);
 		this.output = output;
+		this.isRDF = isRDF;
 	}
 	
 	@Override
@@ -111,7 +113,10 @@ public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 
 	@Override
 	public void close() {
-		output.write(bloomFilterManager.toJSON().toString(4));
+		if (!isRDF)
+			output.write(bloomFilterManager.toJSON().toString(4));
+		else
+			output.write(bloomFilterManager.toRDF());
 		output.flush();
 		output.close();
 	}
