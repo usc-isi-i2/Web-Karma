@@ -16,7 +16,8 @@ window.setTimeout(function() {
 		  async: false,
 		  success: function(data) {
 			  $.workspaceGlobalInformation = {
-				"id" : data["workspaceId"]
+				"id" : data["workspaceId"],
+				"UISettings" : null
 			  };
 	
 	          // Set the preferences workspace cookie if null

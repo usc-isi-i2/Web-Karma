@@ -36,7 +36,9 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	}
 	
 	function setSemanticType() {
+		hideDropdown();
 		SetSemanticTypeDialog.getInstance().show(worksheetId, columnId, columnTitle);
+		return false;
 	}
 	
 	function clusterValues() {
