@@ -25,15 +25,15 @@ public class UIConfiguration {
 
 	private static UIConfiguration instance = null;
 	private boolean googleEarthEnabled = true;
-	private int maxLoadedClasses=1000;
-	private int maxLoadedProperties=1000;
+	private int maxLoadedClasses=-1;
+	private int maxLoadedProperties=-1;
 	private static Logger logger = LoggerFactory.getLogger(UIConfiguration.class);
 	
 	private static final String newLine = System.getProperty("line.separator").toString();
 	
 	private static String propGoogleEarthEnabled = "google.earth.enabled=true";
-	private static String propMaxLoadedClasses = "max.loaded.classes=1000";
-	private static String propMaxLoadedProperties = "max.loaded.properties=1000";
+	private static String propMaxLoadedClasses = "max.loaded.classes=-1";
+	private static String propMaxLoadedProperties = "max.loaded.properties=-1";
 	private static String defaultUIProperties = propGoogleEarthEnabled + newLine
 											  + propMaxLoadedClasses + newLine
 											  + propMaxLoadedProperties + newLine
