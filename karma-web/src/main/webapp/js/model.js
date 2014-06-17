@@ -246,23 +246,7 @@ var modelManagerDialog = (function() {
                         .attr("type", "text");
             td.append(label);
             tr.append(td);
-            table.append(tr);
-            var tr = $("<tr>");
-            var td = $("<td>").addClass("CheckboxProperty");
-            tr.append(td);
-            var td = $("<td>").addClass("FileNameProperty");
-            var label = $("<label>").text("File Name");
-            td.append(label);
-            tr.append(td);
-            var td = $("<td>").addClass("PublishTimeProperty");
-            var label = $("<label>").text("Publish Time");
-            td.append(label);
-            tr.append(td);
-            var td = $("<td>").addClass("URLProperty");
-            var label = $("<label>").text("URL");
-            td.append(label);
-            tr.append(td);
-            table.append(tr);
+            table.append(tr);            
             dialogContent.append(table);
             $('#btnLoadModel', dialog).on('click', function (e) {
                 e.preventDefault();
@@ -455,6 +439,22 @@ var modelManagerDialog = (function() {
             dialogContent.empty();
             var table = $("<table>")
                         .addClass("table table-striped table-condensed");
+            var tr = $("<tr>");
+            var th = $("<th>").addClass("CheckboxProperty");
+            tr.append(th);
+            var th = $("<th>").addClass("FileNameProperty");
+            var label = $("<label>").text("File Name").addClass("FileNameProperty");
+            th.append(label);
+            tr.append(th);
+            var th = $("<th>").addClass("PublishTimeProperty");
+            var label = $("<label>").text("Publish Time").addClass("PublishTimeProperty");
+            th.append(label);
+            tr.append(th);
+            var th = $("<th>").addClass("URLProperty");
+            var label = $("<label>").text("URL").addClass("URLProperty");
+            th.append(label);
+            tr.append(th);
+            table.append(tr);
             console.log(filteredModels.length);
             for (var i = 0; i < filteredModels.length; i++) {                
                 var name = filteredModels[i]['name'];
@@ -473,21 +473,21 @@ var modelManagerDialog = (function() {
                 td.append(checkbox);
                 tr.append(td);
                 var td = $("<td>")
-                         .css("overflow", "scroll")
-                         .addClass("FileNameProperty");;
-                var label = $("<label>").text(name).css("overflow", "scroll");
+                         .addClass("FileNameProperty");
+                var label = $("<label>").text(name)
+                            .addClass("FileNameProperty");
                 td.append(label);
                 tr.append(td);
                 var td = $("<td>")
                          .css("overflow", "scroll")
-                         .addClass("PublishTimeProperty");;
-                var label = $("<label>").text(time).css("overflow", "scroll");
+                         .addClass("PublishTimeProperty");
+                var label = $("<label>").text(time)
+                            .addClass("PublishTimeProperty");
                 td.append(label);
                 tr.append(td);
-                var td = $("<td>")
-                         .css("overflow", "scroll")
-                         .addClass("URLProperty");;
-                var label = $("<label>").text(url).css("overflow", "scroll");
+                var td = $("<td>").addClass("URLProperty");
+                var label = $("<label>").text(url)
+                            .addClass("URLProperty");
                 td.append(label);
                 tr.append(td);
                 table.append(tr);    

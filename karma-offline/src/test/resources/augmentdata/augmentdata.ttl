@@ -1,0 +1,377 @@
+<http://lod.isi.edu/cs548/lecture/l-intro> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-01-13"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-intro> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-intro> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Ambite> .
+<http://lod.isi.edu/cs548/lecture/l-intro> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/lecture/l-intro> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/lecture/l-intro> <http://purl.org/dc/terms/identifier> "l:intro" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+
+<http://lod.isi.edu/cs548/lecture/l-rdf> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-01-15"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-rdf> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://lod.isi.edu/cs548/lecture/l-rdf> <http://purl.org/dc/terms/identifier> "l:rdf" .
+<http://lod.isi.edu/cs548/lecture/l-rdf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/lecture/l-rdf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+
+<http://lod.isi.edu/cs548/lecture/l-rdfs> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://lod.isi.edu/cs548/lecture/l-rdfs> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-01-22"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-rdfs> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-rdfs> <http://purl.org/dc/terms/identifier> "l:rdfs" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/lecture/l-rdfs> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+
+<http://lod.isi.edu/cs548/lecture/l-sparql> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-sparql> <http://purl.org/dc/terms/identifier> "l:sparql" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/lecture/l-sparql> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/lecture/l-sparql> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-01-27"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-sparql> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+
+<http://lod.isi.edu/cs548/lecture/l-linked-data> <http://purl.org/dc/terms/identifier> "l:linked-data" .
+<http://lod.isi.edu/cs548/lecture/l-linked-data> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/lecture/l-linked-data> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-01-29"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-linked-data> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://lod.isi.edu/cs548/lecture/l-linked-data> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+
+<http://lod.isi.edu/cs548/lecture/l-record-linkage-string-matching> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://lod.isi.edu/cs548/lecture/l-record-linkage-string-matching> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/lecture/l-record-linkage-string-matching> <http://purl.org/dc/terms/identifier> "l:record-linkage-string-matching" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/lecture/l-record-linkage-string-matching> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-02-03"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-record-linkage-string-matching> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/lecture/l-record-linkage-record-matching> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-record-linkage-record-matching> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/lecture/l-record-linkage-record-matching> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Ambite> .
+<http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-record-linkage-record-matching> <http://purl.org/dc/terms/identifier> "l:record-linkage-record-matching" .
+<http://lod.isi.edu/cs548/lecture/l-record-linkage-record-matching> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-02-05"^^<http://www.w3.org/2001/XMLSchema#date> .
+
+<http://lod.isi.edu/cs548/lecture/l-entity-extraction> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-entity-extraction> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://lod.isi.edu/cs548/lecture/l-entity-extraction> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-02-10"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/lecture/l-entity-extraction> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/lecture/l-entity-extraction> <http://purl.org/dc/terms/identifier> "l:entity-extraction" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+
+<http://lod.isi.edu/cs548/lecture/l-open-information-extraction> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-open-information-extraction> <http://purl.org/dc/terms/identifier> "l:open-information-extraction" .
+<http://lod.isi.edu/cs548/person/Kozareva> <http://xmlns.com/foaf/0.1/name> "Zornitsa Kozareva" .
+<http://lod.isi.edu/cs548/person/Kozareva> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~kozareva> .
+<http://lod.isi.edu/cs548/lecture/l-open-information-extraction> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-02-12"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-open-information-extraction> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/person/Kozareva> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/lecture/l-open-information-extraction> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Kozareva> .
+<http://www.isi.edu/~kozareva> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/lecture/l-database-theory-basics> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-02-19"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-database-theory-basics> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/lecture/l-database-theory-basics> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-database-theory-basics> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Ambite> .
+<http://lod.isi.edu/cs548/lecture/l-database-theory-basics> <http://purl.org/dc/terms/identifier> "l:database-theory-basics" .
+
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-glav> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-02-24"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-glav> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-glav> <http://purl.org/dc/terms/identifier> "l:glav" .
+<http://lod.isi.edu/cs548/lecture/l-glav> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/lecture/l-glav> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Ambite> .
+
+<http://lod.isi.edu/cs548/lecture/l-data-cleaning> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-02-26"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/lecture/l-data-cleaning> <http://purl.org/dc/terms/identifier> "l:data-cleaning" .
+<http://lod.isi.edu/cs548/lecture/l-data-cleaning> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/lecture/l-data-cleaning> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-data-cleaning> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+
+<http://lod.isi.edu/cs548/lecture/l-schema-mapping> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-schema-mapping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/lecture/l-schema-mapping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-schema-mapping> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-03-03"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-schema-mapping> <http://purl.org/dc/terms/identifier> "l:schema-mapping" .
+
+<http://lod.isi.edu/cs548/lecture/l-rdf-mapping> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/lecture/l-rdf-mapping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/lecture/l-rdf-mapping> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-03-05"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-rdf-mapping> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/lecture/l-rdf-mapping> <http://purl.org/dc/terms/identifier> "l:rdf-mapping" .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/lecture/l-automatic-modeling> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-03-10"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-automatic-modeling> <http://purl.org/dc/terms/identifier> "l:automatic-modeling" .
+<http://lod.isi.edu/cs548/lecture/l-automatic-modeling> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Ambite> .
+<http://lod.isi.edu/cs548/lecture/l-automatic-modeling> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-automatic-modeling> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+
+<http://lod.isi.edu/cs548/lecture/l-karma> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-karma> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/lecture/l-karma> <http://purl.org/dc/terms/identifier> "l:karma" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/lecture/l-karma> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-karma> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-03-12"^^<http://www.w3.org/2001/XMLSchema#date> .
+
+<http://lod.isi.edu/cs548/lecture/l-owl2-basics> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/lecture/l-owl2-basics> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-03-24"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/lecture/l-owl2-basics> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-owl2-basics> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-owl2-basics> <http://purl.org/dc/terms/identifier> "l:owl2-basics" .
+
+<http://lod.isi.edu/cs548/lecture/l-owl2-profiles> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/lecture/l-owl2-profiles> <http://purl.org/dc/terms/identifier> "l:owl2-profiles" .
+<http://lod.isi.edu/cs548/lecture/l-owl2-profiles> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/lecture/l-owl2-profiles> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-owl2-profiles> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-03-26"^^<http://www.w3.org/2001/XMLSchema#date> .
+
+<http://lod.isi.edu/cs548/lecture/l-ontology-based-integration> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/lecture/l-ontology-based-integration> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-03-31"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/lecture/l-ontology-based-integration> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Ambite> .
+<http://lod.isi.edu/cs548/lecture/l-ontology-based-integration> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-ontology-based-integration> <http://purl.org/dc/terms/identifier> "l:ontology-based-integration" .
+
+<http://lod.isi.edu/cs548/person/Taheriyan> <http://xmlns.com/foaf/0.1/name> "Mohsen Taheriyan" .
+<http://lod.isi.edu/cs548/lecture/l-linked-services> <http://purl.org/dc/terms/identifier> "l:linked-services" .
+<http://www-scf.usc.edu/~taheriya/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/person/Taheriyan> <http://xmlns.com/foaf/0.1/homepage> <http://www-scf.usc.edu/~taheriya/> .
+<http://lod.isi.edu/cs548/lecture/l-linked-services> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Taheriyan> .
+<http://lod.isi.edu/cs548/lecture/l-linked-services> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-04-02"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-linked-services> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/lecture/l-linked-services> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/person/Taheriyan> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-wrapper-generation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/lecture/l-wrapper-generation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-wrapper-generation> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Ambite> .
+<http://lod.isi.edu/cs548/lecture/l-wrapper-generation> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-04-07"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-wrapper-generation> <http://purl.org/dc/terms/identifier> "l:wrapper-generation" .
+
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/lecture/l-wrapper-learning> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-04-09"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-wrapper-learning> <http://purl.org/dc/terms/identifier> "l:wrapper-learning" .
+<http://lod.isi.edu/cs548/lecture/l-wrapper-learning> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Ambite> .
+<http://lod.isi.edu/cs548/lecture/l-wrapper-learning> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-wrapper-learning> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/lecture/l-mashup-principles> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-mashup-principles> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-04-14"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-mashup-principles> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-mashup-principles> <http://purl.org/dc/terms/identifier> "l:mashup-principles" .
+<http://lod.isi.edu/cs548/lecture/l-mashup-principles> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Ambite> .
+
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/lecture/l-mashup-tools> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/lecture/l-mashup-tools> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-mashup-tools> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-04-21"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-mashup-tools> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-mashup-tools> <http://purl.org/dc/terms/identifier> "l:mashup-tools" .
+
+<http://lod.isi.edu/cs548/lecture/l-big-data> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Slepicka> .
+<http://lod.isi.edu/cs548/person/Slepicka> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/lecture/l-big-data> <http://purl.org/dc/terms/identifier> "l:big-data" .
+<http://lod.isi.edu/cs548/lecture/l-big-data> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/person/Slepicka> <http://xmlns.com/foaf/0.1/name> "Jason Slepicka" .
+<http://lod.isi.edu/cs548/lecture/l-big-data> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-04-24"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-big-data> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+
+<http://lod.isi.edu/cs548/lecture/l-intellectual-property> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Knoblock> .
+<http://lod.isi.edu/cs548/lecture/l-intellectual-property> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/person/Knoblock> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/person/Knoblock> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~knoblock> .
+<http://lod.isi.edu/cs548/lecture/l-intellectual-property> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://www.isi.edu/~knoblock> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/person/Knoblock> <http://xmlns.com/foaf/0.1/name> "Craig Knoblock" .
+<http://lod.isi.edu/cs548/lecture/l-intellectual-property> <http://purl.org/dc/terms/identifier> "l:intellectual-property" .
+
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/lecture/l-review> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Ambite> .
+<http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-review> <http://purl.org/dc/terms/identifier> "l:review" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/lecture/l-review> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/lecture/l-review> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/lecture/l-review> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/lecture/l-project-presentations-1> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://lod.isi.edu/cs548/lecture/l-project-presentations-1> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Slepicka> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/person/Slepicka> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-project-presentations-1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/lecture/l-project-presentations-1> <http://purl.org/dc/terms/identifier> "l:project-presentations-1" .
+<http://lod.isi.edu/cs548/person/Slepicka> <http://xmlns.com/foaf/0.1/name> "Jason Slepicka" .
+<http://lod.isi.edu/cs548/lecture/l-project-presentations-1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/lecture/l-project-presentations-1> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-04-28"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/lecture/l-project-presentations-1> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Ambite> .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/lecture/l-project-presentations-2> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Szekely> .
+<http://lod.isi.edu/cs548/lecture/l-project-presentations-2> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-04-30"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/lecture/l-project-presentations-2> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Slepicka> .
+<http://lod.isi.edu/cs548/person/Slepicka> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+<http://lod.isi.edu/cs548/lecture/l-project-presentations-2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Lecture" .
+<http://lod.isi.edu/cs548/lecture/l-project-presentations-2> <http://lod.isi.edu/ontology/syllabus/hasInstructor> <http://lod.isi.edu/cs548/person/Ambite> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/person/Slepicka> <http://xmlns.com/foaf/0.1/name> "Jason Slepicka" .
+<http://lod.isi.edu/cs548/lecture/l-project-presentations-2> <http://purl.org/dc/terms/identifier> "l:project-presentations-2" .
+<http://lod.isi.edu/cs548/lecture/l-project-presentations-2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+
+<http://lod.isi.edu/cs548/project/project-proposal> <http://purl.org/dc/terms/identifier> "project:proposal" .
+<http://lod.isi.edu/cs548/project/project-proposal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/project/project-proposal> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-03-16"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/project/project-proposal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/ProjectEvent" .
+
+<http://lod.isi.edu/cs548/project/project-presentation> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-04-28"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/project/project-presentation> <http://purl.org/dc/terms/identifier> "project:presentation" .
+<http://lod.isi.edu/cs548/project/project-presentation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/project/project-presentation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/ProjectEvent" .
+
+<http://lod.isi.edu/cs548/project/project-paper> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/project/project-paper> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/ProjectEvent" .
+<http://lod.isi.edu/cs548/project/project-paper> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-05-06"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/project/project-paper> <http://purl.org/dc/terms/identifier> "project:paper" .
+
+<http://lod.isi.edu/cs548/project/project-video> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/ProjectEvent" .
+<http://lod.isi.edu/cs548/project/project-video> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-05-06"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/project/project-video> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/project/project-video> <http://purl.org/dc/terms/identifier> "project:video" .
+
+<http://lod.isi.edu/cs548/project/project-demonstration> <http://purl.org/dc/terms/identifier> "project:demonstration" .
+<http://lod.isi.edu/cs548/project/project-demonstration> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/ProjectEvent" .
+<http://lod.isi.edu/cs548/project/project-demonstration> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-05-06"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/project/project-demonstration> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+
+<http://lod.isi.edu/cs548/homeworkhw-rdf> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-01-26"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/homeworkhw-rdf> <http://purl.org/dc/terms/identifier> "hw:rdf" .
+<http://lod.isi.edu/cs548/homeworkhw-rdf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Homework" .
+<http://lod.isi.edu/cs548/homeworkhw-rdf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+
+<http://lod.isi.edu/cs548/homeworkhw-sparql> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-02-02"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/homeworkhw-sparql> <http://purl.org/dc/terms/identifier> "hw:sparql" .
+<http://lod.isi.edu/cs548/homeworkhw-sparql> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Homework" .
+<http://lod.isi.edu/cs548/homeworkhw-sparql> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+
+<http://lod.isi.edu/cs548/homeworkhw-karma> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-02-09"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/homeworkhw-karma> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Homework" .
+<http://lod.isi.edu/cs548/homeworkhw-karma> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/homeworkhw-karma> <http://purl.org/dc/terms/identifier> "hw:karma" .
+
+<http://lod.isi.edu/cs548/homeworkhw-triple-stores> <http://purl.org/dc/terms/identifier> "hw:triple-stores" .
+<http://lod.isi.edu/cs548/homeworkhw-triple-stores> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Homework" .
+<http://lod.isi.edu/cs548/homeworkhw-triple-stores> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/homeworkhw-triple-stores> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-02-16"^^<http://www.w3.org/2001/XMLSchema#date> .
+
+<http://lod.isi.edu/cs548/homeworkhw-mashups> <http://purl.org/dc/terms/identifier> "hw:mashups" .
+<http://lod.isi.edu/cs548/homeworkhw-mashups> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Homework" .
+<http://lod.isi.edu/cs548/homeworkhw-mashups> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-03-09"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/homeworkhw-mashups> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+
+<http://lod.isi.edu/cs548/homeworkhw-record-linkage> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-03-02"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/homeworkhw-record-linkage> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Homework" .
+<http://lod.isi.edu/cs548/homeworkhw-record-linkage> <http://purl.org/dc/terms/identifier> "hw:record-linkage" .
+<http://lod.isi.edu/cs548/homeworkhw-record-linkage> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+
+<http://lod.isi.edu/cs548/homeworkhw-information-extraction> <http://purl.org/dc/terms/identifier> "hw:information-extraction" .
+<http://lod.isi.edu/cs548/homeworkhw-information-extraction> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/Homework" .
+<http://lod.isi.edu/cs548/homeworkhw-information-extraction> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/homeworkhw-information-extraction> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-02-23"^^<http://www.w3.org/2001/XMLSchema#date> .
+
+<http://lod.isi.edu/cs548/otherfinal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "http://lod.isi.edu/ontology/syllabus/EvaluationEvent" .
+<http://lod.isi.edu/cs548/otherfinal> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Event> .
+<http://lod.isi.edu/cs548/otherfinal> <http://lod.isi.edu/ontology/syllabus/hasEventDate> "2014-05-09"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://lod.isi.edu/cs548/otherfinal> <http://purl.org/dc/terms/identifier> "final" .
+

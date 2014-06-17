@@ -1823,22 +1823,6 @@ var AugmentDataDialog = (function() {
             td.append(label);
             tr.append(td);
             table.append(tr);
-            var tr = $("<tr>");
-            var td = $("<td>").addClass("CheckboxProperty");
-            tr.append(td);
-            var td = $("<td>").addClass("PredicateProperty");
-            var label = $("<label>").text("Predicate");
-            td.append(label);
-            tr.append(td);
-            var td = $("<td>").addClass("OtherClassProperty");
-            var label = $("<label>").text("Other Class");
-            td.append(label);
-            tr.append(td);
-            var td = $("<td>").addClass("DataCountProperty");
-            var label = $("<label>").text("Occurrence Probability");
-            td.append(label);
-            tr.append(td);
-            table.append(tr);
             dialogContent.append(table);
           	
             $('#txtFilterPredicate', dialog).on('keyup', applyFilter);
@@ -2007,13 +1991,28 @@ var AugmentDataDialog = (function() {
           			dialogContent.empty();
           			var table = $("<table>")
                         .addClass("table table-striped table-condensed");
+                var tr = $("<tr>");
+            		var th = $("<th>").addClass("CheckboxProperty");
+            		tr.append(th);
+            		var th = $("<th>").addClass("PredicateProperty");
+            		var label = $("<label>").text("Predicate");
+            		th.append(label);
+            		tr.append(th);
+            		var th = $("<th>").addClass("OtherClassProperty");
+            		var label = $("<label>").text("Other Class");
+            		th.append(label);
+            		tr.append(th);
+            		var th = $("<th>").addClass("DataCountProperty");
+            		var label = $("<label>").text("Occurrence Probability");
+            		th.append(label);
+            		tr.append(th);
+            		table.append(tr);
                 for (var i = 0; i < filtered.length; i++) {
                     var predicate = filtered[i]['predicate'];
                     var probability = filtered[i]['probability'];
                     var otherClass = filtered[i]['otherClass'];
                     var tr = $("<tr>");
-                    var td = $("<td>")
-                                .addClass("CheckboxProperty");
+                    var td = $("<td>").addClass("CheckboxProperty");
                     var checkbox = $("<input>")
                                .attr("type", "checkbox")                           
                                .attr("id", "selectPredicates")
@@ -2021,29 +2020,23 @@ var AugmentDataDialog = (function() {
                                .attr("src", predicate);
                     td.append(checkbox);
                     tr.append(td);
-                    var td = $("<td>")
-                            .css("overflow", "scroll")
-                            .addClass("PredicateProperty");
+                    var td = $("<td>").addClass("PredicateProperty");
                     var name = invertedClasses[predicate] == undefined ? "" : (invertedClasses[predicate] + ":");
-                    var label = $("<label>").text(name + predicate.substring(predicate.lastIndexOf("/") + 1)).css("overflow", "scroll");
+                    var label = $("<label>").text(name + predicate.substring(predicate.lastIndexOf("/") + 1)).addClass("PredicateProperty");
                     td.append(label);
                     tr.append(td);
-                    var td = $("<td>")
-                            .css("overflow", "scroll")
-                            .addClass("OtherClassProperty");
+                    var td = $("<td>").addClass("OtherClassProperty");
                     name = invertedClasses[otherClass] == undefined ? "" : (invertedClasses[otherClass] + ":");
-                    var label = $("<label>").text(name + otherClass.substring(otherClass.lastIndexOf("/") + 1)).css("overflow", "scroll");
+                    var label = $("<label>").text(name + otherClass.substring(otherClass.lastIndexOf("/") + 1)).addClass("OtherClassProperty");
                     td.append(label);
                     tr.append(td);
-                    var td = $("<td>")
-                            .css("overflow", "scroll")
-                            .addClass("DataCountProperty");
-                    var label = $("<label>").text(probability*100.0 + "%").css("overflow", "scroll");
+                    var td = $("<td>").addClass("DataCountProperty");
+                    var label = $("<label>").text(probability*100.0 + "%").addClass("DataCountProperty");
                     td.append(label);
                     tr.append(td);
                     table.append(tr);    
-                    dialogContent.append(table);
                 }
+                dialogContent.append(table);
             });
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
@@ -2151,7 +2144,7 @@ var AugmentDataIncomingDialog = (function() {
                      .addClass("PredicateProperty");
             var label = $("<input>").text("")
                         .addClass("form-control")
-                        .attr("id","txtFilterPredicate")
+                        .attr("id","txtFilterPredicateIncoming")
                         .attr("type", "text");
             td.append(label);
             tr.append(td);
@@ -2159,7 +2152,7 @@ var AugmentDataIncomingDialog = (function() {
                      .addClass("OtherClassProperty");
             var label = $("<input>").text("")
                         .addClass("form-control")
-                        .attr("id","txtFilterOtherClass")
+                        .attr("id","txtFilterOtherClassIncoming")
                         .attr("type", "text");
             td.append(label);
             tr.append(td);
@@ -2167,34 +2160,18 @@ var AugmentDataIncomingDialog = (function() {
                      .addClass("DataCountProperty");
             var label = $("<input>").text("")
                         .addClass("form-control")
-                        .attr("id","txtFilterDataCount")
+                        .attr("id","txtFilterDataCountIncoming")
                         .attr("type", "text");
-            td.append(label);
-            tr.append(td);
-            table.append(tr);
-            var tr = $("<tr>");
-            var td = $("<td>").addClass("CheckboxProperty");
-            tr.append(td);
-            var td = $("<td>").addClass("PredicateProperty");
-            var label = $("<label>").text("Predicate");
-            td.append(label);
-            tr.append(td);
-            var td = $("<td>").addClass("OtherClassProperty");
-            var label = $("<label>").text("Other Class");
-            td.append(label);
-            tr.append(td);
-            var td = $("<td>").addClass("DataCountProperty");
-            var label = $("<label>").text("Occurrence Probability");
             td.append(label);
             tr.append(td);
             table.append(tr);
             dialogContent.append(table);
           	
-            $('#txtFilterPredicate', dialog).on('keyup', applyFilter);
+            $('#txtFilterPredicateIncoming', dialog).on('keyup', applyFilter);
 
-            $('#txtFilterOtherClass', dialog).on('keyup', applyFilter);
+            $('#txtFilterOtherClassIncoming', dialog).on('keyup', applyFilter);
 
-            $('#txtFilterDataCount', dialog).on('keyup', applyFilter);
+            $('#txtFilterDataCountIncoming', dialog).on('keyup', applyFilter);
 
             $('#btnSave', dialog).on('click', function (e) {
                 e.preventDefault();
@@ -2207,9 +2184,9 @@ var AugmentDataIncomingDialog = (function() {
         function applyFilter(e) {
             console.log("applyFilter");
             var tmp = [];
-            var filterPredicate = $('#txtFilterPredicate').val();
-            var filterOtherClass = $('#txtFilterOtherClass').val();
-            var filterProbability = $('#txtFilterDataCount').val();
+            var filterPredicate = $('#txtFilterPredicateIncoming').val();
+            var filterOtherClass = $('#txtFilterOtherClassIncoming').val();
+            var filterProbability = $('#txtFilterDataCountIncoming').val();
             if (!filterPredicate && !filterOtherClass && !filterProbability) {
                 filtered = available;
                 instance.show();
@@ -2356,6 +2333,22 @@ var AugmentDataIncomingDialog = (function() {
           			dialogContent.empty();
           			var table = $("<table>")
                         .addClass("table table-striped table-condensed");
+                var tr = $("<tr>");
+            		var th = $("<th>").addClass("CheckboxProperty");
+            		tr.append(th);
+            		var th = $("<th>").addClass("PredicateProperty");
+            		var label = $("<label>").text("Predicate");
+            		th.append(label);
+            		tr.append(th);
+            		var th = $("<th>").addClass("OtherClassProperty");
+            		var label = $("<label>").text("Other Class");
+            		th.append(label);
+            		tr.append(th);
+            		var th = $("<th>").addClass("DataCountProperty");
+            		var label = $("<label>").text("Occurrence Probability");
+            		th.append(label);
+            		tr.append(th);
+            		table.append(tr);
                 for (var i = 0; i < filtered.length; i++) {
                     var predicate = filtered[i]['predicate'];
                     var probability = filtered[i]['probability'];
@@ -2370,29 +2363,23 @@ var AugmentDataIncomingDialog = (function() {
                                .attr("src", predicate);
                     td.append(checkbox);
                     tr.append(td);
-                    var td = $("<td>")
-                            .css("overflow", "scroll")
-                            .addClass("PredicateProperty");
+                    var td = $("<td>").addClass("PredicateProperty");
                     var name = invertedClasses[predicate] == undefined ? "" : (invertedClasses[predicate] + ":");
-                    var label = $("<label>").text(name + predicate.substring(predicate.lastIndexOf("/") + 1)).css("overflow", "scroll");
+                    var label = $("<label>").text(name + predicate.substring(predicate.lastIndexOf("/") + 1)).addClass("PredicateProperty");
                     td.append(label);
                     tr.append(td);
-                    var td = $("<td>")
-                            .css("overflow", "scroll")
-                            .addClass("OtherClassProperty");
+                    var td = $("<td>").addClass("OtherClassProperty");
                     name = invertedClasses[otherClass] == undefined ? "" : (invertedClasses[otherClass] + ":");
-                    var label = $("<label>").text(name + otherClass.substring(otherClass.lastIndexOf("/") + 1)).css("overflow", "scroll");
+                    var label = $("<label>").text(name + otherClass.substring(otherClass.lastIndexOf("/") + 1)).addClass("OtherClassProperty");
                     td.append(label);
                     tr.append(td);
-                    var td = $("<td>")
-                            .css("overflow", "scroll")
-                            .addClass("DataCountProperty");
-                    var label = $("<label>").text(probability*100.0 + "%").css("overflow", "scroll");
+                    var td = $("<td>").addClass("DataCountProperty");
+                    var label = $("<label>").text(probability*100.0 + "%").addClass("DataCountProperty");
                     td.append(label);
                     tr.append(td);
                     table.append(tr);    
-                    dialogContent.append(table);
                 }
+                dialogContent.append(table);
             });
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };

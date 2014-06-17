@@ -88,11 +88,15 @@ a.icon-remove:hover {
 						<div id="modelManagerDialogColumns" style="max-height: 300px; overflow: auto;"></div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
-				  		<button type="button" class="btn btn-default" id="btnLoadModel">Load Models</button>
-				  		<button type="button" class="btn btn-default" id="btnClearModel">Clear Models</button>
-				  		<button type="button" class="btn btn-default" id="btnDeleteModel">Delete Models</button>
-				  		<button type="button" class="btn btn-default" id="btnRefreshModel">Refresh Models</button>
-				  		<button type="button" class="btn btn-primary" class="close" data-dismiss="modal" style="padding: 5px;">Cancel</button>
+				  		<div style="padding: 10px;">
+				  			<button type="button" class="btn btn-primary" id="btnLoadModel">Add Models to Manager</button>
+				  			<button type="button" class="btn btn-default" id="btnClearModel">Remove All Models</button>
+				  			<button type="button" class="btn btn-default" class="close" data-dismiss="modal">Cancel</button>
+				  		</div>
+				  		<div style="padding: 10px;"> 
+				  			<button type="button" class="btn btn-default" id="btnDeleteModel">Remove Model</button>
+				  			<button type="button" class="btn btn-default" id="btnRefreshModel">Refresh Models</button>
+				  		</div>				  		
 				  </div> <!-- /.modal-footer -->
 			</div><!-- /.modal-content -->
 		</form>
