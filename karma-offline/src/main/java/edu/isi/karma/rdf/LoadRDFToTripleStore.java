@@ -9,7 +9,7 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class LoadRDFToTripleStore {
 	
-	public static void main(String args[]) throws KarmaException {
+	public static void main(String args[]) {
 		TripleStoreUtil util = new TripleStoreUtil();
 		if (args.length < 3)
 			return;
@@ -21,12 +21,20 @@ public class LoadRDFToTripleStore {
 			for (File f : files) {
 				System.out.println(FileUtils.getExtension(f.getName()));
 				if (FileUtils.getExtension(f.getName()) != null && FileUtils.getExtension(f.getName()).compareTo("ttl") == 0)
-					util.saveToStore(f.getAbsolutePath(), tripleStoreUrl, context, false, null);
+					try {
+						util.saveToStore(f.getAbsolutePath(), tripleStoreUrl, context, false, null);
+					} catch (KarmaException e) {
+						System.err.println(e.getMessage());
+					}
 			}
 		}
 		else {
 			if (FileUtils.getExtension(file.getName()) != null && FileUtils.getExtension(file.getName()).compareTo("ttl") == 0)
-				util.saveToStore(file.getAbsolutePath(), tripleStoreUrl, context, false, null);
+				try {
+					util.saveToStore(file.getAbsolutePath(), tripleStoreUrl, context, false, null);
+				} catch (KarmaException e) {
+					System.err.println(e.getMessage());
+				}
 		}
 	}
 }
