@@ -73,7 +73,12 @@ public class AugmentDataCommand extends WorksheetCommand{
 
 	@Override
 	public String getDescription() {
-		return null;
+		JSONArray predicatesarray = new JSONArray(predicate);
+		StringBuilder builder = new StringBuilder();
+		for(int i = 0; i < predicatesarray.length() - 1; i++) 
+			builder.append(predicatesarray.getJSONObject(i).getString("predicate")).append(" ");
+		builder.append(predicatesarray.getJSONObject(predicatesarray.length() - 1).getString("predicate"));
+		return builder.toString();
 	}
 
 	@Override

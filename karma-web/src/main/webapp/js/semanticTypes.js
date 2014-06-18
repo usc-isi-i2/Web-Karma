@@ -1987,6 +1987,8 @@ var AugmentDataDialog = (function() {
                     }
             });
             showLoading(info["worksheetId"]);
+            var isFirstFinished = false;
+            var isSecondFinished = false;
             var returnedJSON = new Object();
             returnedJSON['elements'] = [];
             if (predicatesOutgoing.length > 0) {
@@ -2015,8 +2017,10 @@ var AugmentDataDialog = (function() {
                         console.log(json);
                         returnedJSON['workspaceId'] = json['workspaceId'];
                         returnedJSON['elements'] = returnedJSON['elements'].concat(json['elements']);
-                        if (predicatesIncoming.length == 0) {
+                        isFirstFinished = true;
+                        if (predicatesIncoming.length == 0 || isSecondFinished) {
                         	parse(returnedJSON);
+                        	console.log("first");
             							hideLoading(info["worksheetId"]);
                         }
                         //applyModelDialog.getInstance().show(worksheetId, json);
@@ -2054,8 +2058,12 @@ var AugmentDataDialog = (function() {
                         console.log(json);
                         returnedJSON['workspaceId'] = json['workspaceId'];
                         returnedJSON['elements'] = returnedJSON['elements'].concat(json['elements']);
-                        parse(returnedJSON);
-            						hideLoading(info["worksheetId"]);
+                        isSecondFinished = true;
+                        if (isFirstFinished || predicatesOutgoing.length == 0) {
+                        	parse(returnedJSON);
+                        	console.log("second");
+            							hideLoading(info["worksheetId"]);
+            						}
                     },
                 	error :
                     function (xhr, textStatus) {
