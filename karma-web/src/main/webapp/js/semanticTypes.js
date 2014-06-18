@@ -1909,7 +1909,7 @@ var AugmentDataDialog = (function() {
                 else if (otherClass.indexOf(filterOtherClass) == -1) {
                     flag = false;
                 }
-                else if (probability * 100 < filterProbability) {
+                else if (probability * 100.0 < filterProbability) {
                     flag = false;
                 }
                 else if (incoming.indexOf(filterIncoming) == -1) {
@@ -2145,7 +2145,7 @@ var AugmentDataDialog = (function() {
                     td.append(label);
                     tr.append(td);
                     var td = $("<td>").addClass("DataCountProperty");
-                    var label = $("<label>").text(probability*100.0 + "%").addClass("DataCountProperty");
+                    var label = $("<label>").text(parseFloat(probability*100.0).toFixed(2) + "%").addClass("DataCountProperty");
                     td.append(label);
                     tr.append(td);
                     var td = $("<td>").addClass("IncomingProperty");
