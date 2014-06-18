@@ -132,6 +132,11 @@ public class CommandHistory {
 	 */
 	public UpdateContainer doCommand(Command command, Workspace workspace)
 			throws CommandException {
+		return doCommand(command, workspace, true);
+	}
+	
+	public UpdateContainer doCommand(Command command, Workspace workspace, boolean saveToHistory)
+			throws CommandException {
 		UpdateContainer effects = new UpdateContainer();
 		effects.append(command.doIt(workspace));
 		command.setExecuted(true);
@@ -150,15 +155,17 @@ public class CommandHistory {
 			effects.add(new HistoryAddCommandUpdate(command));
 		}
 		
-		// Save the modeling commands
-		if (!(instanceOf(command, "ResetKarmaCommand"))) {
-			try {
-				if(isHistoryWriteEnabled && historySavers.get(workspace.getId()) != null) {
-					writeHistoryPerWorksheet(workspace, historySavers.get(workspace.getId()));
+		if(saveToHistory) {
+			// Save the modeling commands
+			if (!(instanceOf(command, "ResetKarmaCommand"))) {
+				try {
+					if(isHistoryWriteEnabled && historySavers.get(workspace.getId()) != null) {
+						writeHistoryPerWorksheet(workspace, historySavers.get(workspace.getId()));
+					}
+				} catch (Exception e) {
+					logger.error("Error occured while writing history!" , e);
+					e.printStackTrace();
 				}
-			} catch (Exception e) {
-				logger.error("Error occured while writing history!" , e);
-				e.printStackTrace();
 			}
 		}
 		return effects;
