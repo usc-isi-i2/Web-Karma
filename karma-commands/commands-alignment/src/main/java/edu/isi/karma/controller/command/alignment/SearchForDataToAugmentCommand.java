@@ -147,6 +147,7 @@ public class SearchForDataToAugmentCommand extends Command{
 				obj.put("predicate", predicatesItr.next());
 				obj.put("otherClass", otherClassesItr.next());
 				obj.put("probability", String.format("%.4f", probability));
+				obj.put("incoming", "false");
 				array.put(obj);
 			} catch (Exception e) {
 				LOG.error("Unable to process bloom filter: " + e.getMessage());

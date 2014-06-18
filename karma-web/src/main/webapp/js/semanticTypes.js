@@ -1752,7 +1752,6 @@ var AugmentDataDialog = (function() {
             info["command"] = "SearchForDataToAugmentCommand";
             info["nodeUri"] = columnDomain;
             info["columnUri"] = columnUri;
-            console.log(info['graphContext']);
             var returnJSON;
             var returned = $.ajax({
                 url: "RequestController",
@@ -1775,6 +1774,37 @@ var AugmentDataDialog = (function() {
                         //hideLoading(info["worksheetId"]);
                     }
             });
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info['tripleStoreUrl'] = $('#txtModel_URL').html();
+            info['context'] = "";
+            info["command"] = "SearchForDataToAugmentIncomingCommand";
+            info["nodeUri"] = columnDomain;
+            info["columnUri"] = columnUri;
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                async: false,
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        json = json.elements[0];
+                        console.log(json);
+                        returnJSON = returnJSON.concat(json);
+
+                        //hideLoading(info["worksheetId"]);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while Searching Models!" + textStatus);
+                        //hideLoading(info["worksheetId"]);
+                    }
+            });
+            console.log(returnJSON);
             return returnJSON;
         };
 
@@ -1822,6 +1852,14 @@ var AugmentDataDialog = (function() {
                         .attr("type", "text");
             td.append(label);
             tr.append(td);
+            var td = $("<td>")
+                     .addClass("IncomingProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterIncoming")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
             table.append(tr);
             dialogContent.append(table);
           	
@@ -1830,6 +1868,8 @@ var AugmentDataDialog = (function() {
             $('#txtFilterOtherClass', dialog).on('keyup', applyFilter);
 
             $('#txtFilterDataCount', dialog).on('keyup', applyFilter);
+
+            $('#txtFilterIncoming', dialog).on('keyup', applyFilter);
 
             $('#btnSave', dialog).on('click', function (e) {
                 e.preventDefault();
@@ -1842,14 +1882,11 @@ var AugmentDataDialog = (function() {
         function applyFilter(e) {
             console.log("applyFilter");
             var tmp = [];
-            var filterPredicate = $('#txtFilterPredicate').val();
-            var filterOtherClass = $('#txtFilterOtherClass').val();
+            var filterPredicate = $('#txtFilterPredicate').val().toLowerCase();
+            var filterOtherClass = $('#txtFilterOtherClass').val().toLowerCase();
             var filterProbability = $('#txtFilterDataCount').val();
-            if (!filterPredicate && !filterOtherClass && !filterProbability) {
-                filtered = available;
-                instance.show();
-                return;
-            }
+            var filterIncoming = $('#txtFilterIncoming').val().toLowerCase();
+ 
             for (var i = 0; i < available.length; i++) {
                 var predicate = available[i]['predicate'];
                 if (invertedClasses[predicate] != undefined)
@@ -1859,20 +1896,27 @@ var AugmentDataDialog = (function() {
                 predicate = predicate.toLowerCase();
                 var probability = available[i]['probability'];
                 var otherClass = available[i]['otherClass'];
+                var incoming = available[i]['incoming'] === "true" ? "incoming" : "outgoing";
                 if (invertedClasses[otherClass] != undefined)
                 	otherClass = invertedClasses[otherClass] + ":" + otherClass.substring(otherClass.lastIndexOf("/") + 1);
                 else
                 	otherClass = otherClass.substring(otherClass.lastIndexOf("/") + 1);
                 otherClass = otherClass.toLowerCase();
-                if (predicate.indexOf(filterPredicate) > -1 && filterPredicate != "") {
-                    tmp.push(available[i]);
+                var flag = true;
+                if (predicate.indexOf(filterPredicate) == -1) {
+                    flag = false;
                 }
-                else if (otherClass.indexOf(filterOtherClass) > -1 && filterOtherClass != "") {
-                    tmp.push(available[i]);
+                else if (otherClass.indexOf(filterOtherClass) == -1) {
+                    flag = false;
                 }
-                else if (probability * 100 > filterProbability && filterProbability != "") {
-                    tmp.push(available[i]);
+                else if (probability * 100 < filterProbability) {
+                    flag = false;
                 }
+                else if (incoming.indexOf(filterIncoming) == -1) {
+                	flag = false;
+                }
+                if (flag)
+                	tmp.push(available[i]);
             }
             filtered = tmp;
             instance.show();
@@ -1893,17 +1937,27 @@ var AugmentDataDialog = (function() {
                 hide();
                 return;
             }
-            var predicates = [];
-            var otherClass = [];
+            var predicatesOutgoing = [];
+            var otherClassOutgoing = [];
+            var predicatesIncoming = [];
+            var otherClassIncoming = [];
             for (var i = 0; i < checkboxes.length; i++) {
 	            var checkbox = checkboxes[i];
+	            var json = $.parseJSON(checkbox['value']);
 	            var t1 = new Object();
 	            var t3 = new Object();
-	            t1['predicate'] = checkbox['src'];
-	            t3['otherClass'] = checkbox['value'];
-	            predicates.push(t1);    
-	            otherClass.push(t3);
+	            t1['predicate'] = json['predicate'];
+	            t3['otherClass'] = json['otherClass'];
+	            if (json['incoming'] === "false") {
+	            	predicatesOutgoing.push(t1);    
+	            	otherClassOutgoing.push(t3);
+	          	}
+	          	else {
+	          		predicatesIncoming.push(t1);    
+	            	otherClassIncoming.push(t3);
+	          	}
 	        	}
+
 	        	var info = new Object();
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -1932,40 +1986,84 @@ var AugmentDataDialog = (function() {
                         //hideLoading(info["worksheetId"]);
                     }
             });
-            var info = new Object();
-            info["worksheetId"] = worksheetId;
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "AugmentDataCommand";
-            var newInfo = [];
-            newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-            newInfo.push(getParamObject("predicate", JSON.stringify(predicates), "other"));
-            newInfo.push(getParamObject("otherClass", JSON.stringify(otherClass), "other"));
-            newInfo.push(getParamObject("columnUri", columnUri, "other"));
-            newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
-            newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
-            newInfo.push(getParamObject("incoming", "false", "other"));
-            info["newInfo"] = JSON.stringify(newInfo);
             showLoading(info["worksheetId"]);
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                complete :
+            var returnedJSON = new Object();
+            returnedJSON['elements'] = [];
+            if (predicatesOutgoing.length > 0) {
+            	var info = new Object();
+            	info["worksheetId"] = worksheetId;
+            	info["workspaceId"] = $.workspaceGlobalInformation.id;
+            	info["command"] = "AugmentDataCommand";
+            	var newInfo = [];
+            	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+            	newInfo.push(getParamObject("predicate", JSON.stringify(predicatesOutgoing), "other"));
+            	newInfo.push(getParamObject("otherClass", JSON.stringify(otherClassOutgoing), "other"));
+            	newInfo.push(getParamObject("columnUri", columnUri, "other"));
+            	newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
+            	newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+            	newInfo.push(getParamObject("incoming", "false", "other"));
+            	info["newInfo"] = JSON.stringify(newInfo);	
+            	var returned = $.ajax({
+                	url: "RequestController",
+                	type: "POST",
+                	data : info,
+                	dataType : "json",
+                	complete :
                     function (xhr, textStatus) {
                         //alert(xhr.responseText);
                         var json = $.parseJSON(xhr.responseText);
                         console.log(json);
-                        parse(json);
-                        hideLoading(info["worksheetId"]);
+                        returnedJSON['workspaceId'] = json['workspaceId'];
+                        returnedJSON['elements'] = returnedJSON['elements'].concat(json['elements']);
+                        if (predicatesIncoming.length == 0) {
+                        	parse(returnedJSON);
+            							hideLoading(info["worksheetId"]);
+                        }
                         //applyModelDialog.getInstance().show(worksheetId, json);
                     },
-                error :
+                	error :
                     function (xhr, textStatus) {
                         alert("Error occured while Augmenting Models!" + textStatus);
                         hideLoading(info["worksheetId"]);
                     }
-            });
+            	});
+          	}
+          	if (predicatesIncoming.length > 0) {
+            	var info = new Object();
+            	info["worksheetId"] = worksheetId;
+            	info["workspaceId"] = $.workspaceGlobalInformation.id;
+            	info["command"] = "AugmentDataCommand";
+            	var newInfo = [];
+            	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+            	newInfo.push(getParamObject("predicate", JSON.stringify(predicatesIncoming), "other"));
+            	newInfo.push(getParamObject("otherClass", JSON.stringify(otherClassIncoming), "other"));
+            	newInfo.push(getParamObject("columnUri", columnUri, "other"));
+            	newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
+            	newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+            	newInfo.push(getParamObject("incoming", "true", "other"));
+            	info["newInfo"] = JSON.stringify(newInfo);
+            	var returned = $.ajax({
+                	url: "RequestController",
+                	type: "POST",
+                	data : info,
+                	dataType : "json",
+                	complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        console.log(json);
+                        returnedJSON['workspaceId'] = json['workspaceId'];
+                        returnedJSON['elements'] = returnedJSON['elements'].concat(json['elements']);
+                        parse(returnedJSON);
+            						hideLoading(info["worksheetId"]);
+                    },
+                	error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while Augmenting Models!" + textStatus);
+                        hideLoading(info["worksheetId"]);
+                    }
+            	});
+          	}          	
         };
         
         function hide() {
@@ -2006,18 +2104,26 @@ var AugmentDataDialog = (function() {
             		var label = $("<label>").text("Occurrence Probability");
             		th.append(label);
             		tr.append(th);
+            		var th = $("<th>").addClass("IncomingProperty");
+            		var label = $("<label>").text("Incoming /Outgoing");
+            		th.append(label);
+            		tr.append(th);
             		table.append(tr);
                 for (var i = 0; i < filtered.length; i++) {
                     var predicate = filtered[i]['predicate'];
                     var probability = filtered[i]['probability'];
                     var otherClass = filtered[i]['otherClass'];
+                    var incoming = filtered[i]['incoming'] === "true" ? "Incoming" : "Outgoing";
                     var tr = $("<tr>");
                     var td = $("<td>").addClass("CheckboxProperty");
+                    var json = new Object();
+                    json['predicate'] = predicate;
+                    json['otherClass'] = otherClass;
+                    json['incoming'] = filtered[i]['incoming'];
                     var checkbox = $("<input>")
                                .attr("type", "checkbox")                           
                                .attr("id", "selectPredicates")
-                               .attr("value", otherClass)
-                               .attr("src", predicate);
+                               .attr("value", JSON.stringify(json));
                     td.append(checkbox);
                     tr.append(td);
                     var td = $("<td>").addClass("PredicateProperty");
@@ -2032,6 +2138,10 @@ var AugmentDataDialog = (function() {
                     tr.append(td);
                     var td = $("<td>").addClass("DataCountProperty");
                     var label = $("<label>").text(probability*100.0 + "%").addClass("DataCountProperty");
+                    td.append(label);
+                    tr.append(td);
+                    var td = $("<td>").addClass("IncomingProperty");
+                    var label = $("<label>").text(incoming).addClass("IncomingProperty");
                     td.append(label);
                     tr.append(td);
                     table.append(tr);    
@@ -2058,349 +2168,7 @@ var AugmentDataDialog = (function() {
         }
         instance.initVariable(wsId, colDomain, colUri, Alnid);
         var json = instance.refresh();
-        available = json;
-        filtered = json;
-        return instance;
-    }
-   
-    return {
-        getInstance : getInstance
-    };
-    
-})();
-
-var AugmentDataIncomingDialog = (function() {
-    var instance = null;
-    var available;
-    var filtered;
-    function PrivateConstructor() {
-        var dialog = $("#augmentDataIncomingDialog");
-        var worksheetId, columnUri, alignmentId, columnDomain;
-        var invertedClasses = {};
-        function initVariable(wsId, colDomain, colUri, Alnid) {
-        	worksheetId = wsId;
-        	columnUri = colUri;
-        	alignmentId = Alnid;
-        	columnDomain = colDomain;
-
-        }
-
-        function refresh() {
-            var info = new Object();
-            info["worksheetId"] = worksheetId;
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info['tripleStoreUrl'] = $('#txtModel_URL').html();
-            info['context'] = "";
-            info["command"] = "SearchForDataToAugmentIncomingCommand";
-            info["nodeUri"] = columnDomain;
-            info["columnUri"] = columnUri;
-            console.log(info['graphContext']);
-            var returnJSON;
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                async: false,
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        json = json.elements[0];
-                        console.log(json);
-                        returnJSON = json;
-                        //hideLoading(info["worksheetId"]);
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while Searching Models!" + textStatus);
-                        //hideLoading(info["worksheetId"]);
-                    }
-            });
-            return returnJSON;
-        };
-
-        function init() {
-            //Initialize what happens when we show the dialog
-            var classes = getAllClasses(worksheetId);
-            var props = getAllDataProperties(worksheetId)
-            $.each(classes, function(index, type) {
-            	//console.log(type);
-            	invertedClasses[type['uri']] = type['label'].substring(0, type['label'].indexOf(":"));
-            });
-            $.each(props, function(index, type) {
-            	//console.log(type);
-            	invertedClasses[type['uri']] = type['label'].substring(0, type['label'].indexOf(":"));
-            });
-
-          	var dialogContent = $("#augmentDataIncomingDialogHeaders", dialog);
-          	dialogContent.empty();
-          	var table = $("<table>");
-            var tr = $("<tr>");
-            var td = $("<td>")
-                     .addClass("CheckboxProperty");
-            tr.append(td);
-            var td = $("<td>")
-                     .addClass("PredicateProperty");
-            var label = $("<input>").text("")
-                        .addClass("form-control")
-                        .attr("id","txtFilterPredicateIncoming")
-                        .attr("type", "text");
-            td.append(label);
-            tr.append(td);
-            var td = $("<td>")
-                     .addClass("OtherClassProperty");
-            var label = $("<input>").text("")
-                        .addClass("form-control")
-                        .attr("id","txtFilterOtherClassIncoming")
-                        .attr("type", "text");
-            td.append(label);
-            tr.append(td);
-            var td = $("<td>")
-                     .addClass("DataCountProperty");
-            var label = $("<input>").text("")
-                        .addClass("form-control")
-                        .attr("id","txtFilterDataCountIncoming")
-                        .attr("type", "text");
-            td.append(label);
-            tr.append(td);
-            table.append(tr);
-            dialogContent.append(table);
-          	
-            $('#txtFilterPredicateIncoming', dialog).on('keyup', applyFilter);
-
-            $('#txtFilterOtherClassIncoming', dialog).on('keyup', applyFilter);
-
-            $('#txtFilterDataCountIncoming', dialog).on('keyup', applyFilter);
-
-            $('#btnSave', dialog).on('click', function (e) {
-                e.preventDefault();
-                saveDialog(e);
-            });
-            
-                
-        }
-
-        function applyFilter(e) {
-            console.log("applyFilter");
-            var tmp = [];
-            var filterPredicate = $('#txtFilterPredicateIncoming').val();
-            var filterOtherClass = $('#txtFilterOtherClassIncoming').val();
-            var filterProbability = $('#txtFilterDataCountIncoming').val();
-            if (!filterPredicate && !filterOtherClass && !filterProbability) {
-                filtered = available;
-                instance.show();
-                return;
-            }
-            for (var i = 0; i < available.length; i++) {
-                var predicate = available[i]['predicate'];
-                if (invertedClasses[predicate] != undefined)
-                	predicate = invertedClasses[predicate] + ":" + predicate.substring(predicate.lastIndexOf("/") + 1);
-                else
-                	predicate = predicate.substring(predicate.lastIndexOf("/") + 1);
-                predicate = predicate.toLowerCase();
-                var probability = available[i]['probability'];
-                var otherClass = available[i]['otherClass'];
-                if (invertedClasses[otherClass] != undefined)
-                	otherClass = invertedClasses[otherClass] + ":" + otherClass.substring(otherClass.lastIndexOf("/") + 1);
-                else
-                	otherClass = otherClass.substring(otherClass.lastIndexOf("/") + 1);
-                otherClass = otherClass.toLowerCase();
-                if (predicate.indexOf(filterPredicate) > -1 && filterPredicate != "") {
-                    tmp.push(available[i]);
-                }
-                else if (otherClass.indexOf(filterOtherClass) > -1 && filterOtherClass != "") {
-                    tmp.push(available[i]);
-                }
-                else if (probability * 100 > filterProbability && filterProbability != "") {
-                    tmp.push(available[i]);
-                }
-            }
-            filtered = tmp;
-            instance.show();
-        };
-        
-        function hideError() {
-            $("div.error", dialog).hide();
-        }
-        
-        function showError() {
-            $("div.error", dialog).show();
-        }
-        
-        function saveDialog(e) {
-            hide();
-            var checkboxes = dialog.find(":checked");
-            if (checkboxes.length == 0) {
-                hide();
-                return;
-            }
-            var predicates = [];
-            var otherClass = [];
-            for (var i = 0; i < checkboxes.length; i++) {
-	            var checkbox = checkboxes[i];
-	            var t1 = new Object();
-	            var t3 = new Object();
-	            t1['predicate'] = checkbox['src'];
-	            t3['otherClass'] = checkbox['value'];
-	            predicates.push(t1);    
-	            otherClass.push(t3);
-	        	}
-	        	var info = new Object();
-            info["worksheetId"] = worksheetId;
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["alignmentId"] = alignmentId;
-            info["columnUri"] = columnUri;
-            info["command"] = "FetchHNodeIdFromAlignmentCommand";
-            var hNodeId;
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                async: false,
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        //json = $.parseJSON();
-                        hNodeId = json.elements[0]['HNodeId'];
-                        console.log(hNodeId);
-                        //applyModelDialog.getInstance().show(worksheetId, json);
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while fetching alignment!" + textStatus);
-                        //hideLoading(info["worksheetId"]);
-                    }
-            });
-            var info = new Object();
-            info["worksheetId"] = worksheetId;
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "AugmentDataCommand";
-            var newInfo = [];
-            newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-            newInfo.push(getParamObject("predicate", JSON.stringify(predicates), "other"));
-            newInfo.push(getParamObject("otherClass", JSON.stringify(otherClass), "other"));
-            newInfo.push(getParamObject("columnUri", columnUri, "other"));
-            newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
-            newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
-            newInfo.push(getParamObject("incoming", "true", "other"));
-            info["newInfo"] = JSON.stringify(newInfo);
-            showLoading(info["worksheetId"]);
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        console.log(json);
-                        parse(json);
-                        hideLoading(info["worksheetId"]);
-                        //applyModelDialog.getInstance().show(worksheetId, json);
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while Augmenting Models!" + textStatus);
-                        hideLoading(info["worksheetId"]);
-                    }
-            });
-        };
-        
-        function hide() {
-            dialog.modal('hide');
-        }
-        
-        function show() {
-            if (available.length == 0) {
-            	alert("No data to augment!");
-            	return;
-            }
-
-            dialog.on('show.bs.modal', function (e) {
-                hideError();
-                var dialogContent = $("#augmentDataIncomingDialogColumns", dialog);
-                var header = $("#augmentIncomingHeader", dialog);
-                var type = invertedClasses[columnDomain];
-                if (type == undefined) 
-                	type = columnUri.substring(columnUri.lastIndexOf("/") + 1);
-                else
-                	type = type + ":" + columnUri.substring(columnUri.lastIndexOf("/") + 1);
-                header.text("Augment data for " + type);
-          			dialogContent.empty();
-          			var table = $("<table>")
-                        .addClass("table table-striped table-condensed");
-                var tr = $("<tr>");
-            		var th = $("<th>").addClass("CheckboxProperty");
-            		tr.append(th);
-            		var th = $("<th>").addClass("PredicateProperty");
-            		var label = $("<label>").text("Predicate");
-            		th.append(label);
-            		tr.append(th);
-            		var th = $("<th>").addClass("OtherClassProperty");
-            		var label = $("<label>").text("Other Class");
-            		th.append(label);
-            		tr.append(th);
-            		var th = $("<th>").addClass("DataCountProperty");
-            		var label = $("<label>").text("Occurrence Probability");
-            		th.append(label);
-            		tr.append(th);
-            		table.append(tr);
-                for (var i = 0; i < filtered.length; i++) {
-                    var predicate = filtered[i]['predicate'];
-                    var probability = filtered[i]['probability'];
-                    var otherClass = filtered[i]['otherClass'];
-                    var tr = $("<tr>");
-                    var td = $("<td>")
-                                .addClass("CheckboxProperty");
-                    var checkbox = $("<input>")
-                               .attr("type", "checkbox")                           
-                               .attr("id", "selectPredicates")
-                               .attr("value", otherClass)
-                               .attr("src", predicate);
-                    td.append(checkbox);
-                    tr.append(td);
-                    var td = $("<td>").addClass("PredicateProperty");
-                    var name = invertedClasses[predicate] == undefined ? "" : (invertedClasses[predicate] + ":");
-                    var label = $("<label>").text(name + predicate.substring(predicate.lastIndexOf("/") + 1)).addClass("PredicateProperty");
-                    td.append(label);
-                    tr.append(td);
-                    var td = $("<td>").addClass("OtherClassProperty");
-                    name = invertedClasses[otherClass] == undefined ? "" : (invertedClasses[otherClass] + ":");
-                    var label = $("<label>").text(name + otherClass.substring(otherClass.lastIndexOf("/") + 1)).addClass("OtherClassProperty");
-                    td.append(label);
-                    tr.append(td);
-                    var td = $("<td>").addClass("DataCountProperty");
-                    var label = $("<label>").text(probability*100.0 + "%").addClass("DataCountProperty");
-                    td.append(label);
-                    tr.append(td);
-                    table.append(tr);    
-                }
-                dialogContent.append(table);
-            });
-            dialog.modal({keyboard:true, show:true, backdrop:'static'});
-        };
-        
-        
-        return {    //Return back the public methods
-            show : show,
-            init : init,
-            initVariable : initVariable,
-            refresh : refresh
-        };
-    };
-
-    function getInstance(wsId, colDomain, colUri, Alnid) {
-    		console.log("instance");
-        if( ! instance ) {
-            instance = new PrivateConstructor();
-            instance.init();
-        }
-        instance.initVariable(wsId, colDomain, colUri, Alnid);
-        var json = instance.refresh();
+        console.log(json);
         available = json;
         filtered = json;
         return instance;

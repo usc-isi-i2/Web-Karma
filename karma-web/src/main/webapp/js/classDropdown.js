@@ -15,7 +15,6 @@ var ClassDropdownMenu = (function() {
     		   	        [ "Add Outgoing Link", addOutgoingLink],
     		   	        [ "Manage Links", manageLinks],
                         [ "Augment Data", searchData], 
-                        [ "Augment Data For Incoming", searchDataIncoming],
     		   	        [ "divider" , null ],
     		   	        [ "Export CSV" , exportCSV ],
     		   	        [ "Export JSON" , exportJSON ],
@@ -49,16 +48,7 @@ var ClassDropdownMenu = (function() {
     	};
 
         function searchData() {
-            console.log(columnLabel);
-            console.log(columnDomain);
-            console.log(columnUri);
-            console.log(AugmentDataDialog);
             AugmentDataDialog.getInstance(worksheetId, 
-                    columnDomain, columnUri, alignmentId).show();
-        }
-
-        function searchDataIncoming() {
-            AugmentDataIncomingDialog.getInstance(worksheetId, 
                     columnDomain, columnUri, alignmentId).show();
         }
     	

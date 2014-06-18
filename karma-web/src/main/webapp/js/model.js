@@ -319,22 +319,22 @@ var modelManagerDialog = (function() {
             var filterFilename = $('#txtFilterFileName').val();
             var filterTime = $('#txtFilterPublishTime').val();
             var filterURL = $('#txtFilterURL').val();
-            if (!filterFilename && !filterTime && !filterURL) {
-                filteredModels = availableModels;
-                instance.show();
-                return;
-            }
+
             for (var i = 0; i < availableModels.length; i++) {
                 var name = availableModels[i]['name'].toLowerCase();
                 var time = new Date(availableModels[i].publishTime*1).toDateString().toLowerCase();
                 var url = availableModels[i].url.toLowerCase();
-                if (name.indexOf(filterFilename) > -1 && filterFilename != "") {
-                    tmp.push(availableModels[i]);
+                var flag = true;
+                if (name.indexOf(filterFilename) == -1) {
+                    flag = false;
                 }
-                else if (time.indexOf(filterTime) > -1 && filterTime != "") {
-                    tmp.push(availableModels[i]);
+                else if (time.indexOf(filterTime) == -1) {
+                    flag = false;
                 }
-                else if (url.indexOf(filterURL) > -1 && filterURL != "") {
+                else if (url.indexOf(filterURL) == -1) {
+                    flag = false;
+                }
+                if (flag) {
                     tmp.push(availableModels[i]);
                 }
             }
