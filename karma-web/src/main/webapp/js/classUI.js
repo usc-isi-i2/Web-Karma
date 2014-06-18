@@ -1,5 +1,5 @@
 function ClassUI(id,  
-		classFuncTop,classFuncBottom, maxHeight) {
+		classFuncTop,classFuncBottom, maxHeight, loadTree) {
 	
 	var classDiv;
 	var classList1, classList2;
@@ -12,6 +12,9 @@ function ClassUI(id,
 	var textForClassList1 = "", textForClassList2 = "";
 	
 	function populateClassList(dataArray, list1, list2) {
+		if(!loadTree)
+			return;
+		
 		console.log("PopulateClassList:" + dataArray.length);
 		//console.log(dataArray);
 		
@@ -85,6 +88,10 @@ function ClassUI(id,
 		classLabel = label;
 	};
 	
+	this.setTreeLoad = function(treeLoad) {
+		loadTree = treeLoad;
+	};
+	
 	/*
 	 * mainDiv: div to which the generate UI should be attached
 	 * populateData : if true, data will be populated immediately, else you can use the
@@ -111,38 +118,48 @@ function ClassUI(id,
 		row1.append(classInputDiv);
 		classDiv.append(row1);
 		
-		classList1 = $("<div>").attr("id", id + "_classList1").addClass(id + "_classList1").css("overflow","auto").css("height", maxHeight + "px");
-		classList2 = $("<div>").attr("id", id + "_classList2").addClass(id + "_classList2").css("overflow","auto").css("height", maxHeight + "px");;
+		if(loadTree) {
+			classList1 = $("<div>").attr("id", id + "_classList1").addClass(id + "_classList1").css("overflow","auto").css("height", maxHeight + "px");
+			classList2 = $("<div>").attr("id", id + "_classList2").addClass(id + "_classList2").css("overflow","auto").css("height", maxHeight + "px");;
+				
+			var row2 =  $("<div>").addClass("row");
+			var classListDiv = $("<div>").addClass("col-sm-12");
 			
-		var row2 =  $("<div>").addClass("row");
-		var classListDiv = $("<div>").addClass("col-sm-12");
-		
-		if(classFuncTop != null)
-			classListDiv.append($("<div>").addClass("separatorWithText").text(textForClassList1))
-						.append(classList1);
-		
-		if(classFuncBottom != null)
-			classListDiv.append($("<div>").addClass("separatorWithText").text(textForClassList2))
-						//.append($("<div>").addClass("separator"))
-						.append(classList2);
-						
-		
-		row2.append(classListDiv);
-		classDiv.append(row2);
-		
-		var searchTimer = null;
-		$(document).on('keyup', "#" + id + "_classKeyword",function(event){
-			if(searchTimer != null)
-				window.clearTimeout(searchTimer);
-			var searchTimer = window.setTimeout(function() {
+			if(classFuncTop != null) {
+				classListDiv.append($("<div>").addClass("separatorWithText").text(textForClassList1));
+				classListDiv.append(classList1);
+			}
+			if(classFuncBottom != null) {
+				classListDiv.append($("<div>").addClass("separatorWithText").text(textForClassList2));
+				classListDiv.append(classList2);
+			}			
+			
+			row2.append(classListDiv);
+			classDiv.append(row2);
+			
+			
+			var searchTimer = null;
+			$(document).on('keyup', "#" + id + "_classKeyword",function(event){
+				if(searchTimer != null)
+					window.clearTimeout(searchTimer);
+				var searchTimer = window.setTimeout(function() {
+					var keyword = $("#" + id + "_classKeyword").val();
+					 //console.log("Class keyup: " + keyword);
+					 $("div#" + id + "_classList1").jstree("search", keyword);
+					 $("div#" + id + "_classList2").jstree("search", keyword);
+				}, 1000); //Wait 1 secs before searching
+				 
+				 
+			});
+		} else {
+			$(document).on('blur',  "#" + id + "_classKeyword", function(event) {
 				var keyword = $("#" + id + "_classKeyword").val();
-				 //console.log("Class keyup: " + keyword);
-				 $("div#" + id + "_classList1").jstree("search", keyword);
-				 $("div#" + id + "_classList2").jstree("search", keyword);
-			}, 1000); //Wait 1 secs before searching
-			 
-			 
-		});
+				if(classSelectorCallback != null) {
+					var classData = {label:keyword, id:keyword, uri:keyword};
+                	classSelectorCallback(classData);
+                }
+			 });
+		}
 		
 		mainDiv.append(classDiv);
 		

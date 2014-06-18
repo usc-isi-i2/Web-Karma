@@ -1,4 +1,4 @@
-function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
+function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTree) {
 	var propertyDiv;
 	var propertyList1, propertyList2;
 	var propertySelectorCallback = null;
@@ -11,6 +11,9 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 	
 	
 	function populatePropertyList(dataArray, list1, list2) {
+		if(!loadTree)
+			return;
+		
 		var selectOnLoad = false;
 		console.log("PopulatePropertyList:" + dataArray.length);
 		
@@ -87,6 +90,10 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 		refreshProperties = refresh;
 	};
 	
+	this.setTreeLoad = function(treeLoad) {
+		loadTree = treeLoad;
+	};
+	
 	/*
 	 * mainDiv: div to which the generate UI should be attached
 	 * populateData : if true, data will be populated immediately, else you can use the
@@ -114,32 +121,42 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight) {
 		row1.append(propertyInputDiv);
 		propertyDiv.append(row1);
 		
-		propertyList1 = $("<div>").attr("id", id + "_propertyList1").addClass(id + "_propertyList1").css("overflow","auto").css("height", maxHeight + "px");;
-		propertyList2 = $("<div>").attr("id", id + "_propertyList2").addClass(id + "_propertyList2").css("overflow","auto").css("height", maxHeight + "px");;
-		
-		var row2 =  $("<div>").addClass("row");
-						
-		var propertyListDiv = $("<div>")
-								.addClass("col-sm-12")
-								.append($("<div>").addClass("separatorWithText").text(textForPropertyList1))
-								.append(propertyList1)
-								.append($("<div>").addClass("separatorWithText").text(textForPropertyList2))
-								//.append($("<div>").addClass("separator"))
-								.append(propertyList2);
-		row2.append(propertyListDiv);
-		propertyDiv.append(row2);
-		
-		var searchTimer = null;
-		$(document).on('keyup',  "#" + id + "_propertyKeyword", function(event) {
-			if(searchTimer != null)
-				window.clearTimeout(searchTimer);
-			var searchTimer = window.setTimeout(function() {
+		if(loadTree) {
+			propertyList1 = $("<div>").attr("id", id + "_propertyList1").addClass(id + "_propertyList1").css("overflow","auto").css("height", maxHeight + "px");;
+			propertyList2 = $("<div>").attr("id", id + "_propertyList2").addClass(id + "_propertyList2").css("overflow","auto").css("height", maxHeight + "px");;
+			
+			var row2 =  $("<div>").addClass("row");
+							
+			var propertyListDiv = $("<div>")
+									.addClass("col-sm-12")
+									.append($("<div>").addClass("separatorWithText").text(textForPropertyList1))
+									.append(propertyList1)
+									.append($("<div>").addClass("separatorWithText").text(textForPropertyList2))
+									//.append($("<div>").addClass("separator"))
+									.append(propertyList2);
+			row2.append(propertyListDiv);
+			propertyDiv.append(row2);
+			
+			var searchTimer = null;
+			$(document).on('keyup',  "#" + id + "_propertyKeyword", function(event) {
+				if(searchTimer != null)
+					window.clearTimeout(searchTimer);
+				var searchTimer = window.setTimeout(function() {
+					var keyword = $("#" + id + "_propertyKeyword").val();
+					 //console.log("Property keyup: " + keyword);
+					 $("div#" + id + "_propertyList1").jstree("search", keyword);
+					 $("div#" + id + "_propertyList2").jstree("search", keyword);
+				}, 1000); //Wait 1 secs before searching
+			 });
+		} else {
+			$(document).on('blur',  "#" + id + "_propertyKeyword", function(event) {
 				var keyword = $("#" + id + "_propertyKeyword").val();
-				 //console.log("Property keyup: " + keyword);
-				 $("div#" + id + "_propertyList1").jstree("search", keyword);
-				 $("div#" + id + "_propertyList2").jstree("search", keyword);
-			}, 1000); //Wait 1 secs before searching
-		 });
+				if(propertySelectorCallback != null) {
+					var propertyData = {label:keyword, id:keyword, uri:keyword};
+                	propertySelectorCallback(propertyData);
+                }  
+			 });
+		}
 		
 		mainDiv.append(propertyDiv);
 		

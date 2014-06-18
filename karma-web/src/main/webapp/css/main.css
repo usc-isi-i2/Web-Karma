@@ -71,6 +71,11 @@ body {
  	width: 1px;
  }
  
+ .truncate {
+ 	overflow: hidden;
+ 	text-overflow: ellipsis;
+ }
+ 
  #semanticTypesTableDiv {
  	overflow: auto;
  	max-height: 500px;
