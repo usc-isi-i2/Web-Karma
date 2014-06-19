@@ -215,7 +215,7 @@ and related projects, please see: http://www.isi.edu/integration
 	      <div class="container">
 	        <p class="text-muted">
 	        	<div class="row">
-	        		<div class="col-sm-4">Karma Home: <%=ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></div>
+	        		<div class="col-sm-4">Karma Home: <span id="karmaHome"><%=ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></span></div>
 	        	</div>
 	        </p>
 	      </div>
@@ -371,6 +371,17 @@ and related projects, please see: http://www.isi.edu/integration
                     dialogBox.dialog({width: 550, title: chartTitle
                         , buttons: { "Close": function() { $(this).dialog("close"); } }})
                 });
+                
+                $("#karmaHome").editable({
+		       			 type: 'text',
+		       			 success: function(response, newValue) {
+		       				 console.log("Set Karma Home:" + newValue);
+		       				 changeKarmaHome(newValue);
+		       			 },
+		       			 showbuttons: 'bottom',
+		       			 mode: 'popup',
+		       			 inputclass: 'worksheetInputEdit'	 
+		            });
 			});
 		</script>
 		<script type="text/javascript">

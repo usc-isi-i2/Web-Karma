@@ -29,7 +29,10 @@ function parse(data) {
     
     // Check for errors
     $.each(data["elements"], function(i, element) {
-    	
+    	if(element["updateType"] == "ReloadPageUpdate") {
+    		//Need to reload the page
+    		location.reload();
+    	}
         if(element["updateType"] == "KarmaError") {
         	if(error[element["Error"]]) {
         		//ignore;

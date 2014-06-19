@@ -23,12 +23,10 @@ public abstract class KarmaUserMetadata extends KarmaMetadata{
 	protected void createDirectoryForMetadata(ContextParameter parameter, String directory) throws KarmaException {
 		
 		String metadataDirPath = ServletContextParameterMap.getParameterValue(parameter);
-		if(metadataDirPath == null || metadataDirPath.isEmpty())
-		{
-			String userDirPath = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH);
-			metadataDirPath = userDirPath + directory;
-			ServletContextParameterMap.setParameterValue(parameter, metadataDirPath);
-		}
+		String userDirPath = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH);
+		metadataDirPath = userDirPath + directory;
+		ServletContextParameterMap.setParameterValue(parameter, metadataDirPath);
+		
 		logger.info("Set parameter: " + parameter + " -> " + metadataDirPath);
 		try{ 
 		
