@@ -45,9 +45,9 @@ public class TriplesMapGraphMerger {
 		while(iter.hasNext())
 		{
 			TriplesMapGraph graph = iter.next();
-			List<TriplesMapLink> sourceLinks = graph.getAllNeighboringTriplesMap(link.getSourceMap().getId());
-			List<TriplesMapLink> targetLinks = graph.getAllNeighboringTriplesMap(link.getTargetMap().getId());
-			if(sourceLinks != null && targetLinks != null)
+			TriplesMap source = graph.getTriplesMap(link.getSourceMap().getId());
+			TriplesMap target = graph.getTriplesMap(link.getTargetMap().getId());
+			if(source != null || target != null)
 			{
 				graphsForMerging.add(graph);
 				iter.remove();
