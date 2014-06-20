@@ -14,13 +14,19 @@ var SetSemanticTypeDialog = (function() {
     	var worksheetId;
     	var columnId;
     	var columnTitle;
-    	var existingTypes, selectedPrimaryRow, classAndPropertyListJson;
+    	var existingTypes, selectedPrimaryRow, classList = null, propertyList = null, existingPropertyList = null;
     	var classPropertyUIDiv;
     	var classUI, propertyUI;
+    	var loadTree = true;
     	
     	function init() {
     		//Initialize what happens when we show the dialog
     		dialog.on('show.bs.modal', function (e) {
+    			 existingPropertyList = null;
+                 classList = null;
+                 propertyList = null;
+                 loadTree = true;
+                 
 				hideError();
 				
 				$("#semanticType_columnName", dialog).text(columnTitle);
@@ -71,44 +77,15 @@ var SetSemanticTypeDialog = (function() {
 			    
 			    addEmptyUriSemanticType();
 			    
-			    // Get the whole list of classes and properties from the server for autocompletion
-			    var info = new Object();
-			    info["workspaceId"] = $.workspaceGlobalInformation.id;
-			    info["command"] = "GetPropertiesAndClassesList";
-			    info["worksheetId"] = worksheetId;
-
-			    var returned = $.ajax({
-			        url: "RequestController",
-			        type: "POST",
-			        data : info,
-			        dataType : "json",
-			        complete :
-			            function (xhr, textStatus) {
-			                var json = $.parseJSON(xhr.responseText);
-			                classAndPropertyListJson = json;
-			                if (json) {
-			                    json["elements"][0]["classList"].sort(function(a,b) {
-			                        return a["label"].toUpperCase().localeCompare(b["label"].toUpperCase());
-			                    });
-
-			                    json["elements"][0]["propertyList"].sort(function(a,b) {
-			                        return a.toUpperCase().localeCompare(b.toUpperCase());
-			                    });
-			                }
-
-			                // Special case when no training has been done to CRF model
-			                // Shows an empty semantic type
-			                if((!CRFInfo && existingTypes.length == 0) ||
-			                    ((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo.length == 0)) ||
-			                    ((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo["Labels"].length == 0))) {
-			                    addEmptySemanticType();
-			                }
-			            },
-			        error :
-			            function (xhr, textStatus) {
-			                alert("Error occured while fetching classes and properties list! " + textStatus);
-			            }
-			    });
+			    if((!CRFInfo && existingTypes.length == 0) ||
+	                    ((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo.length == 0)) ||
+	                    ((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo["Labels"].length == 0))) {
+	                    addEmptySemanticType();
+	            }
+			    
+			    getClasses();
+			    getProperties();
+			    getExistingProperties();
 			});
 			
 			//Initialize handler for Save button
@@ -286,28 +263,25 @@ var SetSemanticTypeDialog = (function() {
                 var valueFound = false;
                 // Get the proper id
                 if (info["metaPropertyName"] == "isUriOfClass" || info["metaPropertyName"] == "isSubclassOfClass") {
-                    var classMap = classAndPropertyListJson["elements"][0]["classMap"];
-                    $.each(classMap, function(index, clazz){
-                        for(var key in clazz) {
-                            if(clazz.hasOwnProperty(key)) {
-                                if(key.toLowerCase() == propValue.toLowerCase()) {
-                                    info["metaPropertyValue"] = clazz[key];
-                                    newInfo.push(getParamObject("metaPropertyValue", clazz[key], "other"));
-                                    valueFound = true;
-                                }
-                            }
-                        }
-                    });
+                   for(var i=0; i<classList.length; i++) {
+                	   var clazz = classList[i];
+                	   if(clazz.label.toLowerCase() == propValue.toLowerCase()) {
+                		   info["metaPropertyValue"] = clazz.uri;
+                           newInfo.push(getParamObject("metaPropertyValue", clazz.uri, "other"));
+                           valueFound = true;
+                           break;
+                	   }
+                    }
                 } else {
-                    var existingLinksMap = classAndPropertyListJson["elements"][0]["existingDataPropertyInstances"];
-                    $.each(existingLinksMap, function(index, prop) {
-                        if (prop["label"] == propValue) {
-                            info["metaPropertyValue"] = prop["id"];
-                            newInfo.push(getParamObject("metaPropertyValue", prop["id"], "other"));
+                	for(var i=0; i<existingPropertyList.length; i++) {
+                 	   var prop = existingPropertyList[i];
+                 	   if(prop.id.toLowerCase() == propValue.toLowerCase()) {
+                 		   info["metaPropertyValue"] = prop.id;
+                            newInfo.push(getParamObject("metaPropertyValue", prop.id, "other"));
                             valueFound = true;
-                        }
-                    });
-                }
+                            break;
+                 	   }
+                     }                }
                 if(!valueFound) {
                 	showError("Class/Property does not exist");
                 	return false;
@@ -344,7 +318,9 @@ var SetSemanticTypeDialog = (function() {
                     function (xhr, textStatus) {
                         var json = $.parseJSON(xhr.responseText);
                         parse(json);
-                        classAndPropertyListJson = [];
+                        existingPropertyList = null;
+                        classList = null;
+                        propertyList = null;
                         hideLoading(info["worksheetId"]);
                     },
                 error :
@@ -522,9 +498,17 @@ var SetSemanticTypeDialog = (function() {
         }
         
         function getClasses() {
-        	var classes = getAllClasses(worksheetId);
+        	if(classList == null) {
+        		classList = getAllClasses(worksheetId);
+        	
+	        	if(loadTree) {
+	        		loadTree = ($.workspaceGlobalInformation.UISettings.maxLoadedClasses == -1 ||
+	        				classList.length <= $.workspaceGlobalInformation.UISettings.maxLoadedClasses) ? true : false;
+	        	}
+        	}
+        	
         	var result = [];
-	       	 $.each(classes, function(index, clazz){
+	       	 $.each(classList, function(index, clazz){
 	       		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
 	       	 });
 	       	return result;
@@ -540,12 +524,24 @@ var SetSemanticTypeDialog = (function() {
         }
       
         function getProperties() {
-        	var props = getAllDataProperties(worksheetId);
+        	if(propertyList == null) {
+        		propertyList = getAllDataProperties(worksheetId);
+        		if(loadTree)
+            		loadTree = ($.workspaceGlobalInformation.UISettings.maxLoadedProperties == -1 || 
+            				propertyList.length <= $.workspaceGlobalInformation.UISettings.maxLoadedProperties) ? true : false;
+        	}
+        	
         	var result = [];
-	       	 $.each(props, function(index, prop){
+	       	 $.each(propertyList, function(index, prop){
 	       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
 	       	 });
 	       	return result;
+        }
+        
+        function getExistingProperties() {
+        	if(existingPropertyList == null)
+        		existingPropertyList = getAllExistingProperties(worksheetId);
+        	return existingPropertyList;
         }
         
         function getPropertiesForClass(thisClass) {
@@ -558,10 +554,9 @@ var SetSemanticTypeDialog = (function() {
         }
         
         function getClassLabels() {
-        	var classes = classAndPropertyListJson["elements"][0]["classList"];
         	var classLabels = [];
         	
-        	$.each(classes, function(index, clazz){
+        	$.each(classList, function(index, clazz){
         		classLabels.push(clazz.label);
             });
         	
@@ -569,18 +564,23 @@ var SetSemanticTypeDialog = (function() {
         }
         
         function getPropertyLabels() {
-        	return classAndPropertyListJson["elements"][0]["propertyList"];
+        	var propLabels = [];
+        	
+        	$.each(propertyList, function(index, prop){
+        		propLabels.push(prop.label);
+            });
+        	
+        	return propLabels;
         }
         
         function getPropertyInstanceLabels() {
-        	var existingLinksMap = classAndPropertyListJson["elements"][0]["existingDataPropertyInstances"];
-        	var arr = [];
-        	//arr.push("test--test2--test");
-        	$.each(existingLinksMap, function(index, prop) {
-            	arr.push(prop["label"]);
-            	
+        	var propLabels = [];
+        	
+        	$.each(existingPropertyList, function(index, prop){
+        		propLabels.push(prop.id);
             });
-            return arr;
+        	
+        	return propLabels;
         }
         
         function hideSemanticTypeEditOptions() {
@@ -616,14 +616,11 @@ var SetSemanticTypeDialog = (function() {
             }
 
 
-            if(classAndPropertyListJson == null){
+            if(classList == null || propertyList == null){
                 alert("Class and property list not yet loaded from the server!");
                 return false;
             }
-
-            var classArray = classAndPropertyListJson["elements"][0]["classList"];
-            var propertyArray = classAndPropertyListJson["elements"][0]["propertyList"];
-
+    
             // Remove any existing edit window open for other semantic type
             $("tr.editRow", table).remove();
             var edittd = $("<td>").attr("colspan", "4");
@@ -639,8 +636,8 @@ var SetSemanticTypeDialog = (function() {
             	showPropertiesList = false;
             	classFuncTop = null;
             }
-            classUI = new ClassUI("semanticTypeEditClass", classFuncTop, classFuncBottom, 100);
-            propertyUI = new PropertyUI("semanticTypeEditProperty", getPropertiesForClass, getProperties, 100);
+            classUI = new ClassUI("semanticTypeEditClass", classFuncTop, classFuncBottom, 100, loadTree);
+            propertyUI = new PropertyUI("semanticTypeEditProperty", getPropertiesForClass, getProperties, 100, loadTree);
             
             classUI.setHeadings("Classes with Selected Property", "All Classes");
             propertyUI.setHeadings("Properties of Selected Class", "All Properties");
@@ -680,12 +677,12 @@ var SetSemanticTypeDialog = (function() {
         }
         
         function doesExistingPropertyExist(propValue) {
-        	var existingLinksMap = classAndPropertyListJson["elements"][0]["existingDataPropertyInstances"];
         	var found = false;
         	var id = "";
-            $.each(existingLinksMap, function(index, prop) {
-                if (prop["label"] == propValue) {
-                    id = prop["id"];
+        	
+            $.each(existingPropertyList, function(index, prop) {
+                if (prop.id == propValue) {
+                    id = prop.id;
                     found = true;
                 }
             });
@@ -693,21 +690,24 @@ var SetSemanticTypeDialog = (function() {
         }
         
         function doesPropertyExist(inputVal) {
-        	var propertyMap = classAndPropertyListJson["elements"][0]["propertyMap"];
-            
+        	 
             var found = false;
             var uri = "";
             var properCasedKey = "";
-            $.each(propertyMap, function(index, prop){
-                for(var key in prop) {
-                    if(prop.hasOwnProperty(key)) {
-                        if(key.toLowerCase() == inputVal.toLowerCase()) {
-                            found = true;
-                            uri = prop[key];
-                            properCasedKey = key;
-                        }
-                    }
-                }
+            $.each(propertyList, function(index, prop){
+            	//1. Check if label is a match
+            	if(prop.label.toLowerCase() == inputVal.toLowerCase()) {
+            		found = true;
+                    uri = prop.uri;
+                    properCasedKey = prop.label;
+            	}
+            	
+            	//2. Check if id is a match
+            	else if(prop.id.toLowerCase() == inputVal.toLowerCase()) {
+            		found = true;
+                    uri = prop.uri;
+                    properCasedKey = prop.label;
+            	}
             });
             return {"found": found, "uri": uri, "properCasedKey": properCasedKey};
         }
@@ -730,7 +730,8 @@ var SetSemanticTypeDialog = (function() {
                 return false;
             }
 
-            classUI.refreshClassDataTop(propertyData.label, propertyData.id, propertyData.uri);
+            if(loadTree)
+            	classUI.refreshClassDataTop(propertyData.label, propertyData.id, propertyData.uri);
             
             var rowToChange = $(classPropertyUIDiv).parents("tr.editRow").data("editRowObject");
             if(rowToChange != null) {
@@ -765,21 +766,32 @@ var SetSemanticTypeDialog = (function() {
         }
 
         function doesClassExist(inputVal) {
-        	var classMap = classAndPropertyListJson["elements"][0]["classMap"]
-            
             var found = false;
             var uri = "";
             var properCasedKey = "";
-            $.each(classMap, function(index, clazz){
-                for(var key in clazz) {
-                    if(clazz.hasOwnProperty(key)) {
-                        if(key.toLowerCase() == inputVal.toLowerCase()) {
-                            found = true;
-                            uri = clazz[key];
-                            properCasedKey = key;
-                        }
-                    }
-                }
+            var inputWithAdd = inputVal + " (add)";
+            $.each(classList, function(index, clazz){
+            	//1. Check if label is a match
+            	if(clazz.label.toLowerCase() == inputVal.toLowerCase()) {
+            		 found = true;
+                     uri = clazz.uri;
+                     properCasedKey = clazz.label;
+            	} else if(clazz.label.toLowerCase() == inputWithAdd.toLowerCase()) {
+            		 found = true;
+                     uri = clazz.uri;
+                     properCasedKey = clazz.label;
+            	}
+            	
+            	//2.Check if id is a match
+            	else if(clazz.id.toLowerCase() == inputVal.toLowerCase()) {
+	           		 found = true;
+	                 uri = clazz.uri;
+	                 properCasedKey = clazz.label;
+	        	} else if(clazz.id.toLowerCase() == inputWithAdd.toLowerCase()) {
+	        		 found = true;
+	                 uri = clazz.uri;
+	                 properCasedKey = clazz.label;
+	        	}
             });
             return {"found": found, "uri": uri, "properCasedKey": properCasedKey};
         }
@@ -800,8 +812,11 @@ var SetSemanticTypeDialog = (function() {
                showError("Input class/instance not valid!");
                 return false;
             }
+            
             // Use the value in proper case as input value
-           propertyUI.refreshPropertyDataTop(classData.label, classData.id, classData.uri);
+            if(loadTree) {
+            	propertyUI.refreshPropertyDataTop(classData.label, classData.id, classData.uri);
+            }
             
             if (updateLabels) {
                 var rowToChange = $(classPropertyUIDiv).parents("tr.editRow").data("editRowObject");
@@ -878,19 +893,21 @@ var IncomingOutgoingLinksDialog = (function() {
     	var columnLabel, columnUri, columnDomain, columnType;
     	
     	var selectedFromClass, selectedProperty, selectedToClass;
-    	var allClasses, allProperties, selectedClasses, selectedProperties;
+    	var allClasses = null, allProperties = null, selectedClasses = null, selectedProperties = null;
     	
     	var fromClassUI, propertyUI, toClassUI;
     	var changeFromNode, changeToNode, changeLink;
+    	
+    	var loadTree = true;
     	
     	function init() {
             selectedFromClass = {label:"", id:"", uri:""};
             selectedToClass = {label:"", id:"", uri:""};
             selectedProperty = {label:"", id:"", uri:""};
             
-            fromClassUI = new ClassUI("incomingOutgoingLinksDialog_fromClass", getExistingClassNodes, getAllClassNodes, 200);
-            toClassUI = new ClassUI("incomingOutgoingLinksDialog_toClass", getExistingClassNodes, getAllClassNodes, 200);
-            propertyUI = new PropertyUI("incomingOutgoingLinksDialog_property", getPropertyForClass, getProperties, 200);
+            fromClassUI = new ClassUI("incomingOutgoingLinksDialog_fromClass", getExistingClassNodes, getAllClassNodes, 200, loadTree);
+            toClassUI = new ClassUI("incomingOutgoingLinksDialog_toClass", getExistingClassNodes, getAllClassNodes, 200, loadTree);
+            propertyUI = new PropertyUI("incomingOutgoingLinksDialog_property", getPropertyForClass, getProperties, 200, loadTree);
             
             fromClassUI.setHeadings("Classes in Model", "All Classes");
             toClassUI.setHeadings("Classes in Model", "All Classes");
@@ -907,11 +924,22 @@ var IncomingOutgoingLinksDialog = (function() {
             //Initialize what happens when we show the dialog
             dialog.on('show.bs.modal', function (e) {
                 hideError();
+                allClasses = null;
+                allProperties = null;
+                selectedClasses = null;
+                selectedProperties = null;
+                loadTree = true;
                 
                 setLinkLabel();
                 $("div.main", dialog).empty();
                 var row = $("<div>").addClass("row");
                 $("div.main", dialog).append(row);
+                getAllClassNodes();
+                getProperties();
+                toClassUI.setTreeLoad(loadTree);
+                fromClassUI.setTreeLoad(loadTree);
+                propertyUI.setTreeLoad(loadTree);
+                
                 if(linkType == "incoming" || linkType == "changeIncoming") {
                 	if(linkType == "incoming")
                 		$("#incomingOutgoingLinksDialog_title", dialog).text("Add incoming link for " + columnLabel);
@@ -980,7 +1008,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	
     	function setSelectedFromClass(id) {
     		console.log("IncomingOutgoingLinksDialog:setSelectedFromClass:" + id);
-    		if(allClasses) {
+    		if(allClasses != null) {
     			for(var i=0; i<allClasses.length; i++) {
     				var clazz = allClasses[i];
     				var clazzElem = ClassUI.parseNodeObject(clazz);
@@ -999,7 +1027,7 @@ var IncomingOutgoingLinksDialog = (function() {
     			}, 100);
     			return;
     		}
-    		if(selectedClasses) {
+    		if(selectedClasses != null) {
     			for(var i=0; i<selectedClasses.length; i++) {
     				var clazz = selectedClasses[i];
     				var clazzElem = ClassUI.parseNodeObject(clazz);
@@ -1022,7 +1050,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	
     	function setSelectedToClass(id) {
     		console.log("IncomingOutgoingLinksDialog:setSelectedToClass:" + id);
-    		if(allClasses) {
+    		if(allClasses != null) {
     			for(var i=0; i<allClasses.length; i++) {
     				var clazz = allClasses[i];
     				var clazzElem = ClassUI.parseNodeObject(clazz);
@@ -1041,7 +1069,7 @@ var IncomingOutgoingLinksDialog = (function() {
     			}, 100);
     			return;
     		}
-    		if(selectedClasses) {
+    		if(selectedClasses != null) {
     			for(var i=0; i<selectedClasses.length; i++) {
     				var clazz = selectedClasses[i];
     				var clazzElem = ClassUI.parseNodeObject(clazz);
@@ -1064,7 +1092,7 @@ var IncomingOutgoingLinksDialog = (function() {
     	
     	function setSelectedProperty(id) {
     		console.log("IncomingOutgoingLinksDialog:setSelectedProperty:" + id);
-    		if(allProperties) {
+    		if(allProperties != null) {
     			for(var i=0; i<allProperties.length; i++) {
     				var prop = allProperties[i];
     				var propElem = PropertyUI.parseNodeObject(prop);
@@ -1084,7 +1112,7 @@ var IncomingOutgoingLinksDialog = (function() {
     			}, 100);
     			return;
     		}
-    		if(selectedProperties) {
+    		if(selectedProperties != null) {
     			for(var i=0; i<selectedProperties.length; i++) {
     				var prop = selectedProperties[i];
     				var propElem = PropertyUI.parseNodeObject(prop);
@@ -1108,7 +1136,41 @@ var IncomingOutgoingLinksDialog = (function() {
     		}
     	}
     	
+    	function getClassFromList(label) {
+    		var clazz = null;
+    		var inputVal = label.toLowerCase();
+			var inputValWithAdd = inputVal + " (add)";
+    		for(var i=0; i<allClasses.length; i++) {
+    			var thisClass = allClasses[i].metadata;
+    			if(thisClass.label.toLowerCase() == inputVal || thisClass.label.toLowerCase() == inputValWithAdd
+    			|| thisClass.id.toLowerCase() == inputVal || thisClass.id.toLowerCase() == inputValWithAdd) {
+    				clazz = thisClass;
+    				break;
+    			}
+    		}
+    		return clazz;
+    	}
+    	
+    	function getPropertyFromList(label) {
+    		var prop = null;
+    		var inputVal = label.toLowerCase();
+			var inputValWithAdd = inputVal + " (add)";
+    		for(var i=0; i<allProperties.length; i++) {
+    			var thisProp = allProperties[i].metadata;
+    			if(thisProp.label.toLowerCase() == inputVal || thisProp.label.toLowerCase() == inputValWithAdd
+    			|| thisProp.id.toLowerCase() == inputVal || thisProp.id.toLowerCase() == inputValWithAdd) {
+    				prop = thisProp;
+    				break;
+    			}
+    		}
+    		return prop;
+    	}
+    	
     	function onSelectFromClassInputValue(clazz) {
+    		if(!loadTree) {
+    			clazz = getClassFromList(clazz.label);
+    		}
+    		
     		selectedFromClass = clazz;
     		if(dialog.hasClass('in'))  {
 	    		propertyUI.refreshPropertyDataTop(clazz.label, clazz.id, clazz.uri);
@@ -1117,6 +1179,10 @@ var IncomingOutgoingLinksDialog = (function() {
     	}
     	
     	function onSelectToClassInputValue(clazz) {
+    		if(!loadTree) {
+    			clazz = getClassFromList(clazz.label);
+    		}
+    		
     		selectedToClass = clazz;
     		if(dialog.hasClass('in')) {
 	    		propertyUI.refreshPropertyDataTop(clazz.label, clazz.id, clazz.uri);
@@ -1125,6 +1191,9 @@ var IncomingOutgoingLinksDialog = (function() {
     	}
     	
     	function onSelectPropertyInputValue(prop) {
+    		if(!loadTree) {
+    			prop = getPropertyFromList(prop.label);
+    		}
     		selectedProperty = prop;
     		setLinkLabel();
     	}
@@ -1135,59 +1204,75 @@ var IncomingOutgoingLinksDialog = (function() {
     	}
     	
     	function getExistingClassNodes() {
-    		var classes = getClassesInModel(alignmentId);
-        	var result = [];
-	       	 $.each(classes, function(index, clazz){
-	       		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
-	       	 });
-	       	selectedClasses = result;
-	       	return result;
+    		if(loadTree && selectedClasses == null) {
+	    		var classes = getClassesInModel(worksheetId);
+	        	var result = [];
+		       	 $.each(classes, function(index, clazz){
+		       		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+		       	 });
+		       	selectedClasses = result;
+    		}
+	       	return selectedClasses;
     	}
     	
     	
     	function getAllClassNodes() {
-    		var classes = getAllClasses(worksheetId);
-        	var result = [];
-	       	 $.each(classes, function(index, clazz){
-	       		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
-	       	 });
-	       	allClasses = result;
-	       	return result;
+    		if(allClasses == null) {
+	    		var classes = getAllClasses(worksheetId);
+	    		if(loadTree)
+	    			loadTree = ($.workspaceGlobalInformation.UISettings.maxLoadedClasses == -1 ||
+	    					classes.length <= $.workspaceGlobalInformation.UISettings.maxLoadedClasses) ? true : false;
+	    		
+	        	var result = [];
+		       	 $.each(classes, function(index, clazz){
+		       		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+		       	 });
+		       	allClasses = result;
+    		}
+		    return allClasses;
     	}
     	
     	function getProperties() {
-    		var props
-    		if(columnType == "ColumnNode")
-    			props = getAllDataProperties(worksheetId);
-    		else
-    			props = getAllObjectProperties(alignmentId);
-        	var result = [];
-	       	 $.each(props, function(index, prop){
-	       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
-	       	 });
-	       	allProperties = result;
-	       	return result;
+    		if(allProperties == null) {
+	    		var props;
+	    		if(columnType == "ColumnNode")
+	    			props = getAllDataProperties(worksheetId);
+	    		else
+	    			props = getAllObjectProperties(alignmentId);
+	        	var result = [];
+		       	 $.each(props, function(index, prop){
+		       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
+		       	 });
+		       	allProperties = result;
+		       	
+		       	if(loadTree)
+	    			loadTree = ($.workspaceGlobalInformation.UISettings.maxLoadedProperties == -1 ||
+	    					allProperties.length <= $.workspaceGlobalInformation.UISettings.maxLoadedProperties) ? true : false;
+    		}
+	       	return allProperties;
     	}
     	
     	function getPropertyForClass(selectedClass) {
-    		var domain, range;
-    	    var startNodeClass = columnDomain;
-    	    if(columnType == "ColumnNode")
-    	    	startNodeClass = "";
-    	    if(linkType == "incoming" || linkType == "changeIncoming" || linkType == "changeLink") {
-    	    	domain = selectedClass.uri;
-    	    	range = startNodeClass;
-    	    } else { //if(linkType == "outgoing" || linkType == "changeOutgoing") {
-    	    	domain = startNodeClass;
-    	    	range = selectedClass.uri;
-    	    }
-    	    
-    	    var props = getAllPropertiesForDomainRange(alignmentId, domain, range);
-    	    var result = [];
-	       	 $.each(props, function(index, prop){
-	       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
-	       	 });
-	       	selectedProperties = result;
+    		var result = [];
+    		if(loadTree) {
+	    		var domain, range;
+	    	    var startNodeClass = columnDomain;
+	    	    if(columnType == "ColumnNode")
+	    	    	startNodeClass = "";
+	    	    if(linkType == "incoming" || linkType == "changeIncoming" || linkType == "changeLink") {
+	    	    	domain = selectedClass.uri;
+	    	    	range = startNodeClass;
+	    	    } else { //if(linkType == "outgoing" || linkType == "changeOutgoing") {
+	    	    	domain = startNodeClass;
+	    	    	range = selectedClass.uri;
+	    	    }
+	    	    
+	    	    var props = getAllPropertiesForDomainRange(worksheetId, domain, range);
+		       	 $.each(props, function(index, prop){
+		       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
+		       	 });
+		       	selectedProperties = result;
+    		}
 	       	return result;
     	}
     	
@@ -1381,12 +1466,17 @@ var ManageIncomingOutgoingLinksDialog = (function() {
     	var initialLinks;
     	
     	var classUI, propertyUI, editLink, classPropertyUIDiv;
-    	
+    	var loadTree = true;
+    	var allClasses = null, existingClasses = null, allProperties = null;
     	function init() {
             
             //Initialize what happens when we show the dialog
             dialog.on('show.bs.modal', function (e) {
                 hideError();
+                allClasses = null;
+                existingClasses = null;
+                allProperties = null;
+                loadTree = true;
                 
                 $("#incomingLinksTable tr", dialog).remove();
                 $("#outgoingLinksTable tr", dialog).remove();
@@ -1471,8 +1561,11 @@ var ManageIncomingOutgoingLinksDialog = (function() {
             classPropertyUIDiv.append(propDiv);
             edittd.append(classPropertyUIDiv);
             
-            classUI = new ClassUI("showIncomingOutgoingLinksDialog_class", getExistingClassNodes, getAllClassNodes, 100);
-            propertyUI = new PropertyUI("showIncomingOutgoingLinksDialog_property", getPropertyForClass, getProperties, 100);
+            getAllClassNodes();
+            getProperties();
+            
+            classUI = new ClassUI("showIncomingOutgoingLinksDialog_class", getExistingClassNodes, getAllClassNodes, 100, loadTree);
+            propertyUI = new PropertyUI("showIncomingOutgoingLinksDialog_property", getPropertyForClass, getProperties, 100, loadTree);
             classUI.setHeadings("Classes in Model", "All Classes");
             propertyUI.setHeadings("Compatible Properties", "All Properties");
             classUI.onClassSelect(validateClassInputValue);
@@ -1501,61 +1594,112 @@ var ManageIncomingOutgoingLinksDialog = (function() {
     	}
     	
     	function getExistingClassNodes() {
-    		var classes = getClassesInModel(alignmentId);
-        	var result = [];
-	       	 $.each(classes, function(index, clazz){
-	       		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
-	       	 });
-	       	return result;
+    		if(loadTree && existingClasses == null) {
+	    		var classes = getClassesInModel(worksheetId);
+	        	var result = [];
+		       	 $.each(classes, function(index, clazz){
+		       		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+		       	 });
+		       	 existingClasses = result;
+    		}
+	       	return existingClasses;
     	}
     	
     	
     	function getAllClassNodes() {
-    		var classes = getAllClasses(worksheetId);
-        	var result = [];
-	       	 $.each(classes, function(index, clazz){
-	       		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
-	       	 });
-	       	return result;
+    		if(allClasses == null) {
+	    		var classes = getAllClasses(worksheetId);
+	    		if(loadTree)
+	    			loadTree = ($.workspaceGlobalInformation.UISettings.maxLoadedClasses == -1 ||
+	    					classes.length <= $.workspaceGlobalInformation.UISettings.maxLoadedClasses) ? true : false;
+	        	var result = [];
+		       	 $.each(classes, function(index, clazz){
+		       		 result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+		       	 });
+		       	 allClasses = result;
+    		}
+	       	return allClasses;
     	}
     	
     	function getProperties() {
-    		var props
-    		if(columnType == "ColumnNode")
-    			props = getAllDataProperties(worksheetId);
-    		else
-    			props = getAllObjectProperties(alignmentId);
-        	var result = [];
-	       	 $.each(props, function(index, prop){
-	       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
-	       	 });
-	       	return result;
+    		if(allProperties == null) {
+	    		var props;
+	    		if(columnType == "ColumnNode")
+	    			props = getAllDataProperties(worksheetId);
+	    		else
+	    			props = getAllObjectProperties(worksheetId);
+	        	var result = [];
+		       	 $.each(props, function(index, prop){
+		       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
+		       	 });
+		       	allProperties = result;
+		       	if(loadTree)
+	    			loadTree = ($.workspaceGlobalInformation.UISettings.maxLoadedProperties == -1 ||
+	    					allProperties.length <= $.workspaceGlobalInformation.UISettings.maxLoadedProperties) ? true : false;
+    		}
+	       	return allProperties;
     	}
     	
     	function getPropertyForClass(selectedClass) {
-    		var domain, range;
-    	    var startNodeClass = columnDomain;
-    	    if(columnType == "ColumnNode")
-    	    	startNodeClass = "";
-    	    if(editLink.type == "incoming") {
-    	    	domain = selectedClass.uri;
-    	    	range = startNodeClass;
-    	    } else { //if(linkType == "outgoing" || linkType == "changeOutgoing") {
-    	    	domain = startNodeClass;
-    	    	range = selectedClass.uri;
-    	    }
-    	    
-    	    var props = getAllPropertiesForDomainRange(alignmentId, domain, range);
-    	    var result = [];
-	       	 $.each(props, function(index, prop){
-	       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
-	       	 });
-	       	selectedProperties = result;
-	       	return result;
+    		if(loadTree) {
+	    		var domain, range;
+	    	    var startNodeClass = columnDomain;
+	    	    if(columnType == "ColumnNode")
+	    	    	startNodeClass = "";
+	    	    if(editLink.type == "incoming") {
+	    	    	domain = selectedClass.uri;
+	    	    	range = startNodeClass;
+	    	    } else { //if(linkType == "outgoing" || linkType == "changeOutgoing") {
+	    	    	domain = startNodeClass;
+	    	    	range = selectedClass.uri;
+	    	    }
+	    	    
+	    	    var props = getAllPropertiesForDomainRange(worksheetId, domain, range);
+	    	    var result = [];
+		       	 $.each(props, function(index, prop){
+		       		 result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
+		       	 });
+		       	selectedProperties = result;
+		       	return result;
+    		}
+    	}
+    	
+    	function getClassFromList(label) {
+    		var clazz = null;
+    		var inputVal = label.toLowerCase();
+			var inputValWithAdd = inputVal + " (add)";
+    		for(var i=0; i<allClasses.length; i++) {
+    			var thisClass = allClasses[i].metadata;
+    			if(thisClass.label.toLowerCase() == inputVal || thisClass.label.toLowerCase() == inputValWithAdd
+    			|| thisClass.id.toLowerCase() == inputVal || thisClass.id.toLowerCase() == inputValWithAdd) {
+    				clazz = thisClass;
+    				break;
+    			}
+    		}
+    		return clazz;
+    	}
+    	
+    	function getPropertyFromList(label) {
+    		var prop = null;
+    		var inputVal = label.toLowerCase();
+			var inputValWithAdd = inputVal + " (add)";
+    		for(var i=0; i<allProperties.length; i++) {
+    			var thisProp = allProperties[i].metadata;
+    			if(thisProp.label.toLowerCase() == inputVal || thisProp.label.toLowerCase() == inputValWithAdd
+    			|| thisProp.id.toLowerCase() == inputVal || thisProp.id.toLowerCase() == inputValWithAdd) {
+    				prop = thisProp;
+    				break;
+    			}
+    		}
+    		return prop;
     	}
     	
     	function validatePropertyInputValue(propertyData) {
-        	classUI.refreshClassDataTop(propertyData.label, propertyData.id, propertyData.uri);
+    		if(loadTree) {
+    			classUI.refreshClassDataTop(propertyData.label, propertyData.id, propertyData.uri);
+    		} else {
+    			propertyData = getPropertyFromList(propertyData.label);
+    		}
             var rowToChange = $(classPropertyUIDiv).parents("tr.editRow").data("editRowObject");
             if(rowToChange != null) {
             	var link = rowToChange.data("link");
@@ -1565,7 +1709,11 @@ var ManageIncomingOutgoingLinksDialog = (function() {
         }
     	
     	function validateClassInputValue(classData) {
-        	propertyUI.refreshPropertyDataTop(classData.label, classData.id, classData.uri);
+    		if(loadTree) {
+    			propertyUI.refreshPropertyDataTop(classData.label, classData.id, classData.uri);
+    		} else {
+    			classData = getClassFromList(classData.label);
+    		}
         	 var rowToChange = $(classPropertyUIDiv).parents("tr.editRow").data("editRowObject");
              if(rowToChange != null) {
              	var link = rowToChange.data("link");

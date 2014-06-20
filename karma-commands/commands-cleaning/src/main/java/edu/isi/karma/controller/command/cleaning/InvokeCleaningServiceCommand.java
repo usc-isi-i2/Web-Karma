@@ -22,6 +22,7 @@
 package edu.isi.karma.controller.command.cleaning;
 
 import edu.isi.karma.controller.command.CommandType;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -41,6 +42,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
@@ -51,6 +53,8 @@ import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class InvokeCleaningServiceCommand extends Command {
 	private String hNodeId;
@@ -117,7 +121,9 @@ public class InvokeCleaningServiceCommand extends Command {
 
 			// String url =
 			// "http://localhost:8080/cleaningService/IdentifyData";
-			String url = "http://localhost:8070/myWS/IdentifyData";
+//			String url = "http://localhost:8070/myWS/IdentifyData";
+			String url = ServletContextParameterMap.getParameterValue(
+					ContextParameter.CLEANING_SERVICE_URL);
 
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = null;

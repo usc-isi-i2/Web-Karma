@@ -59,7 +59,8 @@ public class ServerStart extends HttpServlet {
 			}
 		}
 
-		String contextPath = ctx.getRealPath(File.separator);
+		//String contextPath = ctx.getRealPath(File.separator);
+		String contextPath = ctx.getRealPath("/"); //File.separator was not working in Windows. / works
 		logger.info("Got base path:" + contextPath);
 		ServletContextParameterMap.setParameterValue(ContextParameter.WEBAPP_PATH, contextPath);
 		

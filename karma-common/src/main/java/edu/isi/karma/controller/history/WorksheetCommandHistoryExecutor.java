@@ -73,16 +73,18 @@ public class WorksheetCommandHistoryExecutor {
 	public UpdateContainer executeAllCommands(JSONArray historyJson) 
 			throws JSONException, KarmaException, CommandException {
 		UpdateContainer uc =new UpdateContainer();
+		boolean saveToHistory = false;
 		for (int i = 0; i< historyJson.length(); i++) {
 			JSONObject commObject = (JSONObject) historyJson.get(i);
-			UpdateContainer update = executeCommand(commObject);
+			if(i == historyJson.length() - 1) saveToHistory = true;
+			UpdateContainer update = executeCommand(commObject, saveToHistory);
 			if(update != null)
 				uc.append(update);
 		}
 		return uc;
 	}
 
-	private UpdateContainer executeCommand(JSONObject commObject) 
+	private UpdateContainer executeCommand(JSONObject commObject, boolean saveToHistory) 
 			throws JSONException, KarmaException, CommandException {
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspace.getId());
 		HashMap<String, CommandFactory> commandFactoryMap = ctrl.getCommandFactoryMap();
@@ -103,7 +105,7 @@ public class WorksheetCommandHistoryExecutor {
 					if(comm != null){
 						try {
 							logger.info("Executing command: " + commandName);
-							workspace.getCommandHistory().doCommand(comm, workspace);
+							workspace.getCommandHistory().doCommand(comm, workspace, saveToHistory);
 						} catch(Exception e) {
 							logger.error("Error executing command: "+ commandName + ". Please notify this error");
 							Util.logException(logger, e);

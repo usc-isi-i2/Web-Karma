@@ -132,7 +132,11 @@ public class ChangeInternalNodeLinksCommand extends Command {
 			JSONObject newEdge = newEdges.getJSONObject(j);
 
 			String sourceId = newEdge.has(JsonKeys.edgeSourceId.name()) ? newEdge.getString(JsonKeys.edgeSourceId.name()) : null;
+			if(sourceId != null && sourceId.endsWith(" (add)"))
+					sourceId = null;
 			String targetId = newEdge.has(JsonKeys.edgeTargetId.name()) ? newEdge.getString(JsonKeys.edgeTargetId.name()) : null;
+			if(targetId != null && targetId.endsWith(" (add)"))
+				targetId = null;
 			String edgeUri = newEdge.getString(JsonKeys.edgeId.name());
 			String sourceUri = newEdge.has(JsonKeys.edgeSourceUri.name()) ? newEdge.getString(JsonKeys.edgeSourceUri.name()) : null;
 			String targetUri = newEdge.has(JsonKeys.edgeTargetUri.name()) ? newEdge.getString(JsonKeys.edgeTargetUri.name()) : null;

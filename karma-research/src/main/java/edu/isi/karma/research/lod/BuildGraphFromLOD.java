@@ -295,7 +295,7 @@ public class BuildGraphFromLOD {
 		}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
 		OntologyManager ontologyManager = new OntologyManager();
 		File ff = new File(Params.ONTOLOGY_DIR);

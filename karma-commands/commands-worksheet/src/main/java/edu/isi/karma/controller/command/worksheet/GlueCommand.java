@@ -32,6 +32,7 @@ import edu.isi.karma.util.Util;
 public class GlueCommand extends WorksheetCommand {
 
 	private String hNodeId;
+	private String newhNodeId;
 	private static Logger logger = LoggerFactory
 			.getLogger(GlueCommand.class);
 
@@ -62,7 +63,7 @@ public class GlueCommand extends WorksheetCommand {
 	@Override
 	public CommandType getCommandType() {
 		// TODO Auto-generated method stub
-		return CommandType.notUndoable;
+		return CommandType.undoable;
 	}
 
 	@Override
@@ -104,8 +105,16 @@ public class GlueCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		// TODO Auto-generated method stub
-		return null;
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		UpdateContainer uc = new UpdateContainer();
+		HNode ndid = workspace.getFactory().getHNode(newhNodeId);
+		HTable currentTable = workspace.getFactory().getHTable(ndid.getHTableId());
+		ndid.removeNestedTable();
+		//remove the new column
+		currentTable.removeHNode(newhNodeId, worksheet);
+		uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		uc.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		return uc;
 	}
 
 	private void glueNestedTable(Worksheet oldws, Workspace workspace, HTable ht, List<HNode> hnodes, RepFactory factory) {
@@ -119,6 +128,7 @@ public class GlueCommand extends WorksheetCommand {
 			}
 		}
 		HNode newNode = ht.addHNode(ht.getNewColumnName("Glue"), oldws, factory);
+		newhNodeId = newNode.getId();
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
 		List<HNode> childHNodes = new ArrayList<HNode>();
 		for (HNode hnode : hnodes) {
@@ -170,6 +180,7 @@ public class GlueCommand extends WorksheetCommand {
 	private void glueTopLevel(Worksheet oldws, Workspace workspace, List<HNode> hnodes, RepFactory factory) {
 		HTable parentHT = oldws.getHeaders();
 		HNode newNode = parentHT.addHNode(parentHT.getNewColumnName("Glue"), oldws, factory);
+		newhNodeId = newNode.getId();
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
 		List<HNode> childHNodes = new ArrayList<HNode>();
 		for (HNode hnode : hnodes) {
