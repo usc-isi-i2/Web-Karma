@@ -72,6 +72,7 @@ public class TriplesMapWorker implements Callable<Boolean> {
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			LOG.error("Something went wrong " + e.getMessage() );
 		}
 			

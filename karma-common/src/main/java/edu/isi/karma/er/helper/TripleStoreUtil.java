@@ -257,6 +257,7 @@ public class TripleStoreUtil {
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
+			query.append("BASE <http://lod.isi.edu/>\n");
 			query.append("SELECT ?s ?p ?o ?filteredtype\n");			
 			injectContext(context, query);
 			query.append("{\n");
@@ -357,6 +358,7 @@ public class TripleStoreUtil {
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
+			query.append("BASE <http://lod.isi.edu/>\n");
 			query.append("SELECT ?s ?p ?o ?filteredtype\n");			
 			injectContext(context, query);
 			query.append("{\n");
@@ -605,7 +607,7 @@ public class TripleStoreUtil {
 			injectContext(context, query);
 			query.append("{\n");
 			query.append("?mapping owl:sameAs ?mappingURI . \n"); 
-			query.append("?mappingURI km-dev:hasData \"true\" .\n"); 
+//			query.append("?mappingURI km-dev:hasData \"true\" .\n"); 
 			query.append("?mapping km-dev:hasTriplesMap ?triplesMap .\n");
 			query.append("?triplesMap rr:subjectMap ?subjectMap .\n");
 			query.append("?subjectMap rr:class ");
@@ -680,7 +682,7 @@ public class TripleStoreUtil {
 			injectContext(context, query);
 			query.append("{\n");
 			query.append("?mapping owl:sameAs ?mappingURI . \n"); 
-			query.append("?mappingURI km-dev:hasData \"true\" .\n"); 
+//			query.append("?mappingURI km-dev:hasData \"true\" .\n"); 
 			query.append("?mapping km-dev:hasTriplesMap ?triplesMap .\n");
 			query.append("?triplesMap rr:subjectMap ?subjectMap .\n");
 			query.append("?subjectMap rr:class ");
@@ -1011,6 +1013,7 @@ public class TripleStoreUtil {
 			logger.info("request url : " + builder.build().toString());
 			logger.info("StatusCode: "
 					+ response.getStatusLine().getStatusCode());
+			logger.info(response.toString());
 			int code = response.getStatusLine().getStatusCode();
 			if (code >= 200 && code < 300) {
 				retVal = true;

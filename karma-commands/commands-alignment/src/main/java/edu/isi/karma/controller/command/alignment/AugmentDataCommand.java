@@ -1,5 +1,7 @@
 package edu.isi.karma.controller.command.alignment;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -106,11 +108,20 @@ public class AugmentDataCommand extends WorksheetCommand{
 			for(Row r : t.getRows(0, t.getNumRows())) {
 				Node n = r.getNode(hNodeId);
 				if(n != null && n.getValue() != null && !n.getValue().isEmptyValue() && n.getValue().asString() != null && !n.getValue().asString().trim().isEmpty() ) {
-					rowHashToSubjectURI.put(HashValueManager.getHashValue(r, hNodeIds), n.getValue().asString());
+					String uri = n.getValue().asString();
+					String absoluteURI = uri;
+					try {
+						URI testuri = new URI(uri);
+						if (!testuri.isAbsolute())
+							absoluteURI = "http://lod.isi.edu/" + uri;
+					} catch (URISyntaxException e) {
+						absoluteURI = "http://lod.isi.edu/" + uri;
+					}
+					rowHashToSubjectURI.put(HashValueManager.getHashValue(r, hNodeIds), uri);
 
-					if (SubjectURIToRowId.get(n.getValue().asString()) == null)
-						SubjectURIToRowId.put(n.getValue().asString(), new ArrayList<String>());
-					List<String> rowIds = SubjectURIToRowId.get(n.getValue().asString());	
+					if (SubjectURIToRowId.get(absoluteURI) == null)
+						SubjectURIToRowId.put(absoluteURI, new ArrayList<String>());
+					List<String> rowIds = SubjectURIToRowId.get(absoluteURI);	
 					rowIds.add(r.getId());
 				}
 			}

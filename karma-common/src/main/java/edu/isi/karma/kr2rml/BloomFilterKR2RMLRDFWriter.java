@@ -115,8 +115,9 @@ public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 	public void close() {
 		if (!isRDF)
 			output.write(bloomFilterManager.toJSON().toString(4));
-		else
+		else {
 			output.write(bloomFilterManager.toRDF());
+		}
 		output.flush();
 		output.close();
 	}

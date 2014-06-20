@@ -20,18 +20,18 @@ public class LoadRDFToTripleStore {
 			File[] files = file.listFiles();
 			for (File f : files) {
 				System.out.println(FileUtils.getExtension(f.getName()));
-				if (FileUtils.getExtension(f.getName()) != null && FileUtils.getExtension(f.getName()).compareTo("ttl") == 0)
+				if (FileUtils.getExtension(f.getName()) != null)
 					try {
-						util.saveToStore(f.getAbsolutePath(), tripleStoreUrl, context, false, null);
+						util.saveToStore(f.getAbsolutePath(), tripleStoreUrl, context, false, "http://lod.isi.edu/");
 					} catch (KarmaException e) {
 						System.err.println(e.getMessage());
 					}
 			}
 		}
 		else {
-			if (FileUtils.getExtension(file.getName()) != null && FileUtils.getExtension(file.getName()).compareTo("ttl") == 0)
+			if (FileUtils.getExtension(file.getName()) != null)
 				try {
-					util.saveToStore(file.getAbsolutePath(), tripleStoreUrl, context, false, null);
+					util.saveToStore(file.getAbsolutePath(), tripleStoreUrl, context, false, "http://lod.isi.edu/");
 				} catch (KarmaException e) {
 					System.err.println(e.getMessage());
 				}

@@ -29,7 +29,7 @@ public class TestFileRdfGenerator extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			
-			rdfGen.generateRdf(null, modelIdentifier, pw, new File(getTestResource(filename).toURI()), 
+			rdfGen.generateRdf(null, modelIdentifier, pw, null, new File(getTestResource(filename).toURI()), 
 					"utf-8", 0);
 			
 			String rdf = sw.toString();
@@ -62,7 +62,7 @@ public class TestFileRdfGenerator extends TestRdfGenerator{
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			
-			rdfGen.generateRdf("csv", modelIdentifier, pw, new File(getTestResource(filename).toURI()), 
+			rdfGen.generateRdf("csv", modelIdentifier, pw, null, new File(getTestResource(filename).toURI()), 
 					"utf-8", 0);
 			
 			String rdf = sw.toString();

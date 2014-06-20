@@ -92,6 +92,7 @@ public class OfflineRdfGenerator {
             String modelFilePath = (String) cl.getValue("--modelfilepath");
             String modelURLString = (String) cl.getValue("--modelurl");
             String outputFilePath = (String) cl.getValue("--outputfile");
+            String bloomfiltersFilePath = (String) cl.getValue("--outputbloomfilter");
             if ((modelURLString == null && modelFilePath == null) || outputFilePath == null || inputType == null) {
                 logger.error("Mandatory value missing. Please provide argument value "
                         + "for sourcetype, modelfilepath and outputfile.");
@@ -141,7 +142,11 @@ public class OfflineRdfGenerator {
 //	        Model model = ModelFactory.createDefaultModel();
 //	        Writer bw = new JenaWritable(model);
 	        PrintWriter pw = new PrintWriter(bw);
-
+	        PrintWriter bloomfilterpw = null;
+	        if (bloomfiltersFilePath != null && !bloomfiltersFilePath.trim().isEmpty()) {
+	        	bloomfilterpw = new PrintWriter(new File(bloomfiltersFilePath));
+	        	logger.info(bloomfiltersFilePath);
+	        }
 	        long l = System.currentTimeMillis();
 	        /**
              * Generate RDF on the source type *
@@ -149,12 +154,16 @@ public class OfflineRdfGenerator {
             SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
             // Database table
             if (inputType.equals("DB") || inputType.equals("SQL")) {
-                generateRdfFromDatabaseTable(inputType, cl, modelURL, pw);
+                generateRdfFromDatabaseTable(inputType, cl, modelURL, pw, bloomfilterpw);
             } // File based worksheets such as JSON, XML, CSV
             else {
-                generateRdfFromFile(cl, inputType, modelURL, pw);
+                generateRdfFromFile(cl, inputType, modelURL, pw, bloomfilterpw);
             }
             pw.close();
+            if(bloomfilterpw != null)
+            {
+            	bloomfilterpw.close();
+            }
             logger.info("done after {}", (System.currentTimeMillis() - l));
 
             logger.info("RDF published at: " + outputFilePath);
@@ -164,7 +173,7 @@ public class OfflineRdfGenerator {
     }
 
 	private static void generateRdfFromDatabaseTable(String inputType, CommandLine cl, URL modelURL,
-			PrintWriter pw) throws IOException, JSONException, KarmaException,
+			PrintWriter pw, PrintWriter bloomfilterpw) throws IOException, JSONException, KarmaException,
 			SQLException, ClassNotFoundException {
 		String dbtypeStr = (String) cl.getValue("--dbtype");
 		String hostname = (String) cl.getValue("--hostname");
@@ -218,19 +227,23 @@ public class OfflineRdfGenerator {
 		        hostname, portnumber, username, password, dBorSIDName, encoding);
 		if(inputType.equals("DB")) {
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
-			dbRdfGen.generateRDFFromTable(tablename, pw, id);
+			dbRdfGen.generateRDFFromTable(tablename, pw, bloomfilterpw, id);
 		} else {
 			File file = new File(queryFile);
 			String queryFileEncoding = EncodingDetector.detect(file);
 			String query = EncodingDetector.getString(file, queryFileEncoding);
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(modelURL.toString(), modelURL);
-			dbRdfGen.generateRDFFromSQL(query, pw, id);
+			dbRdfGen.generateRDFFromSQL(query, pw, bloomfilterpw, id);
+		}
+		if (bloomfilterpw != null) {
+			bloomfilterpw.flush();
+			bloomfilterpw.close();
 		}
         pw.flush();
 	}
 
 	private static void generateRdfFromFile(CommandLine cl, String inputType,
-			URL modelURL, PrintWriter pw)
+			URL modelURL, PrintWriter pw, PrintWriter bloomfilterpw)
 			throws JSONException, IOException, KarmaException,
 			ClassNotFoundException, SQLException {
 		String sourceFilePath = (String) cl.getValue("--filepath");
@@ -259,7 +272,11 @@ public class OfflineRdfGenerator {
 		}
 		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(sourceName, modelURL);
 		FileRdfGenerator rdfGenerator = new FileRdfGenerator();
-		rdfGenerator.generateRdf(inputType, id, pw, inputFile, encoding, maxNumLines);
+		rdfGenerator.generateRdf(inputType, id, pw, bloomfilterpw, inputFile, encoding, maxNumLines);
+		if (bloomfilterpw != null) {
+			bloomfilterpw.flush();
+			bloomfilterpw.close();
+		}
         pw.flush();
 	}
 
@@ -285,6 +302,7 @@ public class OfflineRdfGenerator {
                 .withOption(buildOption("dbname", "database or SID name for database connection", "dbname", obuilder, abuilder))
                 .withOption(buildOption("tablename", "hostname for database connection", "tablename", obuilder, abuilder))
                 .withOption(buildOption("queryfile", "query file for loading data", "queryfile", obuilder, abuilder))
+                .withOption(buildOption("outputbloomfilter", "generate bloom filters", "bloomfiltersfile", obuilder, abuilder))
                 .withOption(obuilder
                 .withLongName("help")
                 .withDescription("print this message")
