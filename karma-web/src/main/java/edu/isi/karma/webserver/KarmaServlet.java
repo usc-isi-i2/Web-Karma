@@ -143,6 +143,7 @@ public class KarmaServlet extends HttpServlet {
 			@Override
 			public void generateJson(String prefix, PrintWriter pw,
 					VWorkspace vWorkspace) {
+				UIConfiguration.Instance().loadConfig();
 				pw.println("{");
 				pw.println("\"updateType\": \"UISettings\", ");
 				pw.println("\"settings\": {");
