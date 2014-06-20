@@ -20,9 +20,7 @@
  ******************************************************************************/
 
 function parse(data) {
-    $.workspaceGlobalInformation = {
-        "id" : data["workspaceId"]
-    }
+    $.workspaceGlobalInformation.id = data["workspaceId"];
 
     var isError = false;
     var error = [];
@@ -31,7 +29,10 @@ function parse(data) {
     
     // Check for errors
     $.each(data["elements"], function(i, element) {
-    	
+    	if(element["updateType"] == "ReloadPageUpdate") {
+    		//Need to reload the page
+    		location.reload();
+    	}
         if(element["updateType"] == "KarmaError") {
         	if(error[element["Error"]]) {
         		//ignore;
@@ -51,7 +52,9 @@ function parse(data) {
     var cleaningUpdates = new Array();
     var dataElements = new Array();
     $.each(data["elements"], function(i, element) {
-        if(element["updateType"] == "WorksheetCleaningUpdate") {
+    	if(element["updateType"] == "UISettings") {
+    		$.workspaceGlobalInformation.UISettings = element["settings"];
+    	} else if(element["updateType"] == "WorksheetCleaningUpdate") {
         	cleaningUpdates.push(element);
         } else {
         	dataElements.push(element);

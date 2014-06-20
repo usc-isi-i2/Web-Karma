@@ -496,7 +496,7 @@
         
       </plugin>
 			
-			<!--
+			
 			  <plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
@@ -505,10 +505,10 @@
 				  <execution><goals><goal>java</goal></goals></execution>
 				</executions>
 				<configuration>
-				  <mainClass>edu.isi.karma.webserver.ServerStart</mainClass>
+				 <!-- <mainClass>edu.isi.karma.webserver.ServerStart</mainClass> -->
 				</configuration>
 			  </plugin>
-			-->
+			
 
 
 		</plugins>

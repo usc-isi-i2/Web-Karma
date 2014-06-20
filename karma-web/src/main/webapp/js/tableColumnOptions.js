@@ -17,8 +17,8 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	               {name:"Extract Entities", func:extractEntities, leafOnly:true},
 	               {name:"PyTransform" , func:pyTransform, leafOnly:true},
 	               {name:"Transform", func:transform, leafOnly:true},
-	               {name:"Generate Cluster Values", func:clusterValues, leafOnly:true},
-	               {name:"Merge Cluster Values", func:mergeValues, leafOnly:true},
+	               //{name:"Generate Cluster Values", func:clusterValues, leafOnly:true},
+	               //{name:"Merge Cluster Values", func:mergeValues, leafOnly:true},
 	               {name:"divider" , leafOnly:true},
 			
 	               {name:"Invoke Service" , func:invokeService, leafOnly:true},
@@ -36,7 +36,9 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	}
 	
 	function setSemanticType() {
+		hideDropdown();
 		SetSemanticTypeDialog.getInstance().show(worksheetId, columnId, columnTitle);
+		return false;
 	}
 	
 	function clusterValues() {
@@ -197,11 +199,15 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 							.addClass("dropdown-toggle")
 							.addClass("ColumnTitle")
 							.attr("id", dropdownId)
+							.attr("title", columnTitle)
 							.data("worksheetId", worksheetId)
 							.attr("data-toggle", "dropdown")
-							.text(columnTitle)
-							.append($("<span>").addClass("caret")
+							.append($("<div>")
+								.addClass("truncate")
+								.text(columnTitle)
+								.append($("<span>").addClass("caret")
 							)
+						 )
 						);
 		
 		var div = 
