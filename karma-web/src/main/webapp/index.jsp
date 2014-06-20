@@ -173,16 +173,6 @@ and related projects, please see: http://www.isi.edu/integration
 			        <li><a target="_blank" href="" id="sparql_end_point_link" title='Open RDF workbench in a new window' data-toggle='tooltip' data-placement='bottom'>OpenRDF</a></li>
 		          </ul>
 		        </div>
-		        <div class="nav navbar-nav">
-		        <div class="form-group" style="float:left; width: 500px; padding-right: 10px;">
-										<label for="txtModel_URL">Model Repository Endpoint</label>
-										<label class="edit" id="txtModel_URL"></label>
-						</div>
-		        <div class="form-group" style="float:left; width: 500px; padding-left: 10px;">
-								<label for="txtData_URL">Data Repository Endpoint</label>
-								<label class="edit" id="txtData_URL"></label>
-						</div>
-						</div>
 		      </div> <!--  end of navbar -->
 
 		      <div class="row">
@@ -235,6 +225,16 @@ and related projects, please see: http://www.isi.edu/integration
 	        	</div>
 	        </p>
 	      </div>
+	      <div class="container">
+	      	<div class="form-group" style="float:left; width: 500px; padding-right: 10px;">
+										<label for="txtModel_URL">Model Repository Endpoint</label>
+										<label class="edit" id="txtModel_URL"></label>
+					</div>
+		    	<div class="form-group" style="float:left; width: 500px; padding-left: 10px;">
+								<label for="txtData_URL">Data Repository Endpoint</label>
+								<label class="edit" id="txtData_URL"></label>
+					</div>
+				</div>
 	    </div>
     
         <div id="ScrollHeadersPlaceholder"></div>
