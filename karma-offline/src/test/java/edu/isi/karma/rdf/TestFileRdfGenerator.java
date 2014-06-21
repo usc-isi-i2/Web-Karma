@@ -30,7 +30,7 @@ public class TestFileRdfGenerator extends TestRdfGenerator{
 			PrintWriter pw = new PrintWriter(sw);
 			
 			rdfGen.generateRdf(null, modelIdentifier, pw, null, new File(getTestResource(filename).toURI()), 
-					"utf-8", 0);
+					"utf-8", 0, null);
 			
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
@@ -63,7 +63,7 @@ public class TestFileRdfGenerator extends TestRdfGenerator{
 			PrintWriter pw = new PrintWriter(sw);
 			
 			rdfGen.generateRdf("csv", modelIdentifier, pw, null, new File(getTestResource(filename).toURI()), 
-					"utf-8", 0);
+					"utf-8", 0, null);
 			
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);

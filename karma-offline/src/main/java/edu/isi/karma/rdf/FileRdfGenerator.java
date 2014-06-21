@@ -184,7 +184,7 @@ public class FileRdfGenerator extends RdfGenerator {
 	}
 
 	public void generateRdf(String inputType, R2RMLMappingIdentifier id,
-			 PrintWriter pw, PrintWriter bloomfilterpw, File inputFile, String encoding, int maxNumLines)
+			 PrintWriter pw, PrintWriter bloomfilterpw, File inputFile, String encoding, int maxNumLines, String baseURI)
 			throws IOException, JSONException, KarmaException {
 		logger.info("Generating worksheet from the data source ...");
 		Workspace workspace = initializeWorkspace();
@@ -209,10 +209,12 @@ public class FileRdfGenerator extends RdfGenerator {
 
 		this.applyHistoryToWorksheet(workspace, worksheet, mapping);
 		List<KR2RMLRDFWriter> writers = new ArrayList<KR2RMLRDFWriter>();
-		writers.add(new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), pw));
+		N3KR2RMLRDFWriter rdfwriter = new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), pw);
+		rdfwriter.setBaseURI(baseURI);
+		writers.add(rdfwriter);
 		BloomFilterKR2RMLRDFWriter writer = null;
 		if (bloomfilterpw != null) {
-			writer = new BloomFilterKR2RMLRDFWriter(bloomfilterpw, mapping.getId(), true);
+			writer = new BloomFilterKR2RMLRDFWriter(bloomfilterpw, mapping.getId(), true, baseURI);
 			writers.add(writer);
 		}
 		// RDF generation object initialization

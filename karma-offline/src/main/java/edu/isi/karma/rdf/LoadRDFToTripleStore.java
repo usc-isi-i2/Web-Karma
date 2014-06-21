@@ -22,7 +22,7 @@ public class LoadRDFToTripleStore {
 				System.out.println(FileUtils.getExtension(f.getName()));
 				if (FileUtils.getExtension(f.getName()) != null)
 					try {
-						util.saveToStore(f.getAbsolutePath(), tripleStoreUrl, context, false, "http://lod.isi.edu/");
+						util.saveToStore(f.getAbsolutePath(), tripleStoreUrl, context, false, null);
 					} catch (KarmaException e) {
 						System.err.println(e.getMessage());
 					}
@@ -31,7 +31,7 @@ public class LoadRDFToTripleStore {
 		else {
 			if (FileUtils.getExtension(file.getName()) != null)
 				try {
-					util.saveToStore(file.getAbsolutePath(), tripleStoreUrl, context, false, "http://lod.isi.edu/");
+					util.saveToStore(file.getAbsolutePath(), tripleStoreUrl, context, false, null);
 				} catch (KarmaException e) {
 					System.err.println(e.getMessage());
 				}

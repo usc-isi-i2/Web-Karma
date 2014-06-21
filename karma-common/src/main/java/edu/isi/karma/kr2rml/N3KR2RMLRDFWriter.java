@@ -22,6 +22,8 @@ package edu.isi.karma.kr2rml;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,12 +39,13 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 	protected URIFormatter uriFormatter;
 	protected PrintWriter outWriter;
 	protected Map<String,String> generatedTriples;
-	
+	String baseURI;
 	public N3KR2RMLRDFWriter(URIFormatter uriFormatter, OutputStream outputStream)
 	{
 		this.outWriter = new PrintWriter(outputStream);
 		this.uriFormatter = uriFormatter;
 		generatedTriples = new ConcurrentHashMap<String, String>();
+		baseURI = null;
 	}
 	public N3KR2RMLRDFWriter(URIFormatter uriFormatter, PrintWriter writer)
 	{
@@ -50,7 +53,7 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 		this.uriFormatter = uriFormatter;
 		generatedTriples = new ConcurrentHashMap<String, String>();
 	}
-	
+
 	private void outputTriple(String triple)
 	{
 		generatedTriples.put(triple, "");
@@ -59,26 +62,37 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 	public void outputTripleWithURIObject(String subjUri, String predicateUri, String objectUri)
 	{
 		outputTriple(constructTripleWithURIObject(subjUri, predicateUri, objectUri));
-		
+
 	}
-	
+
 	private String constructTripleWithURIObject(String subjUri, String predicateUri, String objectUri) {
+		if (subjUri.indexOf("<") != -1 && subjUri.indexOf(">") != -1) {
+			String tmp = subjUri.substring(1, subjUri.length() - 1);
+			subjUri = "<" + normalizeURI(tmp) + ">";
+		}
+		if (objectUri.indexOf("<") != -1 && objectUri.indexOf(">") != -1) {
+			String tmp = objectUri.substring(1, objectUri.length() - 1);
+			objectUri = "<" + normalizeURI(tmp) + ">";
+		}
 		return subjUri + " " 
-				+ uriFormatter.getExpandedAndNormalizedUri(predicateUri) + " " 
-				+ objectUri + " .";
+		+ uriFormatter.getExpandedAndNormalizedUri(predicateUri) + " " 
+		+ objectUri + " .";
 	}
-	
+
 	@Override
 	public void outputTripleWithLiteralObject(String subjUri, String predicateUri, String value, 
 			String literalType) {
 		outputTriple(constructTripleWithLiteralObject(subjUri, predicateUri, value, literalType));
 	}
-	
+
 	private String constructTripleWithLiteralObject(String subjUri, String predicateUri, String value, 
 			String literalType) {
 		// Use Apache Commons to escape the value
 		value = StringEscapeUtils.escapeJava(value);
-		
+		if (subjUri.indexOf("<") != -1 && subjUri.indexOf(">") != -1) {
+			String tmp = subjUri.substring(1, subjUri.length() - 1);
+			subjUri = "<" + normalizeURI(tmp) + ">";
+		}
 		// Add the RDF literal type to the literal if present
 		if (literalType != null && !literalType.equals("")) {
 			return subjUri + " " + uriFormatter.getExpandedAndNormalizedUri(predicateUri) + " \"" + value + 
@@ -86,7 +100,7 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 		}
 		return subjUri + " " + uriFormatter.getExpandedAndNormalizedUri(predicateUri) + " \"" + value + "\" .";
 	}
-	
+
 	@Override
 	public void outputQuadWithLiteralObject(String subjUri, String predicateUri, 
 			String value, String literalType, String graph) {
@@ -105,21 +119,21 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri,
 			String objectUri) {
 		outputTripleWithURIObject(subjUri, predicateUri, objectUri);
-		
+
 	}
 	@Override
 	public void outputTripleWithURIObject(TriplesMap subjTriplesMap,
 			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, TriplesMap objTriplesMapId,
 			String objectUri) {
 		outputTripleWithURIObject(subjUri, predicateUri, objectUri);
-		
+
 	}
 	@Override
 	public void outputTripleWithLiteralObject(TriplesMap subjTriplesMap,
 			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, String value,
 			String literalType) {
 		outputTripleWithLiteralObject(subjUri, predicateUri, value, literalType);
-		
+
 	}
 	@Override
 	public void outputQuadWithLiteralObject(TriplesMap subjTriplesMap,
@@ -128,7 +142,7 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 		outputQuadWithLiteralObject(subjUri, predicateUri, value, literalType, graph);
 
 	}
-	
+
 	@Override
 	public void finishRow()
 	{
@@ -148,12 +162,27 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 		}
 		outWriter.flush();
 		LOG.debug("Flushed writer");
-		
+
 	}
 	@Override
 	public void close() {
 		outWriter.close();
-		
+
+	}
+
+	private String normalizeURI(String URI) {
+		try {
+			URI uri = new URI(URI);
+			if (!uri.isAbsolute() && baseURI != null)
+				return baseURI + uri;
+		}catch(URISyntaxException e) {
+			return URI;
+		}
+		return URI;
+	}
+
+	public void setBaseURI(String baseURI) {
+		this.baseURI = baseURI;
 	}
 
 

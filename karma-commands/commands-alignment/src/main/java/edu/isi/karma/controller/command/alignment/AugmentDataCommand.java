@@ -1,7 +1,5 @@
 package edu.isi.karma.controller.command.alignment;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -109,19 +107,11 @@ public class AugmentDataCommand extends WorksheetCommand{
 				Node n = r.getNode(hNodeId);
 				if(n != null && n.getValue() != null && !n.getValue().isEmptyValue() && n.getValue().asString() != null && !n.getValue().asString().trim().isEmpty() ) {
 					String uri = n.getValue().asString();
-					String absoluteURI = uri;
-					try {
-						URI testuri = new URI(uri);
-						if (!testuri.isAbsolute())
-							absoluteURI = "http://lod.isi.edu/" + uri;
-					} catch (URISyntaxException e) {
-						absoluteURI = "http://lod.isi.edu/" + uri;
-					}
 					rowHashToSubjectURI.put(HashValueManager.getHashValue(r, hNodeIds), uri);
 
-					if (SubjectURIToRowId.get(absoluteURI) == null)
-						SubjectURIToRowId.put(absoluteURI, new ArrayList<String>());
-					List<String> rowIds = SubjectURIToRowId.get(absoluteURI);	
+					if (SubjectURIToRowId.get(uri) == null)
+						SubjectURIToRowId.put(uri, new ArrayList<String>());
+					List<String> rowIds = SubjectURIToRowId.get(uri);	
 					rowIds.add(r.getId());
 				}
 			}

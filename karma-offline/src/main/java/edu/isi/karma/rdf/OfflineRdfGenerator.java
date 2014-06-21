@@ -93,6 +93,7 @@ public class OfflineRdfGenerator {
             String modelURLString = (String) cl.getValue("--modelurl");
             String outputFilePath = (String) cl.getValue("--outputfile");
             String bloomfiltersFilePath = (String) cl.getValue("--outputbloomfilter");
+            String baseURI = (String) cl.getValue("--baseuri");
             if ((modelURLString == null && modelFilePath == null) || outputFilePath == null || inputType == null) {
                 logger.error("Mandatory value missing. Please provide argument value "
                         + "for sourcetype, modelfilepath and outputfile.");
@@ -154,10 +155,10 @@ public class OfflineRdfGenerator {
             SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
             // Database table
             if (inputType.equals("DB") || inputType.equals("SQL")) {
-                generateRdfFromDatabaseTable(inputType, cl, modelURL, pw, bloomfilterpw);
+                generateRdfFromDatabaseTable(inputType, cl, modelURL, pw, bloomfilterpw, baseURI);
             } // File based worksheets such as JSON, XML, CSV
             else {
-                generateRdfFromFile(cl, inputType, modelURL, pw, bloomfilterpw);
+                generateRdfFromFile(cl, inputType, modelURL, pw, bloomfilterpw, baseURI);
             }
             pw.close();
             if(bloomfilterpw != null)
@@ -173,7 +174,7 @@ public class OfflineRdfGenerator {
     }
 
 	private static void generateRdfFromDatabaseTable(String inputType, CommandLine cl, URL modelURL,
-			PrintWriter pw, PrintWriter bloomfilterpw) throws IOException, JSONException, KarmaException,
+			PrintWriter pw, PrintWriter bloomfilterpw, String baseURI) throws IOException, JSONException, KarmaException,
 			SQLException, ClassNotFoundException {
 		String dbtypeStr = (String) cl.getValue("--dbtype");
 		String hostname = (String) cl.getValue("--hostname");
@@ -227,13 +228,13 @@ public class OfflineRdfGenerator {
 		        hostname, portnumber, username, password, dBorSIDName, encoding);
 		if(inputType.equals("DB")) {
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
-			dbRdfGen.generateRDFFromTable(tablename, pw, bloomfilterpw, id);
+			dbRdfGen.generateRDFFromTable(tablename, pw, bloomfilterpw, id, baseURI);
 		} else {
 			File file = new File(queryFile);
 			String queryFileEncoding = EncodingDetector.detect(file);
 			String query = EncodingDetector.getString(file, queryFileEncoding);
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(modelURL.toString(), modelURL);
-			dbRdfGen.generateRDFFromSQL(query, pw, bloomfilterpw, id);
+			dbRdfGen.generateRDFFromSQL(query, pw, bloomfilterpw, id, baseURI);
 		}
 		if (bloomfilterpw != null) {
 			bloomfilterpw.flush();
@@ -243,7 +244,7 @@ public class OfflineRdfGenerator {
 	}
 
 	private static void generateRdfFromFile(CommandLine cl, String inputType,
-			URL modelURL, PrintWriter pw, PrintWriter bloomfilterpw)
+			URL modelURL, PrintWriter pw, PrintWriter bloomfilterpw, String baseURI)
 			throws JSONException, IOException, KarmaException,
 			ClassNotFoundException, SQLException {
 		String sourceFilePath = (String) cl.getValue("--filepath");
@@ -272,7 +273,7 @@ public class OfflineRdfGenerator {
 		}
 		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(sourceName, modelURL);
 		FileRdfGenerator rdfGenerator = new FileRdfGenerator();
-		rdfGenerator.generateRdf(inputType, id, pw, bloomfilterpw, inputFile, encoding, maxNumLines);
+		rdfGenerator.generateRdf(inputType, id, pw, bloomfilterpw, inputFile, encoding, maxNumLines, baseURI);
 		if (bloomfilterpw != null) {
 			bloomfilterpw.flush();
 			bloomfilterpw.close();
@@ -303,6 +304,7 @@ public class OfflineRdfGenerator {
                 .withOption(buildOption("tablename", "hostname for database connection", "tablename", obuilder, abuilder))
                 .withOption(buildOption("queryfile", "query file for loading data", "queryfile", obuilder, abuilder))
                 .withOption(buildOption("outputbloomfilter", "generate bloom filters", "bloomfiltersfile", obuilder, abuilder))
+                .withOption(buildOption("baseuri", "specifies base uri", "base URI", obuilder, abuilder))
                 .withOption(obuilder
                 .withLongName("help")
                 .withDescription("print this message")

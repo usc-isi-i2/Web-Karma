@@ -2320,6 +2320,7 @@ var AugmentDataDialog = (function() {
     		console.log("instance");
         if( ! instance ) {
             instance = new PrivateConstructor();
+            instance.initVariable(wsId, colDomain, colUri, Alnid);
             instance.init();
         }
         instance.initVariable(wsId, colDomain, colUri, Alnid);

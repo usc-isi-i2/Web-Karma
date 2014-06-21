@@ -50,7 +50,7 @@ public abstract class TestRdfGenerator {
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
 				"schedule-model", modelFile.toURI().toURL());
 		String encoding = EncodingDetector.detect(inputFile);
-		rdfGen.generateRdf(inputFormat, modelIdentifier, pw, null, inputFile, encoding, 0);
+		rdfGen.generateRdf(inputFormat, modelIdentifier, pw, null, inputFile, encoding, 0, null);
 
 	}
 

@@ -165,7 +165,7 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 		PrintWriter bfpw = new PrintWriter(bfsw);
 
 		
-		BloomFilterKR2RMLRDFWriter bfWriter = new BloomFilterKR2RMLRDFWriter(bfpw, rdfGen.getModels().get(modelName), false);
+		BloomFilterKR2RMLRDFWriter bfWriter = new BloomFilterKR2RMLRDFWriter(bfpw, rdfGen.getModels().get(modelName), false, null);
 		rdfGen.generateRDF(modelName, inputFileName, data, false, bfWriter);
 		String base64EncodedBloomFilterManager = bfsw.toString();
 		return new KR2RMLBloomFilterManager(new JSONObject(base64EncodedBloomFilterManager));
