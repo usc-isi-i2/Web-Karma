@@ -100,15 +100,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		RepFactory factory = workspace.getFactory();
 		Worksheet worksheet = factory.getWorksheet(worksheetId);
-		if (alignment.GetTreeRoot() != null) {
-			Set<LabeledLink> tmp = alignment.getCurrentOutgoingLinksToNode(columnUri);
-			hNodeId = null;
-			for (LabeledLink link : tmp) {
-				if (link.getKeyType() == LinkKeyInfo.UriOfInstance) {
-					hNodeId = link.getTarget().getId();
-				}
-			}
-		}
+		hNodeId = FetchHNodeIdFromAlignmentCommand.gethNodeId(alignmentId, columnUri);
 		if (hNodeId == null) {
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
