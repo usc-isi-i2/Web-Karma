@@ -1,5 +1,6 @@
 package edu.isi.karma.controller.command.alignment;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.worksheet.AddValuesCommand;
 import edu.isi.karma.controller.command.worksheet.AddValuesCommandFactory;
+import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -34,7 +36,10 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
+import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class AugmentDataCommand extends WorksheetCommand{
@@ -95,6 +100,20 @@ public class AugmentDataCommand extends WorksheetCommand{
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		RepFactory factory = workspace.getFactory();
 		Worksheet worksheet = factory.getWorksheet(worksheetId);
+		if (alignment.GetTreeRoot() != null) {
+			Set<LabeledLink> tmp = alignment.getCurrentOutgoingLinksToNode(columnUri);
+			hNodeId = null;
+			for (LabeledLink link : tmp) {
+				if (link.getKeyType() == LinkKeyInfo.UriOfInstance) {
+					hNodeId = link.getTarget().getId();
+				}
+			}
+		}
+		if (hNodeId == null) {
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+			return c;
+		}
 		HNode hnode = factory.getHNode(hNodeId);
 		List<String> hNodeIds = new LinkedList<String>();
 		hNodeIds.add(hNodeId);

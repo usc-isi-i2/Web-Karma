@@ -96,6 +96,15 @@ public class SearchForDataToAugmentCommand extends Command{
 		Iterator<String> predicatesItr = predicates.iterator();
 		Iterator<String> otherClassesItr = otherClasses.iterator();
 		String hNodeId = FetchHNodeIdFromAlignmentCommand.gethNodeId(AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId), columnUri);
+		if (hNodeId == null) {
+			return new UpdateContainer(new AbstractUpdate() {
+
+				@Override
+				public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
+					pw.print(array.toString());
+				}
+			});
+		}
 		HNode hnode = factory.getHNode(hNodeId);
 		List<Table> dataTables = new ArrayList<Table>();
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), factory.getHTable(hnode.getHTableId()), dataTables);
