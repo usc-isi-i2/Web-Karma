@@ -1,0 +1,71 @@
+package edu.isi.karma.rdf;
+
+import org.apache.hadoop.util.hash.Hash;
+
+import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
+
+import java.io.IOException;
+import java.util.*;
+public class BloomFilterWorker implements Runnable{
+	private KR2RMLBloomFilter bf = new KR2RMLBloomFilter(1000000, 8,Hash.JENKINS_HASH);
+	private List<String> bloomfilters = Collections.synchronizedList(new ArrayList<String>());
+	private boolean isFinished = false;
+	private boolean isDone = false;
+
+	public void addBloomfilters(String bloomfilter) {
+		synchronized (bloomfilters) { 
+			bloomfilters.add(bloomfilter);
+			bloomfilters.notify();
+		}
+	}
+
+	public KR2RMLBloomFilter getKR2RMLBloomFilter() {
+		return bf;
+	}
+
+	public boolean isFinished() {
+		return isFinished;
+	}
+
+	private String getBloomfilter() {
+		synchronized (bloomfilters) {
+			if (bloomfilters.isEmpty())
+				try {
+					bloomfilters.wait();;
+				} catch (InterruptedException e) {
+
+				}
+			if (!bloomfilters.isEmpty()) {
+				return bloomfilters.remove(0);
+			}
+		}
+		return null;
+	}
+
+	public void setDone() {
+		isDone = true;
+		synchronized (bloomfilters) {
+			bloomfilters.notify();
+		}
+	}
+
+	@Override
+	public void run() {
+
+		while(!isDone || !bloomfilters.isEmpty()) {
+			KR2RMLBloomFilter bf = new KR2RMLBloomFilter(1000000, 8,Hash.JENKINS_HASH);
+			String tmp = getBloomfilter();
+			try {
+				if (tmp != null)
+					bf.populateFromCompressedAndBase64EncodedString(tmp);
+			} catch (IOException e) {
+				
+			}
+			this.bf.or(bf);
+		}
+		isFinished = true;
+
+	}	
+
+
+}

@@ -5,9 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.*;
-
-import org.apache.hadoop.util.hash.Hash;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -15,7 +14,6 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.uwyn.jhighlight.tools.FileUtils;
 
-import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
 
 
 public class CombineBloomFiltersFromRDF {
@@ -26,7 +24,7 @@ public class CombineBloomFiltersFromRDF {
 			return;
 		File file = new File(args[0]);
 		String predicateURI = null;
-		Map<String, KR2RMLBloomFilter> bfs = new HashMap<String, KR2RMLBloomFilter>();
+		Map<String, BloomFilterWorker> bfs = new HashMap<String, BloomFilterWorker>();
 		if (file.isDirectory()) {
 			File[] files = file.listFiles();
 			for (File f : files) {
@@ -42,28 +40,32 @@ public class CombineBloomFiltersFromRDF {
 						String predicate = st.getPredicate().toString();
 						if (predicate.contains("hasBloomFilter")) {
 							predicateURI = predicate;
-							KR2RMLBloomFilter bf = null;
-							if (bfs.get(subject) == null) {
-								bf = new KR2RMLBloomFilter(1000000, 8,Hash.JENKINS_HASH);
+							BloomFilterWorker worker = bfs.get(subject);
+							if (worker == null) {
+								worker = new BloomFilterWorker();
+								Thread t = new Thread(worker);
+								t.start();
 							}
-							KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter(1000000, 8,Hash.JENKINS_HASH);
-							bf2.populateFromCompressedAndBase64EncodedString(object);
-							bf.or(bf2);
-							bfs.put(subject, bf);
+							worker.addBloomfilters(object);
+							bfs.put(subject, worker);
 						}
 					}
 				}
-
+				
 			}
+			
+			File output = new File(args[1]);
+			PrintWriter pw = new PrintWriter(output);
+			for (String key : bfs.keySet()) {
+				bfs.get(key).setDone();
+				while(!bfs.get(key).isFinished());
+				pw.print("<" + key + "> ");
+				pw.print("<" + predicateURI + "> ");
+				pw.println("\"" + bfs.get(key).getKR2RMLBloomFilter().compressAndBase64Encode() + "\" . ");
+			}
+			pw.close();
 		}
-		File output = new File(args[1]);
-		PrintWriter pw = new PrintWriter(output);
-		for (String key : bfs.keySet()) {
-			pw.print("<" + key + "> ");
-			pw.print("<" + predicateURI + "> ");
-			pw.println("\"" + bfs.get(key).compressAndBase64Encode() + "\" . ");
-		}
-		pw.close();
+		
 	}
 
 }
