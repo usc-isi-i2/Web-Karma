@@ -798,6 +798,57 @@ public class TripleStoreUtil {
 		return bloomfilters;
 	}
 	
+	public void deleteBloomFiltersForMaps(String tripleStoreURL, String context, Collection<String> maps) throws KarmaException
+	{
+		testTripleStoreConnection(tripleStoreURL);
+		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL) + "/statements";		
+		
+		try {
+
+			StringBuilder query = new StringBuilder();
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
+			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
+			if (null != context && !context.trim().isEmpty())
+			{
+				query.append("WITH ");
+				formatURI(context, query);
+				query.append("\n");
+			}
+			query.append("DELETE {?s km-dev:hasBloomFilter ?bf} \n");			
+			query.append("WHERE \n{\n");
+			Iterator<String> iterator = maps.iterator();
+			while(iterator.hasNext()) {
+				query.append("{");
+				query.append("\n ?s <");
+				query.append(Uris.KM_HAS_BLOOMFILTER);
+				query.append("> ?bf . ");
+				query.append("\n<");
+				query.append(iterator.next());
+				query.append("> <");
+				query.append(Uris.KM_HAS_BLOOMFILTER);
+				if (iterator.hasNext())
+					query.append("> ?bf . \n} UNION \n");
+				else
+					query.append("> ?bf . \n} \n");
+			}
+			query.append("}\n");
+			
+			String queryString = query.toString();
+			logger.debug("query: " + queryString);
+
+			
+			Map<String, String> formparams = new HashMap<String, String>();
+			formparams.put("update", queryString);
+			
+			String responseString = HTTPUtil.executeHTTPPostRequest(
+					tripleStoreURL, null, mime_types.get(RDF_Types.N3.name()),
+					formparams);
+			System.out.println(responseString);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+	}
+	
 	public void testTripleStoreConnection(String tripleStoreURL)
 			throws KarmaException {
 		// check the connection first

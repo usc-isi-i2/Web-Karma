@@ -247,6 +247,7 @@ public class PublishRDFCommand extends Command {
 					}
 					bloomfilterMapping.put(tripleUri, bf.compressAndBase64Encode());
 				}
+				utilObj.deleteBloomFiltersForMaps(modelRepoUrl, modelContext, triplemaps);
 			}
 		} catch (Exception e1) {
 			logger.error("Error occured while generating RDF!", e1);
@@ -294,8 +295,9 @@ public class PublishRDFCommand extends Command {
 
 
 				result &= util.saveToStore(input, modelRepoUrl, modelContext, new Boolean(false), this.rdfSourceNamespace);
-				if (rdf != null && rdf.trim().compareTo("") != 0)
+				if (rdf != null && rdf.trim().compareTo("") != 0) {
 					result &= util.saveToStore(rdf, modelRepoUrl, modelContext, new Boolean(false), this.rdfSourceNamespace);
+				}
 				long end = System.currentTimeMillis();
 				System.out.println("execution time: " + (end - start) + "node total: " + bloomfilterMapping.size());
 			}

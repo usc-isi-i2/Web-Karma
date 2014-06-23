@@ -5,8 +5,20 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import org.apache.commons.cli2.CommandLine;
+import org.apache.commons.cli2.Group;
+import org.apache.commons.cli2.Option;
+import org.apache.commons.cli2.builder.ArgumentBuilder;
+import org.apache.commons.cli2.builder.DefaultOptionBuilder;
+import org.apache.commons.cli2.builder.GroupBuilder;
+import org.apache.commons.cli2.commandline.Parser;
+import org.apache.commons.cli2.util.HelpFormatter;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -14,17 +26,39 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.uwyn.jhighlight.tools.FileUtils;
 
+import edu.isi.karma.er.helper.TripleStoreUtil;
+import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
+import edu.isi.karma.webserver.KarmaException;
+
 
 
 public class CombineBloomFiltersFromRDF {
 
 
-	public static void main(String[] args) throws IOException {
-		if (args.length == 0)
-			return;
-		File file = new File(args[0]);
+	public static void main(String[] args) throws IOException, KarmaException {
+		Group options = createCommandLineOptions();
+        Parser parser = new Parser();
+        parser.setGroup(options);
+        parser.setGroup(options);
+        HelpFormatter hf = new HelpFormatter();
+        parser.setHelpFormatter(hf);
+        parser.setHelpTrigger("--help");
+        CommandLine cl = parser.parseAndHelp(args);
+        if (cl == null || cl.getOptions().size() == 0 || cl.hasOption("--help")) {
+            hf.setGroup(options);
+            hf.print();
+            return;
+        }
+        String filepath = (String) cl.getValue("--filepath");
+        String modelurl = (String) cl.getValue("--modelurl");
+        String context = (String) cl.getValue("--context");
+        if (filepath == null || modelurl == null || context == null)
+        	return;
+		File file = new File(filepath);
 		String predicateURI = null;
-		Map<String, BloomFilterWorker> bfs = new HashMap<String, BloomFilterWorker>();
+		Map<String, BloomFilterWorker> workers = new HashMap<String, BloomFilterWorker>();
+		Map<String, KR2RMLBloomFilter> bfs = new HashMap<String, KR2RMLBloomFilter>();
+		long start = System.currentTimeMillis();
 		if (file.isDirectory()) {
 			File[] files = file.listFiles();
 			for (File f : files) {
@@ -40,32 +74,87 @@ public class CombineBloomFiltersFromRDF {
 						String predicate = st.getPredicate().toString();
 						if (predicate.contains("hasBloomFilter")) {
 							predicateURI = predicate;
-							BloomFilterWorker worker = bfs.get(subject);
+							BloomFilterWorker worker = workers.get(subject);
 							if (worker == null) {
 								worker = new BloomFilterWorker();
 								Thread t = new Thread(worker);
 								t.start();
 							}
 							worker.addBloomfilters(object);
-							bfs.put(subject, worker);
+							workers.put(subject, worker);
 						}
 					}
 				}
-				
+
 			}
-			
-			File output = new File(args[1]);
-			PrintWriter pw = new PrintWriter(output);
-			for (String key : bfs.keySet()) {
-				bfs.get(key).setDone();
-				while(!bfs.get(key).isFinished());
-				pw.print("<" + key + "> ");
+			for (Entry<String, BloomFilterWorker> entry : workers.entrySet()) {
+				entry.getValue().setDone();
+			}
+			for (Entry<String, BloomFilterWorker> entry : workers.entrySet()) {
+				while(!entry.getValue().isFinished());
+				bfs.put(entry.getKey(), entry.getValue().getKR2RMLBloomFilter());
+			}
+			TripleStoreUtil utilObj = new TripleStoreUtil();
+			Set<String> triplemaps = bfs.keySet();
+			Map<String, String> bloomfilterMapping = new HashMap<String, String>();
+			bloomfilterMapping.putAll(utilObj.getBloomFiltersForMaps(modelurl, context, triplemaps));
+			for (String tripleUri : triplemaps) {
+				KR2RMLBloomFilter bf = bfs.get(tripleUri);
+				String oldserializedBloomFilter = bloomfilterMapping.get(tripleUri);
+				if (oldserializedBloomFilter != null) {
+					KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
+					bf2.populateFromCompressedAndBase64EncodedString(oldserializedBloomFilter);
+					bf.or(bf2);
+				}
+				bfs.put(tripleUri, bf);
+			}
+			utilObj.deleteBloomFiltersForMaps(modelurl, context, triplemaps);
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			for (Entry<String, KR2RMLBloomFilter> entry : bfs.entrySet()) {
+				pw.print("<" + entry.getKey() + "> ");
 				pw.print("<" + predicateURI + "> ");
-				pw.println("\"" + bfs.get(key).getKR2RMLBloomFilter().compressAndBase64Encode() + "\" . ");
+				pw.println("\"" + entry.getValue().compressAndBase64Encode() + "\" . ");
 			}
 			pw.close();
+			utilObj.saveToStore(sw.toString(), modelurl, context, new Boolean(false), null);
+			System.out.println("process time: " + (System.currentTimeMillis() - start));
 		}
-		
+
+	}
+
+	private static Group createCommandLineOptions() {
+		DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
+		ArgumentBuilder abuilder = new ArgumentBuilder();
+		GroupBuilder gbuilder = new GroupBuilder();
+
+		Group options =
+				gbuilder
+				.withName("options")
+				.withOption(buildOption("filepath", "location of the input file directory", "filepath", obuilder, abuilder))
+				.withOption(buildOption("modelurl", "location of the model", "modelurl", obuilder, abuilder))
+				.withOption(buildOption("context", "the context uri", "context", obuilder, abuilder))
+				.withOption(obuilder
+						.withLongName("help")
+						.withDescription("print this message")
+						.create())
+						.create();
+
+		return options;
+	}
+
+	public static Option buildOption(String shortName, String description, String argumentName,
+			DefaultOptionBuilder obuilder, ArgumentBuilder abuilder) {
+		return obuilder
+				.withLongName(shortName)
+				.withDescription(description)
+				.withArgument(
+						abuilder
+						.withName(argumentName)
+						.withMinimum(1)
+						.withMaximum(1)
+						.create())
+						.create();
 	}
 
 }
