@@ -40,6 +40,20 @@ var saveModelDialog = (function() {
                 e.preventDefault();
                 saveDialog(e);
             });
+
+            $('#txtModel_URL_Save', dialog).on('keyup', function (e) {
+                $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
+            });
+
+            $('#txtModel_URL_Save', dialog).bind('input paste', function (e) {
+                console.log("here");
+                console.log($('#txtModel_URL_Save').val());
+                $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
+            });
+
+            $('#txtModel_URL_Save', dialog).on('change', function (e) {
+                $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
+            });
             
                 
         }
