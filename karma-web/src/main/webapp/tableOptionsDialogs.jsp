@@ -152,10 +152,6 @@ a.icon-remove:hover {
 						<input class="form-control" type="text" id="rdfPrefix" required value="s" maxlength="100">
 					</div>
 					<div class="form-group">
-						<label for="rdfSPAQRLEndPoint">Sparql End Point</label>
-						<input class="form-control" type="text" id="rdfSPAQRLEndPoint" required value="" maxlength="100">
-					</div>
-					<div class="form-group">
 							<label for="modelGraphList">RDF Graphs</label>
 							<select id="modelGraphList">
 		                	</select>

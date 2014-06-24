@@ -1900,7 +1900,8 @@ var AugmentDataDialog = (function() {
             info["command"] = "SearchForDataToAugmentCommand";
             info["nodeUri"] = columnDomain;
             info["columnUri"] = columnUri;
-            var returnJSON;
+            var returnJSON = [];
+            var incoming, outgoing;
             var returned = $.ajax({
                 url: "RequestController",
                 type: "POST",
@@ -1913,7 +1914,7 @@ var AugmentDataDialog = (function() {
                         var json = $.parseJSON(xhr.responseText);
                         json = json.elements[0];
                         console.log(json);
-                        returnJSON = json;
+                        outgoing = json;
                         //hideLoading(info["worksheetId"]);
                     },
                 error :
@@ -1942,7 +1943,7 @@ var AugmentDataDialog = (function() {
                         var json = $.parseJSON(xhr.responseText);
                         json = json.elements[0];
                         console.log(json);
-                        returnJSON = returnJSON.concat(json);
+                        incoming = json;
 
                         //hideLoading(info["worksheetId"]);
                     },
@@ -1952,6 +1953,21 @@ var AugmentDataDialog = (function() {
                         //hideLoading(info["worksheetId"]);
                     }
             });
+            var i = 0, j = 0;
+            while(i < outgoing.length && j < incoming.length) {
+            	if (outgoing[i]['estimate'] * 1 < incoming[j]['estimate'] * 1) {
+            		returnJSON.push(incoming[j]);
+            		j += 1;
+            	}
+            	else {
+            		returnJSON.push(outgoing[i]);
+            		i += 1;
+            	}
+            }
+            for (var k = i; k < outgoing.length; k++)
+            	returnJSON.push(outgoing[k]);
+            for (var k = j; k < incoming.length; k++)
+            	returnJSON.push(incoming[k]);
             console.log(returnJSON);
             return returnJSON;
         };
@@ -1985,7 +2001,7 @@ var AugmentDataDialog = (function() {
             th.append(label);
             tr.append(th);
             var th = $("<th>").addClass("DataCountProperty");
-            var label = $("<label>").text("Occurrence Probability");
+            var label = $("<label>").text("Estimated Matches");
             th.append(label);
             tr.append(th);
             var th = $("<th>").addClass("IncomingProperty");
@@ -2053,7 +2069,7 @@ var AugmentDataDialog = (function() {
             var tmp = [];
             var filterPredicate = $('#txtFilterPredicate').val().toLowerCase();
             var filterOtherClass = $('#txtFilterOtherClass').val().toLowerCase();
-            var filterProbability = $('#txtFilterDataCount').val();
+            var filterEstimate = $('#txtFilterDataCount').val();
             var filterIncoming = $('#txtFilterIncoming').val().toLowerCase();
  
             for (var i = 0; i < available.length; i++) {
@@ -2063,7 +2079,7 @@ var AugmentDataDialog = (function() {
                 else
                 	predicate = predicate.substring(predicate.lastIndexOf("/") + 1);
                 predicate = predicate.toLowerCase();
-                var probability = available[i]['probability'];
+                var estimate = available[i]['estimate'];
                 var otherClass = available[i]['otherClass'];
                 var incoming = available[i]['incoming'] === "true" ? "incoming" : "outgoing";
                 if (invertedClasses[otherClass] != undefined)
@@ -2078,7 +2094,7 @@ var AugmentDataDialog = (function() {
                 else if (otherClass.indexOf(filterOtherClass) == -1) {
                     flag = false;
                 }
-                else if (probability * 100.0 < filterProbability) {
+                else if (estimate < filterEstimate) {
                     flag = false;
                 }
                 else if (incoming.indexOf(filterIncoming) == -1) {
@@ -2268,7 +2284,7 @@ var AugmentDataDialog = (function() {
                         .addClass("table table-striped table-condensed");
                 for (var i = 0; i < filtered.length; i++) {
                     var predicate = filtered[i]['predicate'];
-                    var probability = filtered[i]['probability'];
+                    var estimate = filtered[i]['estimate'];
                     var otherClass = filtered[i]['otherClass'];
                     var incoming = filtered[i]['incoming'] === "true" ? "Incoming" : "Outgoing";
                     var tr = $("<tr>");
@@ -2294,7 +2310,7 @@ var AugmentDataDialog = (function() {
                     td.append(label);
                     tr.append(td);
                     var td = $("<td>").addClass("DataCountProperty");
-                    var label = $("<label>").text(parseFloat(probability*100.0).toFixed(2) + "%").addClass("DataCountProperty");
+                    var label = $("<label>").text(estimate).addClass("DataCountProperty");
                     td.append(label);
                     tr.append(td);
                     var td = $("<td>").addClass("IncomingProperty");

@@ -3,6 +3,8 @@ package edu.isi.karma.controller.command.alignment;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -75,7 +77,7 @@ public class SearchForDataToAugmentCommand extends Command{
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-	
+
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		RepFactory factory = workspace.getFactory();
 		TripleStoreUtil util = new TripleStoreUtil();
@@ -89,6 +91,7 @@ public class SearchForDataToAugmentCommand extends Command{
 			LOG.error("Unable to find predicates for triples maps with same class as: " + nodeUri, e);
 		}
 		final JSONArray array = new JSONArray();
+		List<JSONObject> objects = new ArrayList<JSONObject>();
 		List<String> concatenatedPredicateObjectMapsList = result.get("predicateObjectMaps");
 		List<String> predicates = result.get("predicates");
 		List<String> otherClasses = result.get("otherClasses");
@@ -140,10 +143,11 @@ public class SearchForDataToAugmentCommand extends Command{
 		}
 		while(concatenatedPredicateObjectMapsListItr.hasNext() && predicatesItr.hasNext() && otherClassesItr.hasNext())
 		{
-			JSONObject obj = new JSONObject();
+			
 			String concatenatedPredicateObjectMaps = concatenatedPredicateObjectMapsListItr.next();
 			List<String> predicateObjectMaps = new ArrayList<String>(Arrays.asList(concatenatedPredicateObjectMaps.split(",")));
 			String predicate =  predicatesItr.next();
+			String otherClass = otherClassesItr.next();
 			try {
 				KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 				for (String triplemap : predicateObjectMaps) {
@@ -154,20 +158,37 @@ public class SearchForDataToAugmentCommand extends Command{
 				}
 				System.out.println(predicate + " " + intersectionBF.estimateNumberOfHashedValues());
 				intersectionBF.and(uris);
-				double probability = intersectionBF.estimateNumberOfHashedValues()/(uriSet.size()*1.0);				
-				obj.put("predicate", predicate);
-				obj.put("otherClass", otherClassesItr.next());
-				obj.put("probability", String.format("%.4f", probability));
-				obj.put("incoming", "false");
-				array.put(obj);
+				int estimate = intersectionBF.estimateNumberOfHashedValues();
+				if (estimate > 0) {
+					JSONObject obj = new JSONObject();
+					obj.put("predicate", predicate);
+					obj.put("otherClass", otherClass);
+					obj.put("estimate", estimate);
+					obj.put("incoming", "false");
+//					array.put(obj);
+					objects.add(obj);
+				}
+
 			} catch (Exception e) {
 				LOG.error("Unable to process bloom filter: " + e.getMessage());
 			}
+		}
+		
+		Collections.sort(objects, new Comparator<JSONObject>() {
+
+	        @Override
+	        public int compare(JSONObject a, JSONObject b) {
+	            return b.getInt("estimate") - a.getInt("estimate");
+	        }
+	    });
+		for (JSONObject obj : objects) {
+			array.put(obj);
 		}
 		return new UpdateContainer(new AbstractUpdate() {
 
 			@Override
 			public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
+				System.out.println(array.toString());
 				pw.print(array.toString());
 			}
 		});
