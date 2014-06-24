@@ -69,7 +69,7 @@ public class PublishJSONCommand extends Command {
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.undoable;
+		return CommandType.notUndoable;
 	}
 
 	@Override
@@ -145,7 +145,9 @@ public class PublishJSONCommand extends Command {
 		return uc;
 	}
 
-	private void generateRowsUsingPager(TablePager pager, VWorksheet vWorksheet, List<VHNode> orderedHnodeIds, PrintWriter pw, String space) throws JSONException {
+	private void generateRowsUsingPager(TablePager pager, VWorksheet vWorksheet, 
+			List<VHNode> orderedHnodeIds, PrintWriter pw, 
+			String space) throws JSONException {
 		List<Row> rows = pager.getRows();
 		pw.print(space + "[");
 		while(true) {
@@ -171,14 +173,15 @@ public class PublishJSONCommand extends Command {
 			pw.print(space + "{");
 			for (VHNode vNode : orderedHnodeIds) {
 				if(vNode.isVisible()) {
-					pw.print(rowSep);
-					
 					Node rowNode = row.getNode(vNode.getId());
-					
 					if (vNode.hasNestedTable()) {
 						JSONObject nodeObj = new JSONObject();
-						nodeObj.put(vNode.getColumnName(), "");
+						String columnName = vNode.getColumnName();
+						if(columnName == null || columnName.length() == 0)
+							continue;
+						nodeObj.put(columnName, "");
 						String str = nodeObj.toString();
+						pw.print(rowSep);
 						pw.print(str.substring(1, str.length()-3));
 						
 						Table nestedTable = rowNode.getNestedTable();
@@ -189,8 +192,12 @@ public class PublishJSONCommand extends Command {
 								pw, space + "  ");
 					} else {
 						JSONObject nodeObj = new JSONObject();
-						nodeObj.put(vNode.getColumnName(), rowNode.getValue().asString());
+						String columnName = vNode.getColumnName();
+						if(columnName == null || columnName.length() == 0)
+							continue;
+						nodeObj.put(columnName, rowNode.getValue().asString());
 						String str = nodeObj.toString();
+						pw.print(rowSep);
 						pw.print(str.substring(1, str.length()-1));
 					}
 					rowSep = ",";
