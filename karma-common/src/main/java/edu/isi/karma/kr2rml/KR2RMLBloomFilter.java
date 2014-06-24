@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 public class KR2RMLBloomFilter extends BloomFilter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(KR2RMLBloomFilter.class);
+	public static final int defaultVectorSize = 1000000;
+	public static final int defaultnbHash = 8;
 	static Field bitsField;
 	static
 	{
@@ -44,7 +46,7 @@ public class KR2RMLBloomFilter extends BloomFilter {
 			double N = this.getVectorSize();
 			int k = this.nbHash;
 			double tmp = -(N * Math.log(1 - (setBits / N))) / (double)k;
-			num = (int)(tmp);
+			num = (int) Math.round(tmp);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			LOG.error("Unable to estimate number of hashed values: " + e.getMessage());
 		}

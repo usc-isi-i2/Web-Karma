@@ -7,7 +7,7 @@ import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
 import java.io.IOException;
 import java.util.*;
 public class BloomFilterWorker implements Runnable{
-	private KR2RMLBloomFilter bf = new KR2RMLBloomFilter(1000000, 8,Hash.JENKINS_HASH);
+	private KR2RMLBloomFilter bf = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 	private List<String> bloomfilters = Collections.synchronizedList(new ArrayList<String>());
 	private boolean isFinished = false;
 	private boolean isDone = false;
@@ -53,7 +53,7 @@ public class BloomFilterWorker implements Runnable{
 	public void run() {
 
 		while(!isDone || !bloomfilters.isEmpty()) {
-			KR2RMLBloomFilter bf = new KR2RMLBloomFilter(1000000, 8,Hash.JENKINS_HASH);
+			KR2RMLBloomFilter bf = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 			String tmp = getBloomfilter();
 			try {
 				if (tmp != null)

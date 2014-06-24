@@ -108,7 +108,7 @@ public class SearchForDataToAugmentCommand extends Command{
 		HNode hnode = factory.getHNode(hNodeId);
 		List<Table> dataTables = new ArrayList<Table>();
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), factory.getHTable(hnode.getHTableId()), dataTables);
-		KR2RMLBloomFilter uris = new KR2RMLBloomFilter(1000000, 8,Hash.JENKINS_HASH);
+		KR2RMLBloomFilter uris = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 		Set<String> uriSet = new HashSet<String>();
 		for(Table t : dataTables) {
 			for(Row r : t.getRows(0, t.getNumRows())) {
@@ -145,13 +145,14 @@ public class SearchForDataToAugmentCommand extends Command{
 			List<String> predicateObjectMaps = new ArrayList<String>(Arrays.asList(concatenatedPredicateObjectMaps.split(",")));
 			String predicate =  predicatesItr.next();
 			try {
-				KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(1000000,8,Hash.JENKINS_HASH);
+				KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 				for (String triplemap : predicateObjectMaps) {
 					String serializedBloomFilter = bloomfilterMapping.get(triplemap);
 					KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
 					bf.populateFromCompressedAndBase64EncodedString(serializedBloomFilter);
 					intersectionBF.or(bf);
 				}
+				System.out.println(predicate + " " + intersectionBF.estimateNumberOfHashedValues());
 				intersectionBF.and(uris);
 				double probability = intersectionBF.estimateNumberOfHashedValues()/(uriSet.size()*1.0);				
 				obj.put("predicate", predicate);

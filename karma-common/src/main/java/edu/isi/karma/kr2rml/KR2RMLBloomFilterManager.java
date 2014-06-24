@@ -46,7 +46,7 @@ public class KR2RMLBloomFilterManager {
 		KR2RMLBloomFilter bf = null;
 		if(!idToBloomFilter.containsKey(id))
 		{
-			idToBloomFilter.putIfAbsent(id, new KR2RMLBloomFilter(1000000, 8,Hash.JENKINS_HASH));
+			idToBloomFilter.putIfAbsent(id, new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH));
 		}
 		bf = idToBloomFilter.get(id);
 		

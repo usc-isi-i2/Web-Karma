@@ -99,7 +99,7 @@ public class SearchForDataToAugmentIncomingCommand extends Command{
 		HNode hnode = factory.getHNode(hNodeId);
 		List<Table> dataTables = new ArrayList<Table>();
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), factory.getHTable(hnode.getHTableId()), dataTables);
-		KR2RMLBloomFilter uris = new KR2RMLBloomFilter(1000000, 8,Hash.JENKINS_HASH);
+		KR2RMLBloomFilter uris = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 		Set<String> uriSet = new HashSet<String>();
 		for(Table t : dataTables) {
 			for(Row r : t.getRows(0, t.getNumRows())) {
@@ -135,7 +135,7 @@ public class SearchForDataToAugmentIncomingCommand extends Command{
 			String concatenatedPredicateObjectMaps = concatenatedPredicateObjectMapsListItr.next();
 			List<String> predicateObjectMaps = new ArrayList<String>(Arrays.asList(concatenatedPredicateObjectMaps.split(",")));
 			try {
-				KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(1000000,8,Hash.JENKINS_HASH);
+				KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 				for (String triplemap : predicateObjectMaps) {
 					String serializedBloomFilter = bloomfilterMapping.get(triplemap);
 					KR2RMLBloomFilter bf = new KR2RMLBloomFilter();

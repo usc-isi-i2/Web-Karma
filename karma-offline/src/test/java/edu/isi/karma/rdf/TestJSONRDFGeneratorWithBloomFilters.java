@@ -134,7 +134,7 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 			assertTrue(schedulePersonBF.membershipTest(k));
 			assertEquals(5, schedulePersonBF.estimateNumberOfHashedValues());
 			
-			KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(1000000,8,Hash.JENKINS_HASH);
+			KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 			intersectionBF.or(peoplePersonWithTwitterIdBF);
 			intersectionBF.and(schedulePersonBF);
 			assertEquals(3, intersectionBF.estimateNumberOfHashedValues());
@@ -143,7 +143,7 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 			
 			k = new Key(("<http://lod.isi.edu/cs548/person/Szekely>").getBytes());
 			assertTrue(hasInstructorBF.membershipTest(k));
-			intersectionBF = new KR2RMLBloomFilter(1000000,8,Hash.JENKINS_HASH);
+			intersectionBF = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 			intersectionBF.or(hasInstructorBF);
 			intersectionBF.and(peoplePersonWithTwitterIdBF);
 			assertEquals(3, intersectionBF.estimateNumberOfHashedValues());
