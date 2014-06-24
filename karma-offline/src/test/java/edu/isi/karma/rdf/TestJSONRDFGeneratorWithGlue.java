@@ -102,8 +102,7 @@ public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split(System.getProperty("line.separator"));
 			int count = lines.length;
-			 
-			assertEquals(33, count);
+			assertEquals(35, count);
 		} catch (Exception e) {
 			logger.error("testGlueNested failed:", e);
 			fail("Execption: " + e.getMessage());
@@ -128,8 +127,7 @@ public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split(System.getProperty("line.separator"));
 			int count = lines.length;
-			 
-			assertEquals(19, count);
+			assertEquals(22, count);
 		} catch (Exception e) {
 			logger.error("testGlueTop failed:", e);
 			fail("Execption: " + e.getMessage());
