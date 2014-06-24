@@ -313,6 +313,11 @@ public class SteinerTree {
 		this.tree = g5;
 		logger.debug("exit>");
 
+		//Add all the force added vertices
+		for(Node n : g1.vertexSet()) {
+			if(n.isForceAddedByUser())
+				this.tree.addVertex(n);
+		}
 	}
 	
 	public WeightedMultigraph<Node, DefaultLink> getDefaultSteinerTree() {

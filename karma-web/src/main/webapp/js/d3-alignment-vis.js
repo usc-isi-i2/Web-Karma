@@ -37,28 +37,78 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     }
     
     $("<div>").attr("id","svgDiv_"+worksheetId).addClass("svg-model").insertBefore('div#'+worksheetId + " > div.table-container");
-    
-    var h = 0;
-    // if(json["maxTreeHeight"] == 0)
-        // h = levelHeight * (json["maxTreeHeight"] + 0.2);
-    // else
-        h = levelHeight * (json["maxTreeHeight"] + 0.4);
+    //json["maxTreeHeight"] = 5;
+    var h = levelHeight * (json["maxTreeHeight"] + 0.4);
     if(w == 0)
         w = $("div#"+worksheetId + "TableDiv").width();
     
-    var svg = d3.select("div#svgDiv_"+worksheetId).append("svg:svg")
-        .attr("width", w)
-        .attr("height", h);
+    //1. Take care of floating nodes
+    var floatingLayout = new UnconnectedNodesLayout();
+    $.each(json["nodes"], function(index, node){
+        var hNodeList = node["hNodesCovered"];
         
-    $(svg).data("alignmentId", json["alignmentId"]);
-    $(svg).data("worksheetId", json["worksheetId"]);
+       ///console.log("Hnode:" + node["id"] + "->" + hNodeList.length);
+        if(hNodeList.length == 0) {
+        	var linkList = [];
+        	$.each(json["links"], function(index2, link) {
+        		var source = link["source"];
+        		if(typeof source == "object")
+        			source = source["index"];
+        		var target = link["target"];
+        		if(typeof target == "object")
+        			target = target["index"];
+        		
+        		if(source == index) {
+        			linkList.push(target);
+        		} else if(target == index) {
+        			linkList.push(source);
+        		}
+        	});
+       
+        	if(node["floating"]) {
+        		floatingLayout.addNode(node, linkList);
+        		return;
+        	}
+        	
+	        var extremeLeftX = Number.MAX_VALUE;
+	        var extremeRightX = Number.MIN_VALUE;
+	        $.each(linkList, function(index2, hNodeIdx){
+	            var nodeConnect = json["nodes"][hNodeIdx];
+	            var width = nodeConnect["width"];
+	            var x = nodeConnect["x"];
+	            //var y = nodeConnect["y"];
+	            var leftX = x - (width/2);
+	            var rightX = x + (width/2);
+	            if(leftX < extremeLeftX)
+	                extremeLeftX = leftX;
+	            if(rightX > extremeRightX)
+	                extremeRightX = rightX;
+	        });
+		        //console.log("HNode:" + node["id"] + " has " + linkList.length + " links");
+		        //console.log("left, right: " + extremeLeftX + ":" + extremeRightX);
+	      if(extremeLeftX == Number.MAX_VALUE) {
+	    	   floatingLayout.addNode(node, linkList);
+	    	   node["floating"] = true;
+	    	   return;
+	       }
+	       if(extremeRightX == Number.MIN_VALUE) {
+	    	   floatingLayout.addNode(node, linkList);
+	    	   node["floating"] = true;
+	    	   return;
+	       }
+        }
+    });
     
-    $(mainWorksheetDiv).data("svgVis", svg);
-    $(mainWorksheetDiv).data("forceLayoutObject", force);
+    floatingLayout.computeNodePositions(h, levelHeight, 230, w);
+    var maxLevel = json["maxTreeHeight"] ;
+    if(floatingLayout.getMaxLevel() > maxLevel) {
+    	json["maxTreeHeight"] = floatingLayout.getMaxLevel();
+    	h = levelHeight * (json["maxTreeHeight"] + 0.4);
+    	floatingLayout.setNewH(h);
+    }
     
     //console.log("There are " + json["links"].length + " links, " + json["nodes"].length + " nodes");
     $.each(json["nodes"], function(index, node){
-        node["fixed"] = true;
         var hNodeList = node["hNodesCovered"];
        
         var extremeLeftX = Number.MAX_VALUE;
@@ -92,11 +142,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     
   //Take into account where hNodesCovered is empty as this node does
     //not anchor to anything in the table
-    //var floatsAtLevel = [];
-    var floatingLayout = new UnconnectedNodesLayout();
-    
-    $.each(json["nodes"], function(index, node){
-        node["fixed"] = true;
+   $.each(json["nodes"], function(index, node){
         var hNodeList = node["hNodesCovered"];
         
        ///console.log("Hnode:" + node["id"] + "->" + hNodeList.length);
@@ -120,6 +166,9 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         		}
         	});
        
+        	if(node["floating"]) {
+        		return;
+        	}
         	
 	        var extremeLeftX = Number.MAX_VALUE;
 	        var extremeRightX = Number.MIN_VALUE;
@@ -137,17 +186,11 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	        });
 		        //console.log("HNode:" + node["id"] + " has " + linkList.length + " links");
 		        //console.log("left, right: " + extremeLeftX + ":" + extremeRightX);
-	        //node["floating"] = false;
-	       if(extremeLeftX == Number.MAX_VALUE) {
-	    	   floatingLayout.addNode(node, linkList);
+	      if(extremeLeftX == Number.MAX_VALUE) {
 	    	   return;
-	    	   //extremeLeftX = 10;
-	    	   //node["floating"] = true;
 	       }
 	       if(extremeRightX == Number.MIN_VALUE) {
-	    	   floatingLayout.addNode(node, linkList);
-	    	   //extremeRightX = 230;
-	    	   //node["floating"] = true;
+	    	   return;
 	       }
 		   
 	        var width = extremeRightX - extremeLeftX + 18;
@@ -174,8 +217,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	        //console.log("x:" + node["x"] + ", y:" + node["y"] + ", width:" + node["width"]);
         }
     });
-    
-    floatingLayout.computeNodePositions(h, levelHeight, 230);
+  
     
     var lineLayout;
     if(viewStraightLineModel) {
@@ -212,6 +254,16 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .size([w, h])
         .start();
     
+    var svg = d3.select("div#svgDiv_"+worksheetId).append("svg:svg")
+			    .attr("width", w)
+			    .attr("height", h);
+    
+	$(svg).data("alignmentId", json["alignmentId"]);
+	$(svg).data("worksheetId", json["worksheetId"]);
+	
+	$(mainWorksheetDiv).data("svgVis", svg);
+	$(mainWorksheetDiv).data("forceLayoutObject", force);
+
     svg.append("svg:defs").selectAll("marker")
         .data(["marker-Class", "marker-DataProperty"])
       .enter().append("svg:marker")

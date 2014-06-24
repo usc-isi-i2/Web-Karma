@@ -2,6 +2,7 @@ var UnconnectedNodesLayout = function () {
 	this.nodes = new Array();
 	this.nodeLinks = new Object();
 	this.nodesAtLevel = new Object();
+	this.maxLevel = -1;
 };
 
 UnconnectedNodesLayout.prototype.addNode = function(node, links) {
@@ -9,41 +10,123 @@ UnconnectedNodesLayout.prototype.addNode = function(node, links) {
 	this.nodeLinks[node.id] = links;
 };
 
-UnconnectedNodesLayout.prototype.computeNodePositions = function(h, levelHeight, width) {
-	var maxLevel = -1;
+UnconnectedNodesLayout.prototype.computeNodePositions = function(h, levelHeight, width, maxRight) {
+	this.maxLevel = -1;
+	this.h = h;
+	this.levelHeight = levelHeight;
 	
 	//Compute Nodes at each level
 	for(var i=0; i<this.nodes.length; i++) {
 		var node = this.nodes[i];
 		var level = node["height"];
+		node["width"] = width;
+		node["x"] = 10 + width/2;
+		this._computeNodeY(node);
+		
 		if (this.nodesAtLevel[level] == null) {
 			this.nodesAtLevel[level] = new Array();
 		}
 		this.nodesAtLevel[level].push(node);
-		if(level > maxLevel)
-			maxLevel = level;
+		if(level > this.maxLevel)
+			this.maxLevel = level;
 	}
 	
-	for(var i=0; i<=maxLevel; i++)
-		this._layoutNodesAtLevel(i, h, levelHeight, width);
+	this._layoutNodesAtLevel1(width);
+	for(var i=2; i<=this.maxLevel; i++)
+		this._layoutNodesAtLevel(i, width);
+
 	
-	for(var i=1; i<=maxLevel; i++)
+	for(var i=1; i<=this.maxLevel; i++)
 		this._computeNodeWidthOnLinks(i);
+	
+	var allIn = false;
+	while(!allIn) {
+		allIn = true;
+		//bump levels if nodes are out of the maxLeft
+		for(var i=1; i<=this.maxLevel; i++) {
+			var inAtLevel = this._checkMaxLeftAtLevel(i, maxRight);
+			if(!inAtLevel) {
+				allIn = false;
+			}
+		}
+		if(!allIn)
+			this._removeEmptyLevels(this.maxLevel);
+		this._computeMaxLevel();
+	}
 };
 
-UnconnectedNodesLayout.prototype._layoutNodesAtLevel = function(level, h, levelHeight, width) {
-	var nodes = this.nodesAtLevel[level];
+UnconnectedNodesLayout.prototype.getMaxLevel = function() {
+	return this.maxLevel;
+}; 
+
+UnconnectedNodesLayout.prototype.setNewH = function(h) {
+	this.h = h;
+	for(var i=0; i<this.nodes.length; i++) {
+		var node = this.nodes[i];
+		this._computeNodeY(node);
+	}
+};
+
+UnconnectedNodesLayout.prototype._layoutNodesAtLevel1 = function(width) {
+	var nodes = this.nodesAtLevel[1];
 	if(nodes) {
 		var left = 10;
 		
 		for(var i=0; i<nodes.length; i++) {
 			var node = nodes[i];
-			node["width"] = width;
 			node["x"] = left + width/2;
-			node["y"] = h - ((node["height"] * levelHeight));
 			left += width + 50;
 		}
 	}
+};
+
+UnconnectedNodesLayout.prototype._layoutNodesAtLevel = function(level, width) {
+	var nodes = this.nodesAtLevel[level];
+	if(nodes) {
+		for(var i=0; i<nodes.length; i++) {
+			var node = nodes[i];
+			
+			var links = this.nodeLinks[node.id];
+			var left = 999999;
+			if(links) {
+				for(var j=0; j<links.length; j++) {
+					var linkId = links[j];
+					var nodeConnect = this.nodes[linkId];
+					if(nodeConnect["height"] > level)
+						continue;
+					if(nodeConnect["x"] < left)
+						left = nodeConnect["x"] - width/2;
+				}
+			}
+			
+			if(left == 999999) {
+				left = this._getMaxXAtLevel(level-1) + width + 50;
+				for(var j=0; j<i; j++) {
+					var doneNode = nodes[j];
+					var doneLeft = doneNode["x"] - width/2;
+					if(left <= doneLeft) {
+						left = doneLeft + width + 50;
+					}
+				}
+			}
+			node["x"] = left + width/2;
+		}
+	}
+};
+
+UnconnectedNodesLayout.prototype._getMaxXAtLevel = function(level) {
+	var nodes = this.nodesAtLevel[level];
+	var maxLeft = 10;
+	if(nodes) {
+		for(var i=0; i<nodes.length; i++) {
+			var node = nodes[i];
+			var width = node["width"];
+			var x = node["x"] - width/2;
+			if(x > maxLeft)
+				maxLeft = x;
+		}
+	}
+	return maxLeft;
 };
 
 UnconnectedNodesLayout.prototype._computeNodeWidthOnLinks = function(level) {
@@ -79,5 +162,76 @@ UnconnectedNodesLayout.prototype._computeNodeWidthOnLinks = function(level) {
 			    node["width"] = width;
 			}
 		}
+	}
+};
+
+UnconnectedNodesLayout.prototype._checkMaxLeftAtLevel = function(level, maxRight) {
+	var nodes = this.nodesAtLevel[level];
+	var allIn = true;
+	if(nodes) {
+		for(var i=0; i<nodes.length; i++) {
+			var node = nodes[i];
+			var x = node["x"];
+			var width = node["width"];
+            var rightX = x + width/2;
+            if(rightX > maxRight) {
+            	//need to bump this
+            	allIn = false;
+            	this._setNodeLevel(node, this.maxLevel + node["height"]);
+            	node["x"] = x - maxRight + width/2;
+            }
+		}
+	}
+	return allIn;
+};
+
+UnconnectedNodesLayout.prototype._setNodeLevel = function(node, level) {
+	node["height"] = level;
+	if (this.nodesAtLevel[level] == null) {
+		this.nodesAtLevel[level] = new Array();
+	}
+	this.nodesAtLevel[level].push(node);
+	this._computeNodeY(node);
+};
+
+UnconnectedNodesLayout.prototype._removeEmptyLevels = function(startLevel) {
+	this._computeMaxLevel();
+	var max = this.maxLevel;
+	for(var i=startLevel; i<max; i++) {
+		var nodes = this.nodesAtLevel[i];
+		if(nodes) {
+			
+		} else {
+			//move all at i+1 here
+			var next = i+1;
+			var done = false;
+			while(!done && next <= max) {
+				var upper = this.nodesAtLevel[next];
+				if(upper) {
+					done = true;
+					this.nodesAtLevel[next] = undefined;
+					for(var j=0; j<upper.length; j++) {
+						var node = upper[j];
+						this._setNodeLevel(node, i);
+					}
+				}
+				next++;
+			}
+		}
+	}
+};
+
+UnconnectedNodesLayout.prototype._computeNodeY = function(node) {
+	node["y"] = this.h - ((node["height"] * this.levelHeight));
+};
+
+UnconnectedNodesLayout.prototype._computeMaxLevel = function() {
+	this.maxLevel = -1;
+	for(var i=0; i<this.nodes.length; i++) {
+		var node = this.nodes[i];
+		var level = node["height"];
+		
+		if(level > this.maxLevel)
+			this.maxLevel = level;
 	}
 };
