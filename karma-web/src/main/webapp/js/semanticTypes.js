@@ -834,7 +834,7 @@ var SetSemanticTypeDialog = (function() {
 	                        $(rowToChange).data("ResourceType", "Class").data("FullType",uri).data("DisplayLabel",properCasedKey);
 	                        displayLabel = $(rowToChange).data("DisplayLabel");
 	                    } else {
-	                        $(rowToChange).data("DomainUri",uri).data("DomainId", foundObj.uri).data("DisplayDomainLabel",properCasedKey);
+	                        $(rowToChange).data("DomainUri",uri).data("DomainId", classData.id).data("DisplayDomainLabel",properCasedKey);
 	                        displayLabel = "<span class='italic'>" + propertyOld + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
 	                    }
 	                }

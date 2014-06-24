@@ -111,7 +111,7 @@ public class TemplateTermSetPopulatorWorker {
 			else
 			{
 				List<List<PartiallyPopulatedTermSet>> leftHalf = partialResults.subList(0, partialResults.size()/2);
-				List<List<PartiallyPopulatedTermSet>> rightHalf = partialResults.subList(partialResults.size()/2, partialResults.size()-1);
+				List<List<PartiallyPopulatedTermSet>> rightHalf = partialResults.subList(partialResults.size()/2, partialResults.size());
 				List<PartiallyPopulatedTermSet> left = combinePartialResults(leftHalf);
 				List<PartiallyPopulatedTermSet> right = combinePartialResults(rightHalf);
 				combinePartialResults(combinedResults, left, right);

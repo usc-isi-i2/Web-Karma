@@ -85,15 +85,24 @@ public class TemplateTermSetPopulator {
 			StringBuilder uri = new StringBuilder();
 			Map<ColumnTemplateTerm, Node> references = new HashMap<ColumnTemplateTerm, Node>();
 			boolean termsSatisifed = true;
+			boolean atLeastOneTermSatisified = false;
 			for(TemplateTerm term : terms)
 			{
 				if(term instanceof ColumnTemplateTerm)
 				{
 					Node n = partial.getValue((ColumnTemplateTerm)term);
-					if(n == null || n.getValue() == null || n.getValue().asString() == null || n.getValue().isEmptyValue() || n.getValue().asString().trim().isEmpty())
+					if(n == null)
+					{
+						termsSatisifed = false; 
+						continue;
+					}
+					if(n.getValue() == null || n.getValue().asString() == null || n.getValue().isEmptyValue() || n.getValue().asString().trim().isEmpty())
 					{
 						termsSatisifed = false;
-						break;
+					}
+					else
+					{
+						atLeastOneTermSatisified = true;
 					}
 					references.put((ColumnTemplateTerm) term, n);
 					if(useNodeValue)
@@ -111,14 +120,14 @@ public class TemplateTermSetPopulator {
 					uri.append(term.getTemplateTermValue());
 				}
 			}
-			if(termsSatisifed)
+			if(termsSatisifed || (!useNodeValue && atLeastOneTermSatisified))
 			{
-			String value = uri.toString();
-			if(URIify)
-			{
-				value = formatter.getExpandedAndNormalizedUri(value);
-			}
-			templates.add(new PopulatedTemplateTermSet(originalTerms, references, value));
+				String value = uri.toString();
+				if(URIify)
+				{
+					value = formatter.getExpandedAndNormalizedUri(value);
+				}
+				templates.add(new PopulatedTemplateTermSet(originalTerms, references, value));
 			}
 			
 		}
