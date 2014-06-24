@@ -58,14 +58,16 @@ public class DisplayModel {
 		this.hTable = hTable;
 
 		levelingCyclicGraph();
-//		printLevels();
+		logger.info("After levelingCyclicGraph");
+		printLevels();
 
 		computeNodeSpan();
 //		printSpans();
 		
 		updateNodeLevelsConsideringOverlaps();
 		
-//		printLevels();
+		logger.info("After updateNodeLevelsConsideringOverlaps");
+		printLevels();
 //		printSpans();
 		
 		
@@ -89,8 +91,9 @@ public class DisplayModel {
 			nodesLevel.put(n, nodesLevel.get(n)+maxLevel);
 		}
 		
+		logger.info("Final Levels");
 		printLevels();
-		printSpans();
+		//printSpans();
 		
 		logger.debug("finished leveling the model.");
 	}
