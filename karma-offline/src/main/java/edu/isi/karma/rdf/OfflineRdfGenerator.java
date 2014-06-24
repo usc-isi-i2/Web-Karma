@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.kr2rml.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
@@ -228,13 +229,27 @@ public class OfflineRdfGenerator {
 		        hostname, portnumber, username, password, dBorSIDName, encoding);
 		if(inputType.equals("DB")) {
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
-			dbRdfGen.generateRDFFromTable(tablename, pw, bloomfilterpw, id, baseURI);
+			BloomFilterKR2RMLRDFWriter bloomfilter = null;
+			if (bloomfilterpw != null)
+				bloomfilter = new BloomFilterKR2RMLRDFWriter(bloomfilterpw, id, true, baseURI);
+			dbRdfGen.generateRDFFromTable(tablename, pw, bloomfilter, id, baseURI);
+			if (bloomfilter != null) {
+				bloomfilter.flush();
+				bloomfilter.close();
+			}
 		} else {
 			File file = new File(queryFile);
 			String queryFileEncoding = EncodingDetector.detect(file);
 			String query = EncodingDetector.getString(file, queryFileEncoding);
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(modelURL.toString(), modelURL);
-			dbRdfGen.generateRDFFromSQL(query, pw, bloomfilterpw, id, baseURI);
+			BloomFilterKR2RMLRDFWriter bloomfilter = null;
+			if (bloomfilterpw != null)
+				bloomfilter = new BloomFilterKR2RMLRDFWriter(bloomfilterpw, id, true, baseURI);
+			dbRdfGen.generateRDFFromSQL(query, pw, bloomfilter, id, baseURI);
+			if (bloomfilter != null) {
+				bloomfilter.flush();
+				bloomfilter.close();
+			}
 		}
 		if (bloomfilterpw != null) {
 			bloomfilterpw.flush();
@@ -272,10 +287,14 @@ public class OfflineRdfGenerator {
 			return;
 		}
 		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(sourceName, modelURL);
+		BloomFilterKR2RMLRDFWriter bloomfilter = null;
+		if (bloomfilterpw != null)
+			bloomfilter = new BloomFilterKR2RMLRDFWriter(bloomfilterpw, id, true, baseURI);
 		FileRdfGenerator rdfGenerator = new FileRdfGenerator();
-		rdfGenerator.generateRdf(inputType, id, pw, bloomfilterpw, inputFile, encoding, maxNumLines, baseURI);
-		if (bloomfilterpw != null) {
-			bloomfilterpw.flush();
+		rdfGenerator.generateRdf(inputType, id, pw, bloomfilter, inputFile, encoding, maxNumLines, baseURI);
+		if (bloomfilter != null) {
+			bloomfilter.flush();
+			bloomfilter.close();
 			bloomfilterpw.close();
 		}
         pw.flush();

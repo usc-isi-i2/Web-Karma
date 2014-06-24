@@ -81,7 +81,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		this.encoding = encoding;
 	}
 	
-	public void generateRDFFromSQL(String query, PrintWriter pw, PrintWriter bloomfilterpw, R2RMLMappingIdentifier id, String baseURI)
+	public void generateRDFFromSQL(String query, PrintWriter pw, BloomFilterKR2RMLRDFWriter bloomfilterpw, R2RMLMappingIdentifier id, String baseURI)
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
 		String wkname = query.replace(" ", "_");
 		if(wkname.length() > 100)
@@ -89,14 +89,14 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		generateRDF(wkname, query, pw, bloomfilterpw, id, baseURI);
 	}
 	
-	public void generateRDFFromTable(String tablename, PrintWriter pw, PrintWriter bloomfilterpw, R2RMLMappingIdentifier id, String baseURI)
+	public void generateRDFFromTable(String tablename, PrintWriter pw, BloomFilterKR2RMLRDFWriter bloomfilterpw, R2RMLMappingIdentifier id, String baseURI)
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		String query = "Select * FROM " + dbUtil.escapeTablename(tablename);
 		generateRDF(tablename, query, pw, bloomfilterpw, id, baseURI);
 	}
 
-	private void generateRDF(String wkname, String query, PrintWriter pw, PrintWriter bloomfilterpw, R2RMLMappingIdentifier id, String baseURI) 
+	private void generateRDF(String wkname, String query, PrintWriter pw, BloomFilterKR2RMLRDFWriter bloomfilterpw, R2RMLMappingIdentifier id, String baseURI) 
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException{
 		logger.debug("Generating RDF...");
 
@@ -166,7 +166,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 	}
 	
 	private void generateRDFFromWorksheet(Worksheet wk, 
-			Workspace workspace, KR2RMLMapping mapping, PrintWriter pw, PrintWriter bloomfilterpw, String baseURI) 
+			Workspace workspace, KR2RMLMapping mapping, PrintWriter pw, BloomFilterKR2RMLRDFWriter bloomfilterpw, String baseURI) 
 					throws IOException, JSONException, KarmaException {
 		// Generate RDF for the remaining rows
 		// Gets all the errors generated during the RDF generation
@@ -177,10 +177,8 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		N3KR2RMLRDFWriter rdfwriter = new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), pw);
 		rdfwriter.setBaseURI(baseURI);
 		writers.add(rdfwriter);
-		BloomFilterKR2RMLRDFWriter writer = null;
 		if (bloomfilterpw != null) {
-			writer = new BloomFilterKR2RMLRDFWriter(bloomfilterpw, mapping.getId(), true, baseURI);
-			writers.add(writer);
+			writers.add(bloomfilterpw);
 		}
 		// RDF generation object initialization
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(wk,
@@ -189,8 +187,6 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 
 		// Generate the rdf
 		rdfGen.generateRDF(false);
-		if (writer != null)
-			writer.close();
 	}
 	
 	private List<String> addHeaders (Worksheet wk, List<String> columnNames,

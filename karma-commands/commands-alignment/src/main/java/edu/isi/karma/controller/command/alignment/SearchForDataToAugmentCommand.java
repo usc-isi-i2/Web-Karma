@@ -143,6 +143,7 @@ public class SearchForDataToAugmentCommand extends Command{
 			JSONObject obj = new JSONObject();
 			String concatenatedPredicateObjectMaps = concatenatedPredicateObjectMapsListItr.next();
 			List<String> predicateObjectMaps = new ArrayList<String>(Arrays.asList(concatenatedPredicateObjectMaps.split(",")));
+			String predicate =  predicatesItr.next();
 			try {
 				KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(1000000,8,Hash.JENKINS_HASH);
 				for (String triplemap : predicateObjectMaps) {
@@ -152,8 +153,8 @@ public class SearchForDataToAugmentCommand extends Command{
 					intersectionBF.or(bf);
 				}
 				intersectionBF.and(uris);
-				double probability = intersectionBF.estimateNumberOfHashedValues()/(uriSet.size()*1.0);
-				obj.put("predicate", predicatesItr.next());
+				double probability = intersectionBF.estimateNumberOfHashedValues()/(uriSet.size()*1.0);				
+				obj.put("predicate", predicate);
 				obj.put("otherClass", otherClassesItr.next());
 				obj.put("probability", String.format("%.4f", probability));
 				obj.put("incoming", "false");

@@ -43,7 +43,8 @@ public class KR2RMLBloomFilter extends BloomFilter {
 			int setBits = bits.cardinality();
 			double N = this.getVectorSize();
 			int k = this.nbHash;
-			num = (int)(-(N * Math.log(1 - (setBits / N))) / (double)k);
+			double tmp = -(N * Math.log(1 - (setBits / N))) / (double)k;
+			num = (int)(tmp);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			LOG.error("Unable to estimate number of hashed values: " + e.getMessage());
 		}
