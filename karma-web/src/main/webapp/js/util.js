@@ -433,6 +433,31 @@ function getAllLinksForNode(worksheetId, alignmentId, nodeId) {
     return result;
 }
 
+function changeKarmaHome(homeDir) {
+	var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "SetKarmaHomeCommand";
+    info["directory"] = homeDir;
+    var result = [];
+    $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        async : false,
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+               parse(json);
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while setting Karma Home Directory!");
+            }
+    });
+    return result;
+}
+
 //Make All Modal Dialogs Resizeable
 $(".modal-dialog").resizable({ handles: "e, w" });
 $(".modal-dialog").draggable({

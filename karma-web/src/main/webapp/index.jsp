@@ -1,3 +1,6 @@
+
+<%@page import="edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter"%>
+<%@page import="edu.isi.karma.webserver.ServletContextParameterMap"%>
 <%@page import="edu.isi.karma.config.UIConfiguration"%>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -49,6 +52,7 @@ and related projects, please see: http://www.isi.edu/integration
         <link rel="stylesheet" type="text/css" href="./uiLibs/sticky/css/sticky.min.css" />
         <link rel="stylesheet/less" type="text/css" href="./uiLibs/less/css/styles-03d-fixed-pixel.less" />
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jstree-themes/default/style.css" />
+        <link href="./css/sticky-footer-navbar.css?<jsp:include page='version.jsp'/>" rel="stylesheet">
         
         <link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/command_History.css?<jsp:include page='version.jsp' />" />
@@ -206,7 +210,17 @@ and related projects, please see: http://www.isi.edu/integration
 			</div><!-- /.modal -->
 
 		</div>
- 
+ 		
+ 		<div id="footer">
+	      <div class="container">
+	        <p class="text-muted">
+	        	<div class="row">
+	        		<div class="col-sm-4">Karma Home: <span id="karmaHome"><%=ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></span></div>
+	        	</div>
+	        </p>
+	      </div>
+	    </div>
+    
         <div id="ScrollHeadersPlaceholder"></div>
        
         
@@ -358,6 +372,17 @@ and related projects, please see: http://www.isi.edu/integration
                     dialogBox.dialog({width: 550, title: chartTitle
                         , buttons: { "Close": function() { $(this).dialog("close"); } }})
                 });
+                
+                $("#karmaHome").editable({
+		       			 type: 'text',
+		       			 success: function(response, newValue) {
+		       				 console.log("Set Karma Home:" + newValue);
+		       				 changeKarmaHome(newValue);
+		       			 },
+		       			 showbuttons: 'bottom',
+		       			 mode: 'popup',
+		       			 inputclass: 'worksheetInputEdit'	 
+		            });
 			});
 		</script>
 		<script type="text/javascript">

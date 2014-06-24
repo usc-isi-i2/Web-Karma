@@ -32,8 +32,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.UIConfiguration;
 import edu.isi.karma.controller.command.alignment.R2RMLAlignmentFileSaver;
 import edu.isi.karma.controller.history.CommandHistory;
+import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -136,6 +138,23 @@ public class KarmaServlet extends HttpServlet {
 			updateContainer.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(w.getId())); 
 		}
 
+		updateContainer.add(new AbstractUpdate() {
+
+			@Override
+			public void generateJson(String prefix, PrintWriter pw,
+					VWorkspace vWorkspace) {
+				UIConfiguration.Instance().loadConfig();
+				pw.println("{");
+				pw.println("\"updateType\": \"UISettings\", ");
+				pw.println("\"settings\": {");
+				pw.println("  \"googleEarthEnabled\" : " + UIConfiguration.Instance().isGoogleEarthEnabled() + ",");
+				pw.println("  \"maxLoadedClasses\" : " + UIConfiguration.Instance().getMaxClassesToLoad() + ",");
+				pw.println("  \"maxLoadedProperties\" : " + UIConfiguration.Instance().getMaxPropertiesToLoad());
+				pw.println("  }");
+				pw.println("}");
+			}
+			
+		});
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		updateContainer.applyUpdates(vwsp);
