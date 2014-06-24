@@ -1971,7 +1971,28 @@ var AugmentDataDialog = (function() {
 
           	var dialogContent = $("#augmentDataDialogHeaders", dialog);
           	dialogContent.empty();
-          	var table = $("<table>");
+          	var table = $("<table>")
+          							.addClass("table table-striped table-condensed");
+          	var tr = $("<tr>");
+            var th = $("<th>").addClass("CheckboxProperty");
+            tr.append(th);
+            var th = $("<th>").addClass("PredicateProperty");
+            var label = $("<label>").text("Predicate");
+            th.append(label);
+            tr.append(th);
+            var th = $("<th>").addClass("OtherClassProperty");
+            var label = $("<label>").text("Other Class");
+            th.append(label);
+            tr.append(th);
+            var th = $("<th>").addClass("DataCountProperty");
+            var label = $("<label>").text("Occurrence Probability");
+            th.append(label);
+            tr.append(th);
+            var th = $("<th>").addClass("IncomingProperty");
+            var label = $("<label>").text("Incoming /Outgoing");
+            th.append(label);
+            tr.append(th);
+            table.append(tr);
             var tr = $("<tr>");
             var td = $("<td>")
                      .addClass("CheckboxProperty");
@@ -2245,26 +2266,6 @@ var AugmentDataDialog = (function() {
           			dialogContent.empty();
           			var table = $("<table>")
                         .addClass("table table-striped table-condensed");
-                var tr = $("<tr>");
-            		var th = $("<th>").addClass("CheckboxProperty");
-            		tr.append(th);
-            		var th = $("<th>").addClass("PredicateProperty");
-            		var label = $("<label>").text("Predicate");
-            		th.append(label);
-            		tr.append(th);
-            		var th = $("<th>").addClass("OtherClassProperty");
-            		var label = $("<label>").text("Other Class");
-            		th.append(label);
-            		tr.append(th);
-            		var th = $("<th>").addClass("DataCountProperty");
-            		var label = $("<label>").text("Occurrence Probability");
-            		th.append(label);
-            		tr.append(th);
-            		var th = $("<th>").addClass("IncomingProperty");
-            		var label = $("<label>").text("Incoming /Outgoing");
-            		th.append(label);
-            		tr.append(th);
-            		table.append(tr);
                 for (var i = 0; i < filtered.length; i++) {
                     var predicate = filtered[i]['predicate'];
                     var probability = filtered[i]['probability'];

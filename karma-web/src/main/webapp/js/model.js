@@ -231,7 +231,24 @@ var modelManagerDialog = (function() {
             refresh();
             var dialogContent = $("#modelManagerDialogHeaders", dialog);
             dialogContent.empty();
-            var table = $("<table>");
+            var table = $("<table>")
+                        .addClass("table table-striped table-condensed");
+            var tr = $("<tr>");
+            var th = $("<th>").addClass("CheckboxProperty");
+            tr.append(th);
+            var th = $("<th>").addClass("FileNameProperty");
+            var label = $("<label>").text("File Name").addClass("FileNameProperty");
+            th.append(label);
+            tr.append(th);
+            var th = $("<th>").addClass("PublishTimeProperty");
+            var label = $("<label>").text("Publish Time").addClass("PublishTimeProperty");
+            th.append(label);
+            tr.append(th);
+            var th = $("<th>").addClass("URLProperty");
+            var label = $("<label>").text("URL").addClass("URLProperty");
+            th.append(label);
+            tr.append(th);
+            table.append(tr);
             var tr = $("<tr>");
             var td = $("<td>")
                      .addClass("CheckboxProperty");
@@ -241,7 +258,8 @@ var modelManagerDialog = (function() {
             var label = $("<input>").text("")
                         .addClass("form-control")
                         .attr("id","txtFilterFileName")
-                        .attr("type", "text");
+                        .attr("type", "text")
+                        .on('keyup', applyFilter);
             td.append(label);
             tr.append(td);
             var td = $("<td>")
@@ -249,7 +267,8 @@ var modelManagerDialog = (function() {
             var label = $("<input>").text("")
                         .addClass("form-control")
                         .attr("id","txtFilterPublishTime")
-                        .attr("type", "text");
+                        .attr("type", "text")
+                        .on('keyup', applyFilter);
             td.append(label);
             tr.append(td);
             var td = $("<td>")
@@ -257,22 +276,17 @@ var modelManagerDialog = (function() {
             var label = $("<input>").text("")
                         .addClass("form-control")
                         .attr("id","txtFilterURL")
-                        .attr("type", "text");
+                        .attr("type", "text")
+                        .on('keyup', applyFilter);
             td.append(label);
             tr.append(td);
-            table.append(tr);            
-            dialogContent.append(table);
+            table.append(tr);
+            dialogContent.append(table);      
             $('#btnLoadModel', dialog).on('click', function (e) {
                 e.preventDefault();
                 hide();
                 saveModelDialog.getInstance().show();
             });
-
-            $('#txtFilterFileName', dialog).on('keyup', applyFilter);
-
-            $('#txtFilterPublishTime', dialog).on('keyup', applyFilter);
-
-            $('#txtFilterURL', dialog).on('keyup', applyFilter);
 
             $('#btnClearModel', dialog).on('click', function (e) {
                 e.preventDefault();
@@ -336,7 +350,8 @@ var modelManagerDialog = (function() {
 
             for (var i = 0; i < availableModels.length; i++) {
                 var name = availableModels[i]['name'].toLowerCase();
-                var time = new Date(availableModels[i].publishTime*1).toDateString().toLowerCase();
+                var time = new Date(availableModels[i].publishTime*1).toString();
+                time = time.substring(0, time.indexOf("GMT") - 1).toLowerCase();
                 var url = availableModels[i].url.toLowerCase();
                 var flag = true;
                 if (name.indexOf(filterFilename) == -1) {
@@ -453,26 +468,11 @@ var modelManagerDialog = (function() {
             dialogContent.empty();
             var table = $("<table>")
                         .addClass("table table-striped table-condensed");
-            var tr = $("<tr>");
-            var th = $("<th>").addClass("CheckboxProperty");
-            tr.append(th);
-            var th = $("<th>").addClass("FileNameProperty");
-            var label = $("<label>").text("File Name").addClass("FileNameProperty");
-            th.append(label);
-            tr.append(th);
-            var th = $("<th>").addClass("PublishTimeProperty");
-            var label = $("<label>").text("Publish Time").addClass("PublishTimeProperty");
-            th.append(label);
-            tr.append(th);
-            var th = $("<th>").addClass("URLProperty");
-            var label = $("<label>").text("URL").addClass("URLProperty");
-            th.append(label);
-            tr.append(th);
-            table.append(tr);
             console.log(filteredModels.length);
             for (var i = 0; i < filteredModels.length; i++) {                
                 var name = filteredModels[i]['name'];
-                var time = new Date(filteredModels[i].publishTime*1).toDateString();
+                var time = new Date(filteredModels[i].publishTime*1).toString();
+                time = time.substring(0, time.indexOf("GMT") - 1);
                 var url = filteredModels[i].url;
                 var context = filteredModels[i].context;
                 var tr = $("<tr>");

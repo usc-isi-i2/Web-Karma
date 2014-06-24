@@ -289,7 +289,24 @@ var applyModelDialog = (function() {
             });
             var dialogContent = $("#applyModelDialogHeaders", dialog);
             dialogContent.empty();
-            var table = $("<table>");
+            var table = $("<table>")
+                        .addClass("table table-striped table-condensed");
+            var tr = $("<tr>");
+            var th = $("<th>").addClass("CheckboxProperty");
+            tr.append(th);
+            var th = $("<th>").addClass("FileNameProperty");
+            var label = $("<label>").text("File Name");
+            th.append(label);
+            tr.append(th);
+            var th = $("<th>").addClass("PublishTimeProperty");
+            var label = $("<label>").text("Publish Time");
+            th.append(label);
+            tr.append(th);
+            var th = $("<th>").addClass("URLProperty");
+            var label = $("<label>").text("URL");
+            th.append(label);
+            tr.append(th);
+            table.append(tr);
             var tr = $("<tr>");
             var td = $("<td>")
                      .addClass("CheckboxProperty");
@@ -420,7 +437,8 @@ var applyModelDialog = (function() {
             
             for (var i = 0; i < availableModels.length; i++) {
                 var name = availableModels[i]['name'].toLowerCase();
-                var time = new Date(availableModels[i].publishTime*1).toDateString().toLowerCase();
+                var time = new Date(availableModels[i].publishTime*1).toString();
+                time = time.substring(0, time.indexOf("GMT") - 1).toLowerCase();
                 var url = availableModels[i].url.toLowerCase();
                 var flag = true;
                 if (name.indexOf(filterFilename) == -1) {
@@ -448,25 +466,10 @@ var applyModelDialog = (function() {
                 dialogContent.empty();
                 var table = $("<table>")
                         .addClass("table table-striped table-condensed");
-                var tr = $("<tr>");
-                var th = $("<th>").addClass("CheckboxProperty");
-                tr.append(th);
-                var th = $("<th>").addClass("FileNameProperty");
-                var label = $("<label>").text("File Name");
-                th.append(label);
-                tr.append(th);
-                var th = $("<th>").addClass("PublishTimeProperty");
-                var label = $("<label>").text("Publish Time");
-                th.append(label);
-                tr.append(th);
-                var th = $("<th>").addClass("URLProperty");
-                var label = $("<label>").text("URL");
-                th.append(label);
-                tr.append(th);
-                table.append(tr);
                 for (var i = 0; i < filteredModels.length; i++) {
                     var name = filteredModels[i]['name'];
-                    var time = new Date(filteredModels[i].publishTime*1).toDateString();
+                    var time = new Date(filteredModels[i].publishTime*1).toString();
+                    time = time.substring(0, time.indexOf("GMT") - 1);
                     var url = filteredModels[i].url;
                     var context = filteredModels[i].context;
                     var tr = $("<tr>");
