@@ -113,10 +113,6 @@ public class OfflineRdfGenerator {
         p.setHelpFormatter(hf);
         p.setHelpTrigger("--help");
 
-        for(String s: args)
-        {
-        	System.out.println(s);
-        }
         try {
             /**
              * PARSE THE COMMAND LINE ARGUMENTS *
@@ -187,6 +183,7 @@ public class OfflineRdfGenerator {
 		baseURI = (String) cl.getValue("--baseuri");
 		bloomFiltersFilePath = (String) cl.getValue("--outputbloomfilter");
 		parseDatabaseCommandLineOptions(cl);
+		parseFileCommandLineOptions(cl);
 
 	}
 	
