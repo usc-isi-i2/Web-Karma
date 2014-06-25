@@ -150,7 +150,7 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 			
 		} catch (Exception e) {
 			logger.error("testGenerateRDF1 failed:", e);
-			fail("Execption: " + e.getMessage());
+			fail("Exception: " + e.getMessage());
 		}
 	}
 

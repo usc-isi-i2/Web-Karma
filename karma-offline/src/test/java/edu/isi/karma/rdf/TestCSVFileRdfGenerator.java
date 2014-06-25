@@ -93,7 +93,7 @@ public class TestCSVFileRdfGenerator extends TestRdfGenerator {
 				StringWriter sw = new StringWriter();// generated RDF triples
 				PrintWriter pw = new PrintWriter(sw);
 
-				generateRdfFile("csv", csvFile, modelFile, pw);
+				generateRdfFile("csv", csvFile, modelFile.getName(), modelFile, pw);
 
 				HashSet<String> standardSet = getFileContent(standardRdfFile);
 				HashSet<String> generatedSet = getHashSet(sw.toString().split(

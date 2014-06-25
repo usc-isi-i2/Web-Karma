@@ -27,8 +27,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.*;
+import java.util.List;
 
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.exception.TikaException;
@@ -49,12 +48,9 @@ import org.xml.sax.SAXException;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.imp.json.JsonImport;
-import edu.isi.karma.kr2rml.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
-import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
-import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
@@ -184,7 +180,7 @@ public class FileRdfGenerator extends RdfGenerator {
 	}
 
 	public void generateRdf(String inputType, R2RMLMappingIdentifier id,
-			 PrintWriter pw, BloomFilterKR2RMLRDFWriter bloomfilterpw, File inputFile, String encoding, int maxNumLines, String baseURI)
+			 List<KR2RMLRDFWriter> writers, File inputFile, String encoding, int maxNumLines, String baseURI)
 			throws IOException, JSONException, KarmaException {
 		logger.info("Generating worksheet from the data source ...");
 		Workspace workspace = initializeWorkspace();
@@ -208,13 +204,7 @@ public class FileRdfGenerator extends RdfGenerator {
 		ErrorReport errorReport = new ErrorReport();
 
 		this.applyHistoryToWorksheet(workspace, worksheet, mapping);
-		List<KR2RMLRDFWriter> writers = new ArrayList<KR2RMLRDFWriter>();
-		N3KR2RMLRDFWriter rdfwriter = new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), pw);
-		rdfwriter.setBaseURI(baseURI);
-		writers.add(rdfwriter);
-		if (bloomfilterpw != null) {
-			writers.add(bloomfilterpw);
-		}
+		
 		// RDF generation object initialization
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
 		        workspace.getFactory(), workspace.getOntologyManager(), writers, false, 

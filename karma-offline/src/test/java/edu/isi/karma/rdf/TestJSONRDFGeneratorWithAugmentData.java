@@ -21,13 +21,8 @@
 
 package edu.isi.karma.rdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URL;
 
 import org.junit.After;
@@ -39,14 +34,13 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.util.EncodingDetector;
 
 
 /**
  * @author dipsy
  * 
  */
-public class TestJSONRDFGeneratorWithAugmentData extends TestRdfGenerator{
+public class TestJSONRDFGeneratorWithAugmentData extends TestJSONRDFGenerator{
 
 	JSONRDFGenerator rdfGen;
 	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGeneratorWithAugmentData.class);
@@ -91,29 +85,16 @@ public class TestJSONRDFGeneratorWithAugmentData extends TestRdfGenerator{
 		}
 		try {
 
-			String filename = "augmentdata/schedule.json";
-			System.out.println("Load csv file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
-					"utf-8");
-
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-
-			rdfGen.generateRDF("augmentdata-model", filename, jsonData, false, pw);
-			String rdf = sw.toString();
+			executeBasicJSONTest("augmentdata/schedule.json", "augmentdata-model", false, 376);
 			
-			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split(System.getProperty("line.separator"));
-			int count = lines.length;
-			 
-			assertEquals(376, count);
 		} catch (Exception e) {
 			logger.error("testAugmentData failed:", e);
 			fail("Execption: " + e.getMessage());
 		}
 	}
 
-	private URL getTestResource(String name)
+	@Override
+	protected URL getTestResource(String name)
 	{
 		return getClass().getClassLoader().getResource(name);
 	}
