@@ -2139,18 +2139,23 @@ var AddNodeDialog = (function() {
     	
     	var classUI;
     	var selectedClass;
+    	var allClasses;
     	
     	function init() {
             
             //Initialize what happens when we show the dialog
             dialog.on('show.bs.modal', function (e) {
                 hideError();
+                allClasses = null;
                 
                 $(".main", dialog).empty();
                 var classDiv = $("<div>");
                 $(".main", dialog).append(classDiv);
                 
-                classUI = new ClassUI("addNewNode_class", null, getAllClassNodes, 300);
+                getAllClassNodes();
+                var loadTree = ($.workspaceGlobalInformation.UISettings.maxLoadedClasses == -1 ||
+                		allClasses.length <= $.workspaceGlobalInformation.UISettings.maxLoadedClasses) ? true : false;
+                classUI = new ClassUI("addNewNode_class", null, getAllClassNodes, 300, loadTree);
                 classUI.setHeadings("Classes in Model", "All Classes");
                 classUI.onClassSelect(validateClassInputValue);
                 classUI.generateJS(classDiv, true);
@@ -2164,17 +2169,20 @@ var AddNodeDialog = (function() {
         }
 
     	function getAllClassNodes() {
-    		var classes = getAllClasses(worksheetId);
-        	var result = [];
-	       	 $.each(classes, function(index, clazz){
-	       		 if(clazz.id) {
-	       			 if(!clazz.id.match(/ \(add\)$/))
-	       				 return;
-	       		 }
-	       		result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
-	       		 
-	       	 });
-	       	return result;
+    		if(allClasses == null) {
+	    		var classes = getAllClasses(worksheetId);
+	        	var result = [];
+		       	 $.each(classes, function(index, clazz){
+		       		 if(clazz.id) {
+		       			 if(!clazz.id.match(/ \(add\)$/))
+		       				 return;
+		       		 }
+		       		result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+		       		 
+		       	 });
+		       	 allClasses = result;
+    		}
+	       	return allClasses;
     	}
     	
     	
