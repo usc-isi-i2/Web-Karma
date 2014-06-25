@@ -21,6 +21,7 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
@@ -42,7 +43,7 @@ public class AddValuesCommand extends WorksheetCommand{
 	//the id of the new column that was created
 	//needed for undo
 	private String newHNodeId;
-
+	private HNodeType type;
 	private String newColumnName = "";
 	private boolean isNewNode;
 	private static Logger logger = LoggerFactory
@@ -53,11 +54,12 @@ public class AddValuesCommand extends WorksheetCommand{
 	}
 
 	protected AddValuesCommand(String id,String worksheetId, 
-			String hTableId, String hNodeId) {
+			String hTableId, String hNodeId, HNodeType type) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		isNewNode = false;
+		this.type = type;
 		addTag(CommandTag.Transformation);
 	}
 
@@ -163,12 +165,12 @@ public class AddValuesCommand extends WorksheetCommand{
 			if (hTable.getHNodeFromColumnName(newColumnName) != null)
 				ndid = hTable.getHNodeFromColumnName(newColumnName);
 			else {
-				ndid = hTable.addNewHNodeAfter(hNodeId, workspace.getFactory(), newColumnName, worksheet,true);
+				ndid = hTable.addNewHNodeAfter(hNodeId, type, workspace.getFactory(), newColumnName, worksheet,true);
 				isNewNode = true;
 			}
 		}
 		else {
-			ndid = hTable.addNewHNodeAfter(hNodeId, workspace.getFactory(), newColumnName, worksheet,true);
+			ndid = hTable.addNewHNodeAfter(hNodeId, type, workspace.getFactory(), newColumnName, worksheet,true);
 			isNewNode = true;
 		}
 		if(ndid == null)
@@ -256,7 +258,7 @@ public class AddValuesCommand extends WorksheetCommand{
 			Object value = obj.get(key.toString());
 			HNode h = nestedHTable.getHNodeFromColumnName(key.toString());
 			if ( h == null) {		
-				h = nestedHTable.addHNode(key.toString(), worksheet, factory);
+				h = nestedHTable.addHNode(key.toString(), type, worksheet, factory);
 			}
 			//
 			if (value instanceof String)

@@ -26,6 +26,7 @@ import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.util.Util;
 
@@ -161,7 +162,7 @@ public class UnfoldCommand extends WorksheetCommand {
 			}
 		}
 		//ArrayList<Row> parentRows = parentTable.getRows(0, parentTable.getNumRows());
-		HNode newNode = parentHT.addHNode("Unfold: " + ht.getHNode(keyHNodeid).getColumnName(), oldws, factory);
+		HNode newNode = parentHT.addHNode("Unfold: " + ht.getHNode(keyHNodeid).getColumnName(), HNodeType.Transformation, oldws, factory);
 		this.newHNodeId = newNode.getId();
 		HTable newHT = newNode.addNestedTable("Unfold: " + ht.getHNode(keyHNodeid).getColumnName(), oldws, factory);
 		HNode key = ht.getHNode(keyHNodeid);
@@ -194,9 +195,9 @@ public class UnfoldCommand extends WorksheetCommand {
 			for (String mapkey : keyMapping.keySet()) {
 				HNode hn = newHT.getHNodeFromColumnName(keyMapping.get(mapkey).toLowerCase().replace('/', '_'));
 				if (hn == null) {
-					HNode n = newHT.addHNode(keyMapping.get(mapkey).toLowerCase().replace('/', '_'), oldws, factory);
+					HNode n = newHT.addHNode(keyMapping.get(mapkey).toLowerCase().replace('/', '_'), HNodeType.Transformation, oldws, factory);
 					HTable htt = n.addNestedTable("values", oldws, factory);
-					htt.addHNode("Values", oldws, factory);
+					htt.addHNode("Values", HNodeType.Transformation, oldws, factory);
 					HNodeidMapping.put(keyMapping.get(mapkey), n.getId());
 				}
 				else
@@ -264,9 +265,9 @@ public class UnfoldCommand extends WorksheetCommand {
 			keyMapping.put(HashValueManager.getHashValue(oldws, n.getId()), n.getValue().asString());
 		}
 		for (String mapkey : keyMapping.keySet()) {
-			HNode n = newws.getHeaders().addHNode(keyMapping.get(mapkey), newws, factory);
+			HNode n = newws.getHeaders().addHNode(keyMapping.get(mapkey), HNodeType.Transformation, newws, factory);
 			HTable ht = n.addNestedTable("values", newws, factory);
-			ht.addHNode("Values", newws, factory);
+			ht.addHNode("Values", HNodeType.Transformation, newws, factory);
 			HNodeidMapping.put(keyMapping.get(mapkey), n.getId());
 		}
 

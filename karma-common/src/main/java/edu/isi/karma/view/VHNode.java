@@ -6,7 +6,6 @@ public class VHNode {
 	private String id;
 	private String columnName;
 	private boolean visible;
-	
 	private ArrayList<VHNode> nestedNodes;
 	
 	

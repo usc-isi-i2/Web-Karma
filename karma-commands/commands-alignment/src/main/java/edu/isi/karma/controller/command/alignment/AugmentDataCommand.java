@@ -34,6 +34,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.webserver.KarmaException;
 
@@ -192,7 +193,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 				obj3.put("type", "other");
 				input.put(obj3);
 				try {
-					AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), incoming ? otherClass.substring(otherClass.lastIndexOf("/") + 1) : predicate.substring(predicate.lastIndexOf("/") + 1));
+					AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), incoming ? otherClass.substring(otherClass.lastIndexOf("/") + 1) : predicate.substring(predicate.lastIndexOf("/") + 1), HNodeType.AugmentData);
 					command.doIt(workspace);
 					isNewNode |= command.isNewNode();
 					if (command.isNewNode())

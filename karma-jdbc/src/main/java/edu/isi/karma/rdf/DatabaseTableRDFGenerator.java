@@ -46,6 +46,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.DBType;
 import edu.isi.karma.util.JDBCUtilFactory;
@@ -185,7 +186,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		ArrayList<String> headersList = new ArrayList<String>();
         for(int i=0; i< columnNames.size(); i++){
         	HNode hNode = null;
-        	hNode = headers.addHNode(columnNames.get(i), wk, factory);
+        	hNode = headers.addHNode(columnNames.get(i), HNodeType.Regular, wk, factory);
         	headersList.add(hNode.getId());
         }
         return headersList;

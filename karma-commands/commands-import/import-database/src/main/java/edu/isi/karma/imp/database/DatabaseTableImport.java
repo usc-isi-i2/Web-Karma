@@ -24,6 +24,7 @@ package edu.isi.karma.imp.database;
 
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.*;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.metadata.SourceInformation;
 import edu.isi.karma.rep.metadata.SourceInformation.InfoAttribute;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
@@ -100,7 +101,7 @@ public class DatabaseTableImport extends Import {
 	    for (int i = 0; i < data.get(0).size(); i++)
 	    {
 		    HNode hNode = null;
-		    hNode = headers.addHNode(data.get(0).get(i), getWorksheet(), getFactory());
+		    hNode = headers.addHNode(data.get(0).get(i), HNodeType.Regular, getWorksheet(), getFactory());
 		    headersList.add(hNode.getId());
 	    }
 

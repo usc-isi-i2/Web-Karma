@@ -20,6 +20,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.util.EncodingDetector;
@@ -132,9 +133,9 @@ public class CSVImport extends Import {
         for (int i = 0; i < rowValues.length; i++) {
             HNode hNode = null;
             if (headerRowIndex == 0) {
-                hNode = headers.addHNode("Column_" + (i + 1), worksheet, fac);
+                hNode = headers.addHNode("Column_" + (i + 1), HNodeType.Regular, worksheet, fac);
             } else {
-                hNode = headers.addHNode(rowValues[i], worksheet, fac);
+                hNode = headers.addHNode(rowValues[i], HNodeType.Regular, worksheet, fac);
             }
             headersList.add(hNode.getId());
         }
@@ -191,7 +192,7 @@ public class CSVImport extends Import {
                     logger.error("Error reading Line:" + line, e);
                 }
                 for (int i = 0; i < rowValues.length; i++) {
-                    HNode hNode = headers.addHNode("Column_" + (i + 1),
+                    HNode hNode = headers.addHNode("Column_" + (i + 1), HNodeType.Regular, 
                             worksheet, fac);
                     headersList.add(hNode.getId());
                 }

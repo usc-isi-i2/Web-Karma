@@ -50,6 +50,7 @@ import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
 
@@ -269,7 +270,7 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 		try {
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
 			cmd = (AddValuesCommand) factory.createCommand(addValues, workspace, hNodeId, worksheetId,
-					hTableId);
+					hTableId, HNodeType.Transformation);
 			
 			HNode hnode = worksheet.getHeaders().getHNode(hNodeId);
 			cmd.setColumnName(hnode.getColumnName()+" Extractions");

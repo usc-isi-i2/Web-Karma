@@ -23,7 +23,9 @@
  */
 package edu.isi.karma.rep;
 
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.Node.NodeStatus;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -244,7 +246,7 @@ public class Table extends RepEntity {
 			// to add the nested table before we know what we are going to put
 			// in it.
 			HTable headers = factory.getHTable(hTableId);
-			columnForOrphan = headers.addHNode(HTable.VALUES_COLUMN, factory.getWorksheet(worksheetId), factory);
+			columnForOrphan = headers.addHNode(HTable.VALUES_COLUMN, factory.getHNode(hNodeIdWhereValueWas).getHNodeType(), factory.getWorksheet(worksheetId), factory);
 			logger.warn("Cannot find 'values' in nested table inside column '"
 					+ factory.getColumnName(hNodeIdWhereValueWas)
 					+ "' Cannot find a column to assign the orphan value '"

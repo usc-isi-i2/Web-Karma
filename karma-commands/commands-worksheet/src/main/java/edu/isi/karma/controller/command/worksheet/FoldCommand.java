@@ -25,6 +25,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
@@ -163,7 +164,7 @@ public class FoldCommand extends WorksheetCommand {
 		try{
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
 			//hNodeId = hnodes.get(0).getId();
-			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId, worksheet.getHeaders().getNewColumnName("fold"));
+			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId, worksheet.getHeaders().getNewColumnName("fold"), HNodeType.Transformation);
 			cmd.doIt(workspace);
 			UpdateContainer c =  new UpdateContainer();		
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));

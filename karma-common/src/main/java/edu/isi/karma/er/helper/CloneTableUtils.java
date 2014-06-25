@@ -12,13 +12,14 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.HNode.HNodeType;
 
 public class CloneTableUtils {
 
 	public static void cloneHTable(HTable oldht, HTable newht, Worksheet newws, RepFactory factory, List<HNode> hnodes) {
 		Collections.sort(hnodes);
 		for (HNode hnode : hnodes) {
-			HNode newhnode = newht.addHNode(hnode.getColumnName(), newws, factory);
+			HNode newhnode = newht.addHNode(hnode.getColumnName(), HNodeType.Transformation, newws, factory);
 			if (hnode.hasNestedTable()) {
 				HTable oldnested = hnode.getNestedTable();
 				HTable newnested = newhnode.addNestedTable(hnode.getNestedTable().getTableName(), newws, factory);		
@@ -31,7 +32,7 @@ public class CloneTableUtils {
 		Collections.sort(hnodes);
 		Map<String, String> tmp = new HashMap<String, String>();
 		for (HNode hnode : hnodes) {
-			HNode newhnode = newht.addHNode(hnode.getColumnName(), newws, factory);
+			HNode newhnode = newht.addHNode(hnode.getColumnName(), HNodeType.Transformation, newws, factory);
 			tmp.put(hnode.getId(), newhnode.getId());
 			if (hnode.hasNestedTable()) {
 				HTable oldnested = hnode.getNestedTable();

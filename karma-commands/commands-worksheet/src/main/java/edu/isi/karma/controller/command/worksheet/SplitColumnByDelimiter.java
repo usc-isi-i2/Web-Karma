@@ -2,7 +2,9 @@ package edu.isi.karma.controller.command.worksheet;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.rep.*;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.Node.NodeStatus;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +90,7 @@ public class SplitColumnByDelimiter {
 		// Add the nested new HTable to the hNode
 		HTable newTable = hNode.addNestedTable("Comma Split Values", worksheet,
 				factory);
-		splitValueHNodeID = newTable.addHNode("Values", worksheet, factory)
+		splitValueHNodeID = newTable.addHNode("Values", HNodeType.Transformation, worksheet, factory)
 				.getId();
 		
 		for (Node node : nodes) {
