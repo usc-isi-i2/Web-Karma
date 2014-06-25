@@ -55,6 +55,7 @@ and related projects, please see: http://www.isi.edu/integration
         <link href="./css/sticky-footer-navbar.css?<jsp:include page='version.jsp'/>" rel="stylesheet">
         
         <link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/dropdown.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/command_History.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/tables_workspace.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/fileImport.css?<jsp:include page='version.jsp' />" />
@@ -142,7 +143,7 @@ and related projects, please see: http://www.isi.edu/integration
 		          <ul class="nav navbar-nav">
 		            <li class="dropdown">
 		              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Import <b class="caret"></b></a>
-		              <ul class="dropdown-menu">
+		              <ul class="dropdown-menu multi-level">
 		                  <li><a href="#" id="importDatabaseTableButton">Database Table</a></li>
 		                  <li><a href="#" id="importSQLButton">Using SQL</a></li>
 		                  <li><a href="#" id="importFromServiceButton" >From Service</a></li>
@@ -307,8 +308,8 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="uiLibs/modernizr/js/modernizr.custom.59953.js"></script>
 		
         <!-- Home grown JavaScript files -->
-        <script type="text/javascript" src="js/initWS.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/ServerResponseObjectParsing.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/initWS.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/commandHistory.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/publishRDF.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/publishDatabase.js?<jsp:include page='version.jsp' />"></script>
