@@ -22,7 +22,6 @@
 package edu.isi.karma.rdf;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -34,12 +33,9 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.kr2rml.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
-import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
-import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
@@ -81,22 +77,22 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		this.encoding = encoding;
 	}
 	
-	public void generateRDFFromSQL(String query, PrintWriter pw, BloomFilterKR2RMLRDFWriter bloomfilterpw, R2RMLMappingIdentifier id, String baseURI)
+	public void generateRDFFromSQL(String query, List<KR2RMLRDFWriter> writers, R2RMLMappingIdentifier id, String baseURI)
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
 		String wkname = query.replace(" ", "_");
 		if(wkname.length() > 100)
 			wkname = wkname.substring(0, 99) + "...";
-		generateRDF(wkname, query, pw, bloomfilterpw, id, baseURI);
+		generateRDF(wkname, query, writers, id, baseURI);
 	}
 	
-	public void generateRDFFromTable(String tablename, PrintWriter pw, BloomFilterKR2RMLRDFWriter bloomfilterpw, R2RMLMappingIdentifier id, String baseURI)
+	public void generateRDFFromTable(String tablename, List<KR2RMLRDFWriter> writers, R2RMLMappingIdentifier id, String baseURI)
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		String query = "Select * FROM " + dbUtil.escapeTablename(tablename);
-		generateRDF(tablename, query, pw, bloomfilterpw, id, baseURI);
+		generateRDF(tablename, query, writers, id, baseURI);
 	}
 
-	private void generateRDF(String wkname, String query, PrintWriter pw, BloomFilterKR2RMLRDFWriter bloomfilterpw, R2RMLMappingIdentifier id, String baseURI) 
+	private void generateRDF(String wkname, String query, List<KR2RMLRDFWriter> writers, R2RMLMappingIdentifier id, String baseURI) 
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException{
 		logger.debug("Generating RDF...");
 
@@ -133,7 +129,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		while ((rowValues = dbUtil.parseResultSetRow(r)) != null) {
 			// Generate RDF and create a new worksheet for every DATABASE_TABLE_FETCH_SIZE rows
 			if(counter%DATABASE_TABLE_FETCH_SIZE == 0 && counter != 0) {
-				generateRDFFromWorksheet(wk, workspace, mapping, pw, bloomfilterpw, baseURI);
+				generateRDFFromWorksheet(wk, workspace, mapping, writers, baseURI);
 				logger.debug("Done for " + counter + " rows ..." );
 			    removeWorkspace(workspace);
 			    
@@ -156,7 +152,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 			counter++;
 		}
 		
-		generateRDFFromWorksheet(wk, workspace, mapping, pw, bloomfilterpw, baseURI);
+		generateRDFFromWorksheet(wk, workspace, mapping, writers, baseURI);
 		
 		// Releasing all the resources
 		r.close();
@@ -166,20 +162,14 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 	}
 	
 	private void generateRDFFromWorksheet(Worksheet wk, 
-			Workspace workspace, KR2RMLMapping mapping, PrintWriter pw, BloomFilterKR2RMLRDFWriter bloomfilterpw, String baseURI) 
+			Workspace workspace, KR2RMLMapping mapping, List<KR2RMLRDFWriter> writers, String baseURI) 
 					throws IOException, JSONException, KarmaException {
 		// Generate RDF for the remaining rows
 		// Gets all the errors generated during the RDF generation
 		ErrorReport errorReport = new ErrorReport();
 		
 		this.applyHistoryToWorksheet(workspace, wk, mapping);
-		List<KR2RMLRDFWriter> writers = new ArrayList<KR2RMLRDFWriter>();
-		N3KR2RMLRDFWriter rdfwriter = new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), pw);
-		rdfwriter.setBaseURI(baseURI);
-		writers.add(rdfwriter);
-		if (bloomfilterpw != null) {
-			writers.add(bloomfilterpw);
-		}
+		
 		// RDF generation object initialization
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(wk,
 				workspace.getFactory(), workspace.getOntologyManager(), writers, false,

@@ -29,28 +29,39 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 
 public class URIFormatter {
 	
-	protected Map<String, String> prefixToNamespaceMap;
-	private ErrorReport errorReport;
-
-
+	protected final Map<String, String> prefixToNamespaceMap;
+	private final ErrorReport errorReport;
+	private final boolean reportErrors;
+	private final boolean replacePrefixesWithNamespaces;
+	public URIFormatter()
+	{
+		reportErrors = false;
+		replacePrefixesWithNamespaces = false;
+		prefixToNamespaceMap = new HashMap<String, String>();
+		errorReport = null;
+	}
 
 	public URIFormatter(OntologyManager ontMgr, ErrorReport errorReport)
 	{
+		reportErrors = true;
+		replacePrefixesWithNamespaces = true;
 		prefixToNamespaceMap = new HashMap<String, String>();
 		populatePrefixToNamespaceMap(ontMgr);
 		this.errorReport = errorReport;
 	}
 	public String getExpandedAndNormalizedUri(String uri) {
 		// Check if the predicate contains a predicate.
-		if (!uri.startsWith("<") && !uri.startsWith("http:") && !uri.startsWith("https:") && uri.contains(":") && !uri.startsWith("_:")) {
+		if (replacePrefixesWithNamespaces && !uri.startsWith("<") && !uri.startsWith("http:") && !uri.startsWith("https:") && uri.contains(":") && !uri.startsWith("_:")) {
 			// Replace the prefix with proper namespace by looking into the ontology manager
 			String prefix = uri.substring(0, uri.indexOf(":"));
 			
 			String namespace = this.prefixToNamespaceMap.get(prefix);
 			if (namespace == null || namespace.isEmpty()) {
-				this.errorReport.addReportMessage(new ReportMessage("Error creating predicate's URI: " + uri, 
+				if(reportErrors)
+				{
+					this.errorReport.addReportMessage(new ReportMessage("Error creating predicate's URI: " + uri, 
 						"No namespace found for the prefix: " + prefix, Priority.high));
-//				logger.error("No namespace found for the predicate prefix: " + prefix);
+				}
 			} else {
 				uri = namespace + uri.substring(uri.indexOf(":")+1);
 			}

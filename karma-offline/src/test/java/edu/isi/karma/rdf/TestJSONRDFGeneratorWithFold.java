@@ -21,14 +21,7 @@
 
 package edu.isi.karma.rdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URL;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,16 +31,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.util.EncodingDetector;
 
 
 /**
  * @author dipsy
  * 
  */
-public class TestJSONRDFGeneratorWithFold extends TestRdfGenerator{
-
-	JSONRDFGenerator rdfGen;
+public class TestJSONRDFGeneratorWithFold extends TestJSONRDFGenerator{
 	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGeneratorWithFold.class);
 	
 
@@ -87,57 +77,21 @@ public class TestJSONRDFGeneratorWithFold extends TestRdfGenerator{
 	@Test
 	public void testFoldNested() {
 		try {
-
-			String filename = "fold/fold-nested.json";
-			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
-					"utf-8");
-
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-
-			rdfGen.generateRDF("fold-nested-model", filename, jsonData, false, pw);
-			String rdf = sw.toString();
-			
-			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split(System.getProperty("line.separator"));
-			int count = lines.length;
-			 
-			assertEquals(49, count);
+			executeBasicJSONTest("fold/fold-nested.json", "fold-nested-model", false, 49);
 		} catch (Exception e) {
 			logger.error("testFoldNested failed:", e);
-			fail("Execption: " + e.getMessage());
+			fail("Exception: " + e.getMessage());
 		}
 	}
 	
 	@Test
 	public void testFoldTop() {
 		try {
-
-			String filename = "fold/fold-top.json";
-			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
-					"utf-8");
-
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-
-			rdfGen.generateRDF("fold-top-model", filename, jsonData, false, pw);
-			String rdf = sw.toString();
-			
-			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split(System.getProperty("line.separator"));
-			int count = lines.length;
-			 
-			assertEquals(15, count);
+			executeBasicJSONTest("fold/fold-top.json", "fold-top-model", false, 15);
 		} catch (Exception e) {
 			logger.error("testFoldTop failed:", e);
-			fail("Execption: " + e.getMessage());
+			fail("Exception: " + e.getMessage());
 		}
 	}
 
-	private URL getTestResource(String name)
-	{
-		return getClass().getClassLoader().getResource(name);
-	}
 }

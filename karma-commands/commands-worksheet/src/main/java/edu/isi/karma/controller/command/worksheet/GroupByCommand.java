@@ -86,7 +86,6 @@ public class GroupByCommand extends WorksheetCommand {
 		List<HNode> valuehnodes = new ArrayList<HNode>();
 		JSONArray checked = (JSONArray) JSONUtil.createJson(CommandInputJSONUtil.getStringValue("values", (JSONArray)para));
 		HTable ht;
-		//System.out.println("here" + hNodeId);
 		if (hNodeId.compareTo("") != 0)
 			ht = CloneTableUtils.getHTable(oldws.getHeaders(), hNodeId);
 		else
@@ -216,7 +215,6 @@ public class GroupByCommand extends WorksheetCommand {
 			}	
 			
 			for (String key : hash.keySet()) {
-				//System.out.println("key: " + hash.get(key));
 				ArrayList<String> r = hash.get(key);
 				Node node = parentRow.getNeighbor(newNode.getId());
 				Row lastRow = CloneTableUtils.cloneDataTable(CloneTableUtils.getRow(rows, r.get(0)), node.getNestedTable(), ht, newht, keyhnodes, factory);

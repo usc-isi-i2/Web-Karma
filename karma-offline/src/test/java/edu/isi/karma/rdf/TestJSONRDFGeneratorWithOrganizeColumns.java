@@ -21,14 +21,7 @@
 
 package edu.isi.karma.rdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URL;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,16 +31,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.util.EncodingDetector;
 
 
 /**
  * @author dipsy
  * 
  */
-public class TestJSONRDFGeneratorWithOrganizeColumns extends TestRdfGenerator{
+public class TestJSONRDFGeneratorWithOrganizeColumns extends TestJSONRDFGenerator{
 
-	JSONRDFGenerator rdfGen;
 	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGeneratorWithOrganizeColumns.class);
 	
 
@@ -84,30 +75,11 @@ public class TestJSONRDFGeneratorWithOrganizeColumns extends TestRdfGenerator{
 	public void testOrganizeColumns() {
 		try {
 
-			String filename = "organizecolumns/test3.json";
-			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
-					"utf-8");
-
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-
-			rdfGen.generateRDF("organize-columns-model", filename, jsonData, false, pw);
-			String rdf = sw.toString();
-			
-			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split(System.getProperty("line.separator"));
-			int count = lines.length;
-			 
-			assertEquals(10, count);
+			executeBasicJSONTest("organizecolumns/test3.json", "organize-columns-model", false, 10);
 		} catch (Exception e) {
 			logger.error("testOrganizeColumns failed:", e);
-			fail("Execption: " + e.getMessage());
+			fail("Exception: " + e.getMessage());
 		}
 	}
 
-	private URL getTestResource(String name)
-	{
-		return getClass().getClassLoader().getResource(name);
-	}
 }

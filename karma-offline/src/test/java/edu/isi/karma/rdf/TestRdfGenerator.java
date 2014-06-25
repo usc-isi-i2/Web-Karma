@@ -7,12 +7,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
@@ -43,17 +48,25 @@ public abstract class TestRdfGenerator {
 	 *            stores generated RDF triples
 	 * @throws Exception
 	 */
-	protected void generateRdfFile(String inputFormat, File inputFile, File modelFile, PrintWriter pw)
+	protected void generateRdfFile(String inputFormat, File inputFile, String modelName, File modelFile, PrintWriter pw)
 			throws Exception {
 
 		FileRdfGenerator rdfGen = new FileRdfGenerator();
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
-				"schedule-model", modelFile.toURI().toURL());
+				modelName, modelFile.toURI().toURL());
 		String encoding = EncodingDetector.detect(inputFile);
-		rdfGen.generateRdf(inputFormat, modelIdentifier, pw, null, inputFile, encoding, 0, null);
+		List<KR2RMLRDFWriter> writers = createBasicWriter(pw);
+		rdfGen.generateRdf(inputFormat, modelIdentifier, writers, inputFile, encoding, 0, null);
 
 	}
 
+
+	protected List<KR2RMLRDFWriter> createBasicWriter(PrintWriter pw) {
+		N3KR2RMLRDFWriter writer = new N3KR2RMLRDFWriter(new URIFormatter(), pw);
+		List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
+		writers.add(writer);
+		return writers;
+	}
 	protected HashSet<String> getFileContent(File file) {
 		HashSet<String> hashSet = new HashSet<String>();
 		

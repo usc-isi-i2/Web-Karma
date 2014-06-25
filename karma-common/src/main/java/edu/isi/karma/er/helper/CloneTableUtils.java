@@ -45,11 +45,10 @@ public class CloneTableUtils {
 	public static Row cloneDataTable(Row oldRow, Table newDataTable, HTable oldHTable, HTable newHTable, List<HNode> hnodes, RepFactory factory) {
 		Row newrow = newDataTable.addRow(factory);
 		for (HNode hnode : hnodes) {
-			System.out.println("HNode: " + hnode.getColumnName());
 			HNode newHNode = newHTable.getHNodeFromColumnName(hnode.getColumnName());
 			if (newHNode == null)
 				continue;
-			System.out.println("New HNode: " +newHNode.getColumnName());
+			
 			Node oldNode = oldRow.getNode(hnode.getId());
 			Node newNode = newrow.getNode(newHNode.getId());
 			if (oldNode == null)
