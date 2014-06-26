@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.lang.reflect.Field;
 
 import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.Group;
@@ -19,6 +21,8 @@ import org.apache.commons.cli2.builder.DefaultOptionBuilder;
 import org.apache.commons.cli2.builder.GroupBuilder;
 import org.apache.commons.cli2.commandline.Parser;
 import org.apache.commons.cli2.util.HelpFormatter;
+import org.apache.hadoop.util.bloom.BloomFilter;
+import org.apache.hadoop.util.hash.Hash;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -109,8 +113,21 @@ public class CombineBloomFiltersFromRDF {
 			for (Entry<String, String> entry : verification.entrySet()) {
 				String key = entry.getKey();
 				String value = entry.getValue();
-				if (bfs.get(key).compressAndBase64Encode().compareTo(value) != 0) {
-					verify = false;
+				KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
+				KR2RMLBloomFilter bf = bfs.get(key);
+				bf2.populateFromCompressedAndBase64EncodedString(value);
+				bf2.and(bf);
+				bf2.xor(bf);
+				try {
+					Field f = BloomFilter.class.getDeclaredField("bits");
+					f.setAccessible(true);
+					BitSet bits = (BitSet) f.get(bf2);
+					if (bits.cardinality() != 0) {
+						verify = false;
+						break;
+					}
+				} catch (Exception e) {
+
 				}
 			}
 			if (!verify) {

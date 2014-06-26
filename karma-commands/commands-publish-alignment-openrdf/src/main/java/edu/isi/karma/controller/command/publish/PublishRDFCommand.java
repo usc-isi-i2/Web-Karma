@@ -32,13 +32,17 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.lang.reflect.Field;
 
+import org.apache.hadoop.util.bloom.BloomFilter;
+import org.apache.hadoop.util.hash.Hash;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -242,8 +246,22 @@ public class PublishRDFCommand extends Command {
 				for (Entry<String, String> entry : verification.entrySet()) {
 					String key = entry.getKey();
 					String value = entry.getValue();
-					if (obj.getString(key).compareTo(value) != 0) {
-						verify = false;
+					KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
+					KR2RMLBloomFilter bf = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
+					bf2.populateFromCompressedAndBase64EncodedString(value);
+					bf.populateFromCompressedAndBase64EncodedString(obj.getString(key));
+					bf2.and(bf);
+					bf2.xor(bf);
+					try {
+						Field f1 = BloomFilter.class.getDeclaredField("bits");
+						f1.setAccessible(true);
+						BitSet bits = (BitSet) f1.get(bf2);
+						if (bits.cardinality() != 0) {
+							verify = false;
+							break;
+						}
+					} catch (Exception e) {
+						
 					}
 				}
 				if (!verify) {
