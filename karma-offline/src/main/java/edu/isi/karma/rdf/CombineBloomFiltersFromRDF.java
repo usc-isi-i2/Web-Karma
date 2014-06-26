@@ -34,7 +34,10 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class CombineBloomFiltersFromRDF {
 
-
+	static String filepath;
+    static String modelurl;
+    static String context;
+    static String predicateURI;
 	public static void main(String[] args) throws IOException, KarmaException {
 		Group options = createCommandLineOptions();
         Parser parser = new Parser();
@@ -49,13 +52,13 @@ public class CombineBloomFiltersFromRDF {
             hf.print();
             return;
         }
-        String filepath = (String) cl.getValue("--filepath");
-        String modelurl = (String) cl.getValue("--modelurl");
-        String context = (String) cl.getValue("--context");
+        filepath = (String) cl.getValue("--filepath");
+        modelurl = (String) cl.getValue("--modelurl");
+        context = (String) cl.getValue("--context");
         if (filepath == null || modelurl == null || context == null)
         	return;
 		File file = new File(filepath);
-		String predicateURI = null;
+		predicateURI = null;
 		Map<String, BloomFilterWorker> workers = new HashMap<String, BloomFilterWorker>();
 		Map<String, KR2RMLBloomFilter> bfs = new HashMap<String, KR2RMLBloomFilter>();
 		long start = System.currentTimeMillis();
@@ -98,29 +101,48 @@ public class CombineBloomFiltersFromRDF {
 			Set<String> triplemaps = bfs.keySet();
 			Map<String, String> bloomfilterMapping = new HashMap<String, String>();
 			bloomfilterMapping.putAll(utilObj.getBloomFiltersForMaps(modelurl, context, triplemaps));
-			for (String tripleUri : triplemaps) {
-				KR2RMLBloomFilter bf = bfs.get(tripleUri);
-				String oldserializedBloomFilter = bloomfilterMapping.get(tripleUri);
-				if (oldserializedBloomFilter != null) {
-					KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
-					bf2.populateFromCompressedAndBase64EncodedString(oldserializedBloomFilter);
-					bf.or(bf2);
-				}
-				bfs.put(tripleUri, bf);
-			}
-			utilObj.deleteBloomFiltersForMaps(modelurl, context, triplemaps);
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			for (Entry<String, KR2RMLBloomFilter> entry : bfs.entrySet()) {
-				pw.print("<" + entry.getKey() + "> ");
-				pw.print("<" + predicateURI + "> ");
-				pw.println("\"" + entry.getValue().compressAndBase64Encode() + "\" . ");
-			}
-			pw.close();
-			utilObj.saveToStore(sw.toString(), modelurl, context, new Boolean(false), null);
+			updateTripleStore(bfs, bloomfilterMapping);
 			System.out.println("process time: " + (System.currentTimeMillis() - start));
+			Map<String, String> verification = new HashMap<String, String>();
+			verification.putAll(utilObj.getBloomFiltersForMaps(modelurl, context, triplemaps));
+			boolean verify = true;
+			for (Entry<String, String> entry : verification.entrySet()) {
+				String key = entry.getKey();
+				String value = entry.getValue();
+				if (bfs.get(key).compressAndBase64Encode().compareTo(value) != 0) {
+					verify = false;
+				}
+			}
+			if (!verify) {
+				updateTripleStore(bfs, verification);
+			}
 		}
 
+	}
+	
+	private static void updateTripleStore(Map<String, KR2RMLBloomFilter> bfs, Map<String, String> bloomfilterMapping) throws KarmaException, IOException {
+		TripleStoreUtil utilObj = new TripleStoreUtil();
+		Set<String> triplemaps = bfs.keySet();
+		for (String tripleUri : triplemaps) {
+			KR2RMLBloomFilter bf = bfs.get(tripleUri);
+			String oldserializedBloomFilter = bloomfilterMapping.get(tripleUri);
+			if (oldserializedBloomFilter != null) {
+				KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
+				bf2.populateFromCompressedAndBase64EncodedString(oldserializedBloomFilter);
+				bf.or(bf2);
+			}
+			bfs.put(tripleUri, bf);
+		}
+		utilObj.deleteBloomFiltersForMaps(modelurl, context, triplemaps);
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		for (Entry<String, KR2RMLBloomFilter> entry : bfs.entrySet()) {
+			pw.print("<" + entry.getKey() + "> ");
+			pw.print("<" + predicateURI + "> ");
+			pw.println("\"" + entry.getValue().compressAndBase64Encode() + "\" . ");
+		}
+		pw.close();
+		utilObj.saveToStore(sw.toString(), modelurl, context, new Boolean(false), null);
 	}
 
 	private static Group createCommandLineOptions() {

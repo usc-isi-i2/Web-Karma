@@ -176,6 +176,7 @@ public class PublishRDFCommand extends Command {
 		String modelRepoUrl = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelRepository);
 		modelRepoUrl = modelRepoUrl == null || modelRepoUrl.isEmpty()? TripleStoreUtil.defaultModelsRepoUrl : modelRepoUrl;
 		Map<String, String> bloomfilterMapping = new HashMap<String, String>();
+		boolean result = true;
 		try{
 			mappingGen = new KR2RMLMappingGenerator(workspace, worksheet,
 
@@ -233,29 +234,28 @@ public class PublishRDFCommand extends Command {
 			start = System.currentTimeMillis();
 			if (generateBloomFilters) {
 				JSONObject obj = new JSONObject(sw.toString());
+				result &= updateTripleStore(obj, bloomfilterMapping, modelRepoUrl, modelContext, utilObj);
+				Map<String, String> verification = new HashMap<String, String>();
 				Set<String> triplemaps = new HashSet<String>(Arrays.asList(obj.getString("ids").split(",")));
-				bloomfilterMapping.putAll(utilObj.getBloomFiltersForMaps(modelRepoUrl, modelContext, triplemaps));
-				for (String tripleUri : triplemaps) {
-					String serializedBloomFilter = obj.getString(tripleUri);
-					KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
-					bf.populateFromCompressedAndBase64EncodedString(serializedBloomFilter);
-					String oldserializedBloomFilter = bloomfilterMapping.get(tripleUri);
-					if (oldserializedBloomFilter != null) {
-						KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
-						bf2.populateFromCompressedAndBase64EncodedString(oldserializedBloomFilter);
-						bf.or(bf2);
+				verification.putAll(utilObj.getBloomFiltersForMaps(modelRepoUrl, modelContext, triplemaps));
+				boolean verify = true;
+				for (Entry<String, String> entry : verification.entrySet()) {
+					String key = entry.getKey();
+					String value = entry.getValue();
+					if (obj.getString(key).compareTo(value) != 0) {
+						verify = false;
 					}
-					bloomfilterMapping.put(tripleUri, bf.compressAndBase64Encode());
 				}
-				utilObj.deleteBloomFiltersForMaps(modelRepoUrl, modelContext, triplemaps);
+				if (!verify) {
+					result &= updateTripleStore(obj, verification, modelRepoUrl, modelContext, utilObj);
+				}
+				long end = System.currentTimeMillis();
+				System.out.println("execution time: " + (end - start) + " node total: " + bloomfilterMapping.size());
 			}
 		} catch (Exception e1) {
 			logger.error("Error occured while generating RDF!", e1);
 			return new UpdateContainer(new ErrorUpdate("Error occured while generating RDF: " + e1.getMessage()));
 		}
-		String rdf = null;
-		if (generateBloomFilters)
-			rdf = toRDF(bloomfilterMapping);
 		try {
 
 			// Get the graph name from properties if empty graph uri 
@@ -274,9 +274,8 @@ public class PublishRDFCommand extends Command {
 			logger.info("tripleStoreURl : " + tripleStoreUrl);
 
 
-			boolean result = utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext, this.rdfSourceNamespace);
+			result &= utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext, this.rdfSourceNamespace);
 			if (url != null && !url.isEmpty() && url.compareTo("") != 0 && utilObj.testURIExists(TripleStoreUtil.defaultModelsRepoUrl, "", url)) {
-				TripleStoreUtil util = new TripleStoreUtil();
 				StringBuilder sb = new StringBuilder();
 				url = url.trim();
 				if(!url.startsWith("<"))
@@ -292,14 +291,7 @@ public class PublishRDFCommand extends Command {
 				sb.append( Uris.MODEL_HAS_DATA_URI);
 				sb.append("> \"true\" .\n");
 				String input = sb.toString();
-
-
-				result &= util.saveToStore(input, modelRepoUrl, modelContext, new Boolean(false), this.rdfSourceNamespace);
-				if (rdf != null && rdf.trim().compareTo("") != 0) {
-					result &= util.saveToStore(rdf, modelRepoUrl, modelContext, new Boolean(false), this.rdfSourceNamespace);
-				}
-				long end = System.currentTimeMillis();
-				System.out.println("execution time: " + (end - start) + "node total: " + bloomfilterMapping.size());
+				result &= utilObj.saveToStore(input, modelRepoUrl, modelContext, new Boolean(false), this.rdfSourceNamespace);
 			}
 			if(result) {
 				logger.info("Saved rdf to store");
@@ -397,6 +389,28 @@ public class PublishRDFCommand extends Command {
 			builder.append("\" . \n");
 		}
 		return builder.toString();
+	}
+	
+	private boolean updateTripleStore(JSONObject obj, Map<String, String> bloomfilterMapping, String modelRepoUrl, String modelContext, TripleStoreUtil utilObj) throws KarmaException, IOException {
+		boolean result = true;
+		Set<String> triplemaps = new HashSet<String>(Arrays.asList(obj.getString("ids").split(",")));
+		bloomfilterMapping.putAll(utilObj.getBloomFiltersForMaps(modelRepoUrl, modelContext, triplemaps));
+		for (String tripleUri : triplemaps) {
+			String serializedBloomFilter = obj.getString(tripleUri);
+			KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
+			bf.populateFromCompressedAndBase64EncodedString(serializedBloomFilter);
+			String oldserializedBloomFilter = bloomfilterMapping.get(tripleUri);
+			if (oldserializedBloomFilter != null) {
+				KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
+				bf2.populateFromCompressedAndBase64EncodedString(oldserializedBloomFilter);
+				bf.or(bf2);
+			}
+			bloomfilterMapping.put(tripleUri, bf.compressAndBase64Encode());
+		}
+		utilObj.deleteBloomFiltersForMaps(modelRepoUrl, modelContext, triplemaps);
+		String rdf = toRDF(bloomfilterMapping);
+		result &= utilObj.saveToStore(rdf, modelRepoUrl, modelContext, new Boolean(false), this.rdfSourceNamespace);
+		return result;
 	}
 
 	@Override
