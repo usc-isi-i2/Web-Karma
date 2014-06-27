@@ -40,7 +40,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     //json["maxTreeHeight"] = 5;
     var h = levelHeight * (json["maxTreeHeight"] + 0.4);
     if(w == 0)
-        w = $("div#"+worksheetId + "TableDiv").width();
+        w = $("div#"+worksheetId).width();
     
     //1. Take care of floating nodes
     var floatingLayout = new UnconnectedNodesLayout();
