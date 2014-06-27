@@ -61,10 +61,10 @@
 @color-even-dark: hsla(@hue, @saturation, 33%, 1); 
 @color-even-light: hsla(@hue, @saturation, 92%, 1); 
 @table-background-color: hsla(@hue, 5%, 98%, 1);
-@color-odd-dark-transformation: hsla(@hue - 50, @saturation, 25%, 1);
-@color-even-dark-transformation: hsla(@hue - 50, @saturation, 33%, 1);
-@color-odd-dark-augmentdata: hsla(75 + @hue, @saturation, 25%, 1);
-@color-even-dark-augmentdata: hsla(75 + @hue, @saturation, 33%, 1);
+@color-odd-dark-transformation: hsla(mod(@hue - 150, 360), @saturation, 25%, 1);
+@color-even-dark-transformation: hsla(mod(@hue - 150, 360), @saturation, 33%, 1);
+@color-odd-dark-augmentdata: hsla(mod(150 + @hue, 360), @saturation, 25%, 1);
+@color-even-dark-augmentdata: hsla(mod(150 + @hue, 360), @saturation, 33%, 1);
 
 @table-odd-border-color: @color-odd-dark;
 @table-odd-vertical-grid-border-color: hsla(@hue, @saturation, 90%, 1);
