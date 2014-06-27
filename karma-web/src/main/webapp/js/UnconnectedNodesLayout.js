@@ -49,9 +49,16 @@ UnconnectedNodesLayout.prototype.computeNodePositions = function(h, levelHeight,
 				allIn = false;
 			}
 		}
-		if(!allIn)
+		if(!allIn) {
 			this._removeEmptyLevels(this.maxLevel);
+		}
 		this._computeMaxLevel();
+	}
+	
+	console.log("Final floating node positions:");
+	for(var i=0; i<this.nodes.length; i++) {
+		var node = this.nodes[i];
+		console.log(node.id + " x:" + node["x"] + " left:" + (node["x"] - node["width"]/2));
 	}
 };
 
@@ -80,6 +87,15 @@ UnconnectedNodesLayout.prototype._layoutNodesAtLevel1 = function(width) {
 	}
 };
 
+UnconnectedNodesLayout.prototype._getNodeById = function(id) {
+	for(var i=0; i<this.nodes.length; i++) {
+		var node = this.nodes[i];
+		if(node.id == id)
+			return node;
+	}
+	return null;
+};
+
 UnconnectedNodesLayout.prototype._layoutNodesAtLevel = function(level, width) {
 	var nodes = this.nodesAtLevel[level];
 	if(nodes) {
@@ -91,7 +107,7 @@ UnconnectedNodesLayout.prototype._layoutNodesAtLevel = function(level, width) {
 			if(links) {
 				for(var j=0; j<links.length; j++) {
 					var linkId = links[j];
-					var nodeConnect = this.nodes[linkId];
+					var nodeConnect = this._getNodeById(linkId);
 					if(nodeConnect["height"] > level)
 						continue;
 					if(nodeConnect["x"] < left)
@@ -100,7 +116,11 @@ UnconnectedNodesLayout.prototype._layoutNodesAtLevel = function(level, width) {
 			}
 			
 			if(left == 999999) {
-				left = this._getMaxXAtLevel(level-1) + width + 50;
+				var maxXAtPrevLevel = this._getMaxXAtLevel(level-1);
+				if(maxXAtPrevLevel != -1)
+					left = this._getMaxXAtLevel(level-1) + width + 50;
+				else
+					left = 10;
 				for(var j=0; j<i; j++) {
 					var doneNode = nodes[j];
 					var doneLeft = doneNode["x"] - width/2;
@@ -109,6 +129,7 @@ UnconnectedNodesLayout.prototype._layoutNodesAtLevel = function(level, width) {
 					}
 				}
 			}
+			if(left < 10) left = 10;
 			node["x"] = left + width/2;
 		}
 	}
@@ -116,7 +137,7 @@ UnconnectedNodesLayout.prototype._layoutNodesAtLevel = function(level, width) {
 
 UnconnectedNodesLayout.prototype._getMaxXAtLevel = function(level) {
 	var nodes = this.nodesAtLevel[level];
-	var maxLeft = 10;
+	var maxLeft = -1;
 	if(nodes) {
 		for(var i=0; i<nodes.length; i++) {
 			var node = nodes[i];
@@ -142,7 +163,7 @@ UnconnectedNodesLayout.prototype._computeNodeWidthOnLinks = function(level) {
 				
 				for(var j=0; j<links.length; j++) {
 					var linkId = links[j];
-					var nodeConnect = this.nodes[linkId];
+					var nodeConnect = this._getNodeById(linkId);
 					if(nodeConnect["height"] > level)
 						continue;
 					
@@ -158,6 +179,7 @@ UnconnectedNodesLayout.prototype._computeNodeWidthOnLinks = function(level) {
 				}
 				
 				width = extremeRightX - extremeLeftX;
+				if(extremeLeftX < 10) extremeLeftX = 10;
 				node["x"] = extremeLeftX + width/2;
 			    node["width"] = width;
 			}
@@ -174,11 +196,14 @@ UnconnectedNodesLayout.prototype._checkMaxLeftAtLevel = function(level, maxRight
 			var x = node["x"];
 			var width = node["width"];
             var rightX = x + width/2;
+            var leftX = x - width/2;
             if(rightX > maxRight) {
             	//need to bump this
             	allIn = false;
             	this._setNodeLevel(node, this.maxLevel + node["height"]);
-            	node["x"] = x - maxRight + width/2;
+            	var left = leftX - maxRight;
+            	if(left < 10) left = 10;
+            	node["x"] = left + width/2;
             }
 		}
 	}

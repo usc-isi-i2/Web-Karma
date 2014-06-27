@@ -46,10 +46,12 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     var floatingLayout = new UnconnectedNodesLayout();
     $.each(json["nodes"], function(index, node){
         var hNodeList = node["hNodesCovered"];
-        
-       ///console.log("Hnode:" + node["id"] + "->" + hNodeList.length);
         if(hNodeList.length == 0) {
         	var linkList = [];
+        	
+        	var extremeLeftX = Number.MAX_VALUE;
+	        var extremeRightX = Number.MIN_VALUE;
+	        
         	$.each(json["links"], function(index2, link) {
         		var source = link["source"];
         		if(typeof source == "object")
@@ -58,10 +60,22 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         		if(typeof target == "object")
         			target = target["index"];
         		
+        		var nodeConnect = null;
         		if(source == index) {
-        			linkList.push(target);
+        			nodeConnect = json["nodes"][target];
         		} else if(target == index) {
-        			linkList.push(source);
+        			nodeConnect = json["nodes"][source];
+        		}
+        		if(nodeConnect != null) {
+        			linkList.push(nodeConnect.id);
+        			var width = nodeConnect["width"];
+    	            var x = nodeConnect["x"];
+    	            var leftX = x - (width/2);
+    	            var rightX = x + (width/2);
+    	            if(leftX < extremeLeftX)
+    	                extremeLeftX = leftX;
+    	            if(rightX > extremeRightX)
+    	                extremeRightX = rightX;
         		}
         	});
        
@@ -70,22 +84,6 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         		return;
         	}
         	
-	        var extremeLeftX = Number.MAX_VALUE;
-	        var extremeRightX = Number.MIN_VALUE;
-	        $.each(linkList, function(index2, hNodeIdx){
-	            var nodeConnect = json["nodes"][hNodeIdx];
-	            var width = nodeConnect["width"];
-	            var x = nodeConnect["x"];
-	            //var y = nodeConnect["y"];
-	            var leftX = x - (width/2);
-	            var rightX = x + (width/2);
-	            if(leftX < extremeLeftX)
-	                extremeLeftX = leftX;
-	            if(rightX > extremeRightX)
-	                extremeRightX = rightX;
-	        });
-		        //console.log("HNode:" + node["id"] + " has " + linkList.length + " links");
-		        //console.log("left, right: " + extremeLeftX + ":" + extremeRightX);
 	      if(extremeLeftX == Number.MAX_VALUE) {
 	    	   floatingLayout.addNode(node, linkList);
 	    	   node["floating"] = true;
@@ -453,7 +451,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         			d3.event);
         }).on("mouseover", function(d){
             d3.selectAll("g.InternalNode").each(function(d2,i) {
-                if(d2 == d.source) {
+                if(d2 == d.source || d2 == d.target) {
                     var newRect = $(this).clone();
                     newRect.attr("class","InternalNode highlightOverlay");
                     $("div#svgDiv_" + json["worksheetId"] + " svg").append(newRect);
