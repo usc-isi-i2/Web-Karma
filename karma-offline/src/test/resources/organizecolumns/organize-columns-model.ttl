@@ -1,0 +1,69 @@
+@prefix vitro-public: <http://vitro.mannlib.cornell.edu/ns/vitro/public#> .
+@prefix c4o: <http://purl.org/spar/c4o/> .
+@prefix syll: <http://lod.isi.edu/ontology/syllabus/> .
+@prefix ero: <http://purl.obolibrary.org/obo/> .
+@prefix pvs: <http://vivoweb.org/ontology/provenance-support#> .
+@prefix owl2: <http://www.w3.org/2006/12/owl2-xml#> .
+@prefix scirr: <http://vivoweb.org/ontology/scientific-research-resource#> .
+@prefix vivo: <http://vivoweb.org/ontology/core#> .
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix afn: <http://jena.hpl.hp.com/ARQ/function#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix unit: <http://data.nasa.gov/qudt/owl/unit#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix scires: <http://vivoweb.org/ontology/scientific-research#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcmitype: <http://purl.org/dc/dcmitype/> .
+@prefix geo: <http://aims.fao.org/aos/geopolitical.owl#> .
+@prefix skco: <http://www.w3.org/2004/02/skos/core#> .
+@prefix event: <http://purl.org/NET/c4dm/event.owl#> .
+@prefix wot: <http://xmlns.com/wot/0.1/> .
+@prefix edan-ont: <http://collection.edan.si.edu/ontologies/> .
+@prefix dcelem: <http://purl.org/dc/elements/1.1/> .
+@prefix dim: <http://data.nasa.gov/qudt/owl/dimension#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> .
+@prefix skos: <http://www.w3.org/2008/05/skos#> .
+@prefix qudt: <http://data.nasa.gov/qudt/owl/qudt#> .
+@prefix cc: <http://creativecommons.org/ns#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix quantity: <http://data.nasa.gov/qudt/owl/quantity#> .
+@prefix oecc: <http://www.oegov.org/models/common/cc#> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix dcam: <http://purl.org/dc/dcam/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix km-dev: <http://isi.edu/integration/karma/dev#> .
+
+_:node18q0tap1tx1 a km-dev:R2RMLMapping ;
+	km-dev:sourceName "test3.json" ;
+	km-dev:modelPublicationTime "1402337584189"^^xsd:long ;
+	km-dev:modelVersion "1.3" ;
+	km-dev:hasWorksheetHistory "[{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"orderedColumns\",\"value\":[{\"id\":[{\"columnName\":\"object_type\"}],\"visible\":true,\"hideable\":true,\"name\":\"object_type\",\"children\":\"[{\\\"id\\\":[{\\\"columnName\\\":\\\"object_type\\\"},{\\\"columnName\\\":\\\"values\\\"}],\\\"visible\\\":true,\\\"hideable\\\":true,\\\"name\\\":\\\"values\\\"}]\"},{\"id\":[{\"columnName\":\"language\"}],\"visible\":true,\"hideable\":true,\"name\":\"language\",\"children\":\"[{\\\"id\\\":[{\\\"columnName\\\":\\\"language\\\"},{\\\"columnName\\\":\\\"values\\\"}],\\\"visible\\\":true,\\\"hideable\\\":true,\\\"name\\\":\\\"values\\\"}]\"}],\"type\":\"orderedColumns\"}],\"commandName\":\"OrganizeColumnsCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://www.cidoc-crm.org/cidoc-crm/E30_Right\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"object_type\"},{\"columnName\":\"values\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://isi.edu/integration/karma/dev#classLink\",\"DomainLabel\":\"crm:E30_Right1 (add)\",\"DomainId\":\"http://www.cidoc-crm.org/cidoc-crm/E30_Right1\",\"DomainUri\":\"http://www.cidoc-crm.org/cidoc-crm/E30_Right\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"}]" .
+
+km-dev:TriplesMap_3a54b82f-3ad7-4e5c-8830-217a8a63f515 a rr:TriplesMap .
+
+_:node18q0tap1tx1 km-dev:hasTriplesMap km-dev:TriplesMap_3a54b82f-3ad7-4e5c-8830-217a8a63f515 .
+
+km-dev:TriplesMap_3a54b82f-3ad7-4e5c-8830-217a8a63f515 km-dev:isPartOfMapping _:node18q0tap1tx1 .
+
+_:node18q0tap1tx2 rr:tableName "test3.json" ;
+	a rr:LogicalTable ;
+	km-dev:isPartOfMapping _:node18q0tap1tx1 .
+
+_:node18q0tap1tx1 km-dev:hasLogicalTable _:node18q0tap1tx2 .
+
+km-dev:TriplesMap_3a54b82f-3ad7-4e5c-8830-217a8a63f515 rr:logicalTable _:node18q0tap1tx2 ;
+	rr:subjectMap _:node18q0tap1tx3 .
+
+_:node18q0tap1tx1 km-dev:hasSubjectMap _:node18q0tap1tx3 .
+
+_:node18q0tap1tx3 km-dev:isPartOfMapping _:node18q0tap1tx1 ;
+	a rr:SubjectMap ;
+	km-dev:alignmentNodeId "http://www.cidoc-crm.org/cidoc-crm/E30_Right1" ;
+	rr:class crm:E30_Right ;
+	rr:template "{[\"object_type\",\"values\"]}" ;
+	a km-dev:steinerTreeRootNode .

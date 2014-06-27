@@ -55,6 +55,7 @@ and related projects, please see: http://www.isi.edu/integration
         <link href="./css/sticky-footer-navbar.css?<jsp:include page='version.jsp'/>" rel="stylesheet">
         
         <link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/dropdown.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/command_History.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/tables_workspace.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/fileImport.css?<jsp:include page='version.jsp' />" />
@@ -68,6 +69,8 @@ and related projects, please see: http://www.isi.edu/integration
         <link rel="stylesheet" type="text/css" href="./css/main.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/pyTransform.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/cleaningChart.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/model.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/augmentdata.css?<jsp:include page='version.jsp' />" />
       
 		<style type="text/css">
 			div.sticky {
@@ -140,7 +143,7 @@ and related projects, please see: http://www.isi.edu/integration
 		          <ul class="nav navbar-nav">
 		            <li class="dropdown">
 		              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Import <b class="caret"></b></a>
-		              <ul class="dropdown-menu">
+		              <ul class="dropdown-menu multi-level">
 		                  <li><a href="#" id="importDatabaseTableButton">Database Table</a></li>
 		                  <li><a href="#" id="importSQLButton">Using SQL</a></li>
 		                  <li><a href="#" id="importFromServiceButton" >From Service</a></li>
@@ -148,6 +151,8 @@ and related projects, please see: http://www.isi.edu/integration
 		              </ul>
 		            </li>
 		            <li><a href="#" id="resetButton" data-html='true' title='Delete all saved files,<br/>use with care!' data-toggle='tooltip' data-placement='bottom'>Reset ...</a></li>
+		            <li><a href="#" id="modelManagerButton" data-html='true' data-toggle='tooltip' data-placement='bottom'>Manage Models</a></li>
+
 		            <li>
 		            		<div class="span5 fileupload-progress fade">
 								<!-- The global progress bar -->
@@ -158,6 +163,7 @@ and related projects, please see: http://www.isi.edu/integration
 								<div class="progress-extended">
 									&nbsp;
 								</div>
+								
 							</div>
 		            	
 		            </li>
@@ -169,10 +175,11 @@ and related projects, please see: http://www.isi.edu/integration
 		          </ul>
 		        </div>
 		      </div> <!--  end of navbar -->
-		      
+
 		      <div class="row">
 			      <div id="commHistoryAndWorkspace">
 			      	<div class="col-sm-2">
+			      		
 				      	<div class="ui-corner-top" id="commandHistory">
 				      		<div id="titleCommand" class="ui-corner-top"><span>Command History</span></div>
 				      	</div>
@@ -191,7 +198,7 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="tableOptionsDialogs.jsp"></jsp:include>
 			  <jsp:include page="semanticTypes.jsp"></jsp:include>
 			  <jsp:include page="showModel.jsp"></jsp:include>
-			  
+			  <jsp:include page="model.jsp"></jsp:include>
 			  
 			  <div class="modal fade" id="karmaErrorWindow" tabindex="-1">
 			  	<div class="modal-dialog">
@@ -219,6 +226,16 @@ and related projects, please see: http://www.isi.edu/integration
 	        	</div>
 	        </p>
 	      </div>
+	      <div class="container">
+	      	<div class="form-group" style="float:left; width: 500px; padding-right: 10px;">
+										<label for="txtModel_URL">Model Repository Endpoint</label>
+										<label class="edit" id="txtModel_URL"></label>
+					</div>
+		    	<div class="form-group" style="float:left; width: 500px; padding-left: 10px;">
+								<label for="txtData_URL">Data Repository Endpoint</label>
+								<label class="edit" id="txtData_URL"></label>
+					</div>
+				</div>
 	    </div>
     
         <div id="ScrollHeadersPlaceholder"></div>
@@ -291,8 +308,8 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="uiLibs/modernizr/js/modernizr.custom.59953.js"></script>
 		
         <!-- Home grown JavaScript files -->
-        <script type="text/javascript" src="js/initWS.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/ServerResponseObjectParsing.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/initWS.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/commandHistory.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/publishRDF.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/publishDatabase.js?<jsp:include page='version.jsp' />"></script>
@@ -317,7 +334,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/propertyDropdown.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/model-layout.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/UnconnectedNodesLayout.js?<jsp:include page='version.jsp' />"></script>
-        
+        <script type="text/javascript" src="js/model.js?<jsp:include page='version.jsp' />"></script>
         <script>
         	var googleEarthEnabled = <%=UIConfiguration.Instance().isGoogleEarthEnabled()%>;
         	

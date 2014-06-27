@@ -21,17 +21,22 @@
 
 package edu.isi.karma.kr2rml;
 
+import java.util.UUID;
+
 import edu.isi.karma.kr2rml.planning.TriplesMap;
 
 public class PredicateObjectMap {
 	
 	// Parent TriplesMap. Useful for traversal
 	private final TriplesMap triplesMap;
-	
+	private final String id;
 	private Predicate predicate;
 	private ObjectMap object;
+	private final static String PREDICATE_OBJECT_MAP_PREFIX = "PredicateObjectMap";
 	
-	public PredicateObjectMap(TriplesMap triplesMap) {
+	
+	public PredicateObjectMap(String id, TriplesMap triplesMap) {
+		this.id = id;
 		this.triplesMap = triplesMap;
 	}
 
@@ -55,10 +60,19 @@ public class PredicateObjectMap {
 		this.object = object;
 	}
 
+	public String getId()
+	{
+		return id;
+	}
+	
 	@Override
 	public String toString() {
 		return "PredicateObjectMap [" + predicate + ", "
 				+ object + "]";
 	}
-	
+
+	public static String getNewId()
+	{
+		return PREDICATE_OBJECT_MAP_PREFIX + "_" + UUID.randomUUID();
+	}
 }

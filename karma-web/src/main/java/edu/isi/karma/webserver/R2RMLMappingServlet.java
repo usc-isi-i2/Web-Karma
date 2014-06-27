@@ -21,10 +21,11 @@ public class R2RMLMappingServlet extends HttpServlet{
 	 * 
 	 */
 	private static final long serialVersionUID = -979319404654953710L;
-	private final String serverAddress = "http://localhost:8080";
+	private String serverAddress = "";
 	private final String R2RML_PUBLISH_DIR = ServletContextParameterMap.getParameterValue(ContextParameter.WEBAPP_PATH) + "/publish/R2RML";
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		serverAddress = request.getRequestURL().toString();
 		if (request.getPathInfo() == null) {
 			File directory = new File(R2RML_PUBLISH_DIR);
 			File[] contents = directory.listFiles();
@@ -32,7 +33,7 @@ public class R2RMLMappingServlet extends HttpServlet{
 			for (int i = 0; i < contents.length; i++) {
 				if (FilenameUtils.getExtension(contents[i].getName()).compareTo("ttl") == 0) {
 					JSONObject obj = new JSONObject();
-					obj.put("url", serverAddress + "/R2RMLMapping/local/" + contents[i].getName());
+					obj.put("url", serverAddress + "/" + contents[i].getName());
 					array.put(obj);
 				}
 			}

@@ -20,12 +20,12 @@ public class OrganizeColumnsCommand extends WorksheetCommand {
 	private String workspaceId;
 	private ArrayList<VHNode> prevOrderedColumns;
 	private JSONArray orderedColumns;
-	
+
 	protected OrganizeColumnsCommand(String id, String workspaceId, String worksheetId, org.json.JSONArray orderedColumns) {
 		super(id, worksheetId);
 		this.workspaceId = workspaceId;
 		this.orderedColumns = orderedColumns;
-		
+
 		addTag(CommandTag.Transformation);
 	}
 
@@ -52,11 +52,11 @@ public class OrganizeColumnsCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		orderColumns(orderedColumns);
-		
+
 		UpdateContainer c =  new UpdateContainer();
 		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
-		
+
 		return c;
 	}
 
@@ -73,17 +73,21 @@ public class OrganizeColumnsCommand extends WorksheetCommand {
 
 	private void orderColumns(JSONArray columns) {
 		VWorkspace vWorkspace = VWorkspaceRegistry.getInstance().getVWorkspace(workspaceId);
-		VWorksheet viewWorksheet = vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
-		prevOrderedColumns = viewWorksheet.getHeaderViewNodes();
-		
-		viewWorksheet.organizeColumns(columns);
+		if (vWorkspace != null) {
+			VWorksheet viewWorksheet = vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
+			prevOrderedColumns = viewWorksheet.getHeaderViewNodes();
+
+			viewWorksheet.organizeColumns(columns);
+		}
 	}
-	
+
 	private void orderColumns(ArrayList<VHNode> columns) {
 		VWorkspace vWorkspace = VWorkspaceRegistry.getInstance().getVWorkspace(workspaceId);
-		VWorksheet viewWorksheet = vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
-		prevOrderedColumns = viewWorksheet.getHeaderViewNodes();
-		
-		viewWorksheet.organizeColumns(columns);
+		if (vWorkspace != null) {
+			VWorksheet viewWorksheet = vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
+			prevOrderedColumns = viewWorksheet.getHeaderViewNodes();
+
+			viewWorksheet.organizeColumns(columns);
+		}
 	}
 }

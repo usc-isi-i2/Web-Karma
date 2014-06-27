@@ -1,10 +1,12 @@
-package edu.isi.karma.controller.command.worksheet;
+package edu.isi.karma.rep;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
-
-import edu.isi.karma.rep.*;
 
 public class HashValueManager {
 	private static Map<String, HashMap<String, String>> hashTable = new HashMap<String, HashMap<String, String>>();

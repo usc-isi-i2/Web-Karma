@@ -23,6 +23,7 @@
 package edu.isi.karma.rep;
 
 import edu.isi.karma.modeling.semantictypes.FullCRFModel;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.metadata.MetadataContainer;
 
@@ -159,8 +160,8 @@ public class Worksheet extends RepEntity {
      * @param factory
      * @return The added HNode.
      */
-    public HNode addHNode(String columnName, RepFactory factory) {
-        return headers.addHNode(columnName, this, factory);
+    public HNode addHNode(String columnName, HNodeType type, RepFactory factory) {
+        return headers.addHNode(columnName, type, this, factory);
     }
 
     /**

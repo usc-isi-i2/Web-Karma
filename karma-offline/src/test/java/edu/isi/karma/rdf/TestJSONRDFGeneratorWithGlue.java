@@ -21,14 +21,7 @@
 
 package edu.isi.karma.rdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URL;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,16 +31,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.util.EncodingDetector;
 
 
 /**
  * @author dipsy
  * 
  */
-public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
+public class TestJSONRDFGeneratorWithGlue extends TestJSONRDFGenerator{
 
-	GenericRDFGenerator rdfGen;
 	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGeneratorWithGlue.class);
 	
 
@@ -88,21 +79,7 @@ public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
 	public void testGlueNested() {
 		try {
 
-			String filename = "glue/glue-nested.json";
-			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
-					"utf-8");
-
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-
-			rdfGen.generateRDF("glue-nested-model", jsonData, false, pw);
-			String rdf = sw.toString();
-			
-			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split(System.getProperty("line.separator"));
-			int count = lines.length;
-			assertEquals(35, count);
+			executeBasicJSONTest("glue/glue-nested.json", "glue-nested-model", false, 35);
 		} catch (Exception e) {
 			logger.error("testGlueNested failed:", e);
 			fail("Execption: " + e.getMessage());
@@ -113,29 +90,11 @@ public class TestJSONRDFGeneratorWithGlue extends TestRdfGenerator{
 	public void testGlueTop() {
 		try {
 
-			String filename = "glue/glue-top.json";
-			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
-					"utf-8");
-
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-
-			rdfGen.generateRDF("glue-top-model", jsonData, false, pw);
-			String rdf = sw.toString();
-			
-			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split(System.getProperty("line.separator"));
-			int count = lines.length;
-			assertEquals(22, count);
+			executeBasicJSONTest("glue/glue-top.json", "glue-top-model", false, 22);
 		} catch (Exception e) {
 			logger.error("testGlueTop failed:", e);
-			fail("Execption: " + e.getMessage());
+			fail("Exception: " + e.getMessage());
 		}
 	}
 
-	private URL getTestResource(String name)
-	{
-		return getClass().getClassLoader().getResource(name);
-	}
 }

@@ -21,29 +21,19 @@
 
 package edu.isi.karma.rdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URL;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.util.EncodingDetector;
 
 /**
  * @author dipsy
  * 
  */
-public class TestJSONDagRDFGenerator extends TestRdfGenerator{
-
-	GenericRDFGenerator rdfGen;
+public class TestJSONDagRDFGenerator extends TestJSONRDFGenerator{
 
 	/**
 	 * @throws java.lang.Exception
@@ -80,22 +70,10 @@ public class TestJSONDagRDFGenerator extends TestRdfGenerator{
 	public void testGenerateRDF1() {
 		try {
 
-			String filename = "menu.json";
-			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
-					"utf-8");
-
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-
-			rdfGen.generateRDF("menu-model", jsonData, false, pw);
-			String rdf = sw.toString();
-			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split(System.getProperty("line.separator"));
-			int count = lines.length + 1;
-			assertEquals(191, count);
+			executeBasicJSONTest("menu.json", "menu-model", false, 190);
+			
 		} catch (Exception e) {
-			fail("Execption: " + e.getMessage());
+			fail("Exception: " + e.getMessage());
 		}
 	}
 
@@ -108,28 +86,11 @@ public class TestJSONDagRDFGenerator extends TestRdfGenerator{
 	public void testGenerateRDF2() {
 		try {
 
-			String filename = "menus.json";
-			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
-					"utf-8");
-
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-
-			rdfGen.generateRDF("menus-model", jsonData, false, pw);
-			String rdf = sw.toString();
-			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split(System.getProperty("line.separator"));
-			int count = lines.length + 1;
-			assertEquals(412, count);
+			executeBasicJSONTest("menus.json", "menus-model", false, 411);
+			
 		} catch (Exception e) {
-			fail("Execption: " + e.getMessage());
+			fail("Exception: " + e.getMessage());
 		}
 	}
 	
-
-	private URL getTestResource(String name)
-	{
-		return getClass().getClassLoader().getResource(name);
-	}
 }

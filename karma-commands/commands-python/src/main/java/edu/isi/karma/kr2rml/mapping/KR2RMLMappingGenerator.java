@@ -86,7 +86,6 @@ public class KR2RMLMappingGenerator {
 
 	private OntologyManager ontMgr;
 	private String sourceNamespace;
-//	private ErrorReport errorReport;
 	private KR2RMLMapping r2rmlMapping;
 	private KR2RMLMappingColumnNameHNodeTranslator translator;
 	private PythonTransformationToTemplateTermSetBuilder transformationToTemplateTermSet;
@@ -98,10 +97,7 @@ public class KR2RMLMappingGenerator {
 	
 	// Internal data structures required
 	private int synonymIdCounter;
-	private int refObjectMapId = 1;
-	private int tripleMapId = 1;
-	private final static String TRIPLES_MAP_PREFIX = "TriplesMap";
-	private final static String REFOBJECT_MAP_PREFIX = "RefObjectMap";
+	
 	private static Logger logger = LoggerFactory.getLogger(KR2RMLMappingGenerator.class);
 	
 	public KR2RMLMappingGenerator(Workspace workspace, Worksheet worksheet, Alignment alignment, 
@@ -264,7 +260,7 @@ public class KR2RMLMappingGenerator {
 			if (node instanceof InternalNode) {
 				// Create a TriplesMap corresponding to the Internal node
 				SubjectMap subjMap = r2rmlMapping.getSubjectMapIndex().get(node.getId());
-				TriplesMap trMap = new TriplesMap(getNewTriplesMapId(), subjMap);
+				TriplesMap trMap = new TriplesMap(TriplesMap.getNewId(), subjMap);
 				r2rmlMapping.getTriplesMapIndex().put(node.getId(), trMap);
 				this.r2rmlMapping.addTriplesMap(trMap);
 				r2rmlMapping.getAuxInfo().getTriplesMapGraph().addTriplesMap(trMap);
@@ -373,14 +369,14 @@ public class KR2RMLMappingGenerator {
 							|| olink instanceof ColumnSubClassLink)
 						continue;
 					
-					PredicateObjectMap poMap = new PredicateObjectMap(subjTrMap);
+					PredicateObjectMap poMap = new PredicateObjectMap(PredicateObjectMap.getNewId(), subjTrMap);
 					Node target = olink.getTarget();
 					
 					// Create an object property map
 					if (target instanceof InternalNode) {
 						// Get the RefObjMap object for the objectmap
 						TriplesMap objTrMap = r2rmlMapping.getTriplesMapIndex().get(target.getId());
-						RefObjectMap refObjMap = new RefObjectMap(getNewRefObjectMapId(), objTrMap);
+						RefObjectMap refObjMap = new RefObjectMap(RefObjectMap.getNewRefObjectMapId(), objTrMap);
 						ObjectMap objMap = new ObjectMap(target.getId(), refObjMap);
 						poMap.setObject(objMap);
 						
@@ -480,7 +476,7 @@ public class KR2RMLMappingGenerator {
 					continue;
 				}
 				
-				PredicateObjectMap poMap = new PredicateObjectMap(subjTrMap);
+				PredicateObjectMap poMap = new PredicateObjectMap(PredicateObjectMap.getNewId(),subjTrMap);
 				
 				// Create the object map
 				String columnName = translator.getColumnNameForHNodeId(hNodeId);
@@ -523,14 +519,14 @@ public class KR2RMLMappingGenerator {
 		if (inversePropLabel != null) {
 			TriplesMap inverseTrMap = r2rmlMapping.getTriplesMapIndex().get(poMap.getObject().getId());
 			// Create the predicate object map
-			PredicateObjectMap invPoMap = new PredicateObjectMap(inverseTrMap);
+			PredicateObjectMap invPoMap = new PredicateObjectMap(PredicateObjectMap.getNewId(),inverseTrMap);
 			// Create the predicate
 			Predicate pred = new Predicate(olink.getId()+"+inverse");
 			pred.getTemplate().addTemplateTermToSet(
 					new StringTemplateTerm(inversePropLabel.getUri(), true));
 			invPoMap.setPredicate(pred);
 			// Create the object using RefObjMap
-			RefObjectMap refObjMap = new RefObjectMap(getNewRefObjectMapId(), subjTrMap);
+			RefObjectMap refObjMap = new RefObjectMap(RefObjectMap.getNewRefObjectMapId(), subjTrMap);
 			ObjectMap invObjMap = new ObjectMap(subjMap.getId(), refObjMap);
 			invPoMap.setObject(invObjMap);
 			inverseTrMap.addPredicateObjectMap(invPoMap);
@@ -542,14 +538,14 @@ public class KR2RMLMappingGenerator {
 			// Get the object's triples map
 			TriplesMap inverseOfTrMap = r2rmlMapping.getTriplesMapIndex().get(poMap.getObject().getId());
 			
-			PredicateObjectMap invOfPoMap = new PredicateObjectMap(inverseOfTrMap);
+			PredicateObjectMap invOfPoMap = new PredicateObjectMap(PredicateObjectMap.getNewId(),inverseOfTrMap);
 			// Create the predicate
 			Predicate pred = new Predicate(olink.getId()+"+inverseOf");
 			pred.getTemplate().addTemplateTermToSet(
 					new StringTemplateTerm(inverseOfPropLabel.getUri(), true));
 			invOfPoMap.setPredicate(pred);
 			// Create the object using RefObjMap
-			RefObjectMap refObjMap = new RefObjectMap(getNewRefObjectMapId(), subjTrMap);
+			RefObjectMap refObjMap = new RefObjectMap(RefObjectMap.getNewRefObjectMapId(), subjTrMap);
 			ObjectMap invOfObjMap = new ObjectMap(subjMap.getId(), refObjMap);
 			invOfPoMap.setObject(invOfObjMap);
 			inverseOfTrMap.addPredicateObjectMap(invOfPoMap);
@@ -580,17 +576,7 @@ public class KR2RMLMappingGenerator {
 		}
 		return null;
 	}
-	
-	
-	
-	private String getNewRefObjectMapId() {
-		return REFOBJECT_MAP_PREFIX + "_" + UUID.randomUUID();
-	}
-	
-	private String getNewTriplesMapId() {
-		return TRIPLES_MAP_PREFIX + "_" + UUID.randomUUID();
-	}
-	
+
 }
 
 

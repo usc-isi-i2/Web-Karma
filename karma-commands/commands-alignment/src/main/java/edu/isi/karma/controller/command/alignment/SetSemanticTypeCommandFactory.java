@@ -87,7 +87,11 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}
-
+	
+	public Command createCommand(Workspace workspace, String worksheetId, String hNodeId, boolean isPartOfKey, JSONArray arr, boolean train, String rdfLiteralType) {
+		return new SetSemanticTypeCommand(getNewId(workspace), worksheetId, hNodeId, 
+				isPartOfKey, arr, train, rdfLiteralType);
+	}
 	@Override
 	public Class<? extends Command> getCorrespondingCommand()
 	{

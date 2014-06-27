@@ -23,6 +23,7 @@ package edu.isi.karma.kr2rml.planning;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.SubjectMap;
@@ -32,6 +33,7 @@ public class TriplesMap {
 	private final String id;
 	private SubjectMap subject;
 	private List<PredicateObjectMap> predicateObjectMaps = new ArrayList<PredicateObjectMap>();
+	private final static String TRIPLES_MAP_PREFIX = "TriplesMap";
 	
 	public TriplesMap(String id, SubjectMap subject) {
 		this.id = id;
@@ -81,5 +83,9 @@ public class TriplesMap {
 				"\t\tsubject=" + subject + ",\n" +
 				"\t\tpredicateObjectMaps=\n" + predStr.toString() + "\n\t]";
 	}
-	
+
+	public static String getNewId() {
+		return TRIPLES_MAP_PREFIX + "_" + UUID.randomUUID();
+	}
+
 }

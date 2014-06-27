@@ -8,9 +8,8 @@ import java.net.URL;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.log4j.Logger;
 import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
@@ -22,7 +21,9 @@ import edu.isi.karma.rdf.ContentDetectingRDFGenerator;
 import edu.isi.karma.webserver.KarmaException;
 
 public class SimpleMapper extends Mapper<Text, Text, Text, Text>{
-	private static Logger logger = LoggerFactory.getLogger(SimpleMapper.class);
+
+	private static Logger LOG = Logger.getLogger(SimpleMapper.class);
+
 	ContentDetectingRDFGenerator generator;
 	
 	@Override
@@ -46,10 +47,11 @@ public class SimpleMapper extends Mapper<Text, Text, Text, Text>{
 	        URL modelURL = new URL(modelUri);
 	        generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
 		} catch (KarmaException | IOException e) {
-			logger.error("Unable to complete Karma set up: " + e.getMessage());
+			LOG.error("Unable to complete Karma set up: " + e.getMessage());
 			throw new RuntimeException("Unable to complete Karma set up: " + e .getMessage());
 		}
 	}
+
 	@Override
 	public void map(Text key, Text value, Context context) throws IOException, InterruptedException {
 
@@ -59,9 +61,9 @@ public class SimpleMapper extends Mapper<Text, Text, Text, Text>{
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		try {
-			generator.generateRDF(filename, contents, false, pw);
+			generator.generateRDF("model", filename, contents, false, pw);
 		} catch (JSONException | KarmaException e) {
-			logger.error("Unable to generate RDF for " + filename + ": " + e.getMessage());
+			LOG.error("Unable to generate RDF: " + e.getMessage());
 		}
 		String results = sw.toString();
 		context.write(new Text(filename), new Text(results));

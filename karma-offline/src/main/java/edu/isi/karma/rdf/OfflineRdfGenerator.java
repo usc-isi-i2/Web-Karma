@@ -25,12 +25,16 @@ package edu.isi.karma.rdf;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.Group;
@@ -45,6 +49,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.kr2rml.BloomFilterKR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
@@ -59,10 +67,38 @@ import edu.isi.karma.webserver.KarmaException;
 public class OfflineRdfGenerator {
 
     private static Logger logger = LoggerFactory.getLogger(OfflineRdfGenerator.class);
+	private String inputType;
+	private String modelFilePath;
+	private String modelURLString;
+	private String baseURI;
+	private String outputFilePath;
+	private String bloomFiltersFilePath;
+	private List<KR2RMLRDFWriter> writers;
+	private URL modelURL;
+	private String dbtypeStr;
+	private String username;
+	private String password;
+	private String hostname;
+	private String encoding;
+	private String sourceFilePath;
+	private String dBorSIDName;
+	private String tablename;
+	private String queryFile;
+	private String portnumber;
+	private String sMaxNumLines;
+	private String sourceName;
+	private int port;
+	private DBType dbType;
+	private File inputFile;
+	private int maxNumLines; 
+    public OfflineRdfGenerator(CommandLine cl)
+    {
+    	
+    	this.writers = new LinkedList<KR2RMLRDFWriter>();
+    	parseCommandLineOptions(cl);	
+    }
 
     public static void main(String[] args) {
-    	
-        ModelingConfiguration.setLearnerEnabled(false); // disable automatic learning
     	
     	Group options = createCommandLineOptions();
         Parser parser = new Parser();
@@ -88,103 +124,189 @@ public class OfflineRdfGenerator {
                 return;
             }
 
-            String inputType = (String) cl.getValue("--sourcetype");
-            String modelFilePath = (String) cl.getValue("--modelfilepath");
-            String modelURLString = (String) cl.getValue("--modelurl");
-            String outputFilePath = (String) cl.getValue("--outputfile");
-            if ((modelURLString == null && modelFilePath == null) || outputFilePath == null || inputType == null) {
-                logger.error("Mandatory value missing. Please provide argument value "
-                        + "for sourcetype, modelfilepath and outputfile.");
-                return;
-            }
+            OfflineRdfGenerator generator = new OfflineRdfGenerator(cl);
+          
+            generator.generate();
 
-            /**
-             * VALIDATE THE OPTIONS *
-             */
-            URL modelURL = null;
-            if(modelFilePath != null)
-            {
-            	File modelFile = new File(modelFilePath);
-            	if (!modelFile.exists()) {
-            		logger.error("File not found: " + modelFile.getAbsolutePath());
-            		return;
-            	}
-            	modelURL = modelFile.toURI().toURL();
-            }
-            else
-            {
-            	modelURL = new URL(modelURLString);
-            }
-            
-            if (!inputType.equalsIgnoreCase("DB")
-                    && !inputType.equalsIgnoreCase("CSV")
-                    && !inputType.equalsIgnoreCase("XML")
-                    && !inputType.equalsIgnoreCase("JSON")
-                    && !inputType.equalsIgnoreCase("SQL")
-                    ) {
-                logger.error("Invalid source type: " + inputType
-                        + ". Please choose from: DB, SQL, CSV, XML, JSON.");
-                return;
-            }
 
-            UpdateContainer uc = new UpdateContainer();
-            KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
-            userMetadataManager.register(new UserPreferencesMetadata(), uc);
-            userMetadataManager.register(new UserConfigMetadata(), uc);
-            userMetadataManager.register(new PythonTransformationMetadata(), uc);
-
-            /**
-             * PREPATRE THE OUTPUT OBJECTS *
-             */
-            OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
-            BufferedWriter bw = new BufferedWriter(fw);
-//	        Model model = ModelFactory.createDefaultModel();
-//	        Writer bw = new JenaWritable(model);
-	        PrintWriter pw = new PrintWriter(bw);
-
-	        long l = System.currentTimeMillis();
-	        /**
-             * Generate RDF on the source type *
-             */
-            SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
-            // Database table
-            if (inputType.equals("DB") || inputType.equals("SQL")) {
-                generateRdfFromDatabaseTable(inputType, cl, modelURL, pw);
-            } // File based worksheets such as JSON, XML, CSV
-            else {
-                generateRdfFromFile(cl, inputType, modelURL, pw);
-            }
-            pw.close();
-            logger.info("done after {}", (System.currentTimeMillis() - l));
-
-            logger.info("RDF published at: " + outputFilePath);
         } catch (Exception e) {
             logger.error("Error occured while generating RDF!", e);
         }
     }
 
-	private static void generateRdfFromDatabaseTable(String inputType, CommandLine cl, URL modelURL,
-			PrintWriter pw) throws IOException, JSONException, KarmaException,
+	private void generate() throws Exception {
+		if (validateCommandLineOptions()) {
+			createModelURL();
+			setupKarmaMetadata();
+			generateRDF();
+			closeWriters();
+		}
+	}
+    
+    private void generateRDF() throws Exception
+    {
+        /**
+         * Generate RDF on the source type *
+         */
+        long l = System.currentTimeMillis();
+
+        // Database table
+        if (inputType.equals("DB") || inputType.equals("SQL")) {
+            generateRdfFromDatabaseTable();
+        } // File based worksheets such as JSON, XML, CSV
+        else {
+            generateRdfFromFile();
+        }
+
+        logger.info("done after {}", (System.currentTimeMillis() - l));
+        logger.info("RDF published at: " + outputFilePath);
+    }
+
+	private void setupKarmaMetadata() throws KarmaException {
+		UpdateContainer uc = new UpdateContainer();
+		KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
+		userMetadataManager.register(new UserPreferencesMetadata(), uc);
+		userMetadataManager.register(new UserConfigMetadata(), uc);
+		userMetadataManager.register(new PythonTransformationMetadata(), uc);
+
+        SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
+        ModelingConfiguration.setLearnerEnabled(false); // disable automatic learning
+    	
+	}
+
+
+	protected void parseCommandLineOptions(CommandLine cl) {
+		inputType = (String) cl.getValue("--sourcetype");
+		modelFilePath = (String) cl.getValue("--modelfilepath");
+		modelURLString = (String) cl.getValue("--modelurl");
+		outputFilePath = (String) cl.getValue("--outputfile");
+		baseURI = (String) cl.getValue("--baseuri");
+		bloomFiltersFilePath = (String) cl.getValue("--outputbloomfilter");
+		parseDatabaseCommandLineOptions(cl);
+		parseFileCommandLineOptions(cl);
+
+	}
+	
+	protected void parseDatabaseCommandLineOptions(CommandLine cl)
+	{
+
+		dbtypeStr = (String) cl.getValue("--dbtype");
+		hostname = (String) cl.getValue("--hostname");
+		username = (String) cl.getValue("--username");
+		password = (String) cl.getValue("--password");
+		encoding = (String) cl.getValue("--encoding");
+		dBorSIDName = (String) cl.getValue("--dbname");
+		tablename = (String) cl.getValue("--tablename");
+		queryFile = (String) cl.getValue("--queryfile");
+		portnumber = (String) cl.getValue("--portnumber");
+	}
+	
+	protected void parseFileCommandLineOptions(CommandLine cl)
+	{
+
+		sourceFilePath = (String) cl.getValue("--filepath");
+		sMaxNumLines = (String) cl.getValue("--maxNumLines");
+		sourceName = (String) cl.getValue("--sourcename");
+	}
+    protected boolean validateCommandLineOptions() throws IOException
+    {
+
+          if ((modelURLString == null && modelFilePath == null) || outputFilePath == null || inputType == null) {
+              logger.error("Mandatory value missing. Please provide argument value "
+                      + "for sourcetype, modelfilepath and outputfile.");
+              return false;
+          }
+          
+          if (!inputType.equalsIgnoreCase("DB")
+                  && !inputType.equalsIgnoreCase("CSV")
+                  && !inputType.equalsIgnoreCase("XML")
+                  && !inputType.equalsIgnoreCase("JSON")
+                  && !inputType.equalsIgnoreCase("SQL")
+                  ) {
+              logger.error("Invalid source type: " + inputType
+                      + ". Please choose from: DB, SQL, CSV, XML, JSON.");
+              return false;
+          }
+          return true;
+    }
+
+
+	private boolean validateFileCommandLineOptions() {
+		inputFile = new File(sourceFilePath);
+		if (!inputFile.exists()) {
+		    logger.error("File not found: " + inputFile.getAbsolutePath());
+		    return false;
+		}
+		if(encoding == null) {
+			encoding = EncodingDetector.detect(inputFile);
+		}
+		
+		maxNumLines = -1;
+		if(sMaxNumLines != null) {
+			maxNumLines = Integer.parseInt(sMaxNumLines);
+		}
+		
+		if(sourceName == null)
+		{
+			logger.error("You need to supply a value for '--sourcename'");
+			return false;
+		}
+		return true;
+	}
+	
+	private void createModelURL() throws IOException {
+		/**
+           * VALIDATE THE OPTIONS *
+           */
+          if(modelFilePath != null)
+          {
+          	File modelFile = new File(modelFilePath);
+          	if (!modelFile.exists()) {
+          		throw new IOException("File not found: " + modelFile.getAbsolutePath());
+          	}
+          	modelURL = modelFile.toURI().toURL();
+          }
+          else
+          {
+          	modelURL = new URL(modelURLString);
+          }
+	}
+
+	private void generateRdfFromDatabaseTable() throws IOException, JSONException, KarmaException,
 			SQLException, ClassNotFoundException {
-		String dbtypeStr = (String) cl.getValue("--dbtype");
-		String hostname = (String) cl.getValue("--hostname");
-		String username = (String) cl.getValue("--username");
-		String password = (String) cl.getValue("--password");
-		String encoding = (String) cl.getValue("--encoding");
+		if(!validateDatabaseCommandLineOptions())
+		{
+			logger.error("Unable to generate RDF from database table!");
+			return;
+		}
+		
+		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
+		        hostname, port, username, password, dBorSIDName, encoding);
+		if(inputType.equals("DB")) {
+			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
+			createWriters(id);
+			dbRdfGen.generateRDFFromTable(tablename, writers, id, baseURI);
+		} else {
+			String query = loadQueryFromFile();
+			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(modelURL.toString(), modelURL);
+			createWriters(id);
+			dbRdfGen.generateRDFFromSQL(query, writers, id, baseURI);
+		}
+		
+
+	}
+
+	private boolean validateDatabaseCommandLineOptions() {
 		if(encoding == null)
 			encoding = "UTF-8";
-		int portnumber = 0;
+		port = 0;
 		try {
-		    portnumber = Integer.parseInt(cl.getValue("--portnumber").toString());
+			port = Integer.parseInt(portnumber);
 		} catch (Throwable t) {
 		    logger.error("Error occured while parsing value for portnumber."
-		            + " Provided value: " + cl.getValue("--portnumber"));
-		    pw.close();
-		    return;
+		            + " Provided value: " + portnumber);
+		    return false;
 		}
-		String dBorSIDName = (String) cl.getValue("--dbname");
-		String tablename = (String) cl.getValue("--tablename");
-		String queryFile = (String) cl.getValue("--queryfile");
 		
 		// Validate the arguments
 		if (dbtypeStr == null || dbtypeStr.equals("") || hostname == null
@@ -202,66 +324,84 @@ public class OfflineRdfGenerator {
 				logger.error("A mandatory value is missing for fetching data from "
 			            + "a database. Please provide argument values for dbtype, hostname, "
 			            + "username, password, portnumber, dbname and queryfile.");
-		    pw.close();
-		    return;
+		    return false;
 		}
 
-		DBType dbType = DBType.valueOf(dbtypeStr);
+		dbType = DBType.valueOf(dbtypeStr);
 		if (dbType == null) {
 		    logger.error("Unidentified database type. Valid values: "
 		            + "Oracle, MySQL, SQLServer, PostGIS");
-		    pw.close();
-		    return;
+		    return false;
 		}
-		
-		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
-		        hostname, portnumber, username, password, dBorSIDName, encoding);
-		if(inputType.equals("DB")) {
-			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
-			dbRdfGen.generateRDFFromTable(tablename, pw, id);
-		} else {
-			File file = new File(queryFile);
-			String queryFileEncoding = EncodingDetector.detect(file);
-			String query = EncodingDetector.getString(file, queryFileEncoding);
-			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(modelURL.toString(), modelURL);
-			dbRdfGen.generateRDFFromSQL(query, pw, id);
-		}
-        pw.flush();
+		return true;
 	}
 
-	private static void generateRdfFromFile(CommandLine cl, String inputType,
-			URL modelURL, PrintWriter pw)
+	private String loadQueryFromFile() throws IOException {
+		File file = new File(queryFile);
+		String queryFileEncoding = EncodingDetector.detect(file);
+		String query = EncodingDetector.getString(file, queryFileEncoding);
+		return query;
+	}
+
+	protected void closeWriters() {
+		for(KR2RMLRDFWriter writer : writers)
+        {
+        	writer.flush();
+        	writer.close();
+        }
+	}
+	
+	protected void createWriters(R2RMLMappingIdentifier id) throws IOException
+	{
+        createN3Writer();
+        createBloomFilterWriter(id);
+	}
+	protected void createN3Writer()
+			throws UnsupportedEncodingException, FileNotFoundException {
+
+		OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
+		BufferedWriter bw = new BufferedWriter(fw);
+		PrintWriter pw = new PrintWriter(bw);
+		N3KR2RMLRDFWriter n3Writer = new N3KR2RMLRDFWriter(new URIFormatter(), pw);
+		if(baseURI != null)
+		{
+			n3Writer.setBaseURI(baseURI);
+		}
+		writers.add(n3Writer);
+	}
+
+	protected void createBloomFilterWriter(
+			R2RMLMappingIdentifier id) throws FileNotFoundException {
+		if (bloomFiltersFilePath != null && !bloomFiltersFilePath.trim().isEmpty()) {
+			PrintWriter bloomfilterpw = new PrintWriter(new File(bloomFiltersFilePath));
+			logger.info(bloomFiltersFilePath);
+			BloomFilterKR2RMLRDFWriter bloomfilter = null;
+			if (bloomfilterpw != null)
+			{
+				bloomfilter = new BloomFilterKR2RMLRDFWriter(bloomfilterpw, id, true, baseURI);
+				writers.add(bloomfilter);
+			}
+		}
+		
+	}
+
+	private void generateRdfFromFile()
 			throws JSONException, IOException, KarmaException,
 			ClassNotFoundException, SQLException {
-		String sourceFilePath = (String) cl.getValue("--filepath");
-		File inputFile = new File(sourceFilePath);
-		if (!inputFile.exists()) {
-		    logger.error("File not found: " + inputFile.getAbsolutePath());
-		    pw.close();
-		    return;
-		}
-		String encoding = (String) cl.getValue("--encoding");
-		if(encoding == null) {
-			encoding = EncodingDetector.detect(inputFile);
-		}
-		
-		String sMaxNumLines = (String) cl.getValue("--maxNumLines");
-		int maxNumLines = -1;
-		if(sMaxNumLines != null) {
-			maxNumLines = Integer.parseInt(sMaxNumLines);
-		}
-		
-		String sourceName = (String) cl.getValue("--sourcename");
-		if(sourceName == null)
+		if(!validateFileCommandLineOptions())
 		{
-			logger.error("You need to supply a value for '--sourcename'");
+			logger.error("Unable to generate RDF from file because of invalid configuration");
 			return;
 		}
 		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(sourceName, modelURL);
+		
+
+		createWriters(id);
 		FileRdfGenerator rdfGenerator = new FileRdfGenerator();
-		rdfGenerator.generateRdf(inputType, id, pw, inputFile, encoding, maxNumLines);
-        pw.flush();
+		rdfGenerator.generateRdf(inputType, id, writers, inputFile, encoding, maxNumLines, baseURI);
+		
 	}
+
 
     private static Group createCommandLineOptions() {
         DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
@@ -285,6 +425,8 @@ public class OfflineRdfGenerator {
                 .withOption(buildOption("dbname", "database or SID name for database connection", "dbname", obuilder, abuilder))
                 .withOption(buildOption("tablename", "hostname for database connection", "tablename", obuilder, abuilder))
                 .withOption(buildOption("queryfile", "query file for loading data", "queryfile", obuilder, abuilder))
+                .withOption(buildOption("outputbloomfilter", "generate bloom filters", "bloomfiltersfile", obuilder, abuilder))
+                .withOption(buildOption("baseuri", "specifies base uri", "base URI", obuilder, abuilder))
                 .withOption(obuilder
                 .withLongName("help")
                 .withDescription("print this message")
