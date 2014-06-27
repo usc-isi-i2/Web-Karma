@@ -22,12 +22,14 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.HashValueManager;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.util.JSONUtil;
@@ -85,7 +87,6 @@ public class GroupByCommand extends WorksheetCommand {
 		List<HNode> valuehnodes = new ArrayList<HNode>();
 		JSONArray checked = (JSONArray) JSONUtil.createJson(CommandInputJSONUtil.getStringValue("values", (JSONArray)para));
 		HTable ht;
-		//System.out.println("here" + hNodeId);
 		if (hNodeId.compareTo("") != 0)
 			ht = CloneTableUtils.getHTable(oldws.getHeaders(), hNodeId);
 		else
@@ -163,7 +164,7 @@ public class GroupByCommand extends WorksheetCommand {
 		//newValueTable.addHNode("Values", newws, factory);
 		//HTable newValueNestedTable = newValueTable.getHNodeFromColumnName("Values").addNestedTable("Table for nested values", newws, factory);
 		CloneTableUtils.cloneHTable(oldht, newht, newws, factory, keyhnodes);
-		newht.addHNode("Values", newws, factory);
+		newht.addHNode("Values", HNodeType.Transformation, newws, factory);
 		HTable newValueTable = newht.getHNodeFromColumnName("Values").addNestedTable("Table for values", newws, factory);
 		CloneTableUtils.cloneHTable(oldht, newValueTable, newws, factory, valuehnodes);
 		for (String key : hash.keySet()) {
@@ -189,10 +190,10 @@ public class GroupByCommand extends WorksheetCommand {
 				parentRows.add(row);
 			}
 		}
-		HNode newNode = parentHT.addHNode(parentHT.getNewColumnName("GroupBy"), oldws, factory);
+		HNode newNode = parentHT.addHNode(parentHT.getNewColumnName("GroupBy"), HNodeType.Transformation, oldws, factory);
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
 		CloneTableUtils.cloneHTable(ht, newht, oldws, factory, keyhnodes);
-		newht.addHNode("Values", oldws, factory);
+		newht.addHNode("Values", HNodeType.Transformation, oldws, factory);
 		HTable newValueTable = newht.getHNodeFromColumnName("Values").addNestedTable("Table for values", oldws, factory);
 		CloneTableUtils.cloneHTable(ht, newValueTable, oldws, factory, valuehnodes);
 		for (Row parentRow : parentRows) {
@@ -215,7 +216,6 @@ public class GroupByCommand extends WorksheetCommand {
 			}	
 			
 			for (String key : hash.keySet()) {
-				//System.out.println("key: " + hash.get(key));
 				ArrayList<String> r = hash.get(key);
 				Node node = parentRow.getNeighbor(newNode.getId());
 				Row lastRow = CloneTableUtils.cloneDataTable(CloneTableUtils.getRow(rows, r.get(0)), node.getNestedTable(), ht, newht, keyhnodes, factory);

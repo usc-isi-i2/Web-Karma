@@ -70,6 +70,13 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}
+	
+	public Command createCommand(Workspace workspace, String hNodeId, String worksheetId, String metaPropertyName, String propValue, String rdfLiteralType) {
+		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(metaPropertyName);
+		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(workspace), worksheetId, 
+				hNodeId, prop, propValue, true, rdfLiteralType);
+		return comm;
+	}
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand()

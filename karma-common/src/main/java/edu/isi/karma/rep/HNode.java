@@ -54,13 +54,19 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 	
 	private boolean derivedFromAnotherColumn;
 	private String originalColumnHNodeId;
+	private HNodeType type;
+	
+	public enum HNodeType {
+		Transformation, Regular, AugmentData
+	}
 
 	HNode(String id, String hTableId, String columnName,
-			boolean automaticallyAdded) {
+			boolean automaticallyAdded, HNodeType type) {
 		super(id);
 		this.hTableId = hTableId;
 		this.columnName = columnName;
 		this.automaticallyAdded = automaticallyAdded;
+		this.type = type;
 	}
 
 	public String getColumnName() {
@@ -221,5 +227,9 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 	{
 		HTable hTable = f.getHTable(this.hTableId);
 		return hTable.getNeighborByColumnName(columnName, f);
+	}
+	
+	public HNodeType getHNodeType() {
+		return type;
 	}
 }

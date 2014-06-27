@@ -59,13 +59,14 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 	protected boolean isFlipped = false;
 	protected boolean isLiteral;
 	protected String literalTemplateValue;
+	protected PredicateObjectMap pom; 
 	
 	protected void generateInternal(TemplateTermSet subjectMapTemplate,
 			PredicateObjectMap pom,
 			Map<ColumnTemplateTerm, HNodePath> subjectTermsToPaths)
 			throws HNodeNotFoundKarmaException {
 		
-		
+		this.pom = pom;
 		combinedSubjectObjectTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
 		combinedSubjectObjectTermsToPaths.putAll(subjectTermsToPaths);
 		Map<ColumnTemplateTerm, HNodePath> objectTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
@@ -79,6 +80,7 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 	}
 
 	private void generatePredicatesForPom(PredicateObjectMap pom) throws HNodeNotFoundKarmaException {
+		this.pom = pom;
 		List<ColumnTemplateTerm> subjectAndObjectTemplateTerms = new LinkedList<ColumnTemplateTerm>();
 		subjectAndObjectTemplateTerms.addAll(this.combinedSubjectObjectTermsToPaths.keySet());
 		LinkedList<ColumnTemplateTerm> predicateColumnTemplateTerms = new LinkedList<ColumnTemplateTerm>();
@@ -103,7 +105,7 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 		return subjectsToObjects;
 	}
 	
-	public void outputTriples(KR2RMLRDFWriter outWriter, Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> subjectsToObjects, Row r)
+	public void outputTriples(List<KR2RMLRDFWriter> outWriters, Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> subjectsToObjects, Row r)
 	{
 		for(Entry<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> subjectToObjects : subjectsToObjects.entrySet())
 		{
@@ -114,7 +116,10 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 				List<PopulatedTemplateTermSet> predicates = predicateTemplateTermSetPopulator.generatePopulatedTemplatesFromPartials(predicatePlan.execute(r, subject, object));
 				for(PopulatedTemplateTermSet predicate : predicates)
 				{
-					outputTriple(outWriter, subject, predicate, object);	
+					for(KR2RMLRDFWriter outWriter : outWriters)
+					{
+						outputTriple(outWriter, subject, predicate, object);
+					}
 				}
 			}
 		}

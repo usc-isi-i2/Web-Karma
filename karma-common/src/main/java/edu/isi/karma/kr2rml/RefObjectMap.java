@@ -21,12 +21,15 @@
 
 package edu.isi.karma.kr2rml;
 
+import java.util.UUID;
+
 import edu.isi.karma.kr2rml.planning.TriplesMap;
 
 public class RefObjectMap {
 	
 	private final String id;
 	private TriplesMap parentTriplesMap;
+	private final static String REFOBJECT_MAP_PREFIX = "RefObjectMap";
 
 	public RefObjectMap(String id, TriplesMap parentTriplesMap) {
 		super();
@@ -46,5 +49,9 @@ public class RefObjectMap {
 	public String toString() {
 		return "RefObjectMap [id=" + id + ", parentTriplesMap="
 				+ parentTriplesMap + "]";
+	}
+	
+	public static String getNewRefObjectMapId() {
+		return REFOBJECT_MAP_PREFIX + "_" + UUID.randomUUID();
 	}
 }

@@ -28,9 +28,11 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.*;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.util.Util;
 import edu.isi.karma.webserver.KarmaException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +123,7 @@ public class AddColumnCommand extends WorksheetCommand {
 			}   
 			//add new column to this table
 			//add column after the column with hNodeId
-			HNode ndid = hTable.addNewHNodeAfter(hNodeId, workspace.getFactory(), newColumnName, worksheet,true);
+			HNode ndid = hTable.addNewHNodeAfter(hNodeId, HNodeType.Transformation, workspace.getFactory(), newColumnName, worksheet,true);
 			if(ndid == null)
 			{
 				logger.error("Unable to add new HNode!");

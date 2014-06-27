@@ -11,13 +11,13 @@ function WorksheetOptions(wsId, wsTitle) {
 	        {name:"Show Model" , func:showModel},
 			{name:"Set Properties", func:setProperties},
 			{name:"Show Auto Model", func:showAutoModel},
-			{name:"Apply R2RML Model" , func:applyR2RMLModel, useFileUpload:true, uploadDiv:"applyWorksheetHistory"},
+			{name:"Apply R2RML Model", func: undefined, addLevel:true, levels: [
+				{name:"From File" , func:applyR2RMLModel, useFileUpload:true, uploadDiv:"applyWorksheetHistory"},
+				{name:"From Repository" , func:applyModel}
+			]},
 			{name:"divider"},
 			{name:"Publish RDF" , func:publishRDF},
 			{name:"Publish Model" , func:publishModel},
-			//{name:"Save Model" , func:saveModel},
-			//{name:"Clear Model" , func:clearModel},
-			//{name:"Fetch Model" , func:fetchModel},
 			{name:"Publish Service Model", func:publishServiceModel},
 			{name:"Publish Report", func:publishReport},
 			{name:"Save as JSON", func:saveAsJson},
@@ -33,7 +33,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			{name:"Fold" , func:Fold},
 			{name:"GroupBy" , func:GroupBy}, 
 			{name:"Glue Columns" , func:Glue}, 
-			{name:"Delete", func:deleteWorksheet},
+			{name:"Delete", func:deleteWorksheet}
 	];
 	
 	function hideDropdown() {
@@ -341,24 +341,10 @@ function WorksheetOptions(wsId, wsTitle) {
 		return false;
 	}
 
-	function saveModel(event) {
-		console.log("Save Model: " + worksheetTitle);
+	function applyModel(event) {
+		console.log("Apply Model: " + worksheetTitle);
 		hideDropdown();
-		saveModelDialog.getInstance().show(worksheetId);
-		return false;
-	}
-
-	function clearModel(event) {
-		console.log("Clear Model: " + worksheetTitle);
-		hideDropdown();
-		clearModelDialog.getInstance().show(worksheetId);
-		return false;
-	}
-
-	function fetchModel(event) {
-		console.log("Fetch Model: " + worksheetTitle);
-		hideDropdown();
-		fetchModelListDialog.getInstance().show(worksheetId);
+		applyModelDialog.getInstance().show(worksheetId);
 		return false;
 	}
 	
@@ -565,9 +551,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		var ul = $("<ul>").addClass("dropdown-menu");
 		//console.log("There are " + options.length + " menu items");
 		for(var i=0; i<options.length; i++) {
-			var option = options[i];
-			var needFile = option.useFileUpload;
-			
+			var option = options[i];			
 			var li = $("<li>");
 			//console.log("Got option" +  option);
 			var title = option.name;
@@ -577,35 +561,55 @@ function WorksheetOptions(wsId, wsTitle) {
 				var func = option.func;
 				var a = $("<a>")
 						.attr("href", "#");
-				if(needFile) {
-					//<form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form>
-					a.addClass("fileinput-button");
-					var form = $("<form>")
-								.attr("id", option.uploadDiv + "_" + worksheetId)
-								.attr("action", "ImportFileCommand")
-								.attr("method", "POST")
-								.attr("enctype", "multipart/form-data")
-								.text(title);
-					var input = $("<input>")
-								.attr("type", "file")
-								.attr("name", "files[]");
-					form.append(input);
-					a.append(form);
-					window.setTimeout(func, 1000);
-				} else {
-					if(option.showCheckbox) {
-						var checkbox = $("<input>").attr("type", "checkbox");
-						if(option.defaultChecked)
-							checkbox.attr("checked","checked");
-						var label = $("<span>").append(checkbox).append("&nbsp;").append(title);
-						a.append(label);
-						a.click(func);
-					} else {
-						a.text(title);
-						a.click(func);
+				if(option.showCheckbox) {
+					var checkbox = $("<input>").attr("type", "checkbox");
+					if(option.defaultChecked)
+						checkbox.attr("checked","checked");
+					var label = $("<span>").append(checkbox).append("&nbsp;").append(title);
+					a.append(label);
+					a.click(func);
+				} 
+				else if (option.addLevel) {
+					li.addClass("dropdown-submenu");
+					a.text(title);
+					var subul = $("<ul>")
+											.addClass("dropdown-menu");
+					var suboptions = option.levels;
+					for (var j = 0; j < suboptions.length; j++) {
+						var suboption = suboptions[j];
+						var needFile = suboption.useFileUpload;
+						var li2 = $("<li>");
+						var a2 = $("<a>");
+						if(needFile) {
+							a2.addClass("fileinput-button");
+							var form = $("<form>")
+										.attr("id", suboption.uploadDiv + "_" + worksheetId)
+										.attr("action", "ImportFileCommand")
+										.attr("method", "POST")
+										.attr("enctype", "multipart/form-data")
+										.text(suboption['name']);
+							var input = $("<input>")
+										.attr("type", "file")
+										.attr("name", "files[]");
+							form.append(input);
+							a2.append(form);
+							window.setTimeout(suboption.func, 1000);
+						}
+						else {
+							a2.text(suboption['name']);
+							a2.click(suboption.func);
+						}
+						li2.append(a2);
+						subul.append(li2);
 					}
-					
+						
+					li.append(subul);
 				}
+				else {
+					a.text(title);
+					a.click(func);
+				}
+					
 				li.append(a);
 			}
 			if(option.initFunc)

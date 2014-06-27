@@ -43,18 +43,18 @@ public class TriplesMapWorker implements Callable<Boolean> {
 	protected CountDownLatch latch;
 	protected TriplesMap triplesMap;
 	protected Row r;
-	protected KR2RMLRDFWriter outWriter;
+	protected List<KR2RMLRDFWriter> outWriters;
 	
 	protected TriplesMapWorkerPlan plan;
 	
-	public TriplesMapWorker(TriplesMap triplesMap, CountDownLatch latch, Row r, TriplesMapWorkerPlan plan, KR2RMLRDFWriter outWriter)
+	public TriplesMapWorker(TriplesMap triplesMap, CountDownLatch latch, Row r, TriplesMapWorkerPlan plan, List<KR2RMLRDFWriter> outWriters)
 	{
 		this.latch = latch;
 		this.triplesMap = triplesMap;
 		this.plan = plan;
 		this.dependentTriplesMapLatches = new LinkedList<CountDownLatch>();
 		this.r = r;
-		this.outWriter =outWriter;
+		this.outWriters = outWriters;
 	}
 	public void addDependentTriplesMapLatch(CountDownLatch latch)
 	{
@@ -87,11 +87,12 @@ public class TriplesMapWorker implements Callable<Boolean> {
 		try
 		{
 		
-			plan.execute(r, outWriter);
+			plan.execute(r, outWriters);
 		
 		}
 		catch (Exception e)
 		{
+			e.printStackTrace();
 			LOG.error("Something went wrong " + e.getMessage() );
 		}
 			

@@ -8,6 +8,7 @@ import org.json.JSONException;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.command.worksheet.AddRowCommandFactory.Arguments;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
@@ -25,7 +26,7 @@ public class AddValuesCommandFactory extends JSONInputCommandFactory{
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hTableId = CommandInputJSONUtil.getStringValue(Arguments.hTableId.name(), inputJson);
 		AddValuesCommand valCmd = new AddValuesCommand(getNewId(workspace), worksheetId,
-				hTableId, hNodeID);
+				hTableId, hNodeID, HNodeType.Transformation);
 		valCmd.setInputParameterJson(inputJson.toString());
 		return valCmd;
 	}
@@ -36,23 +37,23 @@ public class AddValuesCommandFactory extends JSONInputCommandFactory{
 		String hTableId = request.getParameter(Arguments.hTableId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		return new AddValuesCommand(getNewId(workspace), worksheetId, 
-				hTableId, hNodeId);
+				hTableId, hNodeId, HNodeType.Transformation);
 	}
 	
-	public Command createCommand(JSONArray inputJson, Workspace workspace, String hNodeID, String worksheetId, String hTableId)
+	public Command createCommand(JSONArray inputJson, Workspace workspace, String hNodeID, String worksheetId, String hTableId, HNodeType type)
 			throws JSONException, KarmaException {
 		AddValuesCommand valCmd = new AddValuesCommand(getNewId(workspace), worksheetId,
-				hTableId, hNodeID);
+				hTableId, hNodeID, type);
 		valCmd.setInputParameterJson(inputJson.toString());
 		valCmd.setColumnName("");
 		return valCmd;
 	}
 	
 	
-	public Command createCommand(JSONArray inputJson, Workspace workspace, String hNodeID, String worksheetId, String hTableId, String newColumnName)
+	public Command createCommand(JSONArray inputJson, Workspace workspace, String hNodeID, String worksheetId, String hTableId, String newColumnName, HNodeType type)
 			throws JSONException, KarmaException {
 		AddValuesCommand valCmd = new AddValuesCommand(getNewId(workspace), worksheetId,
-				hTableId, hNodeID);
+				hTableId, hNodeID, type);
 		valCmd.setInputParameterJson(inputJson.toString());
 		valCmd.setColumnName(newColumnName);
 		return valCmd;

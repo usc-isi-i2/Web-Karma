@@ -401,9 +401,17 @@ function parse(data) {
             // Remove existing link if any
             $.sticky("R2RML Model cleared");
         }
+        else if(element["updateType"] == "DeleteModel") {
+            // Remove existing link if any
+            $.sticky("R2RML Model deleted");
+        }
         else if(element["updateType"] == "SaveCollection") {
             // Remove existing link if any
             $.sticky("R2RML Model Collection saved");
+        }
+        else if(element["updateType"] == "SaveModel") {
+            // Remove existing link if any
+            $.sticky("R2RML Model saved");
         }
         else if(element["updateType"] == "PublishSpatialDataUpdate") {
             $("a.SpatialDataDownloadLink", titleDiv).remove();
@@ -598,8 +606,13 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 
     var columnWidths = [];
     $.each (columns, function (index, column) {
-
+        var type = column['hNodeType'].toLowerCase();
+        console.log(type);
         var td = $("<td>").addClass("wk-header-cell").attr("id", column.hNodeId);
+        if (isOdd)
+            td.addClass("htable-even-" + type);
+        else
+            td.addClass("htable-odd-" + type);
         var headerDiv = $("<div>").addClass(column["columnClass"]);
 
         var colWidthNumber = 0;
@@ -624,7 +637,6 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 //            				.mouseenter(showColumnOptionButton)
 //            				.mouseleave(hideColumnOptionButton);
             				.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"], false)).generateJS());
-
             var nestedTableContainer = $("<div>").addClass("table-container");
             var nestedTableHeaderContainer = $("<div>").addClass("table-header-container");
             var nestedTable = $("<table>").addClass("wk-table");

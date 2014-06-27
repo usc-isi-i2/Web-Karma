@@ -25,6 +25,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
@@ -127,7 +128,7 @@ public class GlueCommand extends WorksheetCommand {
 				parentRows.add(row);
 			}
 		}
-		HNode newNode = ht.addHNode(ht.getNewColumnName("Glue"), oldws, factory);
+		HNode newNode = ht.addHNode(ht.getNewColumnName("Glue"), HNodeType.Transformation, oldws, factory);
 		newhNodeId = newNode.getId();
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
 		List<HNode> childHNodes = new ArrayList<HNode>();
@@ -179,7 +180,7 @@ public class GlueCommand extends WorksheetCommand {
 
 	private void glueTopLevel(Worksheet oldws, Workspace workspace, List<HNode> hnodes, RepFactory factory) {
 		HTable parentHT = oldws.getHeaders();
-		HNode newNode = parentHT.addHNode(parentHT.getNewColumnName("Glue"), oldws, factory);
+		HNode newNode = parentHT.addHNode(parentHT.getNewColumnName("Glue"), HNodeType.Transformation, oldws, factory);
 		newhNodeId = newNode.getId();
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
 		List<HNode> childHNodes = new ArrayList<HNode>();

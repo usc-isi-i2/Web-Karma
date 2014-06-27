@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.isi.karma.rep.HNode.HNodeType;
+
 /**
  * @author szekely
  * 
@@ -69,16 +71,16 @@ public class RepFactory {
 	}
 
 	HNode createHNode(String id, String hTableId, String columnName,
-			boolean automaticallyAdded) {
-		HNode hn = new HNode(id, hTableId, columnName, automaticallyAdded);
+			boolean automaticallyAdded, HNodeType type) {
+		HNode hn = new HNode(id, hTableId, columnName, automaticallyAdded, type);
 		hNodes.put(id, hn);
 		return hn;
 	}
 	
 	HNode createHNode(String hTableId, String columnName,
-			boolean automaticallyAdded) {
+			boolean automaticallyAdded, HNodeType type) {
 		String id = getNewId("HN");
-		return createHNode(id, hTableId, columnName, automaticallyAdded);
+		return createHNode(id, hTableId, columnName, automaticallyAdded, type);
 	}
 
 	// added for testing (mariam)

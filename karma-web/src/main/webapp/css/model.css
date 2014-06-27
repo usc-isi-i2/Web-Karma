@@ -1,0 +1,37 @@
+.FileNameProperty {
+	width: 150px;
+	float: left;
+	height: 60px;
+	min-height: 60px;
+	overflow-x: scroll;
+	overflow-y: hidden !important;
+}
+
+.PublishTimeProperty {
+	width: 150px;
+	float: left;
+	height: 60px;
+	min-height: 60px;
+	overflow-x: scroll;
+	overflow-y: hidden !important;
+}
+
+.URLProperty {
+	width: 200px;
+	float: left;
+	height: 60px;
+	min-height: 60px;
+	overflow-x: scroll;
+	overflow-y: hidden !important;
+}
+
+.CheckboxProperty {
+	width: 25px;
+	float: left;
+	height: 60px;
+	min-height: 60px;
+	overflow-x: scroll;
+	overflow-y: hidden !important;
+}
+
+

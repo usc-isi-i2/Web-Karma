@@ -2,13 +2,10 @@ package edu.isi.karma.rdf;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 
 import org.apache.commons.io.IOUtils;
 
 import edu.isi.karma.imp.json.JsonImport;
-import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;

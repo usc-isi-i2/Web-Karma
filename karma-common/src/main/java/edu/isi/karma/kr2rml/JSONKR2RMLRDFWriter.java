@@ -26,6 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONObject;
 
+import edu.isi.karma.kr2rml.planning.TriplesMap;
+
 public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 
 	protected boolean firstObject = true;
@@ -113,4 +115,38 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 		outWriter.print("]");
 		outWriter.close();
 	}
+
+	@Override
+	public void outputTripleWithURIObject(TriplesMap subjTriplesMap,
+			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri,
+			String objectUri) {
+		outputTripleWithURIObject(subjUri, predicateUri, objectUri);
+		
+	}
+	
+	@Override
+	public void outputTripleWithURIObject(TriplesMap subjTriplesMap,
+			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, TriplesMap objTriplesMapId,
+			String objectUri) {
+		outputTripleWithURIObject(subjUri, predicateUri, objectUri);
+		
+	}
+
+	
+	@Override
+	public void outputTripleWithLiteralObject(TriplesMap subjTriplesMap,
+			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, String value,
+			String literalType) {
+		outputTripleWithLiteralObject(subjUri, predicateUri, value, value);
+		
+	}
+
+	@Override
+	public void outputQuadWithLiteralObject(TriplesMap subjTriplesMap,
+			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, String value,
+			String literalType, String graph) {
+		outputQuadWithLiteralObject(subjUri, predicateUri, value, literalType, graph);
+		
+	}
+
 }

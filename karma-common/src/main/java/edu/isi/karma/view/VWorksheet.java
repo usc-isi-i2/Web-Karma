@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -306,6 +307,10 @@ public class VWorksheet extends ViewEntity {
 			if(!oldPaths.contains(newPath)) {
 				if (i != 0) {
 					String after = newPaths.get(i-1);
+					int difference = StringUtils.countMatches(after, "/") - StringUtils.countMatches(newPath, "/");
+					for (int k = 0; k < difference; k++) {
+						after = after.substring(0, after.lastIndexOf("/"));
+					}
 					pathsToAdd.add(newPath + "$$" + after);
 				}
 				else {

@@ -20,6 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.rep;
 
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.webserver.KarmaException;
 
 import java.io.PrintWriter;
@@ -153,14 +154,14 @@ public class HTable extends RepEntity {
 
 	// ////////////////////////////////////////////
 
-	public HNode addHNode(String columnName, Worksheet worksheet,
+	public HNode addHNode(String columnName, HNodeType type, Worksheet worksheet,
 			RepFactory factory) {
-		return addHNode(columnName, false, worksheet, factory);
+		return addHNode(columnName, false, type, worksheet, factory);
 	}
 
-	public HNode addHNode(String columnName, boolean automaticallyAdded,
+	public HNode addHNode(String columnName, boolean automaticallyAdded, HNodeType type,
 			Worksheet worksheet, RepFactory factory) {
-		HNode hn = factory.createHNode(id, columnName, automaticallyAdded);
+		HNode hn = factory.createHNode(id, columnName, automaticallyAdded, type);
 		nodes.put(hn.getId(), hn);
 		orderedNodeIds.add(hn.getId());
 		worksheet.addNodeToDataTable(hn, factory);
@@ -189,18 +190,18 @@ public class HTable extends RepEntity {
 	// pedro 2012-10-28: this method seems to recurse looking for the hNodeId.
 	// Bad design. Adding a new column should return the HNode or hNodeId of the added column.
 	// There should be a way to add before or after the given hNodeId.
-	public void addNewHNodeAfter(String hNodeId, RepFactory factory,
+	public void addNewHNodeAfter(String hNodeId, HNodeType type, RepFactory factory,
 			String columnName, Worksheet worksheet) {
 		HNode hNode = getHNode(hNodeId);
 		if (hNode == null) {
 			for (HNode node : nodes.values()) {
 				if (node.hasNestedTable()) {
-					node.getNestedTable().addNewHNodeAfter(hNodeId, factory,
+					node.getNestedTable().addNewHNodeAfter(hNodeId, type, factory,
 							columnName, worksheet);
 				}
 			}
 		} else {
-			HNode newNode = factory.createHNode(getId(), columnName, false);
+			HNode newNode = factory.createHNode(getId(), columnName, false, type);
 			nodes.put(newNode.getId(), newNode);
 			int index = orderedNodeIds.indexOf(hNodeId);
 
@@ -215,10 +216,10 @@ public class HTable extends RepEntity {
 	//mariam 2012-11-28
 	//add before hNodeId, or at the beginning of table if hNodeId is null
 	//adds new HNode with given columnName
-	public HNode addNewHNodeAfter(String hNodeId, RepFactory factory,
+	public HNode addNewHNodeAfter(String hNodeId, HNodeType type, RepFactory factory,
 			String columnName, Worksheet worksheet, boolean b) throws KarmaException {
 
-		HNode hn = factory.createHNode(id, columnName, false);
+		HNode hn = factory.createHNode(id, columnName, false, type);
 		nodes.put(hn.getId(), hn);
 		//if hNodeId==null add new node at the beginning
 		if(hNodeId==null){

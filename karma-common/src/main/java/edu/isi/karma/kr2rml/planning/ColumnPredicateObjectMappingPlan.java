@@ -90,19 +90,19 @@ public class ColumnPredicateObjectMappingPlan extends
 			PopulatedTemplateTermSet predicate, PopulatedTemplateTermSet object) {
 		if(objectTemplateTermSetPopulator.getTerms().isSingleUriString())
 		{
-			outWriter.outputTripleWithURIObject(subject.getURI(), predicate.getURI(), uriFormatter.getExpandedAndNormalizedUri(object.getURI()));
+			outWriter.outputTripleWithURIObject(pom.getTriplesMap(), subject.getURI(), pom, predicate.getURI(), uriFormatter.getExpandedAndNormalizedUri(object.getURI()));
 		}
 		else if(generateContext && objectTemplateTermSetPopulator.getTerms().isSingleColumnTerm())
 		{
 			try {
-				outWriter.outputQuadWithLiteralObject(subject.getURI(), predicate.getURI(), object.getURI(), literalTemplateValue,getColumnContextUri(translator.getHNodeIdForColumnName(objectTemplateTermSetPopulator.getTerms().getAllTerms().get(0).getTemplateTermValue())));
+				outWriter.outputQuadWithLiteralObject(pom.getTriplesMap(), subject.getURI(), pom, predicate.getURI(), object.getURI(), literalTemplateValue,getColumnContextUri(translator.getHNodeIdForColumnName(objectTemplateTermSetPopulator.getTerms().getAllTerms().get(0).getTemplateTermValue())));
 			} catch (HNodeNotFoundKarmaException e) {
 				LOG.error("No hnode found for context " +objectTemplateTermSetPopulator.getTerms().getAllTerms().get(0).getTemplateTermValue() + " " + e);
 			}
 		}
 		else
 		{
-			outWriter.outputTripleWithLiteralObject(subject.getURI(), predicate.getURI(), object.getURI(), literalTemplateValue);
+			outWriter.outputTripleWithLiteralObject(pom.getTriplesMap(), subject.getURI(), pom, predicate.getURI(), object.getURI(), literalTemplateValue);
 		}
 		
 	}

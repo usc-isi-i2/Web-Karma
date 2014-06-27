@@ -21,14 +21,7 @@
 
 package edu.isi.karma.rdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URL;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,16 +31,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.util.EncodingDetector;
 
 
 /**
  * @author dipsy
  * 
  */
-public class TestJSONRDFGeneratorWithGroupBy extends TestRdfGenerator{
+public class TestJSONRDFGeneratorWithGroupBy extends TestJSONRDFGenerator{
 
-	JSONRDFGenerator rdfGen;
 	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGeneratorWithGroupBy.class);
 	
 
@@ -88,56 +79,21 @@ public class TestJSONRDFGeneratorWithGroupBy extends TestRdfGenerator{
 	public void testGroupByNested() {
 		try {
 
-			String filename = "groupby/groupby-nested.json";
-			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
-					"utf-8");
-
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-
-			rdfGen.generateRDF("groupby-nested-model", jsonData, false, pw);
-			String rdf = sw.toString();
-			
-			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split(System.getProperty("line.separator"));
-			int count = lines.length;
-			 
-			assertEquals(43, count);
+			executeBasicJSONTest("groupby/groupby-nested.json", "groupby-nested-model", false, 43);
 		} catch (Exception e) {
 			logger.error("testGroupByNested failed:", e);
-			fail("Execption: " + e.getMessage());
+			fail("Exception: " + e.getMessage());
 		}
 	}
 	
 	@Test
 	public void testGroupByTop() {
 		try {
-
-			String filename = "groupby/groupby-top.json";
-			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
-					"utf-8");
-
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-
-			rdfGen.generateRDF("groupby-top-model", jsonData, false, pw);
-			String rdf = sw.toString();
-			
-			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split(System.getProperty("line.separator"));
-			int count = lines.length;
-			 
-			assertEquals(15, count);
+			executeBasicJSONTest("groupby/groupby-top.json", "groupby-top-model", false, 15);
 		} catch (Exception e) {
 			logger.error("testGroupByTop failed:", e);
-			fail("Execption: " + e.getMessage());
+			fail("Exception: " + e.getMessage());
 		}
 	}
 
-	private URL getTestResource(String name)
-	{
-		return getClass().getClassLoader().getResource(name);
-	}
 }

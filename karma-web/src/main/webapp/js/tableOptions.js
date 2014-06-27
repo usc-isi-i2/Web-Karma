@@ -191,12 +191,11 @@ var PublishModelDialog = (function() {
     	var worksheetId;
     	
     	function init() {
-    		//Initialize what happens when we show the dialog
-    		dialog.on('show.bs.modal', function (e) {
-				hideError();
-				 $('#txtR2RML_URL').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-			});
-			
+            //Initialize what happens when we show the dialog
+			dialog.on('show.bs.modal', function (e) {
+                hideError();
+                 $('#txtR2RML_URL').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+            });
 			//Initialize handler for Save button
 			//var me = this;
 			$('#btnSave', dialog).on('click', function (e) {
@@ -217,17 +216,13 @@ var PublishModelDialog = (function() {
         
         function saveDialog(e) {
         	hide();
-        	 if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
-    	        alert("Invalid sparql end point. Could not establish connection.");
-    	        return;
-    	    }
-
+            
     	    var info = new Object();
     	    info["worksheetId"] = worksheetId;
     	    info["workspaceId"] = $.workspaceGlobalInformation.id;
     	    info["command"] = "GenerateR2RMLModelCommand";
-    	    info['tripleStoreUrl'] = $('#txtR2RML_URL').val();
-
+            info['tripleStoreUrl'] = $('#txtR2RML_URL').val();
+            info['localTripleStoreUrl'] = $('#txtModel_URL').html();
     	    showLoading(info["worksheetId"]);
     	    var returned = $.ajax({
     	        url: "RequestController",
@@ -279,218 +274,106 @@ var PublishModelDialog = (function() {
     
 })();
 
-var saveModelDialog = (function() {
-    var instance = null;
-
-    function PrivateConstructor() {
-        var dialog = $("#saveModelDialog");
-        var worksheetId;
-        
-        function init() {
-            //Initialize what happens when we show the dialog
-            dialog.on('show.bs.modal', function (e) {
-                hideError();
-                 $('#txtR2RML_URL_Save').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-            });
-            
-            //Initialize handler for Save button
-            //var me = this;
-            $('#btnSave', dialog).on('click', function (e) {
-                e.preventDefault();
-                saveDialog(e);
-            });
-            
-                
-        }
-        
-        function hideError() {
-            $("div.error", dialog).hide();
-        }
-        
-        function showError() {
-            $("div.error", dialog).show();
-        }
-        
-        function saveDialog(e) {
-            hide();
-            //  if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
-            //     alert("Invalid sparql end point. Could not establish connection.");
-            //     return;
-            // }
-
-            var info = new Object();
-            var checkboxes = dialog.find(":checked");
-            info["worksheetId"] = worksheetId;
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "SaveR2RMLModelCommand";
-            info['tripleStoreUrl'] = $('#txtR2RML_URL_Save').val();
-            info['modelUrl'] = $('#txtModel_URL_Save').val();
-            info['graphContext'] = $('#txtGraph_URL_Save').val();
-            info['collection'] = checkboxes[0]['value'];
-            console.log(info['collection']);
-            showLoading(info["worksheetId"]);
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        parse(json);
-                        hideLoading(info["worksheetId"]);
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while exporting CSV!" + textStatus);
-                        hideLoading(info["worksheetId"]);
-                    }
-            });
-        };
-        
-        function hide() {
-            dialog.modal('hide');
-        }
-        
-        function show(wsId) {
-            worksheetId = wsId;
-            dialog.modal({keyboard:true, show:true, backdrop:'static'});
-        };
-        
-        
-        return {    //Return back the public methods
-            show : show,
-            init : init
-        };
-    };
-
-    function getInstance() {
-        if( ! instance ) {
-            instance = new PrivateConstructor();
-            instance.init();
-        }
-        return instance;
-    }
-   
-    return {
-        getInstance : getInstance
-    };
-    
-})();
-
-var clearModelDialog = (function() {
-    var instance = null;
-
-    function PrivateConstructor() {
-        var dialog = $("#clearModelDialog");
-        var worksheetId;
-        
-        function init() {
-            //Initialize what happens when we show the dialog
-            dialog.on('show.bs.modal', function (e) {
-                hideError();
-                 $('#txtR2RML_URL_Clear').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-            });
-            
-            //Initialize handler for Save button
-            //var me = this;
-            $('#btnSave', dialog).on('click', function (e) {
-                e.preventDefault();
-                saveDialog(e);
-            });
-            
-                
-        }
-        
-        function hideError() {
-            $("div.error", dialog).hide();
-        }
-        
-        function showError() {
-            $("div.error", dialog).show();
-        }
-        
-        function saveDialog(e) {
-            hide();
-            //  if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
-            //     alert("Invalid sparql end point. Could not establish connection.");
-            //     return;
-            // }
-
-            var info = new Object();
-            info["worksheetId"] = worksheetId;
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "ClearTripleStoreCommand";
-            info['tripleStoreUrl'] = $('#txtR2RML_URL_Clear').val();
-            info['graphContext'] = $('#txtGraph_URL_Clear').val();
-            console.log(info['graphContext']);
-            showLoading(info["worksheetId"]);
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        parse(json);
-                        hideLoading(info["worksheetId"]);
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while exporting CSV!" + textStatus);
-                        hideLoading(info["worksheetId"]);
-                    }
-            });
-        };
-        
-        function hide() {
-            dialog.modal('hide');
-        }
-        
-        function show(wsId) {
-            worksheetId = wsId;
-            dialog.modal({keyboard:true, show:true, backdrop:'static'});
-        };
-        
-        
-        return {    //Return back the public methods
-            show : show,
-            init : init
-        };
-    };
-
-    function getInstance() {
-        if( ! instance ) {
-            instance = new PrivateConstructor();
-            instance.init();
-        }
-        return instance;
-    }
-   
-    return {
-        getInstance : getInstance
-    };
-    
-})();
-
 var applyModelDialog = (function() {
     var instance = null;
     function PrivateConstructor() {
         var dialog = $("#applyModelDialog");
         var worksheetId;
-        
+        var availableModels;
+        var filteredModels;
         function init() {
+            refresh();
             $('#btnSave', dialog).on('click', function (e) {
                 e.preventDefault();
                 saveDialog(e);
             });
-            
-                
+            var dialogContent = $("#applyModelDialogHeaders", dialog);
+            dialogContent.empty();
+            var table = $("<table>")
+                        .addClass("table table-striped table-condensed");
+            var tr = $("<tr>");
+            var th = $("<th>").addClass("CheckboxProperty");
+            tr.append(th);
+            var th = $("<th>").addClass("FileNameProperty");
+            var label = $("<label>").text("File Name");
+            th.append(label);
+            tr.append(th);
+            var th = $("<th>").addClass("PublishTimeProperty");
+            var label = $("<label>").text("Publish Time");
+            th.append(label);
+            tr.append(th);
+            var th = $("<th>").addClass("URLProperty");
+            var label = $("<label>").text("URL");
+            th.append(label);
+            tr.append(th);
+            table.append(tr);
+            var tr = $("<tr>");
+            var td = $("<td>")
+                     .addClass("CheckboxProperty");
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("FileNameProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterFileName_Apply")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("PublishTimeProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterPublishTime_Apply")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            var td = $("<td>")
+                     .addClass("URLProperty");
+            var label = $("<input>").text("")
+                        .addClass("form-control")
+                        .attr("id","txtFilterURL_Apply")
+                        .attr("type", "text");
+            td.append(label);
+            tr.append(td);
+            table.append(tr);
+            dialogContent.append(table);
+            $('#txtFilterFileName_Apply', dialog).on('keyup', applyFilter);
+
+            $('#txtFilterPublishTime_Apply', dialog).on('keyup', applyFilter);
+
+            $('#txtFilterURL_Apply', dialog).on('keyup', applyFilter);
+
         }
-        
+        function refresh() {
+            console.log("refresh");
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "FetchR2RMLModelsListCommand";
+            info['tripleStoreUrl'] = $('#txtModel_URL').html();
+            info['graphContext'] = "";
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                async: false,
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        json = json.elements[0];
+                        console.log(json);
+                        //parse(json);
+                        availableModels = json;
+                        filteredModels = availableModels;
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while Fetching Models!" + textStatus);
+                    }
+            });
+        }
         function hideError() {
             $("div.error", dialog).hide();
         }
@@ -501,10 +384,8 @@ var applyModelDialog = (function() {
         
         function saveDialog(e) {
             hide();
-            //  if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
-            //     alert("Invalid sparql end point. Could not establish connection.");
-            //     return;
-            // }
+
+            console.log("here");
             var checkboxes = dialog.find(":checked");
             if (checkboxes.length == 0) {
                 hide();
@@ -515,10 +396,10 @@ var applyModelDialog = (function() {
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
             info["command"] = "ApplyModelFromURLCommand";
-            info['modelRepository'] = $('#txtR2RML_URL_Fetch').val();
-            info['modelContext'] = checked['src'];
-            info['modelUrl'] = checked['value'];
-            console.log(checked['src']);
+            info['modelRepository'] = $('#txtModel_URL').html();
+            info['modelContext'] = checked['value'];
+            info['modelUrl'] = checked['src'];
+            console.log(info["worksheetId"]);
             showLoading(info["worksheetId"]);
             var returned = $.ajax({
                 url: "RequestController",
@@ -531,11 +412,14 @@ var applyModelDialog = (function() {
                         var json = $.parseJSON(xhr.responseText);
                         parse(json);
                         hideLoading(info["worksheetId"]);
+                        refresh();
+
                     },
                 error :
                     function (xhr, textStatus) {
-                        alert("Error occured while Fetching Models!" + textStatus);
+                        alert("Error occured while applying models!" + textStatus);
                         hideLoading(info["worksheetId"]);
+                        refresh();
                     }
             });
         };
@@ -543,34 +427,77 @@ var applyModelDialog = (function() {
         function hide() {
             dialog.modal('hide');
         }
+
+        function applyFilter(e) {
+            console.log("applyFilter");
+            var tmp = [];
+            var filterFilename = $('#txtFilterFileName_Apply').val();
+            var filterTime = $('#txtFilterPublishTime_Apply').val();
+            var filterURL = $('#txtFilterURL_Apply').val();
+            
+            for (var i = 0; i < availableModels.length; i++) {
+                var name = availableModels[i]['name'].toLowerCase();
+                var time = new Date(availableModels[i].publishTime*1).toString();
+                time = time.substring(0, time.indexOf("GMT") - 1).toLowerCase();
+                var url = availableModels[i].url.toLowerCase();
+                var flag = true;
+                if (name.indexOf(filterFilename) == -1) {
+                    flag = false;
+                }
+                else if (time.indexOf(filterTime) == -1) {
+                    flag = false;
+                }
+                else if (url.indexOf(filterURL) == -1) {
+                    flag = false;
+                }
+                if (flag) {
+                    tmp.push(availableModels[i]);
+                }
+            }
+            filteredModels = tmp;
+            instance.show(worksheetId);
+        };
         
-        function show(wsId, json) {
+        function show(wsId) {
             worksheetId = wsId;
             dialog.on('show.bs.modal', function (e) {
                 hideError();
                 var dialogContent = $("#applyModelDialogColumns", dialog);
                 dialogContent.empty();
-                //console.log(headers);
-                for (var i = 0; i < json.length; i++) {
-                    var name = json[i]['name'];
-                    var time = new Date(json[i].publishTime*1);
-                    console.log(json[i].publishTime);
-                    var url = json[i].url;
-                    var context = json[i].context;
-                    console.log(name);
-                    console.log(url);
-                    var row = $("<div>").addClass("radio");
-                    var label = $("<label>").text(name + " " + url + " " + time.toDateString());
-                    var input = $("<input>")
-                                        .attr("type", "radio")
-                                .attr("id", "selectcolumns")
-                                .attr("value", url)
-                                .attr("name", "selectGraphs")
-                                .attr("src", context);
-                    label.append(input);
-                    row.append(label);
-                    dialogContent.append(row);
+                var table = $("<table>")
+                        .addClass("table table-striped table-condensed");
+                for (var i = 0; i < filteredModels.length; i++) {
+                    var name = filteredModels[i]['name'];
+                    var time = new Date(filteredModels[i].publishTime*1).toString();
+                    time = time.substring(0, time.indexOf("GMT") - 1);
+                    var url = filteredModels[i].url;
+                    var context = filteredModels[i].context;
+                    var tr = $("<tr>");
+                    var td = $("<td>")
+                                .addClass("CheckboxProperty");
+                    var checkbox = $("<input>")
+                               .attr("type", "radio")                           
+                               .attr("id", "modelManagerCheckbox")
+                               .attr("name", "modelManagerCheckbox")
+                               .attr("value", context)
+                               .attr("src", url);
+                    td.append(checkbox);
+                    tr.append(td);
+                    var td = $("<td>").addClass("FileNameProperty");
+                    var label = $("<label>").text(name);
+                    td.append(label);
+                    tr.append(td);
+                    var td = $("<td>").addClass("PublishTimeProperty");;
+                    var label = $("<label>").text(time);
+                    td.append(label);
+                    tr.append(td);
+                    var td = $("<td>").addClass("URLProperty");;
+                    var label = $("<label>").text(url);
+                    td.append(label);
+                    tr.append(td);
+                    table.append(tr);    
                 }
+                dialogContent.append(table);
             });
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
@@ -578,7 +505,8 @@ var applyModelDialog = (function() {
         
         return {    //Return back the public methods
             show : show,
-            init : init
+            init : init,
+            refresh: refresh
         };
     };
 
@@ -587,6 +515,7 @@ var applyModelDialog = (function() {
             instance = new PrivateConstructor();
             instance.init();
         }
+        instance.refresh();
         return instance;
     }
    
@@ -595,107 +524,6 @@ var applyModelDialog = (function() {
     };
     
 })();
-
-var fetchModelListDialog = (function() {
-    var instance = null;
-
-    function PrivateConstructor() {
-        var dialog = $("#fetchModelListDialog");
-        var worksheetId;
-        
-        function init() {
-            //Initialize what happens when we show the dialog
-            dialog.on('show.bs.modal', function (e) {
-                hideError();
-                 $('#txtR2RML_URL_Fetch').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-            });
-            
-            //Initialize handler for Save button
-            //var me = this;
-            $('#btnSave', dialog).on('click', function (e) {
-                e.preventDefault();
-                saveDialog(e);
-            });
-            
-                
-        }
-        
-        function hideError() {
-            $("div.error", dialog).hide();
-        }
-        
-        function showError() {
-            $("div.error", dialog).show();
-        }
-        
-        function saveDialog(e) {
-            hide();
-            //  if(!testSparqlEndPoint($("input#txtR2RML_URL").val(), worksheetId)) {
-            //     alert("Invalid sparql end point. Could not establish connection.");
-            //     return;
-            // }
-
-            var info = new Object();
-            info["worksheetId"] = worksheetId;
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "FetchR2RMLModelsListCommand";
-            info['tripleStoreUrl'] = $('#txtR2RML_URL_Fetch').val();
-            info['graphContext'] = $('#txtGraph_URL_Fetch').val();
-            console.log(info['graphContext']);
-            showLoading(info["worksheetId"]);
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        json = json.elements[0];
-                        console.log(json);
-                        //parse(json);
-                        hideLoading(info["worksheetId"]);
-                        applyModelDialog.getInstance().show(worksheetId, json);
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while Fetching Models!" + textStatus);
-                        hideLoading(info["worksheetId"]);
-                    }
-            });
-        };
-        
-        function hide() {
-            dialog.modal('hide');
-        }
-        
-        function show(wsId) {
-            worksheetId = wsId;
-            dialog.modal({keyboard:true, show:true, backdrop:'static'});
-        };
-        
-        
-        return {    //Return back the public methods
-            show : show,
-            init : init
-        };
-    };
-
-    function getInstance() {
-        if( ! instance ) {
-            instance = new PrivateConstructor();
-            instance.init();
-        }
-        return instance;
-    }
-   
-    return {
-        getInstance : getInstance
-    };
-    
-})();
-
 
 var FetchModelDialog = (function() {
     var instance = null;
@@ -1239,7 +1067,7 @@ var FoldDialog = (function() {
 	                },
 	            error :
 	                function (xhr, textStatus) {
-	                    alert("Error occured while generating the automatic model!" + textStatus);
+	                    alert("Error occured while folding!" + textStatus);
 	                    hideLoading(info["worksheetId"]);
 	                }
 	        });
@@ -1364,7 +1192,7 @@ var GroupByDialog2 = (function() {
                     },
                 error :
                     function (xhr, textStatus) {
-                        alert("Error occured while generating the automatic model!" + textStatus);
+                        alert("Error occured while grouping by!" + textStatus);
                         hideLoading(info["worksheetId"]);
                     }
             });
@@ -1514,7 +1342,7 @@ var GlueDialog2 = (function() {
                     },
                 error :
                     function (xhr, textStatus) {
-                        alert("Error occured while generating the automatic model!" + textStatus);
+                        alert("Error occured while gluing!" + textStatus);
                         hideLoading(info["worksheetId"]);
                     }
             });
@@ -1738,9 +1566,9 @@ var OrganizeColumnsDialog = (function() {
 
 		    var newInfo = [];
 		    newInfo.push(getParamObject("worksheetId", _worksheetId, "worksheetId"));
-		    newInfo.push(getParamObject("orderedColumns", columnsJson, "orderedColumns"));
+		    newInfo.push(getParamObject("orderedColumns", JSON.stringify(columnsJson), "orderedColumns"));
 		    info["newInfo"] = JSON.stringify(newInfo);
-
+            console.log(info);
 		    showLoading(info["worksheetId"]);
 		    var returned = $.ajax({
 		        url: "RequestController",

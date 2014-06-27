@@ -20,7 +20,11 @@
  ******************************************************************************/
 package edu.isi.karma.kr2rml.mapping;
 
+import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class R2RMLMappingIdentifier {
 
@@ -33,11 +37,25 @@ public class R2RMLMappingIdentifier {
 		this.location = location;
 	}
 	
+	public R2RMLMappingIdentifier(JSONObject id) throws MalformedURLException, JSONException
+	{
+		this.name = id.getString("name");
+		this.location = new URL(id.getString("location"));
+	}
+	
 	public String getName() {
 		return name;
 	}
 	public URL getLocation() {
 		return location;
+	}
+	
+	public JSONObject toJSON()
+	{
+		JSONObject id = new JSONObject();
+		id.put("name", name);
+		id.put("location", location.toString());
+		return id;
 	}
 	
 }

@@ -152,10 +152,6 @@ a.icon-remove:hover {
 						<input class="form-control" type="text" id="rdfPrefix" required value="s" maxlength="100">
 					</div>
 					<div class="form-group">
-						<label for="rdfSPAQRLEndPoint">Sparql End Point</label>
-						<input class="form-control" type="text" id="rdfSPAQRLEndPoint" required value="" maxlength="100">
-					</div>
-					<div class="form-group">
 							<label for="modelGraphList">RDF Graphs</label>
 							<select id="modelGraphList">
 		                	</select>
@@ -179,10 +175,16 @@ a.icon-remove:hover {
 					
 					<div class="checkbox">
 						<label>
-				    		<input type="checkbox" id="addInverseProperties" unchecked>
+				    		<input type="checkbox" id="addInverseProperties" unchecked></input>
 				    		Add Inverse Properties
 			  			</label>
 					</div>	
+					<div class="checkbox">
+						<label>
+				    		<input type="checkbox" id="generateBloomFilters" unchecked></input>
+				    		Generate Bloom Filters
+			  			</label>
+					</div>
 					
 					<div id="rdfStoreInfo">
 						<div class="form-group">
@@ -248,137 +250,15 @@ a.icon-remove:hover {
 				       <h4 class="modal-title">Publish Model</h4>
 				  </div>
 				  <div class="modal-body">
-					<div class="form-group">
-						<label for="txtR2RML_URL">SPARQL End Point</label>
-						<input class="form-control" type="text" id="txtR2RML_URL" required>
-					</div>
-					
-					<div class="error" style="display: none">Please enter an end point</div>
+				  	<div class="form-group">
+							<label for="txtR2RML_URL">SPARQL End Point</label>
+							<input class="form-control" type="text" id="txtR2RML_URL" required>
+						</div>
+						<div class="error" style="display: none">Please enter an end point</div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 				        <button type="submit" class="btn btn-primary" id="btnSave">Publish</button>
-				  </div> <!-- /.modal-footer -->
-			</div><!-- /.modal-content -->
-		</form>
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<div class="modal fade" id="saveModelDialog" tabindex="-1">
-  <div class="modal-dialog">
-  		<form class="bs-example bs-example-form" role="form">
-			<div class="modal-content">
-			     <div class="modal-header">
-				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				       <h4 class="modal-title">Save Model</h4>
-				  </div>
-				  <div class="modal-body">
-					<div class="form-group">
-						<input class="form-control" type="radio" id="buttonCollection_Save" value="Collection" name="buttonCollection_Save">Collection
-						<input class="form-control" type="radio" id="buttonCollection_Save" value="URL" name="buttonCollection_Save" checked="checked">URL
-					</div>
-					<div class="form-group">
-						<label for="txtR2RML_URL">Model URL</label>
-						<input class="form-control" type="text" id="txtModel_URL_Save" required>
-					</div>
-					<div class="form-group">
-						<label for="txtR2RML_URL">Graph Name</label>
-						<input class="form-control" type="text" id="txtGraph_URL_Save" required>
-					</div>
-
-					<div class="form-group">
-						<label for="txtR2RML_URL">SPARQL End Point</label>
-						<input class="form-control" type="text" id="txtR2RML_URL_Save" required>
-					</div>
-					
-					<div class="error" style="display: none">Please enter an end point</div>
-				  </div> <!-- /.modal-body -->
-				  <div class="modal-footer">
-				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				        <button type="submit" class="btn btn-primary" id="btnSave">Publish</button>
-				  </div> <!-- /.modal-footer -->
-			</div><!-- /.modal-content -->
-		</form>
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<div class="modal fade" id="clearModelDialog" tabindex="-1">
-  <div class="modal-dialog">
-  		<form class="bs-example bs-example-form" role="form">
-			<div class="modal-content">
-			     <div class="modal-header">
-				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				       <h4 class="modal-title">Clear Model</h4>
-				  </div>
-				  <div class="modal-body">
-
-					<div class="form-group">
-						<label for="txtR2RML_URL">Graph Name</label>
-						<input class="form-control" type="text" id="txtGraph_URL_Clear" required>
-					</div>
-
-					<div class="form-group">
-						<label for="txtR2RML_URL">SPARQL End Point</label>
-						<input class="form-control" type="text" id="txtR2RML_URL_Clear" required>
-					</div>
-					
-					<div class="error" style="display: none">Please enter an end point</div>
-				  </div> <!-- /.modal-body -->
-				  <div class="modal-footer">
-				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				        <button type="submit" class="btn btn-primary" id="btnSave">Publish</button>
-				  </div> <!-- /.modal-footer -->
-			</div><!-- /.modal-content -->
-		</form>
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<div class="modal fade" id="fetchModelListDialog" tabindex="-1">
-  <div class="modal-dialog">
-  		<form class="bs-example bs-example-form" role="form">
-			<div class="modal-content">
-			     <div class="modal-header">
-				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				       <h4 class="modal-title">Fetch Model</h4>
-				  </div>
-				  <div class="modal-body">
-
-					<div class="form-group">
-						<label for="txtR2RML_URL">Context Name</label>
-						<input class="form-control" type="text" id="txtGraph_URL_Fetch" required>
-					</div>
-
-					<div class="form-group">
-						<label for="txtR2RML_URL">SPARQL End Point</label>
-						<input class="form-control" type="text" id="txtR2RML_URL_Fetch" required>
-					</div>
-					
-					<div class="error" style="display: none">Please enter an end point</div>
-				  </div> <!-- /.modal-body -->
-				  <div class="modal-footer">
-				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				        <button type="submit" class="btn btn-primary" id="btnSave">Next</button>
-				  </div> <!-- /.modal-footer -->
-			</div><!-- /.modal-content -->
-		</form>
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<div class="modal fade" id="applyModelDialog" tabindex="-1">
-  <div class="modal-dialog">
-  		<form class="bs-example bs-example-form" role="form">
-			<div class="modal-content">
-			     <div class="modal-header">
-				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				       <h4 class="modal-title">Apply Model</h4>
-				  </div>
-				  <div class="modal-body">
-				  	<h4>Select Graphs:</h4>
-						<div id="applyModelDialogColumns"></div>
-				  </div> <!-- /.modal-body -->
-				  <div class="modal-footer">
-				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				        <button type="submit" class="btn btn-primary" id="btnSave">Apply</button>
 				  </div> <!-- /.modal-footer -->
 			</div><!-- /.modal-content -->
 		</form>
@@ -607,6 +487,28 @@ a.icon-remove:hover {
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 				        <button type="submit" class="btn btn-default" id="btnNo">No, just Export as JSON</button>
 				        <button type="submit" class="btn btn-primary" id="btnYes">Yes, Import as Worksheet</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="applyModelDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Apply Model From Repository</h4>
+				  </div>
+				  <div class="modal-body">
+				  	<h4>Select Model:</h4>
+				  	<div id="applyModelDialogHeaders"></div>
+						<div id="applyModelDialogColumns" style="max-height: 300px; overflow: auto;"></div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Apply</button>
 				  </div> <!-- /.modal-footer -->
 			</div><!-- /.modal-content -->
 		</form>

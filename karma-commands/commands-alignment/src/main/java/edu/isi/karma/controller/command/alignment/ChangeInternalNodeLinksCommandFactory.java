@@ -63,6 +63,12 @@ public class ChangeInternalNodeLinksCommandFactory extends JSONInputCommandFacto
 		return cmd;
 	}
 
+	public Command createCommand(String worksheetId, String alignmentId, JSONArray initialEdges, JSONArray newEdges, Workspace workspace)
+	{
+		return  new ChangeInternalNodeLinksCommand(
+				getNewId(workspace), worksheetId, alignmentId, initialEdges,
+				newEdges);
+	}
 	@Override
 	public Class<? extends Command> getCorrespondingCommand()
 	{
