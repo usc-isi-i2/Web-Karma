@@ -21,6 +21,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.ColumnMetadata.DataStructure;
+import edu.isi.karma.rep.HNode.HNodeType;
 
 public class JsonImportValues {
 	private static Logger logger = LoggerFactory.getLogger(JsonImport.class);
@@ -202,7 +203,7 @@ public class JsonImportValues {
 	public static HNode addHNode(HTable headers, String key, DataStructure dataStructure, RepFactory factory, Worksheet worksheet) {
 		HNode hn = headers.getHNodeFromColumnName(key);
 		if (hn == null) {
-			hn = headers.addHNode(key, worksheet, factory);
+			hn = headers.addHNode(key, HNodeType.Regular, worksheet, factory);
 			Worksheet ws = worksheet;
 			ws.getMetadataContainer().getColumnMetadata().addColumnDataStructure(hn.getId(), dataStructure);
 		}

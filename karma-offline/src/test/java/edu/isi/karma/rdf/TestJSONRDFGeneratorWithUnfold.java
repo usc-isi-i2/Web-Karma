@@ -21,14 +21,7 @@
 
 package edu.isi.karma.rdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URL;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,16 +31,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.util.EncodingDetector;
 
 
 /**
  * @author dipsy
  * 
  */
-public class TestJSONRDFGeneratorWithUnfold extends TestRdfGenerator{
+public class TestJSONRDFGeneratorWithUnfold extends TestJSONRDFGenerator{
 
-	JSONRDFGenerator rdfGen;
 	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGeneratorWithUnfold.class);
 	
 
@@ -88,25 +79,10 @@ public class TestJSONRDFGeneratorWithUnfold extends TestRdfGenerator{
 	public void testUnfoldNested() {
 		try {
 
-			String filename = "unfold/unfold-nested.json";
-			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
-					"utf-8");
-
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-
-			rdfGen.generateRDF("unfold-nested-model", jsonData, false, pw);
-			String rdf = sw.toString();
-			
-			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split(System.getProperty("line.separator"));
-			int count = lines.length;
-			 
-			assertEquals(25, count);
+			executeBasicJSONTest("unfold/unfold-nested.json", "unfold-nested-model", false, 25);
 		} catch (Exception e) {
 			logger.error("testUnfoldNested failed:", e);
-			fail("Execption: " + e.getMessage());
+			fail("Exception: " + e.getMessage());
 		}
 	}
 	
@@ -114,30 +90,12 @@ public class TestJSONRDFGeneratorWithUnfold extends TestRdfGenerator{
 	public void testUnfoldTop() {
 		try {
 
-			String filename = "unfold/unfold-top.json";
-			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
-					"utf-8");
+			executeBasicJSONTest("unfold/unfold-top.json", "unfold-top-model", false, 23);
 
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-
-			rdfGen.generateRDF("unfold-top-model", jsonData, false, pw);
-			String rdf = sw.toString();
-			
-			assertNotEquals(rdf.length(), 0);
-			String[] lines = rdf.split(System.getProperty("line.separator"));
-			int count = lines.length;
-			System.out.println("rdf" + rdf);
-			assertEquals(23, count);
 		} catch (Exception e) {
 			logger.error("testUnfoldTop failed:", e);
-			fail("Execption: " + e.getMessage());
+			fail("Exceptions: " + e.getMessage());
 		}
 	}
 
-	private URL getTestResource(String name)
-	{
-		return getClass().getClassLoader().getResource(name);
-	}
 }

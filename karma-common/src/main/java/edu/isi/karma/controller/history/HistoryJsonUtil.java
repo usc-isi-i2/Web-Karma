@@ -13,7 +13,7 @@ import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 public class HistoryJsonUtil {
 	
 	public enum ClientJsonKeys {
-		isPrimary, name, value, type, SemanticType
+		isPrimary, name, value, type, SemanticType, id, children
 	}
 	
 	public enum ParameterType {

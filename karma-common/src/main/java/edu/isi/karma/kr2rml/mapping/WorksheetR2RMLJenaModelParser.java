@@ -76,6 +76,11 @@ public class WorksheetR2RMLJenaModelParser {
 	{
 		this.id = id;
 	}
+	
+	public WorksheetR2RMLJenaModelParser(Model model, R2RMLMappingIdentifier id) throws JSONException, KarmaException 
+	{
+		this.id = id;
+	}
 
 	public KR2RMLMapping parse() throws IOException, KarmaException, JSONException
 	{
@@ -258,7 +263,7 @@ public class WorksheetR2RMLJenaModelParser {
 		while (predObjItr.hasNext()) {
 			Resource pomBlankNode = predObjItr.next().asResource();
 			// Create the PredicateObjectMap object for current POM
-			PredicateObjectMap pom = new PredicateObjectMap(trMap);
+			PredicateObjectMap pom = new PredicateObjectMap(pomBlankNode.getURI(), trMap);
 			
 			// Get the predicate for the POM
 			Predicate pred = null;
@@ -350,7 +355,7 @@ public class WorksheetR2RMLJenaModelParser {
 				List<TemplateTerm> terms = subjTemplTermSet.getAllTerms();
 				if(isValidTemplate(terms))
 				{
-					PredicateObjectMap pom = new PredicateObjectMap(trMap);
+					PredicateObjectMap pom = new PredicateObjectMap(PredicateObjectMap.getNewId(),trMap);
 					Predicate pred = new Predicate(Uris.CLASS_INSTANCE_LINK_URI + "-" + predicateIdCounter++);
 					pred.getTemplate().addTemplateTermToSet(
 							new StringTemplateTerm(Uris.CLASS_INSTANCE_LINK_URI, true));
@@ -541,7 +546,7 @@ public class WorksheetR2RMLJenaModelParser {
 						
 						if(columnsCovered.isEmpty())
 						{
-							String blankNodeUriPrefix = kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().get(subjMap.getId());
+							//String blankNodeUriPrefix = kr2rmlMapping.getAuxInfo().getBlankNodesUriPrefixMap().get(subjMap.getId());
 							//throw new KarmaException("You need to define a URI for "+blankNodeUriPrefix+ ".");
 						}
 						break;

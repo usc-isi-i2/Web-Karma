@@ -9,6 +9,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.KarmaException;
 
 public class OrganizeColumnsCommandFactory extends 
@@ -24,8 +25,8 @@ public class OrganizeColumnsCommandFactory extends
 		String worksheetId = CommandInputJSONUtil.getStringValue(
 				Arguments.worksheetId.name(), inputJson);
 		
-		JSONArray orderedColumns = CommandInputJSONUtil.getJSONArrayValue(
-				Arguments.orderedColumns.name(), inputJson);
+		JSONArray orderedColumns = (JSONArray) JSONUtil.createJson(CommandInputJSONUtil.getStringValue(
+				Arguments.orderedColumns.name(), inputJson));
 
 		OrganizeColumnsCommand cmd = new OrganizeColumnsCommand(
 				getNewId(workspace), workspace.getId(), worksheetId, orderedColumns);

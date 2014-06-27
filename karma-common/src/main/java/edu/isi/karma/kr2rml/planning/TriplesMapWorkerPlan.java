@@ -39,6 +39,7 @@ import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
 import edu.isi.karma.kr2rml.template.PopulatedTemplateTermSet;
 import edu.isi.karma.kr2rml.template.StringTemplateTerm;
 import edu.isi.karma.kr2rml.template.TemplateTermSet;
+import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
@@ -110,7 +111,7 @@ public class TriplesMapWorkerPlan {
 		// Generate triples for specifying the types
 		for (TemplateTermSet typeTerm:triplesMap.getSubject().getRdfsType()) {
 			
-			PredicateObjectMap pom = new PredicateObjectMap(triplesMap);
+			PredicateObjectMap pom = new PredicateObjectMap(Prefixes.KARMA_DEV + PredicateObjectMap.getNewId(),triplesMap);
 			pom.setObject(new ObjectMap(factory.getNewId("objectmap"), typeTerm, null));
 			Predicate typePredicate = new Predicate(factory.getNewId("predicate"));
 			TemplateTermSet typeTemplate = new TemplateTermSet();
@@ -139,20 +140,20 @@ public class TriplesMapWorkerPlan {
 		}
 	}
 	
-	public void execute(Row r, KR2RMLRDFWriter outWriter)
+	public void execute(Row r, List<KR2RMLRDFWriter> outWriters)
 	{
 
 		List<PopulatedTemplateTermSet> subjects = subjectMapPlan.execute(r);
 		
 		for(PredicateObjectMappingPlan internalLinkPlan : internalLinksPlans)
 		{
-			internalLinkPlan.outputTriples(outWriter, internalLinkPlan.execute(r, subjects), r);
+			internalLinkPlan.outputTriples(outWriters, internalLinkPlan.execute(r, subjects), r);
 		}
 		
 		for(PredicateObjectMappingPlan columnLinkPlan : columnLinksPlans)
 		{
 			
-			columnLinkPlan.outputTriples(outWriter, columnLinkPlan.execute(r, subjects), r);
+			columnLinkPlan.outputTriples(outWriters, columnLinkPlan.execute(r, subjects), r);
 		}
 	}
 }

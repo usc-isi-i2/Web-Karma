@@ -22,8 +22,10 @@
 package edu.isi.karma.controller.command.service;
 
 import edu.isi.karma.rep.*;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.sources.Attribute;
 import edu.isi.karma.rep.sources.Table;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +70,7 @@ public class ServiceTableUtil {
 		
 		for (int i = 0; i < tableHeader.size(); i++) {
 			Attribute att = tableHeader.get(i);
-			HNode hNode = headers.addHNode(att.getName(), worksheet, factory);
+			HNode hNode = headers.addHNode(att.getName(), HNodeType.Regular, worksheet, factory);
 			headersList.add(hNode.getId());
 			
 			// very important 

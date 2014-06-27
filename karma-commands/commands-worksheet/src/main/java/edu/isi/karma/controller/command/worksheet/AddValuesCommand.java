@@ -21,6 +21,7 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
@@ -42,9 +43,9 @@ public class AddValuesCommand extends WorksheetCommand{
 	//the id of the new column that was created
 	//needed for undo
 	private String newHNodeId;
-	
+	private HNodeType type;
 	private String newColumnName = "";
-
+	private boolean isNewNode;
 	private static Logger logger = LoggerFactory
 			.getLogger(AddValuesCommand.class);
 
@@ -53,10 +54,12 @@ public class AddValuesCommand extends WorksheetCommand{
 	}
 
 	protected AddValuesCommand(String id,String worksheetId, 
-			String hTableId, String hNodeId) {
+			String hTableId, String hNodeId, HNodeType type) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
+		isNewNode = false;
+		this.type = type;
 		addTag(CommandTag.Transformation);
 	}
 
@@ -82,7 +85,6 @@ public class AddValuesCommand extends WorksheetCommand{
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		System.out.println("here");
 		Worksheet worksheet = workspace.getWorksheet(
 				worksheetId);
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
@@ -108,12 +110,14 @@ public class AddValuesCommand extends WorksheetCommand{
 		} catch (Exception e) {
 			logger.error("Error in AddColumnCommand" + e.toString());
 			Util.logException(logger, e);
+			e.printStackTrace();
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
 	}
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
+		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		HTable currentTable = workspace.getFactory().getHTable(hTableId);
@@ -121,8 +125,9 @@ public class AddValuesCommand extends WorksheetCommand{
 		ndid.removeNestedTable();
 		//remove the new column
 		currentTable.removeHNode(newHNodeId, worksheet);
-
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		return c;
 	}
 
 
@@ -130,6 +135,10 @@ public class AddValuesCommand extends WorksheetCommand{
 		return newHNodeId;
 	}
 	
+	public boolean isNewNode() {
+		return isNewNode;
+	}
+
 	public void setColumnName(String name) {
 		this.newColumnName = name;
 	}
@@ -148,14 +157,22 @@ public class AddValuesCommand extends WorksheetCommand{
 			logger.error("No HTable for id "+ hTableId);
 			throw new KarmaException("No HTable for id "+ hTableId );
 		}
-		
-		if (null != hTable.getHNodeFromColumnName(newColumnName)) {
-			logger.error("Add column failed to create " + newColumnName
-					+ " because it already exists!");
-		}   
+
 		//add new column to this table
 		//add column after the column with hNodeId
-		HNode ndid = hTable.addNewHNodeAfter(hNodeId, workspace.getFactory(), newColumnName, worksheet,true);
+		HNode ndid = null;
+		if (newColumnName != null && !newColumnName.trim().isEmpty()) {
+			if (hTable.getHNodeFromColumnName(newColumnName) != null)
+				ndid = hTable.getHNodeFromColumnName(newColumnName);
+			else {
+				ndid = hTable.addNewHNodeAfter(hNodeId, type, workspace.getFactory(), newColumnName, worksheet,true);
+				isNewNode = true;
+			}
+		}
+		else {
+			ndid = hTable.addNewHNodeAfter(hNodeId, type, workspace.getFactory(), newColumnName, worksheet,true);
+			isNewNode = true;
+		}
 		if(ndid == null)
 		{
 			logger.error("Unable to add new HNode!");
@@ -177,8 +194,20 @@ public class AddValuesCommand extends WorksheetCommand{
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {
-			if (path.getLeaf().getId().equals(newHNodeId)) {
-				selectedPath = path;
+			if (path.contains(factory.getHNode(newHNodeId))) {	
+				if (path.getLeaf().getId().compareTo(newHNodeId) != 0) {
+					HNodePath hp = new HNodePath();
+					HNode hn = path.getFirst();
+					while (hn.getId().compareTo(newHNodeId) != 0) {
+						hp.addHNode(hn);
+						path = path.getRest();
+						hn = path.getFirst();
+					}
+					hp.addHNode(hn);
+					selectedPath = hp;
+				}
+				else
+					selectedPath = path;
 			}
 		}
 		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
@@ -191,7 +220,7 @@ public class AddValuesCommand extends WorksheetCommand{
 						Object t = obj.get("values");
 						if (t instanceof String) {
 							String value = (String)t;
-							addValues(node, value, factory);
+							addValues(node, value, factory, null);
 						}
 						else if (t instanceof JSONObject) {
 							addJSONObjectValues((JSONObject)t, worksheet, htable, factory, node.getBelongsToRow(), newHNodeId);
@@ -202,19 +231,21 @@ public class AddValuesCommand extends WorksheetCommand{
 					}
 				}
 			}
-			
+
 		}
 	}
 
-	private void addJSONArrayValues(JSONArray array, Worksheet worksheet, HTable htable, RepFactory factory, Row row, String newHNodeId) {
+	private boolean addJSONArrayValues(JSONArray array, Worksheet worksheet, HTable htable, RepFactory factory, Row row, String newHNodeId) {
+		boolean flag = false;
 		for (int i = 0; i < array.length(); i++) {
 			JSONObject obj = (JSONObject)array.get(i);
-			addJSONObjectValues(obj, worksheet, htable, factory, row, newHNodeId);
+			flag |= addJSONObjectValues(obj, worksheet, htable, factory, row, newHNodeId);
 		}
+		return flag;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private void addJSONObjectValues(JSONObject obj, Worksheet worksheet, HTable htable, RepFactory factory, Row row, String newHNodeId) {
+	private boolean addJSONObjectValues(JSONObject obj, Worksheet worksheet, HTable htable, RepFactory factory, Row row, String newHNodeId) {
 		HNode ndid = htable.getHNode(newHNodeId);
 		HTable nestedHTable = ndid.getNestedTable();
 		if (nestedHTable == null)
@@ -222,24 +253,40 @@ public class AddValuesCommand extends WorksheetCommand{
 					worksheet, factory);
 		Table nestedTable = row.getNode(newHNodeId).getNestedTable();
 		Row r = nestedTable.addRow(factory);
+		boolean flag = false;
 		for (Object key : new TreeSet<Object>(obj.keySet())) {
 			Object value = obj.get(key.toString());
 			HNode h = nestedHTable.getHNodeFromColumnName(key.toString());
 			if ( h == null) {		
-				h = nestedHTable.addHNode(key.toString(), worksheet, factory);
+				h = nestedHTable.addHNode(key.toString(), type, worksheet, factory);
 			}
-				//
+			//
 			if (value instanceof String)
-				r.getNode(h.getId()).setValue((String)value, NodeStatus.original, factory);
+				flag |= addValues(r.getNode(h.getId()), (String)value, factory, nestedTable);
 			if (value instanceof JSONObject)
-				addJSONObjectValues((JSONObject)value, worksheet, nestedHTable, factory, r, h.getId());
+				flag |= addJSONObjectValues((JSONObject)value, worksheet, nestedHTable, factory, r, h.getId());
 			if (value instanceof JSONArray) 
-				addJSONArrayValues((JSONArray) value, worksheet, nestedHTable, factory,r, h.getId());
+				flag |= addJSONArrayValues((JSONArray) value, worksheet, nestedHTable, factory,r, h.getId());
 		}
+		if (!flag)
+			nestedTable.removeRow(r);
+		return flag;
 	}
-	
-	private void addValues(Node node, String value, RepFactory factory) {
-		node.setValue(value, NodeStatus.original, factory);
+
+	private boolean addValues(Node node, String value, RepFactory factory, Table table) {
+		boolean flag = true;
+		if (table != null) {
+			for (Row r : table.getRows(0, table.getNumRows())) {
+				Node n = r.getNeighbor(node.getHNodeId());
+				if (n.getValue() != null && n.getValue().asString().compareTo(value) == 0) { 
+					flag = false;
+					break;
+				}
+			}
+		}
+		if (flag)
+			node.setValue(value, NodeStatus.original, factory);
+		return flag;
 	}
 
 }

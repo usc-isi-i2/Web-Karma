@@ -30,6 +30,7 @@ import org.json.JSONObject;
 
 import edu.isi.karma.rep.ColumnMetadata;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VHNode;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
@@ -37,10 +38,10 @@ import edu.isi.karma.view.VWorkspace;
 public class WorksheetHeadersUpdate extends AbstractUpdate {
 
 	private final String worksheetId;
-
+	private Workspace workspace;
 	private enum JsonKeys {
 		worksheetId, columns, columnName, characterLength, hasNestedTable, 
-		columnClass, hNodeId, pythonTransformation, previousCommandId, columnDerivedFrom
+		columnClass, hNodeId, pythonTransformation, previousCommandId, columnDerivedFrom, hNodeType
 	}
 
 	public WorksheetHeadersUpdate(String worksheetId) {
@@ -51,7 +52,7 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
 		VWorksheet vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
-		
+		workspace = vWorkspace.getWorkspace();
 		try {
 			JSONObject response = new JSONObject();
 			response.put(JsonKeys.worksheetId.name(), worksheetId);
@@ -90,6 +91,7 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 		hNodeObj.put(JsonKeys.columnName.name(), columnName);
 		hNodeObj.put(JsonKeys.columnClass.name(), getColumnClass(hNode.getId()));
 		hNodeObj.put(JsonKeys.hNodeId.name(), hNode.getId());
+		hNodeObj.put(JsonKeys.hNodeType.name(), workspace.getFactory().getHNode(hNode.getId()).getHNodeType().name());
 		Integer colLength = colMeta.getColumnPreferredLength(hNode.getId());
 		if (colLength == null || colLength == 0) {
 			hNodeObj.put(JsonKeys.characterLength.name(), WorksheetCleaningUpdate.DEFAULT_COLUMN_LENGTH);

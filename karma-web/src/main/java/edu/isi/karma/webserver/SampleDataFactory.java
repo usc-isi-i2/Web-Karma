@@ -22,8 +22,10 @@ package edu.isi.karma.webserver;
 
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.*;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.JSONUtil;
+
 import org.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,26 +45,26 @@ public class SampleDataFactory {
 		RepFactory f = workspace.getFactory();
 
 		Worksheet w = f.createWorksheet("Complex Smaple Table", workspace, "UTF-8");
-		String ss = w.addHNode("Social Security", f).getId();
-		String personContainer = w.addHNode("Person", f).getId();
-		String addressContainer = w.addHNode("Address", f).getId();
-		String relativesContainer = w.addHNode("Relatives", f).getId();
+		String ss = w.addHNode("Social Security", HNodeType.Regular, f).getId();
+		String personContainer = w.addHNode("Person", HNodeType.Regular, f).getId();
+		String addressContainer = w.addHNode("Address", HNodeType.Regular, f).getId();
+		String relativesContainer = w.addHNode("Relatives", HNodeType.Regular, f).getId();
 
 		HTable personTable = w.getHeaders().getHNode(personContainer)
 				.addNestedTable("Person Table", w, f);
-		String firstName = personTable.addHNode("First Name", w, f).getId();
-		String lastName = personTable.addHNode("Last Name", w, f).getId();
+		String firstName = personTable.addHNode("First Name", HNodeType.Regular, w, f).getId();
+		String lastName = personTable.addHNode("Last Name", HNodeType.Regular, w, f).getId();
 
 		HTable addressTable = w.getHeaders().getHNode(addressContainer)
 				.addNestedTable("Address Table", w, f);
-		String what = addressTable.addHNode("What", w, f).getId();
-		String address = addressTable.addHNode("Address", w, f).getId();
+		String what = addressTable.addHNode("What", HNodeType.Regular, w, f).getId();
+		String address = addressTable.addHNode("Address", HNodeType.Regular, w, f).getId();
 
 		HTable relativesTable = w.getHeaders().getHNode(relativesContainer)
 				.addNestedTable("Relatives Person Table", w, f);
-		String relFirstName = relativesTable.addHNode("Relatives First Name",
+		String relFirstName = relativesTable.addHNode("Relatives First Name", HNodeType.Regular, 
 				w, f).getId();
-		String relLastName = relativesTable.addHNode("Relatives Last Name", w,
+		String relLastName = relativesTable.addHNode("Relatives Last Name", HNodeType.Regular, w,
 				f).getId();
 
 		// Row 1
@@ -140,26 +142,26 @@ public class SampleDataFactory {
 		RepFactory f = workspace.getFactory();
 
 		Worksheet w = f.createWorksheet("Complex Smaple Table", workspace, "UTF-8");
-		String ss = w.addHNode("Social Security", f).getId();
-		String personContainer = w.addHNode("Person", f).getId();
-		String addressContainer = w.addHNode("Address", f).getId();
-		String relativesContainer = w.addHNode("Relatives", f).getId();
+		String ss = w.addHNode("Social Security", HNodeType.Regular, f).getId();
+		String personContainer = w.addHNode("Person", HNodeType.Regular, f).getId();
+		String addressContainer = w.addHNode("Address", HNodeType.Regular, f).getId();
+		String relativesContainer = w.addHNode("Relatives", HNodeType.Regular, f).getId();
 
 		HTable personTable = w.getHeaders().getHNode(personContainer)
 				.addNestedTable("Person Table", w, f);
-		String firstName = personTable.addHNode("First Name", w, f).getId();
-		String lastName = personTable.addHNode("Last Name", w, f).getId();
+		String firstName = personTable.addHNode("First Name", HNodeType.Regular, w, f).getId();
+		String lastName = personTable.addHNode("Last Name", HNodeType.Regular, w, f).getId();
 
 		HTable addressTable = w.getHeaders().getHNode(addressContainer)
 				.addNestedTable("Address Table", w, f);
-		String what = addressTable.addHNode("What", w, f).getId();
-		String address = addressTable.addHNode("Address", w, f).getId();
+		String what = addressTable.addHNode("What", HNodeType.Regular, w, f).getId();
+		String address = addressTable.addHNode("Address", HNodeType.Regular, w, f).getId();
 
 		HTable relativesTable = w.getHeaders().getHNode(relativesContainer)
 				.addNestedTable("Relatives Person Table", w, f);
-		String relFirstName = relativesTable.addHNode("Relatives First Name",
+		String relFirstName = relativesTable.addHNode("Relatives First Name", HNodeType.Regular,
 				w, f).getId();
-		String relLastName = relativesTable.addHNode("Relatives Last Name", w,
+		String relLastName = relativesTable.addHNode("Relatives Last Name", HNodeType.Regular, w,
 				f).getId();
 
 		// Row 1
@@ -191,7 +193,7 @@ public class SampleDataFactory {
 				"Table (" + numRows + ", " + numColumns + ")", wsp, "UTF-8");
 
 		for (int c = 1; c <= numColumns; c++) {
-			w.getHeaders().addHNode("Column " + c, w, wsp.getFactory());
+			w.getHeaders().addHNode("Column " + c, HNodeType.Regular, w, wsp.getFactory());
 		}
 
 		int vCount = 1;
