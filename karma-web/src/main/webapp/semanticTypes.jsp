@@ -156,6 +156,10 @@
 				  	<h4>Select Predicates:</h4>
 				  	<div id="augmentDataDialogHeaders"></div>
 						<div id="augmentDataDialogColumns" style = "max-height: 300px; overflow: auto;"></div>
+						<div class="form-group">
+							<label for="altPredicate">Alternative sameAs Predicate</label>
+							<input class="form-control" type="text" id="altPredicate" style = "width: 150px;"required>
+						</div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

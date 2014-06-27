@@ -35,6 +35,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
@@ -83,10 +84,13 @@ public class SearchForDataToAugmentIncomingCommand extends Command{
 		TripleStoreUtil util = new TripleStoreUtil();
 		HashMap<String, List<String>> result = null;
 		nodeUri = nodeUri.trim();
+		Map<String, Label> parents = workspace.getOntologyManager().getSuperClasses(nodeUri, true);
+		Set<String> classes = new HashSet<String>(parents.keySet());
+		classes.add(nodeUri);
 		StringBuilder builder = new StringBuilder();
 		nodeUri = builder.append("<").append(nodeUri).append(">").toString();
 		try {
-			result = util.getPredicatesForParentTriplesMapsWithSameClass(tripleStoreUrl, context, nodeUri);
+			result = util.getPredicatesForParentTriplesMapsWithSameClass(tripleStoreUrl, context, classes);
 		} catch (KarmaException e) {
 			LOG.error("Unable to find predicates for triples maps with same class as: " + nodeUri, e);
 		}

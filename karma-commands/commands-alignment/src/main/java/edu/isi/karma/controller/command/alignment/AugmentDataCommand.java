@@ -224,7 +224,8 @@ public class AugmentDataCommand extends WorksheetCommand{
 				}
 				else
 				{
-					oldNodes.addAll( alignment.getNodesByUri(resultClass.get(i)));
+					if (alignment.getNodesByUri(resultClass.get(i)) != null)
+						oldNodes.addAll( alignment.getNodesByUri(resultClass.get(i)));
 					semanticType.put(ClientJsonKeys.DomainId.name(), resultClass.get(i));
 					semanticType.put(ClientJsonKeys.FullType.name(), Uris.CLASS_INSTANCE_LINK_URI);
 				}

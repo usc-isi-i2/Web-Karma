@@ -590,7 +590,7 @@ public class TripleStoreUtil {
 		}
 	}
 	
-	public HashMap<String, List<String>> getPredicatesForParentTriplesMapsWithSameClass(String tripleStoreURL, String context, String classToMatch) throws KarmaException
+	public HashMap<String, List<String>> getPredicatesForParentTriplesMapsWithSameClass(String tripleStoreURL, String context, Collection<String> classesToMatch) throws KarmaException
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
@@ -610,9 +610,17 @@ public class TripleStoreUtil {
 //			query.append("?mappingURI km-dev:hasData \"true\" .\n"); 
 			query.append("?mapping km-dev:hasTriplesMap ?triplesMap .\n");
 			query.append("?triplesMap rr:subjectMap ?subjectMap .\n");
-			query.append("?subjectMap rr:class ");
-			query.append(classToMatch);
-			query.append(" .\n");
+			Iterator<String> itr = classesToMatch.iterator();
+			while(itr.hasNext()) {
+				String classToMatch = itr.next();
+				query.append("{?subjectMap rr:class ");
+				query.append("<").append(classToMatch.trim()).append(">");
+				query.append("}");
+				if (itr.hasNext())
+					query.append(" UNION  \n");
+				else
+					query.append(". \n");
+			}
 			query.append("?refObjMap rr:parentTriplesMap ?triplesMap .\n");
 			query.append("?pom rr:objectMap ?refObjMap .\n");
 			query.append("?otherTriplesMap rr:predicateObjectMap ?pom .\n"); 
@@ -665,7 +673,7 @@ public class TripleStoreUtil {
 	}
 	
 	
-	public HashMap<String, List<String>> getPredicatesForTriplesMapsWithSameClass(String tripleStoreURL, String context, String classToMatch) throws KarmaException
+	public HashMap<String, List<String>> getPredicatesForTriplesMapsWithSameClass(String tripleStoreURL, String context, Collection<String> classesToMatch) throws KarmaException
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
@@ -685,9 +693,17 @@ public class TripleStoreUtil {
 //			query.append("?mappingURI km-dev:hasData \"true\" .\n"); 
 			query.append("?mapping km-dev:hasTriplesMap ?triplesMap .\n");
 			query.append("?triplesMap rr:subjectMap ?subjectMap .\n");
-			query.append("?subjectMap rr:class ");
-			query.append(classToMatch);
-			query.append(" .\n");
+			Iterator<String> itr = classesToMatch.iterator();
+			while (itr.hasNext()) {
+				String classToMatch = itr.next();
+				query.append("{?subjectMap rr:class ");
+				query.append("<").append(classToMatch.trim()).append(">");
+				query.append("}");
+				if (itr.hasNext())
+					query.append(" UNION  \n");
+				else
+					query.append(". \n");
+			}		
 			query.append("?triplesMap rr:predicateObjectMap ?pom . \n");
 			query.append("?pom rr:predicate ?predicate . \n");
 			query.append("OPTIONAL \n");
