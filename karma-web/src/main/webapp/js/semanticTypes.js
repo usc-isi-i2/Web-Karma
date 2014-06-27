@@ -266,8 +266,11 @@ var SetSemanticTypeDialog = (function() {
                    for(var i=0; i<classList.length; i++) {
                 	   var clazz = classList[i];
                 	   if(clazz.label.toLowerCase() == propValue.toLowerCase()) {
-                		   info["metaPropertyValue"] = clazz.uri;
-                           newInfo.push(getParamObject("metaPropertyValue", clazz.uri, "other"));
+                		   var idOrUri = clazz.id;
+                		   if(idOrUri.match(/ \(add\)$/))
+                			   idOrUri = clazz.uri;
+                		   info["metaPropertyValue"] = idOrUri;
+                           newInfo.push(getParamObject("metaPropertyValue", idOrUri, "other"));
                            valueFound = true;
                            break;
                 	   }
