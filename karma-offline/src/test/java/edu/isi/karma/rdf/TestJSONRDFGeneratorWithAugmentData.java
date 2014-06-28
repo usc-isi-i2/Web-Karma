@@ -42,7 +42,6 @@ import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
  */
 public class TestJSONRDFGeneratorWithAugmentData extends TestJSONRDFGenerator{
 
-	JSONRDFGenerator rdfGen;
 	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGeneratorWithAugmentData.class);
 	
 
@@ -58,7 +57,7 @@ public class TestJSONRDFGeneratorWithAugmentData extends TestJSONRDFGenerator{
 	 */
 	@Before
 	public void setUp() throws Exception {
-		rdfGen = JSONRDFGenerator.getInstance();
+		rdfGen = new GenericRDFGenerator();
 
 		// Add the models in
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
