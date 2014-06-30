@@ -21,14 +21,15 @@ public class ApplyModelFromURLCommand extends WorksheetCommand{
 	private String modelURL;
 	private String modelContext;
 	private String modelRepository;
-	private static final String baseUrl = "http://localhost:8080/R2RMLMapping/local/repository/";
+	private String baseUrl = "http://localhost:8080/R2RMLMapping/local/repository/";
 
 	private static Logger logger = LoggerFactory.getLogger(ApplyModelFromURLCommand.class);
-	public ApplyModelFromURLCommand(String id, String worksheetId, String modelURL, String modelContext, String modelRepository) {
+	public ApplyModelFromURLCommand(String id, String worksheetId, String modelURL, String modelContext, String modelRepository, String baseURL) {
 		super(id, worksheetId);
 		this.modelURL = modelURL;
 		this.modelContext = modelContext;
 		this.modelRepository = modelRepository;
+		this.baseUrl = baseURL;
 	}
 
 	@Override
@@ -57,7 +58,7 @@ public class ApplyModelFromURLCommand extends WorksheetCommand{
 		try {
 
 			String context = (modelContext != null && !modelContext.isEmpty()? (modelContext + "/") : "");
-			URL url = new URL(ApplyModelFromURLCommand.baseUrl + context + modelURL);
+			URL url = new URL(baseUrl + context + modelURL);
 
 			File file = new File("tmp.ttl");	
 			FileUtils.copyURLToFile(url, file);
