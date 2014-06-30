@@ -550,6 +550,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             else
                 return d.width/2 * -1;
         })
+        .style("fill", function(d) { if(d.isForcedByUser) return "rgb(217,234,242)"; })
         .on("click", function(d){
            if(d["nodeType"] == "InternalNode") {
         	   ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain,
