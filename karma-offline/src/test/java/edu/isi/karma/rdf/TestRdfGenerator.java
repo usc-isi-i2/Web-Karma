@@ -23,6 +23,7 @@ import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
+import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.util.EncodingDetector;
 
 public abstract class TestRdfGenerator {
@@ -48,18 +49,15 @@ public abstract class TestRdfGenerator {
 	 *            stores generated RDF triples
 	 * @throws Exception
 	 */
-	protected void generateRdfFile(String inputFormat, File inputFile, String modelName, File modelFile, PrintWriter pw)
+	protected void generateRdfFile(File inputFile, InputType inputType, String modelName, File modelFile, PrintWriter pw)
 			throws Exception {
-
-		FileRdfGenerator rdfGen = new FileRdfGenerator();
+		GenericRDFGenerator rdfGen = new GenericRDFGenerator();
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
 				modelName, modelFile.toURI().toURL());
-		String encoding = EncodingDetector.detect(inputFile);
+		rdfGen.addModel(modelIdentifier);
 		List<KR2RMLRDFWriter> writers = createBasicWriter(pw);
-		rdfGen.generateRdf(inputFormat, modelIdentifier, writers, inputFile, encoding, 0, null);
-
+		rdfGen.generateRDF(modelName, inputFile, inputType, false, writers);	
 	}
-
 
 	protected List<KR2RMLRDFWriter> createBasicWriter(PrintWriter pw) {
 		N3KR2RMLRDFWriter writer = new N3KR2RMLRDFWriter(new URIFormatter(), pw);
@@ -67,6 +65,7 @@ public abstract class TestRdfGenerator {
 		writers.add(writer);
 		return writers;
 	}
+	
 	protected HashSet<String> getFileContent(File file) {
 		HashSet<String> hashSet = new HashSet<String>();
 		

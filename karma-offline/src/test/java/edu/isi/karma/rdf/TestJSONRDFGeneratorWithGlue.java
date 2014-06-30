@@ -54,7 +54,7 @@ public class TestJSONRDFGeneratorWithGlue extends TestJSONRDFGenerator{
 	 */
 	@Before
 	public void setUp() throws Exception {
-		rdfGen = JSONRDFGenerator.getInstance();
+		rdfGen = new GenericRDFGenerator();
 
 		// Add the models in
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
