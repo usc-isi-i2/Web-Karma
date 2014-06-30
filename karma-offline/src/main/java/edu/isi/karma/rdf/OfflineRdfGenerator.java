@@ -60,6 +60,7 @@ import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.util.DBType;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
@@ -397,8 +398,16 @@ public class OfflineRdfGenerator {
 		
 
 		createWriters(id);
-		FileRdfGenerator rdfGenerator = new FileRdfGenerator();
-		rdfGenerator.generateRdf(inputType, id, writers, inputFile, encoding, maxNumLines, baseURI);
+		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator();
+		rdfGenerator.addModel(id);
+		InputType inputType = null;
+		if(this.inputType.equalsIgnoreCase("CSV"))
+			inputType = InputType.CSV;
+		else if(this.inputType.equalsIgnoreCase("JSON"))
+			inputType = InputType.JSON;
+		else if(this.inputType.equalsIgnoreCase("XML"))
+			inputType = InputType.XML;
+		rdfGenerator.generateRDF(sourceName, inputFile, inputType, maxNumLines, false, writers);
 		
 	}
 

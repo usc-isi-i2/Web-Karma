@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.util.EncodingDetector;
+import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 
 public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
 	private static Logger logger = LoggerFactory.getLogger(TestBasicJSONRDFGenerator.class);
@@ -33,7 +33,7 @@ public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		rdfGen = JSONRDFGenerator.getInstance();
+		rdfGen = new GenericRDFGenerator();
 
 		// Add the models in
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
@@ -74,13 +74,10 @@ public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
 		try {
 			String filename = "people.json";
 			logger.info("Loading json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(getTestResource(filename).toURI()),
-					"utf-8");
-
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(pw);
-			rdfGen.generateRDF("people-model", filename, jsonData, false, writer);
+			rdfGen.generateRDF("people-model", new File(getTestResource(filename).toURI()), InputType.JSON, false, writer);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("(\r\n|\n)");

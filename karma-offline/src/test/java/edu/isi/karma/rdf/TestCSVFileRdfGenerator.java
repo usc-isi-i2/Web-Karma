@@ -34,6 +34,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
+
 /**
  * The class is used for test. There are csv files, model files and standard RDF
  * files in the directory. For each csv file, the associated model is applied to
@@ -93,7 +95,7 @@ public class TestCSVFileRdfGenerator extends TestRdfGenerator {
 				StringWriter sw = new StringWriter();// generated RDF triples
 				PrintWriter pw = new PrintWriter(sw);
 
-				generateRdfFile("csv", csvFile, modelFile.getName(), modelFile, pw);
+				generateRdfFile(csvFile, InputType.CSV, modelFile.getName(), modelFile, pw);
 
 				HashSet<String> standardSet = getFileContent(standardRdfFile);
 				HashSet<String> generatedSet = getHashSet(sw.toString().split(

@@ -11,6 +11,8 @@ import java.net.URL;
 
 import org.junit.Test;
 
+import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
+
 
 public class TestFileRdfGenerator extends TestRdfGenerator{
 	
@@ -22,7 +24,7 @@ public class TestFileRdfGenerator extends TestRdfGenerator{
 			
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
-			generateRdfFile(null,  new File(getTestResource(filename).toURI()), "schedule-model", new File(getTestResource("schedule-model.txt").toURI()), pw);
+			generateRdfFile(new File(getTestResource(filename).toURI()), null, "schedule-model", new File(getTestResource("schedule-model.txt").toURI()), pw);
 			
 			
 			String rdf = sw.toString();
@@ -46,7 +48,7 @@ public class TestFileRdfGenerator extends TestRdfGenerator{
 			
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
-			generateRdfFile("csv",  new File(getTestResource(filename).toURI()), "cbev2.WebConAltNames-model", new File(getTestResource("cbev2.WebConAltNames-model.ttl").toURI()), pw);
+			generateRdfFile(new File(getTestResource(filename).toURI()), InputType.CSV, "cbev2.WebConAltNames-model", new File(getTestResource("cbev2.WebConAltNames-model.ttl").toURI()), pw);
 			
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
