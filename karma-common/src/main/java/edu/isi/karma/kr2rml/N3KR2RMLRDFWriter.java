@@ -174,9 +174,12 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 		try {
 			URI uri = new URI(URI);
 			if (!uri.isAbsolute() && baseURI != null)
-				return baseURI + uri;
+				return baseURI + URI;
 		}catch(URISyntaxException e) {
-			return URI;
+			if (baseURI != null)
+				return baseURI + URI;
+			else
+				return URI;
 		}
 		return URI;
 	}
