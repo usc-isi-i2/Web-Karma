@@ -223,19 +223,21 @@ and related projects, please see: http://www.isi.edu/integration
 	        <p class="text-muted">
 	        	<div class="row">
 	        		<div class="col-sm-4">Karma Home: <span id="karmaHome"><%=ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></span></div>
+	        		<div class="col-sm-4">
+	        			<div class="form-group">
+							<label for="txtModel_URL">Model Repository Endpoint: </label>
+							<label class="edit" id="txtModel_URL"></label>
+						</div>
+	        		</div>
+	        		<div class="col-sm-4">
+	        			<div class="form-group">
+							<label for="txtData_URL">Data Repository Endpoint: </label>
+							<label class="edit" id="txtData_URL"></label>
+						</div>
+	        		</div>
 	        	</div>
 	        </p>
 	      </div>
-	      <div class="container">
-	      	<div class="form-group" style="float:left; width: 500px; padding-right: 10px;">
-										<label for="txtModel_URL">Model Repository Endpoint</label>
-										<label class="edit" id="txtModel_URL"></label>
-					</div>
-		    	<div class="form-group" style="float:left; width: 500px; padding-left: 10px;">
-								<label for="txtData_URL">Data Repository Endpoint</label>
-								<label class="edit" id="txtData_URL"></label>
-					</div>
-				</div>
 	    </div>
     
         <div id="ScrollHeadersPlaceholder"></div>
