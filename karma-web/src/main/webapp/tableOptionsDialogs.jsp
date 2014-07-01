@@ -182,7 +182,7 @@ a.icon-remove:hover {
 					<div class="checkbox">
 						<label>
 				    		<input type="checkbox" id="generateBloomFilters" unchecked></input>
-				    		Generate Bloom Filters
+				    		Index Data to Support Joins
 			  			</label>
 					</div>
 					
