@@ -225,13 +225,13 @@ and related projects, please see: http://www.isi.edu/integration
 	        		<div class="col-sm-4">Karma Home: <span id="karmaHome"><%=ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></span></div>
 	        		<div class="col-sm-4">
 	        			<div class="form-group">
-							<label for="txtModel_URL">Model Repository Endpoint: </label>
+							<label for="txtModel_URL">Model Endpoint: </label>
 							<label class="edit" id="txtModel_URL"></label>
 						</div>
 	        		</div>
 	        		<div class="col-sm-4">
 	        			<div class="form-group">
-							<label for="txtData_URL">Data Repository Endpoint: </label>
+							<label for="txtData_URL">Data Endpoint: </label>
 							<label class="edit" id="txtData_URL"></label>
 						</div>
 	        		</div>
