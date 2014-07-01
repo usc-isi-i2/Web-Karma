@@ -293,7 +293,7 @@ public class PublishRDFCommand extends Command {
 
 
 			result &= utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext, this.rdfSourceNamespace);
-			if (url != null && !url.isEmpty() && url.compareTo("") != 0 && utilObj.testURIExists(TripleStoreUtil.defaultModelsRepoUrl, "", url)) {
+			if (url != null && !url.isEmpty() && url.compareTo("") != 0 && utilObj.testURIExists(modelRepoUrl, "", url)) {
 				StringBuilder sb = new StringBuilder();
 				url = url.trim();
 				if(!url.startsWith("<"))

@@ -182,7 +182,7 @@ a.icon-remove:hover {
 					<div class="checkbox">
 						<label>
 				    		<input type="checkbox" id="generateBloomFilters" unchecked></input>
-				    		Generate Bloom Filters
+				    		Index Data to Support Joins
 			  			</label>
 					</div>
 					
@@ -494,7 +494,7 @@ a.icon-remove:hover {
 </div><!-- /.modal -->
 
 <div class="modal fade" id="applyModelDialog" tabindex="-1">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-wide">
   		<form class="bs-example bs-example-form" role="form">
 			<div class="modal-content">
 			     <div class="modal-header">

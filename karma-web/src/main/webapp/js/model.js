@@ -226,9 +226,11 @@ var modelManagerDialog = (function() {
         var dialog = $("#modelManagerDialog");
         var availableModels;
         var filteredModels;
+        var table;
         function init() {
             //Initialize what happens when we show the dialog
             refresh();
+
                  
             $('#btnAddModel', dialog).on('click', function (e) {
                 e.preventDefault();
@@ -254,8 +256,8 @@ var modelManagerDialog = (function() {
         	
     		$(".modelManagerCheckbox").each(function() {
     			$(this).prop("checked", checked);
-    		});
-        	
+    		});        	
+
         }
         
         function getHeaderRow() {
@@ -346,7 +348,6 @@ var modelManagerDialog = (function() {
             var filterFilename = $('#txtFilterFileName').val();
             var filterTime = $('#txtFilterPublishTime').val();
             var filterURL = $('#txtFilterURL').val();
-
             for (var i = 0; i < availableModels.length; i++) {
                 var name = availableModels[i]['name'].toLowerCase();
                 var time = new Date(availableModels[i].publishTime*1).toString();
@@ -463,15 +464,13 @@ var modelManagerDialog = (function() {
         }
 
         function show() {
-        	dialog.modal({keyboard:true, show:true, backdrop:'static'});
-        	
-            var dialogContent = $("#modelManagerDialogColumns", dialog);
+        	var dialogContent = $("#modelManagerDialogColumns", dialog);
             dialogContent.empty();
             var table = $("<table>")
                         .addClass("table table-striped table-condensed");
             var tr = getHeaderRow();
             table.append(tr);
-            
+
             console.log(filteredModels.length);
             for (var i = 0; i < filteredModels.length; i++) {                
                 var name = filteredModels[i]['name'];
@@ -511,8 +510,11 @@ var modelManagerDialog = (function() {
                 tr.append(td);
                 table.append(tr);    
             }
+
             dialogContent.append(table);
-            
+       
+            dialog.modal({keyboard:true, show:true, backdrop:'static'});
+
         };
         
         

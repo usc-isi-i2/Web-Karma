@@ -1884,7 +1884,7 @@ var AugmentDataDialog = (function() {
     var filtered;
     function PrivateConstructor() {
         var dialog = $("#augmentDataDialog");
-        var worksheetId, columnUri, alignmentId, columnDomain;
+        var worksheetId, columnUri, alignmentId, columnDomain, table;
         var invertedClasses = {};
         function initVariable(wsId, colDomain, colUri, Alnid) {
         	worksheetId = wsId;
@@ -1975,6 +1975,57 @@ var AugmentDataDialog = (function() {
             return returnJSON;
         };
 
+        function getHeaderRow() {
+        	var tr = $("<tr>");
+            var th = $("<th>"); //.addClass("CheckboxProperty");
+            tr.append(th);
+            
+            var th = $("<th>"); //.addClass("FileNameProperty");
+            var label = $("<label>").text("Predicate"); //.addClass("FileNameProperty");
+            th.append(label);
+            var label = $("<input>").text("")
+	            .addClass("form-control")
+	            .attr("id","txtFilterPredicate")
+	            .attr("type", "text")
+	            .on('keyup', applyFilter);
+            th.append(label);
+            tr.append(th);
+            
+            var th = $("<th>"); //.addClass("PublishTimeProperty");
+            var label = $("<label>").text("Other Class"); //.addClass("PublishTimeProperty");
+            th.append(label);
+            var label = $("<input>").text("")
+            .addClass("form-control")
+            .attr("id","txtFilterOtherClass")
+            .attr("type", "text")
+            .on('keyup', applyFilter);
+            th.append(label);
+            tr.append(th);
+            
+            var th = $("<th>"); //.addClass("URLProperty");
+            var label = $("<label>").text("Estimated Matches"); //.addClass("URLProperty");
+            th.append(label);
+            var label = $("<input>").text("")
+				            .addClass("form-control")
+				            .attr("id","txtFilterDataCount")
+				            .attr("type", "text")
+				            .on('keyup', applyFilter);
+            th.append(label);
+            tr.append(th);
+
+            var th = $("<th>"); //.addClass("URLProperty");
+            var label = $("<label>").text("Incoming/Outgoing"); //.addClass("URLProperty");
+            th.append(label);
+            var label = $("<input>").text("")
+				            .addClass("form-control")
+				            .attr("id","txtFilterIncoming")
+				            .attr("type", "text")
+				            .on('keyup', applyFilter);
+            th.append(label);
+            tr.append(th);
+            return tr;
+        }
+
         function init() {
             //Initialize what happens when we show the dialog
             var classes = getAllClasses(worksheetId);
@@ -1989,75 +2040,11 @@ var AugmentDataDialog = (function() {
             });
 
           	var dialogContent = $("#augmentDataDialogHeaders", dialog);
-          	dialogContent.empty();
-          	var table = $("<table>")
+          	table = $("<table>")
           							.addClass("table table-striped table-condensed");
-          	var tr = $("<tr>");
-            var th = $("<th>").addClass("CheckboxProperty");
-            tr.append(th);
-            var th = $("<th>").addClass("PredicateProperty");
-            var label = $("<label>").text("Predicate");
-            th.append(label);
-            tr.append(th);
-            var th = $("<th>").addClass("OtherClassProperty");
-            var label = $("<label>").text("Other Class");
-            th.append(label);
-            tr.append(th);
-            var th = $("<th>").addClass("DataCountProperty");
-            var label = $("<label>").text("Estimated Matches");
-            th.append(label);
-            tr.append(th);
-            var th = $("<th>").addClass("IncomingProperty");
-            var label = $("<label>").text("Incoming /Outgoing");
-            th.append(label);
-            tr.append(th);
-            table.append(tr);
-            var tr = $("<tr>");
-            var td = $("<td>")
-                     .addClass("CheckboxProperty");
-            tr.append(td);
-            var td = $("<td>")
-                     .addClass("PredicateProperty");
-            var label = $("<input>").text("")
-                        .addClass("form-control")
-                        .attr("id","txtFilterPredicate")
-                        .attr("type", "text");
-            td.append(label);
-            tr.append(td);
-            var td = $("<td>")
-                     .addClass("OtherClassProperty");
-            var label = $("<input>").text("")
-                        .addClass("form-control")
-                        .attr("id","txtFilterOtherClass")
-                        .attr("type", "text");
-            td.append(label);
-            tr.append(td);
-            var td = $("<td>")
-                     .addClass("DataCountProperty");
-            var label = $("<input>").text("")
-                        .addClass("form-control")
-                        .attr("id","txtFilterDataCount")
-                        .attr("type", "text");
-            td.append(label);
-            tr.append(td);
-            var td = $("<td>")
-                     .addClass("IncomingProperty");
-            var label = $("<input>").text("")
-                        .addClass("form-control")
-                        .attr("id","txtFilterIncoming")
-                        .attr("type", "text");
-            td.append(label);
-            tr.append(td);
+          	var tr = getHeaderRow();
             table.append(tr);
             dialogContent.append(table);
-          	
-            $('#txtFilterPredicate', dialog).on('keyup', applyFilter);
-
-            $('#txtFilterOtherClass', dialog).on('keyup', applyFilter);
-
-            $('#txtFilterDataCount', dialog).on('keyup', applyFilter);
-
-            $('#txtFilterIncoming', dialog).on('keyup', applyFilter);
 
             $('#btnSave', dialog).on('click', function (e) {
                 e.preventDefault();
@@ -2274,7 +2261,6 @@ var AugmentDataDialog = (function() {
 
             dialog.on('show.bs.modal', function (e) {
                 hideError();
-                var dialogContent = $("#augmentDataDialogColumns", dialog);
                 var header = $("#augmentHeader", dialog);
                 var type = invertedClasses[columnDomain];
                 if (type == undefined) 
@@ -2282,16 +2268,14 @@ var AugmentDataDialog = (function() {
                 else
                 	type = type + ":" + columnUri.substring(columnUri.lastIndexOf("/") + 1);
                 header.text("Augment data for " + type);
-          			dialogContent.empty();
-          			var table = $("<table>")
-                        .addClass("table table-striped table-condensed");
+          			table.find("tr:gt(0)").remove();;
                 for (var i = 0; i < filtered.length; i++) {
                     var predicate = filtered[i]['predicate'];
                     var estimate = filtered[i]['estimate'];
                     var otherClass = filtered[i]['otherClass'];
                     var incoming = filtered[i]['incoming'] === "true" ? "Incoming" : "Outgoing";
                     var tr = $("<tr>");
-                    var td = $("<td>").addClass("CheckboxProperty");
+                    var td = $("<td>");
                     var json = new Object();
                     json['predicate'] = predicate;
                     json['otherClass'] = otherClass;
@@ -2302,27 +2286,26 @@ var AugmentDataDialog = (function() {
                                .attr("value", JSON.stringify(json));
                     td.append(checkbox);
                     tr.append(td);
-                    var td = $("<td>").addClass("PredicateProperty");
+                    var td = $("<td>");
                     var name = invertedClasses[predicate] == undefined ? "" : (invertedClasses[predicate] + ":");
-                    var label = $("<label>").text(name + predicate.substring(predicate.lastIndexOf("/") + 1)).addClass("PredicateProperty");
+                    var label = $("<label>").text(name + predicate.substring(predicate.lastIndexOf("/") + 1));
                     td.append(label);
                     tr.append(td);
-                    var td = $("<td>").addClass("OtherClassProperty");
+                    var td = $("<td>");
                     name = invertedClasses[otherClass] == undefined ? "" : (invertedClasses[otherClass] + ":");
-                    var label = $("<label>").text(name + otherClass.substring(otherClass.lastIndexOf("/") + 1)).addClass("OtherClassProperty");
+                    var label = $("<label>").text(name + otherClass.substring(otherClass.lastIndexOf("/") + 1));
                     td.append(label);
                     tr.append(td);
-                    var td = $("<td>").addClass("DataCountProperty");
-                    var label = $("<label>").text(estimate).addClass("DataCountProperty");
+                    var td = $("<td>");
+                    var label = $("<label>").text(estimate);
                     td.append(label);
                     tr.append(td);
-                    var td = $("<td>").addClass("IncomingProperty");
-                    var label = $("<label>").text(incoming).addClass("IncomingProperty");
+                    var td = $("<td>");
+                    var label = $("<label>").text(incoming);
                     td.append(label);
                     tr.append(td);
                     table.append(tr);    
                 }
-                dialogContent.append(table);
             });
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
