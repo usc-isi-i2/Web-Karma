@@ -226,10 +226,16 @@ var modelManagerDialog = (function() {
         var dialog = $("#modelManagerDialog");
         var availableModels;
         var filteredModels;
+        var table;
         function init() {
             //Initialize what happens when we show the dialog
             refresh();
-                 
+            var dialogContent = $("#modelManagerDialogColumns", dialog);
+            table = $("<table>")
+                        .addClass("table table-striped table-condensed");
+            var tr = getHeaderRow();
+            table.append(tr);
+            dialogContent.append(table);
             $('#btnLoadModel', dialog).on('click', function (e) {
                 e.preventDefault();
                 hide();
@@ -253,7 +259,11 @@ var modelManagerDialog = (function() {
         }
         
         function onClickSelectAllCheckbox() {
-        	
+            var overall = $("#modelManagerSelectAllCheckbox").prop("checked");
+            $('.modelManagerCheckbox', table).each(function(i, obj) {
+                obj.checked = overall;
+            });
+            disableButton();
         }
         
         function getHeaderRow() {
@@ -344,7 +354,6 @@ var modelManagerDialog = (function() {
             var filterFilename = $('#txtFilterFileName').val();
             var filterTime = $('#txtFilterPublishTime').val();
             var filterURL = $('#txtFilterURL').val();
-
             for (var i = 0; i < availableModels.length; i++) {
                 var name = availableModels[i]['name'].toLowerCase();
                 var time = new Date(availableModels[i].publishTime*1).toString();
@@ -461,13 +470,12 @@ var modelManagerDialog = (function() {
         }
 
         function show() {
-            var dialogContent = $("#modelManagerDialogColumns", dialog);
-            dialogContent.empty();
-            var table = $("<table>")
-                        .addClass("table table-striped table-condensed");
-            var tr = getHeaderRow();
-            table.append(tr);
-            
+            table.find("tr:gt(0)").remove();
+            $('#btnDeleteModel', dialog)
+                .attr("disabled", "disabled");
+
+            $('#btnRefreshModel', dialog)
+                .attr("disabled", "disabled");
             console.log(filteredModels.length);
             for (var i = 0; i < filteredModels.length; i++) {                
                 var name = filteredModels[i]['name'];
@@ -483,7 +491,8 @@ var modelManagerDialog = (function() {
                                .attr("id", "modelManagerCheckbox")
                                .attr("value", context)
                                .attr("src", url)
-                               .change(disableButton);
+                               .change(disableButton)
+                               .addClass("modelManagerCheckbox");
                 td.append(checkbox);
                 tr.append(td);
                 var td = $("<td>");
@@ -506,7 +515,6 @@ var modelManagerDialog = (function() {
                 tr.append(td);
                 table.append(tr);    
             }
-            dialogContent.append(table);
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
         
