@@ -403,7 +403,12 @@ var modelManagerDialog = (function() {
         
         function deleteModel(e) {
             e.preventDefault();
-            var checkboxes = dialog.find(":checked");
+            var checkboxes = dialog.find(".modelManagerCheckbox:checked");
+            if(checkboxes.length == 0) {
+            	alert("Please select the models to delete");
+            	return false;
+            }
+            
             for (var i = 0; i < checkboxes.length; i++) {
                 var checkbox = checkboxes[i];
                 var info = new Object();
@@ -438,7 +443,12 @@ var modelManagerDialog = (function() {
 
         function refreshModel(e) {
             e.preventDefault();
-            var checkboxes = dialog.find(":checked");
+            var checkboxes = dialog.find(".modelManagerCheckbox:checked");
+            if(checkboxes.length == 0) {
+            	alert("Please select the models to refresh");
+            	return false;
+            }
+            
             for (var i = 0; i < checkboxes.length; i++) {
                 var checkbox = checkboxes[i];
                 var info = new Object();
