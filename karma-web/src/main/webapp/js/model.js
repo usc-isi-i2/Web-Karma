@@ -230,29 +230,31 @@ var modelManagerDialog = (function() {
             //Initialize what happens when we show the dialog
             refresh();
                  
-            $('#btnLoadModel', dialog).on('click', function (e) {
+            $('#btnAddModel', dialog).on('click', function (e) {
                 e.preventDefault();
                 hide();
                 saveModelDialog.getInstance().show();
             });
 
-            $('#btnClearModel', dialog).on('click', function (e) {
-                e.preventDefault();
-                hide();
-                clearModelDialog.getInstance().show();
-            });
+//            $('#btnClearModel', dialog).on('click', function (e) {
+//                e.preventDefault();
+//                hide();
+//                clearModelDialog.getInstance().show();
+//            });
 
-            $('#btnDeleteModel', dialog)
-                .on('click', deleteModel)
-                .attr("disabled", "disabled");
+            $('#btnRemoveModel', dialog)
+                .on('click', deleteModel);
 
             $('#btnRefreshModel', dialog)
-                .on('click', refreshModel)
-                .attr("disabled", "disabled");
-                
+                .on('click', refreshModel);
         }
         
         function onClickSelectAllCheckbox() {
+        	var checked = $("#modelManagerSelectAllCheckbox").prop("checked");
+        	
+    		$(".modelManagerCheckbox").each(function() {
+    			$(this).prop("checked", checked);
+    		});
         	
         }
         
@@ -443,24 +445,26 @@ var modelManagerDialog = (function() {
         }
 
         function disableButton(e) {
-            var checkboxes = dialog.find(":checked");
-            if (checkboxes.length == 0) {
-                $('#btnDeleteModel', dialog)
-                    .attr("disabled", "disabled");
-
-                $('#btnRefreshModel', dialog)
-                    .attr("disabled", "disabled");
-            }
-            else {
-                $('#btnDeleteModel', dialog)
-                    .removeAttr("disabled");
-
-                $('#btnRefreshModel', dialog)
-                    .removeAttr("disabled");
-            }
+//            var checkboxes = dialog.find(":checked");
+//            if (checkboxes.length == 0) {
+//                $('#btnDeleteModel', dialog)
+//                    .attr("disabled", "disabled");
+//
+//                $('#btnRefreshModel', dialog)
+//                    .attr("disabled", "disabled");
+//            }
+//            else {
+//                $('#btnDeleteModel', dialog)
+//                    .removeAttr("disabled");
+//
+//                $('#btnRefreshModel', dialog)
+//                    .removeAttr("disabled");
+//            }
         }
 
         function show() {
+        	dialog.modal({keyboard:true, show:true, backdrop:'static'});
+        	
             var dialogContent = $("#modelManagerDialogColumns", dialog);
             dialogContent.empty();
             var table = $("<table>")
@@ -481,6 +485,7 @@ var modelManagerDialog = (function() {
                 var checkbox = $("<input>")
                                .attr("type", "checkbox")                           
                                .attr("id", "modelManagerCheckbox")
+                               .addClass("modelManagerCheckbox")
                                .attr("value", context)
                                .attr("src", url)
                                .change(disableButton);
@@ -493,7 +498,7 @@ var modelManagerDialog = (function() {
                 td.append(label);
                 tr.append(td);
                 var td = $("<td>")
-                         .css("overflow", "scroll");
+                         //.css("overflow", "scroll");
                          //.addClass("PublishTimeProperty");
                 var label = $("<label>").text(time);
                            // .addClass("PublishTimeProperty");
@@ -507,7 +512,7 @@ var modelManagerDialog = (function() {
                 table.append(tr);    
             }
             dialogContent.append(table);
-            dialog.modal({keyboard:true, show:true, backdrop:'static'});
+            
         };
         
         
