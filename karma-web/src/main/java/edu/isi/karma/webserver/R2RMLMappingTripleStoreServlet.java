@@ -20,7 +20,9 @@ public class R2RMLMappingTripleStoreServlet extends HttpServlet{
 			HttpServletResponse response) throws ServletException, IOException {
 		String baseURL = request.getRequestURL().substring(0, request.getRequestURL().lastIndexOf("R2RMLMapping/local/repository/"));
 		serverAddress = baseURL + "openrdf-sesame/repositories/karma_models";
-		//response.getWriter().println(request.getPathInfo());
+		String[] test = request.getParameterValues("modelRepository");
+		if (test.length > 0)
+			serverAddress = test[0];
 		String path = request.getPathInfo();
 		String context = "";
 		String url = "";

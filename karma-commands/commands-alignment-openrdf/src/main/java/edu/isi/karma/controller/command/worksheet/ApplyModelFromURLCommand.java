@@ -58,7 +58,7 @@ public class ApplyModelFromURLCommand extends WorksheetCommand{
 		try {
 
 			String context = (modelContext != null && !modelContext.isEmpty()? (modelContext + "/") : "");
-			URL url = new URL(baseUrl + context + modelURL);
+			URL url = new URL(baseUrl + context + modelURL + "?modelRepository=" + modelRepository);
 
 			File file = new File("tmp.ttl");	
 			FileUtils.copyURLToFile(url, file);
