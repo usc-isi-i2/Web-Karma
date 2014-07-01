@@ -76,7 +76,7 @@ a.icon-remove:hover {
 </div><!-- /.modal -->
 
 <div class="modal fade" id="modelManagerDialog" tabindex="-1">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-wide">
   		<form class="bs-example bs-example-form" role="form">
 			<div class="modal-content">
 			     <div class="modal-header">
@@ -84,7 +84,7 @@ a.icon-remove:hover {
 				       <h4 class="modal-title">Model Manager</h4>
 				  </div>
 				  <div class="modal-body">
-				  	<div id="modelManagerDialogHeaders"></div>
+				  		<div id="modelManagerDialogHeaders"></div>
 						<div id="modelManagerDialogColumns" style="max-height: 300px; overflow: auto;"></div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
