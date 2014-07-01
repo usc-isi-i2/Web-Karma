@@ -276,6 +276,7 @@ var modelManagerDialog = (function() {
             th.append(label);
             var label = $("<input>").text("")
 	            .addClass("form-control")
+	            .addClass("modelSearchControl")
 	            .attr("id","txtFilterFileName")
 	            .attr("type", "text")
 	            .on('keyup', applyFilter);
@@ -286,18 +287,26 @@ var modelManagerDialog = (function() {
             var label = $("<label>").text("Publish Time"); //.addClass("PublishTimeProperty");
             th.append(label);
             var label = $("<input>").text("")
-            .addClass("form-control")
-            .attr("id","txtFilterPublishTime")
-            .attr("type", "text")
-            .on('keyup', applyFilter);
+	            .addClass("form-control")
+	            .addClass("modelSearchControl")
+	            .attr("id","txtFilterPublishTime")
+	            .attr("type", "text")
+	            .on('keyup', applyFilter);
             th.append(label);
             tr.append(th);
             
             var th = $("<th>"); //.addClass("URLProperty");
             var label = $("<label>").text("URL"); //.addClass("URLProperty");
             th.append(label);
+            var searchBtn = $("<i>").addClass("glyphicon")
+            				.addClass("glyphicon-search")
+            				.css("float", "right")
+            				.css("cursor", "pointer")
+            				.on("click", toggleSearchControls);
+            th.append(searchBtn);
             var label = $("<input>").text("")
 				            .addClass("form-control")
+				            .addClass("modelSearchControl")
 				            .attr("id","txtFilterURL")
 				            .attr("type", "text")
 				            .on('keyup', applyFilter);
@@ -305,6 +314,23 @@ var modelManagerDialog = (function() {
             tr.append(th);
             return tr;
         }
+        
+        function toggleSearchControls() {
+        	$(".modelSearchControl").each(function() {
+        		if ( $(this).is(":visible")) {
+        			$(this).hide();
+        		} else {
+        			$(this).show();
+        		}
+        	});
+        }
+        
+        function hideSearchControls() {
+        	$(".modelSearchControl").each(function() {
+        		$(this).hide();
+        	});
+        }
+        
         function refresh() {
             var info = new Object();
             info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -470,7 +496,7 @@ var modelManagerDialog = (function() {
                         .addClass("table table-striped table-condensed");
             var tr = getHeaderRow();
             table.append(tr);
-
+            
             console.log(filteredModels.length);
             for (var i = 0; i < filteredModels.length; i++) {                
                 var name = filteredModels[i]['name'];
@@ -515,6 +541,7 @@ var modelManagerDialog = (function() {
        
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
 
+            hideSearchControls();
         };
         
         

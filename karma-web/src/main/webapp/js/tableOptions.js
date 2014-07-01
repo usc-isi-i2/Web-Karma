@@ -306,6 +306,7 @@ var applyModelDialog = (function() {
             th.append(label);
             var label = $("<input>").text("")
                 .addClass("form-control")
+                .addClass("modelSearchControl")
                 .attr("id","txtFilterFileName_Apply")
                 .attr("type", "text")
                 .on('keyup', applyFilter);
@@ -316,18 +317,26 @@ var applyModelDialog = (function() {
             var label = $("<label>").text("Publish Time"); //.addClass("PublishTimeProperty");
             th.append(label);
             var label = $("<input>").text("")
-            .addClass("form-control")
-            .attr("id","txtFilterPublishTime_Apply")
-            .attr("type", "text")
-            .on('keyup', applyFilter);
+	            .addClass("form-control")
+	            .addClass("modelSearchControl")
+	            .attr("id","txtFilterPublishTime_Apply")
+	            .attr("type", "text")
+	            .on('keyup', applyFilter);
             th.append(label);
             tr.append(th);
             
             var th = $("<th>"); //.addClass("URLProperty");
             var label = $("<label>").text("URL"); //.addClass("URLProperty");
             th.append(label);
+            var searchBtn = $("<i>").addClass("glyphicon")
+								.addClass("glyphicon-search")
+								.css("float", "right")
+								.css("cursor", "pointer")
+								.on("click", toggleSearchControls);
+            th.append(searchBtn);
             var label = $("<input>").text("")
                             .addClass("form-control")
+                            .addClass("modelSearchControl")
                             .attr("id","txtFilterURL_Apply")
                             .attr("type", "text")
                             .on('keyup', applyFilter);
@@ -336,6 +345,22 @@ var applyModelDialog = (function() {
             return tr;
         }
 
+        function toggleSearchControls() {
+        	$(".modelSearchControl").each(function() {
+        		if ( $(this).is(":visible")) {
+        			$(this).hide();
+        		} else {
+        			$(this).show();
+        		}
+        	});
+        }
+        
+        function hideSearchControls() {
+        	$(".modelSearchControl").each(function() {
+        		$(this).hide();
+        	});
+        }
+        
         function refresh() {
             console.log("refresh");
             var info = new Object();
@@ -485,6 +510,7 @@ var applyModelDialog = (function() {
                     tr.append(td);
                     table.append(tr);    
                 }
+                hideSearchControls();
             });
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
