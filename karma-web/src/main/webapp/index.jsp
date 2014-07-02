@@ -150,9 +150,11 @@ and related projects, please see: http://www.isi.edu/integration
 		                  <li><a href="#" class="fileinput-button"><form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form></a></li>
 		              </ul>
 		            </li>
-		            <li><a href="#" id="resetButton" data-html='true' title='Delete all saved files,<br/>use with care!' data-toggle='tooltip' data-placement='bottom'>Reset ...</a></li>
+		            
 		            <li><a href="#" id="modelManagerButton" data-html='true' data-toggle='tooltip' data-placement='bottom'>Manage Models</a></li>
 
+					<li><a href="#" id="resetButton" data-html='true' title='Delete all saved files,<br/>use with care!' data-toggle='tooltip' data-placement='bottom'>Reset ...</a></li>
+					
 		            <li>
 		            		<div class="span5 fileupload-progress fade">
 								<!-- The global progress bar -->
