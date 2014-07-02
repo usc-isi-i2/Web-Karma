@@ -344,7 +344,32 @@ function WorksheetOptions(wsId, wsTitle) {
 	function publishModel(event) {
 		console.log("Publish Model: " + worksheetTitle);
 		hideDropdown();
-		PublishModelDialog.getInstance().show(worksheetId);
+		var info = new Object();
+	    info["worksheetId"] = worksheetId;
+	    info["workspaceId"] = $.workspaceGlobalInformation.id;
+	    info["command"] = "GenerateR2RMLModelCommand";
+        info['tripleStoreUrl'] = $('#txtModel_URL').text();
+        info['localTripleStoreUrl'] = $('#txtModel_URL').text();
+	    showLoading(info["worksheetId"]);
+	    var returned = $.ajax({
+	        url: "RequestController",
+	        type: "POST",
+	        data : info,
+	        dataType : "json",
+	        complete :
+	            function (xhr, textStatus) {
+	                //alert(xhr.responseText);
+	                var json = $.parseJSON(xhr.responseText);
+	                parse(json);
+	                hideLoading(info["worksheetId"]);
+	            },
+	        error :
+	            function (xhr, textStatus) {
+	                alert("Error occured while exporting CSV!" + textStatus);
+	                hideLoading(info["worksheetId"]);
+	            }
+	    });
+	    
 		return false;
 	}
 
