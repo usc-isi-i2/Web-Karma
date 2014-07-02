@@ -221,7 +221,9 @@ public class PublishRDFCommand extends Command {
 			parentDir.mkdirs();
 			BufferedWriter bw = new BufferedWriter(
 					new OutputStreamWriter(new FileOutputStream(f),"UTF-8"));
-			writers.add(new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), new PrintWriter (bw)));
+			N3KR2RMLRDFWriter writer = new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), new PrintWriter (bw));
+			writer.setBaseURI(rdfSourceNamespace);
+			writers.add(writer);
 			if (generateBloomFilters)
 				writers.add(new BloomFilterKR2RMLRDFWriter(new PrintWriter(sw), mapping.getId(), false, this.rdfSourceNamespace));
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
