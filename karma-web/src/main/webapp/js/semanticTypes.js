@@ -2162,91 +2162,42 @@ var AugmentDataDialog = (function() {
                     }
             });
             showLoading(info["worksheetId"]);
-            var isFirstFinished = false;
-            var isSecondFinished = false;
-            var returnedJSON = new Object();
-            returnedJSON['elements'] = [];
-            if (predicatesOutgoing.length > 0) {
-            	var info = new Object();
-            	info["worksheetId"] = worksheetId;
-            	info["workspaceId"] = $.workspaceGlobalInformation.id;
-            	info["command"] = "AugmentDataCommand";
-            	var newInfo = [];
-            	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-            	newInfo.push(getParamObject("predicate", JSON.stringify(predicatesOutgoing), "other"));
-            	newInfo.push(getParamObject("otherClass", JSON.stringify(otherClassOutgoing), "other"));
-            	newInfo.push(getParamObject("columnUri", columnUri, "other"));
-            	newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
-            	newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
-            	newInfo.push(getParamObject("incoming", "false", "other"));
-            	info["newInfo"] = JSON.stringify(newInfo);	
-            	var returned = $.ajax({
-                	url: "RequestController",
-                	type: "POST",
-                	data : info,
-                	dataType : "json",
-                	complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        console.log(json);
-                        returnedJSON['workspaceId'] = json['workspaceId'];
-                        returnedJSON['elements'] = returnedJSON['elements'].concat(json['elements']);
-                        isFirstFinished = true;
-                        if (predicatesIncoming.length == 0 || isSecondFinished) {
-                        	parse(returnedJSON);
-                        	console.log("first");
-            							hideLoading(info["worksheetId"]);
-                        }
+            var info = new Object();
+            info["worksheetId"] = worksheetId;
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "AugmentDataDispachCommand";
+            var newInfo = [];
+            newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+            newInfo.push(getParamObject("predicateOutgoing", JSON.stringify(predicatesOutgoing), "other"));
+            newInfo.push(getParamObject("otherClassOutgoing", JSON.stringify(otherClassOutgoing), "other"));
+            newInfo.push(getParamObject("predicateIncoming", JSON.stringify(predicatesIncoming), "other"));
+            newInfo.push(getParamObject("otherClassIncoming", JSON.stringify(otherClassIncoming), "other"));
+            newInfo.push(getParamObject("columnUri", columnUri, "other"));
+            newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
+            newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+            info["newInfo"] = JSON.stringify(newInfo);	
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                   function (xhr, textStatus) {
+                      //alert(xhr.responseText);
+                      var json = $.parseJSON(xhr.responseText);
+                      console.log(json);
+                        
+                      parse(json);
+            					hideLoading(info["worksheetId"]);
+                      
                         //applyModelDialog.getInstance().show(worksheetId, json);
-                    },
-                	error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while Augmenting Models!" + textStatus);
-                        hideLoading(info["worksheetId"]);
-                    }
-            	});
-          	}
-          	if (predicatesIncoming.length > 0) {
-            	var info = new Object();
-            	info["worksheetId"] = worksheetId;
-            	info["workspaceId"] = $.workspaceGlobalInformation.id;
-            	info["command"] = "AugmentDataCommand";
-            	var newInfo = [];
-            	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-            	newInfo.push(getParamObject("predicate", JSON.stringify(predicatesIncoming), "other"));
-            	newInfo.push(getParamObject("otherClass", JSON.stringify(otherClassIncoming), "other"));
-            	newInfo.push(getParamObject("columnUri", columnUri, "other"));
-            	newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
-            	newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
-            	newInfo.push(getParamObject("incoming", "true", "other"));
-            	info["newInfo"] = JSON.stringify(newInfo);
-            	var returned = $.ajax({
-                	url: "RequestController",
-                	type: "POST",
-                	data : info,
-                	dataType : "json",
-                	complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        console.log(json);
-                        returnedJSON['workspaceId'] = json['workspaceId'];
-                        returnedJSON['elements'] = returnedJSON['elements'].concat(json['elements']);
-                        isSecondFinished = true;
-                        if (isFirstFinished || predicatesOutgoing.length == 0) {
-                        	parse(returnedJSON);
-                        	console.log("second");
-            							hideLoading(info["worksheetId"]);
-            						}
-                    },
-                	error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while Augmenting Models!" + textStatus);
-                        hideLoading(info["worksheetId"]);
-                    }
-            	});
-          	}          	
+                  },
+                error :
+                  function (xhr, textStatus) {
+                      alert("Error occured while Augmenting Models!" + textStatus);
+                      hideLoading(info["worksheetId"]);
+                  }
+            });
         };
         
         function hide() {

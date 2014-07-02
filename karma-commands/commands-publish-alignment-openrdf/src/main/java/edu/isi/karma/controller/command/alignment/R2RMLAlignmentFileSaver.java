@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,11 +19,7 @@ import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.ICommand;
-import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommand.PreferencesKeys;
-import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.IHistorySaver;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMappingWriter;

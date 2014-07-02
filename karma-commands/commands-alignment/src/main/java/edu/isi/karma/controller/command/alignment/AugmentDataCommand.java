@@ -49,7 +49,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 	private boolean incoming;
 	private final Integer limit = 100;
 	Stack<Command> appliedCommands;
-	public AugmentDataCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicate, String triplesMap, String otherClass, String hNodeId, Boolean incoming) {
+	public AugmentDataCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicate, String otherClass, String hNodeId, Boolean incoming) {
 		super(id, worksheetId);
 		this.predicate = predicate;
 		this.columnUri = columnUri;
