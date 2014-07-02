@@ -47,8 +47,9 @@ public class AugmentDataDispachCommand extends WorksheetCommand {
 			flag = true;
 		}
 		predicatesarray = new JSONArray(predicateOutgoing);
-		if (predicatesarray.length() > 0 && flag) {
+		if (predicatesarray.length() > 0 && flag)
 			builder.append(" ");
+		if (predicatesarray.length() > 0) {
 			for(int i = 0; i < predicatesarray.length() - 1; i++) 
 				builder.append(predicatesarray.getJSONObject(i).getString("predicate")).append(" ");
 			builder.append(predicatesarray.getJSONObject(predicatesarray.length() - 1).getString("predicate"));
