@@ -9,9 +9,13 @@ function WorksheetOptions(wsId, wsTitle) {
 	        {name:"Organize Columns", func:organizeColumns},
 	        {name:"divider"},
 	        
-	        {name:"Show Model" , func:showModel},
+	        {name: "Suggest Model", func:undefined, addLevel:true, levels: [
+	                 {name:"Using Current Ontology" , func:showModel},  
+	                 {name:"Generate New Ontology", func:showAutoModel},
+	        ]},
+	        
 			{name:"Set Properties", func:setProperties},
-			{name:"Show Auto Model", func:showAutoModel},
+			
 			{name:"Apply R2RML Model", func: undefined, addLevel:true, levels: [
 				{name:"From File" , func:applyR2RMLModel, useFileUpload:true, uploadDiv:"applyWorksheetHistory"},
 				{name:"From Repository" , func:applyModel}
