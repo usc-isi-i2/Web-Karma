@@ -1,6 +1,8 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,6 +38,7 @@ import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
@@ -114,6 +117,16 @@ public class SearchForDataToAugmentIncomingCommand extends Command{
 				if(n != null && n.getValue() != null && !n.getValue().isEmptyValue() && n.getValue().asString() != null && !n.getValue().asString().trim().isEmpty() ) {
 					String value = n.getValue().asString().trim();
 					builder = new StringBuilder();
+					String baseURI = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.baseURI);
+					try {
+						URI uri = new URI(value);
+						if (!uri.isAbsolute() && baseURI != null) {
+							value = baseURI + value;
+						}
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+					}
+					n.setValue(value, n.getStatus(), factory);
 					value = builder.append("<").append(value).append(">").toString(); //String builder
 					uriSet.add(value);
 					uris.add(new Key(value.getBytes()));

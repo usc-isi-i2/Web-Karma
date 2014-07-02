@@ -76,7 +76,6 @@ function parse(data) {
                 if($("div#" + worksheet["worksheetId"]).length == 0) {
                     var mainDiv = $("<div>").attr("id", worksheet["worksheetId"]).addClass("Worksheet");
                     mainDiv.data("isCollapsed", worksheet["isCollapsed"]);
-
                     // Div for adding title of that worksheet
                     var titleDiv = $("<div>").addClass("WorksheetTitleDiv ui-corner-top").mouseleave(function() {
                         // Hiding the option buttons for the heading and the data cell
@@ -140,7 +139,6 @@ function parse(data) {
                             )
                         );
                     mainDiv.append(titleDiv);
-
                     // Add the table (if it does not exists)
                     var tableDiv = $("<div>").attr("id", worksheet["worksheetId"] + "TableDiv").addClass("TableDiv").mouseleave(function() {
                         $("div#tableCellMenuButtonDiv").hide();

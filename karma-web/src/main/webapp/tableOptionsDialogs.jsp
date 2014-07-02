@@ -30,6 +30,16 @@ a.icon-remove:hover {
 						<label for="graphNameInput">Model Identifier</label>
 						<input class="form-control" type="text" id="graphNameInput" required>
 					</div>
+
+					<div class="form-group">
+						<label for="graphNameInput">Prefix</label>
+						<input class="form-control" type="text" id="txtPrefix" required>
+					</div>
+
+					<div class="form-group">
+						<label for="graphNameInput">Base URI</label>
+						<input class="form-control" type="text" id="txtBaseURI" required>
+					</div>
 				
 					<label>
 					    <input type="checkbox" id="serviceOptions">

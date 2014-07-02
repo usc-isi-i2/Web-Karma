@@ -101,6 +101,14 @@ public class SetWorksheetPropertiesCommand extends Command {
 							propertiesJson.getString(Property.serviceDataPostMethod.name()));
 				}
 			}
+			if (propertiesJson.getBoolean("hasPrefix")) {
+				props.setPropertyValue(Property.prefix, 
+						propertiesJson.getString(Property.prefix.name()));
+			}
+			if (propertiesJson.getBoolean("hasBaseURI")) {
+				props.setPropertyValue(Property.baseURI, 
+						propertiesJson.getString(Property.baseURI.name()));
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 			return new UpdateContainer(new ErrorUpdate("Malformed properties object received"));
