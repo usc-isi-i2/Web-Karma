@@ -43,6 +43,11 @@ var saveModelDialog = (function() {
 
             $('#txtModel_URL_Save', dialog).on('keyup', function (e) {
                 $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
+                $('input[name="buttonCollection_Save"][value="URL"]').prop('checked', true);
+            });
+            
+            $('#txtGraph_URL_Save', dialog).on('keyup', function (e) {
+                $('input[name="buttonCollection_Save"][value="Collection"]').prop('checked', true);
             });
 
             $('#txtModel_URL_Save', dialog).bind('input paste', function (e) {
@@ -230,7 +235,12 @@ var modelManagerDialog = (function() {
         function init() {
             //Initialize what happens when we show the dialog
             refresh();
-
+            var dialogContent = $("#modelManagerDialogColumns", dialog);
+            table = $("<table>")
+			            .addClass("table table-striped table-condensed");
+			var tr = getHeaderRow();
+			table.append(tr);
+			dialogContent.append(table);
                  
             $('#btnAddModel', dialog).on('click', function (e) {
                 e.preventDefault();
@@ -371,9 +381,9 @@ var modelManagerDialog = (function() {
         function applyFilter(e) {
             console.log("applyFilter");
             var tmp = [];
-            var filterFilename = $('#txtFilterFileName').val();
-            var filterTime = $('#txtFilterPublishTime').val();
-            var filterURL = $('#txtFilterURL').val();
+            var filterFilename = $('#txtFilterFileName').val().toLowerCase();
+            var filterTime = $('#txtFilterPublishTime').val().toLowerCase();
+            var filterURL = $('#txtFilterURL').val().toLowerCase();
             for (var i = 0; i < availableModels.length; i++) {
                 var name = availableModels[i]['name'].toLowerCase();
                 var time = new Date(availableModels[i].publishTime*1).toString();
@@ -394,7 +404,8 @@ var modelManagerDialog = (function() {
                 }
             }
             filteredModels = tmp;
-            instance.show();
+
+            showFilteredModels();
         };
         
         function hide() {
@@ -499,13 +510,8 @@ var modelManagerDialog = (function() {
 //            }
         }
 
-        function show() {
-        	var dialogContent = $("#modelManagerDialogColumns", dialog);
-            dialogContent.empty();
-            var table = $("<table>")
-                        .addClass("table table-striped table-condensed");
-            var tr = getHeaderRow();
-            table.append(tr);
+        function showFilteredModels() {
+        	table.find("tr:gt(0)").remove();
             
             console.log(filteredModels.length);
             for (var i = 0; i < filteredModels.length; i++) {                
@@ -528,29 +534,29 @@ var modelManagerDialog = (function() {
                 tr.append(td);
                 var td = $("<td>");
                         // .addClass("FileNameProperty");
-                var label = $("<label>").text(name);
+                var label = $("<span>").text(name);
                             //.addClass("FileNameProperty");
                 td.append(label);
                 tr.append(td);
                 var td = $("<td>")
                          //.css("overflow", "scroll");
                          //.addClass("PublishTimeProperty");
-                var label = $("<label>").text(time);
+                var label = $("<span>").text(time);
                            // .addClass("PublishTimeProperty");
                 td.append(label);
                 tr.append(td);
                 var td = $("<td>");//.addClass("URLProperty");
-                var label = $("<label>").text(url);
+                var label = $("<span>").text(url);
                             //.addClass("URLProperty");
                 td.append(label);
                 tr.append(td);
                 table.append(tr);    
             }
-
-            dialogContent.append(table);
-       
+        }
+        
+        function show() {
+        	showFilteredModels();
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
-
             hideSearchControls();
         };
         

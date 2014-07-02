@@ -25,21 +25,38 @@ a.icon-remove:hover {
 				       <h4 class="modal-title">Load Model into Repository</h4>
 				  </div>
 				  <div class="modal-body">
-					<div class="form-group">
-						<input class="form-control" type="radio" id="buttonCollection_Save" value="Collection" name="buttonCollection_Save">Collection
-						<input class="form-control" type="radio" id="buttonCollection_Save" value="URL" name="buttonCollection_Save" checked="checked">URL
-					</div>
-					<div class="form-group">
-						<label for="txtModel_URL_Save">Model URL</label>
-						<input class="form-control" type="text" id="txtModel_URL_Save" required>
-					</div>
-					<div class="form-group">
-						<label for="txtGraph_URL_Save">Collection</label>
-						<input class="form-control" type="text" id="txtGraph_URL_Save" required>
-					</div>
-					
-					<div class="error" style="display: none">Please enter an end point</div>
-				  </div> <!-- /.modal-body -->
+				  	<table class="table table-condensed table-no-border">
+				  		<tr>
+				  			<td width="1px"><input type="radio" name="buttonCollection_Save" id="buttonCollection_Save" value="URL"></td>
+				  			<td>
+				  				<div class="form-group">
+					                <label class="col-sm-3 control-label" for="txtModel_URL_Save">Model URL</label>
+					                <div class="col-sm-9">
+					                  <input type="text" placeholder="" id="txtModel_URL_Save" class="form-control">
+					                </div>
+				            	</div>
+				  			</td>
+				  		</tr>
+				  		
+				  		<tr>
+				  			<td width="1px"><input type="radio" name="buttonCollection_Save" id="buttonCollection_Save" value="Collection"></td>
+				  			<td>
+				  				<div class="form-group">
+		              				<label class="col-sm-3 control-label" for="txtGraph_URL_Save">Collection</label>
+				                    <div class="col-sm-9">
+				                      <input type="text" placeholder="" id="txtGraph_URL_Save" class="form-control">
+				                    </div>
+				                </div>
+				  			</td>
+				  		</tr>
+				  	</table>
+		             
+		              
+		              <div style="display: none" class="error">Please enter an end point</div>
+  					
+              		</form>
+              
+		  		  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 				        <button type="submit" class="btn btn-primary" id="btnSave">Save</button>
