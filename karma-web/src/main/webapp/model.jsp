@@ -44,7 +44,8 @@ a.icon-remove:hover {
 				  				<div class="form-group">
 		              				<label class="col-sm-3 control-label" for="txtGraph_URL_Save">Collection</label>
 				                    <div class="col-sm-9">
-				                      <input type="text" placeholder="" id="txtGraph_URL_Save" class="form-control">
+				                      <input type="text" id="txtGraph_URL_Save" class="form-control">
+				                      <p class="help-block">Karma Collection Service to load all models from Karma publish folder</p>
 				                    </div>
 				                </div>
 				  			</td>

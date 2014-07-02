@@ -22,7 +22,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	               {name:"divider" , leafOnly:true},
 			
 	               {name:"Invoke Service" , func:invokeService, leafOnly:true},
-	               {name:"Show Chart", func:showChart, leafOnly:true},
+	               //{name:"Show Chart", func:showChart, leafOnly:true},
 	               {name:"divider" , leafOnly:true},
 	               
 	               {name:"Group By", func:GroupBy, leafOnly:false},
@@ -915,7 +915,7 @@ var ExtractEntitiesDialog = (function() {
 			dialog.on('show.bs.modal', function (e) {
 				console.log("dialog displayed");
 				hideError();
-                $('#extractionService_URL').val("");
+                $('#extractionService_URL').val("http://karmanlp.isi.edu:8080/ExtractionService/myresource");
 			});
 			
 			// Initialize handler for Save button
