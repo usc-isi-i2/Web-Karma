@@ -35,7 +35,6 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.ICommand;
-import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;

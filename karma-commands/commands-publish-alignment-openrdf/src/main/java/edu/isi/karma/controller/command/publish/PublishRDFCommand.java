@@ -125,6 +125,8 @@ public class PublishRDFCommand extends Command {
 		this.tripleStoreUrl = tripleStoreUrl;
 		this.graphUri = graphUri;
 		this.replaceContext = replace;
+		System.out.println(rdfSourceNamespace);
+		System.out.println(rdfSourcePrefix);
 	}
 
 	@Override

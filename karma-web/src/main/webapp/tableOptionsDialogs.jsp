@@ -30,16 +30,6 @@ a.icon-remove:hover {
 						<label for="graphNameInput">Model Identifier</label>
 						<input class="form-control" type="text" id="graphNameInput" required>
 					</div>
-
-					<div class="form-group">
-						<label for="graphNameInput">Prefix</label>
-						<input class="form-control" type="text" id="txtPrefix" required>
-					</div>
-
-					<div class="form-group">
-						<label for="graphNameInput">Base URI</label>
-						<input class="form-control" type="text" id="txtBaseURI" required>
-					</div>
 				
 					<label>
 					    <input type="checkbox" id="serviceOptions">
@@ -153,14 +143,6 @@ a.icon-remove:hover {
 				       <h4 class="modal-title">Publish RDF</h4>
 				  </div>
 				  <div class="modal-body">
-					<div class="form-group">
-						<label for="rdfNamespace">Base URI</label>
-						<input class="form-control" type="text" id="rdfNamespace" required value="http://localhost:8080/source/" maxlength="100">
-					</div>
-					<div class="form-group">
-						<label for="rdfPrefix">RDF Prefix</label>
-						<input class="form-control" type="text" id="rdfPrefix" required value="s" maxlength="100">
-					</div>
 					<div class="form-group">
 							<label for="modelGraphList">RDF Graphs</label>
 							<select id="modelGraphList">
