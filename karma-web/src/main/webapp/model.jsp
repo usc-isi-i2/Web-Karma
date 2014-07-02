@@ -18,28 +18,41 @@ a.icon-remove:hover {
 <body>
 <div class="modal fade" id="saveModelDialog" tabindex="-1">
   <div class="modal-dialog">
-  		<form class="bs-example bs-example-form" role="form">
+  		<form class="form-horizontal" role="form">
 			<div class="modal-content">
 			     <div class="modal-header">
 				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				       <h4 class="modal-title">Load Model into Repository</h4>
 				  </div>
 				  <div class="modal-body">
-					<div class="form-group">
-						<input class="form-control" type="radio" id="buttonCollection_Save" value="Collection" name="buttonCollection_Save">Collection
-						<input class="form-control" type="radio" id="buttonCollection_Save" value="URL" name="buttonCollection_Save" checked="checked">URL
-					</div>
-					<div class="form-group">
-						<label for="txtModel_URL_Save">Model URL</label>
-						<input class="form-control" type="text" id="txtModel_URL_Save" required>
-					</div>
-					<div class="form-group">
-						<label for="txtGraph_URL_Save">Collection</label>
-						<input class="form-control" type="text" id="txtGraph_URL_Save" required>
-					</div>
-					
-					<div class="error" style="display: none">Please enter an end point</div>
-				  </div> <!-- /.modal-body -->
+		              <div class="radio">
+		                 <label>
+		                   <input type="radio" name="buttonCollection_Save" id="buttonCollection_Save" value="URL">
+			            	<div class="form-group">
+				                <label class="col-sm-3 control-label" for="txtModel_URL_Save">Model URL</label>
+				                <div class="col-sm-9">
+				                  <input type="text" placeholder="" id="txtModel_URL_Save" class="form-control">
+				                </div>
+			            	</div>
+		                </label>
+		              </div>
+		              
+		              <div class="radio">
+		              	<label>
+							<input type="radio" name="buttonCollection_Save" id="buttonCollection_Save" value="Collection"> 
+							<div class="form-group">
+		              			<label class="col-sm-3 control-label" for="txtGraph_URL_Save">Collection</label>
+		                    	<div class="col-sm-9">
+		                      		<input type="text" placeholder="" id="txtGraph_URL_Save" class="form-control">
+		                    	</div>
+		              		</div>
+		                </label>
+		              </div>
+		              
+		              <div style="display: none" class="error">Please enter an end point</div>
+  					
+              
+		  		  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 				        <button type="submit" class="btn btn-primary" id="btnSave">Save</button>
