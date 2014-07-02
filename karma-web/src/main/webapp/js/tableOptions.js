@@ -367,9 +367,9 @@ var applyModelDialog = (function() {
         function applyFilter(e) {
             console.log("applyFilter");
             var tmp = [];
-            var filterFilename = $('#txtFilterFileName_Apply').val();
-            var filterTime = $('#txtFilterPublishTime_Apply').val();
-            var filterURL = $('#txtFilterURL_Apply').val();
+            var filterFilename = $('#txtFilterFileName_Apply').val().toLowerCase();
+            var filterTime = $('#txtFilterPublishTime_Apply').val().toLowerCase();
+            var filterURL = $('#txtFilterURL_Apply').val().toLowerCase();
             
             for (var i = 0; i < availableModels.length; i++) {
                 var name = availableModels[i]['name'].toLowerCase();
@@ -391,44 +391,48 @@ var applyModelDialog = (function() {
                 }
             }
             filteredModels = tmp;
-            instance.show(worksheetId);
+            showFilteredModels();
         };
+        
+        function showFilteredModels() {
+        	table.find("tr:gt(0)").remove();
+            for (var i = 0; i < filteredModels.length; i++) {
+                var name = filteredModels[i]['name'];
+                var time = new Date(filteredModels[i].publishTime*1).toString();
+                time = time.substring(0, time.indexOf("GMT") - 1);
+                var url = filteredModels[i].url;
+                var context = filteredModels[i].context;
+                var tr = $("<tr>");
+                var td = $("<td>");
+                var checkbox = $("<input>")
+                           .attr("type", "radio")                           
+                           .attr("id", "modelManagerCheckbox")
+                           .attr("name", "modelManagerCheckbox")
+                           .attr("value", context)
+                           .attr("src", url);
+                td.append(checkbox);
+                tr.append(td);
+                var td = $("<td>");
+                var label = $("<span>").text(name);
+                td.append(label);
+                tr.append(td);
+                var td = $("<td>");
+                var label = $("<span>").text(time);
+                td.append(label);
+                tr.append(td);
+                var td = $("<td>");
+                var label = $("<span>").text(url);
+                td.append(label);
+                tr.append(td);
+                table.append(tr);    
+            }
+        }
         
         function show(wsId) {
             worksheetId = wsId;
             dialog.on('show.bs.modal', function (e) {
                 hideError();
-                table.find("tr:gt(0)").remove();
-                for (var i = 0; i < filteredModels.length; i++) {
-                    var name = filteredModels[i]['name'];
-                    var time = new Date(filteredModels[i].publishTime*1).toString();
-                    time = time.substring(0, time.indexOf("GMT") - 1);
-                    var url = filteredModels[i].url;
-                    var context = filteredModels[i].context;
-                    var tr = $("<tr>");
-                    var td = $("<td>");
-                    var checkbox = $("<input>")
-                               .attr("type", "radio")                           
-                               .attr("id", "modelManagerCheckbox")
-                               .attr("name", "modelManagerCheckbox")
-                               .attr("value", context)
-                               .attr("src", url);
-                    td.append(checkbox);
-                    tr.append(td);
-                    var td = $("<td>");
-                    var label = $("<label>").text(name);
-                    td.append(label);
-                    tr.append(td);
-                    var td = $("<td>");
-                    var label = $("<label>").text(time);
-                    td.append(label);
-                    tr.append(td);
-                    var td = $("<td>");
-                    var label = $("<label>").text(url);
-                    td.append(label);
-                    tr.append(td);
-                    table.append(tr);    
-                }
+                showFilteredModels();
                 hideSearchControls();
             });
             dialog.modal({keyboard:true, show:true, backdrop:'static'});

@@ -235,7 +235,12 @@ var modelManagerDialog = (function() {
         function init() {
             //Initialize what happens when we show the dialog
             refresh();
-
+            var dialogContent = $("#modelManagerDialogColumns", dialog);
+            table = $("<table>")
+			            .addClass("table table-striped table-condensed");
+			var tr = getHeaderRow();
+			table.append(tr);
+			dialogContent.append(table);
                  
             $('#btnAddModel', dialog).on('click', function (e) {
                 e.preventDefault();
@@ -376,9 +381,9 @@ var modelManagerDialog = (function() {
         function applyFilter(e) {
             console.log("applyFilter");
             var tmp = [];
-            var filterFilename = $('#txtFilterFileName').val();
-            var filterTime = $('#txtFilterPublishTime').val();
-            var filterURL = $('#txtFilterURL').val();
+            var filterFilename = $('#txtFilterFileName').val().toLowerCase();
+            var filterTime = $('#txtFilterPublishTime').val().toLowerCase();
+            var filterURL = $('#txtFilterURL').val().toLowerCase();
             for (var i = 0; i < availableModels.length; i++) {
                 var name = availableModels[i]['name'].toLowerCase();
                 var time = new Date(availableModels[i].publishTime*1).toString();
@@ -399,7 +404,8 @@ var modelManagerDialog = (function() {
                 }
             }
             filteredModels = tmp;
-            instance.show();
+
+            showFilteredModels();
         };
         
         function hide() {
@@ -504,13 +510,8 @@ var modelManagerDialog = (function() {
 //            }
         }
 
-        function show() {
-        	var dialogContent = $("#modelManagerDialogColumns", dialog);
-            dialogContent.empty();
-            var table = $("<table>")
-                        .addClass("table table-striped table-condensed");
-            var tr = getHeaderRow();
-            table.append(tr);
+        function showFilteredModels() {
+        	table.find("tr:gt(0)").remove();
             
             console.log(filteredModels.length);
             for (var i = 0; i < filteredModels.length; i++) {                
@@ -551,11 +552,11 @@ var modelManagerDialog = (function() {
                 tr.append(td);
                 table.append(tr);    
             }
-
-            dialogContent.append(table);
-       
+        }
+        
+        function show() {
+        	showFilteredModels();
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
-
             hideSearchControls();
         };
         
