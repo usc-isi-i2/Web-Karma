@@ -51,18 +51,7 @@ var SetPropertiesDialog = (function() {
     	    // Prepare the input data
     	    var worksheetProps = new Object();
     	    worksheetProps["graphName"] = $("#graphNameInput").val();
-            if ($("#txtPrefix").val() != "") {
-                worksheetProps["hasPrefix"] = true;
-                worksheetProps["prefix"] = $("#txtPrefix").val();
-            }
-            else 
-                worksheetProps["hasPrefix"] = false;
-            if ($("#txtBaseURI").val() != "") {
-                worksheetProps["hasBaseURI"] = true;
-                worksheetProps["baseURI"] = $("#txtBaseURI").val();
-            }
-            else 
-                worksheetProps["hasBaseURI"] = false;
+
     	    // Set service options if the window is visible
     	    if ($('#worksheetServiceOptions').is(':visible')) {
     	        worksheetProps["hasServiceProperties"] = true;
