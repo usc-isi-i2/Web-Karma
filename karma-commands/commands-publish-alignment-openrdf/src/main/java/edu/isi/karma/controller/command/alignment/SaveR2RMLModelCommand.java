@@ -84,7 +84,7 @@ public class SaveR2RMLModelCommand extends Command{
 		UpdateContainer uc = new UpdateContainer();
 		if (collection.compareTo("Collection") == 0) {
 			try {
-				URL url = new URL(modelUrl);
+				URL url = new URL(graphContext);
 				graphBaseUrl = url.getProtocol() + "://" + url.getHost() + "/worksheets/";
 				Scanner in = new Scanner(url.openStream());
 				JSONArray array = new JSONArray(in.nextLine());

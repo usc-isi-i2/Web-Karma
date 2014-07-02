@@ -41,8 +41,9 @@ var saveModelDialog = (function() {
                 saveDialog(e);
             });
 
+            $('#txtGraph_URL_Save', dialog).val(window.location.protocol + "//" + window.location.host + "/R2RMLMapping/local" );
             $('#txtModel_URL_Save', dialog).on('keyup', function (e) {
-                $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
+                //$('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
                 $('input[name="buttonCollection_Save"][value="URL"]').prop('checked', true);
             });
             
@@ -53,11 +54,12 @@ var saveModelDialog = (function() {
             $('#txtModel_URL_Save', dialog).bind('input paste', function (e) {
                 console.log("here");
                 console.log($('#txtModel_URL_Save').val());
-                $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
+                $('input[name="buttonCollection_Save"][value="URL"]').prop('checked', true);
+               // $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
             });
 
             $('#txtModel_URL_Save', dialog).on('change', function (e) {
-                $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
+               // $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
             });
             
                 
@@ -72,20 +74,23 @@ var saveModelDialog = (function() {
         }
         
         function saveDialog(e) {
-            hide();
+           
             var checkboxes = dialog.find(":checked");
-            if ($('#txtGraph_URL_Save').val() === '' && checkboxes[0]['value'] === 'URL') {
-            	alert("No graph name!");
+            if ($('#txtGraph_URL_Save').val() === '' && checkboxes[0]['value'] === 'Collection') {
+            	alert("Please enter the Collection");
             	return;
             }
-            if ($('#txtModel_URL_Save').val() === '') {
-            	alert("No model URL!");
+            if ($('#txtModel_URL_Save').val() === '' && checkboxes[0]['value'] === 'URL') {
+            	alert("Please enter the model URL");
             	return;
             }
-            if ($('#txtR2RML_URL_Save').val() === '') {
-            	alert("No triplestore URL!");
+            if ($('#txtModel_URL_Save').val() === '' && $('#txtGraph_URL_Save').val() === '') {
+            	alert("Please enter the model URL or Collection");
             	return;
             }
+            
+            hide();
+            
             var info = new Object();
             
             info["workspaceId"] = $.workspaceGlobalInformation.id;
