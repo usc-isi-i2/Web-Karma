@@ -120,6 +120,14 @@ and related projects, please see: http://www.isi.edu/integration
 				color: #cccccc;
 			}
 			
+			.table-no-border td {
+			    border-top: 0 none;
+			}
+
+			.table-no-border > thead > tr > th, .table > tbody > tr > th, .table-no-border > tfoot > tr > th, .table > thead > tr > td, .table-no-border > tbody > tr > td, .table-no-border > tfoot > tr > td {
+			    border-top: 0px;
+			}
+
 		</style>
 	
 	</head>

@@ -43,6 +43,11 @@ var saveModelDialog = (function() {
 
             $('#txtModel_URL_Save', dialog).on('keyup', function (e) {
                 $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
+                $('input[name="buttonCollection_Save"][value="URL"]').prop('checked', true);
+            });
+            
+            $('#txtGraph_URL_Save', dialog).on('keyup', function (e) {
+                $('input[name="buttonCollection_Save"][value="Collection"]').prop('checked', true);
             });
 
             $('#txtModel_URL_Save', dialog).bind('input paste', function (e) {
@@ -528,19 +533,19 @@ var modelManagerDialog = (function() {
                 tr.append(td);
                 var td = $("<td>");
                         // .addClass("FileNameProperty");
-                var label = $("<label>").text(name);
+                var label = $("<span>").text(name);
                             //.addClass("FileNameProperty");
                 td.append(label);
                 tr.append(td);
                 var td = $("<td>")
                          //.css("overflow", "scroll");
                          //.addClass("PublishTimeProperty");
-                var label = $("<label>").text(time);
+                var label = $("<span>").text(time);
                            // .addClass("PublishTimeProperty");
                 td.append(label);
                 tr.append(td);
                 var td = $("<td>");//.addClass("URLProperty");
-                var label = $("<label>").text(url);
+                var label = $("<span>").text(url);
                             //.addClass("URLProperty");
                 td.append(label);
                 tr.append(td);
