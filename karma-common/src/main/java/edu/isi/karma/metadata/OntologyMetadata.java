@@ -43,7 +43,8 @@ public class OntologyMetadata extends KarmaUserMetadata {
 						ontology.getName().endsWith(".n3") || 
 						ontology.getName().endsWith(".ttl") || 
 						ontology.getName().endsWith(".xml")) {
-					if(ontology.getName().equals("catalog-v001.xml")) {
+					if(ontology.getName().matches("catalog\\-v[0-9]{3}\\.xml")) {
+						logger.info("Ignore: " + ontology.getAbsolutePath());
 						continue; //ignore mac catalog-v001.xml file
 					}
 					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
