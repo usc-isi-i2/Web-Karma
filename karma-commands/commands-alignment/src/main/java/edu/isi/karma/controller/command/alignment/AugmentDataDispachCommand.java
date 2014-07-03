@@ -13,12 +13,12 @@ public class AugmentDataDispachCommand extends WorksheetCommand {
 	private String predicateIncoming, predicateOutgoing;
 	private AugmentDataCommand incoming;
 	private AugmentDataCommand outgoing;
-	public AugmentDataDispachCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicateIncoming, String otherClassIncoming, String predicateOutgoing, String otherClassOutgoing, String hNodeId) {
+	public AugmentDataDispachCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicateIncoming, String otherClassIncoming, String predicateOutgoing, String otherClassOutgoing, String hNodeId, String sameAsPredicate) {
 		super(id, worksheetId);
 		this.predicateIncoming = predicateIncoming;
 		this.predicateOutgoing = predicateOutgoing;
-		incoming = new AugmentDataCommand(id, dataRepoUrl, worksheetId, columnUri, predicateIncoming, otherClassIncoming, hNodeId, true);
-		outgoing = new AugmentDataCommand(id, dataRepoUrl, worksheetId, columnUri, predicateOutgoing, otherClassOutgoing, hNodeId, false);
+		incoming = new AugmentDataCommand(id, dataRepoUrl, worksheetId, columnUri, predicateIncoming, otherClassIncoming, hNodeId, true, sameAsPredicate);
+		outgoing = new AugmentDataCommand(id, dataRepoUrl, worksheetId, columnUri, predicateOutgoing, otherClassOutgoing, hNodeId, false, sameAsPredicate);
 		addTag(CommandTag.Transformation);
 	}
 	

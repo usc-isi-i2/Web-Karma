@@ -2162,6 +2162,7 @@ var AugmentDataDialog = (function() {
                     }
             });
             showLoading(info["worksheetId"]);
+
             var info = new Object();
             info["worksheetId"] = worksheetId;
             info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -2175,6 +2176,7 @@ var AugmentDataDialog = (function() {
             newInfo.push(getParamObject("columnUri", columnUri, "other"));
             newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
             newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+            newInfo.push(getParamObject("sameAsPredicate", $('#altPredicate').val(), "other"));
             info["newInfo"] = JSON.stringify(newInfo);	
             var returned = $.ajax({
                 url: "RequestController",

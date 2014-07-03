@@ -15,7 +15,7 @@ public class AugmentDataDispachCommandFactory extends JSONInputCommandFactory {
 	private enum Arguments {
 		worksheetId, predicateIncoming, alignmentId, 
 		columnUri, otherClassIncoming, tripleStoreUrl, 
-		hNodeId, predicateOutgoing, otherClassOutgoing
+		hNodeId, predicateOutgoing, otherClassOutgoing, sameAsPredicate
 	}
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
@@ -28,9 +28,10 @@ public class AugmentDataDispachCommandFactory extends JSONInputCommandFactory {
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String predicateOutgoing = CommandInputJSONUtil.getStringValue(Arguments.predicateOutgoing.name(), inputJson);
 		String otherClassOutgoing = CommandInputJSONUtil.getStringValue(Arguments.otherClassOutgoing.name(), inputJson);
+		String sameAsPredicate = CommandInputJSONUtil.getStringValue(Arguments.sameAsPredicate.name(), inputJson);
 		AugmentDataDispachCommand cmd = new AugmentDataDispachCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
 				columnUri, predicateIncoming, otherClassIncoming, 
-				predicateOutgoing, otherClassOutgoing, hNodeId);
+				predicateOutgoing, otherClassOutgoing, hNodeId, sameAsPredicate);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
@@ -45,9 +46,10 @@ public class AugmentDataDispachCommandFactory extends JSONInputCommandFactory {
 		String predicateOutgoing = request.getParameter(Arguments.predicateOutgoing.name());
 		String otherClassOutgoing = request.getParameter(Arguments.otherClassOutgoing.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
+		String sameAsPredicate = request.getParameter(Arguments.sameAsPredicate.name());
 		return new AugmentDataDispachCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
 				columnUri, predicateIncoming, otherClassIncoming, 
-				predicateOutgoing, otherClassOutgoing, hNodeId);
+				predicateOutgoing, otherClassOutgoing, hNodeId, sameAsPredicate);
 	}
 
 	@Override
