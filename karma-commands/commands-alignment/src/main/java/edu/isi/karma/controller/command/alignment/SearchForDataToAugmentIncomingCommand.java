@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.alignment;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,6 +45,7 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class SearchForDataToAugmentIncomingCommand extends Command{
 	private static final Logger LOG = LoggerFactory.getLogger(SearchForDataToAugmentIncomingCommand.class);
+	private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 	private String tripleStoreUrl;
 	private String context;
 	private String nodeUri;
@@ -129,7 +131,7 @@ public class SearchForDataToAugmentIncomingCommand extends Command{
 					n.setValue(value, n.getStatus(), factory);
 					value = builder.append("<").append(value).append(">").toString(); //String builder
 					uriSet.add(value);
-					uris.add(new Key(value.getBytes()));
+					uris.add(new Key(value.getBytes(UTF8_CHARSET)));
 				}
 			}
 		}
@@ -159,9 +161,11 @@ public class SearchForDataToAugmentIncomingCommand extends Command{
 				KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 				for (String triplemap : predicateObjectMaps) {
 					String serializedBloomFilter = bloomfilterMapping.get(triplemap);
-					KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
-					bf.populateFromCompressedAndBase64EncodedString(serializedBloomFilter);
-					intersectionBF.or(bf);
+					if (serializedBloomFilter != null) {
+						KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
+						bf.populateFromCompressedAndBase64EncodedString(serializedBloomFilter);
+						intersectionBF.or(bf);
+					}
 				}
 				intersectionBF.and(uris);
 				int estimate = intersectionBF.estimateNumberOfHashedValues();
@@ -180,11 +184,11 @@ public class SearchForDataToAugmentIncomingCommand extends Command{
 		}
 		Collections.sort(objects, new Comparator<JSONObject>() {
 
-	        @Override
-	        public int compare(JSONObject a, JSONObject b) {
-	            return b.getInt("estimate") - a.getInt("estimate");
-	        }
-	    });
+			@Override
+			public int compare(JSONObject a, JSONObject b) {
+				return b.getInt("estimate") - a.getInt("estimate");
+			}
+		});
 		for (JSONObject obj : objects) {
 			array.put(obj);
 		}

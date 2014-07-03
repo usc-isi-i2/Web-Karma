@@ -1,6 +1,7 @@
 package edu.isi.karma.kr2rml;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,6 +17,7 @@ import edu.isi.karma.modeling.Uris;
 public class KR2RMLBloomFilterManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(KR2RMLBloomFilterManager.class);
+	private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 	protected ConcurrentHashMap<String, KR2RMLBloomFilter> idToBloomFilter;
 	protected R2RMLMappingIdentifier mappingIdentifier;
 	public KR2RMLBloomFilterManager(R2RMLMappingIdentifier mappingIdentifier)
@@ -50,7 +52,7 @@ public class KR2RMLBloomFilterManager {
 		}
 		bf = idToBloomFilter.get(id);
 		
-		Key k = new Key(uri.getBytes());
+		Key k = new Key(uri.getBytes(UTF8_CHARSET));
 		bf.add(k);
 		return;
 	}

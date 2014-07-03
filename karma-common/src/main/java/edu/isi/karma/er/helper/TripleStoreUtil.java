@@ -576,15 +576,6 @@ public class TripleStoreUtil {
 			query.append("\n");
 		}
 	}
-	
-	private void injectBaseURI(String baseURI, StringBuilder query) {
-		if (null != baseURI && !baseURI.trim().isEmpty())
-		{
-			query.append("BASE ");
-			formatURI(baseURI, query);
-			query.append("\n");
-		}
-	}
 
 	private void formatURI(String uri, StringBuilder query) {
 		uri = uri.trim();

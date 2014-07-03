@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.alignment;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,6 +45,7 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class SearchForDataToAugmentCommand extends Command{
 	private static final Logger LOG = LoggerFactory.getLogger(SearchForDataToAugmentCommand.class);
+	private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 	private String tripleStoreUrl;
 	private String context;
 	private String nodeUri;
@@ -138,7 +140,7 @@ public class SearchForDataToAugmentCommand extends Command{
 					builder = new StringBuilder();
 					value = builder.append("<").append(value).append(">").toString(); //String builder
 					uriSet.add(value);
-					uris.add(new Key(value.getBytes()));
+					uris.add(new Key(value.getBytes(UTF8_CHARSET)));
 				}
 			}
 		}
@@ -160,7 +162,7 @@ public class SearchForDataToAugmentCommand extends Command{
 		}
 		while(concatenatedPredicateObjectMapsListItr.hasNext() && predicatesItr.hasNext() && otherClassesItr.hasNext())
 		{
-			
+
 			String concatenatedPredicateObjectMaps = concatenatedPredicateObjectMapsListItr.next();
 			List<String> predicateObjectMaps = new ArrayList<String>(Arrays.asList(concatenatedPredicateObjectMaps.split(",")));
 			String predicate =  predicatesItr.next();
@@ -169,9 +171,11 @@ public class SearchForDataToAugmentCommand extends Command{
 				KR2RMLBloomFilter intersectionBF = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 				for (String triplemap : predicateObjectMaps) {
 					String serializedBloomFilter = bloomfilterMapping.get(triplemap);
-					KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
-					bf.populateFromCompressedAndBase64EncodedString(serializedBloomFilter);
-					intersectionBF.or(bf);
+					if (serializedBloomFilter != null) {
+						KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
+						bf.populateFromCompressedAndBase64EncodedString(serializedBloomFilter);
+						intersectionBF.or(bf);
+					}
 				}
 				System.out.println(predicate + " " + intersectionBF.estimateNumberOfHashedValues());
 				intersectionBF.and(uris);
@@ -182,7 +186,7 @@ public class SearchForDataToAugmentCommand extends Command{
 					obj.put("otherClass", otherClass);
 					obj.put("estimate", estimate);
 					obj.put("incoming", "false");
-//					array.put(obj);
+					//					array.put(obj);
 					objects.add(obj);
 				}
 
@@ -190,14 +194,14 @@ public class SearchForDataToAugmentCommand extends Command{
 				LOG.error("Unable to process bloom filter: " + e.getMessage());
 			}
 		}
-		
+
 		Collections.sort(objects, new Comparator<JSONObject>() {
 
-	        @Override
-	        public int compare(JSONObject a, JSONObject b) {
-	            return b.getInt("estimate") - a.getInt("estimate");
-	        }
-	    });
+			@Override
+			public int compare(JSONObject a, JSONObject b) {
+				return b.getInt("estimate") - a.getInt("estimate");
+			}
+		});
 		for (JSONObject obj : objects) {
 			array.put(obj);
 		}
