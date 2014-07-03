@@ -50,23 +50,23 @@ function parse(data) {
     /* Always add the charts from cleaning service in end, so pushing that CleaningServiceUpdate in the end of updates array (if present) */
     // Identify the index
     var cleaningUpdates = new Array();
+    
     var dataElements = new Array();
     $.each(data["elements"], function(i, element) {
     	if(element["updateType"] == "UISettings") {
     		$.workspaceGlobalInformation.UISettings = element["settings"];
     	} else if(element["updateType"] == "WorksheetCleaningUpdate") {
-        	cleaningUpdates.push(element);
+        	cleaningUpdates[element["worksheetId"]] = element;
         } else {
         	dataElements.push(element);
         }
     });
     data["elements"] = dataElements;
     // Move cleaning updates to the end
-    $.each(cleaningUpdates, function(i, update) {
-    	data["elements"].push(update);
-    });
-   
-
+    for (key in cleaningUpdates) {
+    	data["elements"].push(cleaningUpdates[key]);
+    }
+    
     // Loop through each update from the server and take required action for the GUI
     $.each(data["elements"], function(i, element) {
         if(element["updateType"] == "WorksheetListUpdate") {
