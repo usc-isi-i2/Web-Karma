@@ -2,6 +2,7 @@ package edu.isi.karma.controller.command;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.prefs.Preferences;
 
 import org.json.JSONObject;
 
@@ -16,7 +17,9 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 public class SetKarmaHomeCommand extends Command {
 
 	private String directory;
-	
+	enum PreferenceKeys {
+		directory
+	}
 	protected SetKarmaHomeCommand(String id, String directory) {
 		super(id);
 		if(!directory.endsWith(File.separator))
@@ -48,6 +51,9 @@ public class SetKarmaHomeCommand extends Command {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		ServletContextParameterMap.setParameterValue(ContextParameter.USER_DIRECTORY_PATH, directory);
+		Preferences preferences = Preferences.userRoot().node("WebKarma");
+		preferences.put("KARMA_USER_HOME", directory);
+		
 		UpdateContainer uc = new UpdateContainer();
 		uc.add(new InfoUpdate("Successfully changed Karma Home Directory"));
 		uc.add(new AbstractUpdate() {
@@ -64,6 +70,7 @@ public class SetKarmaHomeCommand extends Command {
 		return uc;
 	}
 
+	
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		// TODO Auto-generated method stub
