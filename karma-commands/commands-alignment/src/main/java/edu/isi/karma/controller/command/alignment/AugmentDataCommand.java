@@ -5,12 +5,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
@@ -23,10 +26,13 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.er.helper.TripleStoreUtil;
+import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.HashValueManager;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
@@ -34,11 +40,12 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.webserver.KarmaException;
 
 public class AugmentDataCommand extends WorksheetCommand{
+	
+	private static Logger LOG = LoggerFactory.getLogger(AugmentDataCommand.class);
 	private String predicate;
 	private String columnUri;
 	private String alignmentId;
@@ -47,9 +54,10 @@ public class AugmentDataCommand extends WorksheetCommand{
 	private String hNodeId;
 	private String newhNodeId;
 	private boolean incoming;
+	private String sameAsPredicate;
 	private final Integer limit = 100;
 	Stack<Command> appliedCommands;
-	public AugmentDataCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicate, String triplesMap, String otherClass, String hNodeId, Boolean incoming) {
+	public AugmentDataCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicate, String triplesMap, String otherClass, String hNodeId, Boolean incoming, String sameAsPredicate) {
 		super(id, worksheetId);
 		this.predicate = predicate;
 		this.columnUri = columnUri;
@@ -58,6 +66,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 		this.hNodeId = hNodeId;
 		newhNodeId = hNodeId;
 		this.incoming = incoming;
+		this.sameAsPredicate = sameAsPredicate;
 		appliedCommands = new Stack<Command>();
 		addTag(CommandTag.Transformation);
 	}
@@ -129,42 +138,48 @@ public class AugmentDataCommand extends WorksheetCommand{
 		//String modelContext = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelContext);
 		List<String> subjects = new LinkedList<String>();
 		subjects.addAll(rowHashToSubjectURI.values());
-		JSONArray predicatesarray = new JSONArray(predicate);
-		JSONArray otherClassarray = new JSONArray(otherClass);
 		List<String> predicates = new LinkedList<String>();
 		List<String> otherClasses = new LinkedList<String>();
 		Map<String, List<String>> results = new HashMap<String, List<String>>();
+		
+		URIFormatter uriFormatter = new URIFormatter(workspace.getOntologyManager(), new ErrorReport());
+		if(sameAsPredicate!= null && !sameAsPredicate.trim().isEmpty())
+		{
+			sameAsPredicate = uriFormatter.getExpandedAndNormalizedUri(sameAsPredicate);
+		}
+		
+		JSONArray predicatesarray = new JSONArray(predicate);
+		JSONArray otherClassarray = new JSONArray(otherClass);
+		
 		for(int i = 0; i < predicatesarray.length(); i++) {
 			predicates.add(predicatesarray.getJSONObject(i).getString("predicate"));
 			otherClasses.add(otherClassarray.getJSONObject(i).getString("otherClass"));
-			if (predicates.size() > limit) {
-				try {
-					Map<String, List<String>> temp = null;
-					if (!incoming)
-						temp = util.getObjectsForSubjectsAndPredicates(dataRepoUrl, null, subjects , predicates, otherClasses);
-					else
-						temp = util.getSubjectsForPredicatesAndObjects(dataRepoUrl, null, subjects , predicates, otherClasses);
-					addMappingToResults(results, temp);
-					predicates.clear();
-					otherClasses.clear();
-				} catch (KarmaException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		}
+		
+		while (subjects.size() > 0) {
+			ListIterator<String> subjectsIterator = subjects.listIterator();
+			LinkedList<String> tempSubjects = new LinkedList<String>();
+			while(tempSubjects.size() < limit && subjects.size() > 0)
+			{
+				tempSubjects.add(subjectsIterator.next());
+				subjectsIterator.remove();
+			}
+			try {
+				Map<String, List<String>> temp = null;
+				if (!incoming)
+					temp = util.getObjectsForSubjectsAndPredicates(dataRepoUrl, null, tempSubjects , predicates, otherClasses, sameAsPredicate);
+				else
+					temp = util.getSubjectsForPredicatesAndObjects(dataRepoUrl, null, tempSubjects , predicates, otherClasses, sameAsPredicate);
+				addMappingToResults(results, temp);
+				predicates.clear();
+				otherClasses.clear();
+			} catch (KarmaException e) {
+				LOG.error("Unable to load data to augment: ", e);
+				return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 			}
 		}
+	
 
-		try{
-			Map<String, List<String>> temp = null;
-			if (!incoming)
-				temp = util.getObjectsForSubjectsAndPredicates(dataRepoUrl, null, subjects , predicates, otherClasses);
-			else
-				temp = util.getSubjectsForPredicatesAndObjects(dataRepoUrl, null, subjects , predicates, otherClasses);
-			addMappingToResults(results, temp);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
-		}
 		List<String> resultSubjects = results.get("resultSubjects");
 		List<String> resultPredicates = results.get("resultPredicates");
 		List<String> resultObjects = results.get("resultObjects");

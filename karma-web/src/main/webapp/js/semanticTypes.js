@@ -2192,6 +2192,7 @@ var AugmentDataDialog = (function() {
             	newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
             	newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
             	newInfo.push(getParamObject("incoming", "false", "other"));
+            	newInfo.push(getParamObject("sameAsPredicate", $('#altPredicate').val(), "other"));
             	info["newInfo"] = JSON.stringify(newInfo);	
             	var returned = $.ajax({
                 	url: "RequestController",
@@ -2233,6 +2234,7 @@ var AugmentDataDialog = (function() {
             	newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
             	newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
             	newInfo.push(getParamObject("incoming", "true", "other"));
+            	newInfo.push(getParamObject("sameAsPredicate", $('#altPredicate').val(), "other"));
             	info["newInfo"] = JSON.stringify(newInfo);
             	var returned = $.ajax({
                 	url: "RequestController",

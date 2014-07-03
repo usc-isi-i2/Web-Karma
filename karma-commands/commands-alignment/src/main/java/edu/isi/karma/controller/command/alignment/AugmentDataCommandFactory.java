@@ -14,7 +14,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 	
 	private enum Arguments {
-		worksheetId, predicate, triplesMap, alignmentId, columnUri, otherClass, tripleStoreUrl, hNodeId, incoming
+		worksheetId, predicate, triplesMap, alignmentId, columnUri, otherClass, tripleStoreUrl, hNodeId, incoming, sameAsPredicate
 	}
 
 	@Override
@@ -28,7 +28,8 @@ public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 		String dataRepoUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String incoming = request.getParameter(Arguments.incoming.name());
-		return new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, triplesMap, otherClass, hNodeId, Boolean.parseBoolean(incoming));
+		String sameAsPredicate = request.getParameter(Arguments.sameAsPredicate.name());
+		return new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, triplesMap, otherClass, hNodeId, Boolean.parseBoolean(incoming), sameAsPredicate);
 	}
 
 	@Override
@@ -48,7 +49,8 @@ public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 		String dataRepoUrl = CommandInputJSONUtil.getStringValue(Arguments.tripleStoreUrl.name(), inputJson);
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String incoming = CommandInputJSONUtil.getStringValue(Arguments.incoming.name(), inputJson);
-		AugmentDataCommand cmd = new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, triplesMap, otherClass, hNodeId, Boolean.parseBoolean(incoming));
+		String sameAsPredicate = CommandInputJSONUtil.getStringValue(Arguments.sameAsPredicate.name(), inputJson);
+		AugmentDataCommand cmd = new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, triplesMap, otherClass, hNodeId, Boolean.parseBoolean(incoming),sameAsPredicate);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
