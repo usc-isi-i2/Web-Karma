@@ -8,28 +8,39 @@ function WorksheetOptions(wsId, wsTitle) {
 	        {name:"View model using straight lines", func:viewStraightLineModel, showCheckbox:true, defaultChecked:true, initFunc:initStrightLineModel},
 	        {name:"Organize Columns", func:organizeColumns},
 	        {name:"divider"},
-	        {name:"Show Model" , func:showModel},
+	        
+	        {name: "Suggest Model", func:undefined, addLevel:true, levels: [
+	                 {name:"Using Current Ontology" , func:showModel},  
+	                 {name:"Generate New Ontology", func:showAutoModel},
+	        ]},
+	        
 			{name:"Set Properties", func:setProperties},
-			{name:"Show Auto Model", func:showAutoModel},
+			
 			{name:"Apply R2RML Model", func: undefined, addLevel:true, levels: [
 				{name:"From File" , func:applyR2RMLModel, useFileUpload:true, uploadDiv:"applyWorksheetHistory"},
 				{name:"From Repository" , func:applyModel}
 			]},
 			{name:"divider"},
-			{name:"Publish RDF" , func:publishRDF},
-			{name:"Publish Model" , func:publishModel},
-			{name:"Publish Service Model", func:publishServiceModel},
-			{name:"Publish Report", func:publishReport},
-			{name:"Save as JSON", func:saveAsJson},
+			
+			{name: "Publish", func:undefined, addLevel:true, levels: [
+					{name:"RDF" , func:publishRDF},
+					{name:"Model" , func:publishModel},
+					{name:"Service Model", func:publishServiceModel},
+					{name:"Report", func:publishReport},
+					{name:"JSON", func:saveAsJson},                              
+			 ]},
+			{name: "Export", func:undefined, addLevel:true, levels:[
+				{name:"To CSV", func:exportToCSV},
+				{name:"To Database", func:exportToDatabase},
+				{name:"To MDB", func:exportToMDB},
+				{name:"To SpatialData", func:exportToSpatial},                                               
+			 ]},
 			{name:"divider"},
+			
 			{name:"Populate Source", func:populateSource},
 			{name:"Invoke Service", func:invokeService},
 			{name:"divider"},
-			{name:"Export to CSV", func:exportToCSV},
-			{name:"Export to Database", func:exportToDatabase},
-			{name:"Export to MDB", func:exportToMDB},
-			{name:"Export to SpatialData", func:exportToSpatial},
-			{name:"divider"},
+			
 			{name:"Fold" , func:Fold},
 			{name:"GroupBy" , func:GroupBy}, 
 			{name:"Glue Columns" , func:Glue}, 
@@ -337,7 +348,32 @@ function WorksheetOptions(wsId, wsTitle) {
 	function publishModel(event) {
 		console.log("Publish Model: " + worksheetTitle);
 		hideDropdown();
-		PublishModelDialog.getInstance().show(worksheetId);
+		var info = new Object();
+	    info["worksheetId"] = worksheetId;
+	    info["workspaceId"] = $.workspaceGlobalInformation.id;
+	    info["command"] = "GenerateR2RMLModelCommand";
+        info['tripleStoreUrl'] = $('#txtModel_URL').text();
+        info['localTripleStoreUrl'] = $('#txtModel_URL').text();
+	    showLoading(info["worksheetId"]);
+	    var returned = $.ajax({
+	        url: "RequestController",
+	        type: "POST",
+	        data : info,
+	        dataType : "json",
+	        complete :
+	            function (xhr, textStatus) {
+	                //alert(xhr.responseText);
+	                var json = $.parseJSON(xhr.responseText);
+	                parse(json);
+	                hideLoading(info["worksheetId"]);
+	            },
+	        error :
+	            function (xhr, textStatus) {
+	                alert("Error occured while exporting CSV!" + textStatus);
+	                hideLoading(info["worksheetId"]);
+	            }
+	    });
+	    
 		return false;
 	}
 
@@ -599,6 +635,7 @@ function WorksheetOptions(wsId, wsTitle) {
 							a2.text(suboption['name']);
 							a2.click(suboption.func);
 						}
+						a2.css("cursor", "pointer");
 						li2.append(a2);
 						subul.append(li2);
 					}

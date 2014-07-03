@@ -41,18 +41,25 @@ var saveModelDialog = (function() {
                 saveDialog(e);
             });
 
+            $('#txtGraph_URL_Save', dialog).val(window.location.protocol + "//" + window.location.host + "/R2RMLMapping/local" );
             $('#txtModel_URL_Save', dialog).on('keyup', function (e) {
-                $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
+                //$('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
+                $('input[name="buttonCollection_Save"][value="URL"]').prop('checked', true);
+            });
+            
+            $('#txtGraph_URL_Save', dialog).on('keyup', function (e) {
+                $('input[name="buttonCollection_Save"][value="Collection"]').prop('checked', true);
             });
 
             $('#txtModel_URL_Save', dialog).bind('input paste', function (e) {
                 console.log("here");
                 console.log($('#txtModel_URL_Save').val());
-                $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
+                $('input[name="buttonCollection_Save"][value="URL"]').prop('checked', true);
+               // $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
             });
 
             $('#txtModel_URL_Save', dialog).on('change', function (e) {
-                $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
+               // $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
             });
             
                 
@@ -67,20 +74,23 @@ var saveModelDialog = (function() {
         }
         
         function saveDialog(e) {
-            hide();
+           
             var checkboxes = dialog.find(":checked");
-            if ($('#txtGraph_URL_Save').val() === '' && checkboxes[0]['value'] === 'URL') {
-            	alert("No graph name!");
+            if ($('#txtGraph_URL_Save').val() === '' && checkboxes[0]['value'] === 'Collection') {
+            	alert("Please enter the Collection");
             	return;
             }
-            if ($('#txtModel_URL_Save').val() === '') {
-            	alert("No model URL!");
+            if ($('#txtModel_URL_Save').val() === '' && checkboxes[0]['value'] === 'URL') {
+            	alert("Please enter the model URL");
             	return;
             }
-            if ($('#txtR2RML_URL_Save').val() === '') {
-            	alert("No triplestore URL!");
+            if ($('#txtModel_URL_Save').val() === '' && $('#txtGraph_URL_Save').val() === '') {
+            	alert("Please enter the model URL or Collection");
             	return;
             }
+            
+            hide();
+            
             var info = new Object();
             
             info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -226,82 +236,114 @@ var modelManagerDialog = (function() {
         var dialog = $("#modelManagerDialog");
         var availableModels;
         var filteredModels;
+        var table;
         function init() {
             //Initialize what happens when we show the dialog
             refresh();
-            var dialogContent = $("#modelManagerDialogHeaders", dialog);
-            dialogContent.empty();
-            var table = $("<table>")
-                        .addClass("table table-striped table-condensed");
-            var tr = $("<tr>");
-            var th = $("<th>").addClass("CheckboxProperty");
-            tr.append(th);
-            var th = $("<th>").addClass("FileNameProperty");
-            var label = $("<label>").text("File Name").addClass("FileNameProperty");
-            th.append(label);
-            tr.append(th);
-            var th = $("<th>").addClass("PublishTimeProperty");
-            var label = $("<label>").text("Publish Time").addClass("PublishTimeProperty");
-            th.append(label);
-            tr.append(th);
-            var th = $("<th>").addClass("URLProperty");
-            var label = $("<label>").text("URL").addClass("URLProperty");
-            th.append(label);
-            tr.append(th);
-            table.append(tr);
-            var tr = $("<tr>");
-            var td = $("<td>")
-                     .addClass("CheckboxProperty");
-            tr.append(td);
-            var td = $("<td>")
-                     .addClass("FileNameProperty");
-            var label = $("<input>").text("")
-                        .addClass("form-control")
-                        .attr("id","txtFilterFileName")
-                        .attr("type", "text")
-                        .on('keyup', applyFilter);
-            td.append(label);
-            tr.append(td);
-            var td = $("<td>")
-                     .addClass("PublishTimeProperty");
-            var label = $("<input>").text("")
-                        .addClass("form-control")
-                        .attr("id","txtFilterPublishTime")
-                        .attr("type", "text")
-                        .on('keyup', applyFilter);
-            td.append(label);
-            tr.append(td);
-            var td = $("<td>")
-                     .addClass("URLProperty");
-            var label = $("<input>").text("")
-                        .addClass("form-control")
-                        .attr("id","txtFilterURL")
-                        .attr("type", "text")
-                        .on('keyup', applyFilter);
-            td.append(label);
-            tr.append(td);
-            table.append(tr);
-            dialogContent.append(table);      
-            $('#btnLoadModel', dialog).on('click', function (e) {
+            var dialogContent = $("#modelManagerDialogColumns", dialog);
+            table = $("<table>")
+			            .addClass("table table-striped table-condensed");
+			var tr = getHeaderRow();
+			table.append(tr);
+			dialogContent.append(table);
+                 
+            $('#btnAddModel', dialog).on('click', function (e) {
                 e.preventDefault();
                 hide();
                 saveModelDialog.getInstance().show();
             });
 
-            $('#btnClearModel', dialog).on('click', function (e) {
-                e.preventDefault();
-                hide();
-                clearModelDialog.getInstance().show();
-            });
+//            $('#btnClearModel', dialog).on('click', function (e) {
+//                e.preventDefault();
+//                hide();
+//                clearModelDialog.getInstance().show();
+//            });
 
-            $('#btnDeleteModel', dialog)
-                .on('click', deleteModel)
-                .attr("disabled", "disabled");
+            $('#btnRemoveModel', dialog)
+                .on('click', deleteModel);
 
             $('#btnRefreshModel', dialog)
-                .on('click', refreshModel)
-                .attr("disabled", "disabled");
-                
+                .on('click', refreshModel);
+        }
+        
+        function onClickSelectAllCheckbox() {
+        	var checked = $("#modelManagerSelectAllCheckbox").prop("checked");
+        	
+    		$(".modelManagerCheckbox").each(function() {
+    			$(this).prop("checked", checked);
+    		});        	
+
+        }
+        
+        function getHeaderRow() {
+        	var tr = $("<tr>");
+            var th = $("<th>"); //.addClass("CheckboxProperty");
+            var checkbox = $("<input>")
+					            .attr("type", "checkbox")                           
+					            .attr("id", "modelManagerSelectAllCheckbox")
+					            .prop('checked', false)
+					            .change(onClickSelectAllCheckbox);
+            th.append(checkbox);
+            tr.append(th);
+            
+            var th = $("<th>"); //.addClass("FileNameProperty");
+            var label = $("<label>").text("File Name"); //.addClass("FileNameProperty");
+            th.append(label);
+            var label = $("<input>").text("")
+	            .addClass("form-control")
+	            .addClass("modelSearchControl")
+	            .attr("id","txtFilterFileName")
+	            .attr("type", "text")
+	            .on('keyup', applyFilter);
+            th.append(label);
+            tr.append(th);
+            
+            var th = $("<th>"); //.addClass("PublishTimeProperty");
+            var label = $("<label>").text("Publish Time"); //.addClass("PublishTimeProperty");
+            th.append(label);
+            var label = $("<input>").text("")
+	            .addClass("form-control")
+	            .addClass("modelSearchControl")
+	            .attr("id","txtFilterPublishTime")
+	            .attr("type", "text")
+	            .on('keyup', applyFilter);
+            th.append(label);
+            tr.append(th);
+            
+            var th = $("<th>"); //.addClass("URLProperty");
+            var label = $("<label>").text("URL"); //.addClass("URLProperty");
+            th.append(label);
+            var searchBtn = $("<i>").addClass("glyphicon")
+            				.addClass("glyphicon-search")
+            				.css("float", "right")
+            				.css("cursor", "pointer")
+            				.on("click", toggleSearchControls);
+            th.append(searchBtn);
+            var label = $("<input>").text("")
+				            .addClass("form-control")
+				            .addClass("modelSearchControl")
+				            .attr("id","txtFilterURL")
+				            .attr("type", "text")
+				            .on('keyup', applyFilter);
+            th.append(label);
+            tr.append(th);
+            return tr;
+        }
+        
+        function toggleSearchControls() {
+        	$(".modelSearchControl").each(function() {
+        		if ( $(this).is(":visible")) {
+        			$(this).hide();
+        		} else {
+        			$(this).show();
+        		}
+        	});
+        }
+        
+        function hideSearchControls() {
+        	$(".modelSearchControl").each(function() {
+        		$(this).hide();
+        	});
         }
         
         function refresh() {
@@ -344,10 +386,9 @@ var modelManagerDialog = (function() {
         function applyFilter(e) {
             console.log("applyFilter");
             var tmp = [];
-            var filterFilename = $('#txtFilterFileName').val();
-            var filterTime = $('#txtFilterPublishTime').val();
-            var filterURL = $('#txtFilterURL').val();
-
+            var filterFilename = $('#txtFilterFileName').val().toLowerCase();
+            var filterTime = $('#txtFilterPublishTime').val().toLowerCase();
+            var filterURL = $('#txtFilterURL').val().toLowerCase();
             for (var i = 0; i < availableModels.length; i++) {
                 var name = availableModels[i]['name'].toLowerCase();
                 var time = new Date(availableModels[i].publishTime*1).toString();
@@ -368,7 +409,8 @@ var modelManagerDialog = (function() {
                 }
             }
             filteredModels = tmp;
-            instance.show();
+
+            showFilteredModels();
         };
         
         function hide() {
@@ -377,7 +419,12 @@ var modelManagerDialog = (function() {
         
         function deleteModel(e) {
             e.preventDefault();
-            var checkboxes = dialog.find(":checked");
+            var checkboxes = dialog.find(".modelManagerCheckbox:checked");
+            if(checkboxes.length == 0) {
+            	alert("Please select the models to delete");
+            	return false;
+            }
+            
             for (var i = 0; i < checkboxes.length; i++) {
                 var checkbox = checkboxes[i];
                 var info = new Object();
@@ -412,7 +459,12 @@ var modelManagerDialog = (function() {
 
         function refreshModel(e) {
             e.preventDefault();
-            var checkboxes = dialog.find(":checked");
+            var checkboxes = dialog.find(".modelManagerCheckbox:checked");
+            if(checkboxes.length == 0) {
+            	alert("Please select the models to refresh");
+            	return false;
+            }
+            
             for (var i = 0; i < checkboxes.length; i++) {
                 var checkbox = checkboxes[i];
                 var info = new Object();
@@ -446,28 +498,26 @@ var modelManagerDialog = (function() {
         }
 
         function disableButton(e) {
-            var checkboxes = dialog.find(":checked");
-            if (checkboxes.length == 0) {
-                $('#btnDeleteModel', dialog)
-                    .attr("disabled", "disabled");
-
-                $('#btnRefreshModel', dialog)
-                    .attr("disabled", "disabled");
-            }
-            else {
-                $('#btnDeleteModel', dialog)
-                    .removeAttr("disabled");
-
-                $('#btnRefreshModel', dialog)
-                    .removeAttr("disabled");
-            }
+//            var checkboxes = dialog.find(":checked");
+//            if (checkboxes.length == 0) {
+//                $('#btnDeleteModel', dialog)
+//                    .attr("disabled", "disabled");
+//
+//                $('#btnRefreshModel', dialog)
+//                    .attr("disabled", "disabled");
+//            }
+//            else {
+//                $('#btnDeleteModel', dialog)
+//                    .removeAttr("disabled");
+//
+//                $('#btnRefreshModel', dialog)
+//                    .removeAttr("disabled");
+//            }
         }
 
-        function show() {
-            var dialogContent = $("#modelManagerDialogColumns", dialog);
-            dialogContent.empty();
-            var table = $("<table>")
-                        .addClass("table table-striped table-condensed");
+        function showFilteredModels() {
+        	table.find("tr:gt(0)").remove();
+            
             console.log(filteredModels.length);
             for (var i = 0; i < filteredModels.length; i++) {                
                 var name = filteredModels[i]['name'];
@@ -476,38 +526,43 @@ var modelManagerDialog = (function() {
                 var url = filteredModels[i].url;
                 var context = filteredModels[i].context;
                 var tr = $("<tr>");
-                var td = $("<td>")
-                         .addClass("CheckboxProperty");
+                var td = $("<td>");
+                         //.addClass("CheckboxProperty");
                 var checkbox = $("<input>")
                                .attr("type", "checkbox")                           
                                .attr("id", "modelManagerCheckbox")
+                               .addClass("modelManagerCheckbox")
                                .attr("value", context)
                                .attr("src", url)
                                .change(disableButton);
                 td.append(checkbox);
                 tr.append(td);
-                var td = $("<td>")
-                         .addClass("FileNameProperty");
-                var label = $("<label>").text(name)
-                            .addClass("FileNameProperty");
+                var td = $("<td>");
+                        // .addClass("FileNameProperty");
+                var label = $("<span>").text(name);
+                            //.addClass("FileNameProperty");
                 td.append(label);
                 tr.append(td);
                 var td = $("<td>")
-                         .css("overflow", "scroll")
-                         .addClass("PublishTimeProperty");
-                var label = $("<label>").text(time)
-                            .addClass("PublishTimeProperty");
+                         //.css("overflow", "scroll");
+                         //.addClass("PublishTimeProperty");
+                var label = $("<span>").text(time);
+                           // .addClass("PublishTimeProperty");
                 td.append(label);
                 tr.append(td);
-                var td = $("<td>").addClass("URLProperty");
-                var label = $("<label>").text(url)
-                            .addClass("URLProperty");
+                var td = $("<td>");//.addClass("URLProperty");
+                var label = $("<span>").text(url);
+                            //.addClass("URLProperty");
                 td.append(label);
                 tr.append(td);
                 table.append(tr);    
             }
-            dialogContent.append(table);
+        }
+        
+        function show() {
+        	showFilteredModels();
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
+            hideSearchControls();
         };
         
         

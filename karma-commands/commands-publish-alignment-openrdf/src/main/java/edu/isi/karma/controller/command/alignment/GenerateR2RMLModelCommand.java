@@ -22,7 +22,10 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -31,9 +34,12 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.ICommand;
+import edu.isi.karma.controller.history.CommandHistory;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
+import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.modeling.ModelingConfiguration;
@@ -172,6 +178,7 @@ public class GenerateR2RMLModelCommand extends Command {
 
 		try {
 			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
+			generateGraph(workspace);
 			fileSaver.saveAlignment(alignment, modelFileLocalPath);
 			
 			// Write the model to the triple store
@@ -194,6 +201,9 @@ public class GenerateR2RMLModelCommand extends Command {
 				SaveR2RMLModelCommand cmd = factory.createCommand(workspace, url, localTripleStoreUrl, graphName, "URL");
 				cmd.doIt(workspace);
 				result &= cmd.getSuccessful();
+				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelUrl, url);
+				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelContext, graphName);
+				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelRepository, localTripleStoreUrl);
 			}
 			if (result) {
 				logger.info("Saved model to triple store");
@@ -242,6 +252,21 @@ public class GenerateR2RMLModelCommand extends Command {
 			
 		} catch (JSONException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private void generateGraph(Workspace workspace) {
+		CommandHistory history = workspace.getCommandHistory();
+		List<ICommand> commands = new ArrayList<ICommand>(history.getCommands(CommandTag.Modeling));
+		commands.addAll(history.getCommands(CommandTag.Transformation));
+		for (ICommand c : commands) {
+			if (c instanceof Command) {
+				Command command = (Command)c;
+				JSONArray json = new JSONArray(command.getInputParameterJson());
+				String worksheetId = HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json);
+				if (worksheetId.compareTo(this.worksheetId) == 0)
+					System.out.println(command.getCommandName() + " " + command.getDescription());
+			}
 		}
 	}
 }

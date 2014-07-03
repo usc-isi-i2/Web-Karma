@@ -125,6 +125,8 @@ public class PublishRDFCommand extends Command {
 		this.tripleStoreUrl = tripleStoreUrl;
 		this.graphUri = graphUri;
 		this.replaceContext = replace;
+		System.out.println(rdfSourceNamespace);
+		System.out.println(rdfSourcePrefix);
 	}
 
 	@Override
@@ -221,7 +223,9 @@ public class PublishRDFCommand extends Command {
 			parentDir.mkdirs();
 			BufferedWriter bw = new BufferedWriter(
 					new OutputStreamWriter(new FileOutputStream(f),"UTF-8"));
-			writers.add(new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), new PrintWriter (bw)));
+			N3KR2RMLRDFWriter writer = new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), new PrintWriter (bw));
+			writer.setBaseURI(rdfSourceNamespace);
+			writers.add(writer);
 			if (generateBloomFilters)
 				writers.add(new BloomFilterKR2RMLRDFWriter(new PrintWriter(sw), mapping.getId(), false, this.rdfSourceNamespace));
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
@@ -293,7 +297,7 @@ public class PublishRDFCommand extends Command {
 
 
 			result &= utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext, this.rdfSourceNamespace);
-			if (url != null && !url.isEmpty() && url.compareTo("") != 0 && utilObj.testURIExists(TripleStoreUtil.defaultModelsRepoUrl, "", url)) {
+			if (url != null && !url.isEmpty() && url.compareTo("") != 0 && utilObj.testURIExists(modelRepoUrl, "", url)) {
 				StringBuilder sb = new StringBuilder();
 				url = url.trim();
 				if(!url.startsWith("<"))
