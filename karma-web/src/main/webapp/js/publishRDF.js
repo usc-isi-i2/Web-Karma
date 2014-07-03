@@ -174,7 +174,10 @@ var PublishRDFDialog = (function() {
     		info["modelName"] = $("input#modelName").val();
     		info["tripleStoreUrl"] = $('#txtData_URL').html();
     		info["graphUri"] = graphUri;
-    		info["replaceContext"] = $('#modelGraphList').val();
+    		var replace = false;
+    		if( $('input:radio[name=group1]:checked', dialog).val() == "replace")
+    			replace = true;
+    		info["replaceContext"] = replace;
             info["generateBloomFilters"] = $("input#generateBloomFilters").is(":checked");
             console.log(info["rdfPrefix"]);
             console.log(info["rdfNamespace"]);
