@@ -21,7 +21,9 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
@@ -374,5 +376,19 @@ public class SetSemanticTypeCommand extends Command {
 					"Error occured while unsetting the semantic type!"));
 		}
 		return c;
+	}
+	
+	@Override
+	public Set<String> getInputColumns() {
+		Set<String> t = new HashSet<String>();
+		t.add(hNodeId);
+		return t;
+	}
+	
+	@Override
+	public Set<String> getOutputColumns() {
+		Set<String> t = new HashSet<String>();
+		t.add(hNodeId);
+		return t;
 	}
 }

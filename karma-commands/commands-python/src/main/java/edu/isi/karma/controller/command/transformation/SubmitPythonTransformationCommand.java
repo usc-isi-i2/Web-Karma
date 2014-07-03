@@ -35,6 +35,7 @@ import edu.isi.karma.rep.*;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -42,7 +43,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SubmitPythonTransformationCommand extends MutatingPythonTransformationCommand {
 	protected ICommand previousPythonTransformationCommand;
@@ -239,5 +242,22 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public Set<String> getInputColumns() {
+		Set<String> t = new HashSet<String>();
+		t.add(hNodeId);
+		return t;
+	}
+	
+	@Override
+	public Set<String> getOutputColumns() {
+		Set<String> t = new HashSet<String>();
+		if (addColCmd != null)
+			t.add(addColCmd.getNewHNodeId());
+		else
+			t.add(hNodeId);
+		return t;
 	}
 }
