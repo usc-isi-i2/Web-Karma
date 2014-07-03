@@ -23,7 +23,10 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -259,13 +262,31 @@ public class GenerateR2RMLModelCommand extends Command {
 		CommandHistory history = workspace.getCommandHistory();
 		List<ICommand> commands = new ArrayList<ICommand>(history.getCommands(CommandTag.Modeling));
 		commands.addAll(history.getCommands(CommandTag.Transformation));
+		Map<ICommand, List<ICommand>> dag = new HashMap<ICommand, List<ICommand>>();
+		Map<String, ICommand> outputMapping = new HashMap<String, ICommand>();
 		for (ICommand c : commands) {
 			if (c instanceof Command) {
 				Command command = (Command)c;
 				JSONArray json = new JSONArray(command.getInputParameterJson());
 				String worksheetId = HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json);
-				if (worksheetId.compareTo(this.worksheetId) == 0)
+				if (worksheetId.compareTo(this.worksheetId) == 0) {
+					Set<String> inputs = command.getInputColumns();
+					Set<String> outputs = command.getOutputColumns();
+					for (String input : inputs) {
+						ICommand outputCommand = outputMapping.get(input);
+						if (outputCommand != null) {
+							List<ICommand> edges = dag.get(c);
+							if (edges == null)
+								edges = new ArrayList<ICommand>();
+							edges.add(outputCommand);
+							dag.put(c, edges);
+						}
+					}
+					for (String output : outputs) {
+						outputMapping.put(output, c);
+					}
 					System.out.println(command.getCommandName() + " " + command.getDescription());
+				}
 			}
 		}
 	}
