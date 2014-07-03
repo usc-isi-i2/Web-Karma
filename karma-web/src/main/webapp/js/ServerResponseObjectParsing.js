@@ -82,10 +82,9 @@ function parse(data) {
                         $("div#tableCellMenuButtonDiv").hide();
                         $("div#columnHeadingMenuButtonDiv").hide();
                     });
-                    var headerDiv = $("<div>").addClass("ui-corner-top");
-                    var formgroup = $("<div>").css("float", "left").addClass("col-sm-5");
-                    var label1 = $("<label>").text("Prefix: ");
-                    var prefixLabel = $("<label>").text("s")
+                    var headerDiv = $("<div>").addClass("propertiesHeader");
+                    var label1 = $("<label>").html("Prefix:&nbsp;");
+                    var prefixLabel = $("<span>").text("s")
                                 .addClass("edit")
                                 .attr("id", "txtPrefix_" + worksheet["worksheetId"])
                                 .editable({
@@ -130,12 +129,12 @@ function parse(data) {
                                 title: 'Enter Prefix'
                             }
                         );
-                    formgroup.append(label1);
-                    formgroup.append(prefixLabel);
-                    headerDiv.append(formgroup);
-                    var formgroup = $("<div>").css("float", "left").addClass("col-sm-5");
-                    var label1 = $("<label>").text("Base URI: ");
-                    var baseURILabel = $("<label>")
+                    headerDiv.append(label1);
+                    headerDiv.append(prefixLabel);
+                    
+                    var sep = $("<span>").html("&nbsp;|&nbsp;");
+                    var label1 = $("<label>").html("Base URI:&nbsp;");
+                    var baseURILabel = $("<span>")
                                 .text("http://localhost:8080/source/")
                                 .addClass("edit")
                                 .attr("id", "txtBaseURI_" + worksheet["worksheetId"])
@@ -181,9 +180,11 @@ function parse(data) {
                                 title: 'Enter Base URI'
                             }
                         );;
-                    formgroup.append(label1);
-                    formgroup.append(baseURILabel);
-                    headerDiv.append(formgroup);
+                    
+                    headerDiv.append(sep);
+                    headerDiv.append(label1);
+                    headerDiv.append(baseURILabel);
+                    
                     var worksheetProps = new Object();
                     worksheetProps["hasPrefix"] = true;
                     worksheetProps["prefix"] = "s";
