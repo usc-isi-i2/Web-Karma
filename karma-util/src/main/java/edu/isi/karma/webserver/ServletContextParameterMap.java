@@ -22,6 +22,7 @@ package edu.isi.karma.webserver;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.prefs.Preferences;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,11 +65,16 @@ public class ServletContextParameterMap {
 		if(karmaDir == null)
 		{
 			karmaDir = System.getProperty("KARMA_USER_HOME");
+			if(karmaDir == null) {
+				Preferences preferences = Preferences.userRoot().node("WebKarma");
+				karmaDir = preferences.get("KARMA_USER_HOME",  null);
+			}
 		}
 		if(karmaDir == null)
 		{
-			logger.info("KARMA_USER_HOME not set.  Defaulting to " +System.getProperty("user.home") + File.separator + "karma");
-			File newKarmaDir = new File(System.getProperty("user.home") + File.separator + "karma");
+			String defaultLocation = System.getProperty("user.home") + File.separator + "karma";
+			logger.info("KARMA_USER_HOME not set.  Defaulting to " + defaultLocation);
+			File newKarmaDir = new File(defaultLocation);
 			karmaDir = newKarmaDir.getAbsolutePath() + File.separator;
 			
 		}

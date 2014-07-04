@@ -179,10 +179,12 @@ public class CommandHistory {
 					|| command.hasTag(CommandTag.Transformation))) {
 				JSONArray json = new JSONArray(command.getInputParameterJson());
 				String worksheetId = HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json);
-				//String worksheetName = workspace.getWorksheet(worksheetId).getTitle(); 
-				if(comMap.get(worksheetId) == null)
-					comMap.put(worksheetId, new JSONArray());
-				comMap.get(worksheetId).put(getCommandJSON(workspace, command));
+				if(workspace.getWorksheet(worksheetId) != null)
+				{ 
+					if(comMap.get(worksheetId) == null)
+						comMap.put(worksheetId, new JSONArray());
+					comMap.get(worksheetId).put(getCommandJSON(workspace, command));
+				}
 			}
 		}
 		
