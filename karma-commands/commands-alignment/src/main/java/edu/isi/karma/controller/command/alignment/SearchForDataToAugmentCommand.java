@@ -180,15 +180,13 @@ public class SearchForDataToAugmentCommand extends Command{
 				System.out.println(predicate + " " + intersectionBF.estimateNumberOfHashedValues());
 				intersectionBF.and(uris);
 				int estimate = intersectionBF.estimateNumberOfHashedValues();
-				if (estimate > 0) {
-					JSONObject obj = new JSONObject();
-					obj.put("predicate", predicate);
-					obj.put("otherClass", otherClass);
-					obj.put("estimate", estimate);
-					obj.put("incoming", "false");
-					//					array.put(obj);
-					objects.add(obj);
-				}
+				JSONObject obj = new JSONObject();
+				obj.put("predicate", predicate);
+				obj.put("otherClass", otherClass);
+				obj.put("estimate", estimate);
+				obj.put("incoming", "false");
+				//					array.put(obj);
+				objects.add(obj);
 
 			} catch (Exception e) {
 				LOG.error("Unable to process bloom filter: " + e.getMessage());
