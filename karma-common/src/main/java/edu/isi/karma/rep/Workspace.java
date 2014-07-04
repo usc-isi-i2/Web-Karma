@@ -104,7 +104,7 @@ public class Workspace extends Entity {
 
 	public void removeWorksheet(String id) {
 		Worksheet ws = worksheets.get(id);
-		ws = null;
+		factory.removeWorksheet(id);
 		this.worksheets.remove(id);
 	}
 	
