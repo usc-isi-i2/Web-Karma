@@ -181,7 +181,7 @@ function parse(data) {
                                 },
                                 title: 'Enter Base URI'
                             }
-                        );;
+                        );
                     
                     headerDiv.append(sep);
                     headerDiv.append(label1);
