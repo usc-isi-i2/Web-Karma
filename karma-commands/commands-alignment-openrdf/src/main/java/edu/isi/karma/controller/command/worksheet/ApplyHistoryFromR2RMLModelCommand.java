@@ -25,6 +25,7 @@ import edu.isi.karma.controller.command.CommandType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFParseException;
 import org.slf4j.Logger;
@@ -32,10 +33,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
+import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -50,6 +53,9 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.WorksheetProperties;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
@@ -62,6 +68,10 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 		super(id, worksheetId);
 		this.r2rmlModelFile = uploadedFile;
 		this.worksheetId = worksheetId;
+	}
+	
+	private enum JsonKeys {
+		updateType, worksheetId, baseURI, prefix
 	}
 
 	@Override
@@ -86,6 +96,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		final Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		UpdateContainer c = new UpdateContainer();
 		c.add(new WorksheetListUpdate());
 		UpdateContainer rwu = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
@@ -122,6 +133,29 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 		}
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));	
 		c.add(new InfoUpdate("Model successfully applied!"));
+		c.add(new AbstractUpdate() {
+
+			@Override
+			public void generateJson(String prefix, PrintWriter pw,
+					VWorkspace vWorkspace) {
+				JSONObject outputObject = new JSONObject();
+				try {
+					outputObject.put(JsonKeys.updateType.name(), "SetWorksheetProperties");
+					outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
+					WorksheetProperties props = worksheet.getMetadataContainer().getWorksheetProperties();
+					if (props.getPropertyValue(Property.baseURI) != null)
+						outputObject.put(JsonKeys.baseURI.name(), props.getPropertyValue(Property.baseURI));
+					if (props.getPropertyValue(Property.prefix) != null)
+						outputObject.put(JsonKeys.prefix.name(), props.getPropertyValue(Property.prefix));
+					pw.println(outputObject.toString());
+				} catch (JSONException e) {
+					e.printStackTrace();
+					logger.error("Error occured while generating JSON!");
+				}
+				
+			}
+			
+		});
 		return c;
 	}
 

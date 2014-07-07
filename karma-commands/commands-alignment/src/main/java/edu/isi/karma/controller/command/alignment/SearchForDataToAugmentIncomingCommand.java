@@ -128,7 +128,7 @@ public class SearchForDataToAugmentIncomingCommand extends Command{
 					} catch (URISyntaxException e) {
 						// TODO Auto-generated catch block
 					}
-					n.setValue(value, n.getStatus(), factory);
+//					n.setValue(value, n.getStatus(), factory);
 					value = builder.append("<").append(value).append(">").toString(); //String builder
 					uriSet.add(value);
 					uris.add(new Key(value.getBytes(UTF8_CHARSET)));

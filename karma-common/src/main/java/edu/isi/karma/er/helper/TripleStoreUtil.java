@@ -25,7 +25,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -341,9 +340,6 @@ public class TripleStoreUtil {
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					tripleStoreURL, null, "application/sparql-results+json",
 					formparams);
-			PrintWriter pw = new PrintWriter(new File("test.txt"));
-			pw.println(responseString);
-			pw.close();
 			if (responseString != null) {
 				JSONObject models = new JSONObject(responseString);
 				JSONArray values = models.getJSONObject("results")

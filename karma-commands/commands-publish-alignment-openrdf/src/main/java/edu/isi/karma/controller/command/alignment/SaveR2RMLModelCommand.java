@@ -51,7 +51,7 @@ public class SaveR2RMLModelCommand extends Command{
 	}
 
 
-	public enum JsonKeys {
+	private enum JsonKeys {
 		updateType, fileUrl, worksheetId
 	}
 

@@ -90,9 +90,10 @@ function parse(data) {
                                 .editable({
                                     type: 'text',
                                     pk: 1,
+                                    savenochange: true, 
                                     success: function(response, newValue) {
                                         console.log("Set new value:" + newValue);
-                                        baseURILabel.text(newValue);
+                                        prefixLabel.text(newValue);
                                         var worksheetProps = new Object();
                                         worksheetProps["hasPrefix"] = true;
                                         worksheetProps["hasBaseURI"] = false;
@@ -141,6 +142,7 @@ function parse(data) {
                                 .editable({
                                     type: 'text',
                                     pk: 1,
+                                    savenochange: true, 
                                     success: function(response, newValue) {
                                         console.log("Set new value:" + newValue);
                                         baseURILabel.text(newValue);
@@ -541,6 +543,17 @@ function parse(data) {
         else if(element["updateType"] == "SaveCollection") {
             // Remove existing link if any
             $.sticky("R2RML Model Collection saved");
+        }
+        else if(element["updateType"] == "SetWorksheetProperties") {
+            // Remove existing link if any
+            console.log(element);
+            if (element["prefix"]) {
+                $("#txtPrefix_" + element["worksheetId"]).text(element["prefix"]);
+            }
+            if (element["baseURI"]) {
+                $("#txtBaseURI_" + element["worksheetId"]).text(element["baseURI"]);
+            }
+
         }
         else if(element["updateType"] == "SaveModel") {
             // Remove existing link if any
