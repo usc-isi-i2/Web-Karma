@@ -117,7 +117,7 @@ public class SearchForDataToAugmentIncomingCommand extends Command{
 			for(Row r : t.getRows(0, t.getNumRows())) {
 				Node n = r.getNode(hNodeId);
 				if(n != null && n.getValue() != null && !n.getValue().isEmptyValue() && n.getValue().asString() != null && !n.getValue().asString().trim().isEmpty() ) {
-					String value = n.getValue().asString().trim();
+					String value = n.getValue().asString().trim().replace(" ", "");;
 					builder = new StringBuilder();
 					String baseURI = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.baseURI);
 					try {

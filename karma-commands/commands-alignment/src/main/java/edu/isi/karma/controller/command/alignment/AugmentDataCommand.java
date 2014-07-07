@@ -55,7 +55,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 	private String newhNodeId;
 	private boolean incoming;
 	private String sameAsPredicate;
-	private final Integer limit = 100;
+	private final Integer limit = 50;
 	Stack<Command> appliedCommands;
 	public AugmentDataCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicate, String otherClass, String hNodeId, Boolean incoming, String sameAsPredicate) {
 		super(id, worksheetId);
@@ -171,8 +171,8 @@ public class AugmentDataCommand extends WorksheetCommand{
 				else
 					temp = util.getSubjectsForPredicatesAndObjects(dataRepoUrl, null, tempSubjects , predicates, otherClasses, sameAsPredicate);
 				addMappingToResults(results, temp);
-				predicates.clear();
-				otherClasses.clear();
+//				predicates.clear();
+//				otherClasses.clear();
 			} catch (KarmaException e) {
 				LOG.error("Unable to load data to augment: ", e);
 				return new UpdateContainer(new ErrorUpdate(e.getMessage()));
