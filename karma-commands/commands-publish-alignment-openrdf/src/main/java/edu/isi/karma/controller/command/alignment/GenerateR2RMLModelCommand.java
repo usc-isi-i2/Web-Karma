@@ -24,6 +24,8 @@ package edu.isi.karma.controller.command.alignment;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,8 +43,8 @@ import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.ICommand;
 import edu.isi.karma.controller.command.transformation.SubmitEditPythonTransformationCommand;
 import edu.isi.karma.controller.history.CommandHistory;
-import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -291,18 +293,39 @@ public class GenerateR2RMLModelCommand extends Command {
 				}
 			}					
 		}
-		for (Entry<Command, List<Command>> entry : dag.entrySet()) {
-			Command key = entry.getKey();
-			List<Command> value = entry.getValue();
-			System.out.print(key.getCommandName() + "inputs: " + key.getInputColumns() + "outputs: " + key.getOutputColumns());
-			System.out.print("=");
-			for (Command command : value)
-				System.out.print(command.getCommandName() + "inputs: " + command.getInputColumns() + "outputs: " + command.getOutputColumns());
-			System.out.println();
+		
+//		for (Entry<Command, List<Command>> entry : dag.entrySet()) {
+//			Command key = entry.getKey();
+//			List<Command> value = entry.getValue();
+//			System.out.print(key.getCommandName() + "inputs: " + key.getInputColumns() + "outputs: " + key.getOutputColumns());
+//			System.out.print("=");
+//			for (Command command : value)
+//				System.out.print(command.getCommandName() + "inputs: " + command.getInputColumns() + "outputs: " + command.getOutputColumns());
+//			System.out.println();
+//		}
+		Set<String> inputColumns = new HashSet<String>();
+		for (Command t : commands) {
+			if (t instanceof SetSemanticTypeCommand || t instanceof SetMetaPropertyCommand) {
+				inputColumns.addAll(getParents(t, dag));
+			}
 		}
+		System.out.println(inputColumns);
 		System.out.println("breakpoint!");
 	}
-
+	
+	
+	private Set<String> getParents(Command c, Map<Command, List<Command> >dag) {
+		List<Command> parents = dag.get(c);
+		Set<String> terminalColumns = new HashSet<String>();
+		if (parents == null)
+			terminalColumns.addAll(c.getInputColumns());
+		else {
+			for (Command t : parents) {
+				terminalColumns.addAll(getParents(t, dag));
+			}
+		}
+		return terminalColumns;
+	}
 	private List<Command> getCommandsInHistory(List<ICommand> commands) {
 		List<Command> refinedCommands = new ArrayList<Command>();
 		for (ICommand c : commands) {
@@ -325,10 +348,12 @@ public class GenerateR2RMLModelCommand extends Command {
 		List<Command> refinedCommands = new ArrayList<Command>();
 		for (Command command : commands) {
 			if (command instanceof SubmitEditPythonTransformationCommand) {
-				for (Command tmp : refinedCommands) {
+				Iterator<Command> itr = refinedCommands.iterator();
+				while(itr.hasNext()) {
+					Command tmp = itr.next();
 					if (tmp.getInputColumns().equals(command.getInputColumns()) && tmp instanceof SubmitEditPythonTransformationCommand) {
 						System.out.println("Here");
-						refinedCommands.remove(tmp);
+						itr.remove();
 					}
 				}
 				refinedCommands.add(command);

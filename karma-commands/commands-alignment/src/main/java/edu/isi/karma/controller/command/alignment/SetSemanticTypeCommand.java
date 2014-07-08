@@ -388,7 +388,6 @@ public class SetSemanticTypeCommand extends Command {
 	@Override
 	public Set<String> getOutputColumns() {
 		Set<String> t = new HashSet<String>();
-		t.add(hNodeId);
 		return t;
 	}
 }
