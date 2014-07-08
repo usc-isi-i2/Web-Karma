@@ -58,7 +58,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 	private String newhNodeId;
 	private boolean incoming;
 	private String sameAsPredicate;
-	private final Integer limit = 50;
+	private final Integer limit = 200;
 	Stack<Command> appliedCommands;
 	public AugmentDataCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicate, String otherClass, String hNodeId, Boolean incoming, String sameAsPredicate) {
 		super(id, worksheetId);
