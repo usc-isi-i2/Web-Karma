@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.json.JSONArray;
@@ -42,6 +41,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.ICommand;
 import edu.isi.karma.controller.command.transformation.SubmitEditPythonTransformationCommand;
+import edu.isi.karma.controller.command.transformation.SubmitPythonTransformationCommand;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
@@ -351,6 +351,10 @@ public class GenerateR2RMLModelCommand extends Command {
 				Iterator<Command> itr = refinedCommands.iterator();
 				while(itr.hasNext()) {
 					Command tmp = itr.next();
+					if (tmp.getOutputColumns().equals(command.getInputColumns()) && tmp instanceof SubmitPythonTransformationCommand) {
+						System.out.println("May Consolidate");
+						//PlaceHolder
+					}
 					if (tmp.getInputColumns().equals(command.getInputColumns()) && tmp instanceof SubmitEditPythonTransformationCommand) {
 						System.out.println("Here");
 						itr.remove();
