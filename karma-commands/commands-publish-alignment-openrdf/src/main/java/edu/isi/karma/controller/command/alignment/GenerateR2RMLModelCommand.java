@@ -22,8 +22,11 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.ws.rs.core.UriBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -196,7 +199,8 @@ public class GenerateR2RMLModelCommand extends Command {
 			
 			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true, null);
 			if (localTripleStoreUrl != null && localTripleStoreUrl.trim().compareTo("") != 0) {
-				String url = RESTserverAddress + "/R2RMLMapping/local/" + modelFileName;
+				UriBuilder builder = UriBuilder.fromPath(modelFileName);
+				String url = RESTserverAddress + "/R2RMLMapping/local/" + builder.build().toString();
 				SaveR2RMLModelCommandFactory factory = new SaveR2RMLModelCommandFactory();
 				SaveR2RMLModelCommand cmd = factory.createCommand(workspace, url, localTripleStoreUrl, graphName, "URL");
 				cmd.doIt(workspace);
