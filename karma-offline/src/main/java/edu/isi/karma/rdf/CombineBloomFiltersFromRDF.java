@@ -41,7 +41,7 @@ public class CombineBloomFiltersFromRDF {
 	static String filepath;
     static String modelurl;
     static String context;
-    static String predicateURI;
+    static String predicateURI = "http://isi.edu/integration/karma/dev#hasBloomFilter";
 	public static void main(String[] args) throws IOException, KarmaException {
 		Group options = createCommandLineOptions();
         Parser parser = new Parser();
@@ -62,7 +62,6 @@ public class CombineBloomFiltersFromRDF {
         if (filepath == null || modelurl == null || context == null)
         	return;
 		File file = new File(filepath);
-		predicateURI = null;
 		Map<String, BloomFilterWorker> workers = new HashMap<String, BloomFilterWorker>();
 		Map<String, KR2RMLBloomFilter> bfs = new HashMap<String, KR2RMLBloomFilter>();
 		long start = System.currentTimeMillis();
@@ -80,7 +79,7 @@ public class CombineBloomFiltersFromRDF {
 						String object = st.getObject().toString();
 						String predicate = st.getPredicate().toString();
 						if (predicate.contains("hasBloomFilter")) {
-							predicateURI = predicate;
+							//predicateURI = predicate;
 							BloomFilterWorker worker = workers.get(subject);
 							if (worker == null) {
 								worker = new BloomFilterWorker();
@@ -105,7 +104,7 @@ public class CombineBloomFiltersFromRDF {
 			Set<String> triplemaps = bfs.keySet();
 			Map<String, String> bloomfilterMapping = new HashMap<String, String>();
 			bloomfilterMapping.putAll(utilObj.getBloomFiltersForMaps(modelurl, context, triplemaps));
-			updateTripleStore(bfs, bloomfilterMapping);
+			updateTripleStore(bfs, bloomfilterMapping, modelurl, context);
 			System.out.println("process time: " + (System.currentTimeMillis() - start));
 			Map<String, String> verification = new HashMap<String, String>();
 			verification.putAll(utilObj.getBloomFiltersForMaps(modelurl, context, triplemaps));
@@ -131,13 +130,13 @@ public class CombineBloomFiltersFromRDF {
 				}
 			}
 			if (!verify) {
-				updateTripleStore(bfs, verification);
+				updateTripleStore(bfs, verification, modelurl, context);
 			}
 		}
 
 	}
 	
-	private static void updateTripleStore(Map<String, KR2RMLBloomFilter> bfs, Map<String, String> bloomfilterMapping) throws KarmaException, IOException {
+	public static void updateTripleStore(Map<String, KR2RMLBloomFilter> bfs, Map<String, String> bloomfilterMapping, String modelurl, String context) throws KarmaException, IOException {
 		TripleStoreUtil utilObj = new TripleStoreUtil();
 		Set<String> triplemaps = bfs.keySet();
 		for (String tripleUri : triplemaps) {
