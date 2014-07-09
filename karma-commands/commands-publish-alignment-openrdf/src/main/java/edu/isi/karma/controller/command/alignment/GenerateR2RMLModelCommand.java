@@ -48,12 +48,12 @@ import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
@@ -68,7 +68,6 @@ public class GenerateR2RMLModelCommand extends Command {
 	private String worksheetName;
 	private String tripleStoreUrl;
 	private String graphContext;
-	private String localTripleStoreUrl;
 	private String RESTserverAddress;
 	private static Logger logger = LoggerFactory.getLogger(GenerateR2RMLModelCommand.class);
 
@@ -80,12 +79,11 @@ public class GenerateR2RMLModelCommand extends Command {
 		rdfPrefix, rdfNamespace, modelSparqlEndPoint
 	}
 
-	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String localTripleStoreUrl, String context) {
+	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String context) {
 		super(id);
 		this.worksheetId = worksheetId;
 		this.tripleStoreUrl = url;
 		this.graphContext = context;
-		this.localTripleStoreUrl = localTripleStoreUrl;
 	}
 
 	public String getTripleStoreUrl() {
@@ -185,9 +183,21 @@ public class GenerateR2RMLModelCommand extends Command {
 
 		try {
 			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
-			JSONArray history = generateGraph(workspace);
+			CommandHistory history = workspace.getCommandHistory();
+			List<Command> commands = consolidateSubmitEditPyTransform(getCommandsInHistory(history._getHistory()), workspace);
+			JSONArray refinedhistory = new JSONArray();
+			for (Command refined : commands)
+				refinedhistory.put(history.getCommandJSON(workspace, refined));
+			Set<String> inputColumns = generateGraph(commands);
+			JSONArray array = new JSONArray();
+			for (String hNodeId : inputColumns) {
+				HNode hnode = workspace.getFactory().getHNode(hNodeId);
+				JSONArray hNodeRepresentation = hnode.getJSONArrayRepresentation(workspace.getFactory());
+				array.put(hNodeRepresentation);
+			}
+			System.out.println(array.toString(4));
 			System.out.println(history);
-			fileSaver.saveAlignment(alignment, history, modelFileLocalPath);
+			fileSaver.saveAlignment(alignment, refinedhistory, modelFileLocalPath);
 
 			// Write the model to the triple store
 			//TripleStoreUtil utilObj = new TripleStoreUtil();
@@ -203,15 +213,15 @@ public class GenerateR2RMLModelCommand extends Command {
 			}
 
 			boolean result = true;//utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true, null);
-			if (localTripleStoreUrl != null && localTripleStoreUrl.trim().compareTo("") != 0) {
+			if (tripleStoreUrl != null && tripleStoreUrl.trim().compareTo("") != 0) {
 				String url = RESTserverAddress + "/R2RMLMapping/local/" + modelFileName;
 				SaveR2RMLModelCommandFactory factory = new SaveR2RMLModelCommandFactory();
-				SaveR2RMLModelCommand cmd = factory.createCommand(workspace, url, localTripleStoreUrl, graphName, "URL");
+				SaveR2RMLModelCommand cmd = factory.createCommand(workspace, url, tripleStoreUrl, graphName, "URL");
 				cmd.doIt(workspace);
 				result &= cmd.getSuccessful();
 				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelUrl, url);
 				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelContext, graphName);
-				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelRepository, localTripleStoreUrl);
+				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelRepository, tripleStoreUrl);
 			}
 			if (result) {
 				logger.info("Saved model to triple store");
@@ -263,12 +273,8 @@ public class GenerateR2RMLModelCommand extends Command {
 		}
 	}
 
-	private JSONArray generateGraph(Workspace workspace) {
-		CommandHistory history = workspace.getCommandHistory();
-		List<Command> commands = consolidateSubmitEditPyTransform(getCommandsInHistory(history._getHistory()), workspace);
-		JSONArray refinedhistory = new JSONArray();
-		for (Command refined : commands)
-			refinedhistory.put(history.getCommandJSON(workspace, refined));
+	private Set<String> generateGraph(List<Command> commands) {
+		
 		Map<Command, List<Command> > dag = new HashMap<Command, List<Command>>();
 		Map<String, List<Command> > outputMapping = new HashMap<String, List<Command> >();
 		for (Command command : commands) {
@@ -315,7 +321,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		}
 		System.out.println(inputColumns);
 		System.out.println("breakpoint!");
-		return refinedhistory;
+		return inputColumns;
 	}
 	
 	

@@ -352,8 +352,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	    info["worksheetId"] = worksheetId;
 	    info["workspaceId"] = $.workspaceGlobalInformation.id;
 	    info["command"] = "GenerateR2RMLModelCommand";
-        info['tripleStoreUrl'] = $('#txtModel_URL').text();
-        info['localTripleStoreUrl'] = $('#txtModel_URL').text();
+      info['tripleStoreUrl'] = $('#txtModel_URL').text();
 	    showLoading(info["worksheetId"]);
 	    var returned = $.ajax({
 	        url: "RequestController",
