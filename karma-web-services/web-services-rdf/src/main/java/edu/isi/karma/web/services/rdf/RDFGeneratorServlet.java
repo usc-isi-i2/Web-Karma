@@ -1,24 +1,30 @@
 package edu.isi.karma.web.services.rdf;
 
-import java.io.IOException;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-
-public class RDFGeneratorServlet extends HttpServlet{
+@Path("/hello")
+public class RDFGeneratorServlet{
 
 	/**
 	 * 
-	 */
+	 
 	private static final long serialVersionUID = -979319404654953710L;
 	
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 				response.getWriter().println("Hello world Germany!");
 	
+	}*/
+	
+	
+	@GET
+	@Path("/world")
+	public Response getMsg ()
+	{
+		String output = "Jersey says Hello World";
+		return Response.status(200).entity(output).build();
 	}
 
 }

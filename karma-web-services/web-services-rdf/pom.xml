@@ -11,6 +11,14 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>web-services-rdf</artifactId>		
+    <artifactId>web-services-rdf</artifactId>	
+    
+    <dependencies>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>1.8</version>
+        </dependency>
+    </dependencies>	
 
 </project>
