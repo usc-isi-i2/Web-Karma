@@ -50,23 +50,23 @@ function parse(data) {
     /* Always add the charts from cleaning service in end, so pushing that CleaningServiceUpdate in the end of updates array (if present) */
     // Identify the index
     var cleaningUpdates = new Array();
+    
     var dataElements = new Array();
     $.each(data["elements"], function(i, element) {
     	if(element["updateType"] == "UISettings") {
     		$.workspaceGlobalInformation.UISettings = element["settings"];
     	} else if(element["updateType"] == "WorksheetCleaningUpdate") {
-        	cleaningUpdates.push(element);
+        	cleaningUpdates[element["worksheetId"]] = element;
         } else {
         	dataElements.push(element);
         }
     });
     data["elements"] = dataElements;
     // Move cleaning updates to the end
-    $.each(cleaningUpdates, function(i, update) {
-    	data["elements"].push(update);
-    });
-   
-
+    for (key in cleaningUpdates) {
+    	data["elements"].push(cleaningUpdates[key]);
+    }
+    
     // Loop through each update from the server and take required action for the GUI
     $.each(data["elements"], function(i, element) {
         if(element["updateType"] == "WorksheetListUpdate") {
@@ -76,14 +76,149 @@ function parse(data) {
                 if($("div#" + worksheet["worksheetId"]).length == 0) {
                     var mainDiv = $("<div>").attr("id", worksheet["worksheetId"]).addClass("Worksheet");
                     mainDiv.data("isCollapsed", worksheet["isCollapsed"]);
-
                     // Div for adding title of that worksheet
                     var titleDiv = $("<div>").addClass("WorksheetTitleDiv ui-corner-top").mouseleave(function() {
                         // Hiding the option buttons for the heading and the data cell
                         $("div#tableCellMenuButtonDiv").hide();
                         $("div#columnHeadingMenuButtonDiv").hide();
                     });
+                    var headerDiv = $("<div>").addClass("propertiesHeader");
+                    var label1 = $("<label>").html("Prefix:&nbsp;");
+                    var prefixLabel = $("<span>").text("s")
+                                .addClass("edit")
+                                .attr("id", "txtPrefix_" + worksheet["worksheetId"])
+                                .editable({
+                                    type: 'text',
+                                    pk: 1,
+                                    savenochange: true, 
+                                    success: function(response, newValue) {
+                                        console.log("Set new value:" + newValue);
+                                        prefixLabel.text(newValue);
+                                        var worksheetProps = new Object();
+                                        worksheetProps["hasPrefix"] = true;
+                                        worksheetProps["hasBaseURI"] = false;
+                                        worksheetProps["prefix"] = newValue;
+                                        worksheetProps["graphName"] = "";
+                                        worksheetProps["hasServiceProperties"] = false;                                    
+                                        var info = new Object();
+                                        info["workspaceId"] = $.workspaceGlobalInformation.id;
+                                        info["command"] = "SetWorksheetPropertiesCommand";
 
+                                        var newInfo = [];   // for input parameters
+                                        newInfo.push(getParamObject("worksheetId", worksheet["worksheetId"] ,"worksheetId"));
+                                        newInfo.push(getParamObject("properties", worksheetProps, "other"));
+                                        info["newInfo"] = JSON.stringify(newInfo);
+
+                                        var returned = $.ajax({
+                                            url: "RequestController",
+                                            type: "POST",
+                                            data : info,
+                                            dataType : "json",
+                                            async: false,
+                                            complete :
+                                            function (xhr, textStatus) {
+                                                var json = $.parseJSON(xhr.responseText);
+                                                parse(json);
+                                            },
+                                            error :
+                                                function (xhr, textStatus) {
+                                                    $.sticky("Error occurred while setting properties!");
+                                                }
+                                            });
+
+                                },
+                                title: 'Enter Prefix'
+                            }
+                        );
+                    headerDiv.append(label1);
+                    headerDiv.append(prefixLabel);
+                    
+                    var sep = $("<span>").html("&nbsp;|&nbsp;");
+                    var label1 = $("<label>").html("Base URI:&nbsp;");
+                    var baseURILabel = $("<span>")
+                                .text("http://localhost:8080/source/")
+                                .addClass("edit")
+                                .attr("id", "txtBaseURI_" + worksheet["worksheetId"])
+                                .editable({
+                                    type: 'text',
+                                    pk: 1,
+                                    savenochange: true, 
+                                    success: function(response, newValue) {
+                                        console.log("Set new value:" + newValue);
+                                        baseURILabel.text(newValue);
+                                        var worksheetProps = new Object();
+                                        worksheetProps["hasPrefix"] = false;
+                                        worksheetProps["hasBaseURI"] = true;
+                                        worksheetProps["baseURI"] = newValue;
+                                        worksheetProps["graphName"] = "";
+                                        worksheetProps["hasServiceProperties"] = false;                                    
+                                        var info = new Object();
+                                        info["workspaceId"] = $.workspaceGlobalInformation.id;
+                                        info["command"] = "SetWorksheetPropertiesCommand";
+
+                                        var newInfo = [];   // for input parameters
+                                        newInfo.push(getParamObject("worksheetId", worksheet["worksheetId"] ,"worksheetId"));
+                                        newInfo.push(getParamObject("properties", worksheetProps, "other"));
+                                        info["newInfo"] = JSON.stringify(newInfo);
+
+                                        var returned = $.ajax({
+                                            url: "RequestController",
+                                            type: "POST",
+                                            data : info,
+                                            dataType : "json",
+                                            async: false,
+                                            complete :
+                                            function (xhr, textStatus) {
+                                                var json = $.parseJSON(xhr.responseText);
+                                                parse(json);
+                                            },
+                                            error :
+                                                function (xhr, textStatus) {
+                                                    $.sticky("Error occurred while setting properties!");
+                                                }
+                                            });
+
+                                },
+                                title: 'Enter Base URI'
+                            }
+                        );
+                    
+                    headerDiv.append(sep);
+                    headerDiv.append(label1);
+                    headerDiv.append(baseURILabel);
+                    
+                    var worksheetProps = new Object();
+                    worksheetProps["hasPrefix"] = true;
+                    worksheetProps["prefix"] = "s";
+                    worksheetProps["hasBaseURI"] = true;
+                    worksheetProps["baseURI"] = "http://localhost:8080/source/";
+                    worksheetProps["graphName"] = "";
+                    worksheetProps["hasServiceProperties"] = false;                                    
+                    var info = new Object();
+                    info["workspaceId"] = $.workspaceGlobalInformation.id;
+                    info["command"] = "SetWorksheetPropertiesCommand";
+
+                    var newInfo = [];   // for input parameters
+                    newInfo.push(getParamObject("worksheetId", worksheet["worksheetId"] ,"worksheetId"));
+                    newInfo.push(getParamObject("properties", worksheetProps, "other"));
+                    info["newInfo"] = JSON.stringify(newInfo);
+
+                    var returned = $.ajax({
+                        url: "RequestController",
+                        type: "POST",
+                        data : info,
+                        dataType : "json",
+                        async: false,
+                        complete :
+                            function (xhr, textStatus) {
+                                var json = $.parseJSON(xhr.responseText);
+                                parse(json);
+                            },
+                            error :
+                            function (xhr, textStatus) {
+                                $.sticky("Error occurred while setting properties!");
+                            }
+                    });
                     var mapDiv = $("<div>").addClass("toggleMapView");
                     if(googleEarthEnabled) {
                     	mapDiv
@@ -140,7 +275,7 @@ function parse(data) {
                             )
                         );
                     mainDiv.append(titleDiv);
-
+                    mainDiv.append(headerDiv);
                     // Add the table (if it does not exists)
                     var tableDiv = $("<div>").attr("id", worksheet["worksheetId"] + "TableDiv").addClass("TableDiv").mouseleave(function() {
                         $("div#tableCellMenuButtonDiv").hide();
@@ -408,6 +543,17 @@ function parse(data) {
         else if(element["updateType"] == "SaveCollection") {
             // Remove existing link if any
             $.sticky("R2RML Model Collection saved");
+        }
+        else if(element["updateType"] == "SetWorksheetProperties") {
+            // Remove existing link if any
+            console.log(element);
+            if (element["prefix"]) {
+                $("#txtPrefix_" + element["worksheetId"]).text(element["prefix"]);
+            }
+            if (element["baseURI"]) {
+                $("#txtBaseURI_" + element["worksheetId"]).text(element["baseURI"]);
+            }
+
         }
         else if(element["updateType"] == "SaveModel") {
             // Remove existing link if any

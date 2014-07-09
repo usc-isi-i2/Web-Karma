@@ -238,7 +238,7 @@ public class TripleStoreUtil {
 		return false;
 	}
 	
-	public Map<String, List<String>> getObjectsForSubjectsAndPredicates(String tripleStoreURL, String context, List<String> subjects, List<String> predicates, List<String> otherClasses) throws KarmaException
+	public Map<String, List<String>> getObjectsForSubjectsAndPredicates(String tripleStoreURL, String context, List<String> subjects, List<String> predicates, List<String> otherClasses, String sameAsProperty) throws KarmaException
 	{
 	
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
@@ -257,7 +257,6 @@ public class TripleStoreUtil {
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			query.append("BASE <http://lod.isi.edu/>\n");
 			query.append("SELECT ?s ?p ?o ?filteredtype\n");			
 			injectContext(context, query);
 			query.append("{\n");
@@ -279,17 +278,47 @@ public class TripleStoreUtil {
 				query.append("{\n");
 				predicate = predicateIterator.next();
 				otherClass = otherClassIterator.next();
-				query.append("?s ");
-				formatURI(predicate, query);
-				query.append(" ?o .\n");
+
 				if(!otherClass.trim().isEmpty())
 				{
 					query.append("BIND ( ");
 					formatURI(otherClass, query);
-					
 					query.append(" AS ?filteredtype )\n");
-					query.append("?o a ?filteredtype .\n");
 					
+				}
+				query.append("BIND ( ");
+				formatURI(predicate, query);
+				query.append(" AS ?p )\n");
+				query.append("{\n");
+				query.append("?s ");
+				formatURI(predicate, query);
+				query.append(" ?o .\n");
+				
+				query.append("}\n");
+				if(sameAsProperty != null && !sameAsProperty.isEmpty())
+				{
+					query.append("UNION\n");
+					query.append("{\n");
+					query.append("?s ");
+					formatURI(sameAsProperty, query);
+					query.append("?sprime .\n");
+					query.append("?sprime ");
+					formatURI(predicate, query);
+					query.append(" ?o .\n");
+					query.append("}\n");
+					query.append("UNION\n");
+					query.append("{\n");
+					query.append("?sprime ");
+					formatURI(sameAsProperty, query);
+					query.append("?s .\n");
+					query.append("?sprime ");
+					formatURI(predicate, query);
+					query.append(" ?o .\n");
+					query.append("}\n");
+				}
+				if(!otherClass.trim().isEmpty())
+				{
+					query.append("?o a ?filteredtype .\n");
 				}
 				query.append("}\n");
 				if(predicateIterator.hasNext() && otherClassIterator.hasNext())
@@ -297,7 +326,6 @@ public class TripleStoreUtil {
 					query.append("UNION \n");
 				}
 			}
-			query.append("?s ?p ?o .\n");
 
 			query.append("}\n");
 			
@@ -312,7 +340,6 @@ public class TripleStoreUtil {
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					tripleStoreURL, null, "application/sparql-results+json",
 					formparams);
-
 			if (responseString != null) {
 				JSONObject models = new JSONObject(responseString);
 				JSONArray values = models.getJSONObject("results")
@@ -339,7 +366,7 @@ public class TripleStoreUtil {
 		return results;
 	}
 	
-	public Map<String, List<String>> getSubjectsForPredicatesAndObjects(String tripleStoreURL, String context, List<String> subjects, List<String> predicates, List<String> otherClasses) throws KarmaException
+	public Map<String, List<String>> getSubjectsForPredicatesAndObjects(String tripleStoreURL, String context, List<String> subjects, List<String> predicates, List<String> otherClasses, String sameAsPredicate) throws KarmaException
 	{
 	
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
@@ -358,7 +385,6 @@ public class TripleStoreUtil {
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			query.append("BASE <http://lod.isi.edu/>\n");
 			query.append("SELECT ?s ?p ?o ?filteredtype\n");			
 			injectContext(context, query);
 			query.append("{\n");
@@ -380,25 +406,48 @@ public class TripleStoreUtil {
 				query.append("{\n");
 				predicate = predicateIterator.next();
 				otherClass = otherClassIterator.next();
-				query.append("?s ");
+				query.append("BIND ( ");
 				formatURI(predicate, query);
-				query.append(" ?o .\n");
+				query.append(" AS ?p )\n");
 				if(!otherClass.trim().isEmpty())
 				{
 					query.append("BIND ( ");
 					formatURI(otherClass, query);
-					
 					query.append(" AS ?filteredtype )\n");
+					
+				}
+				query.append("{\n");
+				query.append("?s ?p ?o .\n");
+				query.append("}\n");
+				if(sameAsPredicate != null && !sameAsPredicate.isEmpty())
+				{
+					query.append("UNION \n");
+					query.append("{\n");
+					query.append("?oprime ");
+					query.append(sameAsPredicate);
+					query.append(" ?o .\n");
+					query.append("?s ?p ?oprime .\n");
+					query.append("}\n");
+					query.append("UNION \n");
+					query.append("{\n");
+					query.append("?o ");
+					query.append(sameAsPredicate);
+					query.append(" ?oprime .\n");
+					query.append("?s ?p ?oprime .\n");
+					query.append("}\n");
+				}
+				if(!otherClass.trim().isEmpty())
+				{
 					query.append("?s a ?filteredtype .\n");
 					
 				}
+				
 				query.append("}\n");
 				if(predicateIterator.hasNext() && otherClassIterator.hasNext())
 				{
 					query.append("UNION \n");
 				}
 			}
-			query.append("?s ?p ?o .\n");
 
 			query.append("}\n");
 			

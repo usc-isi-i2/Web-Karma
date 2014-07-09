@@ -27,6 +27,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,11 @@ public class CSVFileExport {
 		this.worksheet = worksheet;
 	}
 	public String publishCSV() throws FileNotFoundException {
-		String outputFile = "publish/CSV/" + worksheet.getTitle() + ".csv";
+		String filename = worksheet.getTitle() + ".csv";
+		String outputFile = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  
+				filename;
+		String relativeFilename = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_RELATIVE_DIR) +  
+				filename;
 		logger.info("CSV file exported. Location:"
 				+ outputFile);
 		HashMap<String, String> modeledColumnTable = new HashMap<String, String>();
@@ -91,7 +96,7 @@ public class CSVFileExport {
 	        Writer outUTF8=null;
 			try {
 				outUTF8 = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +outputFile), "UTF8"));
+						new FileOutputStream(outputFile), "UTF8"));
 				outUTF8.append(sb.toString());
 	    		outUTF8.flush();
 	    		outUTF8.close();
@@ -102,6 +107,6 @@ public class CSVFileExport {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return outputFile;
+		return relativeFilename;
 	}
 }

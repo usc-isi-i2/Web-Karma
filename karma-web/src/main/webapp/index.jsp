@@ -120,6 +120,14 @@ and related projects, please see: http://www.isi.edu/integration
 				color: #cccccc;
 			}
 			
+			.table-no-border td {
+			    border-top: 0 none;
+			}
+
+			.table-no-border > thead > tr > th, .table > tbody > tr > th, .table-no-border > tfoot > tr > th, .table > thead > tr > td, .table-no-border > tbody > tr > td, .table-no-border > tfoot > tr > td {
+			    border-top: 0px;
+			}
+
 		</style>
 	
 	</head>
@@ -150,9 +158,11 @@ and related projects, please see: http://www.isi.edu/integration
 		                  <li><a href="#" class="fileinput-button"><form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form></a></li>
 		              </ul>
 		            </li>
-		            <li><a href="#" id="resetButton" data-html='true' title='Delete all saved files,<br/>use with care!' data-toggle='tooltip' data-placement='bottom'>Reset ...</a></li>
+		            
 		            <li><a href="#" id="modelManagerButton" data-html='true' data-toggle='tooltip' data-placement='bottom'>Manage Models</a></li>
 
+					<li><a href="#" id="resetButton" data-html='true' title='Delete all saved files,<br/>use with care!' data-toggle='tooltip' data-placement='bottom'>Reset ...</a></li>
+					
 		            <li>
 		            		<div class="span5 fileupload-progress fade">
 								<!-- The global progress bar -->
@@ -223,19 +233,21 @@ and related projects, please see: http://www.isi.edu/integration
 	        <p class="text-muted">
 	        	<div class="row">
 	        		<div class="col-sm-4">Karma Home: <span id="karmaHome"><%=ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></span></div>
+	        		<div class="col-sm-4">
+	        			<div class="form-group">
+							<label for="txtModel_URL">Model Endpoint: </label>
+							<label class="edit" id="txtModel_URL"></label>
+						</div>
+	        		</div>
+	        		<div class="col-sm-4">
+	        			<div class="form-group">
+							<label for="txtData_URL">Data Endpoint: </label>
+							<label class="edit" id="txtData_URL"></label>
+						</div>
+	        		</div>
 	        	</div>
 	        </p>
 	      </div>
-	      <div class="container">
-	      	<div class="form-group" style="float:left; width: 500px; padding-right: 10px;">
-										<label for="txtModel_URL">Model Repository Endpoint</label>
-										<label class="edit" id="txtModel_URL"></label>
-					</div>
-		    	<div class="form-group" style="float:left; width: 500px; padding-left: 10px;">
-								<label for="txtData_URL">Data Repository Endpoint</label>
-								<label class="edit" id="txtData_URL"></label>
-					</div>
-				</div>
 	    </div>
     
         <div id="ScrollHeadersPlaceholder"></div>

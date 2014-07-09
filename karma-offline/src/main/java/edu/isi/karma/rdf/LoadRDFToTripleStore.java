@@ -42,7 +42,7 @@ public class LoadRDFToTripleStore {
 		if (file.isDirectory()) {
 			File[] files = file.listFiles();
 			for (File f : files) {
-				System.out.println(FileUtils.getExtension(f.getName()));
+				System.out.println(f.getName());
 				if (FileUtils.getExtension(f.getName()) != null)
 					try {
 						util.saveToStore(f.getAbsolutePath(), tripleStoreUrl, context, false, null);

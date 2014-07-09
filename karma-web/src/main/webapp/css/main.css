@@ -94,3 +94,16 @@ body {
  	max-height: 400px;
  	overflow: auto;
  }
+
+ .propertiesHeader {
+    background: none repeat scroll 0 0 rgb(240, 240, 240);
+    padding: 2px 0 2px 10px;
+}
+
+.edit {
+	cursor: pointer;
+}
+
+.editable {
+	cursor: pointer;
+}
