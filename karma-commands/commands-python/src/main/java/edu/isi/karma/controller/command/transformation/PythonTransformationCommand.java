@@ -55,7 +55,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public abstract class PythonTransformationCommand extends WorksheetCommand {
 
-	final protected String transformationCode;
+	protected String transformationCode;
 	final protected String hNodeId;
 	final protected String errorDefaultValue;
 
@@ -99,7 +99,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 	protected void generateTransformedValues(Workspace workspace,
 			Worksheet worksheet, RepFactory f, HNode hNode,
 			JSONArray transformedRows, JSONArray errorValues, Integer limit)
-			throws JSONException {
+					throws JSONException {
 
 		PythonTransformationHelper pyHelper = new PythonTransformationHelper();
 		String trimmedTransformationCode = transformationCode.trim();
@@ -114,13 +114,13 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 				.getPythonTransformMethodDefinitionState(worksheet,
 						trimmedTransformationCode);
 
-		
+
 		logger.debug("Executing PyTransform\n" + transformMethodStmt);
 
 		// Prepare the Python interpreter
 		PythonInterpreter interpreter = new PythonInterpreter();
-		
-		
+
+
 		interpreter.exec(pyHelper.getImportStatements());
 		importUserScripts(interpreter);
 		interpreter.exec(pyHelper.getGetValueDefStatement());
@@ -136,9 +136,9 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		int counter = 0;
 		long starttime = System.currentTimeMillis();
 		// Go through all nodes collected for the column with given hNodeId
-		
+
 		interpreter.set("workspaceid", workspace.getId());
-		
+
 		PyCode py = interpreter.compile("transform(nodeid)");
 
 		int numRowsWithErrors = 0;
@@ -183,7 +183,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 	private void importUserScripts(PythonInterpreter interpreter) {
 		String dirpathString = ServletContextParameterMap
 				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
-		
+
 		if (dirpathString != null && dirpathString.compareTo("") != 0) {
 			File f = new File(dirpathString);
 			String[] scripts = f.list(new FilenameFilter(){
@@ -230,5 +230,9 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 	public String getTransformationCode() {
 		return transformationCode;
+	}
+
+	public void setTransformationCode(String transformationCode) {
+		this.transformationCode = transformationCode;
 	}
 }

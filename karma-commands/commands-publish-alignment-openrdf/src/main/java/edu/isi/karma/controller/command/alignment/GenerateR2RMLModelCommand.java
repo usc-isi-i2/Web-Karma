@@ -185,11 +185,12 @@ public class GenerateR2RMLModelCommand extends Command {
 
 		try {
 			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
-			generateGraph(workspace);
-			fileSaver.saveAlignment(alignment, modelFileLocalPath);
+			JSONArray history = generateGraph(workspace);
+			System.out.println(history);
+			fileSaver.saveAlignment(alignment, history, modelFileLocalPath);
 
 			// Write the model to the triple store
-			TripleStoreUtil utilObj = new TripleStoreUtil();
+			//TripleStoreUtil utilObj = new TripleStoreUtil();
 
 			// Get the graph name from properties
 			String graphName = worksheet.getMetadataContainer().getWorksheetProperties()
@@ -201,7 +202,7 @@ public class GenerateR2RMLModelCommand extends Command {
 				graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
 			}
 
-			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true, null);
+			boolean result = true;//utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true, null);
 			if (localTripleStoreUrl != null && localTripleStoreUrl.trim().compareTo("") != 0) {
 				String url = RESTserverAddress + "/R2RMLMapping/local/" + modelFileName;
 				SaveR2RMLModelCommandFactory factory = new SaveR2RMLModelCommandFactory();
@@ -262,9 +263,12 @@ public class GenerateR2RMLModelCommand extends Command {
 		}
 	}
 
-	private void generateGraph(Workspace workspace) {
+	private JSONArray generateGraph(Workspace workspace) {
 		CommandHistory history = workspace.getCommandHistory();
-		List<Command> commands = consolidateSubmitEditPyTransform(getCommandsInHistory(history._getHistory()));
+		List<Command> commands = consolidateSubmitEditPyTransform(getCommandsInHistory(history._getHistory()), workspace);
+		JSONArray refinedhistory = new JSONArray();
+		for (Command refined : commands)
+			refinedhistory.put(history.getCommandJSON(workspace, refined));
 		Map<Command, List<Command> > dag = new HashMap<Command, List<Command>>();
 		Map<String, List<Command> > outputMapping = new HashMap<String, List<Command> >();
 		for (Command command : commands) {
@@ -311,6 +315,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		}
 		System.out.println(inputColumns);
 		System.out.println("breakpoint!");
+		return refinedhistory;
 	}
 	
 	
@@ -344,23 +349,34 @@ public class GenerateR2RMLModelCommand extends Command {
 		return refinedCommands;
 	}
 
-	private List<Command> consolidateSubmitEditPyTransform(List<Command> commands) {
+	private List<Command> consolidateSubmitEditPyTransform(List<Command> commands, Workspace workspace) {
 		List<Command> refinedCommands = new ArrayList<Command>();
 		for (Command command : commands) {
 			if (command instanceof SubmitEditPythonTransformationCommand) {
 				Iterator<Command> itr = refinedCommands.iterator();
+				boolean flag = true;
 				while(itr.hasNext()) {
 					Command tmp = itr.next();
 					if (tmp.getOutputColumns().equals(command.getInputColumns()) && tmp instanceof SubmitPythonTransformationCommand) {
 						System.out.println("May Consolidate");
+						SubmitPythonTransformationCommand py = (SubmitPythonTransformationCommand)tmp;
+						SubmitEditPythonTransformationCommand edit = (SubmitEditPythonTransformationCommand)command;
+						JSONArray inputJSON = new JSONArray(py.getInputParameterJson());
+						HistoryJsonUtil.setArgumentValue("transformationCode", edit.getTransformationCode(), inputJSON);
+						py.setInputParameterJson(inputJSON.toString());
+						py.setTransformationCode(edit.getTransformationCode());
+						flag = false;
+						System.out.println(py.getInputParameterJson());
+						py.generateInputColumns(workspace);
 						//PlaceHolder
 					}
-					if (tmp.getInputColumns().equals(command.getInputColumns()) && tmp instanceof SubmitEditPythonTransformationCommand) {
+					if (tmp.getOutputColumns().equals(command.getInputColumns()) && tmp instanceof SubmitEditPythonTransformationCommand) {
 						System.out.println("Here");
 						itr.remove();
 					}
 				}
-				refinedCommands.add(command);
+				if (flag)
+					refinedCommands.add(command);
 			}
 			else
 				refinedCommands.add(command);

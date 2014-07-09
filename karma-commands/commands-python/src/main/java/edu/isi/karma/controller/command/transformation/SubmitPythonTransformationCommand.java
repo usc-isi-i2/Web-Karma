@@ -248,7 +248,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		return null;
 	}
 	
-	private void generateInputColumns(Workspace workspace) {
+	public void generateInputColumns(Workspace workspace) {
 		RepFactory factory = workspace.getFactory();
 		HNode hNode = factory.getHNode(hNodeId);
 		HTable ht = factory.getHTable(hNode.getHTableId());
