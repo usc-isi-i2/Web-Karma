@@ -91,7 +91,7 @@ public class AddSameAsToBloomFilters {
 			}
 		}
 		
-		CombineBloomFiltersFromRDF.updateTripleStore(mapping, serializedmapping, modelurl, null);
+		utilObj.updateTripleStoreWithBloomFilters(mapping, serializedmapping, modelurl, null);
 		
 	}
 	

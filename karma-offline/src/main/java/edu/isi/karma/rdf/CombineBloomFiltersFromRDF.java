@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -104,7 +102,7 @@ public class CombineBloomFiltersFromRDF {
 			Set<String> triplemaps = bfs.keySet();
 			Map<String, String> bloomfilterMapping = new HashMap<String, String>();
 			bloomfilterMapping.putAll(utilObj.getBloomFiltersForMaps(modelurl, context, triplemaps));
-			updateTripleStore(bfs, bloomfilterMapping, modelurl, context);
+			utilObj.updateTripleStoreWithBloomFilters(bfs, bloomfilterMapping, modelurl, context);
 			System.out.println("process time: " + (System.currentTimeMillis() - start));
 			Map<String, String> verification = new HashMap<String, String>();
 			verification.putAll(utilObj.getBloomFiltersForMaps(modelurl, context, triplemaps));
@@ -130,35 +128,10 @@ public class CombineBloomFiltersFromRDF {
 				}
 			}
 			if (!verify) {
-				updateTripleStore(bfs, verification, modelurl, context);
+				utilObj.updateTripleStoreWithBloomFilters(bfs, verification, modelurl, context);
 			}
 		}
 
-	}
-	
-	public static void updateTripleStore(Map<String, KR2RMLBloomFilter> bfs, Map<String, String> bloomfilterMapping, String modelurl, String context) throws KarmaException, IOException {
-		TripleStoreUtil utilObj = new TripleStoreUtil();
-		Set<String> triplemaps = bfs.keySet();
-		for (String tripleUri : triplemaps) {
-			KR2RMLBloomFilter bf = bfs.get(tripleUri);
-			String oldserializedBloomFilter = bloomfilterMapping.get(tripleUri);
-			if (oldserializedBloomFilter != null) {
-				KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
-				bf2.populateFromCompressedAndBase64EncodedString(oldserializedBloomFilter);
-				bf.or(bf2);
-			}
-			bfs.put(tripleUri, bf);
-		}
-		utilObj.deleteBloomFiltersForMaps(modelurl, context, triplemaps);
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		for (Entry<String, KR2RMLBloomFilter> entry : bfs.entrySet()) {
-			pw.print("<" + entry.getKey() + "> ");
-			pw.print("<" + predicateURI + "> ");
-			pw.println("\"" + entry.getValue().compressAndBase64Encode() + "\" . ");
-		}
-		pw.close();
-		utilObj.saveToStore(sw.toString(), modelurl, context, new Boolean(false), null);
 	}
 
 	private static Group createCommandLineOptions() {
