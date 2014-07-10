@@ -218,6 +218,7 @@ public class GenerateR2RMLModelCommand extends Command {
 				String url = RESTserverAddress + "/R2RMLMapping/local/" + modelFileName;
 				SaveR2RMLModelCommandFactory factory = new SaveR2RMLModelCommandFactory();
 				SaveR2RMLModelCommand cmd = factory.createCommand(workspace, url, tripleStoreUrl, graphName, "URL");
+				cmd.setInputColumns(array);
 				cmd.doIt(workspace);
 				result &= cmd.getSuccessful();
 				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelUrl, url);
