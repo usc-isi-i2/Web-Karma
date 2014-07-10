@@ -16,4 +16,13 @@
 	<modules>
 		<module>web-services-rdf</module>
 	</modules>
+	
+	<dependencies>
+	     <dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>karma-offline</artifactId>
+			<version>${project.version}</version>
+	   </dependency>
+	</dependencies>
+	
 </project>
