@@ -2054,17 +2054,19 @@ var AugmentDataDialog = (function() {
 
 				function init() {
 						//Initialize what happens when we show the dialog
-						var classes = getAllClasses(worksheetId);
-						var props = getAllDataProperties(worksheetId)
+						var classes = getAllClassesRaw(worksheetId);
+						var dataprops = getAllDataProperties(worksheetId);
+						var objprops = getAllObjectProperties(worksheetId);
 						$.each(classes, function(index, type) {
-							//console.log(type);
-							invertedClasses[type['uri']] = type['label'].substring(0, type['label'].indexOf(":"));
+							invertedClasses[type['uri']] = type['label'];
 						});
-						$.each(props, function(index, type) {
-							//console.log(type);
-							invertedClasses[type['uri']] = type['label'].substring(0, type['label'].indexOf(":"));
+						$.each(dataprops, function(index, type) {
+							invertedClasses[type['uri']] = type['label'];
 						});
-
+						$.each(objprops, function(index, type) {
+							invertedClasses[type['uri']] = type['label'];
+						});
+						//console.log(invertedClasses);
 						var dialogContent = $("#augmentDataDialogHeaders", dialog);
 						table = $("<table>")
 												.addClass("table table-striped table-condensed");
@@ -2091,7 +2093,7 @@ var AugmentDataDialog = (function() {
 						for (var i = 0; i < available.length; i++) {
 								var predicate = available[i]['predicate'];
 								if (invertedClasses[predicate] != undefined)
-									predicate = invertedClasses[predicate] + ":" + predicate.substring(predicate.lastIndexOf("/") + 1);
+									predicate = invertedClasses[predicate];
 								else
 									predicate = predicate.substring(predicate.lastIndexOf("/") + 1);
 								predicate = predicate.toLowerCase();
@@ -2099,7 +2101,7 @@ var AugmentDataDialog = (function() {
 								var otherClass = available[i]['otherClass'];
 								var incoming = available[i]['incoming'] === "true" ? "incoming" : "outgoing";
 								if (invertedClasses[otherClass] != undefined)
-									otherClass = invertedClasses[otherClass] + ":" + otherClass.substring(otherClass.lastIndexOf("/") + 1);
+									otherClass = invertedClasses[otherClass];
 								else
 									otherClass = otherClass.substring(otherClass.lastIndexOf("/") + 1);
 								otherClass = otherClass.toLowerCase();
@@ -2237,8 +2239,6 @@ var AugmentDataDialog = (function() {
 					var type = invertedClasses[columnDomain];
 					if (type == undefined) 
 						type = columnUri.substring(columnUri.lastIndexOf("/") + 1);
-					else
-					type = type + ":" + columnUri.substring(columnUri.lastIndexOf("/") + 1);
 					header.text("Augment data for " + type);
 					table.find("tr:gt(0)").remove();;
 					for (var i = 0; i < filtered.length; i++) {
@@ -2259,15 +2259,16 @@ var AugmentDataDialog = (function() {
 						td.append(checkbox);
 						tr.append(td);
 						var td = $("<td>");
-						var name = invertedClasses[predicate] == undefined ? "" : (invertedClasses[predicate] + ":");
+						var name = invertedClasses[predicate] == undefined ? predicate.substring(predicate.lastIndexOf("/") + 1) : invertedClasses[predicate];
 						var label = $("<span>")
-												.text(name + predicate.substring(predicate.lastIndexOf("/") + 1));
+												.text(name);
 						td.append(label);
 						tr.append(td);
 						var td = $("<td>");
-						name = invertedClasses[otherClass] == undefined ? "" : (invertedClasses[otherClass] + ":");
+						name = invertedClasses[otherClass] == undefined ? otherClass.substring(otherClass.lastIndexOf("/") + 1) : invertedClasses[otherClass];
+						name = name.replace(" (add)", "");
 						var label = $("<span>")
-												.text(name + otherClass.substring(otherClass.lastIndexOf("/") + 1));
+												.text(name);
 						td.append(label);
 						tr.append(td);
 						var td = $("<td>");
