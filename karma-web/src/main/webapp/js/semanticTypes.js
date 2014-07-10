@@ -1981,7 +1981,7 @@ var AugmentDataDialog = (function() {
 						tr.append(th);
 						
 						var th = $("<th>"); //.addClass("FileNameProperty");
-						var label = $("<label>").text("Predicate"); //.addClass("FileNameProperty");
+						var label = $("<label>").text("Property"); //.addClass("FileNameProperty");
 						th.append(label);
 						var label = $("<input>").text("")
 							.addClass("form-control")
@@ -1993,7 +1993,7 @@ var AugmentDataDialog = (function() {
 						tr.append(th);
 						
 						var th = $("<th>"); //.addClass("PublishTimeProperty");
-						var label = $("<label>").text("Classes"); //.addClass("PublishTimeProperty");
+						var label = $("<label>").text("Class"); //.addClass("PublishTimeProperty");
 						th.append(label);
 						var label = $("<input>").text("")
 						.addClass("form-control")
@@ -2005,7 +2005,7 @@ var AugmentDataDialog = (function() {
 						tr.append(th);
 						
 						var th = $("<th>"); //.addClass("URLProperty");
-						var label = $("<label>").text("Estimated Matches"); //.addClass("URLProperty");
+						var label = $("<label>").text("# Matches (approx)"); //.addClass("URLProperty");
 						th.append(label);
 						var label = $("<input>").text("")
 										.addClass("form-control")
@@ -2017,7 +2017,7 @@ var AugmentDataDialog = (function() {
 						tr.append(th);
 
 						var th = $("<th>"); //.addClass("URLProperty");
-						var label = $("<label>").text("Incoming/Outgoing"); //.addClass("URLProperty");
+						var label = $("<label>").text("Direction"); //.addClass("URLProperty");
 						th.append(label);
 						var searchBtn = $("<i>").addClass("glyphicon")
 										.addClass("glyphicon-search")
