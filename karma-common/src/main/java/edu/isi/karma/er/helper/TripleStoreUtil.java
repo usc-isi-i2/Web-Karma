@@ -76,7 +76,6 @@ public class TripleStoreUtil {
 	public static final String defaultWorkbenchUrl;
 	public static final String karma_model_repo = "karma_models";
 	public static final String karma_data_repo = "karma_data";
-	private static final String predicateURI = "http://isi.edu/integration/karma/dev#hasBloomFilter";
 	static {
 		String host = ServletContextParameterMap
 				.getParameterValue(ServletContextParameterMap.ContextParameter.JETTY_HOST);
@@ -1332,7 +1331,7 @@ public class TripleStoreUtil {
 		PrintWriter pw = new PrintWriter(sw);
 		for (Entry<String, KR2RMLBloomFilter> entry : bfs.entrySet()) {
 			pw.print("<" + entry.getKey() + "> ");
-			pw.print("<" + predicateURI + "> ");
+			pw.print("<" + Uris.KM_HAS_BLOOMFILTER + "> ");
 			pw.println("\"" + entry.getValue().compressAndBase64Encode() + "\" . ");
 		}
 		pw.close();
