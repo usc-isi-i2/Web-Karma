@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.json.JSONArray;
@@ -304,15 +305,15 @@ public class GenerateR2RMLModelCommand extends Command {
 			}					
 		}
 		
-//		for (Entry<Command, List<Command>> entry : dag.entrySet()) {
-//			Command key = entry.getKey();
-//			List<Command> value = entry.getValue();
-//			System.out.print(key.getCommandName() + "inputs: " + key.getInputColumns() + "outputs: " + key.getOutputColumns());
-//			System.out.print("=");
-//			for (Command command : value)
-//				System.out.print(command.getCommandName() + "inputs: " + command.getInputColumns() + "outputs: " + command.getOutputColumns());
-//			System.out.println();
-//		}
+		for (Entry<Command, List<Command>> entry : dag.entrySet()) {
+			Command key = entry.getKey();
+			List<Command> value = entry.getValue();
+			System.out.print(key.getCommandName() + "inputs: " + key.getInputColumns() + "outputs: " + key.getOutputColumns());
+			System.out.print("=");
+			for (Command command : value)
+				System.out.print(command.getCommandName() + "inputs: " + command.getInputColumns() + "outputs: " + command.getOutputColumns());
+			System.out.println();
+		}
 		Set<String> inputColumns = new HashSet<String>();
 		for (Command t : commands) {
 			if (t instanceof SetSemanticTypeCommand || t instanceof SetMetaPropertyCommand) {
@@ -355,7 +356,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		return refinedCommands;
 	}
 
-	private List<Command> consolidateSubmitEditPyTransform(List<Command> commands, Workspace workspace) {
+	private List<Command> consolidateSubmitEditPyTransform(List<Command> commands, Workspace workspace) throws CommandException {
 		List<Command> refinedCommands = new ArrayList<Command>();
 		for (Command command : commands) {
 			if (command instanceof SubmitEditPythonTransformationCommand) {
@@ -363,7 +364,7 @@ public class GenerateR2RMLModelCommand extends Command {
 				boolean flag = true;
 				while(itr.hasNext()) {
 					Command tmp = itr.next();
-					if (tmp.getOutputColumns().equals(command.getInputColumns()) && tmp instanceof SubmitPythonTransformationCommand) {
+					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && tmp instanceof SubmitPythonTransformationCommand) {
 						System.out.println("May Consolidate");
 						SubmitPythonTransformationCommand py = (SubmitPythonTransformationCommand)tmp;
 						SubmitEditPythonTransformationCommand edit = (SubmitEditPythonTransformationCommand)command;
@@ -373,10 +374,10 @@ public class GenerateR2RMLModelCommand extends Command {
 						py.setTransformationCode(edit.getTransformationCode());
 						flag = false;
 						System.out.println(py.getInputParameterJson());
-						py.generateInputColumns(workspace);
+						py.doIt(workspace);
 						//PlaceHolder
 					}
-					if (tmp.getOutputColumns().equals(command.getInputColumns()) && tmp instanceof SubmitEditPythonTransformationCommand) {
+					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && tmp instanceof SubmitEditPythonTransformationCommand) {
 						System.out.println("Here");
 						itr.remove();
 					}

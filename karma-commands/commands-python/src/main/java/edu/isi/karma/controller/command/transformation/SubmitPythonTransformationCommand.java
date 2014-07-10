@@ -46,15 +46,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class SubmitPythonTransformationCommand extends MutatingPythonTransformationCommand {
 	protected ICommand previousPythonTransformationCommand;
 	protected AddColumnCommand addColCmd;
 	protected ArrayList<String> originalColumnValues;
 	protected String pythonNodeId;
-	private Set<String> inputColumns;
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitPythonTransformationCommand.class);
 
@@ -63,7 +60,6 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
 		//logger.info("SubmitPythonTranformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
 		this.pythonNodeId = hNodeId;
-		inputColumns = new HashSet<String>();
 	}
 
 	@Override
@@ -95,7 +91,6 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		HTable hTable = hNode.getHTable(f);
 		String nodeId = hTable.getHNodeIdFromColumnName(newColumnName);
 		inputColumns.clear();
-		generateInputColumns(workspace);
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
 
@@ -246,24 +241,6 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		}
 
 		return null;
-	}
-	
-	public void generateInputColumns(Workspace workspace) {
-		RepFactory factory = workspace.getFactory();
-		HNode hNode = factory.getHNode(hNodeId);
-		HTable ht = factory.getHTable(hNode.getHTableId());
-		String pattern = "getValue\\(\"([^\"]*)\"\\)";
-		List<String> allMatches = new ArrayList<String>();
-		Matcher m = Pattern.compile(pattern)
-				.matcher(transformationCode);
-		while (m.find()) {
-			allMatches.add(m.group().replace("getValue(\"", "").replace("\")", ""));
-		}
-		for (String colName : allMatches) {
-			HNode hn = ht.getHNodeFromColumnName(colName);
-			if (hn != null)
-				inputColumns.add(hn.getId());
-		}
 	}
 
 	@Override

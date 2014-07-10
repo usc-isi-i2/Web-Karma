@@ -117,7 +117,7 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 	@Override
 	public Set<String> getInputColumns() {
 		Set<String> t = new HashSet<String>();
-		t.add(hNodeId);
+		t.addAll(inputColumns);
 		return t;
 	}
 	

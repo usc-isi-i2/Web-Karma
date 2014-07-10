@@ -26,7 +26,9 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,6 +60,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 	protected String transformationCode;
 	final protected String hNodeId;
 	final protected String errorDefaultValue;
+	protected Set<String> inputColumns;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(PythonTransformationCommand.class);
@@ -72,7 +75,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		this.transformationCode = transformationCode;
 		this.hNodeId = hNodeId;
 		this.errorDefaultValue = errorDefaultValue;
-
+		inputColumns = new HashSet<String>();
 		addTag(CommandTag.Transformation);
 	}
 
@@ -138,7 +141,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		// Go through all nodes collected for the column with given hNodeId
 
 		interpreter.set("workspaceid", workspace.getId());
-
+		interpreter.set("command", this);
 		PyCode py = interpreter.compile("transform(nodeid)");
 
 		int numRowsWithErrors = 0;
@@ -234,5 +237,9 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 	public void setTransformationCode(String transformationCode) {
 		this.transformationCode = transformationCode;
+	}
+	
+	public void addInputColumns(String hNodeId) {
+		inputColumns.add(hNodeId);
 	}
 }
