@@ -206,6 +206,13 @@ public class Alignment implements OntologyUpdateListener {
 		return null;
 	}
 	
+	public void deleteForcedInternalNode(String nodeId) {
+		Node node = getNodeById(nodeId);
+		if(node != null) {
+			this.graphBuilder.removeNode(node);
+		}
+	}
+	
 	// AddLink methods
 
 	public DataPropertyLink addDataPropertyLink(Node source, Node target, Label label, boolean partOfKey) {

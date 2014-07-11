@@ -14,19 +14,18 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.DefaultLink;
-import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Node;
 
 /**
- * Force Add a Node. This node need not be connected to anything in the Steiner Tree.
- * This is used for top-down modeling.
- * Nodes added using this command can be removed using the DeleteNodeCommand
+ * Delete a Node added by force using the AddNodeCommand
+ * These nodes do not get deleted automatically when a link is removed and need to be explicitly deleted
+ * using this command
  * @author dipsy
  *
  */
-public class AddNodeCommand extends Command {
+public class DeleteNodeCommand extends Command {
 	private String worksheetId;
-	private String nodeUri;
+	private String nodeId;
 	private String nodeLabel;
 	private String alignmentId;
 	
@@ -36,13 +35,12 @@ public class AddNodeCommand extends Command {
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 		
-	protected AddNodeCommand(String id, String worksheetId, String alignmentId, String uri, String label) {
+	protected DeleteNodeCommand(String id, String worksheetId, String alignmentId, String nodeId, String nodeLabel) {
 		super(id);
 		this.worksheetId = worksheetId;
 		this.alignmentId = alignmentId;
-		this.nodeUri = uri;
-		this.nodeLabel = label;
-		
+		this.nodeId = nodeId;
+		this.nodeLabel = nodeLabel;
 		addTag(CommandTag.Modeling);
 	}
 
@@ -53,7 +51,7 @@ public class AddNodeCommand extends Command {
 
 	@Override
 	public String getTitle() {
-		return "Add Node";
+		return "Delete Node";
 	}
 
 	@Override
@@ -80,7 +78,7 @@ public class AddNodeCommand extends Command {
 				.getGraph().clone();
 
 		try {
-			alignment.addForcedInternalNode(new Label(nodeUri));
+			alignment.deleteForcedInternalNode(nodeId);
 			alignment.align();
 		} catch (JSONException e) {
 			logger.error("Error adding Internal Node:" , e);
@@ -99,7 +97,5 @@ public class AddNodeCommand extends Command {
 		// Get the alignment update
 		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, oldAlignment);
 	}
-
-	
 
 }

@@ -570,6 +570,9 @@ public class GraphBuilder {
 			}
 		}
 		
+		if(node.isForceAddedByUser())
+			this.forcedAddedNodes.remove(node);
+		
 		if (!this.graph.removeVertex(node))
 			return false;
 		

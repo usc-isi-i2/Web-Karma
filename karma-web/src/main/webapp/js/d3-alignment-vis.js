@@ -506,7 +506,10 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .attr("x", function(d){ return this.getComputedTextLength()/2 * -1;})
         .on("click", function(d){
             if(d["nodeType"] == "InternalNode") {
-        		ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain,
+            	var nodeCategory = "";
+        		if(d.isForcedByUser)
+        			nodeCategory = "forcedAdded";
+        		ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain, nodeCategory,
         				$(svg).data("alignmentId"), d3.event);
             }
         })
@@ -553,7 +556,10 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .style("fill", function(d) { if(d.isForcedByUser) return "rgb(217,234,242)"; })
         .on("click", function(d){
            if(d["nodeType"] == "InternalNode") {
-        	   ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain,
+        	   var nodeCategory = "";
+       		   if(d.isForcedByUser)
+       			  nodeCategory = "forcedAdded";
+        	   ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain, nodeCategory,
         			   $(svg).data("alignmentId"), d3.event);
             }
         })
@@ -584,7 +590,11 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         })
         .on("click", function(d){
         	if(d["nodeType"] == "InternalNode") {
+        		var nodeCategory = "";
+        		if(d.isForcedByUser)
+        			nodeCategory = "forcedAdded";
         		ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain,
+        				nodeCategory,
         				$(svg).data("alignmentId"), d3.event);
             }
         })
