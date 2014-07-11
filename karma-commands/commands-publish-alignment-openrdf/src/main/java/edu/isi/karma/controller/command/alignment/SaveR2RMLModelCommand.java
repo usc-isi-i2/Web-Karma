@@ -39,6 +39,7 @@ public class SaveR2RMLModelCommand extends Command{
 	private String collection;
 	private String graphBaseUrl = "";
 	private boolean successful;
+	private JSONArray inputColumns;
 	private static Logger logger = LoggerFactory.getLogger(SaveR2RMLModelCommand.class);
 
 	protected SaveR2RMLModelCommand(String id, String modelUrl, String url, String context, String collection) {
@@ -48,6 +49,7 @@ public class SaveR2RMLModelCommand extends Command{
 		this.graphContext = context;
 		this.collection = collection;
 		successful = false;
+		inputColumns = new JSONArray();
 	}
 
 
@@ -160,6 +162,10 @@ public class SaveR2RMLModelCommand extends Command{
 	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
+	
+	public void setInputColumns(JSONArray inputs) {
+		inputColumns = inputs;
+	}
 
 	private boolean saveMapping(String modelUrl, String graphContext) {
 		try {
@@ -177,6 +183,8 @@ public class SaveR2RMLModelCommand extends Command{
 			for(Resource r: resList)
 			{
 				model.add(r, model.getProperty(Uris.OWL_SAMEAS_URI), model.getResource(url.toString()));
+				if (inputColumns.length() > 0)
+					model.add(r, model.getProperty(Uris.KM_HAS_INPUTCOLUMNS), inputColumns.toString());
 			}
 			model.write(test,"TTL");
 			model.close();

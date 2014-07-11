@@ -272,7 +272,6 @@ var modelManagerDialog = (function() {
 			$(".modelManagerCheckbox").each(function() {
 				$(this).prop("checked", checked);
 			});        	
-
 		}
 		
 		function getHeaderRow() {
@@ -352,6 +351,8 @@ var modelManagerDialog = (function() {
 			info["command"] = "FetchR2RMLModelsListCommand";
 			info['tripleStoreUrl'] = $('#txtModel_URL').html();
 			info['graphContext'] = "";
+			info['worksheetId'] = "";
+			
 			var returned = $.ajax({
 				url: "RequestController",
 				type: "POST",

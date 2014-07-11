@@ -35,6 +35,7 @@ import edu.isi.karma.rep.*;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -42,14 +43,15 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SubmitPythonTransformationCommand extends MutatingPythonTransformationCommand {
 	protected ICommand previousPythonTransformationCommand;
 	protected AddColumnCommand addColCmd;
 	protected ArrayList<String> originalColumnValues;
 	protected String pythonNodeId;
-	
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitPythonTransformationCommand.class);
 
@@ -79,7 +81,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	public CommandType getCommandType() {
 		return CommandType.undoable;
 	}
-	
+
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
@@ -88,10 +90,10 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		String hTableId = hNode.getHTableId();
 		HTable hTable = hNode.getHTable(f);
 		String nodeId = hTable.getHNodeIdFromColumnName(newColumnName);
-		
+		inputColumns.clear();
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
-		
+
 		// Invoke the add column command
 		logger.debug("SubmitPythonTranformation: " + hNodeId + ":" + nodeId);
 		try
@@ -100,9 +102,9 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			if(null != newColumnNameHNode ) //Column name already exists
 			{
 				pythonNodeId = nodeId;
-				
+
 				saveOrResetColumnValues(workspace, ctrl);
-			
+
 				logger.debug("SubmitPythonTranformation: Tranform Existing Column" + hNodeId + ":" + nodeId);
 				UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
 						newColumnNameHNode, ctrl, nodeId);
@@ -110,7 +112,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			} else {
 				saveColumnValues(workspace);
 			}
-			
+
 			if (null == addColCmd) {
 				JSONArray addColumnInput = getAddColumnCommandInputJSON(hTableId);
 				AddColumnCommandFactory addColumnFac = (AddColumnCommandFactory) ctrl
@@ -125,7 +127,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			{
 				addColCmd.doIt(workspace);
 			}
-			
+
 		}
 		catch (Exception e)
 		{
@@ -135,7 +137,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		try
 		{
 			UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
-				hNode, ctrl, addColCmd.getNewHNodeId());
+					hNode, ctrl, addColCmd.getNewHNodeId());
 			return c;
 		}
 		catch (Exception e )
@@ -156,9 +158,9 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		} else {
 			saveColumnValues(workspace);
 		}
-		
+
 	}
-	
+
 	private JSONArray getAddColumnCommandInputJSON(String hTableId) throws JSONException {
 		JSONArray arr = new JSONArray();
 		arr.put(CommandInputJSONUtil.createJsonObject(AddColumnCommandFactory.Arguments.newColumnName.name(), newColumnName, ParameterType.other));
@@ -180,15 +182,15 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 					//Previous python command exists, lets reset the values, and then start again
 					prevCommand.resetColumnValues(workspace);
 				}
-					return previousPythonTransformationCommand.doIt(workspace);
-				} catch (CommandException e) {
-					return new UpdateContainer(new ErrorUpdate("Error occured while  applying previous Python transformation to the column."));
-				
-				}
+				return previousPythonTransformationCommand.doIt(workspace);
+			} catch (CommandException e) {
+				return new UpdateContainer(new ErrorUpdate("Error occured while  applying previous Python transformation to the column."));
+
+			}
 		} else if(this.originalColumnValues != null) {
 			resetColumnValues(workspace);
 		}
-		
+
 		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
 		// TODO is it necessary to compute alignment and semantic types for everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
@@ -199,7 +201,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		RepFactory f = workspace.getFactory();
 		HNode hNode = f.getHNode(pythonNodeId);
-		
+
 		this.originalColumnValues = new ArrayList<String>();
 		Collection<Node> nodes = new ArrayList<Node>();
 		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes);
@@ -207,21 +209,21 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			originalColumnValues.add(node.getValue().asString());
 		}
 	}
-	
+
 	public void resetColumnValues(Workspace workspace) {
 		if(this.originalColumnValues != null) {
 			Worksheet worksheet = workspace.getWorksheet(worksheetId);
 			RepFactory f = workspace.getFactory();
 			HNode hNode = f.getHNode(pythonNodeId);
-	
+
 			worksheet.getDataTable().setCollectedNodeValues(hNode.getHNodePath(f), this.originalColumnValues, f);
 		}
 	}
-	
+
 	public ArrayList<String> getOriginalColumnValues() {
 		return this.originalColumnValues;
 	}
-	
+
 	protected ICommand extractPreviousCommand(ExecutionController ctrl) {
 
 		CommandHistory commandHistory = ctrl.getWorkspace().getCommandHistory();
@@ -237,7 +239,24 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 				}
 			}
 		}
-		
+
 		return null;
+	}
+
+	@Override
+	public Set<String> getInputColumns() {
+		Set<String> t = new HashSet<String>();
+		t.addAll(inputColumns);
+		return t;
+	}
+
+	@Override
+	public Set<String> getOutputColumns() {
+		Set<String> t = new HashSet<String>();
+		if (addColCmd != null)
+			t.add(addColCmd.getNewHNodeId());
+		else
+			t.add(hNodeId);
+		return t;
 	}
 }
