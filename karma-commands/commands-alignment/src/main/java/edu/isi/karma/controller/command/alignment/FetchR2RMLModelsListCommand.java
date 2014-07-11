@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -77,21 +78,25 @@ public class FetchR2RMLModelsListCommand extends Command{
 			List<String> model_Contexts = metadata.get("model_contexts");
 			List<String> model_inputColumns = metadata.get("model_inputcolumns");
 			final List<JSONObject> list = new ArrayList<JSONObject>();
-			int count = 0;
 			Set<String> inputs = new HashSet<String>();
 			Set<String> worksheetcolumns = new HashSet<String>();
 			if (worksheetId != null && !worksheetId.trim().isEmpty()) {
 				HTable htable = factory.getWorksheet(worksheetId).getHeaders();
 				getHNodesForWorksheet(htable, worksheetcolumns, factory);
 			}
-			while(count < model_Names.size()) {
+			Iterator<String> nameitr = model_Names.iterator();
+			Iterator<String> urlitr = model_Urls.iterator();
+			Iterator<String> timeitr = model_Times.iterator();
+			Iterator<String> contextitr = model_Contexts.iterator();
+			Iterator<String> inputitr = model_inputColumns.iterator();
+			while(nameitr.hasNext() && urlitr.hasNext() && timeitr.hasNext() && contextitr.hasNext() && inputitr.hasNext()) {
 				JSONObject obj = new JSONObject();
-				obj.put("name", model_Names.get(count));
-				obj.put("url",  model_Urls.get(count));
-				obj.put("publishTime", model_Times.get(count));
-				obj.put("context", model_Contexts.get(count));
-				if (!worksheetId.isEmpty()) {
-					String columns = model_inputColumns.get(count);				
+				obj.put("name", nameitr.next());
+				obj.put("url",  urlitr.next());
+				obj.put("publishTime", timeitr.next());
+				obj.put("context", contextitr.next());
+				String columns = inputitr.next();	 
+				if (!worksheetId.isEmpty()) {		
 					if (columns != null && !columns.isEmpty()) {
 						JSONArray array = new JSONArray(columns);
 						for (int i = 0; i < array.length(); i++)
@@ -102,7 +107,6 @@ public class FetchR2RMLModelsListCommand extends Command{
 				}
 				else
 					obj.put("inputColumns", 0);
-				count++;
 				list.add(obj);
 
 			}
