@@ -15,7 +15,8 @@ public class AugmentDataDispachCommandFactory extends JSONInputCommandFactory {
 	private enum Arguments {
 		worksheetId, predicateIncoming, alignmentId, 
 		columnUri, otherClassIncoming, tripleStoreUrl, 
-		hNodeId, predicateOutgoing, otherClassOutgoing, sameAsPredicate
+		hNodeId, predicateOutgoing, otherClassOutgoing, 
+		sameAsPredicate
 	}
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)

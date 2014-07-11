@@ -172,6 +172,7 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 
 	private String normalizeURI(String URI) {
 		try {
+			URI = URI.replace(" ", "");
 			URI uri = new URI(URI);
 			if (!uri.isAbsolute() && baseURI != null)
 				return baseURI + URI;

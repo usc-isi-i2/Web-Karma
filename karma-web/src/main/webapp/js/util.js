@@ -124,6 +124,44 @@ function getAllClasses(worksheetId) {
 	return uniques;
 }
 
+function getAllClassesRaw(worksheetId) {
+    var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "GetClassesCommand";
+    info["nodesRange"] = "allClassesRaw";
+    info["worksheetId"] = worksheetId;
+    
+    var result = [];
+    $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        async : false,
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                var data = json.elements[0].nodes;
+                $.each(data, function(index, clazz){
+                    parseClassJSON(clazz, result);
+                });
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while fetching classes: " + textStatus);
+            }
+    });
+    sortClassPropertyNodes(result);
+    var lastLabel = "";
+    var uniques = [];
+    $.each(result, function(index, item){
+        if(item.label != lastLabel)
+            uniques.push(item);
+        lastLabel = item.label;
+    });
+    return uniques;
+}
+
 function getAllClassesForProperty(worksheetId, propertyUri) {
 	if(propertyUri == null || propertyUri == "")
 		return [];

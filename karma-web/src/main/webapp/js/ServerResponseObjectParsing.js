@@ -50,23 +50,23 @@ function parse(data) {
     /* Always add the charts from cleaning service in end, so pushing that CleaningServiceUpdate in the end of updates array (if present) */
     // Identify the index
     var cleaningUpdates = new Array();
+    
     var dataElements = new Array();
     $.each(data["elements"], function(i, element) {
     	if(element["updateType"] == "UISettings") {
     		$.workspaceGlobalInformation.UISettings = element["settings"];
     	} else if(element["updateType"] == "WorksheetCleaningUpdate") {
-        	cleaningUpdates.push(element);
+        	cleaningUpdates[element["worksheetId"]] = element;
         } else {
         	dataElements.push(element);
         }
     });
     data["elements"] = dataElements;
     // Move cleaning updates to the end
-    $.each(cleaningUpdates, function(i, update) {
-    	data["elements"].push(update);
-    });
-   
-
+    for (key in cleaningUpdates) {
+    	data["elements"].push(cleaningUpdates[key]);
+    }
+    
     // Loop through each update from the server and take required action for the GUI
     $.each(data["elements"], function(i, element) {
         if(element["updateType"] == "WorksheetListUpdate") {
@@ -82,18 +82,18 @@ function parse(data) {
                         $("div#tableCellMenuButtonDiv").hide();
                         $("div#columnHeadingMenuButtonDiv").hide();
                     });
-                    var headerDiv = $("<div>").addClass("ui-corner-top");
-                    var formgroup = $("<div>").css("float", "left").addClass("col-sm-5");
-                    var label1 = $("<label>").text("Prefix: ");
-                    var prefixLabel = $("<label>").text("s")
+                    var headerDiv = $("<div>").addClass("propertiesHeader");
+                    var label1 = $("<label>").html("Prefix:&nbsp;");
+                    var prefixLabel = $("<span>").text("s")
                                 .addClass("edit")
                                 .attr("id", "txtPrefix_" + worksheet["worksheetId"])
                                 .editable({
                                     type: 'text',
                                     pk: 1,
+                                    savenochange: true, 
                                     success: function(response, newValue) {
                                         console.log("Set new value:" + newValue);
-                                        baseURILabel.text(newValue);
+                                        prefixLabel.text(newValue);
                                         var worksheetProps = new Object();
                                         worksheetProps["hasPrefix"] = true;
                                         worksheetProps["hasBaseURI"] = false;
@@ -130,18 +130,19 @@ function parse(data) {
                                 title: 'Enter Prefix'
                             }
                         );
-                    formgroup.append(label1);
-                    formgroup.append(prefixLabel);
-                    headerDiv.append(formgroup);
-                    var formgroup = $("<div>").css("float", "left").addClass("col-sm-5");
-                    var label1 = $("<label>").text("Base URI: ");
-                    var baseURILabel = $("<label>")
+                    headerDiv.append(label1);
+                    headerDiv.append(prefixLabel);
+                    
+                    var sep = $("<span>").html("&nbsp;|&nbsp;");
+                    var label1 = $("<label>").html("Base URI:&nbsp;");
+                    var baseURILabel = $("<span>")
                                 .text("http://localhost:8080/source/")
                                 .addClass("edit")
                                 .attr("id", "txtBaseURI_" + worksheet["worksheetId"])
                                 .editable({
                                     type: 'text',
                                     pk: 1,
+                                    savenochange: true, 
                                     success: function(response, newValue) {
                                         console.log("Set new value:" + newValue);
                                         baseURILabel.text(newValue);
@@ -180,10 +181,12 @@ function parse(data) {
                                 },
                                 title: 'Enter Base URI'
                             }
-                        );;
-                    formgroup.append(label1);
-                    formgroup.append(baseURILabel);
-                    headerDiv.append(formgroup);
+                        );
+                    
+                    headerDiv.append(sep);
+                    headerDiv.append(label1);
+                    headerDiv.append(baseURILabel);
+                    
                     var worksheetProps = new Object();
                     worksheetProps["hasPrefix"] = true;
                     worksheetProps["prefix"] = "s";
@@ -540,6 +543,17 @@ function parse(data) {
         else if(element["updateType"] == "SaveCollection") {
             // Remove existing link if any
             $.sticky("R2RML Model Collection saved");
+        }
+        else if(element["updateType"] == "SetWorksheetProperties") {
+            // Remove existing link if any
+            console.log(element);
+            if (element["prefix"]) {
+                $("#txtPrefix_" + element["worksheetId"]).text(element["prefix"]);
+            }
+            if (element["baseURI"]) {
+                $("#txtBaseURI_" + element["worksheetId"]).text(element["baseURI"]);
+            }
+
         }
         else if(element["updateType"] == "SaveModel") {
             // Remove existing link if any

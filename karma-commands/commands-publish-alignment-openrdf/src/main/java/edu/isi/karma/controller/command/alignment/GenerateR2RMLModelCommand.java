@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ws.rs.core.UriBuilder;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -217,7 +219,8 @@ public class GenerateR2RMLModelCommand extends Command {
 
 			boolean result = true;//utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true, null);
 			if (tripleStoreUrl != null && tripleStoreUrl.trim().compareTo("") != 0) {
-				String url = RESTserverAddress + "/R2RMLMapping/local/" + modelFileName;
+				UriBuilder builder = UriBuilder.fromPath(modelFileName);
+				String url = RESTserverAddress + "/R2RMLMapping/local/" + builder.build().toString();
 				SaveR2RMLModelCommandFactory factory = new SaveR2RMLModelCommandFactory();
 				SaveR2RMLModelCommand cmd = factory.createCommand(workspace, url, tripleStoreUrl, graphName, "URL");
 				cmd.setInputColumns(array);

@@ -126,7 +126,7 @@ public class SearchForDataToAugmentCommand extends Command{
 			for(Row r : t.getRows(0, t.getNumRows())) {
 				Node n = r.getNode(hNodeId);
 				if(n != null && n.getValue() != null && !n.getValue().isEmptyValue() && n.getValue().asString() != null && !n.getValue().asString().trim().isEmpty() ) {
-					String value = n.getValue().asString().trim();
+					String value = n.getValue().asString().trim().replace(" ", "");
 					String baseURI = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.baseURI);
 					try {
 						URI uri = new URI(value);
@@ -136,7 +136,7 @@ public class SearchForDataToAugmentCommand extends Command{
 					} catch (URISyntaxException e) {
 						// TODO Auto-generated catch block
 					}
-					n.setValue(value, n.getStatus(), factory);
+//					n.setValue(value, n.getStatus(), factory);
 					builder = new StringBuilder();
 					value = builder.append("<").append(value).append(">").toString(); //String builder
 					uriSet.add(value);
@@ -180,15 +180,13 @@ public class SearchForDataToAugmentCommand extends Command{
 				System.out.println(predicate + " " + intersectionBF.estimateNumberOfHashedValues());
 				intersectionBF.and(uris);
 				int estimate = intersectionBF.estimateNumberOfHashedValues();
-				if (estimate > 0) {
-					JSONObject obj = new JSONObject();
-					obj.put("predicate", predicate);
-					obj.put("otherClass", otherClass);
-					obj.put("estimate", estimate);
-					obj.put("incoming", "false");
-					//					array.put(obj);
-					objects.add(obj);
-				}
+				JSONObject obj = new JSONObject();
+				obj.put("predicate", predicate);
+				obj.put("otherClass", otherClass);
+				obj.put("estimate", estimate);
+				obj.put("incoming", "false");
+				//					array.put(obj);
+				objects.add(obj);
 
 			} catch (Exception e) {
 				LOG.error("Unable to process bloom filter: " + e.getMessage());

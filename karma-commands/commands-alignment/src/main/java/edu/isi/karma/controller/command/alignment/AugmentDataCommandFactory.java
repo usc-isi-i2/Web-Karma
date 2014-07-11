@@ -26,7 +26,6 @@ public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 		String dataRepoUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String incoming = request.getParameter(Arguments.incoming.name());
-
 		String sameAsPredicate = request.getParameter(Arguments.sameAsPredicate.name());
 		return new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, otherClass, hNodeId, Boolean.parseBoolean(incoming), sameAsPredicate);
 	}
