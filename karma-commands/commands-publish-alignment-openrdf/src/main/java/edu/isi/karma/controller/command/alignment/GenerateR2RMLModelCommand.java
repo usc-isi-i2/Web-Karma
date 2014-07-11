@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.json.JSONArray;
@@ -199,8 +198,8 @@ public class GenerateR2RMLModelCommand extends Command {
 				JSONArray hNodeRepresentation = hnode.getJSONArrayRepresentation(workspace.getFactory());
 				array.put(hNodeRepresentation);
 			}
-			System.out.println(array.toString(4));
-			System.out.println(history);
+//			System.out.println(array.toString(4));
+//			System.out.println(history);
 			fileSaver.saveAlignment(alignment, refinedhistory, modelFileLocalPath);
 
 			// Write the model to the triple store
@@ -314,23 +313,23 @@ public class GenerateR2RMLModelCommand extends Command {
 			}					
 		}
 		
-		for (Entry<Command, List<Command>> entry : dag.entrySet()) {
-			Command key = entry.getKey();
-			List<Command> value = entry.getValue();
-			System.out.print(key.getCommandName() + "inputs: " + key.getInputColumns() + "outputs: " + key.getOutputColumns());
-			System.out.print("=");
-			for (Command command : value)
-				System.out.print(command.getCommandName() + "inputs: " + command.getInputColumns() + "outputs: " + command.getOutputColumns());
-			System.out.println();
-		}
+//		for (Entry<Command, List<Command>> entry : dag.entrySet()) {
+//			Command key = entry.getKey();
+//			List<Command> value = entry.getValue();
+//			System.out.print(key.getCommandName() + "inputs: " + key.getInputColumns() + "outputs: " + key.getOutputColumns());
+//			System.out.print("=");
+//			for (Command command : value)
+//				System.out.print(command.getCommandName() + "inputs: " + command.getInputColumns() + "outputs: " + command.getOutputColumns());
+//			System.out.println();
+//		}
 		Set<String> inputColumns = new HashSet<String>();
 		for (Command t : commands) {
 			if (t instanceof SetSemanticTypeCommand || t instanceof SetMetaPropertyCommand) {
 				inputColumns.addAll(getParents(t, dag));
 			}
 		}
-		System.out.println(inputColumns);
-		System.out.println("breakpoint!");
+//		System.out.println(inputColumns);
+//		System.out.println("breakpoint!");
 		return inputColumns;
 	}
 	
@@ -352,7 +351,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		for (ICommand c : commands) {
 			if (c instanceof Command) {
 				Command command = (Command)c;
-				System.out.println(command.getCommandName() + "inputs: " + command.getInputColumns() + "outputs: " + command.getOutputColumns());
+//				System.out.println(command.getCommandName() + "inputs: " + command.getInputColumns() + "outputs: " + command.getOutputColumns());
 				if (command.hasTag(CommandTag.Modeling) || command.hasTag(CommandTag.Transformation)) {
 					JSONArray json = new JSONArray(command.getInputParameterJson());
 					String worksheetId = HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json);
@@ -375,7 +374,7 @@ public class GenerateR2RMLModelCommand extends Command {
 				while(itr.hasNext()) {
 					Command tmp = itr.next();
 					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && tmp instanceof SubmitPythonTransformationCommand && !(tmp instanceof SubmitEditPythonTransformationCommand)) {
-						System.out.println("May Consolidate");
+//						System.out.println("May Consolidate");
 						SubmitPythonTransformationCommand py = (SubmitPythonTransformationCommand)tmp;
 						SubmitEditPythonTransformationCommand edit = (SubmitEditPythonTransformationCommand)command;
 						JSONArray inputJSON = new JSONArray(py.getInputParameterJson());
@@ -383,13 +382,13 @@ public class GenerateR2RMLModelCommand extends Command {
 						py.setInputParameterJson(inputJSON.toString());
 						py.setTransformationCode(edit.getTransformationCode());
 						flag = false;
-						System.out.println(py.getInputParameterJson());
+//						System.out.println(py.getInputParameterJson());
 						py.doIt(workspace);
 						history._getHistory().remove(command);
 						//PlaceHolder
 					}
 					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && tmp instanceof SubmitEditPythonTransformationCommand) {
-						System.out.println("Here");
+//						System.out.println("Here");
 						history._getHistory().remove(tmp);
 						itr.remove();
 					}

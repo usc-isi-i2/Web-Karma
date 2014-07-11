@@ -78,7 +78,6 @@ public class FetchR2RMLModelsListCommand extends Command{
 			List<String> model_Contexts = metadata.get("model_contexts");
 			List<String> model_inputColumns = metadata.get("model_inputcolumns");
 			final List<JSONObject> list = new ArrayList<JSONObject>();
-			Set<String> inputs = new HashSet<String>();
 			Set<String> worksheetcolumns = new HashSet<String>();
 			if (worksheetId != null && !worksheetId.trim().isEmpty()) {
 				HTable htable = factory.getWorksheet(worksheetId).getHeaders();
@@ -91,12 +90,13 @@ public class FetchR2RMLModelsListCommand extends Command{
 			Iterator<String> inputitr = model_inputColumns.iterator();
 			while(nameitr.hasNext() && urlitr.hasNext() && timeitr.hasNext() && contextitr.hasNext() && inputitr.hasNext()) {
 				JSONObject obj = new JSONObject();
+				Set<String> inputs = new HashSet<String>();
 				obj.put("name", nameitr.next());
 				obj.put("url",  urlitr.next());
 				obj.put("publishTime", timeitr.next());
 				obj.put("context", contextitr.next());
 				String columns = inputitr.next();	 
-				if (!worksheetId.isEmpty()) {		
+				if (worksheetId != null && !worksheetId.isEmpty()) {		
 					if (columns != null && !columns.isEmpty()) {
 						JSONArray array = new JSONArray(columns);
 						for (int i = 0; i < array.length(); i++)
@@ -107,7 +107,8 @@ public class FetchR2RMLModelsListCommand extends Command{
 				}
 				else
 					obj.put("inputColumns", 0);
-				list.add(obj);
+				if (worksheetId == null || worksheetId.isEmpty() || inputs.size() > 0)
+					list.add(obj);
 
 			}
 

@@ -231,9 +231,21 @@ var applyModelDialog = (function() {
 	            .on('keyup', applyFilter);
             th.append(label);
             tr.append(th);
+
+            var th = $("<th>"); //.addClass("PublishTimeProperty");
+            var label = $("<label>").text("URL"); //.addClass("PublishTimeProperty");
+            th.append(label);
+            var label = $("<input>").text("")
+                .addClass("form-control")
+                .addClass("modelSearchControl")
+                .attr("id","txtFilterURL_Apply")
+                .attr("type", "text")
+                .on('keyup', applyFilter);
+            th.append(label);
+            tr.append(th);
             
             var th = $("<th>"); //.addClass("URLProperty");
-            var label = $("<label>").text("URL"); //.addClass("URLProperty");
+            var label = $("<label>").text("# Matched Columns"); //.addClass("URLProperty");
             th.append(label);
             var searchBtn = $("<i>").addClass("glyphicon")
 								.addClass("glyphicon-search")
@@ -244,7 +256,7 @@ var applyModelDialog = (function() {
             var label = $("<input>").text("")
                             .addClass("form-control")
                             .addClass("modelSearchControl")
-                            .attr("id","txtFilterURL_Apply")
+                            .attr("id","txtFilterMatchedColumns_Apply")
                             .attr("type", "text")
                             .on('keyup', applyFilter);
             th.append(label);
@@ -358,12 +370,13 @@ var applyModelDialog = (function() {
             var filterFilename = $('#txtFilterFileName_Apply').val().toLowerCase();
             var filterTime = $('#txtFilterPublishTime_Apply').val().toLowerCase();
             var filterURL = $('#txtFilterURL_Apply').val().toLowerCase();
-            
+            var filterInputs = $('#txtFilterMatchedColumns_Apply').val();
             for (var i = 0; i < availableModels.length; i++) {
                 var name = availableModels[i]['name'].toLowerCase();
                 var time = new Date(availableModels[i].publishTime*1).toString();
                 time = time.substring(0, time.indexOf("GMT") - 1).toLowerCase();
                 var url = availableModels[i].url.toLowerCase();
+                var inputColumns = availableModels[i].inputColumns;
                 var flag = true;
                 if (name.indexOf(filterFilename) == -1) {
                     flag = false;
@@ -372,6 +385,9 @@ var applyModelDialog = (function() {
                     flag = false;
                 }
                 else if (url.indexOf(filterURL) == -1) {
+                    flag = false;
+                }
+                else if (filterInputs > inputColumns) {
                     flag = false;
                 }
                 if (flag) {
@@ -390,6 +406,7 @@ var applyModelDialog = (function() {
                 time = time.substring(0, time.indexOf("GMT") - 1);
                 var url = filteredModels[i].url;
                 var context = filteredModels[i].context;
+                var inputColumns = filteredModels[i].inputColumns;
                 var tr = $("<tr>");
                 var td = $("<td>");
                 var checkbox = $("<input>")
@@ -410,6 +427,10 @@ var applyModelDialog = (function() {
                 tr.append(td);
                 var td = $("<td>");
                 var label = $("<span>").text(url);
+                td.append(label);
+                tr.append(td);
+                var td = $("<td>");
+                var label = $("<span>").text(inputColumns);
                 td.append(label);
                 tr.append(td);
                 table.append(tr);    
