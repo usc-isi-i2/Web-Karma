@@ -1174,7 +1174,7 @@ public class TripleStoreUtil {
 	 *            : The graph context for the RDF
 	 * 
 	 * */
-	public boolean saveToStore(String filePath, String tripleStoreURL,
+	public boolean saveToStoreFromFile(String filePath, String tripleStoreURL,
 			String context, boolean replaceFlag, String baseUri) throws KarmaException{
 		File file = new File(filePath);
 		FileEntity entity = new FileEntity(file, ContentType.create(
@@ -1183,7 +1183,7 @@ public class TripleStoreUtil {
 				RDF_Types.Turtle.name(), baseUri);
 	}
 
-	public boolean saveToStore(String input, String tripleStoreURL,
+	public boolean saveToStoreFromString(String input, String tripleStoreURL,
 			String context, Boolean replaceFlag, String baseUri)  throws KarmaException{
 		StringEntity entity = new StringEntity(input, ContentType.create(mime_types.get(RDF_Types.Turtle.name())));
 		return saveToStore(entity, tripleStoreURL, context, replaceFlag,
@@ -1349,7 +1349,7 @@ public class TripleStoreUtil {
 			pw.println("\"" + entry.getValue().compressAndBase64Encode() + "\" . ");
 		}
 		pw.close();
-		return saveToStore(sw.toString(), modelurl, context, new Boolean(false), null);
+		return saveToStoreFromString(sw.toString(), modelurl, context, new Boolean(false), null);
 	}
 
 	/**

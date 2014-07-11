@@ -193,7 +193,7 @@ public class SaveR2RMLModelCommand extends Command{
 			if (utilObj.testURIExists(tripleStoreUrl, graphContext, modelUrl)) {
 				utilObj.deleteMappingFromTripleStore(tripleStoreUrl, graphContext, modelUrl);
 			}
-			boolean result = utilObj.saveToStore(content, tripleStoreUrl, graphContext, new Boolean(false), null);
+			boolean result = utilObj.saveToStoreFromString(content, tripleStoreUrl, graphContext, new Boolean(false), null);
 			return result;
 		}catch (Exception e) {
 			return false;
