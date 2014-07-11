@@ -166,8 +166,6 @@ var PublishRDFDialog = (function() {
     		info["workspaceId"] = $.workspaceGlobalInformation.id;
     		info["command"] = "PublishRDFCommand";
     		info["addInverseProperties"] = $("input#addInverseProperties").is(":checked");
-    		info["rdfPrefix"] = $("input#rdfPrefix").val();
-    		info["rdfNamespace"] = $("input#rdfNamespace").val();
     		info["saveToStore"] = $("input#saveToStore").is(":checked");
     		info["hostName"] = $("input#hostName").val();
     		info["dbName"] = $("input#dbName").val();
@@ -176,9 +174,13 @@ var PublishRDFDialog = (function() {
     		info["modelName"] = $("input#modelName").val();
     		info["tripleStoreUrl"] = $('#txtData_URL').html();
     		info["graphUri"] = graphUri;
-    		info["replaceContext"] = $('#modelGraphList').val();
+    		var replace = false;
+    		if( $('input:radio[name=group1]:checked', dialog).val() == "replace")
+    			replace = true;
+    		info["replaceContext"] = replace;
             info["generateBloomFilters"] = $("input#generateBloomFilters").is(":checked");
-
+            console.log(info["rdfPrefix"]);
+            console.log(info["rdfNamespace"]);
     		if( $("input#saveToRDFStore").is(":checked")) {
     			publishRDFToStore(info);
     		} else {
@@ -272,14 +274,11 @@ var PublishRDFDialog = (function() {
     		   			var json = $.parseJSON(xhr.responseText);
     		    		$.each(json["elements"], function(index, element) {
     		    			if(element["updateType"] == "PublishRDFCommandPreferences") {
-    		    				
     		    				if(element["PreferenceValues"]) {
     		    					$("input#hostName").val(element["PreferenceValues"]["hostName"]);
     		    					$("input#dbName").val(element["PreferenceValues"]["dbName"]);
     		    					$("input#userName").val(element["PreferenceValues"]["userName"]);
     		    					$("input#modelName").val(element["PreferenceValues"]["modelName"]);
-    		    					$("input#rdfPrefix").val(element["PreferenceValues"]["rdfPrefix"]);
-    		    					$("input#rdfNamespace").val(element["PreferenceValues"]["rdfNamespace"]);
     		    					$("input#saveToRDFStore").val(element["PreferenceValues"]["saveToStore"]);
     		    					$("input#addInverseProperties").val(element["PreferenceValues"]["addInverseProperties"]);
     		    				}

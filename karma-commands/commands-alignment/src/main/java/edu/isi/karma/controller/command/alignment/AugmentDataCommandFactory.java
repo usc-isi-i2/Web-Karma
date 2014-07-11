@@ -14,21 +14,20 @@ import edu.isi.karma.webserver.KarmaException;
 public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 	
 	private enum Arguments {
-		worksheetId, predicate, triplesMap, alignmentId, columnUri, otherClass, tripleStoreUrl, hNodeId, incoming
+		worksheetId, predicate, triplesMap, alignmentId, columnUri, otherClass, tripleStoreUrl, hNodeId, incoming, sameAsPredicate
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
-		// TODO Auto-generated method stub
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String predicate = request.getParameter(Arguments.predicate.name());
-		String triplesMap = request.getParameter(Arguments.triplesMap.name());
 		String columnUri = request.getParameter(Arguments.columnUri.name());
 		String otherClass = request.getParameter(Arguments.otherClass.name());
 		String dataRepoUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String incoming = request.getParameter(Arguments.incoming.name());
-		return new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, triplesMap, otherClass, hNodeId, Boolean.parseBoolean(incoming));
+		String sameAsPredicate = request.getParameter(Arguments.sameAsPredicate.name());
+		return new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, otherClass, hNodeId, Boolean.parseBoolean(incoming), sameAsPredicate);
 	}
 
 	@Override
@@ -42,13 +41,14 @@ public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String predicate = CommandInputJSONUtil.getStringValue(Arguments.predicate.name(), inputJson);
-		String triplesMap = CommandInputJSONUtil.getStringValue(Arguments.triplesMap.name(), inputJson);
 		String columnUri = CommandInputJSONUtil.getStringValue(Arguments.columnUri.name(), inputJson);
 		String otherClass = CommandInputJSONUtil.getStringValue(Arguments.otherClass.name(), inputJson);
 		String dataRepoUrl = CommandInputJSONUtil.getStringValue(Arguments.tripleStoreUrl.name(), inputJson);
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String incoming = CommandInputJSONUtil.getStringValue(Arguments.incoming.name(), inputJson);
-		AugmentDataCommand cmd = new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, triplesMap, otherClass, hNodeId, Boolean.parseBoolean(incoming));
+		String sameAsPredicate = CommandInputJSONUtil.getStringValue(Arguments.sameAsPredicate.name(), inputJson);
+		AugmentDataCommand cmd = new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, otherClass, hNodeId, Boolean.parseBoolean(incoming),sameAsPredicate);
+
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}

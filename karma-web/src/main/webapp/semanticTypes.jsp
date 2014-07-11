@@ -145,7 +145,7 @@
 </div><!-- /.modal -->
 
 <div class="modal fade" id="augmentDataDialog" tabindex="-1">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-wide">
   		<form class="bs-example bs-example-form" role="form">
 			<div class="modal-content">
 			     <div class="modal-header">
@@ -153,12 +153,11 @@
 				       <h4 class="modal-title" id="augmentHeader">Augment Data</h4>
 				  </div>
 				  <div class="modal-body">
-				  	<h4>Select Predicates:</h4>
 				  	<div id="augmentDataDialogHeaders"></div>
 						<div id="augmentDataDialogColumns" style = "max-height: 300px; overflow: auto;"></div>
 						<div class="form-group">
-							<label for="altPredicate">Alternative sameAs Predicate</label>
-							<input class="form-control" type="text" id="altPredicate" style = "width: 150px;"required>
+							<label for="altPredicate">"Same As" property</label>
+							<input class="form-control" type="text" value="owl:sameAs" id="altPredicate" style = "width: 150px;"required>
 						</div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">

@@ -125,6 +125,8 @@ public class PublishRDFCommand extends Command {
 		this.tripleStoreUrl = tripleStoreUrl;
 		this.graphUri = graphUri;
 		this.replaceContext = replace;
+		System.out.println(rdfSourceNamespace);
+		System.out.println(rdfSourcePrefix);
 	}
 
 	@Override
@@ -221,7 +223,9 @@ public class PublishRDFCommand extends Command {
 			parentDir.mkdirs();
 			BufferedWriter bw = new BufferedWriter(
 					new OutputStreamWriter(new FileOutputStream(f),"UTF-8"));
-			writers.add(new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), new PrintWriter (bw)));
+			N3KR2RMLRDFWriter writer = new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), new PrintWriter (bw));
+			writer.setBaseURI(rdfSourceNamespace);
+			writers.add(writer);
 			if (generateBloomFilters)
 				writers.add(new BloomFilterKR2RMLRDFWriter(new PrintWriter(sw), mapping.getId(), false, this.rdfSourceNamespace));
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
@@ -293,7 +297,7 @@ public class PublishRDFCommand extends Command {
 
 
 			result &= utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext, this.rdfSourceNamespace);
-			if (url != null && !url.isEmpty() && url.compareTo("") != 0 && utilObj.testURIExists(TripleStoreUtil.defaultModelsRepoUrl, "", url)) {
+			if (url != null && !url.isEmpty() && url.compareTo("") != 0 && utilObj.testURIExists(modelRepoUrl, "", url)) {
 				StringBuilder sb = new StringBuilder();
 				url = url.trim();
 				if(!url.startsWith("<"))
@@ -390,45 +394,18 @@ public class PublishRDFCommand extends Command {
 		model.read(file,null,"N3");
 		file.close();
 	}
-
-	private String toRDF(Map<String, String> bloomfilters)
-	{
-		StringBuilder builder = new StringBuilder();
-		for(Entry<String, String> entry : bloomfilters.entrySet())
-		{
-			String bf = entry.getValue();
-			String key = entry.getKey();
-			builder.append("<");
-			builder.append(key);
-			builder.append("> <");
-			builder.append(Uris.KM_HAS_BLOOMFILTER);
-			builder.append("> \"");
-			builder.append(bf);
-			builder.append("\" . \n");
-		}
-		return builder.toString();
-	}
 	
 	private boolean updateTripleStore(JSONObject obj, Map<String, String> bloomfilterMapping, String modelRepoUrl, String modelContext, TripleStoreUtil utilObj) throws KarmaException, IOException {
-		boolean result = true;
 		Set<String> triplemaps = new HashSet<String>(Arrays.asList(obj.getString("ids").split(",")));
 		bloomfilterMapping.putAll(utilObj.getBloomFiltersForMaps(modelRepoUrl, modelContext, triplemaps));
+		Map<String, KR2RMLBloomFilter> bfs = new HashMap<String, KR2RMLBloomFilter>();
 		for (String tripleUri : triplemaps) {
 			String serializedBloomFilter = obj.getString(tripleUri);
 			KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
 			bf.populateFromCompressedAndBase64EncodedString(serializedBloomFilter);
-			String oldserializedBloomFilter = bloomfilterMapping.get(tripleUri);
-			if (oldserializedBloomFilter != null) {
-				KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
-				bf2.populateFromCompressedAndBase64EncodedString(oldserializedBloomFilter);
-				bf.or(bf2);
-			}
-			bloomfilterMapping.put(tripleUri, bf.compressAndBase64Encode());
+			bfs.put(tripleUri, bf);
 		}
-		utilObj.deleteBloomFiltersForMaps(modelRepoUrl, modelContext, triplemaps);
-		String rdf = toRDF(bloomfilterMapping);
-		result &= utilObj.saveToStore(rdf, modelRepoUrl, modelContext, new Boolean(false), this.rdfSourceNamespace);
-		return result;
+		return utilObj.updateTripleStoreWithBloomFilters(bfs, bloomfilterMapping, modelRepoUrl, modelContext);
 	}
 
 	@Override

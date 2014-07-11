@@ -25,6 +25,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,6 +35,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -55,6 +59,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.util.HTTPUtil;
 import edu.isi.karma.webserver.KarmaException;
@@ -71,7 +76,6 @@ public class TripleStoreUtil {
 	public static final String defaultWorkbenchUrl;
 	public static final String karma_model_repo = "karma_models";
 	public static final String karma_data_repo = "karma_data";
-
 	static {
 		String host = ServletContextParameterMap
 				.getParameterValue(ServletContextParameterMap.ContextParameter.JETTY_HOST);
@@ -238,7 +242,7 @@ public class TripleStoreUtil {
 		return false;
 	}
 	
-	public Map<String, List<String>> getObjectsForSubjectsAndPredicates(String tripleStoreURL, String context, List<String> subjects, List<String> predicates, List<String> otherClasses) throws KarmaException
+	public Map<String, List<String>> getObjectsForSubjectsAndPredicates(String tripleStoreURL, String context, List<String> subjects, List<String> predicates, List<String> otherClasses, String sameAsProperty) throws KarmaException
 	{
 	
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
@@ -257,7 +261,6 @@ public class TripleStoreUtil {
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			query.append("BASE <http://lod.isi.edu/>\n");
 			query.append("SELECT ?s ?p ?o ?filteredtype\n");			
 			injectContext(context, query);
 			query.append("{\n");
@@ -279,17 +282,47 @@ public class TripleStoreUtil {
 				query.append("{\n");
 				predicate = predicateIterator.next();
 				otherClass = otherClassIterator.next();
-				query.append("?s ");
-				formatURI(predicate, query);
-				query.append(" ?o .\n");
+
 				if(!otherClass.trim().isEmpty())
 				{
 					query.append("BIND ( ");
 					formatURI(otherClass, query);
-					
 					query.append(" AS ?filteredtype )\n");
-					query.append("?o a ?filteredtype .\n");
 					
+				}
+				query.append("BIND ( ");
+				formatURI(predicate, query);
+				query.append(" AS ?p )\n");
+				query.append("{\n");
+				query.append("?s ");
+				formatURI(predicate, query);
+				query.append(" ?o .\n");
+				
+				query.append("}\n");
+				if(sameAsProperty != null && !sameAsProperty.isEmpty())
+				{
+					query.append("UNION\n");
+					query.append("{\n");
+					query.append("?s ");
+					formatURI(sameAsProperty, query);
+					query.append("?sprime .\n");
+					query.append("?sprime ");
+					formatURI(predicate, query);
+					query.append(" ?o .\n");
+					query.append("}\n");
+					query.append("UNION\n");
+					query.append("{\n");
+					query.append("?sprime ");
+					formatURI(sameAsProperty, query);
+					query.append("?s .\n");
+					query.append("?sprime ");
+					formatURI(predicate, query);
+					query.append(" ?o .\n");
+					query.append("}\n");
+				}
+				if(!otherClass.trim().isEmpty())
+				{
+					query.append("?o a ?filteredtype .\n");
 				}
 				query.append("}\n");
 				if(predicateIterator.hasNext() && otherClassIterator.hasNext())
@@ -297,7 +330,6 @@ public class TripleStoreUtil {
 					query.append("UNION \n");
 				}
 			}
-			query.append("?s ?p ?o .\n");
 
 			query.append("}\n");
 			
@@ -312,7 +344,6 @@ public class TripleStoreUtil {
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					tripleStoreURL, null, "application/sparql-results+json",
 					formparams);
-
 			if (responseString != null) {
 				JSONObject models = new JSONObject(responseString);
 				JSONArray values = models.getJSONObject("results")
@@ -339,7 +370,7 @@ public class TripleStoreUtil {
 		return results;
 	}
 	
-	public Map<String, List<String>> getSubjectsForPredicatesAndObjects(String tripleStoreURL, String context, List<String> subjects, List<String> predicates, List<String> otherClasses) throws KarmaException
+	public Map<String, List<String>> getSubjectsForPredicatesAndObjects(String tripleStoreURL, String context, List<String> subjects, List<String> predicates, List<String> otherClasses, String sameAsPredicate) throws KarmaException
 	{
 	
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
@@ -358,7 +389,6 @@ public class TripleStoreUtil {
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			query.append("BASE <http://lod.isi.edu/>\n");
 			query.append("SELECT ?s ?p ?o ?filteredtype\n");			
 			injectContext(context, query);
 			query.append("{\n");
@@ -380,25 +410,48 @@ public class TripleStoreUtil {
 				query.append("{\n");
 				predicate = predicateIterator.next();
 				otherClass = otherClassIterator.next();
-				query.append("?s ");
+				query.append("BIND ( ");
 				formatURI(predicate, query);
-				query.append(" ?o .\n");
+				query.append(" AS ?p )\n");
 				if(!otherClass.trim().isEmpty())
 				{
 					query.append("BIND ( ");
 					formatURI(otherClass, query);
-					
 					query.append(" AS ?filteredtype )\n");
+					
+				}
+				query.append("{\n");
+				query.append("?s ?p ?o .\n");
+				query.append("}\n");
+				if(sameAsPredicate != null && !sameAsPredicate.isEmpty())
+				{
+					query.append("UNION \n");
+					query.append("{\n");
+					query.append("?oprime ");
+					query.append(sameAsPredicate);
+					query.append(" ?o .\n");
+					query.append("?s ?p ?oprime .\n");
+					query.append("}\n");
+					query.append("UNION \n");
+					query.append("{\n");
+					query.append("?o ");
+					query.append(sameAsPredicate);
+					query.append(" ?oprime .\n");
+					query.append("?s ?p ?oprime .\n");
+					query.append("}\n");
+				}
+				if(!otherClass.trim().isEmpty())
+				{
 					query.append("?s a ?filteredtype .\n");
 					
 				}
+				
 				query.append("}\n");
 				if(predicateIterator.hasNext() && otherClassIterator.hasNext())
 				{
 					query.append("UNION \n");
 				}
 			}
-			query.append("?s ?p ?o .\n");
 
 			query.append("}\n");
 			
@@ -1259,6 +1312,30 @@ public class TripleStoreUtil {
 			}
 		}
 		return retVal;
+	}
+	
+	public boolean updateTripleStoreWithBloomFilters(Map<String, KR2RMLBloomFilter> bfs, Map<String, String> bloomfilterMapping, String modelurl, String context) throws KarmaException, IOException {
+		Set<String> triplemaps = bfs.keySet();
+		for (String tripleUri : triplemaps) {
+			KR2RMLBloomFilter bf = bfs.get(tripleUri);
+			String oldserializedBloomFilter = bloomfilterMapping.get(tripleUri);
+			if (oldserializedBloomFilter != null) {
+				KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
+				bf2.populateFromCompressedAndBase64EncodedString(oldserializedBloomFilter);
+				bf.or(bf2);
+			}
+			bfs.put(tripleUri, bf);
+		}
+		deleteBloomFiltersForMaps(modelurl, context, triplemaps);
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		for (Entry<String, KR2RMLBloomFilter> entry : bfs.entrySet()) {
+			pw.print("<" + entry.getKey() + "> ");
+			pw.print("<" + Uris.KM_HAS_BLOOMFILTER + "> ");
+			pw.println("\"" + entry.getValue().compressAndBase64Encode() + "\" . ");
+		}
+		pw.close();
+		return saveToStore(sw.toString(), modelurl, context, new Boolean(false), null);
 	}
 
 	/**

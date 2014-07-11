@@ -25,6 +25,12 @@
 		<artifactId>karma-cleaning</artifactId>
 		<version>${project.version}</version>
 	</dependency>
+	
+	<dependency>
+		<groupId>edu.isi</groupId>
+		<artifactId>karma-util</artifactId>
+		<version>${project.version}</version>
+	</dependency>
 
         <dependency>
         	<groupId>org.apache.commons</groupId>

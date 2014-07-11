@@ -120,6 +120,14 @@ and related projects, please see: http://www.isi.edu/integration
 				color: #cccccc;
 			}
 			
+			.table-no-border td {
+			    border-top: 0 none;
+			}
+
+			.table-no-border > thead > tr > th, .table > tbody > tr > th, .table-no-border > tfoot > tr > th, .table > thead > tr > td, .table-no-border > tbody > tr > td, .table-no-border > tfoot > tr > td {
+			    border-top: 0px;
+			}
+
 		</style>
 	
 	</head>
@@ -150,9 +158,11 @@ and related projects, please see: http://www.isi.edu/integration
 		                  <li><a href="#" class="fileinput-button"><form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form></a></li>
 		              </ul>
 		            </li>
-		            <li><a href="#" id="resetButton" data-html='true' title='Delete all saved files,<br/>use with care!' data-toggle='tooltip' data-placement='bottom'>Reset ...</a></li>
+		            
 		            <li><a href="#" id="modelManagerButton" data-html='true' data-toggle='tooltip' data-placement='bottom'>Manage Models</a></li>
 
+					<li><a href="#" id="resetButton" data-html='true' title='Delete all saved files,<br/>use with care!' data-toggle='tooltip' data-placement='bottom'>Reset ...</a></li>
+					
 		            <li>
 		            		<div class="span5 fileupload-progress fade">
 								<!-- The global progress bar -->
@@ -222,17 +232,17 @@ and related projects, please see: http://www.isi.edu/integration
 	      <div class="container">
 	        <p class="text-muted">
 	        	<div class="row">
-	        		<div class="col-sm-4">Karma Home: <span id="karmaHome"><%=ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></span></div>
+	        		<div class="col-sm-4"><label>Karma Home: </label><span id="karmaHome"><%=ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></span></div>
 	        		<div class="col-sm-4">
 	        			<div class="form-group">
-							<label for="txtModel_URL">Model Repository Endpoint: </label>
-							<label class="edit" id="txtModel_URL"></label>
+							<label for="txtModel_URL">Model Endpoint: </label>
+							<span class="edit" id="txtModel_URL"></span>
 						</div>
 	        		</div>
 	        		<div class="col-sm-4">
 	        			<div class="form-group">
-							<label for="txtData_URL">Data Repository Endpoint: </label>
-							<label class="edit" id="txtData_URL"></label>
+							<label for="txtData_URL">Data Endpoint: </label>
+							<span class="edit" id="txtData_URL"></span>
 						</div>
 	        		</div>
 	        	</div>
@@ -402,7 +412,34 @@ and related projects, please see: http://www.isi.edu/integration
 		       			 mode: 'popup',
 		       			 inputclass: 'worksheetInputEdit'	 
 		            });
+                
+            	positionFooter();
+            	$(window)
+                    .scroll(positionFooter)
+                    .resize(positionFooter)
 			});
+            
+            function positionFooter() {
+            	var footerHeight = 0,
+                footerTop = 0,
+                $footer = $("#footer");
+            	
+                footerHeight = $footer.height();
+                footerTop = ($(window).scrollTop()+$(window).height()-footerHeight)+"px";
+       
+               if ( ($(document.body).height()+footerHeight) < $(window).height()) {
+                   $footer.css({
+                        position: "absolute"
+                   }).animate({
+                        top: footerTop
+                   })
+               } else {
+                   $footer.css({
+                        position: "static"
+                   })
+               }
+               
+       		}
 		</script>
 		<script type="text/javascript">
 			if(googleEarthEnabled) {

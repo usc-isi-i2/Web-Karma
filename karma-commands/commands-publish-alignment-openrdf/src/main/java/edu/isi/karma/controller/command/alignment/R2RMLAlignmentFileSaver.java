@@ -50,8 +50,10 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		JSONObject prefObject = workspace.getCommandPreferences().getCommandPreferencesJSONObject(
 				"PublishRDFCommand"+"Preferences");
 		if (prefObject != null) {
-			namespace = prefObject.getString(PreferencesKeys.rdfNamespace.name());
-			prefix = prefObject.getString(PreferencesKeys.rdfPrefix.name());
+			if (prefObject.has(PreferencesKeys.rdfNamespace.name()))
+				namespace = prefObject.getString(PreferencesKeys.rdfNamespace.name());
+			if (prefObject.has(PreferencesKeys.rdfPrefix.name()))
+				prefix = prefObject.getString(PreferencesKeys.rdfPrefix.name());
 			namespace = ((namespace == null) || (namespace.equals(""))) ? 
 					Namespaces.KARMA_DEV : namespace;
 			prefix = ((prefix == null) || (prefix.equals(""))) ? 
@@ -165,5 +167,7 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		}
 		return new JSONArray();
 	}
+	
+	
 
 }

@@ -2,12 +2,14 @@ package edu.isi.karma.webserver;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Scanner;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.io.FilenameUtils;
 import org.json.*;
@@ -33,7 +35,8 @@ public class R2RMLMappingServlet extends HttpServlet{
 			for (int i = 0; i < contents.length; i++) {
 				if (FilenameUtils.getExtension(contents[i].getName()).compareTo("ttl") == 0) {
 					JSONObject obj = new JSONObject();
-					obj.put("url", serverAddress + "/" + contents[i].getName());
+					UriBuilder builder = UriBuilder.fromPath(contents[i].getName());
+					obj.put("url", serverAddress + "/" + builder.build().toString());
 					array.put(obj);
 				}
 			}
