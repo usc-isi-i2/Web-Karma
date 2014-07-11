@@ -22,24 +22,19 @@ package edu.isi.karma.modeling.semantictypes;
 
 import java.util.HashMap;
 
-public class FullCRFModel {
+public class SemanticTypeWorksheetModel {
 	/**
 	 * Keeps a map between the column HNodeIds and the corresponding column
 	 * model
 	 */
-	HashMap<String, CRFColumnModel> columnModelMap = new HashMap<String, CRFColumnModel>();
+	HashMap<String, SemanticTypeColumnModel> columnModelMap = new HashMap<String, SemanticTypeColumnModel>();
 
-	public void addColumnModel(String nodeId, CRFColumnModel columnModel) {
+	public void addColumnModel(String nodeId, SemanticTypeColumnModel columnModel) {
 		columnModelMap.put(nodeId, columnModel);
 	}
 
-	public CRFColumnModel getModelByColumnName(String name) {
-		// TODO Yet to be implemented
-		return null;
 
-	}
-
-	public CRFColumnModel getModelByHNodeId(String hNodeId) {
+	public SemanticTypeColumnModel getModelByHNodeId(String hNodeId) {
 		return columnModelMap.get(hNodeId);
 	}
 }

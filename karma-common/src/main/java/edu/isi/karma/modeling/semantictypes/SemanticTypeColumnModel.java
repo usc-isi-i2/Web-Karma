@@ -38,11 +38,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CRFColumnModel implements Jsonizable {
+public class SemanticTypeColumnModel implements Jsonizable {
 
 	private final HashMap<String, Double> scoreMap = new HashMap<String, Double>();
 
-	public CRFColumnModel(ArrayList<String> labels, ArrayList<Double> scores) {
+	public SemanticTypeColumnModel(ArrayList<String> labels, ArrayList<Double> scores) {
 		for (int i = 0; i < labels.size(); i++) {
 			scoreMap.put(labels.get(i), scores.get(i));
 		}
@@ -171,28 +171,4 @@ public class CRFColumnModel implements Jsonizable {
 		arr.put(typeObj);
 	}
 
-//	private void getDomainDisplayLabelAndId(Label domainURI, StringBuilder domainId, StringBuilder domainDisplayLabel, 
-//			String clazzLocalNameWithPrefix, Alignment alignment, Set<String> steinerTreeNodeIds) {
-//		int graphLastIndex = alignment.getLastIndexOfNodeUri(domainURI.getUri());
-//		if (graphLastIndex == -1) { // No instance present in the graph
-//			domainDisplayLabel.append(clazzLocalNameWithPrefix + "1 (add)");
-//			domainId.append(domainURI.getUri());
-//		} else {
-//			// Check if already present in the steiner tree
-//			if (steinerTreeNodeIds.contains(domainURI.getUri() + (graphLastIndex))) {
-//				domainDisplayLabel.append(clazzLocalNameWithPrefix + (graphLastIndex));
-//				domainId.append(domainURI.getUri() + (graphLastIndex));
-//			} else {
-//				// Check if present in graph and not tree
-//				Node graphNode = alignment.getNodeById(domainURI.getUri() + (graphLastIndex));
-//				if (graphNode != null) {
-//					domainDisplayLabel.append(clazzLocalNameWithPrefix + (graphLastIndex) + " (add)");
-//					domainId.append(graphNode.getId());
-//				} else {
-//					domainDisplayLabel.append(clazzLocalNameWithPrefix + (graphLastIndex+1) + " (add)");
-//					domainId.append(domainURI.getUri());
-//				}
-//			}
-//		}
-//	}
 }

@@ -40,7 +40,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeColumnModel;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.Worksheet;
@@ -62,7 +62,7 @@ public class SetSemanticTypeCommand extends Command {
 	private final String worksheetId;
 	private final boolean trainAndShowUpdates;
 	private final String rdfLiteralType;
-	private CRFColumnModel oldColumnModel;
+	private SemanticTypeColumnModel oldColumnModel;
 	private SynonymSemanticTypes oldSynonymTypes;
 	private JSONArray typesArr;
 	private SynonymSemanticTypes newSynonymTypes;
@@ -261,7 +261,7 @@ public class SetSemanticTypeCommand extends Command {
 
 		// Save the old SemanticType object and CRF Model for undo
 		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(hNodeId);
-		oldColumnModel = worksheet.getCrfModel().getModelByHNodeId(hNodeId);
+		oldColumnModel = worksheet.getSemanticTypeModel().getModelByHNodeId(hNodeId);
 		oldSynonymTypes = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(hNodeId);
 
 		if (newType != null) {
@@ -353,7 +353,7 @@ public class SetSemanticTypeCommand extends Command {
 			worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), oldSynonymTypes);
 		}
 
-		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), oldColumnModel);
+		worksheet.getSemanticTypeModel().addColumnModel(newType.getHNodeId(), oldColumnModel);
 
 		// Replace the current alignment with the old alignment
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);

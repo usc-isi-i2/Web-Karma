@@ -127,8 +127,8 @@ public class SemanticTypePredictionThread implements Runnable {
 					continue;
 				}
 	
-				CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
-				worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(),
+				SemanticTypeColumnModel columnModel = new SemanticTypeColumnModel(labels, scores);
+				worksheet.getSemanticTypeModel().addColumnModel(path.getLeaf().getId(),
 						columnModel);
 			} catch (Exception e) {}
 		} 			
@@ -137,11 +137,11 @@ public class SemanticTypePredictionThread implements Runnable {
 	
 	private void addSemanticTypesToColumnNodes() {
 		
-		FullCRFModel fullCRFModel = worksheet.getCrfModel();
+		SemanticTypeWorksheetModel fullCRFModel = worksheet.getSemanticTypeModel();
 		
 		// Create column nodes for the alignment
 		List<SemanticType> crfSuggestedSemanticTypes;
-		CRFColumnModel columnCRFModel;
+		SemanticTypeColumnModel columnCRFModel;
 		String domainUri, propertyUri;
 		Label domainLabel, propertyLabel;
 		SemanticType semanticType;

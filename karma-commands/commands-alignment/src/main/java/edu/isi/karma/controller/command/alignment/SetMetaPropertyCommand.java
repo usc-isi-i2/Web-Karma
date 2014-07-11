@@ -34,7 +34,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeColumnModel;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.Worksheet;
@@ -73,7 +73,7 @@ public class SetMetaPropertyCommand extends Command {
 	private final String metaPropertyValue;
 	private final String rdfLiteralType;
 
-	private CRFColumnModel oldColumnModel;
+	private SemanticTypeColumnModel oldColumnModel;
 	private SynonymSemanticTypes oldSynonymTypes;
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
@@ -262,7 +262,7 @@ public class SetMetaPropertyCommand extends Command {
 		// Save the old SemanticType object and CRF Model for undo
 		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(
 				hNodeId);
-		oldColumnModel = worksheet.getCrfModel().getModelByHNodeId(hNodeId);
+		oldColumnModel = worksheet.getSemanticTypeModel().getModelByHNodeId(hNodeId);
 		oldSynonymTypes = worksheet.getSemanticTypes()
 				.getSynonymTypesForHNodeId(newType.getHNodeId());
 
@@ -317,7 +317,7 @@ public class SetMetaPropertyCommand extends Command {
 					newType.getHNodeId(), oldSynonymTypes);
 		}
 
-		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(),
+		worksheet.getSemanticTypeModel().addColumnModel(newType.getHNodeId(),
 				oldColumnModel);
 
 		// Replace the current alignment with the old alignment

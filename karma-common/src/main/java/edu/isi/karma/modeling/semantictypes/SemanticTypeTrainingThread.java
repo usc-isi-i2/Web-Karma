@@ -63,8 +63,8 @@ public class SemanticTypeTrainingThread implements Runnable {
 		if (!trainingResult) {
 			logger.error("Error occured while predicting labels");
 		}
-		CRFColumnModel newModel = new CRFColumnModel(labels, scores);
-		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), newModel);
+		SemanticTypeColumnModel newModel = new SemanticTypeColumnModel(labels, scores);
+		worksheet.getSemanticTypeModel().addColumnModel(newType.getHNodeId(), newModel);
 
 		long elapsedTimeMillis = System.currentTimeMillis() - start;
 		float elapsedTimeSec = elapsedTimeMillis / 1000F;

@@ -22,7 +22,7 @@
  */
 package edu.isi.karma.rep;
 
-import edu.isi.karma.modeling.semantictypes.FullCRFModel;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeWorksheetModel;
 import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.metadata.MetadataContainer;
@@ -40,7 +40,7 @@ public class Worksheet extends RepEntity {
     private HTable headers;
     private Table dataTable;
     private SemanticTypes semanticTypes = new SemanticTypes();
-    private FullCRFModel crfModel = new FullCRFModel();
+    private SemanticTypeWorksheetModel semModel = new SemanticTypeWorksheetModel();
     private MetadataContainer metadataContainer;
     private String encoding;
     private Object jsonAnnotation = null;
@@ -109,8 +109,8 @@ public class Worksheet extends RepEntity {
         semanticTypes = t;
     }
 
-    public FullCRFModel getCrfModel() {
-        return crfModel;
+    public SemanticTypeWorksheetModel getSemanticTypeModel() {
+        return semModel;
     }
 
     public MetadataContainer getMetadataContainer() {

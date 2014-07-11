@@ -238,8 +238,8 @@ public class SemanticTypeUtil {
 
 				// Add the scores information to the Full CRF Model of the
 				// worksheet
-				CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
-				worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(),
+				SemanticTypeColumnModel columnModel = new SemanticTypeColumnModel(labels, scores);
+				worksheet.getSemanticTypeModel().addColumnModel(path.getLeaf().getId(),
 						columnModel);
 			}
 		}
@@ -423,8 +423,8 @@ public class SemanticTypeUtil {
 			return;
 		}
 
-		CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
-		worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(), columnModel);
+		SemanticTypeColumnModel columnModel = new SemanticTypeColumnModel(labels, scores);
+		worksheet.getSemanticTypeModel().addColumnModel(path.getLeaf().getId(), columnModel);
 	}
 	
 	private static boolean existsInSemanticTypesCollection(Label typeLabel, Label domainLabel, SemanticType existingSemanticType) {
@@ -470,8 +470,8 @@ public class SemanticTypeUtil {
 			labels.add(label);
 			scores.add(1.0);
 			
-			CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
-			worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(), columnModel);
+			SemanticTypeColumnModel columnModel = new SemanticTypeColumnModel(labels, scores);
+			worksheet.getSemanticTypeModel().addColumnModel(path.getLeaf().getId(), columnModel);
 		}
 	}
 	
