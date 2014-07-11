@@ -352,6 +352,7 @@ var modelManagerDialog = (function() {
             info["command"] = "FetchR2RMLModelsListCommand";
             info['tripleStoreUrl'] = $('#txtModel_URL').html();
             info['graphContext'] = "";
+            info['worksheetId'] = "";
             var returned = $.ajax({
                 url: "RequestController",
                 type: "POST",

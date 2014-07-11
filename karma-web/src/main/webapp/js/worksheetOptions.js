@@ -379,7 +379,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	function applyModel(event) {
 		console.log("Apply Model: " + worksheetTitle);
 		hideDropdown();
-		applyModelDialog.getInstance().show(worksheetId);
+		applyModelDialog.getInstance(worksheetId).show();
 		return false;
 	}
 	

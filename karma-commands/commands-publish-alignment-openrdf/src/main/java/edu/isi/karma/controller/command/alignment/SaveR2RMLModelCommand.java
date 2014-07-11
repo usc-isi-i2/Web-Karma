@@ -184,7 +184,7 @@ public class SaveR2RMLModelCommand extends Command{
 			{
 				model.add(r, model.getProperty(Uris.OWL_SAMEAS_URI), model.getResource(url.toString()));
 				if (inputColumns.length() > 0)
-					model.add(r, model.getProperty(Uris.KM_HAS_INPUTCOLUMNS), model.getResource(inputColumns.toString()));
+					model.add(r, model.getProperty(Uris.KM_HAS_INPUTCOLUMNS), inputColumns.toString());
 			}
 			model.write(test,"TTL");
 			model.close();

@@ -191,7 +191,6 @@ var applyModelDialog = (function() {
         var filteredModels;
         var table;
         function init() {
-            refresh();
             var dialogContent = $("#applyModelDialogColumns", dialog);
             table = $("<table>")
                         .addClass("table table-striped table-condensed");
@@ -417,8 +416,7 @@ var applyModelDialog = (function() {
             }
         }
         
-        function show(wsId) {
-            worksheetId = wsId;
+        function show() {
             dialog.on('show.bs.modal', function (e) {
                 hideError();
                 showFilteredModels();
@@ -426,20 +424,26 @@ var applyModelDialog = (function() {
             });
             dialog.modal({keyboard:true, show:true, backdrop:'static'});
         };
+
+        function initVars(wsId) {
+            worksheetId = wsId;
+        }
         
         
         return {    //Return back the public methods
             show : show,
             init : init,
-            refresh: refresh
+            refresh: refresh, 
+            initVars : initVars
         };
     };
 
-    function getInstance() {
+    function getInstance(wsId) {
         if( ! instance ) {
             instance = new PrivateConstructor();
             instance.init();
         }
+        instance.initVars(wsId);
         instance.refresh();
         return instance;
     }
