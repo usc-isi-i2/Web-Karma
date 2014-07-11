@@ -48,12 +48,15 @@ import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -243,6 +246,7 @@ public class GenerateR2RMLModelCommand extends Command {
 						}
 					}
 				});
+				uc.add(new HistoryUpdate(workspace.getCommandHistory()));
 				return uc;
 			} 
 
@@ -359,13 +363,14 @@ public class GenerateR2RMLModelCommand extends Command {
 
 	private List<Command> consolidateSubmitEditPyTransform(List<Command> commands, Workspace workspace) throws CommandException {
 		List<Command> refinedCommands = new ArrayList<Command>();
+		CommandHistory history = workspace.getCommandHistory();
 		for (Command command : commands) {
 			if (command instanceof SubmitEditPythonTransformationCommand) {
 				Iterator<Command> itr = refinedCommands.iterator();
 				boolean flag = true;
 				while(itr.hasNext()) {
 					Command tmp = itr.next();
-					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && tmp instanceof SubmitPythonTransformationCommand) {
+					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && tmp instanceof SubmitPythonTransformationCommand && !(tmp instanceof SubmitEditPythonTransformationCommand)) {
 						System.out.println("May Consolidate");
 						SubmitPythonTransformationCommand py = (SubmitPythonTransformationCommand)tmp;
 						SubmitEditPythonTransformationCommand edit = (SubmitEditPythonTransformationCommand)command;
@@ -376,10 +381,12 @@ public class GenerateR2RMLModelCommand extends Command {
 						flag = false;
 						System.out.println(py.getInputParameterJson());
 						py.doIt(workspace);
+						history._getHistory().remove(command);
 						//PlaceHolder
 					}
 					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && tmp instanceof SubmitEditPythonTransformationCommand) {
 						System.out.println("Here");
+						history._getHistory().remove(tmp);
 						itr.remove();
 					}
 				}
