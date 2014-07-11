@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.URIFormatter;
@@ -75,8 +76,21 @@ public class RDFGeneratorServlet{
 			
 			
 			String output = sw.toString();
+			
+			
+			TripleStoreUtil tsu = new TripleStoreUtil();
+			String tripleStoreURL = "http://localhost:3000/openrdf-sesame/repositories/karma_data";
+			String context = "http://image-metadata.com";
+			Boolean replace = true;
+			String baseURI = "http://isiimagefinder/";
+			
+			boolean success = tsu.saveToStore(sw.toString(), tripleStoreURL, context, replace, baseURI);
+			
+			
 			//String output = "hello";
-			return Response.status(200).entity(output).build();
+			return Response.status(200).entity("h").build();
+			
+			//return Response.status(200).entity(output).build();
 		}
 		catch(IOException ioe)
 		{
