@@ -606,7 +606,7 @@ var ExportCSVModelDialog = (function() {
 									graphs = json["elements"][0]['graphs'];
 								}
 								//var modelGraphList = $("#csvModelGraphList");
-								modelGraphList.html('<option value="000">Current Worksheet</option>');
+								modelGraphList.html('<option value="000">Current Worksheet</option><option value="ALL">All graphs</option>');
 								for (var x in graphs) {
 									var str = graphs[x];
 									modelGraphList.append('<option value="'+graphs[x]+'">'+str+'</option>');
@@ -634,6 +634,7 @@ var ExportCSVModelDialog = (function() {
 				info["worksheetId"] = worksheetId;
 				info["command"] = "ExportCSVCommand";
 				info["rootNodeId"] = $('#csv_columns').attr('rel');
+				info["model_graph"] = $('#csv_columns').data('modelgraph');
 				info["tripleStoreUrl"] = $("#csvDataEndPoint").val();
 				info["graphUrl"] =  graphUri ;
 				info["columnList"] = JSON.stringify(list);
@@ -716,6 +717,7 @@ var ExportCSVModelDialog = (function() {
 				info["worksheetId"] = worksheetId;
 				info["command"] = "ExportCSVCommand";
 				info["rootNodeId"] = $('#csv_columns').attr('rel');
+				info["model_graph"] = $('#csv_columns').data('modelgraph');
 				info["tripleStoreUrl"] = $("#csvDataEndPoint").val();
 				info["graphUrl"] =  graphUri ;
 				info["columnList"] = JSON.stringify(list);
@@ -771,7 +773,7 @@ var ExportCSVModelDialog = (function() {
 								$('#csvDialogContent').hide();
 								
 								var ele = $('#csvDialogColumnList');
-								var content = '<ol id="csv_columns" rel="'+data['elements'][0]['rootId']+'">';
+								var content = '<ol id="csv_columns" rel="'+data['elements'][0]['rootId']+'" data-modelgraph="'+data['elements'][0]['model_graph']+'">';
 								var list = data['elements'][0]['columns'];
 								for(var x in list) {
 //    		   				var index = 0;
@@ -784,7 +786,7 @@ var ExportCSVModelDialog = (function() {
 //    		   				str = str.substr(index, (str.length - index));
 //    		   				
 									content += '<li style="padding=4px;" name="'+list[x]['url']+'" rel="'+list[x]['name']+'">'
-										+ list[x]['name']+' &nbsp; <a class="icon-remove pull-right">X</a>'  
+										+ list[x]['label']+' &nbsp; <a class="icon-remove pull-right">X</a>'  
 										+'</li>';
 														console.log("done fetching columns..");
 								}
