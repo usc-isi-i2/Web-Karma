@@ -57,9 +57,6 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
  */
 public class FetchColumnCommand extends WorksheetCommand {
 
-//	private final String alignmentNodeId;
-//	private final String tripleStoreUrl;
-//	private final String graphUrl;
 	private final String nodeId;
 	
 	private static Logger logger = LoggerFactory
@@ -71,9 +68,6 @@ public class FetchColumnCommand extends WorksheetCommand {
 	
 	protected FetchColumnCommand(String id, String worksheetId, String alignmentId, String sparqlUrl, String graph, String node ) {
 		super(id, worksheetId);
-//		this.alignmentNodeId = alignmentId;
-//		this.tripleStoreUrl = sparqlUrl;
-//		this.graphUrl = graph;
 		this.nodeId = node;
 	}
 
@@ -134,72 +128,6 @@ public class FetchColumnCommand extends WorksheetCommand {
 				}
 			}
 			
-//			TripleStoreUtil tUtil = new TripleStoreUtil();
-//			StringBuffer query = new StringBuffer("prefix rr: <http://www.w3.org/ns/r2rml#> prefix km-dev: <http://isi.edu/integration/karma/dev#> ");
-	
-			
-			/* ****** this is the query for the list of columns.
-			 
-				PREFIX km-dev: <http://isi.edu/integration/karma/dev#>
-				PREFIX rr: <http://www.w3.org/ns/r2rml#>
-				
-				select distinct ?class where  {
-				  {
-				    ?x1 rr:subjectMap/km-dev:alignmentNodeId "------- The full url of the column/class --------".
-				    ?x1 rr:predicateObjectMap/rr:objectMap/rr:column ?column .
-					?x1 rr:subjectMap/rr:predicate ?class .
-				  }
-				  UNION
-				  {
-				    ?x1 rr:subjectMap/km-dev:alignmentNodeId "------- The full url of the column/class --------".
-					?x1 (rr:predicateObjectMap/rr:objectMap/rr:parentTriplesMap)* ?x2 .
-					?x2 rr:predicateObjectMap/rr:objectMap/rr:column ?column .
-					?x2 rr:predicateObjectMap/rr:predicate ?class .
-				  }
-				}
-			 * */
-			
-//			query.append("select distinct ?class ?column where { ");
-//			if(graphName != null && !graphName.trim().isEmpty()) {
-//				query.append(" graph  <" + graphName + "> { ");
-//			}
-//			query.append("{ ?x1 rr:subjectMap/km-dev:alignmentNodeId \"")
-//				.append(this.nodeId)
-//				.append("\" . ?x1 rr:predicateObjectMap/rr:objectMap/rr:column ?column . ?x1 rr:subjectMap/rr:predicate ?class .")
-//				.append(" } UNION { ")
-//				.append("?x1 rr:subjectMap/km-dev:alignmentNodeId \"")
-//				.append(this.nodeId)
-//				.append("\" . ?x1 (rr:predicateObjectMap/rr:objectMap/rr:parentTriplesMap)* ?x2 .")
-//				.append(" ?x2 rr:predicateObjectMap ?x3 . ")
-//				.append(" ?x3 rr:objectMap/rr:column ?column . ?x3 rr:predicate ?class .")
-//				.append(" } }");
-//			if(graphName != null && !graphName.trim().isEmpty()) {
-//				query.append(" } ");
-//			}
-//			logger.info("Query: " + query.toString());
-//			String sData = TripleStoreUtil.invokeSparqlQuery(query.toString(), 
-//					TripleStoreUtil.defaultModelsRepoUrl, "application/json", null);
-//			if (sData == null | sData.isEmpty()) {
-//				logger.error("Empty response object from query : " + query);
-//			}
-//			HashMap<String,String> cols = new HashMap<String,String>();
-//			try {
-//				JSONObject obj1 = new JSONObject(sData);
-//				JSONArray arr = obj1.getJSONObject("results").getJSONArray("bindings");
-//				for(int i=0; i<arr.length(); i++) {
-//					String colName = arr.getJSONObject(i).getJSONObject("column").getString("value");
-//					String colValue = arr.getJSONObject(i).getJSONObject("class").getString("value");
-//					if(cols.containsKey(colName)) {
-//						logger.error("Duplicate Column <-> property mapping. " + colName + " <=> " + colValue);
-//					} else {
-//						cols.put(colName, colValue);
-//					}
-//				}
-//			} catch (Exception e2) {
-//				logger.error("Error in parsing json response", e2);
-//			}
-			
-			
 			SPARQLGeneratorUtil spqrqlUtil = new SPARQLGeneratorUtil();
 			String query = spqrqlUtil.get_fetch_column_query(graphName, this.nodeId);
 			
@@ -212,7 +140,6 @@ public class FetchColumnCommand extends WorksheetCommand {
 			}
 			logger.info("Query execution time : " + (start_time - System.nanoTime())/1000 + " ms");
 			start_time = System.nanoTime();
-//			HashMap<String,String> cols = new HashMap<String,String>();
 			JSONArray cols = new JSONArray();
 			try {
 				JSONObject obj1 = new JSONObject(sData);
@@ -224,15 +151,11 @@ public class FetchColumnCommand extends WorksheetCommand {
 						String colName = arr.getJSONObject(i).getJSONObject("colName").getString("value");
 						String colLabel = arr.getJSONObject(i).getJSONObject("colName").getString("value") + " (" + url.getRef() + ")";
 						String colValue = arr.getJSONObject(i).getJSONObject("srcPredicate").getString("value");
-//						if(cols.containsKey(colName)) {
-//							logger.error("Duplicate Column <-> property mapping. " + colName + " <=> " + colValue);
-//						} else {
-							JSONObject o = new JSONObject();
-							o.put("name", colName);
-							o.put("url", colValue);
-							o.put("label", colLabel);
-							cols.put(o);
-//						}
+						JSONObject o = new JSONObject();
+						o.put("name", colName);
+						o.put("url", colValue);
+						o.put("label", colLabel);
+						cols.put(o);
 					}
 					
 				}
@@ -242,7 +165,6 @@ public class FetchColumnCommand extends WorksheetCommand {
 			
 			
 			logger.info("Total Columns fetched : " + cols.length());
-//			final HashMap<String,String> columns = cols;
 			final JSONArray cols_final = cols;
 			logger.info("Result Processing time : " + (start_time - System.nanoTime())/1000 + " ms");
 			return new UpdateContainer(new AbstractUpdate() {
@@ -251,16 +173,6 @@ public class FetchColumnCommand extends WorksheetCommand {
 				public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
 					JSONObject obj = new JSONObject();
 					try {
-//						Iterator<String> itr =  columns.keySet().iterator();
-//						JSONArray colList = new JSONArray();
-//						while(itr.hasNext()) {
-//							JSONObject o = new JSONObject();
-//							String k = itr.next();
-//							o.put("name", k);
-//							o.put("url", columns.get(k));
-//							o.put("label", columns.get(k));
-//							colList.put(o);
-//						}
 						obj.put("updateType", "FetchColumnUpdate");
 						obj.put("columns", cols_final);
 						obj.put("rootId", nodeId);
