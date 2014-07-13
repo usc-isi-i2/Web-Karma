@@ -45,10 +45,12 @@ import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -62,6 +64,7 @@ public class ExportCSVCommand extends WorksheetCommand {
 	private final String rootNodeId;
 	private String tripleStoreUrl;
 	private String graphUrl;
+	private String model_graph_uri;
 	private String generatedRDFFileName = null;
 	private final ArrayList<HashMap<String, String>> columnList;
 	
@@ -79,12 +82,13 @@ public class ExportCSVCommand extends WorksheetCommand {
 	 * @param graph
 	 * @param nodes
 	 * */
-	protected ExportCSVCommand(String id, String worksheetId, String rootNode, String sparqlUrl, String graph, ArrayList<HashMap<String, String>> nodes ) {
+	protected ExportCSVCommand(String id, String worksheetId, String rootNode, String sparqlUrl, String graph, ArrayList<HashMap<String, String>> nodes, String model_graph ) {
 		super(id, worksheetId);
 		this.rootNodeId = rootNode;
 		this.tripleStoreUrl = sparqlUrl;
 		this.graphUrl = graph;
 		this.columnList = nodes;
+		this.model_graph_uri = model_graph;
 	}
 
 	@Override
@@ -113,6 +117,8 @@ public class ExportCSVCommand extends WorksheetCommand {
 			if(uc != null) {
 				return uc;
 			}
+		} else if (this.graphUrl.equalsIgnoreCase("ALL")) {
+			this.graphUrl = null;
 		}
 		
 		// Prepare the model file path and names
@@ -122,7 +128,7 @@ public class ExportCSVCommand extends WorksheetCommand {
 				csvFileName;
 
 		HashMap<String, String> result = 
-				ExportCSVUtil.generateCSVFile(workspace, this.worksheetId, this.rootNodeId, this.columnList, this.graphUrl, this.tripleStoreUrl, modelFileLocalPath);
+				ExportCSVUtil.generateCSVFile(workspace, this.worksheetId, this.rootNodeId, this.columnList, this.graphUrl, this.tripleStoreUrl, modelFileLocalPath, this.model_graph_uri);
 
 		if(this.generatedRDFFileName != null) {
 			// delete the created RDF file
@@ -177,7 +183,8 @@ public class ExportCSVCommand extends WorksheetCommand {
 		
 		generatedRDFFileName = ServletContextParameterMap.getParameterValue(ContextParameter.RDF_PUBLISH_DIR) + rdfFileName;
 		
-		final String graphUri = "http://localhost/"+workspace.getCommandPreferencesId() + "/" + worksheetId + "/" + ts;
+		final String graphUri = Uris.KM_DEFAULT_PUBLISH_GRAPH_URI + "data/" +
+				workspace.getWorksheet(worksheetId).getTitle() + "/" + worksheetId + "/" + ts;
 
 		logger.info("Generating RDF for current worksheet - " + rdfFileName);
 		
@@ -239,9 +246,10 @@ public class ExportCSVCommand extends WorksheetCommand {
 		}
 		catch(Exception e)
 		{
+			logger.error("Falied to store rdf to karma_data store", e);
 			result = false;
 		}
-		// if we the RDF is generated correctly, then we dont need to retur an UpdateContainer
+		// if the RDF is generated correctly, then we dont need to return an UpdateContainer
 		// hence we return null
 		if(result) {
 			logger.info("Saved rdf to store");

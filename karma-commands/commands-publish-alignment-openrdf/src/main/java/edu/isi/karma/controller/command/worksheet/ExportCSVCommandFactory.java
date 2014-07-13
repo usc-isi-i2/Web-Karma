@@ -37,7 +37,7 @@ public class ExportCSVCommandFactory extends CommandFactory {
 
 	private static Logger logger = LoggerFactory.getLogger(ExportCSVCommandFactory.class);
 	public enum Arguments {
-		worksheetId, columnList, tripleStoreUrl, graphUrl, rootNodeId
+		worksheetId, columnList, tripleStoreUrl, graphUrl, rootNodeId, model_graph
 	}
 	
 	@Override
@@ -48,6 +48,7 @@ public class ExportCSVCommandFactory extends CommandFactory {
 		String graphUrl = request.getParameter(Arguments.graphUrl.name());
 		String nodeId = request.getParameter(Arguments.rootNodeId.name());
 		String colList = request.getParameter(Arguments.columnList.name());
+		String model_graph = request.getParameter(Arguments.model_graph.name());
 		ArrayList<HashMap<String, String>> cols = new ArrayList<HashMap<String, String>>();
 		try {
 			
@@ -63,7 +64,7 @@ public class ExportCSVCommandFactory extends CommandFactory {
 		} catch (Exception e) {
 			logger.error("Error parsing column list",e);
 		}
-		return new ExportCSVCommand(getNewId(workspace), worksheetId, nodeId, tripleStoreUrl, graphUrl, cols );
+		return new ExportCSVCommand(getNewId(workspace), worksheetId, nodeId, tripleStoreUrl, graphUrl, cols, model_graph );
 	}
 
 	@Override
