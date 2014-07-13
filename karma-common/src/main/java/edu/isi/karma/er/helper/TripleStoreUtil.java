@@ -25,6 +25,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,6 +35,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -55,6 +59,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.util.HTTPUtil;
 import edu.isi.karma.webserver.KarmaException;
@@ -71,7 +76,6 @@ public class TripleStoreUtil {
 	public static final String defaultWorkbenchUrl;
 	public static final String karma_model_repo = "karma_models";
 	public static final String karma_data_repo = "karma_data";
-
 	static {
 		String host = ServletContextParameterMap
 				.getParameterValue(ServletContextParameterMap.ContextParameter.JETTY_HOST);
@@ -143,7 +147,7 @@ public class TripleStoreUtil {
 				while (count < repoList.length()) {
 					JSONObject obj = repoList.getJSONObject(count++);
 					repositories
-							.add(obj.optJSONObject("id").optString("value"));
+					.add(obj.optJSONObject("id").optString("value"));
 				}
 				// check for karama_models repo
 				if (!repositories.contains(karma_model_repo)) {
@@ -205,9 +209,9 @@ public class TripleStoreUtil {
 		testTripleStoreConnection(tripleStoreURL);
 
 		try {
-			
+
 			StringBuilder query = new StringBuilder();
-			
+
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#> ASK ");
 			injectContext(context, query);
 			query.append(" { { ");
@@ -218,11 +222,11 @@ public class TripleStoreUtil {
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
-			
+
 			Map<String, String> formparams = new HashMap<String, String>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
-			
+
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					tripleStoreURL, null, "application/sparql-results+json",
 					formparams);
@@ -234,13 +238,13 @@ public class TripleStoreUtil {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-		
+
 		return false;
 	}
-	
+
 	public Map<String, List<String>> getObjectsForSubjectsAndPredicates(String tripleStoreURL, String context, List<String> subjects, List<String> predicates, List<String> otherClasses, String sameAsProperty) throws KarmaException
 	{
-	
+
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
 		Map<String, List<String>> results = new HashMap<String,List<String>>();
@@ -269,8 +273,8 @@ public class TripleStoreUtil {
 			query.append("}\n");
 			Iterator<String> predicateIterator = predicates.iterator();
 			Iterator<String> otherClassIterator = otherClasses.iterator();
-			
-			
+
+
 			String predicate;
 			String otherClass;
 			while(predicateIterator.hasNext() && otherClassIterator.hasNext())
@@ -284,7 +288,7 @@ public class TripleStoreUtil {
 					query.append("BIND ( ");
 					formatURI(otherClass, query);
 					query.append(" AS ?filteredtype )\n");
-					
+
 				}
 				query.append("BIND ( ");
 				formatURI(predicate, query);
@@ -293,7 +297,7 @@ public class TripleStoreUtil {
 				query.append("?s ");
 				formatURI(predicate, query);
 				query.append(" ?o .\n");
-				
+
 				query.append("}\n");
 				if(sameAsProperty != null && !sameAsProperty.isEmpty())
 				{
@@ -328,15 +332,15 @@ public class TripleStoreUtil {
 			}
 
 			query.append("}\n");
-			
+
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
-			
+
 			Map<String, String> formparams = new HashMap<String, String>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
-			
+
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					tripleStoreURL, null, "application/sparql-results+json",
 					formparams);
@@ -365,10 +369,10 @@ public class TripleStoreUtil {
 		}	
 		return results;
 	}
-	
+
 	public Map<String, List<String>> getSubjectsForPredicatesAndObjects(String tripleStoreURL, String context, List<String> subjects, List<String> predicates, List<String> otherClasses, String sameAsPredicate) throws KarmaException
 	{
-	
+
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
 		Map<String, List<String>> results = new HashMap<String,List<String>>();
@@ -397,8 +401,8 @@ public class TripleStoreUtil {
 			query.append("}\n");
 			Iterator<String> predicateIterator = predicates.iterator();
 			Iterator<String> otherClassIterator = otherClasses.iterator();
-			
-			
+
+
 			String predicate;
 			String otherClass;
 			while(predicateIterator.hasNext() && otherClassIterator.hasNext())
@@ -414,7 +418,7 @@ public class TripleStoreUtil {
 					query.append("BIND ( ");
 					formatURI(otherClass, query);
 					query.append(" AS ?filteredtype )\n");
-					
+
 				}
 				query.append("{\n");
 				query.append("?s ?p ?o .\n");
@@ -439,9 +443,9 @@ public class TripleStoreUtil {
 				if(!otherClass.trim().isEmpty())
 				{
 					query.append("?s a ?filteredtype .\n");
-					
+
 				}
-				
+
 				query.append("}\n");
 				if(predicateIterator.hasNext() && otherClassIterator.hasNext())
 				{
@@ -450,15 +454,15 @@ public class TripleStoreUtil {
 			}
 
 			query.append("}\n");
-			
+
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
-			
+
 			Map<String, String> formparams = new HashMap<String, String>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
-			
+
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					tripleStoreURL, null, "application/sparql-results+json",
 					formparams);
@@ -488,7 +492,7 @@ public class TripleStoreUtil {
 		}	
 		return results;
 	}
-	
+
 	public void deleteMappingFromTripleStore(String tripleStoreURL, String context, String mappingURI) throws KarmaException
 	{
 		testTripleStoreConnection(tripleStoreURL);
@@ -508,19 +512,19 @@ public class TripleStoreUtil {
 			query.append("DELETE { ?s ?p ?o } \n");
 			query.append("WHERE\n");
 			injectMapping(mappingURI, query);
-			
+
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
-			
+
 			Map<String, String> formparams = new HashMap<String, String>();
 			formparams.put("update", queryString);
-			
+
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					tripleStoreURL, null, mime_types.get(RDF_Types.N3.name()),
 					formparams);
 			System.out.println(responseString);
-			
+
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -539,7 +543,7 @@ public class TripleStoreUtil {
 		query.append("?s owl:sameAs ");
 		formatURI(mappingURI, query);
 		query.append(" . \n"); 
-		
+
 		query.append("}\n");
 		query.append("}\n");
 	}
@@ -560,7 +564,7 @@ public class TripleStoreUtil {
 		query.append("}\n");
 		query.append("UNION\n");
 	}
-	
+
 	private void injectType(String mappingURI, StringBuilder query,
 			String type, String hasType, String hasType2) {
 		query.append("{\n");
@@ -580,30 +584,30 @@ public class TripleStoreUtil {
 		query.append("}\n");
 		query.append("UNION\n");
 	}
-	
+
 	public String getMappingFromTripleStore(String tripleStoreURL, String context, String mappingURI) throws KarmaException
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
-	
+
 		try {
 
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
 			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
 			query.append("CONSTRUCT { ?s ?p ?o }\n");
-			
+
 			injectContext(context, query);
 			injectMapping(mappingURI, query);
-			
+
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
-			
+
 			Map<String, String> formparams = new HashMap<String, String>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
-			
+
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					tripleStoreURL, null, mime_types.get(RDF_Types.N3.name()),
 					formparams);
@@ -638,12 +642,12 @@ public class TripleStoreUtil {
 			query.append(">");
 		}
 	}
-	
+
 	public HashMap<String, List<String>> getPredicatesForParentTriplesMapsWithSameClass(String tripleStoreURL, String context, Collection<String> classesToMatch) throws KarmaException
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
-		
+
 		List<String> predicates = new LinkedList<String>();
 		List<String> matchingRefObjMaps = new LinkedList<String>();
 		List<String> otherClasses = new LinkedList<String>();
@@ -656,7 +660,7 @@ public class TripleStoreUtil {
 			injectContext(context, query);
 			query.append("{\n");
 			query.append("?mapping owl:sameAs ?mappingURI . \n"); 
-//			query.append("?mappingURI km-dev:hasData \"true\" .\n"); 
+			//			query.append("?mappingURI km-dev:hasData \"true\" .\n"); 
 			query.append("?mapping km-dev:hasTriplesMap ?triplesMap .\n");
 			query.append("?triplesMap rr:subjectMap ?subjectMap .\n");
 			Iterator<String> itr = classesToMatch.iterator();
@@ -679,15 +683,15 @@ public class TripleStoreUtil {
 			query.append("?pom rr:predicate ?predicate .\n");
 			query.append("}\n");
 			query.append("GROUP BY ?predicate ?otherClass\n");
-			
+
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
-			
+
 			Map<String, String> formparams = new HashMap<String, String>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
-			
+
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					tripleStoreURL, null, "application/sparql-results+json",
 					formparams);
@@ -720,13 +724,13 @@ public class TripleStoreUtil {
 		values.put("otherClasses", otherClasses);
 		return values;
 	}
-	
-	
+
+
 	public HashMap<String, List<String>> getPredicatesForTriplesMapsWithSameClass(String tripleStoreURL, String context, Collection<String> classesToMatch) throws KarmaException
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
-		
+
 		List<String> predicates = new LinkedList<String>();
 		List<String> matchingPOMs = new LinkedList<String>();
 		List<String> otherClasses = new LinkedList<String>();
@@ -739,7 +743,7 @@ public class TripleStoreUtil {
 			injectContext(context, query);
 			query.append("{\n");
 			query.append("?mapping owl:sameAs ?mappingURI . \n"); 
-//			query.append("?mappingURI km-dev:hasData \"true\" .\n"); 
+			//			query.append("?mappingURI km-dev:hasData \"true\" .\n"); 
 			query.append("?mapping km-dev:hasTriplesMap ?triplesMap .\n");
 			query.append("?triplesMap rr:subjectMap ?subjectMap .\n");
 			Iterator<String> itr = classesToMatch.iterator();
@@ -763,15 +767,15 @@ public class TripleStoreUtil {
 			query.append("?otherSubjectMap rr:class ?otherClass .\n");
 			query.append("}\n}\n");
 			query.append("GROUP BY ?predicate ?otherClass\n");
-			
+
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
-			
+
 			Map<String, String> formparams = new HashMap<String, String>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
-			
+
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					tripleStoreURL, null, "application/sparql-results+json",
 					formparams);
@@ -809,7 +813,7 @@ public class TripleStoreUtil {
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
-		
+
 		Map<String, String> bloomfilters = new HashMap<String, String>();
 		try {
 
@@ -835,15 +839,15 @@ public class TripleStoreUtil {
 					query.append("> ?bf . \n} \n");
 			}
 			query.append("}\n");
-			
+
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
-			
+
 			Map<String, String> formparams = new HashMap<String, String>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
-			
+
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					tripleStoreURL, null, "application/sparql-results+json",
 					formparams);
@@ -862,12 +866,12 @@ public class TripleStoreUtil {
 		}
 		return bloomfilters;
 	}
-	
+
 	public void deleteBloomFiltersForMaps(String tripleStoreURL, String context, Collection<String> maps) throws KarmaException
 	{
 		testTripleStoreConnection(tripleStoreURL);
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL) + "/statements";		
-		
+
 		try {
 
 			StringBuilder query = new StringBuilder();
@@ -897,14 +901,14 @@ public class TripleStoreUtil {
 					query.append("> ?bf . \n} \n");
 			}
 			query.append("}\n");
-			
+
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
-			
+
 			Map<String, String> formparams = new HashMap<String, String>();
 			formparams.put("update", queryString);
-			
+
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					tripleStoreURL, null, mime_types.get(RDF_Types.N3.name()),
 					formparams);
@@ -913,7 +917,7 @@ public class TripleStoreUtil {
 			logger.error(e.getMessage());
 		}
 	}
-	
+
 	public void testTripleStoreConnection(String tripleStoreURL)
 			throws KarmaException {
 		// check the connection first
@@ -929,7 +933,7 @@ public class TripleStoreUtil {
 		if (tripleStoreURL == null || tripleStoreURL.isEmpty()) {
 			tripleStoreURL = defaultServerUrl + "/" + karma_model_repo + "/" + "statements";
 		}
-		
+
 		if (tripleStoreURL.charAt(tripleStoreURL.length() - 1) == '/') {
 			tripleStoreURL = tripleStoreURL.substring(0,
 					tripleStoreURL.length() - 2);
@@ -948,25 +952,34 @@ public class TripleStoreUtil {
 
 		TripleStoreURL = normalizeTripleStoreURL(TripleStoreURL);
 		testTripleStoreConnection(TripleStoreURL);
-		
+
 		List<String> times = new ArrayList<String>();
 		List<String> names = new ArrayList<String>();
 		List<String> urls = new ArrayList<String>();
+		List<String> inputColumns = new ArrayList<String>();
 		List<String> contexts = new ArrayList<String>();
 		try {
-			
+
 			StringBuilder query = new StringBuilder();
-			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?z ?y ?x ?src");
+			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
+			query.append("SELECT ?z ?y ?x ?src ?w\n");
 			injectContext(context, query);
-			query.append(" where  { GRAPH ?src {?a km-dev:sourceName ?y . ?a a km-dev:R2RMLMapping . ?a owl:sameAs ?z . ?a km-dev:modelPublicationTime ?x}} ORDER BY ?z ?y ?x ?src");
+			query.append("WHERE \n { \n");
+			query.append("GRAPH ?src \n { \n");
+			query.append("?a km-dev:sourceName ?y . \n");
+			query.append("?a a km-dev:R2RMLMapping . \n");
+			query.append("?a owl:sameAs ?z . \n");
+			query.append("?a km-dev:modelPublicationTime ?x \n");
+			query.append("OPTIONAL \n{?a km-dev:hasInputColumns ?w} \n");
+			query.append("\n}\n} \nORDER BY ?z ?y ?x ?w ?src");
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
-			
+
 			Map<String, String> formparams = new HashMap<String, String>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
-			
+
 			String responseString = HTTPUtil.executeHTTPPostRequest(
 					TripleStoreURL, null, "application/sparql-results+json",
 					formparams);
@@ -981,6 +994,10 @@ public class TripleStoreUtil {
 					times.add(o.getJSONObject("x").getString("value"));
 					names.add(o.getJSONObject("y").getString("value"));
 					urls.add(o.getJSONObject("z").getString("value"));
+					if (o.has("w"))
+							inputColumns.add(o.getJSONObject("w").getString("value"));
+					else
+						inputColumns.add("");
 					contexts.add(o.getJSONObject("src").getString("value"));
 				}
 			}
@@ -992,6 +1009,7 @@ public class TripleStoreUtil {
 		values.put("model_names", names);
 		values.put("model_urls", urls);
 		values.put("model_contexts", contexts);
+		values.put("model_inputcolumns", inputColumns);
 		return values;
 	}
 	/**
@@ -1008,7 +1026,7 @@ public class TripleStoreUtil {
 
 		TripleStoreURL = normalizeTripleStoreURL(TripleStoreURL);
 		testTripleStoreConnection(TripleStoreURL);
-		
+
 		try {
 			String queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?y ?z where { ?x km-dev:sourceName ?y . ?x km-dev:serviceUrl ?z . } ORDER BY ?y ?z";
 			logger.debug("query: " + queryString);
@@ -1067,7 +1085,7 @@ public class TripleStoreUtil {
 
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
-		
+
 		if (tripleStoreURL.charAt(tripleStoreURL.length() - 1) != '/') {
 			tripleStoreURL += "/";
 		}
@@ -1077,12 +1095,12 @@ public class TripleStoreUtil {
 
 			// initialize the http entity
 			HttpClient httpclient = new DefaultHttpClient();
-//			File file = new File(filePath);
+			//			File file = new File(filePath);
 			if (mime_types.get(rdfType) == null) {
 				throw new Exception("Could not find spefied rdf type: "
 						+ rdfType);
 			}
-			
+
 			// preparing the context for the rdf
 			if (context == null || context.isEmpty()) {
 				logger.info("Empty context");
@@ -1093,7 +1111,7 @@ public class TripleStoreUtil {
 				context.replaceAll("<", "");
 				builder.setParameter("context", "<" + context + ">");
 			}
-			
+
 			// preapring the base URL
 			if (baseURL != null && !baseURL.trim().isEmpty()) {
 				baseURL = baseURL.trim();
@@ -1103,8 +1121,8 @@ public class TripleStoreUtil {
 			} else {
 				logger.info("Empty baseURL");
 			}
-			
-			
+
+
 			// check if we need to specify the context
 			if (!replaceFlag) {
 				// we use HttpPost over HttpPut, for put will replace the entire
@@ -1156,7 +1174,7 @@ public class TripleStoreUtil {
 	 *            : The graph context for the RDF
 	 * 
 	 * */
-	public boolean saveToStore(String filePath, String tripleStoreURL,
+	public boolean saveToStoreFromFile(String filePath, String tripleStoreURL,
 			String context, boolean replaceFlag, String baseUri) throws KarmaException{
 		File file = new File(filePath);
 		FileEntity entity = new FileEntity(file, ContentType.create(
@@ -1164,8 +1182,8 @@ public class TripleStoreUtil {
 		return saveToStore(entity, tripleStoreURL, context, replaceFlag,
 				RDF_Types.Turtle.name(), baseUri);
 	}
-	
-	public boolean saveToStore(String input, String tripleStoreURL,
+
+	public boolean saveToStoreFromString(String input, String tripleStoreURL,
 			String context, Boolean replaceFlag, String baseUri)  throws KarmaException{
 		StringEntity entity = new StringEntity(input, ContentType.create(mime_types.get(RDF_Types.Turtle.name())));
 		return saveToStore(entity, tripleStoreURL, context, replaceFlag,
@@ -1192,7 +1210,7 @@ public class TripleStoreUtil {
 	 */
 	public static String invokeSparqlQuery(String query, String tripleStoreUrl,
 			String acceptContentType, String contextType)
-			throws ClientProtocolException, IOException, JSONException {
+					throws ClientProtocolException, IOException, JSONException {
 
 		Map<String, String> formParams = new HashMap<String, String>();
 		formParams.put("query", query);
@@ -1226,9 +1244,9 @@ public class TripleStoreUtil {
 			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
 			formparams.add(new BasicNameValuePair("Repository ID", repo_name));
 			formparams
-					.add(new BasicNameValuePair("Repository title", repo_name));
+			.add(new BasicNameValuePair("Repository title", repo_name));
 			formparams
-					.add(new BasicNameValuePair("Triple indexes", "spoc,posc"));
+			.add(new BasicNameValuePair("Triple indexes", "spoc,posc"));
 			formparams.add(new BasicNameValuePair("type", "native"));
 			httppost.setEntity(new UrlEncodedFormEntity(formparams, "UTF-8"));
 			httppost.setHeader("Content-Type",
@@ -1308,6 +1326,30 @@ public class TripleStoreUtil {
 			}
 		}
 		return retVal;
+	}
+	
+	public boolean updateTripleStoreWithBloomFilters(Map<String, KR2RMLBloomFilter> bfs, Map<String, String> bloomfilterMapping, String modelurl, String context) throws KarmaException, IOException {
+		Set<String> triplemaps = bfs.keySet();
+		for (String tripleUri : triplemaps) {
+			KR2RMLBloomFilter bf = bfs.get(tripleUri);
+			String oldserializedBloomFilter = bloomfilterMapping.get(tripleUri);
+			if (oldserializedBloomFilter != null) {
+				KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
+				bf2.populateFromCompressedAndBase64EncodedString(oldserializedBloomFilter);
+				bf.or(bf2);
+			}
+			bfs.put(tripleUri, bf);
+		}
+		deleteBloomFiltersForMaps(modelurl, context, triplemaps);
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		for (Entry<String, KR2RMLBloomFilter> entry : bfs.entrySet()) {
+			pw.print("<" + entry.getKey() + "> ");
+			pw.print("<" + Uris.KM_HAS_BLOOMFILTER + "> ");
+			pw.println("\"" + entry.getValue().compressAndBase64Encode() + "\" . ");
+		}
+		pw.close();
+		return saveToStoreFromString(sw.toString(), modelurl, context, new Boolean(false), null);
 	}
 
 	/**
