@@ -102,11 +102,11 @@ public class SetWorksheetPropertiesCommand extends Command {
 							propertiesJson.getString(Property.serviceDataPostMethod.name()));
 				}
 			}
-			if (propertiesJson.getBoolean("hasPrefix")) {
+			if (propertiesJson.optBoolean("hasPrefix",false)) {
 				props.setPropertyValue(Property.prefix, 
 						propertiesJson.getString(Property.prefix.name()));
 			}
-			if (propertiesJson.getBoolean("hasBaseURI")) {
+			if (propertiesJson.optBoolean("hasBaseURI", false)) {
 				props.setPropertyValue(Property.baseURI, 
 						propertiesJson.getString(Property.baseURI.name()));
 			}
