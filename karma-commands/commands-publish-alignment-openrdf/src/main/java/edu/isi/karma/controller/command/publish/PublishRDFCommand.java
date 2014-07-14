@@ -296,7 +296,7 @@ public class PublishRDFCommand extends Command {
 			logger.info("tripleStoreURl : " + tripleStoreUrl);
 
 
-			result &= utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext, this.rdfSourceNamespace);
+			result &= utilObj.saveToStoreFromFile(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext, this.rdfSourceNamespace);
 			if (url != null && !url.isEmpty() && url.compareTo("") != 0 && utilObj.testURIExists(modelRepoUrl, "", url)) {
 				StringBuilder sb = new StringBuilder();
 				url = url.trim();
@@ -313,7 +313,7 @@ public class PublishRDFCommand extends Command {
 				sb.append( Uris.MODEL_HAS_DATA_URI);
 				sb.append("> \"true\" .\n");
 				String input = sb.toString();
-				result &= utilObj.saveToStore(input, modelRepoUrl, modelContext, new Boolean(false), this.rdfSourceNamespace);
+				result &= utilObj.saveToStoreFromString(input, modelRepoUrl, modelContext, new Boolean(false), this.rdfSourceNamespace);
 			}
 			if(result) {
 				logger.info("Saved rdf to store");

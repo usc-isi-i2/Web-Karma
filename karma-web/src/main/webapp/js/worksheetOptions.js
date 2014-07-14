@@ -349,38 +349,36 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("Publish Model: " + worksheetTitle);
 		hideDropdown();
 		var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "GenerateR2RMLModelCommand";
-				info['tripleStoreUrl'] = $('#txtModel_URL').text();
-				info['localTripleStoreUrl'] = $('#txtModel_URL').text();
-			showLoading(info["worksheetId"]);
-			var returned = $.ajax({
-					url: "RequestController",
-					type: "POST",
-					data : info,
-					dataType : "json",
-					complete :
-							function (xhr, textStatus) {
-									//alert(xhr.responseText);
-									var json = $.parseJSON(xhr.responseText);
-									parse(json);
-									hideLoading(info["worksheetId"]);
-							},
-					error :
-							function (xhr, textStatus) {
-									alert("Error occured while exporting CSV!" + textStatus);
-									hideLoading(info["worksheetId"]);
-							}
-			});
-			
+	    info["worksheetId"] = worksheetId;
+	    info["workspaceId"] = $.workspaceGlobalInformation.id;
+	    info["command"] = "GenerateR2RMLModelCommand";
+      info['tripleStoreUrl'] = $('#txtModel_URL').text();
+	    showLoading(info["worksheetId"]);
+	    var returned = $.ajax({
+	        url: "RequestController",
+	        type: "POST",
+	        data : info,
+	        dataType : "json",
+	        complete :
+	            function (xhr, textStatus) {
+	                //alert(xhr.responseText);
+	                var json = $.parseJSON(xhr.responseText);
+	                parse(json);
+	                hideLoading(info["worksheetId"]);
+	            },
+	        error :
+	            function (xhr, textStatus) {
+	                alert("Error occured while exporting CSV!" + textStatus);
+	                hideLoading(info["worksheetId"]);
+	            }
+	    });
 		return false;
 	}
 
 	function applyModel(event) {
 		console.log("Apply Model: " + worksheetTitle);
 		hideDropdown();
-		applyModelDialog.getInstance().show(worksheetId);
+		applyModelDialog.getInstance(worksheetId).show();
 		return false;
 	}
 	

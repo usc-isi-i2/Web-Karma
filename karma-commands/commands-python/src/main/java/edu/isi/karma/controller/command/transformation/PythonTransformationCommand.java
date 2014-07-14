@@ -26,7 +26,9 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,9 +57,10 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public abstract class PythonTransformationCommand extends WorksheetCommand {
 
-	final protected String transformationCode;
+	protected String transformationCode;
 	final protected String hNodeId;
 	final protected String errorDefaultValue;
+	protected Set<String> inputColumns;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(PythonTransformationCommand.class);
@@ -72,7 +75,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		this.transformationCode = transformationCode;
 		this.hNodeId = hNodeId;
 		this.errorDefaultValue = errorDefaultValue;
-
+		inputColumns = new HashSet<String>();
 		addTag(CommandTag.Transformation);
 	}
 
@@ -99,7 +102,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 	protected void generateTransformedValues(Workspace workspace,
 			Worksheet worksheet, RepFactory f, HNode hNode,
 			JSONArray transformedRows, JSONArray errorValues, Integer limit)
-			throws JSONException {
+					throws JSONException {
 
 		PythonTransformationHelper pyHelper = new PythonTransformationHelper();
 		String trimmedTransformationCode = transformationCode.trim();
@@ -114,13 +117,13 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 				.getPythonTransformMethodDefinitionState(worksheet,
 						trimmedTransformationCode);
 
-		
+
 		logger.debug("Executing PyTransform\n" + transformMethodStmt);
 
 		// Prepare the Python interpreter
 		PythonInterpreter interpreter = new PythonInterpreter();
-		
-		
+
+
 		interpreter.exec(pyHelper.getImportStatements());
 		importUserScripts(interpreter);
 		interpreter.exec(pyHelper.getGetValueDefStatement());
@@ -136,9 +139,9 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		int counter = 0;
 		long starttime = System.currentTimeMillis();
 		// Go through all nodes collected for the column with given hNodeId
-		
+
 		interpreter.set("workspaceid", workspace.getId());
-		
+		interpreter.set("command", this);
 		PyCode py = interpreter.compile("transform(nodeid)");
 
 		int numRowsWithErrors = 0;
@@ -183,7 +186,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 	private void importUserScripts(PythonInterpreter interpreter) {
 		String dirpathString = ServletContextParameterMap
 				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
-		
+
 		if (dirpathString != null && dirpathString.compareTo("") != 0) {
 			File f = new File(dirpathString);
 			String[] scripts = f.list(new FilenameFilter(){
@@ -230,5 +233,13 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 	public String getTransformationCode() {
 		return transformationCode;
+	}
+
+	public void setTransformationCode(String transformationCode) {
+		this.transformationCode = transformationCode;
+	}
+	
+	public void addInputColumns(String hNodeId) {
+		inputColumns.add(hNodeId);
 	}
 }
