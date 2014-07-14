@@ -231,7 +231,7 @@ public class KR2RMLMappingGenerator {
 				
 				if (subjMap.isBlankNode()) {
 					List<String> columnsCovered = new ArrayList<String>();
-					Set<LabeledLink> links = dm.getModel().outgoingEdgesOf(treeNode);
+					Set<LabeledLink> links = dm.getOutgoingEdgesOf(treeNode);
 					Iterator<LabeledLink> linkIterator = links.iterator();
 					while(linkIterator.hasNext())
 					{
