@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.modeling.semantictypes.ISemanticTypeModelHandler;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeLabel;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
-import edu.isi.karma.semantictypes.globaldata.GlobalData;
 import edu.isi.karma.semantictypes.tfIdf.Indexer;
 import edu.isi.karma.semantictypes.tfIdf.TopKSearcher;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -55,7 +54,6 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	// instance variables
 	static Logger logger = LoggerFactory.getLogger(LuceneBasedSTModelHandler.class.getSimpleName()) ;
 	private ArrayList<String> allowedCharacters;
-	private GlobalData globalData;
 	private Indexer indexer; // responsible for indexing textual data
 	private boolean modelEnabled = false;
 	private String indexDirectory;
@@ -71,7 +69,6 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	public LuceneBasedSTModelHandler()
 	{
 		indexer = new Indexer(); 
-		globalData = new GlobalData();
 		allowedCharacters = allowedCharacters(); 
 		indexDirectory = ServletContextParameterMap.getParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY);
 		
@@ -97,7 +94,6 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	public synchronized boolean addType(String label, List<String> examples) {
 		ArrayList<String> cleanedExamples;
 		ArrayList<Example> selectedExamples;
-		int labelIndex;
 		boolean savingSuccessful=false;
 		
 		// running basic sanity checks in the input arguments
@@ -115,12 +111,6 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 			return false ;
 		}
 		
-		// if label does not already exist in the model, add new label. Also, add an entry in the map for the new label.
-		labelIndex = globalData.labels.indexOf(label) ;
-		if (labelIndex == -1) {
-			globalData.labels.add(label) ;
-			labelIndex = globalData.labels.indexOf(label) ;
-		}
 		// adding all the new examples to list of existing examples for the arg label.
 		selectedExamples = new ArrayList<Example>();
 		for(String newExampleString : examples) {
@@ -165,19 +155,6 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		return true;
 	}
 	
-	/**
-	 * @param labels The ordered list of labels is returned in this argument.
-	 * @return True, if successful, else False
-	 */
-	public boolean getLabels(List<String> labels) {
-		if (labels == null) {
-			Prnt.prn("Invalid argument @labels. It is null.") ;
-			return false ;
-		}
-		labels.clear() ;
-		labels.addAll(globalData.labels);
-		return true ;
-	}
 
 	/**
 	 * @param examples - list of examples of an unknown type
@@ -204,11 +181,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 			logger.warn("Invalid arguments. Possible problems: examples list size is zero, numPredictions is non-positive") ;
 			return null;
 		}
-		// Making sure that there exists a model.
-		if(globalData.labels.size() == 0) {
-			logger.warn("The model does have not any semantic types. Please add some labels with their examples before attempting to predict using this model.") ;
-			return null ;
-		}
+		
 		
 		// construct single text for test column
 	    StringBuilder sb = new StringBuilder();

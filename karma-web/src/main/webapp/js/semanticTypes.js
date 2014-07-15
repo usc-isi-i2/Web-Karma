@@ -49,7 +49,7 @@ var SetSemanticTypeDialog = (function() {
 					console.log(typeJsonObject);
 					existingTypes = typeJsonObject["SemanticTypesArray"];
 					
-					var CRFInfo = typeJsonObject["FullCRFModel"];
+					var SemModel = typeJsonObject["SemanticTypeModel"];
 					
 					// Populate the table with existing types and CRF suggested types
 					$.each(existingTypes, function(index, type){
@@ -69,17 +69,17 @@ var SetSemanticTypeDialog = (function() {
 							addSemTypeObjectToCurrentTable(type, true, false);
 						}
 					});
-					if(CRFInfo != null) {
-							$.each(CRFInfo["Labels"], function(index, type){
+					if(SemModel != null) {
+							$.each(SemModel["Labels"], function(index, type){
 									addSemTypeObjectToCurrentTable(type, false, true);
 							});
 					}
 					
 					addEmptyUriSemanticType();
 					
-					if((!CRFInfo && existingTypes.length == 0) ||
-											((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo.length == 0)) ||
-											((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo["Labels"].length == 0))) {
+					if((!SemModel && existingTypes.length == 0) ||
+											((existingTypes && existingTypes.length == 0) && (SemModel && SemModel.length == 0)) ||
+											((existingTypes && existingTypes.length == 0) && (SemModel && SemModel["Labels"].length == 0))) {
 											addEmptySemanticType();
 							}
 					

@@ -58,7 +58,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	private Alignment alignment;
 
 	public enum JsonKeys {
-		HNodeId, FullType, ConfidenceLevel, Origin, FullCRFModel, DisplayLabel, 
+		HNodeId, FullType, ConfidenceLevel, Origin, SemanticTypeModel, DisplayLabel, 
 		DisplayDomainLabel, DomainId, DomainUri, SemanticTypesArray, isPrimary, isPartOfKey, 
 		Types, isMetaProperty, rdfLiteralType
 	}
@@ -198,7 +198,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 				// Populate the CRF Model
 				SemanticTypeColumnModel colModel = worksheet.getSemanticTypeModel().getModelByHNodeId(nodeId);
 				if (colModel != null) {
-					writer.key(JsonKeys.FullCRFModel.name()).value(colModel.getAsJSONObject(vWorkspace.getWorkspace().getOntologyManager(), alignment));
+					writer.key(JsonKeys.SemanticTypeModel.name()).value(colModel.getAsJSONObject(vWorkspace.getWorkspace().getOntologyManager(), alignment));
 				}
 
 				writer.endObject();
