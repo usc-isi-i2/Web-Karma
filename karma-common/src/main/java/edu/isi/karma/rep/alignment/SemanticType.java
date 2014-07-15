@@ -43,7 +43,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 	
 
 	public enum Origin {
-		AutoModel, User, CRFModel
+		AutoModel, User, CRFModel, TfIdfModel
 	}
 
 	public enum ConfidenceLevel {
