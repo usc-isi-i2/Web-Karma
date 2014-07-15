@@ -256,7 +256,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		if (addColCmd != null)
 			t.add(addColCmd.getNewHNodeId());
 		else
-			t.add(hNodeId);
+			t.add(pythonNodeId);
 		return t;
 	}
 }

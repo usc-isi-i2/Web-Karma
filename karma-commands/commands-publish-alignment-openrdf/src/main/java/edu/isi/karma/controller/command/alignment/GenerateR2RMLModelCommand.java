@@ -21,6 +21,8 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -190,7 +192,24 @@ public class GenerateR2RMLModelCommand extends Command {
 		try {
 			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
 			CommandHistory history = workspace.getCommandHistory();
-			List<Command> commands = consolidateSubmitEditPyTransform(getCommandsInHistory(history._getHistory()), workspace);
+			List<Command> commands = consolidateSubmitEditPyTransform(consolidateSubmitPyTransform(getCommandsInHistory(history._getHistory()), workspace), workspace);
+			try {
+				PrintWriter pw = new PrintWriter(new File("refined.txt"));
+				for (Command c : commands) {
+					if (c instanceof SubmitPythonTransformationCommand) {
+						SubmitPythonTransformationCommand py = (SubmitPythonTransformationCommand)c;
+						pw.println("Command Type: " + py.getCommandName());
+						pw.println("Name: " + py.getDescription());
+						pw.println("Inputs:" + py.getInputColumns());
+						pw.println("Outputs:" + py.getOutputColumns());
+						pw.println("Codes:" + py.getTransformationCode());
+					}
+				}
+				pw.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			JSONArray refinedhistory = new JSONArray();
 			for (Command refined : commands)
 				refinedhistory.put(history.getCommandJSON(workspace, refined));
@@ -365,6 +384,24 @@ public class GenerateR2RMLModelCommand extends Command {
 				}
 			}
 		}
+		try {
+			PrintWriter pw = new PrintWriter(new File("log.txt"));
+			for (Command c : refinedCommands) {
+				if (c instanceof SubmitPythonTransformationCommand) {
+					SubmitPythonTransformationCommand py = (SubmitPythonTransformationCommand)c;
+					pw.println("Command Type: " + py.getCommandName());
+					pw.println("Name: " + py.getDescription());
+					pw.println("Inputs:" + py.getInputColumns());
+					pw.println("Outputs:" + py.getOutputColumns());
+					pw.println("Codes:" + py.getTransformationCode());
+				}
+			}
+			pw.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return refinedCommands;
 	}
 
@@ -372,9 +409,10 @@ public class GenerateR2RMLModelCommand extends Command {
 		List<Command> refinedCommands = new ArrayList<Command>();
 		CommandHistory history = workspace.getCommandHistory();
 		for (Command command : commands) {
-			if (command instanceof SubmitPythonTransformationCommand) {
+			if (command instanceof SubmitEditPythonTransformationCommand) {
 				Iterator<Command> itr = refinedCommands.iterator();
 				boolean flag = true;
+				boolean found = false;
 				while(itr.hasNext()) {
 					Command tmp = itr.next();
 					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && tmp instanceof SubmitPythonTransformationCommand && !(tmp instanceof SubmitEditPythonTransformationCommand)) {
@@ -389,16 +427,39 @@ public class GenerateR2RMLModelCommand extends Command {
 //						System.out.println(py.getInputParameterJson());
 						py.doIt(workspace);
 						history._getHistory().remove(command);
+						found = true;
 						//PlaceHolder
 					}
 					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && tmp instanceof SubmitEditPythonTransformationCommand && command instanceof SubmitEditPythonTransformationCommand) {
 //						System.out.println("Here");
 						history._getHistory().remove(tmp);
+						found = true;
 						itr.remove();
 					}
 				}
-				if (flag)
+				if (flag && found)
 					refinedCommands.add(command);
+			}
+			else
+				refinedCommands.add(command);
+		}
+		return refinedCommands;
+	}
+	
+	private List<Command> consolidateSubmitPyTransform(List<Command> commands, Workspace workspace) throws CommandException {
+		List<Command> refinedCommands = new ArrayList<Command>();
+		CommandHistory history = workspace.getCommandHistory();
+		for (Command command : commands) {
+			if (command instanceof SubmitPythonTransformationCommand && !(command instanceof SubmitEditPythonTransformationCommand)) {
+				Iterator<Command> itr = refinedCommands.iterator();
+				while(itr.hasNext()) {
+					Command tmp = itr.next();
+					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && tmp instanceof SubmitPythonTransformationCommand && !(tmp instanceof SubmitEditPythonTransformationCommand)) {
+						history._getHistory().remove(tmp);
+						itr.remove();
+					}
+				}
+				refinedCommands.add(command);
 			}
 			else
 				refinedCommands.add(command);
