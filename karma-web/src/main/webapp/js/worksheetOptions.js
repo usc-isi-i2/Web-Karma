@@ -5,23 +5,23 @@ function WorksheetOptions(wsId, wsTitle) {
 	var worksheetOptionsDiv;
 	
 	var options = [
-					{name:"View model using straight lines", func:viewStraightLineModel, showCheckbox:true, defaultChecked:true, initFunc:initStrightLineModel},
-					{name:"Organize Columns", func:organizeColumns},
-					{name:"divider"},
-					
-					{name: "Suggest Model", func:undefined, addLevel:true, levels: [
+            {name:"View model using straight lines", func:viewStraightLineModel, showCheckbox:true, defaultChecked:true, initFunc:initStrightLineModel},
+			{name:"Organize Columns", func:organizeColumns},
+			{name:"divider"},
+			
+			{name: "Suggest Model", func:undefined, addLevel:true, levels: [
 									 {name:"Using Current Ontology" , func:showModel},  
 									 {name:"Generate New Ontology", func:showAutoModel},
 					]},
-					
 			{name:"Set Properties", func:setProperties},
 			
 			{name:"Apply R2RML Model", func: undefined, addLevel:true, levels: [
 				{name:"From File" , func:applyR2RMLModel, useFileUpload:true, uploadDiv:"applyWorksheetHistory"},
 				{name:"From Repository" , func:applyModel}
 			]},
-			{name:"divider"},
-			
+			{name:"Add Node", func:addNode},
+			{name:"divider"},			
+
 			{name: "Publish", func:undefined, addLevel:true, levels: [
 					{name:"RDF" , func:publishRDF},
 					{name:"Model" , func:publishModel},
@@ -560,6 +560,13 @@ function WorksheetOptions(wsId, wsTitle) {
 		return false;
 	}
 	
+	function addNode() {
+		console.log("Add Node");
+		hideDropdown();
+		AddNodeDialog.getInstance().show(worksheetId);
+		return false;
+	}
+	
 	this.generateJS = function() {
 		var div = 
 			$("<div>")
@@ -654,7 +661,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		div.append(ul);
 		worksheetOptionsDiv = div;
 		return div;
-	}
+	};
 	
 	
 }
