@@ -12,7 +12,7 @@ import edu.isi.karma.modeling.semantictypes.ISemanticTypeModelHandler;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeLabel;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 import edu.isi.karma.semantictypes.tfIdf.Indexer;
-import edu.isi.karma.semantictypes.tfIdf.TopKSearcher;
+import edu.isi.karma.semantictypes.tfIdf.Searcher;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -148,7 +148,18 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
     	    sb.append(" ");
     	}
     	
-    	indexer.addDocument(sb.toString(),label);
+    	// check if semantic label already exists in index
+    	Searcher searcher = new Searcher(indexDirectory,Indexer.LABEL_FIELD_NAME);
+    	boolean labelExists = searcher.existsSemanticLabel(label);
+    	
+    	if(labelExists==true)
+    	{
+    		indexer.updateDocument(sb.toString(), label);
+    	}
+    	else
+    	{
+    		indexer.addDocument(sb.toString(),label);
+    	}
 		indexer.commit();
 		indexer.closeIndexWriter();
 	
@@ -193,7 +204,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		
 	    // get top-k suggestions
 	    try {
-	    	TopKSearcher predictor = new TopKSearcher(indexDirectory);
+	    	Searcher predictor = new Searcher(indexDirectory,Indexer.CONTENT_FIELD_NAME);
 			return predictor.getTopK(numPredictions, sb.toString());
 		} catch (ParseException | IOException e) {
 			e.printStackTrace();

@@ -10,12 +10,15 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
@@ -24,23 +27,31 @@ import edu.isi.karma.modeling.semantictypes.SemanticTypeLabel;
 
 /**
  * This class is responsible for predicting top-k suggestions for textual data 
- * using TF-IDF based cosine similarity approach
+ * using TF-IDF based cosine similarity approach and checking if a document for a 
+ * semantic label already exists
  * 
  * @author ramnandan
  *
  */
-public class TopKSearcher {
+public class Searcher {
 
 	private IndexSearcher indexSearcher = null;
 	private Analyzer analyzer = null;
 	private QueryParser parser = null;
 	
-	public TopKSearcher(String filepath) throws IOException
+	public Searcher(String filepath, String fieldName) throws IOException
 	{
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(filepath)));
 		indexSearcher = new IndexSearcher(reader);
 		analyzer = new StandardAnalyzer(Version.LUCENE_48);
-		parser = new QueryParser(Version.LUCENE_48, Indexer.CONTENT_FIELD_NAME, analyzer);
+		if(fieldName.equalsIgnoreCase(Indexer.LABEL_FIELD_NAME))
+		{
+			parser = new QueryParser(Version.LUCENE_48, Indexer.LABEL_FIELD_NAME, analyzer);
+		}
+		else
+		{
+			parser = new QueryParser(Version.LUCENE_48, Indexer.CONTENT_FIELD_NAME, analyzer);
+		}
 	}
 	
 	public List<SemanticTypeLabel>  getTopK(int k, String content) throws ParseException, IOException 
@@ -64,6 +75,33 @@ public class TopKSearcher {
 			result.add(new SemanticTypeLabel(labelString, hits[i].score));
 		}	
 		return result;
+	}
+	
+	public boolean existsSemanticLabel(String labelToQuery) throws IOException
+	{
+		BooleanQuery query = new BooleanQuery();
+		query.add(new TermQuery(new Term(Indexer.LABEL_FIELD_NAME, labelToQuery)), BooleanClause.Occur.MUST);
+		
+		TopDocs results = indexSearcher.search(query, 1);
+		ScoreDoc[] hits = results.scoreDocs;
+		
+		if(hits.length>0)
+		{
+			Document doc = indexSearcher.doc(hits[0].doc);
+			String labelString = doc.get(Indexer.LABEL_FIELD_NAME);
+			if(labelString.equalsIgnoreCase(labelToQuery)) // document for exact semantic label already exists
+			{
+				return true;
+			}
+			else // inexact match
+			{
+				return false;
+			}
+		}
+		else // no match found
+		{
+			return false;
+		}
 	}
 	
 }
