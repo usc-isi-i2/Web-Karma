@@ -21,8 +21,6 @@
 
 package edu.isi.karma.controller.command.alignment;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +28,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ws.rs.core.UriBuilder;
@@ -53,6 +50,7 @@ import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
+import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.ModelingConfiguration;
@@ -62,6 +60,7 @@ import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
@@ -192,37 +191,31 @@ public class GenerateR2RMLModelCommand extends Command {
 		try {
 			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
 			CommandHistory history = workspace.getCommandHistory();
-			List<Command> commands = consolidateSubmitEditPyTransform(consolidateSubmitPyTransform(getCommandsInHistory(history._getHistory()), workspace), workspace);
-			try {
-				PrintWriter pw = new PrintWriter(new File("refined.txt"));
-				for (Command c : commands) {
-					if (c instanceof SubmitPythonTransformationCommand) {
-						SubmitPythonTransformationCommand py = (SubmitPythonTransformationCommand)c;
-						pw.println("Command Type: " + py.getCommandName());
-						pw.println("Name: " + py.getDescription());
-						pw.println("Inputs:" + py.getInputColumns());
-						pw.println("Outputs:" + py.getOutputColumns());
-						pw.println("Codes:" + py.getTransformationCode());
-					}
-				}
-				pw.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			List<ICommand> copyCommands = new ArrayList<ICommand>(history._getHistory());
+			List<Command> commands = consolidateSubmitEditPyTransform(getCommandsInHistory(copyCommands), workspace, copyCommands);
 			JSONArray refinedhistory = new JSONArray();
 			for (Command refined : commands)
 				refinedhistory.put(history.getCommandJSON(workspace, refined));
-			Set<String> inputColumns = generateGraph(commands);
+			Set<String> inputColumns = generateGraph(commands, workspace);
 			JSONArray array = new JSONArray();
 			for (String hNodeId : inputColumns) {
 				HNode hnode = workspace.getFactory().getHNode(hNodeId);
 				JSONArray hNodeRepresentation = hnode.getJSONArrayRepresentation(workspace.getFactory());
 				array.put(hNodeRepresentation);
 			}
+			if (checkDependency(commands, workspace)) {
 //			System.out.println(array.toString(4));
 //			System.out.println(history);
-			fileSaver.saveAlignment(alignment, refinedhistory, modelFileLocalPath);
+				fileSaver.saveAlignment(alignment, refinedhistory, modelFileLocalPath);
+				history._getHistory().clear();
+				history._getHistory().addAll(copyCommands);
+				uc.add(new InfoUpdate("Optimize command history successful!"));
+			}
+			else {
+				logger.error("Optimize command history failed!");
+				fileSaver.saveAlignment(alignment, modelFileLocalPath);
+				uc.add(new InfoUpdate("Optimize command history failed!"));
+			}
 
 			// Write the model to the triple store
 			//TripleStoreUtil utilObj = new TripleStoreUtil();
@@ -305,7 +298,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		}
 	}
 
-	private Set<String> generateGraph(List<Command> commands) {
+	private Set<String> generateGraph(List<Command> commands, Workspace workspace) {
 		
 		Map<Command, List<Command> > dag = new HashMap<Command, List<Command>>();
 		Map<String, List<Command> > outputMapping = new HashMap<String, List<Command> >();
@@ -336,19 +329,19 @@ public class GenerateR2RMLModelCommand extends Command {
 			}					
 		}
 		
-		for (Entry<Command, List<Command>> entry : dag.entrySet()) {
-			Command key = entry.getKey();
-			List<Command> value = entry.getValue();
-			System.out.print(key.getCommandName() + "inputs: " + key.getInputColumns() + "outputs: " + key.getOutputColumns());
-			System.out.print("=");
-			for (Command command : value)
-				System.out.print(command.getCommandName() + "inputs: " + command.getInputColumns() + "outputs: " + command.getOutputColumns());
-			System.out.println();
-		}
+//		for (Entry<Command, List<Command>> entry : dag.entrySet()) {
+//			Command key = entry.getKey();
+//			List<Command> value = entry.getValue();
+//			System.out.print(key.getCommandName() + "inputs: " + key.getInputColumns() + "outputs: " + key.getOutputColumns());
+//			System.out.print("=");
+//			for (Command command : value)
+//				System.out.print(command.getCommandName() + "inputs: " + command.getInputColumns() + "outputs: " + command.getOutputColumns());
+//			System.out.println();
+//		}
 		Set<String> inputColumns = new HashSet<String>();
 		for (Command t : commands) {
 			if (t instanceof SetSemanticTypeCommand || t instanceof SetMetaPropertyCommand) {
-				inputColumns.addAll(getParents(t, dag));
+				inputColumns.addAll(getParents(t, dag, workspace));
 			}
 		}
 //		System.out.println(inputColumns);
@@ -357,14 +350,19 @@ public class GenerateR2RMLModelCommand extends Command {
 	}
 	
 	
-	private Set<String> getParents(Command c, Map<Command, List<Command> >dag) {
+	private Set<String> getParents(Command c, Map<Command, List<Command> >dag, Workspace workspace) {
 		List<Command> parents = dag.get(c);
 		Set<String> terminalColumns = new HashSet<String>();
 		if (parents == null || parents.size() == 0)
 			terminalColumns.addAll(c.getInputColumns());
 		else {
 			for (Command t : parents) {
-				terminalColumns.addAll(getParents(t, dag));
+				terminalColumns.addAll(getParents(t, dag, workspace));
+				for (String hNodeId : c.getInputColumns()) {
+					HNode hn = workspace.getFactory().getHNode(hNodeId);
+					if (hn.getHNodeType() == HNodeType.Regular)
+						terminalColumns.add(hNodeId);
+				}
 			}
 		}
 		return terminalColumns;
@@ -384,30 +382,13 @@ public class GenerateR2RMLModelCommand extends Command {
 				}
 			}
 		}
-		try {
-			PrintWriter pw = new PrintWriter(new File("log.txt"));
-			for (Command c : refinedCommands) {
-				if (c instanceof SubmitPythonTransformationCommand) {
-					SubmitPythonTransformationCommand py = (SubmitPythonTransformationCommand)c;
-					pw.println("Command Type: " + py.getCommandName());
-					pw.println("Name: " + py.getDescription());
-					pw.println("Inputs:" + py.getInputColumns());
-					pw.println("Outputs:" + py.getOutputColumns());
-					pw.println("Codes:" + py.getTransformationCode());
-				}
-			}
-			pw.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		return refinedCommands;
 	}
 
-	private List<Command> consolidateSubmitEditPyTransform(List<Command> commands, Workspace workspace) throws CommandException {
+	private List<Command> consolidateSubmitEditPyTransform(List<Command> commands, Workspace workspace, List<ICommand> copyCommands) throws CommandException {
 		List<Command> refinedCommands = new ArrayList<Command>();
-		CommandHistory history = workspace.getCommandHistory();
+		//
 		for (Command command : commands) {
 			if (command instanceof SubmitEditPythonTransformationCommand) {
 				Iterator<Command> itr = refinedCommands.iterator();
@@ -426,13 +407,13 @@ public class GenerateR2RMLModelCommand extends Command {
 						flag = false;
 //						System.out.println(py.getInputParameterJson());
 						py.doIt(workspace);
-						history._getHistory().remove(command);
+						copyCommands.remove(command);
 						found = true;
 						//PlaceHolder
 					}
 					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && tmp instanceof SubmitEditPythonTransformationCommand && command instanceof SubmitEditPythonTransformationCommand) {
 //						System.out.println("Here");
-						history._getHistory().remove(tmp);
+						copyCommands.remove(tmp);
 						found = true;
 						itr.remove();
 					}
@@ -446,24 +427,24 @@ public class GenerateR2RMLModelCommand extends Command {
 		return refinedCommands;
 	}
 	
-	private List<Command> consolidateSubmitPyTransform(List<Command> commands, Workspace workspace) throws CommandException {
-		List<Command> refinedCommands = new ArrayList<Command>();
-		CommandHistory history = workspace.getCommandHistory();
-		for (Command command : commands) {
-			if (command instanceof SubmitPythonTransformationCommand && !(command instanceof SubmitEditPythonTransformationCommand)) {
-				Iterator<Command> itr = refinedCommands.iterator();
-				while(itr.hasNext()) {
-					Command tmp = itr.next();
-					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && tmp instanceof SubmitPythonTransformationCommand && !(tmp instanceof SubmitEditPythonTransformationCommand)) {
-						history._getHistory().remove(tmp);
-						itr.remove();
-					}
-				}
-				refinedCommands.add(command);
-			}
-			else
-				refinedCommands.add(command);
+	private boolean checkDependency(List<Command> commands, Workspace workspace) {
+		Set<String> OutputhNodeIds = new HashSet<String>();
+		for (HNode hnode : workspace.getFactory().getAllHNodes()) {
+			if (hnode.getHNodeType() == HNodeType.Regular)
+				OutputhNodeIds.add(hnode.getId());
 		}
-		return refinedCommands;
+		boolean dependency = true;
+		for (Command command : commands) {
+			if (command.getInputColumns().size() > 0) {
+				for (String hNodeId : command.getInputColumns()) {
+					if (!OutputhNodeIds.contains(hNodeId))
+						dependency = false;
+				}
+			}
+			if (command.getOutputColumns().size() > 0) {
+				OutputhNodeIds.addAll(command.getOutputColumns());
+			}
+		}
+		return dependency;
 	}
 }
