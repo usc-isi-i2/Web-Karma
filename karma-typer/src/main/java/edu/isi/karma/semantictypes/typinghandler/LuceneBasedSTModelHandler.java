@@ -2,19 +2,20 @@ package edu.isi.karma.semantictypes.typinghandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.modeling.semantictypes.ISemanticTypeModelHandler;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeLabel;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 import edu.isi.karma.semantictypes.globaldata.GlobalData;
 import edu.isi.karma.semantictypes.tfIdf.Indexer;
 import edu.isi.karma.semantictypes.tfIdf.TopKSearcher;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 /**
  * This is the API class for the semantic typing module, implementing the combined approach of 
@@ -25,25 +26,13 @@ import edu.isi.karma.semantictypes.tfIdf.TopKSearcher;
  *
  */
 
-public class TypingHandler {
-
-	// Current approach doesn't exploit column feature information. Included for future enhancement.
-	/**
-	 * @author amangoel
-	 * The ColumnFeature enum with members representing the possible features that could be passed.
-	 *
-	 */
-	public enum ColumnFeature {
-		ColumnHeaderName ,
-		TableName
-	} ;
+public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 
 	/**
 	 * This internal class represents an example.
 	 */
 	static class Example {
 		String exampleString;
-		HashMap<ColumnFeature, String> columnFeatures;
 
 		/**
 		 * @param exampleString The string that the example represents
@@ -51,72 +40,25 @@ public class TypingHandler {
 		 */
 		public Example(String exampleString) {
 			this.exampleString = exampleString;
-			columnFeatures = new HashMap<ColumnFeature, String>();
 		}
 
-		/**
-		 * @param exampleString The example string
-		 * @param columnFeatures Associated ColumnFeatures
-		 * It takes in a collection of feature values for each ColumnFeature, 
-		 * but only picks the first value to store in the Example, 
-		 * as I don't see yet why more than one String should be associated with a ColumnFeature.
-		 */
-		public Example(String exampleString, Map<ColumnFeature, Collection<String>> columnFeatures) {
-			this.exampleString = exampleString;
-			this.columnFeatures = new HashMap<ColumnFeature, String>();
-			if (columnFeatures != null) {
-				for(Map.Entry<ColumnFeature, Collection<String>> entry : columnFeatures.entrySet()) {
-					if (entry.getValue() != null && entry.getValue().size() > 0) {
-						String featureValue;
-						featureValue = null;
-						for(String str : entry.getValue()) {
-							featureValue = str;
-							break;
-						}
-						if (featureValue != null) {
-							this.columnFeatures.put(entry.getKey(), featureValue);
-						}
-					}
-				}
-			}
-		}
-
-		/**
-		 * @param columnFeature A ColumnFeature
-		 * @param featureValue Corresponding Value to the ColumnFeature
-		 */
-		public void addColumnFeature(ColumnFeature columnFeature, String featureValue) {
-			if (columnFeature != null && featureValue != null) {
-				columnFeatures.put(columnFeature, featureValue);
-			}
-		}
 
 		public String getString() {
 			return exampleString;
 		}
 
-		/**
-		 * @param colFeature ColumnFeature for which the value is required.
-		 * @return The value corresponding to the ColumnFeature, or null if the example doesn't have the passed ColumnFeature. 
-		 * Checking the return value from this method is therefore important.
-		 */
-		public String getValueForColumnFeature(ColumnFeature colFeature) {
-			if (columnFeatures.containsKey(colFeature)) {
-				return columnFeatures.get(colFeature);
-			}
-			else {
-				return null;
-			}
-		}
+		
 	}
 	
 	//****************************************************************************************//
 	
 	// instance variables
-	static Logger logger = LoggerFactory.getLogger(TypingHandler.class.getSimpleName()) ;
-	ArrayList<String> allowedCharacters;
-	GlobalData globalData;
-	Indexer indexer; // responsible for indexing textual data
+	static Logger logger = LoggerFactory.getLogger(LuceneBasedSTModelHandler.class.getSimpleName()) ;
+	private ArrayList<String> allowedCharacters;
+	private GlobalData globalData;
+	private Indexer indexer; // responsible for indexing textual data
+	private boolean modelEnabled = false;
+	private String indexDirectory;
 	
 	/**
 	 * NOTE: Currently, TF-IDF based approach is used for both textual and numeric data
@@ -125,21 +67,23 @@ public class TypingHandler {
 	 * TODO: Integrate KS test when this bug is resolved : https://issues.apache.org/jira/browse/MATH-1131
 	 */
 	
-	public TypingHandler()
+	
+	public LuceneBasedSTModelHandler()
 	{
 		indexer = new Indexer(); 
 		globalData = new GlobalData();
 		allowedCharacters = allowedCharacters(); 
+		indexDirectory = ServletContextParameterMap.getParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY);
 		
-		// clear any previous index remaining
-		try {
-			indexer.openIndexWriter();
-			indexer.deleteDocuments();
-			indexer.commit();
-			indexer.closeIndexWriter();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		// clear any previous index remaining
+//		try {
+//			indexer.openIndexWriter(indexDirectory);
+//			indexer.deleteDocuments();
+//			indexer.commit();
+//			indexer.closeIndexWriter();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 	
 	/**
@@ -147,10 +91,10 @@ public class TypingHandler {
 	 * 
 	 * @param label True label for the list of example.
 	 * @param examples List of example strings.
-	 * @param columnFeatures Map of column features --> currently not being used
 	 * @return True if success, else False
 	 */
-	public synchronized boolean addOrUpdateLabel(String label, List<String> examples, Map<ColumnFeature, Collection<String>> columnFeatures) {
+	@Override
+	public synchronized boolean addType(String label, List<String> examples) {
 		ArrayList<String> cleanedExamples;
 		ArrayList<Example> selectedExamples;
 		int labelIndex;
@@ -180,7 +124,7 @@ public class TypingHandler {
 		// adding all the new examples to list of existing examples for the arg label.
 		selectedExamples = new ArrayList<Example>();
 		for(String newExampleString : examples) {
-			Example newExample = new Example(newExampleString, columnFeatures);
+			Example newExample = new Example(newExampleString);
 			selectedExamples.add(newExample);
 		}
 
@@ -204,7 +148,7 @@ public class TypingHandler {
 	 */
 	private boolean indexTrainingColumn(String label, ArrayList<Example> selectedExamples) throws IOException
 	{
-		indexer.openIndexWriter();
+		indexer.openIndexWriter(indexDirectory);
 		
 		// add documents to index
     	StringBuilder sb = new StringBuilder();
@@ -246,24 +190,24 @@ public class TypingHandler {
 	 * @param columnFeatures - this Map supplies ColumnFeatures such as ColumnName, etc.
 	 * @return True, if successful, else False
 	 */
-	public boolean predictLabelForExamples(
-			List<String> examples,
-			int numPredictions,
-			List<String> predictedLabels,
-			List<Double> confidenceScores,
-			List<double[]> exampleProbabilities,
-			Map<ColumnFeature, Collection<String>> columnFeatures
-			) {
+	@Override
+	public List<SemanticTypeLabel> predictType(List<String> examples,
+			int numPredictions) {
 
+		if(!this.modelEnabled) {
+			logger.warn("Semantic Type Modeling is not enabled") ;
+			return null;
+		}
+		
 		// Sanity checks for arguments
-		if (examples == null || examples.size() == 0 || numPredictions <= 0 || predictedLabels == null || confidenceScores == null) {
-			logger.warn("Invalid arguments. Possible problems: examples list size is zero, numPredictions is non-positive, predictedLabels or confidenceScores list is null.") ;
-			return false ;
+		if (examples == null || examples.size() == 0 || numPredictions <= 0) {
+			logger.warn("Invalid arguments. Possible problems: examples list size is zero, numPredictions is non-positive") ;
+			return null;
 		}
 		// Making sure that there exists a model.
 		if(globalData.labels.size() == 0) {
 			logger.warn("The model does have not any semantic types. Please add some labels with their examples before attempting to predict using this model.") ;
-			return false ;
+			return null ;
 		}
 		
 		// construct single text for test column
@@ -276,13 +220,13 @@ public class TypingHandler {
 		
 	    // get top-k suggestions
 	    try {
-	    	TopKSearcher predictor = new TopKSearcher();
-			predictor.getTopK(numPredictions, sb.toString(), predictedLabels, confidenceScores);
+	    	TopKSearcher predictor = new TopKSearcher(indexDirectory);
+			return predictor.getTopK(numPredictions, sb.toString());
 		} catch (ParseException | IOException e) {
 			e.printStackTrace();
 		}
 	    
-		return true ;
+		return null;
 	}
 
 	/**
@@ -291,10 +235,11 @@ public class TypingHandler {
 	 * 
 	 * Currently, when only TF-IDF is used, equivalent to deleting all documents
 	 */
+	@Override
 	public boolean removeAllLabels() {
 		
 		try {
-			indexer.openIndexWriter();
+			indexer.openIndexWriter(indexDirectory);
 			indexer.deleteDocuments();
 			indexer.commit();
 			indexer.closeIndexWriter();
@@ -377,6 +322,18 @@ public class TypingHandler {
 		allowed.add(";") ;
 		allowed.add("?") ;
 		return allowed ;
+	}
+
+	@Override
+	public boolean readModelFromFile(String filepath) {
+		indexDirectory = filepath;
+		return true;
+	}
+
+	@Override
+	public void setModelHandlerEnabled(boolean enabled) {
+		this.modelEnabled = enabled;
+		
 	}
 
 	

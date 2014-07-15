@@ -20,6 +20,8 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
+import edu.isi.karma.modeling.semantictypes.SemanticTypeLabel;
+
 /**
  * This class is responsible for predicting top-k suggestions for textual data 
  * using TF-IDF based cosine similarity approach
@@ -33,16 +35,17 @@ public class TopKSearcher {
 	private Analyzer analyzer = null;
 	private QueryParser parser = null;
 	
-	public TopKSearcher() throws IOException
+	public TopKSearcher(String filepath) throws IOException
 	{
-		IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(Indexer.INDEX_LOC)));
+		IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(filepath)));
 		indexSearcher = new IndexSearcher(reader);
 		analyzer = new StandardAnalyzer(Version.LUCENE_48);
 		parser = new QueryParser(Version.LUCENE_48, Indexer.CONTENT_FIELD_NAME, analyzer);
 	}
 	
-	public void getTopK(int k, String content, List<String> predictedLabels, List<Double> confidenceScores) throws ParseException, IOException 
+	public List<SemanticTypeLabel>  getTopK(int k, String content) throws ParseException, IOException 
 	{
+		List<SemanticTypeLabel> result = new ArrayList<>();
 		int spaces = content.length() - content.replace(" ", "").length();
 		if(spaces > BooleanQuery.getMaxClauseCount())
 		{
@@ -58,9 +61,9 @@ public class TopKSearcher {
 		{
 			Document doc = indexSearcher.doc(hits[i].doc);
 			String labelString = doc.get(Indexer.LABEL_FIELD_NAME);
-			predictedLabels.add(labelString);
-			confidenceScores.add((double) hits[i].score);
+			result.add(new SemanticTypeLabel(labelString, hits[i].score));
 		}	
+		return result;
 	}
 	
 }

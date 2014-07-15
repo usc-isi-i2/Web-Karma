@@ -28,23 +28,25 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.util.Jsonizable;
 import edu.isi.karma.util.Util;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class SemanticTypeColumnModel implements Jsonizable {
 
 	private final HashMap<String, Double> scoreMap = new HashMap<String, Double>();
 
-	public SemanticTypeColumnModel(ArrayList<String> labels, ArrayList<Double> scores) {
+	public SemanticTypeColumnModel(List<SemanticTypeLabel> labels) {
 		for (int i = 0; i < labels.size(); i++) {
-			scoreMap.put(labels.get(i), scores.get(i));
+			SemanticTypeLabel label = labels.get(i);
+			scoreMap.put(label.getLabel(), (double)label.getScore());
 		}
 	}
 

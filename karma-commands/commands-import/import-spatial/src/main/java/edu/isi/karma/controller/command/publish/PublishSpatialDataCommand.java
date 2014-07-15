@@ -83,7 +83,7 @@ public class PublishSpatialDataCommand extends Command {
 		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0) {
 			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, workspace
 					.getTagsContainer().getTag(TagName.Outlier), workspace
-					.getCrfModelHandler(), workspace.getOntologyManager());
+					.getSemanticTypeModelHandler(), workspace.getOntologyManager());
 		}
 
 		OntologyManager om= workspace.getOntologyManager();

@@ -81,7 +81,7 @@ public class ResetKarmaCommand extends Command {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		if (forgetSemanticTypes) {
-			boolean deletTypes = workspace.getCrfModelHandler().removeAllLabels();
+			boolean deletTypes = workspace.getSemanticTypeModelHandler().removeAllLabels();
 			if (!deletTypes && forgetModels)
 				return new UpdateContainer(new ErrorUpdate("Error occured while removing semantic types. Models have also not been reset."));
 			else if (!deletTypes)

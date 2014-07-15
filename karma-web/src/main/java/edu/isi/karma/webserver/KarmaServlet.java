@@ -39,7 +39,7 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.metadata.CRFModelMetadata;
+import edu.isi.karma.metadata.SemanticTypeModelMetadata;
 import edu.isi.karma.metadata.CSVMetadata;
 import edu.isi.karma.metadata.GraphVizMetadata;
 import edu.isi.karma.metadata.JSONMetadata;
@@ -108,7 +108,7 @@ public class KarmaServlet extends HttpServlet {
 		
 		logger.info("Start Metadata Setup");
 		try {
-			metadataManager.register(new CRFModelMetadata(workspace), updateContainer);
+			metadataManager.register(new SemanticTypeModelMetadata(workspace), updateContainer);
 			metadataManager.register(new OntologyMetadata(workspace), updateContainer);
 			metadataManager.register(new JSONModelsMetadata(workspace), updateContainer);
 			metadataManager.register(new PythonTransformationMetadata(workspace), updateContainer);

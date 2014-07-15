@@ -21,8 +21,8 @@
 package edu.isi.karma.modeling.alignment;
 
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.semantictypes.ISemanticTypeModelHandler;
 import edu.isi.karma.modeling.semantictypes.SemanticTypePredictionThread;
-import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.*;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Node;
@@ -71,9 +71,7 @@ public class AlignmentManager {
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				workspaceId, worksheetId);
 		
-		Workspace workspace = WorkspaceManager.getInstance().getWorkspace(workspaceId);
 		Worksheet worksheet = WorkspaceManager.getInstance().getWorkspace(workspaceId).getWorksheet(worksheetId);
-		CRFModelHandler crfModelHandler = workspace.getCrfModelHandler();
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		
 		if (alignment == null) {
@@ -97,7 +95,9 @@ public class AlignmentManager {
 		}
 			
 		if (!paths.isEmpty()) {
-			Thread t = new Thread(new SemanticTypePredictionThread(worksheet, paths, crfModelHandler, ontologyManager, alignment));
+			Workspace workspace = WorkspaceManager.getInstance().getWorkspace(workspaceId);
+			ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
+			Thread t = new Thread(new SemanticTypePredictionThread(worksheet, paths, modelHandler, ontologyManager, alignment));
 			t.start();
 		}
 		

@@ -14,7 +14,6 @@
 		<module>karma-web</module>
 		<module>karma-offline</module>
 		<module>karma-jdbc</module>
-		<module>karma-crf</module>
 		<module>karma-util</module>
 		<module>karma-cleaning</module>
 		<module>karma-commands</module>

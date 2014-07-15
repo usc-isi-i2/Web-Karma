@@ -21,8 +21,6 @@
 package edu.isi.karma.modeling.semantictypes;
 
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
-import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler.ColumnFeature;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
@@ -121,7 +119,7 @@ public class SemanticTypeUtil {
 
 	/**
 	 * This method predicts semantic types for all the columns in a worksheet
-	 * using CRF modeling technique developed by Aman Goel. It creates a
+	 * using  modeling technique . It creates a
 	 * SemanticType object for each column and puts it inside the SemanticTypes
 	 * object for that worksheet. User-assigned semantic types are not replaced.
 	 * It also identifies nodes (table cells) that are outliers and are stored
@@ -131,14 +129,14 @@ public class SemanticTypeUtil {
 	 *            The target worksheet
 	 * @param outlierTag
 	 *            Tag object that stores outlier nodes
-	 * @param crfModelHandler
-	 *            The CRF Model Handler to use
+	 * @param modelHandler
+	 *            The Semnatic Typing Model Handler to use
 	 * @return Returns a boolean value that shows if a semantic type object was
 	 *         replaced or added for the worksheet. If nothing changed, false is
 	 *         returned.
 	 */
 	public static boolean populateSemanticTypesUsingCRF(Worksheet worksheet,
-			Tag outlierTag, CRFModelHandler crfModelHandler,
+			Tag outlierTag, ISemanticTypeModelHandler modelHandler,
 			OntologyManager ontMgr) {
 		
 		boolean semanticTypesChangedOrAdded = false;
@@ -154,40 +152,20 @@ public class SemanticTypeUtil {
 			if (trainingExamples.size() == 0)
 				continue;
 
-			Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
-
-			// Prepare the column name feature
-			String columnName = path.getLeaf().getColumnName();
-			Collection<String> columnNameList = new ArrayList<String>();
-			columnNameList.add(columnName);
-			columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
-			
-			// // Prepare the table name feature
-			// String tableName = worksheetName;
-			// Collection<String> tableNameList = new ArrayList<String>();
-			// tableNameList.add(tableName);
-			// columnFeatures.put(ColumnFeature.TableName, tableNameList);
-
-			// Stores the probability scores
-			ArrayList<Double> scores = new ArrayList<Double>();
-			// Stores the predicted labels
-			ArrayList<String> labels = new ArrayList<String>();
-			boolean predictResult = crfModelHandler.predictLabelForExamples(
-					trainingExamples, 4, labels, scores, null, columnFeatures);
-			if (!predictResult) {
+			List<SemanticTypeLabel> result = modelHandler.predictType(trainingExamples, 4);
+			if (result == null) {
 				logger.debug("Error occured while predicting semantic type.");
 				continue;
 			}
-			if (labels.size() == 0) {
+			if (result.size() == 0) {
 				continue;
 			}
 
-			logger.debug("Examples: " + trainingExamples + " Type: " + labels
-					+ " ProbL " + scores);
 
 			// Create and add the semantic type to the semantic types set of the
 			// worksheet
-			String topLabel = labels.get(0);
+			SemanticTypeLabel topResult = result.get(0);
+			String topLabel = topResult.getLabel();
 			String domain = "";
 			String type = topLabel;
 			// Check if it contains domain information
@@ -204,7 +182,7 @@ public class SemanticTypeUtil {
 			Label domainURI = null;
 			if (!domain.equals(""))
 				domainURI = ontMgr.getUriLabel(domain);
-			SemanticType semtype = new SemanticType(path.getLeaf().getId(),typeURI, domainURI, SemanticType.Origin.CRFModel,scores.get(0), false);
+			SemanticType semtype = new SemanticType(path.getLeaf().getId(),typeURI, domainURI, SemanticType.Origin.TfIdfModel, (double)topResult.getScore(), false);
 
 			// Check if the user already provided a semantic type manually
 			SemanticType existingType = types.getSemanticTypeForHNodeId(path
@@ -233,13 +211,13 @@ public class SemanticTypeUtil {
 			// add the CRF model information for that column
 			if (semanticTypeAdded) {
 				// Identify the outliers
-				identifyOutliers(worksheet, labels.get(0), path, outlierTag,
-						columnFeatures, crfModelHandler);
+				identifyOutliers(worksheet, topLabel, path, outlierTag,
+					modelHandler);
 				logger.debug("Outliers:" + outlierTag.getNodeIdList());
 
 				// Add the scores information to the Full CRF Model of the
 				// worksheet
-				SemanticTypeColumnModel columnModel = new SemanticTypeColumnModel(labels, scores);
+				SemanticTypeColumnModel columnModel = new SemanticTypeColumnModel(result);
 				worksheet.getSemanticTypeModel().addColumnModel(path.getLeaf().getId(),
 						columnModel);
 			}
@@ -268,7 +246,7 @@ public class SemanticTypeUtil {
 	 * @param crfModelHandler
 	 */
 	public static void identifyOutliers(Worksheet worksheet, String predictedType, HNodePath path, Tag outlierTag,
-			Map<ColumnFeature, Collection<String>> columnFeatures, CRFModelHandler crfModelHandler) {
+			ISemanticTypeModelHandler modelHandler) {
 		Collection<Node> nodes = new ArrayList<Node>();
 		worksheet.getDataTable().collectNodes(path, nodes);
 
@@ -283,24 +261,20 @@ public class SemanticTypeUtil {
 
 			// Compute the semantic type for the node value
 			List<String> examples = new ArrayList<String>();
-			List<String> predictedLabels = new ArrayList<String>();
-			List<Double> confidenceScores = new ArrayList<Double>();
 
 			String nodeVal = node.getValue().asString();
 			if (nodeVal != null && !nodeVal.equals("")) {
 				examples.add(nodeVal);
-				boolean result = crfModelHandler.predictLabelForExamples(
-						examples, 1, predictedLabels, confidenceScores, null,
-						columnFeatures);
-				 
-				if (!result) {
+				List<SemanticTypeLabel> result = modelHandler.predictType(examples, 1);
+			
+				if (result == null) {
 					logger.error("Error while predicting type for " + nodeVal);
 					continue;
 				}
 				// Check here if it is an outlier
 //				System.out.println("Example: " + examples.get(0) + " Label: " + predictedLabels + " Score: " + confidenceScores);
-				if (!predictedLabels.get(0).equalsIgnoreCase(predictedType)) {
-					logger.info(nodeVal + ": " + predictedLabels + " Prob: " + confidenceScores);
+				String predictedLabel = result.get(0).getLabel();
+				if (!predictedLabel.equalsIgnoreCase(predictedType)) {
 					outlierCounter++;
 					outlierNodeIds.add(node.getId());
 				}
@@ -333,19 +307,19 @@ public class SemanticTypeUtil {
 	}
 
 	public static void computeSemanticTypesSuggestion(Worksheet worksheet,
-			CRFModelHandler crfModelHandler, OntologyManager ontMgr) {
+			ISemanticTypeModelHandler modelHandler, OntologyManager ontMgr) {
 		if(!getSemanticTypeTrainingEnabled())
 		{
 			return;
 		}
 		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : paths) {
-			computeSemanticTypesSuggestion(worksheet, crfModelHandler, ontMgr, path);
+			computeSemanticTypesSuggestion(worksheet, modelHandler, ontMgr, path);
 		}
 	}
 	
 	public static void computeSemanticTypesSuggestion(Worksheet worksheet,
-			CRFModelHandler crfModelHandler, OntologyManager ontMgr, HNodePath path)
+			ISemanticTypeModelHandler modelHandler, OntologyManager ontMgr, HNodePath path)
 	{
 		
 		if(!getSemanticTypeTrainingEnabled())
@@ -354,33 +328,23 @@ public class SemanticTypeUtil {
 		}
 		ArrayList<String> trainingExamples = getTrainingExamples(worksheet, path);
 
-		Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
-
-		// Prepare the column name feature
-		String columnName = path.getLeaf().getColumnName();
-		Collection<String> columnNameList = new ArrayList<String>();
-		columnNameList.add(columnName);
-		columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
+		List<SemanticTypeLabel> result = modelHandler.predictType(trainingExamples, 4);
 		
-		// Stores the probability scores
-		ArrayList<Double> scores = new ArrayList<Double>();
-		// Stores the predicted labels
-		ArrayList<String> labels = new ArrayList<String>();
-		boolean predictResult = crfModelHandler.predictLabelForExamples(trainingExamples, 4, labels, scores, null, columnFeatures);
-		if (!predictResult) {
+		if (result == null) {
 			logger.debug("Error occured while predicting semantic type.");
 			return;
 		}
-		if (labels.size() == 0) {
+		if (result.size() == 0) {
 			return;
 		}
 		
 		/** Remove the labels that are not in the ontology or are already used as the semantic type **/
-		List<String> removeLabels = new ArrayList<String>();
+		List<SemanticTypeLabel> removeLabels = new ArrayList<SemanticTypeLabel>();
 		String domainUri, typeUri;
 		Label domain, type;		
-		for (int i=0; i<labels.size(); i++) {
-			String label = labels.get(i);
+		for (int i=0; i<result.size(); i++) {
+			SemanticTypeLabel resultLabel = result.get(i);
+			String label = resultLabel.getLabel();
 			SemanticType existingSemanticType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(path.getLeaf().getId());
 			/** Check if not in ontology **/
 			if (label.contains("|")) {
@@ -393,39 +357,37 @@ public class SemanticTypeUtil {
 				
 				// Remove from the list if URI not present in the model
 				if (domain == null || type == null) {
-					removeLabels.add(label);
+					removeLabels.add(resultLabel);
 					continue;
 				}
 				// Check if it is being used as the semantic type already
 				if (existingSemanticType != null && 
 						existsInSemanticTypesCollection(type, domain, existingSemanticType)) {
-						removeLabels.add(label);
+						removeLabels.add(resultLabel);
 				}
 				
 			} else {
 				domain = ontMgr.getUriLabel(label);
 				// Remove from the list if URI not present in the model
 				if (domain == null) {
-					removeLabels.add(label);
+					removeLabels.add(resultLabel);
 					continue;
 				}
 				// Check if it is being used as the semantic type already
 				if (existingSemanticType != null && 
 						existsInSemanticTypesCollection(domain, null, existingSemanticType)) {
-					removeLabels.add(label);
+					removeLabels.add(resultLabel);
 				}
 			}
 		}
-		for (String removeLabel : removeLabels) {
-			int idx = labels.indexOf(removeLabel);
-			labels.remove(removeLabel);
-			scores.remove(idx);
+		for (SemanticTypeLabel removeLabel : removeLabels) {
+			result.remove(removeLabel);
 		}
-		if (labels.size() == 0) {
+		if (result.size() == 0) {
 			return;
 		}
 
-		SemanticTypeColumnModel columnModel = new SemanticTypeColumnModel(labels, scores);
+		SemanticTypeColumnModel columnModel = new SemanticTypeColumnModel(result);
 		worksheet.getSemanticTypeModel().addColumnModel(path.getLeaf().getId(), columnModel);
 	}
 	
@@ -446,7 +408,7 @@ public class SemanticTypeUtil {
 	}
 
 	public static void computeSemanticTypesForAutoModel(Worksheet worksheet,
-			CRFModelHandler crfModelHandler, OntologyManager ontMgr) {
+			ISemanticTypeModelHandler crfModelHandler, OntologyManager ontMgr) {
 		
 		String autoModelURI = ServletContextParameterMap
 				.getParameterValue(ContextParameter.AUTO_MODEL_URI);
@@ -455,24 +417,15 @@ public class SemanticTypeUtil {
 		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : paths) {
 
-			Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
-
 			// Prepare the column name feature
 			String columnName = path.getLeaf().getColumnName();
-			Collection<String> columnNameList = new ArrayList<String>();
-			columnNameList.add(columnName);
-			columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
 			
-			// Stores the probability scores
-			ArrayList<Double> scores = new ArrayList<Double>();
-			// Stores the predicted labels
-			ArrayList<String> labels = new ArrayList<String>();
 			
 			String label = topClassURI+"#"+worksheet.getTitle()+"|"+topClassURI+"#"+columnName;
-			labels.add(label);
-			scores.add(1.0);
+			ArrayList<SemanticTypeLabel> labels = new ArrayList<>();
+			labels.add(new SemanticTypeLabel(label, 1.0f));
 			
-			SemanticTypeColumnModel columnModel = new SemanticTypeColumnModel(labels, scores);
+			SemanticTypeColumnModel columnModel = new SemanticTypeColumnModel(labels);
 			worksheet.getSemanticTypeModel().addColumnModel(path.getLeaf().getId(), columnModel);
 		}
 	}

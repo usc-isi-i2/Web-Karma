@@ -24,15 +24,14 @@ import org.apache.lucene.store.FSDirectory;
  */
 
 public class Indexer {
-	public static String INDEX_LOC = "index";
 	public static String CONTENT_FIELD_NAME = "content";
 	public static String LABEL_FIELD_NAME = "label";
 	
   private IndexWriter indexWriter = null;
   
-  public void openIndexWriter() throws IOException
+  public void openIndexWriter(String filepath) throws IOException
   {
-  	Directory dir = FSDirectory.open(new File(INDEX_LOC));
+  	Directory dir = FSDirectory.open(new File(filepath));
   	Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_48); 
   	IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_48, analyzer);
   	

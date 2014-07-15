@@ -42,7 +42,6 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeColumnModel;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
-import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
@@ -257,7 +256,6 @@ public class SetSemanticTypeCommand extends Command {
 		}
 		
 		UpdateContainer c = new UpdateContainer();
-		CRFModelHandler crfModelHandler = workspace.getCrfModelHandler();
 
 		// Save the old SemanticType object and CRF Model for undo
 		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(hNodeId);
@@ -294,7 +292,7 @@ public class SetSemanticTypeCommand extends Command {
 			
 			
 			// Train the semantic type in a separate thread
-			Thread t = new Thread(new SemanticTypeTrainingThread(crfModelHandler, worksheet, newType));
+			Thread t = new Thread(new SemanticTypeTrainingThread(workspace.getSemanticTypeModelHandler(), worksheet, newType));
 			t.start();
 			
 			return c;

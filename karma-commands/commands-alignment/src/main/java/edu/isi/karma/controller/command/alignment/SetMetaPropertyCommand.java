@@ -36,10 +36,8 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeColumnModel;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
-import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
@@ -255,9 +253,6 @@ public class SetMetaPropertyCommand extends Command {
 		columnNode.setUserSelectedSemanticType(newType);
 
 		UpdateContainer c = new UpdateContainer();
-		CRFModelHandler crfModelHandler = workspace.getCrfModelHandler();
-		// CRFModelHandler crfModelHandler =
-		// vWorkspace.getWorkspace().getCrfModelHandler();
 
 		// Save the old SemanticType object and CRF Model for undo
 		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(
@@ -288,7 +283,7 @@ public class SetMetaPropertyCommand extends Command {
 
 			// Train the semantic type in a separate thread
 			Thread t = new Thread(new SemanticTypeTrainingThread(
-					crfModelHandler, worksheet, newType));
+					workspace.getSemanticTypeModelHandler(), worksheet, newType));
 			t.start();
 
 			return c;
