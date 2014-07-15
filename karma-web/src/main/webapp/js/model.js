@@ -55,11 +55,11 @@ var saveModelDialog = (function() {
 				console.log("here");
 				console.log($('#txtModel_URL_Save').val());
 				$('input[name="buttonCollection_Save"][value="URL"]').prop('checked', true);
-			   // $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
+				 // $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
 			});
 
 			$('#txtModel_URL_Save', dialog).on('change', function (e) {
-			   // $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
+				 // $('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
 			});
 			
 				
@@ -74,7 +74,7 @@ var saveModelDialog = (function() {
 		}
 		
 		function saveDialog(e) {
-		   
+			 
 			var checkboxes = dialog.find(":checked");
 			if ($('#txtGraph_URL_Save').val() === '' && checkboxes[0]['value'] === 'Collection') {
 				alert("Please enter the Collection");
@@ -140,7 +140,7 @@ var saveModelDialog = (function() {
 		}
 		return instance;
 	}
-   
+	 
 	return {
 		getInstance : getInstance
 	};
@@ -222,7 +222,7 @@ var clearModelDialog = (function() {
 		}
 		return instance;
 	}
-   
+	 
 	return {
 		getInstance : getInstance
 	};
@@ -530,12 +530,12 @@ var modelManagerDialog = (function() {
 				var td = $("<td>");
 						 //.addClass("CheckboxProperty");
 				var checkbox = $("<input>")
-							   .attr("type", "checkbox")                           
-							   .attr("id", "modelManagerCheckbox")
-							   .addClass("modelManagerCheckbox")
-							   .attr("value", context)
-							   .attr("src", url)
-							   .change(disableButton);
+								 .attr("type", "checkbox")                           
+								 .attr("id", "modelManagerCheckbox")
+								 .addClass("modelManagerCheckbox")
+								 .attr("value", context)
+								 .attr("src", url)
+								 .change(disableButton);
 				td.append(checkbox);
 				tr.append(td);
 				var td = $("<td>");
@@ -548,7 +548,7 @@ var modelManagerDialog = (function() {
 						 //.css("overflow", "scroll");
 						 //.addClass("PublishTimeProperty");
 				var label = $("<span>").text(time);
-						   // .addClass("PublishTimeProperty");
+							 // .addClass("PublishTimeProperty");
 				td.append(label);
 				tr.append(td);
 				var td = $("<td>");//.addClass("URLProperty");
@@ -583,7 +583,7 @@ var modelManagerDialog = (function() {
 		instance.refresh();
 		return instance;
 	}
-   
+	 
 	return {
 		getInstance : getInstance
 	};
