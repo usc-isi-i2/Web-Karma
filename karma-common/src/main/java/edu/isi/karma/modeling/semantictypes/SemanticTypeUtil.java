@@ -140,6 +140,7 @@ public class SemanticTypeUtil {
 	public static boolean populateSemanticTypesUsingCRF(Worksheet worksheet,
 			Tag outlierTag, CRFModelHandler crfModelHandler,
 			OntologyManager ontMgr) {
+		
 		boolean semanticTypesChangedOrAdded = false;
 
 		SemanticTypes types = worksheet.getSemanticTypes();
@@ -346,6 +347,7 @@ public class SemanticTypeUtil {
 	public static void computeSemanticTypesSuggestion(Worksheet worksheet,
 			CRFModelHandler crfModelHandler, OntologyManager ontMgr, HNodePath path)
 	{
+		
 		if(!getSemanticTypeTrainingEnabled())
 		{
 			return;
