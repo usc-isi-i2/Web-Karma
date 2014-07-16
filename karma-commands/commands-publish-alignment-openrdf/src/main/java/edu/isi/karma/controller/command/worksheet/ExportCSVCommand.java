@@ -235,7 +235,7 @@ public class ExportCSVCommand extends WorksheetCommand {
 			if(pref != null) {
 				rdfNamespace = pref.optString(PublishRDFCommandPreferencesKeys.rdfNamespace.name());
 			}
-			result = utilObj.saveToStore(generatedRDFFileName, TripleStoreUtil.defaultDataRepoUrl, graphUri, true, rdfNamespace);
+			result = utilObj.saveToStoreFromFile(generatedRDFFileName, TripleStoreUtil.defaultDataRepoUrl, graphUri, true, rdfNamespace);
 		}
 		catch(Exception e)
 		{

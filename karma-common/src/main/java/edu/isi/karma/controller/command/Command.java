@@ -27,13 +27,16 @@ import edu.isi.karma.rep.Entity;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Abstract class for all commands.
@@ -208,5 +211,13 @@ public abstract class Command extends Entity implements ICommand
 	 */
 	protected JSONObject getArgsJSON(Workspace workspace) {
 		return new JSONObject();
+	}
+	
+	public Set<String> getInputColumns() {
+		return new HashSet<String>();
+	}
+	
+	public Set<String> getOutputColumns() {
+		return new HashSet<String>();
 	}
 }

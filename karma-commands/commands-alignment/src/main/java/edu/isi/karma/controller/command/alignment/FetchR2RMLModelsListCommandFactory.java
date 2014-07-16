@@ -9,13 +9,14 @@ import edu.isi.karma.rep.Workspace;
 public class FetchR2RMLModelsListCommandFactory extends CommandFactory{
 
 	private enum Arguments {
-		modelUrl, tripleStoreUrl, graphContext
+		modelUrl, tripleStoreUrl, graphContext, worksheetId
 	}
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.graphContext.name());
-		return new FetchR2RMLModelsListCommand(getNewId(workspace), tripleStoreUrl, context);
+		String worksheetId = request.getParameter(Arguments.worksheetId.name());
+		return new FetchR2RMLModelsListCommand(getNewId(workspace), tripleStoreUrl, context, worksheetId);
 	}
 
 	@Override

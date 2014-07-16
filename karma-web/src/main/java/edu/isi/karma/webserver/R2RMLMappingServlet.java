@@ -2,7 +2,6 @@ package edu.isi.karma.webserver;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Scanner;
 
 import javax.servlet.ServletException;
@@ -12,7 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.io.FilenameUtils;
-import org.json.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 

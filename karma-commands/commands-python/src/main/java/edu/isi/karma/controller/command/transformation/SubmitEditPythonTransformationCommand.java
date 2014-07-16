@@ -21,6 +21,9 @@
 
 package edu.isi.karma.controller.command.transformation;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.update.ErrorUpdate;
@@ -31,6 +34,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,6 +112,20 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 			return new UpdateContainer(new ErrorUpdate("Error occured while  applying previous Python transformation to the column."));
 		
 		}
+	}
+	
+	@Override
+	public Set<String> getInputColumns() {
+		Set<String> t = new HashSet<String>();
+		t.addAll(inputColumns);
+		return t;
+	}
+	
+	@Override
+	public Set<String> getOutputColumns() {
+		Set<String> t = new HashSet<String>();
+		t.add(targetHNodeId);
+		return t;
 	}
 
 	

@@ -47,6 +47,7 @@ public class PythonTransformationHelper {
 		importStmt.append("import edu.isi.karma.rep.Workspace\n");
 		importStmt.append("import edu.isi.karma.rep.Node\n");
 		importStmt.append("import edu.isi.karma.rep.RepFactory\n");
+		importStmt.append("import edu.isi.karma.controller.command.transformation.PythonTransformationCommand\n");
 		return importStmt.toString();
 	}
 	
@@ -71,6 +72,7 @@ public class PythonTransformationHelper {
 		methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
 		methodStmt.append("	node = factory.getNode(nodeid)\n");
 		methodStmt.append("	targetNode = node.getNeighborByColumnName(columnName, factory)\n");
+		methodStmt.append("	command.addInputColumns(targetNode.getHNodeId())\n");
 		methodStmt.append("	if targetNode is not None:\n");
 		methodStmt.append("		value = targetNode.getValue()\n");
 		methodStmt.append("		if value is not None:\n");

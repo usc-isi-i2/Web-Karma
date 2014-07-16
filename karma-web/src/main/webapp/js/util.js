@@ -8,45 +8,45 @@ function getColumnHeadings(worksheetId) {
 	var columnNames = [];
 	
 	var columnNameDivs = $("#" + worksheetId + " div.wk-header a.ColumnTitle");
-    $.each(columnNameDivs, function(index, element) {
-        columnNames.push($.trim($(element).text()));
-    });
-    
-    return columnNames;
+	$.each(columnNameDivs, function(index, element) {
+		columnNames.push($.trim($(element).text()));
+	});
+	
+	return columnNames;
 }
 
 function showLoading(worksheetId) {
-    // Remove any existing coverDiv
-    $("div#WaitingDiv_" + worksheetId).remove();
+	// Remove any existing coverDiv
+	$("div#WaitingDiv_" + worksheetId).remove();
 
-    // Create a new cover
-    var coverDiv = $("<div>").attr("id","WaitingDiv_"+worksheetId).addClass('waitingDiv')
-        .append($("<div>").html('<b>Please wait</b>')
-            .append($('<img>').attr("src","images/ajax-loader.gif"))
-        );
+	// Create a new cover
+	var coverDiv = $("<div>").attr("id","WaitingDiv_"+worksheetId).addClass('waitingDiv')
+		.append($("<div>").html('<b>Please wait</b>')
+			.append($('<img>').attr("src","images/ajax-loader.gif"))
+		);
 
-    var spaceToCoverDiv = $("div#"+worksheetId);
-    spaceToCoverDiv.append(coverDiv.css({"position":"absolute", "height":spaceToCoverDiv.height(),
-        "width": spaceToCoverDiv.width(), "top":spaceToCoverDiv.position().top, "left":spaceToCoverDiv.position().left}).show());
+	var spaceToCoverDiv = $("div#"+worksheetId);
+	spaceToCoverDiv.append(coverDiv.css({"position":"absolute", "height":spaceToCoverDiv.height(),
+		"width": spaceToCoverDiv.width(), "top":spaceToCoverDiv.position().top, "left":spaceToCoverDiv.position().left}).show());
 }
 
 function hideLoading(worksheetId) {
-    $("div#WaitingDiv_"+worksheetId).hide();
+	$("div#WaitingDiv_"+worksheetId).hide();
 }
 
 function showWaitingSignOnScreen() {
-    var coverDiv = $("<div>").attr("id","WaitingDiv").addClass('waitingDiv')
-        .append($("<div>").html('<b>Please wait</b>')
-            .append($('<img>').attr("src","images/ajax-loader.gif"))
-        );
+	var coverDiv = $("<div>").attr("id","WaitingDiv").addClass('waitingDiv')
+		.append($("<div>").html('<b>Please wait</b>')
+			.append($('<img>').attr("src","images/ajax-loader.gif"))
+		);
 
-    var spaceToCoverDiv = $('body');
-    spaceToCoverDiv.append(coverDiv.css({"position":"fixed", "height":$(document).height(),
-        "width": $(document).width(), "zIndex":100,"top":spaceToCoverDiv.position().top, "left":spaceToCoverDiv.position().left}).show());
+	var spaceToCoverDiv = $('body');
+	spaceToCoverDiv.append(coverDiv.css({"position":"fixed", "height":$(document).height(),
+		"width": $(document).width(), "zIndex":100,"top":spaceToCoverDiv.position().top, "left":spaceToCoverDiv.position().left}).show());
 }
 
 function hideWaitingSignOnScreen() {
-    $("div#WaitingDiv").hide();
+	$("div#WaitingDiv").hide();
 }
 
 function testSparqlEndPoint(url, worksheetId) {
@@ -57,70 +57,108 @@ function testSparqlEndPoint(url, worksheetId) {
 	info["tripleStoreUrl"] = url;
 	window.conncetionStat = false;
 	$.ajax({
-	   	url: "RequestController",
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	async : false,
-	   	complete :
-	   		function (xhr, textStatus) {
-	    		var json = $.parseJSON(xhr.responseText);
-	    		if(json['elements'] && json['elements'][0]['connectionStatus'] && json['elements'][0]['connectionStatus'] == 1) {
-	    			window.conncetionStat = true;
-	    		}
-		   	},
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		async : false,
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				if(json['elements'] && json['elements'][0]['connectionStatus'] && json['elements'][0]['connectionStatus'] == 1) {
+					window.conncetionStat = true;
+				}
+			},
 		error :
 			function (xhr, textStatus) {
-	   			alert("Error occured while testing connection to sparql endpoint!" + textStatus);
-		   	}
+				alert("Error occured while testing connection to sparql endpoint!" + textStatus);
+			}
 	});
 	return window.conncetionStat;
 }
 
 function getParamObject(name, value, type) {
-    var param = new Object();
-    param["name"] = name;
-    param["value"] = value;
-    param["type"] = type;
+	var param = new Object();
+	param["name"] = name;
+	param["value"] = value;
+	param["type"] = type;
 
-    return param;
+	return param;
 }
 
 function getAllClasses(worksheetId) {
 	var info = new Object();
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetClassesCommand";
-    info["nodesRange"] = "allClasses";
-    info["worksheetId"] = worksheetId;
-    
-    var result = [];
-    $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        async : false,
-        complete :
-            function (xhr, textStatus) {
-                var json = $.parseJSON(xhr.responseText);
-                var data = json.elements[0].nodes;
-                $.each(data, function(index, clazz){
-                	parseClassJSON(clazz, result);
-                });
-            },
-        error :
-            function (xhr, textStatus) {
-                alert("Error occured while fetching classes: " + textStatus);
-            }
-    });
-    sortClassPropertyNodes(result);
-    var lastLabel = "";
-    var uniques = [];
-    $.each(result, function(index, item){
-    	if(item.label != lastLabel)
-    		uniques.push(item);
-    	lastLabel = item.label;
-    });
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "GetClassesCommand";
+	info["nodesRange"] = "allClasses";
+	info["worksheetId"] = worksheetId;
+	
+	var result = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		async : false,
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				var data = json.elements[0].nodes;
+				$.each(data, function(index, clazz){
+					parseClassJSON(clazz, result);
+				});
+			},
+		error :
+			function (xhr, textStatus) {
+				alert("Error occured while fetching classes: " + textStatus);
+			}
+	});
+	sortClassPropertyNodes(result);
+	var lastLabel = "";
+	var uniques = [];
+	$.each(result, function(index, item){
+		if(item.label != lastLabel)
+			uniques.push(item);
+		lastLabel = item.label;
+	});
+	return uniques;
+}
+
+function getAllClassesRaw(worksheetId) {
+	var info = new Object();
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "GetClassesCommand";
+	info["nodesRange"] = "allClassesRaw";
+	info["worksheetId"] = worksheetId;
+	
+	var result = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		async : false,
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				var data = json.elements[0].nodes;
+				$.each(data, function(index, clazz){
+					parseClassJSON(clazz, result);
+				});
+			},
+		error :
+			function (xhr, textStatus) {
+				alert("Error occured while fetching classes: " + textStatus);
+			}
+	});
+	sortClassPropertyNodes(result);
+	var lastLabel = "";
+	var uniques = [];
+	$.each(result, function(index, item){
+		if(item.label != lastLabel)
+			uniques.push(item);
+		lastLabel = item.label;
+	});
 	return uniques;
 }
 
@@ -129,71 +167,71 @@ function getAllClassesForProperty(worksheetId, propertyUri) {
 		return [];
 	
 	var info = new Object();
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetClassesCommand";
-    info["nodesRange"] = "classesWithProperty";
-    info["worksheetId"] = worksheetId;
-    info["propertyURI"] = propertyUri;
-    
-    var result = [];
-    $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        async : false,
-        complete :
-            function (xhr, textStatus) {
-                var json = $.parseJSON(xhr.responseText);
-                var data = json.elements[0].nodes;
-                $.each(data, function(index, clazz){
-                	parseClassJSON(clazz, result);
-                });
-            },
-        error :
-            function (xhr, textStatus) {
-                alert("Error occured while fetching classes for property " + property.label + ": " + textStatus);
-            }
-    });
-    sortClassPropertyNodes(result);
-    var lastLabel = "";
-    var uniques = [];
-    $.each(result, function(index, item){
-    	if(item.label != lastLabel)
-    		uniques.push(item);
-    	lastLabel = item.label;
-    });
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "GetClassesCommand";
+	info["nodesRange"] = "classesWithProperty";
+	info["worksheetId"] = worksheetId;
+	info["propertyURI"] = propertyUri;
+	
+	var result = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		async : false,
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				var data = json.elements[0].nodes;
+				$.each(data, function(index, clazz){
+					parseClassJSON(clazz, result);
+				});
+			},
+		error :
+			function (xhr, textStatus) {
+				alert("Error occured while fetching classes for property " + property.label + ": " + textStatus);
+			}
+	});
+	sortClassPropertyNodes(result);
+	var lastLabel = "";
+	var uniques = [];
+	$.each(result, function(index, item){
+		if(item.label != lastLabel)
+			uniques.push(item);
+		lastLabel = item.label;
+	});
 	return uniques;
 }
 
 function getClassesInModel(worksheetId) {
 	var info = new Object();
 	info["command"] = "GetClassesCommand";
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["worksheetId"] = worksheetId;
-    info["nodesRange"] = "classesInModel";
-    var result = [];
-    $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        async : false,
-        complete :
-        	function (xhr, textStatus) {
-	            var json = $.parseJSON(xhr.responseText);
-	            var data = json.elements[0].nodes;
-	            $.each(data, function(index, clazz){
-	            	parseClassJSON(clazz, result);
-	            });
-        	},
-        error :
-            function (xhr, textStatus) {
-                alert("Error occured while getting nodes list!");
-            }
-    });
-    sortClassPropertyNodes(result);
-    return result;
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["worksheetId"] = worksheetId;
+	info["nodesRange"] = "classesInModel";
+	var result = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		async : false,
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				var data = json.elements[0].nodes;
+				$.each(data, function(index, clazz){
+					parseClassJSON(clazz, result);
+				});
+			},
+		error :
+			function (xhr, textStatus) {
+				alert("Error occured while getting nodes list!");
+			}
+	});
+	sortClassPropertyNodes(result);
+	return result;
 }
 
 
@@ -213,94 +251,94 @@ function parseClassJSON(clazz, result, allLabels) {
 
 function getAllDataProperties(worksheetId) {
 	var info = new Object();
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetPropertiesCommand";
-    info["propertiesRange"] = "allDataProperties";
-    info["worksheetId"] = worksheetId;
-    
-    var result = [];
-    $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        async : false,
-        complete :
-            function (xhr, textStatus) {
-                var json = $.parseJSON(xhr.responseText);
-                var data = json.elements[0].properties;
-                $.each(data, function(index, prop){
-                	parsePropertyJSON(prop, result);
-                });
-            },
-        error :
-            function (xhr, textStatus) {
-                alert("Error occured while fetching properties: " + textStatus);
-            }
-    });
-    sortClassPropertyNodes(result);
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "GetPropertiesCommand";
+	info["propertiesRange"] = "allDataProperties";
+	info["worksheetId"] = worksheetId;
+	
+	var result = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		async : false,
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				var data = json.elements[0].properties;
+				$.each(data, function(index, prop){
+					parsePropertyJSON(prop, result);
+				});
+			},
+		error :
+			function (xhr, textStatus) {
+				alert("Error occured while fetching properties: " + textStatus);
+			}
+	});
+	sortClassPropertyNodes(result);
 	return result;
 }
 
 function getAllObjectProperties(worksheetId) {
 	var info = new Object();
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetPropertiesCommand";
-    info["propertiesRange"] = "allObjectProperties";
-    info["worksheetId"] = worksheetId;
-    
-    var result = [];
-    $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        async : false,
-        complete :
-            function (xhr, textStatus) {
-                var json = $.parseJSON(xhr.responseText);
-                var data = json.elements[0].properties;
-                $.each(data, function(index, prop){
-                	parsePropertyJSON(prop, result);
-                });
-            },
-        error :
-            function (xhr, textStatus) {
-                alert("Error occured while fetching properties: " + textStatus);
-            }
-    });
-    sortClassPropertyNodes(result);
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "GetPropertiesCommand";
+	info["propertiesRange"] = "allObjectProperties";
+	info["worksheetId"] = worksheetId;
+	
+	var result = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		async : false,
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				var data = json.elements[0].properties;
+				$.each(data, function(index, prop){
+					parsePropertyJSON(prop, result);
+				});
+			},
+		error :
+			function (xhr, textStatus) {
+				alert("Error occured while fetching properties: " + textStatus);
+			}
+	});
+	sortClassPropertyNodes(result);
 	return result;
 }
 
 function getAllExistingProperties(worksheetId) {
 	var info = new Object();
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetPropertiesCommand";
-    info["propertiesRange"] = "existingProperties";
-    info["worksheetId"] = worksheetId;
-    
-    var result = [];
-    $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        async : false,
-        complete :
-            function (xhr, textStatus) {
-                var json = $.parseJSON(xhr.responseText);
-                var data = json.elements[0].properties;
-                $.each(data, function(index, prop){
-                	parsePropertyJSON(prop, result);
-                });
-            },
-        error :
-            function (xhr, textStatus) {
-                alert("Error occured while fetching properties: " + textStatus);
-            }
-    });
-    sortClassPropertyNodes(result);
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "GetPropertiesCommand";
+	info["propertiesRange"] = "existingProperties";
+	info["worksheetId"] = worksheetId;
+	
+	var result = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		async : false,
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				var data = json.elements[0].properties;
+				$.each(data, function(index, prop){
+					parsePropertyJSON(prop, result);
+				});
+			},
+		error :
+			function (xhr, textStatus) {
+				alert("Error occured while fetching properties: " + textStatus);
+			}
+	});
+	sortClassPropertyNodes(result);
 	return result;
 }
 
@@ -309,66 +347,66 @@ function getAllPropertiesForClass(worksheetId, classUri) {
 		return [];
 	
 	var info = new Object();
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetPropertiesCommand";
-    info["propertiesRange"] = "dataPropertiesForClass";
-    info["classURI"] = classUri;
-    info["worksheetId"] = worksheetId;
-    
-    var result = [];
-    $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        async : false,
-        complete :
-            function (xhr, textStatus) {
-                var json = $.parseJSON(xhr.responseText);
-                var data = json.elements[0].properties;
-                $.each(data, function(index, prop){
-                	parsePropertyJSON(prop, result);
-                });
-            },
-        error :
-            function (xhr, textStatus) {
-                alert("Error occured while fetching properties: " + textStatus);
-            }
-    });
-    sortClassPropertyNodes(result);
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "GetPropertiesCommand";
+	info["propertiesRange"] = "dataPropertiesForClass";
+	info["classURI"] = classUri;
+	info["worksheetId"] = worksheetId;
+	
+	var result = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		async : false,
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				var data = json.elements[0].properties;
+				$.each(data, function(index, prop){
+					parsePropertyJSON(prop, result);
+				});
+			},
+		error :
+			function (xhr, textStatus) {
+				alert("Error occured while fetching properties: " + textStatus);
+			}
+	});
+	sortClassPropertyNodes(result);
 	return result;
 }
 
 function getAllPropertiesForDomainRange(worksheetId, domainUri, rangeUri) {
 	var info = new Object();
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetPropertiesCommand";
-    info["propertiesRange"] = "propertiesWithDomainRange";
-    info["domainURI"] = domainUri;
-    info["rangeURI"] = rangeUri;
-    info["worksheetId"] = worksheetId;
-    
-    var result = [];
-    $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        async : false,
-        complete :
-            function (xhr, textStatus) {
-                var json = $.parseJSON(xhr.responseText);
-                var data = json.elements[0].properties;
-                $.each(data, function(index, prop){
-                	parsePropertyJSON(prop, result);
-                });
-            },
-        error :
-            function (xhr, textStatus) {
-                alert("Error occured while fetching properties: " + textStatus);
-            }
-    });
-    sortClassPropertyNodes(result);
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "GetPropertiesCommand";
+	info["propertiesRange"] = "propertiesWithDomainRange";
+	info["domainURI"] = domainUri;
+	info["rangeURI"] = rangeUri;
+	info["worksheetId"] = worksheetId;
+	
+	var result = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		async : false,
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				var data = json.elements[0].properties;
+				$.each(data, function(index, prop){
+					parsePropertyJSON(prop, result);
+				});
+			},
+		error :
+			function (xhr, textStatus) {
+				alert("Error occured while fetching properties: " + textStatus);
+			}
+	});
+	sortClassPropertyNodes(result);
 	return result;
 }
 
@@ -385,81 +423,81 @@ function parsePropertyJSON(prop, result) {
 function sortClassPropertyNodes(nodes) {
 	nodes.sort(function(a,b) {
 		var label1 = a.label;
-    	if(label1.indexOf(":") == -1)
-    		label1 = a.uri + "/" + label1;
-    	var label2 = b.label;
-    	if(label2.indexOf(":") == -1)
-    		label2 = b.uri + "/" + label2;
-    	
-        return label1.toUpperCase().localeCompare(label2.toUpperCase());
-    });
+		if(label1.indexOf(":") == -1)
+			label1 = a.uri + "/" + label1;
+		var label2 = b.label;
+		if(label2.indexOf(":") == -1)
+			label2 = b.uri + "/" + label2;
+		
+		return label1.toUpperCase().localeCompare(label2.toUpperCase());
+	});
 }
 
 function getAllLinksForNode(worksheetId, alignmentId, nodeId) {
 	var info = new Object();
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "GetCurrentLinksOfInternalNodeCommand";
-    info["worksheetId"] = worksheetId;
-    info["alignmentId"] = alignmentId;
-    info["nodeId"] = nodeId;
-    var result = [];
-    $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        async : false,
-        complete :
-            function (xhr, textStatus) {
-                var json = $.parseJSON(xhr.responseText);
-                $.each(json["elements"], function(index, element) {
-                    if(element["updateType"] == "GetCurrentLinks") {
-                    	$.each(element["edges"], function(index2, node) {
-                    		var source = {"id":node["edgeSourceId"], "label":node["edgeSource"], "uri":node["edgeSourceUri"]};
-                    		var target = {"id":node["edgeTargetId"], "label":node["edgeTarget"], "uri":node["edgeTargetUri"]};
-                    		var prop = {"id":node["edgeId"], "label":node["edgeLabel"]};
-                    		var link = {"type":node["direction"], "source":source, "target":target, "property":prop};
-                        	
-                        	result.push(link);
-                        });
-                    }
-                });
-            },
-        error :
-            function (xhr, textStatus) {
-                alert("Error occured while getting nodes list!");
-            }
-    });
-    return result;
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "GetCurrentLinksOfInternalNodeCommand";
+	info["worksheetId"] = worksheetId;
+	info["alignmentId"] = alignmentId;
+	info["nodeId"] = nodeId;
+	var result = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		async : false,
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				$.each(json["elements"], function(index, element) {
+					if(element["updateType"] == "GetCurrentLinks") {
+						$.each(element["edges"], function(index2, node) {
+							var source = {"id":node["edgeSourceId"], "label":node["edgeSource"], "uri":node["edgeSourceUri"]};
+							var target = {"id":node["edgeTargetId"], "label":node["edgeTarget"], "uri":node["edgeTargetUri"]};
+							var prop = {"id":node["edgeId"], "label":node["edgeLabel"]};
+							var link = {"type":node["direction"], "source":source, "target":target, "property":prop};
+							
+							result.push(link);
+						});
+					}
+				});
+			},
+		error :
+			function (xhr, textStatus) {
+				alert("Error occured while getting nodes list!");
+			}
+	});
+	return result;
 }
 
 function changeKarmaHome(homeDir) {
 	var info = new Object();
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "SetKarmaHomeCommand";
-    info["directory"] = homeDir;
-    var result = [];
-    $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        async : false,
-        complete :
-            function (xhr, textStatus) {
-                var json = $.parseJSON(xhr.responseText);
-               parse(json);
-            },
-        error :
-            function (xhr, textStatus) {
-                alert("Error occured while setting Karma Home Directory!");
-            }
-    });
-    return result;
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "SetKarmaHomeCommand";
+	info["directory"] = homeDir;
+	var result = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		async : false,
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+			   parse(json);
+			},
+		error :
+			function (xhr, textStatus) {
+				alert("Error occured while setting Karma Home Directory!");
+			}
+	});
+	return result;
 }
 
 //Make All Modal Dialogs Resizeable
 $(".modal-dialog").resizable({ handles: "e, w" });
 $(".modal-dialog").draggable({
-    handle: ".modal-header"
+	handle: ".modal-header"
 }); 

@@ -26,18 +26,8 @@ a.icon-remove:hover {
 				       <h4 class="modal-title">Set Properties</h4>
 				  </div>
 				  <div class="modal-body">
-					<div class="form-group">
-						<label for="graphNameInput">Model Identifier</label>
-						<input class="form-control" type="text" id="graphNameInput" required>
-					</div>
-				
-					<label>
-					    <input type="checkbox" id="serviceOptions">
-					    Set Service Options
-				  	</label>
-					<br />
 					
-					<div id="worksheetServiceOptions" style="display: none; margin-left:30px;">
+					<div id="worksheetServiceOptions" style="margin-left:30px;">
 						<div class="form-group">
 							<label for="serviceUrlInput">Service URL</label>
 							<input class="form-control" type="text" id="serviceUrlInput" required>
