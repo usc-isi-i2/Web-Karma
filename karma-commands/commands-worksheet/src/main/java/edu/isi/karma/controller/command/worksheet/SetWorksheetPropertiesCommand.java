@@ -83,9 +83,11 @@ public class SetWorksheetPropertiesCommand extends Command {
 			}
 			
 			// Parse the properties and set WorksheetProperties data structure
-			String modelName = propertiesJson.getString(Property.graphName.name());
-			if (!modelName.trim().isEmpty())
-				props.setPropertyValue(Property.graphName, modelName);
+			String graphLabel = propertiesJson.getString(Property.graphLabel.name());
+			if (!graphLabel.trim().isEmpty()) {
+				props.setPropertyValue(Property.graphLabel, graphLabel);
+				props.setPropertyValue(Property.graphName, WorksheetProperties.createDefaultGraphName(graphLabel));
+			}
 			
 			if (propertiesJson.getBoolean(Property.hasServiceProperties.name())) {
 				props.setHasServiceProperties(true);

@@ -88,6 +88,9 @@ public interface Uris {
 	public static final String KM_SOURCE_TYPE_URI = Namespaces.KARMA_DEV + "sourceType";
 	public static final String KM_HAS_BLOOMFILTER = Namespaces.KARMA_DEV + "hasBloomFilter";
 	public static final String KM_HAS_INPUTCOLUMNS = Namespaces.KARMA_DEV + "hasInputColumns";
+	public static final String KM_HAS_MODELLABEL = Namespaces.KARMA_DEV + "hasModelLabel";
+	public static final String KM_HAS_BASEURI = Namespaces.KARMA_DEV + "hasBaseURI";
+
 	
 	public static final String PROV_ENTITY_URI = Namespaces.PROV + "Entity";
 	public static final String PROV_WAS_DERIVED_FROM_URI = Namespaces.PROV + "wasDerivedFrom";

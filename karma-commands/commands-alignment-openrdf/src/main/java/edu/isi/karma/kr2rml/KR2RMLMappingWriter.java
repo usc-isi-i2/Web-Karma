@@ -87,10 +87,20 @@ public class KR2RMLMappingWriter {
 		
 		// Add the timestamp
 		con.add(mappingRes, repoURIs.get(Uris.KM_MODEL_PUBLICATION_TIME_URI), f.createLiteral(new Date().getTime()));
-		
+		String inputColumns = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(
+				Property.inputColumns);
+		String graphLabel = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(
+				Property.graphLabel);
+		String baseURI = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(
+				Property.baseURI);
 		// Add the version
 		con.add(mappingRes, repoURIs.get(Uris.KM_MODEL_VERSION_URI), f.createLiteral(KR2RMLVersion.getCurrent().toString()));
-		
+		if (inputColumns != null && !inputColumns.trim().isEmpty())
+			con.add(mappingRes, repoURIs.get(Uris.KM_HAS_INPUTCOLUMNS), f.createLiteral(inputColumns));
+		if (graphLabel != null && !graphLabel.trim().isEmpty())
+			con.add(mappingRes, repoURIs.get(Uris.KM_HAS_MODELLABEL), f.createLiteral(graphLabel));	
+		if (baseURI != null && !baseURI.trim().isEmpty())
+			con.add(mappingRes, repoURIs.get(Uris.KM_HAS_BASEURI), f.createLiteral(baseURI));	
 		addWorksheetProperties(worksheet, mappingRes);
 		addCompleteWorksheetHistory(mapping, mappingRes);
 		return mappingRes;
@@ -111,7 +121,11 @@ public class KR2RMLMappingWriter {
 		repoURIs.put(Uris.KM_MODEL_VERSION_URI, f.createURI(Uris.KM_MODEL_VERSION_URI));
 		repoURIs.put(Uris.KM_SOURCE_NAME_URI, f.createURI(Uris.KM_SOURCE_NAME_URI));
 		repoURIs.put(Uris.KM_MODEL_PUBLICATION_TIME_URI, f.createURI(Uris.KM_MODEL_PUBLICATION_TIME_URI));
-		
+		repoURIs.put(Uris.KM_HAS_INPUTCOLUMNS, f.createURI(Uris.KM_HAS_INPUTCOLUMNS));
+		repoURIs.put(Uris.KM_HAS_MODELLABEL, f.createURI(Uris.KM_HAS_MODELLABEL));
+		repoURIs.put(Uris.KM_HAS_BASEURI, f.createURI(Uris.KM_HAS_BASEURI));
+
+
 		repoURIs.put(Uris.RR_TRIPLESMAP_CLASS_URI, f.createURI(Uris.RR_TRIPLESMAP_CLASS_URI));
 		repoURIs.put(Uris.RR_SUBJECTMAP_CLASS_URI, f.createURI(Uris.RR_SUBJECTMAP_CLASS_URI));
 		repoURIs.put(Uris.RR_PREDICATEOBJECTMAP_CLASS_URI, f.createURI(Uris.RR_PREDICATEOBJECTMAP_CLASS_URI));

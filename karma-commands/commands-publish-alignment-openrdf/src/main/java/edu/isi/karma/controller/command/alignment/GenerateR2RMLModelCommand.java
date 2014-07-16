@@ -142,10 +142,18 @@ public class GenerateR2RMLModelCommand extends Command {
 
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		this.worksheetName = worksheet.getTitle();
+		String graphLabel = worksheet.getMetadataContainer().getWorksheetProperties().
+				getPropertyValue(Property.graphLabel); 
 
+		if (graphLabel == null || graphLabel.isEmpty()) {
+				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+						Property.graphLabel, worksheet.getTitle());
+				graphLabel = worksheet.getTitle();
+				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+						Property.graphName, WorksheetProperties.createDefaultGraphName(graphLabel));	
+		}
 		// Prepare the model file path and names
-		final String modelFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
-				this.worksheetName +  "-model.ttl"; 
+		final String modelFileName = graphLabel + "-model.ttl"; 
 		final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
 				ContextParameter.R2RML_PUBLISH_DIR) +  modelFileName;
 
@@ -203,6 +211,8 @@ public class GenerateR2RMLModelCommand extends Command {
 				JSONArray hNodeRepresentation = hnode.getJSONArrayRepresentation(workspace.getFactory());
 				array.put(hNodeRepresentation);
 			}
+			worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+					Property.inputColumns, array.toString());
 			if (checkDependency(commands, workspace)) {
 //			System.out.println(array.toString(4));
 //			System.out.println(history);
@@ -215,10 +225,8 @@ public class GenerateR2RMLModelCommand extends Command {
 				logger.error("Optimize command history failed!");
 				fileSaver.saveAlignment(alignment, modelFileLocalPath);
 				uc.add(new InfoUpdate("Optimize command history failed!"));
-			}
-
+			}			
 			// Write the model to the triple store
-			//TripleStoreUtil utilObj = new TripleStoreUtil();
 
 			// Get the graph name from properties
 			String graphName = worksheet.getMetadataContainer().getWorksheetProperties()
@@ -227,6 +235,8 @@ public class GenerateR2RMLModelCommand extends Command {
 				// Set to default
 				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
 						Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
+				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+						Property.graphLabel, worksheet.getTitle());
 				graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
 			}
 
@@ -236,7 +246,6 @@ public class GenerateR2RMLModelCommand extends Command {
 				String url = RESTserverAddress + "/R2RMLMapping/local/" + builder.build().toString();
 				SaveR2RMLModelCommandFactory factory = new SaveR2RMLModelCommandFactory();
 				SaveR2RMLModelCommand cmd = factory.createCommand(workspace, url, tripleStoreUrl, graphName, "URL");
-				cmd.setInputColumns(array);
 				cmd.doIt(workspace);
 				result &= cmd.getSuccessful();
 				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelUrl, url);

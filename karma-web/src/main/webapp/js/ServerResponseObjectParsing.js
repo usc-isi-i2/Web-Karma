@@ -98,7 +98,7 @@ function parse(data) {
 																				worksheetProps["hasPrefix"] = true;
 																				worksheetProps["hasBaseURI"] = false;
 																				worksheetProps["prefix"] = newValue;
-																				worksheetProps["graphName"] = "";
+																				worksheetProps["graphLabel"] = "";
 																				worksheetProps["hasServiceProperties"] = false;                                    
 																				var info = new Object();
 																				info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -150,7 +150,7 @@ function parse(data) {
 																				worksheetProps["hasPrefix"] = false;
 																				worksheetProps["hasBaseURI"] = true;
 																				worksheetProps["baseURI"] = newValue;
-																				worksheetProps["graphName"] = "";
+																				worksheetProps["graphLabel"] = "";
 																				worksheetProps["hasServiceProperties"] = false;                                    
 																				var info = new Object();
 																				info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -188,11 +188,11 @@ function parse(data) {
 										headerDiv.append(baseURILabel);
 
 										var sep = $("<span>").html("&nbsp;|&nbsp;");
-										var label1 = $("<label>").html("Graph Name:&nbsp;");
+										var label1 = $("<label>").html("Name:&nbsp;");
 										var graphNameLabel = $("<span>")
-																.text(fetchExistingWorksheetOptions(worksheet["worksheetId"]))
+																.text(fetchExistingModelLabel(worksheet["worksheetId"]))
 																.addClass("edit")
-																.attr("id", "txtGraphName_" + worksheet["worksheetId"])
+																.attr("id", "txtGraphLabel_" + worksheet["worksheetId"])
 																.editable({
 																		type: 'text',
 																		pk: 1,
@@ -203,7 +203,7 @@ function parse(data) {
 																				var worksheetProps = new Object();
 																				worksheetProps["hasPrefix"] = false;
 																				worksheetProps["hasBaseURI"] = false;
-																				worksheetProps["graphName"] = newValue;
+																				worksheetProps["graphLabel"] = newValue;
 																				worksheetProps["hasServiceProperties"] = false;                                    
 																				var info = new Object();
 																				info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -240,38 +240,6 @@ function parse(data) {
 										headerDiv.append(label1);
 										headerDiv.append(graphNameLabel);
 										
-										var worksheetProps = new Object();
-										worksheetProps["hasPrefix"] = true;
-										worksheetProps["prefix"] = "s";
-										worksheetProps["hasBaseURI"] = true;
-										worksheetProps["baseURI"] = "http://localhost:8080/source/";
-										worksheetProps["graphName"] = "";
-										worksheetProps["hasServiceProperties"] = false;                                    
-										var info = new Object();
-										info["workspaceId"] = $.workspaceGlobalInformation.id;
-										info["command"] = "SetWorksheetPropertiesCommand";
-
-										var newInfo = [];   // for input parameters
-										newInfo.push(getParamObject("worksheetId", worksheet["worksheetId"] ,"worksheetId"));
-										newInfo.push(getParamObject("properties", worksheetProps, "other"));
-										info["newInfo"] = JSON.stringify(newInfo);
-
-										var returned = $.ajax({
-												url: "RequestController",
-												type: "POST",
-												data : info,
-												dataType : "json",
-												async: false,
-												complete :
-														function (xhr, textStatus) {
-																var json = $.parseJSON(xhr.responseText);
-																parse(json);
-														},
-														error :
-														function (xhr, textStatus) {
-																$.sticky("Error occurred while setting properties!");
-														}
-										});
 										var mapDiv = $("<div>").addClass("toggleMapView");
 										if(googleEarthEnabled) {
 											mapDiv
@@ -607,8 +575,8 @@ function parse(data) {
 								$("#txtBaseURI_" + element["worksheetId"]).text(element["baseURI"]);
 						}
 
-						if (element["graphName"]) {
-								$("#txtGraphName_" + element["worksheetId"]).text(element["graphName"]);
+						if (element["graphLabel"]) {
+								$("#txtGraphLabel_" + element["worksheetId"]).text(element["graphLabel"]);
 						}
 
 				}
@@ -1011,13 +979,13 @@ function submitTableCellEdit(worksheetId, nodeId, value) {
 		});
 }
 
-function fetchExistingWorksheetOptions(worksheetId) {
+function fetchExistingModelLabel(worksheetId) {
 												
 	var info = new Object();
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "FetchExistingWorksheetPropertiesCommand";
 	info["worksheetId"] = worksheetId;
-	var graphName;
+	var graphLabel;
 	var returned = $.ajax({
 		url: "RequestController",
 		type: "POST",
@@ -1029,18 +997,18 @@ function fetchExistingWorksheetOptions(worksheetId) {
 				var json = $.parseJSON(xhr.responseText);
 				var props = json["elements"][0]["properties"];
 
-				if (props["graphName"] != null) {
-					graphName = props["graphName"];
+				if (props["graphLabel"] != null) {
+					graphLabel = props["graphLabel"];
 				} else {
-					graphName = "";
+					graphLabel = "";
 				}
 			},
 		error :
 			function (xhr, textStatus) {
-				graphName = "";																				}
+				graphLabel = "";																				}
 			}
 	);
-	return graphName;
+	return graphLabel;
 }
 
 

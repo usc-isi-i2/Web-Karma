@@ -45,7 +45,7 @@ var SetPropertiesDialog = (function() {
 					
 					// Prepare the input data
 					var worksheetProps = new Object();
-					worksheetProps["graphName"] = "";
+					worksheetProps["graphLabel"] = "";
 
 					// Set service options if the window is visible
 					if ($('#worksheetServiceOptions').is(':visible')) {
@@ -198,7 +198,7 @@ var applyModelDialog = (function() {
 			tr.append(th);
 			
 			var th = $("<th>"); //.addClass("FileNameProperty");
-			var label = $("<label>").text("File Name"); //.addClass("FileNameProperty");
+			var label = $("<label>").text("Name"); //.addClass("FileNameProperty");
 			th.append(label);
 			var label = $("<input>").text("")
 				.addClass("form-control")
