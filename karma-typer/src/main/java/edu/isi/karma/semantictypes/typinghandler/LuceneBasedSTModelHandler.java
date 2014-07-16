@@ -137,9 +137,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	 * @throws IOException
 	 */
 	private boolean indexTrainingColumn(String label, ArrayList<Example> selectedExamples) throws IOException
-	{
-		indexer.openIndexWriter(indexDirectory);
-		
+	{	
 		// add documents to index
     	StringBuilder sb = new StringBuilder();
     	for (Example ex : selectedExamples)
@@ -152,6 +150,8 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
     	Searcher searcher = new Searcher(indexDirectory,Indexer.LABEL_FIELD_NAME);
     	boolean labelExists = searcher.existsSemanticLabel(label);
     	
+		indexer.openIndexWriter(indexDirectory);
+		
     	if(labelExists==true)
     	{
     		indexer.updateDocument(sb.toString(), label);
