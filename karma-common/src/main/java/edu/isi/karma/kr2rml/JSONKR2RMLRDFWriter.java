@@ -20,10 +20,13 @@
  ******************************************************************************/
 package edu.isi.karma.kr2rml;
 
+import java.io.File;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONObject;
@@ -31,12 +34,29 @@ import org.json.JSONObject;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
 
 public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
+	private class ShortHand {
+		private final String prefix;
+		private final String uri;
+		public ShortHand(String prefix, String uri) {
+			this.prefix = prefix;
+			this.uri = uri;
+		}
+
+		public String toString() {
+			if (prefix != null) 
+				return prefix + ":" + uri;
+			else
+				return uri;
+		}
+
+	}
 
 	protected boolean firstObject = true;
 	protected PrintWriter outWriter;
 	protected Map<String, JSONObject> generatedObjects;
 	protected Map<String, JSONObject> rootObjects = new ConcurrentHashMap<String, JSONObject>();
-	private List<Prefix> prefixes = new ArrayList<Prefix>();
+	private Set<Prefix> prefixes = new HashSet<Prefix>();
+	private Map<String, Prefix> prefixMapping = new TreeMap<String, Prefix>();
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter) {
 		this.outWriter = outWriter;
 		generatedObjects = new ConcurrentHashMap<String, JSONObject>();
@@ -74,7 +94,10 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 
 	private void addLiteralObject(String subjUri, String predicateUri, String value) {
 		JSONObject object = generatedObjects.get(subjUri);
-		object.put(predicateUri, value);
+		if (!getPrefix(predicateUri).toString().equals("rdf:type"))
+			object.put(getPrefix(predicateUri).toString(), value);
+		else
+			object.put(getPrefix(predicateUri).toString(), getPrefix(value).toString());
 		generatedObjects.put(subjUri, object);
 	}
 
@@ -82,11 +105,13 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 		if (generatedObjects.containsKey(objectUri)) {
 			JSONObject object1 = generatedObjects.get(subjUri);
 			JSONObject object2 = generatedObjects.get(objectUri);
-			object1.put(predicateUri, object2);
+
+			object1.put(getPrefix(predicateUri).toString(), object2);
 			//			generatedObjects.put(subjUri, object1);
 			rootObjects.remove(objectUri);
 		} else {
 			addLiteralObject(subjUri, predicateUri, objectUri);
+
 		}
 	}
 
@@ -122,24 +147,24 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri,
 			String objectUri) {
 		outputTripleWithURIObject(subjUri, predicateUri, objectUri);
-		
+
 	}
-	
+
 	@Override
 	public void outputTripleWithURIObject(TriplesMap subjTriplesMap,
 			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, TriplesMap objTriplesMapId,
 			String objectUri) {
 		outputTripleWithURIObject(subjUri, predicateUri, objectUri);
-		
+
 	}
 
-	
+
 	@Override
 	public void outputTripleWithLiteralObject(TriplesMap subjTriplesMap,
 			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, String value,
 			String literalType) {
 		outputTripleWithLiteralObject(subjUri, predicateUri, value, value);
-		
+
 	}
 
 	@Override
@@ -147,7 +172,39 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, String value,
 			String literalType, String graph) {
 		outputQuadWithLiteralObject(subjUri, predicateUri, value, literalType, graph);
-		
+
+	}
+
+	public void addPrefixes(Collection<Prefix> prefixes) {
+		this.prefixes.addAll(prefixes);
+		try {
+			PrintWriter pw = new PrintWriter(new File("prefix.txt"));
+			for (Prefix p : prefixes) {
+				pw.println(p.getNamespace() + " " + p.getPrefix());	
+			}
+			pw.close();
+		}catch(Exception e) {
+
+		}
+	}
+
+	private ShortHand getPrefix(String URI) {
+		Prefix p = prefixMapping.get(URI);
+		if (p != null) {
+			URI = URI.replace("<", "");
+			URI = URI.replace(">", "");
+			return new ShortHand(p.getNamespace(), URI.replace(p.getPrefix(), ""));
+		}
+		for (Prefix prefix : prefixes) {
+			if (URI.indexOf(prefix.getPrefix()) >= 0) {
+				prefixMapping.put(URI, prefix); {
+					URI = URI.replace("<", "");
+					URI = URI.replace(">", "");
+					return new ShortHand(prefix.getNamespace(), URI.replace(prefix.getPrefix(), ""));
+				}
+			}
+		}
+		return new ShortHand(null, URI);
 	}
 
 }
