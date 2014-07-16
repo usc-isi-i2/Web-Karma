@@ -50,8 +50,9 @@ import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.ResIterator;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.kr2rml.BloomFilterKR2RMLRDFWriter;
@@ -278,14 +279,21 @@ public class OfflineRdfGenerator {
 		{
 			modelURL = new URL(modelURLString);
 		}
+		if (baseURI != null && !baseURI.trim().isEmpty())
+			return;
 		try {
 			Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(modelURL);
-			StmtIterator itr = model.listStatements();
-			Property p = model.getProperty(Uris.KM_HAS_BASEURI);
-			while(itr.hasNext()) {
-				Statement stmt = itr.next();
-				if (stmt.getPredicate().hasProperty(p))
-					baseURI = stmt.getObject().toString();
+			Property rdfTypeProp = model.getProperty(Uris.RDF_TYPE_URI);
+			Property baseURIProp = model.getProperty(Uris.KM_HAS_BASEURI);
+			RDFNode node = model.getResource(Uris.KM_R2RML_MAPPING_URI);
+			ResIterator res = model.listResourcesWithProperty(rdfTypeProp, node);
+			List<Resource> resList = res.toList();
+			for(Resource r: resList)
+			{
+				if (r.hasProperty(baseURIProp)) {
+					baseURI = r.getProperty(baseURIProp).asTriple().getObject().toString();
+					baseURI = baseURI.replace("\"", "");
+				}
 			}
 		} catch (IOException e) {
 
