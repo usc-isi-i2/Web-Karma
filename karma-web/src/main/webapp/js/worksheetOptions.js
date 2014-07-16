@@ -13,6 +13,8 @@ function WorksheetOptions(wsId, wsTitle) {
 									 {name:"Using Current Ontology" , func:showModel},  
 									 {name:"Generate New Ontology", func:showAutoModel},
 					]},
+
+			{name:"Set Properties", func:setProperties},		
 			
 			{name:"Apply R2RML Model", func: undefined, addLevel:true, levels: [
 				{name:"From File" , func:applyR2RMLModel, useFileUpload:true, uploadDiv:"applyWorksheetHistory"},
@@ -172,6 +174,13 @@ function WorksheetOptions(wsId, wsTitle) {
 										hideLoading(info["worksheetId"]);
 								}
 				});
+		return false;
+	}
+
+	function setProperties() {
+		console.log("Set Properties: " + worksheetTitle);
+		hideDropdown();
+		SetPropertiesDialog.getInstance().show(worksheetId);
 		return false;
 	}
 	
