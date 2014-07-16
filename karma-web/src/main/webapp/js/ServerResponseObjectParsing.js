@@ -192,7 +192,7 @@ function parse(data) {
 										var graphNameLabel = $("<span>")
 																.text(fetchExistingWorksheetOptions(worksheet["worksheetId"]))
 																.addClass("edit")
-																.attr("id", "txtBaseURI_" + worksheet["worksheetId"])
+																.attr("id", "txtGraphName_" + worksheet["worksheetId"])
 																.editable({
 																		type: 'text',
 																		pk: 1,
@@ -605,6 +605,10 @@ function parse(data) {
 						}
 						if (element["baseURI"]) {
 								$("#txtBaseURI_" + element["worksheetId"]).text(element["baseURI"]);
+						}
+
+						if (element["graphName"]) {
+								$("#txtGraphName_" + element["worksheetId"]).text(element["graphName"]);
 						}
 
 				}
