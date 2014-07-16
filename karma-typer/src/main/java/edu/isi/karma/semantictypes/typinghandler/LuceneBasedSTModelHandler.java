@@ -28,30 +28,6 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 
-	/**
-	 * This internal class represents an example.
-	 */
-	static class Example {
-		String exampleString;
-
-		/**
-		 * @param exampleString
-		 *            The string that the example represents No ColumnFeatures
-		 *            specified.
-		 */
-		public Example(String exampleString) {
-			this.exampleString = exampleString;
-		}
-
-		public String getString() {
-			return exampleString;
-		}
-
-	}
-
-	// ****************************************************************************************//
-
-	// instance variables
 	static Logger logger = LoggerFactory
 			.getLogger(LuceneBasedSTModelHandler.class.getSimpleName());
 	private ArrayList<String> allowedCharacters;
@@ -84,8 +60,6 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	 */
 	@Override
 	public synchronized boolean addType(String label, List<String> examples) {
-		ArrayList<String> cleanedExamples;
-		ArrayList<Example> selectedExamples;
 		boolean savingSuccessful = false;
 
 		// running basic sanity checks in the input arguments
@@ -93,29 +67,23 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 			logger.warn("@label argument cannot be null or an empty string and the @examples list cannot be empty.");
 			return false;
 		}
+		
 		label = label.trim();
-		cleanedExamples = new ArrayList<String>();
+		ArrayList<String> cleanedExamples = new ArrayList<String>();
 		cleanedExamplesList(examples, cleanedExamples);
-		examples = cleanedExamples;
+		
 		// making sure that the condition where the examples list is not empty
 		// but contains junk only is not accepted
-		if (examples.size() == 0) {
+		if (cleanedExamples.size() == 0) {
 			logger.warn("@examples list contains forbidden characters only. The allowed characters are "
 					+ allowedCharacters);
 			return false;
 		}
 
-		// adding all the new examples to list of existing examples for the arg
-		// label.
-		selectedExamples = new ArrayList<Example>();
-		for (String newExampleString : examples) {
-			Example newExample = new Example(newExampleString);
-			selectedExamples.add(newExample);
-		}
 
 		// if the column is textual
 		try {
-			savingSuccessful = indexTrainingColumn(label, selectedExamples);
+			savingSuccessful = indexTrainingColumn(label, cleanedExamples);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -132,11 +100,11 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	 * @throws IOException
 	 */
 	private boolean indexTrainingColumn(String label,
-			ArrayList<Example> selectedExamples) throws IOException {
+			ArrayList<String> selectedExamples) throws IOException {
 		// add documents to index
 		StringBuilder sb = new StringBuilder();
-		for (Example ex : selectedExamples) {
-			sb.append(ex.getString());
+		for (String ex : selectedExamples) {
+			sb.append(ex);
 			sb.append(" ");
 		}
 
