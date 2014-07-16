@@ -21,6 +21,8 @@
 package edu.isi.karma.kr2rml;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,11 +36,10 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	protected PrintWriter outWriter;
 	protected Map<String, JSONObject> generatedObjects;
 	protected Map<String, JSONObject> rootObjects = new ConcurrentHashMap<String, JSONObject>();
-
+	private List<Prefix> prefixes = new ArrayList<Prefix>();
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter) {
 		this.outWriter = outWriter;
 		generatedObjects = new ConcurrentHashMap<String, JSONObject>();
-		
 		outWriter.println("[");
 	}
 

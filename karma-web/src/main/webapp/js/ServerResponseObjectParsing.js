@@ -189,7 +189,7 @@ function parse(data) {
 
 										var sep = $("<span>").html("&nbsp;|&nbsp;");
 										var label1 = $("<label>").html("Name:&nbsp;");
-										var graphNameLabel = $("<span>")
+										var graphLabel = $("<span>")
 																.text(fetchExistingModelLabel(worksheet["worksheetId"]))
 																.addClass("edit")
 																.attr("id", "txtGraphLabel_" + worksheet["worksheetId"])
@@ -199,7 +199,7 @@ function parse(data) {
 																		savenochange: true, 
 																		success: function(response, newValue) {
 																				console.log("Set new value:" + newValue);
-																				baseURILabel.text(newValue);
+																				graphLabel.text(newValue);
 																				var worksheetProps = new Object();
 																				worksheetProps["hasPrefix"] = false;
 																				worksheetProps["hasBaseURI"] = false;
@@ -238,7 +238,7 @@ function parse(data) {
 										
 										headerDiv.append(sep);
 										headerDiv.append(label1);
-										headerDiv.append(graphNameLabel);
+										headerDiv.append(graphLabel);
 										
 										var mapDiv = $("<div>").addClass("toggleMapView");
 										if(googleEarthEnabled) {

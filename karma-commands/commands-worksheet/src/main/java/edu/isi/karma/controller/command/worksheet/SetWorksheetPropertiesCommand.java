@@ -75,7 +75,6 @@ public class SetWorksheetPropertiesCommand extends Command {
 		JSONObject propertiesJson = null;
 		try {
 			propertiesJson = new JSONObject(properties);
-			
 			WorksheetProperties props = worksheet.getMetadataContainer().getWorksheetProperties();
 			if (props == null) {
 				props = new WorksheetProperties();
