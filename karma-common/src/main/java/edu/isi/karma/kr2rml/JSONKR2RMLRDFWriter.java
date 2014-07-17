@@ -20,7 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.kr2rml;
 
-import java.io.File;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashSet;
@@ -177,15 +176,6 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 
 	public void addPrefixes(Collection<Prefix> prefixes) {
 		this.prefixes.addAll(prefixes);
-		try {
-			PrintWriter pw = new PrintWriter(new File("prefix.txt"));
-			for (Prefix p : prefixes) {
-				pw.println(p.getNamespace() + " " + p.getPrefix());	
-			}
-			pw.close();
-		}catch(Exception e) {
-
-		}
 	}
 
 	private ShortHand getPrefix(String URI) {
