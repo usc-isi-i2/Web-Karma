@@ -98,17 +98,16 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			value = getPrefix(value).toString();
 		}
 		if (object.has(getPrefix(predicateUri).toString())) {
-			JSONArray array = new JSONArray();
+			JSONArray array = null;
 			Object obj = object.get(getPrefix(predicateUri).toString());
 			if (obj instanceof String) {
-				array.put(new JSONObject().put("values", value));
-				array.put(new JSONObject().put("values", obj));
+				array = new JSONArray();
+				array.put(value);
+				array.put(obj);
 			}
 			else if (obj instanceof JSONArray){
-				JSONArray oldArray = (JSONArray) obj;
-				for (int i = 0; i < oldArray.length(); i++)
-					array.put(oldArray.get(i));
-				array.put(new JSONObject().put("values", value));
+				array = (JSONArray) obj;
+				array.put(value);
 			}
 			object.put(getPrefix(predicateUri).toString(), array);
 		}
@@ -123,16 +122,15 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			JSONObject object2 = generatedObjects.get(objectUri);
 			if (object1.has(getPrefix(predicateUri).toString())) {
 				Object obj = object1.get(getPrefix(predicateUri).toString());
-				JSONArray array = new JSONArray();
+				JSONArray array = null;
 				if (obj instanceof JSONObject) {
-					array.put(new JSONObject().put("objects", object2));
-					array.put(new JSONObject().put("objects", obj));
+					array = new JSONArray();
+					array.put(object2);
+					array.put(obj);
 				}
 				else if (obj instanceof JSONArray) {
-					JSONArray oldArray = (JSONArray) obj;
-					for (int i = 0; i < oldArray.length(); i++)
-						array.put(oldArray.get(i));
-					array.put(new JSONObject().put("objects", object2));
+					array = (JSONArray) obj;
+					array.put(object2);
 				}
 				object1.put(getPrefix(predicateUri).toString(), array);
 			}
