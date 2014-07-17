@@ -20,7 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.kr2rml;
 
-import java.io.File;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,8 +28,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.json.JSONObject;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import edu.isi.karma.kr2rml.planning.TriplesMap;
 
