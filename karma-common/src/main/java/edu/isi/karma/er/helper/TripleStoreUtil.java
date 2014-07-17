@@ -1344,7 +1344,7 @@ public class TripleStoreUtil {
 			}
 			bfs.put(tripleUri, bf);
 		}
-		deleteBloomFiltersForMaps(modelurl, context, triplemaps);
+		deleteBloomFiltersForMaps(modelurl, null, triplemaps);
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		for (Entry<String, KR2RMLBloomFilter> entry : bfs.entrySet()) {
