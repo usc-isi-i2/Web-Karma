@@ -82,7 +82,65 @@ function parse(data) {
 												$("div#tableCellMenuButtonDiv").hide();
 												$("div#columnHeadingMenuButtonDiv").hide();
 										});
-										var headerDiv = $("<div>").addClass("propertiesHeader");
+										
+										var headerDiv = $("<div>").addClass("propertiesHeader");										
+										var label1 = $("<label>").html("Name:&nbsp;");
+										var graphLabel = $("<span>")
+																.text(fetchExistingModelLabel(worksheet["worksheetId"]))
+																.addClass("edit")
+																.attr("id", "txtGraphLabel_" + worksheet["worksheetId"])
+																.editable({
+																		type: 'text',
+																		pk: 1,
+																		savenochange: true, 
+																		success: function(response, newValue) {
+																				console.log("Set new value:" + newValue);
+																				graphLabel.text(newValue);
+																				var worksheetProps = new Object();
+																				worksheetProps["hasPrefix"] = false;
+																				worksheetProps["hasBaseURI"] = false;
+																				worksheetProps["graphLabel"] = newValue;
+																				worksheetProps["hasServiceProperties"] = false;                                    
+																				var info = new Object();
+																				info["workspaceId"] = $.workspaceGlobalInformation.id;
+																				info["command"] = "SetWorksheetPropertiesCommand";
+
+																				var newInfo = [];   // for input parameters
+																				newInfo.push(getParamObject("worksheetId", worksheet["worksheetId"] ,"worksheetId"));
+																				newInfo.push(getParamObject("properties", worksheetProps, "other"));
+																				info["newInfo"] = JSON.stringify(newInfo);
+
+																				var returned = $.ajax({
+																						url: "RequestController",
+																						type: "POST",
+																						data : info,
+																						dataType : "json",
+																						async: false,
+																						complete :
+																						function (xhr, textStatus) {
+																								var json = $.parseJSON(xhr.responseText);
+																								parse(json);
+																						},
+																						error :
+																								function (xhr, textStatus) {
+																										$.sticky("Error occurred while setting properties!");
+																								}
+																						});
+
+																},
+																title: 'Enter Name'
+														}
+												)
+												.on('shown', function(e, editable) {
+													console.log(editable);
+													editable.input.$input.val(graphLabel.html());
+												});
+										
+										headerDiv.append(label1);
+										headerDiv.append(graphLabel);
+
+
+										var sep = $("<span>").html("&nbsp;|&nbsp;");
 										var label1 = $("<label>").html("Prefix:&nbsp;");
 										var prefixLabel = $("<span>").text("s")
 																.addClass("edit")
@@ -134,6 +192,7 @@ function parse(data) {
 													console.log(editable);
 													editable.input.$input.val(prefixLabel.html());
 												});
+										headerDiv.append(sep);
 										headerDiv.append(label1);
 										headerDiv.append(prefixLabel);
 										
@@ -194,63 +253,6 @@ function parse(data) {
 										headerDiv.append(sep);
 										headerDiv.append(label1);
 										headerDiv.append(baseURILabel);
-
-										var sep = $("<span>").html("&nbsp;|&nbsp;");
-										var label1 = $("<label>").html("Name:&nbsp;");
-										var graphLabel = $("<span>")
-																.text(fetchExistingModelLabel(worksheet["worksheetId"]))
-																.addClass("edit")
-																.attr("id", "txtGraphLabel_" + worksheet["worksheetId"])
-																.editable({
-																		type: 'text',
-																		pk: 1,
-																		savenochange: true, 
-																		success: function(response, newValue) {
-																				console.log("Set new value:" + newValue);
-																				graphLabel.text(newValue);
-																				var worksheetProps = new Object();
-																				worksheetProps["hasPrefix"] = false;
-																				worksheetProps["hasBaseURI"] = false;
-																				worksheetProps["graphLabel"] = newValue;
-																				worksheetProps["hasServiceProperties"] = false;                                    
-																				var info = new Object();
-																				info["workspaceId"] = $.workspaceGlobalInformation.id;
-																				info["command"] = "SetWorksheetPropertiesCommand";
-
-																				var newInfo = [];   // for input parameters
-																				newInfo.push(getParamObject("worksheetId", worksheet["worksheetId"] ,"worksheetId"));
-																				newInfo.push(getParamObject("properties", worksheetProps, "other"));
-																				info["newInfo"] = JSON.stringify(newInfo);
-
-																				var returned = $.ajax({
-																						url: "RequestController",
-																						type: "POST",
-																						data : info,
-																						dataType : "json",
-																						async: false,
-																						complete :
-																						function (xhr, textStatus) {
-																								var json = $.parseJSON(xhr.responseText);
-																								parse(json);
-																						},
-																						error :
-																								function (xhr, textStatus) {
-																										$.sticky("Error occurred while setting properties!");
-																								}
-																						});
-
-																},
-																title: 'Enter Graph Name'
-														}
-												)
-												.on('shown', function(e, editable) {
-													console.log(editable);
-													editable.input.$input.val(graphLabel.html());
-												});
-										
-										headerDiv.append(sep);
-										headerDiv.append(label1);
-										headerDiv.append(graphLabel);
 										
 										var mapDiv = $("<div>").addClass("toggleMapView");
 										if(googleEarthEnabled) {
