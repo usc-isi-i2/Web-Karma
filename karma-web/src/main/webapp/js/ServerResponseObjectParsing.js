@@ -129,7 +129,11 @@ function parse(data) {
 																},
 																title: 'Enter Prefix'
 														}
-												);
+												)
+												.on('shown', function(e, editable) {
+													console.log(editable);
+													editable.input.$input.val(prefixLabel.html());
+												});
 										headerDiv.append(label1);
 										headerDiv.append(prefixLabel);
 										
@@ -181,7 +185,11 @@ function parse(data) {
 																},
 																title: 'Enter Base URI'
 														}
-												);
+												)
+												.on('shown', function(e, editable) {
+													console.log(editable);
+													editable.input.$input.val(baseURILabel.html());
+												});
 										
 										headerDiv.append(sep);
 										headerDiv.append(label1);
@@ -234,7 +242,11 @@ function parse(data) {
 																},
 																title: 'Enter Graph Name'
 														}
-												);
+												)
+												.on('shown', function(e, editable) {
+													console.log(editable);
+													editable.input.$input.val(graphLabel.html());
+												});
 										
 										headerDiv.append(sep);
 										headerDiv.append(label1);
