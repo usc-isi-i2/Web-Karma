@@ -20,6 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.kr2rml;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import edu.isi.karma.kr2rml.planning.TriplesMap;
 
@@ -93,10 +95,26 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 
 	private void addLiteralObject(String subjUri, String predicateUri, String value) {
 		JSONObject object = generatedObjects.get(subjUri);
-		if (!getPrefix(predicateUri).toString().equals("rdf:type"))
-			object.put(getPrefix(predicateUri).toString(), value);
+		if (getPrefix(predicateUri).toString().equals("rdf:type")) {
+			value = getPrefix(value).toString();
+		}
+		if (object.has(getPrefix(predicateUri).toString())) {
+			JSONArray array = new JSONArray();
+			Object obj = object.get(getPrefix(predicateUri).toString());
+			if (obj instanceof String) {
+				array.put(new JSONObject().put("values", value));
+				array.put(new JSONObject().put("values", obj));
+			}
+			else if (obj instanceof JSONArray){
+				JSONArray oldArray = (JSONArray) obj;
+				for (int i = 0; i < oldArray.length(); i++)
+					array.put(oldArray.get(i));
+				array.put(new JSONObject().put("values", value));
+			}
+			object.put(getPrefix(predicateUri).toString(), array);
+		}
 		else
-			object.put(getPrefix(predicateUri).toString(), getPrefix(value).toString());
+			object.put(getPrefix(predicateUri).toString(), value);
 		generatedObjects.put(subjUri, object);
 	}
 
@@ -104,8 +122,23 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 		if (generatedObjects.containsKey(objectUri)) {
 			JSONObject object1 = generatedObjects.get(subjUri);
 			JSONObject object2 = generatedObjects.get(objectUri);
-
-			object1.put(getPrefix(predicateUri).toString(), object2);
+			if (object1.has(getPrefix(predicateUri).toString())) {
+				Object obj = object1.get(getPrefix(predicateUri).toString());
+				JSONArray array = new JSONArray();
+				if (obj instanceof JSONObject) {
+					array.put(new JSONObject().put("objects", object2));
+					array.put(new JSONObject().put("objects", obj));
+				}
+				else if (obj instanceof JSONArray) {
+					JSONArray oldArray = (JSONArray) obj;
+					for (int i = 0; i < oldArray.length(); i++)
+						array.put(oldArray.get(i));
+					array.put(new JSONObject().put("objects", object2));
+				}
+				object1.put(getPrefix(predicateUri).toString(), array);
+			}
+			else
+				object1.put(getPrefix(predicateUri).toString(), object2);
 			//			generatedObjects.put(subjUri, object1);
 			rootObjects.remove(objectUri);
 		} else {
