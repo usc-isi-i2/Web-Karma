@@ -40,8 +40,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeColumnModel;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
@@ -61,7 +60,6 @@ public class SetSemanticTypeCommand extends Command {
 	private final String worksheetId;
 	private final boolean trainAndShowUpdates;
 	private final String rdfLiteralType;
-	private SemanticTypeColumnModel oldColumnModel;
 	private SynonymSemanticTypes oldSynonymTypes;
 	private JSONArray typesArr;
 	private SynonymSemanticTypes newSynonymTypes;
@@ -259,7 +257,6 @@ public class SetSemanticTypeCommand extends Command {
 
 		// Save the old SemanticType object and CRF Model for undo
 		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(hNodeId);
-		oldColumnModel = worksheet.getSemanticTypeModel().getModelByHNodeId(hNodeId);
 		oldSynonymTypes = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(hNodeId);
 
 		if (newType != null) {
@@ -280,6 +277,8 @@ public class SetSemanticTypeCommand extends Command {
 //		}
 		
 		if(trainAndShowUpdates) {
+			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType);
+			
 			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
 			try {
 				// Add the visualization update
@@ -289,11 +288,6 @@ public class SetSemanticTypeCommand extends Command {
 				return new UpdateContainer(new ErrorUpdate(
 						"Error occured while setting the semantic type!"));
 			}
-			
-			
-			// Train the semantic type in a separate thread
-			Thread t = new Thread(new SemanticTypeTrainingThread(workspace.getSemanticTypeModelHandler(), worksheet, newType));
-			t.start();
 			
 			return c;
 			
@@ -350,8 +344,6 @@ public class SetSemanticTypeCommand extends Command {
 			worksheet.getSemanticTypes().addType(oldType);
 			worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), oldSynonymTypes);
 		}
-
-		worksheet.getSemanticTypeModel().addColumnModel(newType.getHNodeId(), oldColumnModel);
 
 		// Replace the current alignment with the old alignment
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);

@@ -21,7 +21,6 @@
 package edu.isi.karma.controller.update;
 
 import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeColumnModel;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
@@ -58,7 +57,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	private Alignment alignment;
 
 	public enum JsonKeys {
-		HNodeId, FullType, ConfidenceLevel, Origin, SemanticTypeModel, DisplayLabel, 
+		HNodeId, FullType, ConfidenceLevel, Origin, DisplayLabel, 
 		DisplayDomainLabel, DomainId, DomainUri, SemanticTypesArray, isPrimary, isPartOfKey, 
 		Types, isMetaProperty, rdfLiteralType
 	}
@@ -194,13 +193,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 					writer.key(JsonKeys.SemanticTypesArray.name()).array()
 							.endArray();
 				}
-
-				// Populate the CRF Model
-				SemanticTypeColumnModel colModel = worksheet.getSemanticTypeModel().getModelByHNodeId(nodeId);
-				if (colModel != null) {
-					writer.key(JsonKeys.SemanticTypeModel.name()).value(colModel.getAsJSONObject(vWorkspace.getWorkspace().getOntologyManager(), alignment));
-				}
-
+				
 				writer.endObject();
 			}
 			writer.endArray();

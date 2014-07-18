@@ -24,7 +24,6 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Workspace;
 
@@ -57,9 +56,6 @@ public abstract class WorksheetCommand extends Command {
 	public UpdateContainer computeAlignmentAndSemanticTypesAndCreateUpdates(Workspace workspace, HNodePath path)
 	{
 		Alignment alignment = getAlignmentOrCreateIt(workspace);
-		// Compute the semantic type suggestions
-		SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(worksheetId), workspace
-				.getSemanticTypeModelHandler(), workspace.getOntologyManager(), path);
 		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
 	}
 		
@@ -67,9 +63,6 @@ public abstract class WorksheetCommand extends Command {
 	public UpdateContainer computeAlignmentAndSemanticTypesAndCreateUpdates(Workspace workspace)
 	{
 		Alignment alignment = getAlignmentOrCreateIt(workspace);
-		// Compute the semantic type suggestions
-		SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(worksheetId), workspace
-				.getSemanticTypeModelHandler(), workspace.getOntologyManager());
 		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
 	}
 }

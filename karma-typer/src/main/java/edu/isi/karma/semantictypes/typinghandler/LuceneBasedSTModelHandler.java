@@ -112,7 +112,6 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		}
 
 		// check if semantic label already exists
-		boolean labelExists = false;
 		Document labelDoc = null; // document corresponding to existing semantic label if exists
 		if (indexDirectoryExists()) {
 			try {
@@ -120,7 +119,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 				Searcher searcher = new Searcher(indexDirectory,
 						Indexer.LABEL_FIELD_NAME);
 				try {
-					labelExists = searcher.existsSemanticLabel(label, labelDoc);
+					labelDoc = searcher.getDocumentForLabel(label);
 				} finally {
 					searcher.close();
 				}
@@ -133,7 +132,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		Indexer indexer = new Indexer(indexDirectory);
 		try {
 			indexer.open();
-			if (labelExists) {
+			if (labelDoc != null) {
 				IndexableField existingContent = labelDoc.getField(Indexer.CONTENT_FIELD_NAME);
 				indexer.updateDocument(existingContent, sb.toString(), label);
 			} else {
@@ -202,6 +201,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 			return null;
 		}
 
+		logger.info("Predic Type for " + examples.toArray().toString());
 		// get top-k suggestions
 		if (indexDirectoryExists()) {
 			// construct single text for test column
@@ -215,7 +215,9 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 				Searcher predictor = new Searcher(indexDirectory,
 						Indexer.CONTENT_FIELD_NAME);
 				try {
-					return predictor.getTopK(numPredictions, sb.toString());
+					List<SemanticTypeLabel> result = predictor.getTopK(numPredictions, sb.toString());
+					logger.info("Got " + result.size() + " predictions");
+					return result;
 				} finally {
 					predictor.close();
 				}

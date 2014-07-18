@@ -80,11 +80,11 @@ public class PublishSpatialDataCommand extends Command {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
-		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0) {
-			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, workspace
-					.getTagsContainer().getTag(TagName.Outlier), workspace
-					.getSemanticTypeModelHandler(), workspace.getOntologyManager());
-		}
+//		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0) {
+//			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, workspace
+//					.getTagsContainer().getTag(TagName.Outlier), workspace
+//					.getSemanticTypeModelHandler(), workspace.getOntologyManager());
+//		}
 
 		OntologyManager om= workspace.getOntologyManager();
 		WorksheetToFeatureCollection geo = new WorksheetToFeatureCollection(worksheet,om);//ying

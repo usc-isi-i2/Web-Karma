@@ -146,7 +146,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 		writer.endObject();
 	}
 	
-	public String getCrfModelLabelString() {
+	public String getModelLabelString() {
 		return (this.getDomain() == null) ? 
 				this.getType().getUri() : this.getDomain().getUri() + "|" + this.getType().getUri();
 	}

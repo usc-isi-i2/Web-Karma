@@ -13,7 +13,6 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -74,34 +73,27 @@ public class Searcher {
 		return result;
 	}
 
-	public boolean existsSemanticLabel(String labelToQuery, Document labelDoc) throws IOException {
-		BooleanQuery query = new BooleanQuery();
-		query.add(new TermQuery(
-				new Term(Indexer.LABEL_FIELD_NAME, labelToQuery)),
-				BooleanClause.Occur.MUST);
-
-		TopDocs results = indexSearcher.search(query, 1);
+	public Document getDocumentForLabel(String label) throws IOException {
+		Query query = new TermQuery(
+				new Term(Indexer.LABEL_FIELD_NAME, label));
+		TopDocs results = indexSearcher.search(query, 10);
 		ScoreDoc[] hits = results.scoreDocs;
 
-		if (hits.length > 0) {
-			Document doc = indexSearcher.doc(hits[0].doc);
+		for(int i=0; i<hits.length; i++) {
+			Document doc = indexSearcher.doc(hits[i].doc);
 			String labelString = doc.get(Indexer.LABEL_FIELD_NAME);
-			if (labelString.equalsIgnoreCase(labelToQuery)) // document for
+			if (labelString.equalsIgnoreCase(label)) // document for
 															// exact semantic
 															// label already
 															// exists
 			{
-				labelDoc = doc; // returning the document corresponding to existing semantic label
-				return true;
-			} else // inexact match
-			{
-				return false;
-			}
-		} else // no match found
-		{
-			return false;
+				return doc;
+			}		
+				
 		}
+		return null;
 	}
+	
 
 	public void close() {
 		try {
