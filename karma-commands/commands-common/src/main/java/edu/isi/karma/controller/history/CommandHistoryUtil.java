@@ -4,6 +4,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +17,7 @@ import org.reflections.Reflections;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -235,5 +237,23 @@ public class CommandHistoryUtil {
 			}
 		}
 		return commands;
+	}
+	
+	public void removeCommands(CommandTag tag) {
+		Iterator<Command> commandItr = commands.iterator();
+		while (commandItr.hasNext()) {
+			Command command = commandItr.next();
+			if(command.hasTag(tag))
+				commandItr.remove();
+		}
+	}
+	
+	public void removeCommands(String hNodeId) {
+		Iterator<Command> commandItr = commands.iterator();
+		while (commandItr.hasNext()) {
+			Command command = commandItr.next();
+			if(command.getOutputColumns().contains(hNodeId))
+				commandItr.remove();
+		}
 	}
 }

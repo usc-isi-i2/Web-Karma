@@ -395,14 +395,6 @@ public class CommandHistory {
 		}
 	}
 
-	public void removeCommands(CommandTag tag) {
-		List<ICommand> commandsToBeRemoved = new ArrayList<ICommand>();
-		for(ICommand command: history) {
-			if(command.hasTag(tag))
-				commandsToBeRemoved.add(command);
-		}
-		history.removeAll(commandsToBeRemoved);
-	}
 
 	public void removeCommands(Workspace workspace, String worksheetId) {
 		List<ICommand> commandsToBeRemoved = new ArrayList<ICommand>();
