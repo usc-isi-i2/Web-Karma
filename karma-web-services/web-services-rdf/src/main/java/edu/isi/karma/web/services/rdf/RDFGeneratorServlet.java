@@ -36,14 +36,6 @@ public class RDFGeneratorServlet{
 
 	/**
 	 * 
-	 
-	private static final long serialVersionUID = -979319404654953710L;
-	
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-				response.getWriter().println("Hello world Germany!");
-	
-	}
 	 * @throws IOException 
 	 * @throws KarmaException */
 	
@@ -55,8 +47,8 @@ public class RDFGeneratorServlet{
 	{
 		try
 		{
-			logger.info("I got called");
-			logger.info("Here is the json:" + metadataJSON);
+			logger.info("Calling the web service");
+			logger.info("Parse, model and pulish JSON:" + metadataJSON);
 			
 			UpdateContainer uc = new UpdateContainer();
 			KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
@@ -73,7 +65,7 @@ public class RDFGeneratorServlet{
 			
 			gRDFGen.addModel(rmlID);
 			
-			String filename = "C:\\metadata.json";
+			//String filename = "C:\\metadata.json";
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			
@@ -81,11 +73,12 @@ public class RDFGeneratorServlet{
 			KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
 			
 			//gRDFGen.generateRDF("rdf-model", new File(filename), InputType.JSON, false, outWriter);
+			logger.info("Generating RDF");
 			gRDFGen.generateRDF("rdf-model","PHONE",metadataJSON , InputType.JSON, false, outWriter);
 			
 			
 			
-			String output = sw.toString();
+			//String output = sw.toString();
 			
 			
 			TripleStoreUtil tsu = new TripleStoreUtil();
@@ -94,27 +87,32 @@ public class RDFGeneratorServlet{
 			Boolean replace = true;
 			String baseURI = "http://isiimagefinder/";
 			
+			logger.info("Publishing rdf to triplestore:" + "http://localhost:3000/openrdf-sesame/repositories/karma_data");
 			boolean success = tsu.saveToStore(sw.toString(), tripleStoreURL, context, replace, baseURI);
 			
 			
-			//String output = "hello";
-			return Response.status(200).entity(metadataJSON).build();
+			if(success)
+				return Response.status(201).entity(metadataJSON).build(); //successfully created
+			else
+				return Response.status(503).entity("OOPS it did not work").build(); //Something went wrong
+			//TODO set better return codes in case of error
 			
 			//return Response.status(200).entity(output).build();
 		}
 		catch(IOException ioe)
 		{
 			logger.error("IOException:" + ioe.getMessage());
-			return null;
+			return Response.status(400).entity("Its an IOException:" + ioe.getMessage()).build(); //Something went wrong
 		}
 		catch(KarmaException ke)
 		{
-			return Response.status(200).entity(ke.getMessage()).build();
+			logger.error("Exception:" + ke.getMessage());
+			return Response.status(400).entity("Its a Karma Exception:" + ke.getMessage()).build(); //Something went wrong
 		}
 		catch (Exception e)
 		{
 			logger.error("Exception:" + e.getMessage());
-			return null;
+			return Response.status(400).entity("Its an Exception:" + e.getMessage()).build(); //Something went wrong
 		}
 	}
 
