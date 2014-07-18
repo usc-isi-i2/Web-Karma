@@ -19,7 +19,7 @@
 	  
   <servlet-mapping>
     <servlet-name>RDFGeneratorServlet</servlet-name>
-    <url-pattern>/rest/*</url-pattern>
+    <url-pattern>/rdf/*</url-pattern>
   </servlet-mapping>
   
 </web-app>

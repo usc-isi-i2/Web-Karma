@@ -5,9 +5,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
@@ -26,8 +29,10 @@ import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.webserver.KarmaException;
 
 
-@Path("/hello")
+@Path("/metadata") 
 public class RDFGeneratorServlet{
+	
+	private static Logger logger = LoggerFactory.getLogger(RDFGeneratorServlet.class);
 
 	/**
 	 * 
@@ -43,12 +48,16 @@ public class RDFGeneratorServlet{
 	 * @throws KarmaException */
 	
 	
-	@GET
-	@Path("/world")
-	public Response getMsg()
+	@POST
+	@Consumes("text/plain")
+	@Path("/images")
+	public Response getMsg(String metadataJSON)
 	{
 		try
 		{
+			logger.info("I got called");
+			logger.info("Here is the json:" + metadataJSON);
+			
 			UpdateContainer uc = new UpdateContainer();
 			KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
 			userMetadataManager.register(new UserPreferencesMetadata(), uc);
@@ -71,7 +80,8 @@ public class RDFGeneratorServlet{
 			URIFormatter uriFormatter = new URIFormatter();
 			KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
 			
-			gRDFGen.generateRDF("rdf-model", new File(filename), InputType.JSON, false, outWriter);
+			//gRDFGen.generateRDF("rdf-model", new File(filename), InputType.JSON, false, outWriter);
+			gRDFGen.generateRDF("rdf-model","PHONE",metadataJSON , InputType.JSON, false, outWriter);
 			
 			
 			
@@ -88,13 +98,14 @@ public class RDFGeneratorServlet{
 			
 			
 			//String output = "hello";
-			return Response.status(200).entity("h").build();
+			return Response.status(200).entity(metadataJSON).build();
 			
 			//return Response.status(200).entity(output).build();
 		}
 		catch(IOException ioe)
 		{
-			return Response.status(200).entity(ioe.getMessage()).build();
+			logger.error("IOException:" + ioe.getMessage());
+			return null;
 		}
 		catch(KarmaException ke)
 		{
@@ -102,7 +113,8 @@ public class RDFGeneratorServlet{
 		}
 		catch (Exception e)
 		{
-			return Response.status(200).entity(e.getMessage()).build();
+			logger.error("Exception:" + e.getMessage());
+			return null;
 		}
 	}
 
