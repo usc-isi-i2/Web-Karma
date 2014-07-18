@@ -43,7 +43,8 @@ public class WorksheetProperties {
 		serviceRequestMethod, serviceDataPostMethod, 
 		graphName, serviceUrl, hasServiceProperties, 
 		sourceType, modelUrl, modelRepository, modelContext,
-		baseURI, prefix, graphLabel, inputColumns
+		baseURI, prefix, graphLabel, inputColumns, 
+		outputColumns
 	}
 	
 	public enum SourceTypes {

@@ -23,6 +23,20 @@
  */
 package edu.isi.karma.controller.history;
 
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -38,14 +52,6 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.PrintWriter;
-import java.util.*;
-
 /**
  * @author szekely
  * 
@@ -55,7 +61,6 @@ public class CommandHistory {
 	private final List<ICommand> history = new ArrayList<ICommand>();
 
 	private final List<ICommand> redoStack = new ArrayList<ICommand>();
-
 	/**
 	 * If the last command was undo, and then we do a command that goes on the
 	 * history, then we need to send the browser the full history BEFORE we send
@@ -64,22 +69,23 @@ public class CommandHistory {
 	 * to reset the history.
 	 */
 	private boolean lastCommandWasUndo = false;
-	
+
 	/**
 	 * Used to keep a pointer to the command which require user-interaction
 	 * through multiple HTTP requests.
 	 */
 	private Command currentCommand;
-	
+
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	private static HashMap<String, IHistorySaver> historySavers = new HashMap<>();
-	
+
 	public enum HistoryArguments {
 		worksheetId, commandName, inputParameters, hNodeId, tags
 	}
-	
+
 	public CommandHistory() {
+
 	}
 
 	public CommandHistory(List<ICommand> history, List<ICommand> redoStack) {
@@ -110,11 +116,11 @@ public class CommandHistory {
 	public CommandHistory clone() {
 		return new CommandHistory(history, redoStack);
 	}
-	
+
 	public void setCurrentCommand(Command command) {
 		this.currentCommand = command;
 	}
-	
+
 	public Command getCurrentCommand() {
 		return this.currentCommand;
 	}
@@ -134,27 +140,27 @@ public class CommandHistory {
 			throws CommandException {
 		return doCommand(command, workspace, true);
 	}
-	
+
 	public UpdateContainer doCommand(Command command, Workspace workspace, boolean saveToHistory)
 			throws CommandException {
 		UpdateContainer effects = new UpdateContainer();
 		effects.append(command.doIt(workspace));
 		command.setExecuted(true);
-		
-		
+
+
 		if (command.getCommandType() != CommandType.notInHistory) {
 			redoStack.clear();
-			
+
 			// Send the history before the command we just executed.
 			if (lastCommandWasUndo && !(instanceOf(command, "UndoRedoCommand"))) {
 				effects.append(new UpdateContainer(new HistoryUpdate(this)));
 			}
 			lastCommandWasUndo = false;
-			
+
 			history.add(command);
 			effects.add(new HistoryAddCommandUpdate(command));
 		}
-		
+
 		if(saveToHistory) {
 			// Save the modeling commands
 			if (!(instanceOf(command, "ResetKarmaCommand"))) {
@@ -187,28 +193,28 @@ public class CommandHistory {
 				}
 			}
 		}
-		
+
 		for(String worksheetId : comMap.keySet()) {
 			JSONArray comms = comMap.get(worksheetId);
 			historySaver.saveHistory(workspaceId, worksheetId, comms);
 		}
 	}
 
-	
+
 	public JSONObject getCommandJSON(Workspace workspace, ICommand comm) {
 		JSONObject commObj = new JSONObject();
 		commObj.put(HistoryArguments.commandName.name(), comm.getCommandName());
-		
+
 		// Populate the tags
 		JSONArray tagsArr = new JSONArray();
 		for (CommandTag tag : comm.getTags())
 			tagsArr.put(tag.name());
 		commObj.put(HistoryArguments.tags.name(), tagsArr);
-		
+
 		JSONArray inputArr = new JSONArray(comm.getInputParameterJson());
 		for (int i = 0; i < inputArr.length(); i++) {
 			JSONObject inpP = inputArr.getJSONObject(i);
-			
+
 			/*** Check the input parameter type and accordingly make changes ***/
 			if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeIdList) {
 				JSONArray hnodes = (JSONArray) JSONUtil.createJson(inpP.getString(ClientJsonKeys.value.name()));
@@ -238,7 +244,7 @@ public class CommandHistory {
 				HNode node = workspace.getFactory().getHNode(hNodeId);
 				JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(workspace.getFactory());
 				inpP.put(ClientJsonKeys.value.name(), hNodeRepresentation);
-			
+
 			} else if (HistoryJsonUtil.getParameterType(inpP) == ParameterType.worksheetId) {
 				inpP.put(ClientJsonKeys.value.name(), "W");
 			} else {
@@ -248,11 +254,11 @@ public class CommandHistory {
 		commObj.put(HistoryArguments.inputParameters.name(), inputArr);
 		return commObj;
 	}
-	
+
 	private boolean instanceOf(Object o, String className) { // TODO this is a hack, but instanceof doesn't really seem appropriate here
 		return o.getClass().getName().toLowerCase().contains(className.toLowerCase());
 	}
-	
+
 	private String parseChildren(String inputJSON, Workspace workspace) {
 		JSONArray array = (JSONArray) JSONUtil.createJson(inputJSON);
 		for (int i = 0; i < array.length(); i++) {
@@ -397,7 +403,45 @@ public class CommandHistory {
 		}
 		history.removeAll(commandsToBeRemoved);
 	}
-	
+
+	public void removeCommands(Workspace workspace, String worksheetId) {
+		List<ICommand> commandsToBeRemoved = new ArrayList<ICommand>();
+		ListIterator<ICommand> commandItr = history.listIterator(history.size() - 1);
+		while(commandItr.hasPrevious()) {
+			ICommand command = commandItr.previous();
+			if(command instanceof Command && command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
+					|| command.hasTag(CommandTag.Transformation))) {
+				JSONArray json = new JSONArray(command.getInputParameterJson());
+				if (HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json).equals(worksheetId)) {
+					commandsToBeRemoved.add(command);
+					Command tmp = (Command)command;
+					if (tmp.getCommandType() == CommandType.undoable) {
+						try {
+							tmp.undoIt(workspace);
+						}catch(Exception e) {
+							
+						}
+					}
+				}
+			}
+		}
+		history.removeAll(commandsToBeRemoved);
+	}
+
+	public List<Command> getCommandsFromWorksheetId(String worksheetId) {
+		List<Command> commandsFromWorksheet = new ArrayList<Command>();
+		for(ICommand command: history) {
+			if(command instanceof Command && command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
+					|| command.hasTag(CommandTag.Transformation))) {
+				JSONArray json = new JSONArray(command.getInputParameterJson());
+				if (HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json).equals(worksheetId))
+					commandsFromWorksheet.add((Command)command);
+			}
+
+		}
+		return commandsFromWorksheet;
+	}
+
 	public ICommand getCommand(String commandId)
 	{
 		for(ICommand  c: this.history)
@@ -408,9 +452,9 @@ public class CommandHistory {
 			}
 		}
 		return null;
-			
+
 	}
-	
+
 	public List<ICommand> getCommands(CommandTag tag) {
 		List<ICommand> retCommands = new ArrayList<ICommand>();
 		for(ICommand command: history) {
@@ -419,23 +463,23 @@ public class CommandHistory {
 		}
 		return retCommands;
 	}
-	
-	
+
+
 	private static boolean isHistoryWriteEnabled = false;
 	public static boolean isHistoryEnabled()
 	{
 		return isHistoryWriteEnabled;
 	}
-	
+
 	public static void setIsHistoryEnabled(boolean isHistoryWriteEnabled)
 	{
 		CommandHistory.isHistoryWriteEnabled = isHistoryWriteEnabled;
 	}
-	
+
 	public static void setHistorySaver(String workspaceId, IHistorySaver saver) {
 		historySavers.put(workspaceId, saver);
 	}
-	
+
 	public static IHistorySaver getHistorySaver(String workspaceId) {
 		return historySavers.get(workspaceId);
 	}

@@ -89,6 +89,8 @@ public class KR2RMLMappingWriter {
 		con.add(mappingRes, repoURIs.get(Uris.KM_MODEL_PUBLICATION_TIME_URI), f.createLiteral(new Date().getTime()));
 		String inputColumns = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(
 				Property.inputColumns);
+		String outputColumns = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(
+				Property.outputColumns);
 		String graphLabel = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(
 				Property.graphLabel);
 		String baseURI = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(
@@ -97,6 +99,8 @@ public class KR2RMLMappingWriter {
 		con.add(mappingRes, repoURIs.get(Uris.KM_MODEL_VERSION_URI), f.createLiteral(KR2RMLVersion.getCurrent().toString()));
 		if (inputColumns != null && !inputColumns.trim().isEmpty())
 			con.add(mappingRes, repoURIs.get(Uris.KM_HAS_INPUTCOLUMNS), f.createLiteral(inputColumns));
+		if (outputColumns != null && !outputColumns.trim().isEmpty())
+			con.add(mappingRes, repoURIs.get(Uris.KM_HAS_OUTPUTCOLUMNS), f.createLiteral(outputColumns));
 		if (graphLabel != null && !graphLabel.trim().isEmpty())
 			con.add(mappingRes, repoURIs.get(Uris.KM_HAS_MODELLABEL), f.createLiteral(graphLabel));	
 		if (baseURI != null && !baseURI.trim().isEmpty())
@@ -117,45 +121,9 @@ public class KR2RMLMappingWriter {
 	protected void initializeURIs()
 	{
 		repoURIs = new HashMap<String, URI>();
-		repoURIs.put(Uris.KM_R2RML_MAPPING_URI, f.createURI(Uris.KM_R2RML_MAPPING_URI));
-		repoURIs.put(Uris.KM_MODEL_VERSION_URI, f.createURI(Uris.KM_MODEL_VERSION_URI));
-		repoURIs.put(Uris.KM_SOURCE_NAME_URI, f.createURI(Uris.KM_SOURCE_NAME_URI));
-		repoURIs.put(Uris.KM_MODEL_PUBLICATION_TIME_URI, f.createURI(Uris.KM_MODEL_PUBLICATION_TIME_URI));
-		repoURIs.put(Uris.KM_HAS_INPUTCOLUMNS, f.createURI(Uris.KM_HAS_INPUTCOLUMNS));
-		repoURIs.put(Uris.KM_HAS_MODELLABEL, f.createURI(Uris.KM_HAS_MODELLABEL));
-		repoURIs.put(Uris.KM_HAS_BASEURI, f.createURI(Uris.KM_HAS_BASEURI));
-
-
-		repoURIs.put(Uris.RR_TRIPLESMAP_CLASS_URI, f.createURI(Uris.RR_TRIPLESMAP_CLASS_URI));
-		repoURIs.put(Uris.RR_SUBJECTMAP_CLASS_URI, f.createURI(Uris.RR_SUBJECTMAP_CLASS_URI));
-		repoURIs.put(Uris.RR_PREDICATEOBJECTMAP_CLASS_URI, f.createURI(Uris.RR_PREDICATEOBJECTMAP_CLASS_URI));
-		repoURIs.put(Uris.RR_REF_OBJECT_MAP_CLASS_URI, f.createURI(Uris.RR_REF_OBJECT_MAP_CLASS_URI));
-		repoURIs.put(Uris.RR_OBJECTMAP_CLASS_URI, f.createURI(Uris.RR_OBJECTMAP_CLASS_URI));
-		repoURIs.put(Uris.RR_LOGICAL_TABLE_CLASS_URI, f.createURI(Uris.RR_LOGICAL_TABLE_CLASS_URI));
-		repoURIs.put(Uris.RR_TEMPLATE_URI, f.createURI(Uris.RR_TEMPLATE_URI));
-		repoURIs.put(Uris.RR_SUBJECTMAP_URI, f.createURI(Uris.RR_SUBJECTMAP_URI));
-		repoURIs.put(Uris.RR_PREDICATE_URI, f.createURI(Uris.RR_PREDICATE_URI));
-		repoURIs.put(Uris.RR_OBJECTMAP_URI, f.createURI(Uris.RR_OBJECTMAP_URI));
-		repoURIs.put(Uris.RR_COLUMN_URI, f.createURI(Uris.RR_COLUMN_URI));
-		repoURIs.put(Uris.RR_DATATYPE_URI, f.createURI(Uris.RR_DATATYPE_URI));
-		repoURIs.put(Uris.RR_PARENT_TRIPLE_MAP_URI, f.createURI(Uris.RR_PARENT_TRIPLE_MAP_URI));
-		repoURIs.put(Uris.RR_PRED_OBJ_MAP_URI, f.createURI(Uris.RR_PRED_OBJ_MAP_URI));
-		repoURIs.put(Uris.RR_BLANK_NODE_URI, f.createURI(Uris.RR_BLANK_NODE_URI));
-		repoURIs.put(Uris.RR_TERM_TYPE_URI, f.createURI(Uris.RR_TERM_TYPE_URI));
-		repoURIs.put(Uris.RR_LOGICAL_TABLE_URI, f.createURI(Uris.RR_LOGICAL_TABLE_URI));
-		repoURIs.put(Uris.RR_TABLENAME_URI, f.createURI(Uris.RR_TABLENAME_URI));
-		repoURIs.put(Uris.RR_CLASS_URI, f.createURI(Uris.RR_CLASS_URI));
-		repoURIs.put(Uris.RR_LITERAL_URI, f.createURI(Uris.RR_LITERAL_URI));
-		
-		repoURIs.put(Uris.KM_BLANK_NODE_PREFIX_URI, f.createURI(Uris.KM_BLANK_NODE_PREFIX_URI));
-		repoURIs.put(Uris.KM_NODE_ID_URI, f.createURI(Uris.KM_NODE_ID_URI));
-		repoURIs.put(Uris.KM_STEINER_TREE_ROOT_NODE, f.createURI(Uris.KM_STEINER_TREE_ROOT_NODE));
-		repoURIs.put(Uris.KM_HAS_TRIPLES_MAP_URI, f.createURI(Uris.KM_HAS_TRIPLES_MAP_URI));
-		repoURIs.put(Uris.KM_HAS_OBJECT_MAP_URI, f.createURI(Uris.KM_HAS_OBJECT_MAP_URI));
-		repoURIs.put(Uris.KM_HAS_PREDICATE_OBJECT_MAP_URI, f.createURI(Uris.KM_HAS_PREDICATE_OBJECT_MAP_URI));
-		repoURIs.put(Uris.KM_HAS_SUBJECT_MAP_URI, f.createURI(Uris.KM_HAS_SUBJECT_MAP_URI));
-		repoURIs.put(Uris.KM_HAS_LOGICAL_TABLE_URI, f.createURI(Uris.KM_HAS_LOGICAL_TABLE_URI));
-		repoURIs.put(Uris.KM_IS_PART_OF_MAPPING_URI, f.createURI(Uris.KM_IS_PART_OF_MAPPING_URI));
+		for (String uri : Uris.Uris) {
+			repoURIs.put(uri, f.createURI(uri));
+		}				
 		
 	}
 
