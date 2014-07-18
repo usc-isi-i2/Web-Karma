@@ -63,9 +63,9 @@ public class DisplayModel {
 
 		int modelNum = 1;
 		for(DirectedWeightedMultigraph<Node, LabeledLink> subModel : this.models) {
-			logger.info(modelNum++ + "Start levelingCyclicGraph");
+			logger.debug(modelNum++ + "Start levelingCyclicGraph");
 			levelingCyclicGraph(subModel);
-			logger.info(modelNum + "After levelingCyclicGraph");
+			logger.debug(modelNum + "After levelingCyclicGraph");
 			printLevels();
 	
 			computeNodeSpan(subModel);
@@ -74,7 +74,7 @@ public class DisplayModel {
 			updateNodeLevelsConsideringOverlaps(subModel);
 		}
 		
-		logger.info("After updateNodeLevelsConsideringOverlaps");
+		logger.debug("After updateNodeLevelsConsideringOverlaps");
 		printLevels();
 		printSpans();
 		
@@ -121,7 +121,7 @@ public class DisplayModel {
 			}
 		}
 		
-		logger.info("Final Levels");
+		logger.debug("Final Levels");
 		printLevels();
 		printSpans();
 		
@@ -214,7 +214,7 @@ public class DisplayModel {
 	
 	private boolean cycleExits(DirectedWeightedMultigraph<Node, LabeledLink> model, Set<Node> columnNodes, Set<Node> traversedNodes, Node start, Node end) {
 		Set<Node> neighbors = GraphUtil.getOutNeighbors(GraphUtil.asDefaultGraph(model), start);
-		logger.info("start:" + start.getDisplayId() + ", end:" + end.getDisplayId());
+		logger.debug("start:" + start.getDisplayId() + ", end:" + end.getDisplayId());
 		for (Node w : neighbors) {
 			if(w == end) {
 				return true;
@@ -223,7 +223,7 @@ public class DisplayModel {
 				continue;
 			
 			traversedNodes.add(w);
-			logger.info("neighbour:" + w.getDisplayId());
+			logger.debug("neighbour:" + w.getDisplayId());
 			boolean innerCycle = cycleExits(model, columnNodes, traversedNodes, w, end);
 			if(innerCycle)
 				return true;
