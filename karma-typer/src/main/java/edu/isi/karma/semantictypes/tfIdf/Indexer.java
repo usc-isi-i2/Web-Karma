@@ -11,6 +11,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.util.Version;
 import org.apache.lucene.store.Directory;
@@ -69,9 +70,10 @@ public class Indexer {
 		indexWriter.addDocument(doc);
 	}
 
-	public void updateDocument(String content, String label) throws IOException {
+	public void updateDocument(IndexableField existingContent, String newContent, String label) throws IOException {
 		Document doc = new Document();
-		doc.add(new TextField(CONTENT_FIELD_NAME, content, Field.Store.YES));
+		doc.add(existingContent);
+		doc.add(new TextField(CONTENT_FIELD_NAME, newContent, Field.Store.YES));
 		doc.add(new StringField(LABEL_FIELD_NAME, label, Field.Store.YES));
 		indexWriter.updateDocument(new Term(LABEL_FIELD_NAME, label), doc);
 	}

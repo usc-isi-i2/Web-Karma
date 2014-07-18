@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +21,8 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 /**
  * This is the API class for the semantic typing module, implementing the
  * combined approach of TF-IDF based cosine similarity and Kolmogorov-Smirnov
- * test approaches for textual and numeric respectively by Ramnandan.S.K and
- * Amol Mittal.
+ * test approaches for textual and numeric respectively by 
+ * Ramnandan.S.K and Amol Mittal.
  * 
  * @author ramnandan
  * 
@@ -101,21 +103,24 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	 */
 	private boolean indexTrainingColumn(String label,
 			ArrayList<String> selectedExamples) throws IOException {
-		// add documents to index
+		
+		// treat content of column as single document
 		StringBuilder sb = new StringBuilder();
 		for (String ex : selectedExamples) {
 			sb.append(ex);
 			sb.append(" ");
 		}
 
+		// check if semantic label already exists
 		boolean labelExists = false;
+		Document labelDoc = null; // document corresponding to existing semantic label if exists
 		if (indexDirectoryExists()) {
 			try {
 				// check if semantic label already exists in index
 				Searcher searcher = new Searcher(indexDirectory,
 						Indexer.LABEL_FIELD_NAME);
 				try {
-					labelExists = searcher.existsSemanticLabel(label);
+					labelExists = searcher.existsSemanticLabel(label, labelDoc);
 				} finally {
 					searcher.close();
 				}
@@ -124,11 +129,13 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 			}
 		}
 
+		// index the document
 		Indexer indexer = new Indexer(indexDirectory);
 		try {
 			indexer.open();
 			if (labelExists) {
-				indexer.updateDocument(sb.toString(), label);
+				IndexableField existingContent = labelDoc.getField(Indexer.CONTENT_FIELD_NAME);
+				indexer.updateDocument(existingContent, sb.toString(), label);
 			} else {
 				indexer.addDocument(sb.toString(), label);
 			}

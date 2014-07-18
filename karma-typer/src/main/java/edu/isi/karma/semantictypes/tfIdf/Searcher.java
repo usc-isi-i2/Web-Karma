@@ -74,7 +74,7 @@ public class Searcher {
 		return result;
 	}
 
-	public boolean existsSemanticLabel(String labelToQuery) throws IOException {
+	public boolean existsSemanticLabel(String labelToQuery, Document labelDoc) throws IOException {
 		BooleanQuery query = new BooleanQuery();
 		query.add(new TermQuery(
 				new Term(Indexer.LABEL_FIELD_NAME, labelToQuery)),
@@ -91,6 +91,7 @@ public class Searcher {
 															// label already
 															// exists
 			{
+				labelDoc = doc; // returning the document corresponding to existing semantic label
 				return true;
 			} else // inexact match
 			{
