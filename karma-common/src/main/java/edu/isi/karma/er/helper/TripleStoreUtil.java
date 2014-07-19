@@ -1212,12 +1212,14 @@ public class TripleStoreUtil {
 			String acceptContentType, String contextType)
 					throws ClientProtocolException, IOException, JSONException {
 
+		long timeTaken = System.currentTimeMillis();				
 		Map<String, String> formParams = new HashMap<String, String>();
 		formParams.put("query", query);
 		formParams.put("queryLn", "SPARQL");
 
 		String response = HTTPUtil.executeHTTPPostRequest(tripleStoreUrl,
 				contextType, acceptContentType, formParams);
+		logger.info("Query executed in : " + (System.currentTimeMillis() - timeTaken) + " ms");
 
 		if (response == null || response.isEmpty())
 			return null;
@@ -1376,5 +1378,168 @@ public class TripleStoreUtil {
 		}
 		return false;
 	}
+	
+	
+	
+	public ArrayList<HashMap<String, String>> getAllInputColumnsForServiceNode(String serviceUrl) {
+		StringBuffer query = new StringBuffer();
+		query.append("prefix rr: <http://www.w3.org/ns/r2rml#>  prefix km-dev: <http://isi.edu/integration/karma/dev#> select ?colName ?colUrl where { <")
+			.append(serviceUrl).append("> a km-dev:webService . <")
+			.append(serviceUrl).append(">  km-dev:serviceInputColumn ?pom . ?pom rr:objectMap/rr:column ?colName . ?pom rr:predicate ?colUrl . }");
+		logger.debug("Query : " + query.toString());
+		try {
+			ArrayList<HashMap<String, String>> nodes = new ArrayList<HashMap<String, String>>();
+			logger.info("Fetching columns for service model : " + serviceUrl);
+			String results = TripleStoreUtil.invokeSparqlQuery(query.toString(), TripleStoreUtil.defaultModelsRepoUrl, "application/sparql-results+json", null);
+			
+			JSONObject data = null;
+			try {
+				data = new JSONObject(results);
+			} catch (Exception e1 ) {
+				logger.error("Error while parsing json", e1);
+				logger.error(results);
+			}
+			JSONArray cols = data.getJSONObject("results").getJSONArray("bindings");
+			
+			for(int i=0; i<cols.length(); i++) {
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("name", cols.getJSONObject(i).getJSONObject("colName").getString("value"));
+				map.put("url", cols.getJSONObject(i).getJSONObject("colUrl").getString("value"));
+				nodes.add(map);
+			}
+			logger.info("Total Columns found in the service model : " +nodes.size());
+			return nodes;
+					
+			
+		} catch (Exception e ) {
+			logger.error("Error reading results. ", e);
+			logger.error("Query : " + query.toString());
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * This method returns all the column name and the property mapping for the given graph and root node.
+	 * All object proerpties are ignored
+	 * */
+	public ArrayList<HashMap<String, String>> getOnlyLabeledColumns(String rootNodeUrl, String graphName) {
+		
+		StringBuffer query = new StringBuffer("prefix rr: <http://www.w3.org/ns/r2rml#> prefix km-dev: <http://isi.edu/integration/karma/dev#> ");
+		query.append(" select distinct ?parentClass ?parentPredicate ?srcClass ?srcPredicate ?colName")
+		.append(" where { ");
+		if(graphName != null && !graphName.trim().isEmpty()) {
+			query.append(" graph  <" + graphName + "> { ");
+		}
+		query.append(" 		?y1 rr:subjectMap/km-dev:alignmentNodeId \"").append(rootNodeUrl).append("\" . ")
+		.append(" 		?y1 (rr:predicateObjectMap/rr:objectMap/rr:parentTriplesMap)* ?y2 .")
+		.append(" 		?y2 rr:subjectMap/rr:class ?srcClass .")
+		.append(" 		?y2 rr:predicateObjectMap ?pom11 .")
+		.append(" 		optional {")
+		.append(" 			?y3 rr:predicateObjectMap ?pom12 . ")
+		.append(" 			?pom12 rr:objectMap/rr:parentTriplesMap ?y2 .")
+		.append(" 			?y3 rr:subjectMap/rr:class ?parentClass .")
+		.append(" 			?pom12 rr:predicate ?parentPredicate .")
+		.append(" 		} . ")
+		.append(" 		?pom11 rr:predicate ?srcPredicate .")
+		.append("       ?pom11 rr:objectMap/rr:column ?colName . ");
+		
+		
+		if(graphName != null && !graphName.trim().isEmpty()) {
+			query.append(" } ");
+		}
+		query.append(" } ");
+		
+		logger.debug("Query : " + query.toString());
+		try {
+			ArrayList<HashMap<String, String>> nodes = new ArrayList<HashMap<String, String>>();
+			logger.info("Fetching columns from graph : " + graphName + " and rootNode : " + rootNodeUrl);
+			String results = TripleStoreUtil.invokeSparqlQuery(query.toString(), TripleStoreUtil.defaultModelsRepoUrl, "application/sparql-results+json", null);
+			
+			JSONObject data = null;
+			try {
+				data = new JSONObject(results);
+			} catch (Exception e1 ) {
+				logger.error("Error while parsing json", e1);
+				logger.error(results);
+			}
+			JSONArray cols = data.getJSONObject("results").getJSONArray("bindings");
+			
+			for(int i=0; i<cols.length(); i++) {
+				HashMap<String, String> map = new HashMap<String, String>();
+				map.put("name", cols.getJSONObject(i).getJSONObject("colName").getString("value"));
+				map.put("url", cols.getJSONObject(i).getJSONObject("srcPredicate").getString("value"));
+				map.put("class", cols.getJSONObject(i).getJSONObject("srcClass").getString("value"));
+				nodes.add(map);
+			}
+			logger.info("Total Columns found in the model : " +nodes.size());
+			return nodes;
+					
+			
+		} catch (Exception e ) {
+			logger.error("Error reading results. ", e);
+			logger.error("Query : " + query.toString());
+		}
+		return null;
+		
+	}
 
+	public HashMap<String, String> getServiceColumnLabelsForCurrentWorksheet(String rootNodeUrl, String modelGraphName, String serviceUrl) {
+		StringBuffer query = new StringBuffer();
+		
+		query.append("prefix rr: <http://www.w3.org/ns/r2rml#> ")
+		.append("prefix km-dev: <http://isi.edu/integration/karma/dev#> ")
+
+		.append("select distinct ?srcClass ?srcPredicate ?colName ?modelColumnLabel ")
+		.append("where { ")
+		.append("	graph <"+modelGraphName+"> { ")
+		.append("		?y1 rr:subjectMap/km-dev:alignmentNodeId \""+rootNodeUrl+"\" . ")
+		.append("		?y1 (rr:predicateObjectMap/rr:objectMap/rr:parentTriplesMap)* ?y2 . ")
+		.append("		?y2 rr:subjectMap/rr:class ?srcClass . ")
+		.append("		?y2 rr:predicateObjectMap ?pom11 .	")
+		.append("		optional { ")
+		.append("			?y3 rr:predicateObjectMap ?pom12 . ")
+		.append("			?pom12 rr:objectMap/rr:parentTriplesMap ?y2 . ")
+		.append("			?y3 rr:subjectMap/rr:class ?parentClass . ")
+		.append("			?pom12 rr:predicate ?parentPredicate . ")
+		.append("		} . ")
+		.append("		?pom11 rr:predicate ?srcPredicate . ")
+		.append("    	?pom11 rr:objectMap/rr:column ?colName . ")
+		.append("    } ")
+		.append("	<"+serviceUrl+"> a km-dev:webService . ")
+		.append("	<"+serviceUrl+"> km-dev:serviceInputColumn ?pom2 . ")
+		.append("	<"+serviceUrl+"> km-dev:serviceInputClass ?class1 . ")
+		.append("	?class1 rr:subjectMap/rr:class ?srcClass . ")
+		.append("	?pom2 rr:predicate ?srcPredicate . ")
+		.append("	?pom2 rr:objectMap/rr:column ?modelColumnLabel . ")
+		.append("}");
+		
+		try {
+			logger.info("Fetching columns labels for service model : "+serviceUrl+" from graph : " + modelGraphName + " and rootNode : " + rootNodeUrl);
+			String results = TripleStoreUtil.invokeSparqlQuery(query.toString(), TripleStoreUtil.defaultModelsRepoUrl, "application/sparql-results+json", null);
+			
+			JSONObject data = null;
+			try {
+				data = new JSONObject(results);
+			} catch (Exception e1 ) {
+				logger.error("Error while parsing json", e1);
+				logger.error(results);
+			}
+			JSONArray cols = data.getJSONObject("results").getJSONArray("bindings");
+			HashMap<String, String> map = new HashMap<String, String>();
+			for(int i=0; i<cols.length(); i++) {
+				
+				map.put(cols.getJSONObject(i).getJSONObject("colName").getString("value"), cols.getJSONObject(i).getJSONObject("modelColumnLabel").getString("value"));
+			}
+			logger.info("Total Columns found in the model : " +map.size());
+			return map;
+					
+			
+		} catch (Exception e ) {
+			logger.error("Error reading results. ", e);
+			logger.error("Query : " + query.toString());
+		}
+		return null;
+	}
+	
 }
