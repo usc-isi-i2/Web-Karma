@@ -49,22 +49,32 @@ public class ExportCSVCommandFactory extends CommandFactory {
 		String nodeId = request.getParameter(Arguments.rootNodeId.name());
 		String colList = request.getParameter(Arguments.columnList.name());
 		String model_graph = request.getParameter(Arguments.model_graph.name());
+		
+		return new ExportCSVCommand(getNewId(workspace), worksheetId, nodeId, tripleStoreUrl, graphUrl, formatColumnInformation(colList), model_graph );
+	}
+	
+	private ArrayList<HashMap<String, String>> formatColumnInformation(String jsonArrayColumns) {
 		ArrayList<HashMap<String, String>> cols = new ArrayList<HashMap<String, String>>();
 		try {
 			
-			JSONObject arr = new JSONObject(colList);
+			JSONObject arr = new JSONObject(jsonArrayColumns);
 			for(int i=0; i<arr.keySet().size(); i++) {
 				JSONObject obj = arr.getJSONObject(String.valueOf(i));
 				HashMap<String, String> map = new HashMap<String, String>();
 				map.put("url", obj.getString("url"));
 				map.put("name", obj.getString("name"));
 				cols.add(map);
-				logger.info(cols.toString());
+				logger.info(obj.getString("url") + "  --->  " + obj.getString("name"));
 			}
+			return cols;
 		} catch (Exception e) {
 			logger.error("Error parsing column list",e);
 		}
-		return new ExportCSVCommand(getNewId(workspace), worksheetId, nodeId, tripleStoreUrl, graphUrl, cols, model_graph );
+		return null;
+	}
+	
+	public Command createCommand( Workspace workspace, String worksheetId, String nodeId, String tripleStoreUrl, String graphUrl, ArrayList<HashMap<String, String>> columns ) {
+		return new ExportCSVCommand(getNewId(workspace), worksheetId, nodeId, tripleStoreUrl, graphUrl, columns, null );
 	}
 
 	@Override
