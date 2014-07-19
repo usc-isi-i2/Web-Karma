@@ -175,6 +175,12 @@ public class KR2RMLWorksheetRDFGenerator {
 				if (writer instanceof JSONKR2RMLRDFWriter) {
 					JSONKR2RMLRDFWriter jsonWriter = (JSONKR2RMLRDFWriter)writer;
 					jsonWriter.addPrefixes(kr2rmlMapping.getPrefixes());
+					for(Entry<TriplesMapGraph, List<String>> entry : graphTriplesMapsProcessingOrder.entrySet())
+					{
+						List<String> triplesMapIds = entry.getValue();
+						jsonWriter.addRootTriplesMapId(triplesMapIds.get(triplesMapIds.size()-1));	
+					}
+					
 				}
 			}
 			int i=1;
