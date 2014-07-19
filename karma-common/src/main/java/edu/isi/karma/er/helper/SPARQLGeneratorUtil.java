@@ -38,6 +38,7 @@ import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.RefObjectMap;
 import edu.isi.karma.kr2rml.mapping.R2RMLMapping;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
+import edu.isi.karma.modeling.Uris;
 
 /**
  * @author shri
@@ -468,5 +469,64 @@ public class SPARQLGeneratorUtil {
 		query.append(" } ");
 		
 		return query.toString();
+	}
+	
+	public String getExploreServicesQuery(String graphUri, String rootNodeUri) {
+		StringBuffer buf = new StringBuffer();
+		buf.append("prefix rr: <http://www.w3.org/ns/r2rml#> ")
+		.append("prefix km-dev: <http://isi.edu/integration/karma/dev#> ")
+
+		.append("select distinct ?s1 ?parentClass ?parentPredicate ?srcParentClass ?srcParentPredicate ?srcClass ?srcPredicate ?colName ?totalArgs ?serviceUrl  ?serviceRequestMethod ?servicePostMethodType ?sericeRootNode")
+		.append("   where { ")
+		.append("	graph <"+graphUri+"> {")
+		.append("		?y1 rr:subjectMap/km-dev:alignmentNodeId \""+rootNodeUri+"\" . ")
+		.append("		?y1 (rr:predicateObjectMap/rr:objectMap/rr:parentTriplesMap)* ?y2 .")
+		.append("		?y2 rr:subjectMap/rr:class ?srcClass .")
+		.append("		?y2 rr:predicateObjectMap ?pom11 .	")
+		.append("		optional {")
+		.append("			?y3 rr:predicateObjectMap ?pom12 .")
+		.append("			?pom12 rr:objectMap/rr:parentTriplesMap ?y2 .")
+		.append("			?y3 rr:subjectMap/rr:class ?parentClass .")
+		.append("			?pom12 rr:predicate ?parentPredicate .")
+		.append("		} .")
+		.append("		?pom11 rr:predicate ?srcPredicate .")
+		.append("	}")
+		.append("	{")
+		.append("			select ?s1 ?srcParentClass ?srcParentPredicate ?srcClass ?srcPredicate ?colName ?totalArgs ?serviceUrl  ?serviceRequestMethod ?sericeRootNode")
+		.append("			?servicePostMethodType  where {")
+		.append("			?x1 a rr:TriplesMap .")
+		.append("			?x1 rr:subjectMap/rr:class ?srcClass .")
+		.append("			?x1 rr:predicateObjectMap ?pom1 .")
+		.append("			?s1 a km-dev:webService .")
+		.append("			?s1 km-dev:serviceInput ?pom1 .")
+		.append("			?s1 km-dev:serviceMetadata ?meta .")
+		.append("			?meta km-dev:serviceUrl ?serviceUrl . ")
+		.append("			?meta km-dev:serviceRequestMethod ?serviceRequestMethod  . ")
+		.append("			?meta km-dev:hasTriplesMap/rr:subjectMap ?s2  . ")
+		.append("			?s2 a km-dev:steinerTreeRootNode . ")
+		.append("			?s2 km-dev:alignmentNodeId ?sericeRootNode . ")
+		.append("			optional { ?meta km-dev:servicePostMethodType ?servicePostMethodType }  . ")
+		.append("			?s1 km-dev:serviceInputClass ?x1 .")
+		.append("			?pom1 rr:predicate ?srcPredicate .")
+		.append("			optional { ?pom1 rr:objectMap/rr:column ?colName } .")
+		.append("			optional {")
+		.append("				?s1 km-dev:serviceInputClass ?x2 .")
+		.append("				?x2 rr:predicateObjectMap ?pom2 .")
+		.append("				?pom2 rr:objectMap ?ob1 .")
+		.append("				?pom2 rr:predicate ?srcParentPredicate .")
+		.append("				?ob1 rr:parentTriplesMap ?x1 .")
+		.append("				?x2 rr:subjectMap/rr:class ?srcParentClass .")
+		.append("			} .")
+		.append("			{")
+		.append("				select (count(?arg) as ?totalArgs) ?s1 where {")
+		.append("					?s1 a km-dev:webService .")
+		.append("					?s1 km-dev:serviceInputColumn ?arg .")
+		.append("				} group by ?s1 ")
+		.append("			} } } }");
+
+		
+		
+		
+		return buf.toString();
 	}
 }

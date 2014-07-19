@@ -36,6 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.ExploreServicesCommand;
+import edu.isi.karma.controller.command.ExploreServicesCommandFactory;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommand;
 import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommandFactory;
@@ -128,18 +130,17 @@ public class FetchColumnCommand extends WorksheetCommand {
 				}
 			}
 			
+			
 			SPARQLGeneratorUtil spqrqlUtil = new SPARQLGeneratorUtil();
 			String query = spqrqlUtil.get_fetch_column_query(graphName, this.nodeId);
 			
 			logger.info("Query: " + query);
-			long start_time = System.nanoTime();
+			long start_time = System.currentTimeMillis();
 			String sData = TripleStoreUtil.invokeSparqlQuery(query, 
 					TripleStoreUtil.defaultModelsRepoUrl, "application/sparql-results+json", null);
 			if (sData == null | sData.isEmpty()) {
 				logger.error("Empty response object");
 			}
-			logger.info("Query execution time : " + (start_time - System.nanoTime())/1000 + " ms");
-			start_time = System.nanoTime();
 			JSONArray cols = new JSONArray();
 			try {
 				JSONObject obj1 = new JSONObject(sData);
@@ -149,7 +150,7 @@ public class FetchColumnCommand extends WorksheetCommand {
 					{
 						URL url = new URL(arr.getJSONObject(i).getJSONObject("srcPredicate").getString("value"));
 						String colName = arr.getJSONObject(i).getJSONObject("colName").getString("value");
-						String colLabel = arr.getJSONObject(i).getJSONObject("colName").getString("value") + " (" + url.getRef() + ")";
+						String colLabel = arr.getJSONObject(i).getJSONObject("colName").getString("value") + " (property: " + url.getRef() + ")";
 						String colValue = arr.getJSONObject(i).getJSONObject("srcPredicate").getString("value");
 						JSONObject o = new JSONObject();
 						o.put("name", colName);
@@ -166,7 +167,7 @@ public class FetchColumnCommand extends WorksheetCommand {
 			
 			logger.info("Total Columns fetched : " + cols.length());
 			final JSONArray cols_final = cols;
-			logger.info("Result Processing time : " + (start_time - System.nanoTime())/1000 + " ms");
+			logger.info("Result Processing time : " + (System.nanoTime() - start_time) + " ms");
 			return new UpdateContainer(new AbstractUpdate() {
 				
 				@Override
