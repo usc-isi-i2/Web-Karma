@@ -4,7 +4,7 @@ Karma: A Data Integration Tool
 **08 May 2014:** Check out the [step by step Karma tutorial.](https://github.com/InformationIntegrationGroup/karma-step-by-step)
 
 ## Quick Tidbits for Our Current Users
-- Installation script changed: after download, run `mvn clean install` in the download folder.
+- Installation script changed in April 2014: after download, run `mvn clean install` in the download folder.
 - Command to run Karma changed: `cd karma-web; mvn jetty:run`
 - `preloaded-ontologies` moved. The installation script will create a `karma` folder for you in your home directory and the `preloaded-ontologies` are there.
 - Command to define semantic types moved: it is not in the red/black circles anymore. This command is now in the column menu.
