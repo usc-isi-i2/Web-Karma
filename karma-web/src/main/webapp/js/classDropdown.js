@@ -21,6 +21,7 @@ var ClassDropdownMenu = (function() {
     		   	        {name: "Export CSV" , func:exportCSV },
     		   	        {name: "Export JSON" , func:exportJSON },
     		   	        {name: "Invoke Table Service", func:invokeMLService },
+    		   	        {name: "Invoke Service", func:invokeDefinedServices },
     		   			
     		   			
     		   	];
@@ -142,6 +143,10 @@ var ClassDropdownMenu = (function() {
     	
     	function invokeMLService() {
     		ExportCSVModelDialog.getInstance().show(worksheetId,alignmentId,columnId,"invokeMLService");
+    	}
+    	
+    	function invokeDefinedServices() {
+    		InvokeServicesModelDialog.getInstance().show(worksheetId,alignmentId,columnId);
     	}
     	
     	function generateJS() {
