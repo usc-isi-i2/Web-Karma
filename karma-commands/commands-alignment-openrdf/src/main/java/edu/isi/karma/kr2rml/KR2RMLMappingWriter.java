@@ -144,7 +144,9 @@ public class KR2RMLMappingWriter {
 		repoURIs.put(Uris.KM_IS_PART_OF_MAPPING_URI, f.createURI(Uris.KM_IS_PART_OF_MAPPING_URI));
 		
 		repoURIs.put(Uris.SERVICE_INPUT, f.createURI(Uris.SERVICE_INPUT));
+		repoURIs.put(Uris.SERVICE_METADATA, f.createURI(Uris.SERVICE_METADATA));
 		repoURIs.put(Uris.SERVICE_INPUT_CLASS, f.createURI(Uris.SERVICE_INPUT_CLASS));
+		repoURIs.put(Uris.SERVICE_INPUT_COLUMN, f.createURI(Uris.SERVICE_INPUT_COLUMN));
 		repoURIs.put(Uris.WEB_SERVICE, f.createURI(Uris.WEB_SERVICE));
 		
 	}
@@ -160,7 +162,7 @@ public class KR2RMLMappingWriter {
 			
 			WorksheetProperties props = worksheet.getMetadataContainer().getWorksheetProperties();
 			if(props.hasServiceProperties()) {
-				this.addServiceMappings(mapping, worksheet);
+				this.addServiceMappings(mapping, worksheet, mappingRes);
 			}
 			
 		} catch (OpenRDFException e) {
@@ -329,7 +331,7 @@ public class KR2RMLMappingWriter {
 	}
 	
 	
-	public void addServiceMappings(KR2RMLMapping mapping, Worksheet worksheet) {
+	public void addServiceMappings(KR2RMLMapping mapping, Worksheet worksheet, Resource worksheetMapping) {
 		logger.info("Adding web service input mappings to triple maps and POMs");
 		
 		List<TriplesMap> triplesMapList = mapping.getTriplesMapList();
@@ -343,6 +345,7 @@ public class KR2RMLMappingWriter {
 			}
 			URI serviceUri = f.createURI(props.getPropertyValue(Property.serviceUrl));
 			con.add(serviceUri, RDF.TYPE, repoURIs.get(Uris.WEB_SERVICE));
+			con.add(serviceUri, repoURIs.get(Uris.SERVICE_METADATA), worksheetMapping);
 			
 			// for all the triple maps - add links to the service model
 			for (TriplesMap trMap:triplesMapList) {
@@ -353,6 +356,9 @@ public class KR2RMLMappingWriter {
 				for (PredicateObjectMap pom:trMap.getPredicateObjectMaps()) {
 					URI pomUri = f.createURI(Namespaces.KARMA_DEV + pom.getId());
 					con.add(serviceUri , repoURIs.get(Uris.SERVICE_INPUT) , pomUri);
+					if(!pom.getObject().hasRefObjectMap()) {
+						con.add(serviceUri , repoURIs.get(Uris.SERVICE_INPUT_COLUMN) , pomUri);
+					}
 				}
 			}
 		} catch(Exception e) {
