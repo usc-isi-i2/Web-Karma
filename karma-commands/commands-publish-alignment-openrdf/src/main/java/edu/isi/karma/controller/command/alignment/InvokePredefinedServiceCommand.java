@@ -333,13 +333,14 @@ public class InvokePredefinedServiceCommand extends Command {
 		// find all the hNodeIds for the column names in the service model
 		String lasthNodeId = "";
 		Collection<HNode> hNodes = factory.getAllHNodes();
+		ArrayList<HNode> hNodes2 = new ArrayList<HNode>();
 		for(HNode hn: hNodes) {
-			if(! columnLabelMappings.containsKey(hn.getColumnName()))  {
-				hNodes.remove(hn);
-			} else 
+			if(columnLabelMappings.containsKey(hn.getColumnName()))  {
+				hNodes2.add(hn);
 				lasthNodeId = hn.getId();
+			} 
 		}
-		logger.info("Total hNodes fetched for service :" + hNodes.size());
+		logger.info("Total hNodes fetched for service :" + hNodes2.size());
 		
 //		// for each HNodeId, generate its path
 //		List<HNodePath> columnPaths = wk.getHeaders().getAllPaths();
@@ -371,7 +372,7 @@ public class InvokePredefinedServiceCommand extends Command {
 			try {
 				Thread.sleep(500);
 				formparams = new HashMap<String, String>();
-				for(HNode hn : hNodes) {
+				for(HNode hn : hNodes2) {
 					formparams.put(columnLabelMappings.get(hn.getColumnName()), r.getNode(hn.getId()).getValue().asString());
 				}
 				String responseString = HTTPUtil.executeHTTPPostRequest( this.serviceUrl, "application/x-www-form-urlencoded", "text/plain", formparams);
