@@ -151,12 +151,12 @@ public class SearchForDataToAugmentCommand extends Command{
 				List<String> predicateObjectMaps = new ArrayList<String>(Arrays.asList(concatenatedPredicateObjectMaps.split(",")));
 				maps.addAll(predicateObjectMaps);
 				if (maps.size() > limit) {
-					bloomfilterMapping.putAll(util.getBloomFiltersForMaps(tripleStoreUrl, context, maps));
+					bloomfilterMapping.putAll(util.getBloomFiltersForMaps(tripleStoreUrl, null, maps));
 					maps = new HashSet<String>();
 				}
 			}
 			if (maps.size() > 0)
-				bloomfilterMapping.putAll(util.getBloomFiltersForMaps(tripleStoreUrl, context, maps));
+				bloomfilterMapping.putAll(util.getBloomFiltersForMaps(tripleStoreUrl, null, maps));
 		} catch (KarmaException e1) {
 			e1.printStackTrace();
 		}

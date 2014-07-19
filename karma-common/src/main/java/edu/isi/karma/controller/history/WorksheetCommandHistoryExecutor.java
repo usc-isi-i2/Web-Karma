@@ -143,7 +143,7 @@ public class WorksheetCommandHistoryExecutor {
 		return ignore;
 	}
 
-	private UpdateContainer normalizeCommandHistoryJsonInput(Workspace workspace, String worksheetId, 
+	public UpdateContainer normalizeCommandHistoryJsonInput(Workspace workspace, String worksheetId, 
 			JSONArray inputArr, String commandName) throws JSONException {
 		HTable hTable = workspace.getWorksheet(worksheetId).getHeaders();
 		for (int i = 0; i < inputArr.length(); i++) {

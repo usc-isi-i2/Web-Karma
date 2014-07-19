@@ -75,7 +75,6 @@ public class SetWorksheetPropertiesCommand extends Command {
 		JSONObject propertiesJson = null;
 		try {
 			propertiesJson = new JSONObject(properties);
-			
 			WorksheetProperties props = worksheet.getMetadataContainer().getWorksheetProperties();
 			if (props == null) {
 				props = new WorksheetProperties();
@@ -83,9 +82,11 @@ public class SetWorksheetPropertiesCommand extends Command {
 			}
 			
 			// Parse the properties and set WorksheetProperties data structure
-			String modelName = propertiesJson.getString(Property.graphName.name());
-			if (!modelName.trim().isEmpty())
-				props.setPropertyValue(Property.graphName, modelName);
+			String graphLabel = propertiesJson.getString(Property.graphLabel.name());
+			if (!graphLabel.trim().isEmpty()) {
+				props.setPropertyValue(Property.graphLabel, graphLabel);
+				props.setPropertyValue(Property.graphName, WorksheetProperties.createDefaultGraphName(graphLabel));
+			}
 			
 			if (propertiesJson.getBoolean(Property.hasServiceProperties.name())) {
 				props.setHasServiceProperties(true);

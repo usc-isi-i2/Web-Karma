@@ -9,9 +9,7 @@ var SetPropertiesDialog = (function() {
 				//Initialize what happens when we show the dialog
 				dialog.on('show.bs.modal', function (e) {
 				hideError();
-				$("#serviceOptions").prop('checked', false);
-					$('#worksheetServiceOptions').hide();
-					$("#servicePostOptions").hide();
+				$("#servicePostOptions").hide();
 				fetchExistingWorksheetOptions();
 			});
 			
@@ -22,9 +20,6 @@ var SetPropertiesDialog = (function() {
 				saveDialog(e);
 			});
 			
-			$('#serviceOptions').on('click',  function(e) {
-						$('#worksheetServiceOptions').toggle();
-				});
 
 
 				$('#serviceRequestMethod').on("change", function(e) {
@@ -50,7 +45,7 @@ var SetPropertiesDialog = (function() {
 					
 					// Prepare the input data
 					var worksheetProps = new Object();
-					worksheetProps["graphName"] = $("#graphNameInput").val();
+					worksheetProps["graphLabel"] = "";
 
 					// Set service options if the window is visible
 					if ($('#worksheetServiceOptions').is(':visible')) {
@@ -112,12 +107,6 @@ var SetPropertiesDialog = (function() {
 												var json = $.parseJSON(xhr.responseText);
 												var props = json["elements"][0]["properties"];
 
-												// Set model name
-												if (props["graphName"] != null) {
-														$("#graphNameInput").val(props["graphName"]);
-												} else {
-														$("#graphNameInput").val("");
-												}
 												// Set service options if present
 												if (props["hasServiceProperties"]) {
 														// Select the service option checkbox
@@ -183,296 +172,296 @@ var SetPropertiesDialog = (function() {
 
 
 var applyModelDialog = (function() {
-    var instance = null;
-    function PrivateConstructor() {
-        var dialog = $("#applyModelDialog");
-        var worksheetId;
-        var availableModels;
-        var filteredModels;
-        var table;
-        function init() {
-            var dialogContent = $("#applyModelDialogColumns", dialog);
-            table = $("<table>")
-                        .addClass("table table-striped table-condensed");
-            var tr = getHeaderRow();
-            table.append(tr);
-            dialogContent.append(table);
-            $('#btnSave', dialog).on('click', function (e) {
-                e.preventDefault();
-                saveDialog(e);
-            });
-        }
+	var instance = null;
+	function PrivateConstructor() {
+		var dialog = $("#applyModelDialog");
+		var worksheetId;
+		var availableModels;
+		var filteredModels;
+		var table;
+		function init() {
+			var dialogContent = $("#applyModelDialogColumns", dialog);
+			table = $("<table>")
+						.addClass("table table-striped table-condensed");
+			var tr = getHeaderRow();
+			table.append(tr);
+			dialogContent.append(table);
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e);
+			});
+		}
 
-        function getHeaderRow() {
-            var tr = $("<tr>");
-            var th = $("<th>"); //.addClass("CheckboxProperty");
-            tr.append(th);
-            
-            var th = $("<th>"); //.addClass("FileNameProperty");
-            var label = $("<label>").text("File Name"); //.addClass("FileNameProperty");
-            th.append(label);
-            var label = $("<input>").text("")
-                .addClass("form-control")
-                .addClass("modelSearchControl")
-                .attr("id","txtFilterFileName_Apply")
-                .attr("type", "text")
-                .on('keyup', applyFilter);
-            th.append(label);
-            tr.append(th);
-            
-            var th = $("<th>"); //.addClass("PublishTimeProperty");
-            var label = $("<label>").text("Publish Time"); //.addClass("PublishTimeProperty");
-            th.append(label);
-            var label = $("<input>").text("")
-	            .addClass("form-control")
-	            .addClass("modelSearchControl")
-	            .attr("id","txtFilterPublishTime_Apply")
-	            .attr("type", "text")
-	            .on('keyup', applyFilter);
-            th.append(label);
-            tr.append(th);
+		function getHeaderRow() {
+			var tr = $("<tr>");
+			var th = $("<th>"); //.addClass("CheckboxProperty");
+			tr.append(th);
+			
+			var th = $("<th>"); //.addClass("FileNameProperty");
+			var label = $("<label>").text("Name"); //.addClass("FileNameProperty");
+			th.append(label);
+			var label = $("<input>").text("")
+				.addClass("form-control")
+				.addClass("modelSearchControl")
+				.attr("id","txtFilterFileName_Apply")
+				.attr("type", "text")
+				.on('keyup', applyFilter);
+			th.append(label);
+			tr.append(th);
+			
+			var th = $("<th>"); //.addClass("PublishTimeProperty");
+			var label = $("<label>").text("Publish Time"); //.addClass("PublishTimeProperty");
+			th.append(label);
+			var label = $("<input>").text("")
+				.addClass("form-control")
+				.addClass("modelSearchControl")
+				.attr("id","txtFilterPublishTime_Apply")
+				.attr("type", "text")
+				.on('keyup', applyFilter);
+			th.append(label);
+			tr.append(th);
 
-            var th = $("<th>"); //.addClass("PublishTimeProperty");
-            var label = $("<label>").text("URL"); //.addClass("PublishTimeProperty");
-            th.append(label);
-            var label = $("<input>").text("")
-                .addClass("form-control")
-                .addClass("modelSearchControl")
-                .attr("id","txtFilterURL_Apply")
-                .attr("type", "text")
-                .on('keyup', applyFilter);
-            th.append(label);
-            tr.append(th);
-            
-            var th = $("<th>"); //.addClass("URLProperty");
-            var label = $("<label>").text("# Matched Columns"); //.addClass("URLProperty");
-            th.append(label);
-            var searchBtn = $("<i>").addClass("glyphicon")
+			var th = $("<th>"); //.addClass("PublishTimeProperty");
+			var label = $("<label>").text("URL"); //.addClass("PublishTimeProperty");
+			th.append(label);
+			var label = $("<input>").text("")
+				.addClass("form-control")
+				.addClass("modelSearchControl")
+				.attr("id","txtFilterURL_Apply")
+				.attr("type", "text")
+				.on('keyup', applyFilter);
+			th.append(label);
+			tr.append(th);
+			
+			var th = $("<th>"); //.addClass("URLProperty");
+			var label = $("<label>").text("# Matched Columns"); //.addClass("URLProperty");
+			th.append(label);
+			var searchBtn = $("<i>").addClass("glyphicon")
 								.addClass("glyphicon-search")
 								.css("float", "right")
 								.css("cursor", "pointer")
 								.on("click", toggleSearchControls);
-            th.append(searchBtn);
-            var label = $("<input>").text("")
-                            .addClass("form-control")
-                            .addClass("modelSearchControl")
-                            .attr("id","txtFilterMatchedColumns_Apply")
-                            .attr("type", "text")
-                            .on('keyup', applyFilter);
-            th.append(label);
-            tr.append(th);
-            return tr;
-        }
+			th.append(searchBtn);
+			var label = $("<input>").text("")
+							.addClass("form-control")
+							.addClass("modelSearchControl")
+							.attr("id","txtFilterMatchedColumns_Apply")
+							.attr("type", "text")
+							.on('keyup', applyFilter);
+			th.append(label);
+			tr.append(th);
+			return tr;
+		}
 
-        function toggleSearchControls() {
-        	$(".modelSearchControl").each(function() {
-        		if ( $(this).is(":visible")) {
-        			$(this).hide();
-        		} else {
-        			$(this).show();
-        		}
-        	});
-        }
-        
-        function hideSearchControls() {
-        	$(".modelSearchControl").each(function() {
-        		$(this).hide();
-        	});
-        }
-        
-        function refresh() {
-            console.log("refresh");
-            var info = new Object();
-            info["worksheetId"] = worksheetId;
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "FetchR2RMLModelsListCommand";
-            info['tripleStoreUrl'] = $('#txtModel_URL').html();
-            info['graphContext'] = "";
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                async: false,
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        json = json.elements[0];
-                        console.log(json);
-                        //parse(json);
-                        availableModels = json;
-                        filteredModels = availableModels;
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while Fetching Models!" + textStatus);
-                    }
-            });
-        }
-        function hideError() {
-            $("div.error", dialog).hide();
-        }
-        
-        function showError() {
-            $("div.error", dialog).show();
-        }
-        
-        function saveDialog(e) {
-            hide();
+		function toggleSearchControls() {
+			$(".modelSearchControl").each(function() {
+				if ( $(this).is(":visible")) {
+					$(this).hide();
+				} else {
+					$(this).show();
+				}
+			});
+		}
+		
+		function hideSearchControls() {
+			$(".modelSearchControl").each(function() {
+				$(this).hide();
+			});
+		}
+		
+		function refresh() {
+			console.log("refresh");
+			var info = new Object();
+			info["worksheetId"] = worksheetId;
+			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			info["command"] = "FetchR2RMLModelsListCommand";
+			info['tripleStoreUrl'] = $('#txtModel_URL').html();
+			info['graphContext'] = "";
+			var returned = $.ajax({
+				url: "RequestController",
+				type: "POST",
+				data : info,
+				dataType : "json",
+				async: false,
+				complete :
+					function (xhr, textStatus) {
+						//alert(xhr.responseText);
+						var json = $.parseJSON(xhr.responseText);
+						json = json.elements[0];
+						console.log(json);
+						//parse(json);
+						availableModels = json;
+						filteredModels = availableModels;
+					},
+				error :
+					function (xhr, textStatus) {
+						alert("Error occured while Fetching Models!" + textStatus);
+					}
+			});
+		}
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError() {
+			$("div.error", dialog).show();
+		}
+		
+		function saveDialog(e) {
+			hide();
 
-            console.log("here");
-            var checkboxes = dialog.find(":checked");
-            if (checkboxes.length == 0) {
-                hide();
-                return;
-            }
-            var checked = checkboxes[0];
-            var info = new Object();
-            info["worksheetId"] = worksheetId;
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "ApplyModelFromURLCommand";
-            info['modelRepository'] = $('#txtModel_URL').html();
-            info['modelContext'] = checked['value'];
-            info['modelUrl'] = checked['src'];
-            console.log(info["worksheetId"]);
-            showLoading(info["worksheetId"]);
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        parse(json);
-                        hideLoading(info["worksheetId"]);
-                        refresh();
+			console.log("here");
+			var checkboxes = dialog.find(":checked");
+			if (checkboxes.length == 0) {
+				hide();
+				return;
+			}
+			var checked = checkboxes[0];
+			var info = new Object();
+			info["worksheetId"] = worksheetId;
+			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			info["command"] = "ApplyModelFromURLCommand";
+			info['modelRepository'] = $('#txtModel_URL').html();
+			info['modelContext'] = checked['value'];
+			info['modelUrl'] = checked['src'];
+			console.log(info["worksheetId"]);
+			showLoading(info["worksheetId"]);
+			var returned = $.ajax({
+				url: "RequestController",
+				type: "POST",
+				data : info,
+				dataType : "json",
+				complete :
+					function (xhr, textStatus) {
+						//alert(xhr.responseText);
+						var json = $.parseJSON(xhr.responseText);
+						parse(json);
+						hideLoading(info["worksheetId"]);
+						refresh();
 
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while applying models!" + textStatus);
-                        hideLoading(info["worksheetId"]);
-                        refresh();
-                    }
-            });
-        };
-        
-        function hide() {
-            dialog.modal('hide');
-        }
+					},
+				error :
+					function (xhr, textStatus) {
+						alert("Error occured while applying models!" + textStatus);
+						hideLoading(info["worksheetId"]);
+						refresh();
+					}
+			});
+		};
+		
+		function hide() {
+			dialog.modal('hide');
+		}
 
-        function applyFilter(e) {
-            console.log("applyFilter");
-            var tmp = [];
-            var filterFilename = $('#txtFilterFileName_Apply').val().toLowerCase();
-            var filterTime = $('#txtFilterPublishTime_Apply').val().toLowerCase();
-            var filterURL = $('#txtFilterURL_Apply').val().toLowerCase();
-            var filterInputs = $('#txtFilterMatchedColumns_Apply').val();
-            for (var i = 0; i < availableModels.length; i++) {
-                var name = availableModels[i]['name'].toLowerCase();
-                var time = new Date(availableModels[i].publishTime*1).toString();
-                time = time.substring(0, time.indexOf("GMT") - 1).toLowerCase();
-                var url = availableModels[i].url.toLowerCase();
-                var inputColumns = availableModels[i].inputColumns;
-                var flag = true;
-                if (name.indexOf(filterFilename) == -1) {
-                    flag = false;
-                }
-                else if (time.indexOf(filterTime) == -1) {
-                    flag = false;
-                }
-                else if (url.indexOf(filterURL) == -1) {
-                    flag = false;
-                }
-                else if (filterInputs > inputColumns) {
-                    flag = false;
-                }
-                if (flag) {
-                    tmp.push(availableModels[i]);
-                }
-            }
-            filteredModels = tmp;
-            showFilteredModels();
-        };
-        
-        function showFilteredModels() {
-        	table.find("tr:gt(0)").remove();
-            for (var i = 0; i < filteredModels.length; i++) {
-                var name = filteredModels[i]['name'];
-                var time = new Date(filteredModels[i].publishTime*1).toString();
-                time = time.substring(0, time.indexOf("GMT") - 1);
-                var url = filteredModels[i].url;
-                var context = filteredModels[i].context;
-                var inputColumns = filteredModels[i].inputColumns;
-                var tr = $("<tr>");
-                var td = $("<td>");
-                var checkbox = $("<input>")
-                           .attr("type", "radio")                           
-                           .attr("id", "modelManagerCheckbox")
-                           .attr("name", "modelManagerCheckbox")
-                           .attr("value", context)
-                           .attr("src", url);
-                td.append(checkbox);
-                tr.append(td);
-                var td = $("<td>");
-                var label = $("<span>").text(name);
-                td.append(label);
-                tr.append(td);
-                var td = $("<td>");
-                var label = $("<span>").text(time);
-                td.append(label);
-                tr.append(td);
-                var td = $("<td>");
-                var label = $("<span>").text(url);
-                td.append(label);
-                tr.append(td);
-                var td = $("<td>");
-                var label = $("<span>").text(inputColumns);
-                td.append(label);
-                tr.append(td);
-                table.append(tr);    
-            }
-        }
-        
-        function show() {
-            dialog.on('show.bs.modal', function (e) {
-                hideError();
-                showFilteredModels();
-                hideSearchControls();
-            });
-            dialog.modal({keyboard:true, show:true, backdrop:'static'});
-        };
+		function applyFilter(e) {
+			console.log("applyFilter");
+			var tmp = [];
+			var filterFilename = $('#txtFilterFileName_Apply').val().toLowerCase();
+			var filterTime = $('#txtFilterPublishTime_Apply').val().toLowerCase();
+			var filterURL = $('#txtFilterURL_Apply').val().toLowerCase();
+			var filterInputs = $('#txtFilterMatchedColumns_Apply').val();
+			for (var i = 0; i < availableModels.length; i++) {
+				var name = availableModels[i]['name'].toLowerCase();
+				var time = new Date(availableModels[i].publishTime*1).toString();
+				time = time.substring(0, time.indexOf("GMT") - 1).toLowerCase();
+				var url = availableModels[i].url.toLowerCase();
+				var inputColumns = availableModels[i].inputColumns;
+				var flag = true;
+				if (name.indexOf(filterFilename) == -1) {
+					flag = false;
+				}
+				else if (time.indexOf(filterTime) == -1) {
+					flag = false;
+				}
+				else if (url.indexOf(filterURL) == -1) {
+					flag = false;
+				}
+				else if (filterInputs > inputColumns) {
+					flag = false;
+				}
+				if (flag) {
+					tmp.push(availableModels[i]);
+				}
+			}
+			filteredModels = tmp;
+			showFilteredModels();
+		};
+		
+		function showFilteredModels() {
+			table.find("tr:gt(0)").remove();
+			for (var i = 0; i < filteredModels.length; i++) {
+				var name = filteredModels[i]['name'];
+				var time = new Date(filteredModels[i].publishTime*1).toString();
+				time = time.substring(0, time.indexOf("GMT") - 1);
+				var url = filteredModels[i].url;
+				var context = filteredModels[i].context;
+				var inputColumns = filteredModels[i].inputColumns;
+				var tr = $("<tr>");
+				var td = $("<td>");
+				var checkbox = $("<input>")
+						   .attr("type", "radio")                           
+						   .attr("id", "modelManagerCheckbox")
+						   .attr("name", "modelManagerCheckbox")
+						   .attr("value", context)
+						   .attr("src", url);
+				td.append(checkbox);
+				tr.append(td);
+				var td = $("<td>");
+				var label = $("<span>").text(name);
+				td.append(label);
+				tr.append(td);
+				var td = $("<td>");
+				var label = $("<span>").text(time);
+				td.append(label);
+				tr.append(td);
+				var td = $("<td>");
+				var label = $("<span>").text(url);
+				td.append(label);
+				tr.append(td);
+				var td = $("<td>");
+				var label = $("<span>").text(inputColumns);
+				td.append(label);
+				tr.append(td);
+				table.append(tr);    
+			}
+		}
+		
+		function show() {
+			dialog.on('show.bs.modal', function (e) {
+				hideError();
+				showFilteredModels();
+				hideSearchControls();
+			});
+			dialog.modal({keyboard:true, show:true, backdrop:'static'});
+		};
 
-        function initVars(wsId) {
-            worksheetId = wsId;
-        }
-        
-        
-        return {    //Return back the public methods
-            show : show,
-            init : init,
-            refresh: refresh, 
-            initVars : initVars
-        };
-    };
+		function initVars(wsId) {
+			worksheetId = wsId;
+		}
+		
+		
+		return {    //Return back the public methods
+			show : show,
+			init : init,
+			refresh: refresh, 
+			initVars : initVars
+		};
+	};
 
-    function getInstance(wsId) {
-        if( ! instance ) {
-            instance = new PrivateConstructor();
-            instance.init();
-        }
-        instance.initVars(wsId);
-        instance.refresh();
-        return instance;
-    }
+	function getInstance(wsId) {
+		if( ! instance ) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		instance.initVars(wsId);
+		instance.refresh();
+		return instance;
+	}
    
-    return {
-        getInstance : getInstance
-    };
-    
+	return {
+		getInstance : getInstance
+	};
+	
 })();
 
 var FetchModelDialog = (function() {

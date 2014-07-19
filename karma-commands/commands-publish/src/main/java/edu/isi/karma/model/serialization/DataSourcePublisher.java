@@ -25,6 +25,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
+
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.rep.RepFactory;
@@ -32,6 +33,9 @@ import edu.isi.karma.rep.metadata.SourceInformation;
 import edu.isi.karma.rep.metadata.SourceInformation.InfoAttribute;
 import edu.isi.karma.rep.sources.Attribute;
 import edu.isi.karma.rep.sources.DataSource;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +109,8 @@ public class DataSourcePublisher extends SourcePublisher {
 		if (this.model == null)
 			model = exportToJenaModel();
 		
-		String source_desc_file = Repository.Instance().SOURCE_REPOSITORY_DIR + 
+		String source_desc_file = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
+									Repository.Instance().SOURCE_REPOSITORY_REL_DIR + 
 		 							this.source.getName() + "_" + this.source.getId() +
 									Repository.Instance().getFileExtension(lang);
 

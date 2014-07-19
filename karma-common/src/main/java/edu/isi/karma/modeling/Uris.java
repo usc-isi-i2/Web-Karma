@@ -21,7 +21,12 @@
 
 package edu.isi.karma.modeling;
 
-public interface Uris {
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class Uris {
 
 	public static final String BLANK_NODE_PREFIX = "_:";
 	public static final String THING_URI = Namespaces.OWL + "Thing"; 
@@ -88,6 +93,10 @@ public interface Uris {
 	public static final String KM_SOURCE_TYPE_URI = Namespaces.KARMA_DEV + "sourceType";
 	public static final String KM_HAS_BLOOMFILTER = Namespaces.KARMA_DEV + "hasBloomFilter";
 	public static final String KM_HAS_INPUTCOLUMNS = Namespaces.KARMA_DEV + "hasInputColumns";
+	public static final String KM_HAS_OUTPUTCOLUMNS = Namespaces.KARMA_DEV + "hasOutputColumns";
+	public static final String KM_HAS_MODELLABEL = Namespaces.KARMA_DEV + "hasModelLabel";
+	public static final String KM_HAS_BASEURI = Namespaces.KARMA_DEV + "hasBaseURI";
+
 	
 	public static final String PROV_ENTITY_URI = Namespaces.PROV + "Entity";
 	public static final String PROV_WAS_DERIVED_FROM_URI = Namespaces.PROV + "wasDerivedFrom";
@@ -109,5 +118,25 @@ public interface Uris {
 	public static final String WEB_SERVICE = Namespaces.KARMA_DEV + "webService";
 	public static final String KM_DEFAULT_PUBLISH_GRAPH_URI = Namespaces.KARMA_DEV + "publish/";
 	
+	public static final List<String> Uris = new ArrayList<String>();
+	static {
+		List<Field> staticFields = new ArrayList<>();
+	    Field[] allFields = Uris.class.getDeclaredFields();
+	    for (Field field : allFields) {
+	        if (Modifier.isStatic(field.getModifiers())) {
+	        	staticFields.add(field);
+	        }
+	    }
+	    for (Field field : staticFields) {
+	    	Class<?> t = field.getType();
+	    	if (t == String.class && !field.getName().equals("BLANK_NODE_PREFIX"))
+				try {
+					Uris.add((String)field.get(null));
+				} catch (IllegalArgumentException e) {
 
+				} catch (IllegalAccessException e) {
+
+				}
+	    }
+	}
 }

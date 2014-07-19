@@ -171,6 +171,12 @@ public class KR2RMLWorksheetRDFGenerator {
 	
 				}
 			}
+			for (KR2RMLRDFWriter writer : outWriters) {
+				if (writer instanceof JSONKR2RMLRDFWriter) {
+					JSONKR2RMLRDFWriter jsonWriter = (JSONKR2RMLRDFWriter)writer;
+					jsonWriter.addPrefixes(kr2rmlMapping.getPrefixes());
+				}
+			}
 			int i=1;
 			TriplesMapPlanExecutor e = new TriplesMapPlanExecutor();
 			Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan = new HashMap<TriplesMap, TriplesMapWorkerPlan>() ;

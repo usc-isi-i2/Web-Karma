@@ -24,11 +24,15 @@ package edu.isi.karma.model.serialization;
 import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.rdf.model.Model;
+
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.model.*;
 import edu.isi.karma.rep.sources.*;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +73,7 @@ public class WebServiceLoader extends SourceLoader
 		Repository.Instance().clearNamedModel(uri);
 		
 		String service_id = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 1);
-		String dir = Repository.Instance().SERVICE_REPOSITORY_DIR;
+		String dir = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + Repository.Instance().SERVICE_REPOSITORY_REL_DIR;
 		String fileName = service_id + Repository.Instance().getFileExtension(Repository.Instance().LANG);
 		File f = new File(dir + fileName);
 		

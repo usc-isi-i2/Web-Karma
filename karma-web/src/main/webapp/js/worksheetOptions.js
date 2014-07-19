@@ -5,7 +5,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	var worksheetOptionsDiv;
 	
 	var options = [
-            {name:"View model using straight lines", func:viewStraightLineModel, showCheckbox:true, defaultChecked:true, initFunc:initStrightLineModel},
+						{name:"View model using straight lines", func:viewStraightLineModel, showCheckbox:true, defaultChecked:true, initFunc:initStrightLineModel},
 			{name:"Organize Columns", func:organizeColumns},
 			{name:"divider"},
 			
@@ -13,7 +13,8 @@ function WorksheetOptions(wsId, wsTitle) {
 									 {name:"Using Current Ontology" , func:showModel},  
 									 {name:"Generate New Ontology", func:showAutoModel},
 					]},
-			{name:"Set Properties", func:setProperties},
+
+			{name:"Set Properties", func:setProperties},		
 			
 			{name:"Apply R2RML Model", func: undefined, addLevel:true, levels: [
 				{name:"From File" , func:applyR2RMLModel, useFileUpload:true, uploadDiv:"applyWorksheetHistory"},
@@ -175,7 +176,7 @@ function WorksheetOptions(wsId, wsTitle) {
 				});
 		return false;
 	}
-	
+
 	function setProperties() {
 		console.log("Set Properties: " + worksheetTitle);
 		hideDropdown();
@@ -349,29 +350,29 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("Publish Model: " + worksheetTitle);
 		hideDropdown();
 		var info = new Object();
-	    info["worksheetId"] = worksheetId;
-	    info["workspaceId"] = $.workspaceGlobalInformation.id;
-	    info["command"] = "GenerateR2RMLModelCommand";
-      info['tripleStoreUrl'] = $('#txtModel_URL').text();
-	    showLoading(info["worksheetId"]);
-	    var returned = $.ajax({
-	        url: "RequestController",
-	        type: "POST",
-	        data : info,
-	        dataType : "json",
-	        complete :
-	            function (xhr, textStatus) {
-	                //alert(xhr.responseText);
-	                var json = $.parseJSON(xhr.responseText);
-	                parse(json);
-	                hideLoading(info["worksheetId"]);
-	            },
-	        error :
-	            function (xhr, textStatus) {
-	                alert("Error occured while exporting CSV!" + textStatus);
-	                hideLoading(info["worksheetId"]);
-	            }
-	    });
+			info["worksheetId"] = worksheetId;
+			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			info["command"] = "GenerateR2RMLModelCommand";
+			info['tripleStoreUrl'] = $('#txtModel_URL').text();
+			showLoading(info["worksheetId"]);
+			var returned = $.ajax({
+					url: "RequestController",
+					type: "POST",
+					data : info,
+					dataType : "json",
+					complete :
+							function (xhr, textStatus) {
+									//alert(xhr.responseText);
+									var json = $.parseJSON(xhr.responseText);
+									parse(json);
+									hideLoading(info["worksheetId"]);
+							},
+					error :
+							function (xhr, textStatus) {
+									alert("Error occured while exporting CSV!" + textStatus);
+									hideLoading(info["worksheetId"]);
+							}
+			});
 		return false;
 	}
 
