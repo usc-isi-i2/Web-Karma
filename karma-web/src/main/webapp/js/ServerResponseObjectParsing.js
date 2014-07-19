@@ -669,8 +669,31 @@ function parse(data) {
         }
         else if(element["updateType"] == "InvokeDataMiningServiceUpdate") {
 
-        	alert("This results are loaded in a new worksheet");
+        	alert("This results are loaded in a new worksheet");	
         }
+        else if(element["updateType"] == "ExploreServices") {
+
+        	var services = element["services"];
+        	var tblObj = $('#tblDefinedServices');
+//        	tblObj.html('<thead><tr><th>Label</th><th>Service Url</th><th>Method</th><th>Arguments</th></tr></thead>');
+        	tblObj.html('<thead><tr><th>Service Url</th><th>Method</th><th>Arguments</th></tr></thead>');
+        	var content = '';
+        	for(var x in services) {
+        		var item = services[x];
+        		content += '<tr> <td> <div class="radio"> <label> <input type="radio" data-url="'+item['serviceUrl'] + '" data-method="'+item['serviceRequestMethod']
+        			+ '" data-postopt="'+item['servicePostMethodType']
+        			+'" name="definedServices" data-serviceroot="'+item['sericeRootNode']+'">'+item['serviceUrl']+'</label> \
+	  			</div> </td> <td>'+item['serviceRequestMethod'];
+        		
+        		if(item['serviceRequestMethod'] == 'POST') {
+        			content += ' ('+item['servicePostMethodType']+') ';
+        		}
+        		content += '</td> <td>'+item['totalArgs']+'</td> </tr>';
+        	}
+        	tblObj.append('<tbody>'+content+'</tbody>');
+        	
+        }
+
         else if(element["updateType"] == "CleaningServiceOutput") {
             //console.log(element);
             //console.log(element["hNodeId"]);
