@@ -12,6 +12,9 @@ a.icon-remove:hover {
 	cursor: pointer;
 	font-weight:  bold;
 }
+#tblDefinedServices tr td {
+	vertical-align: middle;
+}
 
 </style>
 </head>
@@ -475,6 +478,48 @@ a.icon-remove:hover {
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 				        <button type="submit" class="btn btn-primary" id="btnSave">Apply</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div class="modal fade" id="invokeServicesDialog" >
+  <div class="modal-dialog modal-wide">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title" id="modal_title">Invoke Services</h4>
+				  </div>
+				  <div class="modal-body">
+				  <div id="service_list">
+				  <table class="table table-condensed table-hover" id="tblDefinedServices">
+				  	<thead>
+				  		<tr>
+					  		<th>Label</th>
+					  		<th>Service Url</th>
+					  		<th>Method</th>
+				  		</tr>
+				  	</thead>
+				  </table>
+				  </div>
+				  <div id="csvDataDialogContent">
+						<div class="form-group" id="formDivSparql">
+							<label for="spaqrlEndPoint">SPARQL End Point</label>
+							<input class="form-control" type="text" id="spaqrlEndPoint" required url value="" maxlength="1000" />
+						</div>
+						<div class="form-group" id="formDivGraphs">
+								<label for="graphList">Graph</label>
+								<select id="graphList">
+			                	</select>
+						</div>
+					</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="button" class="btn btn-primary" id="btnInvokeServices">Invoke</button>
 				  </div> <!-- /.modal-footer -->
 			</div><!-- /.modal-content -->
 		</form>
