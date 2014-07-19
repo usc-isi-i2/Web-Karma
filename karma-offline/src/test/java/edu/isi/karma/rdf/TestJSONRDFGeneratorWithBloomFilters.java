@@ -48,7 +48,6 @@ import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
 import edu.isi.karma.kr2rml.KR2RMLBloomFilterManager;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
-import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
 
 
