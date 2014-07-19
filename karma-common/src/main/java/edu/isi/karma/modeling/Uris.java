@@ -103,6 +103,8 @@ public interface Uris {
 	
 	// Web service modeling related URIs
 	public static final String SERVICE_INPUT = Namespaces.KARMA_DEV + "serviceInput";
+	public static final String SERVICE_METADATA = Namespaces.KARMA_DEV + "serviceMetadata";
+	public static final String SERVICE_INPUT_COLUMN = Namespaces.KARMA_DEV + "serviceInputColumn";
 	public static final String SERVICE_INPUT_CLASS = Namespaces.KARMA_DEV + "serviceInputClass";
 	public static final String WEB_SERVICE = Namespaces.KARMA_DEV + "webService";
 	public static final String KM_DEFAULT_PUBLISH_GRAPH_URI = Namespaces.KARMA_DEV + "publish/";
