@@ -79,11 +79,12 @@ public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
 			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(pw);
 			rdfGen.generateRDF("people-model", new File(getTestResource(filename).toURI()), InputType.JSON, false, writer);
 			String rdf = sw.toString();
+			System.out.println(rdf);
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("(\r\n|\n)");
 			int count = lines.length;
 			
-			assertEquals(148, count);
+			assertEquals(155, count);
 		} catch (Exception e) {
 			logger.error("testGenerateRDF1 failed:", e);
 			fail("Execption: " + e.getMessage());
