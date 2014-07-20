@@ -52,6 +52,11 @@ public class InvokeDataMiningServiceCommandFactory extends CommandFactory {
 		
 		return new InvokeDataMiningServiceCommand(getNewId(workspace), worksheetId, dmURL, csvFileName);
 	}
+	
+	public Command createCommand(Workspace workspace, String worksheetId, String csvFileName, String serviceUrl) {
+		logger.info("dmUrl:"+serviceUrl + " csv:"+csvFileName);
+		return new InvokeDataMiningServiceCommand(getNewId(workspace), worksheetId, serviceUrl, csvFileName);
+	}
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand()

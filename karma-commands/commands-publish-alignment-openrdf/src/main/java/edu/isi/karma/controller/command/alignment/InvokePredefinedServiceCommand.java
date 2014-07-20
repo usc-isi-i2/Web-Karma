@@ -26,6 +26,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,15 +47,20 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.worksheet.ExportCSVCommand;
 import edu.isi.karma.controller.command.worksheet.ExportCSVCommandFactory;
+import edu.isi.karma.controller.command.worksheet.ExportCSVCommand.JsonKeys;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.er.helper.ExportCSVUtil;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.imp.json.JsonImport;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
@@ -208,26 +214,8 @@ public class InvokePredefinedServiceCommand extends Command {
 			if(this.postOption.equalsIgnoreCase("invokeWithWholeWorksheet")) {
 				// export csv
 				// invoke dm service
-				UpdateContainer uc = invokePOSTwholeWorksheetService(workspace);
+				return invokePOSTwholeWorksheetService(workspace);
 				
-				final String sUrl = this.serviceUrl;
-				
-				uc.add(new AbstractUpdate() {
-
-					@Override
-					public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
-						JSONObject obj = new JSONObject();
-						try {
-							obj.put(JsonKeys.updateType.name(), "InvokePreDefinedServices");
-							obj.put(JsonKeys.serviceUrl.name(), sUrl);
-							pw.println(obj.toString());
-						} catch (JSONException e) {
-							logger.error("Error occurred while fetching worksheet properties!", e);
-						}
-					}
-				});
-				
-				return uc;
 			} else {
 				
 				// invoke row by row
@@ -236,6 +224,7 @@ public class InvokePredefinedServiceCommand extends Command {
 			}
 		} else if(this.method.equalsIgnoreCase("GET")) {
 			// invoke row by row, get service
+			return invokeGETService(workspace);
 		}
 		return null;
 		
@@ -285,50 +274,43 @@ public class InvokePredefinedServiceCommand extends Command {
 	private UpdateContainer invokePOSTwholeWorksheetService(Workspace workspace) {
 		
 		logger.info("Invoking POST, wholeWorksheet service");
-		ExportCSVCommandFactory factory = new ExportCSVCommandFactory();
+		Worksheet worksheet = workspace.getWorksheet(this.worksheetId);
 		
-		// TODO : we do not need to retrieve the columns for the selected service model again. We can send them from the UI
-		// When we query for the list of services that could we invoked, we get all the columns along with their Uris, This information could be sent from the UI 
-		// to this method
-		ExportCSVCommand cmd = (ExportCSVCommand)factory
-				.createCommand(workspace, worksheetId, this.rootNodeId, this.tripleStoreUrl, this.graphUrl, 
-						this.sparqlUtil.getAllInputColumnsForServiceNode(this.serviceUrl) );						
+		// Prepare the model file path and names
+		final String csvFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
+				worksheet.getTitle().replaceAll("\\.", "_") +  "-export"+".csv"; 
+		final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  
+				csvFileName;
+
+		ExportCSVUtil.generateCSVFile(workspace, this.worksheetId, this.rootNodeId, 
+						this.sparqlUtil.getAllInputColumnsForServiceNode(this.serviceUrl), this.graphUrl, this.tripleStoreUrl, modelFileLocalPath, null);
+
+		InvokeDataMiningServiceCommandFactory dmFactory = new InvokeDataMiningServiceCommandFactory();
+		InvokeDataMiningServiceCommand cmd = (InvokeDataMiningServiceCommand)dmFactory
+				.createCommand(workspace, worksheetId, csvFileName, this.serviceUrl );						
 		return  cmd.doIt(workspace);
+		
 	}
-	
-	
 	
 	private UpdateContainer invokePOSTrowByrowWorksheetService(Workspace workspace) {
 		
+		return invokeRowByRowService(workspace, false);
+	}
+	
+	private UpdateContainer invokeGETService(Workspace workspace) {
+		
+		return invokeRowByRowService(workspace, true);
+	}
+	
+	private UpdateContainer invokeRowByRowService(Workspace workspace, boolean isGET) {	
 		Worksheet wk = workspace.getWorksheet(this.worksheetId);
 		RepFactory factory = workspace.getFactory();
 		UpdateContainer uc = new UpdateContainer();
 		
 		// get all the column names from the service model to be invoked
-//		ArrayList<HashMap<String, String>> definedModelCols =  this.sparqlUtil.getAllInputColumnsForServiceNode(this.serviceUrl);
-
-//		HashMap<String, String> definedColumnMappings = new HashMap<String, String>();
-//		HashMap<String, String> currentColumnMappings = new HashMap<String, String>();
-		
 		String gName = wk.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.graphName);
 		HashMap<String, String> columnLabelMappings = this.sparqlUtil.getServiceColumnLabelsForCurrentWorksheet(this.rootNodeId, gName, this.serviceUrl);
 
-		// get all the column names from the current model along with their
-		
-//		ArrayList<HashMap<String, String>> currentModelCols = sparqlUtil.getOnlyLabeledColumns(this.rootNodeId,gName);
-		
-		// now match the service model column names to the current worksheet column headers
-//		for(HashMap<String, String> hm1 : definedModelCols) {
-//			definedColumnMappings.put(hm1.get("url"), hm1.get("name"), );
-//		}
-//		definedModelCols = null;
-//		
-//		for(HashMap<String, String> hm1 : currentModelCols) {
-//			currentColumnMappings.put(hm1.get("name"), hm1.get("url"));
-//			columnLabelMappings.put(hm1.get("name"), definedColumnMappings.)
-//		}
-//		currentModelCols = null;
-		
 		
 		// find all the hNodeIds for the column names in the service model
 		String lasthNodeId = "";
@@ -341,18 +323,6 @@ public class InvokePredefinedServiceCommand extends Command {
 			} 
 		}
 		logger.info("Total hNodes fetched for service :" + hNodes2.size());
-		
-//		// for each HNodeId, generate its path
-//		List<HNodePath> columnPaths = wk.getHeaders().getAllPaths();
-//		for (HNodePath path : columnPaths) {
-//			if (!hNodes.contains(path.getLeaf())) {
-//				columnPaths.remove(path);
-//			}
-//		}
-		
-		int numRows = wk.getDataTable().getNumRows();
-		List<Row> rows = wk.getDataTable().getRows(0, numRows);
-		
 		
 		// adding a new column
 		HTable hTable = workspace.getFactory().getHTable(wk.getDataTable().getHTableId());
@@ -367,15 +337,30 @@ public class InvokePredefinedServiceCommand extends Command {
 		} catch (Exception e1) {
 			logger.error("Unable to add new HNode!", e1);
 		}
+		
+		// for each row, prepare the post data and invoke the service
 		Map<String, String> formparams = null;
+		int numRows = wk.getDataTable().getNumRows();
+		List<Row> rows = wk.getDataTable().getRows(0, numRows);
 		for(Row r : rows) {
 			try {
 				Thread.sleep(500);
-				formparams = new HashMap<String, String>();
-				for(HNode hn : hNodes2) {
-					formparams.put(columnLabelMappings.get(hn.getColumnName()), r.getNode(hn.getId()).getValue().asString());
+				String responseString = "";
+				if(isGET) {
+					StringBuffer urlParams = new StringBuffer();
+					for(HNode hn : hNodes2) {
+						urlParams.append(columnLabelMappings.get(hn.getColumnName())).append("=").append(URLEncoder.encode(r.getNode(hn.getId()).getValue().asString())).append("&");
+					}
+					responseString = HTTPUtil.executeHTTPGetRequest(this.serviceUrl+"?"+urlParams.toString(), "text/plain");
+					
+				} else {
+					
+					formparams = new HashMap<String, String>();
+					for(HNode hn : hNodes2) {
+						formparams.put(columnLabelMappings.get(hn.getColumnName()), r.getNode(hn.getId()).getValue().asString());
+					}
+					responseString = HTTPUtil.executeHTTPPostRequest( this.serviceUrl, "application/x-www-form-urlencoded", "text/plain", formparams);
 				}
-				String responseString = HTTPUtil.executeHTTPPostRequest( this.serviceUrl, "application/x-www-form-urlencoded", "text/plain", formparams);
 				r.setValue(ndid.getId(), responseString, factory);
 				logger.info("Got response : " + responseString);
 				
@@ -385,17 +370,30 @@ public class InvokePredefinedServiceCommand extends Command {
 		}
 		
 		uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		uc.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return uc;
 		
 	}
-	private void invokeGETService() {
-		
-	}
+	
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public UpdateContainer computeAlignmentAndSemanticTypesAndCreateUpdates(Workspace workspace)
+	{
+		Alignment alignment = getAlignmentOrCreateIt(workspace);
+		// Compute the semantic type suggestions
+		SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(worksheetId), workspace
+				.getCrfModelHandler(), workspace.getOntologyManager());
+		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
+	}
+	
+	private Alignment getAlignmentOrCreateIt(Workspace workspace)
+	{
+		return AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, workspace.getOntologyManager());
 	}
 
 }

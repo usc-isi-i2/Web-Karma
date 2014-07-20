@@ -1762,47 +1762,9 @@ var InvokeServicesModelDialog = (function() {
 				complete : 
 					function (xhr, textStatus) {
 					var json = $.parseJSON(xhr.responseText);
-					
+					parse(json);
+					hide();
 					console.log(json);
-					return;
-					
-					var updateType = json["elements"][0]['updateType'];
-
-					//ExportCSVUpdate
-					if(updateType == 'ExportCSVUpdate') {
-						var fileName = json["elements"][0]['fileUrl'];
-
-						var dmURL = $('#dataMiningUrl').val().trim();
-						if(dmURL.length < 2) {
-							dmURL = 'http://localhost:8088/train';
-						}
-						var info = new Object();
-						info["workspaceId"] = $.workspaceGlobalInformation.id;
-						info["worksheetId"] = worksheetId;
-						info["command"] = "InvokeDataMiningServiceCommand";
-						info["dataMiningURL"] = dmURL;
-						info["csvFileName"] = fileName;
-
-
-						$.ajax({
-							url: "RequestController", 
-							type: "POST",
-							data : info,
-							dataType : "json",
-							complete : 
-								function (xhr, textStatus) {
-								var json = $.parseJSON(xhr.responseText);
-								parse(json);
-								hide();
-								alert("This results are loaded in a new worksheet");
-							},
-							error :
-								function (xhr, textStatus) {
-								alert("Error occurred while invoking service! " + textStatus);
-							}		   
-						});
-					}
-
 				},
 				error :
 					function (xhr, textStatus) {
