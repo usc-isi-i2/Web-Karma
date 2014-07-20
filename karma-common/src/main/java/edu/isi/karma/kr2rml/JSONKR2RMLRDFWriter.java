@@ -111,7 +111,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 		}
 		
 		addValue(subject, predicateUri, object);
-		if(rootTriplesMapIds.isEmpty() || rootTriplesMapIds.contains(pom.getTriplesMap().getId()))
+		if(rootTriplesMapIds.isEmpty() || !rootTriplesMapIds.contains(pom.getTriplesMap().getId()))
 		{
 			rootObjects.remove(objectUri);
 		}

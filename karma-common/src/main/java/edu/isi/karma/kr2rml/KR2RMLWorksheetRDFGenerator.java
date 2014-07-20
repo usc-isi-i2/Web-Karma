@@ -100,6 +100,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		initializeMemberVariables(worksheet, factory, ontMgr, outputFileName,
 				addColumnContextInformation, kr2rmlMapping, errorReport);
 		this.outWriters.add(writer);
+		this.strategy = strategy;
 
 	}
 
