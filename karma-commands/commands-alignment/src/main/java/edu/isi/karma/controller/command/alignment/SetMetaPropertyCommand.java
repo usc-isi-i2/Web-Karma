@@ -34,9 +34,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
-import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
@@ -74,7 +72,6 @@ public class SetMetaPropertyCommand extends Command {
 	private final String metaPropertyValue;
 	private final String rdfLiteralType;
 
-	private CRFColumnModel oldColumnModel;
 	private SynonymSemanticTypes oldSynonymTypes;
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
@@ -256,14 +253,11 @@ public class SetMetaPropertyCommand extends Command {
 		columnNode.setUserSelectedSemanticType(newType);
 
 		UpdateContainer c = new UpdateContainer();
-		CRFModelHandler crfModelHandler = workspace.getCrfModelHandler();
-		// CRFModelHandler crfModelHandler =
-		// vWorkspace.getWorkspace().getCrfModelHandler();
 
 		// Save the old SemanticType object and CRF Model for undo
 		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(
 				hNodeId);
-		oldColumnModel = worksheet.getCrfModel().getModelByHNodeId(hNodeId);
+
 		oldSynonymTypes = worksheet.getSemanticTypes()
 				.getSynonymTypesForHNodeId(newType.getHNodeId());
 
@@ -275,6 +269,8 @@ public class SetMetaPropertyCommand extends Command {
 		// newSynonymTypes);
 
 		if (trainAndShowUpdates) {
+			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType);
+			
 			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
 			try {
 				// Add the visualization update
@@ -285,13 +281,7 @@ public class SetMetaPropertyCommand extends Command {
 						e);
 				return new UpdateContainer(new ErrorUpdate(
 						"Error occured while setting the semantic type!"));
-			}
-
-			// Train the semantic type in a separate thread
-			Thread t = new Thread(new SemanticTypeTrainingThread(
-					crfModelHandler, worksheet, newType));
-			t.start();
-
+			}			
 			return c;
 
 		}
@@ -317,10 +307,7 @@ public class SetMetaPropertyCommand extends Command {
 			worksheet.getSemanticTypes().addSynonymTypesForHNodeId(
 					newType.getHNodeId(), oldSynonymTypes);
 		}
-
-		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(),
-				oldColumnModel);
-
+		
 		// Replace the current alignment with the old alignment
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				workspace.getId(), worksheetId);

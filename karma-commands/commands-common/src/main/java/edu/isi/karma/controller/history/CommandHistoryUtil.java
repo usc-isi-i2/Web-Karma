@@ -202,9 +202,6 @@ public class CommandHistoryUtil {
 		UpdateContainer uc = new UpdateContainer(new HistoryUpdate(commandHistory));
 		uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
 		Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, workspace.getOntologyManager());
-		// Compute the semantic type suggestions
-		SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(worksheetId), workspace
-				.getCrfModelHandler(), workspace.getOntologyManager());
 		uc.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment));		
 		return uc;
 	}
