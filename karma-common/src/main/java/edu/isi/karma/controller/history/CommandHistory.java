@@ -251,7 +251,37 @@ public class CommandHistory {
 				// do nothing
 			}
 		}
+		if (comm instanceof Command) {
+			Command tmp = (Command)comm;
+			JSONArray inputArray = new JSONArray();
+			for (String hNodeId : tmp.getInputColumns()) {
+				HNode node = workspace.getFactory().getHNode(hNodeId);
+				JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(workspace.getFactory());
+				JSONObject obj1 = new JSONObject();
+				obj1.put(ClientJsonKeys.value.name(), hNodeRepresentation);
+				inputArray.put(obj1);
+			}
+			JSONObject obj = new JSONObject();
+			obj.put(ClientJsonKeys.name.name(), "inputColumns");
+			obj.put(ClientJsonKeys.value.name(), inputArray.toString());
+			obj.put(ClientJsonKeys.type.name(), ParameterType.hNodeIdList.name());
+			inputArr.put(obj);
+			JSONArray outputArray = new JSONArray();
+			for (String hNodeId : tmp.getOutputColumns()) {
+				HNode node = workspace.getFactory().getHNode(hNodeId);
+				JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(workspace.getFactory());
+				JSONObject obj1 = new JSONObject();
+				obj1.put(ClientJsonKeys.value.name(), hNodeRepresentation);
+				outputArray.put(obj1);
+			}
+			obj = new JSONObject();
+			obj.put(ClientJsonKeys.name.name(), "outputColumns");
+			obj.put(ClientJsonKeys.value.name(), outputArray.toString());
+			obj.put(ClientJsonKeys.type.name(), ParameterType.hNodeIdList.name());
+			inputArr.put(obj);
+		}
 		commObj.put(HistoryArguments.inputParameters.name(), inputArr);
+		
 		return commObj;
 	}
 

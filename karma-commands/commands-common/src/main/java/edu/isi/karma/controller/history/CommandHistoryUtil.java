@@ -28,6 +28,7 @@ import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
@@ -221,6 +222,9 @@ public class CommandHistoryUtil {
 			String commandName = (String)commObject.get(HistoryArguments.commandName.name());
 			WorksheetCommandHistoryExecutor ex = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
 			ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
+			JSONArray array = new JSONArray(CommandInputJSONUtil.getStringValue("inputColumns", inputParamArr));
+			for (int j = 0; j < array.length(); j++)
+				System.out.println(array.get(j).toString());
 			System.out.println(inputParamArr.toString(4));
 			CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
 			if(cf != null) {

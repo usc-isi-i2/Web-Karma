@@ -21,9 +21,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
@@ -115,6 +113,9 @@ public class SetSemanticTypeCommand extends Command {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		/*** Get the Alignment for this worksheet ***/
+		inputColumns.clear();
+		outputColumns.clear();
+		inputColumns.add(hNodeId);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		OntologyManager ontMgr = workspace.getOntologyManager();
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
@@ -378,16 +379,16 @@ public class SetSemanticTypeCommand extends Command {
 		return c;
 	}
 	
-	@Override
-	public Set<String> getInputColumns() {
-		Set<String> t = new HashSet<String>();
-		t.add(hNodeId);
-		return t;
-	}
-	
-	@Override
-	public Set<String> getOutputColumns() {
-		Set<String> t = new HashSet<String>();
-		return t;
-	}
+//	@Override
+//	public Set<String> getInputColumns() {
+//		Set<String> t = new HashSet<String>();
+//		t.add(hNodeId);
+//		return t;
+//	}
+//	
+//	@Override
+//	public Set<String> getOutputColumns() {
+//		Set<String> t = new HashSet<String>();
+//		return t;
+//	}
 }
