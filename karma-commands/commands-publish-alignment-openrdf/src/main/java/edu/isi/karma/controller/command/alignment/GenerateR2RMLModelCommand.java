@@ -258,8 +258,6 @@ public class GenerateR2RMLModelCommand extends Command {
 				});
 				uc.add(new HistoryUpdate(workspace.getCommandHistory()));
 				uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
-				SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(worksheetId), workspace
-						.getCrfModelHandler(), workspace.getOntologyManager());
 				uc.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment));
 				return uc;
 			} 
