@@ -29,6 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import edu.isi.karma.modeling.Uris;
+
 public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 
 	protected boolean firstObject = true;
@@ -82,7 +84,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	private JSONObject checkAndAddsubjUri(String triplesMapId, ConcurrentHashMap<String, JSONObject> generatedObjects, String subjUri) {
 		if (!generatedObjects.containsKey(subjUri)) {
 			JSONObject object = new JSONObject();
-			object.put("uri", subjUri);
+			object.put("@id", subjUri);
 			generatedObjects.putIfAbsent(subjUri, object);
 			object = generatedObjects.get(subjUri);
 			if(triplesMapId == null || rootTriplesMapIds.isEmpty() || rootTriplesMapIds.contains(triplesMapId))
@@ -119,24 +121,45 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	}
 
 	private void addValue(JSONObject subject, String predicateUri, Object object) {
-		if (subject.has(shortHandURIGenerator.getShortHand(predicateUri).toString())) {
-			Object obj = subject.get(shortHandURIGenerator.getShortHand(predicateUri).toString());
-			JSONArray array = null;
-			if (obj instanceof JSONObject) {
-				array = new JSONArray();
-				array.put(object);
-				array.put(obj);
-			}
-			else if (obj instanceof JSONArray) {
-				array = (JSONArray) obj;
-				array.put(object);
-			}
-			subject.put(shortHandURIGenerator.getShortHand(predicateUri).toString(), array);
+		if (subject.has(shortHandURIGenerator.getShortHand(predicateUri).toString()) || predicateUri.contains(Uris.RDF_TYPE_URI)) {
+			String shortHandPredicateURI = shortHandURIGenerator.getShortHand(predicateUri).toString();
+			JSONArray array = addValueToArray(subject, object,
+					shortHandPredicateURI);
+			subject.put(!shortHandPredicateURI.equalsIgnoreCase("rdf:type")?shortHandPredicateURI: "@type", array);
 		}
 		else
 		{
 			subject.put(shortHandURIGenerator.getShortHand(predicateUri).toString(), object);
 		}
+	}
+
+	private JSONArray addValueToArray(JSONObject subject, Object object,
+			String shortHandPredicateURI) {
+		JSONArray array = null;
+		if(subject.has(shortHandPredicateURI))
+		{
+			Object obj = subject.get(shortHandPredicateURI);
+			if(obj != null)
+			{
+				if (obj instanceof JSONObject) {
+					array = new JSONArray();
+					array.put(obj);
+				}
+				else if (obj instanceof JSONArray) {
+					array = (JSONArray) obj;
+				}
+			}
+			else
+			{
+				array = new JSONArray();
+			}
+		}
+		else
+		{
+			array = new JSONArray();
+		}
+		array.put(object);
+		return array;
 	}
 
 	@Override
