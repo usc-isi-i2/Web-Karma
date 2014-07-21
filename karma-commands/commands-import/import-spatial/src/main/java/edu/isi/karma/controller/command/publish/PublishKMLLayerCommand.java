@@ -4,6 +4,21 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.publish;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -12,19 +27,9 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.geospatial.WorksheetToFeatureCollection;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.view.VWorkspace;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class PublishKMLLayerCommand extends Command {
 	private final String worksheetId;
@@ -71,11 +76,11 @@ public class PublishKMLLayerCommand extends Command {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
-		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0) {
-			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, workspace
-					.getTagsContainer().getTag(TagName.Outlier), workspace
-					.getCrfModelHandler(), workspace.getOntologyManager());
-		}
+//		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0) {
+//			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, workspace
+//					.getTagsContainer().getTag(TagName.Outlier), workspace
+//					.getSemanticTypeModelHandler(), workspace.getOntologyManager());
+//		}
 
 		OntologyManager om= workspace.getOntologyManager();
 		WorksheetToFeatureCollection geo = new WorksheetToFeatureCollection(worksheet,om);//ying

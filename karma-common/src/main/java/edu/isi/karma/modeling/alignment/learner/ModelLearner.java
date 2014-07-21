@@ -308,7 +308,7 @@ public class ModelLearner {
 			Set<SemanticTypeMapping> semanticTypeMappings = new HashSet<SemanticTypeMapping>();
 			for (SemanticType semanticType: candidateSemanticTypes) {
 				
-				logger.info("\t===== Semantic Type: " + semanticType.getCrfModelLabelString());
+				logger.info("\t===== Semantic Type: " + semanticType.getModelLabelString());
 				
 				if (semanticType == null || 
 						semanticType.getDomain() == null ||
@@ -538,7 +538,7 @@ public class ModelLearner {
 			if (crfSuggestions != null) {
 				for (SemanticType st : crfSuggestions) {
 					if (useCorrectType && userSelectedType != null &&
-						st.getCrfModelLabelString().equalsIgnoreCase(userSelectedType.getCrfModelLabelString()))
+						st.getModelLabelString().equalsIgnoreCase(userSelectedType.getModelLabelString()))
 						continue;
 					types.add(st);
 				}

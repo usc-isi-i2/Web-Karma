@@ -21,7 +21,6 @@
 
 package edu.isi.karma.controller.command.worksheet;
 
-import java.io.PrintWriter;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -34,12 +33,10 @@ import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.ICommand;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.CommandHistory;
-import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.view.VWorkspace;
 
 public class RenameColumnCommand extends WorksheetCommand {
 	final private String newColumnName;

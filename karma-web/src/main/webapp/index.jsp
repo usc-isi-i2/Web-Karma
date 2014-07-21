@@ -232,7 +232,12 @@ and related projects, please see: http://www.isi.edu/integration
 	      <div class="container">
 	        <p class="text-muted">
 	        	<div class="row">
-	        		<div class="col-sm-4"><label>Karma Home: </label><span id="karmaHome"><%=ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></span></div>
+	        		<div class="col-sm-4">
+	        			<div class="form-group">
+	        				<label>Karma Home: </label>
+	        				<span id="karmaHome"><%=ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></span>
+	        			</div>
+	        		</div>
 	        		<div class="col-sm-4">
 	        			<div class="form-group">
 							<label for="txtModel_URL">Model Endpoint: </label>
