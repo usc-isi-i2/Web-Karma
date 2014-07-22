@@ -61,7 +61,7 @@ public class RDFGeneratorServlet{
 			GenericRDFGenerator gRDFGen = new GenericRDFGenerator();
 			
 			R2RMLMappingIdentifier rmlID = new R2RMLMappingIdentifier("rdf-model",
-					new File("C:\\Users\\saggu\\Documents\\GitHub\\Web-Karma\\karma-web\\src\\main\\webapp\\publish\\R2RML\\WSP1WS2-metadata.json-model.ttl").toURI().toURL());
+					new File("/home/amandeep/GitHub/Web-Karma/karma-web/src/main/webapp/publish/R2RML/WSP1WS2-metadata.json-model.ttl").toURI().toURL());
 			
 			gRDFGen.addModel(rmlID);
 			
@@ -83,6 +83,7 @@ public class RDFGeneratorServlet{
 			
 			TripleStoreUtil tsu = new TripleStoreUtil();
 			String tripleStoreURL = "http://localhost:3000/openrdf-sesame/repositories/karma_data";
+			
 			String context = "http://image-metadata.com";
 			Boolean replace = true;
 			String baseURI = "http://isiimagefinder/";
