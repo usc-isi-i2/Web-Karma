@@ -104,7 +104,11 @@ public class InvokePredefinedServiceCommand extends Command {
 		super(id);
 		this.worksheetId = worksheetId;
 		this.rootNodeId = rootNodeId;
-		this.graphUrl = graphUrl;
+		if(graphUrl.equalsIgnoreCase("000")) {
+			this.graphUrl = null;
+		} else {
+			this.graphUrl = graphUrl;
+		}
 		this.tripleStoreUrl = tripleStoreUrl;
 		this.serviceUrl = serviceUrl;
 		this.method = method;
@@ -385,9 +389,6 @@ public class InvokePredefinedServiceCommand extends Command {
 	public UpdateContainer computeAlignmentAndSemanticTypesAndCreateUpdates(Workspace workspace)
 	{
 		Alignment alignment = getAlignmentOrCreateIt(workspace);
-		// Compute the semantic type suggestions
-		SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(worksheetId), workspace
-				.getCrfModelHandler(), workspace.getOntologyManager());
 		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
 	}
 	
