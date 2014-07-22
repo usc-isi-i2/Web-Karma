@@ -1,0 +1,1 @@
+mvn -f ../../../pom.xml exec:java -Dexec.mainClass="edu.isi.karma.mapreduce.driver.SimpleLoader" -Dexec.args="SimpleLoader.properties"

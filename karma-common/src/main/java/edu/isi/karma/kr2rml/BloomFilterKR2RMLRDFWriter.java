@@ -31,8 +31,8 @@ public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 	}
 
 	@Override
-	public void outputTripleWithURIObject(TriplesMap subjTriplesMap,
-			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri,
+	public void outputTripleWithURIObject(PredicateObjectMap predicateObjectMap,
+			String subjUri, String predicateUri,
 			String objectUri) {
 		if (subjUri.indexOf("<") != -1 && subjUri.indexOf(">") != -1) {
 			String tmp = subjUri.substring(1, subjUri.length() - 1);
@@ -42,54 +42,34 @@ public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 			String tmp = objectUri.substring(1, objectUri.length() - 1);
 			objectUri = "<" + normalizeURI(tmp) + ">";
 		}
+		TriplesMap subjTriplesMap = predicateObjectMap.getTriplesMap();
 		bloomFilterManager.addUriToBloomFilter(subjTriplesMap.getId(), subjUri);
 		if(predicateUri.equalsIgnoreCase(formattedTypeURI))
 		{
 			return;
 		}
 		bloomFilterManager.addUriToBloomFilter(predicateObjectMap.getId(), subjUri);
-
-	}
-
-	@Override
-	public void outputTripleWithURIObject(TriplesMap subjTriplesMap,
-			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, TriplesMap objTriplesMap,
-			String objectUri) {
-		if (subjUri.indexOf("<") != -1 && subjUri.indexOf(">") != -1) {
-			String tmp = subjUri.substring(1, subjUri.length() - 1);
-			subjUri = "<" + normalizeURI(tmp) + ">";
-		}
-		if (objectUri.indexOf("<") != -1 && objectUri.indexOf(">") != -1) {
-			String tmp = objectUri.substring(1, objectUri.length() - 1);
-			objectUri = "<" + normalizeURI(tmp) + ">";
-		}
-		bloomFilterManager.addUriToBloomFilter(subjTriplesMap.getId(), subjUri);
-		if(predicateUri.equalsIgnoreCase(formattedTypeURI))
+		if(predicateObjectMap.getObject().hasRefObjectMap())
 		{
-			return;
+			bloomFilterManager.addUriToBloomFilter(predicateObjectMap.getObject().getRefObjectMap().getId(), objectUri);
 		}
-		bloomFilterManager.addUriToBloomFilter(predicateObjectMap.getId(), subjUri);
-		bloomFilterManager.addUriToBloomFilter(predicateObjectMap.getObject().getRefObjectMap().getId(), objectUri);
-
 	}
-
-
 
 	@Override
 	public void outputTripleWithLiteralObject(String subjUri,
 			String predicateUri, String value, String literalType) {
 		return;
-
 	}
 
 	@Override
-	public void outputTripleWithLiteralObject(TriplesMap subjTriplesMap,
-			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, String value,
+	public void outputTripleWithLiteralObject( PredicateObjectMap predicateObjectMap,
+			String subjUri, String predicateUri, String value,
 			String literalType) {
 		if (subjUri.indexOf("<") != -1 && subjUri.indexOf(">") != -1) {
 			String tmp = subjUri.substring(1, subjUri.length() - 1);
 			subjUri = "<" + normalizeURI(tmp) + ">";
 		}
+		TriplesMap subjTriplesMap = predicateObjectMap.getTriplesMap();
 		bloomFilterManager.addUriToBloomFilter(subjTriplesMap.getId(), subjUri);
 		if(predicateUri.equalsIgnoreCase(formattedTypeURI))
 		{
@@ -107,13 +87,14 @@ public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 	}
 
 	@Override
-	public void outputQuadWithLiteralObject(TriplesMap subjTriplesMap,
-			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, String value,
+	public void outputQuadWithLiteralObject( PredicateObjectMap predicateObjectMap,
+			String subjUri, String predicateUri, String value,
 			String literalType, String graph) {
 		if (subjUri.indexOf("<") != -1 && subjUri.indexOf(">") != -1) {
 			String tmp = subjUri.substring(1, subjUri.length() - 1);
 			subjUri = "<" + normalizeURI(tmp) + ">";
 		}
+		TriplesMap subjTriplesMap = predicateObjectMap.getTriplesMap();
 		bloomFilterManager.addUriToBloomFilter(subjTriplesMap.getId(), subjUri);
 		if(predicateUri.equalsIgnoreCase(formattedTypeURI))
 		{

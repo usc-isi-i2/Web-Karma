@@ -50,9 +50,9 @@ src/main/webapp/RDF/*.n3
 src/main/webapp/repository/dataset/*.*
 src/main/webapp/repository/services/*.*
 src/main/webapp/repository/sources/*.*
-src/main/webapp/CRF_Models/WSP1_CRFModel.txt.zip
+karma-web/src/main/webapp/publish/CSV/*
 tmp/*
-src/main/webapp/CRF_Models/WSP1_CRFModel.txt
+src/main/webapp/CRF_Models/*
 src/main/scripts/Lib/*.class
 bin/
 *.kml

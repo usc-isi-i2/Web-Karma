@@ -38,6 +38,7 @@ import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
+import edu.isi.karma.kr2rml.planning.RootStrategy;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
@@ -132,6 +133,11 @@ public class GenericRDFGenerator extends RdfGenerator {
 	public void generateRDF(String modelName, String sourceName, InputStream data, InputType dataType, int maxNumLines, 
 			boolean addProvenance, List<KR2RMLRDFWriter> writers)
 			throws KarmaException, IOException {
+		generateRDF(modelName, sourceName, data, dataType, maxNumLines, addProvenance, writers, null);
+	}
+	private void generateRDF(String modelName, String sourceName, InputStream data, InputType dataType, int maxNumLines, 
+			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy)
+					throws KarmaException, IOException {
 		logger.debug("Generating rdf for " + sourceName);
 		
 		Workspace workspace = initializeWorkspace();
@@ -166,6 +172,25 @@ public class GenericRDFGenerator extends RdfGenerator {
 		logger.debug("Generated rdf for " + sourceName);
 	}
 
+	public void generateRDF(RDFGeneratorRequest request) throws KarmaException, IOException
+	{
+		InputStream inputStream = null;
+		if(request.getInputFile() != null)
+		{
+			inputStream = new FileInputStream(request.getInputFile());
+		}
+		else if(request.getInputData() != null)
+		{
+			inputStream = IOUtils.toInputStream(request.getInputData());
+		}
+		else if(request.getInputStream() != null)
+		{
+			inputStream = request.getInputStream();
+		}
+		
+		generateRDF(request.getModelName(), request.getSourceName(), inputStream,request.getDataType(), request.getMaxNumLines(), request.isAddProvenance(), request.getWriters(), request.getStrategy());
+	}
+	
 	private InputType getInputType(Metadata metadata) {
 		String[] contentType = metadata.get(Metadata.CONTENT_TYPE).split(";");
 		switch (contentType[0]) {

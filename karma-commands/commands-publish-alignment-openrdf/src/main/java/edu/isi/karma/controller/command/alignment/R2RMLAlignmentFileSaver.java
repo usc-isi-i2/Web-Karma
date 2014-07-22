@@ -96,7 +96,7 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		final ErrorReport errorReport = new ErrorReport();
 		if (worksheet != null)
 			alignmentMappingGenerator = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
-					worksheet.getSemanticTypes(), prefix, namespace, true, history, errorReport);
+					worksheet.getSemanticTypes(), prefix, namespace, false, history, errorReport);
 		
 		long end2 = System.currentTimeMillis();
 		logger.info("Time to generate mappings:" + (end2-end1) + "msec");
