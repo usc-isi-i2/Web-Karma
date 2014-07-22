@@ -207,7 +207,7 @@ public class KR2RMLMappingGenerator {
 	{
 		Map<String, String> prefixMap = workspace.getOntologyManager().getPrefixMap(); 
 		for (Entry<String, String> entry :prefixMap.entrySet()) {
-			Prefix p = new Prefix(entry.getKey(), entry.getValue());
+			Prefix p = new Prefix(entry.getValue(), entry.getKey());
 			r2rmlMapping.addPrefix(p);
 		}
 	}

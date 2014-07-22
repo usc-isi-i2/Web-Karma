@@ -38,7 +38,6 @@ public class ShortHandURIGenerator {
 		}
 		catch(Exception e)
 		{
-			System.out.println("what");
 			return new ShortHandURI(null, URI);
 		}
 	}
