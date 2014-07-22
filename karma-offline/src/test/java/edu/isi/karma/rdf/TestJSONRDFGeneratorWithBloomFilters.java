@@ -48,7 +48,6 @@ import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
 import edu.isi.karma.kr2rml.KR2RMLBloomFilterManager;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
-import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
 
 
@@ -105,7 +104,7 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 
 			KR2RMLBloomFilterManager peopleBloomFilterManager = getBloomFilterManagerForSource("people.json", InputType.JSON, "people-model");
 			KR2RMLBloomFilterManager scheduleBloomFilterManager = getBloomFilterManagerForSource("schedule.csv", InputType.CSV, "schedule-model");
-			KR2RMLBloomFilter peoplePersonWithTwitterIdBF = peopleBloomFilterManager.getBloomFilter("http://isi.edu/integration/karma/dev#PredicateObjectMap_1941470a-1dfb-4716-803b-5f07a4af90fd");
+			KR2RMLBloomFilter peoplePersonWithTwitterIdBF = peopleBloomFilterManager.getBloomFilter("http://isi.edu/integration/karma/dev#PredicateObjectMap_5fcf2d39-f62b-4cdd-863e-bde21493e1bd");
 			Key k = new Key(("<http://lod.isi.edu/cs548/person/Slepicka>").getBytes());
 			assertFalse(peoplePersonWithTwitterIdBF.membershipTest(k));
 			k = new Key(("<http://lod.isi.edu/cs548/person/Taheriyan>").getBytes());

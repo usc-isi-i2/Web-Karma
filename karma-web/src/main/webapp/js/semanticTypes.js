@@ -46,10 +46,13 @@ var SetSemanticTypeDialog = (function() {
 					// This is tha JSON array which is changed when the user adds/changes through GUI and is submitted to the server.
 					var tdTag = $("td#"+ columnId); 
 					var typeJsonObject = $(tdTag).data("typesJsonObject");
-					console.log(typeJsonObject);
-					existingTypes = typeJsonObject["SemanticTypesArray"];
+					if(typeJsonObject) {
+						existingTypes = typeJsonObject["SemanticTypesArray"];
+					} else {
+						existingTypes= [];
+					}
 					
-					var CRFInfo = typeJsonObject["FullCRFModel"];
+					var suggestedTypes = getSuggestedTypes();
 					
 					// Populate the table with existing types and CRF suggested types
 					$.each(existingTypes, function(index, type){
@@ -69,19 +72,19 @@ var SetSemanticTypeDialog = (function() {
 							addSemTypeObjectToCurrentTable(type, true, false);
 						}
 					});
-					if(CRFInfo != null) {
-							$.each(CRFInfo["Labels"], function(index, type){
+					if(suggestedTypes) {
+							$.each(suggestedTypes["Labels"], function(index, type){
 									addSemTypeObjectToCurrentTable(type, false, true);
 							});
 					}
 					
 					addEmptyUriSemanticType();
 					
-					if((!CRFInfo && existingTypes.length == 0) ||
-											((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo.length == 0)) ||
-											((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo["Labels"].length == 0))) {
-											addEmptySemanticType();
-							}
+					if((!suggestedTypes && existingTypes.length == 0) ||
+											((existingTypes && existingTypes.length == 0) && (suggestedTypes && suggestedTypes.length == 0)) ||
+											((existingTypes && existingTypes.length == 0) && (suggestedTypes && suggestedTypes["Labels"].length == 0))) {
+						addEmptySemanticType();
+					}
 					
 					getClasses();
 					getProperties();
@@ -151,7 +154,41 @@ var SetSemanticTypeDialog = (function() {
 			}
 			$("div.error", dialog).show();
 		}
-				
+		
+		function getSuggestedTypes() {
+			var info = new Object();
+			var newInfo = [];	// Used for commands that take JSONArray as input and are saved in the history
+			var hNodeId = columnId;
+			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			info["worksheetId"] = worksheetId;
+			info["hNodeId"] = hNodeId;
+			newInfo.push(getParamObject("hNodeId", hNodeId,"hNodeId"));
+			newInfo.push(getParamObject("worksheetId", info["worksheetId"], "worksheetId"));
+			info["newInfo"] = JSON.stringify(newInfo);
+			info["command"] = "GetSemanticSuggestionsCommand";
+			showLoading(info["worksheetId"]);
+			var result;
+			var returned = $.ajax({
+					url: "RequestController",
+					type: "POST",
+					data : info,
+					dataType : "json",
+					async : false,
+					complete :
+							function (xhr, textStatus) {
+									var json = $.parseJSON(xhr.responseText);
+									hideLoading(info["worksheetId"]);
+									result = json.elements[0];
+							},
+					error :
+							function (xhr, textStatus) {
+									alert("Error occured with fetching new rows! " + textStatus);
+									hideLoading(info["worksheetId"]);
+							}
+			});
+			return result;
+		}
+		
 		function validate() {
 			if($("#isSubclassOfClass").prop("checked")) {
 						var foundObj = doesClassExist($("input#isSubclassOfClassTextBox", dialog).val());

@@ -31,8 +31,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.kr2rml.planning.TriplesMap;
-
 public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(N3KR2RMLRDFWriter.class);
@@ -115,32 +113,23 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 			return "";
 	}
 	@Override
-	public void outputTripleWithURIObject(TriplesMap subjTriplesMap,
-			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri,
+	public void outputTripleWithURIObject(PredicateObjectMap predicateObjectMap,
+			String subjUri, String predicateUri,
 			String objectUri) {
 		outputTripleWithURIObject(subjUri, predicateUri, objectUri);
-
 	}
 	@Override
-	public void outputTripleWithURIObject(TriplesMap subjTriplesMap,
-			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, TriplesMap objTriplesMapId,
-			String objectUri) {
-		outputTripleWithURIObject(subjUri, predicateUri, objectUri);
-
-	}
-	@Override
-	public void outputTripleWithLiteralObject(TriplesMap subjTriplesMap,
-			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, String value,
+	public void outputTripleWithLiteralObject(PredicateObjectMap predicateObjectMap,
+			String subjUri, String predicateUri, String value,
 			String literalType) {
 		outputTripleWithLiteralObject(subjUri, predicateUri, value, literalType);
-
 	}
+	
 	@Override
-	public void outputQuadWithLiteralObject(TriplesMap subjTriplesMap,
-			String subjUri, PredicateObjectMap predicateObjectMap, String predicateUri, String value,
+	public void outputQuadWithLiteralObject(PredicateObjectMap predicateObjectMap,
+			String subjUri, String predicateUri, String value,
 			String literalType, String graph) {
 		outputQuadWithLiteralObject(subjUri, predicateUri, value, literalType, graph);
-
 	}
 
 	@Override
