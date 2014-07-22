@@ -24,8 +24,9 @@ import edu.isi.karma.controller.command.CommandPreferences;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
+import edu.isi.karma.modeling.semantictypes.ISemanticTypeModelHandler;
 import edu.isi.karma.rep.metadata.TagsContainer;
+import edu.isi.karma.semantictypes.typinghandler.LuceneBasedSTModelHandler;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -68,7 +69,7 @@ public class Workspace extends Entity {
 	/**
 	 * The CRF Model for the workspace
 	 */
-	private final CRFModelHandler crfModelHandler = new CRFModelHandler();
+	private final ISemanticTypeModelHandler semTypeModelHandler = new LuceneBasedSTModelHandler();
 	
 	private final CommandPreferences commandPreferences;
 
@@ -103,7 +104,7 @@ public class Workspace extends Entity {
 	}
 
 	public void removeWorksheet(String id) {
-		Worksheet ws = worksheets.get(id);
+		//Worksheet ws = worksheets.get(id);
 		factory.removeWorksheet(id);
 		this.worksheets.remove(id);
 	}
@@ -128,8 +129,8 @@ public class Workspace extends Entity {
 		return ontologyManager;
 	}
 
-	public CRFModelHandler getCrfModelHandler() {
-		return crfModelHandler;
+	public ISemanticTypeModelHandler getSemanticTypeModelHandler() {
+		return semTypeModelHandler;
 	}
 
 	public CommandPreferences getCommandPreferences() {

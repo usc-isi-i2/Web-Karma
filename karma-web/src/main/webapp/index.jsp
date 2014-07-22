@@ -232,17 +232,22 @@ and related projects, please see: http://www.isi.edu/integration
 	      <div class="container">
 	        <p class="text-muted">
 	        	<div class="row">
-	        		<div class="col-sm-4">Karma Home: <span id="karmaHome"><%=ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></span></div>
+	        		<div class="col-sm-4">
+	        			<div class="form-group">
+	        				<label>Karma Home: </label>
+	        				<span id="karmaHome"><%=ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></span>
+	        			</div>
+	        		</div>
 	        		<div class="col-sm-4">
 	        			<div class="form-group">
 							<label for="txtModel_URL">Model Endpoint: </label>
-							<label class="edit" id="txtModel_URL"></label>
+							<span class="edit" id="txtModel_URL"></span>
 						</div>
 	        		</div>
 	        		<div class="col-sm-4">
 	        			<div class="form-group">
 							<label for="txtData_URL">Data Endpoint: </label>
-							<label class="edit" id="txtData_URL"></label>
+							<span class="edit" id="txtData_URL"></span>
 						</div>
 	        		</div>
 	        	</div>
@@ -345,8 +350,8 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/classDropdown.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/propertyDropdown.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/model-layout.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/UnconnectedNodesLayout.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/model.js?<jsp:include page='version.jsp' />"></script>
-         
         <script>
         	var googleEarthEnabled = <%=UIConfiguration.Instance().isGoogleEarthEnabled()%>;
         	
@@ -412,7 +417,34 @@ and related projects, please see: http://www.isi.edu/integration
 		       			 mode: 'popup',
 		       			 inputclass: 'worksheetInputEdit'	 
 		            });
+                
+            	positionFooter();
+            	$(window)
+                    .scroll(positionFooter)
+                    .resize(positionFooter)
 			});
+            
+            function positionFooter() {
+            	var footerHeight = 0,
+                footerTop = 0,
+                $footer = $("#footer");
+            	
+                footerHeight = $footer.height();
+                footerTop = ($(window).scrollTop()+$(window).height()-footerHeight)+"px";
+       
+               if ( ($(document.body).height()+footerHeight) < $(window).height()) {
+                   $footer.css({
+                        position: "absolute"
+                   }).animate({
+                        top: footerTop
+                   })
+               } else {
+                   $footer.css({
+                        position: "static"
+                   })
+               }
+               
+       		}
 		</script>
 		<script type="text/javascript">
 			if(googleEarthEnabled) {

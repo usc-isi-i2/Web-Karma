@@ -23,16 +23,15 @@
  */
 package edu.isi.karma.rep;
 
-import edu.isi.karma.rep.HNode.HNodeType;
-import edu.isi.karma.rep.Node.NodeStatus;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.rep.Node.NodeStatus;
 
 /**
  * @author szekely

@@ -136,6 +136,7 @@ public class ExportJSONCommand extends WorksheetCommand {
 		try {
 			printWriter = new PrintWriter(jsonFileLocalPath);
 			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(printWriter);
+			writer.addPrefixes(mapping.getPrefixes());
 			RootStrategy strategy = new UserSpecifiedRootStrategy(rootTriplesMapId, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
 			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, ontMgr, writer, false, strategy, mapping, errorReport);
 			try {

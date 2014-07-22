@@ -38,7 +38,7 @@ var FileFormatSelectionDialog = (function() {
                     $(":radio[name=FileFormatSelection][value=XMLFile]").prop("checked", true);
                 } else if(fileName.match(".xls$") || fileName.match(".xlsx$")) {
                     $(":radio[name=FileFormatSelection][value=ExcelFile]").prop("checked", true);
-                } else if(fileName.match(".owl$") || fileName.match(".rdf$")) {
+                } else if(fileName.match(".owl$") || fileName.match(".rdf$") || fileName.match(".n3$") || fileName.match(".ttl$")) {
                     $(":radio[name=FileFormatSelection][value=Ontology]").prop("checked", true);
                 } else if(fileName.match(".json$")) {
                     $(":radio[name=FileFormatSelection][value=JSONFile]").prop("checked", true);

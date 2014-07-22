@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +39,7 @@ public class CombineBloomFiltersFromRDF {
 	static String filepath;
     static String modelurl;
     static String context;
-    static String predicateURI;
+    static String predicateURI = "http://isi.edu/integration/karma/dev#hasBloomFilter";
 	public static void main(String[] args) throws IOException, KarmaException {
 		Group options = createCommandLineOptions();
         Parser parser = new Parser();
@@ -62,7 +60,6 @@ public class CombineBloomFiltersFromRDF {
         if (filepath == null || modelurl == null || context == null)
         	return;
 		File file = new File(filepath);
-		predicateURI = null;
 		Map<String, BloomFilterWorker> workers = new HashMap<String, BloomFilterWorker>();
 		Map<String, KR2RMLBloomFilter> bfs = new HashMap<String, KR2RMLBloomFilter>();
 		long start = System.currentTimeMillis();
@@ -80,7 +77,7 @@ public class CombineBloomFiltersFromRDF {
 						String object = st.getObject().toString();
 						String predicate = st.getPredicate().toString();
 						if (predicate.contains("hasBloomFilter")) {
-							predicateURI = predicate;
+							//predicateURI = predicate;
 							BloomFilterWorker worker = workers.get(subject);
 							if (worker == null) {
 								worker = new BloomFilterWorker();
@@ -105,7 +102,7 @@ public class CombineBloomFiltersFromRDF {
 			Set<String> triplemaps = bfs.keySet();
 			Map<String, String> bloomfilterMapping = new HashMap<String, String>();
 			bloomfilterMapping.putAll(utilObj.getBloomFiltersForMaps(modelurl, context, triplemaps));
-			updateTripleStore(bfs, bloomfilterMapping);
+			utilObj.updateTripleStoreWithBloomFilters(bfs, bloomfilterMapping, modelurl, context);
 			System.out.println("process time: " + (System.currentTimeMillis() - start));
 			Map<String, String> verification = new HashMap<String, String>();
 			verification.putAll(utilObj.getBloomFiltersForMaps(modelurl, context, triplemaps));
@@ -131,35 +128,10 @@ public class CombineBloomFiltersFromRDF {
 				}
 			}
 			if (!verify) {
-				updateTripleStore(bfs, verification);
+				utilObj.updateTripleStoreWithBloomFilters(bfs, verification, modelurl, context);
 			}
 		}
 
-	}
-	
-	private static void updateTripleStore(Map<String, KR2RMLBloomFilter> bfs, Map<String, String> bloomfilterMapping) throws KarmaException, IOException {
-		TripleStoreUtil utilObj = new TripleStoreUtil();
-		Set<String> triplemaps = bfs.keySet();
-		for (String tripleUri : triplemaps) {
-			KR2RMLBloomFilter bf = bfs.get(tripleUri);
-			String oldserializedBloomFilter = bloomfilterMapping.get(tripleUri);
-			if (oldserializedBloomFilter != null) {
-				KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
-				bf2.populateFromCompressedAndBase64EncodedString(oldserializedBloomFilter);
-				bf.or(bf2);
-			}
-			bfs.put(tripleUri, bf);
-		}
-		utilObj.deleteBloomFiltersForMaps(modelurl, context, triplemaps);
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		for (Entry<String, KR2RMLBloomFilter> entry : bfs.entrySet()) {
-			pw.print("<" + entry.getKey() + "> ");
-			pw.print("<" + predicateURI + "> ");
-			pw.println("\"" + entry.getValue().compressAndBase64Encode() + "\" . ");
-		}
-		pw.close();
-		utilObj.saveToStore(sw.toString(), modelurl, context, new Boolean(false), null);
 	}
 
 	private static Group createCommandLineOptions() {

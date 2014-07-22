@@ -46,10 +46,13 @@ var SetSemanticTypeDialog = (function() {
 					// This is tha JSON array which is changed when the user adds/changes through GUI and is submitted to the server.
 					var tdTag = $("td#"+ columnId); 
 					var typeJsonObject = $(tdTag).data("typesJsonObject");
-					console.log(typeJsonObject);
-					existingTypes = typeJsonObject["SemanticTypesArray"];
+					if(typeJsonObject) {
+						existingTypes = typeJsonObject["SemanticTypesArray"];
+					} else {
+						existingTypes= [];
+					}
 					
-					var CRFInfo = typeJsonObject["FullCRFModel"];
+					var suggestedTypes = getSuggestedTypes();
 					
 					// Populate the table with existing types and CRF suggested types
 					$.each(existingTypes, function(index, type){
@@ -69,19 +72,19 @@ var SetSemanticTypeDialog = (function() {
 							addSemTypeObjectToCurrentTable(type, true, false);
 						}
 					});
-					if(CRFInfo != null) {
-							$.each(CRFInfo["Labels"], function(index, type){
+					if(suggestedTypes) {
+							$.each(suggestedTypes["Labels"], function(index, type){
 									addSemTypeObjectToCurrentTable(type, false, true);
 							});
 					}
 					
 					addEmptyUriSemanticType();
 					
-					if((!CRFInfo && existingTypes.length == 0) ||
-											((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo.length == 0)) ||
-											((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo["Labels"].length == 0))) {
-											addEmptySemanticType();
-							}
+					if((!suggestedTypes && existingTypes.length == 0) ||
+											((existingTypes && existingTypes.length == 0) && (suggestedTypes && suggestedTypes.length == 0)) ||
+											((existingTypes && existingTypes.length == 0) && (suggestedTypes && suggestedTypes["Labels"].length == 0))) {
+						addEmptySemanticType();
+					}
 					
 					getClasses();
 					getProperties();
@@ -151,7 +154,41 @@ var SetSemanticTypeDialog = (function() {
 			}
 			$("div.error", dialog).show();
 		}
-				
+		
+		function getSuggestedTypes() {
+			var info = new Object();
+			var newInfo = [];	// Used for commands that take JSONArray as input and are saved in the history
+			var hNodeId = columnId;
+			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			info["worksheetId"] = worksheetId;
+			info["hNodeId"] = hNodeId;
+			newInfo.push(getParamObject("hNodeId", hNodeId,"hNodeId"));
+			newInfo.push(getParamObject("worksheetId", info["worksheetId"], "worksheetId"));
+			info["newInfo"] = JSON.stringify(newInfo);
+			info["command"] = "GetSemanticSuggestionsCommand";
+			showLoading(info["worksheetId"]);
+			var result;
+			var returned = $.ajax({
+					url: "RequestController",
+					type: "POST",
+					data : info,
+					dataType : "json",
+					async : false,
+					complete :
+							function (xhr, textStatus) {
+									var json = $.parseJSON(xhr.responseText);
+									hideLoading(info["worksheetId"]);
+									result = json.elements[0];
+							},
+					error :
+							function (xhr, textStatus) {
+									alert("Error occured with fetching new rows! " + textStatus);
+									hideLoading(info["worksheetId"]);
+							}
+			});
+			return result;
+		}
+		
 		function validate() {
 			if($("#isSubclassOfClass").prop("checked")) {
 						var foundObj = doesClassExist($("input#isSubclassOfClassTextBox", dialog).val());
@@ -1981,7 +2018,7 @@ var AugmentDataDialog = (function() {
 						tr.append(th);
 						
 						var th = $("<th>"); //.addClass("FileNameProperty");
-						var label = $("<label>").text("Predicate"); //.addClass("FileNameProperty");
+						var label = $("<label>").text("Property"); //.addClass("FileNameProperty");
 						th.append(label);
 						var label = $("<input>").text("")
 							.addClass("form-control")
@@ -1993,7 +2030,7 @@ var AugmentDataDialog = (function() {
 						tr.append(th);
 						
 						var th = $("<th>"); //.addClass("PublishTimeProperty");
-						var label = $("<label>").text("Classes"); //.addClass("PublishTimeProperty");
+						var label = $("<label>").text("Class"); //.addClass("PublishTimeProperty");
 						th.append(label);
 						var label = $("<input>").text("")
 						.addClass("form-control")
@@ -2005,7 +2042,7 @@ var AugmentDataDialog = (function() {
 						tr.append(th);
 						
 						var th = $("<th>"); //.addClass("URLProperty");
-						var label = $("<label>").text("Estimated Matches"); //.addClass("URLProperty");
+						var label = $("<label>").text("# Matches (approx)"); //.addClass("URLProperty");
 						th.append(label);
 						var label = $("<input>").text("")
 										.addClass("form-control")
@@ -2017,7 +2054,7 @@ var AugmentDataDialog = (function() {
 						tr.append(th);
 
 						var th = $("<th>"); //.addClass("URLProperty");
-						var label = $("<label>").text("Incoming/Outgoing"); //.addClass("URLProperty");
+						var label = $("<label>").text("Direction"); //.addClass("URLProperty");
 						th.append(label);
 						var searchBtn = $("<i>").addClass("glyphicon")
 										.addClass("glyphicon-search")
@@ -2054,17 +2091,19 @@ var AugmentDataDialog = (function() {
 
 				function init() {
 						//Initialize what happens when we show the dialog
-						var classes = getAllClasses(worksheetId);
-						var props = getAllDataProperties(worksheetId)
+						var classes = getAllClassesRaw(worksheetId);
+						var dataprops = getAllDataProperties(worksheetId);
+						var objprops = getAllObjectProperties(worksheetId);
 						$.each(classes, function(index, type) {
-							//console.log(type);
-							invertedClasses[type['uri']] = type['label'].substring(0, type['label'].indexOf(":"));
+							invertedClasses[type['uri']] = type['label'];
 						});
-						$.each(props, function(index, type) {
-							//console.log(type);
-							invertedClasses[type['uri']] = type['label'].substring(0, type['label'].indexOf(":"));
+						$.each(dataprops, function(index, type) {
+							invertedClasses[type['uri']] = type['label'];
 						});
-
+						$.each(objprops, function(index, type) {
+							invertedClasses[type['uri']] = type['label'];
+						});
+						//console.log(invertedClasses);
 						var dialogContent = $("#augmentDataDialogHeaders", dialog);
 						table = $("<table>")
 												.addClass("table table-striped table-condensed");
@@ -2091,7 +2130,7 @@ var AugmentDataDialog = (function() {
 						for (var i = 0; i < available.length; i++) {
 								var predicate = available[i]['predicate'];
 								if (invertedClasses[predicate] != undefined)
-									predicate = invertedClasses[predicate] + ":" + predicate.substring(predicate.lastIndexOf("/") + 1);
+									predicate = invertedClasses[predicate];
 								else
 									predicate = predicate.substring(predicate.lastIndexOf("/") + 1);
 								predicate = predicate.toLowerCase();
@@ -2099,7 +2138,7 @@ var AugmentDataDialog = (function() {
 								var otherClass = available[i]['otherClass'];
 								var incoming = available[i]['incoming'] === "true" ? "incoming" : "outgoing";
 								if (invertedClasses[otherClass] != undefined)
-									otherClass = invertedClasses[otherClass] + ":" + otherClass.substring(otherClass.lastIndexOf("/") + 1);
+									otherClass = invertedClasses[otherClass];
 								else
 									otherClass = otherClass.substring(otherClass.lastIndexOf("/") + 1);
 								otherClass = otherClass.toLowerCase();
@@ -2237,8 +2276,6 @@ var AugmentDataDialog = (function() {
 					var type = invertedClasses[columnDomain];
 					if (type == undefined) 
 						type = columnUri.substring(columnUri.lastIndexOf("/") + 1);
-					else
-					type = type + ":" + columnUri.substring(columnUri.lastIndexOf("/") + 1);
 					header.text("Augment data for " + type);
 					table.find("tr:gt(0)").remove();;
 					for (var i = 0; i < filtered.length; i++) {
@@ -2259,15 +2296,16 @@ var AugmentDataDialog = (function() {
 						td.append(checkbox);
 						tr.append(td);
 						var td = $("<td>");
-						var name = invertedClasses[predicate] == undefined ? "" : (invertedClasses[predicate] + ":");
+						var name = invertedClasses[predicate] == undefined ? predicate.substring(predicate.lastIndexOf("/") + 1) : invertedClasses[predicate];
 						var label = $("<span>")
-												.text(name + predicate.substring(predicate.lastIndexOf("/") + 1));
+												.text(name);
 						td.append(label);
 						tr.append(td);
 						var td = $("<td>");
-						name = invertedClasses[otherClass] == undefined ? "" : (invertedClasses[otherClass] + ":");
+						name = invertedClasses[otherClass] == undefined ? otherClass.substring(otherClass.lastIndexOf("/") + 1) : invertedClasses[otherClass];
+						name = name.replace(" (add)", "");
 						var label = $("<span>")
-												.text(name + otherClass.substring(otherClass.lastIndexOf("/") + 1));
+												.text(name);
 						td.append(label);
 						tr.append(td);
 						var td = $("<td>");
@@ -2325,3 +2363,152 @@ var AugmentDataDialog = (function() {
 		};
 		
 })();
+
+
+
+/**
+ * ==================================================================================================================
+ * 
+ * 				Diloag to add a New Node
+ * 
+ * ==================================================================================================================
+ */
+var AddNodeDialog = (function() {
+		var instance = null;
+
+		function PrivateConstructor() {
+			var dialog = $("#addNodeDialog");
+			var worksheetId;
+			
+			var classUI;
+			var selectedClass;
+			var allClasses;
+			
+			function init() {
+						
+						//Initialize what happens when we show the dialog
+						dialog.on('show.bs.modal', function (e) {
+								hideError();
+								allClasses = null;
+								
+								$(".main", dialog).empty();
+								var classDiv = $("<div>");
+								$(".main", dialog).append(classDiv);
+								
+								getAllClassNodes();
+								var loadTree = ($.workspaceGlobalInformation.UISettings.maxLoadedClasses == -1 ||
+										allClasses.length <= $.workspaceGlobalInformation.UISettings.maxLoadedClasses) ? true : false;
+								classUI = new ClassUI("addNewNode_class", null, getAllClassNodes, 300, loadTree);
+								classUI.setHeadings("Classes in Model", "All Classes");
+								classUI.onClassSelect(validateClassInputValue);
+								classUI.generateJS(classDiv, true);
+						});
+						
+						
+						$('#btnSave', dialog).on('click', function (e) {
+								e.preventDefault();
+								saveDialog(e);
+						});
+				}
+
+			function getAllClassNodes() {
+				if(allClasses == null) {
+					var classes = getAllClasses(worksheetId);
+						var result = [];
+						 $.each(classes, function(index, clazz){
+							 if(clazz.id) {
+								 if(!clazz.id.match(/ \(add\)$/))
+									 return;
+							 }
+							result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+							 
+						 });
+						 allClasses = result;
+				}
+					return allClasses;
+			}
+			
+			
+			function validateClassInputValue(classData) {
+				selectedClass = classData;
+				}
+			
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError(err) {
+			if(err) {
+				$("div.error", dialog).text(err);
+			}
+			$("div.error", dialog).show();
+		}
+				
+				function saveDialog(e) {
+					 var info = new Object();
+						 info["workspaceId"] = $.workspaceGlobalInformation.id;
+						 var newInfo = [];
+						 var label = selectedClass.label;
+						 if(label.length > 6) {
+							 label = label.substring(0, label.length-6);
+						 }   
+					 newInfo.push(getParamObject("label", label, "other"));
+					 newInfo.push(getParamObject("uri", selectedClass.uri, "other"));
+					 newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+					 
+						 info["newInfo"] = JSON.stringify(newInfo);
+						 info["command"] = "AddNodeCommand";
+						 showLoading(worksheetId);
+						 var returned = $.ajax({
+								 url: "RequestController",
+								 type: "POST",
+								 data : info,
+								 dataType : "json",
+								 complete :
+										 function (xhr, textStatus) {
+												 var json = $.parseJSON(xhr.responseText);
+												 parse(json);
+												 hideLoading(worksheetId);
+												 hide();
+										 },
+								 error :
+										 function (xhr, textStatus) {
+												 alert("Error occured while adding the node!");
+												 hideLoading(worksheetId);
+												 hide();
+										 }
+						 });
+				};
+				
+				
+				
+				function hide() {
+					dialog.modal('hide');
+				}
+				
+			 
+				function show(wsId) {
+					worksheetId = wsId;
+					dialog.modal({keyboard:true, show:true, backdrop:'static'});
+				};
+				
+				return {    //Return back the public methods
+						show : show,
+						init : init
+				};
+		};
+
+		function getInstance() {
+			if( ! instance ) {
+				instance = new PrivateConstructor();
+				instance.init();
+			}
+			return instance;
+		}
+	 
+		return {
+			getInstance : getInstance
+		};
+		
+})();
+

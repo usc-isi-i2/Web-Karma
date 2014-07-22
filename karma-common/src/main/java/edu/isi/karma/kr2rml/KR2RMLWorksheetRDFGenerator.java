@@ -100,6 +100,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		initializeMemberVariables(worksheet, factory, ontMgr, outputFileName,
 				addColumnContextInformation, kr2rmlMapping, errorReport);
 		this.outWriters.add(writer);
+		this.strategy = strategy;
 
 	}
 
@@ -169,6 +170,18 @@ public class KR2RMLWorksheetRDFGenerator {
 					logger.error("Unable to find DAG for RDF Generation!", e);
 					throw new Exception("Unable to find DAG for RDF Generation!", e);
 	
+				}
+			}
+			for (KR2RMLRDFWriter writer : outWriters) {
+				if (writer instanceof JSONKR2RMLRDFWriter) {
+					JSONKR2RMLRDFWriter jsonWriter = (JSONKR2RMLRDFWriter)writer;
+					jsonWriter.addPrefixes(kr2rmlMapping.getPrefixes());
+					for(Entry<TriplesMapGraph, List<String>> entry : graphTriplesMapsProcessingOrder.entrySet())
+					{
+						List<String> triplesMapIds = entry.getValue();
+						jsonWriter.addRootTriplesMapId(triplesMapIds.get(triplesMapIds.size()-1));	
+					}
+					
 				}
 			}
 			int i=1;

@@ -915,7 +915,7 @@ var ExtractEntitiesDialog = (function() {
 			dialog.on('show.bs.modal', function (e) {
 				console.log("dialog displayed");
 				hideError();
-								$('#extractionService_URL').val("http://karmanlp.isi.edu:8080/ExtractionService/myresource");
+				$('#extractionService_URL').val("http://karmanlp.isi.edu:8080/ExtractionService/StanfordCoreNLP");
 			});
 			
 			// Initialize handler for Save button
@@ -1695,68 +1695,68 @@ function ClusterValues(worksheetId, columnId) {
 	
 	var hNodeId = columnId;
 	var info = {};
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "GenerateClusterValuesCommand";
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "GenerateClusterValuesCommand";
 	
-		var newInfo = [];
-		newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-		newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+	var newInfo = [];
+	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+	newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
 	 
-		info["newInfo"] = JSON.stringify(newInfo);
+	info["newInfo"] = JSON.stringify(newInfo);
 	//alert("sending"+info);
 	showLoading(worksheetId);
-			 $.ajax({
-								url: "RequestController",
-								type: "POST",
-								data : info,
-								dataType : "json",
-								complete :
-										function (xhr, textStatus) {
-												var json = $.parseJSON(xhr.responseText);
-												parse(json);
-						//alert("returned"+json);
-												hideLoading(worksheetId);
-										},
-								error :
-										function (xhr, textStatus) {
-												alert("Error occured with fetching new rows! " + textStatus);
-												hideLoading(worksheetId);
-										}
-						});
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				parse(json);
+				//alert("returned"+json);
+				hideLoading(worksheetId);
+			},
+		error :
+			function (xhr, textStatus) {
+				alert("Error occured with fetching new rows! " + textStatus);
+				hideLoading(worksheetId);
+		}
+	});
 }
 
 function MergeValues(worksheetId, columnId) {
 	
 	var hNodeId = columnId;
 	var info = {};
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "MergeClusterValuesCommand";
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "MergeClusterValuesCommand";
 	
-		var newInfo = [];
-		newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-		newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+	var newInfo = [];
+	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+	newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
 	 
-		info["newInfo"] = JSON.stringify(newInfo);
-		showLoading(worksheetId);
+	info["newInfo"] = JSON.stringify(newInfo);
+	showLoading(worksheetId);
 	//alert("sending"+info);
 			
-			 $.ajax({
-								url: "RequestController",
-								type: "POST",
-								data : info,
-								dataType : "json",
-								complete :
-										function (xhr, textStatus) {
-												var json = $.parseJSON(xhr.responseText);	
-												parse(json);
-						//alert("returned"+json);
-												hideLoading(worksheetId);
-										},
-								error :
-										function (xhr, textStatus) {
-												alert("Error occured with fetching new rows! " + textStatus);
-												hideLoading(worksheetId);
-										}
-						});
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);	
+				parse(json);
+				//alert("returned"+json);
+				hideLoading(worksheetId);
+			},
+		error :
+			function (xhr, textStatus) {
+				alert("Error occured with fetching new rows! " + textStatus);
+				hideLoading(worksheetId);
+		}
+	});
 }
 

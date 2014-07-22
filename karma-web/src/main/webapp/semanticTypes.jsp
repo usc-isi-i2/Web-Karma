@@ -153,11 +153,10 @@
 				       <h4 class="modal-title" id="augmentHeader">Augment Data</h4>
 				  </div>
 				  <div class="modal-body">
-				  	<h4>Select Predicates:</h4>
 				  	<div id="augmentDataDialogHeaders"></div>
 						<div id="augmentDataDialogColumns" style = "max-height: 300px; overflow: auto;"></div>
 						<div class="form-group">
-							<label for="altPredicate">Alternative sameAs Predicate</label>
+							<label for="altPredicate">"Same As" property</label>
 							<input class="form-control" type="text" value="owl:sameAs" id="altPredicate" style = "width: 150px;"required>
 						</div>
 				  </div> <!-- /.modal-body -->
@@ -170,4 +169,27 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
        
+<div class="modal fade" id="addNodeDialog" tabindex="-1">
+  <div class="modal-dialog">
+		<div class="modal-content">
+			<form class="bs-example bs-example-form" role="form">
+		     <div class="modal-header">
+			      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			       <h4 class="modal-title">Add Node</h4>
+			  </div>
+			  <div class="modal-body">
+			  	
+			  		<div class="main"></div>
+					<div class="error" style="display: none"></div>
+				
+			  </div>
+			  <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			        <button type="submit" class="btn btn-primary" id="btnSave">Add</button>
+			  </div>
+			 </form>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 </body>

@@ -32,7 +32,11 @@ public class CloneTableUtils {
 		Collections.sort(hnodes);
 		Map<String, String> tmp = new HashMap<String, String>();
 		for (HNode hnode : hnodes) {
-			HNode newhnode = newht.addHNode(hnode.getColumnName(), HNodeType.Transformation, newws, factory);
+			HNode newhnode = null;
+			if (newht.getHNodeFromColumnName(hnode.getColumnName()) == null)
+				newhnode = newht.addHNode(hnode.getColumnName(), HNodeType.Transformation, newws, factory);
+			else
+				newhnode = newht.addHNode(newht.getNewColumnName(hnode.getColumnName()), HNodeType.Transformation, newws, factory);
 			tmp.put(hnode.getId(), newhnode.getId());
 			if (hnode.hasNestedTable()) {
 				HTable oldnested = hnode.getNestedTable();

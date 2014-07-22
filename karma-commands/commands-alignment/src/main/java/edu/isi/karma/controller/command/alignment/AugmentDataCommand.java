@@ -33,6 +33,7 @@ import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.HashValueManager;
@@ -42,6 +43,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.webserver.KarmaException;
@@ -58,7 +60,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 	private String newhNodeId;
 	private boolean incoming;
 	private String sameAsPredicate;
-	private final Integer limit = 50;
+	private final Integer limit = 200;
 	Stack<Command> appliedCommands;
 	public AugmentDataCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicate, String otherClass, String hNodeId, Boolean incoming, String sameAsPredicate) {
 		super(id, worksheetId);
@@ -224,7 +226,9 @@ public class AugmentDataCommand extends WorksheetCommand{
 				obj3.put("type", "other");
 				input.put(obj3);
 				try {
-					AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), incoming ? otherClass.substring(otherClass.lastIndexOf("/") + 1) : predicate.substring(predicate.lastIndexOf("/") + 1), HNodeType.AugmentData);
+					OntologyManager ontMgr = workspace.getOntologyManager();
+					Label label = ontMgr.getUriLabel(incoming ? otherClass : predicate);
+					AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), label.getDisplayName(), HNodeType.AugmentData);
 					command.doIt(workspace);
 					isNewNode |= command.isNewNode();
 					if (command.isNewNode())

@@ -89,7 +89,7 @@ public class RDFGeneratorServlet{
 			String baseURI = "http://isiimagefinder/";
 			
 			logger.info("Publishing rdf to triplestore:" + "http://localhost:3000/openrdf-sesame/repositories/karma_data");
-			boolean success = tsu.saveToStore(sw.toString(), tripleStoreURL, context, replace, baseURI);
+			boolean success = tsu.saveToStoreFromString(sw.toString(), tripleStoreURL, context, replace, baseURI);
 			
 			
 			if(success)

@@ -19,8 +19,9 @@ body {
   font-size: 9pt;
 }
 
+
 #footer label {
 	text-decoration: none;
-	font-weight: normal;
+	/* font-weight: normal; */
 }
 

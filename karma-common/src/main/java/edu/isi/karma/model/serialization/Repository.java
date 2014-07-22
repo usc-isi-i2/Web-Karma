@@ -38,9 +38,9 @@ import java.io.InputStream;
 
 public class Repository {
 	
-	public final String SERVICE_REPOSITORY_DIR = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "repository/services/";
-	public final String SOURCE_REPOSITORY_DIR = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "repository/sources/";
-	public final String TRIPLE_DATASET_DIR = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "repository/dataset/";
+	public final String SERVICE_REPOSITORY_REL_DIR = "repository/services/";
+	public final String SOURCE_REPOSITORY_REL_DIR = "repository/sources/";
+	public final String TRIPLE_DATASET_REL_DIR =  "repository/dataset/";
 	
 //	@param LANG: The language in which to write the model is specified by the lang argument.
 //	* Predefined values are "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLE", "TURTLE", (and "TTL") and "N3". 
@@ -58,11 +58,11 @@ public class Repository {
 		{
 			_InternalInstance = new Repository();
 
-			File serviceRepository = new File(_InternalInstance.SERVICE_REPOSITORY_DIR);
+			File serviceRepository = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + _InternalInstance.SERVICE_REPOSITORY_REL_DIR);
 			if (!serviceRepository.exists())
 				serviceRepository.mkdir();
 			
-			File sourceRepository = new File(_InternalInstance.SOURCE_REPOSITORY_DIR);
+			File sourceRepository = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + _InternalInstance.SOURCE_REPOSITORY_REL_DIR);
 			if (!sourceRepository.exists())
 				sourceRepository.mkdir();
 			
@@ -72,7 +72,7 @@ public class Repository {
 	}
 	
 	public void createRepository() {
-		Location location = new Location(this.TRIPLE_DATASET_DIR);
+		Location location = new Location(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + this.TRIPLE_DATASET_REL_DIR);
 		this.dataset = TDBFactory.createDataset(location);
 //		TDB.getContext().set(TDB.symUnionDefaultGraph, true);
 	}

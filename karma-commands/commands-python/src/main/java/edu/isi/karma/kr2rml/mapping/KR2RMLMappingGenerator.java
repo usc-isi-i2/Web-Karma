@@ -207,7 +207,7 @@ public class KR2RMLMappingGenerator {
 	{
 		Map<String, String> prefixMap = workspace.getOntologyManager().getPrefixMap(); 
 		for (Entry<String, String> entry :prefixMap.entrySet()) {
-			Prefix p = new Prefix(entry.getKey(), entry.getValue());
+			Prefix p = new Prefix(entry.getValue(), entry.getKey());
 			r2rmlMapping.addPrefix(p);
 		}
 	}
@@ -231,7 +231,7 @@ public class KR2RMLMappingGenerator {
 				
 				if (subjMap.isBlankNode()) {
 					List<String> columnsCovered = new ArrayList<String>();
-					Set<LabeledLink> links = dm.getModel().outgoingEdgesOf(treeNode);
+					Set<LabeledLink> links = dm.getOutgoingEdgesOf(treeNode);
 					Iterator<LabeledLink> linkIterator = links.iterator();
 					while(linkIterator.hasNext())
 					{

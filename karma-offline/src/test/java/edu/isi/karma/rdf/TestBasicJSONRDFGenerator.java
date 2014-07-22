@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 
 public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
@@ -44,6 +45,10 @@ public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
 		modelIdentifier = new R2RMLMappingIdentifier("cs548-events-model",
 				 getTestResource("cs548-events-model.ttl")
 						);
+		rdfGen.addModel(modelIdentifier);
+		modelIdentifier = new R2RMLMappingIdentifier(
+				"employees-model", getTestResource(
+						 "employees-model.ttl"));
 		rdfGen.addModel(modelIdentifier);
 	}
 
@@ -89,7 +94,32 @@ public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
 			fail("Execption: " + e.getMessage());
 		}
 	}
-
+	@Test
+	public void testGenerateJSON2() {
+		try {
+			String filename = "employees.json";
+			logger.info("Loading json file: " + filename);
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(pw);
+			RDFGeneratorRequest request = new RDFGeneratorRequest("employees-model", filename);
+			request.setInputFile(new File(getTestResource(filename).toURI()));
+			request.setDataType(InputType.JSON);
+			request.setStrategy(new UserSpecifiedRootStrategy("http://isi.edu/integration/karma/dev#TriplesMap_6c6ae57b-f0ac-4443-9a49-4ae5d2e20630"));
+			request.addWriter(writer);
+			rdfGen.generateRDF(request);
+			
+			String rdf = sw.toString();
+			assertNotEquals(rdf.length(), 0);
+			String[] lines = rdf.split("(\r\n|\n)");
+			int count = lines.length;
+			
+			assertEquals(366, count);
+		} catch (Exception e) {
+			logger.error("testGenerateRDF1 failed:", e);
+			fail("Execption: " + e.getMessage());
+		}
+	}
 	/**
 	 * Test method for
 	 * {@link edu.isi.karma.rdf.JSONRDFGenerator#generateRDF(java.lang.String, java.lang.String, boolean, java.io.PrintWriter)}

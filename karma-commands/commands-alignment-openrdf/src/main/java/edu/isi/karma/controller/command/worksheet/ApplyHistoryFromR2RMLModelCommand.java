@@ -50,7 +50,6 @@ import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
@@ -71,7 +70,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 	}
 	
 	private enum JsonKeys {
-		updateType, worksheetId, baseURI, prefix
+		updateType, worksheetId, baseURI, prefix, graphLabel
 	}
 
 	@Override
@@ -126,8 +125,6 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 			if (newws.getId().compareTo(worksheetId) != 0) {
 				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId()));
 				Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), newws.getId(), workspace.getOntologyManager());
-				SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(newws.getId()), workspace
-						.getCrfModelHandler(), workspace.getOntologyManager());
 				c.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(newws.getId(), workspace, alignment));
 			}
 		}
@@ -147,6 +144,8 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 						outputObject.put(JsonKeys.baseURI.name(), props.getPropertyValue(Property.baseURI));
 					if (props.getPropertyValue(Property.prefix) != null)
 						outputObject.put(JsonKeys.prefix.name(), props.getPropertyValue(Property.prefix));
+					if (props.getPropertyValue(Property.graphLabel) != null && !props.getPropertyValue(Property.graphLabel).trim().isEmpty()) 
+						outputObject.put(JsonKeys.graphLabel.name(), props.getPropertyValue(Property.graphLabel));
 					pw.println(outputObject.toString());
 				} catch (JSONException e) {
 					e.printStackTrace();

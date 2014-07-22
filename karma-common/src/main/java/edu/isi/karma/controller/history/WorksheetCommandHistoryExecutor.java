@@ -94,36 +94,42 @@ public class WorksheetCommandHistoryExecutor {
 		logger.info("Command in history: " + commandName);
 
 		// Change the hNode ids, vworksheet id to point to the current worksheet ids
-
-		UpdateContainer uc = normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
-		if(uc == null) { //No error
-			// Invoke the command
-			CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
-			if(cf != null) {
-				try { // This is sort of a hack the way I did this, but could not think of a better way to get rid of the dependency
-					Command comm = cf.createCommand(inputParamArr, workspace);
-					if(comm != null){
-						try {
-							logger.info("Executing command: " + commandName);
-							workspace.getCommandHistory().doCommand(comm, workspace, saveToHistory);
-						} catch(Exception e) {
-							logger.error("Error executing command: "+ commandName + ". Please notify this error");
-							Util.logException(logger, e);
-							//make these InfoUpdates so that the UI can still process the rest of the model
+		try {
+			UpdateContainer uc = normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
+			if(uc == null) { //No error
+				// Invoke the command
+				CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
+				if(cf != null) {
+					try { // This is sort of a hack the way I did this, but could not think of a better way to get rid of the dependency
+						Command comm = cf.createCommand(inputParamArr, workspace);
+						if(comm != null){
+							try {
+								logger.info("Executing command: " + commandName);
+								workspace.getCommandHistory().doCommand(comm, workspace, saveToHistory);
+							} catch(Exception e) {
+								logger.error("Error executing command: "+ commandName + ". Please notify this error");
+								Util.logException(logger, e);
+								//make these InfoUpdates so that the UI can still process the rest of the model
+								return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
+							}
+						}
+						else {
+							logger.error("Error occured while creating command (Could not create Command object): " 
+									+ commObject.get(HistoryArguments.commandName.name()));
 							return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
 						}
+					} catch (UnsupportedOperationException ignored) {
+	
 					}
-					else {
-						logger.error("Error occured while creating command (Could not create Command object): " 
-								+ commObject.get(HistoryArguments.commandName.name()));
-						return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
-					}
-				} catch (UnsupportedOperationException ignored) {
-
 				}
-			}
-		} 
-		return uc;
+			} 
+			return uc;
+		} catch(Exception e) {
+			logger.error("Error executing command: "+ commandName + ". Please notify this error");
+			Util.logException(logger, e);
+			//make these InfoUpdates so that the UI can still process the rest of the model
+			return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
+		}
 	}
 
 	private boolean ignoreIfBeforeColumnDoesntExist(String commandName) {
@@ -137,7 +143,7 @@ public class WorksheetCommandHistoryExecutor {
 		return ignore;
 	}
 
-	private UpdateContainer normalizeCommandHistoryJsonInput(Workspace workspace, String worksheetId, 
+	public UpdateContainer normalizeCommandHistoryJsonInput(Workspace workspace, String worksheetId, 
 			JSONArray inputArr, String commandName) throws JSONException {
 		HTable hTable = workspace.getWorksheet(worksheetId).getHeaders();
 		for (int i = 0; i < inputArr.length(); i++) {

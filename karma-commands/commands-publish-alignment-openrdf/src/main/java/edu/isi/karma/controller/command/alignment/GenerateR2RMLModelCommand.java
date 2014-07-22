@@ -22,8 +22,9 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+
+import javax.ws.rs.core.UriBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,19 +35,20 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.ICommand;
 import edu.isi.karma.controller.history.CommandHistory;
-import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
+import edu.isi.karma.controller.history.CommandHistoryUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.er.helper.TripleStoreUtil;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
@@ -56,29 +58,27 @@ import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class GenerateR2RMLModelCommand extends Command {
-	
+
 	private final String worksheetId;
 	private String worksheetName;
 	private String tripleStoreUrl;
 	private String graphContext;
-	private String localTripleStoreUrl;
 	private String RESTserverAddress;
 	private static Logger logger = LoggerFactory.getLogger(GenerateR2RMLModelCommand.class);
-	
+
 	public enum JsonKeys {
 		updateType, fileUrl, worksheetId
 	}
-	
+
 	public enum PreferencesKeys {
 		rdfPrefix, rdfNamespace, modelSparqlEndPoint
 	}
-	
-	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String localTripleStoreUrl, String context) {
+
+	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String context) {
 		super(id);
 		this.worksheetId = worksheetId;
 		this.tripleStoreUrl = url;
 		this.graphContext = context;
-		this.localTripleStoreUrl = localTripleStoreUrl;
 	}
 
 	public String getTripleStoreUrl() {
@@ -88,7 +88,7 @@ public class GenerateR2RMLModelCommand extends Command {
 	public void setTripleStoreUrl(String tripleStoreUrl) {
 		this.tripleStoreUrl = tripleStoreUrl;
 	}
-	
+
 	public String getGraphContext() {
 		return graphContext;
 	}
@@ -96,7 +96,7 @@ public class GenerateR2RMLModelCommand extends Command {
 	public void setGraphContext(String graphContext) {
 		this.graphContext = graphContext;
 	}
-	
+
 	public void setRESTserverAddress(String RESTserverAddress) {
 		this.RESTserverAddress = RESTserverAddress;
 	}
@@ -120,33 +120,64 @@ public class GenerateR2RMLModelCommand extends Command {
 	public CommandType getCommandType() {
 		return CommandType.notUndoable;
 	}
-	
+
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer uc = new UpdateContainer();
 		//save the preferences 
 		savePreferences(workspace);
-				
+
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		this.worksheetName = worksheet.getTitle();
+		CommandHistory history = workspace.getCommandHistory();
+		CommandHistoryUtil historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
+		historyUtil.consolidateHistory();		
+		historyUtil.replayHistory();
+		Set<String> inputColumns = historyUtil.generateInputColumns();
+		Set<String> outputColumns = historyUtil.generateOutputColumns();
+		JSONArray inputColumnsArray = new JSONArray();
+		JSONArray outputColumnsArray = new JSONArray();
+		for (String hNodeId : inputColumns) {
+			HNode hnode = workspace.getFactory().getHNode(hNodeId);
+			JSONArray hNodeRepresentation = hnode.getJSONArrayRepresentation(workspace.getFactory());
+			inputColumnsArray.put(hNodeRepresentation);
+		}
 		
+		for (String hNodeId : outputColumns) {
+			HNode hnode = workspace.getFactory().getHNode(hNodeId);
+			JSONArray hNodeRepresentation = hnode.getJSONArrayRepresentation(workspace.getFactory());
+			outputColumnsArray.put(hNodeRepresentation);
+		}
+		worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+				Property.inputColumns, inputColumnsArray.toString());
+		worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+				Property.outputColumns, outputColumnsArray.toString());
+		this.worksheetName = worksheet.getTitle();
+		String graphLabel = worksheet.getMetadataContainer().getWorksheetProperties().
+				getPropertyValue(Property.graphLabel); 
+
+		if (graphLabel == null || graphLabel.isEmpty()) {
+			worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+					Property.graphLabel, worksheet.getTitle());
+			graphLabel = worksheet.getTitle();
+			worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+					Property.graphName, WorksheetProperties.createDefaultGraphName(graphLabel));	
+		}
 		// Prepare the model file path and names
-		final String modelFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
-				this.worksheetName +  "-model.ttl"; 
+		final String modelFileName = graphLabel + "-model.ttl"; 
 		final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
 				ContextParameter.R2RML_PUBLISH_DIR) +  modelFileName;
 
 		// Get the alignment for this Worksheet
 		Alignment alignment = AlignmentManager.Instance().getAlignment(AlignmentManager.
 				Instance().constructAlignmentId(workspace.getId(), worksheetId));
-		
+
 		if (alignment == null) {
 			logger.info("Alignment is NULL for " + worksheetId);
 			return new UpdateContainer(new ErrorUpdate(
 					"Please align the worksheet before generating R2RML Model!"));
 		}
-		
+
 		// mohsen: my code to enable Karma to leran semantic models
 		// *****************************************************************************************
 		// *****************************************************************************************
@@ -159,7 +190,7 @@ public class GenerateR2RMLModelCommand extends Command {
 					".model.json");
 		} catch (Exception e) {
 			logger.error("error in exporting the model to JSON!");
-//			e.printStackTrace();
+			//			e.printStackTrace();
 		}
 		try {
 			semanticModel.writeGraphviz(ServletContextParameterMap.getParameterValue(ContextParameter.GRAPHVIZ_DIRECTORY) + 
@@ -167,22 +198,21 @@ public class GenerateR2RMLModelCommand extends Command {
 					".model.dot", false, false);
 		} catch (Exception e) {
 			logger.error("error in exporting the model to GRAPHVIZ!");
-//			e.printStackTrace();
+			//			e.printStackTrace();
 		}
 
 		if (ModelingConfiguration.isLearnerEnabled())
 			ModelLearningGraph.getInstance(workspace.getOntologyManager()).addModelAndUpdateGraphJson(semanticModel);
-		
+
 		// *****************************************************************************************
 		// *****************************************************************************************
 
 		try {
 			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
-			generateGraph(workspace);
-			fileSaver.saveAlignment(alignment, modelFileLocalPath);
 			
+			fileSaver.saveAlignment(alignment, modelFileLocalPath);
+
 			// Write the model to the triple store
-			TripleStoreUtil utilObj = new TripleStoreUtil();
 
 			// Get the graph name from properties
 			String graphName = worksheet.getMetadataContainer().getWorksheetProperties()
@@ -191,19 +221,22 @@ public class GenerateR2RMLModelCommand extends Command {
 				// Set to default
 				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
 						Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
+				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+						Property.graphLabel, worksheet.getTitle());
 				graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
 			}
-			
-			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true, null);
-			if (localTripleStoreUrl != null && localTripleStoreUrl.trim().compareTo("") != 0) {
-				String url = RESTserverAddress + "/R2RMLMapping/local/" + modelFileName;
+
+			boolean result = true;//utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true, null);
+			if (tripleStoreUrl != null && tripleStoreUrl.trim().compareTo("") != 0) {
+				UriBuilder builder = UriBuilder.fromPath(modelFileName);
+				String url = RESTserverAddress + "/R2RMLMapping/local/" + builder.build().toString();
 				SaveR2RMLModelCommandFactory factory = new SaveR2RMLModelCommandFactory();
-				SaveR2RMLModelCommand cmd = factory.createCommand(workspace, url, localTripleStoreUrl, graphName, "URL");
+				SaveR2RMLModelCommand cmd = factory.createCommand(workspace, url, tripleStoreUrl, graphName, "URL");
 				cmd.doIt(workspace);
 				result &= cmd.getSuccessful();
 				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelUrl, url);
 				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelContext, graphName);
-				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelRepository, localTripleStoreUrl);
+				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelRepository, tripleStoreUrl);
 			}
 			if (result) {
 				logger.info("Saved model to triple store");
@@ -213,7 +246,7 @@ public class GenerateR2RMLModelCommand extends Command {
 						JSONObject outputObject = new JSONObject();
 						try {
 							outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
-							
+
 							outputObject.put(JsonKeys.fileUrl.name(), ServletContextParameterMap.getParameterValue(
 									ContextParameter.R2RML_PUBLISH_RELATIVE_DIR) + modelFileName);
 							outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
@@ -223,11 +256,14 @@ public class GenerateR2RMLModelCommand extends Command {
 						}
 					}
 				});
+				uc.add(new HistoryUpdate(workspace.getCommandHistory()));
+				uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+				uc.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment));
 				return uc;
 			} 
-			
+
 			return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
-			
+
 		} catch (Exception e) {
 			logger.error("Error occured while generating R2RML Model!", e);
 			return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
@@ -239,34 +275,20 @@ public class GenerateR2RMLModelCommand extends Command {
 		// Not required
 		return null;
 	}
-	
-	
 
-	
+
+
+
 	private void savePreferences(Workspace workspace){
 		try{
 			JSONObject prefObject = new JSONObject();
 			prefObject.put(PreferencesKeys.modelSparqlEndPoint.name(), tripleStoreUrl);
 			workspace.getCommandPreferences().setCommandPreferences(
 					"GenerateR2RMLModelCommandPreferences", prefObject);
-			
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	private void generateGraph(Workspace workspace) {
-		CommandHistory history = workspace.getCommandHistory();
-		List<ICommand> commands = new ArrayList<ICommand>(history.getCommands(CommandTag.Modeling));
-		commands.addAll(history.getCommands(CommandTag.Transformation));
-		for (ICommand c : commands) {
-			if (c instanceof Command) {
-				Command command = (Command)c;
-				JSONArray json = new JSONArray(command.getInputParameterJson());
-				String worksheetId = HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json);
-				if (worksheetId.compareTo(this.worksheetId) == 0)
-					System.out.println(command.getCommandName() + " " + command.getDescription());
-			}
-		}
-	}
+
 }
