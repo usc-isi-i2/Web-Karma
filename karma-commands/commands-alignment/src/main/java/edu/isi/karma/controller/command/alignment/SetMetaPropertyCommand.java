@@ -43,6 +43,7 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
@@ -69,7 +70,7 @@ public class SetMetaPropertyCommand extends Command {
 	private METAPROPERTY_NAME metaPropertyName;
 	private final String metaPropertyValue;
 	private final String rdfLiteralType;
-
+	private String labelName = "";
 	private SynonymSemanticTypes oldSynonymTypes;
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
@@ -101,12 +102,13 @@ public class SetMetaPropertyCommand extends Command {
 
 	@Override
 	public String getTitle() {
-		return "Set Semantic Type";
+		//TODO
+		return "Set Semantic Type (MetaProperty)";
 	}
 
 	@Override
 	public String getDescription() {
-		return null;
+		return labelName;
 	}
 
 	@Override
@@ -120,8 +122,14 @@ public class SetMetaPropertyCommand extends Command {
 		inputColumns.clear();
 		outputColumns.clear();
 		inputColumns.add(hNodeId);
-//		outputColumns.add(hNodeId);
+		outputColumns.add(hNodeId);
 		logCommand(logger, workspace);
+		try {
+			HNode hn = workspace.getFactory().getHNode(hNodeId);
+			labelName = hn.getColumnName();
+		}catch(Exception e) {
+			
+		}
 		/*** Get the Alignment for this worksheet ***/
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		OntologyManager ontMgr = workspace.getOntologyManager();

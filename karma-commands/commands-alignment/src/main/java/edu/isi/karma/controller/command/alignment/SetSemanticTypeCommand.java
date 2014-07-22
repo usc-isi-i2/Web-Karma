@@ -41,6 +41,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
@@ -67,7 +68,7 @@ public class SetSemanticTypeCommand extends Command {
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 //	private DefaultLink newLink;
-	
+	private String labelName = "";
 	private SemanticType oldType;
 	private SemanticType newType;
 	
@@ -98,7 +99,7 @@ public class SetSemanticTypeCommand extends Command {
 
 	@Override
 	public String getDescription() {
-		return "";
+		return labelName;
 	}
 
 	@Override
@@ -113,6 +114,13 @@ public class SetSemanticTypeCommand extends Command {
 		inputColumns.clear();
 		outputColumns.clear();
 		inputColumns.add(hNodeId);
+		outputColumns.add(hNodeId);
+		try {
+			HNode hn = workspace.getFactory().getHNode(hNodeId);
+			labelName = hn.getColumnName();
+		}catch(Exception e) {
+			
+		}
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		OntologyManager ontMgr = workspace.getOntologyManager();
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
