@@ -6,11 +6,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.python.core.PyCode;
+import org.python.core.PyObject;
+import org.python.util.PythonInterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 
 public class Selection {
 	public enum SelectionStatus {
@@ -22,7 +30,7 @@ public class Selection {
 		IGNORE_IN_SERVICE_INVOCATION, IGNORE_IN_WORKSHEET_TRANSFORMATION
 	}
 	
-	private class SelectionProperty {
+	public class SelectionProperty {
 		public Boolean selected;
 		public String pythonCode;
 		public SelectionProperty(boolean selected, String pythonCode) {
@@ -30,17 +38,29 @@ public class Selection {
 			this.pythonCode = pythonCode;
 		}
 	}
+	private static Logger logger = LoggerFactory
+			.getLogger(Selection.class);
 	
+	@SuppressWarnings("unused")
 	private SelectionStatus status;
+	private Workspace workspace;
+	private String worksheetId;
 	private List<Tag> tags = new ArrayList<Tag>();
 	private Map<Row, SelectionProperty> selectedRows = new HashMap<Row, SelectionProperty>();
 	
-	public void addSelections(Worksheet worksheet, HTable htable, String pythonCode) {
+	public Selection(Workspace workspace, String worksheetId) {
+		this.worksheetId = worksheetId;
+		this.workspace = workspace;
+	}
+	public void addSelections(HTable htable, String pythonCode) {
 		List<Table> tables = new ArrayList<Table>();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), htable, tables);
+		PythonInterpreter interpreter = new PythonInterpreter();
+		PyCode code = getCompiledCode(pythonCode, interpreter);
 		for (Table t : tables) {
 			for (Row r : t.getRows(0, t.getNumRows())) {
-				selectedRows.put(r, new SelectionProperty(evaluatePythonExpression(r, pythonCode), pythonCode));
+				selectedRows.put(r, new SelectionProperty(evaluatePythonExpression(r, code, interpreter), pythonCode));
 			}
 		}
 	}
@@ -87,13 +107,49 @@ public class Selection {
 		for (Entry<Row, SelectionProperty> entry : this.selectedRows.entrySet()) {
 			Row key = entry.getKey();
 			SelectionProperty value = entry.getValue();
-			value.selected = evaluatePythonExpression(key, value.pythonCode);
+			PythonInterpreter interpreter = new PythonInterpreter();
+			value.selected = evaluatePythonExpression(key, getCompiledCode(value.pythonCode, interpreter), interpreter);
 		}
 	}
 	
+	public void addInputColumns(String hNodeId) {
+		System.out.println(hNodeId);
+	}
 	
-	private boolean evaluatePythonExpression(Row r, String pythonCode) {
-		return false;
+	
+	private boolean evaluatePythonExpression(Row r, PyCode code, PythonInterpreter interpreter) {
+		ArrayList<Node> nodes = new ArrayList<Node>(r.getNodes());
+		Node node = nodes.get(0);
+		interpreter.set("nodeid", node.getId());
+		PyObject output = interpreter.eval(code);
+		return new PythonTransformationHelper().getPyObjectValueAsBoolean(output);
+	}
+	
+	private PyCode getCompiledCode(String pythonCode, PythonInterpreter interpreter) {
+		PythonTransformationHelper pyHelper = new PythonTransformationHelper();
+		String trimmedTransformationCode = pythonCode.trim();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		if (trimmedTransformationCode.isEmpty()) {
+			trimmedTransformationCode = "return False";
+		}
+		String transformMethodStmt = pyHelper
+				.getPythonTransformMethodDefinitionState(worksheet,
+						trimmedTransformationCode);
+
+
+		logger.debug("Executing PyTransform\n" + transformMethodStmt);
+
+		// Prepare the Python interpreter
+		
+		interpreter.exec(pyHelper.getImportStatements());
+		pyHelper.importUserScripts(interpreter);
+		interpreter.exec(pyHelper.getGetValueDefStatement());
+		interpreter.exec(pyHelper.getVDefStatement());
+		interpreter.exec(transformMethodStmt);
+		interpreter.set("workspaceid", workspace.getId());
+		interpreter.set("command", this);
+		PyCode code = interpreter.compile("transform(nodeid)");
+		return code;
 	}
 	
 	

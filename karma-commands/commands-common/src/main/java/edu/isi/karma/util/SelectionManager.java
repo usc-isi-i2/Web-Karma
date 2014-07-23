@@ -3,13 +3,21 @@ package edu.isi.karma.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class SelectionManager {
 	private Map<String, Selection> selectionMapping = new HashMap<String, Selection>();
 	private Selection currentSelection = null;
+	private Workspace workspace;
+	private String worksheetId;
+	
+	public SelectionManager(Workspace workspace, String worksheetId) {
+		this.workspace = workspace;
+		this.worksheetId = worksheetId;
+	}
 	public Selection defineSelection(String name) {
-		Selection t = new Selection();
+		Selection t = new Selection(workspace, worksheetId);
 		selectionMapping.put(name, t);
 		return t;
 	}

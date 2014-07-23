@@ -21,8 +21,6 @@
 
 package edu.isi.karma.controller.command.transformation;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,9 +47,7 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.transformation.PythonTransformationHelper;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import edu.isi.karma.util.PythonTransformationHelper;
 
 public abstract class PythonTransformationCommand extends WorksheetCommand {
 
@@ -121,7 +117,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 
 		interpreter.exec(pyHelper.getImportStatements());
-		importUserScripts(interpreter);
+		pyHelper.importUserScripts(interpreter);
 		interpreter.exec(pyHelper.getGetValueDefStatement());
 		interpreter.exec(pyHelper.getVDefStatement());
 		interpreter.exec(transformMethodStmt);
@@ -177,25 +173,6 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		}
 		logger.debug("transform time "
 				+ (System.currentTimeMillis() - starttime));
-	}
-
-	private void importUserScripts(PythonInterpreter interpreter) {
-		String dirpathString = ServletContextParameterMap
-				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
-
-		if (dirpathString != null && dirpathString.compareTo("") != 0) {
-			File f = new File(dirpathString);
-			String[] scripts = f.list(new FilenameFilter(){
-
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.endsWith(".py");
-				}});
-			for(String script : scripts)
-			{
-				interpreter.execfile(dirpathString  + File.separator + script);
-			}
-		}
 	}
 
 	private void addError(JSONArray errorValues, Row row, int counter,

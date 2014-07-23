@@ -19,12 +19,18 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.transformation;
+package edu.isi.karma.util;
+
+import java.io.File;
+import java.io.FilenameFilter;
 
 import org.python.core.PyObject;
 import org.python.core.PyType;
+import org.python.util.PythonInterpreter;
 
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PythonTransformationHelper {
 	public String getPyObjectValueAsString(PyObject obj) {
@@ -37,6 +43,22 @@ public class PythonTransformationHelper {
 			return Integer.toString(obj.asInt());
 		
 		return obj.asString();
+	}
+	
+	public boolean getPyObjectValueAsBoolean(PyObject obj) {
+		if (obj == null)
+			return false;
+		PyType type = obj.getType();
+		if (type.getName().equals("long"))
+			return (obj.asLong() != 0);
+		else if (type.getName().equals("int"))
+			return (obj.asInt() != 0);
+		else if (type.getName().equals("bool")) 
+			return (obj.asInt() != 0);
+		else if (type.getName().equals("NoneType")) 
+			return false;
+		
+		return obj.asString().length() != 0;
 	}
 	
 	public String getImportStatements() {
@@ -72,7 +94,8 @@ public class PythonTransformationHelper {
 		methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
 		methodStmt.append("	node = factory.getNode(nodeid)\n");
 		methodStmt.append("	targetNode = node.getNeighborByColumnName(columnName, factory)\n");
-		methodStmt.append("	command.addInputColumns(targetNode.getHNodeId())\n");
+		methodStmt.append("	if command is not None: \n");
+		methodStmt.append("		command.addInputColumns(targetNode.getHNodeId())\n");
 		methodStmt.append("	if targetNode is not None:\n");
 		methodStmt.append("		value = targetNode.getValue()\n");
 		methodStmt.append("		if value is not None:\n");
@@ -89,5 +112,24 @@ public class PythonTransformationHelper {
 		StringBuilder methodStmt = new StringBuilder();
 		methodStmt.append("def v(columnName):\n\treturn getValue(columnName)\n");
 		return methodStmt.toString();
+	}
+	
+	public void importUserScripts(PythonInterpreter interpreter) {
+		String dirpathString = ServletContextParameterMap
+				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
+
+		if (dirpathString != null && dirpathString.compareTo("") != 0) {
+			File f = new File(dirpathString);
+			String[] scripts = f.list(new FilenameFilter(){
+
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.endsWith(".py");
+				}});
+			for(String script : scripts)
+			{
+				interpreter.execfile(dirpathString  + File.separator + script);
+			}
+		}
 	}
 }
