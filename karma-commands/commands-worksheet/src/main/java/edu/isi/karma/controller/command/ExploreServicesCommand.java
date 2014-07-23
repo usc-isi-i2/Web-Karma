@@ -89,7 +89,7 @@ public class ExploreServicesCommand extends WorksheetCommand {
 		long time_slipts = System.currentTimeMillis();
 		String gName = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.graphName);
 		String query = sparqlUtil.getExploreServicesQuery(gName, this.nodeId);
-		
+		logger.info(query);
 		JSONArray final_services = new JSONArray();
 		
 		try {
