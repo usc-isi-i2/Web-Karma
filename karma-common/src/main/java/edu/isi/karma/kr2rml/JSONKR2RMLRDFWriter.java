@@ -111,13 +111,13 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			addValue(subject, predicateUri, objectUri);
 			return;
 		}
-		
+
 		addValue(subject, predicateUri, object);
 		if(rootTriplesMapIds.isEmpty() || !rootTriplesMapIds.contains(pom.getTriplesMap().getId()))
 		{
 			rootObjects.remove(objectUri);
 		}
-		
+
 	}
 
 	private void addValue(JSONObject subject, String predicateUri, Object object) {
@@ -164,8 +164,20 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 
 	@Override
 	public void finishRow() {
+
+	}
+
+	@Override
+	public void flush() {
+		//		finishRow();
+		outWriter.flush();
+	}
+
+	@Override
+	public void close() {
 		for(JSONObject value : rootObjects.values())
 		{
+			collapseSameType(value);
 			if (!firstObject) {
 				outWriter.println(",");
 			}
@@ -173,20 +185,6 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			outWriter.print(value.toString(4));
 		}
 		outWriter.println("");
-		generatedObjectsWithoutTriplesMap = new ConcurrentHashMap<String, JSONObject>();
-		generatedObjectsByTriplesMapId = new ConcurrentHashMap<String, ConcurrentHashMap<String, JSONObject>>();
-		rootObjects = new ConcurrentHashMap<String, JSONObject>();		
-	}
-
-	@Override
-	public void flush() {
-		finishRow();
-		outWriter.flush();
-	}
-
-	@Override
-	public void close() {
-		outWriter.print("]");
 		outWriter.close();
 	}
 
@@ -194,7 +192,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	public void outputTripleWithURIObject(PredicateObjectMap predicateObjectMap,
 			String subjUri, String predicateUri,
 			String objectUri) {
-		
+
 		addURIObject(predicateObjectMap, subjUri, predicateUri, objectUri);
 	}
 
@@ -212,7 +210,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	public void outputQuadWithLiteralObject( PredicateObjectMap predicateObjectMap, 
 			String subjUri, String predicateUri, String value,
 			String literalType, String graph) {
-		
+
 		JSONObject subject = checkAndAddSubjUri(predicateObjectMap.getTriplesMap().getId(), subjUri);
 		//TODO should literal type be ignored?
 		//TODO should graph be ignored?
@@ -223,7 +221,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	public void addPrefixes(Collection<Prefix> prefixes) {
 		shortHandURIGenerator.addPrefixes(prefixes);
 	}
-	
+
 	public JSONObject getGeneratedObject(String triplesMapId, String generatedObjectUri)
 	{
 		ConcurrentHashMap<String, JSONObject> generatedObjects = this.generatedObjectsByTriplesMapId.get(triplesMapId);
@@ -244,6 +242,32 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	}
 	public void addRootTriplesMapIds(Collection<String> rootTriplesMapIds) {
 		this.rootTriplesMapIds.addAll(rootTriplesMapIds);
+	}
+
+	private void collapseSameType(JSONObject obj) {
+		if (obj.has("@type")) {
+			JSONArray array = obj.getJSONArray("@type");
+			Set<String> types = new HashSet<String>();
+			for (int i = 0; i < array.length(); i++) {
+				types.add(array.getString(0));
+				array.remove(0);
+			}
+			for (String type : types)
+				array.put(type);
+		}
+		for (Object key : obj.keySet()) {
+			Object value = obj.get(key.toString());
+			if (value instanceof JSONObject)
+				collapseSameType((JSONObject)value);
+			if (value instanceof JSONArray) {
+				JSONArray array = (JSONArray)value;
+				for (int i = 0; i < array.length(); i++) {
+					Object o = array.get(i);
+					if (o instanceof JSONObject)
+						collapseSameType((JSONObject) o);
+				}
+			}
+		}
 	}
 
 }
