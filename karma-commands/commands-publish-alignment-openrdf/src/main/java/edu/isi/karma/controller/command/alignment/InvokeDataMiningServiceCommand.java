@@ -130,6 +130,7 @@ public class InvokeDataMiningServiceCommand extends Command {
         	Import impCSV = new CSVFileImport(1, 2, ',', ' ', "UTF-8", -1, new File(fileName), workspace);
         	Worksheet wsht = impCSV.generateWorksheet();
         	uc = new UpdateContainer();
+        	uc.add(new WorksheetListUpdate());
             uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
             new File(fileName).delete();
 
