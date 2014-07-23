@@ -21,8 +21,11 @@
 package edu.isi.karma.kr2rml;
 
 import java.io.PrintWriter;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,6 +44,26 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	protected ShortHandURIGenerator shortHandURIGenerator = new ShortHandURIGenerator();
 	protected String rootTriplesMapId; 
 	protected Set<String> rootTriplesMapIds;
+	private static Set<String> numericLiteralTypes = new HashSet<String>();
+	static {
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#decimal");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#integer");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#nonPositiveInteger");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#negativeInteger");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#long");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#int");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#short");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#byte");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#unsignedLong");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#unsignedInt");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#unsignedShort");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#unsignedInt");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#unsignedByte");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#positiveInteger");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#float");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#double");
+	}
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter) {
 		this.outWriter = outWriter;
 		generatedObjectsWithoutTriplesMap = new ConcurrentHashMap<String, JSONObject>();
@@ -62,7 +85,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	public void outputTripleWithLiteralObject(String subjUri,
 			String predicateUri, String value, String literalType) {
 		JSONObject subject = checkAndAddsubjUri(null, generatedObjectsWithoutTriplesMap, subjUri);
-		addValue(subject, predicateUri, value);
+		addValue(subject, predicateUri, convertValueWithLiteralType(literalType, value));
 	}
 
 	@Override
@@ -185,6 +208,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			outWriter.print(value.toString(4));
 		}
 		outWriter.println("");
+		outWriter.println("]");
 		outWriter.close();
 	}
 
@@ -203,7 +227,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			String literalType) {
 		JSONObject subject = checkAndAddSubjUri(predicateObjectMap.getTriplesMap().getId(), subjUri);
 		//TODO should literal type be ignored?
-		addValue(subject, predicateUri, value);
+		addValue(subject, predicateUri, convertValueWithLiteralType(literalType, value));
 	}
 
 	@Override
@@ -214,7 +238,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 		JSONObject subject = checkAndAddSubjUri(predicateObjectMap.getTriplesMap().getId(), subjUri);
 		//TODO should literal type be ignored?
 		//TODO should graph be ignored?
-		addValue(subject, predicateUri, value);
+		addValue(subject, predicateUri, convertValueWithLiteralType(literalType, value));
 
 	}
 
@@ -268,6 +292,23 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 				}
 			}
 		}
+	}
+	
+	private Object convertValueWithLiteralType(String literalType, String value) {
+		try {
+			if (numericLiteralTypes.contains(literalType)) {
+				Number n = NumberFormat.getNumberInstance(Locale.US).parse(value);
+				return n;
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+		if (literalType != null && literalType.equals("http://www.w3.org/2001/XMLSchema#boolean")) {
+			boolean b = Boolean.parseBoolean(value);
+			return b;
+		}
+		return value;
 	}
 
 }
