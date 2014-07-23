@@ -21,8 +21,11 @@
 package edu.isi.karma.kr2rml;
 
 import java.io.PrintWriter;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,6 +44,26 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	protected ShortHandURIGenerator shortHandURIGenerator = new ShortHandURIGenerator();
 	protected String rootTriplesMapId; 
 	protected Set<String> rootTriplesMapIds;
+	private static Set<String> numericLiteralTypes = new HashSet<String>();
+	static {
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#decimal");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#integer");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#nonPositiveInteger");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#negativeInteger");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#long");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#int");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#short");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#byte");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#unsignedLong");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#unsignedInt");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#unsignedShort");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#unsignedInt");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#unsignedByte");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#positiveInteger");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#float");
+		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#double");
+	}
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter) {
 		this.outWriter = outWriter;
 		generatedObjectsWithoutTriplesMap = new ConcurrentHashMap<String, JSONObject>();
@@ -62,7 +85,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	public void outputTripleWithLiteralObject(String subjUri,
 			String predicateUri, String value, String literalType) {
 		JSONObject subject = checkAndAddsubjUri(null, generatedObjectsWithoutTriplesMap, subjUri);
-		addValue(subject, predicateUri, value);
+		addValue(subject, predicateUri, convertValueWithLiteralType(literalType, value));
 	}
 
 	@Override
@@ -111,13 +134,13 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			addValue(subject, predicateUri, objectUri);
 			return;
 		}
-		
+
 		addValue(subject, predicateUri, object);
 		if(rootTriplesMapIds.isEmpty() || !rootTriplesMapIds.contains(pom.getTriplesMap().getId()))
 		{
 			rootObjects.remove(objectUri);
 		}
-		
+
 	}
 
 	private void addValue(JSONObject subject, String predicateUri, Object object) {
@@ -164,8 +187,20 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 
 	@Override
 	public void finishRow() {
+
+	}
+
+	@Override
+	public void flush() {
+		//		finishRow();
+		outWriter.flush();
+	}
+
+	@Override
+	public void close() {
 		for(JSONObject value : rootObjects.values())
 		{
+			collapseSameType(value);
 			if (!firstObject) {
 				outWriter.println(",");
 			}
@@ -173,20 +208,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			outWriter.print(value.toString(4));
 		}
 		outWriter.println("");
-		generatedObjectsWithoutTriplesMap = new ConcurrentHashMap<String, JSONObject>();
-		generatedObjectsByTriplesMapId = new ConcurrentHashMap<String, ConcurrentHashMap<String, JSONObject>>();
-		rootObjects = new ConcurrentHashMap<String, JSONObject>();		
-	}
-
-	@Override
-	public void flush() {
-		finishRow();
-		outWriter.flush();
-	}
-
-	@Override
-	public void close() {
-		outWriter.print("]");
+		outWriter.println("]");
 		outWriter.close();
 	}
 
@@ -194,7 +216,7 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	public void outputTripleWithURIObject(PredicateObjectMap predicateObjectMap,
 			String subjUri, String predicateUri,
 			String objectUri) {
-		
+
 		addURIObject(predicateObjectMap, subjUri, predicateUri, objectUri);
 	}
 
@@ -205,25 +227,25 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			String literalType) {
 		JSONObject subject = checkAndAddSubjUri(predicateObjectMap.getTriplesMap().getId(), subjUri);
 		//TODO should literal type be ignored?
-		addValue(subject, predicateUri, value);
+		addValue(subject, predicateUri, convertValueWithLiteralType(literalType, value));
 	}
 
 	@Override
 	public void outputQuadWithLiteralObject( PredicateObjectMap predicateObjectMap, 
 			String subjUri, String predicateUri, String value,
 			String literalType, String graph) {
-		
+
 		JSONObject subject = checkAndAddSubjUri(predicateObjectMap.getTriplesMap().getId(), subjUri);
 		//TODO should literal type be ignored?
 		//TODO should graph be ignored?
-		addValue(subject, predicateUri, value);
+		addValue(subject, predicateUri, convertValueWithLiteralType(literalType, value));
 
 	}
 
 	public void addPrefixes(Collection<Prefix> prefixes) {
 		shortHandURIGenerator.addPrefixes(prefixes);
 	}
-	
+
 	public JSONObject getGeneratedObject(String triplesMapId, String generatedObjectUri)
 	{
 		ConcurrentHashMap<String, JSONObject> generatedObjects = this.generatedObjectsByTriplesMapId.get(triplesMapId);
@@ -244,6 +266,49 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 	}
 	public void addRootTriplesMapIds(Collection<String> rootTriplesMapIds) {
 		this.rootTriplesMapIds.addAll(rootTriplesMapIds);
+	}
+
+	private void collapseSameType(JSONObject obj) {
+		if (obj.has("@type")) {
+			JSONArray array = obj.getJSONArray("@type");
+			Set<String> types = new HashSet<String>();
+			for (int i = 0; i < array.length(); i++) {
+				types.add(array.getString(0));
+				array.remove(0);
+			}
+			for (String type : types)
+				array.put(type);
+		}
+		for (Object key : obj.keySet()) {
+			Object value = obj.get(key.toString());
+			if (value instanceof JSONObject)
+				collapseSameType((JSONObject)value);
+			if (value instanceof JSONArray) {
+				JSONArray array = (JSONArray)value;
+				for (int i = 0; i < array.length(); i++) {
+					Object o = array.get(i);
+					if (o instanceof JSONObject)
+						collapseSameType((JSONObject) o);
+				}
+			}
+		}
+	}
+	
+	private Object convertValueWithLiteralType(String literalType, String value) {
+		try {
+			if (numericLiteralTypes.contains(literalType)) {
+				Number n = NumberFormat.getNumberInstance(Locale.US).parse(value);
+				return n;
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+		if (literalType != null && literalType.equals("http://www.w3.org/2001/XMLSchema#boolean")) {
+			boolean b = Boolean.parseBoolean(value);
+			return b;
+		}
+		return value;
 	}
 
 }
