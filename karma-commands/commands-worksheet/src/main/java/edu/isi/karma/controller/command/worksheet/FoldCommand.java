@@ -86,6 +86,8 @@ public class FoldCommand extends WorksheetCommand {
 		RepFactory Repfactory = workspace.getFactory();
 		Worksheet worksheet = workspace.getWorksheet(
 				worksheetId);
+		inputColumns.clear();
+		outputColumns.clear();
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
 		HTable htable;
 		if (hNodeId.compareTo("") != 0)
@@ -98,6 +100,7 @@ public class FoldCommand extends WorksheetCommand {
 		for (int i = 0; i < checked.length(); i++) {
 			JSONObject t = (checked.getJSONObject(i));
 			hnodes.add(htable.getHNode((String) t.get("value")));
+			inputColumns.add(t.getString("value"));
 		}
 		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows());
 		if (htable != worksheet.getHeaders()) {
@@ -166,6 +169,7 @@ public class FoldCommand extends WorksheetCommand {
 			//hNodeId = hnodes.get(0).getId();
 			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId, worksheet.getHeaders().getNewColumnName("fold"), HNodeType.Transformation);
 			cmd.doIt(workspace);
+			outputColumns.addAll(cmd.getOutputColumns());
 			UpdateContainer c =  new UpdateContainer();		
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));

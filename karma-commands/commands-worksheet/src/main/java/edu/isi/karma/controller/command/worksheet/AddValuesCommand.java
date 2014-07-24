@@ -87,6 +87,8 @@ public class AddValuesCommand extends WorksheetCommand{
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(
 				worksheetId);
+		inputColumns.clear();
+		outputColumns.clear();
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
 		String addValues = null;	
 		HNode ndid = null;
@@ -162,23 +164,21 @@ public class AddValuesCommand extends WorksheetCommand{
 		//add column after the column with hNodeId
 		HNode ndid = null;
 		if (newColumnName != null && !newColumnName.trim().isEmpty()) {
-			if (hTable.getHNodeFromColumnName(newColumnName) != null)
+			if (hTable.getHNodeFromColumnName(newColumnName) != null) {
 				ndid = hTable.getHNodeFromColumnName(newColumnName);
+				outputColumns.add(ndid.getId());
+			}
 			else {
 				ndid = hTable.addNewHNodeAfter(hNodeId, type, workspace.getFactory(), newColumnName, worksheet,true);
+				outputColumns.add(ndid.getId());
 				isNewNode = true;
 			}
 		}
 		else {
-			ndid = hTable.addNewHNodeAfter(hNodeId, type, workspace.getFactory(), newColumnName, worksheet,true);
+			ndid = hTable.addNewHNodeAfter(hNodeId, type, workspace.getFactory(), hTable.getNewColumnName("default"), worksheet,true);
+			outputColumns.add(ndid.getId());
 			isNewNode = true;
 		}
-		if(ndid == null)
-		{
-			logger.error("Unable to add new HNode!");
-			throw new KarmaException("Unable to add new HNode!");
-		}
-
 		newHNodeId = ndid.getId();
 		//add as first column in the table if hNodeId is null
 		//HNode ndid = currentTable.addNewHNodeAfter(null, vWorkspace.getRepFactory(), newColumnName, worksheet,true);
@@ -260,6 +260,7 @@ public class AddValuesCommand extends WorksheetCommand{
 			if ( h == null) {		
 				h = nestedHTable.addHNode(key.toString(), type, worksheet, factory);
 			}
+			outputColumns.add(h.getId());
 			//
 			if (value instanceof String)
 				flag |= addValues(r.getNode(h.getId()), (String)value, factory, nestedTable);

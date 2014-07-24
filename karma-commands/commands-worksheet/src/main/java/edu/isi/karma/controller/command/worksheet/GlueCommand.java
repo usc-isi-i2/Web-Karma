@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.worksheet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -69,6 +70,8 @@ public class GlueCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		inputColumns.clear();
+		outputColumns.clear();
 		RepFactory factory = workspace.getFactory();
 		Worksheet oldws = workspace.getWorksheet(worksheetId);
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
@@ -129,6 +132,7 @@ public class GlueCommand extends WorksheetCommand {
 			}
 		}
 		HNode newNode = ht.addHNode(ht.getNewColumnName("Glue"), HNodeType.Transformation, oldws, factory);
+		outputColumns.add(newNode.getId());
 		newhNodeId = newNode.getId();
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
 		List<HNode> childHNodes = new ArrayList<HNode>();
@@ -139,8 +143,10 @@ public class GlueCommand extends WorksheetCommand {
 				}
 			}
 		}
-		Map<String, String> mapping = CloneTableUtils.cloneHTable(ht, newht, oldws, factory, childHNodes, true);
-
+		Map<String, String> mapping = CloneTableUtils.cloneHTable(ht, newht, oldws, factory, childHNodes);
+		for (Entry<String, String> entry : mapping.entrySet()) {
+			outputColumns.add(entry.getValue());
+		}
 		for (Row parentRow : parentRows) {
 			Table t = null;
 			for (Node node : parentRow.getNodes()) {
@@ -182,6 +188,7 @@ public class GlueCommand extends WorksheetCommand {
 		HTable parentHT = oldws.getHeaders();
 		HNode newNode = parentHT.addHNode(parentHT.getNewColumnName("Glue"), HNodeType.Transformation, oldws, factory);
 		newhNodeId = newNode.getId();
+		outputColumns.add(newhNodeId);
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
 		List<HNode> childHNodes = new ArrayList<HNode>();
 		for (HNode hnode : hnodes) {
@@ -191,7 +198,10 @@ public class GlueCommand extends WorksheetCommand {
 				}
 			}
 		}
-		Map<String, String> mapping = CloneTableUtils.cloneHTable(oldws.getHeaders(), newht, oldws, factory, childHNodes, true);
+		Map<String, String> mapping = CloneTableUtils.cloneHTable(oldws.getHeaders(), newht, oldws, factory, childHNodes);
+		for (Entry<String, String> entry : mapping.entrySet()) {
+			outputColumns.add(entry.getValue());
+		}
 		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows());
 		for (Row row : rows) {
 			Table nestedTable = row.getNeighbor(newNode.getId()).getNestedTable();
