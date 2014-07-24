@@ -19,18 +19,24 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.transformation;
+package edu.isi.karma.controller.command.transformation;
+
+import java.io.File;
+import java.io.FilenameFilter;
 
 import org.python.core.PyObject;
 import org.python.core.PyType;
+import org.python.util.PythonInterpreter;
 
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PythonTransformationHelper {
 	
 	private static String valueDefStatement = null;
 	private static String importStatement = null;
-	public String getPyObjectValueAsString(PyObject obj) {
+	public static String getPyObjectValueAsString(PyObject obj) {
 		if (obj == null)
 			return "";
 		PyType type = obj.getType();
@@ -42,6 +48,36 @@ public class PythonTransformationHelper {
 		return obj.asString();
 	}
 	
+	public static boolean getPyObjectValueAsBoolean(PyObject obj) {
+		if (obj == null)
+			return false;
+		PyType type = obj.getType();
+		if (type.getName().equals("long"))
+			return (obj.asLong() != 0);
+		else if (type.getName().equals("int"))
+			return (obj.asInt() != 0);
+		else if (type.getName().equals("bool")) 
+			return (obj.asInt() != 0);
+		else if (type.getName().equals("NoneType")) 
+			return false;
+		
+		return obj.asString().length() != 0;
+	}
+
+	public String normalizeString(String string) {
+		return string.replaceAll(" ", "").replaceAll("[^\\p{L}\\p{N}]","");
+	}
+	
+	public static String getPythonTransformMethodDefinitionState(Worksheet worksheet, String transformationCode) {
+		StringBuilder methodStmt = new StringBuilder();
+		methodStmt.append("def transform(r):\n");
+		String lines[] = transformationCode.split("\\r?\\n");
+		for (String line:lines) {
+			methodStmt.append("\t" + line + "\n");
+		}
+		return methodStmt.toString();
+	}
+
 	public static String getImportStatements() {
 		if(importStatement == null)
 		{
@@ -57,24 +93,9 @@ public class PythonTransformationHelper {
 		}
 		return importStatement;
 	}
-	
-	public String normalizeString(String string) {
-		return string.replaceAll(" ", "").replaceAll("[^\\p{L}\\p{N}]","");
-	}
-	
-	public static String getPythonTransformMethodDefinitionState(Worksheet worksheet, String transformationCode) {
-		StringBuilder methodStmt = new StringBuilder();
-		methodStmt.append("def transform(r):\n");
-		String lines[] = transformationCode.split("\\r?\\n");
-		for (String line:lines) {
-			methodStmt.append("\t" + line + "\n");
-		}
-		return methodStmt.toString();
-	}
-
 
 	public static String getGetValueDefStatement() {
-		
+	
 		if(valueDefStatement == null)
 		{
 			StringBuilder methodStmt = new StringBuilder();
@@ -103,5 +124,24 @@ public class PythonTransformationHelper {
 
 	public static String getTransformStatement() {
 		return  "transform(nodeid)";
+	}
+	
+	public void importUserScripts(PythonInterpreter interpreter) {
+		String dirpathString = ServletContextParameterMap
+				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
+
+		if (dirpathString != null && dirpathString.compareTo("") != 0) {
+			File f = new File(dirpathString);
+			String[] scripts = f.list(new FilenameFilter(){
+
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.endsWith(".py");
+				}});
+			for(String script : scripts)
+			{
+				interpreter.execfile(dirpathString  + File.separator + script);
+			}
+		}
 	}
 }

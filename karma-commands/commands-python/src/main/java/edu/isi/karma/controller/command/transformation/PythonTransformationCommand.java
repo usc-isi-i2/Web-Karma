@@ -48,7 +48,7 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.transformation.PythonTransformationHelper;
+
 
 public abstract class PythonTransformationCommand extends WorksheetCommand {
 
@@ -98,7 +98,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 			JSONArray transformedRows, JSONArray errorValues, Integer limit)
 					throws JSONException, IOException {
 
-		PythonTransformationHelper pyHelper = new PythonTransformationHelper();
+		
 		String trimmedTransformationCode = transformationCode.trim();
 		// Pedro: somehow we are getting empty statements, and these are causing
 		// exceptions.
@@ -146,7 +146,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 			try {
 				PyObject output = interpreter.eval(py);
-				String transformedValue = pyHelper
+				String transformedValue = PythonTransformationHelper
 						.getPyObjectValueAsString(output);
 				addTransformedValue(transformedRows, row, transformedValue);
 			} catch (PyException p) {

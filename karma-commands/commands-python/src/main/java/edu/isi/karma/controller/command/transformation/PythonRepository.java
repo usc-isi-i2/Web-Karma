@@ -9,7 +9,6 @@ import org.apache.commons.io.FileUtils;
 import org.python.core.PyCode;
 import org.python.util.PythonInterpreter;
 
-import edu.isi.karma.transformation.PythonTransformationHelper;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 

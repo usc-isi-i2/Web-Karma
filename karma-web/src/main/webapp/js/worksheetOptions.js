@@ -315,7 +315,7 @@ function WorksheetOptions(wsId, wsTitle) {
 					add : function (e, data) {
 							$("#applyWorksheetHistory_" + worksheetId).fileupload({
 									url: "RequestController?workspaceId=" + $.workspaceGlobalInformation.id +
-											"&command=ApplyHistoryFromR2RMLModelCommand&worksheetId=" + worksheetId
+											"&command=ApplyHistoryFromR2RMLModelCommand&worksheetId=" + worksheetId + "&override=false"
 							});
 							hideDropdown();
 							showLoading(worksheetId);
