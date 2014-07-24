@@ -27,6 +27,9 @@ import org.python.core.PyType;
 import edu.isi.karma.rep.Worksheet;
 
 public class PythonTransformationHelper {
+	
+	private static String valueDefStatement = null;
+	private static String importStatement = null;
 	public String getPyObjectValueAsString(PyObject obj) {
 		if (obj == null)
 			return "";
@@ -39,23 +42,27 @@ public class PythonTransformationHelper {
 		return obj.asString();
 	}
 	
-	public String getImportStatements() {
-		StringBuilder importStmt = new StringBuilder();
-		importStmt.append("import re\n");
-		importStmt.append("import datetime\n");
-		importStmt.append("import edu.isi.karma.rep.WorkspaceManager\n");
-		importStmt.append("import edu.isi.karma.rep.Workspace\n");
-		importStmt.append("import edu.isi.karma.rep.Node\n");
-		importStmt.append("import edu.isi.karma.rep.RepFactory\n");
-		importStmt.append("import edu.isi.karma.controller.command.transformation.PythonTransformationCommand\n");
-		return importStmt.toString();
+	public static String getImportStatements() {
+		if(importStatement == null)
+		{
+			StringBuilder importStmt = new StringBuilder();
+			importStmt.append("import re\n");
+			importStmt.append("import datetime\n");
+			importStmt.append("import edu.isi.karma.rep.WorkspaceManager\n");
+			importStmt.append("import edu.isi.karma.rep.Workspace\n");
+			importStmt.append("import edu.isi.karma.rep.Node\n");
+			importStmt.append("import edu.isi.karma.rep.RepFactory\n");
+			importStmt.append("import edu.isi.karma.controller.command.transformation.PythonTransformationCommand\n");
+			importStatement = importStmt.toString();
+		}
+		return importStatement;
 	}
 	
 	public String normalizeString(String string) {
 		return string.replaceAll(" ", "").replaceAll("[^\\p{L}\\p{N}]","");
 	}
 	
-	public String getPythonTransformMethodDefinitionState(Worksheet worksheet, String transformationCode) {
+	public static String getPythonTransformMethodDefinitionState(Worksheet worksheet, String transformationCode) {
 		StringBuilder methodStmt = new StringBuilder();
 		methodStmt.append("def transform(r):\n");
 		String lines[] = transformationCode.split("\\r?\\n");
@@ -66,28 +73,35 @@ public class PythonTransformationHelper {
 	}
 
 
-	public String getGetValueDefStatement() {
-		StringBuilder methodStmt = new StringBuilder();
-		methodStmt.append("def getValue(columnName):\n");
-		methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
-		methodStmt.append("	node = factory.getNode(nodeid)\n");
-		methodStmt.append("	targetNode = node.getNeighborByColumnName(columnName, factory)\n");
-		methodStmt.append("	command.addInputColumns(targetNode.getHNodeId())\n");
-		methodStmt.append("	if targetNode is not None:\n");
-		methodStmt.append("		value = targetNode.getValue()\n");
-		methodStmt.append("		if value is not None:\n");
-		methodStmt.append("			valueAsString = value.asString()\n");
-		methodStmt.append("			if valueAsString is not None:\n");
-		methodStmt.append("				return valueAsString\n");
-		methodStmt.append("	return ''\n");
+	public static String getGetValueDefStatement() {
 		
-		return methodStmt.toString();
+		if(valueDefStatement == null)
+		{
+			StringBuilder methodStmt = new StringBuilder();
+			methodStmt.append("def getValue(columnName):\n");
+			methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
+			methodStmt.append("	node = factory.getNode(nodeid)\n");
+			methodStmt.append("	targetNode = node.getNeighborByColumnName(columnName, factory)\n");
+			methodStmt.append("	command.addInputColumns(targetNode.getHNodeId())\n");
+			methodStmt.append("	if targetNode is not None:\n");
+			methodStmt.append("		value = targetNode.getValue()\n");
+			methodStmt.append("		if value is not None:\n");
+			methodStmt.append("			valueAsString = value.asString()\n");
+			methodStmt.append("			if valueAsString is not None:\n");
+			methodStmt.append("				return valueAsString\n");
+			methodStmt.append("	return ''\n");
+			valueDefStatement = methodStmt.toString();
+		}
+		return valueDefStatement;
 	}
 	
-	public String getVDefStatement()
+	public static String getVDefStatement()
 	{
-		StringBuilder methodStmt = new StringBuilder();
-		methodStmt.append("def v(columnName):\n\treturn getValue(columnName)\n");
-		return methodStmt.toString();
+		return "def v(columnName):\n\treturn getValue(columnName)\n";
+	
+	}
+
+	public static String getTransformStatement() {
+		return  "transform(nodeid)";
 	}
 }
