@@ -117,7 +117,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		// Prepare the Python interpreter
 		PythonInterpreter interpreter = new PythonInterpreter();
 
-		PythonRepository repo = PythonRepository.getinstance();
+		PythonRepository repo = PythonRepository.getInstance();
 		repo.initializeInterperter(interpreter);
 		repo.importUserScripts(interpreter);
 		

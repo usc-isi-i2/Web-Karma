@@ -15,18 +15,19 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PythonRepository {
 
-	private static ConcurrentHashMap<String, PyCode> scripts;
-	private static ConcurrentHashMap<String, PyCode> libraryScripts;
-	protected static ConcurrentHashMap<String, Long> fileNameTolastTimeRead = new ConcurrentHashMap<String,Long>();
+	private ConcurrentHashMap<String, PyCode> scripts;
+	private ConcurrentHashMap<String, PyCode> libraryScripts;
+	private ConcurrentHashMap<String, Long> fileNameTolastTimeRead;
 	private static PythonRepository instance = new PythonRepository();
 	
 	private PythonRepository()
 	{
 		scripts = new ConcurrentHashMap<String, PyCode>();
 		libraryScripts = new ConcurrentHashMap<String, PyCode>();
+		fileNameTolastTimeRead = new ConcurrentHashMap<String,Long>();
 		initialize();
 	}
-	public static PythonRepository getinstance()
+	public static PythonRepository getInstance()
 	{
 		return instance;
 	}
@@ -73,7 +74,7 @@ public class PythonRepository {
 		String dirpathString = ServletContextParameterMap
 				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
 
-		PythonRepository repo = PythonRepository.getinstance();
+		
 		if (dirpathString != null && dirpathString.compareTo("") != 0) {
 			File f = new File(dirpathString);
 			String[] scripts = f.list(new FilenameFilter(){
@@ -90,7 +91,7 @@ public class PythonRepository {
 				if(lastTimeRead == null || s.lastModified() > lastTimeRead)
 				{
 					String statement = FileUtils.readFileToString(s);
-					PyCode py = repo.compileAndAddToRepository(interpreter, statement);
+					PyCode py = compileAndAddToRepository(interpreter, statement);
 					libraryScripts.put(fileName, py);
 					fileNameTolastTimeRead.put(fileName, System.currentTimeMillis());
 				}
