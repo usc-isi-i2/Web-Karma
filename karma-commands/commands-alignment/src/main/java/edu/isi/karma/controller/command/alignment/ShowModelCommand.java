@@ -161,8 +161,8 @@ public class ShowModelCommand extends WorksheetCommand {
 			alignment.align();
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
-
-		ModelLearner modelLearner = new ModelLearner(ontologyManager, columnNodes);
+		
+		ModelLearner modelLearner = new ModelLearner(workspace, worksheet, ontologyManager, columnNodes);
 		SemanticModel model = modelLearner.getModel();
 		if (model == null) {
 			logger.error("could not learn any model for this source!");

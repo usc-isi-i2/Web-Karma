@@ -20,21 +20,30 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.semantictypes;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.rep.metadata.Tag;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 /**
  * This class provides various utility methods that can be used by the semantic
@@ -134,7 +143,19 @@ public class SemanticTypeUtil {
 		modelHandler.addType(label, examples);
 	}
 	
-	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, HNodePath path) {
+	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, String hNodeId, int numSuggestions) {
+		HNodePath currentColumnPath = null;
+		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
+		for (HNodePath path : paths) {
+			if (path.getLeaf().getId().equals(hNodeId)) {
+				currentColumnPath = path;
+				break;
+			}
+		}
+		return predictColumnSemanticType(workspace, worksheet,currentColumnPath, numSuggestions);
+	}
+	
+	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, HNodePath path, int numSuggestions) {
 		ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(worksheet,
 				path);
 		if (trainingExamples.size() == 0)
@@ -143,7 +164,7 @@ public class SemanticTypeUtil {
 		ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
 		OntologyManager ontologyManager = workspace.getOntologyManager();
 		
-		List<SemanticTypeLabel> result = modelHandler.predictType(trainingExamples, 4);
+		List<SemanticTypeLabel> result = modelHandler.predictType(trainingExamples, numSuggestions);
 		if (result == null) {
 			logger.debug("Error occured while predicting semantic type.");
 			return null;
@@ -193,6 +214,40 @@ public class SemanticTypeUtil {
 		return new SemanticTypeColumnModel(result);
 	}
 
+	public ArrayList<SemanticType> getColumnSemanticSuggestions(Workspace workspace, Worksheet worksheet, ColumnNode cn, int numSuggestions) {
+		ArrayList<SemanticType> suggestedSemanticTypes = new ArrayList<SemanticType>();
+		if(workspace != null && worksheet != null) {
+			OntologyManager ontologyManager = workspace.getOntologyManager();
+			String hNodeId = cn.getHNodeId();
+			SemanticTypeColumnModel columnModel = predictColumnSemanticType(workspace, worksheet, hNodeId, numSuggestions);
+			
+			if (columnModel != null) {
+				for (Entry<String, Double> entry : columnModel.getScoreMap().entrySet()) {
+	
+					String key = entry.getKey();
+					Double confidence = entry.getValue();
+					if (key == null || key.isEmpty()) continue;
+	
+					String[] parts = key.split("\\|");
+					if (parts == null || parts.length != 2) continue;
+	
+					String domainUri = parts[0].trim();
+					String propertyUri = parts[1].trim();
+	
+					Label domainLabel = ontologyManager.getUriLabel(domainUri);
+					if (domainLabel == null) continue;
+	
+					Label propertyLabel = ontologyManager.getUriLabel(propertyUri);
+					if (propertyLabel == null) continue;
+	
+					SemanticType semanticType = new SemanticType(hNodeId, propertyLabel, domainLabel, Origin.CRFModel, confidence, false);
+					suggestedSemanticTypes.add(semanticType);
+				}
+			}
+		}
+		return suggestedSemanticTypes;
+	}
+	
 	
 
 	/**

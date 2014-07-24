@@ -181,10 +181,10 @@ public class Alignment implements OntologyUpdateListener {
 	
 	// AddNode methods
 	
-	public ColumnNode addColumnNode(String hNodeId, String columnName, Label rdfLiteralType, List<SemanticType> crfSuggestedSemanticTypes) {
+	public ColumnNode addColumnNode(String hNodeId, String columnName, Label rdfLiteralType) {
 		
 		// use hNodeId as id of the node
-		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType, crfSuggestedSemanticTypes);
+		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType);
 		if (this.graphBuilder.addNodeAndUpdate(node)) 
 			return node;
 		return null;
