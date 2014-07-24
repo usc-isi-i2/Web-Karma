@@ -24,11 +24,6 @@ package edu.isi.karma.rep.alignment;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-
 
 public class ColumnNode extends Node {
 
@@ -36,24 +31,14 @@ public class ColumnNode extends Node {
 	private final String columnName;
 	private Label rdfLiteralType;
 	
-	private List<SemanticType> crfSuggestedSemanticTypes;
 	private SemanticType userSelectedSemanticType;
-	
-	public ColumnNode(String id, String hNodeId, String columnName, Label rdfLiteralType, List<SemanticType> crfSuggestedSemanticTypes) {
-		super(id, new Label(hNodeId), NodeType.ColumnNode);
-		this.hNodeId = hNodeId;
-		this.columnName = columnName;
-		this.setRdfLiteralType(rdfLiteralType);
-		this.crfSuggestedSemanticTypes = crfSuggestedSemanticTypes;
-		this.userSelectedSemanticType = null;
-	}
+
 	
 	public ColumnNode(String id, String hNodeId, String columnName, Label rdfLiteralType) {
 		super(id, new Label(hNodeId), NodeType.ColumnNode);
 		this.hNodeId = hNodeId;
 		this.columnName = columnName;
 		this.setRdfLiteralType(rdfLiteralType);
-		this.crfSuggestedSemanticTypes = null;
 		this.userSelectedSemanticType = null;
 	}
 
@@ -90,24 +75,6 @@ public class ColumnNode extends Node {
 		this.userSelectedSemanticType = userSelectedSemanticType;
 	}
 
-	public List<SemanticType> getCrfSuggestedSemanticTypes() {
-		return crfSuggestedSemanticTypes;
-	}
 
-	public void setCrfSuggestedSemanticTypes(
-			List<SemanticType> crfSuggestedSemanticTypes) {
-		this.crfSuggestedSemanticTypes = crfSuggestedSemanticTypes;
-	}
-	
-	public List<SemanticType> getTopKSuggestions(int k) {
-		
-		List<SemanticType> semanticTypes = new ArrayList<>();
-		if (this.crfSuggestedSemanticTypes == null || this.crfSuggestedSemanticTypes.isEmpty())
-			return semanticTypes;
-		
-		int n = Math.min(k, this.crfSuggestedSemanticTypes.size());
-		Collections.sort(this.crfSuggestedSemanticTypes, Collections.reverseOrder());
-		return this.crfSuggestedSemanticTypes.subList(0, n);
-	}
 	
 }

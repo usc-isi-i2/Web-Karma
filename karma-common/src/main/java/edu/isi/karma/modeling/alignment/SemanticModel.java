@@ -51,6 +51,8 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -70,10 +72,14 @@ public class SemanticModel {
 	protected List<ColumnNode> sourceColumns;
 	protected Map<ColumnNode, ColumnNode> mappingToSourceColumns;
 	protected final static int maxPathLengthForEvaluation = 2;
+	protected Workspace workspace;
+	protected Worksheet worksheet;
 	
-	public SemanticModel(
+	public SemanticModel(Workspace workspace, Worksheet worksheet, 
 			String id,
 			DirectedWeightedMultigraph<Node, LabeledLink> graph) {
+		this.workspace = workspace;
+		this.worksheet = worksheet;
 		this.id = id;
 		this.graph = graph;
 		this.sourceColumns = this.getColumnNodes();
@@ -687,7 +693,7 @@ public class SemanticModel {
 		}
 		writer.name("graph");
 		if (this.graph == null) writer.value(nullStr);
-		else GraphUtil.writeGraph(GraphUtil.asDefaultGraph(this.graph), writer);
+		else GraphUtil.writeGraph(workspace, worksheet, GraphUtil.asDefaultGraph(this.graph), writer);
 		writer.endObject();
 	}
 

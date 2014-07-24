@@ -73,7 +73,7 @@ public class GetSemanticSuggestionsCommand extends Command {
 					}
 				}
 				
-				SemanticTypeColumnModel model = new SemanticTypeUtil().predictColumnSemanticType(ws, worksheet, currentColumnPath);
+				SemanticTypeColumnModel model = new SemanticTypeUtil().predictColumnSemanticType(ws, worksheet, currentColumnPath, 4);
 				if(model != null) {
 					OntologyManager ontMgr = ws.getOntologyManager();
 					Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(ws.getId(), worksheetId, ontMgr);

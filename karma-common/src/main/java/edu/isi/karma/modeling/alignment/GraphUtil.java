@@ -44,7 +44,10 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
@@ -378,7 +381,7 @@ public class GraphUtil {
 		}
 	}
 	
-	public static void exportJson(DirectedWeightedMultigraph<Node, DefaultLink> graph, String filename) throws IOException {
+	public static void exportJson(Workspace workspace, Worksheet worksheet, DirectedWeightedMultigraph<Node, DefaultLink> graph, String filename) throws IOException {
 		logger.info("exporting the graph to json ...");
 		File file = new File(filename);
 		if (!file.exists()) {
@@ -389,7 +392,7 @@ public class GraphUtil {
 		JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
 		//writer.setIndent("    ");
 		try {
-			writeGraph(graph, writer);
+			writeGraph(workspace, worksheet, graph, writer);
 		} catch (Exception e) {
 			logger.error("error in writing the model in json!");
 	    	e.printStackTrace();
@@ -419,7 +422,7 @@ public class GraphUtil {
 	    }
 	}
 	
-	public static void writeGraph(DirectedWeightedMultigraph<Node, DefaultLink> graph, JsonWriter writer) throws IOException {
+	public static void writeGraph(Workspace workspace, Worksheet worksheet, DirectedWeightedMultigraph<Node, DefaultLink> graph, JsonWriter writer) throws IOException {
 		
 		writer.beginObject();
 
@@ -427,7 +430,7 @@ public class GraphUtil {
 		writer.beginArray();
 		if (graph != null)
 			for (Node n : graph.vertexSet())
-				writeNode(writer, n);
+				writeNode(workspace, worksheet, writer, n);
 		writer.endArray();
 		
 		writer.name("links");
@@ -441,7 +444,7 @@ public class GraphUtil {
 		
 	}
 	
-	private static void writeNode(JsonWriter writer, Node node) throws IOException {
+	private static void writeNode(Workspace workspace, Worksheet worksheet, JsonWriter writer, Node node) throws IOException {
 		
 		if (node == null)
 			return;
@@ -455,7 +458,7 @@ public class GraphUtil {
 		else writeLabel(writer, node.getLabel());
 		
 		writer.name("type").value(node.getType().toString());
-		
+		SemanticTypeUtil semUtil = new SemanticTypeUtil();
 		if (node instanceof ColumnNode) {
 			ColumnNode cn = (ColumnNode) node;
 			writer.name("hNodeId").value(cn.getHNodeId());
@@ -467,11 +470,12 @@ public class GraphUtil {
 			if (cn.getUserSelectedSemanticType() == null) writer.value(nullStr);
 			else writeSemanticType(writer, cn.getUserSelectedSemanticType());
 			writer.name("crfSuggestedSemanticTypes");
-			if (cn.getCrfSuggestedSemanticTypes() == null) writer.value(nullStr);
+			ArrayList<SemanticType> semTypes = semUtil.getColumnSemanticSuggestions(workspace, worksheet, cn, 4);
+			if (semTypes == null) writer.value(nullStr);
 			else {
 				writer.beginArray();
-				if (cn.getCrfSuggestedSemanticTypes() != null)
-					for (SemanticType semanticType : cn.getCrfSuggestedSemanticTypes())
+				if (semTypes != null)
+					for (SemanticType semanticType : semTypes)
 						writeSemanticType(writer, semanticType);
 				writer.endArray();
 			}
@@ -659,7 +663,6 @@ public class GraphUtil {
     	} else if (type == NodeType.ColumnNode) {
     		n = new ColumnNode(id, hNodeId, columnName, rdfLiteralType);
     		((ColumnNode)n).setUserSelectedSemanticType(userSelectedSemanticType);
-    		((ColumnNode)n).setCrfSuggestedSemanticTypes(crfSuggestedSemanticTypes);
     	}
 		n.setModelIds(modelIds);
     	
