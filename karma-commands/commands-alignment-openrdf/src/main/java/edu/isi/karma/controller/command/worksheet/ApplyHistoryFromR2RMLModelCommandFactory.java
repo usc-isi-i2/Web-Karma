@@ -44,8 +44,8 @@ public class ApplyHistoryFromR2RMLModelCommandFactory extends CommandFactory {
 	}
 	
 	public Command createCommandFromFile(String worksheetId, File uploadedFile,
-			Workspace workspace) {
-		return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), uploadedFile, worksheetId, false);
+			Workspace workspace, boolean override) {
+		return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), uploadedFile, worksheetId, override);
 	}
 
 	@Override
