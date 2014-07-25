@@ -21,17 +21,12 @@
 
 package edu.isi.karma.modeling.alignment.learner;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
@@ -44,17 +39,13 @@ import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
-import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkFrequency;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
-import edu.isi.karma.modeling.alignment.ModelEvaluation;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.modeling.alignment.TreePostProcess;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.research.ModelReader;
-import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -87,6 +78,8 @@ public class ModelLearner {
 	private boolean useAlignmentGraphBuiltFromKnownModels = false;
 //	private boolean useAlignmentGraphBuiltFromLOD = false;
 
+	private static final int NUM_SEMANTIC_TYPES = 1; //4;
+	
 	public ModelLearner(Workspace workspace, Worksheet worksheet, OntologyManager ontologyManager, List<ColumnNode> columnNodes) {
 		if (ontologyManager == null || 
 				columnNodes == null || 
@@ -129,7 +122,7 @@ public class ModelLearner {
 			init();
 		}
 		
-		List<SortableSemanticModel> hypothesisList = this.hypothesize(true, 4);
+		List<SortableSemanticModel> hypothesisList = this.hypothesize(true, NUM_SEMANTIC_TYPES);
 		if (hypothesisList != null && !hypothesisList.isEmpty()) {
 			SortableSemanticModel m = hypothesisList.get(0);
 			this.semanticModel = new SemanticModel(m);
@@ -641,10 +634,10 @@ public class ModelLearner {
 		}
 	}
 	
-	private static double roundTwoDecimals(double d) {
-        DecimalFormat twoDForm = new DecimalFormat("#.##");
-        return Double.valueOf(twoDForm.format(d));
-	}
+//	private static double roundTwoDecimals(double d) {
+//        DecimalFormat twoDForm = new DecimalFormat("#.##");
+//        return Double.valueOf(twoDForm.format(d));
+//	}
 
 //	private static void updateCrfSemanticTypesForResearchEvaluation(List<ColumnNode> columnNodes) {
 //		
