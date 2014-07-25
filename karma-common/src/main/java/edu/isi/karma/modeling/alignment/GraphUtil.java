@@ -44,7 +44,6 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -458,7 +457,7 @@ public class GraphUtil {
 		else writeLabel(writer, node.getLabel());
 		
 		writer.name("type").value(node.getType().toString());
-		SemanticTypeUtil semUtil = new SemanticTypeUtil();
+//		SemanticTypeUtil semUtil = new SemanticTypeUtil();
 		if (node instanceof ColumnNode) {
 			ColumnNode cn = (ColumnNode) node;
 			writer.name("hNodeId").value(cn.getHNodeId());
@@ -470,15 +469,16 @@ public class GraphUtil {
 			if (cn.getUserSelectedSemanticType() == null) writer.value(nullStr);
 			else writeSemanticType(writer, cn.getUserSelectedSemanticType());
 			writer.name("crfSuggestedSemanticTypes");
-			ArrayList<SemanticType> semTypes = semUtil.getColumnSemanticSuggestions(workspace, worksheet, cn, 4);
+			ArrayList<SemanticType> semTypes = null;
+//			semTypes = semUtil.getColumnSemanticSuggestions(workspace, worksheet, cn, 4);
 			if (semTypes == null) writer.value(nullStr);
-			else {
-				writer.beginArray();
-				if (semTypes != null)
-					for (SemanticType semanticType : semTypes)
-						writeSemanticType(writer, semanticType);
-				writer.endArray();
-			}
+//			else {
+//				writer.beginArray();
+//				if (semTypes != null)
+//					for (SemanticType semanticType : semTypes)
+//						writeSemanticType(writer, semanticType);
+//				writer.endArray();
+//			}
 		}
 		
 		writer.name("modelIds");

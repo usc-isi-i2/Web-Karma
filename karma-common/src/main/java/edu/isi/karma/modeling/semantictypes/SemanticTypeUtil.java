@@ -61,7 +61,7 @@ public class SemanticTypeUtil {
 	
 	private final static int TRAINING_EXAMPLE_MAX_COUNT ;
 	static {
-		int temp = 200;
+		int temp = 10000;
 		try
 		{
 			temp = Integer
@@ -216,6 +216,7 @@ public class SemanticTypeUtil {
 
 	public ArrayList<SemanticType> getColumnSemanticSuggestions(Workspace workspace, Worksheet worksheet, ColumnNode cn, int numSuggestions) {
 		ArrayList<SemanticType> suggestedSemanticTypes = new ArrayList<SemanticType>();
+		logger.info("Column Semantic Suggestions for:" + cn.getColumnName());
 		if(workspace != null && worksheet != null) {
 			OntologyManager ontologyManager = workspace.getOntologyManager();
 			String hNodeId = cn.getHNodeId();
@@ -241,6 +242,7 @@ public class SemanticTypeUtil {
 					if (propertyLabel == null) continue;
 	
 					SemanticType semanticType = new SemanticType(hNodeId, propertyLabel, domainLabel, Origin.CRFModel, confidence, false);
+					logger.info("\t" + propertyUri + " of " + domainUri + ": " + confidence);
 					suggestedSemanticTypes.add(semanticType);
 				}
 			}
