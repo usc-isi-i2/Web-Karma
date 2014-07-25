@@ -182,7 +182,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		// *****************************************************************************************
 		// *****************************************************************************************
 
-		SemanticModel semanticModel = new SemanticModel(worksheetName, alignment.getSteinerTree());
+		SemanticModel semanticModel = new SemanticModel(workspace, worksheet, worksheetName, alignment.getSteinerTree());
 		semanticModel.setName(worksheetName);
 		try {
 			semanticModel.writeJson(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_MODELS_DIR) + 
@@ -202,7 +202,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		}
 
 		if (ModelingConfiguration.isLearnerEnabled())
-			ModelLearningGraph.getInstance(workspace.getOntologyManager()).addModelAndUpdateGraphJson(semanticModel);
+			ModelLearningGraph.getInstance(workspace.getOntologyManager()).addModelAndUpdateGraphJson(workspace, worksheet, semanticModel);
 
 		// *****************************************************************************************
 		// *****************************************************************************************

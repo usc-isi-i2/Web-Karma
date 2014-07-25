@@ -22,7 +22,7 @@ package edu.isi.karma.kr2rml;
 
 import java.io.PrintWriter;
 import java.text.NumberFormat;
-import java.text.ParseException;
+import java.text.ParsePosition;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
@@ -293,20 +293,22 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			}
 		}
 	}
-	
+
 	private Object convertValueWithLiteralType(String literalType, String value) {
-		try {
-			if (numericLiteralTypes.contains(literalType)) {
-				Number n = NumberFormat.getNumberInstance(Locale.US).parse(value);
+		if (numericLiteralTypes.contains(literalType)) {
+			ParsePosition parsePosition = new ParsePosition(0);
+			Number n = NumberFormat.getNumberInstance(Locale.US).parse(value, parsePosition);
+			if (parsePosition.getErrorIndex() != -1 || parsePosition.getIndex() < value.length())
+				return value;
+			else
 				return n;
-			}
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
 		}
+
 		if (literalType != null && literalType.equals("http://www.w3.org/2001/XMLSchema#boolean")) {
-			boolean b = Boolean.parseBoolean(value);
-			return b;
+			if (value.trim().equalsIgnoreCase("false"))
+				return false;
+			else if (value.trim().equalsIgnoreCase("true"))
+				return true;
 		}
 		return value;
 	}

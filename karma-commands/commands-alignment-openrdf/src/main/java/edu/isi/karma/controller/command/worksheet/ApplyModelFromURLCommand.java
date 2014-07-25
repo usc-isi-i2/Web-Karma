@@ -22,14 +22,15 @@ public class ApplyModelFromURLCommand extends WorksheetCommand{
 	private String modelContext;
 	private String modelRepository;
 	private String baseUrl = "http://localhost:8080/R2RMLMapping/local/repository/";
-
+	private boolean override;
 	private static Logger logger = LoggerFactory.getLogger(ApplyModelFromURLCommand.class);
-	public ApplyModelFromURLCommand(String id, String worksheetId, String modelURL, String modelContext, String modelRepository, String baseURL) {
+	public ApplyModelFromURLCommand(String id, String worksheetId, String modelURL, String modelContext, String modelRepository, String baseURL, boolean override) {
 		super(id, worksheetId);
 		this.modelURL = modelURL;
 		this.modelContext = modelContext;
 		this.modelRepository = modelRepository;
 		this.baseUrl = baseURL;
+		this.override = override;
 	}
 
 	@Override
@@ -62,7 +63,7 @@ public class ApplyModelFromURLCommand extends WorksheetCommand{
 
 			File file = new File("tmp.ttl");	
 			FileUtils.copyURLToFile(url, file);
-			Command cmd = factory.createCommandFromFile(worksheetId, file, workspace);
+			Command cmd = factory.createCommandFromFile(worksheetId, file, workspace, override);
 			UpdateContainer uc = cmd.doIt(workspace);
 			workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelUrl, modelURL);
 			workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelContext, modelContext);
