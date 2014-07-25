@@ -201,7 +201,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 			return null;
 		}
 
-		logger.info("Predic Type for " + examples.toArray().toString());
+		logger.debug("Predic Type for " + examples.toArray().toString());
 		// get top-k suggestions
 		if (indexDirectoryExists()) {
 			// construct single text for test column
@@ -216,7 +216,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 						Indexer.CONTENT_FIELD_NAME);
 				try {
 					List<SemanticTypeLabel> result = predictor.getTopK(numPredictions, sb.toString());
-					logger.info("Got " + result.size() + " predictions");
+					logger.debug("Got " + result.size() + " predictions");
 					return result;
 				} finally {
 					predictor.close();
