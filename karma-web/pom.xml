@@ -110,6 +110,7 @@
 			
 			mvn package -Ptomcat-deploy tomcat:deploy
 			
+			from the Web-Karma folder
 			to deploy WAR in the tomcat container
 	  		-->
 			<plugin>
