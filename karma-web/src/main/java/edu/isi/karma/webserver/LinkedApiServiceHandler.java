@@ -166,7 +166,7 @@ public class LinkedApiServiceHandler extends HttpServlet {
 		String serviceId = restRequest.getId();
 		String format = restRequest.getFormat();
 
-		for (String s : request.getParameterMap().keySet())
+		for (Object s : request.getParameterMap().keySet())
 			logger.debug(s + " --- " + request.getParameterMap().get(s).toString());
 		logger.debug("Id: " + serviceId);
 		logger.debug("Format: " + format);

@@ -7,9 +7,9 @@ import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.SequenceFile;
+import org.apache.hadoop.io.SequenceFile.Writer;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -24,7 +24,7 @@ public class SimpleLoader extends Configured implements Tool{
 	 {
 		
 		 Configuration conf = getConf();
-		 conf.set("fs.default.name", p.getProperty("fs.default.name"));
+		 conf.setIfUnset("fs.default.name", p.getProperty("fs.default.name"));
 		 
 	 }
 	 
@@ -42,9 +42,8 @@ public class SimpleLoader extends Configured implements Tool{
         }
         String outputFileName = p.getProperty("output.file");
         Path outputPath = new Path(outputFileName);
-        FileSystem fs = outputPath.getFileSystem(getConf());
-        SequenceFile.Writer writer = SequenceFile.createWriter(fs, getConf(),
-                outputPath, Text.class, Text.class);
+        SequenceFile.Writer writer = SequenceFile.createWriter(getConf(),Writer.keyClass(Text.class),
+                Writer.valueClass(Text.class), Writer.file(outputPath));
         for(File document : f.listFiles())
         {
         	String contents = FileUtils.readFileToString(document);

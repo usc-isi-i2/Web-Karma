@@ -1,5 +1,6 @@
 package edu.isi.karma.mapreduce.driver;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -35,9 +36,9 @@ public class SimpleMapper extends Mapper<Text, Text, Text, Text>{
 		
 		try {
 			Configuration conf = context.getConfiguration();
-			String karmaUserHome = conf.get("KARMA_USER_HOME") != null? conf.get("KARMA_USER_HOME"): context.getWorkingDirectory().toString() + java.io.File.separator + "karma";
-			System.setProperty("KARMA_USER_HOME", karmaUserHome);
-			
+			String karmaUserHome = conf.get("KARMA_USER_HOME") != null? conf.get("KARMA_USER_HOME"): new File(context.getWorkingDirectory().toUri() ).getAbsolutePath()+ java.io.File.separator + "karma";
+			System.setProperty("KARMA_USER_HOME", new File(karmaUserHome).getAbsolutePath());
+			System.out.println(new File("."));
 	        KarmaMetadataManager userMetadataManager;
 			userMetadataManager = new KarmaMetadataManager();
 			UpdateContainer uc = new UpdateContainer();
@@ -49,7 +50,7 @@ public class SimpleMapper extends Mapper<Text, Text, Text, Text>{
 	        generator = new GenericRDFGenerator();
 	        URL modelURL = new URL(modelUri);
 	        generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
-		} catch (KarmaException | IOException e) {
+		} catch (KarmaException | IOException  e) {
 			LOG.error("Unable to complete Karma set up: " + e.getMessage());
 			throw new RuntimeException("Unable to complete Karma set up: " + e .getMessage());
 		}

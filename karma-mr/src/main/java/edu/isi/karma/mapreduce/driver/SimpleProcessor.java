@@ -22,14 +22,14 @@ public class SimpleProcessor extends Configured implements Tool {
 	 {
 		
 		Configuration conf = getConf();
-		conf.set("fs.default.name", p.getProperty("fs.default.name"));
-		conf.set("mapred.job.tracker", p.getProperty("mapred.job.tracker"));
-		conf.set("model.uri", p.getProperty("model.uri"));
+		conf.setIfUnset("fs.default.name", p.getProperty("fs.default.name"));
+		conf.setIfUnset("mapred.job.tracker", p.getProperty("mapred.job.tracker"));
+		conf.setIfUnset("model.uri", p.getProperty("model.uri"));
 		if(p.getProperty("KARMA_USER_HOME") != null)
 		{
-			conf.set("KARMA_USER_HOME", p.getProperty("KARMA_USER_HOME"));
+			conf.setIfUnset("KARMA_USER_HOME", p.getProperty("KARMA_USER_HOME"));
 		}
-		Job job = new Job(getConf());
+		Job job = Job.getInstance(conf);
         job.setInputFormatClass(SequenceFileAsTextInputFormat.class);
         job.setJarByClass(SimpleProcessor.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);

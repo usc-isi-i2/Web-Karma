@@ -31,13 +31,6 @@
 			<artifactId>commands-alignment-openrdf</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
-		<dependency>
-			<groupId>edu.isi</groupId>
-			<artifactId>commands-cleaning</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
 		<dependency>
 			<groupId>edu.isi</groupId>
 			<artifactId>commands-common</artifactId>
