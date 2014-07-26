@@ -81,7 +81,6 @@ AbstractUpdate {
 						|| forceUpdates) {
 					// Prepare the input data for the cleaning service
 					JSONArray requestJsonArray = new JSONArray();  
-					System.out.println("nodes size: " + nodes.size());
 					if (sampleSize == nodes.size()) {
 						for (Node node : nodes) {
 							JSONObject jsonRecord = new JSONObject();
@@ -121,10 +120,8 @@ AbstractUpdate {
 
 					Map<String, String> formParams = new HashMap<String, String>();
 					formParams.put(JsonKeys.json.name(), requestJsonArray.toString());
-					System.out.println("response before recvd");
 					String reqResponse = HTTPUtil.executeHTTPPostRequest(cleaningServiceURL, null,
 							null, formParams);
-					System.out.println("response recvd");
 					//					
 					//					logger.debug("***");
 					//					logger.debug(path.getLeaf().getColumnName());
