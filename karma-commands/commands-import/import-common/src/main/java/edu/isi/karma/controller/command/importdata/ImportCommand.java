@@ -59,7 +59,7 @@ public abstract class ImportCommand extends Command {
         try {
         	Import imp = createImport(workspace);
             Worksheet wsht = imp.generateWorksheet();
-
+            System.out.println("import finished");
             if (hasRevisionId()) {
                 Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
                 wsht.setRevisedWorksheet(revisedWorksheet);  

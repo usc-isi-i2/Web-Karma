@@ -27,11 +27,13 @@ package edu.isi.karma.imp.json;
 
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +44,6 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
-import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.JSONUtil;
 
 /**
@@ -56,7 +57,7 @@ public class JsonImport extends Import {
 	private final Object json;
 	private int maxNumLines;
 	private int numObjects;
-	
+	private String encoding;
 	public JsonImport(Object json, String worksheetName, Workspace workspace,
 			String encoding, int maxNumLines) {
 		super(worksheetName, workspace, encoding);
@@ -67,17 +68,16 @@ public class JsonImport extends Import {
 	public JsonImport(File jsonFile, String worksheetName, Workspace workspace,
 			String encoding, int maxNumLines) {
 		super(worksheetName, workspace, encoding);
-
-		String fileContents = null;
-		try {
-			fileContents = FileUtil
-					.readFileContentsToString(jsonFile, encoding);
-		} catch (IOException ex) {
-			logger.error("Error in reading the JSON file");
-		}
-
-		this.json = JSONUtil.createJson(fileContents);
+//		String fileContents = null;
+//		try {
+//			fileContents = FileUtil
+//					.readFileContentsToString(jsonFile, encoding);
+//		} catch (IOException ex) {
+//			logger.error("Error in reading the JSON file");
+//		}
+		this.json = jsonFile;
 		this.maxNumLines = maxNumLines;
+		this.encoding = encoding;
 	}
 
 	public JsonImport(String jsonString, String worksheetName,
@@ -115,10 +115,56 @@ public class JsonImport extends Import {
 			JsonImportValues.addKeysAndValues((JSONObject) json, getWorksheet().getHeaders(),
 					getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
 		}
-
+		else if (json instanceof File && json != null) {
+			try {
+				JSONTokener tokener = new JSONTokener(new InputStreamReader(new FileInputStream((File)json), encoding));
+				JSONObject obj = JSONUtil.createJSONObject(tokener);
+				if (obj != null) {
+					JsonImportValues.addKeysAndValues(obj, getWorksheet().getHeaders(),
+							getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
+				}
+				else {
+					tokener = new JSONTokener(new InputStreamReader(new FileInputStream((File)json), encoding));
+					parseJSONArray(tokener);
+				}
+			}catch(Exception e) {
+				logger.error("Parsing failure", e);
+			}
+		}
 		Worksheet ws = getWorksheet();
 		ws.getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.JSON.toString());
 		return ws;
 	}
-	
+
+	private void parseJSONArray(JSONTokener x) {
+		if (x.nextClean() != '[') {
+			throw x.syntaxError("A JSONArray text must start with '['");
+		}
+		if (x.nextClean() != ']') {
+			x.back();
+			for (;;) {
+				if (x.nextClean() == ',') {
+					x.back();
+				} else {
+					x.back();
+					Object obj = x.nextValue();
+					JsonImportValues.addListElement(obj, getWorksheet().getHeaders(),
+							getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
+				}
+				switch (x.nextClean()) {
+				case ',':
+					if (x.nextClean() == ']') {
+						return;
+					}
+					x.back();
+					break;
+				case ']':
+					return;
+				default:
+					throw x.syntaxError("Expected a ',' or ']'");
+				}
+			}
+		}
+	}
+
 }
