@@ -178,6 +178,7 @@ public class SetSemanticTypeCommand extends Command {
 				}
 				
 				domain = alignment.getNodeById(domainUriOrId);
+				logger.info("Got domain for domainUriOrId:" + domainUriOrId + " ::" + domain);
 				if (domain == null) {
 					Label label = ontMgr.getUriLabel(domainUriOrId);
 //					if (label == null) {

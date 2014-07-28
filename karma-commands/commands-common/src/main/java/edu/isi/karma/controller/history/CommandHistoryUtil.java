@@ -69,16 +69,7 @@ public class CommandHistoryUtil {
 
 		Map<Command, List<Command> > dag = new HashMap<Command, List<Command>>();
 		Map<String, List<Command> > outputMapping = new HashMap<String, List<Command> >();
-//		for (Command command : commands) {
-//			Set<String> outputs = command.getOutputColumns();
-//			for (String output : outputs) {
-//				List<Command> tmp = outputMapping.get(output);
-//				if (tmp == null)
-//					tmp = new ArrayList<Command>();
-//				tmp.add(command);
-//				outputMapping.put(output, tmp);
-//			}
-//		}
+
 		for (Command command : commands) {
 			Set<String> inputs = command.getInputColumns();
 			for (String input : inputs) {
@@ -104,15 +95,6 @@ public class CommandHistoryUtil {
 			}
 		}
 
-		//		for (Entry<Command, List<Command>> entry : dag.entrySet()) {
-		//			Command key = entry.getKey();
-		//			List<Command> value = entry.getValue();
-		//			System.out.print(key.getCommandName() + "inputs: " + key.getInputColumns() + "outputs: " + key.getOutputColumns());
-		//			System.out.print("=");
-		//			for (Command command : value)
-		//				System.out.print(command.getCommandName() + "inputs: " + command.getInputColumns() + "outputs: " + command.getOutputColumns());
-		//			System.out.println();
-		//		}
 		return dag;
 	}
 
@@ -162,9 +144,6 @@ public class CommandHistoryUtil {
 		}
 		if (!checkDependency(refinedCommands))
 			return commands;
-		//		JSONArray refinedhistory = new JSONArray();
-		//		for (Command refined : refinedCommands)
-		//			refinedhistory.put(workspace.getCommandHistory().getCommandJSON(workspace, refined));
 		this.commands.clear();
 		this.commands.addAll(refinedCommands);
 		return commands;

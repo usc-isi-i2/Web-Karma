@@ -629,28 +629,28 @@ public class DisplayModel {
 	
 	public void printLevels() {
 		for (Entry<Node, Integer> entry : this.nodesLevel.entrySet()) {
-			logger.info(entry.getKey().getId() + " ---> " + entry.getValue().intValue());
+			logger.debug(entry.getKey().getId() + " ---> " + entry.getValue().intValue());
 		}
 	}
 	
 	public void printSpans() {
 		for (Entry<Node, Set<ColumnNode>> entry : this.nodesSpan.entrySet()) {
-			logger.info(entry.getKey().getId() + " spans ---> ");
+			logger.debug(entry.getKey().getId() + " spans ---> ");
 			if (entry.getValue() != null)
 				for (ColumnNode columnNode : entry.getValue()) {
-					logger.info("\t" + columnNode.getColumnName());
+					logger.debug("\t" + columnNode.getColumnName());
 				}
 		}
 	}
 
 	public void printModel(DirectedWeightedMultigraph<Node, LabeledLink> model) {
-		logger.info("Vertices: ");
+		logger.debug("Vertices: ");
 		for(Node n : model.vertexSet()) {
-			logger.info("\t" + n.getId());
+			logger.debug("\t" + n.getId());
 		}
-		logger.info("Edges: ");
+		logger.debug("Edges: ");
 		for(LabeledLink l : model.edgeSet()) {
-			logger.info("\t" + l.getSource().getId() + " --> " + l.getTarget().getId());
+			logger.debug("\t" + l.getSource().getId() + " --> " + l.getTarget().getId());
 		}
 	}
 	
@@ -681,10 +681,10 @@ public class DisplayModel {
 			}
 		}
 		
-		logger.info("Computed " + this.models.size() + " models");
+		logger.debug("Computed " + this.models.size() + " models");
 		int modelNum = 1;
 		for(DirectedWeightedMultigraph<Node, LabeledLink> subModel : this.models) {
-			logger.info("Model: " + modelNum++);
+			logger.debug("Model: " + modelNum++);
 			printModel(subModel);
 		}
 	}

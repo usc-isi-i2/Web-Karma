@@ -329,6 +329,7 @@ function parse(data) {
 						$.sticky("Worksheet deleted");
 				}
 				else if(element["updateType"] == "WorksheetHeadersUpdate") {
+						console.time('header update');
 						var worksheetPanel = $("div.Worksheet#" + element["worksheetId"]);
 
 						var tableContainer = $("div.table-container", worksheetPanel);
@@ -348,14 +349,15 @@ function parse(data) {
 								headersTable = $("<table>").addClass("wk-table htable-odd");
 								tableHeaderContainer.append(headersTable);
 						} else {
-								$("tr", headersTable).addClass("deleteMe");
+								//$("tr", headersTable).addClass("deleteMe");
+								$("tbody", headersTable).empty();
 						}
 
 						var colWidths = addColumnHeadersRecurse(element["worksheetId"], element["columns"], headersTable, true);
 						var stylesheet = document.styleSheets[0];
 
 						// Remove the previous rows if any
-						$("tr.deleteMe", headersTable).remove();
+						//$("tr.deleteMe", headersTable).remove();
 
 						$.each(colWidths, function(index2, colWidth){
 								var selector = "." + colWidth.columnClass;
@@ -366,6 +368,7 @@ function parse(data) {
 										stylesheet.addRule(selector, rule, -1);
 								}
 						});
+						console.timeEnd('header update');
 				}
 				else if(element["updateType"] == "WorksheetDataUpdate") {
 						var worksheetPanel = $("div.Worksheet#" + element["worksheetId"]);
@@ -386,15 +389,15 @@ function parse(data) {
 						var tBody = $(dataTable).children("tbody");
 						if(tBody.length != 0) {
 								// Mark the rows that need to be deleted later
-								if($(tBody).children("tr").length != 0) {
-										$(tBody).children("tr").addClass("deleteMe");
-								}
-						}
-
+								// if($(tBody).children("tr").length != 0) {
+								// 		$(tBody).children("tr").addClass("deleteMe");
+								// }
+								tBody.empty();
+						}				
 						addWorksheetDataRecurse(element["worksheetId"], element["rows"], dataTable, true);
 
 						// Delete the old rows
-						$(tBody).children("tr.deleteMe").remove();
+						//$(tBody).children("tr.deleteMe").remove();
 
 						var additionalRowsAvail = element["additionalRowsCount"];
 						var moreRowsDiv = $("<div>").addClass("load-more");
