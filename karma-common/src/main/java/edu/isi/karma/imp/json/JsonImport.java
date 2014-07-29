@@ -57,7 +57,16 @@ public class JsonImport extends Import {
 	private final Object json;
 	private int maxNumLines;
 	private int numObjects;
-	private String encoding;
+	
+	private class FileObject {
+		File file;
+		String encoding;
+		public FileObject(File file, String encoding) {
+			this.file = file;
+			this.encoding = encoding;
+		}
+		
+	}
 	public JsonImport(Object json, String worksheetName, Workspace workspace,
 			String encoding, int maxNumLines) {
 		super(worksheetName, workspace, encoding);
@@ -75,9 +84,9 @@ public class JsonImport extends Import {
 //		} catch (IOException ex) {
 //			logger.error("Error in reading the JSON file");
 //		}
-		this.json = jsonFile;
+		FileObject fo = new FileObject(jsonFile, encoding);
+		this.json = fo;
 		this.maxNumLines = maxNumLines;
-		this.encoding = encoding;
 	}
 
 	public JsonImport(String jsonString, String worksheetName,
@@ -117,9 +126,10 @@ public class JsonImport extends Import {
 			JsonImportValues.addKeysAndValues((JSONObject) json, getWorksheet().getHeaders(),
 					getWorksheet().getDataTable());
 		}
-		else if (json instanceof File && json != null) {
+		else if (json != null && json instanceof FileObject) {
+			FileObject fo = (FileObject)json;
 			try {
-				JSONTokener tokener = new JSONTokener(new InputStreamReader(new FileInputStream((File)json), encoding));
+				JSONTokener tokener = new JSONTokener(new InputStreamReader(new FileInputStream(fo.file), fo.encoding));
 				char c = tokener.nextClean();
 				if (c == '{') {
 					JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet());
