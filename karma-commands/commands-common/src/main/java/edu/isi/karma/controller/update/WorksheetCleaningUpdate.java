@@ -75,6 +75,7 @@ AbstractUpdate {
 			List<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
 			worksheet.getDataTable().collectNodes(path, nodes);
 			final int sampleSize = (nodes.size() > 1000) ? 1000 : nodes.size();
+			columnsInvoked.add(leafHNodeId);
 			try {
 				// Check if the column metadata doesn't contains the cleaning information
 				if (colMetadata.getColumnHistogramData(leafHNodeId) == null 
@@ -147,7 +148,7 @@ AbstractUpdate {
 						colMetadata.addColumnPreferredLength(leafHNodeId, colLength);
 
 						// Add the hNodeId to the list for which we invoked successfully
-						columnsInvoked.add(leafHNodeId);
+						
 					} catch (JSONException e) {
 						logger.error("Error occured with cleaning service for HNode: " 
 								+ path.toColumnNamePath(), e);
@@ -160,6 +161,7 @@ AbstractUpdate {
 			} catch (Exception e) {
 				logger.error("Error while invoking cleaning service", e);
 			}
+			
 		}
 
 		// Prepare the Update that is going to be sent to the browser
