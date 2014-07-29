@@ -54,6 +54,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 
+import edu.isi.karma.controller.command.transformation.PythonRepository;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.kr2rml.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
@@ -177,6 +178,7 @@ public class OfflineRdfGenerator {
 		userMetadataManager.register(new UserPreferencesMetadata(), uc);
 		userMetadataManager.register(new UserConfigMetadata(), uc);
 		userMetadataManager.register(new PythonTransformationMetadata(), uc);
+        PythonRepository.disableReloadingLibrary();
 
 		SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
 		ModelingConfiguration.setLearnerEnabled(false); // disable automatic learning
