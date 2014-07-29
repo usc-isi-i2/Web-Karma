@@ -21,6 +21,13 @@
 
 package edu.isi.karma.controller.command.worksheet;
 
+import java.io.PrintWriter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -32,13 +39,6 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
-import org.apache.commons.httpclient.URIException;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.PrintWriter;
 
 public class FetchExistingWorksheetPropertiesCommand extends Command {
 	private final String worksheetId;
@@ -79,20 +79,34 @@ public class FetchExistingWorksheetPropertiesCommand extends Command {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		
 		// Check if the model name exists. If not set to a default one
-		String graphName = worksheet.getMetadataContainer().getWorksheetProperties().
-				getPropertyValue(Property.graphName); 
+		String graphLabel = worksheet.getMetadataContainer().getWorksheetProperties().
+				getPropertyValue(Property.graphLabel); 
 
-		if (graphName == null || graphName.isEmpty()) {
-			try {
+		if (graphLabel == null || graphLabel.isEmpty()) {
 				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
-						Property.graphName, 
-						WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
-			} catch (URIException e) {
-				logger.error("Error occurred while fetching worksheet properties!", e);
-				return new UpdateContainer(new ErrorUpdate("Error occurred while fetching " +
-						"worksheet properties!"));
-			}
+						Property.graphLabel, worksheet.getTitle());
+				graphLabel = worksheet.getTitle();
+				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+						Property.graphName, WorksheetProperties.createDefaultGraphName(graphLabel));	
 		}
+		
+		String baseURI = worksheet.getMetadataContainer().getWorksheetProperties().
+				getPropertyValue(Property.baseURI); 
+
+		if (baseURI == null || baseURI.isEmpty()) {
+				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+						Property.baseURI, "http://localhost:8080/source/");	
+		}
+		
+		String prefix = worksheet.getMetadataContainer().getWorksheetProperties().
+				getPropertyValue(Property.prefix); 
+
+		if (prefix == null || prefix.isEmpty()) {
+				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+						Property.prefix, "s");	
+		}
+		
+		
 		
 		WorksheetProperties props = worksheet.getMetadataContainer().getWorksheetProperties();
 		try {

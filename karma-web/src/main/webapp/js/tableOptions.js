@@ -45,7 +45,7 @@ var SetPropertiesDialog = (function() {
 					
 					// Prepare the input data
 					var worksheetProps = new Object();
-					worksheetProps["graphName"] = "";
+					worksheetProps["graphLabel"] = "";
 
 					// Set service options if the window is visible
 					if ($('#worksheetServiceOptions').is(':visible')) {
@@ -198,7 +198,7 @@ var applyModelDialog = (function() {
 			tr.append(th);
 			
 			var th = $("<th>"); //.addClass("FileNameProperty");
-			var label = $("<label>").text("File Name"); //.addClass("FileNameProperty");
+			var label = $("<label>").text("Name"); //.addClass("FileNameProperty");
 			th.append(label);
 			var label = $("<input>").text("")
 				.addClass("form-control")
@@ -316,6 +316,41 @@ var applyModelDialog = (function() {
 				hide();
 				return;
 			}
+			var override = false;
+			var modelExist = false;
+			var info = new Object();
+			info["worksheetId"] = worksheetId;
+			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			info["command"] = "CheckModelExistenceCommand";
+			var returned = $.ajax({
+					url: "RequestController",
+					type: "POST",
+					data : info,
+					dataType : "json",
+					async: false,
+					complete :
+							function (xhr, textStatus) {
+									var json = $.parseJSON(xhr.responseText);
+									json = json.elements[0];
+									console.log(json);
+									modelExist = json['modelExist'];
+
+												//hideLoading(info["worksheetId"]);
+							},
+							error :
+									function (xhr, textStatus) {
+												
+												//hideLoading(info["worksheetId"]);
+									}
+			});
+			if(modelExist) {
+				console.log("here" + modelExist);
+				if (confirm('Clearing the current model?')) {
+					override = true;
+				} else {
+					override = false;
+				}
+			}
 			var checked = checkboxes[0];
 			var info = new Object();
 			info["worksheetId"] = worksheetId;
@@ -324,6 +359,7 @@ var applyModelDialog = (function() {
 			info['modelRepository'] = $('#txtModel_URL').html();
 			info['modelContext'] = checked['value'];
 			info['modelUrl'] = checked['src'];
+			info['override'] = override;
 			console.log(info["worksheetId"]);
 			showLoading(info["worksheetId"]);
 			var returned = $.ajax({

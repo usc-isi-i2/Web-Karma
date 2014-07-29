@@ -915,7 +915,7 @@ var ExtractEntitiesDialog = (function() {
 			dialog.on('show.bs.modal', function (e) {
 				console.log("dialog displayed");
 				hideError();
-								$('#extractionService_URL').val("http://karmanlp.isi.edu:8080/ExtractionService/myresource");
+				$('#extractionService_URL').val("http://karmanlp.isi.edu:8080/ExtractionService/StanfordCoreNLP");
 			});
 			
 			// Initialize handler for Save button

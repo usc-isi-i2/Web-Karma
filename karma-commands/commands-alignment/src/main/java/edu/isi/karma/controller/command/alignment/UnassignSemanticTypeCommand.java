@@ -95,7 +95,10 @@ public class UnassignSemanticTypeCommand extends Command {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-
+		inputColumns.clear();
+		outputColumns.clear();
+		inputColumns.add(hNodeId);
+		outputColumns.add(hNodeId);
 		// Save the old SemanticType object for undo
 		SemanticTypes types = worksheet.getSemanticTypes();
 		oldSemanticType = types.getSemanticTypeForHNodeId(hNodeId);

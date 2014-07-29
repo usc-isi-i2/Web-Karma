@@ -103,8 +103,9 @@ public class AugmentDataCommand extends WorksheetCommand{
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		// TODO Auto-generated method stub
 		appliedCommands.clear();
+		inputColumns.clear();
+		outputColumns.clear();
 		UpdateContainer c =  new UpdateContainer();
 		alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
@@ -120,6 +121,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 		HNode hnode = factory.getHNode(hNodeId);
 		List<String> hNodeIds = new LinkedList<String>();
 		hNodeIds.add(hNodeId);
+		inputColumns.addAll(hNodeIds);
 		List<Table> dataTables = new ArrayList<Table>();
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), factory.getHTable(hnode.getHTableId()), dataTables);
 		Map<String, String> rowHashToSubjectURI = new HashMap<String, String>();
@@ -230,6 +232,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 					Label label = ontMgr.getUriLabel(incoming ? otherClass : predicate);
 					AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), label.getDisplayName(), HNodeType.AugmentData);
 					command.doIt(workspace);
+					outputColumns.addAll(command.getOutputColumns());
 					isNewNode |= command.isNewNode();
 					if (command.isNewNode())
 						appliedCommands.push(command);

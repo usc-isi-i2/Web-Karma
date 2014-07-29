@@ -286,7 +286,7 @@ var modelManagerDialog = (function() {
 			tr.append(th);
 			
 			var th = $("<th>"); //.addClass("FileNameProperty");
-			var label = $("<label>").text("File Name"); //.addClass("FileNameProperty");
+			var label = $("<label>").text("Name"); //.addClass("FileNameProperty");
 			th.append(label);
 			var label = $("<input>").text("")
 				.addClass("form-control")

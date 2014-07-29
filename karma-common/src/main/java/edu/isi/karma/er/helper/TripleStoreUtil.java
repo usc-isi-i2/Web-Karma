@@ -962,16 +962,17 @@ public class TripleStoreUtil {
 
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
-			query.append("SELECT ?z ?y ?x ?src ?w\n");
+			query.append("SELECT ?z ?y ?x ?src ?w ?u\n");
 			injectContext(context, query);
 			query.append("WHERE \n { \n");
 			query.append("GRAPH ?src \n { \n");
-			query.append("?a km-dev:sourceName ?y . \n");
+			query.append("?a km-dev:sourceName ?u . \n");
 			query.append("?a a km-dev:R2RMLMapping . \n");
 			query.append("?a owl:sameAs ?z . \n");
 			query.append("?a km-dev:modelPublicationTime ?x \n");
 			query.append("OPTIONAL \n{?a km-dev:hasInputColumns ?w} \n");
-			query.append("\n}\n} \nORDER BY ?z ?y ?x ?w ?src");
+			query.append("OPTIONAL \n{?a km-dev:hasModelLabel ?y} \n");
+			query.append("\n}\n} \nORDER BY ?z ?y ?x ?w ?u ?src");
 			String queryString = query.toString();
 			logger.debug("query: " + queryString);
 
@@ -992,12 +993,15 @@ public class TripleStoreUtil {
 				while (count < values.length()) {
 					JSONObject o = values.getJSONObject(count++);
 					times.add(o.getJSONObject("x").getString("value"));
-					names.add(o.getJSONObject("y").getString("value"));
 					urls.add(o.getJSONObject("z").getString("value"));
 					if (o.has("w"))
 							inputColumns.add(o.getJSONObject("w").getString("value"));
 					else
 						inputColumns.add("");
+					if (o.has("y"))
+						names.add(o.getJSONObject("y").getString("value"));
+					else
+						names.add(o.getJSONObject("u").getString("value"));
 					contexts.add(o.getJSONObject("src").getString("value"));
 				}
 			}
@@ -1340,7 +1344,7 @@ public class TripleStoreUtil {
 			}
 			bfs.put(tripleUri, bf);
 		}
-		deleteBloomFiltersForMaps(modelurl, context, triplemaps);
+		deleteBloomFiltersForMaps(modelurl, null, triplemaps);
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		for (Entry<String, KR2RMLBloomFilter> entry : bfs.entrySet()) {

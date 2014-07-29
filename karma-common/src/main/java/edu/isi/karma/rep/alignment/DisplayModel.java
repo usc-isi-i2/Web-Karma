@@ -63,8 +63,9 @@ public class DisplayModel {
 
 		int modelNum = 1;
 		for(DirectedWeightedMultigraph<Node, LabeledLink> subModel : this.models) {
+			logger.debug(modelNum++ + "Start levelingCyclicGraph");
 			levelingCyclicGraph(subModel);
-			logger.info(modelNum++ + "After levelingCyclicGraph");
+			logger.debug(modelNum + "After levelingCyclicGraph");
 			printLevels();
 	
 			computeNodeSpan(subModel);
@@ -73,7 +74,7 @@ public class DisplayModel {
 			updateNodeLevelsConsideringOverlaps(subModel);
 		}
 		
-		logger.info("After updateNodeLevelsConsideringOverlaps");
+		logger.debug("After updateNodeLevelsConsideringOverlaps");
 		printLevels();
 		printSpans();
 		
@@ -120,7 +121,7 @@ public class DisplayModel {
 			}
 		}
 		
-		logger.info("Final Levels");
+		logger.debug("Final Levels");
 		printLevels();
 		printSpans();
 		
@@ -211,6 +212,25 @@ public class DisplayModel {
 		return columnNodes;
 	}
 	
+	private boolean cycleExits(DirectedWeightedMultigraph<Node, LabeledLink> model, Set<Node> columnNodes, Set<Node> traversedNodes, Node start, Node end) {
+		Set<Node> neighbors = GraphUtil.getOutNeighbors(GraphUtil.asDefaultGraph(model), start);
+		logger.debug("start:" + start.getDisplayId() + ", end:" + end.getDisplayId());
+		for (Node w : neighbors) {
+			if(w == end) {
+				return true;
+			}
+			if(columnNodes.contains(w) || traversedNodes.contains(w))
+				continue;
+			
+			traversedNodes.add(w);
+			logger.debug("neighbour:" + w.getDisplayId());
+			boolean innerCycle = cycleExits(model, columnNodes, traversedNodes, w, end);
+			if(innerCycle)
+				return true;
+		}
+		return false;
+	}
+	
 	private void levelingCyclicGraph(DirectedWeightedMultigraph<Node, LabeledLink> model) {
 		
 		if (isModelEmpty()) {
@@ -218,7 +238,9 @@ public class DisplayModel {
 			return ;
 		}
 		
-		Set<Node> markedNodes = getAllColumnNodes(model);
+		Set<Node> columnNodes = getAllColumnNodes(model);
+		Set<Node> markedNodes = new HashSet<>();
+		markedNodes.addAll(columnNodes);
 		
 		Queue<Node> q = new LinkedList<Node>();
 		int maxLevel = model.vertexSet().size();
@@ -234,17 +256,22 @@ public class DisplayModel {
 					Node v = q.remove();
 					Set<Node> neighbors = GraphUtil.getOutNeighbors(GraphUtil.asDefaultGraph(model), v);
 					for (Node w : neighbors) {
-						int level = nodesLevel.get(v).intValue() + 1;
-						boolean levelChanged = false;
-						if(!nodesLevel.containsKey(w) || nodesLevel.get(w) < level) {
-							nodesLevel.put(w, level);
-							levelChanged = true;
+						if(!columnNodes.contains(w)) {
+							int level = nodesLevel.get(v).intValue() + 1;
+							boolean levelChanged = false;
+							if(!nodesLevel.containsKey(w) || nodesLevel.get(w) < level) {
+								if(nodesLevel.containsKey(w)) {
+									if(cycleExits(model, columnNodes, new HashSet<Node>(), v, w))
+										continue;
+								}
+								nodesLevel.put(w, level);
+								levelChanged = true;
+							}
+							
+							markedNodes.add(w);
+							if(levelChanged)
+								q.add(w);
 						}
-						
-						markedNodes.add(w);
-						if(levelChanged)
-							q.add(w);
-						
 					}
 				}
 			}
@@ -602,28 +629,28 @@ public class DisplayModel {
 	
 	public void printLevels() {
 		for (Entry<Node, Integer> entry : this.nodesLevel.entrySet()) {
-			logger.info(entry.getKey().getId() + " ---> " + entry.getValue().intValue());
+			logger.debug(entry.getKey().getId() + " ---> " + entry.getValue().intValue());
 		}
 	}
 	
 	public void printSpans() {
 		for (Entry<Node, Set<ColumnNode>> entry : this.nodesSpan.entrySet()) {
-			logger.info(entry.getKey().getId() + " spans ---> ");
+			logger.debug(entry.getKey().getId() + " spans ---> ");
 			if (entry.getValue() != null)
 				for (ColumnNode columnNode : entry.getValue()) {
-					logger.info("\t" + columnNode.getColumnName());
+					logger.debug("\t" + columnNode.getColumnName());
 				}
 		}
 	}
 
 	public void printModel(DirectedWeightedMultigraph<Node, LabeledLink> model) {
-		logger.info("Vertices: ");
+		logger.debug("Vertices: ");
 		for(Node n : model.vertexSet()) {
-			logger.info("\t" + n.getId());
+			logger.debug("\t" + n.getId());
 		}
-		logger.info("Edges: ");
+		logger.debug("Edges: ");
 		for(LabeledLink l : model.edgeSet()) {
-			logger.info("\t" + l.getSource().getId() + " --> " + l.getTarget().getId());
+			logger.debug("\t" + l.getSource().getId() + " --> " + l.getTarget().getId());
 		}
 	}
 	
@@ -654,10 +681,10 @@ public class DisplayModel {
 			}
 		}
 		
-		logger.info("Computed " + this.models.size() + " models");
+		logger.debug("Computed " + this.models.size() + " models");
 		int modelNum = 1;
 		for(DirectedWeightedMultigraph<Node, LabeledLink> subModel : this.models) {
-			logger.info("Model: " + modelNum++);
+			logger.debug("Model: " + modelNum++);
 			printModel(subModel);
 		}
 	}

@@ -82,7 +82,65 @@ function parse(data) {
 												$("div#tableCellMenuButtonDiv").hide();
 												$("div#columnHeadingMenuButtonDiv").hide();
 										});
-										var headerDiv = $("<div>").addClass("propertiesHeader");
+										
+										var headerDiv = $("<div>").addClass("propertiesHeader");										
+										var label1 = $("<label>").html("Name:&nbsp;");
+										var graphLabel = $("<span>")
+																.text(fetchExistingModelLabel(worksheet["worksheetId"]))
+																.addClass("edit")
+																.attr("id", "txtGraphLabel_" + worksheet["worksheetId"])
+																.editable({
+																		type: 'text',
+																		pk: 1,
+																		savenochange: true, 
+																		success: function(response, newValue) {
+																				console.log("Set new value:" + newValue);
+																				graphLabel.text(newValue);
+																				var worksheetProps = new Object();
+																				worksheetProps["hasPrefix"] = false;
+																				worksheetProps["hasBaseURI"] = false;
+																				worksheetProps["graphLabel"] = newValue;
+																				worksheetProps["hasServiceProperties"] = false;                                    
+																				var info = new Object();
+																				info["workspaceId"] = $.workspaceGlobalInformation.id;
+																				info["command"] = "SetWorksheetPropertiesCommand";
+
+																				var newInfo = [];   // for input parameters
+																				newInfo.push(getParamObject("worksheetId", worksheet["worksheetId"] ,"worksheetId"));
+																				newInfo.push(getParamObject("properties", worksheetProps, "other"));
+																				info["newInfo"] = JSON.stringify(newInfo);
+
+																				var returned = $.ajax({
+																						url: "RequestController",
+																						type: "POST",
+																						data : info,
+																						dataType : "json",
+																						async: false,
+																						complete :
+																						function (xhr, textStatus) {
+																								var json = $.parseJSON(xhr.responseText);
+																								parse(json);
+																						},
+																						error :
+																								function (xhr, textStatus) {
+																										$.sticky("Error occurred while setting properties!");
+																								}
+																						});
+
+																},
+																title: 'Enter Name'
+														}
+												)
+												.on('shown', function(e, editable) {
+													console.log(editable);
+													editable.input.$input.val(graphLabel.html());
+												});
+										
+										headerDiv.append(label1);
+										headerDiv.append(graphLabel);
+
+
+										var sep = $("<span>").html("&nbsp;|&nbsp;");
 										var label1 = $("<label>").html("Prefix:&nbsp;");
 										var prefixLabel = $("<span>").text("s")
 																.addClass("edit")
@@ -98,7 +156,7 @@ function parse(data) {
 																				worksheetProps["hasPrefix"] = true;
 																				worksheetProps["hasBaseURI"] = false;
 																				worksheetProps["prefix"] = newValue;
-																				worksheetProps["graphName"] = "";
+																				worksheetProps["graphLabel"] = "";
 																				worksheetProps["hasServiceProperties"] = false;                                    
 																				var info = new Object();
 																				info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -129,7 +187,12 @@ function parse(data) {
 																},
 																title: 'Enter Prefix'
 														}
-												);
+												)
+												.on('shown', function(e, editable) {
+													console.log(editable);
+													editable.input.$input.val(prefixLabel.html());
+												});
+										headerDiv.append(sep);
 										headerDiv.append(label1);
 										headerDiv.append(prefixLabel);
 										
@@ -150,7 +213,7 @@ function parse(data) {
 																				worksheetProps["hasPrefix"] = false;
 																				worksheetProps["hasBaseURI"] = true;
 																				worksheetProps["baseURI"] = newValue;
-																				worksheetProps["graphName"] = "";
+																				worksheetProps["graphLabel"] = "";
 																				worksheetProps["hasServiceProperties"] = false;                                    
 																				var info = new Object();
 																				info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -181,97 +244,16 @@ function parse(data) {
 																},
 																title: 'Enter Base URI'
 														}
-												);
+												)
+												.on('shown', function(e, editable) {
+													console.log(editable);
+													editable.input.$input.val(baseURILabel.html());
+												});
 										
 										headerDiv.append(sep);
 										headerDiv.append(label1);
 										headerDiv.append(baseURILabel);
-
-										var sep = $("<span>").html("&nbsp;|&nbsp;");
-										var label1 = $("<label>").html("Graph Name:&nbsp;");
-										var graphNameLabel = $("<span>")
-																.text(fetchExistingWorksheetOptions(worksheet["worksheetId"]))
-																.addClass("edit")
-																.attr("id", "txtGraphName_" + worksheet["worksheetId"])
-																.editable({
-																		type: 'text',
-																		pk: 1,
-																		savenochange: true, 
-																		success: function(response, newValue) {
-																				console.log("Set new value:" + newValue);
-																				baseURILabel.text(newValue);
-																				var worksheetProps = new Object();
-																				worksheetProps["hasPrefix"] = false;
-																				worksheetProps["hasBaseURI"] = false;
-																				worksheetProps["graphName"] = newValue;
-																				worksheetProps["hasServiceProperties"] = false;                                    
-																				var info = new Object();
-																				info["workspaceId"] = $.workspaceGlobalInformation.id;
-																				info["command"] = "SetWorksheetPropertiesCommand";
-
-																				var newInfo = [];   // for input parameters
-																				newInfo.push(getParamObject("worksheetId", worksheet["worksheetId"] ,"worksheetId"));
-																				newInfo.push(getParamObject("properties", worksheetProps, "other"));
-																				info["newInfo"] = JSON.stringify(newInfo);
-
-																				var returned = $.ajax({
-																						url: "RequestController",
-																						type: "POST",
-																						data : info,
-																						dataType : "json",
-																						async: false,
-																						complete :
-																						function (xhr, textStatus) {
-																								var json = $.parseJSON(xhr.responseText);
-																								parse(json);
-																						},
-																						error :
-																								function (xhr, textStatus) {
-																										$.sticky("Error occurred while setting properties!");
-																								}
-																						});
-
-																},
-																title: 'Enter Graph Name'
-														}
-												);
 										
-										headerDiv.append(sep);
-										headerDiv.append(label1);
-										headerDiv.append(graphNameLabel);
-										
-										var worksheetProps = new Object();
-										worksheetProps["hasPrefix"] = true;
-										worksheetProps["prefix"] = "s";
-										worksheetProps["hasBaseURI"] = true;
-										worksheetProps["baseURI"] = "http://localhost:8080/source/";
-										worksheetProps["graphName"] = "";
-										worksheetProps["hasServiceProperties"] = false;                                    
-										var info = new Object();
-										info["workspaceId"] = $.workspaceGlobalInformation.id;
-										info["command"] = "SetWorksheetPropertiesCommand";
-
-										var newInfo = [];   // for input parameters
-										newInfo.push(getParamObject("worksheetId", worksheet["worksheetId"] ,"worksheetId"));
-										newInfo.push(getParamObject("properties", worksheetProps, "other"));
-										info["newInfo"] = JSON.stringify(newInfo);
-
-										var returned = $.ajax({
-												url: "RequestController",
-												type: "POST",
-												data : info,
-												dataType : "json",
-												async: false,
-												complete :
-														function (xhr, textStatus) {
-																var json = $.parseJSON(xhr.responseText);
-																parse(json);
-														},
-														error :
-														function (xhr, textStatus) {
-																$.sticky("Error occurred while setting properties!");
-														}
-										});
 										var mapDiv = $("<div>").addClass("toggleMapView");
 										if(googleEarthEnabled) {
 											mapDiv
@@ -347,6 +329,7 @@ function parse(data) {
 						$.sticky("Worksheet deleted");
 				}
 				else if(element["updateType"] == "WorksheetHeadersUpdate") {
+						console.time('header update');
 						var worksheetPanel = $("div.Worksheet#" + element["worksheetId"]);
 
 						var tableContainer = $("div.table-container", worksheetPanel);
@@ -366,14 +349,15 @@ function parse(data) {
 								headersTable = $("<table>").addClass("wk-table htable-odd");
 								tableHeaderContainer.append(headersTable);
 						} else {
-								$("tr", headersTable).addClass("deleteMe");
+								//$("tr", headersTable).addClass("deleteMe");
+								$("tbody", headersTable).empty();
 						}
 
 						var colWidths = addColumnHeadersRecurse(element["worksheetId"], element["columns"], headersTable, true);
 						var stylesheet = document.styleSheets[0];
 
 						// Remove the previous rows if any
-						$("tr.deleteMe", headersTable).remove();
+						//$("tr.deleteMe", headersTable).remove();
 
 						$.each(colWidths, function(index2, colWidth){
 								var selector = "." + colWidth.columnClass;
@@ -384,8 +368,10 @@ function parse(data) {
 										stylesheet.addRule(selector, rule, -1);
 								}
 						});
+						console.timeEnd('header update');
 				}
 				else if(element["updateType"] == "WorksheetDataUpdate") {
+						console.time('data update');
 						var worksheetPanel = $("div.Worksheet#" + element["worksheetId"]);
 
 						var tableDataContainer = $(worksheetPanel).children("div.table-data-container");
@@ -404,15 +390,15 @@ function parse(data) {
 						var tBody = $(dataTable).children("tbody");
 						if(tBody.length != 0) {
 								// Mark the rows that need to be deleted later
-								if($(tBody).children("tr").length != 0) {
-										$(tBody).children("tr").addClass("deleteMe");
-								}
-						}
-
+								// if($(tBody).children("tr").length != 0) {
+								// 		$(tBody).children("tr").addClass("deleteMe");
+								// }
+								tBody.empty();
+						}				
 						addWorksheetDataRecurse(element["worksheetId"], element["rows"], dataTable, true);
 
 						// Delete the old rows
-						$(tBody).children("tr.deleteMe").remove();
+						//$(tBody).children("tr.deleteMe").remove();
 
 						var additionalRowsAvail = element["additionalRowsCount"];
 						var moreRowsDiv = $("<div>").addClass("load-more");
@@ -426,6 +412,7 @@ function parse(data) {
 								moreRowsDiv.append(moreRowsLink);
 								tableDataContainer.append(moreRowsDiv);
 						}
+						console.timeEnd('data update');
 				}
 				else if(element["updateType"] == "HistoryAddCommandUpdate") {
 					var title = element.command.title;
@@ -607,8 +594,8 @@ function parse(data) {
 								$("#txtBaseURI_" + element["worksheetId"]).text(element["baseURI"]);
 						}
 
-						if (element["graphName"]) {
-								$("#txtGraphName_" + element["worksheetId"]).text(element["graphName"]);
+						if (element["graphLabel"]) {
+								$("#txtGraphLabel_" + element["worksheetId"]).text(element["graphLabel"]);
 						}
 
 				}
@@ -1011,13 +998,13 @@ function submitTableCellEdit(worksheetId, nodeId, value) {
 		});
 }
 
-function fetchExistingWorksheetOptions(worksheetId) {
+function fetchExistingModelLabel(worksheetId) {
 												
 	var info = new Object();
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "FetchExistingWorksheetPropertiesCommand";
 	info["worksheetId"] = worksheetId;
-	var graphName;
+	var graphLabel;
 	var returned = $.ajax({
 		url: "RequestController",
 		type: "POST",
@@ -1029,18 +1016,18 @@ function fetchExistingWorksheetOptions(worksheetId) {
 				var json = $.parseJSON(xhr.responseText);
 				var props = json["elements"][0]["properties"];
 
-				if (props["graphName"] != null) {
-					graphName = props["graphName"];
+				if (props["graphLabel"] != null) {
+					graphLabel = props["graphLabel"];
 				} else {
-					graphName = "";
+					graphLabel = "";
 				}
 			},
 		error :
 			function (xhr, textStatus) {
-				graphName = "";																				}
+				graphLabel = "";																				}
 			}
 	);
-	return graphName;
+	return graphLabel;
 }
 
 

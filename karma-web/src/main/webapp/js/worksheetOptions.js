@@ -234,49 +234,6 @@ function WorksheetOptions(wsId, wsTitle) {
 		hideDropdown();
 		GlueDialog2.getInstance().show(worksheetId);
 		}
-	function saveRowID () {
-		console.log("saveRowID: " + worksheetTitle);
-		hideDropdown();
-		var checked = [];
-		$(".selectRowID").each( function(index, checkbox) {
-			if (checkbox.checked) {
-				checked.push(getParamObject("selectedRowID", checkbox['value'], "other"));
-				console.log(checkbox['value']);
-			}
-		});
-		var info = new Object();
-		info["worksheetId"] = worksheetId;
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "SaveRowIDCommand";
-
-		var newInfo = [];
-		newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-		newInfo.push(getParamObject("values", JSON.stringify(checked), "other"));
-		info["newInfo"] = JSON.stringify(newInfo);
-
-		showLoading(info["worksheetId"]);
-		var returned = $.ajax({
-			url: "RequestController",
-			type: "POST",
-			data : info,
-			dataType : "json",
-			complete :
-				function (xhr, textStatus) {
-					//alert(xhr.responseText);
-					var json = $.parseJSON(xhr.responseText);
-					console.log(json);
-					//parse(json);
-					hideLoading(info["worksheetId"]);
-			},
-			error :
-				function (xhr, textStatus) {
-					alert("Error occured while generating the automatic model!" + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-		});
-		//console.log(checked);
-		//FoldDialog.getInstance().show(worksheetId);
-	} 
 	
 	function resetModel() {
 		console.log("Reset Model: " + worksheetTitle);
@@ -310,12 +267,48 @@ function WorksheetOptions(wsId, wsTitle) {
 	
 	function applyR2RMLModel() {
 		console.log("Apply R2RMl Model: " + worksheetTitle);
-		//hideDropdown();
+		
 		$("#applyWorksheetHistory_" + worksheetId).fileupload({
 					add : function (e, data) {
+							var override = false;
+							var modelExist = false;
+							var info = new Object();
+							info["worksheetId"] = worksheetId;
+							info["workspaceId"] = $.workspaceGlobalInformation.id;
+							info["command"] = "CheckModelExistenceCommand";
+							var returned = $.ajax({
+									url: "RequestController",
+									type: "POST",
+									data : info,
+									dataType : "json",
+									async: false,
+									complete :
+											function (xhr, textStatus) {
+												//alert(xhr.responseText);
+													var json = $.parseJSON(xhr.responseText);
+													json = json.elements[0];
+													console.log(json);
+													modelExist = json['modelExist'];
+
+												//hideLoading(info["worksheetId"]);
+											},
+									error :
+											function (xhr, textStatus) {
+												
+												//hideLoading(info["worksheetId"]);
+											}
+							});
+							if(modelExist) {
+								console.log("here" + modelExist);
+								if (confirm('Clearing the current model?')) {
+									override = true;
+								} else {
+									override = false;
+								}
+							}
 							$("#applyWorksheetHistory_" + worksheetId).fileupload({
 									url: "RequestController?workspaceId=" + $.workspaceGlobalInformation.id +
-											"&command=ApplyHistoryFromR2RMLModelCommand&worksheetId=" + worksheetId
+											"&command=ApplyHistoryFromR2RMLModelCommand&worksheetId=" + worksheetId + "&override=" + override
 							});
 							hideDropdown();
 							showLoading(worksheetId);
