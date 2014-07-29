@@ -164,12 +164,12 @@ public class JSONKR2RMLRDFWriter implements KR2RMLRDFWriter{
 			Object obj = subject.get(shortHandPredicateURI);
 			if(obj != null)
 			{
-				if (obj instanceof JSONObject) {
+				if (obj instanceof JSONArray) {
+					array = (JSONArray) obj;
+				}
+				else{
 					array = new JSONArray();
 					array.put(obj);
-				}
-				else if (obj instanceof JSONArray) {
-					array = (JSONArray) obj;
 				}
 			}
 			else

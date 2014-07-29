@@ -428,7 +428,7 @@ public class CommandHistory {
 
 	public void removeCommands(Workspace workspace, String worksheetId) {
 		List<ICommand> commandsToBeRemoved = new ArrayList<ICommand>();
-		ListIterator<ICommand> commandItr = history.listIterator(history.size() - 1);
+		ListIterator<ICommand> commandItr = history.listIterator(history.size());
 		while(commandItr.hasPrevious()) {
 			ICommand command = commandItr.previous();
 			if(command instanceof Command && command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
