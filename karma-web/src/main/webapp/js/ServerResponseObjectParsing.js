@@ -29,6 +29,9 @@ function parse(data) {
 		
 		// Check for errors
 		$.each(data["elements"], function(i, element) {
+			if(element == null) {
+				return;
+			}
 			if(element["updateType"] == "ReloadPageUpdate") {
 				//Need to reload the page
 				location.reload();
@@ -53,6 +56,9 @@ function parse(data) {
 		
 		var dataElements = new Array();
 		$.each(data["elements"], function(i, element) {
+			if(element == null) {
+				return;
+			}
 			if(element["updateType"] == "UISettings") {
 				$.workspaceGlobalInformation.UISettings = element["settings"];
 			} else if(element["updateType"] == "WorksheetCleaningUpdate") {
@@ -69,6 +75,9 @@ function parse(data) {
 		
 		// Loop through each update from the server and take required action for the GUI
 		$.each(data["elements"], function(i, element) {
+			if(element == null) {
+				return;
+			}
 				if(element["updateType"] == "WorksheetListUpdate") {
 
 						$.each(element["worksheets"], function(j, worksheet) {
