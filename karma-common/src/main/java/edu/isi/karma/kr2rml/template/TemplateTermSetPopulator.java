@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import edu.isi.karma.kr2rml.KR2RMLConfiguration;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
@@ -36,6 +37,9 @@ public class TemplateTermSetPopulator {
 	private boolean useNodeValue;
 	private StringBuilder baseTemplate;
 	private URIFormatter formatter;
+	
+	// WK-226 Adds the ability to generate blank nodes with out satisfying any column terms
+	private static Boolean noMinimumNumberOfSatisifiedTerms = null;
 	
 	public TemplateTermSetPopulator(TemplateTermSet originalTerms, StringBuilder baseTemplate, URIFormatter formatter)
 	{
@@ -56,6 +60,10 @@ public class TemplateTermSetPopulator {
 		this.originalTerms = originalTerms;
 		this.baseTemplate = baseTemplate;
 		this.formatter = formatter;
+		if(noMinimumNumberOfSatisifiedTerms == null)
+		{
+			noMinimumNumberOfSatisifiedTerms = KR2RMLConfiguration.getNoMinimumNumberOfSatisifiedTerms();
+		}
 	}
 	
 	public TemplateTermSet getTerms()
@@ -84,7 +92,7 @@ public class TemplateTermSetPopulator {
 		{
 			StringBuilder uri = new StringBuilder();
 			Map<ColumnTemplateTerm, Node> references = new HashMap<ColumnTemplateTerm, Node>();
-			boolean termsSatisifed = true;
+			boolean allTermsSatisifed = true;
 			boolean atLeastOneTermSatisified = false;
 			for(TemplateTerm term : terms)
 			{
@@ -93,12 +101,12 @@ public class TemplateTermSetPopulator {
 					Node n = partial.getValue((ColumnTemplateTerm)term);
 					if(n == null)
 					{
-						termsSatisifed = false; 
+						allTermsSatisifed = false; 
 						continue;
 					}
 					if(n.getValue() == null || n.getValue().asString() == null || n.getValue().isEmptyValue() || n.getValue().asString().trim().isEmpty())
 					{
-						termsSatisifed = false;
+						allTermsSatisifed = false;
 					}
 					else
 					{
@@ -120,7 +128,7 @@ public class TemplateTermSetPopulator {
 					uri.append(term.getTemplateTermValue());
 				}
 			}
-			if(termsSatisifed || (!useNodeValue && atLeastOneTermSatisified))
+			if(areTermsSatisified(allTermsSatisifed, atLeastOneTermSatisified))
 			{
 				String value = uri.toString();
 				if(URIify)
@@ -133,5 +141,14 @@ public class TemplateTermSetPopulator {
 		}
 		return templates;
 	}
-	
+
+	private boolean areTermsSatisified(boolean termsSatisifed,
+			boolean atLeastOneTermSatisified) {
+		return termsSatisifed || (!useNodeValue && (atLeastOneTermSatisified || noMinimumNumberOfSatisifiedTerms));
+	}
+
+	public static void setNoMinimumNumberOfSatisifiedTerms(boolean noMinimumNumberOfSatisifiedTerms)
+	{
+		TemplateTermSetPopulator.noMinimumNumberOfSatisifiedTerms = noMinimumNumberOfSatisifiedTerms; 
+	}
 }

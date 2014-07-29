@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.Selection.SelectionProperty;
+import edu.isi.karma.controller.command.transformation.PythonRepository;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.metadata.KarmaMetadataManager;
@@ -47,6 +48,7 @@ public class TestSelection {
         userMetadataManager.register(new UserPreferencesMetadata(), uc);
         userMetadataManager.register(new UserConfigMetadata(), uc);
         userMetadataManager.register(new PythonTransformationMetadata(), uc);
+        PythonRepository.disableReloadingLibrary();
 	}
 	
 	@Before
