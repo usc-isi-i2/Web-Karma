@@ -10,6 +10,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +68,37 @@ public class JsonImportValues {
 		}
 	}
 
+	public static void addObjectElement(String key, JSONTokener token, HTable headers,
+			Row row, int maxNumLines, int numObjects, RepFactory factory, Worksheet worksheet) throws JSONException {
+		HNode hNode = addHNode(headers, key, DataStructure.OBJECT, factory, worksheet);
+
+		String hNodeId = hNode.getId();
+		char c = token.nextClean();
+		if (c != '{' && c != '[' && c != ',') {
+			token.back();
+			String value = token.nextValue().toString();
+			if (value.isEmpty() && hNode.hasNestedTable()) {
+				addEmptyRow(row.getNode(hNodeId).getNestedTable(), hNode, maxNumLines, numObjects, factory);
+			}
+			row.setValue(hNodeId, value, factory);
+		}
+		else if (c == '{') {
+			if (maxNumLines <= 0 || numObjects < maxNumLines) {
+				HTable nestedHTable = addNestedHTable(hNode, key, row, maxNumLines, numObjects, factory, worksheet);
+				Table nestedTable = row.getNode(hNodeId).getNestedTable();
+				addKeysAndValues(token, nestedHTable, nestedTable, maxNumLines, numObjects, factory, worksheet);
+			}
+		} else if (c == '[') {
+			if (maxNumLines <= 0 || numObjects < maxNumLines) {
+				HTable nestedHTable = addNestedHTable(hNode, key, row, maxNumLines, numObjects, factory, worksheet);
+				Table nestedTable = row.getNode(hNodeId).getNestedTable();
+				addListElement(token, nestedHTable, nestedTable, maxNumLines, numObjects, factory, worksheet);
+			}
+		} else if (c != ',') {
+			throw new Error("Cannot handle " + key + " yet.");
+		}
+	}
+
 	public static void addEmptyRow(Table nestedTable, HNode hNode, int maxNumLines, int numObjects, RepFactory factory) {
 		HTable headersNestedTable = hNode.getNestedTable();
 		Row emptyRow = nestedTable.addRow(factory);
@@ -94,12 +126,34 @@ public class JsonImportValues {
 		// if(maxNumLines > 0 && numObjects >= maxNumLines)
 		// return;
 
-		
+
 		Iterator<String> it = getSortedKeysIterator(object);
 		while (it.hasNext()) {
 			String nestedKey = it.next();
 			addObjectElement(nestedKey, object.get(nestedKey), nestedHTable,
 					nestedRow, maxNumLines, numObjects, factory, worksheet);
+		}
+	}
+
+	public static void addKeysAndValues(JSONTokener token, HTable nestedHTable,
+			Table nestedTable, int maxNumLines, int numObjects, RepFactory factory, Worksheet worksheet) throws JSONException {
+		if (maxNumLines > 0 && numObjects >= maxNumLines)
+			return;
+
+		Row nestedRow = nestedTable.addRow(factory);
+		numObjects++;
+		// if(maxNumLines > 0 && numObjects >= maxNumLines)
+		// return;
+		char c = token.nextClean();
+		while (c != '}') {
+			if (c != ',') {
+				token.back();
+				Object key = token.nextValue();
+				token.nextClean();
+				addObjectElement((String)key, token, nestedHTable,
+						nestedRow, maxNumLines, numObjects, factory, worksheet);
+			}
+			c = token.nextClean();
 		}
 	}
 
@@ -146,7 +200,7 @@ public class JsonImportValues {
 				logger.error("Unexpected value in JSON array:"
 						+ listValue.toString());
 			}
-			
+
 			row.setValue(hNodeId, value, factory);
 		} else if (listValue instanceof JSONArray) {
 			if (maxNumLines <= 0 || numObjects < maxNumLines) {
@@ -166,6 +220,48 @@ public class JsonImportValues {
 			}
 		} else {
 			logger.error("Cannot handle whatever case is not covered by the if statements. Sorry.");
+		}
+
+	}
+
+	public static void addListElement(JSONTokener token, HTable headers,
+			Table dataTable, int maxNumLines, int numObjects, RepFactory factory, Worksheet worksheet) throws JSONException {
+		char c = token.nextClean();
+		while (c != ']') {
+			if (c != '{' && c != '[' && c != ',') {
+				token.back();
+				HNode hNode = addHNode(headers, HTable.VALUES_COLUMN, DataStructure.PRIMITIVE, factory, worksheet);
+				String hNodeId = hNode.getId();
+				Row row = dataTable.addRow(factory);
+				numObjects++;
+				String value = token.nextValue().toString();
+				row.setValue(hNodeId, value, factory);
+			}
+			else if (c == '{') {
+				if (maxNumLines <= 0 || numObjects < maxNumLines) {
+					numObjects++;
+					addKeysAndValues(token, headers, dataTable, maxNumLines, numObjects, factory, worksheet);
+				}
+			}
+			else if (c == '[') {
+				if (maxNumLines <= 0 || numObjects < maxNumLines) {
+					HNode hNode = addHNode(headers, "nested array", DataStructure.COLLECTION, factory, worksheet);
+					String hNodeId = hNode.getId();
+					Row row = dataTable.addRow(factory);
+					numObjects++;
+					if (maxNumLines > 0 && numObjects >= maxNumLines)
+						return;
+					HTable nestedHTable = addNestedHTable(hNode,
+							"nested array values", row, maxNumLines, numObjects, factory, worksheet);
+					Table nestedTable = row.getNode(hNodeId).getNestedTable();
+					addListElement(token, nestedHTable, nestedTable, maxNumLines, numObjects, factory, worksheet);
+				}
+			} 
+			else if (c != ',') {
+				logger.error("Cannot handle whatever case is not covered by the if statements. Sorry.");
+
+			}
+			c = token.nextClean();
 		}
 
 	}

@@ -118,14 +118,13 @@ public class JsonImport extends Import {
 		else if (json instanceof File && json != null) {
 			try {
 				JSONTokener tokener = new JSONTokener(new InputStreamReader(new FileInputStream((File)json), encoding));
-				JSONObject obj = JSONUtil.createJSONObject(tokener);
-				if (obj != null) {
-					JsonImportValues.addKeysAndValues(obj, getWorksheet().getHeaders(),
+				char c = tokener.nextClean();
+				if (c == '{') {				
+					JsonImportValues.addKeysAndValues(tokener, getWorksheet().getHeaders(),
 							getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
 				}
-				else {
-					tokener = new JSONTokener(new InputStreamReader(new FileInputStream((File)json), encoding));
-					parseJSONArray(tokener);
+				else if (c == '['){
+					JsonImportValues.addListElement(tokener, getWorksheet().getHeaders(), getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
 				}
 			}catch(Exception e) {
 				logger.error("Parsing failure", e);
@@ -134,37 +133,6 @@ public class JsonImport extends Import {
 		Worksheet ws = getWorksheet();
 		ws.getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.JSON.toString());
 		return ws;
-	}
-
-	private void parseJSONArray(JSONTokener x) {
-		if (x.nextClean() != '[') {
-			throw x.syntaxError("A JSONArray text must start with '['");
-		}
-		if (x.nextClean() != ']') {
-			x.back();
-			for (;;) {
-				if (x.nextClean() == ',') {
-					x.back();
-				} else {
-					x.back();
-					Object obj = x.nextValue();
-					JsonImportValues.addListElement(obj, getWorksheet().getHeaders(),
-							getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
-				}
-				switch (x.nextClean()) {
-				case ',':
-					if (x.nextClean() == ']') {
-						return;
-					}
-					x.back();
-					break;
-				case ']':
-					return;
-				default:
-					throw x.syntaxError("Expected a ',' or ']'");
-				}
-			}
-		}
 	}
 
 }

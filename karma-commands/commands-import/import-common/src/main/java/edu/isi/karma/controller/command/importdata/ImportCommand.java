@@ -57,9 +57,10 @@ public abstract class ImportCommand extends Command {
         UpdateContainer c = new UpdateContainer();
 
         try {
+        	long start = System.currentTimeMillis();
         	Import imp = createImport(workspace);
             Worksheet wsht = imp.generateWorksheet();
-            System.out.println("import finished");
+            System.out.println("import finished: " + (System.currentTimeMillis() - start) + " msec");
             if (hasRevisionId()) {
                 Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
                 wsht.setRevisedWorksheet(revisedWorksheet);  
