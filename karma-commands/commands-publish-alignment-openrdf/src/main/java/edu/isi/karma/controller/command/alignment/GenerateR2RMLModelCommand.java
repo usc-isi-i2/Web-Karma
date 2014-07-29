@@ -22,6 +22,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.core.UriBuilder;
@@ -126,9 +127,18 @@ public class GenerateR2RMLModelCommand extends Command {
 		UpdateContainer uc = new UpdateContainer();
 		//save the preferences 
 		savePreferences(workspace);
-
+		boolean storeOldHistory = Boolean.parseBoolean(ServletContextParameterMap.getParameterValue(ContextParameter.STORE_OLD_HISTORY));
+		System.out.println("storeOldHistory: " + storeOldHistory);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		CommandHistory history = workspace.getCommandHistory();
+		CommandHistory history = workspace.getCommandHistory();		
+		if (storeOldHistory) {
+			List<Command> oldCommands = history.getCommandsFromWorksheetId(worksheetId);
+			JSONArray oldCommandsArray = new JSONArray();
+			for (Command refined : oldCommands)
+				oldCommandsArray.put(workspace.getCommandHistory().getCommandJSON(workspace, refined));
+			worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+					Property.oldCommandHistory, oldCommandsArray.toString());
+		}
 		CommandHistoryUtil historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
 		historyUtil.consolidateHistory();		
 		historyUtil.replayHistory();
@@ -142,7 +152,7 @@ public class GenerateR2RMLModelCommand extends Command {
 			JSONArray hNodeRepresentation = hnode.getJSONArrayRepresentation(workspace.getFactory());
 			inputColumnsArray.put(hNodeRepresentation);
 		}
-		
+
 		for (String hNodeId : outputColumns) {
 			HNode hnode = workspace.getFactory().getHNode(hNodeId);
 			JSONArray hNodeRepresentation = hnode.getJSONArrayRepresentation(workspace.getFactory());
@@ -151,7 +161,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
 				Property.inputColumns, inputColumnsArray.toString());
 		worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
-				Property.outputColumns, outputColumnsArray.toString());
+				Property.outputColumns, outputColumnsArray.toString());		
 		this.worksheetName = worksheet.getTitle();
 		String graphLabel = worksheet.getMetadataContainer().getWorksheetProperties().
 				getPropertyValue(Property.graphLabel); 
@@ -209,7 +219,7 @@ public class GenerateR2RMLModelCommand extends Command {
 
 		try {
 			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
-			
+
 			fileSaver.saveAlignment(alignment, modelFileLocalPath);
 
 			// Write the model to the triple store

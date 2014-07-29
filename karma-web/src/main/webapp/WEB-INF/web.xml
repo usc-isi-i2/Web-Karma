@@ -81,6 +81,10 @@
     <param-value>/cleaningService/IdentifyData</param-value>
   </context-param>
   <context-param>
+    <param-name>STORE_OLD_HISTORY</param-name>
+    <param-value>True</param-value>
+  </context-param>
+  <context-param>
     <param-name>CLUSTER_SERVICE_URL</param-name>
     <param-value>/clusterService/cluster/post</param-value>
   </context-param>
