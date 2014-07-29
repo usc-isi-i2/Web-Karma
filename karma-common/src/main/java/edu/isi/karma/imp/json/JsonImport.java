@@ -105,26 +105,30 @@ public class JsonImport extends Import {
 			getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.COLLECTION);
 			JSONArray a = (JSONArray) json;
 			for (int i = 0; i < a.length(); i++) {
+				JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet());
 				JsonImportValues.addListElement(a.get(i), getWorksheet().getHeaders(),
-						getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
+						getWorksheet().getDataTable());
 				if (maxNumLines > 0 && numObjects >= maxNumLines)
 					break;
 			}
 		} else if (json instanceof JSONObject) {
 			getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.OBJECT);
+			JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet());
 			JsonImportValues.addKeysAndValues((JSONObject) json, getWorksheet().getHeaders(),
-					getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
+					getWorksheet().getDataTable());
 		}
 		else if (json instanceof File && json != null) {
 			try {
 				JSONTokener tokener = new JSONTokener(new InputStreamReader(new FileInputStream((File)json), encoding));
 				char c = tokener.nextClean();
-				if (c == '{') {				
+				if (c == '{') {
+					JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet());
 					JsonImportValues.addKeysAndValues(tokener, getWorksheet().getHeaders(),
-							getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
+							getWorksheet().getDataTable());
 				}
 				else if (c == '['){
-					JsonImportValues.addListElement(tokener, getWorksheet().getHeaders(), getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
+					JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet());
+					JsonImportValues.addListElement(tokener, getWorksheet().getHeaders(), getWorksheet().getDataTable());
 				}
 			}catch(Exception e) {
 				logger.error("Parsing failure", e);
