@@ -29,12 +29,16 @@ import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.core.UriBuilder;
+
+import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.http.HttpEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,6 +65,7 @@ import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
@@ -318,7 +323,7 @@ public class InvokePredefinedServiceCommand extends Command {
 		
 		// find all the hNodeIds for the column names in the service model
 		String lasthNodeId = "";
-		Collection<HNode> hNodes = factory.getAllHNodes();
+		Collection<HNode> hNodes = wk.getHeaders().getHNodes();
 		ArrayList<HNode> hNodes2 = new ArrayList<HNode>();
 		for(HNode hn: hNodes) {
 			if(columnLabelMappings.containsKey(hn.getColumnName()))  {
@@ -352,10 +357,20 @@ public class InvokePredefinedServiceCommand extends Command {
 				String responseString = "";
 				if(isGET) {
 					StringBuffer urlParams = new StringBuffer();
-					for(HNode hn : hNodes2) {
-						urlParams.append(columnLabelMappings.get(hn.getColumnName())).append("=").append(URLEncoder.encode(r.getNode(hn.getId()).getValue().asString())).append("&");
+					try {
+						for(HNode hn : hNodes2) {
+							String paramName = columnLabelMappings.get(hn.getColumnName());
+							Node valNode = r.getNode(hn.getId());
+							CellValue cellVal = valNode.getValue();
+							String param = URIUtil.encodeQuery(cellVal.asString());
+							logger.info(param);
+							urlParams.append(paramName).append("=").append(param).append("&");
+						}
+						responseString = HTTPUtil.executeHTTPGetRequest(this.serviceUrl+"?"+urlParams.toString(), "text/plain");
+					} catch (Exception e2) {
+						logger.error("Failed to invoke service.",e2);
 					}
-					responseString = HTTPUtil.executeHTTPGetRequest(this.serviceUrl+"?"+urlParams.toString(), "text/plain");
+					
 					
 				} else {
 					
@@ -364,6 +379,8 @@ public class InvokePredefinedServiceCommand extends Command {
 						formparams.put(columnLabelMappings.get(hn.getColumnName()), r.getNode(hn.getId()).getValue().asString());
 					}
 					responseString = HTTPUtil.executeHTTPPostRequest( this.serviceUrl, "application/x-www-form-urlencoded", "text/plain", formparams);
+					logger.info(responseString);
+					
 				}
 				r.setValue(ndid.getId(), responseString, factory);
 				logger.info("Got response : " + responseString);
