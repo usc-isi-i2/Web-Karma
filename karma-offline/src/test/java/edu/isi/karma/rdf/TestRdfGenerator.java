@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.transformation.PythonRepository;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
@@ -39,6 +40,7 @@ public abstract class TestRdfGenerator {
         userMetadataManager.register(new UserPreferencesMetadata(), uc);
         userMetadataManager.register(new UserConfigMetadata(), uc);
         userMetadataManager.register(new PythonTransformationMetadata(), uc);
+        PythonRepository.disableReloadingLibrary();
 	}
 
 

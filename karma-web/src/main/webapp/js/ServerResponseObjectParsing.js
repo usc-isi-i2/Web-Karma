@@ -371,6 +371,7 @@ function parse(data) {
 						console.timeEnd('header update');
 				}
 				else if(element["updateType"] == "WorksheetDataUpdate") {
+						console.time('data update');
 						var worksheetPanel = $("div.Worksheet#" + element["worksheetId"]);
 
 						var tableDataContainer = $(worksheetPanel).children("div.table-data-container");
@@ -411,6 +412,7 @@ function parse(data) {
 								moreRowsDiv.append(moreRowsLink);
 								tableDataContainer.append(moreRowsDiv);
 						}
+						console.timeEnd('data update');
 				}
 				else if(element["updateType"] == "HistoryAddCommandUpdate") {
 					var title = element.command.title;
