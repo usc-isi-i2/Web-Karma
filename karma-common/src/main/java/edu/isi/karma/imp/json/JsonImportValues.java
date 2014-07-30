@@ -85,7 +85,7 @@ public class JsonImportValues {
 		char c = token.nextClean();
 		if (maxNumLines > 0 && numObjects >= maxNumLines)
 			return;
-		if (c != '{' && c != '[' && c != ',') {
+		if (c != '{' && c != '[') {
 			token.back();
 			String value = token.nextValue().toString();
 			if (value.isEmpty() && hNode.hasNestedTable()) {
@@ -169,8 +169,11 @@ public class JsonImportValues {
 			c = token.nextClean();
 			if (c != ',' && c != '}')
 				throw new JSONException("Parse JSON object error");
-			if (c == ',')
+			if (c == ',') {
 				c = token.nextClean();
+				if (c == '}')
+					throw new JSONException("Parse JSON object error");
+			}
 		}
 	}
 
@@ -247,7 +250,7 @@ public class JsonImportValues {
 		while (c != ']') {
 			if (maxNumLines > 0 && numObjects >= maxNumLines)
 				break;
-			if (c != '{' && c != '[' && c != ',') {
+			if (c != '{' && c != '[') {
 				token.back();
 				HNode hNode = addHNode(headers, HTable.VALUES_COLUMN, DataStructure.PRIMITIVE, factory, worksheet);
 				String hNodeId = hNode.getId();
@@ -276,15 +279,18 @@ public class JsonImportValues {
 					addListElement(token, nestedHTable, nestedTable);
 				}
 			} 
-			else if (c != ','){
+			else {
 				logger.error("Cannot handle whatever case is not covered by the if statements. Sorry.");
 
 			}
 			c = token.nextClean();
 			if (c != ',' && c != ']')
 				throw new JSONException("Parse JSON array error");
-			if (c == ',')
+			if (c == ',') {
 				c = token.nextClean();
+				if (c == ']')
+					throw new JSONException("Parse JSON array error");
+			}
 		}
 
 	}
