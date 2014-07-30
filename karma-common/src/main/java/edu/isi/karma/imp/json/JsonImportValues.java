@@ -171,8 +171,6 @@ public class JsonImportValues {
 				throw new JSONException("Parse JSON object error");
 			if (c == ',') {
 				c = token.nextClean();
-				if (c == '}')
-					throw new JSONException("Parse JSON object error");
 			}
 		}
 	}
@@ -288,8 +286,6 @@ public class JsonImportValues {
 				throw new JSONException("Parse JSON array error");
 			if (c == ',') {
 				c = token.nextClean();
-				if (c == ']')
-					throw new JSONException("Parse JSON array error");
 			}
 		}
 
