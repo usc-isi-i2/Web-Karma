@@ -261,11 +261,18 @@ public class CommandHistory {
 				obj1.put(ClientJsonKeys.value.name(), hNodeRepresentation);
 				inputArray.put(obj1);
 			}
-			JSONObject obj = new JSONObject();
-			obj.put(ClientJsonKeys.name.name(), "inputColumns");
-			obj.put(ClientJsonKeys.value.name(), inputArray.toString());
-			obj.put(ClientJsonKeys.type.name(), ParameterType.hNodeIdList.name());
-			inputArr.put(obj);
+			JSONObject obj = HistoryJsonUtil.getJSONObjectWithName("inputColumns", inputArr);			
+			if (obj == null) {
+				obj = new JSONObject();
+				obj.put(ClientJsonKeys.name.name(), "inputColumns");
+				obj.put(ClientJsonKeys.value.name(), inputArray.toString());
+				obj.put(ClientJsonKeys.type.name(), ParameterType.hNodeIdList.name());
+				inputArr.put(obj);
+			}
+			else {
+				obj.put(ClientJsonKeys.value.name(), inputArray.toString());
+			}
+				
 			JSONArray outputArray = new JSONArray();
 			for (String hNodeId : tmp.getOutputColumns()) {
 				HNode node = workspace.getFactory().getHNode(hNodeId);
@@ -274,11 +281,17 @@ public class CommandHistory {
 				obj1.put(ClientJsonKeys.value.name(), hNodeRepresentation);
 				outputArray.put(obj1);
 			}
-			obj = new JSONObject();
-			obj.put(ClientJsonKeys.name.name(), "outputColumns");
-			obj.put(ClientJsonKeys.value.name(), outputArray.toString());
-			obj.put(ClientJsonKeys.type.name(), ParameterType.hNodeIdList.name());
-			inputArr.put(obj);
+			obj = HistoryJsonUtil.getJSONObjectWithName("outputColumns", inputArr);						
+			if (obj == null) {
+				obj = new JSONObject();
+				obj.put(ClientJsonKeys.name.name(), "outputColumns");
+				obj.put(ClientJsonKeys.value.name(), outputArray.toString());
+				obj.put(ClientJsonKeys.type.name(), ParameterType.hNodeIdList.name());
+				inputArr.put(obj);
+			}
+			else {
+				obj.put(ClientJsonKeys.value.name(), outputArray.toString());
+			}
 		}
 		commObj.put(HistoryArguments.inputParameters.name(), inputArr);
 		
