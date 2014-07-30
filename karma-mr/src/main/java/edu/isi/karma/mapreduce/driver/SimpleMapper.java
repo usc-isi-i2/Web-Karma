@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
@@ -36,10 +35,13 @@ public class SimpleMapper extends Mapper<Text, Text, Text, Text>{
 	{
 		
 		try {
-			Configuration conf = context.getConfiguration();
-			String karmaUserHome = conf.get("KARMA_USER_HOME") != null? conf.get("KARMA_USER_HOME"): new File(context.getWorkingDirectory().toUri() ).getAbsolutePath()+ java.io.File.separator + "karma";
-			System.setProperty("KARMA_USER_HOME", new File(karmaUserHome).getAbsolutePath());
-			System.out.println(new File("."));
+			//TODO dynamically discover the archive
+			File karmaUserHome = new File("./karma.zip/karma");
+			if(!karmaUserHome.exists())
+			{
+				LOG.info("No Karma user home provided.  Creating default Karma configuration");
+			}
+			System.setProperty("KARMA_USER_HOME", karmaUserHome.getAbsolutePath());
 	        KarmaMetadataManager userMetadataManager;
 			userMetadataManager = new KarmaMetadataManager();
 			UpdateContainer uc = new UpdateContainer();

@@ -26,6 +26,8 @@ public class TestSimpleProcessor {
 		 System.setProperty("hadoop.log.dir", "/tmp/logs");
 		 YarnConfiguration clusterConf = new YarnConfiguration();
 		 clusterConf.addResource(dfsConf);
+		 clusterConf.set("yarn.nodemanager.vmem-check-enabled", "false");
+		 clusterConf.set("yarn.nodemanager.pmem-check-enabled", "false");
 		cluster = new MiniMRYarnCluster("simpleprocessor");
 		cluster.init(clusterConf);
 		cluster.start();
@@ -46,7 +48,7 @@ public class TestSimpleProcessor {
 		String[] args = {new File( getTestResource("SimpleLoader.properties").toURI()).getAbsolutePath()};
 		int res = ToolRunner.run(conf, new SimpleLoader(),args);
 		assertEquals(0, res);
-		String [] jobArgs = {new File( getTestResource("SimpleProcessor.properties").toURI()).getAbsolutePath()}; 
+		String [] jobArgs = {"-archives", "/Users/jason/karma.zip", "-libjars", "/Users/jason/projects/Web-Karma/karma-offline/target/karma-offline-0.0.1-SNAPSHOT-shaded.jar", new File( getTestResource("SimpleProcessor.properties").toURI()).getAbsolutePath()}; 
 		res = ToolRunner.run(conf, new SimpleProcessor(), jobArgs);
 		assertEquals(0, res);
 	}

@@ -25,10 +25,6 @@ public class SimpleProcessor extends Configured implements Tool {
 		conf.setIfUnset("fs.default.name", p.getProperty("fs.default.name"));
 		conf.setIfUnset("mapred.job.tracker", p.getProperty("mapred.job.tracker"));
 		conf.setIfUnset("model.uri", p.getProperty("model.uri"));
-		if(p.getProperty("KARMA_USER_HOME") != null)
-		{
-			conf.setIfUnset("KARMA_USER_HOME", p.getProperty("KARMA_USER_HOME"));
-		}
 		Job job = Job.getInstance(conf);
         job.setInputFormatClass(SequenceFileAsTextInputFormat.class);
         job.setJarByClass(SimpleProcessor.class);
