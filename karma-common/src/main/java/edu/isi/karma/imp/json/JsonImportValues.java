@@ -105,7 +105,7 @@ public class JsonImportValues {
 				Table nestedTable = row.getNode(hNodeId).getNestedTable();
 				addListElement(token, nestedHTable, nestedTable);
 			}
-		} else if (c != ',') {
+		} else {
 			throw new Error("Cannot handle " + key + " yet.");
 		}
 	}
@@ -161,7 +161,9 @@ public class JsonImportValues {
 				break;
 			token.back();
 			Object key = token.nextValue();
-			token.nextClean();
+			char t = token.nextClean();
+			if (t != ':')
+				throw new JSONException("Parse JSON object error");
 			addObjectElement((String)key, token, nestedHTable,
 					nestedRow);
 			c = token.nextClean();
