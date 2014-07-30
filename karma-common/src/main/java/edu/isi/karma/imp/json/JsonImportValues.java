@@ -166,6 +166,8 @@ public class JsonImportValues {
 				throw new JSONException("Parse JSON object error");
 			addObjectElement((String)key, token, nestedHTable,
 					nestedRow);
+			if (maxNumLines > 0 && numObjects >= maxNumLines)
+				break;
 			c = token.nextClean();
 			if (c != ',' && c != '}')
 				throw new JSONException("Parse JSON object error");
@@ -281,6 +283,8 @@ public class JsonImportValues {
 				logger.error("Cannot handle whatever case is not covered by the if statements. Sorry.");
 
 			}
+			if (maxNumLines > 0 && numObjects >= maxNumLines)
+				break;
 			c = token.nextClean();
 			if (c != ',' && c != ']')
 				throw new JSONException("Parse JSON array error");
