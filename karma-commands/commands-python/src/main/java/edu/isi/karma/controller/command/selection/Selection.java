@@ -16,12 +16,12 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.transformation.PythonRepository;
 import edu.isi.karma.controller.command.transformation.PythonTransformationHelper;
 import edu.isi.karma.er.helper.CloneTableUtils;
-import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.KarmaException;
 
 public class Selection {
 	public enum SelectionStatus {
@@ -44,21 +44,26 @@ public class Selection {
 	private static Logger logger = LoggerFactory
 			.getLogger(Selection.class);
 	
-	@SuppressWarnings("unused")
 	private SelectionStatus status;
 	private Workspace workspace;
 	private String worksheetId;
 	private List<Tag> tags = new ArrayList<Tag>();
 	private Map<Row, SelectionProperty> selectedRows = new HashMap<Row, SelectionProperty>();
-	
-	public Selection(Workspace workspace, String worksheetId) {
+	private String hTableId;
+	private List<String> evalColumns = new ArrayList<String>();
+	private String Id;
+	public Selection(Workspace workspace, String worksheetId, String hTableId) {
 		this.worksheetId = worksheetId;
 		this.workspace = workspace;
+		this.hTableId = hTableId;
+		this.Id = workspace.getFactory().getNewId("SEL");
+		this.status = SelectionStatus.UP_TO_DATE;
 	}
-	public void addSelections(HTable htable, String pythonCode) throws IOException {
+	
+	public void addSelections(String pythonCode) throws IOException {
 		List<Table> tables = new ArrayList<Table>();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		CloneTableUtils.getDatatable(worksheet.getDataTable(), htable, tables);
+		CloneTableUtils.getDatatable(worksheet.getDataTable(), workspace.getFactory().getHTable(hTableId), tables);
 		PythonInterpreter interpreter = new PythonInterpreter();
 		PyCode code = getCompiledCode(pythonCode, interpreter);
 		for (Table t : tables) {
@@ -72,7 +77,9 @@ public class Selection {
 		return selectedRows;
 	}
 	
-	public void Intersect(Selection source) {
+	public void Intersect(Selection source) throws KarmaException {
+		if (!source.getHTableId().equals(this.hTableId))
+			throw new KarmaException("Cannot intersect with this selection");
 		for (Entry<Row, SelectionProperty> entry : this.selectedRows.entrySet()) {
 			Row key = entry.getKey();
 			SelectionProperty value = entry.getValue();
@@ -84,7 +91,9 @@ public class Selection {
 		}
 	}
 	
-	public void Subtract(Selection source) {
+	public void Subtract(Selection source) throws KarmaException {
+		if (!source.getHTableId().equals(this.hTableId))
+			throw new KarmaException("Cannot intersect with this selection");
 		for (Entry<Row, SelectionProperty> entry : this.selectedRows.entrySet()) {
 			Row key = entry.getKey();
 			SelectionProperty value = entry.getValue();
@@ -113,14 +122,11 @@ public class Selection {
 			PythonInterpreter interpreter = new PythonInterpreter();
 			value.selected = evaluatePythonExpression(key, getCompiledCode(value.pythonCode, interpreter), interpreter);
 		}
+		this.status = SelectionStatus.UP_TO_DATE;
 	}
-	
-	public void addInputColumns(String hNodeId) {
-		System.out.println(hNodeId);
-	}
-	
 	
 	private boolean evaluatePythonExpression(Row r, PyCode code, PythonInterpreter interpreter) {
+		evalColumns.clear();
 		ArrayList<Node> nodes = new ArrayList<Node>(r.getNodes());
 		Node node = nodes.get(0);
 		interpreter.set("nodeid", node.getId());
@@ -152,6 +158,30 @@ public class Selection {
 		interpreter.set("workspaceid", workspace.getId());
 		interpreter.set("command", this);
 		return repo.getTransformCode();
+	}
+	
+	public String getHTableId() {
+		return hTableId;
+	}
+	
+	public String getId() {
+		return Id;
+	}
+	
+	public void invalidateSelection() {
+		this.status = SelectionStatus.OUT_OF_DATE;
+	}
+	
+	public SelectionStatus getStatus() {
+		return status;
+	}
+	
+	public void addInputColumns(String hNodeId) {
+		evalColumns.add(hNodeId);
+	}
+	
+	public List<Tag> getTags() {
+		return tags;
 	}
 	
 	

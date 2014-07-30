@@ -66,11 +66,11 @@ public class TestSelection {
 	}
 	@Test
 	public void testSelection1() throws IOException {
-		Selection sel = new Selection(workspace, worksheet.getId());
+		Selection sel = new Selection(workspace, worksheet.getId(), worksheet.getHeaders().getId());
 		StringBuilder pythonCode = new StringBuilder();
 		pythonCode.append("if getValue(\"title\") == \"Prof\": \n");
 		pythonCode.append("	 return True \n");
-		sel.addSelections(worksheet.getHeaders(), pythonCode.toString());
+		sel.addSelections(pythonCode.toString());
 		for (Entry<Row, SelectionProperty> entry : sel.getSelectedRows().entrySet()) {
 			SelectionProperty prop = entry.getValue();
 			Row r = entry.getKey();
