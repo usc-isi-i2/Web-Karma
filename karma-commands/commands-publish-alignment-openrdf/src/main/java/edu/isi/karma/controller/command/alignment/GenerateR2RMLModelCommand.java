@@ -127,7 +127,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		UpdateContainer uc = new UpdateContainer();
 		//save the preferences 
 		savePreferences(workspace);
-		boolean storeOldHistory = Boolean.parseBoolean(ServletContextParameterMap.getParameterValue(ContextParameter.STORE_OLD_HISTORY));
+		boolean storeOldHistory = ModelingConfiguration.isStoreOldHistoryEnabled();
 		System.out.println("storeOldHistory: " + storeOldHistory);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		CommandHistory history = workspace.getCommandHistory();		
