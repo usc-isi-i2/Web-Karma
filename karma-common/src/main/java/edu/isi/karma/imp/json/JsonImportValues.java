@@ -159,14 +159,16 @@ public class JsonImportValues {
 		while (c != '}') {
 			if (maxNumLines > 0 && numObjects >= maxNumLines)
 				break;
-			if (c != ',') {
-				token.back();
-				Object key = token.nextValue();
-				token.nextClean();
-				addObjectElement((String)key, token, nestedHTable,
-						nestedRow);
-			}
+			token.back();
+			Object key = token.nextValue();
+			token.nextClean();
+			addObjectElement((String)key, token, nestedHTable,
+					nestedRow);
 			c = token.nextClean();
+			if (c != ',' && c != '}')
+				throw new JSONException("Parse JSON object error");
+			if (c == ',')
+				c = token.nextClean();
 		}
 	}
 
@@ -272,11 +274,15 @@ public class JsonImportValues {
 					addListElement(token, nestedHTable, nestedTable);
 				}
 			} 
-			else if (c != ',') {
+			else if (c != ','){
 				logger.error("Cannot handle whatever case is not covered by the if statements. Sorry.");
 
 			}
 			c = token.nextClean();
+			if (c != ',' && c != ']')
+				throw new JSONException("Parse JSON array error");
+			if (c == ',')
+				c = token.nextClean();
 		}
 
 	}
