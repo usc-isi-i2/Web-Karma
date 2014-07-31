@@ -24,6 +24,7 @@
 package edu.isi.karma.controller.history;
 
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -261,11 +262,18 @@ public class CommandHistory {
 				obj1.put(ClientJsonKeys.value.name(), hNodeRepresentation);
 				inputArray.put(obj1);
 			}
-			JSONObject obj = new JSONObject();
-			obj.put(ClientJsonKeys.name.name(), "inputColumns");
-			obj.put(ClientJsonKeys.value.name(), inputArray.toString());
-			obj.put(ClientJsonKeys.type.name(), ParameterType.hNodeIdList.name());
-			inputArr.put(obj);
+			JSONObject obj = HistoryJsonUtil.getJSONObjectWithName("inputColumns", inputArr);			
+			if (obj == null) {
+				obj = new JSONObject();
+				obj.put(ClientJsonKeys.name.name(), "inputColumns");
+				obj.put(ClientJsonKeys.value.name(), inputArray.toString());
+				obj.put(ClientJsonKeys.type.name(), ParameterType.hNodeIdList.name());
+				inputArr.put(obj);
+			}
+			else {
+				obj.put(ClientJsonKeys.value.name(), inputArray.toString());
+			}
+				
 			JSONArray outputArray = new JSONArray();
 			for (String hNodeId : tmp.getOutputColumns()) {
 				HNode node = workspace.getFactory().getHNode(hNodeId);
@@ -274,11 +282,17 @@ public class CommandHistory {
 				obj1.put(ClientJsonKeys.value.name(), hNodeRepresentation);
 				outputArray.put(obj1);
 			}
-			obj = new JSONObject();
-			obj.put(ClientJsonKeys.name.name(), "outputColumns");
-			obj.put(ClientJsonKeys.value.name(), outputArray.toString());
-			obj.put(ClientJsonKeys.type.name(), ParameterType.hNodeIdList.name());
-			inputArr.put(obj);
+			obj = HistoryJsonUtil.getJSONObjectWithName("outputColumns", inputArr);						
+			if (obj == null) {
+				obj = new JSONObject();
+				obj.put(ClientJsonKeys.name.name(), "outputColumns");
+				obj.put(ClientJsonKeys.value.name(), outputArray.toString());
+				obj.put(ClientJsonKeys.type.name(), ParameterType.hNodeIdList.name());
+				inputArr.put(obj);
+			}
+			else {
+				obj.put(ClientJsonKeys.value.name(), outputArray.toString());
+			}
 		}
 		commObj.put(HistoryArguments.inputParameters.name(), inputArr);
 		
@@ -428,7 +442,7 @@ public class CommandHistory {
 
 	public void removeCommands(Workspace workspace, String worksheetId) {
 		List<ICommand> commandsToBeRemoved = new ArrayList<ICommand>();
-		ListIterator<ICommand> commandItr = history.listIterator(history.size() - 1);
+		ListIterator<ICommand> commandItr = history.listIterator(history.size());
 		while(commandItr.hasPrevious()) {
 			ICommand command = commandItr.previous();
 			if(command instanceof Command && command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
@@ -448,6 +462,23 @@ public class CommandHistory {
 			}
 		}
 		history.removeAll(commandsToBeRemoved);
+	}
+	
+	public void removeCommands(String worksheetId) {
+		List<ICommand> commandsFromWorksheet = new ArrayList<ICommand>();
+		for(ICommand command: history) {
+			try {
+				Field worksheetIdField = command.getClass().getDeclaredField("worksheetId");
+				worksheetIdField.setAccessible(true);
+				String Id = (String) worksheetIdField.get(command);
+				if (Id.equals(worksheetId))
+					commandsFromWorksheet.add(command);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+		}
+		history.removeAll(commandsFromWorksheet);
 	}
 
 	public List<Command> getCommandsFromWorksheetId(String worksheetId) {

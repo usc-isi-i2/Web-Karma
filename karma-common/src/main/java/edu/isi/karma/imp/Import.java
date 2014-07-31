@@ -21,7 +21,7 @@ import java.io.IOException;
 public abstract class Import {
 
     private final RepFactory factory;
-    private final Worksheet worksheet;
+    private Worksheet worksheet;
     
     public Import(String worksheetName, Workspace workspace, String encoding) {
         this.factory = workspace.getFactory();
@@ -39,6 +39,10 @@ public abstract class Import {
 
     public Worksheet getWorksheet() {
         return worksheet;
+    }
+    
+    public void createWorksheet(String worksheetName, Workspace workspace, String encoding) {
+    	this.worksheet = factory.createWorksheet(worksheetName, workspace, encoding);
     }
     
     /*
