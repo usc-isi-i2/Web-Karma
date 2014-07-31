@@ -1,18 +1,17 @@
 package edu.isi.karma.web.services.rdf;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -32,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.URIFormatter;
@@ -48,11 +48,39 @@ import edu.isi.karma.util.HTTPUtil.HTTP_HEADERS;
 import edu.isi.karma.webserver.KarmaException;
 
 
-@Path("/metadata") 
+@Path("/r2rml") 
 public class RDFGeneratorServlet{
 	
 	private static Logger logger = LoggerFactory.getLogger(RDFGeneratorServlet.class);
-	private final String CONTENT_TYPE_XML = "application/xml";
+	
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("/rdf")
+	public String RDF(MultivaluedMap<String, String> formParams) 
+	{
+		try
+		{
+			logger.info("Path - r2rml/rdf . Generate and return RDF as String");
+			return GenerateRDF(formParams.getFirst(FormParameters.RAW_DATA), formParams.getFirst(FormParameters.R2RML_URL));
+		}
+		catch(JSONException je)
+		{
+			return "JSONException: " + je.getMessage();
+		}
+		catch(KarmaException ke)
+		{
+			return "KarmaException: " + ke.getMessage();
+		}
+		catch(IOException ioe)
+		{
+			return "IOException: " + ioe.getMessage();
+		}
+		catch(Exception e)
+		{
+			return "Exception: " + e.getMessage();
+		}
+		
+	}
 
 	/**
 	 * 
@@ -63,34 +91,28 @@ public class RDFGeneratorServlet{
 	
 	
 	@POST
-	@Consumes("text/plain")
-	@Path("/images")
-	public Response postRDF(String metadataJSON) throws ClientProtocolException, IOException, JSONException, KarmaException
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("/sparql")
+	public Response saveToTriplestore(MultivaluedMap<String, String> formParams)
 	{
 		try
 		{
-			logger.info("Calling the web service");
+			logger.info("Path - r2rml/sparql. Store RDF to triplestore and return the Response");
 	
-			logger.info("Generating RDF");
-			String strRDF = GenerateRDF(metadataJSON);
+			logger.info("Generating RDF for: " + formParams.getFirst(FormParameters.RAW_DATA));
+			
+			String strRDF = GenerateRDF(formParams.getFirst(FormParameters.RAW_DATA), formParams.getFirst(FormParameters.R2RML_URL));
 	
-			logger.info("Publishing to Virtuoso");
-			HttpHost httpHost = new HttpHost("fusion-sqid.isi.edu", 8890, "http");
-			//TODO - pass graphURI as parameter
-			String graphURI = "http://fusion-sqid.isi.edu:8890/image-metadata"; //Context in Sesame
+			int responseCode = PublishRDFToTripleStore(formParams, strRDF);
 			
-			HttpPost httpPost = new HttpPost("http://" + httpHost.getHostName() + ":" + httpHost.getPort() +
-											"/sparql-graph-crud-auth?graph-uri=" + graphURI);
 			
-			httpPost.setEntity(new StringEntity(strRDF));
-			String userName = "finimg"; //Virtuoso User, should have appropriate roles
-			String password = "isi"; //Has to be better way for this
+			//TODO Make it better
+			if(responseCode == 200 || responseCode == 201)
+				return Response.status(responseCode).entity("Success").build();
+			else
+				return Response.status(responseCode).entity("Failure: Check logs for more information").build();
 			
-			logger.info("RDF Published to Virtuoso");
 			
-			int responseCode = invokeHTTPRequestWithAuth(httpHost, httpPost, CONTENT_TYPE_XML, null, userName, password);
-			//int responseCode = invokeHTTPDeleteWithAuth(httpHost,"http://fusion-sqid.isi.edu:8890/sparql-graph-crud-auth?graph-uri=http://fusion-sqid.isi.edu:8890/image-metadata", userName, password);
-			return Response.status(responseCode).entity("Success").build();
 		}
 		catch(ClientProtocolException cpe)
 		{
@@ -119,32 +141,135 @@ public class RDFGeneratorServlet{
 		}
 		
 
-		/* 
-		 *Store to Virtuoso - Geospatial capability, the commented code below will store the rdf to Sesame 
-		 * 
-		 * 
-		 * TripleStoreUtil tsu = new TripleStoreUtil();
-		String tripleStoreURL = "http://localhost:3000/openrdf-sesame/repositories/karma_data";
+	}
 
-		String context = "http://image-metadata.com";
-		Boolean replace = true;
-		String baseURI = "http://isiimagefinder/";
-
-		logger.info("Publishing rdf to triplestore:" + "http://localhost:3000/openrdf-sesame/repositories/karma_data");
-		boolean success = tsu.saveToStoreFromString(sw.toString(), tripleStoreURL, context, replace, baseURI);*/
-
-
-		///if(success)
-		//	return Response.status(201).entity(metadataJSON).build(); //successfully created
-		//else
-		//	return Response.status(503).entity("OOPS it did not work").build(); //Something went wrong
-		//TODO set better return codes in case of error
-
-		//return Response.status(200).entity(output).build();
-
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("/rdf/sparql")
+	public String saveAndReturnRDF(MultivaluedMap<String, String> formParams)
+	{
+		try
+		{
+			logger.info("Path - r2rml/sparql. Store RDF to triplestore and return the Response");
+	
+			logger.info("Generating RDF for: " + formParams.getFirst(FormParameters.RAW_DATA));
+			
+			String strRDF = GenerateRDF(formParams.getFirst(FormParameters.RAW_DATA), formParams.getFirst(FormParameters.R2RML_URL));
+	
+			int responseCode = PublishRDFToTripleStore(formParams, strRDF);
+			
+			//TODO Make it better
+			if(responseCode == 200 || responseCode == 201)
+				logger.info("Successfully completed");
+			else
+				logger.error("There was an error while publishing to Triplestore");
+			
+			
+			return strRDF;
+		}
+		catch(ClientProtocolException cpe)
+		{
+			logger.error("ClientProtocolException : " + cpe.getMessage());
+			return "ClientProtocolException : " + cpe.getMessage();
+		}
+		catch(IOException ioe)
+		{
+			logger.error("IOException : " + ioe.getMessage());
+			return "IOException : " + ioe.getMessage();
+		}
+		catch(KarmaException ke)
+		{
+			logger.error("KarmaException : " + ke.getMessage());
+			return "KarmaException : " + ke.getMessage();
+		}
+		catch(JSONException je)
+		{
+			logger.error("JSONException : " + je.getMessage());
+			return "JSONException : " + je.getMessage();
+		}
+		catch(Exception e)
+		{
+			logger.error("Exception : " + e.getMessage());
+			return "Exception : " + e.getMessage();
+		}
 	}
 	
-	private String GenerateRDF(String metadataJSON) throws KarmaException, JSONException, IOException
+	
+	private int PublishRDFToTripleStore(MultivaluedMap<String, String> formParams, String strRDF) throws ClientProtocolException, IOException, KarmaException
+	{
+		String tripleStoreURL = getTripleStoreURL(formParams);
+		
+		Boolean overWrite = Boolean.parseBoolean(formParams.getFirst(FormParameters.OVERWRITE));
+		int responseCode;
+		
+		logger.info("Publishing RDF to TripleStore: " + tripleStoreURL);
+		
+		switch (formParams.getFirst(FormParameters.TRIPLE_STORE))
+		{
+			case FormParameters.TRIPLE_STORE_VIRTUOSO : HttpHost httpHost = getHttpHost(formParams);
+			
+														HttpPost httpPost = new HttpPost(tripleStoreURL);
+			
+														httpPost.setEntity(new StringEntity(strRDF));
+														
+														if(overWrite) //Manually delete everything if overWrite is set to true for Virtuoso
+															invokeHTTPDeleteWithAuth(httpHost,tripleStoreURL,formParams.getFirst(FormParameters.USERNAME), 
+																									formParams.getFirst(FormParameters.PASSWORD));
+			
+														responseCode = invokeHTTPRequestWithAuth(httpHost, httpPost, MediaType.APPLICATION_XML, 
+																									null, formParams.getFirst(FormParameters.USERNAME), 
+																									formParams.getFirst(FormParameters.PASSWORD));
+			
+														//int responseCode = invokeHTTPDeleteWithAuth(httpHost,"http://fusion-sqid.isi.edu:8890/sparql-graph-crud-auth?graph-uri=http://fusion-sqid.isi.edu:8890/image-metadata", userName, password);
+														
+														break;
+											
+			case FormParameters.TRIPLE_STORE_SESAME : TripleStoreUtil tsu = new TripleStoreUtil();
+			
+													  //TODO Find purpose of Graph URI and replace it with formParams
+													  String baseURI = "http://isiimagefinder/";
+													  
+													  boolean success = tsu.saveToStoreFromString(strRDF, tripleStoreURL, formParams.getFirst(FormParameters.GRAPH_URI), overWrite, baseURI);
+													  responseCode = (success) ? 200 : 503; //HTTP OK or Error
+													  break;
+			default : responseCode = 404 ;
+						   break;
+		}
+		
+		return responseCode;
+	}
+	
+	
+	private HttpHost getHttpHost(MultivaluedMap<String, String> formParams)
+	{
+		return new HttpHost(formParams.getFirst(FormParameters.HTTP_HOST), 
+							Integer.parseInt(formParams.getFirst(FormParameters.PORT)), 
+							formParams.getFirst(FormParameters.PROTOCOL));
+	}
+	
+	private String getTripleStoreURL(MultivaluedMap<String, String> formParams)
+	{
+		StringBuilder sbTSURL = new StringBuilder();
+		
+		if(formParams.getFirst(FormParameters.PROTOCOL) != null || formParams.getFirst(FormParameters.PROTOCOL).trim() != "")
+			sbTSURL.append(formParams.getFirst(FormParameters.PROTOCOL) + "://");
+		
+		if(formParams.getFirst(FormParameters.HTTP_HOST) != null || formParams.getFirst(FormParameters.HTTP_HOST).trim() != "")
+			sbTSURL.append(formParams.getFirst(FormParameters.HTTP_HOST) + ":");
+		
+		if(formParams.getFirst(FormParameters.PORT) != null || formParams.getFirst(FormParameters.PORT).trim() != "")
+			sbTSURL.append(formParams.getFirst(FormParameters.PORT));
+		
+		if(formParams.getFirst(FormParameters.SPARQL_ENDPOINT) != null || formParams.getFirst(FormParameters.SPARQL_ENDPOINT).trim() != "")
+			sbTSURL.append(formParams.getFirst(FormParameters.SPARQL_ENDPOINT));
+		
+		if(formParams.getFirst(FormParameters.GRAPH_URI) != null || formParams.getFirst(FormParameters.GRAPH_URI).trim() != "")
+			sbTSURL.append(formParams.getFirst(FormParameters.GRAPH_URI));
+		
+		return sbTSURL.toString();   
+				
+	}
+	private String GenerateRDF(String metadataJSON, String r2rmlURI) throws KarmaException, JSONException, IOException
 	{
 
 			logger.info("Parse and model JSON:" + metadataJSON);
@@ -161,22 +286,19 @@ public class RDFGeneratorServlet{
 			
 	        GenericRDFGenerator gRDFGen = new GenericRDFGenerator();
 			
-	        //R2RML Mapping file - has to be a local file for now
-			R2RMLMappingIdentifier rmlID = new R2RMLMappingIdentifier("rdf-model",
-					new File("/Users/d3admin/Documents/WSP1WS2-metadata.json-model.ttl").toURI().toURL());
+			R2RMLMappingIdentifier rmlID = new R2RMLMappingIdentifier(FormParameters.R2RML_URL,
+					new File(r2rmlURI).toURI().toURL());
 			
 			gRDFGen.addModel(rmlID);
 			
-			//String filename = "C:\\metadata.json";
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			
 			URIFormatter uriFormatter = new URIFormatter();
 			KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
 			
-			//gRDFGen.generateRDF("rdf-model", new File(filename), InputType.JSON, false, outWriter);
-			logger.info("Generating RDF");
-			gRDFGen.generateRDF("rdf-model","PHONE",metadataJSON , InputType.JSON, false, outWriter);
+			//TODO Replace PHONE with something meaningful
+			gRDFGen.generateRDF(FormParameters.R2RML_URL,"PHONE",metadataJSON , InputType.JSON, false, outWriter);
 			
 			return sw.toString();
 		
@@ -212,29 +334,9 @@ public class RDFGeneratorServlet{
 		BasicHttpContext localcontext = new BasicHttpContext();
 	    localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
 
-		
-		
-		
-		// Execute the request
+	    // Execute the request
 		HttpResponse response = httpClient.execute(httpHost, httpPost, localcontext);
 		
-		//logger.info(Integer.toString(response.getStatusLine().getStatusCode()));
-		
-		// Parse the response and store it in a String
-		/*HttpEntity entity = response.getEntity();
-		StringBuilder responseString = new StringBuilder();
-		if (entity != null) {
-			BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent(),"UTF-8"));
-			
-			String line = buf.readLine();
-			while(line != null) {
-				responseString.append(line);
-				responseString.append('\n');
-				line = buf.readLine();
-			}
-		}*/
-		
-		//logger.info("Response: " +responseString.toString());
 		return response.getStatusLine().getStatusCode();
 	}
 	
