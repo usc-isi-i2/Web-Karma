@@ -36,13 +36,19 @@ public class DeleteWorksheetCommand extends WorksheetCommand {
 	}
 
 	@Override
-	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+	public UpdateContainer doIt(final Workspace workspace) throws CommandException {
 		boolean worksheetExists = false;
 		
 		if(workspace.getWorksheet(worksheetId) != null) {
 			worksheetExists = true;
 			workspace.removeWorksheet(worksheetId);
-			workspace.getFactory().removeWorksheet(worksheetId);
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					workspace.getFactory().removeWorksheet(worksheetId);
+				}
+				
+			}).run();			
 		}
 		
 		UpdateContainer update = new UpdateContainer();

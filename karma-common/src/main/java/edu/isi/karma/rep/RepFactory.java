@@ -63,6 +63,8 @@ public class RepFactory {
 			Worksheet worksheet = worksheets.get(id);
 			removeHTableRecursive(worksheet.getHeaders());
 			removeDataTableRecursive(worksheet.getDataTable());
+			worksheet.getMetadataContainer().setColumnMetadata(null);
+			worksheet.setMetadataContainer(null);
 			worksheets.remove(id);
 		}
 	}

@@ -21,9 +21,12 @@
 package edu.isi.karma.controller.command;
 
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetDeleteUpdate;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
+import edu.isi.karma.view.VWorkspaceRegistry;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class CloseWorkspaceCommand extends Command {
@@ -56,6 +59,7 @@ public class CloseWorkspaceCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		UpdateContainer uc = new UpdateContainer();
 		WorkspaceManager mgr = WorkspaceManager.getInstance();
 		// Remove it from the rep factory
 		mgr.removeWorkspace(workspaceId);
@@ -65,8 +69,13 @@ public class CloseWorkspaceCommand extends Command {
 		
 		// Remove it from the workspace registry
 		WorkspaceRegistry.getInstance().deregister(workspaceId);
-		
-		return new UpdateContainer();
+		VWorkspaceRegistry.getInstance().deregisterVWorkspace(workspaceId);
+		for (Worksheet worksheet : workspace.getWorksheets()) {
+			workspace.getFactory().removeWorksheet(worksheet.getId());
+			workspace.removeWorksheet(worksheet.getId());
+			uc.add(new WorksheetDeleteUpdate(worksheet.getId()));
+		}
+		return uc;
 	}
 
 	@Override
