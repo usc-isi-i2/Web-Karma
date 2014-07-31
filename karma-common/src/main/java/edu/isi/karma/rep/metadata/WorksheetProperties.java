@@ -21,13 +21,14 @@
 
 package edu.isi.karma.rep.metadata;
 
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.util.URIUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.ws.rs.core.UriBuilder;
+
 import edu.isi.karma.rep.ColumnMetadata.DataStructure;
 
 public class WorksheetProperties {
@@ -39,7 +40,11 @@ public class WorksheetProperties {
 	public static String DEFAULT_GRAPH_NAME_PREFIX = "http://localhost/worksheets/";
 	
 	public enum Property {
-		serviceRequestMethod, serviceDataPostMethod, graphName, serviceUrl, hasServiceProperties, sourceType, modelUrl, modelRepository, modelContext
+		serviceRequestMethod, serviceDataPostMethod, 
+		graphName, serviceUrl, hasServiceProperties, 
+		sourceType, modelUrl, modelRepository, modelContext,
+		baseURI, prefix, graphLabel, inputColumns, 
+		outputColumns
 	}
 	
 	public enum SourceTypes {
@@ -84,8 +89,9 @@ public class WorksheetProperties {
 		return obj;
 	}
 
-	public static String createDefaultGraphName(String worksheetTitle) throws URIException {
-		return DEFAULT_GRAPH_NAME_PREFIX + URIUtil.encodePath(worksheetTitle);
+	public static String createDefaultGraphName(String worksheetTitle) {
+		UriBuilder builder = UriBuilder.fromPath(worksheetTitle);
+		return DEFAULT_GRAPH_NAME_PREFIX + builder.build().toString();
 	}
 
 	public DataStructure getWorksheetDataStructure() {

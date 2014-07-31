@@ -21,9 +21,10 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.ColumnMetadata.DataStructure;
+import edu.isi.karma.rep.HNode.HNodeType;
 
 public class JsonImportValues {
-	private static Logger logger = LoggerFactory.getLogger(JsonImport.class);
+	private static Logger logger = LoggerFactory.getLogger(JsonImportValues.class);
 
 	public static void addObjectElement(String key, Object value, HTable headers,
 			Row row, int maxNumLines, int numObjects, RepFactory factory, Worksheet worksheet) throws JSONException {
@@ -145,7 +146,7 @@ public class JsonImportValues {
 				logger.error("Unexpected value in JSON array:"
 						+ listValue.toString());
 			}
-			logger.info("Adding 'values' column to store value '" + value);
+			
 			row.setValue(hNodeId, value, factory);
 		} else if (listValue instanceof JSONArray) {
 			if (maxNumLines <= 0 || numObjects < maxNumLines) {
@@ -202,7 +203,7 @@ public class JsonImportValues {
 	public static HNode addHNode(HTable headers, String key, DataStructure dataStructure, RepFactory factory, Worksheet worksheet) {
 		HNode hn = headers.getHNodeFromColumnName(key);
 		if (hn == null) {
-			hn = headers.addHNode(key, worksheet, factory);
+			hn = headers.addHNode(key, HNodeType.Regular, worksheet, factory);
 			Worksheet ws = worksheet;
 			ws.getMetadataContainer().getColumnMetadata().addColumnDataStructure(hn.getId(), dataStructure);
 		}

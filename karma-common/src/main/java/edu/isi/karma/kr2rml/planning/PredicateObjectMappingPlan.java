@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * Copyright 2014 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
 package edu.isi.karma.kr2rml.planning;
 
 import java.util.HashMap;
@@ -39,13 +59,14 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 	protected boolean isFlipped = false;
 	protected boolean isLiteral;
 	protected String literalTemplateValue;
+	protected PredicateObjectMap pom; 
 	
 	protected void generateInternal(TemplateTermSet subjectMapTemplate,
 			PredicateObjectMap pom,
 			Map<ColumnTemplateTerm, HNodePath> subjectTermsToPaths)
 			throws HNodeNotFoundKarmaException {
 		
-		
+		this.pom = pom;
 		combinedSubjectObjectTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
 		combinedSubjectObjectTermsToPaths.putAll(subjectTermsToPaths);
 		Map<ColumnTemplateTerm, HNodePath> objectTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
@@ -59,6 +80,7 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 	}
 
 	private void generatePredicatesForPom(PredicateObjectMap pom) throws HNodeNotFoundKarmaException {
+		this.pom = pom;
 		List<ColumnTemplateTerm> subjectAndObjectTemplateTerms = new LinkedList<ColumnTemplateTerm>();
 		subjectAndObjectTemplateTerms.addAll(this.combinedSubjectObjectTermsToPaths.keySet());
 		LinkedList<ColumnTemplateTerm> predicateColumnTemplateTerms = new LinkedList<ColumnTemplateTerm>();
@@ -83,7 +105,7 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 		return subjectsToObjects;
 	}
 	
-	public void outputTriples(KR2RMLRDFWriter outWriter, Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> subjectsToObjects, Row r)
+	public void outputTriples(List<KR2RMLRDFWriter> outWriters, Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> subjectsToObjects, Row r)
 	{
 		for(Entry<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> subjectToObjects : subjectsToObjects.entrySet())
 		{
@@ -94,7 +116,10 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 				List<PopulatedTemplateTermSet> predicates = predicateTemplateTermSetPopulator.generatePopulatedTemplatesFromPartials(predicatePlan.execute(r, subject, object));
 				for(PopulatedTemplateTermSet predicate : predicates)
 				{
-					outputTriple(outWriter, subject, predicate, object);	
+					for(KR2RMLRDFWriter outWriter : outWriters)
+					{
+						outputTriple(outWriter, subject, predicate, object);
+					}
 				}
 			}
 		}

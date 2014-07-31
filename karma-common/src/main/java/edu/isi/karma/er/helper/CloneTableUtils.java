@@ -12,31 +12,24 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.HNode.HNodeType;
 
 public class CloneTableUtils {
-
-	public static void cloneHTable(HTable oldht, HTable newht, Worksheet newws, RepFactory factory, List<HNode> hnodes) {
-		Collections.sort(hnodes);
-		for (HNode hnode : hnodes) {
-			HNode newhnode = newht.addHNode(hnode.getColumnName(), newws, factory);
-			if (hnode.hasNestedTable()) {
-				HTable oldnested = hnode.getNestedTable();
-				HTable newnested = newhnode.addNestedTable(hnode.getNestedTable().getTableName(), newws, factory);		
-				cloneHTable(oldnested, newnested, newws, factory, new ArrayList<HNode>(oldnested.getHNodes()));
-			}
-		}
-	}
 	
-	public static Map<String, String> cloneHTable(HTable oldht, HTable newht, Worksheet newws, RepFactory factory, List<HNode> hnodes, boolean isFirst) {
+	public static Map<String, String> cloneHTable(HTable oldht, HTable newht, Worksheet newws, RepFactory factory, List<HNode> hnodes) {
 		Collections.sort(hnodes);
 		Map<String, String> tmp = new HashMap<String, String>();
 		for (HNode hnode : hnodes) {
-			HNode newhnode = newht.addHNode(hnode.getColumnName(), newws, factory);
+			HNode newhnode = null;
+			if (newht.getHNodeFromColumnName(hnode.getColumnName()) == null)
+				newhnode = newht.addHNode(hnode.getColumnName(), HNodeType.Transformation, newws, factory);
+			else
+				newhnode = newht.addHNode(newht.getNewColumnName(hnode.getColumnName()), HNodeType.Transformation, newws, factory);
 			tmp.put(hnode.getId(), newhnode.getId());
 			if (hnode.hasNestedTable()) {
 				HTable oldnested = hnode.getNestedTable();
 				HTable newnested = newhnode.addNestedTable(hnode.getNestedTable().getTableName(), newws, factory);		
-				cloneHTable(oldnested, newnested, newws, factory, new ArrayList<HNode>(oldnested.getHNodes()), false);
+				tmp.putAll(cloneHTable(oldnested, newnested, newws, factory, new ArrayList<HNode>(oldnested.getHNodes())));
 			}
 		}
 		return tmp;
@@ -45,11 +38,10 @@ public class CloneTableUtils {
 	public static Row cloneDataTable(Row oldRow, Table newDataTable, HTable oldHTable, HTable newHTable, List<HNode> hnodes, RepFactory factory) {
 		Row newrow = newDataTable.addRow(factory);
 		for (HNode hnode : hnodes) {
-			System.out.println("HNode: " + hnode.getColumnName());
 			HNode newHNode = newHTable.getHNodeFromColumnName(hnode.getColumnName());
 			if (newHNode == null)
 				continue;
-			System.out.println("New HNode: " +newHNode.getColumnName());
+			
 			Node oldNode = oldRow.getNode(hnode.getId());
 			Node newNode = newrow.getNode(newHNode.getId());
 			if (oldNode == null)

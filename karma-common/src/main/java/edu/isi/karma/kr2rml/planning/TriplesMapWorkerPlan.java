@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * Copyright 2014 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
 package edu.isi.karma.kr2rml.planning;
 
 import java.util.Deque;
@@ -19,6 +39,7 @@ import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
 import edu.isi.karma.kr2rml.template.PopulatedTemplateTermSet;
 import edu.isi.karma.kr2rml.template.StringTemplateTerm;
 import edu.isi.karma.kr2rml.template.TemplateTermSet;
+import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
@@ -90,7 +111,7 @@ public class TriplesMapWorkerPlan {
 		// Generate triples for specifying the types
 		for (TemplateTermSet typeTerm:triplesMap.getSubject().getRdfsType()) {
 			
-			PredicateObjectMap pom = new PredicateObjectMap(triplesMap);
+			PredicateObjectMap pom = new PredicateObjectMap(Prefixes.KARMA_DEV + PredicateObjectMap.getNewId(),triplesMap);
 			pom.setObject(new ObjectMap(factory.getNewId("objectmap"), typeTerm, null));
 			Predicate typePredicate = new Predicate(factory.getNewId("predicate"));
 			TemplateTermSet typeTemplate = new TemplateTermSet();
@@ -119,20 +140,20 @@ public class TriplesMapWorkerPlan {
 		}
 	}
 	
-	public void execute(Row r, KR2RMLRDFWriter outWriter)
+	public void execute(Row r, List<KR2RMLRDFWriter> outWriters)
 	{
 
 		List<PopulatedTemplateTermSet> subjects = subjectMapPlan.execute(r);
 		
 		for(PredicateObjectMappingPlan internalLinkPlan : internalLinksPlans)
 		{
-			internalLinkPlan.outputTriples(outWriter, internalLinkPlan.execute(r, subjects), r);
+			internalLinkPlan.outputTriples(outWriters, internalLinkPlan.execute(r, subjects), r);
 		}
 		
 		for(PredicateObjectMappingPlan columnLinkPlan : columnLinksPlans)
 		{
 			
-			columnLinkPlan.outputTriples(outWriter, columnLinkPlan.execute(r, subjects), r);
+			columnLinkPlan.outputTriples(outWriters, columnLinkPlan.execute(r, subjects), r);
 		}
 	}
 }

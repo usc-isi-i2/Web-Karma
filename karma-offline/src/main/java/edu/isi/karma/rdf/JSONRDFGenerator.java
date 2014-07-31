@@ -1,20 +1,23 @@
 package edu.isi.karma.rdf;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
+import java.io.PrintWriter;
 
-import org.apache.commons.io.IOUtils;
+import org.json.JSONException;
 
-import edu.isi.karma.imp.json.JsonImport;
-import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.JSONUtil;
+import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.URIFormatter;
+import edu.isi.karma.webserver.KarmaException;
 
 
 //If running in offline mode, need to set manual.alignment=true in modeling.peoperties
+/**
+ * JSONRDFGenerator
+ *
+ * @deprecated use {@link GenericRDFGenerator} instead.  
+ */
+@Deprecated
 public class JSONRDFGenerator extends GenericRDFGenerator {
 
 	private static JSONRDFGenerator instance = null;
@@ -30,14 +33,11 @@ public class JSONRDFGenerator extends GenericRDFGenerator {
 		
 	}
 	
-	@Override
-	protected Worksheet generateWorksheet(String sourceName, InputStream data,
-			Workspace workspace, int maxNumLines) throws IOException{
-		//Generate worksheet from the json data
-		Object json = JSONUtil.createJson(IOUtils.toString(data));
-		JsonImport imp = new JsonImport(json, sourceName, workspace, "utf-8", maxNumLines);
-		Worksheet worksheet = imp.generateWorksheet();
-		return worksheet;
+	void generateRDF(String modelName, String jsonData, boolean addProvenance, PrintWriter pw) throws KarmaException, JSONException, IOException {
+		URIFormatter uriFormatter = new URIFormatter();
+		KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
+		this.generateRDF(modelName, null, jsonData, InputType.JSON, addProvenance, outWriter);
 	}
+	
 
 }

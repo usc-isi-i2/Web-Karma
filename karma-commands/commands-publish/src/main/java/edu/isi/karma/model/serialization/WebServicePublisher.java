@@ -22,6 +22,7 @@
 package edu.isi.karma.model.serialization;
 
 import com.hp.hpl.jena.rdf.model.*;
+
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
@@ -29,6 +30,9 @@ import edu.isi.karma.rep.sources.Attribute;
 import edu.isi.karma.rep.sources.AttributeRequirement;
 import edu.isi.karma.rep.sources.IOType;
 import edu.isi.karma.rep.sources.WebService;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,7 +135,8 @@ public class WebServicePublisher extends SourcePublisher {
 		if (this.model == null)
 			model = exportToJenaModel();
 		
-		String service_desc_file = Repository.Instance().SERVICE_REPOSITORY_DIR + 
+		String service_desc_file = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
+										Repository.Instance().SERVICE_REPOSITORY_REL_DIR + 
 		 							this.service.getId() +
 									Repository.Instance().getFileExtension(lang);
 
@@ -296,15 +301,18 @@ public class WebServicePublisher extends SourcePublisher {
 		String serviceUri = ModelingConfiguration.getKarmaServicePrefix() + "CDA81BE4-DD77-E0D3-D033-FC771B2F4800" + "#";
 		WebService service = WebServiceLoader.getInstance().getSourceByUri(serviceUri);
 		
-		String service_file = Repository.Instance().SERVICE_REPOSITORY_DIR + 
+		String service_file = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
+									Repository.Instance().SERVICE_REPOSITORY_REL_DIR + 
 									"service" + 
 									Repository.Instance().getFileExtension(SerializationLang.N3);
 		
-		String service_input_file = Repository.Instance().SERVICE_REPOSITORY_DIR + 
+		String service_input_file = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
+									Repository.Instance().SERVICE_REPOSITORY_REL_DIR + 
 									"input" + 
 									Repository.Instance().getFileExtension(SerializationLang.N3);
 
-		String service_output_file = Repository.Instance().SERVICE_REPOSITORY_DIR + 
+		String service_output_file = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
+									Repository.Instance().SERVICE_REPOSITORY_REL_DIR + 
 									"output" + 
 									Repository.Instance().getFileExtension(SerializationLang.N3);
 

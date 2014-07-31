@@ -27,13 +27,16 @@ import edu.isi.karma.rep.Entity;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Abstract class for all commands.
@@ -62,7 +65,8 @@ public abstract class Command extends Entity implements ICommand
 	private boolean writeWorksheetHistoryAfterCommandExecutes = true;
 
 	private boolean appendToHistory = false;
-
+	protected Set<String> inputColumns = new HashSet<String>();
+	protected Set<String> outputColumns = new HashSet<String>();
 	/**
 	 * List of tags for the command
 	 */
@@ -208,5 +212,21 @@ public abstract class Command extends Entity implements ICommand
 	 */
 	protected JSONObject getArgsJSON(Workspace workspace) {
 		return new JSONObject();
+	}
+	
+	public Set<String> getInputColumns() {
+		return inputColumns;
+	}
+	
+	public Set<String> getOutputColumns() {
+		return outputColumns;
+	}
+	
+	public void setInputColumns(Set<String> inputColumns) {
+		this.inputColumns = inputColumns;
+	}
+	
+	public void setOutputColumns(Set<String> outputColumns) {
+		this.outputColumns = outputColumns;
 	}
 }

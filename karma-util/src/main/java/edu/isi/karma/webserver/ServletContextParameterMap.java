@@ -22,6 +22,7 @@ package edu.isi.karma.webserver;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.prefs.Preferences;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public class ServletContextParameterMap {
 		SRID_CLASS, AUTO_MODEL_URI, PYTHON_SCRIPTS_DIRECTORY,
 		KML_CUSTOMIZATION_CLASS, KML_CATEGORY_PROPERTY,KML_LABEL_PROPERTY,
 		CLEANING_SERVICE_URL, CLUSTER_SERVICE_URL,
-		JETTY_PORT, JETTY_HOST, CRF_MODEL_DIRECTORY, 
+		JETTY_PORT, JETTY_HOST, SEMTYPE_MODEL_DIRECTORY, 
 		ALIGNMENT_GRAPH_DIRECTORY, USER_PREFERENCES_DIRECTORY, USER_CONFIG_DIRECTORY,
 		GRAPHVIZ_DIRECTORY, GRAPHVIZ_RELATIVE_DIRECTORY,
 		JSON_MODELS_DIR, 
@@ -64,11 +65,16 @@ public class ServletContextParameterMap {
 		if(karmaDir == null)
 		{
 			karmaDir = System.getProperty("KARMA_USER_HOME");
+			if(karmaDir == null) {
+				Preferences preferences = Preferences.userRoot().node("WebKarma");
+				karmaDir = preferences.get("KARMA_USER_HOME",  null);
+			}
 		}
 		if(karmaDir == null)
 		{
-			logger.info("KARMA_USER_HOME not set.  Defaulting to " +System.getProperty("user.home") + File.separator + "karma");
-			File newKarmaDir = new File(System.getProperty("user.home") + File.separator + "karma");
+			String defaultLocation = System.getProperty("user.home") + File.separator + "karma";
+			logger.info("KARMA_USER_HOME not set.  Defaulting to " + defaultLocation);
+			File newKarmaDir = new File(defaultLocation);
 			karmaDir = newKarmaDir.getAbsolutePath() + File.separator;
 			
 		}

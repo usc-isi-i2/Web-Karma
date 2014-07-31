@@ -21,8 +21,7 @@
 
 package edu.isi.karma.controller.command.transformation;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,15 +48,14 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.transformation.PythonTransformationHelper;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 
 public abstract class PythonTransformationCommand extends WorksheetCommand {
 
-	final protected String transformationCode;
+	protected String transformationCode;
 	final protected String hNodeId;
 	final protected String errorDefaultValue;
+	
 
 	private static Logger logger = LoggerFactory
 			.getLogger(PythonTransformationCommand.class);
@@ -72,7 +70,6 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		this.transformationCode = transformationCode;
 		this.hNodeId = hNodeId;
 		this.errorDefaultValue = errorDefaultValue;
-
 		addTag(CommandTag.Transformation);
 	}
 
@@ -99,9 +96,9 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 	protected void generateTransformedValues(Workspace workspace,
 			Worksheet worksheet, RepFactory f, HNode hNode,
 			JSONArray transformedRows, JSONArray errorValues, Integer limit)
-			throws JSONException {
+					throws JSONException, IOException {
 
-		PythonTransformationHelper pyHelper = new PythonTransformationHelper();
+		
 		String trimmedTransformationCode = transformationCode.trim();
 		// Pedro: somehow we are getting empty statements, and these are causing
 		// exceptions.
@@ -110,22 +107,21 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 			logger.info("Empty PyTransform statement in "
 					+ hNode.getColumnName());
 		}
-		String transformMethodStmt = pyHelper
+		String transformMethodStmt = PythonTransformationHelper
 				.getPythonTransformMethodDefinitionState(worksheet,
 						trimmedTransformationCode);
 
-		
+
 		logger.debug("Executing PyTransform\n" + transformMethodStmt);
 
 		// Prepare the Python interpreter
 		PythonInterpreter interpreter = new PythonInterpreter();
+
+		PythonRepository repo = PythonRepository.getInstance();
+		repo.initializeInterperter(interpreter);
+		repo.importUserScripts(interpreter);
 		
-		
-		interpreter.exec(pyHelper.getImportStatements());
-		importUserScripts(interpreter);
-		interpreter.exec(pyHelper.getGetValueDefStatement());
-		interpreter.exec(pyHelper.getVDefStatement());
-		interpreter.exec(transformMethodStmt);
+		repo.compileAndAddToRepositoryAndExec(interpreter, transformMethodStmt);
 
 		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet
 				.getDataTable().getNumRows()));
@@ -136,10 +132,10 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		int counter = 0;
 		long starttime = System.currentTimeMillis();
 		// Go through all nodes collected for the column with given hNodeId
-		
+
 		interpreter.set("workspaceid", workspace.getId());
-		
-		PyCode py = interpreter.compile("transform(nodeid)");
+		interpreter.set("command", this);
+		PyCode py = repo.getTransformCode();
 
 		int numRowsWithErrors = 0;
 
@@ -150,7 +146,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 			try {
 				PyObject output = interpreter.eval(py);
-				String transformedValue = pyHelper
+				String transformedValue = PythonTransformationHelper
 						.getPyObjectValueAsString(output);
 				addTransformedValue(transformedRows, row, transformedValue);
 			} catch (PyException p) {
@@ -178,25 +174,6 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		}
 		logger.debug("transform time "
 				+ (System.currentTimeMillis() - starttime));
-	}
-
-	private void importUserScripts(PythonInterpreter interpreter) {
-		String dirpathString = ServletContextParameterMap
-				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
-		
-		if (dirpathString != null && dirpathString.compareTo("") != 0) {
-			File f = new File(dirpathString);
-			String[] scripts = f.list(new FilenameFilter(){
-
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.endsWith(".py");
-				}});
-			for(String script : scripts)
-			{
-				interpreter.execfile(dirpathString  + File.separator + script);
-			}
-		}
 	}
 
 	private void addError(JSONArray errorValues, Row row, int counter,
@@ -230,5 +207,13 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 	public String getTransformationCode() {
 		return transformationCode;
+	}
+
+	public void setTransformationCode(String transformationCode) {
+		this.transformationCode = transformationCode;
+	}
+	
+	public void addInputColumns(String hNodeId) {
+		inputColumns.add(hNodeId);
 	}
 }

@@ -23,14 +23,15 @@
  */
 package edu.isi.karma.rep;
 
-import edu.isi.karma.rep.Node.NodeStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.rep.Node.NodeStatus;
 
 /**
  * @author szekely
@@ -85,6 +86,10 @@ public class Table extends RepEntity {
 		// mariam
 		r.setBelongsToTable(this);
 		return r;
+	}
+	
+	public boolean removeRow(Row r) {
+		return rows.remove(r);
 	}
 
 	public int getNumRows() {
@@ -240,7 +245,7 @@ public class Table extends RepEntity {
 			// to add the nested table before we know what we are going to put
 			// in it.
 			HTable headers = factory.getHTable(hTableId);
-			columnForOrphan = headers.addHNode(HTable.VALUES_COLUMN, factory.getWorksheet(worksheetId), factory);
+			columnForOrphan = headers.addHNode(HTable.VALUES_COLUMN, factory.getHNode(hNodeIdWhereValueWas).getHNodeType(), factory.getWorksheet(worksheetId), factory);
 			logger.warn("Cannot find 'values' in nested table inside column '"
 					+ factory.getColumnName(hNodeIdWhereValueWas)
 					+ "' Cannot find a column to assign the orphan value '"

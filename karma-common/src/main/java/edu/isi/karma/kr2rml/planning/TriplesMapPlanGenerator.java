@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * Copyright 2014 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
 package edu.isi.karma.kr2rml.planning;
 
 import java.util.HashMap;
@@ -22,13 +42,13 @@ public class TriplesMapPlanGenerator {
 	private Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan;
 	private Set<String> unprocessedTriplesMapsIds = new HashSet<String>();
 	private Row r;
-	private KR2RMLRDFWriter outWriter;
+	private List<KR2RMLRDFWriter> outWriters;
 	
-	public TriplesMapPlanGenerator(Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan, Row r, KR2RMLRDFWriter outWriter) {
+	public TriplesMapPlanGenerator(Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan, Row r, List<KR2RMLRDFWriter> outWriters) {
 		
 		this.triplesMapToWorkerPlan = triplesMapToWorkerPlan;
 		this.r = r;
-		this.outWriter = outWriter;
+		this.outWriters = outWriters;
 	}
 
 	public TriplesMapPlan generatePlan(TriplesMapGraphMerger tmf)
@@ -117,7 +137,7 @@ public class TriplesMapPlanGenerator {
 				workersDependentOn.add(mapToWorker.get(mapDependedOn));
 			}
 		}
-		TriplesMapWorker newWorker = new TriplesMapWorker(map, new CountDownLatch(workersDependentOn.size()), r, triplesMapToWorkerPlan.get(map), outWriter);
+		TriplesMapWorker newWorker = new TriplesMapWorker(map, new CountDownLatch(workersDependentOn.size()), r, triplesMapToWorkerPlan.get(map), outWriters);
 		mapToWorker.put(map, newWorker);
 		
 		for(TriplesMapWorker worker : workersDependentOn)

@@ -61,6 +61,10 @@
 @color-even-dark: hsla(@hue, @saturation, 33%, 1); 
 @color-even-light: hsla(@hue, @saturation, 92%, 1); 
 @table-background-color: hsla(@hue, 5%, 98%, 1);
+@color-odd-dark-transformation: hsla(mod(@hue - 150, 360), @saturation, 25%, 1);
+@color-even-dark-transformation: hsla(mod(@hue - 150, 360), @saturation, 33%, 1);
+@color-odd-dark-augmentdata: hsla(mod(150 + @hue, 360), @saturation, 25%, 1);
+@color-even-dark-augmentdata: hsla(mod(150 + @hue, 360), @saturation, 33%, 1);
 
 @table-odd-border-color: @color-odd-dark;
 @table-odd-vertical-grid-border-color: hsla(@hue, @saturation, 90%, 1);
@@ -123,7 +127,7 @@ body
     padding-bottom: 2px;
     padding-top: 5px;
     color: @color-odd-dark;
-    text-align: center;;
+    text-align: center;
 }
 
 // If we have links or other toolbar items, they go inside a <UL> element.
@@ -176,12 +180,28 @@ body
 // htables are the tables that contain the headers that appear at the 
 // top of a worksheet.
 //
-.htable-odd 
+.htable-odd-regular 
 {
     background-color: @color-odd-dark;
 }
-.htable-even {
+.htable-even-regular {
     background-color: @color-even-dark;
+}
+
+.htable-odd-transformation 
+{
+    background-color: @color-odd-dark-transformation;
+}
+.htable-even-transformation {
+    background-color: @color-even-dark-transformation;
+}
+
+.htable-odd-augmentdata 
+{
+    background-color: @color-odd-dark-augmentdata;
+}
+.htable-even-augmentdata {
+    background-color: @color-even-dark-augmentdata;
 }
 
 // hdtables are the headings for nested tables when they appear nested

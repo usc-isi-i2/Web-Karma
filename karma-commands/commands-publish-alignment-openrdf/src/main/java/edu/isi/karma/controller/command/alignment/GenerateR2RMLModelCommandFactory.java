@@ -34,7 +34,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class GenerateR2RMLModelCommandFactory extends CommandFactory {
 	
 	private enum Arguments {
-		worksheetId, addInverseProperties, rdfPrefix, rdfNamespace, tripleStoreUrl, graphContext
+		worksheetId, addInverseProperties, rdfPrefix, rdfNamespace, tripleStoreUrl, graphContext, localTripleStoreUrl
 	}
 
 	@Override
@@ -42,7 +42,10 @@ public class GenerateR2RMLModelCommandFactory extends CommandFactory {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.graphContext.name());
-		return new GenerateR2RMLModelCommand(getNewId(workspace), worksheetId, tripleStoreUrl, context);
+		String RESTserverAddress = request.getRequestURL().substring(0, request.getRequestURL().lastIndexOf("/RequestController"));
+		GenerateR2RMLModelCommand cmd = new GenerateR2RMLModelCommand(getNewId(workspace), worksheetId, tripleStoreUrl, context);
+		cmd.setRESTserverAddress(RESTserverAddress);
+		return cmd;
 	}
 	
 	public Command createCommand(Workspace workspace, String worksheetId, String tripleStoreUrl, String context)

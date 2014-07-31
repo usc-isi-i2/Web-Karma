@@ -1,6 +1,7 @@
 package edu.isi.karma.controller.command.worksheet;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +17,16 @@ import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.HashValueManager;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.util.Util;
 
@@ -82,6 +84,8 @@ public class UnfoldCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		RepFactory factory = workspace.getFactory();
+		inputColumns.clear();
+		outputColumns.clear();
 		Worksheet oldws = workspace.getWorksheet(
 				worksheetId);
 		Worksheet newws = null;
@@ -92,7 +96,9 @@ public class UnfoldCommand extends WorksheetCommand {
 		}
 		else {
 			try {
-			unfoldNestedLevel(oldws, ht, keyHNodeId, valueHNodeId, factory);
+				inputColumns.add(keyHNodeId);
+				inputColumns.add(valueHNodeId);
+				unfoldNestedLevel(oldws, ht, keyHNodeId, valueHNodeId, factory);
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -105,8 +111,6 @@ public class UnfoldCommand extends WorksheetCommand {
 			if (newws != null) {
 				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId()));
 				Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), newws.getId(), workspace.getOntologyManager());
-				SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(newws.getId()), workspace
-						.getCrfModelHandler(), workspace.getOntologyManager());
 				c.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(newws.getId(), workspace, alignment));
 			}
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
@@ -139,15 +143,15 @@ public class UnfoldCommand extends WorksheetCommand {
 		}
 		return c;
 	}
-	
+
 	public void setValueName(String valueName) {
 		this.valueName = valueName;
 	}
-	
+
 	public void setKeyName(String keyName) {
 		this.keyName = keyName;
 	}
-	
+
 	private void unfoldNestedLevel(Worksheet oldws, HTable ht, String keyHNodeid, String valueHNodeid, RepFactory factory) {
 		ArrayList<HNode> topHNodes = new ArrayList<HNode>(ht.getHNodes());
 		HTable parentHT = ht.getParentHNode().getHTable(factory);
@@ -160,7 +164,8 @@ public class UnfoldCommand extends WorksheetCommand {
 			}
 		}
 		//ArrayList<Row> parentRows = parentTable.getRows(0, parentTable.getNumRows());
-		HNode newNode = parentHT.addHNode("Unfold: " + ht.getHNode(keyHNodeid).getColumnName(), oldws, factory);
+		HNode newNode = parentHT.addHNode("Unfold: " + ht.getHNode(keyHNodeid).getColumnName(), HNodeType.Transformation, oldws, factory);
+		outputColumns.add(newNode.getId());
 		this.newHNodeId = newNode.getId();
 		HTable newHT = newNode.addNestedTable("Unfold: " + ht.getHNode(keyHNodeid).getColumnName(), oldws, factory);
 		HNode key = ht.getHNode(keyHNodeid);
@@ -173,7 +178,9 @@ public class UnfoldCommand extends WorksheetCommand {
 				hnodeIds.add(h.getId());
 			}
 		}
-		CloneTableUtils.cloneHTable(ht, newHT, oldws, factory, hnodes);
+		for (Entry<String, String> entry : CloneTableUtils.cloneHTable(ht, newHT, oldws, factory, hnodes).entrySet()) {
+			outputColumns.add(entry.getValue());
+		}
 		List<Row> resultRows = new ArrayList<Row>();
 		for (Row parentRow: parentRows) {
 			Table t = null;
@@ -193,9 +200,10 @@ public class UnfoldCommand extends WorksheetCommand {
 			for (String mapkey : keyMapping.keySet()) {
 				HNode hn = newHT.getHNodeFromColumnName(keyMapping.get(mapkey).toLowerCase().replace('/', '_'));
 				if (hn == null) {
-					HNode n = newHT.addHNode(keyMapping.get(mapkey).toLowerCase().replace('/', '_'), oldws, factory);
+					HNode n = newHT.addHNode(keyMapping.get(mapkey).toLowerCase().replace('/', '_'), HNodeType.Transformation, oldws, factory);
+					outputColumns.add(n.getId());
 					HTable htt = n.addNestedTable("values", oldws, factory);
-					htt.addHNode("Values", oldws, factory);
+					outputColumns.add(htt.addHNode("Values", HNodeType.Transformation, oldws, factory).getId());
 					HNodeidMapping.put(keyMapping.get(mapkey), n.getId());
 				}
 				else
@@ -263,9 +271,9 @@ public class UnfoldCommand extends WorksheetCommand {
 			keyMapping.put(HashValueManager.getHashValue(oldws, n.getId()), n.getValue().asString());
 		}
 		for (String mapkey : keyMapping.keySet()) {
-			HNode n = newws.getHeaders().addHNode(keyMapping.get(mapkey), newws, factory);
+			HNode n = newws.getHeaders().addHNode(keyMapping.get(mapkey), HNodeType.Transformation, newws, factory);
 			HTable ht = n.addNestedTable("values", newws, factory);
-			ht.addHNode("Values", newws, factory);
+			ht.addHNode("Values", HNodeType.Transformation, newws, factory);
 			HNodeidMapping.put(keyMapping.get(mapkey), n.getId());
 		}
 

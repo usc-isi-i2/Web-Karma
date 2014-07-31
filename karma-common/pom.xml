@@ -15,7 +15,7 @@
 <dependencies>
 	<dependency>
 		<groupId>edu.isi</groupId>
-		<artifactId>karma-crf</artifactId>
+		<artifactId>karma-typer</artifactId>
 		<version>${project.version}</version>
 	</dependency>
 
@@ -23,6 +23,12 @@
 	<dependency>
 		<groupId>edu.isi</groupId>
 		<artifactId>karma-cleaning</artifactId>
+		<version>${project.version}</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>edu.isi</groupId>
+		<artifactId>karma-util</artifactId>
 		<version>${project.version}</version>
 	</dependency>
 

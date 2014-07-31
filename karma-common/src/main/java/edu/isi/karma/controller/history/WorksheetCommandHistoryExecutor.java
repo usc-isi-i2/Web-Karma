@@ -28,6 +28,7 @@ import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
+import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;
@@ -73,16 +74,18 @@ public class WorksheetCommandHistoryExecutor {
 	public UpdateContainer executeAllCommands(JSONArray historyJson) 
 			throws JSONException, KarmaException, CommandException {
 		UpdateContainer uc =new UpdateContainer();
+		boolean saveToHistory = false;
 		for (int i = 0; i< historyJson.length(); i++) {
 			JSONObject commObject = (JSONObject) historyJson.get(i);
-			UpdateContainer update = executeCommand(commObject);
+			if(i == historyJson.length() - 1) saveToHistory = true;
+			UpdateContainer update = executeCommand(commObject, saveToHistory);
 			if(update != null)
 				uc.append(update);
 		}
 		return uc;
 	}
 
-	private UpdateContainer executeCommand(JSONObject commObject) 
+	private UpdateContainer executeCommand(JSONObject commObject, boolean saveToHistory) 
 			throws JSONException, KarmaException, CommandException {
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspace.getId());
 		HashMap<String, CommandFactory> commandFactoryMap = ctrl.getCommandFactoryMap();
@@ -92,36 +95,42 @@ public class WorksheetCommandHistoryExecutor {
 		logger.info("Command in history: " + commandName);
 
 		// Change the hNode ids, vworksheet id to point to the current worksheet ids
-
-		UpdateContainer uc = normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
-		if(uc == null) { //No error
-			// Invoke the command
-			CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
-			if(cf != null) {
-				try { // This is sort of a hack the way I did this, but could not think of a better way to get rid of the dependency
-					Command comm = cf.createCommand(inputParamArr, workspace);
-					if(comm != null){
-						try {
-							logger.info("Executing command: " + commandName);
-							workspace.getCommandHistory().doCommand(comm, workspace);
-						} catch(Exception e) {
-							logger.error("Error executing command: "+ commandName + ". Please notify this error");
-							Util.logException(logger, e);
-							//make these InfoUpdates so that the UI can still process the rest of the model
+		try {
+			UpdateContainer uc = normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
+			if(uc == null) { //No error
+				// Invoke the command
+				CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
+				if(cf != null) {
+					try { // This is sort of a hack the way I did this, but could not think of a better way to get rid of the dependency
+						Command comm = cf.createCommand(inputParamArr, workspace);
+						if(comm != null){
+							try {
+								logger.info("Executing command: " + commandName);
+								workspace.getCommandHistory().doCommand(comm, workspace, saveToHistory);
+							} catch(Exception e) {
+								logger.error("Error executing command: "+ commandName + ". Please notify this error");
+								Util.logException(logger, e);
+								//make these InfoUpdates so that the UI can still process the rest of the model
+								return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
+							}
+						}
+						else {
+							logger.error("Error occured while creating command (Could not create Command object): " 
+									+ commObject.get(HistoryArguments.commandName.name()));
 							return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
 						}
+					} catch (UnsupportedOperationException ignored) {
+	
 					}
-					else {
-						logger.error("Error occured while creating command (Could not create Command object): " 
-								+ commObject.get(HistoryArguments.commandName.name()));
-						return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
-					}
-				} catch (UnsupportedOperationException ignored) {
-
 				}
-			}
-		} 
-		return uc;
+			} 
+			return uc;
+		} catch(Exception e) {
+			logger.error("Error executing command: "+ commandName + ". Please notify this error");
+			Util.logException(logger, e);
+			//make these InfoUpdates so that the UI can still process the rest of the model
+			return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
+		}
 	}
 
 	private boolean ignoreIfBeforeColumnDoesntExist(String commandName) {
@@ -135,8 +144,9 @@ public class WorksheetCommandHistoryExecutor {
 		return ignore;
 	}
 
-	private UpdateContainer normalizeCommandHistoryJsonInput(Workspace workspace, String worksheetId, 
+	public UpdateContainer normalizeCommandHistoryJsonInput(Workspace workspace, String worksheetId, 
 			JSONArray inputArr, String commandName) throws JSONException {
+		UpdateContainer uc = null;
 		HTable hTable = workspace.getWorksheet(worksheetId).getHeaders();
 		for (int i = 0; i < inputArr.length(); i++) {
 			JSONObject inpP = inputArr.getJSONObject(i);
@@ -144,20 +154,28 @@ public class WorksheetCommandHistoryExecutor {
 			/*** Check the input parameter type and accordingly make changes ***/
 			if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeId) {
 				JSONArray hNodeJSONRep = new JSONArray(inpP.get(ClientJsonKeys.value.name()).toString());
-				System.out.println(hNodeJSONRep);
 				for (int j=0; j<hNodeJSONRep.length(); j++) {
 					JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
 					if(hTable == null) {
-						return new UpdateContainer(new TrivialErrorUpdate("null HTable while normalizing JSON input for the command " + commandName));
+						AbstractUpdate update = new TrivialErrorUpdate("null HTable while normalizing JSON input for the command " + commandName);
+						if (uc == null)
+							uc = new UpdateContainer(update);
+						else
+							uc.add(update);
+						continue;
 					}
 					String nameObjColumnName = cNameObj.getString("columnName");
 					logger.debug("Column being normalized: "+ nameObjColumnName);
 					HNode node = hTable.getHNodeFromColumnName(nameObjColumnName);
 					if(node == null && !ignoreIfBeforeColumnDoesntExist(commandName)) { //Because add column can happen even if the column after which it is to be added is not present
 						logger.info("null HNode " + nameObjColumnName + " while normalizing JSON input for the command " + commandName);
-						return new UpdateContainer(new TrivialErrorUpdate("Column " + nameObjColumnName + " does not exist. " +
-								"All commands for this column are being skipped. You can add the column to the data or Worksheet and apply the model again."));
-						//return false;
+						AbstractUpdate update = new TrivialErrorUpdate("Column " + nameObjColumnName + " does not exist. " +
+								"All commands for this column are being skipped. You can add the column to the data or Worksheet and apply the model again.");
+						if (uc == null)
+							uc = new UpdateContainer(update);
+						else
+							uc.add(update);
+						continue;
 					}
 
 					if (j == hNodeJSONRep.length()-1) {		// Found!
@@ -182,19 +200,28 @@ public class WorksheetCommandHistoryExecutor {
 				for (int k = 0; k < hNodes.length(); k++) {
 					JSONObject hnodeJSON = hNodes.getJSONObject(k);
 					JSONArray hNodeJSONRep = new JSONArray(hnodeJSON.get(ClientJsonKeys.value.name()).toString());
-					System.out.println(hNodeJSONRep);
 					for (int j=0; j<hNodeJSONRep.length(); j++) {
 						JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
 						if(hTable == null) {
-							return new UpdateContainer(new TrivialErrorUpdate("null HTable while normalizing JSON input for the command " + commandName));
+							AbstractUpdate update = new TrivialErrorUpdate("null HTable while normalizing JSON input for the command " + commandName);
+							if (uc == null)
+								uc = new UpdateContainer(update);
+							else
+								uc.add(update);
+							continue;
 						}
 						String nameObjColumnName = cNameObj.getString("columnName");
 						logger.debug("Column being normalized: "+ nameObjColumnName);
 						HNode node = hTable.getHNodeFromColumnName(nameObjColumnName);
 						if(node == null && !ignoreIfBeforeColumnDoesntExist(commandName)) { //Because add column can happen even if the column after which it is to be added is not present
 							logger.info("null HNode " + nameObjColumnName + " while normalizing JSON input for the command " + commandName);
-							return new UpdateContainer(new TrivialErrorUpdate("Column " + nameObjColumnName + " does not exist. " +
-									"All commands for this column are being skipped. You can add the column to the data or Worksheet and apply the model again."));
+							AbstractUpdate update = new TrivialErrorUpdate("Column " + nameObjColumnName + " does not exist. " +
+									"All commands for this column are being skipped. You can add the column to the data or Worksheet and apply the model again.");
+							if (uc == null)
+								uc = new UpdateContainer(update);
+							else
+								uc.add(update);
+							continue;
 							//return false;
 						}
 
@@ -216,7 +243,64 @@ public class WorksheetCommandHistoryExecutor {
 				}
 				inpP.put(ClientJsonKeys.value.name(), hNodes.toString());
 			}
+			else if (HistoryJsonUtil.getParameterType(inpP) == ParameterType.orderedColumns) {
+				JSONArray hNodes = new JSONArray(inpP.get(ClientJsonKeys.value.name()).toString());
+				for (int k = 0; k < hNodes.length(); k++) {
+					JSONObject hnodeJSON = hNodes.getJSONObject(k);
+					JSONArray hNodeJSONRep = new JSONArray(hnodeJSON.get(ClientJsonKeys.id.name()).toString());
+					processHNodeId(hNodeJSONRep, hTable, commandName, hnodeJSON);
+					if (hnodeJSON.has(ClientJsonKeys.children.name())) {
+						JSONArray children = new JSONArray(hnodeJSON.get(ClientJsonKeys.children.name()).toString());
+						hnodeJSON.put(ClientJsonKeys.children.name(), processChildren(children, hTable, commandName));
+					}
+					
+				}
+				inpP.put(ClientJsonKeys.value.name(), hNodes.toString());
+			}
 		}
-		return null;
+		return uc;
+	}
+	
+	private boolean processHNodeId(JSONArray hNodeJSONRep, HTable hTable, String commandName, JSONObject hnodeJSON) {
+		for (int j=0; j<hNodeJSONRep.length(); j++) {
+			JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
+			if(hTable == null) {
+				return false;
+			}
+			String nameObjColumnName = cNameObj.getString("columnName");
+			logger.debug("Column being normalized: "+ nameObjColumnName);
+			HNode node = hTable.getHNodeFromColumnName(nameObjColumnName);
+			if(node == null && !ignoreIfBeforeColumnDoesntExist(commandName)) { //Because add column can happen even if the column after which it is to be added is not present
+				logger.info("null HNode " + nameObjColumnName + " while normalizing JSON input for the command " + commandName);
+				return false;
+			}
+
+			if (j == hNodeJSONRep.length()-1) {		// Found!
+				if(node != null)
+					hnodeJSON.put(ClientJsonKeys.id.name(), node.getId());
+				else {
+					//Get the id of the last node in the table
+					ArrayList<String> allNodeIds = hTable.getOrderedNodeIds();
+					String lastNodeId = allNodeIds.get(allNodeIds.size()-1);
+					hnodeJSON.put(ClientJsonKeys.id.name(), lastNodeId);
+				}
+				hTable = workspace.
+						getWorksheet(worksheetId).getHeaders();
+			} else if(node != null) {
+				hTable = node.getNestedTable();
+			}
+		}
+		return true;
+	}
+	private JSONArray processChildren(JSONArray children, HTable hTable, String commandName) {
+		for (int i = 0; i < children.length(); i++) {
+			JSONObject obj = children.getJSONObject(i);
+			JSONArray array = new JSONArray(obj.get(ClientJsonKeys.id.name()).toString());
+			processHNodeId(array, hTable, commandName, obj);
+			if (obj.has(ClientJsonKeys.children.name())) {
+				obj.put(ClientJsonKeys.children.name(), processChildren(new JSONArray(obj.get(ClientJsonKeys.children.name()).toString()), hTable, commandName));
+			}
+		}
+		return children;
 	}
 }

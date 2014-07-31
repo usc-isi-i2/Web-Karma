@@ -1,3 +1,6 @@
+
+<%@page import="edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter"%>
+<%@page import="edu.isi.karma.webserver.ServletContextParameterMap"%>
 <%@page import="edu.isi.karma.config.UIConfiguration"%>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -49,8 +52,10 @@ and related projects, please see: http://www.isi.edu/integration
         <link rel="stylesheet" type="text/css" href="./uiLibs/sticky/css/sticky.min.css" />
         <link rel="stylesheet/less" type="text/css" href="./uiLibs/less/css/styles-03d-fixed-pixel.less" />
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jstree-themes/default/style.css" />
+        <link href="./css/sticky-footer-navbar.css?<jsp:include page='version.jsp'/>" rel="stylesheet">
         
         <link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/dropdown.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/command_History.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/tables_workspace.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/fileImport.css?<jsp:include page='version.jsp' />" />
@@ -64,6 +69,8 @@ and related projects, please see: http://www.isi.edu/integration
         <link rel="stylesheet" type="text/css" href="./css/main.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/pyTransform.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/cleaningChart.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/model.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/augmentdata.css?<jsp:include page='version.jsp' />" />
       
 		<style type="text/css">
 			div.sticky {
@@ -113,6 +120,14 @@ and related projects, please see: http://www.isi.edu/integration
 				color: #cccccc;
 			}
 			
+			.table-no-border td {
+			    border-top: 0 none;
+			}
+
+			.table-no-border > thead > tr > th, .table > tbody > tr > th, .table-no-border > tfoot > tr > th, .table > thead > tr > td, .table-no-border > tbody > tr > td, .table-no-border > tfoot > tr > td {
+			    border-top: 0px;
+			}
+
 		</style>
 	
 	</head>
@@ -136,14 +151,18 @@ and related projects, please see: http://www.isi.edu/integration
 		          <ul class="nav navbar-nav">
 		            <li class="dropdown">
 		              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Import <b class="caret"></b></a>
-		              <ul class="dropdown-menu">
+		              <ul class="dropdown-menu multi-level">
 		                  <li><a href="#" id="importDatabaseTableButton">Database Table</a></li>
 		                  <li><a href="#" id="importSQLButton">Using SQL</a></li>
 		                  <li><a href="#" id="importFromServiceButton" >From Service</a></li>
 		                  <li><a href="#" class="fileinput-button"><form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form></a></li>
 		              </ul>
 		            </li>
-		            <li><a href="#" id="resetButton" data-html='true' title='Delete all saved files,<br/>use with care!' data-toggle='tooltip' data-placement='bottom'>Reset ...</a></li>
+		            
+		            <li><a href="#" id="modelManagerButton" data-html='true' data-toggle='tooltip' data-placement='bottom'>Manage Models</a></li>
+
+					<li><a href="#" id="resetButton" data-html='true' title='Delete all saved files,<br/>use with care!' data-toggle='tooltip' data-placement='bottom'>Reset ...</a></li>
+					
 		            <li>
 		            		<div class="span5 fileupload-progress fade">
 								<!-- The global progress bar -->
@@ -154,6 +173,7 @@ and related projects, please see: http://www.isi.edu/integration
 								<div class="progress-extended">
 									&nbsp;
 								</div>
+								
 							</div>
 		            	
 		            </li>
@@ -165,10 +185,11 @@ and related projects, please see: http://www.isi.edu/integration
 		          </ul>
 		        </div>
 		      </div> <!--  end of navbar -->
-		      
+
 		      <div class="row">
 			      <div id="commHistoryAndWorkspace">
 			      	<div class="col-sm-2">
+			      		
 				      	<div class="ui-corner-top" id="commandHistory">
 				      		<div id="titleCommand" class="ui-corner-top"><span>Command History</span></div>
 				      	</div>
@@ -187,7 +208,7 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="tableOptionsDialogs.jsp"></jsp:include>
 			  <jsp:include page="semanticTypes.jsp"></jsp:include>
 			  <jsp:include page="showModel.jsp"></jsp:include>
-			  
+			  <jsp:include page="model.jsp"></jsp:include>
 			  
 			  <div class="modal fade" id="karmaErrorWindow" tabindex="-1">
 			  	<div class="modal-dialog">
@@ -206,7 +227,34 @@ and related projects, please see: http://www.isi.edu/integration
 			</div><!-- /.modal -->
 
 		</div>
- 
+ 		
+ 		<div id="footer">
+	      <div class="container">
+	        <p class="text-muted">
+	        	<div class="row">
+	        		<div class="col-sm-4">
+	        			<div class="form-group">
+	        				<label>Karma Home: </label>
+	        				<span id="karmaHome"><%=ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></span>
+	        			</div>
+	        		</div>
+	        		<div class="col-sm-4">
+	        			<div class="form-group">
+							<label for="txtModel_URL">Model Endpoint: </label>
+							<span class="edit" id="txtModel_URL"></span>
+						</div>
+	        		</div>
+	        		<div class="col-sm-4">
+	        			<div class="form-group">
+							<label for="txtData_URL">Data Endpoint: </label>
+							<span class="edit" id="txtData_URL"></span>
+						</div>
+	        		</div>
+	        	</div>
+	        </p>
+	      </div>
+	    </div>
+    
         <div id="ScrollHeadersPlaceholder"></div>
        
         
@@ -277,8 +325,8 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="uiLibs/modernizr/js/modernizr.custom.59953.js"></script>
 		
         <!-- Home grown JavaScript files -->
-        <script type="text/javascript" src="js/initWS.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/ServerResponseObjectParsing.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/initWS.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/commandHistory.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/publishRDF.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/publishDatabase.js?<jsp:include page='version.jsp' />"></script>
@@ -302,7 +350,8 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/classDropdown.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/propertyDropdown.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/model-layout.js?<jsp:include page='version.jsp' />"></script>
-         
+        <script type="text/javascript" src="js/UnconnectedNodesLayout.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/model.js?<jsp:include page='version.jsp' />"></script>
         <script>
         	var googleEarthEnabled = <%=UIConfiguration.Instance().isGoogleEarthEnabled()%>;
         	
@@ -357,7 +406,45 @@ and related projects, please see: http://www.isi.edu/integration
                     dialogBox.dialog({width: 550, title: chartTitle
                         , buttons: { "Close": function() { $(this).dialog("close"); } }})
                 });
+                
+                $("#karmaHome").editable({
+		       			 type: 'text',
+		       			 success: function(response, newValue) {
+		       				 console.log("Set Karma Home:" + newValue);
+		       				 changeKarmaHome(newValue);
+		       			 },
+		       			 showbuttons: 'bottom',
+		       			 mode: 'popup',
+		       			 inputclass: 'worksheetInputEdit'	 
+		            });
+                
+            	positionFooter();
+            	$(window)
+                    .scroll(positionFooter)
+                    .resize(positionFooter)
 			});
+            
+            function positionFooter() {
+            	var footerHeight = 0,
+                footerTop = 0,
+                $footer = $("#footer");
+            	
+                footerHeight = $footer.height();
+                footerTop = ($(window).scrollTop()+$(window).height()-footerHeight)+"px";
+       
+               if ( ($(document.body).height()+footerHeight) < $(window).height()) {
+                   $footer.css({
+                        position: "absolute"
+                   }).animate({
+                        top: footerTop
+                   })
+               } else {
+                   $footer.css({
+                        position: "static"
+                   })
+               }
+               
+       		}
 		</script>
 		<script type="text/javascript">
 			if(googleEarthEnabled) {

@@ -50,8 +50,10 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		JSONObject prefObject = workspace.getCommandPreferences().getCommandPreferencesJSONObject(
 				"PublishRDFCommand"+"Preferences");
 		if (prefObject != null) {
-			namespace = prefObject.getString(PreferencesKeys.rdfNamespace.name());
-			prefix = prefObject.getString(PreferencesKeys.rdfPrefix.name());
+			if (prefObject.has(PreferencesKeys.rdfNamespace.name()))
+				namespace = prefObject.getString(PreferencesKeys.rdfNamespace.name());
+			if (prefObject.has(PreferencesKeys.rdfPrefix.name()))
+				prefix = prefObject.getString(PreferencesKeys.rdfPrefix.name());
 			namespace = ((namespace == null) || (namespace.equals(""))) ? 
 					Namespaces.KARMA_DEV : namespace;
 			prefix = ((prefix == null) || (prefix.equals(""))) ? 
@@ -83,7 +85,7 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		
-		if(modelFilename == null) {
+		if(modelFilename == null && worksheet != null) {
 			modelFilename = getHistoryFilepath(worksheetId);
 		} 
 		
@@ -92,14 +94,16 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
-		alignmentMappingGenerator = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
-					worksheet.getSemanticTypes(), prefix, namespace, true, history, errorReport);
+		if (worksheet != null)
+			alignmentMappingGenerator = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
+					worksheet.getSemanticTypes(), prefix, namespace, false, history, errorReport);
 		
 		long end2 = System.currentTimeMillis();
 		logger.info("Time to generate mappings:" + (end2-end1) + "msec");
 		
 		// Write the model
-		writeModel(workspace, workspace.getOntologyManager(), alignmentMappingGenerator, worksheet, modelFilename);
+		if (modelFilename != null && !modelFilename.trim().isEmpty())
+			writeModel(workspace, workspace.getOntologyManager(), alignmentMappingGenerator, worksheet, modelFilename);
 		logger.info("Alignment for " + workspaceId + ":" + worksheetId + " saved to file: " + modelFilename);
 		long end3 = System.currentTimeMillis();
 		logger.info("Time to write to file:" + (end3-end2) + "msec");
@@ -163,5 +167,7 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		}
 		return new JSONArray();
 	}
+	
+	
 
 }

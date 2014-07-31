@@ -34,6 +34,7 @@ public class EncodingDetector {
             logger.debug("Detected encoding = " + encoding);
         } else {
             logger.debug("No encoding detected, using default: " + DEFAULT_ENCODING);
+            encoding = DEFAULT_ENCODING;
         }
 
         // (5)

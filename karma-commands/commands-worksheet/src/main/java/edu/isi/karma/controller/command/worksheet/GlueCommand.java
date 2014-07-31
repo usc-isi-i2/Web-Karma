@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.worksheet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,6 +26,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
@@ -32,6 +34,7 @@ import edu.isi.karma.util.Util;
 public class GlueCommand extends WorksheetCommand {
 
 	private String hNodeId;
+	private String newhNodeId;
 	private static Logger logger = LoggerFactory
 			.getLogger(GlueCommand.class);
 
@@ -62,11 +65,13 @@ public class GlueCommand extends WorksheetCommand {
 	@Override
 	public CommandType getCommandType() {
 		// TODO Auto-generated method stub
-		return CommandType.notUndoable;
+		return CommandType.undoable;
 	}
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		inputColumns.clear();
+		outputColumns.clear();
 		RepFactory factory = workspace.getFactory();
 		Worksheet oldws = workspace.getWorksheet(worksheetId);
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
@@ -104,8 +109,16 @@ public class GlueCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		// TODO Auto-generated method stub
-		return null;
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		UpdateContainer uc = new UpdateContainer();
+		HNode ndid = workspace.getFactory().getHNode(newhNodeId);
+		HTable currentTable = workspace.getFactory().getHTable(ndid.getHTableId());
+		ndid.removeNestedTable();
+		//remove the new column
+		currentTable.removeHNode(newhNodeId, worksheet);
+		uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		uc.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		return uc;
 	}
 
 	private void glueNestedTable(Worksheet oldws, Workspace workspace, HTable ht, List<HNode> hnodes, RepFactory factory) {
@@ -118,7 +131,9 @@ public class GlueCommand extends WorksheetCommand {
 				parentRows.add(row);
 			}
 		}
-		HNode newNode = ht.addHNode(ht.getNewColumnName("Glue"), oldws, factory);
+		HNode newNode = ht.addHNode(ht.getNewColumnName("Glue"), HNodeType.Transformation, oldws, factory);
+		outputColumns.add(newNode.getId());
+		newhNodeId = newNode.getId();
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
 		List<HNode> childHNodes = new ArrayList<HNode>();
 		for (HNode hnode : hnodes) {
@@ -128,8 +143,10 @@ public class GlueCommand extends WorksheetCommand {
 				}
 			}
 		}
-		Map<String, String> mapping = CloneTableUtils.cloneHTable(ht, newht, oldws, factory, childHNodes, true);
-
+		Map<String, String> mapping = CloneTableUtils.cloneHTable(ht, newht, oldws, factory, childHNodes);
+		for (Entry<String, String> entry : mapping.entrySet()) {
+			outputColumns.add(entry.getValue());
+		}
 		for (Row parentRow : parentRows) {
 			Table t = null;
 			for (Node node : parentRow.getNodes()) {
@@ -169,7 +186,9 @@ public class GlueCommand extends WorksheetCommand {
 
 	private void glueTopLevel(Worksheet oldws, Workspace workspace, List<HNode> hnodes, RepFactory factory) {
 		HTable parentHT = oldws.getHeaders();
-		HNode newNode = parentHT.addHNode(parentHT.getNewColumnName("Glue"), oldws, factory);
+		HNode newNode = parentHT.addHNode(parentHT.getNewColumnName("Glue"), HNodeType.Transformation, oldws, factory);
+		newhNodeId = newNode.getId();
+		outputColumns.add(newhNodeId);
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
 		List<HNode> childHNodes = new ArrayList<HNode>();
 		for (HNode hnode : hnodes) {
@@ -179,7 +198,10 @@ public class GlueCommand extends WorksheetCommand {
 				}
 			}
 		}
-		Map<String, String> mapping = CloneTableUtils.cloneHTable(oldws.getHeaders(), newht, oldws, factory, childHNodes, true);
+		Map<String, String> mapping = CloneTableUtils.cloneHTable(oldws.getHeaders(), newht, oldws, factory, childHNodes);
+		for (Entry<String, String> entry : mapping.entrySet()) {
+			outputColumns.add(entry.getValue());
+		}
 		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows());
 		for (Row row : rows) {
 			Table nestedTable = row.getNeighbor(newNode.getId()).getNestedTable();

@@ -101,7 +101,6 @@ public class JsonImport extends Import {
 	@Override
 	public Worksheet generateWorksheet() throws JSONException {
 		numObjects = 0;
-		boolean importJson = false;
 		if (json instanceof JSONArray) {
 			getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.COLLECTION);
 			JSONArray a = (JSONArray) json;
@@ -111,24 +110,15 @@ public class JsonImport extends Import {
 				if (maxNumLines > 0 && numObjects >= maxNumLines)
 					break;
 			}
-			importJson = true;
 		} else if (json instanceof JSONObject) {
 			getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.OBJECT);
 			JsonImportValues.addKeysAndValues((JSONObject) json, getWorksheet().getHeaders(),
 					getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
-			importJson = true;
 		}
 
-		if (importJson)
-			writeJsonFile(json);
 		Worksheet ws = getWorksheet();
 		ws.getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.JSON.toString());
 		return ws;
 	}
-
-	private static void writeJsonFile(Object o) {
-		JSONUtil.writeJsonFile(o, "lastJsonImport.json");
-	}
-
 	
 }

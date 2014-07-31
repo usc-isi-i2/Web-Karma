@@ -11,7 +11,7 @@ import java.net.URL;
 
 import org.junit.Test;
 
-import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 
 
 public class TestFileRdfGenerator extends TestRdfGenerator{
@@ -21,16 +21,11 @@ public class TestFileRdfGenerator extends TestRdfGenerator{
 		try {
 
 			String filename = "schedule.csv";
-			System.out.println("Load file: " + filename);
 			
-			FileRdfGenerator rdfGen = new FileRdfGenerator();
-			R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
-					"schedule-model", getTestResource("schedule-model.txt"));
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
+			generateRdfFile(new File(getTestResource(filename).toURI()), null, "schedule-model", new File(getTestResource("schedule-model.txt").toURI()), pw);
 			
-			rdfGen.generateRdf(null, modelIdentifier, pw, new File(getTestResource(filename).toURI()), 
-					"utf-8", 0);
 			
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
@@ -39,31 +34,21 @@ public class TestFileRdfGenerator extends TestRdfGenerator{
 			
 			int idx = rdf.indexOf("hasEventDate> \"2014-01-13\" .");
 			assertNotEquals(idx, -1);
-			
-//			System.out.println("------------------------------------------");
-//			System.out.println(rdf);
-//			System.out.println("------------------------------------------");
+
 		} catch (Exception e) {
 			fail("Exception: " + e.getMessage());
 		}
 	}
-	
 	
 	@Test
 	public void testCWeb2RDFPyTransform() {
 		//
 		try {
 			String filename = "cbev2.WebConAltNames.csv";
-			System.out.println("Load file: " + filename);
 			
-			FileRdfGenerator rdfGen = new FileRdfGenerator();
-			R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
-					"cbev2.WebConAltNames-model", getTestResource("cbev2.WebConAltNames-model.ttl"));
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
-			
-			rdfGen.generateRdf("csv", modelIdentifier, pw, new File(getTestResource(filename).toURI()), 
-					"utf-8", 0);
+			generateRdfFile(new File(getTestResource(filename).toURI()), InputType.CSV, "cbev2.WebConAltNames-model", new File(getTestResource("cbev2.WebConAltNames-model.ttl").toURI()), pw);
 			
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
@@ -74,9 +59,6 @@ public class TestFileRdfGenerator extends TestRdfGenerator{
 			int idx = rdf.indexOf(triple);
 			assertNotEquals(idx, -1);
 			
-//			System.out.println("------------------------------------------");
-//			System.out.println(rdf);
-//			System.out.println("------------------------------------------");
 		} catch (Exception e) {
 			fail("Exception: " + e.getMessage());
 		}

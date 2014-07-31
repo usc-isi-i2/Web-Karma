@@ -75,7 +75,6 @@ public class SetWorksheetPropertiesCommand extends Command {
 		JSONObject propertiesJson = null;
 		try {
 			propertiesJson = new JSONObject(properties);
-			
 			WorksheetProperties props = worksheet.getMetadataContainer().getWorksheetProperties();
 			if (props == null) {
 				props = new WorksheetProperties();
@@ -83,8 +82,11 @@ public class SetWorksheetPropertiesCommand extends Command {
 			}
 			
 			// Parse the properties and set WorksheetProperties data structure
-			String modelName = propertiesJson.getString(Property.graphName.name());
-			props.setPropertyValue(Property.graphName, modelName);
+			String graphLabel = propertiesJson.getString(Property.graphLabel.name());
+			if (!graphLabel.trim().isEmpty()) {
+				props.setPropertyValue(Property.graphLabel, graphLabel);
+				props.setPropertyValue(Property.graphName, WorksheetProperties.createDefaultGraphName(graphLabel));
+			}
 			
 			if (propertiesJson.getBoolean(Property.hasServiceProperties.name())) {
 				props.setHasServiceProperties(true);
@@ -100,6 +102,14 @@ public class SetWorksheetPropertiesCommand extends Command {
 					props.setPropertyValue(Property.serviceDataPostMethod, 
 							propertiesJson.getString(Property.serviceDataPostMethod.name()));
 				}
+			}
+			if (propertiesJson.getBoolean("hasPrefix")) {
+				props.setPropertyValue(Property.prefix, 
+						propertiesJson.getString(Property.prefix.name()));
+			}
+			if (propertiesJson.getBoolean("hasBaseURI")) {
+				props.setPropertyValue(Property.baseURI, 
+						propertiesJson.getString(Property.baseURI.name()));
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();

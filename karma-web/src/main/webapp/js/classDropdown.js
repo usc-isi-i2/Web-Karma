@@ -7,19 +7,20 @@ var ClassDropdownMenu = (function() {
     function PrivateConstructor() {
     	var menuId = "classDropdownMenu";
     	var worksheetId, columnId;
-    	var columnUri, columnLabel, columnDomain, alignmentId;
+    	var columnUri, columnLabel, columnDomain, columnCategory, alignmentId;
     	
     	var options = [
+    	               
     		   	        //Title, function to call, needs file upload     
-    		   	        [ "Add Incoming Link", addIncomingLink],
-    		   	        [ "Add Outgoing Link", addOutgoingLink],
-    		   	        [ "Manage Links", manageLinks],
-                        [ "Search For Data To Augment", searchData], 
-    		   	        [ "divider" , null ],
-    		   	        [ "Export CSV" , exportCSV ],
-    		   	        [ "Export JSON" , exportJSON ],
-    		   			[ "Invoke Reconciliation Service" , invokeReconciliationService ],
-    		   			[ "Invoke Table Service", invokeMLService ],
+    		   	        {name: "Add Incoming Link", func:addIncomingLink},
+    		   	        {name: "Add Outgoing Link", func:addOutgoingLink},
+    		   	        {name: "Manage Links", func:manageLinks},
+    		   	        {name: "Augment Data", func:searchData}, 
+    		   	        {name: "Delete", func:deleteNode, category:"forcedAdded"},
+    		   	        {name: "divider"},
+    		   	        {name: "Export CSV" , func:exportCSV },
+    		   	        {name: "Export JSON" , func:exportJSON },
+    		   	        {name: "Invoke Table Service", func:invokeMLService },
     		   			
     		   			
     		   	];
@@ -31,8 +32,14 @@ var ClassDropdownMenu = (function() {
     	function hide() {
     		$("#" + menuId).hide();
     		$(document).off('click', hide);
+    		$(document).off('keydown', hideOnEsc);
     	}
     	
+    	function hideOnEsc(event) {
+    		if ( event.keyCode === 27 ) { // ESC
+			    hide();
+			}
+    	}
     	function manageLinks() {
     		console.log("showIncomingOutgoingLinks");
     		ManageIncomingOutgoingLinksDialog.getInstance().show(worksheetId, 
@@ -49,11 +56,8 @@ var ClassDropdownMenu = (function() {
     	};
 
         function searchData() {
-            console.log(columnLabel);
-            console.log(columnDomain);
-            console.log(columnUri);
-            searchDataDialog.getInstance().show(worksheetId, 
-                    columnDomain, columnUri, alignmentId);
+            AugmentDataDialog.getInstance(worksheetId, 
+                    columnDomain, columnUri, alignmentId).show();
         }
     	
     	function addOutgoingLink() {
@@ -62,6 +66,41 @@ var ClassDropdownMenu = (function() {
     				columnId, alignmentId,
     				columnLabel, columnUri, columnDomain, "InternalNode",
     				"outgoing");
+    	}
+    	
+    	function deleteNode() {
+    		console.log("Delete Node");
+    		var info = new Object();
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            var newInfo = [];
+            var label = columnLabel;
+              
+        	 newInfo.push(getParamObject("label", label, "columnLabel"));
+        	 newInfo.push(getParamObject("id", columnUri, "other"));
+        	 newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+        	 
+            info["newInfo"] = JSON.stringify(newInfo);
+            info["command"] = "DeleteNodeCommand";
+            showLoading(worksheetId);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        var json = $.parseJSON(xhr.responseText);
+                        parse(json);
+                        hideLoading(worksheetId);
+                        hide();
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while deleting the node!");
+                        hideLoading(worksheetId);
+                        hide();
+                    }
+            });
     	}
     	
     	function exportCSV() {
@@ -100,39 +139,6 @@ var ClassDropdownMenu = (function() {
                     }
             });
     	}
-
-    	function invokeReconciliationService() {
-    		console.log("invokeReconciliationService");
-    		var info = new Object();
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "InvokeRubenReconciliationService";
-
-            var newInfo = [];
-            newInfo.push(getParamObject("alignmentNodeId", columnId, "other"));
-            newInfo.push(getParamObject("worksheetId", worksheetId, "other"));
-
-            info["newInfo"] = JSON.stringify(newInfo);
-
-            showLoading(worksheetId);
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        parse(json);
-                        hideLoading(worksheetId);
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error occured while exporting CSV!" + textStatus);
-                        hideLoading(worksheetId);
-                    }
-            });
-    	}
     	
     	function invokeMLService() {
     		ExportCSVModelDialog.getInstance().show(worksheetId,alignmentId,columnId,"invokeMLService");
@@ -148,15 +154,16 @@ var ClassDropdownMenu = (function() {
     		for(var i=0; i<options.length; i++) {
     			var option = options[i];
     			var li = $("<li>");
-    			if(option[0] == "divider") {
+    			if(option.name == "divider") {
     				li.addClass("divider");
     			} else {
 	    			var a = $("<a>")
 								.attr("href", "#")
 								.attr("tabindex", "-1")
-								.text(option[0])
-								.click(option[1]);
+								.text(option.name)
+								.click(option.func);
 	    			li.append(a);
+	    			li.data("category", option.category)
     			}
     			ul.append(li);
     		}
@@ -172,12 +179,13 @@ var ClassDropdownMenu = (function() {
     		container.append(div);
     	}
     	
-    	function show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, p_columnDomain, p_alignmentId, event) {
+    	function show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, p_columnDomain, p_columnCategory, p_alignmentId, event) {
     		worksheetId = p_worksheetId;
     		columnLabel = p_columnLabel;
     		columnId = p_columnId;
     		columnUri = p_columnUri;
     		columnDomain = p_columnDomain;
+    		columnCategory = p_columnCategory;
     		alignmentId = p_alignmentId;
     		
     		
@@ -189,10 +197,37 @@ var ClassDropdownMenu = (function() {
 		      top: event.pageY
 		    });
 			
+			//if(columnCategory.length > 0) {
+				$( "li", $("#" + menuId)).each(function( index ) {
+					var category = $(this).data("category");
+					var show = true;
+					if(category) {
+						if(category.length > 0) {
+							var res = category.split(","); 
+							var catFound = false;
+							for(var j=0; j<res.length; j++) {
+								var cat = res[j];
+								if(cat == columnCategory) {
+									catFound = true;
+									break;
+								}
+							}
+							if(!catFound)
+								show = false;
+						}
+					}
+					if(show)
+						$(this).show();
+					else
+						$(this).hide();
+				});
+			//}
+			
 			window.setTimeout(function() {
 				$(document).on('click', hide);
-					 
-			}, 10);
+				$( document ).on( 'keydown', hideOnEsc);
+				
+			}, 100);
         };
         
         

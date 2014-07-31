@@ -22,10 +22,6 @@ package edu.isi.karma.controller.command.publish;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONException;
@@ -39,26 +35,20 @@ import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.kr2rml.ErrorReport;
-import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
-import edu.isi.karma.kr2rml.ReportMessage;
-import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
-import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.rep.Node;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
+@Deprecated
 public class PublishRDFCellCommand extends Command {
 	private final String worksheetId;
-	private final String nodeId;
-	private String rdfSourcePrefix;
-	private String rdfSourceNamespace;
+	//private final String nodeId;
+	//private String rdfSourcePrefix;
+	//private String rdfSourceNamespace;
 	// rdf for this cell
 	private StringWriter outRdf = new StringWriter();
-	private PrintWriter pw = new PrintWriter(outRdf);
+	//private PrintWriter pw = new PrintWriter(outRdf);
 
 	public enum JsonKeys {
 		updateType, cellRdf, worksheetId
@@ -71,9 +61,9 @@ public class PublishRDFCellCommand extends Command {
 			String nodeId, String rdfSourcePrefix, String rdfSourceNamespace) {
 		super(id);
 		this.worksheetId = worksheetId;
-		this.nodeId = nodeId;
-		this.rdfSourcePrefix = rdfSourcePrefix;
-		this.rdfSourceNamespace = rdfSourceNamespace;
+		//this.nodeId = nodeId;
+		//this.rdfSourcePrefix = rdfSourcePrefix;
+		//this.rdfSourceNamespace = rdfSourceNamespace;
 	}
 
 	@Override
@@ -95,10 +85,20 @@ public class PublishRDFCellCommand extends Command {
 	public CommandType getCommandType() {
 		return CommandType.notInHistory;
 	}
+	
+	public boolean isDeprecated()
+	{
+		return true;
+	}
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		
+		if(isDeprecated())
+		{
+			return new UpdateContainer(new ErrorUpdate("PublishRDFCellCommand is currently not supported"));
+		}
+		//Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		// Get the alignment for this worksheet
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
@@ -113,7 +113,7 @@ public class PublishRDFCellCommand extends Command {
 
 		try {
 			// Generate the KR2RML data structures for the RDF generation
-			final ErrorReport errorReport = new ErrorReport();
+			/*final ErrorReport errorReport = new ErrorReport();
 			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(
 					workspace, worksheet,
 					alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
@@ -131,7 +131,7 @@ public class PublishRDFCellCommand extends Command {
 			
 			Node node = workspace.getFactory().getNode(nodeId);
 			rdfGen.generateTriplesForCell(node, existingTopRowTriples, node.getHNodeId(), 
-					predicatesCovered, predicatesFailed, predicatesSuccessful);
+				predicatesCovered, predicatesFailed, predicatesSuccessful);*/
 			
 			return new UpdateContainer(new AbstractUpdate() {
 				@Override

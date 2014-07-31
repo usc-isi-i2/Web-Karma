@@ -3,11 +3,8 @@ package edu.isi.karma.controller.command.publish.json;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -19,12 +16,9 @@ import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.er.helper.ExportMongoDBUtil;
-import edu.isi.karma.imp.json.JsonExport;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
-import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
 import edu.isi.karma.kr2rml.planning.RootStrategy;
@@ -36,7 +30,6 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.RepFactory;
-import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
@@ -59,7 +52,7 @@ public class ExportJSONCommand extends WorksheetCommand {
 		super(id, worksheetId);
 		this.alignmentNodeId = alignmentNodeId;
 		
-		addTag(CommandTag.Transformation);
+		addTag(CommandTag.Transformation);//??want Export JSON in model history?
 	}
 
 	@Override
@@ -143,6 +136,7 @@ public class ExportJSONCommand extends WorksheetCommand {
 		try {
 			printWriter = new PrintWriter(jsonFileLocalPath);
 			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(printWriter);
+			writer.addPrefixes(mapping.getPrefixes());
 			RootStrategy strategy = new UserSpecifiedRootStrategy(rootTriplesMapId, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
 			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, ontMgr, writer, false, strategy, mapping, errorReport);
 			try {

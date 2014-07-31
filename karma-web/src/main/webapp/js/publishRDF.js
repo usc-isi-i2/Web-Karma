@@ -40,9 +40,9 @@ var PublishRDFDialog = (function() {
 					$("div#rdfStoreInfo").hide();
 				}
 				getRDFPreferences();
-				window.rdfSPAQRLEndPoint = null;
+				window.rdfSPAQRLEndPoint = $('#txtData_URL').html();
 				getGraphURI();
-				fetchGraphsFromTripleStore($("#rdfSPAQRLEndPoint").val());
+				fetchGraphsFromTripleStore($('#txtData_URL').html());
 			});
 			
 			//Initialize handler for Save button
@@ -52,12 +52,6 @@ var PublishRDFDialog = (function() {
 				validateAndPublishRDF(e);
 			});
 			
-			$('input#rdfSPAQRLEndPoint').on('focusout', function(event){
-	            if (window.rdfSPAQRLEndPoint != $('input#rdfSPAQRLEndPoint').val()) {
-	                // get the list of repo
-	                fetchGraphsFromTripleStore($("#rdfSPAQRLEndPoint").val());
-	            }
-	        });
     	}
     	
     	function fetchGraphsFromTripleStore(url) {
@@ -127,7 +121,7 @@ var PublishRDFDialog = (function() {
     			graphUri = $('#modelGraphList').val();
     		}
     		// validate the sparql endpoint
-    		if(!testSparqlEndPoint($("input#rdfSPAQRLEndPoint").val(), worksheetId)) {
+    		if(!testSparqlEndPoint($('#txtData_URL').html(), worksheetId)) {
     			alert("Invalid sparql end point. Could not establish connection.");
     			return;
     		}
@@ -172,18 +166,21 @@ var PublishRDFDialog = (function() {
     		info["workspaceId"] = $.workspaceGlobalInformation.id;
     		info["command"] = "PublishRDFCommand";
     		info["addInverseProperties"] = $("input#addInverseProperties").is(":checked");
-    		info["rdfPrefix"] = $("input#rdfPrefix").val();
-    		info["rdfNamespace"] = $("input#rdfNamespace").val();
     		info["saveToStore"] = $("input#saveToStore").is(":checked");
     		info["hostName"] = $("input#hostName").val();
     		info["dbName"] = $("input#dbName").val();
     		info["userName"] = $("input#userName").val();
     		info["password"] = $("input#password").val();
     		info["modelName"] = $("input#modelName").val();
-    		info["tripleStoreUrl"] = $("input#rdfSPAQRLEndPoint").val();
+    		info["tripleStoreUrl"] = $('#txtData_URL').html();
     		info["graphUri"] = graphUri;
-    		info["replaceContext"] = $('#modelGraphList').val();
-
+    		var replace = false;
+    		if( $('input:radio[name=group1]:checked', dialog).val() == "replace")
+    			replace = true;
+    		info["replaceContext"] = replace;
+            info["generateBloomFilters"] = $("input#generateBloomFilters").is(":checked");
+            console.log(info["rdfPrefix"]);
+            console.log(info["rdfNamespace"]);
     		if( $("input#saveToRDFStore").is(":checked")) {
     			publishRDFToStore(info);
     		} else {
@@ -277,23 +274,13 @@ var PublishRDFDialog = (function() {
     		   			var json = $.parseJSON(xhr.responseText);
     		    		$.each(json["elements"], function(index, element) {
     		    			if(element["updateType"] == "PublishRDFCommandPreferences") {
-    		    				
     		    				if(element["PreferenceValues"]) {
     		    					$("input#hostName").val(element["PreferenceValues"]["hostName"]);
     		    					$("input#dbName").val(element["PreferenceValues"]["dbName"]);
     		    					$("input#userName").val(element["PreferenceValues"]["userName"]);
     		    					$("input#modelName").val(element["PreferenceValues"]["modelName"]);
-    		    					$("input#rdfPrefix").val(element["PreferenceValues"]["rdfPrefix"]);
-    		    					$("input#rdfNamespace").val(element["PreferenceValues"]["rdfNamespace"]);
     		    					$("input#saveToRDFStore").val(element["PreferenceValues"]["saveToStore"]);
     		    					$("input#addInverseProperties").val(element["PreferenceValues"]["addInverseProperties"]);
-    		    					if(element["PreferenceValues"]["rdfSparqlEndPoint"] && element["PreferenceValues"]["rdfSparqlEndPoint"] == '' || element["PreferenceValues"]["rdfSparqlEndPoint"].length < 2) {
-    		    						$("input#rdfSPAQRLEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_data');
-    		    					} else {
-    		    						$("input#rdfSPAQRLEndPoint").val(element["PreferenceValues"]["rdfSparqlEndPoint"]);
-    		    					}
-    		    				} else {
-    		    					$("input#rdfSPAQRLEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_data');
     		    				}
     		    			}
     		    		});
@@ -310,7 +297,7 @@ var PublishRDFDialog = (function() {
     		var info = new Object();
     		info["worksheetId"] = worksheetId;
     		info["workspaceId"] = $.workspaceGlobalInformation.id;
-    		info["tripleStoreUrl"] = $("input#rdfSPAQRLEndPoint").val();
+    		info["tripleStoreUrl"] = $('#txtData_URL').html();
     		if(graphUriTobeValidated && graphUriTobeValidated != null) {
     			info["graphUri"] = graphUriTobeValidated;
     		}

@@ -40,6 +40,7 @@ public class WorksheetUpdateFactory {
 	
 	public static UpdateContainer createWorksheetHierarchicalUpdates(String worksheetId) {
 		UpdateContainer c = new UpdateContainer();
+		c.add(new WorksheetCleaningUpdate(worksheetId, false));
 		createWorksheetHierarchicalUpdates(worksheetId, c);
 		return c;
 	}

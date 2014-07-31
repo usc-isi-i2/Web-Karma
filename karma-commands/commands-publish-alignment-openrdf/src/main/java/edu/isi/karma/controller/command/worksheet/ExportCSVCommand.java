@@ -212,12 +212,13 @@ public class ExportCSVCommand extends WorksheetCommand {
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
 		logger.debug(mapping.toString());
 		
-		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
-				workspace.getFactory(), workspace.getOntologyManager(),
-				generatedRDFFileName, false, mapping, errorReport);
-				
+		
 		// Generate the RDF using KR2RML data structures
 		try {
+			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
+				workspace.getFactory(), workspace.getOntologyManager(),
+				generatedRDFFileName, false, mapping, errorReport);
+		
 			rdfGen.generateRDF(true);
 			logger.info("RDF written to file: " + generatedRDFFileName);
 		} catch (Exception e1) {
@@ -234,7 +235,7 @@ public class ExportCSVCommand extends WorksheetCommand {
 			if(pref != null) {
 				rdfNamespace = pref.optString(PublishRDFCommandPreferencesKeys.rdfNamespace.name());
 			}
-			result = utilObj.saveToStore(generatedRDFFileName, TripleStoreUtil.defaultDataRepoUrl, graphUri, true, rdfNamespace);
+			result = utilObj.saveToStoreFromFile(generatedRDFFileName, TripleStoreUtil.defaultDataRepoUrl, graphUri, true, rdfNamespace);
 		}
 		catch(Exception e)
 		{
