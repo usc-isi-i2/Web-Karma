@@ -17,7 +17,7 @@ import edu.isi.karma.view.VWorkspace;
 public class CheckModelExistenceCommand extends Command {
 	private String worksheetId;
 	protected CheckModelExistenceCommand(String id, String worksheetId) {
-		super(id);
+		super(null, id);
 		this.worksheetId = worksheetId;
 	}
 

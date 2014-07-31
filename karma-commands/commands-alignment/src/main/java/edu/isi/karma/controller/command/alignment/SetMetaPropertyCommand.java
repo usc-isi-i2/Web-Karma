@@ -84,7 +84,7 @@ public class SetMetaPropertyCommand extends Command {
 			String hNodeId, METAPROPERTY_NAME metaPropertyName,
 			String metaPropertyValue, boolean trainAndShowUpdates,
 			String rdfLiteralType) {
-		super(id);
+		super(null, id);
 		this.hNodeId = hNodeId;
 		this.worksheetId = worksheetId;
 		this.trainAndShowUpdates = trainAndShowUpdates;

@@ -31,6 +31,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.Node.NodeStatus;
 
 /**
@@ -144,6 +145,15 @@ public class Table extends RepEntity {
 					startIndex + count, rows.size()); i++) {
 				result.add(rows.get(i));
 			}
+		}
+		return result;
+	}
+	
+	public ArrayList<Row> getRows(SuperSelection sel) {
+		ArrayList<Row> result = new ArrayList<Row>();
+		for (Row r : rows) {
+			if (sel.isSelected(r))
+				result.add(r);
 		}
 		return result;
 	}

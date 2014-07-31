@@ -56,7 +56,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 
 	public AddUserLinkToAlignmentCommand(String id, String edgeId,
 			String alignmentId, String worksheetId) {
-		super(id);
+		super(null, id);
 		this.edgeId = edgeId;
 		this.alignmentId = alignmentId;
 		this.worksheetId = worksheetId;

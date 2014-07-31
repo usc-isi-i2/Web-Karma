@@ -184,5 +184,11 @@ public class Selection {
 		return tags;
 	}
 	
+	public boolean isSelected(Row row) {
+		SelectionProperty prop = selectedRows.get(row);
+		if (prop == null)
+			return false;
+		return prop.selected;
+	}
 	
 }

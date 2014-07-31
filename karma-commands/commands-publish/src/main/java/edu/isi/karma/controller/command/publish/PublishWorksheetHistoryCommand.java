@@ -29,7 +29,7 @@ public class PublishWorksheetHistoryCommand extends Command {
 			.getLogger(PublishWorksheetHistoryCommand.class);
 
 	protected PublishWorksheetHistoryCommand(String id, String worksheetId) {
-		super(id);
+		super(null, id);
 		this.worksheetId = worksheetId;
 	}
 

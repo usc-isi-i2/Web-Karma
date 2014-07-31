@@ -49,7 +49,7 @@ public class ApplyModelFromTripleStoreCommand extends WorksheetCommand {
 	
 	public ApplyModelFromTripleStoreCommand(String id, String worksheetId, String modelName, 
 			String sourceName) {
-		super(id, worksheetId);
+		super(null, id, worksheetId);
 		this.modelName = modelName;
 //		this.sourceName = sourceName;
 	}

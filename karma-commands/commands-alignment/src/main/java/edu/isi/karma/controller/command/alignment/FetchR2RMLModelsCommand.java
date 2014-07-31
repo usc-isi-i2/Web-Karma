@@ -46,7 +46,7 @@ public class FetchR2RMLModelsCommand extends Command {
 	}
 
 	protected FetchR2RMLModelsCommand(String id, String url) {
-		super(id);
+		super(null, id);
 		if (url == null || url.isEmpty()) {
 			url = TripleStoreUtil.defaultServerUrl + "/" + TripleStoreUtil.karma_model_repo;
 		}

@@ -66,7 +66,7 @@ public class ChangeInternalNodeLinksCommand extends Command {
 
 	public ChangeInternalNodeLinksCommand(String id, String worksheetId,
 			String alignmentId, JSONArray initialEdges, JSONArray newEdges) {
-		super(id);
+		super(null,id);
 		this.worksheetId = worksheetId;
 		this.alignmentId = alignmentId;
 		this.initialEdges = initialEdges;

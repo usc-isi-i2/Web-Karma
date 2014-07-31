@@ -23,6 +23,7 @@
  */
 package edu.isi.karma.controller.command;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.Entity;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
@@ -67,6 +68,7 @@ public abstract class Command extends Entity implements ICommand
 	private boolean appendToHistory = false;
 	protected Set<String> inputColumns = new HashSet<String>();
 	protected Set<String> outputColumns = new HashSet<String>();
+	protected SuperSelection selection;
 	/**
 	 * List of tags for the command
 	 */
@@ -74,8 +76,9 @@ public abstract class Command extends Entity implements ICommand
 
 	private String inputParameterJson;
 
-	protected Command(String id) {
+	protected Command(SuperSelection selection, String id) {
 		super(id);
+		this.selection = selection;
 	}
 
 	@Override

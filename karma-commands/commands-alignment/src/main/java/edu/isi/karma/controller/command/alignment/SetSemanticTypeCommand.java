@@ -76,7 +76,7 @@ public class SetSemanticTypeCommand extends Command {
 
 	protected SetSemanticTypeCommand(String id, String worksheetId, String hNodeId, 
 			boolean isPartOfKey, JSONArray typesArr, boolean trainAndShowUpdates, String rdfLiteralType) {
-		super(id);
+		super(null, id);
 		this.hNodeId = hNodeId;
 		this.worksheetId = worksheetId;
 		this.isPartOfKey = isPartOfKey;

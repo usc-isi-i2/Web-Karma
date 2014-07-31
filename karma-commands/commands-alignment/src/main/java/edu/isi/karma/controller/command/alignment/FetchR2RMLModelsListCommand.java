@@ -36,7 +36,7 @@ public class FetchR2RMLModelsListCommand extends Command{
 	private static Logger logger = LoggerFactory.getLogger(FetchR2RMLModelsListCommand.class);
 
 	public FetchR2RMLModelsListCommand(String id, String TripleStoreUrl, String context, String worksheetId) {
-		super(id);
+		super(null, id);
 		this.TripleStoreUrl = TripleStoreUrl;
 		this.context = context;
 		this.worksheetId = worksheetId;

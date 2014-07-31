@@ -64,7 +64,7 @@ public class UnassignSemanticTypeCommand extends Command {
 			.getLogger(UnassignSemanticTypeCommand.class);
 
 	public UnassignSemanticTypeCommand(String id, String hNodeId, String worksheetId) {
-		super(id);
+		super(null, id);
 		this.hNodeId = hNodeId;
 		this.worksheetId = worksheetId;
 		

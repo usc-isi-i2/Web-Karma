@@ -25,7 +25,7 @@ public class ApplyModelFromURLCommand extends WorksheetCommand{
 	private boolean override;
 	private static Logger logger = LoggerFactory.getLogger(ApplyModelFromURLCommand.class);
 	public ApplyModelFromURLCommand(String id, String worksheetId, String modelURL, String modelContext, String modelRepository, String baseURL, boolean override) {
-		super(id, worksheetId);
+		super(null, id, worksheetId);
 		this.modelURL = modelURL;
 		this.modelContext = modelContext;
 		this.modelRepository = modelRepository;

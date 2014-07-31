@@ -50,7 +50,7 @@ public class GetPropertiesCommand extends Command {
 	private static Logger logger = LoggerFactory.getLogger(GetPropertiesCommand.class.getSimpleName());
 	
 	protected GetPropertiesCommand(String id, String worksheetId, INTERNAL_PROP_RANGE propertiesRange, String classURI, String domainURI, String rangeURI) {
-		super(id);
+		super(null, id);
 		this.worksheetId = worksheetId;
 		this.propertiesRange = propertiesRange;
 		this.classURI = classURI;

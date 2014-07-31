@@ -21,7 +21,7 @@ public class FetchHNodeIdFromAlignmentCommand extends Command{
 	private String alignmentId;
 	private String columnUri;
 	public FetchHNodeIdFromAlignmentCommand(String id, String alignmentId, String columnUri) {
-		super(id);
+		super(null, id);
 		this.alignmentId = alignmentId;
 		this.columnUri = columnUri;
 	}

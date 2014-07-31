@@ -29,7 +29,7 @@ import edu.isi.karma.rep.Workspace;
 
 public class CreateNewModelCommand extends WorksheetCommand {
 	public CreateNewModelCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+		super(null, id, worksheetId);
 	}
 
 	@Override

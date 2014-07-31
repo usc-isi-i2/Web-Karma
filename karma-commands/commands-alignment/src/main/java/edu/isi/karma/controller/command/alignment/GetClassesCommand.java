@@ -45,7 +45,7 @@ public class GetClassesCommand extends Command {
 	private static Logger logger = LoggerFactory.getLogger(GetClassesCommand.class.getSimpleName());
 
 	protected GetClassesCommand(String id, String worksheetId, INTERNAL_NODES_RANGE range, String propertyURI) {
-		super(id);
+		super(null, id);
 		this.worksheetId = worksheetId;
 		this.range = range;
 		this.propertyURI = propertyURI;

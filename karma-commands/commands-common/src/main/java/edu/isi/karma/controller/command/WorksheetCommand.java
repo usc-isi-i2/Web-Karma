@@ -20,6 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -38,8 +39,8 @@ public abstract class WorksheetCommand extends Command {
 
 	protected final String worksheetId;
 
-	protected WorksheetCommand(String id, String worksheetId) {
-		super(id);
+	protected WorksheetCommand(SuperSelection sel, String id, String worksheetId) {
+		super(sel, id);
 		this.worksheetId = worksheetId;
 	}
 

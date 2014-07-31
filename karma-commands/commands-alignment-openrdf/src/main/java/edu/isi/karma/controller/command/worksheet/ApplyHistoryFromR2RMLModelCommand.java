@@ -64,7 +64,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory.getLogger(ApplyHistoryFromR2RMLModelCommand.class);
 
 	protected ApplyHistoryFromR2RMLModelCommand(String id, File uploadedFile, String worksheetId, boolean override) {
-		super(id, worksheetId);
+		super(null, id, worksheetId);
 		this.r2rmlModelFile = uploadedFile;
 		this.worksheetId = worksheetId;
 		this.override = override;
