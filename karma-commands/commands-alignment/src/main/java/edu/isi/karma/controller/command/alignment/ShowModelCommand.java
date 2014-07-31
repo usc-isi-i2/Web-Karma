@@ -125,7 +125,7 @@ public class ShowModelCommand extends WorksheetCommand {
 		worksheetName = worksheet.getTitle();
 		
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, ontologyManager);
 		if (alignment == null) {
 			logger.info("Alignment is NULL for " + worksheetId);
 			return new UpdateContainer(new ErrorUpdate(
@@ -161,8 +161,8 @@ public class ShowModelCommand extends WorksheetCommand {
 			alignment.align();
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
-
-		ModelLearner modelLearner = new ModelLearner(ontologyManager, columnNodes);
+		
+		ModelLearner modelLearner = new ModelLearner(workspace, worksheet, ontologyManager, columnNodes);
 		SemanticModel model = modelLearner.getModel();
 		if (model == null) {
 			logger.error("could not learn any model for this source!");

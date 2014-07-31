@@ -31,7 +31,7 @@ import java.io.File;
 
 public class ApplyHistoryFromR2RMLModelCommandFactory extends CommandFactory {
 	private enum Arguments {
-		worksheetId
+		worksheetId, override
 	}
 	
 	@Override
@@ -39,12 +39,13 @@ public class ApplyHistoryFromR2RMLModelCommandFactory extends CommandFactory {
 			Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
-		return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), uploadedFile, worksheetId);
+		boolean override = Boolean.parseBoolean(request.getParameter(Arguments.override.name()));
+		return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), uploadedFile, worksheetId, override);
 	}
 	
 	public Command createCommandFromFile(String worksheetId, File uploadedFile,
-			Workspace workspace) {
-		return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), uploadedFile, worksheetId);
+			Workspace workspace, boolean override) {
+		return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), uploadedFile, worksheetId, override);
 	}
 
 	@Override

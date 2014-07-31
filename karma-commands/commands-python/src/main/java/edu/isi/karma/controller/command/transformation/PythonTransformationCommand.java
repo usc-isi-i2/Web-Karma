@@ -21,14 +21,11 @@
 
 package edu.isi.karma.controller.command.transformation;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,16 +48,14 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.transformation.PythonTransformationHelper;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 
 public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 	protected String transformationCode;
 	final protected String hNodeId;
 	final protected String errorDefaultValue;
-	protected Set<String> inputColumns;
+	
 
 	private static Logger logger = LoggerFactory
 			.getLogger(PythonTransformationCommand.class);
@@ -75,7 +70,6 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		this.transformationCode = transformationCode;
 		this.hNodeId = hNodeId;
 		this.errorDefaultValue = errorDefaultValue;
-		inputColumns = new HashSet<String>();
 		addTag(CommandTag.Transformation);
 	}
 
@@ -102,9 +96,9 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 	protected void generateTransformedValues(Workspace workspace,
 			Worksheet worksheet, RepFactory f, HNode hNode,
 			JSONArray transformedRows, JSONArray errorValues, Integer limit)
-					throws JSONException {
+					throws JSONException, IOException {
 
-		PythonTransformationHelper pyHelper = new PythonTransformationHelper();
+		
 		String trimmedTransformationCode = transformationCode.trim();
 		// Pedro: somehow we are getting empty statements, and these are causing
 		// exceptions.
@@ -113,7 +107,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 			logger.info("Empty PyTransform statement in "
 					+ hNode.getColumnName());
 		}
-		String transformMethodStmt = pyHelper
+		String transformMethodStmt = PythonTransformationHelper
 				.getPythonTransformMethodDefinitionState(worksheet,
 						trimmedTransformationCode);
 
@@ -123,12 +117,11 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		// Prepare the Python interpreter
 		PythonInterpreter interpreter = new PythonInterpreter();
 
-
-		interpreter.exec(pyHelper.getImportStatements());
-		importUserScripts(interpreter);
-		interpreter.exec(pyHelper.getGetValueDefStatement());
-		interpreter.exec(pyHelper.getVDefStatement());
-		interpreter.exec(transformMethodStmt);
+		PythonRepository repo = PythonRepository.getInstance();
+		repo.initializeInterperter(interpreter);
+		repo.importUserScripts(interpreter);
+		
+		repo.compileAndAddToRepositoryAndExec(interpreter, transformMethodStmt);
 
 		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet
 				.getDataTable().getNumRows()));
@@ -142,7 +135,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 		interpreter.set("workspaceid", workspace.getId());
 		interpreter.set("command", this);
-		PyCode py = interpreter.compile("transform(nodeid)");
+		PyCode py = repo.getTransformCode();
 
 		int numRowsWithErrors = 0;
 
@@ -153,7 +146,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 			try {
 				PyObject output = interpreter.eval(py);
-				String transformedValue = pyHelper
+				String transformedValue = PythonTransformationHelper
 						.getPyObjectValueAsString(output);
 				addTransformedValue(transformedRows, row, transformedValue);
 			} catch (PyException p) {
@@ -181,25 +174,6 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		}
 		logger.debug("transform time "
 				+ (System.currentTimeMillis() - starttime));
-	}
-
-	private void importUserScripts(PythonInterpreter interpreter) {
-		String dirpathString = ServletContextParameterMap
-				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
-
-		if (dirpathString != null && dirpathString.compareTo("") != 0) {
-			File f = new File(dirpathString);
-			String[] scripts = f.list(new FilenameFilter(){
-
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.endsWith(".py");
-				}});
-			for(String script : scripts)
-			{
-				interpreter.execfile(dirpathString  + File.separator + script);
-			}
-		}
 	}
 
 	private void addError(JSONArray errorValues, Row row, int counter,

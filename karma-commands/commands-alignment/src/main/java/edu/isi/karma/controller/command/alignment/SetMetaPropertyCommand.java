@@ -21,6 +21,14 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.List;
+
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -35,6 +43,7 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
@@ -42,25 +51,15 @@ import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
-import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
-
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 
 public class SetMetaPropertyCommand extends Command {
@@ -71,7 +70,7 @@ public class SetMetaPropertyCommand extends Command {
 	private METAPROPERTY_NAME metaPropertyName;
 	private final String metaPropertyValue;
 	private final String rdfLiteralType;
-
+	private String labelName = "";
 	private SynonymSemanticTypes oldSynonymTypes;
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
@@ -103,12 +102,13 @@ public class SetMetaPropertyCommand extends Command {
 
 	@Override
 	public String getTitle() {
-		return "Set Semantic Type";
+		//TODO
+		return "Set Semantic Type (MetaProperty)";
 	}
 
 	@Override
 	public String getDescription() {
-		return null;
+		return labelName;
 	}
 
 	@Override
@@ -119,7 +119,17 @@ public class SetMetaPropertyCommand extends Command {
 	@SuppressWarnings("unchecked")
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		inputColumns.clear();
+		outputColumns.clear();
+		inputColumns.add(hNodeId);
+		outputColumns.add(hNodeId);
 		logCommand(logger, workspace);
+		try {
+			HNode hn = workspace.getFactory().getHNode(hNodeId);
+			labelName = hn.getColumnName();
+		}catch(Exception e) {
+			
+		}
 		/*** Get the Alignment for this worksheet ***/
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		OntologyManager ontMgr = workspace.getOntologyManager();
@@ -360,17 +370,17 @@ public class SetMetaPropertyCommand extends Command {
 	// return columnNode;
 	// }
 	
-	@Override
-	public Set<String> getInputColumns() {
-		Set<String> t = new HashSet<String>();
-		t.add(hNodeId);
-		return t;
-	}
-	
-	@Override
-	public Set<String> getOutputColumns() {
-		Set<String> t = new HashSet<String>();
-		return t;
-	}
+//	@Override
+//	public Set<String> getInputColumns() {
+//		Set<String> t = new HashSet<String>();
+//		t.add(hNodeId);
+//		return t;
+//	}
+//	
+//	@Override
+//	public Set<String> getOutputColumns() {
+//		Set<String> t = new HashSet<String>();
+//		return t;
+//	}
 
 }

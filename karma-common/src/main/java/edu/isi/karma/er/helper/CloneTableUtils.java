@@ -15,20 +15,8 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.HNode.HNodeType;
 
 public class CloneTableUtils {
-
-	public static void cloneHTable(HTable oldht, HTable newht, Worksheet newws, RepFactory factory, List<HNode> hnodes) {
-		Collections.sort(hnodes);
-		for (HNode hnode : hnodes) {
-			HNode newhnode = newht.addHNode(hnode.getColumnName(), HNodeType.Transformation, newws, factory);
-			if (hnode.hasNestedTable()) {
-				HTable oldnested = hnode.getNestedTable();
-				HTable newnested = newhnode.addNestedTable(hnode.getNestedTable().getTableName(), newws, factory);		
-				cloneHTable(oldnested, newnested, newws, factory, new ArrayList<HNode>(oldnested.getHNodes()));
-			}
-		}
-	}
 	
-	public static Map<String, String> cloneHTable(HTable oldht, HTable newht, Worksheet newws, RepFactory factory, List<HNode> hnodes, boolean isFirst) {
+	public static Map<String, String> cloneHTable(HTable oldht, HTable newht, Worksheet newws, RepFactory factory, List<HNode> hnodes) {
 		Collections.sort(hnodes);
 		Map<String, String> tmp = new HashMap<String, String>();
 		for (HNode hnode : hnodes) {
@@ -41,7 +29,7 @@ public class CloneTableUtils {
 			if (hnode.hasNestedTable()) {
 				HTable oldnested = hnode.getNestedTable();
 				HTable newnested = newhnode.addNestedTable(hnode.getNestedTable().getTableName(), newws, factory);		
-				cloneHTable(oldnested, newnested, newws, factory, new ArrayList<HNode>(oldnested.getHNodes()), false);
+				tmp.putAll(cloneHTable(oldnested, newnested, newws, factory, new ArrayList<HNode>(oldnested.getHNodes())));
 			}
 		}
 		return tmp;
@@ -100,14 +88,6 @@ public class CloneTableUtils {
 				}
 			}
 		}
-	}
-
-	public static Row getRow(List<Row> rows, String rowID) {
-		for (Row row : rows) {
-			if (row.getId().compareTo(rowID) == 0)
-				return row;
-		}
-		return null;
 	}
 
 	public static HTable getHTable(HTable ht, String HNodeId) {

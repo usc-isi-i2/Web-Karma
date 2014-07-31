@@ -108,8 +108,8 @@ var SetSemanticTypeDialog = (function() {
 				
 				$('.typeahead').typeahead('destroy');
 				
-				$("input#isSubclassOfClassTextBox", dialog).typeahead({ source:classArray});
-				$("input#isSpecializationForEdgeTextBox", dialog).typeahead({ source:propertyArray});
+				$("input#isSubclassOfClassTextBox", dialog).typeahead({ source:classArray, minLength:0});
+				$("input#isSpecializationForEdgeTextBox", dialog).typeahead({ source:propertyArray, minLength:0});
 			});
 			
 			$("div#semanticTypesAdvacedOptionsDiv input:checkbox").on('click', function(e) {

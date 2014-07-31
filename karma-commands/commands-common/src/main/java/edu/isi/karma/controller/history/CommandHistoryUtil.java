@@ -24,10 +24,10 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
@@ -57,13 +57,6 @@ public class CommandHistoryUtil {
 			}
 		}
 	}
-	public CommandHistoryUtil(JSONArray historyJSON, Workspace workspace, String worksheetId) {
-		this.worksheetId = worksheetId;
-		this.workspace = workspace;
-		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspace.getId());
-		commandFactoryMap = ctrl.getCommandFactoryMap();
-		commands.addAll(getCommandsFromHistoryJSON(historyJSON, false));
-	}
 
 	public CommandHistoryUtil(List<Command> commands, Workspace workspace, String worksheetId) {
 		this.worksheetId = worksheetId;
@@ -76,16 +69,7 @@ public class CommandHistoryUtil {
 
 		Map<Command, List<Command> > dag = new HashMap<Command, List<Command>>();
 		Map<String, List<Command> > outputMapping = new HashMap<String, List<Command> >();
-		for (Command command : commands) {
-			Set<String> outputs = command.getOutputColumns();
-			for (String output : outputs) {
-				List<Command> tmp = outputMapping.get(output);
-				if (tmp == null)
-					tmp = new ArrayList<Command>();
-				tmp.add(command);
-				outputMapping.put(output, tmp);
-			}
-		}
+
 		for (Command command : commands) {
 			Set<String> inputs = command.getInputColumns();
 			for (String input : inputs) {
@@ -100,21 +84,20 @@ public class CommandHistoryUtil {
 					}
 					dag.put(command, edges);
 				}
-			}					
+			}
+			Set<String> outputs = command.getOutputColumns();
+			for (String output : outputs) {
+				List<Command> tmp = outputMapping.get(output);
+				if (tmp == null)
+					tmp = new ArrayList<Command>();
+				tmp.add(command);
+				outputMapping.put(output, tmp);
+			}
 		}
-		
-		//		for (Entry<Command, List<Command>> entry : dag.entrySet()) {
-		//			Command key = entry.getKey();
-		//			List<Command> value = entry.getValue();
-		//			System.out.print(key.getCommandName() + "inputs: " + key.getInputColumns() + "outputs: " + key.getOutputColumns());
-		//			System.out.print("=");
-		//			for (Command command : value)
-		//				System.out.print(command.getCommandName() + "inputs: " + command.getInputColumns() + "outputs: " + command.getOutputColumns());
-		//			System.out.println();
-		//		}
+
 		return dag;
 	}
-	
+
 	public Set<String> generateInputColumns() {
 		Map<Command, List<Command> > dag = generateGraph(); 
 		Set<String> inputColumns = new HashSet<String>();
@@ -125,7 +108,7 @@ public class CommandHistoryUtil {
 		}
 		return inputColumns;
 	}
-	
+
 	public Set<String> generateOutputColumns() {
 		Set<String> outputColumns = new HashSet<String>();
 		for (Command t : commands) {
@@ -161,9 +144,6 @@ public class CommandHistoryUtil {
 		}
 		if (!checkDependency(refinedCommands))
 			return commands;
-//		JSONArray refinedhistory = new JSONArray();
-//		for (Command refined : refinedCommands)
-//			refinedhistory.put(workspace.getCommandHistory().getCommandJSON(workspace, refined));
 		this.commands.clear();
 		this.commands.addAll(refinedCommands);
 		return commands;
@@ -190,7 +170,7 @@ public class CommandHistoryUtil {
 		}
 		return dependency;
 	}
-	
+
 	public UpdateContainer replayHistory() {
 		CommandHistory commandHistory = workspace.getCommandHistory();
 		commandHistory.removeCommands(workspace, worksheetId);
@@ -205,11 +185,11 @@ public class CommandHistoryUtil {
 		uc.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment));		
 		return uc;
 	}
-	
+
 	public List<Command> getCommands() {
 		return new ArrayList<Command>(commands);
 	}
-	
+
 	private List<Command> getCommandsFromHistoryJSON(JSONArray historyJSON, boolean replayHistory) {
 		List<Command> commands = new ArrayList<Command>();
 		for (int i = 0; i < historyJSON.length(); i++) {
@@ -218,11 +198,21 @@ public class CommandHistoryUtil {
 			String commandName = (String)commObject.get(HistoryArguments.commandName.name());
 			WorksheetCommandHistoryExecutor ex = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
 			ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
+			String tmp = CommandInputJSONUtil.getStringValue("outputColumns", inputParamArr);
+			Set<String> newOutputColumns = new HashSet<String>();
+			if (tmp != null) {
+				JSONArray array = new JSONArray(tmp);
+				for (int j = 0; j < array.length(); j++) {
+					JSONObject obj = new JSONObject(array.get(j).toString());
+					newOutputColumns.add(obj.get("value").toString());
+				}
+			}
 			System.out.println(inputParamArr.toString(4));
 			CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
 			if(cf != null) {
 				try { // This is sort of a hack the way I did this, but could not think of a better way to get rid of the dependency
 					Command comm = cf.createCommand(inputParamArr, workspace);
+					comm.setOutputColumns(newOutputColumns);
 					if(comm != null){
 						commands.add(comm);
 						workspace.getCommandHistory().doCommand(comm, workspace, true);
@@ -235,7 +225,7 @@ public class CommandHistoryUtil {
 		}
 		return commands;
 	}
-	
+
 	public void removeCommands(CommandTag tag) {
 		Iterator<Command> commandItr = commands.iterator();
 		while (commandItr.hasNext()) {
@@ -244,7 +234,7 @@ public class CommandHistoryUtil {
 				commandItr.remove();
 		}
 	}
-	
+
 	public void removeCommands(String hNodeId) {
 		Iterator<Command> commandItr = commands.iterator();
 		while (commandItr.hasNext()) {
@@ -253,4 +243,5 @@ public class CommandHistoryUtil {
 				commandItr.remove();
 		}
 	}
+
 }

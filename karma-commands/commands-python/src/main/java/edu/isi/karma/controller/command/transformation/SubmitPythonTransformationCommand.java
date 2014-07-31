@@ -21,6 +21,16 @@
 
 package edu.isi.karma.controller.command.transformation;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.ICommand;
@@ -31,21 +41,15 @@ import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.rep.*;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class SubmitPythonTransformationCommand extends MutatingPythonTransformationCommand {
 	protected ICommand previousPythonTransformationCommand;
@@ -84,6 +88,9 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		inputColumns.clear();
+		outputColumns.clear();
+//		outputColumns.add(targetHNodeId);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		RepFactory f = workspace.getFactory();
 		HNode hNode = f.getHNode(hNodeId);
@@ -243,20 +250,19 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		return null;
 	}
 
-	@Override
-	public Set<String> getInputColumns() {
-		Set<String> t = new HashSet<String>();
-		t.addAll(inputColumns);
-		return t;
-	}
+//	@Override
+//	public Set<String> getInputColumns() {
+//		Set<String> t = new HashSet<String>();
+//		t.addAll(inputColumns);
+//		return t;
+//	}
 
 	@Override
 	public Set<String> getOutputColumns() {
-		Set<String> t = new HashSet<String>();
 		if (addColCmd != null)
-			t.add(addColCmd.getNewHNodeId());
+			outputColumns.add(addColCmd.getNewHNodeId());
 		else
-			t.add(pythonNodeId);
-		return t;
+			outputColumns.add(pythonNodeId);
+		return outputColumns;
 	}
 }

@@ -28,6 +28,7 @@ import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
+import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;
@@ -145,6 +146,7 @@ public class WorksheetCommandHistoryExecutor {
 
 	public UpdateContainer normalizeCommandHistoryJsonInput(Workspace workspace, String worksheetId, 
 			JSONArray inputArr, String commandName) throws JSONException {
+		UpdateContainer uc = null;
 		HTable hTable = workspace.getWorksheet(worksheetId).getHeaders();
 		for (int i = 0; i < inputArr.length(); i++) {
 			JSONObject inpP = inputArr.getJSONObject(i);
@@ -155,16 +157,25 @@ public class WorksheetCommandHistoryExecutor {
 				for (int j=0; j<hNodeJSONRep.length(); j++) {
 					JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
 					if(hTable == null) {
-						return new UpdateContainer(new TrivialErrorUpdate("null HTable while normalizing JSON input for the command " + commandName));
+						AbstractUpdate update = new TrivialErrorUpdate("null HTable while normalizing JSON input for the command " + commandName);
+						if (uc == null)
+							uc = new UpdateContainer(update);
+						else
+							uc.add(update);
+						continue;
 					}
 					String nameObjColumnName = cNameObj.getString("columnName");
 					logger.debug("Column being normalized: "+ nameObjColumnName);
 					HNode node = hTable.getHNodeFromColumnName(nameObjColumnName);
 					if(node == null && !ignoreIfBeforeColumnDoesntExist(commandName)) { //Because add column can happen even if the column after which it is to be added is not present
 						logger.info("null HNode " + nameObjColumnName + " while normalizing JSON input for the command " + commandName);
-						return new UpdateContainer(new TrivialErrorUpdate("Column " + nameObjColumnName + " does not exist. " +
-								"All commands for this column are being skipped. You can add the column to the data or Worksheet and apply the model again."));
-						//return false;
+						AbstractUpdate update = new TrivialErrorUpdate("Column " + nameObjColumnName + " does not exist. " +
+								"All commands for this column are being skipped. You can add the column to the data or Worksheet and apply the model again.");
+						if (uc == null)
+							uc = new UpdateContainer(update);
+						else
+							uc.add(update);
+						continue;
 					}
 
 					if (j == hNodeJSONRep.length()-1) {		// Found!
@@ -192,15 +203,25 @@ public class WorksheetCommandHistoryExecutor {
 					for (int j=0; j<hNodeJSONRep.length(); j++) {
 						JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
 						if(hTable == null) {
-							return new UpdateContainer(new TrivialErrorUpdate("null HTable while normalizing JSON input for the command " + commandName));
+							AbstractUpdate update = new TrivialErrorUpdate("null HTable while normalizing JSON input for the command " + commandName);
+							if (uc == null)
+								uc = new UpdateContainer(update);
+							else
+								uc.add(update);
+							continue;
 						}
 						String nameObjColumnName = cNameObj.getString("columnName");
 						logger.debug("Column being normalized: "+ nameObjColumnName);
 						HNode node = hTable.getHNodeFromColumnName(nameObjColumnName);
 						if(node == null && !ignoreIfBeforeColumnDoesntExist(commandName)) { //Because add column can happen even if the column after which it is to be added is not present
 							logger.info("null HNode " + nameObjColumnName + " while normalizing JSON input for the command " + commandName);
-							return new UpdateContainer(new TrivialErrorUpdate("Column " + nameObjColumnName + " does not exist. " +
-									"All commands for this column are being skipped. You can add the column to the data or Worksheet and apply the model again."));
+							AbstractUpdate update = new TrivialErrorUpdate("Column " + nameObjColumnName + " does not exist. " +
+									"All commands for this column are being skipped. You can add the column to the data or Worksheet and apply the model again.");
+							if (uc == null)
+								uc = new UpdateContainer(update);
+							else
+								uc.add(update);
+							continue;
 							//return false;
 						}
 
@@ -237,7 +258,7 @@ public class WorksheetCommandHistoryExecutor {
 				inpP.put(ClientJsonKeys.value.name(), hNodes.toString());
 			}
 		}
-		return null;
+		return uc;
 	}
 	
 	private boolean processHNodeId(JSONArray hNodeJSONRep, HTable hTable, String commandName, JSONObject hnodeJSON) {

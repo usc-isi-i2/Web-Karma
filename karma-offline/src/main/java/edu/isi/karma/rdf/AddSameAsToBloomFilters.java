@@ -35,7 +35,7 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class AddSameAsToBloomFilters {
 	static String filepath;
-    static String modelurl;
+    static String triplestoreURL;
     static String predicate;
 	public static void main(String[] args) throws KarmaException, IOException {
 		Group options = createCommandLineOptions();
@@ -51,19 +51,19 @@ public class AddSameAsToBloomFilters {
             return;
         }
         filepath = (String) cl.getValue("--filepath");
-        modelurl = (String) cl.getValue("--modelurl");
+        triplestoreURL = (String) cl.getValue("--triplestoreurl");
         predicate = (String) cl.getValue("--predicate");
         TripleStoreUtil utilObj = new TripleStoreUtil();
         Set<String> predicates = new HashSet<String>();
         predicates.add(predicate);
         List<String> predicateObjectMaps = new ArrayList<String>();
-        for (String t : utilObj.getPredicatesForParentTriplesMapsWithSameClass(modelurl, null, predicates).get("refObjectMaps")) {
+        for (String t : utilObj.getPredicatesForParentTriplesMapsWithSameClass(triplestoreURL, null, predicates).get("refObjectMaps")) {
         	predicateObjectMaps.addAll(Arrays.asList(t.split(",")));
         }
-        for (String t : utilObj.getPredicatesForTriplesMapsWithSameClass(modelurl, null, predicates).get("predicateObjectMaps")) {
+        for (String t : utilObj.getPredicatesForTriplesMapsWithSameClass(triplestoreURL, null, predicates).get("predicateObjectMaps")) {
         	predicateObjectMaps.addAll(Arrays.asList(t.split(",")));
         }
-        Map<String, String> serializedmapping = utilObj.getBloomFiltersForMaps(modelurl, null, predicateObjectMaps);
+        Map<String, String> serializedmapping = utilObj.getBloomFiltersForMaps(triplestoreURL, null, predicateObjectMaps);
         Map<String, KR2RMLBloomFilter> mapping = new HashMap<String, KR2RMLBloomFilter>();
         
         for (Entry<String, String> entry : serializedmapping.entrySet()) {
@@ -91,7 +91,7 @@ public class AddSameAsToBloomFilters {
 			}
 		}
 		
-		utilObj.updateTripleStoreWithBloomFilters(mapping, serializedmapping, modelurl, null);
+		utilObj.updateTripleStoreWithBloomFilters(mapping, serializedmapping, triplestoreURL, null);
 		
 	}
 	
@@ -104,7 +104,7 @@ public class AddSameAsToBloomFilters {
 				gbuilder
 				.withName("options")
 				.withOption(buildOption("filepath", "location of the input file directory", "filepath", obuilder, abuilder))
-				.withOption(buildOption("modelurl", "location of the model", "modelurl", obuilder, abuilder))
+				.withOption(buildOption("triplestoreurl", "location of the triplestore", "triplestoreurl", obuilder, abuilder))
 				.withOption(buildOption("predicate", "the uri or the predicate", "predicate", obuilder, abuilder))
 				.withOption(obuilder
 						.withLongName("help")

@@ -52,7 +52,7 @@ public class ExportJSONCommand extends WorksheetCommand {
 		super(id, worksheetId);
 		this.alignmentNodeId = alignmentNodeId;
 		
-		addTag(CommandTag.Transformation);
+		addTag(CommandTag.Transformation);//??want Export JSON in model history?
 	}
 
 	@Override

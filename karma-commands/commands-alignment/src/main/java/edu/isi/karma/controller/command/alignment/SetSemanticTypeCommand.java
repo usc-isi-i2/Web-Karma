@@ -21,9 +21,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
@@ -43,6 +41,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
@@ -69,7 +68,7 @@ public class SetSemanticTypeCommand extends Command {
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 //	private DefaultLink newLink;
-	
+	private String labelName = "";
 	private SemanticType oldType;
 	private SemanticType newType;
 	
@@ -100,7 +99,7 @@ public class SetSemanticTypeCommand extends Command {
 
 	@Override
 	public String getDescription() {
-		return "";
+		return labelName;
 	}
 
 	@Override
@@ -112,6 +111,16 @@ public class SetSemanticTypeCommand extends Command {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		/*** Get the Alignment for this worksheet ***/
+		inputColumns.clear();
+		outputColumns.clear();
+		inputColumns.add(hNodeId);
+		outputColumns.add(hNodeId);
+		try {
+			HNode hn = workspace.getFactory().getHNode(hNodeId);
+			labelName = hn.getColumnName();
+		}catch(Exception e) {
+			
+		}
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		OntologyManager ontMgr = workspace.getOntologyManager();
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
@@ -169,6 +178,7 @@ public class SetSemanticTypeCommand extends Command {
 				}
 				
 				domain = alignment.getNodeById(domainUriOrId);
+				logger.info("Got domain for domainUriOrId:" + domainUriOrId + " ::" + domain);
 				if (domain == null) {
 					Label label = ontMgr.getUriLabel(domainUriOrId);
 //					if (label == null) {
@@ -368,16 +378,16 @@ public class SetSemanticTypeCommand extends Command {
 		return c;
 	}
 	
-	@Override
-	public Set<String> getInputColumns() {
-		Set<String> t = new HashSet<String>();
-		t.add(hNodeId);
-		return t;
-	}
-	
-	@Override
-	public Set<String> getOutputColumns() {
-		Set<String> t = new HashSet<String>();
-		return t;
-	}
+//	@Override
+//	public Set<String> getInputColumns() {
+//		Set<String> t = new HashSet<String>();
+//		t.add(hNodeId);
+//		return t;
+//	}
+//	
+//	@Override
+//	public Set<String> getOutputColumns() {
+//		Set<String> t = new HashSet<String>();
+//		return t;
+//	}
 }

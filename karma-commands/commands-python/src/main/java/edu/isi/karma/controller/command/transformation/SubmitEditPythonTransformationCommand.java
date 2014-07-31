@@ -21,8 +21,8 @@
 
 package edu.isi.karma.controller.command.transformation;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -34,9 +34,6 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SubmitEditPythonTransformationCommand extends SubmitPythonTransformationCommand {
 	
@@ -77,6 +74,9 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		RepFactory f = workspace.getFactory();
 		HNode hNode = f.getHNode(hNodeId);
+		inputColumns.clear();
+		outputColumns.clear();
+		outputColumns.add(targetHNodeId);
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
 		
@@ -114,19 +114,19 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 		}
 	}
 	
-	@Override
-	public Set<String> getInputColumns() {
-		Set<String> t = new HashSet<String>();
-		t.addAll(inputColumns);
-		return t;
-	}
-	
-	@Override
-	public Set<String> getOutputColumns() {
-		Set<String> t = new HashSet<String>();
-		t.add(targetHNodeId);
-		return t;
-	}
+//	@Override
+//	public Set<String> getInputColumns() {
+//		Set<String> t = new HashSet<String>();
+//		t.addAll(inputColumns);
+//		return t;
+//	}
+//	
+//	@Override
+//	public Set<String> getOutputColumns() {
+//		Set<String> t = new HashSet<String>();
+//		t.add(targetHNodeId);
+//		return t;
+//	}
 
 	
 }

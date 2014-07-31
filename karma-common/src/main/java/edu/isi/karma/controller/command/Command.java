@@ -65,7 +65,8 @@ public abstract class Command extends Entity implements ICommand
 	private boolean writeWorksheetHistoryAfterCommandExecutes = true;
 
 	private boolean appendToHistory = false;
-
+	protected Set<String> inputColumns = new HashSet<String>();
+	protected Set<String> outputColumns = new HashSet<String>();
 	/**
 	 * List of tags for the command
 	 */
@@ -214,10 +215,18 @@ public abstract class Command extends Entity implements ICommand
 	}
 	
 	public Set<String> getInputColumns() {
-		return new HashSet<String>();
+		return inputColumns;
 	}
 	
 	public Set<String> getOutputColumns() {
-		return new HashSet<String>();
+		return outputColumns;
+	}
+	
+	public void setInputColumns(Set<String> inputColumns) {
+		this.inputColumns = inputColumns;
+	}
+	
+	public void setOutputColumns(Set<String> outputColumns) {
+		this.outputColumns = outputColumns;
 	}
 }

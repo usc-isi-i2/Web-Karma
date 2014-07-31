@@ -1,7 +1,11 @@
 package edu.isi.karma.controller.command.worksheet;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,8 +23,8 @@ import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.HashValueManager;
 import edu.isi.karma.rep.Node;
@@ -29,7 +33,6 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.util.JSONUtil;
@@ -79,6 +82,8 @@ public class GroupByCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		inputColumns.clear();
+		outputColumns.clear();
 		RepFactory factory = workspace.getFactory();
 		Worksheet oldws = workspace.getWorksheet(worksheetId);
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
@@ -110,8 +115,10 @@ public class GroupByCommand extends WorksheetCommand {
 		Worksheet newws = null;
 		if (ht == oldws.getHeaders())
 			newws = groupByTopLevel(oldws, workspace, hnodeIDs, keyhnodes, valuehnodes, factory);
-		else
+		else {
+			inputColumns.addAll(hnodeIDs);
 			groupByNestedTable(oldws, workspace, ht, hnodeIDs, keyhnodes, valuehnodes, factory);
+		}
 		try{
 			UpdateContainer c =  new UpdateContainer();
 			c.add(new WorksheetListUpdate());
@@ -168,9 +175,9 @@ public class GroupByCommand extends WorksheetCommand {
 		for (String key : hash.keySet()) {
 			//System.out.println("key: " + hash.get(key));
 			ArrayList<String> r = hash.get(key);
-			Row lastRow = CloneTableUtils.cloneDataTable(CloneTableUtils.getRow(rows, r.get(0)), newws.getDataTable(), oldws.getHeaders(), newht, keyhnodes, factory);
+			Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), newws.getDataTable(), oldws.getHeaders(), newht, keyhnodes, factory);
 			for (String rowid : r) {
-				Row cur = CloneTableUtils.getRow(rows, rowid);
+				Row cur = factory.getRow(rowid);
 				Table dataTable = lastRow.getNeighborByColumnName("Values", factory).getNestedTable();
 				CloneTableUtils.cloneDataTable(cur, dataTable, oldws.getHeaders(), newValueTable, valuehnodes, factory);
 			}
@@ -189,11 +196,16 @@ public class GroupByCommand extends WorksheetCommand {
 			}
 		}
 		HNode newNode = parentHT.addHNode(parentHT.getNewColumnName("GroupBy"), HNodeType.Transformation, oldws, factory);
+		outputColumns.add(newNode.getId());
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
-		CloneTableUtils.cloneHTable(ht, newht, oldws, factory, keyhnodes);
-		newht.addHNode("Values", HNodeType.Transformation, oldws, factory);
+		for (Entry<String, String> entry : CloneTableUtils.cloneHTable(ht, newht, oldws, factory, keyhnodes).entrySet()) {
+			outputColumns.add(entry.getValue());
+		}
+		outputColumns.add(newht.addHNode("Values", HNodeType.Transformation, oldws, factory).getId());
 		HTable newValueTable = newht.getHNodeFromColumnName("Values").addNestedTable("Table for values", oldws, factory);
-		CloneTableUtils.cloneHTable(ht, newValueTable, oldws, factory, valuehnodes);
+		for (Entry<String, String> entry : CloneTableUtils.cloneHTable(ht, newValueTable, oldws, factory, valuehnodes).entrySet()) {
+			outputColumns.add(entry.getValue());
+		}
 		for (Row parentRow : parentRows) {
 			Table t = null;
 			for (Node node : parentRow.getNodes()) {
@@ -216,9 +228,9 @@ public class GroupByCommand extends WorksheetCommand {
 			for (String key : hash.keySet()) {
 				ArrayList<String> r = hash.get(key);
 				Node node = parentRow.getNeighbor(newNode.getId());
-				Row lastRow = CloneTableUtils.cloneDataTable(CloneTableUtils.getRow(rows, r.get(0)), node.getNestedTable(), ht, newht, keyhnodes, factory);
+				Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), node.getNestedTable(), ht, newht, keyhnodes, factory);
 				for (String rowid : r) {
-					Row cur = CloneTableUtils.getRow(rows, rowid);
+					Row cur = factory.getRow(rowid);
 					Table dataTable = lastRow.getNeighborByColumnName("Values", factory).getNestedTable();
 					CloneTableUtils.cloneDataTable(cur, dataTable, ht, newValueTable, valuehnodes, factory);
 				}

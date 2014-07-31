@@ -34,7 +34,7 @@ public class LoadRDFToTripleStore {
             return;
         }
         String filepath = (String) cl.getValue("--filepath");
-        String tripleStoreUrl = (String) cl.getValue("--modelurl");
+        String tripleStoreUrl = (String) cl.getValue("--triplestoreurl");
         String context = (String) cl.getValue("--context");
         if (filepath == null || tripleStoreUrl == null || context == null)
         	return;
@@ -70,7 +70,7 @@ public class LoadRDFToTripleStore {
 				gbuilder
 				.withName("options")
 				.withOption(buildOption("filepath", "location of the input file directory", "filepath", obuilder, abuilder))
-				.withOption(buildOption("modelurl", "location of the model", "modelurl", obuilder, abuilder))
+				.withOption(buildOption("triplestoreurl", "location of the triplestore", "triplestoreurl", obuilder, abuilder))
 				.withOption(buildOption("context", "the context uri", "context", obuilder, abuilder))
 				.withOption(obuilder
 						.withLongName("help")

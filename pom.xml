@@ -10,7 +10,6 @@
 
 	<modules>
 		<module>karma-common</module>
-		<module>karma-not-common</module>
 		<module>karma-web</module>
 		<module>karma-offline</module>
 		<module>karma-jdbc</module>
@@ -18,7 +17,12 @@
 		<module>karma-cleaning</module>
 		<module>karma-commands</module>
 		<module>karma-mr</module>
+<<<<<<< HEAD
 		<module>karma-web-services</module>
+||||||| merged common ancestors
+
+=======
+>>>>>>> 3c7ce53e341388087977e90eda981de0b9798f4f
 		<module>karma-typer</module>
 	</modules>
 

@@ -77,18 +77,18 @@ public class AlignmentManager {
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
 	
-		List<HNodePath> paths = new ArrayList<>();
+//		List<HNodePath> paths = new ArrayList<>();
 		for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
 			HNode node = path.getLeaf();
 			String hNodeId = node.getId();
 			Node n = alignment.getNodeById(hNodeId);
 			if (n == null) {
-				paths.add(path);
-				alignment.addColumnNode(hNodeId, node.getColumnName(), null, new ArrayList<SemanticType>());
-			} else if (n instanceof ColumnNode) {
-				ColumnNode c =  ((ColumnNode)n);
-				if (c.getCrfSuggestedSemanticTypes() == null || c.getCrfSuggestedSemanticTypes().isEmpty())
-					paths.add(path);
+//				paths.add(path);
+				alignment.addColumnNode(hNodeId, node.getColumnName(), null);
+//			} else if (n instanceof ColumnNode) {
+//				ColumnNode c =  ((ColumnNode)n);
+//				if (c.getSuggestedSemanticTypes() == null || c.getSuggestedSemanticTypes().isEmpty())
+//					paths.add(path);
 			}
 		}
 		
@@ -105,6 +105,10 @@ public class AlignmentManager {
 		for(String key:keysToBeRemoved) {
 			alignmentMap.remove(key);
 		}
+	}
+	
+	public boolean removeAlignment(String alignmentId) {
+		return alignmentMap.remove(alignmentId) != null;
 	}
 	
 	public String constructAlignmentId(String workspaceId, String worksheetId) {

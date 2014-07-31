@@ -21,9 +21,11 @@
 package edu.isi.karma.rep;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.rep.HNode.HNodeType;
 
 /**
@@ -33,12 +35,12 @@ import edu.isi.karma.rep.HNode.HNodeType;
 public class RepFactory {
 
 
-	private final Map<String, HNode> hNodes = new HashMap<String, HNode>(100);
-	private final Map<String, HTable> hTables = new HashMap<String, HTable>(10);
-	private final Map<String, Worksheet> worksheets = new HashMap<String, Worksheet>(10);
-	private final Map<String, Table> tables = new HashMap<String, Table>(10);
-	private final Map<String, Row> rows = new HashMap<String, Row>(1000);
-	private final Map<String, Node> nodes = new HashMap<String, Node>(10000);
+	private final Map<String, HNode> hNodes = Collections.synchronizedMap(new HashMap<String, HNode>(100));
+	private final Map<String, HTable> hTables =  Collections.synchronizedMap(new HashMap<String, HTable>(10));
+	private final Map<String, Worksheet> worksheets =  Collections.synchronizedMap(new HashMap<String, Worksheet>(10));
+	private final Map<String, Table> tables =  Collections.synchronizedMap(new HashMap<String, Table>(10));
+	private final Map<String, Row> rows =  Collections.synchronizedMap(new HashMap<String, Row>(1000));
+	private final Map<String, Node> nodes =  Collections.synchronizedMap(new HashMap<String, Node>(10000));
 	private int id = 0;
 	
 	public Worksheet createWorksheet(String tableName, Workspace workspace, String encoding) {
@@ -58,12 +60,39 @@ public class RepFactory {
 		}
 	}
 
-	public void removeWorksheet(String id) {
+	public void removeWorksheet(String id, CommandHistory history) {
 		if(worksheets.containsKey(id)) {
 			Worksheet worksheet = worksheets.get(id);
-			hTables.remove(worksheet.getHeaders().id);
+			removeHTableRecursive(worksheet.getHeaders());
+			removeDataTableRecursive(worksheet.getDataTable());
+			worksheet.getMetadataContainer().setColumnMetadata(null);
+			worksheet.setMetadataContainer(null);
+			history.removeCommands(id);
 			worksheets.remove(id);
 		}
+	}
+	
+	private void removeHTableRecursive(HTable htable) {
+		for (HNode hn : htable.getHNodes()) {
+			if (hn.hasNestedTable()) {
+				removeHTableRecursive(hn.getNestedTable());
+			}
+			hNodes.remove(hn.id);
+		}
+		hTables.remove(htable.id);
+	}
+	
+	private void removeDataTableRecursive(Table table) {
+		for (Row r : table.getRows(0, table.getNumRows())) {
+			for (Node n : r.getNodes()) {
+				if (n.hasNestedTable()) {
+					removeDataTableRecursive(n.getNestedTable());
+				}
+				nodes.remove(n.id);
+			}
+			rows.remove(r.id);
+		}
+		tables.remove(table.id);
 	}
 	
 	public String getNewId(String prefix) {
