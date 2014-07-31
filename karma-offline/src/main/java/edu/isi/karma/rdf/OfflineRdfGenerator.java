@@ -54,8 +54,8 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-import edu.isi.karma.controller.command.transformation.PythonRepository;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.kr2rml.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;

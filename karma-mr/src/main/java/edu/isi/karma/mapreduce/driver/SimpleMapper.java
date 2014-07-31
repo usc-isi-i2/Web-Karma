@@ -11,8 +11,8 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 
-import edu.isi.karma.controller.command.transformation.PythonRepository;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.URIFormatter;

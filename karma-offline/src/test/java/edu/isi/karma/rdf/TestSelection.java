@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.Selection.SelectionProperty;
-import edu.isi.karma.controller.command.transformation.PythonRepository;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;

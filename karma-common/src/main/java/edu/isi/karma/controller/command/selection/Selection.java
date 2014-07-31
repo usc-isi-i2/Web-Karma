@@ -13,9 +13,9 @@ import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.transformation.PythonRepository;
-import edu.isi.karma.controller.command.transformation.PythonTransformationHelper;
 import edu.isi.karma.er.helper.CloneTableUtils;
+import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonTransformationHelper;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;

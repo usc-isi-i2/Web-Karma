@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.controller.command.transformation;
+package edu.isi.karma.er.helper;
 
 import java.io.File;
 import java.io.FilenameFilter;

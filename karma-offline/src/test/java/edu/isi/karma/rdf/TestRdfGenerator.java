@@ -14,8 +14,8 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.transformation.PythonRepository;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.URIFormatter;
