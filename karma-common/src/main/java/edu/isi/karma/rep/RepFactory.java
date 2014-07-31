@@ -61,9 +61,33 @@ public class RepFactory {
 	public void removeWorksheet(String id) {
 		if(worksheets.containsKey(id)) {
 			Worksheet worksheet = worksheets.get(id);
-			hTables.remove(worksheet.getHeaders().id);
+			removeHTableRecursive(worksheet.getHeaders());
+			removeDataTableRecursive(worksheet.getDataTable());
 			worksheets.remove(id);
 		}
+	}
+	
+	private void removeHTableRecursive(HTable htable) {
+		for (HNode hn : htable.getHNodes()) {
+			if (hn.hasNestedTable()) {
+				removeHTableRecursive(hn.getNestedTable());
+			}
+			hNodes.remove(hn.id);
+		}
+		hTables.remove(htable.id);
+	}
+	
+	private void removeDataTableRecursive(Table table) {
+		for (Row r : table.getRows(0, table.getNumRows())) {
+			for (Node n : r.getNodes()) {
+				if (n.hasNestedTable()) {
+					removeDataTableRecursive(n.getNestedTable());
+				}
+				nodes.remove(n.id);
+			}
+			rows.remove(r.id);
+		}
+		tables.remove(table.id);
 	}
 	
 	public String getNewId(String prefix) {

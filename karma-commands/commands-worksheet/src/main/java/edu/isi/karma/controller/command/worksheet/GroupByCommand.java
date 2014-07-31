@@ -175,9 +175,9 @@ public class GroupByCommand extends WorksheetCommand {
 		for (String key : hash.keySet()) {
 			//System.out.println("key: " + hash.get(key));
 			ArrayList<String> r = hash.get(key);
-			Row lastRow = CloneTableUtils.cloneDataTable(CloneTableUtils.getRow(rows, r.get(0)), newws.getDataTable(), oldws.getHeaders(), newht, keyhnodes, factory);
+			Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), newws.getDataTable(), oldws.getHeaders(), newht, keyhnodes, factory);
 			for (String rowid : r) {
-				Row cur = CloneTableUtils.getRow(rows, rowid);
+				Row cur = factory.getRow(rowid);
 				Table dataTable = lastRow.getNeighborByColumnName("Values", factory).getNestedTable();
 				CloneTableUtils.cloneDataTable(cur, dataTable, oldws.getHeaders(), newValueTable, valuehnodes, factory);
 			}
@@ -228,9 +228,9 @@ public class GroupByCommand extends WorksheetCommand {
 			for (String key : hash.keySet()) {
 				ArrayList<String> r = hash.get(key);
 				Node node = parentRow.getNeighbor(newNode.getId());
-				Row lastRow = CloneTableUtils.cloneDataTable(CloneTableUtils.getRow(rows, r.get(0)), node.getNestedTable(), ht, newht, keyhnodes, factory);
+				Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), node.getNestedTable(), ht, newht, keyhnodes, factory);
 				for (String rowid : r) {
-					Row cur = CloneTableUtils.getRow(rows, rowid);
+					Row cur = factory.getRow(rowid);
 					Table dataTable = lastRow.getNeighborByColumnName("Values", factory).getNestedTable();
 					CloneTableUtils.cloneDataTable(cur, dataTable, ht, newValueTable, valuehnodes, factory);
 				}

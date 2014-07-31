@@ -59,12 +59,11 @@ public abstract class ImportCommand extends Command {
         try {
         	Import imp = createImport(workspace);
             Worksheet wsht = imp.generateWorksheet();
-
             if (hasRevisionId()) {
                 Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
                 wsht.setRevisedWorksheet(revisedWorksheet);  
             }
-
+            System.gc();
             c.add(new WorksheetListUpdate());
             c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
         } catch (JSONException | IOException | KarmaException | NullPointerException | ClassNotFoundException e) {

@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import javax.ws.rs.core.UriBuilder;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -589,7 +591,8 @@ public class TripleStoreUtil {
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
-
+		context = normalizeURI(context);
+		mappingURI = normalizeURI(mappingURI);
 		try {
 
 			StringBuilder query = new StringBuilder();
@@ -1379,6 +1382,11 @@ public class TripleStoreUtil {
 			logger.error(e.getMessage(), e);
 		}
 		return false;
+	}
+	
+	public String normalizeURI(String uri) {
+		UriBuilder builder = UriBuilder.fromPath(uri);
+		return builder.build().toString();
 	}
 
 }
