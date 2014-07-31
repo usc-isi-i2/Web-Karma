@@ -21,6 +21,7 @@
 package edu.isi.karma.rep;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,12 +34,12 @@ import edu.isi.karma.rep.HNode.HNodeType;
 public class RepFactory {
 
 
-	private final Map<String, HNode> hNodes = new HashMap<String, HNode>(100);
-	private final Map<String, HTable> hTables = new HashMap<String, HTable>(10);
-	private final Map<String, Worksheet> worksheets = new HashMap<String, Worksheet>(10);
-	private final Map<String, Table> tables = new HashMap<String, Table>(10);
-	private final Map<String, Row> rows = new HashMap<String, Row>(1000);
-	private final Map<String, Node> nodes = new HashMap<String, Node>(10000);
+	private final Map<String, HNode> hNodes = Collections.synchronizedMap(new HashMap<String, HNode>(100));
+	private final Map<String, HTable> hTables =  Collections.synchronizedMap(new HashMap<String, HTable>(10));
+	private final Map<String, Worksheet> worksheets =  Collections.synchronizedMap(new HashMap<String, Worksheet>(10));
+	private final Map<String, Table> tables =  Collections.synchronizedMap(new HashMap<String, Table>(10));
+	private final Map<String, Row> rows =  Collections.synchronizedMap(new HashMap<String, Row>(1000));
+	private final Map<String, Node> nodes =  Collections.synchronizedMap(new HashMap<String, Node>(10000));
 	private int id = 0;
 	
 	public Worksheet createWorksheet(String tableName, Workspace workspace, String encoding) {
