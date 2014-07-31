@@ -116,7 +116,8 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 			AlignmentManager alignMgr = AlignmentManager.Instance();
 			Alignment alignment = alignMgr.getAlignment(workspace.getId(), worksheetId);
 			if (override || alignment == null || alignment.GetTreeRoot() == null) {
-				alignMgr.removeWorkspaceAlignments(workspace.getId());
+				String alignmentId = alignMgr.constructAlignmentId(workspace.getId(), worksheetId);
+				alignMgr.removeAlignment(alignmentId);
 				alignMgr.getAlignmentOrCreateIt(workspace.getId(), worksheetId, workspace.getOntologyManager());
 				editor.deleteExistingTransformationCommands();
 				historyJson = editor.getHistoryJSON();

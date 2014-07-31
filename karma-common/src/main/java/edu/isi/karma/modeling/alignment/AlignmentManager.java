@@ -107,6 +107,10 @@ public class AlignmentManager {
 		}
 	}
 	
+	public boolean removeAlignment(String alignmentId) {
+		return alignmentMap.remove(alignmentId) != null;
+	}
+	
 	public String constructAlignmentId(String workspaceId, String worksheetId) {
 		return workspaceId + ":" + worksheetId + "AL";
 	}
