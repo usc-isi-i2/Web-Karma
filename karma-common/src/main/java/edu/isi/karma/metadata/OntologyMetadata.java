@@ -35,7 +35,7 @@ public class OntologyMetadata extends KarmaUserMetadata {
 		if (ontDir.exists()) {
 			File[] ontologies = ontDir.listFiles();
 			for (File ontology: ontologies) {
-				if(ontology.getName().startsWith(".")) {
+				if(ontology.getName().startsWith(".") || ontology.isDirectory()) {
 					continue; //Ignore . files
 				}
 				if (ontology.getName().endsWith(".owl") || 
