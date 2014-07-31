@@ -127,7 +127,7 @@ public class UnfoldCommand extends WorksheetCommand {
 		UpdateContainer c = new UpdateContainer();
 		if (this.newWorksheetId != null) {
 			workspace.removeWorksheet(newWorksheetId);
-			workspace.getFactory().removeWorksheet(newWorksheetId);
+			workspace.getFactory().removeWorksheet(newWorksheetId, workspace.getCommandHistory());
 			c.add(new WorksheetListUpdate());
 			c.add(new WorksheetDeleteUpdate(newWorksheetId));
 		}

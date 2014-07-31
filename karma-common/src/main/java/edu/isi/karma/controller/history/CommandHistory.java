@@ -24,6 +24,7 @@
 package edu.isi.karma.controller.history;
 
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -461,6 +462,23 @@ public class CommandHistory {
 			}
 		}
 		history.removeAll(commandsToBeRemoved);
+	}
+	
+	public void removeCommands(String worksheetId) {
+		List<ICommand> commandsFromWorksheet = new ArrayList<ICommand>();
+		for(ICommand command: history) {
+			try {
+				Field worksheetIdField = command.getClass().getDeclaredField("worksheetId");
+				worksheetIdField.setAccessible(true);
+				String Id = (String) worksheetIdField.get(command);
+				if (Id.equals(worksheetId))
+					commandsFromWorksheet.add(command);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+		}
+		history.removeAll(commandsFromWorksheet);
 	}
 
 	public List<Command> getCommandsFromWorksheetId(String worksheetId) {

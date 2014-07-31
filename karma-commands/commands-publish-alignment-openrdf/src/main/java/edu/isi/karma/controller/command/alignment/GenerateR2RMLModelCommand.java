@@ -130,9 +130,9 @@ public class GenerateR2RMLModelCommand extends Command {
 		boolean storeOldHistory = ModelingConfiguration.isStoreOldHistoryEnabled();
 		System.out.println("storeOldHistory: " + storeOldHistory);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		CommandHistory history = workspace.getCommandHistory();		
-		if (storeOldHistory) {
-			List<Command> oldCommands = history.getCommandsFromWorksheetId(worksheetId);
+		CommandHistory history = workspace.getCommandHistory();
+		List<Command> oldCommands = history.getCommandsFromWorksheetId(worksheetId);
+		if (storeOldHistory) {			
 			JSONArray oldCommandsArray = new JSONArray();
 			for (Command refined : oldCommands)
 				oldCommandsArray.put(workspace.getCommandHistory().getCommandJSON(workspace, refined));
@@ -140,9 +140,11 @@ public class GenerateR2RMLModelCommand extends Command {
 					Property.oldCommandHistory, oldCommandsArray.toString());
 		}
 		CommandHistoryUtil historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
-		historyUtil.consolidateHistory();		
-		historyUtil.replayHistory();
-		historyUtil.consolidateHistory();
+		historyUtil.consolidateHistory();	
+		if (!oldCommands.equals(historyUtil.getCommands())) {
+			historyUtil.replayHistory();
+			historyUtil.consolidateHistory();
+		}
 		Set<String> inputColumns = historyUtil.generateInputColumns();
 		Set<String> outputColumns = historyUtil.generateOutputColumns();
 		JSONArray inputColumnsArray = new JSONArray();

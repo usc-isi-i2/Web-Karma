@@ -71,7 +71,7 @@ public class CloseWorkspaceCommand extends Command {
 		WorkspaceRegistry.getInstance().deregister(workspaceId);
 		VWorkspaceRegistry.getInstance().deregisterVWorkspace(workspaceId);
 		for (Worksheet worksheet : workspace.getWorksheets()) {
-			workspace.getFactory().removeWorksheet(worksheet.getId());
+			workspace.getFactory().removeWorksheet(worksheet.getId(), workspace.getCommandHistory());
 			workspace.removeWorksheet(worksheet.getId());
 			uc.add(new WorksheetDeleteUpdate(worksheet.getId()));
 		}

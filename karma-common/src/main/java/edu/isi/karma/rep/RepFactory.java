@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.rep.HNode.HNodeType;
 
 /**
@@ -59,13 +60,14 @@ public class RepFactory {
 		}
 	}
 
-	public void removeWorksheet(String id) {
+	public void removeWorksheet(String id, CommandHistory history) {
 		if(worksheets.containsKey(id)) {
 			Worksheet worksheet = worksheets.get(id);
 			removeHTableRecursive(worksheet.getHeaders());
 			removeDataTableRecursive(worksheet.getDataTable());
 			worksheet.getMetadataContainer().setColumnMetadata(null);
 			worksheet.setMetadataContainer(null);
+			history.removeCommands(id);
 			worksheets.remove(id);
 		}
 	}

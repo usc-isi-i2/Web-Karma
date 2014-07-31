@@ -151,7 +151,7 @@ public class JsonImport extends Import {
 				String worksheetname = getWorksheet().getHeaders().getTableName();
 				String encoding = getWorksheet().getEncoding();
 				workspace.removeWorksheet(getWorksheet().getId());
-				getFactory().removeWorksheet(getWorksheet().getId());
+				getFactory().removeWorksheet(getWorksheet().getId(), workspace.getCommandHistory());
 				createWorksheet(worksheetname, workspace, encoding);
 				if (flag)
 					getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.OBJECT);
