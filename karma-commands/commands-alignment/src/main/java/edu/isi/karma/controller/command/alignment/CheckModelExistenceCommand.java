@@ -4,9 +4,9 @@ import java.io.PrintWriter;
 
 import org.json.JSONObject;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -14,11 +14,10 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
-public class CheckModelExistenceCommand extends Command {
-	private String worksheetId;
+public class CheckModelExistenceCommand extends WorksheetCommand {
+	
 	protected CheckModelExistenceCommand(String id, String worksheetId) {
-		super(id);
-		this.worksheetId = worksheetId;
+		super(id, worksheetId);
 	}
 
 	@Override

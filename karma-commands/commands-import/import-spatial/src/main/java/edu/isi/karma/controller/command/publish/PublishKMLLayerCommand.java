@@ -19,9 +19,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -31,8 +31,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
-public class PublishKMLLayerCommand extends Command {
-	private final String worksheetId;
+public class PublishKMLLayerCommand extends WorksheetCommand {
 	@SuppressWarnings("unused")
 	private String publicKMLAddress;
 	private String kMLTransferServiceURL;
@@ -46,8 +45,7 @@ public class PublishKMLLayerCommand extends Command {
 
 	protected PublishKMLLayerCommand(String id, String worksheetId,
 			String ipAddress, String kMLTransferServiceURL) {
-		super(id);
-		this.worksheetId = worksheetId;
+		super(id, worksheetId);
 		this.publicKMLAddress = ipAddress;
 		this.kMLTransferServiceURL = kMLTransferServiceURL;
 	}

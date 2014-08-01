@@ -21,7 +21,13 @@
 
 package edu.isi.karma.controller.command.cleaning;
 
-import edu.isi.karma.controller.command.CommandType;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -35,16 +41,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -56,18 +55,14 @@ import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class InvokeCleaningServiceCommand extends Command {
-	private String hNodeId;
-	private String worksheetId;
+public class InvokeCleaningServiceCommand extends WorksheetCommand {
 
-	// private static Logger logger =
-	// LoggerFactory.getLogger(InvokeCleaningServiceCommand.class);
+	private String hNodeId;
 
 	public InvokeCleaningServiceCommand(String id, String hNodeId,
 			String worksheetId) {
-		super(id);
+		super(id, worksheetId);
 		this.hNodeId = hNodeId;
-		this.worksheetId = worksheetId;
 	}
 
 	@Override

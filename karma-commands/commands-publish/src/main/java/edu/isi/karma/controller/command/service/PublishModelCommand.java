@@ -27,9 +27,9 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -48,17 +48,14 @@ import edu.isi.karma.rep.metadata.MetadataContainer;
 import edu.isi.karma.rep.sources.DataSource;
 import edu.isi.karma.rep.sources.WebService;
 
-public class PublishModelCommand extends Command{
-
-	private final String worksheetId;
+public class PublishModelCommand extends WorksheetCommand{
 
 	// Logger object
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishModelCommand.class.getSimpleName());
 
 	public PublishModelCommand(String id, String worksheetId) {
-		super(id);
-		this.worksheetId = worksheetId;
+		super(id, worksheetId);
 	}
 
 	@Override
