@@ -20,9 +20,15 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import edu.isi.karma.controller.command.Command;
+import java.util.Set;
+
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -32,19 +38,13 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Set;
+public class AddUserLinkToAlignmentCommand extends WorksheetCommand {
 
-public class AddUserLinkToAlignmentCommand extends Command {
-
-	private final String worksheetId;
 	private final String edgeId;
 	private final String alignmentId;
 	private Alignment 	 oldAlignment;
@@ -56,10 +56,10 @@ public class AddUserLinkToAlignmentCommand extends Command {
 
 	public AddUserLinkToAlignmentCommand(String id, String edgeId,
 			String alignmentId, String worksheetId) {
-		super(null, id);
+
+		super(id, worksheetId);
 		this.edgeId = edgeId;
 		this.alignmentId = alignmentId;
-		this.worksheetId = worksheetId;
 		
 		addTag(CommandTag.Modeling);
 	}

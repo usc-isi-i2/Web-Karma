@@ -30,9 +30,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -55,10 +55,9 @@ import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 
-public class SetSemanticTypeCommand extends Command {
+public class SetSemanticTypeCommand extends WorksheetCommand {
 
 	private final String hNodeId;
-	private final String worksheetId;
 	private final boolean trainAndShowUpdates;
 	private final String rdfLiteralType;
 	private SynonymSemanticTypes oldSynonymTypes;
@@ -76,9 +75,8 @@ public class SetSemanticTypeCommand extends Command {
 
 	protected SetSemanticTypeCommand(String id, String worksheetId, String hNodeId, 
 			boolean isPartOfKey, JSONArray typesArr, boolean trainAndShowUpdates, String rdfLiteralType) {
-		super(null, id);
+		super(id, worksheetId);
 		this.hNodeId = hNodeId;
-		this.worksheetId = worksheetId;
 		this.isPartOfKey = isPartOfKey;
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.typesArr = typesArr;

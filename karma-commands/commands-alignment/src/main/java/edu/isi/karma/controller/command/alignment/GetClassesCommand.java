@@ -12,9 +12,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -27,9 +27,8 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.view.VWorkspace;
 
-public class GetClassesCommand extends Command {
+public class GetClassesCommand extends WorksheetCommand {
 
-	final private String worksheetId;
 	final private INTERNAL_NODES_RANGE range;
 
 	public enum INTERNAL_NODES_RANGE {
@@ -45,8 +44,7 @@ public class GetClassesCommand extends Command {
 	private static Logger logger = LoggerFactory.getLogger(GetClassesCommand.class.getSimpleName());
 
 	protected GetClassesCommand(String id, String worksheetId, INTERNAL_NODES_RANGE range, String propertyURI) {
-		super(null, id);
-		this.worksheetId = worksheetId;
+		super(id, worksheetId);
 		this.range = range;
 		this.propertyURI = propertyURI;
 	}

@@ -21,21 +21,20 @@
 
 package edu.isi.karma.controller.command.worksheet;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AdditionalRowsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
 
-public class LoadAdditionalWorksheetRowsCommand extends Command {
-	private final String worksheetId;
+public class LoadAdditionalWorksheetRowsCommand extends WorksheetCommand {
+	
 	private final String tableId;
 	
 	protected LoadAdditionalWorksheetRowsCommand(String id, String tableId, String worksheetId) {
-		super(id);
+		super(id, worksheetId);
 		this.tableId = tableId;
-		this.worksheetId = worksheetId;
 	}
 
 	@Override

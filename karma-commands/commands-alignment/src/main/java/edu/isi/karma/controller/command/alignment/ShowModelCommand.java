@@ -83,7 +83,7 @@ public class ShowModelCommand extends WorksheetCommand {
 			.getLogger(ShowModelCommand.class);
 
 	protected ShowModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate) {
-		super(null, id, worksheetId);
+		super(id, worksheetId);
 //		this.addVWorksheetUpdate = addVWorksheetUpdate;
 		
 		/** NOTE Not saving this command in history for now since we are 

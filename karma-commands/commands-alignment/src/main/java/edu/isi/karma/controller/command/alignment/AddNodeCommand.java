@@ -5,9 +5,10 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.ICommand.CommandTag;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -24,8 +25,8 @@ import edu.isi.karma.rep.alignment.Node;
  * @author dipsy
  *
  */
-public class AddNodeCommand extends Command {
-	private String worksheetId;
+public class AddNodeCommand extends WorksheetCommand {
+	
 	private String nodeUri;
 	private String nodeLabel;
 	private String alignmentId;
@@ -37,8 +38,7 @@ public class AddNodeCommand extends Command {
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 		
 	protected AddNodeCommand(String id, String worksheetId, String alignmentId, String uri, String label) {
-		super(null, id);
-		this.worksheetId = worksheetId;
+		super(id, worksheetId);
 		this.alignmentId = alignmentId;
 		this.nodeUri = uri;
 		this.nodeLabel = label;

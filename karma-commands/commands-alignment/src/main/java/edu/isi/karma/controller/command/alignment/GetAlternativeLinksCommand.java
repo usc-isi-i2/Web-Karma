@@ -56,7 +56,7 @@ public class GetAlternativeLinksCommand extends Command {
 
 	public GetAlternativeLinksCommand(String id, String sourceNodeId,
 			String targetNodeId, String alignmentId, ALTERNATIVE_LINKS_RANGE range) {
-		super(null, id);
+		super(id);
 		this.sourceNodeId = sourceNodeId;
 		this.targetNodeId = targetNodeId;
 		this.alignmentId = alignmentId;

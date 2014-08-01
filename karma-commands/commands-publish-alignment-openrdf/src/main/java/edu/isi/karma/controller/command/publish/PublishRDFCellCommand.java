@@ -29,9 +29,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -41,8 +41,8 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
 @Deprecated
-public class PublishRDFCellCommand extends Command {
-	private final String worksheetId;
+public class PublishRDFCellCommand extends WorksheetCommand {
+	
 	//private final String nodeId;
 	//private String rdfSourcePrefix;
 	//private String rdfSourceNamespace;
@@ -59,8 +59,7 @@ public class PublishRDFCellCommand extends Command {
 
 	protected PublishRDFCellCommand(String id, String worksheetId,
 			String nodeId, String rdfSourcePrefix, String rdfSourceNamespace) {
-		super(id);
-		this.worksheetId = worksheetId;
+		super(id, worksheetId);
 		//this.nodeId = nodeId;
 		//this.rdfSourcePrefix = rdfSourcePrefix;
 		//this.rdfSourceNamespace = rdfSourceNamespace;

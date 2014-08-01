@@ -38,14 +38,18 @@ import edu.isi.karma.rep.Workspace;
 public abstract class WorksheetCommand extends Command {
 
 	protected final String worksheetId;
-
-	protected WorksheetCommand(SuperSelection sel, String id, String worksheetId) {
-		super(sel, id);
+	protected SuperSelection selection;
+	protected WorksheetCommand(String id, String worksheetId) {
+		super(id);
 		this.worksheetId = worksheetId;
 	}
 
 	public String getWorksheetId() {
 		return worksheetId;
+	}
+	
+	public void setSelection(SuperSelection sel) {
+		this.selection = sel;
 	}
 	
 	private Alignment getAlignmentOrCreateIt(Workspace workspace)

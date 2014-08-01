@@ -25,6 +25,7 @@ package edu.isi.karma.controller.history;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -468,14 +469,17 @@ public class CommandHistory {
 		List<ICommand> commandsFromWorksheet = new ArrayList<ICommand>();
 		for(ICommand command: history) {
 			try {
-				Field worksheetIdField = command.getClass().getDeclaredField("worksheetId");
-				worksheetIdField.setAccessible(true);
-				String Id = (String) worksheetIdField.get(command);
-				if (Id.equals(worksheetId))
-					commandsFromWorksheet.add(command);
+				
+				Method m = command.getClass().getMethod("getWorksheetId");
+				if(m != null)
+				{
+					String id = (String) m.invoke(command, (Object[])null);
+					if (id.equals(worksheetId))
+						commandsFromWorksheet.add(command);
+					
+				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
+				logger.error("Unable to remove command " + command.getCommandName(), e);
 			}
 		}
 		history.removeAll(commandsFromWorksheet);

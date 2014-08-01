@@ -68,7 +68,6 @@ public abstract class Command extends Entity implements ICommand
 	private boolean appendToHistory = false;
 	protected Set<String> inputColumns = new HashSet<String>();
 	protected Set<String> outputColumns = new HashSet<String>();
-	protected SuperSelection selection;
 	/**
 	 * List of tags for the command
 	 */
@@ -76,9 +75,8 @@ public abstract class Command extends Entity implements ICommand
 
 	private String inputParameterJson;
 
-	protected Command(SuperSelection selection, String id) {
+	protected Command(String id) {
 		super(id);
-		this.selection = selection;
 	}
 
 	@Override

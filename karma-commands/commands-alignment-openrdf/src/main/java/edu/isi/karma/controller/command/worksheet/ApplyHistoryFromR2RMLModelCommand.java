@@ -59,14 +59,12 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 	private final File r2rmlModelFile;
-	private final String worksheetId;
 	private boolean override;
 	private static Logger logger = LoggerFactory.getLogger(ApplyHistoryFromR2RMLModelCommand.class);
 
 	protected ApplyHistoryFromR2RMLModelCommand(String id, File uploadedFile, String worksheetId, boolean override) {
-		super(null, id, worksheetId);
+		super(id, worksheetId);
 		this.r2rmlModelFile = uploadedFile;
-		this.worksheetId = worksheetId;
 		this.override = override;
 	}
 

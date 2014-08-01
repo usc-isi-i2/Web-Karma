@@ -21,9 +21,8 @@
 package edu.isi.karma.rep;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.rep.HNode.HNodeType;
@@ -35,12 +34,12 @@ import edu.isi.karma.rep.HNode.HNodeType;
 public class RepFactory {
 
 
-	private final Map<String, HNode> hNodes = Collections.synchronizedMap(new HashMap<String, HNode>(100));
-	private final Map<String, HTable> hTables =  Collections.synchronizedMap(new HashMap<String, HTable>(10));
-	private final Map<String, Worksheet> worksheets =  Collections.synchronizedMap(new HashMap<String, Worksheet>(10));
-	private final Map<String, Table> tables =  Collections.synchronizedMap(new HashMap<String, Table>(10));
-	private final Map<String, Row> rows =  Collections.synchronizedMap(new HashMap<String, Row>(1000));
-	private final Map<String, Node> nodes =  Collections.synchronizedMap(new HashMap<String, Node>(10000));
+	private final Map<String, HNode> hNodes = new ConcurrentHashMap<String, HNode>(100);
+	private final Map<String, HTable> hTables = new ConcurrentHashMap<String, HTable>(10);
+	private final Map<String, Worksheet> worksheets = new ConcurrentHashMap<String, Worksheet>(10);
+	private final Map<String, Table> tables = new ConcurrentHashMap<String, Table>(10);
+	private final Map<String, Row> rows = new ConcurrentHashMap<String, Row>(1000);
+	private final Map<String, Node> nodes = new ConcurrentHashMap<String, Node>(10000);
 	private int id = 0;
 	
 	public Worksheet createWorksheet(String tableName, Workspace workspace, String encoding) {
@@ -95,6 +94,8 @@ public class RepFactory {
 		tables.remove(table.id);
 	}
 	
+	
+	// We need a thread safe version of this
 	public String getNewId(String prefix) {
 		return prefix + id++;
 	}

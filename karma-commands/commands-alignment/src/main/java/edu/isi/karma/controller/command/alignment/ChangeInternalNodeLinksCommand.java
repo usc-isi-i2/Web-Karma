@@ -21,9 +21,16 @@
 
 package edu.isi.karma.controller.command.alignment;
 
-import edu.isi.karma.controller.command.Command;
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.alignment.ChangeInternalNodeLinksCommandFactory.Arguments;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -34,20 +41,14 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ChangeInternalNodeLinksCommand extends Command {
-	private final String worksheetId;
+public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
+	
 	private final String alignmentId;
 	private JSONArray initialEdges;
 	private JSONArray newEdges;
@@ -66,8 +67,7 @@ public class ChangeInternalNodeLinksCommand extends Command {
 
 	public ChangeInternalNodeLinksCommand(String id, String worksheetId,
 			String alignmentId, JSONArray initialEdges, JSONArray newEdges) {
-		super(null,id);
-		this.worksheetId = worksheetId;
+		super(id, worksheetId);
 		this.alignmentId = alignmentId;
 		this.initialEdges = initialEdges;
 		this.newEdges = newEdges;

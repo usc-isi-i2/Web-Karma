@@ -60,7 +60,7 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 
 	protected ShowAutoModelCommand(String id, String worksheetId)
 			{
-		super(null, id, worksheetId);
+		super(id, worksheetId);
 		
 		/** NOTE Not saving this command in history for now since we are 
 		 * not letting CRF model assign semantic types automatically. This command 

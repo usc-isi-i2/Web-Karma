@@ -37,8 +37,6 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
@@ -107,7 +105,7 @@ public class ModelLearningGraph {
 		
 		File file = new File(getGraphJsonName());
 		if (!file.exists()) {
-			this.initializeFromJsonRepository(null, null);
+			this.initializeFromJsonRepository();
 		} else {
 			logger.info("loading the alignment graph ...");
 			DirectedWeightedMultigraph<Node, DefaultLink> graph =
@@ -135,7 +133,7 @@ public class ModelLearningGraph {
 		return this.lastUpdateTime;
 	}
 	
-	public void initializeFromJsonRepository(Workspace workspace, Worksheet worksheet) {
+	public void initializeFromJsonRepository() {
 		logger.info("initializing the graph from models in the json repository ...");
 		
 		this.nodeIdFactory = new NodeIdFactory();
@@ -148,20 +146,20 @@ public class ModelLearningGraph {
 			if (f.getName().endsWith(".json")) {
 				try {
 					SemanticModel model = SemanticModel.readJson(f.getAbsolutePath());
-					if (model != null) this.addModel(workspace, worksheet, model);
+					if (model != null) this.addModel(model);
 				} catch (Exception e) {
 				}
 			}
 		}
-		this.exportJson(workspace, worksheet);
+		this.exportJson();
 		this.exportGraphviz();
 		this.lastUpdateTime = System.currentTimeMillis();
 		logger.info("initialization is done!");
 	}
 	
-	public void exportJson(Workspace workspace, Worksheet worksheet) {
+	public void exportJson() {
 		try {
-			GraphUtil.exportJson(workspace, worksheet, this.graphBuilder.getGraph(), getGraphJsonName());
+			GraphUtil.exportJson(this.graphBuilder.getGraph(), getGraphJsonName());
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to json!");
 		}
@@ -175,18 +173,18 @@ public class ModelLearningGraph {
 		}
 	}
 	
-	public void addModel(Workspace workspace, Worksheet worksheet, SemanticModel model) {
-		this.addModelGraph(workspace, worksheet, model);
+	public void addModel(SemanticModel model) {
+		this.addModelGraph(model);
 		this.graphBuilder.addClosureAndLinksOfNodes(model.getInternalNodes(), null);
 	}
 	
-	public void addModelAndUpdateGraphJson(Workspace workspace, Worksheet worksheet, SemanticModel model) {
-		this.addModel(workspace, worksheet, model);
-		this.exportJson(workspace, worksheet);
+	public void addModelAndUpdateGraphJson(SemanticModel model) {
+		this.addModel(model);
+		this.exportJson();
 		this.exportGraphviz();
 	}
 	
-	private void addModelGraph(Workspace workspace, Worksheet worksheet, SemanticModel model) {
+	private void addModelGraph(SemanticModel model) {
 		
 		HashMap<Node, Node> visitedNodes;
 		Node source, target;
@@ -203,7 +201,7 @@ public class ModelLearningGraph {
 			// we need to somehow update the graph, but I don't know how to do that yet.
 			// so, we rebuild the whole graph from scratch.
 			logger.info("the graph already includes the model and needs to be updated, we re-initialize the graph from the repository!");
-			initializeFromJsonRepository(workspace, worksheet);
+			initializeFromJsonRepository();
 			return;
 		}
 		
