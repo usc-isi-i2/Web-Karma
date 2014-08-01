@@ -85,10 +85,8 @@ public class TestJSONDagRDFGenerator extends TestJSONRDFGenerator{
 	@Test
 	public void testGenerateRDF2() {
 		try {
-			for(int i = 0; i < 1000; i++)
-			{
-				executeBasicJSONTest("menus.json", "menus-model", false, 411);
-			}
+			
+			executeBasicJSONTest("menus.json", "menus-model", false, 411);
 			
 		} catch (Exception e) {
 			fail("Exception: " + e.getMessage());

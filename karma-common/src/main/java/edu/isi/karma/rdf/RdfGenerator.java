@@ -43,16 +43,14 @@ public abstract class RdfGenerator {
 
 	private static Logger logger = LoggerFactory.getLogger(RdfGenerator.class);
 	
-	protected Workspace instance;
 	protected Workspace initializeWorkspace() {
-		if(instance == null)
-		{
-		 instance = WorkspaceManager.getInstance().createWorkspace();
-        WorkspaceRegistry.getInstance().register(new ExecutionController(instance));
+		
+		Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
+        WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
         ModelingConfiguration.load();
         ModelingConfiguration.setManualAlignment(true);
-		}
-		return instance;
+        return workspace;
+        
 	}
 
 	protected void removeWorkspace(Workspace workspace) {
