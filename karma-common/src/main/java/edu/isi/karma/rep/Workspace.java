@@ -23,6 +23,7 @@ package edu.isi.karma.rep;
 import edu.isi.karma.controller.command.CommandPreferences;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.metadata.KarmaMetadataManager;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.ISemanticTypeModelHandler;
 import edu.isi.karma.rep.metadata.TagsContainer;
@@ -105,6 +106,9 @@ public class Workspace extends Entity {
 
 	public void removeWorksheet(String id) {
 		factory.removeWorksheet(id, commandHistory);
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
+				getId(), id);
+		AlignmentManager.Instance().removeAlignment(alignmentId);
 		this.worksheets.remove(id);
 	}
 	
