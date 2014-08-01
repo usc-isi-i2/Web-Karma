@@ -55,7 +55,6 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
-import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SubClassLink;
 
 

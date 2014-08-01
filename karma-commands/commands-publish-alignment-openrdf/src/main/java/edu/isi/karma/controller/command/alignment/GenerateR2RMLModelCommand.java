@@ -202,7 +202,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		}
 
 		if (ModelingConfiguration.isLearnerEnabled())
-			ModelLearningGraph.getInstance(workspace.getOntologyManager()).addModelAndUpdateGraphJson(workspace, worksheet, semanticModel);
+			ModelLearningGraph.getInstance(workspace.getOntologyManager()).addModelAndUpdateGraphJson(semanticModel);
 
 		// *****************************************************************************************
 		// *****************************************************************************************
