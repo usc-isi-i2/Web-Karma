@@ -21,7 +21,7 @@ public class SuperSelection {
 	
 	public boolean isSelected(Row row) {
 		if (selections == null)
-			return true;
+			return false;
 		boolean ret = false;
 		for (Selection sel : selections) {
 			ret |= sel.isSelected(row);

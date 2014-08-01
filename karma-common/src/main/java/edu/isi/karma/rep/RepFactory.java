@@ -49,6 +49,7 @@ public class RepFactory {
 		Worksheet ws = new Worksheet(id, headers, dataTable, encoding);
 		workspace.addWorksheet(ws);
 		worksheets.put(id, ws);
+		dataTable.setSuperSelectionManager(ws.getSuperSelectionManager());
 		return ws;
 	}
         
@@ -163,7 +164,8 @@ public class RepFactory {
 	}
 
 	Table createTable(String id, String hTableId, String worksheetId) {
-		Table t = new Table(worksheetId, id, hTableId);
+		Worksheet ws = this.getWorksheet(worksheetId);
+		Table t = new Table(worksheetId, id, hTableId, ws != null ? ws.getSuperSelectionManager() : null);
 		tables.put(id, t);
 		return t;
 	}

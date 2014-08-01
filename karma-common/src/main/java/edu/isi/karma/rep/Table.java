@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.rep.Node.NodeStatus;
 
 /**
@@ -51,17 +52,19 @@ public class Table extends RepEntity {
 
 	// My rows.
 	private List<Row> rows = new ArrayList<Row>();
-
+	
+	private SuperSelectionManager selMgr;
 	// mariam
 	/**
 	 * The node that this table is a nested table in.
 	 */
 	private Node nestedTableInNode;
 
-	Table(String myWorksheetId, String id, String hTableId) {
+	Table(String myWorksheetId, String id, String hTableId, SuperSelectionManager selMgr) {
 		super(id);
 		this.worksheetId = myWorksheetId;
 		this.hTableId = hTableId;
+		this.selMgr = selMgr;
 	}
 
 	// mariam
@@ -143,17 +146,10 @@ public class Table extends RepEntity {
 		if (rows.size() > 0) {
 			for (int i = Math.min(startIndex, rows.size() - 1); i < Math.min(
 					startIndex + count, rows.size()); i++) {
+				if (selMgr.getCurrentSuperSelection().isSelected(rows.get(i)))
+					continue;
 				result.add(rows.get(i));
 			}
-		}
-		return result;
-	}
-	
-	public ArrayList<Row> getRows(SuperSelection sel) {
-		ArrayList<Row> result = new ArrayList<Row>();
-		for (Row r : rows) {
-			if (sel.isSelected(r))
-				result.add(r);
 		}
 		return result;
 	}
@@ -165,6 +161,8 @@ public class Table extends RepEntity {
 		pw.println(factory.getHTable(hTableId).getTableName());
 
 		for (Row r : rows) {
+			if (selMgr.getCurrentSuperSelection().isSelected(r))
+				continue;
 			r.prettyPrint(prefix, pw, factory);
 		}
 	}
@@ -189,7 +187,8 @@ public class Table extends RepEntity {
 			List<Row> rows) {
 		boolean result = false;
 		for (Row r : rows) {
-			
+			if (selMgr.getCurrentSuperSelection().isSelected(r))
+				continue;
 			result |= r.collectNodes(path, nodes);
 
 		}
@@ -205,7 +204,8 @@ public class Table extends RepEntity {
 			List<Row> rows, int nodeIdx, RepFactory factory) {
 
 		RowIterator: for (Row r : rows) {
-
+			if (selMgr.getCurrentSuperSelection().isSelected(r))
+				continue;
 			Node n = r.getNode(path.getFirst().getId());
 			if (n == null) {
 				continue RowIterator;
@@ -275,10 +275,20 @@ public class Table extends RepEntity {
 		// factory.getColumnName(hNodeId) + " to "
 		// + value.asString());
 		for (Row r : rows) {
+			if (selMgr.getCurrentSuperSelection().isSelected(r))
+				continue;
 			// logger.info("Setting value of column " +
 			// factory.getColumnName(hNodeId) + " in row "
 			// + r.getId() + " to " + value.asString());
 			r.setValue(hNodeId, value, Node.NodeStatus.original, factory);
 		}
+	}
+	
+	public void setSuperSelectionManager(SuperSelectionManager selMgr) {
+		if (selMgr == null) {
+			logger.error("should not be null");
+			return;
+		}
+		this.selMgr = selMgr;
 	}
 }

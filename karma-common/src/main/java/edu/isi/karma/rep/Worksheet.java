@@ -203,5 +203,9 @@ public class Worksheet extends RepEntity {
     public Object getJsonAnnotation() {
     	return this.jsonAnnotation;
     }
+    
+    public SuperSelectionManager getSuperSelectionManager() {
+    	return selMgr;
+    }
 
 }
