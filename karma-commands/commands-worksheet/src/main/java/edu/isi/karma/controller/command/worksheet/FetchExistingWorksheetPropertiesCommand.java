@@ -28,9 +28,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -40,8 +40,8 @@ import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 
-public class FetchExistingWorksheetPropertiesCommand extends Command {
-	private final String worksheetId;
+public class FetchExistingWorksheetPropertiesCommand extends WorksheetCommand {
+	
 	private static Logger logger = LoggerFactory
 			.getLogger(FetchExistingWorksheetPropertiesCommand.class);
 	
@@ -50,8 +50,7 @@ public class FetchExistingWorksheetPropertiesCommand extends Command {
 	}
 
 	public FetchExistingWorksheetPropertiesCommand(String id, String worksheetId) {
-		super(id);
-		this.worksheetId = worksheetId;
+		super(id, worksheetId);
 	}
 
 	@Override

@@ -21,10 +21,14 @@
 
 package edu.isi.karma.controller.command.worksheet;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import edu.isi.karma.common.HttpMethods;
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.ICommand.CommandTag;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -32,17 +36,13 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-public class SetWorksheetPropertiesCommand extends Command {
-	final private String worksheetId;
+public class SetWorksheetPropertiesCommand extends WorksheetCommand {
 	final private String properties;
 	private Worksheet worksheet;
 
 	public SetWorksheetPropertiesCommand(String id, String worksheetId, String properties) {
-		super(id);
-		this.worksheetId = worksheetId;
+		super(id, worksheetId);
 		this.properties = properties;
 		
 		addTag(CommandTag.Modeling);

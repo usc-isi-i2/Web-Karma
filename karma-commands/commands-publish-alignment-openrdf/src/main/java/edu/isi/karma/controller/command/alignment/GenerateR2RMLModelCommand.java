@@ -22,6 +22,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.core.UriBuilder;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.CommandHistoryUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
@@ -56,9 +58,8 @@ import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class GenerateR2RMLModelCommand extends Command {
+public class GenerateR2RMLModelCommand extends WorksheetCommand {
 
-	private final String worksheetId;
 	private String worksheetName;
 	private String tripleStoreUrl;
 	private String graphContext;
@@ -74,8 +75,7 @@ public class GenerateR2RMLModelCommand extends Command {
 	}
 
 	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String context) {
-		super(id);
-		this.worksheetId = worksheetId;
+		super(id, worksheetId);
 		this.tripleStoreUrl = url;
 		this.graphContext = context;
 	}
@@ -126,13 +126,24 @@ public class GenerateR2RMLModelCommand extends Command {
 		UpdateContainer uc = new UpdateContainer();
 		//save the preferences 
 		savePreferences(workspace);
-
+		boolean storeOldHistory = ModelingConfiguration.isStoreOldHistoryEnabled();
+		System.out.println("storeOldHistory: " + storeOldHistory);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		CommandHistory history = workspace.getCommandHistory();
+		List<Command> oldCommands = history.getCommandsFromWorksheetId(worksheetId);
+		if (storeOldHistory) {			
+			JSONArray oldCommandsArray = new JSONArray();
+			for (Command refined : oldCommands)
+				oldCommandsArray.put(workspace.getCommandHistory().getCommandJSON(workspace, refined));
+			worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+					Property.oldCommandHistory, oldCommandsArray.toString());
+		}
 		CommandHistoryUtil historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
-		historyUtil.consolidateHistory();		
-		historyUtil.replayHistory();
-		historyUtil.consolidateHistory();
+		historyUtil.consolidateHistory();	
+		if (!oldCommands.equals(historyUtil.getCommands())) {
+			historyUtil.replayHistory();
+			historyUtil.consolidateHistory();
+		}
 		Set<String> inputColumns = historyUtil.generateInputColumns();
 		Set<String> outputColumns = historyUtil.generateOutputColumns();
 		JSONArray inputColumnsArray = new JSONArray();
@@ -142,7 +153,7 @@ public class GenerateR2RMLModelCommand extends Command {
 			JSONArray hNodeRepresentation = hnode.getJSONArrayRepresentation(workspace.getFactory());
 			inputColumnsArray.put(hNodeRepresentation);
 		}
-		
+
 		for (String hNodeId : outputColumns) {
 			HNode hnode = workspace.getFactory().getHNode(hNodeId);
 			JSONArray hNodeRepresentation = hnode.getJSONArrayRepresentation(workspace.getFactory());
@@ -151,7 +162,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
 				Property.inputColumns, inputColumnsArray.toString());
 		worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
-				Property.outputColumns, outputColumnsArray.toString());
+				Property.outputColumns, outputColumnsArray.toString());		
 		this.worksheetName = worksheet.getTitle();
 		String graphLabel = worksheet.getMetadataContainer().getWorksheetProperties().
 				getPropertyValue(Property.graphLabel); 
@@ -209,7 +220,7 @@ public class GenerateR2RMLModelCommand extends Command {
 
 		try {
 			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
-			
+
 			fileSaver.saveAlignment(alignment, modelFileLocalPath);
 
 			// Write the model to the triple store

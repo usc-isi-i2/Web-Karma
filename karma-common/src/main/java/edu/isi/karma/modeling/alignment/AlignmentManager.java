@@ -104,8 +104,15 @@ public class AlignmentManager {
 		}
 		// Remove the keys
 		for(String key:keysToBeRemoved) {
-			alignmentMap.remove(key);
+			Alignment a = alignmentMap.remove(key);
+			a.cleanup();
 		}
+	}
+	
+	public boolean removeAlignment(String alignmentId) {
+		Alignment a =  alignmentMap.remove(alignmentId);
+		a.cleanup();
+		return a != null;
 	}
 	
 	public String constructAlignmentId(String workspaceId, String worksheetId) {

@@ -614,5 +614,9 @@ public class Alignment implements OntologyUpdateListener {
 		this.graphBuilder.resetOntologyMaps();
 		
 	}
+
+	public void cleanup() {
+		this.ontologyManager.unsubscribeListener(this);
+	}
 	
 }

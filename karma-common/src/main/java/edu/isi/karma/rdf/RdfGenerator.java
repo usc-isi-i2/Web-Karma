@@ -49,7 +49,8 @@ public abstract class RdfGenerator {
         WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
         ModelingConfiguration.load();
         ModelingConfiguration.setManualAlignment(true);
-		return workspace;
+        return workspace;
+        
 	}
 
 	protected void removeWorkspace(Workspace workspace) {
