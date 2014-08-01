@@ -20,15 +20,15 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
-import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.*;
-import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.SemanticType;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
+import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.WorkspaceManager;
+import edu.isi.karma.rep.alignment.Node;
 
 public class AlignmentManager {
 	private static HashMap<String, Alignment> alignmentMap = null;
@@ -103,12 +103,15 @@ public class AlignmentManager {
 		}
 		// Remove the keys
 		for(String key:keysToBeRemoved) {
-			alignmentMap.remove(key);
+			Alignment a = alignmentMap.remove(key);
+			a.cleanup();
 		}
 	}
 	
 	public boolean removeAlignment(String alignmentId) {
-		return alignmentMap.remove(alignmentId) != null;
+		Alignment a =  alignmentMap.remove(alignmentId);
+		a.cleanup();
+		return a != null;
 	}
 	
 	public String constructAlignmentId(String workspaceId, String worksheetId) {

@@ -55,7 +55,6 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
-import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SubClassLink;
 
 
@@ -614,6 +613,10 @@ public class Alignment implements OntologyUpdateListener {
 	public void ontologyModelUpdated() {
 		this.graphBuilder.resetOntologyMaps();
 		
+	}
+
+	public void cleanup() {
+		this.ontologyManager.unsubscribeListener(this);
 	}
 	
 }
