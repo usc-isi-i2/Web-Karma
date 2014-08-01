@@ -1,0 +1,309 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix nao: <http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix km-dev: <http://isi.edu/integration/karma/dev#> .
+
+_:node18sgmk7hex1 a km-dev:R2RMLMapping ;
+	km-dev:sourceName "metadata.json" ;
+	km-dev:modelPublicationTime "1405014908462"^^xsd:long ;
+	km-dev:modelVersion "1.4" ;
+	km-dev:hasWorksheetHistory "[{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"properties\",\"value\":{\"hasServiceProperties\":false,\"hasPrefix\":true,\"graphName\":\"\",\"prefix\":\"s\",\"hasBaseURI\":true,\"baseURI\":\"http://localhost:8080/source/\"},\"type\":\"other\"}],\"commandName\":\"SetWorksheetPropertiesCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"ImageName\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://isi.edu/integration/karma/dev#classLink\",\"DomainLabel\":\"nao:Photo1 (add)\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1 (add)\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"metaPropertyName\",\"value\":\"isUriOfClass\",\"type\":\"other\"},{\"name\":\"metaPropertyValue\",\"value\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"type\":\"other\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"ImageName\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://isi.edu/integration/karma/dev#classLink\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":true,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetMetaPropertyCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"ImageLength\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#imageLength\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"ISOSpeedRatings\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#isoSpeedRatings\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"GPSTimeStamp\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#gpsTimeStamp\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"ImageWidth\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#imageWidth\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"Make\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#make\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"Model\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#model\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"Orientation\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#orientation\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"WhiteBalance\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#whiteBalance\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"GPSProcessingMethod\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#gpsProcessingMethod\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"GPSDateStamp\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#gpsDateStamp\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"GPSAltitudeRef\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#gpsAltitudeRef\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"FocalLength\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#focalLength\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"Flash\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#flash\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"FNumber\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#fNumber\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"ExposureTime\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#exposureTime\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"metadata\"},{\"columnName\":\"DateTime\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#dateTime\",\"DomainLabel\":\"nao:Photo1\",\"DomainId\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1\",\"DomainUri\":\"http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"}]" .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc a rr:TriplesMap .
+
+_:node18sgmk7hex1 km-dev:hasTriplesMap km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex2 rr:tableName "metadata.json" ;
+	a rr:LogicalTable ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasLogicalTable _:node18sgmk7hex2 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:logicalTable _:node18sgmk7hex2 ;
+	rr:subjectMap _:node18sgmk7hex3 .
+
+_:node18sgmk7hex1 km-dev:hasSubjectMap _:node18sgmk7hex3 .
+
+_:node18sgmk7hex3 km-dev:isPartOfMapping _:node18sgmk7hex1 ;
+	a rr:SubjectMap ;
+	km-dev:alignmentNodeId "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo1" ;
+	rr:class nao:Photo ;
+	rr:template "{[\"metadata\",\"ImageName\"]}" ;
+	a km-dev:steinerTreeRootNode .
+
+km-dev:PredicateObjectMap_b2a26cc1-d49d-4db7-8ccc-4911d6475f34 rr:predicate nao:dateTime .
+
+_:node18sgmk7hex4 rr:column "[\"metadata\",\"DateTime\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex4 .
+
+km-dev:PredicateObjectMap_b2a26cc1-d49d-4db7-8ccc-4911d6475f34 rr:objectMap _:node18sgmk7hex4 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_b2a26cc1-d49d-4db7-8ccc-4911d6475f34 .
+
+km-dev:PredicateObjectMap_b2a26cc1-d49d-4db7-8ccc-4911d6475f34 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_b2a26cc1-d49d-4db7-8ccc-4911d6475f34 .
+
+km-dev:PredicateObjectMap_ddf80d7f-0476-420f-86af-96c555ed0fe9 rr:predicate nao:exposureTime .
+
+_:node18sgmk7hex5 rr:column "[\"metadata\",\"ExposureTime\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex5 .
+
+km-dev:PredicateObjectMap_ddf80d7f-0476-420f-86af-96c555ed0fe9 rr:objectMap _:node18sgmk7hex5 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_ddf80d7f-0476-420f-86af-96c555ed0fe9 .
+
+km-dev:PredicateObjectMap_ddf80d7f-0476-420f-86af-96c555ed0fe9 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_ddf80d7f-0476-420f-86af-96c555ed0fe9 .
+
+km-dev:PredicateObjectMap_c376f0a1-ab6a-43c6-8f8c-382e78dce76f rr:predicate nao:fNumber .
+
+_:node18sgmk7hex6 rr:column "[\"metadata\",\"FNumber\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex6 .
+
+km-dev:PredicateObjectMap_c376f0a1-ab6a-43c6-8f8c-382e78dce76f rr:objectMap _:node18sgmk7hex6 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_c376f0a1-ab6a-43c6-8f8c-382e78dce76f .
+
+km-dev:PredicateObjectMap_c376f0a1-ab6a-43c6-8f8c-382e78dce76f a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_c376f0a1-ab6a-43c6-8f8c-382e78dce76f .
+
+km-dev:PredicateObjectMap_1e3bf81f-1262-416b-a0f3-3c73791658d2 rr:predicate nao:flash .
+
+_:node18sgmk7hex7 rr:column "[\"metadata\",\"Flash\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex7 .
+
+km-dev:PredicateObjectMap_1e3bf81f-1262-416b-a0f3-3c73791658d2 rr:objectMap _:node18sgmk7hex7 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_1e3bf81f-1262-416b-a0f3-3c73791658d2 .
+
+km-dev:PredicateObjectMap_1e3bf81f-1262-416b-a0f3-3c73791658d2 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_1e3bf81f-1262-416b-a0f3-3c73791658d2 .
+
+km-dev:PredicateObjectMap_a2ffabba-c0b3-4158-a8db-e0ed47e3a4c0 rr:predicate nao:focalLength .
+
+_:node18sgmk7hex8 rr:column "[\"metadata\",\"FocalLength\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex8 .
+
+km-dev:PredicateObjectMap_a2ffabba-c0b3-4158-a8db-e0ed47e3a4c0 rr:objectMap _:node18sgmk7hex8 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_a2ffabba-c0b3-4158-a8db-e0ed47e3a4c0 .
+
+km-dev:PredicateObjectMap_a2ffabba-c0b3-4158-a8db-e0ed47e3a4c0 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_a2ffabba-c0b3-4158-a8db-e0ed47e3a4c0 .
+
+km-dev:PredicateObjectMap_f52ddaf4-aeac-47a2-8661-b63a066ef5b8 rr:predicate nao:gpsAltitudeRef .
+
+_:node18sgmk7hex9 rr:column "[\"metadata\",\"GPSAltitudeRef\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex9 .
+
+km-dev:PredicateObjectMap_f52ddaf4-aeac-47a2-8661-b63a066ef5b8 rr:objectMap _:node18sgmk7hex9 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_f52ddaf4-aeac-47a2-8661-b63a066ef5b8 .
+
+km-dev:PredicateObjectMap_f52ddaf4-aeac-47a2-8661-b63a066ef5b8 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_f52ddaf4-aeac-47a2-8661-b63a066ef5b8 .
+
+km-dev:PredicateObjectMap_343e8420-0037-4b7e-912f-4365e1ac67ad rr:predicate nao:gpsDateStamp .
+
+_:node18sgmk7hex10 rr:column "[\"metadata\",\"GPSDateStamp\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex10 .
+
+km-dev:PredicateObjectMap_343e8420-0037-4b7e-912f-4365e1ac67ad rr:objectMap _:node18sgmk7hex10 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_343e8420-0037-4b7e-912f-4365e1ac67ad .
+
+km-dev:PredicateObjectMap_343e8420-0037-4b7e-912f-4365e1ac67ad a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_343e8420-0037-4b7e-912f-4365e1ac67ad .
+
+km-dev:PredicateObjectMap_136af3b9-2083-497a-9456-99a5af169af2 rr:predicate nao:gpsProcessingMethod .
+
+_:node18sgmk7hex11 rr:column "[\"metadata\",\"GPSProcessingMethod\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex11 .
+
+km-dev:PredicateObjectMap_136af3b9-2083-497a-9456-99a5af169af2 rr:objectMap _:node18sgmk7hex11 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_136af3b9-2083-497a-9456-99a5af169af2 .
+
+km-dev:PredicateObjectMap_136af3b9-2083-497a-9456-99a5af169af2 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_136af3b9-2083-497a-9456-99a5af169af2 .
+
+km-dev:PredicateObjectMap_3584acba-980c-4969-a826-39026f88cda6 rr:predicate nao:gpsTimeStamp .
+
+_:node18sgmk7hex12 rr:column "[\"metadata\",\"GPSTimeStamp\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex12 .
+
+km-dev:PredicateObjectMap_3584acba-980c-4969-a826-39026f88cda6 rr:objectMap _:node18sgmk7hex12 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_3584acba-980c-4969-a826-39026f88cda6 .
+
+km-dev:PredicateObjectMap_3584acba-980c-4969-a826-39026f88cda6 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_3584acba-980c-4969-a826-39026f88cda6 .
+
+km-dev:PredicateObjectMap_b92a0f13-a9d8-4737-b8bc-7e302e233e6f rr:predicate nao:imageLength .
+
+_:node18sgmk7hex13 rr:column "[\"metadata\",\"ImageLength\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex13 .
+
+km-dev:PredicateObjectMap_b92a0f13-a9d8-4737-b8bc-7e302e233e6f rr:objectMap _:node18sgmk7hex13 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_b92a0f13-a9d8-4737-b8bc-7e302e233e6f .
+
+km-dev:PredicateObjectMap_b92a0f13-a9d8-4737-b8bc-7e302e233e6f a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_b92a0f13-a9d8-4737-b8bc-7e302e233e6f .
+
+km-dev:PredicateObjectMap_ac3713a3-31b2-42d6-a8cc-73d61257dfe8 rr:predicate nao:imageWidth .
+
+_:node18sgmk7hex14 rr:column "[\"metadata\",\"ImageWidth\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex14 .
+
+km-dev:PredicateObjectMap_ac3713a3-31b2-42d6-a8cc-73d61257dfe8 rr:objectMap _:node18sgmk7hex14 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_ac3713a3-31b2-42d6-a8cc-73d61257dfe8 .
+
+km-dev:PredicateObjectMap_ac3713a3-31b2-42d6-a8cc-73d61257dfe8 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_ac3713a3-31b2-42d6-a8cc-73d61257dfe8 .
+
+km-dev:PredicateObjectMap_1544c5f5-c661-4bdc-a92e-6f8a67a115ea rr:predicate nao:isoSpeedRatings .
+
+_:node18sgmk7hex15 rr:column "[\"metadata\",\"ISOSpeedRatings\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex15 .
+
+km-dev:PredicateObjectMap_1544c5f5-c661-4bdc-a92e-6f8a67a115ea rr:objectMap _:node18sgmk7hex15 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_1544c5f5-c661-4bdc-a92e-6f8a67a115ea .
+
+km-dev:PredicateObjectMap_1544c5f5-c661-4bdc-a92e-6f8a67a115ea a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_1544c5f5-c661-4bdc-a92e-6f8a67a115ea .
+
+km-dev:PredicateObjectMap_414c3bd6-4be5-4fb6-b463-27d68e9b34e3 rr:predicate nao:make .
+
+_:node18sgmk7hex16 rr:column "[\"metadata\",\"Make\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex16 .
+
+km-dev:PredicateObjectMap_414c3bd6-4be5-4fb6-b463-27d68e9b34e3 rr:objectMap _:node18sgmk7hex16 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_414c3bd6-4be5-4fb6-b463-27d68e9b34e3 .
+
+km-dev:PredicateObjectMap_414c3bd6-4be5-4fb6-b463-27d68e9b34e3 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_414c3bd6-4be5-4fb6-b463-27d68e9b34e3 .
+
+km-dev:PredicateObjectMap_83eb1b6b-be60-4de6-a65e-71ae361e3d8b rr:predicate nao:model .
+
+_:node18sgmk7hex17 rr:column "[\"metadata\",\"Model\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex17 .
+
+km-dev:PredicateObjectMap_83eb1b6b-be60-4de6-a65e-71ae361e3d8b rr:objectMap _:node18sgmk7hex17 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_83eb1b6b-be60-4de6-a65e-71ae361e3d8b .
+
+km-dev:PredicateObjectMap_83eb1b6b-be60-4de6-a65e-71ae361e3d8b a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_83eb1b6b-be60-4de6-a65e-71ae361e3d8b .
+
+km-dev:PredicateObjectMap_a3b222e5-b69a-4dff-a204-73e3fd0ded80 rr:predicate nao:orientation .
+
+_:node18sgmk7hex18 rr:column "[\"metadata\",\"Orientation\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex18 .
+
+km-dev:PredicateObjectMap_a3b222e5-b69a-4dff-a204-73e3fd0ded80 rr:objectMap _:node18sgmk7hex18 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_a3b222e5-b69a-4dff-a204-73e3fd0ded80 .
+
+km-dev:PredicateObjectMap_a3b222e5-b69a-4dff-a204-73e3fd0ded80 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_a3b222e5-b69a-4dff-a204-73e3fd0ded80 .
+
+km-dev:PredicateObjectMap_7c280388-3951-4e70-a1a4-9b99de00ff19 rr:predicate nao:whiteBalance .
+
+_:node18sgmk7hex19 rr:column "[\"metadata\",\"WhiteBalance\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasObjectMap _:node18sgmk7hex19 .
+
+km-dev:PredicateObjectMap_7c280388-3951-4e70-a1a4-9b99de00ff19 rr:objectMap _:node18sgmk7hex19 .
+
+km-dev:TriplesMap_77cdfcc7-dfa9-4f01-a7ed-2d7b0d3f64cc rr:predicateObjectMap km-dev:PredicateObjectMap_7c280388-3951-4e70-a1a4-9b99de00ff19 .
+
+km-dev:PredicateObjectMap_7c280388-3951-4e70-a1a4-9b99de00ff19 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18sgmk7hex1 .
+
+_:node18sgmk7hex1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_7c280388-3951-4e70-a1a4-9b99de00ff19 .
