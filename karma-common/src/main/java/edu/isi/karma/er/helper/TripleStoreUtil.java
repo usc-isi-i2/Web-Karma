@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import javax.ws.rs.core.UriBuilder;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -589,7 +591,8 @@ public class TripleStoreUtil {
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
-
+		context = normalizeURI(context);
+		mappingURI = normalizeURI(mappingURI);
 		try {
 
 			StringBuilder query = new StringBuilder();
@@ -1384,7 +1387,6 @@ public class TripleStoreUtil {
 	}
 	
 	
-	
 	public ArrayList<HashMap<String, String>> getAllInputColumnsForServiceNode(String serviceUrl) {
 		StringBuffer query = new StringBuffer();
 		query.append("prefix rr: <http://www.w3.org/ns/r2rml#>  prefix km-dev: <http://isi.edu/integration/karma/dev#> select ?colName ?colUrl where { <")
@@ -1485,7 +1487,11 @@ public class TripleStoreUtil {
 			logger.error("Query : " + query.toString());
 		}
 		return null;
+	}
 		
+	public String normalizeURI(String uri) {
+		UriBuilder builder = UriBuilder.fromPath(uri);
+		return builder.build().toString();
 	}
 
 	public HashMap<String, String> getServiceColumnLabelsForCurrentWorksheet(String rootNodeUrl, String modelGraphName, String serviceUrl) {

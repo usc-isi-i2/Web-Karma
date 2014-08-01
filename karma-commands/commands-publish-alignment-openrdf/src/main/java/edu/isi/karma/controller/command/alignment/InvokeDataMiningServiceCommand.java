@@ -23,12 +23,8 @@ package edu.isi.karma.controller.command.alignment;
 
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -39,12 +35,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
@@ -60,9 +55,8 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 /**
  * @author shri
  * */
-public class InvokeDataMiningServiceCommand extends Command {
+public class InvokeDataMiningServiceCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory.getLogger(InvokeDataMiningServiceCommand.class);
-	private final String worksheetId;
 	
 	private final String csvFileName;
 	private String dataMiningURL;
@@ -83,8 +77,7 @@ public class InvokeDataMiningServiceCommand extends Command {
 	 * @param isTesting A boolean flag to identify if it is the training or testing phase
 	 * */
 	protected InvokeDataMiningServiceCommand(String id, String worksheetId, String miningUrl, String fileName) {
-		super(id);
-		this.worksheetId = worksheetId;
+		super(id, worksheetId);
 		this.dataMiningURL = miningUrl;
 		this.csvFileName = fileName;
 	}

@@ -353,7 +353,7 @@ public class InvokePredefinedServiceCommand extends Command {
 		List<Row> rows = wk.getDataTable().getRows(0, numRows);
 		for(Row r : rows) {
 			try {
-				Thread.sleep(500);
+				Thread.sleep(50);
 				String responseString = "";
 				if(isGET) {
 					StringBuffer urlParams = new StringBuffer();

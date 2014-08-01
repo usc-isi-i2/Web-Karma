@@ -41,6 +41,10 @@ public class VWorkspaceRegistry {
 	{
 		registry.put(workspaceId, vWorkspace);
 	}
+	public void deregisterVWorkspace(String workspaceId)
+	{
+		registry.remove(workspaceId);
+	}
 	
 	public VWorkspace getVWorkspace(String workspaceId)
 	{

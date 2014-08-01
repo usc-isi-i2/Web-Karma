@@ -22,9 +22,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.CloneTableUtils;
@@ -43,21 +43,19 @@ import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
-public class SearchForDataToAugmentCommand extends Command{
+public class SearchForDataToAugmentCommand extends WorksheetCommand{
 	private static final Logger LOG = LoggerFactory.getLogger(SearchForDataToAugmentCommand.class);
 	private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 	private String tripleStoreUrl;
 	private String context;
 	private String nodeUri;
-	private String worksheetId;
 	private String columnUri;
 	private final Integer limit = 100;
 	public SearchForDataToAugmentCommand(String id, String url, String context, String nodeUri, String worksheetId, String columnUri) {
-		super(id);
+		super(id, worksheetId);
 		this.tripleStoreUrl = url;
 		this.context = context;
 		this.nodeUri = nodeUri;
-		this.worksheetId = worksheetId;
 		this.columnUri = columnUri;
 	}
 

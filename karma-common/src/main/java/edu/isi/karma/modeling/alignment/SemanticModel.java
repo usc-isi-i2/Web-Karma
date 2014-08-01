@@ -51,6 +51,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
@@ -75,6 +76,21 @@ public class SemanticModel {
 	protected Workspace workspace;
 	protected Worksheet worksheet;
 	
+	public SemanticModel(String id,
+			DirectedWeightedMultigraph<Node, LabeledLink> graph) {
+
+		this.id = id;
+		this.graph = graph;
+
+		this.setSuggestedTypesForColumnNodes();
+		this.setUserSelectedTypeForColumnNodes();
+
+		this.sourceColumns = this.getColumnNodes();
+		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
+		for (ColumnNode c : this.sourceColumns)
+			this.mappingToSourceColumns.put(c, c);
+	}
+	
 	public SemanticModel(Workspace workspace, Worksheet worksheet, 
 			String id,
 			DirectedWeightedMultigraph<Node, LabeledLink> graph) {
@@ -82,11 +98,14 @@ public class SemanticModel {
 		this.worksheet = worksheet;
 		this.id = id;
 		this.graph = graph;
+
+		this.setSuggestedTypesForColumnNodes();
+		this.setUserSelectedTypeForColumnNodes();
+
 		this.sourceColumns = this.getColumnNodes();
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
 		for (ColumnNode c : this.sourceColumns)
 			this.mappingToSourceColumns.put(c, c);
-		this.setUserSelectedTypeForColumnNodes();
 	}
 	
 	public SemanticModel(
@@ -161,9 +180,9 @@ public class SemanticModel {
 		return columnNodes;
 	}
 	
-	private void setUserSelectedTypeForColumnNodes() {
+	private void setSuggestedTypesForColumnNodes() {
 		
-		if (this.graph == null || this.sourceColumns == null)
+		if (this.graph == null)
 			return;
 		
 		for (Node n : this.graph.vertexSet()) {
@@ -171,9 +190,24 @@ public class SemanticModel {
 			if (!(n instanceof ColumnNode)) continue;
 			
 			ColumnNode cn = (ColumnNode)n;
+						
+			List<SemanticType> suggestedSemanticTypes = 
+					new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4);
+			cn.setSuggestedSemanticTypes(suggestedSemanticTypes);
+		}
+	}
+	
+	private void setUserSelectedTypeForColumnNodes() {
+		
+		if (this.graph == null)
+			return;
+		
+		for (Node n : this.graph.vertexSet()) {
 			
-			if (!this.sourceColumns.contains(cn)) continue;
+			if (!(n instanceof ColumnNode)) continue;
 			
+			ColumnNode cn = (ColumnNode)n;
+						
 			Set<LabeledLink> incomingLinks = this.graph.incomingEdgesOf(n);
 			if (incomingLinks != null && incomingLinks.size() == 1) {
 				LabeledLink link = incomingLinks.toArray(new LabeledLink[0])[0];
@@ -693,7 +727,8 @@ public class SemanticModel {
 		}
 		writer.name("graph");
 		if (this.graph == null) writer.value(nullStr);
-		else GraphUtil.writeGraph(workspace, worksheet, GraphUtil.asDefaultGraph(this.graph), writer);
+		else GraphUtil.writeGraph(GraphUtil.asDefaultGraph(this.graph), writer);
+//		else GraphUtil.writeGraph(workspace, worksheet, GraphUtil.asDefaultGraph(this.graph), writer);
 		writer.endObject();
 	}
 

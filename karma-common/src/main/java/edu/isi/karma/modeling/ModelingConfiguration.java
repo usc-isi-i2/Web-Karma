@@ -64,6 +64,8 @@ public class ModelingConfiguration {
 
     private static Boolean learnerEnabled;
     private static Boolean multipleSamePropertyPerNode;
+    
+    private static Boolean storeOldHistory;
 
     private static final String newLine = System.getProperty("line.separator").toString();
     private static String defaultModelingProperties = 
@@ -166,6 +168,11 @@ public class ModelingConfiguration {
 
             if(modelingProperties.getProperty("scoring.size.coefficient") != null)
             	scoringSizeCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.size.coefficient"));
+            
+            if(modelingProperties.getProperty("history.store.old") != null)
+            	storeOldHistory = Boolean.parseBoolean(modelingProperties.getProperty("history.store.old"));
+            else
+            	storeOldHistory = false;
 
 
         } catch (IOException e) {
@@ -314,6 +321,12 @@ public class ModelingConfiguration {
 		if (learnerEnabled == null)
 			load();
 		return learnerEnabled;
+	}
+	
+	public static boolean isStoreOldHistoryEnabled() {
+		if (storeOldHistory == null)
+			load();
+		return storeOldHistory;
 	}
 
 	public static void setLearnerEnabled(Boolean learnerEnabled) {

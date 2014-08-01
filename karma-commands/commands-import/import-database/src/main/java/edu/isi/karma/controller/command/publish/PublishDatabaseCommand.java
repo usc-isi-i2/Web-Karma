@@ -20,9 +20,24 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.publish;
 
-import edu.isi.karma.controller.command.Command;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -35,18 +50,8 @@ import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.DBType;
 import edu.isi.karma.util.JDBCUtilFactory;
 import edu.isi.karma.view.VWorkspace;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.*;
-
-public class PublishDatabaseCommand extends Command {
-	private final String worksheetId;
+public class PublishDatabaseCommand extends WorksheetCommand {
 	private String hostName;
 	private String port;
 	private String dbName;
@@ -80,8 +85,7 @@ public class PublishDatabaseCommand extends Command {
 	protected PublishDatabaseCommand(String id, String worksheetId,
 			String dbType, String hostName, String port, String dbName,String userName,String password, String tableName, 
 			String overwrite, String insert) {
-		super(id);
-		this.worksheetId = worksheetId;
+		super(id,worksheetId);
 		this.hostName=hostName;
 		this.dbName=dbName;
 		this.userName=userName;

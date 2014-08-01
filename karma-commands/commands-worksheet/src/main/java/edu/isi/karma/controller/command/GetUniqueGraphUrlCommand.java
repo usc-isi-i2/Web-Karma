@@ -20,6 +20,13 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
+import java.io.PrintWriter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -27,19 +34,12 @@ import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.PrintWriter;
 
 /**
  * Class responsible for fetching all the graphs in the tripleStore
  */
-public class GetUniqueGraphUrlCommand extends Command {
+public class GetUniqueGraphUrlCommand extends WorksheetCommand {
 	private String tripleStoreUrl;
-	private String worksheetId;
 	private String graphUriTobeValidated;
 	
 	private enum JsonKeys {
@@ -49,9 +49,8 @@ public class GetUniqueGraphUrlCommand extends Command {
 	private static Logger logger = LoggerFactory.getLogger(GetUniqueGraphUrlCommand.class);
 	
 	protected GetUniqueGraphUrlCommand(String id, String worksheetId, String url, String context ){
-		super(id);
+		super(id, worksheetId);
 		this.tripleStoreUrl=url;
-		this.worksheetId = worksheetId;
 		this.graphUriTobeValidated = context;
 	}
 

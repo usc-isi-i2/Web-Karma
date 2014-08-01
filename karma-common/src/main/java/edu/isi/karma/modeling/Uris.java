@@ -96,6 +96,7 @@ public abstract class Uris {
 	public static final String KM_HAS_OUTPUTCOLUMNS = Namespaces.KARMA_DEV + "hasOutputColumns";
 	public static final String KM_HAS_MODELLABEL = Namespaces.KARMA_DEV + "hasModelLabel";
 	public static final String KM_HAS_BASEURI = Namespaces.KARMA_DEV + "hasBaseURI";
+	public static final String KM_HAS_OLDHISTORY = Namespaces.KARMA_DEV + "hasOldHistory";
 
 	
 	public static final String PROV_ENTITY_URI = Namespaces.PROV + "Entity";

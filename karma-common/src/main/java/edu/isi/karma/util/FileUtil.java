@@ -24,8 +24,10 @@ package edu.isi.karma.util;
 
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.JSONException;
@@ -34,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.*;
 import java.util.Iterator;
 import java.util.List;
@@ -78,7 +81,13 @@ public class FileUtil {
                 } else {
                     //Handle Uploaded files. Write file to the ultimate location.
                     uploadedFile = new File(destinationDir, item.getName());
-                    item.write(uploadedFile);
+                    if (item instanceof DiskFileItem) {
+                    	DiskFileItem t = (DiskFileItem)item;
+                    	if (!t.getStoreLocation().renameTo(uploadedFile))
+                    		item.write(uploadedFile);
+                    }
+                    else
+                    	item.write(uploadedFile);
                 }
             }
         } catch (FileUploadException ex) {

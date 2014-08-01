@@ -27,11 +27,13 @@ package edu.isi.karma.imp.json;
 
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +44,6 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
-import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.JSONUtil;
 
 /**
@@ -56,27 +57,37 @@ public class JsonImport extends Import {
 	private final Object json;
 	private int maxNumLines;
 	private int numObjects;
-	
+	private Workspace workspace;
+	private class FileObject {
+		File file;
+		String encoding;
+		public FileObject(File file, String encoding) {
+			this.file = file;
+			this.encoding = encoding;
+		}
+		
+	}
 	public JsonImport(Object json, String worksheetName, Workspace workspace,
 			String encoding, int maxNumLines) {
 		super(worksheetName, workspace, encoding);
 		this.json = json;
+		this.workspace = workspace;
 		this.maxNumLines = maxNumLines;
 	}
 
 	public JsonImport(File jsonFile, String worksheetName, Workspace workspace,
 			String encoding, int maxNumLines) {
 		super(worksheetName, workspace, encoding);
-
-		String fileContents = null;
-		try {
-			fileContents = FileUtil
-					.readFileContentsToString(jsonFile, encoding);
-		} catch (IOException ex) {
-			logger.error("Error in reading the JSON file");
-		}
-
-		this.json = JSONUtil.createJson(fileContents);
+//		String fileContents = null;
+//		try {
+//			fileContents = FileUtil
+//					.readFileContentsToString(jsonFile, encoding);
+//		} catch (IOException ex) {
+//			logger.error("Error in reading the JSON file");
+//		}
+		FileObject fo = new FileObject(jsonFile, encoding);
+		this.json = fo;
+		this.workspace = workspace;
 		this.maxNumLines = maxNumLines;
 	}
 
@@ -86,15 +97,16 @@ public class JsonImport extends Import {
 				encoding, maxNumLines);
 	}
 
-	public JsonImport(String jsonString, RepFactory repFactory, Worksheet wk,
+	public JsonImport(String jsonString, RepFactory repFactory, Worksheet wk, Workspace workspace, 
 			int maxNumLines) {
-		this(JSONUtil.createJson(jsonString), repFactory, wk, maxNumLines);
+		this(JSONUtil.createJson(jsonString), repFactory, wk, workspace, maxNumLines);
 	}
 
-	public JsonImport(Object json, RepFactory repFactory, Worksheet wk,
+	public JsonImport(Object json, RepFactory repFactory, Worksheet wk, Workspace workspace, 
 			int maxNumLines) {
 		super(repFactory, wk);
 		this.json = json;
+		this.workspace = workspace;
 		this.maxNumLines = maxNumLines;
 	}
 
@@ -105,20 +117,52 @@ public class JsonImport extends Import {
 			getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.COLLECTION);
 			JSONArray a = (JSONArray) json;
 			for (int i = 0; i < a.length(); i++) {
+				JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet());
 				JsonImportValues.addListElement(a.get(i), getWorksheet().getHeaders(),
-						getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
+						getWorksheet().getDataTable());
 				if (maxNumLines > 0 && numObjects >= maxNumLines)
 					break;
 			}
 		} else if (json instanceof JSONObject) {
 			getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.OBJECT);
+			JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet());
 			JsonImportValues.addKeysAndValues((JSONObject) json, getWorksheet().getHeaders(),
-					getWorksheet().getDataTable(), maxNumLines, numObjects, getFactory(), getWorksheet());
+					getWorksheet().getDataTable());
 		}
-
+		else if (json != null && json instanceof FileObject) {
+			FileObject fo = (FileObject)json;
+			boolean flag = true;
+			try {
+				JSONTokener tokener = new JSONTokener(new InputStreamReader(new FileInputStream(fo.file), fo.encoding));
+				char c = tokener.nextClean();			
+				if (c == '{') {
+					getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.OBJECT);
+					JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet());
+					JsonImportValues.addKeysAndValues(tokener, getWorksheet().getHeaders(),
+							getWorksheet().getDataTable());
+				}
+				else if (c == '['){
+					flag = false;
+					getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.COLLECTION);
+					JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet());
+					JsonImportValues.addListElement(tokener, getWorksheet().getHeaders(), getWorksheet().getDataTable());
+				}
+			}catch(Exception e) {
+				String worksheetname = getWorksheet().getHeaders().getTableName();
+				String encoding = getWorksheet().getEncoding();
+				workspace.removeWorksheet(getWorksheet().getId());
+				getFactory().removeWorksheet(getWorksheet().getId(), workspace.getCommandHistory());
+				createWorksheet(worksheetname, workspace, encoding);
+				if (flag)
+					getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.OBJECT);
+				else
+					getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.COLLECTION);
+				logger.error("Parsing failure", e);
+			}
+		}
 		Worksheet ws = getWorksheet();
 		ws.getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.JSON.toString());
 		return ws;
 	}
-	
+
 }
