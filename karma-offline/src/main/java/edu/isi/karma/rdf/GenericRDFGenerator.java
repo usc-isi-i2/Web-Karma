@@ -167,7 +167,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 		        workspace.getFactory(), workspace.getOntologyManager(), writers,
 		        addProvenance, mapping, errorReport);
 		rdfGen.generateRDF(true);
-		removeWorkspace(workspace);
+		workspace.removeWorksheet(worksheet.getId());
+		//removeWorkspace(workspace);
 		
 		logger.debug("Generated rdf for " + sourceName);
 	}
