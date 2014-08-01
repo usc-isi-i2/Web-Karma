@@ -10,6 +10,7 @@ public class SuperSelectionManager {
 	private SuperSelection currentSelection = null;
 	public SuperSelectionManager() {
 		selectionMapping.put("DEFAULT_SELECTION", new SuperSelection(null));
+		currentSelection = selectionMapping.get("DEFAULT_SELECTION");
 	}
 	
 	public SuperSelection defineSelection(String name) {
