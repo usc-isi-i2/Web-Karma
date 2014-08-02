@@ -53,18 +53,16 @@ public class Table extends RepEntity {
 	// My rows.
 	private List<Row> rows = new ArrayList<Row>();
 	
-	private SuperSelectionManager selMgr;
 	// mariam
 	/**
 	 * The node that this table is a nested table in.
 	 */
 	private Node nestedTableInNode;
 
-	Table(String myWorksheetId, String id, String hTableId, SuperSelectionManager selMgr) {
+	Table(String myWorksheetId, String id, String hTableId) {
 		super(id);
 		this.worksheetId = myWorksheetId;
 		this.hTableId = hTableId;
-		this.selMgr = selMgr;
 	}
 
 	// mariam
@@ -141,12 +139,12 @@ public class Table extends RepEntity {
 	 * @return the requested number of rows or less if the count or startIndex
 	 *         are out of bounds.
 	 */
-	public ArrayList<Row> getRows(int startIndex, int count) {
+	public ArrayList<Row> getRows(int startIndex, int count, SuperSelection sel) {
 		ArrayList<Row> result = new ArrayList<Row>();
 		if (rows.size() > 0) {
 			for (int i = Math.min(startIndex, rows.size() - 1); i < Math.min(
 					startIndex + count, rows.size()); i++) {
-				if (selMgr.getCurrentSuperSelection().isSelected(rows.get(i)))
+				if (sel.isSelected(rows.get(i)))
 					continue;
 				result.add(rows.get(i));
 			}
@@ -161,8 +159,6 @@ public class Table extends RepEntity {
 		pw.println(factory.getHTable(hTableId).getTableName());
 
 		for (Row r : rows) {
-			if (selMgr.getCurrentSuperSelection().isSelected(r))
-				continue;
 			r.prettyPrint(prefix, pw, factory);
 		}
 	}
@@ -176,35 +172,35 @@ public class Table extends RepEntity {
 	 * @param nodes
 	 *            Collection of nodes that satisfy the path
 	 */
-	public boolean collectNodes(HNodePath path, Collection<Node> nodes) {
+	public boolean collectNodes(HNodePath path, Collection<Node> nodes, SuperSelection sel) {
 		if (nodes == null) {
 			nodes = new ArrayList<Node>();
 		}
-		return collectNodes(path, nodes, rows);
+		return collectNodes(path, nodes, rows, sel);
 	}
 
 	private boolean collectNodes(HNodePath path, Collection<Node> nodes,
-			List<Row> rows) {
+			List<Row> rows, SuperSelection sel) {
 		boolean result = false;
 		for (Row r : rows) {
-			if (selMgr.getCurrentSuperSelection().isSelected(r))
+			if (sel.isSelected(r))
 				continue;
-			result |= r.collectNodes(path, nodes);
+			result |= r.collectNodes(path, nodes, sel);
 
 		}
 		return result;
 	}
 
 	public void setCollectedNodeValues(HNodePath path, List<String> nodes,
-			RepFactory factory) {
-		setCollectedNodeValues(path, nodes, rows, 0, factory);
+			RepFactory factory, SuperSelection sel) {
+		setCollectedNodeValues(path, nodes, rows, 0, factory, sel);
 	}
 
 	private void setCollectedNodeValues(HNodePath path, List<String> nodes,
-			List<Row> rows, int nodeIdx, RepFactory factory) {
+			List<Row> rows, int nodeIdx, RepFactory factory, SuperSelection sel) {
 
 		RowIterator: for (Row r : rows) {
-			if (selMgr.getCurrentSuperSelection().isSelected(r))
+			if (sel.isSelected(r))
 				continue;
 			Node n = r.getNode(path.getFirst().getId());
 			if (n == null) {
@@ -223,10 +219,10 @@ public class Table extends RepEntity {
 					continue RowIterator;
 
 				List<Row> rowsNestedTable = n.getNestedTable().getRows(0,
-						numRows);
+						numRows, sel);
 				if (rowsNestedTable != null && rowsNestedTable.size() != 0) {
 					setCollectedNodeValues(path.getRest(), nodes,
-							rowsNestedTable, nodeIdx, factory);
+							rowsNestedTable, nodeIdx, factory, sel);
 					continue RowIterator;
 				}
 			}
@@ -270,12 +266,12 @@ public class Table extends RepEntity {
 	}
 
 	public void setValueInAllRows(String hNodeId, CellValue value,
-			RepFactory factory) {
+			RepFactory factory, SuperSelection sel) {
 		// logger.info("Setting value of column " +
 		// factory.getColumnName(hNodeId) + " to "
 		// + value.asString());
 		for (Row r : rows) {
-			if (selMgr.getCurrentSuperSelection().isSelected(r))
+			if (sel.isSelected(r))
 				continue;
 			// logger.info("Setting value of column " +
 			// factory.getColumnName(hNodeId) + " in row "
@@ -283,12 +279,5 @@ public class Table extends RepEntity {
 			r.setValue(hNodeId, value, Node.NodeStatus.original, factory);
 		}
 	}
-	
-	public void setSuperSelectionManager(SuperSelectionManager selMgr) {
-		if (selMgr == null) {
-			logger.error("should not be null");
-			return;
-		}
-		this.selMgr = selMgr;
-	}
+
 }

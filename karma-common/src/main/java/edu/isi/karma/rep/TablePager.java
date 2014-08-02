@@ -25,6 +25,8 @@ package edu.isi.karma.rep;
 
 import java.util.List;
 
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
+
 public class TablePager {
 
 	private final Table table;
@@ -45,7 +47,7 @@ public class TablePager {
 	}
 
 	public List<Row> getRows() {
-		return table.getRows(0, currentEndIndex+1);
+		return table.getRows(0, currentEndIndex+1, SuperSelectionManager.DEFAULT_SELECTION);
 	}
 
 	public int getPagerSize() {

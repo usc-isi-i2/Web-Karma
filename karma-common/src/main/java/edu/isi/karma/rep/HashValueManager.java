@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
+
 public class HashValueManager {
 	private static Map<String, HashMap<String, String>> hashTable = new HashMap<String, HashMap<String, String>>();
 
@@ -20,7 +22,7 @@ public class HashValueManager {
 			Node n = row.getNode(HNodeid);
 			if (n.hasNestedTable()) {
 				Table nestedTable = n.getNestedTable();
-				for (Row nestedRow : nestedTable.getRows(0, nestedTable.getNumRows())) {
+				for (Row nestedRow : nestedTable.getRows(0, nestedTable.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
 					List<String> ids = new ArrayList<String>();
 					for (Node node : nestedRow.getNodes()) {
 						ids.add(node.getHNodeId());
@@ -54,7 +56,7 @@ public class HashValueManager {
 			Node n = row.getNode(HNodeid);
 			if (n.hasNestedTable()) {
 				Table nestedTable = n.getNestedTable();
-				for (Row nestedRow : nestedTable.getRows(0, nestedTable.getNumRows())) {
+				for (Row nestedRow : nestedTable.getRows(0, nestedTable.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
 					List<String> ids = new ArrayList<String>();
 					for (Node node : nestedRow.getNodes()) {
 						ids.add(node.getHNodeId());
@@ -81,7 +83,7 @@ public class HashValueManager {
 		hashTable.clear();
 	}
 	private static String getHashValue(Table table, String NodeId) {
-		for (Row row : table.getRows(0, table.getNumRows())) {
+		for (Row row : table.getRows(0, table.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
 			for (Node node : row.getNodes()) {
 				if (node.getId().compareTo(NodeId) == 0) {
 					return DigestUtils.shaHex(node.getValue().asString());

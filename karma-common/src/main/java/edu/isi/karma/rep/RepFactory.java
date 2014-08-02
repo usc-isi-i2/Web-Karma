@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.rep.HNode.HNodeType;
 
@@ -49,7 +50,6 @@ public class RepFactory {
 		Worksheet ws = new Worksheet(id, headers, dataTable, encoding);
 		workspace.addWorksheet(ws);
 		worksheets.put(id, ws);
-		dataTable.setSuperSelectionManager(ws.getSuperSelectionManager());
 		return ws;
 	}
         
@@ -83,7 +83,7 @@ public class RepFactory {
 	}
 	
 	private void removeDataTableRecursive(Table table) {
-		for (Row r : table.getRows(0, table.getNumRows())) {
+		for (Row r : table.getRows(0, table.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
 			for (Node n : r.getNodes()) {
 				if (n.hasNestedTable()) {
 					removeDataTableRecursive(n.getNestedTable());
@@ -164,8 +164,7 @@ public class RepFactory {
 	}
 
 	Table createTable(String id, String hTableId, String worksheetId) {
-		Worksheet ws = this.getWorksheet(worksheetId);
-		Table t = new Table(worksheetId, id, hTableId, ws != null ? ws.getSuperSelectionManager() : null);
+		Table t = new Table(worksheetId, id, hTableId);
 		tables.put(id, t);
 		return t;
 	}

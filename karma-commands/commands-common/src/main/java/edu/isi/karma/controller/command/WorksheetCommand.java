@@ -39,17 +39,14 @@ public abstract class WorksheetCommand extends Command {
 
 	protected final String worksheetId;
 	protected SuperSelection selection;
-	protected WorksheetCommand(String id, String worksheetId) {
+	protected WorksheetCommand(String id, String worksheetId, SuperSelection selection) {
 		super(id);
 		this.worksheetId = worksheetId;
+		this.selection = selection;
 	}
 
 	public String getWorksheetId() {
 		return worksheetId;
-	}
-	
-	public void setSelection(SuperSelection sel) {
-		this.selection = sel;
 	}
 	
 	private Alignment getAlignmentOrCreateIt(Workspace workspace)
