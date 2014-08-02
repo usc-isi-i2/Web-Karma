@@ -1,10 +1,9 @@
 package edu.isi.karma.web.services.rdf;
 
+import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
+
 public class FormParameters {
 	
-	public static final String PROTOCOL = "Protocol";
-	public static final String HTTP_HOST = "HttpHost";
-	public static final String PORT = "Port";
 	public static final String SPARQL_ENDPOINT = "SparqlEndPoint";
 	public static final String GRAPH_URI = "GraphURI";
 	public static final String R2RML_URL = "R2rmlURI";
@@ -16,4 +15,8 @@ public class FormParameters {
 	public static final String TRIPLE_STORE_SESAME = "Sesame";
 	public static final String TRIPLE_STORE_VIRTUOSO = "Virtuoso";
 	public static final String OVERWRITE = "Overwrite"; 
+	public static final String CONTENT_TYPE = "ContentType";
+	public static final String CONTENT_TYPE_CSV = InputType.CSV.toString();
+	public static final String CONTENT_TYPE_JSON = InputType.JSON.toString();
+	public static final String CONTENT_TYPE_XML = InputType.XML.toString();
 }

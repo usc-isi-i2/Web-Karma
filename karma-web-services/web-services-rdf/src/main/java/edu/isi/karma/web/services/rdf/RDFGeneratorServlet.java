@@ -2,8 +2,11 @@ package edu.isi.karma.web.services.rdf;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -26,6 +29,7 @@ import org.apache.http.impl.auth.DigestScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
+import org.hsqldb.lib.StringInputStream;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +65,7 @@ public class RDFGeneratorServlet{
 		try
 		{
 			logger.info("Path - r2rml/rdf . Generate and return RDF as String");
-			return GenerateRDF(formParams.getFirst(FormParameters.RAW_DATA), formParams.getFirst(FormParameters.R2RML_URL));
+			return getRDF(formParams);
 		}
 		catch(JSONException je)
 		{
@@ -98,20 +102,22 @@ public class RDFGeneratorServlet{
 		try
 		{
 			logger.info("Path - r2rml/sparql. Store RDF to triplestore and return the Response");
-	
-			logger.info("Generating RDF for: " + formParams.getFirst(FormParameters.RAW_DATA));
 			
-			String strRDF = GenerateRDF(formParams.getFirst(FormParameters.RAW_DATA), formParams.getFirst(FormParameters.R2RML_URL));
-	
-			int responseCode = PublishRDFToTripleStore(formParams, strRDF);
+			String strRDF = getRDF(formParams);
 			
+			if(strRDF != null)
+			{
+				int responseCode = PublishRDFToTripleStore(formParams, strRDF);
+				
+				
+				//TODO Make it better
+				if(responseCode == 200 || responseCode == 201)
+					return Response.status(responseCode).entity("Success").build();
+				else
+					return Response.status(responseCode).entity("Failure: Check logs for more information").build();
+			}
 			
-			//TODO Make it better
-			if(responseCode == 200 || responseCode == 201)
-				return Response.status(responseCode).entity("Success").build();
-			else
-				return Response.status(responseCode).entity("Failure: Check logs for more information").build();
-			
+			return Response.status(401).entity("Failure: Check logs for more information").build();
 			
 		}
 		catch(ClientProtocolException cpe)
@@ -150,20 +156,21 @@ public class RDFGeneratorServlet{
 	{
 		try
 		{
-			logger.info("Path - r2rml/sparql. Store RDF to triplestore and return the Response");
-	
-			logger.info("Generating RDF for: " + formParams.getFirst(FormParameters.RAW_DATA));
+			logger.info("Path - r2rml/rdf/sparql. Store RDF to triplestore and return the Response");
 			
-			String strRDF = GenerateRDF(formParams.getFirst(FormParameters.RAW_DATA), formParams.getFirst(FormParameters.R2RML_URL));
-	
-			int responseCode = PublishRDFToTripleStore(formParams, strRDF);
+			String strRDF = getRDF(formParams);
 			
-			//TODO Make it better
-			if(responseCode == 200 || responseCode == 201)
-				logger.info("Successfully completed");
-			else
-				logger.error("There was an error while publishing to Triplestore");
-			
+			if(strRDF != null)
+			{
+				int responseCode = PublishRDFToTripleStore(formParams, strRDF);
+				
+				//TODO Make it better
+				if(responseCode == 200 || responseCode == 201)
+					logger.info("Successfully completed");
+				else
+					logger.error("There was an error while publishing to Triplestore");
+				
+			}
 			
 			return strRDF;
 		}
@@ -194,6 +201,24 @@ public class RDFGeneratorServlet{
 		}
 	}
 	
+	/*
+	 * If URL is provided, data will be fetched from the URL, else raw Data in JSON, CSV or XML should be provided
+	 */
+	
+	private String getRDF(MultivaluedMap<String, String> formParams) throws JSONException, MalformedURLException, KarmaException, IOException
+	{
+		if(formParams.getFirst(FormParameters.DATA_URL) != null || formParams.getFirst(FormParameters.DATA_URL).trim() != "")
+			return GenerateRDF(new URL(formParams.getFirst(FormParameters.DATA_URL)).openStream(),
+									   formParams.getFirst(FormParameters.R2RML_URL),
+									   formParams.getFirst(FormParameters.CONTENT_TYPE));
+		
+		if(formParams.getFirst(FormParameters.RAW_DATA) != null || formParams.getFirst(FormParameters.RAW_DATA).trim() != "")
+			return GenerateRDF(formParams.getFirst(FormParameters.RAW_DATA), 
+							   formParams.getFirst(FormParameters.R2RML_URL),
+					    	   formParams.getFirst(FormParameters.CONTENT_TYPE));
+		
+		return null;
+	}
 	
 	private int PublishRDFToTripleStore(MultivaluedMap<String, String> formParams, String strRDF) throws ClientProtocolException, IOException, KarmaException
 	{
@@ -206,7 +231,9 @@ public class RDFGeneratorServlet{
 		
 		switch (formParams.getFirst(FormParameters.TRIPLE_STORE))
 		{
-			case FormParameters.TRIPLE_STORE_VIRTUOSO : HttpHost httpHost = getHttpHost(formParams);
+			case FormParameters.TRIPLE_STORE_VIRTUOSO : URL url = new URL(tripleStoreURL);
+														
+														HttpHost httpHost = new HttpHost(url.getHost(), url.getPort(), url.getProtocol());
 			
 														HttpPost httpPost = new HttpPost(tripleStoreURL);
 			
@@ -219,8 +246,6 @@ public class RDFGeneratorServlet{
 														responseCode = invokeHTTPRequestWithAuth(httpHost, httpPost, MediaType.APPLICATION_XML, 
 																									null, formParams.getFirst(FormParameters.USERNAME), 
 																									formParams.getFirst(FormParameters.PASSWORD));
-			
-														//int responseCode = invokeHTTPDeleteWithAuth(httpHost,"http://fusion-sqid.isi.edu:8890/sparql-graph-crud-auth?graph-uri=http://fusion-sqid.isi.edu:8890/image-metadata", userName, password);
 														
 														break;
 											
@@ -240,49 +265,26 @@ public class RDFGeneratorServlet{
 	}
 	
 	
-	private HttpHost getHttpHost(MultivaluedMap<String, String> formParams)
-	{
-		return new HttpHost(formParams.getFirst(FormParameters.HTTP_HOST), 
-							Integer.parseInt(formParams.getFirst(FormParameters.PORT)), 
-							formParams.getFirst(FormParameters.PROTOCOL));
-	}
-	
 	private String getTripleStoreURL(MultivaluedMap<String, String> formParams)
 	{
 		StringBuilder sbTSURL = new StringBuilder();
 		
-		if(formParams.getFirst(FormParameters.PROTOCOL) != null || formParams.getFirst(FormParameters.PROTOCOL).trim() != "")
-			sbTSURL.append(formParams.getFirst(FormParameters.PROTOCOL) + "://");
-		
-		if(formParams.getFirst(FormParameters.HTTP_HOST) != null || formParams.getFirst(FormParameters.HTTP_HOST).trim() != "")
-			sbTSURL.append(formParams.getFirst(FormParameters.HTTP_HOST) + ":");
-		
-		if(formParams.getFirst(FormParameters.PORT) != null || formParams.getFirst(FormParameters.PORT).trim() != "")
-			sbTSURL.append(formParams.getFirst(FormParameters.PORT));
-		
 		if(formParams.getFirst(FormParameters.SPARQL_ENDPOINT) != null || formParams.getFirst(FormParameters.SPARQL_ENDPOINT).trim() != "")
 			sbTSURL.append(formParams.getFirst(FormParameters.SPARQL_ENDPOINT));
 		
-		if(formParams.getFirst(FormParameters.GRAPH_URI) != null || formParams.getFirst(FormParameters.GRAPH_URI).trim() != "")
-			sbTSURL.append(formParams.getFirst(FormParameters.GRAPH_URI));
+		if(formParams.getFirst(FormParameters.TRIPLE_STORE).equals(FormParameters.TRIPLE_STORE_VIRTUOSO))
+			if(formParams.getFirst(FormParameters.GRAPH_URI) != null || formParams.getFirst(FormParameters.GRAPH_URI).trim() != "")
+			{
+				sbTSURL.append("?graph-uri=");
+				sbTSURL.append(formParams.getFirst(FormParameters.GRAPH_URI));
+			}
 		
 		return sbTSURL.toString();   
 				
 	}
-	private String GenerateRDF(String metadataJSON, String r2rmlURI) throws KarmaException, JSONException, IOException
-	{
-
-			logger.info("Parse and model JSON:" + metadataJSON);
-			
-			UpdateContainer uc = new UpdateContainer();
-			KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
-			userMetadataManager.register(new UserPreferencesMetadata(), uc);
-			userMetadataManager.register(new UserConfigMetadata(), uc);
-			userMetadataManager.register(new PythonTransformationMetadata(), uc);
-	
-	        SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
-	        
-	        ModelingConfiguration.setLearnerEnabled(false); // disable automatic learning
+	private String GenerateRDF(InputStream dataStream, String r2rmlURI, String dataType) throws KarmaException, JSONException, IOException
+	{		
+			initialization();
 			
 	        GenericRDFGenerator gRDFGen = new GenericRDFGenerator();
 			
@@ -298,10 +300,35 @@ public class RDFGeneratorServlet{
 			KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
 			
 			//TODO Replace PHONE with something meaningful
-			gRDFGen.generateRDF(FormParameters.R2RML_URL,"PHONE",metadataJSON , InputType.JSON, false, outWriter);
+			
+			gRDFGen.generateRDF(FormParameters.R2RML_URL,"PHONE",dataStream , InputType.valueOf(dataType), false, outWriter);
 			
 			return sw.toString();
 		
+	}
+	
+	private String GenerateRDF(String rawData, String r2rmlURI, String dataType) throws KarmaException, JSONException, IOException
+	{
+		return GenerateRDF(new StringInputStream(rawData), r2rmlURI, dataType);
+	}
+
+	static {
+		try {
+			initialization();
+		} catch (KarmaException ke) {
+			logger.error("KarmaException: " + ke.getMessage());
+		}
+	}
+	private static void initialization() throws KarmaException {
+		UpdateContainer uc = new UpdateContainer();
+		KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
+		userMetadataManager.register(new UserPreferencesMetadata(), uc);
+		userMetadataManager.register(new UserConfigMetadata(), uc);
+		userMetadataManager.register(new PythonTransformationMetadata(), uc);
+
+		SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
+		
+		ModelingConfiguration.setLearnerEnabled(false); // disable automatic learning
 	}
 	
 	private int invokeHTTPRequestWithAuth(HttpHost httpHost, HttpPost httpPost, String contentType, 
