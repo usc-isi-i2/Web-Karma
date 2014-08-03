@@ -37,6 +37,8 @@ import com.rits.cloning.Cloner;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.ReplaceWorksheetUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -58,7 +60,7 @@ import edu.isi.karma.rep.sources.Table;
 import edu.isi.karma.rep.sources.WebService;
 import edu.isi.karma.webserver.KarmaException;
 
-public class PopulateCommand extends WorksheetCommand{
+public class PopulateCommand extends WorksheetSelectionCommand{
 
 
 	private Worksheet worksheetBeforeInvocation = null;
@@ -67,8 +69,8 @@ public class PopulateCommand extends WorksheetCommand{
 	private static Logger logger = LoggerFactory
 			.getLogger(PopulateCommand.class.getSimpleName());
 
-	public PopulateCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+	public PopulateCommand(String id, String worksheetId, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		
 		addTag(CommandTag.Transformation);
 	}
@@ -210,7 +212,7 @@ public class PopulateCommand extends WorksheetCommand{
 			List<String> requestIds) {
 		
 		List<String> requestURLStrings = new ArrayList<String>();
-		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows());
+		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows(), selection);
 		if (rows == null || rows.size() == 0) {
 			logger.error("Data table does not have any row.");
 			return null;	

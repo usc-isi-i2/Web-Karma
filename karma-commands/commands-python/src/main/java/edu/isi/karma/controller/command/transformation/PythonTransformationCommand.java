@@ -39,6 +39,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -52,7 +54,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
 
-public abstract class PythonTransformationCommand extends WorksheetCommand {
+public abstract class PythonTransformationCommand extends WorksheetSelectionCommand {
 
 	protected String transformationCode;
 	final protected String hNodeId;
@@ -67,8 +69,8 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 	}
 
 	public PythonTransformationCommand(String id, String transformationCode,
-			String worksheetId, String hNodeId, String errorDefaultValue) {
-		super(id, worksheetId);
+			String worksheetId, String hNodeId, String errorDefaultValue, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.transformationCode = transformationCode;
 		this.hNodeId = hNodeId;
 		this.errorDefaultValue = errorDefaultValue;
@@ -127,7 +129,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet
 				.getDataTable().getNumRows()));
-		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes);
+		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes, selection);
 
 		Map<String, String> rowToValueMap = new HashMap<String, String>();
 

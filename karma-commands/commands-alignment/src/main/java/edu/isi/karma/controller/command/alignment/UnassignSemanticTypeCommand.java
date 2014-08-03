@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -141,7 +142,7 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 
 		// Remove the nodes (if any) from the outlier tag
 		Collection<edu.isi.karma.rep.Node> nodes = new ArrayList<edu.isi.karma.rep.Node>();
-		worksheet.getDataTable().collectNodes(currentPath, nodes);
+		worksheet.getDataTable().collectNodes(currentPath, nodes, SuperSelectionManager.DEFAULT_SELECTION);
 		Set<String> nodeIds = new HashSet<String>();
 		for (edu.isi.karma.rep.Node node : nodes) {
 			nodeIds.add(node.getId());

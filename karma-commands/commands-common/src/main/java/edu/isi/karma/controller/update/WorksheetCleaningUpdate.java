@@ -21,28 +21,39 @@
 
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.rep.*;
-import edu.isi.karma.util.HTTPUtil;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.view.ViewPreferences.ViewPreference;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
-import java.util.*;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
+import edu.isi.karma.rep.ColumnMetadata;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.util.HTTPUtil;
+import edu.isi.karma.view.VWorksheet;
+import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.ViewPreferences.ViewPreference;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class WorksheetCleaningUpdate extends
 AbstractUpdate {
 
 	private String	worksheetId;
 	private boolean	forceUpdates;
-
 	private static Logger logger = LoggerFactory.getLogger(
 			WorksheetCleaningUpdate.class);
 
@@ -73,7 +84,7 @@ AbstractUpdate {
 		for (HNodePath path:columnPaths) {
 			String leafHNodeId = path.getLeaf().getId();
 			List<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
-			worksheet.getDataTable().collectNodes(path, nodes);
+			worksheet.getDataTable().collectNodes(path, nodes, SuperSelectionManager.DEFAULT_SELECTION);
 			final int sampleSize = (nodes.size() > 1000) ? 1000 : nodes.size();
 			columnsInvoked.add(leafHNodeId);
 			try {

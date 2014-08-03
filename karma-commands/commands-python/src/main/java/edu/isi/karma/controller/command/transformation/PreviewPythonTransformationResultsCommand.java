@@ -23,6 +23,7 @@ package edu.isi.karma.controller.command.transformation;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.PythonPreviewResultsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -30,6 +31,7 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +43,8 @@ public class PreviewPythonTransformationResultsCommand extends PythonTransformat
 
 	
 	protected PreviewPythonTransformationResultsCommand(String id, String worksheetId, 
-			String transformationCode, String errorDefaultValue, String hNodeId) {
-		super(id, transformationCode, worksheetId, hNodeId,  errorDefaultValue);
+			String transformationCode, String errorDefaultValue, String hNodeId, SuperSelection sel) {
+		super(id, transformationCode, worksheetId, hNodeId,  errorDefaultValue, sel);
 	}
 
 	@Override

@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AddColumnUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -33,7 +35,7 @@ import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
 import edu.isi.karma.webserver.KarmaException;
 
-public class AddValuesCommand extends WorksheetCommand{
+public class AddValuesCommand extends WorksheetSelectionCommand{
 
 
 	private final String hNodeId;
@@ -54,8 +56,8 @@ public class AddValuesCommand extends WorksheetCommand{
 	}
 
 	protected AddValuesCommand(String id,String worksheetId, 
-			String hTableId, String hNodeId, HNodeType type) {
-		super(id, worksheetId);
+			String hTableId, String hNodeId, HNodeType type, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		isNewNode = false;
@@ -211,7 +213,7 @@ public class AddValuesCommand extends WorksheetCommand{
 			}
 		}
 		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
-		worksheet.getDataTable().collectNodes(selectedPath, nodes);	
+		worksheet.getDataTable().collectNodes(selectedPath, nodes, selection);	
 		for (Node node : nodes) {
 			for (int i = 0; i < array.length(); i++) {
 				if (array.get(i) instanceof JSONObject) {
@@ -277,7 +279,7 @@ public class AddValuesCommand extends WorksheetCommand{
 	private boolean addValues(Node node, String value, RepFactory factory, Table table) {
 		boolean flag = true;
 		if (table != null) {
-			for (Row r : table.getRows(0, table.getNumRows())) {
+			for (Row r : table.getRows(0, table.getNumRows(), selection)) {
 				Node n = r.getNeighbor(node.getHNodeId());
 				if (n.getValue() != null && n.getValue().asString().compareTo(value) == 0) { 
 					flag = false;

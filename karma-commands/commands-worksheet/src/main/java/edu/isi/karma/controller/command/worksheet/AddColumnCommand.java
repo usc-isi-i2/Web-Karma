@@ -20,25 +20,32 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.worksheet;
 
-import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.update.AddColumnUpdate;
-import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.rep.*;
-import edu.isi.karma.rep.HNode.HNodeType;
-import edu.isi.karma.rep.Node.NodeStatus;
-import edu.isi.karma.util.Util;
-import edu.isi.karma.webserver.KarmaException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.controller.update.AddColumnUpdate;
+import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNode.HNodeType;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Node.NodeStatus;
+import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.Util;
+import edu.isi.karma.webserver.KarmaException;
 
 /**
  * Adds a new column to the table with hTableId.
@@ -47,7 +54,7 @@ import java.util.List;
  * If no hNodeId is provided adds the new column as the first column in the table hTableId.
  * Returns the hNodeId of the newly created column.
  */
-public class AddColumnCommand extends WorksheetCommand {
+public class AddColumnCommand extends WorksheetSelectionCommand {
 	//if null add column at beginning of table
 	private final String hNodeId;
 	//add column to this table
@@ -63,8 +70,8 @@ public class AddColumnCommand extends WorksheetCommand {
 	.getLogger(AddColumnCommand.class);
 
 	protected AddColumnCommand(String id,String worksheetId,
-			String hTableId, String hNodeId, String newColumnName, String defaultValue) {
-		super(id, worksheetId);
+			String hTableId, String hNodeId, String newColumnName, String defaultValue, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		this.newColumnName=newColumnName;
@@ -162,7 +169,7 @@ public class AddColumnCommand extends WorksheetCommand {
 			}
 		}
 		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
-		worksheet.getDataTable().collectNodes(selectedPath, nodes);	
+		worksheet.getDataTable().collectNodes(selectedPath, nodes, selection);	
 		for (Node node : nodes) {
 			node.setValue(this.defaultValue, NodeStatus.original, factory);
 		}

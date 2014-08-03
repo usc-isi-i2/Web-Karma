@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.ICommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommandFactory;
 import edu.isi.karma.controller.history.CommandHistory;
@@ -60,8 +61,8 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			.getLogger(SubmitPythonTransformationCommand.class);
 
 	public SubmitPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
-			String worksheetId, String hNodeId, String errorDefaultValue) {
-		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
+			String worksheetId, String hNodeId, String errorDefaultValue, SuperSelection sel) {
+		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, sel);
 		//logger.info("SubmitPythonTranformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
 		this.pythonNodeId = hNodeId;
 	}
@@ -211,7 +212,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 
 		this.originalColumnValues = new ArrayList<String>();
 		Collection<Node> nodes = new ArrayList<Node>();
-		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes);
+		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes, selection);
 		for(Node node : nodes) {
 			originalColumnValues.add(node.getValue().asString());
 		}
@@ -223,7 +224,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			RepFactory f = workspace.getFactory();
 			HNode hNode = f.getHNode(pythonNodeId);
 
-			worksheet.getDataTable().setCollectedNodeValues(hNode.getHNodePath(f), this.originalColumnValues, f);
+			worksheet.getDataTable().setCollectedNodeValues(hNode.getHNodePath(f), this.originalColumnValues, f, selection);
 		}
 	}
 

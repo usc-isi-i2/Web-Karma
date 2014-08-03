@@ -44,6 +44,8 @@ import org.json.JSONObject;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -55,13 +57,13 @@ import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class InvokeCleaningServiceCommand extends WorksheetCommand {
+public class InvokeCleaningServiceCommand extends WorksheetSelectionCommand {
 
 	private String hNodeId;
 
 	public InvokeCleaningServiceCommand(String id, String hNodeId,
-			String worksheetId) {
-		super(id, worksheetId);
+			String worksheetId, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.hNodeId = hNodeId;
 	}
 
@@ -98,7 +100,7 @@ public class InvokeCleaningServiceCommand extends WorksheetCommand {
 		}
 		Collection<Node> nodes = new ArrayList<Node>();
 		workspace.getFactory().getWorksheet(worksheetId).getDataTable()
-				.collectNodes(selectedPath, nodes);
+				.collectNodes(selectedPath, nodes, selection);
 
 		try {
 			JSONArray requestJsonArray = new JSONArray();

@@ -22,10 +22,14 @@
 package edu.isi.karma.controller.command.service;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+
 import com.rits.cloning.Cloner;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.ReplaceWorksheetUpdate;
@@ -47,6 +51,7 @@ import edu.isi.karma.rep.sources.InvocationManager;
 import edu.isi.karma.rep.sources.Table;
 import edu.isi.karma.rep.sources.WebService;
 import edu.isi.karma.webserver.KarmaException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +64,7 @@ import java.util.List;
  * @author taheriyan
  * 
  */
-public class InvokeServiceCommand extends WorksheetCommand {
+public class InvokeServiceCommand extends WorksheetSelectionCommand {
 
 	private static Logger logger = LoggerFactory.getLogger(InvokeServiceCommand.class);
 	private Alignment initialAlignment = null;
@@ -68,8 +73,8 @@ public class InvokeServiceCommand extends WorksheetCommand {
 	
 	private Worksheet worksheetBeforeInvocation = null;
 
-	InvokeServiceCommand(String id, String worksheetId, String hNodeId) {
-		super(id, worksheetId);
+	InvokeServiceCommand(String id, String worksheetId, String hNodeId, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.hNodeId = hNodeId;
 	}
 
@@ -101,7 +106,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		}
 		
 		List<String> requestURLStrings = new ArrayList<String>();
-		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows());
+		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows(), selection);
 		if (rows == null || rows.size() == 0) {
 			logger.error("Data table does not have any row.");
 			return new UpdateContainer(new ErrorUpdate("Data table does not have any row."));	

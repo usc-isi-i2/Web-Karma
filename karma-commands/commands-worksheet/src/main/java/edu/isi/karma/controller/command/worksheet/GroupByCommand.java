@@ -15,7 +15,8 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
@@ -38,7 +39,7 @@ import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
 
-public class GroupByCommand extends WorksheetCommand {
+public class GroupByCommand extends WorksheetSelectionCommand {
 	//if null add column at beginning of table
 	//add column to this table
 	Command cmd;
@@ -54,8 +55,8 @@ public class GroupByCommand extends WorksheetCommand {
 	}
 
 	protected GroupByCommand(String id,String worksheetId, 
-			String hTableId, String hNodeId) {
-		super(id, worksheetId);
+			String hTableId, String hNodeId, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.hNodeId = hNodeId;
 		addTag(CommandTag.Transformation);
 	}
@@ -153,7 +154,7 @@ public class GroupByCommand extends WorksheetCommand {
 		Worksheet newws = factory.createWorksheet("GroupBy: " + oldws.getTitle(), workspace, oldws.getEncoding());
 		newws.getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, oldws.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.sourceType));
 		HTable newht =  newws.getHeaders();
-		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows());
+		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows(), selection);
 		HTable oldht =  oldws.getHeaders();
 		Map<String, ArrayList<String>> hash = new TreeMap<String, ArrayList<String>>();
 		for (Row row : rows) {
@@ -191,7 +192,7 @@ public class GroupByCommand extends WorksheetCommand {
 		CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT,parentTables);
 		ArrayList<Row> parentRows = new ArrayList<Row>();
 		for (Table tmp : parentTables) {
-			for (Row row : tmp.getRows(0, tmp.getNumRows())) {
+			for (Row row : tmp.getRows(0, tmp.getNumRows(), selection)) {
 				parentRows.add(row);
 			}
 		}
@@ -214,7 +215,7 @@ public class GroupByCommand extends WorksheetCommand {
 					break;
 				}	
 			}
-			ArrayList<Row> rows = t.getRows(0, t.getNumRows());
+			ArrayList<Row> rows = t.getRows(0, t.getNumRows(), selection);
 			Map<String, ArrayList<String>> hash = new TreeMap<String, ArrayList<String>>();
 			for (Row row : rows) {
 				String hashValue = HashValueManager.getHashValue(row, hnodeIDs);

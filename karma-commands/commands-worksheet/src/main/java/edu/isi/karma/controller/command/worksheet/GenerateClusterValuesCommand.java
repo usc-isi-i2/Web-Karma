@@ -13,7 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetDeleteUpdate;
@@ -28,14 +29,14 @@ import edu.isi.karma.util.HTTPUtil;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class GenerateClusterValuesCommand extends WorksheetCommand {
+public class GenerateClusterValuesCommand extends WorksheetSelectionCommand {
 	private String hNodeId;
 
 	private static Logger logger = LoggerFactory.getLogger(GenerateClusterValuesCommand.class.getSimpleName());
 	
 	public GenerateClusterValuesCommand(String id, String hNodeId,
-			String worksheetId) {
-		super(id, worksheetId);
+			String worksheetId, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.hNodeId = hNodeId;
 	}
 
@@ -73,7 +74,7 @@ public class GenerateClusterValuesCommand extends WorksheetCommand {
 		}
 		Collection<Node> nodes = new ArrayList<Node>();
 		workspace.getFactory().getWorksheet(worksheetId).getDataTable()
-				.collectNodes(selectedPath, nodes);
+				.collectNodes(selectedPath, nodes, selection);
 
 		
 		try {

@@ -24,7 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.CloneTableUtils;
@@ -43,7 +44,7 @@ import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
-public class SearchForDataToAugmentIncomingCommand extends WorksheetCommand{
+public class SearchForDataToAugmentIncomingCommand extends WorksheetSelectionCommand{
 	private static final Logger LOG = LoggerFactory.getLogger(SearchForDataToAugmentIncomingCommand.class);
 	private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 	private String tripleStoreUrl;
@@ -51,8 +52,8 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetCommand{
 	private String nodeUri;
 	private String columnUri;
 	private final Integer limit = 100;
-	public SearchForDataToAugmentIncomingCommand(String id, String url, String context, String nodeUri, String worksheetId, String columnUri) {
-		super(id, worksheetId);
+	public SearchForDataToAugmentIncomingCommand(String id, String url, String context, String nodeUri, String worksheetId, String columnUri, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.tripleStoreUrl = url;
 		this.context = context;
 		this.nodeUri = nodeUri;
@@ -112,7 +113,7 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetCommand{
 		KR2RMLBloomFilter uris = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 		Set<String> uriSet = new HashSet<String>();
 		for(Table t : dataTables) {
-			for(Row r : t.getRows(0, t.getNumRows())) {
+			for(Row r : t.getRows(0, t.getNumRows(), selection)) {
 				Node n = r.getNode(hNodeId);
 				if(n != null && n.getValue() != null && !n.getValue().isEmptyValue() && n.getValue().asString() != null && !n.getValue().asString().trim().isEmpty() ) {
 					String value = n.getValue().asString().trim().replace(" ", "");;

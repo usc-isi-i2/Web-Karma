@@ -4,21 +4,22 @@ import org.json.JSONArray;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.Workspace;
 
-public class AugmentDataDispachCommand extends WorksheetCommand {
+public class AugmentDataDispachCommand extends WorksheetSelectionCommand {
 	private String predicateIncoming, predicateOutgoing;
 	private AugmentDataCommand incoming;
 	private AugmentDataCommand outgoing;
-	public AugmentDataDispachCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicateIncoming, String otherClassIncoming, String predicateOutgoing, String otherClassOutgoing, String hNodeId, String sameAsPredicate) {
-		super(id, worksheetId);
+	public AugmentDataDispachCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicateIncoming, String otherClassIncoming, String predicateOutgoing, String otherClassOutgoing, String hNodeId, String sameAsPredicate, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.predicateIncoming = predicateIncoming;
 		this.predicateOutgoing = predicateOutgoing;
-		incoming = new AugmentDataCommand(id, dataRepoUrl, worksheetId, columnUri, predicateIncoming, otherClassIncoming, hNodeId, true, sameAsPredicate);
-		outgoing = new AugmentDataCommand(id, dataRepoUrl, worksheetId, columnUri, predicateOutgoing, otherClassOutgoing, hNodeId, false, sameAsPredicate);
+		incoming = new AugmentDataCommand(id, dataRepoUrl, worksheetId, columnUri, predicateIncoming, otherClassIncoming, hNodeId, true, sameAsPredicate, selection);
+		outgoing = new AugmentDataCommand(id, dataRepoUrl, worksheetId, columnUri, predicateOutgoing, otherClassOutgoing, hNodeId, false, sameAsPredicate, selection);
 		addTag(CommandTag.Transformation);
 	}
 	

@@ -1,6 +1,7 @@
 package edu.isi.karma.controller.command.worksheet;
 
 import au.com.bytecode.opencsv.CSVReader;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.*;
 import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.Node.NodeStatus;
@@ -22,16 +23,17 @@ public class SplitColumnByDelimiter {
 	private final String delimiter;
 	private final Workspace workspace;
 	private String splitValueHNodeID;
-
+	private SuperSelection selection;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public SplitColumnByDelimiter(String hNodeId, Worksheet worksheet,
-			String delimiter, Workspace workspace) {
+			String delimiter, Workspace workspace, SuperSelection sel) {
 		super();
 		this.hNodeId = hNodeId;
 		this.worksheet = worksheet;
 		this.delimiter = delimiter;
 		this.workspace = workspace;
+		this.selection = sel;
 	}
 
 	public String getSplitValueHNodeID() {
@@ -70,7 +72,7 @@ public class SplitColumnByDelimiter {
 		}
 
 		Collection<Node> nodes = new ArrayList<Node>();
-		worksheet.getDataTable().collectNodes(selectedPath, nodes);
+		worksheet.getDataTable().collectNodes(selectedPath, nodes, selection);
 
 		//pedro: 2012-10-09
 		// Need to save and clear the values before adding the nested table.

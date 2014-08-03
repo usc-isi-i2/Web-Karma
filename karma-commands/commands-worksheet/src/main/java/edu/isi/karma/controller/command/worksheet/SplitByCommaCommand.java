@@ -23,6 +23,8 @@ package edu.isi.karma.controller.command.worksheet;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -34,7 +36,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-public class SplitByCommaCommand extends WorksheetCommand {
+public class SplitByCommaCommand extends WorksheetSelectionCommand {
 	private final String hNodeId;
 	private final String delimiter;
 	private String columnName;
@@ -47,8 +49,8 @@ public class SplitByCommaCommand extends WorksheetCommand {
 //	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	protected SplitByCommaCommand(String id, String worksheetId,
-			String hNodeId, String delimiter) {
-		super(id, worksheetId);
+			String hNodeId, String delimiter, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.hNodeId = hNodeId;
 		this.delimiter = delimiter;
 		
@@ -89,7 +91,7 @@ public class SplitByCommaCommand extends WorksheetCommand {
 		}
 		columnName = hNode.getColumnName();
 		
-		SplitColumnByDelimiter split = new SplitColumnByDelimiter(hNodeId, wk, delimiter, workspace);
+		SplitColumnByDelimiter split = new SplitColumnByDelimiter(hNodeId, wk, delimiter, workspace, selection);
 		split.split(oldNodeValueMap, oldNodeStatusMap);
 		splitValueHNodeID = split.getSplitValueHNodeID();
 
@@ -129,7 +131,7 @@ public class SplitByCommaCommand extends WorksheetCommand {
 
 		// Populate the column with old values
 		Collection<Node> nodes = new ArrayList<Node>();
-		wk.getDataTable().collectNodes(selectedPath, nodes);
+		wk.getDataTable().collectNodes(selectedPath, nodes, selection);
 
 		for (Node node : nodes) {
 			//pedro 2012-09-15 this does not look correct.

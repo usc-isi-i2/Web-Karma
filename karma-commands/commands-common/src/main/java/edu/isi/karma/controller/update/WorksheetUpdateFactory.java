@@ -53,7 +53,7 @@ public class WorksheetUpdateFactory {
 	public static UpdateContainer createRegenerateWorksheetUpdates(String worksheetId) {
 		UpdateContainer c = new UpdateContainer();
 		c.add(new RegenerateWorksheetUpdate(worksheetId));
-		createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId,c);
+		createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, c);
 		return c;
 	}
 	public static UpdateContainer createSemanticTypesAndSVGAlignmentUpdates(String worksheetId, Workspace workspace, Alignment alignment)

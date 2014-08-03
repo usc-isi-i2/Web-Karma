@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetDeleteUpdate;
@@ -30,7 +32,7 @@ import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.util.Util;
 
-public class UnfoldCommand extends WorksheetCommand {
+public class UnfoldCommand extends WorksheetSelectionCommand {
 
 	//add column to this table
 	//the id of the new column that was created
@@ -48,8 +50,8 @@ public class UnfoldCommand extends WorksheetCommand {
 		updateType, hNodeId, worksheetId
 	}
 
-	protected UnfoldCommand(String id, String worksheetId, String keyHNodeid, String valueHNodeid) {
-		super(id, worksheetId);
+	protected UnfoldCommand(String id, String worksheetId, String keyHNodeid, String valueHNodeid, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		newWorksheetId = null;
 		newHNodeId = null;
 		this.keyHNodeId = keyHNodeid;
@@ -159,7 +161,7 @@ public class UnfoldCommand extends WorksheetCommand {
 		CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT,parentTables);
 		ArrayList<Row> parentRows = new ArrayList<Row>();
 		for (Table tmp : parentTables) {
-			for (Row row : tmp.getRows(0, tmp.getNumRows())) {
+			for (Row row : tmp.getRows(0, tmp.getNumRows(), selection)) {
 				parentRows.add(row);
 			}
 		}
@@ -192,7 +194,7 @@ public class UnfoldCommand extends WorksheetCommand {
 			}
 			Map<String, String> keyMapping = new HashMap<String, String>();
 			Map<String, String> HNodeidMapping = new HashMap<String, String>();
-			ArrayList<Row> rows = t.getRows(0, t.getNumRows());
+			ArrayList<Row> rows = t.getRows(0, t.getNumRows(), selection);
 			for (Row row : rows) {
 				Node n = row.getNode(key.getId());
 				keyMapping.put(HashValueManager.getHashValue(oldws, n.getId()), n.getValue().asString());
@@ -252,7 +254,7 @@ public class UnfoldCommand extends WorksheetCommand {
 		Worksheet newws = factory.createWorksheet("Unfold: " + oldws.getTitle(), workspace, oldws.getEncoding());
 		newws.getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, oldws.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.sourceType));
 		ArrayList<HNode> topHNodes = new ArrayList<HNode>(oldws.getHeaders().getHNodes());
-		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows());
+		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows(), selection);
 		HNode key = oldws.getHeaders().getHNode(keyHNodeid);
 		HNode value = oldws.getHeaders().getHNode(valueHNodeid);
 		List<HNode> hnodes = new ArrayList<HNode>();

@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
@@ -31,7 +33,7 @@ import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
 
-public class GlueCommand extends WorksheetCommand {
+public class GlueCommand extends WorksheetSelectionCommand {
 
 	private String hNodeId;
 	private String newhNodeId;
@@ -39,8 +41,8 @@ public class GlueCommand extends WorksheetCommand {
 			.getLogger(GlueCommand.class);
 
 	protected GlueCommand(String id,String worksheetId, 
-			String hTableId, String hNodeId) {
-		super(id, worksheetId);
+			String hTableId, String hNodeId, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.hNodeId = hNodeId;
 		addTag(CommandTag.Transformation);
 	}
@@ -127,7 +129,7 @@ public class GlueCommand extends WorksheetCommand {
 		CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT,parentTables);
 		ArrayList<Row> parentRows = new ArrayList<Row>();
 		for (Table tmp : parentTables) {
-			for (Row row : tmp.getRows(0, tmp.getNumRows())) {
+			for (Row row : tmp.getRows(0, tmp.getNumRows(), selection)) {
 				parentRows.add(row);
 			}
 		}
@@ -155,7 +157,7 @@ public class GlueCommand extends WorksheetCommand {
 					break;
 				}	
 			}
-			ArrayList<Row> rows = t.getRows(0, t.getNumRows());
+			ArrayList<Row> rows = t.getRows(0, t.getNumRows(), selection);
 			for (Row row : rows) {
 				Table nestedTable = row.getNeighbor(newNode.getId()).getNestedTable();
 				int max = 0;
@@ -174,7 +176,7 @@ public class GlueCommand extends WorksheetCommand {
 						continue;
 					Node tmp = row.getNeighbor(hnode.getId());
 					int i = 0;
-					for (Row nestedRow : tmp.getNestedTable().getRows(0, tmp.getNestedTable().getNumRows())) {
+					for (Row nestedRow : tmp.getNestedTable().getRows(0, tmp.getNestedTable().getNumRows(), selection)) {
 						CloneTableUtils.cloneDataTableExistingRow(nestedRow, newRows.get(i), nestedTable, hnode.getNestedTable(), newht, childHNodes, factory, mapping);
 						i++;
 					}
@@ -202,7 +204,7 @@ public class GlueCommand extends WorksheetCommand {
 		for (Entry<String, String> entry : mapping.entrySet()) {
 			outputColumns.add(entry.getValue());
 		}
-		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows());
+		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows(), selection);
 		for (Row row : rows) {
 			Table nestedTable = row.getNeighbor(newNode.getId()).getNestedTable();
 			int max = 0;
@@ -222,7 +224,7 @@ public class GlueCommand extends WorksheetCommand {
 					continue;
 				Node tmp = row.getNeighbor(hnode.getId());
 				int i = 0;
-				for (Row nestedRow : tmp.getNestedTable().getRows(0, tmp.getNestedTable().getNumRows())) {
+				for (Row nestedRow : tmp.getNestedTable().getRows(0, tmp.getNestedTable().getNumRows(), selection)) {
 					CloneTableUtils.cloneDataTableExistingRow(nestedRow, newRows.get(i), nestedTable, hnode.getNestedTable(), newht, childHNodes, factory, mapping);
 					i++;
 				}

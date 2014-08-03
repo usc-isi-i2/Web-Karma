@@ -22,6 +22,7 @@
 package edu.isi.karma.controller.command.cleaning;
 
 import edu.isi.karma.controller.command.*;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
@@ -33,6 +34,7 @@ import edu.isi.karma.rep.cleaning.*;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.WorkspaceRegistry;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class SubmitCleaningCommand extends WorksheetCommand {
+public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 	private String hNodeId = "";
 	private String newHNodeId = "";
 	private String hTableId = "";
@@ -52,8 +54,8 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 	private Vector<TransformationExample> examples = new Vector<TransformationExample>();
 
 	public SubmitCleaningCommand(String id, String hNodeId, String worksheetId,
-			String Examples) {
-		super(id, worksheetId);
+			String Examples, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.hNodeId = hNodeId;
 		this.examples = GenerateCleaningRulesCommand.parseExample(Examples);
 
@@ -254,7 +256,7 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 		}
 		Collection<Node> nodes = new ArrayList<Node>();
 		workspace.getFactory().getWorksheet(worksheetId).getDataTable()
-				.collectNodes(selectedPath, nodes);
+				.collectNodes(selectedPath, nodes, selection);
 		for (Node node : nodes) {
 			String id = node.getBelongsToRow().getId();
 			String originalVal = node.getValue().asString();

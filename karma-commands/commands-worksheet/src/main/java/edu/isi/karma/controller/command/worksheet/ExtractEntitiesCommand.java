@@ -25,32 +25,30 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.Charset;
-
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
 
@@ -58,7 +56,7 @@ import edu.isi.karma.util.Util;
  * Adds extract entities commands to the column menu.
  */
 
-public class ExtractEntitiesCommand extends WorksheetCommand {
+public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 
 	private String hNodeId;
 	// add column to this table
@@ -73,8 +71,8 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 			.getLogger(ExtractEntitiesCommand.class);
 
 	protected ExtractEntitiesCommand(String id, String worksheetId,
-			String hTableId, String hNodeId, String extractionURL, String entitiesToBeExt) {
-		super(id, worksheetId);
+			String hTableId, String hNodeId, String extractionURL, String entitiesToBeExt, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		this.extractionURL = extractionURL;
@@ -115,7 +113,7 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 		entitiesReqd.addAll(Arrays.asList(entities));
 		
 		ArrayList<Row> rows = worksheet.getDataTable().getRows(0,
-				worksheet.getDataTable().getNumRows());
+				worksheet.getDataTable().getNumRows(), selection);
 
 		JSONArray array = new JSONArray();
 		AddValuesCommand cmd;

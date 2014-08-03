@@ -62,7 +62,7 @@ public class TablePager {
 		int previousEndIndex = currentEndIndex;
 		
 		currentEndIndex = Math.min(currentEndIndex + pagerSize, table.getNumRows()-1);
-		return table.getRows(previousEndIndex+1, pagerSize);
+		return table.getRows(previousEndIndex+1, pagerSize, SuperSelectionManager.DEFAULT_SELECTION);
 	}
 	
 	public boolean isAtEndOfTable() {

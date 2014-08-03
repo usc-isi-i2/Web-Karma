@@ -13,6 +13,8 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -30,7 +32,7 @@ import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
 
-public class FoldCommand extends WorksheetCommand {
+public class FoldCommand extends WorksheetSelectionCommand {
 	//if null add column at beginning of table
 	private String hNodeId;
 	//add column to this table
@@ -49,8 +51,8 @@ public class FoldCommand extends WorksheetCommand {
 	}
 
 	protected FoldCommand(String id,String worksheetId, 
-			String hTableId, String hNodeId) {
-		super(id, worksheetId);
+			String hTableId, String hNodeId, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		
@@ -102,7 +104,7 @@ public class FoldCommand extends WorksheetCommand {
 			hnodes.add(htable.getHNode((String) t.get("value")));
 			inputColumns.add(t.getString("value"));
 		}
-		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows());
+		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows(), selection);
 		if (htable != worksheet.getHeaders()) {
 			HTable parentHT = htable.getParentHNode().getHTable(Repfactory);
 			List<Table> parentTables = new ArrayList<Table>();
@@ -110,7 +112,7 @@ public class FoldCommand extends WorksheetCommand {
 			ArrayList<Row> parentRows = new ArrayList<Row>();
 			rows.clear();
 			for (Table tmp : parentTables) {
-				for (Row row : tmp.getRows(0, tmp.getNumRows())) {
+				for (Row row : tmp.getRows(0, tmp.getNumRows(), selection)) {
 					parentRows.add(row);
 				}
 			}
@@ -122,7 +124,7 @@ public class FoldCommand extends WorksheetCommand {
 						break;
 					}	
 				}
-				ArrayList<Row> tmpRows = t.getRows(0, t.getNumRows());
+				ArrayList<Row> tmpRows = t.getRows(0, t.getNumRows(), selection);
 				for (Row r : tmpRows) {
 					rows.add(r);
 				}

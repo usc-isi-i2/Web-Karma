@@ -20,7 +20,8 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.command.worksheet.AddValuesCommand;
 import edu.isi.karma.controller.command.worksheet.AddValuesCommandFactory;
 import edu.isi.karma.controller.update.ErrorUpdate;
@@ -48,7 +49,7 @@ import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.webserver.KarmaException;
 
-public class AugmentDataCommand extends WorksheetCommand{
+public class AugmentDataCommand extends WorksheetSelectionCommand{
 
 	private static Logger LOG = LoggerFactory.getLogger(AugmentDataCommand.class);
 	private String predicate;
@@ -62,8 +63,8 @@ public class AugmentDataCommand extends WorksheetCommand{
 	private String sameAsPredicate;
 	private final Integer limit = 200;
 	Stack<Command> appliedCommands;
-	public AugmentDataCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicate, String otherClass, String hNodeId, Boolean incoming, String sameAsPredicate) {
-		super(id, worksheetId);
+	public AugmentDataCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicate, String otherClass, String hNodeId, Boolean incoming, String sameAsPredicate, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.predicate = predicate;
 		this.columnUri = columnUri;
 		this.otherClass = otherClass;
@@ -127,7 +128,7 @@ public class AugmentDataCommand extends WorksheetCommand{
 		Map<String, String> rowHashToSubjectURI = new HashMap<String, String>();
 		Map<String, List<String>> SubjectURIToRowId = new HashMap<String, List<String>>();
 		for(Table t : dataTables) {
-			for(Row r : t.getRows(0, t.getNumRows())) {
+			for(Row r : t.getRows(0, t.getNumRows(), selection)) {
 				Node n = r.getNode(hNodeId);
 				if(n != null && n.getValue() != null && !n.getValue().isEmptyValue() && n.getValue().asString() != null && !n.getValue().asString().trim().isEmpty() ) {
 					String uri = n.getValue().asString().trim().replace(" ", "");
