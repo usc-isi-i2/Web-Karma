@@ -76,8 +76,8 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 
 	protected SetSemanticTypeCommand(String id, String worksheetId, String hNodeId, 
 			boolean isPartOfKey, JSONArray typesArr, boolean trainAndShowUpdates, 
-			String rdfLiteralType, SuperSelection sel) {
-		super(id, worksheetId, sel);
+			String rdfLiteralType, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.isPartOfKey = isPartOfKey;
 		this.trainAndShowUpdates = trainAndShowUpdates;
@@ -122,6 +122,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 			
 		}
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		OntologyManager ontMgr = workspace.getOntologyManager();
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);

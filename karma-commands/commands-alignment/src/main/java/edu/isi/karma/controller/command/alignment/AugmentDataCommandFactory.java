@@ -7,7 +7,6 @@ import org.json.JSONException;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
@@ -32,12 +31,11 @@ public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 		String incoming = request.getParameter(Arguments.incoming.name());
 		String sameAsPredicate = request.getParameter(Arguments.sameAsPredicate.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		return new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
 				columnUri, predicate, otherClass, 
 				hNodeId, Boolean.parseBoolean(incoming), 
 				sameAsPredicate, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 	}
 
 	@Override
@@ -58,12 +56,11 @@ public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 		String incoming = CommandInputJSONUtil.getStringValue(Arguments.incoming.name(), inputJson);
 		String sameAsPredicate = CommandInputJSONUtil.getStringValue(Arguments.sameAsPredicate.name(), inputJson);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		AugmentDataCommand cmd = new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
 				columnUri, predicate, otherClass, hNodeId, 
 				Boolean.parseBoolean(incoming), 
 				sameAsPredicate, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;

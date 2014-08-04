@@ -28,8 +28,8 @@ public class MergeClusterValuesCommand extends WorksheetSelectionCommand {
 	MultipleValueEditColumnCommand edit;
 			
 	public MergeClusterValuesCommand(String id, String hNodeId,
-			String worksheetId, SuperSelection sel) {
-		super(id, worksheetId, sel);
+			String worksheetId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 	}
 
@@ -61,7 +61,7 @@ public class MergeClusterValuesCommand extends WorksheetSelectionCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		// TODO Auto-generated method stub
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {

@@ -83,8 +83,8 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(ShowModelCommand.class);
 
-	protected ShowModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate, SuperSelection sel) {
-		super(id, worksheetId, sel);
+	protected ShowModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate, String selectionId) {
+		super(id, worksheetId, selectionId);
 //		this.addVWorksheetUpdate = addVWorksheetUpdate;
 		
 		/** NOTE Not saving this command in history for now since we are 
@@ -119,6 +119,7 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		OntologyManager ontologyManager = workspace.getOntologyManager();
 		if(ontologyManager.isEmpty())
 			return new UpdateContainer(new ErrorUpdate("No ontology loaded."));

@@ -52,8 +52,8 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetSelectionCom
 	private String nodeUri;
 	private String columnUri;
 	private final Integer limit = 100;
-	public SearchForDataToAugmentIncomingCommand(String id, String url, String context, String nodeUri, String worksheetId, String columnUri, SuperSelection sel) {
-		super(id, worksheetId, sel);
+	public SearchForDataToAugmentIncomingCommand(String id, String url, String context, String nodeUri, String worksheetId, String columnUri, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.tripleStoreUrl = url;
 		this.context = context;
 		this.nodeUri = nodeUri;
@@ -84,6 +84,7 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetSelectionCom
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		RepFactory factory = workspace.getFactory();
 		TripleStoreUtil util = new TripleStoreUtil();
 		HashMap<String, List<String>> result = null;

@@ -68,8 +68,8 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 	private static Logger logger = LoggerFactory
 			.getLogger(PopulateCommand.class.getSimpleName());
 
-	public PopulateCommand(String id, String worksheetId, SuperSelection sel) {
-		super(id, worksheetId, sel);
+	public PopulateCommand(String id, String worksheetId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		
 		addTag(CommandTag.Transformation);
 	}
@@ -99,7 +99,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 		
 		UpdateContainer c = new UpdateContainer();
 		Worksheet wk = workspace.getWorksheet(worksheetId);
-
+		SuperSelection selection = wk.getSuperSelectionManager().getSuperSelection(selectionId);
 		// Clone the worksheet just before the invocation
 		Cloner cloner = new Cloner();
 		this.worksheetBeforeInvocation = cloner.deepClone(wk);
@@ -209,7 +209,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 	private List<String> getUrlStrings(WebService service, DataSource source, 
 			Worksheet wk, Map<String, String> serviceToSourceAttMapping, 
 			List<String> requestIds) {
-		
+		SuperSelection selection = wk.getSuperSelectionManager().getSuperSelection(selectionId);
 		List<String> requestURLStrings = new ArrayList<String>();
 		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows(), selection);
 		if (rows == null || rows.size() == 0) {

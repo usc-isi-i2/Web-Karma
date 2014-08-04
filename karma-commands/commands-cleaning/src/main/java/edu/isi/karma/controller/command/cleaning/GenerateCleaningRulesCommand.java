@@ -64,8 +64,8 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	private static Logger logger = LoggerFactory.getLogger(GenerateCleaningRulesCommand.class);
 
 	public GenerateCleaningRulesCommand(String id, String worksheetId,
-			String hNodeId, String examples, String cellIDs, SuperSelection sel) {
-		super(id, worksheetId, sel);
+			String hNodeId, String examples, String cellIDs, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.nodeIds = parseNodeIds(cellIDs);
 		ConfigParameters cfg = new ConfigParameters();
@@ -166,6 +166,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = wk.getSuperSelectionManager().getSuperSelection(selectionId);
 		String msg = String.format("Gen rule start,Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
 		logger.info(msg);
 		// Get the HNode

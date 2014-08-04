@@ -35,8 +35,8 @@ public class GenerateClusterValuesCommand extends WorksheetSelectionCommand {
 	private static Logger logger = LoggerFactory.getLogger(GenerateClusterValuesCommand.class.getSimpleName());
 	
 	public GenerateClusterValuesCommand(String id, String hNodeId,
-			String worksheetId, SuperSelection sel) {
-		super(id, worksheetId, sel);
+			String worksheetId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 	}
 
@@ -64,7 +64,7 @@ public class GenerateClusterValuesCommand extends WorksheetSelectionCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {

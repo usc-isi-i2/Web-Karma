@@ -48,7 +48,6 @@ public class PublishDatabaseCommandFactory extends CommandFactory {
 
 		logger.debug("host="+request.getParameter(Arguments.hostName.name()));
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		PublishDatabaseCommand comm = new PublishDatabaseCommand(getNewId(workspace), worksheetId,
 				request.getParameter(Arguments.dbType.name()),
 				request.getParameter(Arguments.hostName.name()),
@@ -59,7 +58,7 @@ public class PublishDatabaseCommandFactory extends CommandFactory {
 				request.getParameter(Arguments.tableName.name()),
 				request.getParameter(Arguments.overwriteTable.name()),
 				request.getParameter(Arguments.insertTable.name()), 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName)
+				selectionName
 				);
 		
 		return comm;

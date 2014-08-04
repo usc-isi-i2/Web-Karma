@@ -73,8 +73,8 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 	private Vector<TransformationExample> examples = new Vector<TransformationExample>();
 
 	public SubmitCleaningCommand(String id, String hNodeId, String worksheetId,
-			String Examples, SuperSelection sel) {
-		super(id, worksheetId, sel);
+			String Examples, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.examples = GenerateCleaningRulesCommand.parseExample(Examples);
 
@@ -274,6 +274,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 			}
 		}
 		Collection<Node> nodes = new ArrayList<Node>();
+		SuperSelection selection = workspace.getWorksheet(worksheetId).getSuperSelectionManager().getSuperSelection(selectionId);
 		workspace.getFactory().getWorksheet(worksheetId).getDataTable()
 				.collectNodes(selectedPath, nodes, selection);
 		for (Node node : nodes) {

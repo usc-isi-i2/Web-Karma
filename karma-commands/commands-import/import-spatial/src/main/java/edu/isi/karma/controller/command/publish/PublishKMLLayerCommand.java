@@ -45,8 +45,9 @@ public class PublishKMLLayerCommand extends WorksheetSelectionCommand {
 			.getLogger(PublishKMLLayerCommand.class);
 
 	protected PublishKMLLayerCommand(String id, String worksheetId,
-			String ipAddress, String kMLTransferServiceURL, SuperSelection sel) {
-		super(id, worksheetId, sel);
+			String ipAddress, String kMLTransferServiceURL, 
+			String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.publicKMLAddress = ipAddress;
 		this.kMLTransferServiceURL = kMLTransferServiceURL;
 	}
@@ -74,7 +75,7 @@ public class PublishKMLLayerCommand extends WorksheetSelectionCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 //		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0) {
 //			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, workspace
 //					.getTagsContainer().getTag(TagName.Outlier), workspace

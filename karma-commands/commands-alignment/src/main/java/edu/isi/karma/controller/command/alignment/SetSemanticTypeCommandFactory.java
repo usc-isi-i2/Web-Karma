@@ -29,10 +29,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
@@ -65,10 +63,9 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 			return null;
 		}
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		return new SetSemanticTypeCommand(getNewId(workspace), worksheetId, hNodeId, 
 				isPartOfKey, arr, true, rdfLiteralType, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 	}
 
 	public Command createCommand(JSONArray inputJson, Workspace workspace) throws JSONException, KarmaException {
@@ -87,11 +84,10 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 			return null;
 		}
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		SetSemanticTypeCommand comm = new SetSemanticTypeCommand(getNewId(workspace), 
 				worksheetId, hNodeId, isPartOfKey, arr, 
 				train, rdfLiteralType, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 		
 		// Change the train flag, so that it does not train while reading from history
 		HistoryJsonUtil.setArgumentValue(Arguments.trainAndShowUpdates.name(), false, inputJson);
@@ -101,9 +97,9 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 	
 	public Command createCommand(Workspace workspace, String worksheetId, String hNodeId, 
 			boolean isPartOfKey, JSONArray arr, boolean train, 
-			String rdfLiteralType, SuperSelection sel) {
+			String rdfLiteralType, String selectionId) {
 		return new SetSemanticTypeCommand(getNewId(workspace), worksheetId, hNodeId, 
-				isPartOfKey, arr, train, rdfLiteralType, sel);
+				isPartOfKey, arr, train, rdfLiteralType, selectionId);
 	}
 	@Override
 	public Class<? extends Command> getCorrespondingCommand()

@@ -142,6 +142,7 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 
 		// Remove the nodes (if any) from the outlier tag
 		Collection<edu.isi.karma.rep.Node> nodes = new ArrayList<edu.isi.karma.rep.Node>();
+		//TODO What does that mean? 
 		worksheet.getDataTable().collectNodes(currentPath, nodes, SuperSelectionManager.DEFAULT_SELECTION);
 		Set<String> nodeIds = new HashSet<String>();
 		for (edu.isi.karma.rep.Node node : nodes) {

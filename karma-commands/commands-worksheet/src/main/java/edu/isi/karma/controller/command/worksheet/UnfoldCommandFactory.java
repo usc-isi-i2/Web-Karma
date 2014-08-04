@@ -7,7 +7,6 @@ import org.json.JSONException;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
@@ -28,11 +27,10 @@ public class UnfoldCommandFactory extends JSONInputCommandFactory{
 		String keyName = workspace.getFactory().getHNode(keyHNodeid).getColumnName();
 		String valueName = workspace.getFactory().getHNode(valueHNodeid).getColumnName();
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		//System.out.println(worksheetId);
 		UnfoldCommand unfoldCmd = new UnfoldCommand(getNewId(workspace), worksheetId, 
 				keyHNodeid, valueHNodeid, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 		unfoldCmd.setInputParameterJson(inputJson.toString());
 		unfoldCmd.setKeyName(keyName);
 		unfoldCmd.setValueName(valueName);
@@ -45,9 +43,8 @@ public class UnfoldCommandFactory extends JSONInputCommandFactory{
 		String keyHNodeid = request.getParameter(Arguments.keyhNodeId.name());
 		String valueHNodeid = request.getParameter(Arguments.valuehNodeId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		return new UnfoldCommand(getNewId(workspace), worksheetId, keyHNodeid, valueHNodeid, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 	}
 
 	@Override

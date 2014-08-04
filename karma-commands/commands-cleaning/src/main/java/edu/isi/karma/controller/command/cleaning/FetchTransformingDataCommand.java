@@ -28,8 +28,8 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 	private final String hNodeId;
 
 	public FetchTransformingDataCommand(String id, String worksheetId,
-			String hNodeId, SuperSelection sel) {
-		super(id, worksheetId, sel);
+			String hNodeId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 
 	}
@@ -78,6 +78,7 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = wk.getSuperSelectionManager().getSuperSelection(selectionId);
 		String Msg = String.format("begin, Time,%d, Worksheet,%s",
 				System.currentTimeMillis(), worksheetId);
 		logger.info(Msg);

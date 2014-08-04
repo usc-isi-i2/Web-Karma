@@ -27,8 +27,8 @@ public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
 	private final String hNodeId;
 	private static Logger logger = LoggerFactory.getLogger(GetSemanticSuggestionsCommand.class.getSimpleName());
 	
-	protected GetSemanticSuggestionsCommand(String id, String worksheetId, String hNodeId, SuperSelection sel) {
-		super(id, worksheetId, sel);
+	protected GetSemanticSuggestionsCommand(String id, String worksheetId, String hNodeId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 	}
 	
@@ -53,17 +53,17 @@ public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
 	}
 
 	@Override
-	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+	public UpdateContainer doIt(final Workspace workspace) throws CommandException {
 		logger.info("Get Semantic Suggestions: " + worksheetId + "," + hNodeId);
-		final Workspace ws = workspace;
 		UpdateContainer uc = new UpdateContainer();
+		final SuperSelection selection = workspace.getWorksheet(worksheetId).getSuperSelectionManager().getSuperSelection(selectionId);
 		uc.add(new AbstractUpdate() {
 
 			@Override
 			public void generateJson(String prefix, PrintWriter pw,
 					VWorkspace vWorkspace) {
 				HNodePath currentColumnPath = null;
-				Worksheet worksheet = ws.getWorksheet(worksheetId);
+				Worksheet worksheet = workspace.getWorksheet(worksheetId);
 				List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
 				for (HNodePath path : paths) {
 					if (path.getLeaf().getId().equals(hNodeId)) {
@@ -72,10 +72,10 @@ public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
 					}
 				}
 				
-				SemanticTypeColumnModel model = new SemanticTypeUtil().predictColumnSemanticType(ws, worksheet, currentColumnPath, 4, selection);
+				SemanticTypeColumnModel model = new SemanticTypeUtil().predictColumnSemanticType(workspace, worksheet, currentColumnPath, 4, selection);
 				if(model != null) {
-					OntologyManager ontMgr = ws.getOntologyManager();
-					Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(ws.getId(), worksheetId, ontMgr);
+					OntologyManager ontMgr = workspace.getOntologyManager();
+					Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, ontMgr);
 					JSONObject json = model.getAsJSONObject(ontMgr, alignment);
 					pw.print(json.toString());
 				}

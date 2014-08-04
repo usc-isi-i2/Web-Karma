@@ -61,8 +61,9 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			.getLogger(SubmitPythonTransformationCommand.class);
 
 	public SubmitPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
-			String worksheetId, String hNodeId, String errorDefaultValue, SuperSelection sel) {
-		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, sel);
+			String worksheetId, String hNodeId, 
+			String errorDefaultValue, String selectionId) {
+		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, selectionId);
 		//logger.info("SubmitPythonTranformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
 		this.pythonNodeId = hNodeId;
 	}
@@ -207,6 +208,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 
 	protected void saveColumnValues(Workspace workspace) {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		RepFactory f = workspace.getFactory();
 		HNode hNode = f.getHNode(pythonNodeId);
 
@@ -221,6 +223,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	public void resetColumnValues(Workspace workspace) {
 		if(this.originalColumnValues != null) {
 			Worksheet worksheet = workspace.getWorksheet(worksheetId);
+			SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 			RepFactory f = workspace.getFactory();
 			HNode hNode = f.getHNode(pythonNodeId);
 

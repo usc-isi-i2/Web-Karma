@@ -108,8 +108,8 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 			String publicRDFAddress, String rdfSourcePrefix, String rdfSourceNamespace, String addInverseProperties,
 			String saveToStore,String hostName,String dbName,String userName,String password, String modelName, String tripleStoreUrl,
 			String graphUri, boolean replace, boolean generateBloomFilters, 
-			SuperSelection sel) {
-		super(id, worksheetId, sel);
+			String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.rdfSourcePrefix = rdfSourcePrefix;
 		this.rdfSourceNamespace = rdfSourceNamespace;
 		this.addInverseProperties = addInverseProperties;
@@ -158,7 +158,7 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		this.worksheetName = worksheet.getTitle();
-
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		// Prepare the file path and names
 		final String rdfFileName = workspace.getCommandPreferencesId() + worksheetId + ".ttl"; 
 		final String rdfFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.RDF_PUBLISH_DIR) +  

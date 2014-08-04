@@ -50,9 +50,8 @@ public class ShowModelCommandFactory extends JSONInputCommandFactory {
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		Worksheet ws = workspace.getWorksheet(getWorksheetId(request, workspace));
 		return new ShowModelCommand(getNewId(workspace), getWorksheetId(request, workspace), false, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 	}
 
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
@@ -61,7 +60,7 @@ public class ShowModelCommandFactory extends JSONInputCommandFactory {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		ShowModelCommand comm = new ShowModelCommand(getNewId(workspace), worksheet.getId(), false, 
-				worksheet.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 		OntologyManager ontMgr = workspace.getOntologyManager();
 		// Add the semantic types that have saved into the history
 		for (int i=2; i<inputJson.length(); i++) {

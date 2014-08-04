@@ -83,8 +83,8 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 	protected SetMetaPropertyCommand(String id, String worksheetId,
 			String hNodeId, METAPROPERTY_NAME metaPropertyName,
 			String metaPropertyValue, boolean trainAndShowUpdates,
-			String rdfLiteralType, SuperSelection sel) {
-		super(id, worksheetId, sel);
+			String rdfLiteralType, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.metaPropertyName = metaPropertyName;
@@ -131,6 +131,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		}
 		/*** Get the Alignment for this worksheet ***/
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		OntologyManager ontMgr = workspace.getOntologyManager();
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				workspace.getId(), worksheetId);

@@ -82,8 +82,8 @@ public class ExportCSVCommand extends WorksheetSelectionCommand {
 	 * */
 	protected ExportCSVCommand(String id, String worksheetId, String rootNode, String sparqlUrl, 
 			String graph, ArrayList<HashMap<String, String>> nodes,
-			SuperSelection sel) {
-		super(id, worksheetId, sel);
+			String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.rootNodeId = rootNode;
 		this.tripleStoreUrl = sparqlUrl;
 		this.graphUrl = graph;
@@ -195,7 +195,7 @@ public class ExportCSVCommand extends WorksheetSelectionCommand {
 		}
 				
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
 		KR2RMLMappingGenerator mappingGen = null;

@@ -85,8 +85,8 @@ public class PublishDatabaseCommand extends WorksheetSelectionCommand {
 	 */
 	protected PublishDatabaseCommand(String id, String worksheetId,
 			String dbType, String hostName, String port, String dbName,String userName,String password, String tableName, 
-			String overwrite, String insert, SuperSelection sel) {
-		super(id,worksheetId, sel);
+			String overwrite, String insert, String selectionId) {
+		super(id,worksheetId, selectionId);
 		this.hostName=hostName;
 		this.dbName=dbName;
 		this.userName=userName;
@@ -288,6 +288,7 @@ public class PublishDatabaseCommand extends WorksheetSelectionCommand {
 	 */
 	private int insertInTable(Worksheet w, String tableName, Map<String, String> colNamesMap,Connection conn) throws SQLException{
 		int numOfRowsNotInserted = 0;
+		SuperSelection selection = w.getSuperSelectionManager().getSuperSelection(selectionId);
 		//get col names for existing table
 		//some databases are case sensitive when referring to column/table names, so we have
 		//to use the "real" case in the queries

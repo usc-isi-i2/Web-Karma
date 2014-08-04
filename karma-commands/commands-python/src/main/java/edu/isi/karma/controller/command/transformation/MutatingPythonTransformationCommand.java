@@ -26,7 +26,6 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
@@ -50,9 +49,9 @@ public abstract class MutatingPythonTransformationCommand extends
 	
 	public MutatingPythonTransformationCommand(String id, String newColumnName,
 			String transformationCode, String worksheetId, String hNodeId,
-			String errorDefaultValue, SuperSelection sel) {
+			String errorDefaultValue, String selectionId) {
 		super(id, transformationCode, worksheetId, hNodeId,
-				errorDefaultValue, sel);
+				errorDefaultValue, selectionId);
 		this.newColumnName = newColumnName;
 	}
 

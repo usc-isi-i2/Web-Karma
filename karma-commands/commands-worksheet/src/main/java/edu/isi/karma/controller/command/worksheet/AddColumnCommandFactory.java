@@ -27,7 +27,6 @@ import org.json.JSONException;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
@@ -48,10 +47,9 @@ public class AddColumnCommandFactory extends JSONInputCommandFactory {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String defaultValue = request.getParameter(Arguments.defaultValue.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		return new AddColumnCommand(getNewId(workspace), worksheetId, 
 				hTableId, hNodeId, newColumnName, defaultValue, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 	}
 
 	@Override
@@ -64,10 +62,9 @@ public class AddColumnCommandFactory extends JSONInputCommandFactory {
 		String newColumnName = CommandInputJSONUtil.getStringValue(Arguments.newColumnName.name(), inputJson);
 		String defaultValue = CommandInputJSONUtil.getStringValue(Arguments.defaultValue.name(), inputJson);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		AddColumnCommand colCmd = new AddColumnCommand(getNewId(workspace), worksheetId,
 				hTableId, hNodeID, newColumnName, defaultValue, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName)
+				selectionName
 				);
 		colCmd.setInputParameterJson(inputJson.toString());
 		return colCmd;

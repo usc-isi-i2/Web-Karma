@@ -60,10 +60,9 @@ public class ShowAutoModelCommandFactory extends JSONInputCommandFactory {
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		Worksheet ws = workspace.getWorksheet(getWorksheetId(request, workspace));
 		return new ShowModelCommand(getNewId(workspace), getWorksheetId(
 				request, workspace), false, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 	}
 
 	public Command createCommand(JSONArray inputJson, Workspace workspace)

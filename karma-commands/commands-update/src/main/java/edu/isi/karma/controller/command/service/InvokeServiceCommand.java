@@ -71,8 +71,8 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 	
 	private Worksheet worksheetBeforeInvocation = null;
 
-	InvokeServiceCommand(String id, String worksheetId, String hNodeId, SuperSelection sel) {
-		super(id, worksheetId, sel);
+	InvokeServiceCommand(String id, String worksheetId, String hNodeId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 	}
 
@@ -85,6 +85,7 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = wk.getSuperSelectionManager().getSuperSelection(selectionId);
 		String encoding = wk.getEncoding();
 		// Clone the worksheet just before the invocation
 		Cloner cloner = new Cloner();

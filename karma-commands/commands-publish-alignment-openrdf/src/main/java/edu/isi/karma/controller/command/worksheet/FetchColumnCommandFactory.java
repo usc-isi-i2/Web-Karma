@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
 public class FetchColumnCommandFactory extends CommandFactory {
@@ -43,10 +42,9 @@ public class FetchColumnCommandFactory extends CommandFactory {
 		String graphUrl = request.getParameter(Arguments.graphUrl.name());
 		String nodeId = request.getParameter(Arguments.nodeId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		return new FetchColumnCommand(getNewId(workspace), worksheetId, alignmentNodeId, 
 				tripleStoreUrl, graphUrl, nodeId, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 	}
 
 	@Override

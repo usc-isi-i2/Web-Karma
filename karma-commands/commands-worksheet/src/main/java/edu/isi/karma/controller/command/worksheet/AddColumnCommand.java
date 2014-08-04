@@ -70,8 +70,9 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 	.getLogger(AddColumnCommand.class);
 
 	protected AddColumnCommand(String id,String worksheetId,
-			String hTableId, String hNodeId, String newColumnName, String defaultValue, SuperSelection sel) {
-		super(id, worksheetId, sel);
+			String hTableId, String hNodeId, String newColumnName, 
+			String defaultValue, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		this.newColumnName=newColumnName;
@@ -161,6 +162,7 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 	}
 
 	private void populateRowsWithDefaultValues(Worksheet worksheet, RepFactory factory) {
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {

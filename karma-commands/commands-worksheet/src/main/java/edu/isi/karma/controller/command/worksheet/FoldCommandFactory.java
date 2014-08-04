@@ -7,7 +7,6 @@ import org.json.JSONException;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
@@ -25,10 +24,9 @@ public class FoldCommandFactory extends JSONInputCommandFactory {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		return new FoldCommand(getNewId(workspace), worksheetId, 
 				"", hNodeId, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 	}
 
 	@Override
@@ -38,10 +36,9 @@ public class FoldCommandFactory extends JSONInputCommandFactory {
 		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		FoldCommand foldCmd = new FoldCommand(getNewId(workspace), worksheetId,
 				"", hNodeID, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 		foldCmd.setInputParameterJson(inputJson.toString());
 		return foldCmd;
 	}

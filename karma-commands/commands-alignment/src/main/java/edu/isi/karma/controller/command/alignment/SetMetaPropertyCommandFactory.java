@@ -28,9 +28,7 @@ import org.json.JSONException;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
@@ -57,10 +55,9 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(request.getParameter(Arguments.metaPropertyName.name()));
 		String propValue = request.getParameter(Arguments.metaPropertyValue.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		return new SetMetaPropertyCommand(getNewId(workspace), worksheetId, hNodeId, 
 				prop, propValue, true, rdfLiteralType, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 	}
 
 	@Override
@@ -72,10 +69,9 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 		String propValue = HistoryJsonUtil.getStringValue(Arguments.metaPropertyValue.name(), inputJson);
 		String rdfLiteralType = HistoryJsonUtil.getStringValue(Arguments.rdfLiteralType.name(), inputJson);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(workspace), worksheetId, 
 				hNodeId, prop, propValue, true, rdfLiteralType, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 		
 		// Change the train flag, so that it does not train while reading from history
 		HistoryJsonUtil.setArgumentValue(Arguments.trainAndShowUpdates.name(), false, inputJson);
@@ -84,10 +80,10 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 	}
 	
 	public Command createCommand(Workspace workspace, String hNodeId, String worksheetId, String metaPropertyName, 
-			String propValue, String rdfLiteralType, SuperSelection sel) {
+			String propValue, String rdfLiteralType, String selectionId) {
 		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(metaPropertyName);
 		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(workspace), worksheetId, 
-				hNodeId, prop, propValue, true, rdfLiteralType, sel);
+				hNodeId, prop, propValue, true, rdfLiteralType, selectionId);
 		return comm;
 	}
 

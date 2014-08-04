@@ -50,7 +50,6 @@ public class PublishRDFCommandFactory extends CommandFactory {
 		String rdfPrefix =  worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.prefix);
 		String rdfNamespace = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.baseURI);
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		PublishRDFCommand comm = new PublishRDFCommand(getNewId(workspace), worksheetId,
 				ServletContextParameterMap
 				.getParameterValue(ContextParameter.PUBLIC_RDF_ADDRESS),
@@ -65,7 +64,7 @@ public class PublishRDFCommandFactory extends CommandFactory {
 				request.getParameter(Arguments.graphUri.name()),
 				Boolean.parseBoolean(request.getParameter(Arguments.replaceContext.name())), 
 				Boolean.parseBoolean(request.getParameter(Arguments.generateBloomFilters.name())), 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName)
+				selectionName
 				);
 		
 		return comm;

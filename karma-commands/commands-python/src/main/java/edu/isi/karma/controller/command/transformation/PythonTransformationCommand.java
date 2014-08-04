@@ -68,8 +68,8 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 	}
 
 	public PythonTransformationCommand(String id, String transformationCode,
-			String worksheetId, String hNodeId, String errorDefaultValue, SuperSelection sel) {
-		super(id, worksheetId, sel);
+			String worksheetId, String hNodeId, String errorDefaultValue, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.transformationCode = transformationCode;
 		this.hNodeId = hNodeId;
 		this.errorDefaultValue = errorDefaultValue;
@@ -101,7 +101,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 			JSONArray transformedRows, JSONArray errorValues, Integer limit)
 					throws JSONException, IOException {
 
-		
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		String trimmedTransformationCode = transformationCode.trim();
 		// Pedro: somehow we are getting empty statements, and these are causing
 		// exceptions.

@@ -75,8 +75,8 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		rdfPrefix, rdfNamespace, modelSparqlEndPoint
 	}
 
-	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String context, SuperSelection sel) {
-		super(id, worksheetId, sel);
+	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String context, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.tripleStoreUrl = url;
 		this.graphContext = context;
 	}
@@ -130,6 +130,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		boolean storeOldHistory = ModelingConfiguration.isStoreOldHistoryEnabled();
 		System.out.println("storeOldHistory: " + storeOldHistory);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		CommandHistory history = workspace.getCommandHistory();
 		List<Command> oldCommands = history.getCommandsFromWorksheetId(worksheetId);
 		if (storeOldHistory) {			

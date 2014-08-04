@@ -49,8 +49,9 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 		updateType, fileUrl, worksheetId
 	}
     
-	public ExportJSONCommand(String id, String alignmentNodeId, String worksheetId, SuperSelection sel) {
-		super(id, worksheetId, sel);
+	public ExportJSONCommand(String id, String alignmentNodeId, 
+			String worksheetId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.alignmentNodeId = alignmentNodeId;
 		
 		addTag(CommandTag.Transformation);//??want Export JSON in model history?
@@ -82,6 +83,7 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 
 		
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		RepFactory f = workspace.getFactory();
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				AlignmentManager.Instance().constructAlignmentId(workspace.getId(),

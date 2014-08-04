@@ -71,8 +71,9 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 			.getLogger(ExtractEntitiesCommand.class);
 
 	protected ExtractEntitiesCommand(String id, String worksheetId,
-			String hTableId, String hNodeId, String extractionURL, String entitiesToBeExt, SuperSelection sel) {
-		super(id, worksheetId, sel);
+			String hTableId, String hNodeId, String extractionURL, 
+			String entitiesToBeExt, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		this.extractionURL = extractionURL;
@@ -104,6 +105,7 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		System.out.println("in do it");
 		System.out.println(extractionURL);
 
@@ -269,7 +271,7 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 		try {
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
 			cmd = (AddValuesCommand) factory.createCommand(addValues, workspace, hNodeId, worksheetId,
-					hTableId, HNodeType.Transformation, selection);
+					hTableId, HNodeType.Transformation, selection.getName());
 			
 			HNode hnode = worksheet.getHeaders().getHNode(hNodeId);
 			cmd.setColumnName(hnode.getColumnName()+" Extractions");

@@ -29,7 +29,6 @@ import org.json.JSONException;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
@@ -55,10 +54,9 @@ public class SubmitPythonTransformationCommandFactory extends JSONInputCommandFa
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String errorDefaultValue = HistoryJsonUtil.getStringValue(Arguments.errorDefaultValue.name(), inputJson);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		SubmitPythonTransformationCommand comm = new SubmitPythonTransformationCommand(getNewId(workspace), 
 				newColumnName, code, worksheetId, hNodeId, errorDefaultValue, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

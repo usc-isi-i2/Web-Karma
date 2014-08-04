@@ -50,8 +50,8 @@ public class PublishSpatialDataCommand extends WorksheetSelectionCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishSpatialDataCommand.class);
 
-	protected PublishSpatialDataCommand(String id, String worksheetId, SuperSelection sel) {
-		super(id, worksheetId, sel);
+	protected PublishSpatialDataCommand(String id, String worksheetId, String selectionId) {
+		super(id, worksheetId, selectionId);
 	}
 
 	@Override
@@ -77,12 +77,7 @@ public class PublishSpatialDataCommand extends WorksheetSelectionCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-
-//		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0) {
-//			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, workspace
-//					.getTagsContainer().getTag(TagName.Outlier), workspace
-//					.getSemanticTypeModelHandler(), workspace.getOntologyManager());
-//		}
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 
 		OntologyManager om= workspace.getOntologyManager();
 		WorksheetToFeatureCollection geo = new WorksheetToFeatureCollection(worksheet, om, selection);//ying

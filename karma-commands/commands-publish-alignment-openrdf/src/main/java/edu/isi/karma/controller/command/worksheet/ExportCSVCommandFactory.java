@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
 public class ExportCSVCommandFactory extends CommandFactory {
@@ -66,10 +65,9 @@ public class ExportCSVCommandFactory extends CommandFactory {
 			logger.error("Error parsing column list",e);
 		}
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		Worksheet ws = workspace.getWorksheet(worksheetId);
 		return new ExportCSVCommand(getNewId(workspace), worksheetId, nodeId, 
 				tripleStoreUrl, graphUrl, cols, 
-				ws.getSuperSelectionManager().getSuperSelection(selectionName));
+				selectionName);
 	}
 
 	@Override

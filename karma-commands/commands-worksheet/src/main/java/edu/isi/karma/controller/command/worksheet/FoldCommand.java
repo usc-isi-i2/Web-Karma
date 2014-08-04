@@ -50,8 +50,8 @@ public class FoldCommand extends WorksheetSelectionCommand {
 	}
 
 	protected FoldCommand(String id,String worksheetId, 
-			String hTableId, String hNodeId, SuperSelection sel) {
-		super(id, worksheetId, sel);
+			String hTableId, String hNodeId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		
@@ -87,6 +87,7 @@ public class FoldCommand extends WorksheetSelectionCommand {
 		RepFactory Repfactory = workspace.getFactory();
 		Worksheet worksheet = workspace.getWorksheet(
 				worksheetId);
+		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
 		inputColumns.clear();
 		outputColumns.clear();
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
@@ -168,7 +169,7 @@ public class FoldCommand extends WorksheetSelectionCommand {
 		try{
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
 			//hNodeId = hnodes.get(0).getId();
-			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId, worksheet.getHeaders().getNewColumnName("fold"), HNodeType.Transformation, selection);
+			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId, worksheet.getHeaders().getNewColumnName("fold"), HNodeType.Transformation, selection.getName());
 			cmd.doIt(workspace);
 			outputColumns.addAll(cmd.getOutputColumns());
 			UpdateContainer c =  new UpdateContainer();		
