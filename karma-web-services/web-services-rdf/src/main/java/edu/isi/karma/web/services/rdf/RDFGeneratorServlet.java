@@ -1,9 +1,9 @@
 package edu.isi.karma.web.services.rdf;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -12,6 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.map.LRUMap;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -37,6 +38,7 @@ import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
@@ -52,7 +54,9 @@ import edu.isi.karma.webserver.KarmaException;
 @Path("/r2rml") 
 public class RDFGeneratorServlet{
 	
+	private static final int MODEL_CACHE_SIZE = 20;
 	private static Logger logger = LoggerFactory.getLogger(RDFGeneratorServlet.class);
+	private static LRUMap modelCache = new LRUMap(MODEL_CACHE_SIZE);
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -62,7 +66,13 @@ public class RDFGeneratorServlet{
 		try
 		{
 			logger.info("Path - r2rml/rdf . Generate and return RDF as String");
-			return GenerateRDF(formParams.getFirst(FormParameters.RAW_DATA), formParams.getFirst(FormParameters.R2RML_URL));
+			boolean refreshModel = false;
+			String sRefreshModel = formParams.getFirst(FormParameters.REFRESH_MODEL);
+			if(sRefreshModel != null && sRefreshModel.equalsIgnoreCase("true"))
+				refreshModel = true;
+			return GenerateRDF(formParams.getFirst(FormParameters.RAW_DATA), 
+					formParams.getFirst(FormParameters.R2RML_URL),
+					refreshModel);
 		}
 		catch(JSONException je)
 		{
@@ -93,6 +103,22 @@ public class RDFGeneratorServlet{
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("/clearCache")
+	public Response clearCache(MultivaluedMap<String, String> formParams) {
+		modelCache.clear();
+		return Response.status(200).entity("Success").build();
+	}
+	
+	/**
+	 * 
+	 * @throws ClientProtocolException 
+	 * @throws IOException 
+	 * @throws JSONException 
+	 * @throws KarmaException */
+	
+	
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/sparql")
 	public Response saveToTriplestore(MultivaluedMap<String, String> formParams)
 	{
@@ -102,7 +128,13 @@ public class RDFGeneratorServlet{
 	
 			logger.info("Generating RDF for: " + formParams.getFirst(FormParameters.RAW_DATA));
 			
-			String strRDF = GenerateRDF(formParams.getFirst(FormParameters.RAW_DATA), formParams.getFirst(FormParameters.R2RML_URL));
+			boolean refreshModel = false;
+			String sRefreshModel = formParams.getFirst(FormParameters.REFRESH_MODEL);
+			if(sRefreshModel != null && sRefreshModel.equalsIgnoreCase("true"))
+				refreshModel = true;
+			String strRDF = GenerateRDF(formParams.getFirst(FormParameters.RAW_DATA), 
+										formParams.getFirst(FormParameters.R2RML_URL),
+										refreshModel);
 	
 			int responseCode = PublishRDFToTripleStore(formParams, strRDF);
 			
@@ -155,7 +187,13 @@ public class RDFGeneratorServlet{
 	
 			logger.info("Generating RDF for: " + formParams.getFirst(FormParameters.RAW_DATA));
 			
-			String strRDF = GenerateRDF(formParams.getFirst(FormParameters.RAW_DATA), formParams.getFirst(FormParameters.R2RML_URL));
+			boolean refreshModel = false;
+			String sRefreshModel = formParams.getFirst(FormParameters.REFRESH_MODEL);
+			if(sRefreshModel != null && sRefreshModel.equalsIgnoreCase("true"))
+				refreshModel = true;
+			String strRDF = GenerateRDF(formParams.getFirst(FormParameters.RAW_DATA), 
+							formParams.getFirst(FormParameters.R2RML_URL),
+							refreshModel);
 	
 			int responseCode = PublishRDFToTripleStore(formParams, strRDF);
 			
@@ -270,7 +308,7 @@ public class RDFGeneratorServlet{
 		return sbTSURL.toString();   
 				
 	}
-	private String GenerateRDF(String metadataJSON, String r2rmlURI) throws KarmaException, JSONException, IOException
+	private String GenerateRDF(String metadataJSON, String r2rmlURI, boolean refreshR2RML) throws KarmaException, JSONException, IOException
 	{
 
 			logger.info("Parse and model JSON:" + metadataJSON);
@@ -287,9 +325,8 @@ public class RDFGeneratorServlet{
 			
 	        GenericRDFGenerator gRDFGen = new GenericRDFGenerator(SuperSelectionManager.DEFAULT_SELECTION);
 			
-			R2RMLMappingIdentifier rmlID = new R2RMLMappingIdentifier(FormParameters.R2RML_URL,
-					new File(r2rmlURI).toURI().toURL());
-			
+			R2RMLMappingIdentifier rmlID = new R2RMLMappingIdentifier(r2rmlURI,
+					new URL(r2rmlURI));
 			gRDFGen.addModel(rmlID);
 			
 			StringWriter sw = new StringWriter();
@@ -298,11 +335,25 @@ public class RDFGeneratorServlet{
 			URIFormatter uriFormatter = new URIFormatter();
 			KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
 			
-			//TODO Replace PHONE with something meaningful
-			gRDFGen.generateRDF(FormParameters.R2RML_URL,"PHONE",metadataJSON , InputType.JSON, false, outWriter);
+			WorksheetR2RMLJenaModelParser modelParser = getModel(rmlID, refreshR2RML);
+			
+			String sourceName = r2rmlURI;
+			gRDFGen.generateRDF(modelParser, sourceName, metadataJSON, InputType.JSON, -1, false, outWriter);
 			
 			return sw.toString();
 		
+	}
+	
+	private WorksheetR2RMLJenaModelParser getModel(R2RMLMappingIdentifier modelIdentifier, boolean refreshR2RML) throws JSONException, KarmaException {
+		WorksheetR2RMLJenaModelParser modelParser = null;
+		if(refreshR2RML == false) {
+			modelParser = (WorksheetR2RMLJenaModelParser) modelCache.get(modelIdentifier.getName());
+		}
+		if(modelParser == null) {
+			modelParser = new WorksheetR2RMLJenaModelParser(modelIdentifier);
+			modelCache.put(modelIdentifier.getName(), modelParser);
+		}
+		return modelParser;
 	}
 	
 	private int invokeHTTPRequestWithAuth(HttpHost httpHost, HttpPost httpPost, String contentType, 

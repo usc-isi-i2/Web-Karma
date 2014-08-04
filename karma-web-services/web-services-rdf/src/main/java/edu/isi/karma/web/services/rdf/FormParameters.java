@@ -16,4 +16,5 @@ public class FormParameters {
 	public static final String TRIPLE_STORE_SESAME = "Sesame";
 	public static final String TRIPLE_STORE_VIRTUOSO = "Virtuoso";
 	public static final String OVERWRITE = "Overwrite"; 
+	public static final String REFRESH_MODEL = "RefreshModel";
 }

@@ -111,7 +111,8 @@ public class AlignmentManager {
 	
 	public boolean removeAlignment(String alignmentId) {
 		Alignment a =  alignmentMap.remove(alignmentId);
-		a.cleanup();
+		if (a != null)
+			a.cleanup();
 		return a != null;
 	}
 	
