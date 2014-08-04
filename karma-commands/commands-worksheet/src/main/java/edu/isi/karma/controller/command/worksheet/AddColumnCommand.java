@@ -162,7 +162,7 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 	}
 
 	private void populateRowsWithDefaultValues(Worksheet worksheet, RepFactory factory) {
-		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {

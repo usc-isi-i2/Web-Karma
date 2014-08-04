@@ -166,7 +166,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
-		SuperSelection selection = wk.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(wk);
 		String msg = String.format("Gen rule start,Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
 		logger.info(msg);
 		// Get the HNode

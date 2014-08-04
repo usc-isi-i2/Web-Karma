@@ -208,7 +208,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 
 	protected void saveColumnValues(Workspace workspace) {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		RepFactory f = workspace.getFactory();
 		HNode hNode = f.getHNode(pythonNodeId);
 
@@ -223,7 +223,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	public void resetColumnValues(Workspace workspace) {
 		if(this.originalColumnValues != null) {
 			Worksheet worksheet = workspace.getWorksheet(worksheetId);
-			SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
+			SuperSelection selection = getSuperSelection(worksheet);
 			RepFactory f = workspace.getFactory();
 			HNode hNode = f.getHNode(pythonNodeId);
 

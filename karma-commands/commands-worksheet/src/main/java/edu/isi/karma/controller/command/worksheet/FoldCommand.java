@@ -87,7 +87,7 @@ public class FoldCommand extends WorksheetSelectionCommand {
 		RepFactory Repfactory = workspace.getFactory();
 		Worksheet worksheet = workspace.getWorksheet(
 				worksheetId);
-		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		inputColumns.clear();
 		outputColumns.clear();
 		Object para = JSONUtil.createJson(this.getInputParameterJson());

@@ -192,7 +192,7 @@ public class AddValuesCommand extends WorksheetSelectionCommand{
 	}
 
 	private void populateRowsWithDefaultValues(Worksheet worksheet, RepFactory factory, JSONArray array, HTable htable) {
-		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {
@@ -278,7 +278,7 @@ public class AddValuesCommand extends WorksheetSelectionCommand{
 
 	private boolean addValues(Node node, String value, RepFactory factory, Table table) {
 		Worksheet worksheet = factory.getWorksheet(worksheetId);
-		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		boolean flag = true;
 		if (table != null) {
 			for (Row r : table.getRows(0, table.getNumRows(), selection)) {

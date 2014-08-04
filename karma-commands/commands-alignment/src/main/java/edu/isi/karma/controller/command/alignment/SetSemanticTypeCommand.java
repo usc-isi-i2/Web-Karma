@@ -122,7 +122,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 			
 		}
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		OntologyManager ontMgr = workspace.getOntologyManager();
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);

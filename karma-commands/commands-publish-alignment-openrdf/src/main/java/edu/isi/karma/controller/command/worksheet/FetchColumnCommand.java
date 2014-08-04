@@ -94,7 +94,7 @@ public class FetchColumnCommand extends WorksheetSelectionCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		String worksheetName = worksheet.getTitle();
 		try {
 

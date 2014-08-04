@@ -158,7 +158,7 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		this.worksheetName = worksheet.getTitle();
-		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		// Prepare the file path and names
 		final String rdfFileName = workspace.getCommandPreferencesId() + worksheetId + ".ttl"; 
 		final String rdfFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.RDF_PUBLISH_DIR) +  

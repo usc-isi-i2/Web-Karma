@@ -99,7 +99,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 		
 		UpdateContainer c = new UpdateContainer();
 		Worksheet wk = workspace.getWorksheet(worksheetId);
-		SuperSelection selection = wk.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(wk);
 		// Clone the worksheet just before the invocation
 		Cloner cloner = new Cloner();
 		this.worksheetBeforeInvocation = cloner.deepClone(wk);
@@ -209,7 +209,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 	private List<String> getUrlStrings(WebService service, DataSource source, 
 			Worksheet wk, Map<String, String> serviceToSourceAttMapping, 
 			List<String> requestIds) {
-		SuperSelection selection = wk.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(wk);
 		List<String> requestURLStrings = new ArrayList<String>();
 		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows(), selection);
 		if (rows == null || rows.size() == 0) {

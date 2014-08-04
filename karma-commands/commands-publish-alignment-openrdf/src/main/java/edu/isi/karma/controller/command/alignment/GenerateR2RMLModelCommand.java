@@ -130,7 +130,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		boolean storeOldHistory = ModelingConfiguration.isStoreOldHistoryEnabled();
 		System.out.println("storeOldHistory: " + storeOldHistory);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		CommandHistory history = workspace.getCommandHistory();
 		List<Command> oldCommands = history.getCommandsFromWorksheetId(worksheetId);
 		if (storeOldHistory) {			

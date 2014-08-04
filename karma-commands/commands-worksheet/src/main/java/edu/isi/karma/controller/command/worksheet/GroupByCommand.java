@@ -152,7 +152,7 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 	}
 
 	private Worksheet groupByTopLevel(Worksheet oldws, Workspace workspace, List<String> hnodeIDs, List<HNode> keyhnodes, List<HNode> valuehnodes, RepFactory factory) {
-		SuperSelection selection = oldws.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(oldws);
 		Worksheet newws = factory.createWorksheet("GroupBy: " + oldws.getTitle(), workspace, oldws.getEncoding());
 		newws.getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, oldws.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.sourceType));
 		HTable newht =  newws.getHeaders();
@@ -189,7 +189,7 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 	}
 
 	private void groupByNestedTable(Worksheet oldws, Workspace workspace, HTable ht, List<String> hnodeIDs, List<HNode> keyhnodes, List<HNode> valuehnodes, RepFactory factory) {
-		SuperSelection selection = oldws.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(oldws);
 		HTable parentHT = ht.getParentHNode().getHTable(factory);
 		List<Table> parentTables = new ArrayList<Table>();
 		CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT,parentTables, selection);

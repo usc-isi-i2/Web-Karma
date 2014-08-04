@@ -288,7 +288,7 @@ public class PublishDatabaseCommand extends WorksheetSelectionCommand {
 	 */
 	private int insertInTable(Worksheet w, String tableName, Map<String, String> colNamesMap,Connection conn) throws SQLException{
 		int numOfRowsNotInserted = 0;
-		SuperSelection selection = w.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(w);
 		//get col names for existing table
 		//some databases are case sensitive when referring to column/table names, so we have
 		//to use the "real" case in the queries

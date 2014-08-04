@@ -274,7 +274,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 			}
 		}
 		Collection<Node> nodes = new ArrayList<Node>();
-		SuperSelection selection = workspace.getWorksheet(worksheetId).getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(workspace);
 		workspace.getFactory().getWorksheet(worksheetId).getDataTable()
 				.collectNodes(selectedPath, nodes, selection);
 		for (Node node : nodes) {

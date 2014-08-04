@@ -56,7 +56,7 @@ public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
 	public UpdateContainer doIt(final Workspace workspace) throws CommandException {
 		logger.info("Get Semantic Suggestions: " + worksheetId + "," + hNodeId);
 		UpdateContainer uc = new UpdateContainer();
-		final SuperSelection selection = workspace.getWorksheet(worksheetId).getSuperSelectionManager().getSuperSelection(selectionId);
+		final SuperSelection selection = getSuperSelection(workspace);
 		uc.add(new AbstractUpdate() {
 
 			@Override

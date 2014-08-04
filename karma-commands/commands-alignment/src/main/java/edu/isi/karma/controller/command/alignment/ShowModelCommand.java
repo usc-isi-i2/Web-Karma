@@ -119,7 +119,7 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		OntologyManager ontologyManager = workspace.getOntologyManager();
 		if(ontologyManager.isEmpty())
 			return new UpdateContainer(new ErrorUpdate("No ontology loaded."));

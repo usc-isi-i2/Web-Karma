@@ -84,7 +84,7 @@ public class SearchForDataToAugmentCommand extends WorksheetSelectionCommand{
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		RepFactory factory = workspace.getFactory();
 		TripleStoreUtil util = new TripleStoreUtil();
 		HashMap<String, List<String>> result = null;

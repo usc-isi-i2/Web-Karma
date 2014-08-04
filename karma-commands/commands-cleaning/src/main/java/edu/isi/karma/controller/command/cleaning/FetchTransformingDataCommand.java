@@ -78,7 +78,7 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
-		SuperSelection selection = wk.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(wk);
 		String Msg = String.format("begin, Time,%d, Worksheet,%s",
 				System.currentTimeMillis(), worksheetId);
 		logger.info(Msg);

@@ -124,7 +124,7 @@ public class GlueCommand extends WorksheetSelectionCommand {
 	}
 
 	private void glueNestedTable(Worksheet oldws, Workspace workspace, HTable ht, List<HNode> hnodes, RepFactory factory) {
-		SuperSelection selection = oldws.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(oldws);
 		HTable parentHT = ht.getParentHNode().getHTable(factory);
 		List<Table> parentTables = new ArrayList<Table>();
 		CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT,parentTables, selection);
@@ -189,7 +189,7 @@ public class GlueCommand extends WorksheetSelectionCommand {
 
 	private void glueTopLevel(Worksheet oldws, Workspace workspace, List<HNode> hnodes, RepFactory factory) {
 		HTable parentHT = oldws.getHeaders();
-		SuperSelection selection = oldws.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(oldws);
 		HNode newNode = parentHT.addHNode(parentHT.getNewColumnName("Glue"), HNodeType.Transformation, oldws, factory);
 		newhNodeId = newNode.getId();
 		outputColumns.add(newhNodeId);

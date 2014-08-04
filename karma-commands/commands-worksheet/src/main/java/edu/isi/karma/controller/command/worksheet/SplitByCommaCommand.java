@@ -86,7 +86,7 @@ public class SplitByCommaCommand extends WorksheetSelectionCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
 		UpdateContainer c = new UpdateContainer();
-		SuperSelection selection = wk.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(wk);
 		// Get the HNode
 		hNode = workspace.getFactory().getHNode(hNodeId);
 		// The column should not have a nested table but check to make sure!
@@ -112,7 +112,7 @@ public class SplitByCommaCommand extends WorksheetSelectionCommand {
 	public UpdateContainer undoIt(Workspace workspace) {
 		
 		Worksheet wk = workspace.getFactory().getWorksheet(worksheetId);
-		SuperSelection selection = wk.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(wk);
 		List<HNodePath> columnPaths = wk.getHeaders().getAllPaths();
 
 		// Get the path which has the split value hNodeId

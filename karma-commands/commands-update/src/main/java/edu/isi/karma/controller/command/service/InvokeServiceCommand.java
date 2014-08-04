@@ -85,7 +85,7 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
-		SuperSelection selection = wk.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(wk);
 		String encoding = wk.getEncoding();
 		// Clone the worksheet just before the invocation
 		Cloner cloner = new Cloner();

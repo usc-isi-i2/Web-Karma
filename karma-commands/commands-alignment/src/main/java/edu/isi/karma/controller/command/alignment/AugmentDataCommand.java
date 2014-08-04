@@ -112,7 +112,7 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		RepFactory factory = workspace.getFactory();
 		Worksheet worksheet = factory.getWorksheet(worksheetId);
-		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		if (alignment.GetTreeRoot() != null)
 			hNodeId = FetchHNodeIdFromAlignmentCommand.gethNodeId(alignmentId, columnUri);
 		if (hNodeId == null) {

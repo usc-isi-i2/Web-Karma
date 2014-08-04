@@ -75,7 +75,7 @@ public class PublishKMLLayerCommand extends WorksheetSelectionCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		SuperSelection selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionId);
+		SuperSelection selection = getSuperSelection(worksheet);
 //		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0) {
 //			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, workspace
 //					.getTagsContainer().getTag(TagName.Outlier), workspace
