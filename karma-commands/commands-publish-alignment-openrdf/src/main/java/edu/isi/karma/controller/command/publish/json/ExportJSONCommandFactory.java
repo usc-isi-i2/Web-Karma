@@ -29,6 +29,7 @@ public class ExportJSONCommandFactory extends JSONInputCommandFactory {
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String alignmentNodeId = HistoryJsonUtil.getStringValue(Arguments.alignmentNodeId.name(), inputJson);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		ExportJSONCommand comm = new ExportJSONCommand(
 				getNewId(workspace), alignmentNodeId, worksheetId, 

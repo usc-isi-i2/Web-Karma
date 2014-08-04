@@ -55,6 +55,7 @@ public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String incoming = CommandInputJSONUtil.getStringValue(Arguments.incoming.name(), inputJson);
 		String sameAsPredicate = CommandInputJSONUtil.getStringValue(Arguments.sameAsPredicate.name(), inputJson);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		AugmentDataCommand cmd = new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
 				columnUri, predicate, otherClass, hNodeId, 

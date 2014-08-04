@@ -53,6 +53,7 @@ public class SubmitPythonTransformationCommandFactory extends JSONInputCommandFa
 		String code = HistoryJsonUtil.getStringValue(Arguments.transformationCode.name(), inputJson);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String errorDefaultValue = HistoryJsonUtil.getStringValue(Arguments.errorDefaultValue.name(), inputJson);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		SubmitPythonTransformationCommand comm = new SubmitPythonTransformationCommand(getNewId(workspace), 
 				newColumnName, code, worksheetId, hNodeId, errorDefaultValue, 

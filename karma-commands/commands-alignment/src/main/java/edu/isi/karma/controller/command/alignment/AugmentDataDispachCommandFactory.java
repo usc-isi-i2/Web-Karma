@@ -30,6 +30,7 @@ public class AugmentDataDispachCommandFactory extends JSONInputCommandFactory {
 		String predicateOutgoing = CommandInputJSONUtil.getStringValue(Arguments.predicateOutgoing.name(), inputJson);
 		String otherClassOutgoing = CommandInputJSONUtil.getStringValue(Arguments.otherClassOutgoing.name(), inputJson);
 		String sameAsPredicate = CommandInputJSONUtil.getStringValue(Arguments.sameAsPredicate.name(), inputJson);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		AugmentDataDispachCommand cmd = new AugmentDataDispachCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
 				columnUri, predicateIncoming, otherClassIncoming, 

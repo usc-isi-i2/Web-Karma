@@ -24,6 +24,7 @@ public class AddValuesCommandFactory extends JSONInputCommandFactory{
 		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hTableId = CommandInputJSONUtil.getStringValue(Arguments.hTableId.name(), inputJson);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		AddValuesCommand valCmd = new AddValuesCommand(getNewId(workspace), worksheetId,
 				hTableId, hNodeID, HNodeType.Transformation, 

@@ -26,6 +26,7 @@ public class GenerateClusterValuesCommandFactory extends JSONInputCommandFactory
 				Arguments.hNodeId.name(), inputJson);
 		String worksheetId = HistoryJsonUtil.getStringValue(
 				Arguments.worksheetId.name(), inputJson);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		GenerateClusterValuesCommand comm = new GenerateClusterValuesCommand(
 				getNewId(workspace), hNodeId, worksheetId, 

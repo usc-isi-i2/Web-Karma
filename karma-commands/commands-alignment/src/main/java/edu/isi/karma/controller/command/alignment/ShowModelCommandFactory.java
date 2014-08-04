@@ -58,6 +58,7 @@ public class ShowModelCommandFactory extends JSONInputCommandFactory {
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		ShowModelCommand comm = new ShowModelCommand(getNewId(workspace), worksheet.getId(), false, 
 				selectionName);

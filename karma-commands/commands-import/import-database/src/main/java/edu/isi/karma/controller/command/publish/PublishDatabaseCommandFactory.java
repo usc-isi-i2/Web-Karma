@@ -20,15 +20,14 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.publish;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.Workspace;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.rep.Workspace;
 
 public class PublishDatabaseCommandFactory extends CommandFactory {
 	

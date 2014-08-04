@@ -35,6 +35,7 @@ public class FoldCommandFactory extends JSONInputCommandFactory {
 		/** Parse the input arguments and create proper data structures to be passed to the command **/
 		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		FoldCommand foldCmd = new FoldCommand(getNewId(workspace), worksheetId,
 				"", hNodeID, 

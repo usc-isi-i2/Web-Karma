@@ -13,7 +13,7 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class GlueCommandFactory extends JSONInputCommandFactory{
 
-	public enum Arguments {
+	private enum Arguments {
 		worksheetId, hTableId, hNodeId, 
 		newColumnName, defaultValue, selectionName		
 	}
@@ -25,6 +25,7 @@ public class GlueCommandFactory extends JSONInputCommandFactory{
 		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hTableId = "";
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		//System.out.println(worksheetId);
 		GlueCommand glueCmd = new GlueCommand(getNewId(workspace), worksheetId,

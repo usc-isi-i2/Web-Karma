@@ -83,6 +83,7 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 			logger.error("Bad JSON received from server!", e);
 			return null;
 		}
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		SetSemanticTypeCommand comm = new SetSemanticTypeCommand(getNewId(workspace), 
 				worksheetId, hNodeId, isPartOfKey, arr, 

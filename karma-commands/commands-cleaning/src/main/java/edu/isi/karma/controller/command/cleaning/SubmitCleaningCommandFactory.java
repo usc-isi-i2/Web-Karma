@@ -61,6 +61,7 @@ public class SubmitCleaningCommandFactory extends JSONInputCommandFactory {
 				Arguments.worksheetId.name(), inputJson);
 		String examples = HistoryJsonUtil.getStringValue(
 				Arguments.examples.name(), inputJson);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		SubmitCleaningCommand comm = new SubmitCleaningCommand(
 				getNewId(workspace), hNodeId, worksheetId, examples, 

@@ -37,6 +37,7 @@ public class GroupByCommandFactory extends JSONInputCommandFactory {
 		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hTableId = "";
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		//System.out.println(worksheetId);
 		GroupByCommand unfoldCmd = new GroupByCommand(getNewId(workspace), worksheetId,
