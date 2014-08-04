@@ -1,8 +1,15 @@
 package edu.isi.karma.controller.command.publish;
 
-import edu.isi.karma.controller.command.Command;
+import java.io.PrintWriter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
@@ -11,15 +18,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.PrintWriter;
-
-public class PublishWorksheetHistoryCommand extends Command {
-	private final String worksheetId;
+public class PublishWorksheetHistoryCommand extends WorksheetCommand {
 	
 	private enum JsonKeys {
 		updateType, fileUrl, worksheetId
@@ -29,8 +28,7 @@ public class PublishWorksheetHistoryCommand extends Command {
 			.getLogger(PublishWorksheetHistoryCommand.class);
 
 	protected PublishWorksheetHistoryCommand(String id, String worksheetId) {
-		super(id);
-		this.worksheetId = worksheetId;
+		super(id, worksheetId);
 	}
 
 	@Override

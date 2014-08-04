@@ -30,9 +30,9 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -51,9 +51,8 @@ import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 
-public class UnassignSemanticTypeCommand extends Command {
+public class UnassignSemanticTypeCommand extends WorksheetCommand {
 
-	private final String worksheetId;
 	private final String hNodeId;
 	private String columnName;
 	private SemanticType oldSemanticType;
@@ -64,9 +63,8 @@ public class UnassignSemanticTypeCommand extends Command {
 			.getLogger(UnassignSemanticTypeCommand.class);
 
 	public UnassignSemanticTypeCommand(String id, String hNodeId, String worksheetId) {
-		super(id);
+		super(id, worksheetId);
 		this.hNodeId = hNodeId;
-		this.worksheetId = worksheetId;
 		
 		addTag(CommandTag.Modeling);
 	}

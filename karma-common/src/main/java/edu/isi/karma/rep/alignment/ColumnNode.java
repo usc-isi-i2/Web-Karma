@@ -21,6 +21,10 @@
 
 package edu.isi.karma.rep.alignment;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 
@@ -32,7 +36,7 @@ public class ColumnNode extends Node {
 	private Label rdfLiteralType;
 	
 	private SemanticType userSelectedSemanticType;
-
+	private List<SemanticType> suggestedSemanticTypes;
 	
 	public ColumnNode(String id, String hNodeId, String columnName, Label rdfLiteralType) {
 		super(id, new Label(hNodeId), NodeType.ColumnNode);
@@ -40,6 +44,15 @@ public class ColumnNode extends Node {
 		this.columnName = columnName;
 		this.setRdfLiteralType(rdfLiteralType);
 		this.userSelectedSemanticType = null;
+		this.suggestedSemanticTypes = null;
+	}
+
+	public List<SemanticType> getSuggestedSemanticTypes() {
+		return suggestedSemanticTypes;
+	}
+
+	public void setSuggestedSemanticTypes(List<SemanticType> suggestedSemanticTypes) {
+		this.suggestedSemanticTypes = suggestedSemanticTypes;
 	}
 
 	public String getHNodeId() {
@@ -75,6 +88,15 @@ public class ColumnNode extends Node {
 		this.userSelectedSemanticType = userSelectedSemanticType;
 	}
 
-
+	public List<SemanticType> getTopKSuggestions(int k) {
+		
+		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
+		if (this.suggestedSemanticTypes == null || this.suggestedSemanticTypes.isEmpty())
+			return semanticTypes;
+		
+		int n = Math.min(k, this.suggestedSemanticTypes.size());
+		Collections.sort(this.suggestedSemanticTypes, Collections.reverseOrder());
+		return this.suggestedSemanticTypes.subList(0, n);
+	}
 	
 }

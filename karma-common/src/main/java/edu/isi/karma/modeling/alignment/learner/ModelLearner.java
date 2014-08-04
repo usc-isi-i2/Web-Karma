@@ -533,9 +533,10 @@ public class ModelLearner {
 					);
 			types.add(newType);
 		} else {
-			List<SemanticType> crfSuggestions = new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, n, numberOfCRFCandidates);
-			if (crfSuggestions != null) {
-				for (SemanticType st : crfSuggestions) {
+			List<SemanticType> suggestions = 
+					new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, n, numberOfCRFCandidates);
+			if (suggestions != null) {
+				for (SemanticType st : suggestions) {
 					if (useCorrectType && userSelectedType != null &&
 						st.getModelLabelString().equalsIgnoreCase(userSelectedType.getModelLabelString()))
 						continue;

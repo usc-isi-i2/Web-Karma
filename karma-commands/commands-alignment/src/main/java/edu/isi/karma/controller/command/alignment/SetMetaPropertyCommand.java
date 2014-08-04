@@ -29,9 +29,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory.Arguments;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory.METAPROPERTY_NAME;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
@@ -62,10 +62,9 @@ import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 
 
-public class SetMetaPropertyCommand extends Command {
+public class SetMetaPropertyCommand extends WorksheetCommand {
 
 	private final String hNodeId;
-	private final String worksheetId;
 	private final boolean trainAndShowUpdates;
 	private METAPROPERTY_NAME metaPropertyName;
 	private final String metaPropertyValue;
@@ -84,9 +83,8 @@ public class SetMetaPropertyCommand extends Command {
 			String hNodeId, METAPROPERTY_NAME metaPropertyName,
 			String metaPropertyValue, boolean trainAndShowUpdates,
 			String rdfLiteralType) {
-		super(id);
+		super(id, worksheetId);
 		this.hNodeId = hNodeId;
-		this.worksheetId = worksheetId;
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.metaPropertyName = metaPropertyName;
 		this.metaPropertyValue = metaPropertyValue;

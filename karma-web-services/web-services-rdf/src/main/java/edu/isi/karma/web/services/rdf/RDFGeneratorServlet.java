@@ -1,6 +1,5 @@
 package edu.isi.karma.web.services.rdf;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -15,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.map.LRUMap;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -40,6 +40,7 @@ import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
@@ -55,7 +56,9 @@ import edu.isi.karma.webserver.KarmaException;
 @Path("/r2rml") 
 public class RDFGeneratorServlet{
 	
+	private static final int MODEL_CACHE_SIZE = 20;
 	private static Logger logger = LoggerFactory.getLogger(RDFGeneratorServlet.class);
+	private static LRUMap modelCache = new LRUMap(MODEL_CACHE_SIZE);
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -96,15 +99,32 @@ public class RDFGeneratorServlet{
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("/clearCache")
+	public Response clearCache(MultivaluedMap<String, String> formParams) {
+		modelCache.clear();
+		return Response.status(200).entity("Success").build();
+	}
+	
+	/**
+	 * 
+	 * @throws ClientProtocolException 
+	 * @throws IOException 
+	 * @throws JSONException 
+	 * @throws KarmaException */
+	
+	
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/sparql")
 	public Response saveToTriplestore(MultivaluedMap<String, String> formParams)
 	{
 		try
 		{
 			logger.info("Path - r2rml/sparql. Store RDF to triplestore and return the Response");
+
+			logger.info("Generating RDF for: " + formParams.getFirst(FormParameters.RAW_DATA));
 			
 			String strRDF = getRDF(formParams);
-			
 			if(strRDF != null)
 			{
 				int responseCode = PublishRDFToTripleStore(formParams, strRDF);
@@ -158,6 +178,7 @@ public class RDFGeneratorServlet{
 		{
 			logger.info("Path - r2rml/rdf/sparql. Store RDF to triplestore and return the Response");
 			
+
 			String strRDF = getRDF(formParams);
 			
 			if(strRDF != null)
@@ -207,15 +228,23 @@ public class RDFGeneratorServlet{
 	
 	private String getRDF(MultivaluedMap<String, String> formParams) throws JSONException, MalformedURLException, KarmaException, IOException
 	{
+		
+		boolean refreshModel = false;
+		String sRefreshModel = formParams.getFirst(FormParameters.REFRESH_MODEL);
+		if(sRefreshModel != null && sRefreshModel.equalsIgnoreCase("true"))
+			refreshModel = true;
+		
 		if(formParams.getFirst(FormParameters.DATA_URL) != null || formParams.getFirst(FormParameters.DATA_URL).trim() != "")
 			return GenerateRDF(new URL(formParams.getFirst(FormParameters.DATA_URL)).openStream(),
 									   formParams.getFirst(FormParameters.R2RML_URL),
-									   formParams.getFirst(FormParameters.CONTENT_TYPE));
+									   formParams.getFirst(FormParameters.CONTENT_TYPE),
+									   refreshModel);
 		
 		if(formParams.getFirst(FormParameters.RAW_DATA) != null || formParams.getFirst(FormParameters.RAW_DATA).trim() != "")
 			return GenerateRDF(formParams.getFirst(FormParameters.RAW_DATA), 
 							   formParams.getFirst(FormParameters.R2RML_URL),
-					    	   formParams.getFirst(FormParameters.CONTENT_TYPE));
+					    	   formParams.getFirst(FormParameters.CONTENT_TYPE),
+					    	   refreshModel);
 		
 		return null;
 	}
@@ -282,15 +311,16 @@ public class RDFGeneratorServlet{
 		return sbTSURL.toString();   
 				
 	}
-	private String GenerateRDF(InputStream dataStream, String r2rmlURI, String dataType) throws KarmaException, JSONException, IOException
+
+	private String GenerateRDF(InputStream dataStream, String r2rmlURI, String dataType, boolean refreshR2RML) throws KarmaException, JSONException, IOException
 	{		
 			initialization();
+
 			
 	        GenericRDFGenerator gRDFGen = new GenericRDFGenerator();
 			
-			R2RMLMappingIdentifier rmlID = new R2RMLMappingIdentifier(FormParameters.R2RML_URL,
-					new File(r2rmlURI).toURI().toURL());
-			
+			R2RMLMappingIdentifier rmlID = new R2RMLMappingIdentifier(r2rmlURI,
+					new URL(r2rmlURI));
 			gRDFGen.addModel(rmlID);
 			
 			StringWriter sw = new StringWriter();
@@ -299,17 +329,20 @@ public class RDFGeneratorServlet{
 			URIFormatter uriFormatter = new URIFormatter();
 			KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
 			
-			//TODO Replace PHONE with something meaningful
+
+			WorksheetR2RMLJenaModelParser modelParser = getModel(rmlID, refreshR2RML);
 			
-			gRDFGen.generateRDF(FormParameters.R2RML_URL,"PHONE",dataStream , InputType.valueOf(dataType), false, outWriter);
+			String sourceName = r2rmlURI;
+			gRDFGen.generateRDF(modelParser, sourceName, dataStream, InputType.JSON, -1, false, outWriter);
 			
 			return sw.toString();
 		
 	}
 	
-	private String GenerateRDF(String rawData, String r2rmlURI, String dataType) throws KarmaException, JSONException, IOException
+
+	private String GenerateRDF(String rawData, String r2rmlURI, String dataType, boolean refreshModel) throws KarmaException, JSONException, IOException
 	{
-		return GenerateRDF(new StringInputStream(rawData), r2rmlURI, dataType);
+		return GenerateRDF(new StringInputStream(rawData), r2rmlURI, dataType, refreshModel);
 	}
 
 	static {
@@ -331,6 +364,20 @@ public class RDFGeneratorServlet{
 		ModelingConfiguration.setLearnerEnabled(false); // disable automatic learning
 	}
 	
+
+	private WorksheetR2RMLJenaModelParser getModel(R2RMLMappingIdentifier modelIdentifier, boolean refreshR2RML) throws JSONException, KarmaException {
+		WorksheetR2RMLJenaModelParser modelParser = null;
+		if(refreshR2RML == false) {
+			modelParser = (WorksheetR2RMLJenaModelParser) modelCache.get(modelIdentifier.getName());
+		}
+		if(modelParser == null) {
+			modelParser = new WorksheetR2RMLJenaModelParser(modelIdentifier);
+			modelCache.put(modelIdentifier.getName(), modelParser);
+		}
+		return modelParser;
+	}
+	
+
 	private int invokeHTTPRequestWithAuth(HttpHost httpHost, HttpPost httpPost, String contentType, 
 			String acceptContentType, String userName, String password) throws ClientProtocolException, IOException 
 	{

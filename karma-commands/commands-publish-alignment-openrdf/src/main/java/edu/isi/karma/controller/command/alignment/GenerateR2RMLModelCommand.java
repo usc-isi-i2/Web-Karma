@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.CommandHistoryUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
@@ -57,9 +58,8 @@ import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class GenerateR2RMLModelCommand extends Command {
+public class GenerateR2RMLModelCommand extends WorksheetCommand {
 
-	private final String worksheetId;
 	private String worksheetName;
 	private String tripleStoreUrl;
 	private String graphContext;
@@ -75,8 +75,7 @@ public class GenerateR2RMLModelCommand extends Command {
 	}
 
 	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String context) {
-		super(id);
-		this.worksheetId = worksheetId;
+		super(id, worksheetId);
 		this.tripleStoreUrl = url;
 		this.graphContext = context;
 	}
@@ -214,7 +213,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		}
 
 		if (ModelingConfiguration.isLearnerEnabled())
-			ModelLearningGraph.getInstance(workspace.getOntologyManager()).addModelAndUpdateGraphJson(workspace, worksheet, semanticModel);
+			ModelLearningGraph.getInstance(workspace.getOntologyManager()).addModelAndUpdateGraphJson(semanticModel);
 
 		// *****************************************************************************************
 		// *****************************************************************************************

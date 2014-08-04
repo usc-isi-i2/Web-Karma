@@ -271,7 +271,7 @@ public class ModelReader {
 
 			DirectedWeightedMultigraph<Node, LabeledLink> graph = buildGraphsFromStatements2(statements);
 
-			SemanticModel semanticModel = new SemanticModel(null, null, id, graph);
+			SemanticModel semanticModel = new SemanticModel(id, graph);
 			semanticModel.setName(name);
 			semanticModel.setDescription(description);
 

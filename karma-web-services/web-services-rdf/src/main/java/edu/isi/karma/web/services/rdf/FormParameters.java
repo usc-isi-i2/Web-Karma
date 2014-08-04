@@ -19,4 +19,5 @@ public class FormParameters {
 	public static final String CONTENT_TYPE_CSV = InputType.CSV.toString();
 	public static final String CONTENT_TYPE_JSON = InputType.JSON.toString();
 	public static final String CONTENT_TYPE_XML = InputType.XML.toString();
+	public static final String REFRESH_MODEL = "RefreshModel";
 }

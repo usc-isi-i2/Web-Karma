@@ -15,9 +15,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -28,36 +28,31 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
-public class FetchR2RMLModelsListCommand extends Command{
+public class FetchR2RMLModelsListCommand extends WorksheetCommand{
 
 	private String TripleStoreUrl;
 	private String context;
-	private String worksheetId;
 	private static Logger logger = LoggerFactory.getLogger(FetchR2RMLModelsListCommand.class);
 
 	public FetchR2RMLModelsListCommand(String id, String TripleStoreUrl, String context, String worksheetId) {
-		super(id);
+		super(id, worksheetId);
 		this.TripleStoreUrl = TripleStoreUrl;
 		this.context = context;
-		this.worksheetId = worksheetId;
 	}
 
 	@Override
 	public String getCommandName() {
-		// TODO Auto-generated method stub
 		return FetchR2RMLModelsListCommand.class.getSimpleName();
 	}
 
 	@Override
 	public String getTitle() {
-		// TODO Auto-generated method stub
 		return "Fetch R2RML from Triple Store";
 	}
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 	@Override

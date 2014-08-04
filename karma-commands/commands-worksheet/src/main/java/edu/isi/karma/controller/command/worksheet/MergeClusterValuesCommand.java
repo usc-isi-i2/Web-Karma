@@ -11,25 +11,27 @@ import java.util.TreeMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.rep.*;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 
-public class MergeClusterValuesCommand extends Command {
+public class MergeClusterValuesCommand extends WorksheetCommand {
 	private String hNodeId;
-	private String worksheetId;
 	private Map<String, String> oldRowValueMap = new HashMap<String, String>();
 	
 	MultipleValueEditColumnCommand edit;
 			
 	public MergeClusterValuesCommand(String id, String hNodeId,
 			String worksheetId) {
-		super(id);
+		super(id, worksheetId);
 		this.hNodeId = hNodeId;
-		this.worksheetId = worksheetId;
 	}
 
 	@Override
