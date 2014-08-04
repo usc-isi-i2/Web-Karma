@@ -82,7 +82,7 @@ public class SinglyAnchoredTemplateTermSetPopulatorPlan extends
 		for(Entry<ColumnTemplateTerm, List<ColumnTemplateTerm>> other : otherToGenerate.entrySet())
 		{
 			TemplateTermSetPopulatorWorker parentWorker = new TemplateTermSetPopulatorWorker(other.getKey(), termToPath.get(other.getKey()), null, selection);
-			TemplateTermSetPopulatorPlan plan = new TemplateTermSetPopulatorPlan(termToPath, other.getValue(), parentWorker);
+			TemplateTermSetPopulatorPlan plan = new TemplateTermSetPopulatorPlan(termToPath, other.getValue(), parentWorker, selection);
 			nestedPlans.put(other.getKey(), plan);
 		}
 		

@@ -59,7 +59,7 @@ public class SubjectMapPlan extends MapPlan {
 		SubjectMap subjMap = triplesMap.getSubject();
 		subjectMapTTSPopulator = generateTemplateTermSetPopulatorForSubjectMap(subjMap);
 		populateTermsToPathForSubject(subjectTermsToPaths, subjectMapTTSPopulator.getTerms());
-		subjectPlan = new TemplateTermSetPopulatorPlan(subjectTermsToPaths, subjectTermsToPaths.keySet());
+		subjectPlan = new TemplateTermSetPopulatorPlan(subjectTermsToPaths, subjectTermsToPaths.keySet(), selection);
 		return subjMap;
 	}
 	

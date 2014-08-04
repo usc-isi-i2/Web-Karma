@@ -60,22 +60,24 @@ public class TemplateTermSetPopulatorPlan {
 	{
 		this.selection = sel;
 	}
-	public TemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath, Collection<ColumnTemplateTerm> columnTerms)
+	public TemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath, Collection<ColumnTemplateTerm> columnTerms, SuperSelection sel)
 	{
 		this.termToPath = termToPath;
 		this.columnTerms = new LinkedList<ColumnTemplateTerm>();
 		this.comparisonTerms = this.columnTerms;
 		this.columnTerms.addAll(columnTerms);
 		this.firstWorker = null;
+		this.selection = sel;
 		generate();
 	}
-	public TemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath, Collection<ColumnTemplateTerm> columnTerms, TemplateTermSetPopulatorWorker firstWorker)
+	public TemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath, Collection<ColumnTemplateTerm> columnTerms, TemplateTermSetPopulatorWorker firstWorker, SuperSelection sel)
 	{
 		this.termToPath = termToPath;
 		this.columnTerms = new LinkedList<ColumnTemplateTerm>();
 		this.comparisonTerms = this.columnTerms;
 		this.columnTerms.addAll(columnTerms);
 		this.firstWorker = firstWorker;
+		this.selection = sel;
 		generate();
 	}	
 
