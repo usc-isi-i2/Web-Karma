@@ -30,6 +30,7 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
@@ -284,7 +285,7 @@ public class RDFGeneratorServlet{
 	        
 	        ModelingConfiguration.setLearnerEnabled(false); // disable automatic learning
 			
-	        GenericRDFGenerator gRDFGen = new GenericRDFGenerator();
+	        GenericRDFGenerator gRDFGen = new GenericRDFGenerator(SuperSelectionManager.DEFAULT_SELECTION);
 			
 			R2RMLMappingIdentifier rmlID = new R2RMLMappingIdentifier(FormParameters.R2RML_URL,
 					new File(r2rmlURI).toURI().toURL());
