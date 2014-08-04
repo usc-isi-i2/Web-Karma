@@ -478,7 +478,7 @@ public class CommandHistory {
 					
 				}
 			} catch (Exception e) {
-				logger.error("Unable to remove command " + command.getCommandName(), e);
+				//logger.error("Unable to remove command " + command.getCommandName(), e);
 			}
 		}
 		history.removeAll(commandsFromWorksheet);
