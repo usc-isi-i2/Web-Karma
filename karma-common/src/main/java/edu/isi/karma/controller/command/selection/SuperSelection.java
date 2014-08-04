@@ -7,11 +7,14 @@ import edu.isi.karma.rep.Row;
 
 public class SuperSelection {
 	private List<Selection> selections;
-	public SuperSelection() {
+	private String name;
+	public SuperSelection(String name) {
 		selections = new ArrayList<Selection>();
+		this.name = name;
 	}
 	
-	public SuperSelection(List<Selection> selections) {
+	public SuperSelection(String name, List<Selection> selections) {
+		this.name = name;
 		this.selections = selections;
 	}
 	
@@ -27,5 +30,9 @@ public class SuperSelection {
 			ret |= sel.isSelected(row);
 		}
 		return ret;
+	}
+	
+	public String getName() {
+		return name;
 	}
 }
