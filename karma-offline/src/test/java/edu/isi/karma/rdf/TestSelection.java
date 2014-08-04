@@ -6,20 +6,37 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringWriter;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.Selection.SelectionProperty;
+import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.imp.json.JsonImport;
+import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
+import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.URIFormatter;
+import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
@@ -32,6 +49,7 @@ import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
+import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
 
@@ -78,4 +96,52 @@ public class TestSelection {
 			logger.debug(r.getNeighborByColumnName("title", workspace.getFactory()).getValue().asString() + " " + prop.selected);
 		}
 	}
+	@Test
+	public void testSelection2() throws IOException, KarmaException {
+		Selection sel = new Selection(workspace, worksheet.getId(), worksheet.getHeaders().getId());
+		StringBuilder pythonCode = new StringBuilder();
+		pythonCode.append("if getValue(\"title\") == \"Prof\": \n");
+		pythonCode.append("	 return True \n");
+		sel.addSelections(pythonCode.toString());
+		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
+				"people-model", getTestResource(
+						 "people-model.ttl"));
+		worksheet.getSuperSelectionManager().defineSelection("test").addSelection(sel);
+		worksheet.getSuperSelectionManager().setCurrentSuperSelection("test");
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		List<KR2RMLRDFWriter> writers = new ArrayList<KR2RMLRDFWriter>();
+		writers.add(new N3KR2RMLRDFWriter(new URIFormatter(), pw));
+		WorksheetR2RMLJenaModelParser modelParser = new WorksheetR2RMLJenaModelParser(modelIdentifier);
+		applyHistoryToWorksheet(workspace, worksheet, modelParser.parse());
+		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
+		        workspace.getFactory(), workspace.getOntologyManager(), writers,
+		        false, modelParser.parse(), new ErrorReport(), worksheet.getSuperSelectionManager().getCurrentSuperSelection());
+		rdfGen.generateRDF(true);
+		String rdf = sw.toString();
+		assertNotEquals(rdf.length(), 0);
+		String[] lines = rdf.split(System.getProperty("line.separator"));
+		assertEquals(37, lines.length);
+	}
+	
+	private URL getTestResource(String name)
+	{
+		return getClass().getClassLoader().getResource(name);
+	}
+	
+	private void applyHistoryToWorksheet(Workspace workspace, Worksheet worksheet,
+			KR2RMLMapping mapping) throws JSONException {
+		WorksheetCommandHistoryExecutor wchr = new WorksheetCommandHistoryExecutor(worksheet.getId(), workspace);
+		try
+		{
+			List<CommandTag> tags = new ArrayList<CommandTag>();
+			tags.add(CommandTag.Transformation);
+			wchr.executeCommandsByTags(tags, mapping.getWorksheetHistory());
+		}
+		catch (CommandException | KarmaException e)
+		{
+			logger.error("Unable to execute column transformations", e);
+		}
+	}
+	
 }
