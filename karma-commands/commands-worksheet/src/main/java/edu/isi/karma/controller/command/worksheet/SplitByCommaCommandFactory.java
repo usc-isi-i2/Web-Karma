@@ -20,20 +20,24 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.worksheet;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.webserver.KarmaException;
+import javax.servlet.http.HttpServletRequest;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import javax.servlet.http.HttpServletRequest;
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.CommandInputJSONUtil;
+import edu.isi.karma.webserver.KarmaException;
 
 public class SplitByCommaCommandFactory extends JSONInputCommandFactory {
 	
 	public enum Arguments {
-		worksheetId, hNodeId, delimiter
+		worksheetId, hNodeId, delimiter, 
+		selectionName
 	}
 
 	@Override
@@ -42,8 +46,11 @@ public class SplitByCommaCommandFactory extends JSONInputCommandFactory {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String delimiter = request.getParameter(Arguments.delimiter.name());
-
-		return new SplitByCommaCommand(getNewId(workspace), worksheetId, hNodeId, delimiter);
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		Worksheet ws = workspace.getWorksheet(worksheetId);
+		return new SplitByCommaCommand(getNewId(workspace), worksheetId, 
+				hNodeId, delimiter, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 	}
 
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
@@ -51,10 +58,12 @@ public class SplitByCommaCommandFactory extends JSONInputCommandFactory {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String delimiter = HistoryJsonUtil.getStringValue(Arguments.delimiter.name(), inputJson);
-		
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		Worksheet ws = workspace.getWorksheet(worksheetId);
 		SplitByCommaCommand comm = new SplitByCommaCommand(getNewId(workspace), 
 				worksheetId, hNodeId,
-				delimiter);
+				delimiter, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

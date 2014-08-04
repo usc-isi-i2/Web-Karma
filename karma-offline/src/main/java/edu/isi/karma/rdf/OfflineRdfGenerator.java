@@ -54,6 +54,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.kr2rml.BloomFilterKR2RMLRDFWriter;
@@ -311,7 +312,7 @@ public class OfflineRdfGenerator {
 		}
 
 		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
-				hostname, port, username, password, dBorSIDName, encoding);
+				hostname, port, username, password, dBorSIDName, encoding, SuperSelectionManager.DEFAULT_SELECTION);
 		if(inputType.equals("DB")) {
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
 			createWriters(id);
@@ -427,7 +428,7 @@ public class OfflineRdfGenerator {
 
 
 		createWriters(id);
-		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator();
+		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator(SuperSelectionManager.DEFAULT_SELECTION);
 		rdfGenerator.addModel(id);
 		InputType inputType = null;
 		if(this.inputType.equalsIgnoreCase("CSV"))

@@ -34,8 +34,9 @@ import org.slf4j.LoggerFactory;
 import com.ibm.icu.text.SimpleDateFormat;
 
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
 import edu.isi.karma.controller.command.publish.PublishRDFCommandPreferencesKeys;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -57,7 +58,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 /**
 @author shri
  */
-public class ExportCSVCommand extends WorksheetCommand {
+public class ExportCSVCommand extends WorksheetSelectionCommand {
 
 	private final String rootNodeId;
 	private String tripleStoreUrl;
@@ -79,8 +80,10 @@ public class ExportCSVCommand extends WorksheetCommand {
 	 * @param graph
 	 * @param nodes
 	 * */
-	protected ExportCSVCommand(String id, String worksheetId, String rootNode, String sparqlUrl, String graph, ArrayList<HashMap<String, String>> nodes ) {
-		super(id, worksheetId);
+	protected ExportCSVCommand(String id, String worksheetId, String rootNode, String sparqlUrl, 
+			String graph, ArrayList<HashMap<String, String>> nodes,
+			SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.rootNodeId = rootNode;
 		this.tripleStoreUrl = sparqlUrl;
 		this.graphUrl = graph;
@@ -217,7 +220,7 @@ public class ExportCSVCommand extends WorksheetCommand {
 		try {
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 				workspace.getFactory(), workspace.getOntologyManager(),
-				generatedRDFFileName, false, mapping, errorReport);
+				generatedRDFFileName, false, mapping, errorReport, selection);
 		
 			rdfGen.generateRDF(true);
 			logger.info("RDF written to file: " + generatedRDFFileName);

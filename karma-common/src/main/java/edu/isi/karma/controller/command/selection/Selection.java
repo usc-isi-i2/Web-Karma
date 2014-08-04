@@ -63,11 +63,11 @@ public class Selection {
 	public void addSelections(String pythonCode) throws IOException {
 		List<Table> tables = new ArrayList<Table>();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		CloneTableUtils.getDatatable(worksheet.getDataTable(), workspace.getFactory().getHTable(hTableId), tables);
+		CloneTableUtils.getDatatable(worksheet.getDataTable(), workspace.getFactory().getHTable(hTableId), tables, SuperSelectionManager.DEFAULT_SELECTION);
 		PythonInterpreter interpreter = new PythonInterpreter();
 		PyCode code = getCompiledCode(pythonCode, interpreter);
 		for (Table t : tables) {
-			for (Row r : t.getRows(0, t.getNumRows())) {
+			for (Row r : t.getRows(0, t.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
 				selectedRows.put(r, new SelectionProperty(evaluatePythonExpression(r, code, interpreter), pythonCode));
 			}
 		}

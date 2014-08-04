@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.URIFormatter;
@@ -33,10 +34,10 @@ import edu.isi.karma.kr2rml.exception.HNodeNotFoundKarmaException;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
 import edu.isi.karma.kr2rml.template.ColumnTemplateTerm;
-import edu.isi.karma.kr2rml.template.SinglyAnchoredTemplateTermSetPopulatorPlan;
 import edu.isi.karma.kr2rml.template.DoublyAnchoredTemplateTermSetPopulator;
 import edu.isi.karma.kr2rml.template.PartiallyPopulatedTermSet;
 import edu.isi.karma.kr2rml.template.PopulatedTemplateTermSet;
+import edu.isi.karma.kr2rml.template.SinglyAnchoredTemplateTermSetPopulatorPlan;
 import edu.isi.karma.kr2rml.template.TemplateTermSet;
 import edu.isi.karma.kr2rml.template.TemplateTermSetPopulator;
 import edu.isi.karma.rep.HNodePath;
@@ -47,8 +48,9 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 
 	public PredicateObjectMappingPlan(KR2RMLMapping kr2rmlMapping,
 			URIFormatter uriFormatter, RepFactory factory,
-			KR2RMLMappingColumnNameHNodeTranslator translator) {
-		super(kr2rmlMapping, uriFormatter, factory, translator);
+			KR2RMLMappingColumnNameHNodeTranslator translator, 
+			SuperSelection sel) {
+		super(kr2rmlMapping, uriFormatter, factory, translator, sel);
 	}
 
 	protected SinglyAnchoredTemplateTermSetPopulatorPlan complicatedPlan;
@@ -75,7 +77,7 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 		combinedSubjectObjectTermsToPaths.putAll(objectTermsToPaths);
 		LinkedList<ColumnTemplateTerm> objectColumnTerms = new LinkedList<ColumnTemplateTerm>();
 		objectColumnTerms.addAll(objectTemplateTermSetPopulator.getTerms().getAllColumnNameTermElements());
-		complicatedPlan = new SinglyAnchoredTemplateTermSetPopulatorPlan(combinedSubjectObjectTermsToPaths, objectColumnTerms, subjectMapTemplate.getAllColumnNameTermElements());
+		complicatedPlan = new SinglyAnchoredTemplateTermSetPopulatorPlan(combinedSubjectObjectTermsToPaths, objectColumnTerms, subjectMapTemplate.getAllColumnNameTermElements(), selection);
 		generatePredicatesForPom(pom);
 	}
 
@@ -93,7 +95,7 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 		populateTermsToPathForSubject(predicateTermsToPaths, pom.getPredicate().getTemplate());
 		combinedSubjectObjectTermsToPaths.putAll(predicateTermsToPaths);
 		
-		predicatePlan = new DoublyAnchoredTemplateTermSetPopulator(combinedSubjectObjectTermsToPaths, predicateColumnTemplateTerms, subjectAndObjectTemplateTerms);
+		predicatePlan = new DoublyAnchoredTemplateTermSetPopulator(combinedSubjectObjectTermsToPaths, predicateColumnTemplateTerms, subjectAndObjectTemplateTerms, selection);
 		
 	}
 	

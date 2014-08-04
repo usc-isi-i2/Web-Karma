@@ -21,13 +21,19 @@
 
 package edu.isi.karma.controller.command.service;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rits.cloning.Cloner;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
@@ -51,14 +57,6 @@ import edu.isi.karma.rep.sources.InvocationManager;
 import edu.isi.karma.rep.sources.Table;
 import edu.isi.karma.rep.sources.WebService;
 import edu.isi.karma.webserver.KarmaException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author taheriyan
@@ -125,7 +123,7 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 			
 			// This generate a flat table of the json results
 			Table serviceTable = invocatioManager.getServiceData(false, true, true);
-			ServiceTableUtil.populateWorksheet(serviceTable, wk, workspace.getFactory());
+			ServiceTableUtil.populateWorksheet(serviceTable, wk, workspace.getFactory(), selection);
 			
 			// FIXME
 //			String json = invocatioManager.getServiceJson(true);

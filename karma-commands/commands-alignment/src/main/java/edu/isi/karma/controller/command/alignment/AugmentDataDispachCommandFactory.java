@@ -7,6 +7,7 @@ import org.json.JSONException;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
@@ -16,7 +17,7 @@ public class AugmentDataDispachCommandFactory extends JSONInputCommandFactory {
 		worksheetId, predicateIncoming, alignmentId, 
 		columnUri, otherClassIncoming, tripleStoreUrl, 
 		hNodeId, predicateOutgoing, otherClassOutgoing, 
-		sameAsPredicate
+		sameAsPredicate, selectionName
 	}
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
@@ -30,9 +31,12 @@ public class AugmentDataDispachCommandFactory extends JSONInputCommandFactory {
 		String predicateOutgoing = CommandInputJSONUtil.getStringValue(Arguments.predicateOutgoing.name(), inputJson);
 		String otherClassOutgoing = CommandInputJSONUtil.getStringValue(Arguments.otherClassOutgoing.name(), inputJson);
 		String sameAsPredicate = CommandInputJSONUtil.getStringValue(Arguments.sameAsPredicate.name(), inputJson);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		Worksheet ws = workspace.getWorksheet(worksheetId);
 		AugmentDataDispachCommand cmd = new AugmentDataDispachCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
 				columnUri, predicateIncoming, otherClassIncoming, 
-				predicateOutgoing, otherClassOutgoing, hNodeId, sameAsPredicate);
+				predicateOutgoing, otherClassOutgoing, hNodeId, sameAsPredicate, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
@@ -48,9 +52,12 @@ public class AugmentDataDispachCommandFactory extends JSONInputCommandFactory {
 		String otherClassOutgoing = request.getParameter(Arguments.otherClassOutgoing.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String sameAsPredicate = request.getParameter(Arguments.sameAsPredicate.name());
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		Worksheet ws = workspace.getWorksheet(worksheetId);
 		return new AugmentDataDispachCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
 				columnUri, predicateIncoming, otherClassIncoming, 
-				predicateOutgoing, otherClassOutgoing, hNodeId, sameAsPredicate);
+				predicateOutgoing, otherClassOutgoing, hNodeId, sameAsPredicate, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 	}
 
 	@Override

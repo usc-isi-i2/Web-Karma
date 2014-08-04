@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -22,12 +23,12 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
-public class GetSemanticSuggestionsCommand extends WorksheetCommand {
+public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
 	private final String hNodeId;
 	private static Logger logger = LoggerFactory.getLogger(GetSemanticSuggestionsCommand.class.getSimpleName());
 	
-	protected GetSemanticSuggestionsCommand(String id, String worksheetId, String hNodeId) {
-		super(id, worksheetId);
+	protected GetSemanticSuggestionsCommand(String id, String worksheetId, String hNodeId, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.hNodeId = hNodeId;
 	}
 	
@@ -71,7 +72,7 @@ public class GetSemanticSuggestionsCommand extends WorksheetCommand {
 					}
 				}
 				
-				SemanticTypeColumnModel model = new SemanticTypeUtil().predictColumnSemanticType(ws, worksheet, currentColumnPath, 4);
+				SemanticTypeColumnModel model = new SemanticTypeUtil().predictColumnSemanticType(ws, worksheet, currentColumnPath, 4, selection);
 				if(model != null) {
 					OntologyManager ontMgr = ws.getOntologyManager();
 					Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(ws.getId(), worksheetId, ontMgr);

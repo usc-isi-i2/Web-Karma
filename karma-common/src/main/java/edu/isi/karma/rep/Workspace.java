@@ -20,6 +20,10 @@
  ******************************************************************************/
 package edu.isi.karma.rep;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import edu.isi.karma.controller.command.CommandPreferences;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.metadata.KarmaMetadataManager;
@@ -28,10 +32,6 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.ISemanticTypeModelHandler;
 import edu.isi.karma.rep.metadata.TagsContainer;
 import edu.isi.karma.semantictypes.typinghandler.LuceneBasedSTModelHandler;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Contains all the data to support a single instance of Karma, called a

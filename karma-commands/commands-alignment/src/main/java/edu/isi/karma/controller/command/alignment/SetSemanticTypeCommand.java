@@ -32,7 +32,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -55,7 +56,7 @@ import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 
-public class SetSemanticTypeCommand extends WorksheetCommand {
+public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 
 	private final String hNodeId;
 	private final boolean trainAndShowUpdates;
@@ -74,8 +75,9 @@ public class SetSemanticTypeCommand extends WorksheetCommand {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	protected SetSemanticTypeCommand(String id, String worksheetId, String hNodeId, 
-			boolean isPartOfKey, JSONArray typesArr, boolean trainAndShowUpdates, String rdfLiteralType) {
-		super(id, worksheetId);
+			boolean isPartOfKey, JSONArray typesArr, boolean trainAndShowUpdates, 
+			String rdfLiteralType, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.hNodeId = hNodeId;
 		this.isPartOfKey = isPartOfKey;
 		this.trainAndShowUpdates = trainAndShowUpdates;
@@ -287,7 +289,7 @@ public class SetSemanticTypeCommand extends WorksheetCommand {
 //		}
 		
 		if(trainAndShowUpdates) {
-			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType);
+			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 			
 			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
 			try {

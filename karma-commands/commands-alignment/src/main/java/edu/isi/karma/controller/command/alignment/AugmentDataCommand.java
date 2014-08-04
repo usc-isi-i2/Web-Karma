@@ -124,7 +124,7 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 		hNodeIds.add(hNodeId);
 		inputColumns.addAll(hNodeIds);
 		List<Table> dataTables = new ArrayList<Table>();
-		CloneTableUtils.getDatatable(worksheet.getDataTable(), factory.getHTable(hnode.getHTableId()), dataTables);
+		CloneTableUtils.getDatatable(worksheet.getDataTable(), factory.getHTable(hnode.getHTableId()), dataTables, selection);
 		Map<String, String> rowHashToSubjectURI = new HashMap<String, String>();
 		Map<String, List<String>> SubjectURIToRowId = new HashMap<String, List<String>>();
 		for(Table t : dataTables) {
@@ -231,7 +231,7 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 				try {
 					OntologyManager ontMgr = workspace.getOntologyManager();
 					Label label = ontMgr.getUriLabel(incoming ? otherClass : predicate);
-					AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), label.getDisplayName(), HNodeType.AugmentData);
+					AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), label.getDisplayName(), HNodeType.AugmentData, selection);
 					command.doIt(workspace);
 					outputColumns.addAll(command.getOutputColumns());
 					isNewNode |= command.isNewNode();
@@ -273,7 +273,7 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 
 
 				semanticTypesArray.put(semanticType);
-				Command sstCommand = sstFactory.createCommand(workspace, worksheetId, nestedHNodeId, false, semanticTypesArray, false, "");
+				Command sstCommand = sstFactory.createCommand(workspace, worksheetId, nestedHNodeId, false, semanticTypesArray, false, "", selection);
 				appliedCommands.push(sstCommand);
 				sstCommand.doIt(workspace);
 				if(!resultClass.get(i).trim().isEmpty())
@@ -303,7 +303,7 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 					Command changeInternalNodeLinksCommand = cinlcf.createCommand(worksheetId, alignmentId, new JSONArray(), newEdges, workspace);
 					changeInternalNodeLinksCommand.doIt(workspace);
 					appliedCommands.push(changeInternalNodeLinksCommand);
-					Command setMetaDataCommand = smpcf.createCommand(workspace, nestedHNodeId, worksheetId, "isUriOfClass", targetId, "");
+					Command setMetaDataCommand = smpcf.createCommand(workspace, nestedHNodeId, worksheetId, "isUriOfClass", targetId, "", selection);
 					setMetaDataCommand.doIt(workspace);
 					appliedCommands.push(setMetaDataCommand);
 				}

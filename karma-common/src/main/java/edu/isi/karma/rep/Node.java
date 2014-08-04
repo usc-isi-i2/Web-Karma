@@ -23,10 +23,10 @@
  */
 package edu.isi.karma.rep;
 
+import java.io.PrintWriter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.PrintWriter;
 
 /**
  * @author szekely

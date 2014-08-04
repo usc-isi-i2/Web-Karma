@@ -57,7 +57,8 @@ import com.hp.hpl.jena.rdf.model.ModelMaker;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -84,7 +85,7 @@ import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class PublishRDFCommand extends WorksheetCommand {
+public class PublishRDFCommand extends WorksheetSelectionCommand {
 	
 	private String rdfSourcePrefix;
 	private String rdfSourceNamespace;
@@ -106,8 +107,9 @@ public class PublishRDFCommand extends WorksheetCommand {
 	protected PublishRDFCommand(String id, String worksheetId,
 			String publicRDFAddress, String rdfSourcePrefix, String rdfSourceNamespace, String addInverseProperties,
 			String saveToStore,String hostName,String dbName,String userName,String password, String modelName, String tripleStoreUrl,
-			String graphUri, boolean replace, boolean generateBloomFilters) {
-		super(id, worksheetId);
+			String graphUri, boolean replace, boolean generateBloomFilters, 
+			SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.rdfSourcePrefix = rdfSourcePrefix;
 		this.rdfSourceNamespace = rdfSourceNamespace;
 		this.addInverseProperties = addInverseProperties;
@@ -229,7 +231,7 @@ public class PublishRDFCommand extends WorksheetCommand {
 				writers.add(new BloomFilterKR2RMLRDFWriter(new PrintWriter(sw), mapping.getId(), false, this.rdfSourceNamespace));
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 					workspace.getFactory(), workspace.getOntologyManager(),
-					writers, false, mapping, errorReport);
+					writers, false, mapping, errorReport, selection);
 
 			rdfGen.generateRDF(true);
 			logger.info("RDF written to file: " + rdfFileLocalPath);

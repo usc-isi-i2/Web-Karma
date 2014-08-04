@@ -26,7 +26,9 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.WKTReader;
+
 import de.micromata.opengis.kml.v_2_2_0.*;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNode;
@@ -37,6 +39,7 @@ import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
 import org.geotools.data.collection.ListFeatureCollection;
@@ -110,7 +113,8 @@ public class WorksheetToFeatureCollection {
 	private double kmlLookAtX = 0;
 	private double kmlLookAtY = 0;
 	private int featureCounter = 0;
-
+	private SuperSelection selection;
+	
 	private static String SRID_PROPERTY = Namespaces.GEOSPATIAL
 			+ ServletContextParameterMap
 					.getParameterValue(ContextParameter.SRID_PROPERTY);
@@ -144,9 +148,10 @@ public class WorksheetToFeatureCollection {
 	private static final Logger logger = LoggerFactory
 			.getLogger(WorksheetGeospatialContent.class);
 
-	public WorksheetToFeatureCollection(Worksheet worksheet, OntologyManager om) {
+	public WorksheetToFeatureCollection(Worksheet worksheet, OntologyManager om, SuperSelection sel) {
 		this.worksheet = worksheet;
 		this.om = om;
+		this.selection = sel;
 		Go();
 	}
 
@@ -365,7 +370,7 @@ public class WorksheetToFeatureCollection {
 
 	private ArrayList<Row> getRows() {
 		int numRows = worksheet.getDataTable().getNumRows();
-		return worksheet.getDataTable().getRows(0, numRows);
+		return worksheet.getDataTable().getRows(0, numRows, selection);
 	}
 
 	public String getZippedSpatialDataPath() {

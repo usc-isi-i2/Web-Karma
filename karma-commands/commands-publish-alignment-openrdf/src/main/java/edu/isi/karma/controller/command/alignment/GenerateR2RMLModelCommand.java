@@ -36,7 +36,8 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.CommandHistoryUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
@@ -58,7 +59,7 @@ import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class GenerateR2RMLModelCommand extends WorksheetCommand {
+public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 	private String worksheetName;
 	private String tripleStoreUrl;
@@ -74,8 +75,8 @@ public class GenerateR2RMLModelCommand extends WorksheetCommand {
 		rdfPrefix, rdfNamespace, modelSparqlEndPoint
 	}
 
-	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String context) {
-		super(id, worksheetId);
+	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String context, SuperSelection sel) {
+		super(id, worksheetId, sel);
 		this.tripleStoreUrl = url;
 		this.graphContext = context;
 	}
@@ -193,7 +194,7 @@ public class GenerateR2RMLModelCommand extends WorksheetCommand {
 		// *****************************************************************************************
 		// *****************************************************************************************
 
-		SemanticModel semanticModel = new SemanticModel(workspace, worksheet, worksheetName, alignment.getSteinerTree());
+		SemanticModel semanticModel = new SemanticModel(workspace, worksheet, worksheetName, alignment.getSteinerTree(), selection);
 		semanticModel.setName(worksheetName);
 		try {
 			semanticModel.writeJson(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_MODELS_DIR) + 

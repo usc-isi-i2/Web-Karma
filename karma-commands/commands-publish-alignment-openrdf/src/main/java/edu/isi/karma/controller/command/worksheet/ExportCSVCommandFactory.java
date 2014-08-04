@@ -31,13 +31,15 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
 public class ExportCSVCommandFactory extends CommandFactory {
 
 	private static Logger logger = LoggerFactory.getLogger(ExportCSVCommandFactory.class);
 	public enum Arguments {
-		worksheetId, columnList, tripleStoreUrl, graphUrl, rootNodeId
+		worksheetId, columnList, tripleStoreUrl, 
+		graphUrl, rootNodeId, selectionName
 	}
 	
 	@Override
@@ -63,7 +65,11 @@ public class ExportCSVCommandFactory extends CommandFactory {
 		} catch (Exception e) {
 			logger.error("Error parsing column list",e);
 		}
-		return new ExportCSVCommand(getNewId(workspace), worksheetId, nodeId, tripleStoreUrl, graphUrl, cols );
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		Worksheet ws = workspace.getWorksheet(worksheetId);
+		return new ExportCSVCommand(getNewId(workspace), worksheetId, nodeId, 
+				tripleStoreUrl, graphUrl, cols, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 	}
 
 	@Override

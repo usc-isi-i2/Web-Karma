@@ -20,6 +20,17 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
@@ -35,15 +46,6 @@ import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
 
 public class ShowAutoModelCommandFactory extends JSONInputCommandFactory {
 
@@ -51,14 +53,17 @@ public class ShowAutoModelCommandFactory extends JSONInputCommandFactory {
 			.getLogger(ShowAutoModelCommandFactory.class);
 
 	private enum Arguments {
-		worksheetId
+		worksheetId, selectionName
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		Worksheet ws = workspace.getWorksheet(getWorksheetId(request, workspace));
 		return new ShowModelCommand(getNewId(workspace), getWorksheetId(
-				request, workspace), false);
+				request, workspace), false, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 	}
 
 	public Command createCommand(JSONArray inputJson, Workspace workspace)

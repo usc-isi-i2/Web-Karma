@@ -4,12 +4,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
 public class SearchForDataToAugmentIncomingCommandFactory extends CommandFactory{
 
 	private enum Arguments {
-		tripleStoreUrl, context, nodeUri, worksheetId, columnUri
+		tripleStoreUrl, context, nodeUri, 
+		worksheetId, columnUri, selectionName
 	}
 
 	@Override
@@ -19,7 +21,11 @@ public class SearchForDataToAugmentIncomingCommandFactory extends CommandFactory
 		String nodeUri = request.getParameter(Arguments.nodeUri.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String columnUri = request.getParameter(Arguments.columnUri.name());
-		return new SearchForDataToAugmentIncomingCommand(getNewId(workspace), url, context, nodeUri, worksheetId, columnUri);
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		Worksheet ws = workspace.getWorksheet(worksheetId);
+		return new SearchForDataToAugmentIncomingCommand(getNewId(workspace), url, 
+				context, nodeUri, worksheetId, columnUri, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 	}
 
 	@Override

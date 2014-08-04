@@ -23,14 +23,14 @@
  */
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.util.JSONUtil;
-import edu.isi.karma.view.VWorkspace;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import edu.isi.karma.util.JSONUtil;
+import edu.isi.karma.view.VWorkspace;
 
 /**
  * Container class to carry multiple update objects.

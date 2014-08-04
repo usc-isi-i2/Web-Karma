@@ -21,16 +21,19 @@
 
 package edu.isi.karma.controller.command.transformation;
 
+import javax.servlet.http.HttpServletRequest;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.controller.command.worksheet.AddColumnCommandFactory.Arguments;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 public class PreviewPythonTransformationResultsCommandFactory extends CommandFactory {
 	private enum Arguments {
-		worksheetId, transformationCode, errorDefaultValue, hNodeId
+		worksheetId, transformationCode, errorDefaultValue, 
+		hNodeId, selectionName
 	}
 
 	@Override
@@ -40,9 +43,11 @@ public class PreviewPythonTransformationResultsCommandFactory extends CommandFac
 		String transformationCode = request.getParameter(Arguments.transformationCode.name());
 		String errorDefaultValue = request.getParameter(Arguments.errorDefaultValue.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		Worksheet ws = workspace.getWorksheet(worksheetId);
 		return new PreviewPythonTransformationResultsCommand(getNewId(workspace), worksheetId, 
-				transformationCode, errorDefaultValue, hNodeId);
+				transformationCode, errorDefaultValue, hNodeId, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 	}
 
 	@Override

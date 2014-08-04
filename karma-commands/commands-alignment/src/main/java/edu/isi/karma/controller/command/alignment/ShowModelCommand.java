@@ -37,7 +37,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
@@ -70,7 +71,7 @@ import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SubClassLink;
 
 
-public class ShowModelCommand extends WorksheetCommand {
+public class ShowModelCommand extends WorksheetSelectionCommand {
 
 	private String worksheetName;
 	private Alignment initialAlignment = null;
@@ -82,8 +83,8 @@ public class ShowModelCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(ShowModelCommand.class);
 
-	protected ShowModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate) {
-		super(id, worksheetId);
+	protected ShowModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate, SuperSelection sel) {
+		super(id, worksheetId, sel);
 //		this.addVWorksheetUpdate = addVWorksheetUpdate;
 		
 		/** NOTE Not saving this command in history for now since we are 
@@ -162,7 +163,7 @@ public class ShowModelCommand extends WorksheetCommand {
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
 		
-		ModelLearner modelLearner = new ModelLearner(workspace, worksheet, ontologyManager, columnNodes);
+		ModelLearner modelLearner = new ModelLearner(workspace, worksheet, ontologyManager, columnNodes, selection);
 		SemanticModel model = modelLearner.getModel();
 		if (model == null) {
 			logger.error("could not learn any model for this source!");

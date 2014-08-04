@@ -21,15 +21,6 @@
 package edu.isi.karma.service.json;
 
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import edu.isi.karma.rep.sources.Attribute;
-import edu.isi.karma.rep.sources.Table;
-import org.json.JSONObject;
-import org.json.XML;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -39,6 +30,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.json.JSONObject;
+import org.json.XML;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import edu.isi.karma.rep.sources.Attribute;
+import edu.isi.karma.rep.sources.Table;
 
 public class JsonManager {
 

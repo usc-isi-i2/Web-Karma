@@ -34,6 +34,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Uris;
@@ -76,11 +77,12 @@ public class ModelLearner {
 	private long lastUpdateTimeOfGraph;
 	private ModelLearningGraph modelLearningGraph = null;
 	private boolean useAlignmentGraphBuiltFromKnownModels = false;
+	private SuperSelection selection;
 //	private boolean useAlignmentGraphBuiltFromLOD = false;
 
 	private static final int NUM_SEMANTIC_TYPES = 1; //4;
 	
-	public ModelLearner(Workspace workspace, Worksheet worksheet, OntologyManager ontologyManager, List<ColumnNode> columnNodes) {
+	public ModelLearner(Workspace workspace, Worksheet worksheet, OntologyManager ontologyManager, List<ColumnNode> columnNodes, SuperSelection sel) {
 		if (ontologyManager == null || 
 				columnNodes == null || 
 				columnNodes.isEmpty()) {
@@ -92,6 +94,7 @@ public class ModelLearner {
 		this.columnNodes = columnNodes;
 		this.workspace = workspace;
 		this.worksheet = worksheet;
+		this.selection = sel;
 		this.init();
 	}
 	
@@ -534,7 +537,7 @@ public class ModelLearner {
 			types.add(newType);
 		} else {
 			List<SemanticType> suggestions = 
-					new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, n, numberOfCRFCandidates);
+					new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, n, numberOfCRFCandidates, selection);
 			if (suggestions != null) {
 				for (SemanticType st : suggestions) {
 					if (useCorrectType && userSelectedType != null &&

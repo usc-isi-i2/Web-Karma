@@ -21,10 +21,6 @@
 
 package edu.isi.karma.rep.sources;
 
-import edu.isi.karma.service.json.JsonManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -33,6 +29,11 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.service.json.JsonManager;
 
 
 public class Invocation {

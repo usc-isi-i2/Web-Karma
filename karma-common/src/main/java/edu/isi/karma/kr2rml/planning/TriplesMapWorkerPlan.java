@@ -28,6 +28,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.ObjectMap;
 import edu.isi.karma.kr2rml.Predicate;
@@ -53,7 +54,7 @@ public class TriplesMapWorkerPlan {
 	private SubjectMapPlan subjectMapPlan;
 	private Deque<PredicateObjectMappingPlan> internalLinksPlans;
 	private Deque<PredicateObjectMappingPlan> columnLinksPlans;
-
+	private SuperSelection selection;
 	private URIFormatter uriFormatter;
 
 	private KR2RMLMappingColumnNameHNodeTranslator translator;
@@ -61,7 +62,12 @@ public class TriplesMapWorkerPlan {
 	private boolean generateContext;
 
 	private Map<String, String> hNodeToContextUriMap;
-	public TriplesMapWorkerPlan(RepFactory factory, TriplesMap triplesMap, KR2RMLMapping kr2rmlMapping, URIFormatter uriFormatter, KR2RMLMappingColumnNameHNodeTranslator translator, boolean generateContext, Map<String, String> hNodeToContextUriMap) throws HNodeNotFoundKarmaException
+	public TriplesMapWorkerPlan(RepFactory factory, TriplesMap triplesMap, 
+			KR2RMLMapping kr2rmlMapping, URIFormatter uriFormatter, 
+			KR2RMLMappingColumnNameHNodeTranslator translator, 
+			boolean generateContext, 
+			Map<String, String> hNodeToContextUriMap, 
+			SuperSelection sel) throws HNodeNotFoundKarmaException
 	{
 		this.factory = factory;
 		this.triplesMap = triplesMap;
@@ -70,12 +76,13 @@ public class TriplesMapWorkerPlan {
 		this.translator = translator;
 		this.generateContext = generateContext;
 		this.hNodeToContextUriMap = hNodeToContextUriMap;
+		this.selection = sel;
 		generate();
 	}
 	
 	public void generate() throws HNodeNotFoundKarmaException
 	{
-		subjectMapPlan = new SubjectMapPlan(triplesMap, kr2rmlMapping,uriFormatter, factory, translator);
+		subjectMapPlan = new SubjectMapPlan(triplesMap, kr2rmlMapping,uriFormatter, factory, translator, selection);
 		
 		internalLinksPlans = new LinkedList<PredicateObjectMappingPlan>();
 		
@@ -94,7 +101,7 @@ public class TriplesMapWorkerPlan {
 				{
 					objectTriplesMap = link.getTargetMap();
 				}
-				PredicateObjectMappingPlan pomPlan = new InternalPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, objectTriplesMap, subjectMapPlan.getSubjectTermsToPaths(),link.isFlipped(), kr2rmlMapping,uriFormatter, factory, translator);
+				PredicateObjectMappingPlan pomPlan = new InternalPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, objectTriplesMap, subjectMapPlan.getSubjectTermsToPaths(),link.isFlipped(), kr2rmlMapping,uriFormatter, factory, translator, selection);
 				if(link.isFlipped())
 				{
 					internalLinksPlans.addFirst(pomPlan);
@@ -118,7 +125,7 @@ public class TriplesMapWorkerPlan {
 			typeTemplate.addTemplateTermToSet(new StringTemplateTerm(Uris.RDF_TYPE_URI));
 			typePredicate.setTemplate(typeTemplate);
 			pom.setPredicate(typePredicate);
-			PredicateObjectMappingPlan pomPlan = new ColumnPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, subjectMapPlan.getSubjectTermsToPaths(), kr2rmlMapping,uriFormatter, factory, translator, hNodeToContextUriMap, generateContext);
+			PredicateObjectMappingPlan pomPlan = new ColumnPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, subjectMapPlan.getSubjectTermsToPaths(), kr2rmlMapping,uriFormatter, factory, translator, hNodeToContextUriMap, generateContext, selection);
 			columnLinksPlans.add(pomPlan);
 		}
 		
@@ -135,7 +142,7 @@ public class TriplesMapWorkerPlan {
 				LOG.debug("Skipping " + pom.toString());
 				continue;
 			}
-			PredicateObjectMappingPlan pomPlan = new ColumnPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, subjectMapPlan.getSubjectTermsToPaths(), kr2rmlMapping,uriFormatter, factory, translator, hNodeToContextUriMap, generateContext);
+			PredicateObjectMappingPlan pomPlan = new ColumnPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, subjectMapPlan.getSubjectTermsToPaths(), kr2rmlMapping,uriFormatter, factory, translator, hNodeToContextUriMap, generateContext, selection);
 			columnLinksPlans.add(pomPlan);
 		}
 	}

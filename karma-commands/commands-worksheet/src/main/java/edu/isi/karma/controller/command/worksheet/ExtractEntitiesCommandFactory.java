@@ -24,12 +24,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
 public class ExtractEntitiesCommandFactory extends CommandFactory {
 
 	public enum Arguments {
-		worksheetId, hTableId, hNodeId, newColumnName, defaultValue, extractionURL, entitiesToBeExt
+		worksheetId, hTableId, hNodeId, 
+		newColumnName, defaultValue, extractionURL, 
+		entitiesToBeExt, selectionName
 	}
 	
 	@Override
@@ -40,9 +43,11 @@ public class ExtractEntitiesCommandFactory extends CommandFactory {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String extractionURL = request.getParameter(Arguments.extractionURL.name());
 		String entitiesToBeExt = request.getParameter(Arguments.entitiesToBeExt.name());
-		
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		Worksheet ws = workspace.getWorksheet(worksheetId);
 		return new ExtractEntitiesCommand(getNewId(workspace), worksheetId, 
-				hTableId, hNodeId, extractionURL, entitiesToBeExt);
+				hTableId, hNodeId, extractionURL, entitiesToBeExt, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 	}
 
 	@Override

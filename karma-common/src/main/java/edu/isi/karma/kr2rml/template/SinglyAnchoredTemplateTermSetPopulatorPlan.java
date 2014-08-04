@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
@@ -36,9 +37,10 @@ public class SinglyAnchoredTemplateTermSetPopulatorPlan extends
 	Map<ColumnTemplateTerm, TemplateTermSetPopulatorPlan> nestedPlans;
 	public SinglyAnchoredTemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath,
 			LinkedList<ColumnTemplateTerm> columnTerms,
-			List<ColumnTemplateTerm> comparisonTerms)
+			List<ColumnTemplateTerm> comparisonTerms, 
+			SuperSelection sel)
 	{
-		super();
+		super(sel);
 		this.comparisonTerms = comparisonTerms;
 		this.columnTerms = columnTerms;
 		this.termToPath = termToPath;
@@ -79,7 +81,7 @@ public class SinglyAnchoredTemplateTermSetPopulatorPlan extends
 		}
 		for(Entry<ColumnTemplateTerm, List<ColumnTemplateTerm>> other : otherToGenerate.entrySet())
 		{
-			TemplateTermSetPopulatorWorker parentWorker = new TemplateTermSetPopulatorWorker(other.getKey(), termToPath.get(other.getKey()), null);
+			TemplateTermSetPopulatorWorker parentWorker = new TemplateTermSetPopulatorWorker(other.getKey(), termToPath.get(other.getKey()), null, selection);
 			TemplateTermSetPopulatorPlan plan = new TemplateTermSetPopulatorPlan(termToPath, other.getValue(), parentWorker);
 			nestedPlans.put(other.getKey(), plan);
 		}

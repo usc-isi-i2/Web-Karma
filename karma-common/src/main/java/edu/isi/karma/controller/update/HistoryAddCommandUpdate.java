@@ -23,11 +23,11 @@
  */
 package edu.isi.karma.controller.update;
 
+import java.io.PrintWriter;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
-
-import java.io.PrintWriter;
 
 /**
  * Announces a command that should be added to the bottom of the history.

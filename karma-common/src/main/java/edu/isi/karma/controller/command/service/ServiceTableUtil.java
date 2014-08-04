@@ -21,17 +21,23 @@
 
 package edu.isi.karma.controller.command.service;
 
-import edu.isi.karma.rep.*;
-import edu.isi.karma.rep.HNode.HNodeType;
-import edu.isi.karma.rep.sources.Attribute;
-import edu.isi.karma.rep.sources.Table;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNode.HNodeType;
+import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.sources.Attribute;
+import edu.isi.karma.rep.sources.Table;
 
 public class ServiceTableUtil {
 
@@ -50,7 +56,7 @@ public class ServiceTableUtil {
 
 	}
 	
-	public static void populateWorksheet(Table table, Worksheet worksheet, RepFactory factory) {
+	public static void populateWorksheet(Table table, Worksheet worksheet, RepFactory factory, SuperSelection sel) {
 		
 		logger.info("Populating existing worksheet with the service data ...");
 		
@@ -60,7 +66,7 @@ public class ServiceTableUtil {
 		hNodeIdList = addHeaders(table.getHeaders(), worksheet, factory);
 
 		edu.isi.karma.rep.Table dataTable = worksheet.getDataTable();
-		updateRows(table.getValues(), table.getRowIds(), worksheet, factory, oldHNodeIdList, hNodeIdList, dataTable);
+		updateRows(table.getValues(), table.getRowIds(), worksheet, factory, oldHNodeIdList, hNodeIdList, dataTable, sel);
 
 	}
 	
@@ -96,10 +102,10 @@ public class ServiceTableUtil {
 	private static void updateRows(List<List<String>> tableValues, List<String> tableRowIds, 
 			Worksheet worksheet, RepFactory factory, 
 			List<String> oldHNodeIdList, List<String> hNodeIdList, 
-			edu.isi.karma.rep.Table dataTable) {
+			edu.isi.karma.rep.Table dataTable, SuperSelection sel) {
 		
 		int rowsCount = dataTable.getNumRows();
-		List<Row> oldRows = dataTable.getRows(0, rowsCount);
+		List<Row> oldRows = dataTable.getRows(0, rowsCount, sel);
 		List<HashMap<String, String>> oldRowValues = new ArrayList<HashMap<String,String>>();
 		List<String> oldRowIds = new ArrayList<String>();
 		
@@ -134,7 +140,7 @@ public class ServiceTableUtil {
 				
 				Row row = null;
 				if (addedRowsCount <= rowsCount)
-					row = dataTable.getRows(addedRowsCount - 1, 1).get(0);
+					row = dataTable.getRows(addedRowsCount - 1, 1, sel).get(0);
 				else 
 					row = dataTable.addRow(factory);
 				

@@ -20,15 +20,27 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.cleaning;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.cleaning.ExampleSelection;
-import edu.isi.karma.cleaning.Research.ConfigParameters;
-import edu.isi.karma.cleaning.Research.DataCollection;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
 import edu.isi.karma.cleaning.UtilTools;
+import edu.isi.karma.cleaning.Research.ConfigParameters;
+import edu.isi.karma.cleaning.Research.DataCollection;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.CleaningResultUpdate;
@@ -37,14 +49,12 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.cleaning.*;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
+import edu.isi.karma.rep.cleaning.RamblerTransformationExample;
+import edu.isi.karma.rep.cleaning.RamblerTransformationInputs;
+import edu.isi.karma.rep.cleaning.RamblerTransformationOutput;
+import edu.isi.karma.rep.cleaning.RamblerValueCollection;
+import edu.isi.karma.rep.cleaning.TransformationExample;
+import edu.isi.karma.rep.cleaning.ValueCollection;
 public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	final String hNodeId;
 	private Vector<TransformationExample> examples;

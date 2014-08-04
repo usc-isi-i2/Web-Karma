@@ -21,20 +21,24 @@
 
 package edu.isi.karma.controller.command.transformation;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.webserver.KarmaException;
+import javax.servlet.http.HttpServletRequest;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import javax.servlet.http.HttpServletRequest;
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.CommandInputJSONUtil;
+import edu.isi.karma.webserver.KarmaException;
 
 public class SubmitPythonTransformationCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
-		newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue
+		newColumnName, transformationCode, worksheetId, 
+		hNodeId, errorDefaultValue, selectionName
 	}
 	
 	@Override
@@ -50,9 +54,11 @@ public class SubmitPythonTransformationCommandFactory extends JSONInputCommandFa
 		String code = HistoryJsonUtil.getStringValue(Arguments.transformationCode.name(), inputJson);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String errorDefaultValue = HistoryJsonUtil.getStringValue(Arguments.errorDefaultValue.name(), inputJson);
-		
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		Worksheet ws = workspace.getWorksheet(worksheetId);
 		SubmitPythonTransformationCommand comm = new SubmitPythonTransformationCommand(getNewId(workspace), 
-				newColumnName, code, worksheetId, hNodeId, errorDefaultValue);
+				newColumnName, code, worksheetId, hNodeId, errorDefaultValue, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

@@ -20,23 +20,29 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.webserver.KarmaException;
+import javax.servlet.http.HttpServletRequest;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
+import edu.isi.karma.controller.update.SemanticTypesUpdate;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.CommandInputJSONUtil;
+import edu.isi.karma.webserver.KarmaException;
 
 public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
-		worksheetId, hNodeId, isKey, SemanticTypesArray, trainAndShowUpdates, rdfLiteralType
+		worksheetId, hNodeId, isKey, 
+		SemanticTypesArray, trainAndShowUpdates, rdfLiteralType, 
+		selectionName
 	}
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -58,9 +64,11 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 			logger.error("Bad JSON received from server!", e);
 			return null;
 		}
-
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		Worksheet ws = workspace.getWorksheet(worksheetId);
 		return new SetSemanticTypeCommand(getNewId(workspace), worksheetId, hNodeId, 
-				isPartOfKey, arr, true, rdfLiteralType);
+				isPartOfKey, arr, true, rdfLiteralType, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 	}
 
 	public Command createCommand(JSONArray inputJson, Workspace workspace) throws JSONException, KarmaException {
@@ -78,9 +86,12 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 			logger.error("Bad JSON received from server!", e);
 			return null;
 		}
-		
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		Worksheet ws = workspace.getWorksheet(worksheetId);
 		SetSemanticTypeCommand comm = new SetSemanticTypeCommand(getNewId(workspace), 
-				worksheetId, hNodeId, isPartOfKey, arr, train, rdfLiteralType);
+				worksheetId, hNodeId, isPartOfKey, arr, 
+				train, rdfLiteralType, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 		
 		// Change the train flag, so that it does not train while reading from history
 		HistoryJsonUtil.setArgumentValue(Arguments.trainAndShowUpdates.name(), false, inputJson);
@@ -88,9 +99,11 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 		return comm;
 	}
 	
-	public Command createCommand(Workspace workspace, String worksheetId, String hNodeId, boolean isPartOfKey, JSONArray arr, boolean train, String rdfLiteralType) {
+	public Command createCommand(Workspace workspace, String worksheetId, String hNodeId, 
+			boolean isPartOfKey, JSONArray arr, boolean train, 
+			String rdfLiteralType, SuperSelection sel) {
 		return new SetSemanticTypeCommand(getNewId(workspace), worksheetId, hNodeId, 
-				isPartOfKey, arr, train, rdfLiteralType);
+				isPartOfKey, arr, train, rdfLiteralType, sel);
 	}
 	@Override
 	public Class<? extends Command> getCorrespondingCommand()

@@ -21,20 +21,22 @@
 
 package edu.isi.karma.controller.command.service;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.CommandInputJSONUtil;
-import edu.isi.karma.webserver.KarmaException;
+import javax.servlet.http.HttpServletRequest;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import javax.servlet.http.HttpServletRequest;
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.CommandInputJSONUtil;
+import edu.isi.karma.webserver.KarmaException;
 
 public class PopulateCommandFactory extends JSONInputCommandFactory {
 	
 	public enum Arguments {
-		worksheetId
+		worksheetId, selectionName
 	}
 	
 	@Override
@@ -42,8 +44,11 @@ public class PopulateCommandFactory extends JSONInputCommandFactory {
 			Workspace workspace) {
 
 		String worksheetId =request.getParameter(Arguments.worksheetId.name());
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		Worksheet ws = workspace.getWorksheet(getWorksheetId(request, workspace));
 		return new PopulateCommand(getNewId(workspace), 
-				worksheetId);
+				worksheetId, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 	}
 
 	@Override
@@ -51,8 +56,11 @@ public class PopulateCommandFactory extends JSONInputCommandFactory {
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name()
 				, inputJson);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		Worksheet ws = workspace.getWorksheet(worksheetId);
 		return new PopulateCommand(getNewId(workspace), 
-				worksheetId);
+				worksheetId, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 	}
 
 	@Override

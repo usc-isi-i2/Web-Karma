@@ -21,6 +21,10 @@
 
 package edu.isi.karma.controller.command.transformation;
 
+import org.json.JSONArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.selection.SuperSelection;
@@ -31,10 +35,6 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-
-import org.json.JSONArray;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PreviewPythonTransformationResultsCommand extends PythonTransformationCommand {
 

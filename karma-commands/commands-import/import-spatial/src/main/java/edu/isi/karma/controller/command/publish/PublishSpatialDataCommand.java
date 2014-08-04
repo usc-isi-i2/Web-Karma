@@ -30,7 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -40,7 +41,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
-public class PublishSpatialDataCommand extends WorksheetCommand {
+public class PublishSpatialDataCommand extends WorksheetSelectionCommand {
 
 	private enum JsonKeys {
 		updateType, fileUrl, worksheetId
@@ -49,8 +50,8 @@ public class PublishSpatialDataCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishSpatialDataCommand.class);
 
-	protected PublishSpatialDataCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+	protected PublishSpatialDataCommand(String id, String worksheetId, SuperSelection sel) {
+		super(id, worksheetId, sel);
 	}
 
 	@Override
@@ -84,7 +85,7 @@ public class PublishSpatialDataCommand extends WorksheetCommand {
 //		}
 
 		OntologyManager om= workspace.getOntologyManager();
-		WorksheetToFeatureCollection geo = new WorksheetToFeatureCollection(worksheet,om);//ying
+		WorksheetToFeatureCollection geo = new WorksheetToFeatureCollection(worksheet, om, selection);//ying
 		
 		// Send an error update if no geospatial data found!
 		if (geo.hasNoGeospatialData()) {

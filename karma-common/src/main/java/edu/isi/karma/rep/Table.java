@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.selection.SuperSelection;
-import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.rep.Node.NodeStatus;
 
 /**

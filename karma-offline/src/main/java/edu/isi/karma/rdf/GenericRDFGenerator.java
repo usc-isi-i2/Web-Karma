@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.csv.CSVImport;
 import edu.isi.karma.imp.json.JsonImport;
@@ -57,8 +58,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 		XML
 	};
 	
-	public GenericRDFGenerator() {
-		super();
+	public GenericRDFGenerator(SuperSelection sel) {
+		super(sel);
 		this.modelIdentifiers = new HashMap<String, R2RMLMappingIdentifier>();
 		this.readModelParsers = new HashMap<String, WorksheetR2RMLJenaModelParser>();
 	}
@@ -165,7 +166,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 		
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
 		        workspace.getFactory(), workspace.getOntologyManager(), writers,
-		        addProvenance, mapping, errorReport);
+		        addProvenance, mapping, errorReport, selection);
 		rdfGen.generateRDF(true);
 		removeWorkspace(workspace);
 		

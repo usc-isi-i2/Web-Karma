@@ -23,16 +23,16 @@
  */
 package edu.isi.karma.rep;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import edu.isi.karma.controller.command.selection.SuperSelection;
-
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.controller.command.selection.SuperSelection;
 
 /**
  * @author szekely

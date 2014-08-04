@@ -21,12 +21,12 @@
 
 package edu.isi.karma.rep.sources;
 
-import edu.isi.karma.common.HttpMethods;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.isi.karma.common.HttpMethods;
 
 public class Request {
 	

@@ -28,13 +28,17 @@ import org.json.JSONException;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class GenerateR2RMLModelCommandFactory extends CommandFactory {
 	
 	private enum Arguments {
-		worksheetId, addInverseProperties, rdfPrefix, rdfNamespace, tripleStoreUrl, graphContext, localTripleStoreUrl
+		worksheetId, addInverseProperties, rdfPrefix, 
+		rdfNamespace, tripleStoreUrl, graphContext, 
+		localTripleStoreUrl, selectionName
 	}
 
 	@Override
@@ -43,14 +47,17 @@ public class GenerateR2RMLModelCommandFactory extends CommandFactory {
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.graphContext.name());
 		String RESTserverAddress = request.getRequestURL().substring(0, request.getRequestURL().lastIndexOf("/RequestController"));
-		GenerateR2RMLModelCommand cmd = new GenerateR2RMLModelCommand(getNewId(workspace), worksheetId, tripleStoreUrl, context);
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		Worksheet ws = workspace.getWorksheet(worksheetId);
+		GenerateR2RMLModelCommand cmd = new GenerateR2RMLModelCommand(getNewId(workspace), worksheetId, tripleStoreUrl, context, 
+				ws.getSuperSelectionManager().getSuperSelection(selectionName));
 		cmd.setRESTserverAddress(RESTserverAddress);
 		return cmd;
 	}
 	
-	public Command createCommand(Workspace workspace, String worksheetId, String tripleStoreUrl, String context)
+	public Command createCommand(Workspace workspace, String worksheetId, String tripleStoreUrl, String context, SuperSelection sel)
 			throws JSONException, KarmaException {
-		return new GenerateR2RMLModelCommand(getNewId(workspace), worksheetId, tripleStoreUrl, context);
+		return new GenerateR2RMLModelCommand(getNewId(workspace), worksheetId, tripleStoreUrl, context, sel);
 	}
 
 	@Override

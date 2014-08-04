@@ -36,7 +36,6 @@ import com.rits.cloning.Cloner;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
@@ -177,7 +176,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 			logger.info("Requesting data with includeURL=" + true + ",includeInput=" + true + ",includeOutput=" + true);
 			Table serviceTable = invocatioManager.getServiceData(false, false, true);
 //			logger.debug(serviceTable.getPrintInfo());
-			ServiceTableUtil.populateWorksheet(serviceTable, wk, workspace.getFactory());
+			ServiceTableUtil.populateWorksheet(serviceTable, wk, workspace.getFactory(), selection);
 			logger.info("The service " + service.getUri() + " has been invoked successfully.");
 
 

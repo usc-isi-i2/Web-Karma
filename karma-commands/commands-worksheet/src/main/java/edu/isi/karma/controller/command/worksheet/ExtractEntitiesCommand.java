@@ -121,6 +121,7 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 
 		for (Row row : rows) {
 			String id = row.getId();
+			@SuppressWarnings("unused")
 			JSONArray t = new JSONArray();
 			Node node = row.getNode(hNodeId);
 			String value = node.getValue().asString();
@@ -268,7 +269,7 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 		try {
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
 			cmd = (AddValuesCommand) factory.createCommand(addValues, workspace, hNodeId, worksheetId,
-					hTableId, HNodeType.Transformation);
+					hTableId, HNodeType.Transformation, selection);
 			
 			HNode hnode = worksheet.getHeaders().getHNode(hNodeId);
 			cmd.setColumnName(hnode.getColumnName()+" Extractions");

@@ -34,9 +34,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
 import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommand;
 import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommandFactory;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -51,7 +52,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 /**
 @author shri
  */
-public class FetchColumnCommand extends WorksheetCommand {
+public class FetchColumnCommand extends WorksheetSelectionCommand {
 
 //	private final String alignmentNodeId;
 //	private final String tripleStoreUrl;
@@ -65,8 +66,10 @@ public class FetchColumnCommand extends WorksheetCommand {
 		worksheetId, alignmentNodeId, tripleStoreUrl, graphUrl, nodeId
 	}
 	
-	protected FetchColumnCommand(String id, String worksheetId, String alignmentId, String sparqlUrl, String graph, String node ) {
-		super(id, worksheetId);
+	protected FetchColumnCommand(String id, String worksheetId, String alignmentId, 
+			String sparqlUrl, String graph, String node, 
+			SuperSelection sel) {
+		super(id, worksheetId, sel);
 //		this.alignmentNodeId = alignmentId;
 //		this.tripleStoreUrl = sparqlUrl;
 //		this.graphUrl = graph;
@@ -114,7 +117,7 @@ public class FetchColumnCommand extends WorksheetCommand {
 			// If the model is not published, publish it!
 			if(!f.exists() || !f.isFile()) {
 				GenerateR2RMLModelCommandFactory factory = new GenerateR2RMLModelCommandFactory();
-				GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, graphName);
+				GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, graphName, selection);
 				cmd.doIt(workspace);
 			} else {
 				// if the model was published 30 min ago, publish it again, just to be sure
@@ -122,7 +125,7 @@ public class FetchColumnCommand extends WorksheetCommand {
 				if((diff / 1000L / 60L) > 30) {
 					f.delete();
 					GenerateR2RMLModelCommandFactory factory = new GenerateR2RMLModelCommandFactory();
-					GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, graphName);
+					GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, graphName, selection);
 					cmd.doIt(workspace);
 				}
 			}

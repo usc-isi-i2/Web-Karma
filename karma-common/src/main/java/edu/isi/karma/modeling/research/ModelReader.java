@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.rep.alignment.ColumnNode;
@@ -271,7 +272,7 @@ public class ModelReader {
 
 			DirectedWeightedMultigraph<Node, LabeledLink> graph = buildGraphsFromStatements2(statements);
 
-			SemanticModel semanticModel = new SemanticModel(id, graph);
+			SemanticModel semanticModel = new SemanticModel(id, graph, SuperSelectionManager.DEFAULT_SELECTION);
 			semanticModel.setName(name);
 			semanticModel.setDescription(description);
 

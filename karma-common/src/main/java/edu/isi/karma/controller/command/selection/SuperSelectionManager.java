@@ -46,4 +46,11 @@ public class SuperSelectionManager {
 	public SuperSelection getCurrentSuperSelection() {
 		return currentSelection;
 	}
+	
+	public SuperSelection getSuperSelection(String name) {
+		if (name == null)
+			return currentSelection;
+		SuperSelection sel = selectionMapping.get(name);
+		return sel == null ? currentSelection : sel;
+	}
  }

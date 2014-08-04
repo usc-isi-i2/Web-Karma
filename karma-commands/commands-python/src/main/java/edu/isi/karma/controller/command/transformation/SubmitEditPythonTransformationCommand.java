@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;
@@ -42,8 +43,8 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 			.getLogger(SubmitEditPythonTransformationCommand.class);
 
 	public SubmitEditPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
-			String worksheetId, String hNodeId, String errorDefaultValue, String targetHNodeId) {
-		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
+			String worksheetId, String hNodeId, String errorDefaultValue, String targetHNodeId, SuperSelection sel) {
+		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, sel);
 		this.targetHNodeId = targetHNodeId;
 		this.pythonNodeId = targetHNodeId;
 		logger.debug("SubmitEditPythonTransformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);

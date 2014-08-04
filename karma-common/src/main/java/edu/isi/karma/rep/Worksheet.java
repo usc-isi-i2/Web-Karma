@@ -22,13 +22,12 @@
  */
 package edu.isi.karma.rep;
 
-import edu.isi.karma.controller.command.selection.SelectionManager;
+import java.io.PrintWriter;
+
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.metadata.MetadataContainer;
-
-import java.io.PrintWriter;
 
 /**
  * @author szekely

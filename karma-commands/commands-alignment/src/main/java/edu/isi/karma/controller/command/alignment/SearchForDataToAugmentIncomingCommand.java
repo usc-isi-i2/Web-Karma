@@ -109,7 +109,7 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetSelectionCom
 		String hNodeId = FetchHNodeIdFromAlignmentCommand.gethNodeId(AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId), columnUri);
 		HNode hnode = factory.getHNode(hNodeId);
 		List<Table> dataTables = new ArrayList<Table>();
-		CloneTableUtils.getDatatable(worksheet.getDataTable(), factory.getHTable(hnode.getHTableId()), dataTables);
+		CloneTableUtils.getDatatable(worksheet.getDataTable(), factory.getHTable(hnode.getHTableId()), dataTables, selection);
 		KR2RMLBloomFilter uris = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 		Set<String> uriSet = new HashSet<String>();
 		for(Table t : dataTables) {
