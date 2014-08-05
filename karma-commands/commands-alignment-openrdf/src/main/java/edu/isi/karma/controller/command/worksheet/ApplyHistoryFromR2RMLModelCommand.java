@@ -123,6 +123,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 			if(hc != null) {
 				hc.removeUpdateByClass(HistoryAddCommandUpdate.class);
 				hc.removeUpdateByClass(InfoUpdate.class);
+				hc.removeUpdateByClass(ErrorUpdate.class);
 				c.append(hc);
 			}
 		} catch (Exception e) {
