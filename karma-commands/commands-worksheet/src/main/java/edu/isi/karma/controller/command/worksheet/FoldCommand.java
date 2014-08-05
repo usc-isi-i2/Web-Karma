@@ -173,7 +173,7 @@ public class FoldCommand extends WorksheetSelectionCommand {
 			cmd.doIt(workspace);
 			outputColumns.addAll(cmd.getOutputColumns());
 			UpdateContainer c =  new UpdateContainer();		
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {
@@ -189,7 +189,7 @@ public class FoldCommand extends WorksheetSelectionCommand {
 		//remove the new column
 		//currentTable.removeHNode(newHNodeId, worksheet);
 		UpdateContainer c =  new UpdateContainer();		
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

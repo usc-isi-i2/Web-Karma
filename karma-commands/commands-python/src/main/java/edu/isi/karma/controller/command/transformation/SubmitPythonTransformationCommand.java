@@ -200,7 +200,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			resetColumnValues(workspace);
 		}
 
-		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 		// TODO is it necessary to compute alignment and semantic types for everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;

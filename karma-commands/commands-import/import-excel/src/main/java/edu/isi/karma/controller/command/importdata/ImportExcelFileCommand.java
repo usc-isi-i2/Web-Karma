@@ -24,6 +24,7 @@ package edu.isi.karma.controller.command.importdata;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.IPreviewable;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.update.*;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.csv.CSVFileImport;
@@ -33,10 +34,12 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.File;
 import java.util.List;
 
@@ -107,7 +110,7 @@ public class ImportExcelFileCommand extends ImportFileCommand implements IPrevie
                     }
 
                     c.add(new WorksheetListUpdate());
-                    c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
+                    c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION));
                 } catch (Exception e) {
                     logger.error("Error occured while importing CSV file.", e);
                     return new UpdateContainer(new ErrorUpdate(

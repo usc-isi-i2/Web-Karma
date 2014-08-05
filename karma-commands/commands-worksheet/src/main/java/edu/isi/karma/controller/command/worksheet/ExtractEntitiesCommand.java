@@ -279,7 +279,7 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 
 			UpdateContainer c = new UpdateContainer(new InfoUpdate("Extracted Entities"));
 			c.append(WorksheetUpdateFactory
-					.createRegenerateWorksheetUpdates(worksheetId));
+					.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			//c.append(new InfoUpdate("Extracted Entities"));
 			return c;
@@ -298,7 +298,7 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 	public UpdateContainer undoIt(Workspace workspace) {
 
 		return WorksheetUpdateFactory
-				.createRegenerateWorksheetUpdates(worksheetId);
+				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace));
 	}
 
 }

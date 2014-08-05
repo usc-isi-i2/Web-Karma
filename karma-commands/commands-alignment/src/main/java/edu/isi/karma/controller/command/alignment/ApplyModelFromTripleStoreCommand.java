@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
@@ -116,7 +117,7 @@ public class ApplyModelFromTripleStoreCommand extends WorksheetCommand {
 			histExecutor.executeAllCommands(historyJson);
 			
 			// Add worksheet updates that could have resulted out of the transformation commands
-			UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+			UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION);
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			c.add(new InfoUpdate("Model successfully applied!"));
 			return c;

@@ -98,7 +98,7 @@ public class GlueCommand extends WorksheetSelectionCommand {
 		try{
 			UpdateContainer c =  new UpdateContainer();
 			c.add(new WorksheetListUpdate());
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId()));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId(), getSuperSelection(oldws)));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {
@@ -118,7 +118,7 @@ public class GlueCommand extends WorksheetSelectionCommand {
 		ndid.removeNestedTable();
 		//remove the new column
 		currentTable.removeHNode(newhNodeId, worksheet);
-		uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 		uc.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return uc;
 	}

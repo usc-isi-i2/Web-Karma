@@ -21,26 +21,27 @@
 
 package edu.isi.karma.controller.update;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
 public class WorksheetUpdateFactory {
 
-	public static UpdateContainer createWorksheetHierarchicalAndCleaningResultsUpdates(String worksheetId) {
+	public static UpdateContainer createWorksheetHierarchicalAndCleaningResultsUpdates(String worksheetId, SuperSelection sel) {
 		UpdateContainer c = new UpdateContainer();
-		createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, c);
+		createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, c, sel);
 		return c;
 	}
 	private static void createWorksheetHierarchicalAndCleaningResultsUpdates(
-			String worksheetId, UpdateContainer c) {
-		c.add(new WorksheetCleaningUpdate(worksheetId, true));
+			String worksheetId, UpdateContainer c, SuperSelection sel) {
+		c.add(new WorksheetCleaningUpdate(worksheetId, true, sel));
 		createWorksheetHierarchicalUpdates(worksheetId, c);
 	}
 	
-	public static UpdateContainer createWorksheetHierarchicalUpdates(String worksheetId) {
+	public static UpdateContainer createWorksheetHierarchicalUpdates(String worksheetId, SuperSelection sel) {
 		UpdateContainer c = new UpdateContainer();
-		c.add(new WorksheetCleaningUpdate(worksheetId, false));
+		c.add(new WorksheetCleaningUpdate(worksheetId, false, sel));
 		createWorksheetHierarchicalUpdates(worksheetId, c);
 		return c;
 	}
@@ -50,10 +51,10 @@ public class WorksheetUpdateFactory {
 		c.add(new WorksheetHeadersUpdate(worksheetId));
 		c.add(new WorksheetDataUpdate(worksheetId));
 	}
-	public static UpdateContainer createRegenerateWorksheetUpdates(String worksheetId) {
+	public static UpdateContainer createRegenerateWorksheetUpdates(String worksheetId, SuperSelection sel) {
 		UpdateContainer c = new UpdateContainer();
 		c.add(new RegenerateWorksheetUpdate(worksheetId));
-		createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, c);
+		createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, c, sel);
 		return c;
 	}
 	public static UpdateContainer createSemanticTypesAndSVGAlignmentUpdates(String worksheetId, Workspace workspace, Alignment alignment)

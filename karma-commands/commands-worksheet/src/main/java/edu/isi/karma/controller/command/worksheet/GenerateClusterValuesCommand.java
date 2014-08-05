@@ -129,7 +129,7 @@ public class GenerateClusterValuesCommand extends WorksheetSelectionCommand {
 			
 			worksheet.setJsonAnnotation(ClusterAnnotation);
 			c.add(new WorksheetListUpdate());
-			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(ws.getId()));
+			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(ws.getId(), getSuperSelection(ws)));
 			
 			return c;
 			//return null;

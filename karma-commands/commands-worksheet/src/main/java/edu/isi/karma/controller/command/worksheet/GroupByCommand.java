@@ -12,13 +12,14 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
 import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetDeleteUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.CloneTableUtils;
@@ -40,12 +41,8 @@ import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
 
 public class GroupByCommand extends WorksheetSelectionCommand {
-	//if null add column at beginning of table
-	//add column to this table
-	Command cmd;
-	//private 
-	//the id of the new column that was created
-	//needed for undo
+	private String newWorksheetId;
+	private String newHNodeId;
 	private String hNodeId;
 	private static Logger logger = LoggerFactory
 			.getLogger(GroupByCommand.class);
@@ -79,7 +76,7 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.notUndoable;
+		return CommandType.undoable;
 	}
 
 	@Override
@@ -125,9 +122,9 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 			UpdateContainer c =  new UpdateContainer();
 			c.add(new WorksheetListUpdate());
 			if (newws == null)
-				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId()));
+				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId(), getSuperSelection(oldws)));
 			if (newws != null) {
-				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId()));
+				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId(), SuperSelectionManager.DEFAULT_SELECTION));
 				//c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(newws.getId()));
 				Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), newws.getId(), workspace.getOntologyManager());
 				c.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(newws.getId(), workspace, alignment));
@@ -144,11 +141,24 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		//cmd.undoIt(workspace);
-		//remove the new column
-		//currentTable.removeHNode(newHNodeId, worksheet);
-		//c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
-		return null;
+		UpdateContainer c = new UpdateContainer();
+		if (this.newWorksheetId != null) {
+			workspace.removeWorksheet(newWorksheetId);
+			workspace.getFactory().removeWorksheet(newWorksheetId, workspace.getCommandHistory());
+			c.add(new WorksheetListUpdate());
+			c.add(new WorksheetDeleteUpdate(newWorksheetId));
+		}
+		if (this.newHNodeId != null) {
+			Worksheet worksheet = workspace.getWorksheet(worksheetId);
+			HNode ndid = workspace.getFactory().getHNode(newHNodeId);
+			HTable currentTable = workspace.getFactory().getHTable(ndid.getHTableId());
+			ndid.removeNestedTable();
+			//remove the new column
+			currentTable.removeHNode(newHNodeId, worksheet);
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		}
+		return c;
 	}
 
 	private Worksheet groupByTopLevel(Worksheet oldws, Workspace workspace, List<String> hnodeIDs, List<HNode> keyhnodes, List<HNode> valuehnodes, RepFactory factory) {
@@ -185,6 +195,7 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 				CloneTableUtils.cloneDataTable(cur, dataTable, oldws.getHeaders(), newValueTable, valuehnodes, factory, selection);
 			}
 		}
+		newWorksheetId = newws.getId();
 		return newws;
 	}
 
@@ -200,6 +211,7 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 			}
 		}
 		HNode newNode = parentHT.addHNode(parentHT.getNewColumnName("GroupBy"), HNodeType.Transformation, oldws, factory);
+		newHNodeId = newNode.getId();
 		outputColumns.add(newNode.getId());
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
 		for (Entry<String, String> entry : CloneTableUtils.cloneHTable(ht, newht, oldws, factory, keyhnodes, selection).entrySet()) {

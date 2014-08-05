@@ -201,7 +201,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		UpdateContainer c = (WorksheetUpdateFactory
-				.createRegenerateWorksheetUpdates(worksheetId));
+				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 		// TODO is it necessary to compute alignment and semantic types for
 		// everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));

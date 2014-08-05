@@ -36,7 +36,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.selection.SuperSelectionManager;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.ColumnMetadata;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
@@ -54,6 +54,7 @@ AbstractUpdate {
 
 	private String	worksheetId;
 	private boolean	forceUpdates;
+	private SuperSelection selection;
 	private static Logger logger = LoggerFactory.getLogger(
 			WorksheetCleaningUpdate.class);
 
@@ -66,9 +67,10 @@ AbstractUpdate {
 		Preferred_Length, sampleSize, sampleRate
 	}
 
-	public WorksheetCleaningUpdate(String worksheetId, boolean forceUpdates) {
+	public WorksheetCleaningUpdate(String worksheetId, boolean forceUpdates, SuperSelection selection) {
 		this.worksheetId = worksheetId;
 		this.forceUpdates = forceUpdates;
+		this.selection = selection;
 	}
 
 	@Override
@@ -84,7 +86,7 @@ AbstractUpdate {
 		for (HNodePath path:columnPaths) {
 			String leafHNodeId = path.getLeaf().getId();
 			List<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
-			worksheet.getDataTable().collectNodes(path, nodes, SuperSelectionManager.DEFAULT_SELECTION);
+			worksheet.getDataTable().collectNodes(path, nodes, selection);
 			final int sampleSize = (nodes.size() > 1000) ? 1000 : nodes.size();
 			columnsInvoked.add(leafHNodeId);
 			try {

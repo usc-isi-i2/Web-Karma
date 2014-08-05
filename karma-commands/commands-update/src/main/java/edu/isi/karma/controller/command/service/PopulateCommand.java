@@ -195,7 +195,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 			columnPaths.add(path);
 		}
 		
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 				
 		return c;
@@ -267,7 +267,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 		workspace.getFactory().replaceWorksheet(this.worksheetId, this.worksheetBeforeInvocation);
 		
 		c.add(new ReplaceWorksheetUpdate(worksheetId, this.worksheetBeforeInvocation));
-		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId));
+		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, getSuperSelection(workspace)));
 		
 		return c;	
 		

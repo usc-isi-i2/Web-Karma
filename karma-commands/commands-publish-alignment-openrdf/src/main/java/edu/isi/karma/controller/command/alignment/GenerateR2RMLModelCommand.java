@@ -269,8 +269,9 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 						}
 					}
 				});
+				//TODO
 				uc.add(new HistoryUpdate(workspace.getCommandHistory()));
-				uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+				uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 				uc.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment));
 				return uc;
 			} 

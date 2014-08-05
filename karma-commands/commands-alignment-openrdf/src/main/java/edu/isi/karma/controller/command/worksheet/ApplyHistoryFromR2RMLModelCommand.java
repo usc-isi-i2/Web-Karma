@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.history.HistoryJSONEditor;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.controller.update.AbstractUpdate;
@@ -97,7 +98,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 		final Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		UpdateContainer c = new UpdateContainer();
 		c.add(new WorksheetListUpdate());
-		UpdateContainer rwu = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		UpdateContainer rwu = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION);
 		if(rwu != null)
 		{
 			c.append(rwu);
@@ -133,11 +134,11 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 			logger.error(msg, e);
 			return new UpdateContainer(new ErrorUpdate(msg));
 		}
-
+		//TODO
 		// Add worksheet updates that could have resulted out of the transformation commands
 		for (Worksheet newws : workspace.getWorksheets()) {
 			if (newws.getId().compareTo(worksheetId) != 0) {
-				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId()));
+				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId(), SuperSelectionManager.DEFAULT_SELECTION));
 				Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), newws.getId(), workspace.getOntologyManager());
 				c.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(newws.getId(), workspace, alignment));
 			}

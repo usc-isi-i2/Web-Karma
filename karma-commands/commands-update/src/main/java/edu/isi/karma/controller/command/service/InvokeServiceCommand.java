@@ -164,7 +164,7 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 		UpdateContainer c = new UpdateContainer();
 		try {
 			// Add the visualization update
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 			c.add(new SemanticTypesUpdate(wk, worksheetId, alignment));
 			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
 		} catch (Exception e) {
@@ -216,7 +216,7 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 			workspace.getFactory().replaceWorksheet(worksheetId, worksheetBeforeInvocation);
 			c.add(new ReplaceWorksheetUpdate(worksheetId, worksheetBeforeInvocation));
 			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 			c.add(new SemanticTypesUpdate(wk, worksheetId, alignment));
 		} catch (Exception e) {
 			logger.error("Error occured while populating the worksheet with service data!", e);

@@ -168,7 +168,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 			RamblerTransformationOutput rtf = applyRamblerTransformation(rows);
 			if (rtf.getTransformations().keySet().size() <= 0) {
 				c.append(WorksheetUpdateFactory
-						.createRegenerateWorksheetUpdates(worksheetId));
+						.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 				c.add(new InfoUpdate("No Result Submitted"));
 				return c;
 			}
@@ -189,7 +189,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 
 		if (selectedPath != null) {
 			c.append(WorksheetUpdateFactory
-					.createRegenerateWorksheetUpdates(worksheetId));
+					.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 			/** Add the alignment update **/
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(
 					workspace, selectedPath));
@@ -353,7 +353,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 		currentTable.removeHNode(newHNodeId, worksheet);
 
 		UpdateContainer c = (WorksheetUpdateFactory
-				.createRegenerateWorksheetUpdates(worksheetId));
+				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 		// TODO is it necessary to compute alignment and semantic types for
 		// everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
