@@ -63,8 +63,10 @@ public class UpdateContainer {
 		Set<AbstractUpdate> needToDeleted = new HashSet<AbstractUpdate>();
 		for (AbstractUpdate update : updateContainer.updates) {
 			for (AbstractUpdate update2 : updates) {
-				if (update2.getClass().equals(update.getClass()))
+				if (update2.equals(update)) {
 					needToDeleted.add(update2);
+					break;
+				}
 			}
 		}
 		updates.removeAll(needToDeleted);

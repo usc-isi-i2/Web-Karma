@@ -331,7 +331,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 	public boolean equals(Object o) {
 		if (o instanceof AlignmentSVGVisualizationUpdate) {
 			AlignmentSVGVisualizationUpdate t = (AlignmentSVGVisualizationUpdate)o;
-			return t.alignment.equals(alignment) && t.worksheetId.equals(worksheetId);
+			return t.worksheetId.equals(worksheetId);
 		}
 		return false;
 	}
