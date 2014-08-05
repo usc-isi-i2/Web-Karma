@@ -18,7 +18,9 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.kr2rml;
+package edu.isi.karma.kr2rml.writer;
+
+import edu.isi.karma.kr2rml.PredicateObjectMap;
 
 
 public interface KR2RMLRDFWriter {

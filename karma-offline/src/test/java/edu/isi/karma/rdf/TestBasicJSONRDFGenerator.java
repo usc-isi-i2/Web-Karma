@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -15,9 +16,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.kr2rml.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
+import edu.isi.karma.kr2rml.writer.AvroKR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 
 public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
@@ -91,6 +93,25 @@ public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
 			assertEquals(148, count);
 		} catch (Exception e) {
 			logger.error("testGenerateRDF1 failed:", e);
+			fail("Execption: " + e.getMessage());
+		}
+	}
+	@Test
+	public void testGenerateAvro1() {
+		try {
+			String filename = "people.json";
+			logger.info("Loading json file: " + filename);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			AvroKR2RMLRDFWriter writer = new AvroKR2RMLRDFWriter(baos);
+			rdfGen.generateRDF("people-model", new File(getTestResource(filename).toURI()), InputType.JSON, false, writer);
+			String rdf = new String(baos.toByteArray());
+			assertNotEquals(rdf.length(), 0);
+			String[] lines = rdf.split("(\r\n|\n)");
+			int count = lines.length;
+			System.out.println(rdf);
+			//assertEquals(148, count);
+		} catch (Exception e) {
+			logger.error("testGenerateAvro1 failed:", e);
 			fail("Execption: " + e.getMessage());
 		}
 	}
