@@ -52,6 +52,7 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -78,11 +79,11 @@ public class SemanticModel {
 	protected Worksheet worksheet;
 	private SuperSelection selection;
 	public SemanticModel(String id,
-			DirectedWeightedMultigraph<Node, LabeledLink> graph, SuperSelection sel) {
+			DirectedWeightedMultigraph<Node, LabeledLink> graph) {
 
 		this.id = id;
 		this.graph = graph;
-		this.selection = sel;
+		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
 		this.setSuggestedTypesForColumnNodes();
 		this.setUserSelectedTypeForColumnNodes();
 
@@ -100,7 +101,7 @@ public class SemanticModel {
 		this.worksheet = worksheet;
 		this.id = id;
 		this.graph = graph;
-
+		this.selection = sel;
 		this.setSuggestedTypesForColumnNodes();
 		this.setUserSelectedTypeForColumnNodes();
 
@@ -118,6 +119,7 @@ public class SemanticModel {
 		this.id = id;
 		this.graph = graph;
 		this.sourceColumns = sourceColumns;
+		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
 		this.mappingToSourceColumns = mappingToSourceColumns;
 	}
 	
@@ -128,6 +130,7 @@ public class SemanticModel {
 		this.graph = semanticModel.getGraph();
 		this.sourceColumns = semanticModel.getSourceColumns();
 		this.mappingToSourceColumns = semanticModel.getMappingToSourceColumns();
+		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
 	}
 	
 	public String getId() {

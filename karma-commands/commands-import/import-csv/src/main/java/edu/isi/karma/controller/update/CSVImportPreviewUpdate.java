@@ -187,5 +187,9 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 			logger.error("Error occured while writing to JSON", e);
 		}
 	}
+	
+	public boolean equals(Object o) {
+		return false;
+	}
 
 }

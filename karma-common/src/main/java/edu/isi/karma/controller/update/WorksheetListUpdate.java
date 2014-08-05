@@ -81,4 +81,10 @@ public class WorksheetListUpdate extends AbstractUpdate {
 	{
 		vWorkspace.createVWorksheetsForAllWorksheets();
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof WorksheetListUpdate)
+			return true;
+		return false;
+	}
 }

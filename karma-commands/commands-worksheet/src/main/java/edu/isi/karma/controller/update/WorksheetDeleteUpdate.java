@@ -45,4 +45,12 @@ public class WorksheetDeleteUpdate extends AbstractUpdate {
 		vWorkspace.getViewFactory().removeWorksheet(vws.getId());
 	}
 	
+	public boolean equals(Object o) {
+		if (o instanceof WorksheetDeleteUpdate) {
+			WorksheetDeleteUpdate t = (WorksheetDeleteUpdate)o;
+			return t.worksheetId.equals(worksheetId);
+		}
+		return false;
+	}
+	
 }

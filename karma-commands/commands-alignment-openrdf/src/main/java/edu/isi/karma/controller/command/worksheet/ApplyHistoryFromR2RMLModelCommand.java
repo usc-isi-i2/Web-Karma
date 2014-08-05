@@ -36,15 +36,13 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.history.HistoryJSONEditor;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetListUpdate;
-import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.kr2rml.KR2RMLVersion;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
@@ -63,7 +61,8 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 	private boolean override;
 	private static Logger logger = LoggerFactory.getLogger(ApplyHistoryFromR2RMLModelCommand.class);
 
-	protected ApplyHistoryFromR2RMLModelCommand(String id, File uploadedFile, String worksheetId, boolean override) {
+	protected ApplyHistoryFromR2RMLModelCommand(String id, File uploadedFile, 
+			String worksheetId, boolean override) {
 		super(id, worksheetId);
 		this.r2rmlModelFile = uploadedFile;
 		this.override = override;
@@ -97,13 +96,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		final Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		UpdateContainer c = new UpdateContainer();
-		c.add(new WorksheetListUpdate());
-		UpdateContainer rwu = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION);
-		if(rwu != null)
-		{
-			c.append(rwu);
-		}
-
+		
 		try {
 			JSONArray historyJson  = extractHistoryFromModel(workspace, c);
 			HistoryJSONEditor editor = new HistoryJSONEditor(new JSONArray(historyJson.toString()), workspace, worksheetId);
@@ -127,23 +120,16 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 			}
 			System.out.println(editor.getHistoryJSON().toString(4));
 			UpdateContainer hc = histExecutor.executeAllCommands(historyJson);
-			if(hc != null)
+			if(hc != null) {
+				hc.removeUpdateByClass(HistoryAddCommandUpdate.class);
+				hc.removeUpdateByClass(InfoUpdate.class);
 				c.append(hc);
+			}
 		} catch (Exception e) {
 			String msg = "Error occured while applying history!";
 			logger.error(msg, e);
 			return new UpdateContainer(new ErrorUpdate(msg));
 		}
-		//TODO
-		// Add worksheet updates that could have resulted out of the transformation commands
-		for (Worksheet newws : workspace.getWorksheets()) {
-			if (newws.getId().compareTo(worksheetId) != 0) {
-				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId(), SuperSelectionManager.DEFAULT_SELECTION));
-				Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), newws.getId(), workspace.getOntologyManager());
-				c.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(newws.getId(), workspace, alignment));
-			}
-		}
-		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));	
 		c.add(new InfoUpdate("Model successfully applied!"));
 		c.add(new AbstractUpdate() {
 
@@ -170,6 +156,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 			}
 
 		});
+		
 		return c;
 	}
 

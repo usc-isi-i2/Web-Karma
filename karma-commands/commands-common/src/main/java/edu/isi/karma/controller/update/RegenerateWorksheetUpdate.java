@@ -62,5 +62,12 @@ public class RegenerateWorksheetUpdate extends AbstractUpdate {
 				worksheet.getHeaders().getAllPaths(), vWorkspace);
 	}
 
+	public boolean equals(Object o) {
+		if (o instanceof RegenerateWorksheetUpdate) {
+			RegenerateWorksheetUpdate t = (RegenerateWorksheetUpdate)o;
+			return t.worksheetId.equals(worksheetId);
+		}
+		return false;
+	}
 
 }

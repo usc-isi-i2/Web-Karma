@@ -139,4 +139,12 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 		}
 		return rowsArr;
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof WorksheetDataUpdate) {
+			WorksheetDataUpdate t = (WorksheetDataUpdate)o;
+			return t.worksheetId.equals(worksheetId);
+		}
+		return false;
+	}
 }

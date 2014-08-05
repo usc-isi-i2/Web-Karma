@@ -250,4 +250,13 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		}
 		return hNodeIdToColumnNodeMap;
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof SemanticTypesUpdate) {
+			SemanticTypesUpdate t = (SemanticTypesUpdate)o;
+			return t.alignment.equals(alignment) && t.worksheetId.equals(worksheetId);
+		}
+		return false;
+		
+	}
 }

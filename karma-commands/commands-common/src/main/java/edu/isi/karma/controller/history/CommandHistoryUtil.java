@@ -19,7 +19,6 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
-import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
@@ -175,7 +174,7 @@ public class CommandHistoryUtil {
 		for (Command refined : commands)
 			redoCommandsArray.put(workspace.getCommandHistory().getCommandJSON(workspace, refined));
 		commands.clear();
-		UpdateContainer uc = new UpdateContainer(new HistoryUpdate(commandHistory));
+		UpdateContainer uc = new UpdateContainer();
 		commands.addAll(getCommandsFromHistoryJSON(redoCommandsArray, uc));
 		return uc;
 	}

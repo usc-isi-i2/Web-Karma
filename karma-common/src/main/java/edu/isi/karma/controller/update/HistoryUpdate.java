@@ -61,5 +61,12 @@ public class HistoryUpdate extends AbstractUpdate {
 		pw.println(newPref + "]");
 		pw.println(prefix + "}");
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof HistoryUpdate) {
+			return true;
+		}
+		return false;
+	}
 
 }

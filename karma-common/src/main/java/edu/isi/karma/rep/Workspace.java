@@ -20,9 +20,10 @@
  ******************************************************************************/
 package edu.isi.karma.rep;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import edu.isi.karma.controller.command.CommandPreferences;
 import edu.isi.karma.controller.history.CommandHistory;
@@ -55,7 +56,7 @@ public class Workspace extends Entity {
 	/**
 	 * Record all the worksheets defined in this workspace.
 	 */
-	private final Map<String, Worksheet> worksheets = new HashMap<String, Worksheet>();
+	private final Map<String, Worksheet> worksheets = new ConcurrentHashMap<String, Worksheet>();
 	
 	/**
 	 * Saves all the tagging information
@@ -117,7 +118,7 @@ public class Workspace extends Entity {
 	}
 
 	public Collection<Worksheet> getWorksheets() {
-		return worksheets.values();
+		return new ArrayList<Worksheet>(worksheets.values());
 	}
 
 	public RepFactory getFactory() {

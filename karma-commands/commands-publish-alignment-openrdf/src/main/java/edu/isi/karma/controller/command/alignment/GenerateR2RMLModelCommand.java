@@ -42,9 +42,10 @@ import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.CommandHistoryUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
+import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
@@ -143,8 +144,12 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		CommandHistoryUtil historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
 		historyUtil.consolidateHistory();	
 		if (!oldCommands.equals(historyUtil.getCommands())) {
-			historyUtil.replayHistory();
+			uc.append(historyUtil.replayHistory());
+			uc.removeUpdateByClass(HistoryAddCommandUpdate.class);
+			uc.removeUpdateByClass(InfoUpdate.class);
 			historyUtil.consolidateHistory();
+			uc.add(new HistoryUpdate(workspace.getCommandHistory()));
+			
 		}
 		Set<String> inputColumns = historyUtil.generateInputColumns();
 		Set<String> outputColumns = historyUtil.generateOutputColumns();
@@ -269,10 +274,6 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 						}
 					}
 				});
-				//TODO
-				uc.add(new HistoryUpdate(workspace.getCommandHistory()));
-				uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
-				uc.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment));
 				return uc;
 			} 
 

@@ -59,5 +59,13 @@ public class HistoryAddCommandUpdate extends AbstractUpdate {
 		command.generateJson(newPref + "  ", pw, vWorkspace, Command.HistoryType.undo);
 		pw.println(prefix + "}");
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof HistoryAddCommandUpdate) {
+			HistoryAddCommandUpdate t = (HistoryAddCommandUpdate)o;
+			return t.command.equals(command);
+		}
+		return false;
+	}
 
 }

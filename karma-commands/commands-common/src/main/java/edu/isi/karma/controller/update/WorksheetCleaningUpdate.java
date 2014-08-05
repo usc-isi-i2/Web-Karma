@@ -221,4 +221,12 @@ AbstractUpdate {
 		colLength = (colLength < colName.length()) ? colName.length() : colLength; 
 		return colLength;
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof WorksheetCleaningUpdate) {
+			WorksheetCleaningUpdate t = (WorksheetCleaningUpdate)o;
+			return t.worksheetId.equals(worksheetId) && t.selection.equals(selection);
+		}
+		return false;
+	}
 }

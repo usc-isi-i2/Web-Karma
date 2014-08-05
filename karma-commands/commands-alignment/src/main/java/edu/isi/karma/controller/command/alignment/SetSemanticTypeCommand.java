@@ -291,25 +291,11 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		
 		if(trainAndShowUpdates) {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
-			
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-			try {
-				// Add the visualization update
-				c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
-			} catch (Exception e) {
-				logger.error("Error occured while setting the semantic type!", e);
-				return new UpdateContainer(new ErrorUpdate(
-						"Error occured while setting the semantic type!"));
-			}
-			
-			return c;
-			
 		} 
 		
-		// Just do the alignment, no training and update JSON required.
-//		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
-//		align.align(false);
-		
+		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+		c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
+				alignment));		
 		return c;
 	}
 

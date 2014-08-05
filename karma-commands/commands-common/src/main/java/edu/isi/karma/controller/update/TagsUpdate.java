@@ -68,5 +68,11 @@ public class TagsUpdate extends AbstractUpdate {
 		}
 
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof TagsUpdate)
+			return true;
+		return false;
+	}
 
 }

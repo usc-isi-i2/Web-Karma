@@ -99,6 +99,7 @@ public class WorksheetCommandHistoryExecutor {
 			UpdateContainer uc = normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
 			if(uc == null) { //No error
 				// Invoke the command
+				uc = new UpdateContainer();
 				CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
 				if(cf != null) {
 					try { // This is sort of a hack the way I did this, but could not think of a better way to get rid of the dependency
@@ -106,7 +107,7 @@ public class WorksheetCommandHistoryExecutor {
 						if(comm != null){
 							try {
 								logger.info("Executing command: " + commandName);
-								workspace.getCommandHistory().doCommand(comm, workspace, saveToHistory);
+								uc.append(workspace.getCommandHistory().doCommand(comm, workspace, saveToHistory));
 							} catch(Exception e) {
 								logger.error("Error executing command: "+ commandName + ". Please notify this error");
 								Util.logException(logger, e);
