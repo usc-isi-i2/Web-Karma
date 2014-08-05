@@ -20,6 +20,8 @@ public abstract class JSONInputCommandFactory extends CommandFactory {
 	protected void normalizeSelectionId(String worksheetId, JSONArray inputJson, Workspace workspace) {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		if (worksheet == null)
+			return;
 		SuperSelection sel = worksheet.getSuperSelectionManager().getSuperSelection(selectionName);
 		JSONObject obj = CommandInputJSONUtil.getJSONObjectWithName(selectionName, inputJson);
 		if (obj != null)
