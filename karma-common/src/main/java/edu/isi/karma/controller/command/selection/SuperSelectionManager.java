@@ -1,6 +1,8 @@
 package edu.isi.karma.controller.command.selection;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import edu.isi.karma.webserver.KarmaException;
@@ -47,10 +49,18 @@ public class SuperSelectionManager {
 		return currentSelection;
 	}
 	
+	public boolean hasSelection(String name) {
+		return selectionMapping.containsKey(name);
+	}
+	
 	public SuperSelection getSuperSelection(String name) {
 		if (name == null)
 			return currentSelection;
 		SuperSelection sel = selectionMapping.get(name);
 		return sel == null ? currentSelection : sel;
+	}
+	
+	public List<String> getAllDefinedSelection() {
+		return new ArrayList<String>(selectionMapping.keySet());
 	}
  }
