@@ -1,7 +1,6 @@
 Karma RDF Generation Service
 ================================
 
-----------
 
 
 ## Generate RDF
