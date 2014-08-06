@@ -91,7 +91,6 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("(\r\n|\n)");
 			int count = lines.length;
-			System.out.println(rdf);
 			assertEquals(148, count);
 		} catch (Exception e) {
 			logger.error("testGenerateAvro1 failed:", e);
