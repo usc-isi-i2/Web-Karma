@@ -61,7 +61,10 @@ public class WorksheetSelectionListUpdate extends AbstractUpdate {
 	public boolean equals(Object o) {
 		if (o instanceof WorksheetSelectionListUpdate) {
 			WorksheetSelectionListUpdate t = (WorksheetSelectionListUpdate)o;
-			return t.worksheetId.equals(worksheetId) && t.hTableId.equals(hTableId);
+			if (t.hTableId == null)
+				return t.worksheetId.equals(worksheetId) && hTableId == null;
+			else
+				return t.worksheetId.equals(worksheetId) && hTableId != null && t.hTableId.equals(hTableId);
 		}
 		return false;
 	}
