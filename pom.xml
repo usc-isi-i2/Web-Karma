@@ -19,7 +19,6 @@
 		<module>karma-mr</module>
 		<module>karma-web-services</module>
 		<module>karma-typer</module>
-		<module>karma-bloom</module>
 	</modules>
 
 

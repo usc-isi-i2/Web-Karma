@@ -20,6 +20,7 @@ var ClassDropdownMenu = (function() {
     		   	        {name: "divider"},
     		   	        {name: "Export CSV" , func:exportCSV },
     		   	        {name: "Export JSON" , func:exportJSON },
+    		   	        {name: "Export Avro" , func:exportAvro },
     		   	        {name: "Invoke Table Service", func:invokeMLService },
     		   			
     		   			
@@ -135,6 +136,38 @@ var ClassDropdownMenu = (function() {
                 error :
                     function (xhr, textStatus) {
                         alert("Error occured while exporting JSON!" + textStatus);
+                        hideLoading(worksheetId);
+                    }
+            });
+    	}
+    	function exportAvro() {
+    		console.log("exportAvro");
+    		var info = new Object();
+            info["workspaceId"] = $.workspaceGlobalInformation.id;
+            info["command"] = "ExportAvroCommand";
+
+            var newInfo = [];
+            newInfo.push(getParamObject("alignmentNodeId", columnId, "other"));
+            newInfo.push(getParamObject("worksheetId", worksheetId, "other"));
+
+            info["newInfo"] = JSON.stringify(newInfo);
+
+            showLoading(worksheetId);
+            var returned = $.ajax({
+                url: "RequestController",
+                type: "POST",
+                data : info,
+                dataType : "json",
+                complete :
+                    function (xhr, textStatus) {
+                        //alert(xhr.responseText);
+                        var json = $.parseJSON(xhr.responseText);
+                        parse(json);
+                        hideLoading(worksheetId);
+                    },
+                error :
+                    function (xhr, textStatus) {
+                        alert("Error occured while exporting Avro!" + textStatus);
                         hideLoading(worksheetId);
                     }
             });

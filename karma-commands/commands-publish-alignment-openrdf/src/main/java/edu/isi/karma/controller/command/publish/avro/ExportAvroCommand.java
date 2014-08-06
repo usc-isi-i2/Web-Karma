@@ -1,6 +1,8 @@
-package edu.isi.karma.controller.command.publish.json;
+package edu.isi.karma.controller.command.publish.avro;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -25,7 +27,7 @@ import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
 import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
 import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
-import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.writer.AvroKR2RMLRDFWriter;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -37,9 +39,9 @@ import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class ExportJSONCommand extends WorksheetCommand {
+public class ExportAvroCommand extends WorksheetCommand {
 
-    private static Logger logger = LoggerFactory.getLogger(ExportJSONCommand.class);
+    private static Logger logger = LoggerFactory.getLogger(ExportAvroCommand.class);
 	private final String alignmentNodeId;
 	private String rdfPrefix;
 	private String rdfNamespace;
@@ -48,11 +50,12 @@ public class ExportJSONCommand extends WorksheetCommand {
 		updateType, fileUrl, worksheetId
 	}
     
-	public ExportJSONCommand(String id, String alignmentNodeId, String worksheetId) {
+	
+	//TODO provde option to output pretty printed avro json
+	public ExportAvroCommand(String id, String alignmentNodeId, String worksheetId) {
 		super(id, worksheetId);
 		this.alignmentNodeId = alignmentNodeId;
 		
-		addTag(CommandTag.Transformation);//??want Export JSON in model history?
 	}
 
 	@Override
@@ -62,7 +65,7 @@ public class ExportJSONCommand extends WorksheetCommand {
 
 	@Override
 	public String getTitle() {
-		return "Export JSON";
+		return "Export Avro";
 	}
 
 	@Override
@@ -77,7 +80,7 @@ public class ExportJSONCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		logger.info("Entered ExportJSONCommand");
+		
 
 		
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
@@ -103,7 +106,6 @@ public class ExportJSONCommand extends WorksheetCommand {
 			return new UpdateContainer(new ErrorUpdate("Error occured while generating RDF: " + e.getMessage()));
 		}
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
-//		TriplesMap triplesMap = mapping.getTriplesMapIndex().get(alignmentNodeId);
 
 		logger.debug(mapping.toString());
 		
@@ -127,15 +129,14 @@ public class ExportJSONCommand extends WorksheetCommand {
 			logger.error(errmsg);
 			return new UpdateContainer(new ErrorUpdate("Error occured while searching for root for JSON: " +errmsg));
 		}
-		// create JSONKR2RMLRDFWriter
-		final String jsonFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
-				worksheet.getTitle().replaceAll("\\.", "_") +  "-export"+".json"; 
-		final String jsonFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_DIR) +  
-				jsonFileName;
-		PrintWriter printWriter;
+		final String avroFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
+				worksheet.getTitle().replaceAll("\\.", "_") +  "-export"+".avro"; 
+		final String avroFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.AVRO_PUBLISH_DIR) +  
+				avroFileName;
+		
 		try {
-			printWriter = new PrintWriter(jsonFileLocalPath);
-			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(printWriter);
+			FileOutputStream fos = new FileOutputStream(new File(avroFileLocalPath));
+			AvroKR2RMLRDFWriter writer = new AvroKR2RMLRDFWriter(fos);
 			writer.addPrefixes(mapping.getPrefixes());
 			RootStrategy strategy = new UserSpecifiedRootStrategy(rootTriplesMapId, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
 			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, ontMgr, writer, false, strategy, mapping, errorReport);
@@ -146,18 +147,16 @@ public class ExportJSONCommand extends WorksheetCommand {
 				logger.error("Error occured while generating RDF!", e1);
 				return new UpdateContainer(new ErrorUpdate("Error occured while generating RDF: " + e1.getMessage()));
 			}
-			printWriter.close();
+			fos.flush();
+			fos.close();
 		} catch (FileNotFoundException e) {
 			logger.error("File Not found", e);
 			return new UpdateContainer(new ErrorUpdate("File Not found while generating RDF: " + e.getMessage()));
+		} catch (IOException e) {
+			logger.error("Error writing out  Not found", e);
+			return new UpdateContainer(new ErrorUpdate("File Not found while generating RDF: " + e.getMessage()));
 		}
-		
-	//	ExportMongoDBUtil mongo = new ExportMongoDBUtil();
-		try {
-		//	mongo.publishMongoDB(JSONArray);
-		} catch (Exception e) {
-			logger.error("Error inserting into MongoDB." + e.getMessage());
-		}		
+			
 		return new UpdateContainer(new AbstractUpdate() {
 			
 			@Override
@@ -165,9 +164,9 @@ public class ExportJSONCommand extends WorksheetCommand {
 				JSONObject outputObject = new JSONObject();
 				try {
 					outputObject.put(JsonKeys.updateType.name(),
-							"PublishJSONUpdate");
+							"PublishAvroUpdate");
 					outputObject.put(JsonKeys.fileUrl.name(), 
-							ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR) + jsonFileName);
+							ServletContextParameterMap.getParameterValue(ContextParameter.AVRO_PUBLISH_RELATIVE_DIR) + avroFileName);
 					outputObject.put(JsonKeys.worksheetId.name(),
 							worksheetId);
 					pw.println(outputObject.toString(4));

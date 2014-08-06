@@ -14,14 +14,15 @@ import org.apache.avro.Schema.Field;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.SchemaBuilder.FieldAssembler;
 import org.apache.avro.SchemaBuilder.RecordBuilder;
+import org.apache.avro.file.DataFileWriter;
 import org.apache.avro.generic.GenericArray;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DatumWriter;
-import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.io.JsonEncoder;
-import org.codehaus.jackson.JsonFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.RefObjectMap;
@@ -32,12 +33,16 @@ import edu.isi.karma.rep.RepFactory;
 
 public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 
+	private static Logger LOG = LoggerFactory.getLogger(AvroKR2RMLRDFWriter.class);
 	protected Map<String, Schema> triplesMapIdToSchema = new HashMap<String, Schema>();
 	protected RepFactory rep;
 	protected Schema rootSchema;
 	protected JsonEncoder jsonEncoder;
 	private OutputStream output; 
 	DatumWriter<GenericRecord> datumWriter;
+	DataFileWriter<GenericRecord> dfw;	
+	//TODO come up with a good naming convention for records
+	private int id = 1;
 	public AvroKR2RMLRDFWriter(OutputStream output)
 	{
 		super(new PrintWriter(output));
@@ -62,12 +67,12 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		rootSchema = triplesMapIdToSchema.get(rootTriplesMapId);
 
 		datumWriter = new GenericDatumWriter<GenericRecord>(rootSchema);
-		jsonEncoder = EncoderFactory.get().jsonEncoder(rootSchema,  new JsonFactory().createJsonGenerator(output).useDefaultPrettyPrinter());
-		
+		dfw = new DataFileWriter<GenericRecord>(datumWriter);
+		dfw.create(rootSchema, output);
 		
 		
 	}
-	static int id = 1;
+
 	protected Schema getSchemaForTriplesMap(TriplesMapGraph graph, String triplesMapId)
 	{
 		TriplesMap map = graph.getTriplesMap(triplesMapId);
@@ -120,6 +125,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 	private FieldAssembler<Schema> addField(
 			FieldAssembler<Schema> fieldAssembler, PredicateObjectMap pom,
 			boolean isMap, Schema targetSchema, String predicateShortHand) {
+		try{
 		if(isMap)
 		{
 			if(targetSchema == null)
@@ -142,6 +148,12 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 				fieldAssembler = fieldAssembler.name(predicateShortHand).type().unionOf().array().items(targetSchema).and().type(targetSchema).and().nullType().endUnion().noDefault();
 			}
 		}
+		}
+		catch(Exception e)
+		{
+			LOG.error("Unable to add field: " + predicateShortHand + " for " + pom.getTriplesMap().getSubject().getTemplate().toString(), e);
+		}
+		
 		return fieldAssembler;
 	}
 
@@ -229,7 +241,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 				}
 				else if(currentObj instanceof String)
 				{
-					strings = new GenericData.Array<String>(SchemaBuilder.nullable().stringBuilder().endString(), new LinkedList<String>());
+					strings = new GenericData.Array<String>(SchemaBuilder.array().items().stringType(), new LinkedList<String>());
 					strings.add((String)object);
 					strings.add((String)currentObj);
 				}
@@ -251,14 +263,17 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		for(GenericRecord record : this.rootObjects.values())
 		{
 			try {
-				datumWriter.write(record, this.jsonEncoder);
+				//datumWriter.write(record, this.jsonEncoder);
+				dfw.append(record);
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		try {
-			jsonEncoder.flush();
+			dfw.flush();
+			//jsonEncoder.flush();
 			output.flush();
 			output.close();
 		} catch (IOException e) {
