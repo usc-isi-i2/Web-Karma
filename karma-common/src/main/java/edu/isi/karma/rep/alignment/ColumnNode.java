@@ -52,7 +52,25 @@ public class ColumnNode extends Node {
 	}
 
 	public void setSuggestedSemanticTypes(List<SemanticType> suggestedSemanticTypes) {
-		this.suggestedSemanticTypes = suggestedSemanticTypes;
+		double sum = 0.0;
+		// normalizing the confidence scores
+		if (suggestedSemanticTypes != null) {
+			for (SemanticType st : suggestedSemanticTypes) {
+				sum += st.getConfidenceScore() != null ? st.getConfidenceScore().doubleValue() : 0.0;
+			}
+			double confidence;
+			this.suggestedSemanticTypes = new ArrayList<SemanticType>();
+			for (SemanticType st : suggestedSemanticTypes) {
+				confidence = st.getConfidenceScore() != null ? st.getConfidenceScore() : 0.0;
+				SemanticType semType = new SemanticType(st.getHNodeId(), 
+						st.getType(), 
+						st.getDomain(), 
+						st.getOrigin(), 
+						confidence / sum, 
+						st.isPartOfKey());
+				this.suggestedSemanticTypes.add(semType);
+			}
+		}
 	}
 
 	public String getHNodeId() {

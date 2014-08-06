@@ -50,6 +50,7 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.learner.ModelLearner;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -162,7 +163,13 @@ public class ShowModelCommand extends WorksheetCommand {
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
 		
-		ModelLearner modelLearner = new ModelLearner(workspace, worksheet, ontologyManager, columnNodes);
+		for (ColumnNode cn : columnNodes) {
+			List<SemanticType> suggestedSemanticTypes = 
+					new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4);
+			cn.setSuggestedSemanticTypes(suggestedSemanticTypes);
+		}
+		
+		ModelLearner modelLearner = new ModelLearner(ontologyManager, columnNodes);
 		SemanticModel model = modelLearner.getModel();
 		if (model == null) {
 			logger.error("could not learn any model for this source!");
