@@ -12,7 +12,7 @@ import edu.isi.karma.rep.Workspace;
 public class CreateSuperSelectionCommand extends WorksheetCommand {
 
 	private String newSelectionName;
-	protected CreateSuperSelectionCommand(String id, String worksheetId, 
+	public CreateSuperSelectionCommand(String id, String worksheetId, 
 			String newSelectionName) {
 		super(id, worksheetId);
 		this.newSelectionName = newSelectionName;

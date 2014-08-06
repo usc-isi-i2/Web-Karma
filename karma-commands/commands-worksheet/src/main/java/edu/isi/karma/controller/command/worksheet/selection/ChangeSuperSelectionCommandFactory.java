@@ -11,21 +11,17 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
 
-public class CreateSelectionCommandFactory extends JSONInputCommandFactory {
-
-	private enum Arguments {
-		worksheetId, hTableId, PythonCode, selectionName
+public class ChangeSuperSelectionCommandFactory extends JSONInputCommandFactory {
+	public enum Arguments {
+		worksheetId, newSelectionName, oldSelectionName
 	}
-	
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
-		String hTableId = CommandInputJSONUtil.getStringValue(Arguments.hTableId.name(), inputJson);
-		String PythonCode = CommandInputJSONUtil.getStringValue(Arguments.PythonCode.name(), inputJson);
-		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		Command cmd = new CreateSelectionCommand(getNewId(workspace), worksheetId, 
-				hTableId, PythonCode, selectionName);
+		String oldSelectionName = CommandInputJSONUtil.getStringValue(Arguments.oldSelectionName.name(), inputJson);
+		String newSelectionName = CommandInputJSONUtil.getStringValue(Arguments.newSelectionName.name(), inputJson);
+		Command cmd = new ChangeSuperSelectionCommand(getNewId(workspace), worksheetId, oldSelectionName, newSelectionName);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
@@ -33,18 +29,15 @@ public class CreateSelectionCommandFactory extends JSONInputCommandFactory {
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		String hTableId = request.getParameter(Arguments.hTableId.name());
-		String PythonCode = request.getParameter(Arguments.PythonCode.name());
-		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new CreateSelectionCommand(getNewId(workspace), worksheetId, 
-				hTableId, PythonCode, selectionName);
-		
+		String oldSelectionName = request.getParameter(Arguments.oldSelectionName.name());
+		String newSelectionName = request.getParameter(Arguments.newSelectionName.name());
+		return new ChangeSuperSelectionCommand(getNewId(workspace), worksheetId, oldSelectionName, newSelectionName);
 	}
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand() {
 		// TODO Auto-generated method stub
-		return CreateSelectionCommand.class;
+		return ChangeSuperSelectionCommand.class;
 	}
 
 }

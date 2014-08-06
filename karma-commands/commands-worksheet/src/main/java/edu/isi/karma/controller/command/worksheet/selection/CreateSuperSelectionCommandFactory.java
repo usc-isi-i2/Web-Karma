@@ -13,7 +13,7 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class CreateSuperSelectionCommandFactory extends JSONInputCommandFactory {
 
-	public enum Arguments {
+	private enum Arguments {
 		worksheetId, newSelectionName
 	}
 	

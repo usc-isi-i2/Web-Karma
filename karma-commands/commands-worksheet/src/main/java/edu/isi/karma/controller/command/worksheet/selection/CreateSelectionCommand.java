@@ -17,7 +17,7 @@ public class CreateSelectionCommand extends WorksheetCommand {
 	private String hNodeId;
 	private String PythonCode;
 	private String selectionName;
-	protected CreateSelectionCommand(String id, String worksheetId, 
+	public CreateSelectionCommand(String id, String worksheetId, 
 			String hNodeId, String PythonCode, String selectionName) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
