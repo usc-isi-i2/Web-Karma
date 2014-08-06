@@ -7,8 +7,11 @@ Karma RDF Generation Service
 ## Generate RDF
 
 **End Point:** ```/rdf/r2rml/rdf```
+
 **Method:** POST
+
 **Parameters:**
+
 | Parameter | Description | Required |
 | --------- | ----------- | -------- |
 | R2rmlURI  | URI of the R2RML Model | Yes |
@@ -31,8 +34,11 @@ curl --request POST --data 'R2rmlURI=file:/Users/karma/karma-files/schedule-mode
 ----------
 ## Publish RDF to Sesame / Virtuoso
 **End Point:** ```/rdf/r2rml/sparql```
+
 **Method:** POST
+
 **Parameters:**
+
 | Parameter | Description | Required |
 | --------- | ----------- | -------- |
 | R2rmlURI  | URI of the R2RML Model | Yes |
@@ -58,9 +64,13 @@ curl --request POST --data 'R2rmlURI=file:/Users/karma/karma-files/schedule-mode
 
 ----------
 ## Publish RDF to Sesame / Virtuoso and return the RDF
+
 **End Point:** ```/rdf/r2rml/rdf/sparql```
+
 **Method:** POST
+
 **Parameters:**
+
 | Parameter | Description | Required |
 | --------- | ----------- | -------- |
 | R2rmlURI  | URI of the R2RML Model | Yes |
