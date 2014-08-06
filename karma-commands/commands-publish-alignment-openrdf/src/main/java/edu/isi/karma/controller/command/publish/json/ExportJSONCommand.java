@@ -17,7 +17,6 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.kr2rml.ErrorReport;
-import edu.isi.karma.kr2rml.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
@@ -26,6 +25,7 @@ import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
 import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
 import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
+import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -96,7 +96,7 @@ public class ExportJSONCommand extends WorksheetCommand {
 			mappingGen = new KR2RMLMappingGenerator(
 					workspace, worksheet, alignment, 
 					worksheet.getSemanticTypes(), rdfPrefix, rdfNamespace,
-					true, errorReport);
+					false, errorReport);
 		} catch (KarmaException e)
 		{
 			logger.error("Error occured while generating RDF!", e);

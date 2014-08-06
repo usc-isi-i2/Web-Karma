@@ -450,7 +450,8 @@ public class KR2RMLMappingGenerator {
 						addSynonymTypesPredicateObjectMaps(subjTrMap, hNodeId);
 					}
 					// Add the predicateobjectmap to the triples map after a sanity check
-					if (poMap.getObject() != null && poMap.getPredicate() != null)
+					if (poMap.getObject() != null && poMap.getPredicate() != null && !doesPredicateAlreadyExist(subjTrMap,
+							poMap, poMap.getObject().getRefObjectMap()))
 						subjTrMap.addPredicateObjectMap(poMap);
 				}
 			}
@@ -529,6 +530,14 @@ public class KR2RMLMappingGenerator {
 			RefObjectMap refObjMap = new RefObjectMap(RefObjectMap.getNewRefObjectMapId(), subjTrMap);
 			ObjectMap invObjMap = new ObjectMap(subjMap.getId(), refObjMap);
 			invPoMap.setObject(invObjMap);
+			
+			boolean alreadyExists = doesPredicateAlreadyExist(inverseTrMap,
+					invPoMap, refObjMap);
+			if(alreadyExists)
+			{
+				return;
+			}
+			
 			inverseTrMap.addPredicateObjectMap(invPoMap);
 			// Add the link to the link set
 			r2rmlMapping.getAuxInfo().getTriplesMapGraph().addLink(new TriplesMapLink(inverseTrMap, subjTrMap, invPoMap));
@@ -548,10 +557,36 @@ public class KR2RMLMappingGenerator {
 			RefObjectMap refObjMap = new RefObjectMap(RefObjectMap.getNewRefObjectMapId(), subjTrMap);
 			ObjectMap invOfObjMap = new ObjectMap(subjMap.getId(), refObjMap);
 			invOfPoMap.setObject(invOfObjMap);
+			
+			boolean alreadyExists = doesPredicateAlreadyExist(inverseOfTrMap,
+					invOfPoMap, refObjMap);
+			if(alreadyExists)
+			{
+				return;
+			}
 			inverseOfTrMap.addPredicateObjectMap(invOfPoMap);
 			// Add the link to the link set
 			r2rmlMapping.getAuxInfo().getTriplesMapGraph().addLink(new TriplesMapLink(inverseOfTrMap, subjTrMap, invOfPoMap));
 		}
+	}
+
+	private boolean doesPredicateAlreadyExist(TriplesMap triplesMap,
+			PredicateObjectMap poMap, RefObjectMap refObjMap) {
+		boolean alreadyExists = false;
+		for(PredicateObjectMap pom : triplesMap.getPredicateObjectMaps())
+		{
+			if(pom.getPredicate().getTemplate().isSingleUriString() && poMap.getPredicate().getTemplate().isSingleUriString())
+			{
+				if(pom.getPredicate().getTemplate().toString().equalsIgnoreCase(poMap.getPredicate().getTemplate().toString()))
+				{
+					if(pom.getObject().hasRefObjectMap() && pom.getObject().getRefObjectMap().getParentTriplesMap().getId().equalsIgnoreCase(refObjMap.getParentTriplesMap().getId()))
+					{
+						alreadyExists = true;
+					}
+				}
+			}
+		}
+		return alreadyExists;
 	}
 
 	private LabeledLink getSpecializationLinkIfExists(LabeledLink link, Node sourceNode) {

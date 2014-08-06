@@ -1,9 +1,10 @@
-package edu.isi.karma.kr2rml;
+package edu.isi.karma.kr2rml.writer;
 
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
 import edu.isi.karma.modeling.Uris;

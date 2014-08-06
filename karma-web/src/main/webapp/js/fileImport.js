@@ -42,6 +42,8 @@ var FileFormatSelectionDialog = (function() {
                     $(":radio[name=FileFormatSelection][value=Ontology]").prop("checked", true);
                 } else if(fileName.match(".json$")) {
                     $(":radio[name=FileFormatSelection][value=JSONFile]").prop("checked", true);
+                }else if(fileName.match(".avro$")) {
+                    $(":radio[name=FileFormatSelection][value=AvroFile]").prop("checked", true);
                 }
                 
 				var worksheets = $('.Worksheet');
@@ -144,7 +146,8 @@ var FileOptionsDialog = (function() {
     			"CSVFile" : ["colDelimiterSelector", "colTextQualifier", "colHeaderStartIndex", "colStartRowIndex", "colEncoding", "colMaxNumLines"],
     			"XMLFile" : ["colEncoding", "colMaxNumLines"],
     			"ExcelFile" : ["colEncoding", "colMaxNumLines"],
-    			"Ontology" : ["colEncoding", "colMaxNumLines"]
+    			"Ontology" : ["colEncoding", "colMaxNumLines"],
+    			"AvroFile": ["colEncoding", "colMaxNumLines"]
     	};
     	
     	function init() {
@@ -193,7 +196,7 @@ var FileOptionsDialog = (function() {
 			$.each(optionSetting, function(index, val) {
 				$("#" + val).show();
 			});
-			if(format == "JSONFile" || format == "XMLFile") {
+			if(format == "JSONFile" || format == "XMLFile" || format == "AvroFile") {
 				$('#lblMaxNumLines').text("Objects to import");
 				$(".help-block", $("#colMaxNumLines")).text("Enter 0 to import all objects");
 			} else {

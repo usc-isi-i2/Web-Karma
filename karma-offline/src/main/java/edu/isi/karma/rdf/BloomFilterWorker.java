@@ -2,7 +2,7 @@ package edu.isi.karma.rdf;
 
 import org.apache.hadoop.util.hash.Hash;
 
-import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
+import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
 
 import java.io.IOException;
 import java.util.*;
