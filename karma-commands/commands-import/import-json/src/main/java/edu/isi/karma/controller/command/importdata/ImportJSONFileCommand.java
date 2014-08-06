@@ -22,31 +22,18 @@
  */
 package edu.isi.karma.controller.command.importdata;
 
-import edu.isi.karma.controller.command.CommandException;
+import java.io.File;
+
 import edu.isi.karma.controller.command.IPreviewable;
-import edu.isi.karma.controller.update.ImportPropertiesUpdate;
-import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 
 public class ImportJSONFileCommand extends ImportFileCommand implements IPreviewable {
-
-	private String encoding = null;
-	private int maxNumLines = 1000;
 	
-	 private static Logger logger = LoggerFactory
-	            .getLogger(ImportJSONFileCommand.class.getSimpleName());
-	 
     public ImportJSONFileCommand(String id, File file) {
         super(id, file);
-        this.encoding = EncodingDetector.detect(file);
     }
 
     public ImportJSONFileCommand(String id, String revisedId, File file) {
@@ -55,89 +42,14 @@ public class ImportJSONFileCommand extends ImportFileCommand implements IPreview
     }
 
     @Override
-    public String getCommandName() {
-        return this.getClass().getSimpleName();
-    }
-
-    @Override
     public String getTitle() {
         return "Import JSON File";
     }
 
-    @Override
-    public String getDescription() {
-        if (isExecuted()) {
-            return getFile().getName() + " imported";
-        }
-        return "";
-    }
-
-    public void setEncoding(String encoding) {
-    	this.encoding = encoding;
-    }
-    
-    public void setMaxNumLines(int lines) {
-    	this.maxNumLines = lines;
-    }
     
     @Override
     protected Import createImport(Workspace workspace) {
         return new JsonImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines);
     }
-    
-    @Override
-    public UpdateContainer handleUserActions(HttpServletRequest request) {
-       
-        String strEncoding = request.getParameter("encoding");
-        if(strEncoding == null || strEncoding == "") {
-        	try {
-        		strEncoding = EncodingDetector.detect(getFile());
-        	} catch(Exception e) {
-        		strEncoding = EncodingDetector.DEFAULT_ENCODING;
-        	}
-        }
-        setEncoding(strEncoding);
-        
-        String maxNumLines = request.getParameter("maxNumLines");
-        if(maxNumLines != null && maxNumLines != "") {
-        	try {
-                int num = Integer.parseInt(maxNumLines);
-                setMaxNumLines(num);
-            } catch (Throwable t) {
-                logger.error("Wrong user input for Data Number of Lines to import");
-                return null;
-            }
-        }
-        /**
-         * Send response based on the interaction type *
-         */
-        UpdateContainer c = null;
-        ImportFileInteractionType type = ImportFileInteractionType.valueOf(request
-                .getParameter("interactionType"));
-        switch (type) {
-            case generatePreview: {
-                try {
-
-                    c = showPreview();
-                } catch (CommandException e) {
-                    logger.error(
-                            "Error occured while creating utput JSON for JSON Import",
-                            e);
-                }
-                return c;
-            }
-            case importTable:
-                return c;
-        }
-        return c;
-    }
-
-	@Override
-	public UpdateContainer showPreview() throws CommandException {
-		
-        UpdateContainer c = new UpdateContainer();
-        c.add(new ImportPropertiesUpdate(getFile(), encoding, maxNumLines, id));
-        return c;
-	   
-	}
+   
 }
