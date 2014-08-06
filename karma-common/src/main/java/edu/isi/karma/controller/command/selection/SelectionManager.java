@@ -25,5 +25,16 @@ public class SelectionManager {
 		if (selections.remove(sel))
 			selectionMapping.put(hTableId, selections);
 	}
+	
+	public List<String> getAllDefinedSelection(String hTableId) {
+		List<String> list = new ArrayList<String>();
+		List<Selection> selections = selectionMapping.get(hTableId);
+		if (selections != null) {
+			for (Selection sel : selections) {
+				list.add(sel.getId());
+			}
+		}
+		return list;
+	}
 
 }
