@@ -132,7 +132,7 @@ public class PublishJSONCommand extends WorksheetCommand {
 						pw.println(",");
 						new WorksheetHeadersUpdate(newWSId).generateJson(prefix, pw, vWorkspace);
 						pw.println(",");
-						new WorksheetDataUpdate(newWSId).generateJson(prefix, pw, vWorkspace);
+						new WorksheetDataUpdate(newWSId, SuperSelectionManager.DEFAULT_SELECTION).generateJson(prefix, pw, vWorkspace);
 					}
 				}
 			}

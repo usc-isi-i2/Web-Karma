@@ -882,20 +882,19 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 
 function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
 		// Loop through the rows
-		$.each (rows, function (index, row) {
+		$.each (rows, function (index, rowWithMetaData) {
 				var rowTr = $("<tr>");
+				var rowId = rowWithMetaData['rowId'];
+				var isSelected = rowWithMetaData['isSelected'];
 				if (isOdd) {
-						rowTr.addClass("wk-row-odd");
+						rowTr.addClass("wk-row-odd")
+								 .attr("id", rowId);
 				} else {
-						rowTr.addClass("wk-row-even");
+						rowTr.addClass("wk-row-even")
+								 .attr("id", rowId);
 				}
-				/*var dataDiv = $("<div>").width(30).height(30);
-				var checkbox = $('<input />', { type: 'checkbox', id: 'selectcolumns', value: "a" });
-				dataDiv.append(checkbox);
-				rowTr.append(dataDiv);*/
-				//console.log(.css(rows[0][0]["columnClass"]));
-				// Loop through the values in a given row
-				//console.log(rows);
+				var row = rowWithMetaData['rowValueArray'];
+
 				$.each(row, function(index2, cell){
 						var td = $("<td>").addClass("wk-cell");
 						var dataDiv = $("<div>");
@@ -917,12 +916,7 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
 								} else {
 										nestedTableDataContainer.append(nestedTable);
 								}
-								/*if (index2 == 0) {
-										var dataDiv2 = $("<div>").width(30).height(30);
-										var checkbox = $('<input />', { type: 'checkbox', class: 'selectRowID', value: cell["rowID"] });
-										dataDiv2.append(checkbox);
-										dataDiv.append(dataDiv2); 
-								}*/
+
 								dataDiv.append(nestedTableDataContainer);
 								dataDiv.addClass(cell["columnClass"]);
 						} else {
@@ -945,27 +939,6 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
 							 mode: 'popup',
 							 inputclass: 'worksheetInputEdit'	 
 								});
-								/*if (index2 == 0) {
-										var stylesheet = document.styleSheets[0];
-										var width = 0;
-										for (i = 0; i < stylesheet.cssRules.length; i++) {
-												if (stylesheet.cssRules[i].selectorText == "." + cell["columnClass"])
-														var str = stylesheet.cssRules[i].style['width'];
-														if (typeof(str) == "string") {
-																str = str.substring(0, str.indexOf("px"));
-																//console.log(str);
-																width = parseInt(str);
-																break;
-														}
-
-										}
-										console.log(width);
-										dataDiv3.css({width: width - 30, float: "right"});
-										var dataDiv2 = $("<div>").width(30).height(30).css({float:'left'});
-										var checkbox = $('<input />', { type: 'checkbox', class: 'selectRowID', value: cell["rowID"] });
-										dataDiv2.append(checkbox);
-										dataDiv.append(dataDiv2); 
-								} */
 								dataDiv.append(dataDiv3);
 								td.addClass(cell["columnClass"]); 
 						}

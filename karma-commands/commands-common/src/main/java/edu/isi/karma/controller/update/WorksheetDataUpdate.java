@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
@@ -44,15 +45,17 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 	
 	private final String worksheetId;
 	private static Logger logger = LoggerFactory.getLogger(WorksheetDataUpdate.class);
-	
+	private final SuperSelection selection;
 	private enum JsonKeys {
 		worksheetId, rows, columnName, characterLength, hasNestedTable, columnClass,
-		displayValue, expandedValue, nestedRows, additionalRowsCount, tableId, nodeId, rowID
+		displayValue, expandedValue, nestedRows, additionalRowsCount, tableId, 
+		nodeId, rowId, isSelected, rowValueArray
 	}
 
-	public WorksheetDataUpdate(String worksheetId) {
+	public WorksheetDataUpdate(String worksheetId, SuperSelection selection) {
 		super();
 		this.worksheetId = worksheetId;
+		this.selection = selection;
 	}
 
 	@Override
@@ -79,10 +82,9 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 			response.put(JsonKeys.tableId.name(), dataTable.getId());
 			response.put(JsonKeys.rows.name(), rows);
 			
-//			logger.debug(response.toString(2));
 			pw.println(response.toString());
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.error("JSONException", e);
 		}
 	}
 
@@ -93,13 +95,13 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 	public JSONArray getRowsJsonArray(List<Row> rows, VWorksheet vWorksheet, List<VHNode> orderedHnodeIds, 
 			int maxDataDisplayLength) throws JSONException {
 		JSONArray rowsArr = new JSONArray();
-		
-//		HTable hTable = null;
-		
+				
 		for (Row row:rows) {
+			JSONObject rowObj = new JSONObject();
 			JSONArray rowValueArray = new JSONArray();
-		
-			
+			rowObj.put(JsonKeys.rowId.name(), row.getId());
+			rowObj.put(JsonKeys.isSelected.name(), selection.isSelected(row));
+			rowObj.put(JsonKeys.rowValueArray.name(), rowValueArray);
 			for (VHNode vNode : orderedHnodeIds) {
 				if(vNode.isVisible()) {
 					Node rowNode = row.getNode(vNode.getId());
@@ -107,7 +109,7 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 					nodeObj.put(JsonKeys.columnClass.name(), 
 							WorksheetHeadersUpdate.getColumnClass(vNode.getId()));
 					nodeObj.put(JsonKeys.nodeId.name(), rowNode.getId());
-					nodeObj.put(JsonKeys.rowID.name(), row.getId());
+					
 					if (vNode.hasNestedTable()) {
 						nodeObj.put(JsonKeys.hasNestedTable.name(), true);
 						Table nestedTable = rowNode.getNestedTable();
@@ -135,7 +137,7 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 					rowValueArray.put(nodeObj);
 				}
 			}
-			rowsArr.put(rowValueArray);
+			rowsArr.put(rowObj);
 		}
 		return rowsArr;
 	}

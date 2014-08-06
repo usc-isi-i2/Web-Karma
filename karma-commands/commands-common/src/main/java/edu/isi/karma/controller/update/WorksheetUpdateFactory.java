@@ -41,20 +41,20 @@ public class WorksheetUpdateFactory {
 	private static void createWorksheetHierarchicalAndCleaningResultsUpdates(
 			String worksheetId, UpdateContainer c, SuperSelection sel) {
 		c.add(new WorksheetCleaningUpdate(worksheetId, true, sel));
-		createWorksheetHierarchicalUpdates(worksheetId, c);
+		createWorksheetHierarchicalUpdates(worksheetId, c, sel);
 	}
 	
 	public static UpdateContainer createWorksheetHierarchicalUpdates(String worksheetId, SuperSelection sel) {
 		UpdateContainer c = new UpdateContainer();
 		c.add(new WorksheetCleaningUpdate(worksheetId, false, sel));
-		createWorksheetHierarchicalUpdates(worksheetId, c);
+		createWorksheetHierarchicalUpdates(worksheetId, c, sel);
 		return c;
 	}
 	
 	private static void createWorksheetHierarchicalUpdates(String worksheetId,
-			UpdateContainer c) {
+			UpdateContainer c, SuperSelection sel) {
 		c.add(new WorksheetHeadersUpdate(worksheetId));
-		c.add(new WorksheetDataUpdate(worksheetId));
+		c.add(new WorksheetDataUpdate(worksheetId, sel));
 		c.add(new WorksheetSelectionListUpdate(worksheetId));
 		c.add(new WorksheetSuperSelectionListUpdate(worksheetId));
 	}

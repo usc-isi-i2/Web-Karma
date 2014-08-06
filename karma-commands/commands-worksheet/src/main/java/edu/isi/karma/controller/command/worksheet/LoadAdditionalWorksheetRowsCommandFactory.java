@@ -29,14 +29,16 @@ import edu.isi.karma.rep.Workspace;
 
 public class LoadAdditionalWorksheetRowsCommandFactory extends CommandFactory {
 	private enum Arguments {
-		worksheetId, tableId
+		worksheetId, tableId, selectionName
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String tableId = request.getParameter(Arguments.tableId.name());
 		String vWorksheetId = request.getParameter(Arguments.worksheetId.name());
-		return new LoadAdditionalWorksheetRowsCommand(getNewId(workspace), tableId, vWorksheetId);
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		return new LoadAdditionalWorksheetRowsCommand(getNewId(workspace), 
+				tableId, vWorksheetId, selectionName);
 	}
 
 	@Override
