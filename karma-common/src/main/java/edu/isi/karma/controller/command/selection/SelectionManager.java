@@ -2,29 +2,53 @@ package edu.isi.karma.controller.command.selection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import edu.isi.karma.rep.Workspace;
+
 public class SelectionManager {
 	private Map<String, List<Selection> > selectionMapping = new HashMap<String, List<Selection> >();
 	
-	public void addSelection(Selection sel) {
-		String hTableId = sel.getHTableId();
+	public boolean createSelection(Workspace workspace, String worksheetId, 
+			String hTableId, String name) {
 		List<Selection> selections = selectionMapping.get(hTableId);
-		if (selections == null)
-			selections = new ArrayList<Selection>();
-		selections.add(sel);
-		selectionMapping.put(hTableId, selections);
+		if (selections != null) {
+			for (Selection s : selections) {
+				if (s.getId().equals(name))
+					return false;
+			}
+		}		
+		Selection sel = new Selection(workspace, worksheetId, hTableId, name);
+		addSelection(sel);
+		return true;
 	}
 	
-	public void removeSelection(Selection sel) {
-		String hTableId = sel.getHTableId();
+	public Selection getSelection(String hTableId, String name) {
 		List<Selection> selections = selectionMapping.get(hTableId);
-		if (selections == null)
-			return;
-		if (selections.remove(sel))
-			selectionMapping.put(hTableId, selections);
+		if (selections != null) {
+			for (Selection s : selections) {
+				if (s.getId().equals(name))
+					return s;
+			}
+		}	
+		return null;
+	}
+	
+	public void removeSelection(String hTableId, String name) {
+		List<Selection> selections = selectionMapping.get(hTableId);
+		if (selections != null) {
+			Iterator<Selection> selItr = selections.iterator();
+			while (selItr.hasNext()) {
+				Selection sel = selItr.next();
+				if (sel.getId().equals(name)) {
+					selItr.remove();
+					break;
+				}
+			}
+		}	
 	}
 	
 	public List<Selection> getAllDefinedSelection(String hTableId) {
@@ -44,6 +68,15 @@ public class SelectionManager {
 				selections.addAll(sels);
 		}
 		return selections;
+	}
+	
+	private void addSelection(Selection sel) {
+		String hTableId = sel.getHTableId();
+		List<Selection> selections = selectionMapping.get(hTableId);
+		if (selections == null)
+			selections = new ArrayList<Selection>();
+		selections.add(sel);
+		selectionMapping.put(hTableId, selections);
 	}
 
 }

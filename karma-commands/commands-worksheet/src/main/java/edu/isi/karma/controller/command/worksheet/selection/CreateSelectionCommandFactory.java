@@ -14,7 +14,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class CreateSelectionCommandFactory extends JSONInputCommandFactory {
 
 	public enum Arguments {
-		worksheetId, hTableId, PythonCode
+		worksheetId, hTableId, PythonCode, selectionName
 	}
 	
 	@Override
@@ -23,7 +23,9 @@ public class CreateSelectionCommandFactory extends JSONInputCommandFactory {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hTableId = CommandInputJSONUtil.getStringValue(Arguments.hTableId.name(), inputJson);
 		String PythonCode = CommandInputJSONUtil.getStringValue(Arguments.PythonCode.name(), inputJson);
-		Command cmd = new CreateSelectionCommand(getNewId(workspace), worksheetId, hTableId, PythonCode);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		Command cmd = new CreateSelectionCommand(getNewId(workspace), worksheetId, 
+				hTableId, PythonCode, selectionName);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
@@ -33,7 +35,9 @@ public class CreateSelectionCommandFactory extends JSONInputCommandFactory {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String hTableId = request.getParameter(Arguments.hTableId.name());
 		String PythonCode = request.getParameter(Arguments.PythonCode.name());
-		return new CreateSelectionCommand(getNewId(workspace), worksheetId, hTableId, PythonCode);
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		return new CreateSelectionCommand(getNewId(workspace), worksheetId, 
+				hTableId, PythonCode, selectionName);
 		
 	}
 

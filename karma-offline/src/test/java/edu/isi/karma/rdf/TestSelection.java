@@ -84,7 +84,8 @@ public class TestSelection {
 	}
 	@Test
 	public void testSelection1() throws IOException {
-		Selection sel = new Selection(workspace, worksheet.getId(), worksheet.getHeaders().getId());
+		worksheet.getSelectionManager().createSelection(workspace, worksheet.getId(), worksheet.getHeaders().getId(), "selection");
+		Selection sel = worksheet.getSelectionManager().getSelection(worksheet.getHeaders().getId(), "selection");
 		StringBuilder pythonCode = new StringBuilder();
 		pythonCode.append("if getValue(\"title\") == \"Prof\": \n");
 		pythonCode.append("	 return True \n");
@@ -98,7 +99,8 @@ public class TestSelection {
 	}
 	@Test
 	public void testSelection2() throws IOException, KarmaException {
-		Selection sel = new Selection(workspace, worksheet.getId(), worksheet.getHeaders().getId());
+		worksheet.getSelectionManager().createSelection(workspace, worksheet.getId(), worksheet.getHeaders().getId(), "selection");
+		Selection sel = worksheet.getSelectionManager().getSelection(worksheet.getHeaders().getId(), "selection");
 		StringBuilder pythonCode = new StringBuilder();
 		pythonCode.append("if getValue(\"title\") == \"Prof\": \n");
 		pythonCode.append("	 return True \n");

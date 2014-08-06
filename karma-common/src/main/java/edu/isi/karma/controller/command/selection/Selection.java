@@ -54,11 +54,12 @@ public class Selection {
 	private String hTableId;
 	private Set<String> evalColumns = new HashSet<String>();
 	private String Id;
-	public Selection(Workspace workspace, String worksheetId, String hTableId) {
+	Selection(Workspace workspace, String worksheetId, 
+			String hTableId, String name) {
 		this.worksheetId = worksheetId;
 		this.workspace = workspace;
 		this.hTableId = hTableId;
-		this.Id = workspace.getFactory().getNewId("SEL");
+		this.Id = name;
 		this.status = SelectionStatus.UP_TO_DATE;
 	}
 	
