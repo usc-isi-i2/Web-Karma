@@ -46,7 +46,7 @@ public class EditCellCommand extends WorksheetCommand {
 	private Node.NodeStatus previousStatus;
 
 	private final CellValue newValueArg;
-
+	
 	EditCellCommand(String id, String worksheetId, String nodeIdArg,
 			String newValueArg) {
 		super(id, worksheetId);
@@ -70,6 +70,10 @@ public class EditCellCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Node node = workspace.getFactory().getNode(nodeIdArg);
+		inputColumns.clear();
+		outputColumns.clear();
+		inputColumns.add(node.getHNodeId());
+		outputColumns.add(node.getHNodeId());
 		previousValue = node.getValue();
 		previousStatus = node.getStatus();
 		if (node.hasNestedTable()) {

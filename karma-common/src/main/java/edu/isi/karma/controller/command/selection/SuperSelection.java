@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.selection;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.isi.karma.controller.command.selection.Selection.SelectionStatus;
 import edu.isi.karma.rep.Row;
 
 public class SuperSelection {
@@ -34,5 +35,15 @@ public class SuperSelection {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public SelectionStatus getStatus() {
+		if (selections == null)
+			return SelectionStatus.UP_TO_DATE;
+		for (Selection sel : selections) {
+			if (sel.getStatus() == SelectionStatus.OUT_OF_DATE)
+				return SelectionStatus.OUT_OF_DATE;
+		}
+		return SelectionStatus.UP_TO_DATE;
 	}
 }

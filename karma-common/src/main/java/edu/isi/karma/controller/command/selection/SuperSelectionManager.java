@@ -60,7 +60,7 @@ public class SuperSelectionManager {
 		return sel == null ? currentSelection : sel;
 	}
 	
-	public List<String> getAllDefinedSelection() {
-		return new ArrayList<String>(selectionMapping.keySet());
+	public List<SuperSelection> getAllDefinedSelection() {
+		return new ArrayList<SuperSelection>(selectionMapping.values());
 	}
  }

@@ -5,21 +5,20 @@ import java.io.PrintWriter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
-public class WorksheetSelectionListUpdate extends AbstractUpdate {
+public class WorksheetSuperSelectionListUpdate extends AbstractUpdate {
 
 	private String worksheetId;
-	private String hTableId;
-	public WorksheetSelectionListUpdate(String worksheetId, String hTableId) {
+	public WorksheetSuperSelectionListUpdate(String worksheetId) {
 		this.worksheetId = worksheetId;
-		this.hTableId = hTableId;
 	}
 	
 	public enum JsonKeys {
-		updateType, worksheetId, selectionList, hTableId
+		updateType, worksheetId, selectionList
 	}
 	
 	@Override
@@ -29,19 +28,28 @@ public class WorksheetSelectionListUpdate extends AbstractUpdate {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		JSONObject outputObject = new JSONObject();
 		JSONArray array = new JSONArray();
-		for (String name : worksheet.getSelectionManager().getAllDefinedSelection(hTableId)) {
-			array.put(name);
+		for (SuperSelection sel : worksheet.getSuperSelectionManager().getAllDefinedSelection()) {
+			JSONObject obj = new JSONObject();
+			obj.put("name", sel.getName());
+			obj.put("status", sel.getStatus().name());
+			array.put(obj);
 		}
 		outputObject.put(JsonKeys.updateType.name(),
-				"WorksheetSelectionListUpdate");		
+				"WorksheetSuperSelectionListUpdate");		
 		outputObject.put(JsonKeys.worksheetId.name(),
-				worksheetId);
-		outputObject.put(JsonKeys.hTableId.name(),
 				worksheetId);
 		outputObject.put(JsonKeys.selectionList.name(),
 				outputObject.toString());
 		pw.println(outputObject.toString());
 
+	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof WorksheetSuperSelectionListUpdate) {
+			WorksheetSuperSelectionListUpdate t = (WorksheetSuperSelectionListUpdate)o;
+			return t.worksheetId.equals(worksheetId);
+		}
+		return false;
 	}
 
 }

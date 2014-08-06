@@ -21,6 +21,11 @@
 
 package edu.isi.karma.controller.update;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.rep.Worksheet;
@@ -50,6 +55,8 @@ public class WorksheetUpdateFactory {
 			UpdateContainer c) {
 		c.add(new WorksheetHeadersUpdate(worksheetId));
 		c.add(new WorksheetDataUpdate(worksheetId));
+		c.add(new WorksheetSelectionListUpdate(worksheetId));
+		c.add(new WorksheetSuperSelectionListUpdate(worksheetId));
 	}
 	public static UpdateContainer createRegenerateWorksheetUpdates(String worksheetId, SuperSelection sel) {
 		UpdateContainer c = new UpdateContainer();
@@ -64,5 +71,15 @@ public class WorksheetUpdateFactory {
 		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
 		c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
 		return c;
+	}
+	
+	public static void detectSelectionStatusChange(String worksheetId, Workspace workspace, Command command) {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		for (Selection sel : worksheet.getSelectionManager().getAllDefinedSelection()) {
+			Set<String> inputColumns = new HashSet<String>(sel.getInputColumns());
+			inputColumns.retainAll(command.getOutputColumns());
+			if (inputColumns.size() > 0)
+				sel.invalidateSelection();
+		}
 	}
 }

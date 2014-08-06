@@ -3,9 +3,11 @@ package edu.isi.karma.controller.command.selection;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.python.core.PyCode;
 import org.python.core.PyObject;
@@ -50,7 +52,7 @@ public class Selection {
 	private List<Tag> tags = new ArrayList<Tag>();
 	private Map<Row, SelectionProperty> selectedRows = new HashMap<Row, SelectionProperty>();
 	private String hTableId;
-	private List<String> evalColumns = new ArrayList<String>();
+	private Set<String> evalColumns = new HashSet<String>();
 	private String Id;
 	public Selection(Workspace workspace, String worksheetId, String hTableId) {
 		this.worksheetId = worksheetId;
@@ -178,6 +180,10 @@ public class Selection {
 	
 	public void addInputColumns(String hNodeId) {
 		evalColumns.add(hNodeId);
+	}
+	
+	public Set<String> getInputColumns() {
+		return evalColumns;
 	}
 	
 	public List<Tag> getTags() {
