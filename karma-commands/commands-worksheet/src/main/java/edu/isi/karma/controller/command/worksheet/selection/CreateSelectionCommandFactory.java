@@ -14,7 +14,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class CreateSelectionCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
-		worksheetId, hNodeId, PythonCode, selectionName
+		worksheetId, hNodeId, pythonCode, selectionName
 	}
 	
 	@Override
@@ -22,10 +22,10 @@ public class CreateSelectionCommandFactory extends JSONInputCommandFactory {
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
-		String PythonCode = CommandInputJSONUtil.getStringValue(Arguments.PythonCode.name(), inputJson);
+		String pythonCode = CommandInputJSONUtil.getStringValue(Arguments.pythonCode.name(), inputJson);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		Command cmd = new CreateSelectionCommand(getNewId(workspace), worksheetId, 
-				hNodeId, PythonCode, selectionName);
+				hNodeId, pythonCode, selectionName);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
@@ -34,10 +34,10 @@ public class CreateSelectionCommandFactory extends JSONInputCommandFactory {
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String PythonCode = request.getParameter(Arguments.PythonCode.name());
+		String pythonCode = request.getParameter(Arguments.pythonCode.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new CreateSelectionCommand(getNewId(workspace), worksheetId, 
-				hNodeId, PythonCode, selectionName);
+				hNodeId, pythonCode, selectionName);
 		
 	}
 

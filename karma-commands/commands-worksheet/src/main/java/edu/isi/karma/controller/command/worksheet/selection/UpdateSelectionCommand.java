@@ -3,27 +3,30 @@ package edu.isi.karma.controller.command.worksheet.selection;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.selection.LargeSelection.Operation;
 import edu.isi.karma.controller.command.selection.Selection;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetSelectionListUpdate;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
 public class UpdateSelectionCommand extends WorksheetCommand {
 
 	private String hNodeId;
-	private String selectionName;
+	private String currentSelectionName;
 	private String anotherSelectionName;
 	private String operation;
-	
-	private enum DefinedOpreations {
-		invert, union, intersect, subtract
-	}
+	private String newSelectionName;
 	public UpdateSelectionCommand(String id, String worksheetId, 
 			String hNodeId, String operation, 
 			String selectionName, String anotherSelectionName) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
-		this.selectionName = selectionName;
+		this.currentSelectionName = selectionName;
 		this.anotherSelectionName = anotherSelectionName;
 		this.operation = operation;
 	}
@@ -54,38 +57,34 @@ public class UpdateSelectionCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		String hTableId = workspace.getFactory().getHNode(hNodeId).getHTableId();
-		Selection currentSel = worksheet.getSelectionManager().getSelection(hTableId, selectionName);
-		Selection anotherSel = worksheet.getSelectionManager().getSelection(hTableId, anotherSelectionName);
-		if (anotherSel == null && !operation.equalsIgnoreCase(DefinedOpreations.invert.name())) {
+		RepFactory factory = workspace.getFactory();
+		HTable hTable = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
+		Selection currentSel = worksheet.getSelectionManager().getSelection(hTable.getId(), currentSelectionName);
+		Selection anotherSel = worksheet.getSelectionManager().getSelection(hTable.getId(), anotherSelectionName);
+		newSelectionName = hTable.getNewColumnName(currentSel.getId());
+		if (anotherSel == null && !operation.equalsIgnoreCase(Operation.Invert.name())) {
 			throw new CommandException(this, "The other selection is undefined");
 		}
 		try {
-			DefinedOpreations operation = DefinedOpreations.valueOf(DefinedOpreations.class, this.operation);
-			switch(operation) {
-			case intersect:
-				Selection newSel = worksheet.getSelectionManager().createSelection(currentSel);
-				newSel.Intersect(anotherSel);
-				break;
-			case invert:
-				break;
-			case subtract:
-				break;
-			case union:
-				break;
-			default:
-				break;
-			
-			}
+			Operation operation = Operation.valueOf(Operation.class, this.operation);
+			boolean t = worksheet.getSelectionManager().createLargeSelection(currentSel, anotherSel, operation, newSelectionName);
+			if (!t)
+				throw new CommandException(this, "Creation unsuccessful");
 		}catch (Exception e) {
 			throw new CommandException(this, "The operation is undefined");
 		}
-		return null;
+		return new UpdateContainer(new WorksheetSelectionListUpdate(worksheetId, hTable.getId()));
 	}
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		return null;
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		HNode hNode = workspace.getFactory().getHNode(hNodeId);
+		if (hNode == null) {
+			return new UpdateContainer(new ErrorUpdate("Cannot find HNode" + hNodeId));
+		}
+		worksheet.getSelectionManager().removeSelection(hNode.getHTableId(), newSelectionName);
+		return new UpdateContainer(new WorksheetSelectionListUpdate(worksheetId, hNode.getHTableId()));
 	}
 
 }

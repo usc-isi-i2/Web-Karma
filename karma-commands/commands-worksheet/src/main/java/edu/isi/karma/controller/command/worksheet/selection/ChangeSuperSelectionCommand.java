@@ -60,11 +60,11 @@ public class ChangeSuperSelectionCommand extends WorksheetCommand {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection currentSelection = worksheet.getSuperSelectionManager().getCurrentSuperSelection();
 		if (!currentSelection.getName().equals(oldSelectionName))
-			return new UpdateContainer(new ErrorUpdate("Cannot change superselection"));
+			throw new CommandException(this, "Cannot change superselection");
 		try {
 			worksheet.getSuperSelectionManager().setCurrentSuperSelection(newSelectionName);
 		}catch(Exception e) {
-			return new UpdateContainer(new ErrorUpdate("Cannot change superselection"));
+			throw new CommandException(this, "Cannot change superselection");
 		}
 		return new UpdateContainer(new UpdateCurrentSuperSelection(newSelectionName));
 	}

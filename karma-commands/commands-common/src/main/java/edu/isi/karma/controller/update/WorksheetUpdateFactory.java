@@ -82,4 +82,5 @@ public class WorksheetUpdateFactory {
 				sel.invalidateSelection();
 		}
 	}
+
 }

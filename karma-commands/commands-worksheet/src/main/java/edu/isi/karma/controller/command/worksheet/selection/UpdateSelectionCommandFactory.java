@@ -14,7 +14,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class UpdateSelectionCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
-		worksheetId, hNodeId, operation, selectionName, anotherSelectionName
+		worksheetId, hNodeId, operation, currentSelectionName, anotherSelectionName
 	}
 	
 	@Override
@@ -23,7 +23,7 @@ public class UpdateSelectionCommandFactory extends JSONInputCommandFactory {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String operation = CommandInputJSONUtil.getStringValue(Arguments.operation.name(), inputJson);
-		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		String currentSelectionName = CommandInputJSONUtil.getStringValue(Arguments.currentSelectionName.name(), inputJson);
 		String anotherSelectionName = CommandInputJSONUtil.getStringValue(Arguments.anotherSelectionName.name(), inputJson);
 		return null;
 	}
@@ -33,7 +33,7 @@ public class UpdateSelectionCommandFactory extends JSONInputCommandFactory {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String operation = request.getParameter(Arguments.operation.name());
-		String selectionName = request.getParameter(Arguments.selectionName.name());
+		String currentSelectionName = request.getParameter(Arguments.currentSelectionName.name());
 		String anotherSelectionName = request.getParameter(Arguments.anotherSelectionName.name());
 
 		return null;

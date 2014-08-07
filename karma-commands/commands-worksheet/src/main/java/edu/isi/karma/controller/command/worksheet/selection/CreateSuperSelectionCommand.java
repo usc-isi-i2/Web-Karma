@@ -3,7 +3,6 @@ package edu.isi.karma.controller.command.worksheet.selection;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetSuperSelectionListUpdate;
 import edu.isi.karma.rep.Worksheet;
@@ -45,7 +44,7 @@ public class CreateSuperSelectionCommand extends WorksheetCommand {
 		if (!worksheet.getSuperSelectionManager().hasSelection(newSelectionName))
 			worksheet.getSuperSelectionManager().defineSelection(newSelectionName);
 		else
-			return new UpdateContainer(new ErrorUpdate("Already have selection " + newSelectionName));
+			throw new CommandException(this, "Already have selection " + newSelectionName);
 		return new UpdateContainer(new WorksheetSuperSelectionListUpdate(worksheetId));
 	}
 

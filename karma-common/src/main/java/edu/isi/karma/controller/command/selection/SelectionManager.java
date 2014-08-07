@@ -1,5 +1,6 @@
 package edu.isi.karma.controller.command.selection;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,13 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import edu.isi.karma.controller.command.selection.LargeSelection.Operation;
 import edu.isi.karma.rep.Workspace;
 
 public class SelectionManager {
 	private Map<String, List<Selection> > selectionMapping = new HashMap<String, List<Selection> >();
 	
-	public boolean createSelection(Workspace workspace, String worksheetId, 
-			String hTableId, String name) {
+	public boolean createMiniSelection(Workspace workspace, String worksheetId, 
+			String hTableId, String name, String pythonCode) {
 		List<Selection> selections = selectionMapping.get(hTableId);
 		if (selections != null) {
 			for (Selection s : selections) {
@@ -21,15 +23,34 @@ public class SelectionManager {
 					return false;
 			}
 		}		
-		Selection sel = new Selection(workspace, worksheetId, hTableId, name);
-		addSelection(sel);
-		return true;
+		
+		try {
+			Selection sel = new MiniSelection(workspace, worksheetId, hTableId, name, pythonCode);
+			addSelection(sel);
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
+		
 	}
 	
-	public Selection createSelection(Selection selection) {	
-		Selection sel = selection.clone();
-		addSelection(sel);
-		return sel;
+	public boolean createLargeSelection(Selection selectionA, Selection selectionB, Operation op, String newSelectionName){	
+		if (!selectionA.hTableId.equals(selectionB.hTableId) || 
+				!selectionA.worksheetId.equals(selectionB.worksheetId) ||
+				!selectionA.workspace.equals(selectionB.workspace))
+			return false;
+		Workspace workspace = selectionA.workspace;
+	//TODO	
+		
+		try {
+			Selection sel = new LargeSelection(workspace, 
+					selectionA.worksheetId, selectionA.hTableId, 
+					newSelectionName, selectionA, selectionB, op);
+			addSelection(sel);
+		} catch (IOException e) {
+			return false;
+		}
+		return true;
 	}
 	
 	public Selection getSelection(String hTableId, String name) {
