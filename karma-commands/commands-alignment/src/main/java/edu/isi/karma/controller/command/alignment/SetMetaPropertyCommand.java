@@ -312,7 +312,6 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		AlignmentManager.Instance()
 				.addAlignmentToMap(alignmentId, oldAlignment);
 		oldAlignment.setGraph(oldGraph);
-
 		// Get the alignment update if any
 		try {
 			c.add(new SemanticTypesUpdate(worksheet, worksheetId, oldAlignment));

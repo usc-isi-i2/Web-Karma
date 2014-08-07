@@ -8,20 +8,21 @@ import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetSelectionListUpdate;
+import edu.isi.karma.controller.update.WorksheetSuperSelectionListUpdate;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
-public class UpdateSelectionCommand extends WorksheetCommand {
+public class OperateSelectionCommand extends WorksheetCommand {
 
 	private String hNodeId;
 	private String currentSelectionName;
 	private String anotherSelectionName;
 	private String operation;
 	private String newSelectionName;
-	public UpdateSelectionCommand(String id, String worksheetId, 
+	public OperateSelectionCommand(String id, String worksheetId, 
 			String hNodeId, String operation, 
 			String selectionName, String anotherSelectionName) {
 		super(id, worksheetId);
@@ -74,7 +75,9 @@ public class UpdateSelectionCommand extends WorksheetCommand {
 		}catch (Exception e) {
 			throw new CommandException(this, "The operation is undefined");
 		}
-		return new UpdateContainer(new WorksheetSelectionListUpdate(worksheetId, hTable.getId()));
+		UpdateContainer uc = new UpdateContainer(new WorksheetSelectionListUpdate(worksheetId, hTable.getId()));
+		uc.add(new WorksheetSuperSelectionListUpdate(worksheetId));
+		return uc;
 	}
 
 	@Override
@@ -85,7 +88,9 @@ public class UpdateSelectionCommand extends WorksheetCommand {
 			return new UpdateContainer(new ErrorUpdate("Cannot find HNode" + hNodeId));
 		}
 		worksheet.getSelectionManager().removeSelection(hNode.getHTableId(), newSelectionName);
-		return new UpdateContainer(new WorksheetSelectionListUpdate(worksheetId, hNode.getHTableId()));
+		UpdateContainer uc = new UpdateContainer(new WorksheetSelectionListUpdate(worksheetId, hNode.getHTableId()));
+		uc.add(new WorksheetSuperSelectionListUpdate(worksheetId));
+		return uc;
 	}
 
 }

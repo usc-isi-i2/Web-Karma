@@ -312,7 +312,7 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 
 		}
 
-
+		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;

@@ -172,6 +172,7 @@ public class FoldCommand extends WorksheetSelectionCommand {
 			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId, worksheet.getHeaders().getNewColumnName("fold"), HNodeType.Transformation, selection.getName());
 			cmd.doIt(workspace);
 			outputColumns.addAll(cmd.getOutputColumns());
+			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			UpdateContainer c =  new UpdateContainer();		
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));

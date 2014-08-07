@@ -6,6 +6,7 @@ import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetSelectionListUpdate;
+import edu.isi.karma.controller.update.WorksheetSuperSelectionListUpdate;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -52,7 +53,9 @@ public class CreateSelectionCommand extends WorksheetCommand {
 		if (!worksheet.getSelectionManager().createMiniSelection(workspace, worksheetId, hTableId, selectionName, pythonCode)) {
 			throw new CommandException(this, selectionName + " already exists!");
 		}
-		return new UpdateContainer(new WorksheetSelectionListUpdate(worksheetId, hTableId));
+		UpdateContainer uc = new UpdateContainer(new WorksheetSelectionListUpdate(worksheetId, hTableId)); 
+		uc.add(new WorksheetSuperSelectionListUpdate(worksheetId));
+		return uc;
 	}
 
 	@Override
@@ -64,7 +67,9 @@ public class CreateSelectionCommand extends WorksheetCommand {
 		}
 		String hTableId = hNode.getHTableId();
 		worksheet.getSelectionManager().removeSelection(hTableId, selectionName);
-		return new UpdateContainer(new WorksheetSelectionListUpdate(worksheetId, hTableId));
+		UpdateContainer uc = new UpdateContainer(new WorksheetSelectionListUpdate(worksheetId, hTableId)); 
+		uc.add(new WorksheetSuperSelectionListUpdate(worksheetId));
+		return uc;
 	}
 
 }

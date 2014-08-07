@@ -147,6 +147,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		{
 			UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
 					hNode, ctrl, addColCmd.getNewHNodeId());
+			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			return c;
 		}
 		catch (Exception e )
@@ -191,7 +192,8 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 					//Previous python command exists, lets reset the values, and then start again
 					prevCommand.resetColumnValues(workspace);
 				}
-				return previousPythonTransformationCommand.doIt(workspace);
+				UpdateContainer uc = previousPythonTransformationCommand.doIt(workspace);
+				return uc;
 			} catch (CommandException e) {
 				return new UpdateContainer(new ErrorUpdate("Error occured while  applying previous Python transformation to the column."));
 

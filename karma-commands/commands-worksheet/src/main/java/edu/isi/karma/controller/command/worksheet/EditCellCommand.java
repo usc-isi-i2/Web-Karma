@@ -28,6 +28,7 @@ import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.NodeChangedUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.StringCellValue;
@@ -79,9 +80,10 @@ public class EditCellCommand extends WorksheetCommand {
 		if (node.hasNestedTable()) {
 			throw new CommandException(this, "Cell " + nodeIdArg
 					+ " has a nested table. It cannot be edited.");
-		}
+		}		
 		node.setValue(newValueArg, Node.NodeStatus.edited,
 				workspace.getFactory());
+		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 		return new UpdateContainer(new NodeChangedUpdate(worksheetId,
 				nodeIdArg, newValueArg, Node.NodeStatus.edited));
 	}

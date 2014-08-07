@@ -120,6 +120,7 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 		}
 		try{
 			UpdateContainer c =  new UpdateContainer();
+			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			c.add(new WorksheetListUpdate());
 			if (newws == null)
 				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId(), getSuperSelection(oldws)));

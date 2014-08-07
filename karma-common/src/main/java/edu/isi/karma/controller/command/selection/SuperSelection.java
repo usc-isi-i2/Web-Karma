@@ -1,5 +1,6 @@
 package edu.isi.karma.controller.command.selection;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,13 +38,23 @@ public class SuperSelection {
 		return name;
 	}
 	
-	public SelectionStatus getStatus() {
-		if (selections == null)
+	public SelectionStatus refreshStatus() {
+		if (selections == null) {
 			return SelectionStatus.UP_TO_DATE;
+		}
 		for (Selection sel : selections) {
 			if (sel.getStatus() == SelectionStatus.OUT_OF_DATE)
 				return SelectionStatus.OUT_OF_DATE;
 		}
 		return SelectionStatus.UP_TO_DATE;
+	}
+	
+	public void updateSelection() throws IOException {
+		if (selections == null) {
+			return;
+		}
+		for (Selection sel : selections) {
+			sel.updateSelection();
+		}
 	}
 }

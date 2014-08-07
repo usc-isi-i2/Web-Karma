@@ -103,6 +103,7 @@ public class AddValuesCommand extends WorksheetSelectionCommand{
 					ndid = addColumn(workspace, worksheet, newColumnName, a);
 				}
 			}
+			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			UpdateContainer c =  new UpdateContainer(new AddColumnUpdate(newHNodeId, worksheetId));		
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 			if (ndid == null) {

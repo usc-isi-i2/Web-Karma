@@ -31,7 +31,7 @@ public class WorksheetSuperSelectionListUpdate extends AbstractUpdate {
 		for (SuperSelection sel : worksheet.getSuperSelectionManager().getAllDefinedSelection()) {
 			JSONObject obj = new JSONObject();
 			obj.put("name", sel.getName());
-			obj.put("status", sel.getStatus().name());
+			obj.put("status", sel.refreshStatus().name());
 			array.put(obj);
 		}
 		outputObject.put(JsonKeys.updateType.name(),

@@ -295,7 +295,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		
 		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
 		c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
-				alignment));		
+				alignment));			
 		return c;
 	}
 

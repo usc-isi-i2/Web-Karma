@@ -100,6 +100,7 @@ public class GlueCommand extends WorksheetSelectionCommand {
 			c.add(new WorksheetListUpdate());
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId(), getSuperSelection(oldws)));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			return c;
 		} catch (Exception e) {
 			logger.error("Error in UnfoldCommand" + e.toString());

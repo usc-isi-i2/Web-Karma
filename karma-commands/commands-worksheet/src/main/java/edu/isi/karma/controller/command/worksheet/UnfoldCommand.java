@@ -124,6 +124,7 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {
+			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			logger.error("Error in UnfoldCommand" + e.toString());
 			Util.logException(logger, e);
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));

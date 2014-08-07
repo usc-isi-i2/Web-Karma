@@ -28,6 +28,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
@@ -88,6 +89,7 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 		{
 			UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
 				hNode, ctrl, targetHNodeId);
+			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			return c;
 		}
 		catch (Exception e )
@@ -108,7 +110,8 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 				//Previous python command exists, lets reset the values, and then start again
 				prevCommand.resetColumnValues(workspace);
 			}
-			return previousPythonTransformationCommand.doIt(workspace);
+			UpdateContainer uc = previousPythonTransformationCommand.doIt(workspace);
+			return uc;
 		} catch (CommandException e) {
 			return new UpdateContainer(new ErrorUpdate("Error occured while  applying previous Python transformation to the column."));
 		

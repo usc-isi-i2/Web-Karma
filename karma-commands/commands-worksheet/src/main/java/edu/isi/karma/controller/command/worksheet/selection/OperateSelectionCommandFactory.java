@@ -11,7 +11,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
 
-public class UpdateSelectionCommandFactory extends JSONInputCommandFactory {
+public class OperateSelectionCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
 		worksheetId, hNodeId, operation, 
@@ -26,7 +26,7 @@ public class UpdateSelectionCommandFactory extends JSONInputCommandFactory {
 		String operation = CommandInputJSONUtil.getStringValue(Arguments.operation.name(), inputJson);
 		String currentSelectionName = CommandInputJSONUtil.getStringValue(Arguments.currentSelectionName.name(), inputJson);
 		String anotherSelectionName = CommandInputJSONUtil.getStringValue(Arguments.anotherSelectionName.name(), inputJson);
-		Command cmd = new UpdateSelectionCommand(getNewId(workspace), worksheetId, hNodeId, 
+		Command cmd = new OperateSelectionCommand(getNewId(workspace), worksheetId, hNodeId, 
 				operation, currentSelectionName, anotherSelectionName);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
@@ -39,13 +39,13 @@ public class UpdateSelectionCommandFactory extends JSONInputCommandFactory {
 		String operation = request.getParameter(Arguments.operation.name());
 		String currentSelectionName = request.getParameter(Arguments.currentSelectionName.name());
 		String anotherSelectionName = request.getParameter(Arguments.anotherSelectionName.name());
-		return new UpdateSelectionCommand(getNewId(workspace), worksheetId, hNodeId, 
+		return new OperateSelectionCommand(getNewId(workspace), worksheetId, hNodeId, 
 				operation, currentSelectionName, anotherSelectionName);
 	}
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand() {
-		return UpdateSelectionCommand.class;
+		return OperateSelectionCommand.class;
 	}
 
 }
