@@ -10,13 +10,17 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Parser;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.file.DataFileWriter;
+import org.apache.avro.generic.GenericArray;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericDatumWriter;
@@ -64,6 +68,11 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 				"people-avro-model", getTestResource(
 						 "people-avro-model.ttl"));
 		rdfGen.addModel(modelIdentifier);
+		
+		modelIdentifier = new R2RMLMappingIdentifier(
+				"people-array.avro-model", getTestResource(
+						 "people-array.avro-model.ttl"));
+		rdfGen.addModel(modelIdentifier);
 	}
 
 	/**
@@ -103,7 +112,7 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 		try {
 			String filename = "people.avro";
 			logger.info("Loading avro file: " + filename);
-			File tempAvroOutput = File.createTempFile("testgenerateavro2", ""+System.currentTimeMillis());
+			File tempAvroOutput = File.createTempFile("testgenerateavro2", "avro");
 			tempAvroOutput.deleteOnExit();
 			FileOutputStream fos = new FileOutputStream(tempAvroOutput );
 			AvroKR2RMLRDFWriter arvowriter = new AvroKR2RMLRDFWriter(fos);
@@ -131,7 +140,7 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 			}
 			assertEquals(7, count);
 		} catch (Exception e) {
-			logger.error("testGenerateAvro1 failed:", e);
+			logger.error("testGenerateAvro2 failed:", e);
 			fail("Execption: " + e.getMessage());
 		}
 	}
@@ -143,7 +152,8 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 			Schema peopleSchema = parser.parse(new File(getTestResource("people.avsc").toURI()));
 			GenericDatumWriter<GenericRecord> datumWriter = new GenericDatumWriter<GenericRecord>(peopleSchema);
 			DataFileWriter<GenericRecord> dfw = new DataFileWriter<GenericRecord>(datumWriter);
-			File tempfile = File.createTempFile("karma-people-"+System.currentTimeMillis(), "avro");
+			File tempfile = File.createTempFile("karma-people", "avro");
+			
 			tempfile.deleteOnExit();
 			dfw.create(peopleSchema, new FileOutputStream(tempfile));
 			JSONArray array = new JSONArray(IOUtils.toString(new FileInputStream(new File(getTestResource("people.json").toURI()))));
@@ -154,16 +164,43 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 			dfw.flush();
 			dfw.close();
 		} catch (Exception e) {
-			logger.error("testGenerateAvro1 failed:", e);
+			logger.error("testGenerateAvro3 failed:", e);
 			fail("Execption: " + e.getMessage());
 		}
 	}
 
+	@Test
+	public void testGenerateAvro4() {
+		try {
+			String filename = "people-array.avro";
+			logger.info("Loading json file: " + filename);
+			File tempAvroOutput = File.createTempFile("testgenerateavro4", "avro");
+			tempAvroOutput.deleteOnExit();
+			FileOutputStream fos = new FileOutputStream(tempAvroOutput );
+			AvroKR2RMLRDFWriter arvowriter = new AvroKR2RMLRDFWriter(fos);
+
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			JSONKR2RMLRDFWriter jsonwriter = new JSONKR2RMLRDFWriter(pw);
+			List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
+			writers.add(arvowriter);
+			writers.add(jsonwriter);
+			rdfGen.generateRDF("people-array.avro-model", new File(getTestResource(filename).toURI()), InputType.AVRO, false, writers);
+			String rdf = sw.toString();
+			assertNotEquals(rdf.length(), 0);
+			
+		} catch (Exception e) {
+			logger.error("testGenerateAvro4 failed:", e);
+			fail("Execption: " + e.getMessage());
+		}
+	}
 	
 	private GenericRecord generatePersonRecord(Schema peopleSchema, JSONObject object)
 	{
 		return generatePersonRecord(peopleSchema, object.getString("name"), object.getString("email"), object.getString("title"), object.has("homepage")? object.getString("homepage") : null, object.getString("depiction"), object.has("twitter")? object.getString("twitter") : null);
 	}
+	
+	private static String[] idNames = {"foaf:yahooChatId", "foaf:msnChatId", "foaf:skypeId" };
 	private GenericRecord generatePersonRecord(Schema peopleSchema, String name, String email,String title, String homepage, String depiction,  String twitter)
 	{
 		GenericRecord record = new GenericData.Record(peopleSchema);
@@ -173,6 +210,24 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 		record.put("homepage", homepage);
 		record.put("depiction", depiction);
 		record.put("twitter", twitter);
+		Schema userIdArraySchema = peopleSchema.getField("userids").schema();
+		Schema userIdSchema = userIdArraySchema.getElementType();
+		GenericArray<GenericRecord> useridrecords = new GenericData.Array<GenericRecord>(userIdArraySchema, new LinkedList<GenericRecord>());
+		
+		Random r = new Random();
+		for(int j = 0; j < 2; j++)
+		{
+			StringBuilder idBuilder = new StringBuilder();
+			for(int i = 0; i < 8; i++)
+			{
+				idBuilder.append((char)(r.nextInt(26) + 'a'));
+			}
+			GenericRecord userId = new GenericData.Record(userIdSchema);
+			userId.put("type", idNames[r.nextInt(idNames.length)]);
+			userId.put("id", idBuilder.toString());
+			useridrecords.add(userId);
+		}
+		record.put("userids", useridrecords);
 		return record;
 	}
 }

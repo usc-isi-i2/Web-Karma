@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
@@ -130,11 +131,11 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		{
 			if(targetSchema == null)
 			{
-				fieldAssembler = fieldAssembler.name(pom.getPredicate().getId()).type().map().values().unionOf().array().items().stringType().and().stringType().and().nullType().endUnion().noDefault();
+				fieldAssembler = fieldAssembler.name(pom.getPredicate().getId().replaceAll("[^\\w]", "_")).type().unionOf().map().values().unionOf().map().values().stringType().and().stringType().and().nullType().endUnion().and().nullType().endUnion().noDefault();
 			}
 			else
 			{
-				fieldAssembler = fieldAssembler.name(pom.getPredicate().getId()).type().map().values().unionOf().array().items(targetSchema).and().type(targetSchema).and().nullType().endUnion().noDefault();
+				fieldAssembler = fieldAssembler.name(pom.getPredicate().getId().replaceAll("[^\\w]", "_")).type().unionOf().map().values().unionOf().map().values(targetSchema).and().type(targetSchema).and().nullType().endUnion().and().nullType().endUnion().noDefault();
 			}
 			
 		}
@@ -168,21 +169,28 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 			Object object) {
 		//TODO maps for dynamic predicates
 		String shortHandPredicateURI = shortHandURIGenerator.getShortHand(predicateUri).toString().replaceAll("[^\\w]", "_");
+		Schema schema = subject.getSchema();
+		Field field = schema.getField(shortHandPredicateURI);
+		Field mapField = schema.getField(pom.getPredicate().getId().replaceAll("[^\\w]", "_"));
 		if (subject.get(shortHandPredicateURI) != null || predicateUri.contains(Uris.RDF_TYPE_URI)) {
 			
-			addValueToArray(pom, subject, object,
+			if(field != null)
+			{
+				addValueToArray(pom, subject, object,
 					shortHandPredicateURI);
+			}
+			else if(mapField != null && mapField.schema().getType() == Schema.Type.MAP)
+			{
+				addValueToMap(pom, subject,object, shortHandPredicateURI);
+			}
 		}
 		else
 		{
-			Schema schema = subject.getSchema();
-			Field field = schema.getField(shortHandPredicateURI);
-			Field mapField = schema.getField(pom.getPredicate().getId());
 			if(field != null)
 			{
 				subject.put(shortHandPredicateURI, object);
 			}
-			else if(mapField != null && mapField.schema().getType() == Schema.Type.MAP)
+			else if(mapField != null && mapField.schema().getTypes().get(0).getType() == Schema.Type.MAP)
 			{
 				addValueToMap(pom, subject,object, shortHandPredicateURI);
 			}
@@ -190,10 +198,33 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void addValueToMap(PredicateObjectMap pom, GenericRecord subject, Object object,
 			String shortHandPredicateURI)
 	{
-		//TODO
+
+		String mapPredicateName = pom.getPredicate().getId().replaceAll("[^\\w]", "_");
+		if(object instanceof String)
+		{
+			Map<String, String> values = null;
+			if(subject.get(mapPredicateName)== null)
+			{
+				subject.put(mapPredicateName, new ConcurrentHashMap<String, String>());
+			}
+			values = (Map<String, String>)subject.get(mapPredicateName);
+			values.put(shortHandPredicateURI, (String)object);
+		}
+		else if(object instanceof GenericRecord)
+		{
+			Map<String, GenericRecord> values = null;
+			if(subject.get(mapPredicateName)== null)
+			{
+				subject.put(mapPredicateName, new ConcurrentHashMap<String, GenericRecord>());
+			}
+			values = (Map<String, GenericRecord>)subject.get(mapPredicateName);
+			values.put(shortHandPredicateURI, (GenericRecord)object);
+		}
+	
 		
 	}
 	@SuppressWarnings("unchecked")
@@ -206,29 +237,29 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 
 		if(object instanceof GenericRecord)
 		{
-		if(currentObj != null)
-		{
-			if(currentObj instanceof GenericArray)
+			if(currentObj != null)
 			{
-				array = (GenericArray<GenericRecord>) currentObj;
-				array.add((GenericRecord) object);
+				if(currentObj instanceof GenericArray)
+				{
+					array = (GenericArray<GenericRecord>) currentObj;
+					array.add((GenericRecord) object);
+				}
+				else if(currentObj instanceof GenericRecord)
+				{
+					GenericRecord record = (GenericRecord)currentObj;
+					array = new GenericData.Array<GenericRecord>(subject.getSchema().getField(shortHandPredicateURI).schema().getTypes().get(0), new LinkedList<GenericRecord>());
+					array.add((GenericRecord)object);
+					array.add((GenericRecord)currentObj);
+				}
 			}
-			else if(currentObj instanceof GenericRecord)
+			else
 			{
-				GenericRecord record = (GenericRecord)currentObj;
-				array = new GenericData.Array<GenericRecord>(record.getSchema(), new LinkedList<GenericRecord>());
-				array.add((GenericRecord)object);
-				array.add((GenericRecord)currentObj);
+					GenericRecord objectToAdd = (GenericRecord)object;
+					array = new GenericData.Array<GenericRecord>(objectToAdd.getSchema(), new LinkedList<GenericRecord>());
+					array.add(objectToAdd);
+				
 			}
-		}
-		else
-		{
-				GenericRecord objectToAdd = (GenericRecord)object;
-				array = new GenericData.Array<GenericRecord>(objectToAdd.getSchema(), new LinkedList<GenericRecord>());
-				array.add(objectToAdd);
-			
-		}
-		subject.put(shortHandPredicateURI, array);
+			subject.put(shortHandPredicateURI, array);
 		}
 		else if(object instanceof String)
 		{
@@ -266,7 +297,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 				//datumWriter.write(record, this.jsonEncoder);
 				dfw.append(record);
 				
-			} catch (IOException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
