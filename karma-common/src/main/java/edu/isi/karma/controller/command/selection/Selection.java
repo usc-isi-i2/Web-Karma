@@ -12,7 +12,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Workspace;
 
 public abstract class Selection {
-	//TODO think about intersection, subtraction, and invertion, and union
+	
 	public enum SelectionStatus {
 		UP_TO_DATE, OUT_OF_DATE
 	}

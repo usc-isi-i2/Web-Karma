@@ -22,7 +22,7 @@ public class LargeSelection extends Selection {
 		this.sourceA = sourceA;
 		this.sourceB = sourceB;
 		this.operation = operation;
-		updateSelection();
+		populateSelection();
 	}
 	
 	private void union() throws IOException {
@@ -87,9 +87,7 @@ public class LargeSelection extends Selection {
 		evalColumns.addAll(sourceA.evalColumns);
 	}
 
-
-	@Override
-	public void updateSelection() throws IOException {
+	private void populateSelection() throws IOException {
 		switch(operation) {
 		case Intersect:
 			intersect();
@@ -104,6 +102,15 @@ public class LargeSelection extends Selection {
 			union();
 			break;
 		}
+	}
+
+	@Override
+	public void updateSelection() throws IOException {
+		if (this.status == SelectionStatus.UP_TO_DATE)
+			return;
+		evalColumns.clear();
+		populateSelection();
+		this.status = SelectionStatus.UP_TO_DATE;
 		
 	}
 

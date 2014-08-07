@@ -29,6 +29,7 @@ public class UpdateSelectionCommand extends WorksheetCommand {
 		this.currentSelectionName = selectionName;
 		this.anotherSelectionName = anotherSelectionName;
 		this.operation = operation;
+		addTag(CommandTag.Transformation);
 	}
 
 	@Override

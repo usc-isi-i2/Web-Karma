@@ -35,6 +35,9 @@ public class MiniSelection extends Selection {
 	}
 	
 	public void updateSelection() throws IOException {
+		if (this.status == SelectionStatus.UP_TO_DATE)
+			return;
+		evalColumns.clear();
 		for (Entry<Row, Boolean> entry : this.selectedRowsCache.entrySet()) {
 			Row key = entry.getKey();
 			PythonInterpreter interpreter = new PythonInterpreter();
