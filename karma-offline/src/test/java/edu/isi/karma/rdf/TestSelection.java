@@ -1,6 +1,9 @@
 package edu.isi.karma.rdf;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,7 +15,6 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.json.JSONException;
 import org.junit.Before;
@@ -24,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.command.selection.Selection;
-import edu.isi.karma.controller.command.selection.Selection.SelectionProperty;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
@@ -43,6 +45,7 @@ import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -84,27 +87,33 @@ public class TestSelection {
 	}
 	@Test
 	public void testSelection1() throws IOException {
-		worksheet.getSelectionManager().createSelection(workspace, worksheet.getId(), worksheet.getHeaders().getId(), "selection");
-		Selection sel = worksheet.getSelectionManager().getSelection(worksheet.getHeaders().getId(), "selection");
+		
 		StringBuilder pythonCode = new StringBuilder();
 		pythonCode.append("if getValue(\"title\") == \"Prof\": \n");
 		pythonCode.append("	 return True \n");
-		sel.addSelections(pythonCode.toString());
-		for (Entry<Row, SelectionProperty> entry : sel.getSelectedRows().entrySet()) {
-			SelectionProperty prop = entry.getValue();
-			Row r = entry.getKey();
-			assertEquals(r.getNeighborByColumnName("title", workspace.getFactory()).getValue().asString().equals("Prof"), prop.selected);
-			logger.debug(r.getNeighborByColumnName("title", workspace.getFactory()).getValue().asString() + " " + prop.selected);
+		boolean result = worksheet.getSelectionManager().createMiniSelection(workspace, worksheet.getId(), 
+				worksheet.getHeaders().getId(), 
+				"selection", pythonCode.toString());
+		assertEquals(result, true);
+		Selection sel = worksheet.getSelectionManager().getSelection(worksheet.getHeaders().getId(), "selection");
+		Table t = worksheet.getDataTable();
+		for (Row r : t.getRows(0, t.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
+			boolean t1 = sel.isSelected(r);
+			if (r.getNeighborByColumnName("title", workspace.getFactory()).getValue().asString().equals("Prof"))
+				assertTrue(t1);
+			else
+				assertFalse(t1);
 		}
 	}
 	@Test
 	public void testSelection2() throws IOException, KarmaException {
-		worksheet.getSelectionManager().createSelection(workspace, worksheet.getId(), worksheet.getHeaders().getId(), "selection");
-		Selection sel = worksheet.getSelectionManager().getSelection(worksheet.getHeaders().getId(), "selection");
 		StringBuilder pythonCode = new StringBuilder();
 		pythonCode.append("if getValue(\"title\") == \"Prof\": \n");
 		pythonCode.append("	 return True \n");
-		sel.addSelections(pythonCode.toString());
+		worksheet.getSelectionManager().createMiniSelection(workspace, worksheet.getId(), 
+				worksheet.getHeaders().getId(), 
+				"selection", pythonCode.toString());
+		Selection sel = worksheet.getSelectionManager().getSelection(worksheet.getHeaders().getId(), "selection");
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
 				"people-model", getTestResource(
 						 "people-model.ttl"));
