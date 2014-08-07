@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 
 import org.json.JSONException;
 
-import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.URIFormatter;
@@ -23,15 +22,15 @@ public class JSONRDFGenerator extends GenericRDFGenerator {
 
 	private static JSONRDFGenerator instance = null;
 
-	public static JSONRDFGenerator getInstance(SuperSelection sel) {
+	public static JSONRDFGenerator getInstance(String selectionName) {
 		if(instance == null) {
-			instance = new JSONRDFGenerator(sel);
+			instance = new JSONRDFGenerator(selectionName);
 		}
 		return instance;
 	}
 
-	private JSONRDFGenerator(SuperSelection sel) {
-		super(sel);
+	private JSONRDFGenerator(String selectionName) {
+		super(selectionName);
 	}
 	
 	void generateRDF(String modelName, String jsonData, boolean addProvenance, PrintWriter pw) throws KarmaException, JSONException, IOException {

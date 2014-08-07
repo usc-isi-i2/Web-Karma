@@ -44,9 +44,9 @@ import edu.isi.karma.webserver.WorkspaceRegistry;
 public abstract class RdfGenerator {
 
 	private static Logger logger = LoggerFactory.getLogger(RdfGenerator.class);
-	protected SuperSelection selection;
-	public RdfGenerator(SuperSelection sel) {
-		this.selection = sel;
+	protected String selectionName;
+	public RdfGenerator(String selectionName) {
+		this.selectionName = selectionName;
 	}
 	protected Workspace initializeWorkspace() {
 		

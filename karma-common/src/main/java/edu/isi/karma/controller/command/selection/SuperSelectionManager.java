@@ -54,6 +54,7 @@ public class SuperSelectionManager {
 	}
 	
 	public SuperSelection getSuperSelection(String name) {
+		//TODO
 		if (name == null)
 			return currentSelection;
 		SuperSelection sel = selectionMapping.get(name);

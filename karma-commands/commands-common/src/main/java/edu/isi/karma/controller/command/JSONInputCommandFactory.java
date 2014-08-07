@@ -17,6 +17,7 @@ public abstract class JSONInputCommandFactory extends CommandFactory {
 	}
 	@Override
 	public abstract Command createCommand(JSONArray inputJson, Workspace workspace) throws JSONException, KarmaException;
+	//TODO
 	protected void normalizeSelectionId(String worksheetId, JSONArray inputJson, Workspace workspace) {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);

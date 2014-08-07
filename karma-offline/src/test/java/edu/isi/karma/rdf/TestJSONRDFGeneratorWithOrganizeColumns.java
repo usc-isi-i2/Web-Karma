@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 
 
@@ -55,7 +54,7 @@ public class TestJSONRDFGeneratorWithOrganizeColumns extends TestJSONRDFGenerato
 	 */
 	@Before
 	public void setUp() throws Exception {
-		rdfGen = new GenericRDFGenerator(SuperSelectionManager.DEFAULT_SELECTION);
+		rdfGen = new GenericRDFGenerator(null);
 
 		// Add the models in
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
