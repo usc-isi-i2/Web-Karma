@@ -11,10 +11,10 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
 
-public class CreateSelectionCommandFactory extends JSONInputCommandFactory {
+public class UpdateSelectionCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
-		worksheetId, hNodeId, PythonCode, selectionName
+		worksheetId, hNodeId, operation, selectionName, anotherSelectionName
 	}
 	
 	@Override
@@ -22,29 +22,27 @@ public class CreateSelectionCommandFactory extends JSONInputCommandFactory {
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
-		String PythonCode = CommandInputJSONUtil.getStringValue(Arguments.PythonCode.name(), inputJson);
+		String operation = CommandInputJSONUtil.getStringValue(Arguments.operation.name(), inputJson);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		Command cmd = new CreateSelectionCommand(getNewId(workspace), worksheetId, 
-				hNodeId, PythonCode, selectionName);
-		cmd.setInputParameterJson(inputJson.toString());
-		return cmd;
+		String anotherSelectionName = CommandInputJSONUtil.getStringValue(Arguments.anotherSelectionName.name(), inputJson);
+		return null;
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String PythonCode = request.getParameter(Arguments.PythonCode.name());
+		String operation = request.getParameter(Arguments.operation.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new CreateSelectionCommand(getNewId(workspace), worksheetId, 
-				hNodeId, PythonCode, selectionName);
-		
+		String anotherSelectionName = request.getParameter(Arguments.anotherSelectionName.name());
+
+		return null;
 	}
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand() {
 		// TODO Auto-generated method stub
-		return CreateSelectionCommand.class;
+		return UpdateSelectionCommand.class;
 	}
 
 }

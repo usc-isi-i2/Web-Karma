@@ -26,6 +26,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class Selection {
+	//TODO think about intersection, subtraction, and invertion, and union
 	public enum SelectionStatus {
 		UP_TO_DATE, OUT_OF_DATE
 	}
@@ -35,6 +36,8 @@ public class Selection {
 		IGNORE_IN_SERVICE_INVOCATION, IGNORE_IN_WORKSHEET_TRANSFORMATION
 	}
 	
+	private static final String returnFalse = "\treturn False\n";
+	private static final String returnTrue = "\treturn True\n";
 	public class SelectionProperty {
 		public Boolean selected;
 		public String pythonCode;
@@ -198,4 +201,7 @@ public class Selection {
 		return prop.selected;
 	}
 	
+	public Selection clone() {
+		return null;
+	}
 }

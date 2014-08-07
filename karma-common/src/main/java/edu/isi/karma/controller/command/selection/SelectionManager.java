@@ -26,7 +26,15 @@ public class SelectionManager {
 		return true;
 	}
 	
+	public Selection createSelection(Selection selection) {	
+		Selection sel = selection.clone();
+		addSelection(sel);
+		return sel;
+	}
+	
 	public Selection getSelection(String hTableId, String name) {
+		if (name == null || name.trim().isEmpty())
+			return null;
 		List<Selection> selections = selectionMapping.get(hTableId);
 		if (selections != null) {
 			for (Selection s : selections) {
@@ -37,7 +45,7 @@ public class SelectionManager {
 		return null;
 	}
 	
-	public void removeSelection(String hTableId, String name) {
+	public boolean removeSelection(String hTableId, String name) {
 		List<Selection> selections = selectionMapping.get(hTableId);
 		if (selections != null) {
 			Iterator<Selection> selItr = selections.iterator();
@@ -45,10 +53,11 @@ public class SelectionManager {
 				Selection sel = selItr.next();
 				if (sel.getId().equals(name)) {
 					selItr.remove();
-					break;
+					return true;
 				}
 			}
-		}	
+		}
+		return false;
 	}
 	
 	public List<Selection> getAllDefinedSelection(String hTableId) {
