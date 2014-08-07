@@ -22,7 +22,6 @@ package edu.isi.karma.kr2rml.planning;
 
 import java.util.Map;
 
-import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.exception.HNodeNotFoundKarmaException;
@@ -31,6 +30,7 @@ import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
 import edu.isi.karma.kr2rml.template.ColumnTemplateTerm;
 import edu.isi.karma.kr2rml.template.PopulatedTemplateTermSet;
 import edu.isi.karma.kr2rml.template.TemplateTermSet;
+import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.RepFactory;
 

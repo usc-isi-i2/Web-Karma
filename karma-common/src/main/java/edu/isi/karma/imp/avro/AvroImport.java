@@ -1,0 +1,99 @@
+package edu.isi.karma.imp.avro;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.avro.Schema;
+import org.apache.avro.file.DataFileReader;
+import org.apache.avro.generic.GenericDatumReader;
+import org.apache.avro.generic.GenericDatumWriter;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.EncoderFactory;
+import org.apache.avro.io.JsonEncoder;
+import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.JsonFactory;
+import org.json.JSONException;
+
+import edu.isi.karma.imp.Import;
+import edu.isi.karma.imp.json.JsonImport;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.KarmaException;
+
+public class AvroImport extends Import {
+
+	private int maxNumLines;
+	//TODO writing to a file each time is a hack, but avro seems to like it.
+	private File file;
+
+	public AvroImport (InputStream stream, String worksheetName, Workspace workspace,
+			String encoding, int maxNumLines) throws IOException
+	{
+		super(worksheetName, workspace, encoding);
+		this.maxNumLines = maxNumLines;
+		this.file = File.createTempFile("karma-avro"+System.currentTimeMillis(), "avro");
+		FileOutputStream fw = new FileOutputStream(file);
+		fw.write(IOUtils.toByteArray(stream));
+		fw.flush();
+		fw.close();
+		this.file.deleteOnExit();
+	}
+	public AvroImport (String string, String worksheetName, Workspace workspace,
+			String encoding, int maxNumLines) throws IOException
+	{
+		super(worksheetName, workspace, encoding);
+		this.maxNumLines = maxNumLines;
+		this.file = File.createTempFile("karma-avro"+System.currentTimeMillis(), "avro");
+		FileWriter fw = new FileWriter(file);
+		fw.write(string);
+		fw.flush();
+		fw.close();
+		this.file.deleteOnExit();
+	}
+	
+	public AvroImport (File file, String worksheetName, Workspace workspace,
+			String encoding, int maxNumLines) 
+	{
+		super(worksheetName, workspace, encoding);
+		this.maxNumLines = maxNumLines;
+		this.file = file;
+	}
+
+	@Override
+	public Worksheet generateWorksheet() throws JSONException, IOException,
+			KarmaException {
+		DataFileReader<Void> schemareader = new DataFileReader<Void>(file, new GenericDatumReader<Void>());
+		Schema schema = schemareader.getSchema();
+		
+		DataFileReader<GenericRecord> reader = new DataFileReader<GenericRecord>(file, new GenericDatumReader<GenericRecord>(schema));
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		baos.write('[');
+		baos.write('\n');
+		GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<GenericRecord>(reader.getSchema());
+		while(reader.hasNext())
+		{
+			
+			GenericRecord record = reader.next();
+				JsonEncoder encoder = EncoderFactory.get().jsonEncoder(reader.getSchema(), new JsonFactory().createJsonGenerator(baos)).configure(baos);
+				writer.write(record, encoder);
+				encoder.flush();
+				if(reader.hasNext())
+				{
+					baos.write(',');
+				}
+				
+			
+		}
+		baos.write('\n');
+		baos.write(']');
+		baos.flush();
+		baos.close();
+		String json = new String(baos.toByteArray());
+		JsonImport jsonImport = new JsonImport(json, this.getFactory(), this.getWorksheet(), workspace, maxNumLines);
+		return jsonImport.generateWorksheet();
+	}
+}

@@ -43,6 +43,12 @@
 					</div>
 					<div class="radio">
 					  <label>
+					    <input type="radio" name="FileFormatSelection" id="AvroFileFormat" value="AvroFile" checked>
+					    Avro
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
 					    <input type="radio" name="FileFormatSelection" id="XLSFileFormat" value="ExcelFile">
 					    Excel Spreadsheet
 					  </label>

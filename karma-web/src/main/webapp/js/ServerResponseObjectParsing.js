@@ -652,6 +652,14 @@ function parse(data) {
 						var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("JSON").addClass("JSONDownloadLink DownloadLink").attr("target", "_blank");
 						$("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
 				}
+				else if(element["updateType"] == "PublishAvroUpdate") {
+					var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
+					// Remove existing link if any
+					$("a.AvroDownloadLink", titleDiv).remove();
+
+					var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("Avro").addClass("AvroDownloadLink DownloadLink").attr("target", "_blank");
+					$("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
+			}
 				else if(element["updateType"] == "PublishReportUpdate") {
 						var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
 						// Remove existing link if any

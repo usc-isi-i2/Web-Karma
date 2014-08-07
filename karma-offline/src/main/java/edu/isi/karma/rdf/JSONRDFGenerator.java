@@ -5,9 +5,9 @@ import java.io.PrintWriter;
 
 import org.json.JSONException;
 
-import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
-import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.URIFormatter;
+import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
 import edu.isi.karma.webserver.KarmaException;
 
 

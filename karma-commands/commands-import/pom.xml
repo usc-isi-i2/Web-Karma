@@ -24,5 +24,6 @@
 		<module>import-service</module>
 		<module>import-xml</module>
 		<module>import-spatial</module>
+		<module>import-avro</module>
 	</modules>
 </project>

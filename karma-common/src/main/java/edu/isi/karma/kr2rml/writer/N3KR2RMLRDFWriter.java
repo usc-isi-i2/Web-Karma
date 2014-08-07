@@ -18,7 +18,7 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.kr2rml;
+package edu.isi.karma.kr2rml.writer;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -30,6 +30,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.kr2rml.PredicateObjectMap;
+import edu.isi.karma.kr2rml.URIFormatter;
 
 public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 
