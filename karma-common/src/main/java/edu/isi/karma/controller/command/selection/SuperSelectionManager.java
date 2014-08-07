@@ -22,6 +22,11 @@ public class SuperSelectionManager {
 		return t;
 	}
 	
+	public SuperSelection defineSelection(String name, SuperSelection sel) {
+		selectionMapping.put(name, sel);
+		return sel;
+	}
+	
 	public boolean removeSelection(String name) {
 		return (selectionMapping.remove(name) != null);
 	}
