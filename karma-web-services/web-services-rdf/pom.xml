@@ -30,6 +30,17 @@
 			<artifactId>karma-offline</artifactId>
 			<version>${project.version}</version>
 	   </dependency>
+
+       <dependency>
+       	<groupId>com.sun.jersey.jersey-test-framework</groupId>
+       	<artifactId>jersey-test-framework-core</artifactId>
+       	<version>1.17.1</version>
+       </dependency>
+       <dependency>
+       	<groupId>com.sun.jersey.jersey-test-framework</groupId>
+       	<artifactId>jersey-test-framework-grizzly</artifactId>
+       	<version>1.17.1</version>
+       </dependency>
     </dependencies>	
     
     <profiles>

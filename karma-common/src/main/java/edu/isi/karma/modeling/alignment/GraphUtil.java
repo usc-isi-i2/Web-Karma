@@ -666,6 +666,7 @@ public class GraphUtil {
     	} else if (type == NodeType.ColumnNode) {
     		n = new ColumnNode(id, hNodeId, columnName, rdfLiteralType);
     		((ColumnNode)n).setUserSelectedSemanticType(userSelectedSemanticType);
+    		((ColumnNode)n).setSuggestedSemanticTypes(suggestedSemanticTypes);
     	}
 		n.setModelIds(modelIds);
     	

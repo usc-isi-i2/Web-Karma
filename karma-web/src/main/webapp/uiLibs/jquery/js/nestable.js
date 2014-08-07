@@ -147,7 +147,7 @@
             var onStartEvent = function(e)
             {
                 var handle = $(e.target);
-				var x = handle[0].className;
+				
 				if(handle[0].className == "glyphicon glyphicon-eye-open" || 
 						handle[0].className == "glyphicon glyphicon-eye-close") {
 					var curNode = handle.parent().parent().parent();
@@ -161,8 +161,7 @@
 					$(".dd-item-hidden").tooltip();
 					$("#nestable.dd").trigger('change');
 					return;
-				}
-				if(handle[0].className == "dd-handle dd-handle-hide") {
+				} else if(handle[0].className == "dd-handle dd-handle-hide") {
 					var curNode = handle.parent();
 					
 					$(".dd-item-hidden").each(function( index ) {
@@ -206,11 +205,20 @@
             };
 
             if (hasTouch) {
+            	list.el[0].removeEventListener(eStart, onStartEvent);
+            	 window.removeEventListener(eMove, onMoveEvent);
+                 window.removeEventListener(eEnd, onEndEvent);
+                 window.removeEventListener(eCancel, onEndEvent);
+            	
                 list.el[0].addEventListener(eStart, onStartEvent, false);
                 window.addEventListener(eMove, onMoveEvent, false);
                 window.addEventListener(eEnd, onEndEvent, false);
                 window.addEventListener(eCancel, onEndEvent, false);
             } else {
+            	list.el.unbind(eStart);
+            	list.w.unbind(eMove);
+            	list.w.unbind(eEnd);
+            	
                 list.el.on(eStart, onStartEvent);
                 list.w.on(eMove, onMoveEvent);
                 list.w.on(eEnd, onEndEvent);
