@@ -140,7 +140,7 @@ public class ExecutionController {
                 logger.error(
                         "Error occured with command " + command.toString(), e);
                 UpdateContainer updateContainer = new UpdateContainer();
-                updateContainer.add(new ErrorUpdate("Error occured with command " + command.toString()));
+                updateContainer.add(new ErrorUpdate("Error occured with command " + command.toString() + ": " + e.getMessage()));
                 return updateContainer; // TODO probably need a return that indicates an
                 // error.
             }

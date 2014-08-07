@@ -14,7 +14,8 @@ import edu.isi.karma.webserver.KarmaException;
 public class UpdateSelectionCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
-		worksheetId, hNodeId, operation, currentSelectionName, anotherSelectionName
+		worksheetId, hNodeId, operation, 
+		currentSelectionName, anotherSelectionName
 	}
 	
 	@Override
@@ -25,7 +26,10 @@ public class UpdateSelectionCommandFactory extends JSONInputCommandFactory {
 		String operation = CommandInputJSONUtil.getStringValue(Arguments.operation.name(), inputJson);
 		String currentSelectionName = CommandInputJSONUtil.getStringValue(Arguments.currentSelectionName.name(), inputJson);
 		String anotherSelectionName = CommandInputJSONUtil.getStringValue(Arguments.anotherSelectionName.name(), inputJson);
-		return null;
+		Command cmd = new UpdateSelectionCommand(getNewId(workspace), worksheetId, hNodeId, 
+				operation, currentSelectionName, anotherSelectionName);
+		cmd.setInputParameterJson(inputJson.toString());
+		return cmd;
 	}
 
 	@Override
@@ -35,13 +39,12 @@ public class UpdateSelectionCommandFactory extends JSONInputCommandFactory {
 		String operation = request.getParameter(Arguments.operation.name());
 		String currentSelectionName = request.getParameter(Arguments.currentSelectionName.name());
 		String anotherSelectionName = request.getParameter(Arguments.anotherSelectionName.name());
-
-		return null;
+		return new UpdateSelectionCommand(getNewId(workspace), worksheetId, hNodeId, 
+				operation, currentSelectionName, anotherSelectionName);
 	}
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand() {
-		// TODO Auto-generated method stub
 		return UpdateSelectionCommand.class;
 	}
 
