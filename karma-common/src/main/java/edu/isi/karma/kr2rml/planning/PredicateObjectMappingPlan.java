@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.exception.HNodeNotFoundKarmaException;
@@ -39,6 +38,7 @@ import edu.isi.karma.kr2rml.template.PartiallyPopulatedTermSet;
 import edu.isi.karma.kr2rml.template.PopulatedTemplateTermSet;
 import edu.isi.karma.kr2rml.template.TemplateTermSet;
 import edu.isi.karma.kr2rml.template.TemplateTermSetPopulator;
+import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;

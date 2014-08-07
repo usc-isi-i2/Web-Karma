@@ -116,7 +116,7 @@ public class JSONUtil {
 		return fileData.toString();
 	}
 
-	private static JSONArray createJSONArray(JSONTokener tokener) {
+	public static JSONArray createJSONArray(JSONTokener tokener) {
 		JSONArray result = null;
 		try {
 			result = new JSONArray(tokener);
@@ -126,7 +126,7 @@ public class JSONUtil {
 		return result;
 	}
 
-	private static JSONObject createJSONObject(JSONTokener tokener) {
+	public static JSONObject createJSONObject(JSONTokener tokener) {
 		JSONObject result = null;
 		try {
 			result = new JSONObject(tokener);

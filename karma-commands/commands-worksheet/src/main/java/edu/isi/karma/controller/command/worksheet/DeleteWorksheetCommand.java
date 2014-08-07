@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.worksheet;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetDeleteUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
@@ -36,19 +37,20 @@ public class DeleteWorksheetCommand extends WorksheetCommand {
 	}
 
 	@Override
-	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+	public UpdateContainer doIt(final Workspace workspace) throws CommandException {
 		boolean worksheetExists = false;
 		
 		if(workspace.getWorksheet(worksheetId) != null) {
 			worksheetExists = true;
-			workspace.removeWorksheet(worksheetId);
-			workspace.getFactory().removeWorksheet(worksheetId);
+			workspace.removeWorksheet(worksheetId);			
+			workspace.getFactory().removeWorksheet(worksheetId, workspace.getCommandHistory());				
 		}
 		
 		UpdateContainer update = new UpdateContainer();
 		update.add(new WorksheetListUpdate());
 		if(worksheetExists) {
 			update.add(new WorksheetDeleteUpdate(worksheetId));
+			update.add(new HistoryUpdate(workspace.getCommandHistory()));
 		}
 		return update;
 	}

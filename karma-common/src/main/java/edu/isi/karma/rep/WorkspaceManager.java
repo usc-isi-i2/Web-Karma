@@ -23,6 +23,8 @@ package edu.isi.karma.rep;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.isi.karma.modeling.alignment.AlignmentManager;
+
 
 /**
  * @author szekely
@@ -64,6 +66,7 @@ public class WorkspaceManager {
 	
 	public void removeWorkspace(String workspaceId) {
 		workspaces.remove(workspaceId);
+		AlignmentManager.Instance().removeWorkspaceAlignments(workspaceId);
 	}
 	
 	public Workspace getWorkspace(String workspaceId) {

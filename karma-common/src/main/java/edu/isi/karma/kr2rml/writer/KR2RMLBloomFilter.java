@@ -1,4 +1,4 @@
-package edu.isi.karma.kr2rml;
+package edu.isi.karma.kr2rml.writer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

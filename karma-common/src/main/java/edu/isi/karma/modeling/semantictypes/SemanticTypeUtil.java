@@ -247,6 +247,7 @@ public class SemanticTypeUtil {
 				}
 			}
 		}
+		Collections.sort(suggestedSemanticTypes, Collections.reverseOrder());
 		return suggestedSemanticTypes;
 	}
 	

@@ -52,10 +52,7 @@ public class ImportCSVFileCommand extends ImportFileCommand implements
 	private char quoteCharacter = '"';
 	// Escape character
 	private char escapeCharacter = '\\';
-	private String encoding = null;
-	private int maxNumLines = 10000;
 
-	// Logger object
 	private static Logger logger = LoggerFactory
 			.getLogger(ImportCSVFileCommand.class.getSimpleName());
 
@@ -79,25 +76,12 @@ public class ImportCSVFileCommand extends ImportFileCommand implements
 		this.escapeCharacter = escapeCharacter;
 	}
 
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
-	}
-
-	public void setMaxNumLines(int numLines) {
-		this.maxNumLines = numLines;
-	}
-
 	public ImportCSVFileCommand(String id, File file) {
 		super(id, file);
 	}
 
 	public ImportCSVFileCommand(String id, String revisedId, File file) {
 		super(id, revisedId, file);
-	}
-
-	@Override
-	public String getCommandName() {
-		return this.getClass().getSimpleName();
 	}
 
 	@Override

@@ -11,9 +11,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetDeleteUpdate;
@@ -28,17 +28,15 @@ import edu.isi.karma.util.HTTPUtil;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class GenerateClusterValuesCommand extends Command {
+public class GenerateClusterValuesCommand extends WorksheetCommand {
 	private String hNodeId;
-	private String worksheetId;
 
 	private static Logger logger = LoggerFactory.getLogger(GenerateClusterValuesCommand.class.getSimpleName());
 	
 	public GenerateClusterValuesCommand(String id, String hNodeId,
 			String worksheetId) {
-		super(id);
+		super(id, worksheetId);
 		this.hNodeId = hNodeId;
-		this.worksheetId = worksheetId;
 	}
 
 	@Override

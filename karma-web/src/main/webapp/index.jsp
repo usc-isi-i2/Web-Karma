@@ -374,7 +374,25 @@ and related projects, please see: http://www.isi.edu/integration
                             // alert("Error while removing the workspace from server memory! " + textStatus);
                         }
                     });
-                });
+                  });
+                  $(window).bind("unload", function() {
+                    var info = new Object();
+                    info["workspaceId"] = $.workspaceGlobalInformation.id;
+                    info["command"] = "CloseWorkspaceCommand";
+
+                    var returned = $.ajax({
+                        url : "RequestController",
+                        type : "POST",
+                        data : info,
+                        dataType : "json",
+                        complete : function(xhr, textStatus) {
+                            // do nothing
+                        },
+                        error : function(xhr, textStatus) {
+                            // alert("Error while removing the workspace from server memory! " + textStatus);
+                        }
+                    });
+                	});
 
                 // Prevent the backspace key from navigating back.
                 $(document).unbind('keydown').bind('keydown', function(event) {

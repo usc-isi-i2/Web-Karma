@@ -17,6 +17,7 @@
 		<module>karma-cleaning</module>
 		<module>karma-commands</module>
 		<module>karma-mr</module>
+		<module>karma-web-services</module>
 		<module>karma-typer</module>
 	</modules>
 

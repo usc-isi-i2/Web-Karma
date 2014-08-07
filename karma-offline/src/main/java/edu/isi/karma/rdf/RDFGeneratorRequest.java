@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.planning.RootStrategy;
+import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 
 public class RDFGeneratorRequest {

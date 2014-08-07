@@ -79,7 +79,7 @@ public class LinkedDataResearch {
 		
 		ColumnNode column1, column2;
 		String column1Name, column2Name;
-		List<SemanticType> column1SemanticTypes, column2SemanticTypes;
+		List<SemanticType> column1SemanticTypes = null, column2SemanticTypes = null;
 		String class1Uri, class2Uri;
 		int k = 4;
 		
@@ -87,13 +87,16 @@ public class LinkedDataResearch {
 			
 			column1 = columnNodes.get(i);
 			column1Name = column1.getColumnName();
-			column1SemanticTypes = column1.getTopKSuggestions(k);
+			
+			// FIXME
+			
+//			column1SemanticTypes = column1.getTopKSuggestions(k);
 			
 			for (int j = i + 1; j < columnNodes.size(); j++) {
 			
 				column2 = columnNodes.get(j);
 				column2Name = column2.getColumnName();
-				column2SemanticTypes = column2.getTopKSuggestions(k);
+//				column2SemanticTypes = column2.getTopKSuggestions(k);
 				
 				logger.info("Extract relationships between columns: " + column1Name + "," + column2Name);
 				

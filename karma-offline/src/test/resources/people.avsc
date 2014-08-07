@@ -1,0 +1,13 @@
+{"namespace": "edu.isi.karma.rdf.test",
+ "type": "record",
+ "name": "Person",
+ "fields": [
+     {"name": "name", "type": "string"},
+     {"name": "email", "type": "string"},
+     {"name": "title", "type": "string"},
+     {"name": "homepage", "type": ["string", "null"]},
+     {"name": "depiction", "type": "string"},
+     {"name": "twitter", "type": ["string", "null"]},
+     {"name": "userids", "type": {"type": "array", "items": {"type": "record", "name": "UserId", "fields": [{"name": "type", "type": "string"}, {"name": "id", "type": "string"}]}}}
+ ]
+}

@@ -15,9 +15,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
@@ -37,21 +37,19 @@ import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class PublishReportCommand extends Command {
+public class PublishReportCommand extends WorksheetCommand {
 
 	private enum JsonKeys {
 		updateType, fileUrl, worksheetId
 	}
 	
-	private final String worksheetId;
 	private String worksheetName;
 	
 	// Logger object
 	private static Logger logger = LoggerFactory.getLogger(PublishReportCommand.class);
 
 	public PublishReportCommand(String id, String worksheetId) {
-		super(id);
-		this.worksheetId = worksheetId;
+		super(id, worksheetId);
 	}
 
 	@Override
