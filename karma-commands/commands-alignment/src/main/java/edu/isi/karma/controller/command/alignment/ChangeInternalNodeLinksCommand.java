@@ -58,6 +58,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 
 	private StringBuilder descStr = new StringBuilder();
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory
 			.getLogger(ChangeInternalNodeLinksCommand.class);
 

@@ -1,7 +1,5 @@
 package edu.isi.karma.controller.command.worksheet.selection;
 
-import java.io.IOException;
-
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -45,11 +43,7 @@ public class RefreshSuperSelectionCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection currentSel = worksheet.getSuperSelectionManager().getSuperSelection(currentSelectionName);
-		try {
-			currentSel.updateSelection();
-		} catch (IOException e) {
-			throw new CommandException(this, "update selection failure");
-		}
+		currentSel.updateSelection();
 		return new UpdateContainer(new WorksheetSuperSelectionListUpdate(worksheetId));
 	}
 
