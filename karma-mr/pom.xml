@@ -55,7 +55,13 @@
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-yarn-common</artifactId>
 			<version>${hadoop.version}</version>
-		</dependency>   
+		</dependency>  
+		<dependency>
+			<groupId>org.apache.mrunit</groupId>
+			<artifactId>mrunit</artifactId>
+			<version>1.1.0</version>
+			<classifier>hadoop2</classifier> 
+		</dependency> 
     </dependencies>
 	<build>
 	

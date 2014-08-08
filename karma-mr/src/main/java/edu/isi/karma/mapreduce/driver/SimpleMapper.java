@@ -41,7 +41,10 @@ public class SimpleMapper extends Mapper<Text, Text, Text, Text>{
 			{
 				LOG.info("No Karma user home provided.  Creating default Karma configuration");
 			}
-			System.setProperty("KARMA_USER_HOME", karmaUserHome.getAbsolutePath());
+			else
+			{
+				System.setProperty("KARMA_USER_HOME", karmaUserHome.getAbsolutePath());
+			}
 	        KarmaMetadataManager userMetadataManager;
 			userMetadataManager = new KarmaMetadataManager();
 			UpdateContainer uc = new UpdateContainer();
@@ -75,6 +78,15 @@ public class SimpleMapper extends Mapper<Text, Text, Text, Text>{
 			LOG.error("Unable to generate RDF: " + e.getMessage());
 		}
 		String results = sw.toString();
-		context.write(new Text(filename), new Text(results));
+		String[] lines = results.split("(\r\n|\n)");
+		for(String line : lines)
+		{
+			if((line = line.trim()).isEmpty())
+			{
+				continue;
+			}
+			int splitBetweenSubjectAndPredicate = line.indexOf(' ');
+			context.write(new Text(line.substring(0, splitBetweenSubjectAndPredicate)), new Text(line.substring(splitBetweenSubjectAndPredicate)+1));
+		}
 	}
 }
