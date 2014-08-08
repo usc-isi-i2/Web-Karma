@@ -25,7 +25,7 @@ public class LargeSelection extends Selection {
 		populateSelection();
 	}
 	
-	private void union() throws IOException {
+	private void union() {
 		if (sourceA.getStatus() == SelectionStatus.OUT_OF_DATE)
 			sourceA.updateSelection();
 		if (sourceB.getStatus() == SelectionStatus.OUT_OF_DATE)
@@ -41,7 +41,7 @@ public class LargeSelection extends Selection {
 		evalColumns.addAll(sourceB.evalColumns);
 	}
 	
-	private void intersect() throws IOException {
+	private void intersect(){
 		if (sourceA.getStatus() == SelectionStatus.OUT_OF_DATE)
 			sourceA.updateSelection();
 		if (sourceB.getStatus() == SelectionStatus.OUT_OF_DATE)
@@ -58,7 +58,7 @@ public class LargeSelection extends Selection {
 		evalColumns.addAll(sourceB.evalColumns);
 	}
 	
-	private void subtract() throws IOException {
+	private void subtract(){
 		if (sourceA.getStatus() == SelectionStatus.OUT_OF_DATE)
 			sourceA.updateSelection();
 		if (sourceB.getStatus() == SelectionStatus.OUT_OF_DATE)
@@ -77,7 +77,7 @@ public class LargeSelection extends Selection {
 		evalColumns.addAll(sourceB.evalColumns);
 	}
 	
-	private void invert() throws IOException {
+	private void invert(){
 		if (sourceA.getStatus() == SelectionStatus.OUT_OF_DATE)
 			sourceA.updateSelection();
 		for (Entry<Row, Boolean> entry : sourceA.getCache().entrySet()) {
@@ -87,7 +87,7 @@ public class LargeSelection extends Selection {
 		evalColumns.addAll(sourceA.evalColumns);
 	}
 
-	private void populateSelection() throws IOException {
+	private void populateSelection(){
 		switch(operation) {
 		case Intersect:
 			intersect();
@@ -105,7 +105,7 @@ public class LargeSelection extends Selection {
 	}
 
 	@Override
-	public void updateSelection() throws IOException {
+	public void updateSelection(){
 		if (this.status == SelectionStatus.UP_TO_DATE)
 			return;
 		evalColumns.clear();

@@ -24,7 +24,7 @@ public class SuperSelection {
 		selections.add(sel);
 	}
 	
-	public boolean isSelected(Row row) {
+	public boolean isSelected(Row row){
 		if (selections == null)
 			return false;
 		boolean ret = false;

@@ -34,14 +34,18 @@ public class MiniSelection extends Selection {
 		populateSelection();
 	}
 	
-	public void updateSelection() throws IOException {
+	public void updateSelection(){
 		if (this.status == SelectionStatus.UP_TO_DATE)
 			return;
 		evalColumns.clear();
 		for (Entry<Row, Boolean> entry : this.selectedRowsCache.entrySet()) {
 			Row key = entry.getKey();
 			PythonInterpreter interpreter = new PythonInterpreter();
-			entry.setValue(evaluatePythonExpression(key, getCompiledCode(pythonCode, interpreter), interpreter));
+			try {
+				entry.setValue(evaluatePythonExpression(key, getCompiledCode(pythonCode, interpreter), interpreter));
+			}catch(IOException e) {
+				entry.setValue(false);
+			}
 		}
 		this.status = SelectionStatus.UP_TO_DATE;
 	}

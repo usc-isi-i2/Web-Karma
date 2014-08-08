@@ -1,6 +1,5 @@
 package edu.isi.karma.controller.command.selection;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,7 +77,7 @@ public abstract class Selection {
 		return prop;
 	}
 	
-	public abstract void updateSelection() throws IOException;
+	public abstract void updateSelection();
 	
 	public Set<String> getInputColumns() {
 		return evalColumns;

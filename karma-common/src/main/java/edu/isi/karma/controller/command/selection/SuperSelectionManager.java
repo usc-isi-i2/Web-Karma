@@ -9,11 +9,9 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class SuperSelectionManager {
 	private Map<String, SuperSelection> selectionMapping = new HashMap<String, SuperSelection>();
-	private SuperSelection currentSelection;
 	public static final SuperSelection DEFAULT_SELECTION = new SuperSelection("DEFAULT_SELECTION", null);
 	public SuperSelectionManager() {
 		selectionMapping.put("DEFAULT_SELECTION", DEFAULT_SELECTION);
-		currentSelection = selectionMapping.get("DEFAULT_SELECTION");
 	}
 	
 	public SuperSelection defineSelection(String name) {
@@ -41,19 +39,6 @@ public class SuperSelectionManager {
 			throw new KarmaException("Name not Found");
 	}
 	
-	public void setCurrentSuperSelection(String name) throws KarmaException {
-		SuperSelection t = selectionMapping.get(name);
-		if (t != null) {
-			currentSelection = t;
-		}
-		else
-			throw new KarmaException("Name not Found");
-	}
-	
-	public SuperSelection getCurrentSuperSelection() {
-		return currentSelection;
-	}
-	
 	public boolean hasSelection(String name) {
 		return selectionMapping.containsKey(name);
 	}
@@ -61,9 +46,9 @@ public class SuperSelectionManager {
 	public SuperSelection getSuperSelection(String name) {
 		//TODO
 		if (name == null)
-			return currentSelection;
+			return DEFAULT_SELECTION;
 		SuperSelection sel = selectionMapping.get(name);
-		return sel == null ? currentSelection : sel;
+		return sel == null ? DEFAULT_SELECTION : sel;
 	}
 	
 	public List<SuperSelection> getAllDefinedSelection() {

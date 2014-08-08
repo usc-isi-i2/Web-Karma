@@ -118,7 +118,6 @@ public class TestSelection {
 				"people-model", getTestResource(
 						 "people-model.ttl"));
 		worksheet.getSuperSelectionManager().defineSelection("test").addSelection(sel);
-		worksheet.getSuperSelectionManager().setCurrentSuperSelection("test");
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		List<KR2RMLRDFWriter> writers = new ArrayList<KR2RMLRDFWriter>();
@@ -127,7 +126,7 @@ public class TestSelection {
 		applyHistoryToWorksheet(workspace, worksheet, modelParser.parse());
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
 		        workspace.getFactory(), workspace.getOntologyManager(), writers,
-		        false, modelParser.parse(), new ErrorReport(), worksheet.getSuperSelectionManager().getCurrentSuperSelection());
+		        false, modelParser.parse(), new ErrorReport(), worksheet.getSuperSelectionManager().getSuperSelection("test"));
 		rdfGen.generateRDF(true);
 		String rdf = sw.toString();
 		assertNotEquals(rdf.length(), 0);
