@@ -314,7 +314,7 @@ public class GraphBuilder {
 		this.graph.addVertex(node);
 		
 		this.idToNodeMap.put(node.getId(), node);
-		logger.info("Added in idToNodeMap:" + node.getId());
+//		logger.info("Added in idToNodeMap:" + node.getId());
 		Set<Node> nodesWithSameUri = uriToNodesMap.get(node.getUri());
 		if (nodesWithSameUri == null) {
 			nodesWithSameUri = new HashSet<Node>();

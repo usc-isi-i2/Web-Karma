@@ -29,7 +29,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.uwyn.jhighlight.tools.FileUtils;
 
 import edu.isi.karma.er.helper.TripleStoreUtil;
-import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
+import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
 import edu.isi.karma.webserver.KarmaException;
 
 
@@ -37,7 +37,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class CombineBloomFiltersFromRDF {
 
 	static String filepath;
-    static String modelurl;
+    static String triplestoreURL;
     static String context;
     static String predicateURI = "http://isi.edu/integration/karma/dev#hasBloomFilter";
 	public static void main(String[] args) throws IOException, KarmaException {
@@ -55,9 +55,9 @@ public class CombineBloomFiltersFromRDF {
             return;
         }
         filepath = (String) cl.getValue("--filepath");
-        modelurl = (String) cl.getValue("--modelurl");
+        triplestoreURL = (String) cl.getValue("--triplestoreurl");
         context = (String) cl.getValue("--context");
-        if (filepath == null || modelurl == null || context == null)
+        if (filepath == null || triplestoreURL == null || context == null)
         	return;
 		File file = new File(filepath);
 		Map<String, BloomFilterWorker> workers = new HashMap<String, BloomFilterWorker>();
@@ -101,11 +101,11 @@ public class CombineBloomFiltersFromRDF {
 			TripleStoreUtil utilObj = new TripleStoreUtil();
 			Set<String> triplemaps = bfs.keySet();
 			Map<String, String> bloomfilterMapping = new HashMap<String, String>();
-			bloomfilterMapping.putAll(utilObj.getBloomFiltersForMaps(modelurl, context, triplemaps));
-			utilObj.updateTripleStoreWithBloomFilters(bfs, bloomfilterMapping, modelurl, context);
+			bloomfilterMapping.putAll(utilObj.getBloomFiltersForMaps(triplestoreURL, context, triplemaps));
+			utilObj.updateTripleStoreWithBloomFilters(bfs, bloomfilterMapping, triplestoreURL, context);
 			System.out.println("process time: " + (System.currentTimeMillis() - start));
 			Map<String, String> verification = new HashMap<String, String>();
-			verification.putAll(utilObj.getBloomFiltersForMaps(modelurl, context, triplemaps));
+			verification.putAll(utilObj.getBloomFiltersForMaps(triplestoreURL, context, triplemaps));
 			boolean verify = true;
 			for (Entry<String, String> entry : verification.entrySet()) {
 				String key = entry.getKey();
@@ -128,7 +128,7 @@ public class CombineBloomFiltersFromRDF {
 				}
 			}
 			if (!verify) {
-				utilObj.updateTripleStoreWithBloomFilters(bfs, verification, modelurl, context);
+				utilObj.updateTripleStoreWithBloomFilters(bfs, verification, triplestoreURL, context);
 			}
 		}
 
@@ -143,7 +143,7 @@ public class CombineBloomFiltersFromRDF {
 				gbuilder
 				.withName("options")
 				.withOption(buildOption("filepath", "location of the input file directory", "filepath", obuilder, abuilder))
-				.withOption(buildOption("modelurl", "location of the model", "modelurl", obuilder, abuilder))
+				.withOption(buildOption("triplestoreurl", "location of the triplestore", "triplestoreurl", obuilder, abuilder))
 				.withOption(buildOption("context", "the context uri", "context", obuilder, abuilder))
 				.withOption(obuilder
 						.withLongName("help")

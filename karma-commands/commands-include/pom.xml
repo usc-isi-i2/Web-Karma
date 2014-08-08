@@ -140,7 +140,11 @@
 			<artifactId>import-xml</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>import-avro</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	
 
 		<dependency>

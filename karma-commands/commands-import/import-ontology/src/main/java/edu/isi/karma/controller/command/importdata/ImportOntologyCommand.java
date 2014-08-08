@@ -45,7 +45,6 @@ import java.io.PrintWriter;
 public class ImportOntologyCommand extends ImportFileCommand implements IPreviewable {
 
     private static Logger logger = LoggerFactory.getLogger(ImportOntologyCommand.class);
-    private String encoding = null;
     
     @Override
     protected Import createImport(Workspace workspace) {
@@ -58,12 +57,6 @@ public class ImportOntologyCommand extends ImportFileCommand implements IPreview
 
     public ImportOntologyCommand(String id, File file) {
         super(id, file);
-        this.encoding = EncodingDetector.detect(file);
-    }
-
-    @Override
-    public String getCommandName() {
-        return this.getClass().getSimpleName();
     }
 
     @Override
@@ -76,10 +69,6 @@ public class ImportOntologyCommand extends ImportFileCommand implements IPreview
         return getFile().getName();
     }
 
-    public void setEncoding(String encoding) {
-    	this.encoding = encoding;
-    }
-    
     @Override
     public UpdateContainer doIt(Workspace workspace) throws CommandException {
         OntologyManager ontManager = workspace.getOntologyManager();

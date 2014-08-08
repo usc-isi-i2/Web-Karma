@@ -30,15 +30,16 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 import edu.isi.karma.imp.Import;
+import edu.isi.karma.imp.avro.AvroImport;
 import edu.isi.karma.imp.csv.CSVImport;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.kr2rml.ErrorReport;
-import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.kr2rml.planning.RootStrategy;
+import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
@@ -54,7 +55,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 	public enum InputType {
 		CSV,
 		JSON,
-		XML
+		XML,
+		AVRO
 	};
 	
 	public GenericRDFGenerator() {
@@ -135,25 +137,60 @@ public class GenericRDFGenerator extends RdfGenerator {
 			throws KarmaException, IOException {
 		generateRDF(modelName, sourceName, data, dataType, maxNumLines, addProvenance, writers, null);
 	}
+	
+	/** Generate RDF functions that do not use the model cache
+	 */
+	public void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, InputStream data, InputType dataType, int maxNumLines, 
+			boolean addProvenance, KR2RMLRDFWriter writer) throws KarmaException, IOException {
+		List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
+		writers.add(writer);
+		generateRDF(modelParser, sourceName, data, dataType, maxNumLines, addProvenance, writers, null);
+	}
+	
+	/** Generate RDF functions that do not use the model cache
+	 */
+	public void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, String data, InputType dataType, int maxNumLines, 
+			boolean addProvenance, KR2RMLRDFWriter writer) throws KarmaException, IOException {
+		List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
+		writers.add(writer);
+		generateRDF(modelParser, sourceName, IOUtils.toInputStream(data), dataType, maxNumLines, addProvenance, writers, null);
+	}
+	
+	/** Generate RDF functions that do not use the model cache
+	 */
+	public void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, File dataFile, InputType dataType, int maxNumLines, 
+			boolean addProvenance, KR2RMLRDFWriter writer) throws KarmaException, IOException {
+		List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
+		writers.add(writer);
+		InputStream is = new FileInputStream(dataFile);
+		generateRDF(modelParser, sourceName, is, dataType, maxNumLines, addProvenance, writers, null);
+	}
+	
 	private void generateRDF(String modelName, String sourceName, InputStream data, InputType dataType, int maxNumLines, 
 			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy)
 					throws KarmaException, IOException {
-		logger.debug("Generating rdf for " + sourceName);
 		
-		Workspace workspace = initializeWorkspace();
 		R2RMLMappingIdentifier id = this.modelIdentifiers.get(modelName);
 		if(id == null) {
 			throw new KarmaException("Cannot generate RDF. Model named " + modelName + " does not exist");
 		}
-		
-		Worksheet worksheet = generateWorksheet(sourceName, new BufferedInputStream(data), dataType, 
-				workspace, maxNumLines);
-		
 		//Check if the parser for this model exists, else create one
 		WorksheetR2RMLJenaModelParser modelParser = readModelParsers.get(modelName);
 		if(modelParser == null) {
 			modelParser = loadModel(id);
 		}
+		generateRDF(modelParser, sourceName, data, dataType, maxNumLines, addProvenance, writers, rootStrategy);
+	}
+
+	private void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, InputStream data, InputType dataType, int maxNumLines, 
+			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy) throws KarmaException, IOException {
+		logger.debug("Generating rdf for " + sourceName);
+		
+		Workspace workspace = initializeWorkspace();
+		
+		Worksheet worksheet = generateWorksheet(sourceName, new BufferedInputStream(data), dataType, 
+				workspace, maxNumLines);
+		
 		
 		//Generate mappping data for the worksheet using the model parser
 		KR2RMLMapping mapping = modelParser.parse();
@@ -171,7 +208,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 		
 		logger.debug("Generated rdf for " + sourceName);
 	}
-
+	
 	public void generateRDF(RDFGeneratorRequest request) throws KarmaException, IOException
 	{
 		InputStream inputStream = null;
@@ -268,6 +305,9 @@ public class GenericRDFGenerator extends RdfGenerator {
 							is, workspace, encoding, maxNumLines);
 					break;
 				}
+				case AVRO : {
+					worksheet = generateWorksheetFromAvroStream(sourceName, is, workspace, encoding, maxNumLines);
+				}
 			}
 		} catch (Exception e ) {
 			logger.error("Error generating worksheet", e);
@@ -321,6 +361,14 @@ public class GenericRDFGenerator extends RdfGenerator {
 		Reader reader = EncodingDetector.getInputStreamReader(is, encoding);
 		Object json = JSONUtil.createJson(reader);
 		JsonImport imp = new JsonImport(json, sourceName, workspace, encoding, maxNumLines);
+		worksheet = imp.generateWorksheet();
+		return worksheet;
+	}
+	private Worksheet generateWorksheetFromAvroStream(String sourceName, InputStream is,
+			Workspace workspace, String encoding, int maxNumLines)
+			throws IOException, JSONException, KarmaException {
+		Worksheet worksheet;
+		AvroImport imp = new AvroImport(is, sourceName, workspace, encoding, maxNumLines);
 		worksheet = imp.generateWorksheet();
 		return worksheet;
 	}

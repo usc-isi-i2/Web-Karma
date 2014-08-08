@@ -91,6 +91,8 @@ public class KR2RMLMappingWriter {
 				Property.inputColumns);
 		String outputColumns = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(
 				Property.outputColumns);
+		String oldHistory = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(
+				Property.oldCommandHistory);
 		String graphLabel = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(
 				Property.graphLabel);
 		String baseURI = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(
@@ -104,7 +106,9 @@ public class KR2RMLMappingWriter {
 		if (graphLabel != null && !graphLabel.trim().isEmpty())
 			con.add(mappingRes, repoURIs.get(Uris.KM_HAS_MODELLABEL), f.createLiteral(graphLabel));	
 		if (baseURI != null && !baseURI.trim().isEmpty())
-			con.add(mappingRes, repoURIs.get(Uris.KM_HAS_BASEURI), f.createLiteral(baseURI));	
+			con.add(mappingRes, repoURIs.get(Uris.KM_HAS_BASEURI), f.createLiteral(baseURI));
+		if (oldHistory != null && !oldHistory.trim().isEmpty())
+			con.add(mappingRes, repoURIs.get(Uris.KM_HAS_OLDHISTORY), f.createLiteral(oldHistory));
 		addWorksheetProperties(worksheet, mappingRes);
 		addCompleteWorksheetHistory(mapping, mappingRes);
 		return mappingRes;

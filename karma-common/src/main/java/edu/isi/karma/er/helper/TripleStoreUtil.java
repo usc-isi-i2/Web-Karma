@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import javax.ws.rs.core.UriBuilder;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -59,7 +61,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
+import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.util.HTTPUtil;
 import edu.isi.karma.webserver.KarmaException;
@@ -589,7 +591,8 @@ public class TripleStoreUtil {
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
-
+		context = normalizeURI(context);
+		mappingURI = normalizeURI(mappingURI);
 		try {
 
 			StringBuilder query = new StringBuilder();
@@ -1379,6 +1382,11 @@ public class TripleStoreUtil {
 			logger.error(e.getMessage(), e);
 		}
 		return false;
+	}
+	
+	public String normalizeURI(String uri) {
+		UriBuilder builder = UriBuilder.fromPath(uri);
+		return builder.build().toString();
 	}
 
 }

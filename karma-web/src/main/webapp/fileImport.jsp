@@ -43,6 +43,12 @@
 					</div>
 					<div class="radio">
 					  <label>
+					    <input type="radio" name="FileFormatSelection" id="AvroFileFormat" value="AvroFile" checked>
+					    Avro
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
 					    <input type="radio" name="FileFormatSelection" id="XLSFileFormat" value="ExcelFile">
 					    Excel Spreadsheet
 					  </label>
@@ -110,13 +116,13 @@
 		        		<div class="col-sm-2 fileOptions" id="colHeaderStartIndex">
 		        			<div class="form-group">
 								<label for="headerStartIndex">Header start index</label>
-								<input class="form-control ImportOption" type="number" placeholder="1" id="headerStartIndex" required>
+								<input class="form-control ImportOption" type="text" placeholder="1" id="headerStartIndex" required>
 							</div>
 		        		</div>
 		        		<div class="col-sm-2 fileOptions" id="colStartRowIndex">
 		        			<div class="form-group">
 								<label for="startRowIndex">Data Start index</label>
-								<input class="form-control ImportOption" type="number" placeholder="2" id="startRowIndex" required>
+								<input class="form-control ImportOption" type="text" placeholder="2" id="startRowIndex" required>
 							</div>
 		        		</div>
 		        		<div class="col-sm-2 fileOptions" id="colEncoding">
@@ -130,7 +136,7 @@
 		        		<div class="col-sm-2 fileOptions" id="colMaxNumLines">
 		        			<div class="form-group">
 								<label for="maxNumLines" id="lblMaxNumLines">Rows to import</label>
-								<input class="form-control ImportOption" type="number" placeholder="1" id="maxNumLines">
+								<input class="form-control ImportOption" type="text" placeholder="1" id="maxNumLines">
                                    <span class="help-block">Enter 0 to import all rows</span>
 							</div>
 		        		</div>

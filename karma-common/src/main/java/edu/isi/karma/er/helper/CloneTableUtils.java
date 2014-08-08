@@ -90,14 +90,6 @@ public class CloneTableUtils {
 		}
 	}
 
-	public static Row getRow(List<Row> rows, String rowID) {
-		for (Row row : rows) {
-			if (row.getId().compareTo(rowID) == 0)
-				return row;
-		}
-		return null;
-	}
-
 	public static HTable getHTable(HTable ht, String HNodeId) {
 		for (HNode hn : ht.getHNodes()) {
 			if (hn.getId().compareTo(HNodeId) == 0)
