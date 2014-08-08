@@ -37,10 +37,6 @@
 		<artifactId>commons-lang3</artifactId>
 	</dependency>
 	<dependency>
-		<groupId>org.apache.commons</groupId>
-		<artifactId>commons-lang3</artifactId>
-    	</dependency>
-	<dependency>
 		<groupId>log4j</groupId>
 		<artifactId>log4j</artifactId>
 	</dependency>
@@ -133,8 +129,7 @@
 		<groupId>commons-httpclient</groupId>
 		<artifactId>commons-httpclient</artifactId>
 	</dependency>
-<<<<<<< HEAD
-=======
+
 	<dependency>
 		<groupId>org.apache.avro</groupId>
 		<artifactId>avro</artifactId>
@@ -151,7 +146,6 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
->>>>>>> development
 </dependencies>
 
 	<build>
