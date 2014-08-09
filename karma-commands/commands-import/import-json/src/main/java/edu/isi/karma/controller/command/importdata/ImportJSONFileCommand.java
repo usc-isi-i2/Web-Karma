@@ -24,11 +24,18 @@ package edu.isi.karma.controller.command.importdata;
 
 import java.io.File;
 
+import javax.servlet.http.HttpServletRequest;
+
+import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.IPreviewable;
+import edu.isi.karma.controller.update.AllWorksheetHeadersUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.json.JsonImport;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
+import edu.isi.karma.view.VWorkspace;
 
 public class ImportJSONFileCommand extends ImportFileCommand implements IPreviewable {
 	
@@ -50,6 +57,23 @@ public class ImportJSONFileCommand extends ImportFileCommand implements IPreview
     @Override
     protected Import createImport(Workspace workspace) {
         return new JsonImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines);
+    }
+    
+    @Override
+    public UpdateContainer showPreview(HttpServletRequest request, VWorkspace vWorkspace) throws CommandException {
+    	boolean filter = Boolean.parseBoolean(request.getParameter("filter"));
+    	if (!filter)
+    		return super.showPreview(request, vWorkspace);
+    	Import imp = new JsonImport(getFile(), getFile().getName(), vWorkspace.getWorkspace(), encoding, 1000);
+    	try {
+			Worksheet worksheet = imp.generateWorksheet();
+			vWorkspace.createVWorksheetsForAllWorksheets();
+			return new UpdateContainer(new AllWorksheetHeadersUpdate(worksheet.getId(), true));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new UpdateContainer();
+    	
     }
    
 }

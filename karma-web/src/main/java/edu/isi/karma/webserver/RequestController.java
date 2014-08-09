@@ -92,9 +92,9 @@ public class RequestController extends HttpServlet {
 			try {
 				UpdateContainer updateContainer;
 				if (!isExecute)
-					updateContainer = ((IPreviewable) currentCommand).handleUserActions(request);
+					updateContainer = ((IPreviewable) currentCommand).handleUserActions(request, vWorkspace);
 				else {
-					((IPreviewable) currentCommand).handleUserActions(request);
+					((IPreviewable) currentCommand).handleUserActions(request, vWorkspace);
 					updateContainer = ctrl.invokeCommand(currentCommand);
 					ctrl.getWorkspace().getCommandHistory().removePreviewCommand(currentCommand);
 				}
@@ -107,7 +107,7 @@ public class RequestController extends HttpServlet {
 		else if (isPreview) {
 			Command command = ctrl.getCommand(request);
 			try {
-				UpdateContainer updateContainer = ((IPreviewable) command).showPreview(request);
+				UpdateContainer updateContainer = ((IPreviewable) command).showPreview(request, vWorkspace);
 				ctrl.getWorkspace().getCommandHistory().addPreviewCommand(command);
 				updateContainer.applyUpdates(vWorkspace);
 				responseString = updateContainer.generateJson(vWorkspace);

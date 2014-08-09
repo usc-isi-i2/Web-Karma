@@ -96,7 +96,7 @@ public class ImportOntologyCommand extends ImportFileCommand implements IPreview
     }
     
     @Override
-    public UpdateContainer handleUserActions(HttpServletRequest request) {
+    public UpdateContainer handleUserActions(HttpServletRequest request, VWorkspace vWorkspace) {
        
         String strEncoding = request.getParameter("encoding");
         if(strEncoding == null || strEncoding == "") {
@@ -118,7 +118,7 @@ public class ImportOntologyCommand extends ImportFileCommand implements IPreview
             case generatePreview: {
                 try {
 
-                    c = showPreview(request);
+                    c = showPreview(request, vWorkspace);
                 } catch (CommandException e) {
                     logger.error(
                             "Error occured while creating utput JSON for JSON Import",
@@ -133,7 +133,7 @@ public class ImportOntologyCommand extends ImportFileCommand implements IPreview
     }
 
 	@Override
-	public UpdateContainer showPreview(HttpServletRequest request) throws CommandException {
+	public UpdateContainer showPreview(HttpServletRequest request, VWorkspace vWorkspace) throws CommandException {
 		
         UpdateContainer c = new UpdateContainer();
         c.add(new ImportPropertiesUpdate(getFile(), encoding, -1, id));

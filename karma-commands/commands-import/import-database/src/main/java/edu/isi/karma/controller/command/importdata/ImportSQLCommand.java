@@ -15,6 +15,7 @@ import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.database.SQLImport;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.DBType;
+import edu.isi.karma.view.VWorkspace;
 
 public class ImportSQLCommand extends ImportCommand implements IPreviewable {
     // Database Type
@@ -86,7 +87,7 @@ public class ImportSQLCommand extends ImportCommand implements IPreviewable {
 
   
     @Override
-    public UpdateContainer showPreview(HttpServletRequest request)
+    public UpdateContainer showPreview(HttpServletRequest request, VWorkspace vWorkspace)
             throws CommandException {
         UpdateContainer c = new UpdateContainer();
         if (requestedInteractionType == InteractionType.getPreferencesValues) {
@@ -98,7 +99,7 @@ public class ImportSQLCommand extends ImportCommand implements IPreviewable {
     }
 
     @Override
-    public UpdateContainer handleUserActions(HttpServletRequest request) {
+    public UpdateContainer handleUserActions(HttpServletRequest request, VWorkspace vWorkspace) {
         InteractionType type = InteractionType.valueOf(request.getParameter("interactionType"));
         UpdateContainer c = new UpdateContainer();
         setRequestedInteractionType(type);
