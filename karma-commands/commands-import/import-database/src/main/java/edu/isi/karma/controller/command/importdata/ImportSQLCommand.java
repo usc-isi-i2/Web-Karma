@@ -86,7 +86,7 @@ public class ImportSQLCommand extends ImportCommand implements IPreviewable {
 
   
     @Override
-    public UpdateContainer showPreview()
+    public UpdateContainer showPreview(HttpServletRequest request)
             throws CommandException {
         UpdateContainer c = new UpdateContainer();
         if (requestedInteractionType == InteractionType.getPreferencesValues) {

@@ -101,7 +101,7 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 		case generatePreview: {
 			try {
 
-				c = showPreview();
+				c = showPreview(request);
 			} catch (CommandException e) {
 				logger.error(
 						"Error occured while creating output",
@@ -116,7 +116,7 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 	}
 
 	@Override
-	public UpdateContainer showPreview() throws CommandException {
+	public UpdateContainer showPreview(HttpServletRequest request) throws CommandException {
 
 		UpdateContainer c = new UpdateContainer();
 		c.add(new ImportPropertiesUpdate(getFile(), encoding, maxNumLines, id));

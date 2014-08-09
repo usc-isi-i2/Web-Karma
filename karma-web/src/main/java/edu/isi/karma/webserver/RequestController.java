@@ -107,7 +107,7 @@ public class RequestController extends HttpServlet {
 		else if (isPreview) {
 			Command command = ctrl.getCommand(request);
 			try {
-				UpdateContainer updateContainer = ((IPreviewable) command).showPreview();
+				UpdateContainer updateContainer = ((IPreviewable) command).showPreview(request);
 				ctrl.getWorkspace().getCommandHistory().addPreviewCommand(command);
 				updateContainer.applyUpdates(vWorkspace);
 				responseString = updateContainer.generateJson(vWorkspace);

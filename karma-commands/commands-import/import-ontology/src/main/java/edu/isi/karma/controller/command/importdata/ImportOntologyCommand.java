@@ -118,7 +118,7 @@ public class ImportOntologyCommand extends ImportFileCommand implements IPreview
             case generatePreview: {
                 try {
 
-                    c = showPreview();
+                    c = showPreview(request);
                 } catch (CommandException e) {
                     logger.error(
                             "Error occured while creating utput JSON for JSON Import",
@@ -133,7 +133,7 @@ public class ImportOntologyCommand extends ImportFileCommand implements IPreview
     }
 
 	@Override
-	public UpdateContainer showPreview() throws CommandException {
+	public UpdateContainer showPreview(HttpServletRequest request) throws CommandException {
 		
         UpdateContainer c = new UpdateContainer();
         c.add(new ImportPropertiesUpdate(getFile(), encoding, -1, id));

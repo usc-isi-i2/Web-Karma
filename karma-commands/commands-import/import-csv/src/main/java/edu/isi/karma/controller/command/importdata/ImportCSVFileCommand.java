@@ -111,7 +111,7 @@ public class ImportCSVFileCommand extends ImportFileCommand implements
 	}
 
 	@Override
-	public UpdateContainer showPreview() throws CommandException {
+	public UpdateContainer showPreview(HttpServletRequest request) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		c.add(new CSVImportPreviewUpdate(delimiter, quoteCharacter,
 				escapeCharacter, encoding, maxNumLines, getFile(),
@@ -198,7 +198,7 @@ public class ImportCSVFileCommand extends ImportFileCommand implements
 		case generatePreview: {
 			try {
 
-				c = showPreview();
+				c = showPreview(request);
 			} catch (CommandException e) {
 				logger.error(
 						"Error occured while creating utput JSON for CSV Import",

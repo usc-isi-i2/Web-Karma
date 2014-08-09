@@ -104,7 +104,7 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
 
   
     @Override
-    public UpdateContainer showPreview()
+    public UpdateContainer showPreview(HttpServletRequest request)
             throws CommandException {
         UpdateContainer c = new UpdateContainer();
         if (requestedInteractionType == InteractionType.getPreferencesValues) {
