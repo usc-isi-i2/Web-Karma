@@ -108,7 +108,7 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
             throws CommandException {
         UpdateContainer c = new UpdateContainer();
         if (requestedInteractionType == InteractionType.getPreferencesValues) {
-            c.add(new FetchPreferencesUpdate(ImportDatabaseTableCommand.class.getSimpleName() + "Preferences"));
+            c.add(new FetchPreferencesUpdate(ImportDatabaseTableCommand.class.getSimpleName() + "Preferences", this.getId()));
             return c;
         }
 
@@ -180,8 +180,8 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
             // multiple tables
             ImportDatabaseTableCommand comm = new ImportDatabaseTableCommand(workspace.getFactory().getNewId("C"),
                     dbType.name(), hostname, portnumber, username, password, dBorSIDName);
-            workspace.getCommandHistory().setCurrentCommand(comm);
-            NewDatabaseCommandUpdate upd = new NewDatabaseCommandUpdate(comm);
+            workspace.getCommandHistory().addPreviewCommand(comm);
+            NewDatabaseCommandUpdate upd = new NewDatabaseCommandUpdate(comm.getId());
             c.add(upd);
         } catch (Throwable e) {
             String message = e.getMessage().replaceAll("\n", "").replaceAll("\"", "\\\"");

@@ -93,12 +93,15 @@ var FileFormatSelectionDialog = (function() {
             if ($("input:checkbox[name='RevisionCheck']").prop('checked')) {
                 urlString += "&revisedWorksheet=" + $('#revisedWorksheetSelector').val();
             }
-
+            var RequireFilter = $("input:checkbox[name='FilterCheck']", dialog).prop('checked');
+            urlString += "&filter=" + RequireFilter;
+            urlString += "&isPreview=true";
             urlString += "&command=";
-
+            console.log(urlString);
             $("#fileupload").fileupload({
             	url : urlString + "Import" + selectedFormat + "Command",
             	done : function(e, data) {
+                    console.log("done");
             		FileOptionsDialog.getInstance().show(data.result, selectedFormat);
             	}
             });
@@ -295,7 +298,7 @@ var FileOptionsDialog = (function() {
 			
 			options["workspaceId"] = $.workspaceGlobalInformation.id;
 			options["interactionType"] = "generatePreview";
-			
+			options["isUserInteraction"] = true;
 			if(execute) {
 				options["execute"] = true;
 				options["interactionType"] = "importTable";

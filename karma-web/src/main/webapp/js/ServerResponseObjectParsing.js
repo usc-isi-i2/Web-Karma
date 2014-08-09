@@ -498,7 +498,10 @@ function parse(data) {
 //			$("span.tag", tdTag).remove();
 				}
 				else if(element["updateType"] == "NewImportDatabaseTableCommandUpdate") {
-						$("#DatabaseImportDiv").data("commandId", element["commandId"]);
+						$("#databaseImportDialog").data("commandId", element["commandId"]);
+				}
+				else if(element["updateType"] == "ImportSQLCommandUpdate") {
+						$("#sqlImportDialog").data("commandId", element["commandId"]);
 				}
 				else if(element["updateType"] == "SemanticTypesUpdate") {
 						var wk = $("div#" + element["worksheetId"]);

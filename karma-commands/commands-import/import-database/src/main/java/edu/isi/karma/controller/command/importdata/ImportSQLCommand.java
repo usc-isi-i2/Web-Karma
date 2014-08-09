@@ -90,7 +90,7 @@ public class ImportSQLCommand extends ImportCommand implements IPreviewable {
             throws CommandException {
         UpdateContainer c = new UpdateContainer();
         if (requestedInteractionType == InteractionType.getPreferencesValues) {
-            c.add(new FetchPreferencesUpdate(ImportSQLCommand.class.getSimpleName() + "Preferences"));
+            c.add(new FetchPreferencesUpdate(ImportSQLCommand.class.getSimpleName() + "Preferences", this.getId()));
             return c;
         }
 
@@ -155,9 +155,9 @@ public class ImportSQLCommand extends ImportCommand implements IPreviewable {
             // multiple tables
             ImportSQLCommand comm = new ImportSQLCommand(workspace.getFactory().getNewId("C"),
                     dbType.name(), hostname, portnumber, username, password, dBorSIDName, query);
-            workspace.getCommandHistory().setCurrentCommand(comm);
+            workspace.getCommandHistory().addPreviewCommand(comm);
             c.add(new InfoUpdate("Sucessfully imported data using SQL"));
-            c.add(new SQLCommandUpdate(comm));
+            c.add(new SQLCommandUpdate(comm.getId()));
         } catch (Throwable e) {
             String message = e.getMessage().replaceAll("\n", "").replaceAll("\"", "\\\"");
             ErrorUpdate errUpdt = new ErrorUpdate(message);

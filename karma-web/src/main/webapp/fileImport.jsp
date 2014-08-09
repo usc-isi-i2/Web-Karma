@@ -68,6 +68,12 @@
 					    Revision of worksheet <select id="revisedWorksheetSelector"></select>
 					  </label>
 					</div>
+					<div class="checkbox">
+					  <label>
+					    <input type="checkbox" name="FilterCheck">
+					    Filter Columns
+					  </label>
+					</div>
 					<div class="error" style="display: none" id="fileFormatError">Please select the file format!</div>
 			  </div>
 			  <div class="modal-footer">

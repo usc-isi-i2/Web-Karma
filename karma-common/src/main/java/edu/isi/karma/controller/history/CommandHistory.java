@@ -24,7 +24,6 @@
 package edu.isi.karma.controller.history;
 
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,7 +60,7 @@ import edu.isi.karma.view.VWorkspace;
 public class CommandHistory {
 
 	private final List<ICommand> history = new ArrayList<ICommand>();
-
+	private final List<Command> previewCommands = new ArrayList<Command>();
 	private final List<ICommand> redoStack = new ArrayList<ICommand>();
 	/**
 	 * If the last command was undo, and then we do a command that goes on the
@@ -76,7 +75,6 @@ public class CommandHistory {
 	 * Used to keep a pointer to the command which require user-interaction
 	 * through multiple HTTP requests.
 	 */
-	private Command currentCommand;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
@@ -117,14 +115,6 @@ public class CommandHistory {
 
 	public CommandHistory clone() {
 		return new CommandHistory(history, redoStack);
-	}
-
-	public void setCurrentCommand(Command command) {
-		this.currentCommand = command;
-	}
-
-	public Command getCurrentCommand() {
-		return this.currentCommand;
 	}
 
 	/**
@@ -521,7 +511,23 @@ public class CommandHistory {
 		return retCommands;
 	}
 
-
+	public void addPreviewCommand(Command c) {
+		previewCommands.add(c);
+	}
+	
+	public Command getPreviewCommand(String commandId) {
+		for (Command c : previewCommands) {
+			if (c.getId().equals(commandId))
+				return c;
+		}
+		return null;
+	}
+	
+	public void removePreviewCommand(Command c) {
+		previewCommands.remove(c);
+		history.remove(c);
+	}
+	
 	private static boolean isHistoryWriteEnabled = false;
 	public static boolean isHistoryEnabled()
 	{
