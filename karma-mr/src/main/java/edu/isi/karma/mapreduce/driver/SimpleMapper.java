@@ -86,7 +86,7 @@ public class SimpleMapper extends Mapper<Text, Text, Text, Text>{
 				continue;
 			}
 			int splitBetweenSubjectAndPredicate = line.indexOf(' ');
-			context.write(new Text(line.substring(0, splitBetweenSubjectAndPredicate)), new Text(line.substring(splitBetweenSubjectAndPredicate)+1));
+			context.write(new Text(line.substring(0, splitBetweenSubjectAndPredicate)), new Text(line));
 		}
 	}
 }
