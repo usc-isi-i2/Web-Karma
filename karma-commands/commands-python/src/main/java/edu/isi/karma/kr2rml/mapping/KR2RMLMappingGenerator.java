@@ -583,6 +583,10 @@ public class KR2RMLMappingGenerator {
 					{
 						alreadyExists = true;
 					}
+					else if(!pom.getObject().hasRefObjectMap())
+					{
+						alreadyExists = true;
+					}
 				}
 			}
 		}
