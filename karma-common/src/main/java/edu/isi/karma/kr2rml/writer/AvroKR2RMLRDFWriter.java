@@ -315,36 +315,34 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void collapseSameType(GenericRecord obj) {
-		Object rawTypes = obj.get("rdf_type");
-		if (rawTypes != null && rawTypes instanceof GenericArray) {
-			GenericArray<String> types = (GenericArray<String>)rawTypes;
-
-			Set<String> typesHash = new HashSet<String>();
-			boolean unmodified = true;
-			for(String type : types)
-			{
-				unmodified &= typesHash.add(type);
-			}
-			if(!unmodified)
-			{
-				GenericArray<String> newTypes = new GenericData.Array<String>(types.getSchema(), typesHash);
-				obj.put("rdf_type", newTypes);
-			}
-		}
+		
 		for (Field f : obj.getSchema().getFields()) {
-			
 			Object value = obj.get(f.name());
+			if(value == null)
+			{
+				continue;
+			}
 			if (value instanceof GenericRecord)
 				collapseSameType((GenericRecord)value);
 			if (value instanceof GenericArray) {
 				GenericArray array = (GenericArray)value;
+				Set<Object> valuesHash = new HashSet<Object>();
+				boolean unmodified = true;
 				for (int i = 0; i < array.size(); i++) {
 					Object o = array.get(i);
 					if (o instanceof GenericRecord)
 						collapseSameType((GenericRecord) o);
+					
+					unmodified &= valuesHash.add(o);
+					
+					
+				}
+				if(!unmodified)
+				{
+					GenericArray<Object> newValues = new GenericData.Array<Object>(array.getSchema(), valuesHash);
+					obj.put(f.name(), newValues);
 				}
 			}
 		}
