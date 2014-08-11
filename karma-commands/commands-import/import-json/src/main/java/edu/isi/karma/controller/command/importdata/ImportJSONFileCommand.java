@@ -73,10 +73,10 @@ public class ImportJSONFileCommand extends ImportFileCommand implements IPreview
     }
     
     @Override
-    public UpdateContainer showPreview(HttpServletRequest request, VWorkspace vWorkspace) throws CommandException {
+    public UpdateContainer showPreview(HttpServletRequest request) throws CommandException {
     	boolean filter = Boolean.parseBoolean(request.getParameter("filter"));
     	if (!filter)
-    		return super.showPreview(request, vWorkspace);
+    		return super.showPreview(request);
     	final Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
     	Import imp = new JsonImport(getFile(), getFile().getName(), workspace, encoding, 1000);
     	try {
@@ -123,7 +123,7 @@ public class ImportJSONFileCommand extends ImportFileCommand implements IPreview
     
     public UpdateContainer handleUserActions(HttpServletRequest request, VWorkspace vWorkspace) {
     	columnsJson = request.getParameter("columnsJson");
-    	return super.handleUserActions(request, vWorkspace);
+    	return super.handleUserActions(request);
     }
    
 }

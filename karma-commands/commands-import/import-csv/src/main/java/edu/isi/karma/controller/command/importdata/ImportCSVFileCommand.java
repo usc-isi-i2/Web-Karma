@@ -38,7 +38,6 @@ import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
-import edu.isi.karma.view.VWorkspace;
 
 public class ImportCSVFileCommand extends ImportFileCommand implements
 		IPreviewable {
@@ -112,7 +111,7 @@ public class ImportCSVFileCommand extends ImportFileCommand implements
 	}
 
 	@Override
-	public UpdateContainer showPreview(HttpServletRequest request, VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer showPreview(HttpServletRequest request) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		c.add(new CSVImportPreviewUpdate(delimiter, quoteCharacter,
 				escapeCharacter, encoding, maxNumLines, getFile(),
@@ -121,7 +120,7 @@ public class ImportCSVFileCommand extends ImportFileCommand implements
 	}
 
 	@Override
-	public UpdateContainer handleUserActions(HttpServletRequest request, VWorkspace vWorkspace) {
+	public UpdateContainer handleUserActions(HttpServletRequest request) {
 		/**
 		 * Set the parameters *
 		 */
@@ -199,7 +198,7 @@ public class ImportCSVFileCommand extends ImportFileCommand implements
 		case generatePreview: {
 			try {
 
-				c = showPreview(request, vWorkspace);
+				c = showPreview(request);
 			} catch (CommandException e) {
 				logger.error(
 						"Error occured while creating utput JSON for CSV Import",

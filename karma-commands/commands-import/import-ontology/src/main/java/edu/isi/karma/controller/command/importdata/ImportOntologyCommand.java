@@ -22,6 +22,14 @@
  */
 package edu.isi.karma.controller.command.importdata;
 
+import java.io.File;
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.update.AbstractUpdate;
@@ -33,14 +41,6 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.view.VWorkspace;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-
-import java.io.File;
-import java.io.PrintWriter;
 
 public class ImportOntologyCommand extends ImportFileCommand implements IPreviewable {
 
@@ -96,7 +96,7 @@ public class ImportOntologyCommand extends ImportFileCommand implements IPreview
     }
     
     @Override
-    public UpdateContainer handleUserActions(HttpServletRequest request, VWorkspace vWorkspace) {
+    public UpdateContainer handleUserActions(HttpServletRequest request) {
        
         String strEncoding = request.getParameter("encoding");
         if(strEncoding == null || strEncoding == "") {
@@ -118,7 +118,7 @@ public class ImportOntologyCommand extends ImportFileCommand implements IPreview
             case generatePreview: {
                 try {
 
-                    c = showPreview(request, vWorkspace);
+                    c = showPreview(request);
                 } catch (CommandException e) {
                     logger.error(
                             "Error occured while creating utput JSON for JSON Import",
@@ -133,7 +133,7 @@ public class ImportOntologyCommand extends ImportFileCommand implements IPreview
     }
 
 	@Override
-	public UpdateContainer showPreview(HttpServletRequest request, VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer showPreview(HttpServletRequest request) throws CommandException {
 		
         UpdateContainer c = new UpdateContainer();
         c.add(new ImportPropertiesUpdate(getFile(), encoding, -1, id));

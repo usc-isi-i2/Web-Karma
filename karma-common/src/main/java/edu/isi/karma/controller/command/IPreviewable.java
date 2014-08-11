@@ -3,7 +3,6 @@ package edu.isi.karma.controller.command;
 import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.view.VWorkspace;
 
 /**
  * All commands that need a preview before executing should implement this interface
@@ -15,11 +14,11 @@ public interface IPreviewable {
     /*
      * Show the preview
      */
-    public UpdateContainer showPreview(HttpServletRequest request, VWorkspace vWorkspace)
+    public UpdateContainer showPreview(HttpServletRequest request)
             throws CommandException;
 
     /*
      * React to the user actions in the preview
      */
-    public UpdateContainer handleUserActions(HttpServletRequest request, VWorkspace vWorkspace);
+    public UpdateContainer handleUserActions(HttpServletRequest request);
 }

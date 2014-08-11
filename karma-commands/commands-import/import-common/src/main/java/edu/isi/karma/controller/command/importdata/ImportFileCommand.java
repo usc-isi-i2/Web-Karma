@@ -16,7 +16,6 @@ import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.update.ImportPropertiesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.util.EncodingDetector;
-import edu.isi.karma.view.VWorkspace;
 
 /**
  * This abstract class in an interface to all Commands that import data from files
@@ -70,7 +69,7 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 
 
 	@Override
-	public UpdateContainer handleUserActions(HttpServletRequest request, VWorkspace vWorkspace) {
+	public UpdateContainer handleUserActions(HttpServletRequest request) {
 
 		String strEncoding = request.getParameter("encoding");
 		if(strEncoding == null || strEncoding == "") {
@@ -102,7 +101,7 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 		case generatePreview: {
 			try {
 
-				c = showPreview(request, vWorkspace);
+				c = showPreview(request);
 			} catch (CommandException e) {
 				logger.error(
 						"Error occured while creating output",
@@ -117,7 +116,7 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 	}
 
 	@Override
-	public UpdateContainer showPreview(HttpServletRequest request, VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer showPreview(HttpServletRequest request) throws CommandException {
 
 		UpdateContainer c = new UpdateContainer();
 		c.add(new ImportPropertiesUpdate(getFile(), encoding, maxNumLines, id));
