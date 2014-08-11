@@ -303,6 +303,8 @@ var FileOptionsDialog = (function() {
 				options["interactionType"] = "importTable";
 				console.log(columnsJson);
 				options["columnsJson"] = JSON.stringify(columnsJson);
+				if (columnsJson === "")
+					options["columnsJson"] = "";
 				showWaitingSignOnScreen();
 			}
 			
