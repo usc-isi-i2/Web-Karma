@@ -68,8 +68,9 @@ public class ImportJSONFileCommand extends ImportFileCommand implements IPreview
     
     @Override
     protected Import createImport(Workspace workspace) {
-    	System.out.println(columnsJson);
-        return new JsonImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines);
+    	JSONObject tree = generateSelectTree(columnsJson, true);
+    	System.out.println(tree.toString(4));
+        return new JsonImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines, tree);
     }
     
     @Override
@@ -78,7 +79,7 @@ public class ImportJSONFileCommand extends ImportFileCommand implements IPreview
     	if (!filter)
     		return super.showPreview(request);
     	final Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
-    	Import imp = new JsonImport(getFile(), getFile().getName(), workspace, encoding, 1000);
+    	Import imp = new JsonImport(getFile(), getFile().getName(), workspace, encoding, 1000, null);
     	try {
 			final Worksheet worksheet = imp.generateWorksheet();
 			UpdateContainer uc = new UpdateContainer(new ImportPropertiesUpdate(getFile(), encoding, maxNumLines, id));			
@@ -121,9 +122,28 @@ public class ImportJSONFileCommand extends ImportFileCommand implements IPreview
     	
     }
     
-    public UpdateContainer handleUserActions(HttpServletRequest request, VWorkspace vWorkspace) {
+    @Override
+    public UpdateContainer handleUserActions(HttpServletRequest request) {
     	columnsJson = request.getParameter("columnsJson");
     	return super.handleUserActions(request);
+    }
+    
+    private JSONObject generateSelectTree(String columnsJson, boolean visible) {
+    	if (columnsJson == null || columnsJson.trim().isEmpty())
+    		return null;
+    	JSONArray array = new JSONArray(columnsJson);
+    	JSONObject tree = new JSONObject();
+    	tree = tree.put("root", true);
+    	for (int i = 0; i < array.length(); i++) {
+    		JSONObject obj = array.getJSONObject(i);
+    		boolean v = Boolean.parseBoolean(obj.get(JsonKeys.visible.name()).toString());
+    		tree.put(obj.getString(JsonKeys.name.name()), v & visible);
+    		if (obj.has(JsonKeys.children.name())) {
+    			String value = obj.get(JsonKeys.children.name()).toString();
+    			tree.put(JsonKeys.children.name(), generateSelectTree(value, v & visible));
+    		}
+    	}
+    	return tree;
     }
    
 }

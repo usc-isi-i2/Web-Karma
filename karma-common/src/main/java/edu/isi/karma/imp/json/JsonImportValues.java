@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
@@ -30,11 +31,14 @@ public class JsonImportValues {
 	private int numObjects;
 	private RepFactory factory;
 	private Worksheet worksheet;
-	public JsonImportValues(int maxNumLines, int numObjects, RepFactory factory, Worksheet worksheet) {
+	private JSONObject columnsJson;
+	public JsonImportValues(int maxNumLines, int numObjects, RepFactory factory, 
+			Worksheet worksheet, JSONObject columnsJson) {
 		this.maxNumLines = maxNumLines;
 		this.numObjects = numObjects;
 		this.factory = factory;
 		this.worksheet = worksheet;
+		this.columnsJson = columnsJson;
 	}
 	public void addObjectElement(String key, Object value, HTable headers,
 			Row row) throws JSONException {
@@ -81,29 +85,38 @@ public class JsonImportValues {
 			Row row) throws JSONException {
 		HNode hNode = addHNode(headers, key, DataStructure.OBJECT, factory, worksheet);
 
-		String hNodeId = hNode.getId();
+		String hNodeId = hNode == null ? null : hNode.getId();
 		char c = token.nextClean();
 		if (maxNumLines > 0 && numObjects >= maxNumLines)
 			return;
 		if (c != '{' && c != '[') {
 			token.back();
 			String value = token.nextValue().toString();
-			if (value.isEmpty() && hNode.hasNestedTable()) {
+			if (value.isEmpty() && hNode != null && hNode.hasNestedTable()) {
 				addEmptyRow(row.getNode(hNodeId).getNestedTable(), hNode);
 			}
-			row.setValue(hNodeId, value, factory);
+			if (hNodeId != null)
+				row.setValue(hNodeId, value, factory);
 		}
 		else if (c == '{') {
 			if (maxNumLines <= 0 || numObjects < maxNumLines) {
-				HTable nestedHTable = addNestedHTable(hNode, key, row);
-				Table nestedTable = row.getNode(hNodeId).getNestedTable();
-				addKeysAndValues(token, nestedHTable, nestedTable);
+				if (hNode != null) {
+					HTable nestedHTable = addNestedHTable(hNode, key, row);
+					Table nestedTable = row.getNode(hNodeId).getNestedTable();
+					addKeysAndValues(token, nestedHTable, nestedTable);
+				}
+				else
+					addKeysAndValues(token, null, null);
 			}
 		} else if (c == '[') {
 			if (maxNumLines <= 0 || numObjects < maxNumLines) {
-				HTable nestedHTable = addNestedHTable(hNode, key, row);
-				Table nestedTable = row.getNode(hNodeId).getNestedTable();
-				addListElement(token, nestedHTable, nestedTable);
+				if (hNode != null) {
+					HTable nestedHTable = addNestedHTable(hNode, key, row);
+					Table nestedTable = row.getNode(hNodeId).getNestedTable();
+					addListElement(token, nestedHTable, nestedTable);
+				}
+				else
+					addListElement(token, null, null);
 			}
 		} else {
 			throw new Error("Cannot handle " + key + " yet.");
@@ -151,7 +164,9 @@ public class JsonImportValues {
 		if (maxNumLines > 0 && numObjects >= maxNumLines)
 			return;
 
-		Row nestedRow = nestedTable.addRow(factory);
+		Row nestedRow = null;
+		if (nestedTable != null)
+			nestedRow = nestedTable.addRow(factory);
 		numObjects++;
 		// if(maxNumLines > 0 && numObjects >= maxNumLines)
 		// return;
@@ -253,11 +268,13 @@ public class JsonImportValues {
 			if (c != '{' && c != '[') {
 				token.back();
 				HNode hNode = addHNode(headers, HTable.VALUES_COLUMN, DataStructure.PRIMITIVE, factory, worksheet);
-				String hNodeId = hNode.getId();
-				Row row = dataTable.addRow(factory);
-				numObjects++;
+				String hNodeId = hNode == null ? null : hNode.getId();
 				String value = token.nextValue().toString();
-				row.setValue(hNodeId, value, factory);
+				if (hNodeId != null) {
+					Row row = dataTable.addRow(factory);
+					numObjects++;
+					row.setValue(hNodeId, value, factory);
+				}
 			}
 			else if (c == '{') {
 				if (maxNumLines <= 0 || numObjects < maxNumLines) {
@@ -268,15 +285,19 @@ public class JsonImportValues {
 			else if (c == '[') {
 				if (maxNumLines <= 0 || numObjects < maxNumLines) {
 					HNode hNode = addHNode(headers, "nested array", DataStructure.COLLECTION, factory, worksheet);
-					String hNodeId = hNode.getId();
-					Row row = dataTable.addRow(factory);
-					numObjects++;
-					if (maxNumLines > 0 && numObjects >= maxNumLines)
-						return;
-					HTable nestedHTable = addNestedHTable(hNode,
-							"nested array values", row);
-					Table nestedTable = row.getNode(hNodeId).getNestedTable();
-					addListElement(token, nestedHTable, nestedTable);
+					String hNodeId = hNode == null ? null : hNode.getId();
+					if (hNodeId == null) {
+						Row row = dataTable.addRow(factory);
+						numObjects++;
+						if (maxNumLines > 0 && numObjects >= maxNumLines)
+							return;
+						HTable nestedHTable = addNestedHTable(hNode,
+								"nested array values", row);
+						Table nestedTable = row.getNode(hNodeId).getNestedTable();
+						addListElement(token, nestedHTable, nestedTable);
+					}
+					else
+						addListElement(token, null, null);
 				}
 			} 
 			else {
@@ -326,8 +347,10 @@ public class JsonImportValues {
 	}
 
 	public HNode addHNode(HTable headers, String key, DataStructure dataStructure, RepFactory factory, Worksheet worksheet) {
+		if (headers == null)
+			return null;
 		HNode hn = headers.getHNodeFromColumnName(key);
-		if (hn == null) {
+		if (hn == null && isVisible(headers, key, factory)) {
 			hn = headers.addHNode(key, HNodeType.Regular, worksheet, factory);
 			Worksheet ws = worksheet;
 			ws.getMetadataContainer().getColumnMetadata().addColumnDataStructure(hn.getId(), dataStructure);
@@ -337,6 +360,31 @@ public class JsonImportValues {
 
 	public String createNestedTableName(String key) {
 		return "Table for " + key;
+	}
+
+	private boolean isVisible(HTable headers, String key, RepFactory factory) {
+		if (columnsJson == null)
+			return true;
+		HNode hn = headers.getParentHNode();
+		JSONObject tree = columnsJson.getJSONObject("children");
+		if (hn != null) {
+			HNodePath hPath = hn.getHNodePath(factory);
+			HNode first = hPath.getFirst();
+			while (first != hn) {
+				String colName = first.getColumnName();
+				if (tree == null || !tree.has(colName) || !tree.has("children"))
+					return true;
+				tree = tree.getJSONObject("children");
+				hPath = hPath.getRest();
+			}
+			if (tree == null || !tree.has("children"))
+				return true;
+			tree = tree.getJSONObject("children");
+		}
+		if (tree.has(key))
+			return tree.getBoolean(key);
+		else
+			return true;
 	}
 
 }

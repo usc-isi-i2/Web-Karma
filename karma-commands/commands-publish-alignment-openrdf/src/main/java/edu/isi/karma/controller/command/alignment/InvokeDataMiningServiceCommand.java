@@ -153,7 +153,7 @@ public class InvokeDataMiningServiceCommand extends WorksheetCommand {
         	fw.close();
         	buf.close();
         	
-			Import impJson = new JsonImport(new File(fileName), fName, workspace, "UTF-8", -1);
+			Import impJson = new JsonImport(new File(fileName), fName, workspace, "UTF-8", -1, null);
             Worksheet wsht = impJson.generateWorksheet();
 //            Worksheet wsht2, wsht3;
             logger.info("Creating worksheet with json : " + wsht.getId());
