@@ -3,9 +3,11 @@ package edu.isi.karma.imp.json;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,9 +33,10 @@ public class JsonImportValues {
 	private int numObjects;
 	private RepFactory factory;
 	private Worksheet worksheet;
-	private JSONObject columnsJson;
+	private JSONArray columnsJson;
+	private Map<String, Boolean> columnsCache = new HashMap<String, Boolean>();
 	public JsonImportValues(int maxNumLines, int numObjects, RepFactory factory, 
-			Worksheet worksheet, JSONObject columnsJson) {
+			Worksheet worksheet, JSONArray columnsJson) {
 		this.maxNumLines = maxNumLines;
 		this.numObjects = numObjects;
 		this.factory = factory;
@@ -365,26 +368,61 @@ public class JsonImportValues {
 	private boolean isVisible(HTable headers, String key, RepFactory factory) {
 		if (columnsJson == null)
 			return true;
-		HNode hn = headers.getParentHNode();
-		JSONObject tree = columnsJson.getJSONObject("children");
+		HNode hn = headers.getParentHNode();		
 		if (hn != null) {
 			HNodePath hPath = hn.getHNodePath(factory);
+			String path = hPath.toColumnNamePath() + "/" + key;
+			Boolean b = columnsCache.get(path);
+			if (b != null)
+				return b;
 			HNode first = hPath.getFirst();
-			while (first != hn) {
-				String colName = first.getColumnName();
-				if (tree == null || !tree.has(colName) || !tree.has("children"))
+			JSONArray t = columnsJson;
+			JSONObject tree = getCorrespondingObject(t, first.getColumnName());
+			while (first != hn) {				
+				tree = getCorrespondingObject(t, first.getColumnName());
+				if (t == null || !tree.has("children")) {
+					columnsCache.put(path, true);
 					return true;
-				tree = tree.getJSONObject("children");
+				}
+				t = tree.getJSONArray("children");
 				hPath = hPath.getRest();
 			}
-			if (tree == null || !tree.has("children"))
+			if (tree == null || !tree.has("children")) {
+				columnsCache.put(path, true);
 				return true;
-			tree = tree.getJSONObject("children");
+			}
+			JSONObject obj = getCorrespondingObject(tree.getJSONArray("children"), key);
+			if (obj == null || !obj.has(key)) {
+				columnsCache.put(path, true);
+				return true;
+			}
+			b = obj.getBoolean(key);
+			columnsCache.put(path, b);
+			return b;
 		}
-		if (tree.has(key))
-			return tree.getBoolean(key);
-		else
-			return true;
+		else {
+			Boolean b = columnsCache.get(key);
+			if (b != null)
+				return b;
+			JSONObject obj = getCorrespondingObject(columnsJson, key);
+			if (obj == null || !obj.has(key)) {
+				columnsCache.put(key, true);
+				return true;
+			}
+			b = obj.getBoolean(key);
+			columnsCache.put(key, b);
+			return b;
+		}
+		
+	}
+	
+	private JSONObject getCorrespondingObject(JSONArray array, String colName) {
+		for (int i = 0; i < array.length(); i++) {
+			JSONObject obj = array.getJSONObject(i);
+			if (obj.has(colName))
+				return obj;
+		}
+		return null;
 	}
 
 }

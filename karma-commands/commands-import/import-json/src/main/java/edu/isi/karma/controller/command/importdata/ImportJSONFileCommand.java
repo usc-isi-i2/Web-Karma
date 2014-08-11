@@ -68,8 +68,7 @@ public class ImportJSONFileCommand extends ImportFileCommand implements IPreview
     
     @Override
     protected Import createImport(Workspace workspace) {
-    	JSONObject tree = generateSelectTree(columnsJson, true);
-    	System.out.println(tree.toString(4));
+    	JSONArray tree = generateSelectTree(columnsJson, true);
         return new JsonImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines, tree);
     }
     
@@ -128,20 +127,21 @@ public class ImportJSONFileCommand extends ImportFileCommand implements IPreview
     	return super.handleUserActions(request);
     }
     
-    private JSONObject generateSelectTree(String columnsJson, boolean visible) {
+    private JSONArray generateSelectTree(String columnsJson, boolean visible) {
     	if (columnsJson == null || columnsJson.trim().isEmpty())
     		return null;
     	JSONArray array = new JSONArray(columnsJson);
-    	JSONObject tree = new JSONObject();
-    	tree = tree.put("root", true);
+    	JSONArray tree = new JSONArray();
     	for (int i = 0; i < array.length(); i++) {
     		JSONObject obj = array.getJSONObject(i);
+    		JSONObject newObj = new JSONObject();
     		boolean v = Boolean.parseBoolean(obj.get(JsonKeys.visible.name()).toString());
-    		tree.put(obj.getString(JsonKeys.name.name()), v & visible);
+    		newObj.put(obj.getString(JsonKeys.name.name()), v & visible);
     		if (obj.has(JsonKeys.children.name())) {
     			String value = obj.get(JsonKeys.children.name()).toString();
-    			tree.put(JsonKeys.children.name(), generateSelectTree(value, v & visible));
+    			newObj.put(JsonKeys.children.name(), generateSelectTree(value, v & visible));
     		}
+    		tree.put(newObj);
     	}
     	return tree;
     }

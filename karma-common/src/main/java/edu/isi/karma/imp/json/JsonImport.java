@@ -58,7 +58,7 @@ public class JsonImport extends Import {
 	private int maxNumLines;
 	private int numObjects;
 	private Workspace workspace;
-	private JSONObject columnsJson;
+	private JSONArray columnsJson;
 	private class FileObject {
 		File file;
 		String encoding;
@@ -77,13 +77,13 @@ public class JsonImport extends Import {
 	}
 
 	public JsonImport(File jsonFile, String worksheetName, Workspace workspace,
-			String encoding, int maxNumLines, JSONObject columnsJson) {
+			String encoding, int maxNumLines, JSONArray tree) {
 		super(worksheetName, workspace, encoding);
 		FileObject fo = new FileObject(jsonFile, encoding);
 		this.json = fo;
 		this.workspace = workspace;
 		this.maxNumLines = maxNumLines;
-		this.columnsJson = columnsJson;
+		this.columnsJson = tree;
 	}
 
 	public JsonImport(String jsonString, String worksheetName,
