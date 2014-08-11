@@ -100,7 +100,7 @@ var FileFormatSelectionDialog = (function() {
 				url : urlString + "Import" + selectedFormat + "Command",
 				done : function(e, data) {
 					console.log("done");
-					if (RequireFilter)
+					if (RequireFilter && selectedFormat === "JSON")
 						SelectColumnsDialog.getInstance(data.result, selectedFormat).show();
 					else
 						FileOptionsDialog.getInstance().show(data.result, selectedFormat, "");

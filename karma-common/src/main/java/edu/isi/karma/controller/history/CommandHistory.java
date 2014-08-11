@@ -60,7 +60,7 @@ import edu.isi.karma.view.VWorkspace;
 public class CommandHistory {
 
 	private final List<ICommand> history = new ArrayList<ICommand>();
-	private final List<Command> previewCommands = new ArrayList<Command>();
+	private Command previewCommand;
 	private final List<ICommand> redoStack = new ArrayList<ICommand>();
 	/**
 	 * If the last command was undo, and then we do a command that goes on the
@@ -469,7 +469,7 @@ public class CommandHistory {
 					
 				}
 			} catch (Exception e) {
-				logger.error("Unable to remove command " + command.getCommandName(), e);
+				logger.error("Unable to remove command " + command.getCommandName());
 			}
 		}
 		history.removeAll(commandsFromWorksheet);
@@ -512,20 +512,13 @@ public class CommandHistory {
 	}
 
 	public void addPreviewCommand(Command c) {
-		previewCommands.add(c);
+		previewCommand = c;
 	}
 	
 	public Command getPreviewCommand(String commandId) {
-		for (Command c : previewCommands) {
-			if (c.getId().equals(commandId))
-				return c;
-		}
+		if (previewCommand.getId().equals(commandId))
+			return previewCommand;
 		return null;
-	}
-	
-	public void removePreviewCommand(Command c) {
-		previewCommands.remove(c);
-		history.remove(c);
 	}
 	
 	private static boolean isHistoryWriteEnabled = false;
