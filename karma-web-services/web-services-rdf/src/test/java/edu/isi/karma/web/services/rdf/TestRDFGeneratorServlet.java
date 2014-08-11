@@ -3,6 +3,7 @@ package edu.isi.karma.web.services.rdf;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -70,7 +71,13 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 	@Test
 	public void testR2RMLRDFVirtuoso() throws IOException,
 			MalformedURLException, ProtocolException {
-
+		URL url = new URL("http://fusion-sqid.isi.edu");
+		try {
+			InputStreamReader reader = new InputStreamReader(url.openStream());
+			reader.read();
+		}catch(Exception e) {
+			return;
+		}
 		WebResource webRes = resource().path("r2rml/rdf/sparql");
 
 		MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
