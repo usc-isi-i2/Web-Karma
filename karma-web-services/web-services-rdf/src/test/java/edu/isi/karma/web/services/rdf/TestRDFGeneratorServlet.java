@@ -71,7 +71,7 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 	@Test
 	public void testR2RMLRDFVirtuoso() throws IOException,
 			MalformedURLException, ProtocolException {
-		URL url = new URL("http://fusion-sqid.isi.edu");
+		URL url = new URL("http://fusion-sqid.isi.edu:8890");
 		try {
 			InputStreamReader reader = new InputStreamReader(url.openStream());
 			reader.read();
