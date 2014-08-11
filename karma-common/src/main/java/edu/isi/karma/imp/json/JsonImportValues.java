@@ -168,9 +168,10 @@ public class JsonImportValues {
 			return;
 
 		Row nestedRow = null;
-		if (nestedTable != null)
+		if (nestedTable != null) {
 			nestedRow = nestedTable.addRow(factory);
-		numObjects++;
+			numObjects++;
+		}
 		// if(maxNumLines > 0 && numObjects >= maxNumLines)
 		// return;
 		char c = token.nextClean();
@@ -281,7 +282,8 @@ public class JsonImportValues {
 			}
 			else if (c == '{') {
 				if (maxNumLines <= 0 || numObjects < maxNumLines) {
-					numObjects++;
+					if (headers != null && dataTable != null)
+						numObjects++;
 					addKeysAndValues(token, headers, dataTable);
 				}
 			}
@@ -289,7 +291,7 @@ public class JsonImportValues {
 				if (maxNumLines <= 0 || numObjects < maxNumLines) {
 					HNode hNode = addHNode(headers, "nested array", DataStructure.COLLECTION, factory, worksheet);
 					String hNodeId = hNode == null ? null : hNode.getId();
-					if (hNodeId == null) {
+					if (hNodeId != null) {
 						Row row = dataTable.addRow(factory);
 						numObjects++;
 						if (maxNumLines > 0 && numObjects >= maxNumLines)
@@ -303,7 +305,7 @@ public class JsonImportValues {
 						addListElement(token, null, null);
 				}
 			} 
-			else {
+			else if (c != ','){
 				logger.error("Cannot handle whatever case is not covered by the if statements. Sorry.");
 
 			}
@@ -375,17 +377,18 @@ public class JsonImportValues {
 			Boolean b = columnsCache.get(path);
 			if (b != null)
 				return b;
-			HNode first = hPath.getFirst();
+			HNode first = null;
 			JSONArray t = columnsJson;
-			JSONObject tree = getCorrespondingObject(t, first.getColumnName());
+			JSONObject tree = null;
 			while (first != hn) {				
+				first = hPath.getFirst();
 				tree = getCorrespondingObject(t, first.getColumnName());
-				if (t == null || !tree.has("children")) {
+				if (tree == null || !tree.has("children")) {
 					columnsCache.put(path, true);
 					return true;
 				}
 				t = tree.getJSONArray("children");
-				hPath = hPath.getRest();
+				hPath = hPath.getRest();				
 			}
 			if (tree == null || !tree.has("children")) {
 				columnsCache.put(path, true);
