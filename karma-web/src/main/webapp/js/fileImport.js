@@ -19,47 +19,46 @@ $('#fileupload').fileupload('option', 'redirect', window.location.href.replace(/
 
 
 var FileFormatSelectionDialog = (function() {
-		var instance = null;
+	var instance = null;
 
-		function PrivateConstructor() {
-			var dialog = $("#fileFormatSelectionDialog");
+	function PrivateConstructor() {
+		var dialog = $("#fileFormatSelectionDialog");
 			
-			function init() {
-				//Initialize what happens when we show the dialog
+		function init() {
+			//Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function (e) {
 				$("span#fileFormatError").hide();
-								$("input:radio[name=FileFormatSelection]").attr("checked", false);
+				$("input:radio[name=FileFormatSelection]").attr("checked", false);
 								
-								var fileName = $("#fileFormatSelectionDialog").data("fileName");
-								console.log("show.bs.modal::Select filename:" + fileName);
-								if(fileName.match(".csv$") || fileName.match(".tsv$") || fileName.match(".txt$") || fileName.match(".log$")) {
-										$(":radio[name=FileFormatSelection][value=CSVFile]").prop("checked", true);
-								} else if(fileName.match(".xml$")) {
-										$(":radio[name=FileFormatSelection][value=XMLFile]").prop("checked", true);
-								} else if(fileName.match(".xls$") || fileName.match(".xlsx$")) {
-										$(":radio[name=FileFormatSelection][value=ExcelFile]").prop("checked", true);
-								} else if(fileName.match(".owl$") || fileName.match(".rdf$") || fileName.match(".n3$") || fileName.match(".ttl$")) {
-										$(":radio[name=FileFormatSelection][value=Ontology]").prop("checked", true);
-								} else if(fileName.match(".json$")) {
-										$(":radio[name=FileFormatSelection][value=JSONFile]").prop("checked", true);
-								}else if(fileName.match(".avro$")) {
-										$(":radio[name=FileFormatSelection][value=AvroFile]").prop("checked", true);
-								}
+				var fileName = $("#fileFormatSelectionDialog").data("fileName");
+				console.log("show.bs.modal::Select filename:" + fileName);
+				if(fileName.match(".csv$") || fileName.match(".tsv$") || 
+					fileName.match(".txt$") || fileName.match(".log$")) {
+					$(":radio[name=FileFormatSelection][value=CSVFile]").prop("checked", true);
+				} else if(fileName.match(".xml$")) {
+					$(":radio[name=FileFormatSelection][value=XMLFile]").prop("checked", true);
+				} else if(fileName.match(".xls$") || fileName.match(".xlsx$")) {
+					$(":radio[name=FileFormatSelection][value=ExcelFile]").prop("checked", true);
+				} else if(fileName.match(".owl$") || fileName.match(".rdf$") || fileName.match(".n3$") || fileName.match(".ttl$")) {
+					$(":radio[name=FileFormatSelection][value=Ontology]").prop("checked", true);
+				} else if(fileName.match(".json$")) {
+					$(":radio[name=FileFormatSelection][value=JSONFile]").prop("checked", true);
+				}else if(fileName.match(".avro$")) {
+					$(":radio[name=FileFormatSelection][value=AvroFile]").prop("checked", true);
+				}
 								
 				var worksheets = $('.Worksheet');
-								if (worksheets.size() > 0){
-										disableRevision(false);
-	
-										worksheets.each(function(){
-												var item = $('<option />');
-												item.val($(this).attr('id'));
-												item.text($(this).find('.WorksheetTitle').text());
-
-												$('#revisedWorksheetSelector').append(item);
-										});
-								} else {
-										disableRevision(true);
-								}
+				if (worksheets.size() > 0){
+					disableRevision(false);	
+					worksheets.each(function(){
+						var item = $('<option />');
+						item.val($(this).attr('id'));
+						item.text($(this).find('.WorksheetTitle').text());
+						$('#revisedWorksheetSelector').append(item);
+					});
+				} else {
+					disableRevision(true);
+				}
 			});
 			
 			//Initialize handler for Save button
@@ -67,98 +66,96 @@ var FileFormatSelectionDialog = (function() {
 			$('#btnSave', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
-								dialog.modal('hide');
+				dialog.modal('hide');
 			});
-			}
+		}
 			
 		
 		function disableRevision (disabled){
-						$('#revisedWorksheetSelector').prop('disabled', disabled);
-						$("input:checkbox[name='RevisionCheck']").prop('disabled', disabled);
-				};
+			$('#revisedWorksheetSelector').prop('disabled', disabled);
+			$("input:checkbox[name='RevisionCheck']").prop('disabled', disabled);
+		};
 				
-				function saveDialog(e) {
-					console.log("Save clicked");
+		function saveDialog(e) {
+			console.log("Save clicked");
 			var data = dialog.data("formData");
 			var selectedFormat = $("input:radio[name='FileFormatSelection']:checked").val();
 			console.log("Selected format:" + selectedFormat);
-						if(selectedFormat == null || selectedFormat == "") {
-								$("span#fileFormatError").show();
-								return false;
-						}
-
-						var urlString = "RequestController?workspaceId=" + $.workspaceGlobalInformation.id;
-						
-						//MVS: add the id of the revised worksheet in the request
-						if ($("input:checkbox[name='RevisionCheck']").prop('checked')) {
-								urlString += "&revisedWorksheet=" + $('#revisedWorksheetSelector').val();
-						}
-						var RequireFilter = $("input:checkbox[name='FilterCheck']", dialog).prop('checked');
-						urlString += "&filter=" + RequireFilter;
-						urlString += "&isPreview=true";
-						urlString += "&command=";
-						console.log(urlString);
-						$("#fileupload").fileupload({
-							url : urlString + "Import" + selectedFormat + "Command",
-							done : function(e, data) {
-										console.log("done");
-										if (RequireFilter)
-											SelectColumnsDialog.getInstance(data.result, selectedFormat).show();
-										else
-											FileOptionsDialog.getInstance().show(data.result, selectedFormat, "");
-							}
-						});
-
-						data.submit();
-				};
-				
-				function show(data) {
-					var fileName = data.files[0].name;
-						dialog.data("fileName", fileName);
-						dialog.data("formData", data);
-						dialog.modal({keyboard:true, show:true, backdrop:'static'});
-				};
-				
-				
-				return {	//Return back the public methods
-					show : show,
-					init : init
-				};
-		};
-
-		function getInstance() {
-			if( ! instance ) {
-				instance = new PrivateConstructor();
-				instance.init();
+			if(selectedFormat == null || selectedFormat == "") {
+				$("span#fileFormatError").show();
+				return false;
 			}
-			return instance;
-		}
-	 
-		return {
-			getInstance : getInstance
+			var urlString = "RequestController?workspaceId=" + $.workspaceGlobalInformation.id;
+						
+			//MVS: add the id of the revised worksheet in the request
+			if ($("input:checkbox[name='RevisionCheck']").prop('checked')) {
+				urlString += "&revisedWorksheet=" + $('#revisedWorksheetSelector').val();
+			}
+			var RequireFilter = $("input:checkbox[name='FilterCheck']", dialog).prop('checked');
+			urlString += "&filter=" + RequireFilter;
+			urlString += "&isPreview=true";
+			urlString += "&command=";
+			console.log(urlString);
+			$("#fileupload").fileupload({
+				url : urlString + "Import" + selectedFormat + "Command",
+				done : function(e, data) {
+					console.log("done");
+					if (RequireFilter)
+						SelectColumnsDialog.getInstance(data.result, selectedFormat).show();
+					else
+						FileOptionsDialog.getInstance().show(data.result, selectedFormat, "");
+				}
+			});
+
+			data.submit();
 		};
-			
-		
+				
+		function show(data) {
+			var fileName = data.files[0].name;
+			dialog.data("fileName", fileName);
+			dialog.data("formData", data);
+			dialog.modal({keyboard:true, show:true, backdrop:'static'});
+		};
+				
+				
+		return {	//Return back the public methods
+			show : show,
+			init : init
+		};
+	};
+
+	function getInstance() {
+		if( ! instance ) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	}
+	 
+	return {
+		getInstance : getInstance
+	};			
+
 })();
 
 
 var FileOptionsDialog = (function() {
-		var instance = null;
+	var instance = null;
 
-		function PrivateConstructor() {
-			var dialog = $("#fileOptionsDialog");
-			var columnsJson;
-			var optionSettings = {
+	function PrivateConstructor() {
+		var dialog = $("#fileOptionsDialog");
+		var columnsJson;
+		var optionSettings = {
 					"JSONFile": ["colEncoding", "colMaxNumLines"],
 					"CSVFile" : ["colDelimiterSelector", "colTextQualifier", "colHeaderStartIndex", "colStartRowIndex", "colEncoding", "colMaxNumLines"],
 					"XMLFile" : ["colEncoding", "colMaxNumLines"],
 					"ExcelFile" : ["colEncoding", "colMaxNumLines"],
 					"Ontology" : ["colEncoding", "colMaxNumLines"],
 					"AvroFile": ["colEncoding", "colMaxNumLines"]
-			};
+		};
 			
-			function init() {
-				//Initialize what happens when we show the dialog
+		function init() {
+			//Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function (e) {
 				
 			});
@@ -173,22 +170,22 @@ var FileOptionsDialog = (function() {
 			
 			$('.ImportOption').change(function() {
 								reloadOptions(false);
-						});
-			}
+			});
+		}
 			
-			function saveDialog(e) {
-				console.log("Save clicked");
+		function saveDialog(e) {
+			console.log("Save clicked");
 			reloadOptions(true);
-			}
+		}
 			
-			function reset() {
-				$("#delimiterSelector :first-child", dialog).attr('selected', 'selected');
-				$("#delimiterSelector :first-child", dialog).prop('selected', 'selected');
-				$("#headerStartIndex", dialog).val("1");
-				$("#startRowIndex", dialog).val("2");
-				$("#textQualifier", dialog).val("\"");
-				$("#encoding", dialog).val("\"");
-				$("#maxNumLines", dialog).val("1000");
+		function reset() {
+			$("#delimiterSelector :first-child", dialog).attr('selected', 'selected');
+			$("#delimiterSelector :first-child", dialog).prop('selected', 'selected');
+			$("#headerStartIndex", dialog).val("1");
+			$("#startRowIndex", dialog).val("2");
+			$("#textQualifier", dialog).val("\"");
+			$("#encoding", dialog).val("\"");
+			$("#maxNumLines", dialog).val("1000");
 		};
 		
 		function showOptions(responseJSON) {
@@ -217,7 +214,7 @@ var FileOptionsDialog = (function() {
 			$("tr", previewTable).remove();
 				
 			if (responseJSON) {
-					headers = responseJSON["elements"][0]["headers"];
+				headers = responseJSON["elements"][0]["headers"];
 				var encoding = responseJSON["elements"][0]["encoding"];
 				$("#encoding", dialog).val(encoding);
 				var maxNumLines = responseJSON["elements"][0]["maxNumLines"];
@@ -238,47 +235,45 @@ var FileOptionsDialog = (function() {
 			}
 		}
 
-				// Pedro added the if(index>0) to not show the index of the table.
-				// It is weird to have to do this, I guess the better solution is that
-				// the data that came from the server would not include the index.
-				// No big deal.
+		// Pedro added the if(index>0) to not show the index of the table.
+		// It is weird to have to do this, I guess the better solution is that
+		// the data that came from the server would not include the index.
+		// No big deal.
 		function generatePreview(headers, rows) {
-						var previewTable = $("#previewTable", dialog);
-						//previewTable.append($("<thead>").append("<tr>").append($("<th colspan='4'>").text("File Row Number")));
-						if(headers != null)  {
-								var trTag = $("<tr>");
-								$.each(headers, function(index, val) {
-										if (index > 0){
-												trTag.append($("<th>").text(val));
-										}
-								});
-								previewTable.append(trTag);
-						} else {
-								// Put empty column names
-								var trTag = $("<tr>");
-								$.each(rows[0], function(index, val) {
-										if (index>0){
-												trTag.append($("<th>").text("Column_" + index));
-										}
-								});
-								previewTable.append(trTag);
+			var previewTable = $("#previewTable", dialog);
+			//previewTable.append($("<thead>").append("<tr>").append($("<th colspan='4'>").text("File Row Number")));
+			if(headers != null)  {
+				var trTag = $("<tr>");
+				$.each(headers, function(index, val) {
+					if (index > 0){
+						trTag.append($("<th>").text(val));
+					}
+				});
+				previewTable.append(trTag);
+			} else {
+				// Put empty column names
+				var trTag = $("<tr>");
+				$.each(rows[0], function(index, val) {
+					if (index>0){
+						trTag.append($("<th>").text("Column_" + index));
+					}
+				});
+				previewTable.append(trTag);
+			}
+
+			$.each(rows, function(index, row) {
+				var trTag = $("<tr>");
+				$.each(row, function(index2, val) {
+					if (index2 >0) {
+						var displayVal = val;
+						if(displayVal.length > 20) {
+							displayVal = displayVal.substring(0,20) + "...";
 						}
-
-
-						$.each(rows, function(index, row) {
-								var trTag = $("<tr>");
-								$.each(row, function(index2, val) {
-										if (index2 >0){
-												var displayVal = val;
-												if(displayVal.length > 20) {
-														displayVal = displayVal.substring(0,20) + "...";
-												}
-												trTag.append($("<td>").text(displayVal));
-										}
-								});
-								previewTable.append(trTag);
-						});
-				
+						trTag.append($("<td>").text(displayVal));
+					}
+				});
+				previewTable.append(trTag);
+			});			
 		}
 		
 		function reloadOptions(execute) {
@@ -312,62 +307,62 @@ var FileOptionsDialog = (function() {
 			}
 			
 			$.ajax({
-						url: "RequestController", 
-						type: "POST",
-						data : options,
-						dataType : "json",
-						complete : function (xhr, textStatus) {
+				url: "RequestController", 
+				type: "POST",
+				data : options,
+				dataType : "json",
+				complete : function (xhr, textStatus) {
 									if(!execute) {
 										var json = $.parseJSON(xhr.responseText);
 										console.log("Got json:" + json);
 										showOptions(json);
 									} else {
 										var json = $.parseJSON(xhr.responseText);
-												parse(json);
-												hideWaitingSignOnScreen();
-												if(format !== "Ontology")  {
-													var lastWorksheetLoaded = $("div.Worksheet").last();
-													if(lastWorksheetLoaded) {
-														var lastWorksheetId = lastWorksheetLoaded.attr("id");
-														ShowExistingModelDialog.getInstance().showIfNeeded(lastWorksheetId);
-													}
-												}
-												dialog.modal('hide');
+										parse(json);
+										hideWaitingSignOnScreen();
+										if(format !== "Ontology")  {
+											var lastWorksheetLoaded = $("div.Worksheet").last();
+											if(lastWorksheetLoaded) {
+												var lastWorksheetId = lastWorksheetLoaded.attr("id");
+												ShowExistingModelDialog.getInstance().showIfNeeded(lastWorksheetId);
+											}
+										}
+										dialog.modal('hide');
 									}
 								}
-					});	
-				
+				});				
 		}
 		
 		
 		function show(data, format, colJson) {
-					reset();
-					columnsJson = colJson;
-					var fileName = data["elements"][0]["fileName"];
-					$("#filename", dialog).html(fileName);
-					dialog.data("format", format);
-					showOptions(data);
+			reset();
+			columnsJson = colJson;
+			var fileName = data["elements"][0]["fileName"];
+			$("#filename", dialog).html(fileName);
+			dialog.data("format", format);
+			showOptions(data);
 						
-						dialog.modal({keyboard:true, show:true, backdrop:'static'});
+			dialog.modal({keyboard:true, show:true, backdrop:'static'});
 		}
 		
 		return {
 			show : show,
 			init : init
 		};
-		};
+	};
 	
-		function getInstance() {
-			if( ! instance ) {
-				instance = new PrivateConstructor();
-				instance.init();
-			}
-			return instance;
+	function getInstance() {
+		if( ! instance ) {
+			instance = new PrivateConstructor();
+			instance.init();
 		}
+		return instance;
+	}
 	 
-		return {
-			getInstance : getInstance
-		};
+	return {
+		getInstance : getInstance
+	};
+
 })();
 
 var SelectColumnsDialog = (function() {
@@ -377,7 +372,7 @@ var SelectColumnsDialog = (function() {
 		var dialog = $("#selectColumnsDialog");
 		var wsJson, selectedFormat;				
 		function init(json, selFormat) {
-								//Initialize what happens when we show the dialog
+			//Initialize what happens when we show the dialog
 			wsJson = json;
 			selectedFormat = selFormat;
 			var wsColumnsJson;
