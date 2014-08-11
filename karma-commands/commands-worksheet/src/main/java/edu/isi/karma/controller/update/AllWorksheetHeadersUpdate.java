@@ -46,6 +46,7 @@ public class AllWorksheetHeadersUpdate extends AbstractUpdate {
 			pw.println(response.toString());
 			if (deleteAfterGenerate) {
 				vWorkspace.getWorkspace().getFactory().removeWorksheet(wk.getId(), vWorkspace.getWorkspace().getCommandHistory());
+				vWorkspace.getViewFactory().removeWorksheet(wk.getId());
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
