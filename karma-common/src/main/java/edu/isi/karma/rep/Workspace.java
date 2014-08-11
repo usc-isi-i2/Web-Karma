@@ -29,6 +29,7 @@ import edu.isi.karma.modeling.semantictypes.ISemanticTypeModelHandler;
 import edu.isi.karma.rep.metadata.TagsContainer;
 import edu.isi.karma.semantictypes.typinghandler.LuceneBasedSTModelHandler;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -117,7 +118,7 @@ public class Workspace extends Entity {
 	}
 
 	public Collection<Worksheet> getWorksheets() {
-		return worksheets.values();
+		return new ArrayList<Worksheet>(worksheets.values());
 	}
 
 	public RepFactory getFactory() {
