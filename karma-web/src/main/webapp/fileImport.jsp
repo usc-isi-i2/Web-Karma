@@ -172,12 +172,21 @@
 				  </div>
 				  <div class="modal-body">
 					<div id="selectColumns_body" class="cf nestable-lists">
+						<div class="form-group">
+					  	<label for="SavePresetCheck">Save Preset: </label>
+					    <input type="checkbox" name="SavePresetCheck" id="SavePresetCheck">
+						</div>
+						<div class="form-group">
+							<label for="presetupload">Load Preset: </label>
+							<input type="file" name="files[]" id="presetupload">
+						</div>
 						<div class="dd" id="nestable">
 						</div>
 					</div>
 					<div class="error" style="display: none">Error</div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
+				        <button type="submit" class="btn btn-primary" id="btnLoadPreset">Load Preset</button>
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 				        <button type="submit" class="btn btn-primary" id="btnSave">Next</button>
 				  </div> <!-- /.modal-footer -->

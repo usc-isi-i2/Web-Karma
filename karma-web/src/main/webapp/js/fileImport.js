@@ -104,7 +104,7 @@ var FileFormatSelectionDialog = (function() {
 					if (RequireFilter && selectedFormat === "JSONFile")
 						SelectColumnsDialog.getInstance(data.result, selectedFormat).show();
 					else
-						FileOptionsDialog.getInstance().show(data.result, selectedFormat, "");
+						FileOptionsDialog.getInstance().show(data.result, selectedFormat, "", false);
 				}
 			});
 
@@ -146,6 +146,7 @@ var FileOptionsDialog = (function() {
 	function PrivateConstructor() {
 		var dialog = $("#fileOptionsDialog");
 		var columnsJson;
+		var savePreset;
 		var optionSettings = {
 					"JSONFile": ["colEncoding", "colMaxNumLines"],
 					"CSVFile" : ["colDelimiterSelector", "colTextQualifier", "colHeaderStartIndex", "colStartRowIndex", "colEncoding", "colMaxNumLines"],
@@ -302,6 +303,7 @@ var FileOptionsDialog = (function() {
 			if(execute) {
 				options["execute"] = true;
 				options["interactionType"] = "importTable";
+				options["savePreset"] = savePreset;
 				console.log(columnsJson);
 				options["columnsJson"] = JSON.stringify(columnsJson);
 				if (columnsJson === "")
@@ -337,9 +339,10 @@ var FileOptionsDialog = (function() {
 		}
 		
 		
-		function show(data, format, colJson) {
+		function show(data, format, colJson, preset) {
 			reset();
 			columnsJson = colJson;
+			savePreset = preset;
 			var fileName = data["elements"][0]["fileName"];
 			$("#filename", dialog).html(fileName);
 			dialog.data("format", format);
@@ -373,12 +376,12 @@ var SelectColumnsDialog = (function() {
 				
 	function PrivateConstructor() {
 		var dialog = $("#selectColumnsDialog");
-		var wsJson, selectedFormat;				
+		var wsJson, selectedFormat;
 		function init(json, selFormat) {
 			//Initialize what happens when we show the dialog
 			wsJson = json;
 			selectedFormat = selFormat;
-			var wsColumnsJson;
+			var wsColumnsJson;	
 			dialog.on('show.bs.modal', function (e) {
 				$(".error").hide();
 				$.each(json['elements'], function(i, element) {
@@ -401,6 +404,11 @@ var SelectColumnsDialog = (function() {
 				e.preventDefault();
 				saveDialog(e);
 				dialog.modal('hide');
+			});
+
+			$('#btnLoadPreset', dialog).on('click', function (e) {
+				e.preventDefault();
+				loadPreset(e);
 			});
 
 		}
@@ -457,8 +465,33 @@ var SelectColumnsDialog = (function() {
 			var columns = $('#selectColumns_body', dialog);
 			var nestableDiv = $("#nestable", columns);
 			var columnsJson = nestableDiv.nestable('serialize');
+			var savePreset = $("input:checkbox[name='SavePresetCheck']", dialog).prop('checked');
 			console.log(columnsJson);
-			FileOptionsDialog.getInstance().show(wsJson, selectedFormat, columnsJson);								
+			FileOptionsDialog.getInstance().show(wsJson, selectedFormat, columnsJson, savePreset);								
+		};
+
+		function loadPreset(e) {
+			console.log("load preset");
+			var filelist = $('#presetupload').get(0).files;
+			for (var i = 0; i < filelist.length; i++) {
+				var file = filelist[i];
+				if (file.size < 1024 * 1024) {
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						var json;
+						try {
+							json = $.parseJSON(e.target.result);
+							console.log(json);
+						}catch(err) {
+							
+						}
+						if (json != undefined) {
+							
+						}
+					};
+					reader.readAsText(file);
+				}
+			}
 		};
 								
 		function show() {
