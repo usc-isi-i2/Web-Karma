@@ -25,7 +25,6 @@ package edu.isi.karma.controller.command.importdata;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -39,16 +38,13 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.ImportPropertiesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.json.JsonImport;
-import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
@@ -85,56 +81,12 @@ public class ImportJSONFileCommand extends ImportFileCommand implements IPreview
 		JSONArray tree = generateSelectTree(columnsJson, true);
 		return new JsonImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines, tree);
 	}
-
+	
 	@Override
-	public UpdateContainer showPreview(HttpServletRequest request) throws CommandException {
-		boolean filter = Boolean.parseBoolean(request.getParameter("filter"));
-		if (!filter)
-			return super.showPreview(request);
-		final Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
-		Import imp = new JsonImport(getFile(), getFile().getName(), workspace, encoding, 1000, null);
-		try {
-			final Worksheet worksheet = imp.generateWorksheet();
-			UpdateContainer uc = new UpdateContainer(new ImportPropertiesUpdate(getFile(), encoding, maxNumLines, id));			
-			uc.add(new AbstractUpdate() {				
-				@Override
-				public void generateJson(String prefix, PrintWriter pw,
-						VWorkspace vWorkspace) {
-					JSONObject response = new JSONObject();
-					response.put(AbstractUpdate.GenericJsonKeys.updateType.name(), 
-							"PreviewHeaderUpdate");
-					JSONArray columns = getColumnsJsonArray(worksheet.getHeaders().getHNodes());
-					response.put(JsonKeys.columns.name(), columns);
-					pw.println(response.toString());
-				}
-
-				private JSONArray getColumnsJsonArray(Collection<HNode> headers) {
-					JSONArray columns = new JSONArray();
-					for(HNode headerNode : headers) {
-						JSONObject column = new JSONObject();
-						column.put(JsonKeys.id.name(), headerNode.getId());
-						column.put(JsonKeys.name.name(), headerNode.getColumnName());
-						column.put(JsonKeys.visible.name(), true);
-						boolean hideable = true;
-						if(headerNode.hasNestedTable()) {
-							JSONArray children = getColumnsJsonArray(headerNode.getNestedTable().getHNodes());
-							column.put(JsonKeys.children.name(), children);
-						}
-						column.put(JsonKeys.hideable.name(), hideable);
-						columns.put(column);
-					}
-					return columns;
-				}
-			});
-			WorkspaceManager.getInstance().removeWorkspace(workspace.getId());
-			return uc;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return new UpdateContainer();
-
+	protected Import createImport(Workspace workspace, int sampleSize) {
+		return new JsonImport(getFile(), getFile().getName(), workspace, encoding, sampleSize, null);
 	}
-
+	
 	@Override
 	public UpdateContainer handleUserActions(HttpServletRequest request) {
 		columnsJson = request.getParameter("columnsJson");

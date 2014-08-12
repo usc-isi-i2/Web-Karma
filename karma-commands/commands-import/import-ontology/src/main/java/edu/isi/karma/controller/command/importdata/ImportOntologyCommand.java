@@ -50,6 +50,11 @@ public class ImportOntologyCommand extends ImportFileCommand implements IPreview
     protected Import createImport(Workspace workspace) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    @Override
+    protected Import createImport(Workspace workspace, int sampleSize) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     private enum JsonKeys {
         Import

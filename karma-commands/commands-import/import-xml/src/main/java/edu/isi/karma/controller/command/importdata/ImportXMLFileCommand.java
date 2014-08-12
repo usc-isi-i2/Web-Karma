@@ -57,5 +57,10 @@ public class ImportXMLFileCommand extends ImportFileCommand implements IPreviewa
         return new XMLImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines);
     }
     
+    @Override
+    protected Import createImport(Workspace workspace, int sampleSize) {
+        return new XMLImport(getFile(), getFile().getName(), workspace, encoding, sampleSize);
+    }
+    
   
 }

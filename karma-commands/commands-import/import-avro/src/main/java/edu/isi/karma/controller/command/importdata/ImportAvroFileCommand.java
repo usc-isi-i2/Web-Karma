@@ -49,4 +49,9 @@ public class ImportAvroFileCommand extends ImportFileCommand implements IPreview
         return new AvroImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines);
     }
     
+    @Override
+    protected Import createImport(Workspace workspace, int sampleSize) {
+        return new AvroImport(getFile(), getFile().getName(), workspace, encoding, sampleSize);
+    }
+    
 }

@@ -113,5 +113,10 @@ public class ImportExcelFileCommand extends ImportFileCommand implements IPrevie
     protected Import createImport(Workspace workspace) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    @Override
+    protected Import createImport(Workspace workspace, int sampleSize) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }

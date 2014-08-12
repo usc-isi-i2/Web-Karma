@@ -109,6 +109,19 @@ public class ImportCSVFileCommand extends ImportFileCommand implements
 			return null;
 		}
 	}
+	
+	@Override
+	protected Import createImport(Workspace workspace, int sampleSize) {
+		try{
+		return new CSVFileImport(headerRowIndex, dataStartRowIndex, delimiter,
+				quoteCharacter, encoding, sampleSize, getFile(), workspace);
+		}
+		catch(IOException e)
+		{
+			logger.error("Unable to import csv file: " + e.getMessage());
+			return null;
+		}
+	}
 
 	@Override
 	public UpdateContainer showPreview(HttpServletRequest request) throws CommandException {
