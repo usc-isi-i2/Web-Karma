@@ -3,8 +3,11 @@ package edu.isi.karma.mapreduce.driver;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URL;
+import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hdfs.MiniDFSCluster;
 import org.apache.hadoop.mapreduce.v2.MiniMRYarnCluster;
@@ -48,7 +51,20 @@ public class TestSimpleProcessor {
 		String[] args = {new File( getTestResource("SimpleLoader.properties").toURI()).getAbsolutePath()};
 		int res = ToolRunner.run(conf, new SimpleLoader(),args);
 		assertEquals(0, res);
-		String [] jobArgs = {"-archives", "/Users/jason/karma.zip", "-libjars", "/Users/jason/projects/Web-Karma/karma-offline/target/karma-offline-0.0.1-SNAPSHOT-shaded.jar", new File( getTestResource("SimpleProcessor.properties").toURI()).getAbsolutePath()}; 
+		File modelFile = new File(getTestResource("people-model.ttl").toURI());
+		File tempModelFile = File.createTempFile("people-model", "ttl");
+		FileUtils.copyFile(modelFile, tempModelFile);
+		tempModelFile.deleteOnExit();
+		
+		Properties p = new Properties();
+		p.load(getTestResource("SimpleProcessor.properties").openStream());
+		p.setProperty("model.uri", tempModelFile.toURI().toString());
+		File tempPropertiesFile= File.createTempFile(TestSimpleProcessor.class.getName(), "properties");
+		FileOutputStream fos = new FileOutputStream(tempPropertiesFile);
+		p.store(fos, "");
+		fos.close();
+		tempPropertiesFile.deleteOnExit();
+		String [] jobArgs = {"-archives", new File( getTestResource("sample_karma_user_home.zip").toURI()).getAbsolutePath(), "-libjars", System.getProperty("user.home") + "/.m2/repository/edu/isi/karma-offline/0.0.1-SNAPSHOT/karma-offline-0.0.1-SNAPSHOT-shaded.jar", tempPropertiesFile.getAbsolutePath()}; 
 		res = ToolRunner.run(conf, new SimpleProcessor(), jobArgs);
 		assertEquals(0, res);
 	}
