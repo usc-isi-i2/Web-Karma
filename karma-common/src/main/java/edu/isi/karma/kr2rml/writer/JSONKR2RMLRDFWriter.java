@@ -36,7 +36,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter) {
 		super(outWriter);
 	}
-	
+
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter, String baseURI) {
 		super(outWriter, baseURI);
 	}
@@ -89,7 +89,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 					if (!uri.isAbsolute())
 						t = baseURI + t;
 				}catch(Exception e) {
-					
+
 				}
 			}
 			object = t;
@@ -140,8 +140,14 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 					}					
 					types.add(o);	
 				}
-				for (Object type : types) {
-					array.put(type);
+				if (types.size() > 1) {
+					for (Object type : types) {
+						array.put(type);
+					}
+				}
+				else if (types.iterator().hasNext()){
+					Object o = types.iterator().next();
+					obj.put((String)key, o);
 				}
 			}
 			if (value instanceof JSONObject)
@@ -167,7 +173,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 				if (!uri.isAbsolute())
 					subjUri = baseURI + subjUri;
 			}catch(Exception e) {
-				
+
 			}
 		}
 		object.put("@id", subjUri);
