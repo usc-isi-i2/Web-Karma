@@ -486,7 +486,22 @@ var SelectColumnsDialog = (function() {
 							
 						}
 						if (json != undefined) {
-							
+							var wsColumnsJson;
+							$.each(wsJson['elements'], function(i, element) {
+								if (element["updateType"] === "PreviewHeaderUpdate") {
+									wsColumnsJson = element['columns'];
+								}
+							});
+							if (compareJSON(wsColumnsJson, json)) {
+								console.log("is identical");
+								var columns = $('#selectColumns_body', dialog);
+								var nestableDiv = $("#nestable", columns);
+								nestableDiv.empty();
+								createColumnList(json, nestableDiv, true);
+								nestableDiv.nestable({
+									group: 1
+								});
+							}
 						}
 					};
 					reader.readAsText(file);
@@ -496,6 +511,48 @@ var SelectColumnsDialog = (function() {
 								
 		function show() {
 			dialog.modal({keyboard:true, show:true, backdrop:'static'});
+		};
+
+		function compareJSON(org_json, preset) {
+			console.log("here");
+			if (org_json == undefined)
+				return false;
+			if (!$.isArray(preset)) {
+				console.log("situation 1");
+				return false;
+			}
+			if (org_json.length != preset.length) {
+				console.log("situation 2");
+				return false;
+			}
+			for (var i = 0; i < org_json.length; i++) {
+				var obj_org = org_json[i];
+				var index = getCorrespondingIndex(obj_org, preset);
+				if (index == -1) {
+					console.log("situation 3");
+					return false;
+				}
+				var obj_preset = preset[index];
+				if (obj_org['children'] != undefined && obj_preset['children'] == undefined) {
+					console.log("situation 4");
+					return false;
+				}
+				if (obj_org['children'] != undefined) {
+					if (!compareJSON(obj_org['children'], obj_preset['children'])) {
+						console.log("situation 5");
+						return false;
+					}
+				}
+			}
+			return true;
+		};
+
+		function getCorrespondingIndex(obj, preset) {
+			for (var i = 0; i < preset.length; i++) {
+				if (obj['name'] == preset[i]['name'])
+					return i;
+			}
+			return -1;
 		};
 								
 		return {    //Return back the public methods
