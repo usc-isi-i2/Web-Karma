@@ -92,6 +92,7 @@ var FileFormatSelectionDialog = (function() {
 				urlString += "&revisedWorksheet=" + $('#revisedWorksheetSelector').val();
 			}
 			var RequireFilter = $("input:checkbox[name='FilterCheck']", dialog).prop('checked');
+			RequireFilter = RequireFilter && (selectedFormat === "JSONFile" || selectedFormat === "XMLFile");
 			urlString += "&filter=" + RequireFilter;
 			urlString += "&isPreview=true";
 			urlString += "&command=";
@@ -101,7 +102,7 @@ var FileFormatSelectionDialog = (function() {
 				done : function(e, data) {
 					console.log("done");
 					console.log(selectedFormat);
-					if (RequireFilter && selectedFormat === "JSONFile")
+					if (RequireFilter)
 						SelectColumnsDialog.getInstance(data.result, selectedFormat).show();
 					else
 						FileOptionsDialog.getInstance().show(data.result, selectedFormat, "", false);

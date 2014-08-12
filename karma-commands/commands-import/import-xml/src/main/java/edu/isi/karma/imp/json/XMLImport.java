@@ -4,15 +4,17 @@
  */
 package edu.isi.karma.imp.json;
 
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.Worksheet;
@@ -33,7 +35,9 @@ public class XMLImport extends Import {
     File jsonFile;
     private static Logger logger = LoggerFactory.getLogger(XMLImport.class);
 
-    public XMLImport(File xmlFile, String worksheetName, Workspace workspace, String encoding, int maxNumLines) {
+    public XMLImport(File xmlFile, String worksheetName, 
+    		Workspace workspace, String encoding, int maxNumLines,
+    		JSONArray columnsJson) {
         super(worksheetName, workspace, encoding);
 
         try {
@@ -45,7 +49,7 @@ public class XMLImport extends Import {
             PrintWriter pw = new PrintWriter(jsonFile);
             pw.println(json.toString(4));
             pw.close();
-            jsonImport = new JsonImport(jsonFile, this.getFactory(), this.getWorksheet(), workspace, maxNumLines);
+            jsonImport = new JsonImport(jsonFile, this.getFactory(), this.getWorksheet(), workspace, maxNumLines, columnsJson);
         } catch (JSONException ex) {
             logger.error("Error in populating the worksheet with XML", ex);
         } catch (IOException ex) {
