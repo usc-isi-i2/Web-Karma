@@ -32,6 +32,7 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -135,7 +136,8 @@ public class ExportJSONCommand extends WorksheetCommand {
 		PrintWriter printWriter;
 		try {
 			printWriter = new PrintWriter(jsonFileLocalPath);
-			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(printWriter);
+			String baseURI = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.baseURI);
+			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(printWriter, baseURI);
 			writer.addPrefixes(mapping.getPrefixes());
 			RootStrategy strategy = new UserSpecifiedRootStrategy(rootTriplesMapId, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
 			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, ontMgr, writer, false, strategy, mapping, errorReport);
