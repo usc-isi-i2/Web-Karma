@@ -22,6 +22,7 @@ public abstract class SFKR2RMLRDFWriter<E> implements KR2RMLRDFWriter {
 	protected ShortHandURIGenerator shortHandURIGenerator = new ShortHandURIGenerator();
 	protected String rootTriplesMapId; 
 	protected Set<String> rootTriplesMapIds;
+	protected String baseURI = "";
 	private static Set<String> numericLiteralTypes = new HashSet<String>();
 	static {
 		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#decimal");
@@ -48,6 +49,12 @@ public abstract class SFKR2RMLRDFWriter<E> implements KR2RMLRDFWriter {
 		generatedObjectsByTriplesMapId = new ConcurrentHashMap<String, ConcurrentHashMap<String, E>>();
 		rootTriplesMapIds = new HashSet<String>();
 		initializeOutput();
+	}
+	
+	public SFKR2RMLRDFWriter (PrintWriter outWriter, String baseURI) {
+		this(outWriter);
+		if (baseURI != null)
+			this.baseURI = baseURI;
 	}
 	
 	protected abstract void initializeOutput();
