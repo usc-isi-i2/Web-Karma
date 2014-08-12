@@ -104,6 +104,15 @@ public class JsonImport extends Import {
 		this.workspace = workspace;
 		this.maxNumLines = maxNumLines;
 	}
+	
+	public JsonImport(File json, RepFactory repFactory, Worksheet wk, Workspace workspace, 
+			int maxNumLines) {
+		super(repFactory, wk);
+		FileObject fo = new FileObject(json, "UTF-8");
+		this.json = fo;
+		this.workspace = workspace;
+		this.maxNumLines = maxNumLines;
+	}
 
 	@Override
 	public Worksheet generateWorksheet() throws JSONException {

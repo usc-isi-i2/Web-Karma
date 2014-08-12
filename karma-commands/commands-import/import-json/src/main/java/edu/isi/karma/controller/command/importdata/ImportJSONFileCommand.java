@@ -168,7 +168,7 @@ public class ImportJSONFileCommand extends ImportFileCommand implements IPreview
 						JSONObject outputObject = new JSONObject();
 						try {
 							outputObject.put(JsonKeys.updateType.name(),
-									"PublishJSONUpdate");
+									"PublishPresetUpdate");
 							outputObject.put(JsonKeys.fileUrl.name(), 
 									ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR) + jsonFileName);
 							outputObject.put(JsonKeys.worksheetId.name(),
