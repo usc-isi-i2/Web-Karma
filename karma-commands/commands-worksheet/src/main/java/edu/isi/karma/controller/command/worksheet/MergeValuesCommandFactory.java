@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import edu.isi.karma.controller.command.Command;
-
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.rep.Workspace;

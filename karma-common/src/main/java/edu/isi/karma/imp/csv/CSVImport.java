@@ -5,22 +5,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.util.EncodingDetector;
@@ -36,13 +38,14 @@ public class CSVImport extends Import {
     protected final InputStream is;
     protected final String encoding;
     protected final int maxNumLines;
-
+    protected final JSONArray columnsJson;
     public CSVImport(int headerRowIndex, int dataStartRowIndex,
             char delimiter, char quoteCharacter, String encoding,
             int maxNumLines,
             String sourceName,
             InputStream is,
-            Workspace workspace) {
+            Workspace workspace, 
+            JSONArray columnsJson) {
 
         super(sourceName, workspace, encoding);
         this.headerRowIndex = headerRowIndex;
@@ -52,6 +55,7 @@ public class CSVImport extends Import {
         this.encoding = encoding;
         this.maxNumLines = maxNumLines;
         this.is = is;
+        this.columnsJson = columnsJson;
         
     }
     
@@ -65,7 +69,7 @@ public class CSVImport extends Import {
 
         // Index for row currently being read
         int rowCount = 0;
-        ArrayList<String> hNodeIdList = new ArrayList<String>();
+        Map<Integer, String> hNodeIdList = new HashMap<Integer, String>();
 
         // If no row is present for the column headers
         if (headerRowIndex == 0) {
@@ -116,10 +120,10 @@ public class CSVImport extends Import {
         return new BufferedReader(isr);
 	}
 
-    private ArrayList<String> addHeaders(Worksheet worksheet, RepFactory fac,
+    private Map<Integer, String> addHeaders(Worksheet worksheet, RepFactory fac,
             String line, BufferedReader br) throws IOException {
         HTable headers = worksheet.getHeaders();
-        ArrayList<String> headersList = new ArrayList<String>();
+        Map<Integer, String> headersMap = new HashMap<Integer, String>();
         CSVReader reader = new CSVReader(new StringReader(line), delimiter,
                 quoteCharacter, escapeCharacter);
         String[] rowValues = null;
@@ -133,18 +137,21 @@ public class CSVImport extends Import {
         for (int i = 0; i < rowValues.length; i++) {
             HNode hNode = null;
             if (headerRowIndex == 0) {
-                hNode = headers.addHNode("Column_" + (i + 1), HNodeType.Regular, worksheet, fac);
+            	if (isVisible("Column_" + (i + 1)))
+            		hNode = headers.addHNode("Column_" + (i + 1), HNodeType.Regular, worksheet, fac);
             } else {
-                hNode = headers.addHNode(rowValues[i], HNodeType.Regular, worksheet, fac);
+            	if (isVisible(rowValues[i]))
+            		hNode = headers.addHNode(rowValues[i], HNodeType.Regular, worksheet, fac);
             }
-            headersList.add(hNode.getId());
+            if (hNode != null)
+            	headersMap.put(i, hNode.getId());
         }
         reader.close();
-        return headersList;
+        return headersMap;
     }
 
     private boolean addRow(Worksheet worksheet, RepFactory fac, String line,
-            List<String> hNodeIdList, Table dataTable) throws IOException {
+    		Map<Integer, String> hNodeIdMap, Table dataTable) throws IOException {
         CSVReader reader = new CSVReader(new StringReader(line), delimiter,
                 quoteCharacter, escapeCharacter);
         String[] rowValues = null;
@@ -155,9 +162,14 @@ public class CSVImport extends Import {
         }
 
         Row row = dataTable.addRow(fac);
+        int size = hNodeIdMap.size();
+        if (columnsJson != null)
+        	size = columnsJson.length();
         for (int i = 0; i < rowValues.length; i++) {
-            if (i < hNodeIdList.size()) {
-                row.setValue(hNodeIdList.get(i), rowValues[i], fac);
+            if (i < size) {
+            	String hNodeId = hNodeIdMap.get(i);
+            	if (hNodeId != null)
+            		row.setValue(hNodeId, rowValues[i], fac);
             } else {
                 // TODO Our model does not allow a value to be added to a row
                 // without its associated HNode. In CSVs, there could be case
@@ -168,10 +180,10 @@ public class CSVImport extends Import {
         reader.close();
         return true;
     }
-    private ArrayList<String> addEmptyHeaders(Worksheet worksheet,
+    private Map<Integer, String> addEmptyHeaders(Worksheet worksheet,
             RepFactory fac, BufferedReader br) throws IOException {
         HTable headers = worksheet.getHeaders();
-        ArrayList<String> headersList = new ArrayList<String>();
+        Map<Integer, String> headersMap = new HashMap<Integer, String>();
 
         
         br.mark(1000000);
@@ -192,9 +204,13 @@ public class CSVImport extends Import {
                     logger.error("Error reading Line:" + line, e);
                 }
                 for (int i = 0; i < rowValues.length; i++) {
-                    HNode hNode = headers.addHNode("Column_" + (i + 1), HNodeType.Regular, 
+                	
+                    HNode hNode = null;
+                    if (isVisible("Column_" + (i + 1)))
+                    	hNode = headers.addHNode("Column_" + (i + 1), HNodeType.Regular, 
                             worksheet, fac);
-                    headersList.add(hNode.getId());
+                    if (hNode != null)
+                    	headersMap.put(i, hNode.getId());
                 }
                 reader.close();
                 break;
@@ -202,6 +218,17 @@ public class CSVImport extends Import {
             rowCount++;
         }
         br.reset();
-        return headersList;
+        return headersMap;
     }
+    
+    private boolean isVisible(String key) {
+		if (columnsJson == null)
+			return true;
+		for (int i = 0; i < columnsJson.length(); i++) {
+			JSONObject obj = columnsJson.getJSONObject(i);
+			if (obj.has(key))
+				return obj.getBoolean(key);
+		}
+		return false;
+	}
 }

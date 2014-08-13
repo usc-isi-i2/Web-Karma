@@ -498,7 +498,10 @@ function parse(data) {
 //			$("span.tag", tdTag).remove();
 				}
 				else if(element["updateType"] == "NewImportDatabaseTableCommandUpdate") {
-						$("#DatabaseImportDiv").data("commandId", element["commandId"]);
+						$("#databaseImportDialog").data("commandId", element["commandId"]);
+				}
+				else if(element["updateType"] == "ImportSQLCommandUpdate") {
+						$("#sqlImportDialog").data("commandId", element["commandId"]);
 				}
 				else if(element["updateType"] == "SemanticTypesUpdate") {
 						var wk = $("div#" + element["worksheetId"]);
@@ -650,6 +653,14 @@ function parse(data) {
 						$("a.JSONDownloadLink", titleDiv).remove();
 
 						var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("JSON").addClass("JSONDownloadLink DownloadLink").attr("target", "_blank");
+						$("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
+				}
+				else if(element["updateType"] == "PublishPresetUpdate") {
+						var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
+						// Remove existing link if any
+						$("a.PresetDownloadLink", titleDiv).remove();
+
+						var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("Preset").addClass("PresetDownloadLink DownloadLink").attr("target", "_blank");
 						$("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
 				}
 				else if(element["updateType"] == "PublishAvroUpdate") {

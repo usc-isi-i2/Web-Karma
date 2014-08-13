@@ -8,5 +8,5 @@ package edu.isi.karma.controller.command.importdata;
 enum ImportFileInteractionType
 {
 
-	generatePreview, importTable
+	generatePreview, importTable, generateFilter
 }

@@ -1,8 +1,8 @@
 package edu.isi.karma.controller.command;
 
-import edu.isi.karma.controller.update.UpdateContainer;
-
 import javax.servlet.http.HttpServletRequest;
+
+import edu.isi.karma.controller.update.UpdateContainer;
 
 /**
  * All commands that need a preview before executing should implement this interface
@@ -14,7 +14,7 @@ public interface IPreviewable {
     /*
      * Show the preview
      */
-    public UpdateContainer showPreview()
+    public UpdateContainer showPreview(HttpServletRequest request)
             throws CommandException;
 
     /*

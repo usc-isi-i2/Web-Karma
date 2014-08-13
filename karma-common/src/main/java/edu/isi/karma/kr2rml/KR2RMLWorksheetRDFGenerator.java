@@ -146,6 +146,7 @@ public class KR2RMLWorksheetRDFGenerator {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public void generateRDF(boolean closeWriterAfterGeneration) throws IOException {
 
 		try {
@@ -178,6 +179,7 @@ public class KR2RMLWorksheetRDFGenerator {
 			}
 			for (KR2RMLRDFWriter writer : outWriters) {
 				if (writer instanceof SFKR2RMLRDFWriter) {
+					@SuppressWarnings("rawtypes")
 					SFKR2RMLRDFWriter jsonWriter = (SFKR2RMLRDFWriter)writer;
 					jsonWriter.addPrefixes(kr2rmlMapping.getPrefixes());
 					for(Entry<TriplesMapGraph, List<String>> entry : graphTriplesMapsProcessingOrder.entrySet())
