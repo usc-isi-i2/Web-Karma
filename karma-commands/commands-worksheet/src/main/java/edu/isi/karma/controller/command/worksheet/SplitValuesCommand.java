@@ -20,6 +20,8 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.worksheet;
 
+import java.io.IOException;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -78,12 +80,13 @@ public class SplitValuesCommand extends WorksheetCommand {
 
 		// Get the HNode
 		HNode hNode = workspace.getFactory().getHNode(hNodeId);
+		columnName = hNode.getColumnName();
 		// The column should not have a nested table but check to make sure!
 		if (hNode.hasNestedTable() || columnName.equals(newColName)) {
 			c.add(new ErrorUpdate("Cannot split column with nested table!"));
 			return c;
 		}
-		columnName = hNode.getColumnName();
+
 		HNode newhNode;
 		HTable hTable = workspace.getFactory().getHTable(hNode.getHTableId());
 		newhNode = hTable.addHNode(newColName, HNodeType.Transformation, wk, workspace.getFactory());
@@ -91,7 +94,12 @@ public class SplitValuesCommand extends WorksheetCommand {
 		newTable.addHNode("Values", HNodeType.Transformation, wk, workspace.getFactory());
 		newhNodeId = newhNode.getId();
 		SplitColumnByDelimiter split = new SplitColumnByDelimiter(hNodeId, newhNode.getId(), wk, delimiter, workspace);
-		split.split();
+		try {
+			split.split();
+		} catch (IOException e) {
+			c.add(new ErrorUpdate("Cannot split column! csv reader error"));
+			return c;
+		}
 		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
 
 		/** Add the alignment update **/

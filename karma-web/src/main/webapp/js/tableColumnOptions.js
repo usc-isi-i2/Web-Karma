@@ -641,7 +641,7 @@ var SplitValueDialog = (function() {
 		var instance = null;
 
 		function PrivateConstructor() {
-			var dialog = $("#splitColumnDialog");
+			var dialog = $("#splitValuesDialog");
 			var worksheetId, columnId;
 			
 			function init() {
@@ -649,7 +649,7 @@ var SplitValueDialog = (function() {
 			dialog.on('show.bs.modal', function (e) {
 				hideError();
 								$("input", dialog).val("");
-								$("#columnSplitDelimiter", dialog).focus();
+								$("#valueSplitDelimiter", dialog).focus();
 			});
 			
 			// Initialize handler for Save button
@@ -671,7 +671,7 @@ var SplitValueDialog = (function() {
 				function saveDialog(e) {
 					console.log("Save clicked");
 	
-				var delimiter = $.trim($("#columnSplitDelimiter", dialog).val());
+				var delimiter = $.trim($("#valueSplitDelimiter", dialog).val());
 			 	var newColName = $.trim($("#valueSplitNewColName", dialog).val());
 				var validationResult = true;
 				if (!delimiter)
@@ -680,7 +680,7 @@ var SplitValueDialog = (function() {
 					validationResult = false;
 				if (!validationResult) {
 					showError();
-						$("#columnSplitDelimiter", dialog).focus();
+						$("#valueSplitDelimiter", dialog).focus();
 						return false;
 				}
 

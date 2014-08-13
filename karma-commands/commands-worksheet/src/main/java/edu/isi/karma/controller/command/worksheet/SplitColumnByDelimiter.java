@@ -165,18 +165,17 @@ public class SplitColumnByDelimiter {
 		}
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), ht, tables);
 		for (Table t : tables) {
-			Node oldNode = t.getNestedTableInNode();
-			Node newNode = oldNode.getNeighbor(newhNodeId);
-			Row newRow = newNode.getNestedTable().addRow(factory);
-			Node nested = newRow.getNeighborByColumnName("Values", factory);
 			for (Row r : t.getRows(0, t.getNumRows())) {
 				String orgValue = r.getNeighbor(hNodeId).getValue().asString();
 				CSVReader reader = new CSVReader(new StringReader(orgValue),
 						delimiterChar);
 				String[] rowValues = reader.readNext();
+				reader.close();
+				Node newNode = r.getNeighbor(newhNodeId);
 				for (int i = 0; i < rowValues.length; i++) {
-					Row dest = nested.getNestedTable().addRow(factory);
-					dest.s
+					Row dest = newNode.getNestedTable().addRow(factory);
+					Node destNode = dest.getNeighborByColumnName("Values", factory);
+					destNode.setValue(rowValues[i], NodeStatus.original, factory);
 				}
 			}
 		}
