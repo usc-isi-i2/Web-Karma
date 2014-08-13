@@ -272,7 +272,45 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 						var label = $("<span>").append(checkbox).append("&nbsp;").append(title);
 						a.append(label);
 						a.click(func);
-					} else {
+					} 
+					else if (option.addLevel) {
+						li.addClass("dropdown-submenu");
+						a.text(title);
+						var subul = $("<ul>")
+											.addClass("dropdown-menu");
+						var suboptions = option.levels;
+						for (var j = 0; j < suboptions.length; j++) {
+							var suboption = suboptions[j];
+							var needFile = suboption.useFileUpload;
+							var li2 = $("<li>");
+							var a2 = $("<a>");
+							if(needFile) {
+								a2.addClass("fileinput-button");
+								var form = $("<form>")
+											.attr("id", suboption.uploadDiv + "_" + worksheetId)
+											.attr("action", "ImportFileCommand")
+											.attr("method", "POST")
+											.attr("enctype", "multipart/form-data")
+											.text(suboption['name']);
+								var input = $("<input>")
+											.attr("type", "file")
+											.attr("name", "files[]");
+								form.append(input);
+								a2.append(form);
+								window.setTimeout(suboption.func, 1000);
+							}
+							else {
+							a2.text(suboption['name']);
+							a2.click(suboption.func);
+						}
+						a2.css("cursor", "pointer");
+						li2.append(a2);
+						subul.append(li2);
+					}
+						
+					li.append(subul);
+				}
+					else {
 						a.text(title);
 						a.click(func);
 					}
@@ -1421,12 +1459,14 @@ var UnfoldDialog = (function() {
 				function show(wsId, cId) {
 						worksheetId = wsId;
 						columnId = cId;
+						var headers = getColumnHeadings(wsId, cId, "Unfold");
+						if (headers.length == 0)
+							return;
 						dialog.on('show.bs.modal', function (e) {
 								hideError();
 								var dialogContent = $("#unfoldDialogColumns", dialog);
 								dialogContent.empty();
-								var headers = getColumnHeadings(wsId, cId, "Unfold");
-								//console.log(headers);
+								
 
 								for (var i = 0; i < headers.length; i++) {
 
