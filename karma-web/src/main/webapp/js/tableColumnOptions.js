@@ -725,7 +725,10 @@ var SplitValueDialog = (function() {
 				function show(wsId, colId) {
 					worksheetId = wsId;
 					columnId = colId;
-						dialog.modal({keyboard:true, show:true, backdrop:'static'});
+					var id = "columnOptionsButton" + wsId + "_" + colId;
+					var title = $("#"+id).attr("title");
+					dialog.modal({keyboard:true, show:true, backdrop:'static'});
+					$("#valueSplitNewColName").val(title);
 				};
 				
 				
@@ -835,7 +838,7 @@ var PyTransformDialog = (function() {
 				};
 				
 				function previewTransform() {
-					var info = {};
+				var info = {};
 				info["hNodeId"] = columnId;
 				info["workspaceId"] = $.workspaceGlobalInformation.id;
 				info["worksheetId"] = worksheetId;
@@ -1268,33 +1271,6 @@ var GroupByDialog = (function() {
 				function hide() {
 						dialog.modal('hide');
 				}
-				function getHeaders() {
-					var info = new Object();
-					info["worksheetId"] = worksheetId;
-					info["workspaceId"] = $.workspaceGlobalInformation.id;
-					info["hNodeId"] = columnId;
-					info["commandName"] = "GroupBy"
-					info["command"] = "GetHeadersCommand";
-					var headers;
-					var returned = $.ajax({
-							url: "RequestController",
-							type: "POST",
-							data : info,
-							dataType : "json",
-							async : false,
-							complete :
-									function (xhr, textStatus) {
-									var json = $.parseJSON(xhr.responseText);
-									headers = json.elements[0];
-									},
-							error :
-									function (xhr, textStatus) {
-											alert("Error occured while getting worksheet headers!" + textStatus);
-											hideLoading(info["worksheetId"]);
-									}
-					});
-					return headers;
-				}
 				function show(wsId, cId) {
 						worksheetId = wsId;
 						columnId = cId;
@@ -1302,7 +1278,7 @@ var GroupByDialog = (function() {
 								hideError();
 								var dialogContent = $("#groupByDialogColumns", dialog);
 								dialogContent.empty();
-								var headers = getHeaders();
+								var headers = getColumnHeadings(wsId, cId, "GroupBy");
 								console.log(headers);
 								if (!headers) {
 									hide();
@@ -1419,33 +1395,6 @@ var UnfoldDialog = (function() {
 				function hide() {
 						dialog.modal('hide');
 				}
-				function getHeaders() {
-					var info = new Object();
-					info["worksheetId"] = worksheetId;
-					info["workspaceId"] = $.workspaceGlobalInformation.id;
-					info["hNodeId"] = columnId;
-					info["commandName"] = "Unfold"
-					info["command"] = "GetHeadersCommand";
-					var headers;
-					var returned = $.ajax({
-							url: "RequestController",
-							type: "POST",
-							data : info,
-							dataType : "json",
-							async : false,
-							complete :
-									function (xhr, textStatus) {
-									var json = $.parseJSON(xhr.responseText);
-									headers = json.elements[0];
-									},
-							error :
-									function (xhr, textStatus) {
-											alert("Error occured while getting worksheet headers!" + textStatus);
-											hideLoading(info["worksheetId"]);
-									}
-					});
-					return headers;
-				}
 				function show(wsId, cId) {
 						worksheetId = wsId;
 						columnId = cId;
@@ -1453,7 +1402,7 @@ var UnfoldDialog = (function() {
 								hideError();
 								var dialogContent = $("#unfoldDialogColumns", dialog);
 								dialogContent.empty();
-								var headers = getHeaders();
+								var headers = getColumnHeadings(wsId, cId, "Unfold");
 								//console.log(headers);
 
 								for (var i = 0; i < headers.length; i++) {
@@ -1511,44 +1460,16 @@ var FoldDialog2 = (function() {
 				saveDialog(e);
 			});    
 			}
-
-				function getHeaders() {
-						var info = new Object();
-						info["worksheetId"] = worksheetId;
-						info["workspaceId"] = $.workspaceGlobalInformation.id;
-						info["hNodeId"] = columnId;
-						info["commandName"] = "Fold";
-						info["command"] = "GetHeadersCommand";
-						var headers;
-						var returned = $.ajax({
-								url: "RequestController",
-								type: "POST",
-								data : info,
-								dataType : "json",
-								async : false,
-								complete :
-										function (xhr, textStatus) {
-												var json = $.parseJSON(xhr.responseText);
-												headers = json.elements[0];
-										},
-								error :
-										function (xhr, textStatus) {
-												alert("Error occured while getting worksheet headers!" + textStatus);
-												hideLoading(info["worksheetId"]);
-										}
-						});
-						return headers;
-				}
 			
-		function hideError() {
-			$("div.error", dialog).hide();
-		}
+			function hideError() {
+				$("div.error", dialog).hide();
+			}
 		
-		function showError() {
-			$("div.error", dialog).show();
-		}
+			function showError() {
+				$("div.error", dialog).show();
+			}
 		
-				function saveDialog(e) {
+			function saveDialog(e) {
 					console.log("Save clicked");
 					
 					var checkboxes = dialog.find(":checked");
@@ -1608,7 +1529,7 @@ var FoldDialog2 = (function() {
 								hideError();
 								var dialogContent = $("#foldDialogColumns", dialog);
 								dialogContent.empty();
-								var headers = getHeaders();
+								var headers = getColumnHeadings(wsId, cId, "Fold");
 								if (!headers) {
 									hide();
 									return;
@@ -1731,33 +1652,7 @@ var GlueDialog = (function() {
 				function hide() {
 						dialog.modal('hide');
 				}
-				function getHeaders() {
-					var info = new Object();
-					info["worksheetId"] = worksheetId;
-					info["workspaceId"] = $.workspaceGlobalInformation.id;
-					info["hNodeId"] = columnId;
-					info["commandName"] = "Glue"
-					info["command"] = "GetHeadersCommand";
-					var headers;
-					var returned = $.ajax({
-							url: "RequestController",
-							type: "POST",
-							data : info,
-							dataType : "json",
-							async : false,
-							complete :
-									function (xhr, textStatus) {
-									var json = $.parseJSON(xhr.responseText);
-									headers = json.elements[0];
-									},
-							error :
-									function (xhr, textStatus) {
-											alert("Error occured while getting worksheet headers!" + textStatus);
-											hideLoading(info["worksheetId"]);
-									}
-					});
-					return headers;
-				}
+
 				function show(wsId, cId) {
 						worksheetId = wsId;
 						columnId = cId;
@@ -1765,7 +1660,7 @@ var GlueDialog = (function() {
 								hideError();
 								var dialogContent = $("#glueDialogColumns", dialog);
 								dialogContent.empty();
-								var headers = getHeaders();
+								var headers = getColumnHeadings(wsId, cId, "Glue");
 								console.log(headers);
 								if (!headers) {
 									hide();

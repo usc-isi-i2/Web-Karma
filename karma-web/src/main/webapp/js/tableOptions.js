@@ -964,34 +964,6 @@ var FoldDialog = (function() {
 				saveDialog(e);
 			});    
 			}
-
-				function getHeaders() {
-						var info = new Object();
-						info["worksheetId"] = worksheetId;
-						info["workspaceId"] = $.workspaceGlobalInformation.id;
-						info["hNodeId"] = "";
-						info["commandName"] = "Fold";
-						info["command"] = "GetHeadersCommand";
-						var headers;
-						var returned = $.ajax({
-								url: "RequestController",
-								type: "POST",
-								data : info,
-								dataType : "json",
-								async : false,
-								complete :
-										function (xhr, textStatus) {
-												var json = $.parseJSON(xhr.responseText);
-												headers = json.elements[0];
-										},
-								error :
-										function (xhr, textStatus) {
-												alert("Error occured while getting worksheet headers!" + textStatus);
-												hideLoading(info["worksheetId"]);
-										}
-						});
-						return headers;
-				}
 			
 		function hideError() {
 			$("div.error", dialog).hide();
@@ -1060,7 +1032,7 @@ var FoldDialog = (function() {
 								hideError();
 								var dialogContent = $("#foldDialogColumns", dialog);
 								dialogContent.empty();
-								var headers = getHeaders();
+								var headers = getColumnHeadings(wsId, "", "Fold");
 								//console.log(headers);
 								for (var i = 0; i < headers.length; i++) {
 
@@ -1178,40 +1150,13 @@ var GroupByDialog2 = (function() {
 				function hide() {
 						dialog.modal('hide');
 				}
-				function getHeaders() {
-						var info = new Object();
-						info["worksheetId"] = worksheetId;
-						info["workspaceId"] = $.workspaceGlobalInformation.id;
-						info["hNodeId"] = "";
-						info["commandName"] = "GroupBy"
-						info["command"] = "GetHeadersCommand";
-						var headers;
-						var returned = $.ajax({
-								url: "RequestController",
-								type: "POST",
-								data : info,
-								dataType : "json",
-								async : false,
-								complete :
-										function (xhr, textStatus) {
-												var json = $.parseJSON(xhr.responseText);
-												headers = json.elements[0];
-										},
-								error :
-										function (xhr, textStatus) {
-												alert("Error occured while getting worksheet headers!" + textStatus);
-												hideLoading(info["worksheetId"]);
-										}
-						});
-						return headers;
-				}
 				function show(wsId) {
 						worksheetId = wsId;
 						dialog.on('show.bs.modal', function (e) {
 								hideError();
 								var dialogContent = $("#groupByDialogColumns", dialog);
 								dialogContent.empty();
-								var headers = getHeaders();
+								var headers = getColumnHeadings(wsId, "", "GroupBy");
 								//console.log(headers);
 								for (var i = 0; i < headers.length; i++) {
 
@@ -1328,40 +1273,14 @@ var GlueDialog2 = (function() {
 				function hide() {
 						dialog.modal('hide');
 				}
-				function getHeaders() {
-						var info = new Object();
-						info["worksheetId"] = worksheetId;
-						info["workspaceId"] = $.workspaceGlobalInformation.id;
-						info["hNodeId"] = "";
-						info["commandName"] = "Glue"
-						info["command"] = "GetHeadersCommand";
-						var headers;
-						var returned = $.ajax({
-								url: "RequestController",
-								type: "POST",
-								data : info,
-								dataType : "json",
-								async : false,
-								complete :
-										function (xhr, textStatus) {
-												var json = $.parseJSON(xhr.responseText);
-												headers = json.elements[0];
-										},
-								error :
-										function (xhr, textStatus) {
-												alert("Error occured while getting worksheet headers!" + textStatus);
-												hideLoading(info["worksheetId"]);
-										}
-						});
-						return headers;
-				}
+
 				function show(wsId) {
 						worksheetId = wsId;
 						dialog.on('show.bs.modal', function (e) {
 								hideError();
 								var dialogContent = $("#glueDialogColumns", dialog);
 								dialogContent.empty();
-								var headers = getHeaders();
+								var headers = getColumnHeadings(wsId, "", "Glue");
 								//console.log(headers);
 								for (var i = 0; i < headers.length; i++) {
 

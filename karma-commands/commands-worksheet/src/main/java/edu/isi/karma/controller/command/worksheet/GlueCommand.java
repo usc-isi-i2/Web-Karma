@@ -81,7 +81,7 @@ public class GlueCommand extends WorksheetCommand {
 		HTable ht;
 		//System.out.println("here" + hNodeId);
 		if (hNodeId.compareTo("") != 0)
-			ht = CloneTableUtils.getHTable(oldws.getHeaders(), hNodeId);
+			ht = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
 		else
 			ht = oldws.getHeaders();
 		for (int i = 0; i < checked.length(); i++) {

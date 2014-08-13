@@ -22,6 +22,7 @@ package edu.isi.karma.controller.command.worksheet;
 
 import java.io.IOException;
 
+import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -41,7 +42,7 @@ public class SplitValuesCommand extends WorksheetCommand {
 	private String newhNodeId;
 	private String columnName;
 	private String newColName;
-
+	private Command splitCommaCommand;
 	//	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	protected SplitValuesCommand(String id, String worksheetId,
@@ -82,9 +83,14 @@ public class SplitValuesCommand extends WorksheetCommand {
 		HNode hNode = workspace.getFactory().getHNode(hNodeId);
 		columnName = hNode.getColumnName();
 		// The column should not have a nested table but check to make sure!
-		if (hNode.hasNestedTable() || columnName.equals(newColName)) {
+		if (hNode.hasNestedTable()) {
 			c.add(new ErrorUpdate("Cannot split column with nested table!"));
 			return c;
+		}
+		
+		if (columnName.equals(newColName)) {
+			splitCommaCommand = new SplitByCommaCommand(workspace.getFactory().getNewId("C"), worksheetId, hNodeId, delimiter);
+			return splitCommaCommand.doIt(workspace);
 		}
 
 		HNode newhNode;
@@ -110,6 +116,8 @@ public class SplitValuesCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
+		if (splitCommaCommand != null)
+			return splitCommaCommand.undoIt(workspace);
 		RepFactory factory = workspace.getFactory();
 		HNode hNode = factory.getHNode(newhNodeId);
 		HTable hTable = factory.getHTable(hNode.getHTableId());

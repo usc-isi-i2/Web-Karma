@@ -13,7 +13,6 @@ import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Worksheet;
@@ -56,10 +55,11 @@ public class GetHeadersCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		HTable ht = worksheet.getHeaders();
+		HNode hNode = workspace.getFactory().getHNode(hNodeId);
 		if (hNodeId.compareTo("") != 0) {
-			HTable parentHT = CloneTableUtils.getHTable(worksheet.getHeaders(), hNodeId);
+			HTable parentHT = workspace.getFactory().getHTable(hNode.getHTableId());
 			if (commandName.compareTo("GroupBy") == 0 || commandName.compareTo("Fold") == 0 || commandName.compareTo("Glue") == 0)
-				ht = CloneTableUtils.getChildHTable(parentHT, parentHT.getId(), false);
+				ht = hNode.getNestedTable();
 			else
 				ht = parentHT;
 		}
