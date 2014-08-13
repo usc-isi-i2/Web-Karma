@@ -129,6 +129,12 @@ public class KR2RMLMappingWriter {
 			repoURIs.put(uri, f.createURI(uri));
 		}				
 		
+		repoURIs.put(Uris.SERVICE_INPUT, f.createURI(Uris.SERVICE_INPUT));
+		repoURIs.put(Uris.SERVICE_METADATA, f.createURI(Uris.SERVICE_METADATA));
+		repoURIs.put(Uris.SERVICE_INPUT_CLASS, f.createURI(Uris.SERVICE_INPUT_CLASS));
+		repoURIs.put(Uris.SERVICE_INPUT_COLUMN, f.createURI(Uris.SERVICE_INPUT_COLUMN));
+		repoURIs.put(Uris.WEB_SERVICE, f.createURI(Uris.WEB_SERVICE));
+		
 	}
 
 	public boolean addR2RMLMapping(KR2RMLMapping mapping, Worksheet worksheet, Workspace workspace)
@@ -139,6 +145,11 @@ public class KR2RMLMappingWriter {
 			Resource mappingRes = addKR2RMLMappingResource(worksheet, mapping);
 			addTripleMaps(mapping, mappingRes, worksheet, workspace);
 			addPrefixes(mapping);
+			
+			WorksheetProperties props = worksheet.getMetadataContainer().getWorksheetProperties();
+			if(props.hasServiceProperties()) {
+				this.addServiceMappings(mapping, worksheet, workspace, mappingRes);
+			}
 			
 		} catch (OpenRDFException e) {
 			logger.error("Error occured while generating RDF representation of R2RML data " +
@@ -304,6 +315,55 @@ public class KR2RMLMappingWriter {
 		con.add(mappingRes, repoURIs.get(Uris.KM_HAS_PREDICATE_OBJECT_MAP_URI), pomUri);
 		
 	}
+	
+	
+	public void addServiceMappings(KR2RMLMapping mapping, Worksheet worksheet, Workspace workspace,  Resource worksheetMapping) {
+		logger.info("Adding web service input mappings to triple maps and POMs");
+		
+		List<TriplesMap> triplesMapList = mapping.getTriplesMapList();
+		
+		try {
+			// create the service model triple
+			WorksheetProperties props = worksheet.getMetadataContainer().getWorksheetProperties();
+			if (props == null || props.getPropertyValue(Property.serviceUrl) == null) {
+				logger.info("Could not generate service mappings. Worksheet Properties null or no service url found.");
+				return;
+			}
+			URI serviceUri = f.createURI(props.getPropertyValue(Property.serviceUrl));
+			con.add(serviceUri, RDF.TYPE, repoURIs.get(Uris.WEB_SERVICE));
+			con.add(serviceUri, repoURIs.get(Uris.SERVICE_METADATA), worksheetMapping);
+			
+			RepFactory factory =  workspace.getFactory();
+			KR2RMLColumnNameFormatter columnNameFormatter = mapping.getColumnNameFormatter();
+			
+			// for all the triple maps - add links to the service model
+			for (TriplesMap trMap:triplesMapList) {
+				URI trMapUri = f.createURI(Namespaces.KARMA_DEV + trMap.getId());
+				con.add(serviceUri , repoURIs.get(Uris.SERVICE_INPUT_CLASS) , trMapUri);
+				
+				// for each POM, add the service mapping link
+				for (PredicateObjectMap pom:trMap.getPredicateObjectMaps()) {
+					
+					URI predValUri = f.createURI(pom.getPredicate().getTemplate().getR2rmlTemplateString(factory, columnNameFormatter));
+					
+					// Skip the class instance special meta property
+					if (predValUri.stringValue().equals(Uris.CLASS_INSTANCE_LINK_URI))
+						continue;
+					
+					URI pomUri = f.createURI(Namespaces.KARMA_DEV + pom.getId());
+					con.add(serviceUri , repoURIs.get(Uris.SERVICE_INPUT) , pomUri);
+					if(!pom.getObject().hasRefObjectMap()) {
+						con.add(serviceUri , repoURIs.get(Uris.SERVICE_INPUT_COLUMN) , pomUri);
+					}
+				}
+			}
+		} catch(Exception e) {
+			logger.error("Error occured while adding web serivce mapping links", e);
+		}
+		
+	}
+	
+	
 	
 	private boolean addPredicate(PredicateObjectMap pom,
 			KR2RMLColumnNameFormatter columnNameFormatter, RepFactory factory,

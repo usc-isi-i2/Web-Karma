@@ -111,6 +111,14 @@ public abstract class Uris {
 	// Linking related URIs
 	public static final String KM_LINKING_MATCHES_URI = Namespaces.KARMA_DEV + "possibleLinkingMatches";
 	
+	// Web service modeling related URIs
+	public static final String SERVICE_INPUT = Namespaces.KARMA_DEV + "serviceInput";
+	public static final String SERVICE_METADATA = Namespaces.KARMA_DEV + "serviceMetadata";
+	public static final String SERVICE_INPUT_COLUMN = Namespaces.KARMA_DEV + "serviceInputColumn";
+	public static final String SERVICE_INPUT_CLASS = Namespaces.KARMA_DEV + "serviceInputClass";
+	public static final String WEB_SERVICE = Namespaces.KARMA_DEV + "webService";
+	public static final String KM_DEFAULT_PUBLISH_GRAPH_URI = Namespaces.KARMA_DEV + "publish/";
+	
 	public static final List<String> Uris = new ArrayList<String>();
 	static {
 		List<Field> staticFields = new ArrayList<>();
@@ -132,5 +140,4 @@ public abstract class Uris {
 				}
 	    }
 	}
-
 }

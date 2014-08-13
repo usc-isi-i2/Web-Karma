@@ -33,34 +33,33 @@ import edu.isi.karma.rep.Workspace;
 /**
  * @author shri
  * */
-public class InvokeDataMiningServiceCommandFactory extends CommandFactory {
+public class InvokePredefinedServiceCommandFactory extends CommandFactory {
 	
-	private static Logger logger = LoggerFactory.getLogger(InvokeDataMiningServiceCommandFactory.class);
+	private static Logger logger = LoggerFactory.getLogger(InvokePredefinedServiceCommandFactory.class);
 	private enum Arguments {
-		worksheetId, dataMiningURL, csvFileName
+		workspaceId, worksheetId, tripleStoreUrl, graphUrl, serviceUrl, method, postOption, rootNodeId
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		String csvFileName = request.getParameter(Arguments.csvFileName.name());
-		csvFileName = csvFileName.substring(csvFileName.lastIndexOf("/")+1, csvFileName.length());
-		String dmURL = request.getParameter(Arguments.dataMiningURL.name());
+		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
+		String graphUrl = request.getParameter(Arguments.graphUrl.name());
+		String serviceUrl = request.getParameter(Arguments.serviceUrl.name());
+		String method = request.getParameter(Arguments.method.name());
+		String rootNodeId = request.getParameter(Arguments.rootNodeId.name());
+		String postOption = null;
+		if(method.equalsIgnoreCase("POST")) {
+			postOption = request.getParameter(Arguments.postOption.name());
+		}
 		
-		logger.info("dmUrl:"+dmURL + " csv:"+csvFileName);
-		
-		return new InvokeDataMiningServiceCommand(getNewId(workspace), worksheetId, dmURL, csvFileName);
-	}
-	
-	public Command createCommand(Workspace workspace, String worksheetId, String csvFileName, String serviceUrl) {
-		logger.info("dmUrl:"+serviceUrl + " csv:"+csvFileName);
-		return new InvokeDataMiningServiceCommand(getNewId(workspace), worksheetId, serviceUrl, csvFileName);
+		return new InvokePredefinedServiceCommand(getNewId(workspace), worksheetId, tripleStoreUrl, graphUrl,rootNodeId, serviceUrl,  method, postOption);
 	}
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand()
 	{
-		return InvokeDataMiningServiceCommand.class;
+		return InvokePredefinedServiceCommand.class;
 	}
 }

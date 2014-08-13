@@ -18,49 +18,38 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
+package edu.isi.karma.controller.command;
 
-package edu.isi.karma.controller.command.alignment;
+import edu.isi.karma.rep.Workspace;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.rep.Workspace;
-
-/**
- * @author shri
- * */
-public class InvokeDataMiningServiceCommandFactory extends CommandFactory {
-	
-	private static Logger logger = LoggerFactory.getLogger(InvokeDataMiningServiceCommandFactory.class);
+public class ExploreServicesCommandFactory extends CommandFactory {
 	private enum Arguments {
-		worksheetId, dataMiningURL, csvFileName
+		rootNodeId, worksheetId
 	}
-	
+
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
-		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		String csvFileName = request.getParameter(Arguments.csvFileName.name());
-		csvFileName = csvFileName.substring(csvFileName.lastIndexOf("/")+1, csvFileName.length());
-		String dmURL = request.getParameter(Arguments.dataMiningURL.name());
+
+		ExploreServicesCommand comm = new ExploreServicesCommand(workspace.getId(),  
+				request.getParameter(Arguments.worksheetId.name()) ,
+				request.getParameter(Arguments.rootNodeId.name())
+				);
 		
-		logger.info("dmUrl:"+dmURL + " csv:"+csvFileName);
-		
-		return new InvokeDataMiningServiceCommand(getNewId(workspace), worksheetId, dmURL, csvFileName);
+		return comm;
 	}
 	
-	public Command createCommand(Workspace workspace, String worksheetId, String csvFileName, String serviceUrl) {
-		logger.info("dmUrl:"+serviceUrl + " csv:"+csvFileName);
-		return new InvokeDataMiningServiceCommand(getNewId(workspace), worksheetId, serviceUrl, csvFileName);
+	public Command createCommand(Workspace workspace, String worksheetId, String rootNodeId){
+		ExploreServicesCommand comm = new ExploreServicesCommand(workspace.getId(), worksheetId,  rootNodeId);
+		
+		return comm;
 	}
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand()
 	{
-		return InvokeDataMiningServiceCommand.class;
+		return ExploreServicesCommand.class;
 	}
 }

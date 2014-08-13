@@ -21,13 +21,21 @@
 
 package edu.isi.karma.er.helper;
 
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.PrintWriter;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.json.JSONArray;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +59,11 @@ import edu.isi.karma.rep.Workspace;
 public class ExportCSVUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(ExportCSVUtil.class);
+	
+//	public static HashMap<String, String> generateCSVQuery(Workspace workspace, final String worksheetId, final String rootNodeId,
+//			final ArrayList<HashMap<String, String>> columnList, final String graphUrl) {
+//		return generateCSVQuery(workspace, worksheetId, rootNodeId, columnList, graphUrl, null);
+//	}
 
 	/**
 	 * @author shri
@@ -60,12 +73,13 @@ public class ExportCSVUtil {
 	 * @param rootNodeId The root Node Id from where the csv is to be generated
 	 * @param columnList An ArrayList<HashMap<String, String>> that has the list of columns to be fetched. These columns are identified by their complete URL as defined in the ontology. <br /> If null then all the columns are fetched
 	 * @param graphUrl The context/graph from where the columns of the models are to be fetched
+	 * @param model_graphUri The context/graph where the R2RML model is published
 	 * 
 	 * @return HashMap<String, String> of the format 'Query: <the sparql query' or 'Error: <The error message>' 
 	 * */
 	
 	public static HashMap<String, String> generateCSVQuery(Workspace workspace, final String worksheetId, final String rootNodeId,
-			final ArrayList<HashMap<String, String>> columnList, final String graphUrl) {
+			final ArrayList<HashMap<String, String>> columnList, final String graphUrl, final String model_graphUri) {
 	
 		HashMap<String, String> retVal = new HashMap<String, String>();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
@@ -116,7 +130,7 @@ public class ExportCSVUtil {
 						break;
 					}
 				}
-				query = genObj.get_query(root_node, columnList, true);
+				query = genObj.get_query(root_node, columnList, true, graphUrl);
 			} else {
 				query = genObj.get_query(mappingGen.getKR2RMLMapping(), graphUrl);
 			}
@@ -131,7 +145,6 @@ public class ExportCSVUtil {
 	}
 	
 	
-	
 	/**
 	 * @author shri
 	 * 
@@ -141,60 +154,52 @@ public class ExportCSVUtil {
 	 * @param columnList An ArrayList of strings that has the list of columns to be fetched. These columns are identified by their complete URL as defined in the ontology. <br /> If null then all the columns are fetched
 	 * @param graphUrl The context/graph from where the columns of the models are to be fetched
 	 * @param tripleStoreUrl The sparql end point for data to be fetched
+	 * @param model_graphUri The graph where the R2RML model is published
 	 * 
 	 * @return HashMap<String, String> of the format 'File: <the csv file path' or 'Error: <The error message>' 
 	 * */
 	
 	public static HashMap<String, String> generateCSVFile(Workspace workspace, final String worksheetId, final String rootNodeId,
-			final ArrayList<HashMap<String, String>> columnList, final String graphUrl, final String tripleStoreUrl, final String csvFilePath) {
+			final ArrayList<HashMap<String, String>> columnList, final String graphUrl, final String tripleStoreUrl, final String csvFilePath, final String model_graphUri) {
+		
 		HashMap<String, String> retVal = new HashMap<String, String>();
-		HashMap<String, String> query = generateCSVQuery(workspace, worksheetId, rootNodeId, columnList, graphUrl);
+		HashMap<String, String> query = generateCSVQuery(workspace, worksheetId, rootNodeId, columnList, graphUrl, model_graphUri);
 		try {
 			if(query.containsKey("Error")) {
 				logger.error("Error while generating csv");
 				return query;
 			}
-			// execute the query on the triple store
-			// TODO need to fix the encoding type for the data returned in csv form
-			// the new line char is not properly encoded
-			String data = TripleStoreUtil.invokeSparqlQuery(query.get("Query"), tripleStoreUrl, "application/sparql-results+json", null);
-			
 			File f = new File(csvFilePath);
 			File parentDir = f.getParentFile();
 			parentDir.mkdirs();
-			PrintWriter writer = new PrintWriter(f, "UTF-8");
-			JSONObject jsonData = new JSONObject(data);
-			JSONArray headers = jsonData.getJSONObject("head").getJSONArray("vars");
-			JSONArray rows = jsonData.getJSONObject("results").getJSONArray("bindings");
-			// write the header
-			for(int j=0;j<headers.length();j++) {
-				writer.write(headers.getString(j).replaceAll("\"", "\\\""));
-				if(j < headers.length()-1) {
-					writer.write(",");
-				}
-			}
-			for(int i=0;i<rows.length();i++) {
-//				JSONObject obj = rows.getJSONObject(i);
-				writer.write("\n");
-				for(int j=0;j<headers.length();j++) {
-					try {
-//						writer.write("\"" + rows.optJSONObject(i).optJSONObject(headers.getString(j)).optString("value").replaceAll("\"", "\\\"") + "\"");
-						writer.write(rows.optJSONObject(i).optJSONObject(headers.getString(j)).optString("value").replaceAll("\"", "\\\""));
-						if(j < headers.length()-1) {
-							writer.write(",");
-						}
-					}catch(Exception e1) {
-						logger.error("Could not find key in json object");
-					}
-				}
-			}
 			
-			logger.info("Fetching data from triple store in csv format : " + tripleStoreUrl);
-//			String data = TripleStoreUtil.invokeSparqlQuery(query.get("Query"), tripleStoreUrl, "text/csv", null);
+			BufferedInputStream buf;
+        	byte[] buffer = new byte[10240];
 			
-			writer.write("\n");
-			writer.flush();
-			writer.close();
+        	logger.info("Fetching data from triple store in csv format : " + tripleStoreUrl);
+        	
+        	
+			List<NameValuePair> formParams = new ArrayList<NameValuePair>();
+			formParams.add(new BasicNameValuePair("query", query.get("Query")));
+			
+			// Prepare the headers
+			HttpPost httpPost = new HttpPost(tripleStoreUrl);
+			httpPost.setEntity(new UrlEncodedFormEntity(formParams, "UTF-8"));
+			httpPost.setHeader("Accept", "text/csv");
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpResponse response = httpClient.execute(httpPost);
+			
+			// Parse the response and store it in a String
+			HttpEntity entity = response.getEntity();
+			FileOutputStream fw = new FileOutputStream(f);
+        	// get the file from the service
+        	buf = new BufferedInputStream(entity.getContent());
+        	for (int length = 0; (length = buf.read(buffer)) > 0;) {
+        		fw.write(buffer, 0, length);
+            }
+        	fw.close();
+        	buf.close();
+			
 			logger.info("Writing CSV file :" + csvFilePath);
 			
 		} catch(Exception e) {

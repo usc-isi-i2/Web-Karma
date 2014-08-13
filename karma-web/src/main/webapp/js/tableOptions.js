@@ -595,357 +595,339 @@ var FetchModelDialog = (function() {
 
 
 var ExportCSVModelDialog = (function() {
-		var instance = null;
+	var instance = null;
 
-		function setOpeartingMode(mode) {
-			opeartingMode = mode;
-		};
-		
-		function PrivateConstructor(mode) {
-			var dialog = $("#exportCSVDialog");
-			var worksheetId;
-			var alignmentNodeId;
-			var columnId;
-			var operatingMode = mode;
-			
-			function init() {
-				//Initialize what happens when we show the dialog
-				dialog.on('show.bs.modal', function (e) {
+	function setOpeartingMode(mode) {
+		opeartingMode = mode;
+	};
+
+	function PrivateConstructor(mode) {
+		var dialog = $("#exportCSVDialog");
+		var worksheetId;
+		var alignmentNodeId;
+		var columnId;
+		var operatingMode = mode;
+
+		function init() {
+			//Initialize what happens when we show the dialog
+			dialog.on('show.bs.modal', function (e) {
 				hideError();
 				$("body").css("cursor", "auto");
-				
-				
+
+
 			});
-				
-//			//Initialize handler for Save button
-//			$('#btnSave', dialog).on('click', function (e) {
-//				e.preventDefault();
-//				getColumnList();
-//			});
-			
+
 			//Initialize change handler for sparql end point text box for url
-			$('input#csvSPAQRLEndPoint').on('focusout', function(event){
+			$('input#csvSPAQRLEndPoint', dialog).on('focusout', function(event){
 				fetchGraphsFromTripleStore($("#csvSPAQRLEndPoint").val(), $("#csvModelGraphList"));
-					});
-			
+			});
+
 			//Initialize change handler for sparql end point text box for url
-			$('input#csvDataEndPoint').on('focusout', function(event){
+			$('input#csvDataEndPoint', dialog).on('focusout', function(event){
 				fetchGraphsFromTripleStore($("#csvDataEndPoint").val(), $("#csvDataGraphList"));
+			});
+		}
+
+		// this method will fetch all the context (graphs) from the given endpoint
+		// it takes in the url and the input element object
+		function fetchGraphsFromTripleStore(url, modelGraphList) {
+
+			var info = new Object();
+			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			info["command"] = "FetchGraphsFromTripleStoreCommand";
+			info["tripleStoreUrl"] = url;
+			var returned = $.ajax({
+				url: "RequestController", 
+				type: "POST",
+				data : info,
+				dataType : "json",
+				complete : 
+					function (xhr, textStatus) {
+					console.log("got graphs ..");
+					var json = $.parseJSON(xhr.responseText);
+					graphs = [];
+					if(json["elements"] && json["elements"][0]['graphs']) {
+						graphs = json["elements"][0]['graphs'];
+					}
+					//var modelGraphList = $("#csvModelGraphList");
+					modelGraphList.html('<option value="000">Current Worksheet</option><option value="ALL">All graphs</option>');
+					for (var x in graphs) {
+						var str = graphs[x];
+						modelGraphList.append('<option value="'+graphs[x]+'">'+str+'</option>');
+					}
+				},
+				error :
+					function (xhr, textStatus) {
+					alert("Error occurred with fetching graphs! " + textStatus);
+				}		   
+			});
+		}
+
+
+		function performInvokeMLService() {
+
+			var graphUri = $('#csvDataGraphList').val().trim();
+
+			var list = {};
+			$('#csv_columns').find('li').each(function(index){
+				list[index] = {'name' : $(this).attr('rel'), 'url':$(this).attr('name') };
+			});
+
+			var info = new Object();
+			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			info["worksheetId"] = worksheetId;
+			info["command"] = "ExportCSVCommand";
+			info["rootNodeId"] = $('#csv_columns').attr('rel');
+			info["model_graph"] = $('#csv_columns').data('modelgraph');
+			info["tripleStoreUrl"] = $("#csvDataEndPoint").val();
+			info["graphUrl"] =  graphUri ;
+			info["columnList"] = JSON.stringify(list);
+
+			var returned = $.ajax({
+				url: "RequestController", 
+				type: "POST",
+				data : info,
+				dataType : "json",
+				complete : 
+					function (xhr, textStatus) {
+					var json = $.parseJSON(xhr.responseText);
+
+					var fileName = json["elements"][0]['fileUrl'];
+
+					var dmURL = $('#dataMiningUrl').val().trim();
+					if(dmURL.length < 2) {
+						dmURL = 'http://localhost:8088/train';
+					}
+					var info = new Object();
+					info["workspaceId"] = $.workspaceGlobalInformation.id;
+					info["worksheetId"] = worksheetId;
+					info["command"] = "InvokeDataMiningServiceCommand";
+					info["dataMiningURL"] = dmURL;
+					info["csvFileName"] = fileName;
+
+
+					$.ajax({
+						url: "RequestController", 
+						type: "POST",
+						data : info,
+						dataType : "json",
+						complete : 
+							function (xhr, textStatus) {
+							var json = $.parseJSON(xhr.responseText);
+							parse(json);
+							hide();
+							alert("This results are loaded in a new worksheet");
+						},
+						error :
+							function (xhr, textStatus) {
+							alert("Error occurred while invoking service! " + textStatus);
+						}		   
 					});
-			}
-			
-			// this method will fetch all the context (graphs) from the given endpoint
-			// it takes in the url and the input element object
-			function fetchGraphsFromTripleStore(url, modelGraphList) {
-				
-				var info = new Object();
-				info["workspaceId"] = $.workspaceGlobalInformation.id;
-				info["command"] = "FetchGraphsFromTripleStoreCommand";
-				info["tripleStoreUrl"] = url;
-				var returned = $.ajax({
-						url: "RequestController", 
-						type: "POST",
-						data : info,
-						dataType : "json",
-						complete : 
-							function (xhr, textStatus) {
-												console.log("got graphs ..");
-								var json = $.parseJSON(xhr.responseText);
-								graphs = [];
-								if(json["elements"] && json["elements"][0]['graphs']) {
-									graphs = json["elements"][0]['graphs'];
-								}
-								//var modelGraphList = $("#csvModelGraphList");
-								modelGraphList.html('<option value="000">Current Worksheet</option>');
-								for (var x in graphs) {
-									var str = graphs[x];
-									modelGraphList.append('<option value="'+graphs[x]+'">'+str+'</option>');
-								}
-							},
-					error :
-						function (xhr, textStatus) {
-								alert("Error occurred with fetching graphs! " + textStatus);
-							}		   
-				});
-			}
-			
-			
-			function performInvokeMLService() {
-				
-				var graphUri = $('#csvDataGraphList').val().trim();
-				
-				var list = {};
+
+				},
+				error :
+					function (xhr, textStatus) {
+					alert("Error occurred while exporting CSV! " + textStatus);
+				}		   
+			});
+		}
+
+		function performExportCSV() {
+
+			var graphUri = $('#csvDataGraphList').val().trim();
+			//graphUri = (graphUri == '000') ? '' : graphUri;
+
+			var list = {};
 			$('#csv_columns').find('li').each(function(index){
 				list[index] = {'name' : $(this).attr('rel'), 'url':$(this).attr('name') };
 			});
-			
-				var info = new Object();
-				info["workspaceId"] = $.workspaceGlobalInformation.id;
-				info["worksheetId"] = worksheetId;
-				info["command"] = "ExportCSVCommand";
-				info["rootNodeId"] = $('#csv_columns').attr('rel');
-				info["tripleStoreUrl"] = $("#csvDataEndPoint").val();
-				info["graphUrl"] =  graphUri ;
-				info["columnList"] = JSON.stringify(list);
-				
-				var returned = $.ajax({
-						url: "RequestController", 
-						type: "POST",
-						data : info,
-						dataType : "json",
-						complete : 
-							function (xhr, textStatus) {
-								var json = $.parseJSON(xhr.responseText);
-								
-								var fileName = json["elements"][0]['fileUrl'];
-								
-								var dmURL = $('#dataMiningUrl').val().trim();
-								if(dmURL.length < 2) {
-									dmURL = 'http://localhost:8088/train';
-								}
-								var info = new Object();
-								info["workspaceId"] = $.workspaceGlobalInformation.id;
-								info["worksheetId"] = worksheetId;
-								info["command"] = "InvokeDataMiningServiceCommand";
-								info["dataMiningURL"] = dmURL;
-								info["csvFileName"] = fileName;
-								
-								
-								$.ajax({
-										url: "RequestController", 
-										type: "POST",
-										data : info,
-										dataType : "json",
-										complete : 
-											function (xhr, textStatus) {
-												var json = $.parseJSON(xhr.responseText);
-												parse(json);
-												hide();
-												alert("This results are loaded in a new worksheet");
-//    		    		   			if(json["elements"][0]['updateType'] && json["elements"][0]['updateType']=="KarmaError") {
-//    		    		   				alert("Error while invoking service");
-//    		    		   				hide();
-//    		    		   			} else if(json["elements"][0]['status'] && json["elements"][0]['status'] == true) {
-//    		    		   				hide();
-////    		    		   				$('#DMresults').html(json["elements"][0]['results']);
-////    		    		   				$('#DMresults').show();
-//    		    		   			}
-//    		    		   			else {
-//    		    		   				var model_name = json["elements"][0]['model_name'];
-//    		    		   				hide();
-//    		    		   				alert('Model Name: '+model_name);
-//    		    		   			}
-												
-											},
-									error :
-										function (xhr, textStatus) {
-												alert("Error occurred while invoking service! " + textStatus);
-											}		   
-								});
-								
-							},
-					error :
-						function (xhr, textStatus) {
-								alert("Error occurred while exporting CSV! " + textStatus);
-							}		   
-				});
-			}
-			
-			function performExportCSV() {
-				
-				var graphUri = $('#csvDataGraphList').val().trim();
-				//graphUri = (graphUri == '000') ? '' : graphUri;
-				
-				var list = {};
-			$('#csv_columns').find('li').each(function(index){
-				list[index] = {'name' : $(this).attr('rel'), 'url':$(this).attr('name') };
+
+			var info = new Object();
+			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			info["worksheetId"] = worksheetId;
+			info["command"] = "ExportCSVCommand";
+			info["rootNodeId"] = $('#csv_columns').attr('rel');
+			info["model_graph"] = $('#csv_columns').data('modelgraph');
+			info["tripleStoreUrl"] = $("#csvDataEndPoint").val();
+			info["graphUrl"] =  graphUri ;
+			info["columnList"] = JSON.stringify(list);
+
+			var returned = $.ajax({
+				url: "RequestController", 
+				type: "POST",
+				data : info,
+				dataType : "json",
+				complete : 
+					function (xhr, textStatus) {
+					var json = $.parseJSON(xhr.responseText);
+					parse(json);
+					hide();
+				},
+				error :
+					function (xhr, textStatus) {
+					alert("Error occurred with fetching graphs! " + textStatus);
+				}		   
 			});
-			
-				var info = new Object();
-				info["workspaceId"] = $.workspaceGlobalInformation.id;
-				info["worksheetId"] = worksheetId;
-				info["command"] = "ExportCSVCommand";
-				info["rootNodeId"] = $('#csv_columns').attr('rel');
-				info["tripleStoreUrl"] = $("#csvDataEndPoint").val();
-				info["graphUrl"] =  graphUri ;
-				info["columnList"] = JSON.stringify(list);
-				
-				var returned = $.ajax({
-						url: "RequestController", 
-						type: "POST",
-						data : info,
-						dataType : "json",
-						complete : 
-							function (xhr, textStatus) {
-								var json = $.parseJSON(xhr.responseText);
-								parse(json);
-								hide();
-							},
-					error :
-						function (xhr, textStatus) {
-								alert("Error occurred with fetching graphs! " + textStatus);
-							}		   
-				});
-			}
-			
-			function initCSVDataDialog() {
-				$("input#csvDataEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_data');
-				var url2 = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_data';
+		}
+
+		function initCSVDataDialog() {
+			$("input#csvDataEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_data');
+			var url2 = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_data';
 			fetchGraphsFromTripleStore(url2, $('#csvDataGraphList') );
-				$('#csvDataDialogContent').show();
-						console.log("initCSVDataDialog..");
-						
-			}
-			
-			// this method will fetch the columns that are reachable from this node
-			function getColumnList(showCallback, dialog) {
-//    		var graphUri = $('#csvModelGraphList').val().trim();
-//    		graphUri = (graphUri == '000') ? '' : graphUri; 
-						console.log("getting columns ..");
-				var info = new Object();
-				info["workspaceId"] = $.workspaceGlobalInformation.id;
-				info["worksheetId"] = worksheetId;
-				info["command"] = "FetchColumnCommand";
-//    		info["alignmentNodeId"] = alignmentNodeId;
-//    		info["tripleStoreUrl"] = $("#csvSPAQRLEndPoint").val();
-//    		info["graphUrl"] =  graphUri ;
-				info["nodeId"] = columnId;
-				var returned = $.ajax({
-						url: "RequestController", 
-						type: "POST",
-						data : info,
-						dataType : "json",
-						complete : 
-							function (xhr, textStatus) {
-								var data = $.parseJSON(xhr.responseText);
-								$('#csvDialogContent').hide();
-								
-								var ele = $('#csvDialogColumnList');
-								var content = '<ol id="csv_columns" rel="'+data['elements'][0]['rootId']+'">';
-								var list = data['elements'][0]['columns'];
-								for(var x in list) {
-//    		   				var index = 0;
-//    		   				var str = list[x];
-//    		   				if(str.lastIndexOf('#') > 0 ) {
-//    		   					index = str.lastIndexOf('#') + 1;
-//    		   				} else if(str.lastIndexOf('/') > 0 ) {
-//    		   					index = str.lastIndexOf('/') + 1;
-//    		   				}
-//    		   				str = str.substr(index, (str.length - index));
-//    		   				
-									content += '<li style="padding=4px;" name="'+list[x]['url']+'" rel="'+list[x]['name']+'">'
-										+ list[x]['name']+' &nbsp; <a class="icon-remove pull-right">X</a>'  
-										+'</li>';
-														console.log("done fetching columns..");
-								}
-								ele.html(content + '</ol>');
-								$("#csv_columns").delegate('a.icon-remove','click',function(event){
-									$(this).parent().remove();
-								});
-								
-								//$('#btnExportCSV').show();
-								$("#csv_columns").sortable();
-								
-								initCSVDataDialog();
-												showCallback(dialog);
-						}	   
-				});
-			}
-			
+			$('#csvDataDialogContent').show();
+			console.log("initCSVDataDialog..");
+
+		}
+
+		// this method will fetch the columns that are reachable from this node
+		function getColumnList(showCallback, dialog) {
+//			var graphUri = $('#csvModelGraphList').val().trim();
+//			graphUri = (graphUri == '000') ? '' : graphUri; 
+			console.log("getting columns ..");
+			var info = new Object();
+			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			info["worksheetId"] = worksheetId;
+			info["command"] = "FetchColumnCommand";
+//			info["alignmentNodeId"] = alignmentNodeId;
+//			info["tripleStoreUrl"] = $("#csvSPAQRLEndPoint").val();
+//			info["graphUrl"] =  graphUri ;
+			info["nodeId"] = columnId;
+			var returned = $.ajax({
+				url: "RequestController", 
+				type: "POST",
+				data : info,
+				dataType : "json",
+				complete : 
+					function (xhr, textStatus) {
+					var data = $.parseJSON(xhr.responseText);
+					$('#csvDialogContent').hide();
+
+					var ele = $('#csvDialogColumnList');
+					var content = '<ol id="csv_columns" rel="'+data['elements'][0]['rootId']+'" data-modelgraph="'+data['elements'][0]['model_graph']+'">';
+					var list = data['elements'][0]['columns'];
+					for(var x in list) {
+//						var index = 0;
+//						var str = list[x];
+//						if(str.lastIndexOf('#') > 0 ) {
+//						index = str.lastIndexOf('#') + 1;
+//						} else if(str.lastIndexOf('/') > 0 ) {
+//						index = str.lastIndexOf('/') + 1;
+//						}
+//						str = str.substr(index, (str.length - index));
+
+						content += '<li style="padding=4px;" name="'+list[x]['url']+'" rel="'+list[x]['name']+'">'
+						+ list[x]['label']+' &nbsp; <a class="icon-remove pull-right">X</a>'  
+						+'</li>';
+						console.log("done fetching columns..");
+					}
+					ele.html(content + '</ol>');
+					$("#csv_columns").delegate('a.icon-remove','click',function(event){
+						$(this).parent().remove();
+					});
+
+					//$('#btnExportCSV').show();
+					$("#csv_columns").sortable();
+
+					initCSVDataDialog();
+					showCallback(dialog);
+				}	   
+			});
+		}
+
 		function hideError() {
 			$("div.error", dialog).hide();
 		}
-		
+
 		function showError() {
 			$("div.error", dialog).show();
 		}
-				
-				function hide() {
-					dialog.modal('hide');
-				}
-				
-				function show(wsId, algnId, colId,mode) {
-					worksheetId = wsId;
-					alignmentNodeId = algnId;
-					columnId = colId;
-					operatingMode = mode;
 
-						// here we need to get the list of columns before showing the dialog
-						$("body").css("cursor", "progress");
-
-						console.log("showing modal..");
-
-						// var url2 = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_data';
-						// $("input#csvDataEndPoint").val(url2);               
-						// fetchGraphsFromTripleStore(url2, $('#csvDataGraphList') );
-						
-						//$("input#csvSPAQRLEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-						//window.csvSPAQRLEndPoint = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_models';
-						//fetchGraphsFromTripleStore(window.csvSPAQRLEndPoint, $("#csvModelGraphList"));
-						
-						//Initialize handler for ExportCSV button
-						$('#btnExportCSV', dialog).unbind('click');
-						
-						if (operatingMode === "invokeMLService") {
-								$('#exportCSV_ModelTitle').html('Invoke Table Service');
-								$('#btnExportCSV', dialog).html('Invoke');
-								$('div.formDivDMUrl', dialog).show();
-								
-								//Initialize handler for ExportCSV button
-								$('#btnExportCSV', dialog).on('click', function (e) {
-										performInvokeMLService();
-								});
-								
-						} else {
-								$('#exportCSV_ModelTitle').html('Export CSV');
-								$('#btnExportCSV', dialog).html('Export');
-								$('div.formDivDMUrl', dialog).hide();
-								
-								//Initialize handler for ExportCSV button
-								$('#btnExportCSV', dialog).on('click', function (e) {
-										performExportCSV();
-								});
-						}
-						
-						$('#csvDialogColumnList').html('');
-						$('#csvDataDialogContent').hide();
-
-						var showDialog = function(dialog){
-								console.log("callback....executing......");
-								dialog.modal({keyboard:true, show:true, backdrop:'static'});
-						};
-
-						getColumnList(showDialog, dialog);
-						//$('#csvDialogContent').show();
-						
-						//$('#csvDialogColumnList').hide();
-						//$('#btnExportCSV').hide();
-						
-						
-
-
-					
-				};
-				
-				
-				return {	//Return back the public methods
-					show : show,
-					init : init
-				};
-		};
-
-		function getInstance(mode) {
-			if( ! instance ) {
-				instance = new PrivateConstructor(mode);
-				instance.init();
-			}
-			return instance;
+		function hide() {
+			dialog.modal('hide');
 		}
-	 
-		return {
-			getInstance : getInstance
+
+		function show(wsId, algnId, colId,mode) {
+			worksheetId = wsId;
+			alignmentNodeId = algnId;
+			columnId = colId;
+			operatingMode = mode;
+
+			// here we need to get the list of columns before showing the dialog
+			$("body").css("cursor", "progress");
+
+			console.log("showing modal..");
+
+			// var url2 = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_data';
+			// $("input#csvDataEndPoint").val(url2);               
+			// fetchGraphsFromTripleStore(url2, $('#csvDataGraphList') );
+
+			//$("input#csvSPAQRLEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+			//window.csvSPAQRLEndPoint = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_models';
+			//fetchGraphsFromTripleStore(window.csvSPAQRLEndPoint, $("#csvModelGraphList"));
+
+			//Initialize handler for ExportCSV button
+			$('#btnExportCSV', dialog).unbind('click');
+
+			if (operatingMode === "invokeMLService") {
+				$('#exportCSV_ModelTitle').html('Invoke Table Service');
+				$('#btnExportCSV', dialog).html('Invoke');
+				$('div.formDivDMUrl', dialog).show();
+
+				//Initialize handler for ExportCSV button
+				$('#btnExportCSV', dialog).on('click', function (e) {
+					performInvokeMLService();
+				});
+
+			} else {
+				$('#exportCSV_ModelTitle').html('Export CSV');
+				$('#btnExportCSV', dialog).html('Export');
+				$('div.formDivDMUrl', dialog).hide();
+
+				//Initialize handler for ExportCSV button
+				$('#btnExportCSV', dialog).on('click', function (e) {
+					performExportCSV();
+				});
+			}
+
+			$('#csvDialogColumnList').html('');
+			$('#csvDataDialogContent').hide();
+
+			var showDialog = function(dialog){
+				console.log("callback....executing......");
+				dialog.modal({keyboard:true, show:true, backdrop:'static'});
+			};
+
+			getColumnList(showDialog, dialog);
+			//$('#csvDialogContent').show();
+
+			//$('#csvDialogColumnList').hide();
+			//$('#btnExportCSV').hide();
+
+
+
+
+
 		};
-		
+
+
+		return {	//Return back the public methods
+			show : show,
+			init : init
+		};
+	};
+
+	function getInstance(mode) {
+		if( ! instance ) {
+			instance = new PrivateConstructor(mode);
+			instance.init();
+		}
+		return instance;
+	}
+
+	return {
+		getInstance : getInstance
+	};
+
 })();
 
 
@@ -1690,4 +1672,170 @@ var PublishJSONDialog = (function() {
 			getInstance : getInstance
 		};
 		
+})();
+
+
+var InvokeServicesModelDialog = (function() {
+	var instance = null;
+
+	function PrivateConstructor() {
+		var dialog = $("#invokeServicesDialog");
+		var worksheetId;
+		var alignmentId;
+		var columnId;
+
+		function init() {
+			//Initialize what happens when we show the dialog
+			dialog.on('show.bs.modal', function (e) {
+				var url2 = 'http://'+window.location.host + '/openrdf-sesame/repositories/karma_data';
+				$("#spaqrlEndPoint", dialog).val(url2);
+				fetchGraphsFromTripleStore($("#spaqrlEndPoint", dialog).val(), $('#graphList', dialog));
+			});
+
+			//Initialize handler for Save button
+			$('#btnInvokeServices', dialog).on('click', function (e) {
+				performInvokeService();
+			});
+			
+			//Initialize change handler for sparql end point text box for url
+			$('#spaqrlEndPoint', dialog).on('focusout', function(event){
+				fetchGraphsFromTripleStore($("#spaqrlEndPoint", dialog).val(), $('#graphList', dialog));
+			});
+		}
+		
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+
+		function showError() {
+			$("div.error", dialog).show();
+		}
+		
+		function invokeTheService() {
+			
+		}
+		
+		function getDefinedServices() {
+			var info = new Object();
+			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			info["worksheetId"] = worksheetId;
+			info["command"] = "ExploreServicesCommand";
+			info["rootNodeId"] = columnId;
+
+			var returned = $.ajax({
+				url: "RequestController", 
+				type: "POST",
+				data : info,
+				dataType : "json",
+				complete : 
+					function (xhr, textStatus) {
+					var json = $.parseJSON(xhr.responseText);
+					parse(json);
+					dialog.modal({keyboard:true, show:true, backdrop:'static'});
+				},
+				error :
+					function (xhr, textStatus) {
+					alert("Error occurred while exporting CSV! " + textStatus);
+				}		   
+			});
+		}
+		
+		function fetchGraphsFromTripleStore(url, element) {
+
+			var info = new Object();
+			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			info["command"] = "FetchGraphsFromTripleStoreCommand";
+			info["tripleStoreUrl"] = url;
+			var returned = $.ajax({
+				url: "RequestController", 
+				type: "POST",
+				data : info,
+				dataType : "json",
+				complete : 
+					function (xhr, textStatus) {
+					console.log("got graphs ..");
+					var json = $.parseJSON(xhr.responseText);
+					graphs = [];
+					if(json["elements"] && json["elements"][0]['graphs']) {
+						graphs = json["elements"][0]['graphs'];
+					}
+					element.html('<option value="000">Current Worksheet</option><option value="ALL">All graphs</option>');
+					for (var x in graphs) {
+						var str = graphs[x];
+						element.append('<option value="'+graphs[x]+'">'+str+'</option>');
+					}
+				},
+				error :
+					function (xhr, textStatus) {
+					alert("Error occurred with fetching graphs! " + textStatus);
+				}		   
+			});
+		}
+		
+		function performInvokeService() {
+
+			var graphUri = $('#graphList', dialog).val().trim();
+			var selectedService = dialog.find('input:checked');
+			
+			var info = new Object();
+			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			info["worksheetId"] = worksheetId;
+			info["command"] = "InvokePredefinedServiceCommand";
+			info["tripleStoreUrl"] = $("#spaqrlEndPoint", dialog).val();
+			info["graphUrl"] =  graphUri ;
+			info["serviceUrl"] = selectedService.data('url');
+			info["method"] = selectedService.data('method');
+			info["postOption"] = selectedService.data('postopt');
+			info["rootNodeId"] = selectedService.data('serviceroot');
+			
+			console.log(info);
+			
+			var returned = $.ajax({
+				url: "RequestController", 
+				type: "POST",
+				data : info,
+				dataType : "json",
+				complete : 
+					function (xhr, textStatus) {
+					var json = $.parseJSON(xhr.responseText);
+					parse(json);
+					hide();
+					console.log(json);
+				},
+				error :
+					function (xhr, textStatus) {
+					alert("Error occurred while exporting CSV! " + textStatus);
+				}		   
+			});
+		}
+
+		function hide() {
+			dialog.modal('hide');
+		}
+
+		function show(wsId,alignId, rootId) {
+			worksheetId = wsId;
+			alignmentId = alignId;
+			columnId = rootId;
+			getDefinedServices();
+			
+		};
+		return {	//Return back the public methods
+			show : show,
+			init : init
+		};
+	};
+
+	function getInstance() {
+		if( ! instance ) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	}
+
+	return {
+		getInstance : getInstance
+	};
+
 })();

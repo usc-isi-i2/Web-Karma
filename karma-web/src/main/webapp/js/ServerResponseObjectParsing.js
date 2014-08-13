@@ -29,6 +29,9 @@ function parse(data) {
 		
 		// Check for errors
 		$.each(data["elements"], function(i, element) {
+			if(element == null) {
+				return;
+			}
 			if(element["updateType"] == "ReloadPageUpdate") {
 				//Need to reload the page
 				location.reload();
@@ -53,6 +56,9 @@ function parse(data) {
 		
 		var dataElements = new Array();
 		$.each(data["elements"], function(i, element) {
+			if(element == null) {
+				return;
+			}
 			if(element["updateType"] == "UISettings") {
 				$.workspaceGlobalInformation.UISettings = element["settings"];
 			} else if(element["updateType"] == "WorksheetCleaningUpdate") {
@@ -69,6 +75,9 @@ function parse(data) {
 		
 		// Loop through each update from the server and take required action for the GUI
 		$.each(data["elements"], function(i, element) {
+			if(element == null) {
+				return;
+			}
 				if(element["updateType"] == "WorksheetListUpdate") {
 
 						$.each(element["worksheets"], function(j, worksheet) {
@@ -791,6 +800,28 @@ function parse(data) {
 						$("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
 						$.sticky("CSV exported");
 				}
+				else if(element["updateType"] == "ExploreServices") {
+
+		        	var services = element["services"];
+		        	var tblObj = $('#tblDefinedServices');
+//		        	tblObj.html('<thead><tr><th>Label</th><th>Service Url</th><th>Method</th><th>Arguments</th></tr></thead>');
+		        	tblObj.html('<thead><tr><th>Service Url</th><th>Method</th><th>Arguments</th></tr></thead>');
+		        	var content = '';
+		        	for(var x in services) {
+		        		var item = services[x];
+		        		content += '<tr> <td> <div class="radio"> <label> <input type="radio" data-url="'+item['serviceUrl'] + '" data-method="'+item['serviceRequestMethod']
+		        			+ '" data-postopt="'+item['servicePostMethodType']
+		        			+'" name="definedServices" data-serviceroot="'+item['sericeRootNode']+'">'+item['serviceUrl']+'</label> \
+			  			</div> </td> <td>'+item['serviceRequestMethod'];
+		        		
+		        		if(item['serviceRequestMethod'] == 'POST') {
+		        			content += ' ('+item['servicePostMethodType']+') ';
+		        		}
+		        		content += '</td> <td>'+item['totalArgs']+'</td> </tr>';
+		        	}
+		        	tblObj.append('<tbody>'+content+'</tbody>');
+		        	
+		        }
 				
 		});
 		
