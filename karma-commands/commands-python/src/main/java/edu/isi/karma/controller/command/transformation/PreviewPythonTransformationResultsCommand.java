@@ -30,6 +30,8 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import net.sf.json.JSONObject;
+
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +79,8 @@ public class PreviewPythonTransformationResultsCommand extends PythonTransformat
 			return new UpdateContainer(new PythonPreviewResultsUpdate(transformedRows, errorValues));
 		} catch (Exception e) {
 			logger.error("Error while creating python results preview", e);
-			return new UpdateContainer(new ErrorUpdate("Error while creating Python results preview."));
+			String message = e.toString();
+			return new UpdateContainer(new ErrorUpdate("Error executing python script: " + message));
 		}
 	}
 

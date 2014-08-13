@@ -798,7 +798,7 @@ var PyTransformDialog = (function() {
 				saveDialog(e);
 			});
 			
-			$('#btnError', dialog).on('click', function(event) {
+			$('#btnErrors', dialog).on('click', function(event) {
 					 $("#pyTransformErrorWindow").show();
 			});
 			
@@ -809,9 +809,13 @@ var PyTransformDialog = (function() {
 			
 		function hideError() {
 			$("div.error", dialog).hide();
+			$("#pyTransformErrorWindow").hide();
 		}
 		
-		function showError() {
+		function showError(message) {
+			if(message) {
+				$("div.error", dialog).text(message);
+			}
 			$("div.error", dialog).show();
 		}
 				
@@ -842,7 +846,7 @@ var PyTransformDialog = (function() {
 				info["transformationCode"] = editor.getValue();
 				info["errorDefaultValue"] = $("#pythonTransformErrorDefaultValue").val();
 				info["command"] = "PreviewPythonTransformationResultsCommand";
-
+				$("#pyTransformErrorWindow").hide();
 				// Send the request
 				$.ajax({
 						url: "RequestController",
@@ -860,22 +864,23 @@ var PyTransformDialog = (function() {
 														$.each(result, function(index2, resVal){
 																previewTable.append($("<tr>").append($("<td>").text(resVal.value)));
 														});
+														var errorWindow = $("#pyTransformErrorWindow", dialog);
 														$("div.pythonError", errorWindow).remove();
 														var errors = element["errors"];
 														if (errors.length > 0) {
 																$("#pyTransformViewErrorButton").button('enable');
-																var errorWindow = $("#pyTransformErrorWindow");
 																$.each(errors, function(index3, error){
-																		var errorHtml = $("<div>").addClass("pythonError")
-																				.append($("<span>").addClass("pythonErrorRowNumber").text("Row: " + error.row)).append($("<br>"))
-																				.append($("<span>").addClass("pythonErrorText").text("Error: " + error["error"])).append($("<br>")).append($("<br>"));
+																		var errorHtml = $("<div>").addClass("pythonError");
+																		if(error.row != -1)
+																			errorHtml.append($("<span>").addClass("pythonErrorRowNumber").text("Row: " + error.row)).append($("<br>"));
+																		errorHtml.append($("<span>").addClass("pythonErrorText").text("Error: " + error["error"])).append($("<br>")).append($("<br>"));
 																		errorWindow.append(errorHtml);
-																})
+																});
 														} else {
 																$("#pyTransformViewErrorButton").button('disable');
 														}
 												} else if(element["updateType"] == "KarmaError") {
-														$.sticky(element["Error"]);
+														showError(element["Error"]);
 												}
 										});
 										previewTable.show();
@@ -940,7 +945,7 @@ var PyTransformDialog = (function() {
 							});
 						}
 						if (!validationResult) {
-								showError();
+								showError('Please provide a new unique column name!');
 								$("#pythonTransformNewColumnName").focus();
 								return false;
 						}
