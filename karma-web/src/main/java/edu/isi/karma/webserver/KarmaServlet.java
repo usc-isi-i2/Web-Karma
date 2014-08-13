@@ -40,6 +40,7 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.metadata.AvroMetadata;
 import edu.isi.karma.metadata.CSVMetadata;
 import edu.isi.karma.metadata.GraphVizMetadata;
 import edu.isi.karma.metadata.JSONMetadata;
@@ -121,6 +122,7 @@ public class KarmaServlet extends HttpServlet {
 			metadataManager.register(new CSVMetadata(workspace), updateContainer);
 			metadataManager.register(new JSONMetadata(workspace), updateContainer);
 			metadataManager.register(new ReportMetadata(workspace), updateContainer);
+			metadataManager.register(new AvroMetadata(workspace), updateContainer);
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}

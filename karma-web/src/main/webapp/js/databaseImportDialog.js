@@ -20,7 +20,7 @@
  ******************************************************************************/
 
 $(document).on("click", "#importDatabaseTableButton", function() {
-	console.log("Import From Service");
+	console.log("Import From Database");
 	DatabaseImportDialog.getInstance().show();
 });
 
@@ -109,7 +109,7 @@ var DatabaseImportDialog = (function() {
     		info["workspaceId"] = $.workspaceGlobalInformation.id;
     		info["command"] = "ImportDatabaseTableCommand";
     		info["interactionType"] = "getPreferencesValues";
-    		
+    		info["isPreview"] = true;
     		var returned = $.ajax({
     		   	url: "RequestController", 
     		   	type: "POST",
@@ -153,7 +153,7 @@ var DatabaseImportDialog = (function() {
     		info["commandId"] = dialog.data("commandId");
     		info["command"] = "ImportDatabaseTableCommand";
     		info["interactionType"] = "generateTableList";
-    			
+    		info["isUserInteraction"] = true;	
     		var returned = $.ajax({
     		   	url: "RequestController", 
     		   	type: "POST",
@@ -245,6 +245,7 @@ var DatabaseImportDialog = (function() {
     		info["commandId"] = dialog.data("commandId");
     		info["tableName"] = $(this).parents("tr").data("tableName");
     		info["interactionType"] = "importTable";
+            info["isUserInteraction"] = true;   
     		info["execute"] = true;
     			
     		var returned = $.ajax({
@@ -289,6 +290,7 @@ var DatabaseImportDialog = (function() {
     		info["commandId"] = $(this).parents("table").data("commandId");
     		info["tableName"] = $(this).parents("tr").data("tableName");
     		info["interactionType"] = "previewTable";
+            info["isUserInteraction"] = true;   
     		// options["execute"] = true;
     			
     		var returned = $.ajax({
@@ -447,7 +449,7 @@ var SQLImportDialog = (function() {
     		info["workspaceId"] = $.workspaceGlobalInformation.id;
     		info["command"] = "ImportSQLCommand";
     		info["interactionType"] = "getPreferencesValues";
-    		
+    		info["isPreview"] = true;
     		var returned = $.ajax({
     		   	url: "RequestController", 
     		   	type: "POST",
@@ -502,7 +504,7 @@ var SQLImportDialog = (function() {
     		info["interactionType"] = "importSQL";
     		info["commandId"] = dialog.data("commandId");
     		info["execute"] = true;
-    		
+    		info["isUserInteraction"] = true;
     		info["dBType"] = $("#databaseTypeSelector option:selected", dialog).text();
     		info["hostname"] = $.trim($("#DatabaseHostName", dialog).val());
     		info["portNumber"] = $.trim($("#DatabasePortNumber", dialog).val());

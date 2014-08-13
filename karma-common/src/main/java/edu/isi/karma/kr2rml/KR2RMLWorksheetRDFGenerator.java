@@ -55,6 +55,10 @@ import edu.isi.karma.kr2rml.planning.TriplesMapPlanExecutor;
 import edu.isi.karma.kr2rml.planning.TriplesMapPlanGenerator;
 import edu.isi.karma.kr2rml.planning.TriplesMapWorkerPlan;
 import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
+import edu.isi.karma.kr2rml.writer.AvroKR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.writer.SFKR2RMLRDFWriter;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -143,6 +147,7 @@ public class KR2RMLWorksheetRDFGenerator {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public void generateRDF(boolean closeWriterAfterGeneration) throws IOException {
 
 		try {
@@ -174,15 +179,20 @@ public class KR2RMLWorksheetRDFGenerator {
 				}
 			}
 			for (KR2RMLRDFWriter writer : outWriters) {
-				if (writer instanceof JSONKR2RMLRDFWriter) {
-					JSONKR2RMLRDFWriter jsonWriter = (JSONKR2RMLRDFWriter)writer;
+				if (writer instanceof SFKR2RMLRDFWriter) {
+					@SuppressWarnings("rawtypes")
+					SFKR2RMLRDFWriter jsonWriter = (SFKR2RMLRDFWriter)writer;
 					jsonWriter.addPrefixes(kr2rmlMapping.getPrefixes());
 					for(Entry<TriplesMapGraph, List<String>> entry : graphTriplesMapsProcessingOrder.entrySet())
 					{
 						List<String> triplesMapIds = entry.getValue();
 						jsonWriter.addRootTriplesMapId(triplesMapIds.get(triplesMapIds.size()-1));	
 					}
-					
+					if(jsonWriter instanceof AvroKR2RMLRDFWriter)
+					{
+						AvroKR2RMLRDFWriter avroWriter = (AvroKR2RMLRDFWriter) jsonWriter;
+						avroWriter.setProcessingOrder(graphTriplesMapsProcessingOrder);
+					}
 				}
 			}
 			int i=1;

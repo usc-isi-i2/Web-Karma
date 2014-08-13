@@ -276,6 +276,8 @@ function parse(data) {
 													.click(showMapViewForWorksheet);
 										}
 										
+										mainDiv.data("worksheetVisible", true);
+										
 										titleDiv
 												.append((new WorksheetOptions(worksheet["worksheetId"], worksheet["title"])).generateJS())
 												.append($("<div>")
@@ -290,10 +292,14 @@ function parse(data) {
 																.addClass("glyphicon-chevron-up")		
 																.attr("id", "hideShow" + worksheet["worksheetId"])
 																.click(function() {
+																		var visible =$("div.table-container", mainDiv).is(':visible');
 																		$("div.svg-model", mainDiv).toggle(400);
 																		$("div.table-container", mainDiv).toggle(400);
 																		$("div.table-data-container", mainDiv).toggle(400);
 
+																		visible = !visible;
+																		mainDiv.data("worksheetVisible", visible);
+																		
 																		// Change the corners
 																		titleDiv.toggleClass("ui-corner-top");
 																		titleDiv.toggleClass("ui-corner-all");
@@ -305,6 +311,13 @@ function parse(data) {
 																		} else {
 																			$(this).addClass("glyphicon-chevron-up");
 																			$(this).removeClass("glyphicon-chevron-down");
+																		}
+																		
+																		if(visible) { //When worksheet becomes visble, refresh it to get all updates
+																			window.setTimeout(function() {
+																				refreshAlignmentTree(worksheet["worksheetId"]);
+																			}, 100);
+																			
 																		}
 																})
 														)
@@ -498,7 +511,10 @@ function parse(data) {
 //			$("span.tag", tdTag).remove();
 				}
 				else if(element["updateType"] == "NewImportDatabaseTableCommandUpdate") {
-						$("#DatabaseImportDiv").data("commandId", element["commandId"]);
+						$("#databaseImportDialog").data("commandId", element["commandId"]);
+				}
+				else if(element["updateType"] == "ImportSQLCommandUpdate") {
+						$("#sqlImportDialog").data("commandId", element["commandId"]);
 				}
 				else if(element["updateType"] == "SemanticTypesUpdate") {
 						var wk = $("div#" + element["worksheetId"]);
@@ -652,6 +668,22 @@ function parse(data) {
 						var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("JSON").addClass("JSONDownloadLink DownloadLink").attr("target", "_blank");
 						$("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
 				}
+				else if(element["updateType"] == "PublishPresetUpdate") {
+						var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
+						// Remove existing link if any
+						$("a.PresetDownloadLink", titleDiv).remove();
+
+						var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("Filter Columns Preset").addClass("PresetDownloadLink DownloadLink").attr("target", "_blank");
+						$("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
+				}
+				else if(element["updateType"] == "PublishAvroUpdate") {
+					var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
+					// Remove existing link if any
+					$("a.AvroDownloadLink", titleDiv).remove();
+
+					var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("Avro").addClass("AvroDownloadLink DownloadLink").attr("target", "_blank");
+					$("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
+			}
 				else if(element["updateType"] == "PublishReportUpdate") {
 						var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
 						// Remove existing link if any
@@ -680,8 +712,12 @@ function parse(data) {
 						$.sticky(element["Info"]);
 				}
 				else if(element["updateType"] == "AlignmentSVGVisualizationUpdate") {
-						// In d3-alignment-vis.js
+					var worksheetId = element["worksheetId"];
+					var worksheetPanel = $("div.Worksheet#" + worksheetId);
+					var wsVisible = worksheetPanel.data("worksheetVisible");
+					if(wsVisible) {
 						displayAlignmentTree_ForceKarmaLayout(element);
+					}
 
 				}
 				else if(element["updateType"] == "KarmaInfo") {

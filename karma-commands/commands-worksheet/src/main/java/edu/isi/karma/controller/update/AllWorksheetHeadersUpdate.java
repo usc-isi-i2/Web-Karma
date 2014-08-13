@@ -15,13 +15,15 @@ import edu.isi.karma.view.VWorkspace;
 
 public class AllWorksheetHeadersUpdate extends AbstractUpdate {
 	private String worksheetId;
+	private boolean deleteAfterGenerate;
 	private enum JsonKeys {
 		worksheetId, columns, name, id, visible, hideable, children
 	}
 	
-	public AllWorksheetHeadersUpdate(String worksheetId) {
+	public AllWorksheetHeadersUpdate(String worksheetId, boolean deleteAfterGenerate) {
 		super();
 		this.worksheetId = worksheetId;
+		this.deleteAfterGenerate = deleteAfterGenerate;
 	}
 	
 	@Override
@@ -42,6 +44,10 @@ public class AllWorksheetHeadersUpdate extends AbstractUpdate {
 			response.put(JsonKeys.columns.name(), columns);
 			
 			pw.println(response.toString());
+			if (deleteAfterGenerate) {
+				vWorkspace.getWorkspace().getFactory().removeWorksheet(wk.getId(), vWorkspace.getWorkspace().getCommandHistory());
+				vWorkspace.getViewFactory().removeWorksheet(wk.getId());
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -62,7 +68,8 @@ public class AllWorksheetHeadersUpdate extends AbstractUpdate {
 			
 			if(headerNode.hasNestedTable()) {
 				JSONArray children = getColumnsJsonArray(headerNode.getNestedNodes(), semTypes);
-				column.put(JsonKeys.children.name(), children);
+				if (children.length() > 0)
+					column.put(JsonKeys.children.name(), children);
 				if(hideable) {
 					//check if any of the children are not hideable, then this is not hideable
 					for(int i=0; i<children.length(); i++) {

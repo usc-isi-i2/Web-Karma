@@ -45,7 +45,7 @@ public class SplitByCommaCommand extends WorksheetSelectionCommand {
 	private final String delimiter;
 	private String columnName;
 	private HNode hNode;
-	private String splitValueHNodeID;
+	private String splitValueHNodeId;
 
 	private HashMap<Node, CellValue> oldNodeValueMap = new HashMap<Node, CellValue>();
 	private HashMap<Node, NodeStatus> oldNodeStatusMap = new HashMap<Node, NodeStatus>();
@@ -98,7 +98,7 @@ public class SplitByCommaCommand extends WorksheetSelectionCommand {
 		
 		SplitColumnByDelimiter split = new SplitColumnByDelimiter(hNodeId, wk, delimiter, workspace, selection);
 		split.split(oldNodeValueMap, oldNodeStatusMap);
-		splitValueHNodeID = split.getSplitValueHNodeID();
+		splitValueHNodeId = split.getSplitValueHNodeId();
 
 		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(wk)));
 		
@@ -118,7 +118,7 @@ public class SplitByCommaCommand extends WorksheetSelectionCommand {
 		// Get the path which has the split value hNodeId
 		HNodePath selectedPath = null;
 		for (HNodePath path : columnPaths) {
-			if (path.getLeaf().getId().equals(splitValueHNodeID)) {
+			if (path.getLeaf().getId().equals(splitValueHNodeId)) {
 				selectedPath = path;
 			}
 		}

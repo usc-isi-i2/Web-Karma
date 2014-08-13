@@ -5,30 +5,31 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	var columnId = wsColumnId;
 	
 	var options = [
-								 {name:"Set Semantic Type", func:setSemanticType, leafOnly:true},
-								 {name:"divider", leafOnly:true},
+								 {name:"Set Semantic Type", func:setSemanticType, leafOnly:true, leafExcluded:false},
+								 {name:"divider", leafOnly:true, leafExcluded:false},
 
-								 {name:"Add Column", func:addColumn, leafOnly:false},
-								 {name:"Rename", func:renameColumn, leafOnly:true},
-								 {name:"Split Column", func:splitColumn, leafOnly:true},
-								 {name:"Add Row", func:addRow, leafOnly:false},
-								 {name:"divider" , leafOnly:false},
+								 {name:"Add Column", func:addColumn, leafOnly:false, leafExcluded:false},
+								 {name:"Rename", func:renameColumn, leafOnly:true, leafExcluded:false},
+								 {name:"Split Column", func:splitColumn, leafOnly:true, leafExcluded:false},
+								 {name:"Split Values", func:splitValue, leafOnly:true, leafExcluded:false},
+								 {name:"Add Row", func:addRow, leafOnly:false, leafExcluded:false},
+								 {name:"divider" , leafOnly:false, leafExcluded:false},
 			
-								 {name:"Extract Entities", func:extractEntities, leafOnly:true},
-								 {name:"PyTransform" , func:pyTransform, leafOnly:true},
-								 {name:"Transform", func:transform, leafOnly:true},
+								 {name:"Extract Entities", func:extractEntities, leafOnly:true, leafExcluded:false},
+								 {name:"PyTransform" , func:pyTransform, leafOnly:true, leafExcluded:false},
+								 {name:"Transform", func:transform, leafOnly:true, leafExcluded:false},
 								 //{name:"Generate Cluster Values", func:clusterValues, leafOnly:true},
 								 //{name:"Merge Cluster Values", func:mergeValues, leafOnly:true},
-								 {name:"divider" , leafOnly:true},
+								 {name:"divider" , leafOnly:true, leafExcluded:false},
 			
-								 {name:"Invoke Service" , func:invokeService, leafOnly:true},
+								 {name:"Invoke Service" , func:invokeService, leafOnly:true, leafExcluded:false},
 								 //{name:"Show Chart", func:showChart, leafOnly:true},
-								 {name:"divider" , leafOnly:true},
+								 {name:"divider" , leafOnly:true, leafExcluded:false},
 								 
-								 {name:"Group By", func:GroupBy, leafOnly:false},
-								 {name:"Unfold", func:Unfold, leafOnly:false}, 
-								 {name:"Fold", func:Fold, leafOnly:false}, 
-								 {name:"Glue Columns", func:Glue, leafOnly:false}
+								 {name:"Group By", func:GroupBy, leafOnly:false, leafExcluded:true},
+								 {name:"Unfold", func:Unfold, leafOnly:true, leafExcluded:false}, 
+								 {name:"Fold", func:Fold, leafOnly:false, leafExcluded:true}, 
+								 {name:"Glue Columns", func:Glue, leafOnly:false, leafExcluded:true}
 	];
 	
 	function hideDropdown() {
@@ -64,7 +65,6 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 			info["worksheetId"] = worksheetId;
 			info["workspaceId"] = $.workspaceGlobalInformation.id;
 			info["hNodeId"] = columnId;
-			info["hTableId"] = "";
 			info["command"] = "AddRowCommand";
 
 			var newInfo = [];   // Used for commands that take JSONArray as input
@@ -151,7 +151,13 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	function splitColumn() {
 		hideDropdown();
 		SplitColumnDialog.getInstance().show(worksheetId, columnId);
-				return false;
+		return false;
+	}
+
+	function splitValue() {
+		hideDropdown();
+		SplitValueDialog.getInstance().show(worksheetId, columnId);
+		return false;
 	}
 	
 	function transform() {
@@ -225,6 +231,10 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 			var option = options[i];
 			
 			if(option.leafOnly ==true && isLeafNode == false) {
+				continue;
+			}
+
+			if(option.leafExcluded ==true && isLeafNode == true) {
 				continue;
 			}
 			
@@ -630,6 +640,138 @@ var SplitColumnDialog = (function() {
 })();
 
 
+var SplitValueDialog = (function() {
+		var instance = null;
+
+		function PrivateConstructor() {
+			var dialog = $("#splitValuesDialog");
+			var worksheetId, columnId;
+			
+			function init() {
+				// Initialize what happens when we show the dialog
+				dialog.on('show.bs.modal', function (e) {
+					hideError();
+					$("input", dialog).val("");
+					$("#valueSplitDelimiter", dialog).focus();
+				});
+			
+			// Initialize handler for Save button
+			// var me = this;
+				$('#btnSave', dialog).on('click', function (e) {
+					e.preventDefault();
+					saveDialog(e);
+				});
+			}
+			
+			function hideError() {
+				$("div.error", dialog).hide();
+			}
+		
+			function showError() {
+				$("div.error", dialog).show();
+			}
+				
+			function saveDialog(e) {
+				console.log("Save clicked");
+	
+				var delimiter = $.trim($("#valueSplitDelimiter", dialog).val());
+				var newColName = $.trim($("#valueSplitNewColName", dialog).val());
+				var id = "columnOptionsButton" + worksheetId + "_" + columnId;
+				var oldColName = $("#"+id).attr("title");
+				var validationResult = true;
+				if (!delimiter) {
+					validationResult = false;
+				}
+				else if(delimiter != "space" && delimiter != "tab" && delimiter.length != 1) {
+					validationResult = false;
+				}
+				if (!validationResult) {
+					showError();
+					$("#valueSplitDelimiter", dialog).focus();
+					return false;
+				}
+				validationResult = true;
+				if (newColName != oldColName) {
+					var headers = getColumnHeadings(worksheetId, columnId, "SplitValues");
+					$.each(headers, function(index, element) {
+						if (element['ColumnName'] == newColName)
+							validationResult = false;
+					});
+				}
+				if (!validationResult) {
+					$("#splitValuesError").text(newColName + " already exists!");
+					showError();
+					$("#valueSplitNewColName", dialog).focus();
+					return false;
+				}
+
+				dialog.modal('hide');
+				var info = new Object();
+				info["worksheetId"] = worksheetId;
+				info["workspaceId"] = $.workspaceGlobalInformation.id;
+				info["hNodeId"] = columnId;
+				info["delimiter"] = delimiter;
+				info["newColName"] = newColName;
+				info["command"] = "SplitValuesCommand";
+
+				var newInfo = [];
+				newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+				newInfo.push(getParamObject("hNodeId", columnId,"hNodeId"));
+				newInfo.push(getParamObject("delimiter", delimiter, "other"));
+				newInfo.push(getParamObject("newColName", newColName, "other"));
+				info["newInfo"] = JSON.stringify(newInfo);
+
+				showLoading(info["worksheetId"]);
+				var returned = $.ajax({
+						url: "RequestController",
+						type: "POST",
+						data : info,
+						dataType : "json",
+						complete :
+								function (xhr, textStatus) {
+									var json = $.parseJSON(xhr.responseText);
+									parse(json);
+									hideLoading(info["worksheetId"]);
+								},
+						error :
+								function (xhr, textStatus) {
+									alert("Error occured while splitting a column by comma! " + textStatus);
+									hideLoading(info["worksheetId"]);
+								}
+				});
+			};
+				
+			function show(wsId, colId) {
+				worksheetId = wsId;
+				columnId = colId;
+				var id = "columnOptionsButton" + wsId + "_" + colId;
+				var title = $("#"+id).attr("title");
+				dialog.modal({keyboard:true, show:true, backdrop:'static'});
+				$("#valueSplitNewColName").val(title);
+			};
+				
+				
+			return {	// Return back the public methods
+				show : show,
+				init : init
+			};
+		};
+
+		function getInstance() {
+			if( ! instance ) {
+				instance = new PrivateConstructor();
+				instance.init();
+			}
+			return instance;
+		}
+	 
+		return {
+			getInstance : getInstance
+		};
+			
+})();
+
+
 
 
 var PyTransformDialog = (function() {
@@ -677,7 +819,7 @@ var PyTransformDialog = (function() {
 				saveDialog(e);
 			});
 			
-			$('#btnError', dialog).on('click', function(event) {
+			$('#btnErrors', dialog).on('click', function(event) {
 					 $("#pyTransformErrorWindow").show();
 			});
 			
@@ -688,9 +830,13 @@ var PyTransformDialog = (function() {
 			
 		function hideError() {
 			$("div.error", dialog).hide();
+			$("#pyTransformErrorWindow").hide();
 		}
 		
-		function showError() {
+		function showError(message) {
+			if(message) {
+				$("div.error", dialog).text(message);
+			}
 			$("div.error", dialog).show();
 		}
 				
@@ -714,14 +860,14 @@ var PyTransformDialog = (function() {
 				};
 				
 				function previewTransform() {
-					var info = {};
+				var info = {};
 				info["hNodeId"] = columnId;
 				info["workspaceId"] = $.workspaceGlobalInformation.id;
 				info["worksheetId"] = worksheetId;
 				info["transformationCode"] = editor.getValue();
 				info["errorDefaultValue"] = $("#pythonTransformErrorDefaultValue").val();
 				info["command"] = "PreviewPythonTransformationResultsCommand";
-
+				$("#pyTransformErrorWindow").hide();
 				// Send the request
 				$.ajax({
 						url: "RequestController",
@@ -739,22 +885,23 @@ var PyTransformDialog = (function() {
 														$.each(result, function(index2, resVal){
 																previewTable.append($("<tr>").append($("<td>").text(resVal.value)));
 														});
+														var errorWindow = $("#pyTransformErrorWindow", dialog);
 														$("div.pythonError", errorWindow).remove();
 														var errors = element["errors"];
 														if (errors.length > 0) {
 																$("#pyTransformViewErrorButton").button('enable');
-																var errorWindow = $("#pyTransformErrorWindow");
 																$.each(errors, function(index3, error){
-																		var errorHtml = $("<div>").addClass("pythonError")
-																				.append($("<span>").addClass("pythonErrorRowNumber").text("Row: " + error.row)).append($("<br>"))
-																				.append($("<span>").addClass("pythonErrorText").text("Error: " + error["error"])).append($("<br>")).append($("<br>"));
+																		var errorHtml = $("<div>").addClass("pythonError");
+																		if(error.row != -1)
+																			errorHtml.append($("<span>").addClass("pythonErrorRowNumber").text("Row: " + error.row)).append($("<br>"));
+																		errorHtml.append($("<span>").addClass("pythonErrorText").text("Error: " + error["error"])).append($("<br>")).append($("<br>"));
 																		errorWindow.append(errorHtml);
-																})
+																});
 														} else {
 																$("#pyTransformViewErrorButton").button('disable');
 														}
 												} else if(element["updateType"] == "KarmaError") {
-														$.sticky(element["Error"]);
+														showError(element["Error"]);
 												}
 										});
 										previewTable.show();
@@ -819,7 +966,7 @@ var PyTransformDialog = (function() {
 							});
 						}
 						if (!validationResult) {
-								showError();
+								showError('Please provide a new unique column name!');
 								$("#pythonTransformNewColumnName").focus();
 								return false;
 						}
@@ -1147,33 +1294,6 @@ var GroupByDialog = (function() {
 				function hide() {
 						dialog.modal('hide');
 				}
-				function getHeaders() {
-					var info = new Object();
-					info["worksheetId"] = worksheetId;
-					info["workspaceId"] = $.workspaceGlobalInformation.id;
-					info["hNodeId"] = columnId;
-					info["commandName"] = "GroupBy"
-					info["command"] = "GetHeadersCommand";
-					var headers;
-					var returned = $.ajax({
-							url: "RequestController",
-							type: "POST",
-							data : info,
-							dataType : "json",
-							async : false,
-							complete :
-									function (xhr, textStatus) {
-									var json = $.parseJSON(xhr.responseText);
-									headers = json.elements[0];
-									},
-							error :
-									function (xhr, textStatus) {
-											alert("Error occured while getting worksheet headers!" + textStatus);
-											hideLoading(info["worksheetId"]);
-									}
-					});
-					return headers;
-				}
 				function show(wsId, cId) {
 						worksheetId = wsId;
 						columnId = cId;
@@ -1181,7 +1301,7 @@ var GroupByDialog = (function() {
 								hideError();
 								var dialogContent = $("#groupByDialogColumns", dialog);
 								dialogContent.empty();
-								var headers = getHeaders();
+								var headers = getColumnHeadings(wsId, cId, "GroupBy");
 								console.log(headers);
 								if (!headers) {
 									hide();
@@ -1298,33 +1418,6 @@ var UnfoldDialog = (function() {
 				function hide() {
 						dialog.modal('hide');
 				}
-				function getHeaders() {
-					var info = new Object();
-					info["worksheetId"] = worksheetId;
-					info["workspaceId"] = $.workspaceGlobalInformation.id;
-					info["hNodeId"] = columnId;
-					info["commandName"] = "Unfold"
-					info["command"] = "GetHeadersCommand";
-					var headers;
-					var returned = $.ajax({
-							url: "RequestController",
-							type: "POST",
-							data : info,
-							dataType : "json",
-							async : false,
-							complete :
-									function (xhr, textStatus) {
-									var json = $.parseJSON(xhr.responseText);
-									headers = json.elements[0];
-									},
-							error :
-									function (xhr, textStatus) {
-											alert("Error occured while getting worksheet headers!" + textStatus);
-											hideLoading(info["worksheetId"]);
-									}
-					});
-					return headers;
-				}
 				function show(wsId, cId) {
 						worksheetId = wsId;
 						columnId = cId;
@@ -1332,7 +1425,7 @@ var UnfoldDialog = (function() {
 								hideError();
 								var dialogContent = $("#unfoldDialogColumns", dialog);
 								dialogContent.empty();
-								var headers = getHeaders();
+								var headers = getColumnHeadings(wsId, cId, "Unfold");
 								//console.log(headers);
 
 								for (var i = 0; i < headers.length; i++) {
@@ -1390,44 +1483,16 @@ var FoldDialog2 = (function() {
 				saveDialog(e);
 			});    
 			}
-
-				function getHeaders() {
-						var info = new Object();
-						info["worksheetId"] = worksheetId;
-						info["workspaceId"] = $.workspaceGlobalInformation.id;
-						info["hNodeId"] = columnId;
-						info["commandName"] = "Fold";
-						info["command"] = "GetHeadersCommand";
-						var headers;
-						var returned = $.ajax({
-								url: "RequestController",
-								type: "POST",
-								data : info,
-								dataType : "json",
-								async : false,
-								complete :
-										function (xhr, textStatus) {
-												var json = $.parseJSON(xhr.responseText);
-												headers = json.elements[0];
-										},
-								error :
-										function (xhr, textStatus) {
-												alert("Error occured while getting worksheet headers!" + textStatus);
-												hideLoading(info["worksheetId"]);
-										}
-						});
-						return headers;
-				}
 			
-		function hideError() {
-			$("div.error", dialog).hide();
-		}
+			function hideError() {
+				$("div.error", dialog).hide();
+			}
 		
-		function showError() {
-			$("div.error", dialog).show();
-		}
+			function showError() {
+				$("div.error", dialog).show();
+			}
 		
-				function saveDialog(e) {
+			function saveDialog(e) {
 					console.log("Save clicked");
 					
 					var checkboxes = dialog.find(":checked");
@@ -1487,7 +1552,7 @@ var FoldDialog2 = (function() {
 								hideError();
 								var dialogContent = $("#foldDialogColumns", dialog);
 								dialogContent.empty();
-								var headers = getHeaders();
+								var headers = getColumnHeadings(wsId, cId, "Fold");
 								if (!headers) {
 									hide();
 									return;
@@ -1610,33 +1675,7 @@ var GlueDialog = (function() {
 				function hide() {
 						dialog.modal('hide');
 				}
-				function getHeaders() {
-					var info = new Object();
-					info["worksheetId"] = worksheetId;
-					info["workspaceId"] = $.workspaceGlobalInformation.id;
-					info["hNodeId"] = columnId;
-					info["commandName"] = "Glue"
-					info["command"] = "GetHeadersCommand";
-					var headers;
-					var returned = $.ajax({
-							url: "RequestController",
-							type: "POST",
-							data : info,
-							dataType : "json",
-							async : false,
-							complete :
-									function (xhr, textStatus) {
-									var json = $.parseJSON(xhr.responseText);
-									headers = json.elements[0];
-									},
-							error :
-									function (xhr, textStatus) {
-											alert("Error occured while getting worksheet headers!" + textStatus);
-											hideLoading(info["worksheetId"]);
-									}
-					});
-					return headers;
-				}
+
 				function show(wsId, cId) {
 						worksheetId = wsId;
 						columnId = cId;
@@ -1644,7 +1683,7 @@ var GlueDialog = (function() {
 								hideError();
 								var dialogContent = $("#glueDialogColumns", dialog);
 								dialogContent.empty();
-								var headers = getHeaders();
+								var headers = getColumnHeadings(wsId, cId, "Glue");
 								console.log(headers);
 								if (!headers) {
 									hide();

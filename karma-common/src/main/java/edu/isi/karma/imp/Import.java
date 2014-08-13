@@ -23,10 +23,12 @@ public abstract class Import {
 
     private final RepFactory factory;
     private Worksheet worksheet;
+    protected Workspace workspace;
     
     public Import(String worksheetName, Workspace workspace, String encoding) {
         this.factory = workspace.getFactory();
         this.worksheet = factory.createWorksheet(worksheetName, workspace, encoding);
+        this.workspace = workspace;
     }
 
     public Import(RepFactory factory, Worksheet worksheet) {

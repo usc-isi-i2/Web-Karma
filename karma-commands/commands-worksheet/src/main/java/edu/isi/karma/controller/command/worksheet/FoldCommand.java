@@ -93,7 +93,7 @@ public class FoldCommand extends WorksheetSelectionCommand {
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
 		HTable htable;
 		if (hNodeId.compareTo("") != 0)
-			htable = CloneTableUtils.getHTable(worksheet.getHeaders(), hNodeId);
+			htable = Repfactory.getHTable(Repfactory.getHNode(hNodeId).getHTableId());
 		else
 			htable = worksheet.getHeaders();
 		hnodes.clear();

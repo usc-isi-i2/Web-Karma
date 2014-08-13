@@ -14,7 +14,7 @@ public interface IPreviewable {
     /*
      * Show the preview
      */
-    public UpdateContainer showPreview()
+    public UpdateContainer showPreview(HttpServletRequest request)
             throws CommandException;
 
     /*

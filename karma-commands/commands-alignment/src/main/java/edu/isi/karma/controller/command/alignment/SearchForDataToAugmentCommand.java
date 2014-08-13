@@ -30,7 +30,7 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.er.helper.TripleStoreUtil;
-import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
+import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
@@ -134,9 +134,7 @@ public class SearchForDataToAugmentCommand extends WorksheetSelectionCommand{
 							value = baseURI + value;
 						}
 					} catch (URISyntaxException e) {
-						// TODO Auto-generated catch block
 					}
-//					n.setValue(value, n.getStatus(), factory);
 					builder = new StringBuilder();
 					value = builder.append("<").append(value).append(">").toString(); //String builder
 					uriSet.add(value);

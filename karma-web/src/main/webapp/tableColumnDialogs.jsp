@@ -104,6 +104,36 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div class="modal fade" id="splitValuesDialog" tabindex="-1">
+	<div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Split Values</h4>
+				  </div>
+				  <div class="modal-body">
+					<div class="form-group">
+						<label for="valueSplitDelimiter">Specify character delimiter</label>
+						<input class="form-control" type="text" id="valueSplitDelimiter" required>
+						<span class="help-block">Enter "space" to use single space</span>
+						<span class="help-block">Enter "tab" to use tab</span>
+						<label for="valueSplitNewColName">Specify the new column name</label>
+						<input class="form-control" type="text" id="valueSplitNewColName" required>
+					</div>
+				
+					
+					<div class="error" style="display: none" id="splitValuesError">Length of the delimter should be 1</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Save</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
         
 <div class="modal fade" id="pyTransformDialog" tabindex="-1">
 	<div class="modal-dialog">
@@ -147,6 +177,7 @@
 					<button type="button" class="btn btn-default" id="btnErrors">View Errors</button>
 					<button type="button" class="btn btn-default" id="btnPreview">Preview results for top 5 rows</button>
 					<br>
+					<div id="pyTransformErrorWindow" style="display:none"></div>
             		<table id="pythonPreviewResultsTable" class="table table-striped table-condensed" style="display: none"></table>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">

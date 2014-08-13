@@ -43,8 +43,8 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 	//needed for undo
 	private String newWorksheetId;
 	private String newHNodeId;
-	private String keyHNodeId;
-	private String valueHNodeId;
+	private String keyhNodeId;
+	private String valuehNodeId;
 	private String keyName;
 	private String valueName;
 	private static Logger logger = LoggerFactory
@@ -60,8 +60,8 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 		super(id, worksheetId, selectionId);
 		newWorksheetId = null;
 		newHNodeId = null;
-		this.keyHNodeId = keyHNodeid;
-		this.valueHNodeId = valueHNodeid;
+		this.keyhNodeId = keyHNodeid;
+		this.valuehNodeId = valueHNodeid;
 		addTag(CommandTag.Transformation);
 	}
 
@@ -97,16 +97,16 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 		Worksheet oldws = workspace.getWorksheet(
 				worksheetId);
 		Worksheet newws = null;
-		HTable ht = CloneTableUtils.getHTable(oldws.getHeaders(), keyHNodeId);
+		HTable ht = factory.getHTable(factory.getHNode(keyhNodeId).getHTableId());
 		if (ht == oldws.getHeaders()) {
-			newws = unfoldTopLevel(oldws, keyHNodeId, valueHNodeId, workspace, factory);
+			newws = unfoldTopLevel(oldws, keyhNodeId, valuehNodeId, workspace, factory);
 			this.newWorksheetId = newws.getId();
 		}
 		else {
 			try {
-				inputColumns.add(keyHNodeId);
-				inputColumns.add(valueHNodeId);
-				unfoldNestedLevel(oldws, ht, keyHNodeId, valueHNodeId, factory);
+				inputColumns.add(keyhNodeId);
+				inputColumns.add(valuehNodeId);
+				unfoldNestedLevel(oldws, ht, keyhNodeId, valuehNodeId, factory);
 			}catch(Exception e) {
 				e.printStackTrace();
 			}

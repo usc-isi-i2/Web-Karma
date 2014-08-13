@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.selection.SuperSelection;
-import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.ObjectMap;
 import edu.isi.karma.kr2rml.Predicate;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
@@ -40,6 +39,7 @@ import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
 import edu.isi.karma.kr2rml.template.PopulatedTemplateTermSet;
 import edu.isi.karma.kr2rml.template.StringTemplateTerm;
 import edu.isi.karma.kr2rml.template.TemplateTermSet;
+import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.RepFactory;

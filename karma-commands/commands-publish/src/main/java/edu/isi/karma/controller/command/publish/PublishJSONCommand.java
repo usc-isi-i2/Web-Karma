@@ -98,7 +98,7 @@ public class PublishJSONCommand extends WorksheetCommand {
 					fileWriter.close();
 					
 					if(importAsWorksheet) {
-						JsonImport jsonImp = new JsonImport(new File(fileLocalPath), newWorksheetName, finalWorkspace, "utf-8", -1);
+						JsonImport jsonImp = new JsonImport(new File(fileLocalPath), newWorksheetName, finalWorkspace, "utf-8", -1, null);
 						jsonImp.generateWorksheet();
 						newWSId = jsonImp.getWorksheet().getId();
 						new WorksheetListUpdate().applyUpdate(vWorkspace);

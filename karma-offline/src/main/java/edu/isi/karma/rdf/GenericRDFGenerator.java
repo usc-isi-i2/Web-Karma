@@ -32,15 +32,16 @@ import org.xml.sax.SAXException;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.imp.Import;
+import edu.isi.karma.imp.avro.AvroImport;
 import edu.isi.karma.imp.csv.CSVImport;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.kr2rml.ErrorReport;
-import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.kr2rml.planning.RootStrategy;
+import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
@@ -56,7 +57,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 	public enum InputType {
 		CSV,
 		JSON,
-		XML
+		XML,
+		AVRO
 	};
 	
 	public GenericRDFGenerator(String selectionName) {
@@ -309,6 +311,9 @@ public class GenericRDFGenerator extends RdfGenerator {
 							is, workspace, encoding, maxNumLines);
 					break;
 				}
+				case AVRO : {
+					worksheet = generateWorksheetFromAvroStream(sourceName, is, workspace, encoding, maxNumLines);
+				}
 			}
 		} catch (Exception e ) {
 			logger.error("Error generating worksheet", e);
@@ -338,7 +343,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 			Workspace workspace, String encoding, int maxNumLines) throws IOException,
 			KarmaException, ClassNotFoundException {
 		Worksheet worksheet;
-		Import fileImport = new CSVImport(1, 2, ',', '\"', encoding, maxNumLines, sourceName, is, workspace);
+		Import fileImport = new CSVImport(1, 2, ',', '\"', encoding, maxNumLines, 
+				sourceName, is, workspace, null);
 
 		worksheet = fileImport.generateWorksheet();
 		return worksheet;
@@ -362,6 +368,14 @@ public class GenericRDFGenerator extends RdfGenerator {
 		Reader reader = EncodingDetector.getInputStreamReader(is, encoding);
 		Object json = JSONUtil.createJson(reader);
 		JsonImport imp = new JsonImport(json, sourceName, workspace, encoding, maxNumLines);
+		worksheet = imp.generateWorksheet();
+		return worksheet;
+	}
+	private Worksheet generateWorksheetFromAvroStream(String sourceName, InputStream is,
+			Workspace workspace, String encoding, int maxNumLines)
+			throws IOException, JSONException, KarmaException {
+		Worksheet worksheet;
+		AvroImport imp = new AvroImport(is, sourceName, workspace, encoding, maxNumLines);
 		worksheet = imp.generateWorksheet();
 		return worksheet;
 	}

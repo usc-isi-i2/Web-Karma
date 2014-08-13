@@ -15,6 +15,29 @@ function getColumnHeadings(worksheetId) {
 	return columnNames;
 }
 
+function getColumnHeadings(worksheetId, columnId, commandName) {
+	var info = {};
+	info["hNodeId"] = columnId;
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["worksheetId"] = worksheetId;
+	info["command"] = "GetHeadersCommand";
+	info["commandName"] = commandName;
+	var returnJSON = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		async: false,
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				returnJSON = json['elements'][0];
+			}
+	});
+	return returnJSON;
+}
+
 function showLoading(worksheetId) {
 	// Remove any existing coverDiv
 	$("div#WaitingDiv_" + worksheetId).remove();
