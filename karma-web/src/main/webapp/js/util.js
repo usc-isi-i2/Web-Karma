@@ -15,12 +15,73 @@ function getColumnHeadings(worksheetId) {
 	return columnNames;
 }
 
-function getColumnHeadings(worksheetId, columnId, commandName) {
+function generateInfoObject(worksheetId, commandName) {
 	var info = {};
 	info["hNodeId"] = columnId;
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["worksheetId"] = worksheetId;
-	info["command"] = "GetHeadersCommand";
+	info["command"] = commandName;
+	var newInfo = [];
+	newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
+	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+	info["newInfo"] = JSON.stringify(newInfo);
+	return info;
+}
+
+function addLevels(li, a, option, worksheetId) {
+	li.addClass("dropdown-submenu");
+	a.text(option['name']);
+	var subul = $("<ul>").addClass("dropdown-menu");
+	var suboptions = option.levels;
+	for (var j = 0; j < suboptions.length; j++) {
+		var suboption = suboptions[j];
+		var needFile = suboption.useFileUpload;
+		var li2 = $("<li>");
+		var a2 = $("<a>");
+		if(needFile) {
+			a2.addClass("fileinput-button");
+			var form = $("<form>")
+									.attr("id", suboption.uploadDiv + "_" + worksheetId)
+									.attr("action", "ImportFileCommand")
+									.attr("method", "POST")
+									.attr("enctype", "multipart/form-data")
+									.text(suboption['name']);
+			var input = $("<input>")
+									.attr("type", "file")
+									.attr("name", "files[]");
+			form.append(input);
+			a2.append(form);
+			window.setTimeout(suboption.func, 1000);
+		}
+		else if (suboption.addLevel) {
+			addLevels(li2, a2, suboption);
+		}
+		else {
+			a2.text(suboption['name']);
+			a2.click(suboption.func);
+		}
+		a2.css("cursor", "pointer");
+		li2.append(a2);
+		subul.append(li2);
+	}						
+	li.append(subul);
+}
+
+function generateInfoObject(worksheetId, columnId, commandName) {
+	var info = {};
+	info["hNodeId"] = columnId;
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["worksheetId"] = worksheetId;
+	info["command"] = commandName;
+	var newInfo = [];
+	newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
+	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+	info["newInfo"] = JSON.stringify(newInfo);
+	return info;
+}
+
+function getColumnHeadings(worksheetId, columnId, commandName) {
+	var info = generateInfoObject(worksheetId, columnId, "GetHeadersCommand");
 	info["commandName"] = commandName;
 	var returnJSON = [];
 	$.ajax({

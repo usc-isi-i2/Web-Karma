@@ -29,11 +29,48 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 								 {name:"Group By", func:GroupBy, leafOnly:false, leafExcluded:true},
 								 {name:"Unfold", func:Unfold, leafOnly:true, leafExcluded:false}, 
 								 {name:"Fold", func:Fold, leafOnly:false, leafExcluded:true}, 
-								 {name:"Glue Columns", func:Glue, leafOnly:false, leafExcluded:true}
-	];
+								 {name:"Glue Columns", func:Glue, leafOnly:false, leafExcluded:true}, 
+								 {name:"Selection", func: undefined, addLevel:true, leafOnly:false, leafExcluded:true, 
+								 levels: 
+								 	[
+										{name:"Add Rows" , func:addRows},
+										{name:"Intersect Rows" , func:intersectRows}, 
+										{name:"Subtract Rows" , func:subtractRows}, 
+										{name:"Invert" , func:invertRows}, 
+										{name:"Clear" , func:undefined, addLevel:true, levels:
+										[
+											{name:"In All Nested Tables" , func:clearAll},
+											{name:"In This Columns" , func:clearThis}
+										]}
+									]}
+								];
 	
 	function hideDropdown() {
 		$('.dropdown.open .dropdown-toggle').dropdown('toggle');
+	}
+
+	function addRows() {
+		console.log("addRows");
+	}
+
+	function intersectRows() {
+		console.log("intersectRows");
+	}
+
+	function subtractRows() {
+		console.log("subtractRows");
+	}
+
+	function invertRows() {
+		console.log("invertRows");
+	}
+
+	function clearAll() {
+		console.log("clearAll");
+	}
+
+	function clearThis() {
+		console.log("clearThis");
 	}
 	
 	function setSemanticType() {
@@ -194,7 +231,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 		GlueDialog.getInstance().show(worksheetId, columnId);
 	}
 	
-	this.generateJS = function() {
+	this.generateJS = function () {
 		var dropdownId = "columnOptionsButton" + worksheetId + "_" + columnId;
 		var span = $("<span>")
 						.attr("display", "inline-block")
@@ -273,43 +310,9 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 						a.append(label);
 						a.click(func);
 					} 
-					else if (option.addLevel) {
-						li.addClass("dropdown-submenu");
-						a.text(title);
-						var subul = $("<ul>")
-											.addClass("dropdown-menu");
-						var suboptions = option.levels;
-						for (var j = 0; j < suboptions.length; j++) {
-							var suboption = suboptions[j];
-							var needFile = suboption.useFileUpload;
-							var li2 = $("<li>");
-							var a2 = $("<a>");
-							if(needFile) {
-								a2.addClass("fileinput-button");
-								var form = $("<form>")
-											.attr("id", suboption.uploadDiv + "_" + worksheetId)
-											.attr("action", "ImportFileCommand")
-											.attr("method", "POST")
-											.attr("enctype", "multipart/form-data")
-											.text(suboption['name']);
-								var input = $("<input>")
-											.attr("type", "file")
-											.attr("name", "files[]");
-								form.append(input);
-								a2.append(form);
-								window.setTimeout(suboption.func, 1000);
-							}
-							else {
-							a2.text(suboption['name']);
-							a2.click(suboption.func);
-						}
-						a2.css("cursor", "pointer");
-						li2.append(a2);
-						subul.append(li2);
+					else if (option.addLevel) {						
+						addLevels(li, a, option, worksheetId);	
 					}
-						
-					li.append(subul);
-				}
 					else {
 						a.text(title);
 						a.click(func);
@@ -326,8 +329,6 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 		return div;
 	};
 };
-
-
 
 var AddColumnDialog = (function() {
 		var instance = null;
