@@ -571,6 +571,8 @@ var SelectColumnsDialog = (function() {
 								});
 							}
 						}
+						var fileInput = $('#presetupload');
+						fileInput.replaceWith(fileInput.val('').clone(true));
 					};
 					reader.readAsText(file);
 				}
