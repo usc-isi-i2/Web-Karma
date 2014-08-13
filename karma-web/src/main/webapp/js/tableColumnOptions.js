@@ -51,6 +51,8 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 
 	function addRows() {
 		console.log("addRows");
+		hideDropdown();
+		PyTransformSelectionDialog.getInstance(wsId, wsColumnId).show();
 	}
 
 	function intersectRows() {
@@ -1768,6 +1770,173 @@ var GlueDialog = (function() {
 		return {
 				getInstance : getInstance
 		};
+})();
+
+var PyTransformSelectionDialog = (function() {
+		var instance = null;
+
+		function PrivateConstructor() {
+			var dialog = $("#pyTransformDialog");
+			var worksheetId, columnId;
+			var editor;
+			var headers;
+			function init(wsId, colId) {
+				worksheetId = wsId;
+				columnId = colId;
+				editor = ace.edit("transformCodeEditor");
+				editor.setTheme("ace/theme/dreamweaver");
+				editor.getSession().setMode("ace/mode/python");
+				editor.getSession().setUseWrapMode(true);
+				editor.getSession().setValue("return getValue(\"state\")");
+				headers = getColumnHeadings(worksheetId, columnId, "GroupBy");
+				console.log(headers);			
+				dialog.on("resize", function(event, ui) {
+					editor.resize();
+				});
+				
+				// Initialize what happens when we show the dialog
+				dialog.on('show.bs.modal', function (e) {
+					hideError();			 
+					editor.getSession().setValue("return getValue(\"" + headers[0]['ColumnName'] + "\")");							 								
+					$("#pythonPreviewResultsTableSelection").hide();
+					$("#btnErrorsSelection").button('disable');
+				});
+			
+			// Initialize handler for Save button
+			// var me = this;
+				$('#btnSaveSelection', dialog).on('click', function (e) {
+					e.preventDefault();
+					saveDialog(e);
+				});
+			
+				$('#btnErrorsSelection', dialog).on('click', function(event) {
+					 $("#pyTransformErrorWindowSelection").show();
+				});
+			
+				$('#btnPreviewSelection', dialog).on('click', function(e) {
+					previewTransform();
+				});
+			}
+			
+			function hideError() {
+				$("div.error", dialog).hide();
+				$("#pyTransformErrorWindowSelection").hide();
+			}
+		
+			function showError(message) {
+				if(message) {
+					$("div.error", dialog).text(message);
+				}
+				$("div.error", dialog).show();
+			}
+				
+			function saveDialog(e) {
+				console.log("Save clicked");
+			};
+				
+			function previewTransform() {
+				var info = {};
+				info["hNodeId"] = headers[0]['HNodeId'];
+				info["workspaceId"] = $.workspaceGlobalInformation.id;
+				info["worksheetId"] = worksheetId;
+				info["transformationCode"] = editor.getValue();
+				info["errorDefaultValue"] = $("#pythonTransformErrorDefaultValueSelection").val();
+				info["command"] = "PreviewPythonTransformationResultsCommand";
+				$("#pyTransformErrorWindowSelection").hide();
+				// Send the request
+				$.ajax({
+						url: "RequestController",
+						type: "POST",
+						data : info,
+						dataType : "json",
+						complete :
+								function (xhr, textStatus) {
+										var json = $.parseJSON(xhr.responseText);
+										var previewTable = $("table#pythonPreviewResultsTableSelection");
+										$("tr",previewTable).remove();
+										$.each(json["elements"], function(index, element) {
+												if(element["updateType"] == "PythonPreviewResultsUpdate") {
+														var result = element["result"];
+														$.each(result, function(index2, resVal){
+																previewTable.append($("<tr>").append($("<td>").text(resVal.value)));
+														});
+														var errorWindow = $("#pyTransformErrorWindowSelection", dialog);
+														$("div.pythonError", errorWindow).remove();
+														var errors = element["errors"];
+														if (errors.length > 0) {
+																$("#btnErrorsSelection").button('enable');
+																$.each(errors, function(index3, error){
+																		var errorHtml = $("<div>").addClass("pythonError");
+																		if(error.row != -1)
+																			errorHtml.append($("<span>").addClass("pythonErrorRowNumber").text("Row: " + error.row)).append($("<br>"));
+																		errorHtml.append($("<span>").addClass("pythonErrorText").text("Error: " + error["error"])).append($("<br>")).append($("<br>"));
+																		errorWindow.append(errorHtml);
+																});
+														} else {
+																$("#btnErrorsSelection").button('disable');
+														}
+												} else if(element["updateType"] == "KarmaError") {
+														showError(element["Error"]);
+												}
+										});
+										previewTable.show();
+								},
+						error :
+								function (xhr, textStatus) {
+										alert("Error occured with fetching new rows! " + textStatus);
+								}
+				});
+				}
+				
+				function sendRequest(info, worksheetId) {
+					 // Send the request
+						$.ajax({
+								url: "RequestController",
+								type: "POST",
+								data : info,
+								dataType : "json",
+								complete :
+										function (xhr, textStatus) {
+												var json = $.parseJSON(xhr.responseText);
+												parse(json);
+												hideLoading(worksheetId);
+										},
+								error :
+										function (xhr, textStatus) {
+												alert("Error occured with fetching new rows! " + textStatus);
+												hideLoading(worksheetId);
+										}
+						});
+				}
+				
+				function hide() {
+					dialog.modal('hide');
+				}
+				
+				function show() {
+					dialog.modal({keyboard:true, show:true, backdrop:'static'});
+				};
+				
+				
+				return {	// Return back the public methods
+					show : show,
+					init : init
+				};
+		};
+
+		function getInstance(wsId, colId) {
+			if( ! instance ) {
+				instance = new PrivateConstructor();				
+			}
+			instance.init(wsId, colId);
+			return instance;
+		}
+	 
+		return {
+			getInstance : getInstance
+		};
+			
+		
 })();
 
 

@@ -68,13 +68,14 @@ public class GetHeadersCommand extends WorksheetCommand {
 		}
 		final JSONArray array = new JSONArray();
 		for (HNode hn : ht.getHNodes()) {
-			if (commandName.equals("Unfold") && !hn.hasNestedTable() && !hn.getId().equals(hNodeId)) {
+			if (!commandName.equals("Unfold") || (!hn.hasNestedTable() && !hn.getId().equals(hNodeId)) ) {
 				JSONObject obj = new JSONObject();
 				obj.put("ColumnName", hn.getColumnName());
 				obj.put("HNodeId", hn.getId());
 				array.put(obj);
 			}
 		}
+		System.out.println(array);
 		try {
 			return new UpdateContainer(new AbstractUpdate() {
 
