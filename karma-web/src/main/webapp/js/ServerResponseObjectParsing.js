@@ -276,6 +276,8 @@ function parse(data) {
 													.click(showMapViewForWorksheet);
 										}
 										
+										mainDiv.data("worksheetVisible", true);
+										
 										titleDiv
 												.append((new WorksheetOptions(worksheet["worksheetId"], worksheet["title"])).generateJS())
 												.append($("<div>")
@@ -290,10 +292,14 @@ function parse(data) {
 																.addClass("glyphicon-chevron-up")		
 																.attr("id", "hideShow" + worksheet["worksheetId"])
 																.click(function() {
+																		var visible =$("div.table-container", mainDiv).is(':visible');
 																		$("div.svg-model", mainDiv).toggle(400);
 																		$("div.table-container", mainDiv).toggle(400);
 																		$("div.table-data-container", mainDiv).toggle(400);
 
+																		visible = !visible;
+																		mainDiv.data("worksheetVisible", visible);
+																		
 																		// Change the corners
 																		titleDiv.toggleClass("ui-corner-top");
 																		titleDiv.toggleClass("ui-corner-all");
@@ -305,6 +311,13 @@ function parse(data) {
 																		} else {
 																			$(this).addClass("glyphicon-chevron-up");
 																			$(this).removeClass("glyphicon-chevron-down");
+																		}
+																		
+																		if(visible) { //When worksheet becomes visble, refresh it to get all updates
+																			window.setTimeout(function() {
+																				refreshAlignmentTree(worksheet["worksheetId"]);
+																			}, 100);
+																			
 																		}
 																})
 														)
@@ -699,8 +712,12 @@ function parse(data) {
 						$.sticky(element["Info"]);
 				}
 				else if(element["updateType"] == "AlignmentSVGVisualizationUpdate") {
-						// In d3-alignment-vis.js
+					var worksheetId = element["worksheetId"];
+					var worksheetPanel = $("div.Worksheet#" + worksheetId);
+					var wsVisible = worksheetPanel.data("worksheetVisible");
+					if(wsVisible) {
 						displayAlignmentTree_ForceKarmaLayout(element);
+					}
 
 				}
 				else if(element["updateType"] == "KarmaInfo") {

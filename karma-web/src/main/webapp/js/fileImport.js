@@ -191,7 +191,7 @@ var FileOptionsDialog = (function() {
 			$("#startRowIndex", dialog).val("2");
 			$("#textQualifier", dialog).val("\"");
 			$("#encoding", dialog).val("\"");
-			$("#maxNumLines", dialog).val("1000");
+			$("#maxNumLines", dialog).val("10000");
 		};
 		
 		function showOptions(responseJSON) {
