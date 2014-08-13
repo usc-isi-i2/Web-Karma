@@ -21,6 +21,7 @@
 package edu.isi.karma.kr2rml.writer;
 
 import java.io.PrintWriter;
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,6 +35,10 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter) {
 		super(outWriter);
+	}
+
+	public JSONKR2RMLRDFWriter (PrintWriter outWriter, String baseURI) {
+		super(outWriter, baseURI);
 	}
 
 	@Override
@@ -50,7 +55,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 	}
 
 	@Override
-	protected void addValueToArray(PredicateObjectMap pom,JSONObject subject, Object object,
+	protected void addValueToArray(PredicateObjectMap pom, JSONObject subject, Object object,
 			String shortHandPredicateURI) {
 		JSONArray array = null;
 		if(subject.has(shortHandPredicateURI))
@@ -74,6 +79,20 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		else
 		{
 			array = new JSONArray();
+		}
+		if (object instanceof String) {
+			String t = ((String)object).trim();
+			if (t.startsWith("<") && t.endsWith(">")) {
+				t = t.substring(1, t.length() - 1);
+				try {
+					URI uri = new URI(t);
+					if (!uri.isAbsolute())
+						t = baseURI + t;
+				}catch(Exception e) {
+
+				}
+			}
+			object = t;
 		}
 		array.put(object);
 		subject.put(!shortHandPredicateURI.equalsIgnoreCase("rdf:type")?shortHandPredicateURI: "@type", array);
@@ -105,44 +124,58 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		outWriter.println("]");
 		outWriter.close();
 	}
-	
+
 	@Override
 	protected void collapseSameType(JSONObject obj) {
-		if (obj.has("@type")) {
-			JSONArray array = obj.getJSONArray("@type");
-			Set<String> types = new HashSet<String>();
-			for (int i = 0; i < array.length(); i++) {
-				types.add(array.getString(0));
-				array.remove(0);
-			}
-			for (String type : types)
-				array.put(type);
-		}
 		for (Object key : obj.keySet()) {
-			Object value = obj.get(key.toString());
-			if (value instanceof JSONObject)
-				collapseSameType((JSONObject)value);
+			Object value = obj.get((String)key);
 			if (value instanceof JSONArray) {
 				JSONArray array = (JSONArray)value;
-				for (int i = 0; i < array.length(); i++) {
-					Object o = array.get(i);
-					if (o instanceof JSONObject)
+				Set<Object> types = new HashSet<Object>();
+				int length = array.length();
+				for (int i = 0; i < length; i++) {
+					Object o = array.remove(0);
+					if (o instanceof JSONObject) {
 						collapseSameType((JSONObject) o);
+					}					
+					types.add(o);	
+				}
+				if (types.size() > 1) {
+					for (Object type : types) {
+						array.put(type);
+					}
+				}
+				else if (types.iterator().hasNext()){
+					Object o = types.iterator().next();
+					obj.put((String)key, o);
 				}
 			}
+			if (value instanceof JSONObject)
+				collapseSameType((JSONObject)value);
 		}
 	}
 
 	@Override
 	protected void initializeOutput() {
 		outWriter.println("[");
-		
+
 	}
 
 
 	@Override
 	public JSONObject getNewObject(String triplesMapId, String subjUri) {
 		JSONObject object = new JSONObject();
+		subjUri.trim();
+		if (subjUri.startsWith("<") && subjUri.endsWith(">")) {
+			subjUri = subjUri.substring(1, subjUri.length() - 1);
+			try {
+				URI uri = new URI(subjUri);
+				if (!uri.isAbsolute())
+					subjUri = baseURI + subjUri;
+			}catch(Exception e) {
+
+			}
+		}
 		object.put("@id", subjUri);
 		return object;
 	}
