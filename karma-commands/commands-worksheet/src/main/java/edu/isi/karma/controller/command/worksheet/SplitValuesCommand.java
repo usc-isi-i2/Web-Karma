@@ -26,33 +26,29 @@ import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.rep.*;
-import edu.isi.karma.rep.Node.NodeStatus;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNode.HNodeType;
+import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-
-public class SplitByCommaCommand extends WorksheetCommand {
+public class SplitValuesCommand extends WorksheetCommand {
 	private final String hNodeId;
 	private final String delimiter;
+	private String newhNodeId;
 	private String columnName;
-	private HNode hNode;
-	private String splitValueHNodeId;
+	private String newColName;
 
-	private HashMap<Node, CellValue> oldNodeValueMap = new HashMap<Node, CellValue>();
-	private HashMap<Node, NodeStatus> oldNodeStatusMap = new HashMap<Node, NodeStatus>();
+	//	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-//	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-	protected SplitByCommaCommand(String id, String worksheetId,
-			String hNodeId, String delimiter) {
+	protected SplitValuesCommand(String id, String worksheetId,
+			String hNodeId, String delimiter, String newColName) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.delimiter = delimiter;
-		
-		 addTag(CommandTag.Transformation);
+		this.newColName = newColName;
+		addTag(CommandTag.Transformation);
 	}
 
 	@Override
@@ -81,63 +77,36 @@ public class SplitByCommaCommand extends WorksheetCommand {
 		UpdateContainer c = new UpdateContainer();
 
 		// Get the HNode
-		hNode = workspace.getFactory().getHNode(hNodeId);
+		HNode hNode = workspace.getFactory().getHNode(hNodeId);
 		// The column should not have a nested table but check to make sure!
-		if (hNode.hasNestedTable()) {
+		if (hNode.hasNestedTable() || columnName.equals(newColName)) {
 			c.add(new ErrorUpdate("Cannot split column with nested table!"));
 			return c;
 		}
 		columnName = hNode.getColumnName();
-		
-		SplitColumnByDelimiter split = new SplitColumnByDelimiter(hNodeId, wk, delimiter, workspace);
-		split.split(oldNodeValueMap, oldNodeStatusMap);
-		splitValueHNodeId = split.getSplitValueHNodeId();
-
+		HNode newhNode;
+		HTable hTable = workspace.getFactory().getHTable(hNode.getHTableId());
+		newhNode = hTable.addHNode(newColName, HNodeType.Transformation, wk, workspace.getFactory());
+		HTable newTable = newhNode.addNestedTable("Comma Split Values", wk, workspace.getFactory());
+		newTable.addHNode("Values", HNodeType.Transformation, wk, workspace.getFactory());
+		newhNodeId = newhNode.getId();
+		SplitColumnByDelimiter split = new SplitColumnByDelimiter(hNodeId, newhNode.getId(), wk, delimiter, workspace);
+		split.split();
 		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
-		
+
 		/** Add the alignment update **/
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
-		
+
 		return c;
 	}
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		
-		Worksheet wk = workspace.getFactory().getWorksheet(worksheetId);
-		List<HNodePath> columnPaths = wk.getHeaders().getAllPaths();
-
-		// Get the path which has the split value hNodeId
-		HNodePath selectedPath = null;
-		for (HNodePath path : columnPaths) {
-			if (path.getLeaf().getId().equals(splitValueHNodeId)) {
-				selectedPath = path;
-			}
-		}
-		// Clear the nested table for the HNode
+		RepFactory factory = workspace.getFactory();
+		HNode hNode = factory.getHNode(newhNodeId);
+		HTable hTable = factory.getHTable(hNode.getHTableId());
+		hTable.removeHNode(newhNodeId, factory.getWorksheet(worksheetId));
 		hNode.removeNestedTable();
-		
-		// Replace the path
-		int oldPathIndex = columnPaths.indexOf(selectedPath);
-		for (HNodePath path : wk.getHeaders().getAllPaths()) {
-			if (path.getLeaf().getId().equals(hNodeId)) {
-				hNode = path.getLeaf();
-				selectedPath = path;
-			}
-		}
-		columnPaths.set(oldPathIndex, selectedPath);
-
-		// Populate the column with old values
-		Collection<Node> nodes = new ArrayList<Node>();
-		wk.getDataTable().collectNodes(selectedPath, nodes);
-
-		for (Node node : nodes) {
-			//pedro 2012-09-15 this does not look correct.
-			node.setNestedTable(null, workspace.getFactory());
-			node.setValue(oldNodeValueMap.get(node), oldNodeStatusMap.get(node), workspace.getFactory());
-		}
-
 		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
-		
 	}
 }

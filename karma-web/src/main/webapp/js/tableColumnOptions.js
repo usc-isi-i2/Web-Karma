@@ -11,6 +11,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 								 {name:"Add Column", func:addColumn, leafOnly:false},
 								 {name:"Rename", func:renameColumn, leafOnly:true},
 								 {name:"Split Column", func:splitColumn, leafOnly:true},
+								 {name:"Split Values", func:splitValue, leafOnly:true},
 								 {name:"Add Row", func:addRow, leafOnly:false},
 								 {name:"divider" , leafOnly:false},
 			
@@ -151,7 +152,13 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	function splitColumn() {
 		hideDropdown();
 		SplitColumnDialog.getInstance().show(worksheetId, columnId);
-				return false;
+		return false;
+	}
+
+	function splitValue() {
+		hideDropdown();
+		SplitValueDialog.getInstance().show(worksheetId, columnId);
+		return false;
 	}
 	
 	function transform() {
@@ -578,6 +585,120 @@ var SplitColumnDialog = (function() {
 				newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
 				newInfo.push(getParamObject("hNodeId", columnId,"hNodeId"));
 				newInfo.push(getParamObject("delimiter", delimiter, "other"));
+				info["newInfo"] = JSON.stringify(newInfo);
+
+				showLoading(info["worksheetId"]);
+				var returned = $.ajax({
+						url: "RequestController",
+						type: "POST",
+						data : info,
+						dataType : "json",
+						complete :
+								function (xhr, textStatus) {
+										// alert(xhr.responseText);
+										var json = $.parseJSON(xhr.responseText);
+										parse(json);
+										hideLoading(info["worksheetId"]);
+								},
+						error :
+								function (xhr, textStatus) {
+										alert("Error occured while splitting a column by comma! " + textStatus);
+										hideLoading(info["worksheetId"]);
+								}
+				});
+				};
+				
+				function show(wsId, colId) {
+					worksheetId = wsId;
+					columnId = colId;
+						dialog.modal({keyboard:true, show:true, backdrop:'static'});
+				};
+				
+				
+				return {	// Return back the public methods
+					show : show,
+					init : init
+				};
+		};
+
+		function getInstance() {
+			if( ! instance ) {
+				instance = new PrivateConstructor();
+				instance.init();
+			}
+			return instance;
+		}
+	 
+		return {
+			getInstance : getInstance
+		};
+			
+		
+})();
+
+
+var SplitValueDialog = (function() {
+		var instance = null;
+
+		function PrivateConstructor() {
+			var dialog = $("#splitColumnDialog");
+			var worksheetId, columnId;
+			
+			function init() {
+				// Initialize what happens when we show the dialog
+			dialog.on('show.bs.modal', function (e) {
+				hideError();
+								$("input", dialog).val("");
+								$("#columnSplitDelimiter", dialog).focus();
+			});
+			
+			// Initialize handler for Save button
+			// var me = this;
+			$('#btnSave', dialog).on('click', function (e) {
+				e.preventDefault();
+				saveDialog(e);
+			});
+			}
+			
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError() {
+			$("div.error", dialog).show();
+		}
+				
+				function saveDialog(e) {
+					console.log("Save clicked");
+	
+				var delimiter = $.trim($("#columnSplitDelimiter", dialog).val());
+			 	var newColName = $.trim($("#valueSplitNewColName", dialog).val());
+				var validationResult = true;
+				if (!delimiter)
+						validationResult = false;
+				else if(delimiter != "space" && delimiter != "tab" && delimiter.length != 1)
+					validationResult = false;
+				if (!validationResult) {
+					showError();
+						$("#columnSplitDelimiter", dialog).focus();
+						return false;
+				}
+
+				dialog.modal('hide');
+
+				var info = new Object();
+				info["worksheetId"] = worksheetId;
+				info["workspaceId"] = $.workspaceGlobalInformation.id;
+				info["hNodeId"] = columnId;
+				info["delimiter"] = delimiter;
+				info["newColName"] = newColName;
+				info["command"] = "SplitValuesCommand";
+
+				var newInfo = [];
+				newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+				newInfo.push(getParamObject("hNodeId", columnId,"hNodeId"));
+				newInfo.push(getParamObject("delimiter", delimiter, "other"));
+				newInfo.push(getParamObject("newColName", newColName, "other"));
 				info["newInfo"] = JSON.stringify(newInfo);
 
 				showLoading(info["worksheetId"]);
