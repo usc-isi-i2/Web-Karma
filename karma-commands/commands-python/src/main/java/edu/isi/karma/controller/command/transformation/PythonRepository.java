@@ -103,10 +103,7 @@ public class PythonRepository {
 						libraryScripts.put(fileName, py);
 						fileNameTolastTimeRead.put(fileName, System.currentTimeMillis());
 					}
-					else
-					{
-						interpreter.exec(libraryScripts.get(fileName));
-					}
+					interpreter.exec(libraryScripts.get(fileName));
 					
 					//TODO prune scripts no longer present
 				}
