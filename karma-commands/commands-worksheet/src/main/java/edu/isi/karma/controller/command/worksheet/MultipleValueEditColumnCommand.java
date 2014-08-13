@@ -1,5 +1,11 @@
 package edu.isi.karma.controller.command.worksheet;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -9,11 +15,6 @@ import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Workspace;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class MultipleValueEditColumnCommand extends WorksheetCommand {
 	private String hNodeID;
