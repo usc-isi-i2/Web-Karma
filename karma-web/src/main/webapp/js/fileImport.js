@@ -562,12 +562,14 @@ var SelectColumnsDialog = (function() {
 									wsColumnsJson = element['columns'];
 								}
 							});
-							if (compareJSON(wsColumnsJson, json)) {
+							var copyOfColumnsJson = $.parseJSON(JSON.stringify(wsColumnsJson));
+							if (compareJSON(copyOfColumnsJson, json)) {
 								console.log("is identical");
+								console.log(copyOfColumnsJson);
 								var columns = $('#selectColumns_body', dialog);
 								var nestableDiv = $("#nestable", columns);
 								nestableDiv.empty();
-								createColumnList(json, nestableDiv, true);
+								createColumnList(copyOfColumnsJson, nestableDiv, true);
 								nestableDiv.nestable({
 									group: 1
 								});
@@ -590,20 +592,21 @@ var SelectColumnsDialog = (function() {
 			if (!$.isArray(preset)) {
 				return false;
 			}
-			if (org_json.length != preset.length) {
+			if (org_json.length < preset.length) {
 				return false;
 			}
-			for (var i = 0; i < org_json.length; i++) {
-				var obj_org = org_json[i];
-				var index = getCorrespondingIndex(obj_org, preset);
+			for (var i = 0; i < preset.length; i++) {
+				var obj_preset = preset[i];
+				var index = getCorrespondingIndex(obj_preset, org_json);
 				if (index == -1) {
 					return false;
 				}
-				var obj_preset = preset[index];
-				if (obj_org['children'] != undefined && obj_org['children'].length > 0 && obj_preset['children'] == undefined) {
+				var obj_org = org_json[index];
+				obj_org['visible'] = obj_preset['visible'];
+				if (obj_preset['children'] != undefined && obj_org['children'] == undefined) {
 					return false;
 				}
-				if (obj_org['children'] != undefined) {
+				if (obj_preset['children'] != undefined) {
 					if (!compareJSON(obj_org['children'], obj_preset['children'])) {
 						return false;
 					}
