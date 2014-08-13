@@ -433,11 +433,14 @@ var SelectColumnsDialog = (function() {
 				dialog.modal('hide');
 			});
 
-			$('#btnLoadPreset', dialog).on('click', function (e) {
-				e.preventDefault();
-				loadPreset(e);
+			$('#presetupload').fileupload({
+				url : "/",
+				add : function(e, data) {
+					console.log("add");
+					console.log(data);
+					loadPreset(data.files);
+				}
 			});
-
 		}
 						
 						
@@ -538,9 +541,8 @@ var SelectColumnsDialog = (function() {
 				FileOptionsDialog.getInstance().show(wsJson, selectedFormat, columnsJson, savePreset);								
 		};
 
-		function loadPreset(e) {
+		function loadPreset(filelist) {
 			console.log("load preset");
-			var filelist = $('#presetupload').get(0).files;
 			for (var i = 0; i < filelist.length; i++) {
 				var file = filelist[i];
 				if (file.size < 1024 * 1024) {
@@ -571,8 +573,6 @@ var SelectColumnsDialog = (function() {
 								});
 							}
 						}
-						var fileInput = $('#presetupload');
-						fileInput.replaceWith(fileInput.val('').clone(true));
 					};
 					reader.readAsText(file);
 				}

@@ -660,7 +660,7 @@ function parse(data) {
 						// Remove existing link if any
 						$("a.PresetDownloadLink", titleDiv).remove();
 
-						var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("Preset").addClass("PresetDownloadLink DownloadLink").attr("target", "_blank");
+						var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("Filter Columns Preset").addClass("PresetDownloadLink DownloadLink").attr("target", "_blank");
 						$("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
 				}
 				else if(element["updateType"] == "PublishAvroUpdate") {
