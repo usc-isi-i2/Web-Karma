@@ -177,6 +177,7 @@
 					<button type="button" class="btn btn-default" id="btnErrors">View Errors</button>
 					<button type="button" class="btn btn-default" id="btnPreview">Preview results for top 5 rows</button>
 					<br>
+					<div id="pyTransformErrorWindow" style="display:none"></div>
             		<table id="pythonPreviewResultsTable" class="table table-striped table-condensed" style="display: none"></table>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
