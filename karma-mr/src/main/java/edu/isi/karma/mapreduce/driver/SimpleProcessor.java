@@ -29,7 +29,7 @@ public class SimpleProcessor extends Configured implements Tool {
         job.setInputFormatClass(SequenceFileAsTextInputFormat.class);
         job.setJarByClass(SimpleProcessor.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
-        job.setMapperClass(SimpleMapper.class);
+        job.setMapperClass(BaseRDFMapper.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);

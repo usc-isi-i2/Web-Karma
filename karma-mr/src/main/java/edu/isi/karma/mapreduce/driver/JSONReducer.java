@@ -82,14 +82,14 @@ public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 				{
 					if(rightObject instanceof String)
 					{
-						if(!((String)leftObject).equalsIgnoreCase((String)rightObject))
+						if(!((JSONObject)leftObject).getString("@id").equalsIgnoreCase((String)rightObject))
 						{
 							left.accumulate(name, rightObject);
 						}
 						
 					}
 					else if (rightObject instanceof JSONObject){
-						if(!((String)leftObject).equalsIgnoreCase(((JSONObject)rightObject).getString("@id")))
+						if(!((JSONObject)leftObject).getString("@id").equalsIgnoreCase(((JSONObject)rightObject).getString("@id")))
 						{
 							left.accumulate(name, rightObject);
 						}

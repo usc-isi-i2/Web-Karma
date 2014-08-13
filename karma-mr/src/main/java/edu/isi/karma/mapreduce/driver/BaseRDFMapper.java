@@ -2,7 +2,6 @@ package edu.isi.karma.mapreduce.driver;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 
@@ -13,10 +12,8 @@ import org.json.JSONException;
 
 import edu.isi.karma.controller.command.transformation.PythonRepository;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
-import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
@@ -24,12 +21,12 @@ import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.rdf.GenericRDFGenerator;
 import edu.isi.karma.webserver.KarmaException;
 
-public class SimpleMapper extends Mapper<Text, Text, Text, Text>{
+public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text>{
 
-	private static Logger LOG = Logger.getLogger(SimpleMapper.class);
+	private static Logger LOG = Logger.getLogger(BaseRDFMapper.class);
 
-	GenericRDFGenerator generator;
-	
+	protected GenericRDFGenerator generator;
+	protected String baseURI;
 	@Override
 	public void setup(Context context)
 	{
@@ -56,6 +53,7 @@ public class SimpleMapper extends Mapper<Text, Text, Text, Text>{
 	        generator = new GenericRDFGenerator();
 	        URL modelURL = new URL(modelUri);
 	        generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
+	        baseURI = context.getConfiguration().get("base.uri");
 		} catch (KarmaException | IOException  e) {
 			LOG.error("Unable to complete Karma set up: " + e.getMessage());
 			throw new RuntimeException("Unable to complete Karma set up: " + e .getMessage());
@@ -69,24 +67,19 @@ public class SimpleMapper extends Mapper<Text, Text, Text, Text>{
 		String contents = value.toString();
 		
 		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		URIFormatter uriFormatter = new URIFormatter();
-		KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
+		KR2RMLRDFWriter outWriter = configureRDFWriter(sw);
 		try {
 			generator.generateRDF("model", filename, contents, null, false, outWriter);
 		} catch (JSONException | KarmaException e) {
 			LOG.error("Unable to generate RDF: " + e.getMessage());
 		}
 		String results = sw.toString();
-		String[] lines = results.split("(\r\n|\n)");
-		for(String line : lines)
-		{
-			if((line = line.trim()).isEmpty())
-			{
-				continue;
-			}
-			int splitBetweenSubjectAndPredicate = line.indexOf(' ');
-			context.write(new Text(line.substring(0, splitBetweenSubjectAndPredicate)), new Text(line));
-		}
+		writeRDFToContext(context, results);
 	}
+
+	protected abstract KR2RMLRDFWriter configureRDFWriter(StringWriter sw);
+	
+	protected abstract void writeRDFToContext(Context context, String results)
+			throws IOException, InterruptedException;
+	
 }
