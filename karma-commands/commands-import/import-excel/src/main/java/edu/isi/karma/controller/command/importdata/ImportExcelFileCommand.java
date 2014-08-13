@@ -88,8 +88,8 @@ public class ImportExcelFileCommand extends ImportFileCommand implements IPrevie
 
 
                 try {
-                    Import imp = new CSVFileImport(1, 2, ',', '"', encoding, maxNumLines, csvFile,
-                            workspace);
+                    Import imp = new CSVFileImport(1, 2, ',', '"', encoding, maxNumLines, 
+                    		csvFile, workspace, null);
                     Worksheet wsht = imp.generateWorksheet();
 
                     if (hasRevisionId()) {

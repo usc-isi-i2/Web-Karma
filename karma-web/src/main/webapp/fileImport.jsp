@@ -78,7 +78,7 @@
 			  </div>
 			  <div class="modal-footer">
 			        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-			        <button type="submit" class="btn btn-primary" id="btnSave">Next</button>
+			        <button type="submit" class="btn btn-primary" id="btnSaveFormat">Next</button>
 			  </div>
 			 </form>
 		</div><!-- /.modal-content -->
@@ -155,7 +155,7 @@
 			  </div>
 			  <div class="modal-footer">
 			        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-			        <button type="submit" class="btn btn-primary" id="btnSave">Import</button>
+			        <button type="submit" class="btn btn-primary" id="btnSaveOptions">Import</button>
 			  </div>
 		</div><!-- /.modal-content -->
 		</form>
@@ -188,7 +188,7 @@
 				  <div class="modal-footer">
 				        <button type="submit" class="btn btn-primary" id="btnLoadPreset">Load Preset</button>
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				        <button type="submit" class="btn btn-primary" id="btnSave">Next</button>
+				        <button type="submit" class="btn btn-primary" id="btnSaveFilter">Next</button>
 				  </div> <!-- /.modal-footer -->
 			</div><!-- /.modal-content -->
 		</form>

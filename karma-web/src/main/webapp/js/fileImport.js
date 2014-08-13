@@ -63,7 +63,7 @@ var FileFormatSelectionDialog = (function() {
 			
 			//Initialize handler for Save button
 			//var me = this;
-			$('#btnSave', dialog).on('click', function (e) {
+			$('#btnSaveFormat', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
 				dialog.modal('hide');
@@ -92,7 +92,8 @@ var FileFormatSelectionDialog = (function() {
 				urlString += "&revisedWorksheet=" + $('#revisedWorksheetSelector').val();
 			}
 			var RequireFilter = $("input:checkbox[name='FilterCheck']", dialog).prop('checked');
-			RequireFilter = RequireFilter && (selectedFormat === "JSONFile" || selectedFormat === "XMLFile");
+			RequireFilter = RequireFilter && 
+			(selectedFormat === "JSONFile" || selectedFormat === "XMLFile");
 			urlString += "&filter=" + RequireFilter;
 			urlString += "&isPreview=true";
 			urlString += "&command=";
@@ -104,8 +105,10 @@ var FileFormatSelectionDialog = (function() {
 					console.log(selectedFormat);
 					if (RequireFilter)
 						SelectColumnsDialog.getInstance(data.result, selectedFormat).show();
-					else
+					else {
+						$("#fileOptionsDialog").data("isFilterSelected", $("input:checkbox[name='FilterCheck']", dialog).prop('checked'));
 						FileOptionsDialog.getInstance().show(data.result, selectedFormat, "", false);
+					}
 				}
 			});
 
@@ -164,7 +167,7 @@ var FileOptionsDialog = (function() {
 			});
 			
 			//Initialize handler for Save button
-			$('#btnSave', dialog).on('click', function (e) {
+			$('#btnSaveOptions', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
 								dialog.modal('hide');
@@ -301,7 +304,20 @@ var FileOptionsDialog = (function() {
 			options["workspaceId"] = $.workspaceGlobalInformation.id;
 			options["interactionType"] = "generatePreview";
 			options["isUserInteraction"] = true;
-			if(execute) {
+			var RequireFilter = dialog.data("isFilterSelected");
+			if (execute && format == "CSVFile" && RequireFilter) {
+				var dialog2 = $("#selectColumnsDialog");
+				options["interactionType"] = "generateFilter";
+				options["filter"] = true;
+				dialog2.data("commandId", options["commandId"]);
+				dialog2.data("delimiter", options["delimiter"]);
+				dialog2.data("CSVHeaderLineIndex", options["CSVHeaderLineIndex"]);
+				dialog2.data("startRowIndex", options["startRowIndex"]);
+				dialog2.data("textQualifier", options["textQualifier"]);
+				dialog2.data("encoding", options["encoding"]);
+				dialog2.data("maxNumLines", options["maxNumLines"]);
+			}
+			else if(execute) {
 				options["execute"] = true;
 				options["interactionType"] = "importTable";
 				options["savePreset"] = savePreset;
@@ -322,7 +338,13 @@ var FileOptionsDialog = (function() {
 										var json = $.parseJSON(xhr.responseText);
 										console.log("Got json:" + json);
 										showOptions(json);
-									} else {
+									}
+									else if (execute && format == "CSVFile" && RequireFilter)  {
+										var json = $.parseJSON(xhr.responseText);
+										console.log(json);
+										SelectColumnsDialog.getInstance(json, format).show();
+									}
+									else {
 										var json = $.parseJSON(xhr.responseText);
 										parse(json);
 										hideWaitingSignOnScreen();
@@ -347,8 +369,10 @@ var FileOptionsDialog = (function() {
 			var fileName = data["elements"][0]["fileName"];
 			$("#filename", dialog).html(fileName);
 			dialog.data("format", format);
-			showOptions(data);
-						
+			console.log(dialog.data("isFilterSelected"));
+			if (format == "CSVFile" && dialog.data("isFilterSelected"))
+				$("#btnSaveOptions").text("Next");		
+			showOptions(data);				
 			dialog.modal({keyboard:true, show:true, backdrop:'static'});
 		}
 		
@@ -400,8 +424,10 @@ var SelectColumnsDialog = (function() {
 					group: 1
 				});
 			});
-						
-			$('#btnSave', dialog).on('click', function (e) {
+			if (selFormat == "CSVFile") {
+				$('#btnSaveFilter', dialog).text("Import");
+			}			
+			$('#btnSaveFilter', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
 				dialog.modal('hide');
@@ -468,7 +494,48 @@ var SelectColumnsDialog = (function() {
 			var columnsJson = nestableDiv.nestable('serialize');
 			var savePreset = $("input:checkbox[name='SavePresetCheck']", dialog).prop('checked');
 			console.log(columnsJson);
-			FileOptionsDialog.getInstance().show(wsJson, selectedFormat, columnsJson, savePreset);								
+			if (selectedFormat == "CSVFile") {
+				var options = new Object();
+				options["command"] = "Import" + selectedFormat + "Command";
+				options["commandId"] = dialog.data("commandId");
+				options["delimiter"] = dialog.data("delimiter");
+				options["CSVHeaderLineIndex"] = dialog.data("CSVHeaderLineIndex");
+				options["startRowIndex"] = dialog.data("startRowIndex");
+				options["textQualifier"] = dialog.data("textQualifier");
+				options["encoding"] = dialog.data("encoding");
+				options["maxNumLines"] = dialog.data("maxNumLines");			
+				options["workspaceId"] = $.workspaceGlobalInformation.id;
+				options["isUserInteraction"] = true;
+				options["execute"] = true;
+				options["interactionType"] = "importTable";
+				options["savePreset"] = savePreset;
+				console.log(columnsJson);
+				options["columnsJson"] = JSON.stringify(columnsJson);
+				if (columnsJson === "")
+					options["columnsJson"] = "";
+				showWaitingSignOnScreen();
+				$.ajax({
+					url: "RequestController", 
+					type: "POST",
+					data : options,
+					dataType : "json",
+					complete : function (xhr, textStatus) {									
+											var json = $.parseJSON(xhr.responseText);
+											parse(json);
+											hideWaitingSignOnScreen();
+											if(selectedFormat !== "Ontology")  {
+												var lastWorksheetLoaded = $("div.Worksheet").last();
+												if(lastWorksheetLoaded) {
+													var lastWorksheetId = lastWorksheetLoaded.attr("id");
+													ShowExistingModelDialog.getInstance().showIfNeeded(lastWorksheetId);
+												}
+											}
+											dialog.modal('hide');
+										}
+				});				
+			}	
+			else		
+				FileOptionsDialog.getInstance().show(wsJson, selectedFormat, columnsJson, savePreset);								
 		};
 
 		function loadPreset(e) {
@@ -519,28 +586,23 @@ var SelectColumnsDialog = (function() {
 			if (org_json == undefined)
 				return false;
 			if (!$.isArray(preset)) {
-				console.log("situation 1");
 				return false;
 			}
 			if (org_json.length != preset.length) {
-				console.log("situation 2");
 				return false;
 			}
 			for (var i = 0; i < org_json.length; i++) {
 				var obj_org = org_json[i];
 				var index = getCorrespondingIndex(obj_org, preset);
 				if (index == -1) {
-					console.log("situation 3");
 					return false;
 				}
 				var obj_preset = preset[index];
 				if (obj_org['children'] != undefined && obj_preset['children'] == undefined) {
-					console.log("situation 4");
 					return false;
 				}
 				if (obj_org['children'] != undefined) {
 					if (!compareJSON(obj_org['children'], obj_preset['children'])) {
-						console.log("situation 5");
 						return false;
 					}
 				}

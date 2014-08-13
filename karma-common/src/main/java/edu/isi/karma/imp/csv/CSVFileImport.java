@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.json.JSONArray;
+
 import edu.isi.karma.rep.Workspace;
 
 public class CSVFileImport extends CSVImport {
@@ -34,9 +36,13 @@ public class CSVFileImport extends CSVImport {
             char delimiter, char quoteCharacter, String encoding,
             int maxNumLines,
             File csvFile,
-            Workspace workspace) throws IOException {
+            Workspace workspace, 
+            JSONArray columnsJson) throws IOException {
 
-    	super(headerRowIndex, dataStartRowIndex,delimiter, quoteCharacter,encoding, maxNumLines, csvFile.getName(), new FileInputStream(csvFile), workspace);
+    	super(headerRowIndex, dataStartRowIndex,delimiter, 
+    			quoteCharacter,encoding, maxNumLines, 
+    			csvFile.getName(), new FileInputStream(csvFile), 
+    			workspace, columnsJson);
        
     }
 

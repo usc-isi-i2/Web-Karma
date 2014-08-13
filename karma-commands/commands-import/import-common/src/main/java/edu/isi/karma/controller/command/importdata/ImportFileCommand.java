@@ -138,6 +138,8 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 		}
 		case importTable:
 			return c;
+		default:
+			break;
 		}
 		return c;
 	}
@@ -185,9 +187,8 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 			WorkspaceManager.getInstance().removeWorkspace(workspace.getId());
 			return uc;
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new CommandException(this, "An error has occured!");
 		}
-		return new UpdateContainer();
 
 	}
 	

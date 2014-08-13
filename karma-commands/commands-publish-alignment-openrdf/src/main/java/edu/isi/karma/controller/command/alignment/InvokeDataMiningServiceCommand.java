@@ -120,7 +120,7 @@ public class InvokeDataMiningServiceCommand extends WorksheetCommand {
         	fw.close();
         	buf.close();
         	logger.info("Created : " + fileName + " by worksheet Id : " +  this.worksheetId) ;
-        	Import impCSV = new CSVFileImport(1, 2, ',', ' ', "UTF-8", -1, new File(fileName), workspace);
+        	Import impCSV = new CSVFileImport(1, 2, ',', ' ', "UTF-8", -1, new File(fileName), workspace, null);
         	Worksheet wsht = impCSV.generateWorksheet();
         	uc = new UpdateContainer();
             uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
