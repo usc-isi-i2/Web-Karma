@@ -337,7 +337,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 			Workspace workspace, String encoding, int maxNumLines) throws IOException,
 			KarmaException, ClassNotFoundException {
 		Worksheet worksheet;
-		Import fileImport = new CSVImport(1, 2, ',', '\"', encoding, maxNumLines, sourceName, is, workspace);
+		Import fileImport = new CSVImport(1, 2, ',', '\"', encoding, maxNumLines, 
+				sourceName, is, workspace, null);
 
 		worksheet = fileImport.generateWorksheet();
 		return worksheet;

@@ -22,6 +22,14 @@
  */
 package edu.isi.karma.controller.command.importdata;
 
+import java.io.File;
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.update.AbstractUpdate;
@@ -34,110 +42,117 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.view.VWorkspace;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public class ImportOntologyCommand extends ImportFileCommand implements
+		IPreviewable {
 
-import javax.servlet.http.HttpServletRequest;
-
-import java.io.File;
-import java.io.PrintWriter;
-
-public class ImportOntologyCommand extends ImportFileCommand implements IPreviewable {
-
-    private static Logger logger = LoggerFactory.getLogger(ImportOntologyCommand.class);
-    
-    @Override
-    protected Import createImport(Workspace workspace) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    private enum JsonKeys {
-        Import
-    }
-
-    public ImportOntologyCommand(String id, File file) {
-        super(id, file);
-    }
-
-    @Override
-    public String getTitle() {
-        return "Import Ontology";
-    }
-
-    @Override
-    public String getDescription() {
-        return getFile().getName();
-    }
-
-    @Override
-    public UpdateContainer doIt(Workspace workspace) throws CommandException {
-        OntologyManager ontManager = workspace.getOntologyManager();
-
-
-        logger.debug("Loading ontology: " + getFile().getAbsolutePath());
-        try {
-	        final boolean success = ontManager.doImportAndUpdateCache(getFile(), encoding);
-	        logger.debug("Done loading ontology: " + getFile().getAbsolutePath());
-	        return new UpdateContainer(new AbstractUpdate() {
-	            @Override
-	            public void generateJson(String prefix, PrintWriter pw,
-	                    VWorkspace vWorkspace) {
-	                pw.println("{");
-	                pw.println("	\"" + GenericJsonKeys.updateType.name() + "\": \"" + ImportOntologyCommand.class.getSimpleName() + "\",");
-	                pw.println("	\"" + JsonKeys.Import.name() + "\":" + success);
-	                pw.println("}");
-	            }
-	        });
-        } catch(Exception e) {
-        	UpdateContainer uc = new UpdateContainer();
-        	uc.add(new TrivialErrorUpdate("Error importing Ontology " + getFile().getName()));
-        	return uc;
-        }
-    }
-    
-    @Override
-    public UpdateContainer handleUserActions(HttpServletRequest request) {
-       
-        String strEncoding = request.getParameter("encoding");
-        if(strEncoding == null || strEncoding == "") {
-        	try {
-        		strEncoding = EncodingDetector.detect(getFile());
-        	} catch(Exception e) {
-        		strEncoding = EncodingDetector.DEFAULT_ENCODING;
-        	}
-        }
-        setEncoding(strEncoding);
-       
-        /**
-         * Send response based on the interaction type *
-         */
-        UpdateContainer c = null;
-        ImportFileInteractionType type = ImportFileInteractionType.valueOf(request
-                .getParameter("interactionType"));
-        switch (type) {
-            case generatePreview: {
-                try {
-
-                    c = showPreview();
-                } catch (CommandException e) {
-                    logger.error(
-                            "Error occured while creating utput JSON for JSON Import",
-                            e);
-                }
-                return c;
-            }
-            case importTable:
-                return c;
-        }
-        return c;
-    }
+	private static Logger logger = LoggerFactory
+			.getLogger(ImportOntologyCommand.class);
 
 	@Override
-	public UpdateContainer showPreview() throws CommandException {
-		
-        UpdateContainer c = new UpdateContainer();
-        c.add(new ImportPropertiesUpdate(getFile(), encoding, -1, id));
-        return c;
-	   
+	protected Import createImport(Workspace workspace) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	protected Import createImport(Workspace workspace, int sampleSize) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	private enum JsonKeys {
+		Import
+	}
+
+	public ImportOntologyCommand(String id, File file) {
+		super(id, file);
+	}
+
+	@Override
+	public String getTitle() {
+		return "Import Ontology";
+	}
+
+	@Override
+	public String getDescription() {
+		return getFile().getName();
+	}
+
+	@Override
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		OntologyManager ontManager = workspace.getOntologyManager();
+
+		logger.debug("Loading ontology: " + getFile().getAbsolutePath());
+		try {
+			final boolean success = ontManager.doImportAndUpdateCache(
+					getFile(), encoding);
+			logger.debug("Done loading ontology: "
+					+ getFile().getAbsolutePath());
+			return new UpdateContainer(new AbstractUpdate() {
+				@Override
+				public void generateJson(String prefix, PrintWriter pw,
+						VWorkspace vWorkspace) {
+					pw.println("{");
+					pw.println("	\"" + GenericJsonKeys.updateType.name()
+							+ "\": \""
+							+ ImportOntologyCommand.class.getSimpleName()
+							+ "\",");
+					pw.println("	\"" + JsonKeys.Import.name() + "\":" + success);
+					pw.println("}");
+				}
+			});
+		} catch (Exception e) {
+			UpdateContainer uc = new UpdateContainer();
+			uc.add(new TrivialErrorUpdate("Error importing Ontology "
+					+ getFile().getName()));
+			return uc;
+		}
+	}
+
+	@Override
+	public UpdateContainer handleUserActions(HttpServletRequest request) {
+
+		String strEncoding = request.getParameter("encoding");
+		if (strEncoding == null || strEncoding == "") {
+			try {
+				strEncoding = EncodingDetector.detect(getFile());
+			} catch (Exception e) {
+				strEncoding = EncodingDetector.DEFAULT_ENCODING;
+			}
+		}
+		setEncoding(strEncoding);
+
+		/**
+		 * Send response based on the interaction type *
+		 */
+		UpdateContainer c = null;
+		ImportFileInteractionType type = ImportFileInteractionType
+				.valueOf(request.getParameter("interactionType"));
+		switch (type) {
+		case generatePreview: {
+			try {
+
+				c = showPreview(request);
+			} catch (CommandException e) {
+				logger.error(
+						"Error occured while creating utput JSON for JSON Import",
+						e);
+			}
+			return c;
+		}
+		case importTable:
+			return c;
+		default:
+			break;
+		}
+		return c;
+	}
+
+	@Override
+	public UpdateContainer showPreview(HttpServletRequest request)
+			throws CommandException {
+
+		UpdateContainer c = new UpdateContainer();
+		c.add(new ImportPropertiesUpdate(getFile(), encoding, -1, id));
+		return c;
+
 	}
 }

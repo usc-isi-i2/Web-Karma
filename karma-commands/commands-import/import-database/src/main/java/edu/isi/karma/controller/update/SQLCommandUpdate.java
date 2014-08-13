@@ -7,21 +7,19 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.importdata.ImportSQLCommand;
 import edu.isi.karma.view.VWorkspace;
 
 public class SQLCommandUpdate extends AbstractUpdate {
 
-	private Command command;
+	private String commandId;
 	private static Logger logger = LoggerFactory.getLogger(SQLCommandUpdate.class);
 	
 	public enum JsonKeys {
 		commandId
 	}
 
-	public SQLCommandUpdate(ImportSQLCommand command) {
-		this.command = command;
+	public SQLCommandUpdate(String commandId) {
+		this.commandId = commandId;
 	}
 
 	@Override
@@ -29,7 +27,7 @@ public class SQLCommandUpdate extends AbstractUpdate {
 			VWorkspace vWorkspace) {
 		JSONObject responseObj = new JSONObject();
 		try {
-			responseObj.put(JsonKeys.commandId.name(), command.getId());
+			responseObj.put(JsonKeys.commandId.name(), commandId);
 			responseObj.put(GenericJsonKeys.updateType.name(), "ImportSQLCommandUpdate");
 			pw.print(responseObj.toString(4));
 		} catch (JSONException e) {

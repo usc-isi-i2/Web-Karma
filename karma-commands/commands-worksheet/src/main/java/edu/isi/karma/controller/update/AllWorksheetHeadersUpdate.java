@@ -15,13 +15,15 @@ import edu.isi.karma.view.VWorkspace;
 
 public class AllWorksheetHeadersUpdate extends AbstractUpdate {
 	private String worksheetId;
+	private boolean deleteAfterGenerate;
 	private enum JsonKeys {
 		worksheetId, columns, name, id, visible, hideable, children
 	}
 	
-	public AllWorksheetHeadersUpdate(String worksheetId) {
+	public AllWorksheetHeadersUpdate(String worksheetId, boolean deleteAfterGenerate) {
 		super();
 		this.worksheetId = worksheetId;
+		this.deleteAfterGenerate = deleteAfterGenerate;
 	}
 	
 	@Override
@@ -42,6 +44,10 @@ public class AllWorksheetHeadersUpdate extends AbstractUpdate {
 			response.put(JsonKeys.columns.name(), columns);
 			
 			pw.println(response.toString());
+			if (deleteAfterGenerate) {
+				vWorkspace.getWorkspace().getFactory().removeWorksheet(wk.getId(), vWorkspace.getWorkspace().getCommandHistory());
+				vWorkspace.getViewFactory().removeWorksheet(wk.getId());
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

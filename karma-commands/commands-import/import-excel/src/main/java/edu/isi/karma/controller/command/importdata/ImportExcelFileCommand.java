@@ -88,8 +88,8 @@ public class ImportExcelFileCommand extends ImportFileCommand implements IPrevie
 
 
                 try {
-                    Import imp = new CSVFileImport(1, 2, ',', '"', encoding, maxNumLines, csvFile,
-                            workspace);
+                    Import imp = new CSVFileImport(1, 2, ',', '"', encoding, maxNumLines, 
+                    		csvFile, workspace, null);
                     Worksheet wsht = imp.generateWorksheet();
 
                     if (hasRevisionId()) {
@@ -111,6 +111,11 @@ public class ImportExcelFileCommand extends ImportFileCommand implements IPrevie
 
     @Override
     protected Import createImport(Workspace workspace) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    protected Import createImport(Workspace workspace, int sampleSize) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -25,18 +25,16 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.Charset;
-
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -45,12 +43,11 @@ import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
 

@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
@@ -45,19 +44,19 @@ import edu.isi.karma.rep.Workspace;
  */
 public class ExecutionController {
 
-    private static Logger logger = LoggerFactory
-            .getLogger(ExecutionController.class);
-    private static final HashMap<String, CommandFactory> commandFactoryMap = new HashMap<String, CommandFactory>();
-    private final Workspace workspace;
+	private static Logger logger = LoggerFactory
+			.getLogger(ExecutionController.class);
+	private static final HashMap<String, CommandFactory> commandFactoryMap = new HashMap<String, CommandFactory>();
+	private final Workspace workspace;
 
-    static{
-    	dynamicallyBuildCommandFactoryMap();
-    }
-    
-    public ExecutionController(Workspace workspace) {
-        this.workspace = workspace;
-	    
-    }
+	static{
+		dynamicallyBuildCommandFactoryMap();
+	}
+
+	public ExecutionController(Workspace workspace) {
+		this.workspace = workspace;
+
+	}
 
 	private static void dynamicallyBuildCommandFactoryMap()
 	{
@@ -69,13 +68,13 @@ public class ExecutionController {
 		for (Class<? extends CommandFactory> subType : subTypes)
 		{
 			if(!Modifier.isAbstract(subType.getModifiers()) && !subType.isInterface())
-			try
+				try
 			{
 
-				CommandFactory commandFactory = subType.newInstance();
-				Class<? extends Command> command = commandFactory.getCorrespondingCommand();
+					CommandFactory commandFactory = subType.newInstance();
+					Class<? extends Command> command = commandFactory.getCorrespondingCommand();
 
-				commandFactoryMap.put(command.getSimpleName(), commandFactory);
+					commandFactoryMap.put(command.getSimpleName(), commandFactory);
 			} catch (InstantiationException e)
 			{
 				logger.error("Error instantiating {} -- likely does not have no-arg constructor", subType);
@@ -93,58 +92,50 @@ public class ExecutionController {
 		logger.info("Loaded {} possible commands", commandFactoryMap.size());
 	}
 
-    public Workspace getWorkspace() {
-        return workspace;
-    }
+	public Workspace getWorkspace() {
+		return workspace;
+	}
 
-    public HashMap<String, CommandFactory> getCommandFactoryMap() {
-        return commandFactoryMap;
-    }
+	public HashMap<String, CommandFactory> getCommandFactoryMap() {
+		return commandFactoryMap;
+	}
 
-    public Command getCommand(HttpServletRequest request) {
-        CommandFactory cf = commandFactoryMap.get(request.getParameter("command"));
-        if (cf != null) {
-                try {
-	                String newInfo = request.getParameter("newInfo");
-	                return cf.createCommand(newInfo == null ? null : new JSONArray(newInfo), workspace);
-                } catch (UnsupportedOperationException ignored)
-                {
-	                return cf.createCommand(request, workspace);
-                } catch (Exception e) {
-	                logger.error(commandFactoryMap.toString());
-	                logger.error(request.toString());
-	                logger.error("Error getting command!!", e);
-                    return null;
-                }
-        } else {
-            logger.error("Command " + request.getParameter("command")
-                    + " not found!");
-            return null;
-        }
-    }
+	public Command getCommand(HttpServletRequest request) {
+		CommandFactory cf = commandFactoryMap.get(request.getParameter("command"));
+		if (cf != null) {
+			try {
+				String newInfo = request.getParameter("newInfo");
+				return cf.createCommand(newInfo == null ? null : new JSONArray(newInfo), workspace);
+			} catch (UnsupportedOperationException ignored)
+			{
+				return cf.createCommand(request, workspace);
+			} catch (Exception e) {
+				logger.error(commandFactoryMap.toString());
+				logger.error(request.toString());
+				logger.error("Error getting command!!", e);
+				return null;
+			}
+		} else {
+			logger.error("Command " + request.getParameter("command")
+					+ " not found!");
+			return null;
+		}
+	}
 
-    public UpdateContainer invokeCommand(Command command) {
-        synchronized (this) {
-            try {
-                UpdateContainer updateContainer = null;
-                workspace.getCommandHistory().setCurrentCommand(command);
+	public UpdateContainer invokeCommand(Command command) {
+		synchronized (this) {
+			try {
+				UpdateContainer updateContainer = workspace.getCommandHistory().doCommand(command, workspace);
+				return updateContainer;
+			} catch (CommandException e) {
+				logger.error(
+						"Error occured with command " + command.toString(), e);
+				UpdateContainer updateContainer = new UpdateContainer();
+				updateContainer.add(new ErrorUpdate("Error occured with command " + command.toString()));
+				return updateContainer; // TODO probably need a return that indicates an
+				// error.
+			}
+		}
 
-                if (command instanceof IPreviewable) {
-                    updateContainer = ((IPreviewable) command).showPreview();
-                } else {
-                    updateContainer = workspace.getCommandHistory().doCommand(command, workspace);
-                }
-
-                return updateContainer;
-            } catch (CommandException e) {
-                logger.error(
-                        "Error occured with command " + command.toString(), e);
-                UpdateContainer updateContainer = new UpdateContainer();
-                updateContainer.add(new ErrorUpdate("Error occured with command " + command.toString()));
-                return updateContainer; // TODO probably need a return that indicates an
-                // error.
-            }
-        }
-
-    }
+	}
 }

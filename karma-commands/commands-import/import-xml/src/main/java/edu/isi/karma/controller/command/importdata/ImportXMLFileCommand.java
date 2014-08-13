@@ -24,14 +24,19 @@ package edu.isi.karma.controller.command.importdata;
 
 import java.io.File;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+
 import edu.isi.karma.controller.command.IPreviewable;
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.json.XMLImport;
 import edu.isi.karma.rep.Workspace;
 
 public class ImportXMLFileCommand extends ImportFileCommand implements IPreviewable {
-	
-    protected ImportXMLFileCommand(String id, File uploadedFile) {
+	    
+	protected ImportXMLFileCommand(String id, File uploadedFile) {
         super(id, uploadedFile);
     }
 
@@ -51,10 +56,23 @@ public class ImportXMLFileCommand extends ImportFileCommand implements IPreviewa
         }
         return "";
     }
+    
+    @Override
+	public UpdateContainer handleUserActions(HttpServletRequest request) {
+		columnsJson = request.getParameter("columnsJson");
+		savePreset = Boolean.parseBoolean(request.getParameter("savePreset"));
+		return super.handleUserActions(request);
+	}
 
     @Override
     protected Import createImport(Workspace workspace) {
-        return new XMLImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines);
+    	JSONArray tree = generateSelectTree(columnsJson, true);
+        return new XMLImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines, tree);
+    }
+    
+    @Override
+    protected Import createImport(Workspace workspace, int sampleSize) {
+        return new XMLImport(getFile(), getFile().getName(), workspace, encoding, sampleSize, null);
     }
     
   

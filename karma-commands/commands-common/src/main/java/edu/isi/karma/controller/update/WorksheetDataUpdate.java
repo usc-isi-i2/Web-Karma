@@ -43,6 +43,7 @@ import edu.isi.karma.view.ViewPreferences.ViewPreference;
 public class WorksheetDataUpdate extends AbstractUpdate {
 	
 	private final String worksheetId;
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(WorksheetDataUpdate.class);
 	
 	private enum JsonKeys {

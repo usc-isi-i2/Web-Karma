@@ -31,20 +31,18 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 
 public class ImportJSONFileCommandFactory extends CommandFactory {
-	
+
 	static Logger logger = LoggerFactory.getLogger(ImportJSONFileCommandFactory.class);
-	
+
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
-				
+
 		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
-                
-                if (request.getParameter("revisedWorksheet") == null) {
-		return new ImportJSONFileCommand(getNewId(workspace), uploadedFile);
-                }
-                
-                return new ImportJSONFileCommand(getNewId(workspace), request.getParameter("revisedWorksheet"), uploadedFile);
+		if (request.getParameter("revisedWorksheet") == null) {
+			return new ImportJSONFileCommand(getNewId(workspace), uploadedFile);
+		}
+		return new ImportJSONFileCommand(getNewId(workspace), request.getParameter("revisedWorksheet"), uploadedFile);
 	}
 
 	@Override

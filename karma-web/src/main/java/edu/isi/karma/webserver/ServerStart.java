@@ -20,18 +20,17 @@
  ******************************************************************************/
 package edu.isi.karma.webserver;
 
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.Enumeration;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Enumeration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ServerStart extends HttpServlet {
 	private static Logger logger = LoggerFactory.getLogger(ServerStart.class);

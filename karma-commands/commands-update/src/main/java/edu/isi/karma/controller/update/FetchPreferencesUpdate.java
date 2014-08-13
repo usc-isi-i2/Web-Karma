@@ -20,21 +20,23 @@
  ******************************************************************************/
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.view.VWorkspace;
+import java.io.PrintWriter;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
+import edu.isi.karma.view.VWorkspace;
 
 public class FetchPreferencesUpdate extends AbstractUpdate {
 	String commandName;
-
+	String commandId;
 	private static Logger logger = LoggerFactory.getLogger(FetchPreferencesUpdate.class);
 	
-	public FetchPreferencesUpdate(String commandName) {
+	public FetchPreferencesUpdate(String commandName, String commandId) {
 		this.commandName = commandName;
+		this.commandId = commandId;
 	}
 
 	@Override
@@ -43,7 +45,7 @@ public class FetchPreferencesUpdate extends AbstractUpdate {
 		JSONObject prefObject = vWorkspace.getWorkspace().getCommandPreferences().getCommandPreferencesJSONObject(commandName);
 		JSONObject responseObj = new JSONObject();
 		try {
-			responseObj.put("commandId", vWorkspace.getWorkspace().getCommandHistory().getCurrentCommand().getId());
+			responseObj.put("commandId", commandId);
 			responseObj.put("updateType", commandName);
 			
 			// Populate the preferences if there are any
