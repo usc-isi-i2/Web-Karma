@@ -65,7 +65,6 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 			info["worksheetId"] = worksheetId;
 			info["workspaceId"] = $.workspaceGlobalInformation.id;
 			info["hNodeId"] = columnId;
-			info["hTableId"] = "";
 			info["command"] = "AddRowCommand";
 
 			var newInfo = [];   // Used for commands that take JSONArray as input
@@ -646,46 +645,63 @@ var SplitValueDialog = (function() {
 			
 			function init() {
 				// Initialize what happens when we show the dialog
-			dialog.on('show.bs.modal', function (e) {
-				hideError();
-								$("input", dialog).val("");
-								$("#valueSplitDelimiter", dialog).focus();
-			});
+				dialog.on('show.bs.modal', function (e) {
+					hideError();
+					$("input", dialog).val("");
+					$("#valueSplitDelimiter", dialog).focus();
+				});
 			
 			// Initialize handler for Save button
 			// var me = this;
-			$('#btnSave', dialog).on('click', function (e) {
-				e.preventDefault();
-				saveDialog(e);
-			});
+				$('#btnSave', dialog).on('click', function (e) {
+					e.preventDefault();
+					saveDialog(e);
+				});
 			}
 			
-		function hideError() {
-			$("div.error", dialog).hide();
-		}
+			function hideError() {
+				$("div.error", dialog).hide();
+			}
 		
-		function showError() {
-			$("div.error", dialog).show();
-		}
+			function showError() {
+				$("div.error", dialog).show();
+			}
 				
-				function saveDialog(e) {
-					console.log("Save clicked");
+			function saveDialog(e) {
+				console.log("Save clicked");
 	
 				var delimiter = $.trim($("#valueSplitDelimiter", dialog).val());
-			 	var newColName = $.trim($("#valueSplitNewColName", dialog).val());
+				var newColName = $.trim($("#valueSplitNewColName", dialog).val());
+				var id = "columnOptionsButton" + worksheetId + "_" + columnId;
+				var oldColName = $("#"+id).attr("title");
 				var validationResult = true;
-				if (!delimiter)
-						validationResult = false;
-				else if(delimiter != "space" && delimiter != "tab" && delimiter.length != 1)
+				if (!delimiter) {
 					validationResult = false;
+				}
+				else if(delimiter != "space" && delimiter != "tab" && delimiter.length != 1) {
+					validationResult = false;
+				}
 				if (!validationResult) {
 					showError();
-						$("#valueSplitDelimiter", dialog).focus();
-						return false;
+					$("#valueSplitDelimiter", dialog).focus();
+					return false;
+				}
+				validationResult = true;
+				if (newColName != oldColName) {
+					var headers = getColumnHeadings(worksheetId, columnId, "SplitValues");
+					$.each(headers, function(index, element) {
+						if (element['ColumnName'] == newColName)
+							validationResult = false;
+					});
+				}
+				if (!validationResult) {
+					$("#splitValuesError").text(newColName + " already exists!");
+					showError();
+					$("#valueSplitNewColName", dialog).focus();
+					return false;
 				}
 
 				dialog.modal('hide');
-
 				var info = new Object();
 				info["worksheetId"] = worksheetId;
 				info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -709,33 +725,32 @@ var SplitValueDialog = (function() {
 						dataType : "json",
 						complete :
 								function (xhr, textStatus) {
-										// alert(xhr.responseText);
-										var json = $.parseJSON(xhr.responseText);
-										parse(json);
-										hideLoading(info["worksheetId"]);
+									var json = $.parseJSON(xhr.responseText);
+									parse(json);
+									hideLoading(info["worksheetId"]);
 								},
 						error :
 								function (xhr, textStatus) {
-										alert("Error occured while splitting a column by comma! " + textStatus);
-										hideLoading(info["worksheetId"]);
+									alert("Error occured while splitting a column by comma! " + textStatus);
+									hideLoading(info["worksheetId"]);
 								}
 				});
-				};
+			};
 				
-				function show(wsId, colId) {
-					worksheetId = wsId;
-					columnId = colId;
-					var id = "columnOptionsButton" + wsId + "_" + colId;
-					var title = $("#"+id).attr("title");
-					dialog.modal({keyboard:true, show:true, backdrop:'static'});
-					$("#valueSplitNewColName").val(title);
-				};
+			function show(wsId, colId) {
+				worksheetId = wsId;
+				columnId = colId;
+				var id = "columnOptionsButton" + wsId + "_" + colId;
+				var title = $("#"+id).attr("title");
+				dialog.modal({keyboard:true, show:true, backdrop:'static'});
+				$("#valueSplitNewColName").val(title);
+			};
 				
 				
-				return {	// Return back the public methods
-					show : show,
-					init : init
-				};
+			return {	// Return back the public methods
+				show : show,
+				init : init
+			};
 		};
 
 		function getInstance() {
@@ -750,7 +765,6 @@ var SplitValueDialog = (function() {
 			getInstance : getInstance
 		};
 			
-		
 })();
 
 

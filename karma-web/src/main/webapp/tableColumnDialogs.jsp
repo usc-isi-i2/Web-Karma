@@ -123,7 +123,7 @@
 					</div>
 				
 					
-					<div class="error" style="display: none">Length of the delimter should be 1</div>
+					<div class="error" style="display: none" id="splitValuesError">Length of the delimter should be 1</div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
