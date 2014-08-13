@@ -21,6 +21,7 @@
 
 package edu.isi.karma.controller.update;
 
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -34,13 +35,17 @@ public class WorksheetUpdateFactory {
 	}
 	private static void createWorksheetHierarchicalAndCleaningResultsUpdates(
 			String worksheetId, UpdateContainer c) {
-		c.add(new WorksheetCleaningUpdate(worksheetId, true));
+		boolean showCleaningCharts = ModelingConfiguration.isShowCleaningCharts();
+		if (showCleaningCharts)
+			c.add(new WorksheetCleaningUpdate(worksheetId, true));
 		createWorksheetHierarchicalUpdates(worksheetId, c);
 	}
 	
 	public static UpdateContainer createWorksheetHierarchicalUpdates(String worksheetId) {
 		UpdateContainer c = new UpdateContainer();
-		c.add(new WorksheetCleaningUpdate(worksheetId, false));
+		boolean showCleaningCharts = ModelingConfiguration.isShowCleaningCharts();
+		if (showCleaningCharts)
+			c.add(new WorksheetCleaningUpdate(worksheetId, false));
 		createWorksheetHierarchicalUpdates(worksheetId, c);
 		return c;
 	}

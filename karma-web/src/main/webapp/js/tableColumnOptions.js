@@ -10,7 +10,6 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 
 								 {name:"Add Column", func:addColumn, leafOnly:false, leafExcluded:false},
 								 {name:"Rename", func:renameColumn, leafOnly:true, leafExcluded:false},
-								 {name:"Split Column", func:splitColumn, leafOnly:true, leafExcluded:false},
 								 {name:"Split Values", func:splitValue, leafOnly:true, leafExcluded:false},
 								 {name:"Add Row", func:addRow, leafOnly:false, leafExcluded:false},
 								 {name:"divider" , leafOnly:false, leafExcluded:false},
