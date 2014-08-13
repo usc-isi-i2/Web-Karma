@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
+import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
@@ -30,7 +31,8 @@ public class SplitColumnByDelimiter {
 	private final Worksheet worksheet;
 	private final String delimiter;
 	private final Workspace workspace;
-	private String splitValueHNodeID;
+	private final String newhNodeId;
+	private String splitValueHNodeId;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -41,10 +43,21 @@ public class SplitColumnByDelimiter {
 		this.worksheet = worksheet;
 		this.delimiter = delimiter;
 		this.workspace = workspace;
+		this.newhNodeId = null;
 	}
 
-	public String getSplitValueHNodeID() {
-		return splitValueHNodeID;
+	public SplitColumnByDelimiter(String hNodeId, String newhNodeId, Worksheet worksheet,
+			String delimiter, Workspace workspace) {
+		super();
+		this.hNodeId = hNodeId;
+		this.worksheet = worksheet;
+		this.delimiter = delimiter;
+		this.workspace = workspace;
+		this.newhNodeId = newhNodeId;
+	}
+
+	public String getSplitValueHNodeId() {
+		return splitValueHNodeId;
 	}
 
 	public void split(HashMap<Node, CellValue> oldNodeValueMap,
@@ -89,23 +102,23 @@ public class SplitColumnByDelimiter {
 				oldNodeValueMap.put(node, node.getValue());
 			if (oldNodeStatusMap != null)
 				oldNodeStatusMap.put(node, node.getStatus());
-			
+
 			node.clearValue(NodeStatus.edited);
 		}
-		
+
 		//pedro: 2012-10-09
 		// Now that we cleared the values it is safe to add the nested table.
 		//
 		// Add the nested new HTable to the hNode
 		HTable newTable = hNode.addNestedTable("Comma Split Values", worksheet,
 				factory);
-		splitValueHNodeID = newTable.addHNode("Values", HNodeType.Transformation, worksheet, factory)
+		splitValueHNodeId = newTable.addHNode("Values", HNodeType.Transformation, worksheet, factory)
 				.getId();
-		
+
 		for (Node node : nodes) {
 			//String originalVal = node.getValue().asString();
 			String originalVal = oldNodeValueMap.get(node).asString();
-				
+
 			if (originalVal != null && !originalVal.equals("")) {
 				// Split the values
 				CSVReader reader = new CSVReader(new StringReader(originalVal),
@@ -123,7 +136,7 @@ public class SplitColumnByDelimiter {
 						String rowVal = rowValues[i];
 						if (!rowVal.trim().equals("")) {
 							Row row = table.addRow(factory);
-							row.setValue(splitValueHNodeID, rowVal,
+							row.setValue(splitValueHNodeId, rowVal,
 									NodeStatus.edited, factory);
 						}
 					}
@@ -140,10 +153,40 @@ public class SplitColumnByDelimiter {
 		// and replace the old one with it
 		int oldPathIndex = columnPaths.indexOf(selectedPath);
 		for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
-			if (path.getLeaf().getId().equals(splitValueHNodeID)) {
+			if (path.getLeaf().getId().equals(splitValueHNodeId)) {
 				selectedPath = path;
 			}
 		}
 		columnPaths.set(oldPathIndex, selectedPath);
+	}
+
+	public void split() throws IOException {
+		RepFactory factory = workspace.getFactory();
+		HTable ht = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
+		List<Table> tables = new ArrayList<Table>();
+		char delimiterChar = ',';
+		if (delimiter.equalsIgnoreCase("space"))
+			delimiterChar = ' ';
+		else if (delimiter.equalsIgnoreCase("tab"))
+			delimiterChar = '\t';
+		else {
+			delimiterChar = new Character(delimiter.charAt(0));
+		}
+		CloneTableUtils.getDatatable(worksheet.getDataTable(), ht, tables);
+		for (Table t : tables) {
+			for (Row r : t.getRows(0, t.getNumRows())) {
+				String orgValue = r.getNeighbor(hNodeId).getValue().asString();
+				CSVReader reader = new CSVReader(new StringReader(orgValue),
+						delimiterChar);
+				String[] rowValues = reader.readNext();
+				reader.close();
+				Node newNode = r.getNeighbor(newhNodeId);
+				for (int i = 0; i < rowValues.length; i++) {
+					Row dest = newNode.getNestedTable().addRow(factory);
+					Node destNode = dest.getNeighborByColumnName("Values", factory);
+					destNode.setValue(rowValues[i], NodeStatus.original, factory);
+				}
+			}
+		}
 	}
 }
