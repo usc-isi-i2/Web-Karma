@@ -68,14 +68,16 @@ public class GetHeadersCommand extends WorksheetCommand {
 		}
 		final JSONArray array = new JSONArray();
 		for (HNode hn : ht.getHNodes()) {
-			JSONObject obj = new JSONObject();
-			obj.put("ColumnName", hn.getColumnName());
-			obj.put("HNodeId", hn.getId());
-			array.put(obj);
+			if (commandName.equals("Unfold") && !hn.hasNestedTable() && !hn.getId().equals(hNodeId)) {
+				JSONObject obj = new JSONObject();
+				obj.put("ColumnName", hn.getColumnName());
+				obj.put("HNodeId", hn.getId());
+				array.put(obj);
+			}
 		}
 		try {
 			return new UpdateContainer(new AbstractUpdate() {
-				
+
 				@Override
 				public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
 					pw.print(array.toString());
@@ -92,6 +94,6 @@ public class GetHeadersCommand extends WorksheetCommand {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 
 }

@@ -5,31 +5,31 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	var columnId = wsColumnId;
 	
 	var options = [
-								 {name:"Set Semantic Type", func:setSemanticType, leafOnly:true},
-								 {name:"divider", leafOnly:true},
+								 {name:"Set Semantic Type", func:setSemanticType, leafOnly:true, leafExcluded:false},
+								 {name:"divider", leafOnly:true, leafExcluded:false},
 
-								 {name:"Add Column", func:addColumn, leafOnly:false},
-								 {name:"Rename", func:renameColumn, leafOnly:true},
-								 {name:"Split Column", func:splitColumn, leafOnly:true},
-								 {name:"Split Values", func:splitValue, leafOnly:true},
-								 {name:"Add Row", func:addRow, leafOnly:false},
-								 {name:"divider" , leafOnly:false},
+								 {name:"Add Column", func:addColumn, leafOnly:false, leafExcluded:false},
+								 {name:"Rename", func:renameColumn, leafOnly:true, leafExcluded:false},
+								 {name:"Split Column", func:splitColumn, leafOnly:true, leafExcluded:false},
+								 {name:"Split Values", func:splitValue, leafOnly:true, leafExcluded:false},
+								 {name:"Add Row", func:addRow, leafOnly:false, leafExcluded:false},
+								 {name:"divider" , leafOnly:false, leafExcluded:false},
 			
-								 {name:"Extract Entities", func:extractEntities, leafOnly:true},
-								 {name:"PyTransform" , func:pyTransform, leafOnly:true},
-								 {name:"Transform", func:transform, leafOnly:true},
+								 {name:"Extract Entities", func:extractEntities, leafOnly:true, leafExcluded:false},
+								 {name:"PyTransform" , func:pyTransform, leafOnly:true, leafExcluded:false},
+								 {name:"Transform", func:transform, leafOnly:true, leafExcluded:false},
 								 //{name:"Generate Cluster Values", func:clusterValues, leafOnly:true},
 								 //{name:"Merge Cluster Values", func:mergeValues, leafOnly:true},
-								 {name:"divider" , leafOnly:true},
+								 {name:"divider" , leafOnly:true, leafExcluded:false},
 			
-								 {name:"Invoke Service" , func:invokeService, leafOnly:true},
+								 {name:"Invoke Service" , func:invokeService, leafOnly:true, leafExcluded:false},
 								 //{name:"Show Chart", func:showChart, leafOnly:true},
-								 {name:"divider" , leafOnly:true},
+								 {name:"divider" , leafOnly:true, leafExcluded:false},
 								 
-								 {name:"Group By", func:GroupBy, leafOnly:false},
-								 {name:"Unfold", func:Unfold, leafOnly:false}, 
-								 {name:"Fold", func:Fold, leafOnly:false}, 
-								 {name:"Glue Columns", func:Glue, leafOnly:false}
+								 {name:"Group By", func:GroupBy, leafOnly:false, leafExcluded:true},
+								 {name:"Unfold", func:Unfold, leafOnly:true, leafExcluded:false}, 
+								 {name:"Fold", func:Fold, leafOnly:false, leafExcluded:true}, 
+								 {name:"Glue Columns", func:Glue, leafOnly:false, leafExcluded:true}
 	];
 	
 	function hideDropdown() {
@@ -231,6 +231,10 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 			var option = options[i];
 			
 			if(option.leafOnly ==true && isLeafNode == false) {
+				continue;
+			}
+
+			if(option.leafExcluded ==true && isLeafNode == true) {
 				continue;
 			}
 			
