@@ -27,8 +27,6 @@ public class TestN3MapReduce extends TestRDFMapReduce {
 		Reducer<Text,Text,Text,Text> reducer = new N3Reducer();
 		
 		   mapDriver = MapDriver.newMapDriver(mapper);
-		   org.apache.hadoop.conf.Configuration conf = mapDriver.getConfiguration();
-			conf.set("model.uri", TestN3MapReduce.class.getClassLoader().getResource("people-model.ttl").toURI().toString());   
 		    reduceDriver = ReduceDriver.newReduceDriver(reducer);
 		    mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 	}
@@ -39,7 +37,9 @@ public class TestN3MapReduce extends TestRDFMapReduce {
 
 	@Test
 	public void testMap() throws IOException {
-		
+
+		org.apache.hadoop.conf.Configuration conf = mapDriver.getConfiguration();
+		conf.set("model.file", "src/test/resources/people-model.ttl");
 		mapDriver.withInput(new Text("people.json"), new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
 		List<Pair<Text,Text>> results = mapDriver.run();
 		assertTrue(results.size() > 1);

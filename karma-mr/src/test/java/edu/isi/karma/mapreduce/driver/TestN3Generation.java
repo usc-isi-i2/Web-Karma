@@ -17,7 +17,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TestSimpleProcessor {
+public class TestN3Generation {
 
 	protected static MiniDFSCluster dfsCluster;
 	protected static MiniMRYarnCluster cluster;
@@ -48,24 +48,12 @@ public class TestSimpleProcessor {
 	@Test
 	public void test() throws Exception {
 		Configuration conf = cluster.getConfig();
-		String[] args = {new File( getTestResource("SimpleLoader.properties").toURI()).getAbsolutePath()};
-		int res = ToolRunner.run(conf, new SimpleLoader(),args);
+		String[] args = {new File( getTestResource("InputFileDirectoryLoader.properties").toURI()).getAbsolutePath()};
+		int res = ToolRunner.run(conf, new InputFileDirectoryLoader(),args);
 		assertEquals(0, res);
-		File modelFile = new File(getTestResource("people-model.ttl").toURI());
-		File tempModelFile = File.createTempFile("people-model", "ttl");
-		FileUtils.copyFile(modelFile, tempModelFile);
-		tempModelFile.deleteOnExit();
 		
-		Properties p = new Properties();
-		p.load(getTestResource("SimpleProcessor.properties").openStream());
-		p.setProperty("model.uri", tempModelFile.toURI().toString());
-		File tempPropertiesFile= File.createTempFile(TestSimpleProcessor.class.getName(), "properties");
-		FileOutputStream fos = new FileOutputStream(tempPropertiesFile);
-		p.store(fos, "");
-		fos.close();
-		tempPropertiesFile.deleteOnExit();
-		String [] jobArgs = {"-archives", new File( getTestResource("sample_karma_user_home.zip").toURI()).getAbsolutePath(), "-libjars", System.getProperty("user.home") + "/.m2/repository/edu/isi/karma-offline/0.0.1-SNAPSHOT/karma-offline-0.0.1-SNAPSHOT-shaded.jar", tempPropertiesFile.getAbsolutePath()}; 
-		res = ToolRunner.run(conf, new SimpleProcessor(), jobArgs);
+		String [] jobArgs = {"-files", new File(getTestResource("people-model.ttl").toURI()).getAbsolutePath().toString(), "-archives", new File( getTestResource("sample_karma_user_home.zip").toURI()).getAbsolutePath(), "-libjars", System.getProperty("user.home") + "/.m2/repository/edu/isi/karma-offline/0.0.1-SNAPSHOT/karma-offline-0.0.1-SNAPSHOT-shaded.jar", new File(getTestResource("N3Processor.properties").toURI()).getAbsolutePath().toString()}; 
+		res = ToolRunner.run(conf, new N3Processor(), jobArgs);
 		assertEquals(0, res);
 	}
 

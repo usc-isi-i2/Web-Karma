@@ -16,18 +16,17 @@ import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SimpleLoader extends Configured implements Tool{
+public class InputFileDirectoryLoader extends Configured implements Tool{
 
-	private static Logger logger = LoggerFactory.getLogger(SimpleLoader.class);
-	Properties p;
-	 public void configure(Properties p ) throws Exception
-	 {
-		
-		 Configuration conf = getConf();
-		 conf.setIfUnset("fs.default.name", p.getProperty("fs.default.name"));
-		 
-	 }
-	 
+	private static Logger logger = LoggerFactory.getLogger(InputFileDirectoryLoader.class);
+
+	public void configure(Properties p) throws Exception {
+
+		Configuration conf = getConf();
+		conf.setIfUnset("fs.default.name", p.getProperty("fs.default.name"));
+
+	}
+ 
 	 public int run(String[] args) throws Exception {
         // Configuration processed by ToolRunner
 		 Properties p = new Properties();
@@ -55,7 +54,7 @@ public class SimpleLoader extends Configured implements Tool{
       
       public static void main(String[] args) throws Exception {
         // Let ToolRunner handle generic command-line options 
-        int res = ToolRunner.run(new Configuration(), new SimpleLoader(), args);
+        int res = ToolRunner.run(new Configuration(), new InputFileDirectoryLoader(), args);
         
         System.exit(res);
       }

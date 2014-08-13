@@ -49,9 +49,18 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text>{
 	        userMetadataManager.register(new UserConfigMetadata(), uc);
 	        userMetadataManager.register(new PythonTransformationMetadata(), uc);
 	        PythonRepository.disableReloadingLibrary();
+	        URL modelURL = null;
 	        String modelUri = context.getConfiguration().get("model.uri");
+	        String modelFile = context.getConfiguration().get("model.file");
+	        if(modelUri != null)
+	        {
+	        	modelURL = new URL(modelUri);
+	        }
+	        else if(modelFile != null)
+	        {
+	        	modelURL = new File(modelFile).toURI().toURL();
+	        }
 	        generator = new GenericRDFGenerator();
-	        URL modelURL = new URL(modelUri);
 	        generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
 	        baseURI = context.getConfiguration().get("base.uri");
 		} catch (KarmaException | IOException  e) {
