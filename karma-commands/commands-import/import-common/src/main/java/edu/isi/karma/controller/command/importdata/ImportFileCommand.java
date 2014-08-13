@@ -48,7 +48,7 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 			.getLogger(ImportFileCommand.class);
 	protected File file;
 	protected String encoding;
-	protected int maxNumLines = 1000;
+	protected int maxNumLines = 10000;
 	protected boolean savePreset = false;
 	protected String columnsJson;
 
