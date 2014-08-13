@@ -584,9 +584,9 @@ var SelectColumnsDialog = (function() {
 		};
 
 		function compareJSON(org_json, preset) {
-			console.log("here");
-			if (org_json == undefined)
+			if (org_json == undefined) {
 				return false;
+			}
 			if (!$.isArray(preset)) {
 				return false;
 			}
@@ -600,7 +600,7 @@ var SelectColumnsDialog = (function() {
 					return false;
 				}
 				var obj_preset = preset[index];
-				if (obj_org['children'] != undefined && obj_preset['children'] == undefined) {
+				if (obj_org['children'] != undefined && obj_org['children'].length > 0 && obj_preset['children'] == undefined) {
 					return false;
 				}
 				if (obj_org['children'] != undefined) {

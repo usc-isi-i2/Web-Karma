@@ -176,7 +176,8 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 						boolean hideable = true;
 						if(headerNode.hasNestedTable()) {
 							JSONArray children = getColumnsJsonArray(headerNode.getNestedTable().getHNodes());
-							column.put(JsonKeys.children.name(), children);
+							if (children.length() > 0)
+								column.put(JsonKeys.children.name(), children);
 						}
 						column.put(JsonKeys.hideable.name(), hideable);
 						columns.put(column);

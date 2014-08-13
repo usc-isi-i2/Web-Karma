@@ -68,7 +68,8 @@ public class AllWorksheetHeadersUpdate extends AbstractUpdate {
 			
 			if(headerNode.hasNestedTable()) {
 				JSONArray children = getColumnsJsonArray(headerNode.getNestedNodes(), semTypes);
-				column.put(JsonKeys.children.name(), children);
+				if (children.length() > 0)
+					column.put(JsonKeys.children.name(), children);
 				if(hideable) {
 					//check if any of the children are not hideable, then this is not hideable
 					for(int i=0; i<children.length(); i++) {
