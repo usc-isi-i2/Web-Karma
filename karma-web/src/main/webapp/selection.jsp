@@ -8,7 +8,7 @@
 				  </div>
 				  <div class="modal-body">
 					<br/>
-	            	<div id="transformCodeEditorSelection"></div>
+	        <div id="transformCodeEditorSelection"></div>
 					<br/>
 					<div class="form-group">
 						<label>

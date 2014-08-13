@@ -1776,27 +1776,27 @@ var PyTransformSelectionDialog = (function() {
 		var instance = null;
 
 		function PrivateConstructor() {
-			var dialog = $("#pyTransformDialog");
+			var dialog = $("#pyTransformSelectionDialog");
 			var worksheetId, columnId;
 			var editor;
 			var headers;
 			function init(wsId, colId) {
 				worksheetId = wsId;
-				columnId = colId;
-				editor = ace.edit("transformCodeEditor");
-				editor.setTheme("ace/theme/dreamweaver");
-				editor.getSession().setMode("ace/mode/python");
-				editor.getSession().setUseWrapMode(true);
-				editor.getSession().setValue("return getValue(\"state\")");
+				columnId = colId;				
 				headers = getColumnHeadings(worksheetId, columnId, "GroupBy");
-				console.log(headers);			
+				console.log(headers);
+
 				dialog.on("resize", function(event, ui) {
 					editor.resize();
-				});
-				
+				});				
 				// Initialize what happens when we show the dialog
 				dialog.on('show.bs.modal', function (e) {
-					hideError();			 
+					console.log("trigger");
+					hideError();
+					editor = ace.edit("transformCodeEditorSelection");
+					editor.setTheme("ace/theme/dreamweaver");
+					editor.getSession().setMode("ace/mode/python");
+					editor.getSession().setUseWrapMode(true);			 
 					editor.getSession().setValue("return getValue(\"" + headers[0]['ColumnName'] + "\")");							 								
 					$("#pythonPreviewResultsTableSelection").hide();
 					$("#btnErrorsSelection").button('disable');
