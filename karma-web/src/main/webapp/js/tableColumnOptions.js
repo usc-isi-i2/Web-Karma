@@ -26,11 +26,6 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 			leafOnly: true,
 			leafExcluded: false
 		}, {
-			name: "Split Column",
-			func: splitColumn,
-			leafOnly: true,
-			leafExcluded: false
-		}, {
 			name: "Split Values",
 			func: splitValue,
 			leafOnly: true,
@@ -198,38 +193,17 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 
 
 	function addRow() {
-		var info = new Object();
-		info["worksheetId"] = worksheetId;
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["hNodeId"] = columnId;
-		info["command"] = "AddRowCommand";
+		var info = generateInfoObject(worksheetId, columnId, "AddRowCommand");
 
-		var newInfo = []; // Used for commands that take JSONArray as input
-		newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
+		var newInfo = info['newInfo']; // Used for commands that take JSONArray as input
 		newInfo.push(getParamObject("hTableId", "", "other"));
-		newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
 
 		info["newInfo"] = JSON.stringify(newInfo);
 
 		// console.log(info["worksheetId"]);
 		showLoading(info["worksheetId"]);
 
-		var returned = $.ajax({
-			url: "RequestController",
-			type: "POST",
-			data: info,
-			dataType: "json",
-			complete: function(xhr, textStatus) {
-				// alert(xhr.responseText);
-				var json = $.parseJSON(xhr.responseText);
-				parse(json);
-				hideLoading(info["worksheetId"]);
-			},
-			error: function(xhr, textStatus) {
-				alert("Error occured while removing semantic types!" + textStatus);
-				hideLoading(info["worksheetId"]);
-			}
-		});
+		var returned = sendRequest(info, worksheetId);
 	}
 
 	function addColumn() {
@@ -252,27 +226,10 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	}
 
 	function invokeService() {
-		var info = new Object();
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["worksheetId"] = worksheetId;
-		info["hNodeId"] = columnId;
-		info["command"] = "InvokeServiceCommand";
+		var info = generateInfoObject(worksheetId, columnId, "InvokeServiceCommand");
 
-		showWaitingSignOnScreen();
-		var returned = $.ajax({
-			url: "RequestController",
-			type: "POST",
-			data: info,
-			dataType: "json",
-			complete: function(xhr, textStatus) {
-				var json = $.parseJSON(xhr.responseText);
-				parse(json);
-				hideWaitingSignOnScreen();
-			},
-			error: function(xhr, textStatus) {
-				$.sticky("Error invoking services!");
-			}
-		});
+		showLoading(worksheetId);
+		var returned = sendRequest(info, worksheetId);
 	}
 
 	function renameColumn() {
@@ -477,19 +434,13 @@ var AddColumnDialog = (function() {
 
 			dialog.modal('hide');
 
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["hNodeId"] = columnId;
+			var info = generateInfoObject(worksheetId, columnId, "AddColumnCommand");
 			info["hTableId"] = "";
 			info["newColumnName"] = "new_column";
-			info["command"] = "AddColumnCommand";
 
-			var newInfo = []; // Used for commands that take JSONArray as
+			var newInfo = info['newInfo']; // Used for commands that take JSONArray as
 			// input
-			newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
 			newInfo.push(getParamObject("hTableId", "", "other"));
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
 			newInfo.push(getParamObject("newColumnName", newColumnValue, "other"));
 			newInfo.push(getParamObject("defaultValue", defaultValue, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
@@ -497,22 +448,7 @@ var AddColumnDialog = (function() {
 			// console.log(info["worksheetId"]);
 			showLoading(info["worksheetId"]);
 
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					// alert(xhr.responseText);
-					var json = $.parseJSON(xhr.responseText);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured while removing semantic types!" + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+			var returned = sendRequest(info, worksheetId);
 		};
 
 		function show(wsId, colId) {
@@ -605,143 +541,13 @@ var RenameColumnDialog = (function() {
 
 			dialog.modal('hide');
 
-			var info = new Object();
-			var newInfo = []; // for input parameters
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-			newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
+			var info = generateInfoObject(worksheetId, columnId, "RenameColumnCommand");
+			var newInfo = info['newInfo']; // for input parameters
 			newInfo.push(getParamObject("newColumnName", newColumnValue, "other"));
 			newInfo.push(getParamObject("getAlignmentUpdate", ($("#svgDiv_" + worksheetId).length > 0), "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "RenameColumnCommand";
-
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					var json = $.parseJSON(xhr.responseText);
-					parse(json);
-				},
-				error: function(xhr, textStatus) {
-					$.sticky("Error occured while renaming column!");
-				}
-			});
-		};
-
-		function show(wsId, colId) {
-			worksheetId = wsId;
-			columnId = colId;
-			dialog.modal({
-				keyboard: true,
-				show: true,
-				backdrop: 'static'
-			});
-		};
-
-
-		return { // Return back the public methods
-			show: show,
-			init: init
-		};
-	};
-
-	function getInstance() {
-		if (!instance) {
-			instance = new PrivateConstructor();
-			instance.init();
-		}
-		return instance;
-	}
-
-	return {
-		getInstance: getInstance
-	};
-
-
-})();
-
-
-var SplitColumnDialog = (function() {
-	var instance = null;
-
-	function PrivateConstructor() {
-		var dialog = $("#splitColumnDialog");
-		var worksheetId, columnId;
-
-		function init() {
-			// Initialize what happens when we show the dialog
-			dialog.on('show.bs.modal', function(e) {
-				hideError();
-				$("input", dialog).val("");
-				$("#columnSplitDelimiter", dialog).focus();
-			});
-
-			// Initialize handler for Save button
-			// var me = this;
-			$('#btnSave', dialog).on('click', function(e) {
-				e.preventDefault();
-				saveDialog(e);
-			});
-		}
-
-		function hideError() {
-			$("div.error", dialog).hide();
-		}
-
-		function showError() {
-			$("div.error", dialog).show();
-		}
-
-		function saveDialog(e) {
-			console.log("Save clicked");
-
-			var delimiter = $.trim($("#columnSplitDelimiter", dialog).val());
-
-			var validationResult = true;
-			if (!delimiter)
-				validationResult = false;
-			else if (delimiter != "space" && delimiter != "tab" && delimiter.length != 1)
-				validationResult = false;
-			if (!validationResult) {
-				showError();
-				$("#columnSplitDelimiter", dialog).focus();
-				return false;
-			}
-
-			dialog.modal('hide');
-
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["hNodeId"] = columnId;
-			info["delimiter"] = delimiter;
-			info["command"] = "SplitByCommaCommand";
-
-			var newInfo = [];
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-			newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
-			newInfo.push(getParamObject("delimiter", delimiter, "other"));
-			info["newInfo"] = JSON.stringify(newInfo);
-
-			showLoading(info["worksheetId"]);
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					// alert(xhr.responseText);
-					var json = $.parseJSON(xhr.responseText);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured while splitting a column by comma! " + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+			showLoading(worksheetId);
+			var returned = sendRequest(info, worksheetId);
 		};
 
 		function show(wsId, colId) {
@@ -842,37 +648,17 @@ var SplitValueDialog = (function() {
 			}
 
 			dialog.modal('hide');
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["hNodeId"] = columnId;
+			var info = generateInfoObject(worksheetId, columnId, "SplitValuesCommand");
 			info["delimiter"] = delimiter;
 			info["newColName"] = newColName;
-			info["command"] = "SplitValuesCommand";
 
-			var newInfo = [];
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-			newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
+			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("delimiter", delimiter, "other"));
 			newInfo.push(getParamObject("newColName", newColName, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
 			showLoading(info["worksheetId"]);
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					var json = $.parseJSON(xhr.responseText);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured while splitting a column by comma! " + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+			var returned = sendRequest(info, worksheetId);
 		};
 
 		function show(wsId, colId) {
@@ -998,13 +784,9 @@ var PyTransformDialog = (function() {
 		};
 
 		function previewTransform() {
-			var info = {};
-			info["hNodeId"] = columnId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["worksheetId"] = worksheetId;
+			var info = generateInfoObject(worksheetId, columnId, "PreviewPythonTransformationResultsCommand");
 			info["transformationCode"] = editor.getValue();
 			info["errorDefaultValue"] = $("#pythonTransformErrorDefaultValue").val();
-			info["command"] = "PreviewPythonTransformationResultsCommand";
 			$("#pyTransformErrorWindow").hide();
 			// Send the request
 			$.ajax({
@@ -1203,12 +985,8 @@ var ExtractEntitiesDialog = (function() {
 
 		function saveDialog(e) {
 			console.log("Save clicked");
-			var info = new Object();
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["worksheetId"] = worksheetId;
-			info["hNodeId"] = columnId;
+			var info = generateInfoObject(worksheetId, columnId, "ExtractEntitiesCommand");
 			info["hTableId"] = "";
-			info["command"] = "ExtractEntitiesCommand";
 			info["extractionURL"] = $('#extractionService_URL').val();
 
 			dialog.modal('hide');
@@ -1286,21 +1064,7 @@ var ExtractEntitiesDialog = (function() {
 			console.log("User selection: " + userSelection);
 			info["entitiesToBeExt"] = userSelection;
 
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					var json = $.parseJSON(xhr.responseText);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured while extracting entities!" + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+			var returned = sendRequest(info, worksheetId);
 
 		};
 
@@ -1376,35 +1140,14 @@ var GroupByDialog = (function() {
 				return;
 			}
 			//console.log(checked);
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "GroupByCommand";
+			var info = generateInfoObject(worksheetId, checkboxes[0]['value'], "GroupByCommand");
 
-			var newInfo = [];
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-			newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
+			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
 			showLoading(info["worksheetId"]);
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					//alert(xhr.responseText);
-					var json = $.parseJSON(xhr.responseText);
-					console.log(json);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured while grouping by!" + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+			var returned = sendRequest(info, worksheetId);
 
 			hide();
 		};
@@ -1506,33 +1249,13 @@ var UnfoldDialog = (function() {
 			var checked = checkboxes[0];
 
 			//console.log(checked);
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "UnfoldCommand";
-			var newInfo = [];
+			var info = generateInfoObject(worksheetId, "UnfoldCommand");
+			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("keyhNodeId", columnId, "hNodeId"));
 			newInfo.push(getParamObject("valuehNodeId", checked['value'], "hNodeId"));
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
 			info["newInfo"] = JSON.stringify(newInfo);
 			showLoading(info["worksheetId"]);
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					//alert(xhr.responseText);
-					var json = $.parseJSON(xhr.responseText);
-					console.log(json);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured while unfolding!" + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+			var returned = sendRequest(info, worksheetId);
 
 			hide();
 		};
@@ -1635,35 +1358,14 @@ var FoldDialog2 = (function() {
 				return;
 			}
 			//console.log(checked);
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "FoldCommand";
+			var info = generateInfoObject(worksheetId, checkboxes[0]['value'], "FoldCommand");
 
-			var newInfo = [];
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"));
-			newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
 			showLoading(info["worksheetId"]);
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					//alert(xhr.responseText);
-					var json = $.parseJSON(xhr.responseText);
-					console.log(json);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured while folding!" + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+			var returned = sendRequest(info, worksheetId);
 
 			hide();
 		};
@@ -1769,35 +1471,14 @@ var GlueDialog = (function() {
 				return;
 			}
 			//console.log(checked);
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "GlueCommand";
+			var info = generateInfoObject(worksheetId, checkboxes[0]['value'], "GlueCommand");
 
-			var newInfo = [];
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-			newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
+			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
 			showLoading(info["worksheetId"]);
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					//alert(xhr.responseText);
-					var json = $.parseJSON(xhr.responseText);
-					console.log(json);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured while gluing!" + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+			var returned = sendRequest(info, worksheetId);
 
 			hide();
 		};
@@ -1940,13 +1621,9 @@ var PyTransformSelectionDialog = (function() {
 		};
 
 		function previewTransform() {
-			var info = {};
-			info["hNodeId"] = headers[0]['HNodeId'];
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["worksheetId"] = worksheetId;
+			var info = generateInfoObject(worksheetId, headers[0]['HNodeId'], "PreviewPythonTransformationResultsCommand");
 			info["transformationCode"] = editor.getValue();
 			info["errorDefaultValue"] = $("#pythonTransformErrorDefaultValueSelection").val();
-			info["command"] = "PreviewPythonTransformationResultsCommand";
 			$("#pyTransformErrorWindowSelection").hide();
 			// Send the request
 			$.ajax({
@@ -2029,65 +1706,25 @@ var PyTransformSelectionDialog = (function() {
 
 function ClusterValues(worksheetId, columnId) {
 
-	var hNodeId = columnId;
-	var info = {};
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "GenerateClusterValuesCommand";
+	var info = generateInfoObject(worksheetId, columnId, "GenerateClusterValuesCommand");
 
-	var newInfo = [];
-	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-	newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+	var newInfo = info['newInfo'];
 
 	info["newInfo"] = JSON.stringify(newInfo);
 	//alert("sending"+info);
 	showLoading(worksheetId);
-	$.ajax({
-		url: "RequestController",
-		type: "POST",
-		data: info,
-		dataType: "json",
-		complete: function(xhr, textStatus) {
-			var json = $.parseJSON(xhr.responseText);
-			parse(json);
-			//alert("returned"+json);
-			hideLoading(worksheetId);
-		},
-		error: function(xhr, textStatus) {
-			alert("Error occured with fetching new rows! " + textStatus);
-			hideLoading(worksheetId);
-		}
-	});
+	sendRequest(info, worksheetId);
 }
 
 function MergeValues(worksheetId, columnId) {
 
-	var hNodeId = columnId;
-	var info = {};
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "MergeClusterValuesCommand";
+	var info = generateInfoObject(worksheetId, columnId, "MergeClusterValuesCommand");
 
-	var newInfo = [];
-	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-	newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
+	var newInfo = info['newInfo'];
 
 	info["newInfo"] = JSON.stringify(newInfo);
 	showLoading(worksheetId);
 	//alert("sending"+info);
 
-	$.ajax({
-		url: "RequestController",
-		type: "POST",
-		data: info,
-		dataType: "json",
-		complete: function(xhr, textStatus) {
-			var json = $.parseJSON(xhr.responseText);
-			parse(json);
-			//alert("returned"+json);
-			hideLoading(worksheetId);
-		},
-		error: function(xhr, textStatus) {
-			alert("Error occured with fetching new rows! " + textStatus);
-			hideLoading(worksheetId);
-		}
-	});
+	sendRequest(info, worksheetId);
 }
