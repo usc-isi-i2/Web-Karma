@@ -21,26 +21,9 @@
 
 
 function loadAdditionalRowsHandler() {
-    var info = new Object();
-    info["tableId"] = $(this).parents("div.table-data-container").attr("id");
-    info["worksheetId"] = $(this).parents("div.Worksheet").attr("id");
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "LoadAdditionalWorksheetRowsCommand";
-
-    var returned = $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        complete :
-            function (xhr, textStatus) {
-                //alert(xhr.responseText);
-                var json = $.parseJSON(xhr.responseText);
-                parse(json);
-            },
-        error :
-            function (xhr, textStatus) {
-                alert("Error occured with fetching new rows! " + textStatus);
-            }
-    });
+	var worksheetId = $(this).parents("div.Worksheet").attr("id");
+	var info = generateInfoObject(worksheetId, "LoadAdditionalWorksheetRowsCommand");
+	info["tableId"] = $(this).parents("div.table-data-container").attr("id");
+	showLoading(worksheetId);
+	var returned = sendRequest(info, worksheetId);
 }

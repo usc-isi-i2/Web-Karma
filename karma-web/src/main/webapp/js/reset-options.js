@@ -24,13 +24,13 @@ $(document).on("click", "#resetButton", function() {
 });
 
 var ResetDialog = (function() {
-    var instance = null;
+	var instance = null;
 
-    function PrivateConstructor() {
-    	var dialog = $("#resetDialog");
-    	
-    	function init() {
-    		//Initialize what happens when we show the dialog
+	function PrivateConstructor() {
+		var dialog = $("#resetDialog");
+		
+		function init() {
+			//Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function (e) {
 				$("input", dialog).attr("checked", false);
 				hideErrMsg();
@@ -41,78 +41,63 @@ var ResetDialog = (function() {
 			$('#btnSave', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
-                
+				
 			});
-    	}
-    	
-    	function showErrMsg(msg) {
-    		if(msg) {
-    			$("#resetErrMsg", dialog).HTMLAnchorElement(msg);
-    		}
-    		$("#resetErrMsg", dialog).show();
-    	}
-    	
-    	function hideErrMsg() {
-    		$("#resetErrMsg", dialog).hide();
-    	}
-    	
-    	function saveDialog(event) {
-    		hideErrMsg();
-    		
-    		if (!($("#forgetSemanticTypes").is(':checked')) && !($("#forgetModels").is(':checked'))) {
-    			showErrMsg();
-    			return false;
-    		}
-    		
-    		dialog.modal('hide');
-    		
-    		var info = new Object();
-    	    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    	    info["command"] = "ResetKarmaCommand";
-    		info["forgetSemanticTypes"] = $("#forgetSemanticTypes").is(':checked');
-    		info["forgetModels"] = $("#forgetModels").is(':checked');
-    		
-    		showWaitingSignOnScreen();
-    		var returned = $.ajax({
-    	    	url: "RequestController", 
-    	    	type: "POST",
-    	    	data : info,
-    	    	dataType : "json",
-    	    	complete : function (xhr, textStatus) {
-    	            hideWaitingSignOnScreen();
-    	            var json = $.parseJSON(xhr.responseText);
-    	            parse(json);
-    	        },
-    	    	error : function (xhr, textStatus) {
-    	    		hideWaitingSignOnScreen();
-    	        }
-    		});
-    	}
-    	
-    	 function show(data) {
-    		 dialog.modal({keyboard:true, show:true, backdrop:'static'});
-         };
-         
-         
-         return {	//Return back the public methods
-         	show : show,
-         	init : init
-         };
-     };
+		}
+		
+		function showErrMsg(msg) {
+			if(msg) {
+				$("#resetErrMsg", dialog).HTMLAnchorElement(msg);
+			}
+			$("#resetErrMsg", dialog).show();
+		}
+		
+		function hideErrMsg() {
+			$("#resetErrMsg", dialog).hide();
+		}
+		
+		function saveDialog(event) {
+			hideErrMsg();
+			
+			if (!($("#forgetSemanticTypes").is(':checked')) && !($("#forgetModels").is(':checked'))) {
+				showErrMsg();
+				return false;
+			}
+			
+			dialog.modal('hide');
+			
+			var info = generateInfoObject("", "ResetKarmaCommand");
+			info["forgetSemanticTypes"] = $("#forgetSemanticTypes").is(':checked');
+			info["forgetModels"] = $("#forgetModels").is(':checked');
+			
+			showWaitingSignOnScreen();
+			var returned = sendRequest(info);
+		}
+		
+		 function show(data) {
+			 dialog.modal({keyboard:true, show:true, backdrop:'static'});
+		 };
+		 
+		 
+		 return {	//Return back the public methods
+			show : show,
+			init : init
+		 };
+	 };
 
-     function getInstance() {
-     	if( ! instance ) {
-     		instance = new PrivateConstructor();
-     		instance.init();
-     	}
-     	return instance;
-     }
-    
-     return {
-     	getInstance : getInstance
-     };
-     	
-     
+	 function getInstance() {
+		if( ! instance ) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	 }
+	
+	 return {
+		getInstance : getInstance
+	 };
+		
+	 
  })();
 
 

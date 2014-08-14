@@ -24,118 +24,97 @@ $(document).on("click", "#importFromServiceButton", function() {
 });
 
 var ImportFromServiceDialog = (function() {
-    var instance = null;
+	var instance = null;
 
-    function PrivateConstructor() {
-    	var dialog = $("#importFromServiceDialog");
-    	
-    	function init() {
-    		dialog.on('show.bs.modal', function (e) {
+	function PrivateConstructor() {
+		var dialog = $("#importFromServiceDialog");
+		
+		function init() {
+			dialog.on('show.bs.modal', function (e) {
 				$("#serviceErrorRow").hide();
 				getServicePreferences();
-    		});
-    		
-    		$('#btnSave', dialog).on('click', function (e) {
+			});
+			
+			$('#btnSave', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
 			});
-    	}
-    	
-    	function saveDialog(e) {
-        	console.log("Save clicked");
-        	var url = $.trim($("#serviceUrl").val());
-            var worksheetName = $.trim($("#serviceWorksheetName").val());
+		}
+		
+		function saveDialog(e) {
+			console.log("Save clicked");
+			var url = $.trim($("#serviceUrl").val());
+			var worksheetName = $.trim($("#serviceWorksheetName").val());
 
-            if(!url || !worksheetName) {
-                $("#serviceErrorRow").show();
-                console.log("Service Errow: missing values");
-                return false;
-            }
-            
-            dialog.modal('hide');
+			if(!url || !worksheetName) {
+				$("#serviceErrorRow").show();
+				console.log("Service Errow: missing values");
+				return false;
+			}
+			
+			dialog.modal('hide');
 
-            var info = new Object();
-            info["workspaceId"] = $.workspaceGlobalInformation.id;
-            info["command"] = "ImportServiceCommand";
-            info["serviceUrl"] = url;
-            info["worksheetName"] = worksheetName;
-            info["includeInputAttributes"] = $('#includeInputAttributesService').is(':checked');
-            info["encoding"] = $("#serviceEncoding").val();
-            
-            showWaitingSignOnScreen();
-            var returned = $.ajax({
-                url: "RequestController",
-                type: "POST",
-                data : info,
-                dataType : "json",
-                complete :
-                    function (xhr, textStatus) {
-                        //alert(xhr.responseText);
-                        var json = $.parseJSON(xhr.responseText);
-                        parse(json);
-                        hideWaitingSignOnScreen();
-                    },
-                error :
-                    function (xhr, textStatus) {
-                        alert("Error creating worksheet from web service! " + textStatus);
-                        hideWaitingSignOnScreen();
-                    }
-            });
-    	}
-    	
-    	function getServicePreferences() {
-    		var info = new Object();
-    		info["workspaceId"] = $.workspaceGlobalInformation.id;
-    		info["command"] = "FetchPreferencesCommand";
-    		info["preferenceCommand"] = "ImportServiceCommand";
-    		var returned = $.ajax({
-    		   	url: "RequestController", 
-    		   	type: "POST",
-    		   	data : info,
-    		   	dataType : "json",
-    		   	complete : 
-    		   		function (xhr, textStatus) {
-    		   			var json = $.parseJSON(xhr.responseText);
-    		    		$.each(json["elements"], function(index, element) {
-    		    			if(element["updateType"] == "ImportServiceCommandPreferences") {
-    		    				
-    		    				if(element["PreferenceValues"]) {
-    		    					$("input#serviceUrl").val(element["PreferenceValues"]["ServiceUrl"]);
-    	                            $("input#serviceWorksheetName").val(element["PreferenceValues"]["WorksheetName"]);
-    		    				}
-    		    			}
-    		    		});
-    		    		
-    			   	},
-    			error :
-    				function (xhr, textStatus) {
-    		   			alert("Error occured with fetching new rows! " + textStatus);
-    			   	}		   
-    		});
-    	}
-    	
-    	function show(data) {
-             dialog.modal({keyboard:true, show:true, backdrop:'static'});
-         };
-         
-         
-         return {	//Return back the public methods
-         	show : show,
-         	init : init
-         };
-     };
+			var info = generateInfoObject("", "ImportServiceCommand");
+			info["serviceUrl"] = url;
+			info["worksheetName"] = worksheetName;
+			info["includeInputAttributes"] = $('#includeInputAttributesService').is(':checked');
+			info["encoding"] = $("#serviceEncoding").val();
+			
+			showWaitingSignOnScreen();
+			var returned = sendRequest(info);
+		}
+		
+		function getServicePreferences() {
+			var info = generateInfoObject("", "FetchPreferencesCommand");
+			info["preferenceCommand"] = "ImportServiceCommand";
+			var returned = $.ajax({
+				url: "RequestController", 
+				type: "POST",
+				data : info,
+				dataType : "json",
+				complete : 
+					function (xhr, textStatus) {
+						var json = $.parseJSON(xhr.responseText);
+						$.each(json["elements"], function(index, element) {
+							if(element["updateType"] == "ImportServiceCommandPreferences") {
+								
+								if(element["PreferenceValues"]) {
+									$("input#serviceUrl").val(element["PreferenceValues"]["ServiceUrl"]);
+									$("input#serviceWorksheetName").val(element["PreferenceValues"]["WorksheetName"]);
+								}
+							}
+						});
+						
+					},
+				error :
+					function (xhr, textStatus) {
+						alert("Error occured with fetching new rows! " + textStatus);
+					}		   
+			});
+		}
+		
+		function show(data) {
+			 dialog.modal({keyboard:true, show:true, backdrop:'static'});
+		 };
+		 
+		 
+		 return {	//Return back the public methods
+			show : show,
+			init : init
+		 };
+	 };
 
-     function getInstance() {
-     	if( ! instance ) {
-     		instance = new PrivateConstructor();
-     		instance.init();
-     	}
-     	return instance;
-     }
-    
-     return {
-     	getInstance : getInstance
-     };
-     	
-     
+	 function getInstance() {
+		if( ! instance ) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	 }
+	
+	 return {
+		getInstance : getInstance
+	 };
+		
+	 
  })();

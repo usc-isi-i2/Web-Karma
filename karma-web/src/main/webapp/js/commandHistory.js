@@ -21,30 +21,12 @@
 function clickUndoButton() {
 	var commandDivElem = $(this).parents(".CommandDiv");
 	// Prepare the data to be sent to the server
-	var edits = new Object();
-	edits["command"] = "UndoRedoCommand";
+	var edits = generateInfoObject("", "UndoRedoCommand");
 	edits["commandId"] = commandDivElem.attr("id");
-	edits["workspaceId"] = $.workspaceGlobalInformation.id;
 	
 	// Invoke the UNDO command on the server
 	showWaitingSignOnScreen();
-	$.ajax({
-	   	url: "RequestController", 
-	   	type: "POST",
-	   	data : edits,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	    		var json = $.parseJSON(xhr.responseText);
-	    		parse(json);
-	    		hideWaitingSignOnScreen();
-		   	},
-		error :
-            function (xhr, textStatus) {
-                alert("Error occured while undo!");
-                hideWaitingSignOnScreen();
-            }
-		});
+	sendRequest(edits);
 	// Change the state
 	var index =  $(".CommandDiv").index($(commandDivElem));
 	if(commandDivElem.hasClass("undo-state")){

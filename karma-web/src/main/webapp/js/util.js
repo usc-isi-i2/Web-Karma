@@ -4,6 +4,46 @@ function isDialogInitialized(dialog) {
 	return false;
 }
 
+function sendRequest(info, worksheetId) {
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				parse(json);
+				hideLoading(worksheetId);
+			},
+			error :
+			function (xhr, textStatus) {
+				alert("Error occured with " + info['command'] + );
+				hideLoading(worksheetId);
+			}
+	});
+}
+
+function sendRequest(info) {
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				parse(json);
+				hideWaitingSignOnScreen();
+			},
+			error :
+			function (xhr, textStatus) {
+				alert("Error occured with " + info['command'] + );
+				hideWaitingSignOnScreen();
+			}
+	});
+}
+
 function getColumnHeadings(worksheetId) {
 	var columnNames = [];
 	
@@ -15,7 +55,37 @@ function getColumnHeadings(worksheetId) {
 	return columnNames;
 }
 
+function getColumnHeadings(worksheetId, columnId, commandName) {
+	var info = generateInfoObject(worksheetId, columnId, "GetHeadersCommand");
+	info["commandName"] = commandName;
+	var returnJSON = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data : info,
+		dataType : "json",
+		async: false,
+		complete :
+			function (xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				returnJSON = json['elements'][0];
+			}
+	});
+	return returnJSON;
+}
+
 function generateInfoObject(worksheetId, commandName) {
+	var info = {};
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["worksheetId"] = worksheetId;
+	info["command"] = commandName;
+	var newInfo = [];
+	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+	info["newInfo"] = newInfo;
+	return info;
+}
+
+function generateInfoObject(worksheetId, columnId, commandName) {
 	var info = {};
 	info["hNodeId"] = columnId;
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -65,38 +135,6 @@ function addLevels(li, a, option, worksheetId) {
 		subul.append(li2);
 	}						
 	li.append(subul);
-}
-
-function generateInfoObject(worksheetId, columnId, commandName) {
-	var info = {};
-	info["hNodeId"] = columnId;
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["worksheetId"] = worksheetId;
-	info["command"] = commandName;
-	var newInfo = [];
-	newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
-	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-	info["newInfo"] = newInfo;
-	return info;
-}
-
-function getColumnHeadings(worksheetId, columnId, commandName) {
-	var info = generateInfoObject(worksheetId, columnId, "GetHeadersCommand");
-	info["commandName"] = commandName;
-	var returnJSON = [];
-	$.ajax({
-		url: "RequestController",
-		type: "POST",
-		data : info,
-		dataType : "json",
-		async: false,
-		complete :
-			function (xhr, textStatus) {
-				var json = $.parseJSON(xhr.responseText);
-				returnJSON = json['elements'][0];
-			}
-	});
-	return returnJSON;
 }
 
 function showLoading(worksheetId) {

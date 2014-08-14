@@ -101,31 +101,13 @@ function parse(data) {
 																				worksheetProps["hasBaseURI"] = false;
 																				worksheetProps["graphLabel"] = newValue;
 																				worksheetProps["hasServiceProperties"] = false;                                    
-																				var info = new Object();
-																				info["workspaceId"] = $.workspaceGlobalInformation.id;
-																				info["command"] = "SetWorksheetPropertiesCommand";
+																				var info = generateInfoObject(worksheetId, "SetWorksheetPropertiesCommand");
 
-																				var newInfo = [];   // for input parameters
-																				newInfo.push(getParamObject("worksheetId", worksheet["worksheetId"] ,"worksheetId"));
+																				var newInfo = info['newInfo'];   // for input parameters
 																				newInfo.push(getParamObject("properties", worksheetProps, "other"));
 																				info["newInfo"] = JSON.stringify(newInfo);
-
-																				var returned = $.ajax({
-																						url: "RequestController",
-																						type: "POST",
-																						data : info,
-																						dataType : "json",
-																						async: false,
-																						complete :
-																						function (xhr, textStatus) {
-																								var json = $.parseJSON(xhr.responseText);
-																								parse(json);
-																						},
-																						error :
-																								function (xhr, textStatus) {
-																										$.sticky("Error occurred while setting properties!");
-																								}
-																						});
+																				showWaitingSignOnScreen();
+																				var returned = sendRequest(info);
 
 																},
 																title: 'Enter Name'
@@ -158,31 +140,13 @@ function parse(data) {
 																				worksheetProps["prefix"] = newValue;
 																				worksheetProps["graphLabel"] = "";
 																				worksheetProps["hasServiceProperties"] = false;                                    
-																				var info = new Object();
-																				info["workspaceId"] = $.workspaceGlobalInformation.id;
-																				info["command"] = "SetWorksheetPropertiesCommand";
+																				var info = generateInfoObject(worksheetId, "SetWorksheetPropertiesCommand");
 
-																				var newInfo = [];   // for input parameters
-																				newInfo.push(getParamObject("worksheetId", worksheet["worksheetId"] ,"worksheetId"));
+																				var newInfo = info['newInfo'];   // for input parameters
 																				newInfo.push(getParamObject("properties", worksheetProps, "other"));
 																				info["newInfo"] = JSON.stringify(newInfo);
-
-																				var returned = $.ajax({
-																						url: "RequestController",
-																						type: "POST",
-																						data : info,
-																						dataType : "json",
-																						async: false,
-																						complete :
-																						function (xhr, textStatus) {
-																								var json = $.parseJSON(xhr.responseText);
-																								parse(json);
-																						},
-																						error :
-																								function (xhr, textStatus) {
-																										$.sticky("Error occurred while setting properties!");
-																								}
-																						});
+																				showWaitingSignOnScreen();
+																				var returned = sendRequest(info);
 
 																},
 																title: 'Enter Prefix'
@@ -215,32 +179,13 @@ function parse(data) {
 																				worksheetProps["baseURI"] = newValue;
 																				worksheetProps["graphLabel"] = "";
 																				worksheetProps["hasServiceProperties"] = false;                                    
-																				var info = new Object();
-																				info["workspaceId"] = $.workspaceGlobalInformation.id;
-																				info["command"] = "SetWorksheetPropertiesCommand";
+																				var info = generateInfoObject(worksheetId, "SetWorksheetPropertiesCommand");
 
-																				var newInfo = [];   // for input parameters
-																				newInfo.push(getParamObject("worksheetId", worksheet["worksheetId"] ,"worksheetId"));
+																				var newInfo = info['newInfo'];   // for input parameters
 																				newInfo.push(getParamObject("properties", worksheetProps, "other"));
 																				info["newInfo"] = JSON.stringify(newInfo);
-
-																				var returned = $.ajax({
-																						url: "RequestController",
-																						type: "POST",
-																						data : info,
-																						dataType : "json",
-																						async: false,
-																						complete :
-																						function (xhr, textStatus) {
-																								var json = $.parseJSON(xhr.responseText);
-																								parse(json);
-																						},
-																						error :
-																								function (xhr, textStatus) {
-																										$.sticky("Error occurred while setting properties!");
-																								}
-																						});
-
+																				showWaitingSignOnScreen();
+																				var returned = sendRequest(info);
 																},
 																title: 'Enter Base URI'
 														}
@@ -988,39 +933,23 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
 }
 
 function submitTableCellEdit(worksheetId, nodeId, value) {
-		var edits = new Object();
+		var edits = generateInfoObject(worksheetId, "EditCellCommand");
 		edits["value"] = value;
-		edits["command"] = "EditCellCommand";
 		edits["nodeId"] = nodeId;
-		edits["worksheetId"] = worksheetId;
-		edits["workspaceId"] = $.workspaceGlobalInformation.id;
-
-		var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data : edits,
-				dataType : "json",
-				complete :
-						function (xhr, textStatus) {
-								var json = $.parseJSON(xhr.responseText);
-								parse(json);
-						}
-		});
+		showLoading(worksheetId);
+		var returned = sendRequest(info, worksheetId);
 }
 
 function fetchExistingModelLabel(worksheetId) {
 												
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "FetchExistingWorksheetPropertiesCommand";
-	info["worksheetId"] = worksheetId;
+	var info = generateInfoObject(worksheetId, "FetchExistingWorksheetPropertiesCommand");
 	var graphLabel;
 	var returned = $.ajax({
 		url: "RequestController",
 		type: "POST",
 		data : info,
 		dataType : "json",
-		async:false,
+		async: false,
 		complete :
 			function (xhr, textStatus) {
 				var json = $.parseJSON(xhr.responseText);
@@ -1034,8 +963,9 @@ function fetchExistingModelLabel(worksheetId) {
 			},
 		error :
 			function (xhr, textStatus) {
-				graphLabel = "";																				}
+				graphLabel = "";																				
 			}
+		}
 	);
 	return graphLabel;
 }
@@ -1046,27 +976,10 @@ function submitSelectedModelNameToBeLoaded() {
 		var optionsDiv = $("div#WorksheetOptionsDiv");
 		var value = $("#modelListRadioBtnGrp").find("input:checked");
 
-		var info = new Object();
-		info["worksheetId"] = optionsDiv.data("worksheetId");
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "InvokeDataMiningServiceCommand";
+		var info = generateInfoObject(worksheetId, "InvokeDataMiningServiceCommand");
 		info['modelContext'] = value.val();
 		info['dataMiningURL'] = value.attr('rel');
 
-
-		var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data : info,
-				dataType : "json",
-				complete :
-						function (xhr, textStatus) {
-								var json = $.parseJSON(xhr.responseText);
-								parse(json);
-						},
-				error :
-						function (xhr, textStatus) {
-								alert("Error occured while invoking the selected service!" + textStatus);
-						}
-		});
+		showLoading(worksheetId);
+		var returned = sendRequest(info, worksheetId);
 }

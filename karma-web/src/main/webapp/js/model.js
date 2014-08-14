@@ -91,31 +91,14 @@ var saveModelDialog = (function() {
 			
 			hide();
 			
-			var info = new Object();
-			
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "SaveR2RMLModelCommand";
+			var info = generateInfoObject("", "SaveR2RMLModelCommand");
 			info['tripleStoreUrl'] = $('#txtModel_URL').html();
 			info['modelUrl'] = $('#txtModel_URL_Save').val();
 			info['graphContext'] = $('#txtGraph_URL_Save').val();
 			info['collection'] = checkboxes[0]['value'];
 			console.log(info['collection']);
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data : info,
-				dataType : "json",
-				complete :
-					function (xhr, textStatus) {
-						//alert(xhr.responseText);
-						var json = $.parseJSON(xhr.responseText);
-						parse(json);
-					},
-				error :
-					function (xhr, textStatus) {
-						alert("Error occured while saving models!" + textStatus);
-					}
-			});
+			showWaitingSignOnScreen();
+			var returned = sendRequest(info);
 		};
 		
 		function hide() {
@@ -176,28 +159,11 @@ var clearModelDialog = (function() {
 		function saveDialog(e) {
 			hide();
 
-			var info = new Object();
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "ClearTripleStoreCommand";
+			var info = generateInfoObject("", "ClearTripleStoreCommand");
 			info['tripleStoreUrl'] = $('#txtModel_URL').html();
 			info['graphContext'] = $('#txtGraph_URL_Clear').val();
-			console.log(info['graphContext']);
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data : info,
-				dataType : "json",
-				complete :
-					function (xhr, textStatus) {
-						//alert(xhr.responseText);
-						var json = $.parseJSON(xhr.responseText);
-						parse(json);
-					},
-				error :
-					function (xhr, textStatus) {
-						alert("Error occured while clearing model!" + textStatus);
-					}
-			});
+			showWaitingSignOnScreen();
+			var returned = sendRequest(info);
 		};
 		
 		function hide() {
@@ -346,12 +312,9 @@ var modelManagerDialog = (function() {
 		}
 		
 		function refresh() {
-			var info = new Object();
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "FetchR2RMLModelsListCommand";
+			var info = generateInfoObject("", "FetchR2RMLModelsListCommand");
 			info['tripleStoreUrl'] = $('#txtModel_URL').html();
 			info['graphContext'] = "";
-			info['worksheetId'] = "";
 			
 			var returned = $.ajax({
 				url: "RequestController",
@@ -428,9 +391,7 @@ var modelManagerDialog = (function() {
 			
 			for (var i = 0; i < checkboxes.length; i++) {
 				var checkbox = checkboxes[i];
-				var info = new Object();
-				info["workspaceId"] = $.workspaceGlobalInformation.id;
-				info["command"] = "DeleteModelFromTripleStoreCommand";
+				var info = generateInfoObject("", "DeleteModelFromTripleStoreCommand");
 				info['tripleStoreUrl'] = $('#txtModel_URL').html();
 				info['graphContext'] = checkbox['value'];
 				info['mappingURI'] = checkbox['src'];
@@ -444,9 +405,7 @@ var modelManagerDialog = (function() {
 					async: false,
 					complete :
 						function (xhr, textStatus) {
-						//alert(xhr.responseText);
 							var json = $.parseJSON(xhr.responseText);
-						//parse(json);
 						},
 					error :
 						function (xhr, textStatus) {
@@ -468,14 +427,10 @@ var modelManagerDialog = (function() {
 			
 			for (var i = 0; i < checkboxes.length; i++) {
 				var checkbox = checkboxes[i];
-				var info = new Object();
-				info["workspaceId"] = $.workspaceGlobalInformation.id;
-				info["command"] = "RefreshModelFromTripleStoreCommand";
+				var info = generateInfoObject("", "RefreshModelFromTripleStoreCommand");
 				info['tripleStoreUrl'] = $('#txtModel_URL').html();
 				info['graphContext'] = checkbox['value'];
 				info['mappingURI'] = checkbox['src'];
-				console.log(info['graphContext']);
-				console.log(info['mappingURI']);
 				var returned = $.ajax({
 					url: "RequestController",
 					type: "POST",

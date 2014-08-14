@@ -156,16 +156,9 @@ var SetSemanticTypeDialog = (function() {
 		}
 		
 		function getSuggestedTypes() {
-			var info = new Object();
-			var newInfo = [];	// Used for commands that take JSONArray as input and are saved in the history
-			var hNodeId = columnId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["worksheetId"] = worksheetId;
-			info["hNodeId"] = hNodeId;
-			newInfo.push(getParamObject("hNodeId", hNodeId,"hNodeId"));
-			newInfo.push(getParamObject("worksheetId", info["worksheetId"], "worksheetId"));
+			var info = generateInfoObject(worksheetId, columnId, "GetSemanticSuggestionsCommand");
+			var newInfo = info['newInfo'];	// Used for commands that take JSONArray as input and are saved in the history
 			info["newInfo"] = JSON.stringify(newInfo);
-			info["command"] = "GetSemanticSuggestionsCommand";
 			showLoading(info["worksheetId"]);
 			var result;
 			var returned = $.ajax({
@@ -263,13 +256,10 @@ var SetSemanticTypeDialog = (function() {
 						return false;
 					}
 					
-					var info = new Object();
-						var newInfo = [];	// Used for commands that take JSONArray as input and are saved in the history
+					var info = generateInfoObject(worksheetId, hNodeId, "");
+						var newInfo = info['newInfo'];	// Used for commands that take JSONArray as input and are saved in the history
 						var hNodeId = columnId;
-						info["worksheetId"] = worksheetId;
-						info["hNodeId"] = hNodeId;
 						info["isKey"] = $("input#chooseClassKey").is(":checked");
-						info["workspaceId"] = $.workspaceGlobalInformation.id;
 						info["rdfLiteralType"] = $("#literalTypeSelect").val()
 
 						// Check if any meta property (advanced options) was selected
@@ -339,9 +329,7 @@ var SetSemanticTypeDialog = (function() {
 						}
 
 						info["SemanticTypesArray"] = JSON.stringify(semTypesArray);
-						newInfo.push(getParamObject("hNodeId", hNodeId,"hNodeId"));
 						newInfo.push(getParamObject("SemanticTypesArray", semTypesArray, "other"));
-						newInfo.push(getParamObject("worksheetId", info["worksheetId"], "worksheetId"));
 						newInfo.push(getParamObject("isKey", $("input#chooseClassKey").is(":checked"), "other"));
 						newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
 						newInfo.push(getParamObject("rdfLiteralType", $("#literalTypeSelect").val(), "other"));
@@ -1346,12 +1334,10 @@ var IncomingOutgoingLinksDialog = (function() {
 						return false;
 					}
 					
-					 var info = new Object();
-					 info["workspaceId"] = $.workspaceGlobalInformation.id;
-					 info["command"] = "ChangeInternalNodeLinksCommand";
+					 var info = generateInfoObject(worksheetId, "ChangeInternalNodeLinksCommand");
 
 					 // Prepare the input for command
-					 var newInfo = [];
+					 var newInfo = info['newInfo'];
 					 
 					// Put the old edge information
 					var initialEdges = [];
@@ -1366,7 +1352,6 @@ var IncomingOutgoingLinksDialog = (function() {
 					newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
 							
 					newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
-					newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
 					 
 					 // Put the new edge information
 					 var newEdges = [];
@@ -1407,25 +1392,7 @@ var IncomingOutgoingLinksDialog = (function() {
 					info["newEdges"] = newEdges;
 					
 					showLoading(worksheetId);
-						var returned = $.ajax({
-								url: "RequestController",
-								type: "POST",
-								data : info,
-								dataType : "json",
-								complete :
-										function (xhr, textStatus) {
-												var json = $.parseJSON(xhr.responseText);
-												parse(json);
-												hideLoading(worksheetId);
-												hide();
-										},
-								error :
-										function (xhr, textStatus) {
-												alert("Error occured while getting nodes list!");
-												hideLoading(worksheetId);
-												hide();
-										}
-						});
+						var returned = sendRequest(info, worksheetId);
 				};
 				
 				function hide() {
@@ -1777,12 +1744,10 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 		}
 				
 				function saveDialog(e) {
-					 var info = new Object();
-					 info["workspaceId"] = $.workspaceGlobalInformation.id;
-					 info["command"] = "ChangeInternalNodeLinksCommand";
+					 var info = new generateInfoObject(worksheetId, "ChangeInternalNodeLinksCommand");
 
 					 // Prepare the input for command
-					 var newInfo = [];
+					 var newInfo = info['newInfo'];
 					 
 					// Put the old edge information
 					var initialEdges = [];
@@ -1796,7 +1761,6 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 					newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
 					
 					newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
-					newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
 					
 					var newEdges = [];
 					
@@ -1835,30 +1799,13 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 					if(!newValidated)
 						return;
 					
-						newInfo.push(getParamObject("newEdges", newEdges, "other"));
+					newInfo.push(getParamObject("newEdges", newEdges, "other"));
 					info["newInfo"] = JSON.stringify(newInfo);
 					info["newEdges"] = newEdges;
 					
 					showLoading(worksheetId);
-						var returned = $.ajax({
-								url: "RequestController",
-								type: "POST",
-								data : info,
-								dataType : "json",
-								complete :
-										function (xhr, textStatus) {
-												var json = $.parseJSON(xhr.responseText);
-												parse(json);
-												hideLoading(worksheetId);
-												hide();
-										},
-								error :
-										function (xhr, textStatus) {
-												alert("Error occured while getting nodes list!");
-												hideLoading(worksheetId);
-												hide();
-										}
-						});
+					var returned = sendRequest(info, worksheetId);
+					hide();
 				};
 				
 				function addIncomingLink(e) {
@@ -1932,12 +1879,9 @@ var AugmentDataDialog = (function() {
 				}
 
 				function refresh() {
-						var info = new Object();
-						info["worksheetId"] = worksheetId;
-						info["workspaceId"] = $.workspaceGlobalInformation.id;
+						var info = generateInfoObject(worksheetId, "SearchForDataToAugmentCommand");
 						info['tripleStoreUrl'] = $('#txtModel_URL').html();
 						info['context'] = "";
-						info["command"] = "SearchForDataToAugmentCommand";
 						info["nodeUri"] = columnDomain;
 						info["columnUri"] = columnUri;
 						var returnJSON = [];
@@ -1963,12 +1907,9 @@ var AugmentDataDialog = (function() {
 												//hideLoading(info["worksheetId"]);
 										}
 						});
-						var info = new Object();
-						info["worksheetId"] = worksheetId;
-						info["workspaceId"] = $.workspaceGlobalInformation.id;
+						var info = generateInfoObject(worksheetId, "SearchForDataToAugmentIncomingCommand");
 						info['tripleStoreUrl'] = $('#txtModel_URL').html();
 						info['context'] = "";
-						info["command"] = "SearchForDataToAugmentIncomingCommand";
 						info["nodeUri"] = columnDomain;
 						info["columnUri"] = columnUri;
 						var returned = $.ajax({
@@ -2198,12 +2139,9 @@ var AugmentDataDialog = (function() {
 							}
 						}
 
-						var info = new Object();
-						info["worksheetId"] = worksheetId;
-						info["workspaceId"] = $.workspaceGlobalInformation.id;
+						var info = generateInfoObject(worksheetId, "FetchHNodeIdFromAlignmentCommand");
 						info["alignmentId"] = alignmentId;
 						info["columnUri"] = columnUri;
-						info["command"] = "FetchHNodeIdFromAlignmentCommand";
 						var hNodeId;
 						var returned = $.ajax({
 								url: "RequestController",
@@ -2228,43 +2166,17 @@ var AugmentDataDialog = (function() {
 						});
 						showLoading(info["worksheetId"]);
 
-						var info = new Object();
-						info["worksheetId"] = worksheetId;
-						info["workspaceId"] = $.workspaceGlobalInformation.id;
-						info["command"] = "AugmentDataDispachCommand";
-						var newInfo = [];
-						newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+						var info = generateInfoObject(worksheetId, hNodeId, "AugmentDataDispachCommand");
+						var newInfo = info['newInfo'];
 						newInfo.push(getParamObject("predicateOutgoing", JSON.stringify(predicatesOutgoing), "other"));
 						newInfo.push(getParamObject("otherClassOutgoing", JSON.stringify(otherClassOutgoing), "other"));
 						newInfo.push(getParamObject("predicateIncoming", JSON.stringify(predicatesIncoming), "other"));
 						newInfo.push(getParamObject("otherClassIncoming", JSON.stringify(otherClassIncoming), "other"));
 						newInfo.push(getParamObject("columnUri", columnUri, "other"));
 						newInfo.push(getParamObject("tripleStoreUrl", $('#txtData_URL').html(), "other"));
-						newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
 						newInfo.push(getParamObject("sameAsPredicate", $('#altPredicate').val(), "other"));
 						info["newInfo"] = JSON.stringify(newInfo);	
-						var returned = $.ajax({
-								url: "RequestController",
-								type: "POST",
-								data : info,
-								dataType : "json",
-								complete :
-									 function (xhr, textStatus) {
-											//alert(xhr.responseText);
-											var json = $.parseJSON(xhr.responseText);
-											console.log(json);
-												
-											parse(json);
-											hideLoading(info["worksheetId"]);
-											
-												//applyModelDialog.getInstance().show(worksheetId, json);
-									},
-								error :
-									function (xhr, textStatus) {
-											alert("Error occured while Augmenting Models!" + textStatus);
-											hideLoading(info["worksheetId"]);
-									}
-						});
+						var returned = sendRequest(info, worksheetId);
 				};
 				
 				function hide() {
@@ -2445,39 +2357,20 @@ var AddNodeDialog = (function() {
 		}
 				
 				function saveDialog(e) {
-					 var info = new Object();
-						 info["workspaceId"] = $.workspaceGlobalInformation.id;
-						 var newInfo = [];
-						 var label = selectedClass.label;
-						 if(label.length > 6) {
-							 label = label.substring(0, label.length-6);
-						 }   
-					 newInfo.push(getParamObject("label", label, "other"));
-					 newInfo.push(getParamObject("uri", selectedClass.uri, "other"));
-					 newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+					var info = generateInfoObject(worksheetId, "AddNodeCommand");
+					var newInfo = info['newInfo'];
+					var label = selectedClass.label;
+					if(label.length > 6) {
+						label = label.substring(0, label.length-6);
+					}   
+					newInfo.push(getParamObject("label", label, "other"));
+					newInfo.push(getParamObject("uri", selectedClass.uri, "other"));
 					 
-						 info["newInfo"] = JSON.stringify(newInfo);
-						 info["command"] = "AddNodeCommand";
-						 showLoading(worksheetId);
-						 var returned = $.ajax({
-								 url: "RequestController",
-								 type: "POST",
-								 data : info,
-								 dataType : "json",
-								 complete :
-										 function (xhr, textStatus) {
-												 var json = $.parseJSON(xhr.responseText);
-												 parse(json);
-												 hideLoading(worksheetId);
-												 hide();
-										 },
-								 error :
-										 function (xhr, textStatus) {
-												 alert("Error occured while adding the node!");
-												 hideLoading(worksheetId);
-												 hide();
-										 }
-						 });
+					info["newInfo"] = JSON.stringify(newInfo);
+					showLoading(worksheetId);
+						 
+					var returned = sendRequest(info, worksheetId);
+					hide();
 				};
 				
 				

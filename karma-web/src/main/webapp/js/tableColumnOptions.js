@@ -1040,27 +1040,6 @@ var PyTransformDialog = (function() {
 						sendRequest(info, worksheetId);
 				}
 				
-				function sendRequest(info, worksheetId) {
-					 // Send the request
-						$.ajax({
-								url: "RequestController",
-								type: "POST",
-								data : info,
-								dataType : "json",
-								complete :
-										function (xhr, textStatus) {
-												var json = $.parseJSON(xhr.responseText);
-												parse(json);
-												hideLoading(worksheetId);
-										},
-								error :
-										function (xhr, textStatus) {
-												alert("Error occured with fetching new rows! " + textStatus);
-												hideLoading(worksheetId);
-										}
-						});
-				}
-				
 				function hide() {
 					dialog.modal('hide');
 				}
@@ -1906,28 +1885,8 @@ var PyTransformSelectionDialog = (function() {
 										alert("Error occured with fetching new rows! " + textStatus);
 								}
 				});
-				}
+			}
 				
-				function sendRequest(info, worksheetId) {
-					 // Send the request
-						$.ajax({
-								url: "RequestController",
-								type: "POST",
-								data : info,
-								dataType : "json",
-								complete :
-										function (xhr, textStatus) {
-												var json = $.parseJSON(xhr.responseText);
-												parse(json);
-												hideLoading(worksheetId);
-										},
-								error :
-										function (xhr, textStatus) {
-												alert("Error occured with fetching new rows! " + textStatus);
-												hideLoading(worksheetId);
-										}
-						});
-				}
 				
 				function hide() {
 					dialog.modal('hide');

@@ -10,30 +10,10 @@ function showChartButtonHandler() {
     
 function showChartForColumn(worksheetId, hNodeId) {
 
-    var info = new Object();
-    var newInfo = [];   // for input parameters
-    newInfo.push(getParamObject("worksheetId", worksheetId ,"worksheetId"));
-    newInfo.push(getParamObject("hNodeId", hNodeId,"hNodeId"));
-
+    var info = generateInfoObject(worksheetId, hNodeId, "InvokeCleaningServiceCommand");
+    var newInfo = info['newInfo'];   // for input parameters
     info["newInfo"] = JSON.stringify(newInfo);
-    info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["command"] = "InvokeCleaningServiceCommand";
-
-    var returned = $.ajax({
-        url: "RequestController",
-        type: "POST",
-        data : info,
-        dataType : "json",
-        complete :
-            function (xhr, textStatus) {
-                var json = $.parseJSON(xhr.responseText);
-                parse(json);
-            },
-        error :
-            function (xhr, textStatus) {
-                $.sticky("Error occured while renaming column!");
-            }
-    });
+    var returned = sendRequest(info, worksheetId);
 }
 
 function drawChart(element)  {

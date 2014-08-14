@@ -285,8 +285,7 @@ var FileOptionsDialog = (function() {
 		function reloadOptions(execute) {
 			var format = dialog.data("format");
 			var optionSetting = optionSettings[format];
-			var options = new Object();
-			options["command"] = "Import" + format + "Command";
+			var options = generateInfoObject("", "Import" + format + "Command");
 			options["commandId"] = dialog.data("commandId");
 			if($.inArray( "colDelimiterSelector", optionSetting ) != -1)
 				options["delimiter"] = $("#delimiterSelector").val();
@@ -301,7 +300,6 @@ var FileOptionsDialog = (function() {
 			if($.inArray( "colMaxNumLines", optionSetting ) != -1)
 				options["maxNumLines"] = $("#maxNumLines").val();
 			
-			options["workspaceId"] = $.workspaceGlobalInformation.id;
 			options["interactionType"] = "generatePreview";
 			options["isUserInteraction"] = true;
 			var RequireFilter = dialog.data("isFilterSelected");
@@ -498,8 +496,7 @@ var SelectColumnsDialog = (function() {
 			var savePreset = $("input:checkbox[name='SavePresetCheck']", dialog).prop('checked');
 			console.log(columnsJson);
 			if (selectedFormat == "CSVFile") {
-				var options = new Object();
-				options["command"] = "Import" + selectedFormat + "Command";
+				var options =	generateInfoObject("", "Import" + selectedFormat + "Command");
 				options["commandId"] = dialog.data("commandId");
 				options["delimiter"] = dialog.data("delimiter");
 				options["CSVHeaderLineIndex"] = dialog.data("CSVHeaderLineIndex");
@@ -507,7 +504,6 @@ var SelectColumnsDialog = (function() {
 				options["textQualifier"] = dialog.data("textQualifier");
 				options["encoding"] = dialog.data("encoding");
 				options["maxNumLines"] = dialog.data("maxNumLines");			
-				options["workspaceId"] = $.workspaceGlobalInformation.id;
 				options["isUserInteraction"] = true;
 				options["execute"] = true;
 				options["interactionType"] = "importTable";

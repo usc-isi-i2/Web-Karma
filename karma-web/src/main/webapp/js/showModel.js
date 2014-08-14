@@ -29,37 +29,15 @@ var ShowExistingModelDialog = (function() {
     	}
     	
 		function createNewModelForWorksheet() {
-			var info = {};
-		    info["workspaceId"] = $.workspaceGlobalInformation.id;
-		    info["command"] = "CreateNewModelCommand";
-		    info["worksheetId"] = lastWorksheetId;
+			var info = generateInfoObject(lastWorksheetId, "CreateNewModelCommand");
 
-		    showLoading(info["worksheetId"]);
-		    var returned = $.ajax({
-		        url: "RequestController",
-		        type: "POST",
-		        data : info,
-		        dataType : "json",
-		        complete :
-		            function (xhr, textStatus) {
-		                var json = $.parseJSON(xhr.responseText);
-		                parse(json);
-		                hideLoading(info["worksheetId"]);
-		                dialog.modal('hide');
-		            },
-		        error :
-		            function (xhr, textStatus) {
-		                $.sticky("Error occurred applying model!");
-		                hideLoading(info["worksheetId"]);
-		            }
-		    });
+		  showLoading(info["worksheetId"]);
+		  sendRequest(info, info["worksheetId"]);
+		  dialog.modal('hide');
 		}
 		
 		function submitModelForWorksheet() {
-			var info = {};
-		    info["workspaceId"] = $.workspaceGlobalInformation.id;
-		    info["command"] = "ApplyModelFromTripleStoreCommand";
-		    info["worksheetId"] = lastWorksheetId;
+			var info = generateInfoObject(lastWorksheetId, "ApplyModelFromTripleStoreCommand");
 
 		    var table = $("#modelsList", dialog);
 		    if ($("td.selected", table).length == 0) {
@@ -71,23 +49,7 @@ var ShowExistingModelDialog = (function() {
 		    info["modelName"] = $("td.selected span", table).text();
 
 		    showLoading(info["worksheetId"]);
-		    var returned = $.ajax({
-		        url: "RequestController",
-		        type: "POST",
-		        data : info,
-		        dataType : "json",
-		        complete :
-		            function (xhr, textStatus) {
-		                var json = $.parseJSON(xhr.responseText);
-		                parse(json);
-		                hideLoading(info["worksheetId"]);
-		            },
-		        error :
-		            function (xhr, textStatus) {
-		                $.sticky("Error occurred applying model!");
-		                hideLoading(info["worksheetId"]);
-		            }
-		    });
+		    var returned = sendRequest(info, info['worksheetId']);
 		}
 		
         function saveDialog(e) {
@@ -102,10 +64,7 @@ var ShowExistingModelDialog = (function() {
 			$("div.noItems", dialog).hide();
 			
 			
-			var info = new Object();
-		    info["workspaceId"] = $.workspaceGlobalInformation.id;
-		    info["command"] = "FetchExistingModelsForWorksheetCommand";
-		    info["worksheetId"] = lastWorksheetId;
+			var info = generateInfoObject(lastWorksheetId, "FetchExistingModelsForWorksheetCommand");
 		    info["garbage"] = "garbage";
 		    var returned = $.ajax({
 		        url: "RequestController",

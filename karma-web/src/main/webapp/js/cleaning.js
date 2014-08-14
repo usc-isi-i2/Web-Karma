@@ -62,35 +62,14 @@ var TransformColumnDialog = (function() {
 
 			var selectedHNodeId = columnId;
 			//var transformedRes = transformedResult;
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["hNodeId"] = selectedHNodeId;
-			info["command"] = "SubmitCleaningCommand";
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			var info = generateInfoObject(worksheetId, selectedHNodeId, "SubmitCleaningCommand");
 			info["examples"] = JSON.stringify(cleaningExamples);
 
-			var newInfo = [];
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-			newInfo.push(getParamObject("hNodeId", selectedHNodeId, "hNodeId"));
+			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("examples", cleaningExamples, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
-
 			showLoading(worksheetId);
-			var returned = $.ajax({
-				url : "RequestController",
-				type : "POST",
-				data : info,
-				dataType : "json",
-				complete : function(xhr, textStatus) {
-					var json = $.parseJSON(xhr.responseText);
-					parse(json);
-					hideLoading(worksheetId);
-				},
-				error : function(xhr, textStatus) {
-					$.sticky("Error in transformation!");
-					hideLoading(worksheetId);
-				}
-			});
+			var returned = sendRequest(info, worksheetId);
 		};
 
 		function loadInitialData() {
@@ -127,11 +106,7 @@ var TransformColumnDialog = (function() {
 		}
 
 		function fetchCleanningRawData() {
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["hNodeId"] = columnId;
-			info["command"] = "FetchTransformingDataCommand";
+			var info = generateInfoObject(worksheetId, columnId, "FetchTransformingDataCommand");
 			var json = {};
 			var returned = $.ajax({
 				url : "RequestController",
@@ -238,14 +213,8 @@ var TransformColumnDialog = (function() {
 		}
 
 		function handleGenerateCleaningRulesButton() {
-			var selectedHNodeId = columnId;
-			var examples = cleaningExamples;
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["hNodeId"] = selectedHNodeId;
-			info["command"] = "GenerateCleaningRulesCommand";
-			info["examples"] = JSON.stringify(examples);
+			var info = generateInfoObject(worksheetId, columnId, "GenerateCleaningRulesCommand");
+			info["examples"] = JSON.stringify(cleaningExamples);
 			info["cellIDs"] = JSON.stringify(nodeIds);
 
 			var returned = $.ajax({
