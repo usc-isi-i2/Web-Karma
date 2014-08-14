@@ -57,15 +57,21 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	}
 
 	function intersectRows() {
-		console.log("intersectRows");
+		hideDropdown();
+		$("#pyTransformSelectionDialog").data("operation", "Intersect");
+		PyTransformSelectionDialog.getInstance(wsId, wsColumnId).show();
 	}
 
 	function subtractRows() {
-		console.log("subtractRows");
+		hideDropdown();
+		$("#pyTransformSelectionDialog").data("operation", "Subtract");
+		PyTransformSelectionDialog.getInstance(wsId, wsColumnId).show();
 	}
 
 	function invertRows() {
-		console.log("invertRows");
+		hideDropdown();
+		$("#pyTransformSelectionDialog").data("operation", "Invert");
+		PyTransformSelectionDialog.getInstance(wsId, wsColumnId).show();
 	}
 
 	function clearAll() {
@@ -1786,10 +1792,17 @@ var PyTransformSelectionDialog = (function() {
 				columnId = colId;				
 				headers = getColumnHeadings(worksheetId, columnId, "GroupBy");
 				console.log(headers);
-				editor = ace.edit("transformCodeEditorSelection");
-				editor.setTheme("ace/theme/dreamweaver");
-				editor.getSession().setMode("ace/mode/python");
-				editor.getSession().setUseWrapMode(true);			 
+				$('#btnSaveSelection', dialog).unbind('click');
+				$('#btnErrorsSelection', dialog).unbind('click');
+				$('#btnPreviewSelection', dialog).unbind('click');
+				dialog.unbind("show.bs.modal");
+				dialog.unbind("resize");
+				if (editor == undefined) {
+					editor = ace.edit("transformCodeEditorSelection");
+					editor.setTheme("ace/theme/dreamweaver");
+					editor.getSession().setMode("ace/mode/python");
+					editor.getSession().setUseWrapMode(true);			 
+				}
 				dialog.on("resize", function(event, ui) {
 					editor.resize();
 				});				
