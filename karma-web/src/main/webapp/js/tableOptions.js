@@ -60,41 +60,21 @@ var SetPropertiesDialog = (function() {
 				worksheetProps["hasServiceProperties"] = false;
 			}
 
-			var info = new Object();
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "SetWorksheetPropertiesCommand";
+			var info = generateInfoObject(worksheetId, "SetWorksheetPropertiesCommand");
 
-			var newInfo = []; // for input parameters
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+			var newInfo = info['newInfo']; // for input parameters
 			newInfo.push(getParamObject("properties", worksheetProps, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 			// Store the data to be shown later when the dialog is opened again
 			$("div#" + info["worksheetId"]).data("worksheetProperties", worksheetProps);
-
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					//alert(xhr.responseText);
-					var json = $.parseJSON(xhr.responseText);
-					parse(json);
-				},
-				error: function(xhr, textStatus) {
-					$.sticky("Error occurred while setting properties!");
-				}
-			});
+			showLoading(worksheetId);
+			var returned = sendRequest(info, worksheetId);
 			hide();
 		};
 
 		function fetchExistingWorksheetOptions() {
 
-			var info = new Object();
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "FetchExistingWorksheetPropertiesCommand";
-			info["worksheetId"] = worksheetId;
-
+			var info = generateInfoObject(worksheetId, "FetchExistingWorksheetPropertiesCommand");
 			var returned = $.ajax({
 				url: "RequestController",
 				type: "POST",
@@ -273,10 +253,7 @@ var applyModelDialog = (function() {
 
 		function refresh() {
 			console.log("refresh");
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "FetchR2RMLModelsListCommand";
+			var info = generateInfoObject(worksheetId, "FetchR2RMLModelsListCommand");
 			info['tripleStoreUrl'] = $('#txtModel_URL').html();
 			info['graphContext'] = "";
 			var returned = $.ajax({
@@ -319,10 +296,7 @@ var applyModelDialog = (function() {
 			}
 			var override = false;
 			var modelExist = false;
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "CheckModelExistenceCommand";
+			var info = generateInfoObject(worksheetId, "CheckModelExistenceCommand");
 			var returned = $.ajax({
 				url: "RequestController",
 				type: "POST",
@@ -351,35 +325,14 @@ var applyModelDialog = (function() {
 				}
 			}
 			var checked = checkboxes[0];
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "ApplyModelFromURLCommand";
+			var info = generateInfoObject(worksheetId, "ApplyModelFromURLCommand");
 			info['modelRepository'] = $('#txtModel_URL').html();
 			info['modelContext'] = checked['value'];
 			info['modelUrl'] = checked['src'];
 			info['override'] = override;
 			console.log(info["worksheetId"]);
 			showLoading(info["worksheetId"]);
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					//alert(xhr.responseText);
-					var json = $.parseJSON(xhr.responseText);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-					refresh();
-
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured while applying models!" + textStatus);
-					hideLoading(info["worksheetId"]);
-					refresh();
-				}
-			});
+			var returned = sendRequest(info, worksheetId);
 		};
 
 		function hide() {
@@ -533,27 +486,10 @@ var FetchModelDialog = (function() {
 		function saveDialog(e) {
 			hide();
 
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "FetchR2RMLModelsCommand";
+			var info = generateInfoObject(worksheetId, "FetchR2RMLModelsCommand");
 			info['tripleStoreUrl'] = $('#txtR2RML_URL_fetch').val();
-
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					var json = $.parseJSON(xhr.responseText);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured while generating the automatic model!" + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+			showLoading(worksheetId);
+			var returned = sendRequest(info, worksheetId);
 		};
 
 		function hide() {
@@ -638,9 +574,7 @@ var ExportCSVModelDialog = (function() {
 		// it takes in the url and the input element object
 		function fetchGraphsFromTripleStore(url, modelGraphList) {
 
-			var info = new Object();
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "FetchGraphsFromTripleStoreCommand";
+			var info = generateInfoObject("", "FetchGraphsFromTripleStoreCommand");
 			info["tripleStoreUrl"] = url;
 			var returned = $.ajax({
 				url: "RequestController",
@@ -680,10 +614,7 @@ var ExportCSVModelDialog = (function() {
 				};
 			});
 
-			var info = new Object();
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["worksheetId"] = worksheetId;
-			info["command"] = "ExportCSVCommand";
+			var info = generateInfoObject(worksheetId, "ExportCSVCommand");
 			info["rootNodeId"] = $('#csv_columns').attr('rel');
 			info["tripleStoreUrl"] = $("#csvDataEndPoint").val();
 			info["graphUrl"] = graphUri;
@@ -703,44 +634,11 @@ var ExportCSVModelDialog = (function() {
 					if (dmURL.length < 2) {
 						dmURL = 'http://localhost:8088/train';
 					}
-					var info = new Object();
-					info["workspaceId"] = $.workspaceGlobalInformation.id;
-					info["worksheetId"] = worksheetId;
-					info["command"] = "InvokeDataMiningServiceCommand";
+					var info = generateInfoObject(worksheetId, "InvokeDataMiningServiceCommand");
 					info["dataMiningURL"] = dmURL;
 					info["csvFileName"] = fileName;
-
-
-					$.ajax({
-						url: "RequestController",
-						type: "POST",
-						data: info,
-						dataType: "json",
-						complete: function(xhr, textStatus) {
-							var json = $.parseJSON(xhr.responseText);
-							parse(json);
-							hide();
-							alert("This results are loaded in a new worksheet");
-							//    		    		   			if(json["elements"][0]['updateType'] && json["elements"][0]['updateType']=="KarmaError") {
-							//    		    		   				alert("Error while invoking service");
-							//    		    		   				hide();
-							//    		    		   			} else if(json["elements"][0]['status'] && json["elements"][0]['status'] == true) {
-							//    		    		   				hide();
-							////    		    		   				$('#DMresults').html(json["elements"][0]['results']);
-							////    		    		   				$('#DMresults').show();
-							//    		    		   			}
-							//    		    		   			else {
-							//    		    		   				var model_name = json["elements"][0]['model_name'];
-							//    		    		   				hide();
-							//    		    		   				alert('Model Name: '+model_name);
-							//    		    		   			}
-
-						},
-						error: function(xhr, textStatus) {
-							alert("Error occurred while invoking service! " + textStatus);
-						}
-					});
-
+					hide();
+					sendRequest(info, worksheetId);
 				},
 				error: function(xhr, textStatus) {
 					alert("Error occurred while exporting CSV! " + textStatus);
@@ -761,29 +659,14 @@ var ExportCSVModelDialog = (function() {
 				};
 			});
 
-			var info = new Object();
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["worksheetId"] = worksheetId;
-			info["command"] = "ExportCSVCommand";
+			var info = generateInfoObject(worksheetId, "ExportCSVCommand");
 			info["rootNodeId"] = $('#csv_columns').attr('rel');
 			info["tripleStoreUrl"] = $("#csvDataEndPoint").val();
 			info["graphUrl"] = graphUri;
 			info["columnList"] = JSON.stringify(list);
-
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					var json = $.parseJSON(xhr.responseText);
-					parse(json);
-					hide();
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occurred with fetching graphs! " + textStatus);
-				}
-			});
+			hide();
+			showLoading(worksheetId);
+			var returned = sendRequest(info, worksheetId);
 		}
 
 		function initCSVDataDialog() {
@@ -800,10 +683,7 @@ var ExportCSVModelDialog = (function() {
 			//    		var graphUri = $('#csvModelGraphList').val().trim();
 			//    		graphUri = (graphUri == '000') ? '' : graphUri; 
 			console.log("getting columns ..");
-			var info = new Object();
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["worksheetId"] = worksheetId;
-			info["command"] = "FetchColumnCommand";
+			var info = generateInfoObject(worksheetId, "FetchColumnCommand");
 			//    		info["alignmentNodeId"] = alignmentNodeId;
 			//    		info["tripleStoreUrl"] = $("#csvSPAQRLEndPoint").val();
 			//    		info["graphUrl"] =  graphUri ;
@@ -986,35 +866,14 @@ var FoldDialog = (function() {
 				return;
 			}
 			//console.log(checked);
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "FoldCommand";
+			var info = generateInfoObject(worksheetId, checkboxes[0]['value'], "FoldCommand");
 
-			var newInfo = [];
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-			newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
+			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
 			showLoading(info["worksheetId"]);
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					//alert(xhr.responseText);
-					var json = $.parseJSON(xhr.responseText);
-					console.log(json);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured while folding!" + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+			var returned = sendRequest(info, worksheetId);
 
 			hide();
 		};
@@ -1114,35 +973,14 @@ var GroupByDialog2 = (function() {
 				return;
 			}
 			//console.log(checked);
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "GroupByCommand";
+			var info = generateInfoObject(worksheetId, checkboxes[0]['value'], "GroupByCommand");
 
-			var newInfo = [];
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-			newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
+			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
 			showLoading(info["worksheetId"]);
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					//alert(xhr.responseText);
-					var json = $.parseJSON(xhr.responseText);
-					console.log(json);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured while grouping by!" + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+			var returned = sendRequest(info, worksheetId);
 
 			hide();
 		};
@@ -1241,35 +1079,14 @@ var GlueDialog2 = (function() {
 				return;
 			}
 			//console.log(checked);
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "GlueCommand";
+			var info = generateInfoObject(worksheetId, checkboxes[0]['value'], "GlueCommand");
 
-			var newInfo = [];
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-			newInfo.push(getParamObject("hNodeId", checkboxes[0]['value'], "hNodeId"));
+			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
 			showLoading(info["worksheetId"]);
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					//alert(xhr.responseText);
-					var json = $.parseJSON(xhr.responseText);
-					console.log(json);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured while gluing!" + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+			var returned = sendRequest(info, worksheetId);
 
 			hide();
 		};
@@ -1374,10 +1191,7 @@ var OrganizeColumnsDialog = (function() {
 
 		function getAllWorksheetHeaders() {
 			//console.log(checked);
-			var info = new Object();
-			info["worksheetId"] = _worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "GetAllWorksheetHeadersCommand";
+			var info = generateInfoObject(_worksheetId, "GetAllWorksheetHeadersCommand");
 
 			showLoading(info["worksheetId"]);
 			var headers = [];
@@ -1458,33 +1272,14 @@ var OrganizeColumnsDialog = (function() {
 			var nestableDiv = $("#nestable", columns);
 			var columnsJson = nestableDiv.nestable('serialize');
 
-			var info = new Object();
-			info["worksheetId"] = _worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "OrganizeColumnsCommand";
+			var info = generateInfoObject(_worksheetId, "OrganizeColumnsCommand");
 
-			var newInfo = [];
-			newInfo.push(getParamObject("worksheetId", _worksheetId, "worksheetId"));
+			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("orderedColumns", JSON.stringify(columnsJson), "orderedColumns"));
 			info["newInfo"] = JSON.stringify(newInfo);
 			console.log(info);
 			showLoading(info["worksheetId"]);
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					// alert(xhr.responseText);
-					var json = $.parseJSON(xhr.responseText);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured while organizing columns " + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+			var returned = sendRequest(info, _worksheetId);
 
 		};
 
@@ -1556,11 +1351,8 @@ var PublishJSONDialog = (function() {
 		function saveDialog(e, importAsWorksheet) {
 			hide();
 
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			var info = generateInfoObject(worksheetId, "PublishJSONCommand");
 			info["importAsWorksheet"] = importAsWorksheet;
-			info["command"] = "PublishJSONCommand";
 
 			showLoading(info["worksheetId"]);
 			var returned = $.ajax({

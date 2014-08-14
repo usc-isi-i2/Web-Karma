@@ -145,54 +145,20 @@ function WorksheetOptions(wsId, wsTitle) {
 
 	function publishReport() {
 		hideDropdown();
-		var info = new Object();
-		info["worksheetId"] = worksheetId;
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "PublishReportCommand";
+		var info = generateInfoObject(worksheetId, "PublishReportCommand");
 
 		showLoading(info["worksheetId"]);
-		var returned = $.ajax({
-			url: "RequestController",
-			type: "POST",
-			data: info,
-			dataType: "json",
-			complete: function(xhr, textStatus) {
-				var json = $.parseJSON(xhr.responseText);
-				parse(json);
-				hideLoading(info["worksheetId"]);
-			},
-			error: function(xhr, textStatus) {
-				alert("Error publishing report" + textStatus);
-				hideLoading(info["worksheetId"]);
-			}
-		});
+		var returned = sendRequest(info, worksheetId);
 		return false;
 	}
 
 	function deleteWorksheet() {
 		if (confirm("Are you sure you wish to delete the worksheet? \nYou cannot undo this operation")) {
 			hideDropdown();
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "DeleteWorksheetCommand";
+			var info = generateInfoObject(worksheetId, "DeleteWorksheetCommand");
 
 			showLoading(info["worksheetId"]);
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				complete: function(xhr, textStatus) {
-					var json = $.parseJSON(xhr.responseText);
-					parse(json);
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					alert("Error deleting worksheet" + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+			var returned = sendRequest(info, worksheetId);
 		}
 		return false;
 	}
@@ -217,31 +183,13 @@ function WorksheetOptions(wsId, wsTitle) {
 	function showModel() {
 		console.log("SHow Model: " + worksheetTitle);
 		hideDropdown();
-		var info = new Object();
-		info["worksheetId"] = worksheetId;
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "ShowModelCommand";
+		var info = generateInfoObject(worksheetId, "ShowModelCommand");
 
-		var newInfo = [];
-		newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+		var newInfo = info['newInfo'];
 		info["newInfo"] = JSON.stringify(newInfo);
 
 		showLoading(info["worksheetId"]);
-		var returned = $.ajax({
-			url: "RequestController",
-			type: "POST",
-			data: info,
-			dataType: "json",
-			complete: function(xhr, textStatus) {
-				var json = $.parseJSON(xhr.responseText);
-				parse(json);
-				hideLoading(info["worksheetId"]);
-			},
-			error: function(xhr, textStatus) {
-				alert("Error occured while generating semantic types!" + textStatus);
-				hideLoading(info["worksheetId"]);
-			}
-		});
+		var returned = sendRequest(info, worksheetId);
 		return false;
 	}
 
@@ -255,32 +203,13 @@ function WorksheetOptions(wsId, wsTitle) {
 	function showAutoModel() {
 		console.log("SHow Auto Model: " + worksheetTitle);
 		hideDropdown();
-		var info = new Object();
-		info["worksheetId"] = worksheetId;
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "ShowAutoModelCommand";
+		var info = generateInfoObject(worksheetId, "ShowAutoModelCommand");
 
-		var newInfo = [];
-		newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+		var newInfo = info['newInfo'];
 		info["newInfo"] = JSON.stringify(newInfo);
 
 		showLoading(info["worksheetId"]);
-		var returned = $.ajax({
-			url: "RequestController",
-			type: "POST",
-			data: info,
-			dataType: "json",
-			complete: function(xhr, textStatus) {
-				//alert(xhr.responseText);
-				var json = $.parseJSON(xhr.responseText);
-				parse(json);
-				hideLoading(info["worksheetId"]);
-			},
-			error: function(xhr, textStatus) {
-				alert("Error occured while generating the automatic model!" + textStatus);
-				hideLoading(info["worksheetId"]);
-			}
-		});
+		var returned = sendRequest(info, worksheetId);
 		return false;
 	}
 
@@ -305,28 +234,10 @@ function WorksheetOptions(wsId, wsTitle) {
 	function resetModel() {
 		console.log("Reset Model: " + worksheetTitle);
 		hideDropdown();
-		var info = new Object();
-		info["worksheetId"] = worksheetId;
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "ResetModelCommand";
+		var info = generateInfoObject(worksheetId, "ResetModelCommand");
 
 		showLoading(info["worksheetId"]);
-		var returned = $.ajax({
-			url: "RequestController",
-			type: "POST",
-			data: info,
-			dataType: "json",
-			complete: function(xhr, textStatus) {
-				//alert(xhr.responseText);
-				var json = $.parseJSON(xhr.responseText);
-				parse(json);
-				hideLoading(info["worksheetId"]);
-			},
-			error: function(xhr, textStatus) {
-				alert("Error occured while removing semantic types!" + textStatus);
-				hideLoading(info["worksheetId"]);
-			}
-		});
+		var returned = sendRequest(info, worksheetId);
 		return false;
 	}
 
@@ -337,9 +248,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			add: function(e, data) {
 				var override = false;
 				var modelExist = false;
-				var info = new Object();
-				info["worksheetId"] = worksheetId;
-				info["workspaceId"] = $.workspaceGlobalInformation.id;
+				var info = generateInfoObject(worksheetId, "CheckModelExistenceCommand");
 				info["command"] = "CheckModelExistenceCommand";
 				var returned = $.ajax({
 					url: "RequestController",
@@ -348,17 +257,14 @@ function WorksheetOptions(wsId, wsTitle) {
 					dataType: "json",
 					async: false,
 					complete: function(xhr, textStatus) {
-						//alert(xhr.responseText);
 						var json = $.parseJSON(xhr.responseText);
 						json = json.elements[0];
 						console.log(json);
 						modelExist = json['modelExist'];
 
-						//hideLoading(info["worksheetId"]);
 					},
 					error: function(xhr, textStatus) {
 
-						//hideLoading(info["worksheetId"]);
 					}
 				});
 				if (modelExist) {
@@ -405,28 +311,10 @@ function WorksheetOptions(wsId, wsTitle) {
 	function publishModel(event) {
 		console.log("Publish Model: " + worksheetTitle);
 		hideDropdown();
-		var info = new Object();
-		info["worksheetId"] = worksheetId;
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "GenerateR2RMLModelCommand";
+		var info = generateInfoObject(worksheetId, "GenerateR2RMLModelCommand");
 		info['tripleStoreUrl'] = $('#txtModel_URL').text();
 		showLoading(info["worksheetId"]);
-		var returned = $.ajax({
-			url: "RequestController",
-			type: "POST",
-			data: info,
-			dataType: "json",
-			complete: function(xhr, textStatus) {
-				//alert(xhr.responseText);
-				var json = $.parseJSON(xhr.responseText);
-				parse(json);
-				hideLoading(info["worksheetId"]);
-			},
-			error: function(xhr, textStatus) {
-				alert("Error occured while exporting CSV!" + textStatus);
-				hideLoading(info["worksheetId"]);
-			}
-		});
+		var returned = sendRequest(info, worksheetId);
 		return false;
 	}
 
@@ -440,60 +328,23 @@ function WorksheetOptions(wsId, wsTitle) {
 	function publishServiceModel() {
 		console.log("Publish Service Model: " + worksheetTitle);
 		hideDropdown();
-		var info = new Object();
-		info["worksheetId"] = worksheetId;
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "PublishModelCommand";
+		var info = generateInfoObject(worksheetId, "PublishModelCommand");
 
 		showLoading(info["worksheetId"]);
-		var returned = $.ajax({
-			url: "RequestController",
-			type: "POST",
-			data: info,
-			dataType: "json",
-			complete: function(xhr, textStatus) {
-				//alert(xhr.responseText);
-				var json = $.parseJSON(xhr.responseText);
-				parse(json);
-				hideLoading(info["worksheetId"]);
-			},
-			error: function(xhr, textStatus) {
-				alert("Error occured while publishing service model!" + textStatus);
-				hideLoading(info["worksheetId"]);
-			}
-		});
+		var returned = sendRequest(info, worksheetId);
 		return false;
 	}
 
 	function populateSource() {
 		console.log("Populate Source: " + worksheetTitle);
 		hideDropdown();
-		var info = new Object();
-		info["worksheetId"] = worksheetId;
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "PopulateCommand";
+		var info = generateInfoObject(worksheetId, "PopulateCommand");
 
-		var newInfo = []; // Used for commands that take JSONArray as input
-		newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+		var newInfo = info['newInfo']; // Used for commands that take JSONArray as input
 		info["newInfo"] = JSON.stringify(newInfo);
 
 		showLoading(info["worksheetId"]);
-		var returned = $.ajax({
-			url: "RequestController",
-			type: "POST",
-			data: info,
-			dataType: "json",
-			complete: function(xhr, textStatus) {
-				//alert(xhr.responseText);
-				var json = $.parseJSON(xhr.responseText);
-				parse(json);
-				hideLoading(info["worksheetId"]);
-			},
-			error: function(xhr, textStatus) {
-				alert("Error occured while populating source!" + textStatus);
-				hideLoading(info["worksheetId"]);
-			}
-		});
+		var returned = sendRequest(info, worksheetId);
 		return false;
 	}
 
@@ -508,28 +359,11 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("Export to CSV: " + worksheetTitle);
 		hideDropdown();
 
-		var info = new Object();
-		info["worksheetId"] = worksheetId;
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
+		var info = generateInfoObject(worksheetId, "PublishCSVCommand");
 		info["command"] = "PublishCSVCommand";
 
 		showLoading(info["worksheetId"]);
-		var returned = $.ajax({
-			url: "RequestController",
-			type: "POST",
-			data: info,
-			dataType: "json",
-			complete: function(xhr, textStatus) {
-				//alert(xhr.responseText);
-				var json = $.parseJSON(xhr.responseText);
-				parse(json);
-				hideLoading(info["worksheetId"]);
-			},
-			error: function(xhr, textStatus) {
-				alert("Error occured while exporting CSV!" + textStatus);
-				hideLoading(info["worksheetId"]);
-			}
-		});
+		var returned = sendRequest(info, worksheetId);
 
 		return false;
 	}
@@ -544,28 +378,10 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("Export To MDB: " + worksheetTitle);
 		hideDropdown();
 
-		var info = new Object();
-		info["worksheetId"] = worksheetId;
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "PublishMDBCommand";
+		var info = generateInfoObject(worksheetId, "PublishMDBCommand");
 
 		showLoading(info["worksheetId"]);
-		var returned = $.ajax({
-			url: "RequestController",
-			type: "POST",
-			data: info,
-			dataType: "json",
-			complete: function(xhr, textStatus) {
-				//alert(xhr.responseText);
-				var json = $.parseJSON(xhr.responseText);
-				parse(json);
-				hideLoading(info["worksheetId"]);
-			},
-			error: function(xhr, textStatus) {
-				alert("Error occured while exporting MDB!" + textStatus);
-				hideLoading(info["worksheetId"]);
-			}
-		});
+		var returned = sendRequest(info, worksheetId);
 		return false;
 	}
 
@@ -573,28 +389,10 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("Export to Spatial: " + worksheetTitle);
 		hideDropdown();
 
-		var info = new Object();
-		info["worksheetId"] = worksheetId;
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "PublishSpatialDataCommand";
+		var info = generateInfoObject(worksheetId, "PublishSpatialDataCommand");
 
 		showLoading(info["worksheetId"]);
-		var returned = $.ajax({
-			url: "RequestController",
-			type: "POST",
-			data: info,
-			dataType: "json",
-			complete: function(xhr, textStatus) {
-				//alert(xhr.responseText);
-				var json = $.parseJSON(xhr.responseText);
-				parse(json);
-				hideLoading(info["worksheetId"]);
-			},
-			error: function(xhr, textStatus) {
-				alert("Error occured while exporting spatial data!" + textStatus);
-				hideLoading(info["worksheetId"]);
-			}
-		});
+		var returned = sendRequest(info, worksheetId);
 		return false;
 	}
 
