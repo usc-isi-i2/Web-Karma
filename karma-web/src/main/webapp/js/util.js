@@ -24,7 +24,7 @@ function generateInfoObject(worksheetId, commandName) {
 	var newInfo = [];
 	newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
 	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-	info["newInfo"] = JSON.stringify(newInfo);
+	info["newInfo"] = newInfo;
 	return info;
 }
 
@@ -76,7 +76,7 @@ function generateInfoObject(worksheetId, columnId, commandName) {
 	var newInfo = [];
 	newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
 	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-	info["newInfo"] = JSON.stringify(newInfo);
+	info["newInfo"] = newInfo;
 	return info;
 }
 

@@ -34,8 +34,7 @@ public class RefreshSuperSelectionCommandFactory extends JSONInputCommandFactory
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand() {
-		// TODO Auto-generated method stub
-		return RefreshSelectionCommand.class;
+		return RefreshSuperSelectionCommand.class;
 	}
 
 }

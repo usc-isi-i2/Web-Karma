@@ -57,6 +57,7 @@
 
 /* Backgrounds and line colors of tables */
 @color-odd-dark: hsla(@hue, @saturation, 25%, 1); 
+@color-row-selected: hsla(@hue, @saturation, 50%, 1); 
 @color-odd-light: hsla(@hue, @saturation, 75%, 1); 
 @color-even-dark: hsla(@hue, @saturation, 33%, 1); 
 @color-even-light: hsla(@hue, @saturation, 92%, 1); 
@@ -282,6 +283,11 @@ body
 .wk-row-odd .wk-cell 
 {
     border-left-color: @table-odd-vertical-grid-border-color; //@color-odd-dark;    
+}
+
+.wk-row-selected
+{
+    background-color: @color-row-selected;
 }
 
 

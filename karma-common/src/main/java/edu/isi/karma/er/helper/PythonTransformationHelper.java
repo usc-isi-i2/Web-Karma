@@ -44,7 +44,8 @@ public class PythonTransformationHelper {
 			return Long.toString(obj.asLong());
 		else if (type.getName().equals("int"))
 			return Integer.toString(obj.asInt());
-		
+		else if (type.getName().equals("bool")) 
+			return obj.asInt() != 0 ? "true" : "false";
 		return obj.asString();
 	}
 	

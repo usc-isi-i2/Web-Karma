@@ -15,7 +15,7 @@ public class OperateSelectionCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
 		worksheetId, hNodeId, operation, 
-		currentSelectionName, anotherSelectionName
+		pythonCode
 	}
 	
 	@Override
@@ -24,23 +24,16 @@ public class OperateSelectionCommandFactory extends JSONInputCommandFactory {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String operation = CommandInputJSONUtil.getStringValue(Arguments.operation.name(), inputJson);
-		String currentSelectionName = CommandInputJSONUtil.getStringValue(Arguments.currentSelectionName.name(), inputJson);
-		String anotherSelectionName = CommandInputJSONUtil.getStringValue(Arguments.anotherSelectionName.name(), inputJson);
+		String pythonCode = CommandInputJSONUtil.getStringValue(Arguments.pythonCode.name(), inputJson);
 		Command cmd = new OperateSelectionCommand(getNewId(workspace), worksheetId, hNodeId, 
-				operation, currentSelectionName, anotherSelectionName);
+				operation, pythonCode);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
-		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String operation = request.getParameter(Arguments.operation.name());
-		String currentSelectionName = request.getParameter(Arguments.currentSelectionName.name());
-		String anotherSelectionName = request.getParameter(Arguments.anotherSelectionName.name());
-		return new OperateSelectionCommand(getNewId(workspace), worksheetId, hNodeId, 
-				operation, currentSelectionName, anotherSelectionName);
+		return null;
 	}
 
 	@Override

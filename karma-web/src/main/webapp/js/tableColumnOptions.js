@@ -52,6 +52,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	function addRows() {
 		console.log("addRows");
 		hideDropdown();
+		$("#pyTransformSelectionDialog").data("operation", "Union");
 		PyTransformSelectionDialog.getInstance(wsId, wsColumnId).show();
 	}
 
@@ -1785,7 +1786,10 @@ var PyTransformSelectionDialog = (function() {
 				columnId = colId;				
 				headers = getColumnHeadings(worksheetId, columnId, "GroupBy");
 				console.log(headers);
-
+				editor = ace.edit("transformCodeEditorSelection");
+				editor.setTheme("ace/theme/dreamweaver");
+				editor.getSession().setMode("ace/mode/python");
+				editor.getSession().setUseWrapMode(true);			 
 				dialog.on("resize", function(event, ui) {
 					editor.resize();
 				});				
@@ -1793,10 +1797,6 @@ var PyTransformSelectionDialog = (function() {
 				dialog.on('show.bs.modal', function (e) {
 					console.log("trigger");
 					hideError();
-					editor = ace.edit("transformCodeEditorSelection");
-					editor.setTheme("ace/theme/dreamweaver");
-					editor.getSession().setMode("ace/mode/python");
-					editor.getSession().setUseWrapMode(true);			 
 					editor.getSession().setValue("return getValue(\"" + headers[0]['ColumnName'] + "\")");							 								
 					$("#pythonPreviewResultsTableSelection").hide();
 					$("#btnErrorsSelection").button('disable');
@@ -1832,6 +1832,13 @@ var PyTransformSelectionDialog = (function() {
 				
 			function saveDialog(e) {
 				console.log("Save clicked");
+				var info = generateInfoObject(worksheetId, headers[0]['HNodeId'], "OperateSelectionCommand");
+				var newInfo = info['newInfo'];
+				newInfo.push(getParamObject("pythonCode", editor.getValue(), "other"));
+				newInfo.push(getParamObject("operation", dialog.data("operation"), "other"));
+				info["newInfo"] = JSON.stringify(newInfo);
+				sendRequest(info, worksheetId);
+				hide();
 			};
 				
 			function previewTransform() {

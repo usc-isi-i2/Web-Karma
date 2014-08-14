@@ -930,7 +930,8 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
 								 .attr("id", rowId);
 				}
 				var row = rowWithMetaData['rowValueArray'];
-
+				if (isSelected)
+					rowTr.addClass("wk-row-selected");
 				$.each(row, function(index2, cell){
 						var td = $("<td>").addClass("wk-cell");
 						var dataDiv = $("<div>");

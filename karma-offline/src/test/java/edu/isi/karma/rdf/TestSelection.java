@@ -91,11 +91,10 @@ public class TestSelection {
 		StringBuilder pythonCode = new StringBuilder();
 		pythonCode.append("if getValue(\"title\") == \"Prof\": \n");
 		pythonCode.append("	 return True \n");
-		boolean result = worksheet.getSelectionManager().createMiniSelection(workspace, worksheet.getId(), 
+		Selection sel = worksheet.getSelectionManager().createMiniSelection(workspace, worksheet.getId(), 
 				worksheet.getHeaders().getId(), 
-				"selection", pythonCode.toString());
-		assertEquals(result, true);
-		Selection sel = worksheet.getSelectionManager().getSelection(worksheet.getHeaders().getId(), "selection");
+				pythonCode.toString());
+		assertEquals(sel != null, true);
 		Table t = worksheet.getDataTable();
 		for (Row r : t.getRows(0, t.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
 			boolean t1 = sel.isSelected(r);
@@ -110,10 +109,9 @@ public class TestSelection {
 		StringBuilder pythonCode = new StringBuilder();
 		pythonCode.append("if getValue(\"title\") == \"Prof\": \n");
 		pythonCode.append("	 return True \n");
-		worksheet.getSelectionManager().createMiniSelection(workspace, worksheet.getId(), 
+		Selection sel = worksheet.getSelectionManager().createMiniSelection(workspace, worksheet.getId(), 
 				worksheet.getHeaders().getId(), 
-				"selection", pythonCode.toString());
-		Selection sel = worksheet.getSelectionManager().getSelection(worksheet.getHeaders().getId(), "selection");
+				pythonCode.toString());
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
 				"people-model", getTestResource(
 						 "people-model.ttl"));

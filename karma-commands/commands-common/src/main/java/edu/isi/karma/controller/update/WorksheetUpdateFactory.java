@@ -55,7 +55,6 @@ public class WorksheetUpdateFactory {
 			UpdateContainer c, SuperSelection sel) {
 		c.add(new WorksheetHeadersUpdate(worksheetId));
 		c.add(new WorksheetDataUpdate(worksheetId, sel));
-		c.add(new WorksheetSelectionListUpdate(worksheetId));
 		c.add(new WorksheetSuperSelectionListUpdate(worksheetId));
 	}
 	public static UpdateContainer createRegenerateWorksheetUpdates(String worksheetId, SuperSelection sel) {
@@ -75,7 +74,7 @@ public class WorksheetUpdateFactory {
 	
 	public static void detectSelectionStatusChange(String worksheetId, Workspace workspace, Command command) {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		for (Selection sel : worksheet.getSelectionManager().getAllDefinedSelection()) {
+		for (Selection sel : worksheet.getSelectionManager().getDefinedSelection()) {
 			Set<String> inputColumns = new HashSet<String>(sel.getInputColumns());
 			inputColumns.retainAll(command.getOutputColumns());
 			if (inputColumns.size() > 0)
