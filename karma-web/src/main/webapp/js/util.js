@@ -65,11 +65,13 @@ function generateInfoObject(worksheetId, columnId, commandName) {
 	if (worksheetId != "" && worksheetId != undefined)
 		info["worksheetId"] = worksheetId;
 	info["command"] = commandName;
+	info['selectionName'] = "DEFAULT_TEST";
 	var newInfo = [];
 	if (columnId != "" && columnId != undefined)
 		newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
 	if (worksheetId != "" && worksheetId != undefined)
 		newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+	newInfo.push(getParamObject("selectionName", "DEFAULT_TEST", "other"));
 	info["newInfo"] = newInfo;
 	return info;
 }

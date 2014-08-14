@@ -14,18 +14,11 @@ public class SuperSelection {
 		this.name = name;
 	}
 	
-	public SuperSelection(String name, List<Selection> selections) {
-		this.name = name;
-		this.selections = selections;
-	}
-	
 	public void addSelection(Selection sel) {
 		selections.add(sel);
 	}
 	
-	public boolean isSelected(Row row){
-		if (selections == null)
-			return false;
+	public boolean isSelected(Row row) {
 		boolean ret = false;
 		for (Selection sel : selections) {
 			ret |= sel.isSelected(row);
@@ -38,9 +31,6 @@ public class SuperSelection {
 	}
 	
 	public SelectionStatus refreshStatus() {
-		if (selections == null) {
-			return SelectionStatus.UP_TO_DATE;
-		}
 		for (Selection sel : selections) {
 			if (sel.getStatus() == SelectionStatus.OUT_OF_DATE)
 				return SelectionStatus.OUT_OF_DATE;
@@ -48,10 +38,7 @@ public class SuperSelection {
 		return SelectionStatus.UP_TO_DATE;
 	}
 	
-	public void updateSelection(){
-		if (selections == null) {
-			return;
-		}
+	public void updateSelection() {
 		for (Selection sel : selections) {
 			sel.updateSelection();
 		}

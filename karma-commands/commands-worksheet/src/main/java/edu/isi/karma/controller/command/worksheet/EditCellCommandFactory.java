@@ -28,14 +28,18 @@ import edu.isi.karma.rep.Workspace;
 
 public class EditCellCommandFactory extends CommandFactory {
 
+	private enum Arguments {
+		worksheetId, nodeId, value, selectionName
+	}
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 
-		String nodeId = request.getParameter(EditCellCommandArguments.nodeId.name());
-		String newValue = request.getParameter(EditCellCommandArguments.value.name());
+		String nodeId = request.getParameter(Arguments.nodeId.name());
+		String newValue = request.getParameter(Arguments.value.name());
+		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new EditCellCommand(getNewId(workspace), 
-				getWorksheetId(request, workspace), nodeId, newValue);
+				getWorksheetId(request, workspace), nodeId, newValue, selectionName);
 	}
 
 	@Override

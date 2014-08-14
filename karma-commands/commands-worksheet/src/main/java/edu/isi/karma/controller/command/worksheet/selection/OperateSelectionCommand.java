@@ -78,7 +78,7 @@ public class OperateSelectionCommand extends WorksheetCommand {
 			if (t == null)
 				return getErrorUpdate("Creation unsuccessful");
 			previousSelection = worksheet.getSelectionManager().updateCurrentSelection(hTable.getId(), t);
-			superSel = worksheet.getSuperSelectionManager().defineSelection("hack");
+			superSel = worksheet.getSuperSelectionManager().getSuperSelection("DEFAULT_TEST");
 			superSel.addSelection(t);
 		}catch (Exception e) {
 			return getErrorUpdate("The operation is undefined");
@@ -91,8 +91,8 @@ public class OperateSelectionCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		worksheet.getSuperSelectionManager().removeSelection("hack");
-		SuperSelection superSel = worksheet.getSuperSelectionManager().defineSelection("hack");
+		worksheet.getSuperSelectionManager().removeSelection("DEFAULT_TEST");
+		SuperSelection superSel = worksheet.getSuperSelectionManager().defineSelection("DEFAULT_TEST");
 		HNode hNode = workspace.getFactory().getHNode(hNodeId);
 		worksheet.getSelectionManager().removeSelection(hNode.getHTableId());
 		worksheet.getSelectionManager().updateCurrentSelection(hNode.getHTableId(), previousSelection);

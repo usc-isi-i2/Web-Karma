@@ -79,7 +79,7 @@ public class WorksheetUpdateFactory {
 
 	public static void detectSelectionStatusChange(String worksheetId, Workspace workspace, Command command) {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		for (Selection sel : worksheet.getSelectionManager().getDefinedSelection()) {
+		for (Selection sel : worksheet.getSelectionManager().getAllDefinedSelection()) {
 			Set<String> inputColumns = new HashSet<String>(sel.getInputColumns());
 			inputColumns.retainAll(command.getOutputColumns());
 			if (inputColumns.size() > 0)

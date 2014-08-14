@@ -25,7 +25,8 @@ package edu.isi.karma.controller.command.worksheet;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.NodeChangedUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -38,7 +39,7 @@ import edu.isi.karma.rep.Workspace;
  * @author szekely
  * 
  */
-public class EditCellCommand extends WorksheetCommand {
+public class EditCellCommand extends WorksheetSelectionCommand {
 
 	private final String nodeIdArg;
 
@@ -49,8 +50,8 @@ public class EditCellCommand extends WorksheetCommand {
 	private final CellValue newValueArg;
 	
 	EditCellCommand(String id, String worksheetId, String nodeIdArg,
-			String newValueArg) {
-		super(id, worksheetId);
+			String newValueArg, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.nodeIdArg = nodeIdArg;
 		this.newValueArg = new StringCellValue(newValueArg);
 	}
@@ -71,6 +72,7 @@ public class EditCellCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Node node = workspace.getFactory().getNode(nodeIdArg);
+		SuperSelection sel = getSuperSelection(workspace);
 		inputColumns.clear();
 		outputColumns.clear();
 		inputColumns.add(node.getHNodeId());
@@ -84,16 +86,21 @@ public class EditCellCommand extends WorksheetCommand {
 		node.setValue(newValueArg, Node.NodeStatus.edited,
 				workspace.getFactory());
 		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
-		return new UpdateContainer(new NodeChangedUpdate(worksheetId,
+		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, sel);
+		uc.add(new NodeChangedUpdate(worksheetId,
 				nodeIdArg, newValueArg, Node.NodeStatus.edited));
+		return uc;
 	}
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		Node node = workspace.getFactory().getNode(nodeIdArg);
+		SuperSelection sel = getSuperSelection(workspace);
 		node.setValue(previousValue, previousStatus, workspace.getFactory());
-		return new UpdateContainer(new NodeChangedUpdate(worksheetId,
+		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, sel);
+		uc.add(new NodeChangedUpdate(worksheetId,
 				nodeIdArg, previousValue, previousStatus));
+		return uc;
 	}
 
 	@Override

@@ -75,6 +75,16 @@ public class SelectionManager {
 		return selections;
 	}
 	
+	public List<Selection> getAllDefinedSelection() {
+		List<Selection> selections = new ArrayList<Selection>();
+		for (Entry<String, List<Selection> > entry : selectionMapping.entrySet()) {
+			List<Selection> sels = entry.getValue();
+			if (sels != null)
+				selections.addAll(sels);
+		}
+		return selections;
+	}
+	
 	public Selection updateCurrentSelection(String hTableId, Selection sel) {
 		if (sel == null) {
 			currentSelectionMapping.remove(hTableId);

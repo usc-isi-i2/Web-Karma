@@ -846,8 +846,10 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
 				.attr("id", rowId);
 		}
 		var row = rowWithMetaData['rowValueArray'];
-		if (isSelected)
+		if (isSelected == "SELECTED")
 			rowTr.addClass("wk-row-selected");
+		if (isSelected == "OUT_OF_DATE")
+			rowTr.addClass("wk-row-out-of-date");
 		$.each(row, function(index2, cell) {
 			var td = $("<td>").addClass("wk-cell");
 			var dataDiv = $("<div>");
@@ -908,7 +910,7 @@ function submitTableCellEdit(worksheetId, nodeId, value) {
 	edits["value"] = value;
 	edits["nodeId"] = nodeId;
 	showLoading(worksheetId);
-	var returned = sendRequest(info, worksheetId);
+	var returned = sendRequest(edits, worksheetId);
 }
 
 function fetchExistingModelLabel(worksheetId) {

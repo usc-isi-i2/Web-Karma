@@ -9,9 +9,10 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class SuperSelectionManager {
 	private Map<String, SuperSelection> selectionMapping = new HashMap<String, SuperSelection>();
-	public static final SuperSelection DEFAULT_SELECTION = new SuperSelection("DEFAULT_SELECTION", null);
+	public static final SuperSelection DEFAULT_SELECTION = new SuperSelection("DEFAULT_SELECTION");
 	public SuperSelectionManager() {
 		selectionMapping.put("DEFAULT_SELECTION", DEFAULT_SELECTION);
+		selectionMapping.put("DEFAULT_TEST", new SuperSelection("DEFAULT_TEST"));
 	}
 	
 	public SuperSelection defineSelection(String name) {

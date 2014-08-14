@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.selection.Selection.SelectionStatus;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
@@ -100,7 +101,12 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 			JSONObject rowObj = new JSONObject();
 			JSONArray rowValueArray = new JSONArray();
 			rowObj.put(JsonKeys.rowId.name(), row.getId());
-			rowObj.put(JsonKeys.isSelected.name(), selection.isSelected(row));
+			if (selection.isSelected(row) && selection.refreshStatus() != SelectionStatus.OUT_OF_DATE)
+				rowObj.put(JsonKeys.isSelected.name(), "SELECTED");
+			if (selection.isSelected(row) && selection.refreshStatus() == SelectionStatus.OUT_OF_DATE)
+				rowObj.put(JsonKeys.isSelected.name(), "OUT_OF_DATE");
+			if (!selection.isSelected(row))
+				rowObj.put(JsonKeys.isSelected.name(), "NOT_SELECTED");
 			rowObj.put(JsonKeys.rowValueArray.name(), rowValueArray);
 			for (VHNode vNode : orderedHnodeIds) {
 				if(vNode.isVisible()) {
