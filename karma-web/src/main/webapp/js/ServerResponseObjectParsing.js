@@ -293,12 +293,17 @@ function parse(data) {
 																.attr("id", "hideShow" + worksheet["worksheetId"])
 																.click(function() {
 																		var visible =$("div.table-container", mainDiv).is(':visible');
-																		$("div.svg-model", mainDiv).toggle(400);
-																		$("div.table-container", mainDiv).toggle(400);
-																		$("div.table-data-container", mainDiv).toggle(400);
-
 																		visible = !visible;
+																		
+																		$("div.svg-model", mainDiv).toggle();
+																		$("div.table-container", mainDiv).toggle('fast', function() {
+																			if(visible)
+																				refreshAlignmentTree(worksheet["worksheetId"]);
+																			$("div.table-data-container", mainDiv).toggle();
+																		});
+																		
 																		mainDiv.data("worksheetVisible", visible);
+																		
 																		
 																		// Change the corners
 																		titleDiv.toggleClass("ui-corner-top");
@@ -313,12 +318,6 @@ function parse(data) {
 																			$(this).removeClass("glyphicon-chevron-down");
 																		}
 																		
-																		if(visible) { //When worksheet becomes visble, refresh it to get all updates
-																			window.setTimeout(function() {
-																				refreshAlignmentTree(worksheet["worksheetId"]);
-																			}, 100);
-																			
-																		}
 																})
 														)
 												);
