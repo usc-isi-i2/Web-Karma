@@ -519,6 +519,35 @@ function changeKarmaHome(homeDir) {
 	return result;
 }
 
+function refreshWorksheet(worksheetId, updates) {
+	console.log("Refresh Worksheet:" + refreshWorksheet)
+	var info = new Object();
+    info["worksheetId"] = worksheetId;
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "RefreshWorksheetCommand";
+    info["updates"] = JSON.stringify(updates);
+
+    showLoading(info["worksheetId"]);
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                //alert(xhr.responseText);
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+                hideLoading(info["worksheetId"]);
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while refreshing model!" + textStatus);
+                hideLoading(info["worksheetId"]);
+            }
+    });
+}
+
 //Make All Modal Dialogs Resizeable
 $(".modal-dialog").resizable({ handles: "e, w" });
 $(".modal-dialog").draggable({

@@ -23,6 +23,12 @@
 function displayAlignmentTree_ForceKarmaLayout(json) {
     var worksheetId = json["worksheetId"];
     var mainWorksheetDiv = $("div#"+worksheetId);
+    
+	//var worksheetPanel = $("div.Worksheet#" + worksheetId);
+	var wsVisible = mainWorksheetDiv.data("worksheetVisible");
+	if(!wsVisible) {
+		return;
+	}
     var tableLeftOffset = mainWorksheetDiv.offset().left;
     var optionsDiv = $("div#WorksheetOptionsDiv", mainWorksheetDiv);
     var viewStraightLineModel = optionsDiv.data("viewStraightLineModel");

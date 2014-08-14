@@ -168,7 +168,7 @@ AbstractUpdate {
 		JSONObject response = new JSONObject();
 		try {
 			response.put(GenericJsonKeys.updateType.name(), this.getClass().getSimpleName());
-			response.put(JsonKeys.worksheetId.name(), vWorksheet.getId());
+			response.put(JsonKeys.worksheetId.name(), worksheetId);
 			JSONArray chartData = new JSONArray();
 
 			for (String hNodeId:columnsInvoked) {

@@ -69,6 +69,13 @@ function parse(data) {
 		
 		// Loop through each update from the server and take required action for the GUI
 		$.each(data["elements"], function(i, element) {
+			if(element["worksheetId"]) {
+				var worksheetPanel = $("div.Worksheet#" + element["worksheetId"]);
+				var wsVisible = worksheetPanel.data("worksheetVisible");
+				if(!wsVisible) {
+					return;
+				}
+			}
 				if(element["updateType"] == "WorksheetListUpdate") {
 
 						$.each(element["worksheets"], function(j, worksheet) {
@@ -292,13 +299,20 @@ function parse(data) {
 																.addClass("glyphicon-chevron-up")		
 																.attr("id", "hideShow" + worksheet["worksheetId"])
 																.click(function() {
-																		var visible =$("div.table-container", mainDiv).is(':visible');
+																		var visible =$("div.worksheet-table-container", mainDiv).is(':visible');
 																		visible = !visible;
 																		
 																		$("div.svg-model", mainDiv).toggle();
-																		$("div.table-container", mainDiv).toggle('fast', function() {
+																		$("div.worksheet-table-container", mainDiv).toggle(function() {
 																			if(visible)
-																				refreshAlignmentTree(worksheet["worksheetId"]);
+																				refreshWorksheet(worksheet["worksheetId"],
+																						["all"]);
+//																						["regenerate",
+//																						 "headers",
+//																						 "data",
+//																						 "semanticTypes",
+//																						 "alignment"
+//																						 ]);
 																			$("div.table-data-container", mainDiv).toggle();
 																		});
 																		
@@ -346,7 +360,7 @@ function parse(data) {
 
 						var tableContainer = $("div.table-container", worksheetPanel);
 						if (tableContainer.length == 0) {
-								tableContainer = $("<div>").addClass("table-container");
+								tableContainer = $("<div>").addClass("table-container").addClass("worksheet-table-container");
 								worksheetPanel.append(tableContainer);
 						}
 
@@ -711,13 +725,7 @@ function parse(data) {
 						$.sticky(element["Info"]);
 				}
 				else if(element["updateType"] == "AlignmentSVGVisualizationUpdate") {
-					var worksheetId = element["worksheetId"];
-					var worksheetPanel = $("div.Worksheet#" + worksheetId);
-					var wsVisible = worksheetPanel.data("worksheetVisible");
-					if(wsVisible) {
 						displayAlignmentTree_ForceKarmaLayout(element);
-					}
-
 				}
 				else if(element["updateType"] == "KarmaInfo") {
 					if(infos[element["Info"]]) {
