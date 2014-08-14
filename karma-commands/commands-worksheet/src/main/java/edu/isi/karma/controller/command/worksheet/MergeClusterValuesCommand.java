@@ -24,6 +24,7 @@ import edu.isi.karma.rep.Workspace;
 
 public class MergeClusterValuesCommand extends WorksheetCommand {
 	private String hNodeId;
+	@SuppressWarnings("unused")
 	private Map<String, String> oldRowValueMap = new HashMap<String, String>();
 	
 	MultipleValueEditColumnCommand edit;

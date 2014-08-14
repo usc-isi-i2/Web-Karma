@@ -646,6 +646,7 @@ public class ModelLearner {
 		return Double.valueOf(twoDForm.format(d));
 	}
 
+	@SuppressWarnings("unused")
 	private static void getStatistics1(List<SemanticModel> semanticModels) {
 		for (int i = 0; i < semanticModels.size(); i++) {
 			SemanticModel source = semanticModels.get(i);
