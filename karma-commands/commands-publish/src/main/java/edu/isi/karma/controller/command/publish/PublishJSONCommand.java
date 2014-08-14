@@ -23,6 +23,7 @@ import edu.isi.karma.controller.update.WorksheetDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.imp.json.JsonImport;
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
@@ -39,7 +40,7 @@ public class PublishJSONCommand extends WorksheetCommand {
 	private enum JsonKeys {
 		updateType, fileUrl, worksheetId
 	}
-	
+
 	private String worksheetName;
 	private boolean importAsWorksheet;
 	// Logger object
@@ -75,7 +76,7 @@ public class PublishJSONCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		final Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		this.worksheetName = worksheet.getTitle();
-		
+
 		// Prepare the file path and names
 		final String newWorksheetName = worksheetName + "-" + workspace.getCommandPreferencesId() + worksheetId;
 		final String fileName =  newWorksheetName + ".json"; 
@@ -83,11 +84,11 @@ public class PublishJSONCommand extends WorksheetCommand {
 				fileName;
 		final String relFilename = ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR) + fileName;
 		final Workspace finalWorkspace = workspace;
-		
+
 		final class PublishJSONUpdate extends AbstractUpdate {
 			String newWSId = null;
 			String errorOnUpdate = null;
-			
+
 			@Override
 			public void applyUpdate(VWorkspace vWorkspace) {
 				VWorksheet vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
@@ -96,21 +97,21 @@ public class PublishJSONCommand extends WorksheetCommand {
 					TablePager pager = vWorksheet.getTopTablePager();
 					generateRowsUsingPager(pager, vWorksheet, vWorksheet.getHeaderViewNodes(), fileWriter,"");
 					fileWriter.close();
-					
+
 					if(importAsWorksheet) {
 						JsonImport jsonImp = new JsonImport(new File(fileLocalPath), newWorksheetName, finalWorkspace, "utf-8", -1, null);
 						jsonImp.generateWorksheet();
 						newWSId = jsonImp.getWorksheet().getId();
 						new WorksheetListUpdate().applyUpdate(vWorkspace);
 					}
-					
-					
+
+
 				} catch(Exception ie) {
 					logger.error("Error writing JSON to file: " + fileLocalPath);
 					errorOnUpdate = "Error exporting to JSON";
 				}
 			}
-			
+
 			@Override
 			public void generateJson(String prefix, PrintWriter pw,
 					VWorkspace vWorkspace) {
@@ -124,12 +125,15 @@ public class PublishJSONCommand extends WorksheetCommand {
 					pw.println(outputObject.toString(4));
 					pw.println(",");
 					new InfoUpdate("Succesfully exported to JSON").generateJson(prefix, pw, vWorkspace);
+					boolean showCleaningCharts = ModelingConfiguration.isShowCleaningCharts();
 					if(importAsWorksheet && newWSId != null) {
 						pw.println(",");
 						new WorksheetListUpdate().generateJson(prefix, pw, vWorkspace);
 						pw.println(",");
-						new WorksheetCleaningUpdate(newWSId, true, SuperSelectionManager.DEFAULT_SELECTION).generateJson(prefix, pw, vWorkspace);
-						pw.println(",");
+						if (showCleaningCharts) {
+							new WorksheetCleaningUpdate(newWSId, true, SuperSelectionManager.DEFAULT_SELECTION).generateJson(prefix, pw, vWorkspace);
+							pw.println(",");
+						}
 						new WorksheetHeadersUpdate(newWSId).generateJson(prefix, pw, vWorkspace);
 						pw.println(",");
 						new WorksheetDataUpdate(newWSId, SuperSelectionManager.DEFAULT_SELECTION).generateJson(prefix, pw, vWorkspace);
@@ -137,10 +141,10 @@ public class PublishJSONCommand extends WorksheetCommand {
 				}
 			}
 		}
-		
+
 		PublishJSONUpdate update = new PublishJSONUpdate();
 		UpdateContainer uc = new UpdateContainer(update);
-		
+
 		return uc;
 	}
 
@@ -150,7 +154,7 @@ public class PublishJSONCommand extends WorksheetCommand {
 		List<Row> rows = pager.getRows();
 		pw.print(space + "[");
 		while(true) {
-			
+
 			generateRowsJSONArray(rows, vWorksheet, orderedHnodeIds, pw, space + " ");
 			if(pager.isAtEndOfTable()) {
 				break;
@@ -161,7 +165,7 @@ public class PublishJSONCommand extends WorksheetCommand {
 		pw.println();
 		pw.println(space + "]");
 	}
-	
+
 	private void generateRowsJSONArray(List<Row> rows, VWorksheet vWorksheet, List<VHNode> orderedHnodeIds, 
 			PrintWriter pw, String space) throws JSONException {
 		String sep = "";
@@ -182,7 +186,7 @@ public class PublishJSONCommand extends WorksheetCommand {
 						String str = nodeObj.toString();
 						pw.print(rowSep);
 						pw.print(str.substring(1, str.length()-3));
-						
+
 						Table nestedTable = rowNode.getNestedTable();
 						generateRowsUsingPager( 
 								vWorksheet.getNestedTablePager(nestedTable), 
@@ -201,18 +205,18 @@ public class PublishJSONCommand extends WorksheetCommand {
 					}
 					rowSep = ",";
 				}
-				
+
 			}
 			pw.print(space + "}");
 			sep = ",";
 		}
 	}
-	
+
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 
 }

@@ -13,9 +13,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 			name: "divider",
 			leafOnly: true,
 			leafExcluded: false
-		},
-
-		{
+		}, {
 			name: "Add Column",
 			func: addColumn,
 			leafOnly: false,

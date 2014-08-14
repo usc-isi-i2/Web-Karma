@@ -27,6 +27,7 @@ import java.util.Set;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -40,17 +41,21 @@ public class WorksheetUpdateFactory {
 	}
 	private static void createWorksheetHierarchicalAndCleaningResultsUpdates(
 			String worksheetId, UpdateContainer c, SuperSelection sel) {
-		c.add(new WorksheetCleaningUpdate(worksheetId, true, sel));
+		boolean showCleaningCharts = ModelingConfiguration.isShowCleaningCharts();
+		if (showCleaningCharts)
+			c.add(new WorksheetCleaningUpdate(worksheetId, true, sel));
 		createWorksheetHierarchicalUpdates(worksheetId, c, sel);
 	}
-	
+
 	public static UpdateContainer createWorksheetHierarchicalUpdates(String worksheetId, SuperSelection sel) {
 		UpdateContainer c = new UpdateContainer();
-		c.add(new WorksheetCleaningUpdate(worksheetId, false, sel));
+		boolean showCleaningCharts = ModelingConfiguration.isShowCleaningCharts();
+		if (showCleaningCharts)
+			c.add(new WorksheetCleaningUpdate(worksheetId, false, sel));
 		createWorksheetHierarchicalUpdates(worksheetId, c, sel);
 		return c;
 	}
-	
+
 	private static void createWorksheetHierarchicalUpdates(String worksheetId,
 			UpdateContainer c, SuperSelection sel) {
 		c.add(new WorksheetHeadersUpdate(worksheetId));
@@ -71,7 +76,7 @@ public class WorksheetUpdateFactory {
 		c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
 		return c;
 	}
-	
+
 	public static void detectSelectionStatusChange(String worksheetId, Workspace workspace, Command command) {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		for (Selection sel : worksheet.getSelectionManager().getDefinedSelection()) {
