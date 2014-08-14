@@ -23,17 +23,18 @@ import edu.isi.karma.rep.Workspace;
 public class MiniSelection extends Selection {
 
 	private String pythonCode;
-	
+	private boolean onError;
 	private static Logger logger = LoggerFactory
 			.getLogger(MiniSelection.class);
 
 	MiniSelection(Workspace workspace, String worksheetId, String hTableId,
-			String name, String pythonCode) throws IOException {
+			String name, String pythonCode, boolean onError) {
 		super(workspace, worksheetId, hTableId, name);
 		this.pythonCode = pythonCode;
+		this.onError = onError;
 		populateSelection();
 	}
-	
+
 	public void updateSelection(){
 		if (this.status == SelectionStatus.UP_TO_DATE)
 			return;
@@ -49,35 +50,48 @@ public class MiniSelection extends Selection {
 		}
 		this.status = SelectionStatus.UP_TO_DATE;
 	}
-	
+
 	public void addInputColumns(String hNodeId) {
 		evalColumns.add(hNodeId);
 	}
-	
-	private void populateSelection() throws IOException {
+
+	private void populateSelection() {
 		List<Table> tables = new ArrayList<Table>();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), workspace.getFactory().getHTable(hTableId), tables, SuperSelectionManager.DEFAULT_SELECTION);
 		PythonInterpreter interpreter = new PythonInterpreter();
-		PyCode code = getCompiledCode(pythonCode, interpreter);
+		PyCode code = null;
+		try {
+			code = getCompiledCode(pythonCode, interpreter);
+		} catch(Exception e) {
+			
+		}
 		for (Table t : tables) {
 			for (Row r : t.getRows(0, t.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
-				selectedRowsCache.put(r, evaluatePythonExpression(r, code, interpreter));
+				if (code == null)
+					selectedRowsCache.put(r, onError);
+				else
+					selectedRowsCache.put(r, evaluatePythonExpression(r, code, interpreter));
 			}
 		}
 	}
-	
+
 	private boolean evaluatePythonExpression(Row r, PyCode code, PythonInterpreter interpreter) {
 		evalColumns.clear();
-		ArrayList<Node> nodes = new ArrayList<Node>(r.getNodes());
-		Node node = nodes.get(0);
-		interpreter.set("nodeid", node.getId());
-		PyObject output = interpreter.eval(code);
-		return PythonTransformationHelper.getPyObjectValueAsBoolean(output);
+		try {
+			ArrayList<Node> nodes = new ArrayList<Node>(r.getNodes());
+			Node node = nodes.get(0);
+			interpreter.set("nodeid", node.getId());
+			PyObject output = interpreter.eval(code);
+			return PythonTransformationHelper.getPyObjectValueAsBoolean(output);
+		}catch(Exception e) {
+			return onError;
+		}
+
 	}
-	
+
 	private PyCode getCompiledCode(String pythonCode, PythonInterpreter interpreter) throws IOException {
-		
+
 		String trimmedTransformationCode = pythonCode.trim();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		if (trimmedTransformationCode.isEmpty()) {
@@ -94,9 +108,9 @@ public class MiniSelection extends Selection {
 		PythonRepository repo = PythonRepository.getInstance();
 		repo.initializeInterperter(interpreter);
 		repo.importUserScripts(interpreter);
-		
+
 		repo.compileAndAddToRepositoryAndExec(interpreter, transformMethodStmt);
-		
+
 		interpreter.set("workspaceid", workspace.getId());
 		interpreter.set("command", this);
 		return repo.getTransformCode();

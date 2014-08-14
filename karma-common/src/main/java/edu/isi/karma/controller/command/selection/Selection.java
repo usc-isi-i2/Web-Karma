@@ -16,6 +16,10 @@ public abstract class Selection {
 		UP_TO_DATE, OUT_OF_DATE
 	}
 	
+	public enum RowStatus {
+		SELECTED, OUT_OF_DATE, NOT_SELECTED
+	}
+	
 	public enum Tag {
 		IGNORE_IN_PUBLISH_RDF, IGNORE_IN_JSON_EXPORT, 
 		IGNORE_IN_SERVICE_INVOCATION, IGNORE_IN_WORKSHEET_TRANSFORMATION
@@ -73,8 +77,19 @@ public abstract class Selection {
 	public boolean isSelected(Row row) {
 		Boolean prop = selectedRowsCache.get(row);
 		if (prop == null)
-			return false;
+			prop = false;
 		return prop;
+	}
+	
+	public RowStatus getSelectedStatus(Row row) {
+		if (!row.getBelongsToTable().getHTableId().equals(hTableId))
+			return RowStatus.NOT_SELECTED;
+		if (this.status == SelectionStatus.OUT_OF_DATE)
+			return RowStatus.OUT_OF_DATE;
+		Boolean prop = selectedRowsCache.get(row);
+		if (prop == null)
+			prop = false;
+		return prop ? RowStatus.SELECTED : RowStatus.NOT_SELECTED;
 	}
 	
 	public abstract void updateSelection();

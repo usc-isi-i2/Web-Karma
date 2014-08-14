@@ -30,7 +30,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.selection.Selection.SelectionStatus;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
@@ -43,7 +42,7 @@ import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
 
 public class WorksheetDataUpdate extends AbstractUpdate {
-	
+
 	private final String worksheetId;
 	private static Logger logger = LoggerFactory.getLogger(WorksheetDataUpdate.class);
 	private final SuperSelection selection;
@@ -62,27 +61,27 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 	@Override
 	public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
 		VWorksheet vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
-		
+
 		try {
 			JSONObject response = new JSONObject();
 			response.put(JsonKeys.worksheetId.name(), worksheetId);
 			response.put(AbstractUpdate.GenericJsonKeys.updateType.name(), 
 					this.getClass().getSimpleName());
-			
+
 			Worksheet wk = vWorksheet.getWorksheet();
 			Table dataTable = wk.getDataTable();
 			TablePager pager = vWorksheet.getTopTablePager();
-			
+
 			JSONArray rows = getRowsUsingPager(
-							pager, vWorksheet,
-							vWorksheet.getHeaderViewNodes(), vWorkspace.getPreferences().getIntViewPreferenceValue(
+					pager, vWorksheet,
+					vWorksheet.getHeaderViewNodes(), vWorkspace.getPreferences().getIntViewPreferenceValue(
 							ViewPreference.maxCharactersInCell));
 			int rowsLeft = dataTable.getNumRows() - rows.length();
 			rowsLeft = rowsLeft < 0 ? 0 : rowsLeft;
 			response.put(JsonKeys.additionalRowsCount.name(), rowsLeft);
 			response.put(JsonKeys.tableId.name(), dataTable.getId());
 			response.put(JsonKeys.rows.name(), rows);
-			
+
 			pw.println(response.toString());
 		} catch (JSONException e) {
 			logger.error("JSONException", e);
@@ -92,21 +91,16 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 	private JSONArray getRowsUsingPager(TablePager pager, VWorksheet vWorksheet, List<VHNode> orderedHnodeIds, int maxDataDisplayLength) throws JSONException {
 		return getRowsJsonArray(pager.getRows(),vWorksheet,  orderedHnodeIds, maxDataDisplayLength);
 	}
-	
+
 	public JSONArray getRowsJsonArray(List<Row> rows, VWorksheet vWorksheet, List<VHNode> orderedHnodeIds, 
 			int maxDataDisplayLength) throws JSONException {
 		JSONArray rowsArr = new JSONArray();
-				
+
 		for (Row row:rows) {
 			JSONObject rowObj = new JSONObject();
 			JSONArray rowValueArray = new JSONArray();
 			rowObj.put(JsonKeys.rowId.name(), row.getId());
-			if (selection.isSelected(row) && selection.refreshStatus() != SelectionStatus.OUT_OF_DATE)
-				rowObj.put(JsonKeys.isSelected.name(), "SELECTED");
-			if (selection.isSelected(row) && selection.refreshStatus() == SelectionStatus.OUT_OF_DATE)
-				rowObj.put(JsonKeys.isSelected.name(), "OUT_OF_DATE");
-			if (!selection.isSelected(row))
-				rowObj.put(JsonKeys.isSelected.name(), "NOT_SELECTED");
+			rowObj.put(JsonKeys.isSelected.name(), selection.getSelectedStatus(row).name());
 			rowObj.put(JsonKeys.rowValueArray.name(), rowValueArray);
 			for (VHNode vNode : orderedHnodeIds) {
 				if(vNode.isVisible()) {
@@ -115,7 +109,7 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 					nodeObj.put(JsonKeys.columnClass.name(), 
 							WorksheetHeadersUpdate.getColumnClass(vNode.getId()));
 					nodeObj.put(JsonKeys.nodeId.name(), rowNode.getId());
-					
+
 					if (vNode.hasNestedTable()) {
 						nodeObj.put(JsonKeys.hasNestedTable.name(), true);
 						Table nestedTable = rowNode.getNestedTable();
@@ -126,11 +120,11 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 								maxDataDisplayLength);
 						nodeObj.put(JsonKeys.nestedRows.name(), nestedTableRows);
 						nodeObj.put(JsonKeys.tableId.name(), rowNode.getNestedTable().getId());
-						
+
 						int rowsLeft = nestedTable.getNumRows() - nestedTableRows.length();
 						rowsLeft = rowsLeft < 0 ? 0 : rowsLeft;
 						nodeObj.put(JsonKeys.additionalRowsCount.name(), rowsLeft);
-						
+
 					} else {
 						String nodeVal = rowNode.getValue().asString();
 						nodeVal = (nodeVal == null) ? "" : nodeVal;
@@ -147,7 +141,7 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 		}
 		return rowsArr;
 	}
-	
+
 	public boolean equals(Object o) {
 		if (o instanceof WorksheetDataUpdate) {
 			WorksheetDataUpdate t = (WorksheetDataUpdate)o;

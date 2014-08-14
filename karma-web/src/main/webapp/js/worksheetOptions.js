@@ -118,11 +118,95 @@ function WorksheetOptions(wsId, wsTitle) {
 		}, {
 			name: "Delete",
 			func: deleteWorksheet
+		}, {
+			name: "divider"
+		}, {
+			name: "Selection",
+			func: undefined,
+			addLevel: true,
+			levels: [{
+				name: "Add Rows",
+				func: addRows
+			}, {
+				name: "Intersect Rows",
+				func: intersectRows
+			}, {
+				name: "Subtract Rows",
+				func: subtractRows
+			}, {
+				name: "Invert",
+				func: invertRows
+			}, {
+				name: "Refresh",
+				func: refreshRows
+			}, {
+				name: "Clear",
+				func: undefined,
+				addLevel: true,
+				levels: [{
+					name: "In All Nested Tables",
+					func: clearAll
+				}, {
+					name: "In This Columns",
+					func: clearThis
+				}]
+			}]
 		}
 	];
 
 	function hideDropdown() {
 		$('.dropdown.open .dropdown-toggle').dropdown('toggle');
+	}
+
+	function addRows() {
+		console.log("addRows");
+		hideDropdown();
+		$("#pyTransformSelectionDialog").data("operation", "Union");
+		PyTransformSelectionDialog.getInstance(wsId, "").show();
+	}
+
+	function intersectRows() {
+		hideDropdown();
+		$("#pyTransformSelectionDialog").data("operation", "Intersect");
+		PyTransformSelectionDialog.getInstance(wsId, "").show();
+	}
+
+	function subtractRows() {
+		hideDropdown();
+		$("#pyTransformSelectionDialog").data("operation", "Subtract");
+		PyTransformSelectionDialog.getInstance(wsId, "").show();
+	}
+
+	function invertRows() {
+		hideDropdown();
+		var headers = getColumnHeadingsForColumn(wsId, "", "GroupBy");
+		var info = generateInfoObject(wsId, headers[0]['HNodeId'], "OperateSelectionCommand");
+		var newInfo = info['newInfo'];
+		newInfo.push(getParamObject("pythonCode", "", "other"));
+		newInfo.push(getParamObject("operation", "Invert", "other"));
+		info["newInfo"] = JSON.stringify(newInfo);
+		showLoading(worksheetId);
+		sendRequest(info, worksheetId);
+	}
+
+	function refreshRows() {
+		hideDropdown();
+		var headers = getColumnHeadingsForColumn(wsId, "", "GroupBy");
+		var info = generateInfoObject(wsId, headers[0]['HNodeId'], "RefreshSelectionCommand");
+		var newInfo = info['newInfo'];
+		info["newInfo"] = JSON.stringify(newInfo);
+		showLoading(worksheetId);
+		sendRequest(info, worksheetId);
+	}
+
+	function clearAll() {
+		hideDropdown();
+		console.log("clearAll");
+	}
+
+	function clearThis() {
+		hideDropdown();
+		console.log("clearThis");
 	}
 
 	function getCheckboxState(event) {

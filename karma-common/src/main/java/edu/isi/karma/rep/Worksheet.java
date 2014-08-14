@@ -59,8 +59,8 @@ public class Worksheet extends RepEntity {
         this.headers = headers;
         this.dataTable = dataTable;
         this.encoding = encoding;
-        this.superSelMgr = new SuperSelectionManager();
         this.selMgr = new SelectionManager();
+        this.superSelMgr = new SuperSelectionManager(selMgr);        
     }
     
     /*

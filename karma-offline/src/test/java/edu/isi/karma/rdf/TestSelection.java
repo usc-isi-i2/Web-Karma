@@ -93,7 +93,7 @@ public class TestSelection {
 		pythonCode.append("	 return True \n");
 		Selection sel = worksheet.getSelectionManager().createMiniSelection(workspace, worksheet.getId(), 
 				worksheet.getHeaders().getId(), 
-				pythonCode.toString());
+				pythonCode.toString(), true);
 		assertEquals(sel != null, true);
 		Table t = worksheet.getDataTable();
 		for (Row r : t.getRows(0, t.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
@@ -111,11 +111,12 @@ public class TestSelection {
 		pythonCode.append("	 return True \n");
 		Selection sel = worksheet.getSelectionManager().createMiniSelection(workspace, worksheet.getId(), 
 				worksheet.getHeaders().getId(), 
-				pythonCode.toString());
+				pythonCode.toString(), true);
+		worksheet.getSelectionManager().updateCurrentSelection(sel.getHTableId(), sel);
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
 				"people-model", getTestResource(
 						 "people-model.ttl"));
-		worksheet.getSuperSelectionManager().defineSelection("test").addSelection(sel);
+		worksheet.getSuperSelectionManager().defineSelection("test").addSelection(sel.getHTableId());
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		List<KR2RMLRDFWriter> writers = new ArrayList<KR2RMLRDFWriter>();

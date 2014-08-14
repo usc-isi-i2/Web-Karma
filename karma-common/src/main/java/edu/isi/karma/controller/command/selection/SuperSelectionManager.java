@@ -10,13 +10,15 @@ import edu.isi.karma.webserver.KarmaException;
 public class SuperSelectionManager {
 	private Map<String, SuperSelection> selectionMapping = new HashMap<String, SuperSelection>();
 	public static final SuperSelection DEFAULT_SELECTION = new SuperSelection("DEFAULT_SELECTION");
-	public SuperSelectionManager() {
+	private SelectionManager selMgr;
+	public SuperSelectionManager(SelectionManager selMgr) {
 		selectionMapping.put("DEFAULT_SELECTION", DEFAULT_SELECTION);
-		selectionMapping.put("DEFAULT_TEST", new SuperSelection("DEFAULT_TEST"));
+		selectionMapping.put("DEFAULT_TEST", new SuperSelection("DEFAULT_TEST", selMgr));
+		this.selMgr = selMgr;
 	}
 	
 	public SuperSelection defineSelection(String name) {
-		SuperSelection t = new SuperSelection(name);
+		SuperSelection t = new SuperSelection(name, selMgr);
 		selectionMapping.put(name, t);
 		return t;
 	}

@@ -1,6 +1,5 @@
 package edu.isi.karma.controller.command.selection;
 
-import java.io.IOException;
 import java.util.Map.Entry;
 
 import edu.isi.karma.rep.Row;
@@ -17,7 +16,7 @@ public class LargeSelection extends Selection {
 	private Operation operation;
 	LargeSelection(Workspace workspace, String worksheetId,
 			String hTableId, String name, 
-			Selection sourceA, Selection sourceB, Operation operation) throws IOException {
+			Selection sourceA, Selection sourceB, Operation operation) {
 		super(workspace, worksheetId, hTableId, name);
 		this.sourceA = sourceA;
 		this.sourceB = sourceB;

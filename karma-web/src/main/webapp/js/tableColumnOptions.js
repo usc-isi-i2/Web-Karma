@@ -115,6 +115,9 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 				name: "Invert",
 				func: invertRows
 			}, {
+				name: "Refresh",
+				func: refreshRows
+			}, {
 				name: "Clear",
 				func: undefined,
 				addLevel: true,
@@ -159,6 +162,16 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 		var newInfo = info['newInfo'];
 		newInfo.push(getParamObject("pythonCode", "", "other"));
 		newInfo.push(getParamObject("operation", "Invert", "other"));
+		info["newInfo"] = JSON.stringify(newInfo);
+		showLoading(worksheetId);
+		sendRequest(info, worksheetId);
+	}
+
+	function refreshRows() {
+		hideDropdown();
+		var headers = getColumnHeadingsForColumn(wsId, wsColumnId, "GroupBy");
+		var info = generateInfoObject(wsId, headers[0]['HNodeId'], "RefreshSelectionCommand");
+		var newInfo = info['newInfo'];
 		info["newInfo"] = JSON.stringify(newInfo);
 		showLoading(worksheetId);
 		sendRequest(info, worksheetId);
@@ -1564,6 +1577,7 @@ var PyTransformSelectionDialog = (function() {
 			columnId = colId;
 			headers = getColumnHeadingsForColumn(worksheetId, columnId, "GroupBy");
 			console.log(headers);
+			console.log(headers);
 			$('#btnSaveSelection', dialog).unbind('click');
 			$('#btnErrorsSelection', dialog).unbind('click');
 			$('#btnPreviewSelection', dialog).unbind('click');
@@ -1580,7 +1594,7 @@ var PyTransformSelectionDialog = (function() {
 			});
 			// Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function(e) {
-				console.log("trigger");
+				$("#onErrorSelection").attr("checked", true);
 				hideError();
 				editor.getSession().setValue("return getValue(\"" + headers[0]['ColumnName'] + "\")");
 				$("#pythonPreviewResultsTableSelection").hide();
@@ -1619,8 +1633,10 @@ var PyTransformSelectionDialog = (function() {
 			console.log("Save clicked");
 			var info = generateInfoObject(worksheetId, headers[0]['HNodeId'], "OperateSelectionCommand");
 			var newInfo = info['newInfo'];
+			var error = $("#onErrorSelection").prop("checked");
 			newInfo.push(getParamObject("pythonCode", editor.getValue(), "other"));
 			newInfo.push(getParamObject("operation", dialog.data("operation"), "other"));
+			newInfo.push(getParamObject("onError", error ? "true" : "false", "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 			showLoading(worksheetId);
 			sendRequest(info, worksheetId);

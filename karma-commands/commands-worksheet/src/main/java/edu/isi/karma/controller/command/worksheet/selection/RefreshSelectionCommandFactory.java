@@ -11,7 +11,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
 
-public class OperateSelectionCommandFactory extends JSONInputCommandFactory {
+public class RefreshSelectionCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
 		worksheetId, hNodeId, operation, 
@@ -23,11 +23,7 @@ public class OperateSelectionCommandFactory extends JSONInputCommandFactory {
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
-		String operation = CommandInputJSONUtil.getStringValue(Arguments.operation.name(), inputJson);
-		String pythonCode = CommandInputJSONUtil.getStringValue(Arguments.pythonCode.name(), inputJson);
-		boolean onError = Boolean.parseBoolean(CommandInputJSONUtil.getStringValue(Arguments.onError.name(), inputJson));
-		Command cmd = new OperateSelectionCommand(getNewId(workspace), worksheetId, hNodeId, 
-				operation, pythonCode, onError);
+		Command cmd = new RefreshSelectionCommand(getNewId(workspace), worksheetId, hNodeId);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
@@ -39,7 +35,7 @@ public class OperateSelectionCommandFactory extends JSONInputCommandFactory {
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand() {
-		return OperateSelectionCommand.class;
+		return RefreshSelectionCommand.class;
 	}
 
 }

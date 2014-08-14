@@ -24,13 +24,15 @@ public class OperateSelectionCommand extends WorksheetCommand {
 	private String pythonCode;
 	private String operation;
 	private Selection previousSelection;
+	private boolean onError;
 	public OperateSelectionCommand(String id, String worksheetId, 
 			String hNodeId, String operation, 
-			String pythonCode) {
+			String pythonCode, boolean onError) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.pythonCode = pythonCode;
 		this.operation = operation;
+		this.onError = onError;
 		addTag(CommandTag.Transformation);
 	}
 
@@ -41,7 +43,7 @@ public class OperateSelectionCommand extends WorksheetCommand {
 
 	@Override
 	public String getTitle() {
-		return "Update Selection";
+		return "Operate Selection";
 	}
 
 	@Override
@@ -64,13 +66,13 @@ public class OperateSelectionCommand extends WorksheetCommand {
 		Selection currentSel = worksheet.getSelectionManager().getSelection(hTable.getId());
 		Selection anotherSel = null;
 		if (!operation.equalsIgnoreCase(Operation.Invert.name())) {
-			anotherSel = worksheet.getSelectionManager().createMiniSelection(workspace, worksheetId, hTable.getId(), pythonCode);
+			anotherSel = worksheet.getSelectionManager().createMiniSelection(workspace, worksheetId, hTable.getId(), pythonCode, onError);
 		}
 		if (currentSel == null && operation.equalsIgnoreCase(Operation.Invert.name()) ) {
 			return getErrorUpdate("No defined Selection");
 		}
 		if (currentSel == null) {
-			currentSel = worksheet.getSelectionManager().createMiniSelection(workspace, worksheetId, hTable.getId(), SelectionManager.defaultCode);
+			currentSel = worksheet.getSelectionManager().createMiniSelection(workspace, worksheetId, hTable.getId(), SelectionManager.defaultCode, onError);
 		}
 		try {
 			Operation operation = Operation.valueOf(Operation.class, this.operation);
@@ -79,7 +81,7 @@ public class OperateSelectionCommand extends WorksheetCommand {
 				return getErrorUpdate("Creation unsuccessful");
 			previousSelection = worksheet.getSelectionManager().updateCurrentSelection(hTable.getId(), t);
 			superSel = worksheet.getSuperSelectionManager().getSuperSelection("DEFAULT_TEST");
-			superSel.addSelection(t);
+			superSel.addSelection(t.getHTableId());
 		}catch (Exception e) {
 			return getErrorUpdate("The operation is undefined");
 		}
@@ -91,13 +93,14 @@ public class OperateSelectionCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		worksheet.getSuperSelectionManager().removeSelection("DEFAULT_TEST");
-		SuperSelection superSel = worksheet.getSuperSelectionManager().defineSelection("DEFAULT_TEST");
+		SuperSelection superSel = worksheet.getSuperSelectionManager().getSuperSelection("DEFAULT_TEST");
 		HNode hNode = workspace.getFactory().getHNode(hNodeId);
 		worksheet.getSelectionManager().removeSelection(hNode.getHTableId());
-		worksheet.getSelectionManager().updateCurrentSelection(hNode.getHTableId(), previousSelection);
+		Selection currentSel = worksheet.getSelectionManager().updateCurrentSelection(hNode.getHTableId(), previousSelection);
 		if (previousSelection != null)
-			superSel.addSelection(previousSelection);
+			superSel.addSelection(previousSelection.getHTableId());
+		else if (currentSel != null)
+			superSel.removeSelection(currentSel.getHTableId());
 		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel);	
 		uc.add(new WorksheetSuperSelectionListUpdate(worksheetId));
 		return uc;

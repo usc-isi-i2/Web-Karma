@@ -1,6 +1,5 @@
 package edu.isi.karma.controller.command.selection;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,15 +14,10 @@ public class SelectionManager {
 	private Map<String, Selection> currentSelectionMapping = new ConcurrentHashMap<String, Selection>();
 	public static String defaultCode = "return False";
 	public Selection createMiniSelection(Workspace workspace, String worksheetId, 
-			String hTableId, String pythonCode) {
-		try {
-			Selection sel = new MiniSelection(workspace, worksheetId, hTableId, workspace.getFactory().getNewId("SEL"), pythonCode);
-			addSelection(sel);
-			return sel;
-		} catch (IOException e) {
-			return null;
-		}
-		
+			String hTableId, String pythonCode, boolean onError) {
+		Selection sel = new MiniSelection(workspace, worksheetId, hTableId, workspace.getFactory().getNewId("SEL"), pythonCode, onError);
+		addSelection(sel);
+		return sel;		
 	}
 	
 	public Selection createLargeSelection(Selection selectionA, Selection selectionB, Operation op){
@@ -35,15 +29,11 @@ public class SelectionManager {
 		if (selectionB == null && op != Operation.Invert)
 			return null;
 		Workspace workspace = selectionA.workspace;		
-		try {
-			Selection sel = new LargeSelection(workspace, 
-					selectionA.worksheetId, selectionA.hTableId, 
-					 workspace.getFactory().getNewId("SEL"), selectionA, selectionB, op);
-			addSelection(sel);
-			return sel;
-		} catch (IOException e) {
-			return null;
-		}
+		Selection sel = new LargeSelection(workspace, 
+				selectionA.worksheetId, selectionA.hTableId, 
+				 workspace.getFactory().getNewId("SEL"), selectionA, selectionB, op);
+		addSelection(sel);
+		return sel;
 	}
 	
 	public Selection getSelection(String hTableId) {
@@ -87,8 +77,9 @@ public class SelectionManager {
 	
 	public Selection updateCurrentSelection(String hTableId, Selection sel) {
 		if (sel == null) {
+			Selection lastSel = currentSelectionMapping.get(hTableId);
 			currentSelectionMapping.remove(hTableId);
-			return null;
+			return lastSel;
 		}
 		return currentSelectionMapping.put(hTableId, sel);
 	}

@@ -59,11 +59,9 @@ function getColumnHeadingsForColumn(worksheetId, columnId, commandName) {
 
 function generateInfoObject(worksheetId, columnId, commandName) {
 	var info = {};
-	if (columnId != "" && columnId != undefined)
-		info["hNodeId"] = columnId;
+	info["hNodeId"] = columnId;
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	if (worksheetId != "" && worksheetId != undefined)
-		info["worksheetId"] = worksheetId;
+	info["worksheetId"] = worksheetId;
 	info["command"] = commandName;
 	info['selectionName'] = "DEFAULT_TEST";
 	var newInfo = [];

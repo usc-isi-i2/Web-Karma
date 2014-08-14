@@ -10,12 +10,12 @@
 					<br/>
 	        <div id="transformCodeEditorSelection"></div>
 					<br/>
-					<div class="form-group">
+					<div class="checkbox">
 						<label>
-							<div class="col-sm-5">On Error:</div>
-							<div class="col-sm-6"><input class="form-control" type="text" id="pythonTransformErrorDefaultValueSelection" /></div>
-						</label>
-					</div>
+				    		<input type="checkbox" id="onErrorSelection" unchecked></input>
+				    		Select On Error
+			  			</label>
+					</div>	
 					<button type="button" class="btn btn-default" id="btnErrorsSelection">View Errors</button>
 					<button type="button" class="btn btn-default" id="btnPreviewSelection">Preview results for top 5 rows</button>
 					<br>

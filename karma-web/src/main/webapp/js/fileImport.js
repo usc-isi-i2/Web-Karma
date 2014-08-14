@@ -28,7 +28,7 @@ var FileFormatSelectionDialog = (function() {
 			dialog.on('show.bs.modal', function(e) {
 				$("span#fileFormatError").hide();
 				$("input:radio[name=FileFormatSelection]").attr("checked", false);
-
+				$("input:checkbox[name='FilterCheck']", dialog).attr('checked', false);
 				var fileName = $("#fileFormatSelectionDialog").data("fileName");
 				console.log("show.bs.modal::Select filename:" + fileName);
 				if (fileName.match(".csv$") || fileName.match(".tsv$") ||
