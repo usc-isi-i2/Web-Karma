@@ -26,10 +26,13 @@ public class SelectionManager {
 		
 	}
 	
-	public Selection createLargeSelection(Selection selectionA, Selection selectionB, Operation op){	
-		if (!selectionA.hTableId.equals(selectionB.hTableId) || 
+	public Selection createLargeSelection(Selection selectionA, Selection selectionB, Operation op){
+		if (selectionB != null)
+			if (!selectionA.hTableId.equals(selectionB.hTableId) || 
 				!selectionA.worksheetId.equals(selectionB.worksheetId) ||
 				!selectionA.workspace.equals(selectionB.workspace))
+			return null;
+		if (selectionB == null && op != Operation.Invert)
 			return null;
 		Workspace workspace = selectionA.workspace;		
 		try {

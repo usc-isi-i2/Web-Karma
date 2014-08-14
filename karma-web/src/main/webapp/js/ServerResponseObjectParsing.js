@@ -101,7 +101,7 @@ function parse(data) {
 								worksheetProps["hasBaseURI"] = false;
 								worksheetProps["graphLabel"] = newValue;
 								worksheetProps["hasServiceProperties"] = false;
-								var info = generateInfoObject(worksheetId, "SetWorksheetPropertiesCommand");
+								var info = generateInfoObject(worksheetId, "", "SetWorksheetPropertiesCommand");
 
 								var newInfo = info['newInfo']; // for input parameters
 								newInfo.push(getParamObject("properties", worksheetProps, "other"));
@@ -139,7 +139,7 @@ function parse(data) {
 								worksheetProps["prefix"] = newValue;
 								worksheetProps["graphLabel"] = "";
 								worksheetProps["hasServiceProperties"] = false;
-								var info = generateInfoObject(worksheetId, "SetWorksheetPropertiesCommand");
+								var info = generateInfoObject(worksheetId, "", "SetWorksheetPropertiesCommand");
 
 								var newInfo = info['newInfo']; // for input parameters
 								newInfo.push(getParamObject("properties", worksheetProps, "other"));
@@ -177,7 +177,7 @@ function parse(data) {
 								worksheetProps["baseURI"] = newValue;
 								worksheetProps["graphLabel"] = "";
 								worksheetProps["hasServiceProperties"] = false;
-								var info = generateInfoObject(worksheetId, "SetWorksheetPropertiesCommand");
+								var info = generateInfoObject(worksheetId, "", "SetWorksheetPropertiesCommand");
 
 								var newInfo = info['newInfo']; // for input parameters
 								newInfo.push(getParamObject("properties", worksheetProps, "other"));
@@ -904,7 +904,7 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
 }
 
 function submitTableCellEdit(worksheetId, nodeId, value) {
-	var edits = generateInfoObject(worksheetId, "EditCellCommand");
+	var edits = generateInfoObject(worksheetId, "", "EditCellCommand");
 	edits["value"] = value;
 	edits["nodeId"] = nodeId;
 	showLoading(worksheetId);
@@ -913,7 +913,7 @@ function submitTableCellEdit(worksheetId, nodeId, value) {
 
 function fetchExistingModelLabel(worksheetId) {
 
-	var info = generateInfoObject(worksheetId, "FetchExistingWorksheetPropertiesCommand");
+	var info = generateInfoObject(worksheetId, "", "FetchExistingWorksheetPropertiesCommand");
 	var graphLabel;
 	var returned = $.ajax({
 		url: "RequestController",
@@ -944,7 +944,7 @@ function submitSelectedModelNameToBeLoaded() {
 	var optionsDiv = $("div#WorksheetOptionsDiv");
 	var value = $("#modelListRadioBtnGrp").find("input:checked");
 
-	var info = generateInfoObject(worksheetId, "InvokeDataMiningServiceCommand");
+	var info = generateInfoObject(worksheetId, "", "InvokeDataMiningServiceCommand");
 	info['modelContext'] = value.val();
 	info['dataMiningURL'] = value.attr('rel');
 

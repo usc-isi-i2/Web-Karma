@@ -66,7 +66,7 @@ var ResetDialog = (function() {
 
 			dialog.modal('hide');
 
-			var info = generateInfoObject("", "ResetKarmaCommand");
+			var info = generateInfoObject("", "", "ResetKarmaCommand");
 			info["forgetSemanticTypes"] = $("#forgetSemanticTypes").is(':checked');
 			info["forgetModels"] = $("#forgetModels").is(':checked');
 

@@ -13,29 +13,17 @@ function sendRequest(info, worksheetId) {
 		complete: function(xhr, textStatus) {
 			var json = $.parseJSON(xhr.responseText);
 			parse(json);
-			hideLoading(worksheetId);
+			if (worksheetId == undefined)
+				hideWaitingSignOnScreen();
+			else
+				hideLoading(worksheetId);
 		},
 		error: function(xhr, textStatus) {
-			alert("Error occured with " + info['command'] + );
-			hideLoading(worksheetId);
-		}
-	});
-}
-
-function sendRequest(info) {
-	$.ajax({
-		url: "RequestController",
-		type: "POST",
-		data: info,
-		dataType: "json",
-		complete: function(xhr, textStatus) {
-			var json = $.parseJSON(xhr.responseText);
-			parse(json);
-			hideWaitingSignOnScreen();
-		},
-		error: function(xhr, textStatus) {
-			alert("Error occured with " + info['command'] + );
-			hideWaitingSignOnScreen();
+			alert("Error occured with " + info['command'] + textStatus);
+			if (worksheetId == undefined)
+				hideWaitingSignOnScreen();
+			else
+				hideLoading(worksheetId);
 		}
 	});
 }
@@ -51,7 +39,7 @@ function getColumnHeadings(worksheetId) {
 	return columnNames;
 }
 
-function getColumnHeadings(worksheetId, columnId, commandName) {
+function getColumnHeadingsForColumn(worksheetId, columnId, commandName) {
 	var info = generateInfoObject(worksheetId, columnId, "GetHeadersCommand");
 	info["commandName"] = commandName;
 	var returnJSON = [];
@@ -69,26 +57,19 @@ function getColumnHeadings(worksheetId, columnId, commandName) {
 	return returnJSON;
 }
 
-function generateInfoObject(worksheetId, commandName) {
-	var info = {};
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["worksheetId"] = worksheetId;
-	info["command"] = commandName;
-	var newInfo = [];
-	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-	info["newInfo"] = newInfo;
-	return info;
-}
-
 function generateInfoObject(worksheetId, columnId, commandName) {
 	var info = {};
-	info["hNodeId"] = columnId;
+	if (columnId != "" && columnId != undefined)
+		info["hNodeId"] = columnId;
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["worksheetId"] = worksheetId;
+	if (worksheetId != "" && worksheetId != undefined)
+		info["worksheetId"] = worksheetId;
 	info["command"] = commandName;
 	var newInfo = [];
-	newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
-	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+	if (columnId != "" && columnId != undefined)
+		newInfo.push(getParamObject("hNodeId", columnId, "hNodeId"));
+	if (worksheetId != "" && worksheetId != undefined)
+		newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
 	info["newInfo"] = newInfo;
 	return info;
 }

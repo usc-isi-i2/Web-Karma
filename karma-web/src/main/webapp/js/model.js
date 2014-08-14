@@ -91,7 +91,7 @@ var saveModelDialog = (function() {
 
 			hide();
 
-			var info = generateInfoObject("", "SaveR2RMLModelCommand");
+			var info = generateInfoObject("", "", "SaveR2RMLModelCommand");
 			info['tripleStoreUrl'] = $('#txtModel_URL').html();
 			info['modelUrl'] = $('#txtModel_URL_Save').val();
 			info['graphContext'] = $('#txtGraph_URL_Save').val();
@@ -163,7 +163,7 @@ var clearModelDialog = (function() {
 		function saveDialog(e) {
 			hide();
 
-			var info = generateInfoObject("", "ClearTripleStoreCommand");
+			var info = generateInfoObject("", "", "ClearTripleStoreCommand");
 			info['tripleStoreUrl'] = $('#txtModel_URL').html();
 			info['graphContext'] = $('#txtGraph_URL_Clear').val();
 			showWaitingSignOnScreen();
@@ -321,7 +321,7 @@ var modelManagerDialog = (function() {
 		}
 
 		function refresh() {
-			var info = generateInfoObject("", "FetchR2RMLModelsListCommand");
+			var info = generateInfoObject("", "", "FetchR2RMLModelsListCommand");
 			info['tripleStoreUrl'] = $('#txtModel_URL').html();
 			info['graphContext'] = "";
 
@@ -396,7 +396,7 @@ var modelManagerDialog = (function() {
 
 			for (var i = 0; i < checkboxes.length; i++) {
 				var checkbox = checkboxes[i];
-				var info = generateInfoObject("", "DeleteModelFromTripleStoreCommand");
+				var info = generateInfoObject("", "", "DeleteModelFromTripleStoreCommand");
 				info['tripleStoreUrl'] = $('#txtModel_URL').html();
 				info['graphContext'] = checkbox['value'];
 				info['mappingURI'] = checkbox['src'];
@@ -430,7 +430,7 @@ var modelManagerDialog = (function() {
 
 			for (var i = 0; i < checkboxes.length; i++) {
 				var checkbox = checkboxes[i];
-				var info = generateInfoObject("", "RefreshModelFromTripleStoreCommand");
+				var info = generateInfoObject("", "", "RefreshModelFromTripleStoreCommand");
 				info['tripleStoreUrl'] = $('#txtModel_URL').html();
 				info['graphContext'] = checkbox['value'];
 				info['mappingURI'] = checkbox['src'];

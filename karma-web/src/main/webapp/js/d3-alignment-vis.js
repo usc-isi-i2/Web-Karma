@@ -727,7 +727,7 @@ var refreshAlignmentTree = function(worksheetId) {
 
 		var alignmentId = $(svg).data("alignmentId");
 		console.log("RefreshSVGAlignmentCommand: " + worksheetId, alignmentId);
-		var info = generateInfoObject(worksheetId, "RefreshSVGAlignmentCommand");
+		var info = generateInfoObject(worksheetId, "", "RefreshSVGAlignmentCommand");
 		info["alignmentId"] = alignmentId;
 		showLoading(worksheetId);
 		sendRequest(info, worksheetId);

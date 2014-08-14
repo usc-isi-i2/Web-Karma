@@ -54,7 +54,7 @@ var ImportFromServiceDialog = (function() {
 
 			dialog.modal('hide');
 
-			var info = generateInfoObject("", "ImportServiceCommand");
+			var info = generateInfoObject("", "", "ImportServiceCommand");
 			info["serviceUrl"] = url;
 			info["worksheetName"] = worksheetName;
 			info["includeInputAttributes"] = $('#includeInputAttributesService').is(':checked');
@@ -65,7 +65,7 @@ var ImportFromServiceDialog = (function() {
 		}
 
 		function getServicePreferences() {
-			var info = generateInfoObject("", "FetchPreferencesCommand");
+			var info = generateInfoObject("", "", "FetchPreferencesCommand");
 			info["preferenceCommand"] = "ImportServiceCommand";
 			var returned = $.ajax({
 				url: "RequestController",

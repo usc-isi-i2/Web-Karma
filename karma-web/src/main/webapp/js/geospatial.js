@@ -10,7 +10,7 @@ function showMapViewForWorksheet() {
 
 	// Change from table to map if current state is table
 	if (state == "table") {
-		var info = generateInfoObject(worksheetId, "PublishKMLLayerCommand");
+		var info = generateInfoObject(worksheetId, "", "PublishKMLLayerCommand");
 		showLoading(worksheetId);
 		var returned = $.ajax({
 			url: "RequestController",

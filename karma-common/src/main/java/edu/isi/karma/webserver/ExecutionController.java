@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
@@ -103,17 +104,17 @@ public class ExecutionController {
 	public Command getCommand(HttpServletRequest request) {
 		CommandFactory cf = commandFactoryMap.get(request.getParameter("command"));
 		if (cf != null) {
-			try {
+			if (cf instanceof JSONInputCommandFactory) {
 				String newInfo = request.getParameter("newInfo");
-				return cf.createCommand(newInfo == null ? null : new JSONArray(newInfo), workspace);
-			} catch (UnsupportedOperationException ignored)
-			{
+				try {
+					return cf.createCommand(newInfo == null ? null : new JSONArray(newInfo), workspace);
+				} catch (Exception e) {
+					logger.error("Error getting command!!", e);
+					return null;
+				}
+			}
+			else {
 				return cf.createCommand(request, workspace);
-			} catch (Exception e) {
-				logger.error(commandFactoryMap.toString());
-				logger.error(request.toString());
-				logger.error("Error getting command!!", e);
-				return null;
 			}
 		} else {
 			logger.error("Command " + request.getParameter("command")

@@ -60,7 +60,7 @@ var SetPropertiesDialog = (function() {
 				worksheetProps["hasServiceProperties"] = false;
 			}
 
-			var info = generateInfoObject(worksheetId, "SetWorksheetPropertiesCommand");
+			var info = generateInfoObject(worksheetId, "", "SetWorksheetPropertiesCommand");
 
 			var newInfo = info['newInfo']; // for input parameters
 			newInfo.push(getParamObject("properties", worksheetProps, "other"));
@@ -74,7 +74,7 @@ var SetPropertiesDialog = (function() {
 
 		function fetchExistingWorksheetOptions() {
 
-			var info = generateInfoObject(worksheetId, "FetchExistingWorksheetPropertiesCommand");
+			var info = generateInfoObject(worksheetId, "", "FetchExistingWorksheetPropertiesCommand");
 			var returned = $.ajax({
 				url: "RequestController",
 				type: "POST",
@@ -253,7 +253,7 @@ var applyModelDialog = (function() {
 
 		function refresh() {
 			console.log("refresh");
-			var info = generateInfoObject(worksheetId, "FetchR2RMLModelsListCommand");
+			var info = generateInfoObject(worksheetId, "", "FetchR2RMLModelsListCommand");
 			info['tripleStoreUrl'] = $('#txtModel_URL').html();
 			info['graphContext'] = "";
 			var returned = $.ajax({
@@ -296,7 +296,7 @@ var applyModelDialog = (function() {
 			}
 			var override = false;
 			var modelExist = false;
-			var info = generateInfoObject(worksheetId, "CheckModelExistenceCommand");
+			var info = generateInfoObject(worksheetId, "", "CheckModelExistenceCommand");
 			var returned = $.ajax({
 				url: "RequestController",
 				type: "POST",
@@ -325,7 +325,7 @@ var applyModelDialog = (function() {
 				}
 			}
 			var checked = checkboxes[0];
-			var info = generateInfoObject(worksheetId, "ApplyModelFromURLCommand");
+			var info = generateInfoObject(worksheetId, "", "ApplyModelFromURLCommand");
 			info['modelRepository'] = $('#txtModel_URL').html();
 			info['modelContext'] = checked['value'];
 			info['modelUrl'] = checked['src'];
@@ -486,7 +486,7 @@ var FetchModelDialog = (function() {
 		function saveDialog(e) {
 			hide();
 
-			var info = generateInfoObject(worksheetId, "FetchR2RMLModelsCommand");
+			var info = generateInfoObject(worksheetId, "", "FetchR2RMLModelsCommand");
 			info['tripleStoreUrl'] = $('#txtR2RML_URL_fetch').val();
 			showLoading(worksheetId);
 			var returned = sendRequest(info, worksheetId);
@@ -574,7 +574,7 @@ var ExportCSVModelDialog = (function() {
 		// it takes in the url and the input element object
 		function fetchGraphsFromTripleStore(url, modelGraphList) {
 
-			var info = generateInfoObject("", "FetchGraphsFromTripleStoreCommand");
+			var info = generateInfoObject("", "", "FetchGraphsFromTripleStoreCommand");
 			info["tripleStoreUrl"] = url;
 			var returned = $.ajax({
 				url: "RequestController",
@@ -614,7 +614,7 @@ var ExportCSVModelDialog = (function() {
 				};
 			});
 
-			var info = generateInfoObject(worksheetId, "ExportCSVCommand");
+			var info = generateInfoObject(worksheetId, "", "ExportCSVCommand");
 			info["rootNodeId"] = $('#csv_columns').attr('rel');
 			info["tripleStoreUrl"] = $("#csvDataEndPoint").val();
 			info["graphUrl"] = graphUri;
@@ -634,7 +634,7 @@ var ExportCSVModelDialog = (function() {
 					if (dmURL.length < 2) {
 						dmURL = 'http://localhost:8088/train';
 					}
-					var info = generateInfoObject(worksheetId, "InvokeDataMiningServiceCommand");
+					var info = generateInfoObject(worksheetId, "", "InvokeDataMiningServiceCommand");
 					info["dataMiningURL"] = dmURL;
 					info["csvFileName"] = fileName;
 					hide();
@@ -659,7 +659,7 @@ var ExportCSVModelDialog = (function() {
 				};
 			});
 
-			var info = generateInfoObject(worksheetId, "ExportCSVCommand");
+			var info = generateInfoObject(worksheetId, "", "ExportCSVCommand");
 			info["rootNodeId"] = $('#csv_columns').attr('rel');
 			info["tripleStoreUrl"] = $("#csvDataEndPoint").val();
 			info["graphUrl"] = graphUri;
@@ -683,7 +683,7 @@ var ExportCSVModelDialog = (function() {
 			//    		var graphUri = $('#csvModelGraphList').val().trim();
 			//    		graphUri = (graphUri == '000') ? '' : graphUri; 
 			console.log("getting columns ..");
-			var info = generateInfoObject(worksheetId, "FetchColumnCommand");
+			var info = generateInfoObject(worksheetId, "", "FetchColumnCommand");
 			//    		info["alignmentNodeId"] = alignmentNodeId;
 			//    		info["tripleStoreUrl"] = $("#csvSPAQRLEndPoint").val();
 			//    		info["graphUrl"] =  graphUri ;
@@ -888,7 +888,7 @@ var FoldDialog = (function() {
 				hideError();
 				var dialogContent = $("#foldDialogColumns", dialog);
 				dialogContent.empty();
-				var headers = getColumnHeadings(wsId, "", "Fold");
+				var headers = getColumnHeadingsForColumn(wsId, "", "Fold");
 				//console.log(headers);
 				for (var i = 0; i < headers.length; i++) {
 
@@ -995,7 +995,7 @@ var GroupByDialog2 = (function() {
 				hideError();
 				var dialogContent = $("#groupByDialogColumns", dialog);
 				dialogContent.empty();
-				var headers = getColumnHeadings(wsId, "", "GroupBy");
+				var headers = getColumnHeadingsForColumn(wsId, "", "GroupBy");
 				//console.log(headers);
 				for (var i = 0; i < headers.length; i++) {
 
@@ -1101,7 +1101,7 @@ var GlueDialog2 = (function() {
 				hideError();
 				var dialogContent = $("#glueDialogColumns", dialog);
 				dialogContent.empty();
-				var headers = getColumnHeadings(wsId, "", "Glue");
+				var headers = getColumnHeadingsForColumn(wsId, "", "Glue");
 				//console.log(headers);
 				for (var i = 0; i < headers.length; i++) {
 
@@ -1191,7 +1191,7 @@ var OrganizeColumnsDialog = (function() {
 
 		function getAllWorksheetHeaders() {
 			//console.log(checked);
-			var info = generateInfoObject(_worksheetId, "GetAllWorksheetHeadersCommand");
+			var info = generateInfoObject(_worksheetId, "", "GetAllWorksheetHeadersCommand");
 
 			showLoading(info["worksheetId"]);
 			var headers = [];
@@ -1272,7 +1272,7 @@ var OrganizeColumnsDialog = (function() {
 			var nestableDiv = $("#nestable", columns);
 			var columnsJson = nestableDiv.nestable('serialize');
 
-			var info = generateInfoObject(_worksheetId, "OrganizeColumnsCommand");
+			var info = generateInfoObject(_worksheetId, "", "OrganizeColumnsCommand");
 
 			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("orderedColumns", JSON.stringify(columnsJson), "orderedColumns"));
@@ -1351,7 +1351,7 @@ var PublishJSONDialog = (function() {
 		function saveDialog(e, importAsWorksheet) {
 			hide();
 
-			var info = generateInfoObject(worksheetId, "PublishJSONCommand");
+			var info = generateInfoObject(worksheetId, "", "PublishJSONCommand");
 			info["importAsWorksheet"] = importAsWorksheet;
 
 			showLoading(info["worksheetId"]);

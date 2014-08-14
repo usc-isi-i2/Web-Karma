@@ -22,7 +22,7 @@
 
 function loadAdditionalRowsHandler() {
 	var worksheetId = $(this).parents("div.Worksheet").attr("id");
-	var info = generateInfoObject(worksheetId, "LoadAdditionalWorksheetRowsCommand");
+	var info = generateInfoObject(worksheetId, "", "LoadAdditionalWorksheetRowsCommand");
 	info["tableId"] = $(this).parents("div.table-data-container").attr("id");
 	showLoading(worksheetId);
 	var returned = sendRequest(info, worksheetId);

@@ -44,7 +44,7 @@ var PublishDatabaseDialog = (function() {
 		}
 
 		function getDatabasePreferences() {
-			var info = generateInfoObject("", "FetchPreferencesCommand");
+			var info = generateInfoObject("", "", "FetchPreferencesCommand");
 			info["preferenceCommand"] = "PublishDatabaseCommand";
 			var returned = $.ajax({
 				url: "RequestController",
@@ -114,7 +114,7 @@ var PublishDatabaseDialog = (function() {
 		function saveDialog(e) {
 			if (validateInputs()) {
 				hide();
-				var info = generateInfoObject(worksheetId, "PublishDatabaseCommand");
+				var info = generateInfoObject(worksheetId, "", "PublishDatabaseCommand");
 				info["dbType"] = $("select#dbType1").val();
 				info["hostName"] = $("input#hostName1").val();
 				info["dbName"] = $("input#dbName1").val();

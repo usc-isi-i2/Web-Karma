@@ -145,7 +145,7 @@ function WorksheetOptions(wsId, wsTitle) {
 
 	function publishReport() {
 		hideDropdown();
-		var info = generateInfoObject(worksheetId, "PublishReportCommand");
+		var info = generateInfoObject(worksheetId, "", "PublishReportCommand");
 
 		showLoading(info["worksheetId"]);
 		var returned = sendRequest(info, worksheetId);
@@ -155,7 +155,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	function deleteWorksheet() {
 		if (confirm("Are you sure you wish to delete the worksheet? \nYou cannot undo this operation")) {
 			hideDropdown();
-			var info = generateInfoObject(worksheetId, "DeleteWorksheetCommand");
+			var info = generateInfoObject(worksheetId, "", "DeleteWorksheetCommand");
 
 			showLoading(info["worksheetId"]);
 			var returned = sendRequest(info, worksheetId);
@@ -183,7 +183,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	function showModel() {
 		console.log("SHow Model: " + worksheetTitle);
 		hideDropdown();
-		var info = generateInfoObject(worksheetId, "ShowModelCommand");
+		var info = generateInfoObject(worksheetId, "", "ShowModelCommand");
 
 		var newInfo = info['newInfo'];
 		info["newInfo"] = JSON.stringify(newInfo);
@@ -203,7 +203,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	function showAutoModel() {
 		console.log("SHow Auto Model: " + worksheetTitle);
 		hideDropdown();
-		var info = generateInfoObject(worksheetId, "ShowAutoModelCommand");
+		var info = generateInfoObject(worksheetId, "", "ShowAutoModelCommand");
 
 		var newInfo = info['newInfo'];
 		info["newInfo"] = JSON.stringify(newInfo);
@@ -234,7 +234,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	function resetModel() {
 		console.log("Reset Model: " + worksheetTitle);
 		hideDropdown();
-		var info = generateInfoObject(worksheetId, "ResetModelCommand");
+		var info = generateInfoObject(worksheetId, "", "ResetModelCommand");
 
 		showLoading(info["worksheetId"]);
 		var returned = sendRequest(info, worksheetId);
@@ -248,7 +248,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			add: function(e, data) {
 				var override = false;
 				var modelExist = false;
-				var info = generateInfoObject(worksheetId, "CheckModelExistenceCommand");
+				var info = generateInfoObject(worksheetId, "", "CheckModelExistenceCommand");
 				info["command"] = "CheckModelExistenceCommand";
 				var returned = $.ajax({
 					url: "RequestController",
@@ -311,7 +311,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	function publishModel(event) {
 		console.log("Publish Model: " + worksheetTitle);
 		hideDropdown();
-		var info = generateInfoObject(worksheetId, "GenerateR2RMLModelCommand");
+		var info = generateInfoObject(worksheetId, "", "GenerateR2RMLModelCommand");
 		info['tripleStoreUrl'] = $('#txtModel_URL').text();
 		showLoading(info["worksheetId"]);
 		var returned = sendRequest(info, worksheetId);
@@ -328,7 +328,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	function publishServiceModel() {
 		console.log("Publish Service Model: " + worksheetTitle);
 		hideDropdown();
-		var info = generateInfoObject(worksheetId, "PublishModelCommand");
+		var info = generateInfoObject(worksheetId, "", "PublishModelCommand");
 
 		showLoading(info["worksheetId"]);
 		var returned = sendRequest(info, worksheetId);
@@ -338,7 +338,7 @@ function WorksheetOptions(wsId, wsTitle) {
 	function populateSource() {
 		console.log("Populate Source: " + worksheetTitle);
 		hideDropdown();
-		var info = generateInfoObject(worksheetId, "PopulateCommand");
+		var info = generateInfoObject(worksheetId, "", "PopulateCommand");
 
 		var newInfo = info['newInfo']; // Used for commands that take JSONArray as input
 		info["newInfo"] = JSON.stringify(newInfo);
@@ -359,7 +359,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("Export to CSV: " + worksheetTitle);
 		hideDropdown();
 
-		var info = generateInfoObject(worksheetId, "PublishCSVCommand");
+		var info = generateInfoObject(worksheetId, "", "PublishCSVCommand");
 		info["command"] = "PublishCSVCommand";
 
 		showLoading(info["worksheetId"]);
@@ -378,7 +378,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("Export To MDB: " + worksheetTitle);
 		hideDropdown();
 
-		var info = generateInfoObject(worksheetId, "PublishMDBCommand");
+		var info = generateInfoObject(worksheetId, "", "PublishMDBCommand");
 
 		showLoading(info["worksheetId"]);
 		var returned = sendRequest(info, worksheetId);
@@ -389,7 +389,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("Export to Spatial: " + worksheetTitle);
 		hideDropdown();
 
-		var info = generateInfoObject(worksheetId, "PublishSpatialDataCommand");
+		var info = generateInfoObject(worksheetId, "", "PublishSpatialDataCommand");
 
 		showLoading(info["worksheetId"]);
 		var returned = sendRequest(info, worksheetId);

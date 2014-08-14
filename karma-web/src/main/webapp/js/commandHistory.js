@@ -21,7 +21,7 @@
 function clickUndoButton() {
 	var commandDivElem = $(this).parents(".CommandDiv");
 	// Prepare the data to be sent to the server
-	var edits = generateInfoObject("", "UndoRedoCommand");
+	var edits = generateInfoObject("", "", "UndoRedoCommand");
 	edits["commandId"] = commandDivElem.attr("id");
 
 	// Invoke the UNDO command on the server

@@ -104,7 +104,7 @@ var DatabaseImportDialog = (function() {
 			var table = $("#DatabaseTablesList table", dialog);
 			$("tr", table).remove();
 
-			var info = generateInfoObject("", "ImportDatabaseTableCommand");
+			var info = generateInfoObject("", "", "ImportDatabaseTableCommand");
 			info["interactionType"] = "getPreferencesValues";
 			info["isPreview"] = true;
 			var returned = $.ajax({
@@ -137,7 +137,7 @@ var DatabaseImportDialog = (function() {
 
 		function generateTableList() {
 			// Prepare the data to be sent to the server	
-			var info = generateInfoObject("", "ImportDatabaseTableCommand");
+			var info = generateInfoObject("", "", "ImportDatabaseTableCommand");
 			info["dBType"] = $("#databaseTypeSelector option:selected", dialog).text();
 			info["hostname"] = $.trim($("#DatabaseHostName", dialog).val());
 			info["portNumber"] = $.trim($("#DatabasePortNumber", dialog).val());
@@ -228,7 +228,7 @@ var DatabaseImportDialog = (function() {
 		}
 
 		function sendImportTableRequest() {
-			var info = generateInfoObject("", "ImportDatabaseTableCommand");
+			var info = generateInfoObject("", "", "ImportDatabaseTableCommand");
 			info["commandId"] = dialog.data("commandId");
 			info["tableName"] = $(this).parents("tr").data("tableName");
 			info["interactionType"] = "importTable";
@@ -269,7 +269,7 @@ var DatabaseImportDialog = (function() {
 		}
 
 		function sendPreviewTableRequest() {
-			var info = generateInfoObject("", "ImportDatabaseTableCommand");
+			var info = generateInfoObject("", "", "ImportDatabaseTableCommand");
 			info["commandId"] = $(this).parents("table").data("commandId");
 			info["tableName"] = $(this).parents("tr").data("tableName");
 			info["interactionType"] = "previewTable";
@@ -429,7 +429,7 @@ var SQLImportDialog = (function() {
 		}
 
 		function getSavedPreferences() {
-			var info = generateInfoObject("", "ImportSQLCommand");
+			var info = generateInfoObject("", "", "ImportSQLCommand");
 			info["interactionType"] = "getPreferencesValues";
 			info["isPreview"] = true;
 			var returned = $.ajax({
@@ -477,7 +477,7 @@ var SQLImportDialog = (function() {
 		}
 
 		function sendImportRequest() {
-			var info = generateInfoObject("", "ImportSQLCommand");
+			var info = generateInfoObject("", "", "ImportSQLCommand");
 			info["interactionType"] = "importSQL";
 			info["commandId"] = dialog.data("commandId");
 			info["execute"] = true;

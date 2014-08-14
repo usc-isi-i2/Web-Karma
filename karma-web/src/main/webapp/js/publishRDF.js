@@ -55,7 +55,7 @@ var PublishRDFDialog = (function() {
 
 		function fetchGraphsFromTripleStore(url) {
 
-			var info = generateInfoObject("", "FetchGraphsFromTripleStoreCommand");
+			var info = generateInfoObject("", "", "FetchGraphsFromTripleStoreCommand");
 			info["tripleStoreUrl"] = url;
 			var returned = $.ajax({
 				url: "RequestController",
@@ -216,7 +216,7 @@ var PublishRDFDialog = (function() {
 
 		function getGraphURI() {
 			// get the graph uri for the worksheet
-			var info = generateInfoObject(worksheetId, "FetchExistingWorksheetPropertiesCommand");
+			var info = generateInfoObject(worksheetId, "", "FetchExistingWorksheetPropertiesCommand");
 
 			var returned = $.ajax({
 				url: "RequestController",
@@ -238,7 +238,7 @@ var PublishRDFDialog = (function() {
 		}
 
 		function getRDFPreferences() {
-			var info = generateInfoObject("", "FetchPreferencesCommand");
+			var info = generateInfoObject("", "", "FetchPreferencesCommand");
 			info["preferenceCommand"] = "PublishRDFCommand";
 			var returned = $.ajax({
 				url: "RequestController",
@@ -269,7 +269,7 @@ var PublishRDFDialog = (function() {
 		}
 
 		function getUniqueGraphUri(graphUriTobeValidated) {
-			var info = generateInfoObject(worksheetId, "GetUniqueGraphUrlCommand");
+			var info = generateInfoObject(worksheetId, "", "GetUniqueGraphUrlCommand");
 			info["tripleStoreUrl"] = $('#txtData_URL').html();
 			if (graphUriTobeValidated && graphUriTobeValidated != null) {
 				info["graphUri"] = graphUriTobeValidated;

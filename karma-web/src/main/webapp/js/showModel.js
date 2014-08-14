@@ -28,7 +28,7 @@ var ShowExistingModelDialog = (function() {
 		}
 
 		function createNewModelForWorksheet() {
-			var info = generateInfoObject(lastWorksheetId, "CreateNewModelCommand");
+			var info = generateInfoObject(lastWorksheetId, "", "CreateNewModelCommand");
 
 			showLoading(info["worksheetId"]);
 			sendRequest(info, info["worksheetId"]);
@@ -36,7 +36,7 @@ var ShowExistingModelDialog = (function() {
 		}
 
 		function submitModelForWorksheet() {
-			var info = generateInfoObject(lastWorksheetId, "ApplyModelFromTripleStoreCommand");
+			var info = generateInfoObject(lastWorksheetId, "", "ApplyModelFromTripleStoreCommand");
 
 			var table = $("#modelsList", dialog);
 			if ($("td.selected", table).length == 0) {
@@ -63,7 +63,7 @@ var ShowExistingModelDialog = (function() {
 			$("div.noItems", dialog).hide();
 
 
-			var info = generateInfoObject(lastWorksheetId, "FetchExistingModelsForWorksheetCommand");
+			var info = generateInfoObject(lastWorksheetId, "", "FetchExistingModelsForWorksheetCommand");
 			info["garbage"] = "garbage";
 			var returned = $.ajax({
 				url: "RequestController",

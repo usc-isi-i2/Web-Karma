@@ -288,7 +288,7 @@ var FileOptionsDialog = (function() {
 		function reloadOptions(execute) {
 			var format = dialog.data("format");
 			var optionSetting = optionSettings[format];
-			var options = generateInfoObject("", "Import" + format + "Command");
+			var options = generateInfoObject("", "", "Import" + format + "Command");
 			options["commandId"] = dialog.data("commandId");
 			if ($.inArray("colDelimiterSelector", optionSetting) != -1)
 				options["delimiter"] = $("#delimiterSelector").val();
@@ -501,7 +501,7 @@ var SelectColumnsDialog = (function() {
 			var savePreset = $("input:checkbox[name='SavePresetCheck']", dialog).prop('checked');
 			console.log(columnsJson);
 			if (selectedFormat == "CSVFile") {
-				var options = generateInfoObject("", "Import" + selectedFormat + "Command");
+				var options = generateInfoObject("", "", "Import" + selectedFormat + "Command");
 				options["commandId"] = dialog.data("commandId");
 				options["delimiter"] = dialog.data("delimiter");
 				options["CSVHeaderLineIndex"] = dialog.data("CSVHeaderLineIndex");

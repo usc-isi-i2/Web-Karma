@@ -92,7 +92,7 @@ var ClassDropdownMenu = (function() {
 
 		function deleteNode() {
 			console.log("Delete Node");
-			var info = generateInfoObject(worksheetId, "DeleteNodeCommand");
+			var info = generateInfoObject(worksheetId, "", "DeleteNodeCommand");
 			var newInfo = info['newInfo'];
 			var label = columnLabel;
 			newInfo.push(getParamObject("label", label, "columnLabel"));
@@ -109,7 +109,7 @@ var ClassDropdownMenu = (function() {
 
 		function exportJSON() {
 			console.log("exportJSON");
-			var info = generateInfoObject(worksheetId, "ExportJSONCommand");
+			var info = generateInfoObject(worksheetId, "", "ExportJSONCommand");
 			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("alignmentNodeId", columnId, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
@@ -120,7 +120,7 @@ var ClassDropdownMenu = (function() {
 
 		function exportAvro() {
 			console.log("exportAvro");
-			var info = generateInfoObject(worksheetId, "ExportAvroCommand");
+			var info = generateInfoObject(worksheetId, "", "ExportAvroCommand");
 			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("alignmentNodeId", columnId, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);

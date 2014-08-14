@@ -26,6 +26,7 @@ package edu.isi.karma.rep;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -140,13 +141,16 @@ public class Table extends RepEntity {
 	 */
 	public ArrayList<Row> getRows(int startIndex, int count, SuperSelection sel) {
 		ArrayList<Row> result = new ArrayList<Row>();
-		if (rows.size() > 0) {
-			for (int i = Math.min(startIndex, rows.size() - 1); i < Math.min(
-					startIndex + count, rows.size()); i++) {
-				if (sel.isSelected(rows.get(i)))
-					continue;
-				result.add(rows.get(i));
+		Iterator<Row> itr = rows.iterator();
+		int sum = 0;
+		while(itr.hasNext()) {
+			Row r = itr.next();
+			if (!sel.isSelected(r)) {
+				result.add(r);
+				sum++;
 			}
+			if (sum == count)
+				break;
 		}
 		return result;
 	}

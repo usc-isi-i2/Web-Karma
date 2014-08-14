@@ -1382,7 +1382,7 @@ var IncomingOutgoingLinksDialog = (function() {
 				return false;
 			}
 
-			var info = generateInfoObject(worksheetId, "ChangeInternalNodeLinksCommand");
+			var info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
 
 			// Prepare the input for command
 			var newInfo = info['newInfo'];
@@ -1810,7 +1810,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 		}
 
 		function saveDialog(e) {
-			var info = new generateInfoObject(worksheetId, "ChangeInternalNodeLinksCommand");
+			var info = new generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
 
 			// Prepare the input for command
 			var newInfo = info['newInfo'];
@@ -1983,7 +1983,7 @@ var AugmentDataDialog = (function() {
 		}
 
 		function refresh() {
-			var info = generateInfoObject(worksheetId, "SearchForDataToAugmentCommand");
+			var info = generateInfoObject(worksheetId, "", "SearchForDataToAugmentCommand");
 			info['tripleStoreUrl'] = $('#txtModel_URL').html();
 			info['context'] = "";
 			info["nodeUri"] = columnDomain;
@@ -2009,7 +2009,7 @@ var AugmentDataDialog = (function() {
 					//hideLoading(info["worksheetId"]);
 				}
 			});
-			var info = generateInfoObject(worksheetId, "SearchForDataToAugmentIncomingCommand");
+			var info = generateInfoObject(worksheetId, "", "SearchForDataToAugmentIncomingCommand");
 			info['tripleStoreUrl'] = $('#txtModel_URL').html();
 			info['context'] = "";
 			info["nodeUri"] = columnDomain;
@@ -2235,7 +2235,7 @@ var AugmentDataDialog = (function() {
 				}
 			}
 
-			var info = generateInfoObject(worksheetId, "FetchHNodeIdFromAlignmentCommand");
+			var info = generateInfoObject(worksheetId, "", "FetchHNodeIdFromAlignmentCommand");
 			info["alignmentId"] = alignmentId;
 			info["columnUri"] = columnUri;
 			var hNodeId;
@@ -2455,7 +2455,7 @@ var AddNodeDialog = (function() {
 		}
 
 		function saveDialog(e) {
-			var info = generateInfoObject(worksheetId, "AddNodeCommand");
+			var info = generateInfoObject(worksheetId, "", "AddNodeCommand");
 			var newInfo = info['newInfo'];
 			var label = selectedClass.label;
 			if (label.length > 6) {

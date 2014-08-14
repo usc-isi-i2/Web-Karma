@@ -55,8 +55,8 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 			leafOnly: true,
 			leafExcluded: false
 		},
-		//{name:"Generate Cluster Values", func:clusterValues, leafOnly:true},
-		//{name:"Merge Cluster Values", func:mergeValues, leafOnly:true},
+		//{name:"Generate Cluster Values", func:clusterValues, leafOnly:true, leafExcluded: false},
+		//{name:"Merge Cluster Values", func:mergeValues, leafOnly:true, leafExcluded: false},
 		{
 			name: "divider",
 			leafOnly: true,
@@ -69,7 +69,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 			leafOnly: true,
 			leafExcluded: false
 		},
-		//{name:"Show Chart", func:showChart, leafOnly:true},
+		//{name:"Show Chart", func:showChart, leafOnly:true, leafExcluded: false},
 		{
 			name: "divider",
 			leafOnly: true,
@@ -154,15 +154,23 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 
 	function invertRows() {
 		hideDropdown();
-		$("#pyTransformSelectionDialog").data("operation", "Invert");
-		PyTransformSelectionDialog.getInstance(wsId, wsColumnId).show();
+		var headers = getColumnHeadingsForColumn(wsId, wsColumnId, "GroupBy");
+		var info = generateInfoObject(wsId, headers[0]['HNodeId'], "OperateSelectionCommand");
+		var newInfo = info['newInfo'];
+		newInfo.push(getParamObject("pythonCode", "", "other"));
+		newInfo.push(getParamObject("operation", "Invert", "other"));
+		info["newInfo"] = JSON.stringify(newInfo);
+		showLoading(worksheetId);
+		sendRequest(info, worksheetId);
 	}
 
 	function clearAll() {
+		hideDropdown();
 		console.log("clearAll");
 	}
 
 	function clearThis() {
+		hideDropdown();
 		console.log("clearThis");
 	}
 
@@ -632,7 +640,7 @@ var SplitValueDialog = (function() {
 			}
 			validationResult = true;
 			if (newColName != oldColName) {
-				var headers = getColumnHeadings(worksheetId, columnId, "SplitValues");
+				var headers = getColumnHeadingsForColumn(worksheetId, columnId, "SplitValues");
 				$.each(headers, function(index, element) {
 					if (element['ColumnName'] == newColName)
 						validationResult = false;
@@ -1161,7 +1169,7 @@ var GroupByDialog = (function() {
 				hideError();
 				var dialogContent = $("#groupByDialogColumns", dialog);
 				dialogContent.empty();
-				var headers = getColumnHeadings(wsId, cId, "GroupBy");
+				var headers = getColumnHeadingsForColumn(wsId, cId, "GroupBy");
 				console.log(headers);
 				if (!headers) {
 					hide();
@@ -1265,7 +1273,7 @@ var UnfoldDialog = (function() {
 		function show(wsId, cId) {
 			worksheetId = wsId;
 			columnId = cId;
-			var headers = getColumnHeadings(wsId, cId, "Unfold");
+			var headers = getColumnHeadingsForColumn(wsId, cId, "Unfold");
 			if (headers.length == 0)
 				return;
 			dialog.on('show.bs.modal', function(e) {
@@ -1379,7 +1387,7 @@ var FoldDialog2 = (function() {
 				hideError();
 				var dialogContent = $("#foldDialogColumns", dialog);
 				dialogContent.empty();
-				var headers = getColumnHeadings(wsId, cId, "Fold");
+				var headers = getColumnHeadingsForColumn(wsId, cId, "Fold");
 				if (!headers) {
 					hide();
 					return;
@@ -1492,7 +1500,7 @@ var GlueDialog = (function() {
 				hideError();
 				var dialogContent = $("#glueDialogColumns", dialog);
 				dialogContent.empty();
-				var headers = getColumnHeadings(wsId, cId, "Glue");
+				var headers = getColumnHeadingsForColumn(wsId, cId, "Glue");
 				console.log(headers);
 				if (!headers) {
 					hide();
@@ -1554,7 +1562,7 @@ var PyTransformSelectionDialog = (function() {
 		function init(wsId, colId) {
 			worksheetId = wsId;
 			columnId = colId;
-			headers = getColumnHeadings(worksheetId, columnId, "GroupBy");
+			headers = getColumnHeadingsForColumn(worksheetId, columnId, "GroupBy");
 			console.log(headers);
 			$('#btnSaveSelection', dialog).unbind('click');
 			$('#btnErrorsSelection', dialog).unbind('click');
@@ -1614,6 +1622,7 @@ var PyTransformSelectionDialog = (function() {
 			newInfo.push(getParamObject("pythonCode", editor.getValue(), "other"));
 			newInfo.push(getParamObject("operation", dialog.data("operation"), "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
+			showLoading(worksheetId);
 			sendRequest(info, worksheetId);
 			hide();
 		};
