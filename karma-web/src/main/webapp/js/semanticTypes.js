@@ -263,7 +263,7 @@ var SetSemanticTypeDialog = (function() {
 				return false;
 			}
 
-			var info = generateInfoObject(worksheetId, hNodeId, "");
+			var info = generateInfoObject(worksheetId, columnId, "");
 			var newInfo = info['newInfo']; // Used for commands that take JSONArray as input and are saved in the history
 			var hNodeId = columnId;
 			info["isKey"] = $("input#chooseClassKey").is(":checked");

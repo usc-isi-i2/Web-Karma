@@ -155,10 +155,7 @@ var PublishRDFDialog = (function() {
 		function publishRDFFunction(graphUri) {
 			hide();
 
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "PublishRDFCommand";
+			var info = generateInfoObject(worksheetId, "", "PublishRDFCommand");
 			info["addInverseProperties"] = $("input#addInverseProperties").is(":checked");
 			info["saveToStore"] = $("input#saveToStore").is(":checked");
 			info["hostName"] = $("input#hostName").val();

@@ -159,10 +159,7 @@ function hideWaitingSignOnScreen() {
 }
 
 function testSparqlEndPoint(url, worksheetId) {
-	var info = new Object();
-	info["worksheetId"] = worksheetId;
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "TestSPARQLEndPointCommand";
+	var info = generateInfoObject(worksheetId, "", "TestSPARQLEndPointCommand");
 	info["tripleStoreUrl"] = url;
 	window.conncetionStat = false;
 	$.ajax({
@@ -194,11 +191,8 @@ function getParamObject(name, value, type) {
 }
 
 function getAllClasses(worksheetId) {
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "GetClassesCommand";
+	var info = generateInfoObject(worksheetId, "", "GetClassesCommand");
 	info["nodesRange"] = "allClasses";
-	info["worksheetId"] = worksheetId;
 
 	var result = [];
 	$.ajax({
@@ -230,11 +224,8 @@ function getAllClasses(worksheetId) {
 }
 
 function getAllClassesRaw(worksheetId) {
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "GetClassesCommand";
+	var info = generateInfoObject(worksheetId, "", "GetClassesCommand");
 	info["nodesRange"] = "allClassesRaw";
-	info["worksheetId"] = worksheetId;
 
 	var result = [];
 	$.ajax({
@@ -269,11 +260,8 @@ function getAllClassesForProperty(worksheetId, propertyUri) {
 	if (propertyUri == null || propertyUri == "")
 		return [];
 
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "GetClassesCommand";
+	var info = generateInfoObject(worksheetId, "", "GetClassesCommand");
 	info["nodesRange"] = "classesWithProperty";
-	info["worksheetId"] = worksheetId;
 	info["propertyURI"] = propertyUri;
 
 	var result = [];
@@ -306,10 +294,7 @@ function getAllClassesForProperty(worksheetId, propertyUri) {
 }
 
 function getClassesInModel(worksheetId) {
-	var info = new Object();
-	info["command"] = "GetClassesCommand";
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["worksheetId"] = worksheetId;
+	var info = generateInfoObject(worksheetId, "", "GetClassesCommand");
 	info["nodesRange"] = "classesInModel";
 	var result = [];
 	$.ajax({
@@ -353,11 +338,8 @@ function parseClassJSON(clazz, result, allLabels) {
 }
 
 function getAllDataProperties(worksheetId) {
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "GetPropertiesCommand";
+	var info = generateInfoObject(worksheetId, "", "GetPropertiesCommand");
 	info["propertiesRange"] = "allDataProperties";
-	info["worksheetId"] = worksheetId;
 
 	var result = [];
 	$.ajax({
@@ -382,11 +364,8 @@ function getAllDataProperties(worksheetId) {
 }
 
 function getAllObjectProperties(worksheetId) {
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "GetPropertiesCommand";
+	var info = generateInfoObject(worksheetId, "", "GetPropertiesCommand");
 	info["propertiesRange"] = "allObjectProperties";
-	info["worksheetId"] = worksheetId;
 
 	var result = [];
 	$.ajax({
@@ -411,11 +390,8 @@ function getAllObjectProperties(worksheetId) {
 }
 
 function getAllExistingProperties(worksheetId) {
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "GetPropertiesCommand";
+	var info = generateInfoObject(worksheetId, "", "GetPropertiesCommand");
 	info["propertiesRange"] = "existingProperties";
-	info["worksheetId"] = worksheetId;
 
 	var result = [];
 	$.ajax({
@@ -443,12 +419,9 @@ function getAllPropertiesForClass(worksheetId, classUri) {
 	if (classUri == null || classUri == "" || classUri == "fakeDomainURI")
 		return [];
 
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "GetPropertiesCommand";
+	var info = generateInfoObject(worksheetId, "", "GetPropertiesCommand");
 	info["propertiesRange"] = "dataPropertiesForClass";
 	info["classURI"] = classUri;
-	info["worksheetId"] = worksheetId;
 
 	var result = [];
 	$.ajax({
@@ -473,13 +446,10 @@ function getAllPropertiesForClass(worksheetId, classUri) {
 }
 
 function getAllPropertiesForDomainRange(worksheetId, domainUri, rangeUri) {
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "GetPropertiesCommand";
+	var info = generateInfoObject(worksheetId, "", "GetPropertiesCommand");
 	info["propertiesRange"] = "propertiesWithDomainRange";
 	info["domainURI"] = domainUri;
 	info["rangeURI"] = rangeUri;
-	info["worksheetId"] = worksheetId;
 
 	var result = [];
 	$.ajax({
@@ -531,10 +501,7 @@ function sortClassPropertyNodes(nodes) {
 }
 
 function getAllLinksForNode(worksheetId, alignmentId, nodeId) {
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "GetCurrentLinksOfInternalNodeCommand";
-	info["worksheetId"] = worksheetId;
+	var info = generateInfoObject(worksheetId, "", "GetCurrentLinksOfInternalNodeCommand");
 	info["alignmentId"] = alignmentId;
 	info["nodeId"] = nodeId;
 	var result = [];
@@ -583,9 +550,7 @@ function getAllLinksForNode(worksheetId, alignmentId, nodeId) {
 }
 
 function changeKarmaHome(homeDir) {
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "SetKarmaHomeCommand";
+	var info = generateInfoObject("", "", "SetKarmaHomeCommand");
 	info["directory"] = homeDir;
 	var result = [];
 	$.ajax({
