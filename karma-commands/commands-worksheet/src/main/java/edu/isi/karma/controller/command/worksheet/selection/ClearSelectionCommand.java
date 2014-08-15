@@ -29,6 +29,7 @@ public class ClearSelectionCommand extends WorksheetCommand {
 		this.hNodeId = hNodeId;
 		this.type = type;
 		oldSelections = new HashMap<String, Selection>();
+		addTag(CommandTag.Transformation);
 	}
 
 	@Override

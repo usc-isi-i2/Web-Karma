@@ -21,6 +21,7 @@ public class RefreshSelectionCommand extends WorksheetCommand {
 			String hNodeId) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
+		addTag(CommandTag.Transformation);
 	}
 
 	@Override
