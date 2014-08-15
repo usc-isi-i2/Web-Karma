@@ -75,7 +75,6 @@ public class GetHeadersCommand extends WorksheetCommand {
 				array.put(obj);
 			}
 		}
-		System.out.println(array);
 		try {
 			return new UpdateContainer(new AbstractUpdate() {
 
@@ -92,7 +91,6 @@ public class GetHeadersCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

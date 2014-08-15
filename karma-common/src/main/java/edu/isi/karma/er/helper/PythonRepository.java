@@ -38,6 +38,7 @@ public class PythonRepository {
 		PythonInterpreter interpreter = new PythonInterpreter();
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getImportStatements());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getGetValueDefStatement());
+		compileAndAddToRepository(interpreter, PythonTransformationHelper.getIsEmptyDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getVDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getTransformStatement());
 	}
@@ -67,6 +68,7 @@ public class PythonRepository {
 	{
 		interpreter.exec(scripts.get(PythonTransformationHelper.getImportStatements()));
 		interpreter.exec(scripts.get(PythonTransformationHelper.getGetValueDefStatement()));
+		interpreter.exec(scripts.get(PythonTransformationHelper.getIsEmptyDefStatement()));
 		interpreter.exec(scripts.get(PythonTransformationHelper.getVDefStatement()));
 
 	}

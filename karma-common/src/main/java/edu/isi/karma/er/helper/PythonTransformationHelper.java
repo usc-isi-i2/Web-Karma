@@ -35,6 +35,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 public class PythonTransformationHelper {
 	
 	private static String valueDefStatement = null;
+	private static String isEmptyDefStatement = null;
 	private static String importStatement = null;
 	public static String getPyObjectValueAsString(PyObject obj) {
 		if (obj == null)
@@ -104,8 +105,8 @@ public class PythonTransformationHelper {
 			methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
 			methodStmt.append("	node = factory.getNode(nodeid)\n");
 			methodStmt.append("	targetNode = node.getNeighborByColumnName(columnName, factory)\n");
-			methodStmt.append("	command.addInputColumns(targetNode.getHNodeId())\n");
 			methodStmt.append("	if targetNode is not None:\n");
+			methodStmt.append("		command.addInputColumns(targetNode.getHNodeId())\n");
 			methodStmt.append("		value = targetNode.getValue()\n");
 			methodStmt.append("		if value is not None:\n");
 			methodStmt.append("			valueAsString = value.asString()\n");
@@ -115,6 +116,33 @@ public class PythonTransformationHelper {
 			valueDefStatement = methodStmt.toString();
 		}
 		return valueDefStatement;
+	}
+	
+	public static String getIsEmptyDefStatement() {
+		
+		if(isEmptyDefStatement == null)
+		{
+			StringBuilder methodStmt = new StringBuilder();
+			methodStmt.append("def isEmpty(columnName):\n");
+			methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
+			methodStmt.append("	node = factory.getNode(nodeid)\n");
+			methodStmt.append("	targetNode = node.getNeighborByColumnName(columnName, factory)\n");
+			methodStmt.append("	if targetNode is not None:\n");
+			methodStmt.append("		hasNestedTable = targetNode.hasNestedTable()\n");
+			methodStmt.append("		command.addInputColumns(targetNode.getHNodeId())\n");
+			methodStmt.append("		if hasNestedTable: \n");
+			methodStmt.append("			table = targetNode.getNestedTable(); \n");
+			methodStmt.append("			if table.getNumRows() > 0:  \n");
+			methodStmt.append("				return True  \n");
+			methodStmt.append("		value = targetNode.getValue()\n");
+			methodStmt.append("		if value is not None:\n");
+			methodStmt.append("			valueAsString = value.asString()\n");
+			methodStmt.append("			if ((not valueAsString) and len(valueAsString) > 0) :\n");
+			methodStmt.append("				return True\n");
+			methodStmt.append("	return False\n");
+			isEmptyDefStatement = methodStmt.toString();
+		}
+		return isEmptyDefStatement;
 	}
 	
 	public static String getVDefStatement()

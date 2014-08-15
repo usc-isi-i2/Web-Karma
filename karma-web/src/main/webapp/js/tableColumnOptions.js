@@ -1269,7 +1269,7 @@ var UnfoldDialog = (function() {
 			var checked = checkboxes[0];
 
 			//console.log(checked);
-			var info = generateInfoObject(worksheetId, "UnfoldCommand");
+			var info = generateInfoObject(worksheetId, "", "UnfoldCommand");
 			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("keyhNodeId", columnId, "hNodeId"));
 			newInfo.push(getParamObject("valuehNodeId", checked['value'], "hNodeId"));

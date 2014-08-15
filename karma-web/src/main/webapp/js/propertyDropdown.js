@@ -46,7 +46,7 @@ var PropertyDropdownMenu = (function() {
 		function deleteLink() {
 			console.log("deleteLink");
 			if (confirm("Are you sure you wish to delete the link?")) {
-				var info = generateInfoObject(worksheetId, "ChangeInternalNodeLinksCommand");
+				var info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
 
 				// Prepare the input for command
 				var newInfo = info['newInfo'];
@@ -60,7 +60,6 @@ var PropertyDropdownMenu = (function() {
 				initialEdges.push(oldEdgeObj);
 				newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
 				newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
-				newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
 				var newEdges = [];
 				newInfo.push(getParamObject("newEdges", newEdges, "other"));
 				info["newInfo"] = JSON.stringify(newInfo);
