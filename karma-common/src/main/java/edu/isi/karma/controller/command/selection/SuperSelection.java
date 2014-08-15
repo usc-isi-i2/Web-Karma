@@ -73,4 +73,8 @@ public class SuperSelection {
 	public void removeSelection(String hTableId) {
 		selections.remove(hTableId);
 	}
+	
+	public Set<String> getAllSelection() {
+		return new HashSet<String>(selections);
+	}
 }

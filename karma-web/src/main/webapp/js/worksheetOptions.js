@@ -147,7 +147,7 @@ function WorksheetOptions(wsId, wsTitle) {
 					name: "In All Nested Tables",
 					func: clearAll
 				}, {
-					name: "In This Columns",
+					name: "In This Column",
 					func: clearThis
 				}]
 			}]
@@ -201,12 +201,24 @@ function WorksheetOptions(wsId, wsTitle) {
 
 	function clearAll() {
 		hideDropdown();
-		console.log("clearAll");
+		var headers = getColumnHeadingsForColumn(wsId, "", "GroupBy");
+		var info = generateInfoObject(wsId, headers[0]['HNodeId'], "ClearSelectionCommand");
+		var newInfo = info['newInfo'];
+		newInfo.push(getParamObject("type", "All", "other"));
+		info["newInfo"] = JSON.stringify(newInfo);
+		showLoading(worksheetId);
+		sendRequest(info, worksheetId);
 	}
 
 	function clearThis() {
 		hideDropdown();
-		console.log("clearThis");
+		var headers = getColumnHeadingsForColumn(wsId, "", "GroupBy");
+		var info = generateInfoObject(wsId, headers[0]['HNodeId'], "ClearSelectionCommand");
+		var newInfo = info['newInfo'];
+		newInfo.push(getParamObject("type", "Column", "other"));
+		info["newInfo"] = JSON.stringify(newInfo);
+		showLoading(worksheetId);
+		sendRequest(info, worksheetId);
 	}
 
 	function getCheckboxState(event) {

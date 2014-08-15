@@ -11,10 +11,10 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
 
-public class RefreshSelectionCommandFactory extends JSONInputCommandFactory {
+public class ClearSelectionCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
-		worksheetId, hNodeId
+		worksheetId, hNodeId, type
 	}
 	
 	@Override
@@ -22,7 +22,8 @@ public class RefreshSelectionCommandFactory extends JSONInputCommandFactory {
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
-		Command cmd = new RefreshSelectionCommand(getNewId(workspace), worksheetId, hNodeId);
+		String type = CommandInputJSONUtil.getStringValue(Arguments.type.name(), inputJson);
+		Command cmd = new ClearSelectionCommand(getNewId(workspace), worksheetId, hNodeId, type);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
@@ -34,7 +35,7 @@ public class RefreshSelectionCommandFactory extends JSONInputCommandFactory {
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand() {
-		return RefreshSelectionCommand.class;
+		return ClearSelectionCommand.class;
 	}
 
 }

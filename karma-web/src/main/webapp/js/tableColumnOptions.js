@@ -125,7 +125,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 					name: "In All Nested Tables",
 					func: clearAll
 				}, {
-					name: "In This Columns",
+					name: "In This Column",
 					func: clearThis
 				}]
 			}]
@@ -179,12 +179,24 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 
 	function clearAll() {
 		hideDropdown();
-		console.log("clearAll");
+		var headers = getColumnHeadingsForColumn(wsId, wsColumnId, "GroupBy");
+		var info = generateInfoObject(wsId, headers[0]['HNodeId'], "ClearSelectionCommand");
+		var newInfo = info['newInfo'];
+		newInfo.push(getParamObject("type", "All", "other"));
+		info["newInfo"] = JSON.stringify(newInfo);
+		showLoading(worksheetId);
+		sendRequest(info, worksheetId);
 	}
 
 	function clearThis() {
 		hideDropdown();
-		console.log("clearThis");
+		var headers = getColumnHeadingsForColumn(wsId, wsColumnId, "GroupBy");
+		var info = generateInfoObject(wsId, headers[0]['HNodeId'], "ClearSelectionCommand");
+		var newInfo = info['newInfo'];
+		newInfo.push(getParamObject("type", "Column", "other"));
+		info["newInfo"] = JSON.stringify(newInfo);
+		showLoading(worksheetId);
+		sendRequest(info, worksheetId);
 	}
 
 	function setSemanticType() {
@@ -866,16 +878,10 @@ var PyTransformDialog = (function() {
 
 
 			// prepare the JSON Object to be sent to the server
-			var info = {};
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "SubmitEditPythonTransformationCommand";
-
-			var newInfo = [];
+			var info = generateInfoObject(worksheetId, hNode.data("columnDerivedFrom"), "SubmitEditPythonTransformationCommand");
+			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("newColumnName", columnName, "other"));
 			newInfo.push(getParamObject("transformationCode", newTransCode, "other"));
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-			newInfo.push(getParamObject("hNodeId", hNode.data("columnDerivedFrom"), "hNodeId"));
-
 			newInfo.push(getParamObject("previousCommandId", hNode.data("previousCommandId"), "other"));
 			newInfo.push(getParamObject("errorDefaultValue", $("#pythonTransformErrorDefaultValue").val(), "other"));
 			newInfo.push(getParamObject("targetHNodeId", columnId, "hNodeId"));
@@ -911,15 +917,10 @@ var PyTransformDialog = (function() {
 			hide();
 
 			// prepare the JSON Object to be sent to the server
-			var info = {};
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["command"] = "SubmitPythonTransformationCommand";
-
-			var newInfo = [];
+			var info = generateInfoObject(worksheetId, hNodeId, "SubmitPythonTransformationCommand");
+			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("newColumnName", columnName, "other"));
 			newInfo.push(getParamObject("transformationCode", editor.getValue(), "other"));
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-			newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
 			newInfo.push(getParamObject("errorDefaultValue", $("#pythonTransformErrorDefaultValue").val(), "other"));
 			// newInfo.push(getParamObject("useExistingColumnName",
 			// useExistingColumnName, "useExistingColumnName"));
@@ -1589,6 +1590,7 @@ var PyTransformSelectionDialog = (function() {
 				editor.getSession().setMode("ace/mode/python");
 				editor.getSession().setUseWrapMode(true);
 			}
+			editor.getSession().setValue("return getValue(\"" + headers[0]['ColumnName'] + "\")");
 			dialog.on("resize", function(event, ui) {
 				editor.resize();
 			});
@@ -1596,7 +1598,6 @@ var PyTransformSelectionDialog = (function() {
 			dialog.on('show.bs.modal', function(e) {
 				$("#onErrorSelection").attr("checked", true);
 				hideError();
-				editor.getSession().setValue("return getValue(\"" + headers[0]['ColumnName'] + "\")");
 				$("#pythonPreviewResultsTableSelection").hide();
 				$("#btnErrorsSelection").button('disable');
 			});
@@ -1647,6 +1648,7 @@ var PyTransformSelectionDialog = (function() {
 			var info = generateInfoObject(worksheetId, headers[0]['HNodeId'], "PreviewPythonTransformationResultsCommand");
 			info["transformationCode"] = editor.getValue();
 			info["errorDefaultValue"] = $("#pythonTransformErrorDefaultValueSelection").val();
+			info["selectionName"] = "DEFAULT_SELECTION";
 			$("#pyTransformErrorWindowSelection").hide();
 			// Send the request
 			$.ajax({
