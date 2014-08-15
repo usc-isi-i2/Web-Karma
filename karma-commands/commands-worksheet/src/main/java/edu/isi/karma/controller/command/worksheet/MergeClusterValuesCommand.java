@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.worksheet;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -24,7 +25,8 @@ import edu.isi.karma.rep.Workspace;
 
 public class MergeClusterValuesCommand extends WorksheetSelectionCommand {
 	private String hNodeId;
-	
+	@SuppressWarnings("unused")
+	private Map<String, String> oldRowValueMap = new HashMap<String, String>();	
 	MultipleValueEditColumnCommand edit;
 			
 	public MergeClusterValuesCommand(String id, String hNodeId,

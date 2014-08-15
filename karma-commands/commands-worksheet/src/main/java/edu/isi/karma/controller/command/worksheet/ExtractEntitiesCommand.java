@@ -123,8 +123,6 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 
 		for (Row row : rows) {
 			String id = row.getId();
-			@SuppressWarnings("unused")
-			JSONArray t = new JSONArray();
 			Node node = row.getNode(hNodeId);
 			String value = node.getValue().asString();
 			JSONObject obj = new JSONObject();

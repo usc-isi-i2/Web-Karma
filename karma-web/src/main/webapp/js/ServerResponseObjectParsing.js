@@ -69,6 +69,13 @@ function parse(data) {
 
 	// Loop through each update from the server and take required action for the GUI
 	$.each(data["elements"], function(i, element) {
+		if (element["worksheetId"]) {
+			var worksheetPanel = $("div.Worksheet#" + element["worksheetId"]);
+			var wsVisible = worksheetPanel.data("worksheetVisible");
+			if (!wsVisible) {
+				return;
+			}
+		}
 		if (element["updateType"] == "WorksheetListUpdate") {
 
 			$.each(element["worksheets"], function(j, worksheet) {
@@ -234,11 +241,13 @@ function parse(data) {
 								.addClass("glyphicon-chevron-up")
 								.attr("id", "hideShow" + worksheet["worksheetId"])
 								.click(function() {
-									var visible = $("div.table-container", mainDiv).is(':visible');
-									$("div.svg-model", mainDiv).toggle(400);
-									$("div.table-container", mainDiv).toggle(400);
-									$("div.table-data-container", mainDiv).toggle(400);
-
+									var visible = $("div.worksheet-table-container", mainDiv).is(':visible');
+									$("div.svg-model", mainDiv).toggle();
+									$("div.worksheet-table-container", mainDiv).toggle(function() {
+										if (visible)
+											refreshAlignmentTree(worksheet["worksheetId"], ["all"]);
+										$("div.table-data-container", mainDiv).toggle();
+									});
 									visible = !visible;
 									mainDiv.data("worksheetVisible", visible);
 
@@ -255,12 +264,6 @@ function parse(data) {
 										$(this).removeClass("glyphicon-chevron-down");
 									}
 
-									if (visible) { //When worksheet becomes visble, refresh it to get all updates
-										window.setTimeout(function() {
-											refreshAlignmentTree(worksheet["worksheetId"]);
-										}, 100);
-
-									}
 								})
 							)
 					);
@@ -287,7 +290,7 @@ function parse(data) {
 
 			var tableContainer = $("div.table-container", worksheetPanel);
 			if (tableContainer.length == 0) {
-				tableContainer = $("<div>").addClass("table-container");
+				tableContainer = $("<div>").addClass("table-container").addClass("worksheet-table-container");
 				worksheetPanel.append(tableContainer);
 			}
 
@@ -626,13 +629,7 @@ function parse(data) {
 		} else if (element["updateType"] == "InfoUpdate") {
 			$.sticky(element["Info"]);
 		} else if (element["updateType"] == "AlignmentSVGVisualizationUpdate") {
-			var worksheetId = element["worksheetId"];
-			var worksheetPanel = $("div.Worksheet#" + worksheetId);
-			var wsVisible = worksheetPanel.data("worksheetVisible");
-			if (wsVisible) {
-				displayAlignmentTree_ForceKarmaLayout(element);
-			}
-
+			displayAlignmentTree_ForceKarmaLayout(element);
 		} else if (element["updateType"] == "KarmaInfo") {
 			if (infos[element["Info"]]) {
 				//ignore;

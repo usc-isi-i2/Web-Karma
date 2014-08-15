@@ -568,6 +568,14 @@ function changeKarmaHome(homeDir) {
 	return result;
 }
 
+function refreshWorksheet(worksheetId, updates) {
+	console.log("Refresh Worksheet:" + refreshWorksheet)
+	var info = generateInfoObject(worksheetId, "", "RefreshWorksheetCommand");
+	info["updates"] = JSON.stringify(updates);
+	showLoading(info["worksheetId"]);
+	sendRequest(info, worksheetId);
+}
+
 //Make All Modal Dialogs Resizeable
 $(".modal-dialog").resizable({
 	handles: "e, w"
