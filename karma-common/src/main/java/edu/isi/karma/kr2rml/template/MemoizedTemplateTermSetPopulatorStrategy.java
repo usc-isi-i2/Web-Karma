@@ -23,6 +23,7 @@ package edu.isi.karma.kr2rml.template;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
@@ -38,7 +39,7 @@ public class MemoizedTemplateTermSetPopulatorStrategy implements
 		this.path = path;
 	}
 	@Override
-	public Collection<Node> getNodes(Row topRow, Row currentRow) 
+	public Collection<Node> getNodes(Row topRow, Row currentRow, SuperSelection sel) 
 	{
 		try
 		{
@@ -47,7 +48,7 @@ public class MemoizedTemplateTermSetPopulatorStrategy implements
 				if(nodes == null || topRow != this.topRow)
 				{
 					nodes = new LinkedList<Node>();
-					topRow.collectNodes(path, nodes);
+					topRow.collectNodes(path, nodes, sel);
 					this.topRow = topRow;
 				}
 			}

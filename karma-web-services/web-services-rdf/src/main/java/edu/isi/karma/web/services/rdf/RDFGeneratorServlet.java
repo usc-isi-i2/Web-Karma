@@ -302,7 +302,7 @@ public class RDFGeneratorServlet {
 		logger.info(r2rmlURI);
 		logger.info(dataType);
 
-		GenericRDFGenerator gRDFGen = new GenericRDFGenerator();
+		GenericRDFGenerator gRDFGen = new GenericRDFGenerator(null);
 
 		R2RMLMappingIdentifier rmlID = new R2RMLMappingIdentifier(r2rmlURI,
 				new URL(r2rmlURI));
@@ -342,6 +342,7 @@ public class RDFGeneratorServlet {
 		}
 	}
 
+
 	private static void initialization() throws KarmaException {
 		UpdateContainer uc = new UpdateContainer();
 		KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
@@ -351,8 +352,7 @@ public class RDFGeneratorServlet {
 
 		SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
 
-		ModelingConfiguration.setLearnerEnabled(false); // disable automatic
-														// learning
+		ModelingConfiguration.setLearnerEnabled(false); // disable automatic													// learning
 	}
 
 	private WorksheetR2RMLJenaModelParser getModel(

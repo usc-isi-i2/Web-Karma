@@ -20,20 +20,22 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.worksheet;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class SplitValuesCommandFactory extends JSONInputCommandFactory {
 	
 	public enum Arguments {
-		worksheetId, hNodeId, delimiter, newColName
+		worksheetId, hNodeId, delimiter, newColName, selectionName
 	}
 
 	@Override
@@ -43,8 +45,9 @@ public class SplitValuesCommandFactory extends JSONInputCommandFactory {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String delimiter = request.getParameter(Arguments.delimiter.name());
 		String newColName = request.getParameter(Arguments.newColName.name());
+		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new SplitValuesCommand(getNewId(workspace), worksheetId, 
-				hNodeId, delimiter, newColName);
+				hNodeId, delimiter, newColName, selectionName);
 	}
 
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
@@ -53,9 +56,10 @@ public class SplitValuesCommandFactory extends JSONInputCommandFactory {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String delimiter = HistoryJsonUtil.getStringValue(Arguments.delimiter.name(), inputJson);
 		String newColName = HistoryJsonUtil.getStringValue(Arguments.newColName.name(), inputJson);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		Command comm = new SplitValuesCommand(getNewId(workspace), 
 				worksheetId, hNodeId,
-				delimiter, newColName);
+				delimiter, newColName, selectionName);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

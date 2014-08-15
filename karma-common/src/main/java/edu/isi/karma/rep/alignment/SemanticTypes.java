@@ -20,13 +20,14 @@
  ******************************************************************************/
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.util.Jsonizable;
-import org.json.JSONException;
-import org.json.JSONWriter;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONWriter;
+
+import edu.isi.karma.util.Jsonizable;
 
 public class SemanticTypes implements Jsonizable {
 	// Map from the HNodeIds (for each column) to the semantic type

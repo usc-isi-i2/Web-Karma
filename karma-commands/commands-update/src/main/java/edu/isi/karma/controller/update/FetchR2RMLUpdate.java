@@ -22,6 +22,7 @@
 package edu.isi.karma.controller.update;
 
 import edu.isi.karma.view.VWorkspace;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -72,5 +73,13 @@ public class FetchR2RMLUpdate extends AbstractUpdate {
 		} catch (Exception e) {
 			logger.error("Error generating JSON!", e);
 		}
+	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof FetchR2RMLUpdate) {
+			FetchR2RMLUpdate t = (FetchR2RMLUpdate)o;
+			return t.model_Names.equals(model_Names) && t.model_Urls.equals(model_Urls);
+		}
+		return false;
 	}
 }

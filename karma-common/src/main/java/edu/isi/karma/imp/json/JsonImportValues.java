@@ -16,7 +16,10 @@ import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
+import edu.isi.karma.rep.ColumnMetadata.DataStructure;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
@@ -24,8 +27,6 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.ColumnMetadata.DataStructure;
-import edu.isi.karma.rep.HNode.HNodeType;
 
 public class JsonImportValues {
 	private static Logger logger = LoggerFactory.getLogger(JsonImportValues.class);
@@ -336,7 +337,7 @@ public class JsonImportValues {
 			// Check for all the nodes that have value and nested tables
 			Collection<Node> nodes = new ArrayList<Node>();
 			worksheet.getDataTable().collectNodes(
-					hNode.getHNodePath(factory), nodes);
+					hNode.getHNodePath(factory), nodes, SuperSelectionManager.DEFAULT_SELECTION);
 			for (Node node : nodes) {
 				if (node.getBelongsToRow() == row)
 					break;

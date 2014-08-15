@@ -21,11 +21,21 @@
 
 package edu.isi.karma.controller.command.service;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.rits.cloning.Cloner;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.ReplaceWorksheetUpdate;
@@ -47,19 +57,12 @@ import edu.isi.karma.rep.sources.InvocationManager;
 import edu.isi.karma.rep.sources.Table;
 import edu.isi.karma.rep.sources.WebService;
 import edu.isi.karma.webserver.KarmaException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author taheriyan
  * 
  */
-public class InvokeServiceCommand extends WorksheetCommand {
+public class InvokeServiceCommand extends WorksheetSelectionCommand {
 
 	private static Logger logger = LoggerFactory.getLogger(InvokeServiceCommand.class);
 	private Alignment initialAlignment = null;
@@ -68,8 +71,8 @@ public class InvokeServiceCommand extends WorksheetCommand {
 	
 	private Worksheet worksheetBeforeInvocation = null;
 
-	InvokeServiceCommand(String id, String worksheetId, String hNodeId) {
-		super(id, worksheetId);
+	InvokeServiceCommand(String id, String worksheetId, String hNodeId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 	}
 
@@ -82,6 +85,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(wk);
 		String encoding = wk.getEncoding();
 		// Clone the worksheet just before the invocation
 		Cloner cloner = new Cloner();
@@ -101,7 +105,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		}
 		
 		List<String> requestURLStrings = new ArrayList<String>();
-		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows());
+		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows(), selection);
 		if (rows == null || rows.size() == 0) {
 			logger.error("Data table does not have any row.");
 			return new UpdateContainer(new ErrorUpdate("Data table does not have any row."));	
@@ -120,7 +124,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			
 			// This generate a flat table of the json results
 			Table serviceTable = invocatioManager.getServiceData(false, true, true);
-			ServiceTableUtil.populateWorksheet(serviceTable, wk, workspace.getFactory());
+			ServiceTableUtil.populateWorksheet(serviceTable, wk, workspace.getFactory(), selection);
 			
 			// FIXME
 //			String json = invocatioManager.getServiceJson(true);
@@ -160,7 +164,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		UpdateContainer c = new UpdateContainer();
 		try {
 			// Add the visualization update
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 			c.add(new SemanticTypesUpdate(wk, worksheetId, alignment));
 			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
 		} catch (Exception e) {
@@ -212,7 +216,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			workspace.getFactory().replaceWorksheet(worksheetId, worksheetBeforeInvocation);
 			c.add(new ReplaceWorksheetUpdate(worksheetId, worksheetBeforeInvocation));
 			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 			c.add(new SemanticTypesUpdate(wk, worksheetId, alignment));
 		} catch (Exception e) {
 			logger.error("Error occured while populating the worksheet with service data!", e);

@@ -23,11 +23,11 @@
  */
 package edu.isi.karma.controller.update;
 
+import java.io.PrintWriter;
+
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
-
-import java.io.PrintWriter;
 
 /**
  * Reports all the commands in the history including undo and redo commands.
@@ -60,6 +60,13 @@ public class HistoryUpdate extends AbstractUpdate {
 		commandHistory.generateFullHistoryJson(newPref + "  ", pw, vWorkspace);
 		pw.println(newPref + "]");
 		pw.println(prefix + "}");
+	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof HistoryUpdate) {
+			return true;
+		}
+		return false;
 	}
 
 }

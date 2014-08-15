@@ -21,27 +21,48 @@
 
 package edu.isi.karma.controller.command.cleaning;
 
-import edu.isi.karma.controller.command.*;
-import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
-import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
-import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.InfoUpdate;
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.rep.*;
-import edu.isi.karma.rep.cleaning.*;
-import edu.isi.karma.webserver.ExecutionController;
-import edu.isi.karma.webserver.KarmaException;
-import edu.isi.karma.webserver.WorkspaceRegistry;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
+import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
+import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.InfoUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.cleaning.RamblerTransformationInputs;
+import edu.isi.karma.rep.cleaning.RamblerTransformationOutput;
+import edu.isi.karma.rep.cleaning.RamblerValueCollection;
+import edu.isi.karma.rep.cleaning.TransformationExample;
+import edu.isi.karma.rep.cleaning.ValueCollection;
+import edu.isi.karma.webserver.ExecutionController;
+import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.WorkspaceRegistry;
 
-public class SubmitCleaningCommand extends WorksheetCommand {
+public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 	private String hNodeId = "";
 	private String newHNodeId = "";
 	private String hTableId = "";
@@ -52,8 +73,8 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 	private Vector<TransformationExample> examples = new Vector<TransformationExample>();
 
 	public SubmitCleaningCommand(String id, String hNodeId, String worksheetId,
-			String Examples) {
-		super(id, worksheetId);
+			String Examples, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.examples = GenerateCleaningRulesCommand.parseExample(Examples);
 
@@ -147,7 +168,7 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 			RamblerTransformationOutput rtf = applyRamblerTransformation(rows);
 			if (rtf.getTransformations().keySet().size() <= 0) {
 				c.append(WorksheetUpdateFactory
-						.createRegenerateWorksheetUpdates(worksheetId));
+						.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 				c.add(new InfoUpdate("No Result Submitted"));
 				return c;
 			}
@@ -168,7 +189,7 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 
 		if (selectedPath != null) {
 			c.append(WorksheetUpdateFactory
-					.createRegenerateWorksheetUpdates(worksheetId));
+					.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 			/** Add the alignment update **/
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(
 					workspace, selectedPath));
@@ -253,8 +274,9 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 			}
 		}
 		Collection<Node> nodes = new ArrayList<Node>();
+		SuperSelection selection = getSuperSelection(workspace);
 		workspace.getFactory().getWorksheet(worksheetId).getDataTable()
-				.collectNodes(selectedPath, nodes);
+				.collectNodes(selectedPath, nodes, selection);
 		for (Node node : nodes) {
 			String id = node.getBelongsToRow().getId();
 			String originalVal = node.getValue().asString();
@@ -331,7 +353,7 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 		currentTable.removeHNode(newHNodeId, worksheet);
 
 		UpdateContainer c = (WorksheetUpdateFactory
-				.createRegenerateWorksheetUpdates(worksheetId));
+				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 		// TODO is it necessary to compute alignment and semantic types for
 		// everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));

@@ -37,7 +37,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -55,7 +56,7 @@ import edu.isi.karma.util.Util;
  * Adds extract entities commands to the column menu.
  */
 
-public class ExtractEntitiesCommand extends WorksheetCommand {
+public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 
 	private String hNodeId;
 	// add column to this table
@@ -70,8 +71,9 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 			.getLogger(ExtractEntitiesCommand.class);
 
 	protected ExtractEntitiesCommand(String id, String worksheetId,
-			String hTableId, String hNodeId, String extractionURL, String entitiesToBeExt) {
-		super(id, worksheetId);
+			String hTableId, String hNodeId, String extractionURL, 
+			String entitiesToBeExt, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		this.extractionURL = extractionURL;
@@ -103,6 +105,7 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		System.out.println("in do it");
 		System.out.println(extractionURL);
 
@@ -112,7 +115,7 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 		entitiesReqd.addAll(Arrays.asList(entities));
 		
 		ArrayList<Row> rows = worksheet.getDataTable().getRows(0,
-				worksheet.getDataTable().getNumRows());
+				worksheet.getDataTable().getNumRows(), selection);
 
 		JSONArray array = new JSONArray();
 		AddValuesCommand cmd;
@@ -266,7 +269,7 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 		try {
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
 			cmd = (AddValuesCommand) factory.createCommand(addValues, workspace, hNodeId, worksheetId,
-					hTableId, HNodeType.Transformation);
+					hTableId, HNodeType.Transformation, selection.getName());
 			
 			HNode hnode = worksheet.getHeaders().getHNode(hNodeId);
 			cmd.setColumnName(hnode.getColumnName()+" Extractions");
@@ -274,7 +277,7 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 
 			UpdateContainer c = new UpdateContainer(new InfoUpdate("Extracted Entities"));
 			c.append(WorksheetUpdateFactory
-					.createRegenerateWorksheetUpdates(worksheetId));
+					.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			//c.append(new InfoUpdate("Extracted Entities"));
 			return c;
@@ -293,7 +296,7 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 	public UpdateContainer undoIt(Workspace workspace) {
 
 		return WorksheetUpdateFactory
-				.createRegenerateWorksheetUpdates(worksheetId);
+				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace));
 	}
 
 }

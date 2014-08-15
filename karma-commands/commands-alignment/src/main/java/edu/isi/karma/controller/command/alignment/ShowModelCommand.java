@@ -37,7 +37,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
@@ -71,7 +72,7 @@ import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SubClassLink;
 
 
-public class ShowModelCommand extends WorksheetCommand {
+public class ShowModelCommand extends WorksheetSelectionCommand {
 
 	private String worksheetName;
 	private Alignment initialAlignment = null;
@@ -83,8 +84,8 @@ public class ShowModelCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(ShowModelCommand.class);
 
-	protected ShowModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate) {
-		super(id, worksheetId);
+	protected ShowModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate, String selectionId) {
+		super(id, worksheetId, selectionId);
 //		this.addVWorksheetUpdate = addVWorksheetUpdate;
 		
 		/** NOTE Not saving this command in history for now since we are 
@@ -119,6 +120,7 @@ public class ShowModelCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		OntologyManager ontologyManager = workspace.getOntologyManager();
 		if(ontologyManager.isEmpty())
 			return new UpdateContainer(new ErrorUpdate("No ontology loaded."));
@@ -165,7 +167,7 @@ public class ShowModelCommand extends WorksheetCommand {
 		
 		for (ColumnNode cn : columnNodes) {
 			List<SemanticType> suggestedSemanticTypes = 
-					new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4);
+					new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4, selection);
 			cn.setSuggestedSemanticTypes(suggestedSemanticTypes);
 		}
 		

@@ -32,8 +32,10 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PublishRDFCommandFactory extends CommandFactory {
 	private enum Arguments {
-		worksheetId, addInverseProperties, rdfPrefix, rdfNamespace, saveToStore,hostName,dbName,userName,password,modelName, 
-		tripleStoreUrl, graphUri, replaceContext, generateBloomFilters
+		worksheetId, addInverseProperties, rdfPrefix, rdfNamespace, saveToStore, 
+		hostName,dbName,userName,password,modelName, 
+		tripleStoreUrl, graphUri, replaceContext, generateBloomFilters, 
+		selectionName
 	}
 
 	@Override
@@ -47,7 +49,7 @@ public class PublishRDFCommandFactory extends CommandFactory {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		String rdfPrefix =  worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.prefix);
 		String rdfNamespace = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.baseURI);
-
+		String selectionName = request.getParameter(Arguments.selectionName.name());
 		PublishRDFCommand comm = new PublishRDFCommand(getNewId(workspace), worksheetId,
 				ServletContextParameterMap
 				.getParameterValue(ContextParameter.PUBLIC_RDF_ADDRESS),
@@ -61,7 +63,8 @@ public class PublishRDFCommandFactory extends CommandFactory {
 				request.getParameter(Arguments.tripleStoreUrl.name()),
 				request.getParameter(Arguments.graphUri.name()),
 				Boolean.parseBoolean(request.getParameter(Arguments.replaceContext.name())), 
-				Boolean.parseBoolean(request.getParameter(Arguments.generateBloomFilters.name()))
+				Boolean.parseBoolean(request.getParameter(Arguments.generateBloomFilters.name())), 
+				selectionName
 				);
 		
 		return comm;

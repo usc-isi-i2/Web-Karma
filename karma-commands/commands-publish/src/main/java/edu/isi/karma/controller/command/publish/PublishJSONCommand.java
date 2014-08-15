@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
@@ -130,12 +131,12 @@ public class PublishJSONCommand extends WorksheetCommand {
 						new WorksheetListUpdate().generateJson(prefix, pw, vWorkspace);
 						pw.println(",");
 						if (showCleaningCharts) {
-							new WorksheetCleaningUpdate(newWSId, true).generateJson(prefix, pw, vWorkspace);
+							new WorksheetCleaningUpdate(newWSId, true, SuperSelectionManager.DEFAULT_SELECTION).generateJson(prefix, pw, vWorkspace);
 							pw.println(",");
 						}
 						new WorksheetHeadersUpdate(newWSId).generateJson(prefix, pw, vWorkspace);
 						pw.println(",");
-						new WorksheetDataUpdate(newWSId).generateJson(prefix, pw, vWorkspace);
+						new WorksheetDataUpdate(newWSId, SuperSelectionManager.DEFAULT_SELECTION).generateJson(prefix, pw, vWorkspace);
 					}
 				}
 			}

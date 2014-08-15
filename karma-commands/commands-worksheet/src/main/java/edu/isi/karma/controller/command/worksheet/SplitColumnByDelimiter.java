@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.HNode;
@@ -31,29 +32,32 @@ public class SplitColumnByDelimiter {
 	private final Worksheet worksheet;
 	private final String delimiter;
 	private final Workspace workspace;
+	private SuperSelection selection;
 	private final String newhNodeId;
 	private String splitValueHNodeId;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public SplitColumnByDelimiter(String hNodeId, Worksheet worksheet,
-			String delimiter, Workspace workspace) {
+			String delimiter, Workspace workspace, SuperSelection sel) {
 		super();
 		this.hNodeId = hNodeId;
 		this.worksheet = worksheet;
 		this.delimiter = delimiter;
 		this.workspace = workspace;
+		this.selection = sel;
 		this.newhNodeId = null;
 	}
 
 	public SplitColumnByDelimiter(String hNodeId, String newhNodeId, Worksheet worksheet,
-			String delimiter, Workspace workspace) {
+			String delimiter, Workspace workspace, SuperSelection sel) {
 		super();
 		this.hNodeId = hNodeId;
 		this.worksheet = worksheet;
 		this.delimiter = delimiter;
 		this.workspace = workspace;
 		this.newhNodeId = newhNodeId;
+		this.selection = sel;
 	}
 
 	public String getSplitValueHNodeId() {
@@ -92,7 +96,7 @@ public class SplitColumnByDelimiter {
 		}
 
 		Collection<Node> nodes = new ArrayList<Node>();
-		worksheet.getDataTable().collectNodes(selectedPath, nodes);
+		worksheet.getDataTable().collectNodes(selectedPath, nodes, selection);
 
 		//pedro: 2012-10-09
 		// Need to save and clear the values before adding the nested table.
@@ -172,9 +176,9 @@ public class SplitColumnByDelimiter {
 		else {
 			delimiterChar = new Character(delimiter.charAt(0));
 		}
-		CloneTableUtils.getDatatable(worksheet.getDataTable(), ht, tables);
+		CloneTableUtils.getDatatable(worksheet.getDataTable(), ht, tables, selection);
 		for (Table t : tables) {
-			for (Row r : t.getRows(0, t.getNumRows())) {
+			for (Row r : t.getRows(0, t.getNumRows(), selection)) {
 				String orgValue = r.getNeighbor(hNodeId).getValue().asString();
 				CSVReader reader = new CSVReader(new StringReader(orgValue),
 						delimiterChar);

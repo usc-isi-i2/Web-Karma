@@ -23,6 +23,7 @@ package edu.isi.karma.kr2rml.planning;
 import java.util.List;
 import java.util.Map;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.kr2rml.SubjectMap;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.exception.HNodeNotFoundKarmaException;
@@ -42,13 +43,17 @@ public abstract class MapPlan {
 	protected URIFormatter uriFormatter;
 	protected RepFactory factory;
 	protected KR2RMLMappingColumnNameHNodeTranslator translator;
-	
-	public MapPlan(KR2RMLMapping kr2rmlMapping, URIFormatter uriFormatter, RepFactory factory, KR2RMLMappingColumnNameHNodeTranslator translator)
+	protected SuperSelection selection;
+	public MapPlan(KR2RMLMapping kr2rmlMapping, URIFormatter uriFormatter, 
+			RepFactory factory, 
+			KR2RMLMappingColumnNameHNodeTranslator translator, 
+			SuperSelection sel)
 	{
 		this.factory = factory;
 		this.uriFormatter = uriFormatter;
 		this.kr2rmlMapping = kr2rmlMapping;
 		this.translator = translator;
+		this.selection = sel;
 	}
 	protected TemplateTermSetPopulator generateTemplateTermSetPopulatorForSubjectMap(SubjectMap subjMap) throws HNodeNotFoundKarmaException {
 		TemplateTermSet subjMapTemplate = null;

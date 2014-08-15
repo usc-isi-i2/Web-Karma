@@ -87,5 +87,13 @@ public class AllWorksheetHeadersUpdate extends AbstractUpdate {
 		}
 		return columns;
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof AllWorksheetHeadersUpdate) {
+			AllWorksheetHeadersUpdate t = (AllWorksheetHeadersUpdate)o;
+			return t.worksheetId.equals(worksheetId);
+		}
+		return false;
+	}
 
 }

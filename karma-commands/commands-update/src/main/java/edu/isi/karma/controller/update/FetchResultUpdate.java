@@ -43,4 +43,12 @@ public class FetchResultUpdate extends AbstractUpdate {
 			logger.error("Error generating JSON!", e);
 		}
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof FetchResultUpdate) {
+			FetchResultUpdate t = (FetchResultUpdate)o;
+			return t.hNodeId.equals(hNodeId) && t.rawData.equals(rawData);
+		}
+		return false;
+	}
 }

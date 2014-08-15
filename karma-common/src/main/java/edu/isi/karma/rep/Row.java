@@ -23,14 +23,16 @@
  */
 package edu.isi.karma.rep;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.controller.command.selection.SuperSelection;
 
 /**
  * @author szekely
@@ -253,7 +255,7 @@ public class Row extends RepEntity implements Neighbor {
 		return null;
 	}
 
-	public boolean collectNodes(HNodePath path, Collection<Node> nodes) {
+	public boolean collectNodes(HNodePath path, Collection<Node> nodes, SuperSelection sel) {
 		Node n = getNode(path.getFirst().getId());
 		if (n == null) {
 			return false;
@@ -271,24 +273,24 @@ public class Row extends RepEntity implements Neighbor {
 			if (numRows != 0)
 			{
 				List<Row> rowsNestedTable = n.getNestedTable().getRows(0,
-						numRows);
+						numRows, sel);
 				if (rowsNestedTable != null && rowsNestedTable.size() != 0) {
-					
-					if(n.getNestedTable().getRows(0, 1).get(0).getNode(rest.getFirst().getId()) != null)
+					List<Row> rows = n.getNestedTable().getRows(0, 1, sel);
+					if(rows.size() > 0 && rows.get(0).getNode(rest.getFirst().getId()) != null)
 					{
-						return n.getNestedTable().collectNodes(path.getRest(), nodes);
+						return n.getNestedTable().collectNodes(path.getRest(), nodes, sel);
 					}
 				}
 			}
 		}
 		if(n.getBelongsToRow().getNode(rest.getFirst().getId()) != null)
 		{
-			return n.getBelongsToRow().collectNodes(rest, nodes);
+			return n.getBelongsToRow().collectNodes(rest, nodes, sel);
 		}
 		
 		if(n.getBelongsToRow().getBelongsToTable().getNestedTableInNode() != null)
 		{
-			return n.getBelongsToRow().getBelongsToTable().getNestedTableInNode().getBelongsToRow().collectNodes(rest, nodes);
+			return n.getBelongsToRow().getBelongsToTable().getNestedTableInNode().getBelongsToRow().collectNodes(rest, nodes, sel);
 		}
 		return false;
 		

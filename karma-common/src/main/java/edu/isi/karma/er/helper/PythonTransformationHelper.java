@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.controller.command.transformation;
+package edu.isi.karma.er.helper;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -44,7 +44,8 @@ public class PythonTransformationHelper {
 			return Long.toString(obj.asLong());
 		else if (type.getName().equals("int"))
 			return Integer.toString(obj.asInt());
-		
+		else if (type.getName().equals("bool")) 
+			return obj.asInt() != 0 ? "true" : "false";
 		return obj.asString();
 	}
 	

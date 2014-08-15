@@ -20,11 +20,33 @@
  ******************************************************************************/
 package edu.isi.karma.geospatial;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.WKTReader;
-import de.micromata.opengis.kml.v_2_2_0.*;
+
+import de.micromata.opengis.kml.v_2_2_0.AltitudeMode;
+import de.micromata.opengis.kml.v_2_2_0.Boundary;
+import de.micromata.opengis.kml.v_2_2_0.Coordinate;
+import de.micromata.opengis.kml.v_2_2_0.Folder;
+import de.micromata.opengis.kml.v_2_2_0.Icon;
+import de.micromata.opengis.kml.v_2_2_0.Kml;
+import de.micromata.opengis.kml.v_2_2_0.KmlFactory;
+import de.micromata.opengis.kml.v_2_2_0.LinearRing;
+import de.micromata.opengis.kml.v_2_2_0.Placemark;
+import de.micromata.opengis.kml.v_2_2_0.Style;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
@@ -32,16 +54,10 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.*;
 
 public class WorksheetGeospatialContent {
 	private Worksheet worksheet;
-
+	private SuperSelection selection;
 	private List<edu.isi.karma.geospatial.Point> points = new ArrayList<edu.isi.karma.geospatial.Point>();
 	private List<edu.isi.karma.geospatial.LineString> lines = new ArrayList<edu.isi.karma.geospatial.LineString>();
 	private List<Polygon> polygons = new ArrayList<Polygon>();
@@ -76,8 +92,9 @@ public class WorksheetGeospatialContent {
 	
 	private static int randomCounter = 0;
 
-	public WorksheetGeospatialContent(Worksheet worksheet) {
+	public WorksheetGeospatialContent(Worksheet worksheet, SuperSelection sel) {
 		this.worksheet = worksheet;
+		this.selection = sel;
 		//WorksheetToFeatureCollections wtfc = new WorksheetToFeatureCollections(worksheet);
 		populateGeospatialData();
 	}
@@ -297,7 +314,7 @@ public class WorksheetGeospatialContent {
 
 	private ArrayList<Row> getRows() {
 		int numRows = worksheet.getDataTable().getNumRows();
-		return worksheet.getDataTable().getRows(0, numRows);
+		return worksheet.getDataTable().getRows(0, numRows, selection);
 	}
 
 	private Map<String, String> getColumnMap() {

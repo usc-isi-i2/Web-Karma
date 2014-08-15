@@ -42,8 +42,9 @@ public class PreviewPythonTransformationResultsCommand extends PythonTransformat
 
 	
 	protected PreviewPythonTransformationResultsCommand(String id, String worksheetId, 
-			String transformationCode, String errorDefaultValue, String hNodeId) {
-		super(id, transformationCode, worksheetId, hNodeId,  errorDefaultValue);
+			String transformationCode, String errorDefaultValue, 
+			String hNodeId, String selectionId) {
+		super(id, transformationCode, worksheetId, hNodeId,  errorDefaultValue, selectionId);
 	}
 
 	@Override

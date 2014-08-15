@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.Node;
@@ -64,7 +65,7 @@ public class MultipleValueEditColumnCommand extends WorksheetCommand {
 			String newCellValue = newRowValueMap.get(rowID);
 			row.setValue(hNodeID, newCellValue, factory);
 		}
-		return WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(this.worksheetId);
+		return WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(this.worksheetId, SuperSelectionManager.DEFAULT_SELECTION);
 	}
 
 	@Override
@@ -81,7 +82,7 @@ public class MultipleValueEditColumnCommand extends WorksheetCommand {
 			String oldCellValue = oldRowValueMap.get(rowID);
 			row.setValue(hNodeID, oldCellValue, factory);
 		}
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION);
 	}
 
 }

@@ -13,8 +13,9 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class GlueCommandFactory extends JSONInputCommandFactory{
 
-	public enum Arguments {
-		worksheetId, hTableId, hNodeId, newColumnName, defaultValue
+	private enum Arguments {
+		worksheetId, hTableId, hNodeId, 
+		newColumnName, defaultValue, selectionName		
 	}
 	
 	@Override
@@ -24,9 +25,12 @@ public class GlueCommandFactory extends JSONInputCommandFactory{
 		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hTableId = "";
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		//System.out.println(worksheetId);
 		GlueCommand glueCmd = new GlueCommand(getNewId(workspace), worksheetId,
-				hTableId, hNodeID);
+				hTableId, hNodeID, 
+				selectionName);
 		glueCmd.setInputParameterJson(inputJson.toString());
 		return glueCmd;
 	}
@@ -37,8 +41,10 @@ public class GlueCommandFactory extends JSONInputCommandFactory{
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String hTableId = request.getParameter(Arguments.hTableId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
+		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new GlueCommand(getNewId(workspace), worksheetId, 
-				hTableId, hNodeId);
+				hTableId, hNodeId, 
+				selectionName);
 	}
 
 	@Override

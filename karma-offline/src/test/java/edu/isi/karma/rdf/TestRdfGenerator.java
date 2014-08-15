@@ -14,8 +14,8 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.transformation.PythonRepository;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
@@ -53,7 +53,7 @@ public abstract class TestRdfGenerator {
 	 */
 	protected void generateRdfFile(File inputFile, InputType inputType, String modelName, File modelFile, PrintWriter pw)
 			throws Exception {
-		GenericRDFGenerator rdfGen = new GenericRDFGenerator();
+		GenericRDFGenerator rdfGen = new GenericRDFGenerator(null);
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
 				modelName, modelFile.toURI().toURL());
 		rdfGen.addModel(modelIdentifier);

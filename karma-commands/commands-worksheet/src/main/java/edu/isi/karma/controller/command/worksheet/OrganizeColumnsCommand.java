@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.Workspace;
@@ -54,7 +55,7 @@ public class OrganizeColumnsCommand extends WorksheetCommand {
 		orderColumns(orderedColumns);
 
 		UpdateContainer c =  new UpdateContainer();
-		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(worksheetId));
+		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 
 		return c;
@@ -66,7 +67,7 @@ public class OrganizeColumnsCommand extends WorksheetCommand {
 			orderColumns(prevOrderedColumns);
 		}
 		UpdateContainer c =  new UpdateContainer();
-		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(worksheetId));
+		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

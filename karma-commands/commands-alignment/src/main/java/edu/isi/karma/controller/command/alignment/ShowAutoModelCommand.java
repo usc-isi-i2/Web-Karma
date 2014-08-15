@@ -20,25 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
-import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
-import edu.isi.karma.controller.update.*;
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.Workspace;
-
-import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.SemanticType;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,9 +30,28 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
+import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
+import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
+import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.SemanticTypesUpdate;
+import edu.isi.karma.controller.update.TagsUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.SemanticType;
 
 
 public class ShowAutoModelCommand extends WorksheetCommand {

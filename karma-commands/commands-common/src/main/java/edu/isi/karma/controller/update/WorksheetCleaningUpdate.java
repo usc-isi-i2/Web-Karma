@@ -21,28 +21,40 @@
 
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.rep.*;
-import edu.isi.karma.util.HTTPUtil;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.view.ViewPreferences.ViewPreference;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
-import java.util.*;
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.rep.ColumnMetadata;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.util.HTTPUtil;
+import edu.isi.karma.view.VWorksheet;
+import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.ViewPreferences.ViewPreference;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class WorksheetCleaningUpdate extends
 AbstractUpdate {
 
 	private String	worksheetId;
 	private boolean	forceUpdates;
-
+	private SuperSelection selection;
 	private static Logger logger = LoggerFactory.getLogger(
 			WorksheetCleaningUpdate.class);
 
@@ -55,9 +67,10 @@ AbstractUpdate {
 		Preferred_Length, sampleSize, sampleRate
 	}
 
-	public WorksheetCleaningUpdate(String worksheetId, boolean forceUpdates) {
+	public WorksheetCleaningUpdate(String worksheetId, boolean forceUpdates, SuperSelection selection) {
 		this.worksheetId = worksheetId;
 		this.forceUpdates = forceUpdates;
+		this.selection = selection;
 	}
 
 	@Override
@@ -73,7 +86,7 @@ AbstractUpdate {
 		for (HNodePath path:columnPaths) {
 			String leafHNodeId = path.getLeaf().getId();
 			List<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
-			worksheet.getDataTable().collectNodes(path, nodes);
+			worksheet.getDataTable().collectNodes(path, nodes, selection);
 			final int sampleSize = (nodes.size() > 1000) ? 1000 : nodes.size();
 			columnsInvoked.add(leafHNodeId);
 			try {
@@ -207,5 +220,13 @@ AbstractUpdate {
 		String colName = hNode.getColumnName();
 		colLength = (colLength < colName.length()) ? colName.length() : colLength; 
 		return colLength;
+	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof WorksheetCleaningUpdate) {
+			WorksheetCleaningUpdate t = (WorksheetCleaningUpdate)o;
+			return t.worksheetId.equals(worksheetId) && t.selection.equals(selection);
+		}
+		return false;
 	}
 }

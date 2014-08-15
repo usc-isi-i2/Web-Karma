@@ -129,4 +129,12 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 	public static String getColumnClass(String hNodeId) {
 		return hNodeId + "-class";
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof WorksheetHeadersUpdate) {
+			WorksheetHeadersUpdate t = (WorksheetHeadersUpdate)o;
+			return t.worksheetId.equals(worksheetId);
+		}
+		return false;
+	}
 }
