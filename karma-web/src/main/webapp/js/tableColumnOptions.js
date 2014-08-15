@@ -1,4 +1,4 @@
-function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
+function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutofStatus) {
 
 	var worksheetId = wsId;
 	var columnTitle = wsColumnTitle;
@@ -115,9 +115,6 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 				name: "Invert",
 				func: invertRows
 			}, {
-				name: "Refresh",
-				func: refreshRows
-			}, {
 				name: "Clear",
 				func: undefined,
 				addLevel: true,
@@ -168,7 +165,6 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 	}
 
 	function refreshRows() {
-		hideDropdown();
 		var headers = getColumnHeadingsForColumn(wsId, wsColumnId, "GroupBy");
 		var info = generateInfoObject(wsId, headers[0]['HNodeId'], "RefreshSelectionCommand");
 		var newInfo = info['newInfo'];
@@ -341,7 +337,12 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode) {
 			.attr("id", "TableOptionsDiv")
 			.data("worksheetId", worksheetId)
 			.append(span);
-
+		if (isOutofStatus) {
+			var a = $("<a>").attr("href", "#");
+			a.click(refreshRows);
+			a.append($("<span>").addClass("glyphicon glyphicon-refresh"));
+			div.append(a);
+		}
 		var ul = $("<ul>").addClass("dropdown-menu");
 		ul.attr("role", "menu")
 			.attr("aria-labelledby", dropdownId);

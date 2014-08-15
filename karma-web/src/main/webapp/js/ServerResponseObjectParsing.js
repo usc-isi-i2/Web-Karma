@@ -749,6 +749,11 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 	var columnWidths = [];
 	$.each(columns, function(index, column) {
 		var type = column['hNodeType'].toLowerCase();
+		var status = column['status'];
+		if (status != undefined && status == "OUT_OF_DATE")
+			status = true;
+		else
+			status = false;
 		console.log(type);
 		var td = $("<td>").addClass("wk-header-cell").attr("id", column.hNodeId);
 		if (isOdd)
@@ -775,7 +780,7 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 				//            				.text(column["columnName"])
 				//            				.mouseenter(showColumnOptionButton)
 				//            				.mouseleave(hideColumnOptionButton);
-				.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"], false)).generateJS());
+				.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"], false, status)).generateJS());
 			var nestedTableContainer = $("<div>").addClass("table-container");
 			var nestedTableHeaderContainer = $("<div>").addClass("table-header-container");
 			var nestedTable = $("<table>").addClass("wk-table");
@@ -804,7 +809,7 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 		} else {
 			headerDiv.addClass("wk-header")
 			//.text(column["columnName"]).mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);
-			.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"], true)).generateJS());
+			.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"], true, status)).generateJS());
 			// Pedro: limit cells to 30 chars wide. This should be smarter: if the table is not too wide, then allow more character.
 			// If we impose the limit, we should set the CSS to wrap rather than use ... ellipsis.
 			// We will need a smarter data structure so we can do two passes, first to compute the desired lenghts based on number of characters
@@ -843,10 +848,8 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
 				.attr("id", rowId);
 		}
 		var row = rowWithMetaData['rowValueArray'];
-		if (isSelected == "SELECTED")
+		if (isSelected)
 			rowTr.addClass("wk-row-selected");
-		if (isSelected == "OUT_OF_DATE")
-			rowTr.addClass("wk-row-out-of-date");
 		$.each(row, function(index2, cell) {
 			var td = $("<td>").addClass("wk-cell");
 			var dataDiv = $("<div>");

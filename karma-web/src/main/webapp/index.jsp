@@ -120,6 +120,10 @@ and related projects, please see: http://www.isi.edu/integration
 			.editable-empty, .editable-empty:hover, .editable-empty:focus {
 				color: #cccccc;
 			}
+
+			.wk-row-selected {
+    		background-color: #EEEEEE;
+			}
 			
 			.table-no-border td {
 			    border-top: 0 none;

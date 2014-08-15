@@ -109,5 +109,9 @@ public class OperateSelectionCommand extends WorksheetCommand {
 	public UpdateContainer getErrorUpdate(String msg) {
 		return new UpdateContainer(new ErrorUpdate(msg));
 	}
+	
+	public String getHNodeId() {
+		return hNodeId;
+	}
 
 }

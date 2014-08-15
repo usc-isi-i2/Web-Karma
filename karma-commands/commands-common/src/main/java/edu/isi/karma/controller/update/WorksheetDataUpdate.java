@@ -100,7 +100,7 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 			JSONObject rowObj = new JSONObject();
 			JSONArray rowValueArray = new JSONArray();
 			rowObj.put(JsonKeys.rowId.name(), row.getId());
-			rowObj.put(JsonKeys.isSelected.name(), selection.getSelectedStatus(row).name());
+			rowObj.put(JsonKeys.isSelected.name(), selection.isSelected(row));
 			rowObj.put(JsonKeys.rowValueArray.name(), rowValueArray);
 			for (VHNode vNode : orderedHnodeIds) {
 				if(vNode.isVisible()) {
