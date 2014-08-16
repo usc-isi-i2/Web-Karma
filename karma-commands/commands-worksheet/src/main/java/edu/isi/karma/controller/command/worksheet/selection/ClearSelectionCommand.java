@@ -75,7 +75,6 @@ public class ClearSelectionCommand extends WorksheetCommand {
 			}
 		}
 		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel);
-		uc.add(new WorksheetSuperSelectionListUpdate(worksheetId));
 		return uc;
 	}
 

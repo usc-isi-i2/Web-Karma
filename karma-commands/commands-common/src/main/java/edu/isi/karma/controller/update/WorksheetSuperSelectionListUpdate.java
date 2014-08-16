@@ -39,7 +39,7 @@ public class WorksheetSuperSelectionListUpdate extends AbstractUpdate {
 		outputObject.put(JsonKeys.worksheetId.name(),
 				worksheetId);
 		outputObject.put(JsonKeys.selectionList.name(),
-				outputObject.toString());
+				array.toString());
 		pw.println(outputObject.toString());
 
 	}

@@ -10,10 +10,10 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.selection.LargeSelection.Operation;
 import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.SelectionManager;
 import edu.isi.karma.controller.command.selection.SuperSelection;
-import edu.isi.karma.controller.command.selection.LargeSelection.Operation;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
@@ -21,7 +21,6 @@ import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetSuperSelectionListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
@@ -90,7 +89,6 @@ public class RefreshSelectionCommand extends WorksheetCommand {
 			history._getHistory().addAll(tmp);
 		}
 		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel);
-		uc.add(new WorksheetSuperSelectionListUpdate(worksheetId));
 		uc.add(new HistoryUpdate(history));
 		return uc;
 	}

@@ -137,9 +137,6 @@ function WorksheetOptions(wsId, wsTitle) {
 				name: "Invert",
 				func: invertRows
 			}, {
-				name: "Refresh",
-				func: refreshRows
-			}, {
 				name: "Clear",
 				func: undefined,
 				addLevel: true,
@@ -184,16 +181,6 @@ function WorksheetOptions(wsId, wsTitle) {
 		var newInfo = info['newInfo'];
 		newInfo.push(getParamObject("pythonCode", "", "other"));
 		newInfo.push(getParamObject("operation", "Invert", "other"));
-		info["newInfo"] = JSON.stringify(newInfo);
-		showLoading(worksheetId);
-		sendRequest(info, worksheetId);
-	}
-
-	function refreshRows() {
-		hideDropdown();
-		var headers = getColumnHeadingsForColumn(wsId, "", "GroupBy");
-		var info = generateInfoObject(wsId, headers[0]['HNodeId'], "RefreshSelectionCommand");
-		var newInfo = info['newInfo'];
 		info["newInfo"] = JSON.stringify(newInfo);
 		showLoading(worksheetId);
 		sendRequest(info, worksheetId);

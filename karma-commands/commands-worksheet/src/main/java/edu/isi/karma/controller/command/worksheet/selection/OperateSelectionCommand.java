@@ -86,7 +86,6 @@ public class OperateSelectionCommand extends WorksheetCommand {
 			return getErrorUpdate("The operation is undefined");
 		}
 		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel);
-		uc.add(new WorksheetSuperSelectionListUpdate(worksheetId));
 		return uc;
 	}
 

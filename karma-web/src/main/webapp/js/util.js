@@ -4,6 +4,14 @@ function isDialogInitialized(dialog) {
 	return false;
 }
 
+function refreshRows(wsId) {
+		var info = generateInfoObject(wsId, "", "RefreshSuperSelectionCommand");
+		var newInfo = info['newInfo'];
+		info["newInfo"] = JSON.stringify(newInfo);
+		showLoading(wsId);
+		sendRequest(info, wsId);
+	}
+
 function sendRequest(info, worksheetId) {
 	$.ajax({
 		url: "RequestController",

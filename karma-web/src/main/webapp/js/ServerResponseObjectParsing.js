@@ -540,6 +540,27 @@ function parse(data) {
 				$("#txtGraphLabel_" + element["worksheetId"]).text(element["graphLabel"]);
 			}
 
+		} else if (element["updateType"] == "WorksheetSuperSelectionListUpdate") {
+			var status;
+			$.each($.parseJSON(element['selectionList']), function (index, e) {
+				if (e['name'] == "DEFAULT_TEST")
+					status = e['status'];
+			});
+			var mainDiv = $("div.Worksheet#" + element["worksheetId"]);
+			var titleDiv = $(".WorksheetTitleDiv", mainDiv);
+			$("a", titleDiv).remove();
+			var a = $("<a>").attr("href", "#");
+			a.click(function () {
+				refreshRows(element["worksheetId"])
+			});
+			if (status == "OUT_OF_DATE") {
+				console.log("out of date");						
+				a.append($("<span>").addClass("glyphicon glyphicon-refresh"));
+			}
+			else {
+				a.append($("<span>").addClass("glyphicon glyphicon-ok"));
+			}
+			titleDiv.append(a);
 		} else if (element["updateType"] == "SaveModel") {
 			// Remove existing link if any
 			$.sticky("R2RML Model saved");

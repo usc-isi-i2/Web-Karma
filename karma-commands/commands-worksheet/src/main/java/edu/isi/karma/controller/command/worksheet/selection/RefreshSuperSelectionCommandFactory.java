@@ -13,13 +13,13 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class RefreshSuperSelectionCommandFactory extends JSONInputCommandFactory {
 	private enum Arguments {
-		worksheetId, currentSelectionName
+		worksheetId, selectionName
 	}
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
-		String currentSelectionName = CommandInputJSONUtil.getStringValue(Arguments.currentSelectionName.name(), inputJson);
+		String currentSelectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		Command cmd = new RefreshSuperSelectionCommand(getNewId(workspace), worksheetId, currentSelectionName);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
@@ -28,7 +28,7 @@ public class RefreshSuperSelectionCommandFactory extends JSONInputCommandFactory
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		String currentSelectionName = request.getParameter(Arguments.currentSelectionName.name());
+		String currentSelectionName = request.getParameter(Arguments.selectionName.name());
 		return new RefreshSuperSelectionCommand(getNewId(workspace), worksheetId, currentSelectionName);
 	}
 
