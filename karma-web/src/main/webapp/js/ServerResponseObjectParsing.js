@@ -557,6 +557,7 @@ function parse(data) {
 							.addClass("refreshSelection");
 			a.tooltip();
 			a.click(function () {
+				a.tooltip('hide');
 				refreshRows(element["worksheetId"])
 			});
 			if (status == "OUT_OF_DATE") {
