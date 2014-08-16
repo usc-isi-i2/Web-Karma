@@ -549,7 +549,12 @@ function parse(data) {
 			var mainDiv = $("div.Worksheet#" + element["worksheetId"]);
 			var titleDiv = $(".WorksheetTitleDiv", mainDiv);
 			$("a", titleDiv).remove();
-			var a = $("<a>").attr("href", "#");
+			var a = $("<a>")
+							.attr("href", "#")
+							.attr("title", "Refresh all selections")
+							.attr("data-toggle", "tooltip")
+							.attr("data-placement", "top");
+			a.tooltip();
 			a.click(function () {
 				refreshRows(element["worksheetId"])
 			});

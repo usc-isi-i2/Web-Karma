@@ -40,7 +40,7 @@ public class RefreshSuperSelectionCommand extends WorksheetCommand {
 
 	@Override
 	public String getDescription() {
-		return currentSelectionName;
+		return "";
 	}
 
 	@Override
