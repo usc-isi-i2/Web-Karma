@@ -26,7 +26,7 @@ public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 		{
 			String value = iterator.next().toString();
 			JSONObject object = new JSONObject(value);
-			object = mergeJSONObjects(accumulatorObject, object);			
+			accumulatorObject = mergeJSONObjects(accumulatorObject, object);			
 		}
 		
 		context.write(key, new Text(accumulatorObject.toString()));
@@ -45,146 +45,82 @@ public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 			{
 				Object leftObject = left.get(name);
 				Object rightObject = right.get(name);
-				if(leftObject instanceof String)
+				if(leftObject instanceof JSONArray)
 				{
-					if(rightObject instanceof String)
+					if(rightObject instanceof JSONArray)
 					{
-						if(!((String)leftObject).equalsIgnoreCase((String)rightObject))
-						{
-							left.accumulate(name, rightObject);
-						}
-						
+						mergeArrays(left, name, (JSONArray) leftObject, (JSONArray) rightObject);
 					}
-					else if (rightObject instanceof JSONObject){
-						if(!((String)leftObject).equalsIgnoreCase(((JSONObject)rightObject).getString("@id")))
-						{
-							left.accumulate(name, rightObject);
-						}
-						else
-						{
-							left.put(name, rightObject);
-						}
-					}
-					else if(rightObject instanceof JSONArray)
+					else
 					{
-						JSONArray rightObjectArray = (JSONArray)rightObject;
-						JSONArray newArray = new JSONArray();
-						newArray.put(leftObject);
-						for(int i = 0; i < rightObjectArray.length(); i++)
-						{
-							newArray.put(rightObjectArray.get(i));
-						}
-						left.put(name, newArray);
+						JSONArray newRightArray = new JSONArray();
+						newRightArray.put(rightObject);
+						mergeArrays(left, name, (JSONArray) leftObject, newRightArray);
 					}
 					
 				}
-				else if (leftObject instanceof JSONObject)
+				else
 				{
-					if(rightObject instanceof String)
+					if(rightObject instanceof JSONArray)
 					{
-						if(!((JSONObject)leftObject).getString("@id").equalsIgnoreCase((String)rightObject))
-						{
-							left.accumulate(name, rightObject);
-						}
-						
+						JSONArray newLeftArray = new JSONArray();
+						newLeftArray.put(leftObject);
+						mergeArrays(left, name, newLeftArray, (JSONArray)rightObject);
 					}
-					else if (rightObject instanceof JSONObject){
-						if(!((JSONObject)leftObject).getString("@id").equalsIgnoreCase(((JSONObject)rightObject).getString("@id")))
-						{
-							left.accumulate(name, rightObject);
-						}
-						else
-						{
-							left.put(name, mergeJSONObjects((JSONObject) leftObject, (JSONObject) rightObject));
-						}
-					}
-					else if(rightObject instanceof JSONArray)
+					else
 					{
-						JSONArray rightObjectArray = (JSONArray)rightObject;
-						JSONArray newArray = new JSONArray();
-						newArray.put(leftObject);
-						for(int i = 0; i < rightObjectArray.length(); i++)
-						{
-							newArray.put(rightObjectArray.get(i));
-						}
-						left.put(name, newArray);
+						JSONArray newLeftArray = new JSONArray();
+						JSONArray newRightArray = new JSONArray();
+						newLeftArray.put(leftObject);
+						newRightArray.put(rightObject);
+						mergeArrays(left, name, newLeftArray, newRightArray);
 					}
-				}
-				else if(leftObject instanceof JSONArray)
-				{
-					JSONArray leftObjectArray = (JSONArray) leftObject;
-					boolean found = false;
-					if(rightObject instanceof String)
-					{
-						String rightObjectString = (String)rightObject;
-						for(int i = 0; i < leftObjectArray.length(); i++)
-						{
-							found |= 0 == comparator.compare(leftObjectArray.get(i), rightObjectString);
-							if(found)
-								break;
-						}
-						if(!found)
-							leftObjectArray.put(rightObject);
-					}
-					else if(rightObject instanceof JSONObject)
-					{
-						JSONObject rightObjectJSONobject = (JSONObject) rightObject;
-						for(int i = 0; i < leftObjectArray.length(); i++)
-						{
-							found |= 0 == comparator.compare(leftObjectArray.get(i), rightObjectJSONobject);
-							if(found)
-							{
-								if(leftObjectArray.get(i) instanceof JSONObject)
-								{
-									leftObjectArray.put(i, mergeJSONObjects(leftObjectArray.getJSONObject(i), rightObjectJSONobject));
-								}
-								break;
-							}
-						}
-						if(!found)
-							leftObjectArray.put(rightObject);
-					}
-					else if(rightObject instanceof JSONArray)
-					{
-						JSONArray newArray = new JSONArray();
-						int leftIndex = 0;
-						int rightIndex = 0;
-						JSONArray leftArray = (JSONArray) leftObject;
-						JSONArray rightArray = (JSONArray) rightObject;
-						while(leftIndex < leftArray.length() && rightIndex < rightArray.length() )
-						{
-							int result = comparator.compare(leftArray.get(leftIndex),rightArray.get(rightIndex));
-							if(result < 0)
-							{
-								newArray.put(leftArray.get(leftIndex++));
-							}
-							else if (result == 0)
-							{
-								Object tempLeft = leftArray.get(leftIndex++);
-								Object tempRight = rightArray.get(rightIndex++);
-								Object mergedResult = mergeStringsAndJSONObjects(
-										tempLeft, tempRight);
-								newArray.put(mergedResult);
-							}
-							else
-							{
-								newArray.put(rightArray.get(rightIndex++));
-							}
-						}
-						while(leftIndex < leftArray.length())
-						{
-							newArray.put(leftArray.get(leftIndex++));
-						}
-						while(rightIndex < rightArray.length())
-						{
-							newArray.put(rightArray.get(rightIndex++));
-						}
-					}
-					
 				}
 			}
 		}
 		return left;
+	}
+	private static void mergeArrays(JSONObject left, String name,
+			JSONArray leftArray, JSONArray rightArray) {
+		JSONArray newArray = new JSONArray();
+		int leftIndex = 0;
+		int rightIndex = 0;
+		while(leftIndex < leftArray.length() && rightIndex < rightArray.length() )
+		{
+			int result = comparator.compare(leftArray.get(leftIndex),rightArray.get(rightIndex));
+			if(result < 0)
+			{
+				newArray.put(leftArray.get(leftIndex++));
+			}
+			else if (result == 0)
+			{
+				Object tempLeft = leftArray.get(leftIndex++);
+				Object tempRight = rightArray.get(rightIndex++);
+				Object mergedResult = mergeStringsAndJSONObjects(
+						tempLeft, tempRight);
+				newArray.put(mergedResult);
+			}
+			else
+			{
+				newArray.put(rightArray.get(rightIndex++));
+			}
+		}
+		while(leftIndex < leftArray.length())
+		{
+			newArray.put(leftArray.get(leftIndex++));
+		}
+		while(rightIndex < rightArray.length())
+		{
+			newArray.put(rightArray.get(rightIndex++));
+		}
+		if(newArray.length() > 1)
+		{
+			left.put(name, newArray);
+		}
+		else
+		{
+			left.put(name, newArray.get(0));
+		}
 	}
 	private static Object mergeStringsAndJSONObjects(Object tempLeft,
 			Object tempRight) {

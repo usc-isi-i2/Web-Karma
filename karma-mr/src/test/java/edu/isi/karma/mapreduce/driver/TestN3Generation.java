@@ -3,11 +3,8 @@ package edu.isi.karma.mapreduce.driver;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.net.URL;
-import java.util.Properties;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hdfs.MiniDFSCluster;
 import org.apache.hadoop.mapreduce.v2.MiniMRYarnCluster;

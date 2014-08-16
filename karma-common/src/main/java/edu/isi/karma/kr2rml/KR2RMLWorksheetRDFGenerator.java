@@ -146,6 +146,7 @@ public class KR2RMLWorksheetRDFGenerator {
 	}
 
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void generateRDF(boolean closeWriterAfterGeneration) throws IOException {
 
 		try {

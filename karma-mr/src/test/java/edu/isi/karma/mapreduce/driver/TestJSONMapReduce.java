@@ -42,7 +42,6 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 	public void testMap() throws IOException {
 		
 		mapDriver.addInput(new Text("people.json"), new Text(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
-		mapDriver.addInput(new Text("people.json"), new Text(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
 		List<Pair<Text,Text>> results = mapDriver.run();
 		System.out.print(results);
 		assertTrue(results.size() > 1);
@@ -55,9 +54,10 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 		
 		List<Text> jasonTriples = new LinkedList<Text>();
 		jasonTriples.add(new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("jason.json"))));
-		jasonTriples.add(new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("jason.json"))));
+		jasonTriples.add(new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("jason2.json"))));
+		jasonTriples.add(new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("jason3.json"))));
 		
-		inputs.add(new Pair(new Text("http://lod.isi.edu/cs548/person/Slepicka"), jasonTriples));
+		inputs.add(new Pair<Text,List<Text>>(new Text("http://lod.isi.edu/cs548/person/Slepicka"), jasonTriples));
 		reduceDriver.withAllOutput(getPairsFromFile("output/jason.output.json"));
 		reduceDriver.withAll(inputs);
 		reduceDriver.runTest();
