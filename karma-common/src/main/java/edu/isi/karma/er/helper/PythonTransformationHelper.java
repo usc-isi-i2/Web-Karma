@@ -133,13 +133,13 @@ public class PythonTransformationHelper {
 			methodStmt.append("		if hasNestedTable: \n");
 			methodStmt.append("			table = targetNode.getNestedTable(); \n");
 			methodStmt.append("			if table.getNumRows() > 0:  \n");
-			methodStmt.append("				return True  \n");
+			methodStmt.append("				return False  \n");
 			methodStmt.append("		value = targetNode.getValue()\n");
 			methodStmt.append("		if value is not None:\n");
 			methodStmt.append("			valueAsString = value.asString()\n");
 			methodStmt.append("			if ((not valueAsString) and len(valueAsString) > 0) :\n");
-			methodStmt.append("				return True\n");
-			methodStmt.append("	return False\n");
+			methodStmt.append("				return False\n");
+			methodStmt.append("	return True\n");
 			isEmptyDefStatement = methodStmt.toString();
 		}
 		return isEmptyDefStatement;
