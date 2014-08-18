@@ -558,7 +558,7 @@ function getAllLinksForNode(worksheetId, alignmentId, nodeId) {
 function changeKarmaHome(homeDir) {
 	var info = generateInfoObject("", "", "SetKarmaHomeCommand");
 	info["directory"] = homeDir;
-	var result = [];
+	var result = true;
 	$.ajax({
 		url: "RequestController",
 		type: "POST",
@@ -568,6 +568,13 @@ function changeKarmaHome(homeDir) {
 		complete: function(xhr, textStatus) {
 			var json = $.parseJSON(xhr.responseText);
 			parse(json);
+			$.each(data["elements"], function(i, element) {
+				if (element["updateType"] == "KarmaError") {
+					result = false;
+					return;
+				}
+			});
+			
 		},
 		error: function(xhr, textStatus) {
 			alert("Error occured while setting Karma Home Directory!");
