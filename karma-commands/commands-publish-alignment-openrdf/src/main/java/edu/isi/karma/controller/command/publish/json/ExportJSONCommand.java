@@ -12,12 +12,12 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.kr2rml.ErrorReport;
-import edu.isi.karma.kr2rml.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
@@ -26,18 +26,20 @@ import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
 import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
 import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
+import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class ExportJSONCommand extends WorksheetCommand {
+public class ExportJSONCommand extends WorksheetSelectionCommand {
 
     private static Logger logger = LoggerFactory.getLogger(ExportJSONCommand.class);
 	private final String alignmentNodeId;
@@ -48,8 +50,9 @@ public class ExportJSONCommand extends WorksheetCommand {
 		updateType, fileUrl, worksheetId
 	}
     
-	public ExportJSONCommand(String id, String alignmentNodeId, String worksheetId) {
-		super(id, worksheetId);
+	public ExportJSONCommand(String id, String alignmentNodeId, 
+			String worksheetId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.alignmentNodeId = alignmentNodeId;
 		
 		addTag(CommandTag.Transformation);//??want Export JSON in model history?
@@ -81,6 +84,7 @@ public class ExportJSONCommand extends WorksheetCommand {
 
 		
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		RepFactory f = workspace.getFactory();
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				AlignmentManager.Instance().constructAlignmentId(workspace.getId(),
@@ -96,7 +100,7 @@ public class ExportJSONCommand extends WorksheetCommand {
 			mappingGen = new KR2RMLMappingGenerator(
 					workspace, worksheet, alignment, 
 					worksheet.getSemanticTypes(), rdfPrefix, rdfNamespace,
-					true, errorReport);
+					false, errorReport);
 		} catch (KarmaException e)
 		{
 			logger.error("Error occured while generating RDF!", e);
@@ -135,10 +139,11 @@ public class ExportJSONCommand extends WorksheetCommand {
 		PrintWriter printWriter;
 		try {
 			printWriter = new PrintWriter(jsonFileLocalPath);
-			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(printWriter);
+			String baseURI = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.baseURI);
+			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(printWriter, baseURI);
 			writer.addPrefixes(mapping.getPrefixes());
 			RootStrategy strategy = new UserSpecifiedRootStrategy(rootTriplesMapId, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
-			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, ontMgr, writer, false, strategy, mapping, errorReport);
+			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, ontMgr, writer, false, strategy, mapping, errorReport, selection);
 			try {
 				generator.generateRDF(true);
 				logger.info("RDF written to file.");

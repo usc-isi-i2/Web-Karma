@@ -14,7 +14,8 @@ import edu.isi.karma.webserver.KarmaException;
 public class GroupByCommandFactory extends JSONInputCommandFactory {
 
 	public enum Arguments {
-		worksheetId, hTableId, hNodeId, newColumnName, defaultValue
+		worksheetId, hTableId, hNodeId, 
+		newColumnName, defaultValue, selectionName
 	}
 	
 	@Override
@@ -23,8 +24,10 @@ public class GroupByCommandFactory extends JSONInputCommandFactory {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String hTableId = request.getParameter(Arguments.hTableId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
+		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new GroupByCommand(getNewId(workspace), worksheetId, 
-				hTableId, hNodeId);
+				hTableId, hNodeId, 
+				selectionName);
 	}
 
 	@Override
@@ -34,9 +37,12 @@ public class GroupByCommandFactory extends JSONInputCommandFactory {
 		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hTableId = "";
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		//System.out.println(worksheetId);
 		GroupByCommand unfoldCmd = new GroupByCommand(getNewId(workspace), worksheetId,
-				hTableId, hNodeID);
+				hTableId, hNodeID, 
+				selectionName);
 		unfoldCmd.setInputParameterJson(inputJson.toString());
 		return unfoldCmd;
 	}

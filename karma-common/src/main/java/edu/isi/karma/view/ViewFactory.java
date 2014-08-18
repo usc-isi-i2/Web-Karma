@@ -23,13 +23,19 @@
  */
 package edu.isi.karma.view;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
-
-import java.util.*;
 
 /**
  * @author szekely
@@ -137,7 +143,8 @@ public class ViewFactory {
 						w.getDataTable()
 								.getRows(
 										0,
-										pref.getIntViewPreferenceValue(ViewPreference.defaultRowsToShowInTopTables)),
+										pref.getIntViewPreferenceValue(ViewPreference.defaultRowsToShowInTopTables),
+										SuperSelectionManager.DEFAULT_SELECTION),
 						vWorkspace);
 	}
 }

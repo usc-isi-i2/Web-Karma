@@ -41,6 +41,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.kr2rml.ErrorReport.Priority;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
@@ -54,6 +55,10 @@ import edu.isi.karma.kr2rml.planning.TriplesMapPlanExecutor;
 import edu.isi.karma.kr2rml.planning.TriplesMapPlanGenerator;
 import edu.isi.karma.kr2rml.planning.TriplesMapWorkerPlan;
 import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
+import edu.isi.karma.kr2rml.writer.AvroKR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.writer.SFKR2RMLRDFWriter;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -74,14 +79,14 @@ public class KR2RMLWorksheetRDFGenerator {
 	protected KR2RMLMappingColumnNameHNodeTranslator translator;
 	protected ConcurrentHashMap<String, String> hNodeToContextUriMap;
 	protected List<KR2RMLRDFWriter> outWriters;
-
+	
 	private Logger logger = LoggerFactory.getLogger(KR2RMLWorksheetRDFGenerator.class);
 	private URIFormatter uriFormatter;
 	private RootStrategy strategy;
-
+	private SuperSelection selection;
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
 			OntologyManager ontMgr, String outputFileName, boolean addColumnContextInformation, 
-			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport) throws UnsupportedEncodingException, FileNotFoundException {
+			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport, SuperSelection sel) throws UnsupportedEncodingException, FileNotFoundException {
 		initializeMemberVariables(worksheet, factory, ontMgr, outputFileName,
 				addColumnContextInformation, kr2rmlMapping, errorReport);
 		File f = new File(this.outputFileName);
@@ -90,37 +95,37 @@ public class KR2RMLWorksheetRDFGenerator {
 		BufferedWriter bw = new BufferedWriter(
 				new OutputStreamWriter(new FileOutputStream(f),"UTF-8"));
 		outWriters.add(new N3KR2RMLRDFWriter(uriFormatter, new PrintWriter (bw)));
-
+		this.selection = sel;
 
 	}
 
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
 			OntologyManager ontMgr, KR2RMLRDFWriter writer, boolean addColumnContextInformation,RootStrategy strategy, 
-			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport) {
+			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport, SuperSelection sel) {
 		initializeMemberVariables(worksheet, factory, ontMgr, outputFileName,
 				addColumnContextInformation, kr2rmlMapping, errorReport);
 		this.outWriters.add(writer);
 		this.strategy = strategy;
-
+		this.selection = sel;
 	}
 
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
 			OntologyManager ontMgr, List<KR2RMLRDFWriter> writers, boolean addColumnContextInformation,  
-			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport) {
+			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport, SuperSelection sel) {
 		initializeMemberVariables(worksheet, factory, ontMgr, outputFileName,
 				addColumnContextInformation, kr2rmlMapping, errorReport);
 		this.outWriters.addAll(writers);
-
+		this.selection = sel;
 	}
 	
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
 			OntologyManager ontMgr, PrintWriter writer, KR2RMLMapping kr2rmlMapping,   
-			ErrorReport errorReport, boolean addColumnContextInformation) {
+			ErrorReport errorReport, boolean addColumnContextInformation, SuperSelection sel) {
 		super();
 		initializeMemberVariables(worksheet, factory, ontMgr, outputFileName,
 				addColumnContextInformation, kr2rmlMapping, errorReport);
 		this.outWriters.add(new N3KR2RMLRDFWriter(uriFormatter, writer));
-
+		this.selection = sel;
 	}
 
 
@@ -142,13 +147,14 @@ public class KR2RMLWorksheetRDFGenerator {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public void generateRDF(boolean closeWriterAfterGeneration) throws IOException {
 
 		try {
 
 			// RDF Generation starts at the top level rows
 			ArrayList<Row> rows = this.worksheet.getDataTable().getRows(0, 
-					this.worksheet.getDataTable().getNumRows());
+					this.worksheet.getDataTable().getNumRows(), selection);
 
 
 			
@@ -173,15 +179,20 @@ public class KR2RMLWorksheetRDFGenerator {
 				}
 			}
 			for (KR2RMLRDFWriter writer : outWriters) {
-				if (writer instanceof JSONKR2RMLRDFWriter) {
-					JSONKR2RMLRDFWriter jsonWriter = (JSONKR2RMLRDFWriter)writer;
+				if (writer instanceof SFKR2RMLRDFWriter) {
+					@SuppressWarnings("rawtypes")
+					SFKR2RMLRDFWriter jsonWriter = (SFKR2RMLRDFWriter)writer;
 					jsonWriter.addPrefixes(kr2rmlMapping.getPrefixes());
 					for(Entry<TriplesMapGraph, List<String>> entry : graphTriplesMapsProcessingOrder.entrySet())
 					{
 						List<String> triplesMapIds = entry.getValue();
 						jsonWriter.addRootTriplesMapId(triplesMapIds.get(triplesMapIds.size()-1));	
 					}
-					
+					if(jsonWriter instanceof AvroKR2RMLRDFWriter)
+					{
+						AvroKR2RMLRDFWriter avroWriter = (AvroKR2RMLRDFWriter) jsonWriter;
+						avroWriter.setProcessingOrder(graphTriplesMapsProcessingOrder);
+					}
 				}
 			}
 			int i=1;
@@ -189,7 +200,7 @@ public class KR2RMLWorksheetRDFGenerator {
 			Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan = new HashMap<TriplesMap, TriplesMapWorkerPlan>() ;
 			for(TriplesMap triplesMap : kr2rmlMapping.getTriplesMapList())
 			{
-				TriplesMapWorkerPlan workerPlan = new TriplesMapWorkerPlan(factory, triplesMap, kr2rmlMapping, uriFormatter, translator,  addColumnContextInformation, hNodeToContextUriMap);
+				TriplesMapWorkerPlan workerPlan = new TriplesMapWorkerPlan(factory, triplesMap, kr2rmlMapping, uriFormatter, translator,  addColumnContextInformation, hNodeToContextUriMap, selection);
 				triplesMapToWorkerPlan.put(triplesMap, workerPlan);
 			}
 			for (Row row:rows) {

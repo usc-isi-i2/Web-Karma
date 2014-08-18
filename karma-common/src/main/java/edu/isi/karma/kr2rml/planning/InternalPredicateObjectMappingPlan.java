@@ -22,7 +22,7 @@ package edu.isi.karma.kr2rml.planning;
 
 import java.util.Map;
 
-import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.exception.HNodeNotFoundKarmaException;
@@ -31,15 +31,22 @@ import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
 import edu.isi.karma.kr2rml.template.ColumnTemplateTerm;
 import edu.isi.karma.kr2rml.template.PopulatedTemplateTermSet;
 import edu.isi.karma.kr2rml.template.TemplateTermSet;
+import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.RepFactory;
 
 public class InternalPredicateObjectMappingPlan extends
 		PredicateObjectMappingPlan {
 
-	public InternalPredicateObjectMappingPlan(TemplateTermSet subjectMapTemplate, PredicateObjectMap pom, TriplesMap objectTriplesMap, Map<ColumnTemplateTerm, HNodePath> subjectTermsToPaths, boolean isFlipped,KR2RMLMapping kr2rmlMapping, URIFormatter uriFormatter, RepFactory factory, KR2RMLMappingColumnNameHNodeTranslator translator) throws HNodeNotFoundKarmaException
+	public InternalPredicateObjectMappingPlan(TemplateTermSet subjectMapTemplate, PredicateObjectMap pom, 
+			TriplesMap objectTriplesMap, 
+			Map<ColumnTemplateTerm, HNodePath> subjectTermsToPaths,
+			boolean isFlipped, KR2RMLMapping kr2rmlMapping, 
+			URIFormatter uriFormatter, RepFactory factory, 
+			KR2RMLMappingColumnNameHNodeTranslator translator, 
+			SuperSelection sel) throws HNodeNotFoundKarmaException
 	{
-		super(kr2rmlMapping, uriFormatter, factory, translator);
+		super(kr2rmlMapping, uriFormatter, factory, translator, sel);
 		this.isFlipped = isFlipped;
 		generateInternal(subjectMapTemplate, pom, objectTriplesMap, subjectTermsToPaths);
 	}

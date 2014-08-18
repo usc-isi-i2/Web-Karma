@@ -21,16 +21,16 @@
 
 package edu.isi.karma.modeling.alignment.learner;
 
-import edu.isi.karma.modeling.ModelingConfiguration;
-import edu.isi.karma.rep.alignment.Node;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.modeling.ModelingConfiguration;
+import edu.isi.karma.rep.alignment.Node;
 
 
 

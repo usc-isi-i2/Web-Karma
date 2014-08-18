@@ -80,3 +80,7 @@ Thumbs.db
 
 *.sh
 
+
+*.log
+
+*.avro

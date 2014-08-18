@@ -11,12 +11,12 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 
-import edu.isi.karma.controller.command.transformation.PythonRepository;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
-import edu.isi.karma.kr2rml.N3KR2RMLRDFWriter;
+import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
@@ -47,7 +47,7 @@ public class SimpleMapper extends Mapper<Text, Text, Text, Text>{
 	        userMetadataManager.register(new PythonTransformationMetadata(), uc);
 	        PythonRepository.disableReloadingLibrary();
 	        String modelUri = context.getConfiguration().get("model.uri");
-	        generator = new GenericRDFGenerator();
+	        generator = new GenericRDFGenerator(null);
 	        URL modelURL = new URL(modelUri);
 	        generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
 		} catch (KarmaException | IOException e) {

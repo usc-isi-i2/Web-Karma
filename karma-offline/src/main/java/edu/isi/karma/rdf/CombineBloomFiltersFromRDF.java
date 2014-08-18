@@ -29,7 +29,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.uwyn.jhighlight.tools.FileUtils;
 
 import edu.isi.karma.er.helper.TripleStoreUtil;
-import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
+import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
 import edu.isi.karma.webserver.KarmaException;
 
 

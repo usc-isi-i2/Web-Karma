@@ -22,6 +22,16 @@
  */
 package edu.isi.karma.webserver;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.IPreviewable;
@@ -29,125 +39,104 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.VWorkspaceRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 public class RequestController extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
-    private static Logger logger = LoggerFactory.getLogger(RequestController.class);
+	private static final long serialVersionUID = 1L;
+	private static Logger logger = LoggerFactory.getLogger(RequestController.class);
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        // initilaize the JETTY_PORT for the first request
-        if (ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT).isEmpty()) {
-            String port = String.valueOf(request.getServerPort());
-            String protocol = request.getProtocol().split("/")[0];
-            String host = protocol.toLowerCase() + "://" + request.getServerName();
+		// initilaize the JETTY_PORT for the first request
+		if (ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT).isEmpty()) {
+			String port = String.valueOf(request.getServerPort());
+			String protocol = request.getProtocol().split("/")[0];
+			String host = protocol.toLowerCase() + "://" + request.getServerName();
 
-            ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT, port);
-            logger.info("JETTY_PORT initilized to " + port);
+			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT, port);
+			logger.info("JETTY_PORT initilized to " + port);
 
 
-            ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_HOST, host);
-            logger.info("JETTY_HOST initilized to " + host);
+			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_HOST, host);
+			logger.info("JETTY_HOST initilized to " + host);
 
-            // also set PUBLIC_RDF_ADDRESS
-            ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.PUBLIC_RDF_ADDRESS,
-                    host + ":" + port + "/RDF/");
+			// also set PUBLIC_RDF_ADDRESS
+			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.PUBLIC_RDF_ADDRESS,
+					host + ":" + port + "/RDF/");
 
-            // also set CLEANING_SERVICE_URL
-            ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL,
-                    host + ":" + port
-                    + ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL));
-            
-            ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL,
-                    host + ":" + port
-                    + ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL));
-        }
+			// also set CLEANING_SERVICE_URL
+			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL,
+					host + ":" + port
+					+ ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL));
 
-        String workspaceId = request.getParameter("workspaceId");
-        ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspaceId);
-        if (ctrl == null) {
-            logger.debug("No execution controller found. This sometime happens when the server is restarted and "
-                    + "an already open window is refereshed (and is okay to happen). A command is sent to the server "
-                    + "to destroy all workspace objects.");
-            return;
-        }
+			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL,
+					host + ":" + port
+					+ ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL));
+		}
 
-        VWorkspace vWorkspace = VWorkspaceRegistry.getInstance().getVWorkspace(workspaceId);
-        String responseString = "";
-//		String id = request.getSession().getId();
-        /**
-         * **********************************
-         */
-        // If the current request is a part of a command that requires user-interaction
-        if (request.getParameter("commandId") != null && !request.getParameter("command").equals("UndoRedoCommand")) {
-            Command currentCommand = ctrl.getWorkspace().getCommandHistory().getCurrentCommand();
+		String workspaceId = request.getParameter("workspaceId");
+		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspaceId);
+		if (ctrl == null) {
+			logger.debug("No execution controller found. This sometime happens when the server is restarted and "
+					+ "an already open window is refereshed (and is okay to happen). A command is sent to the server "
+					+ "to destroy all workspace objects.");
+			return;
+		}
 
-            if (currentCommand != null && request.getParameter("commandId").equals(currentCommand.getId())) {
-                // Check if the command needs to be executed
-                if (request.getParameter("execute") != null && request.getParameter("execute").equals("true")) {
-                    try {
+		VWorkspace vWorkspace = VWorkspaceRegistry.getInstance().getVWorkspace(workspaceId);
+		String responseString = "";
+		boolean isPreview = Boolean.parseBoolean(request.getParameter("isPreview"));
+		boolean isUserInteraction = Boolean.parseBoolean(request.getParameter("isUserInteraction"));
+		boolean isExecute = Boolean.parseBoolean(request.getParameter("execute"));
+		if (isUserInteraction) {
+			String commandId = request.getParameter("commandId");
+			Command currentCommand = (Command) ctrl.getWorkspace().getCommandHistory().getPreviewCommand(commandId);
+			try {
+				UpdateContainer updateContainer;
+				if (!isExecute)
+					updateContainer = ((IPreviewable) currentCommand).handleUserActions(request);
+				else {
+					((IPreviewable) currentCommand).handleUserActions(request);
+					updateContainer = ctrl.invokeCommand(currentCommand);
+				}
+				updateContainer.applyUpdates(vWorkspace);
+				responseString = updateContainer.generateJson(vWorkspace);
+			} catch (Exception e) {
+				responseString = getErrorMessage(vWorkspace, e);
+			}
+		}
+		else if (isPreview) {
+			Command command = ctrl.getCommand(request);
+			try {
+				UpdateContainer updateContainer = ((IPreviewable) command).showPreview(request);
+				ctrl.getWorkspace().getCommandHistory().addPreviewCommand(command);
+				updateContainer.applyUpdates(vWorkspace);
+				responseString = updateContainer.generateJson(vWorkspace);
+			} catch (CommandException e) {
+				responseString = getErrorMessage(vWorkspace, e);
+			}
 
-                        // Set the parameters if any changed after the user preview
-                        ((IPreviewable) currentCommand).handleUserActions(request);
+		}
+		else {
+			Command command = ctrl.getCommand(request);
+			try {
+				UpdateContainer updateContainer =ctrl.invokeCommand(command);
+				updateContainer.applyUpdates(vWorkspace);
+				responseString = updateContainer.generateJson(vWorkspace);
+			} catch(Exception e) {
+				responseString = getErrorMessage(vWorkspace, e);
+			}
+		}
 
-                        UpdateContainer updateContainer = ctrl.getWorkspace()
-                                .getCommandHistory().doCommand(currentCommand, ctrl.getWorkspace());
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(responseString);
+		response.flushBuffer();
+	}
 
-                        updateContainer.applyUpdates(vWorkspace);
-                        responseString = updateContainer.generateJson(vWorkspace);
-                    } catch (CommandException e) {
-                        logger.error("Error occured while executing command: " + currentCommand.getCommandName(), e);
-                        UpdateContainer updateContainer = new UpdateContainer();
-                		updateContainer.add(new ErrorUpdate("Error occured while executing command: " + currentCommand.getCommandName() + ":" + e.getMessage()));
-                		responseString = updateContainer.generateJson(vWorkspace);
-                    }
-                } else {
-                	try {
-	                    UpdateContainer updateContainer =
-	                            ((IPreviewable) currentCommand).handleUserActions(request);
-	                    updateContainer.applyUpdates(vWorkspace);
-	                    responseString = updateContainer.generateJson(vWorkspace);
-                	} catch(Exception e) {
-                		UpdateContainer updateContainer = new UpdateContainer();
-                		updateContainer.add(new ErrorUpdate("Error:" + e.getMessage()));
-                		responseString = updateContainer.generateJson(vWorkspace);
-                	}
-                }
-            }
-        } else {
-            Command command = ctrl.getCommand(request);
-            if (command != null) {
-            	try {
-            		UpdateContainer updateContainer =ctrl.invokeCommand(command);
-            		updateContainer.applyUpdates(vWorkspace);
-            		responseString = updateContainer.generateJson(vWorkspace);
-            	} catch(Exception e) {
-            		e.printStackTrace();
-            		UpdateContainer updateContainer = new UpdateContainer();
-            		updateContainer.add(new ErrorUpdate("Error: " + e.getMessage()));
-            		responseString = updateContainer.generateJson(vWorkspace);
-            	}
-                 
-            } else {
-            	String msg = "Error: Could not create Command object '" + request.getParameter("command") + "'";
-                logger.error(msg);
-                UpdateContainer updateContainer = new UpdateContainer();
-        		updateContainer.add(new ErrorUpdate(msg));
-        		responseString = updateContainer.generateJson(vWorkspace);
-            }
-        }
-
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(responseString);
-        response.flushBuffer();
-    }
+	private String getErrorMessage(VWorkspace vWorkspace, Throwable e) {
+		e.printStackTrace();
+		UpdateContainer updateContainer = new UpdateContainer();
+		updateContainer.add(new ErrorUpdate("Error:" + e.getMessage()));
+		return updateContainer.generateJson(vWorkspace);
+	}
 }

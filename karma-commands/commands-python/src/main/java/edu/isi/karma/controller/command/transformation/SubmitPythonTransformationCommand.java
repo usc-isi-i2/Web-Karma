@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.ICommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommandFactory;
 import edu.isi.karma.controller.history.CommandHistory;
@@ -60,8 +61,9 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			.getLogger(SubmitPythonTransformationCommand.class);
 
 	public SubmitPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
-			String worksheetId, String hNodeId, String errorDefaultValue) {
-		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
+			String worksheetId, String hNodeId, 
+			String errorDefaultValue, String selectionId) {
+		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, selectionId);
 		//logger.info("SubmitPythonTranformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
 		this.pythonNodeId = hNodeId;
 	}
@@ -145,6 +147,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		{
 			UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
 					hNode, ctrl, addColCmd.getNewHNodeId());
+			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			return c;
 		}
 		catch (Exception e )
@@ -189,7 +192,8 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 					//Previous python command exists, lets reset the values, and then start again
 					prevCommand.resetColumnValues(workspace);
 				}
-				return previousPythonTransformationCommand.doIt(workspace);
+				UpdateContainer uc = previousPythonTransformationCommand.doIt(workspace);
+				return uc;
 			} catch (CommandException e) {
 				return new UpdateContainer(new ErrorUpdate("Error occured while  applying previous Python transformation to the column."));
 
@@ -198,7 +202,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			resetColumnValues(workspace);
 		}
 
-		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 		// TODO is it necessary to compute alignment and semantic types for everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
@@ -206,12 +210,13 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 
 	protected void saveColumnValues(Workspace workspace) {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		RepFactory f = workspace.getFactory();
 		HNode hNode = f.getHNode(pythonNodeId);
 
 		this.originalColumnValues = new ArrayList<String>();
 		Collection<Node> nodes = new ArrayList<Node>();
-		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes);
+		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes, selection);
 		for(Node node : nodes) {
 			originalColumnValues.add(node.getValue().asString());
 		}
@@ -220,10 +225,11 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	public void resetColumnValues(Workspace workspace) {
 		if(this.originalColumnValues != null) {
 			Worksheet worksheet = workspace.getWorksheet(worksheetId);
+			SuperSelection selection = getSuperSelection(worksheet);
 			RepFactory f = workspace.getFactory();
 			HNode hNode = f.getHNode(pythonNodeId);
 
-			worksheet.getDataTable().setCollectedNodeValues(hNode.getHNodePath(f), this.originalColumnValues, f);
+			worksheet.getDataTable().setCollectedNodeValues(hNode.getHNodePath(f), this.originalColumnValues, f, selection);
 		}
 	}
 

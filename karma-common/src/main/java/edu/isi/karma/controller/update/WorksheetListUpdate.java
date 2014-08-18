@@ -23,13 +23,13 @@
  */
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.util.JSONUtil;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
-
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Iterator;
+
+import edu.isi.karma.util.JSONUtil;
+import edu.isi.karma.view.VWorksheet;
+import edu.isi.karma.view.VWorkspace;
 
 /**
  * Contains the list of worksheets to be shown in the window. The list may
@@ -80,5 +80,11 @@ public class WorksheetListUpdate extends AbstractUpdate {
 	public void applyUpdate(VWorkspace vWorkspace)
 	{
 		vWorkspace.createVWorksheetsForAllWorksheets();
+	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof WorksheetListUpdate)
+			return true;
+		return false;
 	}
 }

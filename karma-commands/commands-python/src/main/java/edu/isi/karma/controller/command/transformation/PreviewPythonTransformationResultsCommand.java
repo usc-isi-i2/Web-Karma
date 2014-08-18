@@ -21,6 +21,10 @@
 
 package edu.isi.karma.controller.command.transformation;
 
+import org.json.JSONArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.update.ErrorUpdate;
@@ -30,9 +34,6 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import org.json.JSONArray;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PreviewPythonTransformationResultsCommand extends PythonTransformationCommand {
 
@@ -41,8 +42,9 @@ public class PreviewPythonTransformationResultsCommand extends PythonTransformat
 
 	
 	protected PreviewPythonTransformationResultsCommand(String id, String worksheetId, 
-			String transformationCode, String errorDefaultValue, String hNodeId) {
-		super(id, transformationCode, worksheetId, hNodeId,  errorDefaultValue);
+			String transformationCode, String errorDefaultValue, 
+			String hNodeId, String selectionId) {
+		super(id, transformationCode, worksheetId, hNodeId,  errorDefaultValue, selectionId);
 	}
 
 	@Override
@@ -77,7 +79,8 @@ public class PreviewPythonTransformationResultsCommand extends PythonTransformat
 			return new UpdateContainer(new PythonPreviewResultsUpdate(transformedRows, errorValues));
 		} catch (Exception e) {
 			logger.error("Error while creating python results preview", e);
-			return new UpdateContainer(new ErrorUpdate("Error while creating Python results preview."));
+			String message = e.toString();
+			return new UpdateContainer(new ErrorUpdate("Error executing python script: " + message));
 		}
 	}
 

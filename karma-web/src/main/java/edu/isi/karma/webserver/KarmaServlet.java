@@ -34,12 +34,13 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.UIConfiguration;
 import edu.isi.karma.controller.command.alignment.R2RMLAlignmentFileSaver;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.metadata.SemanticTypeModelMetadata;
+import edu.isi.karma.metadata.AvroMetadata;
 import edu.isi.karma.metadata.CSVMetadata;
 import edu.isi.karma.metadata.GraphVizMetadata;
 import edu.isi.karma.metadata.JSONMetadata;
@@ -52,6 +53,7 @@ import edu.isi.karma.metadata.R2RMLMetadata;
 import edu.isi.karma.metadata.R2RMLPublishedMetadata;
 import edu.isi.karma.metadata.RDFMetadata;
 import edu.isi.karma.metadata.ReportMetadata;
+import edu.isi.karma.metadata.SemanticTypeModelMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.rep.Worksheet;
@@ -120,6 +122,7 @@ public class KarmaServlet extends HttpServlet {
 			metadataManager.register(new CSVMetadata(workspace), updateContainer);
 			metadataManager.register(new JSONMetadata(workspace), updateContainer);
 			metadataManager.register(new ReportMetadata(workspace), updateContainer);
+			metadataManager.register(new AvroMetadata(workspace), updateContainer);
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}
@@ -135,7 +138,7 @@ public class KarmaServlet extends HttpServlet {
 		updateContainer.add(new WorksheetListUpdate());
 		
 		for (Worksheet w : vwsp.getWorkspace().getWorksheets()) {
-			updateContainer.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(w.getId())); 
+			updateContainer.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(w.getId(), SuperSelectionManager.DEFAULT_SELECTION)); 
 		}
 
 		updateContainer.add(new AbstractUpdate() {

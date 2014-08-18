@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
@@ -35,8 +36,9 @@ public class DoublyAnchoredTemplateTermSetPopulator extends
 	public DoublyAnchoredTemplateTermSetPopulator(
 			Map<ColumnTemplateTerm, HNodePath> termToPath,
 			LinkedList<ColumnTemplateTerm> columnTerms,
-			List<ColumnTemplateTerm> comparisonTerms) {
-		super(termToPath, columnTerms, comparisonTerms);
+			List<ColumnTemplateTerm> comparisonTerms, 
+			SuperSelection sel) {
+		super(termToPath, columnTerms, comparisonTerms, sel);
 		
 	}
 

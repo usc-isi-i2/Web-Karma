@@ -21,20 +21,21 @@
 
 package edu.isi.karma.controller.command.service;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class PopulateCommandFactory extends JSONInputCommandFactory {
 	
 	public enum Arguments {
-		worksheetId
+		worksheetId, selectionName
 	}
 	
 	@Override
@@ -42,8 +43,10 @@ public class PopulateCommandFactory extends JSONInputCommandFactory {
 			Workspace workspace) {
 
 		String worksheetId =request.getParameter(Arguments.worksheetId.name());
+		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new PopulateCommand(getNewId(workspace), 
-				worksheetId);
+				worksheetId, 
+				selectionName);
 	}
 
 	@Override
@@ -51,8 +54,11 @@ public class PopulateCommandFactory extends JSONInputCommandFactory {
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name()
 				, inputJson);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		return new PopulateCommand(getNewId(workspace), 
-				worksheetId);
+				worksheetId, 
+				selectionName);
 	}
 
 	@Override

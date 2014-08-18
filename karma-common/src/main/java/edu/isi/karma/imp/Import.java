@@ -4,13 +4,14 @@
  */
 package edu.isi.karma.imp;
 
+import java.io.IOException;
+
+import org.json.JSONException;
+
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
-import org.json.JSONException;
-
-import java.io.IOException;
 
 /**
  * 
@@ -22,10 +23,12 @@ public abstract class Import {
 
     private final RepFactory factory;
     private Worksheet worksheet;
+    protected Workspace workspace;
     
     public Import(String worksheetName, Workspace workspace, String encoding) {
         this.factory = workspace.getFactory();
         this.worksheet = factory.createWorksheet(worksheetName, workspace, encoding);
+        this.workspace = workspace;
     }
 
     public Import(RepFactory factory, Worksheet worksheet) {

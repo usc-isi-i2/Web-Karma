@@ -23,17 +23,19 @@ package edu.isi.karma.controller.command.worksheet;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AdditionalRowsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
 
-public class LoadAdditionalWorksheetRowsCommand extends WorksheetCommand {
+public class LoadAdditionalWorksheetRowsCommand extends WorksheetSelectionCommand {
 	
 	private final String tableId;
 	
-	protected LoadAdditionalWorksheetRowsCommand(String id, String tableId, String worksheetId) {
-		super(id, worksheetId);
+	protected LoadAdditionalWorksheetRowsCommand(String id, String tableId, 
+			String worksheetId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.tableId = tableId;
 	}
 
@@ -59,7 +61,8 @@ public class LoadAdditionalWorksheetRowsCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		return new UpdateContainer(new AdditionalRowsUpdate(worksheetId, tableId));
+		SuperSelection selection = getSuperSelection(workspace);
+		return new UpdateContainer(new AdditionalRowsUpdate(worksheetId, tableId, selection));
 		
 	}
 

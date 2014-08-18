@@ -13,7 +13,8 @@ import org.json.JSONObject;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNodePath;
@@ -22,15 +23,15 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
-public class MergeClusterValuesCommand extends WorksheetCommand {
+public class MergeClusterValuesCommand extends WorksheetSelectionCommand {
 	private String hNodeId;
-	private Map<String, String> oldRowValueMap = new HashMap<String, String>();
-	
+	@SuppressWarnings("unused")
+	private Map<String, String> oldRowValueMap = new HashMap<String, String>();	
 	MultipleValueEditColumnCommand edit;
 			
 	public MergeClusterValuesCommand(String id, String hNodeId,
-			String worksheetId) {
-		super(id, worksheetId);
+			String worksheetId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 	}
 
@@ -62,7 +63,7 @@ public class MergeClusterValuesCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		// TODO Auto-generated method stub
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		
+		SuperSelection selection = getSuperSelection(worksheet);
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {
@@ -72,7 +73,7 @@ public class MergeClusterValuesCommand extends WorksheetCommand {
 		}
 		Collection<Node> nodes = new ArrayList<Node>();
 		workspace.getFactory().getWorksheet(worksheetId).getDataTable()
-				.collectNodes(selectedPath, nodes);
+				.collectNodes(selectedPath, nodes, selection);
 
 		
 		try {
@@ -101,7 +102,7 @@ public class MergeClusterValuesCommand extends WorksheetCommand {
 				}
 			}
 			Collection<Node> mainNodes = new ArrayList<Node>();
-			workspace.getFactory().getWorksheet(mainWorksheetId).getDataTable().collectNodes(mainSelectedPath, mainNodes);
+			workspace.getFactory().getWorksheet(mainWorksheetId).getDataTable().collectNodes(mainSelectedPath, mainNodes, selection);
 			int i = 0;
 			Map<String, String> rowValueMap = new TreeMap<String, String>();
 			

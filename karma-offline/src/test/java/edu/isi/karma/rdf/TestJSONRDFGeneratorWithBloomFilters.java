@@ -43,10 +43,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.kr2rml.BloomFilterKR2RMLRDFWriter;
-import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
-import edu.isi.karma.kr2rml.KR2RMLBloomFilterManager;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.writer.BloomFilterKR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
+import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilterManager;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.webserver.KarmaException;
 
@@ -72,7 +72,7 @@ public class TestJSONRDFGeneratorWithBloomFilters extends TestRdfGenerator{
 	 */
 	@Before
 	public void setUp() throws Exception {
-		rdfGen = new GenericRDFGenerator();
+		rdfGen = new GenericRDFGenerator(null);
 
 		// Add the models in
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(

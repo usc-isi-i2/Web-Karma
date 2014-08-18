@@ -23,11 +23,11 @@
  */
 package edu.isi.karma.controller.update;
 
+import java.io.PrintWriter;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
-
-import java.io.PrintWriter;
 
 /**
  * Announces a command that should be added to the bottom of the history.
@@ -58,6 +58,14 @@ public class HistoryAddCommandUpdate extends AbstractUpdate {
 		pw.println(newPref + JSONUtil.jsonStartObject(JsonKeys.command));
 		command.generateJson(newPref + "  ", pw, vWorkspace, Command.HistoryType.undo);
 		pw.println(prefix + "}");
+	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof HistoryAddCommandUpdate) {
+			HistoryAddCommandUpdate t = (HistoryAddCommandUpdate)o;
+			return t.command.equals(command);
+		}
+		return false;
 	}
 
 }

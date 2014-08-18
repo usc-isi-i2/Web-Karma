@@ -20,11 +20,12 @@
  ******************************************************************************/
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.util.Jsonizable;
+import java.util.List;
+
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import java.util.List;
+import edu.isi.karma.util.Jsonizable;
 
 public class SynonymSemanticTypes implements Jsonizable {
 	

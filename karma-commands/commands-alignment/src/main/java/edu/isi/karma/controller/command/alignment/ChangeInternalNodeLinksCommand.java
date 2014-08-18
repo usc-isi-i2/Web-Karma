@@ -25,8 +25,6 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -58,8 +56,6 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 
 	private StringBuilder descStr = new StringBuilder();
-	private static Logger logger = LoggerFactory
-			.getLogger(ChangeInternalNodeLinksCommand.class);
 
 	public enum JsonKeys {
 		edgeSourceId, edgeId, edgeTargetId, edgeSourceUri, edgeTargetUri

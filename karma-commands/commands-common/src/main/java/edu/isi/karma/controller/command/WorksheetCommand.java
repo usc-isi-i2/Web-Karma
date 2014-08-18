@@ -37,7 +37,6 @@ import edu.isi.karma.rep.Workspace;
 public abstract class WorksheetCommand extends Command {
 
 	protected final String worksheetId;
-
 	protected WorksheetCommand(String id, String worksheetId) {
 		super(id);
 		this.worksheetId = worksheetId;

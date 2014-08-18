@@ -59,4 +59,12 @@ public class PythonPreviewResultsUpdate extends AbstractUpdate{
 			new ErrorUpdate("Error while creating Python results preview.").generateJson(prefix, pw, vWorkspace);
 		}
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof PythonPreviewResultsUpdate) {
+			PythonPreviewResultsUpdate t = (PythonPreviewResultsUpdate)o;
+			return t.errorValues.equals(errorValues) && t.transformedRows.equals(transformedRows);
+		}
+		return false;
+	}
 }

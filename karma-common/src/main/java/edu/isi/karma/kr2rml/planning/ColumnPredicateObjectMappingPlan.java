@@ -26,7 +26,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.kr2rml.KR2RMLRDFWriter;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.exception.HNodeNotFoundKarmaException;
@@ -37,6 +37,7 @@ import edu.isi.karma.kr2rml.template.PopulatedTemplateTermSet;
 import edu.isi.karma.kr2rml.template.TemplateTerm;
 import edu.isi.karma.kr2rml.template.TemplateTermSet;
 import edu.isi.karma.kr2rml.template.TemplateTermSetPopulator;
+import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.RepFactory;
@@ -48,9 +49,15 @@ public class ColumnPredicateObjectMappingPlan extends
 	protected Map<String, String> hNodeToContextUriMap;
 	protected boolean generateContext;
 	
-	public ColumnPredicateObjectMappingPlan(TemplateTermSet subjectMapTemplate, PredicateObjectMap pom, Map<ColumnTemplateTerm, HNodePath> subjectTermsToPaths,KR2RMLMapping kr2rmlMapping, URIFormatter uriFormatter, RepFactory factory, KR2RMLMappingColumnNameHNodeTranslator translator, Map<String, String> hNodeToContextUriMap,  boolean generateContext) throws HNodeNotFoundKarmaException
+	public ColumnPredicateObjectMappingPlan(TemplateTermSet subjectMapTemplate, 
+			PredicateObjectMap pom, 
+			Map<ColumnTemplateTerm, HNodePath> subjectTermsToPaths, 
+			KR2RMLMapping kr2rmlMapping, URIFormatter uriFormatter, 
+			RepFactory factory, KR2RMLMappingColumnNameHNodeTranslator translator, 
+			Map<String, String> hNodeToContextUriMap,  boolean generateContext, 
+			SuperSelection sel) throws HNodeNotFoundKarmaException
 	{
-		super(kr2rmlMapping, uriFormatter, factory, translator);
+		super(kr2rmlMapping, uriFormatter, factory, translator, sel);
 		this.hNodeToContextUriMap = hNodeToContextUriMap;
 		this.generateContext = generateContext;
 		generateLiteral(subjectMapTemplate, pom, subjectTermsToPaths);

@@ -21,20 +21,23 @@
 
 package edu.isi.karma.controller.command.cleaning;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class SubmitCleaningCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
-		hNodeId, worksheetId, hTableId, examples
+		hNodeId, worksheetId, hTableId, 
+		examples, selectionName
 	}
 
 	@Override
@@ -42,9 +45,10 @@ public class SubmitCleaningCommandFactory extends JSONInputCommandFactory {
 		String hNodeid = request.getParameter(Arguments.hNodeId.name());
 		String w = request.getParameter(Arguments.worksheetId.name());
 		String exps = request.getParameter(Arguments.examples.name());
-
+		String selectionName = request.getParameter(Arguments.selectionName.name());
 		SubmitCleaningCommand sCleanningCommand = new SubmitCleaningCommand(
-				getNewId(workspace), hNodeid, w, exps);
+				getNewId(workspace), hNodeid, w, exps, 
+				selectionName);
 		return sCleanningCommand;
 	}
 
@@ -57,8 +61,11 @@ public class SubmitCleaningCommandFactory extends JSONInputCommandFactory {
 				Arguments.worksheetId.name(), inputJson);
 		String examples = HistoryJsonUtil.getStringValue(
 				Arguments.examples.name(), inputJson);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		SubmitCleaningCommand comm = new SubmitCleaningCommand(
-				getNewId(workspace), hNodeId, worksheetId, examples);
+				getNewId(workspace), hNodeId, worksheetId, examples, 
+				selectionName);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

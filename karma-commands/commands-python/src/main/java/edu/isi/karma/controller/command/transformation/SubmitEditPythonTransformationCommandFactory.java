@@ -21,20 +21,24 @@
 
 package edu.isi.karma.controller.command.transformation;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class SubmitEditPythonTransformationCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
-		newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, previousCommandId, targetHNodeId
+		newColumnName, transformationCode, worksheetId, 
+		hNodeId, errorDefaultValue, previousCommandId, 
+		targetHNodeId, selectionName
 	}
 	
 	@Override
@@ -52,8 +56,11 @@ public class SubmitEditPythonTransformationCommandFactory extends JSONInputComma
 		String errorDefaultValue = HistoryJsonUtil.getStringValue(Arguments.errorDefaultValue.name(), inputJson);
 		//String previousCommandId = HistoryJsonUtil.getStringValue(Arguments.previousCommandId.name(), inputJson);
 		String targetHNodeId = HistoryJsonUtil.getStringValue(Arguments.targetHNodeId.name(), inputJson);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		SubmitEditPythonTransformationCommand comm = new SubmitEditPythonTransformationCommand(getNewId(workspace), 
-				newColumnName, code, worksheetId, hNodeId, errorDefaultValue, targetHNodeId);
+				newColumnName, code, worksheetId, hNodeId, errorDefaultValue, targetHNodeId, 
+				selectionName);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}
