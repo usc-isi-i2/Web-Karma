@@ -178,6 +178,9 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 					}
 				}
 				
+				if(domainUriOrId.endsWith(" (add)"))
+					domainUriOrId = domainUriOrId.substring(0, domainUriOrId.length()-5).trim();
+				
 				domain = alignment.getNodeById(domainUriOrId);
 				logger.info("Got domain for domainUriOrId:" + domainUriOrId + " ::" + domain);
 				if (domain == null) {
