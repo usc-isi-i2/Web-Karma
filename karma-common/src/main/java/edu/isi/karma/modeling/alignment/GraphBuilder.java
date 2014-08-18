@@ -1173,7 +1173,7 @@ public class GraphBuilder {
 						String encoding = EncodingDetector.detect(ontology);
 						mgr.doImport(ontology, encoding);
 					} catch (Exception t) {
-						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
+//						logger.error("Error loading ontology: " + ontology.getAbsolutePath(), t);
 					}
 				} else {
 					logger.error ("the file: " + ontology.getAbsolutePath() + " does not have proper format: xml/rdf/n3/ttl/owl");
@@ -1181,6 +1181,10 @@ public class GraphBuilder {
 			}
 			// update the cache at the end when all files are added to the model
 			mgr.updateCache();
+			Set<String> test = mgr.getPossibleUris("http://xmlns.com/foaf/0.1/Person", "http://xmlns.com/foaf/0.1/Document");
+			for (String s : test) {
+				System.out.println(s);
+			}
 		} else {
 			logger.info("No directory for preloading ontologies exists.");
 		}
