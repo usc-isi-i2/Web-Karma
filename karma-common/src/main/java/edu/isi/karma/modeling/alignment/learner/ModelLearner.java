@@ -84,7 +84,7 @@ public class ModelLearner {
 	private boolean useAlignmentGraphBuiltFromKnownModels = false;
 	//	private boolean useAlignmentGraphBuiltFromLOD = false;
 
-	private static final int NUM_SEMANTIC_TYPES = 1; //4;
+	private static final int NUM_SEMANTIC_TYPES = 4;
 
 //	public ModelLearner(Workspace workspace, Worksheet worksheet, OntologyManager ontologyManager, List<ColumnNode> columnNodes) {
 	public ModelLearner(OntologyManager ontologyManager, List<ColumnNode> columnNodes) {
