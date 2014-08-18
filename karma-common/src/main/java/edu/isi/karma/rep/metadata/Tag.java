@@ -20,11 +20,11 @@
  ******************************************************************************/
 package edu.isi.karma.rep.metadata;
 
-import edu.isi.karma.rep.metadata.TagsContainer.Color;
-import edu.isi.karma.rep.metadata.TagsContainer.TagName;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import edu.isi.karma.rep.metadata.TagsContainer.Color;
+import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 
 public class Tag {
 	private HashSet<String> nodeIdList;

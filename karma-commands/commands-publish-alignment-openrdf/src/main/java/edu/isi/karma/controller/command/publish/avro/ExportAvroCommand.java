@@ -14,7 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -39,7 +40,7 @@ import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class ExportAvroCommand extends WorksheetCommand {
+public class ExportAvroCommand extends WorksheetSelectionCommand {
 
     private static Logger logger = LoggerFactory.getLogger(ExportAvroCommand.class);
 	private final String alignmentNodeId;
@@ -52,8 +53,9 @@ public class ExportAvroCommand extends WorksheetCommand {
     
 	
 	//TODO provde option to output pretty printed avro json
-	public ExportAvroCommand(String id, String alignmentNodeId, String worksheetId) {
-		super(id, worksheetId);
+	public ExportAvroCommand(String id, String alignmentNodeId, 
+			String worksheetId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.alignmentNodeId = alignmentNodeId;
 		
 	}
@@ -84,6 +86,7 @@ public class ExportAvroCommand extends WorksheetCommand {
 
 		
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		RepFactory f = workspace.getFactory();
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				AlignmentManager.Instance().constructAlignmentId(workspace.getId(),
@@ -139,7 +142,8 @@ public class ExportAvroCommand extends WorksheetCommand {
 			AvroKR2RMLRDFWriter writer = new AvroKR2RMLRDFWriter(fos);
 			writer.addPrefixes(mapping.getPrefixes());
 			RootStrategy strategy = new UserSpecifiedRootStrategy(rootTriplesMapId, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
-			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, ontMgr, writer, false, strategy, mapping, errorReport);
+			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, ontMgr, writer, 
+					false, strategy, mapping, errorReport, selection);
 			try {
 				generator.generateRDF(true);
 				logger.info("RDF written to file.");

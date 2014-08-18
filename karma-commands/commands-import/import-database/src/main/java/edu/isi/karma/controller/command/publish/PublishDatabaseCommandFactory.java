@@ -20,19 +20,23 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.publish;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.rep.Workspace;
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.rep.Workspace;
 
 public class PublishDatabaseCommandFactory extends CommandFactory {
 	
 	private static Logger logger = LoggerFactory.getLogger(PublishDatabaseCommandFactory.class);
 	private enum Arguments {
-		worksheetId, overwriteTable, insertTable, dbType,hostName,port,dbName,userName,password,tableName
+		worksheetId, overwriteTable, 
+		insertTable, dbType, hostName,
+		port, dbName, userName, password, 
+		tableName, selectionName
 	}
 
 	@Override
@@ -42,7 +46,7 @@ public class PublishDatabaseCommandFactory extends CommandFactory {
 				.name());
 
 		logger.debug("host="+request.getParameter(Arguments.hostName.name()));
-		
+		String selectionName = request.getParameter(Arguments.selectionName.name());
 		PublishDatabaseCommand comm = new PublishDatabaseCommand(getNewId(workspace), worksheetId,
 				request.getParameter(Arguments.dbType.name()),
 				request.getParameter(Arguments.hostName.name()),
@@ -52,7 +56,9 @@ public class PublishDatabaseCommandFactory extends CommandFactory {
 				request.getParameter(Arguments.password.name()),
 				request.getParameter(Arguments.tableName.name()),
 				request.getParameter(Arguments.overwriteTable.name()),
-				request.getParameter(Arguments.insertTable.name()));
+				request.getParameter(Arguments.insertTable.name()), 
+				selectionName
+				);
 		
 		return comm;
 	}

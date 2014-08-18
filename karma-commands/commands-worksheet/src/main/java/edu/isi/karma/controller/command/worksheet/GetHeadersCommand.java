@@ -13,7 +13,6 @@ import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Worksheet;
@@ -55,11 +54,12 @@ public class GetHeadersCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		HTable ht = worksheet.getHeaders();
+		HTable ht = worksheet.getHeaders();		
 		if (hNodeId.compareTo("") != 0) {
-			HTable parentHT = CloneTableUtils.getHTable(worksheet.getHeaders(), hNodeId);
+			HNode hNode = workspace.getFactory().getHNode(hNodeId);
+			HTable parentHT = workspace.getFactory().getHTable(hNode.getHTableId());
 			if (commandName.compareTo("GroupBy") == 0 || commandName.compareTo("Fold") == 0 || commandName.compareTo("Glue") == 0)
-				ht = CloneTableUtils.getChildHTable(parentHT, parentHT.getId(), false);
+				ht = hNode.getNestedTable();
 			else
 				ht = parentHT;
 		}
@@ -68,14 +68,16 @@ public class GetHeadersCommand extends WorksheetCommand {
 		}
 		final JSONArray array = new JSONArray();
 		for (HNode hn : ht.getHNodes()) {
-			JSONObject obj = new JSONObject();
-			obj.put("ColumnName", hn.getColumnName());
-			obj.put("HNodeId", hn.getId());
-			array.put(obj);
+			if (!commandName.equals("Unfold") || (!hn.hasNestedTable() && !hn.getId().equals(hNodeId)) ) {
+				JSONObject obj = new JSONObject();
+				obj.put("ColumnName", hn.getColumnName());
+				obj.put("HNodeId", hn.getId());
+				array.put(obj);
+			}
 		}
 		try {
 			return new UpdateContainer(new AbstractUpdate() {
-				
+
 				@Override
 				public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
 					pw.print(array.toString());
@@ -89,9 +91,8 @@ public class GetHeadersCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 
 }

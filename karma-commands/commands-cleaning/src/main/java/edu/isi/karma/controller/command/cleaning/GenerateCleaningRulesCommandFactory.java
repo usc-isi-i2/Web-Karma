@@ -20,16 +20,17 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.cleaning;
 
+import javax.servlet.http.HttpServletRequest;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Workspace;
 
-import javax.servlet.http.HttpServletRequest;
-
 public class GenerateCleaningRulesCommandFactory extends CommandFactory {
 	
 	private enum Arguments {
-		worksheetId, hNodeId, examples,cellIDs
+		worksheetId, hNodeId, examples, 
+		cellIDs, selectionName
 	}
 
 	@Override
@@ -38,7 +39,10 @@ public class GenerateCleaningRulesCommandFactory extends CommandFactory {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String examples = request.getParameter(Arguments.examples.name());
 		String cellIDs= request.getParameter(Arguments.cellIDs.name());
-		return new GenerateCleaningRulesCommand(getNewId(workspace), getWorksheetId(request, workspace), hNodeId, examples,cellIDs);
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		return new GenerateCleaningRulesCommand(getNewId(workspace), getWorksheetId(request, workspace), 
+				hNodeId, examples, cellIDs, 
+				selectionName);
 	}
 
 	@Override

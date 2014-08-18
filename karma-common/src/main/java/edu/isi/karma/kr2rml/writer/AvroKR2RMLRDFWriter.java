@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.avro.Schema;
@@ -21,7 +23,6 @@ import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DatumWriter;
-import org.apache.avro.io.JsonEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,10 +39,9 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 	protected Map<String, Schema> triplesMapIdToSchema = new HashMap<String, Schema>();
 	protected RepFactory rep;
 	protected Schema rootSchema;
-	protected JsonEncoder jsonEncoder;
 	private OutputStream output; 
-	DatumWriter<GenericRecord> datumWriter;
-	DataFileWriter<GenericRecord> dfw;	
+	private DatumWriter<GenericRecord> datumWriter;
+	private DataFileWriter<GenericRecord> dfw;	
 	//TODO come up with a good naming convention for records
 	private int id = 1;
 	public AvroKR2RMLRDFWriter(OutputStream output)
@@ -79,7 +79,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		TriplesMap map = graph.getTriplesMap(triplesMapId);
 		RecordBuilder<Schema> rb = SchemaBuilder.record("subjr"+(id++));
 		
-		
+		Set<String> currentPredicates = new HashSet<String>(); 
 		FieldAssembler<Schema> fieldAssembler = rb.fields();
 		for(PredicateObjectMap pom : map.getPredicateObjectMaps())
 		{
@@ -110,10 +110,16 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 					
 				}
 				
-				fieldAssembler = addField(fieldAssembler, pom, isMap,
+				if(currentPredicates.add(predicateShortHand))
+				{
+					fieldAssembler = addField(fieldAssembler, pom, isMap,
 						targetSchema, predicateShortHand);
-				
-			
+				}
+				else
+				{
+					//TODO handle conflicting types
+					LOG.warn("Duplicate predicate detected in schema");
+				}
 		}
 		
 		fieldAssembler = fieldAssembler.name("id").type().unionOf().array().items().stringType().and().stringType().and().nullType().endUnion().noDefault();
@@ -167,7 +173,6 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 	@Override
 	protected void addValue(PredicateObjectMap pom, GenericRecord subject, String predicateUri,
 			Object object) {
-		//TODO maps for dynamic predicates
 		String shortHandPredicateURI = shortHandURIGenerator.getShortHand(predicateUri).toString().replaceAll("[^\\w]", "_");
 		Schema schema = subject.getSchema();
 		Field field = schema.getField(shortHandPredicateURI);
@@ -246,7 +251,6 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 				}
 				else if(currentObj instanceof GenericRecord)
 				{
-					GenericRecord record = (GenericRecord)currentObj;
 					array = new GenericData.Array<GenericRecord>(subject.getSchema().getField(shortHandPredicateURI).schema().getTypes().get(0), new LinkedList<GenericRecord>());
 					array.add((GenericRecord)object);
 					array.add((GenericRecord)currentObj);
@@ -294,29 +298,55 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		for(GenericRecord record : this.rootObjects.values())
 		{
 			try {
-				//datumWriter.write(record, this.jsonEncoder);
+				collapseSameType(record);
 				dfw.append(record);
 				
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOG.error("Unable to append Avro record to writer!", e);
 			}
 		}
 		try {
 			dfw.flush();
-			//jsonEncoder.flush();
 			output.flush();
 			output.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Unable to flush and close output!", e);
 		}
 		
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected void collapseSameType(GenericRecord obj) {
-		// TODO Auto-generated method stub
+		
+		for (Field f : obj.getSchema().getFields()) {
+			Object value = obj.get(f.name());
+			if(value == null)
+			{
+				continue;
+			}
+			if (value instanceof GenericRecord)
+				collapseSameType((GenericRecord)value);
+			if (value instanceof GenericArray) {
+				GenericArray array = (GenericArray)value;
+				Set<Object> valuesHash = new HashSet<Object>();
+				boolean unmodified = true;
+				for (int i = 0; i < array.size(); i++) {
+					Object o = array.get(i);
+					if (o instanceof GenericRecord)
+						collapseSameType((GenericRecord) o);
+					
+					unmodified &= valuesHash.add(o);
+					
+					
+				}
+				if(!unmodified)
+				{
+					GenericArray<Object> newValues = new GenericData.Array<Object>(array.getSchema(), valuesHash);
+					obj.put(f.name(), newValues);
+				}
+			}
+		}
 		
 	}
 

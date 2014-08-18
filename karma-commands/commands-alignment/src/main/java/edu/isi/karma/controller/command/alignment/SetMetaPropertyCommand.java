@@ -31,9 +31,10 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory.Arguments;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory.METAPROPERTY_NAME;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -62,7 +63,7 @@ import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 
 
-public class SetMetaPropertyCommand extends WorksheetCommand {
+public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 
 	private final String hNodeId;
 	private final boolean trainAndShowUpdates;
@@ -82,8 +83,8 @@ public class SetMetaPropertyCommand extends WorksheetCommand {
 	protected SetMetaPropertyCommand(String id, String worksheetId,
 			String hNodeId, METAPROPERTY_NAME metaPropertyName,
 			String metaPropertyValue, boolean trainAndShowUpdates,
-			String rdfLiteralType) {
-		super(id, worksheetId);
+			String rdfLiteralType, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.metaPropertyName = metaPropertyName;
@@ -100,8 +101,7 @@ public class SetMetaPropertyCommand extends WorksheetCommand {
 
 	@Override
 	public String getTitle() {
-		//TODO
-		return "Set Semantic Type (MetaProperty)";
+		return "Set Semantic Type";
 	}
 
 	@Override
@@ -130,6 +130,7 @@ public class SetMetaPropertyCommand extends WorksheetCommand {
 		}
 		/*** Get the Alignment for this worksheet ***/
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		OntologyManager ontMgr = workspace.getOntologyManager();
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				workspace.getId(), worksheetId);
@@ -277,22 +278,11 @@ public class SetMetaPropertyCommand extends WorksheetCommand {
 		// newSynonymTypes);
 
 		if (trainAndShowUpdates) {
-			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType);
-			
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-			try {
-				// Add the visualization update
-				c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
-						alignment));
-			} catch (Exception e) {
-				logger.error("Error occured while setting the semantic type!",
-						e);
-				return new UpdateContainer(new ErrorUpdate(
-						"Error occured while setting the semantic type!"));
-			}			
-			return c;
-
+			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		}
+		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+		c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
+				alignment));
 		return c;
 	}
 
@@ -322,7 +312,6 @@ public class SetMetaPropertyCommand extends WorksheetCommand {
 		AlignmentManager.Instance()
 				.addAlignmentToMap(alignmentId, oldAlignment);
 		oldAlignment.setGraph(oldGraph);
-
 		// Get the alignment update if any
 		try {
 			c.add(new SemanticTypesUpdate(worksheet, worksheetId, oldAlignment));

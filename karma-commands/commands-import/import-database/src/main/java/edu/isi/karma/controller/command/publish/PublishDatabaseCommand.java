@@ -37,7 +37,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -51,7 +52,7 @@ import edu.isi.karma.util.DBType;
 import edu.isi.karma.util.JDBCUtilFactory;
 import edu.isi.karma.view.VWorkspace;
 
-public class PublishDatabaseCommand extends WorksheetCommand {
+public class PublishDatabaseCommand extends WorksheetSelectionCommand {
 	private String hostName;
 	private String port;
 	private String dbName;
@@ -84,8 +85,8 @@ public class PublishDatabaseCommand extends WorksheetCommand {
 	 */
 	protected PublishDatabaseCommand(String id, String worksheetId,
 			String dbType, String hostName, String port, String dbName,String userName,String password, String tableName, 
-			String overwrite, String insert) {
-		super(id,worksheetId);
+			String overwrite, String insert, String selectionId) {
+		super(id,worksheetId, selectionId);
 		this.hostName=hostName;
 		this.dbName=dbName;
 		this.userName=userName;
@@ -287,6 +288,7 @@ public class PublishDatabaseCommand extends WorksheetCommand {
 	 */
 	private int insertInTable(Worksheet w, String tableName, Map<String, String> colNamesMap,Connection conn) throws SQLException{
 		int numOfRowsNotInserted = 0;
+		SuperSelection selection = getSuperSelection(w);
 		//get col names for existing table
 		//some databases are case sensitive when referring to column/table names, so we have
 		//to use the "real" case in the queries
@@ -309,7 +311,7 @@ public class PublishDatabaseCommand extends WorksheetCommand {
 			}
 		}
 		
-		ArrayList<Row> rows = w.getDataTable().getRows(0, w.getDataTable().getNumRows());
+		ArrayList<Row> rows = w.getDataTable().getRows(0, w.getDataTable().getNumRows(), selection);
 		for(Row r:rows){
 			//insert one row
 			String insertRow = insertInTableRow(r, tableName, addTheseColumns, addTheseTypes);

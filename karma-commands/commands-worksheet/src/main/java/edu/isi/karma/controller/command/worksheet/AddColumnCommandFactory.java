@@ -20,20 +20,22 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.worksheet;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class AddColumnCommandFactory extends JSONInputCommandFactory {
 
 	public enum Arguments {
-		worksheetId, hTableId, hNodeId, newColumnName, defaultValue
+		worksheetId, hTableId, hNodeId, 
+		newColumnName, defaultValue, selectionName
 	}
 	
 	@Override
@@ -44,8 +46,10 @@ public class AddColumnCommandFactory extends JSONInputCommandFactory {
 		String newColumnName = request.getParameter(Arguments.newColumnName.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String defaultValue = request.getParameter(Arguments.defaultValue.name());
+		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new AddColumnCommand(getNewId(workspace), worksheetId, 
-				hTableId, hNodeId, newColumnName, defaultValue);
+				hTableId, hNodeId, newColumnName, defaultValue, 
+				selectionName);
 	}
 
 	@Override
@@ -57,9 +61,12 @@ public class AddColumnCommandFactory extends JSONInputCommandFactory {
 		String hTableId = CommandInputJSONUtil.getStringValue(Arguments.hTableId.name(), inputJson);
 		String newColumnName = CommandInputJSONUtil.getStringValue(Arguments.newColumnName.name(), inputJson);
 		String defaultValue = CommandInputJSONUtil.getStringValue(Arguments.defaultValue.name(), inputJson);
-		
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		AddColumnCommand colCmd = new AddColumnCommand(getNewId(workspace), worksheetId,
-				hTableId, hNodeID, newColumnName, defaultValue);
+				hTableId, hNodeID, newColumnName, defaultValue, 
+				selectionName
+				);
 		colCmd.setInputParameterJson(inputJson.toString());
 		return colCmd;
 	}

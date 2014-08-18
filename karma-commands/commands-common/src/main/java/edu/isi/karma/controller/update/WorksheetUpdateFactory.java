@@ -21,39 +21,51 @@
 
 package edu.isi.karma.controller.update;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.selection.Selection;
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
 public class WorksheetUpdateFactory {
 
-	public static UpdateContainer createWorksheetHierarchicalAndCleaningResultsUpdates(String worksheetId) {
+	public static UpdateContainer createWorksheetHierarchicalAndCleaningResultsUpdates(String worksheetId, SuperSelection sel) {
 		UpdateContainer c = new UpdateContainer();
-		createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, c);
+		createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, c, sel);
 		return c;
 	}
 	private static void createWorksheetHierarchicalAndCleaningResultsUpdates(
-			String worksheetId, UpdateContainer c) {
-		c.add(new WorksheetCleaningUpdate(worksheetId, true));
-		createWorksheetHierarchicalUpdates(worksheetId, c);
+			String worksheetId, UpdateContainer c, SuperSelection sel) {
+		boolean showCleaningCharts = ModelingConfiguration.isShowCleaningCharts();
+		if (showCleaningCharts)
+			c.add(new WorksheetCleaningUpdate(worksheetId, true, sel));
+		createWorksheetHierarchicalUpdates(worksheetId, c, sel);
 	}
-	
-	public static UpdateContainer createWorksheetHierarchicalUpdates(String worksheetId) {
+
+	public static UpdateContainer createWorksheetHierarchicalUpdates(String worksheetId, SuperSelection sel) {
 		UpdateContainer c = new UpdateContainer();
-		c.add(new WorksheetCleaningUpdate(worksheetId, false));
-		createWorksheetHierarchicalUpdates(worksheetId, c);
+		boolean showCleaningCharts = ModelingConfiguration.isShowCleaningCharts();
+		if (showCleaningCharts)
+			c.add(new WorksheetCleaningUpdate(worksheetId, false, sel));
+		createWorksheetHierarchicalUpdates(worksheetId, c, sel);
 		return c;
 	}
-	
+
 	private static void createWorksheetHierarchicalUpdates(String worksheetId,
-			UpdateContainer c) {
+			UpdateContainer c, SuperSelection sel) {
 		c.add(new WorksheetHeadersUpdate(worksheetId));
-		c.add(new WorksheetDataUpdate(worksheetId));
+		c.add(new WorksheetDataUpdate(worksheetId, sel));
+		c.add(new WorksheetSuperSelectionListUpdate(worksheetId));
 	}
-	public static UpdateContainer createRegenerateWorksheetUpdates(String worksheetId) {
+	public static UpdateContainer createRegenerateWorksheetUpdates(String worksheetId, SuperSelection sel) {
 		UpdateContainer c = new UpdateContainer();
 		c.add(new RegenerateWorksheetUpdate(worksheetId));
-		createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId,c);
+		createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, c, sel);
 		return c;
 	}
 	public static UpdateContainer createSemanticTypesAndSVGAlignmentUpdates(String worksheetId, Workspace workspace, Alignment alignment)
@@ -64,4 +76,15 @@ public class WorksheetUpdateFactory {
 		c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
 		return c;
 	}
+
+	public static void detectSelectionStatusChange(String worksheetId, Workspace workspace, Command command) {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		for (Selection sel : worksheet.getSelectionManager().getAllDefinedSelection()) {
+			Set<String> inputColumns = new HashSet<String>(sel.getInputColumns());
+			inputColumns.retainAll(command.getOutputColumns());
+			if (inputColumns.size() > 0)
+				sel.invalidateSelection();
+		}
+	}
+
 }

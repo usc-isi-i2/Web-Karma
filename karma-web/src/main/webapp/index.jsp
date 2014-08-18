@@ -1,4 +1,5 @@
 
+<%@page import="edu.isi.karma.modeling.ModelingConfiguration"%>
 <%@page import="edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter"%>
 <%@page import="edu.isi.karma.webserver.ServletContextParameterMap"%>
 <%@page import="edu.isi.karma.config.UIConfiguration"%>
@@ -119,6 +120,10 @@ and related projects, please see: http://www.isi.edu/integration
 			.editable-empty, .editable-empty:hover, .editable-empty:focus {
 				color: #cccccc;
 			}
+
+			.wk-row-selected {
+    		background-color: #EEEEEE;
+			}
 			
 			.table-no-border td {
 			    border-top: 0 none;
@@ -136,7 +141,7 @@ and related projects, please see: http://www.isi.edu/integration
 	
 		<div class="container">
 		
-			<div class="navbar navbar-default" role="navigation">
+			<div id="karmaHeader" class="navbar navbar-default" role="navigation">
 		        <div class="navbar-header">
 		          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 		            <span class="sr-only">Toggle navigation</span>
@@ -148,7 +153,7 @@ and related projects, please see: http://www.isi.edu/integration
 		              	<span id="karma-version"><jsp:include page="version.jsp" /></a>
 		        </div>
 		        <div class="navbar-collapse collapse">
-		          <ul class="nav navbar-nav">
+		          <ul class="nav navbar-nav col-sm-5">
 		            <li class="dropdown">
 		              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Import <b class="caret"></b></a>
 		              <ul class="dropdown-menu multi-level">
@@ -178,6 +183,10 @@ and related projects, please see: http://www.isi.edu/integration
 		            	
 		            </li>
 		          </ul>
+		          <ul class="nav navbar-nav navbar-middle col-sm-2">
+		            <li id="manualModeHeader" style="display:none;"><a href="#" style="cursor: none">Manual Mode</a></li>
+		          </ul>
+		          
 		          <ul class="nav navbar-nav navbar-right">
 		            <li><a target="_blank" href="https://github.com/InformationIntegrationGroup/Web-Karma/wiki" title='View user guide in GitHub' data-toggle='tooltip' data-placement='bottom'>User Guide</a></li>
 			        <li><a target="_blank" href="http://isi.edu/integration/karma" title='Open the Karma home page in a new window' data-toggle='tooltip' data-placement='bottom'>Karma Home</a></li>
@@ -205,6 +214,7 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="databaseImport.jsp"></jsp:include>
 			  <jsp:include page="reset.jsp"></jsp:include>
 			  <jsp:include page="tableColumnDialogs.jsp"></jsp:include>
+			  <jsp:include page="selection.jsp"></jsp:include>
 			  <jsp:include page="tableOptionsDialogs.jsp"></jsp:include>
 			  <jsp:include page="semanticTypes.jsp"></jsp:include>
 			  <jsp:include page="showModel.jsp"></jsp:include>
@@ -295,7 +305,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="uiLibs/jquery/js/jquery-ui-1.10.3.custom.min.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/nestable.js"></script>
 		<script type="text/javascript" src="uiLibs/twitterBootstrap/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="uiLibs/twitterBootstrap/js/bootstrap3-typeahead.min.js"></script>
+		<script type="text/javascript" src="uiLibs/twitterBootstrap/js/bootstrap3-typeahead.js"></script>
 		<script type="text/javascript" src="uiLibs/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 		
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.tmpl.min.js"></script>
@@ -354,6 +364,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/model.js?<jsp:include page='version.jsp' />"></script>
         <script>
         	var googleEarthEnabled = <%=UIConfiguration.Instance().isGoogleEarthEnabled()%>;
+        	var manualAligment = <%=ModelingConfiguration.getManualAlignment()%>;
         	
             $(function() {
                 // Clear the workspace when closing the window
@@ -436,33 +447,59 @@ and related projects, please see: http://www.isi.edu/integration
 		       			 inputclass: 'worksheetInputEdit'	 
 		            });
                 
+                
             	positionFooter();
             	$(window)
-                    .scroll(positionFooter)
-                    .resize(positionFooter)
+                    .scroll(startPositionFooter)
+                    .resize(startPositionFooter);
+            	
+            	if(manualAligment)
+            		manualAlignHeader();
 			});
+            
+            var footerPositionTimer = null;
+            function startPositionFooter() {
+            	if(footerPositionTimer != null) {
+            		window.clearTimeout(footerPositionTimer);
+            	}
+            	footerPositionTimer = window.setTimeout(function() {
+            		footerPositionTimer = null;
+            		positionFooter();
+            	}, 100);
+            }
             
             function positionFooter() {
             	var footerHeight = 0,
                 footerTop = 0,
                 $footer = $("#footer");
             	
+            	 $footer.css({
+                     position: "relative"
+            	 });
+            	 
                 footerHeight = $footer.height();
                 footerTop = ($(window).scrollTop()+$(window).height()-footerHeight)+"px";
        
+                console.log("Height:" + footerHeight + ",top=" + footerTop + ":scrollTop:" + $(window).scrollTop() + ":winHeight:" + $(window).height());
+                
                if ( ($(document.body).height()+footerHeight) < $(window).height()) {
                    $footer.css({
                         position: "absolute"
                    }).animate({
                         top: footerTop
-                   })
+                   });
                } else {
                    $footer.css({
                         position: "static"
-                   })
+                   });
                }
                
        		}
+            
+            function manualAlignHeader() {
+            	$("#karmaHeader").addClass("manualModeHeader");
+            	$("#manualModeHeader").show();
+            }
 		</script>
 		<script type="text/javascript">
 			if(googleEarthEnabled) {

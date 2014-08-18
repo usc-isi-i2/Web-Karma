@@ -69,4 +69,12 @@ public class CleaningResultUpdate extends AbstractUpdate {
 			logger.error("Error generating JSON!", e);
 		}
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof CleaningResultUpdate) {
+			CleaningResultUpdate t = (CleaningResultUpdate)o;
+			return t.hNodeId.equals(hNodeId);
+		}
+		return false;
+	}
 }

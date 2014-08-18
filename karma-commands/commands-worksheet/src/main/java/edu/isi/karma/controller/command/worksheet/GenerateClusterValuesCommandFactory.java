@@ -9,12 +9,14 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
 
 public class GenerateClusterValuesCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
-		hNodeId, worksheetId, hTableID
+		hNodeId, worksheetId, hTableID, 
+		selectionName
 	}
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
@@ -24,9 +26,11 @@ public class GenerateClusterValuesCommandFactory extends JSONInputCommandFactory
 				Arguments.hNodeId.name(), inputJson);
 		String worksheetId = HistoryJsonUtil.getStringValue(
 				Arguments.worksheetId.name(), inputJson);
-
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		GenerateClusterValuesCommand comm = new GenerateClusterValuesCommand(
-				getNewId(workspace), hNodeId, worksheetId);
+				getNewId(workspace), hNodeId, worksheetId, 
+				selectionName);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

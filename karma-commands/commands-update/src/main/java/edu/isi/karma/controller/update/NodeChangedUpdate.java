@@ -81,4 +81,12 @@ public class NodeChangedUpdate extends AbstractUpdate {
 		pw.println(newPref + JSONUtil.jsonLast(JsonKeys.displayValue, displayValueString));
 		pw.println(prefix + "}");
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof NodeChangedUpdate) {
+			NodeChangedUpdate t = (NodeChangedUpdate)o;
+			return t.worksheetId.equals(worksheetId) && t.nodeId.equals(nodeId);
+		}
+		return false;
+	}
 }

@@ -21,17 +21,19 @@
 
 package edu.isi.karma.model.serialization;
 
+import java.io.FileNotFoundException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
+
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.rep.model.Atom;
 import edu.isi.karma.rep.model.ClassAtom;
 import edu.isi.karma.rep.model.IndividualPropertyAtom;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.FileNotFoundException;
 
 public abstract class SourcePublisher {
 	static Logger logger = LoggerFactory.getLogger(SourcePublisher.class);

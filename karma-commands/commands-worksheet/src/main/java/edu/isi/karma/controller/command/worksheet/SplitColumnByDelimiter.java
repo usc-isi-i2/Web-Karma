@@ -1,13 +1,5 @@
 package edu.isi.karma.controller.command.worksheet;
 
-import au.com.bytecode.opencsv.CSVReader;
-import edu.isi.karma.rep.*;
-import edu.isi.karma.rep.HNode.HNodeType;
-import edu.isi.karma.rep.Node.NodeStatus;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -15,27 +7,61 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import au.com.bytecode.opencsv.CSVReader;
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.er.helper.CloneTableUtils;
+import edu.isi.karma.rep.CellValue;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNode.HNodeType;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Node.NodeStatus;
+import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.Table;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+
 public class SplitColumnByDelimiter {
 
 	private final String hNodeId;
 	private final Worksheet worksheet;
 	private final String delimiter;
 	private final Workspace workspace;
-	private String splitValueHNodeID;
+	private SuperSelection selection;
+	private final String newhNodeId;
+	private String splitValueHNodeId;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public SplitColumnByDelimiter(String hNodeId, Worksheet worksheet,
-			String delimiter, Workspace workspace) {
+			String delimiter, Workspace workspace, SuperSelection sel) {
 		super();
 		this.hNodeId = hNodeId;
 		this.worksheet = worksheet;
 		this.delimiter = delimiter;
 		this.workspace = workspace;
+		this.selection = sel;
+		this.newhNodeId = null;
 	}
 
-	public String getSplitValueHNodeID() {
-		return splitValueHNodeID;
+	public SplitColumnByDelimiter(String hNodeId, String newhNodeId, Worksheet worksheet,
+			String delimiter, Workspace workspace, SuperSelection sel) {
+		super();
+		this.hNodeId = hNodeId;
+		this.worksheet = worksheet;
+		this.delimiter = delimiter;
+		this.workspace = workspace;
+		this.newhNodeId = newhNodeId;
+		this.selection = sel;
+	}
+
+	public String getSplitValueHNodeId() {
+		return splitValueHNodeId;
 	}
 
 	public void split(HashMap<Node, CellValue> oldNodeValueMap,
@@ -70,7 +96,7 @@ public class SplitColumnByDelimiter {
 		}
 
 		Collection<Node> nodes = new ArrayList<Node>();
-		worksheet.getDataTable().collectNodes(selectedPath, nodes);
+		worksheet.getDataTable().collectNodes(selectedPath, nodes, selection);
 
 		//pedro: 2012-10-09
 		// Need to save and clear the values before adding the nested table.
@@ -80,23 +106,23 @@ public class SplitColumnByDelimiter {
 				oldNodeValueMap.put(node, node.getValue());
 			if (oldNodeStatusMap != null)
 				oldNodeStatusMap.put(node, node.getStatus());
-			
+
 			node.clearValue(NodeStatus.edited);
 		}
-		
+
 		//pedro: 2012-10-09
 		// Now that we cleared the values it is safe to add the nested table.
 		//
 		// Add the nested new HTable to the hNode
 		HTable newTable = hNode.addNestedTable("Comma Split Values", worksheet,
 				factory);
-		splitValueHNodeID = newTable.addHNode("Values", HNodeType.Transformation, worksheet, factory)
+		splitValueHNodeId = newTable.addHNode("Values", HNodeType.Transformation, worksheet, factory)
 				.getId();
-		
+
 		for (Node node : nodes) {
 			//String originalVal = node.getValue().asString();
 			String originalVal = oldNodeValueMap.get(node).asString();
-				
+
 			if (originalVal != null && !originalVal.equals("")) {
 				// Split the values
 				CSVReader reader = new CSVReader(new StringReader(originalVal),
@@ -114,7 +140,7 @@ public class SplitColumnByDelimiter {
 						String rowVal = rowValues[i];
 						if (!rowVal.trim().equals("")) {
 							Row row = table.addRow(factory);
-							row.setValue(splitValueHNodeID, rowVal,
+							row.setValue(splitValueHNodeId, rowVal,
 									NodeStatus.edited, factory);
 						}
 					}
@@ -131,10 +157,40 @@ public class SplitColumnByDelimiter {
 		// and replace the old one with it
 		int oldPathIndex = columnPaths.indexOf(selectedPath);
 		for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
-			if (path.getLeaf().getId().equals(splitValueHNodeID)) {
+			if (path.getLeaf().getId().equals(splitValueHNodeId)) {
 				selectedPath = path;
 			}
 		}
 		columnPaths.set(oldPathIndex, selectedPath);
+	}
+
+	public void split() throws IOException {
+		RepFactory factory = workspace.getFactory();
+		HTable ht = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
+		List<Table> tables = new ArrayList<Table>();
+		char delimiterChar = ',';
+		if (delimiter.equalsIgnoreCase("space"))
+			delimiterChar = ' ';
+		else if (delimiter.equalsIgnoreCase("tab"))
+			delimiterChar = '\t';
+		else {
+			delimiterChar = new Character(delimiter.charAt(0));
+		}
+		CloneTableUtils.getDatatable(worksheet.getDataTable(), ht, tables, selection);
+		for (Table t : tables) {
+			for (Row r : t.getRows(0, t.getNumRows(), selection)) {
+				String orgValue = r.getNeighbor(hNodeId).getValue().asString();
+				CSVReader reader = new CSVReader(new StringReader(orgValue),
+						delimiterChar);
+				String[] rowValues = reader.readNext();
+				reader.close();
+				Node newNode = r.getNeighbor(newhNodeId);
+				for (int i = 0; i < rowValues.length; i++) {
+					Row dest = newNode.getNestedTable().addRow(factory);
+					Node destNode = dest.getNeighborByColumnName("Values", factory);
+					destNode.setValue(rowValues[i], NodeStatus.original, factory);
+				}
+			}
+		}
 	}
 }

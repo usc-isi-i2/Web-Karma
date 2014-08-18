@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.ImportServiceCommandPreferencesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -96,7 +97,7 @@ public class ImportServiceCommand extends ImportCommand {
             c.add(new ImportServiceCommandPreferencesUpdate(serviceUrl, worksheetName));
 
             c.add(new WorksheetListUpdate());
-            c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
+            c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION));
             return c;
         } catch (Exception e) {
             logger.error("Error occured while creating worksheet from web-service: " + serviceUrl);

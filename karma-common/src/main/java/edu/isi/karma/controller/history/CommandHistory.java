@@ -24,7 +24,6 @@
 package edu.isi.karma.controller.history;
 
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,7 +60,7 @@ import edu.isi.karma.view.VWorkspace;
 public class CommandHistory {
 
 	private final List<ICommand> history = new ArrayList<ICommand>();
-
+	private Command previewCommand;
 	private final List<ICommand> redoStack = new ArrayList<ICommand>();
 	/**
 	 * If the last command was undo, and then we do a command that goes on the
@@ -76,7 +75,6 @@ public class CommandHistory {
 	 * Used to keep a pointer to the command which require user-interaction
 	 * through multiple HTTP requests.
 	 */
-	private Command currentCommand;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
@@ -117,14 +115,6 @@ public class CommandHistory {
 
 	public CommandHistory clone() {
 		return new CommandHistory(history, redoStack);
-	}
-
-	public void setCurrentCommand(Command command) {
-		this.currentCommand = command;
-	}
-
-	public Command getCurrentCommand() {
-		return this.currentCommand;
 	}
 
 	/**
@@ -479,7 +469,7 @@ public class CommandHistory {
 					
 				}
 			} catch (Exception e) {
-				logger.error("Unable to remove command " + command.getCommandName(), e);
+				logger.error("Unable to remove command " + command.getCommandName());
 			}
 		}
 		history.removeAll(commandsFromWorksheet);
@@ -521,7 +511,16 @@ public class CommandHistory {
 		return retCommands;
 	}
 
-
+	public void addPreviewCommand(Command c) {
+		previewCommand = c;
+	}
+	
+	public Command getPreviewCommand(String commandId) {
+		if (previewCommand.getId().equals(commandId))
+			return previewCommand;
+		return null;
+	}
+	
 	private static boolean isHistoryWriteEnabled = false;
 	public static boolean isHistoryEnabled()
 	{

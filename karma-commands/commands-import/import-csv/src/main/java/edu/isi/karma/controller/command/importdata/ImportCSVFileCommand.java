@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
 
 public class ImportCSVFileCommand extends ImportFileCommand implements
-		IPreviewable {
+IPreviewable {
 
 	// Index of the column headers row
 	private int headerRowIndex = 1;
@@ -99,23 +100,35 @@ public class ImportCSVFileCommand extends ImportFileCommand implements
 
 	@Override
 	protected Import createImport(Workspace workspace) {
-		try{
-		return new CSVFileImport(headerRowIndex, dataStartRowIndex, delimiter,
-				quoteCharacter, encoding, maxNumLines, getFile(), workspace);
-		}
-		catch(IOException e)
-		{
+		JSONArray tree = generateSelectTree(columnsJson, true);
+		try {
+			return new CSVFileImport(headerRowIndex, dataStartRowIndex,
+					delimiter, quoteCharacter, encoding, maxNumLines,
+					getFile(), workspace, tree);
+		} catch (IOException e) {
 			logger.error("Unable to import csv file: " + e.getMessage());
 			return null;
 		}
 	}
 
 	@Override
-	public UpdateContainer showPreview() throws CommandException {
-		UpdateContainer c = new UpdateContainer();
-		c.add(new CSVImportPreviewUpdate(delimiter, quoteCharacter,
-				escapeCharacter, encoding, maxNumLines, getFile(),
-				headerRowIndex, dataStartRowIndex, id));
+	protected Import createImport(Workspace workspace, int sampleSize) {
+		try {
+			return new CSVFileImport(headerRowIndex, dataStartRowIndex,
+					delimiter, quoteCharacter, encoding, sampleSize, getFile(),
+					workspace, null);
+		} catch (IOException e) {
+			logger.error("Unable to import csv file: " + e.getMessage());
+			return null;
+		}
+	}
+
+	@Override
+	public UpdateContainer showPreview(HttpServletRequest request)
+			throws CommandException {
+		UpdateContainer c = new UpdateContainer(new CSVImportPreviewUpdate(
+				delimiter, quoteCharacter, escapeCharacter, encoding,
+				maxNumLines, getFile(), headerRowIndex, dataStartRowIndex, id));
 		return c;
 	}
 
@@ -124,6 +137,9 @@ public class ImportCSVFileCommand extends ImportFileCommand implements
 		/**
 		 * Set the parameters *
 		 */
+		columnsJson = request.getParameter("columnsJson");
+		savePreset = Boolean.parseBoolean(request.getParameter("savePreset"));
+
 		// Set the delimiter
 		if (request.getParameter("delimiter").equals("comma")) {
 			setDelimiter(',');
@@ -192,22 +208,25 @@ public class ImportCSVFileCommand extends ImportFileCommand implements
 		 * Send response based on the interaction type *
 		 */
 		UpdateContainer c = null;
-		ImportFileInteractionType type = ImportFileInteractionType.valueOf(request
-				                                                                   .getParameter("interactionType"));
+		ImportFileInteractionType type = ImportFileInteractionType
+				.valueOf(request.getParameter("interactionType"));
 		switch (type) {
 		case generatePreview: {
 			try {
-
-				c = showPreview();
+				c = showPreview(request);
 			} catch (CommandException e) {
-				logger.error(
-						"Error occured while creating utput JSON for CSV Import",
-						e);
+				logger.error("Error occured while creating output", e);
 			}
 			return c;
 		}
 		case importTable:
 			return c;
+		case generateFilter: 
+			try {
+				return super.showPreview(request);
+			} catch (CommandException e) {
+				
+			}
 		}
 		return c;
 	}

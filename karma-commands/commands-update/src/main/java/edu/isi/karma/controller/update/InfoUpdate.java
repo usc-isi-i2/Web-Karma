@@ -59,5 +59,9 @@ public class InfoUpdate extends AbstractUpdate {
 			logger.error("Info generating JSON for InfoUpdate", e);
 		}
 	}
+	
+	public boolean equals(Object o) {
+		return false;
+	}
 
 }

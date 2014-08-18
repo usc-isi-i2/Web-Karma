@@ -21,7 +21,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -31,7 +32,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
-public class PublishKMLLayerCommand extends WorksheetCommand {
+public class PublishKMLLayerCommand extends WorksheetSelectionCommand {
 	@SuppressWarnings("unused")
 	private String publicKMLAddress;
 	private String kMLTransferServiceURL;
@@ -44,8 +45,9 @@ public class PublishKMLLayerCommand extends WorksheetCommand {
 			.getLogger(PublishKMLLayerCommand.class);
 
 	protected PublishKMLLayerCommand(String id, String worksheetId,
-			String ipAddress, String kMLTransferServiceURL) {
-		super(id, worksheetId);
+			String ipAddress, String kMLTransferServiceURL, 
+			String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.publicKMLAddress = ipAddress;
 		this.kMLTransferServiceURL = kMLTransferServiceURL;
 	}
@@ -73,7 +75,7 @@ public class PublishKMLLayerCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-
+		SuperSelection selection = getSuperSelection(worksheet);
 //		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0) {
 //			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, workspace
 //					.getTagsContainer().getTag(TagName.Outlier), workspace
@@ -81,7 +83,7 @@ public class PublishKMLLayerCommand extends WorksheetCommand {
 //		}
 
 		OntologyManager om= workspace.getOntologyManager();
-		WorksheetToFeatureCollection geo = new WorksheetToFeatureCollection(worksheet,om);//ying
+		WorksheetToFeatureCollection geo = new WorksheetToFeatureCollection(worksheet, om, selection);//ying
 		//WorksheetToFeatureCollections geo = new WorksheetToFeatureCollections(worksheet);
 		// Send an error update if no geospatial data found!
 		if (geo.hasNoGeospatialData()) {

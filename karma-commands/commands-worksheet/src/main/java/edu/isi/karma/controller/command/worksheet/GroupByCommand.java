@@ -12,12 +12,14 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetDeleteUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.CloneTableUtils;
@@ -38,13 +40,9 @@ import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
 
-public class GroupByCommand extends WorksheetCommand {
-	//if null add column at beginning of table
-	//add column to this table
-	Command cmd;
-	//private 
-	//the id of the new column that was created
-	//needed for undo
+public class GroupByCommand extends WorksheetSelectionCommand {
+	private String newWorksheetId;
+	private String newHNodeId;
 	private String hNodeId;
 	private static Logger logger = LoggerFactory
 			.getLogger(GroupByCommand.class);
@@ -54,8 +52,9 @@ public class GroupByCommand extends WorksheetCommand {
 	}
 
 	protected GroupByCommand(String id,String worksheetId, 
-			String hTableId, String hNodeId) {
-		super(id, worksheetId);
+			String hTableId, String hNodeId, 
+			String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		addTag(CommandTag.Transformation);
 	}
@@ -77,7 +76,7 @@ public class GroupByCommand extends WorksheetCommand {
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.notUndoable;
+		return CommandType.undoable;
 	}
 
 	@Override
@@ -93,7 +92,7 @@ public class GroupByCommand extends WorksheetCommand {
 		JSONArray checked = (JSONArray) JSONUtil.createJson(CommandInputJSONUtil.getStringValue("values", (JSONArray)para));
 		HTable ht;
 		if (hNodeId.compareTo("") != 0)
-			ht = CloneTableUtils.getHTable(oldws.getHeaders(), hNodeId);
+			ht = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
 		else
 			ht = oldws.getHeaders();
 		for (int i = 0; i < checked.length(); i++) {
@@ -121,11 +120,12 @@ public class GroupByCommand extends WorksheetCommand {
 		}
 		try{
 			UpdateContainer c =  new UpdateContainer();
+			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			c.add(new WorksheetListUpdate());
 			if (newws == null)
-				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId()));
+				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId(), getSuperSelection(oldws)));
 			if (newws != null) {
-				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId()));
+				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId(), SuperSelectionManager.DEFAULT_SELECTION));
 				//c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(newws.getId()));
 				Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), newws.getId(), workspace.getOntologyManager());
 				c.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(newws.getId(), workspace, alignment));
@@ -142,18 +142,32 @@ public class GroupByCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		//cmd.undoIt(workspace);
-		//remove the new column
-		//currentTable.removeHNode(newHNodeId, worksheet);
-		//c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
-		return null;
+		UpdateContainer c = new UpdateContainer();
+		if (this.newWorksheetId != null) {
+			workspace.removeWorksheet(newWorksheetId);
+			workspace.getFactory().removeWorksheet(newWorksheetId, workspace.getCommandHistory());
+			c.add(new WorksheetListUpdate());
+			c.add(new WorksheetDeleteUpdate(newWorksheetId));
+		}
+		if (this.newHNodeId != null) {
+			Worksheet worksheet = workspace.getWorksheet(worksheetId);
+			HNode ndid = workspace.getFactory().getHNode(newHNodeId);
+			HTable currentTable = workspace.getFactory().getHTable(ndid.getHTableId());
+			ndid.removeNestedTable();
+			//remove the new column
+			currentTable.removeHNode(newHNodeId, worksheet);
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		}
+		return c;
 	}
 
 	private Worksheet groupByTopLevel(Worksheet oldws, Workspace workspace, List<String> hnodeIDs, List<HNode> keyhnodes, List<HNode> valuehnodes, RepFactory factory) {
+		SuperSelection selection = getSuperSelection(oldws);
 		Worksheet newws = factory.createWorksheet("GroupBy: " + oldws.getTitle(), workspace, oldws.getEncoding());
 		newws.getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, oldws.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.sourceType));
 		HTable newht =  newws.getHeaders();
-		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows());
+		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows(), selection);
 		HTable oldht =  oldws.getHeaders();
 		Map<String, ArrayList<String>> hash = new TreeMap<String, ArrayList<String>>();
 		for (Row row : rows) {
@@ -168,42 +182,45 @@ public class GroupByCommand extends WorksheetCommand {
 		//HTable newKeyTable = newht.getHNodeFromColumnName("Keys").addNestedTable("Table for keys", newws, factory);
 		//newValueTable.addHNode("Values", newws, factory);
 		//HTable newValueNestedTable = newValueTable.getHNodeFromColumnName("Values").addNestedTable("Table for nested values", newws, factory);
-		CloneTableUtils.cloneHTable(oldht, newht, newws, factory, keyhnodes);
+		CloneTableUtils.cloneHTable(oldht, newht, newws, factory, keyhnodes, selection);
 		newht.addHNode("Values", HNodeType.Transformation, newws, factory);
 		HTable newValueTable = newht.getHNodeFromColumnName("Values").addNestedTable("Table for values", newws, factory);
-		CloneTableUtils.cloneHTable(oldht, newValueTable, newws, factory, valuehnodes);
+		CloneTableUtils.cloneHTable(oldht, newValueTable, newws, factory, valuehnodes, selection);
 		for (String key : hash.keySet()) {
 			//System.out.println("key: " + hash.get(key));
 			ArrayList<String> r = hash.get(key);
-			Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), newws.getDataTable(), oldws.getHeaders(), newht, keyhnodes, factory);
+			Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), newws.getDataTable(), oldws.getHeaders(), newht, keyhnodes, factory, selection);
 			for (String rowid : r) {
 				Row cur = factory.getRow(rowid);
 				Table dataTable = lastRow.getNeighborByColumnName("Values", factory).getNestedTable();
-				CloneTableUtils.cloneDataTable(cur, dataTable, oldws.getHeaders(), newValueTable, valuehnodes, factory);
+				CloneTableUtils.cloneDataTable(cur, dataTable, oldws.getHeaders(), newValueTable, valuehnodes, factory, selection);
 			}
 		}
+		newWorksheetId = newws.getId();
 		return newws;
 	}
 
 	private void groupByNestedTable(Worksheet oldws, Workspace workspace, HTable ht, List<String> hnodeIDs, List<HNode> keyhnodes, List<HNode> valuehnodes, RepFactory factory) {
+		SuperSelection selection = getSuperSelection(oldws);
 		HTable parentHT = ht.getParentHNode().getHTable(factory);
 		List<Table> parentTables = new ArrayList<Table>();
-		CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT,parentTables);
+		CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT,parentTables, selection);
 		ArrayList<Row> parentRows = new ArrayList<Row>();
 		for (Table tmp : parentTables) {
-			for (Row row : tmp.getRows(0, tmp.getNumRows())) {
+			for (Row row : tmp.getRows(0, tmp.getNumRows(), selection)) {
 				parentRows.add(row);
 			}
 		}
 		HNode newNode = parentHT.addHNode(parentHT.getNewColumnName("GroupBy"), HNodeType.Transformation, oldws, factory);
+		newHNodeId = newNode.getId();
 		outputColumns.add(newNode.getId());
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
-		for (Entry<String, String> entry : CloneTableUtils.cloneHTable(ht, newht, oldws, factory, keyhnodes).entrySet()) {
+		for (Entry<String, String> entry : CloneTableUtils.cloneHTable(ht, newht, oldws, factory, keyhnodes, selection).entrySet()) {
 			outputColumns.add(entry.getValue());
 		}
 		outputColumns.add(newht.addHNode("Values", HNodeType.Transformation, oldws, factory).getId());
 		HTable newValueTable = newht.getHNodeFromColumnName("Values").addNestedTable("Table for values", oldws, factory);
-		for (Entry<String, String> entry : CloneTableUtils.cloneHTable(ht, newValueTable, oldws, factory, valuehnodes).entrySet()) {
+		for (Entry<String, String> entry : CloneTableUtils.cloneHTable(ht, newValueTable, oldws, factory, valuehnodes, selection).entrySet()) {
 			outputColumns.add(entry.getValue());
 		}
 		for (Row parentRow : parentRows) {
@@ -214,7 +231,7 @@ public class GroupByCommand extends WorksheetCommand {
 					break;
 				}	
 			}
-			ArrayList<Row> rows = t.getRows(0, t.getNumRows());
+			ArrayList<Row> rows = t.getRows(0, t.getNumRows(), selection);
 			Map<String, ArrayList<String>> hash = new TreeMap<String, ArrayList<String>>();
 			for (Row row : rows) {
 				String hashValue = HashValueManager.getHashValue(row, hnodeIDs);
@@ -228,11 +245,11 @@ public class GroupByCommand extends WorksheetCommand {
 			for (String key : hash.keySet()) {
 				ArrayList<String> r = hash.get(key);
 				Node node = parentRow.getNeighbor(newNode.getId());
-				Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), node.getNestedTable(), ht, newht, keyhnodes, factory);
+				Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), node.getNestedTable(), ht, newht, keyhnodes, factory, selection);
 				for (String rowid : r) {
 					Row cur = factory.getRow(rowid);
 					Table dataTable = lastRow.getNeighborByColumnName("Values", factory).getNestedTable();
-					CloneTableUtils.cloneDataTable(cur, dataTable, ht, newValueTable, valuehnodes, factory);
+					CloneTableUtils.cloneDataTable(cur, dataTable, ht, newValueTable, valuehnodes, factory, selection);
 				}
 			}
 		}

@@ -24,32 +24,50 @@ package edu.isi.karma.controller.command.importdata;
 
 import java.io.File;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+
 import edu.isi.karma.controller.command.IPreviewable;
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
 
 public class ImportJSONFileCommand extends ImportFileCommand implements IPreviewable {
+
+	public ImportJSONFileCommand(String id, File file) {
+		super(id, file);
+	}
+
+	public ImportJSONFileCommand(String id, String revisedId, File file) {
+		super(id, revisedId, file);
+		this.encoding = EncodingDetector.detect(file);
+	}
+
+	@Override
+	public String getTitle() {
+		return "Import JSON File";
+	}
+
+
+	@Override
+	protected Import createImport(Workspace workspace) {
+		JSONArray tree = generateSelectTree(columnsJson, true);
+		return new JsonImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines, tree);
+	}
 	
-    public ImportJSONFileCommand(String id, File file) {
-        super(id, file);
-    }
+	@Override
+	protected Import createImport(Workspace workspace, int sampleSize) {
+		return new JsonImport(getFile(), getFile().getName(), workspace, encoding, sampleSize, null);
+	}
+	
+	@Override
+	public UpdateContainer handleUserActions(HttpServletRequest request) {
+		columnsJson = request.getParameter("columnsJson");
+		savePreset = Boolean.parseBoolean(request.getParameter("savePreset"));
+		return super.handleUserActions(request);
+	}
 
-    public ImportJSONFileCommand(String id, String revisedId, File file) {
-        super(id, revisedId, file);
-        this.encoding = EncodingDetector.detect(file);
-    }
-
-    @Override
-    public String getTitle() {
-        return "Import JSON File";
-    }
-
-    
-    @Override
-    protected Import createImport(Workspace workspace) {
-        return new JsonImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines);
-    }
-   
 }

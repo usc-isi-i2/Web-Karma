@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.kr2rml.SubjectMap;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.exception.HNodeNotFoundKarmaException;
@@ -44,9 +45,12 @@ public class SubjectMapPlan extends MapPlan {
 	protected TemplateTermSetPopulatorPlan subjectPlan;
 	protected Map<ColumnTemplateTerm, HNodePath> subjectTermsToPaths;
 	
-	public SubjectMapPlan(TriplesMap triplesMap, KR2RMLMapping kr2rmlMapping, URIFormatter uriFormatter, RepFactory factory, KR2RMLMappingColumnNameHNodeTranslator translator) throws HNodeNotFoundKarmaException
+	public SubjectMapPlan(TriplesMap triplesMap, KR2RMLMapping kr2rmlMapping, 
+			URIFormatter uriFormatter, RepFactory factory, 
+			KR2RMLMappingColumnNameHNodeTranslator translator, 
+			SuperSelection sel) throws HNodeNotFoundKarmaException
 	{
-		super(kr2rmlMapping, uriFormatter, factory, translator);
+		super(kr2rmlMapping, uriFormatter, factory, translator, sel);
 		configureSubjectMapPlan(triplesMap);
 	}
 	public SubjectMap configureSubjectMapPlan(TriplesMap triplesMap)
@@ -55,7 +59,7 @@ public class SubjectMapPlan extends MapPlan {
 		SubjectMap subjMap = triplesMap.getSubject();
 		subjectMapTTSPopulator = generateTemplateTermSetPopulatorForSubjectMap(subjMap);
 		populateTermsToPathForSubject(subjectTermsToPaths, subjectMapTTSPopulator.getTerms());
-		subjectPlan = new TemplateTermSetPopulatorPlan(subjectTermsToPaths, subjectTermsToPaths.keySet());
+		subjectPlan = new TemplateTermSetPopulatorPlan(subjectTermsToPaths, subjectTermsToPaths.keySet(), selection);
 		return subjMap;
 	}
 	

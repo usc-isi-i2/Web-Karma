@@ -68,7 +68,7 @@ public class FetchPreferencesCommand extends Command {
 		logger.debug("I get 1....."+prefObject1);
 		 */
 		UpdateContainer c = new UpdateContainer();
-		c.add(new FetchPreferencesUpdate( commandName+"Preferences"));
+		c.add(new FetchPreferencesUpdate( commandName+"Preferences", this.getId()));
 		return c;
 		
 	}

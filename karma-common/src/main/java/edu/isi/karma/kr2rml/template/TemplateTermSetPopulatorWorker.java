@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
@@ -34,14 +35,16 @@ public class TemplateTermSetPopulatorWorker {
 	protected HNodePath path;
 	protected TemplateTermSetPopulatorStrategy strategy;
 	protected List<TemplateTermSetPopulatorWorker> dependentWorkers;
-	
+	protected SuperSelection selection;
 	public TemplateTermSetPopulatorWorker(	ColumnTemplateTerm term,
 	HNodePath path,
-	TemplateTermSetPopulatorStrategy strategy)
+	TemplateTermSetPopulatorStrategy strategy, 
+	SuperSelection sel)
 	{
 		this.term =term;
 		this.path = path;
 		this.strategy = strategy;
+		this.selection = sel;
 		dependentWorkers = new LinkedList<TemplateTermSetPopulatorWorker>();
 	}
 	
@@ -58,7 +61,7 @@ public class TemplateTermSetPopulatorWorker {
 	protected List<PartiallyPopulatedTermSet> work(Row topRow, Row currentRow)
 	{
 		List<PartiallyPopulatedTermSet> results = new LinkedList<PartiallyPopulatedTermSet>();
-		Collection<Node> nodes = strategy.getNodes(topRow, currentRow);
+		Collection<Node> nodes = strategy.getNodes(topRow, currentRow, selection);
 		
 		for(Node n : nodes)
 		{

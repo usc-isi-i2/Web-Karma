@@ -16,7 +16,7 @@ public class AugmentDataDispachCommandFactory extends JSONInputCommandFactory {
 		worksheetId, predicateIncoming, alignmentId, 
 		columnUri, otherClassIncoming, tripleStoreUrl, 
 		hNodeId, predicateOutgoing, otherClassOutgoing, 
-		sameAsPredicate
+		sameAsPredicate, selectionName
 	}
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
@@ -30,9 +30,12 @@ public class AugmentDataDispachCommandFactory extends JSONInputCommandFactory {
 		String predicateOutgoing = CommandInputJSONUtil.getStringValue(Arguments.predicateOutgoing.name(), inputJson);
 		String otherClassOutgoing = CommandInputJSONUtil.getStringValue(Arguments.otherClassOutgoing.name(), inputJson);
 		String sameAsPredicate = CommandInputJSONUtil.getStringValue(Arguments.sameAsPredicate.name(), inputJson);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		AugmentDataDispachCommand cmd = new AugmentDataDispachCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
 				columnUri, predicateIncoming, otherClassIncoming, 
-				predicateOutgoing, otherClassOutgoing, hNodeId, sameAsPredicate);
+				predicateOutgoing, otherClassOutgoing, hNodeId, sameAsPredicate, 
+				selectionName);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
@@ -48,9 +51,11 @@ public class AugmentDataDispachCommandFactory extends JSONInputCommandFactory {
 		String otherClassOutgoing = request.getParameter(Arguments.otherClassOutgoing.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String sameAsPredicate = request.getParameter(Arguments.sameAsPredicate.name());
+		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new AugmentDataDispachCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
 				columnUri, predicateIncoming, otherClassIncoming, 
-				predicateOutgoing, otherClassOutgoing, hNodeId, sameAsPredicate);
+				predicateOutgoing, otherClassOutgoing, hNodeId, sameAsPredicate, 
+				selectionName);
 	}
 
 	@Override

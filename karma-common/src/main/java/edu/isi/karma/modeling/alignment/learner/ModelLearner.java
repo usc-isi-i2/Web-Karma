@@ -72,8 +72,6 @@ import edu.isi.karma.util.RandomGUID;
 public class ModelLearner {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelLearner.class);
-//	private Workspace workspace;
-//	private Worksheet worksheet;
 	private OntologyManager ontologyManager = null;
 	private GraphBuilder graphBuilder = null;
 	private NodeIdFactory nodeIdFactory = null; 
@@ -82,11 +80,10 @@ public class ModelLearner {
 	private long lastUpdateTimeOfGraph;
 	private ModelLearningGraph modelLearningGraph = null;
 	private boolean useAlignmentGraphBuiltFromKnownModels = false;
-	//	private boolean useAlignmentGraphBuiltFromLOD = false;
 
-	private static final int NUM_SEMANTIC_TYPES = 1; //4;
 
-//	public ModelLearner(Workspace workspace, Worksheet worksheet, OntologyManager ontologyManager, List<ColumnNode> columnNodes) {
+	private static final int NUM_SEMANTIC_TYPES = 4;
+
 	public ModelLearner(OntologyManager ontologyManager, List<ColumnNode> columnNodes) {
 		if (ontologyManager == null || 
 				columnNodes == null || 
@@ -97,8 +94,6 @@ public class ModelLearner {
 		this.useAlignmentGraphBuiltFromKnownModels = true;
 		this.ontologyManager = ontologyManager;
 		this.columnNodes = columnNodes;
-//		this.workspace = workspace;
-//		this.worksheet = worksheet;
 		this.init();
 	}
 
@@ -646,6 +641,7 @@ public class ModelLearner {
 		return Double.valueOf(twoDForm.format(d));
 	}
 
+	@SuppressWarnings("unused")
 	private static void getStatistics1(List<SemanticModel> semanticModels) {
 		for (int i = 0; i < semanticModels.size(); i++) {
 			SemanticModel source = semanticModels.get(i);

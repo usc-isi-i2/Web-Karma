@@ -66,6 +66,10 @@ public class ModelingConfiguration {
     private static Boolean multipleSamePropertyPerNode;
     
     private static Boolean storeOldHistory;
+    
+    private static Boolean showCleaningCharts;
+    
+    private static Boolean showModelsWithoutMatching;
 
     private static final String newLine = System.getProperty("line.separator").toString();
     private static String defaultModelingProperties = 
@@ -169,12 +173,18 @@ public class ModelingConfiguration {
             if(modelingProperties.getProperty("scoring.size.coefficient") != null)
             	scoringSizeCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.size.coefficient"));
             
+            storeOldHistory = false;
             if(modelingProperties.getProperty("history.store.old") != null)
             	storeOldHistory = Boolean.parseBoolean(modelingProperties.getProperty("history.store.old"));
-            else
-            	storeOldHistory = false;
-
-
+            
+            showCleaningCharts = true;
+            if(modelingProperties.getProperty("d3.display.charts") != null)
+            	showCleaningCharts = Boolean.parseBoolean(modelingProperties.getProperty("d3.display.charts"));
+            
+            showModelsWithoutMatching = false;
+            if(modelingProperties.getProperty("models.display.nomatching") != null)
+            	showModelsWithoutMatching = Boolean.parseBoolean(modelingProperties.getProperty("models.display.nomatching"));
+            	
         } catch (IOException e) {
             logger.error("Error occured while reading config file ...");
             System.exit(1);
@@ -327,6 +337,18 @@ public class ModelingConfiguration {
 		if (storeOldHistory == null)
 			load();
 		return storeOldHistory;
+	}
+	
+	public static boolean isShowCleaningCharts() {
+		if (showCleaningCharts == null)
+			load();
+		return showCleaningCharts;
+	}
+	
+	public static boolean isShowModelsWithoutMatching() {
+		if (showModelsWithoutMatching == null)
+			load();
+		return showModelsWithoutMatching;
 	}
 
 	public static void setLearnerEnabled(Boolean learnerEnabled) {

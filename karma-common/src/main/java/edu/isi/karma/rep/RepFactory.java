@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.rep.HNode.HNodeType;
 
@@ -82,7 +83,7 @@ public class RepFactory {
 	}
 	
 	private void removeDataTableRecursive(Table table) {
-		for (Row r : table.getRows(0, table.getNumRows())) {
+		for (Row r : table.getRows(0, table.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
 			for (Node n : r.getNodes()) {
 				if (n.hasNestedTable()) {
 					removeDataTableRecursive(n.getNestedTable());
