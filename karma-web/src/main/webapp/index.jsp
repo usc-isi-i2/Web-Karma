@@ -120,6 +120,10 @@ and related projects, please see: http://www.isi.edu/integration
 			.editable-empty, .editable-empty:hover, .editable-empty:focus {
 				color: #cccccc;
 			}
+
+			.wk-row-selected {
+    		background-color: #EEEEEE;
+			}
 			
 			.table-no-border td {
 			    border-top: 0 none;
@@ -210,6 +214,7 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="databaseImport.jsp"></jsp:include>
 			  <jsp:include page="reset.jsp"></jsp:include>
 			  <jsp:include page="tableColumnDialogs.jsp"></jsp:include>
+			  <jsp:include page="selection.jsp"></jsp:include>
 			  <jsp:include page="tableOptionsDialogs.jsp"></jsp:include>
 			  <jsp:include page="semanticTypes.jsp"></jsp:include>
 			  <jsp:include page="showModel.jsp"></jsp:include>

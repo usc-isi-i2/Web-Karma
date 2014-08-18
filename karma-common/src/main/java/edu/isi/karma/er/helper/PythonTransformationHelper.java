@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.controller.command.transformation;
+package edu.isi.karma.er.helper;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -35,6 +35,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 public class PythonTransformationHelper {
 	
 	private static String valueDefStatement = null;
+	private static String isEmptyDefStatement = null;
 	private static String importStatement = null;
 	public static String getPyObjectValueAsString(PyObject obj) {
 		if (obj == null)
@@ -44,7 +45,8 @@ public class PythonTransformationHelper {
 			return Long.toString(obj.asLong());
 		else if (type.getName().equals("int"))
 			return Integer.toString(obj.asInt());
-		
+		else if (type.getName().equals("bool")) 
+			return obj.asInt() != 0 ? "true" : "false";
 		return obj.asString();
 	}
 	
@@ -103,8 +105,8 @@ public class PythonTransformationHelper {
 			methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
 			methodStmt.append("	node = factory.getNode(nodeid)\n");
 			methodStmt.append("	targetNode = node.getNeighborByColumnName(columnName, factory)\n");
-			methodStmt.append("	command.addInputColumns(targetNode.getHNodeId())\n");
 			methodStmt.append("	if targetNode is not None:\n");
+			methodStmt.append("		command.addInputColumns(targetNode.getHNodeId())\n");
 			methodStmt.append("		value = targetNode.getValue()\n");
 			methodStmt.append("		if value is not None:\n");
 			methodStmt.append("			valueAsString = value.asString()\n");
@@ -114,6 +116,33 @@ public class PythonTransformationHelper {
 			valueDefStatement = methodStmt.toString();
 		}
 		return valueDefStatement;
+	}
+	
+	public static String getIsEmptyDefStatement() {
+		
+		if(isEmptyDefStatement == null)
+		{
+			StringBuilder methodStmt = new StringBuilder();
+			methodStmt.append("def isEmpty(columnName):\n");
+			methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
+			methodStmt.append("	node = factory.getNode(nodeid)\n");
+			methodStmt.append("	targetNode = node.getNeighborByColumnName(columnName, factory)\n");
+			methodStmt.append("	if targetNode is not None:\n");
+			methodStmt.append("		hasNestedTable = targetNode.hasNestedTable()\n");
+			methodStmt.append("		command.addInputColumns(targetNode.getHNodeId())\n");
+			methodStmt.append("		if hasNestedTable: \n");
+			methodStmt.append("			table = targetNode.getNestedTable(); \n");
+			methodStmt.append("			if table.getNumRows() > 0:  \n");
+			methodStmt.append("				return False  \n");
+			methodStmt.append("		value = targetNode.getValue()\n");
+			methodStmt.append("		if value is not None:\n");
+			methodStmt.append("			valueAsString = value.asString()\n");
+			methodStmt.append("			if ((not valueAsString) and len(valueAsString) > 0) :\n");
+			methodStmt.append("				return False\n");
+			methodStmt.append("	return True\n");
+			isEmptyDefStatement = methodStmt.toString();
+		}
+		return isEmptyDefStatement;
 	}
 	
 	public static String getVDefStatement()

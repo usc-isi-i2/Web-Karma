@@ -26,11 +26,13 @@ package edu.isi.karma.rep;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.Node.NodeStatus;
 
 /**
@@ -50,7 +52,7 @@ public class Table extends RepEntity {
 
 	// My rows.
 	private List<Row> rows = new ArrayList<Row>();
-
+	
 	// mariam
 	/**
 	 * The node that this table is a nested table in.
@@ -137,13 +139,18 @@ public class Table extends RepEntity {
 	 * @return the requested number of rows or less if the count or startIndex
 	 *         are out of bounds.
 	 */
-	public ArrayList<Row> getRows(int startIndex, int count) {
+	public ArrayList<Row> getRows(int startIndex, int count, SuperSelection sel) {
 		ArrayList<Row> result = new ArrayList<Row>();
-		if (rows.size() > 0) {
-			for (int i = Math.min(startIndex, rows.size() - 1); i < Math.min(
-					startIndex + count, rows.size()); i++) {
-				result.add(rows.get(i));
+		Iterator<Row> itr = rows.iterator();
+		int sum = 0;
+		while(itr.hasNext()) {
+			Row r = itr.next();
+			if (!sel.isSelected(r)) {
+				result.add(r);
+				sum++;
 			}
+			if (sum == count)
+				break;
 		}
 		return result;
 	}
@@ -168,34 +175,36 @@ public class Table extends RepEntity {
 	 * @param nodes
 	 *            Collection of nodes that satisfy the path
 	 */
-	public boolean collectNodes(HNodePath path, Collection<Node> nodes) {
+	public boolean collectNodes(HNodePath path, Collection<Node> nodes, SuperSelection sel) {
 		if (nodes == null) {
 			nodes = new ArrayList<Node>();
 		}
-		return collectNodes(path, nodes, rows);
+		return collectNodes(path, nodes, rows, sel);
 	}
 
 	private boolean collectNodes(HNodePath path, Collection<Node> nodes,
-			List<Row> rows) {
+			List<Row> rows, SuperSelection sel) {
 		boolean result = false;
 		for (Row r : rows) {
-			
-			result |= r.collectNodes(path, nodes);
+			if (sel.isSelected(r))
+				continue;
+			result |= r.collectNodes(path, nodes, sel);
 
 		}
 		return result;
 	}
 
 	public void setCollectedNodeValues(HNodePath path, List<String> nodes,
-			RepFactory factory) {
-		setCollectedNodeValues(path, nodes, rows, 0, factory);
+			RepFactory factory, SuperSelection sel) {
+		setCollectedNodeValues(path, nodes, rows, 0, factory, sel);
 	}
 
 	private void setCollectedNodeValues(HNodePath path, List<String> nodes,
-			List<Row> rows, int nodeIdx, RepFactory factory) {
+			List<Row> rows, int nodeIdx, RepFactory factory, SuperSelection sel) {
 
 		RowIterator: for (Row r : rows) {
-
+			if (sel.isSelected(r))
+				continue;
 			Node n = r.getNode(path.getFirst().getId());
 			if (n == null) {
 				continue RowIterator;
@@ -213,10 +222,10 @@ public class Table extends RepEntity {
 					continue RowIterator;
 
 				List<Row> rowsNestedTable = n.getNestedTable().getRows(0,
-						numRows);
+						numRows, sel);
 				if (rowsNestedTable != null && rowsNestedTable.size() != 0) {
 					setCollectedNodeValues(path.getRest(), nodes,
-							rowsNestedTable, nodeIdx, factory);
+							rowsNestedTable, nodeIdx, factory, sel);
 					continue RowIterator;
 				}
 			}
@@ -260,15 +269,18 @@ public class Table extends RepEntity {
 	}
 
 	public void setValueInAllRows(String hNodeId, CellValue value,
-			RepFactory factory) {
+			RepFactory factory, SuperSelection sel) {
 		// logger.info("Setting value of column " +
 		// factory.getColumnName(hNodeId) + " to "
 		// + value.asString());
 		for (Row r : rows) {
+			if (sel.isSelected(r))
+				continue;
 			// logger.info("Setting value of column " +
 			// factory.getColumnName(hNodeId) + " in row "
 			// + r.getId() + " to " + value.asString());
 			r.setValue(hNodeId, value, Node.NodeStatus.original, factory);
 		}
 	}
+
 }

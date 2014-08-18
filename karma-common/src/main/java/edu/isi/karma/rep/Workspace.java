@@ -20,6 +20,11 @@
  ******************************************************************************/
 package edu.isi.karma.rep;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import edu.isi.karma.controller.command.CommandPreferences;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.metadata.KarmaMetadataManager;
@@ -28,11 +33,6 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.ISemanticTypeModelHandler;
 import edu.isi.karma.rep.metadata.TagsContainer;
 import edu.isi.karma.semantictypes.typinghandler.LuceneBasedSTModelHandler;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Contains all the data to support a single instance of Karma, called a
@@ -56,7 +56,7 @@ public class Workspace extends Entity {
 	/**
 	 * Record all the worksheets defined in this workspace.
 	 */
-	private final Map<String, Worksheet> worksheets = new HashMap<String, Worksheet>();
+	private final Map<String, Worksheet> worksheets = new ConcurrentHashMap<String, Worksheet>();
 	
 	/**
 	 * Saves all the tagging information

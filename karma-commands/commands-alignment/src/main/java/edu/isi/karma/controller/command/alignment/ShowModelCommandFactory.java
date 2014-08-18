@@ -20,6 +20,12 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
@@ -30,32 +36,32 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
+import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class ShowModelCommandFactory extends JSONInputCommandFactory {
 	
 
 	private enum Arguments {
-		worksheetId
+		worksheetId, selectionName
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
-		return new ShowModelCommand(getNewId(workspace), getWorksheetId(request, workspace),false);
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		return new ShowModelCommand(getNewId(workspace), getWorksheetId(request, workspace), false, 
+				selectionName);
 	}
 
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		
-		ShowModelCommand comm = new ShowModelCommand(getNewId(workspace), worksheet.getId(), false);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		ShowModelCommand comm = new ShowModelCommand(getNewId(workspace), worksheet.getId(), false, 
+				selectionName);
 		OntologyManager ontMgr = workspace.getOntologyManager();
 		// Add the semantic types that have saved into the history
 		for (int i=2; i<inputJson.length(); i++) {

@@ -315,6 +315,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected void collapseSameType(GenericRecord obj) {
 		

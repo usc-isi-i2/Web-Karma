@@ -25,7 +25,8 @@ import java.io.IOException;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -36,7 +37,7 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
-public class SplitValuesCommand extends WorksheetCommand {
+public class SplitValuesCommand extends WorksheetSelectionCommand {
 	private final String hNodeId;
 	private final String delimiter;
 	private String newhNodeId;
@@ -46,8 +47,8 @@ public class SplitValuesCommand extends WorksheetCommand {
 	//	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	protected SplitValuesCommand(String id, String worksheetId,
-			String hNodeId, String delimiter, String newColName) {
-		super(id, worksheetId);
+			String hNodeId, String delimiter, String newColName, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.delimiter = delimiter;
 		this.newColName = newColName;
@@ -78,7 +79,7 @@ public class SplitValuesCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
 		UpdateContainer c = new UpdateContainer();
-
+		SuperSelection selection = getSuperSelection(wk);
 		// Get the HNode
 		HNode hNode = workspace.getFactory().getHNode(hNodeId);
 		columnName = hNode.getColumnName();
@@ -89,7 +90,7 @@ public class SplitValuesCommand extends WorksheetCommand {
 		}
 		
 		if (columnName.equals(newColName)) {
-			splitCommaCommand = new SplitByCommaCommand(workspace.getFactory().getNewId("C"), worksheetId, hNodeId, delimiter);
+			splitCommaCommand = new SplitByCommaCommand(workspace.getFactory().getNewId("C"), worksheetId, hNodeId, delimiter, selectionId);
 			return splitCommaCommand.doIt(workspace);
 		}
 
@@ -99,14 +100,14 @@ public class SplitValuesCommand extends WorksheetCommand {
 		HTable newTable = newhNode.addNestedTable("Comma Split Values", wk, workspace.getFactory());
 		newTable.addHNode("Values", HNodeType.Transformation, wk, workspace.getFactory());
 		newhNodeId = newhNode.getId();
-		SplitColumnByDelimiter split = new SplitColumnByDelimiter(hNodeId, newhNode.getId(), wk, delimiter, workspace);
+		SplitColumnByDelimiter split = new SplitColumnByDelimiter(hNodeId, newhNode.getId(), wk, delimiter, workspace, selection);
 		try {
 			split.split();
 		} catch (IOException e) {
 			c.add(new ErrorUpdate("Cannot split column! csv reader error"));
 			return c;
 		}
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, selection));
 
 		/** Add the alignment update **/
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
@@ -116,6 +117,8 @@ public class SplitValuesCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
+		Worksheet wk = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(wk);
 		if (splitCommaCommand != null)
 			return splitCommaCommand.undoIt(workspace);
 		RepFactory factory = workspace.getFactory();
@@ -123,6 +126,6 @@ public class SplitValuesCommand extends WorksheetCommand {
 		HTable hTable = factory.getHTable(hNode.getHTableId());
 		hTable.removeHNode(newhNodeId, factory.getWorksheet(worksheetId));
 		hNode.removeNestedTable();
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, selection);
 	}
 }

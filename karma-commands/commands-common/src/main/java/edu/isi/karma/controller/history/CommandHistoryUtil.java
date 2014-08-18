@@ -19,11 +19,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
-import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.Workspace;
@@ -178,11 +174,8 @@ public class CommandHistoryUtil {
 		for (Command refined : commands)
 			redoCommandsArray.put(workspace.getCommandHistory().getCommandJSON(workspace, refined));
 		commands.clear();
-		commands.addAll(getCommandsFromHistoryJSON(redoCommandsArray, true));
-		UpdateContainer uc = new UpdateContainer(new HistoryUpdate(commandHistory));
-		uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
-		Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, workspace.getOntologyManager());
-		uc.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment));		
+		UpdateContainer uc = new UpdateContainer();
+		commands.addAll(getCommandsFromHistoryJSON(redoCommandsArray, uc));
 		return uc;
 	}
 
@@ -190,7 +183,7 @@ public class CommandHistoryUtil {
 		return new ArrayList<Command>(commands);
 	}
 
-	private List<Command> getCommandsFromHistoryJSON(JSONArray historyJSON, boolean replayHistory) {
+	private List<Command> getCommandsFromHistoryJSON(JSONArray historyJSON, UpdateContainer uc) {
 		List<Command> commands = new ArrayList<Command>();
 		for (int i = 0; i < historyJSON.length(); i++) {
 			JSONObject commObject = historyJSON.getJSONObject(i);
@@ -215,7 +208,8 @@ public class CommandHistoryUtil {
 					comm.setOutputColumns(newOutputColumns);
 					if(comm != null){
 						commands.add(comm);
-						workspace.getCommandHistory().doCommand(comm, workspace, true);
+						//TODO consolidate update
+						uc.append(workspace.getCommandHistory().doCommand(comm, workspace, true));
 					}
 
 				} catch (Exception ignored) {

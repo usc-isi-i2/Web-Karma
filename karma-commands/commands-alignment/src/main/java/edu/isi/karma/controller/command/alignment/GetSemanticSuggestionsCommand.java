@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -22,12 +23,12 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
-public class GetSemanticSuggestionsCommand extends WorksheetCommand {
+public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
 	private final String hNodeId;
 	private static Logger logger = LoggerFactory.getLogger(GetSemanticSuggestionsCommand.class.getSimpleName());
 	
-	protected GetSemanticSuggestionsCommand(String id, String worksheetId, String hNodeId) {
-		super(id, worksheetId);
+	protected GetSemanticSuggestionsCommand(String id, String worksheetId, String hNodeId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 	}
 	
@@ -52,17 +53,17 @@ public class GetSemanticSuggestionsCommand extends WorksheetCommand {
 	}
 
 	@Override
-	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+	public UpdateContainer doIt(final Workspace workspace) throws CommandException {
 		logger.info("Get Semantic Suggestions: " + worksheetId + "," + hNodeId);
-		final Workspace ws = workspace;
 		UpdateContainer uc = new UpdateContainer();
+		final SuperSelection selection = getSuperSelection(workspace);
 		uc.add(new AbstractUpdate() {
 
 			@Override
 			public void generateJson(String prefix, PrintWriter pw,
 					VWorkspace vWorkspace) {
 				HNodePath currentColumnPath = null;
-				Worksheet worksheet = ws.getWorksheet(worksheetId);
+				Worksheet worksheet = workspace.getWorksheet(worksheetId);
 				List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
 				for (HNodePath path : paths) {
 					if (path.getLeaf().getId().equals(hNodeId)) {
@@ -71,10 +72,10 @@ public class GetSemanticSuggestionsCommand extends WorksheetCommand {
 					}
 				}
 				
-				SemanticTypeColumnModel model = new SemanticTypeUtil().predictColumnSemanticType(ws, worksheet, currentColumnPath, 4);
+				SemanticTypeColumnModel model = new SemanticTypeUtil().predictColumnSemanticType(workspace, worksheet, currentColumnPath, 4, selection);
 				if(model != null) {
-					OntologyManager ontMgr = ws.getOntologyManager();
-					Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(ws.getId(), worksheetId, ontMgr);
+					OntologyManager ontMgr = workspace.getOntologyManager();
+					Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, ontMgr);
 					JSONObject json = model.getAsJSONObject(ontMgr, alignment);
 					pw.print(json.toString());
 				}

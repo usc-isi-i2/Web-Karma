@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AddColumnUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -33,7 +34,7 @@ import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
 import edu.isi.karma.webserver.KarmaException;
 
-public class AddValuesCommand extends WorksheetCommand{
+public class AddValuesCommand extends WorksheetSelectionCommand{
 
 
 	private final String hNodeId;
@@ -54,8 +55,8 @@ public class AddValuesCommand extends WorksheetCommand{
 	}
 
 	protected AddValuesCommand(String id,String worksheetId, 
-			String hTableId, String hNodeId, HNodeType type) {
-		super(id, worksheetId);
+			String hTableId, String hNodeId, HNodeType type, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		isNewNode = false;
@@ -102,8 +103,9 @@ public class AddValuesCommand extends WorksheetCommand{
 					ndid = addColumn(workspace, worksheet, newColumnName, a);
 				}
 			}
+			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			UpdateContainer c =  new UpdateContainer(new AddColumnUpdate(newHNodeId, worksheetId));		
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 			if (ndid == null) {
 				System.err.println("error: ndid");
 			}
@@ -127,7 +129,7 @@ public class AddValuesCommand extends WorksheetCommand{
 		ndid.removeNestedTable();
 		//remove the new column
 		currentTable.removeHNode(newHNodeId, worksheet);
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}
@@ -191,6 +193,7 @@ public class AddValuesCommand extends WorksheetCommand{
 	}
 
 	private void populateRowsWithDefaultValues(Worksheet worksheet, RepFactory factory, JSONArray array, HTable htable) {
+		SuperSelection selection = getSuperSelection(worksheet);
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {
@@ -211,7 +214,7 @@ public class AddValuesCommand extends WorksheetCommand{
 			}
 		}
 		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
-		worksheet.getDataTable().collectNodes(selectedPath, nodes);	
+		worksheet.getDataTable().collectNodes(selectedPath, nodes, selection);	
 		for (Node node : nodes) {
 			for (int i = 0; i < array.length(); i++) {
 				if (array.get(i) instanceof JSONObject) {
@@ -275,9 +278,11 @@ public class AddValuesCommand extends WorksheetCommand{
 	}
 
 	private boolean addValues(Node node, String value, RepFactory factory, Table table) {
+		Worksheet worksheet = factory.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		boolean flag = true;
 		if (table != null) {
-			for (Row r : table.getRows(0, table.getNumRows())) {
+			for (Row r : table.getRows(0, table.getNumRows(), selection)) {
 				Node n = r.getNeighbor(node.getHNodeId());
 				if (n.getValue() != null && n.getValue().asString().compareTo(value) == 0) { 
 					flag = false;

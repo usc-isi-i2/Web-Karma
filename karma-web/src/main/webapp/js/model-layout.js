@@ -1,6 +1,4 @@
-
-
-var LineLayout = function () {
+var LineLayout = function() {
 	this.groups = new Object();
 	this.nodes = new Object();
 	this.internalNodes = new Object();
@@ -11,34 +9,55 @@ var LineLayout = function () {
 }
 
 LineLayout.prototype.addInternalNode = function(id, level, left, top, width, height) {
-	this.internalNodes[id] = { 
-		"id": id, "type": "internal", "level": level, 
-		"left": left, "top": top, "width": width, "height": height
+	this.internalNodes[id] = {
+		"id": id,
+		"type": "internal",
+		"level": level,
+		"left": left,
+		"top": top,
+		"width": width,
+		"height": height
 	};
-	var topName = id+"_top";
-	var BottomName = id+"_bottom";
+	var topName = id + "_top";
+	var BottomName = id + "_bottom";
 	if (this.groups[topName] == null) {
 		this.groups[topName] = new Array();
-		this.groupInfo[topName] = { "y": top, "width": width, "left": left };
+		this.groupInfo[topName] = {
+			"y": top,
+			"width": width,
+			"left": left
+		};
 	}
 	if (this.groups[BottomName] == null) {
 		this.groups[BottomName] = new Array();
-		this.groupInfo[BottomName] = { "y": top-height, "width": width, "left": left };
+		this.groupInfo[BottomName] = {
+			"y": top - height,
+			"width": width,
+			"left": left
+		};
 	}
 	return this;
 }
 
 LineLayout.prototype.addColumnNode = function(id, x, y) {
-	this.nodes[id] = { 
-		"id": id, "level": 0, "nodeId": id, 
-		"x": x, "y": y, "type": "column" 
+	this.nodes[id] = {
+		"id": id,
+		"level": 0,
+		"nodeId": id,
+		"x": x,
+		"y": y,
+		"type": "column"
 	};
 	return this;
 }
 
 LineLayout.prototype.addAnchorNode = function(internalNode) {
 	var id = internalNode.id + "_" + (this.counter++);
-	this.nodes[id] = { "id": id, "type": "anchor", "nodeId": internalNode.id };
+	this.nodes[id] = {
+		"id": id,
+		"type": "anchor",
+		"nodeId": internalNode.id
+	};
 	return this.nodes[id];
 }
 
@@ -47,13 +66,17 @@ LineLayout.prototype.getGroupName = function(anchorNode, otherNode) {
 	var otherLevel = otherNode.level;
 	var result = anchorNode.id;
 	if (anchorLevel > 0) {
-		result += anchorLevel < otherLevel ? "_top" : "_bottom" ;
+		result += anchorLevel < otherLevel ? "_top" : "_bottom";
 	}
 	return result;
 }
 
 LineLayout.prototype.addLink = function(id, from, to) {
-	this.links[id] = { "id": id, "from": from, "to": to };
+	this.links[id] = {
+		"id": id,
+		"from": from,
+		"to": to
+	};
 	var fromNode = this.findNode(from);
 	var toNode = this.findNode(to);
 	var fromAnchor = fromNode;
@@ -61,13 +84,13 @@ LineLayout.prototype.addLink = function(id, from, to) {
 	var fromGroupName = this.getGroupName(fromNode, toNode);
 	var toGroupName = this.getGroupName(toNode, fromNode);
 	if ("internal" == fromNode.type) {
-		fromAnchor = this.addAnchorNode(fromNode, fromGroupName); 
+		fromAnchor = this.addAnchorNode(fromNode, fromGroupName);
 		fromAnchor.linkToPropId = id;
 		this.groups[fromGroupName].push(fromAnchor.id);
 		fromAnchor.groupId = fromGroupName;
 	}
 	if ("internal" == toNode.type) {
-		toAnchor = this.addAnchorNode(toNode, toGroupName); 
+		toAnchor = this.addAnchorNode(toNode, toGroupName);
 		this.groups[toGroupName].push(toAnchor.id);
 		toAnchor.groupId = toGroupName;
 	}
@@ -83,12 +106,12 @@ LineLayout.prototype.addLink = function(id, from, to) {
 }
 
 LineLayout.prototype.addReverseMap = function(id, n1, n2) {
-	this.reverseMap[n1+"->-"+n2] = id;
-	this.reverseMap[n2+"->-"+n1] = id;
+	this.reverseMap[n1 + "->-" + n2] = id;
+	this.reverseMap[n2 + "->-" + n1] = id;
 }
 
 LineLayout.prototype.findLink = function(n1, n2) {
-	return this.reverseMap[n1+"->-"+n2];
+	return this.reverseMap[n1 + "->-" + n2];
 }
 
 
@@ -101,7 +124,7 @@ LineLayout.prototype.assignAnchorCoordinates = function() {
 
 	var graph = this;
 	for (g in this.groups) {
-		var separation = this.groupInfo[g].width / (this.groups[g].length+1);
+		var separation = this.groupInfo[g].width / (this.groups[g].length + 1);
 		var y = this.groupInfo[g].y;
 		this.groups[g].reduce(function(previous, anchor) {
 			var anchorNode = graph.nodes[anchor];
@@ -115,7 +138,7 @@ LineLayout.prototype.assignAnchorCoordinates = function() {
 
 
 /**
- * @param {String} n name of node. 
+ * @param {String} n name of node.
  * @return {Number} the cost of a node, defined as the cosine of the angle of the link to it.
  */
 LineLayout.prototype.nodeCost = function(n) {
@@ -123,27 +146,27 @@ LineLayout.prototype.nodeCost = function(n) {
 	var n2 = this.nodes[n1.linkTo];
 	var x = Math.abs(n1.x - n2.x);
 	var y = Math.abs(n1.y - n2.y);
-//	return x*x/(x*x + y*y); 
-	
-	var cos = x/Math.sqrt(x*x + y*y);
+	//	return x*x/(x*x + y*y); 
+
+	var cos = x / Math.sqrt(x * x + y * y);
 	var cost = Math.exp(cos * 100);
-	return cost; 
+	return cost;
 };
 
 
 /** 
- * @param {String} g name of group. 
+ * @param {String} g name of group.
  * @return {Number} the cost of a group of, defined as the sum of the costs of the nodes.
  */
 LineLayout.prototype.groupCost = function(g) {
 	var graph = this;
-	return this.groups[g].reduce(function(previous, x) { 
-		return previous + graph.nodeCost(x); 
+	return this.groups[g].reduce(function(previous, x) {
+		return previous + graph.nodeCost(x);
 	}, 0);
 };
 
 /** 
- * @param {String} g name of group. 
+ * @param {String} g name of group.
  * @return {String} the name of the node with the max cost in the group.
  */
 LineLayout.prototype.groupMaxCostNode = function(g) {
@@ -163,10 +186,10 @@ LineLayout.prototype.groupMaxCostNode = function(g) {
 /** 
  * Suppose n1 points to l1, and n2 points to l2. We may reduce the cost by
  * swapping l1 and l2. This function will swap them if the cost savings is
- * more than the given savings threshold. The idea is that we are making the 
+ * more than the given savings threshold. The idea is that we are making the
  * lines more vertical by reducing their cosines.
- * @param {String} n1 name of a node. 
- * @param {String} n2 name of a node, assumed to be in the same group as n1. 
+ * @param {String} n1 name of a node.
+ * @param {String} n2 name of a node, assumed to be in the same group as n1.
  * @param {Number} savings the amount of savings we need to achieve to accept the swap.
  * @return {String} the savings achieved by swapping n1 and n2.
  */
@@ -177,11 +200,11 @@ LineLayout.prototype.swapIfBetter = function(n1, n2, savings) {
 	var l2 = node2.linkTo;
 	var l1PropId = node1.linkToPropId;
 	var l2PropId = node2.linkToPropId;
-	
+
 	var costn1 = this.nodeCost(n1);
 	var costn2 = this.nodeCost(n2);
 	var currentCost = costn1 + costn2;
-	
+
 	node1.linkTo = l2;
 	node1.linkToPropId = l2PropId;
 	this.nodes[l2].linkTo = n1;
@@ -192,7 +215,7 @@ LineLayout.prototype.swapIfBetter = function(n1, n2, savings) {
 
 	var newSavings = currentCost - newCost;
 	if (newSavings > savings) {
-		console.log("Swap nodes: " +  node1.id + "(" + costn1 + ") and " + node2.id + "(" + costn2 + ")");
+		console.log("Swap nodes: " + node1.id + "(" + costn1 + ") and " + node2.id + "(" + costn2 + ")");
 		return newSavings;
 	} else {
 		node1.linkTo = l1;
@@ -200,14 +223,14 @@ LineLayout.prototype.swapIfBetter = function(n1, n2, savings) {
 		this.nodes[l1].linkTo = n1;
 		node2.linkTo = l2;
 		node2.linkToPropId = l2PropId;
-		this.nodes[l2].linkTo = n2;		
+		this.nodes[l2].linkTo = n2;
 		return savings;
 	}
 };
 
 /** 
  * Find the node with highest cost and do the swap that maximally reduces the cost of the group.
- * @param {String} g name of group. 
+ * @param {String} g name of group.
  * @return {Number} the savings achieved by the best swap in g, 0 if no swap reduced cost.
  */
 LineLayout.prototype.doSwap = function(g) {
@@ -243,19 +266,19 @@ LineLayout.prototype.optimizeGroups = function() {
 		savings = this.tryOneSwapInEachGroup();
 		console.log("tried swap, savings: " + savings);
 	} while (savings > 0);
-	
+
 	var me = this;
-	$.each(this.nodes, function(index, node){
-		if(node.type == "anchor") {
+	$.each(this.nodes, function(index, node) {
+		if (node.type == "anchor") {
 			var linkid = node.linkToPropId;
-			if(linkid) {
+			if (linkid) {
 				var link = me.links[linkid];
 				link.fromAnchor = node;
 				link.toAnchor = me.nodes[node.linkTo];
 			}
 		}
 	});
-	
+
 	console.log(this);
 	return this;
 };
@@ -307,29 +330,29 @@ LineLayout.prototype.getLinkSlope = function(id) {
 		y1 = link.fromAnchor.y,
 		x2 = link.toAnchor.x,
 		y2 = link.toAnchor.y;
-	
-	if(x1 == x2) 
+
+	if (x1 == x2)
 		return 10000;
-	
+
 	var s = (y1 - y2) / (x1 - x2);
-    
-    return s;
+
+	return s;
 };
 
 LineLayout.prototype.getLinkLabelPosition = function(id) {
 	var link = this.links[id];
-	
+
 	//y = mx + b
 	var m = this.getLinkSlope(id);
 	//b = y - mx
 	var b = link.toAnchor.y - (m * link.toAnchor.x);
-	
+
 	//Now calculate the new point on the line
 	var y = link.toAnchor.y;
-	if(link.toNodeType == "column") {
+	if (link.toNodeType == "column") {
 		y = y + 12;
 	} else {
-		if(link.fromAnchor.y > y)
+		if (link.fromAnchor.y > y)
 			y = y + 20;
 		else
 			y = y - 20;
@@ -339,7 +362,7 @@ LineLayout.prototype.getLinkLabelPosition = function(id) {
 };
 
 /**********************************************************
- * 
+ *
  * How to use this
  *
  * The idea is to create two groups per bubble in the model:
@@ -348,13 +371,13 @@ LineLayout.prototype.getLinkLabelPosition = function(id) {
  * In addition, we make a node for each semantic type, but don't put those
  * in any group.
  *
- * Each node will have exactly one link to another node. Here is how we 
+ * Each node will have exactly one link to another node. Here is how we
  * construct it. Iterate over all the links (outgoing + incoming) of a bubble.
  * 1) Construct a group for the target of the link (if no such group exists yet)
  * 2) Add one node to each group, and a link between them.
  * Do this for every bubble in the model. Need ot be careful to not add nodes twice.
  *
- * Assign the coordinates as follows. The Y coordinates are easy as they 
+ * Assign the coordinates as follows. The Y coordinates are easy as they
  * are a function of the levels, like in the current implementation.
  * Assign the X's by taking the width of the bubble, dividing it by (N+1),
  * where N is the number of nodes in a group. Then equally space the nodes
@@ -369,7 +392,7 @@ LineLayout.prototype.getLinkLabelPosition = function(id) {
 
 
 /**********************************************************
- * 
+ *
  * Test
  *
  **********************************************************/
@@ -426,4 +449,3 @@ LineLayout.prototype.getLinkLabelPosition = function(id) {
 //	;
 //
 //console.log(ll1);
-

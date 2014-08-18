@@ -22,12 +22,12 @@
 package edu.isi.karma.modeling.alignment;
 
 
-import edu.isi.karma.rep.alignment.DefaultLink;
-import edu.isi.karma.rep.alignment.Node;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.Node;
 
 public class GraphPath {
 	

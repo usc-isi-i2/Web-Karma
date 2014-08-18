@@ -21,16 +21,22 @@
 
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.alignment.GraphUtil;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HTable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Queue;
+import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.Map.Entry;
+import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HTable;
 
 public class DisplayModel {
 

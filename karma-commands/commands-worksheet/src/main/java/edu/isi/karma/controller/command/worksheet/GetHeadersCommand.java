@@ -54,9 +54,9 @@ public class GetHeadersCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		HTable ht = worksheet.getHeaders();
-		HNode hNode = workspace.getFactory().getHNode(hNodeId);
+		HTable ht = worksheet.getHeaders();		
 		if (hNodeId.compareTo("") != 0) {
+			HNode hNode = workspace.getFactory().getHNode(hNodeId);
 			HTable parentHT = workspace.getFactory().getHTable(hNode.getHTableId());
 			if (commandName.compareTo("GroupBy") == 0 || commandName.compareTo("Fold") == 0 || commandName.compareTo("Glue") == 0)
 				ht = hNode.getNestedTable();
@@ -91,7 +91,6 @@ public class GetHeadersCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

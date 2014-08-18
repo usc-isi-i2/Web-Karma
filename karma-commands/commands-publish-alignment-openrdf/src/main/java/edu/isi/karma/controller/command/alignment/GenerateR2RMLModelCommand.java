@@ -36,14 +36,16 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.CommandHistoryUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
+import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
@@ -58,7 +60,7 @@ import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class GenerateR2RMLModelCommand extends WorksheetCommand {
+public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 	private String worksheetName;
 	private String tripleStoreUrl;
@@ -74,8 +76,8 @@ public class GenerateR2RMLModelCommand extends WorksheetCommand {
 		rdfPrefix, rdfNamespace, modelSparqlEndPoint
 	}
 
-	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String context) {
-		super(id, worksheetId);
+	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String context, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.tripleStoreUrl = url;
 		this.graphContext = context;
 	}
@@ -129,6 +131,7 @@ public class GenerateR2RMLModelCommand extends WorksheetCommand {
 		boolean storeOldHistory = ModelingConfiguration.isStoreOldHistoryEnabled();
 		System.out.println("storeOldHistory: " + storeOldHistory);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		CommandHistory history = workspace.getCommandHistory();
 		List<Command> oldCommands = history.getCommandsFromWorksheetId(worksheetId);
 		if (storeOldHistory) {			
@@ -141,8 +144,13 @@ public class GenerateR2RMLModelCommand extends WorksheetCommand {
 		CommandHistoryUtil historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
 		historyUtil.consolidateHistory();	
 		if (!oldCommands.equals(historyUtil.getCommands())) {
-			historyUtil.replayHistory();
+			uc.append(historyUtil.replayHistory());
+			uc.removeUpdateByClass(HistoryAddCommandUpdate.class);
+			uc.removeUpdateByClass(InfoUpdate.class);
+			uc.removeUpdateByClass(ErrorUpdate.class);
 			historyUtil.consolidateHistory();
+			uc.add(new HistoryUpdate(workspace.getCommandHistory()));
+			
 		}
 		Set<String> inputColumns = historyUtil.generateInputColumns();
 		Set<String> outputColumns = historyUtil.generateOutputColumns();
@@ -193,7 +201,7 @@ public class GenerateR2RMLModelCommand extends WorksheetCommand {
 		// *****************************************************************************************
 		// *****************************************************************************************
 
-		SemanticModel semanticModel = new SemanticModel(workspace, worksheet, worksheetName, alignment.getSteinerTree());
+		SemanticModel semanticModel = new SemanticModel(workspace, worksheet, worksheetName, alignment.getSteinerTree(), selection);
 		semanticModel.setName(worksheetName);
 		try {
 			semanticModel.writeJson(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_MODELS_DIR) + 
@@ -267,9 +275,6 @@ public class GenerateR2RMLModelCommand extends WorksheetCommand {
 						}
 					}
 				});
-				uc.add(new HistoryUpdate(workspace.getCommandHistory()));
-				uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
-				uc.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment));
 				return uc;
 			} 
 

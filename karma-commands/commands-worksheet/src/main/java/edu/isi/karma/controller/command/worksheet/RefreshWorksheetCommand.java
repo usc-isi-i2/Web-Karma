@@ -4,7 +4,8 @@ import org.json.JSONArray;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.RegenerateWorksheetUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -18,12 +19,13 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Workspace;
 
-public class RefreshWorksheetCommand extends WorksheetCommand {
+public class RefreshWorksheetCommand extends WorksheetSelectionCommand {
 
 	private JSONArray updates;
 	
-	protected RefreshWorksheetCommand(String id, String worksheetId, JSONArray updates) {
-		super(id, worksheetId);
+	protected RefreshWorksheetCommand(String id, String worksheetId, 
+			JSONArray updates, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.updates = updates;
 	}
 
@@ -50,6 +52,7 @@ public class RefreshWorksheetCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer uc = new UpdateContainer();
+		SuperSelection sel = this.getSuperSelection(workspace);
 		for(int i=0; i<updates.length(); i++) {
 			String update = updates.getString(i);
 			switch(update) {
@@ -57,7 +60,7 @@ public class RefreshWorksheetCommand extends WorksheetCommand {
 								break;
 				case "list": uc.add(new WorksheetListUpdate());
 								break;
-				case "data": uc.add(new WorksheetDataUpdate(worksheetId));
+				case "data": uc.add(new WorksheetDataUpdate(worksheetId, sel));
 								break;
 				case "alignment": 
 				{
@@ -77,10 +80,10 @@ public class RefreshWorksheetCommand extends WorksheetCommand {
 					uc.add(new RegenerateWorksheetUpdate(worksheetId));
 					break;
 				case "all":
-					uc = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+					uc = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, sel);
 					break;
 				case "cleaning":
-					uc.add(new WorksheetCleaningUpdate(worksheetId, false));
+					uc.add(new WorksheetCleaningUpdate(worksheetId, false, sel));
 					break;
 			}
 		}

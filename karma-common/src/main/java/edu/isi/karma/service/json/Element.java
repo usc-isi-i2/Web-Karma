@@ -20,11 +20,11 @@
  ******************************************************************************/
 package edu.isi.karma.service.json;
 
-import edu.isi.karma.rep.sources.Attribute;
-import edu.isi.karma.rep.sources.Table;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.isi.karma.rep.sources.Attribute;
+import edu.isi.karma.rep.sources.Table;
 
 public class Element {
 	private String key;

@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.worksheet;
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Workspace;
@@ -10,7 +11,7 @@ import edu.isi.karma.rep.Workspace;
 public class RefreshWorksheetCommandFactory extends CommandFactory {
 
 	private enum Arguments {
-		worksheetId, updates
+		worksheetId, updates, selectionName
 	}
 
 	@Override
@@ -19,7 +20,9 @@ public class RefreshWorksheetCommandFactory extends CommandFactory {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String updates = request.getParameter(Arguments.updates.name());
 		JSONArray updatesArr = new org.json.JSONArray(updates);
-		return new RefreshWorksheetCommand(getNewId(workspace), worksheetId, updatesArr);
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		return new RefreshWorksheetCommand(getNewId(workspace), worksheetId, 
+				updatesArr, selectionName);
 	}
 
 	@Override

@@ -1,12 +1,12 @@
 package edu.isi.karma.controller.command;
 
+import java.io.PrintWriter;
+import java.util.List;
+
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.IEntity;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
-
-import java.io.PrintWriter;
-import java.util.List;
 
 /**
  * Class ICommand

@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -30,7 +31,7 @@ import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
 
-public class FoldCommand extends WorksheetCommand {
+public class FoldCommand extends WorksheetSelectionCommand {
 	//if null add column at beginning of table
 	private String hNodeId;
 	//add column to this table
@@ -49,8 +50,8 @@ public class FoldCommand extends WorksheetCommand {
 	}
 
 	protected FoldCommand(String id,String worksheetId, 
-			String hTableId, String hNodeId) {
-		super(id, worksheetId);
+			String hTableId, String hNodeId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		
@@ -86,6 +87,7 @@ public class FoldCommand extends WorksheetCommand {
 		RepFactory Repfactory = workspace.getFactory();
 		Worksheet worksheet = workspace.getWorksheet(
 				worksheetId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		inputColumns.clear();
 		outputColumns.clear();
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
@@ -102,15 +104,15 @@ public class FoldCommand extends WorksheetCommand {
 			hnodes.add(htable.getHNode((String) t.get("value")));
 			inputColumns.add(t.getString("value"));
 		}
-		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows());
+		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows(), selection);
 		if (htable != worksheet.getHeaders()) {
 			HTable parentHT = htable.getParentHNode().getHTable(Repfactory);
 			List<Table> parentTables = new ArrayList<Table>();
-			CloneTableUtils.getDatatable(worksheet.getDataTable(), parentHT,parentTables);
+			CloneTableUtils.getDatatable(worksheet.getDataTable(), parentHT,parentTables, selection);
 			ArrayList<Row> parentRows = new ArrayList<Row>();
 			rows.clear();
 			for (Table tmp : parentTables) {
-				for (Row row : tmp.getRows(0, tmp.getNumRows())) {
+				for (Row row : tmp.getRows(0, tmp.getNumRows(), selection)) {
 					parentRows.add(row);
 				}
 			}
@@ -122,7 +124,7 @@ public class FoldCommand extends WorksheetCommand {
 						break;
 					}	
 				}
-				ArrayList<Row> tmpRows = t.getRows(0, t.getNumRows());
+				ArrayList<Row> tmpRows = t.getRows(0, t.getNumRows(), selection);
 				for (Row r : tmpRows) {
 					rows.add(r);
 				}
@@ -142,7 +144,7 @@ public class FoldCommand extends WorksheetCommand {
 			for (HNode hnode : hnodes) {
 				Node node = row.getNode(hnode.getId());
 				String name = hnode.getColumnName();
-				Object value = CloneTableUtils.cloneNodeToJSON(hnode, node);
+				Object value = CloneTableUtils.cloneNodeToJSON(hnode, node, selection);
 				JSONObject obj = new JSONObject();
 				JSONObject obj2 = new JSONObject();
 				if (value instanceof String)
@@ -167,11 +169,12 @@ public class FoldCommand extends WorksheetCommand {
 		try{
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
 			//hNodeId = hnodes.get(0).getId();
-			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId, worksheet.getHeaders().getNewColumnName("fold"), HNodeType.Transformation);
+			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId, worksheet.getHeaders().getNewColumnName("fold"), HNodeType.Transformation, selection.getName());
 			cmd.doIt(workspace);
 			outputColumns.addAll(cmd.getOutputColumns());
+			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			UpdateContainer c =  new UpdateContainer();		
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {
@@ -187,7 +190,7 @@ public class FoldCommand extends WorksheetCommand {
 		//remove the new column
 		//currentTable.removeHNode(newHNodeId, worksheet);
 		UpdateContainer c =  new UpdateContainer();		
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

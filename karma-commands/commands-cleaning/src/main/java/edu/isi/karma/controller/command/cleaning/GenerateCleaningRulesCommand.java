@@ -20,30 +20,42 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.cleaning;
 
-import edu.isi.karma.cleaning.ExampleSelection;
-import edu.isi.karma.cleaning.Research.ConfigParameters;
-import edu.isi.karma.cleaning.Research.DataCollection;
-import edu.isi.karma.cleaning.Ruler;
-import edu.isi.karma.cleaning.TNode;
-import edu.isi.karma.cleaning.UtilTools;
-import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.update.CleaningResultUpdate;
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.rep.HNodePath;
-import edu.isi.karma.rep.Node;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.cleaning.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-public class GenerateCleaningRulesCommand extends WorksheetCommand {
+import edu.isi.karma.cleaning.ExampleSelection;
+import edu.isi.karma.cleaning.Ruler;
+import edu.isi.karma.cleaning.TNode;
+import edu.isi.karma.cleaning.UtilTools;
+import edu.isi.karma.cleaning.Research.ConfigParameters;
+import edu.isi.karma.cleaning.Research.DataCollection;
+import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.controller.update.CleaningResultUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.cleaning.RamblerTransformationExample;
+import edu.isi.karma.rep.cleaning.RamblerTransformationInputs;
+import edu.isi.karma.rep.cleaning.RamblerTransformationOutput;
+import edu.isi.karma.rep.cleaning.RamblerValueCollection;
+import edu.isi.karma.rep.cleaning.TransformationExample;
+import edu.isi.karma.rep.cleaning.ValueCollection;
+public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	final String hNodeId;
 	private Vector<TransformationExample> examples;
 	private HashSet<String> nodeIds = new HashSet<String>();
@@ -52,8 +64,8 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory.getLogger(GenerateCleaningRulesCommand.class);
 
 	public GenerateCleaningRulesCommand(String id, String worksheetId,
-			String hNodeId, String examples, String cellIDs) {
-		super(id, worksheetId);
+			String hNodeId, String examples, String cellIDs, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.nodeIds = parseNodeIds(cellIDs);
 		ConfigParameters cfg = new ConfigParameters();
@@ -154,6 +166,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(wk);
 		String msg = String.format("Gen rule start,Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
 		logger.info(msg);
 		// Get the HNode
@@ -167,7 +180,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			}
 		}
 		Collection<Node> nodes = new ArrayList<Node>();
-		wk.getDataTable().collectNodes(selectedPath, nodes);
+		wk.getDataTable().collectNodes(selectedPath, nodes, selection);
 		for (Node node : nodes) {
 			String id = node.getId();
 			if (!this.nodeIds.contains(id))

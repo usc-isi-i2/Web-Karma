@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.IPreviewable;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.ImportPropertiesUpdate;
@@ -253,7 +254,7 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 				wsht.setRevisedWorksheet(revisedWorksheet);  
 			}
 			uc.add(new WorksheetListUpdate());
-			uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
+			uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION));
 			if (savePreset) {
 				uc.append(savePreset(workspace, wsht));
 			}

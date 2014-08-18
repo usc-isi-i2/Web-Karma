@@ -34,4 +34,12 @@ public class SQLCommandUpdate extends AbstractUpdate {
 			logger.error("Error generating JSON!", e);
 		}
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof SQLCommandUpdate) {
+			SQLCommandUpdate t = (SQLCommandUpdate)o;
+			return t.commandId.equals(commandId);
+		}
+		return false;
+	}
 }

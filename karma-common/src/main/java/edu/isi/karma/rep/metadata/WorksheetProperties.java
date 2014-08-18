@@ -21,13 +21,13 @@
 
 package edu.isi.karma.rep.metadata;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.core.UriBuilder;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import edu.isi.karma.rep.ColumnMetadata.DataStructure;
 

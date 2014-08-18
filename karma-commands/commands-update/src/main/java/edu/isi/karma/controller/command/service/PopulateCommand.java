@@ -36,7 +36,8 @@ import com.rits.cloning.Cloner;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.ReplaceWorksheetUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -58,7 +59,7 @@ import edu.isi.karma.rep.sources.Table;
 import edu.isi.karma.rep.sources.WebService;
 import edu.isi.karma.webserver.KarmaException;
 
-public class PopulateCommand extends WorksheetCommand{
+public class PopulateCommand extends WorksheetSelectionCommand{
 
 
 	private Worksheet worksheetBeforeInvocation = null;
@@ -67,8 +68,8 @@ public class PopulateCommand extends WorksheetCommand{
 	private static Logger logger = LoggerFactory
 			.getLogger(PopulateCommand.class.getSimpleName());
 
-	public PopulateCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+	public PopulateCommand(String id, String worksheetId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		
 		addTag(CommandTag.Transformation);
 	}
@@ -98,7 +99,7 @@ public class PopulateCommand extends WorksheetCommand{
 		
 		UpdateContainer c = new UpdateContainer();
 		Worksheet wk = workspace.getWorksheet(worksheetId);
-
+		SuperSelection selection = getSuperSelection(wk);
 		// Clone the worksheet just before the invocation
 		Cloner cloner = new Cloner();
 		this.worksheetBeforeInvocation = cloner.deepClone(wk);
@@ -175,7 +176,7 @@ public class PopulateCommand extends WorksheetCommand{
 			logger.info("Requesting data with includeURL=" + true + ",includeInput=" + true + ",includeOutput=" + true);
 			Table serviceTable = invocatioManager.getServiceData(false, false, true);
 //			logger.debug(serviceTable.getPrintInfo());
-			ServiceTableUtil.populateWorksheet(serviceTable, wk, workspace.getFactory());
+			ServiceTableUtil.populateWorksheet(serviceTable, wk, workspace.getFactory(), selection);
 			logger.info("The service " + service.getUri() + " has been invoked successfully.");
 
 
@@ -194,7 +195,7 @@ public class PopulateCommand extends WorksheetCommand{
 			columnPaths.add(path);
 		}
 		
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 				
 		return c;
@@ -208,9 +209,9 @@ public class PopulateCommand extends WorksheetCommand{
 	private List<String> getUrlStrings(WebService service, DataSource source, 
 			Worksheet wk, Map<String, String> serviceToSourceAttMapping, 
 			List<String> requestIds) {
-		
+		SuperSelection selection = getSuperSelection(wk);
 		List<String> requestURLStrings = new ArrayList<String>();
-		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows());
+		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows(), selection);
 		if (rows == null || rows.size() == 0) {
 			logger.error("Data table does not have any row.");
 			return null;	
@@ -266,7 +267,7 @@ public class PopulateCommand extends WorksheetCommand{
 		workspace.getFactory().replaceWorksheet(this.worksheetId, this.worksheetBeforeInvocation);
 		
 		c.add(new ReplaceWorksheetUpdate(worksheetId, this.worksheetBeforeInvocation));
-		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId));
+		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, getSuperSelection(workspace)));
 		
 		return c;	
 		
