@@ -1,3 +1,5 @@
+var MAX_NUM_SEMTYPE_SEARCH = 10;
+
 /**
  * ==================================================================================================================
  * 
@@ -676,8 +678,8 @@ var SetSemanticTypeDialog = (function() {
 							showPropertiesList = false;
 							classFuncTop = null;
 						}
-						classUI = new ClassUI("semanticTypeEditClass", classFuncTop, classFuncBottom, 100, loadTree);
-						propertyUI = new PropertyUI("semanticTypeEditProperty", getPropertiesForClass, getProperties, 100, loadTree);
+						classUI = new ClassUI("semanticTypeEditClass", classFuncTop, classFuncBottom, 100, loadTree, getClasses, MAX_NUM_SEMTYPE_SEARCH);
+						propertyUI = new PropertyUI("semanticTypeEditProperty", getPropertiesForClass, getProperties, 100, loadTree, getProperties, MAX_NUM_SEMTYPE_SEARCH);
 						
 						classUI.setHeadings("Classes with Selected Property", "All Classes");
 						propertyUI.setHeadings("Properties of Selected Class", "All Properties");
@@ -945,9 +947,9 @@ var IncomingOutgoingLinksDialog = (function() {
 						selectedToClass = {label:"", id:"", uri:""};
 						selectedProperty = {label:"", id:"", uri:""};
 						
-						fromClassUI = new ClassUI("incomingOutgoingLinksDialog_fromClass", getExistingClassNodes, getAllClassNodes, 200, loadTree);
-						toClassUI = new ClassUI("incomingOutgoingLinksDialog_toClass", getExistingClassNodes, getAllClassNodes, 200, loadTree);
-						propertyUI = new PropertyUI("incomingOutgoingLinksDialog_property", getPropertyForClass, getProperties, 200, loadTree);
+						fromClassUI = new ClassUI("incomingOutgoingLinksDialog_fromClass", getExistingClassNodes, getAllClassNodes, 200, loadTree, getAllClassNodes, MAX_NUM_SEMTYPE_SEARCH);
+						toClassUI = new ClassUI("incomingOutgoingLinksDialog_toClass", getExistingClassNodes, getAllClassNodes, 200, loadTree, getAllClassNodes, MAX_NUM_SEMTYPE_SEARCH);
+						propertyUI = new PropertyUI("incomingOutgoingLinksDialog_property", getPropertyForClass, getProperties, 200, loadTree, getProperties, MAX_NUM_SEMTYPE_SEARCH);
 						
 						fromClassUI.setHeadings("Classes in Model", "All Classes");
 						toClassUI.setHeadings("Classes in Model", "All Classes");
@@ -1604,8 +1606,8 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 						getAllClassNodes();
 						getProperties();
 						
-						classUI = new ClassUI("showIncomingOutgoingLinksDialog_class", getExistingClassNodes, getAllClassNodes, 100, loadTree);
-						propertyUI = new PropertyUI("showIncomingOutgoingLinksDialog_property", getPropertyForClass, getProperties, 100, loadTree);
+						classUI = new ClassUI("showIncomingOutgoingLinksDialog_class", getExistingClassNodes, getAllClassNodes, 100, loadTree, getAllClassNodes, MAX_NUM_SEMTYPE_SEARCH);
+						propertyUI = new PropertyUI("showIncomingOutgoingLinksDialog_property", getPropertyForClass, getProperties, 100, loadTree, getProperties, MAX_NUM_SEMTYPE_SEARCH);
 						classUI.setHeadings("Classes in Model", "All Classes");
 						propertyUI.setHeadings("Compatible Properties", "All Properties");
 						classUI.onClassSelect(validateClassInputValue);
@@ -2398,7 +2400,7 @@ var AddNodeDialog = (function() {
 								getAllClassNodes();
 								var loadTree = ($.workspaceGlobalInformation.UISettings.maxLoadedClasses == -1 ||
 										allClasses.length <= $.workspaceGlobalInformation.UISettings.maxLoadedClasses) ? true : false;
-								classUI = new ClassUI("addNewNode_class", null, getAllClassNodes, 300, loadTree);
+								classUI = new ClassUI("addNewNode_class", null, getAllClassNodes, 300, loadTree, getAllClassNodes, MAX_NUM_SEMTYPE_SEARCH);
 								classUI.setHeadings("Classes in Model", "All Classes");
 								classUI.onClassSelect(validateClassInputValue);
 								classUI.generateJS(classDiv, true);

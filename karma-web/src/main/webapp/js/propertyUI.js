@@ -1,4 +1,4 @@
-function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTree) {
+function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTree, searchFunction, numSearchResults) {
 	var propertyDiv;
 	var propertyList1, propertyList2;
 	var propertySelectorCallback = null;
@@ -141,7 +141,7 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 			$(document).on('keyup',  "#" + id + "_propertyKeyword", function(event) {
 				if(searchTimer != null)
 					window.clearTimeout(searchTimer);
-				var searchTimer = window.setTimeout(function() {
+				searchTimer = window.setTimeout(function() {
 					var keyword = $("#" + id + "_propertyKeyword").val();
 					 //console.log("Property keyup: " + keyword);
 					 $("div#" + id + "_propertyList1").jstree("search", keyword);
@@ -149,13 +149,45 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 				}, 1000); //Wait 1 secs before searching
 			 });
 		} else {
-			$(document).on('blur',  "#" + id + "_propertyKeyword", function(event) {
-				var keyword = $("#" + id + "_propertyKeyword").val();
-				if(propertySelectorCallback != null) {
-					var propertyData = {label:keyword, id:keyword, uri:keyword};
-                	propertySelectorCallback(propertyData);
-                }  
-			 });
+			var textbox = "#" + id + "_propertyKeyword";
+			
+			if(searchFunction) {
+				var srchProps = searchFunction();
+				var proptxt = [];
+				for(var i=0; i<srchProps.length; i++)
+					proptxt.push(srchProps[i].text);
+				
+				window.setTimeout(function() {
+					$(textbox).typeahead('destroy');
+					
+					$(textbox).typeahead( 
+							{source:proptxt,
+									minLength:0,
+									items: numSearchResults,
+									hideOnBlur: false, 
+									moreMessage: "More.. Enter text to filter",
+									updater:function(keyword) {
+										console.log("updater:" + keyword);
+										if(keyword != "More..Enter text to filter") {
+											if(propertySelectorCallback != null) {
+												var propertyData = {label:keyword, id:keyword, uri:keyword};
+												propertySelectorCallback(propertyData);
+							                }
+											this.hide();
+										}
+										return keyword;
+									}});
+				}, 1000);
+				
+			} else {
+				$(document).on('blur', textbox, function(event) {
+					var keyword = $(textbox).val();
+					if(propertySelectorCallback != null) {
+						var propertyData = {label:keyword, id:keyword, uri:keyword};
+	                	propertySelectorCallback(propertyData);
+	                }  
+				 });
+			}
 		}
 		
 		mainDiv.append(propertyDiv);
