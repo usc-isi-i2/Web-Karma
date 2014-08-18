@@ -300,7 +300,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="uiLibs/jquery/js/jquery-ui-1.10.3.custom.min.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/nestable.js"></script>
 		<script type="text/javascript" src="uiLibs/twitterBootstrap/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="uiLibs/twitterBootstrap/js/bootstrap3-typeahead.min.js"></script>
+		<script type="text/javascript" src="uiLibs/twitterBootstrap/js/bootstrap3-typeahead.js"></script>
 		<script type="text/javascript" src="uiLibs/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 		
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.tmpl.min.js"></script>

@@ -1,5 +1,5 @@
 function ClassUI(id,  
-		classFuncTop,classFuncBottom, maxHeight, loadTree) {
+		classFuncTop,classFuncBottom, maxHeight, loadTree, searchFunction, numSearchResults) {
 	
 	var classDiv;
 	var classList1, classList2;
@@ -142,7 +142,7 @@ function ClassUI(id,
 			$(document).on('keyup', "#" + id + "_classKeyword",function(event){
 				if(searchTimer != null)
 					window.clearTimeout(searchTimer);
-				var searchTimer = window.setTimeout(function() {
+				searchTimer = window.setTimeout(function() {
 					var keyword = $("#" + id + "_classKeyword").val();
 					 //console.log("Class keyup: " + keyword);
 					 $("div#" + id + "_classList1").jstree("search", keyword);
@@ -152,13 +152,45 @@ function ClassUI(id,
 				 
 			});
 		} else {
-			$(document).on('blur',  "#" + id + "_classKeyword", function(event) {
-				var keyword = $("#" + id + "_classKeyword").val();
-				if(classSelectorCallback != null) {
-					var classData = {label:keyword, id:keyword, uri:keyword};
-                	classSelectorCallback(classData);
-                }
-			 });
+			var textbox = "#" + id + "_classKeyword";
+			
+			if(searchFunction) {
+				var srchClasses = searchFunction();
+				var classtxt = [];
+				for(var i=0; i<srchClasses.length; i++)
+					classtxt.push(srchClasses[i].text);
+				
+				window.setTimeout(function() {
+					$(textbox).typeahead('destroy');
+					
+					$(textbox).typeahead( 
+							{source:classtxt,
+									minLength:0,
+									items: numSearchResults,
+									hideOnBlur: false, 
+									moreMessage: "More.. Enter text to filter",
+									updater:function(keyword) {
+										console.log("updater:" + keyword);
+										if(keyword != "More..Enter text to filter") {
+											if(classSelectorCallback != null) {
+												var classData = {label:keyword, id:keyword, uri:keyword};
+							                	classSelectorCallback(classData);
+							                }
+											this.hide();
+										}
+										return keyword;
+									}});
+				}, 1000);
+				
+			} else {
+				$(document).on('blur',  textbox, function(event) {
+					var keyword = $(textbox).val();
+					if(classSelectorCallback != null) {
+						var classData = {label:keyword, id:keyword, uri:keyword};
+	                	classSelectorCallback(classData);
+	                }
+				 });
+			}
 		}
 		
 		mainDiv.append(classDiv);
