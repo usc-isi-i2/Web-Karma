@@ -38,6 +38,7 @@ import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
@@ -156,6 +157,12 @@ public class OntologyCache {
 		logger.info("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
 		logger.info("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
 
+		if (ModelingConfiguration.getManualAlignment()) {
+			float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
+			logger.info("time to build the ontology cache (manual alignment): " + elapsedTimeSec);
+			return;
+		}
+			
 		// build hashmaps for indirect subclass and subproperty relationships
 		logger.info("build subclass hashmaps ...");
 		this.buildSubClassesMaps();
