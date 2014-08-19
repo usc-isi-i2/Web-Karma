@@ -439,8 +439,12 @@ and related projects, please see: http://www.isi.edu/integration
                 $("#karmaHome").editable({
 		       			 type: 'text',
 		       			 success: function(response, newValue) {
+		       				 var old = this.textContent;
 		       				 console.log("Set Karma Home:" + newValue);
-		       				 changeKarmaHome(newValue);
+		       				 var success = changeKarmaHome(newValue);
+		       				 if(!success) {
+		       					 return old;
+		       				 }
 		       			 },
 		       			 showbuttons: 'bottom',
 		       			 mode: 'popup',

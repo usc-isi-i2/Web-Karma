@@ -137,7 +137,9 @@ public class DisplayModel {
 	public Set<LabeledLink> getOutgoingEdgesOf(Node node) {
 		Set<LabeledLink> edges = new HashSet<>();
 		for(DirectedWeightedMultigraph<Node, LabeledLink> model : models) {
-			edges.addAll(model.outgoingEdgesOf(node));
+			GraphUtil.printGraph(GraphUtil.asDefaultGraph(model));
+			if(model.containsVertex(node))
+				edges.addAll(model.outgoingEdgesOf(node));
 		}
 		return edges;
 	}
