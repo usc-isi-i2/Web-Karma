@@ -166,6 +166,31 @@ public class GraphUtil {
 		return g;
 	}
 	
+	public static void printLabeledGraph(Graph<Node, LabeledLink> graph) {
+		
+		if (graph == null) {
+			logger.debug("graph is null.");
+			return;
+		}		
+		StringBuffer sb = new StringBuffer();
+		sb.append("*** Nodes ***\n");
+		for (Node n : graph.vertexSet()) {
+			sb.append(n.getLocalId());
+			sb.append("\n");
+        }
+		sb.append("*** Links ***\n");
+		for (DefaultLink link : graph.edgeSet()) {
+			sb.append(link.getId());
+			sb.append(", ");
+			sb.append(link.getType().toString());
+			sb.append(", ");
+			sb.append(link.getWeight());
+			sb.append("\n");
+        }
+//		sb.append("------------------------------------------");
+		logger.debug(sb.toString());
+	}
+	
 	public static void printGraph(Graph<Node, DefaultLink> graph) {
 		
 		if (graph == null) {
@@ -173,12 +198,12 @@ public class GraphUtil {
 			return;
 		}		
 		StringBuffer sb = new StringBuffer();
-		sb.append("*** Nodes ***");
+		sb.append("*** Nodes ***\n");
 		for (Node n : graph.vertexSet()) {
 			sb.append(n.getLocalId());
 			sb.append("\n");
         }
-		sb.append("*** Links ***");
+		sb.append("*** Links ***\n");
 		for (DefaultLink link : graph.edgeSet()) {
 			sb.append(link.getId());
 			sb.append(", ");
@@ -198,7 +223,13 @@ public class GraphUtil {
 			return "";
 		}		
 
-		StringBuffer sb = new StringBuffer();
+		StringBuffer sb = new StringBuffer();		
+		sb.append("*** Nodes ***\n");
+		for (Node n : graph.vertexSet()) {
+			sb.append(n.getLocalId());
+			sb.append("\n");
+        }
+		sb.append("*** Links ***\n");
 		for (DefaultLink edge : graph.edgeSet()) {
 			sb.append("(");
 			sb.append(edge.getId());
@@ -218,6 +249,12 @@ public class GraphUtil {
 		}		
 
 		StringBuffer sb = new StringBuffer();
+		sb.append("*** Nodes ***\n");
+		for (Node n : graph.vertexSet()) {
+			sb.append(n.getLocalId());
+			sb.append("\n");
+        }
+		sb.append("*** Links ***\n");
 		for (LabeledLink edge : graph.edgeSet()) {
 			sb.append("(");
 			sb.append(edge.getId());
