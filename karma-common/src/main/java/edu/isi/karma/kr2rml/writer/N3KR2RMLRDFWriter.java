@@ -62,31 +62,35 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 	@Override
 	public void outputTripleWithURIObject(String subjUri, String predicateUri, String objectUri)
 	{
-		outputTriple(constructTripleWithURIObject(subjUri, predicateUri, objectUri));
+		outputTriple(formatTripleWithURIObject(subjUri, predicateUri, objectUri));
 
 	}
 
-	private String constructTripleWithURIObject(String subjUri, String predicateUri, String objectUri) {
+	protected String buildTriple(String subject, String predicate, String object)
+	{
+		return subject + " " + predicate + " " + object + " .";
+ 	}
+	
+	protected String formatTripleWithURIObject(String subjUri, String predicateUri, String objectUri) {
 		if (subjUri.indexOf("<") != -1 && subjUri.indexOf(">") != -1) {
 			String tmp = subjUri.substring(1, subjUri.length() - 1);
 			subjUri = "<" + normalizeURI(tmp) + ">";
 		}
+		predicateUri = uriFormatter.getExpandedAndNormalizedUri(predicateUri);
 		if (objectUri.indexOf("<") != -1 && objectUri.indexOf(">") != -1) {
 			String tmp = objectUri.substring(1, objectUri.length() - 1);
 			objectUri = "<" + normalizeURI(tmp) + ">";
 		}
-		return subjUri + " " 
-		+ uriFormatter.getExpandedAndNormalizedUri(predicateUri) + " " 
-		+ objectUri + " .";
+		return buildTriple(subjUri, predicateUri, objectUri);
 	}
 
 	@Override
 	public void outputTripleWithLiteralObject(String subjUri, String predicateUri, String value, 
 			String literalType) {
-		outputTriple(constructTripleWithLiteralObject(subjUri, predicateUri, value, literalType));
+		outputTriple(formatTripleWithLiteralObject(subjUri, predicateUri, value, literalType));
 	}
 
-	private String constructTripleWithLiteralObject(String subjUri, String predicateUri, String value, 
+	protected String formatTripleWithLiteralObject(String subjUri, String predicateUri, String value, 
 			String literalType) {
 		// Use Apache Commons to escape the value
 		value = StringEscapeUtils.escapeJava(value);
@@ -94,22 +98,24 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 			String tmp = subjUri.substring(1, subjUri.length() - 1);
 			subjUri = "<" + normalizeURI(tmp) + ">";
 		}
+		predicateUri = uriFormatter.getExpandedAndNormalizedUri(predicateUri);
 		// Add the RDF literal type to the literal if present
+		value = "\"" + value + "\"";
 		if (literalType != null && !literalType.equals("")) {
-			return subjUri + " " + uriFormatter.getExpandedAndNormalizedUri(predicateUri) + " \"" + value + 
-					"\"" + "^^<" + literalType + "> .";
+			value += "^^<" + literalType + ">";
 		}
-		return subjUri + " " + uriFormatter.getExpandedAndNormalizedUri(predicateUri) + " \"" + value + "\" .";
+		
+		return buildTriple(subjUri, predicateUri, value);
 	}
 
 	@Override
 	public void outputQuadWithLiteralObject(String subjUri, String predicateUri, 
 			String value, String literalType, String graph) {
-		outputTriple(constructQuadWithLiteralObject(subjUri, predicateUri, value, literalType, graph));
+		outputTriple(formatQuadWithLiteralObject(subjUri, predicateUri, value, literalType, graph));
 	}
-	private String constructQuadWithLiteralObject(String subjUri, String predicateUri, 
+	private String formatQuadWithLiteralObject(String subjUri, String predicateUri, 
 			String value, String literalType, String graph) {
-		String triple = constructTripleWithLiteralObject(subjUri, predicateUri, value, literalType);
+		String triple = formatTripleWithLiteralObject(subjUri, predicateUri, value, literalType);
 		if (triple.length() > 2)
 			return triple.substring(0, triple.length()-1) + "<" + graph + "> ." ;
 		else

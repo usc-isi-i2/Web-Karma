@@ -20,6 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.kr2rml;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -126,7 +127,10 @@ public class URIFormatter {
 		}
 	}
 	
-	
+	public Map<String, String> getPrefixToNamespaceMap()
+	{
+		return Collections.unmodifiableMap(this.prefixToNamespaceMap);
+	}
 	
 	private void populatePrefixToNamespaceMap(OntologyManager ontMgr) {
 		Map<String, String> prefixMapOntMgr = ontMgr.getPrefixMap(); 
