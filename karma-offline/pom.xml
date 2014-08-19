@@ -116,6 +116,35 @@
           			</execution>
         		</executions>
       		</plugin>
+      		
+      		<!-- Configuration for Generating a self contained executabel jar for offline mode -->
+	  		<!--
+	  		to generate the jar, run:
+	  			mvn assembly:assembly -DdescriptorId=jar-with-dependencies
+	  		-->
+      		<plugin>
+			    <artifactId>maven-assembly-plugin</artifactId>
+			    <executions>
+			      <execution>
+			        <phase>package</phase>
+			        <goals>
+			          <goal>single</goal>
+			        </goals>
+			      </execution>
+			    </executions>
+			    <configuration>
+			      <descriptorRefs>
+			        <descriptorRef>jar-with-dependencies</descriptorRef>
+			      </descriptorRefs>
+			      <archive>
+				      <manifest>
+				        <mainClass>edu.isi.karma.rdf.OfflineRdfGenerator</mainClass>
+				      </manifest>
+				  </archive>
+			    </configuration>
+			</plugin>
+  
+      		
     	</plugins>
 		<resources>
 			<resource>
