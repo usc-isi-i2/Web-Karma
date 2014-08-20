@@ -779,12 +779,12 @@ public class GraphBuilder {
 		logger.debug("<enter");
 		
 		// Add Thing to the Graph 
-//		if (!ModelingConfiguration.getManualAlignment()) {
-//			String id = nodeIdFactory.getNodeId(Uris.THING_URI);
-//			Label label = new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL);
-//			Node thing = new InternalNode(id, label);
-//			addNode(thing);
-//		}
+		if (ModelingConfiguration.getThingNode()) {
+			String id = nodeIdFactory.getNodeId(Uris.THING_URI);
+			Label label = new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL);
+			Node thing = new InternalNode(id, label);
+			addNode(thing);
+		}
 		
 		logger.debug("exit>");
 	}

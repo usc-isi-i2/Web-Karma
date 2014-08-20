@@ -39,44 +39,47 @@ public class ModelingConfiguration {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelingConfiguration.class);
 
-    private static Boolean manualAlignment;
-    private static Boolean nodeClosure;
-    private static Boolean propertiesDirect;
-    private static Boolean propertiesIndirect;
-    private static Boolean propertiesWithOnlyDomain;
-    private static Boolean propertiesWithOnlyRange;
-    private static Boolean propertiesWithoutDomainRange;
-    private static Boolean propertiesSubClass;
-    
-    private static String karmaSourcePrefix;
-    private static String karmaServicePrefix; 
+	private static Boolean manualAlignment;
+	private static Boolean thingNode;
+	private static Boolean nodeClosure;
+	private static Boolean propertiesDirect;
+	private static Boolean propertiesIndirect;
+	private static Boolean propertiesWithOnlyDomain;
+	private static Boolean propertiesWithOnlyRange;
+	private static Boolean propertiesWithoutDomainRange;
+	private static Boolean propertiesSubClass;
 
-    private static String modelsJsonDir;
-    private static String modelsGraphvizDir;
-    private static String alignmentGraphDir; 
-    
-    private static Integer maxCandidateModels;
-    private static Integer maxQueuedMappigs;
+	private static String karmaSourcePrefix;
+	private static String karmaServicePrefix; 
 
-    private static Double scoringConfidenceCoefficient;
-    private static Double scoringCoherenceSCoefficient;
-    private static Double scoringSizeCoefficient;
+	private static String modelsJsonDir;
+	private static String modelsGraphvizDir;
+	private static String alignmentGraphDir; 
 
-    private static Boolean learnerEnabled;
-    private static Boolean multipleSamePropertyPerNode;
-    
-    private static Boolean storeOldHistory;
-    
-    private static Boolean showModelsWithoutMatching;
+	private static Integer maxCandidateModels;
+	private static Integer maxQueuedMappigs;
 
-    private static final String newLine = System.getProperty("line.separator").toString();
-    private static String defaultModelingProperties = 
-    		"##########################################################################################" + newLine + 
+	private static Double scoringConfidenceCoefficient;
+	private static Double scoringCoherenceSCoefficient;
+	private static Double scoringSizeCoefficient;
+
+	private static Boolean learnerEnabled;
+	private static Boolean multipleSamePropertyPerNode;
+
+	private static Boolean storeOldHistory;
+
+	private static Boolean showModelsWithoutMatching;
+
+	private static final String newLine = System.getProperty("line.separator").toString();
+	private static String defaultModelingProperties = 
+			"##########################################################################################" + newLine + 
 			"#" + newLine + 
 			"# Graph Builder" + newLine + 
 			"#" + newLine + 
 			"##########################################################################################" + newLine + 
 			"manual.alignment=false" + newLine + 
+			"" + newLine + 
+			"thing.node=false" + newLine + 
 			"" + newLine + 
 			"node.closure=true" + newLine + 
 			"" + newLine + 
@@ -123,107 +126,122 @@ public class ModelingConfiguration {
 			"models.display.nomatching=false" + newLine +
 			"history.store.old=false"
 			;
-    
+
 	public static void load() {
-        try {
-            Properties modelingProperties = loadParams();
+		try {
+			Properties modelingProperties = loadParams();
 
-            if(modelingProperties.getProperty("manual.alignment") != null)
-            	manualAlignment = Boolean.parseBoolean(modelingProperties.getProperty("manual.alignment"));
+			if(modelingProperties.getProperty("manual.alignment") != null)
+				manualAlignment = Boolean.parseBoolean(modelingProperties.getProperty("manual.alignment"));
 
-            if(modelingProperties.getProperty("node.closure") != null)
-            	nodeClosure = Boolean.parseBoolean(modelingProperties.getProperty("node.closure"));
-            
-            if(modelingProperties.getProperty("properties.direct") != null)
-            	propertiesDirect = Boolean.parseBoolean(modelingProperties.getProperty("properties.direct"));
-            
-            if(modelingProperties.getProperty("properties.indirect") != null)
-            	propertiesIndirect = Boolean.parseBoolean(modelingProperties.getProperty("properties.indirect"));
+			if(modelingProperties.getProperty("thing.node") != null)
+				thingNode = Boolean.parseBoolean(modelingProperties.getProperty("thing.node"));
 
-            if(modelingProperties.getProperty("properties.with.only.domain") != null)
-            	propertiesWithOnlyDomain = Boolean.parseBoolean(modelingProperties.getProperty("properties.with.only.domain"));
+			if(modelingProperties.getProperty("node.closure") != null)
+				nodeClosure = Boolean.parseBoolean(modelingProperties.getProperty("node.closure"));
 
-            if(modelingProperties.getProperty("properties.with.only.range") != null)
-            	propertiesWithOnlyRange = Boolean.parseBoolean(modelingProperties.getProperty("properties.with.only.range"));
+			if(modelingProperties.getProperty("properties.direct") != null)
+				propertiesDirect = Boolean.parseBoolean(modelingProperties.getProperty("properties.direct"));
 
-            if(modelingProperties.getProperty("properties.without.domain.range") != null)
-            	propertiesWithoutDomainRange = Boolean.parseBoolean(modelingProperties.getProperty("properties.without.domain.range"));
+			if(modelingProperties.getProperty("properties.indirect") != null)
+				propertiesIndirect = Boolean.parseBoolean(modelingProperties.getProperty("properties.indirect"));
 
-            if(modelingProperties.getProperty("properties.subclass") != null)
-            	propertiesSubClass = Boolean.parseBoolean(modelingProperties.getProperty("properties.subclass"));
+			if(modelingProperties.getProperty("properties.with.only.domain") != null)
+				propertiesWithOnlyDomain = Boolean.parseBoolean(modelingProperties.getProperty("properties.with.only.domain"));
 
-            karmaSourcePrefix = modelingProperties.getProperty("karma.source.prefix");
-            karmaServicePrefix = modelingProperties.getProperty("karma.service.prefix");
+			if(modelingProperties.getProperty("properties.with.only.range") != null)
+				propertiesWithOnlyRange = Boolean.parseBoolean(modelingProperties.getProperty("properties.with.only.range"));
 
-            if(modelingProperties.getProperty("learner.enabled") != null)
-            	learnerEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learner.enabled"));
+			if(modelingProperties.getProperty("properties.without.domain.range") != null)
+				propertiesWithoutDomainRange = Boolean.parseBoolean(modelingProperties.getProperty("properties.without.domain.range"));
 
-            if(modelingProperties.getProperty("multiple.same.property.per.node") != null)
-            	multipleSamePropertyPerNode = Boolean.parseBoolean(modelingProperties.getProperty("multiple.same.property.per.node"));
+			if(modelingProperties.getProperty("properties.subclass") != null)
+				propertiesSubClass = Boolean.parseBoolean(modelingProperties.getProperty("properties.subclass"));
 
-            modelsJsonDir = modelingProperties.getProperty("models.json.dir");
-            modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir");
-            alignmentGraphDir = modelingProperties.getProperty("alignment.graph.dir");
-            
-            if(modelingProperties.getProperty("max.queued.mappings") != null)
-            	maxQueuedMappigs = Integer.parseInt(modelingProperties.getProperty("max.queued.mappings"));
+			karmaSourcePrefix = modelingProperties.getProperty("karma.source.prefix");
+			karmaServicePrefix = modelingProperties.getProperty("karma.service.prefix");
 
-            if(modelingProperties.getProperty("max.candidate.models") != null)
-            	maxCandidateModels = Integer.parseInt(modelingProperties.getProperty("max.candidate.models"));
-            
-            if(modelingProperties.getProperty("scoring.confidence.coefficient") != null)
-            	scoringConfidenceCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.confidence.coefficient"));
+			if(modelingProperties.getProperty("learner.enabled") != null)
+				learnerEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learner.enabled"));
 
-            if(modelingProperties.getProperty("scoring.coherence.coefficient") != null)
-            	scoringCoherenceSCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.coherence.coefficient"));
+			if(modelingProperties.getProperty("multiple.same.property.per.node") != null)
+				multipleSamePropertyPerNode = Boolean.parseBoolean(modelingProperties.getProperty("multiple.same.property.per.node"));
 
-            if(modelingProperties.getProperty("scoring.size.coefficient") != null)
-            	scoringSizeCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.size.coefficient"));
-            
-            storeOldHistory = false;
-            if(modelingProperties.getProperty("history.store.old") != null)
-            	storeOldHistory = Boolean.parseBoolean(modelingProperties.getProperty("history.store.old"));
-          
-            showModelsWithoutMatching = false;
-            if(modelingProperties.getProperty("models.display.nomatching") != null)
-            	showModelsWithoutMatching = Boolean.parseBoolean(modelingProperties.getProperty("models.display.nomatching"));
-            	
-        } catch (IOException e) {
-            logger.error("Error occured while reading config file ...");
-            System.exit(1);
-        }
-    }
-	
+			modelsJsonDir = modelingProperties.getProperty("models.json.dir");
+			modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir");
+			alignmentGraphDir = modelingProperties.getProperty("alignment.graph.dir");
+
+			if(modelingProperties.getProperty("max.queued.mappings") != null)
+				maxQueuedMappigs = Integer.parseInt(modelingProperties.getProperty("max.queued.mappings"));
+
+			if(modelingProperties.getProperty("max.candidate.models") != null)
+				maxCandidateModels = Integer.parseInt(modelingProperties.getProperty("max.candidate.models"));
+
+			if(modelingProperties.getProperty("scoring.confidence.coefficient") != null)
+				scoringConfidenceCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.confidence.coefficient"));
+
+			if(modelingProperties.getProperty("scoring.coherence.coefficient") != null)
+				scoringCoherenceSCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.coherence.coefficient"));
+
+			if(modelingProperties.getProperty("scoring.size.coefficient") != null)
+				scoringSizeCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.size.coefficient"));
+
+			storeOldHistory = false;
+			if(modelingProperties.getProperty("history.store.old") != null)
+				storeOldHistory = Boolean.parseBoolean(modelingProperties.getProperty("history.store.old"));
+
+			showModelsWithoutMatching = false;
+			if(modelingProperties.getProperty("models.display.nomatching") != null)
+				showModelsWithoutMatching = Boolean.parseBoolean(modelingProperties.getProperty("models.display.nomatching"));
+
+		} catch (IOException e) {
+			logger.error("Error occured while reading config file ...");
+			System.exit(1);
+		}
+	}
+
 	private static Properties loadParams()
-            throws IOException {
-        Properties prop = new Properties();
-        
-        File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
-        logger.info("Load modeling.properties: " + file.getAbsolutePath() + ":" + file.exists());
+			throws IOException {
+		Properties prop = new Properties();
+
+		File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
+		logger.info("Load modeling.properties: " + file.getAbsolutePath() + ":" + file.exists());
 		if(!file.exists()) {
 			file.createNewFile();
 			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
-	        BufferedWriter bw = new BufferedWriter(fw);
-	        logger.info(defaultModelingProperties);
-	        bw.write(defaultModelingProperties);
-	        bw.close();
-	        logger.info("Written default properties to modeling.properties");
+			BufferedWriter bw = new BufferedWriter(fw);
+			logger.info(defaultModelingProperties);
+			bw.write(defaultModelingProperties);
+			bw.close();
+			logger.info("Written default properties to modeling.properties");
 		}
-		
-		 prop.load(new FileInputStream(file));
+
+		prop.load(new FileInputStream(file));
 		logger.info("Done Loading modeling.properties");
-       
-      
-        return prop;
-    }
-	
-	public static Boolean getNodeClosure() {
-		if (nodeClosure == null)
-			load();
-		
+
+
+		return prop;
+	}
+
+	public static Boolean getThingNode() {
+
 		if (getManualAlignment() == true)
 			return false;
-		
+
+		if (thingNode == null)
+			load();
+
+		return thingNode;
+	}
+
+	public static Boolean getNodeClosure() {
+
+		if (getManualAlignment() == true)
+			return false;
+
+		if (nodeClosure == null)
+			load();
+
 		return nodeClosure;
 	}
 
@@ -293,7 +311,7 @@ public class ModelingConfiguration {
 			load();
 		return modelsGraphvizDir;
 	}
-	
+
 	public static String getAlignmentGraphDir() {
 		if (alignmentGraphDir == null)
 			load();
@@ -335,13 +353,13 @@ public class ModelingConfiguration {
 			load();
 		return learnerEnabled;
 	}
-	
+
 	public static boolean isStoreOldHistoryEnabled() {
 		if (storeOldHistory == null)
 			load();
 		return storeOldHistory;
 	}
-	
+
 	public static boolean isShowModelsWithoutMatching() {
 		if (showModelsWithoutMatching == null)
 			load();
@@ -357,10 +375,10 @@ public class ModelingConfiguration {
 			load();
 		return multipleSamePropertyPerNode;
 	}
-	
+
 	public static void setManualAlignment(Boolean newManualAlignment)
 	{
 		manualAlignment = newManualAlignment;
 	}
-	
+
 }
