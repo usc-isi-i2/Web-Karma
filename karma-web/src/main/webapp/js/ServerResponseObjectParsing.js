@@ -80,8 +80,9 @@ function parse(data) {
 
 			$.each(element["worksheets"], function(j, worksheet) {
 				// If worksheet doesn't exist yet
-				if ($("div#" + worksheet["worksheetId"]).length == 0) {
-					var mainDiv = $("<div>").attr("id", worksheet["worksheetId"]).addClass("Worksheet");
+				var worksheetId = worksheet["worksheetId"];
+				if ($("div#" + worksheetId).length == 0) {
+					var mainDiv = $("<div>").attr("id", worksheetId).addClass("Worksheet");
 					mainDiv.data("isCollapsed", worksheet["isCollapsed"]);
 					// Div for adding title of that worksheet
 					var titleDiv = $("<div>").addClass("WorksheetTitleDiv ui-corner-top").mouseleave(function() {
@@ -93,9 +94,9 @@ function parse(data) {
 					var headerDiv = $("<div>").addClass("propertiesHeader");
 					var label1 = $("<label>").html("Name:&nbsp;");
 					var graphLabel = $("<span>")
-						.text(fetchExistingModelLabel(worksheet["worksheetId"]))
+						.text(fetchExistingModelLabel(worksheetId))
 						.addClass("edit")
-						.attr("id", "txtGraphLabel_" + worksheet["worksheetId"])
+						.attr("id", "txtGraphLabel_" + worksheetId)
 						.editable({
 							type: 'text',
 							pk: 1,
@@ -132,7 +133,7 @@ function parse(data) {
 					var label1 = $("<label>").html("Prefix:&nbsp;");
 					var prefixLabel = $("<span>").text("s")
 						.addClass("edit")
-						.attr("id", "txtPrefix_" + worksheet["worksheetId"])
+						.attr("id", "txtPrefix_" + worksheetId)
 						.editable({
 							type: 'text',
 							pk: 1,
@@ -170,7 +171,7 @@ function parse(data) {
 					var baseURILabel = $("<span>")
 						.text("http://localhost:8080/source/")
 						.addClass("edit")
-						.attr("id", "txtBaseURI_" + worksheet["worksheetId"])
+						.attr("id", "txtBaseURI_" + worksheetId)
 						.editable({
 							type: 'text',
 							pk: 1,
