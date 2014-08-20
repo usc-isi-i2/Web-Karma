@@ -38,7 +38,7 @@ import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
-import edu.isi.karma.modeling.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;

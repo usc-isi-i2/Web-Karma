@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.config.UIConfiguration;
 import edu.isi.karma.controller.command.alignment.R2RMLAlignmentFileSaver;
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
@@ -56,7 +57,6 @@ import edu.isi.karma.metadata.ReportMetadata;
 import edu.isi.karma.metadata.SemanticTypeModelMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
-import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;

@@ -28,11 +28,11 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
-import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;

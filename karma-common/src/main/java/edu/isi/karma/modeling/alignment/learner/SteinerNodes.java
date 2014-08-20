@@ -36,7 +36,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
-import edu.isi.karma.modeling.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Node;

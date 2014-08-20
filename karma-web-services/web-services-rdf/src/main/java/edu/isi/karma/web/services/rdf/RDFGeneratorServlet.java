@@ -34,6 +34,7 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.URIFormatter;
@@ -45,7 +46,6 @@ import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
-import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rdf.GenericRDFGenerator;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;

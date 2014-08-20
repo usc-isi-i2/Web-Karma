@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling;
+package edu.isi.karma.config;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -67,8 +67,6 @@ public class ModelingConfiguration {
     
     private static Boolean storeOldHistory;
     
-    private static Boolean showCleaningCharts;
-    
     private static Boolean showModelsWithoutMatching;
 
     private static final String newLine = System.getProperty("line.separator").toString();
@@ -115,7 +113,16 @@ public class ModelingConfiguration {
 			"" + newLine + 
 			"models.json.dir=JSON/" + newLine + 
 			"models.graphviz.dir=GRAPHVIZ/" + newLine + 
-			"alignment.graph.dir=AlignmentGraph/" + newLine;
+			"alignment.graph.dir=AlignmentGraph/" + newLine +
+			"" + newLine + 
+			"##########################################################################################" + newLine + 
+			"#" + newLine + 
+			"# Other Settings" + newLine + 
+			"#" + newLine + 
+			"##########################################################################################" + newLine + 
+			"models.display.nomatching=false" + newLine +
+			"history.store.old=false"
+			;
     
 	public static void load() {
         try {
@@ -176,11 +183,7 @@ public class ModelingConfiguration {
             storeOldHistory = false;
             if(modelingProperties.getProperty("history.store.old") != null)
             	storeOldHistory = Boolean.parseBoolean(modelingProperties.getProperty("history.store.old"));
-            
-            showCleaningCharts = true;
-            if(modelingProperties.getProperty("d3.display.charts") != null)
-            	showCleaningCharts = Boolean.parseBoolean(modelingProperties.getProperty("d3.display.charts"));
-            
+          
             showModelsWithoutMatching = false;
             if(modelingProperties.getProperty("models.display.nomatching") != null)
             	showModelsWithoutMatching = Boolean.parseBoolean(modelingProperties.getProperty("models.display.nomatching"));
@@ -337,12 +340,6 @@ public class ModelingConfiguration {
 		if (storeOldHistory == null)
 			load();
 		return storeOldHistory;
-	}
-	
-	public static boolean isShowCleaningCharts() {
-		if (showCleaningCharts == null)
-			load();
-		return showCleaningCharts;
 	}
 	
 	public static boolean isShowModelsWithoutMatching() {

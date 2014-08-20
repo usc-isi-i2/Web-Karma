@@ -32,7 +32,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.modeling.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 

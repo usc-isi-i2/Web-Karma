@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.common.HttpMethods;
-import edu.isi.karma.modeling.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.rep.alignment.ColumnNode;

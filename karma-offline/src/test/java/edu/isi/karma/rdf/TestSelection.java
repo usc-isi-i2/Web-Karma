@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.command.selection.Selection;
@@ -43,7 +44,6 @@ import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
-import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
