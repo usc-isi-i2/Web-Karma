@@ -56,6 +56,7 @@ import edu.isi.karma.metadata.ReportMetadata;
 import edu.isi.karma.metadata.SemanticTypeModelMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -146,7 +147,11 @@ public class KarmaServlet extends HttpServlet {
 			@Override
 			public void generateJson(String prefix, PrintWriter pw,
 					VWorkspace vWorkspace) {
+				//1. Load all configurations
 				UIConfiguration.Instance().loadConfig();
+				ModelingConfiguration.load();
+				
+				//2 Return all settings related updates
 				pw.println("{");
 				pw.println("\"updateType\": \"UISettings\", ");
 				pw.println("\"settings\": {");
