@@ -131,68 +131,48 @@ public class ModelingConfiguration {
 		try {
 			Properties modelingProperties = loadParams();
 
-			if(modelingProperties.getProperty("manual.alignment") != null)
-				manualAlignment = Boolean.parseBoolean(modelingProperties.getProperty("manual.alignment"));
+			manualAlignment = Boolean.parseBoolean(modelingProperties.getProperty("manual.alignment", "false"));
 
-			if(modelingProperties.getProperty("thing.node") != null)
-				thingNode = Boolean.parseBoolean(modelingProperties.getProperty("thing.node"));
+			thingNode = Boolean.parseBoolean(modelingProperties.getProperty("thing.node", "false"));
 
-			if(modelingProperties.getProperty("node.closure") != null)
-				nodeClosure = Boolean.parseBoolean(modelingProperties.getProperty("node.closure"));
+			nodeClosure = Boolean.parseBoolean(modelingProperties.getProperty("node.closure", "true"));
 
-			if(modelingProperties.getProperty("properties.direct") != null)
-				propertiesDirect = Boolean.parseBoolean(modelingProperties.getProperty("properties.direct"));
+			propertiesDirect = Boolean.parseBoolean(modelingProperties.getProperty("properties.direct", "true"));
 
-			if(modelingProperties.getProperty("properties.indirect") != null)
-				propertiesIndirect = Boolean.parseBoolean(modelingProperties.getProperty("properties.indirect"));
+			propertiesIndirect = Boolean.parseBoolean(modelingProperties.getProperty("properties.indirect", "true"));
 
-			if(modelingProperties.getProperty("properties.with.only.domain") != null)
-				propertiesWithOnlyDomain = Boolean.parseBoolean(modelingProperties.getProperty("properties.with.only.domain"));
+			propertiesWithOnlyDomain = Boolean.parseBoolean(modelingProperties.getProperty("properties.with.only.domain", "true"));
 
-			if(modelingProperties.getProperty("properties.with.only.range") != null)
-				propertiesWithOnlyRange = Boolean.parseBoolean(modelingProperties.getProperty("properties.with.only.range"));
+			propertiesWithOnlyRange = Boolean.parseBoolean(modelingProperties.getProperty("properties.with.only.range", "true"));
 
-			if(modelingProperties.getProperty("properties.without.domain.range") != null)
-				propertiesWithoutDomainRange = Boolean.parseBoolean(modelingProperties.getProperty("properties.without.domain.range"));
+			propertiesWithoutDomainRange = Boolean.parseBoolean(modelingProperties.getProperty("properties.without.domain.range", "false"));
 
-			if(modelingProperties.getProperty("properties.subclass") != null)
-				propertiesSubClass = Boolean.parseBoolean(modelingProperties.getProperty("properties.subclass"));
+			propertiesSubClass = Boolean.parseBoolean(modelingProperties.getProperty("properties.subclass", "true"));
 
-			karmaSourcePrefix = modelingProperties.getProperty("karma.source.prefix");
-			karmaServicePrefix = modelingProperties.getProperty("karma.service.prefix");
+			karmaSourcePrefix = modelingProperties.getProperty("karma.source.prefix", "http://isi.edu/integration/karma/sources/");
+			karmaServicePrefix = modelingProperties.getProperty("karma.service.prefix", "http://isi.edu/integration/karma/services/");
 
-			if(modelingProperties.getProperty("learner.enabled") != null)
-				learnerEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learner.enabled"));
+			learnerEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learner.enabled", "true"));
 
-			if(modelingProperties.getProperty("multiple.same.property.per.node") != null)
-				multipleSamePropertyPerNode = Boolean.parseBoolean(modelingProperties.getProperty("multiple.same.property.per.node"));
+			modelsJsonDir = modelingProperties.getProperty("models.json.dir", "JSON/");
+			modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir", "GRAPHVIZ/");
+			alignmentGraphDir = modelingProperties.getProperty("alignment.graph.dir", "AlignmentGraph/");
 
-			modelsJsonDir = modelingProperties.getProperty("models.json.dir");
-			modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir");
-			alignmentGraphDir = modelingProperties.getProperty("alignment.graph.dir");
+			maxQueuedMappigs = Integer.parseInt(modelingProperties.getProperty("max.queued.mappings", "100"));
 
-			if(modelingProperties.getProperty("max.queued.mappings") != null)
-				maxQueuedMappigs = Integer.parseInt(modelingProperties.getProperty("max.queued.mappings"));
+			maxCandidateModels = Integer.parseInt(modelingProperties.getProperty("max.candidate.models", "5"));
 
-			if(modelingProperties.getProperty("max.candidate.models") != null)
-				maxCandidateModels = Integer.parseInt(modelingProperties.getProperty("max.candidate.models"));
+			multipleSamePropertyPerNode = Boolean.parseBoolean(modelingProperties.getProperty("multiple.same.property.per.node", "true"));
 
-			if(modelingProperties.getProperty("scoring.confidence.coefficient") != null)
-				scoringConfidenceCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.confidence.coefficient"));
+			scoringConfidenceCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.confidence.coefficient", "1"));
 
-			if(modelingProperties.getProperty("scoring.coherence.coefficient") != null)
-				scoringCoherenceSCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.coherence.coefficient"));
+			scoringCoherenceSCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.coherence.coefficient", "1"));
 
-			if(modelingProperties.getProperty("scoring.size.coefficient") != null)
-				scoringSizeCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.size.coefficient"));
+			scoringSizeCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.size.coefficient", "1"));
 
-			storeOldHistory = false;
-			if(modelingProperties.getProperty("history.store.old") != null)
-				storeOldHistory = Boolean.parseBoolean(modelingProperties.getProperty("history.store.old"));
+			storeOldHistory = Boolean.parseBoolean(modelingProperties.getProperty("history.store.old", "false"));
 
-			showModelsWithoutMatching = false;
-			if(modelingProperties.getProperty("models.display.nomatching") != null)
-				showModelsWithoutMatching = Boolean.parseBoolean(modelingProperties.getProperty("models.display.nomatching"));
+			showModelsWithoutMatching = Boolean.parseBoolean(modelingProperties.getProperty("models.display.nomatching", "false"));
 
 		} catch (IOException e) {
 			logger.error("Error occured while reading config file ...");
