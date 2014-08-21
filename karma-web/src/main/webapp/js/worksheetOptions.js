@@ -21,6 +21,7 @@ function WorksheetOptions(wsId, wsTitle) {
 				{name:"From Repository" , func:applyModel}
 			]},
 			{name:"Add Node", func:addNode},
+			{name:"Add Liternal Node", func:addLiteralNode},
 			{name:"divider"},			
 
 			{name: "Publish", func:undefined, addLevel:true, levels: [
@@ -97,6 +98,7 @@ function WorksheetOptions(wsId, wsTitle) {
 				});
 				return false;
 	}
+	
 	function deleteWorksheet() {
 		if(confirm("Are you sure you wish to delete the worksheet? \nYou cannot undo this operation")) {
 			hideDropdown();
@@ -558,6 +560,13 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("Add Node");
 		hideDropdown();
 		AddNodeDialog.getInstance().show(worksheetId);
+		return false;
+	}
+	
+	function addLiteralNode() {
+		console.log("Add Literal Node");
+		hideDropdown();
+		AddLiteralNodeDialog.getInstance().show(worksheetId);
 		return false;
 	}
 	

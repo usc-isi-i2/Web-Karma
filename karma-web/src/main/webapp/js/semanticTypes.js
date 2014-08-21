@@ -1,3 +1,13 @@
+var LITERAL_TYPE_ARRAY = [
+      					"xsd:string","xsd:boolean","xsd:decimal","xsd:integer","xsd:double","xsd:float","xsd:time",
+    					"xsd:dateTime","xsd:dateTimeStamp","xsd:gYear","xsd:gMonth","xsd:gDa","xsd:gYearMonth",
+    					"xsd:gMonthDay","xsd:duration","xsd:yearMonthDuration","xsd:dayTimeDuration","xsd:",
+    					"xsd:shor","xsd:int","xsd:long","xsd:unsignedByte","xsd:unsignedShort","xsd:unsignedInt",
+    					"xsd:unsignedLong","xsd:positiveInteger","xsd:nonNegativeInteger","xsd:negativeInteger",
+    					"xsd:nonPositiveInteger","xsd:hexBinary","xsd:base64Binar","xsd:anyURI",
+    					"xsd:language","xsd:normalizedString","xsd:token","xsd:NMTOKEN","xsd:Namexsd:NCName"
+    							 ];
+
 /**
  * ==================================================================================================================
  * 
@@ -130,18 +140,7 @@ var SetSemanticTypeDialog = (function() {
 			});
 			
 			$("#literalTypeSelect").typeahead( 
-				{source:[
-					"xsd:string","xsd:boolean","xsd:decimal","xsd:integer","xsd:double","xsd:float","xsd:time",
-					"xsd:dateTime","xsd:dateTimeStamp","xsd:gYear","xsd:gMonth","xsd:gDa","xsd:gYearMonth",
-					"xsd:gMonthDay","xsd:duration","xsd:yearMonthDuration","xsd:dayTimeDuration","xsd:",
-					"xsd:shor","xsd:int","xsd:long","xsd:unsignedByte","xsd:unsignedShort","xsd:unsignedInt",
-					"xsd:unsignedLong","xsd:positiveInteger","xsd:nonNegativeInteger","xsd:negativeInteger",
-					"xsd:nonPositiveInteger","xsd:hexBinary","xsd:base64Binar","xsd:anyURI",
-					"xsd:language","xsd:normalizedString","xsd:token","xsd:NMTOKEN","xsd:Namexsd:NCName"
-							 ],
-						minLength:0,
-						items:"all"});
-			
+				{source:LITERAL_TYPE_ARRAY, minLength:0, items:"all"});
 			}
 			
 		function hideError() {
@@ -2496,6 +2495,122 @@ var AddNodeDialog = (function() {
 						show : show,
 						init : init
 				};
+		};
+
+		function getInstance() {
+			if( ! instance ) {
+				instance = new PrivateConstructor();
+				instance.init();
+			}
+			return instance;
+		}
+	 
+		return {
+			getInstance : getInstance
+		};
+		
+})();
+
+/**
+ * ==================================================================================================================
+ * 
+ * 				Diloag to add a New Literal Node
+ * 
+ * ==================================================================================================================
+ */
+var AddLiteralNodeDialog = (function() {
+		var instance = null;
+
+		function PrivateConstructor() {
+			var dialog = $("#addLiteralNodeDialog");
+			var worksheetId;
+			
+			function init() {
+						
+					//Initialize what happens when we show the dialog
+					dialog.on('show.bs.modal', function (e) {
+							hideError();
+							$("#literal", dialog).val("");
+							$("#literalType", dialog).val("");
+							$("input#isUri", dialog).attr("checked", false);
+							$("#literalType").typeahead( 
+									{source:LITERAL_TYPE_ARRAY, minLength:0, items:"all"});
+					});
+					
+					
+					$('#btnSave', dialog).on('click', function (e) {
+							e.preventDefault();
+							saveDialog(e);
+					});
+			}
+
+			function validateClassInputValue(classData) {
+				selectedClass = classData;
+				}
+		
+			function hideError() {
+				$("div.error", dialog).hide();
+			}
+			
+			function showError(err) {
+				if(err) {
+					$("div.error", dialog).text(err);
+				}
+				$("div.error", dialog).show();
+			}
+			
+			function saveDialog(e) {
+				 var info = new Object();
+				 info["workspaceId"] = $.workspaceGlobalInformation.id;
+				 var newInfo = [];
+				 var literal = $("#literal", dialog).val();
+				 var literalType = $("#literalType", dialog).val();  
+				 var isUri = $("input#isUri").is(":checked");
+				 newInfo.push(getParamObject("literalValue", literal, "other"));
+				 newInfo.push(getParamObject("literalType", literalType, "other"));
+				 newInfo.push(getParamObject("isUri", isUri, "other"));
+				 newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+				 
+				 info["newInfo"] = JSON.stringify(newInfo);
+				 info["command"] = "AddLiteralNodeCommand";
+				 showLoading(worksheetId);
+				 var returned = $.ajax({
+						 url: "RequestController",
+						 type: "POST",
+						 data : info,
+						 dataType : "json",
+						 complete :
+								 function (xhr, textStatus) {
+										 var json = $.parseJSON(xhr.responseText);
+										 parse(json);
+										 hideLoading(worksheetId);
+										 hide();
+								 },
+						 error :
+								 function (xhr, textStatus) {
+										 alert("Error occured while adding the node!");
+										 hideLoading(worksheetId);
+										 hide();
+								 }
+				 });
+			};
+			
+			
+			
+			function hide() {
+				dialog.modal('hide');
+			}
+			
+		 
+			function show(wsId) {
+				worksheetId = wsId;
+				dialog.modal({keyboard:true, show:true, backdrop:'static'});
+			};
+			
+			return {    //Return back the public methods
+					show : show,
+					init : init
+			};
 		};
 
 		function getInstance() {

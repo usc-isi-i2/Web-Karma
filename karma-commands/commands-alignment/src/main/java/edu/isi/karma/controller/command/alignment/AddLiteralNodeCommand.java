@@ -18,29 +18,31 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Node;
 
 /**
- * Force Add a Node. This node need not be connected to anything in the Steiner Tree.
+ * Add a Literal Node. This node need not be connected to anything in the Steiner Tree.
  * This is used for top-down modeling.
  * Nodes added using this command can be removed using the DeleteNodeCommand
  * @author dipsy
  *
  */
-public class AddNodeCommand extends WorksheetCommand {
+public class AddLiteralNodeCommand extends WorksheetCommand {
 	
-	private String nodeUri;
-	private String nodeLabel;
+	private String literalValue;
+	private String literalType;
+	private boolean isUri;
 	private String alignmentId;
 	
-	private static Logger logger = LoggerFactory.getLogger(AddNodeCommand.class);
+	private static Logger logger = LoggerFactory.getLogger(AddLiteralNodeCommand.class);
 	
 	// Required for undo
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 		
-	protected AddNodeCommand(String id, String worksheetId, String alignmentId, String uri, String label) {
+	protected AddLiteralNodeCommand(String id, String worksheetId, String alignmentId, String literalValue, String literalType, boolean isUri) {
 		super(id, worksheetId);
 		this.alignmentId = alignmentId;
-		this.nodeUri = uri;
-		this.nodeLabel = label;
+		this.literalValue = literalValue;
+		this.literalType = literalType;
+		this.isUri = isUri;
 		
 		addTag(CommandTag.Modeling);
 	}
@@ -52,12 +54,12 @@ public class AddNodeCommand extends WorksheetCommand {
 
 	@Override
 	public String getTitle() {
-		return "Add Node";
+		return "Add Literal Node";
 	}
 
 	@Override
 	public String getDescription() {
-		return nodeLabel;
+		return literalValue;
 	}
 
 	@Override
@@ -79,10 +81,10 @@ public class AddNodeCommand extends WorksheetCommand {
 				.getGraph().clone();
 
 		try {
-			alignment.addForcedInternalNode(new Label(nodeUri));
+			alignment.addLiteralNode(literalValue, literalType, isUri);
 			alignment.align();
 		} catch (JSONException e) {
-			logger.error("Error adding Internal Node:" , e);
+			logger.error("Error adding Literal Node:" , e);
 		}
 
 		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);

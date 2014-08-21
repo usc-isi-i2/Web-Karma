@@ -228,7 +228,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	    	if(node.nodeType == "ColumnNode") {
 	    		//console.log("Add Column Node: " + node.id + " " + node.x + "," + (h - node.y));
 	    		lineLayout.addColumnNode(node.id, node.x, h - node.y);
-	    	} else if(node.nodeType == "InternalNode") {
+	    	} else if(node.nodeType == "InternalNode" || node.nodeType == "LiteralNode") {
 	    		var level = node.height;
 	    		var width = node.width;
 	    		var height = 20; //node.y;
@@ -381,7 +381,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     		return d.target.y; 
     	}
     	
-    	if(d.target.nodeType == "InternalNode") {
+    	if(d.target.nodeType == "InternalNode" || d.target.nodeType == "LiteralNode") {
     		var slope = Math.abs(lineLayout.getLinkSlope(d.id));
         	//console.log(d.source.id + "->" + d.target.id + ": slope=" + slope);
         	if(slope <= 0.2) return d.target.y - 10;
@@ -452,7 +452,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         			d.target.id,
         			d3.event);
         }).on("mouseover", function(d){
-            d3.selectAll("g.InternalNode").each(function(d2,i) {
+            d3.selectAll("g.InternalNode, g.LiteralNode").each(function(d2,i) {
                 if(d2 == d.source || d2 == d.target) {
                     var newRect = $(this).clone();
                     newRect.attr("class","InternalNode highlightOverlay");
@@ -505,10 +505,12 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         })
         .attr("x", function(d){ return this.getComputedTextLength()/2 * -1;})
         .on("click", function(d){
-            if(d["nodeType"] == "InternalNode") {
+            console.log("Got nodetype: " + d["nodeType"]);
+            if(d["nodeType"] == "InternalNode" || d["nodeType"] == "LiteralNode") {
             	var nodeCategory = "";
         		if(d.isForcedByUser)
         			nodeCategory = "forcedAdded";
+                console.log("Show Class Menu");
         		ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain, nodeCategory,
         				$(svg).data("alignmentId"), d3.event);
             }
@@ -555,10 +557,12 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         })
         .style("fill", function(d) { if(d.isForcedByUser) return "rgb(217,234,242)"; })
         .on("click", function(d){
-           if(d["nodeType"] == "InternalNode") {
+            console.log("Got nodetype: " + d["nodeType"]);
+           if(d["nodeType"] == "InternalNode" || d["nodeType"] == "LiteralNode") {
         	   var nodeCategory = "";
        		   if(d.isForcedByUser)
        			  nodeCategory = "forcedAdded";
+                console.log("Show Class Menu");
         	   ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain, nodeCategory,
         			   $(svg).data("alignmentId"), d3.event);
             }
@@ -589,10 +593,12 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             }
         })
         .on("click", function(d){
-        	if(d["nodeType"] == "InternalNode") {
+        	console.log("Got nodetype: " + d["nodeType"]);
+        	if(d["nodeType"] == "InternalNode" || d["nodeType"] == "LiteralNode") {
         		var nodeCategory = "";
         		if(d.isForcedByUser)
         			nodeCategory = "forcedAdded";
+        		console.log("Open class Menu");
         		ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain,
         				nodeCategory,
         				$(svg).data("alignmentId"), d3.event);

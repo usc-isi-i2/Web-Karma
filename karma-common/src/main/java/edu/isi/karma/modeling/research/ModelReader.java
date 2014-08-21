@@ -397,7 +397,7 @@ public class ModelReader {
 
 				} else if (objStr.indexOf(":") == -1 && objStr.indexOf("\"") != -1) {
 //					String literalId = "lit:" + serviceId + "_l" + String.valueOf(countOfLiterals); 
-					obj = new LiteralNode(objStr, objStr, null);
+					obj = new LiteralNode(objStr, objStr, null, false);
 //					countOfLiterals ++;
 				} else
 					obj = new InternalNode(objStr, new Label(objStr));
