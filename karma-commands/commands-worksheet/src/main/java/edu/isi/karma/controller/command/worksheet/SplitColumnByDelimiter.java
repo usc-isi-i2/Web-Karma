@@ -184,11 +184,13 @@ public class SplitColumnByDelimiter {
 						delimiterChar);
 				String[] rowValues = reader.readNext();
 				reader.close();
-				Node newNode = r.getNeighbor(newhNodeId);
-				for (int i = 0; i < rowValues.length; i++) {
-					Row dest = newNode.getNestedTable().addRow(factory);
-					Node destNode = dest.getNeighborByColumnName("Values", factory);
-					destNode.setValue(rowValues[i], NodeStatus.original, factory);
+				if(rowValues != null) {
+					Node newNode = r.getNeighbor(newhNodeId);
+					for (int i = 0; i < rowValues.length; i++) {
+						Row dest = newNode.getNestedTable().addRow(factory);
+						Node destNode = dest.getNeighborByColumnName("Values", factory);
+						destNode.setValue(rowValues[i], NodeStatus.original, factory);
+					}
 				}
 			}
 		}
