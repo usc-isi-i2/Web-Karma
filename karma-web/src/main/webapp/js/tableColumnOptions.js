@@ -621,13 +621,51 @@ var SplitValueDialog = (function() {
 	function PrivateConstructor() {
 		var dialog = $("#splitValuesDialog");
 		var worksheetId, columnId;
-
+		var worksheetHeaders;
+		var updatableColumns;
+		
 		function init() {
 			// Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function(e) {
 				hideError();
-				$("input", dialog).val("");
+				$("#valueSplitNewColName", dialog).val("");
 				$("#valueSplitDelimiter", dialog).focus();
+				$("#splitValuesUpdateColumns").empty();
+				worksheetHeaders = getColumnHeadingsForColumn(worksheetId, columnId, "SplitValues");
+				updatableColumns = [];
+				nonupdatableColumns = [];
+				var columnName = getColumnName();
+				$.each(worksheetHeaders, function(index, element) {
+					if (element['ColumnName'] == columnName) {
+						if(element["appliedCommands"]) {
+							$.each(element["appliedCommands"], function(index, appliedCommand) {
+								if(appliedCommand["CommandName"] == "SplitValuesCommand") {
+									var columns = appliedCommand["Columns"];
+									$.each(columns, function(index, column) {
+										updatableColumns.push(column["ColumnName"]);
+										var option = $('<option>').html(column["ColumnName"]).val(column["ColumnName"]);
+										$("#splitValuesUpdateColumns").append(option);
+									});
+								}
+							});
+						}
+					}
+				});
+				
+				var $radios = $('input:radio[name=splitValuesType]');
+			    $radios.filter('[value=new]').prop('checked', true);
+			    
+			    
+				if(updatableColumns.length > 0) {
+					$("#splitValuesUpdateColumns").attr('disabled',false);
+					jQuery("#splitValuesTypeEdit").attr('disabled',false);
+					$.each(updatableColumns, function(index, element) {
+						console.log("Can update:" + element);
+					});
+				} else {
+					$("#splitValuesUpdateColumns").attr('disabled',true);
+					jQuery("#splitValuesTypeEdit").attr('disabled',true);
+				}
 			});
 
 			// Initialize handler for Save button
@@ -642,39 +680,69 @@ var SplitValueDialog = (function() {
 			$("div.error", dialog).hide();
 		}
 
-		function showError() {
+		function showError(txt) {
+			$("div.error", dialog).txt(txt);
 			$("div.error", dialog).show();
 		}
 
+		function getColumnName() {
+			var id = "columnOptionsButton" + worksheetId + "_" + columnId;
+			var oldColName = $("#" + id).attr("title");
+			return oldColName;
+		}
+		
 		function saveDialog(e) {
 			console.log("Save clicked");
 
 			var delimiter = $.trim($("#valueSplitDelimiter", dialog).val());
-			var newColName = $.trim($("#valueSplitNewColName", dialog).val());
+			
+			var splitValuesType = $('input:radio[name=splitValuesType]:checked').val();
+			var newColName;
+			if(splitValuesType == "new") {
+				newColName = $.trim($("#valueSplitNewColName", dialog).val());
+			} else {
+				newColName = $("#splitValuesUpdateColumns").val();
+			}
+			
+			 
 			var id = "columnOptionsButton" + worksheetId + "_" + columnId;
 			var oldColName = $("#" + id).attr("title");
 			var validationResult = true;
+			
 			if (!delimiter) {
 				validationResult = false;
 			} else if (delimiter != "space" && delimiter != "tab" && delimiter.length != 1) {
 				validationResult = false;
 			}
 			if (!validationResult) {
-				showError();
+				showError("Length of the delimter should be 1");
 				$("#valueSplitDelimiter", dialog).focus();
 				return false;
 			}
+			if(newColName.length == 0) {
+				showError("Please enter the column name");
+				$("#valueSplitNewColName", dialog).focus();
+			}
 			validationResult = true;
 			if (newColName != oldColName) {
-				var headers = getColumnHeadingsForColumn(worksheetId, columnId, "SplitValues");
-				$.each(headers, function(index, element) {
-					if (element['ColumnName'] == newColName)
-						validationResult = false;
+				$.each(worksheetHeaders, function(index, element) {
+					if (element['ColumnName'] == newColName) {
+						var isUpdatable = false;
+						$.each(updatableColumns, function(idx, cn) {
+							if(cn == newColName) {
+								isUpdatable = true;
+							}
+						});
+						if(!isUpdatable)
+							validationResult = false;
+					}
 				});
+			} else {
+				validationResult = false;
 			}
+			
 			if (!validationResult) {
-				$("#splitValuesError").text(newColName + " already exists!");
-				showError();
+				showError(newColName + " already exists");
 				$("#valueSplitNewColName", dialog).focus();
 				return false;
 			}
@@ -703,7 +771,6 @@ var SplitValueDialog = (function() {
 				show: true,
 				backdrop: 'static'
 			});
-			$("#valueSplitNewColName").val(title);
 		};
 
 

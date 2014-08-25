@@ -94,6 +94,10 @@ public class Table extends RepEntity {
 		return rows.remove(r);
 	}
 
+	public void removeAllRows() {
+		rows.clear();
+	}
+	
 	public int getNumRows() {
 		return rows.size();
 	}

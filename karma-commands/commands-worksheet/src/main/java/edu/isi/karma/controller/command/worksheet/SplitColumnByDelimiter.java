@@ -164,6 +164,20 @@ public class SplitColumnByDelimiter {
 		columnPaths.set(oldPathIndex, selectedPath);
 	}
 
+	public void empty() {
+		RepFactory factory = workspace.getFactory();
+		HTable ht = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
+		List<Table> tables = new ArrayList<Table>();
+		
+		CloneTableUtils.getDatatable(worksheet.getDataTable(), ht, tables, selection);
+		for (Table t : tables) {
+			for (Row r : t.getRows(0, t.getNumRows(), selection)) {
+				Node newNode = r.getNeighbor(newhNodeId);
+				newNode.getNestedTable().removeAllRows();
+			}
+		}
+	}
+	
 	public void split() throws IOException {
 		RepFactory factory = workspace.getFactory();
 		HTable ht = factory.getHTable(factory.getHNode(hNodeId).getHTableId());

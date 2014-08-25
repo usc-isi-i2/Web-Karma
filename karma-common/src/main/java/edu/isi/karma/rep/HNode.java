@@ -25,6 +25,8 @@ package edu.isi.karma.rep;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Stack;
 
@@ -55,6 +57,7 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 	private boolean derivedFromAnotherColumn;
 	private String originalColumnHNodeId;
 	private HNodeType type;
+	private HashMap<String, HashSet<HNode>> commandsApplied;
 	
 	public enum HNodeType {
 		Transformation, Regular, AugmentData
@@ -67,6 +70,7 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 		this.columnName = columnName;
 		this.automaticallyAdded = automaticallyAdded;
 		this.type = type;
+		this.commandsApplied = new HashMap<String, HashSet<HNode>>();
 	}
 
 	public String getColumnName() {
@@ -231,5 +235,17 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 	
 	public HNodeType getHNodeType() {
 		return type;
+	}
+	
+	public void addAppliedCommand(String commandName, HNode newHNode) {
+		HashSet<HNode> nodes = this.commandsApplied.get(commandName);
+		if(nodes == null)
+			nodes = new HashSet<>();
+		nodes.add(newHNode);
+		this.commandsApplied.put(commandName, nodes);
+	}
+	
+	public final HashMap<String, HashSet<HNode>> getAppliedCommands() {
+		return this.commandsApplied;
 	}
 }
