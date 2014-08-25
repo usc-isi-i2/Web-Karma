@@ -51,6 +51,7 @@ public class JsonImportValues {
 		String hNodeId = hNode.getId();
 
 		if (value instanceof String) {
+			
 			if (((String) value).isEmpty() && hNode.hasNestedTable()) {
 				addEmptyRow(row.getNode(hNodeId).getNestedTable(), hNode);
 			}
@@ -95,7 +96,13 @@ public class JsonImportValues {
 			return;
 		if (c != '{' && c != '[') {
 			token.back();
-			String value = token.nextValue().toString();
+			Object tokenObj = token.nextValue();
+			String value;
+			if(tokenObj == null || tokenObj == JSONObject.NULL)
+				value = "";
+			else 
+				value = tokenObj.toString();
+				
 			if (value.isEmpty() && hNode != null && hNode.hasNestedTable()) {
 				addEmptyRow(row.getNode(hNodeId).getNestedTable(), hNode);
 			}
