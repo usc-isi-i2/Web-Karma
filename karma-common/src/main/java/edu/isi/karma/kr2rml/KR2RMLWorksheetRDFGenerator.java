@@ -35,9 +35,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -271,7 +271,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		if (hNodeToContextUriMap.containsKey(hNodeId))
 			return hNodeToContextUriMap.get(hNodeId);
 		else {
-			String randomId = RandomStringUtils.randomAlphanumeric(10);
+			String randomId = UUID.randomUUID().toString();
 			String uri = Namespaces.KARMA_DEV + randomId + "_" + hNodeId;
 			hNodeToContextUriMap.put(hNodeId, uri);
 			return uri;
