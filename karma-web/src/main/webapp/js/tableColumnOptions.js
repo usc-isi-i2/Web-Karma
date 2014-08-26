@@ -643,7 +643,7 @@ var SplitValueDialog = (function() {
 									var columns = appliedCommand["Columns"];
 									$.each(columns, function(index, column) {
 										updatableColumns.push(column["ColumnName"]);
-										var option = $('<option>').html(column["ColumnName"]).val(column["ColumnName"]);
+										var option = $('<option>').html(column["ColumnName"]).val(column["HNodeId"]);
 										$("#splitValuesUpdateColumns").append(option);
 									});
 								}
@@ -698,10 +698,13 @@ var SplitValueDialog = (function() {
 			
 			var splitValuesType = $('input:radio[name=splitValuesType]:checked').val();
 			var newColName;
+			var newHNodeId;
 			if(splitValuesType == "new") {
 				newColName = $.trim($("#valueSplitNewColName", dialog).val());
+				newHNodeId = "";
 			} else {
-				newColName = $("#splitValuesUpdateColumns").val();
+				newHNodeId = $("#splitValuesUpdateColumns").val();
+				newColName = $("#splitValuesUpdateColumns").html();
 			}
 			
 			 
@@ -751,10 +754,12 @@ var SplitValueDialog = (function() {
 			var info = generateInfoObject(worksheetId, columnId, "SplitValuesCommand");
 			info["delimiter"] = delimiter;
 			info["newColName"] = newColName;
+			info["newHNodeId"] = newHNodeId;
 
 			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("delimiter", delimiter, "other"));
 			newInfo.push(getParamObject("newColName", newColName, "other"));
+			newInfo.push(getParamObject("newHNodeId", newHNodeId, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
 			showLoading(info["worksheetId"]);
