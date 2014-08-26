@@ -68,47 +68,47 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		assertEquals(17, lines.length);
 	}
 	
-	@Test
-	public void testR2RMLRDFVirtuoso() throws IOException,
-			MalformedURLException, ProtocolException {
-		URL url = new URL("http://fusion-sqid.isi.edu:8890");
-		try {
-			InputStreamReader reader = new InputStreamReader(url.openStream());
-			reader.read();
-		}catch(Exception e) {
-			return;
-		}
-		WebResource webRes = resource().path("r2rml/rdf/sparql");
-
-		MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
-
-		formParams.add(FormParameters.SPARQL_ENDPOINT,
-				"http://fusion-sqid.isi.edu:8890/sparql-graph-crud-auth/");
-		formParams.add(FormParameters.GRAPH_URI,
-				"http://fusion-sqid.isi.edu:8890/image-metadata");
-		formParams.add(FormParameters.TRIPLE_STORE,
-				FormParameters.TRIPLE_STORE_VIRTUOSO);
-		formParams.add(FormParameters.OVERWRITE, "True");
-		formParams.add(FormParameters.R2RML_URL,
-				getTestResource("metadata.json-model.ttl").toString());
-		// formParams.add("DataURL", "");
-		formParams
-				.add(FormParameters.RAW_DATA,
-						"{\"metadata\":{\"GPSTimeStamp\":\"NOT_AVAILABLE\",\"ISOSpeedRatings\":\"100\",\"Orientation\":\"6\",\"Model\":\"GT-N7100\",\"WhiteBalance\":\"0\",\"GPSLongitude\":\"NOT_AVAILABLE\",\"ImageLength\":\"2448\",\"FocalLength\":\"3.7\",\"HasFaces\":\"1\",\"ImageName\":\"20140707_134558.jpg\",\"GPSDateStamp\":\"NOT_AVAILABLE\",\"Flash\":\"0\",\"DateTime\":\"2014:07:07 13:45:58\",\"NumberOfFaces\":\"1\",\"ExposureTime\":\"0.020\",\"GPSProcessingMethod\":\"NOT_AVAILABLE\",\"FNumber\":\"2.6\",\"ImageWidth\":\"3264\",\"GPSLatitude\":\"NOT_AVAILABLE\",\"GPSAltitudeRef\":\"-1\",\"Make\":\"SAMSUNG\",\"GPSAltitude\":\"-1.0\"}}");
-		formParams.add(FormParameters.CONTENT_TYPE, FormParameters.CONTENT_TYPE_JSON);
-		formParams.add(FormParameters.USERNAME, "finimg");
-		formParams.add(FormParameters.PASSWORD, "isi");
-
-		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
-				.post(String.class, formParams);
-		System.out.print(response);
-		String sampleTriple = "<20140707_134558.jpg> <http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#make> \"SAMSUNG\" .";
-		int idx = response.indexOf(sampleTriple);
-		assert(idx != -1);
-		
-		String[] lines = response.split(System.getProperty("line.separator"));
-		assertEquals(17, lines.length);
-	}
+//	@Test
+//	public void testR2RMLRDFVirtuoso() throws IOException,
+//			MalformedURLException, ProtocolException {
+//		URL url = new URL("http://fusion-sqid.isi.edu:8890");
+//		try {
+//			InputStreamReader reader = new InputStreamReader(url.openStream());
+//			reader.read();
+//		}catch(Exception e) {
+//			return;
+//		}
+//		WebResource webRes = resource().path("r2rml/rdf/sparql");
+//
+//		MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+//
+//		formParams.add(FormParameters.SPARQL_ENDPOINT,
+//				"http://fusion-sqid.isi.edu:8890/sparql-graph-crud-auth/");
+//		formParams.add(FormParameters.GRAPH_URI,
+//				"http://fusion-sqid.isi.edu:8890/image-metadata");
+//		formParams.add(FormParameters.TRIPLE_STORE,
+//				FormParameters.TRIPLE_STORE_VIRTUOSO);
+//		formParams.add(FormParameters.OVERWRITE, "True");
+//		formParams.add(FormParameters.R2RML_URL,
+//				getTestResource("metadata.json-model.ttl").toString());
+//		// formParams.add("DataURL", "");
+//		formParams
+//				.add(FormParameters.RAW_DATA,
+//						"{\"metadata\":{\"GPSTimeStamp\":\"NOT_AVAILABLE\",\"ISOSpeedRatings\":\"100\",\"Orientation\":\"6\",\"Model\":\"GT-N7100\",\"WhiteBalance\":\"0\",\"GPSLongitude\":\"NOT_AVAILABLE\",\"ImageLength\":\"2448\",\"FocalLength\":\"3.7\",\"HasFaces\":\"1\",\"ImageName\":\"20140707_134558.jpg\",\"GPSDateStamp\":\"NOT_AVAILABLE\",\"Flash\":\"0\",\"DateTime\":\"2014:07:07 13:45:58\",\"NumberOfFaces\":\"1\",\"ExposureTime\":\"0.020\",\"GPSProcessingMethod\":\"NOT_AVAILABLE\",\"FNumber\":\"2.6\",\"ImageWidth\":\"3264\",\"GPSLatitude\":\"NOT_AVAILABLE\",\"GPSAltitudeRef\":\"-1\",\"Make\":\"SAMSUNG\",\"GPSAltitude\":\"-1.0\"}}");
+//		formParams.add(FormParameters.CONTENT_TYPE, FormParameters.CONTENT_TYPE_JSON);
+//		formParams.add(FormParameters.USERNAME, "finimg");
+//		formParams.add(FormParameters.PASSWORD, "isi");
+//
+//		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
+//				.post(String.class, formParams);
+//		System.out.print(response);
+//		String sampleTriple = "<20140707_134558.jpg> <http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#make> \"SAMSUNG\" .";
+//		int idx = response.indexOf(sampleTriple);
+//		assert(idx != -1);
+//		
+//		String[] lines = response.split(System.getProperty("line.separator"));
+//		assertEquals(17, lines.length);
+//	}
 
 	@Test
 	public void testR2RMLRDFSesame() {
