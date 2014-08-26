@@ -114,12 +114,31 @@
 				  </div>
 				  <div class="modal-body">
 					<div class="form-group">
+						<div class="form-group">
+						    <div class="radio">
+						    	<div class="col-sm-5">
+								  <label>
+								    <input type="radio" value="new" name="splitValuesType">
+							    	Name of new column:
+							  		</label>
+							  	</div>
+							  	<div class="col-sm-6"><input class="form-control" type="text" id="valueSplitNewColName"></div>
+							 </div>	
+							 <div class="radio">
+						    	<div class="col-sm-5">
+								  <label>
+								    <input type="radio" value="edit" name="splitValuesType" id="splitValuesTypeEdit">
+								    Update existing column:
+							  	</label>
+							  	</div>
+							  	<div class="col-sm-6"><select id="splitValuesUpdateColumns"></select></div>
+							</div>
+						</div>
+						<div class="row">&nbsp;</div>
 						<label for="valueSplitDelimiter">Specify character delimiter</label>
 						<input class="form-control" type="text" id="valueSplitDelimiter" required>
 						<span class="help-block">Enter "space" to use single space</span>
 						<span class="help-block">Enter "tab" to use tab</span>
-						<label for="valueSplitNewColName">Specify the new column name</label>
-						<input class="form-control" type="text" id="valueSplitNewColName" required>
 					</div>
 				
 					

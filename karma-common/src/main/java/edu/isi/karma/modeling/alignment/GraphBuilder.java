@@ -32,7 +32,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.modeling.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
@@ -779,12 +779,12 @@ public class GraphBuilder {
 		logger.debug("<enter");
 		
 		// Add Thing to the Graph 
-//		if (!ModelingConfiguration.getManualAlignment()) {
-//			String id = nodeIdFactory.getNodeId(Uris.THING_URI);
-//			Label label = new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL);
-//			Node thing = new InternalNode(id, label);
-//			addNode(thing);
-//		}
+		if (ModelingConfiguration.getThingNode()) {
+			String id = nodeIdFactory.getNodeId(Uris.THING_URI);
+			Label label = new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL);
+			Node thing = new InternalNode(id, label);
+			addNode(thing);
+		}
 		
 		logger.debug("exit>");
 	}

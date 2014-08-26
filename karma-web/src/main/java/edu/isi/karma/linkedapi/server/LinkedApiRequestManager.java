@@ -1,9 +1,10 @@
 package edu.isi.karma.linkedapi.server;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.model.serialization.SerializationLang;
-import edu.isi.karma.modeling.ModelingConfiguration;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.PrintWriter;
 
 public class LinkedApiRequestManager {

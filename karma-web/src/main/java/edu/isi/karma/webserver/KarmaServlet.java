@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.config.UIConfiguration;
 import edu.isi.karma.controller.command.alignment.R2RMLAlignmentFileSaver;
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
@@ -146,7 +147,11 @@ public class KarmaServlet extends HttpServlet {
 			@Override
 			public void generateJson(String prefix, PrintWriter pw,
 					VWorkspace vWorkspace) {
+				//1. Load all configurations
 				UIConfiguration.Instance().loadConfig();
+				ModelingConfiguration.load();
+				
+				//2 Return all settings related updates
 				pw.println("{");
 				pw.println("\"updateType\": \"UISettings\", ");
 				pw.println("\"settings\": {");

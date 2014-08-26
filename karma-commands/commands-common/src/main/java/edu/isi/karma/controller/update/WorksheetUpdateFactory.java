@@ -24,10 +24,11 @@ package edu.isi.karma.controller.update;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.UIConfiguration;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.SuperSelection;
-import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -41,7 +42,7 @@ public class WorksheetUpdateFactory {
 	}
 	private static void createWorksheetHierarchicalAndCleaningResultsUpdates(
 			String worksheetId, UpdateContainer c, SuperSelection sel) {
-		boolean showCleaningCharts = ModelingConfiguration.isShowCleaningCharts();
+		boolean showCleaningCharts = UIConfiguration.Instance().isD3ChartsEnabled();
 		if (showCleaningCharts)
 			c.add(new WorksheetCleaningUpdate(worksheetId, true, sel));
 		createWorksheetHierarchicalUpdates(worksheetId, c, sel);
@@ -49,7 +50,7 @@ public class WorksheetUpdateFactory {
 
 	public static UpdateContainer createWorksheetHierarchicalUpdates(String worksheetId, SuperSelection sel) {
 		UpdateContainer c = new UpdateContainer();
-		boolean showCleaningCharts = ModelingConfiguration.isShowCleaningCharts();
+		boolean showCleaningCharts = UIConfiguration.Instance().isD3ChartsEnabled();
 		if (showCleaningCharts)
 			c.add(new WorksheetCleaningUpdate(worksheetId, false, sel));
 		createWorksheetHierarchicalUpdates(worksheetId, c, sel);

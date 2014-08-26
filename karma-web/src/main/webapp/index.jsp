@@ -1,5 +1,5 @@
 
-<%@page import="edu.isi.karma.modeling.ModelingConfiguration"%>
+<%@page import="edu.isi.karma.config.ModelingConfiguration"%>
 <%@page import="edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter"%>
 <%@page import="edu.isi.karma.webserver.ServletContextParameterMap"%>
 <%@page import="edu.isi.karma.config.UIConfiguration"%>

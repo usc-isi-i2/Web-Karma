@@ -164,6 +164,20 @@ public class SplitColumnByDelimiter {
 		columnPaths.set(oldPathIndex, selectedPath);
 	}
 
+	public void empty() {
+		RepFactory factory = workspace.getFactory();
+		HTable ht = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
+		List<Table> tables = new ArrayList<Table>();
+		
+		CloneTableUtils.getDatatable(worksheet.getDataTable(), ht, tables, selection);
+		for (Table t : tables) {
+			for (Row r : t.getRows(0, t.getNumRows(), selection)) {
+				Node newNode = r.getNeighbor(newhNodeId);
+				newNode.getNestedTable().removeAllRows();
+			}
+		}
+	}
+	
 	public void split() throws IOException {
 		RepFactory factory = workspace.getFactory();
 		HTable ht = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
@@ -184,11 +198,13 @@ public class SplitColumnByDelimiter {
 						delimiterChar);
 				String[] rowValues = reader.readNext();
 				reader.close();
-				Node newNode = r.getNeighbor(newhNodeId);
-				for (int i = 0; i < rowValues.length; i++) {
-					Row dest = newNode.getNestedTable().addRow(factory);
-					Node destNode = dest.getNeighborByColumnName("Values", factory);
-					destNode.setValue(rowValues[i], NodeStatus.original, factory);
+				if(rowValues != null) {
+					Node newNode = r.getNeighbor(newhNodeId);
+					for (int i = 0; i < rowValues.length; i++) {
+						Row dest = newNode.getNestedTable().addRow(factory);
+						Node destNode = dest.getNeighborByColumnName("Values", factory);
+						destNode.setValue(rowValues[i], NodeStatus.original, factory);
+					}
 				}
 			}
 		}

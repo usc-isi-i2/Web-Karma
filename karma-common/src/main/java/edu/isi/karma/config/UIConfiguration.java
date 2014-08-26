@@ -27,6 +27,8 @@ public class UIConfiguration {
 	private boolean googleEarthEnabled = true;
 	private int maxLoadedClasses=-1;
 	private int maxLoadedProperties=-1;
+	private boolean d3ChartsEnabled = true;
+	
 	private static Logger logger = LoggerFactory.getLogger(UIConfiguration.class);
 	
 	private static final String newLine = System.getProperty("line.separator").toString();
@@ -34,9 +36,11 @@ public class UIConfiguration {
 	private static String propGoogleEarthEnabled = "google.earth.enabled=true";
 	private static String propMaxLoadedClasses = "max.loaded.classes=-1";
 	private static String propMaxLoadedProperties = "max.loaded.properties=-1";
+	private static String propD3ChartsEnabled = "d3.display.charts=true";
 	private static String defaultUIProperties = propGoogleEarthEnabled + newLine
 											  + propMaxLoadedClasses + newLine
 											  + propMaxLoadedProperties + newLine
+											  + propD3ChartsEnabled + newLine
 			;
 	
 	public static UIConfiguration Instance() {
@@ -97,6 +101,15 @@ public class UIConfiguration {
 				out.println(propMaxLoadedProperties);
 				out.close();
 			}
+			
+			String sD3 = uiProperties.getProperty("d3.display.charts");
+			if(sD3 != null)
+				d3ChartsEnabled = Boolean.parseBoolean(sD3);
+			else {
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+				out.println(propD3ChartsEnabled);
+				out.close();
+			}
 		} catch (IOException e) {
 			logger.error("Could not load ui.properties, using defaults", e);
 		}
@@ -112,5 +125,9 @@ public class UIConfiguration {
 	
 	public int getMaxPropertiesToLoad() {
 		return maxLoadedProperties;
+	}
+	
+	public boolean isD3ChartsEnabled() {
+		return d3ChartsEnabled;
 	}
 }

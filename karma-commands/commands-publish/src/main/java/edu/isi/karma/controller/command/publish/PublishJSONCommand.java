@@ -10,6 +10,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.UIConfiguration;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -23,7 +25,6 @@ import edu.isi.karma.controller.update.WorksheetDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.imp.json.JsonImport;
-import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
@@ -125,7 +126,7 @@ public class PublishJSONCommand extends WorksheetCommand {
 					pw.println(outputObject.toString(4));
 					pw.println(",");
 					new InfoUpdate("Succesfully exported to JSON").generateJson(prefix, pw, vWorkspace);
-					boolean showCleaningCharts = ModelingConfiguration.isShowCleaningCharts();
+					boolean showCleaningCharts = UIConfiguration.Instance().isD3ChartsEnabled();
 					if(importAsWorksheet && newWSId != null) {
 						pw.println(",");
 						new WorksheetListUpdate().generateJson(prefix, pw, vWorkspace);

@@ -21,6 +21,10 @@
 package edu.isi.karma.controller.command.worksheet;
 
 import java.io.IOException;
+import java.util.Collection;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
@@ -44,7 +48,8 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 	private String columnName;
 	private String newColName;
 	private Command splitCommaCommand;
-	//	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	protected SplitValuesCommand(String id, String worksheetId,
 			String hNodeId, String delimiter, String newColName, String selectionId) {
@@ -94,14 +99,29 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 			return splitCommaCommand.doIt(workspace);
 		}
 
-		HNode newhNode;
-		HTable hTable = workspace.getFactory().getHTable(hNode.getHTableId());
-		newhNode = hTable.addHNode(newColName, HNodeType.Transformation, wk, workspace.getFactory());
-		HTable newTable = newhNode.addNestedTable("Comma Split Values", wk, workspace.getFactory());
-		newTable.addHNode("Values", HNodeType.Transformation, wk, workspace.getFactory());
-		newhNodeId = newhNode.getId();
+		logger.info("SplitValuesCommand:" + newColName + ", columnName:" + columnName);
+		
+		HNode newhNode = workspace.getWorksheet(worksheetId).getHeaders().getHNodeFromColumnName(newColName);
+		boolean isUpdate = false;
+		if(newhNode == null) {
+			HTable hTable = workspace.getFactory().getHTable(hNode.getHTableId());
+			newhNode = hTable.addHNode(newColName, HNodeType.Transformation, wk, workspace.getFactory());
+			
+			HTable newTable = newhNode.addNestedTable("Comma Split Values", wk, workspace.getFactory());
+			newTable.addHNode("Values", HNodeType.Transformation, wk, workspace.getFactory());
+			newhNodeId = newhNode.getId();
+			hNode.addAppliedCommand("SplitValuesCommand", newhNode);
+		} else {
+			logger.info("Column names are same, re-compute the split values");
+			isUpdate = true;
+		}
+		
+		
+		
 		SplitColumnByDelimiter split = new SplitColumnByDelimiter(hNodeId, newhNode.getId(), wk, delimiter, workspace, selection);
 		try {
+			if(isUpdate)
+				split.empty();
 			split.split();
 		} catch (IOException e) {
 			c.add(new ErrorUpdate("Cannot split column! csv reader error"));

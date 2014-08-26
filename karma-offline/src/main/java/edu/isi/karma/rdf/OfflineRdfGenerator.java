@@ -54,6 +54,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.kr2rml.URIFormatter;
@@ -66,7 +67,6 @@ import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
-import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
