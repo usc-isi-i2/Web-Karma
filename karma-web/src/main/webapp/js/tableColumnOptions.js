@@ -681,7 +681,7 @@ var SplitValueDialog = (function() {
 		}
 
 		function showError(txt) {
-			$("div.error", dialog).txt(txt);
+			$("div.error", dialog).text(txt);
 			$("div.error", dialog).show();
 		}
 
@@ -724,12 +724,12 @@ var SplitValueDialog = (function() {
 				$("#valueSplitNewColName", dialog).focus();
 			}
 			validationResult = true;
-			if (newColName != oldColName) {
+			if (newColName.toLowerCase() != oldColName.toLowerCase()) {
 				$.each(worksheetHeaders, function(index, element) {
-					if (element['ColumnName'] == newColName) {
+					if (element['ColumnName'].toLowerCase() == newColName.toLowerCase()) {
 						var isUpdatable = false;
 						$.each(updatableColumns, function(idx, cn) {
-							if(cn == newColName) {
+							if(cn.toLowerCase() == newColName.toLowerCase()) {
 								isUpdatable = true;
 							}
 						});
