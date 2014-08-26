@@ -59,7 +59,10 @@ var ResetDialog = (function() {
 		function saveDialog(event) {
 			hideErrMsg();
 
-			if (!($("#forgetSemanticTypes").is(':checked')) && !($("#forgetModels").is(':checked'))) {
+			if (!($("#forgetSemanticTypes").is(':checked')) 
+					&& !($("#forgetModels").is(':checked'))
+					&& !($("#forgetAlignment").is(':checked'))
+					) {
 				showErrMsg();
 				return false;
 			}
@@ -69,6 +72,7 @@ var ResetDialog = (function() {
 			var info = generateInfoObject("", "", "ResetKarmaCommand");
 			info["forgetSemanticTypes"] = $("#forgetSemanticTypes").is(':checked');
 			info["forgetModels"] = $("#forgetModels").is(':checked');
+			info["forgetAlignment"] = $("#forgetAlignment").is(':checked');
 
 			showWaitingSignOnScreen();
 			var returned = sendRequest(info);
