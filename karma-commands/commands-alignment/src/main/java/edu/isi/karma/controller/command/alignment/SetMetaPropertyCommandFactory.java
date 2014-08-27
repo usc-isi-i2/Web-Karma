@@ -41,7 +41,7 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 	
 	enum Arguments {
 		worksheetId, hNodeId, metaPropertyName, 
-		metaPropertyValue, trainAndShowUpdates, rdfLiteralType, 
+		metaPropertyId, metaPropertyUri, trainAndShowUpdates, rdfLiteralType, 
 		selectionName
 	}
 	
@@ -53,10 +53,11 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 		String rdfLiteralType = request.getParameter(Arguments.rdfLiteralType.name());
 		
 		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(request.getParameter(Arguments.metaPropertyName.name()));
-		String propValue = request.getParameter(Arguments.metaPropertyValue.name());
+		String propUri = request.getParameter(Arguments.metaPropertyUri.name());
+		String propId = request.getParameter(Arguments.metaPropertyId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new SetMetaPropertyCommand(getNewId(workspace), worksheetId, hNodeId, 
-				prop, propValue, true, rdfLiteralType, 
+				prop, propUri, propId, true, rdfLiteralType, 
 				selectionName);
 	}
 
@@ -66,12 +67,13 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(HistoryJsonUtil.getStringValue(Arguments.metaPropertyName.name(), inputJson));
-		String propValue = HistoryJsonUtil.getStringValue(Arguments.metaPropertyValue.name(), inputJson);
+		String propUri = HistoryJsonUtil.getStringValue(Arguments.metaPropertyUri.name(), inputJson);
+		String propId = HistoryJsonUtil.getStringValue(Arguments.metaPropertyId.name(), inputJson);
 		String rdfLiteralType = HistoryJsonUtil.getStringValue(Arguments.rdfLiteralType.name(), inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(workspace), worksheetId, 
-				hNodeId, prop, propValue, true, rdfLiteralType, 
+				hNodeId, prop, propUri, propId, true, rdfLiteralType, 
 				selectionName);
 		
 		// Change the train flag, so that it does not train while reading from history
@@ -81,10 +83,10 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 	}
 	
 	public Command createCommand(Workspace workspace, String hNodeId, String worksheetId, String metaPropertyName, 
-			String propValue, String rdfLiteralType, String selectionId) {
+			String propUri, String propId, String rdfLiteralType, String selectionId) {
 		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(metaPropertyName);
 		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(workspace), worksheetId, 
-				hNodeId, prop, propValue, true, rdfLiteralType, selectionId);
+				hNodeId, prop, propUri, propId, true, rdfLiteralType, selectionId);
 		return comm;
 	}
 

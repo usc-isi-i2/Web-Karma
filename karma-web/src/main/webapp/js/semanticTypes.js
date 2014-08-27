@@ -302,11 +302,10 @@ var SetSemanticTypeDialog = (function() {
 					for (var i = 0; i < classList.length; i++) {
 						var clazz = classList[i];
 						if (clazz.label.toLowerCase() == propValue.toLowerCase()) {
-							var idOrUri = clazz.id;
-							if (idOrUri.match(/ \(add\)$/))
-								idOrUri = clazz.uri;
-							info["metaPropertyValue"] = idOrUri;
-							newInfo.push(getParamObject("metaPropertyValue", idOrUri, "other"));
+							info["metaPropertyUri"] = clazz.uri;
+							info["metaPropertyId"] = clazz.id
+							newInfo.push(getParamObject("metaPropertyUri", clazz.uri, "other"));
+							newInfo.push(getParamObject("metaPropertyId", clazz.id, "other"));
 							valueFound = true;
 							break;
 						}
@@ -315,8 +314,10 @@ var SetSemanticTypeDialog = (function() {
 					for (var i = 0; i < existingPropertyList.length; i++) {
 						var prop = existingPropertyList[i];
 						if (prop.id.toLowerCase() == propValue.toLowerCase()) {
-							info["metaPropertyValue"] = prop.id;
-							newInfo.push(getParamObject("metaPropertyValue", prop.id, "other"));
+							info["metaPropertyUri"] = prop.id;
+							info["metaPropertyId"] = prop.id;
+							newInfo.push(getParamObject("metaPropertyUri", prop.id, "other"));
+							newInfo.push(getParamObject("metaPropertyId", prop.id, "other"));
 							valueFound = true;
 							break;
 						}
