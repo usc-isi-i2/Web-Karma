@@ -23,12 +23,13 @@
  */
 package edu.isi.karma.controller.command;
 
-import edu.isi.karma.util.Preferences;
+import java.io.IOException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import edu.isi.karma.util.Preferences;
 
 /**
  * @author szekely

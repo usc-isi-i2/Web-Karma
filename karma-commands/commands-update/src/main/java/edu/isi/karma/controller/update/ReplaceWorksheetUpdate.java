@@ -62,6 +62,14 @@ public class ReplaceWorksheetUpdate extends AbstractUpdate {
 		vWorkspace.getViewFactory().updateWorksheet(vWorksheet.getId(), worksheetBeforeInvocation,
 				worksheet.getHeaders().getAllPaths(), vWorkspace);
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof ReplaceWorksheetUpdate) {
+			ReplaceWorksheetUpdate t = (ReplaceWorksheetUpdate)o;
+			return t.worksheetBeforeInvocation.getId().equals(worksheetBeforeInvocation.getId()) && t.worksheetId.equals(worksheetId);
+		}
+		return false;
+	}
 
 
 }

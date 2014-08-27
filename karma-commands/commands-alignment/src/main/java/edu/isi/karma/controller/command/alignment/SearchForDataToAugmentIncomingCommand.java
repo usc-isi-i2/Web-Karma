@@ -24,12 +24,13 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.er.helper.TripleStoreUtil;
-import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
+import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
@@ -43,7 +44,7 @@ import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
-public class SearchForDataToAugmentIncomingCommand extends WorksheetCommand{
+public class SearchForDataToAugmentIncomingCommand extends WorksheetSelectionCommand{
 	private static final Logger LOG = LoggerFactory.getLogger(SearchForDataToAugmentIncomingCommand.class);
 	private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 	private String tripleStoreUrl;
@@ -51,8 +52,8 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetCommand{
 	private String nodeUri;
 	private String columnUri;
 	private final Integer limit = 100;
-	public SearchForDataToAugmentIncomingCommand(String id, String url, String context, String nodeUri, String worksheetId, String columnUri) {
-		super(id, worksheetId);
+	public SearchForDataToAugmentIncomingCommand(String id, String url, String context, String nodeUri, String worksheetId, String columnUri, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.tripleStoreUrl = url;
 		this.context = context;
 		this.nodeUri = nodeUri;
@@ -83,6 +84,7 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetCommand{
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		RepFactory factory = workspace.getFactory();
 		TripleStoreUtil util = new TripleStoreUtil();
 		HashMap<String, List<String>> result = null;
@@ -108,11 +110,11 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetCommand{
 		String hNodeId = FetchHNodeIdFromAlignmentCommand.gethNodeId(AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId), columnUri);
 		HNode hnode = factory.getHNode(hNodeId);
 		List<Table> dataTables = new ArrayList<Table>();
-		CloneTableUtils.getDatatable(worksheet.getDataTable(), factory.getHTable(hnode.getHTableId()), dataTables);
+		CloneTableUtils.getDatatable(worksheet.getDataTable(), factory.getHTable(hnode.getHTableId()), dataTables, selection);
 		KR2RMLBloomFilter uris = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 		Set<String> uriSet = new HashSet<String>();
 		for(Table t : dataTables) {
-			for(Row r : t.getRows(0, t.getNumRows())) {
+			for(Row r : t.getRows(0, t.getNumRows(), selection)) {
 				Node n = r.getNode(hNodeId);
 				if(n != null && n.getValue() != null && !n.getValue().isEmptyValue() && n.getValue().asString() != null && !n.getValue().asString().trim().isEmpty() ) {
 					String value = n.getValue().asString().trim().replace(" ", "");;
@@ -124,9 +126,7 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetCommand{
 							value = baseURI + value;
 						}
 					} catch (URISyntaxException e) {
-						// TODO Auto-generated catch block
 					}
-//					n.setValue(value, n.getStatus(), factory);
 					value = builder.append("<").append(value).append(">").toString(); //String builder
 					uriSet.add(value);
 					uris.add(new Key(value.getBytes(UTF8_CHARSET)));

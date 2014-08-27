@@ -21,18 +21,29 @@
 
 package edu.isi.karma.modeling.ontology;
 
-import com.hp.hpl.jena.ontology.*;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.vocabulary.XSD;
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.Worksheet;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import com.hp.hpl.jena.ontology.DatatypeProperty;
+import com.hp.hpl.jena.ontology.ObjectProperty;
+import com.hp.hpl.jena.ontology.OntClass;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntModelSpec;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.vocabulary.XSD;
+
+import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.Worksheet;
 
 public class AutoOntology {
 	static Logger logger = LoggerFactory.getLogger(AutoOntology.class.getName());

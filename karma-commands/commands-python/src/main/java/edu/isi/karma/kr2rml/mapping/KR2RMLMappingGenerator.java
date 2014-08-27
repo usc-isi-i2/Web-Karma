@@ -70,6 +70,7 @@ import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
+import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
@@ -406,6 +407,29 @@ public class KR2RMLMappingGenerator {
 						r2rmlMapping.getAuxInfo().getTriplesMapGraph().addLink(link);
 					}
 					
+					else if(target instanceof LiteralNode) {
+						LiteralNode lnode = (LiteralNode) target;
+						
+						TemplateTermSet termSet = new TemplateTermSet();
+						
+						StringTemplateTerm rdfLiteralTypeTerm = new StringTemplateTerm(lnode.getValue(), lnode.isUri());
+						TemplateTermSet rdfLiteralTypeTermSet = new TemplateTermSet();
+						rdfLiteralTypeTermSet.addTemplateTermToSet(rdfLiteralTypeTerm);
+						
+						TriplesMap objTrMap = r2rmlMapping.getTriplesMapIndex().get(target.getId());
+						ObjectMap objMap = new ObjectMap(target.getId(), termSet, rdfLiteralTypeTermSet);
+						poMap.setObject(objMap);
+						
+						// Create the predicate
+						Predicate pred = new Predicate(olink.getId());
+						pred.getTemplate().addTemplateTermToSet(rdfLiteralTypeTerm);
+						poMap.setPredicate(pred);
+						
+						// Add the links in the graph links data structure
+						TriplesMapLink link = new TriplesMapLink(subjTrMap, objTrMap, poMap);  
+						r2rmlMapping.getAuxInfo().getTriplesMapGraph().addLink(link);
+					}
+					
 					// Create a data property map
 					else if(target instanceof ColumnNode) {
 						// Create the object map
@@ -450,7 +474,8 @@ public class KR2RMLMappingGenerator {
 						addSynonymTypesPredicateObjectMaps(subjTrMap, hNodeId);
 					}
 					// Add the predicateobjectmap to the triples map after a sanity check
-					if (poMap.getObject() != null && poMap.getPredicate() != null)
+					if (poMap.getObject() != null && poMap.getPredicate() != null && !doesPredicateAlreadyExist(subjTrMap,
+							poMap, poMap.getObject().getRefObjectMap()))
 						subjTrMap.addPredicateObjectMap(poMap);
 				}
 			}
@@ -529,6 +554,14 @@ public class KR2RMLMappingGenerator {
 			RefObjectMap refObjMap = new RefObjectMap(RefObjectMap.getNewRefObjectMapId(), subjTrMap);
 			ObjectMap invObjMap = new ObjectMap(subjMap.getId(), refObjMap);
 			invPoMap.setObject(invObjMap);
+			
+			boolean alreadyExists = doesPredicateAlreadyExist(inverseTrMap,
+					invPoMap, refObjMap);
+			if(alreadyExists)
+			{
+				return;
+			}
+			
 			inverseTrMap.addPredicateObjectMap(invPoMap);
 			// Add the link to the link set
 			r2rmlMapping.getAuxInfo().getTriplesMapGraph().addLink(new TriplesMapLink(inverseTrMap, subjTrMap, invPoMap));
@@ -548,10 +581,40 @@ public class KR2RMLMappingGenerator {
 			RefObjectMap refObjMap = new RefObjectMap(RefObjectMap.getNewRefObjectMapId(), subjTrMap);
 			ObjectMap invOfObjMap = new ObjectMap(subjMap.getId(), refObjMap);
 			invOfPoMap.setObject(invOfObjMap);
+			
+			boolean alreadyExists = doesPredicateAlreadyExist(inverseOfTrMap,
+					invOfPoMap, refObjMap);
+			if(alreadyExists)
+			{
+				return;
+			}
 			inverseOfTrMap.addPredicateObjectMap(invOfPoMap);
 			// Add the link to the link set
 			r2rmlMapping.getAuxInfo().getTriplesMapGraph().addLink(new TriplesMapLink(inverseOfTrMap, subjTrMap, invOfPoMap));
 		}
+	}
+
+	private boolean doesPredicateAlreadyExist(TriplesMap triplesMap,
+			PredicateObjectMap poMap, RefObjectMap refObjMap) {
+		boolean alreadyExists = false;
+		for(PredicateObjectMap pom : triplesMap.getPredicateObjectMaps())
+		{
+			if(pom.getPredicate().getTemplate().isSingleUriString() && poMap.getPredicate().getTemplate().isSingleUriString())
+			{
+				if(pom.getPredicate().getTemplate().toString().equalsIgnoreCase(poMap.getPredicate().getTemplate().toString()))
+				{
+					if(pom.getObject().hasRefObjectMap() && pom.getObject().getRefObjectMap().getParentTriplesMap().getId().equalsIgnoreCase(refObjMap.getParentTriplesMap().getId()))
+					{
+						alreadyExists = true;
+					}
+					else if(!pom.getObject().hasRefObjectMap() && pom.getObject().getTemplate().toString().compareTo(poMap.getObject().getTemplate().toString())== 0)
+					{
+						alreadyExists = true;
+					}
+				}
+			}
+		}
+		return alreadyExists;
 	}
 
 	private LabeledLink getSpecializationLinkIfExists(LabeledLink link, Node sourceNode) {

@@ -54,7 +54,7 @@ public class TestJSONRDFGeneratorWithUnfold extends TestJSONRDFGenerator{
 	 */
 	@Before
 	public void setUp() throws Exception {
-		rdfGen = new GenericRDFGenerator();
+		rdfGen = new GenericRDFGenerator(null);
 
 		// Add the models in
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(

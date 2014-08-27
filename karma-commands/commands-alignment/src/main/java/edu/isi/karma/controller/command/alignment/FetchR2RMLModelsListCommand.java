@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -64,6 +65,7 @@ public class FetchR2RMLModelsListCommand extends WorksheetCommand{
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		TripleStoreUtil utilObj = new TripleStoreUtil();
+		boolean showModelsWithoutMatching = ModelingConfiguration.isShowModelsWithoutMatching();
 		try {
 			HashMap<String, List<String>> metadata = utilObj.getMappingsWithMetadata(TripleStoreUrl, context);
 			RepFactory factory = workspace.getFactory();
@@ -90,19 +92,22 @@ public class FetchR2RMLModelsListCommand extends WorksheetCommand{
 				obj.put("url",  urlitr.next());
 				obj.put("publishTime", timeitr.next());
 				obj.put("context", contextitr.next());
-				String columns = inputitr.next();	 
+				String columns = inputitr.next();
+				if (columns != null && !columns.isEmpty()) {
+					JSONArray array = new JSONArray(columns);
+					for (int i = 0; i < array.length(); i++)
+						inputs.add(array.get(i).toString());
+				}
+				else if (showModelsWithoutMatching){
+					list.add(obj);
+				}
 				if (worksheetId != null && !worksheetId.isEmpty()) {		
-					if (columns != null && !columns.isEmpty()) {
-						JSONArray array = new JSONArray(columns);
-						for (int i = 0; i < array.length(); i++)
-							inputs.add(array.get(i).toString());
-					}
 					inputs.retainAll(worksheetcolumns);
 					obj.put("inputColumns", inputs.size());
 				}
 				else
 					obj.put("inputColumns", 0);
-				if (worksheetId == null || worksheetId.isEmpty() || inputs.size() > 0)
+				if (inputs.size() > 0)
 					list.add(obj);
 
 			}

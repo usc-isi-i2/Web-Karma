@@ -25,32 +25,35 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.Charset;
-
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.util.Util;
 
@@ -58,7 +61,7 @@ import edu.isi.karma.util.Util;
  * Adds extract entities commands to the column menu.
  */
 
-public class ExtractEntitiesCommand extends WorksheetCommand {
+public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 
 	private String hNodeId;
 	// add column to this table
@@ -73,8 +76,9 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 			.getLogger(ExtractEntitiesCommand.class);
 
 	protected ExtractEntitiesCommand(String id, String worksheetId,
-			String hTableId, String hNodeId, String extractionURL, String entitiesToBeExt) {
-		super(id, worksheetId);
+			String hTableId, String hNodeId, String extractionURL, 
+			String entitiesToBeExt, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		this.extractionURL = extractionURL;
@@ -106,6 +110,7 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		System.out.println("in do it");
 		System.out.println(extractionURL);
 
@@ -113,26 +118,34 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 		HashSet<String> entitiesReqd = new HashSet<String>();
 		
 		entitiesReqd.addAll(Arrays.asList(entities));
-		
-		ArrayList<Row> rows = worksheet.getDataTable().getRows(0,
-				worksheet.getDataTable().getNumRows());
 
 		JSONArray array = new JSONArray();
 		AddValuesCommand cmd;
 		StringBuffer extractions;
 
-		for (Row row : rows) {
-			String id = row.getId();
-			JSONArray t = new JSONArray();
-			Node node = row.getNode(hNodeId);
-			String value = node.getValue().asString();
-			JSONObject obj = new JSONObject();
-			System.out.println(value);
-
-			obj.put("rowId", id);
-			obj.put("text", value);
-			array.put(obj);
+		RepFactory repFactory = workspace.getFactory();
+		HTable ht = repFactory.getHTable(repFactory.getHNode(hNodeId).getHTableId());
+		
+		List<Table> tables = new ArrayList<Table>();
+		
+		CloneTableUtils.getDatatable(worksheet.getDataTable(), ht, tables, selection);
+		for(Table table : tables) {
+			ArrayList<Row> rows = table.getRows(0, table.getNumRows(), selection);
+		
+				for (Row row : rows) {
+					String id = row.getId();
+					row.getNode(hNodeId);
+					Node node = row.getNeighbor(hNodeId);
+					String value = node.getValue().asString();
+					JSONObject obj = new JSONObject();
+					System.out.println(value);
+	
+					obj.put("rowId", id);
+					obj.put("text", value);
+					array.put(obj);
+				}
 		}
+		
 
 		// POST Request to ExtractEntities API.
 		try {
@@ -193,67 +206,70 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 		// index for result iteration
 		int index = 0;
 
-		for (Row row : rows) {
-
-			if (index < result.length()) {
-				JSONObject extraction = (JSONObject) result.getJSONObject(index++).get("extractions");
-				System.out.println("test1");
-				
-				JSONObject extractionValues = new JSONObject();
-				
-				//Check if the user wants People entities
-				if(entitiesReqd.contains("People")) {
-				//***Extracting People***
-				JSONArray peopleExtract = (JSONArray) extraction.get("people");
-				JSONArray peopleValues = new JSONArray();
-				
-				
-				for(int i=0; i<peopleExtract.length(); i++) {
-					peopleValues.put(new JSONObject().put("extraction", ((JSONObject)peopleExtract.get(i)).getString("extraction"))); 
-				}
-				
-				extractionValues.put("People", peopleValues);
-				}
-								
-				
-				//Check if the user wants Places entities
-				if(entitiesReqd.contains("Places")) {
-				//***Extracting Places***
-				
-				JSONArray placesExtract = (JSONArray) extraction.get("places");
-				JSONArray placesValues = new JSONArray();
-				
-				
-				for(int i=0; i<placesExtract.length(); i++) {
-					placesValues.put(new JSONObject().put("extraction", ((JSONObject)placesExtract.get(i)).getString("extraction"))); 
-				}
-				
-				
-				extractionValues.put("Places", placesValues);
-				}
-				
-				//Check if the user wants Date entities
-				if(entitiesReqd.contains("Dates")) {
-				//***Extracting People***
-				
-				JSONArray datesExtract = (JSONArray) extraction.get("dates");
-				JSONArray datesValues = new JSONArray();
+		for(Table table : tables) {
+			ArrayList<Row> rows = table.getRows(0, table.getNumRows(), selection);
+			for (Row row : rows) {
+	
+				if (index < result.length()) {
+					JSONObject extraction = (JSONObject) result.getJSONObject(index++).get("extractions");
+					System.out.println("test1");
 					
-				
-				for(int i=0; i<datesExtract.length(); i++) {
-					datesValues.put(new JSONObject().put("extraction", ((JSONObject)datesExtract.get(i)).getString("extraction"))); 
+					JSONObject extractionValues = new JSONObject();
+					
+					//Check if the user wants People entities
+					if(entitiesReqd.contains("People")) {
+					//***Extracting People***
+					JSONArray peopleExtract = (JSONArray) extraction.get("people");
+					JSONArray peopleValues = new JSONArray();
+					
+					
+					for(int i=0; i<peopleExtract.length(); i++) {
+						peopleValues.put(new JSONObject().put("extraction", ((JSONObject)peopleExtract.get(i)).getString("extraction"))); 
+					}
+					
+					extractionValues.put("People", peopleValues);
+					}
+									
+					
+					//Check if the user wants Places entities
+					if(entitiesReqd.contains("Places")) {
+					//***Extracting Places***
+					
+					JSONArray placesExtract = (JSONArray) extraction.get("places");
+					JSONArray placesValues = new JSONArray();
+					
+					
+					for(int i=0; i<placesExtract.length(); i++) {
+						placesValues.put(new JSONObject().put("extraction", ((JSONObject)placesExtract.get(i)).getString("extraction"))); 
+					}
+					
+					
+					extractionValues.put("Places", placesValues);
+					}
+					
+					//Check if the user wants Date entities
+					if(entitiesReqd.contains("Dates")) {
+					//***Extracting People***
+					
+					JSONArray datesExtract = (JSONArray) extraction.get("dates");
+					JSONArray datesValues = new JSONArray();
+						
+					
+					for(int i=0; i<datesExtract.length(); i++) {
+						datesValues.put(new JSONObject().put("extraction", ((JSONObject)datesExtract.get(i)).getString("extraction"))); 
+					}
+					
+					extractionValues.put("Dates", datesValues);
+					}
+					
+					JSONObject extractionsObj = new JSONObject();
+					extractionsObj.put("extractions", extractionValues);
+					
+					JSONObject rowDataObject = new JSONObject();
+					rowDataObject.put("values", extractionsObj);
+					rowDataObject.put("rowId", row.getId());
+					rowData.put(rowDataObject);
 				}
-				
-				extractionValues.put("Dates", datesValues);
-				}
-				
-				JSONObject extractionsObj = new JSONObject();
-				extractionsObj.put("extractions", extractionValues);
-				
-				JSONObject rowDataObject = new JSONObject();
-				rowDataObject.put("values", extractionsObj);
-				rowDataObject.put("rowId", row.getId());
-				rowData.put(rowDataObject);
 			}
 		}
 
@@ -270,15 +286,15 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 		try {
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
 			cmd = (AddValuesCommand) factory.createCommand(addValues, workspace, hNodeId, worksheetId,
-					hTableId, HNodeType.Transformation);
+					hTableId, HNodeType.Transformation, selection.getName());
 			
-			HNode hnode = worksheet.getHeaders().getHNode(hNodeId);
+			HNode hnode = repFactory.getHNode(hNodeId);
 			cmd.setColumnName(hnode.getColumnName()+" Extractions");
 			cmd.doIt(workspace);
 
 			UpdateContainer c = new UpdateContainer(new InfoUpdate("Extracted Entities"));
 			c.append(WorksheetUpdateFactory
-					.createRegenerateWorksheetUpdates(worksheetId));
+					.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			//c.append(new InfoUpdate("Extracted Entities"));
 			return c;
@@ -297,7 +313,7 @@ public class ExtractEntitiesCommand extends WorksheetCommand {
 	public UpdateContainer undoIt(Workspace workspace) {
 
 		return WorksheetUpdateFactory
-				.createRegenerateWorksheetUpdates(worksheetId);
+				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace));
 	}
 
 }

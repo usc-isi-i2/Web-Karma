@@ -21,6 +21,16 @@
 
 package edu.isi.karma.controller.history;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
@@ -38,16 +48,6 @@ import edu.isi.karma.util.Util;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.WorkspaceRegistry;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class WorksheetCommandHistoryExecutor {
 
@@ -99,6 +99,7 @@ public class WorksheetCommandHistoryExecutor {
 			UpdateContainer uc = normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
 			if(uc == null) { //No error
 				// Invoke the command
+				uc = new UpdateContainer();
 				CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
 				if(cf != null) {
 					try { // This is sort of a hack the way I did this, but could not think of a better way to get rid of the dependency
@@ -106,7 +107,7 @@ public class WorksheetCommandHistoryExecutor {
 						if(comm != null){
 							try {
 								logger.info("Executing command: " + commandName);
-								workspace.getCommandHistory().doCommand(comm, workspace, saveToHistory);
+								uc.append(workspace.getCommandHistory().doCommand(comm, workspace, saveToHistory));
 							} catch(Exception e) {
 								logger.error("Error executing command: "+ commandName + ". Please notify this error");
 								Util.logException(logger, e);

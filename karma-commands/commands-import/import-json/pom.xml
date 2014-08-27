@@ -18,6 +18,11 @@
 			<artifactId>import-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>commands-worksheet</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 </project>

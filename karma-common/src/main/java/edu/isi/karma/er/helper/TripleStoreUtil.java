@@ -35,8 +35,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -61,7 +61,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.kr2rml.KR2RMLBloomFilter;
+import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.util.HTTPUtil;
 import edu.isi.karma.webserver.KarmaException;

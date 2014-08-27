@@ -28,7 +28,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.isi.karma.controller.command.selection.Selection;
+import edu.isi.karma.controller.command.selection.SelectionManager;
 import edu.isi.karma.rep.ColumnMetadata;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VHNode;
@@ -39,9 +42,10 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 
 	private final String worksheetId;
 	private Workspace workspace;
+	private SelectionManager selMgr;
 	private enum JsonKeys {
 		worksheetId, columns, columnName, characterLength, hasNestedTable, 
-		columnClass, hNodeId, pythonTransformation, previousCommandId, columnDerivedFrom, hNodeType
+		columnClass, hNodeId, pythonTransformation, previousCommandId, columnDerivedFrom, hNodeType, status
 	}
 
 	public WorksheetHeadersUpdate(String worksheetId) {
@@ -60,6 +64,7 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 					this.getClass().getSimpleName());
 			
 			Worksheet wk = vWorksheet.getWorksheet();
+			selMgr = wk.getSelectionManager();
 			ColumnMetadata colMeta = wk.getMetadataContainer().getColumnMetadata();
 			List<VHNode> viewHeaders = vWorksheet.getHeaderViewNodes();
 			
@@ -91,7 +96,13 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 		hNodeObj.put(JsonKeys.columnName.name(), columnName);
 		hNodeObj.put(JsonKeys.columnClass.name(), getColumnClass(hNode.getId()));
 		hNodeObj.put(JsonKeys.hNodeId.name(), hNode.getId());
-		hNodeObj.put(JsonKeys.hNodeType.name(), workspace.getFactory().getHNode(hNode.getId()).getHNodeType().name());
+		HNode t = workspace.getFactory().getHNode(hNode.getId());
+		if (t.hasNestedTable()) {
+			Selection sel = selMgr.getSelection(t.getNestedTable().getId());
+			if (sel != null)
+				hNodeObj.put(JsonKeys.status.name(), sel.getStatus().name());
+		}
+		hNodeObj.put(JsonKeys.hNodeType.name(), t.getHNodeType().name());
 		Integer colLength = colMeta.getColumnPreferredLength(hNode.getId());
 		if (colLength == null || colLength == 0) {
 			hNodeObj.put(JsonKeys.characterLength.name(), WorksheetCleaningUpdate.DEFAULT_COLUMN_LENGTH);
@@ -128,5 +139,13 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 	
 	public static String getColumnClass(String hNodeId) {
 		return hNodeId + "-class";
+	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof WorksheetHeadersUpdate) {
+			WorksheetHeadersUpdate t = (WorksheetHeadersUpdate)o;
+			return t.worksheetId.equals(worksheetId);
+		}
+		return false;
 	}
 }

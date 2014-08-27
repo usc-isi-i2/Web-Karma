@@ -373,6 +373,7 @@ public class KR2RMLMappingWriter {
 			}
 			else if(!objTermSet.isEmpty())
 			{
+				//TODO Dipsy::
 				BNode cnBnode = f.createBNode();
 				// Print out the template for anything that isn't a blank node
 				Value templVal = f.createLiteral(objTermSet

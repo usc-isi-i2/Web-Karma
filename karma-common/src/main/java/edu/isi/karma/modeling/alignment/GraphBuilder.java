@@ -32,7 +32,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.modeling.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
@@ -270,9 +270,9 @@ public class GraphBuilder {
 			
 //			updateLinksFromThing();
 			
-			long updateLinksFromThing = System.currentTimeMillis();
-			elapsedTimeSec = (updateLinksFromThing - updateLinks)/1000F;
-			logger.debug("time to update links to Thing (root): " + elapsedTimeSec);
+//			long updateLinksFromThing = System.currentTimeMillis();
+//			elapsedTimeSec = (updateLinksFromThing - updateLinks)/1000F;
+//			logger.debug("time to update links to Thing (root): " + elapsedTimeSec);
 
 			logger.debug("total number of nodes in graph: " + this.graph.vertexSet().size());
 			logger.debug("total number of links in graph: " + this.graph.edgeSet().size());
@@ -779,7 +779,7 @@ public class GraphBuilder {
 		logger.debug("<enter");
 		
 		// Add Thing to the Graph 
-		if (!ModelingConfiguration.getManualAlignment()) {
+		if (ModelingConfiguration.getThingNode()) {
 			String id = nodeIdFactory.getNodeId(Uris.THING_URI);
 			Label label = new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL);
 			Node thing = new InternalNode(id, label);
@@ -1163,6 +1163,7 @@ public class GraphBuilder {
 			File[] ontologies = ontDir.listFiles();
 			OntologyManager mgr = new OntologyManager();
 			for (File ontology: ontologies) {
+				System.out.println(ontology.getName());
 				if (ontology.getName().endsWith(".owl") || 
 						ontology.getName().endsWith(".rdf") || 
 						ontology.getName().endsWith(".n3") || 
@@ -1173,7 +1174,7 @@ public class GraphBuilder {
 						String encoding = EncodingDetector.detect(ontology);
 						mgr.doImport(ontology, encoding);
 					} catch (Exception t) {
-						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
+//						logger.error("Error loading ontology: " + ontology.getAbsolutePath(), t);
 					}
 				} else {
 					logger.error ("the file: " + ontology.getAbsolutePath() + " does not have proper format: xml/rdf/n3/ttl/owl");
@@ -1181,6 +1182,19 @@ public class GraphBuilder {
 			}
 			// update the cache at the end when all files are added to the model
 			mgr.updateCache();
+			Set<String> test = mgr.getPossibleUris("http://example.com/layout/C01_", "http://example.com/layout/C02_");
+			for (String s : test) {
+				System.out.println(s);
+			}
+			Alignment al = new Alignment(mgr);
+			ColumnNode c1 = al.addColumnNode("h1", "c1", null);
+			ColumnNode c2 = al.addColumnNode("h2", "c2", null);
+			InternalNode n1 = al.addInternalNode(new Label("http://example.com/layout/C01_"));
+			InternalNode n2 = al.addInternalNode(new Label("http://example.com/layout/C02_"));
+			al.addDataPropertyLink(n1, c1, new Label("http://example.com/layout/d1"), false);
+			al.addDataPropertyLink(n2, c2, new Label("http://example.com/layout/d2"), false);
+			al.align();
+			System.out.println(GraphUtil.labeledGraphToString(al.getSteinerTree()));
 		} else {
 			logger.info("No directory for preloading ontologies exists.");
 		}

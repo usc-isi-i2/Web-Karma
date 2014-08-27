@@ -29,7 +29,8 @@ import edu.isi.karma.rep.Workspace;
 public class FetchColumnCommandFactory extends CommandFactory {
 
 	public enum Arguments {
-		worksheetId, alignmentNodeId, tripleStoreUrl, graphUrl,nodeId
+		worksheetId, alignmentNodeId, tripleStoreUrl, 
+		graphUrl, nodeId, selectionName
 	}
 	
 	@Override
@@ -40,7 +41,10 @@ public class FetchColumnCommandFactory extends CommandFactory {
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String graphUrl = request.getParameter(Arguments.graphUrl.name());
 		String nodeId = request.getParameter(Arguments.nodeId.name());
-		return new FetchColumnCommand(getNewId(workspace), worksheetId, alignmentNodeId, tripleStoreUrl, graphUrl, nodeId );
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		return new FetchColumnCommand(getNewId(workspace), worksheetId, alignmentNodeId, 
+				tripleStoreUrl, graphUrl, nodeId, 
+				selectionName);
 	}
 
 	@Override

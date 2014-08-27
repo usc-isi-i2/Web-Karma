@@ -21,6 +21,7 @@
 
 package edu.isi.karma.controller.update;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.rep.Node;
@@ -43,7 +44,7 @@ public class AdditionalRowsUpdate extends AbstractUpdate {
 
 	private String worksheetId;
 	private String tableId;
-	
+	private SuperSelection selection;
 	private static Logger logger = LoggerFactory.getLogger(AdditionalRowsUpdate.class);
 	
 
@@ -52,9 +53,10 @@ public class AdditionalRowsUpdate extends AbstractUpdate {
 		displayValue, expandedValue, nestedRows, additionalRowsCount, tableId
 	}
 	
-	public AdditionalRowsUpdate(String worksheetId, String tableId) {
+	public AdditionalRowsUpdate(String worksheetId, String tableId, SuperSelection sel) {
 		this.worksheetId = worksheetId;
 		this.tableId = tableId;
+		this.selection = sel;
 	}
 
 	@Override
@@ -64,7 +66,7 @@ public class AdditionalRowsUpdate extends AbstractUpdate {
 		
 		final List<Row> additionalRows = pager.loadAdditionalRows();
 		
-		WorksheetDataUpdate upd = new WorksheetDataUpdate(vWorksheet.getId());
+		WorksheetDataUpdate upd = new WorksheetDataUpdate(vWorksheet.getId(), selection);
 		
 		try {
 			JSONArray rowsJson = new JSONArray();

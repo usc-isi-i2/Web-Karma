@@ -38,6 +38,7 @@ import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
@@ -73,8 +74,8 @@ public class OntologyCache {
 	private HashSet<String> directSubClassCheck;
 	private HashSet<String> indirectSubClassCheck;
 	// List <subclass, superclass> pairs
-	private List<SubclassSuperclassPair> directSubclassSuperclassPairs;
-	private List<SubclassSuperclassPair> indirectSubclassSuperclassPairs;
+//	private List<SubclassSuperclassPair> directSubclassSuperclassPairs;
+//	private List<SubclassSuperclassPair> indirectSubclassSuperclassPairs;
 
 	// hashmap: class -> subproperties
 	private HashMap<String, HashMap<String, Label>> directSubProperties;
@@ -156,6 +157,12 @@ public class OntologyCache {
 		logger.info("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
 		logger.info("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
 
+		if (ModelingConfiguration.getManualAlignment()) {
+			float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
+			logger.info("time to build the ontology cache (manual alignment): " + elapsedTimeSec);
+			return;
+		}
+			
 		// build hashmaps for indirect subclass and subproperty relationships
 		logger.info("build subclass hashmaps ...");
 		this.buildSubClassesMaps();
@@ -228,8 +235,8 @@ public class OntologyCache {
 		this.indirectSuperClasses = new HashMap<String, HashMap<String, Label>>();
 		this.directSubClassCheck = new HashSet<String>();
 		this.indirectSubClassCheck = new HashSet<String>();
-		this.directSubclassSuperclassPairs = new ArrayList<SubclassSuperclassPair>();
-		this.indirectSubclassSuperclassPairs = new ArrayList<SubclassSuperclassPair>();
+//		this.directSubclassSuperclassPairs = new ArrayList<SubclassSuperclassPair>();
+//		this.indirectSubclassSuperclassPairs = new ArrayList<SubclassSuperclassPair>();
 		
 		this.directSubProperties = new HashMap<String, HashMap<String, Label>>();
 		this.indirectSubProperties = new HashMap<String, HashMap<String, Label>>();
@@ -341,13 +348,13 @@ public class OntologyCache {
 		return indirectSubClassCheck;
 	}
 	
-	public List<SubclassSuperclassPair> getDirectSubclassSuperclassPairs() {
-		return directSubclassSuperclassPairs;
-	}
-
-	public List<SubclassSuperclassPair> getIndirectSubclassSuperclassPairs() {
-		return indirectSubclassSuperclassPairs;
-	}
+//	public List<SubclassSuperclassPair> getDirectSubclassSuperclassPairs() {
+//		return directSubclassSuperclassPairs;
+//	}
+//
+//	public List<SubclassSuperclassPair> getIndirectSubclassSuperclassPairs() {
+//		return indirectSubclassSuperclassPairs;
+//	}
 
 	public HashMap<String, HashMap<String, Label>> getDirectSubProperties() {
 		return directSubProperties;
@@ -714,23 +721,21 @@ public class OntologyCache {
 		
 		for (String c : this.classes.keySet()) {
 			
-			directSubClassesLocal = this.ontHandler.getSubClasses(c, false);
-			allSubClassesLocal = this.ontHandler.getSubClasses(c, true);
-			indirectSubClassesLocal = new HashMap<String, Label>();
-			for (Entry<String, Label> entry : allSubClassesLocal.entrySet())
-				if (!directSubClassesLocal.containsKey(entry.getKey()))
-					indirectSubClassesLocal.put(entry.getKey(), entry.getValue());
-			
 			// Thing node
 			if (c.equalsIgnoreCase(Uris.THING_URI)) {
-				List<OntologyTreeNode> thingDirectChildren = this.classHierarchy.getChildren();
-				if (thingDirectChildren != null) 
-					for (OntologyTreeNode node : thingDirectChildren) 
-						if (node.getLabel() != null && node.getLabel().getUri() != null)
-							directSubClassesLocal.put(node.getLabel().getUri(), node.getLabel());
-				
+				directSubClassesLocal = allClassesExceptThing;
 				indirectSubClassesLocal = allClassesExceptThing;
+			} else {
+				
+				directSubClassesLocal = this.ontHandler.getSubClasses(c, false);
+				allSubClassesLocal = this.ontHandler.getSubClasses(c, true);
+				indirectSubClassesLocal = new HashMap<String, Label>();
+				for (Entry<String, Label> entry : allSubClassesLocal.entrySet())
+					if (!directSubClassesLocal.containsKey(entry.getKey()))
+						indirectSubClassesLocal.put(entry.getKey(), entry.getValue());
+			
 			}
+
 			
 			this.directSubClasses.put(c, directSubClassesLocal);
 			this.indirectSubClasses.put(c, indirectSubClassesLocal);
@@ -742,19 +747,19 @@ public class OntologyCache {
 				this.indirectSubClassCheck.add(s + c);
 		}
 		
-		for (String superclass : this.directSubClasses.keySet()) {
-			Set<String> subClasses = this.directSubClasses.get(superclass).keySet();
-			if (subClasses != null)
-			for (String subclass : subClasses)
-				this.directSubclassSuperclassPairs.add(new SubclassSuperclassPair(subclass, superclass));
-		}
-		
-		for (String superclass : this.indirectSubClasses.keySet()) {
-			Set<String> subClasses = this.indirectSubClasses.get(superclass).keySet();
-			if (subClasses != null)
-			for (String subclass : subClasses)
-				this.indirectSubclassSuperclassPairs.add(new SubclassSuperclassPair(subclass, superclass));
-		}
+//		for (String superclass : this.directSubClasses.keySet()) {
+//			Set<String> subClasses = this.directSubClasses.get(superclass).keySet();
+//			if (subClasses != null)
+//			for (String subclass : subClasses)
+//				this.directSubclassSuperclassPairs.add(new SubclassSuperclassPair(subclass, superclass));
+//		}
+//		
+//		for (String superclass : this.indirectSubClasses.keySet()) {
+//			Set<String> subClasses = this.indirectSubClasses.get(superclass).keySet();
+//			if (subClasses != null)
+//			for (String subclass : subClasses)
+//				this.indirectSubclassSuperclassPairs.add(new SubclassSuperclassPair(subclass, superclass));
+//		}
 	}
 	
 	private void buildSuperClassesMaps() {
@@ -1020,8 +1025,8 @@ public class OntologyCache {
 			}
 			directDomainsUris = ontHandler.getResourcesUris(directDomains);
 			
-			if (directDomainsUris != null && directDomainsUris.contains(Uris.THING_URI))
-				directDomainsUris.remove(Uris.THING_URI);
+//			if (directDomainsUris != null && directDomainsUris.contains(Uris.THING_URI))
+//				directDomainsUris.remove(Uris.THING_URI);
 			
 			temp  = propertyDirectDomains.get(property.getURI());
 			if (temp == null)
@@ -1078,8 +1083,8 @@ public class OntologyCache {
 			}
 			directRangesUris = ontHandler.getResourcesUris(directRanges);
 			
-			if (directRangesUris != null && directRangesUris.contains(Uris.THING_URI))
-				directRangesUris.remove(Uris.THING_URI);
+//			if (directRangesUris != null && directRangesUris.contains(Uris.THING_URI))
+//				directRangesUris.remove(Uris.THING_URI);
 
 			temp  = propertyDirectRanges.get(property.getURI());
 			if (temp == null)
@@ -1499,8 +1504,10 @@ public class OntologyCache {
 			else if (!haveDomain && haveRange) {
 				this.objectPropertiesWithOnlyRange.put(p, label);
 			}
-			else if (!haveDomain && !haveRange) 
-				this.objectPropertiesWithoutDomainAndRange.put(p, label);
+			else if (!haveDomain && !haveRange) {
+				if (!p.startsWith(Namespaces.RDF) && !p.startsWith(Namespaces.RDFS))
+					this.objectPropertiesWithoutDomainAndRange.put(p, label);
+			}
 		}
 }
 	

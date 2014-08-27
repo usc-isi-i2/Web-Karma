@@ -14,7 +14,10 @@ import edu.isi.karma.webserver.KarmaException;
 public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 	
 	private enum Arguments {
-		worksheetId, predicate, triplesMap, alignmentId, columnUri, otherClass, tripleStoreUrl, hNodeId, incoming, sameAsPredicate
+		worksheetId, predicate, triplesMap, 
+		alignmentId, columnUri, otherClass, 
+		tripleStoreUrl, hNodeId, incoming, 
+		sameAsPredicate, selectionName
 	}
 
 	@Override
@@ -27,7 +30,12 @@ public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String incoming = request.getParameter(Arguments.incoming.name());
 		String sameAsPredicate = request.getParameter(Arguments.sameAsPredicate.name());
-		return new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, otherClass, hNodeId, Boolean.parseBoolean(incoming), sameAsPredicate);
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		return new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
+				columnUri, predicate, otherClass, 
+				hNodeId, Boolean.parseBoolean(incoming), 
+				sameAsPredicate, 
+				selectionName);
 	}
 
 	@Override
@@ -47,7 +55,13 @@ public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String incoming = CommandInputJSONUtil.getStringValue(Arguments.incoming.name(), inputJson);
 		String sameAsPredicate = CommandInputJSONUtil.getStringValue(Arguments.sameAsPredicate.name(), inputJson);
-		AugmentDataCommand cmd = new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, columnUri, predicate, otherClass, hNodeId, Boolean.parseBoolean(incoming),sameAsPredicate);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		AugmentDataCommand cmd = new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
+				columnUri, predicate, otherClass, hNodeId, 
+				Boolean.parseBoolean(incoming), 
+				sameAsPredicate, 
+				selectionName);
 
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;

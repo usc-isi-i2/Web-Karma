@@ -20,26 +20,25 @@
  ******************************************************************************/
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.importdata.ImportDatabaseTableCommand;
-import edu.isi.karma.view.VWorkspace;
+import java.io.PrintWriter;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
+import edu.isi.karma.view.VWorkspace;
 
 public class NewDatabaseCommandUpdate extends AbstractUpdate{
-	private Command command;
+	private String commandId;
 	private static Logger logger = LoggerFactory.getLogger(NewDatabaseCommandUpdate.class);
 	
 	public enum JsonKeys {
 		commandId
 	}
 
-	public NewDatabaseCommandUpdate(ImportDatabaseTableCommand command) {
-		this.command = command;
+	public NewDatabaseCommandUpdate(String commandId) {
+		this.commandId = commandId;
 	}
 
 	@Override
@@ -47,7 +46,7 @@ public class NewDatabaseCommandUpdate extends AbstractUpdate{
 			VWorkspace vWorkspace) {
 		JSONObject responseObj = new JSONObject();
 		try {
-			responseObj.put(JsonKeys.commandId.name(), command.getId());
+			responseObj.put(JsonKeys.commandId.name(), commandId);
 			responseObj.put(GenericJsonKeys.updateType.name(), "NewImportDatabaseTableCommandUpdate");
 			pw.print(responseObj.toString(4));
 		} catch (JSONException e) {

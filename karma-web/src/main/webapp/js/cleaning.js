@@ -62,35 +62,14 @@ var TransformColumnDialog = (function() {
 
 			var selectedHNodeId = columnId;
 			//var transformedRes = transformedResult;
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["hNodeId"] = selectedHNodeId;
-			info["command"] = "SubmitCleaningCommand";
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			var info = generateInfoObject(worksheetId, selectedHNodeId, "SubmitCleaningCommand");
 			info["examples"] = JSON.stringify(cleaningExamples);
 
-			var newInfo = [];
-			newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
-			newInfo.push(getParamObject("hNodeId", selectedHNodeId, "hNodeId"));
+			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("examples", cleaningExamples, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
-
 			showLoading(worksheetId);
-			var returned = $.ajax({
-				url : "RequestController",
-				type : "POST",
-				data : info,
-				dataType : "json",
-				complete : function(xhr, textStatus) {
-					var json = $.parseJSON(xhr.responseText);
-					parse(json);
-					hideLoading(worksheetId);
-				},
-				error : function(xhr, textStatus) {
-					$.sticky("Error in transformation!");
-					hideLoading(worksheetId);
-				}
-			});
+			var returned = sendRequest(info, worksheetId);
 		};
 
 		function loadInitialData() {
@@ -107,10 +86,10 @@ var TransformColumnDialog = (function() {
 
 			nodeIds = [];
 			var data = values[0]["data"]
-			for(var nodeId in data) {
-				if(data.hasOwnProperty(nodeId)) {
-					var tr = $("<tr>").attr("id", nodeId + "_cl_row").addClass("nonHeading").append($("<td>").text(data[nodeId]["Org"]).attr('id', nodeId + "_origVal"))//add text and id to the td
-					.append($("<td>").addClass("noBorder"));
+			for (var nodeId in data) {
+				if (data.hasOwnProperty(nodeId)) {
+					var tr = $("<tr>").attr("id", nodeId + "_cl_row").addClass("nonHeading").append($("<td>").text(data[nodeId]["Org"]).attr('id', nodeId + "_origVal")) //add text and id to the td
+						.append($("<td>").addClass("noBorder"));
 					//add td to seperate org and result
 					tr.data("originalVal", (data[nodeId]["Org"]));
 					cleaningTable.append(tr);
@@ -127,31 +106,27 @@ var TransformColumnDialog = (function() {
 		}
 
 		function fetchCleanningRawData() {
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["hNodeId"] = columnId;
-			info["command"] = "FetchTransformingDataCommand";
+			var info = generateInfoObject(worksheetId, columnId, "FetchTransformingDataCommand");
 			var json = {};
 			var returned = $.ajax({
-				url : "RequestController",
-				type : "POST",
-				async : false,
-				data : info,
-				dataType : "json",
-				complete : function(xhr, textStatus) {
+				url: "RequestController",
+				type: "POST",
+				async: false,
+				data: info,
+				dataType: "json",
+				complete: function(xhr, textStatus) {
 					json = $.parseJSON(xhr.responseText);
 					json = json["elements"][0]["result"];
 					hideCleanningWaitingSignOnScreen();
 				},
-				error : function(xhr, textStatus) {
+				error: function(xhr, textStatus) {
 					hideCleanningWaitingSignOnScreen();
 					$.sticky("Error in Fetching Raw Data!");
 				}
 			});
 			return json;
 		}
-		
+
 		function populateResult(rdata) {
 			try {
 				var examples = cleaningExamples;
@@ -166,58 +141,58 @@ var TransformColumnDialog = (function() {
 				var data = rdata["data"];
 				$.each(data, function(nodeId, xval) {
 					var trTag = $("tr#" + nodeId + "_cl_row");
-					if(trTag != null) {
+					if (trTag != null) {
 						transformedResult[nodeId] = xval;
-						if(xval == $("div#" + nodeId).text()) {
+						if (xval == $("div#" + nodeId).text()) {
 							$("div#" + nodeId).attr("class", "cleanExampleDiv");
 							//return true;
 						}
 						$("td.ruleResultsValue_begin", trTag).remove();
 						$("#" + nodeId + "_origVal", trTag).html(xval["Orgdis"]).data("CellValue", xval["Org"]);
 						var cleaningRes = xval["Tardis"];
-						if(cleaningRes == "<span class=\"ins\"></span>")
+						if (cleaningRes == "<span class=\"ins\"></span>")
 							cleaningRes = "";
 						trTag.append(
-								$("<td>").addClass("ruleResultsValue_begin").attr("id", nodeId + "_transformed")
-									.append($("<table>")
-											.append($("<tr>")
-													.append($("<td>").addClass("noinnerBorder")
-															.append($("<div>").data("nodeId", nodeId)// set the original value for the example
-																	.data("cellValue", xval["Tar"])
-																	.addClass("cleanExampleDiv")
-																	.html(cleaningRes)//set the result here
-																	.attr("id", nodeId)))
-													.append($("<td>").addClass("noBorder")))));
-						
+							$("<td>").addClass("ruleResultsValue_begin").attr("id", nodeId + "_transformed")
+							.append($("<table>")
+								.append($("<tr>")
+									.append($("<td>").addClass("noinnerBorder")
+										.append($("<div>").data("nodeId", nodeId) // set the original value for the example
+											.data("cellValue", xval["Tar"])
+											.addClass("cleanExampleDiv")
+											.html(cleaningRes) //set the result here
+											.attr("id", nodeId)))
+									.append($("<td>").addClass("noBorder")))));
+
 						console.log($("div#" + nodeId).text() + ":" + xval["Tardis"]);
 						$("div#" + nodeId, trTag).editable({
-		        			 type: 'text',
-		        			 success: function(response, value) {
-		        				 	console.log("Set new value:" + value);
-		        				 	var tmpnodeId = nodeId;
-									$("div", $(this).parent().prev()).html(xval["Tar"]);
-									if(nodeId.indexOf("suggestion") >= 0) {
-										tmpnodeId = nodeId.substring(0, nodeId.indexOf("_suggestion"));
-										$("div#" + tmpnodeId).text(value);
-									}
-									var editDiv = $("div#" + nodeId);
-									examples.push({
-										"nodeId" : tmpnodeId,
-										"before" : $("tr#" + tmpnodeId + "_cl_row").data("originalVal"),
-										"after" : value
-									});
-									$("div#" + nodeId).text(value);
-									xval["Tardis"] = value;
-									updateResult();
-		        			 },
-		        			 showbuttons: 'bottom',
-		        			 mode: 'popup',
-		        			 inputclass: 'worksheetInputEdit'	 
-				            });
+							type: 'text',
+							success: function(response, value) {
+								console.log("Set new value:" + value);
+								var tmpnodeId = nodeId;
+								$("div", $(this).parent().prev()).html(xval["Tar"]);
+								if (nodeId.indexOf("suggestion") >= 0) {
+									tmpnodeId = nodeId.substring(0, nodeId.indexOf("_suggestion"));
+									$("div#" + tmpnodeId).text(value);
+								}
+								var editDiv = $("div#" + nodeId);
+								examples.push({
+									"nodeId": tmpnodeId,
+									"before": $("tr#" + tmpnodeId + "_cl_row").data("originalVal"),
+									"after": value
+								});
+								$("div#" + nodeId).text(value);
+								xval["Tardis"] = value;
+								updateResult();
+							},
+							showbuttons: 'bottom',
+							mode: 'popup',
+							inputclass: 'worksheetInputEdit'
+						});
 					}
 				});
-				
-			} catch(err) {
+
+			} catch (err) {
 				console.log(err.message)
 			}
 		}
@@ -238,27 +213,21 @@ var TransformColumnDialog = (function() {
 		}
 
 		function handleGenerateCleaningRulesButton() {
-			var selectedHNodeId = columnId;
-			var examples = cleaningExamples;
-			var info = new Object();
-			info["worksheetId"] = worksheetId;
-			info["workspaceId"] = $.workspaceGlobalInformation.id;
-			info["hNodeId"] = selectedHNodeId;
-			info["command"] = "GenerateCleaningRulesCommand";
-			info["examples"] = JSON.stringify(examples);
+			var info = generateInfoObject(worksheetId, columnId, "GenerateCleaningRulesCommand");
+			info["examples"] = JSON.stringify(cleaningExamples);
 			info["cellIDs"] = JSON.stringify(nodeIds);
 
 			var returned = $.ajax({
-				url : "RequestController",
-				type : "POST",
-				data : info,
-				dataType : "json",
-				complete : function(xhr, textStatus) {
+				url: "RequestController",
+				type: "POST",
+				data: info,
+				dataType: "json",
+				complete: function(xhr, textStatus) {
 					var json = $.parseJSON(xhr.responseText);
 					hideCleanningWaitingSignOnScreen();
 					parse(json);
 				},
-				error : function(xhr, textStatus) {
+				error: function(xhr, textStatus) {
 					hideCleanningWaitingSignOnScreen();
 					$.sticky("Error generating new cleaning rules!");
 				}
@@ -270,12 +239,12 @@ var TransformColumnDialog = (function() {
 
 			var spaceToCoverDiv = dialog;
 			spaceToCoverDiv.append(coverDiv.css({
-				"position" : "fixed",
-				"height" : $(document).height(),
-				"width" : $(document).width(),
-				"zIndex" : 100,
-				"top" : spaceToCoverDiv.position().top,
-				"left" : spaceToCoverDiv.position().left
+				"position": "fixed",
+				"height": $(document).height(),
+				"width": $(document).width(),
+				"zIndex": 100,
+				"top": spaceToCoverDiv.position().top,
+				"left": spaceToCoverDiv.position().left
 			}).show());
 		}
 
@@ -293,7 +262,7 @@ var TransformColumnDialog = (function() {
 				var nodeID = value["nodeId"];
 				var trTag1 = $("tr#" + nodeID + "_suggestion_cl_row", tab2);
 
-				if(trTag1.length == 0) {
+				if (trTag1.length == 0) {
 					trTag1 = $("<tr>").attr("id", nodeID + "_suggestion_cl_row").append($("<td>").addClass('info').text($("tr#" + nodeID + "_cl_row").data("originalVal")));
 				}
 
@@ -301,10 +270,10 @@ var TransformColumnDialog = (function() {
 				closeButton.attr("id", nodeID);
 				closeButton.addClass("ui-icon").addClass("ui-icon-close").addClass("closeButton");
 				closeButton.button({
-					icons : {
+					icons: {
 						//primary : "ui-icon-close"
 					},
-					text : false
+					text: false
 				});
 				closeButton.click(function(event) {
 					trTag1.hide();
@@ -312,10 +281,10 @@ var TransformColumnDialog = (function() {
 					var curId = $(this).attr("id");
 					// update examples and rerun the program
 					$.each(examples, function(index2, example) {
-						if(example["nodeId"] == curId)
+						if (example["nodeId"] == curId)
 							delInd = index2;
 					});
-					if(delInd != -1) {
+					if (delInd != -1) {
 						examples.splice(delInd, 1);
 						updateResult();
 					}
@@ -330,7 +299,7 @@ var TransformColumnDialog = (function() {
 				tab2.append(trTag1);
 			});
 			// recommanded examples
-			if(nodeId == undefined || nodeId == "-2") {
+			if (nodeId == undefined || nodeId == "-2") {
 				return;
 			}
 			var datadict = results[0]["data"];
@@ -338,7 +307,7 @@ var TransformColumnDialog = (function() {
 			var trTag = $("tr#" + nodeId + "_suggestion_cl_row", tab1);
 			$("tr", tab1).remove();
 			// empty an array in JS
-			if(trTag.length == 0) {
+			if (trTag.length == 0) {
 				trTag = $("<tr>").attr("id", nodeId + "_suggestion_cl_row").append($("<td>").addClass('info').html(datadict[nodeId]["Orgdis"])).append($("<td>").addClass("noBorder"));
 			} else {
 				trTag = trTag[0];
@@ -376,21 +345,21 @@ var TransformColumnDialog = (function() {
 			worksheetId = wsId;
 			columnId = colId;
 			dialog.modal({
-				keyboard : true,
-				show : true,
-				backdrop : 'static'
+				keyboard: true,
+				show: true,
+				backdrop: 'static'
 			});
 		};
 
-		return {//Return back the public methods
-			show : show,
-			init : init,
-			handleCleaningResultUpdate : handleCleaningResultUpdate
+		return { //Return back the public methods
+			show: show,
+			init: init,
+			handleCleaningResultUpdate: handleCleaningResultUpdate
 		};
 	};
 
 	function getInstance() {
-		if(!instance) {
+		if (!instance) {
 			instance = new PrivateConstructor();
 			instance.init();
 		}
@@ -398,8 +367,7 @@ var TransformColumnDialog = (function() {
 	}
 
 	return {
-		getInstance : getInstance
+		getInstance: getInstance
 	};
 
 })();
-

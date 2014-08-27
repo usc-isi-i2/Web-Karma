@@ -74,6 +74,7 @@ body {
  .truncate {
  	overflow: hidden;
  	text-overflow: ellipsis;
+ 	word-wrap: break-word;
  }
  
  #semanticTypesTableDiv {
@@ -106,4 +107,9 @@ body {
 
 .editable {
 	cursor: pointer;
+}
+
+.manualModeHeader {
+	background-color: rgb(255, 255, 200);
+    border-color: rgb(255, 255, 0);
 }

@@ -18,36 +18,43 @@
 			       <h4 class="modal-title">Set Semantic Type for: <span id="semanticType_columnName"></span></h4>
 			  </div>
 			  <div class="modal-body">
-			  		<div class="form-group">
-				  		<B>Semantic Types:</B>
-				  		<div id="semanticTypesTableDiv">
-					  		<table id="semanticTypesTable" class="table table-striped table-condensed">
-					  			<tr><th /><th /><th>Primary</th><th/></tr>
-				  			</table>
+			  		<div class="row">
+				  		<div class="col-sm-12">
+					  		<div class="row">
+				                <div class="col-sm-6"><b>Semantic Types:</b></div>
+				                <div class="col-sm-6"><button type="button" id="addType" class="btn btn-default pull-right">Add Row</button></div>
+				            </div>
+					  		<div id="semanticTypesTableDiv">
+						  		<table id="semanticTypesTable" class="table table-striped table-condensed">
+						  			<tr><th /><th /><th>Primary</th><th/><th/></tr>
+					  			</table>
+					  		</div>
 				  		</div>
 			  		</div>
-			  		
-			  		
-			  		<button type="button" id="addType" class="btn btn-default">Add synonym Semantic Type</button>
-			        
-                	<div class="checkbox">
-					  <label>
-					    <input type="checkbox" id="chooseClassKey">
-					    Mark as key for the class
-					  </label>
-					</div>
-					
-					<label>
-						Literal Type:
-						<input type="text" class="form-control" id="literalTypeSelect" autocomplete="off">
-							
-					</label>
+			  		 
+                	<div class="row">
+            			<div class="col-sm-6">
+  			  				<div class="checkbox">
+						  		<label>
+						    		<input type="checkbox" id="chooseClassKey">
+						    		Mark as key for the class
+						  		</label>
+							</div>
+            			</div>
+            			<div class="col-sm-6">
+							<label>
+								Literal Type:
+								<input type="text" class="form-control" id="literalTypeSelect" autocomplete="off">
+							</label>
+            			</div>
+  					</div>
 						
-					<div class="row" style="padding-top:10px">
+					<div class="row">
 						<div class="col-sm-11">
-						<button type="button" id="semanticTypesAdvancedOptions" class="btn btn-default">Advanced Options</button>
+							<button type="button" id="semanticTypesAdvancedOptions" class="btn btn-default">Advanced Options</button>
 						</div>
 					</div>
+					
 					<div class="row">
 						<div id="semanticTypesAdvacedOptionsDiv" style="display: none; padding-top:10px" class="col-sm-12">
 							<div class="input-group form-group">

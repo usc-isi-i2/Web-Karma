@@ -15,9 +15,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.kr2rml.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
+import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 
 public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
@@ -34,7 +34,7 @@ public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		rdfGen = new GenericRDFGenerator();
+		rdfGen = new GenericRDFGenerator(null);
 
 		// Add the models in
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
@@ -94,6 +94,7 @@ public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
 			fail("Execption: " + e.getMessage());
 		}
 	}
+	
 	@Test
 	public void testGenerateJSON2() {
 		try {

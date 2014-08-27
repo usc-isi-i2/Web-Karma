@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.kr2rml.affinity.ColumnAffinity;
 import edu.isi.karma.kr2rml.affinity.CommonParentRowColumnAffinity;
 import edu.isi.karma.kr2rml.affinity.NoColumnAffinity;
@@ -47,7 +48,7 @@ public class TemplateTermSetPopulatorPlan {
 	protected TemplateTermSetPopulatorWorker firstWorker;
 	protected LinkedList<ColumnTemplateTerm> columnTerms;
 	protected List<ColumnTemplateTerm> comparisonTerms;
-	
+	protected SuperSelection selection;
 	private static final List<ColumnAffinity> affinities;
 	static {
 		affinities = new LinkedList<ColumnAffinity>();
@@ -55,26 +56,28 @@ public class TemplateTermSetPopulatorPlan {
 		affinities.add(ParentRowColumnAffinity.INSTANCE);
 		affinities.add(CommonParentRowColumnAffinity.INSTANCE);
 	}	
-	protected TemplateTermSetPopulatorPlan()
+	protected TemplateTermSetPopulatorPlan(SuperSelection sel)
 	{
-		
+		this.selection = sel;
 	}
-	public TemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath, Collection<ColumnTemplateTerm> columnTerms)
+	public TemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath, Collection<ColumnTemplateTerm> columnTerms, SuperSelection sel)
 	{
 		this.termToPath = termToPath;
 		this.columnTerms = new LinkedList<ColumnTemplateTerm>();
 		this.comparisonTerms = this.columnTerms;
 		this.columnTerms.addAll(columnTerms);
 		this.firstWorker = null;
+		this.selection = sel;
 		generate();
 	}
-	public TemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath, Collection<ColumnTemplateTerm> columnTerms, TemplateTermSetPopulatorWorker firstWorker)
+	public TemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath, Collection<ColumnTemplateTerm> columnTerms, TemplateTermSetPopulatorWorker firstWorker, SuperSelection sel)
 	{
 		this.termToPath = termToPath;
 		this.columnTerms = new LinkedList<ColumnTemplateTerm>();
 		this.comparisonTerms = this.columnTerms;
 		this.columnTerms.addAll(columnTerms);
 		this.firstWorker = firstWorker;
+		this.selection = sel;
 		generate();
 	}	
 
@@ -152,7 +155,7 @@ public class TemplateTermSetPopulatorPlan {
 			ColumnTemplateTerm dependentTerm) {
 		TemplateTermSetPopulatorStrategy strategy = generateStrategy(
 				currentTerm, dependentTerm);
-		TemplateTermSetPopulatorWorker worker = new TemplateTermSetPopulatorWorker(currentTerm,termToPath.get(currentTerm), strategy);
+		TemplateTermSetPopulatorWorker worker = new TemplateTermSetPopulatorWorker(currentTerm,termToPath.get(currentTerm), strategy, selection);
 		if(workerDependencyPlaceholder.containsKey(currentTerm))
 		{
 			for(TemplateTermSetPopulatorWorker dependentWorker : workerDependencyPlaceholder.get(currentTerm)){

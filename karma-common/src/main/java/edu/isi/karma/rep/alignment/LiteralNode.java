@@ -53,4 +53,9 @@ public class LiteralNode extends Node {
 	public boolean isUri() {
 		return isUri;
 	}
+	
+	@Override
+	public String getLocalId() {
+		return getValue();
+	}
 }

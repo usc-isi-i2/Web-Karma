@@ -9,6 +9,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
 
 public class GetSemanticSuggestionsCommandFactory
@@ -16,7 +17,7 @@ public class GetSemanticSuggestionsCommandFactory
 			JSONInputCommandFactory {
 
 	private enum Arguments {
-		worksheetId, hNodeId
+		worksheetId, hNodeId, selectionName
 	}
 	
 	@Override
@@ -24,14 +25,19 @@ public class GetSemanticSuggestionsCommandFactory
 			throws JSONException, KarmaException {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
-		return new GetSemanticSuggestionsCommand(getNewId(workspace), worksheetId, hNodeId);
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		return new GetSemanticSuggestionsCommand(getNewId(workspace), worksheetId, hNodeId, 
+				selectionName);
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		return new GetSemanticSuggestionsCommand(getNewId(workspace), worksheetId, hNodeId);
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		return new GetSemanticSuggestionsCommand(getNewId(workspace), worksheetId, hNodeId, 
+				selectionName);
 	}
 
 	@Override

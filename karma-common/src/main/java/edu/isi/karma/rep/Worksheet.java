@@ -22,11 +22,13 @@
  */
 package edu.isi.karma.rep;
 
+import java.io.PrintWriter;
+
+import edu.isi.karma.controller.command.selection.SelectionManager;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.metadata.MetadataContainer;
-
-import java.io.PrintWriter;
 
 /**
  * @author szekely
@@ -42,7 +44,8 @@ public class Worksheet extends RepEntity {
     private MetadataContainer metadataContainer;
     private String encoding;
     private Object jsonAnnotation = null;
-    
+    private SuperSelectionManager superSelMgr;
+    private SelectionManager selMgr;
     @Override
     public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {
         pw.print(prefix);
@@ -56,6 +59,8 @@ public class Worksheet extends RepEntity {
         this.headers = headers;
         this.dataTable = dataTable;
         this.encoding = encoding;
+        this.selMgr = new SelectionManager();
+        this.superSelMgr = new SuperSelectionManager(selMgr);        
     }
     
     /*
@@ -199,6 +204,14 @@ public class Worksheet extends RepEntity {
     
     public Object getJsonAnnotation() {
     	return this.jsonAnnotation;
+    }
+    
+    public SuperSelectionManager getSuperSelectionManager() {
+    	return superSelMgr;
+    }
+    
+    public SelectionManager getSelectionManager() {
+    	return selMgr;
     }
 
 }
