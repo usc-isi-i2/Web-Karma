@@ -142,7 +142,15 @@ public class TriplesMapWorkerPlan {
 				LOG.debug("Skipping " + pom.toString());
 				continue;
 			}
-			PredicateObjectMappingPlan pomPlan = new ColumnPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, subjectMapPlan.getSubjectTermsToPaths(), kr2rmlMapping,uriFormatter, factory, translator, hNodeToContextUriMap, generateContext, selection);
+			PredicateObjectMappingPlan pomPlan = null;
+			if(pom.getObject().getTemplate().getAllColumnNameTermElements().isEmpty())
+			{
+				pomPlan = new ConstantPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, kr2rmlMapping,subjectMapPlan.getSubjectTermsToPaths(), uriFormatter, factory, translator, selection);
+			}
+			else
+			{
+				pomPlan = new ColumnPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, subjectMapPlan.getSubjectTermsToPaths(), kr2rmlMapping,uriFormatter, factory, translator, hNodeToContextUriMap, generateContext, selection);
+			}
 			columnLinksPlans.add(pomPlan);
 		}
 	}
