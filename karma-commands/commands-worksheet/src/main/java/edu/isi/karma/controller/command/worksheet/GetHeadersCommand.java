@@ -1,6 +1,8 @@
 package edu.isi.karma.controller.command.worksheet;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -72,6 +74,23 @@ public class GetHeadersCommand extends WorksheetCommand {
 				JSONObject obj = new JSONObject();
 				obj.put("ColumnName", hn.getColumnName());
 				obj.put("HNodeId", hn.getId());
+				HashMap<String, HashSet<HNode>> appliedCommands = hn.getAppliedCommands();
+				JSONArray commands = new JSONArray();
+				for(String command : appliedCommands.keySet()) {
+					JSONObject com = new JSONObject();
+					com.put("CommandName", command);
+					HashSet<HNode> cNodes = appliedCommands.get(command);
+					JSONArray cols = new JSONArray();
+					for(HNode cNode : cNodes) {
+						JSONObject col = new JSONObject();
+						col.put("HNodeId", cNode.getId());
+						col.put("ColumnName", cNode.getColumnName());
+						cols.put(col);
+					}
+					com.put("Columns", cols);
+					commands.put(com);
+				}
+				obj.put("appliedCommands", commands);
 				array.put(obj);
 			}
 		}

@@ -33,14 +33,15 @@ public abstract class Selection {
 	protected String Id;
 	protected Map<Row, Boolean> selectedRowsCache;
 	protected Set<String> evalColumns;
-
+	protected String superSelectionName;
 	Selection(Workspace workspace, String worksheetId, 
-			String hTableId, String name) {
+			String hTableId, String name, String superSelectionName) {
 		this.worksheetId = worksheetId;
 		this.workspace = workspace;
 		this.hTableId = hTableId;
 		this.Id = name;
 		this.status = SelectionStatus.UP_TO_DATE;
+		this.superSelectionName = superSelectionName;
 		selectedRowsCache = new HashMap<Row, Boolean>();
 		evalColumns = new HashSet<String>();
 	}
@@ -96,5 +97,9 @@ public abstract class Selection {
 	
 	public Set<String> getInputColumns() {
 		return evalColumns;
+	}
+	
+	public String getParentSuperSelection() {
+		return superSelectionName;
 	}
 }

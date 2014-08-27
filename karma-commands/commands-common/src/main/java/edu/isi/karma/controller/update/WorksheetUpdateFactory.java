@@ -24,7 +24,6 @@ package edu.isi.karma.controller.update;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.config.UIConfiguration;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.selection.Selection;
@@ -59,7 +58,7 @@ public class WorksheetUpdateFactory {
 
 	private static void createWorksheetHierarchicalUpdates(String worksheetId,
 			UpdateContainer c, SuperSelection sel) {
-		c.add(new WorksheetHeadersUpdate(worksheetId));
+		c.add(new WorksheetHeadersUpdate(worksheetId, sel));
 		c.add(new WorksheetDataUpdate(worksheetId, sel));
 		c.add(new WorksheetSuperSelectionListUpdate(worksheetId));
 	}

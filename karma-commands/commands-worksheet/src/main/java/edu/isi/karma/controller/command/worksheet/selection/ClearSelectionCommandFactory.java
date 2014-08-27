@@ -14,7 +14,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class ClearSelectionCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
-		worksheetId, hNodeId, type
+		worksheetId, hNodeId, type, selectionName
 	}
 	
 	@Override
@@ -23,7 +23,8 @@ public class ClearSelectionCommandFactory extends JSONInputCommandFactory {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String type = CommandInputJSONUtil.getStringValue(Arguments.type.name(), inputJson);
-		Command cmd = new ClearSelectionCommand(getNewId(workspace), worksheetId, hNodeId, type);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		Command cmd = new ClearSelectionCommand(getNewId(workspace), worksheetId, selectionName, hNodeId, type);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}

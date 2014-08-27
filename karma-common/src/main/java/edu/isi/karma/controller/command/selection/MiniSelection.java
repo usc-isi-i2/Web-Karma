@@ -27,9 +27,9 @@ public class MiniSelection extends Selection {
 	private static Logger logger = LoggerFactory
 			.getLogger(MiniSelection.class);
 
-	MiniSelection(Workspace workspace, String worksheetId, String hTableId,
-			String name, String pythonCode, boolean onError) {
-		super(workspace, worksheetId, hTableId, name);
+	public MiniSelection(Workspace workspace, String worksheetId, String hTableId,
+			String name, String superSelectionName, String pythonCode, boolean onError) {
+		super(workspace, worksheetId, hTableId, name, superSelectionName);
 		this.pythonCode = pythonCode;
 		this.onError = onError;
 		populateSelection();
@@ -112,6 +112,7 @@ public class MiniSelection extends Selection {
 		repo.compileAndAddToRepositoryAndExec(interpreter, transformMethodStmt);
 
 		interpreter.set("workspaceid", workspace.getId());
+		interpreter.set("selectionName", superSelectionName);
 		interpreter.set("command", this);
 		return repo.getTransformCode();
 	}	

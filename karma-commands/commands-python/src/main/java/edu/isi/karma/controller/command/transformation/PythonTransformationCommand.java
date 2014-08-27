@@ -138,6 +138,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 
 		interpreter.set("workspaceid", workspace.getId());
 		interpreter.set("command", this);
+		interpreter.set("selectionName", selection.getName());
 		PyCode py = repo.getTransformCode();
 
 		int numRowsWithErrors = 0;

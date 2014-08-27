@@ -7,7 +7,8 @@ import org.json.JSONArray;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.HistoryUpdate;
@@ -18,13 +19,11 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 
-public class RefreshSuperSelectionCommand extends WorksheetCommand {
+public class RefreshSuperSelectionCommand extends WorksheetSelectionCommand {
 
-	private String currentSelectionName;
 	public RefreshSuperSelectionCommand(String id, String worksheetId, 
-			String currentSelectionName) {
-		super(id, worksheetId);
-		this.currentSelectionName = currentSelectionName;
+			String selectionId) {
+		super(id, worksheetId, selectionId);
 		addTag(CommandTag.Transformation);
 	}
 
@@ -51,13 +50,14 @@ public class RefreshSuperSelectionCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		SuperSelection currentSel = worksheet.getSuperSelectionManager().getSuperSelection(currentSelectionName);
-		for (String s : currentSel.getAllSelection()) {
+		SuperSelection currentSel = getSuperSelection(worksheet);
+		for (Selection sel : currentSel.getAllSelection()) {
 			JSONArray inputJSON = new JSONArray();
-			HTable ht = workspace.getFactory().getHTable(s);
+			HTable ht = workspace.getFactory().getHTable(sel.getHTableId());
 			Iterator<String> itr = ht.getHNodeIds().iterator();
 			inputJSON.put(CommandInputJSONUtil.createJsonObject("worksheetId", worksheetId, ParameterType.worksheetId));
 			inputJSON.put(CommandInputJSONUtil.createJsonObject("hNodeId", itr.next(), ParameterType.hNodeId));
+			inputJSON.put(CommandInputJSONUtil.createJsonObject("selectionName", currentSel.getName(), ParameterType.other));
 			try {
 				Command c = new RefreshSelectionCommandFactory().createCommand(inputJSON, workspace);
 				c.doIt(workspace);

@@ -25,7 +25,13 @@
 				<div class="checkbox">
 				  <label>
 				    <input type="checkbox" id="forgetModels">
-				    Model Histories
+				    Auto-Saved Models
+				  </label>
+				</div>
+				<div class="checkbox">
+				  <label>
+				    <input type="checkbox" id="forgetAlignment">
+				    Learned Alignment
 				  </label>
 				</div>
 				

@@ -21,6 +21,14 @@
 
 package edu.isi.karma.controller.command;
 
+import java.io.File;
+import java.io.PrintWriter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
@@ -29,25 +37,19 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.PrintWriter;
 
 public class ResetKarmaCommand extends Command {
 	private final boolean forgetSemanticTypes;
 	private final boolean forgetModels;
+	private final boolean forgetAlignment;
 	
 	private static Logger logger = LoggerFactory.getLogger(ResetKarmaCommand.class);
 	
-	protected ResetKarmaCommand(String id, boolean forgetSemanticTypes, boolean forgetModels) {
+	protected ResetKarmaCommand(String id, boolean forgetSemanticTypes, boolean forgetModels, boolean forgetAlignment) {
 		super(id);
 		this.forgetSemanticTypes = forgetSemanticTypes;
 		this.forgetModels = forgetModels;
+		this.forgetAlignment = forgetAlignment;
 	}
 
 	@Override
@@ -62,14 +64,45 @@ public class ResetKarmaCommand extends Command {
 
 	@Override
 	public String getDescription() {
-		if (forgetSemanticTypes && forgetModels)
-			return "Semantic Types and Models";
-		else if (forgetModels)
-			return "Models";
-		else if(forgetSemanticTypes)
-			return "Semantic Types";
-		else
-			return "";
+		String desc = "";
+		int numSelected = 0;
+		
+		if(forgetSemanticTypes)  numSelected++;
+		if(forgetModels) numSelected++;
+		if(forgetAlignment) numSelected++;
+		
+		int curSep = 0;
+		if(forgetSemanticTypes) {
+			desc = "Semantic Types";
+			curSep ++;
+		}
+		if(forgetModels) {
+			if(curSep > 0) {
+				if(curSep < numSelected-1) {
+					desc += ", ";
+				} else {
+					desc += " and ";
+				}
+			}
+				
+			desc += "Models";
+			curSep++;
+		}
+		
+		if(forgetAlignment) {
+			if(curSep > 0) {
+				if(curSep < numSelected-1) {
+					desc += ", ";
+				} else {
+					desc += " and ";
+				}
+			}
+				
+			desc += "Alignment";
+			curSep++;
+		}
+		
+		return desc;
 	}
 
 	@Override
@@ -82,59 +115,61 @@ public class ResetKarmaCommand extends Command {
 		UpdateContainer c = new UpdateContainer();
 		if (forgetSemanticTypes) {
 			boolean deletTypes = workspace.getSemanticTypeModelHandler().removeAllLabels();
-			if (!deletTypes && forgetModels)
-				return new UpdateContainer(new ErrorUpdate("Error occured while removing semantic types. Models have also not been reset."));
-			else if (!deletTypes)
-				return new UpdateContainer(new ErrorUpdate("Error occured while removing semantic types."));
+			if (!deletTypes)
+				c.add(new ErrorUpdate("Error occured while removing semantic types."));
 		}
 		
 		if (forgetModels) {
-			c.add(new AbstractUpdate(){
-				
-			@Override
-			public void applyUpdate(VWorkspace vWorkspace){
-			/** Delete the model history files **/
-			final String vwsPrefId = vWorkspace.getPreferencesId();
-			File historyDir = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "publish/History/");
-			if (!historyDir.exists() || !historyDir.isDirectory()) {
+			File dir = new File(ServletContextParameterMap.getParameterValue(ContextParameter.R2RML_USER_DIR));
+			if (!dir.exists() || !dir.isDirectory()) {
 				logger.error("Directory not found where the model histories are stored.");
-				/*if (forgetSemanticTypes)
-					return new UpdateContainer(new ErrorUpdate("Error occured while removing model histories." +
-							" Learned Semantic types have been reset."));
-				return new UpdateContainer(new ErrorUpdate("Error occured while removing model histories."));*/
-				//TODO return error messages
-				return;
-			}
+				c.add(new ErrorUpdate("Error occured while removing Model Histories: Directory was not found"));
+			} else {
 			
-			File[] workspaceFiles = historyDir.listFiles(new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String name) {
-					// Remove the workspace name in front of it
-					// If it has been removed and it starts with _, return true
-					return (name.replaceAll(vwsPrefId, "").startsWith("_"));
-				}
-			});
-			if (workspaceFiles != null && workspaceFiles.length != 0) {
-				for (File file: workspaceFiles) {
-					file.delete();
+				File[] workspaceFiles = dir.listFiles();
+				if (workspaceFiles != null && workspaceFiles.length != 0) {
+					for (File file: workspaceFiles) {
+						file.delete();
+					}
 				}
 			}
-			}
-
-			@Override
-			public void generateJson(String prefix, PrintWriter pw,
-					VWorkspace vWorkspace) {
-				JSONObject obj = new JSONObject();
-				try {
-					obj.put(GenericJsonKeys.updateType.name(), "ResetKarmaCommandUpdate");
-					pw.println(obj.toString());
-				} catch (JSONException e) {
-					logger.error("Unable to generate Json", e);
-				}
-				
-			}
-			});
 		}
+			
+		if(forgetAlignment) {
+			File dir = new File(ServletContextParameterMap.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY));
+			if (!dir.exists() || !dir.isDirectory()) {
+				logger.error("Directory not found where the Alignment is stored.");
+				c.add(new ErrorUpdate("Error occured while removing Alignment: Directory was not found"));
+			} else {
+			
+				File[] workspaceFiles = dir.listFiles();
+				if (workspaceFiles != null && workspaceFiles.length != 0) {
+					for (File file: workspaceFiles) {
+						file.delete();
+					}
+				}
+			}
+		}
+		
+		c.add(new AbstractUpdate(){
+				
+	
+				@Override
+				public void generateJson(String prefix, PrintWriter pw,
+						VWorkspace vWorkspace) {
+					JSONObject obj = new JSONObject();
+					try {
+						obj.put(GenericJsonKeys.updateType.name(), "ResetKarmaCommandUpdate");
+						pw.println(obj.toString());
+					} catch (JSONException e) {
+						logger.error("Unable to generate Json", e);
+					}
+					
+				}
+			});
+		
+		
+		
 		c.add(new InfoUpdate("Reset complete"));
 		return c;
 	}

@@ -22,6 +22,9 @@ package edu.isi.karma.controller.command.worksheet;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -40,18 +43,22 @@ import edu.isi.karma.rep.Workspace;
 public class SplitValuesCommand extends WorksheetSelectionCommand {
 	private final String hNodeId;
 	private final String delimiter;
-	private String newhNodeId;
 	private String columnName;
 	private String newColName;
+	private String newHNodeId;
 	private Command splitCommaCommand;
-	//	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	protected SplitValuesCommand(String id, String worksheetId,
-			String hNodeId, String delimiter, String newColName, String selectionId) {
+			String hNodeId, String delimiter, String newColName, 
+			String newHNodeId,
+			String selectionId) {
 		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.delimiter = delimiter;
 		this.newColName = newColName;
+		this.newHNodeId = newHNodeId;
 		addTag(CommandTag.Transformation);
 	}
 
@@ -94,14 +101,31 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 			return splitCommaCommand.doIt(workspace);
 		}
 
-		HNode newhNode;
-		HTable hTable = workspace.getFactory().getHTable(hNode.getHTableId());
-		newhNode = hTable.addHNode(newColName, HNodeType.Transformation, wk, workspace.getFactory());
-		HTable newTable = newhNode.addNestedTable("Comma Split Values", wk, workspace.getFactory());
-		newTable.addHNode("Values", HNodeType.Transformation, wk, workspace.getFactory());
-		newhNodeId = newhNode.getId();
+		logger.info("SplitValuesCommand:" + newColName + ", columnName:" + columnName);
+		
+		HNode newhNode = null;
+		if(newHNodeId != null && newHNodeId.length() > 0)
+			newhNode = workspace.getFactory().getHNode(newHNodeId);
+		boolean isUpdate = false;
+		if(newhNode == null) {
+			HTable hTable = workspace.getFactory().getHTable(hNode.getHTableId());
+			newhNode = hTable.addHNode(newColName, HNodeType.Transformation, wk, workspace.getFactory());
+			
+			HTable newTable = newhNode.addNestedTable("Comma Split Values", wk, workspace.getFactory());
+			newTable.addHNode("Values", HNodeType.Transformation, wk, workspace.getFactory());
+			newHNodeId = newhNode.getId();
+			hNode.addAppliedCommand("SplitValuesCommand", newhNode);
+		} else {
+			logger.info("Column names are same, re-compute the split values");
+			isUpdate = true;
+		}
+		
+		
+		
 		SplitColumnByDelimiter split = new SplitColumnByDelimiter(hNodeId, newhNode.getId(), wk, delimiter, workspace, selection);
 		try {
+			if(isUpdate)
+				split.empty();
 			split.split();
 		} catch (IOException e) {
 			c.add(new ErrorUpdate("Cannot split column! csv reader error"));
@@ -122,9 +146,9 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 		if (splitCommaCommand != null)
 			return splitCommaCommand.undoIt(workspace);
 		RepFactory factory = workspace.getFactory();
-		HNode hNode = factory.getHNode(newhNodeId);
+		HNode hNode = factory.getHNode(newHNodeId);
 		HTable hTable = factory.getHTable(hNode.getHTableId());
-		hTable.removeHNode(newhNodeId, factory.getWorksheet(worksheetId));
+		hTable.removeHNode(newHNodeId, factory.getWorksheet(worksheetId));
 		hNode.removeNestedTable();
 		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, selection);
 	}

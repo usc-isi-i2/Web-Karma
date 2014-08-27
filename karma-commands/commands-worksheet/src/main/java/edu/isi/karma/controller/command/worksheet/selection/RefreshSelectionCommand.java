@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
 import edu.isi.karma.controller.command.selection.LargeSelection.Operation;
 import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.SelectionManager;
@@ -29,12 +29,12 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 
-public class RefreshSelectionCommand extends WorksheetCommand {
+public class RefreshSelectionCommand extends WorksheetSelectionCommand {
 
 	private String hNodeId;
 	public RefreshSelectionCommand(String id, String worksheetId, 
-			String hNodeId) {
-		super(id, worksheetId);
+			String selectionId, String hNodeId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		addTag(CommandTag.Transformation);
 	}
@@ -63,9 +63,9 @@ public class RefreshSelectionCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		RepFactory factory = workspace.getFactory();
-		SuperSelection superSel = worksheet.getSuperSelectionManager().getSuperSelection("DEFAULT_TEST");
+		SuperSelection superSel = getSuperSelection(worksheet);
 		HTable hTable = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
-		Selection currentSel = worksheet.getSelectionManager().getSelection(hTable.getId());
+		Selection currentSel = superSel.getSelection(hTable.getId());
 		if (currentSel != null) {
 			currentSel.updateSelection();
 		}
@@ -78,6 +78,7 @@ public class RefreshSelectionCommand extends WorksheetCommand {
 			inputJSON.put(CommandInputJSONUtil.createJsonObject("operation", Operation.Intersect.name(), ParameterType.other));
 			inputJSON.put(CommandInputJSONUtil.createJsonObject("pythonCode", SelectionManager.defaultCode, ParameterType.other));
 			inputJSON.put(CommandInputJSONUtil.createJsonObject("onError", "false", ParameterType.other));
+			inputJSON.put(CommandInputJSONUtil.createJsonObject("selectionName", superSel.getName(), ParameterType.other));
 			Command t = null;
 			try {
 				t = new OperateSelectionCommandFactory().createCommand(inputJSON, workspace);

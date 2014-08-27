@@ -21,8 +21,8 @@
 package edu.isi.karma.kr2rml.planning;
 
 import java.util.Map;
+import java.util.UUID;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,7 +119,7 @@ public class ColumnPredicateObjectMappingPlan extends
 		if (hNodeToContextUriMap.containsKey(hNodeId))
 			return hNodeToContextUriMap.get(hNodeId);
 		else {
-			String randomId = RandomStringUtils.randomAlphanumeric(10);
+			String randomId = UUID.randomUUID().toString();
 			String uri = Namespaces.KARMA_DEV + randomId + "_" + hNodeId;
 			hNodeToContextUriMap.put(hNodeId, uri);
 			return uri;
