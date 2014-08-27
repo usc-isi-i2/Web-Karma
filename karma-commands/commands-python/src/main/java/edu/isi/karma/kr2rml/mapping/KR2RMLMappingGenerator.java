@@ -332,6 +332,25 @@ public class KR2RMLMappingGenerator {
 						}
 					}
 				}
+			} else if(node instanceof LiteralNode) {
+				LiteralNode literalNode = (LiteralNode)node;
+				
+				SubjectMap subj = new SubjectMap(literalNode.getId());
+				
+				if (literalNode.getId().equals(steinerTreeRoot.getId()))
+					subj.setAsSteinerTreeRootNode(true);
+				
+				StringTemplateTerm typeTerm = new StringTemplateTerm(literalNode.getLabel().getUri(), true);
+				TemplateTermSet typeTermSet = new TemplateTermSet();
+				typeTermSet.addTemplateTermToSet(typeTerm);
+				subj.addRdfsType(typeTermSet);
+				
+				TemplateTermSet templateTermSet = new TemplateTermSet();
+				StringTemplateTerm tempTerm = new StringTemplateTerm(literalNode.getValue(), literalNode.isUri());
+				templateTermSet.addTemplateTermToSet(tempTerm);
+				subj.setTemplate(templateTermSet);
+				
+				r2rmlMapping.getSubjectMapIndex().put(node.getId(), subj);
 			}
 		}
 	}
@@ -410,21 +429,28 @@ public class KR2RMLMappingGenerator {
 					else if(target instanceof LiteralNode) {
 						LiteralNode lnode = (LiteralNode) target;
 						
+						//Create the object
 						TemplateTermSet termSet = new TemplateTermSet();
+						StringTemplateTerm literalTerm = new StringTemplateTerm(lnode.getValue(), lnode.isUri());
+						termSet.addTemplateTermToSet(literalTerm);
 						
-						StringTemplateTerm rdfLiteralTypeTerm = new StringTemplateTerm(lnode.getValue(), lnode.isUri());
+						StringTemplateTerm rdfLiteralTypeTerm = new StringTemplateTerm(lnode.getLabel().getUri(), true);
 						TemplateTermSet rdfLiteralTypeTermSet = new TemplateTermSet();
 						rdfLiteralTypeTermSet.addTemplateTermToSet(rdfLiteralTypeTerm);
 						
-						TriplesMap objTrMap = r2rmlMapping.getTriplesMapIndex().get(target.getId());
 						ObjectMap objMap = new ObjectMap(target.getId(), termSet, rdfLiteralTypeTermSet);
 						poMap.setObject(objMap);
 						
 						// Create the predicate
 						Predicate pred = new Predicate(olink.getId());
-						pred.getTemplate().addTemplateTermToSet(rdfLiteralTypeTerm);
-						poMap.setPredicate(pred);
+						pred.getTemplate().addTemplateTermToSet(
+									new StringTemplateTerm(olink.getLabel().getUri(), true));
 						
+						poMap.setPredicate(pred);
+						if (generateInverse)
+							addInversePropertyIfExists(subjMap, poMap, olink, subjTrMap);
+						
+						TriplesMap objTrMap = new TriplesMap(target.getId(), r2rmlMapping.getSubjectMapIndex().get(target.getId()));
 						// Add the links in the graph links data structure
 						TriplesMapLink link = new TriplesMapLink(subjTrMap, objTrMap, poMap);  
 						r2rmlMapping.getAuxInfo().getTriplesMapGraph().addLink(link);
