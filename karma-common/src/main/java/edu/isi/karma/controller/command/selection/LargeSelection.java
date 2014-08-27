@@ -14,10 +14,10 @@ public class LargeSelection extends Selection {
 	private Selection sourceA;
 	private Selection sourceB;
 	private Operation operation;
-	LargeSelection(Workspace workspace, String worksheetId,
-			String hTableId, String name, 
+	public LargeSelection(Workspace workspace, String worksheetId,
+			String hTableId, String name, String superSelectionName, 
 			Selection sourceA, Selection sourceB, Operation operation) {
-		super(workspace, worksheetId, hTableId, name);
+		super(workspace, worksheetId, hTableId, name, superSelectionName);
 		this.sourceA = sourceA;
 		this.sourceB = sourceB;
 		this.operation = operation;

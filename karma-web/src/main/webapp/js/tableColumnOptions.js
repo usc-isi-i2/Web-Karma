@@ -1721,7 +1721,6 @@ var PyTransformSelectionDialog = (function() {
 			var info = generateInfoObject(worksheetId, headers[0]['HNodeId'], "PreviewPythonTransformationResultsCommand");
 			info["transformationCode"] = editor.getValue();
 			info["errorDefaultValue"] = $("#pythonTransformErrorDefaultValueSelection").val();
-			info["selectionName"] = "DEFAULT_SELECTION";
 			$("#pyTransformErrorWindowSelection").hide();
 			// Send the request
 			$.ajax({

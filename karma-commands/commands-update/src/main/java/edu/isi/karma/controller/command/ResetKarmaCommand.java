@@ -21,6 +21,14 @@
 
 package edu.isi.karma.controller.command;
 
+import java.io.File;
+import java.io.PrintWriter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
@@ -29,14 +37,6 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.PrintWriter;
 
 public class ResetKarmaCommand extends Command {
 	private final boolean forgetSemanticTypes;

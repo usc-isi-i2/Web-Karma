@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.ICommand.CommandTag;
+import edu.isi.karma.controller.command.selection.MiniSelection;
 import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
@@ -91,8 +92,8 @@ public class TestSelection {
 		StringBuilder pythonCode = new StringBuilder();
 		pythonCode.append("if getValue(\"title\") == \"Prof\": \n");
 		pythonCode.append("	 return True \n");
-		Selection sel = worksheet.getSelectionManager().createMiniSelection(workspace, worksheet.getId(), 
-				worksheet.getHeaders().getId(), 
+		Selection sel = new MiniSelection(workspace, worksheet.getId(), 
+				worksheet.getHeaders().getId(), workspace.getFactory().getNewId("SEL"), null, 
 				pythonCode.toString(), true);
 		assertEquals(sel != null, true);
 		Table t = worksheet.getDataTable();
@@ -109,8 +110,8 @@ public class TestSelection {
 		StringBuilder pythonCode = new StringBuilder();
 		pythonCode.append("if getValue(\"title\") == \"Prof\": \n");
 		pythonCode.append("	 return True \n");
-		Selection sel = worksheet.getSelectionManager().createMiniSelection(workspace, worksheet.getId(), 
-				worksheet.getHeaders().getId(), 
+		Selection sel = new MiniSelection(workspace, worksheet.getId(), 
+				worksheet.getHeaders().getId(), workspace.getFactory().getNewId("SEL"), "test", 
 				pythonCode.toString(), true);
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
 				"people-model", getTestResource(

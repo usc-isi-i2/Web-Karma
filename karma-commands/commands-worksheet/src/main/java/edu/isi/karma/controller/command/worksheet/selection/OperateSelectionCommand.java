@@ -3,7 +3,9 @@ package edu.isi.karma.controller.command.worksheet.selection;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.LargeSelection;
 import edu.isi.karma.controller.command.selection.LargeSelection.Operation;
+import edu.isi.karma.controller.command.selection.MiniSelection;
 import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.SelectionManager;
 import edu.isi.karma.controller.command.selection.SuperSelection;
@@ -65,19 +67,20 @@ public class OperateSelectionCommand extends WorksheetSelectionCommand {
 		Selection currentSel = superSel.getSelection(hTable.getId());
 		Selection anotherSel = null;
 		if (!operation.equalsIgnoreCase(Operation.Invert.name())) {
-			anotherSel = worksheet.getSelectionManager().createMiniSelection(workspace, worksheetId, hTable.getId(), pythonCode, onError);
+			anotherSel = new MiniSelection(workspace, worksheetId, hTable.getId(), factory.getNewId("SEL"), superSel.getName(), pythonCode, onError);
+			worksheet.getSelectionManager().addSelection(anotherSel);
 		}
 		if (currentSel == null && operation.equalsIgnoreCase(Operation.Invert.name()) ) {
 			return getErrorUpdate("No defined Selection");
 		}
 		if (currentSel == null) {
-			currentSel = worksheet.getSelectionManager().createMiniSelection(workspace, worksheetId, hTable.getId(), SelectionManager.defaultCode, onError);
+			currentSel = new MiniSelection(workspace, worksheetId, hTable.getId(), factory.getNewId("SEL"), superSel.getName(), SelectionManager.defaultCode, onError);
+			worksheet.getSelectionManager().addSelection(currentSel);
 		}
 		try {
 			Operation operation = Operation.valueOf(Operation.class, this.operation);
-			Selection t = worksheet.getSelectionManager().createLargeSelection(currentSel, anotherSel, operation);
-			if (t == null)
-				return getErrorUpdate("Creation unsuccessful");
+			Selection t = new LargeSelection(workspace, worksheetId, hTable.getId(), factory.getNewId("SEL"), superSel.getName(), currentSel, anotherSel, operation);
+			worksheet.getSelectionManager().addSelection(t);
 			previousSelection = superSel.getSelection(t.getHTableId());
 			if (previousSelection != null)
 				superSel.removeSelection(previousSelection);

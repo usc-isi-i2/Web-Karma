@@ -6,34 +6,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import edu.isi.karma.controller.command.selection.LargeSelection.Operation;
-import edu.isi.karma.rep.Workspace;
-
 public class SelectionManager {
 	private Map<String, List<Selection> > selectionMapping = new ConcurrentHashMap<String, List<Selection> >();
 	public static String defaultCode = "return False";
-	public Selection createMiniSelection(Workspace workspace, String worksheetId, 
-			String hTableId, String pythonCode, boolean onError) {
-		Selection sel = new MiniSelection(workspace, worksheetId, hTableId, workspace.getFactory().getNewId("SEL"), pythonCode, onError);
-		addSelection(sel);
-		return sel;		
-	}
-	
-	public Selection createLargeSelection(Selection selectionA, Selection selectionB, Operation op){
-		if (selectionB != null)
-			if (!selectionA.hTableId.equals(selectionB.hTableId) || 
-				!selectionA.worksheetId.equals(selectionB.worksheetId) ||
-				!selectionA.workspace.equals(selectionB.workspace))
-			return null;
-		if (selectionB == null && op != Operation.Invert)
-			return null;
-		Workspace workspace = selectionA.workspace;		
-		Selection sel = new LargeSelection(workspace, 
-				selectionA.worksheetId, selectionA.hTableId, 
-				 workspace.getFactory().getNewId("SEL"), selectionA, selectionB, op);
-		addSelection(sel);
-		return sel;
-	}
 	
 	public void removeSelection(Selection sel) {
 		List<Selection> selections = selectionMapping.get(sel.hTableId);
