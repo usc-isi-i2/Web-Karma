@@ -112,11 +112,10 @@ public class TestSelection {
 		Selection sel = worksheet.getSelectionManager().createMiniSelection(workspace, worksheet.getId(), 
 				worksheet.getHeaders().getId(), 
 				pythonCode.toString(), true);
-		worksheet.getSelectionManager().updateCurrentSelection(sel.getHTableId(), sel);
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
 				"people-model", getTestResource(
 						 "people-model.ttl"));
-		worksheet.getSuperSelectionManager().defineSelection("test").addSelection(sel.getHTableId());
+		worksheet.getSuperSelectionManager().defineSelection("test").addSelection(sel);
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		List<KR2RMLRDFWriter> writers = new ArrayList<KR2RMLRDFWriter>();

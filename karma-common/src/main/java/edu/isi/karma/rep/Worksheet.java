@@ -60,7 +60,7 @@ public class Worksheet extends RepEntity {
         this.dataTable = dataTable;
         this.encoding = encoding;
         this.selMgr = new SelectionManager();
-        this.superSelMgr = new SuperSelectionManager(selMgr);        
+        this.superSelMgr = new SuperSelectionManager();        
     }
     
     /*

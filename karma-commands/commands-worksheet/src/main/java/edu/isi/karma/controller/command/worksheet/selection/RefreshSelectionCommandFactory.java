@@ -14,15 +14,16 @@ import edu.isi.karma.webserver.KarmaException;
 public class RefreshSelectionCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
-		worksheetId, hNodeId
+		worksheetId, hNodeId, selectionName
 	}
 	
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
-		Command cmd = new RefreshSelectionCommand(getNewId(workspace), worksheetId, hNodeId);
+		Command cmd = new RefreshSelectionCommand(getNewId(workspace), worksheetId, selectionName, hNodeId);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}

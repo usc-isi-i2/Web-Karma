@@ -29,7 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.isi.karma.controller.command.selection.Selection;
-import edu.isi.karma.controller.command.selection.SelectionManager;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.ColumnMetadata;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
@@ -42,15 +42,16 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 
 	private final String worksheetId;
 	private Workspace workspace;
-	private SelectionManager selMgr;
+	private SuperSelection selection;
 	private enum JsonKeys {
 		worksheetId, columns, columnName, characterLength, hasNestedTable, 
 		columnClass, hNodeId, pythonTransformation, previousCommandId, columnDerivedFrom, hNodeType, status
 	}
 
-	public WorksheetHeadersUpdate(String worksheetId) {
+	public WorksheetHeadersUpdate(String worksheetId, SuperSelection selection) {
 		super();
 		this.worksheetId = worksheetId;
+		this.selection = selection;
 	}
 
 	public void generateJson(String prefix, PrintWriter pw,
@@ -64,7 +65,6 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 					this.getClass().getSimpleName());
 			
 			Worksheet wk = vWorksheet.getWorksheet();
-			selMgr = wk.getSelectionManager();
 			ColumnMetadata colMeta = wk.getMetadataContainer().getColumnMetadata();
 			List<VHNode> viewHeaders = vWorksheet.getHeaderViewNodes();
 			
@@ -98,7 +98,7 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 		hNodeObj.put(JsonKeys.hNodeId.name(), hNode.getId());
 		HNode t = workspace.getFactory().getHNode(hNode.getId());
 		if (t.hasNestedTable()) {
-			Selection sel = selMgr.getSelection(t.getNestedTable().getId());
+			Selection sel = selection.getSelection(t.getNestedTable().getId());
 			if (sel != null)
 				hNodeObj.put(JsonKeys.status.name(), sel.getStatus().name());
 		}

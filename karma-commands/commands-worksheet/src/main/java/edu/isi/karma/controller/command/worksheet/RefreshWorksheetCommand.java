@@ -56,7 +56,7 @@ public class RefreshWorksheetCommand extends WorksheetSelectionCommand {
 		for(int i=0; i<updates.length(); i++) {
 			String update = updates.getString(i);
 			switch(update) {
-				case "headers": uc.add(new WorksheetHeadersUpdate(worksheetId));
+				case "headers": uc.add(new WorksheetHeadersUpdate(worksheetId, sel));
 								break;
 				case "list": uc.add(new WorksheetListUpdate());
 								break;

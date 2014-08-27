@@ -11,7 +11,6 @@ import edu.isi.karma.rep.Workspace;
 
 public class SelectionManager {
 	private Map<String, List<Selection> > selectionMapping = new ConcurrentHashMap<String, List<Selection> >();
-	private Map<String, Selection> currentSelectionMapping = new ConcurrentHashMap<String, Selection>();
 	public static String defaultCode = "return False";
 	public Selection createMiniSelection(Workspace workspace, String worksheetId, 
 			String hTableId, String pythonCode, boolean onError) {
@@ -36,33 +35,10 @@ public class SelectionManager {
 		return sel;
 	}
 	
-	public Selection getSelection(String hTableId) {
-		return currentSelectionMapping.get(hTableId);
-	}
-	
-	public void removeSelection(String hTableId) {
-		List<Selection> selections = selectionMapping.get(hTableId);
-		Selection cur = currentSelectionMapping.get(hTableId);
-		if (cur != null && selections != null)
-			selections.remove(cur);
-	}
-	
-	public List<Selection> getDefinedSelection(String hTableId) {
-		List<Selection> list = new ArrayList<Selection>();
-		Selection cur = currentSelectionMapping.get(hTableId);
-		if (cur != null)
-			list.add(cur);
-		return list;
-	}
-	
-	public List<Selection> getDefinedSelection() {
-		List<Selection> selections = new ArrayList<Selection>();
-		for (Entry<String, Selection> entry : currentSelectionMapping.entrySet()) {
-			Selection sel = entry.getValue();
-			if (sel != null)
-				selections.add(sel);
-		}
-		return selections;
+	public void removeSelection(Selection sel) {
+		List<Selection> selections = selectionMapping.get(sel.hTableId);
+		if (sel != null && selections != null)
+			selections.remove(sel);
 	}
 	
 	public List<Selection> getAllDefinedSelection() {
@@ -75,16 +51,7 @@ public class SelectionManager {
 		return selections;
 	}
 	
-	public Selection updateCurrentSelection(String hTableId, Selection sel) {
-		if (sel == null) {
-			Selection lastSel = currentSelectionMapping.get(hTableId);
-			currentSelectionMapping.remove(hTableId);
-			return lastSel;
-		}
-		return currentSelectionMapping.put(hTableId, sel);
-	}
-	
-	private void addSelection(Selection sel) {
+	public void addSelection(Selection sel) {
 		String hTableId = sel.getHTableId();
 		List<Selection> selections = selectionMapping.get(hTableId);
 		if (selections == null)
