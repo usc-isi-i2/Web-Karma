@@ -90,7 +90,7 @@ public class SemanticTypeUtil {
 	 */
 	public static ArrayList<String> getTrainingExamples(Worksheet worksheet,
 			HNodePath path, SuperSelection sel) {
-		if(!getSemanticTypeTrainingEnabled())
+		if(!getSemanticTypeTrainingEnabled() || path == null)
 		{
 			return new ArrayList<String>();
 		}
@@ -153,7 +153,9 @@ public class SemanticTypeUtil {
 				break;
 			}
 		}
-		return predictColumnSemanticType(workspace, worksheet,currentColumnPath, numSuggestions, sel);
+		if(currentColumnPath != null)
+			return predictColumnSemanticType(workspace, worksheet,currentColumnPath, numSuggestions, sel);
+		return null;
 	}
 	
 	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, HNodePath path, int numSuggestions, SuperSelection sel) {
