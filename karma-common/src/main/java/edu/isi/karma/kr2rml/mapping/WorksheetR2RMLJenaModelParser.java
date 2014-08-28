@@ -336,8 +336,9 @@ public class WorksheetR2RMLJenaModelParser {
 						while (templateItr.hasNext()) {
 							RDFNode templNode = templateItr.next();
 							String template = templNode.toString();
+							boolean isUri = !templNode.isLiteral();
 							objTemplTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
-								template, kr2rmlMapping.getColumnNameFormatter());
+								template, isUri, kr2rmlMapping.getColumnNameFormatter());
 						
 						}
 						objMap = new ObjectMap(getNewObjectMapId(objectMapCounter++), 
