@@ -49,11 +49,10 @@
 		    <version>${project.version}</version>
 		    <optional>true</optional>
 	    </dependency>
-		
 		<dependency>
-			<groupId>de.micromata.jak</groupId>
-			<artifactId>JavaAPIforKml</artifactId>
-		</dependency>
+	<groupId>org.apache.mahout.commons</groupId>
+	<artifactId>commons-cli</artifactId>
+</dependency>
 <dependency>
     <groupId>org.apache.tika</groupId>
     <artifactId>tika-core</artifactId>

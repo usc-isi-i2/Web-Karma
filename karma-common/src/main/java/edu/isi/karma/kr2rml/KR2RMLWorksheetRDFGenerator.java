@@ -146,8 +146,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.outWriters = new LinkedList<KR2RMLRDFWriter>();
 	}
 
-
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void generateRDF(boolean closeWriterAfterGeneration) throws IOException {
 
 		try {

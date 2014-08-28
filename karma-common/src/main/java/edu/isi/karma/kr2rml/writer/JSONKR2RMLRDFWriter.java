@@ -22,8 +22,8 @@ package edu.isi.karma.kr2rml.writer;
 
 import java.io.PrintWriter;
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -131,22 +131,26 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			Object value = obj.get((String)key);
 			if (value instanceof JSONArray) {
 				JSONArray array = (JSONArray)value;
-				Set<Object> types = new HashSet<Object>();
+				TreeMap<String, Object> types = new TreeMap<String, Object>();
 				int length = array.length();
 				for (int i = 0; i < length; i++) {
 					Object o = array.remove(0);
 					if (o instanceof JSONObject) {
 						collapseSameType((JSONObject) o);
-					}					
-					types.add(o);	
-				}
-				if (types.size() > 1) {
-					for (Object type : types) {
-						array.put(type);
+						types.put(((JSONObject)o).getString("@id"), o);
+					}			
+					else
+					{
+						types.put((String)o, o);
 					}
 				}
-				else if (types.iterator().hasNext()){
-					Object o = types.iterator().next();
+				if (types.size() > 1) {
+					for (Entry<String, Object> type : types.entrySet()) {
+						array.put(type.getValue());
+					}
+				}
+				else if (types.values().iterator().hasNext()){
+					Object o = types.values().iterator().next();
 					obj.put((String)key, o);
 				}
 			}

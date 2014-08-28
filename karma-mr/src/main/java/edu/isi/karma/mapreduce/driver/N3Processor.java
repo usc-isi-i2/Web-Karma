@@ -16,24 +16,28 @@ import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-public class SimpleProcessor extends Configured implements Tool {
+public class N3Processor extends Configured implements Tool {
 
 	 public Job configure(Properties p ) throws Exception
 	 {
 		
 		Configuration conf = getConf();
-		conf.set("fs.default.name", p.getProperty("fs.default.name"));
-		conf.set("mapred.job.tracker", p.getProperty("mapred.job.tracker"));
-		conf.set("model.uri", p.getProperty("model.uri"));
-		if(p.getProperty("KARMA_USER_HOME") != null)
+		conf.setIfUnset("fs.default.name", p.getProperty("fs.default.name"));
+		conf.setIfUnset("mapred.job.tracker", p.getProperty("mapred.job.tracker"));
+		if(p.getProperty("model.uri") != null)
 		{
-			conf.set("KARMA_USER_HOME", p.getProperty("KARMA_USER_HOME"));
+			conf.setIfUnset("model.uri", p.getProperty("model.uri"));
 		}
-		Job job = new Job(getConf());
+		if(p.getProperty("model.file") != null)
+		{
+			conf.setIfUnset("model.file", p.getProperty("model.file"));
+		}
+		Job job = Job.getInstance(conf);
         job.setInputFormatClass(SequenceFileAsTextInputFormat.class);
-        job.setJarByClass(SimpleProcessor.class);
+        job.setJarByClass(N3Processor.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
-        job.setMapperClass(SimpleMapper.class);
+        job.setMapperClass(N3Mapper.class);
+        job.setReducerClass(N3Reducer.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
@@ -46,7 +50,6 @@ public class SimpleProcessor extends Configured implements Tool {
 	 }
 	 
 	 public int run(String[] args) throws Exception {
-         // Configuration processed by ToolRunner
 		 Properties p = new Properties();
 		 p.load(new FileInputStream(new File(args[0])));
 		 
@@ -55,7 +58,7 @@ public class SimpleProcessor extends Configured implements Tool {
          
          if(!job.waitForCompletion(false))
          {
-        	 System.err.println("Unable to finished job");
+        	 System.err.println("Unable to finish job");
         	 return -1;
          }
         
@@ -63,10 +66,7 @@ public class SimpleProcessor extends Configured implements Tool {
        }
        
        public static void main(String[] args) throws Exception {
-         // Let ToolRunner handle generic command-line options 
-         int res = ToolRunner.run(new Configuration(), new SimpleProcessor(), args);
-         
-         System.exit(res);
+    	   System.exit(ToolRunner.run(new Configuration(), new N3Processor(), args));
        }
 
 }

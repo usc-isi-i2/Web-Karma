@@ -11,31 +11,69 @@
     </parent>
 
     <artifactId>karma-common</artifactId>
-
+    
+	<properties>
+        <hadoop.version>2.4.0.2.1.3.0-563</hadoop.version>
+	</properties>
+	
 <dependencies>
 	<dependency>
 		<groupId>edu.isi</groupId>
 		<artifactId>karma-typer</artifactId>
 		<version>${project.version}</version>
 	</dependency>
-
-
-	<dependency>
-		<groupId>edu.isi</groupId>
-		<artifactId>karma-cleaning</artifactId>
-		<version>${project.version}</version>
-	</dependency>
-	
+    <dependency>
+		<groupId>org.apache.hadoop</groupId>
+		<artifactId>hadoop-common</artifactId>
+		<version>${hadoop.version}</version>
+		<exclusions>
+        <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jsp-2.1</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jsp-api-2.1</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>servlet-api-2.1</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>tomcat</groupId>
+            <artifactId>jasper-compiler</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>tomcat</groupId>
+            <artifactId>jasper-runtime</artifactId>
+        </exclusion>
+      </exclusions>
+	</dependency>   
 	<dependency>
 		<groupId>edu.isi</groupId>
 		<artifactId>karma-util</artifactId>
 		<version>${project.version}</version>
 	</dependency>
-
 	<dependency>
 		<groupId>org.apache.commons</groupId>
 		<artifactId>commons-lang3</artifactId>
-    </dependency>
+	</dependency>
 	<dependency>
 		<groupId>log4j</groupId>
 		<artifactId>log4j</artifactId>
@@ -129,6 +167,7 @@
 		<groupId>commons-httpclient</groupId>
 		<artifactId>commons-httpclient</artifactId>
 	</dependency>
+
 	<dependency>
 		<groupId>org.apache.avro</groupId>
 		<artifactId>avro</artifactId>
@@ -139,7 +178,10 @@
 		<artifactId>avro-compiler</artifactId>
 		<version>1.7.7</version>
 	</dependency>
-
+	<dependency>
+		<groupId>org.python</groupId>
+		<artifactId>jython-standalone</artifactId>
+	</dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -157,4 +199,23 @@
 			</resource>
 		</resources>
 	</build>
+	
+<repositories>
+ <repository>
+ <releases>
+ <enabled>true</enabled>
+ <updatePolicy>always</updatePolicy>
+ <checksumPolicy>warn</checksumPolicy>
+ </releases>
+ <snapshots>
+ <enabled>false</enabled>
+ <updatePolicy>never</updatePolicy>
+ <checksumPolicy>fail</checksumPolicy>
+ </snapshots>
+ <id>HDPReleases</id>
+ <name>HDP Releases</name>
+ <url>http://repo.hortonworks.com/content/repositories/releases/</url>
+ <layout>default</layout>
+ </repository>
+ </repositories> 
 </project>
