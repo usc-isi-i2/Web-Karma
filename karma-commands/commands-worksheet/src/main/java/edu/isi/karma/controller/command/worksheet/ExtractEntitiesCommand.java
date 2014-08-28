@@ -64,8 +64,7 @@ import edu.isi.karma.util.Util;
 public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 
 	private String hNodeId;
-	// add column to this table
-	private String hTableId;
+	private String newHNodeId;
 	
 	//URL for Extraction Service as input by the user
 	private String extractionURL;
@@ -76,11 +75,10 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 			.getLogger(ExtractEntitiesCommand.class);
 
 	protected ExtractEntitiesCommand(String id, String worksheetId,
-			String hTableId, String hNodeId, String extractionURL, 
+			String hNodeId, String extractionURL, 
 			String entitiesToBeExt, String selectionId) {
 		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
-		this.hTableId = hTableId;
 		this.extractionURL = extractionURL;
 		this.entitiesToBeExt = entitiesToBeExt;
 		
@@ -104,7 +102,7 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.notInHistory;
+		return CommandType.undoable;
 	}
 
 	@Override
@@ -286,12 +284,14 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 		try {
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
 			cmd = (AddValuesCommand) factory.createCommand(addValues, workspace, hNodeId, worksheetId,
-					hTableId, HNodeType.Transformation, selection.getName());
+					ht.getId(), HNodeType.Transformation, selection.getName());
 			
 			HNode hnode = repFactory.getHNode(hNodeId);
 			cmd.setColumnName(hnode.getColumnName()+" Extractions");
 			cmd.doIt(workspace);
 
+			newHNodeId = cmd.getNewHNodeId();
+			
 			UpdateContainer c = new UpdateContainer(new InfoUpdate("Extracted Entities"));
 			c.append(WorksheetUpdateFactory
 					.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
@@ -311,9 +311,14 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		RepFactory repFactory = workspace.getFactory();
+		HTable ht = repFactory.getHTable(repFactory.getHNode(hNodeId).getHTableId());
+		//remove the new column
+		ht.removeHNode(newHNodeId, worksheet);
 
-		return WorksheetUpdateFactory
-				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace));
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet));
+		
 	}
 
 }

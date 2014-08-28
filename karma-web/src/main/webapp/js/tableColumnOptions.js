@@ -1084,7 +1084,11 @@ var ExtractEntitiesDialog = (function() {
 			info["extractionURL"] = $('#extractionService_URL').val();
 
 			dialog.modal('hide');
-
+			var newInfo = info['newInfo'];
+			newInfo.push(getParamObject("extractionURL", info["extractionURL"], "other"));
+			
+			info["newInfo"] = JSON.stringify(newInfo);
+			
 			// console.log(info["worksheetId"]);
 			showLoading(info["worksheetId"]);
 
@@ -1157,7 +1161,11 @@ var ExtractEntitiesDialog = (function() {
 
 			console.log("User selection: " + userSelection);
 			info["entitiesToBeExt"] = userSelection;
-
+			var newInfo = JSON.parse(info['newInfo']);
+			newInfo.push(getParamObject("entitiesToBeExt", info["entitiesToBeExt"], "other"));
+			
+			info["newInfo"] = JSON.stringify(newInfo);
+			
 			var returned = sendRequest(info, worksheetId);
 
 		};
