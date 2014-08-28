@@ -450,10 +450,6 @@ public class KR2RMLMappingGenerator {
 						if (generateInverse)
 							addInversePropertyIfExists(subjMap, poMap, olink, subjTrMap);
 						
-						TriplesMap objTrMap = new TriplesMap(target.getId(), r2rmlMapping.getSubjectMapIndex().get(target.getId()));
-						// Add the links in the graph links data structure
-						TriplesMapLink link = new TriplesMapLink(subjTrMap, objTrMap, poMap);  
-						r2rmlMapping.getAuxInfo().getTriplesMapGraph().addLink(link);
 					}
 					
 					// Create a data property map
