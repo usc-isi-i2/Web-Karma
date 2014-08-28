@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.URIFormatter;
@@ -16,6 +19,7 @@ import edu.isi.karma.kr2rml.template.ConstantTemplateTermSetPopulatorPlan;
 import edu.isi.karma.kr2rml.template.PartiallyPopulatedTermSet;
 import edu.isi.karma.kr2rml.template.PopulatedTemplateTermSet;
 import edu.isi.karma.kr2rml.template.SinglyAnchoredTemplateTermSetPopulatorPlan;
+import edu.isi.karma.kr2rml.template.TemplateTerm;
 import edu.isi.karma.kr2rml.template.TemplateTermSet;
 import edu.isi.karma.kr2rml.template.TemplateTermSetPopulator;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
@@ -26,6 +30,7 @@ import edu.isi.karma.rep.Row;
 public class ConstantPredicateObjectMappingPlan extends
 PredicateObjectMappingPlan {
 	
+	private static Logger LOG = LoggerFactory.getLogger(ConstantPredicateObjectMappingPlan.class);
 	public ConstantPredicateObjectMappingPlan(TemplateTermSet subjectMapTemplate,PredicateObjectMap pom, KR2RMLMapping kr2rmlMapping,Map<ColumnTemplateTerm, HNodePath> subjectTermsToPaths,
 			URIFormatter uriFormatter, RepFactory factory,
 			KR2RMLMappingColumnNameHNodeTranslator translator,
@@ -36,8 +41,7 @@ PredicateObjectMappingPlan {
 		try {
 			generateInternal(subjectMapTemplate, pom, subjectTermsToPaths);
 		} catch (HNodeNotFoundKarmaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Unable to generate plan!", e);
 		}
 	}
 	
@@ -49,9 +53,28 @@ PredicateObjectMappingPlan {
 		this.pom = pom;
 		combinedSubjectObjectTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
 		combinedSubjectObjectTermsToPaths.putAll(subjectTermsToPaths);
+		this.isLiteral = true;
+		TemplateTermSet literalTemplate = pom.getObject().getRdfLiteralType();
+		literalTemplateValue = null;
+		if(literalTemplate != null)
+		{
+			literalTemplateValue = generateStringValueForTemplate(literalTemplate);
+		}
 		
 		generatePredicatesForPom(pom);
 	}
+	
+	protected String generateStringValueForTemplate(
+			TemplateTermSet objMapTemplate) {
+		StringBuilder sb = new StringBuilder();
+		for(TemplateTerm term : objMapTemplate.getAllTerms())
+		{
+			sb.append(term.getTemplateTermValue());
+		}
+		return sb.toString();
+	}
+
+	
 	@Override
 	public Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> execute(Row r, List<PopulatedTemplateTermSet> subjects)
 	{
