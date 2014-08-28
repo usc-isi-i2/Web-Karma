@@ -23,7 +23,6 @@
 		<dependency>
 			<groupId>de.micromata.jak</groupId>
 			<artifactId>JavaAPIforKml</artifactId>
-			<version>2.2.0</version>
 		</dependency>
             
 	</dependencies>

@@ -20,15 +20,16 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.worksheet;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class AddRowCommandFactory extends JSONInputCommandFactory {
 
@@ -40,21 +41,17 @@ public class AddRowCommandFactory extends JSONInputCommandFactory {
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String hTableId = request.getParameter(Arguments.hTableId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		return new AddRowCommand(getNewId(workspace), worksheetId, 
-				hTableId, hNodeId);
+		return new AddRowCommand(getNewId(workspace), worksheetId, hNodeId);
 	}
 
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
 		/** Parse the input arguments and create proper data structures to be passed to the command **/
-		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
+		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
-		String hTableId = CommandInputJSONUtil.getStringValue(Arguments.hTableId.name(), inputJson);
-		AddRowCommand rowCmd = new AddRowCommand(getNewId(workspace), worksheetId,
-				hTableId, hNodeID);
+		AddRowCommand rowCmd = new AddRowCommand(getNewId(workspace), worksheetId, hNodeId);
 		rowCmd.setInputParameterJson(inputJson.toString());
 		return rowCmd;
 	}

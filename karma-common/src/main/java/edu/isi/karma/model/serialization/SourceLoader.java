@@ -21,10 +21,11 @@
 
 package edu.isi.karma.model.serialization;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import edu.isi.karma.rep.sources.Source;
-
 import java.util.List;
+
+import com.hp.hpl.jena.rdf.model.Model;
+
+import edu.isi.karma.rep.sources.Source;
 
 public abstract class SourceLoader {
 

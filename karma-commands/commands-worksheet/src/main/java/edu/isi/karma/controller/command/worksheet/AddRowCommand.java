@@ -26,10 +26,10 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.Util;
@@ -45,13 +45,6 @@ public class AddRowCommand extends WorksheetCommand {
 	//if null add column at beginning of table
 	@SuppressWarnings("unused")
 	private final String hNodeId;
-	//add column to this table
-	private String hTableId;
-
-
-	//the id of the new column that was created
-	//needed for undo
-	private String newHNodeId;
 	
 	private static Logger logger = LoggerFactory
 	.getLogger(AddRowCommand.class);
@@ -60,11 +53,9 @@ public class AddRowCommand extends WorksheetCommand {
 		updateType, hNodeId, worksheetId
 	}
 	
-	protected AddRowCommand(String id,String worksheetId, 
-			String hTableId, String hNodeId) {
+	protected AddRowCommand(String id,String worksheetId, String hNodeId) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
-		this.hTableId = hTableId;
 		
 		addTag(CommandTag.Transformation);
 	}
@@ -81,7 +72,7 @@ public class AddRowCommand extends WorksheetCommand {
 
 	@Override
 	public String getDescription() {
-			return "New Row";
+		return "New Row";
 	}
 
 	@Override
@@ -97,11 +88,11 @@ public class AddRowCommand extends WorksheetCommand {
 		try{
 			worksheet.addRow(workspace.getFactory());
 			UpdateContainer c =  new UpdateContainer();		
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {
-			logger.error("Error in AddColumnCommand" + e.toString());
+			logger.error("Error in AddRowCommand" + e.toString());
 			Util.logException(logger, e);
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
@@ -109,19 +100,7 @@ public class AddRowCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-
-		HTable currentTable = workspace.getFactory().getHTable(hTableId);
-		//remove the new column
-		currentTable.removeHNode(newHNodeId, worksheet);
-
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
-	}
-
-
-	public String getNewHNodeId() {
-		return newHNodeId;
+		return null;
 	}
 	
-
 }

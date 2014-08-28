@@ -20,16 +20,16 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.service;
 
+import javax.servlet.http.HttpServletRequest;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Workspace;
 
-import javax.servlet.http.HttpServletRequest;
-
 public class InvokeServiceCommandFactory extends CommandFactory {
 
 	public enum Arguments {
-		worksheetId, hNodeId
+		worksheetId, hNodeId, selectionName
 	}
 	
 	@Override
@@ -37,8 +37,10 @@ public class InvokeServiceCommandFactory extends CommandFactory {
 			Workspace workspace) {
 
 		String hNodeId =request.getParameter(Arguments.hNodeId.name());
+		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new InvokeServiceCommand(getNewId(workspace), 
-				getWorksheetId(request, workspace), hNodeId);
+				getWorksheetId(request, workspace), hNodeId, 
+				selectionName);
 	}
 
 	@Override

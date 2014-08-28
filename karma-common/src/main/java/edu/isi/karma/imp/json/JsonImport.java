@@ -58,6 +58,7 @@ public class JsonImport extends Import {
 	private int maxNumLines;
 	private int numObjects;
 	private Workspace workspace;
+	private JSONArray columnsJson;
 	private class FileObject {
 		File file;
 		String encoding;
@@ -76,19 +77,13 @@ public class JsonImport extends Import {
 	}
 
 	public JsonImport(File jsonFile, String worksheetName, Workspace workspace,
-			String encoding, int maxNumLines) {
+			String encoding, int maxNumLines, JSONArray tree) {
 		super(worksheetName, workspace, encoding);
-//		String fileContents = null;
-//		try {
-//			fileContents = FileUtil
-//					.readFileContentsToString(jsonFile, encoding);
-//		} catch (IOException ex) {
-//			logger.error("Error in reading the JSON file");
-//		}
 		FileObject fo = new FileObject(jsonFile, encoding);
 		this.json = fo;
 		this.workspace = workspace;
 		this.maxNumLines = maxNumLines;
+		this.columnsJson = tree;
 	}
 
 	public JsonImport(String jsonString, String worksheetName,
@@ -109,6 +104,16 @@ public class JsonImport extends Import {
 		this.workspace = workspace;
 		this.maxNumLines = maxNumLines;
 	}
+	
+	public JsonImport(File json, RepFactory repFactory, Worksheet wk, Workspace workspace, 
+			int maxNumLines, JSONArray columnsJson) {
+		super(repFactory, wk);
+		FileObject fo = new FileObject(json, "UTF-8");
+		this.json = fo;
+		this.workspace = workspace;
+		this.maxNumLines = maxNumLines;
+		this.columnsJson = columnsJson;
+	}
 
 	@Override
 	public Worksheet generateWorksheet() throws JSONException {
@@ -117,7 +122,7 @@ public class JsonImport extends Import {
 			getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.COLLECTION);
 			JSONArray a = (JSONArray) json;
 			for (int i = 0; i < a.length(); i++) {
-				JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet());
+				JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet(), columnsJson);
 				JsonImportValues.addListElement(a.get(i), getWorksheet().getHeaders(),
 						getWorksheet().getDataTable());
 				if (maxNumLines > 0 && numObjects >= maxNumLines)
@@ -125,7 +130,7 @@ public class JsonImport extends Import {
 			}
 		} else if (json instanceof JSONObject) {
 			getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.OBJECT);
-			JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet());
+			JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet(), columnsJson);
 			JsonImportValues.addKeysAndValues((JSONObject) json, getWorksheet().getHeaders(),
 					getWorksheet().getDataTable());
 		}
@@ -137,14 +142,14 @@ public class JsonImport extends Import {
 				char c = tokener.nextClean();			
 				if (c == '{') {
 					getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.OBJECT);
-					JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet());
+					JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet(), columnsJson);
 					JsonImportValues.addKeysAndValues(tokener, getWorksheet().getHeaders(),
 							getWorksheet().getDataTable());
 				}
 				else if (c == '['){
 					flag = false;
 					getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.COLLECTION);
-					JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet());
+					JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet(), columnsJson);
 					JsonImportValues.addListElement(tokener, getWorksheet().getHeaders(), getWorksheet().getDataTable());
 				}
 			}catch(Exception e) {

@@ -21,6 +21,13 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.io.PrintWriter;
+import java.util.Set;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -35,12 +42,6 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.view.VWorkspace;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.PrintWriter;
-import java.util.Set;
 
 public class GetCurrentLinksOfInternalNodeCommand extends Command {
 	private final String nodeId;

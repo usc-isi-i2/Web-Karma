@@ -23,14 +23,16 @@
  */
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.util.JSONUtil;
-import edu.isi.karma.view.VWorkspace;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
+import edu.isi.karma.util.JSONUtil;
+import edu.isi.karma.view.VWorkspace;
 
 /**
  * Container class to carry multiple update objects.
@@ -58,6 +60,16 @@ public class UpdateContainer {
 	}
 
 	public void append(UpdateContainer updateContainer) {
+		Set<AbstractUpdate> needToDeleted = new HashSet<AbstractUpdate>();
+		for (AbstractUpdate update : updateContainer.updates) {
+			for (AbstractUpdate update2 : updates) {
+				if (update2.equals(update)) {
+					needToDeleted.add(update2);
+					break;
+				}
+			}
+		}
+		updates.removeAll(needToDeleted);
 		updates.addAll(updateContainer.updates);
 	}
 
@@ -86,6 +98,15 @@ public class UpdateContainer {
 		Iterator<AbstractUpdate> it = updates.iterator();
 		while (it.hasNext()) {
 			it.next().applyUpdate(vWorkspace);
+		}
+	}
+	
+	public void removeUpdateByClass(Class<? extends AbstractUpdate> clazz) {
+		Iterator<AbstractUpdate> it = updates.iterator();
+		while (it.hasNext()) {
+			AbstractUpdate t = it.next();
+			if (t.getClass().equals(clazz))
+				it.remove();
 		}
 	}
 

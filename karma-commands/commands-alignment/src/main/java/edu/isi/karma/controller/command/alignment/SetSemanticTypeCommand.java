@@ -32,7 +32,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -55,7 +56,7 @@ import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 
-public class SetSemanticTypeCommand extends WorksheetCommand {
+public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 
 	private final String hNodeId;
 	private final boolean trainAndShowUpdates;
@@ -74,8 +75,9 @@ public class SetSemanticTypeCommand extends WorksheetCommand {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	protected SetSemanticTypeCommand(String id, String worksheetId, String hNodeId, 
-			boolean isPartOfKey, JSONArray typesArr, boolean trainAndShowUpdates, String rdfLiteralType) {
-		super(id, worksheetId);
+			boolean isPartOfKey, JSONArray typesArr, boolean trainAndShowUpdates, 
+			String rdfLiteralType, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.isPartOfKey = isPartOfKey;
 		this.trainAndShowUpdates = trainAndShowUpdates;
@@ -120,6 +122,7 @@ public class SetSemanticTypeCommand extends WorksheetCommand {
 			
 		}
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(worksheet);
 		OntologyManager ontMgr = workspace.getOntologyManager();
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
@@ -174,6 +177,9 @@ public class SetSemanticTypeCommand extends WorksheetCommand {
 						continue;
 					}
 				}
+				
+				if(domainUriOrId.endsWith(" (add)"))
+					domainUriOrId = domainUriOrId.substring(0, domainUriOrId.length()-5).trim();
 				
 				domain = alignment.getNodeById(domainUriOrId);
 				logger.info("Got domain for domainUriOrId:" + domainUriOrId + " ::" + domain);
@@ -287,26 +293,12 @@ public class SetSemanticTypeCommand extends WorksheetCommand {
 //		}
 		
 		if(trainAndShowUpdates) {
-			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType);
-			
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-			try {
-				// Add the visualization update
-				c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
-			} catch (Exception e) {
-				logger.error("Error occured while setting the semantic type!", e);
-				return new UpdateContainer(new ErrorUpdate(
-						"Error occured while setting the semantic type!"));
-			}
-			
-			return c;
-			
+			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		} 
 		
-		// Just do the alignment, no training and update JSON required.
-//		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
-//		align.align(false);
-		
+		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+		c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
+				alignment));			
 		return c;
 	}
 

@@ -1,7 +1,7 @@
 package edu.isi.karma.metadata;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphLoaderThread;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;

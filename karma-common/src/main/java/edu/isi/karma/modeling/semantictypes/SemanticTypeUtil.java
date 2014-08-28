@@ -32,6 +32,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
@@ -88,13 +89,13 @@ public class SemanticTypeUtil {
 	 * @return Collection of training examples
 	 */
 	public static ArrayList<String> getTrainingExamples(Worksheet worksheet,
-			HNodePath path) {
-		if(!getSemanticTypeTrainingEnabled())
+			HNodePath path, SuperSelection sel) {
+		if(!getSemanticTypeTrainingEnabled() || path == null)
 		{
 			return new ArrayList<String>();
 		}
 		ArrayList<Node> nodes = new ArrayList<Node>(Math.max(100, worksheet.getDataTable().getNumRows()));
-		worksheet.getDataTable().collectNodes(path, nodes);
+		worksheet.getDataTable().collectNodes(path, nodes, sel);
 
 		Random r = new Random();
 		ArrayList<String> subset = new ArrayList<String>(TRAINING_EXAMPLE_MAX_COUNT);
@@ -127,7 +128,7 @@ public class SemanticTypeUtil {
 		return subset;
 	}
 	
-	public void trainOnColumn(Workspace workspace, Worksheet worksheet, SemanticType newType) {
+	public void trainOnColumn(Workspace workspace, Worksheet worksheet, SemanticType newType, SuperSelection sel) {
 		HNodePath currentColumnPath = null;
 		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : paths) {
@@ -137,13 +138,13 @@ public class SemanticTypeUtil {
 			}
 		}
 		
-		ArrayList<String> examples = getTrainingExamples(worksheet, currentColumnPath);
+		ArrayList<String> examples = getTrainingExamples(worksheet, currentColumnPath, sel);
 		ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
 		String label = newType.getModelLabelString();
 		modelHandler.addType(label, examples);
 	}
 	
-	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, String hNodeId, int numSuggestions) {
+	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, String hNodeId, int numSuggestions, SuperSelection sel) {
 		HNodePath currentColumnPath = null;
 		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : paths) {
@@ -152,12 +153,14 @@ public class SemanticTypeUtil {
 				break;
 			}
 		}
-		return predictColumnSemanticType(workspace, worksheet,currentColumnPath, numSuggestions);
+		if(currentColumnPath != null)
+			return predictColumnSemanticType(workspace, worksheet,currentColumnPath, numSuggestions, sel);
+		return null;
 	}
 	
-	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, HNodePath path, int numSuggestions) {
+	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, HNodePath path, int numSuggestions, SuperSelection sel) {
 		ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(worksheet,
-				path);
+				path, sel);
 		if (trainingExamples.size() == 0)
 			return null;
 
@@ -214,13 +217,13 @@ public class SemanticTypeUtil {
 		return new SemanticTypeColumnModel(result);
 	}
 
-	public ArrayList<SemanticType> getColumnSemanticSuggestions(Workspace workspace, Worksheet worksheet, ColumnNode cn, int numSuggestions) {
+	public ArrayList<SemanticType> getColumnSemanticSuggestions(Workspace workspace, Worksheet worksheet, ColumnNode cn, int numSuggestions, SuperSelection sel) {
 		ArrayList<SemanticType> suggestedSemanticTypes = new ArrayList<SemanticType>();
 		logger.info("Column Semantic Suggestions for:" + cn.getColumnName());
 		if(workspace != null && worksheet != null) {
 			OntologyManager ontologyManager = workspace.getOntologyManager();
 			String hNodeId = cn.getHNodeId();
-			SemanticTypeColumnModel columnModel = predictColumnSemanticType(workspace, worksheet, hNodeId, numSuggestions);
+			SemanticTypeColumnModel columnModel = predictColumnSemanticType(workspace, worksheet, hNodeId, numSuggestions, sel);
 			
 			if (columnModel != null) {
 				for (Entry<String, Double> entry : columnModel.getScoreMap().entrySet()) {
@@ -274,9 +277,9 @@ public class SemanticTypeUtil {
 	 * @param crfModelHandler
 	 */
 	public static void identifyOutliers(Worksheet worksheet, String predictedType, HNodePath path, Tag outlierTag,
-			ISemanticTypeModelHandler modelHandler) {
+			ISemanticTypeModelHandler modelHandler, SuperSelection sel) {
 		Collection<Node> nodes = new ArrayList<Node>();
-		worksheet.getDataTable().collectNodes(path, nodes);
+		worksheet.getDataTable().collectNodes(path, nodes, sel);
 
 		// Identify the top semantic type for each node
 		// It it does not matches the predicted type, it is a outlier.

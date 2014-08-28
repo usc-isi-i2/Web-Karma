@@ -23,13 +23,13 @@
  */
 package edu.isi.karma.controller.command;
 
-import edu.isi.karma.controller.command.worksheet.EditCellCommandArguments;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.webserver.KarmaException;
+import javax.servlet.http.HttpServletRequest;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import javax.servlet.http.HttpServletRequest;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.KarmaException;
 
 /**
  * @author szekely
@@ -42,8 +42,7 @@ public abstract class CommandFactory {
 
 	public String getWorksheetId(HttpServletRequest request,
 			Workspace workspace) {
-		return request.getParameter(EditCellCommandArguments.worksheetId
-				.name());
+		return request.getParameter("worksheetId");
 	}
 	
 	protected String getNewId(Workspace workspace){

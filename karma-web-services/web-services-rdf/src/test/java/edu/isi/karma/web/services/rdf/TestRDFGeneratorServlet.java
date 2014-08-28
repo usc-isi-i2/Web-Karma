@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -73,7 +74,9 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 			MalformedURLException, ProtocolException {
 		URL url = new URL("http://fusion-sqid.isi.edu:8890");
 		try {
-			InputStreamReader reader = new InputStreamReader(url.openStream());
+			URLConnection connection = url.openConnection();
+			connection.setConnectTimeout(10000);
+			InputStreamReader reader = new InputStreamReader(connection.getInputStream());
 			reader.read();
 		}catch(Exception e) {
 			return;

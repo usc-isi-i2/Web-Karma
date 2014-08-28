@@ -36,7 +36,7 @@ public class GetAllWorksheetHeadersCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		return new UpdateContainer(new AllWorksheetHeadersUpdate(worksheetId));
+		return new UpdateContainer(new AllWorksheetHeadersUpdate(worksheetId, false));
 	}
 
 	@Override

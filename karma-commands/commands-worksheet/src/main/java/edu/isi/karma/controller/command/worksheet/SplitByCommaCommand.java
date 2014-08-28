@@ -20,26 +20,32 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.worksheet;
 
-import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.rep.*;
-import edu.isi.karma.rep.Node.NodeStatus;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-public class SplitByCommaCommand extends WorksheetCommand {
+import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.rep.CellValue;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Node.NodeStatus;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+
+public class SplitByCommaCommand extends WorksheetSelectionCommand {
 	private final String hNodeId;
 	private final String delimiter;
 	private String columnName;
 	private HNode hNode;
-	private String splitValueHNodeID;
+	private String splitValueHNodeId;
 
 	private HashMap<Node, CellValue> oldNodeValueMap = new HashMap<Node, CellValue>();
 	private HashMap<Node, NodeStatus> oldNodeStatusMap = new HashMap<Node, NodeStatus>();
@@ -47,8 +53,9 @@ public class SplitByCommaCommand extends WorksheetCommand {
 //	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	protected SplitByCommaCommand(String id, String worksheetId,
-			String hNodeId, String delimiter) {
-		super(id, worksheetId);
+			String hNodeId, String delimiter, 
+			String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.delimiter = delimiter;
 		
@@ -79,7 +86,7 @@ public class SplitByCommaCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
 		UpdateContainer c = new UpdateContainer();
-
+		SuperSelection selection = getSuperSelection(wk);
 		// Get the HNode
 		hNode = workspace.getFactory().getHNode(hNodeId);
 		// The column should not have a nested table but check to make sure!
@@ -89,11 +96,11 @@ public class SplitByCommaCommand extends WorksheetCommand {
 		}
 		columnName = hNode.getColumnName();
 		
-		SplitColumnByDelimiter split = new SplitColumnByDelimiter(hNodeId, wk, delimiter, workspace);
+		SplitColumnByDelimiter split = new SplitColumnByDelimiter(hNodeId, wk, delimiter, workspace, selection);
 		split.split(oldNodeValueMap, oldNodeStatusMap);
-		splitValueHNodeID = split.getSplitValueHNodeID();
+		splitValueHNodeId = split.getSplitValueHNodeId();
 
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(wk)));
 		
 		/** Add the alignment update **/
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
@@ -105,12 +112,13 @@ public class SplitByCommaCommand extends WorksheetCommand {
 	public UpdateContainer undoIt(Workspace workspace) {
 		
 		Worksheet wk = workspace.getFactory().getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(wk);
 		List<HNodePath> columnPaths = wk.getHeaders().getAllPaths();
 
 		// Get the path which has the split value hNodeId
 		HNodePath selectedPath = null;
 		for (HNodePath path : columnPaths) {
-			if (path.getLeaf().getId().equals(splitValueHNodeID)) {
+			if (path.getLeaf().getId().equals(splitValueHNodeId)) {
 				selectedPath = path;
 			}
 		}
@@ -129,7 +137,7 @@ public class SplitByCommaCommand extends WorksheetCommand {
 
 		// Populate the column with old values
 		Collection<Node> nodes = new ArrayList<Node>();
-		wk.getDataTable().collectNodes(selectedPath, nodes);
+		wk.getDataTable().collectNodes(selectedPath, nodes, selection);
 
 		for (Node node : nodes) {
 			//pedro 2012-09-15 this does not look correct.
@@ -137,7 +145,7 @@ public class SplitByCommaCommand extends WorksheetCommand {
 			node.setValue(oldNodeValueMap.get(node), oldNodeStatusMap.get(node), workspace.getFactory());
 		}
 
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(wk));
 		
 	}
 }

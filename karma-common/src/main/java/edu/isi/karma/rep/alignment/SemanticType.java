@@ -20,12 +20,13 @@
  ******************************************************************************/
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.util.Jsonizable;
+import java.io.Serializable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import java.io.Serializable;
+import edu.isi.karma.util.Jsonizable;
 
 public class SemanticType implements Jsonizable, Serializable, Comparable<SemanticType>  {
 	/**

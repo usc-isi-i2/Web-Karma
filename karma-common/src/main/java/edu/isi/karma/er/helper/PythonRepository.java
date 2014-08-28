@@ -1,4 +1,4 @@
-package edu.isi.karma.controller.command.transformation;
+package edu.isi.karma.er.helper;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -20,28 +20,30 @@ public class PythonRepository {
 	private static PythonRepository instance = new PythonRepository();
 	private static boolean libraryHasBeenLoaded = false;
 	private static boolean reloadLibrary = true;
-	
+
 	private PythonRepository()
 	{
 		initialize();
 		resetLibrary();
 	}
-	
+
 	public static PythonRepository getInstance()
 	{
 		return instance;
 	}
-	
+
 	private void initialize()
 	{
 		scripts = new ConcurrentHashMap<String, PyCode>();
 		PythonInterpreter interpreter = new PythonInterpreter();
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getImportStatements());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getGetValueDefStatement());
+		compileAndAddToRepository(interpreter, PythonTransformationHelper.getIsEmptyDefStatement());
+		compileAndAddToRepository(interpreter, PythonTransformationHelper.getHasSelectedRowsStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getVDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getTransformStatement());
 	}
-	
+
 	public PyCode compileAndAddToRepositoryAndExec(PythonInterpreter interpreter, String statement)
 	{
 		PyCode py = compileAndAddToRepository(interpreter,statement);
@@ -58,19 +60,21 @@ public class PythonRepository {
 		}
 		return scripts.get(statement);
 	}
-	
+
 	private PyCode compile(PythonInterpreter interpreter, String statement) {
 		return interpreter.compile(statement);
 	}
-	
+
 	public void initializeInterperter(PythonInterpreter interpreter)
 	{
 		interpreter.exec(scripts.get(PythonTransformationHelper.getImportStatements()));
 		interpreter.exec(scripts.get(PythonTransformationHelper.getGetValueDefStatement()));
+		interpreter.exec(scripts.get(PythonTransformationHelper.getIsEmptyDefStatement()));
+		interpreter.exec(scripts.get(PythonTransformationHelper.getHasSelectedRowsStatement()));
 		interpreter.exec(scripts.get(PythonTransformationHelper.getVDefStatement()));
-		
+
 	}
-	
+
 	public PyCode getTransformCode()
 	{
 		return scripts.get(PythonTransformationHelper.getTransformStatement());
@@ -80,7 +84,7 @@ public class PythonRepository {
 		String dirpathString = ServletContextParameterMap
 				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
 
-		
+
 		if (dirpathString != null && dirpathString.compareTo("") != 0) {
 			File f = new File(dirpathString);
 			String[] scripts = f.list(new FilenameFilter(){
@@ -103,15 +107,11 @@ public class PythonRepository {
 						libraryScripts.put(fileName, py);
 						fileNameTolastTimeRead.put(fileName, System.currentTimeMillis());
 					}
-					else
-					{
-						interpreter.exec(libraryScripts.get(fileName));
-					}
-					
+					interpreter.exec(libraryScripts.get(fileName));
 					//TODO prune scripts no longer present
 				}
 				libraryHasBeenLoaded = true;
-				
+
 			}
 			else
 			{
@@ -120,21 +120,21 @@ public class PythonRepository {
 					interpreter.exec(code);
 				}
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	public static synchronized void disableReloadingLibrary()
 	{
 		reloadLibrary = false;
 	}
-	
+
 	public synchronized void resetLibrary()
 	{
 		libraryScripts = new ConcurrentHashMap<String, PyCode>();
 		fileNameTolastTimeRead = new ConcurrentHashMap<String,Long>();		
 		libraryHasBeenLoaded = false;
-		
+
 	}
 }

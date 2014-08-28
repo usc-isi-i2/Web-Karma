@@ -68,11 +68,17 @@
 					    Revision of worksheet <select id="revisedWorksheetSelector"></select>
 					  </label>
 					</div>
+					<div class="checkbox">
+					  <label>
+					    <input type="checkbox" name="FilterCheck">
+					    Filter Columns
+					  </label>
+					</div>
 					<div class="error" style="display: none" id="fileFormatError">Please select the file format!</div>
 			  </div>
 			  <div class="modal-footer">
 			        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-			        <button type="submit" class="btn btn-primary" id="btnSave">Next</button>
+			        <button type="submit" class="btn btn-primary" id="btnSaveFormat">Next</button>
 			  </div>
 			 </form>
 		</div><!-- /.modal-content -->
@@ -149,9 +155,41 @@
 			  </div>
 			  <div class="modal-footer">
 			        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-			        <button type="submit" class="btn btn-primary" id="btnSave">Import</button>
+			        <button type="submit" class="btn btn-primary" id="btnSaveOptions">Import</button>
 			  </div>
 		</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="selectColumnsDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Select Columns</h4>
+				  </div>
+				  <div class="modal-body">
+					<div id="selectColumns_body" class="cf nestable-lists">
+						<div class="form-group">
+					  	<label for="SavePresetCheck">Save Preset: </label>
+					    <input type="checkbox" name="SavePresetCheck" id="SavePresetCheck">
+						</div>
+						<div class="dd" id="nestable">
+						</div>
+					</div>
+					<div class="error" style="display: none">Error</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				  		<span class="btn btn-primary fileinput-button">
+				  			<span>Load Preset</span>
+				  			<input type="file" name="files[]" id="presetupload" multiple>
+				  		</span>
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSaveFilter">Next</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
 		</form>
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->

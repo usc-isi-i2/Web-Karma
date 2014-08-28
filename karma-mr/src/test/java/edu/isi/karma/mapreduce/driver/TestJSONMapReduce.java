@@ -43,7 +43,6 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 		
 		mapDriver.addInput(new Text("people.json"), new Text(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
 		List<Pair<Text,Text>> results = mapDriver.run();
-		System.out.print(results);
 		assertTrue(results.size() > 1);
 	}
 	

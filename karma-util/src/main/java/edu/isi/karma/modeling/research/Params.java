@@ -25,7 +25,7 @@ public class Params {
 
 	public static boolean RESEARCH_MODE = true;
 	
-	private static String DATASET_NAME = "museum-new";
+	private static String DATASET_NAME = "bm";
 	private static String ROOT_DIR = "/Users/mohsen/Dropbox/Source Modeling/datasets/" + DATASET_NAME + "/";
 	
 	public static String ONTOLOGY_DIR = ROOT_DIR + "ontology/";
@@ -53,7 +53,7 @@ public class Params {
 	public static String GRAPHVIS_OUT_DETAILS_FILE_EXT = ".out.details.dot";
 
 	public static String LOD_DIR = ROOT_DIR + "lod/";
-	public static String LOD_OBJECT_PROPERIES_FILE = ROOT_DIR + "objectproperties.csv";
-	public static String LOD_DATA_PROPERIES_FILE = ROOT_DIR + "dataproperties.csv";
+	public static String LOD_OBJECT_PROPERIES_FILE = LOD_DIR + "objectproperties.csv";
+	public static String LOD_DATA_PROPERIES_FILE = LOD_DIR + "dataproperties.csv";
 	
 }

@@ -38,10 +38,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonTransformationHelper;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
@@ -50,7 +53,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
 
-public abstract class PythonTransformationCommand extends WorksheetCommand {
+public abstract class PythonTransformationCommand extends WorksheetSelectionCommand {
 
 	protected String transformationCode;
 	final protected String hNodeId;
@@ -65,8 +68,8 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 	}
 
 	public PythonTransformationCommand(String id, String transformationCode,
-			String worksheetId, String hNodeId, String errorDefaultValue) {
-		super(id, worksheetId);
+			String worksheetId, String hNodeId, String errorDefaultValue, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.transformationCode = transformationCode;
 		this.hNodeId = hNodeId;
 		this.errorDefaultValue = errorDefaultValue;
@@ -98,7 +101,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 			JSONArray transformedRows, JSONArray errorValues, Integer limit)
 					throws JSONException, IOException {
 
-		
+		SuperSelection selection = getSuperSelection(worksheet);
 		String trimmedTransformationCode = transformationCode.trim();
 		// Pedro: somehow we are getting empty statements, and these are causing
 		// exceptions.
@@ -125,7 +128,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet
 				.getDataTable().getNumRows()));
-		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes);
+		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes, selection);
 
 		Map<String, String> rowToValueMap = new HashMap<String, String>();
 
@@ -135,6 +138,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 
 		interpreter.set("workspaceid", workspace.getId());
 		interpreter.set("command", this);
+		interpreter.set("selectionName", selection.getName());
 		PyCode py = repo.getTransformCode();
 
 		int numRowsWithErrors = 0;
@@ -198,7 +202,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		UpdateContainer c = (WorksheetUpdateFactory
-				.createRegenerateWorksheetUpdates(worksheetId));
+				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 		// TODO is it necessary to compute alignment and semantic types for
 		// everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));

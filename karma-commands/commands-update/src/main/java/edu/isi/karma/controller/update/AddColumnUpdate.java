@@ -59,5 +59,13 @@ public class AddColumnUpdate extends AbstractUpdate {
 		}
 		
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof AddColumnUpdate) {
+			AddColumnUpdate t = (AddColumnUpdate)o;
+			return t.newHNodeId.equals(newHNodeId) && t.worksheetId.equals(worksheetId);
+		}
+		return false;
+	}
 
 }

@@ -21,20 +21,27 @@
 
 package edu.isi.karma.imp.csv;
 
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class CSVFileExport {
 	private Worksheet worksheet;
@@ -60,7 +67,7 @@ public class CSVFileExport {
 		if(numRows==0) 
 			return "";
 		StringBuilder sb = new StringBuilder();
-		ArrayList<Row> rows =  worksheet.getDataTable().getRows(0, numRows);
+		ArrayList<Row> rows =  worksheet.getDataTable().getRows(0, numRows, SuperSelectionManager.DEFAULT_SELECTION);
 		List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
 		List<String> hNodeIdList = new ArrayList<String>();
 		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);

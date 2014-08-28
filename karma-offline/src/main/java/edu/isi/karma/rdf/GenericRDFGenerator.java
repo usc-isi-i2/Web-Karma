@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.avro.AvroImport;
 import edu.isi.karma.imp.csv.CSVImport;
@@ -59,8 +61,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 		AVRO
 	};
 	
-	public GenericRDFGenerator() {
-		super();
+	public GenericRDFGenerator(String selectionName) {
+		super(selectionName);
 		this.modelIdentifiers = new HashMap<String, R2RMLMappingIdentifier>();
 		this.readModelParsers = new HashMap<String, WorksheetR2RMLJenaModelParser>();
 	}
@@ -196,13 +198,17 @@ public class GenericRDFGenerator extends RdfGenerator {
 		KR2RMLMapping mapping = modelParser.parse();
 		
 		applyHistoryToWorksheet(workspace, worksheet, mapping);
-
+		SuperSelection selection = SuperSelectionManager.DEFAULT_SELECTION;
+		if (selectionName != null && !selectionName.trim().isEmpty())
+			selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionName);
+		if (selection == null)
+			return;
 		//Generate RDF using the mapping data
 		ErrorReport errorReport = new ErrorReport();
 		
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
 		        workspace.getFactory(), workspace.getOntologyManager(), writers,
-		        addProvenance, mapping, errorReport);
+		        addProvenance, mapping, errorReport, selection);
 		rdfGen.generateRDF(true);
 		removeWorkspace(workspace);
 		
@@ -337,7 +343,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 			Workspace workspace, String encoding, int maxNumLines) throws IOException,
 			KarmaException, ClassNotFoundException {
 		Worksheet worksheet;
-		Import fileImport = new CSVImport(1, 2, ',', '\"', encoding, maxNumLines, sourceName, is, workspace);
+		Import fileImport = new CSVImport(1, 2, ',', '\"', encoding, maxNumLines, 
+				sourceName, is, workspace, null);
 
 		worksheet = fileImport.generateWorksheet();
 		return worksheet;

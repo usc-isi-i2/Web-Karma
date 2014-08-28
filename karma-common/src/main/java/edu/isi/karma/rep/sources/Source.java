@@ -21,7 +21,7 @@
 
 package edu.isi.karma.rep.sources;
 
-import edu.isi.karma.modeling.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfiguration;
 
 public abstract class Source {
 

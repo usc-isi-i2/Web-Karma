@@ -10,8 +10,8 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 
-import edu.isi.karma.controller.command.transformation.PythonRepository;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.metadata.KarmaMetadataManager;
@@ -60,7 +60,7 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text>{
 	        {
 	        	modelURL = new File(modelFile).toURI().toURL();
 	        }
-	        generator = new GenericRDFGenerator();
+	        generator = new GenericRDFGenerator(null);
 	        generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
 	        baseURI = context.getConfiguration().get("base.uri");
 		} catch (KarmaException | IOException  e) {

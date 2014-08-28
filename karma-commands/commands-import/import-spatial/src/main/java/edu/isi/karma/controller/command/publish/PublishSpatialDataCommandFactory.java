@@ -4,15 +4,15 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.publish;
 
+import javax.servlet.http.HttpServletRequest;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Workspace;
 
-import javax.servlet.http.HttpServletRequest;
-
 public class PublishSpatialDataCommandFactory extends CommandFactory {
 	private enum Arguments {
-		worksheetId
+		worksheetId, selectionName
 	}
 
 	@Override
@@ -20,7 +20,9 @@ public class PublishSpatialDataCommandFactory extends CommandFactory {
 			Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId
 				.name());
-		return new PublishSpatialDataCommand(getNewId(workspace), worksheetId);
+		String selectionName = request.getParameter(Arguments.selectionName.name());
+		return new PublishSpatialDataCommand(getNewId(workspace), worksheetId, 
+				selectionName);
 	}
 
 	@Override

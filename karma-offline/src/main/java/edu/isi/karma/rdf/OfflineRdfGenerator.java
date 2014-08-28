@@ -54,8 +54,9 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-import edu.isi.karma.controller.command.transformation.PythonRepository;
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
@@ -66,7 +67,6 @@ import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
-import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
@@ -97,6 +97,7 @@ public class OfflineRdfGenerator {
 	private String portnumber;
 	private String sMaxNumLines;
 	private String sourceName;
+	private String selectionName;
 	private int port;
 	private DBType dbType;
 	private File inputFile;
@@ -193,6 +194,7 @@ public class OfflineRdfGenerator {
 		outputFilePath = (String) cl.getValue("--outputfile");
 		baseURI = (String) cl.getValue("--baseuri");
 		bloomFiltersFilePath = (String) cl.getValue("--outputbloomfilter");
+		selectionName = (String) cl.getValue("--selection");
 		parseDatabaseCommandLineOptions(cl);
 		parseFileCommandLineOptions(cl);
 
@@ -311,7 +313,7 @@ public class OfflineRdfGenerator {
 		}
 
 		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
-				hostname, port, username, password, dBorSIDName, encoding);
+				hostname, port, username, password, dBorSIDName, encoding, selectionName);
 		if(inputType.equals("DB")) {
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
 			createWriters(id);
@@ -427,7 +429,7 @@ public class OfflineRdfGenerator {
 
 
 		createWriters(id);
-		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator();
+		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator(selectionName);
 		rdfGenerator.addModel(id);
 		InputType inputType = null;
 		if(this.inputType.equalsIgnoreCase("CSV"))
@@ -465,6 +467,7 @@ public class OfflineRdfGenerator {
 				.withOption(buildOption("queryfile", "query file for loading data", "queryfile", obuilder, abuilder))
 				.withOption(buildOption("outputbloomfilter", "generate bloom filters", "bloomfiltersfile", obuilder, abuilder))
 				.withOption(buildOption("baseuri", "specifies base uri", "base URI", obuilder, abuilder))
+				.withOption(buildOption("selection", "specifies selection name", "selection", obuilder, abuilder))
 				.withOption(obuilder
 						.withLongName("help")
 						.withDescription("print this message")

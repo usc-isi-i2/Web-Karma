@@ -27,14 +27,15 @@ import javax.servlet.http.HttpServletRequest;
 
 public class ResetKarmaCommandFactory extends CommandFactory {
 	private enum Arguments {
-		forgetSemanticTypes, forgetModels
+		forgetSemanticTypes, forgetModels, forgetAlignment
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		boolean forgetSemanticTypes = Boolean.parseBoolean(request.getParameter(Arguments.forgetSemanticTypes.name()));
 		boolean forgetModels = Boolean.parseBoolean(request.getParameter(Arguments.forgetModels.name()));
-		return new ResetKarmaCommand(getNewId(workspace), forgetSemanticTypes, forgetModels);
+		boolean forgetAlignment = Boolean.parseBoolean(request.getParameter(Arguments.forgetAlignment.name()));
+		return new ResetKarmaCommand(getNewId(workspace), forgetSemanticTypes, forgetModels, forgetAlignment);
 	}
 
 	@Override

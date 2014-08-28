@@ -1,28 +1,35 @@
 package edu.isi.karma.controller.command.cleaning;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.FetchResultUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.*;
-
-public class FetchTransformingDataCommand extends WorksheetCommand {
+public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(FetchTransformingDataCommand.class);
 	private final String hNodeId;
 
 	public FetchTransformingDataCommand(String id, String worksheetId,
-			String hNodeId) {
-		super(id, worksheetId);
+			String hNodeId, String selectionId) {
+		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 
 	}
@@ -71,6 +78,7 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
+		SuperSelection selection = getSuperSelection(wk);
 		String Msg = String.format("begin, Time,%d, Worksheet,%s",
 				System.currentTimeMillis(), worksheetId);
 		logger.info(Msg);
@@ -85,7 +93,7 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 		}
 		// random nodes
 		Collection<Node> nodes = new ArrayList<Node>();
-		wk.getDataTable().collectNodes(selectedPath, nodes);
+		wk.getDataTable().collectNodes(selectedPath, nodes, selection);
 		HashSet<Integer> indSet = this.obtainIndexs(nodes.size());
 		int index = 0;
 		for (Iterator<Node> iterator = nodes.iterator(); iterator.hasNext();) {

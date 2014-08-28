@@ -1,10 +1,10 @@
 package edu.isi.karma.common;
 
-import com.hp.hpl.jena.rdf.model.Model;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.Writer;
+
+import com.hp.hpl.jena.rdf.model.Model;
 
 /**
  * Class JenaWritable

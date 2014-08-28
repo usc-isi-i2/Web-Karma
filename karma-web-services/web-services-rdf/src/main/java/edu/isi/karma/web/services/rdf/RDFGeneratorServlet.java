@@ -34,6 +34,7 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.URIFormatter;
@@ -45,7 +46,6 @@ import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
-import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rdf.GenericRDFGenerator;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
@@ -302,7 +302,7 @@ public class RDFGeneratorServlet {
 		logger.info(r2rmlURI);
 		logger.info(dataType);
 
-		GenericRDFGenerator gRDFGen = new GenericRDFGenerator();
+		GenericRDFGenerator gRDFGen = new GenericRDFGenerator(null);
 
 		R2RMLMappingIdentifier rmlID = new R2RMLMappingIdentifier(r2rmlURI,
 				new URL(r2rmlURI));
@@ -342,6 +342,7 @@ public class RDFGeneratorServlet {
 		}
 	}
 
+
 	private static void initialization() throws KarmaException {
 		UpdateContainer uc = new UpdateContainer();
 		KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
@@ -351,8 +352,7 @@ public class RDFGeneratorServlet {
 
 		SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
 
-		ModelingConfiguration.setLearnerEnabled(false); // disable automatic
-														// learning
+		ModelingConfiguration.setLearnerEnabled(false); // disable automatic													// learning
 	}
 
 	private WorksheetR2RMLJenaModelParser getModel(

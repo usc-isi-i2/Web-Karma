@@ -9,11 +9,12 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
 
 public class ExportAvroCommandFactory extends JSONInputCommandFactory {
 	private enum Arguments {
-		worksheetId, alignmentNodeId
+		worksheetId, alignmentNodeId, selectionName
 	}
 
 	@Override
@@ -28,8 +29,9 @@ public class ExportAvroCommandFactory extends JSONInputCommandFactory {
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String alignmentNodeId = HistoryJsonUtil.getStringValue(Arguments.alignmentNodeId.name(), inputJson);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		ExportAvroCommand comm = new ExportAvroCommand(
-				getNewId(workspace), alignmentNodeId, worksheetId);
+				getNewId(workspace), alignmentNodeId, worksheetId, selectionName);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

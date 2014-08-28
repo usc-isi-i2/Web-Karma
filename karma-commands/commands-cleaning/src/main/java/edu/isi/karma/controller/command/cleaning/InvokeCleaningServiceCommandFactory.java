@@ -21,19 +21,22 @@
 
 package edu.isi.karma.controller.command.cleaning;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.KarmaException;
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class InvokeCleaningServiceCommandFactory extends JSONInputCommandFactory {
 	private enum Arguments {
-		hNodeId, worksheetId, hTableID
+		hNodeId, worksheetId, hTableID, 
+		selectionName
 	}
 
 	@Override
@@ -49,9 +52,11 @@ public class InvokeCleaningServiceCommandFactory extends JSONInputCommandFactory
 				Arguments.hNodeId.name(), inputJson);
 		String worksheetId = HistoryJsonUtil.getStringValue(
 				Arguments.worksheetId.name(), inputJson);
-
+		this.normalizeSelectionId(worksheetId, inputJson, workspace);
+		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		InvokeCleaningServiceCommand comm = new InvokeCleaningServiceCommand(
-				getNewId(workspace), hNodeId, worksheetId);
+				getNewId(workspace), hNodeId, worksheetId, 
+				selectionName);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

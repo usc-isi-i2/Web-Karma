@@ -21,23 +21,26 @@
 
 package edu.isi.karma.model.serialization;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.tdb.TDB;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.tdb.base.file.Location;
+
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 
 public class Repository {
 	
+	public final String REPOSITORY_REL_DIR = "repository/";
 	public final String SERVICE_REPOSITORY_REL_DIR = "repository/services/";
 	public final String SOURCE_REPOSITORY_REL_DIR = "repository/sources/";
 	public final String TRIPLE_DATASET_REL_DIR =  "repository/dataset/";
@@ -58,6 +61,14 @@ public class Repository {
 		{
 			_InternalInstance = new Repository();
 
+			File repository = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + _InternalInstance.REPOSITORY_REL_DIR);
+			if (!repository.exists())
+				repository.mkdir();
+			
+			File tripleStore = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + _InternalInstance.TRIPLE_DATASET_REL_DIR);
+			if (!tripleStore.exists())
+				tripleStore.mkdir();
+			
 			File serviceRepository = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + _InternalInstance.SERVICE_REPOSITORY_REL_DIR);
 			if (!serviceRepository.exists())
 				serviceRepository.mkdir();
@@ -72,6 +83,7 @@ public class Repository {
 	}
 	
 	public void createRepository() {
+		
 		Location location = new Location(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + this.TRIPLE_DATASET_REL_DIR);
 		this.dataset = TDBFactory.createDataset(location);
 //		TDB.getContext().set(TDB.symUnionDefaultGraph, true);
@@ -183,4 +195,5 @@ public class Repository {
 		else if (lang.equalsIgnoreCase("N3")) ext = ".n3";
 		return ext;
 	}
+
 }

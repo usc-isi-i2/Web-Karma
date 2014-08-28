@@ -23,7 +23,7 @@ package edu.isi.karma.model.serialization;
 
 import com.hp.hpl.jena.rdf.model.*;
 
-import edu.isi.karma.modeling.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.rep.sources.Attribute;

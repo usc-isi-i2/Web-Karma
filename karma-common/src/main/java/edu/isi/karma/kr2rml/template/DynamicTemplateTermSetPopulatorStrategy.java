@@ -23,6 +23,7 @@ package edu.isi.karma.kr2rml.template;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
@@ -38,9 +39,9 @@ public class DynamicTemplateTermSetPopulatorStrategy implements
 		
 	}
 	@Override
-	public Collection<Node> getNodes(Row topRow, Row currentRow) {
+	public Collection<Node> getNodes(Row topRow, Row currentRow, SuperSelection sel) {
 		Collection<Node> nodes = new LinkedList<Node>();
-		currentRow.collectNodes(relativePath, nodes);
+		currentRow.collectNodes(relativePath, nodes, sel);
 		return nodes;
 	}
 

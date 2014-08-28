@@ -21,6 +21,11 @@
 
 package edu.isi.karma.controller.command.transformation;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
@@ -34,10 +39,6 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class MutatingPythonTransformationCommand extends
 		PythonTransformationCommand {
@@ -48,9 +49,9 @@ public abstract class MutatingPythonTransformationCommand extends
 	
 	public MutatingPythonTransformationCommand(String id, String newColumnName,
 			String transformationCode, String worksheetId, String hNodeId,
-			String errorDefaultValue) {
+			String errorDefaultValue, String selectionId) {
 		super(id, transformationCode, worksheetId, hNodeId,
-				errorDefaultValue);
+				errorDefaultValue, selectionId);
 		this.newColumnName = newColumnName;
 	}
 
@@ -88,7 +89,7 @@ public abstract class MutatingPythonTransformationCommand extends
 		worksheet.getMetadataContainer().getColumnMetadata().addColumnDerivedFrom(newHNodeId, hNodeId);
 		// Prepare the output container
 		UpdateContainer c = new UpdateContainer();
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 		
 		/** Add the alignment update **/
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace, workspace.getFactory().getHNode(newHNodeId).getHNodePath(workspace.getFactory())));

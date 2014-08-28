@@ -33,6 +33,8 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
@@ -67,8 +69,8 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 	
 	public DatabaseTableRDFGenerator(DBType dbType, String hostname,
 			int portnumber, String username, String password,
-			String dBorSIDName, String encoding) {
-		super();
+			String dBorSIDName, String encoding, String selectionName) {
+		super(selectionName);
 		this.dbType = dbType;
 		this.hostname = hostname;
 		this.portnumber = portnumber;
@@ -170,11 +172,15 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		ErrorReport errorReport = new ErrorReport();
 		
 		this.applyHistoryToWorksheet(workspace, wk, mapping);
-		
+		SuperSelection selection = SuperSelectionManager.DEFAULT_SELECTION;
+		if (selectionName != null && !selectionName.trim().isEmpty())
+			selection = wk.getSuperSelectionManager().getSuperSelection(selectionName);
+		if (selection == null)
+			return;
 		// RDF generation object initialization
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(wk,
 				workspace.getFactory(), workspace.getOntologyManager(), writers, false,
-				mapping, errorReport);
+				mapping, errorReport, selection);
 
 		// Generate the rdf
 		rdfGen.generateRDF(false);

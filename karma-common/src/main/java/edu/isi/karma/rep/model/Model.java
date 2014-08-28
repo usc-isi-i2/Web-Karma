@@ -21,18 +21,6 @@
 
 package edu.isi.karma.rep.model;
 
-import com.hp.hpl.jena.query.*;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import edu.isi.karma.model.serialization.Repository;
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.Prefixes;
-import edu.isi.karma.rep.sources.IOType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -40,6 +28,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
+
+import edu.isi.karma.model.serialization.Repository;
+import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.Prefixes;
+import edu.isi.karma.rep.sources.IOType;
 
 public class Model {
 	
