@@ -54,6 +54,8 @@ public class ClearSelectionCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		inputColumns.clear();
+		outputColumns.clear();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		RepFactory factory = workspace.getFactory();
 		SuperSelection superSel = this.getSuperSelection(worksheet);
@@ -61,6 +63,7 @@ public class ClearSelectionCommand extends WorksheetSelectionCommand {
 		if (type.equals("Column")) {
 			Selection currentSel = superSel.getSelection(hTable.getId());
 			if (currentSel != null) {
+				outputColumns.addAll(currentSel.getInputColumns());
 				oldSelections.put(currentSel.getHTableId(), currentSel);
 				worksheet.getSelectionManager().removeSelection(currentSel);
 				superSel.removeSelection(currentSel);
@@ -75,18 +78,23 @@ public class ClearSelectionCommand extends WorksheetSelectionCommand {
 				}
 			}
 		}
+		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel);
 		return uc;
 	}
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
+		inputColumns.clear();
+		outputColumns.clear();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection superSel = getSuperSelection(worksheet);
 		for (Entry<String, Selection> entry : oldSelections.entrySet()) {
+			outputColumns.addAll(entry.getValue().getInputColumns());
 			superSel.addSelection(entry.getValue());
 			worksheet.getSelectionManager().addSelection(entry.getValue());
 		}
+		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel);
 		uc.add(new WorksheetSuperSelectionListUpdate(worksheetId));
 		return uc;

@@ -28,6 +28,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
@@ -83,7 +84,7 @@ public class WorksheetUpdateFactory {
 		for (Selection sel : worksheet.getSelectionManager().getAllDefinedSelection()) {
 			Set<String> inputColumns = sel.getInputColumns();
 			inputColumns.retainAll(command.getOutputColumns());
-			if (inputColumns.size() > 0)
+			if (inputColumns.size() > 0 && !command.getCommandName().equals("OperateSelectionCommand") && !command.getCommandName().equals("ClearSelectionCommand"))
 				sel.invalidateSelection();
 			if (sel.isSelectedRowsMethod() && checkSelection(sel, command, workspace.getFactory())) {
 				sel.invalidateSelection();
@@ -107,9 +108,12 @@ public class WorksheetUpdateFactory {
 	
 	private static boolean isChildHTable(HTable parent, HTable child, RepFactory factory) {
 		while (child != null) {
+			HNode parentHN = child.getParentHNode();
+			child = null;
+			if (parentHN != null)
+				child = parentHN.getHTable(factory);
 			if (parent == child)
 				return true;
-			child = child.getParentHNode().getHTable(factory);
 		}
 		return false;
 	}

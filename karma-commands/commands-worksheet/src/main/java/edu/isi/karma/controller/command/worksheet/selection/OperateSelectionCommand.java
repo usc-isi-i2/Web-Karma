@@ -59,7 +59,8 @@ public class OperateSelectionCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		//TODO hack for now
+		inputColumns.clear();
+		outputColumns.clear();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		RepFactory factory = workspace.getFactory();
 		SuperSelection superSel = this.getSuperSelection(worksheet);
@@ -81,6 +82,7 @@ public class OperateSelectionCommand extends WorksheetSelectionCommand {
 			Operation operation = Operation.valueOf(Operation.class, this.operation);
 			Selection t = new LargeSelection(workspace, worksheetId, hTable.getId(), factory.getNewId("SEL"), superSel.getName(), currentSel, anotherSel, operation);
 			worksheet.getSelectionManager().addSelection(t);
+			outputColumns.addAll(t.getInputColumns());
 			previousSelection = superSel.getSelection(t.getHTableId());
 			if (previousSelection != null)
 				superSel.removeSelection(previousSelection);
@@ -89,22 +91,28 @@ public class OperateSelectionCommand extends WorksheetSelectionCommand {
 		}catch (Exception e) {
 			return getErrorUpdate("The operation is undefined");
 		}
+		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel);
 		return uc;
 	}
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
+		inputColumns.clear();
+		outputColumns.clear();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection superSel = getSuperSelection(worksheet);
 		HNode hNode = workspace.getFactory().getHNode(hNodeId);
 		Selection currentSel = superSel.getSelection(hNode.getHTableId());
-		if (previousSelection != null)
+		if (previousSelection != null) {
 			superSel.addSelection(previousSelection);
+			outputColumns.addAll(previousSelection.getInputColumns());
+		}
 		if (currentSel != null) {
 			worksheet.getSelectionManager().removeSelection(currentSel);
 			superSel.removeSelection(currentSel);
 		}
+		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel);	
 		uc.add(new WorksheetSuperSelectionListUpdate(worksheetId));
 		return uc;
