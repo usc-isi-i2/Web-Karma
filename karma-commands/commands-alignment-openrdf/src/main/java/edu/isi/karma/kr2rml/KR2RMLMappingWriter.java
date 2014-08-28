@@ -49,6 +49,7 @@ import edu.isi.karma.common.HttpMethods;
 import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatter;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
+import edu.isi.karma.kr2rml.template.StringTemplateTerm;
 import edu.isi.karma.kr2rml.template.TemplateTerm;
 import edu.isi.karma.kr2rml.template.TemplateTermSet;
 import edu.isi.karma.modeling.Namespaces;
@@ -376,8 +377,23 @@ public class KR2RMLMappingWriter {
 			{
 				BNode cnBnode = f.createBNode();
 				// Print out the template for anything that isn't a blank node
-				Value templVal = f.createLiteral(objTermSet
-						.getR2rmlTemplateString(factory, columnNameFormatter));
+				boolean isUri = false;
+				
+				for (TemplateTerm term:objTermSet.getAllTerms()) {
+					if (term instanceof StringTemplateTerm) {
+						if(((StringTemplateTerm)term).hasFullUri())
+							isUri = true;
+					}
+				}
+						
+				String value = objTermSet
+						.getR2rmlTemplateString(factory, columnNameFormatter);
+				Value templVal;
+				if(isUri) {
+					templVal = f.createURI(value);
+				} else {
+					templVal = f.createLiteral(value);
+				}
 				con.add(cnBnode, repoURIs.get(Uris.RR_CONSTANT), templVal);
 				if (rdfLiteralTypeTermSet != null && rdfLiteralTypeTermSet.isSingleUriString()) {
 					String rdfLiteralTypeString = rdfLiteralTypeTermSet.
