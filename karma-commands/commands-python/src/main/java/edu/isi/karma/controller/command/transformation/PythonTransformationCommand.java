@@ -220,4 +220,10 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 	public void addInputColumns(String hNodeId) {
 		inputColumns.add(hNodeId);
 	}
+	
+	public void addSelectedRowsColumns(String hNodeId) {
+	}
+	
+	public void setSelectedRowsMethod(boolean t) {
+	}
 }

@@ -139,10 +139,10 @@ public class PythonTransformationHelper {
 			methodStmt.append("	targetNode = node.getNeighborByColumnName(columnName, factory)\n");
 			methodStmt.append("	if targetNode is not None: \n");
 			methodStmt.append("		if targetNode.hasNestedTable(): \n");
-			methodStmt.append("			nestedTable = targetNode.getNestedTable() \n");
-			methodStmt.append("			hTable = factory.getHTable(nestedTable.getHTableId()) \n");
-			methodStmt.append("			for hNode in hTable.getHNodes():  \n");
-			methodStmt.append("				command.addInputColumns(hNode.getId())\n");
+			methodStmt.append("			command.addInputColumns(targetNode.getHNodeId())\n");
+			methodStmt.append("			command.addSelectedRowsColumns(targetNode.getHNodeId())\n");
+			methodStmt.append("			command.setSelectedRowsMethod(True)\n");
+			methodStmt.append("			nestedTable = targetNode.getNestedTable()\n");
 			methodStmt.append("			if edu.isi.karma.er.helper.PythonTransformationHelper.hasSelectedRows(nestedTable, factory, selectionName) :\n");
 			methodStmt.append("				return True\n");
 			methodStmt.append("	return False\n");

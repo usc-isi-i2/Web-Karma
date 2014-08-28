@@ -21,7 +21,6 @@
 
 package edu.isi.karma.controller.update;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import edu.isi.karma.config.UIConfiguration;
@@ -29,6 +28,8 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
@@ -80,11 +81,37 @@ public class WorksheetUpdateFactory {
 	public static void detectSelectionStatusChange(String worksheetId, Workspace workspace, Command command) {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		for (Selection sel : worksheet.getSelectionManager().getAllDefinedSelection()) {
-			Set<String> inputColumns = new HashSet<String>(sel.getInputColumns());
+			Set<String> inputColumns = sel.getInputColumns();
 			inputColumns.retainAll(command.getOutputColumns());
 			if (inputColumns.size() > 0)
 				sel.invalidateSelection();
+			if (sel.isSelectedRowsMethod() && checkSelection(sel, command, workspace.getFactory())) {
+				sel.invalidateSelection();
+			}
 		}
 	}
-
+	
+	private static boolean checkSelection(Selection sel, Command command, RepFactory factory) {
+		Set<String> selectedRowsColumns = sel.getSelectedRowsColumns();
+		Set<String> outputColumns = command.getOutputColumns();
+		for (String parent : selectedRowsColumns) {
+			HTable parentHT = factory.getHTable(factory.getHNode(parent).getHTableId());
+			for (String child : outputColumns) {
+				HTable childHT = factory.getHTable(factory.getHNode(child).getHTableId());
+				if (isChildHTable(parentHT, childHT, factory))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	private static boolean isChildHTable(HTable parent, HTable child, RepFactory factory) {
+		while (child != null) {
+			if (parent == child)
+				return true;
+			child = child.getParentHNode().getHTable(factory);
+		}
+		return false;
+	}
+	
 }
