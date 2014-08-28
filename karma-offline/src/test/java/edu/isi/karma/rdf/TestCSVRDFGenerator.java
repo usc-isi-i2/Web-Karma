@@ -60,10 +60,6 @@ public abstract class TestCSVRDFGenerator extends TestRdfGenerator{
 		String rdf = sw.toString();
 		assertNotEquals(rdf.length(), 0);
 		String[] lines = rdf.split(System.getProperty("line.separator"));
-		for(String line : lines)
-		{
-			System.out.println(line);
-		}
 		assertEquals(expectedNumberOfLines, lines.length);
 	}
 

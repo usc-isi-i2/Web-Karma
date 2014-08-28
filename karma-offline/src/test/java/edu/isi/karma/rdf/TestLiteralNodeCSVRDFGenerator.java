@@ -34,11 +34,11 @@ public class TestLiteralNodeCSVRDFGenerator extends TestCSVRDFGenerator{
 	
 	}
 	@Test
-	public void testGenerateRDF2() {
+	public void testGenerateWithLiteralNode() {
 		try {
 			executeBasicCSVTest("names.csv", "names.csv-model-new", false, 11);
 		} catch (Exception e) {
-			logger.error("testGenerateRDF1 failed:", e);
+			logger.error("testGenerateWithLiteralNode failed:", e);
 			fail("Execption: " + e.getMessage());
 		}
 	}
