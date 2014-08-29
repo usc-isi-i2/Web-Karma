@@ -52,7 +52,7 @@ g.ColumnNode rect{
 	fill:black;
 }
 
-g.InternalNode rect {
+g.InternalNode rect, g.LiteralNode rect {
 	fill: #D3D3D3;
 	z-index: 1;
 }
@@ -60,7 +60,7 @@ g.InternalNode rect {
 g.ColumnNode:hover {
 /*	cursor: pointer; */
 }
-g.InternalNode:hover {
+g.InternalNode:hover, g.LiteralNode:hover {
 	cursor: pointer;
 }
 
@@ -77,7 +77,7 @@ text.LinkLabel:hover {
 	cursor: pointer;
 }
 
-g.InternalNode.highlightOverlay rect{
+g.InternalNode.highlightOverlay rect, g.LiteralNode.highlightOverlay rect{
 	fill: #9C9C9C;
 	stroke: black;
 	z-index:10;

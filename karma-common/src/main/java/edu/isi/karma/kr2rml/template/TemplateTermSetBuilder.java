@@ -40,8 +40,9 @@ public class TemplateTermSetBuilder {
 			String templStr) throws JSONException {
 		return constructTemplateTermSetFromR2rmlTemplateString(templStr, KR2RMLColumnNameFormatterFactory.getFormatter(SourceTypes.CSV));
 	}
+	
 	public static TemplateTermSet constructTemplateTermSetFromR2rmlTemplateString(
-			String templStr, KR2RMLColumnNameFormatter formatter) throws JSONException {
+			String templStr, boolean isStringUri, KR2RMLColumnNameFormatter formatter) throws JSONException {
 		TemplateTermSet termSet = new TemplateTermSet();
 		
 		Pattern p = Pattern.compile("\\{\\\"?.*?\\\"?\\}");
@@ -55,7 +56,7 @@ public class TemplateTermSetBuilder {
 		    	if (matcher.start() != startIndex) {
 		    		String strTermVal = templStr.substring(startIndex, matcher.start());
 		    		logger.debug("String templ term: " + strTermVal);
-		    		termSet.addTemplateTermToSet(new StringTemplateTerm(strTermVal));
+		    		termSet.addTemplateTermToSet(new StringTemplateTerm(strTermVal, isStringUri));
 		    	}
 		    	
 		    	String colTermVal = removeR2rmlFormatting(matcher.group());
@@ -68,13 +69,18 @@ public class TemplateTermSetBuilder {
 		      }
 	    	if(startIndex != templStr.length())
 	    	{
-	    		termSet.addTemplateTermToSet(new StringTemplateTerm(templStr.substring(startIndex)));
+	    		termSet.addTemplateTermToSet(new StringTemplateTerm(templStr.substring(startIndex), isStringUri));
 	    	}
 	    } else {
-	    	termSet.addTemplateTermToSet(new StringTemplateTerm(templStr));
+	    	termSet.addTemplateTermToSet(new StringTemplateTerm(templStr, isStringUri));
 	    }
 	    
 		return termSet;
+	}
+	
+	public static TemplateTermSet constructTemplateTermSetFromR2rmlTemplateString(
+			String templStr, KR2RMLColumnNameFormatter formatter) throws JSONException {
+		return constructTemplateTermSetFromR2rmlTemplateString(templStr, false, formatter);
 	}
 	
 	public static TemplateTermSet constructTemplateTermSetFromR2rmlColumnString(

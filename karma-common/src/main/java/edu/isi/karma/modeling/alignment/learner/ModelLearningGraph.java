@@ -47,6 +47,7 @@ import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
+import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
@@ -240,6 +241,14 @@ public class ModelLearningGraph {
 				if (target instanceof InternalNode) {
 					String id = nodeIdFactory.getNodeId(target.getLabel().getUri());
 					InternalNode node = new InternalNode(id, new Label(target.getLabel()));
+					if (this.graphBuilder.addNode(node)) {
+						n2 = node;
+					} else continue;
+				}
+				else if(target instanceof LiteralNode) {
+					LiteralNode lTarget = (LiteralNode)target;
+					String id = nodeIdFactory.getNodeId(lTarget.getValue());
+					LiteralNode node = new LiteralNode(id, lTarget.getValue(), new Label(target.getLabel()), lTarget.isUri());
 					if (this.graphBuilder.addNode(node)) {
 						n2 = node;
 					} else continue;
