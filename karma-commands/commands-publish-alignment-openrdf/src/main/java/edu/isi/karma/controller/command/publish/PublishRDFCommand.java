@@ -227,7 +227,7 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 			N3KR2RMLRDFWriter writer = new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), new PrintWriter (bw));
 			writer.setBaseURI(rdfSourceNamespace);
 			writers.add(writer);
-			if (generateBloomFilters)
+			if (generateBloomFilters && utilObj.testURIExists(modelRepoUrl, "", url))
 				writers.add(new BloomFilterKR2RMLRDFWriter(new PrintWriter(sw), mapping.getId(), false, this.rdfSourceNamespace));
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 					workspace.getFactory(), workspace.getOntologyManager(),
@@ -241,7 +241,7 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 				saveToStore(rdfFileLocalPath);
 			}
 			start = System.currentTimeMillis();
-			if (generateBloomFilters) {
+			if (generateBloomFilters && utilObj.testURIExists(modelRepoUrl, "", url)) {
 				JSONObject obj = new JSONObject(sw.toString());
 				result &= updateTripleStore(obj, bloomfilterMapping, modelRepoUrl, modelContext, utilObj);
 				Map<String, String> verification = new HashMap<String, String>();
