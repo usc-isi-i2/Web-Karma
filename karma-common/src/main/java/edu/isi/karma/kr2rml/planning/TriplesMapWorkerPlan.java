@@ -54,6 +54,7 @@ public class TriplesMapWorkerPlan {
 	private SubjectMapPlan subjectMapPlan;
 	private Deque<PredicateObjectMappingPlan> internalLinksPlans;
 	private Deque<PredicateObjectMappingPlan> columnLinksPlans;
+	private Deque<PredicateObjectMappingPlan> constantLinksPlans;
 	private SuperSelection selection;
 	private URIFormatter uriFormatter;
 
@@ -114,6 +115,7 @@ public class TriplesMapWorkerPlan {
 		}
 		
 		columnLinksPlans = new LinkedList<PredicateObjectMappingPlan>();
+		constantLinksPlans = new LinkedList<PredicateObjectMappingPlan>();
 		// Subject 
 		// Generate triples for specifying the types
 		for (TemplateTermSet typeTerm:triplesMap.getSubject().getRdfsType()) {
@@ -142,8 +144,18 @@ public class TriplesMapWorkerPlan {
 				LOG.debug("Skipping " + pom.toString());
 				continue;
 			}
-			PredicateObjectMappingPlan pomPlan = new ColumnPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, subjectMapPlan.getSubjectTermsToPaths(), kr2rmlMapping,uriFormatter, factory, translator, hNodeToContextUriMap, generateContext, selection);
-			columnLinksPlans.add(pomPlan);
+			PredicateObjectMappingPlan pomPlan = null;
+			if(pom.getObject().getTemplate().getAllColumnNameTermElements().isEmpty())
+			{
+				pomPlan = new ConstantPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, kr2rmlMapping,subjectMapPlan.getSubjectTermsToPaths(), uriFormatter, factory, translator, selection);
+				constantLinksPlans.add(pomPlan);
+			}
+			else
+			{
+				pomPlan = new ColumnPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, subjectMapPlan.getSubjectTermsToPaths(), kr2rmlMapping,uriFormatter, factory, translator, hNodeToContextUriMap, generateContext, selection);
+				columnLinksPlans.add(pomPlan);
+			}
+			
 		}
 	}
 	
@@ -161,6 +173,11 @@ public class TriplesMapWorkerPlan {
 		{
 			
 			columnLinkPlan.outputTriples(outWriters, columnLinkPlan.execute(r, subjects), r);
+		}
+		
+		for(PredicateObjectMappingPlan constantLinkPlan : constantLinksPlans)
+		{
+			constantLinkPlan.outputTriples(outWriters, constantLinkPlan.execute(r, subjects), r);
 		}
 	}
 }

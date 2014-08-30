@@ -253,6 +253,7 @@ public class WorksheetR2RMLJenaModelParser {
 		Property parentTriplesMapProp = model.getProperty(Uris.RR_PARENT_TRIPLE_MAP_URI);
 		Property rdfTypeProp = model.getProperty(Uris.RDF_TYPE_URI);
 		Property templateProp = model.getProperty(Uris.RR_TEMPLATE_URI);
+		Property constantProp = model.getProperty(Uris.RR_CONSTANT);
 		KR2RMLColumnNameFormatter formatter = kr2rmlMapping.getColumnNameFormatter();
 		TriplesMap trMap = kr2rmlMapping.getTriplesMapIndex().get(trMapRes.getURI());
 		if (trMap == null) {
@@ -327,12 +328,17 @@ public class WorksheetR2RMLJenaModelParser {
 					if(objMap == null)
 					{
 						NodeIterator templateItr = model.listObjectsOfProperty(objNode, templateProp);
+						//try a literal/constant node
+						if(templateItr == null ||  !templateItr.hasNext()){
+							templateItr = model.listObjectsOfProperty(objNode, constantProp);
+						}
 						TemplateTermSet objTemplTermSet = null;
 						while (templateItr.hasNext()) {
 							RDFNode templNode = templateItr.next();
 							String template = templNode.toString();
+							boolean isUri = !templNode.isLiteral();
 							objTemplTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
-								template, kr2rmlMapping.getColumnNameFormatter());
+								template, isUri, kr2rmlMapping.getColumnNameFormatter());
 						
 						}
 						objMap = new ObjectMap(getNewObjectMapId(objectMapCounter++), 
@@ -537,7 +543,7 @@ public class WorksheetR2RMLJenaModelParser {
 							if(templateTermSet != null)
 							{
 								TemplateTerm term = templateTermSet.getAllTerms().get(0);
-								if(term!= null)
+								if(term!= null && term instanceof ColumnTemplateTerm)
 								{
 									columnsCovered.add(term.getTemplateTermValue());
 								}

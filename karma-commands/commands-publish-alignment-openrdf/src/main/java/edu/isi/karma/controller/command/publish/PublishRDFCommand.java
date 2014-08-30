@@ -30,7 +30,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -51,7 +50,6 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.db.DBConnection;
 import com.hp.hpl.jena.db.IDBConnection;
 import com.hp.hpl.jena.db.ModelRDB;
-import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
 
@@ -68,8 +66,6 @@ import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
-import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.kr2rml.writer.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
@@ -197,21 +193,7 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 		}
 
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
-		if (url != null && !url.trim().isEmpty() && modelContext != null && !modelContext.trim().isEmpty()) {
-			try {
-				File tmp = new File("tmp");
-				PrintWriter pw = new PrintWriter(tmp);
-				pw.println(utilObj.getMappingFromTripleStore(modelRepoUrl, modelContext, url));
-				pw.close();
-				Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(tmp.toURI().toURL());
-				tmp.delete();
-				R2RMLMappingIdentifier identifier = new R2RMLMappingIdentifier(mapping.getId().getName(), new URL(url));
-				WorksheetR2RMLJenaModelParser parser = new WorksheetR2RMLJenaModelParser(model, identifier);
-				mapping = parser.parse();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+	
 		logger.debug(mapping.toString());
 
 		StringWriter sw = new StringWriter();

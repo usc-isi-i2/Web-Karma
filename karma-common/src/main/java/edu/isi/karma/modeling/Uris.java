@@ -63,6 +63,7 @@ public abstract class Uris {
 	public static final String RR_SUBJECTMAP_URI = Namespaces.RR + "subjectMap";
 	public static final String RR_TABLENAME_URI = Namespaces.RR + "tableName";
 	public static final String RR_TEMPLATE_URI = Namespaces.RR + "template";
+	public static final String RR_CONSTANT = Namespaces.RR + "constant";
 	public static final String RR_PRED_OBJ_MAP_URI = Namespaces.RR + "predicateObjectMap";
 	public static final String RR_PREDICATE_URI = Namespaces.RR + "predicate";
 	public static final String RR_OBJECTMAP_URI = Namespaces.RR + "objectMap";

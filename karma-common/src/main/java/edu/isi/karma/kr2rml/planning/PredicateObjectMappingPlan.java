@@ -33,6 +33,7 @@ import edu.isi.karma.kr2rml.exception.HNodeNotFoundKarmaException;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
 import edu.isi.karma.kr2rml.template.ColumnTemplateTerm;
+import edu.isi.karma.kr2rml.template.ConstantTemplateTermSetPopulatorPlan;
 import edu.isi.karma.kr2rml.template.DoublyAnchoredTemplateTermSetPopulator;
 import edu.isi.karma.kr2rml.template.PartiallyPopulatedTermSet;
 import edu.isi.karma.kr2rml.template.PopulatedTemplateTermSet;
@@ -81,7 +82,7 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 		generatePredicatesForPom(pom);
 	}
 
-	private void generatePredicatesForPom(PredicateObjectMap pom) throws HNodeNotFoundKarmaException {
+	protected void generatePredicatesForPom(PredicateObjectMap pom) throws HNodeNotFoundKarmaException {
 		this.pom = pom;
 		List<ColumnTemplateTerm> subjectAndObjectTemplateTerms = new LinkedList<ColumnTemplateTerm>();
 		subjectAndObjectTemplateTerms.addAll(this.combinedSubjectObjectTermsToPaths.keySet());
