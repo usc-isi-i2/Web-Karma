@@ -197,7 +197,7 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 		}
 
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
-		if (url != null && !url.trim().isEmpty() && modelContext != null && !modelContext.trim().isEmpty()) {
+		if (url != null && !url.trim().isEmpty() && modelContext != null && !modelContext.trim().isEmpty() && generateBloomFilters && utilObj.testURIExists(modelRepoUrl, "", url)) {
 			try {
 				File tmp = new File("tmp");
 				PrintWriter pw = new PrintWriter(tmp);

@@ -205,10 +205,14 @@ public class TripleStoreUtil {
 		return retval;
 	}
 
-	public boolean testURIExists(String tripleStoreURL, String context, String uri) throws KarmaException
+	public boolean testURIExists(String tripleStoreURL, String context, String uri)
 	{
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
-		testTripleStoreConnection(tripleStoreURL);
+		try {
+			testTripleStoreConnection(tripleStoreURL);
+		} catch (KarmaException e1) {
+			return false;
+		}
 
 		try {
 
