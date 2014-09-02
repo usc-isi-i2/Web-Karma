@@ -104,11 +104,11 @@
 			<version>1.1.0</version>
 			<classifier>hadoop2</classifier> 
 		</dependency> 
-		<dependency>
+	<!--	<dependency>
 	    	<groupId>com.karma</groupId>
 	    	<artifactId>entityExtraction</artifactId>
 	    	<version>0.0.1</version>
-	    </dependency>
+	    </dependency>-->
 	    
     </dependencies>
 	<build>
