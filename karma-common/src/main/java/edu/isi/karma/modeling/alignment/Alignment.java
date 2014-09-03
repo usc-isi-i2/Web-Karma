@@ -136,8 +136,8 @@ public class Alignment implements OntologyUpdateListener {
 		return this.graphBuilder.getTypeToNodesMap().get(type);
 	}
 	
-	public Set<Node> getNodesForceAddedByUser() {
-		return this.graphBuilder.getNodesForceAddedByUser();
+	public Set<Node> getForcedNodes() {
+		return this.graphBuilder.getForcedNodes();
 	}
 	
 	public LabeledLink getLinkById(String linkId) {
@@ -203,7 +203,7 @@ public class Alignment implements OntologyUpdateListener {
 	public InternalNode addForcedInternalNode(Label label) {
 		String id = nodeIdFactory.getNodeId(label.getUri());
 		InternalNode node = new InternalNode(id, label);
-		node.setForceAddedByUser(true);
+		node.setForced(true);
 		if (this.graphBuilder.addNodeAndUpdate(node)) return node;
 		return null;
 	}
@@ -541,8 +541,8 @@ public class Alignment implements OntologyUpdateListener {
 			}
 		}
 
-		Set<Node> forcedAddedNodes = this.getNodesForceAddedByUser();
-		for (Node n : forcedAddedNodes) {
+		Set<Node> forcedNodes = this.getForcedNodes();
+		for (Node n : forcedNodes) {
 			steinerNodes.add(n);
 		}
 		

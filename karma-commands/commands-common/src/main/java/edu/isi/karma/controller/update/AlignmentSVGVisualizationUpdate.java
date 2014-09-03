@@ -136,7 +136,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 						hNodeIdsAdded.add(cNode.getHNodeId());
 					}
 					JSONObject nodeObj = getNodeJsonObject(node.getLocalId(), node.getId(), node.getType().name()
-							, height, node.isForceAddedByUser(), hNodeIdsCoveredByVertex, hNodeId, node.getUri());
+							, height, node.isForced(), hNodeIdsCoveredByVertex, hNodeId, node.getUri());
 					nodesArr.put(nodeObj);
 					verticesIndex.put(node, nodesIndexcounter++);
 				}

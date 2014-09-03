@@ -39,7 +39,7 @@ public class LiteralNode extends Node {
 		this.datatype = datatype;
 		this.isUri = isUri;
 		
-		this.setForceAddedByUser(true);
+		this.setForced(true);
 	}
 
 	public String getValue() {

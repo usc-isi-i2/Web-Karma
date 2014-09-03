@@ -315,7 +315,7 @@ public class SteinerTree {
 
 		//Add all the force added vertices
 		for(Node n : g1.vertexSet()) {
-			if(n.isForceAddedByUser())
+			if(n.isForced())
 				this.tree.addVertex(n);
 		}
 	}

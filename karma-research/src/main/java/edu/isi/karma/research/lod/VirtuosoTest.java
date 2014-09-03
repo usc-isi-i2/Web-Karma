@@ -280,8 +280,8 @@ public class VirtuosoTest {
 		//		extractObjectProperties(repository, "http://amsterdammuseum.nl", Params.LOD_OBJECT_PROPERIES_FILE);
 		//		extractDataProperties(repository, "http://amsterdammuseum.nl", Params.LOD_DATA_PROPERIES_FILE);
 
-		extractObjectProperties(repository, null, Params.LOD_OBJECT_PROPERIES_FILE);
 		extractDataProperties(repository, null, Params.LOD_DATA_PROPERIES_FILE);
+		extractObjectProperties(repository, null, Params.LOD_OBJECT_PROPERIES_FILE);
 
 	}
 
