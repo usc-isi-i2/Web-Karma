@@ -127,8 +127,7 @@ public class WorksheetCommandHistoryExecutor {
 			} 
 			return uc;
 		} catch(Exception e) {
-			logger.error("Error executing command: "+ commandName + ". Please notify this error");
-			Util.logException(logger, e);
+			logger.error("Error executing command: "+ commandName + ".", e);
 			//make these InfoUpdates so that the UI can still process the rest of the model
 			return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
 		}
@@ -185,6 +184,7 @@ public class WorksheetCommandHistoryExecutor {
 						else {
 							//Get the id of the last node in the table
 							ArrayList<String> allNodeIds = hTable.getOrderedNodeIds();
+							//TODO check for allNodeIds.size == 0
 							String lastNodeId = allNodeIds.get(allNodeIds.size()-1);
 							inpP.put(ClientJsonKeys.value.name(), lastNodeId);
 						}
