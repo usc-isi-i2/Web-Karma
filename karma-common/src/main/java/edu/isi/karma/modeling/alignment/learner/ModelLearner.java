@@ -692,8 +692,10 @@ public class ModelLearner {
 		System.out.println("numberOfAttributesWhoseTypeIsFirstCRFType:" + numberOfAttributesWhoseTypeIsFirstCRFType);
 	}
 
-	public static void main(String[] args) throws Exception {
-
+	public static void testUsingCompactLearningGraph() throws Exception {
+	}
+	
+	public static void testUsingOriginalLearningGraph() throws Exception {
 		//		String inputPath = Params.INPUT_DIR;
 		String outputPath = Params.OUTPUT_DIR;
 		String graphPath = Params.GRAPHS_DIR;
@@ -901,6 +903,19 @@ public class ModelLearner {
 			resultFile.println(s.toString());
 
 		resultFile.close();
+	}
+	
+	public static void main(String[] args) throws Exception {
+
+		boolean testUsingOriginalLearningGraph = true;
+		boolean testUsingCompactLearningGraph = false;
+		
+		if (testUsingOriginalLearningGraph)
+			testUsingOriginalLearningGraph();
+		else if (testUsingCompactLearningGraph)
+			testUsingCompactLearningGraph();
+
+
 	}
 
 }

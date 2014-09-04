@@ -41,6 +41,8 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.research.ModelReader;
+import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
@@ -51,12 +53,10 @@ import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
-import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SubClassLink;
-import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -145,14 +145,16 @@ public class ModelLearningGraphCompact {
 		this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
 
 		File ff = new File(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_MODELS_DIR));
-		File[] files = ff.listFiles();
-		
-		for (File f : files) {
-			if (f.getName().endsWith(".json")) {
-				try {
-					SemanticModel model = SemanticModel.readJson(f.getAbsolutePath());
-					if (model != null) this.addModel(model);
-				} catch (Exception e) {
+		if (ff.exists()) {
+			File[] files = ff.listFiles();
+			
+			for (File f : files) {
+				if (f.getName().endsWith(".json")) {
+					try {
+						SemanticModel model = SemanticModel.readJson(f.getAbsolutePath());
+						if (model != null) this.addModel(model);
+					} catch (Exception e) {
+					}
 				}
 			}
 		}
@@ -178,23 +180,37 @@ public class ModelLearningGraphCompact {
 		}
 	}
 	
-	public void addModel(SemanticModel model) {
-		this.addModelGraph(model);
-		this.graphBuilder.addClosureAndLinksOfNodes(model.getInternalNodes(), null);
+	public Set<InternalNode> addModel(SemanticModel model) {
+		return this.addModelGraph(model);
 	}
 	
-	public void addModelAndUpdateGraphJson(SemanticModel model) {
-		this.addModel(model);
+	public void addModelAndUpdate(SemanticModel model) {
+		this.addModelGraph(model);
+		this.updateGraphUsingOntology(model);
+	}
+	
+	public void addModelAndUpdateAndExport(SemanticModel model) {
+		this.addModelGraph(model);
+		this.updateGraphUsingOntology(model);
 		this.exportJson();
 		this.exportGraphviz();
 	}
 	
-	private HashMap<Node,Set<Node>> addInternalNodes(SemanticModel model) {
+	private void updateGraphUsingOntology(SemanticModel model) {
+		this.graphBuilder.addClosureAndLinksOfNodes(model.getInternalNodes(), null);
+	}
+	
+	public void updateGraphUsingOntology(Set<InternalNode> nodes) {
+		this.graphBuilder.addClosureAndLinksOfNodes(nodes, null);
+	}
+	
+	private HashMap<Node,Set<Node>> addInternalNodes(SemanticModel model, Set<InternalNode> addedNodes) {
 	
 		if (model == null || model.getGraph() == null) 
 			return null;
 		
 		HashMap<Node,Set<Node>> internalNodeMatches = new HashMap<Node,Set<Node>>();
+		if (addedNodes == null) addedNodes = new HashSet<InternalNode>();
 
 		HashMap<String, Integer> uriCount = new HashMap<String, Integer>();
 		for (Node n : model.getGraph().vertexSet()) {
@@ -213,7 +229,8 @@ public class ModelLearningGraphCompact {
 			for (int i = 0; i < modelNodeCount - graphNodeCount; i++) {
 				String id = this.nodeIdFactory.getNodeId(uri);
 				Node n = new InternalNode(id, new Label(uri));
-				this.graphBuilder.addNode(n);
+				if (this.graphBuilder.addNode(n))
+					addedNodes.add((InternalNode)n);
 			}
 		}
 		
@@ -228,18 +245,18 @@ public class ModelLearningGraphCompact {
 	}
 	
 	// FIXME: What if a column node has more than one domain?
-	private HashMap<Node,Set<Node>> addColumnNodes(SemanticModel model) {
+	private HashMap<Node,Set<Node>> addColumnNodes(SemanticModel model, HashMap<Node,Node> modelNodeDomains) {
 		
 		if (model == null || model.getGraph() == null) 
 			return null;
 
+		if (modelNodeDomains == null) modelNodeDomains = new HashMap<Node,Node>();
 		HashMap<Node,Set<Node>> columnNodeMatches = new HashMap<Node,Set<Node>>();
-
-		HashMap<Node,Node> nodeToDomain = new HashMap<Node,Node>();
+		
 		HashMap<Node,LabeledLink> nodeToDataProperty = new HashMap<Node,LabeledLink>();
 		HashMap<String, Integer> dataPropertyCount = new HashMap<String, Integer>(); // key = domainUri + propertyUri
 		for (Node n : model.getGraph().vertexSet()) {
-			if (n instanceof ColumnNode || n instanceof LiteralNode) {
+			if (n instanceof ColumnNode) {
 				Set<LabeledLink> incomingLinks = model.getGraph().incomingEdgesOf(n);
 				if (incomingLinks == null || incomingLinks.isEmpty())
 					continue;
@@ -251,7 +268,7 @@ public class ModelLearningGraphCompact {
 					Integer count = dataPropertyCount.get(key);
 					if (count == null) dataPropertyCount.put(key, 1);
 					else dataPropertyCount.put(key, count.intValue() + 1);
-					nodeToDomain.put(n, domain);
+					modelNodeDomains.put(n, domain);
 					nodeToDataProperty.put(n, incomingLinksArray[0]);
 				} else {
 					logger.debug("The column node " + ((ColumnNode)n).getColumnName() + " does not have any domain or it has more than one domain.");
@@ -263,7 +280,7 @@ public class ModelLearningGraphCompact {
 		for (Node n : model.getGraph().vertexSet()) {
 			Set<Node> matches = new HashSet<Node>();
 			if (n instanceof ColumnNode) {
-				Node domain = nodeToDomain.get(n);
+				Node domain = modelNodeDomains.get(n);
 				LabeledLink incomingLink = nodeToDataProperty.get(n);
 				Set<Node> matchedNodes = this.graphBuilder.getUriToNodesMap().get(domain.getUri());
 				if (matchedNodes == null || matchedNodes.isEmpty()) {
@@ -272,11 +289,12 @@ public class ModelLearningGraphCompact {
 				}
 				for (Node m : matchedNodes) {
 					String graphKey = m.getId() + incomingLink.getUri(); 
-					Set<SemanticTypeMapping> mappings = this.graphBuilder.getSemanticTypeMatches().get(graphKey);
-					int graphDataPropertyCount = mappings == null ? 0 : mappings.size();
-					if (mappings != null) {
-						for (SemanticTypeMapping sm : mappings) {
-							matches.add(sm.getTarget());
+					Set<Node> dataPropertyColumnNodes = this.graphBuilder.getNodeDataProperties().get(graphKey);
+					Integer graphDataPropertyCount = this.graphBuilder.getNodeDataPropertyCount().get(graphKey);
+					if (graphDataPropertyCount == null) graphDataPropertyCount = 0;
+					if (dataPropertyColumnNodes != null) {
+						for (Node cn : dataPropertyColumnNodes) {
+							matches.add(cn);
 						}
 					}
 					String modelKey = domain.getId() + incomingLink.getUri(); 
@@ -290,8 +308,12 @@ public class ModelLearningGraphCompact {
 						if (newNode == null) {
 							return null;
 						}
-						if (this.graphBuilder.addNode(newNode))
+						if (this.graphBuilder.addNode(newNode)) {
 							matches.add(newNode);
+							String linkId = LinkIdFactory.getLinkId(incomingLink.getUri(), m.getId(), newNode.getId());
+							DataPropertyLink link = new DataPropertyLink(linkId, new Label(incomingLink.getLabel()));
+							this.graphBuilder.addLink(m, newNode, link);
+						}
 					}
 					columnNodeMatches.put(n, matches);
 				}
@@ -301,49 +323,87 @@ public class ModelLearningGraphCompact {
 		return columnNodeMatches;
 	}
 	
+	private List<HashMap<Node,Node>> updateMapping(List<HashMap<Node,Node>> mappings, 
+			Node node, int size, 
+			HashMap<Node, Set<Node>> internalNodeMatches,
+			HashMap<Node, Set<Node>> columnNodeMatches,
+			HashMap<Node,Node> modelNodeDomains) {
+		
+//		System.out.println("node: " + node.getId());
+		
+		List<HashMap<Node,Node>> newMappings = new LinkedList<HashMap<Node,Node>>();
+		
+		Set<Node> matchedNodes = null;
+		if (node instanceof InternalNode) 
+			matchedNodes = internalNodeMatches.get(node);
+		else if (node instanceof ColumnNode)
+			matchedNodes = columnNodeMatches.get(node);
+		if (matchedNodes == null) {
+			return null;
+		}
+
+		if (matchedNodes == null || matchedNodes.isEmpty()) {
+			logger.error("no match found for the node " + node.getId() + "in the graph");
+			return null;
+		}
+
+		if (mappings.size() == 0) {
+			for (Node n : matchedNodes) {
+				HashMap<Node,Node> nodeMap = new HashMap<Node,Node>();
+				nodeMap.put(node, n);
+				newMappings.add(nodeMap);
+//				System.out.println("\t\t" + n.getId());
+			}
+		} else {
+			for (int i = 0; i < mappings.size(); i++) {
+				HashMap<Node,Node> nodeMap = mappings.get(i);
+				for (Node n : matchedNodes) {
+					
+					if (n instanceof ColumnNode) {
+						Node modelDomain = modelNodeDomains.get(node);
+						Node correspondingMatch = nodeMap.get(modelDomain);
+						if (this.graphBuilder.getNode2Domain().get(n) != correspondingMatch)
+							continue;
+						
+					}
+					HashMap<Node,Node> newMapping = new HashMap<Node,Node>(nodeMap);
+					newMapping.put(node, n);
+					if (new HashSet<Node>(newMapping.values()).size() != size)
+						continue;
+
+//					for (Node nnn : newMapping.values()) {
+//						System.out.println("\t\t" + nnn.getId());
+//					}
+					newMappings.add(newMapping);
+				}
+			}
+		}
+		
+		return newMappings;
+	}
+	
 	private List<HashMap<Node,Node>> findMappings(SemanticModel model, 
 			HashMap<Node, Set<Node>> internalNodeMatches,
-			HashMap<Node, Set<Node>> columnNodeMatches) {
+			HashMap<Node, Set<Node>> columnNodeMatches,
+			HashMap<Node,Node> modelNodeDomains) {
 		
 		if (model == null || model.getGraph() == null) 
 			return null;
 		
 		List<HashMap<Node,Node>> mappings = new LinkedList<HashMap<Node,Node>>();
-				
-		int countOfNodes = 0;
-		for (Node node : model.getGraph().vertexSet()) {
-			countOfNodes ++;
-			List<HashMap<Node,Node>> newMappings = new LinkedList<HashMap<Node,Node>>();
-			Set<Node> matchedNodes = null;
-			if (node instanceof InternalNode) 
-				matchedNodes = internalNodeMatches.get(node);
-			else if (node instanceof ColumnNode)
-				matchedNodes = columnNodeMatches.get(node);
-			if (matchedNodes == null) {
-				return null;
-			}
 
-			if (matchedNodes == null || matchedNodes.isEmpty()) {
-				logger.error("no match found for the node " + node.getId() + "in the graph");
-				return null;
+		int size = 0;
+		for (Node node : model.getGraph().vertexSet()) {
+			if (node instanceof InternalNode) {
+				size ++;
+				mappings = updateMapping(mappings, node, size, internalNodeMatches, columnNodeMatches, modelNodeDomains);
 			}
-			
-			if (mappings.size() == 0) {
-				for (Node n : matchedNodes) {
-					HashMap<Node,Node> nodeMap = new HashMap<Node,Node>();
-					nodeMap.put(node, n);
-					mappings.add(nodeMap);
-				}
-			} else {
-				for (HashMap<Node,Node> nodeMap : mappings) {
-					for (Node n : matchedNodes) {
-						HashMap<Node,Node> newMapping = new HashMap<Node,Node>(nodeMap);
-						newMapping.put(node, n);
-						if (newMapping.size() == countOfNodes) // prevent mapping two model nodes to same graph node
-							newMappings.add(newMapping);
-					}
-				}
-				mappings = newMappings;					
+		}
+
+		for (Node node : model.getGraph().vertexSet()) {
+			if (node instanceof ColumnNode) {
+				size ++;
+				mappings = updateMapping(mappings, node, size, internalNodeMatches, columnNodeMatches, modelNodeDomains);
 			}
 		}
 		
@@ -356,16 +416,12 @@ public class ModelLearningGraphCompact {
 		return modelId;
 	}
 	
-	private void addModelGraph(SemanticModel model) {
-		
-		HashMap<Node, Node> visitedNodes;
-		Node source, target;
-		Node n1, n2;
-		
+	private Set<InternalNode> addModelGraph(SemanticModel model) {
+				
 		// adding the patterns to the graph
 		
 		if (model == null) 
-			return;
+			return null;
 		
 		String modelId = model.getId();
 		if (this.graphBuilder.getModelIds().contains(modelId)) {
@@ -374,21 +430,43 @@ public class ModelLearningGraphCompact {
 			// so, we rebuild the whole graph from scratch.
 			logger.info("the graph already includes the model and needs to be updated, we re-initialize the graph from the repository!");
 			initializeFromJsonRepository();
-			return;
+			return null;
 		}
 		
 		// add the model  nodes that are not in the graph
-		HashMap<Node, Set<Node>> internalNodeMatches = addInternalNodes(model);
-		HashMap<Node, Set<Node>> columnNodeMatches = addColumnNodes(model);
+		Set<InternalNode> addedInternalNodes = new HashSet<InternalNode>();
+		HashMap<Node, Set<Node>> internalNodeMatches = addInternalNodes(model, addedInternalNodes);
+//		for (Entry<Node, Set<Node>> entry : internalNodeMatches.entrySet()) {
+//			System.out.println(entry.getKey().getId());
+//			for (Node n : entry.getValue()) {
+//				System.out.println("\t" + n.getId());
+//			}
+//		}
+		HashMap<Node,Node> modelNodeDomains = new HashMap<Node,Node>();
+		HashMap<Node, Set<Node>> columnNodeMatches = addColumnNodes(model,modelNodeDomains);
+//		for (Entry<Node, Set<Node>> entry : columnNodeMatches.entrySet()) {
+//			System.out.println(((ColumnNode)entry.getKey()).getColumnName());
+//			for (Node n : entry.getValue()) {
+//				System.out.println("\t" + ((ColumnNode)n).getColumnName());
+//			}
+//		}
 		
 		// find possible mappings between models nodes and the graph nodes
-		List<HashMap<Node,Node>> mappings = findMappings(model, internalNodeMatches, columnNodeMatches);
-		
+		List<HashMap<Node,Node>> mappings = findMappings(model, 
+				internalNodeMatches, 
+				columnNodeMatches, 
+				modelNodeDomains);
 		if (mappings == null) {
-			return;
+			return null;
 		}
 		
+		System.out.println("number of mappings: " + mappings.size());
+		
+		Node source, target;
+		Node n1, n2;
+
 		int index = 1;
+//		int i = 0;
 		for (HashMap<Node,Node> mapping : mappings) {
 			String indexedModelId = generateLinkModelId(modelId, index++);
 			for (LabeledLink e : model.getGraph().edgeSet()) {
@@ -399,19 +477,22 @@ public class ModelLearningGraphCompact {
 				n1 = mapping.get(source);
 				if (n1 == null) {
 					logger.error("the mappings does not include the source node " + source.getId());
-					return;
+					return null;
 				}
 				
 				n2 = mapping.get(target);
 				if (n2 == null) {
 					logger.error("the mappings does not include the target node " + target.getId());
-					return;
+					return null;
 				}
 				String id = LinkIdFactory.getLinkId(e.getUri(), n1.getId(), n2.getId());
 				LabeledLink l = this.graphBuilder.getIdToLinkMap().get(id);
 				if (l != null) {
+					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
 					l.getModelIds().add(indexedModelId);
 				} else {
+//					System.out.println("added links: " + i);
+//					i++;
 					LabeledLink link;
 					if (e instanceof DataPropertyLink) 
 						link = new DataPropertyLink(id, e.getLabel(), e.getKeyType() == LinkKeyInfo.PartOfKey? true : false);
@@ -441,132 +522,47 @@ public class ModelLearningGraphCompact {
 				}
 			}
 		}
-		
-		visitedNodes = new HashMap<Node, Node>();
-	
-		for (LabeledLink e : model.getGraph().edgeSet()) {
-
-			source = e.getSource();
-			target = e.getTarget();
-
-			n1 = visitedNodes.get(source);
-			n2 = visitedNodes.get(target);
-			
-			if (n1 == null) {
 				
-				if (source instanceof InternalNode) {
-					String id = this.nodeIdFactory.getNodeId(source.getLabel().getUri());
-					InternalNode node = new InternalNode(id, new Label(source.getLabel()));
-					if (this.graphBuilder.addNode(node)) {
-						n1 = node;
-					} else continue;
-				}
-				else {
-					String id = new RandomGUID().toString();
-					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), null);
-					if (this.graphBuilder.addNode(node)) {
-						n1 = node;
-					} else continue;
-				}
-
-				visitedNodes.put(source, n1);
-			}
-			
-			if (n2 == null) {
-				
-				if (target instanceof InternalNode) {
-					String id = nodeIdFactory.getNodeId(target.getLabel().getUri());
-					InternalNode node = new InternalNode(id, new Label(target.getLabel()));
-					if (this.graphBuilder.addNode(node)) {
-						n2 = node;
-					} else continue;
-				}
-				else if(target instanceof LiteralNode) {
-					LiteralNode lTarget = (LiteralNode)target;
-					String id = nodeIdFactory.getNodeId(lTarget.getValue());
-					LiteralNode node = new LiteralNode(id, lTarget.getValue(), new Label(target.getLabel()), lTarget.isUri());
-					if (this.graphBuilder.addNode(node)) {
-						n2 = node;
-					} else continue;
-				}
-				else {
-					String id = new RandomGUID().toString();
-					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), null);
-					if (this.graphBuilder.addNode(node)) {
-						n2 = node;
-					} else continue;
-				}
-
-				visitedNodes.put(target, n2);
-			}
-			
-			LabeledLink link;
-			String id = LinkIdFactory.getLinkId(e.getLabel().getUri(), n1.getId(), n2.getId());	
-			if (e instanceof DataPropertyLink) 
-				link = new DataPropertyLink(id, e.getLabel(), e.getKeyType() == LinkKeyInfo.PartOfKey? true : false);
-			else if (e instanceof ObjectPropertyLink)
-				link = new ObjectPropertyLink(id, e.getLabel(), ((ObjectPropertyLink)e).getObjectPropertyType());
-			else if (e instanceof SubClassLink)
-				link = new SubClassLink(id);
-			else if (e instanceof ClassInstanceLink)
-				link = new ClassInstanceLink(id, e.getKeyType());
-			else if (e instanceof ColumnSubClassLink)
-				link = new ColumnSubClassLink(id);
-			else if (e instanceof DataPropertyOfColumnLink)
-				link = new DataPropertyOfColumnLink(id, ((DataPropertyOfColumnLink)e).getSpecializedColumnHNodeId());
-			else if (e instanceof ObjectPropertySpecializationLink)
-				link = new ObjectPropertySpecializationLink(id, ((ObjectPropertySpecializationLink)e).getSpecializedLinkId());
-			else {
-	    		logger.error("cannot instanciate a link from the type: " + e.getType().toString());
-	    		continue;
-			}
-			
-			
-			link.getModelIds().add(modelId);
-			
-			if (this.graphBuilder.addLink(n1, n2, link)) {
-				this.graphBuilder.changeLinkWeight(link, ModelingParams.PATTERN_LINK_WEIGHT);
-			}
-			
-			if (!n1.getModelIds().contains(modelId))
-				n1.getModelIds().add(modelId);
-			
-			if (!n2.getModelIds().contains(modelId))
-				n2.getModelIds().add(modelId);
-
-		}
-		
 		this.lastUpdateTime = System.currentTimeMillis();
+		return addedInternalNodes;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
-		/** Check if any ontology needs to be preloaded **/
-		String preloadedOntDir = "/Users/mohsen/Documents/Academic/ISI/_GIT/Web-Karma/preloaded-ontologies/";
-		File ontDir = new File(preloadedOntDir);
-		if (ontDir.exists()) {
-			File[] ontologies = ontDir.listFiles();
-			OntologyManager mgr = new OntologyManager();
-			for (File ontology: ontologies) {
-				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf")) {
-					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
-					try {
-						String encoding = EncodingDetector.detect(ontology);
-						mgr.doImport(ontology, encoding);
-					} catch (Exception t) {
-						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
-					}
-				}
-			}
-			// update the cache at the end when all files are added to the model
-			mgr.updateCache();
-			ModelLearningGraphCompact.getInstance(mgr);
-			
-		} else {
-			logger.info("No directory for preloading ontologies exists.");
+		OntologyManager ontologyManager = new OntologyManager();
+		File ff = new File(Params.ONTOLOGY_DIR);
+		File[] files = ff.listFiles();
+		for (File f : files) {
+			ontologyManager.doImport(f, "UTF-8");
 		}
-
-
+		ontologyManager.updateCache();  
 		
+		List<SemanticModel> semanticModels = 
+				ModelReader.importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
+
+		String graphPath = Params.GRAPHS_DIR;
+		String graphName = graphPath + "graph.json";
+		String graphVizName = graphPath + "graph.dot";
+		
+
+		ModelLearningGraphCompact ml = ModelLearningGraphCompact.getEmptyInstance(ontologyManager);
+//		int i = 0;
+		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
+		Set<InternalNode> temp;
+		for (SemanticModel sm : semanticModels) {
+//			if (i == 4) break;
+//			i++;
+			System.out.println(sm.getId());
+			temp = ml.addModel(sm);
+			if (temp != null) addedNodes.addAll(temp);
+		}
+		
+		ml.updateGraphUsingOntology(addedNodes);
+		try {
+			GraphUtil.exportJson(ml.getGraphBuilder().getGraph(), graphName);
+			GraphVizUtil.exportJGraphToGraphviz(ml.getGraphBuilder().getGraph(), "main graph", true, false, false, graphVizName);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
