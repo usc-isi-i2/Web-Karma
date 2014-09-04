@@ -525,6 +525,7 @@ public class Alignment implements OntologyUpdateListener {
 		Set<Node> steinerNodes = new HashSet<Node>();
 		
 		// Add column nodes and their domain
+		// it is better to set isForced flag when setting a semantic type
 		Set<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
 		if (columnNodes != null) {
 			for (Node n : columnNodes) {
