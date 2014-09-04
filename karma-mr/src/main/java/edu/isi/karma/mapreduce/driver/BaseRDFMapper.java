@@ -7,8 +7,9 @@ import java.net.URL;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.log4j.Logger;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
@@ -19,14 +20,16 @@ import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.rdf.GenericRDFGenerator;
+import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.webserver.KarmaException;
 
 public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text>{
 
-	private static Logger LOG = Logger.getLogger(BaseRDFMapper.class);
+	private static Logger LOG = LoggerFactory.getLogger(BaseRDFMapper.class);
 
 	protected GenericRDFGenerator generator;
 	protected String baseURI;
+	protected InputType inputType;
 	@Override
 	public void setup(Context context)
 	{
@@ -60,6 +63,20 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text>{
 	        {
 	        	modelURL = new File(modelFile).toURI().toURL();
 	        }
+	        String inputTypeString = context.getConfiguration().get("karma.input.type");
+	        inputType = null;
+	        if(inputTypeString != null)
+	        {
+	        	try
+	        	{
+	        		inputType = InputType.valueOf(inputTypeString.toUpperCase());
+	        		LOG.info("Expecting input of type {}.", inputType.toString());
+	        	}
+	        	catch(Exception e)
+	        	{
+	        		LOG.error("Unable to recognize input type {}. Will attempt to automatically detect serialization format.", inputTypeString);
+	        	}
+	        }
 	        generator = new GenericRDFGenerator(null);
 	        generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
 	        baseURI = context.getConfiguration().get("base.uri");
@@ -78,7 +95,7 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text>{
 		StringWriter sw = new StringWriter();
 		KR2RMLRDFWriter outWriter = configureRDFWriter(sw);
 		try {
-			generator.generateRDF("model", filename, contents, null, false, outWriter);
+			generator.generateRDF("model", filename, contents, inputType, false, outWriter);
 		} catch (JSONException | KarmaException e) {
 			LOG.error("Unable to generate RDF: " + e.getMessage());
 		}
