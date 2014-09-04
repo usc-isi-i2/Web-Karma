@@ -127,6 +127,8 @@ function ClassUI(id,
 		row1.append(classInputDiv);
 		classDiv.append(row1);
 
+		var textbox = "#" + id + "_classKeyword";
+		
 		if (loadTree) {
 			classList1 = $("<div>").attr("id", id + "_classList1").addClass(id + "_classList1").css("overflow", "auto").css("height", maxHeight + "px");
 			classList2 = $("<div>").attr("id", id + "_classList2").addClass(id + "_classList2").css("overflow", "auto").css("height", maxHeight + "px");;
@@ -148,7 +150,7 @@ function ClassUI(id,
 
 
 			var searchTimer = null;
-			$(document).on('keyup', "#" + id + "_classKeyword", function(event) {
+			$(document).on('keyup', textbox, function(event) {
 				if (searchTimer != null)
 					window.clearTimeout(searchTimer);
 				searchTimer = window.setTimeout(function() {
@@ -160,8 +162,16 @@ function ClassUI(id,
 
 
 			});
+			
+			$(document).on('blur', textbox, function(event) {
+				var keyword = $(textbox).val();
+				if(keyword == "") {
+					 $(textbox).val("Class")
+				}
+			});
+			
 		} else {
-			var textbox = "#" + id + "_classKeyword";
+			
 			
 			if(searchFunction) {
 				var srchClasses = searchFunction();
@@ -194,7 +204,9 @@ function ClassUI(id,
 			} else {
 				$(document).on('blur',  textbox, function(event) {
 					var keyword = $(textbox).val();
-					if(classSelectorCallback != null) {
+					if(keyword == "") {
+						 $(textbox).val("Class")
+					} else if(classSelectorCallback != null) {
 						var classData = {label:keyword, id:keyword, uri:keyword};
 	                	classSelectorCallback(classData);
 	                }
@@ -202,6 +214,13 @@ function ClassUI(id,
 			}
 		}
 
+		$(document).on('focus', textbox, function(event) {
+			var keyword = $(textbox).val();
+			if(keyword == "Class") {
+				 $(textbox).val("")
+			}
+		});
+		
 		mainDiv.append(classDiv);
 
 		if (populateData) {
