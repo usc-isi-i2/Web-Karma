@@ -3,6 +3,7 @@ package edu.isi.karma.mapreduce.driver;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.hadoop.io.Text;
@@ -35,54 +36,70 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text>{
 	{
 		
 		try {
-			//TODO dynamically discover the archive
-			File karmaUserHome = new File("./karma.zip/karma");
-			if(!karmaUserHome.exists())
-			{
-				LOG.info("No Karma user home provided.  Creating default Karma configuration");
-			}
-			else
-			{
-				System.setProperty("KARMA_USER_HOME", karmaUserHome.getAbsolutePath());
-			}
-	        KarmaMetadataManager userMetadataManager;
-			userMetadataManager = new KarmaMetadataManager();
-			UpdateContainer uc = new UpdateContainer();
-	        userMetadataManager.register(new UserPreferencesMetadata(), uc);
-	        userMetadataManager.register(new UserConfigMetadata(), uc);
-	        userMetadataManager.register(new PythonTransformationMetadata(), uc);
-	        PythonRepository.disableReloadingLibrary();
-	        URL modelURL = null;
-	        String modelUri = context.getConfiguration().get("model.uri");
-	        String modelFile = context.getConfiguration().get("model.file");
-	        if(modelUri != null)
-	        {
-	        	modelURL = new URL(modelUri);
-	        }
-	        else if(modelFile != null)
-	        {
-	        	modelURL = new File(modelFile).toURI().toURL();
-	        }
-	        String inputTypeString = context.getConfiguration().get("karma.input.type");
-	        inputType = null;
-	        if(inputTypeString != null)
-	        {
-	        	try
-	        	{
-	        		inputType = InputType.valueOf(inputTypeString.toUpperCase());
-	        		LOG.info("Expecting input of type {}.", inputType.toString());
-	        	}
-	        	catch(Exception e)
-	        	{
-	        		LOG.error("Unable to recognize input type {}. Will attempt to automatically detect serialization format.", inputTypeString);
-	        	}
-	        }
+			setupKarmaHome();
+	        determineInputType(context);
 	        generator = new GenericRDFGenerator(null);
-	        generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
+	        addModel(context);
 	        baseURI = context.getConfiguration().get("base.uri");
 		} catch (KarmaException | IOException  e) {
 			LOG.error("Unable to complete Karma set up: " + e.getMessage());
 			throw new RuntimeException("Unable to complete Karma set up: " + e .getMessage());
+		}
+	}
+
+	private void setupKarmaHome() throws KarmaException {
+		//TODO dynamically discover the archive
+		File karmaUserHome = new File("./karma.zip/karma");
+		if(!karmaUserHome.exists())
+		{
+			LOG.info("No Karma user home provided.  Creating default Karma configuration");
+		}
+		else
+		{
+			System.setProperty("KARMA_USER_HOME", karmaUserHome.getAbsolutePath());
+		}
+		KarmaMetadataManager userMetadataManager;
+		userMetadataManager = new KarmaMetadataManager();
+		UpdateContainer uc = new UpdateContainer();
+		userMetadataManager.register(new UserPreferencesMetadata(), uc);
+		userMetadataManager.register(new UserConfigMetadata(), uc);
+		userMetadataManager.register(new PythonTransformationMetadata(), uc);
+		PythonRepository.disableReloadingLibrary();
+	}
+
+	private void addModel(Context context) throws MalformedURLException {
+		URL modelURL = null;
+		String modelUri = context.getConfiguration().get("model.uri");
+		String modelFile = context.getConfiguration().get("model.file");
+		if(modelUri != null)
+		{
+			modelURL = new URL(modelUri);
+		}
+		else if(modelFile != null)
+		{
+			modelURL = new File(modelFile).toURI().toURL();
+		}
+		generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
+	}
+
+	private void determineInputType(Context context) {
+		String inputTypeString = context.getConfiguration().get("karma.input.type");
+		inputType = null;
+		if(inputTypeString != null)
+		{
+			try
+			{
+				inputType = InputType.valueOf(inputTypeString.toUpperCase());
+				LOG.info("Expecting input of type {}.", inputType.toString());
+			}
+			catch(Exception e)
+			{
+				LOG.error("Unable to recognize input type {}. Will attempt to automatically detect serialization format.", inputTypeString);
+			}
+		}
+		else
+		{
+			LOG.info("No input type provided.  Will attempt to automatically detect serialization format.");
 		}
 	}
 
