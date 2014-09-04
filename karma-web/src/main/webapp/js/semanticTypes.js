@@ -276,7 +276,7 @@ var SetSemanticTypeDialog = (function() {
 			// Check if any meta property (advanced options) was selected
 			var semTypesArray = getCurrentSelectedTypes();
 			if ($("#isSubclassOfClass").prop("checked") || $("#isSpecializationForEdge").prop("checked") ||
-				(semTypesArray.length == 1 && semTypesArray[0]["FullType"] == "http://isi.edu/integration/karma/dev#classLink")) {
+				(semTypesArray != null && semTypesArray.length == 1 && semTypesArray[0]["FullType"] == "http://isi.edu/integration/karma/dev#classLink")) {
 				info["command"] = "SetMetaPropertyCommand";
 				var propValue;
 
@@ -379,7 +379,7 @@ var SetSemanticTypeDialog = (function() {
 			fakeSemType["FullType"] = "fakePropertyURI";
 			fakeSemType["DomainUri"] = "fakeDomainURI";
 			fakeSemType["DomainId"] = "fakeDomainID";
-			fakeSemType["DisplayLabel"] = "property";
+			fakeSemType["DisplayLabel"] = "Property";
 			fakeSemType["DisplayDomainLabel"] = "Class";
 			// Add it to the table
 			addSemTypeObjectToCurrentTable(fakeSemType, false, false);
@@ -1897,7 +1897,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 			};
 			var prop = {
 				"id": "FakeId",
-				"label": "property"
+				"label": "Property"
 			};
 			var link = {
 				"type": "incoming",
@@ -1921,7 +1921,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 			};
 			var prop = {
 				"id": "FakeId",
-				"label": "property"
+				"label": "Property"
 			};
 			var link = {
 				"type": "outgoing",
