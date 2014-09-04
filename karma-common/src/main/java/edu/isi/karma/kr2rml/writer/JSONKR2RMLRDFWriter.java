@@ -95,7 +95,13 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			object = t;
 		}
 		array.put(object);
-		subject.put(!shortHandPredicateURI.equalsIgnoreCase("rdf:type")?shortHandPredicateURI: "@type", array);
+		if (shortHandPredicateURI.equalsIgnoreCase("rdf:type")) {
+			subject.put("@type", array);
+			subject.put("_type", new JSONArray(array.toString()));
+		}
+		else {
+			subject.put(shortHandPredicateURI, array);
+		}
 	}
 
 	@Override
@@ -138,6 +144,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 					if (o instanceof JSONObject) {
 						collapseSameType((JSONObject) o);
 						types.put(((JSONObject)o).getString("@id"), o);
+						types.put(((JSONObject)o).getString("_id"), o);
 					}			
 					else
 					{
@@ -181,6 +188,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			}
 		}
 		object.put("@id", subjUri);
+		object.put("_id", subjUri);
 		return object;
 	}
 
