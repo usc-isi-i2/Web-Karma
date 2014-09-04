@@ -92,9 +92,12 @@ public class GraphBuilder {
 	private HashMap<String, Set<SemanticTypeMapping>> semanticTypeMatches; // nodeUri + dataPropertyUri --> SemanticType Mapping
 	private int numberOfModelLinks = 0;
 
+	private HashMap<Node, Node> node2Domain;
+
+	
 	// Constructor
 	
-	public GraphBuilder(OntologyManager ontologyManager, NodeIdFactory nodeIdFactory, boolean addThingNode) { //, LinkIdFactory linkIdFactory) {
+	public GraphBuilder(OntologyManager ontologyManager, NodeIdFactory nodeIdFactory, boolean addThingNode) { 
 		
 		this.ontologyManager = ontologyManager;
 		this.nodeIdFactory = nodeIdFactory;
@@ -117,6 +120,8 @@ public class GraphBuilder {
 		this.linkCountMap = new HashMap<String, Integer>();
 		this.nodeDataPropertyCount = new HashMap<String, Integer>();
 		this.semanticTypeMatches = new HashMap<String, Set<SemanticTypeMapping>>();
+		
+		this.node2Domain = new HashMap<Node,Node>();
 		
 		this.forcedNodes = new HashSet<Node>();
 		if (addThingNode) 
@@ -217,6 +222,10 @@ public class GraphBuilder {
 
 	public int getNumberOfModelLinks() {
 		return numberOfModelLinks;
+	}
+	
+	public HashMap<Node, Node> getNode2Domain() {
+		return node2Domain;
 	}
 
 	public void resetOntologyMaps() {
@@ -446,6 +455,8 @@ public class GraphBuilder {
 		}
 
 		if (source instanceof InternalNode && target instanceof ColumnNode) {
+			
+			this.node2Domain.put(target, source);
 			
 			String key = source.getId() + link.getUri();
 			Integer count = this.nodeDataPropertyCount.get(key);
