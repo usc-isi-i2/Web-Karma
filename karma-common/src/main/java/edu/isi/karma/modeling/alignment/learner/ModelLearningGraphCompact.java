@@ -29,26 +29,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.ModelingParams;
-import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
-import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.research.ModelReader;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
-import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
@@ -58,151 +53,26 @@ import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SubClassLink;
 import edu.isi.karma.util.RandomGUID;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class ModelLearningGraphCompact {
+public class ModelLearningGraphCompact extends ModelLearningGraph {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelLearningGraphCompact.class);
 	
-	private static ModelLearningGraphCompact instance = null;
-	private OntologyManager ontologyManager;
-	private GraphBuilder graphBuilder;
-	private NodeIdFactory nodeIdFactory; 
-	private long lastUpdateTime;
-		
-	private static final String getGraphJsonName()
-	{
-		return ServletContextParameterMap.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY) + "graph.json";
-	}
-	private static final String getGraphGraphvizName()
-	{
-		return ServletContextParameterMap.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY) + "graph.dot";
-	}
-
-	public static synchronized ModelLearningGraphCompact getInstance(OntologyManager ontologyManager) {
-		if (instance == null || !ontologyManager.equals(instance.ontologyManager)) {
-			try {
-				instance = new ModelLearningGraphCompact(ontologyManager);
-			} catch (IOException e) {
-				logger.error("error in importing the main learning graph!", e);
-				return null;
-			}
-		}
-		return instance;
-	}
-
-	public static ModelLearningGraphCompact getEmptyInstance(OntologyManager ontologyManager) {
-		instance = new ModelLearningGraphCompact(ontologyManager, true);
-		return instance;
-	}
-
-	private ModelLearningGraphCompact(OntologyManager ontologyManager, boolean emptyInstance) {
-		this.ontologyManager = ontologyManager;
-		this.nodeIdFactory = new NodeIdFactory();
-		this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
-		this.lastUpdateTime = System.currentTimeMillis();
+	public ModelLearningGraphCompact(OntologyManager ontologyManager) throws IOException {
+		super(ontologyManager);
 	}
 	
-	private ModelLearningGraphCompact(OntologyManager ontologyManager) throws IOException {
-		
-		this.ontologyManager = ontologyManager;
-		
-		File file = new File(getGraphJsonName());
-		if (!file.exists()) {
-			this.initializeFromJsonRepository();
-		} else {
-			logger.info("loading the alignment graph ...");
-			DirectedWeightedMultigraph<Node, DefaultLink> graph =
-					GraphUtil.importJson(getGraphJsonName());
-			this.graphBuilder = new GraphBuilder(ontologyManager, graph);
-			this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
-			logger.info("loading is done!");
-		}
-		if (this.graphBuilder.getGraph() != null) {
-			logger.info("number of nodes: " + this.graphBuilder.getGraph().vertexSet().size());
-			logger.info("number of links: " + this.graphBuilder.getGraph().edgeSet().size());
-		}
-		this.lastUpdateTime = System.currentTimeMillis();
-	}
-
-	public GraphBuilder getGraphBuilder() {
-		return this.graphBuilder;
+	public ModelLearningGraphCompact(OntologyManager ontologyManager, boolean emptyInstance) {
+		super(ontologyManager, emptyInstance);
 	}
 	
-	public NodeIdFactory getNodeIdFactory() {
-		return this.nodeIdFactory;
-	}
-	
-	public long getLastUpdateTime() {
-		return this.lastUpdateTime;
-	}
-	
-	public void initializeFromJsonRepository() {
-		logger.info("initializing the graph from models in the json repository ...");
-		
-		this.nodeIdFactory = new NodeIdFactory();
-		this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
-
-		File ff = new File(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_MODELS_DIR));
-		if (ff.exists()) {
-			File[] files = ff.listFiles();
-			
-			for (File f : files) {
-				if (f.getName().endsWith(".json")) {
-					try {
-						SemanticModel model = SemanticModel.readJson(f.getAbsolutePath());
-						if (model != null) this.addModel(model);
-					} catch (Exception e) {
-					}
-				}
-			}
-		}
-		this.exportJson();
-		this.exportGraphviz();
-		this.lastUpdateTime = System.currentTimeMillis();
-		logger.info("initialization is done!");
-	}
-	
-	public void exportJson() {
-		try {
-			GraphUtil.exportJson(this.graphBuilder.getGraph(), getGraphJsonName());
-		} catch (Exception e) {
-			logger.error("error in exporting the alignment graph to json!");
-		}
-	}
-	
-	public void exportGraphviz() {
-		try {
-			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), "main graph", true, false, false, getGraphGraphvizName());
-		} catch (Exception e) {
-			logger.error("error in exporting the alignment graph to graphviz!");
-		}
-	}
-	
-	public Set<InternalNode> addModel(SemanticModel model) {
-		return this.addModelGraph(model);
-	}
-	
-	public void addModelAndUpdate(SemanticModel model) {
-		this.addModelGraph(model);
-		this.updateGraphUsingOntology(model);
-	}
-	
-	public void addModelAndUpdateAndExport(SemanticModel model) {
-		this.addModelGraph(model);
-		this.updateGraphUsingOntology(model);
-		this.exportJson();
-		this.exportGraphviz();
-	}
-	
-	private void updateGraphUsingOntology(SemanticModel model) {
-		this.graphBuilder.addClosureAndLinksOfNodes(model.getInternalNodes(), null);
-	}
-	
-	public void updateGraphUsingOntology(Set<InternalNode> nodes) {
-		this.graphBuilder.addClosureAndLinksOfNodes(nodes, null);
-	}
+//	protected static ModelLearningGraphCompact getInstance(OntologyManager ontologyManager) {
+//		return (ModelLearningGraphCompact)ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact);
+//	}
+//
+//	protected static ModelLearningGraphCompact getEmptyInstance(OntologyManager ontologyManager) {
+//		return (ModelLearningGraphCompact)ModelLearningGraph.getEmptyInstance(ontologyManager, ModelLearningGraphType.Compact);
+//	}
 	
 	private HashMap<Node,Set<Node>> addInternalNodes(SemanticModel model, Set<InternalNode> addedNodes) {
 	
@@ -416,7 +286,8 @@ public class ModelLearningGraphCompact {
 		return modelId;
 	}
 	
-	private Set<InternalNode> addModelGraph(SemanticModel model) {
+	@Override
+	public Set<InternalNode> addModel(SemanticModel model) {
 				
 		// adding the patterns to the graph
 		
@@ -545,7 +416,7 @@ public class ModelLearningGraphCompact {
 		String graphVizName = graphPath + "graph.dot";
 		
 
-		ModelLearningGraphCompact ml = ModelLearningGraphCompact.getEmptyInstance(ontologyManager);
+		ModelLearningGraph ml = ModelLearningGraph.getEmptyInstance(ontologyManager, ModelLearningGraphType.Compact);
 //		int i = 0;
 		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
 		Set<InternalNode> temp;

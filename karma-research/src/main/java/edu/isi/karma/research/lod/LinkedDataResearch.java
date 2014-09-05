@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.SemanticModel;
+import edu.isi.karma.modeling.alignment.learner.ModelReader;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.research.ModelReader;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.SemanticType;

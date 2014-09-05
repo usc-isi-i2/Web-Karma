@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research;
+package edu.isi.karma.modeling.alignment.learner;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -34,6 +34,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
+import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.InternalNode;

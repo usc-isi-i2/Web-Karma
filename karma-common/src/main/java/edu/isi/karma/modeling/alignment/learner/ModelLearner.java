@@ -53,7 +53,6 @@ import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.modeling.alignment.TreePostProcess;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.research.ModelReader;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
@@ -80,11 +79,13 @@ public class ModelLearner {
 	private long lastUpdateTimeOfGraph;
 	private ModelLearningGraph modelLearningGraph = null;
 	private boolean useAlignmentGraphBuiltFromKnownModels = false;
-
+	private ModelLearningGraphType graphType;
 
 	private static final int NUM_SEMANTIC_TYPES = 4;
 
-	public ModelLearner(OntologyManager ontologyManager, List<ColumnNode> columnNodes) {
+	public ModelLearner(OntologyManager ontologyManager, 
+			ModelLearningGraphType graphType, 
+			List<ColumnNode> columnNodes) {
 		if (ontologyManager == null || 
 				columnNodes == null || 
 				columnNodes.isEmpty()) {
@@ -94,10 +95,13 @@ public class ModelLearner {
 		this.useAlignmentGraphBuiltFromKnownModels = true;
 		this.ontologyManager = ontologyManager;
 		this.columnNodes = columnNodes;
+		this.graphType = graphType;
 		this.init();
 	}
 
-	public ModelLearner(GraphBuilder graphBuilder, List<ColumnNode> columnNodes) {
+	public ModelLearner(GraphBuilder graphBuilder, 
+			ModelLearningGraphType graphType, 
+			List<ColumnNode> columnNodes) {
 		if (graphBuilder == null || 
 				columnNodes == null || 
 				columnNodes.isEmpty()) {
@@ -109,6 +113,7 @@ public class ModelLearner {
 		this.graphBuilder = graphBuilder;
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 		this.ontologyManager = this.graphBuilder.getOntologyManager();
+		this.graphType = graphType;
 	}
 
 	public SemanticModel getModel() {
@@ -134,7 +139,7 @@ public class ModelLearner {
 	}
 
 	private void init() {
-		this.modelLearningGraph = ModelLearningGraph.getInstance(ontologyManager);
+		this.modelLearningGraph = ModelLearningGraph.getInstance(ontologyManager, graphType);
 		this.lastUpdateTimeOfGraph = this.modelLearningGraph.getLastUpdateTime();
 		this.graphBuilder = cloneGraphBuilder(modelLearningGraph.getGraphBuilder());
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
@@ -692,10 +697,7 @@ public class ModelLearner {
 		System.out.println("numberOfAttributesWhoseTypeIsFirstCRFType:" + numberOfAttributesWhoseTypeIsFirstCRFType);
 	}
 
-	public static void testUsingCompactLearningGraph() throws Exception {
-	}
-	
-	public static void testUsingOriginalLearningGraph() throws Exception {
+	public static void test(ModelLearningGraphType graphType) throws Exception {
 		//		String inputPath = Params.INPUT_DIR;
 		String outputPath = Params.OUTPUT_DIR;
 		String graphPath = Params.GRAPHS_DIR;
@@ -724,10 +726,11 @@ public class ModelLearner {
 //		if (true)
 //			return;
 
-		ModelLearningGraph modelLearningGraph;
+		ModelLearningGraph modelLearningGraph = null;
+		
 		ModelLearner modelLearner;
 
-		boolean iterativeEvaluation = true;
+		boolean iterativeEvaluation = false;
 		boolean useCorrectType = false;
 		int numberOfCRFCandidates = 4;
 		int numberOfKnownModels;
@@ -777,13 +780,15 @@ public class ModelLearner {
 					j++;
 				}
 
-				modelLearningGraph = ModelLearningGraph.getEmptyInstance(ontologyManager);
+				modelLearningGraph = (ModelLearningGraphCompact)ModelLearningGraph.getEmptyInstance(ontologyManager, graphType);
+				
+				
 				SemanticModel correctModel = newSource;
 				List<ColumnNode> columnNodes = correctModel.getColumnNodes();
 				//				if (useCorrectType && numberOfCRFCandidates > 1)
 				//					updateCrfSemanticTypesForResearchEvaluation(columnNodes);
 
-				modelLearner = new ModelLearner(ontologyManager, columnNodes);
+				modelLearner = new ModelLearner(ontologyManager, graphType, columnNodes);
 				long start = System.currentTimeMillis();
 
 				String graphName = !iterativeEvaluation?
@@ -890,7 +895,9 @@ public class ModelLearner {
 				GraphVizUtil.exportSemanticModelsToGraphviz(
 						models, 
 						newSource.getName(),
-						outName);
+						outName,
+						false,
+						false);
 				//				}
 
 				numberOfKnownModels ++;
@@ -907,14 +914,8 @@ public class ModelLearner {
 	
 	public static void main(String[] args) throws Exception {
 
-		boolean testUsingOriginalLearningGraph = true;
-		boolean testUsingCompactLearningGraph = false;
-		
-		if (testUsingOriginalLearningGraph)
-			testUsingOriginalLearningGraph();
-		else if (testUsingCompactLearningGraph)
-			testUsingCompactLearningGraph();
-
+//		test(ModelLearningGraphType.Sparse);
+		test(ModelLearningGraphType.Compact);
 
 	}
 
