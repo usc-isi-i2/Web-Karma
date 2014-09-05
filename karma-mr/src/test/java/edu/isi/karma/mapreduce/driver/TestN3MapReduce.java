@@ -46,6 +46,28 @@ public class TestN3MapReduce extends TestRDFMapReduce {
 	}
 	
 	@Test
+	public void testMapWithInputTypeSpecified() throws IOException {
+
+		org.apache.hadoop.conf.Configuration conf = mapDriver.getConfiguration();
+		conf.set("model.file", "src/test/resources/people-model.ttl");
+		conf.set("karma.input.type", "JSON");
+		mapDriver.withInput(new Text("people.somethingsomething"), new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
+		List<Pair<Text,Text>> results = mapDriver.run();
+		assertTrue(results.size() > 1);
+	}
+	
+	@Test
+	public void testMapWithBadInputTypeSpecified() throws IOException {
+
+		org.apache.hadoop.conf.Configuration conf = mapDriver.getConfiguration();
+		conf.set("model.file", "src/test/resources/people-model.ttl");
+		conf.set("karma.input.type", "XML");
+		mapDriver.withInput(new Text("people.somethingsomething"), new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
+		List<Pair<Text,Text>> results = mapDriver.run();
+		assertTrue(results.size() == 0);
+	}
+	
+	@Test
 	public void testReduce() throws IOException 
 	{
 		List<Pair<Text,List<Text>>> inputs = new LinkedList<Pair<Text,List<Text>>>();
