@@ -16,7 +16,6 @@ public class IdentityJSONMapper extends Mapper<BytesWritable, Text, Text, Text> 
 	public void map(BytesWritable key, Text value, Context context) throws IOException, InterruptedException {
 		try {
 			JSONObject obj = new JSONObject(value.toString());
-			LOG.info(obj.toString(4));
 			context.write(new Text(obj.getString("@id")), value);
 		}catch(Exception e) {
 			LOG.error("something is wrong", e);

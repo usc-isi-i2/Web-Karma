@@ -45,7 +45,7 @@ public class TestJSONIdentityMapReduce {
 
 	@Test
 	public void testMap() throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, URISyntaxException {
-		Configuration config = new Configuration();
+		Configuration config = mapDriver.getConfiguration();
 		Path path = new Path(TestJSONMapReduce.class.getClassLoader().getResource("join.seq").toURI().toString());
 		SequenceFile.Reader reader = new SequenceFile.Reader(config, Reader.file(path));		
 		@SuppressWarnings("rawtypes")

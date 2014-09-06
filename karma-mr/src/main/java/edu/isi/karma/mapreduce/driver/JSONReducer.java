@@ -39,7 +39,7 @@ public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 		{
 			if(!left.has(name))
 			{
-				left.accumulate(name, right.get(name));
+				left.put(name, right.get(name));
 			}
 			else
 			{
