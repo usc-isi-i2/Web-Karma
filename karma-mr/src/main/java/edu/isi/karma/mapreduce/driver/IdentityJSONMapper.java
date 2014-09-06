@@ -6,11 +6,20 @@ import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IdentityJSONMapper extends Mapper<BytesWritable, Text, Text, Text> {
+	private static Logger LOG = LoggerFactory.getLogger(IdentityJSONMapper.class);
+
 	@Override
 	public void map(BytesWritable key, Text value, Context context) throws IOException, InterruptedException {
-		JSONObject obj = new JSONObject(value.toString());
-		context.write(new Text(obj.getString("@id")), value);
+		try {
+			JSONObject obj = new JSONObject(value.toString());
+			LOG.info(obj.toString(4));
+			context.write(new Text(obj.getString("@id")), value);
+		}catch(Exception e) {
+			LOG.error("something is wrong", e);
+		}
 	}
 }
