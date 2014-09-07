@@ -361,6 +361,8 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 				if (l != null) {
 					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
 					l.getModelIds().add(indexedModelId);
+					n1.getModelIds().add(indexedModelId);
+					n2.getModelIds().add(indexedModelId);
 				} else {
 //					System.out.println("added links: " + i);
 //					i++;
@@ -417,12 +419,12 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		
 
 		ModelLearningGraph ml = ModelLearningGraph.getEmptyInstance(ontologyManager, ModelLearningGraphType.Compact);
-//		int i = 0;
+		int i = 0;
 		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
 		Set<InternalNode> temp;
 		for (SemanticModel sm : semanticModels) {
-//			if (i == 4) break;
-//			i++;
+			i++;
+			if (i == 4) continue;
 			System.out.println(sm.getId());
 			temp = ml.addModel(sm);
 			if (temp != null) addedNodes.addAll(temp);

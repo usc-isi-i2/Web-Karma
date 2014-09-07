@@ -22,28 +22,20 @@
 package edu.isi.karma.modeling.alignment.learner;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 
 import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.util.RandomGUID;
 
 public class SteinerNodes implements Comparable<SteinerNodes> {
 
+//	private static Logger logger = LoggerFactory.getLogger(SteinerNodes.class);
 	private static final double MIN_CONFIDENCE = 1E-6;
 	
 	private Set<Node> nodes;
@@ -55,7 +47,6 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	private int semanticTypesCount;
 	private int nonModelNodesCount; // nodes that do not belong to any pattern
 
-	
 	public SteinerNodes() {
 		this.nodes = new HashSet<Node>();
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
@@ -77,6 +68,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.nonModelNodesCount = steinerNodes.getNonModelNodesCount();
 		this.score = steinerNodes.getScore();
 	}
+
 	
 	public Set<Node> getNodes() {
 		return Collections.unmodifiableSet(this.nodes);
@@ -99,11 +91,13 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		
 		if (!this.nodes.contains(n1)) {
 			this.nodes.add(n1);
+			this.coherence.updateCoherence(n1);
 			if (n1.getModelIds() == null || n1.getModelIds().isEmpty())
 				this.nonModelNodesCount ++;
 		}
 		if (!this.nodes.contains(n2)) {
 			this.nodes.add(n2);
+			this.coherence.updateCoherence(n2);
 			this.mappingToSourceColumns.put(n2, sourceColumn);
 			if (n2.getModelIds() == null || n2.getModelIds().isEmpty())
 				this.nonModelNodesCount ++;
@@ -117,7 +111,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 //		this.frequency += n1.getModelIds() == null ? 0 : n1.getModelIds().size();
 //		this.frequency += n2.getModelIds() == null ? 0 : n2.getModelIds().size();
 		
-		this.computeCoherence();
+//		this.coherence.computeCoherence(this.nodes);
 		
 		this.computeScore();
 		
@@ -173,83 +167,6 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 //		return confidence;
 //	}
 
-	
-	private void computeCoherence() {
-		
-		if (nodes == null || nodes.size() == 0)
-			return;
-
-		Map<String, Integer> patternSize = new HashMap<String, Integer>();
-		Map<String, String> patternGuid = new HashMap<String, String>();
-		int guidSize = new RandomGUID().toString().length();
-		
-		for (Node n : nodes) {
-			for (String p : n.getModelIds()) {
-				
-				Integer size = patternSize.get(p);
-				if (size == null) 
-					patternSize.put(p, 1);
-				else
-					patternSize.put(p, ++size);
-				
-				if (!patternGuid.containsKey(p)) {
-					String guid = new RandomGUID().toString();
-					patternGuid.put(p, guid);
-				}
-			}
-		}
-		
-		// find the maximum pattern size
-		int maxPatternSize = 0;
-		for (Entry<String, Integer> entry : patternSize.entrySet()) {
-			if (entry.getValue().intValue() > maxPatternSize)
-				maxPatternSize = entry.getValue().intValue();
-		}
-		
-		List<String> listOfNodesLargestPatterns = new ArrayList<String>();
-		
-		for (Node n : nodes) {
-			List<String> patternIds = new ArrayList<String>(n.getModelIds());
-			Collections.sort(patternIds);
-			
-			String[] nodeMaxPatterns = new String[maxPatternSize];
-			Arrays.fill(nodeMaxPatterns, "");
-			
-			for (String p : patternIds) {
-				int size = patternSize.get(p).intValue();
-				nodeMaxPatterns[size - 1] += patternGuid.get(p);
-			}
-			for (int i = maxPatternSize - 1; i >= 0; i--) {
-				if (nodeMaxPatterns[i] != null && nodeMaxPatterns[i].trim().length() > 0) {
-					listOfNodesLargestPatterns.add(nodeMaxPatterns[i]);
-					break;
-				}
-			}
-		}	
-		
-		Function<String, String> stringEqualiy = new Function<String, String>() {
-			  @Override public String apply(final String s) {
-			    return s;
-			  }
-			};
-				
-		Multimap<String, String> index =
-			Multimaps.index(listOfNodesLargestPatterns, stringEqualiy);
-		
-		int x, y;
-		this.coherence = new Coherence(this.getNodesCount());
-		for (String s : index.keySet()) {
-			if (s.trim().length() == 0)
-				continue;
-			x = index.get(s).size();
-			y = x > 0 ? index.get(s).iterator().next().length() / guidSize : 0; 
-			CoherenceItem ci = new CoherenceItem(x, y);
-			this.coherence.addItem(ci);
-		}
-		
-	}
-	
-	
 	private double getSizeReduction() {
 		
 		int minSize = this.semanticTypesCount;
@@ -305,7 +222,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		
 		double confidence = this.confidence.getConfidenceValue();
 		double sizeReduction = this.getSizeReduction();
-		double coherence = this.coherence.getCoherenceValue();
+		double coherence = this.coherence.getCoherenceValue2();
 		//int frequency = this.getFrequency();
 		
 		double alpha = ModelingConfiguration.getScoringConfidenceCoefficient();
@@ -366,11 +283,14 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 
 		sb.append("\n");
 		sb.append("coherence list: ");
+		for (Integer ci : this.coherence.getCoherenceList()) {
+			sb.append("(" + ci.intValue() + ")");
+		}
 		for (CoherenceItem ci : this.coherence.getItems()) {
 			sb.append("(" + ci.getX() + "," + ci.getY() + ")");
 		}
 //		sb.append("\n");
-		sb.append("--- coherence value: " + this.coherence.getCoherenceValue());
+		sb.append("--- coherence value: " + this.coherence.getCoherenceValue2());
 		sb.append("\n");
 		sb.append("size: " + this.getNodesCount() + ", max size: " + (this.semanticTypesCount * 2) + "---" + 
 				"size reduction: " +  roundTwoDecimals(this.getSizeReduction()) );

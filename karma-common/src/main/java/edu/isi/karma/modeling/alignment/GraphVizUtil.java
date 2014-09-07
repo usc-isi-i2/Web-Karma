@@ -280,11 +280,12 @@ public class GraphVizUtil {
 		if (models != null) {
 			for(Entry<String,SemanticModel> entry : models.entrySet()) {
 				if (entry.getKey() == "1-correct model") {
-					showNodeMetaData = false;
-					showLinkMetaData = false; 
+					cluster = GraphVizUtil.convertToGraphviz(GraphUtil.asDefaultGraph(entry.getValue().getGraph()), 
+							entry.getValue().getMappingToSourceColumns(), false, false, false);
+				} else {
+					cluster = GraphVizUtil.convertToGraphviz(GraphUtil.asDefaultGraph(entry.getValue().getGraph()), 
+							entry.getValue().getMappingToSourceColumns(), false, showNodeMetaData, showLinkMetaData);
 				}
-				cluster = GraphVizUtil.convertToGraphviz(GraphUtil.asDefaultGraph(entry.getValue().getGraph()), 
-						entry.getValue().getMappingToSourceColumns(), false, showNodeMetaData, showLinkMetaData);
 				cluster.id("cluster_" + counter);
 				cluster.attr("label", entry.getKey());
 				graphViz.subGraph(cluster);

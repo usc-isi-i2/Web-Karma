@@ -68,9 +68,9 @@ import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.rep.alignment.SubClassLink;
 import edu.isi.karma.util.RandomGUID;
 
-public class ModelLearner {
+public class ModelLearner2 {
 
-	private static Logger logger = LoggerFactory.getLogger(ModelLearner.class);
+	private static Logger logger = LoggerFactory.getLogger(ModelLearner2.class);
 	private OntologyManager ontologyManager = null;
 	private GraphBuilder graphBuilder = null;
 	private NodeIdFactory nodeIdFactory = null; 
@@ -83,7 +83,7 @@ public class ModelLearner {
 
 	private static final int NUM_SEMANTIC_TYPES = 4;
 
-	public ModelLearner(OntologyManager ontologyManager, 
+	public ModelLearner2(OntologyManager ontologyManager, 
 			ModelLearningGraphType graphType, 
 			List<ColumnNode> columnNodes) {
 		if (ontologyManager == null || 
@@ -99,7 +99,7 @@ public class ModelLearner {
 		this.init();
 	}
 
-	public ModelLearner(GraphBuilder graphBuilder, 
+	public ModelLearner2(GraphBuilder graphBuilder, 
 			ModelLearningGraphType graphType, 
 			List<ColumnNode> columnNodes) {
 		if (graphBuilder == null || 
@@ -323,23 +323,22 @@ public class ModelLearner {
 				domainUri = semanticType.getDomain().getUri();
 				propertyUri = semanticType.getType().getUri();
 				Integer countOfSemanticType = semanticTypesCount.get(domainUri + propertyUri);
-//				logger.info("count of semantic type: " +  countOfSemanticType);
+				logger.info("count of semantic type: " +  countOfSemanticType);
 
 				tempSemanticTypeMappings = findSemanticTypeInGraph(n, semanticType, semanticTypesCount, addedNodes);
-//				logger.info("number of matches for semantic type: " +  
-//					 + (tempSemanticTypeMappings == null ? 0 : tempSemanticTypeMappings.size()));
+				logger.info("number of matches for semantic type: " +  
+					 + (tempSemanticTypeMappings == null ? 0 : tempSemanticTypeMappings.size()));
 
 				if (tempSemanticTypeMappings != null) 
 					semanticTypeMappings.addAll(tempSemanticTypeMappings);
 
 				int countOfMatches = tempSemanticTypeMappings == null ? 0 : tempSemanticTypeMappings.size();
-				if (countOfMatches < countOfSemanticType) // No struct in graph is matched with the semantic type, we add a new struct to the graph
+//				if (countOfMatches < countOfSemanticType) 
+				if (countOfMatches == 0) // No struct in graph is matched with the semantic type, we add a new struct to the graph
 				{
-					for (int i = 0; i < countOfSemanticType - countOfMatches; i++) {
-						SemanticTypeMapping mp = addSemanticTypeStruct(n, semanticType, addedNodes);
-						if (mp != null)
-							semanticTypeMappings.add(mp);
-					}
+					SemanticTypeMapping mp = addSemanticTypeStruct(n, semanticType, addedNodes);
+					if (mp != null)
+						semanticTypeMappings.add(mp);
 				}
 			}
 			//			System.out.println("number of matches for column " + n.getColumnName() + 
@@ -729,7 +728,7 @@ public class ModelLearner {
 
 		ModelLearningGraph modelLearningGraph = null;
 		
-		ModelLearner modelLearner;
+		ModelLearner2 modelLearner;
 
 		boolean iterativeEvaluation = false;
 		boolean useCorrectType = false;
@@ -744,9 +743,9 @@ public class ModelLearner {
 			resultsArray[i] = new StringBuffer();
 		}
 
-		for (int i = 0; i < semanticModels.size(); i++) {
+//		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 3; {
+		int i = 3; {
 
 			resultFile.flush();
 			int newSourceIndex = i;
@@ -789,7 +788,7 @@ public class ModelLearner {
 				//				if (useCorrectType && numberOfCRFCandidates > 1)
 				//					updateCrfSemanticTypesForResearchEvaluation(columnNodes);
 
-				modelLearner = new ModelLearner(ontologyManager, graphType, columnNodes);
+				modelLearner = new ModelLearner2(ontologyManager, graphType, columnNodes);
 				long start = System.currentTimeMillis();
 
 				String graphName = !iterativeEvaluation?
