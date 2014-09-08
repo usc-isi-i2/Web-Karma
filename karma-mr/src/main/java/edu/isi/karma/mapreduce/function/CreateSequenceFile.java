@@ -11,6 +11,7 @@ import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.SequenceFile.Writer;
 import org.apache.hadoop.io.Text;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -35,6 +36,11 @@ public class CreateSequenceFile {
 		Path outputPath = new Path(outputFileName);
 		SequenceFile.Writer writer = SequenceFile.createWriter(new Configuration(),Writer.keyClass(Text.class),
 				Writer.valueClass(Text.class), Writer.file(outputPath),Writer.compression(CompressionType.NONE));
+		addValuesToSequenceFile(tokener, writer);
+		writer.close();
+	}
+	
+	public static void addValuesToSequenceFile(JSONTokener tokener, SequenceFile.Writer writer) throws JSONException, IOException {
 		char c = tokener.nextClean();
 		if (c == '[') {
 			while (true) {
@@ -48,7 +54,6 @@ public class CreateSequenceFile {
 					break;
 			}
 		}
-		writer.close();
 	}
 
 }
