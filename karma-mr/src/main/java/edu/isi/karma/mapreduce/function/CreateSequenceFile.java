@@ -32,7 +32,8 @@ public class CreateSequenceFile {
 
 	public static void createSequenceFileFromJSON(File f) throws IOException {
 		JSONTokener tokener = new JSONTokener(new InputStreamReader(new FileInputStream(f), "UTF-8"));
-		String outputFileName = f.getName().substring(0, f.getName().lastIndexOf(".")) + ".seq";
+		String filePath = f.getAbsolutePath().substring(0, f.getAbsolutePath().lastIndexOf(File.separator));
+		String outputFileName = filePath + File.separator + f.getName().substring(0, f.getName().lastIndexOf(".")) + ".seq";
 		Path outputPath = new Path(outputFileName);
 		SequenceFile.Writer writer = SequenceFile.createWriter(new Configuration(),Writer.keyClass(Text.class),
 				Writer.valueClass(Text.class), Writer.file(outputPath),Writer.compression(CompressionType.NONE));
