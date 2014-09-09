@@ -20,14 +20,32 @@ public class MergeJSON extends UDF{
 			if (obj instanceof String && obj.equals(sourceObj.get("@id"))) {
 				targetObj.put(lastLevel, sourceObj);
 			}
+			if (obj instanceof JSONObject) {
+				JSONObject t = (JSONObject)obj;
+				if (t.has("@id") && t.get("@id").equals(sourceObj.get("@id"))) {
+					for (Object key : sourceObj.keySet()) {
+						t.put((String) key, sourceObj.get((String) key));
+					}
+				}
+			}
 			if (obj instanceof JSONArray) {
 				JSONArray tmpArray = (JSONArray)obj;
 				for (int i = 0; i < tmpArray.length(); i++) {
 					if (tmpArray.get(i).equals(sourceObj.get("@id"))) {
 						tmpArray.put(i, sourceObj);
 					}
+					Object o = tmpArray.get(i);
+					if (o instanceof JSONObject) {
+						JSONObject t = (JSONObject)o;
+						if (t.has("@id") && t.get("@id").equals(sourceObj.get("@id"))) {
+							for (Object key : sourceObj.keySet()) {
+								t.put((String) key, sourceObj.get((String) key));
+							}
+						}
+					}
 				}
 			}
+
 		}
 		return new Text(targetObj.toString());
 	}
