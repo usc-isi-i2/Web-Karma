@@ -208,25 +208,25 @@ public class ModelLearner2 {
 		}
 
 		Collections.sort(sortableSemanticModels);
-//		logger.info("results are ready ...");
-//		return sortableSemanticModels;
+//		logger.inf÷o("results are ready ...");
+		return sortableSemanticModels;
 
-		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
-		SortableSemanticModel current, previous;
-		if (sortableSemanticModels != null) {
-			if (sortableSemanticModels.size() > 0)
-				uniqueModels.add(sortableSemanticModels.get(0));
-			for (int i = 1; i < sortableSemanticModels.size(); i++) {
-				current = sortableSemanticModels.get(i);
-				previous = sortableSemanticModels.get(i - 1);
-				if (current.getScore() == previous.getScore() && current.getCost() == previous.getCost())
-					continue;
-				uniqueModels.add(current);
-			}
-		}
-		
-		logger.info("results are ready ...");
-		return uniqueModels;
+//		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
+//		SortableSemanticModel current, previous;
+//		if (sortableSemanticModels != null) {
+//			if (sortableSemanticModels.size() > 0)
+//				uniqueModels.add(sortableSemanticModels.get(0));
+//			for (int i = 1; i < sortableSemanticModels.size(); i++) {
+//				current = sortableSemanticModels.get(i);
+//				previous = sortableSemanticModels.get(i - 1);
+//				if (current.getScore() == previous.getScore() && current.getCost() == previous.getCost())
+//					continue;
+//				uniqueModels.add(current);
+//			}
+//		}
+//		
+//		logger.info("results are ready ...");
+//		return uniqueModels;
 
 	}
 
@@ -303,7 +303,7 @@ public class ModelLearner2 {
 			}
 		}
 
-		int numOfMappings = 1;
+		long numOfMappings = 1;
 		for (ColumnNode n : columnNodes) {
 
 			candidateSemanticTypes = columnSemanticTypes.get(n);
@@ -323,10 +323,10 @@ public class ModelLearner2 {
 				domainUri = semanticType.getDomain().getUri();
 				propertyUri = semanticType.getType().getUri();
 				Integer countOfSemanticType = semanticTypesCount.get(domainUri + propertyUri);
-				logger.info("count of semantic type: " +  countOfSemanticType);
+				logger.debug("count of semantic type: " +  countOfSemanticType);
 
 				tempSemanticTypeMappings = findSemanticTypeInGraph(n, semanticType, semanticTypesCount, addedNodes);
-				logger.info("number of matches for semantic type: " +  
+				logger.debug("number of matches for semantic type: " +  
 					 + (tempSemanticTypeMappings == null ? 0 : tempSemanticTypeMappings.size()));
 
 				if (tempSemanticTypeMappings != null) 
@@ -343,11 +343,13 @@ public class ModelLearner2 {
 			}
 			//			System.out.println("number of matches for column " + n.getColumnName() + 
 			//					": " + (semanticTypeMappings == null ? 0 : semanticTypeMappings.size()));
-			logger.info("number of matches for column " + n.getColumnName() + 
+			logger.debug("number of matches for column " + n.getColumnName() + 
 					": " + (semanticTypeMappings == null ? 0 : semanticTypeMappings.size()));
-			numOfMappings *= semanticTypeMappings == null || semanticTypeMappings.isEmpty() ? 1 : semanticTypeMappings.size();
+			numOfMappings *= (semanticTypeMappings == null || semanticTypeMappings.isEmpty() ? 1 : semanticTypeMappings.size());
 
+			logger.debug("number of candidate steiner sets before update: " + candidateSteinerSets.getSteinerSets().size());
 			candidateSteinerSets.updateSteinerSets(semanticTypeMappings);
+			logger.debug("number of candidate steiner sets after update: " + candidateSteinerSets.getSteinerSets().size());
 		}
 
 		//		System.out.println("number of possible mappings: " + numOfMappings);
@@ -730,7 +732,7 @@ public class ModelLearner2 {
 		
 		ModelLearner2 modelLearner;
 
-		boolean iterativeEvaluation = false;
+		boolean iterativeEvaluation = true;
 		boolean useCorrectType = false;
 		int numberOfCRFCandidates = 4;
 		int numberOfKnownModels;
@@ -743,9 +745,9 @@ public class ModelLearner2 {
 			resultsArray[i] = new StringBuffer();
 		}
 
-//		for (int i = 0; i < semanticModels.size(); i++) {
+		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-		int i = 3; {
+//		int i = 3; {
 
 			resultFile.flush();
 			int newSourceIndex = i;
@@ -766,8 +768,9 @@ public class ModelLearner2 {
 			if (resultsArray[1].length() > 0)	resultsArray[1].append(" \t ");			
 			resultsArray[1].append("p \t r \t t");
 
-
-			while (numberOfKnownModels <= semanticModels.size() - 1) {
+//			numberOfKnownModels = 2;
+			while (numberOfKnownModels <= semanticModels.size() - 1) 
+			{
 
 				trainingData.clear();
 
