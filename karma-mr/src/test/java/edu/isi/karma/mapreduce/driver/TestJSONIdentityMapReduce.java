@@ -26,12 +26,12 @@ import org.junit.Test;
 
 public class TestJSONIdentityMapReduce {
 
-	MapDriver<BytesWritable, Text, Text, Text> mapDriver;
+	MapDriver<Writable, Text, Text, Text> mapDriver;
 	ReduceDriver<Text, Text, Text, Text> reduceDriver;
-	MapReduceDriver<BytesWritable, Text, Text, Text, Text, Text> mapReduceDriver;
+	MapReduceDriver<Writable, Text, Text, Text, Text, Text> mapReduceDriver;
 	@Before
 	public void setUp() throws Exception {
-		Mapper<BytesWritable,Text, Text, Text> mapper = new IdentityJSONMapper();
+		Mapper<Writable,Text, Text, Text> mapper = new IdentityJSONMapper();
 		Reducer<Text,Text,Text,Text> reducer = new JSONReducer();
 
 		mapDriver = MapDriver.newMapDriver(mapper);
