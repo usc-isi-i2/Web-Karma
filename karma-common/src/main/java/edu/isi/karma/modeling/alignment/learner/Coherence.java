@@ -26,14 +26,21 @@ public class Coherence {
 	private List<CoherenceItem> items;
 	private int nodesCount;
 
+	private static int NUM_OF_MAX_SIZE_PATTERNS = 5;
 	private Map<String, Integer> patternSize;
 	private Map<String, String> patternGuid;
-
+	private String[] maxPatterns;
+	private int numOfElementsInMaxPatterns;
+	private HashMap<String, Integer> patternIndex;
+	
 	public Coherence() {
 		this.items = new ArrayList<>();
 		this.nodesCount = 0;
 		this.patternSize = new HashMap<String, Integer>();
 		this.patternGuid = new HashMap<String, String>();
+		this.maxPatterns = new String[NUM_OF_MAX_SIZE_PATTERNS];
+		this.numOfElementsInMaxPatterns = 0;
+		this.patternIndex = new HashMap<String, Integer>();
 	}
 	
 //	public Coherence(int nodesCount) {
@@ -48,6 +55,9 @@ public class Coherence {
 		this.nodesCount = coherence.nodesCount;
 		this.patternSize = new HashMap<String, Integer>(coherence.patternSize);
 		this.patternGuid = new HashMap<String, String>(coherence.patternGuid);
+		this.maxPatterns = coherence.maxPatterns.clone();
+		this.numOfElementsInMaxPatterns = coherence.numOfElementsInMaxPatterns;
+		this.patternIndex = new HashMap<String, Integer>(coherence.patternIndex);
 	}
 	
 	public List<CoherenceItem> getItems() {
@@ -80,12 +90,40 @@ public class Coherence {
 //		logger.debug("update coherence data ...");
 		this.nodesCount ++;
 //		System.out.println("=========================" + nodesCount);
+//		System.out.println("=========================" + n.getModelIds() != null ? n.getModelIds().size() : "null");
+		Integer index;
 		for (String p : n.getModelIds()) {
 			Integer size = patternSize.get(p);
-			if (size == null) 
-				patternSize.put(p, 1);
-			else
-				patternSize.put(p, ++size);
+			if (size == null) size = 0;
+			patternSize.put(p, ++size);
+			
+			index = patternIndex.get(p);
+			if (index != null) {
+				int i = index.intValue();
+				while (i > 0 && size > patternSize.get(maxPatterns[i - 1])) {
+					maxPatterns[i] = maxPatterns[i-1];
+					i--;
+				}
+				maxPatterns[i] = p;
+				patternIndex.put(p, i);
+			} else if (numOfElementsInMaxPatterns < NUM_OF_MAX_SIZE_PATTERNS) {
+				int i = 0;
+				while (i < numOfElementsInMaxPatterns && size < patternSize.get(maxPatterns[i]) )
+					i++;
+				for (int j = numOfElementsInMaxPatterns; j > i; j--)
+					maxPatterns[j] = maxPatterns[j-1];
+				maxPatterns[i] = p;
+				patternIndex.put(p, i);
+				numOfElementsInMaxPatterns ++;
+			} else if (size > patternSize.get(maxPatterns[NUM_OF_MAX_SIZE_PATTERNS - 1])) {
+					int i = numOfElementsInMaxPatterns - 1;
+					while (i > 0 && size > patternSize.get(maxPatterns[i])) {
+						maxPatterns[i] = maxPatterns[i-1];
+						i--;
+					}
+					maxPatterns[i] = p;
+					patternIndex.put(p, i);
+			}
 			
 //			if (!patternGuid.containsKey(p)) {
 //				String guid = new RandomGUID().toString();
@@ -136,7 +174,6 @@ public class Coherence {
 			return 0.0;
 		}
 		
-		List<Integer> coherenceList = getCoherenceList();
 
 		BigDecimal value = BigDecimal.ZERO;
 		
@@ -144,15 +181,18 @@ public class Coherence {
 		BigDecimal factor = new BigDecimal(this.nodesCount);
 		BigDecimal b;
 		
-		for (Integer i : coherenceList) {
-			
+//		List<Integer> coherenceList = getCoherenceList();
+//		for (int i = 0; i < coherenceList.size(); i++) {
+//			int size = coherenceList.get(i);
+		for (int i = 0; i < numOfElementsInMaxPatterns; i++) {
+			int size = patternSize.get(maxPatterns[i]);
 			denominator = denominator.multiply(factor);
-			b = new BigDecimal((double)i.intValue());
+			b = new BigDecimal((double)size);
 			b= b.divide(denominator, 5, RoundingMode.HALF_UP);
 			value = value.add(b);
 		}
 		
-		return value.doubleValue();
+		return Math.min(1.0, value.doubleValue());
 	}
 
 	public void computeCoherence(Set<Node> nodes) {
@@ -201,5 +241,15 @@ public class Coherence {
 			this.addItem(ci);
 		}
 		
+	}
+	
+	public String printCoherenceList() {
+		String s = "(";
+		for (int i = 0; i < numOfElementsInMaxPatterns; i++) {
+			s += patternSize.get(maxPatterns[i]);
+			s += ",";
+		}
+		s += ")";
+		return s;
 	}
 }

@@ -283,12 +283,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 
 		sb.append("\n");
 		sb.append("coherence list: ");
-		for (Integer ci : this.coherence.getCoherenceList()) {
-			sb.append("(" + ci.intValue() + ")");
-		}
-		for (CoherenceItem ci : this.coherence.getItems()) {
-			sb.append("(" + ci.getX() + "," + ci.getY() + ")");
-		}
+		sb.append(coherence.printCoherenceList());
 //		sb.append("\n");
 		sb.append("--- coherence value: " + this.coherence.getCoherenceValue2());
 		sb.append("\n");

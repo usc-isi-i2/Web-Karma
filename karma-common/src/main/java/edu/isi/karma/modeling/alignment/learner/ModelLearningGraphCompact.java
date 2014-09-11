@@ -307,16 +307,18 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		// add the model  nodes that are not in the graph
 		Set<InternalNode> addedInternalNodes = new HashSet<InternalNode>();
 		HashMap<Node, Set<Node>> internalNodeMatches = addInternalNodes(model, addedInternalNodes);
+//		if (modelId.equalsIgnoreCase("s21-s-met.json"))
 //		for (Entry<Node, Set<Node>> entry : internalNodeMatches.entrySet()) {
-//			System.out.println(entry.getKey().getId());
+//			System.out.println(entry.getKey().getId() + "--> size: " + entry.getValue().size());
 //			for (Node n : entry.getValue()) {
 //				System.out.println("\t" + n.getId());
 //			}
 //		}
 		HashMap<Node,Node> modelNodeDomains = new HashMap<Node,Node>();
 		HashMap<Node, Set<Node>> columnNodeMatches = addColumnNodes(model,modelNodeDomains);
+//		if (modelId.equalsIgnoreCase("s21-s-met.json"))
 //		for (Entry<Node, Set<Node>> entry : columnNodeMatches.entrySet()) {
-//			System.out.println(((ColumnNode)entry.getKey()).getColumnName());
+//			System.out.println(((ColumnNode)entry.getKey()).getColumnName() + "--> size: " + entry.getValue().size());
 //			for (Node n : entry.getValue()) {
 //				System.out.println("\t" + ((ColumnNode)n).getColumnName());
 //			}
@@ -331,7 +333,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			return null;
 		}
 		
-		System.out.println("number of mappings: " + mappings.size());
+		logger.debug(model.getId() + " --> number of mappings: " + mappings.size());
 		
 		Node source, target;
 		Node n1, n2;
@@ -339,7 +341,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		int index = 1;
 //		int i = 0;
 		for (HashMap<Node,Node> mapping : mappings) {
-			String indexedModelId = generateLinkModelId(modelId, index++);
+			String indexedModelId = generateLinkModelId(modelId, index++); // modelId
 			for (LabeledLink e : model.getGraph().edgeSet()) {
 				
 				source = e.getSource();
