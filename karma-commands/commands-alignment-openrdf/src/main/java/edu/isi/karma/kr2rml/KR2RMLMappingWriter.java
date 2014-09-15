@@ -427,7 +427,7 @@ public class KR2RMLMappingWriter {
 			throws RepositoryException {
 		URI hasWorksheetHistoryUri = f.createURI(Uris.KM_HAS_WORKSHEET_HISTORY_URI);
 		
-			Value historyLiteral = f.createLiteral(mapping.getWorksheetHistory().toString());
+			Value historyLiteral = f.createLiteral(mapping.getWorksheetHistory().toString(4));
 			con.add(mappingRes, hasWorksheetHistoryUri, historyLiteral);
 		
 	}
