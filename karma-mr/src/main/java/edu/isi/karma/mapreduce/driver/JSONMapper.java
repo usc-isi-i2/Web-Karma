@@ -11,6 +11,8 @@ import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 
 public class JSONMapper extends BaseRDFMapper {
+	private Text reusableOutputValue = new Text("");
+	private Text reusableOutputKey = new Text("");
 	@Override
 	protected KR2RMLRDFWriter configureRDFWriter(StringWriter sw) {
 		PrintWriter pw = new PrintWriter(sw);
@@ -24,7 +26,9 @@ public class JSONMapper extends BaseRDFMapper {
 		JSONArray generatedObjects = new JSONArray(results);
 		for(int i = 0; i < generatedObjects.length(); i++)
 		{
-			context.write(new Text(generatedObjects.getJSONObject(i).getString("@id")), new Text(generatedObjects.getJSONObject(i).toString()));
+			reusableOutputKey.set(generatedObjects.getJSONObject(i).getString("@id"));
+			reusableOutputValue.set(generatedObjects.getJSONObject(i).toString());
+			context.write(reusableOutputKey, new Text(reusableOutputValue));
 		}
 	}
 }

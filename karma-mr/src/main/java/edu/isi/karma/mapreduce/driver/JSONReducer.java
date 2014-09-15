@@ -12,7 +12,7 @@ import org.json.JSONObject;
 public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 
 	private static JSONReducerComparator comparator;
-	
+	private Text reusableOutputValue = new Text("");
 	@Override
 	public void setup(Context context)
 	{
@@ -28,8 +28,8 @@ public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 			JSONObject object = new JSONObject(value);
 			accumulatorObject = mergeJSONObjects(accumulatorObject, object);			
 		}
-		
-		context.write(key, new Text(accumulatorObject.toString()));
+		reusableOutputValue.set(accumulatorObject.toString());
+		context.write(key, reusableOutputValue);
 	}
 	
 	private static JSONObject mergeJSONObjects(JSONObject left, JSONObject right)

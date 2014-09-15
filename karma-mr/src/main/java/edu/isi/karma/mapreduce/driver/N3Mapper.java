@@ -11,6 +11,8 @@ import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
 
 public class N3Mapper extends BaseRDFMapper {
+	private Text reusableOutputValue = new Text("");
+	private Text reusableOutputKey = new Text("");
 	protected KR2RMLRDFWriter configureRDFWriter(StringWriter sw) {
 		PrintWriter pw = new PrintWriter(sw);
 		URIFormatter uriFormatter = new URIFormatter();
@@ -29,7 +31,9 @@ public class N3Mapper extends BaseRDFMapper {
 				continue;
 			}
 			int splitBetweenSubjectAndPredicate = line.indexOf(' ');
-			context.write(new Text(line.substring(0, splitBetweenSubjectAndPredicate)), new Text(line));
+			reusableOutputKey.set(line.substring(0, splitBetweenSubjectAndPredicate));
+			reusableOutputValue.set(line);
+			context.write(reusableOutputKey,reusableOutputValue);
 		}
 	}
 }

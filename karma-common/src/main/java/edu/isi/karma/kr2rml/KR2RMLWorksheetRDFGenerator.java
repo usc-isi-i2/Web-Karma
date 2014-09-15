@@ -66,6 +66,7 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.webserver.KarmaException;
 
 public class KR2RMLWorksheetRDFGenerator {
 
@@ -227,6 +228,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		{
 			logger.error("Unable to generate RDF: ", e);
 			errorReport.addReportMessage(new ReportMessage("General RDF Generation Error", e.getMessage(), Priority.high));
+			throw new IOException("Unable to generate RDF: " +e.getMessage());
 		}
 		finally {
 			if (closeWriterAfterGeneration) {
@@ -239,7 +241,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		}
 		// An attempt to prevent an occasional error that occurs on Windows platform
 		// The requested operation cannot be performed on a file with a user-mapped section open
-		System.gc();
+		//System.gc();
 	}
 
 	private void generateColumnProvenanceInformation() {

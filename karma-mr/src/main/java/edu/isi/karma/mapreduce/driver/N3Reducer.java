@@ -9,7 +9,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 public class N3Reducer extends Reducer<Text,Text,Text,Text>{
-
+	private Text reusableOutputValue = new Text("");
 	protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException
 	{
 		Iterator<Text> iterator = values.iterator();
@@ -30,6 +30,7 @@ public class N3Reducer extends Reducer<Text,Text,Text,Text>{
 				sb.append(triple);
 				sb.append("\n");
 		}
-		context.write(key, new Text(sb.toString()));
+		reusableOutputValue.set(sb.toString());
+		context.write(key, reusableOutputValue);
 	}
 }

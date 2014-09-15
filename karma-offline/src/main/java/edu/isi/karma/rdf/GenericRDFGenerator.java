@@ -189,28 +189,39 @@ public class GenericRDFGenerator extends RdfGenerator {
 		logger.debug("Generating rdf for " + sourceName);
 		
 		Workspace workspace = initializeWorkspace();
+		try
+		{
 		
-		Worksheet worksheet = generateWorksheet(sourceName, new BufferedInputStream(data), dataType, 
-				workspace, maxNumLines);
 		
-		
-		//Generate mappping data for the worksheet using the model parser
-		KR2RMLMapping mapping = modelParser.parse();
-		
-		applyHistoryToWorksheet(workspace, worksheet, mapping);
-		SuperSelection selection = SuperSelectionManager.DEFAULT_SELECTION;
-		if (selectionName != null && !selectionName.trim().isEmpty())
-			selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionName);
-		if (selection == null)
-			return;
-		//Generate RDF using the mapping data
-		ErrorReport errorReport = new ErrorReport();
-		
-		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
-		        workspace.getFactory(), workspace.getOntologyManager(), writers,
-		        addProvenance, mapping, errorReport, selection);
-		rdfGen.generateRDF(true);
-		removeWorkspace(workspace);
+				Worksheet worksheet = generateWorksheet(sourceName, new BufferedInputStream(data), dataType, 
+					workspace, maxNumLines);
+			
+			
+			//Generate mappping data for the worksheet using the model parser
+			KR2RMLMapping mapping = modelParser.parse();
+			
+			applyHistoryToWorksheet(workspace, worksheet, mapping);
+			SuperSelection selection = SuperSelectionManager.DEFAULT_SELECTION;
+			if (selectionName != null && !selectionName.trim().isEmpty())
+				selection = worksheet.getSuperSelectionManager().getSuperSelection(selectionName);
+			if (selection == null)
+				return;
+			//Generate RDF using the mapping data
+			ErrorReport errorReport = new ErrorReport();
+			
+			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
+			        workspace.getFactory(), workspace.getOntologyManager(), writers,
+			        addProvenance, mapping, errorReport, selection);
+			rdfGen.generateRDF(true);
+		}
+		catch( Exception e)
+		{
+			throw new KarmaException(e.getMessage());
+		}
+		finally
+		{
+			removeWorkspace(workspace);
+		}
 		
 		logger.debug("Generated rdf for " + sourceName);
 	}

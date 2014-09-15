@@ -24,39 +24,38 @@ import edu.isi.karma.rdf.GenericRDFGenerator;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.webserver.KarmaException;
 
-public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text>{
+public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 
 	private static Logger LOG = LoggerFactory.getLogger(BaseRDFMapper.class);
 
 	protected GenericRDFGenerator generator;
 	protected String baseURI;
 	protected InputType inputType;
+
 	@Override
-	public void setup(Context context)
-	{
-		
+	public void setup(Context context) {
+
 		try {
 			setupKarmaHome();
-	        determineInputType(context);
-	        generator = new GenericRDFGenerator(null);
-	        addModel(context);
-	        baseURI = context.getConfiguration().get("base.uri");
-		} catch (KarmaException | IOException  e) {
+			determineInputType(context);
+			generator = new GenericRDFGenerator(null);
+			addModel(context);
+			baseURI = context.getConfiguration().get("base.uri");
+		} catch (KarmaException | IOException e) {
 			LOG.error("Unable to complete Karma set up: " + e.getMessage());
-			throw new RuntimeException("Unable to complete Karma set up: " + e .getMessage());
+			throw new RuntimeException("Unable to complete Karma set up: "
+					+ e.getMessage());
 		}
 	}
 
 	private void setupKarmaHome() throws KarmaException {
-		//TODO dynamically discover the archive
+		// TODO dynamically discover the archive
 		File karmaUserHome = new File("./karma.zip/karma");
-		if(!karmaUserHome.exists())
-		{
+		if (!karmaUserHome.exists()) {
 			LOG.info("No Karma user home provided.  Creating default Karma configuration");
-		}
-		else
-		{
-			System.setProperty("KARMA_USER_HOME", karmaUserHome.getAbsolutePath());
+		} else {
+			System.setProperty("KARMA_USER_HOME",
+					karmaUserHome.getAbsolutePath());
 		}
 		KarmaMetadataManager userMetadataManager;
 		userMetadataManager = new KarmaMetadataManager();
@@ -71,58 +70,59 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text>{
 		URL modelURL = null;
 		String modelUri = context.getConfiguration().get("model.uri");
 		String modelFile = context.getConfiguration().get("model.file");
-		if(modelUri != null)
-		{
+		if (modelUri != null) {
 			modelURL = new URL(modelUri);
-		}
-		else if(modelFile != null)
-		{
+		} else if (modelFile != null) {
 			modelURL = new File(modelFile).toURI().toURL();
 		}
 		generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
 	}
 
 	private void determineInputType(Context context) {
-		String inputTypeString = context.getConfiguration().get("karma.input.type");
+		String inputTypeString = context.getConfiguration().get(
+				"karma.input.type");
 		inputType = null;
-		if(inputTypeString != null)
-		{
-			try
-			{
+		if (inputTypeString != null) {
+			try {
 				inputType = InputType.valueOf(inputTypeString.toUpperCase());
 				LOG.info("Expecting input of type {}.", inputType.toString());
+			} catch (Exception e) {
+				LOG.error(
+						"Unable to recognize input type {}. Will attempt to automatically detect serialization format.",
+						inputTypeString);
 			}
-			catch(Exception e)
-			{
-				LOG.error("Unable to recognize input type {}. Will attempt to automatically detect serialization format.", inputTypeString);
-			}
-		}
-		else
-		{
+		} else {
 			LOG.info("No input type provided.  Will attempt to automatically detect serialization format.");
 		}
 	}
 
 	@Override
-	public void map(Text key, Text value, Context context) throws IOException, InterruptedException {
+	public void map(Text key, Text value, Context context) throws IOException,
+			InterruptedException {
 
 		String filename = key.toString();
 		String contents = value.toString();
-		
+		LOG.info(key.toString() + " started");
 		StringWriter sw = new StringWriter();
 		KR2RMLRDFWriter outWriter = configureRDFWriter(sw);
 		try {
-			generator.generateRDF("model", filename, contents, inputType, false, outWriter);
-		} catch (JSONException | KarmaException e) {
+			generator.generateRDF("model", filename, contents, inputType,
+					false, outWriter);
+
+			String results = sw.toString();
+			if (!results.equals("[\n\n]\n")) {
+				writeRDFToContext(context, results);
+				
+			}
+		} catch (Exception e) {
 			LOG.error("Unable to generate RDF: " + e.getMessage());
 		}
-		String results = sw.toString();
-		writeRDFToContext(context, results);
+		LOG.info(key.toString() + " finished");
 	}
 
 	protected abstract KR2RMLRDFWriter configureRDFWriter(StringWriter sw);
-	
+
 	protected abstract void writeRDFToContext(Context context, String results)
 			throws IOException, InterruptedException;
-	
+
 }
