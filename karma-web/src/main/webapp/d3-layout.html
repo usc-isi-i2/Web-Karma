@@ -11,68 +11,48 @@
 <script type="text/javascript">
 
 var json = {
-	"comment": "Screen can not display all columns, contains cycles",
-  	"anchors": [
-    	{ "id": "col0", "column": 0, "label":"classroom"},
-      { "id": "col2", "column": 2, "label":"course_title"},
-      { "id": "col3", "column": 3, "label":"course"},
-      { "id": "col4", "column": 4, "label":"course_uri"},
-      { "id": "col6", "column": 6, "label":"homeworks_description"},
-      { "id": "col7", "column": 7, "label":"homeworks_id"},
-      { "id": "col8", "column": 8, "label":"Hhomeworks_homework_uri"},
-      { "id": "col9", "column": 9, "label":"homeworks_title"},
-      { "id": "col11", "column": 11, "label":"instructors_instructor_uri"},
-      { "id": "col12", "column": 12, "label":"lectures_description"},
-      { "id": "col13", "column": 13, "label":"lectures_id"},
-      { "id": "col14", "column": 14, "label":"lectures_lecture_uri"},
-      { "id": "col15", "column": 15, "label":"lectures_title"},
-      { "id": "col16", "column": 16, "label":"prerequisites_values"},
-      { "id": "col17", "column": 17, "label":"prerequisites_course_uri"},
-      { "id": "col18", "column": 18, "label":"project_description"},
-      { "id": "col19", "column": 19, "label":"project_id"},
-      { "id": "col20", "column": 20, "label":"project_project_uri"},
-      { "id": "col21", "column": 21, "label":"project_title"},
-      { "id": "col23", "column": 23, "label":"teaching-assistants_ta_uri"}
-  	],
-  	"nodes": [
-    	{ "id": "Homework1", "label": "Homework1"},
-      { "id": "Person1", "label": "Peson1"},
-      { "id": "Lecture1", "label": "Lecture1"},
-      { "id": "Course2", "label": "Course2"},
-      { "id": "ProjectEvent1", "label": "ProjectEvent1"},
-      { "id": "Person2", "label": "Person2"},
-      { "id": "Course1", "label": "Course1"}
-  	],
-  	"links": [
-    	{ "source": "Course1", "target": "col0", "label": "hasClassroom"},
-      { "source": "Course1", "target": "col2", "label": "title"},
-      { "source": "Course1", "target": "col3", "label": "label"},
-      { "source": "Course1", "target": "col4", "label": "classLink"},
-      { "source": "Homework1", "target": "col6", "label": "description"},
-      { "source": "Homework1", "target": "col7", "label": "identifier"},
-      { "source": "Homework1", "target": "col8", "label": "classLink"},
-      { "source": "Homework1", "target": "col9", "label": "title"},
-      { "source": "Person1", "target": "col11", "label": "classLink"},
-      { "source": "Lecture1", "target": "col12", "label": "description"},
-      { "source": "Lecture1", "target": "col13", "label": "identifier"},
-      { "source": "Lecture1", "target": "col14", "label": "classLink"},
-      { "source": "Lecture1", "target": "col15", "label": "title"},
-      { "source": "Course2", "target": "col16", "label": "label"},
-      { "source": "Course2", "target": "col17", "label": "classLink"},
-      { "source": "ProjectEvent1", "target": "col18", "label": "description"},
-      { "source": "ProjectEvent1", "target": "col19", "label": "identifier"},
-      { "source": "ProjectEvent1", "target": "col20", "label": "classLink"},
-      { "source": "ProjectEvent1", "target": "col21", "label": "title"},
-      { "source": "Person2", "target": "col23", "label": "classLink"},
-      { "source": "Course1", "target": "Homework1", "label": "hasHomeWork"},
-      { "source": "Homework1", "target": "Course1", "label": "belongTo"},
-      { "source": "Course1", "target": "Person1", "label": "hasInstructor"},
-      { "source": "Person1", "target": "Course1", "label": "teaches"},
-      { "source": "Course1", "target": "Lecture1", "label": "hasLecture"},
-      { "source": "Course1", "target": "Course2", "label": "hasPrerequisite"},
-      { "source": "Course1", "target": "ProjectEvent1", "label": "hasProjectEvent"},
-      { "source": "Course1", "target": "Person2", "label": "hasTeachingAssistant"}
-  	]
+    "comment": "Contains label Links",
+    "anchors": [
+        { "id": 1, "column": 1, "label" : "column1" } ,
+        { "id": 2, "column": 4, "label" : "column4" } ,
+        { "id": 3, "column": 5, "label" : "column5" } ,
+        { "id": 4, "column": 6, "label" : "column6" } ,
+        { "id": 5, "column": 7, "label" : "column7" } ,
+        { "id": 6, "column": 11, "label" : "column11" } ,
+        { "id": 7, "column": 13, "label" : "column13" } ,
+        { "id": 16, "column": 2, "label" : "column2" } 
+    ],
+    "nodes": [
+        { "id": 8, "label": "semantic type" } ,
+        { "id": 9, "label": "semantic type" } ,
+        { "id": 10, "label": "semantic type" } ,
+        { "id": 11, "label": "semantic type" } ,
+        { "id": 12, "label": "semantic type" } ,
+        { "id": 13, "label": "semantic type" } ,
+        { "id": 14, "label": "semantic type" } ,
+        { "id": 15, "label": "class" } 
+
+
+    ],
+    "links": [
+        { "source": 8, "target": 1, "label": "link", "id":"l1" } ,
+        { "source": 9, "target": 2, "label": "link","id":"l2" } ,
+        { "source": 10, "target": 3, "label": "link", "id":"l3" } ,
+        { "source": 11, "target": 4, "label": "link", "id":"l4" } ,
+        { "source": 12, "target": 5, "label": "link", "id":"l5" } ,
+        { "source": 13, "target": 6, "label": "link", "id":"l6" } ,
+        { "source": 14, "target": 7, "label": "link", "id":"l7" } ,
+        { "source": 15, "target": 8, "label": "link", "id":"l8" } ,
+        { "source": 15, "target": 9, "label": "link", "id":"l9" } ,
+        { "source": 15, "target": 10, "label": "link", "id":"l10" } ,
+        { "source": 15, "target": 11, "label": "link", "id":"l11" } ,
+        { "source": 15, "target": 12, "label": "link", "id":"l12" } ,
+        { "source": 15, "target": 13, "label": "link", "id":"l13" } ,
+        { "source": 15, "target": 14, "label": "link", "id":"l14" } 
+    ],
+    "edgeLinks":[
+        {"source":"l8", "target":"16"} 
+    ]
 };
 
 

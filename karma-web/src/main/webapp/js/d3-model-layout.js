@@ -1,59 +1,129 @@
 D3ModelLayout = function() {
-	var padding = 35;
-	var width=window.innerWidth - padding;           
-	var height=window.innerHeight - padding;
-	var columns = 35;
-	var barWidth = 100;
-	var barHeight = 100;
-
-	//return color of node
-	var cScale;     
-	var forceSVG ;
-
-	var xScale;
-	var upperForceScale;       
+	padding = 35;
+	width=window.innerWidth - padding;           
+	height=window.innerHeight - padding;
+	columns = 35;
+	barWidth = 100;
+	barHeight = 100;
 
 
-	var test = [];
-	var anchorData = [];                           //store anchor nodes
-	var nodesData = [];                            //store all nodes includes anchors
-	var linksData = [];                            //links data
-	var noCycleLinksData = [];                     //cycles are removed
-	var cycles = [];                               //all cycles, each cycle contians all nodes in that cycle.
-	var textData = [];                             //text nodes
-	var textLinksData = [];                        //text links
-	var idMap = [];                                //map from label to id
-	var layerMap = [];                             //store nodes'id in sequence of layers
-	var nodesChildren = [];                        //store node's id and its children pair
-	var SCCindex = 0;                              //strong connected component node's index
-	var SCCNodes = [];                             //SCC nodes set
-	var SCCtmpNodes = [];                          //the nodes stack of SCC
-	var layerLabel = [];                           //layers are divided into sections based on its layer
-	var map = new Map();
+	test = [];
+	anchorData = [];                           //store anchor nodes
+	nodesData = [];                            //store all nodes includes anchors
+	linksData = [];                            //links data
+	noCycleLinksData = [];                     //cycles are removed
+	cycles = [];                               //all cycles, each cycle contians all nodes in that cycle.
+	textData = [];                             //text nodes
+	textLinksData = [];                        //text links
+	idMap = [];                                //map from label to id
+	edgeIdMap = [];                            //map of edge's id
+	layerMap = [];                             //store nodes'id in sequence of layers
+	nodesChildren = [];                        //store node's id and its children pair
+	SCCindex = 0;                              //strong connected component node's index
+	SCCNodes = [];                             //SCC nodes set
+	SCCtmpNodes = [];                          //the nodes stack of SCC
+	layerLabel = [];                           //layers are divided into sections based on its layer
+	map = new Map();
 
 
-	var nodeRadius = 4;
-	var unitLinkLength = 70;                       //difference between layers
-	var maxLayer = 0;
-	var reshuffleFrequency = 10;                   //pixel changes to excute scroll bar event
-	var xOffset = 0;                               //x position offset
-	var outsideNodesNum = 0;                       //outside nodes number
-	var firstTime = true;                          //first time to load the force-layout
-	var maxLabelLength = 0;                        //the max of label length
+	nodeRadius = 4;
+	unitLinkLength = 70;                       //difference between layers
+	maxLayer = 0;
+	reshuffleFrequency = 10;                   //pixel changes to excute scroll bar event
+	xOffset = 0;                               //x position offset
+	outsideNodesNum = 0;                       //outside nodes number
+	firstTime = true;                          //first time to load the force-layout
+	maxLabelLength = 0;    
+	cScale = d3.scale.category20();
 
+	//create svg
+	svg = d3.select("body")                         
+	    .append("svg")
+	    .attr("width", Math.max(width, columns * barWidth))
+	    .attr("height", height)
+	    .on("mousemove", mousemove);
 
-	var nodes;
-	var links;
-	var labels;
-	var labelLinks;
-	var linkArrow;
-	var labelFrame; ;
+	//svg to draw nodes and links
+	forceSVG = svg.append("g");
 
-	var force; 
-	var labelForce;
-	var drag;
+	//place to show mouse coordinate
+	pos = svg.append("text")
+		.attr("fill", "black")
+		.attr("font-size", 10);
 
+	//x-scale
+	xScale = d3.scale.linear()
+		.domain([0, columns])                        
+		.range([0, barWidth * columns]);
+
+	//coefficient of force move nodes to top
+	upperForceScale = d3.scale.linear()
+		.domain([0, height]) 
+		.range([1, 0]);        
+
+	nodes = forceSVG.selectAll(".node");       //all nodes    
+	links = forceSVG.selectAll(".link");       //all links
+	labels = forceSVG.selectAll(".label");     //all labels
+	labelLinks = forceSVG.selectAll(".labelLinks"); //all label links.
+	linkArrow = forceSVG.selectAll(".linkArrow");   //little triangle of links
+	labelFrame = forceSVG.selectAll(".labelFrame"); //the frame of each label
+
+	//force layout for nodes
+	force = d3.layout.force()
+		.size([Math.max(width, columns * barWidth), height])
+		.gravity(0)
+		.linkStrength(function(d){
+			if (d.type == "edgeLink"){
+				if (d.target.outside.isOutside){
+					return 1;
+				}
+				return 0;
+			}
+			if (d.source.outside.isOutside && d.target.outside.isOutside){
+				return 1;
+			} else if (d.source.outside.isOutside || d.target.outside.isOutside){
+				if (!d.target.outside.isOutside && d.target.type == "anchor"){
+					return 0.1;
+				}
+				return 0.8;
+			}
+			return 0;
+		})
+		.friction(0.8)
+		//.theta(0.1)
+		.charge(-100)
+		.linkDistance(30)
+		.on("tick", tick);
+		// force layout for labels
+
+	labelForce = d3.layout.force()
+		.size([Math.max(width, columns * barWidth), height])
+		.gravity(0)
+		.friction(0.8)
+		.charge(function(d){
+			return 0;
+		})
+		.linkDistance(0)
+		.linkStrength(3);
+		//node can be dragged to the position you want
+
+	drag = force.drag()
+		.on("dragstart", function(d) {
+			if (!d.outside.isOutside){
+	  			d3.select(this).classed("fixed", d.fixed = true);
+			}
+	  	})
+	    .on("dragend", function(d) {
+	  		if (!d.outside.isOutside){
+	  			d.position.x = d.x;
+	  			d.position.y = d.y;
+	  		}
+		});
 	//draw nodes and links
+
+
+
+
 	function transit(){
 		links = links.data(linksData)
 		links.enter()
@@ -70,19 +140,34 @@ D3ModelLayout = function() {
 			.delay(250)
 			.duration(500)
 			.attr("stroke-width", 1);
+		links.exit()
+			.transition()
+			.duration(500)
+			.attr("opacity", 0)
+			.remove();
 
 
 		linkArrow = linkArrow.data(linksData);
 		linkArrow.enter()
 			.append("polygon")
 			.attr("fill", "#555")
-			//.attr("opacity", 0.6);
+		linkArrow.exit()
+			.transition()
+			.duration(500)
+			.attr("opacity", 500)
+			.remove();
 
 
-		labels = labels.data(textData)
-			.enter()
+		labels = labels.data(textData);
+		labels.enter()
 			.append("g")
 			.classed("label", true);
+		labels.exit()
+			.transition()
+			.duration(500)
+			.attr("opacity", 0)
+			.remove();
+
 		var test = labels.append("circle")
 			.attr("r", 0)
 			//.attr("fill", "black");
@@ -166,7 +251,11 @@ D3ModelLayout = function() {
 			.append("line")
 			.classed("labelLinks", true)
 			.attr("stroke-width", 0);
-		//labels.moveToBack();
+		labelLinks.exit()
+			.transition()
+			.duration(500)
+			.attr("opacity", 0)
+			.remove();
 
 
 
@@ -280,8 +369,11 @@ D3ModelLayout = function() {
 		nodes.transition()
 			.duration(500)
 			.attr("r", nodeRadius);
-
-		//test.moveToFront();
+		nodes.exit()
+			.transition()
+			.duration(500)
+			.attr("opacity", 500)
+			.remove();
 	}
 
 	//tick function for force-layout
@@ -354,48 +446,56 @@ D3ModelLayout = function() {
 	//updata link for tick function
 	var updateLink = function(){
 	    this.attr("d", function(d){
-				var a = d.source;
-				var b = d.target;
+	    	var a = d.source;
+			var b = d.target;
+
+			
+			if (d.type == "edgeLink"){
+				if (b.outside.isOutside){
+					return "M" + b.x + " " + b.y + " L " + a.x + " " + a.y;
+				}
+			} else {
 				if ((a.outside.isOutside && b.outside.isOutside) || (b.outside.isOutside && b.type == "anchor") || b.noLayer){
 					return "M" + b.x + " " + b.y + " L " + a.x + " " + a.y;
 				}
-				//var ay = a.y + (b.y - a.y) / 5;
-				var ax = a.x - (a.x - b.x) / 3;
-				var by = b.y - (b.y - a.y) / 3;
-				var p = "M " + b.x + " " + b.y + " C " + b.x + " " + by + " " + ax + " " + a.y + " " + a.x + " " + a.y;
+			}
+			
+			var ax = a.x - (a.x - b.x) / 3;
+			var by = b.y - (b.y - a.y) / 3;
+			var p = "M " + b.x + " " + b.y + " C " + b.x + " " + by + " " + ax + " " + a.y + " " + a.x + " " + a.y;
 
-				//calculate the position for upward arrow
-				if (b.layer > a.layer){
-					d.up = true;
-					d.arrow = {};
-					d.arrow.x = b.x;
-					d.arrow.y = b.y;
-					getArrowAngle(d, ax, by, 0.05);
-				}
-				else {
-				//calculate the position for downward arrow
-					var y = (d.target.type == "anchor") ? b.y : b.y - 12;
-					d.arrow = {};
-					d.arrow.y = y;
-					var i, j;			
-					for (i = 0; i < 1; i += 0.1){
-						if (getXofBezier(d, ax, by, i, y)){
-							break;
-						}
-					}
-					i -= 0.1;
-					for (j = 0; j < 0.1; j += 0.01){
-						if (getXofBezier(d, ax, by, i + j, y)){
-							break;
-						}
-					}   		
-					d.arrow.t = i + j;
-					getArrowAngle(d, ax, by, i + j + 0.05);
-					if (b.y < a.y){
-						d.angle -= 180;
+			//calculate the position for upward arrow
+			if (b.layer > a.layer){
+				d.up = true;
+				d.arrow = {};
+				d.arrow.x = b.x;
+				d.arrow.y = b.y;
+				getArrowAngle(d, ax, by, 0.05);
+			}
+			else {
+			//calculate the position for downward arrow
+				var y = (d.target.type == "anchor") ? b.y : b.y - 12;
+				d.arrow = {};
+				d.arrow.y = y;
+				var i, j;			
+				for (i = 0; i < 1; i += 0.1){
+					if (getXofBezier(d, ax, by, i, y)){
+						break;
 					}
 				}
-				return p;
+				i -= 0.1;
+				for (j = 0; j < 0.1; j += 0.01){
+					if (getXofBezier(d, ax, by, i + j, y)){
+						break;
+					}
+				}   		
+				d.arrow.t = i + j;
+				getArrowAngle(d, ax, by, i + j + 0.05);
+				if (b.y < a.y){
+					d.angle -= 180;
+				}
+			}
+			return p;
 		});	
 
 		linkArrow.attr("points", function(d){
@@ -626,6 +726,9 @@ D3ModelLayout = function() {
 			edge.source = idMap[d.source];
 			edge.target = idMap[d.target];
 			edge.id = i;
+			if (d.id){
+				edgeIdMap[d.id] = i;
+			}
 			linksData.push(edge);
 
 			var node = {};
@@ -659,7 +762,7 @@ D3ModelLayout = function() {
 			nodesData[d.target].parent = d.source;
 			nodesData[d.source].degree++;
 			nodesData[d.target].degree++;
-		});
+		});		
 	}
 
 	//detect the strong connect component in the graph
@@ -730,7 +833,7 @@ D3ModelLayout = function() {
 	}
 
 	//set layer and position for each node
-	function setLayer(tmpLinkData){
+	function setLayer(tmpLinkData, tmpE){
 		//layer is set from bottem to top, one layer per loop. The anchors are layer 0.
 		var change = anchorData.length;
 		//for (var i = 0; i < 10; i++){
@@ -805,6 +908,20 @@ D3ModelLayout = function() {
 				d.xPosCol = -1;
 			}
 		});
+
+
+		//set the edge link
+		tmpE.forEach(function(d, i){
+			var srcIndex = nodesData.length * 2 + edgeIdMap[d.source] * 2 + 1;
+			textData[srcIndex].layer = (nodesData[textData[srcIndex].node.src].layer + nodesData[textData[srcIndex].node.tgt].layer) / 2;
+
+			var edge = {};
+			edge.source = textData[srcIndex];
+			edge.target = idMap[d.target];
+			edge.id = linksData.length;
+			edge.type = "edgeLink";
+			linksData.push(edge);
+		});
 	}
 
 	//draw columns
@@ -829,7 +946,7 @@ D3ModelLayout = function() {
 	}
 
 	//when move over show the coordinate
-	function  mousemove(){
+	function mousemove(){
 		var ary = d3.mouse(this);
 		pos.attr("x", ary[0] + 2)
 			.attr("y", ary[1] + 2)
@@ -853,6 +970,20 @@ D3ModelLayout = function() {
 	  return this.each(function(){
 	    this.parentNode.appendChild(this);
 	  });   //move component to the up of svg
+	};
+
+	window.onscroll = function(event){
+		//console.log(window.pageXOffset);
+		if (Math.abs(window.pageXOffset - xOffset) > reshuffleFrequency){
+			xOffset = window.pageXOffset;
+			setNodePosition();
+		}
+	}
+
+	window.onresize = function(event) {
+	    width = window.innerWidth - padding;
+	    //height=window.innerHeight - padding;
+	    //console.log(width + " " + height);
 	};
 
 	//set the outside nodes
@@ -932,6 +1063,9 @@ D3ModelLayout = function() {
 				})
 
 			links.classed("outsideLink", function(d){
+				if (d.type == "edgeLink"){
+					return d.target.outside.isOutside;
+				}
 				if (d.source.outside && d.target.outside){
 					return d.source.outside.isOutside || d.target.outside.isOutside;
 				}
@@ -957,140 +1091,17 @@ D3ModelLayout = function() {
 		}
 	}
 
-	var generateLayout = function(json) {
-		padding = 35;
-		width=window.innerWidth - padding;           
-		height=window.innerHeight - padding;
-		columns = 35;
-		barWidth = 100;
-		barHeight = 100;
-
-		//return color of node
-		cScale;     
-		forceSVG ;
-
-		xScale;
-		upperForceScale;       
-
-
-		test = [];
-		anchorData = [];                           //store anchor nodes
-		nodesData = [];                            //store all nodes includes anchors
-		linksData = [];                            //links data
-		noCycleLinksData = [];                     //cycles are removed
-		cycles = [];                               //all cycles, each cycle contians all nodes in that cycle.
-		textData = [];                             //text nodes
-		textLinksData = [];                        //text links
-		idMap = [];                                //map from label to id
-		layerMap = [];                             //store nodes'id in sequence of layers
-		nodesChildren = [];                        //store node's id and its children pair
-		SCCindex = 0;                              //strong connected component node's index
-		SCCNodes = [];                             //SCC nodes set
-		SCCtmpNodes = [];                          //the nodes stack of SCC
-		layerLabel = [];                           //layers are divided into sections based on its layer
-		map = new Map();
-
-
-		nodeRadius = 4;
-		nitLinkLength = 70;                       //difference between layers
-		maxLayer = 0;
-		reshuffleFrequency = 10;                   //pixel changes to excute scroll bar event
-		xOffset = 0;                               //x position offset
-		outsideNodesNum = 0;                       //outside nodes number
-		firstTime = true;                          //first time to load the force-layout
-		maxLabelLength = 0;    
-		cScale = d3.scale.category20();     
-
-		//create svg
-		svg = d3.select("body")                         
-		    .append("svg")
-		    .attr("width", Math.max(width, columns * barWidth))
-		    .attr("height", height)
-		    .on("mousemove", mousemove);
-
-		//svg to draw nodes and links
-		forceSVG = svg.append("g");
-
-		//place to show mouse coordinate
-		pos = svg.append("text")
-			.attr("fill", "black")
-			.attr("font-size", 10);
-
-		//x-scale
-		xScale = d3.scale.linear()
-			.domain([0, columns])                        
-			.range([0, barWidth * columns]);
-
-		//coefficient of force move nodes to top
-		upperForceScale = d3.scale.linear()
-			.domain([0, height]) 
-			.range([1, 0]);        
-		nodes = forceSVG.selectAll(".node");       //all nodes    
-		links = forceSVG.selectAll(".link");       //all links
-		labels = forceSVG.selectAll(".label");     //all labels
-		labelLinks = forceSVG.selectAll(".labelLinks"); //all label links.
-		linkArrow = forceSVG.selectAll(".linkArrow");   //little triangle of links
-		labelFrame = forceSVG.selectAll(".labelFrame"); //the frame of each label
-
-
-		//force layout for nodes
-		force = d3.layout.force()
-			.size([Math.max(width, columns * barWidth), height])
-			.gravity(0)
-			.linkStrength(function(d){
-				if (d.source.outside.isOutside && d.target.outside.isOutside){
-					return 1;
-				} else if (d.source.outside.isOutside || d.target.outside.isOutside){
-					if (!d.target.outside.isOutside && d.target.type == "anchor"){
-						return 0.1;
-					}
-					return 0.8;
-				}
-				return 0;
-			})
-			.friction(0.8)
-			//.theta(0.1)
-			.charge(-100)
-			.linkDistance(30)
-			.on("tick", tick);
-
-		// force layout for labels
-		labelForce = d3.layout.force()
-			.size([Math.max(width, columns * barWidth), height])
-			.gravity(0)
-			.friction(0.8)
-			.charge(function(d){
-				return 0;
-			})
-			.linkDistance(0)
-			.linkStrength(3);
-
-		//node can be dragged to the position you want
-		drag = force.drag()
-			.on("dragstart", function(d) {
-				if (!d.outside.isOutside){
-		  			d3.select(this).classed("fixed", d.fixed = true);
-				}
-		  	})
-		    .on("dragend", function(d) {
-		  		if (!d.outside.isOutside){
-		  			d.position.x = d.x;
-		  			d.position.y = d.y;
-		  		}
-			});
-
+	var generateLayout = function(json) {  
 		//read file and execute program
 		//d3.json(jsonFile, function(d){
 		var processData = function(d) {
-		//d3.json("datasets/complex/complex02.json", function(d){
-		//d3.json("datasets/simple/simple06.json", function(d){
 			var tmpNodeData = d.anchors.concat(d.nodes);
 			var tmpLinkData = d.links;
+			var tmpEdgeLink = d.edgeLinks;
 			initializeData(tmpLinkData, tmpNodeData);
-			//var tmpL = removeCycle();
 			removeCycle();
 			var tmpL = linksData.slice(0);
-			setLayer(tmpL);
+			setLayer(tmpL, tmpEdgeLink);
 			drawTable();
 
 			transit();
@@ -1106,21 +1117,10 @@ D3ModelLayout = function() {
 			setNodePosition();
 		};
 		processData(json);
-
-		window.onscroll = function(event){
-			//console.log(window.pageXOffset);
-			if (Math.abs(window.pageXOffset - xOffset) > reshuffleFrequency){
-				xOffset = window.pageXOffset;
-				setNodePosition();
-			}
-		}
-
-		window.onresize = function(event) {
-		    width = window.innerWidth - padding;
-		    //height=window.innerHeight - padding;
-		    //console.log(width + " " + height);
-		};
 	}
+
+
+
 
 	/**
 	===========================================================================
