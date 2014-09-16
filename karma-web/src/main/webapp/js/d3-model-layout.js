@@ -1,4 +1,4 @@
-D3ModelLayout = function() {
+D3ModelLayout = function(htmlElement) {
 	padding = 35;
 	width=window.innerWidth - padding;           
 	height=window.innerHeight - padding;
@@ -37,7 +37,7 @@ D3ModelLayout = function() {
 	cScale = d3.scale.category20();
 
 	//create svg
-	svg = d3.select("body")                         
+	svg = d3.select(htmlElement)                         
 	    .append("svg")
 	    .attr("width", Math.max(width, columns * barWidth))
 	    .attr("height", height)
