@@ -33,6 +33,8 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -101,7 +103,10 @@ public class OfflineRdfGenerator {
 	private int port;
 	private DBType dbType;
 	private File inputFile;
-	private int maxNumLines; 
+	private int maxNumLines;
+	private String rootTripleMap;
+	private List<String> killTripleMap;
+	private List<String> stopTripleMap;
 	public OfflineRdfGenerator(CommandLine cl)
 	{
 
@@ -195,6 +200,24 @@ public class OfflineRdfGenerator {
 		baseURI = (String) cl.getValue("--baseuri");
 		bloomFiltersFilePath = (String) cl.getValue("--outputbloomfilter");
 		selectionName = (String) cl.getValue("--selection");
+		rootTripleMap = (String) cl.getValue("--root");
+		String killTripleMap = (String) cl.getValue("--killTripleMap");
+		String stopTripleMap = (String) cl.getValue("--stopTripleMap");
+		if (rootTripleMap == null) {
+			rootTripleMap = "";
+		}
+		if (killTripleMap == null) {
+			this.killTripleMap = new ArrayList<String>();
+		}
+		else {
+			this.killTripleMap = new ArrayList<String>(Arrays.asList(killTripleMap.split(",")));
+		}
+		if (stopTripleMap == null) {
+			this.stopTripleMap = new ArrayList<String>();
+		}
+		else {
+			this.stopTripleMap = new ArrayList<String>(Arrays.asList(stopTripleMap.split(",")));
+		}
 		parseDatabaseCommandLineOptions(cl);
 		parseFileCommandLineOptions(cl);
 
@@ -429,7 +452,7 @@ public class OfflineRdfGenerator {
 
 
 		createWriters(id);
-		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator(selectionName);
+		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator(selectionName, killTripleMap, stopTripleMap, rootTripleMap);
 		rdfGenerator.addModel(id);
 		InputType inputType = null;
 		if(this.inputType.equalsIgnoreCase("CSV"))
@@ -468,6 +491,9 @@ public class OfflineRdfGenerator {
 				.withOption(buildOption("outputbloomfilter", "generate bloom filters", "bloomfiltersfile", obuilder, abuilder))
 				.withOption(buildOption("baseuri", "specifies base uri", "base URI", obuilder, abuilder))
 				.withOption(buildOption("selection", "specifies selection name", "selection", obuilder, abuilder))
+				.withOption(buildOption("root", "specifies root", "root", obuilder, abuilder))
+				.withOption(buildOption("killTripleMap", "specifies TripleMap to kill", "killTripleMap", obuilder, abuilder))
+				.withOption(buildOption("stopTripleMap", "specifies TripleMap to stop", "stopTripleMap", obuilder, abuilder))
 				.withOption(obuilder
 						.withLongName("help")
 						.withDescription("print this message")

@@ -182,8 +182,7 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 		Set<String> visited = new HashSet<String>();
 		dfs(graph, rootTriplesMapId, visited, rootTriplesMapId);
 	}
-	private TriplesMapGraph copyGraph(TriplesMapGraph graph, 
-			HashSet<String> triplesMapsIds) {
+	private TriplesMapGraph copyGraph(TriplesMapGraph graph, HashSet<String> triplesMapsIds) {
 		TriplesMapGraph newGraph = new TriplesMapGraph();
 		for(TriplesMapLink link : graph.getLinks())
 		{
