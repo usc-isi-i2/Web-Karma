@@ -4,16 +4,12 @@ function WorksheetOptions(wsId, wsTitle) {
 	var worksheetTitle = wsTitle;
 	var worksheetOptionsDiv;
 
-	var options = [{
-			name: "View model using straight lines",
-			func: viewStraightLineModel,
-			showCheckbox: true,
-			defaultChecked: true,
-			initFunc: initStrightLineModel
-		}, {
+	var options = [
+	    {
 			name: "Organize Columns",
 			func: organizeColumns
-		}, {
+		}, 
+		{
 			name: "divider"
 		},
 
@@ -249,22 +245,6 @@ function WorksheetOptions(wsId, wsTitle) {
 		return false;
 	}
 
-	function viewStraightLineModel(event) {
-		var isChecked = getCheckboxState(event);
-		console.log("viewStraightLineModel: " + isChecked);
-		worksheetOptionsDiv.data("viewStraightLineModel", isChecked);
-
-		hideDropdown();
-		refreshAlignmentTree(worksheetId);
-		return false;
-	}
-
-	function initStrightLineModel() {
-		if (worksheetOptionsDiv)
-			worksheetOptionsDiv.data("viewStraightLineModel", true);
-		else
-			window.setTimeout(initStrightLineModel, 100);
-	}
 
 	function showModel() {
 		console.log("SHow Model: " + worksheetTitle);
