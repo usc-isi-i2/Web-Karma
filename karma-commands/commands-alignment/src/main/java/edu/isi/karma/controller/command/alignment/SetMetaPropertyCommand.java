@@ -221,7 +221,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				String targetHNodeId = ((ColumnNode) propertyLink.getTarget())
 						.getHNodeId();
 				alignment.addDataPropertyOfColumnLink(classInstanceNode,
-						columnNode, targetHNodeId);
+						columnNode, targetHNodeId, propertyLink.getId());
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId,
 						DataPropertyOfColumnLink.getFixedLabel(),

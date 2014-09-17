@@ -274,10 +274,10 @@ public class Alignment implements OntologyUpdateListener {
 		return null;
 	}
 	
-	public DataPropertyOfColumnLink addDataPropertyOfColumnLink(Node source, Node target, String specializedColumnHNodeId) {
+	public DataPropertyOfColumnLink addDataPropertyOfColumnLink(Node source, Node target, String specializedColumnHNodeId, String specializedLinkId) {
 		
 		String id = LinkIdFactory.getLinkId(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI, source.getId(), target.getId());
-		DataPropertyOfColumnLink link = new DataPropertyOfColumnLink(id, specializedColumnHNodeId);
+		DataPropertyOfColumnLink link = new DataPropertyOfColumnLink(id, specializedColumnHNodeId, specializedLinkId);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
 	}

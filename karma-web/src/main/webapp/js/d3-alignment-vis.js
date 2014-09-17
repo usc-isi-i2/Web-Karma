@@ -67,6 +67,11 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 		nodesMap[node["id"]] = node;
 	});
 	
+	$.each(alignJson.links, function(index, link) {
+		if(link.label == "classLink")
+			link.label = "uri";
+	});
+	
 	var layout = new D3ModelLayout(layoutElement);
 	layout.generateLayoutForJson(alignJson);
 	

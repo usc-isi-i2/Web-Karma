@@ -38,10 +38,13 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
+import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
+import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
@@ -199,7 +202,19 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 					}
 
 					linkObj.put(JsonKeys.linkType.name(), link.getType());
-					linksArr.put(linkObj);
+					if(link.getType() == LinkType.ObjectPropertySpecializationLink) {
+						ObjectPropertySpecializationLink spLink = (ObjectPropertySpecializationLink)link;
+						String linkId = spLink.getSpecializedLinkId();
+						linkObj.put(JsonKeys.source.name(), linkId);
+						edgeLinksArr.put(linkObj);
+					} else if(link.getType() == LinkType.DataPropertyOfColumnLink) {
+						DataPropertyOfColumnLink spLink = (DataPropertyOfColumnLink)link;
+						String linkId = spLink.getSpecializedLinkId();
+						linkObj.put(JsonKeys.source.name(), linkId);
+						edgeLinksArr.put(linkObj);
+					} else {
+						linksArr.put(linkObj);
+					}
 				}
 			} 
 

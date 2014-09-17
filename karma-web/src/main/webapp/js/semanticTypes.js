@@ -70,27 +70,31 @@ var SetSemanticTypeDialog = (function() {
 
 				var suggestedTypes = getSuggestedTypes();
 
+				var addSemTypeOrAdvOption = function(type, isSelected, isCrfModelSuggested) {
+					if (type["DisplayLabel"] == "km-dev:classLink") {
+						addUriSemanticType(type["DisplayDomainLabel"], type["DomainUri"], type["DomainId"]);
+					} else if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
+						$("#isSubclassOfClass").prop('checked', false);
+						$("#isSubclassOfClassTextBox").val(type["DisplayDomainLabel"]);
+						$("div#semanticTypingAdvacedOptionsDiv").show();
+					} else if (type["DisplayLabel"] == "km-dev:dataPropertyOfColumnLink" ||
+							type["DisplayLabel"] == "km-dev:objectPropertySpecialization") {
+						$("#isSpecializationForEdge").prop('checked', false);
+						$("#isSpecializationForEdgeTextBox").val(type["DisplayDomainLabel"]);
+						$("div#semanticTypingAdvacedOptionsDiv").show();
+					} else {
+						addSemTypeObjectToCurrentTable(type, isSelected, isCrfModelSuggested);
+					}
+				};
+				
 				// Populate the table with existing types and CRF suggested types
 				$.each(existingTypes, function(index, type) {
 					// Take care of the special meta properties that are set through the advanced options
-					if (type["isMetaProperty"]) {
-						if (type["DisplayLabel"] == "km-dev:classLink") {
-							addUriSemanticType(type["DisplayDomainLabel"], type["DomainUri"], type["DomainId"]);
-						} else if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
-							$("#isSubclassOfClass").prop('checked', true);
-							$("#isSubclassOfClassTextBox").val(type["DisplayDomainLabel"]);
-						} else if (type["DisplayLabel"] == "km-dev:dataPropertyOfColumnLink") {
-							$("#isSpecializationForEdge").prop('checked', true);
-							$("#isSpecializationForEdgeTextBox").val(type["DisplayDomainLabel"]);
-						}
-						$("div#semanticTypingAdvacedOptionsDiv").show();
-					} else {
-						addSemTypeObjectToCurrentTable(type, true, false);
-					}
+					addSemTypeOrAdvOption(type, true, false);
 				});
 				if (suggestedTypes) {
 					$.each(suggestedTypes["Labels"], function(index, type) {
-						addSemTypeObjectToCurrentTable(type, false, true);
+						addSemTypeOrAdvOption(type, false, true);
 					});
 				}
 

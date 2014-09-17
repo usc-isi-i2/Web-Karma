@@ -29,19 +29,25 @@ import edu.isi.karma.modeling.Uris;
 public class DataPropertyOfColumnLink extends LabeledLink {
 
 	private final String specializedColumnHNodeId;
+	private final String specializedLinkId;
 	private static final long serialVersionUID = 1L;
 	private static final Label label = 
 			new Label(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
 
-	public DataPropertyOfColumnLink(String id, String hNodeId) {
+	public DataPropertyOfColumnLink(String id, String hNodeId, String specializedLinkId) {
 		super(id, label, LinkType.DataPropertyOfColumnLink);
 		this.specializedColumnHNodeId = hNodeId;
+		this.specializedLinkId = specializedLinkId;
 	}
 
 	public static Label getFixedLabel() {
 		return label;
 	}
 
+	public String getSpecializedLinkId() {
+		return specializedLinkId;
+	}
+	
 	public String getSpecializedColumnHNodeId() {
 		return specializedColumnHNodeId;
 	}
