@@ -48,18 +48,30 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	
 	var tableLeftOffset = mainWorksheetDiv.offset().left;
 	
+	var maxX = 0;
 	var alignJson = json.alignObject;
 	$.each(alignJson.anchors, function(index, node) {
 		var hNodeId = node["hNodeId"];
 		var columnNode = $("td#" + hNodeId);
 		var leftX = $(columnNode).offset().left - tableLeftOffset;
-		node.posX = leftX;
+		node.xPos = leftX + ($(columnNode).width()/2);
+		var nodeMax = leftX + $(columnNode).width();
+		if(nodeMax > maxX)
+			maxX = nodeMax;
 	});
-	
+	alignJson.width = maxX;
 	var layout = new D3ModelLayout(layoutElement);
-	layout.generateLayoutForJson(json.alignObject);
+	layout.generateLayoutForJson(alignJson);
 	$(mainWorksheetDiv).data("alignmentId", json["alignmentId"]);
 	$(mainWorksheetDiv).data("svgVis", {"svgVis":true});
+	
+	layout.setNodeClickListener(function(node) {
+		console.log("This function is called when the node is clicked");
+	});
+	
+	layout.setLinkClickListener(function(link) {
+		console.log("This function is called when the link is clicked");
+	});
 }
 
 var refreshAlignmentTree = function(worksheetId) {
