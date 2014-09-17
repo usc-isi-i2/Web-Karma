@@ -24,7 +24,6 @@ package edu.isi.karma.kr2rml.planning;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -159,29 +158,132 @@ public class TriplesMapGraph {
 
 	}
 
-	public void killTriplesMap(String triplesMapId) {
-		removeTriplesMap(triplesMapId);
-		for (Entry<String, List<TriplesMapLink>> entry : neighboringTriplesMapCache.entrySet()) {
-			List<TriplesMapLink> links = entry.getValue();
-			if (links != null) {
-				Iterator<TriplesMapLink> itr = links.iterator();
-				while (itr.hasNext()) {
-					TriplesMapLink link = itr.next();
-					if (link.getTargetMap().getId().equals(triplesMapId)) {
-						itr.remove();
-					}
-				}
+	public TriplesMapGraph copyGraph(HashSet<String> triplesMapsIds) {
+		TriplesMapGraph newGraph = new TriplesMapGraph();
+		for(TriplesMapLink link : links)
+		{
+			if (triplesMapsIds != null) {
+				triplesMapsIds.add(link.getSourceMap().getId());
+				triplesMapsIds.add(link.getTargetMap().getId());
 			}
+			newGraph.addLink(link);
 		}
+		return newGraph;
 	}
 	
 	public TriplesMapGraph copyGraph() {
 		TriplesMapGraph newGraph = new TriplesMapGraph();
 		newGraph.links.addAll(links);
-		for (Entry<String, List<TriplesMapLink> >entry : neighboringTriplesMapCache.entrySet()) {
+		for (Entry<String, List<TriplesMapLink>> entry : neighboringTriplesMapCache.entrySet()) {
 			newGraph.neighboringTriplesMapCache.put(entry.getKey(), new ArrayList<TriplesMapLink>(entry.getValue()));
 		}
 		newGraph.triplesMapIndex.putAll(triplesMapIndex);
 		return newGraph;
 	}
+
+	public void killTriplesMap(List<String> tripleMapToKill, RootStrategy strategy) {
+		if (tripleMapToKill.size() == 0) {
+			return;
+		}
+		List<TriplesMapLink> remainedLinks = new ArrayList<TriplesMapLink>();
+		Set<String> visited = new HashSet<String>();
+		killTriplesMap(strategy.findRoot(this), tripleMapToKill, remainedLinks, visited);
+		links.clear();
+		neighboringTriplesMapCache.clear();
+		triplesMapIndex.clear();
+		for (TriplesMapLink link : remainedLinks) {
+			addLink(link);
+		}
+	}
+
+	private void killTriplesMap(String rootId, List<String> tripleMapToKill, List<TriplesMapLink> remainedLinks, Set<String> visited) {
+		visited.add(rootId);
+		Set<String> next = new HashSet<String>();
+		List<TriplesMapLink> links = neighboringTriplesMapCache.get(rootId);
+		if (links != null) {
+			for (TriplesMapLink link : links) {
+				if (link.getSourceMap().getId().equals(rootId) && !tripleMapToKill.contains(link.getTargetMap().getId())) {
+					next.add(link.getTargetMap().getId());
+					remainedLinks.add(link);
+				}
+			}
+		}
+		for (String n : next) {
+			if (!visited.contains(n)) {
+				killTriplesMap(n, tripleMapToKill, remainedLinks, visited);
+			}
+		}
+	}
+	
+	public void killPredicateObjectMap(List<String> POMToKill, RootStrategy strategy) {
+		if (POMToKill.size() == 0) {
+			return;
+		}
+		List<TriplesMapLink> remainedLinks = new ArrayList<TriplesMapLink>();
+		Set<String> visited = new HashSet<String>();
+		killPredicateObjectMap(strategy.findRoot(this), POMToKill, remainedLinks, visited);
+		links.clear();
+		neighboringTriplesMapCache.clear();
+		triplesMapIndex.clear();
+		for (TriplesMapLink link : remainedLinks) {
+			addLink(link);
+		}
+	}
+
+	private void killPredicateObjectMap(String rootId, List<String> POMToKill, List<TriplesMapLink> remainedLinks, Set<String> visited) {
+		visited.add(rootId);
+		Set<String> next = new HashSet<String>();
+		List<TriplesMapLink> links = neighboringTriplesMapCache.get(rootId);
+		if (links != null) {
+			for (TriplesMapLink link : links) {
+				if (link.getSourceMap().getId().equals(rootId) && !POMToKill.contains(link.getPredicateObjectMapLink().getId())) {
+					next.add(link.getTargetMap().getId());
+					remainedLinks.add(link);
+				}
+			}
+		}
+		for (String n : next) {
+			if (!visited.contains(n)) {
+				killPredicateObjectMap(n, POMToKill, remainedLinks, visited);
+			}
+		}
+	}
+	
+	public void stopTriplesMap(List<String> tripleMapToStop, RootStrategy strategy) {
+		if (tripleMapToStop.size() == 0) {
+			return;
+		}
+		List<TriplesMapLink> remainedLinks = new ArrayList<TriplesMapLink>();
+		Set<String> visited = new HashSet<String>();
+		stopTriplesMap(strategy.findRoot(this), tripleMapToStop, remainedLinks, visited);
+		links.clear();
+		neighboringTriplesMapCache.clear();
+		triplesMapIndex.clear();
+		for (TriplesMapLink link : remainedLinks) {
+			addLink(link);
+		}
+	}
+
+	private void stopTriplesMap(String rootId, List<String> tripleMapToStop, List<TriplesMapLink> remainedLinks, Set<String> visited) {
+		visited.add(rootId);
+		if (tripleMapToStop.contains(rootId)) {
+			return;
+		}
+		Set<String> next = new HashSet<String>();
+		List<TriplesMapLink> links = neighboringTriplesMapCache.get(rootId);
+		if (links != null) {
+			for (TriplesMapLink link : links) {
+				if (link.getSourceMap().getId().equals(rootId)) {
+					next.add(link.getTargetMap().getId());
+					remainedLinks.add(link);
+				}
+			}
+		}
+		for (String n : next) {
+			if (!visited.contains(n)) {
+				stopTriplesMap(n, tripleMapToStop, remainedLinks, visited);
+			}
+		}
+	}
+
 }

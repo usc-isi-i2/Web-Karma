@@ -81,7 +81,7 @@ public class KR2RMLWorksheetRDFGenerator {
 	protected List<KR2RMLRDFWriter> outWriters;
 	protected List<String> tripleMapToKill = new ArrayList<String>();
 	protected List<String> tripleMapToStop = new ArrayList<String>();
-
+	protected List<String> POMToKill = new ArrayList<String>();
 	private Logger logger = LoggerFactory.getLogger(KR2RMLWorksheetRDFGenerator.class);
 	private URIFormatter uriFormatter;
 	private RootStrategy strategy;
@@ -123,12 +123,14 @@ public class KR2RMLWorksheetRDFGenerator {
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
 			OntologyManager ontMgr, List<KR2RMLRDFWriter> writers, boolean addColumnContextInformation, 
 			RootStrategy strategy,  List<String> tripleMapToKill, List<String> tripleMapToStop, 
+			List<String> POMToKill, 
 			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport, SuperSelection sel) {
 		initializeMemberVariables(worksheet, factory, ontMgr, outputFileName,
 				addColumnContextInformation, kr2rmlMapping, errorReport);
 		this.strategy = strategy;
 		this.tripleMapToKill = tripleMapToKill;
 		this.tripleMapToStop = tripleMapToStop;
+		this.POMToKill = POMToKill;
 		this.outWriters.addAll(writers);
 		this.selection = sel;
 	}
@@ -176,19 +178,15 @@ public class KR2RMLWorksheetRDFGenerator {
 			for(TriplesMapGraph graph : kr2rmlMapping.getAuxInfo().getTriplesMapGraph().getGraphs())
 			{
 				TriplesMapGraph copyGraph = graph.copyGraph();
-				for (String id : tripleMapToKill) {
-					copyGraph.removeTriplesMap(id);
+				if(null == strategy) {
+					strategy = new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy());
 				}
-				for (String id : tripleMapToStop) {
-					copyGraph.killTriplesMap(id);
-				}
+				copyGraph.killTriplesMap(tripleMapToKill, strategy);
+				copyGraph.stopTriplesMap(tripleMapToStop, strategy);
+				copyGraph.killPredicateObjectMap(POMToKill, strategy);
 				try{
 					DFSTriplesMapGraphDAGifier dagifier = new DFSTriplesMapGraphDAGifier();
-					if(null == strategy)
-					{
-						strategy =new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy());
-
-					}
+					
 					List<String> triplesMapsProcessingOrder = new LinkedList<String>();
 					triplesMapsProcessingOrder = dagifier.dagify(copyGraph, strategy);
 					graphTriplesMapsProcessingOrder.put(copyGraph, triplesMapsProcessingOrder);

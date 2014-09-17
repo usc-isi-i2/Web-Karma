@@ -47,7 +47,7 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 			results.addAll(graph.getTriplesMapIds());
 			return results;
 		}
-		TriplesMapGraph newGraph = copyGraph(graph, triplesMapsIds);
+		TriplesMapGraph newGraph = graph.copyGraph(triplesMapsIds);
 		
 		String rootTriplesMapId = newGraph.findRoot(rootStrategy);
 		
@@ -181,16 +181,6 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 	{
 		Set<String> visited = new HashSet<String>();
 		dfs(graph, rootTriplesMapId, visited, rootTriplesMapId);
-	}
-	private TriplesMapGraph copyGraph(TriplesMapGraph graph, HashSet<String> triplesMapsIds) {
-		TriplesMapGraph newGraph = new TriplesMapGraph();
-		for(TriplesMapLink link : graph.getLinks())
-		{
-			triplesMapsIds.add(link.getSourceMap().getId());
-			triplesMapsIds.add(link.getTargetMap().getId());
-			newGraph.addLink(link);
-		}
-		return newGraph;
 	}
 
 }
