@@ -50,6 +50,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	
 	var maxX = 0;
 	var alignJson = json.alignObject;
+	var nodesMap = [];
 	$.each(alignJson.anchors, function(index, node) {
 		var hNodeId = node["hNodeId"];
 		var columnNode = $("td#" + hNodeId);
@@ -58,8 +59,14 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 		var nodeMax = leftX + $(columnNode).width();
 		if(nodeMax > maxX)
 			maxX = nodeMax;
+		nodesMap[node["id"]] = node;
 	});
 	alignJson.width = maxX;
+	
+	$.each(alignJson.nodes, function(index, node) {
+		nodesMap[node["id"]] = node;
+	});
+	
 	var layout = new D3ModelLayout(layoutElement);
 	layout.generateLayoutForJson(alignJson);
 	
@@ -74,13 +81,32 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 			var nodeCategory = "";
 			if (d.isForcedByUser)
 				nodeCategory = "forcedAdded";
-			ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain, nodeCategory,
+			ClassDropdownMenu.getInstance().show(worksheetId, d.nodeId, d.label, d.nodeId, d.nodeDomain, nodeCategory,
 					alignmentId, event);
 		}
 	});
 	
 	layout.setLinkClickListener(function(link, event) {
 		console.log("This function is called when the link is clicked");
+		var d = link.node.original;
+		var sourceObj = nodesMap[d.source];
+		var targetObj = nodesMap[d.target];
+		PropertyDropdownMenu.getInstance().show(
+				worksheetId,
+				alignmentId,
+				d.id,
+				d.linkUri,
+				d.sourceNodeId,
+				sourceObj.nodeType,
+				sourceObj.label,
+				sourceObj.nodeDomain,
+				d.sourceNodeId,
+				d.targetNodeId,
+				targetObj.nodeType,
+				targetObj.label,
+				targetObj.nodeDomain,
+				d.targetNodeId,
+				event);
 	});
 }
 
