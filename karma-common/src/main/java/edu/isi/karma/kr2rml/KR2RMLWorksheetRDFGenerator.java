@@ -200,8 +200,14 @@ public class KR2RMLWorksheetRDFGenerator {
 			Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan = new HashMap<TriplesMap, TriplesMapWorkerPlan>() ;
 			for(TriplesMap triplesMap : kr2rmlMapping.getTriplesMapList())
 			{
-				TriplesMapWorkerPlan workerPlan = new TriplesMapWorkerPlan(factory, triplesMap, kr2rmlMapping, uriFormatter, translator,  addColumnContextInformation, hNodeToContextUriMap, selection);
-				triplesMapToWorkerPlan.put(triplesMap, workerPlan);
+				try{
+					TriplesMapWorkerPlan workerPlan = new TriplesMapWorkerPlan(factory, triplesMap, kr2rmlMapping, uriFormatter, translator,  addColumnContextInformation, hNodeToContextUriMap, selection);
+					triplesMapToWorkerPlan.put(triplesMap, workerPlan);
+				}
+				catch (Exception ex)
+				{
+					logger.error("unable to generate working plan for " + triplesMap.getId(), ex.getMessage());
+				}
 			}
 			for (Row row:rows) {
 				for(Entry<TriplesMapGraph, List<String>> entry : graphTriplesMapsProcessingOrder.entrySet())
