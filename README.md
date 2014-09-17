@@ -82,7 +82,27 @@ Yes. Due to Oracles binary license issues, we can't distribute the JAR file that
     <artifactId>ojdbc</artifactId> 
     <version>14</version> 
     <scope>system</scope> 
-    <systemPath>${project.basedir}/lib/ojdbc14.jar</systemPath> 
+    <systemPath>/Users/karma/Web-Karma/lib/ojdbc14.jar</systemPath> 
 </dependency> 
 ```
 Make sure that the filename mentioned in the `systemPath` element matches with your downloaded JAR file.
+
+### Are there additional steps required to import data from MySQL database? ###
+Yes. Due to MySQL binary license issues, we can't distribute the JAR file that is required for importing data from an MySQL database. Following are the steps to resolve the runtime error that you will get if you try to do it with the current source code:
+
+1. Download the appropriate MySQL driver JAR file (for JDK 1.5 and above) that matches your MySQL version. Link: http://dev.mysql.com/downloads/connector/j/
+2. Put the downloaded JAR file inside `lib` folder of the Karma source code. 
+3. Add the following snippet in the `pom.xml` file of the `karma-jdbc` project inside the dependencies XML element: 
+
+```
+<dependency> 
+    <groupId>mysql</groupId> 
+    <artifactId>mysql-connector-java</artifactId> 
+    <version>5.1.32</version> 
+    <scope>system</scope> 
+    <systemPath>/Users/karma/Web-Karma/lib/mysql-connector-java-5.1.32-bin.jar</systemPath> 
+</dependency> 
+```
+Make sure that the filename mentioned in the `systemPath` element matches with your downloaded JAR file. The `version` will be the version of the JAR that you downloaded.
+
+
