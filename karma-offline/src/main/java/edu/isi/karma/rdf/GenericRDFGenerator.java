@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -41,6 +42,9 @@ import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.kr2rml.planning.RootStrategy;
+import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
+import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
+import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -53,7 +57,10 @@ public class GenericRDFGenerator extends RdfGenerator {
 	private static Logger logger = LoggerFactory.getLogger(GenericRDFGenerator.class);
 	protected HashMap<String, R2RMLMappingIdentifier> modelIdentifiers;
 	protected HashMap<String, WorksheetR2RMLJenaModelParser> readModelParsers;
-
+	protected String rootTripleMap;
+	protected List<String> tripleMapToKill;
+	protected List<String> tripleMapToStop;
+	protected List<String> POMToKill;
 	public enum InputType {
 		CSV,
 		JSON,
@@ -65,6 +72,21 @@ public class GenericRDFGenerator extends RdfGenerator {
 		super(selectionName);
 		this.modelIdentifiers = new HashMap<String, R2RMLMappingIdentifier>();
 		this.readModelParsers = new HashMap<String, WorksheetR2RMLJenaModelParser>();
+		tripleMapToKill = new ArrayList<String>();
+		tripleMapToStop = new ArrayList<String>();
+		POMToKill = new ArrayList<String>();
+		rootTripleMap = "";
+	}
+	
+	public GenericRDFGenerator(String selectionName, List<String> tripleMapToKill, 
+			List<String> tripleMapToStop, List<String> POMToKill, String rootTripleMap) {
+		super(selectionName);
+		this.modelIdentifiers = new HashMap<String, R2RMLMappingIdentifier>();
+		this.readModelParsers = new HashMap<String, WorksheetR2RMLJenaModelParser>();
+		this.tripleMapToKill = tripleMapToKill;
+		this.tripleMapToStop = tripleMapToStop;
+		this.POMToKill = POMToKill;
+		this.rootTripleMap = rootTripleMap;
 	}
 
 	public void addModel(R2RMLMappingIdentifier modelIdentifier) {
@@ -208,10 +230,11 @@ public class GenericRDFGenerator extends RdfGenerator {
 				return;
 			//Generate RDF using the mapping data
 			ErrorReport errorReport = new ErrorReport();
-			
+			RootStrategy strategy = new UserSpecifiedRootStrategy(rootTripleMap, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
 			        workspace.getFactory(), workspace.getOntologyManager(), writers,
-			        addProvenance, mapping, errorReport, selection);
+			        addProvenance, strategy, tripleMapToKill, tripleMapToStop, POMToKill, 
+			        mapping, errorReport, selection);
 			rdfGen.generateRDF(true);
 		}
 		catch( Exception e)
