@@ -62,14 +62,24 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	alignJson.width = maxX;
 	var layout = new D3ModelLayout(layoutElement);
 	layout.generateLayoutForJson(alignJson);
-	$(mainWorksheetDiv).data("alignmentId", json["alignmentId"]);
+	
+	var alignmentId = json["alignmentId"];
+	$(mainWorksheetDiv).data("alignmentId", alignmentId);
 	$(mainWorksheetDiv).data("svgVis", {"svgVis":true});
 	
-	layout.setNodeClickListener(function(node) {
+	layout.setNodeClickListener(function(node, event) {
 		console.log("This function is called when the node is clicked");
+		var d = node.node.original;
+		if (d["nodeType"] == "InternalNode" || d["nodeType"] == "LiteralNode") {
+			var nodeCategory = "";
+			if (d.isForcedByUser)
+				nodeCategory = "forcedAdded";
+			ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain, nodeCategory,
+					alignmentId, event);
+		}
 	});
 	
-	layout.setLinkClickListener(function(link) {
+	layout.setLinkClickListener(function(link, event) {
 		console.log("This function is called when the link is clicked");
 	});
 }

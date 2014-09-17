@@ -262,10 +262,10 @@ D3ModelLayout = function(htmlElement) {
 		.on("click", function(d){
 			if (d.type == "linkLabel"){
 				if(linkClickListener != null)
-					linkClickListener(d);
+					linkClickListener(d, d3.event);
 			} else {
 				if(nodeClickListener != null)
-					nodeClickListener(d);
+					nodeClickListener(d, d3.event);
 			}
 			//console.log(d.type);
 		})
