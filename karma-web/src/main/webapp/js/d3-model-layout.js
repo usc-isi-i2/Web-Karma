@@ -1123,7 +1123,10 @@ D3ModelLayout = function(htmlElement) {
 
 
 			width = d.width + padding;
-			height = (maxLayer + 1) * (unitLinkLength + outsideUnitLinkLength);
+			height = (maxLayer + 0.5) * unitLinkLength;
+			if (width > window.innerWidth){
+				height += (maxLayer + 0.5) * outsideUnitLinkLength;
+			}
 			svg.attr("width", width);
 			svg.attr("height", height);
 			force.size([width, height]);
