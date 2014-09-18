@@ -264,13 +264,13 @@ D3ModelLayout = function(htmlElement) {
 		.on("click", function(d){
 			if (d.type == "linkLabel"){
 				if(linkClickListener != null)
-					linkClickListener(d, d3.event);
+					linkClickListener(d.node.original, d3.event);
 			} else {
 				if(nodeClickListener != null)
-					nodeClickListener(d, d3.event);
+					nodeClickListener(d.node.original, d3.event);
 			}
 			//console.log(d.type);
-		})
+		});
 
 
 			

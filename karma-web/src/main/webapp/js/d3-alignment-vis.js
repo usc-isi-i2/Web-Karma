@@ -27,11 +27,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	if (!wsVisible) {
 		return;
 	}
-	var optionsDiv = $("div#WorksheetOptionsDiv", mainWorksheetDiv);
-	var viewStraightLineModel = optionsDiv.data("viewStraightLineModel");
-
-	console.log("displayAlignmentTree_ForceKarmaLayout:viewStraightLineModel:" + viewStraightLineModel);
-
+	
 	var w = 0;
 	var mainWorksheetDiv = $("div#" + worksheetId);
 	var layoutElement = "div#svgDiv_" + worksheetId;
@@ -48,54 +44,68 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	
 	var tableLeftOffset = mainWorksheetDiv.offset().left;
 	
-	var maxX = 0;
-	var alignJson = json.alignObject;
-	var nodesMap = [];
-	$.each(alignJson.anchors, function(index, node) {
-		var hNodeId = node["hNodeId"];
-		var columnNode = $("td#" + hNodeId);
-		var leftX = $(columnNode).offset().left - tableLeftOffset;
-		node.xPos = leftX + ($(columnNode).width()/2);
-		var nodeMax = leftX + $(columnNode).width();
-		if(nodeMax > maxX)
-			maxX = nodeMax;
-		nodesMap[node["id"]] = node;
-	});
-	alignJson.width = maxX;
-	
-	$.each(alignJson.nodes, function(index, node) {
-		nodesMap[node["id"]] = node;
-	});
-	
-	$.each(alignJson.links, function(index, link) {
-		if(link.label == "classLink")
-			link.label = "uri";
-	});
-	
-	var layout = new D3ModelLayout(layoutElement);
+	var alignJson;
+	var nodesMap;
+	if(json.alignObject) {
+		var maxX = 0;
+		alignJson = json.alignObject;
+		nodesMap = [];
+		$.each(alignJson.anchors, function(index, node) {
+			var hNodeId = node["hNodeId"];
+			var columnNode = $("td#" + hNodeId);
+			var leftX = $(columnNode).offset().left - tableLeftOffset;
+			node.xPos = leftX + ($(columnNode).width()/2);
+			var nodeMax = leftX + $(columnNode).width();
+			if(nodeMax > maxX)
+				maxX = nodeMax;
+			nodesMap[node["id"]] = node;
+		});
+		alignJson.width = maxX;
+		
+		$.each(alignJson.nodes, function(index, node) {
+			nodesMap[node["id"]] = node;
+		});
+		
+		$.each(alignJson.links, function(index, link) {
+			if(link.label == "classLink")
+				link.label = "uri";
+		});
+	} else {
+		alignJson = json;
+	}
+	var layout = new D3ModelLayout(layoutElement, w, worksheetId);
 	layout.generateLayoutForJson(alignJson);
 	
 	var alignmentId = json["alignmentId"];
 	$(mainWorksheetDiv).data("alignmentId", alignmentId);
 	$(mainWorksheetDiv).data("svgVis", {"svgVis":true});
 	
-	layout.setNodeClickListener(function(node, event) {
+	layout.setNodeClickListener(function(d, event) {
 		console.log("This function is called when the node is clicked");
-		var d = node.node.original;
 		if (d["nodeType"] == "InternalNode" || d["nodeType"] == "LiteralNode") {
 			var nodeCategory = "";
 			if (d.isForcedByUser)
 				nodeCategory = "forcedAdded";
-			ClassDropdownMenu.getInstance().show(worksheetId, d.nodeId, d.label, d.nodeId, d.nodeDomain, nodeCategory,
+			var id;
+			if(d.nodeId)
+				id = d.nodeId;
+			else
+				id = d.id;
+			ClassDropdownMenu.getInstance().show(worksheetId, id, d.label, id, d.nodeDomain, nodeCategory,
 					alignmentId, event);
 		}
 	});
 	
-	layout.setLinkClickListener(function(link, event) {
+	layout.setLinkClickListener(function(d, event) {
 		console.log("This function is called when the link is clicked");
-		var d = link.node.original;
-		var sourceObj = nodesMap[d.source];
-		var targetObj = nodesMap[d.target];
+		var sourceObj, targetObj;
+		if(nodesMap) {
+			sourceObj = nodesMap[d.source];
+			targetObj = nodesMap[d.target];
+		} else {
+			sourceObj = d.source;
+			targetObj = d.target;
+		}
 		PropertyDropdownMenu.getInstance().show(
 				worksheetId,
 				alignmentId,
