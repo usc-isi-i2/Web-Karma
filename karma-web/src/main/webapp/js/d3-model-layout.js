@@ -121,12 +121,14 @@ D3ModelLayout = function(htmlElement) {
 		links = links.data(linksData)
 		links.enter()
 			.append("path")
-			.classed("link", true)
 			.attr("stroke", "#555")
 			.attr("stroke-width", 0)
 			//.attr("opacity", 0.5)
 			.attr("id", function(d, i){
 				return d.source.id + "link" + d.target.id;
+			})
+			.attr("class", function(d) {
+				return "link " + d.linkType;
 			})
 			.attr("fill", "none");
 		links.transition()
@@ -753,6 +755,7 @@ D3ModelLayout = function(htmlElement) {
 			edge.source = idMap[d.source];
 			edge.target = idMap[d.target];
 			edge.id = i;
+			edge.linkType = d.linkType;
 			if (d.id){
 				edgeIdMap[d.id] = i;
 			}
@@ -947,7 +950,10 @@ D3ModelLayout = function(htmlElement) {
 			edge.source = textData[srcIndex];
 			edge.target = idMap[d.target];
 			edge.id = linksData.length;
+			edge.linkType = d.linkType;
 			edge.type = "edgeLink";
+			edge.node = {};
+			edge.node.original = d;
 			linksData.push(edge);
 		});
 	}
