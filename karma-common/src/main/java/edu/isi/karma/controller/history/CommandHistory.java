@@ -212,10 +212,13 @@ public class CommandHistory {
 				JSONArray hnodes = (JSONArray) JSONUtil.createJson(inpP.getString(ClientJsonKeys.value.name()));
 				for (int j = 0; j < hnodes.length(); j++) {
 					JSONObject obj = (JSONObject)hnodes.get(j);
-					String hNodeId = obj.getString(ClientJsonKeys.value.name());
-					HNode node = workspace.getFactory().getHNode(hNodeId);
-					JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(workspace.getFactory());
-					obj.put(ClientJsonKeys.value.name(), hNodeRepresentation);
+					Object value = obj.get(ClientJsonKeys.value.name());
+					if (value instanceof String) {
+						String hNodeId = (String) value;
+						HNode node = workspace.getFactory().getHNode(hNodeId);
+						JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(workspace.getFactory());
+						obj.put(ClientJsonKeys.value.name(), hNodeRepresentation);
+					}
 				}
 				inpP.put(ClientJsonKeys.value.name(), hnodes);
 			} else if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.orderedColumns) {
@@ -264,7 +267,7 @@ public class CommandHistory {
 			else {
 				obj.put(ClientJsonKeys.value.name(), inputArray.toString());
 			}
-				
+
 			JSONArray outputArray = new JSONArray();
 			for (String hNodeId : tmp.getOutputColumns()) {
 				HNode node = workspace.getFactory().getHNode(hNodeId);
@@ -286,7 +289,7 @@ public class CommandHistory {
 			}
 		}
 		commObj.put(HistoryArguments.inputParameters.name(), inputArr);
-		
+
 		return commObj;
 	}
 
@@ -446,7 +449,7 @@ public class CommandHistory {
 						try {
 							tmp.undoIt(workspace);
 						}catch(Exception e) {
-							
+
 						}
 					}
 				}
@@ -454,19 +457,19 @@ public class CommandHistory {
 		}
 		history.removeAll(commandsToBeRemoved);
 	}
-	
+
 	public void removeCommands(String worksheetId) {
 		List<ICommand> commandsFromWorksheet = new ArrayList<ICommand>();
 		for(ICommand command: history) {
 			try {
-				
+
 				Method m = command.getClass().getMethod("getWorksheetId");
 				if(m != null)
 				{
 					String id = (String) m.invoke(command, (Object[])null);
 					if (id.equals(worksheetId))
 						commandsFromWorksheet.add(command);
-					
+
 				}
 			} catch (Exception e) {
 				logger.error("Unable to remove command " + command.getCommandName());
@@ -514,13 +517,13 @@ public class CommandHistory {
 	public void addPreviewCommand(Command c) {
 		previewCommand = c;
 	}
-	
+
 	public Command getPreviewCommand(String commandId) {
 		if (previewCommand.getId().equals(commandId))
 			return previewCommand;
 		return null;
 	}
-	
+
 	private static boolean isHistoryWriteEnabled = false;
 	public static boolean isHistoryEnabled()
 	{
