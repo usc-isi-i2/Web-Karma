@@ -212,10 +212,13 @@ public class CommandHistory {
 				JSONArray hnodes = (JSONArray) JSONUtil.createJson(inpP.getString(ClientJsonKeys.value.name()));
 				for (int j = 0; j < hnodes.length(); j++) {
 					JSONObject obj = (JSONObject)hnodes.get(j);
-					String hNodeId = obj.getString(ClientJsonKeys.value.name());
-					HNode node = workspace.getFactory().getHNode(hNodeId);
-					JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(workspace.getFactory());
-					obj.put(ClientJsonKeys.value.name(), hNodeRepresentation);
+					Object value = obj.get(ClientJsonKeys.value.name());
+					if (value instanceof String) {
+						String hNodeId = (String) value;
+						HNode node = workspace.getFactory().getHNode(hNodeId);
+						JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(workspace.getFactory());
+						obj.put(ClientJsonKeys.value.name(), hNodeRepresentation);
+					}
 				}
 				inpP.put(ClientJsonKeys.value.name(), hnodes);
 			} else if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.orderedColumns) {
