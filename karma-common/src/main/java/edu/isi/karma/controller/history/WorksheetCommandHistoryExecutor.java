@@ -150,7 +150,8 @@ public class WorksheetCommandHistoryExecutor {
 		HTable hTable = workspace.getWorksheet(worksheetId).getHeaders();
 		for (int i = 0; i < inputArr.length(); i++) {
 			JSONObject inpP = inputArr.getJSONObject(i);
-
+			if (inpP.getString(ClientJsonKeys.name.name()).equals("outputColumns") || inpP.getString(ClientJsonKeys.name.name()).equals("inputColumns"))
+				continue;
 			/*** Check the input parameter type and accordingly make changes ***/
 			if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeId) {
 				JSONArray hNodeJSONRep = new JSONArray(inpP.get(ClientJsonKeys.value.name()).toString());
