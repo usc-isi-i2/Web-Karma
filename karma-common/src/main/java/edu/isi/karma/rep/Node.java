@@ -203,4 +203,13 @@ public class Node extends RepEntity implements Neighbor {
 	public Node getNeighborByColumnName(String columnName, RepFactory factory) {
 		return belongsToRow.getNeighborByColumnName(columnName, factory);
 	}
+	
+	public Node getNeighborByColumnNameWithNestedColumnByRowIndex(String columnName, RepFactory factory, String nestedColumnName, int index) {
+		return belongsToRow.getNeighborByColumnNameWithNestedColumnByRowIndex(columnName, factory, nestedColumnName, index);
+	}
+	
+	public int getRowIndex()
+	{
+		return belongsToRow.getBelongsToTable().getRowIndex(belongsToRow);
+	}
 }
