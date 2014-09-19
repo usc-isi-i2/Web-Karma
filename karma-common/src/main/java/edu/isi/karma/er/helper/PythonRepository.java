@@ -37,7 +37,9 @@ public class PythonRepository {
 		scripts = new ConcurrentHashMap<String, PyCode>();
 		PythonInterpreter interpreter = new PythonInterpreter();
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getImportStatements());
+		compileAndAddToRepository(interpreter, PythonTransformationHelper.getRowIndexDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getGetValueDefStatement());
+		compileAndAddToRepository(interpreter, PythonTransformationHelper.getGetValueFromNestedColumnByIndexDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getIsEmptyDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getVDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getTransformStatement());
@@ -67,7 +69,9 @@ public class PythonRepository {
 	public void initializeInterperter(PythonInterpreter interpreter)
 	{
 		interpreter.exec(scripts.get(PythonTransformationHelper.getImportStatements()));
+		interpreter.exec(scripts.get(PythonTransformationHelper.getRowIndexDefStatement()));
 		interpreter.exec(scripts.get(PythonTransformationHelper.getGetValueDefStatement()));
+		interpreter.exec(scripts.get(PythonTransformationHelper.getGetValueFromNestedColumnByIndexDefStatement()));
 		interpreter.exec(scripts.get(PythonTransformationHelper.getIsEmptyDefStatement()));
 		interpreter.exec(scripts.get(PythonTransformationHelper.getVDefStatement()));
 
