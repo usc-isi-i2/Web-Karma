@@ -12,7 +12,7 @@ public class CollectJSONObject extends UDF {
 	public Text evaluate(Text target, Text path) {
 		try {
 			if (path == null)
-				return target;
+				return new Text("");
 			String targetString = target.toString();
 			String pathString = path.toString().replaceAll("\\[.*\\]","");
 			JSONObject obj = new JSONObject(targetString);
@@ -24,7 +24,7 @@ public class CollectJSONObject extends UDF {
 			return new Text(array.toString());
 		}catch(Exception e) {
 			LOG.error("something wrong",e );
-			return target;
+			return new Text("");
 		}
 	}
 
