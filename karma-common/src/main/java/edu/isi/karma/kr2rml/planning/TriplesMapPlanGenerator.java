@@ -74,7 +74,13 @@ public class TriplesMapPlanGenerator {
 		Map<TriplesMap, TriplesMapWorker> mapToWorker = generatePlan(graph, plan);
 		for(String triplesMapId : triplesMapProcessingOrder)
 		{
+			
 			TriplesMap map = graph.getTriplesMap(triplesMapId);
+			if(!triplesMapToWorkerPlan.containsKey(map))
+			{
+				LOG.error("No worker plan for " + triplesMapId);
+				continue;
+			}
 			TriplesMapWorker worker = mapToWorker.get(map);
 			if(worker != null)
 			{
@@ -121,6 +127,13 @@ public class TriplesMapPlanGenerator {
 			LOG.error("already visited " + map.toString());
 			return;
 		}
+		
+		if(!triplesMapToWorkerPlan.containsKey(map))
+		{
+			LOG.error("No worker plan for " + map.getId());
+			return;
+		}
+		
 		List<TriplesMapLink> links = graph.getAllNeighboringTriplesMap(map.getId());
 		
 		
@@ -134,7 +147,14 @@ public class TriplesMapPlanGenerator {
 				{
 					generateTriplesMapWorker(mapToWorker, graph, mapDependedOn, plan);
 				}
-				workersDependentOn.add(mapToWorker.get(mapDependedOn));
+				if(triplesMapToWorkerPlan.containsKey(mapDependedOn))
+				{
+					workersDependentOn.add(mapToWorker.get(mapDependedOn));
+				}
+				else
+				{
+					LOG.error("Attempted to add dependency for "+map.getId() +" invalid triplesmap " + mapDependedOn.getId());
+				}	
 			}
 		}
 		TriplesMapWorker newWorker = new TriplesMapWorker(map, new CountDownLatch(workersDependentOn.size()), r, triplesMapToWorkerPlan.get(map), outWriters);

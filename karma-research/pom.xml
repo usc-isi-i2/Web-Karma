@@ -80,7 +80,7 @@
     		<systemPath>${project.basedir}/lib/virtjdbc4.jar</systemPath>
 		</dependency>
 	
-			<dependency>
+		<dependency>
     		<groupId>virtuoso</groupId>
     		<artifactId>sesame</artifactId>
     		<version>0.9.2</version>

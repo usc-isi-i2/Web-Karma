@@ -138,6 +138,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 
 		interpreter.set("workspaceid", workspace.getId());
 		interpreter.set("command", this);
+		interpreter.set("selectionName", selection.getName());
 		PyCode py = repo.getTransformCode();
 
 		int numRowsWithErrors = 0;
@@ -218,5 +219,11 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 	
 	public void addInputColumns(String hNodeId) {
 		inputColumns.add(hNodeId);
+	}
+	
+	public void addSelectedRowsColumns(String hNodeId) {
+	}
+	
+	public void setSelectedRowsMethod(boolean t) {
 	}
 }

@@ -1,0 +1,112 @@
+(<http://drop.isi.edu/sites/default/files/imagecache/profile_photo/photos/users/picture-32.jpg>, <http://drop.isi.edu/sites/default/files/imagecache/profile_photo/photos/users/picture-32.jpg> <http://xmlns.com/foaf/0.1/depicts> <http://lod.isi.edu/cs548/person/Ambite> .
+<http://drop.isi.edu/sites/default/files/imagecache/profile_photo/photos/users/picture-32.jpg> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Image> .
+)
+(<http://lod.isi.edu/cs548/person/Ambite>, <http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/lastName> "Ambite" .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/title> "Prof" .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~ambite> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/name> "Jos\u00E9 Luis Ambite" .
+<http://lod.isi.edu/cs548/person/Ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/depiction> <http://drop.isi.edu/sites/default/files/imagecache/profile_photo/photos/users/picture-32.jpg> .
+<http://lod.isi.edu/cs548/person/Ambite> <http://xmlns.com/foaf/0.1/mbox> <mailto:ambite@isi.edu> .
+)
+(<http://lod.isi.edu/cs548/person/Knoblock>, <http://lod.isi.edu/cs548/person/Knoblock> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/person/Knoblock> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~knoblock> .
+<http://lod.isi.edu/cs548/person/Knoblock> <http://xmlns.com/foaf/0.1/mbox> <mailto:knoblock@isi.edu> .
+<http://lod.isi.edu/cs548/person/Knoblock> <http://xmlns.com/foaf/0.1/title> "Prof" .
+<http://lod.isi.edu/cs548/person/Knoblock> <http://lod.isi.edu/ontology/syllabus/twitterId> "caknoblock" .
+<http://lod.isi.edu/cs548/person/Knoblock> <http://xmlns.com/foaf/0.1/lastName> "Knoblock" .
+<http://lod.isi.edu/cs548/person/Knoblock> <http://xmlns.com/foaf/0.1/name> "Craig Knoblock" .
+<http://lod.isi.edu/cs548/person/Knoblock> <http://xmlns.com/foaf/0.1/depiction> <http://www.isi.edu/integration/people/knoblock/img/CraigKnoblock.jpg> .
+)
+(<http://lod.isi.edu/cs548/person/Kozareva>, <http://lod.isi.edu/cs548/person/Kozareva> <http://xmlns.com/foaf/0.1/mbox> <mailto:kozareva@isi.edu> .
+<http://lod.isi.edu/cs548/person/Kozareva> <http://xmlns.com/foaf/0.1/lastName> "Kozareva" .
+<http://lod.isi.edu/cs548/person/Kozareva> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/person/Kozareva> <http://xmlns.com/foaf/0.1/title> "Prof" .
+<http://lod.isi.edu/cs548/person/Kozareva> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~kozareva> .
+<http://lod.isi.edu/cs548/person/Kozareva> <http://xmlns.com/foaf/0.1/depiction> <http://www.isi.edu/~kozareva/imagenes/zori_mini.jpg> .
+<http://lod.isi.edu/cs548/person/Kozareva> <http://xmlns.com/foaf/0.1/name> "Zornitsa Kozareva" .
+)
+(<http://lod.isi.edu/cs548/person/Slepicka>, <http://lod.isi.edu/cs548/person/Slepicka> <http://xmlns.com/foaf/0.1/title> "Mr" .
+<http://lod.isi.edu/cs548/person/Slepicka> <http://xmlns.com/foaf/0.1/name> "Jason Slepicka" .
+<http://lod.isi.edu/cs548/person/Slepicka> <http://xmlns.com/foaf/0.1/depiction> <https://lh4.googleusercontent.com/-uonc-uQiTGw/AAAAAAAAAAI/AAAAAAAAATk/V_iGc4e8Vwk/photo.jpg?sz=80> .
+<http://lod.isi.edu/cs548/person/Slepicka> <http://xmlns.com/foaf/0.1/mbox> <mailto:slepicka@isi.edu> .
+<http://lod.isi.edu/cs548/person/Slepicka> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/person/Slepicka> <http://xmlns.com/foaf/0.1/lastName> "Slepicka" .
+)
+(<http://lod.isi.edu/cs548/person/Szekely>, <http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/name> "Pedro Szekely" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/depiction> <http://www.isi.edu/~szekely/assets/img/staff/pedro.jpeg> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~szekely> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/mbox> <mailto:pszekely@isi.edu> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/person/Szekely> <http://lod.isi.edu/ontology/syllabus/twitterId> "szeke" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/lastName> "Szekely" .
+<http://lod.isi.edu/cs548/person/Szekely> <http://xmlns.com/foaf/0.1/title> "Prof" .
+)
+(<http://lod.isi.edu/cs548/person/Taheriyan>, <http://lod.isi.edu/cs548/person/Taheriyan> <http://xmlns.com/foaf/0.1/lastName> "Taheriyan" .
+<http://lod.isi.edu/cs548/person/Taheriyan> <http://xmlns.com/foaf/0.1/homepage> <http://www-scf.usc.edu/~taheriya/> .
+<http://lod.isi.edu/cs548/person/Taheriyan> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/person/Taheriyan> <http://xmlns.com/foaf/0.1/name> "Mohsen Taheriyan" .
+<http://lod.isi.edu/cs548/person/Taheriyan> <http://lod.isi.edu/ontology/syllabus/twitterId> "taheriyan" .
+<http://lod.isi.edu/cs548/person/Taheriyan> <http://xmlns.com/foaf/0.1/mbox> <mailto:mohsen@isi.edu> .
+<http://lod.isi.edu/cs548/person/Taheriyan> <http://xmlns.com/foaf/0.1/depiction> <http://www-scf.usc.edu/~taheriya/images/image24958.jpg> .
+<http://lod.isi.edu/cs548/person/Taheriyan> <http://xmlns.com/foaf/0.1/title> "Mr" .
+)
+(<http://lod.isi.edu/cs548/person/Wu>, <http://lod.isi.edu/cs548/person/Wu> <http://xmlns.com/foaf/0.1/name> "Bo Wu" .
+<http://lod.isi.edu/cs548/person/Wu> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .
+<http://lod.isi.edu/cs548/person/Wu> <http://xmlns.com/foaf/0.1/homepage> <http://www-scf.usc.edu/~wubo/> .
+<http://lod.isi.edu/cs548/person/Wu> <http://xmlns.com/foaf/0.1/depiction> <http://www-scf.usc.edu/~wubo/_MG_0004-Edit.jpg> .
+<http://lod.isi.edu/cs548/person/Wu> <http://xmlns.com/foaf/0.1/mbox> <mailto:bowu@isi.edu> .
+<http://lod.isi.edu/cs548/person/Wu> <http://xmlns.com/foaf/0.1/title> "Mr" .
+<http://lod.isi.edu/cs548/person/Wu> <http://xmlns.com/foaf/0.1/lastName> "Wu" .
+)
+(<http://www-scf.usc.edu/~taheriya/>, <http://www-scf.usc.edu/~taheriya/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+)
+(<http://www-scf.usc.edu/~taheriya/images/image24958.jpg>, <http://www-scf.usc.edu/~taheriya/images/image24958.jpg> <http://xmlns.com/foaf/0.1/depicts> <http://lod.isi.edu/cs548/person/Taheriyan> .
+<http://www-scf.usc.edu/~taheriya/images/image24958.jpg> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Image> .
+)
+(<http://www-scf.usc.edu/~wubo/>, <http://www-scf.usc.edu/~wubo/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+)
+(<http://www-scf.usc.edu/~wubo/_MG_0004-Edit.jpg>, <http://www-scf.usc.edu/~wubo/_MG_0004-Edit.jpg> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Image> .
+<http://www-scf.usc.edu/~wubo/_MG_0004-Edit.jpg> <http://xmlns.com/foaf/0.1/depicts> <http://lod.isi.edu/cs548/person/Wu> .
+)
+(<http://www.isi.edu/integration/people/knoblock/img/CraigKnoblock.jpg>, <http://www.isi.edu/integration/people/knoblock/img/CraigKnoblock.jpg> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Image> .
+<http://www.isi.edu/integration/people/knoblock/img/CraigKnoblock.jpg> <http://xmlns.com/foaf/0.1/depicts> <http://lod.isi.edu/cs548/person/Knoblock> .
+)
+(<http://www.isi.edu/~ambite>, <http://www.isi.edu/~ambite> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+)
+(<http://www.isi.edu/~knoblock>, <http://www.isi.edu/~knoblock> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+)
+(<http://www.isi.edu/~kozareva/imagenes/zori_mini.jpg>, <http://www.isi.edu/~kozareva/imagenes/zori_mini.jpg> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Image> .
+<http://www.isi.edu/~kozareva/imagenes/zori_mini.jpg> <http://xmlns.com/foaf/0.1/depicts> <http://lod.isi.edu/cs548/person/Kozareva> .
+)
+(<http://www.isi.edu/~kozareva>, <http://www.isi.edu/~kozareva> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+)
+(<http://www.isi.edu/~szekely/assets/img/staff/pedro.jpeg>, <http://www.isi.edu/~szekely/assets/img/staff/pedro.jpeg> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Image> .
+<http://www.isi.edu/~szekely/assets/img/staff/pedro.jpeg> <http://xmlns.com/foaf/0.1/depicts> <http://lod.isi.edu/cs548/person/Szekely> .
+)
+(<http://www.isi.edu/~szekely>, <http://www.isi.edu/~szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Document> .
+)
+(<https://lh4.googleusercontent.com/-uonc-uQiTGw/AAAAAAAAAAI/AAAAAAAAATk/V_iGc4e8Vwk/photo.jpg?sz=80>, <https://lh4.googleusercontent.com/-uonc-uQiTGw/AAAAAAAAAAI/AAAAAAAAATk/V_iGc4e8Vwk/photo.jpg?sz=80> <http://xmlns.com/foaf/0.1/depicts> <http://lod.isi.edu/cs548/person/Slepicka> .
+<https://lh4.googleusercontent.com/-uonc-uQiTGw/AAAAAAAAAAI/AAAAAAAAATk/V_iGc4e8Vwk/photo.jpg?sz=80> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Image> .
+)
+(<mailto:ambite@isi.edu>, <mailto:ambite@isi.edu> <http://www.w3.org/2000/01/rdf-schema#label> "ambite@isi.edu" .
+<mailto:ambite@isi.edu> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+)
+(<mailto:bowu@isi.edu>, <mailto:bowu@isi.edu> <http://www.w3.org/2000/01/rdf-schema#label> "bowu@isi.edu" .
+<mailto:bowu@isi.edu> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+)
+(<mailto:knoblock@isi.edu>, <mailto:knoblock@isi.edu> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<mailto:knoblock@isi.edu> <http://www.w3.org/2000/01/rdf-schema#label> "knoblock@isi.edu" .
+)
+(<mailto:kozareva@isi.edu>, <mailto:kozareva@isi.edu> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<mailto:kozareva@isi.edu> <http://www.w3.org/2000/01/rdf-schema#label> "kozareva@isi.edu" .
+)
+(<mailto:mohsen@isi.edu>, <mailto:mohsen@isi.edu> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<mailto:mohsen@isi.edu> <http://www.w3.org/2000/01/rdf-schema#label> "mohsen@isi.edu" .
+)
+(<mailto:pszekely@isi.edu>, <mailto:pszekely@isi.edu> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<mailto:pszekely@isi.edu> <http://www.w3.org/2000/01/rdf-schema#label> "pszekely@isi.edu" .
+)
+(<mailto:slepicka@isi.edu>, <mailto:slepicka@isi.edu> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<mailto:slepicka@isi.edu> <http://www.w3.org/2000/01/rdf-schema#label> "slepicka@isi.edu" .
+)

@@ -19,7 +19,6 @@ import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
-import edu.isi.karma.modeling.alignment.learner.ModelLearner;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ColumnNode;
@@ -232,7 +231,8 @@ public class BuildGraphFromLOD {
 				link = new ObjectPropertyLink(id, new Label(predicateUri), ObjectPropertyType.None);
 				if (this.graphBuilder.addLink(n1, n2, link)) {
 //					this.graphBuilder.changeLinkWeight(link, 1 - ((double)linkFrequency / (double)countOfObjectProperties));
-					this.graphBuilder.changeLinkWeight(link, countOfObjectProperties - linkFrequency);
+//					this.graphBuilder.changeLinkWeight(link, countOfObjectProperties - linkFrequency);
+					this.graphBuilder.changeLinkWeight(link, linkFrequency);
 				}
 
 			}
@@ -289,7 +289,8 @@ public class BuildGraphFromLOD {
 				link = new DataPropertyLink(id, new Label(predicateUri));
 				if (this.graphBuilder.addLink(n1, n2, link)) {
 //					this.graphBuilder.changeLinkWeight(link, 1 - ((double)linkFrequency / (double)countOfDataProperties));
-					this.graphBuilder.changeLinkWeight(link, countOfDataProperties - linkFrequency);
+//					this.graphBuilder.changeLinkWeight(link, countOfDataProperties - linkFrequency);
+					this.graphBuilder.changeLinkWeight(link, linkFrequency);
 				}
 			}
 		}
@@ -300,17 +301,29 @@ public class BuildGraphFromLOD {
 		OntologyManager ontologyManager = new OntologyManager();
 		File ff = new File(Params.ONTOLOGY_DIR);
 		File[] files = ff.listFiles();
+		if (files == null) {
+			logger.error("no ontology to import at " + ff.getAbsolutePath());
+			return;
+		}
+		
 		for (File f : files) {
-			ontologyManager.doImport(f, "UTF-8");
+			if (f.getName().endsWith(".owl") || 
+					f.getName().endsWith(".rdf") || 
+					f.getName().endsWith(".n3") || 
+					f.getName().endsWith(".ttl") || 
+					f.getName().endsWith(".xml")) {
+				logger.info("Loading ontology file: " + f.getAbsolutePath());
+				ontologyManager.doImport(f, "UTF-8");
+			}
 		}
 		ontologyManager.updateCache(); 
 
-		BuildGraphFromLOD b = new BuildGraphFromLOD(ontologyManager, 
+		new BuildGraphFromLOD(ontologyManager, 
 				Params.LOD_OBJECT_PROPERIES_FILE, 
 				Params.LOD_DATA_PROPERIES_FILE);
 		
 		// FIXME
-		ModelLearner modelLearner = new ModelLearner(b.getGraphBuilder(), null);
+//		ModelLearner modelLearner = new ModelLearner(b.getGraphBuilder(), null);
 		
 		
 	}

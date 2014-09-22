@@ -51,6 +51,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
+import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphType;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -221,7 +222,8 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		}
 
 		if (ModelingConfiguration.isLearnerEnabled())
-			ModelLearningGraph.getInstance(workspace.getOntologyManager()).addModelAndUpdateGraphJson(semanticModel);
+			ModelLearningGraph.getInstance(workspace.getOntologyManager(), ModelLearningGraphType.Sparse).
+			addModelAndUpdateAndExport(semanticModel);
 
 		// *****************************************************************************************
 		// *****************************************************************************************

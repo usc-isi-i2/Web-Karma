@@ -79,7 +79,9 @@ public class KR2RMLWorksheetRDFGenerator {
 	protected KR2RMLMappingColumnNameHNodeTranslator translator;
 	protected ConcurrentHashMap<String, String> hNodeToContextUriMap;
 	protected List<KR2RMLRDFWriter> outWriters;
-	
+	protected List<String> tripleMapToKill = new ArrayList<String>();
+	protected List<String> tripleMapToStop = new ArrayList<String>();
+	protected List<String> POMToKill = new ArrayList<String>();
 	private Logger logger = LoggerFactory.getLogger(KR2RMLWorksheetRDFGenerator.class);
 	private URIFormatter uriFormatter;
 	private RootStrategy strategy;
@@ -117,7 +119,22 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.outWriters.addAll(writers);
 		this.selection = sel;
 	}
-	
+
+	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
+			OntologyManager ontMgr, List<KR2RMLRDFWriter> writers, boolean addColumnContextInformation, 
+			RootStrategy strategy,  List<String> tripleMapToKill, List<String> tripleMapToStop, 
+			List<String> POMToKill, 
+			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport, SuperSelection sel) {
+		initializeMemberVariables(worksheet, factory, ontMgr, outputFileName,
+				addColumnContextInformation, kr2rmlMapping, errorReport);
+		this.strategy = strategy;
+		this.tripleMapToKill = tripleMapToKill;
+		this.tripleMapToStop = tripleMapToStop;
+		this.POMToKill = POMToKill;
+		this.outWriters.addAll(writers);
+		this.selection = sel;
+	}
+
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
 			OntologyManager ontMgr, PrintWriter writer, KR2RMLMapping kr2rmlMapping,   
 			ErrorReport errorReport, boolean addColumnContextInformation, SuperSelection sel) {
@@ -146,8 +163,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.outWriters = new LinkedList<KR2RMLRDFWriter>();
 	}
 
-
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void generateRDF(boolean closeWriterAfterGeneration) throws IOException {
 
 		try {
@@ -157,30 +173,32 @@ public class KR2RMLWorksheetRDFGenerator {
 					this.worksheet.getDataTable().getNumRows(), selection);
 
 
-			
+
 			Map<TriplesMapGraph, List<String>> graphTriplesMapsProcessingOrder = new HashMap<TriplesMapGraph, List<String>>();
 			for(TriplesMapGraph graph : kr2rmlMapping.getAuxInfo().getTriplesMapGraph().getGraphs())
 			{
+				TriplesMapGraph copyGraph = graph.copyGraph();
+				if(null == strategy) {
+					strategy = new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy());
+				}
+				copyGraph.killTriplesMap(tripleMapToKill, strategy);
+				copyGraph.stopTriplesMap(tripleMapToStop, strategy);
+				copyGraph.killPredicateObjectMap(POMToKill, strategy);
 				try{
 					DFSTriplesMapGraphDAGifier dagifier = new DFSTriplesMapGraphDAGifier();
-					if(null == strategy)
-					{
-						strategy =new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy());
 					
-					}
 					List<String> triplesMapsProcessingOrder = new LinkedList<String>();
-					triplesMapsProcessingOrder = dagifier.dagify(graph, strategy);
-					graphTriplesMapsProcessingOrder.put(graph, triplesMapsProcessingOrder);
+					triplesMapsProcessingOrder = dagifier.dagify(copyGraph, strategy);
+					graphTriplesMapsProcessingOrder.put(copyGraph, triplesMapsProcessingOrder);
 				}catch (Exception e)
 				{
 					logger.error("Unable to find DAG for RDF Generation!", e);
 					throw new Exception("Unable to find DAG for RDF Generation!", e);
-	
+
 				}
 			}
 			for (KR2RMLRDFWriter writer : outWriters) {
 				if (writer instanceof SFKR2RMLRDFWriter) {
-					@SuppressWarnings("rawtypes")
 					SFKR2RMLRDFWriter jsonWriter = (SFKR2RMLRDFWriter)writer;
 					jsonWriter.addPrefixes(kr2rmlMapping.getPrefixes());
 					for(Entry<TriplesMapGraph, List<String>> entry : graphTriplesMapsProcessingOrder.entrySet())
@@ -200,8 +218,14 @@ public class KR2RMLWorksheetRDFGenerator {
 			Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan = new HashMap<TriplesMap, TriplesMapWorkerPlan>() ;
 			for(TriplesMap triplesMap : kr2rmlMapping.getTriplesMapList())
 			{
-				TriplesMapWorkerPlan workerPlan = new TriplesMapWorkerPlan(factory, triplesMap, kr2rmlMapping, uriFormatter, translator,  addColumnContextInformation, hNodeToContextUriMap, selection);
-				triplesMapToWorkerPlan.put(triplesMap, workerPlan);
+				try{
+					TriplesMapWorkerPlan workerPlan = new TriplesMapWorkerPlan(factory, triplesMap, kr2rmlMapping, uriFormatter, translator,  addColumnContextInformation, hNodeToContextUriMap, selection);
+					triplesMapToWorkerPlan.put(triplesMap, workerPlan);
+				}
+				catch (Exception ex)
+				{
+					logger.error("unable to generate working plan for " + triplesMap.getId(), ex.getMessage());
+				}
 			}
 			for (Row row:rows) {
 				for(Entry<TriplesMapGraph, List<String>> entry : graphTriplesMapsProcessingOrder.entrySet())
@@ -228,6 +252,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		{
 			logger.error("Unable to generate RDF: ", e);
 			errorReport.addReportMessage(new ReportMessage("General RDF Generation Error", e.getMessage(), Priority.high));
+			throw new IOException("Unable to generate RDF: " +e.getMessage());
 		}
 		finally {
 			if (closeWriterAfterGeneration) {
@@ -240,7 +265,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		}
 		// An attempt to prevent an occasional error that occurs on Windows platform
 		// The requested operation cannot be performed on a file with a user-mapped section open
-		System.gc();
+		//System.gc();
 	}
 
 	private void generateColumnProvenanceInformation() {
@@ -286,8 +311,8 @@ public class KR2RMLWorksheetRDFGenerator {
 			// Generate the type
 			outWriter.outputTripleWithURIObject("<" + colUri + ">", Uris.RDF_TYPE_URI, 
 					"<" + Uris.PROV_ENTITY_URI + ">");
-	
-	
+
+
 			// Generate the label
 			HNode hNode = factory.getHNode(hNodeId);
 			outWriter.outputTripleWithLiteralObject("<" + colUri + ">", Uris.RDFS_LABEL_URI, 
@@ -295,7 +320,6 @@ public class KR2RMLWorksheetRDFGenerator {
 		}
 
 	}
-
 
 }
 

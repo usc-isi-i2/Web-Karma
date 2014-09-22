@@ -14,13 +14,17 @@ public class LargeSelection extends Selection {
 	private Selection sourceA;
 	private Selection sourceB;
 	private Operation operation;
-	LargeSelection(Workspace workspace, String worksheetId,
-			String hTableId, String name, 
+	public LargeSelection(Workspace workspace, String worksheetId,
+			String hTableId, String name, String superSelectionName, 
 			Selection sourceA, Selection sourceB, Operation operation) {
-		super(workspace, worksheetId, hTableId, name);
+		super(workspace, worksheetId, hTableId, name, superSelectionName);
 		this.sourceA = sourceA;
 		this.sourceB = sourceB;
 		this.operation = operation;
+		if (sourceA != null && sourceA.hasSelectedRowsMethod)
+			hasSelectedRowsMethod = true;
+		if (sourceB != null && sourceB.hasSelectedRowsMethod)
+			hasSelectedRowsMethod = true;
 		populateSelection();
 	}
 	
@@ -38,6 +42,8 @@ public class LargeSelection extends Selection {
 		}
 		evalColumns.addAll(sourceA.evalColumns);
 		evalColumns.addAll(sourceB.evalColumns);
+		selectedRowsColumns.addAll(sourceA.evalColumns);
+		selectedRowsColumns.addAll(sourceB.evalColumns);
 	}
 	
 	private void intersect(){
@@ -55,6 +61,8 @@ public class LargeSelection extends Selection {
 		}
 		evalColumns.addAll(sourceA.evalColumns);
 		evalColumns.addAll(sourceB.evalColumns);
+		selectedRowsColumns.addAll(sourceA.evalColumns);
+		selectedRowsColumns.addAll(sourceB.evalColumns);
 	}
 	
 	private void subtract(){
@@ -74,6 +82,8 @@ public class LargeSelection extends Selection {
 		}
 		evalColumns.addAll(sourceA.evalColumns);
 		evalColumns.addAll(sourceB.evalColumns);
+		selectedRowsColumns.addAll(sourceA.evalColumns);
+		selectedRowsColumns.addAll(sourceB.evalColumns);
 	}
 	
 	private void invert(){
@@ -84,6 +94,7 @@ public class LargeSelection extends Selection {
 			selectedRowsCache.put(entry.getKey(), !valueA);
 		}
 		evalColumns.addAll(sourceA.evalColumns);
+		selectedRowsColumns.addAll(sourceA.evalColumns);
 	}
 
 	private void populateSelection(){
@@ -108,6 +119,7 @@ public class LargeSelection extends Selection {
 		if (this.status == SelectionStatus.UP_TO_DATE)
 			return;
 		evalColumns.clear();
+		selectedRowsColumns.clear();
 		populateSelection();
 		this.status = SelectionStatus.UP_TO_DATE;
 		

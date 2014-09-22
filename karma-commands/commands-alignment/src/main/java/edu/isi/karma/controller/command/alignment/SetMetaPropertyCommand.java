@@ -68,7 +68,8 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 	private final String hNodeId;
 	private final boolean trainAndShowUpdates;
 	private METAPROPERTY_NAME metaPropertyName;
-	private final String metaPropertyValue;
+	private final String metaPropertyUri;
+	private String metaPropertyId;
 	private final String rdfLiteralType;
 	private String labelName = "";
 	private SynonymSemanticTypes oldSynonymTypes;
@@ -82,13 +83,15 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 
 	protected SetMetaPropertyCommand(String id, String worksheetId,
 			String hNodeId, METAPROPERTY_NAME metaPropertyName,
-			String metaPropertyValue, boolean trainAndShowUpdates,
+			String metaPropertyUri, String metaPropertyId, 
+			boolean trainAndShowUpdates,
 			String rdfLiteralType, String selectionId) {
 		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.metaPropertyName = metaPropertyName;
-		this.metaPropertyValue = metaPropertyValue;
+		this.metaPropertyUri = metaPropertyUri;
+		this.metaPropertyId = metaPropertyId;
 		this.rdfLiteralType = rdfLiteralType;
 
 		addTag(CommandTag.Modeling);
@@ -166,18 +169,21 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 			oldDomainNode = oldIncomingLinkToColumnNode.getSource();
 		}
 
+		if(metaPropertyId.endsWith(" (add)"))
+			metaPropertyId = metaPropertyId.substring(0, metaPropertyId.length()-5).trim();
+		
 		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
-			Node classNode = alignment.getNodeById(metaPropertyValue);
+			Node classNode = alignment.getNodeById(metaPropertyId);
 			if (semanticTypeAlreadyExists) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode,
 						oldDomainNode, alignment, classNode);
 			}
 
 			if (classNode == null) {
-				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
+				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyUri);
 				if (classNodeLabel == null) {
-					String errorMessage = "Error while setting a classLink. MetaPropertyValue '"
-							+ metaPropertyValue
+					String errorMessage = "Error while setting a classLink. MetaPropertyUri '"
+							+ metaPropertyUri
 							+ "' should be in the Ontology Manager, but it is not.";
 					logger.error(errorMessage);
 					return new UpdateContainer(new ErrorUpdate(errorMessage));
@@ -195,17 +201,17 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 					SemanticType.Origin.User, 1.0, false);
 		} else if (metaPropertyName
 				.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
-			LabeledLink propertyLink = alignment.getLinkById(metaPropertyValue);
+			LabeledLink propertyLink = alignment.getLinkById(metaPropertyId);
 			if (propertyLink == null) {
 				String errorMessage = "Error while specializing a link. The DefaultLink '"
-						+ metaPropertyValue
+						+ metaPropertyId
 						+ "' should already be in the alignment, but it is not.";
 				logger.error(errorMessage);
 				return new UpdateContainer(new ErrorUpdate(errorMessage));
 			}
 
 			Node classInstanceNode = alignment.getNodeById(LinkIdFactory
-					.getLinkSourceId(metaPropertyValue));
+					.getLinkSourceId(metaPropertyId));
 			if (semanticTypeAlreadyExists) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode,
 						oldDomainNode, alignment, classInstanceNode);
@@ -233,17 +239,17 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 
 			alignment.align();
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
-			Node classNode = alignment.getNodeById(metaPropertyValue);
+			Node classNode = alignment.getNodeById(metaPropertyId);
 			if (semanticTypeAlreadyExists) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode,
 						oldDomainNode, alignment, classNode);
 			}
 
 			if (classNode == null) {
-				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
+				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyUri);
 				if (classNodeLabel == null) {
 					String errorMessage = "Error while setting an advances subclass. MetaPropertyValue '"
-							+ metaPropertyValue
+							+ metaPropertyUri
 							+ "' should be in the Ontology Manager, but it is not.";
 					logger.error(errorMessage);
 					return new UpdateContainer(new ErrorUpdate(errorMessage));
@@ -330,7 +336,8 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		try {
 			args.put("command", getTitle())
 					.put(Arguments.metaPropertyName.name(), metaPropertyName)
-					.put(Arguments.metaPropertyValue.name(), metaPropertyValue)
+					.put(Arguments.metaPropertyId.name(), metaPropertyId)
+					.put(Arguments.metaPropertyUri.name(), metaPropertyUri)
 					.put(Arguments.worksheetId.name(),
 							formatWorsheetId(workspace, worksheetId))
 					.put(Arguments.hNodeId.name(),

@@ -49,12 +49,13 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			func: pyTransform,
 			leafOnly: true,
 			leafExcluded: false
-		}, {
-			name: "Transform",
-			func: transform,
-			leafOnly: true,
-			leafExcluded: false
-		},
+		}, 
+		//{
+			//name: "Transform",
+			//func: transform,
+			//leafOnly: true,
+			//leafExcluded: false
+		//},
 		//{name:"Generate Cluster Values", func:clusterValues, leafOnly:true, leafExcluded: false},
 		//{name:"Merge Cluster Values", func:mergeValues, leafOnly:true, leafExcluded: false},
 		{
@@ -1083,7 +1084,11 @@ var ExtractEntitiesDialog = (function() {
 			info["extractionURL"] = $('#extractionService_URL').val();
 
 			dialog.modal('hide');
-
+			var newInfo = info['newInfo'];
+			newInfo.push(getParamObject("extractionURL", info["extractionURL"], "other"));
+			
+			info["newInfo"] = JSON.stringify(newInfo);
+			
 			// console.log(info["worksheetId"]);
 			showLoading(info["worksheetId"]);
 
@@ -1156,7 +1161,11 @@ var ExtractEntitiesDialog = (function() {
 
 			console.log("User selection: " + userSelection);
 			info["entitiesToBeExt"] = userSelection;
-
+			var newInfo = JSON.parse(info['newInfo']);
+			newInfo.push(getParamObject("entitiesToBeExt", info["entitiesToBeExt"], "other"));
+			
+			info["newInfo"] = JSON.stringify(newInfo);
+			
 			var returned = sendRequest(info, worksheetId);
 
 		};
@@ -1721,7 +1730,6 @@ var PyTransformSelectionDialog = (function() {
 			var info = generateInfoObject(worksheetId, headers[0]['HNodeId'], "PreviewPythonTransformationResultsCommand");
 			info["transformationCode"] = editor.getValue();
 			info["errorDefaultValue"] = $("#pythonTransformErrorDefaultValueSelection").val();
-			info["selectionName"] = "DEFAULT_SELECTION";
 			$("#pyTransformErrorWindowSelection").hide();
 			// Send the request
 			$.ajax({

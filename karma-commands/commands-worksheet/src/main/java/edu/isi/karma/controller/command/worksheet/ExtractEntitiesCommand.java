@@ -23,6 +23,7 @@ package edu.isi.karma.controller.command.worksheet;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -61,11 +62,11 @@ import edu.isi.karma.util.Util;
  * Adds extract entities commands to the column menu.
  */
 
+@SuppressWarnings("unchecked")
 public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 
 	private String hNodeId;
-	// add column to this table
-	private String hTableId;
+	private String newHNodeId;
 	
 	//URL for Extraction Service as input by the user
 	private String extractionURL;
@@ -75,12 +76,27 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(ExtractEntitiesCommand.class);
 
+	private static Object entityExtractor = null;
+	private static Method entityExtractorMethod = null;
+	static {
+		try {
+			@SuppressWarnings("rawtypes")
+			Class entityExtractorClass = Class.forName("com.karma.extractionservice.Service");
+			entityExtractor = entityExtractorClass.newInstance();
+			entityExtractorMethod =
+					entityExtractorClass.getMethod("execute", new Class[]{String.class});
+			
+		} catch (Exception ie) {
+			logger.info("Entity Extraction Service Class not found. Will use the Service URL");
+			logger.debug("Entity Extraction Service Class could not be loaded", ie);
+		}
+		
+	}
 	protected ExtractEntitiesCommand(String id, String worksheetId,
-			String hTableId, String hNodeId, String extractionURL, 
+			String hNodeId, String extractionURL, 
 			String entitiesToBeExt, String selectionId) {
 		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
-		this.hTableId = hTableId;
 		this.extractionURL = extractionURL;
 		this.entitiesToBeExt = entitiesToBeExt;
 		
@@ -104,16 +120,14 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.notInHistory;
+		return CommandType.undoable;
 	}
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(worksheet);
-		System.out.println("in do it");
-		System.out.println(extractionURL);
-
+		
 		String[] entities = entitiesToBeExt.split(",");
 		HashSet<String> entitiesReqd = new HashSet<String>();
 		
@@ -121,7 +135,6 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 
 		JSONArray array = new JSONArray();
 		AddValuesCommand cmd;
-		StringBuffer extractions;
 
 		RepFactory repFactory = workspace.getFactory();
 		HTable ht = repFactory.getHTable(repFactory.getHNode(hNodeId).getHTableId());
@@ -146,47 +159,53 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 				}
 		}
 		
-
+		String extractions = null;
+		String urlParameters = array.toString();
+		urlParameters = new String(urlParameters.getBytes(Charset.forName("UTF-8")), Charset.forName("ISO-8859-1"));
+		
 		// POST Request to ExtractEntities API.
 		try {
-
-			//String url = "http://karmanlp.isi.edu:8080/ExtractionService/myresource";
-			String url = extractionURL;
-			
-			URL obj = new URL(url);
-			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-			// add request header
-			con.setRequestMethod("POST");
-			con.setRequestProperty("Accept", "application/json");
-			con.setRequestProperty("Content-Type", "application/json");
-			con.setRequestProperty("charset","utf-8");
-
-			// POST content. JSON String
-			String urlParameters = array.toString();
-			urlParameters = new String(urlParameters.getBytes(Charset.forName("UTF-8")), Charset.forName("ISO-8859-1"));
-
-			// Send POST request
-			con.setDoOutput(true);
-			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			wr.writeBytes(urlParameters);
-			wr.flush();
-			wr.close();
-
-			int responseCode = con.getResponseCode();
-			System.out.println("\nSending 'POST' request to URL : " + url);
-			System.out.println("Post parameters : " + urlParameters);
-			System.out.println("Response Code : " + responseCode);
-
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					con.getInputStream()));
-			String inputLine;
-			extractions = new StringBuffer();
-
-			while ((inputLine = in.readLine()) != null) {
-				extractions.append(inputLine);
+			if(entityExtractor != null && entityExtractorMethod != null) {
+				logger.info("Using the Extract Entities JAR");
+				logger.info("Sending:" + urlParameters);
+				Object returnValue = entityExtractorMethod.invoke(entityExtractor, urlParameters);
+				extractions = returnValue.toString();
+			} else {
+				logger.info("Using the Extract Entities Service: " + extractionURL);
+				logger.info("Sending:" + urlParameters);
+				
+				String url = extractionURL;
+				URL obj = new URL(url);
+				HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+	
+				// add request header
+				con.setRequestMethod("POST");
+				con.setRequestProperty("Accept", "application/json");
+				con.setRequestProperty("Content-Type", "application/json");
+				con.setRequestProperty("charset","utf-8");
+	
+				// Send POST request
+				con.setDoOutput(true);
+				DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+				wr.writeBytes(urlParameters);
+				wr.flush();
+				wr.close();
+	
+				int responseCode = con.getResponseCode();
+				logger.info("Response Code : " + responseCode);
+	
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						con.getInputStream()));
+				String inputLine;
+				StringBuffer extractionsBuffer = new StringBuffer();
+	
+				while ((inputLine = in.readLine()) != null) {
+					extractionsBuffer.append(inputLine);
+				}
+				in.close();
+				
+				extractions = extractionsBuffer.toString();
 			}
-			in.close();
 
 		} catch (Exception e) {
 			logger.error("Error in ExtractEntitiesCommand" + e.toString());
@@ -195,10 +214,10 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 		}
 
 		// print result
-		System.out.println(extractions.toString());
+		logger.info("Got extractions:");
+		logger.info(extractions);
 
-		JSONArray result = (JSONArray) JSONUtil.createJson(extractions
-				.toString());
+		JSONArray result = (JSONArray) JSONUtil.createJson(extractions);
 
 		//Final Data for AddValuesCommand
 		JSONArray rowData = new JSONArray();
@@ -212,7 +231,6 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 	
 				if (index < result.length()) {
 					JSONObject extraction = (JSONObject) result.getJSONObject(index++).get("extractions");
-					System.out.println("test1");
 					
 					JSONObject extractionValues = new JSONObject();
 					
@@ -286,12 +304,14 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 		try {
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
 			cmd = (AddValuesCommand) factory.createCommand(addValues, workspace, hNodeId, worksheetId,
-					hTableId, HNodeType.Transformation, selection.getName());
+					ht.getId(), HNodeType.Transformation, selection.getName());
 			
 			HNode hnode = repFactory.getHNode(hNodeId);
 			cmd.setColumnName(hnode.getColumnName()+" Extractions");
 			cmd.doIt(workspace);
 
+			newHNodeId = cmd.getNewHNodeId();
+			
 			UpdateContainer c = new UpdateContainer(new InfoUpdate("Extracted Entities"));
 			c.append(WorksheetUpdateFactory
 					.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
@@ -311,9 +331,14 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		RepFactory repFactory = workspace.getFactory();
+		HTable ht = repFactory.getHTable(repFactory.getHNode(hNodeId).getHTableId());
+		//remove the new column
+		ht.removeHNode(newHNodeId, worksheet);
 
-		return WorksheetUpdateFactory
-				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace));
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet));
+		
 	}
 
 }

@@ -1,4 +1,16 @@
+
+var LITERAL_TYPE_ARRAY = [
+      					"xsd:string","xsd:boolean","xsd:decimal","xsd:integer","xsd:double","xsd:float","xsd:time",
+    					"xsd:dateTime","xsd:dateTimeStamp","xsd:gYear","xsd:gMonth","xsd:gDa","xsd:gYearMonth",
+    					"xsd:gMonthDay","xsd:duration","xsd:yearMonthDuration","xsd:dayTimeDuration","xsd:",
+    					"xsd:shor","xsd:int","xsd:long","xsd:unsignedByte","xsd:unsignedShort","xsd:unsignedInt",
+    					"xsd:unsignedLong","xsd:positiveInteger","xsd:nonNegativeInteger","xsd:negativeInteger",
+    					"xsd:nonPositiveInteger","xsd:hexBinary","xsd:base64Binar","xsd:anyURI",
+    					"xsd:language","xsd:normalizedString","xsd:token","xsd:NMTOKEN","xsd:Namexsd:NCName"
+    							 ];
+
 var MAX_NUM_SEMTYPE_SEARCH = 10;
+
 
 /**
  * ==================================================================================================================
@@ -139,21 +151,11 @@ var SetSemanticTypeDialog = (function() {
 				addEmptySemanticType();
 			});
 
-			$("#literalTypeSelect").typeahead({
-				source: [
-					"xsd:string", "xsd:boolean", "xsd:decimal", "xsd:integer", "xsd:double", "xsd:float", "xsd:time",
-					"xsd:dateTime", "xsd:dateTimeStamp", "xsd:gYear", "xsd:gMonth", "xsd:gDa", "xsd:gYearMonth",
-					"xsd:gMonthDay", "xsd:duration", "xsd:yearMonthDuration", "xsd:dayTimeDuration", "xsd:",
-					"xsd:shor", "xsd:int", "xsd:long", "xsd:unsignedByte", "xsd:unsignedShort", "xsd:unsignedInt",
-					"xsd:unsignedLong", "xsd:positiveInteger", "xsd:nonNegativeInteger", "xsd:negativeInteger",
-					"xsd:nonPositiveInteger", "xsd:hexBinary", "xsd:base64Binar", "xsd:anyURI",
-					"xsd:language", "xsd:normalizedString", "xsd:token", "xsd:NMTOKEN", "xsd:Namexsd:NCName"
-				],
-				minLength: 0,
-				items: "all"
-			});
-
-		}
+			
+			$("#literalTypeSelect").typeahead( 
+				{source:LITERAL_TYPE_ARRAY, minLength:0, items:"all"});
+			}
+			
 
 		function hideError() {
 			$("div.error", dialog).hide();
@@ -274,7 +276,7 @@ var SetSemanticTypeDialog = (function() {
 			// Check if any meta property (advanced options) was selected
 			var semTypesArray = getCurrentSelectedTypes();
 			if ($("#isSubclassOfClass").prop("checked") || $("#isSpecializationForEdge").prop("checked") ||
-				(semTypesArray.length == 1 && semTypesArray[0]["FullType"] == "http://isi.edu/integration/karma/dev#classLink")) {
+				(semTypesArray != null && semTypesArray.length == 1 && semTypesArray[0]["FullType"] == "http://isi.edu/integration/karma/dev#classLink")) {
 				info["command"] = "SetMetaPropertyCommand";
 				var propValue;
 
@@ -302,11 +304,10 @@ var SetSemanticTypeDialog = (function() {
 					for (var i = 0; i < classList.length; i++) {
 						var clazz = classList[i];
 						if (clazz.label.toLowerCase() == propValue.toLowerCase()) {
-							var idOrUri = clazz.id;
-							if (idOrUri.match(/ \(add\)$/))
-								idOrUri = clazz.uri;
-							info["metaPropertyValue"] = idOrUri;
-							newInfo.push(getParamObject("metaPropertyValue", idOrUri, "other"));
+							info["metaPropertyUri"] = clazz.uri;
+							info["metaPropertyId"] = clazz.id
+							newInfo.push(getParamObject("metaPropertyUri", clazz.uri, "other"));
+							newInfo.push(getParamObject("metaPropertyId", clazz.id, "other"));
 							valueFound = true;
 							break;
 						}
@@ -315,8 +316,10 @@ var SetSemanticTypeDialog = (function() {
 					for (var i = 0; i < existingPropertyList.length; i++) {
 						var prop = existingPropertyList[i];
 						if (prop.id.toLowerCase() == propValue.toLowerCase()) {
-							info["metaPropertyValue"] = prop.id;
-							newInfo.push(getParamObject("metaPropertyValue", prop.id, "other"));
+							info["metaPropertyUri"] = prop.id;
+							info["metaPropertyId"] = prop.id;
+							newInfo.push(getParamObject("metaPropertyUri", prop.id, "other"));
+							newInfo.push(getParamObject("metaPropertyId", prop.id, "other"));
 							valueFound = true;
 							break;
 						}
@@ -376,7 +379,7 @@ var SetSemanticTypeDialog = (function() {
 			fakeSemType["FullType"] = "fakePropertyURI";
 			fakeSemType["DomainUri"] = "fakeDomainURI";
 			fakeSemType["DomainId"] = "fakeDomainID";
-			fakeSemType["DisplayLabel"] = "property";
+			fakeSemType["DisplayLabel"] = "Property";
 			fakeSemType["DisplayDomainLabel"] = "Class";
 			// Add it to the table
 			addSemTypeObjectToCurrentTable(fakeSemType, false, false);
@@ -1894,7 +1897,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 			};
 			var prop = {
 				"id": "FakeId",
-				"label": "property"
+				"label": "Property"
 			};
 			var link = {
 				"type": "incoming",
@@ -1918,7 +1921,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 			};
 			var prop = {
 				"id": "FakeId",
-				"label": "property"
+				"label": "Property"
 			};
 			var link = {
 				"type": "outgoing",
@@ -2493,7 +2496,7 @@ var AddNodeDialog = (function() {
 				backdrop: 'static'
 			});
 		};
-
+		
 		return { //Return back the public methods
 			show: show,
 			init: init
@@ -2512,4 +2515,120 @@ var AddNodeDialog = (function() {
 		getInstance: getInstance
 	};
 
+})();
+
+/**
+ * ==================================================================================================================
+ * 
+ * 				Diloag to add a New Literal Node
+ * 
+ * ==================================================================================================================
+ */
+var AddLiteralNodeDialog = (function() {
+		var instance = null;
+
+		function PrivateConstructor() {
+			var dialog = $("#addLiteralNodeDialog");
+			var worksheetId;
+			
+			function init() {
+						
+					//Initialize what happens when we show the dialog
+					dialog.on('show.bs.modal', function (e) {
+							hideError();
+							$("#literal", dialog).val("");
+							$("#literalType", dialog).val("");
+							$("input#isUri", dialog).attr("checked", false);
+							$("#literalType").typeahead( 
+									{source:LITERAL_TYPE_ARRAY, minLength:0, items:"all"});
+					});
+					
+					
+					$('#btnSave', dialog).on('click', function (e) {
+							e.preventDefault();
+							saveDialog(e);
+					});
+			}
+
+			function validateClassInputValue(classData) {
+				selectedClass = classData;
+				}
+		
+			function hideError() {
+				$("div.error", dialog).hide();
+			}
+			
+			function showError(err) {
+				if(err) {
+					$("div.error", dialog).text(err);
+				}
+				$("div.error", dialog).show();
+			}
+			
+			function saveDialog(e) {
+				 var info = new Object();
+				 info["workspaceId"] = $.workspaceGlobalInformation.id;
+				 var newInfo = [];
+				 var literal = $("#literal", dialog).val();
+				 var literalType = $("#literalType", dialog).val();  
+				 var isUri = $("input#isUri").is(":checked");
+				 newInfo.push(getParamObject("literalValue", literal, "other"));
+				 newInfo.push(getParamObject("literalType", literalType, "other"));
+				 newInfo.push(getParamObject("isUri", isUri, "other"));
+				 newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+				 
+				 info["newInfo"] = JSON.stringify(newInfo);
+				 info["command"] = "AddLiteralNodeCommand";
+				 showLoading(worksheetId);
+				 var returned = $.ajax({
+						 url: "RequestController",
+						 type: "POST",
+						 data : info,
+						 dataType : "json",
+						 complete :
+								 function (xhr, textStatus) {
+										 var json = $.parseJSON(xhr.responseText);
+										 parse(json);
+										 hideLoading(worksheetId);
+										 hide();
+								 },
+						 error :
+								 function (xhr, textStatus) {
+										 alert("Error occured while adding the node!");
+										 hideLoading(worksheetId);
+										 hide();
+								 }
+				 });
+			};
+			
+			
+			
+			function hide() {
+				dialog.modal('hide');
+			}
+			
+		 
+			function show(wsId) {
+				worksheetId = wsId;
+				dialog.modal({keyboard:true, show:true, backdrop:'static'});
+			};
+			
+			return {    //Return back the public methods
+					show : show,
+					init : init
+			};
+		};
+
+		function getInstance() {
+			if( ! instance ) {
+				instance = new PrivateConstructor();
+				instance.init();
+			}
+			return instance;
+		}
+	 
+		return {
+			getInstance : getInstance
+		};
+		
 })();

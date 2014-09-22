@@ -10,49 +10,52 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>karma-cleaning</artifactId>
-<dependencies>
-	<dependency>
-		<groupId>edu.isi</groupId>
-		<artifactId>karma-util</artifactId>
-		<version>${project.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.json</groupId>
-		<artifactId>json</artifactId>
-	</dependency>
-
-	<dependency>
-		<groupId>log4j</groupId>
-		<artifactId>log4j</artifactId>
-	</dependency>
-	<dependency>
-		<groupId>org.slf4j</groupId>
-		<artifactId>slf4j-api</artifactId>
-	</dependency>
-	<dependency>
-		<groupId>org.slf4j</groupId>
-		<artifactId>slf4j-log4j12</artifactId>
-	</dependency>
-	<dependency>
-		<groupId>net.sf.opencsv</groupId>
-		<artifactId>opencsv</artifactId>
-	</dependency>
-	<dependency>
-		<groupId>org.antlr</groupId>
-		<artifactId>antlr</artifactId>
-	</dependency>
-	<dependency>
-		<groupId>org.python</groupId>
-		<artifactId>jython-standalone</artifactId>
-	</dependency>
-	<dependency> <!-- TODO modularize this out this is a big one -->
-		<groupId>org.apache.mahout</groupId>
-		<artifactId>mahout-core</artifactId>
-	</dependency>
-
-
-</dependencies>
+	<artifactId>karma-cleaning</artifactId>
+	
+	<properties>
+	  <hadoop.dist.mahout.version>0.9</hadoop.dist.mahout.version>
+	</properties>
+    
+	<dependencies>
+		<dependency>
+			<groupId>edu.isi</groupId>
+			<artifactId>karma-util</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.python</groupId>
+			<artifactId>jython-standalone</artifactId>
+		</dependency>
+		<dependency> <!-- TODO modularize this out this is a big one -->
+			<groupId>org.apache.mahout</groupId>
+			<artifactId>mahout-core</artifactId>
+			<version>${hadoop.dist.mahout.version}</version>
+		</dependency>
+	</dependencies>
  
  	<build>
 		<resources>

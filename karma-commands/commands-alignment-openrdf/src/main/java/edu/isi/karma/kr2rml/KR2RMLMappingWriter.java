@@ -49,6 +49,8 @@ import edu.isi.karma.common.HttpMethods;
 import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatter;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
+import edu.isi.karma.kr2rml.template.StringTemplateTerm;
+import edu.isi.karma.kr2rml.template.TemplateTerm;
 import edu.isi.karma.kr2rml.template.TemplateTermSet;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
@@ -375,10 +377,35 @@ public class KR2RMLMappingWriter {
 			{
 				BNode cnBnode = f.createBNode();
 				// Print out the template for anything that isn't a blank node
-				Value templVal = f.createLiteral(objTermSet
-						.getR2rmlTemplateString(factory, columnNameFormatter));
-				con.add(cnBnode, repoURIs.get(Uris.RR_TEMPLATE_URI), templVal);
-				con.add(cnBnode, repoURIs.get(Uris.RR_TERM_TYPE_URI), repoURIs.get(Uris.RR_LITERAL_URI));
+				boolean isUri = false;
+				
+				for (TemplateTerm term:objTermSet.getAllTerms()) {
+					if (term instanceof StringTemplateTerm) {
+						if(((StringTemplateTerm)term).hasFullUri())
+							isUri = true;
+					}
+				}
+						
+				String value = objTermSet
+						.getR2rmlTemplateString(factory, columnNameFormatter);
+				Value templVal;
+				if(isUri) {
+					templVal = f.createURI(value);
+				} else {
+					templVal = f.createLiteral(value);
+				}
+				con.add(cnBnode, repoURIs.get(Uris.RR_CONSTANT), templVal);
+				if (rdfLiteralTypeTermSet != null && rdfLiteralTypeTermSet.isSingleUriString()) {
+					String rdfLiteralTypeString = rdfLiteralTypeTermSet.
+							getR2rmlTemplateString(factory);
+					if(!rdfLiteralTypeString.isEmpty())
+					{
+						Value cnRdfLiteralType = f.createLiteral(rdfLiteralTypeString);
+						con.add(cnBnode, repoURIs.get(Uris.RR_DATATYPE_URI), cnRdfLiteralType);
+					}
+
+				}
+				//con.add(cnBnode, repoURIs.get(Uris.RR_TERM_TYPE_URI), repoURIs.get(Uris.RR_LITERAL_URI));
 				con.add(cnBnode, RDF.TYPE, repoURIs.get(Uris.RR_OBJECTMAP_CLASS_URI));
 				con.add(cnBnode, repoURIs.get(Uris.KM_IS_PART_OF_MAPPING_URI), mappingRes);
 				con.add(mappingRes, repoURIs.get(Uris.KM_HAS_OBJECT_MAP_URI), cnBnode);
@@ -400,7 +427,7 @@ public class KR2RMLMappingWriter {
 			throws RepositoryException {
 		URI hasWorksheetHistoryUri = f.createURI(Uris.KM_HAS_WORKSHEET_HISTORY_URI);
 		
-			Value historyLiteral = f.createLiteral(mapping.getWorksheetHistory().toString());
+			Value historyLiteral = f.createLiteral(mapping.getWorksheetHistory().toString(4));
 			con.add(mappingRes, hasWorksheetHistoryUri, historyLiteral);
 		
 	}

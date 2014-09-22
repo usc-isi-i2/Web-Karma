@@ -129,6 +129,8 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 		row1.append(propertyInputDiv);
 		propertyDiv.append(row1);
 
+		var textbox = "#" + id + "_propertyKeyword";
+		
 		if (loadTree) {
 			propertyList1 = $("<div>").attr("id", id + "_propertyList1").addClass(id + "_propertyList1").css("overflow", "auto").css("height", maxHeight + "px");;
 			propertyList2 = $("<div>").attr("id", id + "_propertyList2").addClass(id + "_propertyList2").css("overflow", "auto").css("height", maxHeight + "px");;
@@ -146,19 +148,25 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 			propertyDiv.append(row2);
 
 			var searchTimer = null;
-			$(document).on('keyup', "#" + id + "_propertyKeyword", function(event) {
+			$(document).on('keyup', textbox, function(event) {
 				if (searchTimer != null)
 					window.clearTimeout(searchTimer);
 				searchTimer = window.setTimeout(function() {
-					var keyword = $("#" + id + "_propertyKeyword").val();
+					var keyword = $(textbox).val();
 					//console.log("Property keyup: " + keyword);
 					$("div#" + id + "_propertyList1").jstree("search", keyword);
 					$("div#" + id + "_propertyList2").jstree("search", keyword);
 				}, 1000); //Wait 1 secs before searching
 			});
-		} else {
-			var textbox = "#" + id + "_propertyKeyword";
 			
+			$(document).on('blur', textbox, function(event) {
+				var keyword = $(textbox).val();
+				if(keyword == "") {
+					$(textbox).val("Property");
+				}  
+			 });
+			
+		} else {
 			if(searchFunction) {
 				var srchProps = searchFunction();
 				var proptxt = [];
@@ -190,7 +198,9 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 			} else {
 				$(document).on('blur', textbox, function(event) {
 					var keyword = $(textbox).val();
-					if(propertySelectorCallback != null) {
+					if(keyword == "") {
+						$(textbox).val("Property");
+					} else if(propertySelectorCallback != null) {
 						var propertyData = {label:keyword, id:keyword, uri:keyword};
 	                	propertySelectorCallback(propertyData);
 	                }  
@@ -198,6 +208,13 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 			}
 		}
 
+		$(document).on('focus', textbox, function(event) {
+			var keyword = $(textbox).val();
+			if(keyword == "Property") {
+				$(textbox).val("");
+            }  
+		 });
+		
 		mainDiv.append(propertyDiv);
 
 		if (populateData) {

@@ -22,14 +22,19 @@ package edu.isi.karma.controller.command.worksheet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.rep.Workspace;
+import org.json.JSONArray;
+import org.json.JSONException;
 
-public class ExtractEntitiesCommandFactory extends CommandFactory {
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.KarmaException;
+
+public class ExtractEntitiesCommandFactory extends JSONInputCommandFactory {
 
 	public enum Arguments {
-		worksheetId, hTableId, hNodeId, 
+		worksheetId, hNodeId, 
 		newColumnName, defaultValue, extractionURL, 
 		entitiesToBeExt, selectionName
 	}
@@ -38,16 +43,31 @@ public class ExtractEntitiesCommandFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String hTableId = request.getParameter(Arguments.hTableId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String extractionURL = request.getParameter(Arguments.extractionURL.name());
 		String entitiesToBeExt = request.getParameter(Arguments.entitiesToBeExt.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new ExtractEntitiesCommand(getNewId(workspace), worksheetId, 
-				hTableId, hNodeId, extractionURL, entitiesToBeExt, 
+				hNodeId, extractionURL, entitiesToBeExt, 
 				selectionName);
 	}
 
+	@Override
+	public Command createCommand(JSONArray inputJson, Workspace workspace)
+			throws JSONException, KarmaException {
+		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
+		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
+		String extractionURL = HistoryJsonUtil.getStringValue(Arguments.extractionURL.name(), inputJson);
+		String entitiesToBeExt = HistoryJsonUtil.getStringValue(Arguments.entitiesToBeExt.name(), inputJson);
+		String selectionName = HistoryJsonUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		ExtractEntitiesCommand cmd = new ExtractEntitiesCommand(getNewId(workspace), worksheetId, 
+				hNodeId, extractionURL, entitiesToBeExt, 
+				selectionName);
+		
+		cmd.setInputParameterJson(inputJson.toString());
+		return cmd;
+	}
+	
 	@Override
 	public Class<? extends Command> getCorrespondingCommand() {
 		return ExtractEntitiesCommand.class;

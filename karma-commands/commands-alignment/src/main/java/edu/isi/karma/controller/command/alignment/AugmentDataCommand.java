@@ -288,7 +288,9 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 					tempnodes.addAll(alignment.getNodesByUri(resultClass.get(i)));
 					tempnodes.removeAll(oldNodes);
 
-					String targetId = tempnodes.iterator().next().getId();
+					edu.isi.karma.rep.alignment.Node target = tempnodes.iterator().next();
+					String targetId = target.getId();
+					String targetUri = target.getLabel().getUri();
 					String edgeUri = resultPredicates.get(i);
 					if (!incoming) {
 						newEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeSourceId.name(), sourceId);
@@ -304,7 +306,8 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 					Command changeInternalNodeLinksCommand = cinlcf.createCommand(worksheetId, alignmentId, new JSONArray(), newEdges, workspace);
 					changeInternalNodeLinksCommand.doIt(workspace);
 					appliedCommands.push(changeInternalNodeLinksCommand);
-					Command setMetaDataCommand = smpcf.createCommand(workspace, nestedHNodeId, worksheetId, "isUriOfClass", targetId, "", selection.getName());
+					Command setMetaDataCommand = smpcf.createCommand(workspace, nestedHNodeId, worksheetId, "isUriOfClass", 
+							targetUri, targetId, "", selection.getName());
 					setMetaDataCommand.doIt(workspace);
 					appliedCommands.push(setMetaDataCommand);
 				}

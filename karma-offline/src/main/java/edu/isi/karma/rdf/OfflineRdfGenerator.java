@@ -33,6 +33,8 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -61,12 +63,14 @@ import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.kr2rml.writer.BloomFilterKR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
+import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
@@ -82,6 +86,7 @@ public class OfflineRdfGenerator {
 	private String modelURLString;
 	private String baseURI;
 	private String outputFilePath;
+	private String outputFileJSONPath;
 	private String bloomFiltersFilePath;
 	private List<KR2RMLRDFWriter> writers;
 	private URL modelURL;
@@ -101,7 +106,11 @@ public class OfflineRdfGenerator {
 	private int port;
 	private DBType dbType;
 	private File inputFile;
-	private int maxNumLines; 
+	private int maxNumLines;
+	private String rootTripleMap;
+	private List<String> killTripleMap;
+	private List<String> stopTripleMap;
+	private List<String> POMToKill;
 	public OfflineRdfGenerator(CommandLine cl)
 	{
 
@@ -179,7 +188,7 @@ public class OfflineRdfGenerator {
 		userMetadataManager.register(new UserPreferencesMetadata(), uc);
 		userMetadataManager.register(new UserConfigMetadata(), uc);
 		userMetadataManager.register(new PythonTransformationMetadata(), uc);
-        PythonRepository.disableReloadingLibrary();
+		PythonRepository.disableReloadingLibrary();
 
 		SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
 		ModelingConfiguration.setLearnerEnabled(false); // disable automatic learning
@@ -192,9 +201,53 @@ public class OfflineRdfGenerator {
 		modelFilePath = (String) cl.getValue("--modelfilepath");
 		modelURLString = (String) cl.getValue("--modelurl");
 		outputFilePath = (String) cl.getValue("--outputfile");
+		outputFileJSONPath = (String) cl.getValue("--JSONOutputFile");
 		baseURI = (String) cl.getValue("--baseuri");
 		bloomFiltersFilePath = (String) cl.getValue("--outputbloomfilter");
 		selectionName = (String) cl.getValue("--selection");
+		rootTripleMap = (String) cl.getValue("--root");
+		String killTripleMap = (String) cl.getValue("--killTripleMap");
+		String stopTripleMap = (String) cl.getValue("--stopTripleMap");
+		String POMToKill = (String) cl.getValue("--POMToKill");
+		if (rootTripleMap == null) {
+			rootTripleMap = "";
+		}
+		else {
+			rootTripleMap = Namespaces.KARMA_DEV + rootTripleMap;
+		}
+		if (killTripleMap == null) {
+			this.killTripleMap = new ArrayList<String>();
+		}
+		else {
+			this.killTripleMap = new ArrayList<String>(Arrays.asList(killTripleMap.split(",")));
+			int size = this.killTripleMap.size();
+			for (int i = 0; i < size; i++) {
+				String t = this.killTripleMap.remove(0);
+				this.killTripleMap.add(Namespaces.KARMA_DEV + t);
+			}
+		}
+		if (stopTripleMap == null) {
+			this.stopTripleMap = new ArrayList<String>();
+		}
+		else {
+			this.stopTripleMap = new ArrayList<String>(Arrays.asList(stopTripleMap.split(",")));
+			int size = this.stopTripleMap.size();
+			for (int i = 0; i < size; i++) {
+				String t = this.stopTripleMap.remove(0);
+				this.stopTripleMap.add(Namespaces.KARMA_DEV + t);
+			}
+		}
+		if (POMToKill == null) {
+			this.POMToKill = new ArrayList<String>();
+		}
+		else {
+			this.POMToKill = new ArrayList<String>(Arrays.asList(POMToKill.split(",")));
+			int size = this.POMToKill.size();
+			for (int i = 0; i < size; i++) {
+				String t = this.POMToKill.remove(0);
+				this.POMToKill.add(Namespaces.KARMA_DEV + t);
+			}
+		}
 		parseDatabaseCommandLineOptions(cl);
 		parseFileCommandLineOptions(cl);
 
@@ -395,6 +448,10 @@ public class OfflineRdfGenerator {
 		BufferedWriter bw = new BufferedWriter(fw);
 		PrintWriter pw = new PrintWriter(bw);
 		N3KR2RMLRDFWriter n3Writer = new N3KR2RMLRDFWriter(new URIFormatter(), pw);
+		if (outputFileJSONPath != null) {
+			JSONKR2RMLRDFWriter jsonWriter = new JSONKR2RMLRDFWriter(new PrintWriter(outputFileJSONPath), baseURI);
+			writers.add(jsonWriter);
+		}
 		if(baseURI != null)
 		{
 			n3Writer.setBaseURI(baseURI);
@@ -429,7 +486,7 @@ public class OfflineRdfGenerator {
 
 
 		createWriters(id);
-		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator(selectionName);
+		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator(selectionName, killTripleMap, stopTripleMap, POMToKill, rootTripleMap);
 		rdfGenerator.addModel(id);
 		InputType inputType = null;
 		if(this.inputType.equalsIgnoreCase("CSV"))
@@ -468,6 +525,11 @@ public class OfflineRdfGenerator {
 				.withOption(buildOption("outputbloomfilter", "generate bloom filters", "bloomfiltersfile", obuilder, abuilder))
 				.withOption(buildOption("baseuri", "specifies base uri", "base URI", obuilder, abuilder))
 				.withOption(buildOption("selection", "specifies selection name", "selection", obuilder, abuilder))
+				.withOption(buildOption("root", "specifies root", "root", obuilder, abuilder))
+				.withOption(buildOption("killTripleMap", "specifies TripleMap to kill", "killTripleMap", obuilder, abuilder))
+				.withOption(buildOption("stopTripleMap", "specifies TripleMap to stop", "stopTripleMap", obuilder, abuilder))
+				.withOption(buildOption("POMToKill", "specifies POM to kill", "POMToKill", obuilder, abuilder))
+				.withOption(buildOption("JSONOutputFile", "specifies JSONOutputFile", "JSONOutputFile", obuilder, abuilder))
 				.withOption(obuilder
 						.withLongName("help")
 						.withDescription("print this message")

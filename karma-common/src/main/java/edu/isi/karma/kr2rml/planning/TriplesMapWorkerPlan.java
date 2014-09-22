@@ -54,6 +54,7 @@ public class TriplesMapWorkerPlan {
 	private SubjectMapPlan subjectMapPlan;
 	private Deque<PredicateObjectMappingPlan> internalLinksPlans;
 	private Deque<PredicateObjectMappingPlan> columnLinksPlans;
+	private Deque<PredicateObjectMappingPlan> constantLinksPlans;
 	private SuperSelection selection;
 	private URIFormatter uriFormatter;
 
@@ -81,39 +82,46 @@ public class TriplesMapWorkerPlan {
 	}
 	
 	public void generate() throws HNodeNotFoundKarmaException
-	{
+	{ 
 		subjectMapPlan = new SubjectMapPlan(triplesMap, kr2rmlMapping,uriFormatter, factory, translator, selection);
 		
 		internalLinksPlans = new LinkedList<PredicateObjectMappingPlan>();
 		
 		List<TriplesMapLink> links = kr2rmlMapping.getAuxInfo().getTriplesMapGraph().getTriplesMapGraph(triplesMap.getId()).getAllNeighboringTriplesMap(triplesMap.getId());
 		for(TriplesMapLink link : links) {
-			if(link.getSourceMap().getId().compareTo(triplesMap.getId()) ==0  && !link.isFlipped() ||
-					link.getTargetMap().getId().compareTo(triplesMap.getId()) == 0 && link.isFlipped())
+			try {
+				if(link.getSourceMap().getId().compareTo(triplesMap.getId()) ==0  && !link.isFlipped() ||
+						link.getTargetMap().getId().compareTo(triplesMap.getId()) == 0 && link.isFlipped())
+				{
+					PredicateObjectMap pom = link.getPredicateObjectMapLink();
+					TriplesMap objectTriplesMap = null;
+					if(link.isFlipped())
+					{
+						objectTriplesMap = link.getSourceMap();
+					}
+					else
+					{
+						objectTriplesMap = link.getTargetMap();
+					}
+					PredicateObjectMappingPlan pomPlan = new InternalPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, objectTriplesMap, subjectMapPlan.getSubjectTermsToPaths(),link.isFlipped(), kr2rmlMapping,uriFormatter, factory, translator, selection);
+					if(link.isFlipped())
+					{
+						internalLinksPlans.addFirst(pomPlan);
+					}
+					else
+					{
+						internalLinksPlans.addLast(pomPlan);
+					}
+				}	
+			}
+			catch (Exception e)
 			{
-				PredicateObjectMap pom = link.getPredicateObjectMapLink();
-				TriplesMap objectTriplesMap = null;
-				if(link.isFlipped())
-				{
-					objectTriplesMap = link.getSourceMap();
-				}
-				else
-				{
-					objectTriplesMap = link.getTargetMap();
-				}
-				PredicateObjectMappingPlan pomPlan = new InternalPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, objectTriplesMap, subjectMapPlan.getSubjectTermsToPaths(),link.isFlipped(), kr2rmlMapping,uriFormatter, factory, translator, selection);
-				if(link.isFlipped())
-				{
-					internalLinksPlans.addFirst(pomPlan);
-				}
-				else
-				{
-					internalLinksPlans.addLast(pomPlan);
-				}
-			}	
+				LOG.error("Unable to generate plan for link " + link.getSourceMap().getId() + " " + link.getPredicateObjectMapLink().getPredicate().getId() + " " + link.getTargetMap().getId(), e);
+			}
 		}
 		
 		columnLinksPlans = new LinkedList<PredicateObjectMappingPlan>();
+		constantLinksPlans = new LinkedList<PredicateObjectMappingPlan>();
 		// Subject 
 		// Generate triples for specifying the types
 		for (TemplateTermSet typeTerm:triplesMap.getSubject().getRdfsType()) {
@@ -142,8 +150,24 @@ public class TriplesMapWorkerPlan {
 				LOG.debug("Skipping " + pom.toString());
 				continue;
 			}
-			PredicateObjectMappingPlan pomPlan = new ColumnPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, subjectMapPlan.getSubjectTermsToPaths(), kr2rmlMapping,uriFormatter, factory, translator, hNodeToContextUriMap, generateContext, selection);
-			columnLinksPlans.add(pomPlan);
+			try{
+				PredicateObjectMappingPlan pomPlan = null;
+				if(pom.getObject().getTemplate().getAllColumnNameTermElements().isEmpty())
+				{
+					pomPlan = new ConstantPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, kr2rmlMapping,subjectMapPlan.getSubjectTermsToPaths(), uriFormatter, factory, translator, selection);
+					constantLinksPlans.add(pomPlan);
+				}
+				else
+				{
+					pomPlan = new ColumnPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, subjectMapPlan.getSubjectTermsToPaths(), kr2rmlMapping,uriFormatter, factory, translator, hNodeToContextUriMap, generateContext, selection);
+					columnLinksPlans.add(pomPlan);
+				}
+			}
+			catch (Exception e)
+			{
+				LOG.error("Unable to generate plan for pom " + pom.getId(), e);
+			}
+			
 		}
 	}
 	
@@ -161,6 +185,11 @@ public class TriplesMapWorkerPlan {
 		{
 			
 			columnLinkPlan.outputTriples(outWriters, columnLinkPlan.execute(r, subjects), r);
+		}
+		
+		for(PredicateObjectMappingPlan constantLinkPlan : constantLinksPlans)
+		{
+			constantLinkPlan.outputTriples(outWriters, constantLinkPlan.execute(r, subjects), r);
 		}
 	}
 }

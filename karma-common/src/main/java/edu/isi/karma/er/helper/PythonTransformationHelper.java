@@ -28,14 +28,20 @@ import org.python.core.PyObject;
 import org.python.core.PyType;
 import org.python.util.PythonInterpreter;
 
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
+import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PythonTransformationHelper {
-	
+
 	private static String valueDefStatement = null;
 	private static String isEmptyDefStatement = null;
+	private static String hasSelectedRowsStatement = null;
 	private static String importStatement = null;
 	public static String getPyObjectValueAsString(PyObject obj) {
 		if (obj == null)
@@ -49,7 +55,7 @@ public class PythonTransformationHelper {
 			return obj.asInt() != 0 ? "true" : "false";
 		return obj.asString();
 	}
-	
+
 	public static boolean getPyObjectValueAsBoolean(PyObject obj) {
 		if (obj == null)
 			return false;
@@ -62,14 +68,14 @@ public class PythonTransformationHelper {
 			return (obj.asInt() != 0);
 		else if (type.getName().equals("NoneType")) 
 			return false;
-		
+
 		return obj.asString().length() != 0;
 	}
 
 	public String normalizeString(String string) {
 		return string.replaceAll(" ", "").replaceAll("[^\\p{L}\\p{N}]","");
 	}
-	
+
 	public static String getPythonTransformMethodDefinitionState(Worksheet worksheet, String transformationCode) {
 		StringBuilder methodStmt = new StringBuilder();
 		methodStmt.append("def transform(r):\n");
@@ -89,7 +95,11 @@ public class PythonTransformationHelper {
 			importStmt.append("import edu.isi.karma.rep.WorkspaceManager\n");
 			importStmt.append("import edu.isi.karma.rep.Workspace\n");
 			importStmt.append("import edu.isi.karma.rep.Node\n");
+			importStmt.append("import edu.isi.karma.rep.Table\n");
+			importStmt.append("import edu.isi.karma.rep.HTable\n");
+			importStmt.append("import edu.isi.karma.rep.HNode\n");
 			importStmt.append("import edu.isi.karma.rep.RepFactory\n");
+			importStmt.append("import edu.isi.karma.er.helper.PythonTransformationHelper\n");
 			importStmt.append("import edu.isi.karma.controller.command.transformation.PythonTransformationCommand\n");
 			importStatement = importStmt.toString();
 		}
@@ -97,7 +107,7 @@ public class PythonTransformationHelper {
 	}
 
 	public static String getGetValueDefStatement() {
-	
+
 		if(valueDefStatement == null)
 		{
 			StringBuilder methodStmt = new StringBuilder();
@@ -117,9 +127,32 @@ public class PythonTransformationHelper {
 		}
 		return valueDefStatement;
 	}
-	
+
+	public static String getHasSelectedRowsStatement() {
+
+		if(hasSelectedRowsStatement == null)
+		{
+			StringBuilder methodStmt = new StringBuilder();
+			methodStmt.append("def hasSelectedRows(columnName):\n");
+			methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
+			methodStmt.append("	node = factory.getNode(nodeid)\n");
+			methodStmt.append("	targetNode = node.getNeighborByColumnName(columnName, factory)\n");
+			methodStmt.append("	if targetNode is not None: \n");
+			methodStmt.append("		if targetNode.hasNestedTable(): \n");
+			methodStmt.append("			command.addInputColumns(targetNode.getHNodeId())\n");
+			methodStmt.append("			command.addSelectedRowsColumns(targetNode.getHNodeId())\n");
+			methodStmt.append("			command.setSelectedRowsMethod(True)\n");
+			methodStmt.append("			nestedTable = targetNode.getNestedTable()\n");
+			methodStmt.append("			if edu.isi.karma.er.helper.PythonTransformationHelper.hasSelectedRows(nestedTable, factory, selectionName) :\n");
+			methodStmt.append("				return True\n");
+			methodStmt.append("	return False\n");
+			hasSelectedRowsStatement = methodStmt.toString();
+		}
+		return hasSelectedRowsStatement;
+	}
+
 	public static String getIsEmptyDefStatement() {
-		
+
 		if(isEmptyDefStatement == null)
 		{
 			StringBuilder methodStmt = new StringBuilder();
@@ -144,17 +177,27 @@ public class PythonTransformationHelper {
 		}
 		return isEmptyDefStatement;
 	}
-	
+
 	public static String getVDefStatement()
 	{
 		return "def v(columnName):\n\treturn getValue(columnName)\n";
-	
+
 	}
 
 	public static String getTransformStatement() {
 		return  "transform(nodeid)";
 	}
-	
+
+	public static boolean hasSelectedRows(Table nestedTable, RepFactory factory, String selectionName) {
+		Worksheet worksheet = factory.getWorksheet(nestedTable.getWorksheetId());
+		SuperSelection sel = worksheet.getSuperSelectionManager().getSuperSelection(selectionName);
+		for (Row r : nestedTable.getRows(0, nestedTable.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
+			if (sel.isSelected(r))
+				return true;
+		}
+		return false;
+	}
+
 	public void importUserScripts(PythonInterpreter interpreter) {
 		String dirpathString = ServletContextParameterMap
 				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);

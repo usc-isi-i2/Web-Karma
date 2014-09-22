@@ -8,27 +8,20 @@ import edu.isi.karma.controller.command.selection.Selection.SelectionStatus;
 import edu.isi.karma.rep.Row;
 
 public class SuperSelection {
-	private Set<String> selections;
+	private Set<Selection> selections;
 	private String name;
-	private SelectionManager selMgr;
-	public SuperSelection(String name, SelectionManager selMgr) {
-		selections = new HashSet<String>();
-		this.name = name;
-		this.selMgr = selMgr;
-	}
 	
 	public SuperSelection(String name) {
-		selections = new HashSet<String>();
+		selections = new HashSet<Selection>();
 		this.name = name;
 	}
 
-	public void addSelection(String hTableId) {
-		selections.add(hTableId);
+	public void addSelection(Selection sel) {
+		selections.add(sel);
 	}
 
 	public RowStatus getSelectedStatus(Row row) {
-		for (String s : selections) {
-			Selection sel = selMgr.getSelection(s);
+		for (Selection sel : selections) {
 			if (sel != null) {
 				RowStatus status = sel.getSelectedStatus(row);
 				if (status == RowStatus.OUT_OF_DATE || status == RowStatus.SELECTED)
@@ -40,8 +33,7 @@ public class SuperSelection {
 
 	public boolean isSelected(Row row) {
 		boolean ret = false;
-		for (String s : selections) {
-			Selection sel = selMgr.getSelection(s);
+		for (Selection sel : selections) {
 			if (sel != null)
 				ret |= sel.isSelected(row);
 		}
@@ -53,8 +45,7 @@ public class SuperSelection {
 	}
 
 	public SelectionStatus refreshStatus() {
-		for (String s : selections) {
-			Selection sel = selMgr.getSelection(s);
+		for (Selection sel : selections) {
 			if (sel != null)
 				if (sel.getStatus() == SelectionStatus.OUT_OF_DATE)
 					return SelectionStatus.OUT_OF_DATE;
@@ -63,18 +54,25 @@ public class SuperSelection {
 	}
 
 	public void updateSelection() {
-		for (String s : selections) {
-			Selection sel = selMgr.getSelection(s);
+		for (Selection sel : selections) {
 			if (sel != null)
 				sel.updateSelection();
 		}
 	}
 
-	public void removeSelection(String hTableId) {
-		selections.remove(hTableId);
+	public void removeSelection(Selection sel) {
+		selections.remove(sel);
 	}
 	
-	public Set<String> getAllSelection() {
-		return new HashSet<String>(selections);
+	public Selection getSelection(String hTableId) {
+		for (Selection sel : selections) {
+			if (sel.hTableId.equals(hTableId))
+				return sel;
+		}
+		return null;
+	}
+	
+	public Set<Selection> getAllSelection() {
+		return new HashSet<Selection>(selections);
 	}
 }

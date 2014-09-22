@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.config.UIConfiguration;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -135,7 +134,7 @@ public class PublishJSONCommand extends WorksheetCommand {
 							new WorksheetCleaningUpdate(newWSId, true, SuperSelectionManager.DEFAULT_SELECTION).generateJson(prefix, pw, vWorkspace);
 							pw.println(",");
 						}
-						new WorksheetHeadersUpdate(newWSId).generateJson(prefix, pw, vWorkspace);
+						new WorksheetHeadersUpdate(newWSId, SuperSelectionManager.DEFAULT_SELECTION).generateJson(prefix, pw, vWorkspace);
 						pw.println(",");
 						new WorksheetDataUpdate(newWSId, SuperSelectionManager.DEFAULT_SELECTION).generateJson(prefix, pw, vWorkspace);
 					}

@@ -86,7 +86,7 @@ public class TreePostProcess {
 
 		// If tree contains the Thing, we return it as the root
 		for (Node v: this.tree.vertexSet()) { 
-			if (v.getLabel() != null && v.getLabel().getUri().equals(Uris.THING_URI)) {
+			if (v.getLabel() != null && v.getLabel().getUri() != null && v.getLabel().getUri().equals(Uris.THING_URI)) {
 				possibleRoots.add(v);
 			}
 		}

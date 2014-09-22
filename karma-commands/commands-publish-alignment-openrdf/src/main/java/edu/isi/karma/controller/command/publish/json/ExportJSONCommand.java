@@ -54,8 +54,6 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 			String worksheetId, String selectionId) {
 		super(id, worksheetId, selectionId);
 		this.alignmentNodeId = alignmentNodeId;
-		
-		addTag(CommandTag.Transformation);//??want Export JSON in model history?
 	}
 
 	@Override

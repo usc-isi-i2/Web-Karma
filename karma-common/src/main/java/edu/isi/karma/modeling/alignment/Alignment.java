@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 import com.rits.cloning.Cloner;
 
+import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.ontology.OntologyUpdateListener;
@@ -51,6 +53,7 @@ import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkPriorityComparator;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.LinkType;
+import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
@@ -133,8 +136,8 @@ public class Alignment implements OntologyUpdateListener {
 		return this.graphBuilder.getTypeToNodesMap().get(type);
 	}
 	
-	public Set<Node> getNodesForceAddedByUser() {
-		return this.graphBuilder.getNodesForceAddedByUser();
+	public Set<Node> getForcedNodes() {
+		return this.graphBuilder.getForcedNodes();
 	}
 	
 	public LabeledLink getLinkById(String linkId) {
@@ -200,8 +203,20 @@ public class Alignment implements OntologyUpdateListener {
 	public InternalNode addForcedInternalNode(Label label) {
 		String id = nodeIdFactory.getNodeId(label.getUri());
 		InternalNode node = new InternalNode(id, label);
-		node.setForceAddedByUser(true);
+		node.setForced(true);
 		if (this.graphBuilder.addNodeAndUpdate(node)) return node;
+		return null;
+	}
+	
+	public LiteralNode addLiteralNode(String value, String type, boolean isUri) {
+		
+		type = type.replace(Prefixes.XSD + ":", Namespaces.XSD);
+		Label literalType = new Label(type, Namespaces.XSD, Prefixes.XSD);
+		
+		String id = nodeIdFactory.getNodeId(value);
+		
+		LiteralNode node = new LiteralNode(id, value, literalType, isUri);
+		if(this.graphBuilder.addNode(node)) return node;
 		return null;
 	}
 	
@@ -510,6 +525,7 @@ public class Alignment implements OntologyUpdateListener {
 		Set<Node> steinerNodes = new HashSet<Node>();
 		
 		// Add column nodes and their domain
+		// it is better to set isForced flag when setting a semantic type
 		Set<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
 		if (columnNodes != null) {
 			for (Node n : columnNodes) {
@@ -526,8 +542,8 @@ public class Alignment implements OntologyUpdateListener {
 			}
 		}
 
-		Set<Node> forcedAddedNodes = this.getNodesForceAddedByUser();
-		for (Node n : forcedAddedNodes) {
+		Set<Node> forcedNodes = this.getForcedNodes();
+		for (Node n : forcedNodes) {
 			steinerNodes.add(n);
 		}
 		

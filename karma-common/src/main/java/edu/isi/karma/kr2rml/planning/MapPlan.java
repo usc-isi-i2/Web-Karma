@@ -74,7 +74,12 @@ public abstract class MapPlan {
 			throws HNodeNotFoundKarmaException {
 		for(ColumnTemplateTerm term : subjMapTemplate.getAllColumnNameTermElements())
 		{
-			HNodePath path = factory.getHNode(translator.getHNodeIdForColumnName(term.getTemplateTermValue())).getHNodePath(factory);
+			String hNodeIdForColumnName = translator.getHNodeIdForColumnName(term.getTemplateTermValue());
+			if(hNodeIdForColumnName == null)
+			{
+				throw new HNodeNotFoundKarmaException("Unable to find column name while populating terms for subject template", term.getTemplateTermValue());
+			}
+			HNodePath path = factory.getHNode(hNodeIdForColumnName).getHNodePath(factory);
 			subjectTermsToPaths.put(term, path);
 		}
 	}

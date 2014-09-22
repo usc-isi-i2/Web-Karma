@@ -33,16 +33,21 @@ public abstract class Selection {
 	protected String Id;
 	protected Map<Row, Boolean> selectedRowsCache;
 	protected Set<String> evalColumns;
-
+	protected Set<String> selectedRowsColumns;
+	protected String superSelectionName;
+	protected boolean hasSelectedRowsMethod;
 	Selection(Workspace workspace, String worksheetId, 
-			String hTableId, String name) {
+			String hTableId, String name, String superSelectionName) {
 		this.worksheetId = worksheetId;
 		this.workspace = workspace;
 		this.hTableId = hTableId;
 		this.Id = name;
 		this.status = SelectionStatus.UP_TO_DATE;
+		this.superSelectionName = superSelectionName;
 		selectedRowsCache = new HashMap<Row, Boolean>();
 		evalColumns = new HashSet<String>();
+		selectedRowsColumns = new HashSet<String>();
+		hasSelectedRowsMethod = false;
 	}
 		
 	public void setTags(List<Tag> tags) {
@@ -95,6 +100,26 @@ public abstract class Selection {
 	public abstract void updateSelection();
 	
 	public Set<String> getInputColumns() {
-		return evalColumns;
+		return new HashSet<String>(evalColumns);
+	}
+	
+	public Set<String> getSelectedRowsColumns() {
+		return new HashSet<String>(selectedRowsColumns);
+	}
+	
+	public String getParentSuperSelection() {
+		return superSelectionName;
+	}
+	
+	public void addSelectedRowsColumns(String hNodeId) {
+		selectedRowsColumns.add(hNodeId);
+	}
+	
+	public void setSelectedRowsMethod(boolean t) {
+		hasSelectedRowsMethod = t;
+	}
+	
+	public boolean isSelectedRowsMethod() {
+		return hasSelectedRowsMethod;
 	}
 }

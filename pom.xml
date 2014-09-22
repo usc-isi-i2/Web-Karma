@@ -69,7 +69,6 @@
 	  <gson.version>2.2.2</gson.version>
 	  <httpcomponents.version>4.2.4</httpcomponents.version>
 	  <guava.version>13.0.1</guava.version>
-	  <hadoop.dist.mahout.version>0.9</hadoop.dist.mahout.version>
 	  <spring.version>3.2.4.RELEASE</spring.version>
 
   </properties>
@@ -111,6 +110,20 @@
             <name>Open Source Geospatial Foundation Repository</name>
             <url>http://download.osgeo.org/webdav/geotools/</url>
       </repository>
+      
+      <repository>
+	    <id>repo</id>
+	    <name>repo</name>
+	    <releases>
+	        <enabled>true</enabled>
+	        <checksumPolicy>ignore</checksumPolicy>
+	    </releases>
+	    <snapshots>
+	        <enabled>false</enabled>
+	    </snapshots>
+	    <url>file://${project.basedir}/repo</url>
+	</repository>
+
    </repositories>
   <dependencyManagement><dependencies>
   <dependency>
@@ -245,7 +258,11 @@
     	<artifactId>opencsv</artifactId>
     	<version>2.3</version>
     </dependency>
-
+<dependency>
+	<groupId>org.apache.mahout.commons</groupId>
+	<artifactId>commons-cli</artifactId>
+	<version>2.0-mahout</version>
+</dependency>
 	  <dependency>
 		  <groupId>commons-httpclient</groupId>
 		  <artifactId>commons-httpclient</artifactId>
@@ -338,12 +355,7 @@
 		    <artifactId>guava</artifactId>
 		    <version>${guava.version}</version>
 		</dependency>
-   		<dependency>
-        	<groupId>org.apache.mahout</groupId>
-        	<artifactId>mahout-core</artifactId>
-        	<version>${hadoop.dist.mahout.version}</version>
-    	</dependency>
-    	<dependency>
+		<dependency>
       		<groupId>org.powermock</groupId>
       		<artifactId>powermock-module-junit4</artifactId>
       		<version>${powermock.version}</version>

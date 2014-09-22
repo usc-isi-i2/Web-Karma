@@ -199,4 +199,43 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div class="modal fade" id="addLiteralNodeDialog" tabindex="-1">
+  <div class="modal-dialog">
+		<div class="modal-content">
+			<form class="bs-example bs-example-form" role="form">
+		     <div class="modal-header">
+			      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			       <h4 class="modal-title">Add Literal Node</h4>
+			  </div>
+			  <div class="modal-body">
+			  		<div class="form-group">
+						<label for="literal">Literal:</label>
+						<input type="text" id="literal" class="form-control">
+					</div>
+					<div class="row">
+						<div class="col-sm-4 form-group">
+						    <label for="literalType">Type:</label>
+						    <input type="text" id="literalType" class="form-control">
+						</div>
+					</div>
+					<div class="checkbox">
+					  <label>
+					    <input type="checkbox" name="isUri" id="isUri">
+					   Is URI?
+					  </label>
+					</div>
+					
+					<div class="error" style="display: none"></div>
+				
+			  </div>
+			  <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			        <button type="submit" class="btn btn-primary" id="btnSave">Add</button>
+			  </div>
+			 </form>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
 </body>

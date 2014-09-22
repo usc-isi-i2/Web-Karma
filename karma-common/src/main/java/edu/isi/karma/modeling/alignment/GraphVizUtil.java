@@ -265,7 +265,9 @@ public class GraphVizUtil {
 	public static void exportSemanticModelsToGraphviz(
 			Map<String, SemanticModel> models, 
 			String label, 
-			String filename) throws IOException {
+			String filename,
+			boolean showNodeMetaData,
+			boolean showLinkMetaData) throws IOException {
 		
 		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
 		graphViz.attr("fontcolor", "blue");
@@ -275,19 +277,15 @@ public class GraphVizUtil {
 		org.kohsuke.graphviz.Graph cluster = null;
 		int counter = 0;
 		
-		boolean showNodeMetaData;
-		boolean showLinkMetaData;
 		if (models != null) {
 			for(Entry<String,SemanticModel> entry : models.entrySet()) {
 				if (entry.getKey() == "1-correct model") {
-					showNodeMetaData = false;
-					showLinkMetaData = false; 
+					cluster = GraphVizUtil.convertToGraphviz(GraphUtil.asDefaultGraph(entry.getValue().getGraph()), 
+							entry.getValue().getMappingToSourceColumns(), false, false, false);
 				} else {
-					showNodeMetaData = true;
-					showLinkMetaData = true;
+					cluster = GraphVizUtil.convertToGraphviz(GraphUtil.asDefaultGraph(entry.getValue().getGraph()), 
+							entry.getValue().getMappingToSourceColumns(), false, showNodeMetaData, showLinkMetaData);
 				}
-				cluster = GraphVizUtil.convertToGraphviz(GraphUtil.asDefaultGraph(entry.getValue().getGraph()), 
-						entry.getValue().getMappingToSourceColumns(), false, showNodeMetaData, showLinkMetaData);
 				cluster.id("cluster_" + counter);
 				cluster.attr("label", entry.getKey());
 				graphViz.subGraph(cluster);

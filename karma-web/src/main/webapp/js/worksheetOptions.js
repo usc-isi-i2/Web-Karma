@@ -52,6 +52,9 @@ function WorksheetOptions(wsId, wsTitle) {
 			name: "Add Node",
 			func: addNode
 		}, {
+			name:"Add Liternal Node", 
+			func:addLiteralNode
+		}, {
 			name: "divider"
 		},
 
@@ -492,7 +495,14 @@ function WorksheetOptions(wsId, wsTitle) {
 		AddNodeDialog.getInstance().show(worksheetId);
 		return false;
 	}
-
+	
+	function addLiteralNode() {
+		console.log("Add Literal Node");
+		hideDropdown();
+		AddLiteralNodeDialog.getInstance().show(worksheetId);
+		return false;
+	}
+	
 	this.generateJS = function() {
 		var div =
 			$("<div>")
