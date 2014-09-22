@@ -20,7 +20,12 @@ public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 	}
 	protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException
 	{
-		Iterator<Text> iterator = values.iterator();
+		JSONObject accumulatorObject = mergeJSONObjects(values.iterator());
+		reusableOutputValue.set(accumulatorObject.toString());
+		context.write(key, reusableOutputValue);
+	}
+	public static JSONObject mergeJSONObjects(Iterator<Text> iterator) {
+		
 		JSONObject accumulatorObject = new JSONObject();
 		while(iterator.hasNext())
 		{
@@ -28,8 +33,19 @@ public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 			JSONObject object = new JSONObject(value);
 			accumulatorObject = mergeJSONObjects(accumulatorObject, object);			
 		}
-		reusableOutputValue.set(accumulatorObject.toString());
-		context.write(key, reusableOutputValue);
+		return accumulatorObject;
+	}
+	
+	public static JSONObject mergeJSONObjectsFromStrings(Iterator<String> iterator) {
+		
+		JSONObject accumulatorObject = new JSONObject();
+		while(iterator.hasNext())
+		{
+			String value = iterator.next().toString();
+			JSONObject object = new JSONObject(value);
+			accumulatorObject = mergeJSONObjects(accumulatorObject, object);			
+		}
+		return accumulatorObject;
 	}
 	
 	private static JSONObject mergeJSONObjects(JSONObject left, JSONObject right)

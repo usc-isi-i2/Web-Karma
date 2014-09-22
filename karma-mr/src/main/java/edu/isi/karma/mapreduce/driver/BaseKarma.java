@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,14 +25,18 @@ public class BaseKarma {
 	protected GenericRDFGenerator generator;
 	protected String baseURI;
 	protected InputType inputType;
-	
+	protected String modelUri;
+	protected String modelFile;
+	protected URL modelURL;
 	public void setup(String inputTypeString, String modelUri, String modelFile, String baseURI) {
 
 		try {
 			setupKarmaHome();
 			determineInputType(inputTypeString);
 			generator = new GenericRDFGenerator(null);
-			addModel(modelUri, modelFile);
+			this.modelUri = modelUri;
+			this.modelFile = modelFile;
+			addModel();
 		} catch (KarmaException | IOException e) {
 			LOG.error("Unable to complete Karma set up: " + e.getMessage());
 			throw new RuntimeException("Unable to complete Karma set up: "
@@ -59,13 +62,8 @@ public class BaseKarma {
 		PythonRepository.disableReloadingLibrary();
 	}
 
-	private void addModel(String modelUri, String modelFile) throws MalformedURLException {
-		URL modelURL = null;
-		if (modelUri != null) {
-			modelURL = new URL(modelUri);
-		} else if (modelFile != null) {
-			modelURL = new File(modelFile).toURI().toURL();
-		}
+	private void addModel() throws MalformedURLException {
+		getModel();
 		generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
 	}
 
@@ -98,4 +96,16 @@ public class BaseKarma {
 		return inputType;
 	}
 
+	public URL getModel() throws MalformedURLException
+	{
+		if(modelURL == null)
+		{
+			if (modelUri != null) {
+				modelURL = new URL(modelUri);
+			} else if (modelFile != null) {
+				modelURL = new File(modelFile).toURI().toURL();
+			}
+		}
+		return modelURL;
+	}
 }

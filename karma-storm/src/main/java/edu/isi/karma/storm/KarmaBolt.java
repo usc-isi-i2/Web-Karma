@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
+import java.util.Properties;
 
-import org.apache.hadoop.io.Text;
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +30,17 @@ public class KarmaBolt extends BaseRichBolt {
 	 */
 	private static final long serialVersionUID = 1L;
 	private OutputCollector outputCollector;
+	private Properties config;
 
+	public KarmaBolt(Properties config)
+	{
+		this.config = config;
+	}
+	
 	@Override
 	public void execute(Tuple tuple) {
 		
-		
+		System.out.println("My name is: " + config.getProperty("name"));
 		long start = System.currentTimeMillis();
 		System.out.println("id: "+tuple.getStringByField("id"));
 		StringWriter sw = new StringWriter();
@@ -45,10 +51,7 @@ public class KarmaBolt extends BaseRichBolt {
 			String results = sw.toString();
 			if (!results.equals("[\n\n]\n")) {
 				writeRDF(tuple, results);
-				
 			}
-			
-			
 		} catch (Exception e) {
 			LOG.error("Unable to generate RDF: " + e.getMessage());
 			
@@ -70,7 +73,7 @@ public class KarmaBolt extends BaseRichBolt {
 		JSONArray generatedObjects = new JSONArray(results);
 		for(int i = 0; i < generatedObjects.length(); i++)
 		{
-			outputCollector.emit(tuple, new Values(generatedObjects.getJSONObject(i).getString("@id"), generatedObjects.getJSONObject(i).toString()));
+			outputCollector.emit(tuple, new Values(generatedObjects.getJSONObject(i).getString("@id"), generatedObjects.getJSONObject(i).toString(), karma.getModel().toString() ));
 			
 		}
 	}
@@ -79,14 +82,13 @@ public class KarmaBolt extends BaseRichBolt {
 	public void prepare(Map configMap, TopologyContext arg1, OutputCollector outputCollector) {
 		this.outputCollector = outputCollector;
 		karma = new BaseKarma();
-		karma.setup((String)configMap.get("karma.input.type"), (String)configMap.get("model.uri"), (String)configMap.get("model.file"), (String)configMap.get("base.uri"));
+		karma.setup(config.getProperty("karma.input.type"), config.getProperty("model.uri"), config.getProperty("model.file"), config.getProperty("base.uri"));
 		
 	}
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFields) {
-		outputFields.declare(new Fields("id", "json"));
+		outputFields.declare(new Fields("id", "json", "model"));
 		
 	}
-
 }
