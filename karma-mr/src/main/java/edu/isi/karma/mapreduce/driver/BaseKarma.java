@@ -2,20 +2,16 @@ package edu.isi.karma.mapreduce.driver;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
-import org.json.JSONException;
+import org.apache.hadoop.mapreduce.Mapper.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
@@ -24,23 +20,20 @@ import edu.isi.karma.rdf.GenericRDFGenerator;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.webserver.KarmaException;
 
-public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
-
-	private static Logger LOG = LoggerFactory.getLogger(BaseRDFMapper.class);
+public class BaseKarma {
+	private static Logger LOG = LoggerFactory.getLogger(BaseKarma.class);
 
 	protected GenericRDFGenerator generator;
 	protected String baseURI;
 	protected InputType inputType;
-
-	@Override
-	public void setup(Context context) {
+	
+	public void setup(String inputTypeString, String modelUri, String modelFile, String baseURI) {
 
 		try {
 			setupKarmaHome();
-			determineInputType(context);
+			determineInputType(inputTypeString);
 			generator = new GenericRDFGenerator(null);
-			addModel(context);
-			baseURI = context.getConfiguration().get("base.uri");
+			addModel(modelUri, modelFile);
 		} catch (KarmaException | IOException e) {
 			LOG.error("Unable to complete Karma set up: " + e.getMessage());
 			throw new RuntimeException("Unable to complete Karma set up: "
@@ -66,10 +59,8 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 		PythonRepository.disableReloadingLibrary();
 	}
 
-	private void addModel(Context context) throws MalformedURLException {
+	private void addModel(String modelUri, String modelFile) throws MalformedURLException {
 		URL modelURL = null;
-		String modelUri = context.getConfiguration().get("model.uri");
-		String modelFile = context.getConfiguration().get("model.file");
 		if (modelUri != null) {
 			modelURL = new URL(modelUri);
 		} else if (modelFile != null) {
@@ -78,9 +69,8 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 		generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
 	}
 
-	private void determineInputType(Context context) {
-		String inputTypeString = context.getConfiguration().get(
-				"karma.input.type");
+	private void determineInputType(String inputTypeString) {
+	
 		inputType = null;
 		if (inputTypeString != null) {
 			try {
@@ -96,33 +86,16 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 		}
 	}
 
-	@Override
-	public void map(Text key, Text value, Context context) throws IOException,
-			InterruptedException {
-
-		String filename = key.toString();
-		String contents = value.toString();
-		LOG.info(key.toString() + " started");
-		StringWriter sw = new StringWriter();
-		KR2RMLRDFWriter outWriter = configureRDFWriter(sw);
-		try {
-			generator.generateRDF("model", filename, contents, inputType,
-					false, outWriter);
-
-			String results = sw.toString();
-			if (!results.equals("[\n\n]\n")) {
-				writeRDFToContext(context, results);
-				
-			}
-		} catch (Exception e) {
-			LOG.error("Unable to generate RDF: " + e.getMessage());
-		}
-		LOG.info(key.toString() + " finished");
+	public GenericRDFGenerator getGenerator() {
+		return generator;
 	}
 
-	protected abstract KR2RMLRDFWriter configureRDFWriter(StringWriter sw);
+	public String getBaseURI() {
+		return baseURI;
+	}
 
-	protected abstract void writeRDFToContext(Context context, String results)
-			throws IOException, InterruptedException;
+	public InputType getInputType() {
+		return inputType;
+	}
 
 }
