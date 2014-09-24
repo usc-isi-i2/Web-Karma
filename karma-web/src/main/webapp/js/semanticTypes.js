@@ -943,7 +943,7 @@ var IncomingOutgoingLinksDialog = (function() {
 	function PrivateConstructor() {
 		var dialog = $("#incomingOutgoingLinksDialog");
 		var worksheetId, columnId, alignmentId, linkType;
-		var columnLabel, columnUri, columnDomain, columnType;
+		var columnLabel, columnUri, columnDomain, columnType, isColumnUri;
 
 		var selectedFromClass, selectedProperty, selectedToClass;
 		var allClasses = null,
@@ -1319,10 +1319,10 @@ var IncomingOutgoingLinksDialog = (function() {
 		function getProperties() {
 			if (allProperties == null) {
 				var props;
-				if (columnType == "ColumnNode")
+				if (columnType == "ColumnNode" || (columnType == "LiteralNode" && isColumnUri == false))
 					props = getAllDataProperties(worksheetId);
 				else
-					props = getAllObjectProperties(alignmentId);
+					props = getAllObjectProperties(worksheetId);
 				var result = [];
 				$.each(props, function(index, prop) {
 					result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
@@ -1341,7 +1341,7 @@ var IncomingOutgoingLinksDialog = (function() {
 			if (loadTree) {
 				var domain, range;
 				var startNodeClass = columnDomain;
-				if (columnType == "ColumnNode")
+				if (columnType == "ColumnNode" || columnType == "LiteralNode")
 					startNodeClass = "";
 				if (linkType == "incoming" || linkType == "changeIncoming" || linkType == "changeLink") {
 					domain = selectedClass.uri;
@@ -1457,7 +1457,8 @@ var IncomingOutgoingLinksDialog = (function() {
 		}
 
 		function show(wsId, colId, alignId,
-			colLabel, colUri, colDomain, colType, type, changeFrom, changeTo, changeLinkUri) {
+			colLabel, colUri, colDomain, colType, isColUri,
+			type, changeFrom, changeTo, changeLinkUri) {
 			worksheetId = wsId;
 			columnId = colId;
 			alignmentId = alignId;
@@ -1466,7 +1467,8 @@ var IncomingOutgoingLinksDialog = (function() {
 			columnUri = colUri;
 			columnDomain = colDomain;
 			columnType = colType;
-
+			isColumnUri = isColUri;
+			
 			linkType = type;
 			dialog.modal({
 				keyboard: true,
@@ -1483,7 +1485,7 @@ var IncomingOutgoingLinksDialog = (function() {
 
 
 		function showBlank(wsId, colId, alignId,
-			colLabel, colUri, colDomain, colType, type) {
+			colLabel, colUri, colDomain, colType, isColUri, type) {
 			selectedFromClass = {
 				label: "",
 				id: "",
@@ -1500,7 +1502,7 @@ var IncomingOutgoingLinksDialog = (function() {
 				uri: ""
 			};
 			show(wsId, colId, alignId,
-				colLabel, colUri, colDomain, colType, type);
+				colLabel, colUri, colDomain, colType, isColUri, type);
 		};
 
 
@@ -1542,7 +1544,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 	function PrivateConstructor() {
 		var dialog = $("#manageIncomingOutgoingLinksDialog");
 		var worksheetId, columnId, alignmentId, linkType;
-		var columnLabel, columnUri, columnDomain, columnType;
+		var columnLabel, columnUri, columnDomain, columnType, isColumnUri;
 		var initialLinks;
 
 		var classUI, propertyUI, editLink, classPropertyUIDiv;
@@ -1709,7 +1711,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 		function getProperties() {
 			if (allProperties == null) {
 				var props;
-				if (columnType == "ColumnNode")
+				if (columnType == "ColumnNode" || (columnType == "LiteralNode" && isColumnUri == false))
 					props = getAllDataProperties(worksheetId);
 				else
 					props = getAllObjectProperties(worksheetId);
@@ -1729,7 +1731,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 			if (loadTree) {
 				var domain, range;
 				var startNodeClass = columnDomain;
-				if (columnType == "ColumnNode")
+				if (columnType == "ColumnNode" || columnType == "LiteralNode")
 					startNodeClass = "";
 				if (editLink.type == "incoming") {
 					domain = selectedClass.uri;
@@ -1938,7 +1940,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 
 
 		function show(wsId, colId, alignId,
-			colLabel, colUri, colDomain, colType) {
+			colLabel, colUri, colDomain, colType, isColUri) {
 			worksheetId = wsId;
 			columnId = colId;
 			alignmentId = alignId;
@@ -1947,6 +1949,8 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 			columnUri = colUri;
 			columnDomain = colDomain;
 			columnType = colType;
+			isColumnUri = isColUri;
+			
 			dialog.modal({
 				keyboard: true,
 				show: true,

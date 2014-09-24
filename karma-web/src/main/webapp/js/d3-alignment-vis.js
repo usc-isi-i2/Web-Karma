@@ -461,11 +461,13 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 				d.source.label,
 				d.source.nodeDomain,
 				d.source.id,
+				d.source.isUri,
 				d["targetNodeId"],
 				d.target.nodeType,
 				d.target.label,
 				d.target.nodeDomain,
 				d.target.id,
+				d.target.isUri,
 				d3.event);
 		}).on("mouseover", function(d) {
 			d3.selectAll("g.InternalNode, g.LiteralNode").each(function(d2, i) {
@@ -531,7 +533,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 				if (d.isForcedByUser)
 					nodeCategory = "forcedAdded";
 				ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain, nodeCategory,
-					$(svg).data("alignmentId"), d3.event);
+					$(svg).data("alignmentId"), d["nodeType"], d["isUri"], d3.event);
 			}
 		});
 
@@ -582,7 +584,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 				if (d.isForcedByUser)
 					nodeCategory = "forcedAdded";
 				ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain, nodeCategory,
-					$(svg).data("alignmentId"), d3.event);
+					$(svg).data("alignmentId"), d["nodeType"], d["isUri"], d3.event);
 			}
 		});
 
@@ -615,7 +617,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 					nodeCategory = "forcedAdded";
 				ClassDropdownMenu.getInstance().show(worksheetId, d.id, d.label, d["id"], d.nodeDomain,
 					nodeCategory,
-					$(svg).data("alignmentId"), d3.event);
+					$(svg).data("alignmentId"), d["nodeType"], d["isUri"], d3.event);
 			}
 		});
 
