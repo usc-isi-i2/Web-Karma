@@ -20,10 +20,8 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.ontology;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -574,29 +572,29 @@ public class OntologyCache {
 		}
 	}
 	
-	private boolean isTopLevelClass(String c) {
-		
-		// returns TRUE if the class s is an immediate node after THING in the class hierarchy
-		
-//		if (c.equalsIgnoreCase(Uris.THING_URI))
+//	private boolean isTopLevelClass(String c) {
+//		
+//		// returns TRUE if the class s is an immediate node after THING in the class hierarchy
+//		
+////		if (c.equalsIgnoreCase(Uris.THING_URI))
+////			return true;
+//		
+//		Set<String> superClasses = this.directSuperClasses.get(c).keySet();
+//
+//		if (superClasses == null || superClasses.isEmpty())
 //			return true;
-		
-		Set<String> superClasses = this.directSuperClasses.get(c).keySet();
-
-		if (superClasses == null || superClasses.isEmpty())
-			return true;
-		
-		if (superClasses.size() == 1 &&
-				superClasses.iterator().next().equalsIgnoreCase(Uris.THING_URI))
-			return true;
-		
-		for (String s : superClasses)
-			if (this.classes.containsKey(s))
-				return false;
-		
-		return true;
-	}
-	
+//		
+//		if (superClasses.size() == 1 &&
+//				superClasses.iterator().next().equalsIgnoreCase(Uris.THING_URI))
+//			return true;
+//		
+//		for (String s : superClasses)
+//			if (this.classes.containsKey(s))
+//				return false;
+//		
+//		return true;
+//	}
+//	
 //	private void buildClassHierarchy(OntologyTreeNode node) {
 //		
 //		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
