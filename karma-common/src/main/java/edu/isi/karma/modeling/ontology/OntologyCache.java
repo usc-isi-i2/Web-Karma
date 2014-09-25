@@ -60,7 +60,7 @@ public class OntologyCache {
 	private HashMap<String, Label> objectPropertiesWithOnlyRange;
 	private HashMap<String, Label> objectPropertiesWithoutDomainAndRange;
 	
-	private OntologyTreeNode classHierarchy;
+//	private OntologyTreeNode classHierarchy;
 //	private OntologyTreeNode objectPropertyHierarchy;
 //	private OntologyTreeNode dataPropertyHierarchy;
 	
@@ -175,7 +175,7 @@ public class OntologyCache {
 
 		// create a hierarchy of classes and properties of the model
 		logger.info("build class hierarchy ...");
-		this.buildClassHierarchy(classHierarchy);
+//		this.buildClassHierarchy(classHierarchy);
 //		logger.info("build object property hierarchy ...");
 //		this.buildDataPropertyHierarchy(dataPropertyHierarchy);
 //		logger.info("build data property hierarchy ...");
@@ -225,7 +225,7 @@ public class OntologyCache {
 		this.objectPropertiesWithOnlyRange = new HashMap<String, Label>();
 		this.objectPropertiesWithoutDomainAndRange = new HashMap<String, Label>();
 		
-		this.classHierarchy = new OntologyTreeNode(new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL), null, null);
+//		this.classHierarchy = new OntologyTreeNode(new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL), null, null);
 //		this.dataPropertyHierarchy = new OntologyTreeNode(new Label("Data Properties"), null, null);
 //		this.objectPropertyHierarchy = new OntologyTreeNode(new Label("Object Properties"), null, null);
 
@@ -597,34 +597,34 @@ public class OntologyCache {
 		return true;
 	}
 	
-	private void buildClassHierarchy(OntologyTreeNode node) {
-		
-		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
-		if (node.getParent() == null) {
-			for (String s : this.classes.keySet()) {
-//				if (s.equalsIgnoreCase(Uris.THING_URI)) continue;
-				if (isTopLevelClass(s)) {
-					Label label = this.classes.get(s);
-					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
-					buildClassHierarchy(childNode);
-					children.add(childNode);
-				}
-			}
-		} else {
-			HashMap<String, Label> subClasses = 
-					this.directSubClasses.get(node.getLabel().getUri());
-
-			for (String s : subClasses.keySet()) {
-				Label label = subClasses.get(s);
-				OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
-				
-				buildClassHierarchy(childNode);
-				children.add(childNode);
-			}
-		}
-		node.setChildren(children);
-	}
-	
+//	private void buildClassHierarchy(OntologyTreeNode node) {
+//		
+//		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
+//		if (node.getParent() == null) {
+//			for (String s : this.classes.keySet()) {
+////				if (s.equalsIgnoreCase(Uris.THING_URI)) continue;
+//				if (isTopLevelClass(s)) {
+//					Label label = this.classes.get(s);
+//					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
+//					buildClassHierarchy(childNode);
+//					children.add(childNode);
+//				}
+//			}
+//		} else {
+//			HashMap<String, Label> subClasses = 
+//					this.directSubClasses.get(node.getLabel().getUri());
+//
+//			for (String s : subClasses.keySet()) {
+//				Label label = subClasses.get(s);
+//				OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
+//				
+//				buildClassHierarchy(childNode);
+//				children.add(childNode);
+//			}
+//		}
+//		node.setChildren(children);
+//	}
+//	
 //	private boolean isTopLevelDataProperty(String property) {
 //		
 //		Set<String> superProperties = this.directSuperProperties.get(property).keySet();
