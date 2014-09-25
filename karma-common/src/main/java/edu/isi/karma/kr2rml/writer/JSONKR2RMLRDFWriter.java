@@ -145,7 +145,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 						JSONObject jsonObjectValue = (JSONObject)o;
 						if(isJustIdAndType(jsonObjectValue))
 						{
-							obj.put((String)key, jsonObjectValue.get("@id"));
+							//obj.put((String)key, jsonObjectValue.get("@id"));
 							types.put(jsonObjectValue.getString("@id"), jsonObjectValue.get("@id"));
 						}
 						else
