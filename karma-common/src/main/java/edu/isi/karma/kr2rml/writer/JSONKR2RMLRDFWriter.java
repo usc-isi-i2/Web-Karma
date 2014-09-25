@@ -97,7 +97,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		array.put(object);
 		if (shortHandPredicateURI.equalsIgnoreCase("rdf:type")) {
 			subject.put("@type", array);
-			subject.put("_type", new JSONArray(array.toString()));
+			//subject.put("_type", new JSONArray(array.toString()));
 		}
 		else {
 			subject.put(shortHandPredicateURI, array);
@@ -142,9 +142,17 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 				for (int i = 0; i < length; i++) {
 					Object o = array.remove(0);
 					if (o instanceof JSONObject) {
-						collapseSameType((JSONObject) o);
+						JSONObject jsonObjectValue = (JSONObject)o;
+						if(isJustIdAndType(jsonObjectValue))
+						{
+							obj.put((String)key, jsonObjectValue.get("@id"));
+						}
+						else
+						{
+							collapseSameType((JSONObject)o);
+						}
 						types.put(((JSONObject)o).getString("@id"), o);
-						types.put(((JSONObject)o).getString("_id"), o);
+						//types.put(((JSONObject)o).getString("_id"), o);
 					}			
 					else
 					{
@@ -162,10 +170,24 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 				}
 			}
 			if (value instanceof JSONObject)
-				collapseSameType((JSONObject)value);
+			{
+				JSONObject jsonObjectValue = (JSONObject)value;
+				if(isJustIdAndType(jsonObjectValue))
+				{
+					obj.put((String)key, jsonObjectValue.get("@id"));
+				}
+				else
+				{
+					collapseSameType((JSONObject)value);
+				}
+			}
 		}
 	}
 
+	protected boolean isJustIdAndType(JSONObject object)
+	{
+		return object.keySet().size() == 2;
+	}
 	@Override
 	protected void initializeOutput() {
 		outWriter.println("[");
@@ -188,7 +210,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			}
 		}
 		object.put("@id", subjUri);
-		object.put("_id", subjUri);
+		//object.put("_id", subjUri);
 		return object;
 	}
 
