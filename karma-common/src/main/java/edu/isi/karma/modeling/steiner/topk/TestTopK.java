@@ -77,16 +77,11 @@ public class TestTopK {
 		N.graph = graph;
 		N.nodes = nodes;
 
+//		N.writeGraphForSTAR("");
 //		N.loadGraphFromFile("STAR.txt");
 
-		int k = 10;
 		long startTime=System.currentTimeMillis();
 		N.getTopKTrees(3);
-		N.writeGraphForSTAR("");
-		int count = 0;
-		HashMap<Double, ApprSteinerTree> visitedTress = 
-				new HashMap<Double, ApprSteinerTree>();
-		
 		for(ResultGraph tree: N.resultQueue){
 			for (Fact f : tree.getFacts()) { 
 				System.out.println(f.toString());

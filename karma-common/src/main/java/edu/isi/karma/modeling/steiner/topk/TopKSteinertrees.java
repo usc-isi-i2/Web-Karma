@@ -38,7 +38,7 @@ public abstract class TopKSteinertrees {
 	public static Map<SteinerNode, TreeSet<SteinerEdge>> graph;
 	
 	//nodes of the graph
-	static Map<String, SteinerNode> nodes;
+	public static Map<String, SteinerNode> nodes;
 	
 	//maps node names to ids
 	public static Map<String, Integer> nodeToId= new HashMap<String, Integer>();
