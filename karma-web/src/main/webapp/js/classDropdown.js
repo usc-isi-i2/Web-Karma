@@ -7,7 +7,8 @@ var ClassDropdownMenu = (function() {
 		var menuId = "classDropdownMenu";
 		var worksheetId, columnId;
 		var columnUri, columnLabel, columnDomain, columnCategory, alignmentId;
-
+		var nodeType, isUri; //LiteralNode or InternalNode
+		
 		var options = [
 
 			//Title, function to call, needs file upload     
@@ -66,15 +67,16 @@ var ClassDropdownMenu = (function() {
 			console.log("showIncomingOutgoingLinks");
 			ManageIncomingOutgoingLinksDialog.getInstance().show(worksheetId,
 				columnId, alignmentId,
-				columnLabel, columnUri, columnDomain, "InternalNode");
+				columnLabel, columnUri, columnDomain, nodeType, isUri);
 		}
 
 		function addIncomingLink() {
 			console.log("addIncomingLink");
 			IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId,
 				columnId, alignmentId,
-				columnLabel, columnUri, columnDomain, "InternalNode",
+				columnLabel, columnUri, columnDomain, nodeType, isUri,
 				"incoming");
+			
 		};
 
 		function searchData() {
@@ -86,7 +88,7 @@ var ClassDropdownMenu = (function() {
 			console.log("addOutgoingLink");
 			IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId,
 				columnId, alignmentId,
-				columnLabel, columnUri, columnDomain, "InternalNode",
+				columnLabel, columnUri, columnDomain, nodeType, isUri,
 				"outgoing");
 		}
 
@@ -167,7 +169,9 @@ var ClassDropdownMenu = (function() {
 			container.append(div);
 		}
 
-		function show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, p_columnDomain, p_columnCategory, p_alignmentId, event) {
+		function show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, p_columnDomain, p_columnCategory, 
+				p_alignmentId, p_nodeType, p_isUri,
+				event) {
 			worksheetId = p_worksheetId;
 			columnLabel = p_columnLabel;
 			columnId = p_columnId;
@@ -175,8 +179,9 @@ var ClassDropdownMenu = (function() {
 			columnDomain = p_columnDomain;
 			columnCategory = p_columnCategory;
 			alignmentId = p_alignmentId;
-
-
+			nodeType = p_nodeType;
+			isUri = p_isUri;
+			
 			//console.log("Click for opening Menu");
 			$("#" + menuId).css({
 				display: "block",

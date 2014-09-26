@@ -46,6 +46,7 @@ import edu.isi.karma.rep.alignment.DisplayModel;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkType;
+import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
@@ -60,7 +61,10 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			.getLogger(AlignmentSVGVisualizationUpdate.class);
 
 	private enum JsonKeys {
-		worksheetId, alignmentId, label, id, nodeId, hNodeId, nodeType, source, target, linkType, sourceNodeId, targetNodeId, column, nodes, links, maxTreeHeight, linkStatus, linkUri, nodeDomain, isForcedByUser, edgeLinks, anchors, alignObject, hNodesCovered, height
+		worksheetId, alignmentId, label, id, hNodeId, nodeType, source,
+		target, linkType, sourceNodeId, targetNodeId, height, hNodesCovered,
+		nodes, links, maxTreeHeight, linkStatus, linkUri, nodeDomain, isForcedByUser, 
+		isUri, nodeId, column, anchors, edgeLinks, alignObject
 	}
 
 	private enum JsonValues {
@@ -77,7 +81,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 
 	private JSONObject getForceLayoutNodeJsonObject(int id, String label,
 			String nodeId, String nodeType, boolean isForcedByUser,
-			String nodeDomain) throws JSONException {
+			String nodeDomain, boolean isUri) throws JSONException {
 		JSONObject nodeObj = new JSONObject();
 		nodeObj.put(JsonKeys.label.name(), label);
 		nodeObj.put(JsonKeys.id.name(), id);
@@ -85,6 +89,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 		nodeObj.put(JsonKeys.nodeType.name(), nodeType);
 		nodeObj.put(JsonKeys.isForcedByUser.name(), isForcedByUser);
 		nodeObj.put(JsonKeys.nodeDomain.name(), nodeDomain);
+		nodeObj.put(JsonKeys.isUri.name(), isUri);
 		return nodeObj;
 	}
 
@@ -93,7 +98,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			String hNodeId, String nodeDomain, int columnIndex)
 			throws JSONException {
 		JSONObject nodeObj = getForceLayoutNodeJsonObject(id, label, nodeId,
-				nodeType, isForcedByUser, nodeDomain);
+				nodeType, isForcedByUser, nodeDomain, false);
 		nodeObj.put(JsonKeys.hNodeId.name(), hNodeId);
 		nodeObj.put(JsonKeys.column.name(), columnIndex);
 		return nodeObj;
@@ -183,10 +188,13 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 					if (node instanceof ColumnNode) {
 						// Already handled
 					} else {
+						boolean isUri = false;
+						if(node instanceof LiteralNode && ((LiteralNode)node).isUri())
+							isUri = true;
 						JSONObject nodeObj = getForceLayoutNodeJsonObject(
 								nodesIndexcounter, node.getLocalId(),
 								node.getId(), node.getType().name(),
-								node.isForced(), node.getUri());
+								node.isForced(), node.getUri(), isUri);
 						nodesArr.put(nodeObj);
 						verticesIndex.put(node, nodesIndexcounter++);
 					}
@@ -319,10 +327,16 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 						hNodeId = cNode.getHNodeId();
 						hNodeIdsAdded.add(cNode.getHNodeId());
 					}
+
+					boolean isUri = false;
+					if(node instanceof LiteralNode)
+						isUri = ((LiteralNode)node).isUri();
+
 					JSONObject nodeObj = getNormalLayoutNodeJsonObject(node.getLocalId(),
 							node.getId(), node.getType().name(), height,
 							node.isForced(), hNodeIdsCoveredByVertex,
-							hNodeId, node.getUri());
+							hNodeId, node.getUri(), isUri);
+
 					nodesArr.put(nodeObj);
 					verticesIndex.put(node, nodesIndexcounter++);
 				}
@@ -368,12 +382,14 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 						// attaches nodes to the columns
 						JSONArray hNodeIdsCoveredByVertex_holder = new JSONArray();
 						hNodeIdsCoveredByVertex_holder.put(cNode.getHNodeId());
+
 						JSONObject vertObj_holder = getNormalLayoutNodeJsonObject(
 								JsonValues.key.name(), source.getId()
 										+ "_holder",
 								NodeType.ColumnNode.name(), 0, false,
 								hNodeIdsCoveredByVertex_holder,
-								cNode.getHNodeId(), cNode.getLabel().getUri());
+								cNode.getHNodeId(), cNode.getLabel().getUri(), false);
+
 						nodesArr.put(vertObj_holder);
 						nodesIndexcounter++;
 						// Add the holder link
@@ -392,13 +408,20 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 						// Add 2 more holder nodes
 						// Start node
 						JSONArray hNodeIdsCoveredByVertex_holder = new JSONArray();
+						boolean isSUri = false;
+						if(source instanceof LiteralNode) {
+							isSUri = ((LiteralNode)source).isUri();
+						}
+							
 						hNodeIdsCoveredByVertex_holder.put(startHNodeId);
+
 						JSONObject startNode = getNormalLayoutNodeJsonObject("",
 								source.getId() + "_holder",
 								JsonValues.DataPropertyOfColumnHolder.name(),
 								height - 0.35, false,
 								hNodeIdsCoveredByVertex_holder, startHNodeId,
-								source.getLabel().getUri());
+								source.getLabel().getUri(), isSUri);
+
 						nodesArr.put(startNode);
 						nodesIndexcounter++;
 						// End node
@@ -406,12 +429,19 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 								.getHNodeId();
 						JSONArray hNodeIdsCoveredByVertex_holder_2 = new JSONArray();
 						hNodeIdsCoveredByVertex_holder_2.put(endHNodeId);
+
+						boolean isTUri = false;
+						if(target instanceof LiteralNode) {
+							isTUri = ((LiteralNode)target).isUri();
+						}
+						
 						JSONObject endNode = getNormalLayoutNodeJsonObject("",
 								target.getId() + "_holder",
 								JsonValues.DataPropertyOfColumnHolder.name(),
 								height - 0.35, false,
 								hNodeIdsCoveredByVertex_holder_2, endHNodeId,
-								target.getLabel().getUri());
+								target.getLabel().getUri(), isTUri);
+
 						nodesArr.put(endNode);
 						nodesIndexcounter++;
 						// Add the horizontal link
@@ -439,12 +469,18 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 										.getHNodeId());
 							}
 						}
+
+						boolean isSUri = false;
+						if(source instanceof LiteralNode) {
+							isSUri = ((LiteralNode)source).isUri();
+						}
 						JSONObject startNode = getNormalLayoutNodeJsonObject("",
 								source.getId() + "_holder",
 								JsonValues.DataPropertyOfColumnHolder.name(),
 								height + 0.65, false,
 								hNodeIdsCoveredByVertex_holder, "", source
-										.getLabel().getUri());
+										.getLabel().getUri(), isSUri);
+
 						nodesArr.put(startNode);
 						nodesIndexcounter++;
 						// End node
@@ -452,12 +488,19 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 								.getHNodeId();
 						JSONArray hNodeIdsCoveredByVertex_holder_2 = new JSONArray();
 						hNodeIdsCoveredByVertex_holder_2.put(endHNodeId);
+
+						boolean isTUri = false;
+						if(source instanceof LiteralNode) {
+							isTUri = ((LiteralNode)target).isUri();
+						}
+						
 						JSONObject endNode = getNormalLayoutNodeJsonObject("",
 								target.getId() + "_holder",
 								JsonValues.DataPropertyOfColumnHolder.name(),
 								height + 0.65, false,
 								hNodeIdsCoveredByVertex_holder_2, endHNodeId,
-								target.getLabel().getUri());
+								target.getLabel().getUri(), isTUri);
+
 						nodesArr.put(endNode);
 						nodesIndexcounter++;
 						// Add the horizontal link
@@ -475,9 +518,11 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			for (String hNodeId : hNodeIdList) {
 				JSONArray hNodeIdsCoveredByVertex = new JSONArray();
 				hNodeIdsCoveredByVertex.put(hNodeId);
+
 				JSONObject vertObj = getNormalLayoutNodeJsonObject("", hNodeId,
 						JsonValues.Unassigned.name(), 0, false,
-						hNodeIdsCoveredByVertex, hNodeId, "");
+						hNodeIdsCoveredByVertex, hNodeId, "", false);
+
 				nodesArr.put(vertObj);
 			}
 			topObj.put(JsonKeys.maxTreeHeight.name(), maxTreeHeight);
@@ -488,10 +533,11 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			logger.error("Error occured while writing JSON!", e);
 		}
 	}
+
 	private JSONObject getNormalLayoutNodeJsonObject(String label, String id,
 			String nodeType, double height, boolean isForcedByUser,
-			JSONArray hNodeIdsCoveredByVertex, String hNodeId, String nodeDomain)
-			throws JSONException {
+			JSONArray hNodeIdsCoveredByVertex, String hNodeId, String nodeDomain, 
+			boolean isUri) throws JSONException {
 		JSONObject nodeObj = new JSONObject();
 		nodeObj.put(JsonKeys.label.name(), label);
 		nodeObj.put(JsonKeys.id.name(), id);
@@ -502,8 +548,10 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 		if (!hNodeId.equals(""))
 			nodeObj.put(JsonKeys.hNodeId.name(), hNodeId);
 		nodeObj.put(JsonKeys.nodeDomain.name(), nodeDomain);
+		nodeObj.put(JsonKeys.isUri.name(), isUri);
 		return nodeObj;
 	}
+	
 	private JSONObject getNormalLayoutLinkJsonObject(String label, String id,
 			int sourceIndex, int targetIndex, String linkType,
 			String sourceNodeId, String targetNodeId, String linkStatus)

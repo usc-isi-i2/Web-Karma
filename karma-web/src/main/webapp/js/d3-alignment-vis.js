@@ -92,8 +92,9 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 			else
 				id = d.id;
 			ClassDropdownMenu.getInstance().show(worksheetId, id, d.label, id, d.nodeDomain, nodeCategory,
-					alignmentId, event);
+					alignmentId, d.isUri, event);
 		}
+
 	});
 	
 	layout.setLinkClickListener(function(d, event) {
@@ -116,11 +117,13 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 				sourceObj.label,
 				sourceObj.nodeDomain,
 				d.sourceNodeId,
+				d.source.isUri,
 				d.targetNodeId,
 				targetObj.nodeType,
 				targetObj.label,
 				targetObj.nodeDomain,
 				d.targetNodeId,
+				d.target.isUri,
 				event);
 	});
 }

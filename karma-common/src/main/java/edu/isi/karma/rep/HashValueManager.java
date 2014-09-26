@@ -82,24 +82,13 @@ public class HashValueManager {
 	public static void purgeHashTable() {
 		hashTable.clear();
 	}
-	private static String getHashValue(Table table, String NodeId) {
-		for (Row row : table.getRows(0, table.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
-			for (Node node : row.getNodes()) {
-				if (node.getId().compareTo(NodeId) == 0) {
-					return DigestUtils.shaHex(node.getValue().asString());
-				}
-				if (node.hasNestedTable()) {
-					String t = getHashValue(node.getNestedTable(), NodeId);
-					if (t != null)
-						return t;
-				}
-			}
+	
+	public static String getHashValue(Worksheet worksheet, String NodeId, RepFactory factory) {
+		Node node = factory.getNode(NodeId);
+		if (node != null) {
+			return DigestUtils.shaHex(node.getValue().asString());
 		}
 		return null;
-	}
-	public static String getHashValue(Worksheet worksheet, String NodeId) {
-		Table dataTable = worksheet.getDataTable();
-		return getHashValue(dataTable, NodeId);
 	}
 
 }
