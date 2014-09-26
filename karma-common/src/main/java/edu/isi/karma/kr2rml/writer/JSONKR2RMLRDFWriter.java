@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -97,7 +98,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		array.put(object);
 		if (shortHandPredicateURI.equalsIgnoreCase("rdf:type")) {
 			subject.put("@type", array);
-			//subject.put("_type", new JSONArray(array.toString()));
+			subject.put("_type", new JSONArray(array.toString()));
 		}
 		else {
 			subject.put(shortHandPredicateURI, array);
@@ -111,20 +112,22 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 
 	@Override
 	public void flush() {
-		//		finishRow();
 		outWriter.flush();
 	}
 
 	@Override
 	public void close() {
-		for(JSONObject value : rootObjects.values())
+		for(ConcurrentHashMap<String, JSONObject> records : this.rootObjectsByTriplesMapId.values())
 		{
-			collapseSameType(value);
-			if (!firstObject) {
-				outWriter.println(",");
+			for(JSONObject value : records.values())
+			{
+				collapseSameType(value);
+				if (!firstObject) {
+					outWriter.println(",");
+				}
+				firstObject = false;
+				outWriter.print(value.toString(4));
 			}
-			firstObject = false;
-			outWriter.print(value.toString(4));
 		}
 		outWriter.println("");
 		outWriter.println("]");
@@ -145,14 +148,13 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 						JSONObject jsonObjectValue = (JSONObject)o;
 						if(isJustIdAndType(jsonObjectValue))
 						{
-							//obj.put((String)key, jsonObjectValue.get("@id"));
 							types.put(jsonObjectValue.getString("@id"), jsonObjectValue.get("@id"));
 						}
 						else
 						{
 							collapseSameType((JSONObject)o);
 							types.put(((JSONObject)o).getString("@id"), o);
-							//types.put(((JSONObject)o).getString("_id"), o);
+							types.put(((JSONObject)o).getString("_id"), o);
 						}
 						
 					}			
@@ -188,7 +190,8 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 
 	protected boolean isJustIdAndType(JSONObject object)
 	{
-		return object.keySet().size() == 2;
+		//return object.keySet().size() <= 4;
+		return false;
 	}
 	@Override
 	protected void initializeOutput() {
@@ -212,7 +215,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			}
 		}
 		object.put("@id", subjUri);
-		//object.put("_id", subjUri);
+		object.put("_id", subjUri);
 		return object;
 	}
 
