@@ -92,7 +92,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 			else
 				id = d.id;
 			ClassDropdownMenu.getInstance().show(worksheetId, id, d.label, id, d.nodeDomain, nodeCategory,
-					alignmentId, d.isUri, event);
+					alignmentId, d.nodeType, d.isUri, event);
 		}
 
 	});

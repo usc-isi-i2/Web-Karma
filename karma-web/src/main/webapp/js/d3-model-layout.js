@@ -22,6 +22,25 @@ D3ModelLayout = function(htmlElement) {
 	SCCNodes = [];                             //SCC nodes set
 	SCCtmpNodes = [];                          //the nodes stack of SCC
 	layerLabel = [];                           //layers are divided into sections based on its layer
+	var Map = function(){
+		var data = [];
+		this.entry = data;
+		this.set = function(key, value){
+			data[key] = value;
+		}
+		this.get = function(key){
+			return data[key];
+		}
+		this.has = function(key){
+			return (key in data);
+		}
+		this.delete = function(key){
+			data.splice(data.indexOf(key), 1);
+		}
+		this.clear = function(){
+			data = [];
+		}
+	}
 	map = new Map();
 
 
