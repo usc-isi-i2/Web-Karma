@@ -164,7 +164,10 @@ public class ModelLearningGraphSparse extends ModelLearningGraph {
 			else if (e instanceof ColumnSubClassLink)
 				link = new ColumnSubClassLink(id);
 			else if (e instanceof DataPropertyOfColumnLink)
-				link = new DataPropertyOfColumnLink(id, ((DataPropertyOfColumnLink)e).getSpecializedColumnHNodeId());
+				link = new DataPropertyOfColumnLink(id, 
+						((DataPropertyOfColumnLink)e).getSpecializedColumnHNodeId(),
+						((DataPropertyOfColumnLink)e).getSpecializedLinkId()
+						);
 			else if (e instanceof ObjectPropertySpecializationLink)
 				link = new ObjectPropertySpecializationLink(id, ((ObjectPropertySpecializationLink)e).getSpecializedLinkId());
 			else {
