@@ -19,6 +19,17 @@
 	stroke-width : 4;
 }
 
+.linkLabel {
+	cursor: pointer;
+}
+
+.nodeLabel {
+	cursor: pointer;
+}
+
+.clickBoard {
+	cursor: pointer;
+}
 body {
 	
 }
