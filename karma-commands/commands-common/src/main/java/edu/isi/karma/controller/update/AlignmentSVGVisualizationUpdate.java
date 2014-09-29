@@ -162,13 +162,14 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 				String hNodeId = hNodeIdList.get(columnNum);
 				ColumnNode node = columnNodes.get(hNodeId);
 				JSONObject anchorObj;
+				HNode hNode = headers.getHNode(hNodeId, true);
 				if (node != null) {
 					anchorObj = getForceLayoutColumnJsonObject(columnNum,
-							node.getLocalId(), node.getId(), node.getType()
+							hNode.getColumnName(), node.getId(), node.getType()
 									.name(), node.isForced(), hNodeId,
 							node.getUri(), columnNum);
 				} else {
-					HNode hNode = headers.getHNode(hNodeId, true);
+					
 					anchorObj = getForceLayoutColumnJsonObject(columnNum,
 							hNode.getColumnName(), hNode.getId(), "ColumnNode",
 							false, hNodeId, "", columnNum);
