@@ -60,7 +60,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 				maxX = nodeMax;
 			nodesMap[node["id"]] = node;
 		});
-		alignJson.width = maxX;
+		alignJson.width = maxX + 100;
 		
 		$.each(alignJson.nodes, function(index, node) {
 			nodesMap[node["id"]] = node;

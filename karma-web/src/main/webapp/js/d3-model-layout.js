@@ -1,5 +1,6 @@
 D3ModelLayout = function(htmlElement) {
 	padding = 35;
+	windowWidth = window.innerWidth - padding;
 	width=0;           
 	height=0;
 
@@ -22,7 +23,7 @@ D3ModelLayout = function(htmlElement) {
 	SCCNodes = [];                             //SCC nodes set
 	SCCtmpNodes = [];                          //the nodes stack of SCC
 	layerLabel = [];                           //layers are divided into sections based on its layer
-	var Map = function(){
+	var myMap = function(){
 		var data = [];
 		this.entry = data;
 		this.set = function(key, value){
@@ -40,8 +41,8 @@ D3ModelLayout = function(htmlElement) {
 		this.clear = function(){
 			data = [];
 		}
-	}
-	map = new Map();
+	};
+	map = new myMap();
 
 
 	nodeRadius = 4;
@@ -324,7 +325,7 @@ D3ModelLayout = function(htmlElement) {
 				d.outside.position = {};
 				d.outside.isOutside = false;
 				if (d.noLayer){
-					//d.outside.isOutside = true;
+					d.outside.isOutside = true;
 					d.position.x = -1;
 					d.position.y = -1;
 				}
@@ -390,7 +391,9 @@ D3ModelLayout = function(htmlElement) {
 				labelForce.start();
 			})
 			.on("mouseout", function(d){
-				if (d.outside.isOutside){
+				if (d.noLayer){
+
+				} else if (d.outside.isOutside){
 					if (d.degree < 3){
 						d3.select("#nodeLabel" + d.id)
 							.attr("opacity", 0);
@@ -436,7 +439,7 @@ D3ModelLayout = function(htmlElement) {
 
 		nodes.attr("cx", function(d) {
 				if (d.outside.isOutside){				
-					return d.x = Math.max(xOffset + nodeRadius, Math.min(xOffset + width - nodeRadius, d.x));
+					return d.x = Math.max(xOffset + nodeRadius, Math.min(xOffset + windowWidth - nodeRadius, d.x));
 				} 
 				var differX = d.position.x - d.x;
 				if (d.type == "anchor"){
@@ -452,7 +455,7 @@ D3ModelLayout = function(htmlElement) {
 	        .attr("cy", function(d) { 
 	        	if (d.outside.isOutside){
 	        		d.y += -d.y * k;
-	        		return d.y = Math.max(nodeRadius, Math.min(height - nodeRadius, d.y));
+	        		return d.y = Math.max(nodeRadius + 12, Math.min(height - nodeRadius, d.y));
 	        	}
 	        	var differY = d.position.y - d.y;
 	        	if (d.type == "anchor"){
@@ -1044,7 +1047,7 @@ D3ModelLayout = function(htmlElement) {
 	}
 
 	window.onresize = function(event) {
-	    width = window.innerWidth - padding;
+	    windowWidth = Math.min(window.innerWidth - padding, width);
 	    //height=window.innerHeight - padding;
 	    //console.log(width + " " + height);
 	};
@@ -1106,6 +1109,10 @@ D3ModelLayout = function(htmlElement) {
 			outsideNodesNum = num;	
 			d3.selectAll(".nodeLabel")
 				.attr("opacity", function(d){
+					if (d.node.noLayer){
+						d.node.showLabel = true;
+						return 1;
+					}
 					if (d.type == "nodeLabel" && d.node.outside){
 						if ((!d.node.outside.isOutside && d.node.type != "anchor") || (d.node.outside.isOutside && d.node.degree >= 3)){
 							d.node.showLabel = true;
@@ -1196,6 +1203,7 @@ D3ModelLayout = function(htmlElement) {
 
 
 			width = d.width + padding;
+			windowWidth = Math.min(windowWidth, width);
 			height = (maxLayer + 0.5) * unitLinkLength;
 			if (width > window.innerWidth){
 				height += (maxLayer + 0.5) * outsideUnitLinkLength;
