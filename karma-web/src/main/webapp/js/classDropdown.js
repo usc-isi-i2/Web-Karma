@@ -25,6 +25,10 @@ var ClassDropdownMenu = (function() {
 				name: "Augment Data",
 				func: searchData
 			}, {
+				name: "Edit",
+				func: editNode,
+				nodeType: "LiteralNode"
+			}, {
 				name: "Delete",
 				func: deleteNode,
 				category: "forcedAdded"
@@ -105,6 +109,11 @@ var ClassDropdownMenu = (function() {
 			hide();
 		}
 
+		function editNode() {
+			console.log("Edit Node");
+			AddLiteralNodeDialog.getInstance().showEdit(worksheetId, columnId);
+		}
+		
 		function exportCSV() {
 			ExportCSVModelDialog.getInstance().show(worksheetId, alignmentId, columnId, "exportCSV");
 		};
@@ -153,7 +162,8 @@ var ClassDropdownMenu = (function() {
 						.text(option.name)
 						.click(option.func);
 					li.append(a);
-					li.data("category", option.category)
+					li.data("category", option.category);
+					li.data("nodeType", option.nodeType);
 				}
 				ul.append(li);
 			}
@@ -192,8 +202,9 @@ var ClassDropdownMenu = (function() {
 
 			//if(columnCategory.length > 0) {
 			$("li", $("#" + menuId)).each(function(index) {
-				var category = $(this).data("category");
 				var show = true;
+				
+				var category = $(this).data("category");
 				if (category) {
 					if (category.length > 0) {
 						var res = category.split(",");
@@ -209,6 +220,24 @@ var ClassDropdownMenu = (function() {
 							show = false;
 					}
 				}
+				
+				var selNodeType = $(this).data("nodeType");
+				if(selNodeType) {
+					if (selNodeType.length > 0) {
+						var res = selNodeType.split(",");
+						var found = false;
+						for (var j = 0; j < res.length; j++) {
+							var nt = res[j];
+							if (nt == nodeType) {
+								found = true;
+								break;
+							}
+						}
+						if (!found)
+							show = false;
+					}
+				}
+				
 				if (show)
 					$(this).show();
 				else

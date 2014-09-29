@@ -39,8 +39,8 @@ function drawChart(element) {
 	var xPadding = 10;
 	var yPadding = 2;
 
-	if(element["chartData"]) {
-		
+	
+	if (element["chartData"]) {
 	} else {
 		return;
 	}

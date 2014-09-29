@@ -2538,15 +2538,22 @@ var AddLiteralNodeDialog = (function() {
 		function PrivateConstructor() {
 			var dialog = $("#addLiteralNodeDialog");
 			var worksheetId;
+			var dialogMode;
+			var nodeId;
 			
 			function init() {
-						
+					dialogMode = "add";
+					
 					//Initialize what happens when we show the dialog
 					dialog.on('show.bs.modal', function (e) {
 							hideError();
-							$("#literal", dialog).val("");
-							$("#literalType", dialog).val("");
-							$("input#isUri", dialog).attr("checked", false);
+							if(dialogMode == "add") {
+								$(".modal-title", dialog).html("Add Literal Node");
+								$("#btnSave", dialog).text("Add");
+							} else {
+								$(".modal-title", dialog).html("Edit Literal Node");
+								$("#btnSave", dialog).text("Save");
+							}
 							$("#literalType").typeahead( 
 									{source:LITERAL_TYPE_ARRAY, minLength:0, items:"all"});
 					});
@@ -2585,6 +2592,9 @@ var AddLiteralNodeDialog = (function() {
 				 newInfo.push(getParamObject("isUri", isUri, "other"));
 				 newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
 				 
+				 if(dialogMode == "edit")
+					 newInfo.push(getParamObject("nodeId", nodeId, "other"));
+				 
 				 info["newInfo"] = JSON.stringify(newInfo);
 				 info["command"] = "AddLiteralNodeCommand";
 				 showLoading(worksheetId);
@@ -2618,11 +2628,63 @@ var AddLiteralNodeDialog = (function() {
 		 
 			function show(wsId) {
 				worksheetId = wsId;
+				dialogMode = "add";
+				$("#literal", dialog).val("");
+				$("#literalType", dialog).val("");
+				$("input#isUri", dialog).attr("checked", false);
 				dialog.modal({keyboard:true, show:true, backdrop:'static'});
 			};
 			
+			function showEdit(wsId, columnId) {
+				worksheetId = wsId;
+				nodeId = columnId;
+				
+				var info = new Object();
+				 info["workspaceId"] = $.workspaceGlobalInformation.id;
+				 info["worksheetId"] = worksheetId;
+				 info["nodeId"] = nodeId;
+				 
+				 var value, type, isUri;
+				 
+				 info["command"] = "GetLiteralNodeCommand";
+				 showLoading(worksheetId);
+				 var returned = $.ajax({
+						 url: "RequestController",
+						 type: "POST",
+						 data : info,
+						 async: false,
+						 dataType : "json",
+						 complete :
+								 function (xhr, textStatus) {
+										 var json = $.parseJSON(xhr.responseText);
+										 var update = json.elements[0];
+										 if(update.updateType == "LiteralNodeUpdate") {
+											 var node = update.node;
+											 value = node.value;
+											 type = node.type;
+											 isUri = node.isUri;
+										 } else {
+											 alert("Error getting information about the node");
+										 }
+										 hideLoading(worksheetId);
+								 },
+						 error :
+								 function (xhr, textStatus) {
+										 alert("Error occured while adding the node!");
+										 hideLoading(worksheetId);
+								 }
+				 });
+				 
+				$("#literal", dialog).val(value);
+				$("#literalType", dialog).val(type);
+				$("input#isUri", dialog).attr("checked", isUri);
+				dialogMode = "edit";
+				
+				dialog.modal({keyboard:true, show:true, backdrop:'static'});
+			}
 			return {    //Return back the public methods
 					show : show,
+					showEdit : showEdit,
 					init : init
 			};
 		};
