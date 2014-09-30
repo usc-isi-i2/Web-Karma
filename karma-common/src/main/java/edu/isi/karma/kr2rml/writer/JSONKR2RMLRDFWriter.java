@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -111,20 +112,22 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 
 	@Override
 	public void flush() {
-		//		finishRow();
 		outWriter.flush();
 	}
 
 	@Override
 	public void close() {
-		for(JSONObject value : rootObjects.values())
+		for(ConcurrentHashMap<String, JSONObject> records : this.rootObjectsByTriplesMapId.values())
 		{
-			collapseSameType(value);
-			if (!firstObject) {
-				outWriter.println(",");
+			for(JSONObject value : records.values())
+			{
+				collapseSameType(value);
+				if (!firstObject) {
+					outWriter.println(",");
+				}
+				firstObject = false;
+				outWriter.print(value.toString(4));
 			}
-			firstObject = false;
-			outWriter.print(value.toString(4));
 		}
 		outWriter.println("");
 		outWriter.println("]");
@@ -142,9 +145,18 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 				for (int i = 0; i < length; i++) {
 					Object o = array.remove(0);
 					if (o instanceof JSONObject) {
-						collapseSameType((JSONObject) o);
-						types.put(((JSONObject)o).getString("@id"), o);
-						types.put(((JSONObject)o).getString("_id"), o);
+						JSONObject jsonObjectValue = (JSONObject)o;
+						if(isJustIdAndType(jsonObjectValue))
+						{
+							types.put(jsonObjectValue.getString("@id"), jsonObjectValue.get("@id"));
+						}
+						else
+						{
+							collapseSameType((JSONObject)o);
+							types.put(((JSONObject)o).getString("@id"), o);
+							
+						}
+						
 					}			
 					else
 					{
@@ -162,10 +174,25 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 				}
 			}
 			if (value instanceof JSONObject)
-				collapseSameType((JSONObject)value);
+			{
+				JSONObject jsonObjectValue = (JSONObject)value;
+				if(isJustIdAndType(jsonObjectValue))
+				{
+					obj.put((String)key, jsonObjectValue.get("@id"));
+				}
+				else
+				{
+					collapseSameType((JSONObject)value);
+				}
+			}
 		}
 	}
 
+	protected boolean isJustIdAndType(JSONObject object)
+	{
+		//return object.keySet().size() <= 4;
+		return false;
+	}
 	@Override
 	protected void initializeOutput() {
 		outWriter.println("[");
