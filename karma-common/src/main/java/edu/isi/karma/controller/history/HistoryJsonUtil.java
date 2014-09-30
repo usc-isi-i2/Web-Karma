@@ -47,6 +47,10 @@ public class HistoryJsonUtil {
 		return getJSONObjectWithName(arg, json).get(ClientJsonKeys.value.name()).toString();
 	}
 
+	public static boolean valueExits(String arg, JSONArray json) throws JSONException {
+		return getJSONObjectWithName(arg, json) != null;
+	}
+	
 	public static boolean setArgumentValue(String name, Object value,
 			JSONArray inputJson) throws JSONException {
 		JSONObject obj = getJSONObjectWithName(name, inputJson);

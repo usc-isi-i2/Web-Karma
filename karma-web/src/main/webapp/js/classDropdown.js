@@ -7,7 +7,8 @@ var ClassDropdownMenu = (function() {
 		var menuId = "classDropdownMenu";
 		var worksheetId, columnId;
 		var columnUri, columnLabel, columnDomain, columnCategory, alignmentId;
-
+		var nodeType, isUri; //LiteralNode or InternalNode
+		
 		var options = [
 
 			//Title, function to call, needs file upload     
@@ -23,6 +24,10 @@ var ClassDropdownMenu = (function() {
 			}, {
 				name: "Augment Data",
 				func: searchData
+			}, {
+				name: "Edit",
+				func: editNode,
+				nodeType: "LiteralNode"
 			}, {
 				name: "Delete",
 				func: deleteNode,
@@ -66,15 +71,16 @@ var ClassDropdownMenu = (function() {
 			console.log("showIncomingOutgoingLinks");
 			ManageIncomingOutgoingLinksDialog.getInstance().show(worksheetId,
 				columnId, alignmentId,
-				columnLabel, columnUri, columnDomain, "InternalNode");
+				columnLabel, columnUri, columnDomain, nodeType, isUri);
 		}
 
 		function addIncomingLink() {
 			console.log("addIncomingLink");
 			IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId,
 				columnId, alignmentId,
-				columnLabel, columnUri, columnDomain, "InternalNode",
+				columnLabel, columnUri, columnDomain, nodeType, isUri,
 				"incoming");
+			
 		};
 
 		function searchData() {
@@ -86,7 +92,7 @@ var ClassDropdownMenu = (function() {
 			console.log("addOutgoingLink");
 			IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId,
 				columnId, alignmentId,
-				columnLabel, columnUri, columnDomain, "InternalNode",
+				columnLabel, columnUri, columnDomain, nodeType, isUri,
 				"outgoing");
 		}
 
@@ -103,6 +109,11 @@ var ClassDropdownMenu = (function() {
 			hide();
 		}
 
+		function editNode() {
+			console.log("Edit Node");
+			AddLiteralNodeDialog.getInstance().showEdit(worksheetId, columnId);
+		}
+		
 		function exportCSV() {
 			ExportCSVModelDialog.getInstance().show(worksheetId, alignmentId, columnId, "exportCSV");
 		};
@@ -151,7 +162,8 @@ var ClassDropdownMenu = (function() {
 						.text(option.name)
 						.click(option.func);
 					li.append(a);
-					li.data("category", option.category)
+					li.data("category", option.category);
+					li.data("nodeType", option.nodeType);
 				}
 				ul.append(li);
 			}
@@ -167,7 +179,9 @@ var ClassDropdownMenu = (function() {
 			container.append(div);
 		}
 
-		function show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, p_columnDomain, p_columnCategory, p_alignmentId, event) {
+		function show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, p_columnDomain, p_columnCategory, 
+				p_alignmentId, p_nodeType, p_isUri,
+				event) {
 			worksheetId = p_worksheetId;
 			columnLabel = p_columnLabel;
 			columnId = p_columnId;
@@ -175,8 +189,9 @@ var ClassDropdownMenu = (function() {
 			columnDomain = p_columnDomain;
 			columnCategory = p_columnCategory;
 			alignmentId = p_alignmentId;
-
-
+			nodeType = p_nodeType;
+			isUri = p_isUri;
+			
 			//console.log("Click for opening Menu");
 			$("#" + menuId).css({
 				display: "block",
@@ -187,8 +202,9 @@ var ClassDropdownMenu = (function() {
 
 			//if(columnCategory.length > 0) {
 			$("li", $("#" + menuId)).each(function(index) {
-				var category = $(this).data("category");
 				var show = true;
+				
+				var category = $(this).data("category");
 				if (category) {
 					if (category.length > 0) {
 						var res = category.split(",");
@@ -204,6 +220,24 @@ var ClassDropdownMenu = (function() {
 							show = false;
 					}
 				}
+				
+				var selNodeType = $(this).data("nodeType");
+				if(selNodeType) {
+					if (selNodeType.length > 0) {
+						var res = selNodeType.split(",");
+						var found = false;
+						for (var j = 0; j < res.length; j++) {
+							var nt = res[j];
+							if (nt == nodeType) {
+								found = true;
+								break;
+							}
+						}
+						if (!found)
+							show = false;
+					}
+				}
+				
 				if (show)
 					$(this).show();
 				else

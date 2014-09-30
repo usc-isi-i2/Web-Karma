@@ -70,27 +70,31 @@ var SetSemanticTypeDialog = (function() {
 
 				var suggestedTypes = getSuggestedTypes();
 
+				var addSemTypeOrAdvOption = function(type, isSelected, isCrfModelSuggested) {
+					if (type["DisplayLabel"] == "km-dev:classLink") {
+						addUriSemanticType(type["DisplayDomainLabel"], type["DomainUri"], type["DomainId"]);
+					} else if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
+						$("#isSubclassOfClass").prop('checked', false);
+						$("#isSubclassOfClassTextBox").val(type["DisplayDomainLabel"]);
+						$("div#semanticTypingAdvacedOptionsDiv").show();
+					} else if (type["DisplayLabel"] == "km-dev:dataPropertyOfColumnLink" ||
+							type["DisplayLabel"] == "km-dev:objectPropertySpecialization") {
+						$("#isSpecializationForEdge").prop('checked', false);
+						$("#isSpecializationForEdgeTextBox").val(type["DisplayDomainLabel"]);
+						$("div#semanticTypingAdvacedOptionsDiv").show();
+					} else {
+						addSemTypeObjectToCurrentTable(type, isSelected, isCrfModelSuggested);
+					}
+				};
+				
 				// Populate the table with existing types and CRF suggested types
 				$.each(existingTypes, function(index, type) {
 					// Take care of the special meta properties that are set through the advanced options
-					if (type["isMetaProperty"]) {
-						if (type["DisplayLabel"] == "km-dev:classLink") {
-							addUriSemanticType(type["DisplayDomainLabel"], type["DomainUri"], type["DomainId"]);
-						} else if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
-							$("#isSubclassOfClass").prop('checked', true);
-							$("#isSubclassOfClassTextBox").val(type["DisplayDomainLabel"]);
-						} else if (type["DisplayLabel"] == "km-dev:dataPropertyOfColumnLink") {
-							$("#isSpecializationForEdge").prop('checked', true);
-							$("#isSpecializationForEdgeTextBox").val(type["DisplayDomainLabel"]);
-						}
-						$("div#semanticTypingAdvacedOptionsDiv").show();
-					} else {
-						addSemTypeObjectToCurrentTable(type, true, false);
-					}
+					addSemTypeOrAdvOption(type, true, false);
 				});
 				if (suggestedTypes) {
 					$.each(suggestedTypes["Labels"], function(index, type) {
-						addSemTypeObjectToCurrentTable(type, false, true);
+						addSemTypeOrAdvOption(type, false, true);
 					});
 				}
 
@@ -943,7 +947,7 @@ var IncomingOutgoingLinksDialog = (function() {
 	function PrivateConstructor() {
 		var dialog = $("#incomingOutgoingLinksDialog");
 		var worksheetId, columnId, alignmentId, linkType;
-		var columnLabel, columnUri, columnDomain, columnType;
+		var columnLabel, columnUri, columnDomain, columnType, isColumnUri;
 
 		var selectedFromClass, selectedProperty, selectedToClass;
 		var allClasses = null,
@@ -1319,10 +1323,10 @@ var IncomingOutgoingLinksDialog = (function() {
 		function getProperties() {
 			if (allProperties == null) {
 				var props;
-				if (columnType == "ColumnNode")
+				if (columnType == "ColumnNode" || (columnType == "LiteralNode" && isColumnUri == false))
 					props = getAllDataProperties(worksheetId);
 				else
-					props = getAllObjectProperties(alignmentId);
+					props = getAllObjectProperties(worksheetId);
 				var result = [];
 				$.each(props, function(index, prop) {
 					result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
@@ -1341,7 +1345,7 @@ var IncomingOutgoingLinksDialog = (function() {
 			if (loadTree) {
 				var domain, range;
 				var startNodeClass = columnDomain;
-				if (columnType == "ColumnNode")
+				if (columnType == "ColumnNode" || columnType == "LiteralNode")
 					startNodeClass = "";
 				if (linkType == "incoming" || linkType == "changeIncoming" || linkType == "changeLink") {
 					domain = selectedClass.uri;
@@ -1457,7 +1461,8 @@ var IncomingOutgoingLinksDialog = (function() {
 		}
 
 		function show(wsId, colId, alignId,
-			colLabel, colUri, colDomain, colType, type, changeFrom, changeTo, changeLinkUri) {
+			colLabel, colUri, colDomain, colType, isColUri,
+			type, changeFrom, changeTo, changeLinkUri) {
 			worksheetId = wsId;
 			columnId = colId;
 			alignmentId = alignId;
@@ -1466,7 +1471,8 @@ var IncomingOutgoingLinksDialog = (function() {
 			columnUri = colUri;
 			columnDomain = colDomain;
 			columnType = colType;
-
+			isColumnUri = isColUri;
+			
 			linkType = type;
 			dialog.modal({
 				keyboard: true,
@@ -1483,7 +1489,7 @@ var IncomingOutgoingLinksDialog = (function() {
 
 
 		function showBlank(wsId, colId, alignId,
-			colLabel, colUri, colDomain, colType, type) {
+			colLabel, colUri, colDomain, colType, isColUri, type) {
 			selectedFromClass = {
 				label: "",
 				id: "",
@@ -1500,7 +1506,7 @@ var IncomingOutgoingLinksDialog = (function() {
 				uri: ""
 			};
 			show(wsId, colId, alignId,
-				colLabel, colUri, colDomain, colType, type);
+				colLabel, colUri, colDomain, colType, isColUri, type);
 		};
 
 
@@ -1542,7 +1548,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 	function PrivateConstructor() {
 		var dialog = $("#manageIncomingOutgoingLinksDialog");
 		var worksheetId, columnId, alignmentId, linkType;
-		var columnLabel, columnUri, columnDomain, columnType;
+		var columnLabel, columnUri, columnDomain, columnType, isColumnUri;
 		var initialLinks;
 
 		var classUI, propertyUI, editLink, classPropertyUIDiv;
@@ -1709,7 +1715,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 		function getProperties() {
 			if (allProperties == null) {
 				var props;
-				if (columnType == "ColumnNode")
+				if (columnType == "ColumnNode" || (columnType == "LiteralNode" && isColumnUri == false))
 					props = getAllDataProperties(worksheetId);
 				else
 					props = getAllObjectProperties(worksheetId);
@@ -1729,7 +1735,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 			if (loadTree) {
 				var domain, range;
 				var startNodeClass = columnDomain;
-				if (columnType == "ColumnNode")
+				if (columnType == "ColumnNode" || columnType == "LiteralNode")
 					startNodeClass = "";
 				if (editLink.type == "incoming") {
 					domain = selectedClass.uri;
@@ -1938,7 +1944,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 
 
 		function show(wsId, colId, alignId,
-			colLabel, colUri, colDomain, colType) {
+			colLabel, colUri, colDomain, colType, isColUri) {
 			worksheetId = wsId;
 			columnId = colId;
 			alignmentId = alignId;
@@ -1947,6 +1953,8 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 			columnUri = colUri;
 			columnDomain = colDomain;
 			columnType = colType;
+			isColumnUri = isColUri;
+			
 			dialog.modal({
 				keyboard: true,
 				show: true,
@@ -2530,15 +2538,22 @@ var AddLiteralNodeDialog = (function() {
 		function PrivateConstructor() {
 			var dialog = $("#addLiteralNodeDialog");
 			var worksheetId;
+			var dialogMode;
+			var nodeId;
 			
 			function init() {
-						
+					dialogMode = "add";
+					
 					//Initialize what happens when we show the dialog
 					dialog.on('show.bs.modal', function (e) {
 							hideError();
-							$("#literal", dialog).val("");
-							$("#literalType", dialog).val("");
-							$("input#isUri", dialog).attr("checked", false);
+							if(dialogMode == "add") {
+								$(".modal-title", dialog).html("Add Literal Node");
+								$("#btnSave", dialog).text("Add");
+							} else {
+								$(".modal-title", dialog).html("Edit Literal Node");
+								$("#btnSave", dialog).text("Save");
+							}
 							$("#literalType").typeahead( 
 									{source:LITERAL_TYPE_ARRAY, minLength:0, items:"all"});
 					});
@@ -2577,6 +2592,9 @@ var AddLiteralNodeDialog = (function() {
 				 newInfo.push(getParamObject("isUri", isUri, "other"));
 				 newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
 				 
+				 if(dialogMode == "edit")
+					 newInfo.push(getParamObject("nodeId", nodeId, "other"));
+				 
 				 info["newInfo"] = JSON.stringify(newInfo);
 				 info["command"] = "AddLiteralNodeCommand";
 				 showLoading(worksheetId);
@@ -2610,11 +2628,63 @@ var AddLiteralNodeDialog = (function() {
 		 
 			function show(wsId) {
 				worksheetId = wsId;
+				dialogMode = "add";
+				$("#literal", dialog).val("");
+				$("#literalType", dialog).val("");
+				$("input#isUri", dialog).attr("checked", false);
 				dialog.modal({keyboard:true, show:true, backdrop:'static'});
 			};
 			
+			function showEdit(wsId, columnId) {
+				worksheetId = wsId;
+				nodeId = columnId;
+				
+				var info = new Object();
+				 info["workspaceId"] = $.workspaceGlobalInformation.id;
+				 info["worksheetId"] = worksheetId;
+				 info["nodeId"] = nodeId;
+				 
+				 var value, type, isUri;
+				 
+				 info["command"] = "GetLiteralNodeCommand";
+				 showLoading(worksheetId);
+				 var returned = $.ajax({
+						 url: "RequestController",
+						 type: "POST",
+						 data : info,
+						 async: false,
+						 dataType : "json",
+						 complete :
+								 function (xhr, textStatus) {
+										 var json = $.parseJSON(xhr.responseText);
+										 var update = json.elements[0];
+										 if(update.updateType == "LiteralNodeUpdate") {
+											 var node = update.node;
+											 value = node.value;
+											 type = node.type;
+											 isUri = node.isUri;
+										 } else {
+											 alert("Error getting information about the node");
+										 }
+										 hideLoading(worksheetId);
+								 },
+						 error :
+								 function (xhr, textStatus) {
+										 alert("Error occured while adding the node!");
+										 hideLoading(worksheetId);
+								 }
+				 });
+				 
+				$("#literal", dialog).val(value);
+				$("#literalType", dialog).val(type);
+				$("input#isUri", dialog).attr("checked", isUri);
+				dialogMode = "edit";
+				
+				dialog.modal({keyboard:true, show:true, backdrop:'static'});
+			}
 			return {    //Return back the public methods
 					show : show,
+					showEdit : showEdit,
 					init : init
 			};
 		};
