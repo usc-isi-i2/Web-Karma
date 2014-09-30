@@ -1,8 +1,10 @@
 D3ModelLayout = function(htmlElement) {
 	padding = 35;
-	windowWidth = window.innerWidth - padding;
+	windowWidth = window.innerWidth * 0.8 - padding;
+	leftPanelWidth = window.innerWidth * 0.2;
 	width=0;           
 	height=0;
+
 
 	linkClickListener = null;
 	nodeClickListener = null;
@@ -41,7 +43,7 @@ D3ModelLayout = function(htmlElement) {
 		this.clear = function(){
 			data = [];
 		}
-	};
+	}
 	map = new myMap();
 
 
@@ -49,7 +51,7 @@ D3ModelLayout = function(htmlElement) {
 	unitLinkLength = 70;                       //difference between layers
 	outsideUnitLinkLength = 30;                //length for outside links
 	maxLayer = 0;                              //max layer number, base 0
-	reshuffleFrequency = 10;                   //pixel changes to excute scroll bar event
+	reshuffleFrequency = 8;                    //pixel changes to excute scroll bar event
 	xOffset = 0;                               //x position offset
 	outsideNodesNum = 0;                       //outside nodes number
 	firstTime = true;                          //first time to load the force-layout
@@ -58,8 +60,14 @@ D3ModelLayout = function(htmlElement) {
 
 	//create svg
 	svg = d3.select(htmlElement)                         
-	    .append("svg");
+	    .append("svg")
 	    //.on("mousemove", mousemove);
+	/*function  mousemove(){
+		var ary = d3.mouse(this);
+		pos.attr("x", ary[0] + 2)
+			.attr("y", ary[1] + 2)
+			.text(ary[0] + ", " + ary[1]);
+	}*/
 
 	//svg to draw nodes and links
 	forceSVG = svg.append("g");
@@ -142,7 +150,7 @@ D3ModelLayout = function(htmlElement) {
 		links.enter()
 			.append("path")
 			.attr("stroke", "#555")
-			.attr("stroke-width", 0)
+			.attr("stroke-width", 1)
 			//.attr("opacity", 0.5)
 			.attr("id", function(d, i){
 				return d.source.id + "link" + d.target.id;
@@ -151,10 +159,6 @@ D3ModelLayout = function(htmlElement) {
 				return "link " + d.linkType;
 			})
 			.attr("fill", "none");
-		links.transition()
-			.delay(250)
-			.duration(500)
-			.attr("stroke-width", 1);
 		links.exit()
 			.transition()
 			.duration(500)
@@ -209,6 +213,7 @@ D3ModelLayout = function(htmlElement) {
 				return "labelPart" + i;
 			})
 			.attr("opacity", 0);
+			
 		labelText = labelFrame.append("text")
 			.text(function(d, i){
 				return i % 2 == 0 ? "" : d.content;
@@ -233,9 +238,13 @@ D3ModelLayout = function(htmlElement) {
 				return -(this.getBBox().width / 2);
 			})
 			.attr("y", -3);
-		labelBoard = labelFrame.append("path")
-			//.attr("stroke-width", 1)
-			//.attr("stroke", "black")
+
+		labelBoard = labelFrame.append("path")	
+			.attr("stroke-width", 0)
+			.attr("stroke", "black")	
+			.attr("id", function(d, i){
+				return "labelBoard" + i;
+			})	
 			.attr("fill", function(d){
 				if (d.type == "nodeLabel"){
 					return "#555";
@@ -261,7 +270,8 @@ D3ModelLayout = function(htmlElement) {
 					maxLabelLength = Math.max(maxLabelLength, d.width);
 				}
 				return "M " + dx + " " + dy + " L " + (dx + textWidth) + " " + dy + " Q " + (dx + textWidth + textHeight / 3) + " " + (dy - textHeight / 2) + " " + (dx + textWidth) + " " + (dy - textHeight) + " L " + dx + " " + (dy - textHeight) + " Q " + (dx - textHeight / 3) + " " + (dy - textHeight / 2) + " " + dx + " " + dy;
-			})
+			});
+			
 		labelBoard.moveToBack();
 		labelClickBoard = labels.filter(function(d, i){
 			return (i % 2 == 1) && d.node.type != "anchor";
@@ -294,6 +304,19 @@ D3ModelLayout = function(htmlElement) {
 					nodeClickListener(d.node.original, d3.event);
 			}
 			//console.log(d.type);
+		})
+		.on("mouseover", function(d, i){
+			var obj = d3.selectAll("#labelBoard" + i);
+			console.log(obj);
+			d3.select("#labelBoard" + i)
+				.attr("stroke-width", 1)
+				.moveToFront();					
+		})
+		.on("mouseout", function(d, i){
+			//console.log("out");
+			d3.select("#labelBoard" + i)
+				.attr("stroke-width", 0)
+				.moveToBack();
 		});
 
 
@@ -329,6 +352,7 @@ D3ModelLayout = function(htmlElement) {
 					d.position.x = -1;
 					d.position.y = -1;
 				}
+				//console.log(d.id + " " + d.position.x);
 				return "red";
 			})
 			.attr("id", function(d, i){
@@ -336,10 +360,11 @@ D3ModelLayout = function(htmlElement) {
 			})
 			.call(drag)
 			.on("click", function(d){
-				if (d.outside.isOutside && !d.noLayer){
-					if (d.position.x < xOffset){		
-						var destination = Math.max(0, d.position.x - width / 2);
-						var xPosition = window.pageXOffset;
+				var offset = Math.max(xOffset - leftPanelWidth,0);
+				if (d.outside.isOutside && !d.noLayer){					
+					if (d.position.x < offset){		
+						var destination = Math.max(0, d.position.x - windowWidth / 2);
+						var xPosition = offset;
 						var differ = Math.max(30, (xPosition - destination) / 200);
 						var interval = setInterval(function(){
 							xPosition -= differ;
@@ -350,8 +375,8 @@ D3ModelLayout = function(htmlElement) {
 							}
 						}, 10);
 					} else {
-						var destination = Math.min(width - window.innerWidth, d.position.x - width / 2);
-						var xPosition = window.pageXOffset;
+						var destination = Math.min(width - windowWidth, d.position.x - windowWidth / 2);
+						var xPosition = offset;
 						var differ = Math.max(30, (destination - xPosition) / 200);
 						var interval = setInterval(function(){
 							xPosition += differ;
@@ -827,6 +852,13 @@ D3ModelLayout = function(htmlElement) {
 			nodesData[d.source].degree++;
 			nodesData[d.target].degree++;
 		});		
+
+		//mark anchors that do not connect to any nodes
+		nodesData.forEach(function(d){
+			if (d.type == 'anchor' && d.degree == 0){
+				d.unAssigned = true;
+			}
+		});
 	}
 
 	//detect the strong connect component in the graph
@@ -956,7 +988,11 @@ D3ModelLayout = function(htmlElement) {
 				d.forEach(function(e){
 					var tmp = [];
 					nodesChildren[e].forEach(function(f){
-						tmp.push(nodesData[f].xpos);
+						var tmpX = nodesData[f].xpos;
+						var offset = Math.max(xOffset - leftPanelWidth,0);
+						if (tmpX - nodeRadius > offset && tmpX + nodeRadius < offset + windowWidth){
+							tmp.push(tmpX);
+						}
 					});				
 					nodesData[e].xpos = (d3.min(tmp) + d3.max(tmp)) / 2;
 				}); 
@@ -1042,12 +1078,13 @@ D3ModelLayout = function(htmlElement) {
 		//console.log(window.pageXOffset);
 		if (Math.abs(window.pageXOffset - xOffset) > reshuffleFrequency){
 			xOffset = window.pageXOffset;
+			windowWidth = Math.min(window.innerWidth * 0.8 + Math.min(xOffset, leftPanelWidth) - padding, width);
 			setNodePosition();
 		}
 	}
 
 	window.onresize = function(event) {
-	    windowWidth = Math.min(window.innerWidth - padding, width);
+	    windowWidth = Math.min(window.innerWidth * 0.8 + Math.min(xOffset, leftPanelWidth) - padding, width);
 	    //height=window.innerHeight - padding;
 	    //console.log(width + " " + height);
 	};
@@ -1067,14 +1104,18 @@ D3ModelLayout = function(htmlElement) {
 					.attr("r", nodeRadius)
 					.attr("fill", "black");	
 				return;				
-			}
-			if (d.position.x - nodeRadius < xOffset || d.position.x + nodeRadius > xOffset + window.innerWidth){
+			}			
+			var offset = Math.max(xOffset - leftPanelWidth,0);
+			if (d.position.x - nodeRadius < offset || d.position.x + nodeRadius > offset + windowWidth){				
 				d3.select(this).classed("fixed", d.fixed = false);
 	  			d.position.x = d.xpos;
 				d.position.y = height - nodeRadius - d.layer * unitLinkLength;
 			}
-			if (d.position.x - nodeRadius < xOffset || d.position.x + nodeRadius > xOffset + window.innerWidth){
-				if (!d.outside.isOutside){
+			if (d.position.x - nodeRadius < offset || d.position.x + nodeRadius > offset + windowWidth){
+				if (d.unAssigned == true){
+
+				}
+				else if (!d.outside.isOutside){
 					d.outside.isOutside = true;				
 					d3.select(this)
 						.transition()
@@ -1101,6 +1142,7 @@ D3ModelLayout = function(htmlElement) {
 					num--;
 				}
 			}
+			//console.log(d.id + " " + d.outside.isOutside + " " + d.position.x);
 		});
 
 		//when some node changes its status, the correspoding links, labels and the x position of inside nodes should also change.
@@ -1164,6 +1206,7 @@ D3ModelLayout = function(htmlElement) {
 					return d.target.outside.isOutside;
 				}
 				if (d.source.outside && d.target.outside){
+					//console.log(d.source.outside.isOutside + " " + d.target.outside.isOutside);
 					return d.source.outside.isOutside || d.target.outside.isOutside;
 				}
 				return false;
@@ -1201,9 +1244,10 @@ D3ModelLayout = function(htmlElement) {
 			var tmpL = linksData.slice(0);
 			setLayer(tmpL, tmpEdgeLink);
 
-
+			xOffset = window.pageXOffset;
 			width = d.width + padding;
-			windowWidth = Math.min(windowWidth, width);
+			windowWidth = Math.min(windowWidth + Math.min(xOffset, leftPanelWidth), width);
+			//console.log(windowWidth);
 			height = (maxLayer + 0.5) * unitLinkLength;
 			if (width > window.innerWidth){
 				height += (maxLayer + 0.5) * outsideUnitLinkLength;
