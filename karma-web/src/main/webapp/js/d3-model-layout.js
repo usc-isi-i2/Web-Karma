@@ -247,6 +247,7 @@ D3ModelLayout = function(htmlElement) {
 			})	
 			.attr("fill", function(d){
 				if (d.type == "nodeLabel"){
+					if (d.node.isForcedByUser) return "rgb(42,98,126)";
 					return "#555";
 				}
 				if (d.type == "linkLabel" || d.type == "edgeLinkLabel"){
@@ -780,6 +781,7 @@ D3ModelLayout = function(htmlElement) {
 			node.degree = 0;
 			node.showLabel = false;
 			node.original = d;
+			node.isForcedByUser = d.isForcedByUser;
 			if (d.column || d.column == 0){
 				node.column = d.column;
 				node.type = "anchor";
