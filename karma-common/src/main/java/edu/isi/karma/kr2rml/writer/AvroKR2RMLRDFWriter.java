@@ -295,15 +295,19 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 
 	@Override
 	public void close() {
-		for(GenericRecord record : this.rootObjects.values())
+		for(ConcurrentHashMap<String, GenericRecord> records : this.rootObjectsByTriplesMapId.values())
 		{
-			try {
-				collapseSameType(record);
-				dfw.append(record);
-				
-			} catch (Exception e) {
-				LOG.error("Unable to append Avro record to writer!", e);
+			
+			for(GenericRecord record : records.values()){ 
+				try {
+					collapseSameType(record);
+					dfw.append(record);
+					
+				} catch (Exception e) {
+					LOG.error("Unable to append Avro record to writer!", e);
+				}
 			}
+			
 		}
 		try {
 			dfw.flush();
@@ -312,7 +316,6 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		} catch (IOException e) {
 			LOG.error("Unable to flush and close output!", e);
 		}
-		
 	}
 
 	@SuppressWarnings("rawtypes")

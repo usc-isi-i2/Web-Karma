@@ -177,7 +177,7 @@ public class WorksheetCommandHistoryExecutor {
 							uc = new UpdateContainer(update);
 						else
 							uc.add(update);
-						hTable.addHNode(nameObjColumnName, HNodeType.Regular, workspace.getWorksheet(worksheetId), workspace.getFactory());						
+						node = hTable.addHNode(nameObjColumnName, HNodeType.Regular, workspace.getWorksheet(worksheetId), workspace.getFactory());						
 					}
 
 					if (j == hNodeJSONRep.length()-1) {		// Found!
