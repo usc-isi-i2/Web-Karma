@@ -61,13 +61,13 @@ D3ModelLayout = function(htmlElement) {
 	//create svg
 	svg = d3.select(htmlElement)                         
 	    .append("svg")
-	    //.on("mousemove", mousemove);
-	/*function  mousemove(){
+	   ;// .on("mousemove", mousemove);
+	function  mousemove(){
 		var ary = d3.mouse(this);
 		pos.attr("x", ary[0] + 2)
 			.attr("y", ary[1] + 2)
 			.text(ary[0] + ", " + ary[1]);
-	}*/
+	}
 
 	//svg to draw nodes and links
 	forceSVG = svg.append("g");
@@ -91,7 +91,6 @@ D3ModelLayout = function(htmlElement) {
 
 	//force layout for nodes
 	force = d3.layout.force()
-		//.size([Math.max(width, columns * barWidth), height])
 		.gravity(0)
 		.linkStrength(function(d){
 			if (d.type == "edgeLink"){
@@ -111,12 +110,16 @@ D3ModelLayout = function(htmlElement) {
 			return 0;
 		})
 		.friction(0.8)
-		//.theta(0.1)
 		.charge(-100)
-		.linkDistance(outsideUnitLinkLength)
+		.linkDistance(function(d){
+			if (d.target.noLayer){
+				return outsideUnitLinkLength * 4;
+			}
+			return outsideUnitLinkLength;
+		})
 		.on("tick", tick);
-		// force layout for labels
 
+	// force layout for labels
 	labelForce = d3.layout.force()
 		//.size([Math.max(width, columns * barWidth), height])
 		.gravity(0)
@@ -191,7 +194,8 @@ D3ModelLayout = function(htmlElement) {
 			.attr("r", 0)
 			//.attr("fill", "black");
 		
-		labelFrame = labels.append("g")
+		labelFrame = labels
+			.append("g")
 			.attr("class", function(d){
 				if (d.type == "nodeLabel"){
 					return "nodeLabel";
@@ -206,7 +210,7 @@ D3ModelLayout = function(htmlElement) {
 				if (d.type == "nodeLabel"){
 					return "nodeLabel" + d.node.id;
 				} else if (d.type == "linkLabel"){
-					return "linkLabel" + nodesData[d.node.src].id + " " + nodesData[d.node.tgt].id;
+					return "linkLabel" + d.node.src + "-" + d.node.tgt;
 				} else if (d.type == "edgeLinkLabel"){
 					return "edgeLinkLabel" + nodesData[d.node.tgt].id;
 				}
@@ -214,9 +218,13 @@ D3ModelLayout = function(htmlElement) {
 			})
 			.attr("opacity", 0);
 			
-		labelText = labelFrame.append("text")
+		labelText = labelFrame
+			.filter(function(d, i){
+				return i % 2 == 1;
+			})
+			.append("text")
 			.text(function(d, i){
-				return i % 2 == 0 ? "" : d.content;
+				return d.content;
 			})
 			.attr("fill", function(d){
 				if (d.type == "nodeLabel"){
@@ -239,11 +247,19 @@ D3ModelLayout = function(htmlElement) {
 			})
 			.attr("y", -3);
 
-		labelBoard = labelFrame.append("path")	
+		labelBoard = labelFrame
+			.filter(function(d, i){
+				return i % 2 == 1;
+			})
+			.append("path")	
 			.attr("stroke-width", 0)
-			.attr("stroke", "black")	
-			.attr("id", function(d, i){
-				return "labelBoard" + i;
+			.attr("stroke", "gold")	
+			.attr("id", function(d){
+				if (d.type == "nodeLabel"){
+					return "labelBoard" + d.node.id;
+				} else if (d.type == "linkLabel"){
+					return "labelBoard" + d.node.src + "-" + d.node.tgt;
+				}
 			})	
 			.attr("fill", function(d){
 				if (d.type == "nodeLabel"){
@@ -279,6 +295,13 @@ D3ModelLayout = function(htmlElement) {
 		})
 		.append("rect")
 		.classed("clickBoard", true)
+		.attr("id", function(d){
+			if (d.type == "nodeLabel"){
+				return "clickBoard" + d.node.id;
+			} else if (d.type == "linkLabel"){
+				return "clickBoard" + d.node.src + " " + d.node.tgt;
+			}
+		})
 		.attr("fill", "transparent")
 		.attr("width", function(d){
 			var w = Math.ceil(this.parentNode.childNodes[1].getBBox().width);
@@ -306,18 +329,36 @@ D3ModelLayout = function(htmlElement) {
 			}
 			//console.log(d.type);
 		})
-		.on("mouseover", function(d, i){
-			var obj = d3.selectAll("#labelBoard" + i);
-			console.log(obj);
-			d3.select("#labelBoard" + i)
-				.attr("stroke-width", 1)
-				.moveToFront();					
+		.on("mouseover", function(d){
+			var surfix = "";
+			var frameId = "";
+			if (d.type == "nodeLabel"){
+				surfix += d.node.id;
+				frameId = "#nodeLabel" + d.node.id;
+			} else if (d.type == "linkLabel"){
+				surfix += d.node.src + "-" + d.node.tgt;
+				frameId = "#linkLabel" + d.node.src + "-" + d.node.tgt;
+			}
+			/*var obj = d3.select(frameId);
+			obj[0].parentNode.appendChild(obj[0]);
+			d3.select("#labelBoard" + surfix)
+				.attr("stroke-width", 2);
+			console.log(obj[0]);*/
 		})
 		.on("mouseout", function(d, i){
-			//console.log("out");
-			d3.select("#labelBoard" + i)
-				.attr("stroke-width", 0)
-				.moveToBack();
+			var surfix = "";
+			var frameId = "";
+			if (d.type == "nodeLabel"){
+				surfix += d.node.id;
+				frameId = "nodeLabel" + d.node.id;
+			} else if (d.type == "linkLabel"){
+				surfix += d.node.src + "-" + d.node.tgt;
+				frameId = "linkLabel" + d.node.src + "-" + d.node.tgt;
+			}
+			d3.select("#labelBoard" + surfix)
+				.attr("stroke-width", 0);
+			//d3.select(frameId)
+				//.moveToBack();
 		});
 
 
@@ -540,7 +581,7 @@ D3ModelLayout = function(htmlElement) {
 					return "M" + b.x + " " + b.y + " L " + a.x + " " + a.y;
 				}
 			} else {
-				if ((a.outside.isOutside && b.outside.isOutside) || (b.outside.isOutside && b.type == "anchor") || b.noLayer){
+				if ((a.outside.isOutside && b.outside.isOutside) || (b.outside.isOutside && b.type == "anchor")){
 					return "M" + b.x + " " + b.y + " L " + a.x + " " + a.y;
 				}
 			}
@@ -548,6 +589,16 @@ D3ModelLayout = function(htmlElement) {
 			var ax = a.x - (a.x - b.x) / 3;
 			var by = b.y - (b.y - a.y) / 3;
 			var p = "M " + b.x + " " + b.y + " C " + b.x + " " + by + " " + ax + " " + a.y + " " + a.x + " " + a.y;
+
+			//for no Layer nodes
+			if (b.noLayer){
+				d.up = true;
+				d.arrow = {};
+				d.arrow.x = b.x;
+				d.arrow.y = b.y;
+				getArrowAngle(d, ax, by, 0.05);
+				return p;
+			}
 
 			//calculate the position for upward arrow
 			if (b.layer > a.layer){
@@ -584,7 +635,7 @@ D3ModelLayout = function(htmlElement) {
 		});	
 
 		linkArrow.attr("points", function(d){
-			if (d.target.outside.isOutside || d.target.noLayer){
+			if (d.target.outside.isOutside && d.target.noLayer == undefined){
 				return "";
 			}
 			if (d.up){
@@ -605,7 +656,7 @@ D3ModelLayout = function(htmlElement) {
 			return ax + "," + ay + " " + bx + "," + by + " " + cx + "," + cy;
 		})
 		.attr("transform", function(d){
-			if (!d.target.outside.isOutside && !d.target.noLayer){
+			if (!d.target.outside.isOutside || d.target.noLayer){
 				return "rotate(" + d.angle + " " + d.arrow.x + " " + d.arrow.y + ")";
 			}
 		})
@@ -1071,9 +1122,9 @@ D3ModelLayout = function(htmlElement) {
 
 	//move element to the top of its parent's children
 	d3.selection.prototype.moveToFront = function() {
-	  return this.each(function(){
-	    this.parentNode.appendChild(this);
-	  });   //move component to the up of svg
+	  	return this.each(function(){
+	    	this.parentNode.appendChild(this);
+	  	});   //move component to the up of svg
 	};
 
 	window.onscroll = function(event){
@@ -1104,7 +1155,7 @@ D3ModelLayout = function(htmlElement) {
 					.duration(500)
 					.attr("opacity", 0.8)
 					.attr("r", nodeRadius)
-					.attr("fill", "black");	
+					.attr("fill", "red");	
 				return;				
 			}			
 			var offset = Math.max(xOffset - leftPanelWidth,0);
@@ -1169,6 +1220,10 @@ D3ModelLayout = function(htmlElement) {
 			d3.selectAll(".linkLabel")
 				.attr("opacity", function(d){
 					if (d.type == "linkLabel"){
+						if (nodesData[d.node.tgt].noLayer){
+							d.show = true;
+							return 1;
+						}
 						if (nodesData[d.node.src].outside.isOutside || nodesData[d.node.tgt].outside.isOutside){
 							d.show = false;
 							return 0;
@@ -1206,6 +1261,9 @@ D3ModelLayout = function(htmlElement) {
 			links.classed("outsideLink", function(d){
 				if (d.type == "edgeLink"){
 					return d.target.outside.isOutside;
+				}
+				if (d.target.noLayer){
+					return false;
 				}
 				if (d.source.outside && d.target.outside){
 					//console.log(d.source.outside.isOutside + " " + d.target.outside.isOutside);
