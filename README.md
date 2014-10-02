@@ -63,7 +63,7 @@ mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.ar
 --portnumber 1433 --dbname Employees --tablename Person 
 --modelfilepath \"/Users/shubhamgupta/Documents/db-r2rml-model.ttl\"
 --outputfile db-rdf.n3
---outputFileJSONPath db-rdf.json" -Dexec.classpathScope=compile
+--JSONOutputFile db-rdf.json" -Dexec.classpathScope=compile
 ```
 
 You can do `mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--help"` to get information about required arguments.
