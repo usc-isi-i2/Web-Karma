@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.GraphBuilder;
+import edu.isi.karma.modeling.alignment.GraphBuilderTopK;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
@@ -83,7 +84,7 @@ public abstract class ModelLearningGraph {
 		return instance;
 	}
 	
-	protected ModelLearningGraph(OntologyManager ontologyManager) throws IOException {
+	protected ModelLearningGraph(OntologyManager ontologyManager, ModelLearningGraphType type) throws IOException {
 		
 		this.ontologyManager = ontologyManager;
 		
@@ -94,7 +95,10 @@ public abstract class ModelLearningGraph {
 			logger.info("loading the alignment graph ...");
 			DirectedWeightedMultigraph<Node, DefaultLink> graph =
 					GraphUtil.importJson(getGraphJsonName());
-			this.graphBuilder = new GraphBuilder(ontologyManager, graph);
+			if (type == ModelLearningGraphType.Compact)
+				this.graphBuilder = new GraphBuilderTopK(ontologyManager, graph);
+			else
+				this.graphBuilder = new GraphBuilder(ontologyManager, graph);
 			this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 			logger.info("loading is done!");
 		}
@@ -105,10 +109,13 @@ public abstract class ModelLearningGraph {
 		this.lastUpdateTime = System.currentTimeMillis();
 	}
 	
-	protected ModelLearningGraph(OntologyManager ontologyManager, boolean emptyInstance) {
+	protected ModelLearningGraph(OntologyManager ontologyManager, boolean emptyInstance, ModelLearningGraphType type) {
 		this.ontologyManager = ontologyManager;
 		this.nodeIdFactory = new NodeIdFactory();
-		this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
+		if (type == ModelLearningGraphType.Compact)
+			this.graphBuilder = new GraphBuilderTopK(ontologyManager, this.nodeIdFactory, false);
+		else
+			this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
 		this.lastUpdateTime = System.currentTimeMillis();
 	}
 	

@@ -39,6 +39,7 @@ import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.learner.SemanticTypeMapping;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.CompactLink;
 import edu.isi.karma.rep.alignment.CompactObjectPropertyLink;
@@ -356,6 +357,14 @@ public class GraphBuilder {
 	public Set<Node> getForcedNodes() {
 		return this.forcedNodes;
 	}
+
+	public boolean addLink(Node source, Node target, DefaultLink link, Double weight) {
+		if (addLink(source, target, link)) {
+			if (weight != null) changeLinkWeight(link, weight);
+			return true;
+		}
+		return false;
+	}
 	
 	public boolean addLink(Node source, Node target, DefaultLink link) {
 
@@ -396,33 +405,7 @@ public class GraphBuilder {
 		
 		this.visitedSourceTargetPairs.add(source.getId() + target.getId());
 		
-		double w = 0.0;
-		if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct)
-			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
-		if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct)
-			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
-		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Indirect)
-			w = ModelingParams.PROPERTY_INDIRECT_WEIGHT;
-		else if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Indirect)
-			w = ModelingParams.PROPERTY_INDIRECT_WEIGHT;
-		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithOnlyDomain)
-			w = ModelingParams.PROPERTY_WITH_ONLY_DOMAIN_WEIGHT;
-		else if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithOnlyDomain)
-			w = ModelingParams.PROPERTY_WITH_ONLY_DOMAIN_WEIGHT;
-		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithOnlyRange)
-			w = ModelingParams.PROPERTY_WITH_ONLY_RANGE_WEIGHT;
-		else if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithOnlyRange)
-			w = ModelingParams.PROPERTY_WITH_ONLY_RANGE_WEIGHT;
-		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithoutDomainAndRange)
-			w = ModelingParams.PROPERTY_WITHOUT_DOMAIN_RANGE_WEIGHT;
-		else if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithoutDomainAndRange)
-			w = ModelingParams.PROPERTY_WITHOUT_DOMAIN_RANGE_WEIGHT;
-		else if (link instanceof SubClassLink)
-			w = ModelingParams.SUBCLASS_WEIGHT;
-		else if (link instanceof CompactSubClassLink)
-			w = ModelingParams.SUBCLASS_WEIGHT;
-		else
-			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
+		double w = computeWeight(link);
 		
 		this.graph.setEdgeWeight(link, w);
 				
@@ -494,6 +477,37 @@ public class GraphBuilder {
 		
 		logger.debug("exit>");		
 		return true;
+	}
+	
+	private double computeWeight(DefaultLink link) {
+		double w = 0.0;
+		if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct)
+			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
+		if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct)
+			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
+		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Indirect)
+			w = ModelingParams.PROPERTY_INDIRECT_WEIGHT;
+		else if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Indirect)
+			w = ModelingParams.PROPERTY_INDIRECT_WEIGHT;
+		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithOnlyDomain)
+			w = ModelingParams.PROPERTY_WITH_ONLY_DOMAIN_WEIGHT;
+		else if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithOnlyDomain)
+			w = ModelingParams.PROPERTY_WITH_ONLY_DOMAIN_WEIGHT;
+		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithOnlyRange)
+			w = ModelingParams.PROPERTY_WITH_ONLY_RANGE_WEIGHT;
+		else if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithOnlyRange)
+			w = ModelingParams.PROPERTY_WITH_ONLY_RANGE_WEIGHT;
+		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithoutDomainAndRange)
+			w = ModelingParams.PROPERTY_WITHOUT_DOMAIN_RANGE_WEIGHT;
+		else if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithoutDomainAndRange)
+			w = ModelingParams.PROPERTY_WITHOUT_DOMAIN_RANGE_WEIGHT;
+		else if (link instanceof SubClassLink)
+			w = ModelingParams.SUBCLASS_WEIGHT;
+		else if (link instanceof CompactSubClassLink)
+			w = ModelingParams.SUBCLASS_WEIGHT;
+		else
+			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
+		return w;
 	}
 	
 	public void changeLinkStatus(LabeledLink link, LinkStatus newStatus) {
@@ -1180,8 +1194,7 @@ public class GraphBuilder {
 		logger.info(Integer.class.getFields()[0].getName());
 		
 		/** Check if any ontology needs to be preloaded **/
-		String preloadedOntDir = "/Users/mohsen/karma/preloaded-ontologies/";
-		File ontDir = new File(preloadedOntDir);
+		File ontDir = new File(Params.ONTOLOGY_DIR);
 		if (ontDir.exists()) {
 			File[] ontologies = ontDir.listFiles();
 			OntologyManager mgr = new OntologyManager();

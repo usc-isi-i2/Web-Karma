@@ -45,9 +45,11 @@ public class GraphVizUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(GraphVizUtil.class);
 
-	private static double roundTwoDecimals(double d) {
-        DecimalFormat twoDForm = new DecimalFormat("#.##");
-        return Double.valueOf(twoDForm.format(d));
+	private static double roundDecimals(double d, int k) {
+		String format = "";
+		for (int i = 0; i < k; i++) format += "#";
+        DecimalFormat DForm = new DecimalFormat("#." + format);
+        return Double.valueOf(DForm.format(d));
 	}
 	
 	public static String getLocalName(String uri) {
@@ -203,9 +205,9 @@ public class GraphVizUtil {
 
 			if (showLinkMetaData) {
 				edgeLabel += metaDataSeparator;
-				edgeLabel += "w=" + roundTwoDecimals(e.getWeight());
-				edgeLabel += metaDataSeparator;
-				edgeLabel += getModelIds(modelIds);
+				edgeLabel += "w=" + roundDecimals(e.getWeight(), 4);
+//				edgeLabel += metaDataSeparator;
+//				edgeLabel += getModelIds(modelIds);
 			}
 
 			edge.attr("label", edgeLabel);

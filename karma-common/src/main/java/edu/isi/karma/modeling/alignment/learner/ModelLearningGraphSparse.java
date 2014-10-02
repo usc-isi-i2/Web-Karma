@@ -55,11 +55,11 @@ public class ModelLearningGraphSparse extends ModelLearningGraph {
 	private static Logger logger = LoggerFactory.getLogger(ModelLearningGraphSparse.class);
 
 	public ModelLearningGraphSparse(OntologyManager ontologyManager) throws IOException {
-		super(ontologyManager);
+		super(ontologyManager, ModelLearningGraphType.Sparse);
 	}
 
 	public ModelLearningGraphSparse(OntologyManager ontologyManager, boolean emptyInstance) {
-		super(ontologyManager, emptyInstance);
+		super(ontologyManager, emptyInstance, ModelLearningGraphType.Sparse);
 	}
 
 //	protected static ModelLearningGraphSparse getInstance(OntologyManager ontologyManager) {
