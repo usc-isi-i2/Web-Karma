@@ -9,8 +9,8 @@ var PropertyDropdownMenu = (function() {
 		var alignmentId;
 		var propertyId;
 		var propertyUri;
-		var sourceNodeId, sourceLabel, sourceDomain, sourceId, sourceNodeType;
-		var targetNodeId, targetLabel, targetDomain, targetId, targetNodeType;
+		var sourceNodeId, sourceLabel, sourceDomain, sourceId, sourceNodeType, sourceIsUri;
+		var targetNodeId, targetLabel, targetDomain, targetId, targetNodeType, targetIsUri;
 
 		var options = [
 			//Title, function to call, needs file upload     
@@ -39,7 +39,7 @@ var PropertyDropdownMenu = (function() {
 			dialog.setSelectedProperty(propertyUri);
 			dialog.show(worksheetId,
 				targetNodeId, alignmentId,
-				targetLabel, targetId, targetDomain, targetNodeType,
+				targetLabel, targetId, targetDomain, targetNodeType, targetIsUri,
 				"changeLink", sourceNodeId, targetNodeId, propertyUri);
 		};
 
@@ -78,7 +78,7 @@ var PropertyDropdownMenu = (function() {
 			dialog.setSelectedProperty(propertyUri);
 			dialog.show(worksheetId,
 				targetNodeId, alignmentId,
-				targetLabel, targetId, targetDomain, targetNodeType,
+				targetLabel, targetId, targetDomain, targetNodeType, targetIsUri,
 				"changeIncoming", sourceNodeId, targetNodeId, propertyUri);
 
 		}
@@ -90,7 +90,7 @@ var PropertyDropdownMenu = (function() {
 			dialog.setSelectedProperty(propertyUri);
 			dialog.show(worksheetId,
 				sourceNodeId, alignmentId,
-				sourceLabel, sourceId, sourceDomain, sourceNodeType,
+				sourceLabel, sourceId, sourceDomain, sourceNodeType, sourceIsUri,
 				"changeOutgoing", sourceNodeId, targetNodeId, propertyUri);
 		}
 
@@ -136,8 +136,8 @@ var PropertyDropdownMenu = (function() {
 
 
 		function show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri,
-			p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceDomain, p_sourceId,
-			p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetDomain, p_targetId,
+			p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceDomain, p_sourceId, p_sourceIsUri,
+			p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetDomain, p_targetId, p_targetIsUri,
 			event) {
 			worksheetId = p_worksheetId;
 			alignmentId = p_alignmentId;
@@ -147,15 +147,17 @@ var PropertyDropdownMenu = (function() {
 			sourceLabel = p_sourceLabel;
 			sourceDomain = p_sourceDomain;
 			sourceId = p_sourceId;
+			sourceIsUri = p_sourceIsUri;
 			targetNodeId = p_targetNodeId;
 			targetLabel = p_targetLabel;
 			targetDomain = p_targetDomain;
 			targetId = p_targetId;
-
+			targetIsUri = p_targetIsUri;
+			
 			sourceNodeType = p_sourceNodeType;
 			targetNodeType = p_targetNodeType;
 
-			if (p_sourceNodeType == "ColumnNode") {
+			if (p_sourceNodeType == "ColumnNode" || p_sourceNodeType == "LiteralNode") {
 				for (var i = 0; i < options.length; i++) {
 					if (options[i][0] == "Change From") {
 						disableItem(i);
@@ -164,7 +166,7 @@ var PropertyDropdownMenu = (function() {
 				}
 			}
 
-			if (p_targetNodeType == "ColumnNode") {
+			if (p_targetNodeType == "ColumnNode" || p_targetNodeType == "LiteralNode") {
 				for (var i = 0; i < options.length; i++) {
 					if (options[i][0] == "Change To") {
 						disableItem(i);
@@ -172,6 +174,8 @@ var PropertyDropdownMenu = (function() {
 					}
 				}
 			}
+			
+			
 			//console.log("Click for opening Menu");
 			$("#" + menuId).css({
 				display: "block",

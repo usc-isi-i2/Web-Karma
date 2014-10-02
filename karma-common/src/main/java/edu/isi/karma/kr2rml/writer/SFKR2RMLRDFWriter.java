@@ -18,7 +18,7 @@ public abstract class SFKR2RMLRDFWriter<E> implements KR2RMLRDFWriter {
 	protected PrintWriter outWriter;
 	protected ConcurrentHashMap<String, ConcurrentHashMap<String, E>> generatedObjectsByTriplesMapId;
 	protected ConcurrentHashMap<String, E> generatedObjectsWithoutTriplesMap;
-	protected ConcurrentHashMap<String, E> rootObjects = new ConcurrentHashMap<String, E>();
+	protected ConcurrentHashMap<String, ConcurrentHashMap<String, E>> rootObjectsByTriplesMapId = new ConcurrentHashMap<String, ConcurrentHashMap<String,E>>();
 	protected ShortHandURIGenerator shortHandURIGenerator = new ShortHandURIGenerator();
 	protected String rootTriplesMapId; 
 	protected Set<String> rootTriplesMapIds;
@@ -48,6 +48,7 @@ public abstract class SFKR2RMLRDFWriter<E> implements KR2RMLRDFWriter {
 		generatedObjectsWithoutTriplesMap = new ConcurrentHashMap<String, E>();
 		generatedObjectsByTriplesMapId = new ConcurrentHashMap<String, ConcurrentHashMap<String, E>>();
 		rootTriplesMapIds = new HashSet<String>();
+		this.rootObjectsByTriplesMapId.put("", new ConcurrentHashMap<String, E>());
 		initializeOutput();
 	}
 	
@@ -65,7 +66,7 @@ public abstract class SFKR2RMLRDFWriter<E> implements KR2RMLRDFWriter {
 		E subject = checkAndAddsubjUri(null, generatedObjectsWithoutTriplesMap, subjUri);
 		E object = getGeneratedObject(generatedObjectsWithoutTriplesMap, objectUri);
 		addValue(null, subject, predicateUri, object !=null? object : objectUri);
-		rootObjects.remove(objectUri);
+		rootObjectsByTriplesMapId.get("").remove(objectUri);
 	}
 
 	@Override
@@ -99,7 +100,7 @@ public abstract class SFKR2RMLRDFWriter<E> implements KR2RMLRDFWriter {
 			object = generatedObjects.get(subjUri);
 			if(triplesMapId == null || rootTriplesMapIds.isEmpty() || rootTriplesMapIds.contains(triplesMapId))
 			{
-				rootObjects.put(subjUri, object);
+				rootObjectsByTriplesMapId.get(triplesMapId).put(subjUri, object);
 			}
 			return object;
 		}
@@ -123,9 +124,10 @@ public abstract class SFKR2RMLRDFWriter<E> implements KR2RMLRDFWriter {
 		}
 
 		addValue(pom, subject, predicateUri, object);
-		if(rootTriplesMapIds.isEmpty() || !rootTriplesMapIds.contains(pom.getTriplesMap().getId()))
+		String refParentObjectTriplesMapId = pom.getObject().getRefObjectMap().getParentTriplesMap().getId();
+		if(rootTriplesMapIds.isEmpty() || rootTriplesMapIds.contains(refParentObjectTriplesMapId))
 		{
-			rootObjects.remove(objectUri);
+			rootObjectsByTriplesMapId.get(refParentObjectTriplesMapId).remove(objectUri);
 		}
 
 	}
@@ -199,9 +201,15 @@ public abstract class SFKR2RMLRDFWriter<E> implements KR2RMLRDFWriter {
 
 	public void addRootTriplesMapId(String rootTriplesMapId) {
 		rootTriplesMapIds.add(rootTriplesMapId);
+		this.rootObjectsByTriplesMapId.putIfAbsent(rootTriplesMapId, new ConcurrentHashMap<String, E>());
 	}
 	public void addRootTriplesMapIds(Collection<String> rootTriplesMapIds) {
-		this.rootTriplesMapIds.addAll(rootTriplesMapIds);
+		
+		for(String rootTriplesMapId : rootTriplesMapIds)
+		{
+			this.rootTriplesMapIds.add(rootTriplesMapId);
+			this.rootObjectsByTriplesMapId.putIfAbsent(rootTriplesMapId, new ConcurrentHashMap<String, E>());
+		}
 	}
 
 	protected abstract void collapseSameType(E obj);

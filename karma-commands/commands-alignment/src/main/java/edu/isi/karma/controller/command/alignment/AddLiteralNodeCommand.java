@@ -1,20 +1,19 @@
 package edu.isi.karma.controller.command.alignment;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.DefaultLink;
-import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Node;
 
 /**
@@ -29,6 +28,8 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 	private String literalValue;
 	private String literalType;
 	private boolean isUri;
+	private String nodeId;
+	
 	private String alignmentId;
 	
 	private static Logger logger = LoggerFactory.getLogger(AddLiteralNodeCommand.class);
@@ -37,13 +38,14 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 		
-	protected AddLiteralNodeCommand(String id, String worksheetId, String alignmentId, String literalValue, String literalType, boolean isUri) {
+	protected AddLiteralNodeCommand(String id, String worksheetId, String alignmentId, String nodeId, String literalValue, String literalType, boolean isUri) {
 		super(id, worksheetId);
 		this.alignmentId = alignmentId;
 		this.literalValue = literalValue;
 		this.literalType = literalType;
 		this.isUri = isUri;
-		
+		this.nodeId = nodeId;
+
 		addTag(CommandTag.Modeling);
 	}
 
@@ -54,7 +56,9 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 
 	@Override
 	public String getTitle() {
-		return "Add Literal Node";
+		if(nodeId == null)
+			return "Add Literal Node";
+		return "Edit Literal Node";
 	}
 
 	@Override
@@ -81,10 +85,17 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 				.getGraph().clone();
 
 		try {
-			alignment.addLiteralNode(literalValue, literalType, isUri);
+			if(nodeId == null) {
+				alignment.addLiteralNode(literalValue, literalType, isUri);
+			} else {
+				alignment.updateLiteralNode(nodeId, literalValue, literalType, isUri);
+			}
 			alignment.align();
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			logger.error("Error adding Literal Node:" , e);
+			UpdateContainer uc = new UpdateContainer();
+			uc.add(new ErrorUpdate("Error adding Literal Node"));
+			return uc;
 		}
 
 		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);

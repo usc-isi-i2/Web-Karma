@@ -16,7 +16,7 @@ public class JSONMapper extends BaseRDFMapper {
 	@Override
 	protected KR2RMLRDFWriter configureRDFWriter(StringWriter sw) {
 		PrintWriter pw = new PrintWriter(sw);
-		KR2RMLRDFWriter outWriter = new JSONKR2RMLRDFWriter(pw, baseURI);
+		KR2RMLRDFWriter outWriter = new JSONKR2RMLRDFWriter(pw, karma.getBaseURI());
 		return outWriter;
 	}
 

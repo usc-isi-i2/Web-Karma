@@ -239,7 +239,10 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 				else if (l instanceof ColumnSubClassLink)
 					newLink = alignment.addColumnSubClassOfLink(source, target);
 				else if (l instanceof DataPropertyOfColumnLink)
-					newLink = alignment.addDataPropertyOfColumnLink(source, target, ((DataPropertyOfColumnLink)l).getSpecializedColumnHNodeId());
+					newLink = alignment.addDataPropertyOfColumnLink(source, target, 
+							((DataPropertyOfColumnLink)l).getSpecializedColumnHNodeId(),
+							((DataPropertyOfColumnLink)l).getSpecializedLinkId()
+							);
 				else if (l instanceof ObjectPropertySpecializationLink)
 					newLink = alignment.addObjectPropertySpecializationLink(source, target, ((ObjectPropertySpecializationLink)l).getSpecializedLinkId());
 				else {
