@@ -72,7 +72,17 @@ and related projects, please see: http://www.isi.edu/integration
         <link rel="stylesheet" type="text/css" href="./css/cleaningChart.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/model.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/augmentdata.css?<jsp:include page='version.jsp' />" />
-      
+        <%
+        if(UIConfiguration.Instance().isForceModelLayoutEnabled()) {
+        %>
+        <link rel="stylesheet" href="css/d3-model-layout.css?<jsp:include page='version.jsp' />" />
+		<%
+        } else {
+		%>
+        <link rel="stylesheet" href="css/d3-wide-model-layout.css?<jsp:include page='version.jsp' />" />
+      	<%
+        }
+      	%>
 		<style type="text/css">
 			div.sticky {
     		/*	color: #555555; */
@@ -324,7 +334,7 @@ and related projects, please see: http://www.isi.edu/integration
 
         <script type="text/javascript" src="uiLibs/json/js/json2.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.cookie.js"></script>
-        <script type="text/javascript" src="uiLibs/d3/js/d3.v2.min.js"></script>
+        <script type="text/javascript" src="uiLibs/d3/js/d3.v3.min.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.iframe-transport.js"></script>
         <script type="text/javascript" src="uiLibs/ace/js/ace.js" charset="utf-8"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload.js"></script>
@@ -362,10 +372,21 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/model-layout.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/UnconnectedNodesLayout.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/model.js?<jsp:include page='version.jsp' />"></script>
+        <%
+        if(UIConfiguration.Instance().isForceModelLayoutEnabled()) {
+        %>
+		<script type="text/javascript" src="js/d3-model-layout.js?<jsp:include page='version.jsp' />"></script>
+		<%
+        } else {
+        %>
+        <script type="text/javascript" src="js/d3-wide-model-layout.js?<jsp:include page='version.jsp' />"></script>
+        <%
+        }
+        %>
         <script>
         	var googleEarthEnabled = <%=UIConfiguration.Instance().isGoogleEarthEnabled()%>;
         	var manualAligment = <%=ModelingConfiguration.getManualAlignment()%>;
-        	
+        	var forceLayoutEnabled = <%=UIConfiguration.Instance().isForceModelLayoutEnabled()%>;
             $(function() {
                 // Clear the workspace when closing the window
                 $(window).bind("beforeunload", function() {

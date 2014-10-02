@@ -190,7 +190,7 @@ public class CommandHistoryUtil {
 			JSONArray inputParamArr = (JSONArray) commObject.get(HistoryArguments.inputParameters.name());
 			String commandName = (String)commObject.get(HistoryArguments.commandName.name());
 			WorksheetCommandHistoryExecutor ex = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
-			ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
+			ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, true);
 			String tmp = CommandInputJSONUtil.getStringValue("outputColumns", inputParamArr);
 			Set<String> newOutputColumns = new HashSet<String>();
 			if (tmp != null) {

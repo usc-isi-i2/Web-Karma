@@ -57,7 +57,9 @@ public class SplitValuesCommandFactory extends JSONInputCommandFactory {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String delimiter = HistoryJsonUtil.getStringValue(Arguments.delimiter.name(), inputJson);
 		String newColName = HistoryJsonUtil.getStringValue(Arguments.newColName.name(), inputJson);
-		String newHNodeId = HistoryJsonUtil.getStringValue(Arguments.newHNodeId.name(), inputJson);
+		String newHNodeId = null;
+		if(HistoryJsonUtil.valueExits(Arguments.newHNodeId.name(), inputJson))
+			newHNodeId = HistoryJsonUtil.getStringValue(Arguments.newHNodeId.name(), inputJson);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		Command comm = new SplitValuesCommand(getNewId(workspace), 
 				worksheetId, hNodeId,

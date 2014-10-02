@@ -397,7 +397,7 @@ public class CommandHistory {
 					HashMap<String, CommandFactory> commandFactoryMap = ctrl.getCommandFactoryMap();
 					JSONArray inputParamArr = (JSONArray)rco.historyObject.get(HistoryArguments.inputParameters.name());
 					String commandName = (String)rco.historyObject.get(HistoryArguments.commandName.name());
-					executor.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
+					executor.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, true);
 					CommandFactory cf = commandFactoryMap.get(rco.historyObject.get(HistoryArguments.commandName.name()));
 					Command comm = cf.createCommand(inputParamArr, workspace);
 					effects.append(comm.doIt(workspace));
