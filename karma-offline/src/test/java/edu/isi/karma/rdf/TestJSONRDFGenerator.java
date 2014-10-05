@@ -55,8 +55,12 @@ public abstract class TestJSONRDFGenerator extends TestRdfGenerator{
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		List<KR2RMLRDFWriter> writers = this.createBasicWriter(pw);
-
-		rdfGen.generateRDF(modelName, new File(getTestResource(filename).toURI()), InputType.JSON, generateProvenance, writers);
+		RDFGeneratorRequest request = new RDFGeneratorRequest(modelName, filename);
+		request.setInputFile(new File(getTestResource(filename).toURI()));
+		request.setAddProvenance(generateProvenance);
+		request.setDataType(InputType.JSON);
+		request.addWriters(writers);
+		rdfGen.generateRDF(request);
 		String rdf = sw.toString();
 		assertNotEquals(rdf.length(), 0);
 		String[] lines = rdf.split(System.getProperty("line.separator"));

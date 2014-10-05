@@ -39,7 +39,6 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
-import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
 import edu.isi.karma.metadata.KarmaMetadataManager;
@@ -49,6 +48,7 @@ import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rdf.GenericRDFGenerator;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
+import edu.isi.karma.rdf.RDFGeneratorRequest;
 import edu.isi.karma.util.HTTPUtil.HTTP_HEADERS;
 import edu.isi.karma.webserver.KarmaException;
 
@@ -314,12 +314,14 @@ public class RDFGeneratorServlet {
 		URIFormatter uriFormatter = new URIFormatter();
 		KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
 
-		WorksheetR2RMLJenaModelParser modelParser = getModel(rmlID,
-				refreshR2RML);
-
 		String sourceName = r2rmlURI;
-		gRDFGen.generateRDF(modelParser, sourceName, dataStream,
-				InputType.valueOf(dataType), -1, false, outWriter);
+		RDFGeneratorRequest request = new RDFGeneratorRequest(rmlID.getName(), sourceName);
+		request.addWriter(outWriter);
+		request.setInputStream(dataStream);
+		request.setDataType(InputType.valueOf(dataType));
+		request.setAddProvenance(false);
+		request.setMaxNumLines(-1);
+		gRDFGen.generateRDF(request);
 
 		return sw.toString();
 
@@ -353,21 +355,6 @@ public class RDFGeneratorServlet {
 		SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
 
 		ModelingConfiguration.setLearnerEnabled(false); // disable automatic													// learning
-	}
-
-	private WorksheetR2RMLJenaModelParser getModel(
-			R2RMLMappingIdentifier modelIdentifier, boolean refreshR2RML)
-			throws JSONException, KarmaException {
-		WorksheetR2RMLJenaModelParser modelParser = null;
-		if (refreshR2RML == false) {
-			modelParser = (WorksheetR2RMLJenaModelParser) modelCache
-					.get(modelIdentifier.getName());
-		}
-		if (modelParser == null) {
-			modelParser = new WorksheetR2RMLJenaModelParser(modelIdentifier);
-			modelCache.put(modelIdentifier.getName(), modelParser);
-		}
-		return modelParser;
 	}
 
 	private int invokeHTTPRequestWithAuth(HttpHost httpHost, HttpPost httpPost,

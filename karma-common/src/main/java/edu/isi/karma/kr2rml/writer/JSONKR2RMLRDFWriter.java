@@ -22,6 +22,9 @@ package edu.isi.karma.kr2rml.writer;
 
 import java.io.PrintWriter;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,6 +37,7 @@ import edu.isi.karma.modeling.Uris;
 
 public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 
+	private Map<String, String> contextInverseMapping = new HashMap<String, String>();
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter) {
 		super(outWriter);
 	}
@@ -41,17 +45,35 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter, String baseURI) {
 		super(outWriter, baseURI);
 	}
+	
+	public void setGlobalContext(JSONObject context) {
+		if (context.has("@context")) {
+			JSONObject c = context.getJSONObject("@context");
+			@SuppressWarnings("rawtypes")
+			Iterator itr = c.keys();
+			while (itr.hasNext()) {
+				String key = itr.next().toString();
+				try {
+					contextInverseMapping.put(c.getJSONObject(key).getString("@id"), key);
+				}catch(Exception e) 
+				{
+					
+				}
+			}
+		}
+	}
 
 	@Override
 	protected void addValue(PredicateObjectMap pom, JSONObject subject, String predicateUri, Object object) {
 		if (subject.has(shortHandURIGenerator.getShortHand(predicateUri).toString()) || predicateUri.contains(Uris.RDF_TYPE_URI)) {
-			String shortHandPredicateURI = shortHandURIGenerator.getShortHand(predicateUri).toString();
+			String shortHandPredicateURI = generateShortHandURIFromContext(predicateUri);
 			addValueToArray(pom, subject, object,
 					shortHandPredicateURI);
 		}
 		else
 		{
-			subject.put(shortHandURIGenerator.getShortHand(predicateUri).toString(), object);
+			String shortHandPredicateURI = generateShortHandURIFromContext(predicateUri);
+			subject.put(shortHandPredicateURI, object);
 		}
 	}
 
@@ -97,8 +119,12 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		}
 		array.put(object);
 		if (shortHandPredicateURI.equalsIgnoreCase("rdf:type")) {
+			int size = array.length();
+			for (int i = 0; i < size; i++) {
+				String t = generateShortHandURIFromContext(array.remove(0).toString());
+				array.put(t);
+			}
 			subject.put("@type", array);
-			subject.put("_type", new JSONArray(array.toString()));
 		}
 		else {
 			subject.put(shortHandPredicateURI, array);
@@ -215,8 +241,18 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			}
 		}
 		object.put("@id", subjUri);
-		object.put("_id", subjUri);
 		return object;
+	}
+	
+	private String generateShortHandURIFromContext(String uri) {
+		if (uri.startsWith("<") && uri.endsWith(">")) { 
+			uri = uri.substring(1, uri.length() - 1);		
+		}
+		String shortHandPredicateURI = contextInverseMapping.get(uri);
+		if (shortHandPredicateURI == null) {
+			shortHandPredicateURI = shortHandURIGenerator.getShortHand(uri).toString();
+		}
+		return shortHandPredicateURI;
 	}
 
 }

@@ -33,7 +33,6 @@ import edu.isi.karma.kr2rml.exception.HNodeNotFoundKarmaException;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingColumnNameHNodeTranslator;
 import edu.isi.karma.kr2rml.template.ColumnTemplateTerm;
-import edu.isi.karma.kr2rml.template.ConstantTemplateTermSetPopulatorPlan;
 import edu.isi.karma.kr2rml.template.DoublyAnchoredTemplateTermSetPopulator;
 import edu.isi.karma.kr2rml.template.PartiallyPopulatedTermSet;
 import edu.isi.karma.kr2rml.template.PopulatedTemplateTermSet;

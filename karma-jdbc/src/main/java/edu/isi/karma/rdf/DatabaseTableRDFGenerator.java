@@ -40,6 +40,7 @@ import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
+import edu.isi.karma.kr2rml.writer.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
@@ -101,7 +102,12 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 
 		WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(id);
 		KR2RMLMapping mapping = parserTest.parse();
-		
+		for (KR2RMLRDFWriter writer : writers) {
+			if (writer instanceof BloomFilterKR2RMLRDFWriter) {
+				BloomFilterKR2RMLRDFWriter t = (BloomFilterKR2RMLRDFWriter)writer;
+				t.setR2RMLMappingIdentifier(id);
+			}
+		}
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		Connection conn = dbUtil.getConnection(hostname, portnumber, username, password, dBorSIDName);
 		conn.setAutoCommit(false);

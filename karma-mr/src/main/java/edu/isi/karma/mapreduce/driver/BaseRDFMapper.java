@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
+import edu.isi.karma.rdf.RDFGeneratorRequest;
 
 public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 
@@ -39,8 +40,12 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 		StringWriter sw = new StringWriter();
 		KR2RMLRDFWriter outWriter = configureRDFWriter(sw);
 		try {
-			karma.getGenerator().generateRDF("model", filename, contents, karma.getInputType(),
-					false, outWriter);
+			RDFGeneratorRequest request = new RDFGeneratorRequest("model", filename);
+			request.setDataType(karma.getInputType());
+			request.setInputData(contents);
+			request.setAddProvenance(false);
+			request.addWriter(outWriter);
+			karma.getGenerator().generateRDF(request);
 
 			String results = sw.toString();
 			if (!results.equals("[\n\n]\n")) {
