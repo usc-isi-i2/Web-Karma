@@ -203,14 +203,14 @@ public class OfflineRdfGenerator {
 		modelFilePath = (String) cl.getValue("--modelfilepath");
 		modelURLString = (String) cl.getValue("--modelurl");
 		outputFilePath = (String) cl.getValue("--outputfile");
-		outputFileJSONPath = (String) cl.getValue("--JSONOutputFile");
+		outputFileJSONPath = (String) cl.getValue("--jsonoutputfile");
 		baseURI = (String) cl.getValue("--baseuri");
 		bloomFiltersFilePath = (String) cl.getValue("--outputbloomfilter");
 		selectionName = (String) cl.getValue("--selection");
 		rootTripleMap = (String) cl.getValue("--root");
-		String killTripleMap = (String) cl.getValue("--killTripleMap");
-		String stopTripleMap = (String) cl.getValue("--stopTripleMap");
-		String POMToKill = (String) cl.getValue("--POMToKill");
+		String killTripleMap = (String) cl.getValue("--killtriplemap");
+		String stopTripleMap = (String) cl.getValue("--stoptriplemap");
+		String POMToKill = (String) cl.getValue("--pomtokill");
 		contextFile = (String)cl.getValue("--contextfile");
 		if (rootTripleMap == null) {
 			rootTripleMap = "";
@@ -376,15 +376,20 @@ public class OfflineRdfGenerator {
 
 		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
 				hostname, port, username, password, dBorSIDName, encoding, selectionName);
+		ContextIdentifier contextId = null;
+		if (contextFile != null) {
+			File tmp = new File(contextFile);
+			contextId = new ContextIdentifier(tmp.getName(), tmp.toURI().toURL());
+		}
 		if(inputType.equals("DB")) {
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
 			createWriters();
-			dbRdfGen.generateRDFFromTable(tablename, writers, id, baseURI);
+			dbRdfGen.generateRDFFromTable(tablename, writers, id, contextId, baseURI);
 		} else {
 			String query = loadQueryFromFile();
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(modelURL.toString(), modelURL);
 			createWriters();
-			dbRdfGen.generateRDFFromSQL(query, writers, id, baseURI);
+			dbRdfGen.generateRDFFromSQL(query, writers, id, contextId, baseURI);
 		}
 
 
@@ -495,7 +500,7 @@ public class OfflineRdfGenerator {
 		createWriters();
 		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator(selectionName, killTripleMap, stopTripleMap, POMToKill, rootTripleMap);
 		rdfGenerator.addModel(id);
-		
+
 		InputType inputType = null;
 		if(this.inputType.equalsIgnoreCase("CSV"))
 			inputType = InputType.CSV;
@@ -545,10 +550,10 @@ public class OfflineRdfGenerator {
 				.withOption(buildOption("baseuri", "specifies base uri", "base URI", obuilder, abuilder))
 				.withOption(buildOption("selection", "specifies selection name", "selection", obuilder, abuilder))
 				.withOption(buildOption("root", "specifies root", "root", obuilder, abuilder))
-				.withOption(buildOption("killTripleMap", "specifies TripleMap to kill", "killTripleMap", obuilder, abuilder))
-				.withOption(buildOption("stopTripleMap", "specifies TripleMap to stop", "stopTripleMap", obuilder, abuilder))
-				.withOption(buildOption("POMToKill", "specifies POM to kill", "POMToKill", obuilder, abuilder))
-				.withOption(buildOption("JSONOutputFile", "specifies JSONOutputFile", "JSONOutputFile", obuilder, abuilder))
+				.withOption(buildOption("killtriplemap", "specifies TripleMap to kill", "killtriplemap", obuilder, abuilder))
+				.withOption(buildOption("stoptriplemap", "specifies TripleMap to stop", "stoptriplemap", obuilder, abuilder))
+				.withOption(buildOption("pomtokill", "specifies POM to kill", "pomtokill", obuilder, abuilder))
+				.withOption(buildOption("jsonoutputfile", "specifies JSONOutputFile", "jsonoutputfile", obuilder, abuilder))
 				.withOption(buildOption("contextfile", "specifies global context file", "contextile", obuilder, abuilder))
 				.withOption(obuilder
 						.withLongName("help")

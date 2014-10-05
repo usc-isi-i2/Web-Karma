@@ -30,26 +30,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
+import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.kr2rml.writer.BloomFilterKR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.DBType;
 import edu.isi.karma.util.JDBCUtilFactory;
@@ -81,19 +85,44 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		this.encoding = encoding;
 	}
 	
-	public void generateRDFFromSQL(String query, List<KR2RMLRDFWriter> writers, R2RMLMappingIdentifier id, String baseURI)
+	public void generateRDFFromSQL(String query, List<KR2RMLRDFWriter> writers, R2RMLMappingIdentifier id, ContextIdentifier contextId, String baseURI)
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
+		initializeWriter(id, contextId, writers);
 		String wkname = query.replace(" ", "_");
 		if(wkname.length() > 100)
 			wkname = wkname.substring(0, 99) + "...";
 		generateRDF(wkname, query, writers, id, baseURI);
 	}
 	
-	public void generateRDFFromTable(String tablename, List<KR2RMLRDFWriter> writers, R2RMLMappingIdentifier id, String baseURI)
+	public void generateRDFFromTable(String tablename, List<KR2RMLRDFWriter> writers, R2RMLMappingIdentifier id, ContextIdentifier contextId, String baseURI)
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
+		initializeWriter(id, contextId, writers);
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		String query = "Select * FROM " + dbUtil.escapeTablename(tablename);
 		generateRDF(tablename, query, writers, id, baseURI);
+	}
+	
+	private void initializeWriter(R2RMLMappingIdentifier id, ContextIdentifier contextId, List<KR2RMLRDFWriter> writers) {
+		JSONObject contextObj = new JSONObject();
+		if (contextId != null) {
+			try {
+				JSONTokener token = new JSONTokener(contextId.getLocation().openStream());
+				contextObj = new JSONObject(token);
+			}catch(Exception e) 
+			{
+				
+			}
+		}
+		for (KR2RMLRDFWriter writer : writers) {
+			if (writer instanceof JSONKR2RMLRDFWriter) {
+				JSONKR2RMLRDFWriter t = (JSONKR2RMLRDFWriter)writer;
+				t.setGlobalContext(contextObj);
+			}
+			if (writer instanceof BloomFilterKR2RMLRDFWriter) {
+				BloomFilterKR2RMLRDFWriter t = (BloomFilterKR2RMLRDFWriter)writer;
+				t.setR2RMLMappingIdentifier(id);
+			}
+		}
 	}
 
 	private void generateRDF(String wkname, String query, List<KR2RMLRDFWriter> writers, R2RMLMappingIdentifier id, String baseURI) 
