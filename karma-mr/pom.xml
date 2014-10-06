@@ -19,37 +19,18 @@
     </properties>
         
 	<repositories>
-		 <repository>
-		    <id>repomr</id>
-		    <name>repomr</name>
-		    <releases>
-		        <enabled>true</enabled>
-		        <checksumPolicy>ignore</checksumPolicy>
-		    </releases>
-		    <snapshots>
-		        <enabled>false</enabled>
-		    </snapshots>
-		    <url>file://${project.basedir}/repo</url>
-		</repository>
 		
 		 <repository>
-			 <releases>
-			 <enabled>true</enabled>
-			 <updatePolicy>always</updatePolicy>
-			 <checksumPolicy>warn</checksumPolicy>
-			 </releases>
-			 <snapshots>
-			 <enabled>false</enabled>
-			 <updatePolicy>never</updatePolicy>
-			 <checksumPolicy>ignore</checksumPolicy>
-			 </snapshots>
-			 <id>HDPReleases</id>
-			 <name>HDP Releases</name>
-			 <url>http://repo.hortonworks.com/content/repositories/releases/</url>
-			 <layout>default</layout>
+			<id>HDPReleases</id>
+			<name>HDP Releases</name>
+			<url>http://repo.hortonworks.com/content/repositories/releases/</url>
 		 </repository>
 		 
-		
+		<repository>
+		    <id>colo-vm41</id>
+		    <name>colo-vm41</name>
+		    <url>http://colo-vm41.isi.edu:8081/artifactory/simple/libs-release-local/</url>
+		</repository>
 	
 		
  </repositories> 
@@ -109,11 +90,11 @@
 			<version>1.1.0</version>
 			<classifier>hadoop2</classifier> 
 		</dependency> 
-	<!--	<dependency>
-	    	<groupId>com.karma</groupId>
+		<dependency>
+	    	<groupId>edu.isi.karma.services</groupId>
 	    	<artifactId>entityExtraction</artifactId>
 	    	<version>0.0.1</version>
-	    </dependency>-->
+	    </dependency>
 	    
     </dependencies>
 	<build>

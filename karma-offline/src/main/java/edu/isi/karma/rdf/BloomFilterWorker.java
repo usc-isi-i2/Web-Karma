@@ -1,11 +1,13 @@
 package edu.isi.karma.rdf;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.hadoop.util.hash.Hash;
 
 import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
-
-import java.io.IOException;
-import java.util.*;
 public class BloomFilterWorker implements Runnable{
 	private KR2RMLBloomFilter bf = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
 	private List<String> bloomfilters = Collections.synchronizedList(new ArrayList<String>());

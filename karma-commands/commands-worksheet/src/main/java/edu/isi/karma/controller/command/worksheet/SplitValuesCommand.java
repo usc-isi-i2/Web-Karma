@@ -109,10 +109,16 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 		boolean isUpdate = false;
 		if(newhNode == null) {
 			HTable hTable = workspace.getFactory().getHTable(hNode.getHTableId());
-			newhNode = hTable.addHNode(newColName, HNodeType.Transformation, wk, workspace.getFactory());
-			
-			HTable newTable = newhNode.addNestedTable("Comma Split Values", wk, workspace.getFactory());
-			newTable.addHNode("Values", HNodeType.Transformation, wk, workspace.getFactory());
+			newhNode = hTable.getHNodeFromColumnName(newColName);
+			if(newhNode == null)
+			{
+				newhNode = hTable.addHNode(newColName, HNodeType.Transformation, wk, workspace.getFactory());
+			}
+			if(newhNode.getNestedTable() == null)
+			{
+				HTable newTable = newhNode.addNestedTable("Comma Split Values", wk, workspace.getFactory());
+				newTable.addHNode("Values", HNodeType.Transformation, wk, workspace.getFactory());
+			}
 			newHNodeId = newhNode.getId();
 			hNode.addAppliedCommand("SplitValuesCommand", newhNode);
 		} else {

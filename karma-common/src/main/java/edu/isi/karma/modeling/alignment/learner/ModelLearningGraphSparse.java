@@ -55,11 +55,11 @@ public class ModelLearningGraphSparse extends ModelLearningGraph {
 	private static Logger logger = LoggerFactory.getLogger(ModelLearningGraphSparse.class);
 
 	public ModelLearningGraphSparse(OntologyManager ontologyManager) throws IOException {
-		super(ontologyManager);
+		super(ontologyManager, ModelLearningGraphType.Sparse);
 	}
 
 	public ModelLearningGraphSparse(OntologyManager ontologyManager, boolean emptyInstance) {
-		super(ontologyManager, emptyInstance);
+		super(ontologyManager, emptyInstance, ModelLearningGraphType.Sparse);
 	}
 
 //	protected static ModelLearningGraphSparse getInstance(OntologyManager ontologyManager) {
@@ -164,7 +164,10 @@ public class ModelLearningGraphSparse extends ModelLearningGraph {
 			else if (e instanceof ColumnSubClassLink)
 				link = new ColumnSubClassLink(id);
 			else if (e instanceof DataPropertyOfColumnLink)
-				link = new DataPropertyOfColumnLink(id, ((DataPropertyOfColumnLink)e).getSpecializedColumnHNodeId());
+				link = new DataPropertyOfColumnLink(id, 
+						((DataPropertyOfColumnLink)e).getSpecializedColumnHNodeId(),
+						((DataPropertyOfColumnLink)e).getSpecializedLinkId()
+						);
 			else if (e instanceof ObjectPropertySpecializationLink)
 				link = new ObjectPropertySpecializationLink(id, ((ObjectPropertySpecializationLink)e).getSpecializedLinkId());
 			else {

@@ -343,4 +343,24 @@ public class HTable extends RepEntity {
 		}
 		return null;
 	}
+	
+	public HNode getHNode(String hNodeId, boolean scanNested) {
+		if(!scanNested)
+			return getHNode(hNodeId);
+		
+		HNode node = getHNode(hNodeId);
+		if(node == null && hasNestedTables()) {
+			for (HNode n : getHNodes()) {
+				if (n.hasNestedTable()) {
+					HTable nestedTable = n.getNestedTable();
+					node = nestedTable.getHNode(hNodeId, scanNested);
+					if(node != null)
+						break;
+				}
+					
+			}
+		}
+		
+		return node;
+	}
 }

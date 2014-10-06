@@ -34,7 +34,7 @@ public class HistoryJSONEditor {
 			String commandName = (String)historyJSON.getJSONObject(i).get(HistoryArguments.commandName.name());
 			JSONArray commandTag = (JSONArray)historyJSON.getJSONObject(i).get(HistoryArguments.tags.name());
 			if (isCommandTag(commandTag, CommandTag.Transformation)) {
-				ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
+				ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, false);
 				String tmp = CommandInputJSONUtil.getStringValue("outputColumns", inputParamArr);
 				if (tmp == null) {
 					newHistoryJSON.put(historyJSON.get(i));
@@ -69,7 +69,7 @@ public class HistoryJSONEditor {
 			String commandName = (String)historyJSON.getJSONObject(i).get(HistoryArguments.commandName.name());
 			JSONArray commandTag = (JSONArray)historyJSON.getJSONObject(i).get(HistoryArguments.tags.name());
 			if (isCommandTag(commandTag, CommandTag.Transformation)) {
-				ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
+				ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, false);
 				String tmp = CommandInputJSONUtil.getStringValue("outputColumns", inputParamArr);
 				if (tmp == null) {
 					newHistoryJSON.put(historyJSON.get(i));

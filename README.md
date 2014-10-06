@@ -33,7 +33,7 @@ Look in the Wiki [Installation](https://github.com/InformationIntegrationGroup/W
 ```
 cd karma-offline
 mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--sourcetype 
-<sourcetype> --filepath <filepath> --modelfilepath <modelfilepath> --sourcename <sourcename> --outputfile <outputfile>" -Dexec.classpathScope=compile
+<sourcetype> --filepath <filepath> --modelfilepath <modelfilepath> --sourcename <sourcename> --outputfile <outputfile> --JSONOutputFile<outputJSON-LD>" -Dexec.classpathScope=compile
 ```
 
 	Valid argument values for sourcetype are: CSV, JSON, XML. Also, you need to escape the double quotes that go inside argument values. Example invocation for a JSON file:
@@ -43,14 +43,15 @@ mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.ar
 --filepath \"/Users/shubhamgupta/Documents/wikipedia.json\" 
 --modelfilepath \"/Users/shubhamgupta/Documents/model-wikipedia.n3\"
 --sourcename wikipedia
---outputfile wikipedia-rdf.n3" -Dexec.classpathScope=compile
+--outputfile wikipedia-rdf.n3
+--JSONOutputFile wikipedia-rdf.json" -Dexec.classpathScope=compile
 ```
 3. To generate RDF of a database table, go to the top level Karma directory and run the following command from terminal:
 ```
 cd karma-offline
 mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--sourcetype DB
 --modelfilepath <modelfilepath> --outputfile <outputfile> --dbtype <dbtype> --hostname <hostname> 
---username <username> --password <password> --portnumber <portnumber> --dbname <dbname> --tablename <tablename>" -Dexec.classpathScope=compile
+--username <username> --password <password> --portnumber <portnumber> --dbname <dbname> --tablename <tablename> --JSONOutputFile<outputJSON-LD>" -Dexec.classpathScope=compile
 ```
 	Valid argument values for `dbtype` are Oracle, MySQL, SQLServer, PostGIS, Sybase. Example invocation:
 ```
@@ -59,7 +60,8 @@ mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.ar
 --hostname example.com --username root --password secret 
 --portnumber 1433 --dbname Employees --tablename Person 
 --modelfilepath \"/Users/shubhamgupta/Documents/db-r2rml-model.ttl\"
---outputfile db-rdf.n3" -Dexec.classpathScope=compile
+--outputfile db-rdf.n3
+--JSONOutputFile db-rdf.json" -Dexec.classpathScope=compile
 ```
 
 You can do `mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--help"` to get information about required arguments.

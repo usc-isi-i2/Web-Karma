@@ -33,8 +33,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.jgrapht.UndirectedGraph;
-import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +41,7 @@ import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
+import edu.isi.karma.modeling.alignment.GraphBuilderTopK;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkFrequency;
@@ -50,8 +49,6 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.ModelEvaluation;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
-import edu.isi.karma.modeling.alignment.SteinerTree;
-import edu.isi.karma.modeling.alignment.TreePostProcess;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
@@ -118,20 +115,25 @@ public class ModelLearner2 {
 
 	public SemanticModel getModel() {
 		if (this.semanticModel == null)
-			this.learn();
+			try {
+				this.learn();
+			} catch (Exception e) {
+				logger.error("error in learing the semantic model for the source " + this.semanticModel.getId());
+				e.printStackTrace();
+			}
 
 		return this.semanticModel;
 	}
 
-	public void learn() {
+	public void learn() throws Exception {
 
 		if (this.useAlignmentGraphBuiltFromKnownModels && !isGraphUpToDate()) {
 			init();
 		}
 
-		List<SortableSemanticModel> hypothesisList = this.hypothesize(true, NUM_SEMANTIC_TYPES);
+		List<SortableSemanticModel2> hypothesisList = this.hypothesize(true, NUM_SEMANTIC_TYPES);
 		if (hypothesisList != null && !hypothesisList.isEmpty()) {
-			SortableSemanticModel m = hypothesisList.get(0);
+			SortableSemanticModel2 m = hypothesisList.get(0);
 			this.semanticModel = new SemanticModel(m);
 		} else {
 			this.semanticModel = null;
@@ -149,9 +151,15 @@ public class ModelLearner2 {
 
 		GraphBuilder clonedGraphBuilder = null;
 		if (graphBuilder == null || graphBuilder.getGraph() == null) {
-			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, this.nodeIdFactory, false);
+			if (graphType == ModelLearningGraphType.Compact)
+				clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, this.nodeIdFactory, false);
+			else
+				clonedGraphBuilder = new GraphBuilder(this.ontologyManager, this.nodeIdFactory, false);
 		} else {
-			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, graphBuilder.getGraph());
+			if (graphType == ModelLearningGraphType.Compact)
+				clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, graphBuilder.getGraph());
+			else
+				clonedGraphBuilder = new GraphBuilder(this.ontologyManager, graphBuilder.getGraph());
 		}
 		return clonedGraphBuilder;
 	}
@@ -162,7 +170,7 @@ public class ModelLearner2 {
 		return true;
 	}
 
-	public List<SortableSemanticModel> hypothesize(boolean useCorrectTypes, int numberOfCRFCandidates) {
+	public List<SortableSemanticModel2> hypothesize(boolean useCorrectTypes, int numberOfCRFCandidates) throws Exception {
 
 		Set<Node> addedNodes = new HashSet<Node>(); //They should be deleted from the graph after computing the semantic models
 
@@ -175,41 +183,54 @@ public class ModelLearner2 {
 			logger.error("there is no candidate set of steiner nodes.");
 			return null;
 		}
+		
+		logger.info("graph nodes: " + this.graphBuilder.getGraph().vertexSet().size());
+		logger.info("graph links: " + this.graphBuilder.getGraph().edgeSet().size());
 
 		logger.info("number of steiner sets: " + candidateSteinerSets.numberOfCandidateSets());
 
 		logger.info("updating weights according to training data ...");
 		long start = System.currentTimeMillis();
-		this.updateWeights();
+//		this.updateWeights();
 		long updateWightsElapsedTimeMillis = System.currentTimeMillis() - start;
 		logger.info("time to update weights: " + (updateWightsElapsedTimeMillis/1000F));
 
 
 		logger.info("computing steiner trees ...");
-		List<SortableSemanticModel> sortableSemanticModels = new ArrayList<SortableSemanticModel>();
-		int count = 1;
+		List<SortableSemanticModel2> sortableSemanticModels = new ArrayList<SortableSemanticModel2>();
+		int number = 1;
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
-			logger.debug("computing steiner tree for steiner nodes set " + count + " ...");
+			logger.debug("computing steiner tree for steiner nodes set " + number + " ...");
 			logger.debug(sn.getScoreDetailsString());
-			DirectedWeightedMultigraph<Node, LabeledLink> tree = computeSteinerTree(sn.getNodes());
-			count ++;
-			if (tree != null) {
-				SemanticModel sm = new SemanticModel(new RandomGUID().toString(), 
-						tree,
-						columnNodes,
-						sn.getMappingToSourceColumns()
-						);
-				SortableSemanticModel sortableSemanticModel = 
-						new SortableSemanticModel(sm, sn);
-				sortableSemanticModels.add(sortableSemanticModel);
+			number++;
+//			logger.info("START ...");
+			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees = 
+					((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn.getNodes(), ModelingConfiguration.getMaxCandidateModels());
+//			logger.info("END ...");
+
+			for (DirectedWeightedMultigraph<Node, LabeledLink> tree: topKSteinerTrees) {
+				if (tree != null) {
+//					System.out.println();
+					SemanticModel sm = new SemanticModel(new RandomGUID().toString(), 
+							tree,
+							columnNodes,
+							sn.getMappingToSourceColumns()
+							);
+					SortableSemanticModel2 sortableSemanticModel = 
+							new SortableSemanticModel2(sm, sn);
+					sortableSemanticModels.add(sortableSemanticModel);
+				}
 			}
-			if (count == ModelingConfiguration.getMaxCandidateModels())
+			if (number == ModelingConfiguration.getMaxCandidateModels())
 				break;
+
 		}
 
 		Collections.sort(sortableSemanticModels);
-//		logger.inf÷o("results are ready ...");
-		return sortableSemanticModels;
+		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getMaxCandidateModels());
+		logger.info("results are ready ...");
+		sortableSemanticModels.get(0).print();
+		return sortableSemanticModels.subList(0, count);
 
 //		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
 //		SortableSemanticModel current, previous;
@@ -230,41 +251,41 @@ public class ModelLearner2 {
 
 	}
 
-	private DirectedWeightedMultigraph<Node, LabeledLink> computeSteinerTree(Set<Node> steinerNodes) {
-
-		if (steinerNodes == null || steinerNodes.size() == 0) {
-			logger.error("There is no steiner node.");
-			return null;
-		}
-
-		//		System.out.println(steinerNodes.size());
-		List<Node> steinerNodeList = new ArrayList<Node>(steinerNodes); 
-
-		long start = System.currentTimeMillis();
-		UndirectedGraph<Node, DefaultLink> undirectedGraph = new AsUndirectedGraph<Node, DefaultLink>(this.graphBuilder.getGraph());
-
-		logger.debug("computing steiner tree ...");
-		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodeList);
-		DirectedWeightedMultigraph<Node, LabeledLink> tree = new TreePostProcess(this.graphBuilder, steinerTree.getDefaultSteinerTree(), null, false).getTree();
-		//(DirectedWeightedMultigraph<Node, LabeledLink>)GraphUtil.asDirectedGraph(steinerTree.getDefaultSteinerTree());
-
-		logger.debug(GraphUtil.labeledGraphToString(tree));
-
-		long steinerTreeElapsedTimeMillis = System.currentTimeMillis() - start;
-		logger.debug("total number of nodes in steiner tree: " + tree.vertexSet().size());
-		logger.debug("total number of edges in steiner tree: " + tree.edgeSet().size());
-		logger.debug("time to compute steiner tree: " + (steinerTreeElapsedTimeMillis/1000F));
-
-		return tree;
-
-		//		long finalTreeElapsedTimeMillis = System.currentTimeMillis() - steinerTreeElapsedTimeMillis;
-		//		DirectedWeightedMultigraph<Node, Link> finalTree = buildOutputTree(tree);
-		//		logger.info("time to build final tree: " + (finalTreeElapsedTimeMillis/1000F));
-
-		//		GraphUtil.printGraph(finalTree);
-		//		return finalTree; 
-
-	}
+//	private DirectedWeightedMultigraph<Node, LabeledLink> computeSteinerTree(Set<Node> steinerNodes) {
+//
+//		if (steinerNodes == null || steinerNodes.size() == 0) {
+//			logger.error("There is no steiner node.");
+//			return null;
+//		}
+//
+//		//		System.out.println(steinerNodes.size());
+//		List<Node> steinerNodeList = new ArrayList<Node>(steinerNodes); 
+//
+//		long start = System.currentTimeMillis();
+//		UndirectedGraph<Node, DefaultLink> undirectedGraph = new AsUndirectedGraph<Node, DefaultLink>(this.graphBuilder.getGraph());
+//
+//		logger.debug("computing steiner tree ...");
+//		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodeList);
+//		DirectedWeightedMultigraph<Node, LabeledLink> tree = new TreePostProcess(this.graphBuilder, steinerTree.getDefaultSteinerTree(), null, false).getTree();
+//		//(DirectedWeightedMultigraph<Node, LabeledLink>)GraphUtil.asDirectedGraph(steinerTree.getDefaultSteinerTree());
+//
+//		logger.debug(GraphUtil.labeledGraphToString(tree));
+//
+//		long steinerTreeElapsedTimeMillis = System.currentTimeMillis() - start;
+//		logger.debug("total number of nodes in steiner tree: " + tree.vertexSet().size());
+//		logger.debug("total number of edges in steiner tree: " + tree.edgeSet().size());
+//		logger.debug("time to compute steiner tree: " + (steinerTreeElapsedTimeMillis/1000F));
+//
+//		return tree;
+//
+//		//		long finalTreeElapsedTimeMillis = System.currentTimeMillis() - steinerTreeElapsedTimeMillis;
+//		//		DirectedWeightedMultigraph<Node, Link> finalTree = buildOutputTree(tree);
+//		//		logger.info("time to build final tree: " + (finalTreeElapsedTimeMillis/1000F));
+//
+//		//		GraphUtil.printGraph(finalTree);
+//		//		return finalTree; 
+//
+//	}
 
 	private CandidateSteinerSets getCandidateSteinerSets(List<ColumnNode> columnNodes, boolean useCorrectTypes, int numberOfCRFCandidates, Set<Node> addedNodes) {
 
@@ -314,7 +335,7 @@ public class ModelLearner2 {
 			Set<SemanticTypeMapping> semanticTypeMappings = new HashSet<SemanticTypeMapping>();
 			for (SemanticType semanticType: candidateSemanticTypes) {
 
-				logger.info("\t===== Semantic Type: " + semanticType.getModelLabelString());
+				logger.info("\t" + semanticType.getConfidenceScore() + " :" + semanticType.getModelLabelString());
 
 				if (semanticType == null || 
 						semanticType.getDomain() == null ||
@@ -643,9 +664,11 @@ public class ModelLearner2 {
 		}
 	}
 
-	private static double roundTwoDecimals(double d) {
-		DecimalFormat twoDForm = new DecimalFormat("#.##");
-		return Double.valueOf(twoDForm.format(d));
+	private static double roundDecimals(double d, int k) {
+		String format = "";
+		for (int i = 0; i < k; i++) format += "#";
+        DecimalFormat DForm = new DecimalFormat("#." + format);
+        return Double.valueOf(DForm.format(d));
 	}
 
 	@SuppressWarnings("unused")
@@ -732,7 +755,7 @@ public class ModelLearner2 {
 		
 		ModelLearner2 modelLearner;
 
-		boolean iterativeEvaluation = true;
+		boolean iterativeEvaluation = false;
 		boolean useCorrectType = false;
 		int numberOfCRFCandidates = 4;
 		int numberOfKnownModels;
@@ -747,7 +770,7 @@ public class ModelLearner2 {
 
 		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 3; {
+//		int i = 0; {
 
 			resultFile.flush();
 			int newSourceIndex = i;
@@ -803,7 +826,10 @@ public class ModelLearner2 {
 					try {
 						logger.info("loading the graph ...");
 						DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
-						modelLearner.graphBuilder = new GraphBuilder(ontologyManager, graph);
+						if (graphType == ModelLearningGraphType.Compact)
+							modelLearner.graphBuilder = new GraphBuilderTopK(ontologyManager, graph);
+						else
+							modelLearner.graphBuilder = new GraphBuilder(ontologyManager, graph);
 						modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -812,7 +838,7 @@ public class ModelLearner2 {
 				{
 					logger.info("building the graph ...");
 					for (SemanticModel sm : trainingData)
-						modelLearningGraph.addModel(sm);
+						modelLearningGraph.addModelAndUpdate(sm);
 					modelLearner.graphBuilder = modelLearningGraph.getGraphBuilder();
 					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					// save graph to file
@@ -822,13 +848,14 @@ public class ModelLearner2 {
 						e.printStackTrace();
 					}
 				}
-
-				List<SortableSemanticModel> hypothesisList = modelLearner.hypothesize(useCorrectType, numberOfCRFCandidates);
+				
+//				GraphVizUtil.exportJGraphToGraphviz(modelLearner.graphBuilder.getGraph(), "test", true, false, true, graphName + ".dot");
+				List<SortableSemanticModel2> hypothesisList = modelLearner.hypothesize(useCorrectType, numberOfCRFCandidates);
 
 				long elapsedTimeMillis = System.currentTimeMillis() - start;
 				float elapsedTimeSec = elapsedTimeMillis/1000F;
 
-				List<SortableSemanticModel> topHypotheses = null;
+				List<SortableSemanticModel2> topHypotheses = null;
 				if (hypothesisList != null) {
 					topHypotheses = hypothesisList.size() > ModelingConfiguration.getMaxCandidateModels() ? 
 							hypothesisList.subList(0, ModelingConfiguration.getMaxCandidateModels()) : 
@@ -857,13 +884,13 @@ public class ModelLearner2 {
 				if (topHypotheses != null)
 					for (int k = 0; k < topHypotheses.size(); k++) {
 
-						SortableSemanticModel m = topHypotheses.get(k);
+						SortableSemanticModel2 m = topHypotheses.get(k);
 
 						me = m.evaluate(correctModel);
 
 						String label = "candidate" + k + 
 								m.getSteinerNodes().getScoreDetailsString() +
-								"cost:" + roundTwoDecimals(m.getCost()) + 
+								"cost:" + roundDecimals(m.getCost(), 6) + 
 								//								"-distance:" + me.getDistance() + 
 								"-precision:" + me.getPrecision() + 
 								"-recall:" + me.getRecall();

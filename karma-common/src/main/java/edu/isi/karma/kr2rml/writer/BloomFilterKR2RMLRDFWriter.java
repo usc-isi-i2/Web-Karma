@@ -17,12 +17,15 @@ public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 	protected boolean isRDF;
 	private final static String formattedTypeURI = "<" + Uris.RDF_TYPE_URI +">";
 	private String baseURI;
-	public BloomFilterKR2RMLRDFWriter(PrintWriter output, R2RMLMappingIdentifier mappingIdentifer, boolean isRDF, String baseURI)
+	public BloomFilterKR2RMLRDFWriter(PrintWriter output, boolean isRDF, String baseURI)
 	{
-		bloomFilterManager = new KR2RMLBloomFilterManager(mappingIdentifer);
 		this.output = output;
 		this.isRDF = isRDF;
 		this.baseURI = baseURI;
+	}
+	
+	public void setR2RMLMappingIdentifier(R2RMLMappingIdentifier mappingIdentifer) {
+		bloomFilterManager = new KR2RMLBloomFilterManager(mappingIdentifer);
 	}
 
 	@Override

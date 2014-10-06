@@ -760,7 +760,7 @@ public class GraphUtil {
     	} else if (type == LinkType.DataPropertyLink) {
     		l = new DataPropertyLink(id, label, keyInfo == LinkKeyInfo.PartOfKey ? true : false);
     	} else if (type == LinkType.DataPropertyOfColumnLink) {
-    		l = new DataPropertyOfColumnLink(id, hNodeId);
+    		l = new DataPropertyOfColumnLink(id, hNodeId, specializedLinkId);
     	} else if (type == LinkType.ObjectPropertyLink) {
     		l = new ObjectPropertyLink(id, label, objectPropertyType);
     	} else if (type == LinkType.ObjectPropertySpecializationLink) {

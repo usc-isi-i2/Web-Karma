@@ -17,7 +17,7 @@ public class N3Mapper extends BaseRDFMapper {
 		PrintWriter pw = new PrintWriter(sw);
 		URIFormatter uriFormatter = new URIFormatter();
 		N3KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
-		outWriter.setBaseURI(baseURI);
+		outWriter.setBaseURI(karma.getBaseURI());
 		return outWriter;
 	}
 

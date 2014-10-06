@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
-import java.lang.reflect.Field;
+import java.util.Set;
 
 import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.Group;

@@ -220,6 +220,16 @@ public class Alignment implements OntologyUpdateListener {
 		return null;
 	}
 	
+	public void updateLiteralNode(String nodeId, String value, String type, boolean isUri) {
+		LiteralNode node = (LiteralNode) getNodeById(nodeId);
+		type = type.replace(Prefixes.XSD + ":", Namespaces.XSD);
+		Label literalType = new Label(type, Namespaces.XSD, Prefixes.XSD);
+		
+		node.setDatatype(literalType);
+		node.setValue(value);
+		node.setUri(isUri);
+	}
+	
 	public void deleteForcedInternalNode(String nodeId) {
 		Node node = getNodeById(nodeId);
 		if(node != null) {
@@ -274,10 +284,10 @@ public class Alignment implements OntologyUpdateListener {
 		return null;
 	}
 	
-	public DataPropertyOfColumnLink addDataPropertyOfColumnLink(Node source, Node target, String specializedColumnHNodeId) {
+	public DataPropertyOfColumnLink addDataPropertyOfColumnLink(Node source, Node target, String specializedColumnHNodeId, String specializedLinkId) {
 		
 		String id = LinkIdFactory.getLinkId(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI, source.getId(), target.getId());
-		DataPropertyOfColumnLink link = new DataPropertyOfColumnLink(id, specializedColumnHNodeId);
+		DataPropertyOfColumnLink link = new DataPropertyOfColumnLink(id, specializedColumnHNodeId, specializedLinkId);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
 	}

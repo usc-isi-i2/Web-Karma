@@ -45,6 +45,10 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 		selectionName
 	}
 	
+	enum ArgumentsOld {
+		metaPropertyValue
+	}
+	
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
@@ -56,6 +60,12 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 		String propUri = request.getParameter(Arguments.metaPropertyUri.name());
 		String propId = request.getParameter(Arguments.metaPropertyId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
+		
+		if(propUri == null && propId == null) {
+			propUri = request.getParameter(ArgumentsOld.metaPropertyValue.name());
+			propId = propUri;
+		}
+			
 		return new SetMetaPropertyCommand(getNewId(workspace), worksheetId, hNodeId, 
 				prop, propUri, propId, true, rdfLiteralType, 
 				selectionName);
@@ -67,8 +77,14 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(HistoryJsonUtil.getStringValue(Arguments.metaPropertyName.name(), inputJson));
-		String propUri = HistoryJsonUtil.getStringValue(Arguments.metaPropertyUri.name(), inputJson);
-		String propId = HistoryJsonUtil.getStringValue(Arguments.metaPropertyId.name(), inputJson);
+		String propUri, propId;
+		if(HistoryJsonUtil.valueExits(Arguments.metaPropertyUri.name(), inputJson)) {
+			propUri = HistoryJsonUtil.getStringValue(Arguments.metaPropertyUri.name(), inputJson);
+			propId = HistoryJsonUtil.getStringValue(Arguments.metaPropertyId.name(), inputJson);
+		} else {
+			propUri = HistoryJsonUtil.getStringValue(ArgumentsOld.metaPropertyValue.name(), inputJson);
+			propId = propUri;
+		}
 		String rdfLiteralType = HistoryJsonUtil.getStringValue(Arguments.rdfLiteralType.name(), inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
