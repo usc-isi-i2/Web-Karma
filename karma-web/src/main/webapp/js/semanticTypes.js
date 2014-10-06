@@ -70,9 +70,10 @@ var SetSemanticTypeDialog = (function() {
 
 				var suggestedTypes = getSuggestedTypes();
 
-				var addSemTypeOrAdvOption = function(type, isSelected, isCrfModelSuggested) {
+				var addSemTypeOrAdvOption = function(type, isPrimary, isSelected, isCrfModelSuggested) {
 					if (type["DisplayLabel"] == "km-dev:classLink") {
-						addUriSemanticType(type["DisplayDomainLabel"], type["DomainUri"], type["DomainId"]);
+						addUriSemanticType(type["DisplayDomainLabel"], type["DomainUri"], type["DomainId"], 
+								isPrimary, isSelected, isCrfModelSuggested);
 					} else if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
 						$("#isSubclassOfClass").prop('checked', false);
 						$("#isSubclassOfClassTextBox").val(type["DisplayDomainLabel"]);
@@ -90,11 +91,11 @@ var SetSemanticTypeDialog = (function() {
 				// Populate the table with existing types and CRF suggested types
 				$.each(existingTypes, function(index, type) {
 					// Take care of the special meta properties that are set through the advanced options
-					addSemTypeOrAdvOption(type, true, false);
+					addSemTypeOrAdvOption(type, true, true, false);
 				});
 				if (suggestedTypes) {
 					$.each(suggestedTypes["Labels"], function(index, type) {
-						addSemTypeOrAdvOption(type, false, true);
+						addSemTypeOrAdvOption(type, false, false, true);
 					});
 				}
 
@@ -389,16 +390,16 @@ var SetSemanticTypeDialog = (function() {
 			addSemTypeObjectToCurrentTable(fakeSemType, false, false);
 		}
 
-		function addUriSemanticType(domainLabel, domainUri, domainId) {
+		function addUriSemanticType(domainLabel, domainUri, domainId, isPrimary, isSelected, isCrfModelSuggested) {
 			var type = new Object();
 			type["FullType"] = "http://isi.edu/integration/karma/dev#classLink";
 			type["DomainId"] = domainId;
 			type["DomainUri"] = domainUri;
 			type["DisplayLabel"] = "km-dev:classLink";
 			type["DisplayDomainLabel"] = domainLabel;
-			type["isPrimary"] = true;
+			type["isPrimary"] = isPrimary;
 			// Add it to the table
-			addSemTypeObjectToCurrentTable(type, true, false);
+			addSemTypeObjectToCurrentTable(type, isSelected, isCrfModelSuggested);
 		}
 
 		function addEmptyUriSemanticType() {
