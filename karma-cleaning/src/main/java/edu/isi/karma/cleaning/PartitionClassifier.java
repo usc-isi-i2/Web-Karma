@@ -1,13 +1,10 @@
 package edu.isi.karma.cleaning;
 
-import edu.isi.karma.cleaning.features.RecordClassifier2;
-import edu.isi.karma.cleaning.features.RecordFeatureSet;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import java.util.Vector;
+
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 
-import java.util.Vector;
 
 public class PartitionClassifier {
 	private PyObject interpreterClass;
@@ -15,14 +12,10 @@ public class PartitionClassifier {
 	public String[] vocabs;
 
 	public PartitionClassifier() {
-		String dirpathString = ServletContextParameterMap
-				.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY);
+		String dirpathString = "";
 		if (dirpathString.compareTo("") == 0) {
 			dirpathString = "./src/main/scripts/Lib";
 		}
-
-		dirpathString = "scripts/Lib";
-
 		PythonInterpreter interpreter = new PythonInterpreter();
 		// change the sys.path
 		interpreter.exec("import sys");
@@ -40,42 +33,25 @@ public class PartitionClassifier {
 		interpreter.exec("from IDCTClassifier import *");
 		interpreterClass = interpreter.get("IDCTClassifier");
 	}
-
-	public PartitionClassifierType create(Vector<Partition> pars) {
-		PyObject buildingObject = interpreterClass.__call__();
-		PartitionClassifierType ele = (PartitionClassifierType) buildingObject
-				.__tojava__(PartitionClassifierType.class);
-		// populate the classifier with data
-		for (int i = 0; i < pars.size(); i++) {
+	public PartitionClassifierType create2(Vector<Partition> pars,PartitionClassifierType ele,DataPreProcessor dpp)
+	{
+		ele.init();
+		for(int i = 0; i<pars.size(); i++)
+		{
 			Partition partition = pars.get(i);
 			for (int j = 0; j < partition.orgNodes.size(); j++) {
 				String s = UtilTools.print(partition.orgNodes.get(j));
 				String label = partition.label;
 				ele.addTrainingData(s, label);
 			}
-		}
-		this.clssettingString = ele.learnClassifer();
-		return ele;
-	}
-
-	public PartitionClassifierType create2(Vector<Partition> pars) {
-		RecordFeatureSet rfs = new RecordFeatureSet();
-		rfs.vocabs = this.vocabs;
-		RecordClassifier2 ele = new RecordClassifier2(rfs);
-		for (int i = 0; i < pars.size(); i++) {
-			Partition partition = pars.get(i);
-			for (int j = 0; j < partition.orgNodes.size(); j++) {
-				String s = UtilTools.print(partition.orgNodes.get(j));
+			for(int j = 0; j < partition.orgUnlabeledData.size(); j++)
+			{
 				String label = partition.label;
+				String s = partition.orgUnlabeledData.get(j);
 				ele.addTrainingData(s, label);
 			}
 		}
 		this.clssettingString = ele.learnClassifer();
 		return ele;
-	}
-
-	public static void main(String args[]) {
-		PartitionClassifier it = new PartitionClassifier();
-		it.create(null);
 	}
 }

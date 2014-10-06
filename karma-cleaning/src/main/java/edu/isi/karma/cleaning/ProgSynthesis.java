@@ -1,12 +1,24 @@
 package edu.isi.karma.cleaning;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPageOrder;
+import org.perf4j.LoggingStopWatch;
+import org.perf4j.StopWatch;
+import org.perf4j.log4j.Log4JStopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.cleaning.Research.ConfigParameters;
 import edu.isi.karma.cleaning.Research.Prober;
+import edu.isi.karma.cleaning.features.Feature;
+import edu.isi.karma.cleaning.features.RecordClassifier;
+import edu.isi.karma.cleaning.features.RecordFeatureSet;
+
 public class ProgSynthesis {
 	public static int time_limit = 20;
 	Vector<Vector<TNode>> orgVector = new Vector<Vector<TNode>>();
@@ -16,11 +28,24 @@ public class ProgSynthesis {
 	public long learnspan = 0;
 	public long genspan = 0;
 	public long ruleNo = 0;
+	public HashMap<String, double[]> string2Vector = new HashMap<String, double[]>();
 	public PartitionClassifierType classifier;
-	public String[] vocab = null;
+	public RecordFeatureSet featureSet = null;
+	public Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
 	public HashMap<String, Boolean> legalParitions = new HashMap<String, Boolean>();
 	public MyLogger logger = new MyLogger();
-	public void inite(Vector<String[]> examples) {
+	private static Logger ulogger = LoggerFactory
+			.getLogger(ProgSynthesis.class);
+	public Program myprog;
+	public OptimizePartition partitioner; // A* search for a consistent program
+	public ExampleCluster partiCluster;
+	public DataPreProcessor dataPreProcessor;
+	public Messager msGer;
+
+	public ProgSynthesis() {
+	}
+
+	public void inite(Vector<String[]> examples, String[] vocb) {
 		for (int i = 0; i < examples.size(); i++) {
 			Ruler r = new Ruler();
 			r.setNewInput(examples.get(i)[0]);
@@ -29,8 +54,45 @@ public class ProgSynthesis {
 			r1.setNewInput(examples.get(i)[1]);
 			tarVector.add(r1.vec);
 		}
+		RecordFeatureSet rSet = new RecordFeatureSet();
+		rSet.addVocabulary(vocb);
+		this.featureSet = rSet;
+		RecordClassifier r2 = new RecordClassifier(rSet);
+		this.classifier = r2;
+		partitioner = new OptimizePartition(this, r2);
 	}
-
+	
+	public void inite(Vector<String[]> examples, DataPreProcessor dp, Vector<Vector<String[]>> constraints) {
+		for (int i = 0; i < examples.size(); i++) {
+			Ruler r = new Ruler();
+			r.setNewInput(examples.get(i)[0]);
+			orgVector.add(r.vec);
+			Ruler r1 = new Ruler();
+			r1.setNewInput(examples.get(i)[1]);
+			tarVector.add(r1.vec);
+		}
+		featureSet = dp.rfs;
+		RecordClassifier r2 = new RecordClassifier(featureSet);
+		this.classifier = r2;
+		this.constraints = constraints;
+		string2Vector = dp.getStandardData();
+	}
+	public void inite(Vector<String[]> examples, DataPreProcessor dp, Messager msger) {
+		for (int i = 0; i < examples.size(); i++) {
+			Ruler r = new Ruler();
+			r.setNewInput(examples.get(i)[0]);
+			orgVector.add(r.vec);
+			Ruler r1 = new Ruler();
+			r1.setNewInput(examples.get(i)[1]);
+			tarVector.add(r1.vec);
+		}
+		featureSet = dp.rfs;
+		RecordClassifier r2 = new RecordClassifier(featureSet);
+		this.classifier = r2;
+		string2Vector = dp.getStandardData();
+		this.dataPreProcessor = dp;
+		this.msGer = msger;
+	}
 	public Vector<Vector<Integer>> generateCrossIndex(Vector<Integer> poss,
 			Vector<Vector<Integer>> p, int index) {
 		Vector<Vector<Integer>> qVector = new Vector<Vector<Integer>>();
@@ -114,7 +176,6 @@ public class ProgSynthesis {
 			legalParitions.put(key, true);
 			return true;
 		}
-
 	}
 
 	public void mergePartitions(Vector<Partition> pars) {
@@ -133,7 +194,6 @@ public class ProgSynthesis {
 				}
 			}
 		}
-
 		if (pos[0] != -1 && pos[1] != -1)
 			UpdatePartitions(pos[0], pos[1], pars);
 	}
@@ -148,26 +208,39 @@ public class ProgSynthesis {
 		return this.bestRuleString;
 	}
 
-	public Vector<Partition> ProducePartitions(boolean condense) {
-		Vector<Partition> pars = this.initePartitions();
-		int size = pars.size();
-		while (condense) {
-			this.mergePartitions(pars);
-			if (size == pars.size()) {
-				break;
-			} else {
-				size = pars.size();
-			}
+	public double[] getFeatureArray(String s) {
+		Collection<Feature> cfeat = featureSet.computeFeatures(s, "");
+		Feature[] x = cfeat.toArray(new Feature[cfeat.size()]);
+		double[] res = new double[x.length];
+		for (int i = 0; i < x.length; i++) {
+			res[i] = x[i].getScore();
 		}
-		return pars;
+		return res;
 	}
 
+	public Vector<Partition> ProducePartitions(boolean condense) {
+		Vector<Partition> pars = this.initePartitions();
+		partiCluster = new ExampleCluster(this, pars, string2Vector);
+		partiCluster.updateConstraints(msGer.getConstraints());
+		partiCluster.updateWeights(msGer.weights);
+		if (condense) {
+			pars = partiCluster.cluster_weigthEuclidean(pars);
+		}
+		this.ruleNo = pars.size();
+		/*
+		 * int size = pars.size(); while (condense) {
+		 * this.mergePartitions(pars); if (size == pars.size()) { break; } else
+		 * { size = pars.size(); } }
+		 */
+		return pars;
+	}
+	
 	public Collection<ProgramRule> producePrograms(Vector<Partition> pars) {
-		Program prog = new Program(pars, this.vocab);
+		Program prog = new Program(pars, this.classifier,this.dataPreProcessor);
+		this.myprog = prog;
 		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
 		int prog_cnt = 1;
 		int i = 0;
-		long startTime = System.currentTimeMillis();
 		while (i < prog_cnt) {
 			ProgramRule r = prog.toProgram1();
 			if (r == null)
@@ -178,10 +251,6 @@ public class ProgSynthesis {
 			while ((xString = this.validRule(r, pars)) != "GOOD" && findRule) {
 				if (xString.compareTo("NO_CLASIF") == 0) {
 					return null; // indistinguishable classes.
-				}
-				if ((System.currentTimeMillis() - startTime) / 1000 >= time_limit) {
-					findRule = false;
-					break;
 				}
 				for (Partition p : prog.partitions) {
 					if (p.label.compareTo(xString) == 0) {
@@ -199,35 +268,94 @@ public class ProgSynthesis {
 				termCnt++;
 			}
 			if (findRule)
+			{
 				rules.add(r);
-			this.ruleNo += termCnt; // accumulate the no of rules while the
+			}
 			i++;
 		}
 		return rules;
 	}
-
+	public Collection<ProgramRule> adaptive_main()
+	{
+		StopWatch stopWatch0 = new Log4JStopWatch("adaptive_main");
+		long t1 = System.currentTimeMillis();
+		StopWatch stopWatch = new Log4JStopWatch("adaptive_producePartition");
+		Vector<Partition> par = this.adaptive_producePartition();
+		stopWatch.stop();
+		StopWatch stopWatch1 = new Log4JStopWatch("adaptive_produceProgram");
+		Collection<ProgramRule> cpr = this.adaptive_produceProgram(par);
+		stopWatch1.stop();
+		Traces.AllSegs.clear();
+		//record the learning time
+		this.learnspan = System.currentTimeMillis()-t1;
+		stopWatch0.stop();
+		return cpr;
+	}
+	public Collection<ProgramRule> adaptive_produceProgram(Vector<Partition> pars)
+	{
+		
+		Program prog = new Program(pars, this.classifier,this.dataPreProcessor);
+		this.myprog = prog;
+		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
+		int prog_cnt = 1;
+		int i = 0;
+		while (i < prog_cnt) {
+			ProgramRule r = prog.toProgram2(msGer);
+			if (r == null)
+				return null;
+			String xString = "";
+			int termCnt = 0;
+			boolean findRule = true;
+			while ((xString = this.validRule(r, pars)) != "GOOD" && findRule) {
+				if (xString.compareTo("NO_CLASIF") == 0) {
+					return null; // indistinguishable classes.
+				}
+				for (Partition p : prog.partitions) {
+					if (p.label.compareTo(xString) == 0) {
+						String newRule = p.toProgram();
+						if (ConfigParameters.debug == 1)
+							System.out.println("updated Rule: " + p.label
+									+ ": " + newRule);
+						if (newRule.contains("null")) {
+							findRule = false;
+							break;
+						}
+						r.updateClassworker(xString, newRule);
+					}
+				}
+				termCnt++;
+			}
+			if (findRule)
+			{
+				rules.add(r);
+			}
+			i++;
+		}
+		return rules;
+	}
+	public Vector<Partition> adaptive_producePartition()
+	{	
+		Vector<Partition> pars = this.initePartitions();
+		partiCluster = new ExampleCluster(this, pars, string2Vector);
+		partiCluster.updateConstraints(msGer.getConstraints());
+		partiCluster.updateWeights(msGer.weights);
+		//update the program space and hypothesis space
+		pars = partiCluster.adaptive_cluster_weightEuclidean(pars);
+		this.ruleNo = pars.size();
+		return pars;
+	}
 	public Collection<ProgramRule> run_main() {
 		long t1 = System.currentTimeMillis();
+		StopWatch stopWatch0 = new Log4JStopWatch("main");
+		StopWatch stopWatch = new Log4JStopWatch("producePartition");
 		Vector<Partition> vp = this.ProducePartitions(true);
-		long t2 = System.currentTimeMillis();
+		stopWatch.stop();
+		StopWatch stopWatch1 = new Log4JStopWatch("producePrograms");
 		Collection<ProgramRule> cpr = this.producePrograms(vp);
-		long t3 = System.currentTimeMillis();
-		learnspan = (t2 - t1);
-		genspan = (t3 - t2);
-		if (cpr == null || cpr.size() == 0) {
-			t1 = System.currentTimeMillis();
-			vp = this.ProducePartitions(false);
-			t2 = System.currentTimeMillis();
-			cpr = this.producePrograms(vp);
-			t3 = System.currentTimeMillis();
-			learnspan += t2 - t1;
-			genspan += t3 - t2;
-		}
-		if(ConfigParameters.debug==1)
-		{
-			MyLogger.logsth(Prober.PartitionDisplay1(vp));
-		}
+		stopWatch1.stop();
 		Traces.AllSegs.clear();
+		stopWatch0.stop();
+		this.learnspan = System.currentTimeMillis()-t1;
 		return cpr;
 	}
 
@@ -237,9 +365,12 @@ public class ProgSynthesis {
 				String s1 = UtilTools.print(px.orgNodes.get(i));
 				String labelString = p.getClassForValue(s1);
 				if (labelString.compareTo(px.label) != 0) {
-					return "NO_CLASIF";
+					//logger.error(vp.toString());
+					ulogger.error("classification error on examples " + s1
+							+ "as: " + labelString);
+					// return "NO_CLASIF";
 				}
-				InterpreterType worker = p.getWorkerForClass(labelString);
+				InterpreterType worker = p.getWorkerForClass(px.label);
 				String s2 = "";
 				try {
 					s2 = new String(worker.execute(s1).getBytes(), "UTF-8");
