@@ -131,7 +131,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 		for (KR2RMLRDFWriter writer : writers) {
 			if (writer instanceof JSONKR2RMLRDFWriter) {
 				JSONKR2RMLRDFWriter t = (JSONKR2RMLRDFWriter)writer;
-				t.setGlobalContext(context);
+				t.setGlobalContext(context, contextId);
 			}
 			if (writer instanceof BloomFilterKR2RMLRDFWriter) {
 				BloomFilterKR2RMLRDFWriter t = (BloomFilterKR2RMLRDFWriter)writer;

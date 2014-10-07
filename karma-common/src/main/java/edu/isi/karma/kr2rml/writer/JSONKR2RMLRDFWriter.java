@@ -22,6 +22,7 @@ package edu.isi.karma.kr2rml.writer;
 
 import java.io.PrintWriter;
 import java.net.URI;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,12 +33,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.modeling.Uris;
 
 public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 
 	private Map<String, String> contextInverseMapping = new HashMap<String, String>();
+	private URL location;
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter) {
 		super(outWriter);
 	}
@@ -45,9 +48,10 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter, String baseURI) {
 		super(outWriter, baseURI);
 	}
-	
-	public void setGlobalContext(JSONObject context) {
+
+	public void setGlobalContext(JSONObject context, ContextIdentifier contextId) {
 		if (context.has("@context")) {
+			location = contextId.getLocation();
 			JSONObject c = context.getJSONObject("@context");
 			@SuppressWarnings("rawtypes")
 			Iterator itr = c.keys();
@@ -57,7 +61,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 					contextInverseMapping.put(c.getJSONObject(key).getString("@id"), key);
 				}catch(Exception e) 
 				{
-					
+
 				}
 			}
 		}
@@ -152,6 +156,9 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 					outWriter.println(",");
 				}
 				firstObject = false;
+				if (location != null) {
+					value.put("@context", location.toString());
+				}
 				outWriter.print(value.toString(4));
 			}
 		}
@@ -180,9 +187,9 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 						{
 							collapseSameType((JSONObject)o);
 							types.put(((JSONObject)o).getString("@id"), o);
-							
+
 						}
-						
+
 					}			
 					else
 					{
@@ -243,7 +250,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		object.put("@id", subjUri);
 		return object;
 	}
-	
+
 	private String generateShortHandURIFromContext(String uri) {
 		if (uri.startsWith("<") && uri.endsWith(">")) { 
 			uri = uri.substring(1, uri.length() - 1);		
