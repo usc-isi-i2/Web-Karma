@@ -1,4 +1,4 @@
-D3ModelLayout = function(htmlElement) {
+D3ModelLayout = function(htmlElement, cssClass) {
 	padding = 35;
 	windowWidth = window.innerWidth * 0.8 - padding;
 	leftPanelWidth = window.innerWidth * 0.2;
@@ -61,13 +61,9 @@ D3ModelLayout = function(htmlElement) {
 	//create svg
 	svg = d3.select(htmlElement)                         
 	    .append("svg")
-	   ;// .on("mousemove", mousemove);
-	function  mousemove(){
-		var ary = d3.mouse(this);
-		pos.attr("x", ary[0] + 2)
-			.attr("y", ary[1] + 2)
-			.text(ary[0] + ", " + ary[1]);
-	}
+	    //.on("mousemove", mousemove)
+	    ;
+
 
 	//svg to draw nodes and links
 	forceSVG = svg.append("g");
@@ -183,7 +179,17 @@ D3ModelLayout = function(htmlElement) {
 		labels = labels.data(textData);
 		labels.enter()
 			.append("g")
-			.classed("label", true);
+			.classed("label", true)
+			.attr("id", function(d, i){
+				if (d.type == "nodeLabel"){
+					return "nodeLabelG" + d.node.id;
+				} else if (d.type == "linkLabel"){
+					return "linkLabelG" + d.node.src + "-" + d.node.tgt;
+				} else if (d.type == "edgeLinkLabel"){
+					return "edgeLinkLabelG" + nodesData[d.node.tgt].id;
+				}
+				return "labelPartG" + i;
+			});
 		labels.exit()
 			.transition()
 			.duration(500)
@@ -253,12 +259,21 @@ D3ModelLayout = function(htmlElement) {
 			})
 			.append("path")	
 			.attr("stroke-width", 0)
-			.attr("stroke", "gold")	
+			.attr("stroke", function(d){
+				return "red";
+				if (d.type == "nodeLabel"){
+					return "#ddd";
+				} else if (d.type == "linkLabel"){
+					return "#555";
+				}
+			})		
 			.attr("id", function(d){
 				if (d.type == "nodeLabel"){
-					return "labelBoard" + d.node.id;
+					return "nodeLabelBoard" + d.node.id;
 				} else if (d.type == "linkLabel"){
-					return "labelBoard" + d.node.src + "-" + d.node.tgt;
+					return "linkLabelBoard" + d.node.src + "-" + d.node.tgt;
+				} else if (d.type == "edgeLinkLabel"){
+					return "edgeLinkLabelBoard" + nodesData[d.node.tgt].id;
 				}
 			})	
 			.attr("fill", function(d){
@@ -290,76 +305,82 @@ D3ModelLayout = function(htmlElement) {
 			});
 			
 		labelBoard.moveToBack();
-		labelClickBoard = labels.filter(function(d, i){
-			return (i % 2 == 1) && d.node.type != "anchor";
-		})
-		.append("rect")
-		.classed("clickBoard", true)
-		.attr("id", function(d){
-			if (d.type == "nodeLabel"){
-				return "clickBoard" + d.node.id;
-			} else if (d.type == "linkLabel"){
-				return "clickBoard" + d.node.src + " " + d.node.tgt;
-			}
-		})
-		.attr("fill", "transparent")
-		.attr("width", function(d){
-			var w = Math.ceil(this.parentNode.childNodes[1].getBBox().width);
-			return w;
-		})
-		.attr("height", function(d){
-			var h = Math.ceil(this.parentNode.childNodes[1].getBBox().height);
-			return h;
-		})
-		.attr("x", function(d){
-			var w = Math.ceil(this.parentNode.childNodes[1].getBBox().width);
-			return -w / 2;
-		})
-		.attr("y", function(d){
-			var h = Math.ceil(this.parentNode.childNodes[1].getBBox().height);
-			return -h;
-		})
-		.on("click", function(d){
-			if (d.type == "linkLabel" || d.type == "edgeLinkLabel"){
-				if(linkClickListener != null)
-					linkClickListener(d.node.original, d3.event);
-			} else {
-				if(nodeClickListener != null)
-					nodeClickListener(d.node.original, d3.event);
-			}
-			//console.log(d.type);
-		})
-		.on("mouseover", function(d){
-			var surfix = "";
-			var frameId = "";
-			if (d.type == "nodeLabel"){
-				surfix += d.node.id;
-				frameId = "#nodeLabel" + d.node.id;
-			} else if (d.type == "linkLabel"){
-				surfix += d.node.src + "-" + d.node.tgt;
-				frameId = "#linkLabel" + d.node.src + "-" + d.node.tgt;
-			}
-			/*var obj = d3.select(frameId);
-			obj[0].parentNode.appendChild(obj[0]);
-			d3.select("#labelBoard" + surfix)
-				.attr("stroke-width", 2);
-			console.log(obj[0]);*/
-		})
-		.on("mouseout", function(d, i){
-			var surfix = "";
-			var frameId = "";
-			if (d.type == "nodeLabel"){
-				surfix += d.node.id;
-				frameId = "nodeLabel" + d.node.id;
-			} else if (d.type == "linkLabel"){
-				surfix += d.node.src + "-" + d.node.tgt;
-				frameId = "linkLabel" + d.node.src + "-" + d.node.tgt;
-			}
-			d3.select("#labelBoard" + surfix)
-				.attr("stroke-width", 0);
-			//d3.select(frameId)
-				//.moveToBack();
-		});
+		labelClickBoard = labels
+			.filter(function(d, i){
+				return (i % 2 == 1) && d.node.type != "anchor";
+			})
+			.append("rect")
+			.classed("clickBoard", true)
+			.attr("id", function(d){
+				if (d.type == "nodeLabel"){
+					return "nodeLabelClickBoard" + d.node.id;
+				} else if (d.type == "linkLabel"){
+					return "linkLabelClickBoard" + d.node.src + " " + d.node.tgt;
+				} else if (d.type == "edgeLinkLabel"){
+					return "edgeLinkClickBoard" + nodesData[d.node.tgt].id;
+				}
+			})
+			.attr("fill", "transparent")
+			.attr("width", function(d){
+				var w = Math.ceil(this.parentNode.childNodes[1].getBBox().width);
+				return w;
+			})
+			.attr("height", function(d){
+				var h = Math.ceil(this.parentNode.childNodes[1].getBBox().height);
+				return h;
+			})
+			.attr("x", function(d){
+				var w = Math.ceil(this.parentNode.childNodes[1].getBBox().width);
+				return -w / 2;
+			})
+			.attr("y", function(d){
+				var h = Math.ceil(this.parentNode.childNodes[1].getBBox().height);
+				return -h;
+			})
+			.on("click", function(d){
+				if (d.type == "linkLabel" || d.type == "edgeLinkLabel"){
+					if(linkClickListener != null)
+						linkClickListener(d.node.original, d3.event);
+				} else {
+					if(nodeClickListener != null)
+						nodeClickListener(d.node.original, d3.event);
+				}
+				//console.log(d.type);
+			})
+			.on("mouseover", function(d){
+				var surfix = "";
+				var frameId = "";
+				if (d.type == "nodeLabel"){
+					surfix = "#nodeLabelBoard" + d.node.id;
+					frameId = "#nodeLabelG" + d.node.id;
+				} else if (d.type == "linkLabel"){
+					surfix = "#linkLabelBoard" + d.node.src + "-" + d.node.tgt;
+					frameId = "#linkLabelG" + d.node.src + "-" + d.node.tgt;
+				} else if (d.type == "edgeLinkLabel"){
+					surfix = "#edgeLinkLabelBoard" + nodesData[d.node.tgt].id;
+					frameId = "#edgeLinkLabelG" + nodesData[d.node.tgt].id;
+				}
+				d3.select(surfix)
+					.attr("stroke-width", 2);
+				d3.select(frameId)
+					.moveToFront();
+			})
+			.on("mouseout", function(d, i){
+				var surfix = "";
+				var frameId = "";
+				if (d.type == "nodeLabel"){
+					surfix = "#nodeLabelBoard" + d.node.id;
+					frameId = "#nodeLabelG" + d.node.id;
+				} else if (d.type == "linkLabel"){
+					surfix = "#linkLabelBoard" + d.node.src + "-" + d.node.tgt;
+					frameId = "#linkLabelG" + d.node.src + "-" + d.node.tgt;
+				} else if (d.type == "edgeLinkLabel"){
+					surfix = "#edgeLinkLabelBoard" + nodesData[d.node.tgt].id;
+					frameId = "#edgeLinkLabelG" + nodesData[d.node.tgt].id;
+				}
+				d3.select(surfix)
+					.attr("stroke-width", 0);
+			});
 
 
 			
@@ -504,7 +525,8 @@ D3ModelLayout = function(htmlElement) {
 		var kY = 0.05;
 
 
-		nodes.attr("cx", function(d) {
+		nodes
+			.attr("cx", function(d) {
 				if (d.outside.isOutside){				
 					return d.x = Math.max(xOffset + nodeRadius, Math.min(xOffset + windowWidth - nodeRadius, d.x));
 				} 
@@ -543,8 +565,22 @@ D3ModelLayout = function(htmlElement) {
 	    		if (d.type == "linkCircle"){
 		    		var a = nodesData[d.node.src];
 		    		var b = nodesData[d.node.tgt];
+		    		d.y = (a.y + b.y) / 2;	
 		    		d.x = (a.x + b.x) / 2 + (nodesData[d.node.tgt].x - nodesData[d.node.src].x) / 6;
-		    		d.y = (a.y + b.y) / 2;		    		
+		    		/*var i, j;			
+					for (i = 0; i < 1; i += 0.1){
+						if (getXofLabel(d, i, d.y)){
+							break;
+						}
+					}
+					i -= 0.1;
+					for (j = 0; j < 0.1; j += 0.01){
+						if (getXofLabel(d, i + j, d.y)){
+							break;
+						}
+					}   	*/
+
+		    			    		
 	    		} else if (d.type == "edgeLinkCircle"){
 	    			var a = d.node.src;
 	    			var b = nodesData[d.node.tgt];
@@ -662,16 +698,39 @@ D3ModelLayout = function(htmlElement) {
 		})
 	}
 
+	//calculate the X of inside labels
+	function getXofLabel(d, t, y){
+		var a = nodesData[d.node.src];
+		var b = nodesData[d.node.tgt];
+		var ax = a.x - (a.x - b.x) / 3;
+		var by = b.y - (b.y - a.y) / 3;
+		var Ax = ((1 - t) * b.x) + (t * b.x);
+		var Ay = ((1 - t) * b.y) + (t * by);
+		var Bx = ((1 - t) * b.x) + (t * ax);
+		var By = ((1 - t) * by) + (t * a.y);
+		var Cx = ((1 - t) * ax) + (t * a.x);
+		var Cy = ((1 - t) * a.y) + (t * a.y);
+		var Dx = ((1 - t) * Ax ) + (t * Bx);
+	    var Dy = ((1 - t) * Ay ) + (t * By);
+	    var Ex = ((1 - t) * Bx ) + (t * Cx);
+	    var Ey = ((1 - t) * By ) + (t * Cy);
+	    var Px = ((1 - t) * Dx ) + (t * Ex);
+	    var Py = ((1 - t) * Dy ) + (t * Ey);
+	    d.x = Px;
+	    return Py < y;
+	}
+
 	//calculate coordinate on the bezier curve
 	function getXofBezier(d, ax, by, t, y){
 		var a = d.source;
 		var b = d.target;
 		var x = b.x;
-		var tmpWidth = 100;
+		var tmpWidth = d.width / 2;
+		/*var tmpWidth = 100;
 		var obj = d3.select("nodeLabel" + b.id)
 			.attr("id", function(d){
 				tmpWidth = d.width / 2;
-			})
+			})*/
 		var Ax = ((1 - t) * b.x) + (t * b.x);
 		var Ay = ((1 - t) * b.y) + (t * by);
 		var Bx = ((1 - t) * b.x) + (t * ax);
@@ -1202,7 +1261,7 @@ D3ModelLayout = function(htmlElement) {
 		if (change > 0 || firstTime){
 			firstTime = false;
 			outsideNodesNum = num;	
-			d3.selectAll(".nodeLabel")
+			d3.select(htmlElement).selectAll(".nodeLabel")
 				.attr("opacity", function(d){
 					if (d.node.noLayer){
 						d.node.showLabel = true;
@@ -1217,7 +1276,7 @@ D3ModelLayout = function(htmlElement) {
 					d.node.showLabel = false;
 					return 0;			
 				});
-			d3.selectAll(".linkLabel")
+			d3.select(htmlElement).selectAll(".linkLabel")
 				.attr("opacity", function(d){
 					if (d.type == "linkLabel"){
 						if (nodesData[d.node.tgt].noLayer){
@@ -1232,7 +1291,7 @@ D3ModelLayout = function(htmlElement) {
 						return 1;
 					}
 				});
-			d3.selectAll(".edgeLinkLabel")
+			d3.select(htmlElement).selectAll(".edgeLinkLabel")
 				.attr("opacity", function(d){
 					//console.log(d.index);
 					if (!d.node.src.show || nodesData[d.node.tgt].outside.isOutside){
@@ -1242,7 +1301,7 @@ D3ModelLayout = function(htmlElement) {
 					d.show = true;
 					return 1;					
 				});
-			d3.selectAll(".clickBoard")
+			d3.select(htmlElement).selectAll(".clickBoard")
 				.attr("fill", function(d){
 					if (d.content == "edgeLinks"){
 						if (nodesData[d.node.tgt].outside.isOutside || !d.node.src.show){
@@ -1353,9 +1412,9 @@ D3ModelLayout = function(htmlElement) {
 
 	this.setNodeClickListener = function(listener) {
 		nodeClickListener = listener;
-	}
+	};
 
 	this.setLinkClickListener = function(listener) {
 		linkClickListener = listener
-	}
+	};
 };

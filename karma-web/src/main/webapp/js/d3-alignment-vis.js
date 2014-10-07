@@ -73,7 +73,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	} else {
 		alignJson = json;
 	}
-	var layout = new D3ModelLayout(layoutElement, w, worksheetId);
+	var layout = new D3ModelLayout(layoutElement, "col-sm-10", w, worksheetId);
 	layout.generateLayoutForJson(alignJson);
 	
 	var alignmentId = json["alignmentId"];

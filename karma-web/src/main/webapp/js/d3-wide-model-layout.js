@@ -1,4 +1,4 @@
-D3ModelLayout = function(htmlElement, w, worksheetId) {
+D3ModelLayout = function(htmlElement, htmlClass, w, worksheetId) {
 	nodeClickListener = null;
 	linkClickListener = null;
 
