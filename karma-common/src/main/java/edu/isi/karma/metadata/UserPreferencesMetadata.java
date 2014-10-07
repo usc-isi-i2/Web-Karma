@@ -29,7 +29,7 @@ public class UserPreferencesMetadata extends KarmaUserMetadata{
 
 	@Override
 	protected String getDirectoryPath() {
-		return "UserPrefs"+File.separator;
+		return "user-preferences" + File.separator;
 	}
 
 	@Override

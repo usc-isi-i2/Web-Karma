@@ -172,7 +172,7 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 			cn.setSuggestedSemanticTypes(suggestedSemanticTypes);
 		}
 		
-		ModelLearner modelLearner = new ModelLearner(ontologyManager, ModelLearningGraphType.Sparse, columnNodes);
+		ModelLearner modelLearner = new ModelLearner(ontologyManager, ModelLearningGraphType.Compact, columnNodes);
 		SemanticModel model = modelLearner.getModel();
 		if (model == null) {
 			logger.error("could not learn any model for this source!");

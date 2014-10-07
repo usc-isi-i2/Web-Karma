@@ -5,7 +5,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,18 +12,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-
-import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.util.RandomGUID;
-
 public class Coherence {
 
 	private static Logger logger = LoggerFactory.getLogger(Coherence.class);
 	private List<CoherenceItem> items;
-	private int nodesCount;
+	private int itemsCount;
 
 	private static int NUM_OF_MAX_SIZE_PATTERNS = 5;
 	private Map<String, Integer> patternSize;
@@ -35,7 +27,7 @@ public class Coherence {
 	
 	public Coherence() {
 		this.items = new ArrayList<>();
-		this.nodesCount = 0;
+		this.itemsCount = 0;
 		this.patternSize = new HashMap<String, Integer>();
 		this.patternGuid = new HashMap<String, String>();
 		this.maxPatterns = new String[NUM_OF_MAX_SIZE_PATTERNS];
@@ -43,16 +35,9 @@ public class Coherence {
 		this.patternIndex = new HashMap<String, Integer>();
 	}
 	
-//	public Coherence(int nodesCount) {
-//		this.items = new ArrayList<>();
-//		this.nodesCount = nodesCount;
-//		this.patternSize = new HashMap<String, Integer>();
-//		this.patternGuid = new HashMap<String, String>();
-//	}
-	
 	public Coherence(Coherence coherence) {
 		this.items = new ArrayList<CoherenceItem>(coherence.getItems());
-		this.nodesCount = coherence.nodesCount;
+		this.itemsCount = coherence.itemsCount;
 		this.patternSize = new HashMap<String, Integer>(coherence.patternSize);
 		this.patternGuid = new HashMap<String, String>(coherence.patternGuid);
 		this.maxPatterns = coherence.maxPatterns.clone();
@@ -85,14 +70,17 @@ public class Coherence {
 		return coherenceList;
 	}
 	
-	public void updateCoherence(Node n) {
+	public void updateCoherence(Set<String> modelIds) {
+		
+		if (modelIds == null || modelIds.isEmpty())
+			return;
 		
 //		logger.debug("update coherence data ...");
-		this.nodesCount ++;
+		this.itemsCount ++;
 //		System.out.println("=========================" + nodesCount);
 //		System.out.println("=========================" + n.getModelIds() != null ? n.getModelIds().size() : "null");
 		Integer index;
-		for (String p : n.getModelIds()) {
+		for (String p : modelIds) {
 			Integer size = patternSize.get(p);
 			if (size == null) size = 0;
 			patternSize.put(p, ++size);
@@ -102,6 +90,7 @@ public class Coherence {
 				int i = index.intValue();
 				while (i > 0 && size > patternSize.get(maxPatterns[i - 1])) {
 					maxPatterns[i] = maxPatterns[i-1];
+					patternIndex.put(maxPatterns[i-1], i);
 					i--;
 				}
 				maxPatterns[i] = p;
@@ -110,15 +99,19 @@ public class Coherence {
 				int i = 0;
 				while (i < numOfElementsInMaxPatterns && size < patternSize.get(maxPatterns[i]) )
 					i++;
-				for (int j = numOfElementsInMaxPatterns; j > i; j--)
+				for (int j = numOfElementsInMaxPatterns; j > i; j--) {
 					maxPatterns[j] = maxPatterns[j-1];
+					patternIndex.put(maxPatterns[j-1], j);
+				}
 				maxPatterns[i] = p;
 				patternIndex.put(p, i);
 				numOfElementsInMaxPatterns ++;
 			} else if (size > patternSize.get(maxPatterns[NUM_OF_MAX_SIZE_PATTERNS - 1])) {
 					int i = numOfElementsInMaxPatterns - 1;
+					patternIndex.remove(maxPatterns[i]);
 					while (i > 0 && size > patternSize.get(maxPatterns[i])) {
 						maxPatterns[i] = maxPatterns[i-1];
+						patternIndex.put(maxPatterns[i-1], i);
 						i--;
 					}
 					maxPatterns[i] = p;
@@ -140,36 +133,36 @@ public class Coherence {
 		Collections.sort(items, Collections.reverseOrder());
 	}
 
+//	public double getCoherenceValue() {
+//		
+//		if (this.itemsCount == 0) {
+//			logger.error("cannot compute coherence when number of nodes is zero!");
+//			return 0.0;
+//		}
+//		
+//		this.sortDescending();
+//
+//		BigDecimal value = BigDecimal.ZERO;
+//		
+//		BigDecimal denominator = BigDecimal.ONE;
+//		BigDecimal factor = new BigDecimal(this.itemsCount);
+//		BigDecimal b;
+//		
+//		for (CoherenceItem ci : this.items) {
+//			
+//			denominator = denominator.multiply(factor);
+//			b = new BigDecimal((double)ci.getX());
+////			b = new BigDecimal(ci.getDouble());
+//			b= b.divide(denominator, 5, RoundingMode.HALF_UP);
+//			value = value.add(b);
+//		}
+//		
+//		return value.doubleValue();
+//	}
+	
 	public double getCoherenceValue() {
 		
-		if (this.nodesCount == 0) {
-			logger.error("cannot compute coherence when number of nodes is zero!");
-			return 0.0;
-		}
-		
-		this.sortDescending();
-
-		BigDecimal value = BigDecimal.ZERO;
-		
-		BigDecimal denominator = BigDecimal.ONE;
-		BigDecimal factor = new BigDecimal(this.nodesCount);
-		BigDecimal b;
-		
-		for (CoherenceItem ci : this.items) {
-			
-			denominator = denominator.multiply(factor);
-			b = new BigDecimal((double)ci.getX());
-//			b = new BigDecimal(ci.getDouble());
-			b= b.divide(denominator, 5, RoundingMode.HALF_UP);
-			value = value.add(b);
-		}
-		
-		return value.doubleValue();
-	}
-	
-	public double getCoherenceValue2() {
-		
-		if (this.nodesCount == 0) {
+		if (this.itemsCount == 0) {
 			logger.error("cannot compute coherence when number of nodes is zero!");
 			return 0.0;
 		}
@@ -178,7 +171,7 @@ public class Coherence {
 		BigDecimal value = BigDecimal.ZERO;
 		
 		BigDecimal denominator = BigDecimal.ONE;
-		BigDecimal factor = new BigDecimal(this.nodesCount);
+		BigDecimal factor = new BigDecimal(this.itemsCount);
 		BigDecimal b;
 		
 //		List<Integer> coherenceList = getCoherenceList();
@@ -195,53 +188,53 @@ public class Coherence {
 		return Math.min(1.0, value.doubleValue());
 	}
 
-	public void computeCoherence(Set<Node> nodes) {
-		
-		logger.debug("computing coherence ...");
-		if (nodes == null || nodes.size() == 0)
-			return;
-
-		logger.debug("finding nodes largest patterns ...");
-		List<String> nodesLargetsPatterns = new LinkedList<String>();
-		int maxSize = 0;
-		String listOfMaxSizePatterns = "";
-		for (Node n : nodes) {
-			for (String p : n.getModelIds()) {
-				int size = this.patternSize.get(p).intValue();
-				if (size > maxSize) {
-					maxSize = size;
-					listOfMaxSizePatterns = "";
-				} else if (size == maxSize) {
-					listOfMaxSizePatterns += this.patternGuid.get(p);
-				}
-			}
-			nodesLargetsPatterns.add(listOfMaxSizePatterns);
-		}
-		
-		logger.debug("grouping coherence patterns ...");
-		Function<String, String> stringEqualiy = new Function<String, String>() {
-			  @Override public String apply(final String s) {
-			    return s;
-			  }
-			};
-				
-		Multimap<String, String> index =
-			Multimaps.index(nodesLargetsPatterns, stringEqualiy);
-		
-		int x, y;
-		int guidSize = new RandomGUID().toString().length();
-		this.items = new ArrayList<>();
-		this.nodesCount = nodes.size();
-		for (String s : index.keySet()) {
-			if (s.trim().length() == 0)
-				continue;
-			x = index.get(s).size();
-			y = x > 0 ? index.get(s).iterator().next().length() / guidSize : 0; 
-			CoherenceItem ci = new CoherenceItem(x, y);
-			this.addItem(ci);
-		}
-		
-	}
+//	public void computeCoherence(Set<Node> nodes) {
+//		
+//		logger.debug("computing coherence ...");
+//		if (nodes == null || nodes.size() == 0)
+//			return;
+//
+//		logger.debug("finding nodes largest patterns ...");
+//		List<String> nodesLargetsPatterns = new LinkedList<String>();
+//		int maxSize = 0;
+//		String listOfMaxSizePatterns = "";
+//		for (Node n : nodes) {
+//			for (String p : n.getModelIds()) {
+//				int size = this.patternSize.get(p).intValue();
+//				if (size > maxSize) {
+//					maxSize = size;
+//					listOfMaxSizePatterns = "";
+//				} else if (size == maxSize) {
+//					listOfMaxSizePatterns += this.patternGuid.get(p);
+//				}
+//			}
+//			nodesLargetsPatterns.add(listOfMaxSizePatterns);
+//		}
+//		
+//		logger.debug("grouping coherence patterns ...");
+//		Function<String, String> stringEqualiy = new Function<String, String>() {
+//			  @Override public String apply(final String s) {
+//			    return s;
+//			  }
+//			};
+//				
+//		Multimap<String, String> index =
+//			Multimaps.index(nodesLargetsPatterns, stringEqualiy);
+//		
+//		int x, y;
+//		int guidSize = new RandomGUID().toString().length();
+//		this.items = new ArrayList<>();
+//		this.itemsCount = nodes.size();
+//		for (String s : index.keySet()) {
+//			if (s.trim().length() == 0)
+//				continue;
+//			x = index.get(s).size();
+//			y = x > 0 ? index.get(s).iterator().next().length() / guidSize : 0; 
+//			CoherenceItem ci = new CoherenceItem(x, y);
+//			this.addItem(ci);
+//		}
+//		
+//	}
 	
 	public String printCoherenceList() {
 		String s = "(";

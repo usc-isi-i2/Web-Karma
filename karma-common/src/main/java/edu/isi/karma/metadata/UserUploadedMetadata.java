@@ -5,30 +5,33 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class JSONModelsMetadata extends KarmaUserMetadata {
+public class UserUploadedMetadata extends KarmaUserMetadata{
 
-	
-	public JSONModelsMetadata(Workspace workspace) throws KarmaException
-	{
+	public UserUploadedMetadata() throws KarmaException {
+		super(null);
+	}
+	public UserUploadedMetadata(Workspace workspace) throws KarmaException {
 		super(workspace);
 	}
-	
+
 	@Override
 	public void setup(UpdateContainer uc) {
-	
+		
 	}
 
 	@Override
 	protected ContextParameter getDirectoryContextParameter() {
-		return ContextParameter.JSON_MODELS_DIR;
+
+		return ContextParameter.USER_UPLOADED_DIR;
 	}
 
 	@Override
 	protected String getDirectoryPath() {
-		return "models-json/";
+		return "user-uploaded-files";
 	}
+
 	@Override
 	public KarmaMetadataType getType() {
-		return StandardUserMetadataTypes.JSON_MODELS;
+		return StandardUserMetadataTypes.USER_UPLOADED;
 	}
 }

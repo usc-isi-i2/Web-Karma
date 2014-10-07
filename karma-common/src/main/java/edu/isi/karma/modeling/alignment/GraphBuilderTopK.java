@@ -114,6 +114,9 @@ public class GraphBuilderTopK extends GraphBuilder {
 			return null;
 		}
 		
+//		for (Node n : steinerNodes)
+//			System.out.println(n instanceof ColumnNode ? ((ColumnNode)n).getColumnName() : n.getId());
+		
 		TreeSet<SteinerNode> terminals= new TreeSet<SteinerNode>();
 		for (Node n : steinerNodes) {
 			terminals.add(new SteinerNode(n.getId()));
@@ -121,6 +124,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 		
 //		DPBFfromMM N = new DPBFfromMM(terminals);
 		BANKSfromMM N = new BANKSfromMM(terminals);
+//		STARfromMM N = new STARfromMM(terminals);
 		TopKSteinertrees.graph = this.getTopKGraph();
 		TopKSteinertrees.nodes = this.getTopKGraphNodes();
 		

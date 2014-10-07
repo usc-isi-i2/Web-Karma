@@ -213,7 +213,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 			//			e.printStackTrace();
 		}
 		try {
-			semanticModel.writeGraphviz(ServletContextParameterMap.getParameterValue(ContextParameter.GRAPHVIZ_DIRECTORY) + 
+			semanticModel.writeGraphviz(ServletContextParameterMap.getParameterValue(ContextParameter.GRAPHVIZ_MODELS_DIR) + 
 					semanticModel.getName() + 
 					".model.dot", false, false);
 		} catch (Exception e) {
@@ -222,7 +222,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		}
 
 		if (ModelingConfiguration.isLearnerEnabled())
-			ModelLearningGraph.getInstance(workspace.getOntologyManager(), ModelLearningGraphType.Sparse).
+			ModelLearningGraph.getInstance(workspace.getOntologyManager(), ModelLearningGraphType.Compact).
 			addModelAndUpdateAndExport(semanticModel);
 
 		// *****************************************************************************************

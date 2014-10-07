@@ -67,5 +67,6 @@ public class ServerStart extends HttpServlet {
 		logger.info("Server start servlet initialized successfully..");
 		logger.info("***********");
 
-	}		
+	}
+
 }
