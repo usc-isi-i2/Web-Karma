@@ -194,7 +194,6 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 
 			alignment.addClassInstanceLink(classNode, columnNode,
 					LinkKeyInfo.UriOfInstance);
-			alignment.align();
 
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId,
@@ -238,7 +237,6 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 						1.0, false);
 			}
 
-			alignment.align();
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyId);
 			if (semanticTypeAlreadyExists) {
