@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
@@ -257,7 +258,6 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				classNode = alignment.addInternalNode(classNodeLabel);
 			}
 			alignment.addColumnSubClassOfLink(classNode, columnNode);
-			alignment.align();
 
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId,
@@ -266,6 +266,14 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		}
 
 		columnNode.setUserSelectedSemanticType(newType);
+		
+		// Update the alignment
+		UpdateContainer suggestModelUpdate = null;
+		if (ModelingConfiguration.isLearnAlignmentEnabled()) 
+			suggestModelUpdate = new SuggestModelCommand(alignmentId, worksheetId, false, selectionId, true).doIt(workspace);
+		else
+			alignment.align();
+
 
 		UpdateContainer c = new UpdateContainer();
 
@@ -286,10 +294,15 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		if (trainAndShowUpdates) {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		}
-		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-		c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
-				alignment));
-		return c;
+		
+		if (ModelingConfiguration.isLearnAlignmentEnabled() && suggestModelUpdate != null) {
+			return suggestModelUpdate;
+		} else {
+			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+			c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
+					alignment));
+			return c;
+		}
 	}
 
 	private void clearOldSemanticTypeLink(LabeledLink oldIncomingLinkToColumnNode,

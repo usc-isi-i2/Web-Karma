@@ -59,10 +59,9 @@ public class SuggestAutoModelCommandFactory extends JSONInputCommandFactory {
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
-		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new SuggestModelCommand(getNewId(workspace), getWorksheetId(
-				request, workspace), false, 
-				selectionName);
+//		String selectionName = request.getParameter(Arguments.selectionName.name());
+		return new SuggestAutoModelCommand(getNewId(workspace), getWorksheetId(
+				request, workspace));
 	}
 
 	public Command createCommand(JSONArray inputJson, Workspace workspace)

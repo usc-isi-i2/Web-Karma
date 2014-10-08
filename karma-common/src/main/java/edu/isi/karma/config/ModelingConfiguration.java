@@ -64,6 +64,7 @@ public class ModelingConfiguration {
 	private static Double scoringSizeCoefficient;
 
 	private static Boolean learnerEnabled;
+	private static Boolean learnAlignmentEnabled;
 	private static Boolean multipleSamePropertyPerNode;
 
 	private static Boolean storeOldHistory;
@@ -104,6 +105,8 @@ public class ModelingConfiguration {
 			"#" + newLine + 
 			"##########################################################################################" + newLine + 
 			"learner.enabled=true" + newLine + 
+			"" + newLine + 
+			"learn.alignment.enabled=false" + newLine + 
 			"" + newLine + 
 			"max.queued.mappings=100" + newLine + 
 			"max.candidate.models=5" + newLine + 
@@ -153,6 +156,8 @@ public class ModelingConfiguration {
 			karmaServicePrefix = modelingProperties.getProperty("karma.service.prefix", "http://isi.edu/integration/karma/services/");
 
 			learnerEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learner.enabled", "true"));
+
+			learnAlignmentEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learn.alignment.enabled", "false"));
 
 //			modelsJsonDir = modelingProperties.getProperty("models.json.dir", "models-json/");
 //			modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir", "models-graphviz/");
@@ -334,6 +339,12 @@ public class ModelingConfiguration {
 		return learnerEnabled;
 	}
 
+	public static boolean isLearnAlignmentEnabled() {
+		if (learnAlignmentEnabled == null)
+			load();
+		return learnAlignmentEnabled;
+	}
+	
 	public static boolean isStoreOldHistoryEnabled() {
 		if (storeOldHistory == null)
 			load();
