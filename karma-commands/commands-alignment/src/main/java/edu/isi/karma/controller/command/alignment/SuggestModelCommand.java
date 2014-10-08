@@ -73,7 +73,7 @@ import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SubClassLink;
 
 
-public class ShowModelCommand extends WorksheetSelectionCommand {
+public class SuggestModelCommand extends WorksheetSelectionCommand {
 
 	private String worksheetName;
 	private Alignment initialAlignment = null;
@@ -83,9 +83,9 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 //	private final boolean addVWorksheetUpdate;
 
 	private static Logger logger = LoggerFactory
-			.getLogger(ShowModelCommand.class);
+			.getLogger(SuggestModelCommand.class);
 
-	protected ShowModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate, String selectionId) {
+	protected SuggestModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate, String selectionId) {
 		super(id, worksheetId, selectionId);
 //		this.addVWorksheetUpdate = addVWorksheetUpdate;
 		
@@ -103,7 +103,7 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public String getTitle() {
-		return "Show Model";
+		return "Suggest Model";
 	}
 
 	@Override
