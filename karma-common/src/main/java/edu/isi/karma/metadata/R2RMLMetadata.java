@@ -24,7 +24,7 @@ public class R2RMLMetadata extends KarmaUserMetadata {
 	
 	@Override
 	protected String getDirectoryPath() {
-		return "models-r2rml/";
+		return "models-autosave/";
 	}
 
 	@Override
