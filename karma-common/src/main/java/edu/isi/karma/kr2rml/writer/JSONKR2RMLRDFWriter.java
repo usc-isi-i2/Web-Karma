@@ -73,7 +73,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 
 	@Override
 	protected void addValue(PredicateObjectMap pom, JSONObject subject, String predicateUri, Object object) {
-		if (subject.has(shortHandURIGenerator.getShortHand(predicateUri).toString()) || predicateUri.contains(Uris.RDF_TYPE_URI)) {
+		if (subject.has(generateShortHandURIFromContext(predicateUri)) || predicateUri.contains(Uris.RDF_TYPE_URI)) {
 			String shortHandPredicateURI = generateShortHandURIFromContext(predicateUri);
 			addValueToArray(pom, subject, object,
 					shortHandPredicateURI);
