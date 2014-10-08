@@ -41,6 +41,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 
 	private Map<String, String> contextInverseMapping = new HashMap<String, String>();
 	private URL location;
+	private JSONObject context;
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter) {
 		super(outWriter);
 	}
@@ -51,8 +52,11 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 
 	public void setGlobalContext(JSONObject context, ContextIdentifier contextId) {
 		if (context.has("@context")) {
-			location = contextId.getLocation();
+			if (contextId != null) {
+				location = contextId.getLocation();
+			}
 			JSONObject c = context.getJSONObject("@context");
+			this.context = c;
 			@SuppressWarnings("rawtypes")
 			Iterator itr = c.keys();
 			while (itr.hasNext()) {
@@ -158,6 +162,9 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 				firstObject = false;
 				if (location != null) {
 					value.put("@context", location.toString());
+				}
+				else if (context != null) {
+					value.put("@context", context);
 				}
 				outWriter.print(value.toString(4));
 			}

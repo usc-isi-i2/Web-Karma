@@ -2703,3 +2703,126 @@ var AddLiteralNodeDialog = (function() {
 		};
 		
 })();
+
+
+var ExportJSONDialog = (function() {
+	var instance = null;
+
+	function PrivateConstructor() {
+		var dialog = $("#exportJSONDialog");
+		var worksheetId, columnId;
+		var contextJSON;
+		function init() {
+			$('#useContextControl').hide();
+			$('#useContext').attr("checked", false);
+			$('#useContext').change(function (e){
+				if (this.checked) {
+					$('#useContextControl').show();
+				}
+				else {
+					$('#useContextControl').hide();
+				}
+			});
+
+			$('#btnSave', dialog).on('click', function(e) {
+				e.preventDefault();
+				saveDialog(e);
+			});
+
+			$('#contextupload').fileupload({
+				url: "/",
+				add: function(e, data) {
+					console.log("add");
+					loadContext(data.files);
+				}
+			});
+		}
+
+		function loadContext(filelist) {
+			console.log("load preset");
+			if(filelist.length > 0) {
+				var file = filelist[0];
+				if (file.size < 1024 * 1024 * 10) {
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						var json;
+						try {
+							contextJSON = e.target.result;
+							console.log(contextJSON);
+						} catch (err) {
+
+						}
+					}
+					reader.readAsText(file);
+				}
+			}
+		};
+
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+
+		function showError() {
+			$("div.error", dialog).show();
+		}
+
+		function saveDialog(e) {
+			hide();
+			var info = generateInfoObject(worksheetId, "", "ExportJSONCommand");
+			var newInfo = info['newInfo'];
+			newInfo.push(getParamObject("alignmentNodeId", columnId, "other"));
+			var contextFromModel = "false";
+			if ($('#useContext').is(":checked")) {
+				if (!$('#useContextFromFile').is(":checked")) {
+					contextJSON = "";
+				}
+				if ($('#useContextFromModel').is(":checked")) {
+					contextFromModel = "true";
+				}
+			}
+			else {
+				contextJSON = "";
+			}
+			newInfo.push(getParamObject("contextJSON", contextJSON, "other"));
+			newInfo.push(getParamObject("contextFromModel", contextFromModel, "other"));
+			info["newInfo"] = JSON.stringify(newInfo);
+			var returned = sendRequest(info, worksheetId);
+		};
+
+		function hide() {
+			dialog.modal('hide');
+		}
+
+		function show(wsId, colId) {
+			worksheetId = wsId;
+			columnId = colId;
+			contextJSON = "";
+			dialog.modal({
+				keyboard: true,
+				show: true,
+				backdrop: 'static'
+			});
+		};
+
+
+		return { //Return back the public methods
+			show: show,
+			init: init,
+		};
+	};
+
+	function getInstance() {
+		console.log("instance");
+		if (!instance) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	}
+
+	return {
+		getInstance: getInstance
+	};
+
+})();
+

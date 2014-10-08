@@ -19,10 +19,8 @@ import org.json.JSONObject;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-import edu.isi.karma.modeling.Uris;
+import edu.isi.karma.kr2rml.ContextGenerator;
 import edu.isi.karma.webserver.KarmaException;
 
 public class GenerateContextFromModel {
@@ -53,31 +51,7 @@ public class GenerateContextFromModel {
 		Model model = ModelFactory.createDefaultModel();
         InputStream s = new FileInputStream(file);
         model.read(s, null, "TURTLE");
-        StmtIterator itr = model.listStatements();
-        JSONObject obj = new JSONObject();
-        while(itr.hasNext()) {
-        	Statement stmt = itr.next();
-        	if (stmt.getPredicate().getURI().equals(Uris.RR_CLASS_URI)) {
-        		if (stmt.getObject().isURIResource()) {
-        			String shortForm = model.shortForm(stmt.getObject().toString());
-        			String fullURI = stmt.getObject().toString();
-        			if (!shortForm.equals(fullURI)) {
-        				obj.put(shortForm.substring(shortForm.lastIndexOf(":") + 1), new JSONObject().put("@id", fullURI));
-        			}
-        		}
-        	}
-        	if (stmt.getPredicate().getURI().equals(Uris.RR_PREDICATE_URI)) {
-        		if (stmt.getObject().isURIResource()) {
-        			String shortForm = model.shortForm(stmt.getObject().toString());
-        			String fullURI = stmt.getObject().toString();
-        			if (!shortForm.equals(fullURI)) {
-        				obj.put(shortForm.substring(shortForm.lastIndexOf(":") + 1), new JSONObject().put("@id", fullURI));
-        			}
-        		}
-        	}
-        }
-        JSONObject top = new JSONObject();
-        top.put("@context", obj);
+        JSONObject top = new ContextGenerator(model).generateContext();
         PrintWriter pw = new PrintWriter(output);
         pw.println(top.toString(4));
         pw.close();
