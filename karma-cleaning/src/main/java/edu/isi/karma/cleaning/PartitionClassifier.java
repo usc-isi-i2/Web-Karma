@@ -3,35 +3,14 @@ package edu.isi.karma.cleaning;
 import java.util.Vector;
 
 import org.python.core.PyObject;
-import org.python.util.PythonInterpreter;
 
 
 public class PartitionClassifier {
-	private PyObject interpreterClass;
+	private PyObject interpreterClass = null;
 	public String clssettingString = "";
 	public String[] vocabs;
 
 	public PartitionClassifier() {
-		String dirpathString = "";
-		if (dirpathString.compareTo("") == 0) {
-			dirpathString = "./src/main/scripts/Lib";
-		}
-		PythonInterpreter interpreter = new PythonInterpreter();
-		// change the sys.path
-		interpreter.exec("import sys");
-		// interpreter.exec("sys.path.append('/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/')");
-		// interpreter.exec("sys.path.append('/Library/Python/2.7/site-packages')");
-		interpreter.exec("sys.path.append('" + dirpathString + "')");
-		// /Users/bowu/projects/IDCT/src/edu/isi/karma/cleaning
-		interpreter.exec("sys.path.append('" + dirpathString + "')");
-		// interpreter.exec("print sys.path");
-		interpreter.exec("import re");
-		// interpreter.exec("print sys.path");
-		interpreter.exec("from FunctionList import *");
-		interpreter.exec("from FeatureFactory import *");
-		interpreter.exec("from NaiveBayes import *");
-		interpreter.exec("from IDCTClassifier import *");
-		interpreterClass = interpreter.get("IDCTClassifier");
 	}
 	public PartitionClassifierType create2(Vector<Partition> pars,PartitionClassifierType ele,DataPreProcessor dpp)
 	{

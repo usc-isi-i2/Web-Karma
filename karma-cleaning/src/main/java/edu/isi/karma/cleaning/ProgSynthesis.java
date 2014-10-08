@@ -1,20 +1,16 @@
 package edu.isi.karma.cleaning;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPageOrder;
-import org.perf4j.LoggingStopWatch;
 import org.perf4j.StopWatch;
 import org.perf4j.log4j.Log4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.cleaning.Research.ConfigParameters;
-import edu.isi.karma.cleaning.Research.Prober;
 import edu.isi.karma.cleaning.features.Feature;
 import edu.isi.karma.cleaning.features.RecordClassifier;
 import edu.isi.karma.cleaning.features.RecordFeatureSet;
@@ -246,7 +242,6 @@ public class ProgSynthesis {
 			if (r == null)
 				return null;
 			String xString = "";
-			int termCnt = 0;
 			boolean findRule = true;
 			while ((xString = this.validRule(r, pars)) != "GOOD" && findRule) {
 				if (xString.compareTo("NO_CLASIF") == 0) {
@@ -265,7 +260,6 @@ public class ProgSynthesis {
 						r.updateClassworker(xString, newRule);
 					}
 				}
-				termCnt++;
 			}
 			if (findRule)
 			{
@@ -304,7 +298,6 @@ public class ProgSynthesis {
 			if (r == null)
 				return null;
 			String xString = "";
-			int termCnt = 0;
 			boolean findRule = true;
 			while ((xString = this.validRule(r, pars)) != "GOOD" && findRule) {
 				if (xString.compareTo("NO_CLASIF") == 0) {
@@ -323,7 +316,6 @@ public class ProgSynthesis {
 						r.updateClassworker(xString, newRule);
 					}
 				}
-				termCnt++;
 			}
 			if (findRule)
 			{

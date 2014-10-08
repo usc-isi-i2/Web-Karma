@@ -31,6 +31,7 @@ import java.util.ListIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * @author szekely
  * 
@@ -39,7 +40,8 @@ public class HNodePath {
 
 	private static final Logger LOG = LoggerFactory.getLogger(HNodePath.class);
 	private List<HNode> hNodes = new LinkedList<HNode>();
-
+	private Object msger = null;//used for holding session cleaning data
+	private Object dpp = null; // data preprocessing for cleaning
 	public HNodePath() {
 	}
 

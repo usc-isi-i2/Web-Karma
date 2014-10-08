@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
 
-import javax.xml.xpath.XPath;
-
 import org.perf4j.StopWatch;
 import org.perf4j.log4j.Log4JStopWatch;
 
