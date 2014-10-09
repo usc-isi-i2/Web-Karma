@@ -227,8 +227,11 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 			N3KR2RMLRDFWriter writer = new N3KR2RMLRDFWriter(new URIFormatter(workspace.getOntologyManager(), errorReport), new PrintWriter (bw));
 			writer.setBaseURI(rdfSourceNamespace);
 			writers.add(writer);
-			if (generateBloomFilters && utilObj.testURIExists(modelRepoUrl, "", url))
-				writers.add(new BloomFilterKR2RMLRDFWriter(new PrintWriter(sw), mapping.getId(), false, this.rdfSourceNamespace));
+			if (generateBloomFilters && utilObj.testURIExists(modelRepoUrl, "", url)) {
+				BloomFilterKR2RMLRDFWriter bfWriter = new BloomFilterKR2RMLRDFWriter(new PrintWriter(sw), false, this.rdfSourceNamespace);
+				writers.add(bfWriter);
+				bfWriter.setR2RMLMappingIdentifier(mapping.getId());
+			}
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 					workspace.getFactory(), workspace.getOntologyManager(),
 					writers, false, mapping, errorReport, selection);

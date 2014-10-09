@@ -53,18 +53,14 @@ import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class FileUtil {
-	private static String USER_UPLOAD_DIR = "UserUploadedFiles/";
-	
-    private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
+
+	private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
     static public File downloadFileFromHTTPRequest(HttpServletRequest request) {
         // Download the file to the upload file folder
     	
-        File destinationDir = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + USER_UPLOAD_DIR);
+        File destinationDir = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_UPLOADED_DIR));
         logger.debug("File upload destination directory: " + destinationDir.getAbsolutePath());
-        if (!destinationDir.isDirectory()) {
-            destinationDir.mkdir();
-        }
 
         DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
 

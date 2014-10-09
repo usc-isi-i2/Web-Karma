@@ -57,6 +57,7 @@ import edu.isi.karma.metadata.ReportMetadata;
 import edu.isi.karma.metadata.SemanticTypeModelMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
+import edu.isi.karma.metadata.UserUploadedMetadata;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -81,6 +82,7 @@ public class KarmaServlet extends HttpServlet {
 		UpdateContainer updateContainer = new  UpdateContainer();
 		try {
 			metadataManager = new KarmaMetadataManager();
+			metadataManager.register(new UserUploadedMetadata(), updateContainer);
 			metadataManager.register(new UserPreferencesMetadata(), updateContainer);
 			metadataManager.register(new UserConfigMetadata(), updateContainer);
 		} catch (KarmaException e) {

@@ -73,7 +73,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	} else {
 		alignJson = json;
 	}
-	var layout = new D3ModelLayout(layoutElement, w, worksheetId);
+	var layout = D3ModelManager.getInstance().getModelManager(worksheetId, layoutElement, "col-sm-10", w);
 	layout.generateLayoutForJson(alignJson);
 	
 	var alignmentId = json["alignmentId"];
@@ -140,3 +140,57 @@ var refreshAlignmentTree = function(worksheetId) {
 		sendRequest(info, worksheetId);
 	}
 };
+
+
+var D3ModelManager = (function() {
+	var instance = null;
+
+	function PrivateConstructor() {
+		var models;
+		
+		function init() {
+			models = [];
+			
+			window.onscroll = function(event){
+				for (var worksheetId in models) {
+					models[worksheetId].onscroll(event);
+				} 
+			};
+			
+			window.onresize = function(event) {
+				for (var worksheetId in models) {
+					models[worksheetId].onresize(event);
+				} 
+			};
+		}
+		
+		function getModelManager(worksheetId, layoutElement, layoutClass, width) {
+			if(models[worksheetId]) {
+				//This is temporary. Comment this out when the D3ModelLayout can handle updates.
+				models[worksheetId] = new D3ModelLayout(layoutElement, layoutClass, width, worksheetId);
+			} else { 
+				models[worksheetId] = new D3ModelLayout(layoutElement, layoutClass, width, worksheetId);
+			}
+			return models[worksheetId];	
+		};
+
+		return { //Return back the public methods
+			init: init,
+			getModelManager: getModelManager
+		};
+	};
+
+	function getInstance() {
+		if (!instance) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	}
+
+	return {
+		getInstance: getInstance
+	};
+
+})();
+

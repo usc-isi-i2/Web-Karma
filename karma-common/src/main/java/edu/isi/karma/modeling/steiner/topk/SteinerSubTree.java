@@ -69,6 +69,8 @@ public abstract class SteinerSubTree implements Comparable<SteinerSubTree>{
 	public int compareTo(SteinerSubTree p){
 		String thisEdgeString = "";
 		String otherEdgesString = "";
+//		if (p.score - this.score < 0.0005)
+//			return 0;
 		for(SteinerEdge e: p.getEdges()) otherEdgesString=otherEdgesString+e.toString();
 		for(SteinerEdge e: this.getEdges()) thisEdgeString= thisEdgeString+e.toString();
 		return thisEdgeString.compareTo(otherEdgesString);

@@ -54,14 +54,14 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 
 
-public class ShowAutoModelCommand extends WorksheetCommand {
+public class SuggestAutoModelCommand extends WorksheetCommand {
 
 	private String worksheetName;
 
 	private static Logger logger = LoggerFactory
-			.getLogger(ShowAutoModelCommand.class);
+			.getLogger(SuggestAutoModelCommand.class);
 
-	protected ShowAutoModelCommand(String id, String worksheetId)
+	protected SuggestAutoModelCommand(String id, String worksheetId)
 			{
 		super(id, worksheetId);
 		
@@ -79,7 +79,7 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 
 	@Override
 	public String getTitle() {
-		return "Show AutoModel";
+		return "Suggest AutoModel";
 	}
 
 	@Override

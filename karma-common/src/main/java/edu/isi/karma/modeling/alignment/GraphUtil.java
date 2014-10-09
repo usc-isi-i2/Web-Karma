@@ -260,6 +260,7 @@ public class GraphUtil {
 			sb.append(edge.getId());
 			sb.append(" - status=" + edge.getStatus().name());
 			sb.append(" - w=" + edge.getWeight());
+			sb.append(" - type=" + edge.getType().name());
 			sb.append("\n");
         }
 		//sb.append("------------------------------------------");

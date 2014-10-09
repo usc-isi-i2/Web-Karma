@@ -61,11 +61,20 @@ public class TreePostProcess {
 		
 		this.graphBuilder = graphBuilder;
 		this.tree = (DirectedWeightedMultigraph<Node, DefaultLink>)GraphUtil.asDirectedGraph(tree);
-		buildOutputTree();
+		buildOutputTree(true);
 		addLinks(newLinks);
 		if (findRoot)
 			selectRoot(findPossibleRoots());
 
+	}
+	
+	public TreePostProcess(
+			GraphBuilder graphBuilder,
+			UndirectedGraph<Node, DefaultLink> tree) {
+		
+		this.graphBuilder = graphBuilder;
+		this.tree = (DirectedWeightedMultigraph<Node, DefaultLink>)GraphUtil.asDirectedGraph(tree);
+		buildOutputTree(false);
 	}
 	
 	// Public Methods
@@ -132,7 +141,7 @@ public class TreePostProcess {
 		this.root = possibleRoots.get(0);
 	}
 
-	private void buildOutputTree() {
+	private void buildOutputTree(boolean allowedChaningGraph) {
 		
 		String sourceId, targetId;
 		DefaultLink[] links = tree.edgeSet().toArray(new DefaultLink[0]);
@@ -174,14 +183,14 @@ public class TreePostProcess {
 					
 					if (linkSourceId.equals(sourceId)) {
 						tree.addEdge(link.getSource(), link.getTarget(), newLink);
-						this.graphBuilder.addLink(link.getSource(), link.getTarget(), newLink);
+						if (allowedChaningGraph) this.graphBuilder.addLink(link.getSource(), link.getTarget(), newLink);
 					} else {
 						tree.addEdge(link.getTarget(), link.getSource(), newLink);
-						this.graphBuilder.addLink(link.getTarget(), link.getSource(), newLink);
+						if (allowedChaningGraph) this.graphBuilder.addLink(link.getTarget(), link.getSource(), newLink);
 					}
 					
 					tree.removeEdge(link);
-					this.graphBuilder.removeLink(link);
+					if (allowedChaningGraph) this.graphBuilder.removeLink(link);
 	
 				} else {
 					logger.error("Something is going wrong. " +

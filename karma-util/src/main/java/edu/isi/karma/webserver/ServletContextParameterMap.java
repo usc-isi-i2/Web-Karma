@@ -48,16 +48,16 @@ public class ServletContextParameterMap {
 		CLEANING_SERVICE_URL, CLUSTER_SERVICE_URL,
 		JETTY_PORT, JETTY_HOST, SEMTYPE_MODEL_DIRECTORY, 
 		ALIGNMENT_GRAPH_DIRECTORY, USER_PREFERENCES_DIRECTORY, USER_CONFIG_DIRECTORY,
-		GRAPHVIZ_DIRECTORY, GRAPHVIZ_RELATIVE_DIRECTORY,
+		GRAPHVIZ_MODELS_DIR,
 		JSON_MODELS_DIR, 
 		R2RML_PUBLISH_DIR, R2RML_PUBLISH_RELATIVE_DIR,
 		R2RML_USER_DIR,
 		RDF_PUBLISH_DIR, RDF_PUBLISH_RELATIVE_DIR,
 		CSV_PUBLISH_DIR, CSV_PUBLISH_RELATIVE_DIR, USER_PYTHON_SCRIPTS_DIRECTORY,
 		JSON_PUBLISH_DIR, JSON_PUBLISH_RELATIVE_DIR,
-		REPORT_PUBLISH_DIR, REPORT_PUBLISH_RELATIVE_DIR, AVRO_PUBLISH_DIR, AVRO_PUBLISH_RELATIVE_DIR
+		REPORT_PUBLISH_DIR, REPORT_PUBLISH_RELATIVE_DIR, AVRO_PUBLISH_DIR, AVRO_PUBLISH_RELATIVE_DIR, USER_UPLOADED_DIR
 	}
-
+	
 	static {
 		
 		// Find a safe place to store preferences
@@ -84,6 +84,7 @@ public class ServletContextParameterMap {
 		}
 		setParameterValue(ContextParameter.USER_DIRECTORY_PATH, karmaDir);
 		logger.info("Karma home: " + karmaDir);
+		
 	}
 	public static void setParameterValue(ContextParameter param, String value) {
 		valuesMap.put(param, value);
@@ -96,4 +97,7 @@ public class ServletContextParameterMap {
 
 		return "";
 	}
+	
+	
+
 }

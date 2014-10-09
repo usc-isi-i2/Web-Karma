@@ -13,13 +13,15 @@ import org.jgrapht.graph.WeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.steiner.topk.DPBFfromMM;
+import edu.isi.karma.modeling.steiner.topk.BANKSfromMM;
 import edu.isi.karma.modeling.steiner.topk.Fact;
 import edu.isi.karma.modeling.steiner.topk.ResultGraph;
 import edu.isi.karma.modeling.steiner.topk.SteinerEdge;
 import edu.isi.karma.modeling.steiner.topk.SteinerNode;
 import edu.isi.karma.modeling.steiner.topk.TopKSteinertrees;
+import edu.isi.karma.rep.alignment.CompactObjectPropertyLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
@@ -33,46 +35,75 @@ public class GraphBuilderTopK extends GraphBuilder {
 	
 	static Logger logger = LoggerFactory.getLogger(GraphBuilderTopK.class);
 
-	private HashMap<SteinerNode, TreeSet<SteinerEdge>> topKGraph = new HashMap<SteinerNode, TreeSet<SteinerEdge>>();
-	private HashMap<String, SteinerNode> topKGraphNodes = new HashMap<String, SteinerNode>();
+	private HashMap<SteinerNode, TreeSet<SteinerEdge>> topKGraph;
+	private HashMap<String, SteinerNode> topKGraphNodes;
 
 	public GraphBuilderTopK(OntologyManager ontologyManager, NodeIdFactory nodeIdFactory, boolean addThingNode) { 
 		super(ontologyManager, nodeIdFactory, addThingNode);
+		if (topKGraph == null) topKGraph = new HashMap<SteinerNode, TreeSet<SteinerEdge>>();
+		if (topKGraphNodes == null) topKGraphNodes = new HashMap<String, SteinerNode>();
 	}
 	
 	public GraphBuilderTopK(OntologyManager ontologyManager, DirectedWeightedMultigraph<Node, DefaultLink> graph) {
 		super(ontologyManager, graph);
+		if (topKGraph == null) topKGraph = new HashMap<SteinerNode, TreeSet<SteinerEdge>>();
+		if (topKGraphNodes == null) topKGraphNodes = new HashMap<String, SteinerNode>();
 	}
 	
 	public HashMap<SteinerNode, TreeSet<SteinerEdge>> getTopKGraph() {
+		if (topKGraph == null)
+			topKGraph = new HashMap<SteinerNode, TreeSet<SteinerEdge>>();
 		return topKGraph;
 	}
 
 	public HashMap<String, SteinerNode> getTopKGraphNodes() {
+		if (topKGraphNodes == null)
+			topKGraphNodes = new HashMap<String, SteinerNode>();
 		return topKGraphNodes;
 	}
 
 	public boolean addNode(Node node) {
 		if (super.addNode(node)) {
 			SteinerNode n = new SteinerNode(node.getId());
-			topKGraphNodes.put(n.getNodeId(), n);
-			topKGraph.put(n, new TreeSet<SteinerEdge>());
+			getTopKGraphNodes().put(n.getNodeId(), n);
+			getTopKGraph().put(n, new TreeSet<SteinerEdge>());
+			return true;
+		} else
+			return false;
+	}
+	public boolean addLink(Node source, Node target, DefaultLink link) {
+		if (super.addLink(source, target, link)) {
+			SteinerNode n1 = new SteinerNode(source.getId());
+			SteinerNode n2 = new SteinerNode(target.getId());
+			SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)link.getWeight());
+			getTopKGraph().get(n1).add(e);
+			getTopKGraph().get(n2).add(e);
 			return true;
 		} else
 			return false;
 	}
 	
 	public boolean addLink(Node source, Node target, DefaultLink link, Double weight) {
-		if (super.addLink(source, target, link)) {
-			super.changeLinkWeight(link, weight);
+		if (super.addLink(source, target, link, weight)) {
 			SteinerNode n1 = new SteinerNode(source.getId());
 			SteinerNode n2 = new SteinerNode(target.getId());
 			SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)weight.doubleValue());
-			topKGraph.get(n1).add(e);
-			topKGraph.get(n2).add(e);
+			getTopKGraph().get(n1).add(e);
+			getTopKGraph().get(n2).add(e);
 			return true;
 		} else
 			return false;
+	}
+	
+	public void changeLinkWeight(DefaultLink link, double weight) {
+		super.changeLinkWeight(link, weight);
+		SteinerNode n1 = new SteinerNode(link.getSource().getId());
+		SteinerNode n2 = new SteinerNode(link.getTarget().getId());
+		SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)weight);
+		getTopKGraph().get(n1).remove(e);
+		getTopKGraph().get(n2).remove(e);
+		getTopKGraph().get(n1).add(e);
+		getTopKGraph().get(n2).add(e);
 	}
 	
 	public List<DirectedWeightedMultigraph<Node, LabeledLink>> getTopKSteinerTrees(Set<Node> steinerNodes, int k) 
@@ -83,12 +114,17 @@ public class GraphBuilderTopK extends GraphBuilder {
 			return null;
 		}
 		
+//		for (Node n : steinerNodes)
+//			System.out.println(n instanceof ColumnNode ? ((ColumnNode)n).getColumnName() : n.getId());
+		
 		TreeSet<SteinerNode> terminals= new TreeSet<SteinerNode>();
 		for (Node n : steinerNodes) {
 			terminals.add(new SteinerNode(n.getId()));
 		}
 		
-		DPBFfromMM N = new DPBFfromMM(terminals);
+//		DPBFfromMM N = new DPBFfromMM(terminals);
+		BANKSfromMM N = new BANKSfromMM(terminals);
+//		STARfromMM N = new STARfromMM(terminals);
 		TopKSteinertrees.graph = this.getTopKGraph();
 		TopKSteinertrees.nodes = this.getTopKGraphNodes();
 		
@@ -98,6 +134,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 		N.getTopKTrees(k);
 		DirectedWeightedMultigraph<Node, LabeledLink> processedTree = null;
 		for(ResultGraph tree: N.getResultQueue()){
+//			System.out.println(tree.getScore());
 			processedTree = getLabeledSteinerTree(tree);
 			if (processedTree != null) results.add(processedTree);
 		}
@@ -116,7 +153,12 @@ public class GraphBuilderTopK extends GraphBuilder {
 		for (Fact f : initialTree.getFacts()) { 
 			source = this.getIdToNodeMap().get(f.source().name());
 			target = this.getIdToNodeMap().get(f.destination().name());
-			l = this.getIdToLinkMap().get(f.label().name);
+			
+			if (LinkIdFactory.getLinkUri(f.label().name).equals(Uris.DEFAULT_LINK_URI)) {
+				String id = LinkIdFactory.getLinkId(Uris.DEFAULT_LINK_URI, source.getId(), target.getId());					
+				l = new CompactObjectPropertyLink(id, ObjectPropertyType.None);
+			}
+			else l = this.getIdToLinkMap().get(f.label().name);
 			weight = f.weight();
 			if (!visitedNodes.contains(source)) {
 				tree.addVertex(source);
@@ -126,12 +168,12 @@ public class GraphBuilderTopK extends GraphBuilder {
 				tree.addVertex(target);
 				visitedNodes.add(target);
 			}
+//			System.out.println(f.toString());
 			tree.addEdge(source, target, l);
 			tree.setEdgeWeight(l, weight);
-//			System.out.println(f.toString());
 		}
 		
-		TreePostProcess treePostProcess = new TreePostProcess(this, tree, null, false);
+		TreePostProcess treePostProcess = new TreePostProcess(this, tree);
 		return treePostProcess.getTree();
 
 	}

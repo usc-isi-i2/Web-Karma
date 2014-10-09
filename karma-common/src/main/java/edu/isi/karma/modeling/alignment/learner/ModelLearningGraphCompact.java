@@ -57,13 +57,13 @@ import edu.isi.karma.util.RandomGUID;
 public class ModelLearningGraphCompact extends ModelLearningGraph {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelLearningGraphCompact.class);
-	
+		
 	public ModelLearningGraphCompact(OntologyManager ontologyManager) throws IOException {
-		super(ontologyManager);
+		super(ontologyManager, ModelLearningGraphType.Compact);
 	}
 	
 	public ModelLearningGraphCompact(OntologyManager ontologyManager, boolean emptyInstance) {
-		super(ontologyManager, emptyInstance);
+		super(ontologyManager, emptyInstance, ModelLearningGraphType.Compact);
 	}
 	
 //	protected static ModelLearningGraphCompact getInstance(OntologyManager ontologyManager) {
@@ -361,7 +361,13 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 				String id = LinkIdFactory.getLinkId(e.getUri(), n1.getId(), n2.getId());
 				LabeledLink l = this.graphBuilder.getIdToLinkMap().get(id);
 				if (l != null) {
-					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
+					int numOfPatterns = l.getModelIds().size();
+//					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
+//					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT / (double) (numOfPatterns + 1) );
+					if (n2 instanceof InternalNode)
+						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT - (0.00001 * numOfPatterns) );
+					else
+						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
 					l.getModelIds().add(indexedModelId);
 					n1.getModelIds().add(indexedModelId);
 					n2.getModelIds().add(indexedModelId);
@@ -391,9 +397,8 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			    		continue;
 					}
 					link.getModelIds().add(indexedModelId);
-					if (this.graphBuilder.addLink(n1, n2, link)) {
-						this.graphBuilder.changeLinkWeight(link, ModelingParams.PATTERN_LINK_WEIGHT);
-					}
+					if (!this.graphBuilder.addLink(n1, n2, link, ModelingParams.PATTERN_LINK_WEIGHT)) continue;
+
 					n1.getModelIds().add(indexedModelId);
 					n2.getModelIds().add(indexedModelId);
 					

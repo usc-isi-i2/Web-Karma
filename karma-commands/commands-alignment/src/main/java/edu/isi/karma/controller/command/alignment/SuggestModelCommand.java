@@ -73,20 +73,35 @@ import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SubClassLink;
 
 
-public class ShowModelCommand extends WorksheetSelectionCommand {
+public class SuggestModelCommand extends WorksheetSelectionCommand {
 
 	private String worksheetName;
 	private Alignment initialAlignment = null;
 	private DirectedWeightedMultigraph<Node, DefaultLink> initialGraph = null;
 	private List<ColumnNode> columnNodes;
 	private Set<String> columnsWithoutSemanticType = null;
+	private boolean onlyUseTypesColumns;
 //	private final boolean addVWorksheetUpdate;
 
 	private static Logger logger = LoggerFactory
-			.getLogger(ShowModelCommand.class);
+			.getLogger(SuggestModelCommand.class);
 
-	protected ShowModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate, String selectionId) {
+	protected SuggestModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate, String selectionId) {
 		super(id, worksheetId, selectionId);
+		this.onlyUseTypesColumns = false;
+//		this.addVWorksheetUpdate = addVWorksheetUpdate;
+		
+		/** NOTE Not saving this command in history for now since we are 
+		 * not letting CRF model assign semantic types automatically. This command 
+		 * was being saved in history to keep track of the semantic types 
+		 * that were assigned by the CRF Model **/ 
+		// addTag(CommandTag.Modeling);
+	}
+	
+	protected SuggestModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate, String selectionId, 
+			boolean onlyUseTypesColumns) {
+		super(id, worksheetId, selectionId);
+		this.onlyUseTypesColumns = onlyUseTypesColumns;
 //		this.addVWorksheetUpdate = addVWorksheetUpdate;
 		
 		/** NOTE Not saving this command in history for now since we are 
@@ -103,7 +118,7 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public String getTitle() {
-		return "Show Model";
+		return "Suggest Model";
 	}
 
 	@Override
@@ -151,6 +166,10 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 				{
 					String hNodeId = orderedNodeIds.get(i).getId();
 					ColumnNode cn = alignment.getColumnNodeByHNodeId(hNodeId);
+					
+					if (this.onlyUseTypesColumns && cn.getUserSelectedSemanticType() == null)
+						continue; // ignore the columns without any semantic type
+
 					if (cn.getUserSelectedSemanticType() == null)
 					{
 						columnsWithoutSemanticType.add(hNodeId);
@@ -166,13 +185,15 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
 		
-		for (ColumnNode cn : columnNodes) {
-			List<SemanticType> suggestedSemanticTypes = 
-					new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4, selection);
-			cn.setSuggestedSemanticTypes(suggestedSemanticTypes);
+		if (!onlyUseTypesColumns) { // if column already has a type, we don't need suggested semantic types
+			for (ColumnNode cn : columnNodes) {
+				List<SemanticType> suggestedSemanticTypes = 
+						new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4, selection);
+				cn.setSuggestedSemanticTypes(suggestedSemanticTypes);
+			}
 		}
 		
-		ModelLearner modelLearner = new ModelLearner(ontologyManager, ModelLearningGraphType.Sparse, columnNodes);
+		ModelLearner modelLearner = new ModelLearner(ontologyManager, columnNodes);
 		SemanticModel model = modelLearner.getModel();
 		if (model == null) {
 			logger.error("could not learn any model for this source!");

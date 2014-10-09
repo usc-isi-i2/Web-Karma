@@ -98,7 +98,7 @@ public class WorksheetCommandHistoryExecutor {
 
 		// Change the hNode ids, vworksheet id to point to the current worksheet ids
 		try {
-			UpdateContainer uc = normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
+			UpdateContainer uc = normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, true);
 			// Invoke the command
 			if (uc == null) {
 				uc = new UpdateContainer();
@@ -148,7 +148,7 @@ public class WorksheetCommandHistoryExecutor {
 	}
 
 	public UpdateContainer normalizeCommandHistoryJsonInput(Workspace workspace, String worksheetId, 
-			JSONArray inputArr, String commandName) throws JSONException {
+			JSONArray inputArr, String commandName, boolean addIfNonExist) throws JSONException {
 		UpdateContainer uc = null;
 		HTable hTable = workspace.getWorksheet(worksheetId).getHeaders();
 		for (int i = 0; i < inputArr.length(); i++) {
@@ -177,7 +177,12 @@ public class WorksheetCommandHistoryExecutor {
 							uc = new UpdateContainer(update);
 						else
 							uc.add(update);
-						node = hTable.addHNode(nameObjColumnName, HNodeType.Regular, workspace.getWorksheet(worksheetId), workspace.getFactory());						
+						if (addIfNonExist) {
+							node = hTable.addHNode(nameObjColumnName, HNodeType.Regular, workspace.getWorksheet(worksheetId), workspace.getFactory());		
+						}
+						else {
+							continue;
+						}
 					}
 
 					if (j == hNodeJSONRep.length()-1) {		// Found!
@@ -194,7 +199,7 @@ public class WorksheetCommandHistoryExecutor {
 								getWorksheet(worksheetId).getHeaders();
 					} else if(node != null) {
 						hTable = node.getNestedTable();
-						if (hTable == null) {
+						if (hTable == null && addIfNonExist) {
 							hTable = node.addNestedTable("NestedTable", workspace.getWorksheet(worksheetId), workspace.getFactory());
 						}
 					}
@@ -225,7 +230,12 @@ public class WorksheetCommandHistoryExecutor {
 								uc = new UpdateContainer(update);
 							else
 								uc.add(update);
-							hTable.addHNode(nameObjColumnName, HNodeType.Regular, workspace.getWorksheet(worksheetId), workspace.getFactory());						
+							if (addIfNonExist) {
+								hTable.addHNode(nameObjColumnName, HNodeType.Regular, workspace.getWorksheet(worksheetId), workspace.getFactory());
+							}
+							else {
+								continue;
+							}
 						}
 
 						if (j == hNodeJSONRep.length()-1) {		// Found!
@@ -241,7 +251,7 @@ public class WorksheetCommandHistoryExecutor {
 									getWorksheet(worksheetId).getHeaders();
 						} else if(node != null) {
 							hTable = node.getNestedTable();
-							if (hTable == null) {
+							if (hTable == null && addIfNonExist) {
 								hTable = node.addNestedTable("NestedTable", workspace.getWorksheet(worksheetId), workspace.getFactory());
 							}
 						}

@@ -1,12 +1,11 @@
 package edu.isi.karma.metadata;
 
-import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class GraphVizMetadata extends KarmaPublishedMetadata {
+public class GraphVizMetadata extends KarmaUserMetadata {
 
 	
 	public GraphVizMetadata(Workspace workspace) throws KarmaException
@@ -21,21 +20,16 @@ public class GraphVizMetadata extends KarmaPublishedMetadata {
 
 	@Override
 	protected ContextParameter getDirectoryContextParameter() {
-		return ContextParameter.GRAPHVIZ_DIRECTORY;
-	}
-
-	@Override
-	protected ContextParameter getRelativeDirectoryContextParameter() {
-		return ContextParameter.GRAPHVIZ_RELATIVE_DIRECTORY;
+		return ContextParameter.GRAPHVIZ_MODELS_DIR;
 	}
 	
 	@Override
 	protected String getDirectoryPath() {
-		return ModelingConfiguration.getModelsGraphvizDir();
+		return "models-graphviz/";
 	}
 
 	@Override
 	public KarmaMetadataType getType() {
-		return StandardPublishMetadataTypes.GRAPHVIZ;
+		return StandardUserMetadataTypes.GRAPHVIZ_MODELS;
 	}
 }

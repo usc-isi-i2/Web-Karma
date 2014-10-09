@@ -2,6 +2,7 @@ package edu.isi.karma.rdf;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class RDFGeneratorRequest {
 	private List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
 	private String modelName;
 	private String sourceName;
+	private String contextName;
 	public RDFGeneratorRequest(String modelName, String sourceName)
 	{
 	
@@ -31,7 +33,7 @@ public class RDFGeneratorRequest {
 		this.strategy = null;
 		this.inputFile = null;
 		this.inputStream = null;
-		
+		this.contextName = null;
 	}
 	
 	public boolean isValidRequest()
@@ -45,6 +47,14 @@ public class RDFGeneratorRequest {
 
 	public void setStrategy(RootStrategy strategy) {
 		this.strategy = strategy;
+	}
+	
+	public String getContextName() {
+		return contextName;
+	}
+
+	public void setContextName(String contextName) {
+		this.contextName = contextName;
 	}
 
 	public int getMaxNumLines() {
@@ -101,6 +111,10 @@ public class RDFGeneratorRequest {
 
 	public void addWriter(KR2RMLRDFWriter writer) {
 		this.writers.add(writer);
+	}
+	
+	public void addWriters(Collection<KR2RMLRDFWriter> writers) {
+		this.writers.addAll(writers);
 	}
 
 	public String getModelName() {

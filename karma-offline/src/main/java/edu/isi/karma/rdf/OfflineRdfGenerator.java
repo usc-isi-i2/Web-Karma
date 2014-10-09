@@ -59,6 +59,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
@@ -111,6 +112,7 @@ public class OfflineRdfGenerator {
 	private List<String> killTripleMap;
 	private List<String> stopTripleMap;
 	private List<String> POMToKill;
+	private String contextFile;
 	public OfflineRdfGenerator(CommandLine cl)
 	{
 
@@ -201,14 +203,15 @@ public class OfflineRdfGenerator {
 		modelFilePath = (String) cl.getValue("--modelfilepath");
 		modelURLString = (String) cl.getValue("--modelurl");
 		outputFilePath = (String) cl.getValue("--outputfile");
-		outputFileJSONPath = (String) cl.getValue("--JSONOutputFile");
+		outputFileJSONPath = (String) cl.getValue("--jsonoutputfile");
 		baseURI = (String) cl.getValue("--baseuri");
 		bloomFiltersFilePath = (String) cl.getValue("--outputbloomfilter");
 		selectionName = (String) cl.getValue("--selection");
 		rootTripleMap = (String) cl.getValue("--root");
-		String killTripleMap = (String) cl.getValue("--killTripleMap");
-		String stopTripleMap = (String) cl.getValue("--stopTripleMap");
-		String POMToKill = (String) cl.getValue("--POMToKill");
+		String killTripleMap = (String) cl.getValue("--killtriplemap");
+		String stopTripleMap = (String) cl.getValue("--stoptriplemap");
+		String POMToKill = (String) cl.getValue("--pomtokill");
+		contextFile = (String)cl.getValue("--contextfile");
 		if (rootTripleMap == null) {
 			rootTripleMap = "";
 		}
@@ -336,6 +339,12 @@ public class OfflineRdfGenerator {
 		{
 			modelURL = new URL(modelURLString);
 		}
+		if (contextFile != null) {
+			File tmp = new File(contextFile);
+			if (!tmp.exists()) {
+				throw new IOException("File not found: " + tmp.getAbsolutePath());
+			}
+		}
 		if (baseURI != null && !baseURI.trim().isEmpty())
 			return;
 		try {
@@ -367,15 +376,20 @@ public class OfflineRdfGenerator {
 
 		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
 				hostname, port, username, password, dBorSIDName, encoding, selectionName);
+		ContextIdentifier contextId = null;
+		if (contextFile != null) {
+			File tmp = new File(contextFile);
+			contextId = new ContextIdentifier(tmp.getName(), tmp.toURI().toURL());
+		}
 		if(inputType.equals("DB")) {
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
-			createWriters(id);
-			dbRdfGen.generateRDFFromTable(tablename, writers, id, baseURI);
+			createWriters();
+			dbRdfGen.generateRDFFromTable(tablename, writers, id, contextId, baseURI);
 		} else {
 			String query = loadQueryFromFile();
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(modelURL.toString(), modelURL);
-			createWriters(id);
-			dbRdfGen.generateRDFFromSQL(query, writers, id, baseURI);
+			createWriters();
+			dbRdfGen.generateRDFFromSQL(query, writers, id, contextId, baseURI);
 		}
 
 
@@ -436,10 +450,10 @@ public class OfflineRdfGenerator {
 		}
 	}
 
-	protected void createWriters(R2RMLMappingIdentifier id) throws IOException
+	protected void createWriters() throws IOException
 	{
 		createN3Writer();
-		createBloomFilterWriter(id);
+		createBloomFilterWriter();
 	}
 	protected void createN3Writer()
 			throws UnsupportedEncodingException, FileNotFoundException {
@@ -459,15 +473,14 @@ public class OfflineRdfGenerator {
 		writers.add(n3Writer);
 	}
 
-	protected void createBloomFilterWriter(
-			R2RMLMappingIdentifier id) throws FileNotFoundException {
+	protected void createBloomFilterWriter() throws FileNotFoundException {
 		if (bloomFiltersFilePath != null && !bloomFiltersFilePath.trim().isEmpty()) {
 			PrintWriter bloomfilterpw = new PrintWriter(new File(bloomFiltersFilePath));
 			logger.info(bloomFiltersFilePath);
 			BloomFilterKR2RMLRDFWriter bloomfilter = null;
 			if (bloomfilterpw != null)
 			{
-				bloomfilter = new BloomFilterKR2RMLRDFWriter(bloomfilterpw, id, true, baseURI);
+				bloomfilter = new BloomFilterKR2RMLRDFWriter(bloomfilterpw, true, baseURI);
 				writers.add(bloomfilter);
 			}
 		}
@@ -484,10 +497,10 @@ public class OfflineRdfGenerator {
 		}
 		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(sourceName, modelURL);
 
-
-		createWriters(id);
+		createWriters();
 		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator(selectionName, killTripleMap, stopTripleMap, POMToKill, rootTripleMap);
 		rdfGenerator.addModel(id);
+
 		InputType inputType = null;
 		if(this.inputType.equalsIgnoreCase("CSV"))
 			inputType = InputType.CSV;
@@ -495,8 +508,19 @@ public class OfflineRdfGenerator {
 			inputType = InputType.JSON;
 		else if(this.inputType.equalsIgnoreCase("XML"))
 			inputType = InputType.XML;
-		rdfGenerator.generateRDF(sourceName, inputFile, inputType, maxNumLines, false, writers);
-
+		RDFGeneratorRequest request = new RDFGeneratorRequest(sourceName, inputFile.getName());
+		request.setInputFile(inputFile);
+		request.setDataType(inputType);
+		request.setMaxNumLines(maxNumLines);
+		request.setAddProvenance(false);
+		request.addWriters(writers);
+		if (contextFile != null) {
+			File tmp = new File(contextFile);
+			ContextIdentifier contextId = new ContextIdentifier(tmp.getName(), tmp.toURI().toURL());
+			rdfGenerator.addContext(contextId);
+			request.setContextName(tmp.getName());
+		}
+		rdfGenerator.generateRDF(request);
 	}
 
 
@@ -526,10 +550,11 @@ public class OfflineRdfGenerator {
 				.withOption(buildOption("baseuri", "specifies base uri", "base URI", obuilder, abuilder))
 				.withOption(buildOption("selection", "specifies selection name", "selection", obuilder, abuilder))
 				.withOption(buildOption("root", "specifies root", "root", obuilder, abuilder))
-				.withOption(buildOption("killTripleMap", "specifies TripleMap to kill", "killTripleMap", obuilder, abuilder))
-				.withOption(buildOption("stopTripleMap", "specifies TripleMap to stop", "stopTripleMap", obuilder, abuilder))
-				.withOption(buildOption("POMToKill", "specifies POM to kill", "POMToKill", obuilder, abuilder))
-				.withOption(buildOption("JSONOutputFile", "specifies JSONOutputFile", "JSONOutputFile", obuilder, abuilder))
+				.withOption(buildOption("killtriplemap", "specifies TripleMap to kill", "killtriplemap", obuilder, abuilder))
+				.withOption(buildOption("stoptriplemap", "specifies TripleMap to stop", "stoptriplemap", obuilder, abuilder))
+				.withOption(buildOption("pomtokill", "specifies POM to kill", "pomtokill", obuilder, abuilder))
+				.withOption(buildOption("jsonoutputfile", "specifies JSONOutputFile", "jsonoutputfile", obuilder, abuilder))
+				.withOption(buildOption("contextfile", "specifies global context file", "contextile", obuilder, abuilder))
 				.withOption(obuilder
 						.withLongName("help")
 						.withDescription("print this message")
