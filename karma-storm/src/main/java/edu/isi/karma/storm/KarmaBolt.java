@@ -20,6 +20,7 @@ import backtype.storm.tuple.Values;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.mapreduce.driver.BaseKarma;
+import edu.isi.karma.rdf.RDFGeneratorRequest;
 
 public class KarmaBolt extends BaseRichBolt {
 
@@ -46,8 +47,11 @@ public class KarmaBolt extends BaseRichBolt {
 		StringWriter sw = new StringWriter();
 		KR2RMLRDFWriter outWriter = configureRDFWriter(sw);
 		try {
-			karma.getGenerator().generateRDF("model", tuple.getStringByField("id"), tuple.getStringByField("text"), karma.getInputType(),
-					false, outWriter);
+			RDFGeneratorRequest request = new RDFGeneratorRequest("model", tuple.getStringByField("id"));
+			request.addWriter(outWriter);
+			request.setInputData(tuple.getStringByField("text"));
+			request.setDataType(karma.getInputType());
+			karma.getGenerator().generateRDF(request);
 			String results = sw.toString();
 			if (!results.equals("[\n\n]\n")) {
 				writeRDF(tuple, results);

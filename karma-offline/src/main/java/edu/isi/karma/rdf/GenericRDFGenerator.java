@@ -1,7 +1,6 @@
 package edu.isi.karma.rdf;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +8,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +22,7 @@ import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +35,7 @@ import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.avro.AvroImport;
 import edu.isi.karma.imp.csv.CSVImport;
 import edu.isi.karma.imp.json.JsonImport;
+import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
@@ -45,6 +45,8 @@ import edu.isi.karma.kr2rml.planning.RootStrategy;
 import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
 import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
 import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
+import edu.isi.karma.kr2rml.writer.BloomFilterKR2RMLRDFWriter;
+import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -57,6 +59,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 	private static Logger logger = LoggerFactory.getLogger(GenericRDFGenerator.class);
 	protected HashMap<String, R2RMLMappingIdentifier> modelIdentifiers;
 	protected HashMap<String, WorksheetR2RMLJenaModelParser> readModelParsers;
+	protected HashMap<String, ContextIdentifier> contextIdentifiers;
+	protected HashMap<String, JSONObject> contextCache;
 	protected String rootTripleMap;
 	protected List<String> tripleMapToKill;
 	protected List<String> tripleMapToStop;
@@ -72,6 +76,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 		super(selectionName);
 		this.modelIdentifiers = new HashMap<String, R2RMLMappingIdentifier>();
 		this.readModelParsers = new HashMap<String, WorksheetR2RMLJenaModelParser>();
+		this.contextCache = new HashMap<String, JSONObject>();
+		this.contextIdentifiers = new HashMap<String, ContextIdentifier>();
 		tripleMapToKill = new ArrayList<String>();
 		tripleMapToStop = new ArrayList<String>();
 		POMToKill = new ArrayList<String>();
@@ -83,6 +89,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 		super(selectionName);
 		this.modelIdentifiers = new HashMap<String, R2RMLMappingIdentifier>();
 		this.readModelParsers = new HashMap<String, WorksheetR2RMLJenaModelParser>();
+		this.contextCache = new HashMap<String, JSONObject>();
+		this.contextIdentifiers = new HashMap<String, ContextIdentifier>();
 		this.tripleMapToKill = tripleMapToKill;
 		this.tripleMapToStop = tripleMapToStop;
 		this.POMToKill = POMToKill;
@@ -92,111 +100,43 @@ public class GenericRDFGenerator extends RdfGenerator {
 	public void addModel(R2RMLMappingIdentifier modelIdentifier) {
 		this.modelIdentifiers.put(modelIdentifier.getName(), modelIdentifier);
 	}
-
-	public void generateRDF(String modelName, String sourceName, String data, InputType dataType, boolean addProvenance,
-			KR2RMLRDFWriter writer) throws KarmaException, JSONException, IOException {
-		generateRDF(modelName, sourceName, data, dataType, -1, addProvenance, writer);
+	
+	public void addContext(ContextIdentifier id) {
+		this.contextIdentifiers.put(id.getName(), id);
 	}
 	
-	public void generateRDF(String modelName, String sourceName, String data, InputType dataType, int maxNumLines, boolean addProvenance,
-			KR2RMLRDFWriter writer) throws KarmaException, JSONException, IOException {
-		List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
-		writers.add(writer);
-		generateRDF(modelName, sourceName, data, dataType, maxNumLines, addProvenance, writers);
-	}
-	
-	public void generateRDF(String modelName, String sourceName, String data, InputType dataType, boolean addProvenance,
-			List<KR2RMLRDFWriter> writers ) throws KarmaException, JSONException, IOException {
-		generateRDF(modelName, sourceName, data, dataType, -1, addProvenance, writers);
-	}
-	
-	public void generateRDF(String modelName, String sourceName, String data, InputType dataType, int maxNumLines, boolean addProvenance,
-			List<KR2RMLRDFWriter> writers ) throws KarmaException, JSONException, IOException {
-		generateRDF(modelName, sourceName, IOUtils.toInputStream(data), dataType, maxNumLines, addProvenance, writers);
-	}
-	
-	public void generateRDF(String modelName, String sourceName, InputStream data, InputType dataType,  
-			boolean addProvenance, KR2RMLRDFWriter writer) throws KarmaException, IOException {
-		generateRDF(modelName, sourceName, data, dataType, -1, addProvenance, writer);
-	}
-	
-	public void generateRDF(String modelName, String sourceName, InputStream data, InputType dataType, int maxNumLines, 
-			boolean addProvenance, KR2RMLRDFWriter writer) throws KarmaException, IOException {
-		List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
-		writers.add(writer);
-		generateRDF(modelName, sourceName, data, dataType, maxNumLines, addProvenance, writers);
-	}
-	
-	public void generateRDF(String modelName, File inputFile, InputType inputType,
-			boolean addProvenance, KR2RMLRDFWriter writer) throws KarmaException, IOException {
-		generateRDF(modelName, inputFile, inputType, -1, addProvenance, writer);
-	}
-	
-	public void generateRDF(String modelName, File inputFile, InputType inputType, int maxNumLines,
-			boolean addProvenance, KR2RMLRDFWriter writer) throws KarmaException, IOException {
-		List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
-		writers.add(writer);
-		generateRDF(modelName, inputFile, inputType, maxNumLines, addProvenance, writers);
-	}
-	
-	public void generateRDF(String modelName, File inputFile, InputType inputType, 
-			boolean addProvenance, List<KR2RMLRDFWriter> writers) throws KarmaException, IOException {
-		generateRDF(modelName, inputFile, inputType, -1, addProvenance, writers);
-	}
-	
-	public void generateRDF(String modelName, File inputFile, InputType inputType, int maxNumLines,
-			boolean addProvenance, List<KR2RMLRDFWriter> writers) throws KarmaException, IOException {
-		String sourceName = inputFile.getName();
-		InputStream is = new FileInputStream(inputFile);
-		generateRDF(modelName, sourceName, is, inputType, maxNumLines, addProvenance, writers);
-	}
-	
-	public void generateRDF(String modelName, String sourceName, InputStream data, InputType dataType,
-			boolean addProvenance, List<KR2RMLRDFWriter> writers) throws KarmaException, IOException  {
-		generateRDF(modelName, sourceName, data, dataType, -1, addProvenance, writers);
-	}
-	
-	public void generateRDF(String modelName, String sourceName, InputStream data, InputType dataType, int maxNumLines, 
-			boolean addProvenance, List<KR2RMLRDFWriter> writers)
-			throws KarmaException, IOException {
-		generateRDF(modelName, sourceName, data, dataType, maxNumLines, addProvenance, writers, null);
-	}
-	
-	/** Generate RDF functions that do not use the model cache
-	 */
-	public void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, InputStream data, InputType dataType, int maxNumLines, 
-			boolean addProvenance, KR2RMLRDFWriter writer) throws KarmaException, IOException {
-		List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
-		writers.add(writer);
-		generateRDF(modelParser, sourceName, data, dataType, maxNumLines, addProvenance, writers, null);
-	}
-	
-	/** Generate RDF functions that do not use the model cache
-	 */
-	public void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, String data, InputType dataType, int maxNumLines, 
-			boolean addProvenance, KR2RMLRDFWriter writer) throws KarmaException, IOException {
-		List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
-		writers.add(writer);
-		generateRDF(modelParser, sourceName, IOUtils.toInputStream(data), dataType, maxNumLines, addProvenance, writers, null);
-	}
-	
-	/** Generate RDF functions that do not use the model cache
-	 */
-	public void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, File dataFile, InputType dataType, int maxNumLines, 
-			boolean addProvenance, KR2RMLRDFWriter writer) throws KarmaException, IOException {
-		List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
-		writers.add(writer);
-		InputStream is = new FileInputStream(dataFile);
-		generateRDF(modelParser, sourceName, is, dataType, maxNumLines, addProvenance, writers, null);
-	}
-	
-	private void generateRDF(String modelName, String sourceName, InputStream data, InputType dataType, int maxNumLines, 
+	private void generateRDF(String modelName, String sourceName,String contextName, InputStream data, InputType dataType, int maxNumLines, 
 			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy)
 					throws KarmaException, IOException {
 		
 		R2RMLMappingIdentifier id = this.modelIdentifiers.get(modelName);
+		ContextIdentifier contextId = this.contextIdentifiers.get(contextName);
 		if(id == null) {
 			throw new KarmaException("Cannot generate RDF. Model named " + modelName + " does not exist");
+		}
+		JSONObject context;
+		if (contextId == null) {
+			context = new JSONObject();
+		}
+		else {
+			context = this.contextCache.get(contextName);
+		}
+		if (context == null) {
+			try {
+				context = loadContext(contextId);
+			}catch(Exception e) {
+				context = new JSONObject();
+			}
+		}
+		for (KR2RMLRDFWriter writer : writers) {
+			if (writer instanceof JSONKR2RMLRDFWriter) {
+				JSONKR2RMLRDFWriter t = (JSONKR2RMLRDFWriter)writer;
+				t.setGlobalContext(context, contextId);
+			}
+			if (writer instanceof BloomFilterKR2RMLRDFWriter) {
+				BloomFilterKR2RMLRDFWriter t = (BloomFilterKR2RMLRDFWriter)writer;
+				t.setR2RMLMappingIdentifier(id);
+			}
 		}
 		//Check if the parser for this model exists, else create one
 		WorksheetR2RMLJenaModelParser modelParser = readModelParsers.get(modelName);
@@ -265,7 +205,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 			inputStream = request.getInputStream();
 		}
 		
-		generateRDF(request.getModelName(), request.getSourceName(), inputStream,request.getDataType(), request.getMaxNumLines(), request.isAddProvenance(), request.getWriters(), request.getStrategy());
+		generateRDF(request.getModelName(), request.getSourceName(), request.getContextName(), inputStream,request.getDataType(), request.getMaxNumLines(), request.isAddProvenance(), request.getWriters(), request.getStrategy());
 	}
 	
 	private InputType getInputType(Metadata metadata) {
@@ -364,6 +304,13 @@ public class GenericRDFGenerator extends RdfGenerator {
 		WorksheetR2RMLJenaModelParser parser = new WorksheetR2RMLJenaModelParser(modelIdentifier);
 		this.readModelParsers.put(modelIdentifier.getName(), parser);
 		return parser;
+	}
+	
+	private JSONObject loadContext(ContextIdentifier id) throws IOException {
+		JSONTokener token = new JSONTokener(id.getLocation().openStream());
+		JSONObject obj = new JSONObject(token);
+		this.contextCache.put(id.getName(), obj);
+		return obj;
 	}
 	
 	public Map<String, R2RMLMappingIdentifier> getModels()

@@ -93,12 +93,17 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 			List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
 			writers.add(arvowriter);
 			writers.add(jsonwriter);
-			rdfGen.generateRDF("people-model", new File(getTestResource(filename).toURI()), InputType.JSON, false, writers);
+			RDFGeneratorRequest request = new RDFGeneratorRequest("people-model", filename);
+			request.setInputFile(new File(getTestResource(filename).toURI()));
+			request.setAddProvenance(false);
+			request.setDataType(InputType.JSON);
+			request.addWriters(writers);
+			rdfGen.generateRDF(request);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("(\r\n|\n)");
 			int count = lines.length;
-			assertEquals(202, count);
+			assertEquals(148, count);
 		} catch (Exception e) {
 			logger.error("testGenerateAvro1 failed:", e);
 			fail("Execption: " + e.getMessage());
@@ -121,7 +126,12 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 			List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
 			writers.add(arvowriter);
 			writers.add(jsonwriter);
-			rdfGen.generateRDF("people-avro-model", new File(getTestResource(filename).toURI()), InputType.AVRO, false, writers);
+			RDFGeneratorRequest request = new RDFGeneratorRequest("people-avro-model", filename);
+			request.setInputFile(new File(getTestResource(filename).toURI()));
+			request.setAddProvenance(false);
+			request.setDataType(InputType.AVRO);
+			request.addWriters(writers);
+			rdfGen.generateRDF(request);
 			fos.flush();
 			fos.close();
 			DataFileReader<Void> schemareader = new DataFileReader<Void>(tempAvroOutput, new GenericDatumReader<Void>());
@@ -183,7 +193,12 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 			List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
 			writers.add(arvowriter);
 			writers.add(jsonwriter);
-			rdfGen.generateRDF("people-array.avro-model", new File(getTestResource(filename).toURI()), InputType.AVRO, false, writers);
+			RDFGeneratorRequest request = new RDFGeneratorRequest("people-array.avro-model", filename);
+			request.setInputFile(new File(getTestResource(filename).toURI()));
+			request.setAddProvenance(false);
+			request.setDataType(InputType.AVRO);
+			request.addWriters(writers);
+			rdfGen.generateRDF(request);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
 			

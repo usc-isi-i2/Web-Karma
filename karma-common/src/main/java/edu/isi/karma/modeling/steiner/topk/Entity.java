@@ -12,32 +12,33 @@ package edu.isi.karma.modeling.steiner.topk;
  *
  */
 public class Entity implements Comparable<Entity> {
-  /** Holds the name of the entity*/
+	/** Holds the name of the entity*/
 	protected String name;
 
-  public Entity(String n) {
-    this.name=n;
-  }
-  
-	public String name () { return name; }
-	
-  /** Compares by name*/
-	public boolean equals (Object o){
-    if(!(o instanceof Entity)) return(false);
-		return (((Entity)o).name.equals(name)); 
-  }
-	
-  /** Compares by name*/
-	public int compareTo (Entity e) {
-    return(this.name.compareTo(e.name));
+	public Entity(String n) {
+		this.name=n;
 	}
+
 	
-  /** Hashes by name*/
-  public int hashCode() {  
-    return name.hashCode();
-  }
-  
-  /** Returns name*/
+	public String name () { return name; }
+
+	/** Compares by name*/
+	public boolean equals (Object o){
+		if(!(o instanceof Entity)) return(false);
+		return (((Entity)o).name.equals(name)); 
+	}
+
+	/** Compares by name*/
+	public int compareTo (Entity e) {
+		return(this.name.compareTo(e.name));
+	}
+
+	/** Hashes by name*/
+	public int hashCode() {  
+		return name.hashCode();
+	}
+
+	/** Returns name*/
 	public String toString () { return name; }
-  
+
 }

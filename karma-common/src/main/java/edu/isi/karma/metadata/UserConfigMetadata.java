@@ -29,7 +29,7 @@ public class UserConfigMetadata extends KarmaUserMetadata {
 
 	@Override
 	protected String getDirectoryPath() {
-		return "Config" + File.separator;
+		return "config" + File.separator;
 	}
 
 	@Override

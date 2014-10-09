@@ -175,6 +175,39 @@
 		</form>
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<div class="modal fade" id="exportJSONDialog" tabindex="-1">
+  <div class="modal-dialog modal-wide">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title" id="augmentHeader">Export JSON</h4>
+				  </div>
+				  <div class="modal-body">
+						<div class="form-group">
+							<label for="useContext">Use @Context</label>
+							<input class="form-control" type="checkbox" id="useContext"required>
+							<div id="useContextControl">
+								<label for="useContextFromModel">Use @Context From Model</label>
+								<input class="form-control" type="radio" id="useContextFromModel" name="context">
+								<label for="useContextFromModel">Use Uploaded @Context</label>
+								<input class="form-control" type="radio" id="useContextFromFile" name="context">
+								<span class="btn btn-primary fileinput-button">
+				  				<span>Upload Context</span>
+				  				<input type="file" name="files[]" id="contextupload" multiple>
+				  			</span>
+							</div>
+						</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Submit</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
        
 <div class="modal fade" id="addNodeDialog" tabindex="-1">
   <div class="modal-dialog">
@@ -208,24 +241,31 @@
 			       <h4 class="modal-title">Add Literal Node</h4>
 			  </div>
 			  <div class="modal-body">
-			  		<div class="form-group">
-						<label for="literal">Literal:</label>
-						<input type="text" id="literal" class="form-control">
-					</div>
-					<div class="row">
-						<div class="col-sm-4 form-group">
-						    <label for="literalType">Type:</label>
-						    <input type="text" id="literalType" class="form-control">
+			  	<div class="row">
+			  		<div class="col-sm-6" id="col-literal">
+				  		<div class="form-group">
+							<label for="literal">Literal:</label>
+							<input type="text" id="literal" class="form-control">
+						</div>
+						<div class="row">
+							<div class="col-sm-7 form-group">
+							    <label for="literalType">Type:</label>
+							    <input type="text" id="literalType" class="form-control">
+							</div>
+						</div>
+						<div class="checkbox" id="isUriRow">
+						  <label>
+						    <input type="checkbox" name="isUri" id="isUri">
+						   Is URI?
+						  </label>
 						</div>
 					</div>
-					<div class="checkbox">
-					  <label>
-					    <input type="checkbox" name="isUri" id="isUri">
-					   Is URI?
-					  </label>
-					</div>
+					<div class="col-sm-6" id="col-property">
 					
-					<div class="error" style="display: none"></div>
+					</div>
+				</div>
+				
+				<div class="error" style="display: none"></div>
 				
 			  </div>
 			  <div class="modal-footer">

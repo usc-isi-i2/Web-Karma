@@ -132,7 +132,7 @@ public class RefreshSelectionCommand extends WorksheetSelectionCommand {
 		JSONArray inputParamArr = (JSONArray) obj.get(HistoryArguments.inputParameters.name());
 		String commandName = (String)obj.get(HistoryArguments.commandName.name());
 		WorksheetCommandHistoryExecutor ex = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
-		ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
+		ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, true);
 		try {
 			Command c = new OperateSelectionCommandFactory().createCommand(inputParamArr, workspace);
 			return c;

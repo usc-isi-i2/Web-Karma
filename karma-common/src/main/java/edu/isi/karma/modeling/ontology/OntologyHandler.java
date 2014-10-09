@@ -58,6 +58,7 @@ class OntologyHandler {
 		OntModelSpec s = new OntModelSpec( OntModelSpec.OWL_MEM );
 		s.setDocumentManager( mgr );
 		ontModel = ModelFactory.createOntologyModel(s);
+		ontModel.setStrictMode(false);
 	}
 
 	public OntModel getOntModel() {
@@ -163,7 +164,7 @@ class OntologyHandler {
 		ObjectProperty op = ontModel.getObjectProperty(uri);
 		if (op == null)
 			return null;
-		OntProperty inverseProp = null;
+		OntProperty inverseProp = null; 
 		try {
 			inverseProp = op.getInverse();
 		} catch (ConversionException e) {

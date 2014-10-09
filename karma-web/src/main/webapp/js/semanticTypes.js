@@ -70,9 +70,10 @@ var SetSemanticTypeDialog = (function() {
 
 				var suggestedTypes = getSuggestedTypes();
 
-				var addSemTypeOrAdvOption = function(type, isSelected, isCrfModelSuggested) {
+				var addSemTypeOrAdvOption = function(type, isPrimary, isSelected, isCrfModelSuggested) {
 					if (type["DisplayLabel"] == "km-dev:classLink") {
-						addUriSemanticType(type["DisplayDomainLabel"], type["DomainUri"], type["DomainId"]);
+						addUriSemanticType(type["DisplayDomainLabel"], type["DomainUri"], type["DomainId"], 
+								isPrimary, isSelected, isCrfModelSuggested);
 					} else if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
 						$("#isSubclassOfClass").prop('checked', false);
 						$("#isSubclassOfClassTextBox").val(type["DisplayDomainLabel"]);
@@ -90,11 +91,11 @@ var SetSemanticTypeDialog = (function() {
 				// Populate the table with existing types and CRF suggested types
 				$.each(existingTypes, function(index, type) {
 					// Take care of the special meta properties that are set through the advanced options
-					addSemTypeOrAdvOption(type, true, false);
+					addSemTypeOrAdvOption(type, true, true, false);
 				});
 				if (suggestedTypes) {
 					$.each(suggestedTypes["Labels"], function(index, type) {
-						addSemTypeOrAdvOption(type, false, true);
+						addSemTypeOrAdvOption(type, false, false, true);
 					});
 				}
 
@@ -389,16 +390,16 @@ var SetSemanticTypeDialog = (function() {
 			addSemTypeObjectToCurrentTable(fakeSemType, false, false);
 		}
 
-		function addUriSemanticType(domainLabel, domainUri, domainId) {
+		function addUriSemanticType(domainLabel, domainUri, domainId, isPrimary, isSelected, isCrfModelSuggested) {
 			var type = new Object();
 			type["FullType"] = "http://isi.edu/integration/karma/dev#classLink";
 			type["DomainId"] = domainId;
 			type["DomainUri"] = domainUri;
 			type["DisplayLabel"] = "km-dev:classLink";
 			type["DisplayDomainLabel"] = domainLabel;
-			type["isPrimary"] = true;
+			type["isPrimary"] = isPrimary;
 			// Add it to the table
-			addSemTypeObjectToCurrentTable(type, true, false);
+			addSemTypeObjectToCurrentTable(type, isSelected, isCrfModelSuggested);
 		}
 
 		function addEmptyUriSemanticType() {
@@ -2539,7 +2540,8 @@ var AddLiteralNodeDialog = (function() {
 			var dialog = $("#addLiteralNodeDialog");
 			var worksheetId;
 			var dialogMode;
-			var nodeId;
+			var nodeId, nodeUri;
+			var propertyUI, propertyList, loadTree;
 			
 			function init() {
 					dialogMode = "add";
@@ -2547,12 +2549,37 @@ var AddLiteralNodeDialog = (function() {
 					//Initialize what happens when we show the dialog
 					dialog.on('show.bs.modal', function (e) {
 							hideError();
+							loadTree = true;
+							
+							$("#col-literal", dialog).removeClass();
 							if(dialogMode == "add") {
 								$(".modal-title", dialog).html("Add Literal Node");
 								$("#btnSave", dialog).text("Add");
+								$("#col-literal", dialog).addClass("col-sm-12");
+								$("#col-property", dialog).hide();
+								$("#isUriRow", dialog).show();
+							} else if(dialogMode == "addWithProperty") {
+								$(".modal-title", dialog).html("Add Literal Node and Link");
+								$("#btnSave", dialog).text("Add");
+								$("#col-literal", dialog).addClass("col-sm-6");
+								$("#col-property", dialog).show();
+								
+								propertyUI = new PropertyUI("AddLiteralNodeProperty",  getAllProperties, null, 300, loadTree, getAllProperties, MAX_NUM_SEMTYPE_SEARCH);
+								propertyUI.setHeadings("All Properties", null);
+								var propDiv = $("<div>");
+								$("#col-property", dialog).empty();
+								$("#col-property", dialog).append(propDiv);
+								propertyList = null;
+								getAllProperties();
+								propertyUI.generateJS(propDiv, true);
+								
+								$("#isUriRow", dialog).hide();
 							} else {
 								$(".modal-title", dialog).html("Edit Literal Node");
 								$("#btnSave", dialog).text("Save");
+								$("#col-literal", dialog).addClass("col-sm-12");
+								$("#col-property", dialog).hide();
+								$("#isUriRow", dialog).show();
 							}
 							$("#literalType").typeahead( 
 									{source:LITERAL_TYPE_ARRAY, minLength:0, items:"all"});
@@ -2565,6 +2592,23 @@ var AddLiteralNodeDialog = (function() {
 					});
 			}
 
+			function getAllProperties() {
+				if(propertyList == null) {
+					propertyList = getAllDataAndObjectProperties(worksheetId);
+				
+					if (loadTree)
+						loadTree = ($.workspaceGlobalInformation.UISettings.maxLoadedProperties == -1 ||
+								propertyList.length <= $.workspaceGlobalInformation.UISettings.maxLoadedProperties) ? true : false;
+				}
+
+				var result = [];
+				$.each(propertyList, function(index, prop) {
+					result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri, prop.type));
+				});
+				
+				return result;
+			}
+			
 			function validateClassInputValue(classData) {
 				selectedClass = classData;
 				}
@@ -2589,11 +2633,20 @@ var AddLiteralNodeDialog = (function() {
 				 var isUri = $("input#isUri").is(":checked");
 				 newInfo.push(getParamObject("literalValue", literal, "other"));
 				 newInfo.push(getParamObject("literalType", literalType, "other"));
-				 newInfo.push(getParamObject("isUri", isUri, "other"));
 				 newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
 				 
 				 if(dialogMode == "edit")
 					 newInfo.push(getParamObject("nodeId", nodeId, "other"));
+				 else if(dialogMode == "addWithProperty") {
+					 var property = propertyUI.getSelectedProperty();
+					 var type = property.other;
+					 if(type == "objectProperty")
+						 isUri = true;
+					 else
+						 isUri = false;
+				 }
+				 
+				 newInfo.push(getParamObject("isUri", isUri, "other"));
 				 
 				 info["newInfo"] = JSON.stringify(newInfo);
 				 info["command"] = "AddLiteralNodeCommand";
@@ -2606,9 +2659,25 @@ var AddLiteralNodeDialog = (function() {
 						 complete :
 								 function (xhr, textStatus) {
 										 var json = $.parseJSON(xhr.responseText);
-										 parse(json);
-										 hideLoading(worksheetId);
-										 hide();
+										 
+										 if(dialogMode == "addWithProperty") {
+											 var property = propertyUI.getSelectedProperty();
+											 var updates = json.elements[0];
+											 var literalId, literalUri;
+											 
+											 $.each(json["elements"], function(i, update) {
+												 if(update.updateType == "AddLiteralNodeUpdate") {
+													literalId = update.hNodeId;
+													literalUri = update.uri;
+												 }
+											 });
+											 
+											 addEdge(nodeId, nodeUri, property.id, literalId, literalUri);
+										 } else {
+											 parse(json);
+											 hideLoading(worksheetId);
+											 hide();
+										 }
 								 },
 						 error :
 								 function (xhr, textStatus) {
@@ -2619,7 +2688,52 @@ var AddLiteralNodeDialog = (function() {
 				 });
 			};
 			
-			
+			function addEdge(sourceId, sourceUri, propertyId, targetId, targetUri) {
+				
+				var info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
+
+				// Prepare the input for command
+				var newInfo = info['newInfo'];
+
+				// Put the old edge information
+				var initialEdges = [];
+				newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
+
+				// Put the new edge information
+				var newEdges = [];
+				var newEdgeObj = {};
+
+				newEdgeObj["edgeSourceId"] = sourceId;
+				newEdgeObj["edgeSourceUri"] = sourceUri;
+				newEdgeObj["edgeTargetId"] = targetId;
+				newEdgeObj["edgeTargetUri"] = targetUri;
+				newEdgeObj["edgeId"] = propertyId;
+				newEdges.push(newEdgeObj);
+
+				newInfo.push(getParamObject("newEdges", newEdges, "other"));
+				info["newInfo"] = JSON.stringify(newInfo);
+				info["newEdges"] = newEdges;
+				
+				var returned = $.ajax({
+					 url: "RequestController",
+					 type: "POST",
+					 data : info,
+					 dataType : "json",
+					 complete :
+							 function (xhr, textStatus) {
+									 var json = $.parseJSON(xhr.responseText);
+									 parse(json);
+									 hideLoading(worksheetId);
+									 hide();
+							 },
+					 error :
+							 function (xhr, textStatus) {
+									 alert("Error adding the edge for the Literal Node");
+									 hideLoading(worksheetId);
+									 hide();
+							 }
+			 });
+			}
 			
 			function hide() {
 				dialog.modal('hide');
@@ -2682,9 +2796,24 @@ var AddLiteralNodeDialog = (function() {
 				
 				dialog.modal({keyboard:true, show:true, backdrop:'static'});
 			}
+			
+			function showWithProperty(wsId, columnId, columnUri) {
+				worksheetId = wsId;
+				nodeId = columnId;
+				nodeUri = columnUri;
+				
+				$("#literal", dialog).val("");
+				$("#literalType", dialog).val("");
+				$("input#isUri", dialog).attr("checked", false);
+				dialogMode = "addWithProperty";
+				
+				dialog.modal({keyboard:true, show:true, backdrop:'static'});
+			}
+			
 			return {    //Return back the public methods
 					show : show,
 					showEdit : showEdit,
+					showWithProperty: showWithProperty,
 					init : init
 			};
 		};
@@ -2702,3 +2831,126 @@ var AddLiteralNodeDialog = (function() {
 		};
 		
 })();
+
+
+var ExportJSONDialog = (function() {
+	var instance = null;
+
+	function PrivateConstructor() {
+		var dialog = $("#exportJSONDialog");
+		var worksheetId, columnId;
+		var contextJSON;
+		function init() {
+			$('#useContextControl').hide();
+			$('#useContext').attr("checked", false);
+			$('#useContext').change(function (e){
+				if (this.checked) {
+					$('#useContextControl').show();
+				}
+				else {
+					$('#useContextControl').hide();
+				}
+			});
+
+			$('#btnSave', dialog).on('click', function(e) {
+				e.preventDefault();
+				saveDialog(e);
+			});
+
+			$('#contextupload').fileupload({
+				url: "/",
+				add: function(e, data) {
+					console.log("add");
+					loadContext(data.files);
+				}
+			});
+		}
+
+		function loadContext(filelist) {
+			console.log("load preset");
+			if(filelist.length > 0) {
+				var file = filelist[0];
+				if (file.size < 1024 * 1024 * 10) {
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						var json;
+						try {
+							contextJSON = e.target.result;
+							console.log(contextJSON);
+						} catch (err) {
+
+						}
+					}
+					reader.readAsText(file);
+				}
+			}
+		};
+
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+
+		function showError() {
+			$("div.error", dialog).show();
+		}
+
+		function saveDialog(e) {
+			hide();
+			var info = generateInfoObject(worksheetId, "", "ExportJSONCommand");
+			var newInfo = info['newInfo'];
+			newInfo.push(getParamObject("alignmentNodeId", columnId, "other"));
+			var contextFromModel = "false";
+			if ($('#useContext').is(":checked")) {
+				if (!$('#useContextFromFile').is(":checked")) {
+					contextJSON = "";
+				}
+				if ($('#useContextFromModel').is(":checked")) {
+					contextFromModel = "true";
+				}
+			}
+			else {
+				contextJSON = "";
+			}
+			newInfo.push(getParamObject("contextJSON", contextJSON, "other"));
+			newInfo.push(getParamObject("contextFromModel", contextFromModel, "other"));
+			info["newInfo"] = JSON.stringify(newInfo);
+			var returned = sendRequest(info, worksheetId);
+		};
+
+		function hide() {
+			dialog.modal('hide');
+		}
+
+		function show(wsId, colId) {
+			worksheetId = wsId;
+			columnId = colId;
+			contextJSON = "";
+			dialog.modal({
+				keyboard: true,
+				show: true,
+				backdrop: 'static'
+			});
+		};
+
+
+		return { //Return back the public methods
+			show: show,
+			init: init,
+		};
+	};
+
+	function getInstance() {
+		console.log("instance");
+		if (!instance) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	}
+
+	return {
+		getInstance: getInstance
+	};
+
+})();
+

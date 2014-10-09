@@ -36,7 +36,12 @@ public class JSONRDFGenerator extends GenericRDFGenerator {
 	void generateRDF(String modelName, String jsonData, boolean addProvenance, PrintWriter pw) throws KarmaException, JSONException, IOException {
 		URIFormatter uriFormatter = new URIFormatter();
 		KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
-		this.generateRDF(modelName, null, jsonData, InputType.JSON, addProvenance, outWriter);
+		RDFGeneratorRequest request = new RDFGeneratorRequest(modelName, null);
+		request.setAddProvenance(addProvenance);
+		request.setDataType(InputType.JSON);
+		request.setInputData(jsonData);
+		request.addWriter(outWriter);
+		this.generateRDF(request);
 	}
 	
 

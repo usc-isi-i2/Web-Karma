@@ -617,9 +617,14 @@ function parse(data) {
 			var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
 			// Remove existing link if any
 			$("a.JSONDownloadLink", titleDiv).remove();
-
+			$("a.JSONContextDownloadLink", titleDiv).remove();
 			var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("JSON").addClass("JSONDownloadLink DownloadLink").attr("target", "_blank");
 			$("div#WorksheetOptionsDiv", titleDiv).after(downloadLink);
+			if (element["contextUrl"] != undefined) {
+				var contextDownloadLink = $("<a>").attr("href", element["contextUrl"]).text("Context").addClass("JSONContextDownloadLink DownloadLink").attr("target", "_blank");
+				$("div#WorksheetOptionsDiv", titleDiv).after(contextDownloadLink);
+			}
+			
 		} else if (element["updateType"] == "PublishPresetUpdate") {
 			var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
 			// Remove existing link if any

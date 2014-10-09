@@ -24,7 +24,6 @@
 package edu.isi.karma.controller.history;
 
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -397,7 +396,7 @@ public class CommandHistory {
 					HashMap<String, CommandFactory> commandFactoryMap = ctrl.getCommandFactoryMap();
 					JSONArray inputParamArr = (JSONArray)rco.historyObject.get(HistoryArguments.inputParameters.name());
 					String commandName = (String)rco.historyObject.get(HistoryArguments.commandName.name());
-					executor.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
+					executor.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, true);
 					CommandFactory cf = commandFactoryMap.get(rco.historyObject.get(HistoryArguments.commandName.name()));
 					Command comm = cf.createCommand(inputParamArr, workspace);
 					effects.append(comm.doIt(workspace));

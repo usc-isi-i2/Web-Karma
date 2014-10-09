@@ -74,7 +74,7 @@ public class OntologyMetadata extends KarmaUserMetadata {
 	}
 	@Override
 	protected String getDirectoryPath() {
-		return "preloaded-ontologies";
+		return "preloaded-ontologies/";
 	}
 	@Override
 	public KarmaMetadataType getType() {

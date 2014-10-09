@@ -58,7 +58,12 @@ public abstract class TestRdfGenerator {
 				modelName, modelFile.toURI().toURL());
 		rdfGen.addModel(modelIdentifier);
 		List<KR2RMLRDFWriter> writers = createBasicWriter(pw);
-		rdfGen.generateRDF(modelName, inputFile, inputType, false, writers);	
+		RDFGeneratorRequest request = new RDFGeneratorRequest(modelName, inputFile.getName());
+		request.setAddProvenance(false);
+		request.setInputFile(inputFile);
+		request.setDataType(inputType);
+		request.addWriters(writers);
+		rdfGen.generateRDF(request);
 	}
 
 	protected List<KR2RMLRDFWriter> createBasicWriter(PrintWriter pw) {

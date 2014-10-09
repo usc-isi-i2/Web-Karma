@@ -37,7 +37,8 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 					propertyData.label = selectedNodeData.text;
 					propertyData.uri = selectedNodeData.metadata.uri;
 					propertyData.id = selectedNodeData.metadata.id;
-
+					propertyData.other = selectedNodeData.metadata.other;
+					
 					var treeId = PropertyUI.getNodeID(propertyData.label, propertyData.id, propertyData.uri);
 					$(list1).jstree('open_node', treeId); //Open node will scroll to that pos
 
@@ -140,10 +141,15 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 			var propertyListDiv = $("<div>")
 				.addClass("col-sm-12")
 				.append($("<div>").addClass("separatorWithText").text(textForPropertyList1))
-				.append(propertyList1)
-				.append($("<div>").addClass("separatorWithText").text(textForPropertyList2))
-				//.append($("<div>").addClass("separator"))
-				.append(propertyList2);
+				.append(propertyList1);
+			
+			if (propertyFuncBottom != null) {
+				propertyListDiv
+					.append($("<div>").addClass("separatorWithText").text(textForPropertyList2))
+					//.append($("<div>").addClass("separator"))
+					.append(propertyList2);
+			}
+			
 			row2.append(propertyListDiv);
 			propertyDiv.append(row2);
 
@@ -226,7 +232,8 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 
 	this.populateProperties = function() {
 		populatePropertyList(propertyFuncTop(selectedClassData), propertyList1, propertyList2);
-		populatePropertyList(propertyFuncBottom(selectedClassData), propertyList2, propertyList1);
+		if(propertyFuncBottom != null)
+			populatePropertyList(propertyFuncBottom(selectedClassData), propertyList2, propertyList1);
 	};
 
 	this.refreshPropertyDataTop = function(label, classId, uri) {
@@ -269,7 +276,7 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 };
 
 //Static declarations
-PropertyUI.getNodeObject = function(label, cId, uri) {
+PropertyUI.getNodeObject = function(label, cId, uri, other) {
 	var treeId = PropertyUI.getNodeID(label, cId, uri);
 
 	var nodeData = {
@@ -279,7 +286,8 @@ PropertyUI.getNodeObject = function(label, cId, uri) {
 		metadata: {
 			"uri": uri,
 			id: cId,
-			"label": label
+			"label": label,
+			"other": other
 		}
 	};
 	//	var nodeData = { attr: { id : treeId }, data: label, metadata:{"uri": uri, id : cId, "label":label} } ;
@@ -288,7 +296,7 @@ PropertyUI.getNodeObject = function(label, cId, uri) {
 
 PropertyUI.parseNodeObject = function(nodeData) {
 	//return [nodeData.data.title, nodeData.metadata.id, nodeData.metadata.uri];
-	return [nodeData.metadata.label, nodeData.metadata.id, nodeData.metadata.uri];
+	return [nodeData.metadata.label, nodeData.metadata.id, nodeData.metadata.uri, nodeData.metadata.other];
 };
 
 PropertyUI.getNodeID = function(label, id, uri) {

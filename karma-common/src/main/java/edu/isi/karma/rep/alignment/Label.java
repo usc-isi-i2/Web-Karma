@@ -143,5 +143,12 @@ public class Label implements Serializable {
 	public int hashCode() {
 		return toString().hashCode();
 	}
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Label) {
+			return this.hashCode() == obj.hashCode();
+		}
+		return false;
+	}
 }

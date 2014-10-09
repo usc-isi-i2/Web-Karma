@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
@@ -51,6 +52,7 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
@@ -86,7 +88,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 
 		addTag(CommandTag.Modeling);
 	}
-
+	
 	@Override
 	public String getCommandName() {
 		return this.getClass().getSimpleName();
@@ -121,6 +123,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		}catch(Exception e) {
 			
 		}
+		UpdateContainer suggestModelUpdate = null;
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(worksheet);
 		OntologyManager ontMgr = workspace.getOntologyManager();
@@ -139,6 +142,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		List<SemanticType> typesList = new ArrayList<SemanticType>();
 		for (int i = 0; i < typesArr.length(); i++) {
 			try {
+				LabeledLink newLink = null;
 				JSONObject type = typesArr.getJSONObject(i);
 				
 				String domainValue;
@@ -230,9 +234,9 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 						} else if (semanticTypeAlreadyExists) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
 //							alignment.removeNode(oldDomainNode.getId());
-							alignment.addClassInstanceLink(domain, columnNode, keyInfo);
+							newLink = alignment.addClassInstanceLink(domain, columnNode, keyInfo);
 						} else {
-							alignment.addClassInstanceLink(domain, columnNode, keyInfo);
+							newLink = alignment.addClassInstanceLink(domain, columnNode, keyInfo);
 						}
 					} 
 					// Property semantic type
@@ -241,15 +245,15 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 						// When only the link changes between the class node and the internal node (domain)
 						if (semanticTypeAlreadyExists && oldDomainNode == domain) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-							alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
+							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
 						}
 						// When there was an existing semantic type and the new domain is a new node in the graph and semantic type already existed 
 						else if (semanticTypeAlreadyExists) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
 //							alignment.removeNode(oldDomainNode.getId());
-							alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
+							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
 						} else {
-							alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
+							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
 						}						
 					}
 				} else { // Synonym semantic type
@@ -257,12 +261,20 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 					typesList.add(synType);
 				}
 				
-				// Update the alignment
-				alignment.align();
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0, isPartOfKey);
 //				newType = new SemanticType(hNodeId, classNode.getLabel(), null, SemanticType.Origin.User, 1.0,isPartOfKey);
 				columnNode.setUserSelectedSemanticType(newType);
+				
+				if(newLink != null) {
+					alignment.changeLinkStatus(newLink.getId(),
+							LinkStatus.ForcedByUser);
+				}
+				// Update the alignment
+				if (ModelingConfiguration.isLearnAlignmentEnabled()) 
+					suggestModelUpdate = new SuggestModelCommand(alignmentId, worksheetId, false, selectionId, true).doIt(workspace);
+				else
+					alignment.align();
 
 			} catch (JSONException e) {
 				logger.error("JSON Exception occured", e);
@@ -296,10 +308,14 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		} 
 		
-		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-		c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
-				alignment));			
-		return c;
+		if (ModelingConfiguration.isLearnAlignmentEnabled() && suggestModelUpdate != null) {
+			return suggestModelUpdate;
+		} else {
+			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+			c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
+					alignment));			
+			return c;
+		}
 	}
 
 //	private void identifyOutliers(Worksheet worksheet,

@@ -55,6 +55,7 @@ tmp/*
 src/main/webapp/CRF_Models/*
 src/main/scripts/Lib/*.class
 bin/
+karma-offline/*.csv
 *.kml
 *.fix
 *.dbf
