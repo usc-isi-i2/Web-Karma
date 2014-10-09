@@ -193,7 +193,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 			}
 		}
 		
-		ModelLearner modelLearner = new ModelLearner(ontologyManager, ModelLearningGraphType.Compact, columnNodes);
+		ModelLearner modelLearner = new ModelLearner(ontologyManager, columnNodes);
 		SemanticModel model = modelLearner.getModel();
 		if (model == null) {
 			logger.error("could not learn any model for this source!");

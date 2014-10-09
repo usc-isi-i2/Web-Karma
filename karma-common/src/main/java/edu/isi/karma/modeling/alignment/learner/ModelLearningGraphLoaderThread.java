@@ -37,7 +37,7 @@ public class ModelLearningGraphLoaderThread implements Runnable {
 		if (this.ontologyManager == null)
 			return;
 		
-		ModelLearningGraph.getInstance(this.ontologyManager, ModelLearningGraphType.Sparse);
+		ModelLearningGraph.getInstance(this.ontologyManager, ModelLearningGraphType.Compact);
 		
 	}
 }

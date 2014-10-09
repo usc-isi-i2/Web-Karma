@@ -71,12 +71,10 @@ public class ModelLearner {
 	private long lastUpdateTimeOfGraph;
 	private ModelLearningGraph modelLearningGraph = null;
 	private boolean useAlignmentGraphBuiltFromKnownModels = false;
-	private ModelLearningGraphType graphType;
 
 	private static final int NUM_SEMANTIC_TYPES = 4;
 
 	public ModelLearner(OntologyManager ontologyManager, 
-			ModelLearningGraphType graphType, 
 			List<ColumnNode> columnNodes) {
 		if (ontologyManager == null || 
 				columnNodes == null || 
@@ -87,12 +85,10 @@ public class ModelLearner {
 		this.useAlignmentGraphBuiltFromKnownModels = true;
 		this.ontologyManager = ontologyManager;
 		this.columnNodes = columnNodes;
-		this.graphType = graphType;
 		this.init();
 	}
 
 	public ModelLearner(GraphBuilder graphBuilder, 
-			ModelLearningGraphType graphType, 
 			List<ColumnNode> columnNodes) {
 		if (graphBuilder == null || 
 				columnNodes == null || 
@@ -105,7 +101,6 @@ public class ModelLearner {
 		this.graphBuilder = graphBuilder;
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 		this.ontologyManager = this.graphBuilder.getOntologyManager();
-		this.graphType = graphType;
 	}
 
 	public SemanticModel getModel() {
@@ -136,7 +131,7 @@ public class ModelLearner {
 	}
 
 	private void init() {
-		this.modelLearningGraph = ModelLearningGraph.getInstance(ontologyManager, graphType);
+		this.modelLearningGraph = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact);
 		this.lastUpdateTimeOfGraph = this.modelLearningGraph.getLastUpdateTime();
 		this.graphBuilder = cloneGraphBuilder(modelLearningGraph.getGraphBuilder());
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
@@ -146,15 +141,9 @@ public class ModelLearner {
 
 		GraphBuilder clonedGraphBuilder = null;
 		if (graphBuilder == null || graphBuilder.getGraph() == null) {
-			if (graphType == ModelLearningGraphType.Compact)
-				clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, this.nodeIdFactory, false);
-			else
-				clonedGraphBuilder = new GraphBuilder(this.ontologyManager, this.nodeIdFactory, false);
+			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, this.nodeIdFactory, false);
 		} else {
-			if (graphType == ModelLearningGraphType.Compact)
-				clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, graphBuilder.getGraph());
-			else
-				clonedGraphBuilder = new GraphBuilder(this.ontologyManager, graphBuilder.getGraph());
+			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, graphBuilder.getGraph());
 		}
 		return clonedGraphBuilder;
 	}
@@ -717,7 +706,7 @@ public class ModelLearner {
 		System.out.println("numberOfAttributesWhoseTypeIsFirstCRFType:" + numberOfAttributesWhoseTypeIsFirstCRFType);
 	}
 
-	public static void test(ModelLearningGraphType graphType) throws Exception {
+	public static void test() throws Exception {
 		//		String inputPath = Params.INPUT_DIR;
 		String outputPath = Params.OUTPUT_DIR;
 		String graphPath = Params.GRAPHS_DIR;
@@ -801,7 +790,7 @@ public class ModelLearner {
 					j++;
 				}
 
-				modelLearningGraph = (ModelLearningGraphCompact)ModelLearningGraph.getEmptyInstance(ontologyManager, graphType);
+				modelLearningGraph = (ModelLearningGraphCompact)ModelLearningGraph.getEmptyInstance(ontologyManager, ModelLearningGraphType.Compact);
 				
 				
 				SemanticModel correctModel = newSource;
@@ -809,7 +798,7 @@ public class ModelLearner {
 				//				if (useCorrectType && numberOfCRFCandidates > 1)
 				//					updateCrfSemanticTypesForResearchEvaluation(columnNodes);
 
-				modelLearner = new ModelLearner(ontologyManager, graphType, columnNodes);
+				modelLearner = new ModelLearner(ontologyManager, columnNodes);
 				long start = System.currentTimeMillis();
 
 				String graphName = !iterativeEvaluation?
@@ -821,10 +810,7 @@ public class ModelLearner {
 					try {
 						logger.info("loading the graph ...");
 						DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
-						if (graphType == ModelLearningGraphType.Compact)
-							modelLearner.graphBuilder = new GraphBuilderTopK(ontologyManager, graph);
-						else
-							modelLearner.graphBuilder = new GraphBuilder(ontologyManager, graph);
+						modelLearner.graphBuilder = new GraphBuilderTopK(ontologyManager, graph);
 						modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -940,8 +926,7 @@ public class ModelLearner {
 	
 	public static void main(String[] args) throws Exception {
 
-//		test(ModelLearningGraphType.Sparse);
-		test(ModelLearningGraphType.Compact);
+		test();
 
 	}
 

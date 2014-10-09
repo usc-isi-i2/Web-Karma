@@ -79,12 +79,10 @@ public class ModelLearner_Old {
 	private long lastUpdateTimeOfGraph;
 	private ModelLearningGraph modelLearningGraph = null;
 	private boolean useAlignmentGraphBuiltFromKnownModels = false;
-	private ModelLearningGraphType graphType;
 
 	private static final int NUM_SEMANTIC_TYPES = 4;
 
 	public ModelLearner_Old(OntologyManager ontologyManager, 
-			ModelLearningGraphType graphType, 
 			List<ColumnNode> columnNodes) {
 		if (ontologyManager == null || 
 				columnNodes == null || 
@@ -95,12 +93,10 @@ public class ModelLearner_Old {
 		this.useAlignmentGraphBuiltFromKnownModels = true;
 		this.ontologyManager = ontologyManager;
 		this.columnNodes = columnNodes;
-		this.graphType = graphType;
 		this.init();
 	}
 
 	public ModelLearner_Old(GraphBuilder graphBuilder, 
-			ModelLearningGraphType graphType, 
 			List<ColumnNode> columnNodes) {
 		if (graphBuilder == null || 
 				columnNodes == null || 
@@ -113,7 +109,6 @@ public class ModelLearner_Old {
 		this.graphBuilder = graphBuilder;
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 		this.ontologyManager = this.graphBuilder.getOntologyManager();
-		this.graphType = graphType;
 	}
 
 	public SemanticModel getModel() {
@@ -139,7 +134,7 @@ public class ModelLearner_Old {
 	}
 
 	private void init() {
-		this.modelLearningGraph = ModelLearningGraph.getInstance(ontologyManager, graphType);
+		this.modelLearningGraph = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Sparse);
 		this.lastUpdateTimeOfGraph = this.modelLearningGraph.getLastUpdateTime();
 		this.graphBuilder = cloneGraphBuilder(modelLearningGraph.getGraphBuilder());
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
@@ -698,7 +693,7 @@ public class ModelLearner_Old {
 		System.out.println("numberOfAttributesWhoseTypeIsFirstCRFType:" + numberOfAttributesWhoseTypeIsFirstCRFType);
 	}
 
-	public static void test(ModelLearningGraphType graphType) throws Exception {
+	public static void test() throws Exception {
 		//		String inputPath = Params.INPUT_DIR;
 		String outputPath = Params.OUTPUT_DIR;
 		String graphPath = Params.GRAPHS_DIR;
@@ -781,7 +776,7 @@ public class ModelLearner_Old {
 					j++;
 				}
 
-				modelLearningGraph = (ModelLearningGraphCompact)ModelLearningGraph.getEmptyInstance(ontologyManager, graphType);
+				modelLearningGraph = (ModelLearningGraphSparse)ModelLearningGraph.getEmptyInstance(ontologyManager, ModelLearningGraphType.Sparse);
 				
 				
 				SemanticModel correctModel = newSource;
@@ -789,7 +784,7 @@ public class ModelLearner_Old {
 				//				if (useCorrectType && numberOfCRFCandidates > 1)
 				//					updateCrfSemanticTypesForResearchEvaluation(columnNodes);
 
-				modelLearner = new ModelLearner_Old(ontologyManager, graphType, columnNodes);
+				modelLearner = new ModelLearner_Old(ontologyManager, columnNodes);
 				long start = System.currentTimeMillis();
 
 				String graphName = !iterativeEvaluation?
@@ -915,8 +910,7 @@ public class ModelLearner_Old {
 	
 	public static void main(String[] args) throws Exception {
 
-//		test(ModelLearningGraphType.Sparse);
-		test(ModelLearningGraphType.Compact);
+		test();
 
 	}
 
