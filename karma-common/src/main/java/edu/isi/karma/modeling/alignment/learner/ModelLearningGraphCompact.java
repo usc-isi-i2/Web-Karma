@@ -362,7 +362,12 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 				LabeledLink l = this.graphBuilder.getIdToLinkMap().get(id);
 				if (l != null) {
 					int numOfPatterns = l.getModelIds().size();
-					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT / (double) (numOfPatterns + 1) );
+//					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
+//					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT / (double) (numOfPatterns + 1) );
+					if (n2 instanceof InternalNode)
+						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT - (0.00001 * numOfPatterns) );
+					else
+						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
 					l.getModelIds().add(indexedModelId);
 					n1.getModelIds().add(indexedModelId);
 					n2.getModelIds().add(indexedModelId);

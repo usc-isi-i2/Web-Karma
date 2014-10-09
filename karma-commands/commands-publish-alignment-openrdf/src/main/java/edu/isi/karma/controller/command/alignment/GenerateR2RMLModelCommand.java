@@ -22,6 +22,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -41,6 +42,7 @@ import edu.isi.karma.controller.command.WorksheetSelectionCommand;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.CommandHistoryUtil;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
@@ -55,6 +57,9 @@ import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphType;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.LinkStatus;
+import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
@@ -151,7 +156,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 			uc.removeUpdateByClass(ErrorUpdate.class);
 			historyUtil.consolidateHistory();
 			uc.add(new HistoryUpdate(workspace.getCommandHistory()));
-			
+
 		}
 		Set<String> inputColumns = historyUtil.generateInputColumns();
 		Set<String> outputColumns = historyUtil.generateOutputColumns();
@@ -197,6 +202,55 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 			return new UpdateContainer(new ErrorUpdate(
 					"Please align the worksheet before generating R2RML Model!"));
 		}
+		Set<LabeledLink> links = new HashSet<LabeledLink>();
+		if (alignment.getLinksByType(LinkType.ObjectPropertyLink) != null) {
+			for (LabeledLink link : alignment.getLinksByType(LinkType.ObjectPropertyLink)) {
+				if (link.getStatus() == LinkStatus.Normal) {
+					links.add(link);
+				}
+			}
+		}
+		JSONArray newEdges = new JSONArray();
+		JSONArray initialEdges = new JSONArray();
+		ChangeInternalNodeLinksCommandFactory cinlcf = new ChangeInternalNodeLinksCommandFactory();
+		for (LabeledLink link : links) {
+			JSONObject newEdge = new JSONObject();
+			JSONObject initialEdge = new JSONObject();
+			newEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeSourceId.name(), link.getSource().getId());
+			newEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeTargetId.name(), link.getTarget().getId());
+			newEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeId.name(), link.getUri());
+			initialEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeSourceId.name(), link.getSource().getId());
+			initialEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeTargetId.name(), link.getTarget().getId());
+			initialEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeId.name(), link.getUri());
+			newEdges.put(newEdge);
+			initialEdges.put(initialEdge);
+		}
+		JSONArray inputJSON = new JSONArray();
+		JSONObject t = new JSONObject();
+		t.put("name", "worksheetId");
+		t.put("type", HistoryJsonUtil.ParameterType.worksheetId.name());
+		t.put("value", worksheetId);
+		inputJSON.put(t);
+		t = new JSONObject();
+		t.put("name", "initialEdges");
+		t.put("type", HistoryJsonUtil.ParameterType.other.name());
+		t.put("value", initialEdges);
+		inputJSON.put(t);
+		t = new JSONObject();
+		t.put("name", "newEdges");
+		t.put("type", HistoryJsonUtil.ParameterType.other.name());
+		t.put("value", newEdges);
+		inputJSON.put(t);
+		if (newEdges.length() > 0 || initialEdges.length() > 0) {
+			try {
+				Command changeInternalNodeLinksCommand = cinlcf.createCommand(inputJSON, workspace);
+				workspace.getCommandHistory().doCommand(changeInternalNodeLinksCommand, workspace);
+				uc.add(new HistoryUpdate(workspace.getCommandHistory()));
+			}catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
 
 		// mohsen: my code to enable Karma to leran semantic models
 		// *****************************************************************************************
@@ -213,7 +267,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 			//			e.printStackTrace();
 		}
 		try {
-			semanticModel.writeGraphviz(ServletContextParameterMap.getParameterValue(ContextParameter.GRAPHVIZ_DIRECTORY) + 
+			semanticModel.writeGraphviz(ServletContextParameterMap.getParameterValue(ContextParameter.GRAPHVIZ_MODELS_DIR) + 
 					semanticModel.getName() + 
 					".model.dot", false, false);
 		} catch (Exception e) {
@@ -222,7 +276,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		}
 
 		if (ModelingConfiguration.isLearnerEnabled())
-			ModelLearningGraph.getInstance(workspace.getOntologyManager(), ModelLearningGraphType.Sparse).
+			ModelLearningGraph.getInstance(workspace.getOntologyManager(), ModelLearningGraphType.Compact).
 			addModelAndUpdateAndExport(semanticModel);
 
 		// *****************************************************************************************

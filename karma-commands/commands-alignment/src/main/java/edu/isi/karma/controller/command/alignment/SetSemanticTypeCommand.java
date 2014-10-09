@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
@@ -86,7 +87,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 
 		addTag(CommandTag.Modeling);
 	}
-
+	
 	@Override
 	public String getCommandName() {
 		return this.getClass().getSimpleName();
@@ -121,6 +122,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		}catch(Exception e) {
 			
 		}
+		UpdateContainer suggestModelUpdate = null;
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(worksheet);
 		OntologyManager ontMgr = workspace.getOntologyManager();
@@ -257,12 +259,16 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 					typesList.add(synType);
 				}
 				
-				// Update the alignment
-				alignment.align();
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0, isPartOfKey);
 //				newType = new SemanticType(hNodeId, classNode.getLabel(), null, SemanticType.Origin.User, 1.0,isPartOfKey);
 				columnNode.setUserSelectedSemanticType(newType);
+				
+				// Update the alignment
+				if (ModelingConfiguration.isLearnAlignmentEnabled()) 
+					suggestModelUpdate = new SuggestModelCommand(alignmentId, worksheetId, false, selectionId, true).doIt(workspace);
+				else
+					alignment.align();
 
 			} catch (JSONException e) {
 				logger.error("JSON Exception occured", e);
@@ -296,10 +302,14 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		} 
 		
-		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-		c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
-				alignment));			
-		return c;
+		if (ModelingConfiguration.isLearnAlignmentEnabled() && suggestModelUpdate != null) {
+			return suggestModelUpdate;
+		} else {
+			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+			c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
+					alignment));			
+			return c;
+		}
 	}
 
 //	private void identifyOutliers(Worksheet worksheet,

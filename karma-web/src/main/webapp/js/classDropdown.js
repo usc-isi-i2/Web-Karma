@@ -129,13 +129,14 @@ var ClassDropdownMenu = (function() {
 
 		function exportJSON() {
 			console.log("exportJSON");
-			var info = generateInfoObject(worksheetId, "", "ExportJSONCommand");
-			var newInfo = info['newInfo'];
-			newInfo.push(getParamObject("alignmentNodeId", columnId, "other"));
-			info["newInfo"] = JSON.stringify(newInfo);
+			// var info = generateInfoObject(worksheetId, "", "ExportJSONCommand");
+			// var newInfo = info['newInfo'];
+			// newInfo.push(getParamObject("alignmentNodeId", columnId, "other"));
+			// info["newInfo"] = JSON.stringify(newInfo);
 
-			showLoading(worksheetId);
-			var returned = sendRequest(info, worksheetId);
+			// showLoading(worksheetId);
+			// var returned = sendRequest(info, worksheetId);
+			ExportJSONDialog.getInstance().show(worksheetId, columnId);
 		}
 
 		function exportAvro() {

@@ -55,7 +55,7 @@ public class SemanticTypeModelMetadata extends KarmaUserMetadata {
 
 	@Override
 	protected String getDirectoryPath() {
-		return "SemanticTypeModels/";
+		return "semantic-type-files/";
 	}
 
 	@Override
