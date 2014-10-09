@@ -1,7 +1,11 @@
-D3ModelLayout = function(htmlElement, htmlClass, w, worksheetId) {
+D3ModelLayout = function(p_htmlElement, p_cssClass, p_w, p_worksheetId) {
 	nodeClickListener = null;
 	linkClickListener = null;
-
+	var htmlElement = htmlElement;
+	var cssClass = cssClass;
+	var w = p_w;
+	var worksheetId = p_worksheetId;
+	
 	/**
 	===========================================================================
 					PUBLIC METHODS
@@ -576,17 +580,11 @@ D3ModelLayout = function(htmlElement, htmlClass, w, worksheetId) {
 			return "translate(" + d.x + "," + d.y + ")";
 		});
 		
-		$(window).resize(function() {
-			waitForFinalEvent(function() {
-				displayAlignmentTree_ForceKarmaLayout(json);
-			}, 500, worksheetId);
-		});
 		window.setTimeout(function() {
-		
-		if ($(mainWorksheetDiv).data("svgVis") != null) {
-			var w = $("div#svgDiv_" + worksheetId).width();
-			svg.attr("width", w);
-		}
+			if ($(mainWorksheetDiv).data("svgVis") != null) {
+				var w = $("div#svgDiv_" + worksheetId).width();
+				svg.attr("width", w);
+			}
 		}, 100);
 	};
 
@@ -602,6 +600,16 @@ D3ModelLayout = function(htmlElement, htmlClass, w, worksheetId) {
 
 	this.setLinkClickListener = function(listener) {
 		linkClickListener = listener;
+	};
+	
+	this.onresize = function(event) {
+		waitForFinalEvent(function() {
+			displayAlignmentTree_ForceKarmaLayout(json);
+		}, 500, worksheetId);
+	};
+	
+	this.onscroll = function(event) {
+		
 	};
 };
 
