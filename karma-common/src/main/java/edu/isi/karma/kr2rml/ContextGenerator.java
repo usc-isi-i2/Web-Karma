@@ -1,10 +1,10 @@
 package edu.isi.karma.kr2rml;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.json.JSONObject;
 
@@ -16,13 +16,24 @@ import edu.isi.karma.modeling.Uris;
 
 public class ContextGenerator {
 	private Model model;
-	Map<String, List<ContextObject>> contextMapping = new HashMap<String, List<ContextObject>>();
+	Map<String, Set<ContextObject>> contextMapping = new HashMap<String, Set<ContextObject>>();
 	private class ContextObject {
 		public String prefix;
 		public String URI;
 		public ContextObject(String prefix, String URI) {
 			this.prefix = prefix;
 			this.URI = URI;
+		}
+		
+		public int hashCode() {
+			return prefix.hashCode() * URI.hashCode();		
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof ContextObject) {
+				return ((ContextObject) o).URI == URI;
+			}
+			return false;
 		}
 	}
 	public ContextGenerator(Model model) {
@@ -40,9 +51,9 @@ public class ContextGenerator {
         			if (!shortForm.equals(fullURI)) {
         				String postfix = shortForm.substring(shortForm.lastIndexOf(":") + 1);
         				String prefix = shortForm.substring(0, shortForm.lastIndexOf(":"));
-        				List<ContextObject> existPrefixes = contextMapping.get(postfix);
+        				Set<ContextObject> existPrefixes = contextMapping.get(postfix);
         				if (existPrefixes == null) {
-        					existPrefixes = new ArrayList<ContextObject>();
+        					existPrefixes = new HashSet<ContextObject>();
         				}
         				existPrefixes.add(new ContextObject(prefix, fullURI));
         				contextMapping.put(postfix, existPrefixes);
@@ -56,9 +67,9 @@ public class ContextGenerator {
         			if (!shortForm.equals(fullURI)) {
         				String postfix = shortForm.substring(shortForm.lastIndexOf(":") + 1);
         				String prefix = shortForm.substring(0, shortForm.lastIndexOf(":"));
-        				List<ContextObject> existPrefixes = contextMapping.get(postfix);
+        				Set<ContextObject> existPrefixes = contextMapping.get(postfix);
         				if (existPrefixes == null) {
-        					existPrefixes = new ArrayList<ContextObject>();
+        					existPrefixes = new HashSet<ContextObject>();
         				}
         				existPrefixes.add(new ContextObject(prefix, fullURI));
         				contextMapping.put(postfix, existPrefixes);
@@ -66,11 +77,12 @@ public class ContextGenerator {
         		}
         	}
         }
-        for (Entry<String, List<ContextObject>> entry : contextMapping.entrySet()) {
-        	List<ContextObject> prefixes = entry.getValue();
+        for (Entry<String, Set<ContextObject>> entry : contextMapping.entrySet()) {
+        	Set<ContextObject> prefixes = entry.getValue();
         	if (prefixes.size() > 1) {
         		for (ContextObject prefix : prefixes) {
-        			obj.put(entry.getKey() + "_" + prefix.prefix, new JSONObject().put("@id", prefix.URI));
+        			String prefixURI = prefix.URI.replace(entry.getKey(), "");
+        			obj.put(prefix.prefix, prefixURI);
         		}
         	}
         	else {
