@@ -208,24 +208,31 @@
 			       <h4 class="modal-title">Add Literal Node</h4>
 			  </div>
 			  <div class="modal-body">
-			  		<div class="form-group">
-						<label for="literal">Literal:</label>
-						<input type="text" id="literal" class="form-control">
-					</div>
-					<div class="row">
-						<div class="col-sm-4 form-group">
-						    <label for="literalType">Type:</label>
-						    <input type="text" id="literalType" class="form-control">
+			  	<div class="row">
+			  		<div class="col-sm-6" id="col-literal">
+				  		<div class="form-group">
+							<label for="literal">Literal:</label>
+							<input type="text" id="literal" class="form-control">
+						</div>
+						<div class="row">
+							<div class="col-sm-7 form-group">
+							    <label for="literalType">Type:</label>
+							    <input type="text" id="literalType" class="form-control">
+							</div>
+						</div>
+						<div class="checkbox" id="isUriRow">
+						  <label>
+						    <input type="checkbox" name="isUri" id="isUri">
+						   Is URI?
+						  </label>
 						</div>
 					</div>
-					<div class="checkbox">
-					  <label>
-					    <input type="checkbox" name="isUri" id="isUri">
-					   Is URI?
-					  </label>
-					</div>
+					<div class="col-sm-6" id="col-property">
 					
-					<div class="error" style="display: none"></div>
+					</div>
+				</div>
+				
+				<div class="error" style="display: none"></div>
 				
 			  </div>
 			  <div class="modal-footer">

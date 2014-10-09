@@ -19,6 +19,10 @@ var ClassDropdownMenu = (function() {
 				name: "Add Outgoing Link",
 				func: addOutgoingLink
 			}, {
+	
+				name: "Add Outgoing Constant",
+				func: addOutgoingConstant
+			}, {
 				name: "Manage Links",
 				func: manageLinks
 			}, {
@@ -96,6 +100,11 @@ var ClassDropdownMenu = (function() {
 				"outgoing");
 		}
 
+		function addOutgoingConstant() {
+			console.log("addOutgoingConstant");
+			AddLiteralNodeDialog.getInstance().showWithProperty(worksheetId, columnId, columnDomain);
+		}
+		
 		function deleteNode() {
 			console.log("Delete Node");
 			var info = generateInfoObject(worksheetId, "", "DeleteNodeCommand");
