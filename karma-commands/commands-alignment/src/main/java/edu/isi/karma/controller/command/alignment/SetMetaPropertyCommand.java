@@ -57,6 +57,7 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
@@ -192,9 +193,11 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				classNode = alignment.addInternalNode(classNodeLabel);
 			}
 
-			alignment.addClassInstanceLink(classNode, columnNode,
+			LabeledLink newLink = alignment.addClassInstanceLink(classNode, columnNode,
 					LinkKeyInfo.UriOfInstance);
-
+			alignment.changeLinkStatus(newLink.getId(),
+					LinkStatus.ForcedByUser);
+			
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId,
 					ClassInstanceLink.getFixedLabel(), classNode.getLabel(),
@@ -220,16 +223,20 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 			if (propertyLink instanceof DataPropertyLink) {
 				String targetHNodeId = ((ColumnNode) propertyLink.getTarget())
 						.getHNodeId();
-				alignment.addDataPropertyOfColumnLink(classInstanceNode,
+				LabeledLink newLink = alignment.addDataPropertyOfColumnLink(classInstanceNode,
 						columnNode, targetHNodeId, propertyLink.getId());
+				alignment.changeLinkStatus(newLink.getId(),
+						LinkStatus.ForcedByUser);
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId,
 						DataPropertyOfColumnLink.getFixedLabel(),
 						classInstanceNode.getLabel(), SemanticType.Origin.User,
 						1.0, false);
 			} else if (propertyLink instanceof ObjectPropertyLink) {
-				alignment.addObjectPropertySpecializationLink(
+				LabeledLink newLink = alignment.addObjectPropertySpecializationLink(
 						classInstanceNode, columnNode, propertyLink.getId());
+				alignment.changeLinkStatus(newLink.getId(),
+						LinkStatus.ForcedByUser);
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId,
 						ObjectPropertySpecializationLink.getFixedLabel(),
@@ -255,8 +262,10 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				}
 				classNode = alignment.addInternalNode(classNodeLabel);
 			}
-			alignment.addColumnSubClassOfLink(classNode, columnNode);
-
+			LabeledLink newLink = alignment.addColumnSubClassOfLink(classNode, columnNode);
+			alignment.changeLinkStatus(newLink.getId(),
+					LinkStatus.ForcedByUser);
+			
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId,
 					ColumnSubClassLink.getFixedLabel(), classNode.getLabel(),

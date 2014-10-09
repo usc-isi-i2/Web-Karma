@@ -156,7 +156,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				return d.source.id + "link" + d.target.id;
 			})
 			.attr("class", function(d) {
-				return "link " + d.linkType;
+				return "link " + d.linkType + " " + d.linkStatus;
 			})
 			.attr("fill", "none");
 		links.exit()
@@ -928,6 +928,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			edge.target = idMap[d.target];
 			edge.id = i;
 			edge.linkType = d.linkType;
+			edge.linkStatus = d.linkStatus;
 			if (d.id){
 				edgeIdMap[d.id] = i;
 			}
