@@ -205,7 +205,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		Set<LabeledLink> links = new HashSet<LabeledLink>();
 		if (alignment.getLinksByType(LinkType.ObjectPropertyLink) != null) {
 			for (LabeledLink link : alignment.getLinksByType(LinkType.ObjectPropertyLink)) {
-				if (link.getStatus() == LinkStatus.Normal) {
+				if (link.getStatus() == LinkStatus.Normal || link.getStatus() == LinkStatus.PreferredByUI) {
 					links.add(link);
 				}
 			}
