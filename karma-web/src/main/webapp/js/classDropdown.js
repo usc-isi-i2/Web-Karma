@@ -20,8 +20,8 @@ var ClassDropdownMenu = (function() {
 				func: addOutgoingLink
 			}, {
 	
-				name: "Add Outgoing Constant",
-				func: addOutgoingConstant
+				name: "Add Outgoing Literal",
+				func: addOutgoingLiteral
 			}, {
 				name: "Manage Links",
 				func: manageLinks
@@ -100,8 +100,8 @@ var ClassDropdownMenu = (function() {
 				"outgoing");
 		}
 
-		function addOutgoingConstant() {
-			console.log("addOutgoingConstant");
+		function addOutgoingLiteral() {
+			console.log("addOutgoingLiteral");
 			AddLiteralNodeDialog.getInstance().showWithProperty(worksheetId, columnId, columnDomain);
 		}
 		
