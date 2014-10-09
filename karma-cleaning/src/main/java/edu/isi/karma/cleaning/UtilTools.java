@@ -19,7 +19,7 @@ public class UtilTools {
 	public static int index = 0;
 	public static Vector<String> results = new Vector<String>();
 	@SuppressWarnings("unchecked")
-	public static Map sortByComparator(Map unsortMap) {
+	public static Map<?, ?> sortByComparator(Map<?, ?> unsortMap) {
 		List list = new LinkedList(unsortMap.entrySet());
 		// sort list based on comparator
 		Collections.sort(list, new Comparator() {

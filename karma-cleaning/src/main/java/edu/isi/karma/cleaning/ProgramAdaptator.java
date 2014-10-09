@@ -138,7 +138,7 @@ public class ProgramAdaptator {
 					break;
 				}
 			}
-			Prober.tracePatchers(program, errNodes, inExps,exp,valid,exp2program);
+			//Prober.tracePatchers(program, errNodes, inExps,exp,valid,exp2program);
 			if (valid) {
 				// NEED TO UPDATE THE SUBSPACE RATHER THAN THE WHOLE ONE!!!
 				Traces nTraces = cwspace.mergewith(tIn);

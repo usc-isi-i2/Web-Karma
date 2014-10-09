@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.cleaning.DataPreProcessor;
 import edu.isi.karma.cleaning.Messager;
+import edu.isi.karma.cleaning.UtilTools;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
@@ -105,6 +106,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 
 	public JSONArray creatNewColumnCommand(String worksheetId, String hTableId,
 			String colname) {
+		colname = colname.replace("\"", "\\\"");
 		String cmdString = String
 				.format("[{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"},"
 						+ "{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"},"
@@ -119,6 +121,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 		try {
 			jsonArray = new JSONArray(cmdString);
 		} catch (Exception e) {
+			logger.debug("Creating AddColumn Error: "+e.toString());
 		}
 		return jsonArray;
 	}
@@ -166,6 +169,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 			HashMap<String, String> rows = new HashMap<String, String>();
 			colnameString = obtainTransformedResultsAndFindNewColumnName(
 					workspace, rows);
+			createAndExecuteNewAddColumnCommand(workspace, colnameString);
 			Worksheet wk = workspace.getWorksheet(worksheetId);
 			selectedPath = findPathForNewColumn(workspace, colnameString);
 			DataPreProcessor dpp = (DataPreProcessor) wk.getDpp();
@@ -186,7 +190,6 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 				return c;
 			}
 
-			createAndExecuteNewAddColumnCommand(workspace, colnameString);
 
 			ValueCollection rvco = getValueCollectionFromRamblerTranformationOutput(rtf);
 			
