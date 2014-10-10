@@ -38,8 +38,10 @@ import edu.isi.karma.config.UIConfiguration;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
+import edu.isi.karma.rep.ColumnMetadata;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.DisplayModel;
@@ -50,6 +52,7 @@ import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
+import edu.isi.karma.view.VHNode;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
@@ -64,7 +67,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 		worksheetId, alignmentId, label, id, hNodeId, nodeType, source,
 		target, linkType, sourceNodeId, targetNodeId, height, hNodesCovered,
 		nodes, links, maxTreeHeight, linkStatus, linkUri, nodeDomain, isForcedByUser, 
-		isUri, nodeId, column, anchors, edgeLinks, alignObject
+		isUri, nodeId, column, anchors, edgeLinks, alignObject, tableLayout, columnName, hasNestedTable, columns
 	}
 
 	private enum JsonValues {
@@ -259,6 +262,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 
 			JSONObject alignObject = new JSONObject();
 			alignObject.put(JsonKeys.anchors.name(), anchorsArr);
+			alignObject.put(JsonKeys.tableLayout.name(), getTableLayout(vWorkspace));
 			alignObject.put(JsonKeys.nodes.name(), nodesArr);
 			alignObject.put(JsonKeys.links.name(), linksArr);
 			alignObject.put(JsonKeys.edgeLinks.name(), edgeLinksArr);
@@ -272,6 +276,43 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 
 	}
 
+	public JSONArray getTableLayout(VWorkspace vWorkspace) {
+		VWorksheet vWorksheet = vWorkspace.getViewFactory()
+				.getVWorksheetByWorksheetId(worksheetId);
+		Worksheet wk = vWorksheet.getWorksheet();
+		ColumnMetadata colMeta = wk.getMetadataContainer().getColumnMetadata();
+		List<VHNode> viewHeaders = vWorksheet.getHeaderViewNodes();
+			
+		return getColumnsJsonArray(viewHeaders, colMeta);
+	}
+	
+	private JSONArray getColumnsJsonArray(List<VHNode> viewHeaders, ColumnMetadata colMeta) throws JSONException {
+		JSONArray colArr = new JSONArray();
+		
+		for (VHNode hNode:viewHeaders) {
+			if(hNode.isVisible()) {
+				JSONObject hNodeObj = new JSONObject();
+				String columnName = hNode.getColumnName();
+				
+				hNodeObj.put(JsonKeys.columnName.name(), columnName);
+				hNodeObj.put(JsonKeys.hNodeId.name(), hNode.getId());
+				
+				if (hNode.hasNestedTable()) {
+					hNodeObj.put(JsonKeys.hasNestedTable.name(), true);
+					
+					List<VHNode> nestedHeaders = hNode.getNestedNodes();
+					hNodeObj.put(JsonKeys.columns.name(), getColumnsJsonArray(nestedHeaders, colMeta));
+				} else {
+					hNodeObj.put(JsonKeys.hasNestedTable.name(), false);
+				}
+				
+				colArr.put(hNodeObj);
+			}
+		}
+		
+		return colArr;
+	}
+	
 	public void generateJsonForNormalLayout(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
 		VWorksheet vWorksheet = vWorkspace.getViewFactory()
