@@ -9,6 +9,8 @@ import java.util.Set;
 import org.json.JSONObject;
 
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
@@ -17,7 +19,7 @@ import edu.isi.karma.modeling.Uris;
 public class ContextGenerator {
 	private Model model;
 	Map<String, Set<ContextObject>> contextMapping = new HashMap<String, Set<ContextObject>>();
-	private class ContextObject {
+	private abstract class ContextObject {
 		public String prefix;
 		public String URI;
 		public ContextObject(String prefix, String URI) {
@@ -35,6 +37,43 @@ public class ContextGenerator {
 			}
 			return false;
 		}
+		
+		public abstract boolean isClassContext();
+		public abstract String getDataType();
+	}
+	
+	private class ClassContextObject extends ContextObject {
+		public ClassContextObject(String prefix, String URI) {
+			super(prefix, URI);
+		}
+
+		@Override
+		public boolean isClassContext() {
+			return true;
+		}
+
+		@Override
+		public String getDataType() {
+			return null;
+		}
+		
+	}
+	
+	private class PredicateContextObject extends ContextObject {
+		public String dataType;
+		public PredicateContextObject(String prefix, String URI, String dataType) {
+			super(prefix, URI);
+			this.dataType = dataType;
+		}
+		@Override
+		public boolean isClassContext() {
+			return false;
+		}
+		@Override
+		public String getDataType() {
+			return dataType;
+		}
+		
 	}
 	public ContextGenerator(Model model) {
 		this.model = model;
@@ -55,13 +94,21 @@ public class ContextGenerator {
         				if (existPrefixes == null) {
         					existPrefixes = new HashSet<ContextObject>();
         				}
-        				existPrefixes.add(new ContextObject(prefix, fullURI));
+        				existPrefixes.add(new ClassContextObject(prefix, fullURI));
         				contextMapping.put(postfix, existPrefixes);
         			}
         		}
         	}
         	if (stmt.getPredicate().getURI().equals(Uris.RR_PREDICATE_URI)) {
         		if (stmt.getObject().isURIResource()) {
+        			Property objectMapProp = model.getProperty(Uris.RR_OBJECTMAP_URI);
+        			Property dataTypeProp = model.getProperty(Uris.RR_DATATYPE_URI);
+        			RDFNode node = stmt.getSubject().getProperty(objectMapProp).getObject();
+        			String dataType = null;
+        			if (node.isResource()) {
+        				Statement s = node.asResource().getProperty(dataTypeProp);
+        				dataType = model.shortForm(s.getObject().toString());
+        			}
         			String shortForm = model.shortForm(stmt.getObject().toString());
         			String fullURI = stmt.getObject().toString();
         			if (!shortForm.equals(fullURI)) {
@@ -71,7 +118,7 @@ public class ContextGenerator {
         				if (existPrefixes == null) {
         					existPrefixes = new HashSet<ContextObject>();
         				}
-        				existPrefixes.add(new ContextObject(prefix, fullURI));
+        				existPrefixes.add(new PredicateContextObject(prefix, fullURI, dataType));
         				contextMapping.put(postfix, existPrefixes);
         			}
         		}
@@ -87,7 +134,18 @@ public class ContextGenerator {
         	}
         	else {
         		for (ContextObject prefix : prefixes) {
-        			obj.put(entry.getKey(), new JSONObject().put("@id", prefix.URI));
+        			JSONObject t = new JSONObject();
+        			t.put("@id", prefix.URI);
+        			if (prefix.isClassContext()) {
+        				t.put("@type", "@id");
+        			}
+        			String dataType = prefix.getDataType();
+        			if (dataType != null) {
+        				String p = dataType.substring(0, dataType.lastIndexOf(":"));
+        				obj.put(p, model.getNsPrefixURI(p));
+        				t.put("@type", dataType);
+        			}
+        			obj.put(entry.getKey(), t);
         		}
         	}
         }
