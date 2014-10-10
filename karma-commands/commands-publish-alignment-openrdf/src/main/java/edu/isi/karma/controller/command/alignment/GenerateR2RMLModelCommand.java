@@ -49,6 +49,7 @@ import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.SemanticModel;
@@ -203,9 +204,9 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 					"Please align the worksheet before generating R2RML Model!"));
 		}
 		Set<LabeledLink> links = new HashSet<LabeledLink>();
-		if (alignment.getLinksByType(LinkType.ObjectPropertyLink) != null) {
-			for (LabeledLink link : alignment.getLinksByType(LinkType.ObjectPropertyLink)) {
-				if (link.getStatus() == LinkStatus.Normal) {
+		if (alignment.getSteinerTree() != null) {
+			for (LabeledLink link : alignment.getSteinerTree().edgeSet()) {
+				if ((link.getStatus() == LinkStatus.Normal || link.getStatus() == LinkStatus.PreferredByUI) && (link.getType() == LinkType.ObjectPropertyLink)) {
 					links.add(link);
 				}
 			}
@@ -246,6 +247,8 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 				Command changeInternalNodeLinksCommand = cinlcf.createCommand(inputJSON, workspace);
 				workspace.getCommandHistory().doCommand(changeInternalNodeLinksCommand, workspace);
 				uc.add(new HistoryUpdate(workspace.getCommandHistory()));
+				uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+				uc.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			}catch(Exception e)
 			{
 				e.printStackTrace();

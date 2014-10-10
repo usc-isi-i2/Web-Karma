@@ -32,14 +32,22 @@ text.FakeRootLink {
 .link {
   fill: none;
   stroke: #ccc;
-  stroke-width: 1px;
+  stroke-dasharray: 9, 5;
+  stroke-width: 1.5px;
 }
 
+.link.ForcedByUser {
+	stroke-dasharray: none;	
+	stroke-width: 1px;
+}
+
+/*
 .link.DataPropertyOfColumnLink, .link.ColumnSubClassLink, .link.ClassInstanceLink, .link.horizontalDataPropertyLink, .link.ObjectPropertySpecializationLink {
 	stroke: #009900;
     stroke-dasharray: 9, 5;
     stroke-width: 1.5;
 }
+*/
 
 g.ColumnNode rect{
 	fill:black;

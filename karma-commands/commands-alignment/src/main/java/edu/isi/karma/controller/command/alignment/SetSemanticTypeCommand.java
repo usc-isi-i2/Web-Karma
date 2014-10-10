@@ -52,6 +52,7 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
@@ -140,6 +141,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		List<SemanticType> typesList = new ArrayList<SemanticType>();
 		for (int i = 0; i < typesArr.length(); i++) {
 			try {
+				LabeledLink newLink = null;
 				JSONObject type = typesArr.getJSONObject(i);
 				
 				String domainValue;
@@ -231,9 +233,9 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 						} else if (semanticTypeAlreadyExists) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
 //							alignment.removeNode(oldDomainNode.getId());
-							alignment.addClassInstanceLink(domain, columnNode, keyInfo);
+							newLink = alignment.addClassInstanceLink(domain, columnNode, keyInfo);
 						} else {
-							alignment.addClassInstanceLink(domain, columnNode, keyInfo);
+							newLink = alignment.addClassInstanceLink(domain, columnNode, keyInfo);
 						}
 					} 
 					// Property semantic type
@@ -242,15 +244,15 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 						// When only the link changes between the class node and the internal node (domain)
 						if (semanticTypeAlreadyExists && oldDomainNode == domain) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-							alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
+							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
 						}
 						// When there was an existing semantic type and the new domain is a new node in the graph and semantic type already existed 
 						else if (semanticTypeAlreadyExists) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
 //							alignment.removeNode(oldDomainNode.getId());
-							alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
+							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
 						} else {
-							alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
+							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
 						}						
 					}
 				} else { // Synonym semantic type
@@ -264,6 +266,10 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				columnNode.setUserSelectedSemanticType(newType);
 				columnNode.setForced(true);
 				
+				if(newLink != null) {
+					alignment.changeLinkStatus(newLink.getId(),
+							LinkStatus.ForcedByUser);
+				}
 				// Update the alignment
 				alignment.align();
 

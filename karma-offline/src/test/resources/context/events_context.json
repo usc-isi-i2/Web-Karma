@@ -1,0 +1,17 @@
+{"@context": {
+    "hasGeographicLocation": {"@id": "http://vivoweb.org/ontology/core#hasGeographicLocation"},
+    "Thing": {"@id": "http://www.w3.org/2002/07/owl#Thing"},
+    "hasPrerequisite": {"@id": "http://vivoweb.org/ontology/core#hasPrerequisite"},
+    "label": {"@id": "http://www.w3.org/2000/01/rdf-schema#label"},
+    "hasGrader": {"@id": "http://lod.isi.edu/ontology/syllabus/hasGrader"},
+    "hasInstructor": {"@id": "http://lod.isi.edu/ontology/syllabus/hasInstructor"},
+    "title": {"@id": "http://purl.org/dc/terms/title"},
+    "Course": {"@id": "http://lod.isi.edu/ontology/syllabus/Course"},
+    "Lecture": {"@id": "http://lod.isi.edu/ontology/syllabus/Lecture"},
+    "description": {"@id": "http://purl.org/dc/terms/description"},
+    "Homework": {"@id": "http://lod.isi.edu/ontology/syllabus/Homework"},
+    "hasHomework": {"@id": "http://lod.isi.edu/ontology/syllabus/hasHomework"},
+    "hasLecture": {"@id": "http://lod.isi.edu/ontology/syllabus/hasLecture"},
+    "hasTeachingAssistant": {"@id": "http://lod.isi.edu/ontology/syllabus/hasTeachingAssistant"},
+    "Person": {"@id": "http://lod.isi.edu/ontology/syllabus/Person"}
+}}

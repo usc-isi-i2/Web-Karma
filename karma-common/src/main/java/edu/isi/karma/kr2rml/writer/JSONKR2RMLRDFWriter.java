@@ -42,6 +42,8 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 	private Map<String, String> contextInverseMapping = new HashMap<String, String>();
 	private URL location;
 	private JSONObject context;
+	private String atType = "@type";
+	private String atId = "@id";
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter) {
 		super(outWriter);
 	}
@@ -62,6 +64,12 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			while (itr.hasNext()) {
 				String key = itr.next().toString();
 				try {
+					if (c.get(key).toString().equals("@id")) {
+						atId = key;
+					}
+					if (c.get(key).toString().equals("@type")) {
+						atType = key;
+					}
 					contextInverseMapping.put(c.getJSONObject(key).getString("@id"), key);
 				}catch(Exception e) 
 				{
@@ -132,7 +140,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 				String t = generateShortHandURIFromContext(array.remove(0).toString());
 				array.put(t);
 			}
-			subject.put("@type", array);
+			subject.put(atType, array);
 		}
 		else {
 			subject.put(shortHandPredicateURI, array);
@@ -188,12 +196,12 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 						JSONObject jsonObjectValue = (JSONObject)o;
 						if(isJustIdAndType(jsonObjectValue))
 						{
-							types.put(jsonObjectValue.getString("@id"), jsonObjectValue.get("@id"));
+							types.put(jsonObjectValue.getString(atId), jsonObjectValue.get(atId));
 						}
 						else
 						{
 							collapseSameType((JSONObject)o);
-							types.put(((JSONObject)o).getString("@id"), o);
+							types.put(((JSONObject)o).getString(atId), o);
 
 						}
 
@@ -218,7 +226,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 				JSONObject jsonObjectValue = (JSONObject)value;
 				if(isJustIdAndType(jsonObjectValue))
 				{
-					obj.put((String)key, jsonObjectValue.get("@id"));
+					obj.put((String)key, jsonObjectValue.get(atId));
 				}
 				else
 				{
@@ -254,7 +262,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 
 			}
 		}
-		object.put("@id", subjUri);
+		object.put(atId, subjUri);
 		return object;
 	}
 
