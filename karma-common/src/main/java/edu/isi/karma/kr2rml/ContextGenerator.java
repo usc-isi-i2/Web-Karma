@@ -109,9 +109,11 @@ public class ContextGenerator {
 					Property dataTypeProp = model.getProperty(Uris.RR_DATATYPE_URI);
 					RDFNode node = stmt.getSubject().getProperty(objectMapProp).getObject();
 					String dataType = null;
-					if (node.isResource()) {
+					if (node != null && node.isResource()) {
 						Statement s = node.asResource().getProperty(dataTypeProp);
-						dataType = model.shortForm(s.getObject().toString());
+						if (s != null) {
+							dataType = model.shortForm(s.getObject().toString());
+						}
 					}
 					String shortForm = model.shortForm(stmt.getObject().toString());
 					String fullURI = stmt.getObject().toString();
