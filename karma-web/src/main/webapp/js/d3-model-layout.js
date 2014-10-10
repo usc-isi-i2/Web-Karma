@@ -1,6 +1,7 @@
-D3ModelLayout = function(p_htmlElement, p_cssClass) {
+D3ModelLayout = function(p_htmlElement, p_cssClass, p_w, p_worksheetId) {
 	var htmlElement = p_htmlElement;
 	var cssClass = p_cssClass;
+	var worksheetId = p_worksheetId;
 	
 	var padding = 35;
 	var windowWidth = parseInt($("." + cssClass).css("width"));
