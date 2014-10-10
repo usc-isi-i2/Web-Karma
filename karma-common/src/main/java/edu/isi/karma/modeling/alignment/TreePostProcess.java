@@ -186,9 +186,11 @@ public class TreePostProcess {
 					
 					if (linkSourceId.equals(sourceId)) {
 						tree.addEdge(link.getSource(), link.getTarget(), newLink);
+						tree.setEdgeWeight(newLink, link.getWeight());
 						if (allowedChaningGraph) this.graphBuilder.addLink(link.getSource(), link.getTarget(), newLink);
 					} else {
 						tree.addEdge(link.getTarget(), link.getSource(), newLink);
+						tree.setEdgeWeight(newLink, link.getWeight());
 						if (allowedChaningGraph) this.graphBuilder.addLink(link.getTarget(), link.getSource(), newLink);
 					}
 					

@@ -146,7 +146,10 @@ public abstract class ModelLearningGraph {
 		logger.info("initializing the graph from models in the json repository ...");
 		
 		this.nodeIdFactory = new NodeIdFactory();
-		this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
+		if (this instanceof ModelLearningGraphSparse)
+			this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
+		else 
+			this.graphBuilder = new GraphBuilderTopK(ontologyManager, this.nodeIdFactory, false);
 		
 		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
 		Set<InternalNode> temp;
@@ -167,7 +170,12 @@ public abstract class ModelLearningGraph {
 				}
 			}
 		}
-		this.updateGraphUsingOntology(addedNodes);
+		
+		// This line should be uncommented when we have a good top-k steiner tree algorithm. 
+		// The current algorithm does not give right answer when I add the links from ontology. 
+		// FIXME
+//		this.updateGraphUsingOntology(addedNodes);
+		
 		this.exportJson();
 		this.exportGraphviz();
 		this.lastUpdateTime = System.currentTimeMillis();
