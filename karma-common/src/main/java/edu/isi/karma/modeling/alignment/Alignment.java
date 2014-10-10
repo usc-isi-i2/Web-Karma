@@ -119,7 +119,7 @@ public class Alignment implements OntologyUpdateListener {
 	public Set<Node> getGraphNodes() {
 		return this.graphBuilder.getGraph().vertexSet();
 	}
-//	
+	
 //	public Set<DefaultLink> getGraphLinks() {
 //		return this.graphBuilder.getGraph().edgeSet();
 //	}
