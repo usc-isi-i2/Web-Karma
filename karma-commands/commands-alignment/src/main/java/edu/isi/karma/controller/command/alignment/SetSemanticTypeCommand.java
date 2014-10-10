@@ -122,7 +122,6 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		}catch(Exception e) {
 			
 		}
-		UpdateContainer suggestModelUpdate = null;
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(worksheet);
 		OntologyManager ontMgr = workspace.getOntologyManager();
@@ -263,12 +262,10 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				newType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0, isPartOfKey);
 //				newType = new SemanticType(hNodeId, classNode.getLabel(), null, SemanticType.Origin.User, 1.0,isPartOfKey);
 				columnNode.setUserSelectedSemanticType(newType);
+				columnNode.setForced(true);
 				
 				// Update the alignment
-				if (ModelingConfiguration.isLearnAlignmentEnabled()) 
-					suggestModelUpdate = new SuggestModelCommand(alignmentId, worksheetId, false, selectionId, true).doIt(workspace);
-				else
-					alignment.align();
+				alignment.align();
 
 			} catch (JSONException e) {
 				logger.error("JSON Exception occured", e);
@@ -302,14 +299,10 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		} 
 		
-		if (ModelingConfiguration.isLearnAlignmentEnabled() && suggestModelUpdate != null) {
-			return suggestModelUpdate;
-		} else {
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-			c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
-					alignment));			
-			return c;
-		}
+		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+		c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
+				alignment));			
+		return c;
 	}
 
 //	private void identifyOutliers(Worksheet worksheet,

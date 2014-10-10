@@ -142,8 +142,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				alignmentId);
 		if (alignment == null) {
 			alignment = new Alignment(ontMgr);
-			AlignmentManager.Instance().addAlignmentToMap(alignmentId,
-					alignment);
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
 
 		// Save the original alignment for undo
@@ -264,13 +263,10 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		}
 
 		columnNode.setUserSelectedSemanticType(newType);
-		
+		columnNode.setForced(true);
+
 		// Update the alignment
-		UpdateContainer suggestModelUpdate = null;
-		if (ModelingConfiguration.isLearnAlignmentEnabled()) 
-			suggestModelUpdate = new SuggestModelCommand(alignmentId, worksheetId, false, selectionId, true).doIt(workspace);
-		else
-			alignment.align();
+		alignment.align();
 
 
 		UpdateContainer c = new UpdateContainer();
@@ -293,14 +289,10 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		}
 		
-		if (ModelingConfiguration.isLearnAlignmentEnabled() && suggestModelUpdate != null) {
-			return suggestModelUpdate;
-		} else {
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-			c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
-					alignment));
-			return c;
-		}
+		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+		c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
+				alignment));
+		return c;
 	}
 
 	private void clearOldSemanticTypeLink(LabeledLink oldIncomingLinkToColumnNode,

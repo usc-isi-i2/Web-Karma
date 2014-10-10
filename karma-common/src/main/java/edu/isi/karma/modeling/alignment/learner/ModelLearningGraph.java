@@ -123,6 +123,16 @@ public abstract class ModelLearningGraph {
 		return this.graphBuilder;
 	}
 	
+	public GraphBuilder getGraphBuilderClone() {
+		GraphBuilder clonedGraphBuilder = null;
+		if (this instanceof ModelLearningGraphSparse) {
+			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, this.getGraphBuilder().getGraph());
+		} else if (this instanceof ModelLearningGraphCompact) {
+			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, this.getGraphBuilder().getGraph());
+		}
+		return clonedGraphBuilder;
+	}
+	
 	public NodeIdFactory getNodeIdFactory() {
 		return this.nodeIdFactory;
 	}

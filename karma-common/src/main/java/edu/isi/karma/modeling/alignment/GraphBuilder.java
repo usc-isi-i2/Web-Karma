@@ -376,7 +376,7 @@ public class GraphBuilder {
 		}
 		
 		if (this.idToLinkMap.containsKey(link.getId())) {
-			logger.error("The link with id=" + link.getId() + " already exists in the graph");
+			logger.warn("The link with id=" + link.getId() + " already exists in the graph");
 			return false;
 		}
 		

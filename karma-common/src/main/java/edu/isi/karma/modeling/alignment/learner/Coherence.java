@@ -163,8 +163,8 @@ public class Coherence {
 	public double getCoherenceValue() {
 		
 		if (this.itemsCount == 0) {
-			logger.info("cannot compute coherence when number of nodes is zero!");
-			return 0.0;
+			logger.debug("cannot compute coherence when number of nodes is zero!");
+			return Double.MIN_VALUE;
 		}
 		
 

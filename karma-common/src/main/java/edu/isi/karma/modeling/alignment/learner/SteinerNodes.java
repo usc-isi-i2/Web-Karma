@@ -108,11 +108,22 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		
 		this.confidence.addValue(confidence);
 		
-//		this.frequency += n1.getModelIds() == null ? 0 : n1.getModelIds().size();
-//		this.frequency += n2.getModelIds() == null ? 0 : n2.getModelIds().size();
+		this.computeScore();
 		
-//		this.coherence.computeCoherence(this.nodes);
+		return true;
 		
+	}
+	
+	public boolean addNode(InternalNode n) {
+		
+		if (this.nodes.contains(n))
+			return false;
+		
+		this.nodes.add(n);
+		this.nodeCoherence.updateCoherence(n.getModelIds());
+		if (n.getModelIds() == null || n.getModelIds().isEmpty())
+				this.nonModelNodesCount ++;
+
 		this.computeScore();
 		
 		return true;

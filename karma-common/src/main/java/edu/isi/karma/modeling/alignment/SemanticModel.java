@@ -183,8 +183,10 @@ public class SemanticModel {
 					columnNodes.add((ColumnNode)n);
 		}
 		return columnNodes;
+		
+
 	}
-	
+
 	private void setSuggestedTypesForColumnNodes() {
 		
 		if (this.graph == null)
