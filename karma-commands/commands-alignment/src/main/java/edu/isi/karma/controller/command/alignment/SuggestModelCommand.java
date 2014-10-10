@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.jgrapht.graph.WeightedMultigraph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,7 +67,6 @@ import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
-import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;

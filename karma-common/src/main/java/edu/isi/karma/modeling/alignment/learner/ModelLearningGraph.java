@@ -23,6 +23,7 @@ package edu.isi.karma.modeling.alignment.learner;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -146,7 +147,9 @@ public abstract class ModelLearningGraph {
 		
 		this.nodeIdFactory = new NodeIdFactory();
 		this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
-
+		
+		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
+		Set<InternalNode> temp;
 		File ff = new File(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_MODELS_DIR));
 		if (ff.exists()) {
 			File[] files = ff.listFiles();
@@ -155,12 +158,16 @@ public abstract class ModelLearningGraph {
 				if (f.getName().endsWith(".json")) {
 					try {
 						SemanticModel model = SemanticModel.readJson(f.getAbsolutePath());
-						if (model != null) this.addModel(model);
+						if (model != null) {
+							temp = this.addModel(model);
+							if (temp != null) addedNodes.addAll(temp);
+						}
 					} catch (Exception e) {
 					}
 				}
 			}
 		}
+		this.updateGraphUsingOntology(addedNodes);
 		this.exportJson();
 		this.exportGraphviz();
 		this.lastUpdateTime = System.currentTimeMillis();
