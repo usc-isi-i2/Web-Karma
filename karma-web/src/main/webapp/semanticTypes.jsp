@@ -22,7 +22,7 @@
 				  		<div class="col-sm-12">
 					  		<div class="row">
 				                <div class="col-sm-6"><b>Semantic Types:</b></div>
-				                <div class="col-sm-6"><button type="button" id="addType" class="btn btn-default pull-right">Add Row</button></div>
+				                <div class="col-sm-6"><button type="button" id="addType" class="btn btn-default pull-right" style="padding: 0px 12px">Add Row</button></div>
 				            </div>
 					  		<div id="semanticTypesTableDiv">
 						  		<table id="semanticTypesTable" class="table table-striped table-condensed">

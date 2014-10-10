@@ -99,14 +99,10 @@ var SetSemanticTypeDialog = (function() {
 					});
 				}
 
+				addEmptySemanticType();
 				addEmptyUriSemanticType();
-
-				if ((!suggestedTypes && existingTypes.length == 0) ||
-					((existingTypes && existingTypes.length == 0) && (suggestedTypes && suggestedTypes.length == 0)) ||
-					((existingTypes && existingTypes.length == 0) && (suggestedTypes && suggestedTypes["Labels"].length == 0))) {
-					addEmptySemanticType();
-				}
-
+				
+				
 				getClasses();
 				getProperties();
 				getExistingProperties();
@@ -153,7 +149,7 @@ var SetSemanticTypeDialog = (function() {
 
 			$("#addType", dialog).on("click", function(e) {
 				e.preventDefault();
-				addEmptySemanticType();
+				addEmptySemanticType();  
 			});
 
 			
@@ -420,7 +416,7 @@ var SetSemanticTypeDialog = (function() {
 			// Check if it is eligible to be added to the table
 			var isValid = true;
 			$.each($("tr", table), function(index, row) {
-				if ($(row).data("FullType") == semTypeObject["FullType"] && $(row).data("DomainUri") == semTypeObject["DomainUri"]) {
+				if ($(row).data("FullType") == semTypeObject["FullType"] && $(row).data("DomainId") == semTypeObject["DomainId"]) {
 					// We allow multiple fake semantic type objects to be added
 					if (!(semTypeObject["FullType"] == "fakePropertyURI" && semTypeObject["DomainUri"] == "fakeDomainURI"))
 						isValid = false;
@@ -628,6 +624,7 @@ var SetSemanticTypeDialog = (function() {
 
 		function hideSemanticTypeEditOptions() {
 			var table = $("#semanticTypesTable");
+			$("tr", table).show();
 			var parentTrTag = $(this).parents("tr");
 			$("tr", table).removeClass('currentEditRow');
 			$("td.CRFSuggestedText", parentTrTag).text("");
@@ -640,6 +637,8 @@ var SetSemanticTypeDialog = (function() {
 		function showSemanticTypeEditOptions() {
 			var table = $("#semanticTypesTable");
 			var parentTrTag = $(this).parents("tr");
+			$("tr", table).hide();
+			parentTrTag.show();
 			$("tr", table).removeClass('currentEditRow');
 			$("td.CRFSuggestedText", parentTrTag).text("");
 
