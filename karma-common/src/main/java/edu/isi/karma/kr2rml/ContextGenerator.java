@@ -27,10 +27,12 @@ public class ContextGenerator {
 			this.URI = URI;
 		}
 		
+		@Override
 		public int hashCode() {
 			return prefix.hashCode() * URI.hashCode();		
 		}
 		
+		@Override
 		public boolean equals(Object o) {
 			if (o instanceof ContextObject) {
 				return ((ContextObject) o).URI == URI;
@@ -149,6 +151,8 @@ public class ContextGenerator {
         		}
         	}
         }
+        obj.put("url", "@id");
+        obj.put("a", "@type");
         JSONObject top = new JSONObject();
         top.put("@context", obj);
         return top;
