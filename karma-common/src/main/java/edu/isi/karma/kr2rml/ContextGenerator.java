@@ -156,7 +156,7 @@ public class ContextGenerator {
 			}
 		}
 		if (isGenerateAtIdType) {
-			obj.put("url", "@id");
+			obj.put("uri", "@id");
 			obj.put("a", "@type");
 		}
 		JSONObject top = new JSONObject();
