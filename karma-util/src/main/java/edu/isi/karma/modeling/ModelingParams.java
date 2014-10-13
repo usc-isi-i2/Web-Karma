@@ -25,8 +25,8 @@ package edu.isi.karma.modeling;
 public interface ModelingParams {
 
 	// Building Graph
-	public static double PROPERTY_USER_PREFERRED_WEIGHT = 10;
-	public static double PROPERTY_UI_PREFERRED_WEIGHT = 90;
+	public static double PROPERTY_USER_PREFERRED_WEIGHT = 0.01;
+	public static double PROPERTY_UI_PREFERRED_WEIGHT = 0.1;
 	public static double PROPERTY_DIRECT_WEIGHT = 100;	
 	public static double PROPERTY_INDIRECT_WEIGHT = 100.01;
 	public static double PROPERTY_WITH_ONLY_DOMAIN_WEIGHT = 1000;

@@ -211,11 +211,9 @@ public class GetClassesCommand extends WorksheetCommand {
 			String nodeId;
 			// If the node exists in graph but not in tree then use the graph node id
 			if (graphLastIndex != -1) {
-				if (!steinerTreeNodeIds.contains(nodeUri + graphLastIndex)) {
-					nodeId = nodeUri + "1 (add)";
-				} else {
-					nodeId = nodeUri + (graphLastIndex+1) + " (add)";
-				}
+				int i = 1;
+				for (; i <= graphLastIndex && steinerTreeNodeIds.contains(nodeUri + i); i++) ;
+				nodeId = nodeUri + i + " (add)";
 			} else {
 				nodeId = nodeUri + "1 (add)";
 			}

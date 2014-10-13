@@ -23,6 +23,7 @@ package edu.isi.karma.modeling.alignment.learner;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -123,6 +124,16 @@ public abstract class ModelLearningGraph {
 		return this.graphBuilder;
 	}
 	
+	public GraphBuilder getGraphBuilderClone() {
+		GraphBuilder clonedGraphBuilder = null;
+		if (this instanceof ModelLearningGraphSparse) {
+			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, this.getGraphBuilder().getGraph());
+		} else if (this instanceof ModelLearningGraphCompact) {
+			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, this.getGraphBuilder().getGraph());
+		}
+		return clonedGraphBuilder;
+	}
+	
 	public NodeIdFactory getNodeIdFactory() {
 		return this.nodeIdFactory;
 	}
@@ -135,8 +146,13 @@ public abstract class ModelLearningGraph {
 		logger.info("initializing the graph from models in the json repository ...");
 		
 		this.nodeIdFactory = new NodeIdFactory();
-		this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
-
+		if (this instanceof ModelLearningGraphSparse)
+			this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
+		else 
+			this.graphBuilder = new GraphBuilderTopK(ontologyManager, this.nodeIdFactory, false);
+		
+		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
+		Set<InternalNode> temp;
 		File ff = new File(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_MODELS_DIR));
 		if (ff.exists()) {
 			File[] files = ff.listFiles();
@@ -145,12 +161,21 @@ public abstract class ModelLearningGraph {
 				if (f.getName().endsWith(".json")) {
 					try {
 						SemanticModel model = SemanticModel.readJson(f.getAbsolutePath());
-						if (model != null) this.addModel(model);
+						if (model != null) {
+							temp = this.addModel(model);
+							if (temp != null) addedNodes.addAll(temp);
+						}
 					} catch (Exception e) {
 					}
 				}
 			}
 		}
+		
+		// This line should be uncommented when we have a good top-k steiner tree algorithm. 
+		// The current algorithm does not give right answer when I add the links from ontology. 
+		// FIXME
+//		this.updateGraphUsingOntology(addedNodes);
+		
 		this.exportJson();
 		this.exportGraphviz();
 		this.lastUpdateTime = System.currentTimeMillis();

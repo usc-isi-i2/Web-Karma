@@ -29,7 +29,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
@@ -143,8 +142,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				alignmentId);
 		if (alignment == null) {
 			alignment = new Alignment(ontMgr);
-			AlignmentManager.Instance().addAlignmentToMap(alignmentId,
-					alignment);
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
 
 		// Save the original alignment for undo
@@ -201,7 +199,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId,
 					ClassInstanceLink.getFixedLabel(), classNode.getLabel(),
-					SemanticType.Origin.User, 1.0, false);
+					SemanticType.Origin.User, 1.0);
 		} else if (metaPropertyName
 				.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
 			LabeledLink propertyLink = alignment.getLinkById(metaPropertyId);
@@ -231,7 +229,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				newType = new SemanticType(hNodeId,
 						DataPropertyOfColumnLink.getFixedLabel(),
 						classInstanceNode.getLabel(), SemanticType.Origin.User,
-						1.0, false);
+						1.0);
 			} else if (propertyLink instanceof ObjectPropertyLink) {
 				LabeledLink newLink = alignment.addObjectPropertySpecializationLink(
 						classInstanceNode, columnNode, propertyLink.getId());
@@ -241,7 +239,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				newType = new SemanticType(hNodeId,
 						ObjectPropertySpecializationLink.getFixedLabel(),
 						classInstanceNode.getLabel(), SemanticType.Origin.User,
-						1.0, false);
+						1.0);
 			}
 
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
@@ -269,17 +267,14 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId,
 					ColumnSubClassLink.getFixedLabel(), classNode.getLabel(),
-					SemanticType.Origin.User, 1.0, false);
+					SemanticType.Origin.User, 1.0);
 		}
 
 		columnNode.setUserSelectedSemanticType(newType);
-		
+		columnNode.setForced(true);
+
 		// Update the alignment
-		UpdateContainer suggestModelUpdate = null;
-		if (ModelingConfiguration.isLearnAlignmentEnabled()) 
-			suggestModelUpdate = new SuggestModelCommand(alignmentId, worksheetId, false, selectionId, true).doIt(workspace);
-		else
-			alignment.align();
+		alignment.align();
 
 
 		UpdateContainer c = new UpdateContainer();
@@ -302,14 +297,10 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		}
 		
-		if (ModelingConfiguration.isLearnAlignmentEnabled() && suggestModelUpdate != null) {
-			return suggestModelUpdate;
-		} else {
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-			c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
-					alignment));
-			return c;
-		}
+		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+		c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
+				alignment));
+		return c;
 	}
 
 	private void clearOldSemanticTypeLink(LabeledLink oldIncomingLinkToColumnNode,

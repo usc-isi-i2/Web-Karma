@@ -34,6 +34,9 @@ public class ColumnNode extends Node {
 	private final String hNodeId;
 	private final String columnName;
 	private Label rdfLiteralType;
+
+	private InternalNode domainNode;
+	private LabeledLink domainLink;
 	
 	private SemanticType userSelectedSemanticType;
 	private List<SemanticType> suggestedSemanticTypes;
@@ -46,6 +49,27 @@ public class ColumnNode extends Node {
 		this.userSelectedSemanticType = null;
 		this.suggestedSemanticTypes = null;
 	}
+
+	
+	public InternalNode getDomainNode() {
+		return domainNode;
+	}
+
+
+	public void setDomainNode(InternalNode domainNode) {
+		this.domainNode = domainNode;
+	}
+
+
+	public LabeledLink getDomainLink() {
+		return domainLink;
+	}
+
+
+	public void setDomainLink(LabeledLink domainLink) {
+		this.domainLink = domainLink;
+	}
+
 
 	public List<SemanticType> getSuggestedSemanticTypes() {
 		return suggestedSemanticTypes;
@@ -66,8 +90,7 @@ public class ColumnNode extends Node {
 						st.getType(), 
 						st.getDomain(), 
 						st.getOrigin(), 
-						confidence / sum, 
-						st.isPartOfKey());
+						confidence / sum);
 				this.suggestedSemanticTypes.add(semType);
 			}
 		}

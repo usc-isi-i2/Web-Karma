@@ -38,7 +38,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
-		worksheetId, hNodeId, isKey, 
+		worksheetId, hNodeId,
 		SemanticTypesArray, trainAndShowUpdates, rdfLiteralType, 
 		selectionName
 	}
@@ -51,7 +51,6 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		boolean isPartOfKey = Boolean.parseBoolean(request.getParameter(Arguments.isKey.name()));
 		String arrStr = request.getParameter(SemanticTypesUpdate.JsonKeys.SemanticTypesArray.name());
 		String rdfLiteralType = request.getParameter(Arguments.rdfLiteralType.name());
 		
@@ -64,7 +63,7 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 		}
 		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new SetSemanticTypeCommand(getNewId(workspace), worksheetId, hNodeId, 
-				isPartOfKey, arr, true, rdfLiteralType, 
+				arr, true, rdfLiteralType, 
 				selectionName);
 	}
 
@@ -72,7 +71,6 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String arrStr = HistoryJsonUtil.getStringValue(Arguments.SemanticTypesArray.name(), inputJson);
-		boolean isPartOfKey = HistoryJsonUtil.getBooleanValue(Arguments.isKey.name(), inputJson);
 		boolean train = HistoryJsonUtil.getBooleanValue(Arguments.trainAndShowUpdates.name(), inputJson);
 		String rdfLiteralType = HistoryJsonUtil.getStringValue(Arguments.rdfLiteralType.name(), inputJson);
 		
@@ -86,7 +84,7 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		SetSemanticTypeCommand comm = new SetSemanticTypeCommand(getNewId(workspace), 
-				worksheetId, hNodeId, isPartOfKey, arr, 
+				worksheetId, hNodeId, arr, 
 				train, rdfLiteralType, 
 				selectionName);
 		
@@ -100,7 +98,7 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 			boolean isPartOfKey, JSONArray arr, boolean train, 
 			String rdfLiteralType, String selectionId) {
 		return new SetSemanticTypeCommand(getNewId(workspace), worksheetId, hNodeId, 
-				isPartOfKey, arr, train, rdfLiteralType, selectionId);
+				arr, train, rdfLiteralType, selectionId);
 	}
 	@Override
 	public Class<? extends Command> getCorrespondingCommand()

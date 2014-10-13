@@ -1,10 +1,12 @@
-D3ModelLayout = function(p_htmlElement, p_cssClass) {
+D3ModelLayout = function(p_htmlElement, p_cssClass, p_w, p_worksheetId) {
 	var htmlElement = p_htmlElement;
 	var cssClass = p_cssClass;
+	var worksheetId = p_worksheetId;
 	
 	var padding = 35;
-	var windowWidth = window.innerWidth * 0.8 - padding;
-	var leftPanelWidth = window.innerWidth * 0.2;
+	var windowWidth = parseInt($("." + cssClass).css("width"));
+	var leftPanelWidth = window.innerWidth - windowWidth;
+	var maxXOfferset = 0;
 	var width=0;           
 	var height=0;
 
@@ -63,7 +65,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	//create svg
 	var svg = d3.select(htmlElement)                         
 	    .append("svg")
-	    ; //.on("mousemove", mousemove);
+	   ;// .on("mousemove", mousemove);
 
 
 	//svg to draw nodes and links
@@ -524,8 +526,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 
 		nodes
 			.attr("cx", function(d) {
-				if (d.outside.isOutside){				
-					return d.x = Math.max(xOffset + nodeRadius, Math.min(xOffset + windowWidth - nodeRadius, d.x));
+				if (d.outside.isOutside){		
+					var tmpXOffset = Math.min(xOffset, maxXOfferset);		
+					return d.x = Math.max(tmpXOffset + nodeRadius, Math.min(tmpXOffset + windowWidth - nodeRadius, d.x));
 				} 
 				var differX = d.position.x - d.x;
 				if (d.type == "anchor"){
@@ -1394,6 +1397,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 
 			xOffset = window.pageXOffset;
 			width = d.width + padding;
+			maxXOfferset = leftPanelWidth + width - window.innerWidth;
 			windowWidth = Math.ceil(Math.min(windowWidth + Math.min(xOffset, leftPanelWidth), width));
 
 			initializeData(tmpLinkData, tmpNodeData);

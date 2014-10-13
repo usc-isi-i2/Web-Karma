@@ -137,7 +137,7 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 				Model model = ModelFactory.createDefaultModel();
 				InputStream s = new ReaderInputStream(new StringReader(string.toString()));
 				model.read(s, null, "TURTLE");
-				contextJSON = new ContextGenerator(model).generateContext().toString();
+				contextJSON = new ContextGenerator(model, true).generateContext().toString();
 
 			} catch (Exception e) {
 

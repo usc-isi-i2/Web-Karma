@@ -22,7 +22,7 @@
 				  		<div class="col-sm-12">
 					  		<div class="row">
 				                <div class="col-sm-6"><b>Semantic Types:</b></div>
-				                <div class="col-sm-6"><button type="button" id="addType" class="btn btn-default pull-right">Add Row</button></div>
+				                <div class="col-sm-6"><button type="button" id="addType" class="btn btn-default pull-right" style="padding: 0px 12px">Add Row</button></div>
 				            </div>
 					  		<div id="semanticTypesTableDiv">
 						  		<table id="semanticTypesTable" class="table table-striped table-condensed">
@@ -33,15 +33,7 @@
 			  		</div>
 			  		 
                 	<div class="row">
-            			<div class="col-sm-6">
-  			  				<div class="checkbox">
-						  		<label>
-						    		<input type="checkbox" id="chooseClassKey">
-						    		Mark as key for the class
-						  		</label>
-							</div>
-            			</div>
-            			<div class="col-sm-6">
+            			<div class="col-sm-12">
 							<label>
 								Literal Type:
 								<input type="text" class="form-control" id="literalTypeSelect" autocomplete="off">

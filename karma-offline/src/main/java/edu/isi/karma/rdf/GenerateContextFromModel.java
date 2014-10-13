@@ -51,7 +51,7 @@ public class GenerateContextFromModel {
 		Model model = ModelFactory.createDefaultModel();
         InputStream s = new FileInputStream(file);
         model.read(s, null, "TURTLE");
-        JSONObject top = new ContextGenerator(model).generateContext();
+        JSONObject top = new ContextGenerator(model, true).generateContext();
         PrintWriter pw = new PrintWriter(output);
         pw.println(top.toString(4));
         pw.close();

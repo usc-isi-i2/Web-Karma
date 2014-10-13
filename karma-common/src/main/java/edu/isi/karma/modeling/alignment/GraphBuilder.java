@@ -376,7 +376,7 @@ public class GraphBuilder {
 		}
 		
 		if (this.idToLinkMap.containsKey(link.getId())) {
-			logger.error("The link with id=" + link.getId() + " already exists in the graph");
+			logger.warn("The link with id=" + link.getId() + " already exists in the graph");
 			return false;
 		}
 		
@@ -1227,8 +1227,8 @@ public class GraphBuilder {
 			ColumnNode c2 = al.addColumnNode("h2", "c2", null);
 			InternalNode n1 = al.addInternalNode(new Label("http://example.com/layout/C01_"));
 			InternalNode n2 = al.addInternalNode(new Label("http://example.com/layout/C02_"));
-			al.addDataPropertyLink(n1, c1, new Label("http://example.com/layout/d1"), false);
-			al.addDataPropertyLink(n2, c2, new Label("http://example.com/layout/d2"), false);
+			al.addDataPropertyLink(n1, c1, new Label("http://example.com/layout/d1"));
+			al.addDataPropertyLink(n2, c2, new Label("http://example.com/layout/d2"));
 			al.align();
 			System.out.println(GraphUtil.labeledGraphToString(al.getSteinerTree()));
 		} else {
