@@ -20,15 +20,16 @@
  ******************************************************************************/
 package edu.isi.karma.cleaning.features;
 
-import edu.isi.karma.cleaning.TNode;
-import edu.isi.karma.cleaning.Tokenizer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Vector;
+
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.Token;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Vector;
+import edu.isi.karma.cleaning.TNode;
+import edu.isi.karma.cleaning.Tokenizer;
 
 public class RegularityFeatureSet implements FeatureSet {
 

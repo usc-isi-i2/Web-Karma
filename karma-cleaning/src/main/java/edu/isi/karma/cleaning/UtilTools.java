@@ -1,14 +1,110 @@
 package edu.isi.karma.cleaning;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Vector;
 
 public class UtilTools {
 	public static int index = 0;
 	public static Vector<String> results = new Vector<String>();
+	@SuppressWarnings({"unchecked","rawtypes"})
+	public static Map<?, ?> sortByComparator(Map<?, ?> unsortMap) {
+		List list = new LinkedList(unsortMap.entrySet());
+		// sort list based on comparator
+		Collections.sort(list, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				return ((Comparable) ((Map.Entry) (o1)).getValue())
+						.compareTo(((Map.Entry) (o2)).getValue());
+			}
+		});
+		// put sorted list into map again
+		// LinkedHashMap make sure order in which keys were inserted
+		Map sortedMap = new LinkedHashMap();
+		for (Iterator it = list.iterator(); it.hasNext();) {
+			Map.Entry entry = (Map.Entry) it.next();
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+		return sortedMap;
+	}
+	//math operators
+	
+	// inner product
+	public static double product(double[] a, double[] b)
+	{
+		double sum = 0;
+		for(int i = 0; i< a.length; i++)
+		{
+			sum += a[i]*b[i];
+		}
+		return sum;
+	}
+	//sum over vectors
+	public static double[] sum(Collection<double[]> vec)
+	{
+		Iterator<double[]> iter = vec.iterator();
+		if(vec.size() <=0)
+			return null;
+		double[] res = new double[iter.next().length];
+		while(iter.hasNext())
+		{
+			double[] tmp = iter.next();
+			for(int i = 0; i< res.length; i++)
+			{
+				res[i] += tmp[i];
+			}
+		}
+		return res;
+	}
+	//init array using one element
+	public static double[] initArray(double[] array, double a) {
+		double[] res = new double[array.length];
+		for (int i = 0; i < array.length; i++) {
+			res[i] = a;
+		}
+		return res;
+	}
+	//scalar multiply vector
+	public static double[] produce(double coeff, double[] vec)
+	{
+		double[] res = new double[vec.length];
+		for(int i = 0; i < vec.length; i++)
+		{
+			res[i] = coeff*vec[i];
+		}
+		return res;
+	}
+	public static double distance(double[] a, double[] b,double[] w)
+	{
+		double res = 0.0;
+		for(int i = 0; i < a.length; i++)
+		{
+			res += Math.pow(a[i]-b[i], 2)*w[i];
+		}
+		return Math.sqrt(res);
+	}
+	public static double distance(double[] a, double[] b)
+	{
+		double res = 0.0;
+		for(int i = 0; i < a.length; i++)
+		{
+			res += Math.pow(a[i]-b[i], 2);
+		}
+		return Math.sqrt(res);
+	}
+	public static Vector<Integer> getStringPos(int tokenpos,Vector<TNode> example)
+	{
 
-	public static Vector<Integer> getStringPos(int tokenpos,
-			Vector<TNode> example) {
 		Vector<Integer> poss = new Vector<Integer>();
 		if (tokenpos < 0)
 			return poss;
@@ -211,6 +307,7 @@ public class UtilTools {
 		results.clear();
 		index = 0;
 	}
+	
 
 	public static Vector<String> buildDict(Collection<String> data) {
 		HashMap<String, Integer> mapHashSet = new HashMap<String, Integer>();
@@ -229,6 +326,14 @@ public class UtilTools {
 			for (TNode t : v) {
 				String k = t.text;
 				k = k.replaceAll("[0-9]+", "DIGITs");
+				//filter punctuation
+				if(k.trim().length() == 1)
+				{
+					if (!Character.isLetterOrDigit(k.charAt(0)))
+					{
+						continue;
+					}
+				}
 				if (k.trim().length() == 0)
 					continue;
 				// only consider K once in one row
@@ -244,11 +349,11 @@ public class UtilTools {
 				}
 			}
 		}
-		// prune infrequent terms
-		int thresdhold = 5;
-		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet()
-				.iterator();
-		while (iter.hasNext()) {
+		//prune infrequent terms
+		int thresdhold =(int) (data.size()*0.10);
+		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet().iterator();
+		while(iter.hasNext())
+		{
 			Entry<String, Integer> e = iter.next();
 			if (e.getValue() < thresdhold) {
 				iter.remove();
@@ -257,5 +362,54 @@ public class UtilTools {
 		Vector<String> res = new Vector<String>();
 		res.addAll(mapHashSet.keySet());
 		return res;
+	}
+	public static String formatExp(String[] e)
+	{
+		String res =String.format("%s|%s", e[0],e[1]);
+		return res;
+	}
+	//test whether a covers b
+	public static boolean iscovered(String a, String b)
+	{
+		String[] elems = b.split("\\*");
+		boolean covered = true;
+		for(String e: elems)
+		{
+			if(a.indexOf(e)== -1)
+			{
+				covered = false;
+				break;
+			}
+		}
+		return covered;
+	}
+	public static String createkey(ArrayList<String[]> examples)
+	{
+		ArrayList<String> tmp = new ArrayList<String>();
+		for(String[] ele: examples)
+		{
+			String t = UtilTools.formatExp(ele);
+			tmp.add(t);
+		}
+		Collections.sort(tmp);
+		String key = "";
+		for(String e: tmp)
+		{
+			key += e+"*";
+		}
+		return key;
+	}
+	public static ArrayList<String[]> extractExamplesinPartition(Collection<Partition> pars)
+	{
+		ArrayList<String[]> examples = new ArrayList<String[]>();
+		for(Partition par: pars)
+		{
+			for(int i = 0; i < par.orgNodes.size(); i++)
+			{
+				String[] exp = {UtilTools.print(par.orgNodes.get(i)), UtilTools.print(par.tarNodes.get(i))};
+				examples.add(exp);
+			}
+		}
+		return examples;
 	}
 }

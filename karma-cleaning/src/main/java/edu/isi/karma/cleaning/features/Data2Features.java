@@ -1,15 +1,16 @@
 package edu.isi.karma.cleaning.features;
 
-import au.com.bytecode.opencsv.CSVWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class Data2Features {
 
@@ -66,7 +67,6 @@ public class Data2Features {
 			for (Vector<String> vecs : class2Records.values()) {
 				vsStrings.addAll(vecs);
 			}
-			rf.initialize(vsStrings);
 			// get attribute names
 			Collection<String> attrStrings = rf.getFeatureNames();
 			String[] attr_names = attrStrings.toArray(new String[attrStrings

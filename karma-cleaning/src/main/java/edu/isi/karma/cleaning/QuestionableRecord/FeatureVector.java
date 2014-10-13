@@ -21,13 +21,13 @@
 
 package edu.isi.karma.cleaning.QuestionableRecord;
 
-import edu.isi.karma.cleaning.Ruler;
-import edu.isi.karma.cleaning.TNode;
-import edu.isi.karma.cleaning.UtilTools;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
+
+import edu.isi.karma.cleaning.Ruler;
+import edu.isi.karma.cleaning.TNode;
+import edu.isi.karma.cleaning.UtilTools;
 
 public class FeatureVector {
 	String[] symbol = { "#", ";", ",", "!", "~", "@", "$", "%", "^", "&", "*",

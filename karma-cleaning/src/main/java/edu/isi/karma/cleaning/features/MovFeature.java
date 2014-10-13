@@ -1,11 +1,11 @@
 package edu.isi.karma.cleaning.features;
 
-import edu.isi.karma.cleaning.Ruler;
-import edu.isi.karma.cleaning.TNode;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
+
+import edu.isi.karma.cleaning.Ruler;
+import edu.isi.karma.cleaning.TNode;
 
 public class MovFeature implements Feature {
 	String name = "";

@@ -9,6 +9,7 @@ public class Template implements GrammarTreeNode {
 	public Vector<Vector<Integer>> indexes = new Vector<Vector<Integer>>();
 	public int curState = 0;
 	public long size = 1;
+	public String program = "null";
 
 	public Template(Vector<GrammarTreeNode> body) {
 		this.body = body;
@@ -109,9 +110,13 @@ public class Template implements GrammarTreeNode {
 
 	public String toProgram() {
 		if (supermode == 0) {
-			return prog0();
+			String res =  prog0();
+			this.program = res;
+			return res;
 		} else {
-			return prog1();
+			String res =  prog1();
+			this.program = res;
+			return res;
 		}
 	}
 
@@ -199,6 +204,7 @@ public class Template implements GrammarTreeNode {
 
 	@Override
 	public void emptyState() {
+		curState = 0;
 		for (GrammarTreeNode treeNode : body) {
 			treeNode.emptyState();
 		}
@@ -209,6 +215,11 @@ public class Template implements GrammarTreeNode {
 	public long size() {
 		// TODO Auto-generated method stub
 		return this.size;
+	}
+
+	@Override
+	public String getProgram() {
+		return this.program;
 	}
 
 }

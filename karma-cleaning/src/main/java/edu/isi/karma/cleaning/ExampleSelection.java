@@ -21,12 +21,12 @@
 
 package edu.isi.karma.cleaning;
 
-import edu.isi.karma.cleaning.QuestionableRecord.OutlierDetector;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
+
+import edu.isi.karma.cleaning.QuestionableRecord.OutlierDetector;
 
 public class ExampleSelection {
 	public HashMap<String, Vector<TNode>> org = new HashMap<String, Vector<TNode>>();
