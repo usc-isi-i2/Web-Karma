@@ -114,6 +114,6 @@ body {
     border-color: rgb(255, 255, 0);
 }
 
-.editButton, .hideButton {
+.editButton, .hideButton, .deleteButton {
 	padding: 0px 12px;
 }

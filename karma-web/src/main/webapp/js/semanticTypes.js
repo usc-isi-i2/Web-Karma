@@ -1600,7 +1600,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 				.append($("<td>").append("via").css("width", "5%"))
 				.append($("<td>").addClass("bold").append(link.property.label).css("width", "40%"))
 				.append($("<td>").css("width", "5%")
-					.append($("<button>").attr("type", "button").addClass("btn").addClass("btn-default").text("Delete").click(deleteLink))
+					.append($("<button>").attr("type", "button").addClass("btn").addClass("deleteButton").addClass("btn-default").text("Delete").click(deleteLink))
 			)
 				.append($("<td>").css("width", "5%")
 					.append($("<button>").attr("type", "button").addClass("btn").addClass("editButton").addClass("btn-default").text("Edit").click(editLink))
