@@ -46,7 +46,6 @@ import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.DisplayModel;
 import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
@@ -238,9 +237,6 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 							&& outEdges.isEmpty()) {
 						linkObj.put(JsonKeys.linkType.name(),
 								JsonValues.holderLink.name());
-						if (link.getKeyType() == LinkKeyInfo.PartOfKey)
-							linkObj.put(JsonKeys.label.name(), link.getLabel()
-									.getLocalName() + "*");
 					}
 
 					linkObj.put(JsonKeys.linkType.name(), link.getType());
@@ -411,13 +407,9 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 							&& outEdges.isEmpty()) {
 						linkObj.put(JsonKeys.linkType.name(),
 								JsonValues.holderLink.name());
-						if (link.getKeyType() == LinkKeyInfo.PartOfKey)
-							linkObj.put(JsonKeys.label.name(), link.getLabel()
-									.getLocalName() + "*");
 					}
 					linksArr.put(linkObj);
 					if (link.getType() == LinkType.ClassInstanceLink
-							&& link.getKeyType() == LinkKeyInfo.PartOfKey
 							&& target instanceof ColumnNode) {
 						ColumnNode cNode = (ColumnNode) target;
 						// Add the holder vertex object and the link that

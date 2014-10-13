@@ -1,9 +1,9 @@
 
 var LITERAL_TYPE_ARRAY = [
-      					"xsd:string","xsd:boolean","xsd:decimal","xsd:integer","xsd:double","xsd:float","xsd:time",
-    					"xsd:dateTime","xsd:dateTimeStamp","xsd:gYear","xsd:gMonth","xsd:gDa","xsd:gYearMonth",
-    					"xsd:gMonthDay","xsd:duration","xsd:yearMonthDuration","xsd:dayTimeDuration","xsd:",
-    					"xsd:shor","xsd:int","xsd:long","xsd:unsignedByte","xsd:unsignedShort","xsd:unsignedInt",
+      					"xsd:string","xsd:boolean","xsd:decimal","xsd:integer","xsd:double","xsd:float","xsd:date","xsd:time",
+    					"xsd:dateTime","xsd:dateTimeStamp","xsd:gYear","xsd:gMonth","xsd:gDay","xsd:gYearMonth",
+    					"xsd:gMonthDay","xsd:duration","xsd:yearMonthDuration","xsd:dayTimeDuration",
+    					"xsd:short","xsd:int","xsd:long","xsd:unsignedByte","xsd:unsignedShort","xsd:unsignedInt",
     					"xsd:unsignedLong","xsd:positiveInteger","xsd:nonNegativeInteger","xsd:negativeInteger",
     					"xsd:nonPositiveInteger","xsd:hexBinary","xsd:base64Binar","xsd:anyURI",
     					"xsd:language","xsd:normalizedString","xsd:token","xsd:NMTOKEN","xsd:Namexsd:NCName"
@@ -49,7 +49,6 @@ var SetSemanticTypeDialog = (function() {
 
 				$("table#semanticTypesTable tr.semTypeRow", dialog).remove();
 				$("table#semanticTypesTable tr.editRow", dialog).remove();
-				$("input#chooseClassKey", dialog).attr("checked", false);
 				$("#literalTypeSelect").val("");
 
 				dialog.removeData("selectedPrimaryRow");
@@ -271,7 +270,7 @@ var SetSemanticTypeDialog = (function() {
 			var info = generateInfoObject(worksheetId, columnId, "");
 			var newInfo = info['newInfo']; // Used for commands that take JSONArray as input and are saved in the history
 			var hNodeId = columnId;
-			info["isKey"] = $("input#chooseClassKey").is(":checked");
+			
 			info["rdfLiteralType"] = $("#literalTypeSelect").val()
 
 			// Check if any meta property (advanced options) was selected
@@ -344,7 +343,6 @@ var SetSemanticTypeDialog = (function() {
 
 			info["SemanticTypesArray"] = JSON.stringify(semTypesArray);
 			newInfo.push(getParamObject("SemanticTypesArray", semTypesArray, "other"));
-			newInfo.push(getParamObject("isKey", $("input#chooseClassKey").is(":checked"), "other"));
 			newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
 			newInfo.push(getParamObject("rdfLiteralType", $("#literalTypeSelect").val(), "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
@@ -472,12 +470,6 @@ var SetSemanticTypeDialog = (function() {
 				$("input[name='isPrimaryGroup']:radio", trTag).prop('checked', true);
 				selectedPrimaryRow = trTag;
 				$("#literalTypeSelect").val(semTypeObject["rdfLiteralType"]);
-			}
-
-
-			// Check if it was marked as key for a class
-			if (semTypeObject["isPartOfKey"]) {
-				$("input#chooseClassKey").attr("checked", true);
 			}
 
 			if (semTypeObject["DomainUri"].length == 0 || semTypeObject["DomainUri"] == "")
@@ -1608,7 +1600,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 				.append($("<td>").append("via").css("width", "5%"))
 				.append($("<td>").addClass("bold").append(link.property.label).css("width", "40%"))
 				.append($("<td>").css("width", "5%")
-					.append($("<button>").attr("type", "button").addClass("btn").addClass("btn-default").text("Delete").click(deleteLink))
+					.append($("<button>").attr("type", "button").addClass("btn").addClass("deleteButton").addClass("btn-default").text("Delete").click(deleteLink))
 			)
 				.append($("<td>").css("width", "5%")
 					.append($("<button>").attr("type", "button").addClass("btn").addClass("editButton").addClass("btn-default").text("Edit").click(editLink))

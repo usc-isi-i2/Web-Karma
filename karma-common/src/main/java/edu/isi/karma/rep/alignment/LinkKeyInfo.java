@@ -22,6 +22,5 @@ package edu.isi.karma.rep.alignment;
 
 public enum LinkKeyInfo {
 	None, // default
-	PartOfKey,
 	UriOfInstance
 }

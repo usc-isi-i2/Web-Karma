@@ -33,15 +33,7 @@
 			  		</div>
 			  		 
                 	<div class="row">
-            			<div class="col-sm-6">
-  			  				<div class="checkbox">
-						  		<label>
-						    		<input type="checkbox" id="chooseClassKey">
-						    		Mark as key for the class
-						  		</label>
-							</div>
-            			</div>
-            			<div class="col-sm-6">
+            			<div class="col-sm-12">
 							<label>
 								Literal Type:
 								<input type="text" class="form-control" id="literalTypeSelect" autocomplete="off">

@@ -89,6 +89,9 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		else
 		{
 			String shortHandPredicateURI = generateShortHandURIFromContext(predicateUri);
+			if (object instanceof String) {	
+				object = normalizeURI((String)object);
+			}
 			subject.put(shortHandPredicateURI, object);
 		}
 	}
@@ -119,19 +122,8 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		{
 			array = new JSONArray();
 		}
-		if (object instanceof String) {
-			String t = ((String)object).trim();
-			if (t.startsWith("<") && t.endsWith(">")) {
-				t = t.substring(1, t.length() - 1);
-				try {
-					URI uri = new URI(t);
-					if (!uri.isAbsolute())
-						t = baseURI + t;
-				}catch(Exception e) {
-
-				}
-			}
-			object = t;
+		if (object instanceof String) {	
+			object = normalizeURI((String)object);
 		}
 		array.put(object);
 		if (shortHandPredicateURI.equalsIgnoreCase("rdf:type")) {
@@ -275,6 +267,20 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			shortHandPredicateURI = shortHandURIGenerator.getShortHand(uri).toString();
 		}
 		return shortHandPredicateURI;
+	}
+	
+	private String normalizeURI(String URI) {
+		if (URI.startsWith("<") && URI.endsWith(">")) {
+			URI = URI.substring(1, URI.length() - 1);
+			try {
+				URI uri = new URI(URI);
+				if (!uri.isAbsolute())
+					URI = baseURI + URI;
+			}catch(Exception e) {
+
+			}
+		}
+		return URI;
 	}
 
 }

@@ -39,6 +39,7 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
@@ -111,7 +112,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 		// First delete the links that are not present in newEdges and present
 		// in intialEdges
 		try {
-			deleteLinks(alignment);
+			deleteLinks(worksheet, alignment);
 			addNewLinks(alignment, ontMgr);
 			alignment.align();
 
@@ -172,7 +173,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 		}
 	}
 
-	private void deleteLinks(Alignment alignment) throws JSONException {
+	private void deleteLinks(Worksheet worksheet, Alignment alignment) throws JSONException {
 		for (int i = 0; i < initialEdges.length(); i++) {
 			JSONObject initialEdge = initialEdges.getJSONObject(i);
 //			boolean exists = false;
@@ -194,13 +195,20 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 //			}
 
 //			if (!exists) {
+				String targetId = initialEdge.getString(JsonKeys.edgeTargetId.name());
 				String linkId = LinkIdFactory.getLinkId(
 						initialEdge.getString(JsonKeys.edgeId.name()),
 						initialEdge.getString(JsonKeys.edgeSourceId.name()),
-						initialEdge.getString(JsonKeys.edgeTargetId.name()));
+						targetId);
 
 				// alignment.changeLinkStatus(linkId, LinkStatus.Normal);
 				alignment.removeLink(linkId);
+				
+				Node node = alignment.getNodeById(targetId);
+				if(node instanceof ColumnNode) {
+					ColumnNode cNode = (ColumnNode)node;
+					worksheet.getSemanticTypes().unassignColumnSemanticType(cNode.getHNodeId());
+				}
 //			}
 		}
 	}

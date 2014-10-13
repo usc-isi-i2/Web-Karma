@@ -259,10 +259,10 @@ public class Alignment implements OntologyUpdateListener {
 	
 	// AddLink methods
 
-	public DataPropertyLink addDataPropertyLink(Node source, Node target, Label label, boolean partOfKey) {
+	public DataPropertyLink addDataPropertyLink(Node source, Node target, Label label) {
 		
 		String id = LinkIdFactory.getLinkId(label.getUri(), source.getId(), target.getId());	
-		DataPropertyLink link = new DataPropertyLink(id, label, partOfKey);
+		DataPropertyLink link = new DataPropertyLink(id, label);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;
 	}
