@@ -34,7 +34,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.jgrapht.graph.WeightedMultigraph;
+import org.python.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +50,8 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.ModelEvaluation;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
+import edu.isi.karma.modeling.alignment.SteinerTree;
+import edu.isi.karma.modeling.alignment.TreePostProcess;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
@@ -60,6 +65,8 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.util.RandomGUID;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ModelLearner {
 
@@ -195,16 +202,25 @@ public class ModelLearner {
 		logger.info("computing steiner trees ...");
 		int number = 1;
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
+			if (sn == null) continue;
 			logger.debug("computing steiner tree for steiner nodes set " + number + " ...");
 			logger.debug(sn.getScoreDetailsString());
 			number++;
 //			logger.info("START ...");
-			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees = 
-					((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn.getNodes(), ModelingConfiguration.getMaxCandidateModels());
 			
-//			SteinerTree steinerTree = new SteinerTree(new AsUndirectedGraph<Node, DefaultLink>(this.graphBuilder.getGraph()), steinerNodes);
-//			WeightedMultigraph<Node, DefaultLink> t = steinerTree.getDefaultSteinerTree();
-//			TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, t);
+			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
+			if (this.graphBuilder instanceof GraphBuilderTopK)
+				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn.getNodes(), ModelingConfiguration.getMaxCandidateModels());
+			else {
+				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
+				SteinerTree steinerTree = new SteinerTree(
+						new AsUndirectedGraph<Node, DefaultLink>(this.graphBuilder.getGraph()), Lists.newLinkedList(sn.getNodes()));
+				WeightedMultigraph<Node, DefaultLink> t = steinerTree.getDefaultSteinerTree();
+				TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, t);
+				if (treePostProcess.getTree() != null)
+					topKSteinerTrees.add(treePostProcess.getTree());
+			}
+			
 //			System.out.println(GraphUtil.labeledGraphToString(treePostProcess.getTree()));
 			
 //			logger.info("END ...");
@@ -747,14 +763,18 @@ public class ModelLearner {
 
 		}
 
-		System.out.println(columnNodes.size() + "\t" + numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + numberOfAttributesWhoseTypeIsFirstCRFType);
+		System.out.println(numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + numberOfAttributesWhoseTypeIsFirstCRFType);
+//		System.out.println(columnNodes.size() + "\t" + numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + numberOfAttributesWhoseTypeIsFirstCRFType);
 
-		System.out.println("totalNumberOfAttributes: " + columnNodes.size());
-		System.out.println("numberOfAttributesWhoseTypeIsInCRFTypes: " + numberOfAttributesWhoseTypeIsInCRFTypes);
-		System.out.println("numberOfAttributesWhoseTypeIsFirstCRFType:" + numberOfAttributesWhoseTypeIsFirstCRFType);
+//		System.out.println("totalNumberOfAttributes: " + columnNodes.size());
+//		System.out.println("numberOfAttributesWhoseTypeIsInCRFTypes: " + numberOfAttributesWhoseTypeIsInCRFTypes);
+//		System.out.println("numberOfAttributesWhoseTypeIsFirstCRFType:" + numberOfAttributesWhoseTypeIsFirstCRFType);
 	}
 
 	public static void test() throws Exception {
+
+		ServletContextParameterMap.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
+
 		//		String inputPath = Params.INPUT_DIR;
 		String outputPath = Params.OUTPUT_DIR;
 		String graphPath = Params.GRAPHS_DIR;
@@ -787,7 +807,7 @@ public class ModelLearner {
 		
 		ModelLearner modelLearner;
 
-		boolean iterativeEvaluation = false;
+		boolean iterativeEvaluation = true;
 		boolean useCorrectType = false;
 		int numberOfCRFCandidates = 4;
 		int numberOfKnownModels;
@@ -800,9 +820,9 @@ public class ModelLearner {
 			resultsArray[i] = new StringBuffer();
 		}
 
-//		for (int i = 0; i < semanticModels.size(); i++) {
+		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-		int i = 3; {
+//		int i = 0; {
 
 			resultFile.flush();
 			int newSourceIndex = i;
@@ -874,13 +894,13 @@ public class ModelLearner {
 					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					// save graph to file
 					try {
-						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName);
+//						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 				
-				GraphVizUtil.exportJGraphToGraphviz(modelLearner.graphBuilder.getGraph(), "test", true, false, true, graphName + ".dot");
+//				GraphVizUtil.exportJGraphToGraphviz(modelLearner.graphBuilder.getGraph(), "test", true, false, true, graphName + ".dot");
 				List<SortableSemanticModel> hypothesisList = modelLearner.hypothesize(useCorrectType, numberOfCRFCandidates);
 
 				long elapsedTimeMillis = System.currentTimeMillis() - start;
