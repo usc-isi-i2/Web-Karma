@@ -207,7 +207,6 @@ public class RecordClassifier implements PartitionClassifierType {
 	}
 
 	public void NormalizeTrainingData() {
-		ArrayList<String[]> csvData = new ArrayList<String[]>();
 		int featuresize = rf.getFeatureNames().size();
 		double[] maxvals = new double[featuresize];
 		maxvals = UtilTools.initArray(maxvals, -1);
@@ -244,7 +243,6 @@ public class RecordClassifier implements PartitionClassifierType {
 	}
 
 	public double getAccuracy() {
-		double res = 0.0;
 		int totalCnt = trainData.size();
 		int errorCnt = 0;
 		for (int i = 0; i < trainData.size(); i++) {
@@ -336,6 +334,7 @@ public class RecordClassifier implements PartitionClassifierType {
 				if (datasize < fold) {
 					// add its own data until reach the fold number
 					int times = fold / datasize;
+					@SuppressWarnings("unchecked")
 					ArrayList<Integer> ditems = (ArrayList<Integer>) labPos
 							.get(l).clone();
 					for (int t = 1; t < times+1; t++) {
@@ -388,7 +387,6 @@ public class RecordClassifier implements PartitionClassifierType {
 				.toPrimitive(tars.toArray(new Double[tars.size()])); // target
 																		// values
 		svm_parameter parameters = new svm_parameter();
-		int featureNum = this.rf.getFeatureNames().size();
 
 		parameters.gamma = gamma;
 		parameters.svm_type = svm_parameter.C_SVC;

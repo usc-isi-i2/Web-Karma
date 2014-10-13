@@ -9,8 +9,6 @@ import java.util.Vector;
 import org.perf4j.StopWatch;
 import org.perf4j.log4j.Log4JStopWatch;
 
-import edu.isi.karma.cleaning.Research.Prober;
-
 public class ProgramAdaptator {
 	public ParseTreeNode program;
 
@@ -442,7 +440,6 @@ public class ProgramAdaptator {
 			ArrayList<String> tarStrings = new ArrayList<String>();
 			ArrayList<ArrayList<String>> tarSegs = new ArrayList<ArrayList<String>>();
 			ArrayList<String> evalNewExp = new ArrayList<String>();
-			Vector<String> progs = new Vector<String>();
 			ArrayList<ArrayList<String>> tmp = new ArrayList<ArrayList<String>>();
 			for(ParseTreeNode node: pat.programNodes)
 			{

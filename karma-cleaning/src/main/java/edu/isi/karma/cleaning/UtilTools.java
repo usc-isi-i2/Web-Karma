@@ -18,7 +18,7 @@ import java.util.Vector;
 public class UtilTools {
 	public static int index = 0;
 	public static Vector<String> results = new Vector<String>();
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked","rawtypes"})
 	public static Map<?, ?> sortByComparator(Map<?, ?> unsortMap) {
 		List list = new LinkedList(unsortMap.entrySet());
 		// sort list based on comparator

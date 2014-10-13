@@ -93,7 +93,6 @@ public class OptimizePartition {
 				}
 			}
 			// update the fringe
-			Vector<Partition> curPars = elem.getKey();
 			fringe = candidates;
 			
 		}

@@ -27,16 +27,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Vector;
 
+import au.com.bytecode.opencsv.CSVWriter;
 import edu.isi.karma.cleaning.DataPreProcessor;
 import edu.isi.karma.cleaning.InterpreterType;
 import edu.isi.karma.cleaning.Messager;
 import edu.isi.karma.cleaning.ProgSynthesis;
 import edu.isi.karma.cleaning.ProgramRule;
-import au.com.bytecode.opencsv.CSVWriter;
 
 public class Tools {
 	public void transformFile(String fpath) {

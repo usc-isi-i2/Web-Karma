@@ -23,12 +23,8 @@ package edu.isi.karma.cleaning.features;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Vector;
-import edu.isi.karma.cleaning.Ruler;
-import edu.isi.karma.cleaning.TNode;
 
 public class RecordFeatureSet {
 	public String record;
@@ -52,7 +48,6 @@ public class RecordFeatureSet {
 	}
 	public void removeFeatures(ArrayList<Integer> fs)
 	{
-		int cnt = 0;
 		ArrayList<String> xList = new ArrayList<String>();
 		for(int i = 0; i<xStrings.length; i++)
 		{

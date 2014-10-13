@@ -6,6 +6,7 @@ import org.python.core.PyObject;
 
 
 public class PartitionClassifier {
+	@SuppressWarnings("unused")
 	private PyObject interpreterClass = null;
 	public String clssettingString = "";
 	public String[] vocabs;
