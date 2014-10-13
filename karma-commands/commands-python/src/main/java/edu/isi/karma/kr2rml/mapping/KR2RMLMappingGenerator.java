@@ -69,7 +69,6 @@ import edu.isi.karma.rep.alignment.DisplayModel;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
@@ -291,8 +290,7 @@ public class KR2RMLMappingGenerator {
 				for (LabeledLink link:outgoingLinks) {
 					
 					if (link instanceof ClassInstanceLink || link instanceof ColumnSubClassLink
-							|| (link instanceof DataPropertyLink && 
-								link.getKeyType() == LinkKeyInfo.PartOfKey)) {
+							|| (link instanceof DataPropertyLink)) {
 						Node tNode = link.getTarget();
 						if (tNode instanceof ColumnNode) {
 							ColumnNode cnode = (ColumnNode) tNode;
@@ -316,8 +314,7 @@ public class KR2RMLMappingGenerator {
 							}
 							
 							// Identify the link which has been chosen as the key
-							else if (link instanceof DataPropertyLink && 
-									link.getKeyType() == LinkKeyInfo.PartOfKey) {
+							else if (link instanceof DataPropertyLink) {
 								subj.getTemplate().addTemplateTermToSet(cnTerm);
 							}
 							List<String> columnsCovered = new LinkedList<String>();

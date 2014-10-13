@@ -66,7 +66,6 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
@@ -275,7 +274,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 			String id = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
 			Label label = l.getLabel();
 			if (l instanceof DataPropertyLink)
-				newLink = new DataPropertyLink(id, label, l.getKeyType() == LinkKeyInfo.PartOfKey ? true : false);
+				newLink = new DataPropertyLink(id, label);
 			else if (l instanceof ObjectPropertyLink)
 				newLink = new ObjectPropertyLink(id, label, ((ObjectPropertyLink)l).getObjectPropertyType());
 			else if (l instanceof SubClassLink)
@@ -303,7 +302,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 			
 			if (target instanceof ColumnNode) {
 				SemanticType st = new SemanticType(((ColumnNode)target).getHNodeId(), 
-						newLink.getLabel(), source.getLabel(), SemanticType.Origin.User, 1.0, false);
+						newLink.getLabel(), source.getLabel(), SemanticType.Origin.User, 1.0);
 				semanticTypes.add(st);
 			}
 		}
@@ -362,7 +361,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 			String id = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
 			Label label = l.getLabel();
 			if (l instanceof DataPropertyLink)
-				newLink = new DataPropertyLink(id, label, l.getKeyType() == LinkKeyInfo.PartOfKey ? true : false);
+				newLink = new DataPropertyLink(id, label);
 			else if (l instanceof ObjectPropertyLink)
 				newLink = new ObjectPropertyLink(id, label, ((ObjectPropertyLink)l).getObjectPropertyType());
 			else if (l instanceof SubClassLink)
@@ -390,7 +389,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 			
 			if (target instanceof ColumnNode) {
 				SemanticType st = new SemanticType(((ColumnNode)target).getHNodeId(), 
-						newLink.getLabel(), source.getLabel(), SemanticType.Origin.User, 1.0, false);
+						newLink.getLabel(), source.getLabel(), SemanticType.Origin.User, 1.0);
 				semanticTypes.add(st);
 			}
 			

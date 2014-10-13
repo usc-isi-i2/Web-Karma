@@ -29,7 +29,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
@@ -200,7 +199,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId,
 					ClassInstanceLink.getFixedLabel(), classNode.getLabel(),
-					SemanticType.Origin.User, 1.0, false);
+					SemanticType.Origin.User, 1.0);
 		} else if (metaPropertyName
 				.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
 			LabeledLink propertyLink = alignment.getLinkById(metaPropertyId);
@@ -230,7 +229,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				newType = new SemanticType(hNodeId,
 						DataPropertyOfColumnLink.getFixedLabel(),
 						classInstanceNode.getLabel(), SemanticType.Origin.User,
-						1.0, false);
+						1.0);
 			} else if (propertyLink instanceof ObjectPropertyLink) {
 				LabeledLink newLink = alignment.addObjectPropertySpecializationLink(
 						classInstanceNode, columnNode, propertyLink.getId());
@@ -240,7 +239,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				newType = new SemanticType(hNodeId,
 						ObjectPropertySpecializationLink.getFixedLabel(),
 						classInstanceNode.getLabel(), SemanticType.Origin.User,
-						1.0, false);
+						1.0);
 			}
 
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
@@ -268,7 +267,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId,
 					ColumnSubClassLink.getFixedLabel(), classNode.getLabel(),
-					SemanticType.Origin.User, 1.0, false);
+					SemanticType.Origin.User, 1.0);
 		}
 
 		columnNode.setUserSelectedSemanticType(newType);

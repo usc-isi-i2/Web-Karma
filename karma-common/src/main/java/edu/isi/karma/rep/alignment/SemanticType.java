@@ -37,8 +37,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 	private final String hNodeId;
 	private final Label type;
 	private final Label domain;
-	private final Origin origin;
-	private final boolean isPartOfKey; 
+	private final Origin origin; 
 	private final ConfidenceLevel confidenceLevel;
 	private Double confidenceScore;
 	
@@ -55,12 +54,11 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 		isPrimary, DomainUri, DomainId, FullType
 	}
 	
-	public SemanticType(String hNodeId, Label type, Label domain, Origin origin, Double probability, boolean isPartOfKey) {
+	public SemanticType(String hNodeId, Label type, Label domain, Origin origin, Double probability) {
 		this.hNodeId = hNodeId;
 		this.type = type;
 		this.origin = origin;
 		this.domain = domain;
-		this.isPartOfKey = isPartOfKey;
 		this.confidenceScore = probability;
 		
 		if(probability > 0.8)
@@ -98,12 +96,12 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 		if (isClass())
 			return "SemanticType [hNodeId=" + hNodeId + ", type=" + type.getUri()
 				+ ", origin=" + origin
-				+ ", isPartOfKey=" + isPartOfKey + ", confidenceLevel="
+				+ ", confidenceLevel="
 				+ confidenceLevel + "]";
 		else
 			return "SemanticType [hNodeId=" + hNodeId + ", type=" + type.getUri()
 					+ ", domain=" + domain.getUri() + ", origin=" + origin
-					+ ", isPartOfKey=" + isPartOfKey + ", confidenceLevel="
+					+ ", confidenceLevel="
 					+ confidenceLevel + "]";
 	}
 
@@ -123,10 +121,6 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 		return confidenceLevel;
 	}
 
-	public boolean isPartOfKey() {
-		return isPartOfKey;
-	}
-	
 	public JSONObject getJSONArrayRepresentation() throws JSONException {
 		JSONObject typeObj = new JSONObject();
 		typeObj.put(ClientJsonKeys.FullType.name(), type.getUri());
@@ -134,7 +128,6 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 			typeObj.put(ClientJsonKeys.DomainUri.name(), "");
 		else
 			typeObj.put(ClientJsonKeys.DomainUri.name(), domain.getUri());
-		typeObj.put(ClientJsonKeys.isPrimary.name(), isPartOfKey);
 		return typeObj;
 	}
 

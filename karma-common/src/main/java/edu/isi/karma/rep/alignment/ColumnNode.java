@@ -90,8 +90,7 @@ public class ColumnNode extends Node {
 						st.getType(), 
 						st.getDomain(), 
 						st.getOrigin(), 
-						confidence / sum, 
-						st.isPartOfKey());
+						confidence / sum);
 				this.suggestedSemanticTypes.add(semType);
 			}
 		}

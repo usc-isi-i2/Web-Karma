@@ -439,7 +439,7 @@ public class ModelLearner_Old {
 				addedNodes.add(target);
 
 				String linkId = LinkIdFactory.getLinkId(propertyUri, source.getId(), target.getId());	
-				LabeledLink link = new DataPropertyLink(linkId, new Label(propertyUri), false);
+				LabeledLink link = new DataPropertyLink(linkId, new Label(propertyUri));
 				if (!this.graphBuilder.addLink(source, target, link)) continue;;
 
 				SemanticTypeMapping mp = new SemanticTypeMapping(sourceColumn, semanticType, (InternalNode)source, link, target);
@@ -507,7 +507,7 @@ public class ModelLearner_Old {
 			link = new ClassInstanceLink(linkId);
 		else {
 			Label label = this.ontologyManager.getUriLabel(propertyUri);
-			link = new DataPropertyLink(linkId, label, false);
+			link = new DataPropertyLink(linkId, label);
 		}
 		if (!this.graphBuilder.addLink(source, target, link)) return null;
 
@@ -531,8 +531,7 @@ public class ModelLearner_Old {
 					userSelectedType.getType(),
 					userSelectedType.getDomain(),
 					userSelectedType.getOrigin(),
-					probability,
-					false
+					probability
 					);
 			types.add(newType);
 		} else {

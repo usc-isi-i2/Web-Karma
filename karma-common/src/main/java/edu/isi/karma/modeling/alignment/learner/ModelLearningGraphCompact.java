@@ -47,7 +47,6 @@ import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
@@ -376,7 +375,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 //					i++;
 					LabeledLink link;
 					if (e instanceof DataPropertyLink) 
-						link = new DataPropertyLink(id, e.getLabel(), e.getKeyType() == LinkKeyInfo.PartOfKey? true : false);
+						link = new DataPropertyLink(id, e.getLabel());
 					else if (e instanceof ObjectPropertyLink)
 						link = new ObjectPropertyLink(id, e.getLabel(), ((ObjectPropertyLink)e).getObjectPropertyType());
 					else if (e instanceof SubClassLink)

@@ -110,9 +110,7 @@ public class SuggestAutoModelCommandFactory extends JSONInputCommandFactory {
 					.get(SemanticType.ClientJsonKeys.DomainUri.name());
 			String fullType = (String) value
 					.get(SemanticType.ClientJsonKeys.FullType.name());
-			boolean isPrimary = (Boolean) value
-					.get(SemanticType.ClientJsonKeys.isPrimary.name());
-
+			
 			Label typeName = ontMgr.getUriLabel(fullType);
 			Label domainName = null;
 			if (domain != null && !domain.trim().equals(""))
@@ -120,7 +118,7 @@ public class SuggestAutoModelCommandFactory extends JSONInputCommandFactory {
 
 			if (typeName != null) {
 				type = new SemanticType(hNodeId, typeName, domainName,
-						Origin.User, 1.00, isPrimary);
+						Origin.User, 1.00);
 				worksheet.getSemanticTypes().addType(type);
 			}
 		}
