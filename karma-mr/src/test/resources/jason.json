@@ -1,0 +1,13 @@
+{
+	"@type":"http://lod.isi.edu/ontology/syllabus/Person",
+	"foaf:name":"Jason Slepicka",
+	"foaf:lastName":"Slepicka",
+	"@id":"http://lod.isi.edu/cs548/person/Slepicka",
+	"foaf:depiction":{
+		"@type":"http://xmlns.com/foaf/0.1/Image",
+		"@id":"https://lh4.googleusercontent.com/-uonc-uQiTGw/AAAAAAAAAAI/AAAAAAAAATk/V_iGc4e8Vwk/photo.jpg?sz=80",
+		"foaf:depicts":"<http://lod.isi.edu/cs548/person/Slepicka>"
+		},
+	"foaf:title":"Mr",
+	"foaf:mbox":{"rdfs:label":"slepicka@usc.edu","@type":"http://www.w3.org/2002/07/owl#Thing","@id":"mailto:slepicka@usc.edu"}
+}

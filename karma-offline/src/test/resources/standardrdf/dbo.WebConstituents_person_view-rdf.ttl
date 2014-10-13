@@ -1,0 +1,46 @@
+<person-institution/2985/appellation/displayname> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/2985/appellation/displayname> <http://collection.americanart.si.edu/id/ontologies/PE_firstname> "McKendree Robbins" .
+<person-institution/2985/appellation/displayname> <http://collection.americanart.si.edu/id/ontologies/PE_lastname> "Long" .
+<person-institution/2985/appellation/displayname> <http://collection.americanart.si.edu/id/ontologies/PE_nametitle> "Rev." .
+<person-institution/2985/appellation/displayname> <http://collection.americanart.si.edu/id/ontologies/PE_suffix> "Sr." .
+<person-institution/2985/appellation/displayname> <http://www.w3.org/2000/01/rdf-schema#label> "Rev. McKendree Robbins Long, Sr." .
+<person-institution/2985> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<thesauri/nationality/American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<person-institution/2985> <http://www.cidoc-crm.org/cidoc-crm/P107i_is_current_or_former_member_of> <thesauri/nationality/American> .
+<person-institution/2985> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/2985/appellation/displayname> .
+<person-institution/2985/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<person-institution/2985> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <person-institution/2985/id> .
+<person-institution/2985/id> <http://www.w3.org/2000/01/rdf-schema#label> "2985" .
+
+<person-institution/407/appellation/displayname> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/407/appellation/displayname> <http://collection.americanart.si.edu/id/ontologies/PE_lastname> "Bieman" .
+<person-institution/407/appellation/displayname> <http://www.w3.org/2000/01/rdf-schema#label> "Bieman" .
+<person-institution/407> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<person-institution/407> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/407/appellation/displayname> .
+<person-institution/407/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<person-institution/407> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <person-institution/407/id> .
+<person-institution/407/id> <http://www.w3.org/2000/01/rdf-schema#label> "407" .
+
+<person-institution/17996/appellation/displayname> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/17996/appellation/displayname> <http://collection.americanart.si.edu/id/ontologies/PE_lastname> "Unidentified" .
+<person-institution/17996/appellation/displayname> <http://www.w3.org/2000/01/rdf-schema#label> "Unidentified" .
+<person-institution/17996> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<thesauri/nationality/South-American> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<person-institution/17996> <http://collection.americanart.si.edu/id/ontologies/PE_probably_is_current_or_former_member_of> <thesauri/nationality/South-American> .
+<person-institution/17996> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/17996/appellation/displayname> .
+<person-institution/17996/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<person-institution/17996> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <person-institution/17996/id> .
+<person-institution/17996/id> <http://www.w3.org/2000/01/rdf-schema#label> "17996" .
+
+<person-institution/1199/appellation/displayname> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E82_Actor_Appellation> .
+<person-institution/1199/appellation/displayname> <http://collection.americanart.si.edu/id/ontologies/PE_firstname> "Francisco" .
+<person-institution/1199/appellation/displayname> <http://collection.americanart.si.edu/id/ontologies/PE_lastname> "De Maria" .
+<person-institution/1199/appellation/displayname> <http://www.w3.org/2000/01/rdf-schema#label> "Francisco De Maria" .
+<person-institution/1199> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E21_Person> .
+<thesauri/nationality/Italian> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E74_Group> .
+<person-institution/1199> <http://www.cidoc-crm.org/cidoc-crm/P107i_is_current_or_former_member_of> <thesauri/nationality/Italian> .
+<person-institution/1199> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <person-institution/1199/appellation/displayname> .
+<person-institution/1199/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<person-institution/1199> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <person-institution/1199/id> .
+<person-institution/1199/id> <http://www.w3.org/2000/01/rdf-schema#label> "1199" .
+

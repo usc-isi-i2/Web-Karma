@@ -1,0 +1,487 @@
+
+/**********************************************************************
+ *
+ * Parameters you can play with to control the whole layout
+ *
+ **********************************************************************/
+
+@hue: 200;                          // One hue controls all the colors.
+                                    // All other colors are a function of this one
+
+@saturation: 50%;                   // One saturation value controls the saturation
+                                    // of all the other colors. Set to 100% for child mode
+                                    // and to a low number for a corporate mode.
+
+@packing-factor: 0.9;               // The default scheme is designed for 16pixel font.
+                                    // If you want to pack things together set to a
+                                    // number less than one.
+
+@cell-width-stretch-factor: 0.9;    // The width of columns is defined based on the expected
+                                    // number of characters. You can make the columns 
+                                    // narrower by setting this to less than one.
+
+@max-lines-in-cell: 5;              // Cells will clip both vertically and horizontally.
+                                    // If a single word does not fit in a line it will be 
+                                    // truncated and shown with ...
+                                    // Values will wrap inside a cell and get truncated after
+                                    // the number of lines specified here. I could not get
+                                    // the auto scrollbars to show up only when needed.
+
+@max-top-table-height: 600px;       // Vertical size of the outermost table. Should be set 
+                                    // to a value so that the whole table fits in the screen.
+                                    // The contents of the table will scroll, and the headers
+                                    // will not, so don't set this too large.
+
+@max-nested-table-height: 400px;    // The maximum vertical size of nested tables before they
+                                    // get a scrollbar.
+
+/**********************************************************************/
+
+/**********************************************************************
+ *
+ * DON'T CHANGE ANYTHING BELOW UNLESS YOU UNDERSTAND THE COLOR SCHEME
+ *
+ **********************************************************************/
+
+
+/**********************************************************************
+ * 
+ * The color scheme is designed so that nested tables will alternate colors.
+ * The outermost table is odd, subtables are even and then alternates odd/even/...
+ *
+ * For each level there is a dark and light color, of the same hue and 
+ * saturation, but different lightness. These colors are used for backgrounds and
+ * borders (grid lines are even lighter)
+ **********************************************************************/
+
+
+/* Backgrounds and line colors of tables */
+@color-odd-dark: hsla(@hue, @saturation, 25%, 1); 
+@color-odd-light: hsla(@hue, @saturation, 75%, 1); 
+@color-even-dark: hsla(@hue, @saturation, 33%, 1); 
+@color-even-light: hsla(@hue, @saturation, 92%, 1); 
+@table-background-color: hsla(@hue, 5%, 98%, 1);
+@color-odd-dark-transformation: hsla(mod(@hue - 150, 360), @saturation, 25%, 1);
+@color-even-dark-transformation: hsla(mod(@hue - 150, 360), @saturation, 33%, 1);
+@color-odd-dark-augmentdata: hsla(mod(150 + @hue, 360), @saturation, 25%, 1);
+@color-even-dark-augmentdata: hsla(mod(150 + @hue, 360), @saturation, 33%, 1);
+
+@table-odd-border-color: @color-odd-dark;
+@table-odd-vertical-grid-border-color: hsla(@hue, @saturation, 90%, 1);
+@table-odd-horizontal-grid-border-color: hsla(@hue, @saturation, 75%, 1);
+
+@table-even-border-color: @color-even-dark;
+@table-even-vertical-grid-border-color: hsla(@hue, @saturation, 90%, 1); 
+@table-even-horizontal-grid-border-color: hsla(@hue, @saturation, 75%, 1);
+
+/* Text colors */
+@value-color: hsla(@hue, 5%, 15%, 1); 
+@header-color: hsla(@hue, @saturation, 95%, 1);
+@header-color-for-nested-tables: hsla(@hue, 75%, 5%, 1);
+
+/* Worksheet colors */
+@worksheet-color: hsla(mod(180 + @hue, 360), @saturation, 75%, 1);
+@worksheet-color-light: hsla(mod(180 + @hue, 360), @saturation, 85%, 1);
+
+/* Padding and sizes */
+@base-font-size-px: 16px;
+@base-cell-left-right-padding: 10px;
+@base-cell-top-bottom-padding: 5px;
+
+@cell-font-size-px: ceil(@packing-factor*@base-font-size-px);
+
+@cell-left-right-padding: floor(@packing-factor*@base-cell-left-right-padding);
+@cell-top-bottom-padding: floor(@packing-factor*@packing-factor*@base-cell-top-bottom-padding);
+@cell-border-width: 1px;
+
+/**********************************************************************
+ * 
+ * Styles
+ * 
+ **********************************************************************/
+
+body 
+{
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+
+// The outermost element containing the whole worksheet.
+.worksheet {
+    margin: 0 auto;
+    margin-top: 30px;
+    padding: 4px;
+    border: 0px solid black;
+    background-color: @worksheet-color;
+    font-size: @cell-font-size-px;
+}
+
+.worksheet-header  {
+}
+
+// Used for the name of the source.
+//
+.worksheet-header h1 {
+    font-size: 1.8*@cell-font-size-px;
+    font-weight: bold;
+    padding-bottom: 2px;
+    padding-top: 5px;
+    color: @color-odd-dark;
+    text-align: center;
+}
+
+// If we have links or other toolbar items, they go inside a <UL> element.
+// 
+.worksheet-header ul {
+    list-style-type: none;
+    display: block;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    border-top: 1px solid @worksheet-color-light;
+    color: @color-odd-dark;
+}
+.worksheet-header ul li {
+    padding-left: @cell-font-size-px;
+    display: inline;
+}
+.worksheet-header:first-child ul li {
+    padding-left: 0;
+}
+// TODO: need to define the style for <A> links. Set to red so it is obvious
+// it is not what we want.
+.worksheet-header ul a {
+    color: #f00; 
+}
+
+// Placeholder for the main worksheet menu
+//
+.worksheet-tools {
+    float: left;
+    padding-right: 10px;
+}
+
+// Placeholder for the minimze or close buttons.
+//
+.worksheet-close {
+    float: right;
+}
+
+// All worksheet tables, outermost and nested compute their width based
+// on the width of the columns.
+//
+.wk-table {
+    table-layout: fixed;
+}
+
+
+
+// htables are the tables that contain the headers that appear at the 
+// top of a worksheet.
+//
+.htable-odd-regular 
+{
+    background-color: @color-odd-dark;
+}
+.htable-even-regular {
+    background-color: @color-even-dark;
+}
+
+.htable-odd-transformation 
+{
+    background-color: @color-odd-dark-transformation;
+}
+.htable-even-transformation {
+    background-color: @color-even-dark-transformation;
+}
+
+.htable-odd-augmentdata 
+{
+    background-color: @color-odd-dark-augmentdata;
+}
+.htable-even-augmentdata {
+    background-color: @color-even-dark-augmentdata;
+}
+
+// hdtables are the headings for nested tables when they appear nested
+// inside the data part of a table.
+.hdtable-odd 
+{
+    background-color: @color-odd-light;
+}
+
+// All tables, even the top one are contained in a table-container div.
+//
+.table-container {
+    background-color: @table-background-color;
+}
+
+.table-data-container-outermost {
+   max-height: @max-top-table-height;
+   overflow-y: scroll;
+}
+   
+// The data part of a table is contained in a table-data-container that will
+// scroll separately from the headings.
+//
+.table-data-container {
+   // max-height: @max-top-table-height;
+   // overflow-y: scroll;
+    color: @value-color;
+}
+
+// Nested tables are smaller.
+//
+.table-data-container .table-data-container {
+  //  max-height: @max-nested-table-height;
+  //  overflow-y: scroll;
+}
+
+.table-data-container > .wk-table > tbody >tr:last-child {
+  border-bottom-color: @color-odd-dark;
+}
+
+
+
+
+
+
+.hdtable-even .wk-row-even .wk-cell 
+{
+    border-left-color: @color-even-dark;
+}
+.hdtable-odd .wk-row-odd .wk-cell 
+{
+    border-left-color: @color-odd-dark;
+}
+.htable-odd .wk-row-odd 
+{
+    border-top-color: @color-odd-light;
+    border-bottom-color: @color-odd-light;
+    border-left-color: @color-odd-light;
+    border-right-color: @color-odd-light;
+}
+.htable-odd .wk-row-odd .wk-cell 
+{
+    border-left-color: @color-odd-light;
+}
+
+
+//.wk-row-odd:last-child
+//{
+//    border-bottom-color: @color-odd-dark;
+//}
+.wk-row-odd 
+{
+    border-bottom-color: @table-odd-horizontal-grid-border-color; //@color-odd-dark;
+    border-top-color: @table-odd-border-color; //@color-odd-dark;
+    border-left-color: @table-odd-border-color; //@color-odd-dark;
+    border-right-color: @table-odd-border-color; //@color-odd-dark;
+}
+.wk-row-odd .wk-cell 
+{
+    border-left-color: @table-odd-vertical-grid-border-color; //@color-odd-dark;    
+}
+
+/* Light ODD color */
+
+
+
+
+/* Dark EVEN color */
+
+.wk-row-even:last-child
+{
+    border-bottom-color: @color-odd-dark;
+}
+.wk-row-even 
+{
+    border-bottom-color: @table-even-horizontal-grid-border-color; //@color-even-dark;
+    border-top-color: @table-even-horizontal-grid-border-color; //@color-even-dark;
+    border-left-color: @table-even-border-color; //@color-even-dark;
+    border-right-color: @table-even-border-color; //@color-even-dark;
+}
+.wk-row-even .wk-cell 
+{
+    border-left-color: @table-even-vertical-grid-border-color; //@color-even-dark;
+}
+.wk-row-even:first-child,
+{
+    border-top-color: @color-even-dark;
+}
+
+
+/* Light EVEN color */
+.hdtable-even {
+    background-color: @color-even-light;
+}
+.htable-even .wk-row-even 
+{
+    border-top-color: @color-even-light;
+    border-bottom-color: @color-even-light;
+    border-left-color: @color-even-light;
+    border-right-color: @color-even-light;
+}
+.htable-even .wk-row-even .wk-cell 
+{
+    border-left-color: @color-even-light;
+}
+
+
+
+
+/*
+.wk-row-odd:first-child,
+.wk-row-even:first-child
+{
+    border-top-style: solid;
+    border-top-width: 0px;
+}
+*/
+
+.htable-odd .wk-row-odd:first-child,
+.htable-even .wk-row-even:first-child,
+.hdtable-odd .wk-row-odd:first-child,
+.hdtable-even .wk-row-even:first-child
+{
+    border-top-style: solid;
+    border-top-width: @cell-border-width;
+}
+
+
+.wk-row-odd,
+.wk-row-even
+{
+    border-bottom-style: solid;
+    border-bottom-width: @cell-border-width;
+    border-top-style: solid;
+    border-top-width: @cell-border-width;
+    border-left-style: solid;
+    border-left-width: @cell-border-width;
+    border-right-style: solid;
+    border-right-width: @cell-border-width;
+}
+
+
+.wk-cell 
+{
+    min-height: @cell-font-size-px;
+    border-left-style: solid;
+    border-left-width: @cell-border-width;    
+    padding-left: @cell-left-right-padding;
+    padding-right: @cell-left-right-padding;
+    padding-top: @cell-top-bottom-padding;
+    padding-bottom: @cell-top-bottom-padding;
+    overflow: hidden;
+    vertical-align: top;
+}
+
+.wk-cell:first-child {
+    border-left: 0;
+}
+
+.wk-header-cell 
+{
+    min-height: @cell-font-size-px;
+    border-left-style: solid;
+    border-left-width: @cell-border-width;    
+    padding-left: @cell-left-right-padding;
+    padding-right: @cell-left-right-padding;
+    padding-top: @cell-top-bottom-padding;
+    padding-bottom: @cell-top-bottom-padding;
+   vertical-align: top;
+}
+
+.wk-header-cell:first-child {
+    border-left: 0;
+}
+
+.load-more
+{
+    margin-top: @cell-top-bottom-padding;
+    margin-bottom: @cell-top-bottom-padding;
+    text-align: center;
+}
+
+
+
+.wk-value {
+    max-height: @max-lines-in-cell*@cell-font-size-px;
+    overflow-y: hidden;         // auto makes a scrollbar appear all the time.
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+    line-height: 1.2*@cell-font-size-px;
+    text-align: left;
+}
+
+.wk-header {
+    color: @header-color;
+    text-align:center;
+    line-height: 1.2*@cell-font-size-px;
+}
+
+.wk-dheader {
+    color: @header-color-for-nested-tables;
+    text-align:center;
+    line-height: 1.2*@cell-font-size-px;
+}
+
+.wk-subtable-header
+{
+    margin-bottom: 1*@cell-top-bottom-padding;
+}
+
+/**************************************************************
+ *
+ * Styles and calculations specific to the example data.
+ *
+ **************************************************************/
+
+//.col-01 {
+//    width: 10*@cell-font-size-px*@cell-width-stretch-factor;
+//}
+//.col-02 {
+//    width: 10*@cell-font-size-px*@cell-width-stretch-factor;
+//}
+//
+//
+//@col-03-width:  @cell-border-width
+//                + 3*@cell-border-width
+//                + 3*2*@cell-left-right-padding
+//                + 10*@cell-font-size-px*@cell-width-stretch-factor
+//                + 17*@cell-font-size-px*@cell-width-stretch-factor
+//                + 10*@cell-font-size-px*@cell-width-stretch-factor;
+//
+//.col-03 {
+//    /* The width of the contents of the cell (without the padding) */
+//    width: @col-03-width;
+//}
+//
+//.col-04 {
+//    width: 10*@cell-font-size-px*@cell-width-stretch-factor;
+//}
+//
+//.col-a01 {
+//    width: 10*@cell-font-size-px*@cell-width-stretch-factor;
+//}
+//.col-a02 {
+//    width: 17*@cell-font-size-px*@cell-width-stretch-factor;
+//}
+//.col-a03 {
+//    width: 10*@cell-font-size-px*@cell-width-stretch-factor;
+//}
+//
+//@table-01-width:    2*@cell-border-width
+//                    + 3*@cell-border-width
+//                    + 4*2*@cell-left-right-padding
+//                    + 10*@cell-font-size-px*@cell-width-stretch-factor
+//                    + 10*@cell-font-size-px*@cell-width-stretch-factor
+//                    + @col-03-width
+//                    + 10*@cell-font-size-px*@cell-width-stretch-factor;
+//
+//.table-01-width {
+//    /* The width of the whole top-level table */
+//    width: @table-01-width;
+//}
+

@@ -1,0 +1,81 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix wot: <http://xmlns.com/wot/0.1/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix km-dev: <http://isi.edu/integration/karma/dev#> .
+
+_:node190eue9r5x1 a km-dev:R2RMLMapping ;
+	km-dev:sourceName "names.csv" ;
+	km-dev:modelPublicationTime "1409250961254"^^xsd:long ;
+	km-dev:modelVersion "1.7" ;
+	km-dev:hasInputColumns "[[{\"columnName\":\"name\"}]]" ;
+	km-dev:hasOutputColumns "[[{\"columnName\":\"name\"}]]" ;
+	km-dev:hasModelLabel "names.csv" ;
+	km-dev:hasBaseURI "http://localhost:8080/source/" ;
+	km-dev:hasWorksheetHistory "[{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"name\"}],\"type\":\"hNodeId\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"selectionName\",\"value\":\"DEFAULT_TEST\",\"type\":\"other\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/name\",\"DomainLabel\":\"foaf:Person1 (add)\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person1 (add)\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person\"}],\"type\":\"other\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"xsd:string\",\"type\":\"other\"},{\"name\":\"inputColumns\",\"value\":\"[{\\\"value\\\":[{\\\"columnName\\\":\\\"name\\\"}]}]\",\"type\":\"hNodeIdList\"},{\"name\":\"outputColumns\",\"value\":\"[{\\\"value\\\":[{\\\"columnName\\\":\\\"name\\\"}]}]\",\"type\":\"hNodeIdList\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"literalValue\",\"value\":\"USC\",\"type\":\"other\"},{\"name\":\"literalType\",\"value\":\"xsd:string\",\"type\":\"other\"},{\"name\":\"isUri\",\"value\":false,\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"inputColumns\",\"value\":\"[]\",\"type\":\"hNodeIdList\"},{\"name\":\"outputColumns\",\"value\":\"[]\",\"type\":\"hNodeIdList\"}],\"commandName\":\"AddLiteralNodeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"selectionName\",\"value\":\"DEFAULT_TEST\",\"type\":\"other\"},{\"name\":\"initialEdges\",\"value\":[],\"type\":\"other\"},{\"name\":\"alignmentId\",\"value\":\"WSP1:WS64AL\",\"type\":\"other\"},{\"name\":\"newEdges\",\"value\":[{\"edgeTargetUri\":\"USC1\",\"edgeId\":\"http://xmlns.com/foaf/0.1/fundedBy\",\"edgeTargetId\":\"USC1\",\"edgeSourceId\":\"http://xmlns.com/foaf/0.1/Person1\",\"edgeSourceUri\":\"http://xmlns.com/foaf/0.1/Person\"}],\"type\":\"other\"},{\"name\":\"inputColumns\",\"value\":\"[]\",\"type\":\"hNodeIdList\"},{\"name\":\"outputColumns\",\"value\":\"[]\",\"type\":\"hNodeIdList\"}],\"commandName\":\"ChangeInternalNodeLinksCommand\"}]" .
+
+km-dev:TriplesMap_4f980586-676d-45e7-8fa9-9e9a384505b0 a rr:TriplesMap .
+
+_:node190eue9r5x1 km-dev:hasTriplesMap km-dev:TriplesMap_4f980586-676d-45e7-8fa9-9e9a384505b0 .
+
+km-dev:TriplesMap_4f980586-676d-45e7-8fa9-9e9a384505b0 km-dev:isPartOfMapping _:node190eue9r5x1 .
+
+_:node190eue9r5x2 rr:tableName "names.csv" ;
+	a rr:LogicalTable ;
+	km-dev:isPartOfMapping _:node190eue9r5x1 .
+
+_:node190eue9r5x1 km-dev:hasLogicalTable _:node190eue9r5x2 .
+
+km-dev:TriplesMap_4f980586-676d-45e7-8fa9-9e9a384505b0 rr:logicalTable _:node190eue9r5x2 ;
+	rr:subjectMap _:node190eue9r5x3 .
+
+_:node190eue9r5x1 km-dev:hasSubjectMap _:node190eue9r5x3 .
+
+_:node190eue9r5x3 km-dev:isPartOfMapping _:node190eue9r5x1 ;
+	a rr:SubjectMap ;
+	km-dev:alignmentNodeId "http://xmlns.com/foaf/0.1/Person1" ;
+	rr:class foaf:Person ;
+	rr:termType rr:BlankNode ;
+	km-dev:namePrefix "foaf:Person1" ;
+	a km-dev:steinerTreeRootNode .
+
+km-dev:PredicateObjectMap_76918cc5-f034-4d68-8332-21d650e2639f rr:predicate foaf:fundedBy .
+
+_:node190eue9r5x4 rr:constant "USC" ;
+	rr:datatype "http://www.w3.org/2001/XMLSchema#string" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node190eue9r5x1 .
+
+_:node190eue9r5x1 km-dev:hasObjectMap _:node190eue9r5x4 .
+
+km-dev:PredicateObjectMap_76918cc5-f034-4d68-8332-21d650e2639f rr:objectMap _:node190eue9r5x4 .
+
+km-dev:TriplesMap_4f980586-676d-45e7-8fa9-9e9a384505b0 rr:predicateObjectMap km-dev:PredicateObjectMap_76918cc5-f034-4d68-8332-21d650e2639f .
+
+km-dev:PredicateObjectMap_76918cc5-f034-4d68-8332-21d650e2639f a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node190eue9r5x1 .
+
+_:node190eue9r5x1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_76918cc5-f034-4d68-8332-21d650e2639f .
+
+km-dev:PredicateObjectMap_da7546e3-5cc8-4f5e-a803-14caa7b96fe0 rr:predicate foaf:name .
+
+_:node190eue9r5x5 rr:column "name" ;
+	a rr:ObjectMap ;
+	rr:datatype "http://www.w3.org/2001/XMLSchema#string" ;
+	km-dev:isPartOfMapping _:node190eue9r5x1 .
+
+_:node190eue9r5x1 km-dev:hasObjectMap _:node190eue9r5x5 .
+
+km-dev:PredicateObjectMap_da7546e3-5cc8-4f5e-a803-14caa7b96fe0 rr:objectMap _:node190eue9r5x5 .
+
+km-dev:TriplesMap_4f980586-676d-45e7-8fa9-9e9a384505b0 rr:predicateObjectMap km-dev:PredicateObjectMap_da7546e3-5cc8-4f5e-a803-14caa7b96fe0 .
+
+km-dev:PredicateObjectMap_da7546e3-5cc8-4f5e-a803-14caa7b96fe0 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node190eue9r5x1 .
+
+_:node190eue9r5x1 km-dev:hasPredicateObjectMap km-dev:PredicateObjectMap_da7546e3-5cc8-4f5e-a803-14caa7b96fe0 .

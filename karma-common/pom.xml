@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>edu.isi</groupId>
+        <artifactId>webkarma</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>karma-common</artifactId>
+    
+	<properties>
+        <hadoop.version>2.4.0.2.1.3.0-563</hadoop.version>
+	</properties>
+	
+<dependencies>
+	<dependency>
+		<groupId>edu.isi</groupId>
+		<artifactId>karma-typer</artifactId>
+		<version>${project.version}</version>
+	</dependency>
+    <dependency>
+		<groupId>org.apache.hadoop</groupId>
+		<artifactId>hadoop-common</artifactId>
+		<version>${hadoop.version}</version>
+		<exclusions>
+        <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jsp-2.1</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jsp-api-2.1</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>servlet-api-2.1</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>tomcat</groupId>
+            <artifactId>jasper-compiler</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>tomcat</groupId>
+            <artifactId>jasper-runtime</artifactId>
+        </exclusion>
+      </exclusions>
+	</dependency>   
+	<dependency>
+		<groupId>edu.isi</groupId>
+		<artifactId>karma-util</artifactId>
+		<version>${project.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-lang3</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>log4j</groupId>
+		<artifactId>log4j</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-api</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-log4j12</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>commons-io</groupId>
+		<artifactId>commons-io</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>com.googlecode.juniversalchardet</groupId>
+		<artifactId>juniversalchardet</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>net.sf.json-lib</groupId>
+		<artifactId>json-lib</artifactId>
+		<classifier>jdk15</classifier>
+	</dependency>
+
+	<dependency>
+		<groupId>${jena.group}</groupId>
+		<artifactId>${jena.arq.artifact}</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>${jena.group}</groupId>
+		<artifactId>${jena.core.artifact}</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>${jena.group}</groupId>
+		<artifactId>${jena.tdb.artifact}</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>${jena.group}</groupId>
+		<artifactId>${jena.iri.artifact}</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>com.google.code.gson</groupId>
+		<artifactId>gson</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.json</groupId>
+		<artifactId>json</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>commons-fileupload</groupId>
+		<artifactId>commons-fileupload</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>uk.com.robust-it</groupId>
+		<artifactId>cloning</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>net.sf.jgrapht</groupId>
+		<artifactId>jgrapht</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.kohsuke</groupId>
+		<artifactId>graphviz-api</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>javax.servlet</groupId>
+		<artifactId>javax.servlet-api</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>org.reflections</groupId>
+		<artifactId>reflections</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>net.sf.opencsv</groupId>
+		<artifactId>opencsv</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpclient</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>commons-httpclient</groupId>
+		<artifactId>commons-httpclient</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.avro</groupId>
+		<artifactId>avro</artifactId>
+		<version>1.7.7</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.avro</groupId>
+		<artifactId>avro-compiler</artifactId>
+		<version>1.7.7</version>
+	</dependency>
+	<dependency>
+		<groupId>org.python</groupId>
+		<artifactId>jython-standalone</artifactId>
+	</dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+</dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/config</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+	</build>
+	
+<repositories>
+ <repository>
+ <releases>
+ <enabled>true</enabled>
+ <updatePolicy>always</updatePolicy>
+ <checksumPolicy>warn</checksumPolicy>
+ </releases>
+ <snapshots>
+ <enabled>false</enabled>
+ <updatePolicy>never</updatePolicy>
+ <checksumPolicy>fail</checksumPolicy>
+ </snapshots>
+ <id>HDPReleases</id>
+ <name>HDP Releases</name>
+ <url>http://repo.hortonworks.com/content/repositories/releases/</url>
+ <layout>default</layout>
+ </repository>
+ </repositories> 
+</project>

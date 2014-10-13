@@ -1,0 +1,125 @@
+@prefix edan-ont: <http://collection.edan.si.edu/ontologies/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dim: <http://data.nasa.gov/qudt/owl/dimension#> .
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix skos: <http://www.w3.org/2008/05/skos#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix qudt: <http://data.nasa.gov/qudt/owl/qudt#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix cc: <http://creativecommons.org/ns#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix quantity: <http://data.nasa.gov/qudt/owl/quantity#> .
+@prefix unit: <http://data.nasa.gov/qudt/owl/unit#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix oecc: <http://www.oegov.org/models/common/cc#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix km-dev: <http://isi.edu/integration/karma/dev#> .
+
+_:node18p73hja4x1 a km-dev:R2RMLMapping ;
+	km-dev:sourceName "test.json" ;
+	km-dev:modelPublicationTime "1401471683908"^^xsd:long ;
+	km-dev:modelVersion "1.3" ;
+	km-dev:hasWorksheetHistory "[{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"subject\"}],\"type\":\"hNodeId\"},{\"name\":\"values\",\"value\":[{\"name\":\"checked\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"subject\"}],\"type\":\"hNodeId\"}],\"type\":\"hNodeIdList\"}],\"commandName\":\"GroupByCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"GroupBy_1\"},{\"columnName\":\"Values\"},{\"columnName\":\"score\"},{\"columnName\":\"values\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.cidoc-crm.org/cidoc-crm/P124i_was_transformed_by\",\"DomainLabel\":\"crm:E55_Type1 (add)\",\"DomainId\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type\",\"DomainUri\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"GroupBy_1\"},{\"columnName\":\"Values\"},{\"columnName\":\"name\"},{\"columnName\":\"Last\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.cidoc-crm.org/cidoc-crm/P130_shows_features_of\",\"DomainLabel\":\"crm:E42_Identifier1 (add)\",\"DomainId\":\"http://www.cidoc-crm.org/cidoc-crm/E42_Identifier1\",\"DomainUri\":\"http://www.cidoc-crm.org/cidoc-crm/E42_Identifier1\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"}]" .
+
+km-dev:TriplesMap_aaf843be-89b4-4249-8e42-e0eefa2d09cf a rr:TriplesMap .
+
+_:node18p73hja4x1 km-dev:hasTriplesMap km-dev:TriplesMap_aaf843be-89b4-4249-8e42-e0eefa2d09cf .
+
+km-dev:TriplesMap_aaf843be-89b4-4249-8e42-e0eefa2d09cf km-dev:isPartOfMapping _:node18p73hja4x1 .
+
+_:node18p73hja4x2 rr:tableName "test.json" ;
+	a rr:LogicalTable ;
+	km-dev:isPartOfMapping _:node18p73hja4x1 .
+
+_:node18p73hja4x1 km-dev:hasLogicalTable _:node18p73hja4x2 .
+
+km-dev:TriplesMap_aaf843be-89b4-4249-8e42-e0eefa2d09cf rr:logicalTable _:node18p73hja4x2 ;
+	rr:subjectMap _:node18p73hja4x3 .
+
+_:node18p73hja4x1 km-dev:hasSubjectMap _:node18p73hja4x3 .
+
+_:node18p73hja4x3 km-dev:isPartOfMapping _:node18p73hja4x1 ;
+	a rr:SubjectMap ;
+	km-dev:alignmentNodeId "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier1" ;
+	rr:class crm:E42_Identifier ;
+	rr:termType rr:BlankNode ;
+	km-dev:namePrefix "crm:E42_Identifier1" ;
+	a km-dev:steinerTreeRootNode .
+
+_:node18p73hja4x4 rr:predicate crm:P130_shows_features_of .
+
+_:node18p73hja4x5 rr:column "[\"GroupBy_1\",\"Values\",\"name\",\"Last\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18p73hja4x1 .
+
+_:node18p73hja4x1 km-dev:hasObjectMap _:node18p73hja4x5 .
+
+_:node18p73hja4x4 rr:objectMap _:node18p73hja4x5 .
+
+km-dev:TriplesMap_aaf843be-89b4-4249-8e42-e0eefa2d09cf rr:predicateObjectMap _:node18p73hja4x4 .
+
+_:node18p73hja4x4 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18p73hja4x1 .
+
+_:node18p73hja4x1 km-dev:hasPredicateObjectMap _:node18p73hja4x4 .
+
+_:node18p73hja4x6 rr:predicate crm:P1i_identifies .
+
+km-dev:RefObjectMap_f4ab0f5a-92c6-4c94-965b-c872bc2ab1f5 a rr:RefObjectMap , rr:ObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_559c6671-3f51-48c2-84c6-28bac52ebf7f ;
+	km-dev:isPartOfMapping _:node18p73hja4x1 .
+
+_:node18p73hja4x1 km-dev:hasObjectMap km-dev:RefObjectMap_f4ab0f5a-92c6-4c94-965b-c872bc2ab1f5 .
+
+_:node18p73hja4x6 rr:objectMap km-dev:RefObjectMap_f4ab0f5a-92c6-4c94-965b-c872bc2ab1f5 .
+
+km-dev:TriplesMap_aaf843be-89b4-4249-8e42-e0eefa2d09cf rr:predicateObjectMap _:node18p73hja4x6 .
+
+_:node18p73hja4x6 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18p73hja4x1 .
+
+_:node18p73hja4x1 km-dev:hasPredicateObjectMap _:node18p73hja4x6 .
+
+km-dev:TriplesMap_559c6671-3f51-48c2-84c6-28bac52ebf7f a rr:TriplesMap .
+
+_:node18p73hja4x1 km-dev:hasTriplesMap km-dev:TriplesMap_559c6671-3f51-48c2-84c6-28bac52ebf7f .
+
+km-dev:TriplesMap_559c6671-3f51-48c2-84c6-28bac52ebf7f km-dev:isPartOfMapping _:node18p73hja4x1 .
+
+_:node18p73hja4x7 rr:tableName "test.json" ;
+	a rr:LogicalTable ;
+	km-dev:isPartOfMapping _:node18p73hja4x1 .
+
+_:node18p73hja4x1 km-dev:hasLogicalTable _:node18p73hja4x7 .
+
+km-dev:TriplesMap_559c6671-3f51-48c2-84c6-28bac52ebf7f rr:logicalTable _:node18p73hja4x7 ;
+	rr:subjectMap _:node18p73hja4x8 .
+
+_:node18p73hja4x1 km-dev:hasSubjectMap _:node18p73hja4x8 .
+
+_:node18p73hja4x8 km-dev:isPartOfMapping _:node18p73hja4x1 ;
+	a rr:SubjectMap ;
+	km-dev:alignmentNodeId "http://www.cidoc-crm.org/cidoc-crm/E55_Type1" ;
+	rr:class crm:E55_Type ;
+	rr:termType rr:BlankNode ;
+	km-dev:namePrefix "crm:E55_Type1" .
+
+_:node18p73hja4x9 rr:predicate crm:P124i_was_transformed_by .
+
+_:node18p73hja4x10 rr:column "[\"GroupBy_1\",\"Values\",\"score\",\"values\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18p73hja4x1 .
+
+_:node18p73hja4x1 km-dev:hasObjectMap _:node18p73hja4x10 .
+
+_:node18p73hja4x9 rr:objectMap _:node18p73hja4x10 .
+
+km-dev:TriplesMap_559c6671-3f51-48c2-84c6-28bac52ebf7f rr:predicateObjectMap _:node18p73hja4x9 .
+
+_:node18p73hja4x9 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18p73hja4x1 .
+
+_:node18p73hja4x1 km-dev:hasPredicateObjectMap _:node18p73hja4x9 .

@@ -1,0 +1,172 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+	<context-param>
+		<param-name>PUBLIC_KML_ADDRESS</param-name>
+		<param-value>http://128.9.216.81:9999/KML/</param-value>
+	</context-param>
+	<context-param>
+		<param-name>KML_TRANSFER_SERVICE</param-name>
+		<param-value>http://128.9.216.81:9999/KMLFileTransferHandler</param-value>
+	</context-param>
+	<context-param>
+		<param-name>PUBLIC_RDF_ADDRESS</param-name>
+		<param-value>http://localhost:8080/RDF/</param-value>
+	</context-param>
+	<context-param>
+		<param-name>SRID_CLASS</param-name>
+		<param-value>SpatialReferenceSystem</param-value>
+	</context-param>
+	<context-param>
+		<param-name>SRID_PROPERTY</param-name>
+		<param-value>hasSRID</param-value>
+	</context-param>
+		<context-param>
+		<param-name>KML_CUSTOMIZATION_CLASS</param-name>
+		<param-value>KMLCustomization</param-value>
+	</context-param>
+	<context-param>
+		<param-name>KML_CATEGORY_PROPERTY</param-name>
+		<param-value>hasKMLCategory</param-value>
+	</context-param>
+	<context-param>
+		<param-name>KML_LABEL_PROPERTY</param-name>
+		<param-value>hasKMLLabel</param-value>
+	</context-param>
+	<context-param>
+		<param-name>WGS84_LAT_PROPERTY</param-name>
+		<param-value>http://www.w3.org/2003/01/geo/wgs84_pos#lat</param-value>
+	</context-param>
+	<context-param>
+		<param-name>WGS84_LNG_PROPERTY</param-name>
+		<param-value>http://www.w3.org/2003/01/geo/wgs84_pos#long</param-value>
+	</context-param>
+	<context-param>
+		<param-name>POINT_POS_PROPERTY</param-name>
+		<param-value>http://www.opengis.net/gml/pos</param-value>
+	</context-param>
+	<context-param>
+		<param-name>POS_LIST_PROPERTY</param-name>
+		<param-value>http://www.opengis.net/gml/posList</param-value>
+	</context-param>
+	<context-param>
+		<param-name>POINT_CLASS</param-name>
+		<param-value>http://www.opengis.net/gml/Point</param-value>
+	</context-param>
+	<context-param>
+		<param-name>LINE_CLASS</param-name>
+		<param-value>http://www.opengis.net/gml/LineString</param-value>
+	</context-param>
+		<context-param>
+		<param-name>POLYGON_CLASS</param-name>
+		<param-value>http://www.opengis.net/gml/Polygon</param-value>
+	</context-param>
+	<context-param>
+		<param-name>TRAINING_EXAMPLE_MAX_COUNT</param-name>
+		<param-value>100</param-value>
+	</context-param>
+  <context-param>
+  		<param-name>PYTHON_SCRIPTS_DIRECTORY</param-name>
+		<param-value>resources/pythonCleaningscripts</param-value>
+  </context-param>
+  <context-param>
+		<param-name>MSFT</param-name>
+		<param-value>False</param-value>
+  </context-param>
+  <context-param>
+    <param-name>CLEANING_SERVICE_URL</param-name>
+    <param-value>/cleaningService/IdentifyData</param-value>
+  </context-param>
+  <context-param>
+    <param-name>CLUSTER_SERVICE_URL</param-name>
+    <param-value>/clusterService/cluster/post</param-value>
+  </context-param>
+  
+  	<servlet>
+    	<servlet-name>ServletStart</servlet-name>
+    	<servlet-class>edu.isi.karma.webserver.ServerStart</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>R2RMLMappingServlet</servlet-name>
+		<servlet-class>edu.isi.karma.webserver.R2RMLMappingServlet</servlet-class>
+	</servlet>
+	
+	<servlet>
+    <servlet-name>KMLFileTransferHandler</servlet-name>
+    <servlet-class>edu.isi.karma.webserver.KMLFileTransferHandler</servlet-class>
+  </servlet>
+  
+   <servlet>
+    <servlet-name>KarmaServlet</servlet-name>
+    <servlet-class>edu.isi.karma.webserver.KarmaServlet</servlet-class>
+  </servlet>
+  
+  <servlet>
+    <servlet-name>requestController</servlet-name>
+    <servlet-class>edu.isi.karma.webserver.RequestController</servlet-class>
+  </servlet>
+  
+   <servlet>
+    <servlet-name>LinkedAPIServiceHandler</servlet-name>
+    <servlet-class>edu.isi.karma.webserver.LinkedApiServiceHandler</servlet-class>
+  </servlet>
+  
+  <servlet>
+     <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>
+     <servlet-class>edu.isi.karma.webserver.SpatialReferenceSystemServiceHandler</servlet-class>
+    </servlet>
+  <servlet>
+  	<servlet-name>R2RMLMappingTripleStoreServlet</servlet-name>
+  	<servlet-class>edu.isi.karma.webserver.R2RMLMappingTripleStoreServlet</servlet-class>
+  </servlet>
+    
+  <servlet-mapping>
+    <servlet-name>KarmaServlet</servlet-name>
+    <url-pattern>/KarmaServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+  	<servlet-name>R2RMLMappingServlet</servlet-name>
+  	<url-pattern>/R2RMLMapping/local</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+  	<servlet-name>R2RMLMappingTripleStoreServlet</servlet-name>
+  	<url-pattern>/R2RMLMapping/local/repository/*</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+  	<servlet-name>R2RMLMappingServlet</servlet-name>
+  	<url-pattern>/R2RMLMapping/local/*</url-pattern>
+  </servlet-mapping>
+  
+  
+  
+  <servlet-mapping>
+    <servlet-name>requestController</servlet-name>
+    <url-pattern>/RequestController</url-pattern>
+  </servlet-mapping>
+  
+  
+  <servlet-mapping>
+    <servlet-name>KMLFileTransferHandler</servlet-name>
+    <url-pattern>/KMLFileTransferHandler</url-pattern>
+  </servlet-mapping>
+  
+ 
+  <servlet-mapping>
+    <servlet-name>LinkedAPIServiceHandler</servlet-name>
+    <url-pattern>/services/*</url-pattern>
+  </servlet-mapping>
+ 
+
+    <servlet-mapping>
+     <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>
+     <url-pattern>/SpatialReferenceSystemService/*</url-pattern>
+  </servlet-mapping> 
+</web-app>

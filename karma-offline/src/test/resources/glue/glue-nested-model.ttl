@@ -1,0 +1,75 @@
+@prefix wot: <http://xmlns.com/wot/0.1/> .
+@prefix edan-ont: <http://collection.edan.si.edu/ontologies/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dim: <http://data.nasa.gov/qudt/owl/dimension#> .
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix skos: <http://www.w3.org/2008/05/skos#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix qudt: <http://data.nasa.gov/qudt/owl/qudt#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix cc: <http://creativecommons.org/ns#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix quantity: <http://data.nasa.gov/qudt/owl/quantity#> .
+@prefix unit: <http://data.nasa.gov/qudt/owl/unit#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix oecc: <http://www.oegov.org/models/common/cc#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix km-dev: <http://isi.edu/integration/karma/dev#> .
+
+_:node18odpgdfax1 a km-dev:R2RMLMapping ;
+	km-dev:sourceName "test.json" ;
+	km-dev:modelPublicationTime "1400622298602"^^xsd:long ;
+	km-dev:modelVersion "1.1" ;
+	km-dev:hasWorksheetHistory "[{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"score\"}],\"type\":\"hNodeId\"},{\"name\":\"values\",\"value\":[{\"name\":\"checked\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"score\"}],\"type\":\"hNodeId\"},{\"name\":\"checked\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"name\"}],\"type\":\"hNodeId\"}],\"type\":\"hNodeIdList\"}],\"commandName\":\"GlueCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"Glue_1\"},{\"columnName\":\"First\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/firstName\",\"DomainLabel\":\"foaf:Person1 (add)\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person1\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"Glue_1\"},{\"columnName\":\"Last\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/lastName\",\"DomainLabel\":\"foaf:Person1\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person1\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"Glue_1\"},{\"columnName\":\"values\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/myersBriggs\",\"DomainLabel\":\"foaf:Person1\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person1\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"}]" .
+
+km-dev:TriplesMap_1 a rr:TriplesMap .
+
+_:node18odpgdfax1 km-dev:hasTriplesMap km-dev:TriplesMap_1 .
+
+_:node18odpgdfax2 rr:tableName "test.json" .
+
+km-dev:TriplesMap_1 rr:logicalTable _:node18odpgdfax2 ;
+	rr:subjectMap _:node18odpgdfax3 .
+
+_:node18odpgdfax3 a rr:SubjectMap ;
+	km-dev:alignmentNodeId "http://xmlns.com/foaf/0.1/Person1" ;
+	rr:class foaf:Person ;
+	rr:termType rr:BlankNode ;
+	km-dev:namePrefix "foaf:Person1" ;
+	a km-dev:steinerTreeRootNode .
+
+_:node18odpgdfax4 rr:predicate foaf:firstName .
+
+_:node18odpgdfax5 rr:column "[\"test\",\"Glue_1\",\"First\"]" ;
+	a rr:ObjectMap .
+
+_:node18odpgdfax4 rr:objectMap _:node18odpgdfax5 .
+
+km-dev:TriplesMap_1 rr:predicateObjectMap _:node18odpgdfax4 .
+
+_:node18odpgdfax4 a rr:PredicateObjectMap .
+
+_:node18odpgdfax6 rr:predicate foaf:lastName .
+
+_:node18odpgdfax7 rr:column "[\"test\",\"Glue_1\",\"Last\"]" ;
+	a rr:ObjectMap .
+
+_:node18odpgdfax6 rr:objectMap _:node18odpgdfax7 .
+
+km-dev:TriplesMap_1 rr:predicateObjectMap _:node18odpgdfax6 .
+
+_:node18odpgdfax6 a rr:PredicateObjectMap .
+
+_:node18odpgdfax8 rr:predicate foaf:myersBriggs .
+
+_:node18odpgdfax9 rr:column "[\"test\",\"Glue_1\",\"values\"]" ;
+	a rr:ObjectMap .
+
+_:node18odpgdfax8 rr:objectMap _:node18odpgdfax9 .
+
+km-dev:TriplesMap_1 rr:predicateObjectMap _:node18odpgdfax8 .
+
+_:node18odpgdfax8 a rr:PredicateObjectMap .

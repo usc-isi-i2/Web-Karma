@@ -1,0 +1,35 @@
+.PredicateProperty {
+	width: 150px;
+	float: left;
+	height: 60px;
+	min-height: 60px;
+	overflow-x: scroll;
+	overflow-y: hidden !important;
+}
+
+.OtherClassProperty {
+	width: 150px;
+	float: left;
+	height: 60px;
+	min-height: 60px;
+	overflow-x: scroll;
+	overflow-y: hidden !important;
+}
+
+.DataCountProperty {
+	width: 100px;
+	float: left;
+	height: 60px;
+	min-height: 60px;
+	overflow-x: scroll;
+	overflow-y: hidden !important;
+}
+
+.IncomingProperty {
+	width: 100px;
+	float: left;
+	height: 60px;
+	min-height: 60px;
+	overflow-x: scroll;
+	overflow-y: hidden !important;
+}

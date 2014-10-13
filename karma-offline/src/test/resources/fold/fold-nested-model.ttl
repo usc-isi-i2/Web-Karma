@@ -1,0 +1,84 @@
+@prefix edan-ont: <http://collection.edan.si.edu/ontologies/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dim: <http://data.nasa.gov/qudt/owl/dimension#> .
+@prefix crm: <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix skos: <http://www.w3.org/2008/05/skos#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix qudt: <http://data.nasa.gov/qudt/owl/qudt#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix cc: <http://creativecommons.org/ns#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix quantity: <http://data.nasa.gov/qudt/owl/quantity#> .
+@prefix unit: <http://data.nasa.gov/qudt/owl/unit#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix oecc: <http://www.oegov.org/models/common/cc#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix km-dev: <http://isi.edu/integration/karma/dev#> .
+
+_:node18p72u1uqx1 a km-dev:R2RMLMapping ;
+	km-dev:sourceName "test.json" ;
+	km-dev:modelPublicationTime "1401471043547"^^xsd:long ;
+	km-dev:modelVersion "1.3" ;
+	km-dev:hasWorksheetHistory "[{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"values\",\"value\":[{\"name\":\"checked\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"subject\"}],\"type\":\"hNodeId\"},{\"name\":\"checked\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"score\"}],\"type\":\"hNodeId\"}],\"type\":\"hNodeIdList\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"subject\"}],\"type\":\"hNodeId\"}],\"commandName\":\"FoldCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"name\"},{\"columnName\":\"First\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.cidoc-crm.org/cidoc-crm/P101i_was_use_of\",\"DomainLabel\":\"crm:E55_Type1 (add)\",\"DomainId\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type1\",\"DomainUri\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"fold_1\"},{\"columnName\":\"values\"},{\"columnName\":\"nested_1\"},{\"columnName\":\"values\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://www.w3.org/2008/05/skos#prefLabel\",\"DomainLabel\":\"crm:E55_Type1\",\"DomainId\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type1\",\"DomainUri\":\"http://www.cidoc-crm.org/cidoc-crm/E55_Type\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"}]" .
+
+km-dev:TriplesMap_14a8565a-0ebf-4410-a808-a95025c0a7de a rr:TriplesMap .
+
+_:node18p72u1uqx1 km-dev:hasTriplesMap km-dev:TriplesMap_14a8565a-0ebf-4410-a808-a95025c0a7de .
+
+km-dev:TriplesMap_14a8565a-0ebf-4410-a808-a95025c0a7de km-dev:isPartOfMapping _:node18p72u1uqx1 .
+
+_:node18p72u1uqx2 rr:tableName "test.json" ;
+	a rr:LogicalTable ;
+	km-dev:isPartOfMapping _:node18p72u1uqx1 .
+
+_:node18p72u1uqx1 km-dev:hasLogicalTable _:node18p72u1uqx2 .
+
+km-dev:TriplesMap_14a8565a-0ebf-4410-a808-a95025c0a7de rr:logicalTable _:node18p72u1uqx2 ;
+	rr:subjectMap _:node18p72u1uqx3 .
+
+_:node18p72u1uqx1 km-dev:hasSubjectMap _:node18p72u1uqx3 .
+
+_:node18p72u1uqx3 km-dev:isPartOfMapping _:node18p72u1uqx1 ;
+	a rr:SubjectMap ;
+	km-dev:alignmentNodeId "http://www.cidoc-crm.org/cidoc-crm/E55_Type1" ;
+	rr:class crm:E55_Type ;
+	rr:termType rr:BlankNode ;
+	km-dev:namePrefix "crm:E55_Type1" ;
+	a km-dev:steinerTreeRootNode .
+
+_:node18p72u1uqx4 rr:predicate crm:P101i_was_use_of .
+
+_:node18p72u1uqx5 rr:column "[\"test\",\"name\",\"First\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18p72u1uqx1 .
+
+_:node18p72u1uqx1 km-dev:hasObjectMap _:node18p72u1uqx5 .
+
+_:node18p72u1uqx4 rr:objectMap _:node18p72u1uqx5 .
+
+km-dev:TriplesMap_14a8565a-0ebf-4410-a808-a95025c0a7de rr:predicateObjectMap _:node18p72u1uqx4 .
+
+_:node18p72u1uqx4 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18p72u1uqx1 .
+
+_:node18p72u1uqx1 km-dev:hasPredicateObjectMap _:node18p72u1uqx4 .
+
+_:node18p72u1uqx6 rr:predicate skos:prefLabel .
+
+_:node18p72u1uqx7 rr:column "[\"test\",\"fold_1\",\"values\",\"nested_1\",\"values\"]" ;
+	a rr:ObjectMap ;
+	km-dev:isPartOfMapping _:node18p72u1uqx1 .
+
+_:node18p72u1uqx1 km-dev:hasObjectMap _:node18p72u1uqx7 .
+
+_:node18p72u1uqx6 rr:objectMap _:node18p72u1uqx7 .
+
+km-dev:TriplesMap_14a8565a-0ebf-4410-a808-a95025c0a7de rr:predicateObjectMap _:node18p72u1uqx6 .
+
+_:node18p72u1uqx6 a rr:PredicateObjectMap ;
+	km-dev:isPartOfMapping _:node18p72u1uqx1 .
+
+_:node18p72u1uqx1 km-dev:hasPredicateObjectMap _:node18p72u1uqx6 .

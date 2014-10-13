@@ -1,0 +1,136 @@
+<object/1988.16/acquisition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E8_Acquisition> .
+<the-american-art-museum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body> .
+<object/1988.16/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P22_transferred_title_to> <the-american-art-museum> .
+<object/1988.16/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P3_has_note> "Gift of the artist" .
+<object/1988.16/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P29_custody_received_by> <the-american-art-museum> .
+<object/1988.16> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<object/1988.16/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P30_transferred_custody_of> <object/1988.16> .
+<object/1988.16/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P24_transferred_title_of> <object/1988.16> .
+<thesauri/classification/GraphicArts> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1988.16> <http://collection.americanart.si.edu/id/ontologies/PE_object_mainclass> <thesauri/classification/GraphicArts> .
+<thesauri/classification/Print> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1988.16> <http://collection.americanart.si.edu/id/ontologies/PE_object_subsclass> <thesauri/classification/Print> .
+<object/1988.16> <http://collection.americanart.si.edu/id/ontologies/PE_medium_description> "etching and monotype on paper" .
+<object/1988.16/title> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E35_Title> .
+<object/1988.16> <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> <object/1988.16/title> .
+<object/1988.16/copyright> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E30_Right> .
+<object/1988.16> <http://www.cidoc-crm.org/cidoc-crm/P104_is_subject_to> <object/1988.16/copyright> .
+<object/1988.16/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<object/1988.16> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <object/1988.16/id> .
+<object/1988.16> <http://www.cidoc-crm.org/cidoc-crm/P24i_changed_ownership_through> <object/1988.16/acquisition> .
+<object/1988.16/acquisition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E10_Transfer_of_Custody> .
+<object/1988.16> <http://www.cidoc-crm.org/cidoc-crm/P30i_custody_transferred_through> <object/1988.16/acquisition> .
+<object/1988.16/objnum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<object/1988.16> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <object/1988.16/objnum> .
+<object/1988.16> <http://www.cidoc-crm.org/cidoc-crm/P52_has_current_owner> <the-american-art-museum> .
+<object/1988.16> <http://www.cidoc-crm.org/cidoc-crm/P50_has_current_keeper> <the-american-art-museum> .
+<object/1988.16/copyright> <http://www.cidoc-crm.org/cidoc-crm/P3_has_note> "\u00A9 1988, K. Achepol" .
+<thesauri/identifier/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1988.16/id> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/identifier/id> .
+<object/1988.16/id> <http://www.w3.org/2000/01/rdf-schema#label> "65" .
+<thesauri/identifier/objnum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1988.16/objnum> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/identifier/objnum> .
+<object/1988.16/objnum> <http://www.w3.org/2000/01/rdf-schema#label> "1988.16" .
+<object/1988.16/title> <http://www.w3.org/2000/01/rdf-schema#label> "Untitled--Lovers/Night Sky" .
+
+<object/1985.66.177> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<thesauri/classification/Painting> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1985.66.177> <http://collection.americanart.si.edu/id/ontologies/PE_object_mainclass> <thesauri/classification/Painting> .
+<object/1985.66.177/title> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E35_Title> .
+<object/1985.66.177> <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> <object/1985.66.177/title> .
+<object/1985.66.177/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<object/1985.66.177> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <object/1985.66.177/id> .
+<object/1985.66.177/objnum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<object/1985.66.177> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <object/1985.66.177/objnum> .
+<the-american-art-museum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body> .
+<object/1985.66.177> <http://www.cidoc-crm.org/cidoc-crm/P52_has_current_owner> <the-american-art-museum> .
+<object/1985.66.177> <http://www.cidoc-crm.org/cidoc-crm/P50_has_current_keeper> <the-american-art-museum> .
+<thesauri/identifier/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1985.66.177/id> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/identifier/id> .
+<object/1985.66.177/id> <http://www.w3.org/2000/01/rdf-schema#label> "4077" .
+<thesauri/identifier/objnum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/1985.66.177/objnum> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/identifier/objnum> .
+<object/1985.66.177/objnum> <http://www.w3.org/2000/01/rdf-schema#label> "1985.66.177" .
+<object/1985.66.177/title> <http://www.w3.org/2000/01/rdf-schema#label> "Tsee-mo\u00A8\u00B2nt, Great Wonder, Carrying Her Baby in Her Robe" .
+
+<object/VR.1998.84.50A-F> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<thesauri/classification/Painting> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/VR.1998.84.50A-F> <http://collection.americanart.si.edu/id/ontologies/PE_object_mainclass> <thesauri/classification/Painting> .
+<object/VR.1998.84.50A-F> <http://collection.americanart.si.edu/id/ontologies/PE_medium_description> "pen and colored inks on cardboard encased in plastic sleeves with metal gromets and leather ties" .
+<object/VR.1998.84.50A-F/title> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E35_Title> .
+<object/VR.1998.84.50A-F> <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> <object/VR.1998.84.50A-F/title> .
+<object/VR.1998.84.50A-F/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<object/VR.1998.84.50A-F> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <object/VR.1998.84.50A-F/id> .
+<object/VR.1998.84.50A-F/objnum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<object/VR.1998.84.50A-F> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <object/VR.1998.84.50A-F/objnum> .
+<the-american-art-museum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body> .
+<object/VR.1998.84.50A-F> <http://www.cidoc-crm.org/cidoc-crm/P52_has_current_owner> <the-american-art-museum> .
+<object/VR.1998.84.50A-F> <http://www.cidoc-crm.org/cidoc-crm/P50_has_current_keeper> <the-american-art-museum> .
+<thesauri/identifier/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/VR.1998.84.50A-F/id> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/identifier/id> .
+<object/VR.1998.84.50A-F/id> <http://www.w3.org/2000/01/rdf-schema#label> "80354" .
+<thesauri/identifier/objnum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/VR.1998.84.50A-F/objnum> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/identifier/objnum> .
+<object/VR.1998.84.50A-F/objnum> <http://www.w3.org/2000/01/rdf-schema#label> "VR.1998.84.50A-F" .
+<object/VR.1998.84.50A-F/title> <http://www.w3.org/2000/01/rdf-schema#label> "Tattoo Flash Sample Book" .
+
+<object/L.1968.84.1/acquisition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E8_Acquisition> .
+<the-american-art-museum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body> .
+<object/L.1968.84.1/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P22_transferred_title_to> <the-american-art-museum> .
+<object/L.1968.84.1/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P3_has_note> "Lent by the Department of the Interior Museum" .
+<object/L.1968.84.1/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P29_custody_received_by> <the-american-art-museum> .
+<object/L.1968.84.1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<object/L.1968.84.1/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P30_transferred_custody_of> <object/L.1968.84.1> .
+<object/L.1968.84.1/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P24_transferred_title_of> <object/L.1968.84.1> .
+<thesauri/classification/Painting> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/L.1968.84.1> <http://collection.americanart.si.edu/id/ontologies/PE_object_mainclass> <thesauri/classification/Painting> .
+<object/L.1968.84.1> <http://collection.americanart.si.edu/id/ontologies/PE_medium_description> "oil on canvas mounted on aluminum" .
+<object/L.1968.84.1/title> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E35_Title> .
+<object/L.1968.84.1> <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> <object/L.1968.84.1/title> .
+<object/L.1968.84.1/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<object/L.1968.84.1> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <object/L.1968.84.1/id> .
+<object/L.1968.84.1> <http://www.cidoc-crm.org/cidoc-crm/P24i_changed_ownership_through> <object/L.1968.84.1/acquisition> .
+<object/L.1968.84.1/acquisition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E10_Transfer_of_Custody> .
+<object/L.1968.84.1> <http://www.cidoc-crm.org/cidoc-crm/P30i_custody_transferred_through> <object/L.1968.84.1/acquisition> .
+<object/L.1968.84.1/objnum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<object/L.1968.84.1> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <object/L.1968.84.1/objnum> .
+<object/L.1968.84.1> <http://www.cidoc-crm.org/cidoc-crm/P52_has_current_owner> <the-american-art-museum> .
+<object/L.1968.84.1> <http://www.cidoc-crm.org/cidoc-crm/P50_has_current_keeper> <the-american-art-museum> .
+<thesauri/identifier/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/L.1968.84.1/id> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/identifier/id> .
+<object/L.1968.84.1/id> <http://www.w3.org/2000/01/rdf-schema#label> "17832" .
+<thesauri/identifier/objnum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/L.1968.84.1/objnum> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/identifier/objnum> .
+<object/L.1968.84.1/objnum> <http://www.w3.org/2000/01/rdf-schema#label> "L.1968.84.1" .
+<object/L.1968.84.1/title> <http://www.w3.org/2000/01/rdf-schema#label> "The Grand Canyon of the Yellowstone" .
+
+<object/2009.NJP.VID.1/acquisition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E8_Acquisition> .
+<the-american-art-museum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E40_Legal_Body> .
+<object/2009.NJP.VID.1/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P22_transferred_title_to> <the-american-art-museum> .
+<object/2009.NJP.VID.1/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P3_has_note> "Smithsonian American Art Museum, Nam June Paik Archive; Gift of the Artist's Estate" .
+<object/2009.NJP.VID.1/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P29_custody_received_by> <the-american-art-museum> .
+<object/2009.NJP.VID.1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E22_Man-Made_Object> .
+<object/2009.NJP.VID.1/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P30_transferred_custody_of> <object/2009.NJP.VID.1> .
+<object/2009.NJP.VID.1/acquisition> <http://www.cidoc-crm.org/cidoc-crm/P24_transferred_title_of> <object/2009.NJP.VID.1> .
+<thesauri/classification/MediaArts> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/2009.NJP.VID.1> <http://collection.americanart.si.edu/id/ontologies/PE_object_mainclass> <thesauri/classification/MediaArts> .
+<object/2009.NJP.VID.1> <http://collection.americanart.si.edu/id/ontologies/PE_medium_description> "single-channel video, color, sound; 80:00 minutes" .
+<object/2009.NJP.VID.1/title> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E35_Title> .
+<object/2009.NJP.VID.1> <http://www.cidoc-crm.org/cidoc-crm/P102_has_title> <object/2009.NJP.VID.1/title> .
+<object/2009.NJP.VID.1/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<object/2009.NJP.VID.1> <http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by> <object/2009.NJP.VID.1/id> .
+<object/2009.NJP.VID.1> <http://www.cidoc-crm.org/cidoc-crm/P24i_changed_ownership_through> <object/2009.NJP.VID.1/acquisition> .
+<object/2009.NJP.VID.1/acquisition> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E10_Transfer_of_Custody> .
+<object/2009.NJP.VID.1> <http://www.cidoc-crm.org/cidoc-crm/P30i_custody_transferred_through> <object/2009.NJP.VID.1/acquisition> .
+<object/2009.NJP.VID.1/objnum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E42_Identifier> .
+<object/2009.NJP.VID.1> <http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier> <object/2009.NJP.VID.1/objnum> .
+<object/2009.NJP.VID.1> <http://www.cidoc-crm.org/cidoc-crm/P52_has_current_owner> <the-american-art-museum> .
+<object/2009.NJP.VID.1> <http://www.cidoc-crm.org/cidoc-crm/P50_has_current_keeper> <the-american-art-museum> .
+<thesauri/identifier/id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/2009.NJP.VID.1/id> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/identifier/id> .
+<object/2009.NJP.VID.1/id> <http://www.w3.org/2000/01/rdf-schema#label> "79097" .
+<thesauri/identifier/objnum> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.cidoc-crm.org/cidoc-crm/E55_Type> .
+<object/2009.NJP.VID.1/objnum> <http://www.cidoc-crm.org/cidoc-crm/P2_has_type> <thesauri/identifier/objnum> .
+<object/2009.NJP.VID.1/objnum> <http://www.w3.org/2000/01/rdf-schema#label> "2009.NJP.VID.1" .
+<object/2009.NJP.VID.1/title> <http://www.w3.org/2000/01/rdf-schema#label> "9/23/69: Experiment with David Atwood" .
+

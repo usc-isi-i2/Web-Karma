@@ -1,0 +1,228 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
+
+table#currentSemanticTypesTable tr.currentEditRow {
+	background-color: #E2E2E2;
+	border-collapse: collapse;
+	border-spacing: 0px;
+}
+
+table#currentSemanticTypesTable tr.fixMe, table#currentIncomingLinksTable tr.fixMe, table#currentOutgoingLinksTable tr.fixMe {
+	background-color: #FFBABA;
+	border-collapse: collapse;
+	border-spacing: 0px;
+}
+
+table#currentSemanticTypesTable {
+	border-collapse: collapse;
+	border-width: 0px;
+	border-spacing: 0px;
+}
+
+table#currentSemanticTypesTable table td {
+	text-align: right;
+}
+
+table#currentSemanticTypesTable button {
+	font-size: 0.8em;
+	padding: 2px;
+}
+
+div#SemanticTypeErrorWindow span {
+	font-size: 10px;
+	display: block;
+}
+
+div#SemanticTypeErrorWindow.ui-widget {
+	font-size: 0.4em;
+	width: 250px;
+}
+
+table#AlternativeParentLinksTable td {
+	padding: 4px;
+	font-size: 10px;
+}
+
+div#classOntologyBox {
+	font-size: 0.6em;
+}
+
+div#propertyOntologyBox {
+	font-size: 0.6em;
+}
+
+div#classTree {
+	overflow: auto;
+}
+
+div#propertyTree {
+	overflow: auto;
+}
+
+span#propertyName {
+	
+}
+
+.ui-menu-item {
+	font-size: 10px;
+}
+
+text.ForcedByUser {
+	fill: blue;
+}
+
+div#OntologyAlternativeLinksPanel input {
+	font-size: 10px;
+}
+
+.ui-autocomplete-category {
+    font-weight: bold;
+    font-size: 10px;
+    /*padding: .2em .4em;
+    margin: 8px 0 2px;*/
+    line-height: 1.5;
+}
+
+.ui-combobox {
+    position: relative;
+    display: inline-block;
+    font-size: 10px;
+}
+
+.ui-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    /* support: IE7 */
+    *height: 1.7em;
+    *top: 0.1em;
+}
+
+.ui-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+}
+
+div#rdfTypeSelectDiv {
+	margin-bottom: 12px;
+}
+
+#CurrentLinksBox table {
+    margin-top: 5px;
+    border-collapse: collapse;
+}
+
+#CurrentLinksBox table td {
+    height: 25px;
+    padding: 3px;
+}
+
+#CurrentLinksBox table td img:hover {
+    cursor: pointer;
+}
+
+#CurrentLinksBox table td.currentEditedCell {
+    background-color: #add8e6;
+}
+
+#CurrentLinksBox table td.valueChangedCell {
+    background-color: #f0f8ff;
+}
+
+.inlineDiv {
+    display: inline;
+}
+
+#nodesList td, #linksList td, #alternativeLinksList td, #modelsList td {
+    height: 20px;
+    background-color: #F0F0F0;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+
+#chooseNodeDialog {
+    position: relative;
+}
+
+#nodesList td:hover, #linksList td:hover, #alternativeLinksList td:hover, #modelsList td:hover {
+    cursor: pointer;
+    background-color: #E0E0E0;
+}
+
+#nodesList td.selected, #linksList td.selected, #alternativeLinksList td.selected, #modelsList td.selected {
+    background-color: #D0D0D0;
+}
+
+table#currentIncomingLinksTable button,  table#currentOutgoingLinksTable button {
+    height: 1.6em;
+    width: 1.6em;
+}
+
+#addIncomingInternalNodeLink, #addOutgoingInternalNodeLink {
+    font-size: 1.8em;
+}
+
+#CurrentLinksBox .node-or-edge-label {
+    font-weight: bold;
+    padding: 4px;
+}
+
+#CurrentLinksBox .node-or-edge-label:hover {
+    background-color: #d3d3d3;
+    cursor: pointer;
+}
+
+button.deleteLink {
+    margin-left: 15px;
+}
+
+div.italic {
+    font-style: italic;
+}
+
+#showExistingModelDialog div.error {
+    margin-left: 20px;
+    margin-bottom: 5px;
+}
+
+div.incomingOutgoingLinksSeparator {
+	height: 4px;
+	width: 100%;
+	background: #AAAAAA;
+}
+div.separator {
+	height: 4px;
+	width: 100%;
+	background: #AAAAAA;
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+div.separatorWithText {
+	padding: 3px;
+	color: white;
+	width: 100%;
+	background: #AAAAAA;
+	margin-top: 2px;
+	margin-bottom: 2px;
+}

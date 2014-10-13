@@ -1,0 +1,1878 @@
+@prefix vitro-public: <http://vitro.mannlib.cornell.edu/ns/vitro/public#> .
+@prefix c4o: <http://purl.org/spar/c4o/> .
+@prefix syll: <http://lod.isi.edu/ontology/syllabus/> .
+@prefix ero: <http://purl.obolibrary.org/obo/> .
+@prefix pvs: <http://vivoweb.org/ontology/provenance-support#> .
+@prefix owl2: <http://www.w3.org/2006/12/owl2-xml#> .
+@prefix scirr: <http://vivoweb.org/ontology/scientific-research-resource#> .
+@prefix vivo: <http://vivoweb.org/ontology/core#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix afn: <http://jena.hpl.hp.com/ARQ/function#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix scires: <http://vivoweb.org/ontology/scientific-research#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcmitype: <http://purl.org/dc/dcmitype/> .
+@prefix geo: <http://aims.fao.org/aos/geopolitical.owl#> .
+@prefix skco: <http://www.w3.org/2004/02/skos/core#> .
+@prefix event: <http://purl.org/NET/c4dm/event.owl#> .
+@prefix wot: <http://xmlns.com/wot/0.1/> .
+@prefix dcelem: <http://purl.org/dc/elements/1.1/> .
+@prefix vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix skos: <http://www.w3.org/2008/05/skos#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dcam: <http://purl.org/dc/dcam/> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix km-dev: <http://isi.edu/integration/karma/dev#> .
+
+_:node18b0jn3llx1 a km-dev:R2RMLMapping ;
+	km-dev:sourceName "cs548-events.json" ;
+	km-dev:modelPublicationTime "1386221375157"^^xsd:long ;
+	km-dev:hasWorksheetHistory """[
+  {
+    \"commandName\": \"SubmitPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"course_uri\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return \\\"http://lod.isi.edu/cs548/2014/spring\\\"\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"course\"}]
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SetMetaPropertyCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\",
+        \"value\": \"isUriOfClass\"
+      },
+      {
+        \"name\": \"metaPropertyValue\",
+        \"type\": \"other\",
+        \"value\": \"http://lod.isi.edu/ontology/syllabus/Course\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"course_uri\"}]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SubmitPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"homework_uri\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return \\\"http://lod.isi.edu/cs548/homework/\\\"+getValue(\\\"id\\\")\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"homeworks\"},
+          {\"columnName\": \"id\"}
+        ]
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SetMetaPropertyCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\",
+        \"value\": \"isUriOfClass\"
+      },
+      {
+        \"name\": \"metaPropertyValue\",
+        \"type\": \"other\",
+        \"value\": \"http://lod.isi.edu/ontology/syllabus/Homework1\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"homeworks\"},
+          {\"columnName\": \"homework_uri\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"homeworks\"},
+          {\"columnName\": \"title\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://lod.isi.edu/ontology/syllabus/Homework1\",
+          \"FullType\": \"http://purl.org/dc/terms/title\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"homeworks\"},
+          {\"columnName\": \"id\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://lod.isi.edu/ontology/syllabus/Homework1\",
+          \"FullType\": \"http://purl.org/dc/terms/identifier\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"course\"}]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://lod.isi.edu/ontology/syllabus/Course1\",
+          \"FullType\": \"http://www.w3.org/2000/01/rdf-schema#label\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"homeworks\"},
+          {\"columnName\": \"description\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://lod.isi.edu/ontology/syllabus/Homework1\",
+          \"FullType\": \"http://purl.org/dc/terms/description\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SubmitPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"lecture_uri\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return \\\"http://lod.isi.edu/cs548/lecture/\\\"+getValue(\\\"id\\\")\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"lectures\"},
+          {\"columnName\": \"id\"}
+        ]
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SetMetaPropertyCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\",
+        \"value\": \"isUriOfClass\"
+      },
+      {
+        \"name\": \"metaPropertyValue\",
+        \"type\": \"other\",
+        \"value\": \"http://lod.isi.edu/ontology/syllabus/Lecture1\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"lectures\"},
+          {\"columnName\": \"lecture_uri\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"lectures\"},
+          {\"columnName\": \"id\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://lod.isi.edu/ontology/syllabus/Lecture1\",
+          \"FullType\": \"http://purl.org/dc/terms/identifier\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"lectures\"},
+          {\"columnName\": \"description\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://lod.isi.edu/ontology/syllabus/Lecture1\",
+          \"FullType\": \"http://purl.org/dc/terms/description\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"lectures\"},
+          {\"columnName\": \"title\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://lod.isi.edu/ontology/syllabus/Lecture1\",
+          \"FullType\": \"http://purl.org/dc/terms/title\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SubmitEditPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"course_uri\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return \\\"http://lod.isi.edu/course/cs548/2014/spring\\\"\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"course\"}]
+      },
+      {
+        \"name\": \"previousCommandId\",
+        \"type\": \"other\",
+        \"value\": \"C205\"
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      },
+      {
+        \"name\": \"targetHNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"course_uri\"}]
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SubmitPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"course_uri\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return \\\"http://lod.isi.edu/course/\\\"+getValue(\\\"values\\\")\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"prerequisites\"},
+          {\"columnName\": \"values\"}
+        ]
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SetMetaPropertyCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\",
+        \"value\": \"isUriOfClass\"
+      },
+      {
+        \"name\": \"metaPropertyValue\",
+        \"type\": \"other\",
+        \"value\": \"http://lod.isi.edu/ontology/syllabus/Course\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"prerequisites\"},
+          {\"columnName\": \"course_uri\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"ChangeInternalNodeLinksCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"initialEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"direction\": \"outgoing\",
+          \"edgeId\": \"http://lod.isi.edu/ontology/syllabus/hasHomework\",
+          \"edgeLabel\": \"syll:hasHomework\",
+          \"edgeSource\": \"syll:Course2\",
+          \"edgeSourceId\": \"http://lod.isi.edu/ontology/syllabus/Course2\",
+          \"edgeTarget\": \"syll:Homework1\",
+          \"edgeTargetId\": \"http://lod.isi.edu/ontology/syllabus/Homework1\"
+        }]
+      },
+      {
+        \"name\": \"alignmentId\",
+        \"type\": \"other\",
+        \"value\": \"WSP7:WS1AL\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"newEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"edgeId\": \"http://vivoweb.org/ontology/core#hasPrerequisite\",
+          \"edgeSourceId\": \"http://lod.isi.edu/ontology/syllabus/Course1\",
+          \"edgeTargetId\": \"http://lod.isi.edu/ontology/syllabus/Course2\"
+        }]
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"prerequisites\"},
+          {\"columnName\": \"values\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://lod.isi.edu/ontology/syllabus/Course2\",
+          \"FullType\": \"http://www.w3.org/2000/01/rdf-schema#label\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetWorksheetPropertiesCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"properties\",
+        \"type\": \"other\",
+        \"value\": {
+          \"graphName\": \"http://lod.isi.edu/cs548/model/events\",
+          \"hasServiceProperties\": false
+        }
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SubmitPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"project_uri\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return \\\"http://lod.isi.edu/cs548/project/\\\"+getValue(\\\"id\\\")\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"project\"},
+          {\"columnName\": \"id\"}
+        ]
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SetMetaPropertyCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\",
+        \"value\": \"isUriOfClass\"
+      },
+      {
+        \"name\": \"metaPropertyValue\",
+        \"type\": \"other\",
+        \"value\": \"http://lod.isi.edu/ontology/syllabus/ProjectEvent1\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"project\"},
+          {\"columnName\": \"project_uri\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"ChangeInternalNodeLinksCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"initialEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"direction\": \"outgoing\",
+          \"edgeId\": \"http://vivoweb.org/ontology/core#includesEvent\",
+          \"edgeLabel\": \"vivo:includesEvent\",
+          \"edgeSource\": \"syll:ProjectEvent1\",
+          \"edgeSourceId\": \"http://lod.isi.edu/ontology/syllabus/ProjectEvent1\",
+          \"edgeTarget\": \"syll:Homework1\",
+          \"edgeTargetId\": \"http://lod.isi.edu/ontology/syllabus/Homework1\"
+        }]
+      },
+      {
+        \"name\": \"alignmentId\",
+        \"type\": \"other\",
+        \"value\": \"WSP7:WS1AL\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"newEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"edgeId\": \"http://lod.isi.edu/ontology/syllabus/hasProjectEvent\",
+          \"edgeSourceId\": \"http://lod.isi.edu/ontology/syllabus/Course1\",
+          \"edgeTargetId\": \"http://lod.isi.edu/ontology/syllabus/ProjectEvent1\"
+        }]
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"project\"},
+          {\"columnName\": \"id\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://lod.isi.edu/ontology/syllabus/ProjectEvent1\",
+          \"FullType\": \"http://purl.org/dc/terms/identifier\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"project\"},
+          {\"columnName\": \"description\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://lod.isi.edu/ontology/syllabus/ProjectEvent1\",
+          \"FullType\": \"http://purl.org/dc/terms/description\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"project\"},
+          {\"columnName\": \"title\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://lod.isi.edu/ontology/syllabus/ProjectEvent1\",
+          \"FullType\": \"http://purl.org/dc/terms/title\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SubmitEditPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"homework_uri\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return \\\"http://lod.isi.edu/cs548/homework/\\\"+getValue(\\\"id\\\").replace(\\\":\\\", \\\"-\\\")\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"homeworks\"},
+          {\"columnName\": \"id\"}
+        ]
+      },
+      {
+        \"name\": \"previousCommandId\",
+        \"type\": \"other\",
+        \"value\": \"C212\"
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      },
+      {
+        \"name\": \"targetHNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"homeworks\"},
+          {\"columnName\": \"homework_uri\"}
+        ]
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SubmitEditPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"project_uri\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return \\\"http://lod.isi.edu/cs548/project/\\\"+getValue(\\\"id\\\").replace(\\\":\\\",\\\"-\\\")\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"project\"},
+          {\"columnName\": \"id\"}
+        ]
+      },
+      {
+        \"name\": \"previousCommandId\",
+        \"type\": \"other\",
+        \"value\": \"C277\"
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      },
+      {
+        \"name\": \"targetHNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"project\"},
+          {\"columnName\": \"project_uri\"}
+        ]
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SubmitPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"instructor_uri\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return \\\"http://lod.isi.edu/cs548/person/\\\"+getValue(\\\"values\\\").capitalize()\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"instructors\"},
+          {\"columnName\": \"values\"}
+        ]
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SetMetaPropertyCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\",
+        \"value\": \"isUriOfClass\"
+      },
+      {
+        \"name\": \"metaPropertyValue\",
+        \"type\": \"other\",
+        \"value\": \"http://lod.isi.edu/ontology/syllabus/Person1\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"instructors\"},
+          {\"columnName\": \"instructor_uri\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"ChangeInternalNodeLinksCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"initialEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"direction\": \"incoming\",
+          \"edgeId\": \"http://lod.isi.edu/ontology/syllabus/hasGrader\",
+          \"edgeLabel\": \"syll:hasGrader\",
+          \"edgeSource\": \"syll:Course2\",
+          \"edgeSourceId\": \"http://lod.isi.edu/ontology/syllabus/Course2\",
+          \"edgeTarget\": \"syll:Person1\",
+          \"edgeTargetId\": \"http://lod.isi.edu/ontology/syllabus/Person1\"
+        }]
+      },
+      {
+        \"name\": \"alignmentId\",
+        \"type\": \"other\",
+        \"value\": \"WSP12:WS1AL\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"newEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"edgeId\": \"http://lod.isi.edu/ontology/syllabus/hasInstructor\",
+          \"edgeSourceId\": \"http://lod.isi.edu/ontology/syllabus/Course1\",
+          \"edgeTargetId\": \"http://lod.isi.edu/ontology/syllabus/Person1\"
+        }]
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SubmitPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"ta_uri\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return \\\"http://lod.isi.edu/cs548/person/\\\"+getValue(\\\"values\\\").capitalize()\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"teaching-assistants\"},
+          {\"columnName\": \"values\"}
+        ]
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SetMetaPropertyCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\",
+        \"value\": \"isUriOfClass\"
+      },
+      {
+        \"name\": \"metaPropertyValue\",
+        \"type\": \"other\",
+        \"value\": \"http://lod.isi.edu/ontology/syllabus/Person\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"teaching-assistants\"},
+          {\"columnName\": \"ta_uri\"}
+        ]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"ChangeInternalNodeLinksCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"initialEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"direction\": \"incoming\",
+          \"edgeId\": \"http://lod.isi.edu/ontology/syllabus/hasGrader\",
+          \"edgeLabel\": \"syll:hasGrader\",
+          \"edgeSource\": \"syll:Course2\",
+          \"edgeSourceId\": \"http://lod.isi.edu/ontology/syllabus/Course2\",
+          \"edgeTarget\": \"syll:Person2\",
+          \"edgeTargetId\": \"http://lod.isi.edu/ontology/syllabus/Person2\"
+        }]
+      },
+      {
+        \"name\": \"alignmentId\",
+        \"type\": \"other\",
+        \"value\": \"WSP12:WS1AL\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"newEdges\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"edgeId\": \"http://lod.isi.edu/ontology/syllabus/hasTeachingAssistant\",
+          \"edgeSourceId\": \"http://lod.isi.edu/ontology/syllabus/Course1\",
+          \"edgeTargetId\": \"http://lod.isi.edu/ontology/syllabus/Person2\"
+        }]
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"AddColumnCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"comment\"}]
+      },
+      {
+        \"name\": \"hTableId\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"course_title\"
+      },
+      {
+        \"name\": \"defaultValue\",
+        \"type\": \"other\",
+        \"value\": \"Information Integration on the Web (CS 548)\"
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"course_title\"}]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://lod.isi.edu/ontology/syllabus/Course1\",
+          \"FullType\": \"http://purl.org/dc/terms/title\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SetSemanticTypeCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"metaPropertyName\",
+        \"type\": \"other\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [{\"columnName\": \"classroom\"}]
+      },
+      {
+        \"name\": \"SemanticTypesArray\",
+        \"type\": \"other\",
+        \"value\": [{
+          \"Domain\": \"http://lod.isi.edu/ontology/syllabus/Course1\",
+          \"FullType\": \"http://lod.isi.edu/ontology/syllabus/hasClassroom\",
+          \"isPrimary\": true
+        }]
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"isKey\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"trainAndShowUpdates\",
+        \"type\": \"other\",
+        \"value\": false
+      },
+      {
+        \"name\": \"rdfLiteralType\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      }
+    ],
+    \"tags\": [\"Modeling\"]
+  },
+  {
+    \"commandName\": \"SubmitEditPythonTransformationCommand\",
+    \"inputParameters\": [
+      {
+        \"name\": \"newColumnName\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      },
+      {
+        \"name\": \"transformationCode\",
+        \"type\": \"other\",
+        \"value\": \"return \\\"http://lod.isi.edu/cs548/lecture/\\\"+getValue(\\\"id\\\").replace(\\\":\\\", \\\"-\\\")\"
+      },
+      {
+        \"name\": \"worksheetId\",
+        \"type\": \"worksheetId\",
+        \"value\": \"W\"
+      },
+      {
+        \"name\": \"hNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"lectures\"},
+          {\"columnName\": \"id\"}
+        ]
+      },
+      {
+        \"name\": \"previousCommandId\",
+        \"type\": \"other\",
+        \"value\": \"C250\"
+      },
+      {
+        \"name\": \"errorDefaultValue\",
+        \"type\": \"other\",
+        \"value\": \"\"
+      },
+      {
+        \"name\": \"targetHNodeId\",
+        \"type\": \"hNodeId\",
+        \"value\": [
+          {\"columnName\": \"lectures\"},
+          {\"columnName\": \"lecture_uri\"}
+        ]
+      }
+    ],
+    \"tags\": [\"Transformation\"]
+  }
+]
+""" .
+
+km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 a rr:TriplesMap .
+
+_:node18b0jn3llx1 km-dev:hasTriplesMap km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 .
+
+_:node18b0jn3llx2 rr:tableName "cs548-events.json" .
+
+km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 rr:logicalTable _:node18b0jn3llx2 .
+
+_:node18b0jn3llx3 rr:template "{\"course_uri\"}" .
+
+km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 rr:subjectMap _:node18b0jn3llx3 .
+
+_:node18b0jn3llx3 km-dev:alignmentNodeId "http://lod.isi.edu/ontology/syllabus/Course1" ;
+	rr:class syll:Course ;
+	a km-dev:steinerTreeRootNode .
+
+_:node18b0jn3llx5 rr:predicate syll:hasClassroom .
+
+_:node18b0jn3llx6 rr:column "classroom" ;
+	rr:datatype "" .
+
+_:node18b0jn3llx5 rr:objectMap _:node18b0jn3llx6 .
+
+km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 rr:predicateObjectMap _:node18b0jn3llx5 .
+
+_:node18b0jn3llx7 rr:predicate syll:hasHomework .
+
+km-dev:RefObjectMap_2d947f4f-7dcf-47ee-9701-955999ec0541 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_6b0c7968-fabb-45de-be84-f47284fc3c7a .
+
+_:node18b0jn3llx7 rr:objectMap km-dev:RefObjectMap_2d947f4f-7dcf-47ee-9701-955999ec0541 .
+
+km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 rr:predicateObjectMap _:node18b0jn3llx7 .
+
+_:node18b0jn3llx8 rr:predicate syll:hasInstructor .
+
+km-dev:RefObjectMap_c884583e-025d-4907-84de-05954faa2e1b a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_7775592a-ceea-4698-926c-899207e29a66 .
+
+_:node18b0jn3llx8 rr:objectMap km-dev:RefObjectMap_c884583e-025d-4907-84de-05954faa2e1b .
+
+km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 rr:predicateObjectMap _:node18b0jn3llx8 .
+
+_:node18b0jn3llx9 rr:predicate syll:hasLecture .
+
+km-dev:RefObjectMap_feab3939-6130-4542-9804-dce7215871fa a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_1c503a8c-c637-41a6-9c6b-c98fb93f5552 .
+
+_:node18b0jn3llx9 rr:objectMap km-dev:RefObjectMap_feab3939-6130-4542-9804-dce7215871fa .
+
+km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 rr:predicateObjectMap _:node18b0jn3llx9 .
+
+_:node18b0jn3llx10 rr:predicate syll:hasProjectEvent .
+
+km-dev:RefObjectMap_371b79e6-95bd-4c68-ab8e-6a07f206b2d2 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_946a21f5-d8ab-417a-9b2a-40712a5cafe8 .
+
+_:node18b0jn3llx10 rr:objectMap km-dev:RefObjectMap_371b79e6-95bd-4c68-ab8e-6a07f206b2d2 .
+
+km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 rr:predicateObjectMap _:node18b0jn3llx10 .
+
+_:node18b0jn3llx11 rr:predicate syll:hasTeachingAssistant .
+
+km-dev:RefObjectMap_eaf1f6fd-a285-4d30-817a-19ff91cf9ed4 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_d91924e7-8d52-475c-8b88-06302b25ef34 .
+
+_:node18b0jn3llx11 rr:objectMap km-dev:RefObjectMap_eaf1f6fd-a285-4d30-817a-19ff91cf9ed4 .
+
+km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 rr:predicateObjectMap _:node18b0jn3llx11 .
+
+_:node18b0jn3llx12 rr:predicate dcterms:title .
+
+_:node18b0jn3llx13 rr:column "course_title" ;
+	rr:datatype "" .
+
+_:node18b0jn3llx12 rr:objectMap _:node18b0jn3llx13 .
+
+km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 rr:predicateObjectMap _:node18b0jn3llx12 .
+
+_:node18b0jn3llx14 rr:predicate vivo:hasPrerequisite .
+
+km-dev:RefObjectMap_eacff2fc-dfaa-4308-b31c-c4429a17df21 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_795f536c-58ca-4817-9797-5789a404cad9 .
+
+_:node18b0jn3llx14 rr:objectMap km-dev:RefObjectMap_eacff2fc-dfaa-4308-b31c-c4429a17df21 .
+
+km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 rr:predicateObjectMap _:node18b0jn3llx14 .
+
+_:node18b0jn3llx15 rr:predicate rdfs:label .
+
+_:node18b0jn3llx16 rr:column "course" ;
+	rr:datatype "" .
+
+_:node18b0jn3llx15 rr:objectMap _:node18b0jn3llx16 .
+
+km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 rr:predicateObjectMap _:node18b0jn3llx15 .
+
+km-dev:TriplesMap_6b0c7968-fabb-45de-be84-f47284fc3c7a a rr:TriplesMap .
+
+_:node18b0jn3llx1 km-dev:hasTriplesMap km-dev:TriplesMap_6b0c7968-fabb-45de-be84-f47284fc3c7a .
+
+_:node18b0jn3llx17 rr:tableName "cs548-events.json" .
+
+km-dev:TriplesMap_6b0c7968-fabb-45de-be84-f47284fc3c7a rr:logicalTable _:node18b0jn3llx17 .
+
+_:node18b0jn3llx18 rr:template "{\"[\"homeworks\",\"homework_uri\"]\"}" .
+
+km-dev:TriplesMap_6b0c7968-fabb-45de-be84-f47284fc3c7a rr:subjectMap _:node18b0jn3llx18 .
+
+_:node18b0jn3llx18 km-dev:alignmentNodeId "http://lod.isi.edu/ontology/syllabus/Homework1" ;
+	rr:class syll:Homework .
+
+_:node18b0jn3llx20 rr:predicate dcterms:description .
+
+_:node18b0jn3llx21 rr:column "[\"homeworks\",\"description\"]" ;
+	rr:datatype "" .
+
+_:node18b0jn3llx20 rr:objectMap _:node18b0jn3llx21 .
+
+km-dev:TriplesMap_6b0c7968-fabb-45de-be84-f47284fc3c7a rr:predicateObjectMap _:node18b0jn3llx20 .
+
+_:node18b0jn3llx22 rr:predicate dcterms:identifier .
+
+_:node18b0jn3llx23 rr:column "[\"homeworks\",\"id\"]" ;
+	rr:datatype "" .
+
+_:node18b0jn3llx22 rr:objectMap _:node18b0jn3llx23 .
+
+km-dev:TriplesMap_6b0c7968-fabb-45de-be84-f47284fc3c7a rr:predicateObjectMap _:node18b0jn3llx22 .
+
+_:node18b0jn3llx24 rr:predicate dcterms:title .
+
+_:node18b0jn3llx25 rr:column "[\"homeworks\",\"title\"]" ;
+	rr:datatype "" .
+
+_:node18b0jn3llx24 rr:objectMap _:node18b0jn3llx25 .
+
+km-dev:TriplesMap_6b0c7968-fabb-45de-be84-f47284fc3c7a rr:predicateObjectMap _:node18b0jn3llx24 .
+
+km-dev:TriplesMap_7775592a-ceea-4698-926c-899207e29a66 a rr:TriplesMap .
+
+_:node18b0jn3llx1 km-dev:hasTriplesMap km-dev:TriplesMap_7775592a-ceea-4698-926c-899207e29a66 .
+
+_:node18b0jn3llx26 rr:tableName "cs548-events.json" .
+
+km-dev:TriplesMap_7775592a-ceea-4698-926c-899207e29a66 rr:logicalTable _:node18b0jn3llx26 .
+
+_:node18b0jn3llx27 rr:template "{\"[\"instructors\",\"instructor_uri\"]\"}" .
+
+km-dev:TriplesMap_7775592a-ceea-4698-926c-899207e29a66 rr:subjectMap _:node18b0jn3llx27 .
+
+_:node18b0jn3llx27 km-dev:alignmentNodeId "http://lod.isi.edu/ontology/syllabus/Person1" ;
+	rr:class syll:Person .
+
+km-dev:TriplesMap_1c503a8c-c637-41a6-9c6b-c98fb93f5552 a rr:TriplesMap .
+
+_:node18b0jn3llx1 km-dev:hasTriplesMap km-dev:TriplesMap_1c503a8c-c637-41a6-9c6b-c98fb93f5552 .
+
+_:node18b0jn3llx29 rr:tableName "cs548-events.json" .
+
+km-dev:TriplesMap_1c503a8c-c637-41a6-9c6b-c98fb93f5552 rr:logicalTable _:node18b0jn3llx29 .
+
+_:node18b0jn3llx30 rr:template "{\"[\"lectures\",\"lecture_uri\"]\"}" .
+
+km-dev:TriplesMap_1c503a8c-c637-41a6-9c6b-c98fb93f5552 rr:subjectMap _:node18b0jn3llx30 .
+
+_:node18b0jn3llx30 km-dev:alignmentNodeId "http://lod.isi.edu/ontology/syllabus/Lecture1" ;
+	rr:class syll:Lecture .
+
+_:node18b0jn3llx32 rr:predicate dcterms:description .
+
+_:node18b0jn3llx33 rr:column "[\"lectures\",\"description\"]" ;
+	rr:datatype "" .
+
+_:node18b0jn3llx32 rr:objectMap _:node18b0jn3llx33 .
+
+km-dev:TriplesMap_1c503a8c-c637-41a6-9c6b-c98fb93f5552 rr:predicateObjectMap _:node18b0jn3llx32 .
+
+_:node18b0jn3llx34 rr:predicate dcterms:identifier .
+
+_:node18b0jn3llx35 rr:column "[\"lectures\",\"id\"]" ;
+	rr:datatype "" .
+
+_:node18b0jn3llx34 rr:objectMap _:node18b0jn3llx35 .
+
+km-dev:TriplesMap_1c503a8c-c637-41a6-9c6b-c98fb93f5552 rr:predicateObjectMap _:node18b0jn3llx34 .
+
+_:node18b0jn3llx36 rr:predicate dcterms:title .
+
+_:node18b0jn3llx37 rr:column "[\"lectures\",\"title\"]" ;
+	rr:datatype "" .
+
+_:node18b0jn3llx36 rr:objectMap _:node18b0jn3llx37 .
+
+km-dev:TriplesMap_1c503a8c-c637-41a6-9c6b-c98fb93f5552 rr:predicateObjectMap _:node18b0jn3llx36 .
+
+km-dev:TriplesMap_946a21f5-d8ab-417a-9b2a-40712a5cafe8 a rr:TriplesMap .
+
+_:node18b0jn3llx1 km-dev:hasTriplesMap km-dev:TriplesMap_946a21f5-d8ab-417a-9b2a-40712a5cafe8 .
+
+_:node18b0jn3llx38 rr:tableName "cs548-events.json" .
+
+km-dev:TriplesMap_946a21f5-d8ab-417a-9b2a-40712a5cafe8 rr:logicalTable _:node18b0jn3llx38 .
+
+_:node18b0jn3llx39 rr:template "{\"[\"project\",\"project_uri\"]\"}" .
+
+km-dev:TriplesMap_946a21f5-d8ab-417a-9b2a-40712a5cafe8 rr:subjectMap _:node18b0jn3llx39 .
+
+_:node18b0jn3llx39 km-dev:alignmentNodeId "http://lod.isi.edu/ontology/syllabus/ProjectEvent1" ;
+	rr:class syll:ProjectEvent .
+
+_:node18b0jn3llx41 rr:predicate dcterms:description .
+
+_:node18b0jn3llx42 rr:column "[\"project\",\"description\"]" ;
+	rr:datatype "" .
+
+_:node18b0jn3llx41 rr:objectMap _:node18b0jn3llx42 .
+
+km-dev:TriplesMap_946a21f5-d8ab-417a-9b2a-40712a5cafe8 rr:predicateObjectMap _:node18b0jn3llx41 .
+
+_:node18b0jn3llx43 rr:predicate dcterms:identifier .
+
+_:node18b0jn3llx44 rr:column "[\"project\",\"id\"]" ;
+	rr:datatype "" .
+
+_:node18b0jn3llx43 rr:objectMap _:node18b0jn3llx44 .
+
+km-dev:TriplesMap_946a21f5-d8ab-417a-9b2a-40712a5cafe8 rr:predicateObjectMap _:node18b0jn3llx43 .
+
+_:node18b0jn3llx45 rr:predicate dcterms:title .
+
+_:node18b0jn3llx46 rr:column "[\"project\",\"title\"]" ;
+	rr:datatype "" .
+
+_:node18b0jn3llx45 rr:objectMap _:node18b0jn3llx46 .
+
+km-dev:TriplesMap_946a21f5-d8ab-417a-9b2a-40712a5cafe8 rr:predicateObjectMap _:node18b0jn3llx45 .
+
+km-dev:TriplesMap_d91924e7-8d52-475c-8b88-06302b25ef34 a rr:TriplesMap .
+
+_:node18b0jn3llx1 km-dev:hasTriplesMap km-dev:TriplesMap_d91924e7-8d52-475c-8b88-06302b25ef34 .
+
+_:node18b0jn3llx47 rr:tableName "cs548-events.json" .
+
+km-dev:TriplesMap_d91924e7-8d52-475c-8b88-06302b25ef34 rr:logicalTable _:node18b0jn3llx47 .
+
+_:node18b0jn3llx48 rr:template "{\"[\"teaching-assistants\",\"ta_uri\"]\"}" .
+
+km-dev:TriplesMap_d91924e7-8d52-475c-8b88-06302b25ef34 rr:subjectMap _:node18b0jn3llx48 .
+
+_:node18b0jn3llx48 km-dev:alignmentNodeId "http://lod.isi.edu/ontology/syllabus/Person2" ;
+	rr:class syll:Person .
+
+km-dev:TriplesMap_795f536c-58ca-4817-9797-5789a404cad9 a rr:TriplesMap .
+
+_:node18b0jn3llx1 km-dev:hasTriplesMap km-dev:TriplesMap_795f536c-58ca-4817-9797-5789a404cad9 .
+
+_:node18b0jn3llx50 rr:tableName "cs548-events.json" .
+
+km-dev:TriplesMap_795f536c-58ca-4817-9797-5789a404cad9 rr:logicalTable _:node18b0jn3llx50 .
+
+_:node18b0jn3llx51 rr:template "{\"[\"prerequisites\",\"course_uri\"]\"}" .
+
+km-dev:TriplesMap_795f536c-58ca-4817-9797-5789a404cad9 rr:subjectMap _:node18b0jn3llx51 .
+
+_:node18b0jn3llx51 km-dev:alignmentNodeId "http://lod.isi.edu/ontology/syllabus/Course2" ;
+	rr:class syll:Course .
+
+_:node18b0jn3llx52 rr:predicate vivo:prerequisiteFor .
+
+km-dev:RefObjectMap_0b8155d0-ceb3-4a5a-a8f4-ddc74b094316 a rr:RefObjectMap ;
+	rr:parentTriplesMap km-dev:TriplesMap_deffa5b3-a91a-4f6f-af54-e0891c740bc4 .
+
+_:node18b0jn3llx52 rr:objectMap km-dev:RefObjectMap_0b8155d0-ceb3-4a5a-a8f4-ddc74b094316 .
+
+km-dev:TriplesMap_795f536c-58ca-4817-9797-5789a404cad9 rr:predicateObjectMap _:node18b0jn3llx52 .
+
+_:node18b0jn3llx55 rr:predicate rdfs:label .
+
+_:node18b0jn3llx56 rr:column "[\"prerequisites\",\"values\"]" ;
+	rr:datatype "" .
+
+_:node18b0jn3llx55 rr:objectMap _:node18b0jn3llx56 .
+
+km-dev:TriplesMap_795f536c-58ca-4817-9797-5789a404cad9 rr:predicateObjectMap _:node18b0jn3llx55 .

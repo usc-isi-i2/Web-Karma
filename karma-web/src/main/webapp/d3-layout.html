@@ -1,0 +1,72 @@
+<html>
+<head>
+<link rel="stylesheet" href="css/d3-model-layout.css" />
+<script type="text/javascript" src="uiLibs/jquery/js/jquery.js"></script>
+<script type="text/javascript" src="uiLibs/d3/js/d3.v3.min.js"></script>
+<script type="text/javascript" src="js/d3-model-layout.js"></script>
+</head>
+
+
+<body>
+<script type="text/javascript">
+
+var json = {
+    "comment": "Contains label Links",
+    "anchors": [
+        { "id": 1, "column": 1, "label" : "column1" } ,
+        { "id": 2, "column": 4, "label" : "column4" } ,
+        { "id": 3, "column": 5, "label" : "column5" } ,
+        { "id": 4, "column": 6, "label" : "column6" } ,
+        { "id": 5, "column": 7, "label" : "column7" } ,
+        { "id": 6, "column": 11, "label" : "column11" } ,
+        { "id": 7, "column": 13, "label" : "column13" } ,
+        { "id": 16, "column": 2, "label" : "column2" } 
+    ],
+    "nodes": [
+        { "id": 8, "label": "semantic type" } ,
+        { "id": 9, "label": "semantic type" } ,
+        { "id": 10, "label": "semantic type" } ,
+        { "id": 11, "label": "semantic type" } ,
+        { "id": 12, "label": "semantic type" } ,
+        { "id": 13, "label": "semantic type" } ,
+        { "id": 14, "label": "semantic type" } ,
+        { "id": 15, "label": "class" } 
+
+
+    ],
+    "links": [
+        { "source": 8, "target": 1, "label": "link", "id":"l1" } ,
+        { "source": 9, "target": 2, "label": "link","id":"l2" } ,
+        { "source": 10, "target": 3, "label": "link", "id":"l3" } ,
+        { "source": 11, "target": 4, "label": "link", "id":"l4" } ,
+        { "source": 12, "target": 5, "label": "link", "id":"l5" } ,
+        { "source": 13, "target": 6, "label": "link", "id":"l6" } ,
+        { "source": 14, "target": 7, "label": "link", "id":"l7" } ,
+        { "source": 15, "target": 8, "label": "link", "id":"l8" } ,
+        { "source": 15, "target": 9, "label": "link", "id":"l9" } ,
+        { "source": 15, "target": 10, "label": "link", "id":"l10" } ,
+        { "source": 15, "target": 11, "label": "link", "id":"l11" } ,
+        { "source": 15, "target": 12, "label": "link", "id":"l12" } ,
+        { "source": 15, "target": 13, "label": "link", "id":"l13" } ,
+        { "source": 15, "target": 14, "label": "link", "id":"l14" } 
+    ],
+    "edgeLinks":[
+        {"source":"l8", "target":"16", "label": "edgeLabel"} 
+    ]
+};
+
+
+var layout = new D3ModelLayout();
+layout.generateLayoutForJson(json);
+
+layout.setNodeClickListener(function(e, node) {
+	console.log("This function is called when the node is clicked");
+});
+
+layout.setLinkClickListener(function(e, link) {
+	console.log("This function is called when the link is clicked");
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+	<packaging>pom</packaging>
+
+    <parent>
+        <groupId>edu.isi</groupId>
+        <artifactId>karma-commands</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>commands-import</artifactId>
+
+	<modules>
+		<module>import-common</module>
+		<module>import-csv</module>
+		<module>import-database</module>
+		<module>import-excel</module>
+		<module>import-file</module>
+		<module>import-json</module>
+		<module>import-ontology</module>
+		<module>import-service</module>
+		<module>import-xml</module>
+		<module>import-spatial</module>
+		<module>import-avro</module>
+	</modules>
+</project>

@@ -1,0 +1,11 @@
+/target
+
+/src/main/java/topKsteiner
+
+/data/*
+
+/lib/javatools_24112009.jar
+/lib/javatools_25052010.jar
+/lib/jdom.jar
+
+STAR.txt
