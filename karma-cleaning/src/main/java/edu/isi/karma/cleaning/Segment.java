@@ -20,12 +20,17 @@ public class Segment implements GrammarTreeNode {
 	public boolean isinloop = false;
 	public Vector<TNode> constNodes = new Vector<TNode>();
 	public String repString = "";
-	private int curState = -1;
+	public int curState = 0;
 	public Vector<String> segStrings = new Vector<String>();
 	public int VersionSP_size = 0;
+	public String program = "null";
 
 	public Segment(Vector<TNode> cont) {
 		constNodes = cont;
+		for(TNode n:cont)
+		{
+			this.tarString += n.text;
+		}
 		createTotalOrderVector();
 	}
 
@@ -33,6 +38,10 @@ public class Segment implements GrammarTreeNode {
 		this.start = start;
 		this.end = end;
 		this.constNodes = cont;
+		for(TNode n:cont)
+		{
+			this.tarString += n.text;
+		}
 		this.createTotalOrderVector();
 	}
 
@@ -104,23 +113,22 @@ public class Segment implements GrammarTreeNode {
 				mdString += t.text;
 			}
 			mdString = "\'" + mdString + "\'";
+			this.program = mdString;
 			return mdString;
 		}
-		long seg_time_limit = System.currentTimeMillis();
-		for (Section s : this.section) {
-			if ((System.currentTimeMillis() - seg_time_limit) / 1000 > time_limit * 1.0 / 2) {
-				return "null";
-			}
+		for(int i = curState; i< this.section.size(); i++){
+			Section s = this.section.get(i);
+			curState = i; //update current state;
 			s.isinloop = this.isinloop;
-			ruleString = s.verifySpace();
+			ruleString = s.verifySpace();			
 			if (ruleString.indexOf("null") == -1) {
+				this.program = ruleString;
 				return ruleString;
 			}
 		}
+		this.program = ruleString;
 		return ruleString;
 	}
-
-	//
 	public void initSections(Vector<TNode> orgNodes) {
 		for (int[] elem : mappings) {
 			int s = elem[0];
@@ -295,7 +303,7 @@ public class Segment implements GrammarTreeNode {
 		// mdString = "\'"+mdString+"\'";
 		// rules.add(mdString);
 		// }
-		rules.add(-1);
+		rules.add(0);
 		for (Section s : section) {
 			this.VersionSP_size += s.size();
 		}
@@ -314,16 +322,7 @@ public class Segment implements GrammarTreeNode {
 	}
 
 	public String toProgram() {
-		if (curState >= rules.size()) {
-			return "null";
-		}
-
-		String s = "null";
-		while (curState < rules.size() && s.contains("null")) {
-			s = section.get(rules.get(curState)).toProgram();
-			if (s.contains("null"))
-				curState++;
-		}
+		String s =  verifySpace();
 		return s;
 	}
 
@@ -369,5 +368,10 @@ public class Segment implements GrammarTreeNode {
 
 	public String getNodeType() {
 		return "segment";
+	}
+
+	@Override
+	public String getProgram() {
+		return this.program;
 	}
 }

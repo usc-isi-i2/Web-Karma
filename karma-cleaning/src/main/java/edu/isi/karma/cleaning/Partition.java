@@ -1,19 +1,31 @@
 package edu.isi.karma.cleaning;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Vector;
+
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Partition implements GrammarTreeNode {
 	public Traces trace;
 	public Vector<Vector<TNode>> orgNodes;
 	public Vector<Vector<TNode>> tarNodes;
+	public Vector<String> orgUnlabeledData = new Vector<String>();
 	public Vector<String> mapping = new Vector<String>();
 	public String label; // the class label of current partition
 	public String cls;
-
-	public Partition() {
-
+	public String program = "";
+	public Partition()
+	{	
 	}
-
+	public Partition(Traces t,Vector<Vector<TNode>> orgNodes, Vector<Vector<TNode>> tarNodes)
+	{
+		this.trace = t;
+		this.orgNodes = orgNodes;
+		this.tarNodes = tarNodes;
+		
+	}
 	public long size() {
 		return trace.size();
 	}
@@ -32,8 +44,12 @@ public class Partition implements GrammarTreeNode {
 		}
 		this.trace = iterTraces;
 	}
-
-	public void setTraces(Traces t) {
+	public void setunLabeledData(Vector<String> orgUdata)
+	{
+		this.orgUnlabeledData = orgUdata;
+	}
+	public void setTraces(Traces t)
+	{
 		this.trace = t;
 	}
 
@@ -65,29 +81,42 @@ public class Partition implements GrammarTreeNode {
 			return null;
 		}
 	}
-
-	public String getHashKey() {
+	@Override
+	public int hashCode()
+	{
+		String s = this.getHashKey();
+		return new HashCodeBuilder(17, 31).append(s).toHashCode();
+	}
+	public String getHashKey()
+	{
+		ArrayList<Partition> pars = new ArrayList<Partition>();
+		pars.add(this);
+		return Partition.getStringKey(pars);
+ 	}
+	public static String getStringKey(ArrayList<Partition> pars)
+	{
 		String s = "";
-		ArrayList<String> lines = new ArrayList<String>();
-		for (int i = 0; i < this.orgNodes.size(); i++) {
-			String line = UtilTools.print(this.orgNodes.get(i)) + "   "
-					+ UtilTools.print(this.tarNodes.get(i)) + "\n";
-			lines.add(line);
+		ArrayList<String[]> lines = new ArrayList<String[]>();
+		for(Partition p: pars)
+		{
+			for (int i = 0; i < p.orgNodes.size(); i++) {
+				String s1 = UtilTools.print(p.orgNodes.get(i));
+				String s2 = UtilTools.print(p.tarNodes.get(i));
+				String[] line = {s1,s2};
+				lines.add(line);
+			}
 		}
-		Collections.sort(lines);
-		for (String l : lines) {
-			s += l;
-		}
-		return s;
+		s = UtilTools.createkey(lines);
+		return s.trim();
 	}
 
 	public String toString() {
 		String s = "partition:" + this.label + "\n";
 		s += "Examples:\n";
 		ArrayList<String> lines = new ArrayList<String>();
-		for (int i = 0; i < this.orgNodes.size(); i++) {
-			String line = this.orgNodes.get(i).toString() + "   "
-					+ this.tarNodes.get(i).toString() + "\n";
+		for(int i = 0; i<this.orgNodes.size(); i++)
+		{
+			String line= UtilTools.print(this.orgNodes.get(i))+"   "+UtilTools.print(this.tarNodes.get(i))+"\n";
 			lines.add(line);
 		}
 		Collections.sort(lines);
@@ -104,34 +133,9 @@ public class Partition implements GrammarTreeNode {
 	}
 
 	public String toProgram() {
-		// //randomly choose a Template
-		// Iterator<String> iterator = this.templates.keySet().iterator();
-		// String[] inds = new String[this.templates.keySet().size()];
-		// double[] prob = new double[inds.length];
-		// int i = 0;
-		// double totalLength = 0;
-		// while(iterator.hasNext())
-		// {
-		// String key = iterator.next();
-		// inds[i] = key;
-		// int size = templates.get(key).get(0).size();
-		// prob[i] = 1.0/(size*1.0);
-		// totalLength += prob[i];
-		// i++;
-		// }
-		// for(int j = 0; j<inds.length; j++)
-		// {
-		//
-		// prob[j] = prob[j]*1.0/totalLength;
-		// }
-		// int clen = UtilTools.multinominalSampler(prob);
-		// String key = inds[clen];
-		// int k = UtilTools.randChoose(templates.get(key).size());
-		// String r = templates.get(key).get(k).toProgram();
-		// //String r =
-		// String.format("(not getClass(\"%s\",value)==\'attr_0\',len(%s))",this.cls,"\"\'"+this.label+"\'\"");
-		// score = templates.get(key).get(k).getScore();
-		return this.trace.toProgram();
+		String res =  this.trace.toProgram();
+		this.program = res;
+		return res;
 
 	}
 
@@ -149,15 +153,16 @@ public class Partition implements GrammarTreeNode {
 		return "Partition";
 	}
 
-	@Override
 	public void createTotalOrderVector() {
-		// TODO Auto-generated method stub
+		
+	}
 
+	public void emptyState() {
+		this.trace.emptyState();
 	}
 
 	@Override
-	public void emptyState() {
-		// TODO Auto-generated method stub
-
+	public String getProgram() {
+		return this.program;
 	}
 }

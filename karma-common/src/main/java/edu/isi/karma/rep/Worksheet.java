@@ -46,6 +46,8 @@ public class Worksheet extends RepEntity {
     private Object jsonAnnotation = null;
     private SuperSelectionManager superSelMgr;
     private SelectionManager selMgr;
+    private Object msger = null;//used for holding session cleaning data
+	private Object dpp = null; // data preprocessing for cleaning
     @Override
     public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {
         pw.print(prefix);
@@ -213,5 +215,25 @@ public class Worksheet extends RepEntity {
     public SelectionManager getSelectionManager() {
     	return selMgr;
     }
-
+    public Object getMsg()
+	{
+		return msger;
+	}
+	public void setMsg(Object x)
+	{
+		this.msger = x;
+	}
+	public Object getDpp()
+	{
+		return dpp;
+	}
+	public void setDpp(Object x)
+	{
+		this.dpp = x;
+	}
+	public void clearSessionData()
+	{
+		this.msger = null;
+		this.dpp = null;
+	}
 }

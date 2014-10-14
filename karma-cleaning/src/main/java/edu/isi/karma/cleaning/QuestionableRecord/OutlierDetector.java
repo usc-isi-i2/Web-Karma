@@ -21,11 +21,15 @@
 
 package edu.isi.karma.cleaning.QuestionableRecord;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Vector;
+
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
-
-import java.util.*;
-import java.util.Map.Entry;
 
 public class OutlierDetector {
 	public HashMap<String, double[]> rVectors = new HashMap<String, double[]>();
@@ -37,7 +41,7 @@ public class OutlierDetector {
 	}
 
 	public double getDistance(double[] x, double[] y) {
-		if (x.length != y.length)
+		if (x == null || y==null ||x.length != y.length )
 			return Double.MAX_VALUE;
 		double value = 0.0;
 		for (int i = 0; i < x.length; i++) {

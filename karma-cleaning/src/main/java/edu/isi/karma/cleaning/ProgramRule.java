@@ -24,7 +24,8 @@ public class ProgramRule {
 	}
 
 	public String transform(String value) {
-		String s2 = rules.get("attr_0").execute(value);
+		InterpreterType worker= this.getRuleForValue(value);
+		String s2 = worker.execute(value);
 		return s2;
 	}
 
