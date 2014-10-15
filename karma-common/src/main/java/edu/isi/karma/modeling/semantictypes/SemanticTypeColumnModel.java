@@ -98,7 +98,9 @@ public class SemanticTypeColumnModel implements Jsonizable {
 					continue;
 				
 				String clazzLocalNameWithPrefix = domainURI.getDisplayName();
-				
+				if(domainURI.getPrefix() == null) 
+					clazzLocalNameWithPrefix = domainURI.getUri() + "/" + domainURI.getLocalName();
+					
 				int graphLastIndex = alignment.getLastIndexOfNodeUri(domainURI.getUri());
 				if (graphLastIndex == -1) { // No instance present in the graph
 					insertSemanticTypeSuggestion(arr, clazzLocalNameWithPrefix + "1 (add)", 
