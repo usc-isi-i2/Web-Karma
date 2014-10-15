@@ -72,6 +72,10 @@ public class SortableSemanticModel extends SemanticModel
 		return this.steinerNodes;
 	}
 	
+	public Coherence getLinkCoherence() {
+		return this.linkCoherence;
+	}
+
 	private double computeCost() {
 		double cost = 0.0;
 		for (LabeledLink e : this.graph.edgeSet()) {
@@ -82,7 +86,7 @@ public class SortableSemanticModel extends SemanticModel
 
 	private void computeCoherence() {
 		for (LabeledLink l : this.graph.edgeSet()) {
-			linkCoherence.updateCoherence(l.getModelIds());
+			linkCoherence.updateCoherence(l);
 		}
 	}
 
@@ -168,17 +172,23 @@ public class SortableSemanticModel extends SemanticModel
 			return greaterThan;
 		else if (score1 < score2)
 			return lessThan;
-		else if (linkCoherence1 > linkCoherence2)
-			return greaterThan;
-		else if (linkCoherence1 < linkCoherence2)
-			return lessThan;
-		else if (this.cost < m.cost)
+		
+		if (this.cost < m.cost)
 			return greaterThan;
 		else if (m.cost < this.cost)
 			return lessThan;
-		else {
-			return 0;
-		}
+		
+		// TODO: fix coherence value --> use percentage rather than raw number
+		if (linkCoherence1 > linkCoherence2)
+			return greaterThan;
+		else if (linkCoherence1 < linkCoherence2)
+			return lessThan;
+		
+
+		
+		
+		return 0;
+		
 	}
 
 }

@@ -91,13 +91,13 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		
 		if (!this.nodes.contains(n1)) {
 			this.nodes.add(n1);
-			this.nodeCoherence.updateCoherence(n1.getModelIds());
+			this.nodeCoherence.updateCoherence(n1);
 			if (n1.getModelIds() == null || n1.getModelIds().isEmpty())
 				this.nonModelNodesCount ++;
 		}
 		if (!this.nodes.contains(n2)) {
 			this.nodes.add(n2);
-			this.nodeCoherence.updateCoherence(n2.getModelIds());
+			this.nodeCoherence.updateCoherence(n2);
 			this.mappingToSourceColumns.put(n2, sourceColumn);
 			if (n2.getModelIds() == null || n2.getModelIds().isEmpty())
 				this.nonModelNodesCount ++;
@@ -120,7 +120,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 			return false;
 		
 		this.nodes.add(n);
-		this.nodeCoherence.updateCoherence(n.getModelIds());
+		this.nodeCoherence.updateCoherence(n);
 		if (n.getModelIds() == null || n.getModelIds().isEmpty())
 				this.nonModelNodesCount ++;
 
@@ -293,10 +293,10 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 //		sb.append("\n");
 
 		sb.append("\n");
-		sb.append("coherence list: ");
+		sb.append("node coherence: ");
 		sb.append(nodeCoherence.printCoherenceList());
 //		sb.append("\n");
-		sb.append("--- coherence value: " + this.nodeCoherence.getCoherenceValue());
+		sb.append("--- value: " + this.nodeCoherence.getCoherenceValue());
 		sb.append("\n");
 		sb.append("size: " + this.getNodesCount() + ", max size: " + (this.semanticTypesCount * 2) + "---" + 
 				"size reduction: " +  roundTwoDecimals(this.getSizeReduction()) );

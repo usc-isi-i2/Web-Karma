@@ -213,11 +213,11 @@ public abstract class ModelLearningGraph {
 	}
 	
 	private void updateGraphUsingOntology(SemanticModel model) {
-		this.graphBuilder.addClosureAndLinksOfNodes(model.getInternalNodes(), null);
+		this.graphBuilder.addClosureAndUpdateLinks(model.getInternalNodes(), null);
 	}
 	
 	public void updateGraphUsingOntology(Set<InternalNode> nodes) {
-		this.graphBuilder.addClosureAndLinksOfNodes(nodes, null);
+		this.graphBuilder.addClosureAndUpdateLinks(nodes, null);
 	}
 	
 }

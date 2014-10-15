@@ -243,26 +243,45 @@ public class GraphBuilder {
 	}
 
 	public boolean addNodeAndUpdate(Node node) {
-		if (ModelingConfiguration.getManualAlignment()) {
-			return addNode(node);
-		} else
-		return addNodeAndUpdate(node, null);
+		return this.addNodeAndUpdate(node, null);
 	}
-
+	
 	public boolean addNodeAndUpdate(Node node, Set<Node> addedNodes) {
 		
-		logger.debug("<enter");
-		if (addedNodes == null) addedNodes = new HashSet<Node>();
-
-		if (!addNode(node))
-			return false;
+		boolean result = addNode(node);
+		if (!result || ModelingConfiguration.getManualAlignment()) 
+			return result;
 			
+		if (addedNodes == null) 
+			addedNodes = new HashSet<Node>();
+		addedNodes.add(node);
+		if (node instanceof InternalNode) 
+			addClosureAndUpdateLinks((InternalNode)node, addedNodes);
+		
+		return result;
+	}
+	
+	public InternalNode copyNodeAndUpdate(Node node, Set<Node> addedNodes) {
+		InternalNode copyNode = null;
+		if (node instanceof InternalNode) {
+			copyNode = this.copyNode((InternalNode)node);
+			if (copyNode != null)
+				this.addClosureAndUpdateLinks(copyNode, addedNodes);
+		} else {
+			logger.error("only can copy an internal node");
+			return null;
+		}
+		return copyNode;
+	}
+	
+	private void addClosureAndUpdateLinks(InternalNode node, Set<Node> addedNodes) {
+		
+		if (addedNodes == null) addedNodes = new HashSet<Node>();
 		if (node instanceof InternalNode) {
 
 			long start = System.currentTimeMillis();
 			float elapsedTimeSec;
 
-			
 			addedNodes.add(node);
 			
 			if (ModelingConfiguration.getNodeClosure()) {
@@ -292,10 +311,40 @@ public class GraphBuilder {
 
 			logger.debug("total number of nodes in graph: " + this.graph.vertexSet().size());
 			logger.debug("total number of links in graph: " + this.graph.edgeSet().size());
+
+		}
+		
+	}
+	
+	public void addClosureAndUpdateLinks(Set<InternalNode> internalNodes, Set<Node> addedNodes) {
+		
+		logger.debug("<enter");
+		if (addedNodes == null) addedNodes = new HashSet<Node>();
+
+		long start = System.currentTimeMillis();
+		float elapsedTimeSec;
+
+		if (internalNodes != null) {
+			Node[] nodes = internalNodes.toArray(new Node[0]);
+			for (Node node : nodes)
+				if (this.idToNodeMap.containsKey(node.getId()))
+					addNodeClosure(node, addedNodes);
 		}
 
+		long addNodesClosure = System.currentTimeMillis();
+		elapsedTimeSec = (addNodesClosure - start)/1000F;
+		logger.debug("time to add nodes closure: " + elapsedTimeSec);
+
+		updateLinks();
+		
+		long updateLinks = System.currentTimeMillis();
+		elapsedTimeSec = (updateLinks - addNodesClosure)/1000F;
+		logger.debug("time to update links of the graph: " + elapsedTimeSec);
+		
+		logger.debug("total number of nodes in graph: " + this.graph.vertexSet().size());
+		logger.debug("total number of links in graph: " + this.graph.edgeSet().size());
+
 		logger.debug("exit>");		
-		return true;
 	}
 	
 	
@@ -352,6 +401,53 @@ public class GraphBuilder {
 
 		logger.debug("exit>");		
 		return true;
+	}
+	
+	public InternalNode copyNode(InternalNode node) {
+		
+		if (node == null) {
+			logger.error("input node is null");
+			return null;
+		}
+		
+		String id = this.nodeIdFactory.getNodeId(node.getUri());
+		InternalNode newNode = new InternalNode(id, node.getLabel());
+		
+		if (!this.addNode(newNode)) {
+			logger.error("could not add the new node " + newNode.getId());
+			return null;
+		}
+		
+		Node source , target;
+		String newId;
+		Set<DefaultLink> incomingLinks = this.getGraph().incomingEdgesOf(node);
+		if (incomingLinks != null) {
+			for (DefaultLink l : incomingLinks) {
+				if (l instanceof LabeledLink) {
+					source = l.getSource();
+					target = newNode;
+					newId = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
+					LabeledLink copyLink = ((LabeledLink) l).copy(newId);
+					this.addLink(source, target, copyLink);
+				}
+			}
+		}
+		
+		Set<DefaultLink> outgoingLinks = this.getGraph().outgoingEdgesOf(node);
+		if (outgoingLinks != null) {
+			for (DefaultLink l : outgoingLinks) {
+				if (l instanceof LabeledLink) {
+					source = newNode;
+					target = l.getTarget();
+					newId = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
+					LabeledLink copyLink = ((LabeledLink) l).copy(newId);
+					this.addLink(source, target, copyLink);
+				}
+			}
+		}
+		
+		return newNode;
+
 	}
 	
 	public Set<Node> getForcedNodes() {
@@ -629,37 +725,6 @@ public class GraphBuilder {
 		logger.debug("total number of links in graph: " + this.graph.edgeSet().size());
 		
 		return true;
-	}
-
-	public void addClosureAndLinksOfNodes(Set<InternalNode> internalNodes, Set<Node> addedNodes) {
-		
-		logger.debug("<enter");
-		if (addedNodes == null) addedNodes = new HashSet<Node>();
-
-		long start = System.currentTimeMillis();
-		float elapsedTimeSec;
-
-		if (internalNodes != null) {
-			Node[] nodes = internalNodes.toArray(new Node[0]);
-			for (Node node : nodes)
-				if (this.idToNodeMap.containsKey(node.getId()))
-					addNodeClosure(node, addedNodes);
-		}
-
-		long addNodesClosure = System.currentTimeMillis();
-		elapsedTimeSec = (addNodesClosure - start)/1000F;
-		logger.debug("time to add nodes closure: " + elapsedTimeSec);
-
-		updateLinks();
-		
-		long updateLinks = System.currentTimeMillis();
-		elapsedTimeSec = (updateLinks - addNodesClosure)/1000F;
-		logger.debug("time to update links of the graph: " + elapsedTimeSec);
-		
-		logger.debug("total number of nodes in graph: " + this.graph.vertexSet().size());
-		logger.debug("total number of links in graph: " + this.graph.edgeSet().size());
-
-		logger.debug("exit>");		
 	}
 	
 

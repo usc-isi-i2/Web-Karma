@@ -270,30 +270,10 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 			if (source == null || target == null)
 				continue;
 
-			LabeledLink newLink = null;
 			String id = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
-			Label label = l.getLabel();
-			if (l instanceof DataPropertyLink)
-				newLink = new DataPropertyLink(id, label);
-			else if (l instanceof ObjectPropertyLink)
-				newLink = new ObjectPropertyLink(id, label, ((ObjectPropertyLink)l).getObjectPropertyType());
-			else if (l instanceof SubClassLink)
-				newLink = new SubClassLink(id);
-			else if (l instanceof ClassInstanceLink)
-				newLink = new ClassInstanceLink(id, l.getKeyType());
-			else if (l instanceof ColumnSubClassLink)
-				newLink = new ColumnSubClassLink(id);
-			else if (l instanceof DataPropertyOfColumnLink)
-				newLink = new DataPropertyOfColumnLink(id, 
-						((DataPropertyOfColumnLink)l).getSpecializedColumnHNodeId(),
-						((DataPropertyOfColumnLink)l).getSpecializedLinkId()
-						);
-			else if (l instanceof ObjectPropertySpecializationLink)
-				newLink = new ObjectPropertySpecializationLink(id, ((ObjectPropertySpecializationLink)l).getSpecializedLinkId());
-			else {
-	    		logger.error("cannot instanciate a link from the type: " + l.getType().toString());
-	    		continue;
-			}
+			LabeledLink newLink = l.copy(id);
+
+	    	if (newLink == null) continue;
 			
 			alignment.getGraphBuilder().addLink(source, target, newLink); // returns fals if link already exists
 			tree.addEdge(source, target, newLink);

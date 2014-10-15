@@ -105,7 +105,7 @@ public class LODSchemaGraphBuilder {
 			logger.error("error in exporting the alignment graph to graphviz!");
 		}
 
-		this.graphBuilder.addClosureAndLinksOfNodes(addedNodes, null);
+		this.graphBuilder.addClosureAndUpdateLinks(addedNodes, null);
 
 		try {
 			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), "LOD Graph", false, true, true, Params.GRAPHS_DIR + "lod.graph.dot");

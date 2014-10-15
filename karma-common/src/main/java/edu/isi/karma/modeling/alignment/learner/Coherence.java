@@ -12,6 +12,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.Node;
+
 public class Coherence {
 
 	private static Logger logger = LoggerFactory.getLogger(Coherence.class);
@@ -69,14 +72,25 @@ public class Coherence {
 		coherenceList = coherenceList.subList(0, Math.min(coherenceList.size(), 5));
 		return coherenceList;
 	}
+
+	public void updateCoherence(Node node) {
+		if (node == null) return;
+		this.itemsCount ++;
+		updateCoherence(node.getModelIds());
+	}
 	
-	public void updateCoherence(Set<String> modelIds) {
+	public void updateCoherence(LabeledLink link) {
+		if (link == null) return;
+		this.itemsCount ++;
+		updateCoherence(link.getModelIds());
+	}
+	
+	private void updateCoherence(Set<String> modelIds) {
 		
 		if (modelIds == null || modelIds.isEmpty())
 			return;
 		
 //		logger.debug("update coherence data ...");
-		this.itemsCount ++;
 //		System.out.println("=========================" + nodesCount);
 //		System.out.println("=========================" + n.getModelIds() != null ? n.getModelIds().size() : "null");
 		Integer index;
