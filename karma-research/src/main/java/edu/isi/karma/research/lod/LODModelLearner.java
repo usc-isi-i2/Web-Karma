@@ -390,7 +390,6 @@ public class LODModelLearner {
 				Integer countOfSemanticType = semanticTypesCount.get(domainUri + propertyUri);
 				logger.debug("count of semantic type: " +  countOfSemanticType);
 
-				
 				if (cn.getDomainNode() != null) {
 					SemanticTypeMapping mp = new SemanticTypeMapping(cn, semanticType, cn.getDomainNode(), cn.getDomainLink(), cn);
 					semanticTypeMappings.add(mp);
@@ -486,6 +485,7 @@ public class LODModelLearner {
 
 		// add dataproperty to existing classes if sl is a data node mapping
 		//		Set<Node> foundInternalNodes = new HashSet<Node>();
+		Double weight = null;
 		Set<SemanticTypeMapping> semanticTypeMatches = this.graphBuilder.getSemanticTypeMatches().get(domainUri + propertyUri);
 		if (semanticTypeMatches != null) {
 			for (SemanticTypeMapping stm : semanticTypeMatches) {
@@ -493,6 +493,7 @@ public class LODModelLearner {
 				SemanticTypeMapping mp = 
 						new SemanticTypeMapping(sourceColumn, semanticType, stm.getSource(), stm.getLink(), stm.getTarget());
 				mappings.add(mp);
+				weight = stm.getLink().getWeight();
 				//				foundInternalNodes.add(stm.getSource());
 			}
 		}
@@ -524,7 +525,9 @@ public class LODModelLearner {
 
 				String linkId = LinkIdFactory.getLinkId(propertyUri, source.getId(), target.getId());	
 				LabeledLink link = new DataPropertyLink(linkId, new Label(propertyUri));
-				if (!this.graphBuilder.addLink(source, target, link)) continue;;
+				
+				boolean result = weight == null ? this.graphBuilder.addLink(source, target, link) : this.graphBuilder.addLink(source, target, link, weight);
+				if (!result) continue;;
 
 				SemanticTypeMapping mp = new SemanticTypeMapping(sourceColumn, semanticType, (InternalNode)source, link, target);
 				mappings.add(mp);
@@ -579,7 +582,7 @@ public class LODModelLearner {
 		Set<Node> nodesWithSameUri = this.graphBuilder.getUriToNodesMap().get(domainUri);
 		if (nodesWithSameUri != null && !nodesWithSameUri.isEmpty()) {
 			InternalNode copyFrom = (InternalNode)nodesWithSameUri.iterator().next();
-			source = this.graphBuilder.copyNodeAndUpdate(copyFrom, addedNodes);
+			source = this.graphBuilder.copyNode(copyFrom, false);
 			if (source == null) return null;
 		} else {
 			nodeId = nodeIdFactory.getNodeId(domainUri);
@@ -831,9 +834,9 @@ public class LODModelLearner {
 
 		resultFile.println("source \t p \t r \t t \n");
 
-//		for (int i = 0; i < semanticModels.size(); i++) {
+		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-		int i = 2; {
+//		int i = 0; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -937,7 +940,7 @@ public class LODModelLearner {
 					newSource.getName(),
 					outName,
 					true,
-					false);
+					true);
 
 		}
 

@@ -261,12 +261,10 @@ public class GraphBuilder {
 		return result;
 	}
 	
-	public InternalNode copyNodeAndUpdate(Node node, Set<Node> addedNodes) {
+	public InternalNode copyNodeAndUpdate(Node node, boolean copyLinksToColumnNodes) {
 		InternalNode copyNode = null;
 		if (node instanceof InternalNode) {
-			copyNode = this.copyNode((InternalNode)node);
-			if (copyNode != null)
-				this.addClosureAndUpdateLinks(copyNode, addedNodes);
+			copyNode = this.copyNode((InternalNode)node, copyLinksToColumnNodes);
 		} else {
 			logger.error("only can copy an internal node");
 			return null;
@@ -403,7 +401,7 @@ public class GraphBuilder {
 		return true;
 	}
 	
-	public InternalNode copyNode(InternalNode node) {
+	public InternalNode copyNode(InternalNode node, boolean copyLinksToColumnNodes) {
 		
 		if (node == null) {
 			logger.error("input node is null");
@@ -423,26 +421,24 @@ public class GraphBuilder {
 		Set<DefaultLink> incomingLinks = this.getGraph().incomingEdgesOf(node);
 		if (incomingLinks != null) {
 			for (DefaultLink l : incomingLinks) {
-				if (l instanceof LabeledLink) {
-					source = l.getSource();
-					target = newNode;
-					newId = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
-					LabeledLink copyLink = ((LabeledLink) l).copy(newId);
-					this.addLink(source, target, copyLink);
-				}
+				source = l.getSource();
+				if (source instanceof ColumnNode) continue;
+				target = newNode;
+				newId = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
+				DefaultLink copyLink = l.getCopy(newId);
+				this.addLink(source, target, copyLink, l.getWeight());
 			}
 		}
 		
 		Set<DefaultLink> outgoingLinks = this.getGraph().outgoingEdgesOf(node);
 		if (outgoingLinks != null) {
 			for (DefaultLink l : outgoingLinks) {
-				if (l instanceof LabeledLink) {
-					source = newNode;
-					target = l.getTarget();
-					newId = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
-					LabeledLink copyLink = ((LabeledLink) l).copy(newId);
-					this.addLink(source, target, copyLink);
-				}
+				source = newNode;
+				target = l.getTarget();
+				if (!copyLinksToColumnNodes && target instanceof ColumnNode) continue; // skip links to column nodes
+				newId = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
+				DefaultLink copyLink = l.getCopy(newId);
+				this.addLink(source, target, copyLink, l.getWeight());
 			}
 		}
 		

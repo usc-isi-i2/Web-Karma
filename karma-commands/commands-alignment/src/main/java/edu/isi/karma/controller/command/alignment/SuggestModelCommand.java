@@ -57,20 +57,12 @@ import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.ColumnSubClassLink;
-import edu.isi.karma.rep.alignment.DataPropertyLink;
-import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
-import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.ObjectPropertyLink;
-import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.rep.alignment.SubClassLink;
 
 
 public class SuggestModelCommand extends WorksheetSelectionCommand {
@@ -337,30 +329,10 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 			if (source == null || target == null)
 				continue;
 
-			LabeledLink newLink = null;
 			String id = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
-			Label label = l.getLabel();
-			if (l instanceof DataPropertyLink)
-				newLink = new DataPropertyLink(id, label);
-			else if (l instanceof ObjectPropertyLink)
-				newLink = new ObjectPropertyLink(id, label, ((ObjectPropertyLink)l).getObjectPropertyType());
-			else if (l instanceof SubClassLink)
-				newLink = new SubClassLink(id);
-			else if (l instanceof ClassInstanceLink)
-				newLink = new ClassInstanceLink(id, l.getKeyType());
-			else if (l instanceof ColumnSubClassLink)
-				newLink = new ColumnSubClassLink(id);
-			else if (l instanceof DataPropertyOfColumnLink)
-				newLink = new DataPropertyOfColumnLink(id, 
-						((DataPropertyOfColumnLink)l).getSpecializedColumnHNodeId(),
-						((DataPropertyOfColumnLink)l).getSpecializedLinkId()
-						);
-			else if (l instanceof ObjectPropertySpecializationLink)
-				newLink = new ObjectPropertySpecializationLink(id, ((ObjectPropertySpecializationLink)l).getSpecializedLinkId());
-			else {
-	    		logger.error("cannot instanciate a link from the type: " + l.getType().toString());
-	    		continue;
-			}
+			LabeledLink newLink = l.copy(id);
+			
+	    	if (newLink == null) continue;
 			
 			alignment.getGraphBuilder().addLink(source, target, newLink); // returns fals if link already exists
 			tree.addEdge(source, target, newLink);

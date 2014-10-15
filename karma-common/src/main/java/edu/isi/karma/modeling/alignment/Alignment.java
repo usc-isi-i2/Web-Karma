@@ -731,6 +731,16 @@ public class Alignment implements OntologyUpdateListener {
 
 			}
 			
+			Set<LabeledLink> forcedLinks = getLinksByStatus(LinkStatus.ForcedByUser);
+			if (forcedLinks != null)
+			for (LabeledLink link : forcedLinks) {
+				if (!tree.containsEdge(link) &&
+						tree.containsVertex(link.getSource()) &&
+						tree.containsVertex(link.getTarget())) {
+							tree.addEdge(link.getSource(), link.getTarget(), link);
+				}
+			}
+
 			this.steinerTree = tree;
 			this.root = TreePostProcess.selectRoot(GraphUtil.asDefaultGraph(tree));
 
