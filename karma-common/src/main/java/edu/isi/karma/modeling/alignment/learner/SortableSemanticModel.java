@@ -173,19 +173,16 @@ public class SortableSemanticModel extends SemanticModel
 		else if (score1 < score2)
 			return lessThan;
 		
-		if (this.cost < m.cost)
-			return greaterThan;
-		else if (m.cost < this.cost)
-			return lessThan;
-		
 		// TODO: fix coherence value --> use percentage rather than raw number
 		if (linkCoherence1 > linkCoherence2)
 			return greaterThan;
 		else if (linkCoherence1 < linkCoherence2)
 			return lessThan;
 		
-
-		
+		if (this.cost < m.cost)
+			return greaterThan;
+		else if (m.cost < this.cost)
+			return lessThan;
 		
 		return 0;
 		
