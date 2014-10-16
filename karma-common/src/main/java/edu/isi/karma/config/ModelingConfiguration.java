@@ -52,9 +52,9 @@ public class ModelingConfiguration {
 	private static String karmaSourcePrefix;
 	private static String karmaServicePrefix; 
 
-	private static String modelsJsonDir;
-	private static String modelsGraphvizDir;
-	private static String alignmentGraphDir; 
+//	private static String modelsJsonDir;
+//	private static String modelsGraphvizDir;
+//	private static String alignmentGraphDir; 
 
 	private static Integer maxCandidateModels;
 	private static Integer maxQueuedMappigs;
@@ -64,6 +64,7 @@ public class ModelingConfiguration {
 	private static Double scoringSizeCoefficient;
 
 	private static Boolean learnerEnabled;
+	private static Boolean learnAlignmentEnabled;
 	private static Boolean multipleSamePropertyPerNode;
 
 	private static Boolean storeOldHistory;
@@ -105,19 +106,21 @@ public class ModelingConfiguration {
 			"##########################################################################################" + newLine + 
 			"learner.enabled=true" + newLine + 
 			"" + newLine + 
+			"learn.alignment.enabled=false" + newLine + 
+			"" + newLine + 
 			"max.queued.mappings=100" + newLine + 
 			"max.candidate.models=5" + newLine + 
-			"multiple.same.property.per.node=true" + newLine + 
+			"multiple.same.property.per.node=false" + newLine + 
 			"" + newLine + 
 			"# scoring coefficients, should be in range [0..1]" + newLine + 
 			"scoring.confidence.coefficient=1.0" + newLine + 
 			"scoring.coherence.coefficient=1.0" + newLine + 
 			"scoring.size.coefficient=1.0" + newLine + 
 			"" + newLine + 
-			"models.json.dir=JSON/" + newLine + 
-			"models.graphviz.dir=GRAPHVIZ/" + newLine + 
-			"alignment.graph.dir=AlignmentGraph/" + newLine +
-			"" + newLine + 
+//			"models.json.dir=models-json/" + newLine + 
+//			"models.graphviz.dir=models-graphviz/" + newLine + 
+//			"alignment.graph.dir=alignment-graph/" + newLine +
+//			"" + newLine + 
 			"##########################################################################################" + newLine + 
 			"#" + newLine + 
 			"# Other Settings" + newLine + 
@@ -154,15 +157,17 @@ public class ModelingConfiguration {
 
 			learnerEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learner.enabled", "true"));
 
-			modelsJsonDir = modelingProperties.getProperty("models.json.dir", "JSON/");
-			modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir", "GRAPHVIZ/");
-			alignmentGraphDir = modelingProperties.getProperty("alignment.graph.dir", "AlignmentGraph/");
+			learnAlignmentEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learn.alignment.enabled", "false"));
+
+//			modelsJsonDir = modelingProperties.getProperty("models.json.dir", "models-json/");
+//			modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir", "models-graphviz/");
+//			alignmentGraphDir = modelingProperties.getProperty("alignment.graph.dir", "alignment-graph/");
 
 			maxQueuedMappigs = Integer.parseInt(modelingProperties.getProperty("max.queued.mappings", "100"));
 
 			maxCandidateModels = Integer.parseInt(modelingProperties.getProperty("max.candidate.models", "5"));
 
-			multipleSamePropertyPerNode = Boolean.parseBoolean(modelingProperties.getProperty("multiple.same.property.per.node", "true"));
+			multipleSamePropertyPerNode = Boolean.parseBoolean(modelingProperties.getProperty("multiple.same.property.per.node", "false"));
 
 			scoringConfidenceCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.confidence.coefficient", "1"));
 
@@ -280,23 +285,23 @@ public class ModelingConfiguration {
 		return karmaServicePrefix.trim();
 	}
 
-	public static String getModelsJsonDir() {
-		if (modelsJsonDir == null)
-			load();
-		return modelsJsonDir;
-	}
-
-	public static String getModelsGraphvizDir() {
-		if (modelsGraphvizDir == null)
-			load();
-		return modelsGraphvizDir;
-	}
-
-	public static String getAlignmentGraphDir() {
-		if (alignmentGraphDir == null)
-			load();
-		return alignmentGraphDir;
-	}
+//	public static String getModelsJsonDir() {
+//		if (modelsJsonDir == null)
+//			load();
+//		return modelsJsonDir;
+//	}
+//
+//	public static String getModelsGraphvizDir() {
+//		if (modelsGraphvizDir == null)
+//			load();
+//		return modelsGraphvizDir;
+//	}
+//
+//	public static String getAlignmentGraphDir() {
+//		if (alignmentGraphDir == null)
+//			load();
+//		return alignmentGraphDir;
+//	}
 
 	public static Integer getMaxCandidateModels() {
 		if (maxCandidateModels == null)
@@ -334,6 +339,12 @@ public class ModelingConfiguration {
 		return learnerEnabled;
 	}
 
+	public static boolean isLearnAlignmentEnabled() {
+		if (learnAlignmentEnabled == null)
+			load();
+		return learnAlignmentEnabled;
+	}
+	
 	public static boolean isStoreOldHistoryEnabled() {
 		if (storeOldHistory == null)
 			load();

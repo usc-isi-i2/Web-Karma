@@ -21,9 +21,9 @@
 
 package edu.isi.karma.cleaning.QuestionableRecord;
 
-import edu.isi.karma.cleaning.TNode;
-
 import java.util.Vector;
+
+import edu.isi.karma.cleaning.TNode;
 
 //counting text feature
 public class Feature1 implements RecFeature {

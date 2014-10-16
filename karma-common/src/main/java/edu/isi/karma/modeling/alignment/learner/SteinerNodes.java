@@ -41,7 +41,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	private Set<Node> nodes;
 	private Map<ColumnNode, ColumnNode> mappingToSourceColumns;
 	private Confidence confidence;
-	private Coherence coherence;
+	private Coherence nodeCoherence;
 //	private int frequency;
 	private double score;
 	private int semanticTypesCount;
@@ -52,7 +52,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
 		this.semanticTypesCount = 0;
 		this.confidence = new Confidence();
-		this.coherence = new Coherence();
+		this.nodeCoherence = new Coherence();
 		this.nonModelNodesCount = 0;
 //		this.frequency = 0;
 		this.score = 0.0;
@@ -62,7 +62,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.nodes = new HashSet<Node>(steinerNodes.getNodes());
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>(steinerNodes.getMappingToSourceColumns());
 		this.confidence = new Confidence(steinerNodes.getConfidence());
-		this.coherence = new Coherence(steinerNodes.getCoherence());
+		this.nodeCoherence = new Coherence(steinerNodes.getCoherence());
 //		this.frequency = steinerNodes.getFrequency();
 		this.semanticTypesCount = steinerNodes.getSemanticTypesCount();
 		this.nonModelNodesCount = steinerNodes.getNonModelNodesCount();
@@ -91,13 +91,13 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		
 		if (!this.nodes.contains(n1)) {
 			this.nodes.add(n1);
-			this.coherence.updateCoherence(n1);
+			this.nodeCoherence.updateCoherence(n1);
 			if (n1.getModelIds() == null || n1.getModelIds().isEmpty())
 				this.nonModelNodesCount ++;
 		}
 		if (!this.nodes.contains(n2)) {
 			this.nodes.add(n2);
-			this.coherence.updateCoherence(n2);
+			this.nodeCoherence.updateCoherence(n2);
 			this.mappingToSourceColumns.put(n2, sourceColumn);
 			if (n2.getModelIds() == null || n2.getModelIds().isEmpty())
 				this.nonModelNodesCount ++;
@@ -108,11 +108,22 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		
 		this.confidence.addValue(confidence);
 		
-//		this.frequency += n1.getModelIds() == null ? 0 : n1.getModelIds().size();
-//		this.frequency += n2.getModelIds() == null ? 0 : n2.getModelIds().size();
+		this.computeScore();
 		
-//		this.coherence.computeCoherence(this.nodes);
+		return true;
 		
+	}
+	
+	public boolean addNode(InternalNode n) {
+		
+		if (this.nodes.contains(n))
+			return false;
+		
+		this.nodes.add(n);
+		this.nodeCoherence.updateCoherence(n);
+		if (n.getModelIds() == null || n.getModelIds().isEmpty())
+				this.nonModelNodesCount ++;
+
 		this.computeScore();
 		
 		return true;
@@ -136,7 +147,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	}
 	
 	public Coherence getCoherence() {
-		return this.coherence;
+		return this.nodeCoherence;
 	}
 	
 //	public int getFrequency() {
@@ -222,7 +233,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		
 		double confidence = this.confidence.getConfidenceValue();
 		double sizeReduction = this.getSizeReduction();
-		double coherence = this.coherence.getCoherenceValue2();
+		double coherence = this.nodeCoherence.getCoherenceValue();
 		//int frequency = this.getFrequency();
 		
 		double alpha = ModelingConfiguration.getScoringConfidenceCoefficient();
@@ -282,10 +293,10 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 //		sb.append("\n");
 
 		sb.append("\n");
-		sb.append("coherence list: ");
-		sb.append(coherence.printCoherenceList());
+		sb.append("node coherence: ");
+		sb.append(nodeCoherence.printCoherenceList());
 //		sb.append("\n");
-		sb.append("--- coherence value: " + this.coherence.getCoherenceValue2());
+		sb.append("--- value: " + this.nodeCoherence.getCoherenceValue());
 		sb.append("\n");
 		sb.append("size: " + this.getNodesCount() + ", max size: " + (this.semanticTypesCount * 2) + "---" + 
 				"size reduction: " +  roundTwoDecimals(this.getSizeReduction()) );

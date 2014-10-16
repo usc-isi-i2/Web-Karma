@@ -51,6 +51,7 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
@@ -64,7 +65,6 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 	private SynonymSemanticTypes oldSynonymTypes;
 	private JSONArray typesArr;
 	private SynonymSemanticTypes newSynonymTypes;
-	private final boolean isPartOfKey;
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 //	private DefaultLink newLink;
@@ -75,18 +75,17 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	protected SetSemanticTypeCommand(String id, String worksheetId, String hNodeId, 
-			boolean isPartOfKey, JSONArray typesArr, boolean trainAndShowUpdates, 
+			JSONArray typesArr, boolean trainAndShowUpdates, 
 			String rdfLiteralType, String selectionId) {
 		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
-		this.isPartOfKey = isPartOfKey;
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.typesArr = typesArr;
 		this.rdfLiteralType = rdfLiteralType;
 
 		addTag(CommandTag.Modeling);
 	}
-
+	
 	@Override
 	public String getCommandName() {
 		return this.getClass().getSimpleName();
@@ -139,6 +138,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		List<SemanticType> typesList = new ArrayList<SemanticType>();
 		for (int i = 0; i < typesArr.length(); i++) {
 			try {
+				LabeledLink newLink = null;
 				JSONObject type = typesArr.getJSONObject(i);
 				
 				String domainValue;
@@ -224,15 +224,14 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				if (type.getBoolean(ClientJsonKeys.isPrimary.name())) {
 					
 					if (isClassSemanticType) {
-						LinkKeyInfo keyInfo = isPartOfKey ? LinkKeyInfo.PartOfKey : LinkKeyInfo.None;
 						if (semanticTypeAlreadyExists && oldDomainNode == domain) {
 							// do nothing;
 						} else if (semanticTypeAlreadyExists) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
 //							alignment.removeNode(oldDomainNode.getId());
-							alignment.addClassInstanceLink(domain, columnNode, keyInfo);
+							newLink = alignment.addClassInstanceLink(domain, columnNode, LinkKeyInfo.None);
 						} else {
-							alignment.addClassInstanceLink(domain, columnNode, keyInfo);
+							newLink = alignment.addClassInstanceLink(domain, columnNode, LinkKeyInfo.None);
 						}
 					} 
 					// Property semantic type
@@ -241,28 +240,34 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 						// When only the link changes between the class node and the internal node (domain)
 						if (semanticTypeAlreadyExists && oldDomainNode == domain) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-							alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
+							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
 						}
 						// When there was an existing semantic type and the new domain is a new node in the graph and semantic type already existed 
 						else if (semanticTypeAlreadyExists) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
 //							alignment.removeNode(oldDomainNode.getId());
-							alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
+							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
 						} else {
-							alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
+							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
 						}						
 					}
 				} else { // Synonym semantic type
-					SemanticType synType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0,isPartOfKey);
+					SemanticType synType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0);
 					typesList.add(synType);
 				}
 				
-				// Update the alignment
-				alignment.align();
 				// Create the semantic type object
-				newType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0, isPartOfKey);
+				newType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0);
 //				newType = new SemanticType(hNodeId, classNode.getLabel(), null, SemanticType.Origin.User, 1.0,isPartOfKey);
 				columnNode.setUserSelectedSemanticType(newType);
+				columnNode.setForced(true);
+				
+				if(newLink != null) {
+					alignment.changeLinkStatus(newLink.getId(),
+							LinkStatus.ForcedByUser);
+				}
+				// Update the alignment
+				alignment.align();
 
 			} catch (JSONException e) {
 				logger.error("JSON Exception occured", e);

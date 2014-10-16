@@ -26,10 +26,10 @@ function WorksheetOptions(wsId, wsTitle) {
 			addLevel: true,
 			levels: [{
 				name: "Using Current Ontology",
-				func: showModel
+				func: suggestModel
 			}, {
 				name: "Generate New Ontology",
-				func: showAutoModel
+				func: suggestAutoModel
 			}, ]
 		},
 
@@ -271,10 +271,10 @@ function WorksheetOptions(wsId, wsTitle) {
 	}
 
 
-	function showModel() {
-		console.log("SHow Model: " + worksheetTitle);
+	function suggestModel() {
+		console.log("Suggest Model: " + worksheetTitle);
 		hideDropdown();
-		var info = generateInfoObject(worksheetId, "", "ShowModelCommand");
+		var info = generateInfoObject(worksheetId, "", "SuggestModelCommand");
 
 		var newInfo = info['newInfo'];
 		info["newInfo"] = JSON.stringify(newInfo);
@@ -291,10 +291,10 @@ function WorksheetOptions(wsId, wsTitle) {
 		return false;
 	}
 
-	function showAutoModel() {
-		console.log("SHow Auto Model: " + worksheetTitle);
+	function suggestAutoModel() {
+		console.log("Suggest Auto Model: " + worksheetTitle);
 		hideDropdown();
-		var info = generateInfoObject(worksheetId, "", "ShowAutoModelCommand");
+		var info = generateInfoObject(worksheetId, "", "SuggestAutoModelCommand");
 
 		var newInfo = info['newInfo'];
 		info["newInfo"] = JSON.stringify(newInfo);

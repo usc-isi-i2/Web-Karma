@@ -260,6 +260,7 @@ public class GraphUtil {
 			sb.append(edge.getId());
 			sb.append(" - status=" + edge.getStatus().name());
 			sb.append(" - w=" + edge.getWeight());
+			sb.append(" - type=" + edge.getType().name());
 			sb.append("\n");
         }
 		//sb.append("------------------------------------------");
@@ -590,7 +591,6 @@ public class GraphUtil {
 		if (semanticType.getType() == null) writer.value(nullStr);
 		else writeLabel(writer, semanticType.getType());
 		writer.name("origin").value(semanticType.getOrigin().toString());
-		writer.name("isPartOfKey").value(semanticType.isPartOfKey());
 		writer.name("confidenceScore").value(semanticType.getConfidenceScore());
 		writer.endObject();
 	}
@@ -758,7 +758,7 @@ public class GraphUtil {
     	} else if (type == LinkType.ColumnSubClassLink) {
     		l = new ColumnSubClassLink(id);
     	} else if (type == LinkType.DataPropertyLink) {
-    		l = new DataPropertyLink(id, label, keyInfo == LinkKeyInfo.PartOfKey ? true : false);
+    		l = new DataPropertyLink(id, label);
     	} else if (type == LinkType.DataPropertyOfColumnLink) {
     		l = new DataPropertyOfColumnLink(id, hNodeId, specializedLinkId);
     	} else if (type == LinkType.ObjectPropertyLink) {
@@ -821,7 +821,6 @@ public class GraphUtil {
 		Label domain = null;
 		Label type = null;
 		Origin origin = null;
-		Boolean isPartOfKey = null;
 		Double confidenceScore = null;
 		
 		reader.beginObject();
@@ -835,8 +834,6 @@ public class GraphUtil {
 				type = readLabel(reader);
 			} else if (key.equals("origin") && reader.peek() != JsonToken.NULL) {
 				origin = Origin.valueOf(reader.nextString());
-			} else if (key.equals("isPartOfKey") && reader.peek() != JsonToken.NULL) {
-				isPartOfKey = reader.nextBoolean();
 			} else if (key.equals("confidenceScore") && reader.peek() != JsonToken.NULL) {
 				confidenceScore = reader.nextDouble();
 			} else {
@@ -845,7 +842,7 @@ public class GraphUtil {
 		}
     	reader.endObject();
     	
-    	SemanticType semanticType = new SemanticType(hNodeId, type, domain, origin, confidenceScore, isPartOfKey);
+    	SemanticType semanticType = new SemanticType(hNodeId, type, domain, origin, confidenceScore);
     	return semanticType;	
     }
 	

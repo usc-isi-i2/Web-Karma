@@ -41,7 +41,6 @@ import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
@@ -55,11 +54,11 @@ public class ModelLearningGraphSparse extends ModelLearningGraph {
 	private static Logger logger = LoggerFactory.getLogger(ModelLearningGraphSparse.class);
 
 	public ModelLearningGraphSparse(OntologyManager ontologyManager) throws IOException {
-		super(ontologyManager);
+		super(ontologyManager, ModelLearningGraphType.Sparse);
 	}
 
 	public ModelLearningGraphSparse(OntologyManager ontologyManager, boolean emptyInstance) {
-		super(ontologyManager, emptyInstance);
+		super(ontologyManager, emptyInstance, ModelLearningGraphType.Sparse);
 	}
 
 //	protected static ModelLearningGraphSparse getInstance(OntologyManager ontologyManager) {
@@ -154,7 +153,7 @@ public class ModelLearningGraphSparse extends ModelLearningGraph {
 			LabeledLink link;
 			String id = LinkIdFactory.getLinkId(e.getLabel().getUri(), n1.getId(), n2.getId());	
 			if (e instanceof DataPropertyLink) 
-				link = new DataPropertyLink(id, e.getLabel(), e.getKeyType() == LinkKeyInfo.PartOfKey? true : false);
+				link = new DataPropertyLink(id, e.getLabel());
 			else if (e instanceof ObjectPropertyLink)
 				link = new ObjectPropertyLink(id, e.getLabel(), ((ObjectPropertyLink)e).getObjectPropertyType());
 			else if (e instanceof SubClassLink)

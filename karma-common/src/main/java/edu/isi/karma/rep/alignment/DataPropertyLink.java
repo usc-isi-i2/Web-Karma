@@ -31,8 +31,5 @@ public class DataPropertyLink extends LabeledLink {
 		super(id, label, LinkType.DataPropertyLink);
 	}
 
-	public DataPropertyLink(String id, Label label, boolean partOfKey) {
-		super(id, label, LinkType.DataPropertyLink, partOfKey ? LinkKeyInfo.PartOfKey : LinkKeyInfo.None);
-	}
 
 }

@@ -21,10 +21,10 @@
 
 package edu.isi.karma.cleaning.features;
 
+import java.util.Vector;
+
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
-
-import java.util.Vector;
 
 //only to test whether a substring exist
 public class RecordTextFeature implements Feature {
@@ -41,14 +41,17 @@ public class RecordTextFeature implements Feature {
 		nodes = ruler.vec;
 		this.score = computeScore();
 	}
-
-	public double computeScore() {
-		for (TNode t : nodes) {
-			if (t.text.compareTo(text) == 0) {
-				return 1;
+	public double computeScore()
+	{
+		int cnt = 0;
+		for(TNode t:nodes)
+		{
+			if(t.text.compareTo(text)==0)
+			{
+				cnt += 1;
 			}
 		}
-		return 0;
+		return cnt;
 	}
 
 	@Override

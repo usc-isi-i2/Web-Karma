@@ -31,8 +31,6 @@ public class SteinerNode extends Entity {
 	 * for BANKS II
 	 */
 	
-	
-	
 	public SteinerNode(String id){
 		super(id);
 		edges=new TreeSet<SteinerEdge>();		

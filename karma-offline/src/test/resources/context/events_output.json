@@ -1,0 +1,320 @@
+[
+{
+    "@context": "file:/C:/Users/Frank/Web-Karma/karma-offline/events_context.json",
+    "hasGeographicLocation": [
+        {
+            "@type": "Thing",
+            "label": "3:30-4:50@VKC100",
+            "@id": "_:owl_Thing1_N357"
+        },
+        {
+            "@type": "Thing",
+            "label": " 5:30-650@THH212",
+            "@id": "_:owl_Thing1_N359"
+        }
+    ],
+    "hasInstructor": [
+        {
+            "@type": "Person",
+            "@id": "http://isi.edu/cs548/person/knoblock"
+        },
+        {
+            "@type": "Person",
+            "@id": "http://isi.edu/cs548/person/pszekely"
+        }
+    ],
+    "@type": "Course",
+    "hasPrerequisite": [
+        {
+            "@type": "Course",
+            "label": "CS561",
+            "@id": "http://isi.edu/cs548/course/CS561"
+        },
+        {
+            "@type": "Course",
+            "label": "CS585",
+            "@id": "http://isi.edu/cs548/course/CS585"
+        }
+    ],
+    "hasHomework": [
+        {
+            "title": "Sign USC academic integrity rules",
+            "description": "Sign the Trojan academic integrity document",
+            "@type": "Homework",
+            "@id": "http://isi.edu/cs548/event/hw-academic-integrity"
+        },
+        {
+            "title": "Writing a Map/Reduce job to Analyze a Dataset",
+            "@type": "Homework",
+            "@id": "http://isi.edu/cs548/event/hw-big-data"
+        },
+        {
+            "title": "Using Data Cleaning Tools to Clean a Dataset",
+            "@type": "Homework",
+            "@id": "http://isi.edu/cs548/event/hw-data-cleaning"
+        },
+        {
+            "title": "Undertanding GLAV rules",
+            "@type": "Homework",
+            "@id": "http://isi.edu/cs548/event/hw-glav"
+        },
+        {
+            "title": "Using Information Extraction Tools to Extract Entities from Text",
+            "@type": "Homework",
+            "@id": "http://isi.edu/cs548/event/hw-information-extraction"
+        },
+        {
+            "title": "Using Karma to Convert Datasets Into RDF",
+            "@type": "Homework",
+            "@id": "http://isi.edu/cs548/event/hw-karma"
+        },
+        {
+            "title": "Mashup Tools: Yahoo Pipes and YQL and Google Refine",
+            "@type": "Homework",
+            "@id": "http://isi.edu/cs548/event/hw-mashups"
+        },
+        {
+            "title": "Writing an OWL ontology for a Domain",
+            "@type": "Homework",
+            "@id": "http://isi.edu/cs548/event/hw-ontology"
+        },
+        {
+            "title": "RDF Graphs",
+            "description": "RDF graphs",
+            "@type": "Homework",
+            "@id": "http://isi.edu/cs548/event/hw-rdf"
+        },
+        {
+            "title": "Using Record Linkage Tools to Link Datasets",
+            "@type": "Homework",
+            "@id": "http://isi.edu/cs548/event/hw-record-linkage"
+        },
+        {
+            "title": "SPARQL the RDF Query Language",
+            "description": "Writing SPARQL queries",
+            "@type": "Homework",
+            "@id": "http://isi.edu/cs548/event/hw-sparql"
+        },
+        {
+            "title": "Working with Triple Stores",
+            "@type": "Homework",
+            "@id": "http://isi.edu/cs548/event/hw-triple-stores"
+        },
+        {
+            "title": "Creating a Wrapper for a Web Site",
+            "@type": "Homework",
+            "@id": "http://isi.edu/cs548/event/hw-wrapper"
+        }
+    ],
+    "label": "CS548",
+    "hasLecture": [
+        {
+            "title": "Automatic source modeling",
+            "description": "Mapping datasets to RDF can be difficult and time-consuming. In this class we cover different techniques for automatically mapping a dataset to a domain ontology (RDF Schema).",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-automatic-modeling"
+        },
+        {
+            "title": "Big Data",
+            "description": "Lately, there has been significant interest in NoSQL databases that support parallel distributed analysis of large datasets on commodity hardware. In this lecture we explore the latest ideas for using NoSQL databases for storing Linked Data at large scale.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-big-data"
+        },
+        {
+            "title": "Data cleaning",
+            "description": "Data cleaning is a major headache in information integration because most datasets contain errors that need to be corrected before the information is usable. We will cover the main types of errors and common techniques for detecting and correcting data errors. We will provide an overview of Google Refine, a popular tool for data cleaning.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-data-cleaning"
+        },
+        {
+            "title": "Database theory basics: queries, query containment, Datalog",
+            "description": "We review the basics of the relational data model, query languages (conjunctive queries and recursive queries - Datalog), reasoning about queries (query containment), and data modeling constructs (keys, functional dependencies, referential integrity constraints, and their generalizations: tuple-generating dependencies and equality-generating dependencies). We use queries to describe the contents of sources and to map data structured according to the schemas of the sources into a common harmonized target schema.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-database-theory-basics"
+        },
+        {
+            "title": "Extracting entities and relations from text",
+            "description": "Many structured sources contain unstructured fields (e.g., the biography of a person). We will provide a brief overview of the main techniques to extract entities (people, places and organizations) from text and review several off-the-shelf tools for entity extraction.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-entity-extraction"
+        },
+        {
+            "title": "Logical data integration: answering queries using views (GAV, LAV, st-tgds)",
+            "description": "We describe the formal approach to data integration: (1) defining  mappings between source and target schemas, using logical rules/queries/st-tgds, and (2) reasoning with these rules to rewrite queries posed over the target schema to executable queries over the source schemas. We describe the virtual approach to data integration where the data remains at remote sources and the data integration system (mediator) retrieves the data in real time in response to user queries. ",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-glav"
+        },
+        {
+            "title": "Logical data integration: (advanced)",
+            "description": "We present the latest research and techniques on how to build a highly scalable approach using logical data integration techniques.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-glav-advanced"
+        },
+        {
+            "title": "Intellectual Property",
+            "description": "We present the various methods for protecting intellectual property, including patents, trade secrets, copyright, and trademarks.  We also present and discuss various legal case studies related to the techniques presented in the class.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-intellectual-property"
+        },
+        {
+            "title": "Introduction and course overview",
+            "description": "Overview of issues that make information integration challenging and the techniques that we will cover in the course to address these challenges.  Disucssion of the grading policy, including the quizzes, homeworks and the final project.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-intro"
+        },
+        {
+            "title": "Karma, semi-automatic source modeling",
+            "description": "Karma is our own tool for semi-automatically mapping a variety of sources to a domain model defined using an ontology or an RDF Schema. In this class we will cover the algorithms that Karma uses to learn from previous mappings and the algorithms to automatically suggest models for new sources.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-karma"
+        },
+        {
+            "title": "Linked Data, common vocabularies/ontologies",
+            "description": "Tim Berners Lee introduced the concept of Linked Data more than 10 years ago. Since then, the Linked Data cloud has grown to more than 30 billion facts covering pretty much any topic you can think of. We will review the principles of Linked Data and provide an overview of the main datasets and vocabularies available in the Linked Data cloud.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-linked-data"
+        },
+        {
+            "title": "Linked Services",
+            "description": "A significant amount of data on the Web is available via Web APIs. These APIs typically return their data in XML or JSON. In this class we review techniques for modeling Web APIs to make them easy to discover and to wrap them so that they can consume and produce RDF. This makes it possible to integrate them with other Linked Data sources.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-linked-services"
+        },
+        {
+            "title": "Mashups: principles",
+            "description": "Mashups are applications that combine information from multiple Web sites and Web APIs to build an interesting new application. In this calls we discuss the main techniques that have been used to create mashups and describe interesting research systemts that incorporate these techniques.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-mashup-principles"
+        },
+        {
+            "title": "Mashups: Yahoo Pipes & YQL, REST",
+            "description": "In this class we focus on techniques for building mashups using Web APIs. We begin by introducing the principles of RESTful APIs and illustrating these principles using examples. Then we cover two interesting systems that allow users to quickly and easily construct mashups using Web APIs.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-mashup-tools"
+        },
+        {
+            "title": "Ontology-based data integration",
+            "description": "We consider the problem of data integration when the target schema is expressed as an ontology, in particular, the OWL2QL and OWL2EL profiles. We discuss approaches to answer queries over such ontologies and the computational effects of different ontology languages.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-ontology-based-integration"
+        },
+        {
+            "title": "Open information extraction",
+            "description": "New information extraction techniques are able to extract a wide variety of entities, relations and events from text. These techniques allow you to build large knowledge bases of a wide variety of topics (e.g., the places where famous people where born). Our guest lecturer is a leading expert in open information extrction and will present an overview of these techniques. ",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-open-information-extraction"
+        },
+        {
+            "title": "OWL2: Description Logics, Inference",
+            "description": "OWL, the Web Ontology Language is the standard language for defining ontologies in the Semantic Web. OWL ontologies define the semantics of classes and properties and allow inferences to be made to derive new facts. In this class we cover the main OWL constructs and how they allow a system to infer new facts.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-owl2-basics"
+        },
+        {
+            "title": "OWL2 Profiles: QL, EL, RL",
+            "description": "Full OWL reasoning is computationally expensive (exponential) and thus impractical for most applications. The OWL profiles define subsets of OWL where the reasoning algorithms perform efficiently. In this class we introduce the most common OWL profiles, review the reasoning capabilities that they support and illustrate them in practical settings.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-owl2-profiles"
+        },
+        {
+            "title": "Project Presentations",
+            "description": "Students present their papers. The presentations will use the Pecha-Kucha format where students present the projects in 6 minutes in 40 seconds using 20 slides in auto-advance mode every 20 seconds. We used this technique for the first time in Fall 2013 and it was a huge success, so we will continue using this format.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-project-presentations-1"
+        },
+        {
+            "title": "Project Presentations",
+            "description": "Second day of project presentations using the Pecha-Kucha style.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-project-presentations-2"
+        },
+        {
+            "title": "RDF, graph data model",
+            "description": "Introduction to the Resource Description Framework (RDF), the langauage of the Semantic Web and the Linked Data Cloud. We will review basic concepts of XML and contrast XML with RDF. Will introduce the concept of URIs, the global graph of data that RDF supports, and the syntax to write RDF documents.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-rdf"
+        },
+        {
+            "title": "RDF mapping tools",
+            "description": "A popular and useful technique for integrating datasets (databases, delimited text files, XML or JSON) is to map them to RDF. Once the datasets are mapped to RDF it becomes possible to query them in an integrated way using SPARQL. In this class we cover techniques for mapping different types of datasets to RDF.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-rdf-mapping"
+        },
+        {
+            "title": "RDF Schema and basic inference",
+            "description": "RDF Schema defines the semantics of RDF graphs. We will introduce the elements of the RDF Schema language and show how these elements enable an RDF database (triple store) to make inferences to derive new information.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-rdfs"
+        },
+        {
+            "title": "Record linkage \u2013 record matching",
+            "description": "We continue our study of Record Linkage by reviewing techniques for matching records consisting of multiple attributes. We will review the main algorithms for record linkage and cover optimization technques to avoid the N-squared comparison problem.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-record-linkage-record-matching"
+        },
+        {
+            "title": "Record linkage \u2013 string matching",
+            "description": "Record Linkage is the problem of identifying when two different records refer to the same real world entity (e.g., whether two records about restaurants refer to the same restaurant). Record Linkage is one of the most important problems in information integration. In this class we begin our study of Record Linkage by covering several techniques for fuzzy matching text strings.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-record-linkage-string-matching"
+        },
+        {
+            "title": "Review",
+            "description": "In this class we review all the topics covered during the semester highlighting the main ideas and techniques.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-review"
+        },
+        {
+            "title": "Schema Mapping",
+            "description": "Different datasets often use different schemas even when they contain information about the same topic. In order to integrate these datasets it is useful to identify a mapping between the attributes in these datasets so that one can combine them into one integrated dataset. In this class we cover techniques for automatically identifying mappings between schemas.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-schema-mapping"
+        },
+        {
+            "title": "Social Data Analysis",
+            "description": "Invited lecture illustrating applications of information integration to social network analysis.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-social-data-analysis"
+        },
+        {
+            "title": "SPARQL query language",
+            "description": "SPARQL is the query language of RDF databases. We will introduce the types of queries that can be expressed in SPARQL and the main elements of the language. We will show how one can query the Linked Data cloud using SPARQL.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-sparql"
+        },
+        {
+            "title": "Semi-structured Data: Wrapper Generation",
+            "description": "Most of the information on the Web is available on Web pages, and often is not available in a structured format or a Web API. Web wrappers are programs that extract data from Web pages and return it in a structured format, typically XML. Several libraries exist for programmers to develop such wrappers. There has been significant research on techniques to generate wrappers by example so that users who don't know how to program can generate wrappers. In this lecture we cover several systems that use this approch and discuss the algorithms that they use.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-wrapper-generation"
+        },
+        {
+            "title": "Semi-structured Data: Wrapper Learning",
+            "description": "An alternative approach to generating wrappers from examples is to automatically learn the wrappers given a set of Web pages. In this class we discuss techinques that enable a system to discover differences in pages and use this information to automatically generate a wrapper to extract information from Web pages.",
+            "@type": "Lecture",
+            "@id": "http://isi.edu/cs548/event/l-wrapper-learning"
+        }
+    ],
+    "hasTeachingAssistant": [
+        {
+            "@type": "Person",
+            "@id": "http://isi.edu/cs548/person/bowu"
+        },
+        {
+            "@type": "Person",
+            "@id": "http://isi.edu/cs548/person/hwu732"
+        }
+    ],
+    "@id": "http://isi.edu/cs548/course/CS548",
+    "hasGrader": [
+        {
+            "@type": "Person",
+            "@id": "http://isi.edu/cs548/person/hkulkarn"
+        },
+        {
+            "@type": "Person",
+            "@id": "http://isi.edu/cs548/person/tadphale"
+        }
+    ]
+}
+]

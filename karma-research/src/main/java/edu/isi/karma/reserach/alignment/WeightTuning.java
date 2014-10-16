@@ -25,7 +25,7 @@ import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.Ordering;
 import edu.isi.karma.modeling.alignment.SemanticModel;
-import edu.isi.karma.modeling.alignment.learner.SortableSemanticModel;
+import edu.isi.karma.modeling.alignment.learner.SortableSemanticModel_Old;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,28 +71,28 @@ public class WeightTuning {
 		this.confidenceFactor = c;
 	}
 	
-	public void updateWeights(List<SortableSemanticModel> rankedSemanticModels, SemanticModel correctModel) {
+	public void updateWeights(List<SortableSemanticModel_Old> rankedSemanticModels, SemanticModel correctModel) {
 		
 		if (rankedSemanticModels == null || 
 				rankedSemanticModels.isEmpty())
 			return;
 		
-		for (SortableSemanticModel sm: rankedSemanticModels)
+		for (SortableSemanticModel_Old sm: rankedSemanticModels)
 			System.out.println(sm.getId());
 		
-		HashMap<SortableSemanticModel, Integer> modelRanking = 
-				new HashMap<SortableSemanticModel, Integer>();
+		HashMap<SortableSemanticModel_Old, Integer> modelRanking = 
+				new HashMap<SortableSemanticModel_Old, Integer>();
 		
 		for (int i = 0; i < rankedSemanticModels.size(); i++) {
 			modelRanking.put(rankedSemanticModels.get(i), i + 1);
 		}
 
-		HashMap<SortableSemanticModel, Double> modelDistance = 
-				new HashMap<SortableSemanticModel, Double>();
+		HashMap<SortableSemanticModel_Old, Double> modelDistance = 
+				new HashMap<SortableSemanticModel_Old, Double>();
 		
 
 		double distance = 0.0;
-		for (SortableSemanticModel sm : rankedSemanticModels) {
+		for (SortableSemanticModel_Old sm : rankedSemanticModels) {
 			distance = correctModel.evaluate(sm).getDistance();
 			modelDistance.put(sm, distance);
 		}
@@ -100,7 +100,7 @@ public class WeightTuning {
 //		Ordering<SortableSemanticModel> orderingByDistance = Ordering.natural().nullsLast().onResultOf(Functions.forMap(modelDistance));
 		
 		// To prevent duplicate keys - having two entries equal according to comparator function
-		Ordering<SortableSemanticModel> orderingByDistance = Ordering.natural().nullsLast().onResultOf(Functions.forMap(modelDistance))
+		Ordering<SortableSemanticModel_Old> orderingByDistance = Ordering.natural().nullsLast().onResultOf(Functions.forMap(modelDistance))
 				.compound(Ordering.natural().nullsLast().onResultOf(Functions.forMap(modelRanking)))
 				.compound(Ordering.natural());;
 		
@@ -110,9 +110,9 @@ public class WeightTuning {
 //						return entry.getValue();
 //		    }
 		    
-		Map<SortableSemanticModel, Double> map = ImmutableSortedMap.copyOf(modelDistance, orderingByDistance);
+		Map<SortableSemanticModel_Old, Double> map = ImmutableSortedMap.copyOf(modelDistance, orderingByDistance);
 		
-		SortableSemanticModel closestModel = map.entrySet().iterator().next().getKey();
+		SortableSemanticModel_Old closestModel = map.entrySet().iterator().next().getKey();
 		if (modelRanking.get(closestModel) == 1) {
 			logger.info("best model is already the first suggested one!");
 			return;

@@ -56,6 +56,7 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
@@ -141,8 +142,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				alignmentId);
 		if (alignment == null) {
 			alignment = new Alignment(ontMgr);
-			AlignmentManager.Instance().addAlignmentToMap(alignmentId,
-					alignment);
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
 
 		// Save the original alignment for undo
@@ -191,14 +191,15 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				classNode = alignment.addInternalNode(classNodeLabel);
 			}
 
-			alignment.addClassInstanceLink(classNode, columnNode,
+			LabeledLink newLink = alignment.addClassInstanceLink(classNode, columnNode,
 					LinkKeyInfo.UriOfInstance);
-			alignment.align();
-
+			alignment.changeLinkStatus(newLink.getId(),
+					LinkStatus.ForcedByUser);
+			
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId,
 					ClassInstanceLink.getFixedLabel(), classNode.getLabel(),
-					SemanticType.Origin.User, 1.0, false);
+					SemanticType.Origin.User, 1.0);
 		} else if (metaPropertyName
 				.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
 			LabeledLink propertyLink = alignment.getLinkById(metaPropertyId);
@@ -220,24 +221,27 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 			if (propertyLink instanceof DataPropertyLink) {
 				String targetHNodeId = ((ColumnNode) propertyLink.getTarget())
 						.getHNodeId();
-				alignment.addDataPropertyOfColumnLink(classInstanceNode,
+				LabeledLink newLink = alignment.addDataPropertyOfColumnLink(classInstanceNode,
 						columnNode, targetHNodeId, propertyLink.getId());
+				alignment.changeLinkStatus(newLink.getId(),
+						LinkStatus.ForcedByUser);
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId,
 						DataPropertyOfColumnLink.getFixedLabel(),
 						classInstanceNode.getLabel(), SemanticType.Origin.User,
-						1.0, false);
+						1.0);
 			} else if (propertyLink instanceof ObjectPropertyLink) {
-				alignment.addObjectPropertySpecializationLink(
+				LabeledLink newLink = alignment.addObjectPropertySpecializationLink(
 						classInstanceNode, columnNode, propertyLink.getId());
+				alignment.changeLinkStatus(newLink.getId(),
+						LinkStatus.ForcedByUser);
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId,
 						ObjectPropertySpecializationLink.getFixedLabel(),
 						classInstanceNode.getLabel(), SemanticType.Origin.User,
-						1.0, false);
+						1.0);
 			}
 
-			alignment.align();
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyId);
 			if (semanticTypeAlreadyExists) {
@@ -256,16 +260,22 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				}
 				classNode = alignment.addInternalNode(classNodeLabel);
 			}
-			alignment.addColumnSubClassOfLink(classNode, columnNode);
-			alignment.align();
-
+			LabeledLink newLink = alignment.addColumnSubClassOfLink(classNode, columnNode);
+			alignment.changeLinkStatus(newLink.getId(),
+					LinkStatus.ForcedByUser);
+			
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId,
 					ColumnSubClassLink.getFixedLabel(), classNode.getLabel(),
-					SemanticType.Origin.User, 1.0, false);
+					SemanticType.Origin.User, 1.0);
 		}
 
 		columnNode.setUserSelectedSemanticType(newType);
+		columnNode.setForced(true);
+
+		// Update the alignment
+		alignment.align();
+
 
 		UpdateContainer c = new UpdateContainer();
 
@@ -286,6 +296,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		if (trainAndShowUpdates) {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		}
+		
 		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
 		c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
 				alignment));

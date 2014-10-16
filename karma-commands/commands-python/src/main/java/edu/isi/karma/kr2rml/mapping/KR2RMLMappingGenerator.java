@@ -63,13 +63,11 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
-import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.DisplayModel;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
@@ -290,9 +288,7 @@ public class KR2RMLMappingGenerator {
 				Set<LabeledLink> outgoingLinks = alignmentGraph.outgoingEdgesOf(node);
 				for (LabeledLink link:outgoingLinks) {
 					
-					if (link instanceof ClassInstanceLink || link instanceof ColumnSubClassLink
-							|| (link instanceof DataPropertyLink && 
-								link.getKeyType() == LinkKeyInfo.PartOfKey)) {
+					if (link instanceof ClassInstanceLink || link instanceof ColumnSubClassLink) {
 						Node tNode = link.getTarget();
 						if (tNode instanceof ColumnNode) {
 							ColumnNode cnode = (ColumnNode) tNode;
@@ -315,11 +311,6 @@ public class KR2RMLMappingGenerator {
 								subj.addRdfsType(typeTermSet2);
 							}
 							
-							// Identify the link which has been chosen as the key
-							else if (link instanceof DataPropertyLink && 
-									link.getKeyType() == LinkKeyInfo.PartOfKey) {
-								subj.getTemplate().addTemplateTermToSet(cnTerm);
-							}
 							List<String> columnsCovered = new LinkedList<String>();
 							for(TemplateTerm term : subj.getTemplate().getAllColumnNameTermElements())
 							{

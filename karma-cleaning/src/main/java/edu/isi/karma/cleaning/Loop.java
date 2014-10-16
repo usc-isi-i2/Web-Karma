@@ -2,6 +2,7 @@ package edu.isi.karma.cleaning;
 
 public class Loop implements GrammarTreeNode {
 	public Segment loopbody;
+	public String program = "null";
 	public int looptype;
 	public static final int LOOP_START = 0;
 	public static final int LOOP_END = 1;
@@ -19,7 +20,10 @@ public class Loop implements GrammarTreeNode {
 	}
 
 	public String verifySpace() {
-		return this.loopbody.verifySpace();
+		String res = "";
+		res= this.loopbody.verifySpace();
+		this.program = res;
+		return res;
 	}
 
 	public Loop mergewith(Loop a) {
@@ -79,7 +83,6 @@ public class Loop implements GrammarTreeNode {
 		return this.loopbody.getrepString();
 	}
 
-	@Override
 	public void createTotalOrderVector() {
 		// TODO Auto-generated method stub
 
@@ -97,9 +100,14 @@ public class Loop implements GrammarTreeNode {
 		return this.loopbody.size();
 	}
 
-	@Override
 	public void emptyState() {
 		this.loopbody.emptyState();
 
 	}
+
+	@Override
+	public String getProgram() {
+		return this.program;
+	}
+
 }

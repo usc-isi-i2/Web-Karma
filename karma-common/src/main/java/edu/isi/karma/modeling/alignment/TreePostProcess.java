@@ -61,11 +61,21 @@ public class TreePostProcess {
 		
 		this.graphBuilder = graphBuilder;
 		this.tree = (DirectedWeightedMultigraph<Node, DefaultLink>)GraphUtil.asDirectedGraph(tree);
-		buildOutputTree();
+		buildOutputTree(true);
 		addLinks(newLinks);
-		if (findRoot)
-			selectRoot(findPossibleRoots());
+		if (findRoot) {
+			this.root = selectRoot(this.tree);
+		}
 
+	}
+	
+	public TreePostProcess(
+			GraphBuilder graphBuilder,
+			UndirectedGraph<Node, DefaultLink> tree) {
+		
+		this.graphBuilder = graphBuilder;
+		this.tree = (DirectedWeightedMultigraph<Node, DefaultLink>)GraphUtil.asDirectedGraph(tree);
+		buildOutputTree(false);
 	}
 	
 	// Public Methods
@@ -80,12 +90,12 @@ public class TreePostProcess {
 	
 	// Private Methods
 	
-	private List<Node> findPossibleRoots() {
+	private static List<Node> findPossibleRoots(DirectedWeightedMultigraph<Node, DefaultLink> tree) {
 
 		List<Node> possibleRoots = new ArrayList<Node>();
 
 		// If tree contains the Thing, we return it as the root
-		for (Node v: this.tree.vertexSet()) { 
+		for (Node v: tree.vertexSet()) { 
 			if (v.getLabel() != null && v.getLabel().getUri() != null && v.getLabel().getUri().equals(Uris.THING_URI)) {
 				possibleRoots.add(v);
 			}
@@ -97,9 +107,9 @@ public class TreePostProcess {
 		List<Node> vertexList = new ArrayList<Node>();
 		List<Integer> reachableNodesList = new ArrayList<Integer>();
 		
-		for (Node v: this.tree.vertexSet()) {
+		for (Node v: tree.vertexSet()) {
 			BreadthFirstIterator<Node, DefaultLink> i = 
-				new BreadthFirstIterator<Node, DefaultLink>(this.tree, v);
+				new BreadthFirstIterator<Node, DefaultLink>(tree, v);
 			
 			reachableNodes = -1;
 			while (i.hasNext()) {
@@ -122,17 +132,19 @@ public class TreePostProcess {
 		return possibleRoots;
 	}
 	
-	private void selectRoot(List<Node> possibleRoots) {
+	public static Node selectRoot(DirectedWeightedMultigraph<Node, DefaultLink> tree) {
+		
+		List<Node> possibleRoots = findPossibleRoots(tree);
 		
 		if (possibleRoots == null || possibleRoots.size() == 0)
-			return;
+			return null;
 		
 		Collections.sort(possibleRoots);
 		
-		this.root = possibleRoots.get(0);
+		return possibleRoots.get(0);
 	}
 
-	private void buildOutputTree() {
+	private void buildOutputTree(boolean allowedChaningGraph) {
 		
 		String sourceId, targetId;
 		DefaultLink[] links = tree.edgeSet().toArray(new DefaultLink[0]);
@@ -174,14 +186,16 @@ public class TreePostProcess {
 					
 					if (linkSourceId.equals(sourceId)) {
 						tree.addEdge(link.getSource(), link.getTarget(), newLink);
-						this.graphBuilder.addLink(link.getSource(), link.getTarget(), newLink);
+						tree.setEdgeWeight(newLink, link.getWeight());
+						if (allowedChaningGraph) this.graphBuilder.addLink(link.getSource(), link.getTarget(), newLink);
 					} else {
 						tree.addEdge(link.getTarget(), link.getSource(), newLink);
-						this.graphBuilder.addLink(link.getTarget(), link.getSource(), newLink);
+						tree.setEdgeWeight(newLink, link.getWeight());
+						if (allowedChaningGraph) this.graphBuilder.addLink(link.getTarget(), link.getSource(), newLink);
 					}
 					
 					tree.removeEdge(link);
-					this.graphBuilder.removeLink(link);
+					if (allowedChaningGraph) this.graphBuilder.removeLink(link);
 	
 				} else {
 					logger.error("Something is going wrong. " +

@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -40,14 +41,17 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.SemanticType;
 
 public class GraphVizUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(GraphVizUtil.class);
 
-	private static double roundTwoDecimals(double d) {
-        DecimalFormat twoDForm = new DecimalFormat("#.##");
-        return Double.valueOf(twoDForm.format(d));
+	private static double roundDecimals(double d, int k) {
+		String format = "";
+		for (int i = 0; i < k; i++) format += "#";
+        DecimalFormat DForm = new DecimalFormat("#." + format);
+        return Double.valueOf(DForm.format(d));
 	}
 	
 	public static String getLocalName(String uri) {
@@ -151,8 +155,9 @@ public class GraphVizUtil {
 				n = new org.kohsuke.graphviz.Node();
 //				label = (uri == null || uri.trim().length() == 0?id:uri));
 				sourceLabel = (sourceLocalName == null || sourceLocalName.trim().length() == 0?sourceId:sourceLocalName);
-				if (showNodeMetaData) 
-					sourceLabel += metaDataSeparator + getModelIds(source.getModelIds()); 
+				if (showNodeMetaData) {
+//					sourceLabel += metaDataSeparator + getModelIds(source.getModelIds());
+				}
 				n.attr("label", sourceLabel);
 				nodeIndex.put(source, n);
 			
@@ -179,8 +184,21 @@ public class GraphVizUtil {
 					ColumnNode mappedColumn = (mappingToSourceColumns == null) ? (ColumnNode)target : mappingToSourceColumns.get(target);
 					targetLabel = mappedColumn.getColumnName();
 				}
-				if (showNodeMetaData) 
-					targetLabel += metaDataSeparator + getModelIds(target.getModelIds()); 
+				if (showNodeMetaData) {
+//					targetLabel += metaDataSeparator + getModelIds(target.getModelIds());
+					if (target instanceof ColumnNode) {
+						ColumnNode mappedColumn = (mappingToSourceColumns == null) ? (ColumnNode)target : mappingToSourceColumns.get(target);
+						List<SemanticType> suggestedTypes = mappedColumn.getTopKSuggestions(4);
+						if (suggestedTypes != null)
+							for (SemanticType st : suggestedTypes)
+								targetLabel += "\n[" + 
+										getLocalName(st.getDomain().getUri()) + 
+										"," + 
+										getLocalName(st.getType().getUri()) + 
+										"," + 
+										roundDecimals(st.getConfidenceScore(),3) + "]";
+					}
+				}
 				n.attr("label", targetLabel);
 				nodeIndex.put(target, n);
 			
@@ -203,9 +221,9 @@ public class GraphVizUtil {
 
 			if (showLinkMetaData) {
 				edgeLabel += metaDataSeparator;
-				edgeLabel += "w=" + roundTwoDecimals(e.getWeight());
-				edgeLabel += metaDataSeparator;
-				edgeLabel += getModelIds(modelIds);
+				edgeLabel += "w=" + roundDecimals(e.getWeight(), 6);
+//				edgeLabel += metaDataSeparator;
+//				edgeLabel += getModelIds(modelIds);
 			}
 
 			edge.attr("label", edgeLabel);

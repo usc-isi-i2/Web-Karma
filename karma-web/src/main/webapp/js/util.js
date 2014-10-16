@@ -343,6 +343,32 @@ function parseClassJSON(clazz, result, allLabels) {
 	//	}
 }
 
+function getAllDataAndObjectProperties(worksheetId) {
+	var info = generateInfoObject(worksheetId, "", "GetPropertiesCommand");
+	info["propertiesRange"] = "allDataAndObjectProperties";
+
+	var result = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data: info,
+		dataType: "json",
+		async: false,
+		complete: function(xhr, textStatus) {
+			var json = $.parseJSON(xhr.responseText);
+			var data = json.elements[0].properties;
+			$.each(data, function(index, prop) {
+				parsePropertyJSON(prop, result);
+			});
+		},
+		error: function(xhr, textStatus) {
+			alert("Error occured while fetching properties: " + textStatus);
+		}
+	});
+	sortClassPropertyNodes(result);
+	return result;
+}
+
 function getAllDataProperties(worksheetId) {
 	var info = generateInfoObject(worksheetId, "", "GetPropertiesCommand");
 	info["propertiesRange"] = "allDataProperties";
@@ -483,7 +509,8 @@ function parsePropertyJSON(prop, result) {
 	var node = {
 		"label": prop.label,
 		"id": prop.id,
-		"uri": prop.uri
+		"uri": prop.uri,
+		"type": prop.type
 	};
 	result.push(node);
 	//	if(prop.children) {

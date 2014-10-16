@@ -54,14 +54,14 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 
 
-public class ShowAutoModelCommand extends WorksheetCommand {
+public class SuggestAutoModelCommand extends WorksheetCommand {
 
 	private String worksheetName;
 
 	private static Logger logger = LoggerFactory
-			.getLogger(ShowAutoModelCommand.class);
+			.getLogger(SuggestAutoModelCommand.class);
 
-	protected ShowAutoModelCommand(String id, String worksheetId)
+	protected SuggestAutoModelCommand(String id, String worksheetId)
 			{
 		super(id, worksheetId);
 		
@@ -79,7 +79,7 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 
 	@Override
 	public String getTitle() {
-		return "Show AutoModel";
+		return "Suggest AutoModel";
 	}
 
 	@Override
@@ -127,10 +127,10 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 			List<LabeledLink> columnNodeIncomingLinks = alignment.getIncomingLinks(columnNode.getId());
 			if (columnNodeIncomingLinks == null || columnNodeIncomingLinks.isEmpty()) { // SemanticType not yet assigned
 				Label propertyLabel = new Label(ns + columnName, ns, "karma");
-				alignment.addDataPropertyLink(classNode, columnNode, propertyLabel, false);
+				alignment.addDataPropertyLink(classNode, columnNode, propertyLabel);
 				
 				// Create a semantic type object
-				SemanticType type = new SemanticType(hNode.getId(), propertyLabel, internalNodeLabel, SemanticType.Origin.User, 1.0,false);
+				SemanticType type = new SemanticType(hNode.getId(), propertyLabel, internalNodeLabel, SemanticType.Origin.User, 1.0);
 				worksheet.getSemanticTypes().addType(type);
 				columnNode.setUserSelectedSemanticType(type);
 			} else {

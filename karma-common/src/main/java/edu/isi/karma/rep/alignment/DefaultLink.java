@@ -119,4 +119,15 @@ public class DefaultLink extends DefaultWeightedEdge implements Comparable<Defau
         return this.id.compareTo(link.getId());
     }
     
+    public DefaultLink getCopy(String newId) {
+    	
+    	if (this instanceof LabeledLink)
+    		return ((LabeledLink)this).copy(newId);
+    	else if (this instanceof CompactLink)
+    		return ((CompactLink)this).copy(newId);
+    	else {
+			logger.error("cannot instanciate a link from the type: " + this.getType().toString());
+			return null;
+    	}
+    }
 }

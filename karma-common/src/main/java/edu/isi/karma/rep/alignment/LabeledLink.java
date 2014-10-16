@@ -130,4 +130,30 @@ public abstract class LabeledLink extends DefaultLink {
     	return cloner.deepClone(this);
     }
 
+    public LabeledLink copy(String newId) {
+    	
+		LabeledLink newLink = null;
+		Label label = this.getLabel();
+		if (this instanceof DataPropertyLink)
+			newLink = new DataPropertyLink(newId, label);
+		else if (this instanceof ObjectPropertyLink)
+			newLink = new ObjectPropertyLink(newId, label, ((ObjectPropertyLink)this).getObjectPropertyType());
+		else if (this instanceof SubClassLink)
+			newLink = new SubClassLink(newId);
+		else if (this instanceof ClassInstanceLink)
+			newLink = new ClassInstanceLink(newId, this.getKeyType());
+		else if (this instanceof ColumnSubClassLink)
+			newLink = new ColumnSubClassLink(newId);
+		else if (this instanceof DataPropertyOfColumnLink)
+			newLink = new DataPropertyOfColumnLink(newId, 
+					((DataPropertyOfColumnLink)this).getSpecializedColumnHNodeId(),
+					((DataPropertyOfColumnLink)this).getSpecializedLinkId()
+					);
+		else if (this instanceof ObjectPropertySpecializationLink)
+			newLink = new ObjectPropertySpecializationLink(newId, ((ObjectPropertySpecializationLink)this).getSpecializedLinkId());
+		else
+			logger.error("cannot instanciate a link from the type: " + this.getType().toString());
+		
+		return newLink;
+    }
 }

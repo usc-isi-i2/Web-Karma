@@ -183,8 +183,10 @@ public class SemanticModel {
 					columnNodes.add((ColumnNode)n);
 		}
 		return columnNodes;
+		
+
 	}
-	
+
 	private void setSuggestedTypesForColumnNodes() {
 		
 		if (this.graph == null)
@@ -217,7 +219,7 @@ public class SemanticModel {
 			if (incomingLinks != null && incomingLinks.size() == 1) {
 				LabeledLink link = incomingLinks.toArray(new LabeledLink[0])[0];
 				Node domain = link.getSource();
-				SemanticType st = new SemanticType(cn.getHNodeId(), link.getLabel(), domain.getLabel(), Origin.User, 1.0, false);
+				SemanticType st = new SemanticType(cn.getHNodeId(), link.getLabel(), domain.getLabel(), Origin.User, 1.0);
 				cn.setUserSelectedSemanticType(st);
 			} else
 				logger.debug("The column node " + ((ColumnNode)n).getColumnName() + " does not have any domain or it has more than one domain.");

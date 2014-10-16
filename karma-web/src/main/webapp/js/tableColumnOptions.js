@@ -50,12 +50,12 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			leafOnly: true,
 			leafExcluded: false
 		}, 
-		//{
-			//name: "Transform",
-			//func: transform,
-			//leafOnly: true,
-			//leafExcluded: false
-		//},
+		{
+			name: "Transform",
+			func: transform,
+			leafOnly: true,
+			leafExcluded: false
+		},
 		//{name:"Generate Cluster Values", func:clusterValues, leafOnly:true, leafExcluded: false},
 		//{name:"Merge Cluster Values", func:mergeValues, leafOnly:true, leafExcluded: false},
 		{
