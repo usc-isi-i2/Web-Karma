@@ -170,10 +170,20 @@ public class GenericRDFGenerator extends RdfGenerator {
 				return;
 			//Generate RDF using the mapping data
 			ErrorReport errorReport = new ErrorReport();
-			RootStrategy strategy = new UserSpecifiedRootStrategy(rootTripleMap, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
+			if(rootStrategy == null)
+			{
+				if(rootTripleMap != null)
+				{
+					rootStrategy = new UserSpecifiedRootStrategy(rootTripleMap, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
+				}
+				else
+				{
+					rootStrategy = new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy());;
+				}
+			}
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
 			        workspace.getFactory(), workspace.getOntologyManager(), writers,
-			        addProvenance, strategy, tripleMapToKill, tripleMapToStop, POMToKill, 
+			        addProvenance, rootStrategy, tripleMapToKill, tripleMapToStop, POMToKill, 
 			        mapping, errorReport, selection);
 			rdfGen.generateRDF(true);
 		}

@@ -1,38 +1,41 @@
 package edu.isi.karma.mapreduce.function;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
 
 public class CreateJSONFromSequenceFile {
+	static String filePath = null;
 	public static void main(String[] args) throws IOException {
 		if (args.length < 1)
 			return;
-		File directory = new File(args[0]);
-		if (directory.isDirectory()) {
-			for (File f : directory.listFiles()) {
-				if (f.getName().contains("seq")) {
-					createJSONFromSequenceFileFrom(f);
-				}
+		filePath = args[0];
+		FileSystem hdfs = FileSystem.get(new Configuration());
+		RemoteIterator<LocatedFileStatus> itr = hdfs.listFiles(new Path(args[0]), true);
+		while (itr.hasNext()) {
+			LocatedFileStatus status = itr.next();
+			String fileName = status.getPath().getName();
+			if (status.getLen() > 0) {
+				String outputFileName = filePath + File.separator + fileName + ".json";
+				createJSONFromSequenceFileFrom(status.getPath(), hdfs.create(new Path(outputFileName)));
 			}
 		}
 	}
 
-	public static void createJSONFromSequenceFileFrom(File f) throws IOException {
-		String filePath = f.getAbsolutePath().substring(0, f.getAbsolutePath().lastIndexOf(File.separator));
-		String outputFileName = filePath + File.separator + f.getName().substring(0, f.getName().lastIndexOf(".")) + ".json";
-		Path inputPath = new Path(f.getAbsolutePath());
+	public static void createJSONFromSequenceFileFrom(Path input, FSDataOutputStream fsDataOutputStream) throws IOException {
+		Path inputPath = input;
 		Configuration conf = new Configuration();
-		conf.setIfUnset("fs.default.name", "file:///");
-		FileWriter fw = new FileWriter(new File(outputFileName));
-		
+		PrintWriter fw = new PrintWriter(fsDataOutputStream);
 		SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(inputPath));
-		//SequenceFile.Reader reader = new SequenceFile.Reader(FileSystem.getLocal(conf),inputPath,conf);
 		Text key = new Text();
 		Text val = new Text();
 		fw.write("[\n");
