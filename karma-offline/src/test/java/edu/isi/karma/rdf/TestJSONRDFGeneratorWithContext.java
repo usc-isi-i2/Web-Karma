@@ -83,7 +83,7 @@ public class TestJSONRDFGeneratorWithContext extends TestJSONRDFGenerator {
 			String[] lines = rdf.split("(\r\n|\n)");
 			int count = lines.length;
 			
-			assertEquals(320, count);
+			assertEquals(318, count);
 		} catch (Exception e) {
 			logger.error("testGenerateJSONWithContext failed:", e);
 			fail("Execption: " + e.getMessage());

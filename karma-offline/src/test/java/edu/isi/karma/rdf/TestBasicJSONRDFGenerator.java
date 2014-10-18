@@ -120,7 +120,7 @@ public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
 			String[] lines = rdf.split("(\r\n|\n)");
 			int count = lines.length;
 			
-			assertEquals(365, count);
+			assertEquals(358, count);
 		} catch (Exception e) {
 			logger.error("testGenerateRDF1 failed:", e);
 			fail("Execption: " + e.getMessage());
