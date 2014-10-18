@@ -187,7 +187,7 @@ public class KR2RMLMappingWriter {
 		
 		addSubjectMap(mapping, mappingRes, trMap, trMapUri, workspace);
 		
-		addPredicateObjectMaps(mapping, mappingRes, trMap, trMapUri, workspace);
+		addPredicateObjectMaps(mapping, mappingRes, trMap, trMapUri, workspace, worksheet);
 	}
 
 	private void addTripleMapMetadata(KR2RMLMapping mapping, Resource mappingRes, Worksheet worksheet,
@@ -276,16 +276,16 @@ public class KR2RMLMappingWriter {
 
 	private void addPredicateObjectMaps(
 			KR2RMLMapping mapping, Resource mappingRes, TriplesMap trMap,
-			URI trMapUri, Workspace workspace) throws RepositoryException {
+			URI trMapUri, Workspace workspace, Worksheet worksheet) throws RepositoryException {
 
 		// Add the predicate object maps
 		for (PredicateObjectMap pom:trMap.getPredicateObjectMaps()) {
-			addPredicateObjectMap(mapping, mappingRes, trMapUri, workspace, pom);
+			addPredicateObjectMap(mapping, mappingRes, trMapUri, workspace, pom, worksheet);
 		}
 	}
 
 	private void addPredicateObjectMap(KR2RMLMapping mapping, Resource mappingRes, URI trMapUri,
-			Workspace workspace, PredicateObjectMap pom)
+			Workspace workspace, PredicateObjectMap pom, Worksheet worksheet)
 			throws RepositoryException {
 		KR2RMLColumnNameFormatter columnNameFormatter = mapping.getColumnNameFormatter();
 		RepFactory factory = workspace.getFactory();
@@ -298,7 +298,7 @@ public class KR2RMLMappingWriter {
 			return;
 		}
 		
-		addObject(mappingRes, pom, columnNameFormatter, factory, pomUri);
+		addObject(mappingRes, pom, columnNameFormatter, factory, pomUri, worksheet);
 		con.add(trMapUri, repoURIs.get(Uris.RR_PRED_OBJ_MAP_URI), pomUri);
 		// Add the predicate object map type statement
 		con.add(pomUri, RDF.TYPE, repoURIs.get(Uris.RR_PREDICATEOBJECTMAP_CLASS_URI));
@@ -331,7 +331,7 @@ public class KR2RMLMappingWriter {
 
 	private void addObject(Resource mappingRes, PredicateObjectMap pom,
 			KR2RMLColumnNameFormatter columnNameFormatter, RepFactory factory,
-			URI pomUri) throws RepositoryException {
+			URI pomUri, Worksheet worksheet) throws RepositoryException {
 		// Add the object: Could be RefObjectMap or simple object with column values
 		if (pom.getObject().hasRefObjectMap()) {
 			RefObjectMap rfMap = pom.getObject().getRefObjectMap();
@@ -390,7 +390,13 @@ public class KR2RMLMappingWriter {
 						.getR2rmlTemplateString(factory, columnNameFormatter);
 				Value templVal;
 				if(isUri) {
-					templVal = f.createURI(value);
+					try {
+						templVal = f.createURI(value);
+					}catch(IllegalArgumentException e) {
+						String baseURI = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(
+								Property.baseURI);
+						templVal = f.createURI(baseURI + value);
+					}
 				} else {
 					templVal = f.createLiteral(value);
 				}
