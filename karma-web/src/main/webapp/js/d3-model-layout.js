@@ -2,14 +2,15 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var htmlElement = p_htmlElement;
 	var cssClass = p_cssClass;
 
-	var padding = 35;
-	var windowWidth = parseInt($("." + cssClass).css("width"));
-	var leftPanelWidth = window.innerWidth - windowWidth;
-	console.log("windowWidth: " + windowWidth + "  leftPanelWidth: " + leftPanelWidth);
+	//var padding = 35;
+	var rightPanelWidth = parseInt($("." + cssClass).css("width"));
+	var leftPanelWidth = window.innerWidth - rightPanelWidth;
+	console.log("rightPanelWidth: " + rightPanelWidth + "  leftPanelWidth: " + leftPanelWidth);
+	var windowWidth = rightPanelWidth;
 	var maxXOfferset = 0;
 	var width=0;           
 	var height=0;
-
+	var textHeight = 15;
 
 	var linkClickListener = null;
 	var nodeClickListener = null;
@@ -28,6 +29,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var SCCNodes = [];                             //SCC nodes set
 	var SCCtmpNodes = [];                          //the nodes stack of SCC
 	var layerLabel = [];                           //layers are divided into sections based on its layer
+	var cycleSet = [];                             //each element in the array is an arraylist, consist of edges of cycle. ex: {1->2, 2->3, 3->1}
 	var myMap = function(){
 		var data = [];
 		this.entry = data;
@@ -45,6 +47,52 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		}
 		this.clear = function(){
 			data = [];
+		}
+	}
+	var ArrayList = function(){
+		var data = [];
+		this.contains = function(arg){			
+			for (var i = 0; i < data.length; i++){
+				if (data[i] == arg){
+					return true;
+				}
+			};
+			return false;
+		}
+		this.add = function(arg){
+			data.push(arg);
+		}
+		this.removeByValue = function(arg){
+			var index = data.indexOf(arg);
+			if (index > -1){
+				data.splice(index, 1);
+				return true;
+			}
+			return false;
+		}
+		this.removeByIndex = function(arg){
+			if (arg >= 0 && arg < data.length){
+				data.splice(arg, 1);
+				return true;
+			}
+			return false;
+		}
+		this.get = function(arg){
+			if (arg >= 0 && arg < data.length){
+				return data[arg];
+			}
+			return undefined;
+		}
+		this.print = function(){
+			var output = "[";
+			data.forEach(function(d, i){
+				output += d;
+				if (i < data.length - 1){
+					output += ',';
+				}
+			});
+			output += "]";
+			console.log("ArrayList: " + output);
 		}
 	}
 	var map = new myMap();
@@ -182,8 +230,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.duration(500)
 			.attr("opacity", 500)
 			.remove();
-
-
+			
 		labels = labels.data(textData, function(d){
 			return d.nodeId;
 		});
@@ -240,9 +287,17 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			})
 			.append("text")
 			.text(function(d, i){
+				if (d.content.length > 20){
+					d.alt = d.content.slice(0, 7) + "..." + d.content.slice(d.content.length - 10, d.content.length);
+					return d.alt;
+				}
 				return d.content;
 			})
 			.attr("fill", function(d){
+				d.width = this.getBBox().width + textHeight / 3 * 2;
+				if (d.type == "nodeLabel"){
+					d.node.labelWidth = d.width;
+				}
 				if (d.type == "nodeLabel"){
 					return "white";
 				}
@@ -301,16 +356,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					d.width = 0;
 					return "";
 				}
-				var textWidth = Math.ceil(this.parentNode.firstChild.getBBox().width);
-				var textHeight = Math.ceil(this.parentNode.firstChild.getBBox().height);
-				//console.log(textWidth + " " + textHeight);
+				var textWidth = d.width;
 				var dx = -textWidth / 2;
-				var dy = 0;
-				d.width = textWidth + textHeight / 3 * 2;
-				d.height = textHeight;
-				if (d.type == "linkLabel" || d.tyoe == "edgeLinkLabel" || (d.node.type != "anchor")){
-					maxLabelLength = Math.max(maxLabelLength, d.width);
-				}
+				var dy = 0;							
 				return "M " + dx + " " + dy + " L " + (dx + textWidth) + " " + dy + " Q " + (dx + textWidth + textHeight / 3) + " " + (dy - textHeight / 2) + " " + (dx + textWidth) + " " + (dy - textHeight) + " L " + dx + " " + (dy - textHeight) + " Q " + (dx - textHeight / 3) + " " + (dy - textHeight / 2) + " " + dx + " " + dy;
 			});
 			
@@ -348,6 +396,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				return -h;
 			})
 			.on("click", function(d){
+				console.log(d.node.labelWidth);
 				if (d.type == "linkLabel" || d.type == "edgeLinkLabel"){
 					if(linkClickListener != null)
 						linkClickListener(d.node.original, d3.event);
@@ -357,42 +406,79 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				}
 				//console.log(d.type);
 			})
-			.on("mouseover", function(d){
-				var surfix = "";
+			.on("mouseover", function(d){				
 				var frameId = "";
 				//console.log(d.content);
 				if (d.type == "nodeLabel"){
-					surfix = "#nodeLabelBoard" + d.node.id;
 					frameId = "#nodeLabelG" + d.node.id;
 				} else if (d.type == "linkLabel"){
-					surfix = "#linkLabelBoard" + d.node.src + "-" + d.node.tgt;
 					frameId = "#linkLabelG" + d.node.src + "-" + d.node.tgt;
 				} else if (d.type == "edgeLinkLabel"){
-					surfix = "#edgeLinkLabelBoard" + nodesData[d.node.tgt].id;
 					frameId = "#edgeLinkLabelG" + nodesData[d.node.tgt].id;
 				}
-				d3.select(surfix)
+				if (d.alt != undefined){
+					d3.select(frameId)
+						.select("text")
+						.text(function(d){
+							return d.content;
+						})
+						.attr("x", function(d){
+							d.width = this.getBBox().width
+							return -(d.width / 2);
+						})
+					d3.select(frameId)
+						.select("path")	
+						.transition()
+						.duration(500)					
+						.attr("d", function(d){							
+							var textWidth = d.width;
+							var dx = -textWidth / 2;
+							var dy = 0;
+							return "M " + dx + " " + dy + " L " + (dx + textWidth) + " " + dy + " Q " + (dx + textWidth + textHeight / 3) + " " + (dy - textHeight / 2) + " " + (dx + textWidth) + " " + (dy - textHeight) + " L " + dx + " " + (dy - textHeight) + " Q " + (dx - textHeight / 3) + " " + (dy - textHeight / 2) + " " + dx + " " + dy;
+						})
+				}
+				d3.select(frameId)
+					.select("path")
 					.attr("stroke-width", 2);
 				d3.select(frameId)
 					.moveToFront();
 			})
 			.on("mouseout", function(d, i){
-				var surfix = "";
 				var frameId = "";
 				if (d.type == "nodeLabel"){
-					surfix = "#nodeLabelBoard" + d.node.id;
 					frameId = "#nodeLabelG" + d.node.id;
 				} else if (d.type == "linkLabel"){
-					surfix = "#linkLabelBoard" + d.node.src + "-" + d.node.tgt;
 					frameId = "#linkLabelG" + d.node.src + "-" + d.node.tgt;
 				} else if (d.type == "edgeLinkLabel"){
-					surfix = "#edgeLinkLabelBoard" + nodesData[d.node.tgt].id;
 					frameId = "#edgeLinkLabelG" + nodesData[d.node.tgt].id;
 				}
-				d3.select(surfix)
+				if (d.alt != undefined){
+					d3.select(frameId)
+						.select("text")
+						.text(function(d){
+							return d.alt;
+						})
+						.attr("x", function(d){
+							d.width = this.getBBox().width
+							return -(d.width / 2);
+						})
+					d3.select(frameId)
+						.select("path")	
+						.transition()
+						.duration(500)					
+						.attr("d", function(d){							
+							var textWidth = d.width;
+							var dx = -textWidth / 2;
+							var dy = 0;
+							return "M " + dx + " " + dy + " L " + (dx + textWidth) + " " + dy + " Q " + (dx + textWidth + textHeight / 3) + " " + (dy - textHeight / 2) + " " + (dx + textWidth) + " " + (dy - textHeight) + " L " + dx + " " + (dy - textHeight) + " Q " + (dx - textHeight / 3) + " " + (dy - textHeight / 2) + " " + dx + " " + dy;
+						})
+				}
+				d3.select(frameId)
+					.select("path")
 					.attr("stroke-width", 0);
 				d3.select(frameId)
 					.moveToBack();
+
 			});
 
 
@@ -411,6 +497,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.remove();
 
 
+		
+			
 
 		nodesData.forEach(function(d){				
 			if (d.noLayer){					
@@ -553,8 +641,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		nodes
 			.attr("cx", function(d) {
 				if (d.outside.isOutside){		
-					var tmpXOffset = Math.min(xOffset, maxXOfferset);		
-					return d.x = Math.max(tmpXOffset + nodeRadius, Math.min(tmpXOffset + windowWidth - nodeRadius, d.x));
+					var tmpXOffset = Math.max(Math.min(xOffset, maxXOfferset) - leftPanelWidth, 0);		
+					return d.x = Math.max(tmpXOffset + nodeRadius + d.labelWidth / 2, Math.min(tmpXOffset + windowWidth - nodeRadius - d.labelWidth / 2, d.x));
 				} 
 				var differX = d.position.x - d.x;
 				if (d.type == "anchor"){
@@ -638,15 +726,15 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			var b = d.target;
 
 			
-			if (d.type == "edgeLink"){
-				if (b.outside.isOutside){
+			//if (d.type == "edgeLink"){
+				if (b.outside.isOutside && d.target.noLayer == undefined){
 					return "M" + b.x + " " + b.y + " L " + a.x + " " + a.y;
 				}
-			} else {
-				if ((a.outside.isOutside && b.outside.isOutside) || (b.outside.isOutside && b.type == "anchor")){
-					return "M" + b.x + " " + b.y + " L " + a.x + " " + a.y;
-				}
-			}
+			///} else {
+				//if ((a.outside.isOutside && b.outside.isOutside) || (b.outside.isOutside && b.type == "anchor")){
+				//	return "M" + b.x + " " + b.y + " L " + a.x + " " + a.y;
+				//}
+			//}
 			
 			var ax = a.x - (a.x - b.x) / 3;
 			var by = b.y - (b.y - a.y) / 3;
@@ -700,6 +788,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			if (d.target.outside.isOutside && d.target.noLayer == undefined){
 				return "";
 			}
+			//if (d.arrow == undefined){
+				//console.log(d.id);
+				//return "";
+			//}
 			if (d.up){
 				var ax = d.arrow.x;
 				var ay = d.arrow.y;
@@ -718,10 +810,14 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			return ax + "," + ay + " " + bx + "," + by + " " + cx + "," + cy;
 		})
 		.attr("transform", function(d){
+			//if (d.arrow == undefined){
+				//return "";
+			//}
 			if (!d.target.outside.isOutside || d.target.noLayer){
 				return "rotate(" + d.angle + " " + d.arrow.x + " " + d.arrow.y + ")";
 			}
 		})
+		//alert();
 	}
 
 	//calculate the X of inside labels
@@ -917,7 +1013,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			nodePosMap.set(d.nodeId, {x : d.x, y : d.y});
 		});
 
-		padding = 35;
+		//padding = 35;
 		windowWidth = parseInt($("." + cssClass).css("width"));
 		leftPanelWidth = window.innerWidth - windowWidth;
 		maxXOfferset = 0;
@@ -1110,68 +1206,86 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	function removeCycle(){
 		detectCycle();
 		map.clear();
+		//model point of cycles to edge, ex: [1,2,3] to {1->2, 2->3, 3->1}
+		//edge set stored in the data structure of arraylist, and all these edge sets store into an array, defined above -- cycleSet
 		cycles.forEach(function(d){
-			var tmp = [];
+			var tmpArrayList = new ArrayList();
 			for (var i = 0; i < d.length; i++){
+				//e is the edge, the pattern is (source Id) + " " + (target Id)
 				var e = "";
 				if (i == d.length - 1){
 					e = d[i] + " " + d[0];
 				} else {
 					e = d[i] + " " + d[i + 1];
 				}
-				map.set(e, tmp);
-				tmp.push(e);
+				//console.log(e);
+				tmpArrayList.add(e);
 			}
+			//tmpArrayList.print();
+			cycleSet.push(tmpArrayList);
 		});
-		/*map.forEach(function(v, k, m){
-			console.log(v + "------" + k);
-		})*/
 	}
 
 	//set layer and position for each node
 	function setLayer(tmpLinkData, tmpE){
 		//layer is set from bottem to top, one layer per loop. The anchors are layer 0.
+		//change evalutes how many node's layer has set in one loop, if no node's layer is set, change is 0. It means all node's layer is set properly
 		var change = anchorData.length;
-		//for (var i = 0; i < 10; i++){
+		var baseLayer = new ArrayList();
+		anchorData.forEach(function(d){
+			baseLayer.add(d.id);
+		});
+
+		//for (var j = 0; j < 5; j++){
 		while (change > 0){
-			var tmpLayerMap = [];
+			//tmpLayerMap is a set of nodes that change their layer in this loop, they will be considered as the base layer for next iteration.
+			//the base layer of first iteration is anchors, their layer is 0.
+			//console.log("baseLayer: ");
+			//baseLayer.print();
+			var nextLayer = new ArrayList();
 			change = 0;
+			//parse all edges
 			tmpLinkData.forEach(function(d){
-			//for (var i = 0; i < tmpLinkData.length; i++){
-				//d = tmpLinkData[i];
 				var src = d.source;
 				var tgt = d.target;
-				var flag = true;
-				if (tgt in layerMap){
+				//flag to check if one link need to be evaluated. It is used to avoid infinity loop of cycle.
+				//when target id is in the base layer, the source will be set will layer = target's layer + 1, if this edge dose not comprise a cycle, the third edge of above example.
+				if (baseLayer.contains(tgt)){
 					var e = src + " " + tgt;
-					if (map.has(e)){
-						var tmp = map.get(e);
-						if (tmp.length > 1){
-							tmp.splice(tmp.indexOf(e), 1);
-							//console.log(tmp);
-						} else {
-							if (tmp[0] == e){
-								var index = nodesChildren[src].indexOf(tgt);
-								if (index > -1){
-									nodesChildren[src].splice(index, 1);
-								}
+					var flag = true;
+					cycleSet.forEach(function(cycleInstance){
+						if (cycleInstance.contains(e)){
+							//when the edge set has only one edge, this edge will comprise a cycle based on the tree we build befor, the tree consists of all edge we evaluated before
+							if (cycleInstance.size > 1){
+								//remove the edge from edge set.
+								cycleInstance.removeByValue(e);											
+							} else {
 								flag = false;
-								//console.log("left" + e);
-							}
+							}						
 						}
-					}
+					});
+					//set the source node's layer, and record the source node id for next iteration
 					if (flag){
 						nodesData[src].layer = nodesData[tgt].layer + 1;
-						tmpLayerMap[src] = 1;
+						if (!nextLayer.contains(src)){
+							nextLayer.add(src);
+						}
 						change++;
-					}
+						//console.log("id: " + src + "  layer: " + nodesData[src].layer);		
+					}		
 				}
 			});
-			layerMap = tmpLayerMap.slice(0);
+			baseLayer = nextLayer;
+			//maxLayer is the max layer value we set.
 			maxLayer++;
+			//console.log("change: " + change);			
 		}
 		maxLayer--;	
-
+		/*
+		nodesData.forEach(function(d, i){
+			console.log(i + " " + d.layer);
+		})
+		*/
 
 		//store the node id in the sequence of layer
 		//xPos is the x position for nodes in the unit of column's width
@@ -1479,19 +1593,20 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			var tmpEdgeLink = d.edgeLinks;
 
 			xOffset = window.pageXOffset;
-			width = d.width + padding;
+			width = d.width;// + padding;
 			maxXOfferset = Math.max(0, leftPanelWidth + width - window.innerWidth);
 			windowWidth = Math.ceil(Math.min(windowWidth + Math.min(xOffset, leftPanelWidth), width));
 
 			initializeData(tmpLinkData, tmpNodeData);
 			removeCycle();
+			
 			var tmpL = linksData.slice(0);
 			setLayer(tmpL, tmpEdgeLink);
 
 			
 			height = (maxLayer + 0.5) * unitLinkLength;
 			if (width > window.innerWidth){
-				height += (maxLayer + 0.5) * outsideUnitLinkLength;
+				height += (maxLayer + 1.5) * outsideUnitLinkLength;
 			}
 
 			console.log("width: " + width + "  window height: " + height + " max offset: " + maxXOfferset);
@@ -1547,13 +1662,13 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		//console.log(window.pageXOffset);
 		if (Math.abs(window.pageXOffset - xOffset) > reshuffleFrequency){
 			xOffset = window.pageXOffset;
-			windowWidth = Math.min(window.innerWidth * 0.8 + Math.min(xOffset, leftPanelWidth) - padding, width);
+			windowWidth = Math.min(rightPanelWidth + Math.min(xOffset, leftPanelWidth)/* - padding*/, width);
 			setNodePosition();
 		}
 	}
 
 	this.onresize = function(event) {
-	    windowWidth = Math.min(window.innerWidth * 0.8 + Math.min(xOffset, leftPanelWidth) - padding, width);
+	    windowWidth = Math.min(rightPanelWidth + Math.min(xOffset, leftPanelWidth)/* - padding*/, width);
 	    //height=window.innerHeight - padding;
 	    //console.log(width + " " + height);
 	};
