@@ -110,7 +110,7 @@ public class SemanticTypeColumnModel implements Jsonizable {
 					boolean hasLastNodeFromSteinerTree = false;
 					for (int i=1; i<= graphLastIndex; i++) {
 						
-						if (steinerTreeNodeIds.contains(domainURI.getUri() + (graphLastIndex))) {
+						if (steinerTreeNodeIds.contains(domainURI.getUri() + i)) {
 							insertSemanticTypeSuggestion(arr, clazzLocalNameWithPrefix + i, 
 									domainURI.getUri(),
 									domainURI.getUri() + i, 

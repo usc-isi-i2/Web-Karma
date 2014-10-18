@@ -22,10 +22,8 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
@@ -67,7 +65,6 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 	private Alignment initialAlignment = null;
 	private DirectedWeightedMultigraph<Node, DefaultLink> initialGraph = null;
 	private List<Node> steinerNodes;
-	private Set<String> columnsWithoutSemanticType = null;
 //	private final boolean addVWorksheetUpdate;
 
 	private static Logger logger = LoggerFactory
@@ -131,7 +128,6 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 			initialGraph = (DirectedWeightedMultigraph<Node, DefaultLink>)alignment.getGraph().clone();
 			
 			steinerNodes = new LinkedList<Node>();
-			columnsWithoutSemanticType = new HashSet<String>();
 			List<HNode> orderedNodeIds = new ArrayList<HNode>();
 			worksheet.getHeaders().getSortedLeafHNodes(orderedNodeIds);
 			if (orderedNodeIds != null) {
@@ -142,7 +138,6 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 					
 					if (!cn.hasUserType())
 					{
-						columnsWithoutSemanticType.add(hNodeId);
 						worksheet.getSemanticTypes().unassignColumnSemanticType(hNodeId);
 						List<SemanticType> suggestedSemanticTypes = 
 								new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4, selection);
@@ -184,15 +179,16 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 		
 		List<SemanticType> semanticTypes = new LinkedList<SemanticType>();
 		alignment.updateAlignment(model, semanticTypes);
-		Set<ColumnNode> alignmentColumnNodes = alignment.getSourceColumnNodes();
-		if (alignmentColumnNodes != null)
-			for (ColumnNode cn : alignmentColumnNodes) {
-				worksheet.getSemanticTypes().unassignColumnSemanticType(cn.getHNodeId());
-			}
-		if (semanticTypes != null) {
-			for (SemanticType st : semanticTypes)
-				worksheet.getSemanticTypes().addType(st);
-		}
+//		Set<ColumnNode> alignmentColumnNodes = alignment.getSourceColumnNodes();
+//		if (alignmentColumnNodes != null) {
+//			for (ColumnNode cn : alignmentColumnNodes) {
+//				worksheet.getSemanticTypes().unassignColumnSemanticType(cn.getHNodeId());
+//			}
+//		}
+//		if (semanticTypes != null) {
+//			for (SemanticType st : semanticTypes)
+//				worksheet.getSemanticTypes().addType(st);
+//		}
 		
 		try {
 			// Save the semantic types in the input parameter JSON
@@ -260,16 +256,19 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 					"Please align the worksheet before generating R2RML Model!"));
 		}
 
+//		Set<ColumnNode> alignmentColumnNodes = alignment.getSourceColumnNodes();
+//		if (alignmentColumnNodes != null) {
+//			for (ColumnNode cn : alignmentColumnNodes) {
+//				if (!cn.hasUserType())
+//					worksheet.getSemanticTypes().unassignColumnSemanticType(cn.getHNodeId());
+//			}
+//		}
+
 		alignment = initialAlignment;
 		alignment.setGraph(initialGraph);
 		alignment.align();
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		
-		if (this.columnsWithoutSemanticType != null) {
-			for (String hNodeId : this.columnsWithoutSemanticType) {
-				worksheet.getSemanticTypes().unassignColumnSemanticType(hNodeId);
-			}
-		}
 
 		try {
 			// Save the semantic types in the input parameter JSON

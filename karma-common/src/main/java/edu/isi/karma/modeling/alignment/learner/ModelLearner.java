@@ -132,13 +132,8 @@ public class ModelLearner {
 						if (domain != null) {
 							if (this.graphBuilder.getIdToNodeMap().get(domain.getId()) == null) {
 								this.graphBuilder.addNodeAndUpdate(domain);
-							} else {
-								// FIXME: why domain.equals(this.graphBuilder.getIdToNodeMap().get(domain.getId())) = false
-								domain = this.graphBuilder.getIdToNodeMap().get(domain.getId());
 							}
 						}
-//						boolean bug1 = this.graphBuilder.getGraph().vertexSet().contains(n);
-//						boolean bug2 = this.graphBuilder.getGraph().vertexSet().contains(domain);
 						LabeledLink domainLink = ((ColumnNode)n).getDomainLink();
 						this.graphBuilder.addLink(domain, n, domainLink, worksheetTree.getEdgeWeight(domainLink));
 					}
