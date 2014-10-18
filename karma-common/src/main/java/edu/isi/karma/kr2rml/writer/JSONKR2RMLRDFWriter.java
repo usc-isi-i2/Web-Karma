@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -174,10 +175,19 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		outWriter.close();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected void collapseSameType(JSONObject obj) {
-		for (Object key : obj.keySet()) {
+		for (Object key : new HashSet(obj.keySet())) {
 			Object value = obj.get((String)key);
+			if (key.equals(atId)) {
+				try {
+					@SuppressWarnings("unused")
+					URI uri = new URI(value.toString());
+				}catch(Exception e) {
+					obj.remove(atId);
+				}
+			}
 			if (value instanceof JSONArray) {
 				JSONArray array = (JSONArray)value;
 				TreeMap<String, Object> types = new TreeMap<String, Object>();
@@ -192,8 +202,8 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 						}
 						else
 						{
-							collapseSameType((JSONObject)o);
 							types.put(((JSONObject)o).getString(atId), o);
+							collapseSameType((JSONObject)o);
 
 						}
 
