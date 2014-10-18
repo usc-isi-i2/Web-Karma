@@ -172,7 +172,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		if(metaPropertyId.endsWith(" (add)"))
 			metaPropertyId = metaPropertyId.substring(0, metaPropertyId.length()-5).trim();
 		
-		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
+	if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyId);
 			if (semanticTypeAlreadyExists) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode,
@@ -225,6 +225,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 						columnNode, targetHNodeId, propertyLink.getId());
 				alignment.changeLinkStatus(newLink.getId(),
 						LinkStatus.ForcedByUser);
+				
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId,
 						DataPropertyOfColumnLink.getFixedLabel(),
@@ -235,6 +236,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 						classInstanceNode, columnNode, propertyLink.getId());
 				alignment.changeLinkStatus(newLink.getId(),
 						LinkStatus.ForcedByUser);
+
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId,
 						ObjectPropertySpecializationLink.getFixedLabel(),
@@ -271,7 +273,6 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		}
 
 		columnNode.setUserSelectedSemanticType(newType);
-		columnNode.setForced(true);
 
 		// Update the alignment
 		alignment.align();

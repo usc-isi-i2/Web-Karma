@@ -95,6 +95,18 @@ public class GraphBuilderTopK extends GraphBuilder {
 			return false;
 	}
 	
+	public boolean removeLink(DefaultLink link) {
+		if (super.removeLink(link)) {
+			SteinerNode n1 = new SteinerNode(link.getSource().getId());
+			SteinerNode n2 = new SteinerNode(link.getTarget().getId());
+			SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)link.getWeight());
+			getTopKGraph().get(n1).remove(e);
+			getTopKGraph().get(n2).remove(e);
+			return true;
+		} else
+			return false;
+	}
+	
 	public void changeLinkWeight(DefaultLink link, double weight) {
 		super.changeLinkWeight(link, weight);
 		SteinerNode n1 = new SteinerNode(link.getSource().getId());

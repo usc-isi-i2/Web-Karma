@@ -225,6 +225,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 					
 					if (isClassSemanticType) {
 						if (semanticTypeAlreadyExists && oldDomainNode == domain) {
+							newLink = oldIncomingLinkToColumnNode;
 							// do nothing;
 						} else if (semanticTypeAlreadyExists) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
@@ -260,7 +261,6 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				newType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0);
 //				newType = new SemanticType(hNodeId, classNode.getLabel(), null, SemanticType.Origin.User, 1.0,isPartOfKey);
 				columnNode.setUserSelectedSemanticType(newType);
-				columnNode.setForced(true);
 				
 				if(newLink != null) {
 					alignment.changeLinkStatus(newLink.getId(),

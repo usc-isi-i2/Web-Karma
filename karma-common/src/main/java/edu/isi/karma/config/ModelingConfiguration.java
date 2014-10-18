@@ -231,9 +231,10 @@ public class ModelingConfiguration {
 	}
 
 	public static Boolean getManualAlignment() {
-		if (manualAlignment == null)
+		if (manualAlignment == null) {
 			load();
-		logger.info("Manual Alignment:" + manualAlignment);
+			logger.info("Manual Alignment:" + manualAlignment);
+		}
 		return manualAlignment;
 	}
 

@@ -22,7 +22,6 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,7 +48,6 @@ import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.learner.ModelLearner;
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -59,8 +57,6 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DefaultLink;
-import edu.isi.karma.rep.alignment.InternalNode;
-import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 
@@ -144,7 +140,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 					String hNodeId = orderedNodeIds.get(i).getId();
 					ColumnNode cn = alignment.getColumnNodeByHNodeId(hNodeId);
 					
-					if (cn.getUserSelectedSemanticType() == null)
+					if (!cn.hasUserType())
 					{
 						columnsWithoutSemanticType.add(hNodeId);
 						worksheet.getSemanticTypes().unassignColumnSemanticType(hNodeId);
@@ -153,13 +149,8 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 						cn.setSuggestedSemanticTypes(suggestedSemanticTypes);
 						steinerNodes.add(cn);
 					} else {
-						if (ModelingConfiguration.isLearnAlignmentEnabled()) {
-							if (cn.getDomainNode() != null)
-								steinerNodes.add(cn.getDomainNode());
-						} else {
-							cn.setDomainNode(null); // ModelLearner does not find matches if the column node already had a domain
-							cn.setDomainLink(null);
-						}
+						if (ModelingConfiguration.isLearnAlignmentEnabled()) 
+							steinerNodes.add(cn.getDomainNode());
 						steinerNodes.add(cn);
 					}
 					
@@ -174,8 +165,14 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 		}
 
 		
-		ModelLearner modelLearner = new ModelLearner(alignment.getGraphBuilder(), steinerNodes);
-		
+		ModelLearner modelLearner = null;
+		if (ModelingConfiguration.isLearnAlignmentEnabled()) 
+			modelLearner = new ModelLearner(alignment.getGraphBuilder(), steinerNodes);
+		else
+			modelLearner = new ModelLearner(ontologyManager, alignment.getSteinerTree(), steinerNodes);
+
+//		logger.info(GraphUtil.defaultGraphToString(ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder().getGraph()));
+
 		SemanticModel model = modelLearner.getModel();
 		if (model == null) {
 			logger.error("could not learn any model for this source!");
@@ -186,10 +183,12 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 //		logger.info(GraphUtil.labeledGraphToString(model.getGraph()));
 		
 		List<SemanticType> semanticTypes = new LinkedList<SemanticType>();
-		if (ModelingConfiguration.isLearnAlignmentEnabled()) 
-			updateLearningAlignment(alignment, model, semanticTypes);
-		else
-			updateNormalAlignment(alignment, model, semanticTypes);
+		alignment.updateAlignment(model, semanticTypes);
+		Set<ColumnNode> alignmentColumnNodes = alignment.getSourceColumnNodes();
+		if (alignmentColumnNodes != null)
+			for (ColumnNode cn : alignmentColumnNodes) {
+				worksheet.getSemanticTypes().unassignColumnSemanticType(cn.getHNodeId());
+			}
 		if (semanticTypes != null) {
 			for (SemanticType st : semanticTypes)
 				worksheet.getSemanticTypes().addType(st);
@@ -203,6 +202,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
 			c.add(new AlignmentSVGVisualizationUpdate(
 					worksheetId, alignment));
+
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(
@@ -212,142 +212,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 		
 		return c;
 	}
-	
-	private void updateNormalAlignment(Alignment alignment, SemanticModel model, List<SemanticType> semanticTypes) {
 
-		if (model == null || alignment == null) 
-			return;
-		
-		if (semanticTypes == null) semanticTypes = new LinkedList<SemanticType>();
-		
-		DirectedWeightedMultigraph<Node, LabeledLink> tree = 
-				new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
-
-		HashMap<Node, Node> modelToAlignmentNode = new HashMap<Node, Node>();
-		for (Node n : model.getGraph().vertexSet()) {
-			if (n instanceof InternalNode) {
-
-				InternalNode iNode;
-
-				iNode = (InternalNode)alignment.getNodeById(n.getId());
-				if (iNode != null) {
-					modelToAlignmentNode.put(n, iNode);
-				} else {
-					iNode = alignment.addInternalNode(n.getLabel());
-					modelToAlignmentNode.put(n, iNode);
-				}
-				
-				tree.addVertex(iNode);
-			}
-			
-			if (n instanceof ColumnNode) {
-				if (model.getMappingToSourceColumns() != null) {
-					modelToAlignmentNode.put(n, model.getMappingToSourceColumns().get(n));
-					tree.addVertex(model.getMappingToSourceColumns().get(n));
-				}
-			}
-		}
-		
-		Node source, target;
-		for (LabeledLink l : model.getGraph().edgeSet()) {
-			
-			if (!(l.getSource() instanceof InternalNode)) {
-				logger.error("column node cannot have an outgoing link!");
-				return;
-			}
-
-			source = modelToAlignmentNode.get(l.getSource());
-			target = modelToAlignmentNode.get(l.getTarget());
-			
-			if (source == null || target == null)
-				continue;
-
-			String id = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
-			LabeledLink newLink = l.copy(id);
-
-	    	if (newLink == null) continue;
-			
-			alignment.getGraphBuilder().addLink(source, target, newLink); // returns fals if link already exists
-			tree.addEdge(source, target, newLink);
-			
-			alignment.setSteinerTree(tree);
-			
-			if (target instanceof ColumnNode) {
-				SemanticType st = new SemanticType(((ColumnNode)target).getHNodeId(), 
-						newLink.getLabel(), source.getLabel(), SemanticType.Origin.User, 1.0);
-				semanticTypes.add(st);
-			}
-		}
-	}
-
-	private void updateLearningAlignment(Alignment alignment, SemanticModel model, List<SemanticType> semanticTypes) {
-		
-		if (model == null || alignment == null) 
-			return;
-		
-		if (semanticTypes == null) semanticTypes = new LinkedList<SemanticType>();
-		
-		DirectedWeightedMultigraph<Node, LabeledLink> tree = 
-				new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
-
-		HashMap<Node, Node> modelToAlignmentNode = new HashMap<Node, Node>();
-		for (Node n : model.getGraph().vertexSet()) {
-			if (n instanceof InternalNode) {
-
-				InternalNode iNode;
-
-				iNode = (InternalNode)alignment.getNodeById(n.getId());
-				if (iNode != null) {
-					modelToAlignmentNode.put(n, iNode);
-				} else {
-					iNode = alignment.addInternalNode(n.getLabel());
-					modelToAlignmentNode.put(n, iNode);
-				}
-				
-				tree.addVertex(iNode);
-			}
-			
-			if (n instanceof ColumnNode) {
-				if (model.getMappingToSourceColumns() != null) {
-					modelToAlignmentNode.put(n, model.getMappingToSourceColumns().get(n));
-					tree.addVertex(model.getMappingToSourceColumns().get(n));
-				}
-			}
-		}
-		
-		Node source, target;
-		for (LabeledLink l : model.getGraph().edgeSet()) {
-			
-			if (!(l.getSource() instanceof InternalNode)) {
-				logger.error("column node cannot have an outgoing link!");
-				return;
-			}
-
-			source = modelToAlignmentNode.get(l.getSource());
-			target = modelToAlignmentNode.get(l.getTarget());
-			
-			if (source == null || target == null)
-				continue;
-
-			String id = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
-			LabeledLink newLink = l.copy(id);
-			
-	    	if (newLink == null) continue;
-			
-			alignment.getGraphBuilder().addLink(source, target, newLink); // returns fals if link already exists
-			tree.addEdge(source, target, newLink);
-			
-			alignment.setSteinerTree(tree);
-			
-			if (target instanceof ColumnNode) {
-				SemanticType st = new SemanticType(((ColumnNode)target).getHNodeId(), 
-						newLink.getLabel(), source.getLabel(), SemanticType.Origin.User, 1.0);
-				semanticTypes.add(st);
-			}
-			
-		}
-
-	}
 	
 	private void saveSemanticTypesInformation(Worksheet worksheet, Workspace workspace
 			, Collection<SemanticType> semanticTypes) throws JSONException {

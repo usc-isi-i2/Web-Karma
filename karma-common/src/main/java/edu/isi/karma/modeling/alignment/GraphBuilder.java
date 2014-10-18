@@ -94,9 +94,6 @@ public class GraphBuilder {
 	private HashMap<String, Set<SemanticTypeMapping>> semanticTypeMatches; // nodeUri + dataPropertyUri --> SemanticType Mapping
 	private int numberOfModelLinks = 0;
 
-	private HashMap<Node, Node> node2Domain;
-
-	
 	// Constructor
 	
 	public GraphBuilder(OntologyManager ontologyManager, NodeIdFactory nodeIdFactory, boolean addThingNode) { 
@@ -124,7 +121,6 @@ public class GraphBuilder {
 		this.semanticTypeMatches = new HashMap<String, Set<SemanticTypeMapping>>();
 		
 		this.nodeDataProperties= new HashMap<String,Set<Node>>(); 
-		this.node2Domain = new HashMap<Node,Node>();
 		
 		this.forcedNodes = new HashSet<Node>();
 		if (addThingNode) 
@@ -225,10 +221,6 @@ public class GraphBuilder {
 
 	public int getNumberOfModelLinks() {
 		return numberOfModelLinks;
-	}
-	
-	public HashMap<Node, Node> getNode2Domain() {
-		return node2Domain;
 	}
 
 	public HashMap<String, Set<Node>> getNodeDataProperties() {
@@ -493,6 +485,18 @@ public class GraphBuilder {
 			((LabeledLink)link).getLabel().setPrefix(label.getPrefix());
 		}
 			
+		if (source instanceof InternalNode && target instanceof ColumnNode) {
+			
+			// remove other incoming links to this column node
+			DefaultLink oldIncomingLink = null;
+			Set<DefaultLink> incomingLinks = this.getGraph().incomingEdgesOf(target);
+			if (incomingLinks != null && incomingLinks.size() == 1) {
+				oldIncomingLink = incomingLinks.iterator().next();
+			}
+			if (oldIncomingLink != null)
+				this.removeLink(oldIncomingLink);
+		}
+			
 		this.graph.addEdge(source, target, link);
 		
 		this.visitedSourceTargetPairs.add(source.getId() + target.getId());
@@ -536,8 +540,9 @@ public class GraphBuilder {
 		}
 
 		if (source instanceof InternalNode && target instanceof ColumnNode) {
-			
-			this.node2Domain.put(target, source);
+
+			((ColumnNode)target).setDomainNode((InternalNode)source);
+			((ColumnNode)target).setDomainLink(labeledLink);
 			
 			String key = source.getId() + link.getUri();
 			Integer count = this.nodeDataPropertyCount.get(key);

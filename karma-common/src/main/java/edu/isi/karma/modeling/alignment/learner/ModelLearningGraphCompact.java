@@ -231,7 +231,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 					if (n instanceof ColumnNode) {
 						Node modelDomain = modelNodeDomains.get(node);
 						Node correspondingMatch = nodeMap.get(modelDomain);
-						if (this.graphBuilder.getNode2Domain().get(n) != correspondingMatch)
+						if ( ((ColumnNode)n).getDomainNode() != correspondingMatch)
 							continue;
 						
 					}

@@ -23,7 +23,9 @@ package edu.isi.karma.modeling.alignment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -62,6 +64,7 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
+import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SubClassLink;
 
 
@@ -75,12 +78,14 @@ public class Alignment implements OntologyUpdateListener {
 	private DirectedWeightedMultigraph<Node, LabeledLink> steinerTree = null;
 	private Node root = null;
 	private NodeIdFactory nodeIdFactory;
+	private Set<ColumnNode> sourceColumnNodes;
 
 
 	public Alignment(OntologyManager ontologyManager) {
 
 		this.ontologyManager = ontologyManager;
 		this.ontologyManager.subscribeListener(this);
+		this.sourceColumnNodes = new HashSet<ColumnNode>(); 
 		if (ModelingConfiguration.isLearnAlignmentEnabled()) {
 			this.nodeIdFactory = 
 					ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getNodeIdFactory();
@@ -96,7 +101,7 @@ public class Alignment implements OntologyUpdateListener {
 	}
 
 	public boolean isEmpty() {
-		return (this.graphBuilder.getGraph().edgeSet().size() == 0);
+		return (this.graphBuilder.getGraph().edgeSet().size() == 0 || this.steinerTree == null);
 	}
 	
 	public Node GetTreeRoot() {
@@ -107,6 +112,11 @@ public class Alignment implements OntologyUpdateListener {
 		return this.graphBuilder;
 	}
 	
+	
+	public Set<ColumnNode> getSourceColumnNodes() {
+		return sourceColumnNodes;
+	}
+
 	public Alignment getAlignmentClone() {
 		Cloner cloner = new Cloner();
 //		cloner.setDumpClonedClasses(true);
@@ -121,11 +131,6 @@ public class Alignment implements OntologyUpdateListener {
 		if (this.steinerTree == null) align();
 		// GraphUtil.printGraph(this.steinerTree);
 		return this.steinerTree;
-	}
-	
-	public void setSteinerTree(DirectedWeightedMultigraph<Node, LabeledLink> tree) {
-		this.steinerTree = tree;
-		this.root = TreePostProcess.selectRoot(GraphUtil.asDefaultGraph(tree));
 	}
 	
 	public DirectedWeightedMultigraph<Node, DefaultLink> getGraph() {
@@ -207,8 +212,10 @@ public class Alignment implements OntologyUpdateListener {
 		
 		// use hNodeId as id of the node
 		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType);
-		if (this.graphBuilder.addNodeAndUpdate(node)) 
+		if (this.graphBuilder.addNodeAndUpdate(node)) {
+			this.sourceColumnNodes.add(node);
 			return node;
+		}
 		return null;
 	}
 	
@@ -556,30 +563,12 @@ public class Alignment implements OntologyUpdateListener {
 		
 		// Add column nodes and their domain
 		// it is better to set isForced flag when setting a semantic type
-		Set<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
+		Set<ColumnNode> columnNodes = this.sourceColumnNodes;
 		if (columnNodes != null) {
-			for (Node n : columnNodes) {
-				
-				if (!n.isForced())
-					continue;
-				
-//				if (ModelingConfiguration.isLearnAlignmentEnabled()) { // do not add domain nodes
-//					steinerNodes.add(n);
-//					continue;
-//				}
-				
-				Set<DefaultLink> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(n);
-				if (incomingLinks != null && incomingLinks.size() == 1) {
-					LabeledLink l = incomingLinks.toArray(new LabeledLink[0])[0];
-					Node domain = l.getSource();
-					// adding the column node
-					steinerNodes.add(n);
-					// adding the domain
-					steinerNodes.add(domain);
-					((ColumnNode)n).setDomainNode((InternalNode)domain);
-					((ColumnNode)n).setDomainLink(l);
-				} else 
-					logger.debug("The column node " + ((ColumnNode)n).getColumnName() + " does not have any domain or it has more than one domain.");
+			for (ColumnNode n : columnNodes) {
+				steinerNodes.add(n);
+				if (n.hasUserType())
+					steinerNodes.add(n.getDomainNode());
 			}
 		}
 
@@ -689,12 +678,8 @@ public class Alignment implements OntologyUpdateListener {
 		if (!ModelingConfiguration.isLearnAlignmentEnabled())
 			return;
 		
-		DirectedWeightedMultigraph<Node, LabeledLink> tree = 
-				new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
-
 		List<Node> steinerNodes = this.computeSteinerNodes();
 		if (steinerNodes == null || steinerNodes.isEmpty()) {
-			this.steinerTree = tree;
 			return;
 		}
 		
@@ -706,45 +691,92 @@ public class Alignment implements OntologyUpdateListener {
 			return ;
 		}
 
-		if (model != null) {
-			Node source, target;
-			
-			for (Node n : model.getGraph().vertexSet()) {
-				tree.addVertex(n);
+		this.updateAlignment(model, null);
+	}
+	
+	private void addForcedLinks() {
+		Set<LabeledLink> forcedLinks = getLinksByStatus(LinkStatus.ForcedByUser);
+		if (forcedLinks != null)
+		for (LabeledLink link : forcedLinks) {
+			if (!this.steinerTree.containsEdge(link) &&
+					this.steinerTree.containsVertex(link.getSource()) &&
+					this.steinerTree.containsVertex(link.getTarget())) {
+						this.steinerTree.addEdge(link.getSource(), link.getTarget(), link);
 			}
-			
-			for (LabeledLink l : model.getGraph().edgeSet()) {
-				
-				if (!(l.getSource() instanceof InternalNode)) {
-					logger.error("column node cannot have an outgoing link!");
-					return;
+		}
+	}
+	
+	public void updateAlignment(SemanticModel model, List<SemanticType> semanticTypes) {
+		
+		if (model == null) 
+			return;
+		
+		if (semanticTypes == null) semanticTypes = new LinkedList<SemanticType>();
+		
+		DirectedWeightedMultigraph<Node, LabeledLink> tree = 
+				new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
+
+		HashMap<Node, Node> modelToAlignmentNode = new HashMap<Node, Node>();
+		for (Node n : model.getGraph().vertexSet()) {
+			if (n instanceof InternalNode) {
+
+				InternalNode iNode;
+
+				iNode = (InternalNode)this.getNodeById(n.getId());
+				if (iNode != null) {
+					modelToAlignmentNode.put(n, iNode);
+				} else {
+					iNode = this.addInternalNode(n.getLabel());
+					modelToAlignmentNode.put(n, iNode);
 				}
-
-				source = l.getSource();
-				target = l.getTarget();
 				
-				if (source == null || target == null)
-					continue;
-				
-				this.graphBuilder.addLink(source, target, l);
-				tree.addEdge(source, target, l);
-
+				tree.addVertex(iNode);
 			}
 			
-			Set<LabeledLink> forcedLinks = getLinksByStatus(LinkStatus.ForcedByUser);
-			if (forcedLinks != null)
-			for (LabeledLink link : forcedLinks) {
-				if (!tree.containsEdge(link) &&
-						tree.containsVertex(link.getSource()) &&
-						tree.containsVertex(link.getTarget())) {
-							tree.addEdge(link.getSource(), link.getTarget(), link);
+			if (n instanceof ColumnNode) {
+				if (model.getMappingToSourceColumns() != null) {
+					ColumnNode cn = model.getMappingToSourceColumns().get(n);
+					modelToAlignmentNode.put(n, cn);
+					tree.addVertex(cn);
 				}
 			}
+		}
+		
+		Node source, target;
+		for (LabeledLink l : model.getGraph().edgeSet()) {
+			
+			if (!(l.getSource() instanceof InternalNode)) {
+				logger.error("column node cannot have an outgoing link!");
+				return;
+			}
 
-			this.steinerTree = tree;
-			this.root = TreePostProcess.selectRoot(GraphUtil.asDefaultGraph(tree));
+			source = modelToAlignmentNode.get(l.getSource());
+			target = modelToAlignmentNode.get(l.getTarget());
+			
+			if (source == null || target == null)
+				continue;
 
-		} 		
+			String id = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
+			LabeledLink newLink = l.copy(id);
+			
+	    	if (newLink == null) continue;
+			
+			this.getGraphBuilder().addLink(source, target, newLink); // returns false if link already exists
+			if (target instanceof ColumnNode && ((ColumnNode)target).hasUserType())
+				this.getGraphBuilder().changeLinkStatus(newLink, LinkStatus.ForcedByUser);
+			tree.addEdge(source, target, newLink);
+						
+			if (target instanceof ColumnNode) {
+				SemanticType st = new SemanticType(((ColumnNode)target).getHNodeId(), 
+						newLink.getLabel(), source.getLabel(), SemanticType.Origin.User, 1.0);
+				semanticTypes.add(st);
+			}
+			
+		}
+
+		this.steinerTree = tree;
+		this.addForcedLinks();
+		this.root = TreePostProcess.selectRoot(GraphUtil.asDefaultGraph(tree));
 
 	}
 	
