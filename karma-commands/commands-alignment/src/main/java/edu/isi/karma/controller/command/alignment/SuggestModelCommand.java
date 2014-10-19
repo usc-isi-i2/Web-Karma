@@ -55,6 +55,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 
@@ -127,7 +128,6 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 
 			initialGraph = (DirectedWeightedMultigraph<Node, DefaultLink>)alignment.getGraph().clone();
 			
-			steinerNodes = new LinkedList<Node>();
 			List<HNode> orderedNodeIds = new ArrayList<HNode>();
 			worksheet.getHeaders().getSortedLeafHNodes(orderedNodeIds);
 			if (orderedNodeIds != null) {
@@ -142,13 +142,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 						List<SemanticType> suggestedSemanticTypes = 
 								new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4, selection);
 						cn.setSuggestedSemanticTypes(suggestedSemanticTypes);
-						steinerNodes.add(cn);
-					} else {
-						if (ModelingConfiguration.isLearnAlignmentEnabled()) 
-							steinerNodes.add(cn.getDomainNode());
-						steinerNodes.add(cn);
-					}
-					
+					} 
 				}
 			}
 		} else {
@@ -159,12 +153,12 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
 
-		
+		steinerNodes = alignment.computeSteinerNodes();
 		ModelLearner modelLearner = null;
 		if (ModelingConfiguration.isLearnAlignmentEnabled()) 
 			modelLearner = new ModelLearner(alignment.getGraphBuilder(), steinerNodes);
 		else
-			modelLearner = new ModelLearner(ontologyManager, alignment.getSteinerTree(), steinerNodes);
+			modelLearner = new ModelLearner(ontologyManager, alignment.getLinksByStatus(LinkStatus.ForcedByUser), steinerNodes);
 
 //		logger.info(GraphUtil.defaultGraphToString(ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder().getGraph()));
 

@@ -61,6 +61,7 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
@@ -110,7 +111,7 @@ public class ModelLearner {
 	}
 
 	public ModelLearner(OntologyManager ontologyManager, 
-			DirectedWeightedMultigraph<Node, LabeledLink> worksheetTree,
+			Set<LabeledLink> forcedLinks,
 			List<Node> steinerNodes) {
 		if (ontologyManager == null || 
 				steinerNodes == null || 
@@ -123,19 +124,23 @@ public class ModelLearner {
 		this.nodeIdFactory = gb.getNodeIdFactory();
 		this.steinerNodes = steinerNodes;
 		this.graphBuilder = cloneGraphBuilder(gb); // create a copy of the graph builder
-		if (worksheetTree != null) {
-			for (Node n : worksheetTree.vertexSet()) {
-				if (n instanceof ColumnNode) {
-					if (((ColumnNode)n).hasUserType()) {
-						this.graphBuilder.addNode(n);
-						Node domain = ((ColumnNode)n).getDomainNode();
-						if (domain != null) {
-							if (this.graphBuilder.getIdToNodeMap().get(domain.getId()) == null) {
-								this.graphBuilder.addNodeAndUpdate(domain);
-							}
+		if (steinerNodes != null) {
+			for (Node n : steinerNodes) {
+				if (this.graphBuilder.getIdToNodeMap().get(n.getId()) == null) {
+					this.graphBuilder.addNodeAndUpdate(n);
+				}
+			}
+		}
+		if (forcedLinks != null) {
+			for (LabeledLink l : forcedLinks) {
+				if (l.getStatus() == LinkStatus.ForcedByUser) {
+					Node source = l.getSource();
+					Node target = l.getTarget();
+					if (!this.graphBuilder.addLink(source, target, l)) {
+						LabeledLink existingLink = this.graphBuilder.getIdToLinkMap().get(l.getId());
+						if (existingLink != null) { // the link already exist, but it may not be forced by user
+							this.graphBuilder.changeLinkStatus(existingLink, LinkStatus.ForcedByUser);
 						}
-						LabeledLink domainLink = ((ColumnNode)n).getDomainLink();
-						this.graphBuilder.addLink(domain, n, domainLink, worksheetTree.getEdgeWeight(domainLink));
 					}
 				}
 			}

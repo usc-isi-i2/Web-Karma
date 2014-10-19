@@ -151,9 +151,7 @@ public class GraphBuilder {
 			source = link.getSource();
 			target = link.getTarget();
 			
-			double w = link.getWeight();
-			if (this.addLink(source, target, link))
-				changeLinkWeight(link, w);
+			this.addLink(source, target, link);
 		}
 		
 		logger.debug("graph has been loaded.");
@@ -578,9 +576,24 @@ public class GraphBuilder {
 	
 	private double computeWeight(DefaultLink link) {
 		double w = 0.0;
+		
+		if (link instanceof LabeledLink && ((LabeledLink)link).getStatus() == LinkStatus.PreferredByUI)
+			w = ModelingParams.PROPERTY_UI_PREFERRED_WEIGHT;
+		
+		if (link instanceof LabeledLink && 
+				((LabeledLink)link).getModelIds() != null &&
+				!((LabeledLink)link).getModelIds().isEmpty()) 
+			w = ModelingParams.PATTERN_LINK_WEIGHT;
+
+		if (link instanceof LabeledLink && ((LabeledLink)link).getStatus() == LinkStatus.ForcedByUser)
+			w = ModelingParams.PROPERTY_USER_PREFERRED_WEIGHT;
+		
+		if (w != 0.0)
+			return w;
+		
 		if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct)
 			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
-		if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct)
+		else if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct)
 			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
 		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Indirect)
 			w = ModelingParams.PROPERTY_INDIRECT_WEIGHT;
@@ -602,8 +615,9 @@ public class GraphBuilder {
 			w = ModelingParams.SUBCLASS_WEIGHT;
 		else if (link instanceof CompactSubClassLink)
 			w = ModelingParams.SUBCLASS_WEIGHT;
-		else
+		else 
 			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
+		
 		return w;
 	}
 	
@@ -614,6 +628,7 @@ public class GraphBuilder {
 			return;
 		
 		link.setStatus(newStatus);
+		this.changeLinkWeight(link, computeWeight(link));
 		
 		Set<LabeledLink> linksWithOldStatus = this.statusToLinksMap.get(oldStatus);
 		if (linksWithOldStatus != null) linksWithOldStatus.remove(link);

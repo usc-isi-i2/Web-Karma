@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jgrapht.UndirectedGraph;
+import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
 import org.slf4j.Logger;
@@ -574,7 +575,8 @@ public class Alignment implements OntologyUpdateListener {
 
 		Set<Node> forcedNodes = this.getForcedNodes();
 		for (Node n : forcedNodes) {
-			steinerNodes.add(n);
+			if (!steinerNodes.contains(n))
+				steinerNodes.add(n);
 		}
 		
 		// Add source and target of the links forced by the user
@@ -640,10 +642,10 @@ public class Alignment implements OntologyUpdateListener {
 		
 		logger.debug("preparing G Prime for steiner algorithm input ...");
 		
-		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), 
-				this.getLinksByStatus(LinkStatus.PreferredByUI),
-				this.getLinksByStatus(LinkStatus.ForcedByUser));		
-		UndirectedGraph<Node, DefaultLink> undirectedGraph = graphPreProcess.getUndirectedGraph();
+//		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), 
+//				this.getLinksByStatus(LinkStatus.PreferredByUI),
+//				this.getLinksByStatus(LinkStatus.ForcedByUser));		
+		UndirectedGraph<Node, DefaultLink> undirectedGraph = new AsUndirectedGraph<Node, DefaultLink>(this.getGraph());
 
 		logger.debug("computing steiner nodes ...");
 		List<Node> steinerNodes = this.computeSteinerNodes();
@@ -684,7 +686,7 @@ public class Alignment implements OntologyUpdateListener {
 		}
 		
 		ModelLearner modelLearner = new ModelLearner(this.graphBuilder, steinerNodes);
-		
+
 		SemanticModel model = modelLearner.getModel();
 		if (model == null) {
 			logger.error("could not learn any model for this source!");
@@ -762,8 +764,6 @@ public class Alignment implements OntologyUpdateListener {
 	    	if (newLink == null) continue;
 			
 			this.getGraphBuilder().addLink(source, target, newLink); // returns false if link already exists
-			if (target instanceof ColumnNode && ((ColumnNode)target).hasUserType())
-				this.getGraphBuilder().changeLinkStatus(newLink, LinkStatus.ForcedByUser);
 			tree.addEdge(source, target, newLink);
 						
 			if (target instanceof ColumnNode) {
