@@ -91,9 +91,9 @@ public class ModelLearner {
 		}
 		GraphBuilder gb = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder();
 		this.ontologyManager = ontologyManager;
-		this.nodeIdFactory = gb.getNodeIdFactory();
 		this.steinerNodes = steinerNodes;
 		this.graphBuilder = cloneGraphBuilder(gb); // create a copy of the graph builder
+		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 	}
 
 	public ModelLearner(GraphBuilder graphBuilder, 
@@ -105,9 +105,9 @@ public class ModelLearner {
 			return;
 		}
 		this.ontologyManager = graphBuilder.getOntologyManager();
-		this.nodeIdFactory = graphBuilder.getNodeIdFactory();
 		this.steinerNodes = steinerNodes;
 		this.graphBuilder = cloneGraphBuilder(graphBuilder); // create a copy of the graph builder
+		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 	}
 
 	public ModelLearner(OntologyManager ontologyManager, 
@@ -121,9 +121,9 @@ public class ModelLearner {
 		}
 		GraphBuilder gb = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder();
 		this.ontologyManager = ontologyManager;
-		this.nodeIdFactory = gb.getNodeIdFactory();
 		this.steinerNodes = steinerNodes;
 		this.graphBuilder = cloneGraphBuilder(gb); // create a copy of the graph builder
+		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 		if (steinerNodes != null) {
 			for (Node n : steinerNodes) {
 				if (this.graphBuilder.getIdToNodeMap().get(n.getId()) == null) {
@@ -174,7 +174,7 @@ public class ModelLearner {
 
 		GraphBuilder clonedGraphBuilder = null;
 		if (graphBuilder == null || graphBuilder.getGraph() == null) {
-			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, this.nodeIdFactory, false);
+			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, false);
 		} else {
 			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, graphBuilder.getGraph());
 		}

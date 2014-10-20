@@ -144,10 +144,11 @@ public class ModelLearner_Old {
 
 		GraphBuilder clonedGraphBuilder = null;
 		if (graphBuilder == null || graphBuilder.getGraph() == null) {
-			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, this.nodeIdFactory, false);
+			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, false);
 		} else {
 			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, graphBuilder.getGraph());
 		}
+		this.nodeIdFactory = clonedGraphBuilder.getNodeIdFactory();
 		return clonedGraphBuilder;
 	}
 
