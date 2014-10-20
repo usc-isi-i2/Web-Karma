@@ -88,17 +88,13 @@ public class Alignment implements OntologyUpdateListener {
 		this.ontologyManager.subscribeListener(this);
 		this.sourceColumnNodes = new HashSet<ColumnNode>(); 
 		if (ModelingConfiguration.isLearnAlignmentEnabled()) {
-			this.nodeIdFactory = 
-					ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getNodeIdFactory();
 			this.graphBuilder = 
 					ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilderClone();
 		} else {
-			this.nodeIdFactory = new NodeIdFactory();
-			this.graphBuilder =  new GraphBuilder(this.ontologyManager, nodeIdFactory, true);
+			this.graphBuilder =  new GraphBuilder(this.ontologyManager, true);
 		}
+		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 		logger.debug("loading learning graph ...");
-		
-
 	}
 
 	public boolean isEmpty() {

@@ -96,10 +96,10 @@ public class GraphBuilder {
 
 	// Constructor
 	
-	public GraphBuilder(OntologyManager ontologyManager, NodeIdFactory nodeIdFactory, boolean addThingNode) { 
+	public GraphBuilder(OntologyManager ontologyManager, boolean addThingNode) { 
 		
 		this.ontologyManager = ontologyManager;
-		this.nodeIdFactory = nodeIdFactory;
+		this.nodeIdFactory = new NodeIdFactory();
 
 		this.idToNodeMap = new HashMap<String, Node>();
 		this.idToLinkMap = new HashMap<String, LabeledLink>();
@@ -130,7 +130,7 @@ public class GraphBuilder {
 	
 	public GraphBuilder(OntologyManager ontologyManager, DirectedWeightedMultigraph<Node, DefaultLink> graph) {
 		
-		this(ontologyManager, new NodeIdFactory(), false);
+		this(ontologyManager, false);
 		if (graph == null)
 			return;
 		
