@@ -36,7 +36,7 @@ public class ColumnMetadata {
 	private Map<String, String>			columnPreviousCommandId;
 	private Map<String, String>			columnDerivedFrom;
 	private Map<String, DataStructure>  columnDataStructure;
-	
+	private Map<String, Boolean>	    columnOnError;
 	public ColumnMetadata() {
 		super();
 		this.columnPreferredLengths = new HashMap<String, Integer>();
@@ -47,6 +47,7 @@ public class ColumnMetadata {
 		this.columnPreviousCommandId = new HashMap<String, String>();
 		this.columnDerivedFrom = new HashMap<String, String>();
 		this.columnDataStructure = new HashMap<String, DataStructure>();
+		this.columnOnError = new HashMap<String, Boolean>();
 	}
 	
 	public enum DataStructure {
@@ -72,6 +73,14 @@ public class ColumnMetadata {
 	
 	public void addColumnHistogramData(String hNodeId, JSONObject data) {
 		columnHistogramData.put(hNodeId, data);
+	}
+	
+	public void addColumnOnError(String hNodeId, Boolean onError) {
+		columnOnError.put(hNodeId, onError);
+	}
+	
+	public Boolean getColumnOnError(String hNodeId) {
+		return columnOnError.get(hNodeId);
 	}
 	
 	public String getColumnPython(String hNodeId)

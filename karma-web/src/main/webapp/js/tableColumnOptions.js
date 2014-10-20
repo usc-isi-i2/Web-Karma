@@ -1,4 +1,4 @@
-function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutofStatus) {
+function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutofStatus, isPyTransform, error) {
 
 	var worksheetId = wsId;
 	var columnTitle = wsColumnTitle;
@@ -174,6 +174,17 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 		sendRequest(info, worksheetId);
 	}
 
+	function refreshPython() {
+		console.log("refreshPython!");
+		console.log(wsColumnId);
+		console.log($("#" + wsColumnId).data("pythonTransformation"));
+		var info = generateInfoObject(wsId, wsColumnId, "RepeatPythonTransformationCommand");
+		var newInfo = info['newInfo'];
+		info["newInfo"] = JSON.stringify(newInfo);
+		showLoading(worksheetId);
+		sendRequest(info, worksheetId);
+	}
+
 	function clearAll() {
 		hideDropdown();
 		var headers = getColumnHeadingsForColumn(wsId, wsColumnId, "GroupBy");
@@ -343,6 +354,15 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			a.click(refreshRows);
 			a.append($("<span>").addClass("glyphicon glyphicon-refresh"));
 			div.append(a);
+		}
+		if (isPyTransform) {
+			var a = $("<a>").attr("href", "#");
+			a.click(refreshPython);
+			a.append($("<span>").addClass("glyphicon glyphicon-repeat"));
+			div.append(a);
+		}
+		if (error) {
+			div.append($("<span>").addClass("glyphicon glyphicon-remove"));
 		}
 		var ul = $("<ul>").addClass("dropdown-menu");
 		ul.attr("role", "menu")
