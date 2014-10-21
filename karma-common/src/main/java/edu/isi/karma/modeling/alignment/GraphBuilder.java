@@ -94,15 +94,12 @@ public class GraphBuilder {
 	private HashMap<String, Set<SemanticTypeMapping>> semanticTypeMatches; // nodeUri + dataPropertyUri --> SemanticType Mapping
 	private int numberOfModelLinks = 0;
 
-	private HashMap<Node, Node> node2Domain;
-
-	
 	// Constructor
 	
-	public GraphBuilder(OntologyManager ontologyManager, NodeIdFactory nodeIdFactory, boolean addThingNode) { 
+	public GraphBuilder(OntologyManager ontologyManager, boolean addThingNode) { 
 		
 		this.ontologyManager = ontologyManager;
-		this.nodeIdFactory = nodeIdFactory;
+		this.nodeIdFactory = new NodeIdFactory();
 
 		this.idToNodeMap = new HashMap<String, Node>();
 		this.idToLinkMap = new HashMap<String, LabeledLink>();
@@ -124,7 +121,6 @@ public class GraphBuilder {
 		this.semanticTypeMatches = new HashMap<String, Set<SemanticTypeMapping>>();
 		
 		this.nodeDataProperties= new HashMap<String,Set<Node>>(); 
-		this.node2Domain = new HashMap<Node,Node>();
 		
 		this.forcedNodes = new HashSet<Node>();
 		if (addThingNode) 
@@ -134,7 +130,7 @@ public class GraphBuilder {
 	
 	public GraphBuilder(OntologyManager ontologyManager, DirectedWeightedMultigraph<Node, DefaultLink> graph) {
 		
-		this(ontologyManager, new NodeIdFactory(), false);
+		this(ontologyManager, false);
 		if (graph == null)
 			return;
 		
@@ -155,9 +151,7 @@ public class GraphBuilder {
 			source = link.getSource();
 			target = link.getTarget();
 			
-			double w = link.getWeight();
-			if (this.addLink(source, target, link))
-				changeLinkWeight(link, w);
+			this.addLink(source, target, link);
 		}
 		
 		logger.debug("graph has been loaded.");
@@ -225,10 +219,6 @@ public class GraphBuilder {
 
 	public int getNumberOfModelLinks() {
 		return numberOfModelLinks;
-	}
-	
-	public HashMap<Node, Node> getNode2Domain() {
-		return node2Domain;
 	}
 
 	public HashMap<String, Set<Node>> getNodeDataProperties() {
@@ -493,6 +483,18 @@ public class GraphBuilder {
 			((LabeledLink)link).getLabel().setPrefix(label.getPrefix());
 		}
 			
+		if (source instanceof InternalNode && target instanceof ColumnNode) {
+			
+			// remove other incoming links to this column node
+			DefaultLink oldIncomingLink = null;
+			Set<DefaultLink> incomingLinks = this.getGraph().incomingEdgesOf(target);
+			if (incomingLinks != null && incomingLinks.size() == 1) {
+				oldIncomingLink = incomingLinks.iterator().next();
+			}
+			if (oldIncomingLink != null)
+				this.removeLink(oldIncomingLink);
+		}
+			
 		this.graph.addEdge(source, target, link);
 		
 		this.visitedSourceTargetPairs.add(source.getId() + target.getId());
@@ -536,8 +538,9 @@ public class GraphBuilder {
 		}
 
 		if (source instanceof InternalNode && target instanceof ColumnNode) {
-			
-			this.node2Domain.put(target, source);
+
+			((ColumnNode)target).setDomainNode((InternalNode)source);
+			((ColumnNode)target).setDomainLink(labeledLink);
 			
 			String key = source.getId() + link.getUri();
 			Integer count = this.nodeDataPropertyCount.get(key);
@@ -573,9 +576,24 @@ public class GraphBuilder {
 	
 	private double computeWeight(DefaultLink link) {
 		double w = 0.0;
+		
+		if (link instanceof LabeledLink && ((LabeledLink)link).getStatus() == LinkStatus.PreferredByUI)
+			w = ModelingParams.PROPERTY_UI_PREFERRED_WEIGHT;
+		
+		if (link instanceof LabeledLink && 
+				((LabeledLink)link).getModelIds() != null &&
+				!((LabeledLink)link).getModelIds().isEmpty()) 
+			w = ModelingParams.PATTERN_LINK_WEIGHT;
+
+		if (link instanceof LabeledLink && ((LabeledLink)link).getStatus() == LinkStatus.ForcedByUser)
+			w = ModelingParams.PROPERTY_USER_PREFERRED_WEIGHT;
+		
+		if (w != 0.0)
+			return w;
+		
 		if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct)
 			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
-		if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct)
+		else if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct)
 			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
 		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Indirect)
 			w = ModelingParams.PROPERTY_INDIRECT_WEIGHT;
@@ -597,8 +615,9 @@ public class GraphBuilder {
 			w = ModelingParams.SUBCLASS_WEIGHT;
 		else if (link instanceof CompactSubClassLink)
 			w = ModelingParams.SUBCLASS_WEIGHT;
-		else
+		else 
 			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
+		
 		return w;
 	}
 	
@@ -609,6 +628,7 @@ public class GraphBuilder {
 			return;
 		
 		link.setStatus(newStatus);
+		this.changeLinkWeight(link, computeWeight(link));
 		
 		Set<LabeledLink> linksWithOldStatus = this.statusToLinksMap.get(oldStatus);
 		if (linksWithOldStatus != null) linksWithOldStatus.remove(link);

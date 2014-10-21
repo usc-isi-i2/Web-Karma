@@ -38,8 +38,8 @@ public class GraphBuilderTopK extends GraphBuilder {
 	private HashMap<SteinerNode, TreeSet<SteinerEdge>> topKGraph;
 	private HashMap<String, SteinerNode> topKGraphNodes;
 
-	public GraphBuilderTopK(OntologyManager ontologyManager, NodeIdFactory nodeIdFactory, boolean addThingNode) { 
-		super(ontologyManager, nodeIdFactory, addThingNode);
+	public GraphBuilderTopK(OntologyManager ontologyManager, boolean addThingNode) { 
+		super(ontologyManager, addThingNode);
 		if (topKGraph == null) topKGraph = new HashMap<SteinerNode, TreeSet<SteinerEdge>>();
 		if (topKGraphNodes == null) topKGraphNodes = new HashMap<String, SteinerNode>();
 	}
@@ -90,6 +90,18 @@ public class GraphBuilderTopK extends GraphBuilder {
 			SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)weight.doubleValue());
 			getTopKGraph().get(n1).add(e);
 			getTopKGraph().get(n2).add(e);
+			return true;
+		} else
+			return false;
+	}
+	
+	public boolean removeLink(DefaultLink link) {
+		if (super.removeLink(link)) {
+			SteinerNode n1 = new SteinerNode(link.getSource().getId());
+			SteinerNode n2 = new SteinerNode(link.getTarget().getId());
+			SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)link.getWeight());
+			getTopKGraph().get(n1).remove(e);
+			getTopKGraph().get(n2).remove(e);
 			return true;
 		} else
 			return false;
@@ -209,7 +221,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 			mgr.updateCache();
 		}
 		
-		GraphBuilderTopK gbtk = new GraphBuilderTopK(mgr, new NodeIdFactory(), false);
+		GraphBuilderTopK gbtk = new GraphBuilderTopK(mgr, false);
 		
 		Node n1 = new InternalNode("n1", new Label("http://erlangen-crm.org/current/E55_Type"));
 		Node n2 = new InternalNode("n2", new Label("http://erlangen-crm.org/current/E70_Thing"));

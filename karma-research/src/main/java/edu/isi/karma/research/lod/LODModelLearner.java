@@ -150,7 +150,7 @@ public class LODModelLearner {
 
 		GraphBuilder clonedGraphBuilder = null;
 		if (graphBuilder == null || graphBuilder.getGraph() == null) {
-			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, this.nodeIdFactory, false);
+			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, false);
 		} else {
 			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, graphBuilder.getGraph());
 		}

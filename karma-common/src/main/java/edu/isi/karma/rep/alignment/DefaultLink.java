@@ -105,7 +105,7 @@ public class DefaultLink extends DefaultWeightedEdge implements Comparable<Defau
         }
 
         DefaultLink link = (DefaultLink) obj;
-        return this.id == link.getId();
+        return this.id.equals(link.getId());
     }
     
     @Override

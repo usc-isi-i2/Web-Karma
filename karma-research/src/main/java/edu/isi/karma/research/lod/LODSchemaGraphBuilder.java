@@ -83,7 +83,7 @@ public class LODSchemaGraphBuilder {
 
 		this.ontologyManager = ontologyManager;
 		this.nodeIdFactory = new NodeIdFactory();
-		this.graphBuilder = new GraphBuilder(this.ontologyManager, this.nodeIdFactory, false);
+		this.graphBuilder = new GraphBuilder(this.ontologyManager, false);
 
 		List<Triple> objectPropertiesTriples = null;
 		List<Triple> dataPropertiesTriples = null;

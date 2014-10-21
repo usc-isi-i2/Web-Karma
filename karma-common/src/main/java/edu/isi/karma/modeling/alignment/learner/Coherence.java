@@ -75,13 +75,14 @@ public class Coherence {
 
 	public void updateCoherence(Node node) {
 		if (node == null) return;
-//		this.itemsCount ++;
+		this.itemsCount ++;
 		updateCoherence(node.getModelIds());
 	}
 	
 	public void updateCoherence(LabeledLink link) {
 		if (link == null) return;
-//		this.itemsCount ++;
+		// FIXME
+		if (link.getModelIds() != null && !link.getModelIds().isEmpty()) this.itemsCount ++;
 		updateCoherence(link.getModelIds());
 	}
 	
@@ -90,7 +91,7 @@ public class Coherence {
 		if (modelIds == null || modelIds.isEmpty())
 			return;
 		
-		this.itemsCount ++;
+//		this.itemsCount ++;
 
 //		logger.debug("update coherence data ...");
 //		System.out.println("=========================" + nodesCount);

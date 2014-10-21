@@ -72,18 +72,18 @@ public class GraphVizUtil {
 		return localName;
 	}
 	
-	private static String getModelIds(Set<String> modelIds) {
-		String label = "";
-		if (modelIds == null || modelIds.size() == 0)
-			return label;
-		label += "[";
-		for (String pId : modelIds)
-			label += pId + ",";
-		if (label.endsWith(","))
-			label = label.substring(0, label.length() - 1);
-		label += "]";
-		return label;
-	}
+//	private static String getModelIds(Set<String> modelIds) {
+//		String label = "";
+//		if (modelIds == null || modelIds.size() == 0)
+//			return label;
+//		label += "[";
+//		for (String pId : modelIds)
+//			label += pId + ",";
+//		if (label.endsWith(","))
+//			label = label.substring(0, label.length() - 1);
+//		label += "]";
+//		return label;
+//	}
 	
 	private static org.kohsuke.graphviz.Graph convertToGraphviz(
 			DirectedGraph<Node, DefaultLink> graph, 

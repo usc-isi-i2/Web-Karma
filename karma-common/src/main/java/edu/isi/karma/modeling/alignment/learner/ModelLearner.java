@@ -61,6 +61,7 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
@@ -77,7 +78,6 @@ public class ModelLearner {
 	private List<Node> steinerNodes = null;
 	private SemanticModel semanticModel = null;
 //	private long lastUpdateTimeOfGraph;
-	private boolean useKarmaAlignmentGraph;
 
 	private static final int NUM_SEMANTIC_TYPES = 4;
 
@@ -89,9 +89,11 @@ public class ModelLearner {
 			logger.error("cannot instanciate model learner!");
 			return;
 		}
+		GraphBuilder gb = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder();
 		this.ontologyManager = ontologyManager;
 		this.steinerNodes = steinerNodes;
-		this.useKarmaAlignmentGraph = true;
+		this.graphBuilder = cloneGraphBuilder(gb); // create a copy of the graph builder
+		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 	}
 
 	public ModelLearner(GraphBuilder graphBuilder, 
@@ -102,19 +104,55 @@ public class ModelLearner {
 			logger.error("cannot instanciate model learner!");
 			return;
 		}
+		this.ontologyManager = graphBuilder.getOntologyManager();
 		this.steinerNodes = steinerNodes;
-		this.graphBuilder = graphBuilder;
+		this.graphBuilder = cloneGraphBuilder(graphBuilder); // create a copy of the graph builder
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
-		this.ontologyManager = this.graphBuilder.getOntologyManager();
-		this.useKarmaAlignmentGraph = false;
 	}
 
+	public ModelLearner(OntologyManager ontologyManager, 
+			Set<LabeledLink> forcedLinks,
+			List<Node> steinerNodes) {
+		if (ontologyManager == null || 
+				steinerNodes == null || 
+				steinerNodes.isEmpty()) {
+			logger.error("cannot instanciate model learner!");
+			return;
+		}
+		GraphBuilder gb = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder();
+		this.ontologyManager = ontologyManager;
+		this.steinerNodes = steinerNodes;
+		this.graphBuilder = cloneGraphBuilder(gb); // create a copy of the graph builder
+		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
+		if (steinerNodes != null) {
+			for (Node n : steinerNodes) {
+				if (this.graphBuilder.getIdToNodeMap().get(n.getId()) == null) {
+					this.graphBuilder.addNodeAndUpdate(n);
+				}
+			}
+		}
+		if (forcedLinks != null) {
+			for (LabeledLink l : forcedLinks) {
+				if (l.getStatus() == LinkStatus.ForcedByUser) {
+					Node source = l.getSource();
+					Node target = l.getTarget();
+					if (!this.graphBuilder.addLink(source, target, l)) {
+						LabeledLink existingLink = this.graphBuilder.getIdToLinkMap().get(l.getId());
+						if (existingLink != null) { // the link already exist, but it may not be forced by user
+							this.graphBuilder.changeLinkStatus(existingLink, LinkStatus.ForcedByUser);
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	public SemanticModel getModel() {
 		if (this.semanticModel == null)
 			try {
 				this.learn();
 			} catch (Exception e) {
-				logger.error("error in learing the semantic model for the source " + this.semanticModel != null ? this.semanticModel.getId() : "");
+				logger.error("error in learing the semantic model for the source " + ((this.semanticModel == null) ? "" : this.semanticModel.getId()));
 				e.printStackTrace();
 			}
 
@@ -123,13 +161,6 @@ public class ModelLearner {
 
 	public void learn() throws Exception {
 
-		if (this.useKarmaAlignmentGraph) {
-			this.graphBuilder = 
-					ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder();
-			this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
-		}
-		
-		this.graphBuilder = cloneGraphBuilder(this.graphBuilder); // create a copy of the graph builder
 		List<SortableSemanticModel> hypothesisList = this.hypothesize(true, NUM_SEMANTIC_TYPES);
 		if (hypothesisList != null && !hypothesisList.isEmpty()) {
 			SortableSemanticModel m = hypothesisList.get(0);
@@ -143,7 +174,7 @@ public class ModelLearner {
 
 		GraphBuilder clonedGraphBuilder = null;
 		if (graphBuilder == null || graphBuilder.getGraph() == null) {
-			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, this.nodeIdFactory, false);
+			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, false);
 		} else {
 			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, graphBuilder.getGraph());
 		}
@@ -209,9 +240,10 @@ public class ModelLearner {
 //			logger.info("START ...");
 			
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
-			if (this.graphBuilder instanceof GraphBuilderTopK)
-				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn.getNodes(), ModelingConfiguration.getMaxCandidateModels());
-			else 
+//			if (this.graphBuilder instanceof GraphBuilderTopK) {
+//				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn.getNodes(), ModelingConfiguration.getMaxCandidateModels());
+//			} 
+//			else 
 			{
 				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
 				SteinerTree steinerTree = new SteinerTree(
@@ -238,8 +270,8 @@ public class ModelLearner {
 							new SortableSemanticModel(sm, sn);
 					sortableSemanticModels.add(sortableSemanticModel);
 					
-					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));
-					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
+//					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));
+//					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
 			if (number == ModelingConfiguration.getMaxCandidateModels())
@@ -384,7 +416,7 @@ public class ModelLearner {
 				logger.debug("count of semantic type: " +  countOfSemanticType);
 
 				
-				if (cn.getDomainNode() != null) {
+				if (cn.hasUserType()) {
 					SemanticTypeMapping mp = new SemanticTypeMapping(cn, semanticType, cn.getDomainNode(), cn.getDomainLink(), cn);
 					semanticTypeMappings.add(mp);
 				} else {

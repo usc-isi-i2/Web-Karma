@@ -112,11 +112,11 @@ public abstract class ModelLearningGraph {
 	
 	protected ModelLearningGraph(OntologyManager ontologyManager, boolean emptyInstance, ModelLearningGraphType type) {
 		this.ontologyManager = ontologyManager;
-		this.nodeIdFactory = new NodeIdFactory();
 		if (type == ModelLearningGraphType.Compact)
-			this.graphBuilder = new GraphBuilderTopK(ontologyManager, this.nodeIdFactory, false);
+			this.graphBuilder = new GraphBuilderTopK(ontologyManager, false);
 		else
-			this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
+			this.graphBuilder = new GraphBuilder(ontologyManager, false);
+		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 		this.lastUpdateTime = System.currentTimeMillis();
 	}
 	
@@ -145,11 +145,11 @@ public abstract class ModelLearningGraph {
 	public void initializeFromJsonRepository() {
 		logger.info("initializing the graph from models in the json repository ...");
 		
-		this.nodeIdFactory = new NodeIdFactory();
 		if (this instanceof ModelLearningGraphSparse)
-			this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
+			this.graphBuilder = new GraphBuilder(ontologyManager, false);
 		else 
-			this.graphBuilder = new GraphBuilderTopK(ontologyManager, this.nodeIdFactory, false);
+			this.graphBuilder = new GraphBuilderTopK(ontologyManager, false);
+		this.nodeIdFactory = new NodeIdFactory();
 		
 		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
 		Set<InternalNode> temp;

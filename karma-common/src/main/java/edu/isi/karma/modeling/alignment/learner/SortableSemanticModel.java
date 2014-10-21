@@ -183,7 +183,9 @@ public class SortableSemanticModel extends SemanticModel
 			return greaterThan;
 		else if (m.cost < this.cost)
 			return lessThan;
-		
+
+
+				
 		return 0;
 		
 	}

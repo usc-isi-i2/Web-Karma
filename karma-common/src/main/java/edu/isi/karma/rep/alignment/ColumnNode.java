@@ -50,6 +50,9 @@ public class ColumnNode extends Node {
 		this.suggestedSemanticTypes = null;
 	}
 
+	public boolean hasUserType() {
+		return this.userSelectedSemanticType == null ? false : true;
+	}
 	
 	public InternalNode getDomainNode() {
 		return domainNode;

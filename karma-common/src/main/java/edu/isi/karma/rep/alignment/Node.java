@@ -120,7 +120,7 @@ public abstract class Node implements Comparable<Node> {
         }
 
         Node node = (Node) obj;
-        return this.id == node.getId();
+        return this.id.equals(node.getId());
     }
     
     @Override

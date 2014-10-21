@@ -154,6 +154,10 @@ public abstract class LabeledLink extends DefaultLink {
 		else
 			logger.error("cannot instanciate a link from the type: " + this.getType().toString());
 		
+		newLink.setStatus(this.getStatus());
+		newLink.setModelIds(this.getModelIds());
+		newLink.setKeyType(this.getKeyType());
+		
 		return newLink;
     }
 }
