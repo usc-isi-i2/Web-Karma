@@ -158,6 +158,10 @@ public class Table extends RepEntity {
 		}
 		return result;
 	}
+	
+	public List<Row> getRowsWithoutSelection() {
+		return rows;
+	}
 
 	@Override
 	public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {

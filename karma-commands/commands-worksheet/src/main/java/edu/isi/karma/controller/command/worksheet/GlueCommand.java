@@ -167,8 +167,9 @@ public class GlueCommand extends WorksheetSelectionCommand {
 					if (!hnode.hasNestedTable())
 						continue;
 					Node tmp = row.getNeighbor(hnode.getId());
-					if (tmp.getNestedTable().getNumRows() > max)
-						max = tmp.getNestedTable().getNumRows();
+					int size = tmp.getNestedTable().getRows(0, tmp.getNestedTable().getNumRows(), selection).size();
+					if (size > max)
+						max = size;
 				}
 				List<Row> newRows = new ArrayList<Row>();
 				for (int i = 0; i < max; i++)
@@ -215,8 +216,9 @@ public class GlueCommand extends WorksheetSelectionCommand {
 				if (!hnode.hasNestedTable())
 					continue;
 				Node tmp = row.getNeighbor(hnode.getId());
-				if (tmp.getNestedTable().getNumRows() > max) {
-					max = tmp.getNestedTable().getNumRows();
+				int size = tmp.getNestedTable().getRows(0, tmp.getNestedTable().getNumRows(), selection).size();
+				if (size > max) {
+					max = size;
 				}
 			}
 			List<Row> newRows = new ArrayList<Row>();
