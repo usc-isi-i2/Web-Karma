@@ -240,7 +240,7 @@ public class RDFGeneratorServlet {
 								GenerateContext(formParams.getFirst(FormParameters.R2RML_URL)));
 		}
 		
-		return "i must return you";
+		return null;
 		
 	}
 
@@ -360,7 +360,7 @@ public class RDFGeneratorServlet {
 	private String GenerateJSON(String rawData, String r2rmlURI,
 			String dataType, boolean refreshModel,String jsonContext) throws KarmaException,
 			JSONException, IOException {
-		logger.info(rawData);
+		//logger.info(rawData);
 
 		return GenerateJSON(IOUtils.toInputStream(rawData), r2rmlURI, dataType,
 				refreshModel,jsonContext);
@@ -369,8 +369,8 @@ public class RDFGeneratorServlet {
 	private String GenerateJSON(InputStream dataStream, String r2rmlURI,
 			String dataType, boolean refreshR2RML,String jsonContext) throws KarmaException,
 			JSONException, IOException { // logger.info(dataStream.toString());
-		logger.info(r2rmlURI);
-		logger.info(dataType);
+		//logger.info(r2rmlURI);
+		//logger.info(dataType);
 		
 		GenericRDFGenerator rdfGen = new GenericRDFGenerator(null);
 
@@ -381,16 +381,17 @@ public class RDFGeneratorServlet {
 
 		//String filename = "context/events.json";
 		//String contextName = "context/events_context.json";
-		//logger.info("Loading json file: " + filename);
+		logger.info("Loading json file: " + jsonContext);
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		//File contextFile =  new File(getTestResource(contextName).toURI()); GIVE FUCKS LATER
 		
 		
 		JSONTokener token = new JSONTokener(IOUtils.toInputStream(jsonContext)); //PERFECCT
-		ContextIdentifier contextId = new ContextIdentifier("generic-context", new URL("http://this.com"));
+		//logger.info(new JSONObject(token).getString("@context"));
+		ContextIdentifier contextId = new ContextIdentifier("generic-context", new URL("https://raw.githubusercontent.com/saggu/Web-Karma/development/karma-web-services/web-services-rdf/src/test/resources/metadata.json-model.ttl_context.json"));
 		JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(pw);
-		writer.setGlobalContext(new JSONObject(token), contextId); //GIVE FUCKS LATER ABOUT NULL
+		writer.setGlobalContext(new JSONObject(token), contextId); 
 		RDFGeneratorRequest request = new RDFGeneratorRequest("generic-model", "whatsinthename");
 		request.setInputStream(dataStream); //DOUBLE PERFECCT;input json take care of
 		request.setAddProvenance(false);
@@ -406,10 +407,8 @@ public class RDFGeneratorServlet {
 		
 		Model model = ModelFactory.createDefaultModel();
         InputStream s = new URL(r2rmlURI).openStream(); //get the r2rml from URL
-        //logger.info(s.toString());
         model.read(s, null, "TURTLE");
         JSONObject top = new ContextGenerator(model, true).generateContext();
-        //logger.info(top.toString());
         return top.toString();
 		
 	}
