@@ -56,7 +56,8 @@ import edu.isi.karma.util.RandomGUID;
 public class ModelLearningGraphCompact extends ModelLearningGraph {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelLearningGraphCompact.class);
-		
+	private static int MAX_MAPPING_SIZE = 3000;
+	
 	public ModelLearningGraphCompact(OntologyManager ontologyManager) throws IOException {
 		super(ontologyManager, ModelLearningGraphType.Compact);
 	}
@@ -227,7 +228,6 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			for (int i = 0; i < mappings.size(); i++) {
 				HashMap<Node,Node> nodeMap = mappings.get(i);
 				for (Node n : matchedNodes) {
-					
 					if (n instanceof ColumnNode) {
 						Node modelDomain = modelNodeDomains.get(node);
 						Node correspondingMatch = nodeMap.get(modelDomain);
@@ -261,11 +261,17 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		
 		List<HashMap<Node,Node>> mappings = new LinkedList<HashMap<Node,Node>>();
 
+		logger.info("max mapping size: " + MAX_MAPPING_SIZE);
+		
 		int size = 0;
 		for (Node node : model.getGraph().vertexSet()) {
 			if (node instanceof InternalNode) {
 				size ++;
 				mappings = updateMapping(mappings, node, size, internalNodeMatches, columnNodeMatches, modelNodeDomains);
+//				System.out.println(mappings.size());
+				if (mappings != null && mappings.size() >= MAX_MAPPING_SIZE)
+					mappings = mappings.subList(0,  MAX_MAPPING_SIZE);
+//				System.out.println(mappings.size());
 			}
 		}
 
@@ -273,6 +279,10 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			if (node instanceof ColumnNode) {
 				size ++;
 				mappings = updateMapping(mappings, node, size, internalNodeMatches, columnNodeMatches, modelNodeDomains);
+//				System.out.println(mappings.size());
+				if (mappings != null && mappings.size() >= MAX_MAPPING_SIZE)
+					mappings = mappings.subList(0,  MAX_MAPPING_SIZE);
+//				System.out.println(mappings.size());
 			}
 		}
 		
@@ -348,14 +358,14 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 				
 				n1 = mapping.get(source);
 				if (n1 == null) {
-					logger.error("the mappings does not include the source node " + source.getId());
-					return null;
+//					logger.warn("the mappings does not include the source node " + source.getId());
+					continue;
 				}
 				
 				n2 = mapping.get(target);
 				if (n2 == null) {
-					logger.error("the mappings does not include the target node " + target.getId());
-					return null;
+//					logger.warn("the mappings does not include the target node " + target.getId());
+					continue;
 				}
 				String id = LinkIdFactory.getLinkId(e.getUri(), n1.getId(), n2.getId());
 				LabeledLink l = this.graphBuilder.getIdToLinkMap().get(id);

@@ -60,6 +60,7 @@ import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.LinkType;
+import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
@@ -521,6 +522,14 @@ public class GraphUtil {
 				writer.endArray();
 			}
 		}
+		if (node instanceof LiteralNode) {
+			LiteralNode ln = (LiteralNode) node;
+			writer.name("value").value(ln.getValue());
+			writer.name("datatype");
+			if (ln.getDatatype() == null) writer.value(nullStr);
+			else writeLabel(writer, ln.getDatatype());
+			writer.name("isUri").value(Boolean.toString(ln.isUri()));
+		}
 		
 		writer.name("modelIds");
 		if (node.getModelIds() == null) writer.value(nullStr);
@@ -660,6 +669,9 @@ public class GraphUtil {
 		String hNodeId = null;
 		String columnName = null;
 		Label rdfLiteralType = null;
+		Label datatype = null;
+		String value = null;
+		boolean isUri = false;
 		SemanticType userSelectedSemanticType = null;
 		List<SemanticType> suggestedSemanticTypes = null;
 		Set<String> modelIds = null;
@@ -677,6 +689,12 @@ public class GraphUtil {
 				hNodeId = reader.nextString();
 			} else if (key.equals("columnName") && reader.peek() != JsonToken.NULL) {
 				columnName = reader.nextString();
+			} else if (key.equals("datatype") && reader.peek() != JsonToken.NULL) {
+				datatype = readLabel(reader);
+			} else if (key.equals("value") && reader.peek() != JsonToken.NULL) {
+				value = reader.nextString();
+			} else if (key.equals("isUri") && reader.peek() != JsonToken.NULL) {
+				isUri = Boolean.parseBoolean(reader.nextString());
 			} else if (key.equals("rdfLiteralType") && reader.peek() != JsonToken.NULL) {
 				rdfLiteralType = readLabel(reader);
 			} else if (key.equals("userSelectedSemanticType") && reader.peek() != JsonToken.NULL) {
@@ -704,7 +722,13 @@ public class GraphUtil {
     		n = new ColumnNode(id, hNodeId, columnName, rdfLiteralType);
     		((ColumnNode)n).setUserSelectedSemanticType(userSelectedSemanticType);
     		((ColumnNode)n).setSuggestedSemanticTypes(suggestedSemanticTypes);
+    	} else if (type == NodeType.LiteralNode) {
+    		n = new LiteralNode(id, value, datatype, isUri);
+    	} else {
+    		logger.error("cannot instanciate a node from the type: " + type.toString());
+    		return null;
     	}
+    	
 		n.setModelIds(modelIds);
     	
     	return n;
