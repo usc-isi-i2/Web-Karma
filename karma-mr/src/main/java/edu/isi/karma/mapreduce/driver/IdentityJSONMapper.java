@@ -23,7 +23,7 @@ public class IdentityJSONMapper extends Mapper<Writable, Text, Text, Text> {
 				context.write(new Text(obj.getString("@id")), value);
 			}
 			else {
-				context.write(new Text(""), value);
+				context.write(new Text(obj.toString()), value);
 			}
 		}catch(Exception e) {
 			LOG.error("something is wrong", e);
