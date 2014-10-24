@@ -1,5 +1,8 @@
 package edu.isi.karma.web.services.rdf;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -372,6 +375,23 @@ public class RDFGeneratorServlet {
 		//logger.info(r2rmlURI);
 		//logger.info(dataType);
 		
+		String r2rmlFileName = new File(r2rmlURI).getName();
+        String contextFileName = r2rmlFileName.substring(0,r2rmlFileName.length()-4) + "_context.json";
+        
+        File contextFile = new File("context/"+contextFileName);
+        
+        if(!contextFile.exists()){
+        	contextFile.createNewFile();
+        }
+        
+        FileWriter fw = new FileWriter(contextFile);
+        
+        BufferedWriter bw = new BufferedWriter(fw);
+        
+        bw.write(jsonContext);
+        
+        bw.close();
+		
 		GenericRDFGenerator rdfGen = new GenericRDFGenerator(null);
 
 		// Add the models in;
@@ -389,7 +409,7 @@ public class RDFGeneratorServlet {
 		
 		JSONTokener token = new JSONTokener(IOUtils.toInputStream(jsonContext)); //PERFECCT
 		//logger.info(new JSONObject(token).getString("@context"));
-		ContextIdentifier contextId = new ContextIdentifier("generic-context", new URL("https://raw.githubusercontent.com/saggu/Web-Karma/development/karma-web-services/web-services-rdf/src/test/resources/metadata.json-model.ttl_context.json"));
+		ContextIdentifier contextId = new ContextIdentifier("generic-context", contextFile.toURI().toURL());
 		JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(pw);
 		writer.setGlobalContext(new JSONObject(token), contextId); 
 		RDFGeneratorRequest request = new RDFGeneratorRequest("generic-model", "whatsinthename");
@@ -406,7 +426,7 @@ public class RDFGeneratorServlet {
 	public String GenerateContext(String  r2rmlURI) throws MalformedURLException, IOException{
 		
 		Model model = ModelFactory.createDefaultModel();
-        InputStream s = new URL(r2rmlURI).openStream(); //get the r2rml from URL
+        InputStream s = new URL(r2rmlURI).openStream(); //get the r2rml from URI
         model.read(s, null, "TURTLE");
         JSONObject top = new ContextGenerator(model, true).generateContext();
         return top.toString();
