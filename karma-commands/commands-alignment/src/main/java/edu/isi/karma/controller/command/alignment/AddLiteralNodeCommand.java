@@ -122,7 +122,10 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 			} else {
 				alignment.updateLiteralNode(nodeId, literalValue, literalType, isUri);
 			}
-			alignment.align();
+			
+			if(!this.isExecutedInBatch())
+				alignment.align();
+			
 		} catch (Exception e) {
 			logger.error("Error adding Literal Node:" , e);
 			uc.add(new ErrorUpdate("Error adding Literal Node"));

@@ -114,7 +114,9 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 		try {
 			deleteLinks(worksheet, alignment);
 			addNewLinks(alignment, ontMgr);
-			alignment.align();
+			
+			if(!this.isExecutedInBatch())
+				alignment.align();
 
 		} catch (JSONException e) {
 			e.printStackTrace();

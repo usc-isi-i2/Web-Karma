@@ -275,7 +275,8 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		columnNode.setUserSelectedSemanticType(newType);
 
 		// Update the alignment
-		alignment.align();
+		if(!this.isExecutedInBatch())
+			alignment.align();
 
 
 		UpdateContainer c = new UpdateContainer();

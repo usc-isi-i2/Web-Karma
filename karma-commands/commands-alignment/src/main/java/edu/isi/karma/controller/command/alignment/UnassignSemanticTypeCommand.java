@@ -128,7 +128,8 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 //			alignment.removeNode(domainNodeId);
 			
 		}
-		alignment.align();
+		if(!this.isExecutedInBatch())
+			alignment.align();
 		
 		// Get the column name
 		HNodePath currentPath = null;

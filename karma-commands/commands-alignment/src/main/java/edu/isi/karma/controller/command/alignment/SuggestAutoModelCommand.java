@@ -137,7 +137,8 @@ public class SuggestAutoModelCommand extends WorksheetCommand {
 				// User-defined: do nothing
 			}
 		}
-		alignment.align();
+		if(!this.isExecutedInBatch())
+			alignment.align();
 		
 		try {
 			// Save the semantic types in the input parameter JSON
