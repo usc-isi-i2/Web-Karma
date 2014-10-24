@@ -209,7 +209,8 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = initialAlignment;
 		alignment.setGraph(initialGraph);
-		alignment.align();
+		if(!this.isExecutedInBatch())
+			alignment.align();
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		try {
 			// Add the visualization update

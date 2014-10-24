@@ -149,7 +149,8 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 		// Replace the current alignment with the old alignment
 			alignment = initialAlignment;
 			alignment.setGraph(initialGraph);
-			alignment.align();
+			if(!this.isExecutedInBatch())
+				alignment.align();
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
 
@@ -260,7 +261,8 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 
 		alignment = initialAlignment;
 		alignment.setGraph(initialGraph);
-		alignment.align();
+		if(!this.isExecutedInBatch())
+			alignment.align();
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		
 

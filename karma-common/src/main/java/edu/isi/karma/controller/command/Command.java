@@ -73,7 +73,9 @@ public abstract class Command extends Entity implements ICommand
 	private List<CommandTag> tags = new ArrayList<CommandTag>();
 
 	private String inputParameterJson;
-
+	
+	private boolean isExecutedInBatch = false;
+	
 	protected Command(String id) {
 		super(id);
 	}
@@ -88,6 +90,14 @@ public abstract class Command extends Entity implements ICommand
 		this.isExecuted = isExecuted;
 	}
 
+	public boolean isExecutedInBatch() {
+		return isExecutedInBatch;
+	}
+
+	public void setExecutedInBatch(boolean isExecuted) {
+		this.isExecutedInBatch = isExecuted;
+	}
+	
 	@Override
 	public boolean isSavedInHistory() {
 		return saveInHistory;

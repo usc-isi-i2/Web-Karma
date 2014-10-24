@@ -80,7 +80,9 @@ public class AddNodeCommand extends WorksheetCommand {
 
 		try {
 			alignment.addForcedInternalNode(new Label(nodeUri));
-			alignment.align();
+			if(!this.isExecutedInBatch())
+				alignment.align();
+			
 		} catch (JSONException e) {
 			logger.error("Error adding Internal Node:" , e);
 		}

@@ -267,7 +267,8 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 							LinkStatus.ForcedByUser);
 				}
 				// Update the alignment
-				alignment.align();
+				if(!this.isExecutedInBatch())
+					alignment.align();
 
 			} catch (JSONException e) {
 				logger.error("JSON Exception occured", e);

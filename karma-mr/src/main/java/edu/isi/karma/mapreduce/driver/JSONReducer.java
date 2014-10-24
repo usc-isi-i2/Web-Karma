@@ -178,6 +178,10 @@ public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 				if (t.has("uri")) {
 					return t.getString("uri").compareToIgnoreCase((String)o2);
 				}
+				else if (t.has("@id")) {
+					return t.getString("@id").compareToIgnoreCase((String)o2);
+				}
+
 				else {
 					return t.toString().compareToIgnoreCase((String)o2);
 				}
@@ -187,6 +191,9 @@ public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 				JSONObject t2 = (JSONObject)o2;
 				if (t2.has("uri")) {
 					return (((String)o1).compareToIgnoreCase(t2.getString("uri")));
+				}
+				else if (t2.has("@id")) {
+					return (((String)o1).compareToIgnoreCase(t2.getString("@id")));
 				}
 				else {
 					return o1.toString().compareToIgnoreCase(t2.toString());
@@ -198,6 +205,9 @@ public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 				JSONObject t2 = (JSONObject)o2;
 				if (t1.has("uri") && t2.has("uri")) {
 					return t1.getString("uri").compareTo(t2.getString("uri"));
+				}
+				else if (t1.has("@id") && t2.has("@id")) {
+					return t1.getString("@id").compareTo(t2.getString("@id"));
 				}
 				else {
 					return t1.toString().compareToIgnoreCase(t2.toString());
