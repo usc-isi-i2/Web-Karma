@@ -304,6 +304,9 @@
 				  <div class="modal-body">
 						<h4>Select Column:</h4>
 						<div id="unfoldDialogColumns"></div>
+						<div id="unfoldOtherColumns">
+							<input type="checkbox">Use Other Columns</input>
+						</div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

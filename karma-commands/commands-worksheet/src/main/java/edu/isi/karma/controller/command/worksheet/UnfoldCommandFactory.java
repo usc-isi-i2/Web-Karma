@@ -13,24 +13,24 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class UnfoldCommandFactory extends JSONInputCommandFactory{
 
-	public enum Arguments {
+	private enum Arguments {
 		worksheetId, keyhNodeId, valuehNodeId, 
-		selectionName
+		selectionName, notOtherColumn
 	}
 
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
-		String keyHNodeid = CommandInputJSONUtil.getStringValue("keyhNodeId", inputJson);
-		String valueHNodeid = CommandInputJSONUtil.getStringValue("valuehNodeId", inputJson);
+		String keyHNodeid = CommandInputJSONUtil.getStringValue(Arguments.keyhNodeId.name(), inputJson);
+		String valueHNodeid = CommandInputJSONUtil.getStringValue(Arguments.valuehNodeId.name(), inputJson);
+		boolean notOtherColumn = Boolean.parseBoolean(CommandInputJSONUtil.getStringValue(Arguments.notOtherColumn.name(), inputJson));
 		String keyName = workspace.getFactory().getHNode(keyHNodeid).getColumnName();
 		String valueName = workspace.getFactory().getHNode(valueHNodeid).getColumnName();
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		//System.out.println(worksheetId);
 		UnfoldCommand unfoldCmd = new UnfoldCommand(getNewId(workspace), worksheetId, 
-				keyHNodeid, valueHNodeid, 
+				keyHNodeid, valueHNodeid, notOtherColumn, 
 				selectionName);
 		unfoldCmd.setInputParameterJson(inputJson.toString());
 		unfoldCmd.setKeyName(keyName);
@@ -40,12 +40,7 @@ public class UnfoldCommandFactory extends JSONInputCommandFactory{
 
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
-		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		String keyHNodeid = request.getParameter(Arguments.keyhNodeId.name());
-		String valueHNodeid = request.getParameter(Arguments.valuehNodeId.name());
-		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new UnfoldCommand(getNewId(workspace), worksheetId, keyHNodeid, valueHNodeid, 
-				selectionName);
+		return null;
 	}
 
 	@Override

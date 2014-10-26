@@ -785,7 +785,6 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 		var type = column['hNodeType'].toLowerCase();
 		var status = column['status'];
 		var error = column['onError'];
-		console.log(error);
 		var isPyTransform = false;
 		if (status != undefined && status == "OUT_OF_DATE")
 			status = true;
@@ -794,7 +793,6 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 		if (error == undefined) {
 			error = false;
 		}
-		console.log(type);
 		var td = $("<td>").addClass("wk-header-cell").attr("id", column.hNodeId);
 		if (isOdd)
 			td.addClass("htable-even-" + type);

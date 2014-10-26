@@ -1369,12 +1369,14 @@ var UnfoldDialog = (function() {
 				return;
 			}
 			var checked = checkboxes[0];
-
+			var otherColumns = $('#unfoldOtherColumns input[type="checkbox"]', dialog).is(":checked");
 			//console.log(checked);
+			console.log(otherColumns);
 			var info = generateInfoObject(worksheetId, "", "UnfoldCommand");
 			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("keyhNodeId", columnId, "hNodeId"));
 			newInfo.push(getParamObject("valuehNodeId", checked['value'], "hNodeId"));
+			newInfo.push(getParamObject("notOtherColumn", otherColumns ? "false" : "true", "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 			showLoading(info["worksheetId"]);
 			var returned = sendRequest(info, worksheetId);
