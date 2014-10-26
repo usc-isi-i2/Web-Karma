@@ -146,21 +146,18 @@ public class Table extends RepEntity {
 	public ArrayList<Row> getRows(int startIndex, int count, SuperSelection sel) {
 		ArrayList<Row> result = new ArrayList<Row>();
 		Iterator<Row> itr = rows.iterator();
-		int sum = 0;
+		int sum = 0, index = 0;
 		while(itr.hasNext()) {
 			Row r = itr.next();
-			if (!sel.isSelected(r)) {
+			if (!sel.isSelected(r) && index >= startIndex) {
 				result.add(r);
 				sum++;
 			}
 			if (sum == count)
 				break;
+			index++;
 		}
 		return result;
-	}
-	
-	public List<Row> getRowsWithoutSelection() {
-		return rows;
 	}
 
 	@Override

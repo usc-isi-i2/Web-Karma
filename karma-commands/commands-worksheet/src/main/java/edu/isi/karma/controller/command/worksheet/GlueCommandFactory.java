@@ -15,41 +15,32 @@ public class GlueCommandFactory extends JSONInputCommandFactory{
 
 	private enum Arguments {
 		worksheetId, hTableId, hNodeId, 
-		newColumnName, defaultValue, selectionName		
+		newColumnName, defaultValue, selectionName, 
+		values, ImplMethod
 	}
 	
 	@Override
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-		// TODO Auto-generated method stub
-		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
+		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
-		String hTableId = "";
+		String hNodeIdList = CommandInputJSONUtil.getStringValue(Arguments.values.name(), inputJson);
+		String implMethod = CommandInputJSONUtil.getStringValue(Arguments.ImplMethod.name(), inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		//System.out.println(worksheetId);
 		GlueCommand glueCmd = new GlueCommand(getNewId(workspace), worksheetId,
-				hTableId, hNodeID, 
-				selectionName);
+				hNodeId, selectionName, hNodeIdList, implMethod);
 		glueCmd.setInputParameterJson(inputJson.toString());
 		return glueCmd;
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
-		// TODO Auto-generated method stub
-		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String hTableId = request.getParameter(Arguments.hTableId.name());
-		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new GlueCommand(getNewId(workspace), worksheetId, 
-				hTableId, hNodeId, 
-				selectionName);
+		return null;
 	}
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand() {
-		// TODO Auto-generated method stub
 		return GlueCommand.class;
 	}
 

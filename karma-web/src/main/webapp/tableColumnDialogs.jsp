@@ -276,6 +276,13 @@
 				  <div class="modal-body">
 						<h4>Select Columns:</h4>
 						<div id="glueDialogColumns"></div>
+						<div>
+							<select id="glueDialogImplWays">
+								<option value="Longest">Longest</option>
+								<option value="Shortest">Shortest</option>
+								<option value="CrossProduct">Cross Product</option>
+							</select>
+						</div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
