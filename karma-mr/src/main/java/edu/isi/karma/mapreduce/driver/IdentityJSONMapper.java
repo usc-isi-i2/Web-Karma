@@ -19,7 +19,7 @@ public class IdentityJSONMapper extends Mapper<Writable, Text, Text, Text> {
 			if (obj.has("uri")) {
 				context.write(new Text(obj.getString("uri")), value);
 			}
-			if (obj.has("@id")) {
+			else if (obj.has("@id")) {
 				context.write(new Text(obj.getString("@id")), value);
 			}
 			else {
