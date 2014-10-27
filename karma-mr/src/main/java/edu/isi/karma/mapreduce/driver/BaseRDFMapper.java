@@ -26,7 +26,8 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 		String modelUri = context.getConfiguration().get("model.uri");
 		String modelFile = context.getConfiguration().get("model.file");
 		String baseURI = context.getConfiguration().get("base.uri");
-		karma.setup(inputTypeString, modelUri, modelFile, baseURI);
+		String contextURI = context.getConfiguration().get("context.uri");
+		karma.setup(inputTypeString, modelUri, modelFile, baseURI, contextURI);
 	
 	}
 
