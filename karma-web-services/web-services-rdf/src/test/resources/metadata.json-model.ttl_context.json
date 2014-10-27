@@ -1,0 +1,24 @@
+{"@context": {
+    "exposureTime": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#exposureTime"},
+    "flash": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#flash"},
+    "orientation": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#orientation"},
+    "model": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#model"},
+    "gpsTimeStamp": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#gpsTimeStamp"},
+    "dateTime": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#dateTime"},
+    "fNumber": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#fNumber"},
+    "a": "@type",
+    "isoSpeedRatings": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#isoSpeedRatings"},
+    "whiteBalance": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#whiteBalance"},
+    "imageLength": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#imageLength"},
+    "uri": "@id",
+    "Photo": {
+        "@type": "@id",
+        "@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#Photo"
+    },
+    "focalLength": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#focalLength"},
+    "gpsProcessingMethod": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#gpsProcessingMethod"},
+    "gpsDateStamp": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#gpsDateStamp"},
+    "gpsAltitudeRef": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#gpsAltitudeRef"},
+    "make": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#make"},
+    "imageWidth": {"@id": "http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#imageWidth"}
+}}
