@@ -33,11 +33,11 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
 	var layoutElement = "div#svgDiv_" + worksheetId;
 	
 	if ($(mainWorksheetDiv).data("svgVis") != null) {
-		//w = $("div#svgDiv_"+worksheetId).width();
-		$(layoutElement).remove();
+		//$(layoutElement).remove();
+	} else {
+		$("<div>").attr("id", "svgDiv_" + worksheetId).addClass("svg-model").insertBefore('div#' + worksheetId + " > div.table-container");
 	}
-
-	$("<div>").attr("id", "svgDiv_" + worksheetId).addClass("svg-model").insertBefore('div#' + worksheetId + " > div.table-container");
+	
 	if (w == 0)
 		w = $("div#" + worksheetId).width();
 
@@ -167,7 +167,7 @@ var D3ModelManager = (function() {
 		function getModelManager(worksheetId, layoutElement, layoutClass, width) {
 			if(models[worksheetId]) {
 				//This is temporary. Comment this out when the D3ModelLayout can handle updates.
-				models[worksheetId] = new D3ModelLayout(layoutElement, layoutClass, width, worksheetId);
+				//models[worksheetId] = new D3ModelLayout(layoutElement, layoutClass, width, worksheetId);
 			} else { 
 				models[worksheetId] = new D3ModelLayout(layoutElement, layoutClass, width, worksheetId);
 			}
