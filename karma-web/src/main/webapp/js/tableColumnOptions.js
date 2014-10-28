@@ -1369,12 +1369,14 @@ var UnfoldDialog = (function() {
 				return;
 			}
 			var checked = checkboxes[0];
-
+			var otherColumns = $('#unfoldOtherColumns input[type="checkbox"]', dialog).is(":checked");
 			//console.log(checked);
+			console.log(otherColumns);
 			var info = generateInfoObject(worksheetId, "", "UnfoldCommand");
 			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("keyhNodeId", columnId, "hNodeId"));
 			newInfo.push(getParamObject("valuehNodeId", checked['value'], "hNodeId"));
+			newInfo.push(getParamObject("notOtherColumn", otherColumns ? "false" : "true", "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 			showLoading(info["worksheetId"]);
 			var returned = sendRequest(info, worksheetId);
@@ -1582,7 +1584,7 @@ var GlueDialog = (function() {
 		function saveDialog(e) {
 			console.log("Save clicked");
 
-			var checkboxes = dialog.find(":checked");
+			var checkboxes = $("#glueDialogColumns").find(":checked");
 			var checked = [];
 			for (var i = 0; i < checkboxes.length; i++) {
 				var checkbox = checkboxes[i];
@@ -1592,11 +1594,13 @@ var GlueDialog = (function() {
 				hide();
 				return;
 			}
+			var selected = $("#glueDialogImplWays").find(":selected");
 			//console.log(checked);
 			var info = generateInfoObject(worksheetId, checkboxes[0]['value'], "GlueCommand");
 
 			var newInfo = info['newInfo'];
-			newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"));
+			newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"))
+			newInfo.push(getParamObject("ImplMethod", selected.val(), "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
 			showLoading(info["worksheetId"]);
@@ -1622,6 +1626,7 @@ var GlueDialog = (function() {
 					hide();
 					return;
 				}
+				$('#glueDialogImplWays option[value="Longest"]').attr("selected", true);
 				//console.log(headers);
 				for (var i = 0; i < headers.length; i++) {
 

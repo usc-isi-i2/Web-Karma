@@ -273,6 +273,14 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		object.put(atId, subjUri);
 		return object;
 	}
+	
+	public String getAtId() {
+		return atId;
+	}
+	
+	public String getAtType() {
+		return atType;
+	}
 
 	private String generateShortHandURIFromContext(String uri) {
 		if (uri.startsWith("<") && uri.endsWith(">")) { 
