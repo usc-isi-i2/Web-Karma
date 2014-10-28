@@ -371,9 +371,7 @@ public class RDFGeneratorServlet {
 	
 	private String GenerateJSON(InputStream dataStream, String r2rmlURI,
 			String dataType, boolean refreshR2RML,String jsonContext) throws KarmaException,
-			JSONException, IOException { // logger.info(dataStream.toString());
-		//logger.info(r2rmlURI);
-		//logger.info(dataType);
+			JSONException, IOException { 
 		
 		String r2rmlFileName = new File(r2rmlURI).getName();
         String contextFileName = r2rmlFileName.substring(0,r2rmlFileName.length()-4) + "_context.json";
@@ -399,21 +397,17 @@ public class RDFGeneratorServlet {
 				"generic-model", new URL(r2rmlURI)); 
 		rdfGen.addModel(modelIdentifier);
 
-		//String filename = "context/events.json";
-		//String contextName = "context/events_context.json";
 		logger.info("Loading json file: " + jsonContext);
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
-		//File contextFile =  new File(getTestResource(contextName).toURI()); GIVE FUCKS LATER
 		
-		
-		JSONTokener token = new JSONTokener(IOUtils.toInputStream(jsonContext)); //PERFECCT
-		//logger.info(new JSONObject(token).getString("@context"));
+		JSONTokener token = new JSONTokener(IOUtils.toInputStream(jsonContext)); 
+
 		ContextIdentifier contextId = new ContextIdentifier("generic-context", contextFile.toURI().toURL());
 		JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(pw);
 		writer.setGlobalContext(new JSONObject(token), contextId); 
-		RDFGeneratorRequest request = new RDFGeneratorRequest("generic-model", "whatsinthename");
-		request.setInputStream(dataStream); //DOUBLE PERFECCT;input json take care of
+		RDFGeneratorRequest request = new RDFGeneratorRequest("generic-model", "Karma-Web-Services");
+		request.setInputStream(dataStream); 
 		request.setAddProvenance(false);
 		request.setDataType(InputType.JSON);
 		request.addWriter(writer);
