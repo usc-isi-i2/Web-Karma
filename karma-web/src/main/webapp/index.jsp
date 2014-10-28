@@ -372,7 +372,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/model-layout.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/UnconnectedNodesLayout.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/model.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/saveSvgAsPng?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/saveSvgAsPng.js?<jsp:include page='version.jsp' />"></script>
         
         <%
         if(UIConfiguration.Instance().isForceModelLayoutEnabled()) {
