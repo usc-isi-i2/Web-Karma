@@ -78,7 +78,8 @@ public class DeleteNodeCommand extends WorksheetCommand {
 
 		try {
 			alignment.deleteForcedInternalNode(nodeId);
-			alignment.align();
+			if(!this.isExecutedInBatch())
+				alignment.align();
 		} catch (JSONException e) {
 			logger.error("Error adding Internal Node:" , e);
 		}

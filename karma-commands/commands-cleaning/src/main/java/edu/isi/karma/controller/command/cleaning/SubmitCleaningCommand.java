@@ -34,6 +34,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.cleaning.DataPreProcessor;
+import edu.isi.karma.cleaning.Messager;
+import edu.isi.karma.cleaning.UtilTools;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
@@ -103,6 +106,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 
 	public JSONArray creatNewColumnCommand(String worksheetId, String hTableId,
 			String colname) {
+		colname = colname.replace("\"", "\\\"");
 		String cmdString = String
 				.format("[{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"},"
 						+ "{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"},"
@@ -117,6 +121,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 		try {
 			jsonArray = new JSONArray(cmdString);
 		} catch (Exception e) {
+			logger.debug("Creating AddColumn Error: "+e.toString());
 		}
 		return jsonArray;
 	}
@@ -164,8 +169,20 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 			HashMap<String, String> rows = new HashMap<String, String>();
 			colnameString = obtainTransformedResultsAndFindNewColumnName(
 					workspace, rows);
-
-			RamblerTransformationOutput rtf = applyRamblerTransformation(rows);
+			createAndExecuteNewAddColumnCommand(workspace, colnameString);
+			Worksheet wk = workspace.getWorksheet(worksheetId);
+			selectedPath = findPathForNewColumn(workspace, colnameString);
+			DataPreProcessor dpp = (DataPreProcessor) wk.getDpp();
+			if(dpp == null)
+			{
+				dpp = new DataPreProcessor(rows.values());
+			}
+			Messager msg = (Messager) wk.getMsg();
+			if(msg == null)
+			{
+				msg = new Messager();
+			}
+			RamblerTransformationOutput rtf = applyRamblerTransformation(rows,dpp,msg);
 			if (rtf.getTransformations().keySet().size() <= 0) {
 				c.append(WorksheetUpdateFactory
 						.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
@@ -173,10 +190,9 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 				return c;
 			}
 
-			createAndExecuteNewAddColumnCommand(workspace, colnameString);
 
 			ValueCollection rvco = getValueCollectionFromRamblerTranformationOutput(rtf);
-			selectedPath = findPathForNewColumn(workspace, colnameString);
+			
 			findNewHNodeIdAndHNodeAsDerived(workspace, selectedPath);
 			// create edit multiple cells command
 			createAndExecuteMultiCellCmd(workspace, selectedPath, rvco);
@@ -235,10 +251,10 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 	}
 
 	private RamblerTransformationOutput applyRamblerTransformation(
-			HashMap<String, String> rows) {
+			HashMap<String, String> rows,DataPreProcessor dpp, Messager msg) {
 		RamblerValueCollection vc = new RamblerValueCollection(rows);
 		RamblerTransformationInputs inputs = new RamblerTransformationInputs(
-				examples, vc);
+				examples, vc,dpp,msg);
 		// generate the program
 		boolean results = false;
 		int iterNum = 0;

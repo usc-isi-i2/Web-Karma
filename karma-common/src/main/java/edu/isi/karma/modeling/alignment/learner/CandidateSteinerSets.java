@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Node;
 
 
@@ -67,11 +68,12 @@ public class CandidateSteinerSets {
 			int numOfNewSets = 0;
 			for (SteinerNodes nodeSet : this.steinerSets) {
 				for (SemanticTypeMapping stm : mappings) {
-					SteinerNodes sn = new SteinerNodes(nodeSet);
 					
 					if (nodeSet.getNodes().contains(stm.getSource()) &&
 							nodeSet.getNodes().contains(stm.getTarget()))
 						continue;
+
+					SteinerNodes sn = new SteinerNodes(nodeSet);
 					sn.addNodes(stm.getSourceColumn(), stm.getSource(), stm.getTarget(), stm.getConfidence());
 					newSteinerNodes.add(sn);
 					numOfNewSets ++;
@@ -86,6 +88,50 @@ public class CandidateSteinerSets {
 //			this.steinerSets = getTopKSteinerSets(newSteinerNodes, ModelingConfiguration.getMaxQueuedMappigs());
 			
 			// sort Steiner nodes based on their score
+			Collections.sort(newSteinerNodes);
+			
+			this.steinerSets.clear();
+			
+//			for (int i = 0; i < newSteinerNodes.size(); i++) // do not cut off
+			for (int i = 0; i < ModelingConfiguration.getMaxQueuedMappigs() && i < newSteinerNodes.size(); i++)
+				this.steinerSets.add(newSteinerNodes.get(i));
+
+		}
+		for (SteinerNodes sn : this.steinerSets) {
+			logger.debug(sn.getScoreDetailsString());
+		}
+		logger.debug("***************************************************************");
+	}
+	
+	public void updateSteinerSets(InternalNode n) {
+		
+		List<SteinerNodes> newSteinerNodes = new ArrayList<SteinerNodes>();
+		if (n == null) 
+			return;
+		
+		if (this.steinerSets.size() == 0) {
+			SteinerNodes sn = new SteinerNodes();
+			sn.addNode(n);
+			this.steinerSets.add(sn);
+		} else {
+			int numOfNewSets = 0;
+			for (SteinerNodes nodeSet : this.steinerSets) {
+
+				if (nodeSet.getNodes().contains(n))
+					continue;
+
+				SteinerNodes sn = new SteinerNodes(nodeSet);
+				
+				sn.addNode(n);
+				newSteinerNodes.add(sn);
+				numOfNewSets ++;
+			}
+			if (numOfNewSets == 0) {
+				for (SteinerNodes nodeSet : this.steinerSets) {
+					newSteinerNodes.add(nodeSet);
+				}
+			}
+			
 			Collections.sort(newSteinerNodes);
 			
 			this.steinerSets.clear();

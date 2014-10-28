@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -40,6 +41,7 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.SemanticType;
 
 public class GraphVizUtil {
 
@@ -70,18 +72,18 @@ public class GraphVizUtil {
 		return localName;
 	}
 	
-	private static String getModelIds(Set<String> modelIds) {
-		String label = "";
-		if (modelIds == null || modelIds.size() == 0)
-			return label;
-		label += "[";
-		for (String pId : modelIds)
-			label += pId + ",";
-		if (label.endsWith(","))
-			label = label.substring(0, label.length() - 1);
-		label += "]";
-		return label;
-	}
+//	private static String getModelIds(Set<String> modelIds) {
+//		String label = "";
+//		if (modelIds == null || modelIds.size() == 0)
+//			return label;
+//		label += "[";
+//		for (String pId : modelIds)
+//			label += pId + ",";
+//		if (label.endsWith(","))
+//			label = label.substring(0, label.length() - 1);
+//		label += "]";
+//		return label;
+//	}
 	
 	private static org.kohsuke.graphviz.Graph convertToGraphviz(
 			DirectedGraph<Node, DefaultLink> graph, 
@@ -153,8 +155,9 @@ public class GraphVizUtil {
 				n = new org.kohsuke.graphviz.Node();
 //				label = (uri == null || uri.trim().length() == 0?id:uri));
 				sourceLabel = (sourceLocalName == null || sourceLocalName.trim().length() == 0?sourceId:sourceLocalName);
-				if (showNodeMetaData) 
-					sourceLabel += metaDataSeparator + getModelIds(source.getModelIds()); 
+				if (showNodeMetaData) {
+//					sourceLabel += metaDataSeparator + getModelIds(source.getModelIds());
+				}
 				n.attr("label", sourceLabel);
 				nodeIndex.put(source, n);
 			
@@ -181,8 +184,21 @@ public class GraphVizUtil {
 					ColumnNode mappedColumn = (mappingToSourceColumns == null) ? (ColumnNode)target : mappingToSourceColumns.get(target);
 					targetLabel = mappedColumn.getColumnName();
 				}
-				if (showNodeMetaData) 
-					targetLabel += metaDataSeparator + getModelIds(target.getModelIds()); 
+				if (showNodeMetaData) {
+//					targetLabel += metaDataSeparator + getModelIds(target.getModelIds());
+					if (target instanceof ColumnNode) {
+						ColumnNode mappedColumn = (mappingToSourceColumns == null) ? (ColumnNode)target : mappingToSourceColumns.get(target);
+						List<SemanticType> suggestedTypes = mappedColumn.getTopKSuggestions(4);
+						if (suggestedTypes != null)
+							for (SemanticType st : suggestedTypes)
+								targetLabel += "\n[" + 
+										getLocalName(st.getDomain().getUri()) + 
+										"," + 
+										getLocalName(st.getType().getUri()) + 
+										"," + 
+										roundDecimals(st.getConfidenceScore(),3) + "]";
+					}
+				}
 				n.attr("label", targetLabel);
 				nodeIndex.put(target, n);
 			
@@ -205,7 +221,7 @@ public class GraphVizUtil {
 
 			if (showLinkMetaData) {
 				edgeLabel += metaDataSeparator;
-				edgeLabel += "w=" + roundDecimals(e.getWeight(), 4);
+				edgeLabel += "w=" + roundDecimals(e.getWeight(), 6);
 //				edgeLabel += metaDataSeparator;
 //				edgeLabel += getModelIds(modelIds);
 			}

@@ -14,7 +14,7 @@ public class MyLogger {
 		if (out == null) {
 			try {
 				out = new BufferedWriter(new FileWriter(new File(
-						"./log/mylog.txt"), true));
+						"./log/mylog.txt"), false));
 			} catch (Exception e) {
 				// LoggerFactory.getLogger(MyLogger.class).info(e.toString());
 				out = null;

@@ -21,6 +21,8 @@
 
 package edu.isi.karma.rep.alignment;
 
+import com.rits.cloning.Cloner;
+
 
 
 public abstract class CompactLink extends DefaultLink {
@@ -31,4 +33,22 @@ public abstract class CompactLink extends DefaultLink {
 		super(id, type);
 	}
 	
+    public CompactLink clone() {
+    	
+    	Cloner cloner = new Cloner();
+    	return cloner.deepClone(this);
+    }
+
+    public CompactLink copy(String newId) {
+    	
+		CompactLink newLink = null;
+		if (this instanceof CompactObjectPropertyLink)
+			newLink = new CompactObjectPropertyLink(newId, ((CompactObjectPropertyLink)this).getObjectPropertyType());
+		else if (this instanceof CompactSubClassLink)
+			newLink = new CompactSubClassLink(newId);
+		else
+			logger.error("cannot instanciate a link from the type: " + this.getType().toString());
+		
+		return newLink;
+    }
 }

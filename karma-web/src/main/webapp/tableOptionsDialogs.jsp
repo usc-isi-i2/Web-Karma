@@ -371,7 +371,14 @@ a.icon-remove:hover {
 				  </div>
 				  <div class="modal-body">
 						<h4>Select Columns:</h4>
-						<div id="glueDialogColumns"></div>
+						<div id="glueDialog2Columns"></div>
+						<div>
+							<select id="glueDialog2ImplWays">
+								<option value="Longest">Longest</option>
+								<option value="Shortest">Shortest</option>
+								<option value="CrossProduct">Cross Product</option>
+							</select>
+						</div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

@@ -1,5 +1,8 @@
 package edu.isi.karma.web.services.rdf;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -31,14 +34,22 @@ import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
+import edu.isi.karma.kr2rml.ContextGenerator;
+import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
 import edu.isi.karma.metadata.KarmaMetadataManager;
@@ -69,6 +80,20 @@ public class RDFGeneratorServlet {
 			return getRDF(formParams);
 		} catch (Exception e) {
 			logger.error("Error generating RDF", e);
+			return "Exception: " + e.getMessage();
+		}
+
+	}
+	
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("/json")
+	public String JSON(MultivaluedMap<String, String> formParams) {
+		try {
+			logger.info("Path - r2rml/json . Generate and return JSON ld as String");
+			return getJSON(formParams);
+		} catch (Exception e) {
+			logger.error("Error generating JSON", e);
 			return "Exception: " + e.getMessage();
 		}
 
@@ -125,27 +150,10 @@ public class RDFGeneratorServlet {
 			return Response.status(401)
 					.entity("Failure: Check logs for more information").build();
 
-		} catch (ClientProtocolException cpe) {
-			logger.error("ClientProtocolException : " + cpe.getMessage());
-			return Response.status(401)
-					.entity("ClientProtocolException : " + cpe.getMessage())
-					.build();
-		} catch (IOException ioe) {
-			logger.error("IOException : " + ioe.getMessage());
-			return Response.status(401)
-					.entity("IOException : " + ioe.getMessage()).build();
-		} catch (KarmaException ke) {
-			logger.error("KarmaException : " + ke.getMessage());
-			return Response.status(401)
-					.entity("KarmaException : " + ke.getMessage()).build();
-		} catch (JSONException je) {
-			logger.error("JSONException : " + je.getMessage());
-			return Response.status(401)
-					.entity("JSONException : " + je.getMessage()).build();
 		} catch (Exception e) {
 			logger.error("Exception : " + e.getMessage());
 			return Response.status(401)
-					.entity("Exceptionß : " + e.getMessage()).build();
+					.entity("Exception : " + e.getMessage()).build();
 		}
 
 	}
@@ -171,18 +179,6 @@ public class RDFGeneratorServlet {
 			}
 
 			return strRDF;
-		} catch (ClientProtocolException cpe) {
-			logger.error("ClientProtocolException : " + cpe.getMessage());
-			return "ClientProtocolException : " + cpe.getMessage();
-		} catch (IOException ioe) {
-			logger.error("IOException : " + ioe.getMessage());
-			return "IOException : " + ioe.getMessage();
-		} catch (KarmaException ke) {
-			logger.error("KarmaException : " + ke.getMessage());
-			return "KarmaException : " + ke.getMessage();
-		} catch (JSONException je) {
-			logger.error("JSONException : " + je.getMessage());
-			return "JSONException : " + je.getMessage();
 		} catch (Exception e) {
 			logger.error("Exception : " + e.getMessage());
 			return "Exception : " + e.getMessage();
@@ -221,6 +217,34 @@ public class RDFGeneratorServlet {
 					refreshModel);
 
 		return null;
+	}
+	
+	private String getJSON(MultivaluedMap<String, String> formParams) throws JSONException, MalformedURLException, KarmaException, IOException{
+		
+		boolean refreshModel = false;
+		if (formParams.containsKey(FormParameters.REFRESH_MODEL)
+				&& formParams.getFirst(FormParameters.REFRESH_MODEL)
+						.equalsIgnoreCase("true"))
+			refreshModel = true;
+		
+		if (formParams.containsKey(FormParameters.DATA_URL)	&& formParams.getFirst(FormParameters.DATA_URL).trim() != "") {
+			return GenerateJSON(new URL(formParams.getFirst(FormParameters.DATA_URL)).openStream(),
+								formParams.getFirst(FormParameters.R2RML_URL), 
+								formParams.getFirst(FormParameters.CONTENT_TYPE),
+								refreshModel,
+								GenerateContext(formParams.getFirst(FormParameters.R2RML_URL)));
+		}
+
+		if (formParams.containsKey(FormParameters.RAW_DATA)	&& formParams.getFirst(FormParameters.RAW_DATA).trim() != ""){
+			return GenerateJSON(formParams.getFirst(FormParameters.RAW_DATA),
+								formParams.getFirst(FormParameters.R2RML_URL),
+								formParams.getFirst(FormParameters.CONTENT_TYPE),
+								refreshModel,
+								GenerateContext(formParams.getFirst(FormParameters.R2RML_URL)));
+		}
+		
+		return null;
+		
 	}
 
 	private int PublishRDFToTripleStore(
@@ -335,6 +359,81 @@ public class RDFGeneratorServlet {
 		return GenerateRDF(IOUtils.toInputStream(rawData), r2rmlURI, dataType,
 				refreshModel);
 	}
+	
+	private String GenerateJSON(String rawData, String r2rmlURI,
+			String dataType, boolean refreshModel,String jsonContext) throws KarmaException,
+			JSONException, IOException {
+		//logger.info(rawData);
+
+		return GenerateJSON(IOUtils.toInputStream(rawData), r2rmlURI, dataType,
+				refreshModel,jsonContext);
+	}
+	
+	private String GenerateJSON(InputStream dataStream, String r2rmlURI,
+			String dataType, boolean refreshR2RML,String jsonContext) throws KarmaException,
+			JSONException, IOException { // logger.info(dataStream.toString());
+		//logger.info(r2rmlURI);
+		//logger.info(dataType);
+		
+		String r2rmlFileName = new File(r2rmlURI).getName();
+        String contextFileName = r2rmlFileName.substring(0,r2rmlFileName.length()-4) + "_context.json";
+        
+        File contextFile = new File("context/"+contextFileName);
+        
+        if(!contextFile.exists()){
+        	contextFile.createNewFile();
+        }
+        
+        FileWriter fw = new FileWriter(contextFile);
+        
+        BufferedWriter bw = new BufferedWriter(fw);
+        
+        bw.write(jsonContext);
+        
+        bw.close();
+		
+		GenericRDFGenerator rdfGen = new GenericRDFGenerator(null);
+
+		// Add the models in;
+		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
+				"generic-model", new URL(r2rmlURI)); 
+		rdfGen.addModel(modelIdentifier);
+
+		//String filename = "context/events.json";
+		//String contextName = "context/events_context.json";
+		logger.info("Loading json file: " + jsonContext);
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		//File contextFile =  new File(getTestResource(contextName).toURI()); GIVE FUCKS LATER
+		
+		
+		JSONTokener token = new JSONTokener(IOUtils.toInputStream(jsonContext)); //PERFECCT
+		//logger.info(new JSONObject(token).getString("@context"));
+		ContextIdentifier contextId = new ContextIdentifier("generic-context", contextFile.toURI().toURL());
+		JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(pw);
+		writer.setGlobalContext(new JSONObject(token), contextId); 
+		RDFGeneratorRequest request = new RDFGeneratorRequest("generic-model", "whatsinthename");
+		request.setInputStream(dataStream); //DOUBLE PERFECCT;input json take care of
+		request.setAddProvenance(false);
+		request.setDataType(InputType.JSON);
+		request.addWriter(writer);
+		rdfGen.generateRDF(request);
+		String rdf = sw.toString();
+		return rdf;
+
+	}
+	
+	public String GenerateContext(String  r2rmlURI) throws MalformedURLException, IOException{
+		
+		Model model = ModelFactory.createDefaultModel();
+        InputStream s = new URL(r2rmlURI).openStream(); //get the r2rml from URI
+        model.read(s, null, "TURTLE");
+        JSONObject top = new ContextGenerator(model, true).generateContext();
+        return top.toString();
+		
+	}
+	
+	
 
 	static {
 		try {

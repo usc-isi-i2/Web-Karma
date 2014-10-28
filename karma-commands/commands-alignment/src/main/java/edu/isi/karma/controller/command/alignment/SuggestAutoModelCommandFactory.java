@@ -20,27 +20,37 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
+import edu.isi.karma.modeling.ontology.AutoOntology;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
-import edu.isi.karma.util.CommandInputJSONUtil;
+import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class ShowModelCommandFactory extends JSONInputCommandFactory {
-	
+public class SuggestAutoModelCommandFactory extends JSONInputCommandFactory {
+
+	private static Logger logger = LoggerFactory
+			.getLogger(SuggestAutoModelCommandFactory.class);
 
 	private enum Arguments {
 		worksheetId, selectionName
@@ -49,40 +59,66 @@ public class ShowModelCommandFactory extends JSONInputCommandFactory {
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
-		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new ShowModelCommand(getNewId(workspace), getWorksheetId(request, workspace), false, 
-				selectionName);
+//		String selectionName = request.getParameter(Arguments.selectionName.name());
+		return new SuggestAutoModelCommand(getNewId(workspace), getWorksheetId(
+				request, workspace));
 	}
 
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
+
+		String worksheetId = HistoryJsonUtil.getStringValue(
+				Arguments.worksheetId.name(), inputJson);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		this.normalizeSelectionId(worksheetId, inputJson, workspace);
-		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		ShowModelCommand comm = new ShowModelCommand(getNewId(workspace), worksheet.getId(), false, 
-				selectionName);
+
+		AutoOntology autoOntology = new AutoOntology(worksheet);
+		String path = ServletContextParameterMap
+				.getParameterValue(ContextParameter.PRELOADED_ONTOLOGY_DIRECTORY)
+				 + worksheet.getTitle() + ".owl";
+		try {
+			autoOntology.Build(path);
+		} catch (IOException e) {
+			logger.error("Error occured while creating auto model!", e);
+		}
+
 		OntologyManager ontMgr = workspace.getOntologyManager();
+		File autoOtologyFile = new File(path);
+		logger.info("Loading ontology: " + autoOtologyFile.getAbsolutePath());
+		String encoding = EncodingDetector.detect(autoOtologyFile);
+		try {
+			ontMgr.doImportAndUpdateCache(autoOtologyFile, encoding);
+			logger.info("Done loading ontology: "
+					+ autoOtologyFile.getAbsolutePath());
+		} catch(Exception e) {
+			logger.error("Error importing auto ontology file: " + autoOtologyFile.getAbsolutePath());
+		}
+		
+		SuggestAutoModelCommand comm = new SuggestAutoModelCommand(
+				getNewId(workspace), worksheet.getId());
 		// Add the semantic types that have saved into the history
-		for (int i=2; i<inputJson.length(); i++) {
+		for (int i = 2; i < inputJson.length(); i++) {
 			JSONObject hnodeObj = (JSONObject) inputJson.get(i);
-			String hNodeId = (String) hnodeObj.get(ClientJsonKeys.value.name());
-			
+			String hNodeId = (String) hnodeObj.get(ClientJsonKeys.value
+					.name());
+
 			JSONObject typeObj = (JSONObject) inputJson.get(++i);
-			JSONObject value = (JSONObject) typeObj.get(ClientJsonKeys.value.name());
-			
+			JSONObject value = (JSONObject) typeObj
+					.get(ClientJsonKeys.value.name());
+
 			SemanticType type = null;
-			String domain = (String) value.get(SemanticType.ClientJsonKeys.DomainUri.name());
-			String fullType = (String) value.get(SemanticType.ClientJsonKeys.FullType.name());
-			boolean isPrimary = (Boolean) value.get(SemanticType.ClientJsonKeys.isPrimary.name());
+			String domain = (String) value
+					.get(SemanticType.ClientJsonKeys.DomainUri.name());
+			String fullType = (String) value
+					.get(SemanticType.ClientJsonKeys.FullType.name());
 			
 			Label typeName = ontMgr.getUriLabel(fullType);
 			Label domainName = null;
 			if (domain != null && !domain.trim().equals(""))
 				domainName = ontMgr.getUriLabel(domain);
-			
-			if(typeName != null) {
-				type = new SemanticType(hNodeId, typeName, domainName, Origin.User, 1.00, isPrimary);
+
+			if (typeName != null) {
+				type = new SemanticType(hNodeId, typeName, domainName,
+						Origin.User, 1.00);
 				worksheet.getSemanticTypes().addType(type);
 			}
 		}
@@ -92,6 +128,6 @@ public class ShowModelCommandFactory extends JSONInputCommandFactory {
 	@Override
 	public Class<? extends Command> getCorrespondingCommand()
 	{
-		return ShowModelCommand.class;
+		return SuggestAutoModelCommand.class;
 	}
 }

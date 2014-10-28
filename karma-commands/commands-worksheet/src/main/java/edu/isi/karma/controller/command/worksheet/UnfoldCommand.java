@@ -47,6 +47,7 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 	private String valuehNodeId;
 	private String keyName;
 	private String valueName;
+	private boolean notOtherColumn;
 	private static Logger logger = LoggerFactory
 			.getLogger(FoldCommand.class);
 
@@ -55,37 +56,34 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 	}
 
 	protected UnfoldCommand(String id, String worksheetId, 
-			String keyHNodeid, String valueHNodeid, 
+			String keyHNodeid, String valueHNodeid, boolean notOtherColumn,
 			String selectionId) {
 		super(id, worksheetId, selectionId);
 		newWorksheetId = null;
 		newHNodeId = null;
 		this.keyhNodeId = keyHNodeid;
 		this.valuehNodeId = valueHNodeid;
+		this.notOtherColumn = notOtherColumn;
 		addTag(CommandTag.Transformation);
 	}
 
 	@Override
 	public String getCommandName() {
-		// TODO Auto-generated method stub
 		return this.getClass().getSimpleName();
 	}
 
 	@Override
 	public String getTitle() {
-		// TODO Auto-generated method stub
 		return "Unfold";
 	}
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
 		return keyName + " with " + valueName;
 	}
 
 	@Override
 	public CommandType getCommandType() {
-		// TODO Auto-generated method stub
 		return CommandType.undoable;
 	}
 
@@ -182,10 +180,12 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 		HNode value = ht.getHNode(valueHNodeid);
 		List<HNode> hnodes = new ArrayList<HNode>();
 		List<String> hnodeIds = new ArrayList<String>();
-		for (HNode h : topHNodes) {
-			if (h.getId().compareTo(value.getId()) != 0 && h.getId().compareTo(key.getId()) != 0) {
-				hnodes.add(h);
-				hnodeIds.add(h.getId());
+		if (!notOtherColumn) {
+			for (HNode h : topHNodes) {
+				if (h.getId().compareTo(value.getId()) != 0 && h.getId().compareTo(key.getId()) != 0) {
+					hnodes.add(h);
+					hnodeIds.add(h.getId());
+				}
 			}
 		}
 		for (Entry<String, String> entry : CloneTableUtils.cloneHTable(ht, newHT, oldws, factory, hnodes, selection).entrySet()) {
@@ -269,10 +269,12 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 		HNode value = oldws.getHeaders().getHNode(valueHNodeid);
 		List<HNode> hnodes = new ArrayList<HNode>();
 		List<String> hnodeIds = new ArrayList<String>();
-		for (HNode h : topHNodes) {
-			if (h.getId().compareTo(value.getId()) != 0 && h.getId().compareTo(key.getId()) != 0) {
-				hnodes.add(h);
-				hnodeIds.add(h.getId());
+		if (!notOtherColumn) {
+			for (HNode h : topHNodes) {
+				if (h.getId().compareTo(value.getId()) != 0 && h.getId().compareTo(key.getId()) != 0) {
+					hnodes.add(h);
+					hnodeIds.add(h.getId());
+				}
 			}
 		}
 		CloneTableUtils.cloneHTable(oldws.getHeaders(), newws.getHeaders(), newws, factory, hnodes, selection);

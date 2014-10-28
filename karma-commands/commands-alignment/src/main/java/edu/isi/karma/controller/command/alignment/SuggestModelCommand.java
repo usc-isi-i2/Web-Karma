@@ -22,11 +22,8 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
@@ -35,6 +32,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
@@ -50,42 +48,30 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.learner.ModelLearner;
-import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphType;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.ColumnSubClassLink;
-import edu.isi.karma.rep.alignment.DataPropertyLink;
-import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
-import edu.isi.karma.rep.alignment.InternalNode;
-import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.ObjectPropertyLink;
-import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.rep.alignment.SubClassLink;
 
 
-public class ShowModelCommand extends WorksheetSelectionCommand {
+public class SuggestModelCommand extends WorksheetSelectionCommand {
 
 	private String worksheetName;
 	private Alignment initialAlignment = null;
 	private DirectedWeightedMultigraph<Node, DefaultLink> initialGraph = null;
-	private List<ColumnNode> columnNodes;
-	private Set<String> columnsWithoutSemanticType = null;
+	private List<Node> steinerNodes;
 //	private final boolean addVWorksheetUpdate;
 
 	private static Logger logger = LoggerFactory
-			.getLogger(ShowModelCommand.class);
+			.getLogger(SuggestModelCommand.class);
 
-	protected ShowModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate, String selectionId) {
+	protected SuggestModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate, String selectionId) {
 		super(id, worksheetId, selectionId);
 //		this.addVWorksheetUpdate = addVWorksheetUpdate;
 		
@@ -103,7 +89,7 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public String getTitle() {
-		return "Show Model";
+		return "Suggest Model";
 	}
 
 	@Override
@@ -142,37 +128,41 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 
 			initialGraph = (DirectedWeightedMultigraph<Node, DefaultLink>)alignment.getGraph().clone();
 			
-			columnNodes = new LinkedList<ColumnNode>();
-			columnsWithoutSemanticType = new HashSet<String>();
 			List<HNode> orderedNodeIds = new ArrayList<HNode>();
 			worksheet.getHeaders().getSortedLeafHNodes(orderedNodeIds);
-			if (orderedNodeIds != null)
+			if (orderedNodeIds != null) {
 				for (int i = 0; i < orderedNodeIds.size(); i++)
 				{
 					String hNodeId = orderedNodeIds.get(i).getId();
 					ColumnNode cn = alignment.getColumnNodeByHNodeId(hNodeId);
-					if (cn.getUserSelectedSemanticType() == null)
+					
+					if (!cn.hasUserType())
 					{
-						columnsWithoutSemanticType.add(hNodeId);
 						worksheet.getSemanticTypes().unassignColumnSemanticType(hNodeId);
-					}
-					columnNodes.add(cn);
+						List<SemanticType> suggestedSemanticTypes = 
+								new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4, selection);
+						cn.setSuggestedSemanticTypes(suggestedSemanticTypes);
+					} 
 				}
+			}
 		} else {
 		// Replace the current alignment with the old alignment
 			alignment = initialAlignment;
 			alignment.setGraph(initialGraph);
-			alignment.align();
+			if(!this.isExecutedInBatch())
+				alignment.align();
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
-		
-		for (ColumnNode cn : columnNodes) {
-			List<SemanticType> suggestedSemanticTypes = 
-					new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4, selection);
-			cn.setSuggestedSemanticTypes(suggestedSemanticTypes);
-		}
-		
-		ModelLearner modelLearner = new ModelLearner(ontologyManager, ModelLearningGraphType.Sparse, columnNodes);
+
+		steinerNodes = alignment.computeSteinerNodes();
+		ModelLearner modelLearner = null;
+		if (ModelingConfiguration.isLearnAlignmentEnabled()) 
+			modelLearner = new ModelLearner(alignment.getGraphBuilder(), steinerNodes);
+		else
+			modelLearner = new ModelLearner(ontologyManager, alignment.getLinksByStatus(LinkStatus.ForcedByUser), steinerNodes);
+
+//		logger.info(GraphUtil.defaultGraphToString(ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder().getGraph()));
+
 		SemanticModel model = modelLearner.getModel();
 		if (model == null) {
 			logger.error("could not learn any model for this source!");
@@ -182,90 +172,18 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 		
 //		logger.info(GraphUtil.labeledGraphToString(model.getGraph()));
 		
-		HashSet<String> alignmentNodeUris = new HashSet<String>();
-		HashMap<Node, Node> modelToAlignmentNode = new HashMap<Node, Node>();
-		Set<Node> nodesWithSameUri;
-		if (model != null) {
-			String uri;
-			for (Node n : model.getGraph().vertexSet()) {
-				if (n instanceof InternalNode) {
-					uri = n.getUri();
-					InternalNode iNode;
-					
-					if (alignmentNodeUris.contains(uri)) {
-						iNode = alignment.addInternalNode(n.getLabel());
-					} else {
-						nodesWithSameUri = alignment.getNodesByUri(uri);
-						if (nodesWithSameUri != null && !nodesWithSameUri.isEmpty())
-							iNode = (InternalNode)nodesWithSameUri.iterator().next();
-						else
-							iNode = alignment.addInternalNode(n.getLabel());
-					}
-					modelToAlignmentNode.put(n, iNode);
-					alignmentNodeUris.add(uri);
-				}
-				if (n instanceof ColumnNode) {
-					if (model.getMappingToSourceColumns() != null)
-						modelToAlignmentNode.put(n, model.getMappingToSourceColumns().get(n));
-				}
-			}
-			
-			Node source, target;
-			for (LabeledLink l : model.getGraph().edgeSet()) {
-				
-				if (!(l.getSource() instanceof InternalNode)) {
-					logger.error("column node cannot have an outgoing link!");
-					return new UpdateContainer(new ErrorUpdate(
-							"Error occured while generating the model for the source. " +
-							"A column node cannot have an outgoing link."));
-				}
-
-				
-				source = modelToAlignmentNode.get(l.getSource());
-				target = modelToAlignmentNode.get(l.getTarget());
-				
-				if (source == null || target == null)
-					continue;
-
-				LabeledLink newLink = null;
-				if (l instanceof DataPropertyLink)
-					newLink = alignment.addDataPropertyLink(source, target, l.getLabel(), l.getKeyType() == LinkKeyInfo.PartOfKey? true : false);
-				else if (l instanceof ObjectPropertyLink)
-					newLink = alignment.addObjectPropertyLink(source, target, l.getLabel());
-				else if (l instanceof SubClassLink)
-					newLink = alignment.addSubClassOfLink(source, target);
-				else if (l instanceof ClassInstanceLink)
-					newLink = alignment.addClassInstanceLink(source, target, l.getKeyType());
-				else if (l instanceof ColumnSubClassLink)
-					newLink = alignment.addColumnSubClassOfLink(source, target);
-				else if (l instanceof DataPropertyOfColumnLink)
-					newLink = alignment.addDataPropertyOfColumnLink(source, target, 
-							((DataPropertyOfColumnLink)l).getSpecializedColumnHNodeId(),
-							((DataPropertyOfColumnLink)l).getSpecializedLinkId()
-							);
-				else if (l instanceof ObjectPropertySpecializationLink)
-					newLink = alignment.addObjectPropertySpecializationLink(source, target, ((ObjectPropertySpecializationLink)l).getSpecializedLinkId());
-				else {
-		    		logger.error("cannot instanciate a link from the type: " + l.getType().toString());
-		    		continue;
-				}
-				
-				if (newLink == null) // link already exist
-					continue;
-				
-				if (target instanceof ColumnNode) {
-					SemanticType st = new SemanticType(((ColumnNode)target).getHNodeId(), 
-							newLink.getLabel(), source.getLabel(), SemanticType.Origin.User, 1.0, false);
-					worksheet.getSemanticTypes().addType(st);
-				}
-				
-				if (!(target instanceof ColumnNode) && newLink != null)
-					alignment.changeLinkStatus(newLink.getId(), LinkStatus.ForcedByUser);
-
-			}
-		}
-		
-		alignment.align();
+		List<SemanticType> semanticTypes = new LinkedList<SemanticType>();
+		alignment.updateAlignment(model, semanticTypes);
+//		Set<ColumnNode> alignmentColumnNodes = alignment.getSourceColumnNodes();
+//		if (alignmentColumnNodes != null) {
+//			for (ColumnNode cn : alignmentColumnNodes) {
+//				worksheet.getSemanticTypes().unassignColumnSemanticType(cn.getHNodeId());
+//			}
+//		}
+//		if (semanticTypes != null) {
+//			for (SemanticType st : semanticTypes)
+//				worksheet.getSemanticTypes().addType(st);
+//		}
 		
 		try {
 			// Save the semantic types in the input parameter JSON
@@ -275,6 +193,7 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
 			c.add(new AlignmentSVGVisualizationUpdate(
 					worksheetId, alignment));
+
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(
@@ -285,6 +204,7 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 		return c;
 	}
 
+	
 	private void saveSemanticTypesInformation(Worksheet worksheet, Workspace workspace
 			, Collection<SemanticType> semanticTypes) throws JSONException {
 		JSONArray typesArray = new JSONArray();
@@ -331,16 +251,20 @@ public class ShowModelCommand extends WorksheetSelectionCommand {
 					"Please align the worksheet before generating R2RML Model!"));
 		}
 
+//		Set<ColumnNode> alignmentColumnNodes = alignment.getSourceColumnNodes();
+//		if (alignmentColumnNodes != null) {
+//			for (ColumnNode cn : alignmentColumnNodes) {
+//				if (!cn.hasUserType())
+//					worksheet.getSemanticTypes().unassignColumnSemanticType(cn.getHNodeId());
+//			}
+//		}
+
 		alignment = initialAlignment;
 		alignment.setGraph(initialGraph);
-		alignment.align();
+		if(!this.isExecutedInBatch())
+			alignment.align();
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		
-		if (this.columnsWithoutSemanticType != null) {
-			for (String hNodeId : this.columnsWithoutSemanticType) {
-				worksheet.getSemanticTypes().unassignColumnSemanticType(hNodeId);
-			}
-		}
 
 		try {
 			// Save the semantic types in the input parameter JSON

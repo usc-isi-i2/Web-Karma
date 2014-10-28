@@ -47,7 +47,6 @@ import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
@@ -57,7 +56,8 @@ import edu.isi.karma.util.RandomGUID;
 public class ModelLearningGraphCompact extends ModelLearningGraph {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelLearningGraphCompact.class);
-		
+	private static int MAX_MAPPING_SIZE = 3000;
+	
 	public ModelLearningGraphCompact(OntologyManager ontologyManager) throws IOException {
 		super(ontologyManager, ModelLearningGraphType.Compact);
 	}
@@ -228,11 +228,10 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			for (int i = 0; i < mappings.size(); i++) {
 				HashMap<Node,Node> nodeMap = mappings.get(i);
 				for (Node n : matchedNodes) {
-					
 					if (n instanceof ColumnNode) {
 						Node modelDomain = modelNodeDomains.get(node);
 						Node correspondingMatch = nodeMap.get(modelDomain);
-						if (this.graphBuilder.getNode2Domain().get(n) != correspondingMatch)
+						if ( ((ColumnNode)n).getDomainNode() != correspondingMatch)
 							continue;
 						
 					}
@@ -262,11 +261,17 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		
 		List<HashMap<Node,Node>> mappings = new LinkedList<HashMap<Node,Node>>();
 
+		logger.info("max mapping size: " + MAX_MAPPING_SIZE);
+		
 		int size = 0;
 		for (Node node : model.getGraph().vertexSet()) {
 			if (node instanceof InternalNode) {
 				size ++;
 				mappings = updateMapping(mappings, node, size, internalNodeMatches, columnNodeMatches, modelNodeDomains);
+//				System.out.println(mappings.size());
+				if (mappings != null && mappings.size() >= MAX_MAPPING_SIZE)
+					mappings = mappings.subList(0,  MAX_MAPPING_SIZE);
+//				System.out.println(mappings.size());
 			}
 		}
 
@@ -274,6 +279,10 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			if (node instanceof ColumnNode) {
 				size ++;
 				mappings = updateMapping(mappings, node, size, internalNodeMatches, columnNodeMatches, modelNodeDomains);
+//				System.out.println(mappings.size());
+				if (mappings != null && mappings.size() >= MAX_MAPPING_SIZE)
+					mappings = mappings.subList(0,  MAX_MAPPING_SIZE);
+//				System.out.println(mappings.size());
 			}
 		}
 		
@@ -349,20 +358,25 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 				
 				n1 = mapping.get(source);
 				if (n1 == null) {
-					logger.error("the mappings does not include the source node " + source.getId());
-					return null;
+//					logger.warn("the mappings does not include the source node " + source.getId());
+					continue;
 				}
 				
 				n2 = mapping.get(target);
 				if (n2 == null) {
-					logger.error("the mappings does not include the target node " + target.getId());
-					return null;
+//					logger.warn("the mappings does not include the target node " + target.getId());
+					continue;
 				}
 				String id = LinkIdFactory.getLinkId(e.getUri(), n1.getId(), n2.getId());
 				LabeledLink l = this.graphBuilder.getIdToLinkMap().get(id);
 				if (l != null) {
 					int numOfPatterns = l.getModelIds().size();
-					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT / (double) (numOfPatterns + 1) );
+//					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
+//					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT / (double) (numOfPatterns + 1) );
+					if (n2 instanceof InternalNode)
+						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT - (0.00001 * numOfPatterns) );
+					else
+						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
 					l.getModelIds().add(indexedModelId);
 					n1.getModelIds().add(indexedModelId);
 					n2.getModelIds().add(indexedModelId);
@@ -371,7 +385,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 //					i++;
 					LabeledLink link;
 					if (e instanceof DataPropertyLink) 
-						link = new DataPropertyLink(id, e.getLabel(), e.getKeyType() == LinkKeyInfo.PartOfKey? true : false);
+						link = new DataPropertyLink(id, e.getLabel());
 					else if (e instanceof ObjectPropertyLink)
 						link = new ObjectPropertyLink(id, e.getLabel(), ((ObjectPropertyLink)e).getObjectPropertyType());
 					else if (e instanceof SubClassLink)

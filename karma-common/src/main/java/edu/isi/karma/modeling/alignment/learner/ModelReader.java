@@ -392,8 +392,7 @@ public class ModelReader {
 							new Label(predicateStr), 
 							subj.getLabel(), 
 							Origin.User, 
-							1.0, 
-							false);
+							1.0);
 					((ColumnNode)obj).setUserSelectedSemanticType(semanticType);
 
 				} else if (objStr.indexOf(":") == -1 && objStr.indexOf("\"") != -1) {

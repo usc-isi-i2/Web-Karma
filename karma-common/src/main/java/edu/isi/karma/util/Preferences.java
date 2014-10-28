@@ -97,7 +97,7 @@ public abstract class Preferences {
 	
 	private File loadWorkspacePrefTemplateFile() throws IOException {
 		File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + 
-				  "/WorkspacePref.template");
+				  "/workspace-pref.template");
 		if(!file.exists()) {
 			JSONObject json = new JSONObject(defaultWorkspaceTemplate);
 			file.createNewFile();

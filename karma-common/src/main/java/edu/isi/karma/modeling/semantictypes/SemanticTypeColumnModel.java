@@ -98,7 +98,9 @@ public class SemanticTypeColumnModel implements Jsonizable {
 					continue;
 				
 				String clazzLocalNameWithPrefix = domainURI.getDisplayName();
-				
+				if(domainURI.getPrefix() == null) 
+					clazzLocalNameWithPrefix = domainURI.getUri() + "/" + domainURI.getLocalName();
+					
 				int graphLastIndex = alignment.getLastIndexOfNodeUri(domainURI.getUri());
 				if (graphLastIndex == -1) { // No instance present in the graph
 					insertSemanticTypeSuggestion(arr, clazzLocalNameWithPrefix + "1 (add)", 
@@ -108,7 +110,7 @@ public class SemanticTypeColumnModel implements Jsonizable {
 					boolean hasLastNodeFromSteinerTree = false;
 					for (int i=1; i<= graphLastIndex; i++) {
 						
-						if (steinerTreeNodeIds.contains(domainURI.getUri() + (graphLastIndex))) {
+						if (steinerTreeNodeIds.contains(domainURI.getUri() + i)) {
 							insertSemanticTypeSuggestion(arr, clazzLocalNameWithPrefix + i, 
 									domainURI.getUri(),
 									domainURI.getUri() + i, 

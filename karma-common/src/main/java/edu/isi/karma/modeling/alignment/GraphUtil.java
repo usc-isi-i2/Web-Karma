@@ -60,6 +60,7 @@ import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.LinkType;
+import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
@@ -260,6 +261,7 @@ public class GraphUtil {
 			sb.append(edge.getId());
 			sb.append(" - status=" + edge.getStatus().name());
 			sb.append(" - w=" + edge.getWeight());
+			sb.append(" - type=" + edge.getType().name());
 			sb.append("\n");
         }
 		//sb.append("------------------------------------------");
@@ -520,6 +522,14 @@ public class GraphUtil {
 				writer.endArray();
 			}
 		}
+		if (node instanceof LiteralNode) {
+			LiteralNode ln = (LiteralNode) node;
+			writer.name("value").value(ln.getValue());
+			writer.name("datatype");
+			if (ln.getDatatype() == null) writer.value(nullStr);
+			else writeLabel(writer, ln.getDatatype());
+			writer.name("isUri").value(Boolean.toString(ln.isUri()));
+		}
 		
 		writer.name("modelIds");
 		if (node.getModelIds() == null) writer.value(nullStr);
@@ -590,7 +600,6 @@ public class GraphUtil {
 		if (semanticType.getType() == null) writer.value(nullStr);
 		else writeLabel(writer, semanticType.getType());
 		writer.name("origin").value(semanticType.getOrigin().toString());
-		writer.name("isPartOfKey").value(semanticType.isPartOfKey());
 		writer.name("confidenceScore").value(semanticType.getConfidenceScore());
 		writer.endObject();
 	}
@@ -660,6 +669,9 @@ public class GraphUtil {
 		String hNodeId = null;
 		String columnName = null;
 		Label rdfLiteralType = null;
+		Label datatype = null;
+		String value = null;
+		boolean isUri = false;
 		SemanticType userSelectedSemanticType = null;
 		List<SemanticType> suggestedSemanticTypes = null;
 		Set<String> modelIds = null;
@@ -677,6 +689,12 @@ public class GraphUtil {
 				hNodeId = reader.nextString();
 			} else if (key.equals("columnName") && reader.peek() != JsonToken.NULL) {
 				columnName = reader.nextString();
+			} else if (key.equals("datatype") && reader.peek() != JsonToken.NULL) {
+				datatype = readLabel(reader);
+			} else if (key.equals("value") && reader.peek() != JsonToken.NULL) {
+				value = reader.nextString();
+			} else if (key.equals("isUri") && reader.peek() != JsonToken.NULL) {
+				isUri = Boolean.parseBoolean(reader.nextString());
 			} else if (key.equals("rdfLiteralType") && reader.peek() != JsonToken.NULL) {
 				rdfLiteralType = readLabel(reader);
 			} else if (key.equals("userSelectedSemanticType") && reader.peek() != JsonToken.NULL) {
@@ -704,7 +722,13 @@ public class GraphUtil {
     		n = new ColumnNode(id, hNodeId, columnName, rdfLiteralType);
     		((ColumnNode)n).setUserSelectedSemanticType(userSelectedSemanticType);
     		((ColumnNode)n).setSuggestedSemanticTypes(suggestedSemanticTypes);
+    	} else if (type == NodeType.LiteralNode) {
+    		n = new LiteralNode(id, value, datatype, isUri);
+    	} else {
+    		logger.error("cannot instanciate a node from the type: " + type.toString());
+    		return null;
     	}
+    	
 		n.setModelIds(modelIds);
     	
     	return n;
@@ -758,7 +782,7 @@ public class GraphUtil {
     	} else if (type == LinkType.ColumnSubClassLink) {
     		l = new ColumnSubClassLink(id);
     	} else if (type == LinkType.DataPropertyLink) {
-    		l = new DataPropertyLink(id, label, keyInfo == LinkKeyInfo.PartOfKey ? true : false);
+    		l = new DataPropertyLink(id, label);
     	} else if (type == LinkType.DataPropertyOfColumnLink) {
     		l = new DataPropertyOfColumnLink(id, hNodeId, specializedLinkId);
     	} else if (type == LinkType.ObjectPropertyLink) {
@@ -821,7 +845,6 @@ public class GraphUtil {
 		Label domain = null;
 		Label type = null;
 		Origin origin = null;
-		Boolean isPartOfKey = null;
 		Double confidenceScore = null;
 		
 		reader.beginObject();
@@ -835,8 +858,6 @@ public class GraphUtil {
 				type = readLabel(reader);
 			} else if (key.equals("origin") && reader.peek() != JsonToken.NULL) {
 				origin = Origin.valueOf(reader.nextString());
-			} else if (key.equals("isPartOfKey") && reader.peek() != JsonToken.NULL) {
-				isPartOfKey = reader.nextBoolean();
 			} else if (key.equals("confidenceScore") && reader.peek() != JsonToken.NULL) {
 				confidenceScore = reader.nextDouble();
 			} else {
@@ -845,7 +866,7 @@ public class GraphUtil {
 		}
     	reader.endObject();
     	
-    	SemanticType semanticType = new SemanticType(hNodeId, type, domain, origin, confidenceScore, isPartOfKey);
+    	SemanticType semanticType = new SemanticType(hNodeId, type, domain, origin, confidenceScore);
     	return semanticType;	
     }
 	

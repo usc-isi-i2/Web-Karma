@@ -22,25 +22,23 @@ package edu.isi.karma.rep.cleaning;
 
 import java.util.Collection;
 
+import edu.isi.karma.cleaning.DataPreProcessor;
+import edu.isi.karma.cleaning.Messager;
+
 
 public class RamblerTransformationInputs implements TransformationInputs {
 
 	private Collection<TransformationExample> examples;
 	private ValueCollection inputValues;
-	private String[] vocab;
+	public DataPreProcessor dpp = null;
+	public Messager msg = null;
 	//private Transformation preferedTransformation;
-	public RamblerTransformationInputs(Collection<TransformationExample> examples,ValueCollection inputValues)
+	public RamblerTransformationInputs(Collection<TransformationExample> examples,ValueCollection inputValues, DataPreProcessor dpp, Messager msg)
 	{
 		this.examples = examples;
 		this.inputValues = inputValues;
-	}
-	public void setVocab(String[] vocab)
-	{
-		this.vocab = vocab;
-	}
-	public String[] getVocab()
-	{
-		return this.vocab;
+		this.dpp = dpp;
+		this.msg = msg;
 	}
 	public Collection<TransformationExample> getExamples() {
 		// TODO Auto-generated method stub

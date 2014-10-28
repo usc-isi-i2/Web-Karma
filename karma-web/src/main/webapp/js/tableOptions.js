@@ -1068,7 +1068,7 @@ var GlueDialog2 = (function() {
 		function saveDialog(e) {
 			console.log("Save clicked");
 
-			var checkboxes = dialog.find(":checked");
+			var checkboxes = $("#glueDialog2Columns").find(":checked");
 			var checked = [];
 			for (var i = 0; i < checkboxes.length; i++) {
 				var checkbox = checkboxes[i];
@@ -1078,11 +1078,14 @@ var GlueDialog2 = (function() {
 				hide();
 				return;
 			}
+			var selected = $("#glueDialog2ImplWays").find(":selected");
+			console.log(selected.val());
 			//console.log(checked);
 			var info = generateInfoObject(worksheetId, checkboxes[0]['value'], "GlueCommand");
 
 			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("values", JSON.stringify(checked), "hNodeIdList"));
+			newInfo.push(getParamObject("ImplMethod", selected.val(), "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
 			showLoading(info["worksheetId"]);
@@ -1099,7 +1102,7 @@ var GlueDialog2 = (function() {
 			worksheetId = wsId;
 			dialog.on('show.bs.modal', function(e) {
 				hideError();
-				var dialogContent = $("#glueDialogColumns", dialog);
+				var dialogContent = $("#glueDialog2Columns", dialog);
 				dialogContent.empty();
 				var headers = getColumnHeadingsForColumn(wsId, "", "Glue");
 				//console.log(headers);
@@ -1119,6 +1122,7 @@ var GlueDialog2 = (function() {
 					row.append(label);
 					dialogContent.append(row);
 				}
+				$('#glueDialog2ImplWays option[value="Longest"]').attr("selected", true);
 			});
 			dialog.modal({
 				keyboard: true,

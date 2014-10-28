@@ -41,6 +41,7 @@ import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
@@ -73,10 +74,12 @@ public class WorksheetCommandHistoryExecutor {
 		JSONArray filteredCommands = HistoryJsonUtil.filterCommandsByTag(tags, historyJson);
 		return executeAllCommands(filteredCommands);
 	}
+	
 	public UpdateContainer executeAllCommands(JSONArray historyJson) 
 			throws JSONException, KarmaException, CommandException {
 		UpdateContainer uc =new UpdateContainer();
 		boolean saveToHistory = false;
+		
 		for (int i = 0; i< historyJson.length(); i++) {
 			JSONObject commObject = (JSONObject) historyJson.get(i);
 			if(i == historyJson.length() - 1) saveToHistory = true;
@@ -84,6 +87,11 @@ public class WorksheetCommandHistoryExecutor {
 			if(update != null)
 				uc.append(update);
 		}
+		
+		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
+		if(alignment != null)
+			alignment.align();
+		
 		return uc;
 	}
 
@@ -109,8 +117,10 @@ public class WorksheetCommandHistoryExecutor {
 					Command comm = cf.createCommand(inputParamArr, workspace);
 					if(comm != null){
 						try {
+							comm.setExecutedInBatch(true);
 							logger.info("Executing command: " + commandName);
 							uc.append(workspace.getCommandHistory().doCommand(comm, workspace, saveToHistory));
+							comm.setExecutedInBatch(false);
 						} catch(Exception e) {
 							logger.error("Error executing command: "+ commandName + ". Please notify this error");
 							Util.logException(logger, e);
@@ -134,6 +144,8 @@ public class WorksheetCommandHistoryExecutor {
 			//make these InfoUpdates so that the UI can still process the rest of the model
 			return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
 		}
+		
+		
 	}
 
 	private boolean ignoreIfBeforeColumnDoesntExist(String commandName) {

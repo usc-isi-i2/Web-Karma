@@ -2,6 +2,11 @@
 package edu.isi.karma.cleaning;
 
 import org.antlr.runtime.*;
+import java.util.Stack;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 @SuppressWarnings({ "all", "warnings", "unchecked" })
 public class Tokenizer extends Lexer {
@@ -94,34 +99,62 @@ public class Tokenizer extends Lexer {
 		try {
 			int _type = BLANK;
 			int _channel = DEFAULT_TOKEN_CHANNEL;
-			// Tokenizer.g:4:6: ( ( '\\t' | ' ' | '\\r' | '\\n' | '\ ' ) )
-			// Tokenizer.g:
+			// Tokenizer.g:4:6: ( ( '\\t' | ' ' | '\\r' | '\\n' | '\ ' )+ )
+			// Tokenizer.g:4:8: ( '\\t' | ' ' | '\\r' | '\\n' | '\ ' )+
 			{
-				if ((input.LA(1) >= '\t' && input.LA(1) <= '\n')
-						|| (input.LA(1) >= '\f' && input.LA(1) <= '\r')
-						|| input.LA(1) == ' ') {
-					input.consume();
-					state.failed = false;
-				} else {
-					if (state.backtracking > 0) {
-						state.failed = true;
-						return;
+				// Tokenizer.g:4:8: ( '\\t' | ' ' | '\\r' | '\\n' | '\ ' )+
+				int cnt1 = 0;
+				loop1: do {
+					int alt1 = 2;
+					int LA1_0 = input.LA(1);
+
+					if (((LA1_0 >= '\t' && LA1_0 <= '\n')
+							|| (LA1_0 >= '\f' && LA1_0 <= '\r') || LA1_0 == ' ')) {
+						alt1 = 1;
 					}
-					MismatchedSetException mse = new MismatchedSetException(
-							null, input);
-					recover(mse);
-					throw mse;
-				}
 
+					switch (alt1) {
+					case 1:
+					// Tokenizer.g:
+					{
+						if ((input.LA(1) >= '\t' && input.LA(1) <= '\n')
+								|| (input.LA(1) >= '\f' && input.LA(1) <= '\r')
+								|| input.LA(1) == ' ') {
+							input.consume();
+							state.failed = false;
+						} else {
+							if (state.backtracking > 0) {
+								state.failed = true;
+								return;
+							}
+							MismatchedSetException mse = new MismatchedSetException(
+									null, input);
+							recover(mse);
+							throw mse;
+						}
+
+					}
+						break;
+					default:
+						if (cnt1 >= 1)
+							break loop1;
+						if (state.backtracking > 0) {
+							state.failed = true;
+							return;
+						}
+						EarlyExitException eee = new EarlyExitException(1,
+								input);
+						throw eee;
+					}
+					cnt1++;
+				} while (true);
 			}
-
 			state.type = _type;
 			state.channel = _channel;
 		} finally {
 			// do for sure before leaving
 		}
 	}
-
 	// $ANTLR end "BLANK"
 
 	// $ANTLR start "UWRD"
@@ -423,7 +456,7 @@ public class Tokenizer extends Lexer {
 	public final void mSYMBOL() throws RecognitionException {
 		try {
 			// Tokenizer.g:15:2: ( '!' .. '/' | ':' .. '@' | '[' .. '`' | '{' ..
-			// '~' | '�' )
+			// '~' | '???' )
 			// Tokenizer.g:
 			{
 				if ((input.LA(1) >= '!' && input.LA(1) <= '/')

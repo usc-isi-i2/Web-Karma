@@ -30,7 +30,7 @@ public class ModelLearnerMetadata extends KarmaUserMetadata {
 
 	@Override
 	protected String getDirectoryPath() {
-		return ModelingConfiguration.getAlignmentGraphDir();
+		return "alignment-graph/";
 	}
 
 	@Override

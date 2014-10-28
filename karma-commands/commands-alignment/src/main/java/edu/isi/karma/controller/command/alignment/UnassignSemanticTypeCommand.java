@@ -110,6 +110,7 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 		
 		// Remove it from the alignment
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+		columnNode.setForced(false);
 		if (columnNode != null) {
 			Set<LabeledLink> links =  alignment.getCurrentIncomingLinksToNode(columnNode.getId());
 			if(links == null)
@@ -127,7 +128,8 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 //			alignment.removeNode(domainNodeId);
 			
 		}
-		alignment.align();
+		if(!this.isExecutedInBatch())
+			alignment.align();
 		
 		// Get the column name
 		HNodePath currentPath = null;

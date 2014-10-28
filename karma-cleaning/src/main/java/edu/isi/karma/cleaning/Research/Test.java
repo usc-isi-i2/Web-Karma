@@ -1,42 +1,26 @@
 package edu.isi.karma.cleaning.Research;
 
-import au.com.bytecode.opencsv.CSVReader;
-import edu.isi.karma.cleaning.*;
-
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
 
+import au.com.bytecode.opencsv.CSVReader;
+import edu.isi.karma.cleaning.DataPreProcessor;
+import edu.isi.karma.cleaning.ExampleCluster;
+import edu.isi.karma.cleaning.ExampleCluster.method;
+import edu.isi.karma.cleaning.ExampleSelection;
+import edu.isi.karma.cleaning.GradientDecendOptimizer;
+import edu.isi.karma.cleaning.InterpreterType;
+import edu.isi.karma.cleaning.Messager;
+import edu.isi.karma.cleaning.ProgSynthesis;
+import edu.isi.karma.cleaning.ProgramRule;
+import edu.isi.karma.cleaning.UtilTools;
+
 public class Test {
-	public static void test1() {
-		Vector<String[]> examples = new Vector<String[]>();
-		String[] x1 = { "<_START>50 x 40<_END>", "40" }; // 15th element start.
-		String[] x2 = { "<_START>H: 23 1/4 in.<_END>", "23 1/4" };
-		String[] x3 = { "<_START>38 1/2 in.<_END>", "38 1/2" };
-		String[] x7 = { "<_START>27 x 54 in.<_END>", "54" }; // 15th element
-																// start.
-		String[] x8 = { "<_START>35 3/4 x 29 7/8 in.<_END>", "29 7/8" };
-		String[] x9 = { "<_START>55 in.<_END>", "none" };
-		examples.add(x1);
-		examples.add(x2);
-		examples.add(x3);
-		examples.add(x7);
-		examples.add(x8);
-		examples.add(x9);
-		for (String[] elem : examples) {
-			System.out.println("Examples inputed: " + Arrays.toString(elem));
-		}
-		ProgSynthesis psProgSynthesis = new ProgSynthesis();
-		psProgSynthesis.inite(examples);
-		Collection<ProgramRule> ps = psProgSynthesis.run_main();
-		ProgramRule pr = ps.iterator().next();
-		String val = "US$ 232.982 billion\"@en";
-		InterpreterType rule = pr.getRuleForValue(val);
-		System.out.println(rule.execute(val));
-	}
 
 	// check whether it longest or shortest
 	public static boolean visible(HashMap<String, String[]> xHashMap, String Id) {
@@ -82,7 +66,391 @@ public class Test {
 		return (shortest || longest);
 	}
 
-	public static void test4(String dirpath) {
+	public void parameterSelection(String dirpath) {
+		ArrayList<String> selectParams = new ArrayList<String>();
+		ArrayList<String> runningInfo = new ArrayList<String>();
+		File nf = new File(dirpath);
+		File[] allfiles = nf.listFiles();
+		double[] r = { 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8 };
+		// statistics
+		// list all the csv file under the dir
+		for (File f : allfiles) {
+			if (f.getName().indexOf(".csv") != -1
+					&& f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
+				double minS = Double.MAX_VALUE;
+				double bestRatio = 0.0;
+				for (int i = 0; i < r.length; i++) {
+					GradientDecendOptimizer.ratio = r[i];
+					double s = transform(f);
+					if (s <= minS) {
+						minS = s;
+						bestRatio = r[i];
+
+					}
+					String runinfo = String.format("%s: ratio: %f, value:%f\n",
+							f.getName(), r[i], s);
+					runningInfo.add(runinfo);
+				}
+				String parms = String.format("%s: ratio: %f, BestVal:%f",
+						f.getName(), bestRatio, minS);
+				selectParams.add(parms);
+			}
+		}
+		System.out.println("" + runningInfo.toString());
+		System.out.println(selectParams.toString());
+	}
+
+	public double transform(File f) {
+		double measure = Double.MAX_VALUE;
+		try {
+			Vector<String[]> examples = new Vector<String[]>();
+			Vector<String[]> addExamples = new Vector<String[]>();
+			Vector<String[]> entries = new Vector<String[]>();
+			if (f.getName().indexOf(".csv") != -1
+					&& f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
+				// MyLogger.logsth("========"+f.getName()+"============\n");
+				HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
+				@SuppressWarnings("resource")
+				CSVReader cr = new CSVReader(new FileReader(f), ',', '"', '\0');
+				String[] pair;
+				int index = 0;
+				Vector<String> vtmp = new Vector<String>();
+				while ((pair = cr.readNext()) != null) {
+					if (pair == null || pair.length <= 1)
+						break;
+					entries.add(pair);
+					vtmp.add(pair[0]);
+					String[] line = { pair[0], pair[1], "", "", "wrong" }; // org,
+																			// tar,
+																			// tarcode,
+																			// label
+					xHashMap.put(index + "", line);
+					index++;
+				}
+				DataPreProcessor dpp = new DataPreProcessor(vtmp);
+				dpp.run();
+				Messager msger = new Messager();
+				Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
+				if (entries.size() <= 1)
+					return Double.MAX_VALUE;
+				ExampleSelection expsel = new ExampleSelection();
+				ExampleSelection.firsttime = true;
+				expsel.inite(xHashMap, null);
+				int target = Integer.parseInt(expsel.Choose());
+				String[] mt = { "<_START>" + entries.get(target)[0] + "<_END>",
+						entries.get(target)[1] };
+				examples.add(mt);
+				ExampleSelection.firsttime = false;
+				// accuracy record code
+				ArrayList<double[]> accArrayList = new ArrayList<double[]>();
+				long stime = System.currentTimeMillis();
+				boolean overtime = true;
+				while (true) // repeat as no incorrect answer appears.
+				{
+					if (examples.size() == 4) {
+						System.out.println("Hello World");
+					}
+					if (System.currentTimeMillis() - stime > 600000) {
+						overtime = false;
+						break;
+					}
+					long checknumber = 1;
+					long iterAfterNoFatalError = 0;
+					long isvisible = 0;
+					HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
+					Vector<String> resultString = new Vector<String>();
+					xHashMap = new HashMap<String, String[]>();
+					ProgSynthesis psProgSynthesis = new ProgSynthesis();
+					HashMap<String, String> unlabeledData = new HashMap<String, String>();
+					for (int i = 0; i < vtmp.size(); i++) {
+						unlabeledData.put("" + i, vtmp.get(i));
+					}
+					psProgSynthesis.inite(examples, dpp, msger);
+					Vector<ProgramRule> pls = new Vector<ProgramRule>();
+					Collection<ProgramRule> ps = psProgSynthesis.run_main();
+					// collect history contraints
+					msger.updateCM_Constr(psProgSynthesis.partiCluster
+							.getConstraints());
+					msger.updateWeights(psProgSynthesis.partiCluster.weights);
+					// constraints.addAll();
+					if (ps != null) {
+						pls.addAll(ps);
+					} else {
+						System.out.println("Cannot find any rule");
+					}
+					String[] wexam = null;
+					if (pls.size() == 0)
+						break;
+					long t1 = System.currentTimeMillis();
+					int ErrorCnt = 0;
+					int clf_acc_error_cnt = 0;
+					int clf_acc_total_cnt = 0;
+					HashMap<String, HashMap<String, String>> uData = new HashMap<String, HashMap<String, String>>();
+					for (int i = 0; i < pls.size(); i++) {
+						ProgramRule script = pls.get(i);
+						// System.out.println(script);
+						String res = "";
+						for (int j = 0; j < entries.size(); j++) {
+							InterpreterType worker = script
+									.getRuleForValue(entries.get(j)[0]);
+							String classlabel = script.getClassForValue(entries
+									.get(j)[0]);
+							String tmps = worker
+									.execute_debug(entries.get(j)[0]);
+							HashMap<String, String> dict = new HashMap<String, String>();
+							dict.put("class", classlabel);
+							UtilTools.StringColorCode(entries.get(j)[0], tmps,
+									dict);
+							String s = dict.get("Tar");
+							if (Test.isExample(entries.get(j)[0], examples)) {
+								s = entries.get(j)[1];
+							}
+							res += s + "\n";
+							if (ConfigParameters.debug == 1) {
+								String indicator = "wrong";
+								if (s.compareTo(entries.get(j)[1]) == 0)
+									indicator = "correct";
+								if (!uData.containsKey(j + ""))
+									uData.put(j + "", dict);
+							}
+							// classifier accuracy
+
+							boolean existres = false;
+							for (InterpreterType w : script.rules.values()) {
+								String xtmp = w.execute(entries.get(j)[0]);
+								if (xtmp != null
+										&& xtmp.length() > 0
+										&& xtmp.compareTo(entries.get(j)[1]) == 0) {
+									existres = true;
+									break;
+								}
+							}
+							if (existres) {
+								clf_acc_total_cnt++;
+								if (s == null || s.length() == 0
+										|| s.compareTo(entries.get(j)[1]) != 0) {
+									clf_acc_error_cnt++;
+								}
+							}
+							//
+							if (s == null || s.length() == 0) {
+								String[] ts = {
+										"<_START>" + entries.get(j)[0]
+												+ "<_END>", "", tmps,
+										classlabel, "wrong" };
+								xHashMap.put(j + "", ts);
+								wexam = ts;
+								checknumber++;
+							}
+							boolean isfind = false;
+							for (String[] exppair : examples) {
+								if (exppair[0].compareTo("<_START>"
+										+ dict.get("Org") + "<_END>") == 0) {
+									String[] exp = { dict.get("Org"), tmps };
+									if (!expFeData.containsKey(classlabel)) {
+										Vector<String[]> vstr = new Vector<String[]>();
+										vstr.add(exp);
+										expFeData.put(classlabel, vstr);
+									} else {
+										expFeData.get(classlabel).add(exp);
+									}
+									isfind = true;
+								}
+							}
+							// update positive traing data with user
+							// specification
+							for (String[] tmpx : addExamples) {
+								if (tmpx[0].compareTo(dict.get("Org")) == 0
+										&& tmpx[1].compareTo(dict.get("Tar")) == 0) {
+									String[] exp = { dict.get("Org"), tmps };
+									if (!expFeData.containsKey(classlabel)) {
+										Vector<String[]> vstr = new Vector<String[]>();
+										vstr.add(exp);
+										expFeData.put(classlabel, vstr);
+									} else {
+										expFeData.get(classlabel).add(exp);
+									}
+									isfind = true;
+								}
+							}
+							if (!isfind) {
+								String[] ts = {
+										"<_START>" + entries.get(j)[0]
+												+ "<_END>", s, tmps,
+										classlabel, "right" };
+								if (s.compareTo(entries.get(j)[1]) != 0) {
+									ErrorCnt++;
+									wexam = ts;
+									ts[4] = "wrong";
+								}
+								xHashMap.put(j + "", ts);
+							}
+						}
+
+						if (wexam == null
+								|| (entries.size() - ErrorCnt) * 1.0
+										/ entries.size() == 1.0) {
+							wexam = null;
+							break;
+						}
+						resultString.add(res);
+					}
+					double resultacc = (entries.size() - ErrorCnt) * 1.0
+							/ entries.size();
+					double clf_acc = 1 - clf_acc_error_cnt * 1.0
+							/ clf_acc_total_cnt;
+					double[] accarray = { resultacc, clf_acc };
+					// use uData to refiner the result
+					System.out.println("" + psProgSynthesis.myprog.toString());
+					System.out.println(pls.get(0).toString());
+					// cRefiner.clusterUdata();
+					long t2 = System.currentTimeMillis();
+
+					if (wexam != null) {
+						String[] wexp = new String[2];
+						while (true) {
+							expsel = new ExampleSelection();
+							expsel.inite(xHashMap, expFeData);
+							int e = Integer.parseInt(expsel.Choose());
+							// /
+							System.out.println("Recommand Example: "
+									+ Arrays.toString(xHashMap.get("" + e)));
+							// /
+							if (xHashMap.get("" + e)[4].compareTo("right") != 0) {
+								wexp[0] = "<_START>" + entries.get(e)[0]
+										+ "<_END>";
+								wexp[1] = entries.get(e)[1];
+								if (expsel.isDetectingQuestionableRecord) {
+									iterAfterNoFatalError++;
+									// check whether this record is has the
+									// longest or shortest result
+									Boolean v = visible(xHashMap, "" + e);
+									if (v) {
+										isvisible += 1;
+									}
+								}
+								break;
+							} else {
+								// update positive training data
+								addExamples.add(entries.get(e));
+								// update the rest dataset
+								xHashMap.remove("" + e);
+							}
+							checknumber++;
+						}
+
+						examples.add(wexp);
+
+					} else {
+						measure = examples.size();
+						break;
+					}
+				}
+
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return measure;
+	}
+	public static String test_seq(ArrayList<String[]> exps) {
+		String timeres = "";
+		HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
+		int index = 0;
+		Vector<String> vtmp = new Vector<String>();
+		Vector<String[]> examples = new Vector<String[]>();
+		for (String[] pair : exps) {
+			if (pair == null || pair.length <= 1)
+				break;
+			String[] line = { pair[0], pair[1], "", "", "wrong" };
+			vtmp.add(pair[0]);
+			xHashMap.put(index + "", line);
+			index++;
+		}
+		DataPreProcessor dpp = new DataPreProcessor(vtmp);
+		dpp.run();
+		Messager msger = new Messager();
+		Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
+		ArrayList<double[]> accArrayList = new ArrayList<double[]>();
+		int i = 0;
+		while (i<exps.size()) // repeat as no incorrect answer appears.
+		{
+			String[] tmt = { "<_START>" + exps.get(i)[0] + "<_END>", exps.get(i)[1] };
+			examples.add(tmt);
+			xHashMap = new HashMap<String, String[]>();
+			ProgSynthesis psProgSynthesis = new ProgSynthesis();
+			psProgSynthesis.inite(examples, dpp, msger);
+			Vector<ProgramRule> pls = new Vector<ProgramRule>();
+			long t1 = System.currentTimeMillis();
+			Collection<ProgramRule> ps = psProgSynthesis.run_main();
+			long span = System.currentTimeMillis()-t1;
+			timeres += span+",";
+			// collect history contraints
+			msger.updateCM_Constr(psProgSynthesis.partiCluster.getConstraints());
+			msger.updateWeights(psProgSynthesis.partiCluster.weights);
+			i++;
+			// constraints.addAll();
+			if (ps != null) {
+				pls.addAll(ps);
+				System.out.println("program: "+ps);
+			} else {
+				System.out.println("Cannot find any rule");
+			}
+			if (pls.size() == 0)
+				break;
+		}
+		return timeres;
+	}
+	public static String test_adaptive_seq(ArrayList<String[]> exps) {
+		String timeres = "";
+		HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
+		int index = 0;
+		Vector<String> vtmp = new Vector<String>();
+		Vector<String[]> examples = new Vector<String[]>();
+		for (String[] pair : exps) {
+			if (pair == null || pair.length <= 1)
+				break;
+			String[] line = { pair[0], pair[1], "", "", "wrong" };
+			vtmp.add(pair[0]);
+			xHashMap.put(index + "", line);
+			index++;
+		}
+		DataPreProcessor dpp = new DataPreProcessor(vtmp);
+		dpp.run();
+		Messager msger = new Messager();
+		Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
+		ArrayList<double[]> accArrayList = new ArrayList<double[]>();
+		int i = 0;
+		while (i<exps.size()) // repeat as no incorrect answer appears.
+		{
+			String[] tmt = { "<_START>" + exps.get(i)[0] + "<_END>", exps.get(i)[1] };
+			examples.add(tmt);
+			xHashMap = new HashMap<String, String[]>();
+			ProgSynthesis psProgSynthesis = new ProgSynthesis();
+			psProgSynthesis.inite(examples, dpp, msger);
+			Vector<ProgramRule> pls = new Vector<ProgramRule>();
+			long t1 = System.currentTimeMillis();
+			Collection<ProgramRule> ps = psProgSynthesis.adaptive_main();
+			long span = System.currentTimeMillis()-t1;
+			timeres += span+",";
+			// collect history contraints
+			msger.updateCM_Constr(psProgSynthesis.partiCluster.getConstraints());
+			msger.updateWeights(psProgSynthesis.partiCluster.weights);
+			i++;
+			// constraints.addAll();
+			if (ps != null) {
+				pls.addAll(ps);
+				System.out.println("program: "+ps);
+			} else {
+				System.out.println("Cannot find any rule");
+			}
+			if (pls.size() == 0)
+				break;
+		}
+		return timeres;
+	}
+
+	public static void test3(String dirpath) {
 		HashMap<String, Vector<String>> records = new HashMap<String, Vector<String>>();
 		File nf = new File(dirpath);
 		File[] allfiles = nf.listFiles();
@@ -94,8 +462,9 @@ public class Test {
 			Vector<String[]> addExamples = new Vector<String[]>();
 			Vector<String[]> entries = new Vector<String[]>();
 			try {
-				if (f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
-					MyLogger.logsth("========" + f.getName() + "============\n");
+				if (f.getName().indexOf(".csv") != -1
+						&& f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
+					// MyLogger.logsth("========"+f.getName()+"============\n");
 					HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
 					@SuppressWarnings("resource")
 					CSVReader cr = new CSVReader(new FileReader(f), ',', '"',
@@ -115,7 +484,10 @@ public class Test {
 						xHashMap.put(index + "", line);
 						index++;
 					}
-					Vector<String> vob = UtilTools.buildDict(vtmp);
+					DataPreProcessor dpp = new DataPreProcessor(vtmp);
+					dpp.run();
+					Messager msger = new Messager();
+					Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
 					if (entries.size() <= 1)
 						continue;
 					ExampleSelection expsel = new ExampleSelection();
@@ -127,30 +499,43 @@ public class Test {
 							entries.get(target)[1] };
 					examples.add(mt);
 					ExampleSelection.firsttime = false;
-					while (true) // repeat as no correct answer appears.
+					// accuracy record code
+					ArrayList<double[]> accArrayList = new ArrayList<double[]>();
+
+					while (true) // repeat as no incorrect answer appears.
 					{
 						long checknumber = 1;
 						long iterAfterNoFatalError = 0;
-						long isvisible = 0;
 						HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
 						Vector<String> resultString = new Vector<String>();
 						xHashMap = new HashMap<String, String[]>();
 						ProgSynthesis psProgSynthesis = new ProgSynthesis();
-						psProgSynthesis.vocab = vob.toArray(new String[vob
-								.size()]);
-						psProgSynthesis.inite(examples);
+						HashMap<String, String> unlabeledData = new HashMap<String, String>();
+						for (int i = 0; i < vtmp.size(); i++) {
+							unlabeledData.put("" + i, vtmp.get(i));
+						}
+						psProgSynthesis.inite(examples, dpp, msger);
 						Vector<ProgramRule> pls = new Vector<ProgramRule>();
-						Collection<ProgramRule> ps = psProgSynthesis.run_main();
-						if (ps != null)
+						Collection<ProgramRule> ps = psProgSynthesis
+								.adaptive_main();
+						// collect history contraints
+						msger.updateCM_Constr(psProgSynthesis.partiCluster
+								.getConstraints());
+						msger.updateWeights(psProgSynthesis.partiCluster.weights);
+						// constraints.addAll();
+						if (ps != null) {
 							pls.addAll(ps);
-						else {
+						} else {
 							System.out.println("Cannot find any rule");
 						}
 						String[] wexam = null;
 						if (pls.size() == 0)
 							break;
 						long t1 = System.currentTimeMillis();
-
+						int ErrorCnt = 0;
+						int clf_acc_error_cnt = 0;
+						int clf_acc_total_cnt = 0;
+						HashMap<String, HashMap<String, String>> uData = new HashMap<String, HashMap<String, String>>();
 						for (int i = 0; i < pls.size(); i++) {
 							ProgramRule script = pls.get(i);
 							// System.out.println(script);
@@ -163,19 +548,42 @@ public class Test {
 								String tmps = worker.execute_debug(entries
 										.get(j)[0]);
 								HashMap<String, String> dict = new HashMap<String, String>();
+								dict.put("class", classlabel);
 								UtilTools.StringColorCode(entries.get(j)[0],
 										tmps, dict);
 								String s = dict.get("Tar");
+								if (Test.isExample(entries.get(j)[0], examples)) {
+									s = entries.get(j)[1];
+								}
 								res += s + "\n";
 								if (ConfigParameters.debug == 1) {
 									String indicator = "wrong";
 									if (s.compareTo(entries.get(j)[1]) == 0)
 										indicator = "correct";
-									System.out.println("result:   "
-											+ dict.get("Org") + "   "
-											+ dict.get("Tardis") + "    "
-											+ indicator);
+									if (!uData.containsKey(j + ""))
+										uData.put(j + "", dict);
 								}
+								// classifier accuracy
+
+								boolean existres = false;
+								for (InterpreterType w : script.rules.values()) {
+									String xtmp = w.execute(entries.get(j)[0]);
+									if (xtmp != null
+											&& xtmp.length() > 0
+											&& xtmp.compareTo(entries.get(j)[1]) == 0) {
+										existres = true;
+										break;
+									}
+								}
+								if (existres) {
+									clf_acc_total_cnt++;
+									if (s == null
+											|| s.length() == 0
+											|| s.compareTo(entries.get(j)[1]) != 0) {
+										clf_acc_error_cnt++;
+									}
+								}
+								//
 								if (s == null || s.length() == 0) {
 									String[] ts = {
 											"<_START>" + entries.get(j)[0]
@@ -223,16 +631,317 @@ public class Test {
 													+ "<_END>", s, tmps,
 											classlabel, "right" };
 									if (s.compareTo(entries.get(j)[1]) != 0) {
+										ErrorCnt++;
 										wexam = ts;
 										ts[4] = "wrong";
 									}
 									xHashMap.put(j + "", ts);
 								}
 							}
-							if (wexam == null)
+
+							if (wexam == null
+									|| (entries.size() - ErrorCnt) * 1.0
+											/ entries.size() == 1.0) {
+								wexam = null;
 								break;
+							}
 							resultString.add(res);
 						}
+						double resultacc = (entries.size() - ErrorCnt) * 1.0
+								/ entries.size();
+						double clf_acc = 1 - clf_acc_error_cnt * 1.0
+								/ clf_acc_total_cnt;
+						double[] accarray = { resultacc, clf_acc };
+						// use uData to refiner the result
+						System.out.println(""
+								+ psProgSynthesis.myprog.toString());
+						System.out.println(pls.get(0).toString());
+						// cRefiner.clusterUdata();
+						records.put(f.getName() + examples.size(), resultString);
+						long t2 = System.currentTimeMillis();
+
+						if (wexam != null) {
+							String[] wexp = new String[2];
+							while (true) {
+								expsel = new ExampleSelection();
+								expsel.inite(xHashMap, expFeData);
+								int e = Integer.parseInt(expsel.Choose());
+								// /
+								System.out
+										.println("Recommand Example: "
+												+ Arrays.toString(xHashMap
+														.get("" + e)));
+								// /
+								if (xHashMap.get("" + e)[4].compareTo("right") != 0) {
+									wexp[0] = "<_START>" + entries.get(e)[0]
+											+ "<_END>";
+									wexp[1] = entries.get(e)[1];
+									if (expsel.isDetectingQuestionableRecord) {
+										iterAfterNoFatalError++;
+										// check whether this record is has the
+										// longest or shortest result
+										Boolean v = visible(xHashMap, "" + e);
+									}
+									break;
+								} else {
+									// update positive training data
+									addExamples.add(entries.get(e));
+									// update the rest dataset
+									xHashMap.remove("" + e);
+								}
+								checknumber++;
+							}
+
+							examples.add(wexp);
+							FileStat fileStat = new FileStat(f.getName() + "",
+									psProgSynthesis.learnspan,
+									psProgSynthesis.genspan, (t2 - t1),
+									examples.size(), examples,
+									psProgSynthesis.partiCluster.failedCnt,
+									checknumber, iterAfterNoFatalError,
+									psProgSynthesis.myprog.partitions.size(),
+									pls.get(0).toString(), resultacc, clf_acc);
+							dCollection.addEntry(fileStat);
+						} else {
+							FileStat fileStat = new FileStat(f.getName() + "",
+									psProgSynthesis.learnspan,
+									psProgSynthesis.genspan, (t2 - t1),
+									examples.size(), examples,
+									psProgSynthesis.partiCluster.failedCnt,
+									checknumber, iterAfterNoFatalError,
+									psProgSynthesis.myprog.partitions.size(),
+									pls.get(0).toString(), resultacc, clf_acc);
+							dCollection.addEntry(fileStat);
+							dCollection.addSucceededFile(f.getName());
+							break;
+						}
+					}
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		dCollection.print();
+		dCollection.print1();
+		Prober.displayProgram();
+		//
+	}
+
+	public static void test4(String dirpath) {
+		HashMap<String, Vector<String>> records = new HashMap<String, Vector<String>>();
+		File nf = new File(dirpath);
+		File[] allfiles = nf.listFiles();
+		// statistics
+		DataCollection dCollection = new DataCollection();
+		// list all the csv file under the dir
+		for (File f : allfiles) {
+			Vector<String[]> examples = new Vector<String[]>();
+			Vector<String[]> addExamples = new Vector<String[]>();
+			Vector<String[]> entries = new Vector<String[]>();
+			try {
+				if (f.getName().indexOf(".csv") != -1
+						&& f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
+					// MyLogger.logsth("========"+f.getName()+"============\n");
+					HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
+					@SuppressWarnings("resource")
+					CSVReader cr = new CSVReader(new FileReader(f), ',', '"',
+							'\0');
+					String[] pair;
+					int index = 0;
+					Vector<String> vtmp = new Vector<String>();
+					while ((pair = cr.readNext()) != null) {
+						if (pair == null || pair.length <= 1)
+							break;
+						entries.add(pair);
+						vtmp.add(pair[0]);
+						String[] line = { pair[0], pair[1], "", "", "wrong" }; // org,
+																				// tar,
+																				// tarcode,
+																				// label
+						xHashMap.put(index + "", line);
+						index++;
+					}
+					DataPreProcessor dpp = new DataPreProcessor(vtmp);
+					dpp.run();
+					Messager msger = new Messager();
+					Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
+					if (entries.size() <= 1)
+						continue;
+					ExampleSelection expsel = new ExampleSelection();
+					ExampleSelection.firsttime = true;
+					expsel.inite(xHashMap, null);
+					int target = Integer.parseInt(expsel.Choose());
+					String[] mt = {
+							"<_START>" + entries.get(target)[0] + "<_END>",
+							entries.get(target)[1] };
+					examples.add(mt);
+					ExampleSelection.firsttime = false;
+					// accuracy record code
+					ArrayList<double[]> accArrayList = new ArrayList<double[]>();
+					long stime = System.currentTimeMillis();
+					boolean overtime = true;
+					while (true) // repeat as no incorrect answer appears.
+					{
+						if (examples.size() == 8) {
+							System.out.println("Hello World");
+						}
+						if (System.currentTimeMillis() - stime > 600000) {
+							overtime = false;
+							break;
+						}
+						long checknumber = 1;
+						long iterAfterNoFatalError = 0;
+						long isvisible = 0;
+						HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
+						Vector<String> resultString = new Vector<String>();
+						xHashMap = new HashMap<String, String[]>();
+						ProgSynthesis psProgSynthesis = new ProgSynthesis();
+						HashMap<String, String> unlabeledData = new HashMap<String, String>();
+						for (int i = 0; i < vtmp.size(); i++) {
+							unlabeledData.put("" + i, vtmp.get(i));
+						}
+						psProgSynthesis.inite(examples, dpp, msger);
+						Vector<ProgramRule> pls = new Vector<ProgramRule>();
+						Collection<ProgramRule> ps = psProgSynthesis.run_main();
+						// collect history contraints
+						msger.updateCM_Constr(psProgSynthesis.partiCluster
+								.getConstraints());
+						msger.updateWeights(psProgSynthesis.partiCluster.weights);
+						// constraints.addAll();
+						if (ps != null) {
+							pls.addAll(ps);
+						} else {
+							System.out.println("Cannot find any rule");
+						}
+						String[] wexam = null;
+						if (pls.size() == 0)
+							break;
+						long t1 = System.currentTimeMillis();
+						int ErrorCnt = 0;
+						int clf_acc_error_cnt = 0;
+						int clf_acc_total_cnt = 0;
+						HashMap<String, HashMap<String, String>> uData = new HashMap<String, HashMap<String, String>>();
+						for (int i = 0; i < pls.size(); i++) {
+							ProgramRule script = pls.get(i);
+							// System.out.println(script);
+							String res = "";
+							for (int j = 0; j < entries.size(); j++) {
+								InterpreterType worker = script
+										.getRuleForValue(entries.get(j)[0]);
+								String classlabel = script
+										.getClassForValue(entries.get(j)[0]);
+								String tmps = worker.execute_debug(entries
+										.get(j)[0]);
+								HashMap<String, String> dict = new HashMap<String, String>();
+								dict.put("class", classlabel);
+								UtilTools.StringColorCode(entries.get(j)[0],
+										tmps, dict);
+								String s = dict.get("Tar");
+								if (Test.isExample(entries.get(j)[0], examples)) {
+									s = entries.get(j)[1];
+								}
+								res += s + "\n";
+								if (ConfigParameters.debug == 1) {
+									String indicator = "wrong";
+									if (s.compareTo(entries.get(j)[1]) == 0)
+										indicator = "correct";
+									if (!uData.containsKey(j + ""))
+										uData.put(j + "", dict);
+								}
+								// classifier accuracy
+
+								boolean existres = false;
+								for (InterpreterType w : script.rules.values()) {
+									String xtmp = w.execute(entries.get(j)[0]);
+									if (xtmp != null
+											&& xtmp.length() > 0
+											&& xtmp.compareTo(entries.get(j)[1]) == 0) {
+										existres = true;
+										break;
+									}
+								}
+								if (existres) {
+									clf_acc_total_cnt++;
+									if (s == null
+											|| s.length() == 0
+											|| s.compareTo(entries.get(j)[1]) != 0) {
+										clf_acc_error_cnt++;
+									}
+								}
+								//
+								if (s == null || s.length() == 0) {
+									String[] ts = {
+											"<_START>" + entries.get(j)[0]
+													+ "<_END>", "", tmps,
+											classlabel, "wrong" };
+									xHashMap.put(j + "", ts);
+									wexam = ts;
+									checknumber++;
+								}
+								boolean isfind = false;
+								for (String[] exppair : examples) {
+									if (exppair[0].compareTo("<_START>"
+											+ dict.get("Org") + "<_END>") == 0) {
+										String[] exp = { dict.get("Org"), tmps };
+										if (!expFeData.containsKey(classlabel)) {
+											Vector<String[]> vstr = new Vector<String[]>();
+											vstr.add(exp);
+											expFeData.put(classlabel, vstr);
+										} else {
+											expFeData.get(classlabel).add(exp);
+										}
+										isfind = true;
+									}
+								}
+								// update positive traing data with user
+								// specification
+								for (String[] tmpx : addExamples) {
+									if (tmpx[0].compareTo(dict.get("Org")) == 0
+											&& tmpx[1].compareTo(dict
+													.get("Tar")) == 0) {
+										String[] exp = { dict.get("Org"), tmps };
+										if (!expFeData.containsKey(classlabel)) {
+											Vector<String[]> vstr = new Vector<String[]>();
+											vstr.add(exp);
+											expFeData.put(classlabel, vstr);
+										} else {
+											expFeData.get(classlabel).add(exp);
+										}
+										isfind = true;
+									}
+								}
+								if (!isfind) {
+									String[] ts = {
+											"<_START>" + entries.get(j)[0]
+													+ "<_END>", s, tmps,
+											classlabel, "right" };
+									if (s.compareTo(entries.get(j)[1]) != 0) {
+										ErrorCnt++;
+										wexam = ts;
+										ts[4] = "wrong";
+									}
+									xHashMap.put(j + "", ts);
+								}
+							}
+
+							if (wexam == null
+									|| (entries.size() - ErrorCnt) * 1.0
+											/ entries.size() == 1.0) {
+								wexam = null;
+								break;
+							}
+							resultString.add(res);
+						}
+						double resultacc = (entries.size() - ErrorCnt) * 1.0
+								/ entries.size();
+						double clf_acc = 1 - clf_acc_error_cnt * 1.0
+								/ clf_acc_total_cnt;
+						double[] accarray = { resultacc, clf_acc };
+						// use uData to refiner the result
+						System.out.println(""
+								+ psProgSynthesis.myprog.toString());
+						System.out.println(pls.get(0).toString());
+						// cRefiner.clusterUdata();
 						records.put(f.getName() + examples.size(), resultString);
 						long t2 = System.currentTimeMillis();
 
@@ -270,27 +979,30 @@ public class Test {
 								}
 								checknumber++;
 							}
+
 							examples.add(wexp);
-							FileStat fileStat = new FileStat(f.getName(),
+							FileStat fileStat = new FileStat(f.getName() + "",
 									psProgSynthesis.learnspan,
 									psProgSynthesis.genspan, (t2 - t1),
 									examples.size(), examples,
-									psProgSynthesis.ruleNo, checknumber,
-									iterAfterNoFatalError, isvisible, pls
-											.get(0).toString());
+									psProgSynthesis.partiCluster.failedCnt,
+									checknumber, iterAfterNoFatalError,
+									psProgSynthesis.myprog.partitions.size(),
+									pls.get(0).toString(), resultacc, clf_acc);
 							dCollection.addEntry(fileStat);
 						} else {
-							FileStat fileStat = new FileStat(f.getName(),
+							FileStat fileStat = new FileStat(f.getName() + "",
 									psProgSynthesis.learnspan,
 									psProgSynthesis.genspan, (t2 - t1),
 									examples.size(), examples,
-									psProgSynthesis.ruleNo, checknumber,
-									iterAfterNoFatalError, isvisible, pls
-											.get(0).toString());
+									psProgSynthesis.partiCluster.failedCnt,
+									checknumber, iterAfterNoFatalError,
+									psProgSynthesis.myprog.partitions.size(),
+									pls.get(0).toString(), resultacc, clf_acc);
 							dCollection.addEntry(fileStat);
+							dCollection.addSucceededFile(f.getName());
 							break;
 						}
-
 					}
 				}
 			} catch (Exception ex) {
@@ -299,7 +1011,20 @@ public class Test {
 		}
 		dCollection.print();
 		dCollection.print1();
-		// hashResultPrint(records);
+		Prober.displayProgram();
+		//
+	}
+
+	public static boolean isExample(String var, Vector<String[]> examples) {
+		boolean is = false;
+		String s = "<_START>" + var + "<_END>";
+		for (String[] x : examples) {
+			if (s.compareTo(x[0]) == 0) {
+				is = true;
+				break;
+			}
+		}
+		return is;
 	}
 
 	public static void hashResultPrint(HashMap<String, Vector<String>> res) {
@@ -313,63 +1038,21 @@ public class Test {
 		System.out.println("" + s);
 	}
 
-	public static void test0_sub(Vector<String[]> all, Vector<String[]> cand,
-			Vector<String[]> examples, int cnt) {
-		if (cand.size() <= 0) {
-			if (cnt > Test.MaximalNumber) {
-				MaximalNumber = cnt;
-				Test.larexamples = examples;
-			}
-			if (cnt < Test.MinimalNumber) {
-				MinimalNumber = cnt;
-				Test.smalexamples = examples;
-			}
-			// System.out.println("returned");
-			return;
-		}
-		for (int p = 0; p < cand.size(); p++) {
-			Vector<String[]> tmp = new Vector<String[]>();
-			tmp.addAll(examples);
-			String[] x = { "<_START>" + cand.get(p)[0] + "<_END>",
-					cand.get(p)[1] };
-			tmp.add(x);
-			Vector<String[]> tmpxStrings = new Vector<String[]>();
-
-			ProgSynthesis psProgSynthesis = new ProgSynthesis();
-			psProgSynthesis.inite(tmp);
-			Vector<ProgramRule> pls = new Vector<ProgramRule>();
-			Collection<ProgramRule> ps = psProgSynthesis.run_main();
-			if (ps != null)
-				pls.addAll(ps);
-			String[] wexam = null;
-			if (pls.size() == 0)
-				break;
-			for (int i = 0; i < pls.size(); i++) {
-				ProgramRule script = pls.get(i);
-				for (int j = 0; j < all.size(); j++) {
-					InterpreterType worker = script
-							.getRuleForValue(all.get(j)[0]);
-					String s = worker.execute(all.get(j)[0]);
-					// System.out.println("result:   " + s);
-					if (s == null || s.length() == 0) {
-						wexam = all.get(j);
-						String[] ep = { "<_START>" + wexam[0] + "<_END>",
-								wexam[1] };
-						tmpxStrings.add(ep);
-						continue;
-					}
-					if (s.compareTo(all.get(j)[1]) != 0) {
-						wexam = all.get(j);
-						String[] ep = { "<_START>" + wexam[0] + "<_END>",
-								wexam[1] };
-						tmpxStrings.add(ep);
-						continue;
-					}
-				}
-
-			}
-			test0_sub(all, tmpxStrings, tmp, cnt + 1);
-		}
+	public static void runSeriseExper() {
+		ExampleCluster.option = method.DPIC;
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		ExampleCluster.option = method.DPIC;
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		ExampleCluster.option = method.DP;
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		ExampleCluster.option = method.SPIC;
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		ExampleCluster.option = method.SP;
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		ExampleCluster.option = method.CPIC;
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		ExampleCluster.option = method.CP;
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
 	}
 
 	public static int MaximalNumber = -1;
@@ -377,65 +1060,15 @@ public class Test {
 	public static Vector<String[]> larexamples = new Vector<String[]>();
 	public static Vector<String[]> smalexamples = new Vector<String[]>();
 
-	public static void test0(String dirpath) {
-		File nf = new File(dirpath);
-		File[] allfiles = nf.listFiles();
-		// list all the csv file under the dir
-		for (File f : allfiles) {
-			Vector<String[]> examples = new Vector<String[]>();
-			Vector<String[]> entries = new Vector<String[]>();
-			try {
-				if (f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
-					@SuppressWarnings("resource")
-					CSVReader cr = new CSVReader(new FileReader(f), ',', '"',
-							'\0');
-					String[] pair;
-					while ((pair = cr.readNext()) != null) {
-						if (pair == null || pair.length <= 1)
-							break;
-						entries.add(pair);
-					}
-					if (entries.size() <= 1)
-						continue;
-					int cnt = 0;
-					Vector<String[]> candStrings = new Vector<String[]>();
-					candStrings.addAll(entries);
-					test0_sub(entries, candStrings, examples, cnt);
-					System.out.println("File " + f.getName() + "\n");
-					System.out.println("Max: " + Test.MaximalNumber);
-					System.out.println("Min: " + Test.MinimalNumber);
-					String str = "Larget number of Examples:\n";
-					for (int x = 0; x < Test.larexamples.size(); x++) {
-						str += String.format("exp: %s, %s\n",
-								larexamples.get(x)[0], larexamples.get(x)[1]);
-					}
-					System.out.println("Largest: " + str);
-					String str1 = "Smallest number of Examples:\n";
-					for (int x = 0; x < Test.smalexamples.size(); x++) {
-						str1 += String.format("exp: %s, %s\n",
-								smalexamples.get(x)[0], smalexamples.get(x)[1]);
-					}
-					System.out.println("Smallest: " + str1);
-					// clear
-					Test.MaximalNumber = -1;
-					Test.larexamples = new Vector<String[]>();
-					Test.MinimalNumber = 200;
-					Test.smalexamples = new Vector<String[]>();
-				}
-				//
-			} catch (Exception e) {
-				System.out.println("" + e.toString());
-			}
-		}
-	}
-
 	public static void main(String[] args) {
 		// load parameters
 		ConfigParameters cfg = new ConfigParameters();
 		cfg.initeParameters();
 		DataCollection.config = cfg.getString();
-		// Test.test0("/Users/bowu/Research/testdata/TestSingleFile");
 		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		// Test.test1();
+		//Test.test3("/Users/bowu/Research/testdata/TestSingleFile");
+		// Test.runSeriseExper();
+		// Test test = new Test();
+		// test.parameterSelection("/Users/bowu/Research/testdata/TestSingleFile");
 	}
 }

@@ -115,8 +115,6 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							.value(type.getOrigin().name())
 							.key(JsonKeys.ConfidenceLevel.name())
 							.value(type.getConfidenceLevel().name())
-							.key(JsonKeys.isPartOfKey.name())
-							.value(type.isPartOfKey())
 							.key(JsonKeys.isPrimary.name())
 							.value(true);
 					

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
@@ -28,7 +29,9 @@ public class BaseKarma {
 	protected String modelUri;
 	protected String modelFile;
 	protected URL modelURL;
-	public void setup(String inputTypeString, String modelUri, String modelFile, String baseURI) {
+	protected ContextIdentifier contextId; 
+	public void setup(String inputTypeString, String modelUri, String modelFile, 
+			String baseURI, String contextURI) {
 
 		try {
 			setupKarmaHome();
@@ -37,6 +40,9 @@ public class BaseKarma {
 			this.modelUri = modelUri;
 			this.modelFile = modelFile;
 			addModel();
+			if (contextURI != null && !contextURI.isEmpty()) {
+				addContext(contextURI);
+			}
 		} catch (KarmaException | IOException e) {
 			LOG.error("Unable to complete Karma set up: " + e.getMessage());
 			throw new RuntimeException("Unable to complete Karma set up: "
@@ -67,8 +73,13 @@ public class BaseKarma {
 		generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
 	}
 
+	private void addContext(String contextURI) throws MalformedURLException {
+		contextId = new ContextIdentifier("context", new URL(contextURI));
+		generator.addContext(contextId);
+	}
+
 	private void determineInputType(String inputTypeString) {
-	
+
 		inputType = null;
 		if (inputTypeString != null) {
 			try {
@@ -90,6 +101,10 @@ public class BaseKarma {
 
 	public String getBaseURI() {
 		return baseURI;
+	}
+	
+	public ContextIdentifier getContextId() {
+		return contextId;
 	}
 
 	public InputType getInputType() {

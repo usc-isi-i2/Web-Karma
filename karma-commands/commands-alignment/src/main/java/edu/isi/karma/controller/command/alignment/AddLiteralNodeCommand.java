@@ -1,12 +1,18 @@
 package edu.isi.karma.controller.command.alignment;
 
+import java.io.PrintWriter;
+
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.json.JSONException;
+import org.json.JSONStringer;
+import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -14,7 +20,9 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.view.VWorkspace;
 
 /**
  * Add a Literal Node. This node need not be connected to anything in the Steiner Tree.
@@ -84,21 +92,48 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 		oldGraph = (DirectedWeightedMultigraph<Node, DefaultLink>) alignment
 				.getGraph().clone();
 
+		UpdateContainer uc = new UpdateContainer();
 		try {
 			if(nodeId == null) {
-				alignment.addLiteralNode(literalValue, literalType, isUri);
+				final LiteralNode ln = alignment.addLiteralNode(literalValue, literalType, isUri);
+				uc.add(new AbstractUpdate() {
+
+					@Override
+					public void generateJson(String prefix, PrintWriter pw,
+							VWorkspace vWorkspace) {
+						try {
+							JSONStringer jsonStr = new JSONStringer();
+							
+							JSONWriter writer = jsonStr.object();
+							writer.key("worksheetId").value(worksheetId);
+							writer.key("updateType").value("AddLiteralNodeUpdate");	
+							writer.key("hNodeId").value(ln.getId());
+							writer.key("uri").value(literalValue);
+							writer.endObject();
+							pw.print(writer.toString());
+						} catch (JSONException e) {
+							logger.error("Error occured while writing to JSON!", e);
+							
+						}
+						
+					}
+					
+				});
 			} else {
 				alignment.updateLiteralNode(nodeId, literalValue, literalType, isUri);
 			}
-			alignment.align();
+			
+			if(!this.isExecutedInBatch())
+				alignment.align();
+			
 		} catch (Exception e) {
 			logger.error("Error adding Literal Node:" , e);
-			UpdateContainer uc = new UpdateContainer();
 			uc.add(new ErrorUpdate("Error adding Literal Node"));
 			return uc;
 		}
 
-		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
+		uc.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment));
+		return uc;
 	}
 
 	@Override

@@ -33,7 +33,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.cleaning.DataPreProcessor;
 import edu.isi.karma.cleaning.ExampleSelection;
+import edu.isi.karma.cleaning.Messager;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
 import edu.isi.karma.cleaning.UtilTools;
@@ -72,7 +74,6 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		cfg.initeParameters();
 		DataCollection.config = cfg.getString();
 		this.examples = parseExample(examples);
-
 	}
 
 	private HashSet<String> parseNodeIds(String Ids) {
@@ -118,30 +119,6 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		es.inite(xHashMap, expFeData);
 		return es.Choose();
 	}
-
-/*	private static Vector<String> getTopK(Set<String> res, int k, String cmpres) {
-		String dirpathString = ServletContextParameterMap
-				.getParameterValue(ContextParameter.USER_DIRECTORY_PATH);
-		if (dirpathString.compareTo("") == 0) {
-			dirpathString = "./src/main/webapp/";
-		}
-
-		String trainPath = dirpathString + "grammar/features.arff";
-		//
-		String[] x = (String[]) res.toArray(new String[res.size()]);
-		logger.trace("" + x);
-		// Vector<Double> scores = UtilTools.getScores(x, trainPath);
-		Vector<Double> scores = UtilTools.getScores2(x, cmpres);
-		logger.trace("Scores: " + scores);
-		Vector<Integer> ins = UtilTools.topKindexs(scores, k);
-		logger.trace("Indexs: " + ins);
-		Vector<String> y = new Vector<String>();
-		for (int i = 0; i < k && i < ins.size(); i++) {
-			y.add(x[ins.get(i)]);
-		}
-		return y;
-	}*/
-
 	@Override
 	public String getCommandName() {
 		return GenerateCleaningRulesCommand.class.getSimpleName();
@@ -179,6 +156,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 				selectedPath = path;
 			}
 		}
+		
 		Collection<Node> nodes = new ArrayList<Node>();
 		wk.getDataTable().collectNodes(selectedPath, nodes, selection);
 		for (Node node : nodes) {
@@ -192,7 +170,28 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		}
 		RamblerValueCollection vc = new RamblerValueCollection(rows);
 		HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
-		inputs = new RamblerTransformationInputs(examples, vc);
+		Messager mg = null;
+		if(wk.getMsg()!= null)
+		{
+			mg = (Messager) wk.getMsg();
+		}
+		else
+		{
+			mg = new Messager();
+			wk.setMsg(mg);
+		}
+		DataPreProcessor dp = null;
+		if(wk.getDpp()!= null)
+		{
+			dp = (DataPreProcessor) wk.getDpp();
+		}
+		else
+		{
+			dp = new DataPreProcessor(rows.values());
+			dp.run();
+			wk.setDpp(dp);
+		}
+		inputs = new RamblerTransformationInputs(examples, vc,dp,mg);
 		// generate the program
 		boolean results = false;
 		int iterNum = 0;
@@ -207,8 +206,6 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 			v.add(eString);
 			vb_cnt ++;
 		}
-		Vector<String> vob = UtilTools.buildDict(v);
-		inputs.setVocab(vob.toArray(new String[vob.size()]));
 		while (iterNum < 1 && !results) // try to find an program within iterNum
 		{
 			rtf = new RamblerTransformationOutput(inputs);

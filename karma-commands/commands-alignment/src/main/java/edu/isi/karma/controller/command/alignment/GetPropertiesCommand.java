@@ -30,6 +30,7 @@ import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
+import edu.isi.karma.rep.alignment.ObjectPropertyType;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetPropertiesCommand extends WorksheetCommand {
@@ -37,11 +38,11 @@ public class GetPropertiesCommand extends WorksheetCommand {
 	final private INTERNAL_PROP_RANGE propertiesRange;
 	
 	public enum INTERNAL_PROP_RANGE {
-		allDataProperties, allObjectProperties, existingProperties, dataPropertiesForClass, propertiesWithDomainRange
+		allDataProperties, allObjectProperties, allDataAndObjectProperties, existingProperties, dataPropertiesForClass, propertiesWithDomainRange
 	}
 	
 	private enum JsonKeys {
-		updateType, label, id, properties, uri
+		updateType, label, id, properties, uri, type
 	}
 	
 	private String classURI, domainURI, rangeURI;
@@ -87,13 +88,23 @@ public class GetPropertiesCommand extends WorksheetCommand {
 			HashMap<String, Label> linkList = ontMgr.getObjectProperties();
 			if(linkList != null) {
 				for(Label label : linkList.values()) {
-					properties.add(new DataPropertyLink(label.getUri(), label));
+					properties.add(new ObjectPropertyLink(label.getUri(), label, ObjectPropertyType.None));
 				}
 			}
 		} else if(propertiesRange == INTERNAL_PROP_RANGE.allDataProperties) {
 			HashMap<String, Label> linkList = ontMgr.getDataProperties();
 			for(Label label : linkList.values()) {
 				properties.add(new DataPropertyLink(label.getUri(), label));
+			}
+		} else if(propertiesRange == INTERNAL_PROP_RANGE.allDataAndObjectProperties) {
+			HashMap<String, Label> linkList = ontMgr.getDataProperties();
+			for(Label label : linkList.values()) {
+				properties.add(new DataPropertyLink(label.getUri(), label));
+			}
+			HashMap<String, Label> objectLinkList = ontMgr.getObjectProperties();
+			for(Label label : objectLinkList.values()) {
+				if(!linkList.containsValue(label))
+					properties.add(new ObjectPropertyLink(label.getUri(), label, ObjectPropertyType.None));
 			}
 		} else if(propertiesRange == INTERNAL_PROP_RANGE.propertiesWithDomainRange) {
 			Map<String, Label> linkList = ontMgr.getObjectPropertiesByDomainRange(domainURI, rangeURI, true);
@@ -154,6 +165,13 @@ public class GetPropertiesCommand extends WorksheetCommand {
 						edgeObj.put(JsonKeys.label.name(), edgeLabelStr);
 						edgeObj.put(JsonKeys.uri.name(), linkLabel.getUri());
 						edgeObj.put(JsonKeys.id.name(), link.getId());
+						
+						
+						if(link instanceof ObjectPropertyLink)
+							edgeObj.put(JsonKeys.type.name(), "objectProperty");
+						else
+							edgeObj.put(JsonKeys.type.name(), "dataProperty");
+						
 						resultArray.put(edgeObj);
 					}
 					

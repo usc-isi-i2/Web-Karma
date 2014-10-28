@@ -111,7 +111,8 @@ public class AddUserLinkToAlignmentCommand extends WorksheetCommand {
 		
 		// Change the status of the user selected edge
 		alignment.changeLinkStatus(edgeId, LinkStatus.ForcedByUser);
-		alignment.align();
+		if(!this.isExecutedInBatch())
+			alignment.align();
 		
 		return getAlignmentUpdateContainer(alignment, worksheet, workspace);
 	}

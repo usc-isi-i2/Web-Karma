@@ -73,11 +73,12 @@ public class RamblerTransformationOutput implements TransformationOutput {
 			exps.add(tmp);
 		}
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
-		psProgSynthesis.vocab = this.input.getVocab();
-		psProgSynthesis.inite(exps);
+		psProgSynthesis.inite(exps, input.dpp, input.msg);
 		// add time out here
 		Collection<ProgramRule> rules = null;
-		rules = psProgSynthesis.run_main();
+		rules = psProgSynthesis.adaptive_main();
+		input.msg.updateCM_Constr(psProgSynthesis.partiCluster.getConstraints());
+		input.msg.updateWeights(psProgSynthesis.partiCluster.weights);
 
 		if (rules == null || rules.size() == 0) {
 			ProgramRule r = new ProgramRule(ProgramRule.IDENTITY);
@@ -85,7 +86,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 			this.nullRule = true;
 			rules = new Vector<ProgramRule>();
 			rules.add(r);
-			// return;
+			// return;+
 		}
 		Iterator<ProgramRule> iterator = rules.iterator();
 		while (iterator.hasNext()) {

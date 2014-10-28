@@ -94,15 +94,12 @@ public class GraphBuilder {
 	private HashMap<String, Set<SemanticTypeMapping>> semanticTypeMatches; // nodeUri + dataPropertyUri --> SemanticType Mapping
 	private int numberOfModelLinks = 0;
 
-	private HashMap<Node, Node> node2Domain;
-
-	
 	// Constructor
 	
-	public GraphBuilder(OntologyManager ontologyManager, NodeIdFactory nodeIdFactory, boolean addThingNode) { 
+	public GraphBuilder(OntologyManager ontologyManager, boolean addThingNode) { 
 		
 		this.ontologyManager = ontologyManager;
-		this.nodeIdFactory = nodeIdFactory;
+		this.nodeIdFactory = new NodeIdFactory();
 
 		this.idToNodeMap = new HashMap<String, Node>();
 		this.idToLinkMap = new HashMap<String, LabeledLink>();
@@ -124,7 +121,6 @@ public class GraphBuilder {
 		this.semanticTypeMatches = new HashMap<String, Set<SemanticTypeMapping>>();
 		
 		this.nodeDataProperties= new HashMap<String,Set<Node>>(); 
-		this.node2Domain = new HashMap<Node,Node>();
 		
 		this.forcedNodes = new HashSet<Node>();
 		if (addThingNode) 
@@ -134,7 +130,7 @@ public class GraphBuilder {
 	
 	public GraphBuilder(OntologyManager ontologyManager, DirectedWeightedMultigraph<Node, DefaultLink> graph) {
 		
-		this(ontologyManager, new NodeIdFactory(), false);
+		this(ontologyManager, false);
 		if (graph == null)
 			return;
 		
@@ -155,9 +151,7 @@ public class GraphBuilder {
 			source = link.getSource();
 			target = link.getTarget();
 			
-			double w = link.getWeight();
-			if (this.addLink(source, target, link))
-				changeLinkWeight(link, w);
+			this.addLink(source, target, link);
 		}
 		
 		logger.debug("graph has been loaded.");
@@ -226,10 +220,6 @@ public class GraphBuilder {
 	public int getNumberOfModelLinks() {
 		return numberOfModelLinks;
 	}
-	
-	public HashMap<Node, Node> getNode2Domain() {
-		return node2Domain;
-	}
 
 	public HashMap<String, Set<Node>> getNodeDataProperties() {
 		return nodeDataProperties;
@@ -243,26 +233,43 @@ public class GraphBuilder {
 	}
 
 	public boolean addNodeAndUpdate(Node node) {
-		if (ModelingConfiguration.getManualAlignment()) {
-			return addNode(node);
-		} else
-		return addNodeAndUpdate(node, null);
+		return this.addNodeAndUpdate(node, null);
 	}
-
+	
 	public boolean addNodeAndUpdate(Node node, Set<Node> addedNodes) {
 		
-		logger.debug("<enter");
-		if (addedNodes == null) addedNodes = new HashSet<Node>();
-
-		if (!addNode(node))
-			return false;
+		boolean result = addNode(node);
+		if (!result || ModelingConfiguration.getManualAlignment()) 
+			return result;
 			
+		if (addedNodes == null) 
+			addedNodes = new HashSet<Node>();
+		addedNodes.add(node);
+		if (node instanceof InternalNode) 
+			addClosureAndUpdateLinks((InternalNode)node, addedNodes);
+		
+		return result;
+	}
+	
+	public InternalNode copyNodeAndUpdate(Node node, boolean copyLinksToColumnNodes) {
+		InternalNode copyNode = null;
+		if (node instanceof InternalNode) {
+			copyNode = this.copyNode((InternalNode)node, copyLinksToColumnNodes);
+		} else {
+			logger.error("only can copy an internal node");
+			return null;
+		}
+		return copyNode;
+	}
+	
+	private void addClosureAndUpdateLinks(InternalNode node, Set<Node> addedNodes) {
+		
+		if (addedNodes == null) addedNodes = new HashSet<Node>();
 		if (node instanceof InternalNode) {
 
 			long start = System.currentTimeMillis();
 			float elapsedTimeSec;
 
-			
 			addedNodes.add(node);
 			
 			if (ModelingConfiguration.getNodeClosure()) {
@@ -292,10 +299,40 @@ public class GraphBuilder {
 
 			logger.debug("total number of nodes in graph: " + this.graph.vertexSet().size());
 			logger.debug("total number of links in graph: " + this.graph.edgeSet().size());
+
+		}
+		
+	}
+	
+	public void addClosureAndUpdateLinks(Set<InternalNode> internalNodes, Set<Node> addedNodes) {
+		
+		logger.debug("<enter");
+		if (addedNodes == null) addedNodes = new HashSet<Node>();
+
+		long start = System.currentTimeMillis();
+		float elapsedTimeSec;
+
+		if (internalNodes != null) {
+			Node[] nodes = internalNodes.toArray(new Node[0]);
+			for (Node node : nodes)
+				if (this.idToNodeMap.containsKey(node.getId()))
+					addNodeClosure(node, addedNodes);
 		}
 
+		long addNodesClosure = System.currentTimeMillis();
+		elapsedTimeSec = (addNodesClosure - start)/1000F;
+		logger.debug("time to add nodes closure: " + elapsedTimeSec);
+
+		updateLinks();
+		
+		long updateLinks = System.currentTimeMillis();
+		elapsedTimeSec = (updateLinks - addNodesClosure)/1000F;
+		logger.debug("time to update links of the graph: " + elapsedTimeSec);
+		
+		logger.debug("total number of nodes in graph: " + this.graph.vertexSet().size());
+		logger.debug("total number of links in graph: " + this.graph.edgeSet().size());
+
 		logger.debug("exit>");		
-		return true;
 	}
 	
 	
@@ -354,6 +391,51 @@ public class GraphBuilder {
 		return true;
 	}
 	
+	public InternalNode copyNode(InternalNode node, boolean copyLinksToColumnNodes) {
+		
+		if (node == null) {
+			logger.error("input node is null");
+			return null;
+		}
+		
+		String id = this.nodeIdFactory.getNodeId(node.getUri());
+		InternalNode newNode = new InternalNode(id, node.getLabel());
+		
+		if (!this.addNode(newNode)) {
+			logger.error("could not add the new node " + newNode.getId());
+			return null;
+		}
+		
+		Node source , target;
+		String newId;
+		Set<DefaultLink> incomingLinks = this.getGraph().incomingEdgesOf(node);
+		if (incomingLinks != null) {
+			for (DefaultLink l : incomingLinks) {
+				source = l.getSource();
+				if (source instanceof ColumnNode) continue;
+				target = newNode;
+				newId = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
+				DefaultLink copyLink = l.getCopy(newId);
+				this.addLink(source, target, copyLink, l.getWeight());
+			}
+		}
+		
+		Set<DefaultLink> outgoingLinks = this.getGraph().outgoingEdgesOf(node);
+		if (outgoingLinks != null) {
+			for (DefaultLink l : outgoingLinks) {
+				source = newNode;
+				target = l.getTarget();
+				if (!copyLinksToColumnNodes && target instanceof ColumnNode) continue; // skip links to column nodes
+				newId = LinkIdFactory.getLinkId(l.getUri(), source.getId(), target.getId());
+				DefaultLink copyLink = l.getCopy(newId);
+				this.addLink(source, target, copyLink, l.getWeight());
+			}
+		}
+		
+		return newNode;
+
+	}
+	
 	public Set<Node> getForcedNodes() {
 		return this.forcedNodes;
 	}
@@ -376,7 +458,7 @@ public class GraphBuilder {
 		}
 		
 		if (this.idToLinkMap.containsKey(link.getId())) {
-			logger.error("The link with id=" + link.getId() + " already exists in the graph");
+			logger.warn("The link with id=" + link.getId() + " already exists in the graph");
 			return false;
 		}
 		
@@ -399,6 +481,18 @@ public class GraphBuilder {
 			}
 			((LabeledLink)link).getLabel().setNs(label.getNs());
 			((LabeledLink)link).getLabel().setPrefix(label.getPrefix());
+		}
+			
+		if (source instanceof InternalNode && target instanceof ColumnNode) {
+			
+			// remove other incoming links to this column node
+			DefaultLink oldIncomingLink = null;
+			Set<DefaultLink> incomingLinks = this.getGraph().incomingEdgesOf(target);
+			if (incomingLinks != null && incomingLinks.size() == 1) {
+				oldIncomingLink = incomingLinks.iterator().next();
+			}
+			if (oldIncomingLink != null)
+				this.removeLink(oldIncomingLink);
 		}
 			
 		this.graph.addEdge(source, target, link);
@@ -444,8 +538,9 @@ public class GraphBuilder {
 		}
 
 		if (source instanceof InternalNode && target instanceof ColumnNode) {
-			
-			this.node2Domain.put(target, source);
+
+			((ColumnNode)target).setDomainNode((InternalNode)source);
+			((ColumnNode)target).setDomainLink(labeledLink);
 			
 			String key = source.getId() + link.getUri();
 			Integer count = this.nodeDataPropertyCount.get(key);
@@ -481,9 +576,24 @@ public class GraphBuilder {
 	
 	private double computeWeight(DefaultLink link) {
 		double w = 0.0;
+		
+		if (link instanceof LabeledLink && ((LabeledLink)link).getStatus() == LinkStatus.PreferredByUI)
+			w = ModelingParams.PROPERTY_UI_PREFERRED_WEIGHT;
+		
+		if (link instanceof LabeledLink && 
+				((LabeledLink)link).getModelIds() != null &&
+				!((LabeledLink)link).getModelIds().isEmpty()) 
+			w = ModelingParams.PATTERN_LINK_WEIGHT;
+
+		if (link instanceof LabeledLink && ((LabeledLink)link).getStatus() == LinkStatus.ForcedByUser)
+			w = ModelingParams.PROPERTY_USER_PREFERRED_WEIGHT;
+		
+		if (w != 0.0)
+			return w;
+		
 		if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct)
 			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
-		if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct)
+		else if (link instanceof CompactObjectPropertyLink && ((CompactObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct)
 			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
 		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Indirect)
 			w = ModelingParams.PROPERTY_INDIRECT_WEIGHT;
@@ -505,8 +615,9 @@ public class GraphBuilder {
 			w = ModelingParams.SUBCLASS_WEIGHT;
 		else if (link instanceof CompactSubClassLink)
 			w = ModelingParams.SUBCLASS_WEIGHT;
-		else
+		else 
 			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
+		
 		return w;
 	}
 	
@@ -517,6 +628,7 @@ public class GraphBuilder {
 			return;
 		
 		link.setStatus(newStatus);
+		this.changeLinkWeight(link, computeWeight(link));
 		
 		Set<LabeledLink> linksWithOldStatus = this.statusToLinksMap.get(oldStatus);
 		if (linksWithOldStatus != null) linksWithOldStatus.remove(link);
@@ -629,37 +741,6 @@ public class GraphBuilder {
 		logger.debug("total number of links in graph: " + this.graph.edgeSet().size());
 		
 		return true;
-	}
-
-	public void addClosureAndLinksOfNodes(Set<InternalNode> internalNodes, Set<Node> addedNodes) {
-		
-		logger.debug("<enter");
-		if (addedNodes == null) addedNodes = new HashSet<Node>();
-
-		long start = System.currentTimeMillis();
-		float elapsedTimeSec;
-
-		if (internalNodes != null) {
-			Node[] nodes = internalNodes.toArray(new Node[0]);
-			for (Node node : nodes)
-				if (this.idToNodeMap.containsKey(node.getId()))
-					addNodeClosure(node, addedNodes);
-		}
-
-		long addNodesClosure = System.currentTimeMillis();
-		elapsedTimeSec = (addNodesClosure - start)/1000F;
-		logger.debug("time to add nodes closure: " + elapsedTimeSec);
-
-		updateLinks();
-		
-		long updateLinks = System.currentTimeMillis();
-		elapsedTimeSec = (updateLinks - addNodesClosure)/1000F;
-		logger.debug("time to update links of the graph: " + elapsedTimeSec);
-		
-		logger.debug("total number of nodes in graph: " + this.graph.vertexSet().size());
-		logger.debug("total number of links in graph: " + this.graph.edgeSet().size());
-
-		logger.debug("exit>");		
 	}
 	
 
@@ -1227,8 +1308,8 @@ public class GraphBuilder {
 			ColumnNode c2 = al.addColumnNode("h2", "c2", null);
 			InternalNode n1 = al.addInternalNode(new Label("http://example.com/layout/C01_"));
 			InternalNode n2 = al.addInternalNode(new Label("http://example.com/layout/C02_"));
-			al.addDataPropertyLink(n1, c1, new Label("http://example.com/layout/d1"), false);
-			al.addDataPropertyLink(n2, c2, new Label("http://example.com/layout/d2"), false);
+			al.addDataPropertyLink(n1, c1, new Label("http://example.com/layout/d1"));
+			al.addDataPropertyLink(n2, c2, new Label("http://example.com/layout/d2"));
 			al.align();
 			System.out.println(GraphUtil.labeledGraphToString(al.getSteinerTree()));
 		} else {

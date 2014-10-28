@@ -13,6 +13,7 @@ public class Section implements GrammarTreeNode {
 	public Vector<String> tarStrings = new Vector<String>();
 	public static Interpretor itInterpretor = null;
 	public static final int supermode = 1;
+	public String program = "null";
 
 	public Section(Position[] p, Vector<String> orgStrings,
 			Vector<String> tarStrings, boolean isinloop) {
@@ -27,38 +28,53 @@ public class Section implements GrammarTreeNode {
 		this.reiniteRules();
 		this.isinloop = isinloop;
 	}
-
+	public boolean isValid(String rule)
+	{
+		boolean res = true;
+		ProgramRule convRule = new ProgramRule(rule);
+		for(int i = 0; i < orgStrings.size(); i++)
+		{
+			if(!(convRule.transform(orgStrings.get(i)).compareTo(tarStrings.get(i))==0))
+			{
+				res = false;
+				return res;
+			}
+		}
+		return res;
+	}
 	public String verifySpace() {
 		String rule = "";
 		this.pair[0].isinloop = this.isinloop;
 		this.pair[1].isinloop = this.isinloop;
-		long sec_time_limit = System.currentTimeMillis();
 		while (curState < this.rules.size()) {
-			if ((System.currentTimeMillis() - sec_time_limit) / 1000 > time_limit * 1.0 / 5) {
-				return "null";
-			}
 			String rule1 = this.pair[0].VerifySpace(rules.get(curState)[0]);
 			String rule2 = this.pair[1].VerifySpace(rules.get(curState)[1]);
 			curState++;
 			if (rule1.indexOf("null") == -1 && rule2.indexOf("null") == -1) {
 				rule = String.format("substr(value,%s,%s)", rule1, rule2);
-				return rule;
+				if(rule.contains("substr(value,indexOf(value,'BNK','NUM',1*1),indexOf(value,'NUM','BNK',2*1))"))
+				{
+					System.out.println("Here");
+				}
+				if(isValid(rule))
+				{
+					this.program = rule;
+					return rule;
+				}
 			}
 			if (rule1.indexOf("null") != -1 && rule2.indexOf("null") != -1) {
 				break;
 			}
 		}
+		this.program = "null";
 		return "null";
-
 	}
 
-	@Override
 	public String toProgram() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
 		Section sec = (Section) a;
 		Position x = this.pair[0].mergewith(sec.pair[0]);
@@ -91,12 +107,10 @@ public class Section implements GrammarTreeNode {
 		}
 	}
 
-	@Override
 	public String getNodeType() {
 		return "section";
 	}
 
-	@Override
 	public double getScore() {
 		// TODO Auto-generated method stub
 		return this.pair[0].getScore() + this.pair[1].getScore();
@@ -186,6 +200,11 @@ public class Section implements GrammarTreeNode {
 			rp = pair[1].toString();
 		}
 		return lp + rp;
+	}
+
+	@Override
+	public String getProgram() {
+		return this.program;
 	}
 
 }

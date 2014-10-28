@@ -16,9 +16,10 @@ public class FetchTransformingDataFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new FetchTransformingDataCommand(getNewId(workspace),
+		FetchTransformingDataCommand cmd = new FetchTransformingDataCommand(getNewId(workspace),
 				getWorksheetId(request, workspace), hNodeId, 
 				selectionName);
+		return cmd;
 	}
 
 	@Override

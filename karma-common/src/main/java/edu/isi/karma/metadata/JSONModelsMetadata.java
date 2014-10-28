@@ -1,6 +1,5 @@
 package edu.isi.karma.metadata;
 
-import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
@@ -26,7 +25,7 @@ public class JSONModelsMetadata extends KarmaUserMetadata {
 
 	@Override
 	protected String getDirectoryPath() {
-		return ModelingConfiguration.getModelsJsonDir();
+		return "models-json/";
 	}
 	@Override
 	public KarmaMetadataType getType() {
