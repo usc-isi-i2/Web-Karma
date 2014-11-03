@@ -1,41 +1,3 @@
-(function() {
-  var out$ = typeof exports != 'undefined' && exports || this;
-
-  var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
-
-  function inlineImages(callback) {
-    var images = document.querySelectorAll('svg image');
-    var left = images.length;
-    console.log("inlineImages, left: " + left);
-    if (left == 0) {
-      callback();
-    }
-    for (var i = 0; i < images.length; i++) {
-      (function(image) {
-        if (image.getAttribute('xlink:href')) {
-          var href = image.getAttribute('xlink:href').value;
-          if (/^http/.test(href) && !(new RegExp('^' + window.location.host).test(href))) {
-            throw new Error("Cannot render embedded images linking to external hosts.");
-          }
-        }
-        var canvas = document.createElement('canvas');
-        var ctx = canvas.getContext('2d');
-        var img = new Image();
-        img.src = image.getAttribute('xlink:href');
-        img.onload = function() {
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
-          image.setAttribute('xlink:href', canvas.toDataURL('image/png'));
-          left--;
-          if (left == 0) {
-            callback();
-          }
-        }
-      })(images[i]);
-    }
-  }
-
   function styles(dom) {
     var css = "";
     var sheets = document.styleSheets;
@@ -60,18 +22,18 @@
     return defs;
   }
 
-  out$.svgAsDataUri = function(el, scaleFactor, cb) {
+  svgAsDataUri = function(el, scaleFactor, cb) {
     scaleFactor = scaleFactor || 1;
 
-    inlineImages(function() {
       var outer = document.createElement("div");
       var clone = el.cloneNode(true);
+      //console.log(clone);
       var width = parseInt(
         clone.getAttribute('width')
           || clone.style.width
           || out$.getComputedStyle(el).getPropertyValue('width')
       );
-      console.log(width);
+      //console.log(width);
       var height = parseInt(
         clone.getAttribute('height')
           || clone.style.height
@@ -90,16 +52,17 @@
 
       clone.insertBefore(styles(clone), clone.firstChild);
 
+      var doctype = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
       var svg = doctype + outer.innerHTML;
       var uri = 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(svg)));
       if (cb) {
         cb(uri);
       }
-    });
   }
 
-  out$.saveSvgAsPng = function(el, name, scaleFactor) {
-    out$.svgAsDataUri(el, scaleFactor, function(uri) {
+
+  saveSvgAsPng = function(el, name, scaleFactor) {
+    svgAsDataUri(el, scaleFactor, function(uri) {
       var image = new Image();
       image.src = uri;
       image.onload = function() {
@@ -108,7 +71,7 @@
         canvas.height = image.height;
         var context = canvas.getContext('2d');
         context.drawImage(image, 0, 0);
-        console.log(canvas.width);
+        //console.log(canvas.width);
         var a = document.createElement('a');
         a.download = name;
         a.href = canvas.toDataURL('image/png');
@@ -117,4 +80,3 @@
       }
     });
   }
-})();

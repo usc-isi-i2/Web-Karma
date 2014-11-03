@@ -148,8 +148,11 @@ public class OfflineRdfGenerator {
 
 			OfflineRdfGenerator generator = new OfflineRdfGenerator(cl);
 
+			long start = System.currentTimeMillis();
 			generator.generate();
-
+			long end = System.currentTimeMillis();
+			
+			logger.info("Time to generate RDF:" + ((float)(end-start))/(1000*60) + " mins");
 
 		} catch (Exception e) {
 			logger.error("Error occured while generating RDF!", e);

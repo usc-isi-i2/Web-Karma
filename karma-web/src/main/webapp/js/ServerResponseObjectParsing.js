@@ -246,7 +246,7 @@ function parse(data) {
 									$("div.svg-model", mainDiv).toggle();
 									$("div.worksheet-table-container", mainDiv).toggle(function() {
 										if (visible)
-											refreshAlignmentTree(worksheet["worksheetId"], ["all"]);
+											D3ModelManager.getInstance().refreshModel(worksheet["worksheetId"]);
 										$("div.table-data-container", mainDiv).toggle();
 									});
 									visible = !visible;
@@ -663,7 +663,7 @@ function parse(data) {
 		} else if (element["updateType"] == "InfoUpdate") {
 			$.sticky(element["Info"]);
 		} else if (element["updateType"] == "AlignmentSVGVisualizationUpdate") {
-			displayAlignmentTree_ForceKarmaLayout(element);
+			D3ModelManager.getInstance().displayModel(element);
 		} else if (element["updateType"] == "KarmaInfo") {
 			if (infos[element["Info"]]) {
 				//ignore;

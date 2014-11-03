@@ -97,7 +97,10 @@ function WorksheetOptions(wsId, wsTitle) {
 			}, {
 				name: "To SpatialData",
 				func: exportToSpatial
-			}, ]
+			}, ] 
+		}, { 
+			name: "Print Model",
+			func: printModel
 		}, {
 			name: "divider"
 		},
@@ -164,7 +167,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("viewStraightLineModel: " + isChecked);
 		worksheetOptionsDiv.data("viewStraightLineModel", isChecked);
 		hideDropdown();
-		refreshAlignmentTree(worksheetId);
+		D3ModelManager.getInstance().refreshModel(worksheetId);
 		return false;
 	}
 	
@@ -506,6 +509,10 @@ function WorksheetOptions(wsId, wsTitle) {
 		hideDropdown();
 		AddLiteralNodeDialog.getInstance().show(worksheetId);
 		return false;
+	}
+	
+	function printModel() {
+		D3ModelManager.getInstance().printModel(worksheetId);
 	}
 	
 	this.generateJS = function() {
