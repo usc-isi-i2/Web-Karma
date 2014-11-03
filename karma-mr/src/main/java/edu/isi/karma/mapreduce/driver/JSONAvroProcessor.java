@@ -34,6 +34,10 @@ public class JSONAvroProcessor extends Configured implements Tool {
 		{
 			conf.setIfUnset("karma.input.type", p.getProperty("karma.input.type"));
 		}
+		if(p.getProperty("context.uri") != null)
+		{
+			conf.setIfUnset("context.uri", p.getProperty("context.uri"));
+		}
 		Job job = Job.getInstance(conf);
         job.setInputFormatClass(AvroKeyInputFormat.class);
         job.setJarByClass(JSONAvroProcessor.class);
