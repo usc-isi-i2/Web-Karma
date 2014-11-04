@@ -105,6 +105,7 @@ var D3ModelManager = (function() {
 				alignJson = json;
 			}
 			var layout = getModelManager(worksheetId, layoutElement, "col-sm-10", w);
+			console.log(JSON.stringify(alignJson));
 			layout.generateLayoutForJson(alignJson);
 			
 			var alignmentId = json["alignmentId"];

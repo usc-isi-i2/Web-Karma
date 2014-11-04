@@ -739,7 +739,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 
 			
 			//if (d.type == "edgeLink"){
-				if (b.outside.isOutside && d.target.noLayer == undefined){
+				if (b.noLayer == undefined && b.outside.isOutside){
 					return "M" + b.x + " " + b.y + " L " + a.x + " " + a.y;
 				}
 			///} else {
@@ -1050,8 +1050,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		height=0;
 
 		test = [];
-	 	//tableData = [];                            //store table data
-		//columnPos = [];                            //position for each column
+	 	anchorName = [];                           //store anchor name, include nested
 		anchorData = [];                           //store anchor nodes
 		nodesData = [];                            //store all nodes includes anchors
 		linksData = [];                            //links data
@@ -1398,17 +1397,20 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			textData.push({
 				node : node,
 				type : "edgeLinkCircle",
-				content : d.label
+				content : d.label,
+				nodeId : "circle" + d.id
 			});
 			textData.push({
 				node : node,
 				type : "edgeLinkLabel",
-				content : d.label
+				content : d.label,
+				nodeId : d.id
 			});
 
 			textLinksData.push({
 				source : textData.length - 2,
-				target : textData.length - 1
+				target : textData.length - 1,
+				edgeId : d.id
 			});
 		});
 	}
