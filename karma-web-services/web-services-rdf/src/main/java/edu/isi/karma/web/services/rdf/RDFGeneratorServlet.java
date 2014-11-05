@@ -373,6 +373,7 @@ public class RDFGeneratorServlet {
 			String dataType, boolean refreshR2RML,String jsonContext) throws KarmaException,
 			JSONException, IOException { 
 		
+		
 		String r2rmlFileName = new File(r2rmlURI).getName();
         String contextFileName = r2rmlFileName.substring(0,r2rmlFileName.length()-4) + "_context.json";
         
@@ -409,7 +410,7 @@ public class RDFGeneratorServlet {
 		RDFGeneratorRequest request = new RDFGeneratorRequest("generic-model", "Karma-Web-Services");
 		request.setInputStream(dataStream); 
 		request.setAddProvenance(false);
-		request.setDataType(InputType.JSON);
+		request.setDataType(InputType.valueOf(dataType));
 		request.addWriter(writer);
 		rdfGen.generateRDF(request);
 		String rdf = sw.toString();
