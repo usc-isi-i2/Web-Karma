@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,7 @@ public class BaseKarma {
 	protected String modelFile;
 	protected URL modelURL;
 	protected ContextIdentifier contextId; 
+	protected JSONObject contextObj = new JSONObject();
 	public void setup(String inputTypeString, String modelUri, String modelFile, 
 			String baseURI, String contextURI) {
 
@@ -73,9 +76,14 @@ public class BaseKarma {
 		generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
 	}
 
-	private void addContext(String contextURI) throws MalformedURLException {
-		contextId = new ContextIdentifier("context", new URL(contextURI));
-		generator.addContext(contextId);
+	private void addContext(String contextURI)    {
+		try {
+			contextId = new ContextIdentifier("context", new URL(contextURI));
+			contextObj = new JSONObject(new JSONTokener(contextId.getLocation().openStream()));
+			generator.addContext(contextId);
+		}catch(Exception e) {
+			
+		}
 	}
 
 	private void determineInputType(String inputTypeString) {

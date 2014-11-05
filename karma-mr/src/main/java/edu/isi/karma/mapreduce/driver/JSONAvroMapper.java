@@ -6,8 +6,6 @@ import java.io.StringWriter;
 
 import org.apache.hadoop.io.Text;
 import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
@@ -24,8 +22,7 @@ public class JSONAvroMapper extends BaseAvroMapper {
 		ContextIdentifier contextId = karma.getContextId();
 		if (contextId != null) {
 			try {
-				JSONObject obj = new JSONObject(new JSONTokener(contextId.getLocation().openStream()));
-				((JSONKR2RMLRDFWriter)outWriter).setGlobalContext(obj, contextId);
+				((JSONKR2RMLRDFWriter)outWriter).setGlobalContext(this.karma.contextObj, contextId);
 				atId = ((JSONKR2RMLRDFWriter)outWriter).getAtId();
 			}
 			catch(Exception e)
