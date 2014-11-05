@@ -18,10 +18,8 @@ public class ElasticSearchMapper extends Mapper<Writable,Text,NullWritable, Text
 	@Override
 	public void map(Writable key, Text value, Context context
 			) throws IOException, InterruptedException {
-		String source = value.toString();
-		LOG.info("input:" + source);
-		
-		Text jsonDoc = new Text(source);
+					
+		Text jsonDoc = new Text(value.toString());
 		
 		context.write(NullWritable.get(), jsonDoc);
 		
