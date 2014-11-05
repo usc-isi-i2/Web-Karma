@@ -79,7 +79,7 @@
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-yarn-common</artifactId>
 			<version>${hadoop.version}</version>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.apache.hive</groupId>
 			<artifactId>hive-exec</artifactId>
@@ -96,34 +96,7 @@
 	    	<artifactId>entityExtraction</artifactId>
 	    	<version>0.0.1</version>
 	    </dependency>
-	    <dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
-			<version>${es.version}</version>
-		</dependency>
-		
-		<dependency>
-		  <groupId>org.elasticsearch</groupId>
-		  <artifactId>elasticsearch-hadoop-mr</artifactId>
-		  <version>2.0.2</version>
-		</dependency>
-		
-		<dependency>
-		  <groupId>org.elasticsearch</groupId>
-		  <artifactId>elasticsearch-hadoop-hive</artifactId>
-		  <version>2.0.2</version>
-		</dependency>
-		<dependency>
-		  <groupId>org.elasticsearch</groupId>
-		  <artifactId>elasticsearch-hadoop-pig</artifactId>
-		  <version>2.0.2</version>
-		</dependency>
-		<dependency>
-		  <groupId>org.elasticsearch</groupId>
-		  <artifactId>elasticsearch-hadoop-cascading</artifactId>
-		  <version>2.0.2</version>
-		</dependency>
-			    
+
     </dependencies>
 	<build>
 	
@@ -144,6 +117,38 @@
           <skipTests>true</skipTests>
         </configuration>
       </plugin>
+      <plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-shade-plugin</artifactId>
+					<version>2.3</version>
+					<configuration>
+						<shadedArtifactAttached>true</shadedArtifactAttached>
+						<shadedClassifierName>shaded</shadedClassifierName>
+						<transformers>
+							<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<mainClass>edu.isi.karma.rdf.OfflineRdfGenerator</mainClass>
+							</transformer>
+						</transformers>
+						<filters>
+							<filter>
+								<artifact>*:*</artifact>
+								<excludes>
+									<exclude>META-INF/*.SF</exclude>
+									<exclude>META-INF/*.DSA</exclude>
+									<exclude>META-INF/*.RSA</exclude>
+								</excludes>
+							</filter>
+						</filters>
+					</configuration>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>shade</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 		</plugins>
 	</build>
 	
