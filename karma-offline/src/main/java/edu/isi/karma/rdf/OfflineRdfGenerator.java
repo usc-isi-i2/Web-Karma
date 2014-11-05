@@ -294,9 +294,10 @@ public class OfflineRdfGenerator {
 				&& !inputType.equalsIgnoreCase("XML")
 				&& !inputType.equalsIgnoreCase("JSON")
 				&& !inputType.equalsIgnoreCase("SQL")
+				&& !inputType.equalsIgnoreCase("AVRO")
 				) {
 			logger.error("Invalid source type: " + inputType
-					+ ". Please choose from: DB, SQL, CSV, XML, JSON.");
+					+ ". Please choose from: DB, SQL, CSV, XML, JSON, AVRO.");
 			return false;
 		}
 		return true;
@@ -511,6 +512,8 @@ public class OfflineRdfGenerator {
 			inputType = InputType.JSON;
 		else if(this.inputType.equalsIgnoreCase("XML"))
 			inputType = InputType.XML;
+		else if(this.inputType.equalsIgnoreCase("AVRO"))
+			inputType = InputType.AVRO;
 		RDFGeneratorRequest request = new RDFGeneratorRequest(sourceName, inputFile.getName());
 		request.setInputFile(inputFile);
 		request.setDataType(inputType);
