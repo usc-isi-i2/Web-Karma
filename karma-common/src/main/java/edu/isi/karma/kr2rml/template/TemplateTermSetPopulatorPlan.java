@@ -98,7 +98,7 @@ public class TemplateTermSetPopulatorPlan {
 		LinkedList<ColumnTemplateTerm> columnTermsLocal = new LinkedList<ColumnTemplateTerm>();
 		columnTermsLocal.addAll(columnTerms);
 		sortColumnTermsByHNodePathDepth(columnTermsLocal);
-		Map<ColumnTemplateTerm, ColumnTemplateTerm> termsToTermDependentOn = generateTermsToTermDependentOn(columnTermsLocal, columnTermsLocal);
+		Map<ColumnTemplateTerm, ColumnTemplateTerm> termsToTermDependentOn = generateTermsToTermDependentOn(columnTermsLocal, comparisonTerms);
 		
 		generateWorkers(termsToTermDependentOn);
 		findFirstWorker();
@@ -137,8 +137,12 @@ public class TemplateTermSetPopulatorPlan {
 			ColumnTemplateTerm dependentTerm = null;
 			for(ColumnTemplateTerm comparisonTerm : comparisonTermsLocal)
 			{
+				if(comparisonTerm == currentTerm)
+				{
+					continue;
+				}
 				ColumnAffinity affinity = findAffinity(currentTerm, comparisonTerm, termToPath);
-				if(affinity.isCloserThan(closestAffinity))
+				if(affinity.isCloserThan(closestAffinity) && !isTransitivelyDependentOn(termsToTermDependentOn, currentTerm, comparisonTerm))
 				{
 					closestAffinity = affinity;
 					dependentTerm = comparisonTerm;
@@ -148,6 +152,22 @@ public class TemplateTermSetPopulatorPlan {
 
 		}
 		return termsToTermDependentOn;
+	}
+	
+	private boolean isTransitivelyDependentOn(Map<ColumnTemplateTerm, ColumnTemplateTerm> termsToTermDependentOn, ColumnTemplateTerm currentTerm, ColumnTemplateTerm comparisonTerm)
+	{
+		if(!termsToTermDependentOn.containsKey(comparisonTerm))
+		{
+			return false;
+		}
+		else if(termsToTermDependentOn.get(comparisonTerm) == currentTerm)
+		{
+			return true;
+		}
+		else
+		{
+			return isTransitivelyDependentOn(termsToTermDependentOn, currentTerm, termsToTermDependentOn.get(comparisonTerm) );
+		}
 	}
 
 	private TemplateTermSetPopulatorWorker generateWorker(

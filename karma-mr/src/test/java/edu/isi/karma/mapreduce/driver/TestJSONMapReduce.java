@@ -24,14 +24,14 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 
 	@Before
 	public void setUp() throws Exception {
-		Mapper<Text,Text, Text, Text> mapper = new JSONMapper();
+		Mapper<Text, Text, Text, Text> mapper = new JSONMapper();
 		Reducer<Text,Text,Text,Text> reducer = new JSONReducer();
-		
-		   mapDriver = MapDriver.newMapDriver(mapper);
-		   org.apache.hadoop.conf.Configuration conf = mapDriver.getConfiguration();
-			conf.set("model.uri", TestJSONMapReduce.class.getClassLoader().getResource("people-model.ttl").toURI().toString());   
-		    reduceDriver = ReduceDriver.newReduceDriver(reducer);
-		    mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
+
+		mapDriver = MapDriver.newMapDriver(mapper);
+		org.apache.hadoop.conf.Configuration conf = mapDriver.getConfiguration();
+		conf.set("model.uri", TestJSONMapReduce.class.getClassLoader().getResource("people-model.ttl").toURI().toString());   
+		reduceDriver = ReduceDriver.newReduceDriver(reducer);
+		mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 	}
 
 	@After
@@ -40,38 +40,38 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 
 	@Test
 	public void testMap() throws IOException {
-		
+
 		mapDriver.addInput(new Text("people.json"), new Text(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
 		List<Pair<Text,Text>> results = mapDriver.run();
 		assertTrue(results.size() > 1);
 	}
-	
+
 	@Test
 	public void testReduce() throws IOException 
 	{
 		List<Pair<Text,List<Text>>> inputs = new LinkedList<Pair<Text,List<Text>>>();
-		
+
 		List<Text> jasonTriples = new LinkedList<Text>();
 		jasonTriples.add(new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("jason.json"))));
 		jasonTriples.add(new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("jason2.json"))));
 		jasonTriples.add(new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("jason3.json"))));
-		
+
 		inputs.add(new Pair<Text,List<Text>>(new Text("http://lod.isi.edu/cs548/person/Slepicka"), jasonTriples));
 		reduceDriver.withAllOutput(getPairsFromFile("output/jason.output.json"));
 		reduceDriver.withAll(inputs);
 		reduceDriver.runTest();
 	}
-	
+
 	@Test
 	public void testMapReduce() throws IOException, URISyntaxException
 	{
 		org.apache.hadoop.conf.Configuration conf = mapReduceDriver.getConfiguration();
 		conf.set("model.uri", TestJSONMapReduce.class.getClassLoader().getResource("people-model.ttl").toURI().toString());
-		
+
 		mapReduceDriver.addInput(new Text("people.json"), new Text(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
 		mapReduceDriver.addAllOutput(getPairsFromFile("output/people.output.json"));
 		mapReduceDriver.runTest();
 	}
 
-	
+
 }
