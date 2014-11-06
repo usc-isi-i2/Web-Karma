@@ -88,10 +88,6 @@ public class WorksheetCommandHistoryExecutor {
 				uc.append(update);
 		}
 		
-		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
-		if(alignment != null)
-			alignment.align();
-		
 		return uc;
 	}
 
