@@ -2,6 +2,7 @@ package edu.isi.karma.mapreduce.driver;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Iterator;
 
 import org.apache.avro.mapred.AvroKey;
 import org.apache.hadoop.io.NullWritable;
@@ -13,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rdf.RDFGeneratorRequest;
 
-public abstract class BaseAvroMapper extends Mapper<AvroKey<Text>, NullWritable, Text, Text> {
+public abstract class BaseAvroMapper extends Mapper<Iterable<AvroKey<Text>>, NullWritable, Text, Text> {
 
 	private static Logger LOG = LoggerFactory.getLogger(BaseAvroMapper.class);
 
@@ -34,10 +35,20 @@ public abstract class BaseAvroMapper extends Mapper<AvroKey<Text>, NullWritable,
 	}
 
 	@Override
-	public void map(AvroKey<Text> key, NullWritable value, Context context) throws IOException,
+	public void map(Iterable<AvroKey<Text>> key, NullWritable value, Context context) throws IOException,
 			InterruptedException {
-
-		String contents = key.toString();
+		Iterator<AvroKey<Text>> itr = key.iterator();
+		StringBuilder jsonArray = new StringBuilder();
+		jsonArray.append("[");
+		while (itr.hasNext()) {
+			String tmp = itr.next().toString();
+			jsonArray.append(tmp);
+			if (itr.hasNext()) {
+				jsonArray.append(",");
+			}
+		}
+		jsonArray.append("]");
+		String contents = jsonArray.toString();
 		String filename = "query";
 		LOG.info(key.toString() + " started");
 		StringWriter sw = new StringWriter();

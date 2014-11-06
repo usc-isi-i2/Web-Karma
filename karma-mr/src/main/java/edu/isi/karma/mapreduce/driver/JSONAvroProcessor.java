@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-import org.apache.avro.mapreduce.AvroKeyInputFormat;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -15,6 +14,8 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+
+import edu.isi.karma.mapreduce.inputformat.AvroKeyBatchInputFormat;
 
 public class JSONAvroProcessor extends Configured implements Tool {
 
@@ -39,7 +40,7 @@ public class JSONAvroProcessor extends Configured implements Tool {
 			conf.setIfUnset("context.uri", p.getProperty("context.uri"));
 		}
 		Job job = Job.getInstance(conf);
-        job.setInputFormatClass(AvroKeyInputFormat.class);
+        job.setInputFormatClass(AvroKeyBatchInputFormat.class);
         job.setJarByClass(JSONAvroProcessor.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
         job.setMapperClass(JSONAvroMapper.class);
