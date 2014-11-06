@@ -5,13 +5,13 @@ function WorksheetOptions(wsId, wsTitle) {
 	var worksheetOptionsDiv;
 
 	var options = [
-		{
-			name: "View model using straight lines",
-			func: viewStraightLineModel,
-			showCheckbox: true,
-			defaultChecked: true,
-			initFunc: initStrightLineModel
-		},
+//		{
+//			name: "View model using straight lines",
+//			func: viewStraightLineModel,
+//			showCheckbox: true,
+//			defaultChecked: true,
+//			initFunc: initStrightLineModel
+//		},
 	    {
 			name: "Organize Columns",
 			func: organizeColumns
