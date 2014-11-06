@@ -154,7 +154,8 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 						.getPyObjectValueAsString(output);
 				addTransformedValue(transformedRows, row, transformedValue);
 			} catch (PyException p) {
-				logger.info("error in evaluation python, skipping one row");
+				logger.info("error in evaluation python - " + transformMethodStmt + ", skipping one row");
+				logger.info("Row:" + row.toString());
 				numRowsWithErrors++;
 				// Error occured in the Python method execution
 				addTransformedValue(transformedRows, row, errorDefaultValue);
