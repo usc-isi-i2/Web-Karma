@@ -68,7 +68,7 @@ public class WorksheetR2RMLJenaModelParser {
 	
 	private Model model;
 	private R2RMLMappingIdentifier id;
-	
+	private KR2RMLMapping mapping;
 	private static Logger logger = LoggerFactory.getLogger(WorksheetR2RMLJenaModelParser.class);
 	
 	
@@ -89,6 +89,10 @@ public class WorksheetR2RMLJenaModelParser {
 			this.model = loadSourceModelIntoJenaModel(id.getLocation());
 		}
 		
+		if(null != mapping)
+		{
+			return mapping;
+		}
 		// Capture the main mapping resource that corresponds to the source name
 		Resource mappingResource = getMappingResourceFromSourceName();
 		if (mappingResource == null) {
@@ -128,7 +132,7 @@ public class WorksheetR2RMLJenaModelParser {
 		
 		// Calculate the nodes covered by each InternalNode
 		calculateColumnNodesCoveredByBlankNodes(kr2rmlMapping, subjectResources);
-		return kr2rmlMapping;
+		return mapping = kr2rmlMapping;
 	}
 	
 	private SourceTypes getSourceType(Resource mappingResource)
