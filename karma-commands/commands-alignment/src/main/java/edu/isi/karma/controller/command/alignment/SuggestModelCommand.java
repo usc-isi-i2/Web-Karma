@@ -115,7 +115,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 		worksheetName = worksheet.getTitle();
 		
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, ontologyManager);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
 		if (alignment == null) {
 			logger.info("Alignment is NULL for " + worksheetId);
 			return new UpdateContainer(new ErrorUpdate(
@@ -190,9 +190,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 			saveSemanticTypesInformation(worksheet, workspace, worksheet.getSemanticTypes().getListOfTypes());
 			
 			// Add the visualization update
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-			c.add(new AlignmentSVGVisualizationUpdate(
-					worksheetId, alignment));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
@@ -269,11 +267,8 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 		try {
 			// Save the semantic types in the input parameter JSON
 			saveSemanticTypesInformation(worksheet, workspace, worksheet.getSemanticTypes().getListOfTypes());
-			
+			c.append(this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			// Add the visualization update
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-			c.add(new AlignmentSVGVisualizationUpdate(
-					worksheetId, alignment));
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(

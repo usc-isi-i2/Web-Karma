@@ -40,8 +40,7 @@ public class RefreshSVGAlignmentCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer container = new UpdateContainer();
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		container.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
+		container.add(new AlignmentSVGVisualizationUpdate(worksheetId));
 		return container;
 	}
 

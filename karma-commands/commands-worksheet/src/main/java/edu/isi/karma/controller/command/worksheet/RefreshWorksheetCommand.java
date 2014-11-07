@@ -64,16 +64,13 @@ public class RefreshWorksheetCommand extends WorksheetSelectionCommand {
 								break;
 				case "alignment": 
 				{
-					Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(
-							workspace.getId(), worksheetId, workspace.getOntologyManager());
-					uc.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
+					uc.add(new AlignmentSVGVisualizationUpdate(worksheetId));
 					break;
 				}
 				case "semanticTypes":
 				{
-					Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(
-							workspace.getId(), worksheetId, workspace.getOntologyManager());
-					uc.add(new SemanticTypesUpdate(workspace.getWorksheet(worksheetId), worksheetId, alignment));
+					
+					uc.add(new SemanticTypesUpdate(workspace.getWorksheet(worksheetId), worksheetId));
 					break;
 				}
 				case "regenerate":

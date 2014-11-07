@@ -24,11 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.WorkspaceManager;
-import edu.isi.karma.rep.alignment.Node;
 
 public class AlignmentManager {
 	private static HashMap<String, Alignment> alignmentMap = null;
@@ -65,7 +62,7 @@ public class AlignmentManager {
 	}
 
 	
-	public Alignment getAlignmentOrCreateIt(String workspaceId, String worksheetId, OntologyManager ontologyManager){
+	public Alignment createAlignment(String workspaceId, String worksheetId, OntologyManager ontologyManager){
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				workspaceId, worksheetId);
 		
@@ -76,25 +73,12 @@ public class AlignmentManager {
 		if (alignment == null) {
 			alignment = new Alignment(ontologyManager);
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+			alignment.updateColumnNodesInAlignment(worksheet);
 		}
 	
-//		List<HNodePath> paths = new ArrayList<>();
-		for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
-			HNode node = path.getLeaf();
-			String hNodeId = node.getId();
-			Node n = alignment.getNodeById(hNodeId);
-			if (n == null) {
-//				paths.add(path);
-				alignment.addColumnNode(hNodeId, node.getColumnName(), null);
-//			} else if (n instanceof ColumnNode) {
-//				ColumnNode c =  ((ColumnNode)n);
-//				if (c.getSuggestedSemanticTypes() == null || c.getSuggestedSemanticTypes().isEmpty())
-//					paths.add(path);
-			}
-		}
-		
 		return alignment;
 	}
+
 	public void removeWorkspaceAlignments(String workspaceId) {
 		ArrayList<String> keysToBeRemoved = new ArrayList<String>();
 		for(String key:alignmentMap.keySet()) {

@@ -233,7 +233,7 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 				bfWriter.setR2RMLMappingIdentifier(mapping.getId());
 			}
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
-					workspace.getFactory(), workspace.getOntologyManager(),
+					workspace.getFactory(), 
 					writers, false, mapping, errorReport, selection);
 
 			rdfGen.generateRDF(true);

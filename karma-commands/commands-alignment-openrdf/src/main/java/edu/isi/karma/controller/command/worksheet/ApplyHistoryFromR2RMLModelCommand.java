@@ -113,7 +113,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 			if (override || alignment == null || alignment.GetTreeRoot() == null) {
 				String alignmentId = alignMgr.constructAlignmentId(workspace.getId(), worksheetId);
 				alignMgr.removeAlignment(alignmentId);
-				alignMgr.getAlignmentOrCreateIt(workspace.getId(), worksheetId, workspace.getOntologyManager());
+				alignMgr.createAlignment(workspace.getId(), worksheetId,workspace.getOntologyManager());
 				editor.deleteExistingTransformationCommands();
 				historyJson = editor.getHistoryJSON();
 			}
@@ -132,7 +132,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 			}
 			alignment = alignMgr.getAlignment(workspace.getId(), worksheetId);
 			if(alignment != null)
-				c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
+				c.add(new AlignmentSVGVisualizationUpdate(worksheetId));
 		} catch (Exception e) {
 			String msg = "Error occured while applying history!";
 			logger.error(msg, e);

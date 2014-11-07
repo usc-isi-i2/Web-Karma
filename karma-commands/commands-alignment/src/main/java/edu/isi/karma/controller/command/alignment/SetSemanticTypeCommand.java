@@ -302,9 +302,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		} 
 		
-		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-		c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
-				alignment));			
+		c.append(this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}
 
@@ -364,8 +362,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		
 		// Get the alignment update if any
 		try {
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, oldAlignment));
-			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, oldAlignment));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		} catch (Exception e) {
 			logger.error("Error occured while unsetting the semantic type!", e);
 			return new UpdateContainer(new ErrorUpdate(

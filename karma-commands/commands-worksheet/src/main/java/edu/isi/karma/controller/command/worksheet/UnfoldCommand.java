@@ -116,8 +116,8 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId(), getSuperSelection(oldws)));
 			if (newws != null) {
 				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId(), SuperSelectionManager.DEFAULT_SELECTION));
-				Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), newws.getId(), workspace.getOntologyManager());
-				c.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(newws.getId(), workspace, alignment));
+				Alignment alignment = AlignmentManager.Instance().createAlignment(workspace.getId(), newws.getId(), workspace.getOntologyManager());
+				c.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(newws.getId(), workspace));
 			}
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;

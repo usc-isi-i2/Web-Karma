@@ -156,10 +156,10 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
 		
-		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+		c.add(new SemanticTypesUpdate(worksheet, worksheetId));
 		// Add the alignment update
 		try {
-			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
+			c.add(new AlignmentSVGVisualizationUpdate(worksheetId));
 		} catch (Exception e) {
 			logger.error("Error occured while unassigning the semantic type!",e);
 			return new UpdateContainer(new ErrorUpdate("Error occured while unassigning the semantic type!"));
@@ -186,8 +186,8 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
 		oldAlignment.setGraph(oldGraph);
 		try {
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, oldAlignment));
-			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, oldAlignment));
+			c.add(new SemanticTypesUpdate(worksheet, worksheetId));
+			c.add(new AlignmentSVGVisualizationUpdate(worksheetId));
 		} catch (Exception e) {
 			logger.error("Error occured during undo of unassigning the semantic type!", e);
 			return new UpdateContainer(new ErrorUpdate("Error occured during undo of unassigning the semantic type!"));

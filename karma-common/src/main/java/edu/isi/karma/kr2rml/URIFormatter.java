@@ -21,6 +21,7 @@
 package edu.isi.karma.kr2rml;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import edu.isi.karma.kr2rml.ErrorReport.Priority;
@@ -47,6 +48,14 @@ public class URIFormatter {
 		replacePrefixesWithNamespaces = true;
 		prefixToNamespaceMap = new HashMap<String, String>();
 		populatePrefixToNamespaceMap(ontMgr);
+		this.errorReport = errorReport;
+	}
+	public URIFormatter(List<Prefix> prefixes, ErrorReport errorReport)
+	{
+		reportErrors = true;
+		replacePrefixesWithNamespaces = true;
+		prefixToNamespaceMap = new HashMap<String, String>();
+		populatePrefixToNamespaceMap(prefixes);
 		this.errorReport = errorReport;
 	}
 	public String getExpandedAndNormalizedUri(String uri) {
@@ -133,6 +142,14 @@ public class URIFormatter {
 		for (String ns:prefixMapOntMgr.keySet()) {
 			String prefix = prefixMapOntMgr.get(ns);
 			this.prefixToNamespaceMap.put(prefix, ns);
+		}
+	}
+	
+	private void populatePrefixToNamespaceMap(List<Prefix>prefixes) {
+		
+		for(Prefix prefix : prefixes)
+		{
+			this.prefixToNamespaceMap.put(prefix.getPrefix(), prefix.getNamespace());
 		}
 	}
 }

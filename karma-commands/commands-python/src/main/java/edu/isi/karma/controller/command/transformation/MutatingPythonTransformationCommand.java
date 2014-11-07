@@ -92,7 +92,7 @@ public abstract class MutatingPythonTransformationCommand extends
 		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 		
 		/** Add the alignment update **/
-		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace, workspace.getFactory().getHNode(newHNodeId).getHNodePath(workspace.getFactory())));
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		
 		c.add(new InfoUpdate("Transformation complete"));
 		return c;

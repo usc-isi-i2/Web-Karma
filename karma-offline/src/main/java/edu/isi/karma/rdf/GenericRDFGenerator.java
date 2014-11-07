@@ -148,20 +148,22 @@ public class GenericRDFGenerator extends RdfGenerator {
 
 	private void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, InputStream data, InputType dataType, int maxNumLines, 
 			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy) throws KarmaException, IOException {
-		logger.debug("Generating rdf for " + sourceName);
+		logger.info("Generating rdf for {}", sourceName);
 		
+		logger.debug("Initializing workspace for {}", sourceName);
 		Workspace workspace = initializeWorkspace();
+		logger.debug("Initialized workspace for {}", sourceName);
 		try
 		{
 		
-		
+			logger.debug("Generating worksheet for {}", sourceName);
 				Worksheet worksheet = generateWorksheet(sourceName, new BufferedInputStream(data), dataType, 
 					workspace, maxNumLines);
-			
-			
+			logger.debug("Generated worksheet for {}", sourceName);
+			logger.debug("Parsing mapping for {}", sourceName);
 			//Generate mappping data for the worksheet using the model parser
 			KR2RMLMapping mapping = modelParser.parse();
-			
+			logger.debug("Parsed mapping for {}", sourceName);
 			applyHistoryToWorksheet(workspace, worksheet, mapping);
 			SuperSelection selection = SuperSelectionManager.DEFAULT_SELECTION;
 			if (selectionName != null && !selectionName.trim().isEmpty())
@@ -181,11 +183,13 @@ public class GenericRDFGenerator extends RdfGenerator {
 					rootStrategy = new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy());;
 				}
 			}
+			logger.debug("Generating output for {}", sourceName);
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
 			        workspace.getFactory(), workspace.getOntologyManager(), writers,
 			        addProvenance, rootStrategy, tripleMapToKill, tripleMapToStop, POMToKill, 
 			        mapping, errorReport, selection);
 			rdfGen.generateRDF(true);
+			logger.debug("Generated output for {}", sourceName);
 		}
 		catch( Exception e)
 		{
@@ -196,7 +200,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 			removeWorkspace(workspace);
 		}
 		
-		logger.debug("Generated rdf for " + sourceName);
+		logger.debug("Generated rdf for {}", sourceName);
 	}
 	
 	public void generateRDF(RDFGeneratorRequest request) throws KarmaException, IOException

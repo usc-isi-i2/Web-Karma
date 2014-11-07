@@ -124,7 +124,7 @@ public class TestSelection {
 		WorksheetR2RMLJenaModelParser modelParser = new WorksheetR2RMLJenaModelParser(modelIdentifier);
 		applyHistoryToWorksheet(workspace, worksheet, modelParser.parse());
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
-		        workspace.getFactory(), workspace.getOntologyManager(), writers,
+		        workspace.getFactory(), writers,
 		        false, modelParser.parse(), new ErrorReport(), worksheet.getSuperSelectionManager().getSuperSelection("test"));
 		rdfGen.generateRDF(true);
 		String rdf = sw.toString();

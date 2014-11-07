@@ -72,7 +72,6 @@ public class KR2RMLWorksheetRDFGenerator {
 	protected RepFactory factory;
 	protected Worksheet worksheet;
 	protected String outputFileName;
-	protected OntologyManager ontMgr;
 	protected ErrorReport errorReport;
 	protected boolean addColumnContextInformation;
 	protected KR2RMLMapping kr2rmlMapping;
@@ -87,9 +86,9 @@ public class KR2RMLWorksheetRDFGenerator {
 	private RootStrategy strategy;
 	private SuperSelection selection;
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
-			OntologyManager ontMgr, String outputFileName, boolean addColumnContextInformation, 
+			String outputFileName, boolean addColumnContextInformation, 
 			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport, SuperSelection sel) throws UnsupportedEncodingException, FileNotFoundException {
-		initializeMemberVariables(worksheet, factory, ontMgr, outputFileName,
+		initializeMemberVariables(worksheet, factory, outputFileName,
 				addColumnContextInformation, kr2rmlMapping, errorReport);
 		File f = new File(this.outputFileName);
 		File parentDir = f.getParentFile();
@@ -104,7 +103,7 @@ public class KR2RMLWorksheetRDFGenerator {
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
 			OntologyManager ontMgr, KR2RMLRDFWriter writer, boolean addColumnContextInformation,RootStrategy strategy, 
 			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport, SuperSelection sel) {
-		initializeMemberVariables(worksheet, factory, ontMgr, outputFileName,
+		initializeMemberVariables(worksheet, factory, outputFileName,
 				addColumnContextInformation, kr2rmlMapping, errorReport);
 		this.outWriters.add(writer);
 		this.strategy = strategy;
@@ -112,9 +111,9 @@ public class KR2RMLWorksheetRDFGenerator {
 	}
 
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
-			OntologyManager ontMgr, List<KR2RMLRDFWriter> writers, boolean addColumnContextInformation,  
+			List<KR2RMLRDFWriter> writers, boolean addColumnContextInformation,  
 			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport, SuperSelection sel) {
-		initializeMemberVariables(worksheet, factory, ontMgr, outputFileName,
+		initializeMemberVariables(worksheet, factory, outputFileName,
 				addColumnContextInformation, kr2rmlMapping, errorReport);
 		this.outWriters.addAll(writers);
 		this.selection = sel;
@@ -125,7 +124,7 @@ public class KR2RMLWorksheetRDFGenerator {
 			RootStrategy strategy,  List<String> tripleMapToKill, List<String> tripleMapToStop, 
 			List<String> POMToKill, 
 			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport, SuperSelection sel) {
-		initializeMemberVariables(worksheet, factory, ontMgr, outputFileName,
+		initializeMemberVariables(worksheet, factory, outputFileName,
 				addColumnContextInformation, kr2rmlMapping, errorReport);
 		this.strategy = strategy;
 		this.tripleMapToKill = tripleMapToKill;
@@ -136,10 +135,10 @@ public class KR2RMLWorksheetRDFGenerator {
 	}
 
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
-			OntologyManager ontMgr, PrintWriter writer, KR2RMLMapping kr2rmlMapping,   
+			 PrintWriter writer, KR2RMLMapping kr2rmlMapping,   
 			ErrorReport errorReport, boolean addColumnContextInformation, SuperSelection sel) {
 		super();
-		initializeMemberVariables(worksheet, factory, ontMgr, outputFileName,
+		initializeMemberVariables(worksheet, factory, outputFileName,
 				addColumnContextInformation, kr2rmlMapping, errorReport);
 		this.outWriters.add(new N3KR2RMLRDFWriter(uriFormatter, writer));
 		this.selection = sel;
@@ -147,16 +146,16 @@ public class KR2RMLWorksheetRDFGenerator {
 
 
 	private void initializeMemberVariables(Worksheet worksheet,
-			RepFactory factory, OntologyManager ontMgr, String outputFileName,
+			RepFactory factory, String outputFileName,
 			boolean addColumnContextInformation, KR2RMLMapping kr2rmlMapping,
 			ErrorReport errorReport) {
-		this.ontMgr = ontMgr;
+	//	
 		this.kr2rmlMapping = kr2rmlMapping;
 		this.factory = factory;
 		this.worksheet = worksheet;
 		this.outputFileName = outputFileName;
 		this.errorReport = errorReport;
-		this.uriFormatter = new URIFormatter(ontMgr, errorReport);
+		this.uriFormatter = new URIFormatter(kr2rmlMapping.getPrefixes(), errorReport);
 		this.hNodeToContextUriMap = new ConcurrentHashMap<String, String>();
 		this.addColumnContextInformation = addColumnContextInformation;
 		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);

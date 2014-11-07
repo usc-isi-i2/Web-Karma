@@ -41,8 +41,6 @@ import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.HTable;
@@ -282,7 +280,7 @@ public class WorksheetCommandHistoryExecutor {
 				inpP.put(ClientJsonKeys.value.name(), hNodes.toString());
 			}
 		}
-		AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, workspace.getOntologyManager());
+		
 		return uc;
 	}
 

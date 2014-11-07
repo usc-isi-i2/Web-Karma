@@ -30,8 +30,6 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.alignment.ChangeInternalNodeLinksCommandFactory.Arguments;
-import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
@@ -122,7 +120,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 			e.printStackTrace();
 		}
 
-		return getAlignmentUpdateContainer(alignment, worksheet, workspace);
+		return this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace);
 	}
 
 	private void addNewLinks(Alignment alignment, OntologyManager ontMgr)
@@ -217,25 +215,12 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-
 		// Revert to the old alignment
 		AlignmentManager.Instance()
 				.addAlignmentToMap(alignmentId, oldAlignment);
 		oldAlignment.setGraph(oldGraph);
 
-		// Get the alignment update
-		return getAlignmentUpdateContainer(oldAlignment, worksheet, workspace);
-	}
-
-	// TODO this is in worksheetcommand
-	private UpdateContainer getAlignmentUpdateContainer(Alignment alignment,
-			Worksheet worksheet, Workspace workspace) {
-		// Add the visualization update
-		UpdateContainer c = new UpdateContainer();
-		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-		c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
-		return c;
+		return this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace);
 	}
 
 	@Override

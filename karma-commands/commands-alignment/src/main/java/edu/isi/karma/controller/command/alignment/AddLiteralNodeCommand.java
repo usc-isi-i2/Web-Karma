@@ -132,7 +132,7 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 			return uc;
 		}
 
-		uc.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment));
+		uc.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace));
 		return uc;
 	}
 
@@ -144,7 +144,7 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 		oldAlignment.setGraph(oldGraph);
 
 		// Get the alignment update
-		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, oldAlignment);
+		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace);
 	}
 
 	
