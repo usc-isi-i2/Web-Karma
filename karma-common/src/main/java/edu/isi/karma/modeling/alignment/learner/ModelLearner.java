@@ -282,7 +282,7 @@ public class ModelLearner {
 		Collections.sort(sortableSemanticModels);
 		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getMaxCandidateModels());
 		logger.info("results are ready ...");
-		sortableSemanticModels.get(0).print();
+//		sortableSemanticModels.get(0).print();
 		return sortableSemanticModels.subList(0, count);
 
 //		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
@@ -402,25 +402,30 @@ public class ModelLearner {
 			logger.info("===== Column: " + cn.getColumnName());
 
 			Set<SemanticTypeMapping> semanticTypeMappings = new HashSet<SemanticTypeMapping>();
-			for (SemanticType semanticType: candidateSemanticTypes) {
-
-				logger.info("\t" + semanticType.getConfidenceScore() + " :" + semanticType.getModelLabelString());
-
-				if (semanticType == null || 
-						semanticType.getDomain() == null ||
-						semanticType.getType() == null) continue;
-
-				domainUri = semanticType.getDomain().getUri();
-				propertyUri = semanticType.getType().getUri();
-				Integer countOfSemanticType = semanticTypesCount.get(domainUri + propertyUri);
-				logger.debug("count of semantic type: " +  countOfSemanticType);
-
-				
-				if (cn.hasUserType()) {
-					SemanticTypeMapping mp = new SemanticTypeMapping(cn, semanticType, cn.getDomainNode(), cn.getDomainLink(), cn);
-					semanticTypeMappings.add(mp);
-				} else {
-
+			
+			if (cn.hasUserType()) {
+				SemanticTypeMapping mp = new SemanticTypeMapping(cn, cn.getUserSelectedSemanticType(), cn.getDomainNode(), cn.getDomainLink(), cn);
+				semanticTypeMappings.add(mp);
+			} else {
+				for (SemanticType semanticType: candidateSemanticTypes) {
+	
+					logger.info("\t" + semanticType.getConfidenceScore() + " :" + semanticType.getModelLabelString());
+	
+					if (semanticType == null || 
+							semanticType.getDomain() == null ||
+							semanticType.getType() == null) continue;
+	
+					domainUri = semanticType.getDomain().getUri();
+					//FIXME: for demo
+	//				if (cn.getColumnName().contains("imageURL"))
+	//					if (!domainUri.toLowerCase().contains("webresource"))
+	//						continue;
+					
+					propertyUri = semanticType.getType().getUri();
+					Integer countOfSemanticType = semanticTypesCount.get(domainUri + propertyUri);
+					logger.debug("count of semantic type: " +  countOfSemanticType);
+	
+					
 					tempSemanticTypeMappings = findSemanticTypeInGraph(cn, semanticType, semanticTypesCount, addedNodes);
 					logger.debug("number of matches for semantic type: " +  
 						 + (tempSemanticTypeMappings == null ? 0 : tempSemanticTypeMappings.size()));

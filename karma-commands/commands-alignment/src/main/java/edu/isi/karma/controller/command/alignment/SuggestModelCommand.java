@@ -46,6 +46,7 @@ import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.learner.ModelLearner;
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -174,6 +175,8 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 		
 		List<SemanticType> semanticTypes = new LinkedList<SemanticType>();
 		alignment.updateAlignment(model, semanticTypes);
+		logger.info(GraphUtil.labeledGraphToString(alignment.getSteinerTree()));
+
 //		Set<ColumnNode> alignmentColumnNodes = alignment.getSourceColumnNodes();
 //		if (alignmentColumnNodes != null) {
 //			for (ColumnNode cn : alignmentColumnNodes) {
