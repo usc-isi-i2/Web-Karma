@@ -22,8 +22,6 @@ public class JSONProcessor extends Configured implements Tool {
 	 {
 		
 		Configuration conf = getConf();
-		conf.setIfUnset("fs.default.name", p.getProperty("fs.default.name"));
-		conf.setIfUnset("mapred.job.tracker", p.getProperty("mapred.job.tracker"));
 		if(p.getProperty("model.uri") != null)
 		{
 			conf.setIfUnset("model.uri", p.getProperty("model.uri"));
@@ -35,6 +33,14 @@ public class JSONProcessor extends Configured implements Tool {
 		if(p.getProperty("karma.input.type") != null)
 		{
 			conf.setIfUnset("karma.input.type", p.getProperty("karma.input.type"));
+		}
+		if(p.getProperty("context.uri") != null)
+		{
+			conf.setIfUnset("context.uri", p.getProperty("context.uri"));
+		}
+		if(p.getProperty("rdf.generation.root") != null)
+		{
+			conf.setIfUnset("rdf.generation.root", p.getProperty("rdf.generation.root"));
 		}
 		Job job = Job.getInstance(conf);
         job.setInputFormatClass(SequenceFileAsTextInputFormat.class);
