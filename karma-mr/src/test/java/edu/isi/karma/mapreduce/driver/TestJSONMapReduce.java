@@ -29,7 +29,8 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 
 		mapDriver = MapDriver.newMapDriver(mapper);
 		org.apache.hadoop.conf.Configuration conf = mapDriver.getConfiguration();
-		conf.set("model.uri", TestJSONMapReduce.class.getClassLoader().getResource("people-model.ttl").toURI().toString());   
+		conf.set("model.uri", TestJSONMapReduce.class.getClassLoader().getResource("people-model.ttl").toURI().toString());
+		conf.set("rdf.generation.root", "http://isi.edu/integration/karma/dev#TriplesMap_c6f9c495-90e4-4c83-aa62-0ab1841a1871");
 		reduceDriver = ReduceDriver.newReduceDriver(reducer);
 		mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 	}
@@ -67,7 +68,7 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 	{
 		org.apache.hadoop.conf.Configuration conf = mapReduceDriver.getConfiguration();
 		conf.set("model.uri", TestJSONMapReduce.class.getClassLoader().getResource("people-model.ttl").toURI().toString());
-
+		conf.set("rdf.generation.root", "http://isi.edu/integration/karma/dev#TriplesMap_c6f9c495-90e4-4c83-aa62-0ab1841a1871");
 		mapReduceDriver.addInput(new Text("people.json"), new Text(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
 		mapReduceDriver.addAllOutput(getPairsFromFile("output/people.output.json"));
 		mapReduceDriver.runTest();

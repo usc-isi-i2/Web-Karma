@@ -11,6 +11,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rdf.RDFGeneratorRequest;
 
@@ -30,7 +31,8 @@ public abstract class BaseAvroMapper extends Mapper<Iterable<AvroKey<Text>>, Nul
 		String modelFile = context.getConfiguration().get("model.file");
 		String baseURI = context.getConfiguration().get("base.uri");
 		String contextURI = context.getConfiguration().get("context.uri");
-		karma.setup(inputTypeString, modelUri, modelFile, baseURI, contextURI);
+		String rdfGenerationRoot = context.getConfiguration().get("rdf.generation.root");
+		karma.setup(inputTypeString, modelUri, modelFile, baseURI, contextURI, rdfGenerationRoot);
 	
 	}
 
@@ -59,6 +61,10 @@ public abstract class BaseAvroMapper extends Mapper<Iterable<AvroKey<Text>>, Nul
 			request.setInputData(contents);
 			request.setAddProvenance(false);
 			request.addWriter(outWriter);
+			if(karma.getRdfGenerationRoot() != null)
+			{
+				request.setStrategy(new UserSpecifiedRootStrategy(karma.getRdfGenerationRoot()));
+			}
 			karma.getGenerator().generateRDF(request);
 
 			String results = sw.toString();

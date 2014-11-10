@@ -33,8 +33,9 @@ public class BaseKarma {
 	protected URL modelURL;
 	protected ContextIdentifier contextId; 
 	protected JSONObject contextObj = new JSONObject();
+	protected String rdfGenerationRoot = null;
 	public void setup(String inputTypeString, String modelUri, String modelFile, 
-			String baseURI, String contextURI) {
+			String baseURI, String contextURI, String root) {
 
 		try {
 			setupKarmaHome();
@@ -42,6 +43,7 @@ public class BaseKarma {
 			generator = new GenericRDFGenerator(null);
 			this.modelUri = modelUri;
 			this.modelFile = modelFile;
+			this.rdfGenerationRoot = root;
 			addModel();
 			if (contextURI != null && !contextURI.isEmpty()) {
 				addContext(contextURI);
@@ -130,5 +132,9 @@ public class BaseKarma {
 			}
 		}
 		return modelURL;
+	}
+
+	public String getRdfGenerationRoot() {
+		return rdfGenerationRoot;
 	}
 }
