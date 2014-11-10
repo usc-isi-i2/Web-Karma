@@ -22,8 +22,6 @@ public class JSONIdentityReducerProcessor extends Configured implements Tool {
 	 {
 		
 		Configuration conf = getConf();
-		conf.setIfUnset("fs.default.name", p.getProperty("fs.default.name"));
-		conf.setIfUnset("mapred.job.tracker", p.getProperty("mapred.job.tracker"));
 		Job job = Job.getInstance(conf);
         job.setInputFormatClass(SequenceFileAsTextInputFormat.class);
         job.setJarByClass(JSONIdentityReducerProcessor.class);
