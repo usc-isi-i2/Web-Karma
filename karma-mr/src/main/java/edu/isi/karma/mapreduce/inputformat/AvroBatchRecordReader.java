@@ -13,7 +13,7 @@ import org.apache.hadoop.io.NullWritable;
 
 public class AvroBatchRecordReader<T> extends AvroRecordReaderBase<Iterable<AvroKey<T>>, NullWritable, T>{
 
-	private static final int batchSize = 1000;
+	private static final int batchSize = 10000;
 	protected AvroBatchRecordReader(Schema readerSchema) {
 		super(readerSchema);
 	}

@@ -105,6 +105,15 @@ public class GenericRDFGenerator extends RdfGenerator {
 		this.contextIdentifiers.put(id.getName(), id);
 	}
 	
+	public WorksheetR2RMLJenaModelParser getModelParser(String modelName) throws JSONException, KarmaException {
+		WorksheetR2RMLJenaModelParser modelParser = readModelParsers.get(modelName);
+		R2RMLMappingIdentifier id = this.modelIdentifiers.get(modelName);
+		if(modelParser == null) {
+			modelParser = loadModel(id);
+		}
+		return modelParser;
+	}
+	
 	private void generateRDF(String modelName, String sourceName,String contextName, InputStream data, InputType dataType, int maxNumLines, 
 			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy)
 					throws KarmaException, IOException {
@@ -139,12 +148,11 @@ public class GenericRDFGenerator extends RdfGenerator {
 			}
 		}
 		//Check if the parser for this model exists, else create one
-		WorksheetR2RMLJenaModelParser modelParser = readModelParsers.get(modelName);
-		if(modelParser == null) {
-			modelParser = loadModel(id);
-		}
+		WorksheetR2RMLJenaModelParser modelParser = getModelParser(modelName);
 		generateRDF(modelParser, sourceName, data, dataType, maxNumLines, addProvenance, writers, rootStrategy);
 	}
+	
+	
 
 	private void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, InputStream data, InputType dataType, int maxNumLines, 
 			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy) throws KarmaException, IOException {
