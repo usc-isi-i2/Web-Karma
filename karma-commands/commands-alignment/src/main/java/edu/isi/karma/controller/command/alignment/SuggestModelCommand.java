@@ -142,7 +142,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 						worksheet.getSemanticTypes().unassignColumnSemanticType(hNodeId);
 						List<SemanticType> suggestedSemanticTypes = 
 								new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4, selection);
-						cn.setSuggestedSemanticTypes(suggestedSemanticTypes);
+						cn.setLearnedSemanticTypes(suggestedSemanticTypes);
 					} 
 				}
 			}

@@ -141,8 +141,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 	}
 	
 	public String getModelLabelString() {
-		return (this.getDomain() == null) ? 
-				this.getType().getUri() : this.getDomain().getUri() + "|" + this.getType().getUri();
+		return this.getDomain().getUri() + "|" + this.getType().getUri();
 	}
 
 	@Override

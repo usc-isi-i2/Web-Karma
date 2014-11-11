@@ -188,7 +188,7 @@ public class GraphVizUtil {
 //					targetLabel += metaDataSeparator + getModelIds(target.getModelIds());
 					if (target instanceof ColumnNode) {
 						ColumnNode mappedColumn = (mappingToSourceColumns == null) ? (ColumnNode)target : mappingToSourceColumns.get(target);
-						List<SemanticType> suggestedTypes = mappedColumn.getTopKSuggestions(4);
+						List<SemanticType> suggestedTypes = mappedColumn.getTopKLearnedSemanticTypes(4);
 						if (suggestedTypes != null)
 							for (SemanticType st : suggestedTypes)
 								targetLabel += "\n[" + 

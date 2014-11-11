@@ -482,18 +482,19 @@ public class GraphBuilder {
 			((LabeledLink)link).getLabel().setNs(label.getNs());
 			((LabeledLink)link).getLabel().setPrefix(label.getPrefix());
 		}
-			
-		if (source instanceof InternalNode && target instanceof ColumnNode) {
-			
-			// remove other incoming links to this column node
-			DefaultLink oldIncomingLink = null;
-			Set<DefaultLink> incomingLinks = this.getGraph().incomingEdgesOf(target);
-			if (incomingLinks != null && incomingLinks.size() == 1) {
-				oldIncomingLink = incomingLinks.iterator().next();
-			}
-			if (oldIncomingLink != null)
-				this.removeLink(oldIncomingLink);
-		}
+		
+		// whi I wrote this code?
+//		if (source instanceof InternalNode && target instanceof ColumnNode) {
+//			
+//			// remove other incoming links to this column node
+//			DefaultLink oldIncomingLink = null;
+//			Set<DefaultLink> incomingLinks = this.getGraph().incomingEdgesOf(target);
+//			if (incomingLinks != null && incomingLinks.size() == 1) {
+//				oldIncomingLink = incomingLinks.iterator().next();
+//			}
+//			if (oldIncomingLink != null)
+//				this.removeLink(oldIncomingLink);
+//		}
 			
 		this.graph.addEdge(source, target, link);
 		
@@ -539,9 +540,6 @@ public class GraphBuilder {
 
 		if (source instanceof InternalNode && target instanceof ColumnNode) {
 
-			((ColumnNode)target).setDomainNode((InternalNode)source);
-			((ColumnNode)target).setDomainLink(labeledLink);
-			
 			String key = source.getId() + link.getUri();
 			Integer count = this.nodeDataPropertyCount.get(key);
 			if (count == null) this.nodeDataPropertyCount.put(key, 1);

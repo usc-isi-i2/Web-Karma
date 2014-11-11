@@ -166,6 +166,7 @@ public abstract class ModelLearningGraph {
 							if (temp != null) addedNodes.addAll(temp);
 						}
 					} catch (Exception e) {
+						logger.error(e.getMessage());
 					}
 				}
 			}
