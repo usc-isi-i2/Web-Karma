@@ -45,6 +45,7 @@ import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
+import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
@@ -76,7 +77,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		
 		SemanticTypes types = worksheet.getSemanticTypes();
 		Map<String, ColumnNode> hNodeIdTocolumnNodeMap = createColumnNodeMap();
-		Map<String, InternalNode> hNodeIdToDomainNodeMap = createDomainNodeMap();
+		Map<String, SemanticTypeNode> hNodeIdToDomainNodeMap = createDomainNodeMap();
 		
 		JSONStringer jsonStr = new JSONStringer();
 		try {
@@ -101,7 +102,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							.key(JsonKeys.SemanticTypesArray.name()).array();
 					
 					ColumnNode alignmentColumnNode = hNodeIdTocolumnNodeMap.get(type.getHNodeId());
-					InternalNode domainNode = hNodeIdToDomainNodeMap.get(type.getHNodeId());
+					SemanticTypeNode domainNode = hNodeIdToDomainNodeMap.get(type.getHNodeId());
 					
 					if (alignmentColumnNode == null || domainNode == null) {
 						logger.error("Column node or domain node not found in alignment." +
@@ -218,8 +219,8 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		return false;
 	}
 
-	private Map<String, InternalNode> createDomainNodeMap() {
-		Map<String, InternalNode> hNodeIdToDomainNodeMap = new HashMap<String, InternalNode>();
+	private Map<String, SemanticTypeNode> createDomainNodeMap() {
+		Map<String, SemanticTypeNode> hNodeIdToDomainNodeMap = new HashMap<String, SemanticTypeNode>();
 		Set<Node> alignmentColumnNodes = alignment.getNodesByType(NodeType.ColumnNode);
 		if (alignmentColumnNodes == null)
 			return hNodeIdToDomainNodeMap;
@@ -228,8 +229,19 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 			if (incomingLinks != null && !incomingLinks.isEmpty()) {
 				LabeledLink incomingLink = alignment.getCurrentIncomingLinksToNode(cNode.getId()).iterator().next();
 				if (incomingLink!= null && incomingLink.getSource() instanceof InternalNode) {
-					hNodeIdToDomainNodeMap.put(((ColumnNode)cNode).getHNodeId()
-							, (InternalNode)incomingLink.getSource());
+					String hNodeId = ((ColumnNode)cNode).getHNodeId();
+					if(incomingLink instanceof DataPropertyOfColumnLink || incomingLink instanceof ObjectPropertySpecializationLink) {
+						String id = null;
+						if(incomingLink instanceof DataPropertyOfColumnLink)
+							id = ((DataPropertyOfColumnLink)incomingLink).getSpecializedLinkId();
+						else 
+							id = ((ObjectPropertySpecializationLink)incomingLink).getSpecializedLinkId();
+						hNodeIdToDomainNodeMap.put(hNodeId, new SemanticTypeNode(id, id, id));
+					} else {
+						InternalNode source = (InternalNode)incomingLink.getSource();
+						hNodeIdToDomainNodeMap.put(hNodeId, new SemanticTypeNode(source.getId(), 
+								source.getUri(), source.getDisplayId()));
+					}
 				}
 			}
 			
@@ -255,6 +267,31 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 			return t.worksheetId.equals(worksheetId);
 		}
 		return false;
+		
+	}
+	
+	private class SemanticTypeNode {
+		private String id;
+		private String uri;
+		private String displayId;
+		
+		SemanticTypeNode(String id, String uri, String displayId) {
+			this.id = id;
+			this.uri = uri;
+			this.displayId = displayId;
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		public String getUri() {
+			return uri;
+		}
+
+		public String getDisplayId() {
+			return displayId;
+		}
 		
 	}
 }
