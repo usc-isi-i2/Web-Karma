@@ -55,6 +55,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -63,6 +64,7 @@ import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
+import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
 import edu.isi.karma.kr2rml.writer.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
@@ -217,9 +219,6 @@ public class OfflineRdfGenerator {
 		contextFile = (String)cl.getValue("--contextfile");
 		if (rootTripleMap == null) {
 			rootTripleMap = "";
-		}
-		else {
-			rootTripleMap = Namespaces.KARMA_DEV + rootTripleMap;
 		}
 		if (killTripleMap == null) {
 			this.killTripleMap = new ArrayList<String>();
@@ -502,7 +501,7 @@ public class OfflineRdfGenerator {
 		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(sourceName, modelURL);
 
 		createWriters();
-		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator(selectionName, killTripleMap, stopTripleMap, POMToKill, rootTripleMap);
+		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator(selectionName);
 		rdfGenerator.addModel(id);
 
 		InputType inputType = null;
@@ -514,12 +513,30 @@ public class OfflineRdfGenerator {
 			inputType = InputType.XML;
 		else if(this.inputType.equalsIgnoreCase("AVRO"))
 			inputType = InputType.AVRO;
+		Model model = rdfGenerator.getModelParser(sourceName).getModel();
+		if (rootTripleMap != null && !rootTripleMap.isEmpty()) {
+			StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), rootTripleMap);
+			Resource subject = null;
+			while (itr.hasNext()) {
+				subject = itr.next().getSubject();
+			}
+			if (subject != null) {
+				itr = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
+				while (itr.hasNext()) {
+					rootTripleMap = itr.next().getSubject().toString();
+				}
+			}
+		}
 		RDFGeneratorRequest request = new RDFGeneratorRequest(sourceName, inputFile.getName());
 		request.setInputFile(inputFile);
 		request.setDataType(inputType);
 		request.setMaxNumLines(maxNumLines);
 		request.setAddProvenance(false);
 		request.addWriters(writers);
+		request.setPOMToKill(POMToKill);
+		request.setTripleMapToKill(killTripleMap);
+		request.setTripleMapToStop(stopTripleMap);
+		request.setStrategy(new UserSpecifiedRootStrategy(rootTripleMap));
 		if (contextFile != null) {
 			File tmp = new File(contextFile);
 			ContextIdentifier contextId = new ContextIdentifier(tmp.getName(), tmp.toURI().toURL());
