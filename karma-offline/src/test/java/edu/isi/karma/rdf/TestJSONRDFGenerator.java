@@ -51,7 +51,7 @@ public abstract class TestJSONRDFGenerator extends TestRdfGenerator{
 	
 	protected void executeBasicJSONTest(String filename, String modelName, boolean generateProvenance, int expectedNumberOfLines) throws IOException, URISyntaxException,
 			KarmaException {
-		logger.info("Loading json file: " + filename);
+		logger.debug("Loading json file: " + filename);
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		List<KR2RMLRDFWriter> writers = this.createBasicWriter(pw);

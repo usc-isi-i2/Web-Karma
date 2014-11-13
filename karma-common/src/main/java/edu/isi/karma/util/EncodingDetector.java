@@ -54,7 +54,7 @@ public class EncodingDetector {
 	        
 	        String encoding = EncodingDetector.detect(fis);
 	        
-	        logger.info("Detected encoding for file: " + file.getName() + ": " + encoding);
+	        logger.debug("Detected encoding for file: " + file.getName() + ": " + encoding);
 	        if (encoding == null) {
 	            encoding = DEFAULT_ENCODING;
 	        }
@@ -67,14 +67,14 @@ public class EncodingDetector {
 
     public static InputStreamReader getInputStreamReader(InputStream is, String encoding) throws IOException {
         
-        logger.info("Reading stream: using encoding: " + encoding);
+        logger.debug("Reading stream: using encoding: " + encoding);
         BOMInputStream bis = new BOMInputStream(is); //So that we can remove the BOM
         return new InputStreamReader(bis, encoding);
     }
     public static InputStreamReader getInputStreamReader(File file, String encoding) throws IOException {
         
         FileInputStream fis = new FileInputStream(file);
-        logger.info("Reading file: " + file + " using encoding: " + encoding);
+        logger.debug("Reading file: " + file + " using encoding: " + encoding);
         BOMInputStream bis = new BOMInputStream(fis); //So that we can remove the BOM
         return new InputStreamReader(bis, encoding);
     }
@@ -83,7 +83,7 @@ public class EncodingDetector {
         StringWriter sw = new StringWriter();
         
         FileInputStream fis = new FileInputStream(file);
-        logger.info("Reading file: " + file + " using encoding: " + encoding);
+        logger.debug("Reading file: " + file + " using encoding: " + encoding);
         IOUtils.copy(fis, sw, encoding);
 
         return sw.toString();

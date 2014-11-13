@@ -96,7 +96,7 @@ public class WorksheetCommandHistoryExecutor {
 
 		JSONArray inputParamArr = (JSONArray) commObject.get(HistoryArguments.inputParameters.name());
 		String commandName = (String)commObject.get(HistoryArguments.commandName.name());
-		logger.info("Command in history: " + commandName);
+		logger.debug("Command in history: " + commandName);
 
 		// Change the hNode ids, vworksheet id to point to the current worksheet ids
 		try {
@@ -112,7 +112,7 @@ public class WorksheetCommandHistoryExecutor {
 					if(comm != null){
 						try {
 							comm.setExecutedInBatch(true);
-							logger.info("Executing command: " + commandName);
+							logger.debug("Executing command: " + commandName);
 							uc.append(workspace.getCommandHistory().doCommand(comm, workspace, saveToHistory));
 							comm.setExecutedInBatch(false);
 						} catch(Exception e) {

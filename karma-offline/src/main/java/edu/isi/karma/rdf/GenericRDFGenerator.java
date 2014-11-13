@@ -148,7 +148,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 
 	private void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, InputStream data, InputType dataType, int maxNumLines, 
 			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy) throws KarmaException, IOException {
-		logger.info("Generating rdf for {}", sourceName);
+		logger.debug("Generating rdf for {}", sourceName);
 		
 		logger.debug("Initializing workspace for {}", sourceName);
 		Workspace workspace = initializeWorkspace();
