@@ -38,8 +38,7 @@ public abstract class BaseAvroMapper extends Mapper<AvroKey<Text>, NullWritable,
 			InterruptedException {
 
 		String contents = key.toString();
-		String filename = "query";
-		LOG.info(key.toString() + " started");
+		String filename = "data.avro";
 		StringWriter sw = new StringWriter();
 		KR2RMLRDFWriter outWriter = configureRDFWriter(sw);
 		try {
@@ -58,7 +57,6 @@ public abstract class BaseAvroMapper extends Mapper<AvroKey<Text>, NullWritable,
 		} catch (Exception e) {
 			LOG.error("Unable to generate RDF: " + e.getMessage());
 		}
-		LOG.info(key.toString() + " finished");
 	}
 
 	protected abstract KR2RMLRDFWriter configureRDFWriter(StringWriter sw);
