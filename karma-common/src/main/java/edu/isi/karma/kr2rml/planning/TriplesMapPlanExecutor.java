@@ -37,40 +37,62 @@ import edu.isi.karma.kr2rml.ReportMessage;
 public class TriplesMapPlanExecutor {
 
 	private static Logger LOG = LoggerFactory.getLogger(TriplesMapPlanExecutor.class);
-	private ExecutorService service = Executors.newFixedThreadPool(10);
+	private ExecutorService service;
+	private boolean useExecutorService = false;
+	
+	public TriplesMapPlanExecutor(boolean useExecutorService){
+		this.useExecutorService = useExecutorService;
+		if(this.useExecutorService)
+		{
+			service = Executors.newFixedThreadPool(10);
+		}
+	}
+	
 	public ErrorReport execute(TriplesMapPlan plan)
 	{
 		ErrorReport errorReport = new ErrorReport();
 		//TODO Handle exceptions/waiting for results better
 		try {
-			List<Future<Boolean>> results = new LinkedList<Future<Boolean>>();
-			for(TriplesMapWorker worker : plan.workers)
+			
+			if(useExecutorService)
 			{
-				results.add(service.submit(worker));
+				List<Future<Boolean>> results = new LinkedList<Future<Boolean>>();
+				results = service.invokeAll(plan.workers);
+				for(Future<Boolean> result : results)
+				{
+					result.get(1, TimeUnit.MINUTES);
+				}
 			}
-
-			for(Future<Boolean> result : results)
+			else
 			{
-				result.get(1, TimeUnit.MINUTES);
+				for(TriplesMapWorker worker : plan.workers)
+				{
+					worker.call(); 
+				}
 			}
+			
 		} catch (Exception e) {
 			LOG.error("Unable to finish executing plan", e);
 			errorReport.addReportMessage(new ReportMessage("Triples Map Plan Execution Error", e.getMessage(), Priority.high));
-			
-			shutdown(errorReport);
-			service = Executors.newFixedThreadPool(10);
-			
+			if(useExecutorService)
+			{
+				shutdown(errorReport);
+				service = Executors.newFixedThreadPool(10);
+			}
 		}
 		return errorReport;
 	}
 	public  void shutdown(ErrorReport errorReport) {
-		List<Runnable> unfinishedWorkers = service.shutdownNow();
-		for(Runnable unfinishedWorker : unfinishedWorkers)
+		if(useExecutorService)
 		{
-			if(unfinishedWorker instanceof TriplesMapWorker)
+			List<Runnable> unfinishedWorkers = service.shutdownNow();
+			for(Runnable unfinishedWorker : unfinishedWorkers)
 			{
-				TriplesMapWorker unfinishedTriplesMapWorker = (TriplesMapWorker) unfinishedWorker;
-				errorReport.addReportMessage(new ReportMessage("Triples Map Plan Execution Error", unfinishedTriplesMapWorker.toString() + " was unable to complete", Priority.high));
+				if(unfinishedWorker instanceof TriplesMapWorker)
+				{
+					TriplesMapWorker unfinishedTriplesMapWorker = (TriplesMapWorker) unfinishedWorker;
+					errorReport.addReportMessage(new ReportMessage("Triples Map Plan Execution Error", unfinishedTriplesMapWorker.toString() + " was unable to complete", Priority.high));
+				}
 			}
 		}
 	}

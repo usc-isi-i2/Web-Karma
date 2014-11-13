@@ -213,7 +213,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				}
 			}
 			int i=1;
-			TriplesMapPlanExecutor e = new TriplesMapPlanExecutor();
+			TriplesMapPlanExecutor e = new TriplesMapPlanExecutor(false);
 			Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan = new HashMap<TriplesMap, TriplesMapWorkerPlan>() ;
 			for(TriplesMap triplesMap : kr2rmlMapping.getTriplesMapList())
 			{
