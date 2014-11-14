@@ -76,9 +76,9 @@ public class PythonTransformationHelper {
 		return string.replaceAll(" ", "").replaceAll("[^\\p{L}\\p{N}]","");
 	}
 
-	public static String getPythonTransformMethodDefinitionState(Worksheet worksheet, String transformationCode) {
+	public static String getPythonTransformMethodDefinitionState(Worksheet worksheet, String transformationCode, String transformId) {
 		StringBuilder methodStmt = new StringBuilder();
-		methodStmt.append("def transform(r):\n");
+		methodStmt.append("def transform"+transformId+"(r):\n");
 		String lines[] = transformationCode.split("\\r?\\n");
 		for (String line:lines) {
 			methodStmt.append("\t" + line + "\n");

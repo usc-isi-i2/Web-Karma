@@ -39,11 +39,12 @@ public class MiniSelection extends Selection {
 		if (this.status == SelectionStatus.UP_TO_DATE)
 			return;
 		evalColumns.clear();
+		String transformId = Thread.currentThread().getName() + this.superSelectionName;
 		for (Entry<Row, Boolean> entry : this.selectedRowsCache.entrySet()) {
 			Row key = entry.getKey();
 			PythonInterpreter interpreter = new PythonInterpreter();
 			try {
-				entry.setValue(evaluatePythonExpression(key, getCompiledCode(pythonCode, interpreter), interpreter));
+				entry.setValue(evaluatePythonExpression(key, getCompiledCode(pythonCode, interpreter, transformId), interpreter));
 			}catch(IOException e) {
 				entry.setValue(false);
 			}
@@ -59,10 +60,13 @@ public class MiniSelection extends Selection {
 		List<Table> tables = new ArrayList<Table>();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), workspace.getFactory().getHTable(hTableId), tables, SuperSelectionManager.DEFAULT_SELECTION);
-		PythonInterpreter interpreter = new PythonInterpreter();
+		String transformId = Thread.currentThread().getName() + this.superSelectionName;
+		PythonInterpreter interpreter = PythonRepository.getInstance().interpreter;
 		PyCode code = null;
 		try {
-			code = getCompiledCode(pythonCode, interpreter);
+			code = getCompiledCode(pythonCode, interpreter, transformId);
+			interpreter.set("transform", interpreter.get("transform"+transformId));
+			
 		} catch(Exception e) {
 			
 		}
@@ -90,7 +94,7 @@ public class MiniSelection extends Selection {
 
 	}
 
-	private PyCode getCompiledCode(String pythonCode, PythonInterpreter interpreter) throws IOException {
+	private PyCode getCompiledCode(String pythonCode, PythonInterpreter interpreter, String transformId) throws IOException {
 
 		String trimmedTransformationCode = pythonCode.trim();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
@@ -99,15 +103,13 @@ public class MiniSelection extends Selection {
 		}
 		String transformMethodStmt = PythonTransformationHelper
 				.getPythonTransformMethodDefinitionState(worksheet,
-						trimmedTransformationCode);
+						trimmedTransformationCode,transformId);
 
 
 		logger.debug("Executing PySelection\n" + transformMethodStmt);
 
 		// Prepare the Python interpreter
 		PythonRepository repo = PythonRepository.getInstance();
-		repo.initializeInterperter(interpreter);
-		repo.importUserScripts(interpreter);
 
 		repo.compileAndAddToRepositoryAndExec(interpreter, transformMethodStmt);
 

@@ -20,7 +20,7 @@ public class PythonRepository {
 	private static PythonRepository instance = new PythonRepository();
 	private static boolean libraryHasBeenLoaded = false;
 	private static boolean reloadLibrary = true;
-
+	public PythonInterpreter interpreter = PythonInterpreter.threadLocalStateInterpreter(null);
 	private PythonRepository()
 	{
 		initialize();
@@ -35,20 +35,25 @@ public class PythonRepository {
 	private void initialize()
 	{
 		scripts = new ConcurrentHashMap<String, PyCode>();
-		PythonInterpreter interpreter = new PythonInterpreter();
+		
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getImportStatements());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getGetValueDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getIsEmptyDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getHasSelectedRowsStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getVDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getTransformStatement());
+		initializeInterperter(interpreter);
 	}
 
 	public PyCode compileAndAddToRepositoryAndExec(PythonInterpreter interpreter, String statement)
 	{
-		PyCode py = compileAndAddToRepository(interpreter,statement);
-		interpreter.exec(py);
-		return py;
+		PyCode py  = null;
+		if(!scripts.containsKey(statement))
+		{
+			py = compileAndAddToRepository(interpreter,statement);
+			interpreter.exec(py);
+		}
+		return scripts.get(statement);
 	}
 	public PyCode compileAndAddToRepository(PythonInterpreter interpreter,
 			String statement) {
@@ -86,15 +91,16 @@ public class PythonRepository {
 
 
 		if (dirpathString != null && dirpathString.compareTo("") != 0) {
-			File f = new File(dirpathString);
-			String[] scripts = f.list(new FilenameFilter(){
-
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.endsWith(".py");
-				}});
+			
 			if(!libraryHasBeenLoaded || reloadLibrary)
 			{
+				File f = new File(dirpathString);
+				String[] scripts = f.list(new FilenameFilter(){
+
+					@Override
+					public boolean accept(File dir, String name) {
+						return name.endsWith(".py");
+					}});
 				for(String script : scripts)
 				{
 					String fileName = dirpathString  + script;
