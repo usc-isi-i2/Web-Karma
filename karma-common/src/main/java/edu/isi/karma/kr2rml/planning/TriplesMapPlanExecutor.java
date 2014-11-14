@@ -22,6 +22,7 @@ package edu.isi.karma.kr2rml.planning;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -38,23 +39,27 @@ public class TriplesMapPlanExecutor {
 
 	private static Logger LOG = LoggerFactory.getLogger(TriplesMapPlanExecutor.class);
 	private ExecutorService service;
-	private boolean useExecutorService = false;
+	private boolean submitPlansIndividually = false;
 	
-	public TriplesMapPlanExecutor(boolean useExecutorService){
-		this.useExecutorService = useExecutorService;
-		if(this.useExecutorService)
+	public TriplesMapPlanExecutor(boolean submitPlansIndividually){
+		this.submitPlansIndividually = submitPlansIndividually;
+		if(this.submitPlansIndividually)
 		{
 			service = Executors.newFixedThreadPool(10);
 		}
+		else
+		{
+			service = Executors.newSingleThreadExecutor();
+		}
 	}
 	
-	public ErrorReport execute(TriplesMapPlan plan)
+	public ErrorReport execute(final TriplesMapPlan plan)
 	{
 		ErrorReport errorReport = new ErrorReport();
 		//TODO Handle exceptions/waiting for results better
 		try {
 			
-			if(useExecutorService)
+			if(submitPlansIndividually)
 			{
 				List<Future<Boolean>> results = new LinkedList<Future<Boolean>>();
 				results = service.invokeAll(plan.workers);
@@ -65,36 +70,49 @@ public class TriplesMapPlanExecutor {
 			}
 			else
 			{
-				for(TriplesMapWorker worker : plan.workers)
-				{
-					worker.call(); 
-				}
+				Future<Boolean> result =	service.submit(new Callable<Boolean>(){
+
+						@Override
+						public Boolean call() throws Exception {
+							for(TriplesMapWorker worker : plan.workers)
+							{
+								worker.call();
+							}
+							return true;
+						}
+						
+					}); 
+				result.get(1, TimeUnit.MINUTES);
 			}
 			
 		} catch (Exception e) {
 			LOG.error("Unable to finish executing plan", e);
 			errorReport.addReportMessage(new ReportMessage("Triples Map Plan Execution Error", e.getMessage(), Priority.high));
-			if(useExecutorService)
+			
+			shutdown(errorReport);
+			if(submitPlansIndividually)
 			{
-				shutdown(errorReport);
 				service = Executors.newFixedThreadPool(10);
+			}
+			else
+			{
+				service = Executors.newSingleThreadExecutor();
 			}
 		}
 		return errorReport;
 	}
 	public  void shutdown(ErrorReport errorReport) {
-		if(useExecutorService)
+		
+		List<Runnable> unfinishedWorkers = service.shutdownNow();
+		for(Runnable unfinishedWorker : unfinishedWorkers)
 		{
-			List<Runnable> unfinishedWorkers = service.shutdownNow();
-			for(Runnable unfinishedWorker : unfinishedWorkers)
+			if(unfinishedWorker instanceof TriplesMapWorker)
 			{
-				if(unfinishedWorker instanceof TriplesMapWorker)
-				{
-					TriplesMapWorker unfinishedTriplesMapWorker = (TriplesMapWorker) unfinishedWorker;
-					errorReport.addReportMessage(new ReportMessage("Triples Map Plan Execution Error", unfinishedTriplesMapWorker.toString() + " was unable to complete", Priority.high));
-				}
+				TriplesMapWorker unfinishedTriplesMapWorker = (TriplesMapWorker) unfinishedWorker;
+				errorReport.addReportMessage(new ReportMessage("Triples Map Plan Execution Error", unfinishedTriplesMapWorker.toString() + " was unable to complete", Priority.high));
 			}
 		}
+	
 	}
 
 }
