@@ -635,7 +635,7 @@ public class KR2RMLMappingGenerator {
 		for (LabeledLink olink:outgoingEdges) {
 			// Check for the object property specialization
 			if (olink instanceof ObjectPropertySpecializationLink ) {
-				String splLinkId = ((ObjectPropertySpecializationLink) olink).getId();
+				String splLinkId = ((ObjectPropertySpecializationLink) olink).getSpecializedLinkId();
 				if (splLinkId.equals(link.getId()))
 					return olink;
 			}
