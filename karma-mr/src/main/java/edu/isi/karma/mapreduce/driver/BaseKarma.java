@@ -48,7 +48,7 @@ public class BaseKarma {
 			generator = new GenericRDFGenerator(null);
 			this.modelUri = modelUri;
 			this.modelFile = modelFile;
-
+			this.baseURI = baseURI;
 			addModel();
 			if (contextURI != null && !contextURI.isEmpty()) {
 				addContext(contextURI);
