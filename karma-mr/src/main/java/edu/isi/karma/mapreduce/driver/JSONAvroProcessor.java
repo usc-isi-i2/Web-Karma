@@ -49,7 +49,7 @@ public class JSONAvroProcessor extends Configured implements Tool {
         job.setInputFormatClass(AvroKeyBatchInputFormat.class);
         job.setJarByClass(JSONAvroProcessor.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
-        job.setMapperClass(JSONAvroMapper.class);
+        job.setMapperClass(JSONMapper.class);
         job.setReducerClass(JSONReducer.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
@@ -58,7 +58,7 @@ public class JSONAvroProcessor extends Configured implements Tool {
         FileInputFormat.setInputPaths(job, new Path(p.getProperty("input.directory")));
         FileOutputFormat.setOutputPath(job, new Path(p.getProperty("output.directory")));
         
-        job.setNumReduceTasks(0);
+        job.setNumReduceTasks(4);
         return job;
 	 }
 	 
