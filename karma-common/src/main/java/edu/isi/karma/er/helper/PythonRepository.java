@@ -8,15 +8,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.io.FileUtils;
 import org.python.core.PyCode;
 import org.python.util.PythonInterpreter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PythonRepository {
 
-	private ConcurrentHashMap<String, PyCode> scripts;
-	private ConcurrentHashMap<String, PyCode> libraryScripts;
-	private ConcurrentHashMap<String, Long> fileNameTolastTimeRead;
+	private static Logger logger = LoggerFactory.getLogger(PythonRepository.class);
+	private ConcurrentHashMap<String, PyCode> scripts = new ConcurrentHashMap<String, PyCode>();
+	private ConcurrentHashMap<String, PyCode> libraryScripts = new ConcurrentHashMap<String, PyCode>();
+	private ConcurrentHashMap<String, Long> fileNameTolastTimeRead = new ConcurrentHashMap<String, Long>();
 	private static PythonRepository instance = new PythonRepository();
 	private static boolean libraryHasBeenLoaded = false;
 	private static boolean reloadLibrary = true;
@@ -77,7 +80,7 @@ public class PythonRepository {
 		interpreter.exec(scripts.get(PythonTransformationHelper.getIsEmptyDefStatement()));
 		interpreter.exec(scripts.get(PythonTransformationHelper.getHasSelectedRowsStatement()));
 		interpreter.exec(scripts.get(PythonTransformationHelper.getVDefStatement()));
-
+		importUserScripts(interpreter);
 	}
 
 	public PyCode getTransformCode()
@@ -85,7 +88,7 @@ public class PythonRepository {
 		return scripts.get(PythonTransformationHelper.getTransformStatement());
 	}
 
-	public synchronized void importUserScripts(PythonInterpreter interpreter) throws IOException {
+	public synchronized void importUserScripts(PythonInterpreter interpreter) {
 		String dirpathString = ServletContextParameterMap
 				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
 
@@ -108,10 +111,16 @@ public class PythonRepository {
 					File s = new File(fileName);
 					if(lastTimeRead == null || s.lastModified() > lastTimeRead)
 					{
-						String statement = FileUtils.readFileToString(s);
-						PyCode py = compile(interpreter, statement);
-						libraryScripts.put(fileName, py);
-						fileNameTolastTimeRead.put(fileName, System.currentTimeMillis());
+						String statement;
+						try {
+							statement = FileUtils.readFileToString(s);
+							PyCode py = compile(interpreter, statement);
+							libraryScripts.put(fileName, py);
+							fileNameTolastTimeRead.put(fileName, System.currentTimeMillis());
+						} catch (IOException e) {
+							logger.error("Unable to process python script in {}: {}", fileName,e.toString());
+						}
+						
 					}
 					interpreter.exec(libraryScripts.get(fileName));
 					//TODO prune scripts no longer present
