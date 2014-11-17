@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +42,6 @@ import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.kr2rml.planning.RootStrategy;
 import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
-import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
 import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
 import edu.isi.karma.kr2rml.writer.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
@@ -61,10 +59,6 @@ public class GenericRDFGenerator extends RdfGenerator {
 	protected HashMap<String, WorksheetR2RMLJenaModelParser> readModelParsers;
 	protected HashMap<String, ContextIdentifier> contextIdentifiers;
 	protected HashMap<String, JSONObject> contextCache;
-	protected String rootTripleMap;
-	protected List<String> tripleMapToKill;
-	protected List<String> tripleMapToStop;
-	protected List<String> POMToKill;
 	public enum InputType {
 		CSV,
 		JSON,
@@ -78,23 +72,6 @@ public class GenericRDFGenerator extends RdfGenerator {
 		this.readModelParsers = new HashMap<String, WorksheetR2RMLJenaModelParser>();
 		this.contextCache = new HashMap<String, JSONObject>();
 		this.contextIdentifiers = new HashMap<String, ContextIdentifier>();
-		tripleMapToKill = new ArrayList<String>();
-		tripleMapToStop = new ArrayList<String>();
-		POMToKill = new ArrayList<String>();
-		rootTripleMap = "";
-	}
-	
-	public GenericRDFGenerator(String selectionName, List<String> tripleMapToKill, 
-			List<String> tripleMapToStop, List<String> POMToKill, String rootTripleMap) {
-		super(selectionName);
-		this.modelIdentifiers = new HashMap<String, R2RMLMappingIdentifier>();
-		this.readModelParsers = new HashMap<String, WorksheetR2RMLJenaModelParser>();
-		this.contextCache = new HashMap<String, JSONObject>();
-		this.contextIdentifiers = new HashMap<String, ContextIdentifier>();
-		this.tripleMapToKill = tripleMapToKill;
-		this.tripleMapToStop = tripleMapToStop;
-		this.POMToKill = POMToKill;
-		this.rootTripleMap = rootTripleMap;
 	}
 
 	public void addModel(R2RMLMappingIdentifier modelIdentifier) {
@@ -105,8 +82,18 @@ public class GenericRDFGenerator extends RdfGenerator {
 		this.contextIdentifiers.put(id.getName(), id);
 	}
 	
+	public WorksheetR2RMLJenaModelParser getModelParser(String modelName) throws JSONException, KarmaException {
+		WorksheetR2RMLJenaModelParser modelParser = readModelParsers.get(modelName);
+		R2RMLMappingIdentifier id = this.modelIdentifiers.get(modelName);
+		if(modelParser == null) {
+			modelParser = loadModel(id);
+		}
+		return modelParser;
+	}
+	
 	private void generateRDF(String modelName, String sourceName,String contextName, InputStream data, InputType dataType, int maxNumLines, 
-			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy)
+			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy, 
+			List<String> tripleMapToKill, List<String> tripleMapToStop, List<String> POMToKill)
 					throws KarmaException, IOException {
 		
 		R2RMLMappingIdentifier id = this.modelIdentifiers.get(modelName);
@@ -139,16 +126,16 @@ public class GenericRDFGenerator extends RdfGenerator {
 			}
 		}
 		//Check if the parser for this model exists, else create one
-		WorksheetR2RMLJenaModelParser modelParser = readModelParsers.get(modelName);
-		if(modelParser == null) {
-			modelParser = loadModel(id);
-		}
-		generateRDF(modelParser, sourceName, data, dataType, maxNumLines, addProvenance, writers, rootStrategy);
+		WorksheetR2RMLJenaModelParser modelParser = getModelParser(modelName);
+		generateRDF(modelParser, sourceName, data, dataType, maxNumLines, addProvenance, writers, rootStrategy, tripleMapToKill, tripleMapToStop, POMToKill);
 	}
+	
+	
 
 	private void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, InputStream data, InputType dataType, int maxNumLines, 
-			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy) throws KarmaException, IOException {
-		logger.debug("Generating rdf for {}", sourceName);
+			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy, 
+			List<String> tripleMapToKill, List<String> tripleMapToStop, List<String> POMToKill) throws KarmaException, IOException {
+		logger.debug("Generating rdf for " + sourceName);
 		
 		logger.debug("Initializing workspace for {}", sourceName);
 		Workspace workspace = initializeWorkspace();
@@ -174,14 +161,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 			ErrorReport errorReport = new ErrorReport();
 			if(rootStrategy == null)
 			{
-				if(rootTripleMap != null)
-				{
-					rootStrategy = new UserSpecifiedRootStrategy(rootTripleMap, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
-				}
-				else
-				{
-					rootStrategy = new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy());;
-				}
+				rootStrategy = new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy());
 			}
 			logger.debug("Generating output for {}", sourceName);
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
@@ -219,7 +199,10 @@ public class GenericRDFGenerator extends RdfGenerator {
 			inputStream = request.getInputStream();
 		}
 		
-		generateRDF(request.getModelName(), request.getSourceName(), request.getContextName(), inputStream,request.getDataType(), request.getMaxNumLines(), request.isAddProvenance(), request.getWriters(), request.getStrategy());
+		generateRDF(request.getModelName(), request.getSourceName(), request.getContextName(), 
+				inputStream,request.getDataType(), request.getMaxNumLines(), request.isAddProvenance(), 
+				request.getWriters(), request.getStrategy(), 
+				request.getTripleMapToKill(), request.getTripleMapToStop(), request.getPOMToKill());
 	}
 	
 	private InputType getInputType(Metadata metadata) {

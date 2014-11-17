@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-import org.apache.avro.mapreduce.AvroKeyInputFormat;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -15,6 +14,10 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import edu.isi.karma.mapreduce.inputformat.AvroKeyBatchInputFormat;
 
 public class JSONAvroProcessor extends Configured implements Tool {
 
@@ -38,11 +41,15 @@ public class JSONAvroProcessor extends Configured implements Tool {
 		{
 			conf.setIfUnset("context.uri", p.getProperty("context.uri"));
 		}
+		if(p.getProperty("rdf.generation.root") != null)
+		{
+			conf.setIfUnset("rdf.generation.root", p.getProperty("rdf.generation.root"));
+		}
 		Job job = Job.getInstance(conf);
-        job.setInputFormatClass(AvroKeyInputFormat.class);
+        job.setInputFormatClass(AvroKeyBatchInputFormat.class);
         job.setJarByClass(JSONAvroProcessor.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
-        job.setMapperClass(JSONAvroMapper.class);
+        job.setMapperClass(JSONMapper.class);
         job.setReducerClass(JSONReducer.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
@@ -51,7 +58,7 @@ public class JSONAvroProcessor extends Configured implements Tool {
         FileInputFormat.setInputPaths(job, new Path(p.getProperty("input.directory")));
         FileOutputFormat.setOutputPath(job, new Path(p.getProperty("output.directory")));
         
-        job.setNumReduceTasks(0);
+        job.setNumReduceTasks(4);
         return job;
 	 }
 	 
@@ -72,6 +79,7 @@ public class JSONAvroProcessor extends Configured implements Tool {
        }
        
        public static void main(String[] args) throws Exception {
+    	   Logger.getRootLogger().setLevel(Level.ERROR);
     	   System.exit(ToolRunner.run(new Configuration(), new JSONAvroProcessor(), args));
        }
 

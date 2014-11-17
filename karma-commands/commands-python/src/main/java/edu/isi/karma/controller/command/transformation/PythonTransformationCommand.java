@@ -101,7 +101,6 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 			JSONArray transformedRows, JSONArray errorValues, Integer limit)
 					throws JSONException, IOException {
 
-		long start;
 		SuperSelection selection = getSuperSelection(worksheet);
 		String trimmedTransformationCode = transformationCode.trim();
 		// Pedro: somehow we are getting empty statements, and these are causing

@@ -16,8 +16,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var nodeClickListener = null;
 	
 	var test = [];
-	//var tableData = [];                            //store table data
-	//var columnPos = [];                            //position for each column
 	var anchorName = [];                           //store anchor name, include nested
 	var anchorData = [];                           //store anchor nodes
 	var nodesData = [];                            //store all nodes includes anchors
@@ -220,8 +218,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			})
 			.attr("fill", "none");
 		links.exit()
-			.transition()
-			.duration(500)
+			//.transition()
+			//.duration(500)
 			.attr("opacity", 0)
 			.remove();
 
@@ -233,8 +231,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.append("polygon")
 			.attr("fill", "#555")
 		linkArrow.exit()
-			.transition()
-			.duration(500)
+			//.transition()
+			//.duration(500)
 			.attr("opacity", 500)
 			.remove();
 			
@@ -244,7 +242,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		labels.enter()
 			.append("g")
 			.classed("label", true)
-			.attr("id", function(d, i){
+			.attr("id", function(d, i){				
 				if (d.type == "nodeLabel"){
 					return "nodeLabelG" + d.node.id;
 				} else if (d.type == "linkLabel"){
@@ -255,8 +253,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				return "labelPartG" + i;
 			});
 		labels.exit()
-			.transition()
-			.duration(500)
+			//.transition()
+			//.duration(500)
 			.attr("opacity", 0)
 			.remove();
 
@@ -503,8 +501,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.classed("labelLinks", true)
 			.attr("stroke-width", 0);
 		labelLinks.exit()
-			.transition()
-			.duration(500)
+			//.transition()
+			//.duration(500)
 			.attr("opacity", 0)
 			.remove();
 
@@ -637,8 +635,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.duration(500)
 			.attr("r", nodeRadius);
 		nodes.exit()
-			.transition()
-			.duration(500)
+			//.transition()
+			//.duration(500)
 			.attr("opacity", 500)
 			.remove();
 	}
@@ -1043,11 +1041,13 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		});
 
 		//padding = 35;
-		windowWidth = parseInt($("." + cssClass).css("width"));
-		leftPanelWidth = window.innerWidth - windowWidth;
+		rightPanelWidth = parseInt($("." + cssClass).css("width"));
+		leftPanelWidth = window.innerWidth - rightPanelWidth;
+		windowWidth = rightPanelWidth;
 		maxXOfferset = 0;
 		width=0;           
 		height=0;
+		textHeight = 15;
 
 		test = [];
 	 	anchorName = [];                           //store anchor name, include nested
@@ -1064,16 +1064,23 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		SCCNodes = [];                             //SCC nodes set
 		SCCtmpNodes = [];                          //the nodes stack of SCC
 		layerLabel = [];                           //layers are divided into sections based on its layer
-		
+		cycleSet = [];                             //each element in the array is an arraylist, consist of edges of cycle. ex: {1->2, 2->3, 3->1}
+
 		map = new myMap();
 		idMap = [];                                //map from label to id
 		edgeIdMap = [];                            //map of edge's id	
 
+		print = false;                             //whether or not print 
+		nodeRadius = 4;
+		unitLinkLength = 70;                       //difference between layers
+		outsideUnitLinkLength = 50;                //length for outside links
 		maxLayer = 0;                              //max layer number, base 0
 		reshuffleFrequency = 8;                    //pixel changes to excute scroll bar event
 		xOffset = 0;                               //x position offset
 		firstTime = true;                          //first time to load the force-layout
-		maxLabelLength = 0;    	
+		maxLabelLength = 0;    
+		tableHeight = 0;
+		cellWidth = $(".wk-header-cell").css("width");	
 	}
 
 	//initialize data
@@ -1151,19 +1158,18 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			textData.push({
 				node : node,
 				type : "linkCircle",
-				nodeId : "circle" + d.id
+				nodeId : "circle" + node.src + "-" + node.tgt
 			});
 			textData.push({
 				node : node,
 				type : "linkLabel",
 				content : d.label,
-				nodeId : d.id
+				nodeId : node.src + "-" + node.tgt
 			});
-
 			textLinksData.push({
 				source : textData.length - 2,
 				target : textData.length - 1,
-				edgeId : d.id
+				edgeId : node.src + "-" + node.tgt
 			});
 		});
 
@@ -1319,6 +1325,49 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		})
 		*/
 
+		//set the edge link
+		tmpE.forEach(function(d, i){
+			var srcIndex = nodesData.length * 2 + edgeIdMap[d.source] * 2 + 1;
+			textData[srcIndex].layer = (nodesData[textData[srcIndex].node.src].layer + nodesData[textData[srcIndex].node.tgt].layer) / 2;
+
+			var edge = {};
+			edge.source = textData[srcIndex];
+			edge.target = idMap[d.target];
+			edge.id = linksData.length;
+			edge.edgeId = d.id;
+			edge.linkType = d.linkType;
+			edge.type = "edgeLink";
+			edge.node = {};
+			edge.node.original = d;
+			linksData.push(edge);
+
+			var node = {};
+			node.src = edge.source;
+			node.tgt = edge.target;
+			node.original = d;
+			textData.push({
+				node : node,
+				type : "edgeLinkCircle",
+				content : d.label,
+				nodeId : "circle" + node.src.nodeId + "-" + node.tgt
+			});
+			textData.push({
+				node : node,
+				type : "edgeLinkLabel",
+				content : d.label,
+				nodeId : node.src.nodeId + "-" + node.tgt
+			});
+
+			textLinksData.push({
+				source : textData.length - 2,
+				target : textData.length - 1,
+				edgeId : node.src.nodeId + "-" + node.tgt
+			});
+
+			nodesData[node.tgt].unAssigned = false;
+			nodesData[node.tgt].degree++;
+		});
+
 		//store the node id in the sequence of layer
 		//xPos is the x position for nodes in the unit of column's width
 		layerMap = d3.range(maxLayer + 1)
@@ -1328,6 +1377,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		nodesData.forEach(function(d){
 			if (d.layer != undefined){
 				if (!d.unAssigned){
+					if (layerMap[d.layer] == undefined)
+						console.log(d);
 					layerMap[d.layer].push(d.id);
 				}				
 			}		
@@ -1372,46 +1423,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				d.layer = -1;
 				d.xpos = -1;
 			}	
-		});
-
-
-		//set the edge link
-		tmpE.forEach(function(d, i){
-			var srcIndex = nodesData.length * 2 + edgeIdMap[d.source] * 2 + 1;
-			textData[srcIndex].layer = (nodesData[textData[srcIndex].node.src].layer + nodesData[textData[srcIndex].node.tgt].layer) / 2;
-
-			var edge = {};
-			edge.source = textData[srcIndex];
-			edge.target = idMap[d.target];
-			edge.id = linksData.length;
-			edge.linkType = d.linkType;
-			edge.type = "edgeLink";
-			edge.node = {};
-			edge.node.original = d;
-			linksData.push(edge);
-
-			var node = {};
-			node.src = edge.source;
-			node.tgt = edge.target;
-			node.original = d;
-			textData.push({
-				node : node,
-				type : "edgeLinkCircle",
-				content : d.label,
-				nodeId : "circle" + d.id
-			});
-			textData.push({
-				node : node,
-				type : "edgeLinkLabel",
-				content : d.label,
-				nodeId : d.id
-			});
-
-			textLinksData.push({
-				source : textData.length - 2,
-				target : textData.length - 1,
-				edgeId : d.id
-			});
 		});
 	}
 
@@ -1601,8 +1612,14 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					return 0;			
 				});
 			d3.select(htmlElement).selectAll(".linkLabel")
-				.attr("opacity", function(d){
-					if (d.type == "linkLabel"){
+				.attr("opacity", function(d, i){
+					if (d.type == "linkLabel"){						
+						/*if (nodesData[d.node.src] == undefined || nodesData[d.node.tgt] == undefined){
+							console.log(i + " " + d.node.src + " " + d.node.tgt)
+							console.log(d)
+							d.show = false;
+							return 0;
+						}*/
 						if (nodesData[d.node.tgt].noLayer){
 							d.show = true;
 							return 1;
@@ -1610,7 +1627,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 						if (nodesData[d.node.tgt].type == 'anchor' && !nodesData[d.node.tgt].outside.isOutside){
 							d.show = true;
 							return 1;
-						}
+						}						
 						if (nodesData[d.node.src].outside.isOutside || nodesData[d.node.tgt].outside.isOutside){
 							d.show = false;
 							return 0;

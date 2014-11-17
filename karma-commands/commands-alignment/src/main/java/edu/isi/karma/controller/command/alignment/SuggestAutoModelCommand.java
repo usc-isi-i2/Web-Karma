@@ -132,7 +132,21 @@ public class SuggestAutoModelCommand extends WorksheetCommand {
 				// Create a semantic type object
 				SemanticType type = new SemanticType(hNode.getId(), propertyLabel, internalNodeLabel, SemanticType.Origin.User, 1.0);
 				worksheet.getSemanticTypes().addType(type);
-				columnNode.setUserSelectedSemanticType(type);
+				
+				List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();
+				if (userSemanticTypes == null) {
+					userSemanticTypes = new ArrayList<SemanticType>();
+					columnNode.setUserSemanticTypes(userSemanticTypes);
+				}
+				boolean duplicateSemanticType = false;
+				for (SemanticType st : userSemanticTypes) {
+					if (st.getModelLabelString().equalsIgnoreCase(type.getModelLabelString())) {
+						duplicateSemanticType = true;
+						break;
+					}
+				}
+				if (!duplicateSemanticType)
+					userSemanticTypes.add(type);
 			} else {
 				// User-defined: do nothing
 			}

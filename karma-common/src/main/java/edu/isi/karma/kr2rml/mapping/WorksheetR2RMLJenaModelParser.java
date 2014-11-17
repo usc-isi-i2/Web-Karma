@@ -81,6 +81,13 @@ public class WorksheetR2RMLJenaModelParser {
 	{
 		this.id = id;
 	}
+	
+	public Model getModel() throws IOException {
+		if (model == null) {
+			this.model = loadSourceModelIntoJenaModel(id.getLocation());
+		}
+		return model;
+	}
 
 	public KR2RMLMapping parse() throws IOException, KarmaException, JSONException
 	{

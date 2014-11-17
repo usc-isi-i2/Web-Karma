@@ -21,6 +21,7 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -272,7 +273,20 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 					SemanticType.Origin.User, 1.0);
 		}
 
-		columnNode.setUserSelectedSemanticType(newType);
+		List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();
+		if (userSemanticTypes == null) {
+			userSemanticTypes = new ArrayList<SemanticType>();
+			columnNode.setUserSemanticTypes(userSemanticTypes);
+		}
+		boolean duplicateSemanticType = false;
+		for (SemanticType st : userSemanticTypes) {
+			if (st.getModelLabelString().equalsIgnoreCase(newType.getModelLabelString())) {
+				duplicateSemanticType = true;
+				break;
+			}
+		}
+		if (!duplicateSemanticType)
+			userSemanticTypes.add(newType);
 
 		// Update the alignment
 		if(!this.isExecutedInBatch())

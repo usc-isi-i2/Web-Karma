@@ -10,6 +10,10 @@ import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
+
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.kr2rml.ContextIdentifier;
@@ -18,6 +22,7 @@ import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rdf.GenericRDFGenerator;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.webserver.KarmaException;
@@ -33,8 +38,9 @@ public class BaseKarma {
 	protected URL modelURL;
 	protected ContextIdentifier contextId; 
 	protected JSONObject contextObj = new JSONObject();
+	protected String rdfGenerationRoot = null;
 	public void setup(String inputTypeString, String modelUri, String modelFile, 
-			String baseURI, String contextURI) {
+			String baseURI, String contextURI, String root) {
 
 		try {
 			setupKarmaHome();
@@ -42,9 +48,24 @@ public class BaseKarma {
 			generator = new GenericRDFGenerator(null);
 			this.modelUri = modelUri;
 			this.modelFile = modelFile;
+
 			addModel();
 			if (contextURI != null && !contextURI.isEmpty()) {
 				addContext(contextURI);
+			}
+			Model model = generator.getModelParser("model").getModel();
+			if (root != null && !root.isEmpty()) {
+				StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), root);
+				Resource subject = null;
+				while (itr.hasNext()) {
+					subject = itr.next().getSubject();
+				}
+				if (subject != null) {
+					itr = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
+					while (itr.hasNext()) {
+						rdfGenerationRoot = itr.next().getSubject().toString();
+					}
+				}
 			}
 		} catch (KarmaException | IOException e) {
 			LOG.error("Unable to complete Karma set up: " + e.getMessage());
@@ -82,7 +103,7 @@ public class BaseKarma {
 			contextObj = new JSONObject(new JSONTokener(contextId.getLocation().openStream()));
 			generator.addContext(contextId);
 		}catch(Exception e) {
-			
+
 		}
 	}
 
@@ -110,7 +131,7 @@ public class BaseKarma {
 	public String getBaseURI() {
 		return baseURI;
 	}
-	
+
 	public ContextIdentifier getContextId() {
 		return contextId;
 	}
@@ -130,5 +151,9 @@ public class BaseKarma {
 			}
 		}
 		return modelURL;
+	}
+
+	public String getRdfGenerationRoot() {
+		return rdfGenerationRoot;
 	}
 }
