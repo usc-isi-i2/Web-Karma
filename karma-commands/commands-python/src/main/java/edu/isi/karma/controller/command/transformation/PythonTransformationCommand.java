@@ -110,7 +110,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 			logger.info("Empty PyTransform statement in "
 					+ hNode.getColumnName());
 		}
-		String transformId = Thread.currentThread().getName() + "_" + this.id;
+		String transformId = Thread.currentThread().getId() + this.id;
 		String transformMethodStmt = PythonTransformationHelper
 				.getPythonTransformMethodDefinitionState(worksheet,
 						trimmedTransformationCode, transformId);

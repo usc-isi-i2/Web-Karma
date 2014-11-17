@@ -60,7 +60,7 @@ public class MiniSelection extends Selection {
 		List<Table> tables = new ArrayList<Table>();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), workspace.getFactory().getHTable(hTableId), tables, SuperSelectionManager.DEFAULT_SELECTION);
-		String transformId = Thread.currentThread().getName() + this.superSelectionName;
+		String transformId = Thread.currentThread().getId() + this.superSelectionName;
 		PythonInterpreter interpreter = PythonRepository.getInstance().interpreter;
 		PyCode code = null;
 		try {
