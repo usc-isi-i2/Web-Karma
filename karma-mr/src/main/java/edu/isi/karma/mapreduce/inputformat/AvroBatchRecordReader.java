@@ -34,7 +34,7 @@ public class AvroBatchRecordReader<T> extends AvroRecordReaderBase<Text, Text, T
 	}
 
 	@Override
-	public boolean nextKeyValue() throws IOException, InterruptedException {
+	public synchronized boolean nextKeyValue() throws IOException, InterruptedException {
 		data.clear();
 		int i = 0;
 		while (super.nextKeyValue()) {	
