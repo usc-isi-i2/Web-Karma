@@ -33,6 +33,8 @@ public class KarmaReducerBolt extends BaseRichBolt {
 		this.models = models;
 		this.outputId = outputId;
 	}
+	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void prepare(Map stormConf, TopologyContext context,
 			OutputCollector collector) {

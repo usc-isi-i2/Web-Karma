@@ -21,6 +21,7 @@ import backtype.storm.utils.Utils;
 
 public class TestElasticSearchKarmaTopology {
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testBasicTopology(){ 
 		TopologyBuilder builder = new TopologyBuilder(); 
@@ -69,7 +70,6 @@ public class TestElasticSearchKarmaTopology {
          config,
          topology); 
 		Utils.sleep(35000);
-		//cluster.killTopology("karma-basic-topology");
 		cluster.shutdown();
 	}
 }

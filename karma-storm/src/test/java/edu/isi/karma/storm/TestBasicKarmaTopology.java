@@ -12,6 +12,8 @@ import org.apache.storm.hdfs.bolt.rotation.FileSizeRotationPolicy;
 import org.apache.storm.hdfs.bolt.rotation.FileSizeRotationPolicy.Units;
 import org.apache.storm.hdfs.bolt.sync.CountSyncPolicy;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
@@ -22,6 +24,7 @@ import backtype.storm.utils.Utils;
 
 public class TestBasicKarmaTopology {
 
+	private static final Logger LOG = LoggerFactory.getLogger(TestBasicKarmaTopology.class);
 	@Test
 	public void testBasicTopology(){ 
 		TopologyBuilder builder = new TopologyBuilder(); 
@@ -35,8 +38,7 @@ public class TestBasicKarmaTopology {
 			source = new File(this.getClass().getClassLoader().getResource("people-model.ttl").toURI()).getAbsolutePath().toString();
 			basicKarmaBoltProperties.setProperty("model.file", source);
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Unable to load model", e);
 		}
 		builder.setBolt("karma-generate-json", new KarmaBolt(basicKarmaBoltProperties)).shuffleGrouping("karma-seq-spout");
 		SequenceFileBolt sequenceFileBolt = new SequenceFileBolt();

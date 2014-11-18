@@ -7,6 +7,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
@@ -21,6 +23,7 @@ public class KarmaSequenceFileSpout extends BaseRichSpout {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOG = LoggerFactory.getLogger(KarmaSequenceFileSpout.class);
 	private SpoutOutputCollector outputCollector;
 	private SequenceFile.Reader reader;
 	@Override
@@ -35,12 +38,12 @@ public class KarmaSequenceFileSpout extends BaseRichSpout {
 				outputCollector.emit(new Values(key.toString(), val.toString()));
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Unable to emit new tuple", e);
 		}
 		
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void open(Map configMap, TopologyContext arg1, SpoutOutputCollector outputCollector) {
 		this.outputCollector = outputCollector;
@@ -51,8 +54,7 @@ public class KarmaSequenceFileSpout extends BaseRichSpout {
 		try {
 			this.reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(inputPath));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Unable to open sequence file", e);
 		}
 		
 		
