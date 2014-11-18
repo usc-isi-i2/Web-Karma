@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONArray;
@@ -156,6 +155,12 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		{
 			for(JSONObject value : records.values())
 			{
+				if (value.has(atId)) {
+					String Id = value.get(atId).toString();
+					if (!isValidURI(Id)) {
+						value.remove(atId);
+					}
+				}
 				collapseSameType(value);
 				if (!firstObject) {
 					outWriter.println(",");
@@ -180,22 +185,20 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 	protected void collapseSameType(JSONObject obj) {
 		for (Object key : new HashSet(obj.keySet())) {
 			Object value = obj.get((String)key);
-			if (key.equals(atId)) {
-				try {
-					@SuppressWarnings("unused")
-					URI uri = new URI(value.toString());
-				}catch(Exception e) {
-					obj.remove(atId);
-				}
-			}
 			if (value instanceof JSONArray) {
 				JSONArray array = (JSONArray)value;
-				TreeMap<String, Object> types = new TreeMap<String, Object>();
+				Map<String, Object> types = new HashMap<String, Object>();
 				int length = array.length();
 				for (int i = 0; i < length; i++) {
 					Object o = array.remove(0);
 					if (o instanceof JSONObject) {
 						JSONObject jsonObjectValue = (JSONObject)o;
+						if (jsonObjectValue.has(atId)) {
+							String Id = jsonObjectValue.get(atId).toString();
+							if (!isValidURI(Id)) {
+								jsonObjectValue.remove(atId);
+							}
+						}
 						if(isJustIdAndType(jsonObjectValue))
 						{
 							types.put(jsonObjectValue.getString(atId), jsonObjectValue.get(atId));
@@ -232,6 +235,12 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			if (value instanceof JSONObject)
 			{
 				JSONObject jsonObjectValue = (JSONObject)value;
+				if (jsonObjectValue.has(atId)) {
+					String Id = jsonObjectValue.get(atId).toString();
+					if (!isValidURI(Id)) {
+						jsonObjectValue.remove(atId);
+					}
+				}
 				if(isJustIdAndType(jsonObjectValue))
 				{
 					obj.put((String)key, jsonObjectValue.get(atId));
@@ -242,6 +251,16 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 				}
 			}
 		}
+	}
+	
+	private boolean isValidURI(String URI) {
+		try {
+			@SuppressWarnings("unused")
+			URI uri = new URI(URI);
+		}catch(Exception e) {
+			return false;
+		}
+		return true;
 	}
 
 	protected boolean isJustIdAndType(JSONObject object)
