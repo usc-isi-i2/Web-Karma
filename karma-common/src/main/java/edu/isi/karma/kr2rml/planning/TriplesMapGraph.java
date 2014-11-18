@@ -21,7 +21,6 @@
 
 package edu.isi.karma.kr2rml.planning;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -50,7 +49,7 @@ public class TriplesMapGraph {
 		triplesMapIndex.put(triplesMap.getId(), triplesMap);
 		List<TriplesMapLink> neighbouringLinks = neighboringTriplesMapCache.get(triplesMap.getId());
 		if (neighbouringLinks == null) {
-			neighbouringLinks = new ArrayList<TriplesMapLink>();
+			neighbouringLinks = new LinkedList<TriplesMapLink>();
 			neighboringTriplesMapCache.put(triplesMap.getId(), neighbouringLinks);
 		}
 	}
@@ -78,7 +77,7 @@ public class TriplesMapGraph {
 		// Add source neighboring links to the cache
 		List<TriplesMapLink> sourceNeighbouringLinks = neighboringTriplesMapCache.get(link.getSourceMap().getId());
 		if (sourceNeighbouringLinks == null) {
-			sourceNeighbouringLinks = new ArrayList<TriplesMapLink>();
+			sourceNeighbouringLinks = new LinkedList<TriplesMapLink>();
 		}
 		sourceNeighbouringLinks.add(link);
 		triplesMapIndex.put(link.getSourceMap().getId(),link.getSourceMap());
@@ -87,7 +86,7 @@ public class TriplesMapGraph {
 		// Add target neighboring links to the cache
 		List<TriplesMapLink> targetNeighbouringLinks = neighboringTriplesMapCache.get(link.getTargetMap().getId());
 		if (targetNeighbouringLinks == null) {
-			targetNeighbouringLinks = new ArrayList<TriplesMapLink>();
+			targetNeighbouringLinks = new LinkedList<TriplesMapLink>();
 		}
 		targetNeighbouringLinks.add(link);
 		triplesMapIndex.put(link.getTargetMap().getId(),link.getTargetMap());
@@ -96,7 +95,7 @@ public class TriplesMapGraph {
 
 	public List<TriplesMapLink> getAllNeighboringTriplesMap(String triplesMapId) {
 		if (neighboringTriplesMapCache.get(triplesMapId) == null)
-			return new ArrayList<TriplesMapLink>();
+			return new LinkedList<TriplesMapLink>();
 
 		return neighboringTriplesMapCache.get(triplesMapId);
 	}
@@ -175,7 +174,7 @@ public class TriplesMapGraph {
 		TriplesMapGraph newGraph = new TriplesMapGraph();
 		newGraph.links.addAll(links);
 		for (Entry<String, List<TriplesMapLink>> entry : neighboringTriplesMapCache.entrySet()) {
-			newGraph.neighboringTriplesMapCache.put(entry.getKey(), new ArrayList<TriplesMapLink>(entry.getValue()));
+			newGraph.neighboringTriplesMapCache.put(entry.getKey(), new LinkedList<TriplesMapLink>(entry.getValue()));
 		}
 		newGraph.triplesMapIndex.putAll(triplesMapIndex);
 		return newGraph;
@@ -185,7 +184,7 @@ public class TriplesMapGraph {
 		if (tripleMapToKill.size() == 0) {
 			return;
 		}
-		List<TriplesMapLink> remainedLinks = new ArrayList<TriplesMapLink>();
+		List<TriplesMapLink> remainedLinks = new LinkedList<TriplesMapLink>();
 		Set<String> visited = new HashSet<String>();
 		killTriplesMap(strategy.findRoot(this), tripleMapToKill, remainedLinks, visited);
 		links.clear();
@@ -219,7 +218,7 @@ public class TriplesMapGraph {
 		if (POMToKill.size() == 0) {
 			return;
 		}
-		List<TriplesMapLink> remainedLinks = new ArrayList<TriplesMapLink>();
+		List<TriplesMapLink> remainedLinks = new LinkedList<TriplesMapLink>();
 		Set<String> visited = new HashSet<String>();
 		killPredicateObjectMap(strategy.findRoot(this), POMToKill, remainedLinks, visited);
 		links.clear();
@@ -253,7 +252,7 @@ public class TriplesMapGraph {
 		if (tripleMapToStop.size() == 0) {
 			return;
 		}
-		List<TriplesMapLink> remainedLinks = new ArrayList<TriplesMapLink>();
+		List<TriplesMapLink> remainedLinks = new LinkedList<TriplesMapLink>();
 		Set<String> visited = new HashSet<String>();
 		stopTriplesMap(strategy.findRoot(this), tripleMapToStop, remainedLinks, visited);
 		links.clear();
