@@ -54,6 +54,9 @@ public class TestElasticSearchKarmaTopology {
 		conf.put("es.storm.bolt.flush.entries.size", 1);
 		conf.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, 10);
 		conf.put("es.storm.bolt.write.ack", "true");
+		conf.put("es.storm.bolt.tick.tuple.flush", "true");
+		conf.put("es.nodes", "localhost");
+		conf.put("es.port", "9200");
 		EsBolt elasticSearchOutput = new EsBolt("nerp/people", conf);
 		
 		builder.setBolt("karma-elasticsearch-json", elasticSearchOutput).shuffleGrouping("karma-reducer-json");
