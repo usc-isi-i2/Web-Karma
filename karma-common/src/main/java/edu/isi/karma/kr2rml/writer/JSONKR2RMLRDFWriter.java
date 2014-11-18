@@ -216,7 +216,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 					}			
 					else
 					{
-						types.put((String)o, o);
+						types.put(o.toString(), o);
 					}
 				}
 				if (types.size() > 1) {

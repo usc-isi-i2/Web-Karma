@@ -40,12 +40,12 @@ public class BaseKarma {
 	protected JSONObject contextObj = new JSONObject();
 	protected String rdfGenerationRoot = null;
 	public void setup(String inputTypeString, String modelUri, String modelFile, 
-			String baseURI, String contextURI, String root) {
+			String baseURI, String contextURI, String root, String selection) {
 
 		try {
 			setupKarmaHome();
 			determineInputType(inputTypeString);
-			generator = new GenericRDFGenerator(null);
+			generator = new GenericRDFGenerator(selection);
 			this.modelUri = modelUri;
 			this.modelFile = modelFile;
 
