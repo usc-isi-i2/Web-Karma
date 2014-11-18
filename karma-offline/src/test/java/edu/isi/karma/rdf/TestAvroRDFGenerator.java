@@ -146,6 +146,8 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 				reader.next();
 				count ++;
 			}
+			reader.close();
+			schemareader.close();
 			assertEquals(7, count);
 		} catch (Exception e) {
 			logger.error("testGenerateAvro2 failed:", e);
