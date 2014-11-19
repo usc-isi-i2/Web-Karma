@@ -3,11 +3,11 @@ package edu.isi.karma.mapreduce.driver;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Iterator;
 
 import org.apache.hadoop.io.Text;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
@@ -22,17 +22,10 @@ public class JSONMapper extends BaseRDFMapper {
 		PrintWriter pw = new PrintWriter(sw);
 		KR2RMLRDFWriter outWriter = new JSONKR2RMLRDFWriter(pw, karma.getBaseURI());
 		ContextIdentifier contextId = karma.getContextId();
-		if (contextId != null) {
-			try {
-				JSONObject obj = new JSONObject(new JSONTokener(contextId.getLocation().openStream()));
-				((JSONKR2RMLRDFWriter)outWriter).setGlobalContext(obj, contextId);
-				atId = ((JSONKR2RMLRDFWriter)outWriter).getAtId();
-			}
-			catch(Exception e)
-			{
-				
-			}
-		}
+		try {
+			atId = getAtId(karma.getGenerator().loadContext(contextId).getJSONObject(("@context")));
+		} catch(Exception e)
+		{}
 		return outWriter;
 	}
 
@@ -51,5 +44,23 @@ public class JSONMapper extends BaseRDFMapper {
 			reusableOutputValue.set(generatedObjects.getJSONObject(i).toString());
 			context.write(reusableOutputKey, new Text(reusableOutputValue));
 		}
+	}
+
+	private String getAtId(JSONObject c) {
+		@SuppressWarnings("rawtypes")
+		Iterator itr = c.keys();
+		while (itr.hasNext()) {
+			String key = itr.next().toString();
+			try {
+				if (c.get(key).toString().equals("@id")) {
+					return key;
+				}
+			}
+			catch(Exception e) 
+			{
+
+			}
+		}
+		return atId;
 	}
 }
