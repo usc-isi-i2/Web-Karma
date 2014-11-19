@@ -23,6 +23,14 @@ package edu.isi.karma.rdf;
 
 import static org.junit.Assert.fail;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +48,7 @@ public class TestJSONDagRDFGenerator extends TestJSONRDFGenerator{
 	 */
 	@Before
 	public void setUp() throws Exception {
-		rdfGen = new GenericRDFGenerator(null);
+		
 
 		// Add the models in
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
@@ -84,12 +92,62 @@ public class TestJSONDagRDFGenerator extends TestJSONRDFGenerator{
 	 */
 	@Test
 	public void testGenerateRDF2() {
+		for(int i = 0; i < 2000; i++)
+		{
+			testMenus();
+		}
+	}
+
+	private void testMenus() {
 		try {
 			
 			executeBasicJSONTest("menus.json", "menus-model", false, 411);
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Exception: " + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testGenerateRDFThreaded()
+	{
+		List<Future<Boolean>> results = new LinkedList<Future<Boolean>>();
+		ExecutorService es  = Executors.newFixedThreadPool(16);
+		for(int i = 0; i < 16; i++)
+		{
+			results.add(es.submit(new Callable<Boolean>(){
+
+			@Override
+			public Boolean call() throws Exception {
+				for(int i = 0; i < 1000; i++)
+				{
+					testMenus();
+				}
+				return true;
+			}
+			
+		}));
+		}
+		boolean failure = false;
+		for(Future<Boolean> result : results)
+		{
+		try
+		{
+		
+			result.get();
+		}
+		
+		catch(Exception e)
+		{
+			failure = true;
+			e.printStackTrace();
+			
+		}
+		}
+		if(failure)
+		{
+			fail();
 		}
 	}
 	
