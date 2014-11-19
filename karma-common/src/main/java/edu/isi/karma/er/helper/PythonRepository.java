@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.FileUtils;
 import org.python.core.PyCode;
+import org.python.core.PyStringMap;
 import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,8 @@ public class PythonRepository {
 	private static PythonRepository instance = new PythonRepository();
 	private static boolean libraryHasBeenLoaded = false;
 	private static boolean reloadLibrary = true;
-	public PythonInterpreter interpreter = PythonInterpreter.threadLocalStateInterpreter(null);
+	private PyStringMap initialLocals = new PyStringMap();
+	public PythonInterpreter interpreter = PythonInterpreter.threadLocalStateInterpreter(initialLocals);
 	private PythonRepository()
 	{
 		initialize();
@@ -38,6 +40,7 @@ public class PythonRepository {
 	private void initialize()
 	{
 		scripts = new ConcurrentHashMap<String, PyCode>();
+
 		
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getImportStatements());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getGetValueDefStatement());
@@ -45,6 +48,7 @@ public class PythonRepository {
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getHasSelectedRowsStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getVDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getTransformStatement());
+		compileAndAddToRepository(interpreter, PythonTransformationHelper.getSelectionStatement());
 		initializeInterperter(interpreter);
 	}
 
@@ -54,9 +58,12 @@ public class PythonRepository {
 		if(!scripts.containsKey(statement))
 		{
 			py = compileAndAddToRepository(interpreter,statement);
-			interpreter.exec(py);
+			
 		}
-		return scripts.get(statement);
+		else
+			py = scripts.get(statement);
+		interpreter.exec(py);
+		return py;
 	}
 	public PyCode compileAndAddToRepository(PythonInterpreter interpreter,
 			String statement) {
@@ -75,17 +82,31 @@ public class PythonRepository {
 
 	public void initializeInterperter(PythonInterpreter interpreter)
 	{
-		interpreter.exec(scripts.get(PythonTransformationHelper.getImportStatements()));
-		interpreter.exec(scripts.get(PythonTransformationHelper.getGetValueDefStatement()));
-		interpreter.exec(scripts.get(PythonTransformationHelper.getIsEmptyDefStatement()));
-		interpreter.exec(scripts.get(PythonTransformationHelper.getHasSelectedRowsStatement()));
-		interpreter.exec(scripts.get(PythonTransformationHelper.getVDefStatement()));
-		importUserScripts(interpreter);
+		boolean localsUninitialized = interpreter.getLocals() == initialLocals;
+		if(localsUninitialized)
+		{
+			PyStringMap locals = new PyStringMap();
+			interpreter.setLocals(locals);
+			interpreter.exec(scripts.get(PythonTransformationHelper.getImportStatements()));
+			interpreter.exec(scripts.get(PythonTransformationHelper.getGetValueDefStatement()));
+			interpreter.exec(scripts.get(PythonTransformationHelper.getIsEmptyDefStatement()));
+			interpreter.exec(scripts.get(PythonTransformationHelper.getHasSelectedRowsStatement()));
+			interpreter.exec(scripts.get(PythonTransformationHelper.getVDefStatement()));
+		}
+		if(localsUninitialized ||(!libraryHasBeenLoaded || reloadLibrary))
+		{
+			importUserScripts(interpreter);
+		}
 	}
 
 	public PyCode getTransformCode()
 	{
 		return scripts.get(PythonTransformationHelper.getTransformStatement());
+	}
+	
+	public PyCode getSelectionCode()
+	{
+		return scripts.get(PythonTransformationHelper.getSelectionStatement());
 	}
 
 	public synchronized void importUserScripts(PythonInterpreter interpreter) {
@@ -130,6 +151,7 @@ public class PythonRepository {
 			}
 			else
 			{
+				
 				for(PyCode code : libraryScripts.values())
 				{
 					interpreter.exec(code);

@@ -29,7 +29,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
@@ -113,14 +112,14 @@ public class TestJSONDagRDFGenerator extends TestJSONRDFGenerator{
 	public void testGenerateRDFThreaded()
 	{
 		List<Future<Boolean>> results = new LinkedList<Future<Boolean>>();
-		ExecutorService es  = Executors.newFixedThreadPool(16);
-		for(int i = 0; i < 16; i++)
+		ExecutorService es  = Executors.newFixedThreadPool(4);
+		for(int i = 0; i < 4 ; i++)
 		{
 			results.add(es.submit(new Callable<Boolean>(){
 
 			@Override
 			public Boolean call() throws Exception {
-				for(int i = 0; i < 1000; i++)
+				for(int i = 0; i < 100; i++)
 				{
 					testMenus();
 				}

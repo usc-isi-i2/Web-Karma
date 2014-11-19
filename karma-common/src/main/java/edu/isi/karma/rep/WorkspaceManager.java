@@ -20,8 +20,8 @@
  ******************************************************************************/
 package edu.isi.karma.rep;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 
@@ -34,7 +34,7 @@ public class WorkspaceManager {
 	
 	private int nextId = 1;
 	
-	private final Map<String, Workspace> workspaces = new HashMap<String, Workspace>();
+	private final Map<String, Workspace> workspaces = new ConcurrentHashMap<String, Workspace>();
 	
 	private static WorkspaceManager singleton = new WorkspaceManager();
 	
@@ -60,7 +60,7 @@ public class WorkspaceManager {
 		return wsp;
 	}
 	
-	public String getNewId(String prefix) {
+	public synchronized String getNewId(String prefix) {
 		return prefix + (nextId++);
 	}
 	

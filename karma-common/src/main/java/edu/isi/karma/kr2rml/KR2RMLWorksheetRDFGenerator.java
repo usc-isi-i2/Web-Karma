@@ -61,7 +61,6 @@ import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.SFKR2RMLRDFWriter;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
@@ -100,8 +99,7 @@ public class KR2RMLWorksheetRDFGenerator {
 
 	}
 
-	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
-			OntologyManager ontMgr, KR2RMLRDFWriter writer, boolean addColumnContextInformation,RootStrategy strategy, 
+	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, KR2RMLRDFWriter writer, boolean addColumnContextInformation,RootStrategy strategy, 
 			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport, SuperSelection sel) {
 		initializeMemberVariables(worksheet, factory, outputFileName,
 				addColumnContextInformation, kr2rmlMapping, errorReport);
@@ -119,8 +117,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.selection = sel;
 	}
 
-	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
-			OntologyManager ontMgr, List<KR2RMLRDFWriter> writers, boolean addColumnContextInformation, 
+	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, List<KR2RMLRDFWriter> writers, boolean addColumnContextInformation, 
 			RootStrategy strategy,  List<String> tripleMapToKill, List<String> tripleMapToStop, 
 			List<String> POMToKill, 
 			KR2RMLMapping kr2rmlMapping, ErrorReport errorReport, SuperSelection sel) {

@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import org.python.core.PyCode;
 import org.python.core.PyObject;
+import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ public class MiniSelection extends Selection {
 		this.pythonCode = pythonCode;
 		this.onError = onError;
 		populateSelection();
+		
 	}
 
 	public void updateSelection(){
@@ -60,23 +62,26 @@ public class MiniSelection extends Selection {
 		List<Table> tables = new ArrayList<Table>();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), workspace.getFactory().getHTable(hTableId), tables, SuperSelectionManager.DEFAULT_SELECTION);
-		String transformId = Thread.currentThread().getId() + this.superSelectionName;
-		PythonInterpreter interpreter = PythonRepository.getInstance().interpreter;
+		String selectionId = Thread.currentThread().getId() + this.superSelectionName;
+		PythonRepository repo = PythonRepository.getInstance();
+		PythonInterpreter interpreter = repo.interpreter;
+		repo.initializeInterperter(interpreter);
 		PyCode code = null;
 		try {
-			code = getCompiledCode(pythonCode, interpreter, transformId);
-			interpreter.set("transform", interpreter.get("transform"+transformId));
+			code = getCompiledCode(pythonCode, interpreter, selectionId);
+			interpreter.getLocals().__setitem__("selection", interpreter.get("selection"+selectionId));
 			
-		} catch(Exception e) {
-			
-		}
-		for (Table t : tables) {
-			for (Row r : t.getRows(0, t.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
-				if (code == null)
-					selectedRowsCache.put(r, onError);
-				else
-					selectedRowsCache.put(r, evaluatePythonExpression(r, code, interpreter));
+		
+			for (Table t : tables) {
+				for (Row r : t.getRows(0, t.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
+					if (code == null)
+						selectedRowsCache.put(r, onError);
+					else
+						selectedRowsCache.put(r, evaluatePythonExpression(r, code, interpreter));
+				}
 			}
+		} catch(Exception e) {
+			logger.error("Unable to populate selection");
 		}
 	}
 
@@ -85,7 +90,7 @@ public class MiniSelection extends Selection {
 		try {
 			ArrayList<Node> nodes = new ArrayList<Node>(r.getNodes());
 			Node node = nodes.get(0);
-			interpreter.set("nodeid", node.getId());
+			interpreter.getLocals().__setitem__("nodeid", new PyString(node.getId()));
 			PyObject output = interpreter.eval(code);
 			return PythonTransformationHelper.getPyObjectValueAsBoolean(output);
 		}catch(Exception e) {
@@ -94,29 +99,29 @@ public class MiniSelection extends Selection {
 
 	}
 
-	private PyCode getCompiledCode(String pythonCode, PythonInterpreter interpreter, String transformId) throws IOException {
+	private PyCode getCompiledCode(String pythonCode, PythonInterpreter interpreter, String selectionId) throws IOException {
 
-		String trimmedTransformationCode = pythonCode.trim();
+		String trimmedSelectionCode = pythonCode.trim();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		if (trimmedTransformationCode.isEmpty()) {
-			trimmedTransformationCode = "return False";
+		if (trimmedSelectionCode.isEmpty()) {
+			trimmedSelectionCode = "return False";
 		}
-		String transformMethodStmt = PythonTransformationHelper
-				.getPythonTransformMethodDefinitionState(worksheet,
-						trimmedTransformationCode,transformId);
+		String selectionMethodStmt = PythonTransformationHelper
+				.getPythonSelectionMethodDefinitionState(worksheet,
+						trimmedSelectionCode,selectionId);
 
 
-		logger.debug("Executing PySelection\n" + transformMethodStmt);
+		logger.debug("Executing PySelection\n" + selectionMethodStmt);
 
 		// Prepare the Python interpreter
 		PythonRepository repo = PythonRepository.getInstance();
 
-		repo.compileAndAddToRepositoryAndExec(interpreter, transformMethodStmt);
-
-		interpreter.set("workspaceid", workspace.getId());
-		interpreter.set("selectionName", superSelectionName);
+		repo.compileAndAddToRepositoryAndExec(interpreter, selectionMethodStmt);
+		PyObject locals = interpreter.getLocals();
+		locals.__setitem__("workspaceid", new PyString(workspace.getId()));
+		locals.__setitem__("selectionName", new PyString(superSelectionName));
 		interpreter.set("command", this);
-		return repo.getTransformCode();
+		return repo.getSelectionCode();
 	}	
 
 }

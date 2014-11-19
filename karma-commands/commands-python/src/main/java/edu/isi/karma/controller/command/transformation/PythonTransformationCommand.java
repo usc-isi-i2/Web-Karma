@@ -33,6 +33,8 @@ import org.json.JSONObject;
 import org.python.core.PyCode;
 import org.python.core.PyException;
 import org.python.core.PyObject;
+import org.python.core.PyString;
+import org.python.core.PyStringMap;
 import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +115,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		String transformId = Thread.currentThread().getId() + this.id;
 		String transformMethodStmt = PythonTransformationHelper
 				.getPythonTransformMethodDefinitionState(worksheet,
-						trimmedTransformationCode, transformId);
+						trimmedTransformationCode, "");
 
 
 		logger.debug("Executing PyTransform {}\n",  transformMethodStmt);
@@ -122,7 +124,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		PythonRepository repo = PythonRepository.getInstance();
 
 		PythonInterpreter interpreter = repo.interpreter;
-		
+		repo.initializeInterperter(interpreter);
 		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet
 				.getDataTable().getNumRows()));
 		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes, selection);
@@ -131,27 +133,28 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 
 		int counter = 0;
 		long starttime = System.currentTimeMillis();
-		// Go through all nodes collected for the column with given hNodeId
-		interpreter.set("workspaceid", workspace.getId());
+		// Go through all nodes collected for the column with given hNodeId;
+		PyObject locals = interpreter.getLocals();
+		locals.__setitem__("workspaceid", new PyString(workspace.getId()));
 		interpreter.set("command", this);
-		interpreter.set("selectionName", selection.getName());
+		locals.__setitem__("selectionName", new PyString(selection.getName()));
 		
 		repo.compileAndAddToRepositoryAndExec(interpreter, transformMethodStmt);
 		PyCode py = repo.getTransformCode();
 
 		int numRowsWithErrors = 0;
 
-		
 		for (Node node : nodes) {
 			Row row = node.getBelongsToRow();
-
-			interpreter.set("nodeid", node.getId());
-
+			
+			locals.__setitem__("nodeid", new PyString(node.getId()));
+		
 			try {
-				interpreter.set("transform", interpreter.get("transform"+transformId));
+		
 				PyObject output = interpreter.eval(py);
 				String transformedValue = PythonTransformationHelper
 						.getPyObjectValueAsString(output);
+				
 				addTransformedValue(transformedRows, row, transformedValue);
 			} catch (PyException p) {
 				logger.debug("error in evaluation python, skipping one row");

@@ -22,20 +22,21 @@ package edu.isi.karma.modeling.alignment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.WorkspaceManager;
 
 public class AlignmentManager {
-	private static HashMap<String, Alignment> alignmentMap = null;
+	private static ConcurrentHashMap<String, Alignment> alignmentMap = null;
 	private static AlignmentManager _InternalInstance = null;
 	public static AlignmentManager Instance()
 	{
 		if (_InternalInstance == null)
 		{
 			_InternalInstance = new AlignmentManager();
-			alignmentMap = new HashMap<String, Alignment>();
+			alignmentMap = new ConcurrentHashMap<String, Alignment>();
 		}
 		return _InternalInstance;
 	}

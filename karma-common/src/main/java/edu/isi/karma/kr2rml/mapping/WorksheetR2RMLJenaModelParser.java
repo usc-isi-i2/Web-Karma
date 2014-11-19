@@ -82,19 +82,20 @@ public class WorksheetR2RMLJenaModelParser {
 		this.id = id;
 	}
 	
-	public Model getModel() throws IOException {
-		if (model == null) {
-			this.model = loadSourceModelIntoJenaModel(id.getLocation());
-		}
+	public synchronized Model getModel() throws IOException {
+		loadModel();
 		return model;
 	}
 
-	public KR2RMLMapping parse() throws IOException, KarmaException, JSONException
-	{
-		if(null == model)
-		{
+	private void loadModel() throws IOException {
+		if (model == null) {
 			this.model = loadSourceModelIntoJenaModel(id.getLocation());
 		}
+	}
+
+	public synchronized KR2RMLMapping parse() throws IOException, KarmaException, JSONException
+	{
+		loadModel();
 		
 		if(null != mapping)
 		{

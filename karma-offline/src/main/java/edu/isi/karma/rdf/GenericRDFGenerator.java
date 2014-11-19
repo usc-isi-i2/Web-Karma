@@ -82,7 +82,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 		this.contextIdentifiers.put(id.getName(), id);
 	}
 	
-	public WorksheetR2RMLJenaModelParser getModelParser(String modelName) throws JSONException, KarmaException {
+	public synchronized WorksheetR2RMLJenaModelParser getModelParser(String modelName) throws JSONException, KarmaException {
 		WorksheetR2RMLJenaModelParser modelParser = readModelParsers.get(modelName);
 		R2RMLMappingIdentifier id = this.modelIdentifiers.get(modelName);
 		if(modelParser == null) {
@@ -165,7 +165,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 			}
 			logger.debug("Generating output for {}", sourceName);
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
-			        workspace.getFactory(), workspace.getOntologyManager(), writers,
+			        workspace.getFactory(), writers,
 			        addProvenance, rootStrategy, tripleMapToKill, tripleMapToStop, POMToKill, 
 			        mapping, errorReport, selection);
 			rdfGen.generateRDF(true);
