@@ -85,7 +85,7 @@ public class WorksheetListUpdate extends AbstractUpdate {
 		Workspace workspace = vWorkspace.getWorkspace();
 		for(VWorksheet vworksheet : vWorkspace.getViewFactory().getVWorksheets())
 		{
-			if(null == AlignmentManager.Instance().getAlignment(workspace.getId(), vworksheet.getWorksheetId()))
+			if(vworksheet.getWorksheet() != null && null == AlignmentManager.Instance().getAlignment(workspace.getId(), vworksheet.getWorksheetId()))
 			{
 				AlignmentManager.Instance().createAlignment(workspace.getId(), vworksheet.getWorksheetId(), workspace.getOntologyManager());
 			}
