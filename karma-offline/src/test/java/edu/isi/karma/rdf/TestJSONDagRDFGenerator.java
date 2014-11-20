@@ -91,10 +91,7 @@ public class TestJSONDagRDFGenerator extends TestJSONRDFGenerator{
 	 */
 	@Test
 	public void testGenerateRDF2() {
-		for(int i = 0; i < 2000; i++)
-		{
-			testMenus();
-		}
+		testMenus();
 	}
 
 	private void testMenus() {
