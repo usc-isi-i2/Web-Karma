@@ -49,7 +49,10 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 			request.setAddProvenance(false);
 			request.addWriter(outWriter);
 			request.setMaxNumLines(0);
-			request.setContextName(karma.getContextId().getName());
+			if(karma.getContextId() != null)
+			{
+				request.setContextName(karma.getContextId().getName());
+			}
 			if(karma.getRdfGenerationRoot() != null)
 			{
 				request.setStrategy(new UserSpecifiedRootStrategy(karma.getRdfGenerationRoot()));
@@ -62,6 +65,7 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 				
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			LOG.error("Unable to generate RDF: " + e.getMessage());
 		}
 		LOG.debug(key.toString() + " finished");
