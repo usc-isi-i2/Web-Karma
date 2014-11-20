@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.python.core.Py;
 import org.python.core.PyCode;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -120,7 +121,7 @@ public class MiniSelection extends Selection {
 		PyObject locals = interpreter.getLocals();
 		locals.__setitem__("workspaceid", new PyString(workspace.getId()));
 		locals.__setitem__("selectionName", new PyString(superSelectionName));
-		interpreter.set("command", this);
+		locals.__setitem__("command", Py.java2py(this));
 		return repo.getSelectionCode();
 	}	
 

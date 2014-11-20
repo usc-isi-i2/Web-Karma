@@ -30,11 +30,11 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.python.core.Py;
 import org.python.core.PyCode;
 import org.python.core.PyException;
 import org.python.core.PyObject;
 import org.python.core.PyString;
-import org.python.core.PyStringMap;
 import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +112,6 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 			logger.info("Empty PyTransform statement in "
 					+ hNode.getColumnName());
 		}
-		String transformId = Thread.currentThread().getId() + this.id;
 		String transformMethodStmt = PythonTransformationHelper
 				.getPythonTransformMethodDefinitionState(worksheet,
 						trimmedTransformationCode, "");
@@ -136,7 +135,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		// Go through all nodes collected for the column with given hNodeId;
 		PyObject locals = interpreter.getLocals();
 		locals.__setitem__("workspaceid", new PyString(workspace.getId()));
-		interpreter.set("command", this);
+		locals.__setitem__("command", Py.java2py(this));
 		locals.__setitem__("selectionName", new PyString(selection.getName()));
 		
 		repo.compileAndAddToRepositoryAndExec(interpreter, transformMethodStmt);
