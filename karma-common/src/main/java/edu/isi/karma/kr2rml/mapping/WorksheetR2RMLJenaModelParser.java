@@ -88,12 +88,19 @@ public class WorksheetR2RMLJenaModelParser {
 	}
 
 	private void loadModel() throws IOException {
-		if (model == null) {
-			this.model = loadSourceModelIntoJenaModel(id.getLocation());
+		if (model != null) {
+			return;
+		}
+		synchronized(this)
+		{	
+			if(model == null)
+			{
+				this.model = loadSourceModelIntoJenaModel(id.getLocation());
+			}
 		}
 	}
 
-	public synchronized KR2RMLMapping parse() throws IOException, KarmaException, JSONException
+	public KR2RMLMapping parse() throws IOException, KarmaException, JSONException
 	{
 		loadModel();
 		
@@ -101,6 +108,12 @@ public class WorksheetR2RMLJenaModelParser {
 		{
 			return mapping;
 		}
+		synchronized(this)
+		{
+			if(null != mapping)
+			{
+				return mapping;
+			}
 		// Capture the main mapping resource that corresponds to the source name
 		Resource mappingResource = getMappingResourceFromSourceName();
 		if (mappingResource == null) {
@@ -141,6 +154,7 @@ public class WorksheetR2RMLJenaModelParser {
 		// Calculate the nodes covered by each InternalNode
 		calculateColumnNodesCoveredByBlankNodes(kr2rmlMapping, subjectResources);
 		return mapping = kr2rmlMapping;
+		}
 	}
 	
 	private SourceTypes getSourceType(Resource mappingResource)

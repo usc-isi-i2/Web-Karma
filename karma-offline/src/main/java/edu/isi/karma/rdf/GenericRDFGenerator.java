@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.detect.DefaultDetector;
@@ -55,8 +56,8 @@ import edu.isi.karma.webserver.KarmaException;
 public class GenericRDFGenerator extends RdfGenerator {
 
 	private static Logger logger = LoggerFactory.getLogger(GenericRDFGenerator.class);
-	protected HashMap<String, R2RMLMappingIdentifier> modelIdentifiers;
-	protected HashMap<String, WorksheetR2RMLJenaModelParser> readModelParsers;
+	protected ConcurrentHashMap<String, R2RMLMappingIdentifier> modelIdentifiers;
+	protected ConcurrentHashMap<String, WorksheetR2RMLJenaModelParser> readModelParsers;
 	protected HashMap<String, ContextIdentifier> contextIdentifiers;
 	protected HashMap<String, JSONObject> contextCache;
 	public enum InputType {
@@ -68,8 +69,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 	
 	public GenericRDFGenerator(String selectionName) {
 		super(selectionName);
-		this.modelIdentifiers = new HashMap<String, R2RMLMappingIdentifier>();
-		this.readModelParsers = new HashMap<String, WorksheetR2RMLJenaModelParser>();
+		this.modelIdentifiers = new ConcurrentHashMap<String, R2RMLMappingIdentifier>();
+		this.readModelParsers = new ConcurrentHashMap<String, WorksheetR2RMLJenaModelParser>();
 		this.contextCache = new HashMap<String, JSONObject>();
 		this.contextIdentifiers = new HashMap<String, ContextIdentifier>();
 	}
@@ -82,7 +83,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 		this.contextIdentifiers.put(id.getName(), id);
 	}
 	
-	public synchronized WorksheetR2RMLJenaModelParser getModelParser(String modelName) throws JSONException, KarmaException {
+	public WorksheetR2RMLJenaModelParser getModelParser(String modelName) throws JSONException, KarmaException {
 		WorksheetR2RMLJenaModelParser modelParser = readModelParsers.get(modelName);
 		R2RMLMappingIdentifier id = this.modelIdentifiers.get(modelName);
 		if(modelParser == null) {
@@ -297,7 +298,11 @@ public class GenericRDFGenerator extends RdfGenerator {
 	}
 
 
-	private WorksheetR2RMLJenaModelParser loadModel(R2RMLMappingIdentifier modelIdentifier) throws JSONException, KarmaException {
+	private synchronized WorksheetR2RMLJenaModelParser loadModel(R2RMLMappingIdentifier modelIdentifier) throws JSONException, KarmaException {
+		if(readModelParsers.containsKey(modelIdentifier.getName()))
+		{
+			return readModelParsers.get(modelIdentifier.getName());
+		}
 		WorksheetR2RMLJenaModelParser parser = new WorksheetR2RMLJenaModelParser(modelIdentifier);
 		this.readModelParsers.put(modelIdentifier.getName(), parser);
 		return parser;

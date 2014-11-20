@@ -22,6 +22,7 @@ package edu.isi.karma.rep;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 
@@ -32,7 +33,7 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
  */
 public class WorkspaceManager {
 	
-	private int nextId = 1;
+	private AtomicInteger nextId = new AtomicInteger(1);
 	
 	private final Map<String, Workspace> workspaces = new ConcurrentHashMap<String, Workspace>();
 	
@@ -60,8 +61,8 @@ public class WorkspaceManager {
 		return wsp;
 	}
 	
-	public synchronized String getNewId(String prefix) {
-		return prefix + (nextId++);
+	public String getNewId(String prefix) {
+		return prefix + (nextId.getAndIncrement());
 	}
 	
 	public void removeWorkspace(String workspaceId) {
