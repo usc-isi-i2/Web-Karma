@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.avro.Schema;
 import org.apache.avro.mapreduce.AvroRecordReaderBase;
 import org.apache.hadoop.io.Text;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class AvroBatchRecordReader<T> extends AvroRecordReaderBase<Text, Text, T>{
@@ -26,11 +25,21 @@ public class AvroBatchRecordReader<T> extends AvroRecordReaderBase<Text, Text, T
 	@Override
 	public Text getCurrentValue() throws IOException,
 	InterruptedException {
-		JSONArray array = new JSONArray();
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		boolean isFirst = true;
 		for (JSONObject obj : data) {
-			array.put(obj);
+			if (isFirst) {
+				builder.append(obj.toString());
+				isFirst = false;
+			}
+			else {
+				builder.append(",");
+				builder.append(obj.toString());
+			}
 		}
-		return new Text(array.toString());
+		builder.append("]");
+		return new Text(builder.toString());
 	}
 
 	@Override
