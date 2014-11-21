@@ -178,17 +178,33 @@
 				  </div>
 				  <div class="modal-body">
 						<div class="form-group">
-							<label for="useContext">Use @Context</label>
-							<input class="form-control" type="checkbox" id="useContext"required>
-							<div id="useContextControl">
-								<label for="useContextFromModel">Use @Context From Model</label>
-								<input class="form-control" type="radio" id="useContextFromModel" name="context">
-								<label for="useContextFromModel">Use Uploaded @Context</label>
-								<input class="form-control" type="radio" id="useContextFromFile" name="context">
-								<span class="btn btn-primary fileinput-button">
-				  				<span>Upload Context</span>
-				  				<input type="file" name="files[]" id="contextupload" multiple>
-				  			</span>
+							<div class="checkbox">
+							  	<label>
+								    <input type="checkbox" id="useContext"required>
+								    Use @Context
+							  	</label>
+							  	
+								<div id="useContextControl">
+									<div class="radio">
+									  	<label>
+									    	<input type="radio" id="useContextFromModel" name="context">
+									    	Use @Context From Model
+									  	</label>
+									</div>
+								
+									<div class="radio">
+									  	<label>
+										    <input type="radio" id="useContextFromFile" name="context">
+										    Use Uploaded @Context
+									  	</label>
+									  	<br/>
+									  	<div class="btn btn-primary fileinput-button">
+							  				<span>Upload Context</span>
+							  				<input type="file" name="files[]" id="contextupload" multiple>
+					  					</div>
+					  			
+									</div>
+								</div>
 							</div>
 						</div>
 				  </div> <!-- /.modal-body -->
