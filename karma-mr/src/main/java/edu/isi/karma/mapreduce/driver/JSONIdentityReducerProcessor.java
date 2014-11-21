@@ -32,7 +32,13 @@ public class JSONIdentityReducerProcessor extends Configured implements Tool {
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
-        FileInputFormat.setInputPaths(job, new Path(p.getProperty("input.directory")));
+        String[] paths = p.getProperty("input.directory").split(",");
+        Path[] array = new Path[paths.length];
+        int i = 0;
+        for (String path : paths) {
+        	array[i++] = new Path(path);
+        }
+        FileInputFormat.setInputPaths(job, array);
         FileOutputFormat.setOutputPath(job, new Path(p.getProperty("output.directory")));
         
         job.setNumReduceTasks(1);
