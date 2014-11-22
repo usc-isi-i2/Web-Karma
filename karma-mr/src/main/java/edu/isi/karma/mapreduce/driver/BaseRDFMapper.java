@@ -54,6 +54,9 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 			{
 				request.setStrategy(new UserSpecifiedRootStrategy(karma.getRdfGenerationRoot()));
 			}
+			if (karma.getContextId() != null) {
+				request.setContextName(karma.getContextId().getName());
+			}
 			karma.getGenerator().generateRDF(request);
 
 			String results = sw.toString();

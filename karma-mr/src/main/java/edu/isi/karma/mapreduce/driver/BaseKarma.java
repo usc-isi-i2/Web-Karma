@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +35,6 @@ public class BaseKarma {
 	protected String modelFile;
 	protected URL modelURL;
 	protected ContextIdentifier contextId; 
-	protected JSONObject contextObj = new JSONObject();
 	protected String rdfGenerationRoot = null;
 	public void setup(String inputTypeString, String modelUri, String modelFile, 
 			String baseURI, String contextURI, String root, String selection) {
@@ -100,7 +97,6 @@ public class BaseKarma {
 	private void addContext(String contextURI)    {
 		try {
 			contextId = new ContextIdentifier("context", new URL(contextURI));
-			contextObj = new JSONObject(new JSONTokener(contextId.getLocation().openStream()));
 			generator.addContext(contextId);
 		}catch(Exception e) {
 

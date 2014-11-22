@@ -299,7 +299,10 @@ public class GenericRDFGenerator extends RdfGenerator {
 		return parser;
 	}
 	
-	private JSONObject loadContext(ContextIdentifier id) throws IOException {
+	public JSONObject loadContext(ContextIdentifier id) throws IOException {
+		if (contextCache.containsKey(id.getName())) {
+			return contextCache.get(id.getName());
+		}
 		JSONTokener token = new JSONTokener(id.getLocation().openStream());
 		JSONObject obj = new JSONObject(token);
 		this.contextCache.put(id.getName(), obj);
