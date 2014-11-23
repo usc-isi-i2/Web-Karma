@@ -79,7 +79,10 @@ public class JSONProcessor extends Configured implements Tool {
 
 	public static void main(String[] args) throws Exception {
 		Logger.getRootLogger().setLevel(Level.ERROR);
-		System.exit(ToolRunner.run(new Configuration(), new JSONProcessor(), args));
+		long start = System.currentTimeMillis();
+		int status = ToolRunner.run(new Configuration(), new JSONProcessor(), args);
+		System.out.println((System.currentTimeMillis() - start) + " msec");
+		System.exit(status);
 	}
 
 }

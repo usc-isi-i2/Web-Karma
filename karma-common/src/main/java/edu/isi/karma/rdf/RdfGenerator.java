@@ -70,7 +70,7 @@ public abstract class RdfGenerator {
 		{
 			List<CommandTag> tags = new ArrayList<CommandTag>();
 			tags.add(CommandTag.Transformation);
-			wchr.executeCommandsByTags(tags, new JSONArray(mapping.getWorksheetHistory().toString()));
+			wchr.executeCommandsByTags(tags, new JSONArray(mapping.getWorksheetHistoryString()));
 		}
 		catch (CommandException | KarmaException e)
 		{

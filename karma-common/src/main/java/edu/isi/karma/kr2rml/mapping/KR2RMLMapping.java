@@ -38,6 +38,7 @@ public class KR2RMLMapping extends R2RMLMapping{
 	private Map<String, SubjectMap> subjectMapIndex;
 	private Map<String, TriplesMap> triplesMapIndex;
 	private JSONArray worksheetHistory;
+	private String worksheetHistoryString;
 	private KR2RMLColumnNameFormatter formatter;
 	private boolean isR2RMLCompatible;
 	private boolean isRMLCompatible;
@@ -75,6 +76,7 @@ public class KR2RMLMapping extends R2RMLMapping{
 
 	public void setWorksheetHistory(JSONArray worksheetHistory) {
 		this.worksheetHistory = worksheetHistory;
+		worksheetHistoryString = worksheetHistory.toString();
 	}
 
 	public void setColumnNameFormatter(KR2RMLColumnNameFormatter formatter) {
@@ -109,5 +111,9 @@ public class KR2RMLMapping extends R2RMLMapping{
 
 	public void setSourceType(SourceTypes sourceType) {
 		this.sourceType = sourceType;
+	}
+	
+	public String getWorksheetHistoryString() {
+		return worksheetHistoryString;
 	}
 }
