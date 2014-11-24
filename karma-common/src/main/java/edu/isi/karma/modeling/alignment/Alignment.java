@@ -564,8 +564,17 @@ public class Alignment implements OntologyUpdateListener {
 		if (columnNodes != null) {
 			for (ColumnNode n : columnNodes) {
 				steinerNodes.add(n);
-				if (n.hasUserType())
-					steinerNodes.add(n.getDomainNode());
+				if (n.hasUserType()) {
+					HashMap<SemanticType, LabeledLink> domainLinks = 
+							GraphUtil.getDomainLinks(this.graphBuilder.getGraph(), n, n.getUserSemanticTypes());
+					if (domainLinks != null) {
+						for (LabeledLink l : domainLinks.values()) {
+							if (l.getSource() == null || !(l.getSource() instanceof InternalNode))
+								continue;
+							steinerNodes.add(l.getSource());
+						}
+					}
+				}
 			}
 		}
 
@@ -622,6 +631,8 @@ public class Alignment implements OntologyUpdateListener {
 			logger.debug("total number of edges in steiner tree: " + this.steinerTree.edgeSet().size());
 		}
 		logger.debug("time to compute steiner tree: " + elapsedTimeSec);
+		logger.info(GraphUtil.labeledGraphToString(this.steinerTree));
+
 	}
 
 	@Override

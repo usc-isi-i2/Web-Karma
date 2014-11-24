@@ -2,6 +2,7 @@ package edu.isi.karma.rdf;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,9 +24,12 @@ public class RDFGeneratorRequest {
 	private String modelName;
 	private String sourceName;
 	private String contextName;
+	private List<String> tripleMapToKill;
+	private List<String> tripleMapToStop;
+	private List<String> POMToKill;
 	public RDFGeneratorRequest(String modelName, String sourceName)
 	{
-	
+
 		this.modelName = modelName;
 		this.sourceName = sourceName;
 		this.addProvenance = false;
@@ -34,8 +38,41 @@ public class RDFGeneratorRequest {
 		this.inputFile = null;
 		this.inputStream = null;
 		this.contextName = null;
+		tripleMapToKill = new ArrayList<String>();
+		tripleMapToStop = new ArrayList<String>();
+		POMToKill = new ArrayList<String>();
+	}
+
+	public void setTripleMapToKill(List<String> tripleMapToKill) {
+		if (tripleMapToKill != null) {
+			this.tripleMapToKill = tripleMapToKill;
+		}
+	}
+
+	public List<String> getTripleMapToKill() {
+		return tripleMapToKill;
 	}
 	
+	public void setTripleMapToStop(List<String> tripleMapToStop) {
+		if (tripleMapToStop != null) {
+			this.tripleMapToStop = tripleMapToStop;
+		}
+	}
+
+	public List<String> getTripleMapToStop() {
+		return tripleMapToStop;
+	}
+	
+	public void setPOMToKill(List<String> POMToKill) {
+		if (POMToKill != null) {
+			this.POMToKill = POMToKill;
+		}
+	}
+
+	public List<String> getPOMToKill() {
+		return POMToKill;
+	}
+
 	public boolean isValidRequest()
 	{
 		return inputFile != null || inputData != null || inputStream != null;
@@ -48,7 +85,7 @@ public class RDFGeneratorRequest {
 	public void setStrategy(RootStrategy strategy) {
 		this.strategy = strategy;
 	}
-	
+
 	public String getContextName() {
 		return contextName;
 	}
@@ -112,7 +149,7 @@ public class RDFGeneratorRequest {
 	public void addWriter(KR2RMLRDFWriter writer) {
 		this.writers.add(writer);
 	}
-	
+
 	public void addWriters(Collection<KR2RMLRDFWriter> writers) {
 		this.writers.addAll(writers);
 	}
@@ -124,5 +161,5 @@ public class RDFGeneratorRequest {
 	public String getSourceName() {
 		return sourceName;
 	}
-	
+
 }

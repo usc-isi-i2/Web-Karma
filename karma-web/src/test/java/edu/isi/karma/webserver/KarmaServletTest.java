@@ -24,6 +24,8 @@ package edu.isi.karma.webserver;
 
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -32,6 +34,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -68,6 +71,13 @@ public class KarmaServletTest {
     {
         this.request = PowerMockito.mock(HttpServletRequest.class);
         
+        String contextPath = KarmaServlet.class.getResource("").getPath();
+        int idx = contextPath.indexOf("/karma-web");
+        if(idx != -1)
+        	contextPath = contextPath.substring(0, idx) + "/karma-web/src/main/webapp";
+    	System.out.println("Got base path:" + contextPath);
+		ServletContextParameterMap.setParameterValue(ContextParameter.WEBAPP_PATH, contextPath);
+		
         Mockito.when(this.request.getHeader("Accept-Encoding")).thenReturn("gzip,deflate,sdch");
         Mockito.when(this.request.getHeader("Accept-Language")).thenReturn("en-US,en;q=0.8");
         Mockito.when(this.request.getHeader("Cache-Control")).thenReturn("max-age=0");
@@ -88,6 +98,9 @@ public class KarmaServletTest {
     {
     	
     	Mockito.when(request.getParameter("hasPreferenceId")).thenReturn("false");
+    	
+    	
+		
     	this.instance.doGet(request, response);
     	Mockito.verify(response).setContentType("application/json");
     	Mockito.verify(response).setStatus(HttpServletResponse.SC_OK);

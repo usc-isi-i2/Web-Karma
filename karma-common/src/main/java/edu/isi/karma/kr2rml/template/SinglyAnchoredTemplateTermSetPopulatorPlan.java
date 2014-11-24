@@ -82,15 +82,21 @@ public class SinglyAnchoredTemplateTermSetPopulatorPlan extends
 		for(Entry<ColumnTemplateTerm, List<ColumnTemplateTerm>> other : otherToGenerate.entrySet())
 		{
 			TemplateTermSetPopulatorWorker parentWorker = new TemplateTermSetPopulatorWorker(other.getKey(), termToPath.get(other.getKey()), null, selection);
-			TemplateTermSetPopulatorPlan plan = new TemplateTermSetPopulatorPlan(termToPath, other.getValue(), parentWorker, selection);
+			Map<ColumnTemplateTerm, HNodePath> truncatedTermToPath = new HashMap<ColumnTemplateTerm, HNodePath>();
+			for(Entry<ColumnTemplateTerm, HNodePath> terms : termToPath.entrySet())
+			{
+				truncatedTermToPath.put(terms.getKey(), HNodePath.findPathBetweenLeavesWithCommonHead(termToPath.get(other.getKey()), terms.getValue()));
+			}
+			TemplateTermSetPopulatorPlan plan = new TemplateTermSetPopulatorPlan(truncatedTermToPath, other.getValue(), parentWorker, selection);
 			nestedPlans.put(other.getKey(), plan);
 		}
 		
 		Map<ColumnTemplateTerm, ColumnTemplateTerm> parentTermsToTermDependentOn = new HashMap<ColumnTemplateTerm, ColumnTemplateTerm>();
-		for(ColumnTemplateTerm independentTerm : independentNestedTerms)
-		{
-			parentTermsToTermDependentOn.put(independentTerm, null);
-		}
+		
+		columnTermsLocal.addAll(independentNestedTerms);
+		sortColumnTermsByHNodePathDepth(columnTermsLocal);
+		termsToTermDependentOn = generateTermsToTermDependentOn(columnTermsLocal, independentNestedTerms);
+		parentTermsToTermDependentOn.putAll(termsToTermDependentOn);
 		this.generateWorkers(parentTermsToTermDependentOn);
 		this.findFirstWorker();
 	}

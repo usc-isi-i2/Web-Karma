@@ -21,6 +21,7 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -202,7 +203,22 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 					SemanticType.Origin.User, 1.0);
 		} else if (metaPropertyName
 				.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
+			
 			LabeledLink propertyLink = alignment.getLinkById(metaPropertyId);
+			Node classInstanceNode = alignment.getNodeById(LinkIdFactory
+					.getLinkSourceId(metaPropertyId));
+			
+			if(propertyLink == null && this.isExecutedInBatch()) {
+				//Try to add the link, it might not exist beacuse of the batch
+				Node targetNode = alignment.getNodeById(LinkIdFactory.getLinkTargetId(metaPropertyId));
+				Label linkLabel = new Label(LinkIdFactory.getLinkUri(metaPropertyId));
+				LabeledLink newLink = alignment.addObjectPropertyLink(classInstanceNode,
+						targetNode, linkLabel);
+				alignment.changeLinkStatus(newLink.getId(),
+						LinkStatus.ForcedByUser);
+				propertyLink = alignment.getLinkById(metaPropertyId);
+			}
+			
 			if (propertyLink == null) {
 				String errorMessage = "Error while specializing a link. The DefaultLink '"
 						+ metaPropertyId
@@ -210,9 +226,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				logger.error(errorMessage);
 				return new UpdateContainer(new ErrorUpdate(errorMessage));
 			}
-
-			Node classInstanceNode = alignment.getNodeById(LinkIdFactory
-					.getLinkSourceId(metaPropertyId));
+			
 			if (semanticTypeAlreadyExists) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode,
 						oldDomainNode, alignment, classInstanceNode);
@@ -272,7 +286,20 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 					SemanticType.Origin.User, 1.0);
 		}
 
-		columnNode.setUserSelectedSemanticType(newType);
+		List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();
+		if (userSemanticTypes == null) {
+			userSemanticTypes = new ArrayList<SemanticType>();
+			columnNode.setUserSemanticTypes(userSemanticTypes);
+		}
+		boolean duplicateSemanticType = false;
+		for (SemanticType st : userSemanticTypes) {
+			if (st.getModelLabelString().equalsIgnoreCase(newType.getModelLabelString())) {
+				duplicateSemanticType = true;
+				break;
+			}
+		}
+		if (!duplicateSemanticType)
+			userSemanticTypes.add(newType);
 
 		// Update the alignment
 		if(!this.isExecutedInBatch())

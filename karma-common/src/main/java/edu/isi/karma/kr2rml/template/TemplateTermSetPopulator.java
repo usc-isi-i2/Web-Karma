@@ -25,6 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import edu.isi.karma.kr2rml.KR2RMLConfiguration;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.rep.Node;
@@ -120,7 +122,10 @@ public class TemplateTermSetPopulator {
 					else
 					{
 						uri.append("_");
-						uri.append(n.getId());
+						String value = n.getValue().asString();
+						value = DigestUtils.shaHex(value);
+						uri.append(value);
+						uri.append("_" + n.getId());
 					}
 				}
 				else

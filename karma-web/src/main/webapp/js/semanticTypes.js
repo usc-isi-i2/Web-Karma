@@ -67,21 +67,26 @@ var SetSemanticTypeDialog = (function() {
 					existingTypes = [];
 				}
 
+				getClasses();
+				getProperties();
+				getExistingProperties();
+				
 				var suggestedTypes = getSuggestedTypes();
-
+				
 				var addSemTypeOrAdvOption = function(type, isPrimary, isSelected, isCrfModelSuggested) {
 					if (type["DisplayLabel"] == "km-dev:classLink") {
 						addUriSemanticType(type["DisplayDomainLabel"], type["DomainUri"], type["DomainId"], 
 								isPrimary, isSelected, isCrfModelSuggested);
 					} else if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
-						$("#isSubclassOfClass").prop('checked', false);
-						$("#isSubclassOfClassTextBox").val(type["DisplayDomainLabel"]);
-						$("div#semanticTypingAdvacedOptionsDiv").show();
+						$("#isSubclassOfClass").prop('checked', true);
+						$("input#isSubclassOfClassTextBox").val(type["DisplayDomainLabel"]);
+						$("#semanticTypesAdvancedOptions").click();
 					} else if (type["DisplayLabel"] == "km-dev:dataPropertyOfColumnLink" ||
 							type["DisplayLabel"] == "km-dev:objectPropertySpecialization") {
-						$("#isSpecializationForEdge").prop('checked', false);
-						$("#isSpecializationForEdgeTextBox").val(type["DisplayDomainLabel"]);
-						$("div#semanticTypingAdvacedOptionsDiv").show();
+						$("#isSpecializationForEdge").prop('checked', true);
+						$("input#isSpecializationForEdgeTextBox").val(type["DisplayDomainLabel"]);
+						$("#semanticTypesAdvancedOptions").click();
+						
 					} else {
 						addSemTypeObjectToCurrentTable(type, isSelected, isCrfModelSuggested);
 					}
@@ -94,17 +99,17 @@ var SetSemanticTypeDialog = (function() {
 				});
 				if (suggestedTypes) {
 					$.each(suggestedTypes["Labels"], function(index, type) {
+						if(type["DisplayLabel"] == "km-dev:columnSubClassOfLink" ||
+								type["DisplayLabel"] == "km-dev:dataPropertyOfColumnLink" ||
+								type["DisplayLabel"] == "km-dev:objectPropertySpecialization") {
+							return;
+						}
 						addSemTypeOrAdvOption(type, false, false, true);
 					});
 				}
 
 				addEmptySemanticType();
 				addEmptyUriSemanticType();
-				
-				
-				getClasses();
-				getProperties();
-				getExistingProperties();
 			});
 
 			//Initialize handler for Save button
@@ -118,12 +123,13 @@ var SetSemanticTypeDialog = (function() {
 			$("#semanticTypesAdvancedOptions", dialog).on('click', function(e) {
 				e.preventDefault();
 				$("#semanticTypesAdvacedOptionsDiv").toggle();
-
+				
 				var classArray = getClassLabels();
 				var propertyArray = getPropertyInstanceLabels();
 
 				$('.typeahead').typeahead('destroy');
-
+				$("input#isSubclassOfClassTextBox", dialog).typeahead('destroy');
+				$("input#isSpecializationForEdgeTextBox", dialog).typeahead('destroy');
 				$("input#isSubclassOfClassTextBox", dialog).typeahead({
 					source: classArray,
 					minLength: 0
@@ -133,6 +139,8 @@ var SetSemanticTypeDialog = (function() {
 					minLength: 0
 				});
 			});
+			
+			
 
 			$("div#semanticTypesAdvacedOptionsDiv input:checkbox").on('click', function(e) {
 				console.log("semanticTypesAdvancedOptions checbox change handler");
@@ -154,9 +162,8 @@ var SetSemanticTypeDialog = (function() {
 			
 			$("#literalTypeSelect").typeahead( 
 				{source:LITERAL_TYPE_ARRAY, minLength:0, items:"all"});
-			}
-			
-
+		}
+		
 		function hideError() {
 			$("div.error", dialog).hide();
 		}
@@ -318,8 +325,8 @@ var SetSemanticTypeDialog = (function() {
 						if (prop.id.toLowerCase() == propValue.toLowerCase()) {
 							info["metaPropertyUri"] = prop.id;
 							info["metaPropertyId"] = prop.id;
-							newInfo.push(getParamObject("metaPropertyUri", prop.id, "other"));
-							newInfo.push(getParamObject("metaPropertyId", prop.id, "other"));
+							newInfo.push(getParamObject("metaPropertyUri", prop.id, "linkWithHNodeId"));
+							newInfo.push(getParamObject("metaPropertyId", prop.id, "linkWithHNodeId"));
 							valueFound = true;
 							break;
 						}

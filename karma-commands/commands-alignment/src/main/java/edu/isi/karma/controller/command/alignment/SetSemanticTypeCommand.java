@@ -260,7 +260,21 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0);
 //				newType = new SemanticType(hNodeId, classNode.getLabel(), null, SemanticType.Origin.User, 1.0,isPartOfKey);
-				columnNode.setUserSelectedSemanticType(newType);
+				
+				List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();
+				if (userSemanticTypes == null) {
+					userSemanticTypes = new ArrayList<SemanticType>();
+					columnNode.setUserSemanticTypes(userSemanticTypes);
+				}
+				boolean duplicateSemanticType = false;
+				for (SemanticType st : userSemanticTypes) {
+					if (st.getModelLabelString().equalsIgnoreCase(newType.getModelLabelString())) {
+						duplicateSemanticType = true;
+						break;
+					}
+				}
+				if (!duplicateSemanticType)
+					userSemanticTypes.add(newType);
 				
 				if(newLink != null) {
 					alignment.changeLinkStatus(newLink.getId(),

@@ -354,7 +354,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/pager.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/geospatial.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/databaseImportDialog.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/d3-alignment-vis.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/d3-model-manager.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/fileImport.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/cleaning.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/reset-options.js?<jsp:include page='version.jsp' />"></script>

@@ -604,7 +604,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass, p_w, p_worksheetId) {
 	
 	this.onresize = function(event) {
 		waitForFinalEvent(function() {
-			displayAlignmentTree_ForceKarmaLayout(json);
+			D3ModelManager.getInstance().displayModel(json);
 		}, 500, worksheetId);
 	};
 	

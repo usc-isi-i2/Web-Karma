@@ -10,35 +10,56 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileAsTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
-public class JSONIdentityReducerProcessor extends Configured implements Tool {
+import edu.isi.karma.mapreduce.inputformat.AvroKeyBatchInputFormat;
+
+public class JSONAvroProcessor extends Configured implements Tool {
 
 	 public Job configure(Properties p ) throws Exception
 	 {
 		
 		Configuration conf = getConf();
+		if(p.getProperty("model.uri") != null)
+		{
+			conf.setIfUnset("model.uri", p.getProperty("model.uri"));
+		}
+		if(p.getProperty("model.file") != null)
+		{
+			conf.setIfUnset("model.file", p.getProperty("model.file"));
+		}
+		if(p.getProperty("karma.input.type") != null)
+		{
+			conf.setIfUnset("karma.input.type", p.getProperty("karma.input.type"));
+		}
+		if(p.getProperty("context.uri") != null)
+		{
+			conf.setIfUnset("context.uri", p.getProperty("context.uri"));
+		}
+		if(p.getProperty("rdf.generation.root") != null)
+		{
+			conf.setIfUnset("rdf.generation.root", p.getProperty("rdf.generation.root"));
+		}
+		if(p.getProperty("base.uri") != null)
+		{
+			conf.setIfUnset("base.uri", p.getProperty("base.uri"));
+		}
 		Job job = Job.getInstance(conf);
-        job.setInputFormatClass(SequenceFileAsTextInputFormat.class);
-        job.setJarByClass(JSONIdentityReducerProcessor.class);
+        job.setInputFormatClass(AvroKeyBatchInputFormat.class);
+        job.setJarByClass(JSONAvroProcessor.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
-        job.setMapperClass(IdentityJSONMapper.class);
+        job.setMapperClass(JSONMapper.class);
         job.setReducerClass(JSONReducer.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
-        String[] paths = p.getProperty("input.directory").split(",");
-        Path[] array = new Path[paths.length];
-        int i = 0;
-        for (String path : paths) {
-        	array[i++] = new Path(path);
-        }
-        FileInputFormat.setInputPaths(job, array);
+        FileInputFormat.setInputPaths(job, new Path(p.getProperty("input.directory")));
         FileOutputFormat.setOutputPath(job, new Path(p.getProperty("output.directory")));
         
         job.setNumReduceTasks(1);
@@ -62,7 +83,8 @@ public class JSONIdentityReducerProcessor extends Configured implements Tool {
        }
        
        public static void main(String[] args) throws Exception {
-    	   System.exit(ToolRunner.run(new Configuration(), new JSONIdentityReducerProcessor(), args));
+    	   Logger.getRootLogger().setLevel(Level.ERROR);
+    	   System.exit(ToolRunner.run(new Configuration(), new JSONAvroProcessor(), args));
        }
 
 }

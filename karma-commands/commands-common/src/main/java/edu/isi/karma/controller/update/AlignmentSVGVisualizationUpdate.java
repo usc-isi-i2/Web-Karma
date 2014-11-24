@@ -57,7 +57,7 @@ import edu.isi.karma.view.VWorkspace;
 
 public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 	private final String worksheetId;
-	private final DirectedWeightedMultigraph<Node, LabeledLink> alignmentGraph;
+	private DirectedWeightedMultigraph<Node, LabeledLink> alignmentGraph;
 	private final Alignment alignment;
 	private static Logger logger = LoggerFactory
 			.getLogger(AlignmentSVGVisualizationUpdate.class);
@@ -77,8 +77,8 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			Alignment alignment) {
 		super();
 		this.worksheetId = worksheetId;
-		this.alignmentGraph = alignment.getSteinerTree();
 		this.alignment = alignment;
+		
 	}
 
 	private JSONObject getForceLayoutNodeJsonObject(int id, String label,
@@ -117,6 +117,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
+		this.alignmentGraph = alignment.getSteinerTree();
 		if (UIConfiguration.Instance().isForceModelLayoutEnabled())
 			generateJsonForForceLayout(prefix, pw, vWorkspace);
 		else

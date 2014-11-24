@@ -16,6 +16,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var nodeClickListener = null;
 	
 	var test = [];
+	var anchorName = [];                           //store anchor name, include nested
 	var anchorData = [];                           //store anchor nodes
 	var nodesData = [];                            //store all nodes includes anchors
 	var linksData = [];                            //links data
@@ -101,6 +102,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var nodePosMap = new myMap();                  //map of node's position
 
 
+	var print = false;                             //whether or not print 
 	var nodeRadius = 4;
 	var unitLinkLength = 70;                       //difference between layers
 	var outsideUnitLinkLength = 50;                //length for outside links
@@ -109,12 +111,14 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var xOffset = 0;                               //x position offset
 	var firstTime = true;                          //first time to load the force-layout
 	var maxLabelLength = 0;    
+	var tableHeight = 0;
+	var cellWidth = $(".wk-header-cell").css("width");
 	var cScale = d3.scale.category20();
 
 	//create svg
 	var svg = d3.select(htmlElement)                         
 	    .append("svg")
-	    .attr("id", p_htmlElement);
+	    .attr("id", p_htmlElement)
 	    //.on("mousemove", mousemove);
 
 
@@ -137,7 +141,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var labelLinks = forceSVG.selectAll(".labelLinks"); //all label links.
 	var linkArrow = forceSVG.selectAll(".linkArrow");   //little triangle of links
 	var labelFrame = forceSVG.selectAll(".labelFrame"); //the frame of each label
-
+	var labelText = null;
+	var labelFrame = null;
+	var labelBoard = null;
+	var labelClickBoard = null;
 	//force layout for nodes
 	var force = d3.layout.force()
 		.gravity(0)
@@ -205,17 +212,17 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.append("path")
 			.attr("stroke", "#555")
 			.attr("stroke-width", 1)
-			//.attr("opacity", 0.5)
-			.attr("id", function(d, i){
-				return d.source.id + "link" + d.target.id;
-			})
+			//.attr("opacity", 0.5)			
 			.attr("class", function(d) {
 				return "link " + d.linkType + " " + d.linkStatus;
 			})
 			.attr("fill", "none");
+		links.attr("id", function(d, i){
+				return d.source.id + "link" + d.target.id;
+			})
 		links.exit()
-			.transition()
-			.duration(500)
+			//.transition()
+			//.duration(500)
 			.attr("opacity", 0)
 			.remove();
 
@@ -227,8 +234,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.append("polygon")
 			.attr("fill", "#555")
 		linkArrow.exit()
-			.transition()
-			.duration(500)
+			//.transition()
+			//.duration(500)
 			.attr("opacity", 500)
 			.remove();
 			
@@ -237,8 +244,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		});
 		labels.enter()
 			.append("g")
-			.classed("label", true)
-			.attr("id", function(d, i){
+			.classed("label", true);
+		labels.attr("id", function(d, i){				
 				if (d.type == "nodeLabel"){
 					return "nodeLabelG" + d.node.id;
 				} else if (d.type == "linkLabel"){
@@ -249,8 +256,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				return "labelPartG" + i;
 			});
 		labels.exit()
-			.transition()
-			.duration(500)
+			//.transition()
+			//.duration(500)
 			.attr("opacity", 0)
 			.remove();
 
@@ -258,6 +265,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.attr("r", 0)
 			//.attr("fill", "black");
 		
+		/*labels.enter()
+			.append("g")*/
+		labelFrame = labels.selectAll("g").remove();
 		labelFrame = labels
 			.append("g")
 			.attr("class", function(d){
@@ -270,6 +280,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				}
 				return "unusedLable";
 			})
+			.attr("opacity", 0)
 			.attr("id", function(d, i){
 				if (d.type == "nodeLabel"){
 					return "nodeLabel" + d.node.id;
@@ -279,8 +290,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					return "edgeLinkLabel" + nodesData[d.node.tgt].id;
 				}
 				return "labelPart" + i;
-			})
-			.attr("opacity", 0);
+			});
+			
 			
 		labelText = labelFrame
 			.filter(function(d, i){
@@ -288,6 +299,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			})
 			.append("text")
 			.text(function(d, i){
+				/*if (d.type == "nodeLabel" && d.node.type == "anchor"){
+					return d.content;
+				}*/
 				if (d.content.length > 20){
 					d.alt = d.content.slice(0, 7) + "..." + d.content.slice(d.content.length - 10, d.content.length);
 					return d.alt;
@@ -309,7 +323,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				}
 				return "normal";
 			})
-			.classed("labelText", true)
+			.attr("font-family", "Arial")
+			.attr("font-size", 12)
+			.attr("opacity", 0.8)
 			.attr("x", function(d){
 				d.width = this.getBBox().width //+ textHeight / 3 * 2;
 				if (d.type == "nodeLabel"){
@@ -418,9 +434,11 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					frameId = "#edgeLinkLabelG" + nodesData[d.node.tgt].id;
 				}
 				if (d.alt != undefined){
+					//console.log(d.alt + " " + d.content + " " + d.index)
 					d3.select(frameId)
 						.select("text")
 						.text(function(d){
+							//d.content = ""
 							return d.content;
 						})
 						.attr("x", function(d){
@@ -473,7 +491,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 							var dy = 0;
 							return "M " + dx + " " + dy + " L " + (dx + textWidth) + " " + dy + " Q " + (dx + textWidth + textHeight / 3) + " " + (dy - textHeight / 2) + " " + (dx + textWidth) + " " + (dy - textHeight) + " L " + dx + " " + (dy - textHeight) + " Q " + (dx - textHeight / 3) + " " + (dy - textHeight / 2) + " " + dx + " " + dy;
 						})
-				}
+				}/**/
 				d3.select(frameId)
 					.select("path")
 					.attr("stroke-width", 0);
@@ -492,8 +510,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.classed("labelLinks", true)
 			.attr("stroke-width", 0);
 		labelLinks.exit()
-			.transition()
-			.duration(500)
+			//.transition()
+			//.duration(500)
 			.attr("opacity", 0)
 			.remove();
 
@@ -520,10 +538,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.attr("r", 1)
 			.attr("opacity", 0.7)
 			.attr("fill", "red")
-			.attr("id", function(d, i){
-				return "node" + d.id;
-			})
-			.call(drag)
+			.call(drag)	
 			.on("click", function(d){
 				var offset = Math.max(xOffset - leftPanelWidth,0);
 				if (d.outside.isOutside && !d.noLayer){					
@@ -622,12 +637,16 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					d.showLabel = false;
 				}
 			});
+
+		nodes.attr("id", function(d, i){
+				return "node" + d.id;
+			})		
 		nodes.transition()
 			.duration(500)
 			.attr("r", nodeRadius);
 		nodes.exit()
-			.transition()
-			.duration(500)
+			//.transition()
+			//.duration(500)
 			.attr("opacity", 500)
 			.remove();
 	}
@@ -728,7 +747,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 
 			
 			//if (d.type == "edgeLink"){
-				if (b.outside.isOutside && d.target.noLayer == undefined){
+				if (b.noLayer == undefined && b.outside.isOutside){
 					return "M" + b.x + " " + b.y + " L " + a.x + " " + a.y;
 				}
 			///} else {
@@ -810,11 +829,16 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			}
 			return ax + "," + ay + " " + bx + "," + by + " " + cx + "," + cy;
 		})
-		.attr("transform", function(d){
-			//if (d.arrow == undefined){
-				//return "";
-			//}
+		.attr("transform", function(d){			
 			if (!d.target.outside.isOutside || d.target.noLayer){
+				if (d.arrow.x == NaN){
+					console.log("x NaN: " + d);
+					d.arrow.x = xOffset + 10;
+				}
+				if (d.arrow.y == NaN){
+					console.log("y NaN: " + d);
+					d.arrow.y = 10;
+				}
 				return "rotate(" + d.angle + " " + d.arrow.x + " " + d.arrow.y + ")";
 			}
 		})
@@ -916,10 +940,11 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 						layerLabel[0].push(d);
 					}
 					if (!d.node.outside.isOutside && d.node.layer > 0){
-						if (!layerLabel[d.node.layer]){
-							layerLabel[d.node.layer] = [];
+						var layer = d.node.layer * 2;
+						if (!layerLabel[layer]){
+							layerLabel[layer] = [];
 						}
-						layerLabel[d.node.layer].push(d);
+						layerLabel[layer].push(d);
 					}
 				} else if (d.type == "edgeLinkLabel"){
 
@@ -927,11 +952,11 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					//if (!nodesData[d.node.src].outside.isOutside && !nodesData[d.node.tgt].outside.isOutside){
 					if (d.show){
 						if (nodesData[d.node.tgt].noLayer == undefined){
-							var l = (nodesData[d.node.src].layer + nodesData[d.node.tgt].layer) / 2;
-							if (!layerLabel[l]){
-								layerLabel[l] = [];
+							var layer = (nodesData[d.node.src].layer + nodesData[d.node.tgt].layer);
+							if (!layerLabel[layer]){
+								layerLabel[layer] = [];
 							}
-							layerLabel[l].push(d);
+							layerLabel[layer].push(d);
 						} else {
 							layerLabel[0].push(d);
 						}
@@ -939,25 +964,33 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				}
 			}
 		});
-
+		
 		layerLabel.forEach(function(e, i){
-			/*if (e.length > 1 && i > 0){
+			if (e.length > 1 && i > 0){
 				var q = d3.geom.quadtree(e),
 					i = 0,
 	      			n = e.length;
 	    		while (++i < n) q.visit(collide(e[i]));
-	    	}
+	    	}/**/
 	    	if (i == 0 && e.length > 1){
 	    		var q = d3.geom.quadtree(e),
 					i = 0,
 	      			n = e.length;
 	    		while (++i < n) q.visit(collideOutside(e[i]));
-	    	}*/
+	    	}
 		});
 	      	
 		this.attr("transform", function(d) {
 			//dx = Math.max(xOffset + 20, Math.min(xOffset + width, d.x)); 
 			//d.y = Math.max(nodeRadius, Math.min(height - nodeRadius, d.y)); 
+			if (d.x == NaN){
+				console.log("x NaN: " + d);
+				d.x = xOffset + 10;
+			}
+			if (d.y == NaN){
+				console.log("y NaN: " + d);
+				d.y = 10;
+			}
 			return "translate(" + d.x + "," + d.y + ")";
 		});
 	}
@@ -965,19 +998,18 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	//collision detection
 	function collide(d) {
 	    var r = d.width / 2,
-	    //var r = d.width * 8,
 	      	nx1 = d.x - r,
 	      	nx2 = d.x + r;
 	  	return function(quad, x1, y1, x2, y2) {
 	    	if (quad.point && (quad.point !== d)) {
 	      		var x = d.x - quad.point.x,
-	          		y = 0,
 	          		l = Math.sqrt(x * x),
-	          		r = d.width / 2 + quad.point.width / 2;
+	          		r = d.width / 2 + textHeight / 3 * 2 + quad.point.width / 2;
 	      		if (l < r) {
-	        		l = (l - r) / l * .5;
-	        		d.x -= x *= l;
-	        		quad.point.x += x;
+	        		l = (l != 0) ? (l - r) / l * 0.5 : (l - r) * 0.5;
+	        		x *= l;
+	        		d.x = Math.max(d.width, d.x - x);
+	        		quad.point.x = Math.min(xOffset + windowWidth - d.width, quad.point.x + x);
 	      		}
 	    	}
 	    	return x1 > nx2 || x2 < nx1;
@@ -986,7 +1018,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 
 	//collision detection for outside nodes
 	function collideOutside(d){
-	  	var r = d.width / 2,
+	  	var r = d.width / 2 + textHeight,
 	      	nx1 = d.x - r,
 	      	nx2 = d.x + r,
 	      	ny1 = d.y - textHeight,
@@ -998,19 +1030,19 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	          		lx = Math.abs(x),
 	          		ly = Math.abs(y),
 	          		rx = d.width / 2 + quad.point.width / 2,
-	          		ry = d.height;
+	          		ry = textHeight;
 
 	          	if (ly >= ry || lx >= rx){
 	          		return true;
 	          	}      		
-	        	ly = (ly - ry) / ly * .5;
-	        	d.y -= y *= ly;
-	        	quad.point.y += y;	      		
+	        	ly = (ly != 0) ? (ly - ry) / ly * 0.5 : (ly - ry) * 0.5;
+	        	y *= ly;
+	        	d.y = Math.max(d.y - y, textHeight);
+	        	quad.point.y = Math.min(quad.point.y + y, height);
 	    	}
 	    	return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
 	  	};
 	}
-
 	//reset data
 	function resetData(){
 		nodePosMap.clear();
@@ -1019,13 +1051,16 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		});
 
 		//padding = 35;
-		windowWidth = parseInt($("." + cssClass).css("width"));
-		leftPanelWidth = window.innerWidth - windowWidth;
+		rightPanelWidth = parseInt($("." + cssClass).css("width"));
+		leftPanelWidth = window.innerWidth - rightPanelWidth;
+		windowWidth = rightPanelWidth;
 		maxXOfferset = 0;
 		width=0;           
 		height=0;
+		textHeight = 15;
 
 		test = [];
+	 	anchorName = [];                           //store anchor name, include nested
 		anchorData = [];                           //store anchor nodes
 		nodesData = [];                            //store all nodes includes anchors
 		linksData = [];                            //links data
@@ -1039,20 +1074,28 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		SCCNodes = [];                             //SCC nodes set
 		SCCtmpNodes = [];                          //the nodes stack of SCC
 		layerLabel = [];                           //layers are divided into sections based on its layer
-		
+		cycleSet = [];                             //each element in the array is an arraylist, consist of edges of cycle. ex: {1->2, 2->3, 3->1}
+
 		map = new myMap();
 		idMap = [];                                //map from label to id
 		edgeIdMap = [];                            //map of edge's id	
 
+		print = false;                             //whether or not print 
+		nodeRadius = 4;
+		unitLinkLength = 70;                       //difference between layers
+		outsideUnitLinkLength = 50;                //length for outside links
 		maxLayer = 0;                              //max layer number, base 0
 		reshuffleFrequency = 8;                    //pixel changes to excute scroll bar event
 		xOffset = 0;                               //x position offset
 		firstTime = true;                          //first time to load the force-layout
-		maxLabelLength = 0;    	
+		maxLabelLength = 0;    
+		tableHeight = 0;
+		cellWidth = $(".wk-header-cell").css("width");	
 	}
 
 	//initialize data
 	function initializeData(tmpL, tmpN){
+		var anchorNameIndex = 0;
 		tmpN.forEach(function(d, i){
 			var node = {};
 			node.label = d.id;
@@ -1063,6 +1106,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			node.original = d;
 			node.isForcedByUser = d.isForcedByUser;
 			if (d.column || d.column == 0){
+				//columnPos.push(d.xPos);
 				node.nodeId = d.hNodeId;
 				node.column = d.column;
 				node.type = "anchor";
@@ -1092,7 +1136,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			textData.push({
 				node : node,
 				nodeId : d.nodeId,
-				content : d.label,
+				content : anchorNameIndex < anchorName.length ? anchorName[anchorNameIndex++] : d.label,
 				type : "nodeLabel"
 			});
 
@@ -1124,19 +1168,18 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			textData.push({
 				node : node,
 				type : "linkCircle",
-				nodeId : "circle" + d.id
+				nodeId : "circle" + nodesData[node.src].nodeId + "-" + nodesData[node.tgt].nodeId //node.src + "-" + node.tgt
 			});
 			textData.push({
 				node : node,
 				type : "linkLabel",
 				content : d.label,
-				nodeId : d.id
+				nodeId : nodesData[node.src].nodeId + "-" + nodesData[node.tgt].nodeId//node.src + "-" + node.tgt
 			});
-
 			textLinksData.push({
 				source : textData.length - 2,
 				target : textData.length - 1,
-				edgeId : d.id
+				edgeId : nodesData[node.src].nodeId + "-" + nodesData[node.tgt].nodeId//node.src + "-" + node.tgt
 			});
 		});
 
@@ -1292,6 +1335,49 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		})
 		*/
 
+		//set the edge link
+		tmpE.forEach(function(d, i){
+			var srcIndex = nodesData.length * 2 + edgeIdMap[d.source] * 2 + 1;
+			textData[srcIndex].layer = (nodesData[textData[srcIndex].node.src].layer + nodesData[textData[srcIndex].node.tgt].layer) / 2;
+
+			var edge = {};
+			edge.source = textData[srcIndex];
+			edge.target = idMap[d.target];
+			edge.id = linksData.length;
+			edge.edgeId = d.id;
+			edge.linkType = d.linkType;
+			edge.type = "edgeLink";
+			edge.node = {};
+			edge.node.original = d;
+			linksData.push(edge);
+
+			var node = {};
+			node.src = edge.source;
+			node.tgt = edge.target;
+			node.original = d;
+			textData.push({
+				node : node,
+				type : "edgeLinkCircle",
+				content : d.label,
+				nodeId : "circle" + node.src.nodeId + "-" + nodesData[node.tgt].nodeId//node.src.nodeId + "-" + node.tgt
+			});
+			textData.push({
+				node : node,
+				type : "edgeLinkLabel",
+				content : d.label,
+				nodeId : node.src.nodeId + "-" + nodesData[node.tgt].nodeId//node.src.nodeId + "-" + node.tgt
+			});
+
+			textLinksData.push({
+				source : textData.length - 2,
+				target : textData.length - 1,
+				edgeId : node.src.nodeId + "-" + nodesData[node.tgt].nodeId//node.src.nodeId + "-" + node.tgt
+			});
+
+			nodesData[node.tgt].unAssigned = false;
+			nodesData[node.tgt].degree++;
+		});
+
 		//store the node id in the sequence of layer
 		//xPos is the x position for nodes in the unit of column's width
 		layerMap = d3.range(maxLayer + 1)
@@ -1301,6 +1387,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		nodesData.forEach(function(d){
 			if (d.layer != undefined){
 				if (!d.unAssigned){
+					if (layerMap[d.layer] == undefined)
+						console.log(d);
 					layerMap[d.layer].push(d.id);
 				}				
 			}		
@@ -1346,43 +1434,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				d.xpos = -1;
 			}	
 		});
-
-
-		//set the edge link
-		tmpE.forEach(function(d, i){
-			var srcIndex = nodesData.length * 2 + edgeIdMap[d.source] * 2 + 1;
-			textData[srcIndex].layer = (nodesData[textData[srcIndex].node.src].layer + nodesData[textData[srcIndex].node.tgt].layer) / 2;
-
-			var edge = {};
-			edge.source = textData[srcIndex];
-			edge.target = idMap[d.target];
-			edge.id = linksData.length;
-			edge.linkType = d.linkType;
-			edge.type = "edgeLink";
-			edge.node = {};
-			edge.node.original = d;
-			linksData.push(edge);
-
-			var node = {};
-			node.src = edge.source;
-			node.tgt = edge.target;
-			node.original = d;
-			textData.push({
-				node : node,
-				type : "edgeLinkCircle",
-				content : d.label
-			});
-			textData.push({
-				node : node,
-				type : "edgeLinkLabel",
-				content : d.label
-			});
-
-			textLinksData.push({
-				source : textData.length - 2,
-				target : textData.length - 1
-			});
-		});
 	}
 
 	//when move over show the coordinate
@@ -1396,23 +1447,50 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	}
 
 	//print the Extented svg
-	function printExtentedSVG(savePath, resolution){
+	function printExtentedSVG(resolution, callback){
 		var recordWidth = windowWidth;
 		windowWidth = width + 100;
+		print = true;
+		firstTime = true;
 		setNodePosition();
 
-		var objSVG = document.getElementById(p_htmlElement);
+		var objSVG = document.getElementById(htmlElement);
 		setTimeout(function(){
-			saveSvgAsPng(objSVG, savePath + p_htmlElement + ".png", resolution);
+			saveSvgAsPng(objSVG, htmlElement + ".png", resolution);
 			windowWidth = recordWidth;
+			print = false;
+			firstTime = true;
 			setNodePosition();
+			if(callback)
+				callback();
 		}, 1500);
 	}
 
 	//print screen shot
-	function printSVG(savePath, resolution){
-		var objSVG = document.getElementById(p_htmlElement);
-		saveSvgAsPng(objSVG, savePath + p_htmlElement + ".png", resolution);
+	function printSVG(resolution, callback){
+		print = true;
+		firstTime = true;
+		setNodePosition();
+		var objSVG = document.getElementById(htmlElement);
+		setTimeout(function(){
+			saveSvgAsPng(objSVG, htmlElement + ".png", resolution);
+			print = false;
+			firstTime = true;
+			setNodePosition();
+			if(callback)
+				callback();
+		}, 1500);
+	}
+
+	//extract table header
+	function extractTable(data, prefix) {		
+		data.forEach(function(column, i) {			
+			if(column.hasNestedTable) {
+				extractTable(column.columns, column.columnName + ":");
+			} else {
+				anchorName.push(prefix + column.columnName);
+			}
+		});
 	}
 
 	//move element to the back of its parent's children
@@ -1434,6 +1512,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 
 	//set the outside nodes
 	function setNodePosition(){
+		//console.log(print);
 		var change = 0;
 		var offset = Math.max(xOffset - leftPanelWidth,0);
 
@@ -1534,7 +1613,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 						return 1;
 					}
 					if (d.type == "nodeLabel" && d.node.outside){
-						if ((!d.node.outside.isOutside && d.node.type != "anchor") || (d.node.outside.isOutside && d.node.degree >= 3)){
+						if ((!d.node.outside.isOutside && (print || d.node.type != "anchor")) || (d.node.outside.isOutside && d.node.degree >= 3)){
 							d.node.showLabel = true;
 							return 1;
 						}
@@ -1543,8 +1622,14 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					return 0;			
 				});
 			d3.select(htmlElement).selectAll(".linkLabel")
-				.attr("opacity", function(d){
-					if (d.type == "linkLabel"){
+				.attr("opacity", function(d, i){
+					if (d.type == "linkLabel"){						
+						/*if (nodesData[d.node.src] == undefined || nodesData[d.node.tgt] == undefined){
+							console.log(i + " " + d.node.src + " " + d.node.tgt)
+							console.log(d)
+							d.show = false;
+							return 0;
+						}*/
 						if (nodesData[d.node.tgt].noLayer){
 							d.show = true;
 							return 1;
@@ -1552,7 +1637,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 						if (nodesData[d.node.tgt].type == 'anchor' && !nodesData[d.node.tgt].outside.isOutside){
 							d.show = true;
 							return 1;
-						}
+						}						
 						if (nodesData[d.node.src].outside.isOutside || nodesData[d.node.tgt].outside.isOutside){
 							d.show = false;
 							return 0;
@@ -1622,6 +1707,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			maxXOfferset = Math.max(0, leftPanelWidth + width - window.innerWidth);
 			windowWidth = Math.ceil(Math.min(windowWidth + Math.min(xOffset, leftPanelWidth), width));
 
+			//extractTable(d.tableLayout, "");
+			//console.log(anchorName);
 			initializeData(tmpLinkData, tmpNodeData);
 			removeCycle();
 			
@@ -1687,22 +1774,29 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		//console.log(window.pageXOffset);
 		if (Math.abs(window.pageXOffset - xOffset) > reshuffleFrequency){
 			xOffset = window.pageXOffset;
-			windowWidth = Math.min(rightPanelWidth + Math.min(xOffset, leftPanelWidth)/* - padding*/, width);
+			windowWidth = Math.min(rightPanelWidth + Math.min(xOffset, leftPanelWidth), width);
 			setNodePosition();
 		}
 	}
 
 	this.onresize = function(event) {
-	    windowWidth = Math.min(rightPanelWidth + Math.min(xOffset, leftPanelWidth)/* - padding*/, width);
-	    //height=window.innerHeight - padding;
-	    //console.log(width + " " + height);
+		rightPanelWidth = parseInt($("." + cssClass).css("width"));
+		leftPanelWidth = window.innerWidth - rightPanelWidth;
+		windowWidth = rightPanelWidth;
+		maxXOfferset = 0;
+		xOffset = window.pageXOffset;
+		maxXOfferset = Math.max(0, leftPanelWidth + width - window.innerWidth);
+		windowWidth = Math.ceil(Math.min(windowWidth + Math.min(xOffset, leftPanelWidth), width));
+
+	    console.log("on resize: rightPanelWidth: " + rightPanelWidth + "  leftPanelWidth: " + leftPanelWidth + " maxXOfferset: " + maxXOfferset + " windowWidth: " + windowWidth + " xOffset: " + xOffset);
+		setNodePosition();
 	};
 
 	//The savePath format: "file/image/", include last 'image'. 
-	this.printExtented = function(savePath, resolution){
-		printExtentedSVG(savePath, resolution);
+	this.printExtented = function(resolution, callback){
+		printExtentedSVG(resolution, callback);
 	}
-	this.print = function(savePath, resolution){
-		printSVG(savePath, resolution);
+	this.print = function(resolution, callback){
+		printSVG(resolution, callback);
 	}
 };

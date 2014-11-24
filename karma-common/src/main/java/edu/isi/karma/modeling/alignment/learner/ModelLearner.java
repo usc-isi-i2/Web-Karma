@@ -200,7 +200,7 @@ public class ModelLearner {
 				columnNodes.add((ColumnNode)n);
 		
 		logger.info("finding candidate steiner sets ... ");
-		CandidateSteinerSets candidateSteinerSets = getCandidateSteinerSets(steinerNodes, useCorrectTypes, numberOfCandidates, addedNodes);
+		CandidateSteinerSets candidateSteinerSets = getCandidateSteinerSets(steinerNodes, numberOfCandidates, addedNodes);
 
 		if (candidateSteinerSets == null || 
 				candidateSteinerSets.getSteinerSets() == null || 
@@ -282,7 +282,7 @@ public class ModelLearner {
 		Collections.sort(sortableSemanticModels);
 		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getMaxCandidateModels());
 		logger.info("results are ready ...");
-		sortableSemanticModels.get(0).print();
+//		sortableSemanticModels.get(0).print();
 		return sortableSemanticModels.subList(0, count);
 
 //		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
@@ -340,7 +340,7 @@ public class ModelLearner {
 //
 //	}
 
-	private CandidateSteinerSets getCandidateSteinerSets(List<Node> steinerNodes, boolean useCorrectTypes, int numberOfCandidates, Set<Node> addedNodes) {
+	private CandidateSteinerSets getCandidateSteinerSets(List<Node> steinerNodes, int numberOfCandidates, Set<Node> addedNodes) {
 
 		if (steinerNodes == null || steinerNodes.isEmpty())
 			return null;
@@ -365,7 +365,7 @@ public class ModelLearner {
 			else
 				continue;
 				
-			candidateSemanticTypes = getCandidateSemanticTypes(cn, useCorrectTypes, numberOfCandidates);
+			candidateSemanticTypes = cn.getTopKLearnedSemanticTypes(numberOfCandidates);
 			columnSemanticTypes.put(cn, candidateSemanticTypes);
 
 			for (SemanticType semanticType: candidateSemanticTypes) {
@@ -401,26 +401,44 @@ public class ModelLearner {
 
 			logger.info("===== Column: " + cn.getColumnName());
 
-			Set<SemanticTypeMapping> semanticTypeMappings = new HashSet<SemanticTypeMapping>();
-			for (SemanticType semanticType: candidateSemanticTypes) {
-
-				logger.info("\t" + semanticType.getConfidenceScore() + " :" + semanticType.getModelLabelString());
-
-				if (semanticType == null || 
-						semanticType.getDomain() == null ||
-						semanticType.getType() == null) continue;
-
-				domainUri = semanticType.getDomain().getUri();
-				propertyUri = semanticType.getType().getUri();
-				Integer countOfSemanticType = semanticTypesCount.get(domainUri + propertyUri);
-				logger.debug("count of semantic type: " +  countOfSemanticType);
-
-				
-				if (cn.hasUserType()) {
-					SemanticTypeMapping mp = new SemanticTypeMapping(cn, semanticType, cn.getDomainNode(), cn.getDomainLink(), cn);
-					semanticTypeMappings.add(mp);
-				} else {
-
+			Set<SemanticTypeMapping> semanticTypeMappings = null; 
+			
+			if (cn.hasUserType()) {
+				HashMap<SemanticType, LabeledLink> domainLinks = 
+						GraphUtil.getDomainLinks(this.graphBuilder.getGraph(), cn, cn.getUserSemanticTypes());
+				if (domainLinks != null) {
+					for (SemanticType st : cn.getUserSemanticTypes()) {
+						semanticTypeMappings = new HashSet<SemanticTypeMapping>();
+						LabeledLink domainLink = domainLinks.get(st);
+						if (domainLink.getSource() == null || !(domainLink.getSource() instanceof InternalNode))
+							continue;
+						SemanticTypeMapping mp = 
+								new SemanticTypeMapping(cn, st, (InternalNode)domainLink.getSource(), domainLink, cn);
+						semanticTypeMappings.add(mp);
+						candidateSteinerSets.updateSteinerSets(semanticTypeMappings);
+					}
+				}
+			} else {
+				semanticTypeMappings = new HashSet<SemanticTypeMapping>();
+				for (SemanticType semanticType: candidateSemanticTypes) {
+	
+					logger.info("\t" + semanticType.getConfidenceScore() + " :" + semanticType.getModelLabelString());
+	
+					if (semanticType == null || 
+							semanticType.getDomain() == null ||
+							semanticType.getType() == null) continue;
+	
+					domainUri = semanticType.getDomain().getUri();
+					//FIXME: for demo
+	//				if (cn.getColumnName().contains("imageURL"))
+	//					if (!domainUri.toLowerCase().contains("webresource"))
+	//						continue;
+					
+					propertyUri = semanticType.getType().getUri();
+					Integer countOfSemanticType = semanticTypesCount.get(domainUri + propertyUri);
+					logger.debug("count of semantic type: " +  countOfSemanticType);
+	
+					
 					tempSemanticTypeMappings = findSemanticTypeInGraph(cn, semanticType, semanticTypesCount, addedNodes);
 					logger.debug("number of matches for semantic type: " +  
 						 + (tempSemanticTypeMappings == null ? 0 : tempSemanticTypeMappings.size()));
@@ -437,16 +455,17 @@ public class ModelLearner {
 							semanticTypeMappings.add(mp);
 					}
 				}
-			}
-			//			System.out.println("number of matches for column " + n.getColumnName() + 
-			//					": " + (semanticTypeMappings == null ? 0 : semanticTypeMappings.size()));
-			logger.debug("number of matches for column " + cn.getColumnName() + 
-					": " + (semanticTypeMappings == null ? 0 : semanticTypeMappings.size()));
-			numOfMappings *= (semanticTypeMappings == null || semanticTypeMappings.isEmpty() ? 1 : semanticTypeMappings.size());
 
-			logger.debug("number of candidate steiner sets before update: " + candidateSteinerSets.getSteinerSets().size());
-			candidateSteinerSets.updateSteinerSets(semanticTypeMappings);
-			logger.debug("number of candidate steiner sets after update: " + candidateSteinerSets.getSteinerSets().size());
+				//			System.out.println("number of matches for column " + n.getColumnName() + 
+				//					": " + (semanticTypeMappings == null ? 0 : semanticTypeMappings.size()));
+				logger.debug("number of matches for column " + cn.getColumnName() + 
+						": " + (semanticTypeMappings == null ? 0 : semanticTypeMappings.size()));
+				numOfMappings *= (semanticTypeMappings == null || semanticTypeMappings.isEmpty() ? 1 : semanticTypeMappings.size());
+	
+				logger.debug("number of candidate steiner sets before update: " + candidateSteinerSets.getSteinerSets().size());
+				candidateSteinerSets.updateSteinerSets(semanticTypeMappings);
+				logger.debug("number of candidate steiner sets after update: " + candidateSteinerSets.getSteinerSets().size());
+			}
 		}
 
 		for (Node n : steinerNodes) {
@@ -625,40 +644,6 @@ public class ModelLearner {
 		return mappingStruct;
 	}
 
-	private List<SemanticType> getCandidateSemanticTypes(ColumnNode n, boolean useCorrectType, int numberOfCandidates) {
-
-		if (n == null)
-			return null;
-
-		List<SemanticType> types = new ArrayList<>();
-
-		SemanticType userSelectedType = n.getUserSelectedSemanticType();
-		if (useCorrectType && userSelectedType != null) {
-			double probability = 1.0;
-			SemanticType newType = new SemanticType(
-					userSelectedType.getHNodeId(),
-					userSelectedType.getType(),
-					userSelectedType.getDomain(),
-					userSelectedType.getOrigin(),
-					probability
-					);
-			types.add(newType);
-		} else {
-			List<SemanticType> suggestions = n.getTopKSuggestions(numberOfCandidates);
-			if (suggestions != null) {
-				for (SemanticType st : suggestions) {
-					if (useCorrectType && userSelectedType != null &&
-							st.getModelLabelString().equalsIgnoreCase(userSelectedType.getModelLabelString()))
-						continue;
-					types.add(st);
-				}
-			}
-		}
-
-		return types;
-
-	}
-
 //	private void updateWeights() {
 //
 //		List<DefaultLink> oldLinks = new ArrayList<DefaultLink>();
@@ -781,16 +766,20 @@ public class ModelLearner {
 		int numberOfAttributesWhoseTypeIsFirstCRFType = 0;
 		int numberOfAttributesWhoseTypeIsInCRFTypes = 0;
 		for (ColumnNode cn : columnNodes) {
-			SemanticType userSelectedType = cn.getUserSelectedSemanticType();
-			List<SemanticType> top4Suggestions = cn.getTopKSuggestions(4);
+			List<SemanticType> userSemanticTypes = cn.getUserSemanticTypes();
+			List<SemanticType> top4Suggestions = cn.getTopKLearnedSemanticTypes(4);
 
 			for (int i = 0; i < top4Suggestions.size(); i++) {
 				SemanticType st = top4Suggestions.get(i);
-				if (userSelectedType != null &&
-						st.getModelLabelString().equalsIgnoreCase(userSelectedType.getModelLabelString())) {
-					if (i == 0) numberOfAttributesWhoseTypeIsFirstCRFType ++;
-					numberOfAttributesWhoseTypeIsInCRFTypes ++;
-					break;
+				if (userSemanticTypes != null) {
+					for (SemanticType t : userSemanticTypes) {
+						if (st.getModelLabelString().equalsIgnoreCase(t.getModelLabelString())) {
+							if (i == 0) numberOfAttributesWhoseTypeIsFirstCRFType ++;
+							numberOfAttributesWhoseTypeIsInCRFTypes ++;
+							i = top4Suggestions.size();
+							break;
+						}
+					}
 				} 
 			}
 

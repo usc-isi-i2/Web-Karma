@@ -8,6 +8,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rdf.RDFGeneratorRequest;
 
@@ -27,7 +28,10 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 		String modelFile = context.getConfiguration().get("model.file");
 		String baseURI = context.getConfiguration().get("base.uri");
 		String contextURI = context.getConfiguration().get("context.uri");
-		karma.setup(inputTypeString, modelUri, modelFile, baseURI, contextURI);
+		String rdfGenerationRoot = context.getConfiguration().get("rdf.generation.root");
+		String rdfSelection = context.getConfiguration().get("rdf.generation.selection");
+		karma.setup(inputTypeString, modelUri, modelFile, 
+				baseURI, contextURI, rdfGenerationRoot, rdfSelection);
 	
 	}
 
@@ -46,6 +50,13 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 			request.setInputData(contents);
 			request.setAddProvenance(false);
 			request.addWriter(outWriter);
+			if(karma.getRdfGenerationRoot() != null)
+			{
+				request.setStrategy(new UserSpecifiedRootStrategy(karma.getRdfGenerationRoot()));
+			}
+			if (karma.getContextId() != null) {
+				request.setContextName(karma.getContextId().getName());
+			}
 			karma.getGenerator().generateRDF(request);
 
 			String results = sw.toString();
