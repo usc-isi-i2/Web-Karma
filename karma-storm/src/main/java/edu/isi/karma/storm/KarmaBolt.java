@@ -87,7 +87,9 @@ public class KarmaBolt extends BaseRichBolt {
 	public void prepare(Map configMap, TopologyContext arg1, OutputCollector outputCollector) {
 		this.outputCollector = outputCollector;
 		karma = new BaseKarma();
-		karma.setup(config.getProperty("karma.input.type"), config.getProperty("model.uri"), config.getProperty("model.file"), config.getProperty("base.uri"), config.getProperty("context.uri"), config.getProperty("rdf.generation.root"));
+		karma.setup(config.getProperty("karma.input.type"), config.getProperty("model.uri"), config.getProperty("model.file"), 
+				config.getProperty("base.uri"), config.getProperty("context.uri"), 
+				config.getProperty("rdf.generation.root"), config.getProperty("rdf.generation.selection"));
 		
 	}
 

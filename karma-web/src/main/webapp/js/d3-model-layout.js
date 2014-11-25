@@ -141,7 +141,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var labelLinks = forceSVG.selectAll(".labelLinks"); //all label links.
 	var linkArrow = forceSVG.selectAll(".linkArrow");   //little triangle of links
 	var labelFrame = forceSVG.selectAll(".labelFrame"); //the frame of each label
-
+	var labelText = null;
+	var labelFrame = null;
+	var labelBoard = null;
+	var labelClickBoard = null;
 	//force layout for nodes
 	var force = d3.layout.force()
 		.gravity(0)
@@ -209,14 +212,14 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.append("path")
 			.attr("stroke", "#555")
 			.attr("stroke-width", 1)
-			//.attr("opacity", 0.5)
-			.attr("id", function(d, i){
-				return d.source.id + "link" + d.target.id;
-			})
+			//.attr("opacity", 0.5)			
 			.attr("class", function(d) {
 				return "link " + d.linkType + " " + d.linkStatus;
 			})
 			.attr("fill", "none");
+		links.attr("id", function(d, i){
+				return d.source.id + "link" + d.target.id;
+			})
 		links.exit()
 			//.transition()
 			//.duration(500)
@@ -241,8 +244,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		});
 		labels.enter()
 			.append("g")
-			.classed("label", true)
-			.attr("id", function(d, i){				
+			.classed("label", true);
+		labels.attr("id", function(d, i){				
 				if (d.type == "nodeLabel"){
 					return "nodeLabelG" + d.node.id;
 				} else if (d.type == "linkLabel"){
@@ -262,6 +265,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.attr("r", 0)
 			//.attr("fill", "black");
 		
+		/*labels.enter()
+			.append("g")*/
+		labelFrame = labels.selectAll("g").remove();
 		labelFrame = labels
 			.append("g")
 			.attr("class", function(d){
@@ -274,6 +280,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				}
 				return "unusedLable";
 			})
+			.attr("opacity", 0)
 			.attr("id", function(d, i){
 				if (d.type == "nodeLabel"){
 					return "nodeLabel" + d.node.id;
@@ -283,8 +290,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					return "edgeLinkLabel" + nodesData[d.node.tgt].id;
 				}
 				return "labelPart" + i;
-			})
-			.attr("opacity", 0);
+			});
+			
 			
 		labelText = labelFrame
 			.filter(function(d, i){
@@ -292,9 +299,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			})
 			.append("text")
 			.text(function(d, i){
-				if (d.type == "nodeLabel" && d.node.type == "anchor"){
+				/*if (d.type == "nodeLabel" && d.node.type == "anchor"){
 					return d.content;
-				}
+				}*/
 				if (d.content.length > 20){
 					d.alt = d.content.slice(0, 7) + "..." + d.content.slice(d.content.length - 10, d.content.length);
 					return d.alt;
@@ -427,9 +434,11 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					frameId = "#edgeLinkLabelG" + nodesData[d.node.tgt].id;
 				}
 				if (d.alt != undefined){
+					//console.log(d.alt + " " + d.content + " " + d.index)
 					d3.select(frameId)
 						.select("text")
 						.text(function(d){
+							//d.content = ""
 							return d.content;
 						})
 						.attr("x", function(d){
@@ -482,7 +491,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 							var dy = 0;
 							return "M " + dx + " " + dy + " L " + (dx + textWidth) + " " + dy + " Q " + (dx + textWidth + textHeight / 3) + " " + (dy - textHeight / 2) + " " + (dx + textWidth) + " " + (dy - textHeight) + " L " + dx + " " + (dy - textHeight) + " Q " + (dx - textHeight / 3) + " " + (dy - textHeight / 2) + " " + dx + " " + dy;
 						})
-				}
+				}/**/
 				d3.select(frameId)
 					.select("path")
 					.attr("stroke-width", 0);
@@ -529,10 +538,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.attr("r", 1)
 			.attr("opacity", 0.7)
 			.attr("fill", "red")
-			.attr("id", function(d, i){
-				return "node" + d.id;
-			})
-			.call(drag)
+			.call(drag)	
 			.on("click", function(d){
 				var offset = Math.max(xOffset - leftPanelWidth,0);
 				if (d.outside.isOutside && !d.noLayer){					
@@ -631,6 +637,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					d.showLabel = false;
 				}
 			});
+
+		nodes.attr("id", function(d, i){
+				return "node" + d.id;
+			})		
 		nodes.transition()
 			.duration(500)
 			.attr("r", nodeRadius);
@@ -1158,18 +1168,18 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			textData.push({
 				node : node,
 				type : "linkCircle",
-				nodeId : "circle" + node.src + "-" + node.tgt
+				nodeId : "circle" + nodesData[node.src].nodeId + "-" + nodesData[node.tgt].nodeId //node.src + "-" + node.tgt
 			});
 			textData.push({
 				node : node,
 				type : "linkLabel",
 				content : d.label,
-				nodeId : node.src + "-" + node.tgt
+				nodeId : nodesData[node.src].nodeId + "-" + nodesData[node.tgt].nodeId//node.src + "-" + node.tgt
 			});
 			textLinksData.push({
 				source : textData.length - 2,
 				target : textData.length - 1,
-				edgeId : node.src + "-" + node.tgt
+				edgeId : nodesData[node.src].nodeId + "-" + nodesData[node.tgt].nodeId//node.src + "-" + node.tgt
 			});
 		});
 
@@ -1349,19 +1359,19 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				node : node,
 				type : "edgeLinkCircle",
 				content : d.label,
-				nodeId : "circle" + node.src.nodeId + "-" + node.tgt
+				nodeId : "circle" + node.src.nodeId + "-" + nodesData[node.tgt].nodeId//node.src.nodeId + "-" + node.tgt
 			});
 			textData.push({
 				node : node,
 				type : "edgeLinkLabel",
 				content : d.label,
-				nodeId : node.src.nodeId + "-" + node.tgt
+				nodeId : node.src.nodeId + "-" + nodesData[node.tgt].nodeId//node.src.nodeId + "-" + node.tgt
 			});
 
 			textLinksData.push({
 				source : textData.length - 2,
 				target : textData.length - 1,
-				edgeId : node.src.nodeId + "-" + node.tgt
+				edgeId : node.src.nodeId + "-" + nodesData[node.tgt].nodeId//node.src.nodeId + "-" + node.tgt
 			});
 
 			nodesData[node.tgt].unAssigned = false;

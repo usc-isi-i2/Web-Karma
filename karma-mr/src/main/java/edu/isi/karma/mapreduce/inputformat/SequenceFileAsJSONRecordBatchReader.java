@@ -13,7 +13,6 @@ import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileRecordReader;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 @InterfaceAudience.Public
@@ -46,11 +45,21 @@ extends RecordReader<Text, Text> {
 	@Override
 	public Text getCurrentValue() 
 			throws IOException, InterruptedException {
-		JSONArray array = new JSONArray();
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		boolean isFirst = true;
 		for (JSONObject obj : data) {
-			array.put(obj);
+			if (isFirst) {
+				builder.append(obj.toString());
+				isFirst = false;
+			}
+			else {
+				builder.append(",");
+				builder.append(obj.toString());
+			}
 		}
-		return new Text(array.toString());
+		builder.append("]");
+		return new Text(builder.toString());
 	}
 
 	public synchronized boolean nextKeyValue() 

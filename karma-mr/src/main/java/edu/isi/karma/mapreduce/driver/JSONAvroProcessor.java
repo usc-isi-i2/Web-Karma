@@ -45,6 +45,10 @@ public class JSONAvroProcessor extends Configured implements Tool {
 		{
 			conf.setIfUnset("rdf.generation.root", p.getProperty("rdf.generation.root"));
 		}
+		if(p.getProperty("base.uri") != null)
+		{
+			conf.setIfUnset("base.uri", p.getProperty("base.uri"));
+		}
 		Job job = Job.getInstance(conf);
         job.setInputFormatClass(AvroKeyBatchInputFormat.class);
         job.setJarByClass(JSONAvroProcessor.class);
@@ -58,7 +62,7 @@ public class JSONAvroProcessor extends Configured implements Tool {
         FileInputFormat.setInputPaths(job, new Path(p.getProperty("input.directory")));
         FileOutputFormat.setOutputPath(job, new Path(p.getProperty("output.directory")));
         
-        job.setNumReduceTasks(4);
+        job.setNumReduceTasks(1);
         return job;
 	 }
 	 

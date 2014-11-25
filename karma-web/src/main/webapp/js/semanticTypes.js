@@ -128,7 +128,8 @@ var SetSemanticTypeDialog = (function() {
 				var propertyArray = getPropertyInstanceLabels();
 
 				$('.typeahead').typeahead('destroy');
-
+				$("input#isSubclassOfClassTextBox", dialog).typeahead('destroy');
+				$("input#isSpecializationForEdgeTextBox", dialog).typeahead('destroy');
 				$("input#isSubclassOfClassTextBox", dialog).typeahead({
 					source: classArray,
 					minLength: 0
@@ -324,8 +325,8 @@ var SetSemanticTypeDialog = (function() {
 						if (prop.id.toLowerCase() == propValue.toLowerCase()) {
 							info["metaPropertyUri"] = prop.id;
 							info["metaPropertyId"] = prop.id;
-							newInfo.push(getParamObject("metaPropertyUri", prop.id, "other"));
-							newInfo.push(getParamObject("metaPropertyId", prop.id, "other"));
+							newInfo.push(getParamObject("metaPropertyUri", prop.id, "linkWithHNodeId"));
+							newInfo.push(getParamObject("metaPropertyId", prop.id, "linkWithHNodeId"));
 							valueFound = true;
 							break;
 						}

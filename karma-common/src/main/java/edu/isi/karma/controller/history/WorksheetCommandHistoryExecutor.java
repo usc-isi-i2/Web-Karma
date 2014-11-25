@@ -41,6 +41,7 @@ import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.HTable;
@@ -210,6 +211,25 @@ public class WorksheetCommandHistoryExecutor {
 						}
 					}
 				}
+			} else if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.linkWithHNodeId) {
+				JSONObject link = new JSONObject(inpP.get(ClientJsonKeys.value.name()).toString());
+				Object subject = link.get("subject");
+				String predicate = link.getString("predicate");
+				Object object = link.get("object");
+				
+				String objectHNodeId = null, subjectHNodeId = null;
+				if(subject instanceof JSONArray) {
+					subjectHNodeId = generateHNodeId((JSONArray)subject, hTable, addIfNonExist, uc);
+				} else {
+					subjectHNodeId = subject.toString();
+				}
+				if(object instanceof JSONArray) {
+					objectHNodeId = generateHNodeId((JSONArray)object, hTable, addIfNonExist, uc);
+				} else {
+					objectHNodeId = object.toString();
+				}
+				
+				inpP.put(ClientJsonKeys.value.name(), subjectHNodeId + "---" + predicate + "---" + objectHNodeId);
 			} else if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.worksheetId) {
 				inpP.put(ClientJsonKeys.value.name(), worksheetId);
 			} else if (HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeIdList) {
@@ -284,6 +304,56 @@ public class WorksheetCommandHistoryExecutor {
 		return uc;
 	}
 
+	private String generateHNodeId(JSONArray hNodeJSONRep, HTable hTable, boolean addIfNonExist, UpdateContainer uc) {
+		String hNodeId = null;
+		for (int j=0; j<hNodeJSONRep.length(); j++) {
+			JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
+			if(hTable == null) {
+				AbstractUpdate update = new TrivialErrorUpdate("null HTable while normalizing JSON input for the command");
+				if (uc == null)
+					uc = new UpdateContainer(update);
+				else
+					uc.add(update);
+				continue;
+			}
+			String nameObjColumnName = cNameObj.getString("columnName");
+			logger.debug("Column being normalized: "+ nameObjColumnName);
+			HNode node = hTable.getHNodeFromColumnName(nameObjColumnName);
+			if(node == null) { //Because add column can happen even if the column after which it is to be added is not present
+				AbstractUpdate update = new TrivialErrorUpdate(nameObjColumnName + " does not exist, using empty values");
+				if (uc == null)
+					uc = new UpdateContainer(update);
+				else
+					uc.add(update);
+				if (addIfNonExist) {
+					node = hTable.addHNode(nameObjColumnName, HNodeType.Regular, workspace.getWorksheet(worksheetId), workspace.getFactory());		
+				}
+				else {
+					continue;
+				}
+			}
+
+			if (j == hNodeJSONRep.length()-1) {		// Found!
+				if(node != null)
+					hNodeId = node.getId();
+				else {
+					//Get the id of the last node in the table
+					ArrayList<String> allNodeIds = hTable.getOrderedNodeIds();
+					//TODO check for allNodeIds.size == 0
+					String lastNodeId = allNodeIds.get(allNodeIds.size()-1);
+					hNodeId = lastNodeId;
+				}
+				hTable = workspace.
+						getWorksheet(worksheetId).getHeaders();
+			} else if(node != null) {
+				hTable = node.getNestedTable();
+				if (hTable == null && addIfNonExist) {
+					hTable = node.addNestedTable("NestedTable", workspace.getWorksheet(worksheetId), workspace.getFactory());
+				}
+			}
+		}
+		return hNodeId;
+	}
 	private boolean processHNodeId(JSONArray hNodeJSONRep, HTable hTable, String commandName, JSONObject hnodeJSON) {
 		for (int j=0; j<hNodeJSONRep.length(); j++) {
 			JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
