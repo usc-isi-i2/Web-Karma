@@ -35,6 +35,7 @@ public class KarmaJoinBolt extends BaseRichBolt {
 	private Properties config;
 	private String atId = "uri";
 	private String mergePath;
+	private String field;
 	private Map<String, JSONObject> joinTable = new HashMap<String, JSONObject>();
 	public KarmaJoinBolt(Properties config)
 	{
@@ -46,7 +47,7 @@ public class KarmaJoinBolt extends BaseRichBolt {
 
 		System.out.println("My name is: " + config.getProperty("name"));
 		long start = System.currentTimeMillis();
-		JSONObject objectToJoin = new JSONObject(tuple.getStringByField("text"));
+		JSONObject objectToJoin = new JSONObject(tuple.getStringByField(field));
 		String[] mergePath = this.mergePath.split(",");
 		joinJSONObject(objectToJoin, mergePath, 0);
 		outputCollector.emit(new Values(objectToJoin.getString(atId), objectToJoin.toString()));
@@ -102,6 +103,7 @@ public class KarmaJoinBolt extends BaseRichBolt {
 		String filePath = config.getProperty("karma.storm.join.source");
 		atId = config.getProperty("karma.context.atid");
 		mergePath = config.getProperty("karma.storm.mergepath");
+		field = config.getProperty("karma.storm.reducer.field");
 		try {
 			SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(new Path(filePath)));
 			Text key = new Text();

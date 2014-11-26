@@ -27,6 +27,7 @@ public class TestKarmaJoinTopology {
 		basicKarmaBoltProperties.setProperty("karma.storm.join.source", "/Users/chengyey/exchange.seq");
 		basicKarmaBoltProperties.setProperty("karma.context.atid", "uri");
 		basicKarmaBoltProperties.setProperty("karma.storm.mergepath", "hasFeatureCollection,phonenumber_feature,featureObject,location");
+		basicKarmaBoltProperties.setProperty("karma.storm.reducer.field", "text");
 		KarmaJoinBolt bolt = new KarmaJoinBolt(basicKarmaBoltProperties);
 		builder.setBolt("karma-generate-json", bolt).shuffleGrouping("karma-seq-spout");
 		SequenceFileBolt sequenceFileBolt = new SequenceFileBolt();
