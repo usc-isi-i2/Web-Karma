@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,18 +60,20 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 	private String rdfNamespace;
 	private boolean contextFromModel;
 	private String contextJSON;
-
+	private String contextURL;
 	private enum JsonKeys {
 		updateType, fileUrl, worksheetId, contextUrl
 	}
 
 	public ExportJSONCommand(String id, String alignmentNodeId, 
 			String worksheetId, String selectionId, 
-			boolean contextFromModel, String contextJSON) {
+			boolean contextFromModel, String contextJSON,
+			String contextURL) {
 		super(id, worksheetId, selectionId);
 		this.alignmentNodeId = alignmentNodeId;
 		this.contextFromModel = contextFromModel;
 		this.contextJSON = contextJSON;
+		this.contextURL = contextURL;
 	}
 
 	@Override
@@ -178,6 +181,17 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 			printWriter = new PrintWriter(jsonFileLocalPath);
 			String baseURI = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.baseURI);
 			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(printWriter, baseURI);
+			if((contextJSON == null || contextJSON.trim().isEmpty()) && contextURL != null)
+			{
+				try{
+					contextJSON = IOUtils.toString(new URL(contextURL).openStream());	
+				}
+				catch (Exception e)
+				{
+					logger.error("Unable to read context from URL", e);
+				}
+				
+			}
 			if (contextJSON != null && !contextJSON.isEmpty()) {
 				JSONObject context = new JSONObject();
 				try {
@@ -190,14 +204,18 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 				PrintWriter pw = new PrintWriter(jsonContextFileLocalPath);
 				pw.println(context.toString(4));
 				pw.close();
-				StringBuilder url = new StringBuilder();
-				url.append(ServletContextParameterMap.getParameterValue(ContextParameter.JETTY_HOST));
-				url.append(":");
-				url.append(ServletContextParameterMap.getParameterValue(ContextParameter.JETTY_PORT));
-				url.append("/");
-				url.append(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR));
-				url.append(contextName);
-				writer.setGlobalContext(context, new ContextIdentifier(context.toString(), new URL(url.toString())));
+				if(contextURL == null || contextURL.trim().isEmpty())
+				{
+					StringBuilder url = new StringBuilder();
+					url.append(ServletContextParameterMap.getParameterValue(ContextParameter.JETTY_HOST));
+					url.append(":");
+					url.append(ServletContextParameterMap.getParameterValue(ContextParameter.JETTY_PORT));
+					url.append("/");
+					url.append(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR));
+					url.append(contextName);
+					contextURL = url.toString();
+				}
+				writer.setGlobalContext(context, new ContextIdentifier(context.toString(), new URL(contextURL)));
 			}
 			writer.addPrefixes(mapping.getPrefixes());
 			RootStrategy strategy = new UserSpecifiedRootStrategy(rootTriplesMapId, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
