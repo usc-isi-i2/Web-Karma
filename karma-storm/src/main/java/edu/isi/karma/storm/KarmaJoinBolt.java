@@ -5,14 +5,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.SequenceFile;
-import org.apache.hadoop.io.Text;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
@@ -25,7 +19,6 @@ import edu.isi.karma.mapreduce.driver.BaseKarma;
 
 public class KarmaJoinBolt extends BaseRichBolt {
 
-	private static Logger LOG = LoggerFactory.getLogger(KarmaJoinBolt.class);
 	protected BaseKarma karma;
 	/**
 	 * 
@@ -36,10 +29,11 @@ public class KarmaJoinBolt extends BaseRichBolt {
 	private String atId = "uri";
 	private String mergePath;
 	private String field;
-	private Map<String, JSONObject> joinTable = new HashMap<String, JSONObject>();
-	public KarmaJoinBolt(Properties config)
+	private JoinStrategy strategy;
+	public KarmaJoinBolt(Properties config, JoinStrategy strategy)
 	{
 		this.config = config;
+		this.strategy = strategy;
 	}
 
 	@Override
@@ -60,7 +54,7 @@ public class KarmaJoinBolt extends BaseRichBolt {
 			if (level == mergePath.length - 1) {
 				if (val instanceof JSONObject) {
 					JSONObject target = (JSONObject)val;
-					JSONObject source = joinTable.get(target.get(atId).toString());
+					JSONObject source = strategy.get(target.get(atId).toString());
 					if (source != null) {
 						@SuppressWarnings("rawtypes")
 						Iterator itr = source.keys();
@@ -72,7 +66,7 @@ public class KarmaJoinBolt extends BaseRichBolt {
 					}
 				}
 				if (val instanceof String) {
-					JSONObject source = joinTable.get(val.toString());
+					JSONObject source = strategy.get(val.toString());
 					if (source != null) {
 						obj.put(mergePath[level], source);
 					}
@@ -99,25 +93,14 @@ public class KarmaJoinBolt extends BaseRichBolt {
 	@Override
 	public void prepare(@SuppressWarnings("rawtypes") Map configMap, TopologyContext arg1, OutputCollector outputCollector) {
 		this.outputCollector = outputCollector;
-		Configuration conf = new Configuration();
 		String filePath = config.getProperty("karma.storm.join.source");
 		atId = config.getProperty("karma.context.atid");
 		mergePath = config.getProperty("karma.storm.mergepath");
 		field = config.getProperty("karma.storm.reducer.field");
-		try {
-			SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(new Path(filePath)));
-			Text key = new Text();
-			Text val = new Text();
-			while(reader.next(key, val))
-			{
-				JSONObject obj = new JSONObject(val.toString());
-				joinTable.put(obj.getString(atId), obj);
-			}
-			reader.close();		
-		}catch(Exception e)
-		{
-			LOG.error("Cannot read source table", e);
-		}
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("karma.storm.join.source", filePath);
+		map.put("karma.context.atid", atId);
+		strategy.config(map);
 	}
 
 	@Override
