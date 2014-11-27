@@ -2838,6 +2838,7 @@ var ExportJSONDialog = (function() {
 		var dialog = $("#exportJSONDialog");
 		var worksheetId, columnId;
 		var contextJSON;
+		var contextURL;
 		function init() {
 			$('#useContextControl').hide();
 			$('#useContext').attr("checked", false);
@@ -2902,6 +2903,13 @@ var ExportJSONDialog = (function() {
 				if (!$('#useContextFromFile').is(":checked")) {
 					contextJSON = "";
 				}
+				if (!$('#useContextFromURL').is(":checked")) {
+					contextURL = "";
+				}
+				else
+				{
+					contextURL = $('#useContextFromURLText').val();
+				}
 				if ($('#useContextFromModel').is(":checked")) {
 					contextFromModel = "true";
 				}
@@ -2911,6 +2919,7 @@ var ExportJSONDialog = (function() {
 			}
 			newInfo.push(getParamObject("contextJSON", contextJSON, "other"));
 			newInfo.push(getParamObject("contextFromModel", contextFromModel, "other"));
+			newInfo.push(getParamObject("contextURL", contextURL, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 			var returned = sendRequest(info, worksheetId);
 		};
