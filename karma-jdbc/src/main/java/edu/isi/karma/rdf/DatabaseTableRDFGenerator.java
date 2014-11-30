@@ -214,7 +214,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 			return;
 		// RDF generation object initialization
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(wk,
-				workspace.getFactory(), workspace.getOntologyManager(), writers, false,
+				workspace.getFactory(), writers, false,
 				mapping, errorReport, selection);
 
 		// Generate the rdf

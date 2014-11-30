@@ -76,16 +76,24 @@ public class PythonTransformationHelper {
 		return string.replaceAll(" ", "").replaceAll("[^\\p{L}\\p{N}]","");
 	}
 
-	public static String getPythonTransformMethodDefinitionState(Worksheet worksheet, String transformationCode) {
+	public static String getPythonTransformMethodDefinitionState(Worksheet worksheet, String transformationCode, String transformId) {
+		return getPythonMethodDefinition("transform", transformationCode, transformId);
+	}
+
+	public static String getPythonSelectionMethodDefinitionState(Worksheet worksheet, String code, String codeId) {
+		return getPythonMethodDefinition("selection", code, codeId);
+	}
+
+	private static String getPythonMethodDefinition(String methodName, String code, String codeId) {
 		StringBuilder methodStmt = new StringBuilder();
-		methodStmt.append("def transform(r):\n");
-		String lines[] = transformationCode.split("\\r?\\n");
+		methodStmt.append("def "+methodName+codeId+"(r):\n");
+		String lines[] = code.split("\\r?\\n");
 		for (String line:lines) {
 			methodStmt.append("\t" + line + "\n");
 		}
 		return methodStmt.toString();
 	}
-
+	
 	public static String getImportStatements() {
 		if(importStatement == null)
 		{
@@ -188,6 +196,9 @@ public class PythonTransformationHelper {
 		return  "transform(nodeid)";
 	}
 
+	public static String getSelectionStatement() {
+		return  "selection(nodeid)";
+	}
 	public static boolean hasSelectedRows(Table nestedTable, RepFactory factory, String selectionName) {
 		Worksheet worksheet = factory.getWorksheet(nestedTable.getWorksheetId());
 		SuperSelection sel = worksheet.getSuperSelectionManager().getSuperSelection(selectionName);
@@ -216,4 +227,5 @@ public class PythonTransformationHelper {
 			}
 		}
 	}
+
 }

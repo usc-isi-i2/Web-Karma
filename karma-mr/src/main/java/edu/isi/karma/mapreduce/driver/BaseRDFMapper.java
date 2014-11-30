@@ -41,7 +41,7 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 
 		String filename = key.toString();
 		String contents = value.toString();
-		LOG.info(key.toString() + " started");
+		LOG.debug(key.toString() + " started");
 		StringWriter sw = new StringWriter();
 		KR2RMLRDFWriter outWriter = configureRDFWriter(sw);
 		try {
@@ -50,6 +50,11 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 			request.setInputData(contents);
 			request.setAddProvenance(false);
 			request.addWriter(outWriter);
+			request.setMaxNumLines(0);
+			if(karma.getContextId() != null)
+			{
+				request.setContextName(karma.getContextId().getName());
+			}
 			if(karma.getRdfGenerationRoot() != null)
 			{
 				request.setStrategy(new UserSpecifiedRootStrategy(karma.getRdfGenerationRoot()));
@@ -65,9 +70,10 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 				
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			LOG.error("Unable to generate RDF: " + e.getMessage());
 		}
-		LOG.info(key.toString() + " finished");
+		LOG.debug(key.toString() + " finished");
 	}
 
 	protected abstract KR2RMLRDFWriter configureRDFWriter(StringWriter sw);

@@ -44,6 +44,10 @@ public abstract class Selection {
 		this.Id = name;
 		this.status = SelectionStatus.UP_TO_DATE;
 		this.superSelectionName = superSelectionName;
+		if(this.superSelectionName == null)
+		{
+			this.superSelectionName = "";
+		}
 		selectedRowsCache = new HashMap<Row, Boolean>();
 		evalColumns = new HashSet<String>();
 		selectedRowsColumns = new HashSet<String>();

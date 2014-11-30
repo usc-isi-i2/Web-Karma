@@ -219,7 +219,7 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 			}
 			writer.addPrefixes(mapping.getPrefixes());
 			RootStrategy strategy = new UserSpecifiedRootStrategy(rootTriplesMapId, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
-			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, ontMgr, writer, false, strategy, mapping, errorReport, selection);
+			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, writer, false, strategy, mapping, errorReport, selection);
 			try {
 				generator.generateRDF(true);
 				logger.info("RDF written to file.");

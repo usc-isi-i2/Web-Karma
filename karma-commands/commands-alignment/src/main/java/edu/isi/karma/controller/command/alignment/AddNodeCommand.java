@@ -87,7 +87,7 @@ public class AddNodeCommand extends WorksheetCommand {
 			logger.error("Error adding Internal Node:" , e);
 		}
 
-		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
+		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace);
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public class AddNodeCommand extends WorksheetCommand {
 		oldAlignment.setGraph(oldGraph);
 
 		// Get the alignment update
-		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, oldAlignment);
+		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace);
 	}
 
 	

@@ -45,7 +45,7 @@ public class JSONMapper extends BaseRDFMapper {
 			context.write(reusableOutputKey, new Text(reusableOutputValue));
 		}
 	}
-	
+
 	private String getAtId(JSONObject c) {
 		@SuppressWarnings("rawtypes")
 		Iterator itr = c.keys();

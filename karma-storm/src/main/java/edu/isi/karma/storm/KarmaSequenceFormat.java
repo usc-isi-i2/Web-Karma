@@ -23,11 +23,14 @@ public class KarmaSequenceFormat implements SequenceFormat {
 		this.keyField = keyField;
 		this.valueField = valueField;
 	}
+	
+	@SuppressWarnings("rawtypes")
 	@Override 
 	public Class keyClass() {
 		return Text.class;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Class valueClass() {
 		return Text.class;

@@ -109,7 +109,7 @@ public class AddValuesCommand extends WorksheetSelectionCommand{
 			if (ndid == null) {
 				System.err.println("error: ndid");
 			}
-			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace, ndid.getHNodePath(workspace.getFactory())));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {
 			logger.error("Error in AddColumnCommand" + e.toString());

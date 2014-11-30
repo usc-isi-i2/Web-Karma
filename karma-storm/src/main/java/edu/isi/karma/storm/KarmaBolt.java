@@ -82,6 +82,7 @@ public class KarmaBolt extends BaseRichBolt {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void prepare(Map configMap, TopologyContext arg1, OutputCollector outputCollector) {
 		this.outputCollector = outputCollector;

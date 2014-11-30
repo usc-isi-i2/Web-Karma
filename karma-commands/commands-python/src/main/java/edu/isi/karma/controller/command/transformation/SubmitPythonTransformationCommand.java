@@ -130,6 +130,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 				addColCmd = (AddColumnCommand) addColumnFac.createCommand(
 						addColumnInput, workspace);
 				addColCmd.saveInHistory(false);
+				addColCmd.setExecutedInBatch(this.isExecutedInBatch());
 				addColCmd.doIt(workspace);
 			}
 			else if(null == hTable.getHNode(addColCmd.getNewHNodeId()))

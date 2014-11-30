@@ -65,7 +65,7 @@ public class RepeatPythonTransformationCommand extends PythonTransformationComma
 		worksheet.getMetadataContainer().getColumnMetadata().addColumnOnError(hNodeId, isError);
 		UpdateContainer c = new UpdateContainer();
 		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));		
-		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace, workspace.getFactory().getHNode(hNodeId).getHNodePath(workspace.getFactory())));
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}
 

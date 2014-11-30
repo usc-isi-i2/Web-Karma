@@ -22,11 +22,19 @@ public class KarmaReducerBolt extends BaseRichBolt {
 	private OutputCollector collector;
 	protected Map<String, JSONToMerge> allJsonToMerge;
 	protected Set<String> models;
-	
+	protected Boolean outputId;
 	public KarmaReducerBolt(Set<String> models)
 	{
 		this.models = models;
 	}
+	
+	public KarmaReducerBolt(Set<String> models, boolean outputId)
+	{
+		this.models = models;
+		this.outputId = outputId;
+	}
+	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void prepare(Map stormConf, TopologyContext context,
 			OutputCollector collector) {
@@ -47,7 +55,14 @@ public class KarmaReducerBolt extends BaseRichBolt {
 		if(jsonToMerge.isReadyToMerge())
 		{
 			String mergedJson = jsonToMerge.merge();
-			collector.emit(new Values(id, mergedJson));
+			if(outputId)
+			{
+				collector.emit(new Values(id, mergedJson));
+			}
+			else
+			{
+				collector.emit(new Values(mergedJson));
+			}
 			List<Tuple> tuplesToAck = jsonToMerge.getTuplesToAck();
 			for(Tuple tuple : tuplesToAck)
 			{
@@ -59,7 +74,14 @@ public class KarmaReducerBolt extends BaseRichBolt {
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer declarer) {
-		declarer.declare(new Fields("id", "json"));
+		if(outputId)
+		{
+			declarer.declare(new Fields("id", "json"));
+		}
+		else
+		{
+			declarer.declare(new Fields("json"));
+		}
 		
 	}
 

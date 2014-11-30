@@ -115,6 +115,8 @@ public class OfflineRdfGenerator {
 	private List<String> stopTripleMap;
 	private List<String> POMToKill;
 	private String contextFile;
+	private String contextURLString;
+	private URL contextURL;
 	public OfflineRdfGenerator(CommandLine cl)
 	{
 
@@ -217,6 +219,7 @@ public class OfflineRdfGenerator {
 		String stopTripleMap = (String) cl.getValue("--stoptriplemap");
 		String POMToKill = (String) cl.getValue("--pomtokill");
 		contextFile = (String)cl.getValue("--contextfile");
+		contextURLString = (String)cl.getValue("--contexturl");
 		if (rootTripleMap == null) {
 			rootTripleMap = "";
 		}
@@ -347,6 +350,11 @@ public class OfflineRdfGenerator {
 			if (!tmp.exists()) {
 				throw new IOException("File not found: " + tmp.getAbsolutePath());
 			}
+			contextURL = tmp.toURI().toURL();
+		}
+		else
+		{
+			contextURL = new URL(contextURLString);
 		}
 		if (baseURI != null && !baseURI.trim().isEmpty())
 			return;
@@ -380,9 +388,9 @@ public class OfflineRdfGenerator {
 		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
 				hostname, port, username, password, dBorSIDName, encoding, selectionName);
 		ContextIdentifier contextId = null;
-		if (contextFile != null) {
-			File tmp = new File(contextFile);
-			contextId = new ContextIdentifier(tmp.getName(), tmp.toURI().toURL());
+		if (contextURL != null) {
+			
+			contextId = new ContextIdentifier(contextURL.getQuery(), contextURL);
 		}
 		if(inputType.equals("DB")) {
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
@@ -537,11 +545,10 @@ public class OfflineRdfGenerator {
 		request.setTripleMapToKill(killTripleMap);
 		request.setTripleMapToStop(stopTripleMap);
 		request.setStrategy(new UserSpecifiedRootStrategy(rootTripleMap));
-		if (contextFile != null) {
-			File tmp = new File(contextFile);
-			ContextIdentifier contextId = new ContextIdentifier(tmp.getName(), tmp.toURI().toURL());
+		if (contextURL != null) {
+			ContextIdentifier contextId = new ContextIdentifier(contextURL.getQuery(), contextURL);
 			rdfGenerator.addContext(contextId);
-			request.setContextName(tmp.getName());
+			request.setContextName(contextURL.getQuery());
 		}
 		rdfGenerator.generateRDF(request);
 	}
@@ -578,6 +585,7 @@ public class OfflineRdfGenerator {
 				.withOption(buildOption("pomtokill", "specifies POM to kill", "pomtokill", obuilder, abuilder))
 				.withOption(buildOption("jsonoutputfile", "specifies JSONOutputFile", "jsonoutputfile", obuilder, abuilder))
 				.withOption(buildOption("contextfile", "specifies global context file", "contextile", obuilder, abuilder))
+				.withOption(buildOption("contexturl", "specifies global context url", "contexturl", obuilder, abuilder))
 				.withOption(obuilder
 						.withLongName("help")
 						.withDescription("print this message")

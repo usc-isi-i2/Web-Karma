@@ -37,7 +37,6 @@ public class TestJSONRDFGeneratorWithContext extends TestJSONRDFGenerator {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		rdfGen = new GenericRDFGenerator(null);
 
 		// Add the models in
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(

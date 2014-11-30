@@ -54,7 +54,6 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		rdfGen = new GenericRDFGenerator(null);
 
 		// Add the models in
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
@@ -146,6 +145,8 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 				reader.next();
 				count ++;
 			}
+			reader.close();
+			schemareader.close();
 			assertEquals(7, count);
 		} catch (Exception e) {
 			logger.error("testGenerateAvro2 failed:", e);

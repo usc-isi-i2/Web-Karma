@@ -117,7 +117,7 @@ public class GetPropertiesCommand extends WorksheetCommand {
 				properties.add(new DataPropertyLink(label.getUri(), label));
 			}
 		} else if(propertiesRange == INTERNAL_PROP_RANGE.existingProperties) {
-			Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, ontMgr);
+			Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
 			Set<String> steinerTreeNodeIds = new HashSet<String>();
 			if (alignment != null && !alignment.isEmpty()) {
 				DirectedWeightedMultigraph<Node, LabeledLink> steinerTree = alignment.getSteinerTree(); 

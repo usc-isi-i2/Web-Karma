@@ -47,6 +47,9 @@ import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphType;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.ontology.OntologyUpdateListener;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
@@ -207,6 +210,10 @@ public class Alignment implements OntologyUpdateListener {
 	
 	public ColumnNode addColumnNode(String hNodeId, String columnName, Label rdfLiteralType) {
 		
+		if(this.getNodeById(hNodeId) != null)
+		{
+			return null;
+		}
 		// use hNodeId as id of the node
 		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType);
 		if (this.graphBuilder.addNodeAndUpdate(node)) {
@@ -785,6 +792,20 @@ public class Alignment implements OntologyUpdateListener {
 		this.addForcedLinks();
 		this.root = TreePostProcess.selectRoot(GraphUtil.asDefaultGraph(tree));
 
+	}
+
+	public void updateColumnNodesInAlignment(Worksheet worksheet) {
+
+		for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
+			HNode node = path.getLeaf();
+			String hNodeId = node.getId();
+			Node n = getNodeById(hNodeId);
+			if (n == null) {
+				addColumnNode(hNodeId, node.getColumnName(), null);
+			}
+		}
+	
+		
 	}
 	
 }
