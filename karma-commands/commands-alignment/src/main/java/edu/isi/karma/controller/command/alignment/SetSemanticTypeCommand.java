@@ -221,7 +221,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 					oldDomainNode = oldIncomingLinkToColumnNode.getSource();
 				}
 
-				if (type.getBoolean(ClientJsonKeys.isPrimary.name())) {
+				if (true) { //type.getBoolean(ClientJsonKeys.isPrimary.name())) {
 					
 					if (isClassSemanticType) {
 						if (semanticTypeAlreadyExists && oldDomainNode == domain) {

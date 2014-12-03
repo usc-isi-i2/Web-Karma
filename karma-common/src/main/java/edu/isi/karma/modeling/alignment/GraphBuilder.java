@@ -91,6 +91,8 @@ public class GraphBuilder {
 	private HashMap<String, Integer> linkCountMap;
 	private HashMap<String, Integer> nodeDataPropertyCount; // nodeId + dataPropertyUri --> count
 	private HashMap<String, Set<Node>> nodeDataProperties; // nodeId + dataPropertyUri --> ColumnNode
+	private HashMap<String, Set<LabeledLink>> nodeIncomingLinks;
+	private HashMap<String, Set<LabeledLink>> nodeOutgoingLinks;
 	private HashMap<String, Set<SemanticTypeMapping>> semanticTypeMatches; // nodeUri + dataPropertyUri --> SemanticType Mapping
 	private int numberOfModelLinks = 0;
 
@@ -121,6 +123,9 @@ public class GraphBuilder {
 		this.semanticTypeMatches = new HashMap<String, Set<SemanticTypeMapping>>();
 		
 		this.nodeDataProperties= new HashMap<String,Set<Node>>(); 
+		
+		this.nodeIncomingLinks = new HashMap<String, Set<LabeledLink>>();
+		this.nodeOutgoingLinks = new HashMap<String, Set<LabeledLink>>();
 		
 		this.forcedNodes = new HashSet<Node>();
 		if (addThingNode) 
@@ -225,6 +230,14 @@ public class GraphBuilder {
 		return nodeDataProperties;
 	}
 
+	public final HashMap<String, Set<LabeledLink>> getIncomingLinksMap() {
+		return nodeIncomingLinks;
+	}
+	
+	public final HashMap<String, Set<LabeledLink>> getOutgoingLinksMap() {
+		return nodeOutgoingLinks;
+	}
+	
 	public void resetOntologyMaps() {
 		String[] currentUris = this.uriClosure.keySet().toArray(new String[0]);
 		this.uriClosure.clear();
@@ -538,6 +551,17 @@ public class GraphBuilder {
 			}
 		}
 
+		Set<LabeledLink> inLinks = nodeIncomingLinks.get(target.getId());
+		if(inLinks == null) inLinks = new HashSet<>();
+		inLinks.add(labeledLink);
+		nodeIncomingLinks.put(target.getId(), inLinks);
+		
+		Set<LabeledLink> outLinks = nodeOutgoingLinks.get(source.getId());
+		if(outLinks == null) outLinks = new HashSet<>();
+		outLinks.add(labeledLink);
+		nodeOutgoingLinks.put(source.getId(), outLinks);
+		
+		
 		if (source instanceof InternalNode && target instanceof ColumnNode) {
 
 			String key = source.getId() + link.getUri();
@@ -682,6 +706,16 @@ public class GraphBuilder {
 			Set<LabeledLink> linksWithSameStatus = statusToLinksMap.get(((LabeledLink)link).getStatus());
 			if (linksWithSameStatus != null) 
 				linksWithSameStatus.remove(link);
+			
+			Node source = link.getSource();
+			Set<LabeledLink> sourceLinks = nodeOutgoingLinks.get(source.getId());
+			if(sourceLinks != null)
+				sourceLinks.remove(link);
+			
+			Node target = link.getTarget();
+			Set<LabeledLink> targetLinks = nodeIncomingLinks.get(target.getId());
+			if(targetLinks != null)
+				targetLinks.remove(link);
 		}
 		
 		return true;
