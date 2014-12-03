@@ -1,9 +1,7 @@
 package edu.isi.karma.storm;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,12 +23,13 @@ public class KarmaJoinBolt extends BaseRichBolt {
 	 */
 	private static final long serialVersionUID = 1L;
 	private OutputCollector outputCollector;
-	private Properties config;
+	@SuppressWarnings("rawtypes")
+	private Map config;
 	private String atId = "uri";
 	private String mergePath;
 	private String field;
 	private JoinStrategy strategy;
-	public KarmaJoinBolt(Properties config, JoinStrategy strategy)
+	public KarmaJoinBolt(@SuppressWarnings("rawtypes") Map config, JoinStrategy strategy)
 	{
 		this.config = config;
 		this.strategy = strategy;
@@ -39,7 +38,7 @@ public class KarmaJoinBolt extends BaseRichBolt {
 	@Override
 	public void execute(Tuple tuple) {
 
-		System.out.println("My name is: " + config.getProperty("name"));
+		System.out.println("My name is: " + config.get("name"));
 		long start = System.currentTimeMillis();
 		JSONObject objectToJoin = new JSONObject(tuple.getStringByField(field));
 		String[] mergePath = this.mergePath.split(",");
@@ -93,23 +92,10 @@ public class KarmaJoinBolt extends BaseRichBolt {
 	@Override
 	public void prepare(@SuppressWarnings("rawtypes") Map configMap, TopologyContext arg1, OutputCollector outputCollector) {
 		this.outputCollector = outputCollector;
-		String filePath = config.getProperty("karma.storm.join.source");
-		atId = config.getProperty("karma.context.atid");
-		mergePath = config.getProperty("karma.storm.mergepath");
-		field = config.getProperty("karma.storm.reducer.field");
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("karma.storm.join.source", filePath);
-		map.put("karma.context.atid", atId);
-		if (config.getProperty("karma.jedis.server") != null) {
-			map.put("karma.jedis.server", config.getProperty("karma.jedis.server"));
-		}
-		if (config.getProperty("karma.jedis.port") != null) {
-			map.put("karma.jedis.port", config.getProperty("karma.jedis.port"));
-		}
-		if (config.getProperty("karma.jedis.auth") != null) {
-			map.put("karma.jedis.auth", config.getProperty("karma.jedis.auth"));
-		}
-		strategy.config(map);
+		atId = config.get("karma.context.atid").toString();
+		mergePath = config.get("karma.storm.mergepath").toString();
+		field = config.get("karma.storm.reducer.field").toString();
+		strategy.config(config);
 	}
 
 	@Override
