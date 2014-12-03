@@ -47,7 +47,7 @@ public class KarmaJoinBolt extends BaseRichBolt {
 		outputCollector.emit(new Values(objectToJoin.getString(atId), objectToJoin.toString()));
 		System.out.println("id: "+ tuple.getStringByField("id") + " " + (System.currentTimeMillis() - start));
 	}
-	
+
 	private void joinJSONObject(JSONObject obj, String[] mergePath, int level) {
 		if (obj.has(mergePath[level])) {
 			Object val = obj.get(mergePath[level]);
@@ -100,6 +100,15 @@ public class KarmaJoinBolt extends BaseRichBolt {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("karma.storm.join.source", filePath);
 		map.put("karma.context.atid", atId);
+		if (config.getProperty("karma.jedis.server") != null) {
+			map.put("karma.jedis.server", config.getProperty("karma.jedis.server"));
+		}
+		if (config.getProperty("karma.jedis.port") != null) {
+			map.put("karma.jedis.port", config.getProperty("karma.jedis.port"));
+		}
+		if (config.getProperty("karma.jedis.auth") != null) {
+			map.put("karma.jedis.auth", config.getProperty("karma.jedis.auth"));
+		}
 		strategy.config(map);
 	}
 
