@@ -21,22 +21,7 @@ public class CollectJSONObject extends UDF {
 			JSONObject obj = new JSONObject(targetString);
 			JSONArray array = new JSONArray();
 			for (String aPath : pathString.split(",")) {
-				List<String> levelsCandidates = new LinkedList<String>();
-				int lastSplit = 0;
-				for(int i = 0; i < aPath.length() - 1; i++)
-				{
-					if(aPath.charAt(i) != '\\' && aPath.charAt(i+1) == '.')
-					{
-						levelsCandidates.add(aPath.substring(lastSplit, aPath.charAt(i) != '\\'? i+1 : i).replace("\\", ""));
-						lastSplit = i+2;
-					}
-				}
-				if(lastSplit < aPath.length())
-				{
-					levelsCandidates.add(aPath.substring(lastSplit, aPath.length()).replace("\\", ""));
-				}
-				String[] levels = new String[levelsCandidates.size()];
-				levels = levelsCandidates.toArray(levels);
+				String[] levels = splitPath(aPath);
 				
 				collectJSONObject(obj, levels, 1, array);
 			}
@@ -45,6 +30,26 @@ public class CollectJSONObject extends UDF {
 			LOG.error("something wrong",e );
 			return new Text("");
 		}
+	}
+
+	protected static String[] splitPath(String aPath) {
+		List<String> levelsCandidates = new LinkedList<String>();
+		int lastSplit = 0;
+		for(int i = 0; i < aPath.length() - 1; i++)
+		{
+			if(aPath.charAt(i) != '\\' && aPath.charAt(i+1) == '.')
+			{
+				levelsCandidates.add(aPath.substring(lastSplit, aPath.charAt(i) != '\\'? i+1 : i).replace("\\", ""));
+				lastSplit = i+2;
+			}
+		}
+		if(lastSplit < aPath.length())
+		{
+			levelsCandidates.add(aPath.substring(lastSplit, aPath.length()).replace("\\", ""));
+		}
+		String[] levels = new String[levelsCandidates.size()];
+		levels = levelsCandidates.toArray(levels);
+		return levels;
 	}
 
 	public void collectJSONObject(JSONObject obj, String[] levels, int i, JSONArray array) {
