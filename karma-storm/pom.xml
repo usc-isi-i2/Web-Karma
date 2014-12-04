@@ -136,6 +136,12 @@
   			<artifactId>elasticsearch-storm</artifactId>
   			<version>${es.hadoop.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.4.1</version>
+		</dependency>
+		
     </dependencies>
     
 

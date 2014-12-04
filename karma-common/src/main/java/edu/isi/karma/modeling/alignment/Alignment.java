@@ -98,7 +98,7 @@ public class Alignment implements OntologyUpdateListener {
 		}
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 		logger.debug("loading learning graph ...");
-	}
+	}  
 
 	public boolean isEmpty() {
 		return (this.graphBuilder.getGraph().edgeSet().size() == 0 || this.steinerTree == null);
@@ -408,21 +408,18 @@ public class Alignment implements OntologyUpdateListener {
 	}
 	
 	public Set<LabeledLink> getCurrentIncomingLinksToNode(String nodeId) {
-		
 		Node node = this.getNodeById(nodeId);
-		if (node == null) return null;
-		if (this.steinerTree == null || !this.steinerTree.containsVertex(node)) return null;
-			
-		return this.steinerTree.incomingEdgesOf(node);
+		if (node == null)
+			return null;
+		
+		return this.graphBuilder.getIncomingLinksMap().get(nodeId);
 	}
 	
 	public Set<LabeledLink> getCurrentOutgoingLinksToNode(String nodeId) {
-		
 		Node node = this.getNodeById(nodeId);
-		if (node == null) return null;
-		if (this.steinerTree == null || !this.steinerTree.containsVertex(node)) return null;
-			
-		return this.steinerTree.outgoingEdgesOf(node);
+		if (node == null)
+			return null;
+		return this.graphBuilder.getOutgoingLinksMap().get(nodeId);
 	}
 
 	public List<LabeledLink> getLinks(String sourceId, String targetId) {

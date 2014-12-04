@@ -39,7 +39,7 @@ public class MergeJSON extends UDF{
 	}
 	protected static String mergeJSON(List<String> sourceStrings, String targetString,
 			String pathString) {
-		String[] array = pathString.split("\\.");
+		String[] array = CollectJSONObject.splitPath(pathString);//pathString.split("\\.");
 		
 		JSONObject rootTargetObj = new JSONObject(targetString);
 		JSONObject targetResult = rootTargetObj;

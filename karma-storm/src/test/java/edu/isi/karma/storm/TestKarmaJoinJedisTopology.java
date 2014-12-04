@@ -17,7 +17,7 @@ import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import backtype.storm.utils.Utils;
 
-public class TestKarmaJoinTopology {
+public class TestKarmaJoinJedisTopology {
 
 	@Test
 	public void testBasicTopology(){ 
@@ -25,11 +25,12 @@ public class TestKarmaJoinTopology {
 		builder.setSpout("karma-seq-spout", new KarmaSequenceFileSpout());
 		Map<String, String> basicKarmaBoltProperties = new HashMap<String, String>();
 		basicKarmaBoltProperties.put("name", "Stormy");
-		basicKarmaBoltProperties.put("karma.storm.join.source", "/Users/chengyey/exchange.seq");
+		basicKarmaBoltProperties.put("karma.jedis.server", "karma-dig-service.cloudapp.net");
+		basicKarmaBoltProperties.put("karma.jedis.port", "55299");
 		basicKarmaBoltProperties.put("karma.context.atid", "uri");
 		basicKarmaBoltProperties.put("karma.storm.mergepath", "hasFeatureCollection,phonenumber_feature,featureObject,location");
 		basicKarmaBoltProperties.put("karma.storm.reducer.field", "text");
-		KarmaJoinBolt bolt = new KarmaJoinBolt(basicKarmaBoltProperties, new InMemoryJoinStrategy());
+		KarmaJoinBolt bolt = new KarmaJoinBolt(basicKarmaBoltProperties, new JedisJoinStrategy());
 		builder.setBolt("karma-generate-json", bolt).shuffleGrouping("karma-seq-spout");
 		SequenceFileBolt sequenceFileBolt = new SequenceFileBolt();
 		builder.setBolt("karma-output-json", sequenceFileBolt).fieldsGrouping("karma-generate-json", new Fields("id"));
