@@ -45,6 +45,7 @@ import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphBuilderTopK;
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.GraphVizLabelType;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.ModelEvaluation;
@@ -923,6 +924,8 @@ public class LODModelLearner {
 					models, 
 					newSource.getName(),
 					outName,
+					GraphVizLabelType.LocalId,
+					GraphVizLabelType.LocalUri,
 					true,
 					true);
 

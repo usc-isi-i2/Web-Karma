@@ -28,6 +28,8 @@ package edu.isi.karma.research.lod;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openrdf.model.Value;
 import org.openrdf.query.BindingSet;
@@ -51,7 +53,7 @@ public class VirtuosoConnector {
 	private static Logger logger = LoggerFactory.getLogger(VirtuosoConnector.class);
 
 	public static final String VIRTUOSO_INSTANCE = "fusionRepository.isi.edu";
-	public static final int VIRTUOSO_PORT = 1130;  // Web UI: 8990
+	public static final int VIRTUOSO_PORT = 1140;  // Web UI: 8990
 	public static final String VIRTUOSO_USERNAME = "dba";
 	public static final String VIRTUOSO_PASSWORD = "dba";
 
@@ -80,7 +82,7 @@ public class VirtuosoConnector {
 		System.out.println("PASSED:" + PASSED + " FAILED:" + FAILED);
 	}
 
-	public static void extractObjectProperties(Repository repository, String GraphIRI, String filename) {
+	public static void extractObjectProperties(Repository repository, List<String> graphIRIs, String filename) {
 
 		try {
 			PrintWriter resultFile = new PrintWriter(new File(filename));
@@ -88,22 +90,27 @@ public class VirtuosoConnector {
 			try {
 
 				long start = System.currentTimeMillis();
-				String from = GraphIRI == null || GraphIRI.trim().isEmpty() ? "" : "FROM <" + GraphIRI + "> ";
-
+				String fromClause = "";
+				if (graphIRIs != null && !graphIRIs.isEmpty()) {
+					for (String iri : graphIRIs) {
+						fromClause += "FROM <" + iri + ">\n"; 
+					}
+				}
 				String queryString = 
-						"SELECT DISTINCT ?c1 ?p ?c2 (COUNT(?p) as ?count) " +
-								from +
-								"WHERE { ?x rdf:type ?c1. " +
-								"?y rdf:type ?c2. " +
-								"?x ?p ?y. " +
-								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
-								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
-								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
-								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
-								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2002/07/owl#\")) " +
-								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2002/07/owl#\")) " +
-								"} " +
-								"GROUP BY ?c1 ?p ?c2";
+						"SELECT DISTINCT ?c1 ?p ?c2 (COUNT(*) as ?count) \n" +
+								fromClause +
+								"WHERE { ?x rdf:type ?c1. \n" +
+								"?y rdf:type ?c2. \n" +
+								"?x ?p ?y. \n" +
+								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) \n" +
+								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) \n" +
+								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2000/01/rdf-schema#\")) \n" +
+								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2000/01/rdf-schema#\")) \n" +
+								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2002/07/owl#\")) \n" +
+								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2002/07/owl#\")) \n" +
+								"} \n" +
+								"GROUP BY ?c1 ?p ?c2 \n" + 
+								"ORDER BY DESC(?count)";
 
 				System.out.println(queryString);
 
@@ -162,7 +169,7 @@ public class VirtuosoConnector {
 
 	}
 
-	public static void extractDataProperties(Repository repository, String GraphIRI, String filename) {
+	public static void extractDataProperties(Repository repository, List<String> graphIRIs, String filename) {
 
 		try {
 			PrintWriter resultFile = new PrintWriter(new File(filename));
@@ -170,19 +177,25 @@ public class VirtuosoConnector {
 			try {
 
 				long start = System.currentTimeMillis();
-				String from = GraphIRI == null || GraphIRI.trim().isEmpty() ? "" : "FROM <" + GraphIRI + "> ";
+				String fromClause = "";
+				if (graphIRIs != null && !graphIRIs.isEmpty()) {
+					for (String iri : graphIRIs) {
+						fromClause += "FROM <" + iri + ">\n"; 
+					}
+				}
 
 				String queryString = 
-						"SELECT DISTINCT ?c ?p (COUNT(?p) as ?count) " +
-								from + 
-								"WHERE { ?x rdf:type ?c. " +
-								"?x ?p ?y. " +
-								"FILTER isLiteral(?y). " +
-								"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) " +
-								"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/2000/01/rdf-schema#\")) " +
-								"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/2002/07/owl#\")) " +
+						"SELECT DISTINCT ?c ?p (COUNT(*) as ?count) \n" +
+								fromClause + 
+								"WHERE { ?x rdf:type ?c. \n" +
+								"?x ?p ?y. \n" +
+								"FILTER isLiteral(?y). \n" +
+								"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) \n" +
+								"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/2000/01/rdf-schema#\")) \n" +
+								"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/2002/07/owl#\")) \n" +
 								"} " +
-								"GROUP BY ?c ?p";
+								"GROUP BY ?c ?p \n" + 
+								"ORDER BY DESC(?count)";
 
 				System.out.println(queryString);
 
@@ -255,8 +268,14 @@ public class VirtuosoConnector {
 		//		extractObjectProperties(repository, "http://amsterdammuseum.nl", Params.LOD_OBJECT_PROPERIES_FILE);
 		//		extractDataProperties(repository, "http://amsterdammuseum.nl", Params.LOD_DATA_PROPERIES_FILE);
 
-		extractDataProperties(repository, null, Params.LOD_DATA_PROPERIES_FILE);
-		extractObjectProperties(repository, null, Params.LOD_OBJECT_PROPERIES_FILE);
+		List<String> graphIRIs = new ArrayList<String>();
+		graphIRIs.add("http://musicbrainz.org");
+		graphIRIs.add("http://dbtune.org/jamendo");
+		graphIRIs.add("http://dbtune.org/magnatune");
+		graphIRIs.add("http://dbtune.org/bbc/peel");
+		graphIRIs.add("http://dbtune.org/bbc/playcount");
+		extractDataProperties(repository, graphIRIs, Params.LOD_DATA_PROPERIES_FILE);
+		extractObjectProperties(repository, graphIRIs, Params.LOD_OBJECT_PROPERIES_FILE);
 
 	}
 
