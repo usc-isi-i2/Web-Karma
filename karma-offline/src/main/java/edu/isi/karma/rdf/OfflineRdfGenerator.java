@@ -352,7 +352,7 @@ public class OfflineRdfGenerator {
 			}
 			contextURL = tmp.toURI().toURL();
 		}
-		else
+		else if(contextURLString != null)
 		{
 			contextURL = new URL(contextURLString);
 		}
