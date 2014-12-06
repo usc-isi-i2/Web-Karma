@@ -1,4 +1,4 @@
-package edu.isi.karma.storm;
+package edu.isi.karma.storm.spout;
 
 import java.io.IOException;
 import java.util.Map;

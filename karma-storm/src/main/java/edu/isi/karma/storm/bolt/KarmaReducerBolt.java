@@ -1,10 +1,11 @@
-package edu.isi.karma.storm;
+package edu.isi.karma.storm.bolt;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import edu.isi.karma.storm.function.JSONToMerge;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;

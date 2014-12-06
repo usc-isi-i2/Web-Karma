@@ -1,4 +1,4 @@
-package edu.isi.karma.storm;
+package edu.isi.karma.storm.function;
 
 import java.util.HashMap;
 import java.util.LinkedList;

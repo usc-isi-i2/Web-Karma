@@ -1,4 +1,4 @@
-package edu.isi.karma.storm;
+package edu.isi.karma.storm.bolt;
 
 import java.io.IOException;
 import java.io.PrintWriter;

@@ -1,4 +1,4 @@
-package edu.isi.karma.storm;
+package edu.isi.karma.storm.bolt;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -14,6 +14,7 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import edu.isi.karma.mapreduce.driver.BaseKarma;
+import edu.isi.karma.storm.strategy.JoinStrategy;
 
 public class KarmaJoinBolt extends BaseRichBolt {
 
@@ -39,11 +40,15 @@ public class KarmaJoinBolt extends BaseRichBolt {
 	public void execute(Tuple tuple) {
 
 		System.out.println("My name is: " + config.get("name"));
+		String docid = "";
+		if (tuple.contains("docid")) {
+			docid = tuple.getStringByField("docid");
+		}
 		long start = System.currentTimeMillis();
 		JSONObject objectToJoin = new JSONObject(tuple.getStringByField(field));
 		String[] mergePath = this.mergePath.split(",");
 		joinJSONObject(objectToJoin, mergePath, 0);
-		outputCollector.emit(new Values(objectToJoin.getString(atId), objectToJoin.toString()));
+		outputCollector.emit(new Values(objectToJoin.getString(atId), docid, objectToJoin.toString()));
 		System.out.println("id: "+ tuple.getStringByField("id") + " " + (System.currentTimeMillis() - start));
 	}
 
@@ -100,6 +105,6 @@ public class KarmaJoinBolt extends BaseRichBolt {
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFields) {
-		outputFields.declare(new Fields("id", "json"));
+		outputFields.declare(new Fields("id", "docid", "json"));
 	}
 }
