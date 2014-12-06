@@ -1,9 +1,20 @@
 package edu.isi.karma.mapreduce.function;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.Group;
@@ -29,11 +40,53 @@ import org.json.JSONTokener;
 
 public class CreateSequenceFile {
 
-	static boolean useKey = true;
-	static boolean outputFileName = false;
-	static String filePath = null;
-	static String outputPath = null;
+	ConcurrentHashMap<String, SequenceFile.Writer> writers = new ConcurrentHashMap<String, SequenceFile.Writer>();
+	boolean useKey = true;
+	boolean outputFileName = false;
+	String filePath = null;
+	String outputPath = null;
 	public static void main(String[] args) throws IOException {
+		CreateSequenceFile csf = new CreateSequenceFile();
+		csf.setup(args);
+		csf.execute();
+	}
+
+	public void execute() throws IOException, FileNotFoundException {
+		ExecutorService executor = Executors.newFixedThreadPool(4);
+		FileSystem hdfs = FileSystem.get(new Configuration());
+		RemoteIterator<LocatedFileStatus> itr = hdfs.listFiles(new Path(filePath), true);
+		List<Future<Boolean>> results = new LinkedList<Future<Boolean>>();
+		while (itr.hasNext()) {
+			LocatedFileStatus status = itr.next();
+			String fileName = status.getPath().getName();
+			if (fileName.substring(fileName.lastIndexOf(".") + 1).contains("json")) {
+				results.add(executor.submit(getNewJSONProcessor(hdfs, status, fileName)));
+			}
+		}
+		
+		for(Future<Boolean> result : results)
+		{
+			try {
+				result.get(5, TimeUnit.MINUTES);
+			} catch (InterruptedException | ExecutionException
+					| TimeoutException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		executor.shutdown();
+		for(SequenceFile.Writer writer : writers.values())
+		{
+			writer.close();
+		}
+	}
+
+	protected JSONFileProcessor getNewJSONProcessor(FileSystem hdfs,
+			LocatedFileStatus status, String fileName) throws IOException {
+		return new JSONFileProcessor(hdfs.open(status.getPath()), fileName);
+	}
+
+	public void setup(String[] args) {
 		Group options = createCommandLineOptions();
         Parser parser = new Parser();
         parser.setGroup(options);
@@ -53,65 +106,90 @@ public class CreateSequenceFile {
 		if (cl.hasOption("--outputpath")) {
 			outputPath = (String) cl.getValue("--outputpath");
 		}
-		FileSystem hdfs = FileSystem.get(new Configuration());
-		RemoteIterator<LocatedFileStatus> itr = hdfs.listFiles(new Path(filePath), true);
-		while (itr.hasNext()) {
-			LocatedFileStatus status = itr.next();
-			String fileName = status.getPath().getName();
-			if (fileName.substring(fileName.lastIndexOf(".") + 1).contains("json")) {
-				createSequenceFileFromJSON(hdfs.open(status.getPath()), fileName);
-			}
-		}
 	}
 
-	public static void createSequenceFileFromJSON(InputStream stream, String fileName) throws IOException {
-		JSONTokener tokener = new JSONTokener(new InputStreamReader(stream, "UTF-8"));
-		String outputFileName = outputPath + File.separator +fileName.substring(0, fileName.lastIndexOf(".")) + ".seq";
-		Path outputPath = new Path(outputFileName);
-		SequenceFile.Writer writer = null;
-		if(useKey)
+	protected class JSONFileProcessor implements Callable<Boolean>
+	{
+		protected InputStream stream;
+		protected String fileName;
+		protected String defaultOutputFileName;
+		public JSONFileProcessor(InputStream stream, String fileName)
 		{
-			writer = SequenceFile.createWriter(new Configuration(),Writer.keyClass(Text.class),
-			Writer.valueClass(Text.class), Writer.file(outputPath),Writer.compression(CompressionType.NONE));
+			this.stream = stream;
+			this.fileName = fileName;
+			defaultOutputFileName = outputPath + File.separator +fileName.substring(0, fileName.lastIndexOf(".")) + ".seq";
 		}
-		else
-		{
-			writer = 	SequenceFile.createWriter(new Configuration(),Writer.keyClass(BytesWritable.class),
-					Writer.valueClass(Text.class), Writer.file(outputPath),Writer.compression(CompressionType.NONE));
+		@Override
+		public Boolean call() throws Exception {
+			
+			JSONTokener tokener = new JSONTokener(new InputStreamReader(stream, "UTF-8"));
+
+			addValuesToSequenceFile(tokener);
+			return true;
 		}
-		addValuesToSequenceFile(tokener, writer, fileName);
-		writer.close();
-	}
-	
-	public static void addValuesToSequenceFile(JSONTokener tokener, SequenceFile.Writer writer, String fileName) throws JSONException, IOException {
-		char c = tokener.nextClean();
-		if (c == '[') {
-			while (true) {
-				Object o = tokener.nextValue();
-				if (o instanceof JSONObject) {
-					JSONObject obj = (JSONObject) o;
-					if(useKey)
-					{
-						if(outputFileName)
+		
+
+		public SequenceFile.Writer createSequenceFile(Path outputPath)
+				throws IOException {
+			SequenceFile.Writer writer = null;
+			if(useKey)
+			{
+				writer = SequenceFile.createWriter(new Configuration(),Writer.keyClass(Text.class),
+				Writer.valueClass(Text.class), Writer.file(outputPath),Writer.compression(CompressionType.NONE));
+			}
+			else
+			{
+				writer = 	SequenceFile.createWriter(new Configuration(),Writer.keyClass(BytesWritable.class),
+						Writer.valueClass(Text.class), Writer.file(outputPath),Writer.compression(CompressionType.NONE));
+			}
+			return writer;
+		}
+		
+		public void addValuesToSequenceFile(JSONTokener tokener) throws JSONException, IOException {
+			char c = tokener.nextClean();
+			if (c == '[') {
+				while (!tokener.end()) {
+					Object o = tokener.nextValue();
+					if (o instanceof JSONObject) {
+						JSONObject obj = (JSONObject) o;
+						SequenceFile.Writer writer = getWriter(obj);
+						if(useKey)
 						{
-							writer.append(new Text(fileName), new Text(obj.toString()));
+							if(outputFileName)
+							{
+								writer.append(new Text(fileName), new Text(obj.toString()));
+							}
+							else
+							{
+								writer.append(new Text(obj.getString("@id")), new Text(obj.toString()));
+							}
 						}
 						else
 						{
-							writer.append(new Text(obj.getString("@id")), new Text(obj.toString()));
+							writer.append(new BytesWritable(), new Text(obj.toString()));
 						}
+							
 					}
-					else
-					{
-						writer.append(new BytesWritable(), new Text(obj.toString()));
-					}
-						
+					char tmp = tokener.nextClean();
+					if (tmp == ']')
+						break;
 				}
-				char tmp = tokener.nextClean();
-				if (tmp == ']')
-					break;
 			}
 		}
+		
+		public SequenceFile.Writer getWriter(JSONObject obj) throws IOException
+		{
+			if(!writers.containsKey(defaultOutputFileName))
+			{
+				Path outputPath = new Path(defaultOutputFileName);
+				synchronized(writers)
+				{
+					writers.put(defaultOutputFileName, createSequenceFile(outputPath));
+				}
+			}
+			return writers.get(defaultOutputFileName);
+		}
+		
 	}
 	
 	private static Group createCommandLineOptions() {

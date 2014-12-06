@@ -687,7 +687,7 @@ public class SemanticModel {
 	}
 	
 	public void writeGraphviz(String filename, boolean showNodeMetaData, boolean showLinkMetaData) throws IOException {
-		GraphVizUtil.exportSemanticModelToGraphviz(this, showNodeMetaData, showLinkMetaData, filename);
+		GraphVizUtil.exportSemanticModelToGraphviz(this, GraphVizLabelType.LocalId, GraphVizLabelType.LocalUri, showNodeMetaData, showLinkMetaData, filename);
 	}
 	
 	public void writeJson(String filename) throws IOException {

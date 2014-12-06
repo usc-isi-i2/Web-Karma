@@ -1,6 +1,7 @@
 package edu.isi.karma.research.lod;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.GraphVizLabelType;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
@@ -30,6 +32,8 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
 import edu.isi.karma.util.RandomGUID;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class LODSchemaGraphBuilder {
 
@@ -100,7 +104,15 @@ public class LODSchemaGraphBuilder {
 		addDataPrpertiesTriplesToGraph(dataPropertiesTriples, addedNodes);
 
 		try {
-			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), "LOD Graph", false, true, true, Params.GRAPHS_DIR + "lod.graph.small.dot");
+			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), 
+					"LOD Graph", 
+					false, 
+					GraphVizLabelType.LocalId,
+					GraphVizLabelType.LocalUri,
+					true, 
+					true, 
+					Params.GRAPHS_DIR + 
+					"lod.graph.small.dot");
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to graphviz!");
 		}
@@ -108,7 +120,14 @@ public class LODSchemaGraphBuilder {
 		this.graphBuilder.addClosureAndUpdateLinks(addedNodes, null);
 
 		try {
-			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), "LOD Graph", false, true, true, Params.GRAPHS_DIR + "lod.graph.dot");
+			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), 
+					"LOD Graph", 
+					false, 
+					GraphVizLabelType.LocalId,
+					GraphVizLabelType.LocalUri,
+					true, 
+					true, 
+					Params.GRAPHS_DIR + "lod.graph.dot");
 			GraphUtil.exportJson(this.graphBuilder.getGraph(), Params.GRAPHS_DIR + "lod" + Params.GRAPH_FILE_EXT);
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to graphviz!");
@@ -297,5 +316,37 @@ public class LODSchemaGraphBuilder {
 		}
 	}
 
+	public static void main(String[] args) throws Exception {
 
+		ServletContextParameterMap.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
+
+		OntologyManager ontologyManager = new OntologyManager();
+		File ff = new File(Params.ONTOLOGY_DIR);
+		File[] files = ff.listFiles();
+		if (files == null) {
+			logger.error("no ontology to import at " + ff.getAbsolutePath());
+			return;
+		}
+
+		for (File f : files) {
+			if (f.getName().endsWith(".owl") || 
+					f.getName().endsWith(".rdf") || 
+					f.getName().endsWith(".rdfs") || 
+					f.getName().endsWith(".n3") || 
+					f.getName().endsWith(".ttl") || 
+					f.getName().endsWith(".xml")) {
+				System.out.println("Loading ontology file: " + f.getAbsolutePath());
+				logger.info("Loading ontology file: " + f.getAbsolutePath());
+				ontologyManager.doImport(f, "UTF-8");
+			}
+		}
+		ontologyManager.updateCache(); 
+		
+		new LODSchemaGraphBuilder(ontologyManager, 
+				Params.LOD_OBJECT_PROPERIES_FILE, 
+				Params.LOD_DATA_PROPERIES_FILE);
+		
+
+	}
+	
 }

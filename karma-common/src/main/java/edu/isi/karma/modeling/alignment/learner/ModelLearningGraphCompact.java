@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.GraphVizLabelType;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
@@ -468,7 +469,14 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		ml.updateGraphUsingOntology(addedNodes);
 		try {
 			GraphUtil.exportJson(ml.getGraphBuilder().getGraph(), graphName);
-			GraphVizUtil.exportJGraphToGraphviz(ml.getGraphBuilder().getGraph(), "main graph", true, false, false, graphVizName);
+			GraphVizUtil.exportJGraphToGraphviz(ml.getGraphBuilder().getGraph(), 
+					"main graph", 
+					true, 
+					GraphVizLabelType.LocalId,
+					GraphVizLabelType.LocalUri,
+					false, 
+					false, 
+					graphVizName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

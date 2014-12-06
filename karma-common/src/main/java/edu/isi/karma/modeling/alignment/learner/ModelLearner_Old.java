@@ -44,6 +44,7 @@ import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.GraphVizLabelType;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkFrequency;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
@@ -862,6 +863,8 @@ public class ModelLearner_Old {
 						models, 
 						newSource.getName(),
 						outName,
+						GraphVizLabelType.LocalId,
+						GraphVizLabelType.LocalUri,
 						false,
 						false);
 				//				}
