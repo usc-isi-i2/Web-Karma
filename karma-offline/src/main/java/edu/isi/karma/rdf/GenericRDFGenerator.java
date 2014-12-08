@@ -67,6 +67,10 @@ public class GenericRDFGenerator extends RdfGenerator {
 		AVRO
 	};
 	
+	public GenericRDFGenerator() {
+		this(null);
+	}
+	
 	public GenericRDFGenerator(String selectionName) {
 		super(selectionName);
 		this.modelIdentifiers = new ConcurrentHashMap<String, R2RMLMappingIdentifier>();
