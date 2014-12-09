@@ -47,7 +47,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 		}, {
 			name: "PyTransform",
 			func: pyTransform,
-			leafOnly: true,
+			leafOnly: false,
 			leafExcluded: false
 		}, 
 		{
@@ -969,7 +969,10 @@ var PyTransformDialog = (function() {
 				console.log("Code has not changed, we do not need to perform an edit");
 				return;
 			}
-
+			var isJSONOutput = "false";
+			if ($("#pythonTransformUseJSONOutput").prop("checked")) {
+				isJSONOutput = "true"
+			}
 
 			// prepare the JSON Object to be sent to the server
 			var info = generateInfoObject(worksheetId, hNode.data("columnDerivedFrom"), "SubmitEditPythonTransformationCommand");
@@ -979,6 +982,7 @@ var PyTransformDialog = (function() {
 			newInfo.push(getParamObject("previousCommandId", hNode.data("previousCommandId"), "other"));
 			newInfo.push(getParamObject("errorDefaultValue", $("#pythonTransformErrorDefaultValue").val(), "other"));
 			newInfo.push(getParamObject("targetHNodeId", columnId, "hNodeId"));
+			newInfo.push(getParamObject("isJSONOutput", isJSONOutput, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
 			showLoading(worksheetId);
@@ -1009,13 +1013,17 @@ var PyTransformDialog = (function() {
 			}
 
 			hide();
-
+			var isJSONOutput = "false";
+			if ($("#pythonTransformUseJSONOutput").prop("checked")) {
+				isJSONOutput = "true"
+			}
 			// prepare the JSON Object to be sent to the server
 			var info = generateInfoObject(worksheetId, hNodeId, "SubmitPythonTransformationCommand");
 			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("newColumnName", columnName, "other"));
 			newInfo.push(getParamObject("transformationCode", editor.getValue(), "other"));
 			newInfo.push(getParamObject("errorDefaultValue", $("#pythonTransformErrorDefaultValue").val(), "other"));
+			newInfo.push(getParamObject("isJSONOutput", isJSONOutput, "other"));
 			// newInfo.push(getParamObject("useExistingColumnName",
 			// useExistingColumnName, "useExistingColumnName"));
 			info["newInfo"] = JSON.stringify(newInfo);
