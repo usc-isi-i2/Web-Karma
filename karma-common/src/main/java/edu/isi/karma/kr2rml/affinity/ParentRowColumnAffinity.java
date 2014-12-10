@@ -62,6 +62,9 @@ public class ParentRowColumnAffinity implements ColumnAffinity {
 	@Override
 	public boolean isValidFor(HNodePath a, HNodePath b) {
 		HNodePath commonPath = HNodePath.findCommon(a, b);
+		if(commonPath == null || a == null || b == null)
+			return false;
+		
 		if(commonPath.length() == a.length() && b.length() > a.length())
 		{
 			return true;
