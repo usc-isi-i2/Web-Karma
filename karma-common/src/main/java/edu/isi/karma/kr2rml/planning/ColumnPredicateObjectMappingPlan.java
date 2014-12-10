@@ -115,14 +115,16 @@ public class ColumnPredicateObjectMappingPlan extends
 	}
 
 	protected String getColumnContextUri (String hNodeId) {
-		
-		if (hNodeToContextUriMap.containsKey(hNodeId))
-			return hNodeToContextUriMap.get(hNodeId);
-		else {
-			String randomId = UUID.randomUUID().toString();
-			String uri = Namespaces.KARMA_DEV + randomId + "_" + hNodeId;
-			hNodeToContextUriMap.put(hNodeId, uri);
-			return uri;
+		if(hNodeId != null) {
+			if (hNodeToContextUriMap.containsKey(hNodeId))
+				return hNodeToContextUriMap.get(hNodeId);
+			else {
+				String randomId = UUID.randomUUID().toString();
+				String uri = Namespaces.KARMA_DEV + randomId + "_" + hNodeId;
+				hNodeToContextUriMap.put(hNodeId, uri);
+				return uri;
+			}
 		}
+		return null;
 	}
 }

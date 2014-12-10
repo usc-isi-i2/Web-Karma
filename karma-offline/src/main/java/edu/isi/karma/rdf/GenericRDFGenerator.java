@@ -178,6 +178,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 		}
 		catch( Exception e)
 		{
+			logger.error("Error occurred while generating RDF", e);
 			throw new KarmaException(e.getMessage());
 		}
 		finally

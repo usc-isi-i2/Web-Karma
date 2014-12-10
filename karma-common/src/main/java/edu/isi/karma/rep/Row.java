@@ -256,6 +256,9 @@ public class Row extends RepEntity implements Neighbor {
 	}
 
 	public boolean collectNodes(HNodePath path, Collection<Node> nodes, SuperSelection sel) {
+		if(path == null || path.getFirst() == null)
+			return false;
+		
 		Node n = getNode(path.getFirst().getId());
 		if (n == null) {
 			return false;
