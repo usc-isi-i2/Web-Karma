@@ -11,7 +11,7 @@
 <http://lod.isi.edu/cs548/person/Knoblock> <http://xmlns.com/foaf/0.1/homepage> <http://www.isi.edu/~knoblock> .
 <http://lod.isi.edu/cs548/person/Knoblock> <http://xmlns.com/foaf/0.1/mbox> <mailto:knoblock@isi.edu> .
 <http://lod.isi.edu/cs548/person/Knoblock> <http://xmlns.com/foaf/0.1/title> "Prof" .
-<http://lod.isi.edu/cs548/person/Knoblock> <http://lod.isi.edu/ontology/syllabus/twitterId> "caknoblock" .
+<http://lod.isi.edu/cs548/person/Knoblock> <http://lod.isi.edu/ontology/syllabus/twitterId> "caknoblock"^^xsd:string .
 <http://lod.isi.edu/cs548/person/Knoblock> <http://xmlns.com/foaf/0.1/lastName> "Knoblock" .
 <http://lod.isi.edu/cs548/person/Knoblock> <http://xmlns.com/foaf/0.1/name> "Craig Knoblock" .
 <http://lod.isi.edu/cs548/person/Knoblock> <http://xmlns.com/foaf/0.1/depiction> <http://www.isi.edu/integration/people/knoblock/img/CraigKnoblock.jpg> .

@@ -53,7 +53,16 @@ public class N3ToJSONReducer extends Reducer<Text,Text,Text,Text>{
 				periodIndex = triple.length();
 			}
 			String object = triple.substring(secondSpaceIndex, periodIndex).trim();
-			if(object.startsWith("<") && object.endsWith(">"))
+			if((object.startsWith("<") && object.endsWith(">")))
+			{
+				object = object.substring(1, object.length()-1);
+			}
+			int typeIndex = object.indexOf("^^");
+			if(typeIndex > 0)
+			{
+				object = object.substring(0, typeIndex);
+			}
+			if(object.startsWith("\"") && object.endsWith("\""))
 			{
 				object = object.substring(1, object.length()-1);
 			}
@@ -71,6 +80,11 @@ public class N3ToJSONReducer extends Reducer<Text,Text,Text,Text>{
 					{
 						newArray.put(value);
 						newArray.put(object);
+					}
+					else
+					{
+						newArray.put(object);
+						newArray.put(value);
 					}
 					output.put(predicate, newArray);
 				}
