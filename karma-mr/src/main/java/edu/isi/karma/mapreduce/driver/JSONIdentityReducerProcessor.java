@@ -27,6 +27,7 @@ public class JSONIdentityReducerProcessor extends Configured implements Tool {
         job.setJarByClass(JSONIdentityReducerProcessor.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
         job.setMapperClass(IdentityJSONMapper.class);
+        job.setCombinerClass(JSONReducer.class);
         job.setReducerClass(JSONReducer.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
