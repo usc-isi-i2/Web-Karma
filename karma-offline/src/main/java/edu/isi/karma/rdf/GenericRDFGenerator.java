@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -20,6 +22,7 @@ import org.apache.tika.mime.MediaTypeRegistry;
 import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.BodyContentHandler;
+import org.hsqldb.lib.StringInputStream;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -34,6 +37,7 @@ import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.avro.AvroImport;
 import edu.isi.karma.imp.csv.CSVImport;
+import edu.isi.karma.imp.excel.ToCSV;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.ErrorReport;
@@ -47,6 +51,7 @@ import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
 import edu.isi.karma.kr2rml.writer.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
+import edu.isi.karma.rdf.InputProperties.InputProperty;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
@@ -60,11 +65,14 @@ public class GenericRDFGenerator extends RdfGenerator {
 	protected ConcurrentHashMap<String, WorksheetR2RMLJenaModelParser> readModelParsers;
 	protected HashMap<String, ContextIdentifier> contextIdentifiers;
 	protected HashMap<String, JSONObject> contextCache;
+	
+	
 	public enum InputType {
 		CSV,
 		JSON,
 		XML,
-		AVRO
+		AVRO,
+		EXCEL
 	};
 	
 	public GenericRDFGenerator() {
@@ -96,7 +104,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 		return modelParser;
 	}
 	
-	private void generateRDF(String modelName, String sourceName,String contextName, InputStream data, InputType dataType, int maxNumLines, 
+	private void generateRDF(String modelName, String sourceName,String contextName, InputStream data, InputType dataType,  InputProperties inputTypeParameters, 
 			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy, 
 			List<String> tripleMapToKill, List<String> tripleMapToStop, List<String> POMToKill)
 					throws KarmaException, IOException {
@@ -132,12 +140,10 @@ public class GenericRDFGenerator extends RdfGenerator {
 		}
 		//Check if the parser for this model exists, else create one
 		WorksheetR2RMLJenaModelParser modelParser = getModelParser(modelName);
-		generateRDF(modelParser, sourceName, data, dataType, maxNumLines, addProvenance, writers, rootStrategy, tripleMapToKill, tripleMapToStop, POMToKill);
+		generateRDF(modelParser, sourceName, data, dataType, inputTypeParameters, addProvenance, writers, rootStrategy, tripleMapToKill, tripleMapToStop, POMToKill);
 	}
 	
-	
-
-	private void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, InputStream data, InputType dataType, int maxNumLines, 
+	private void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, InputStream data, InputType dataType,  InputProperties inputTypeParameters,
 			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy, 
 			List<String> tripleMapToKill, List<String> tripleMapToStop, List<String> POMToKill) throws KarmaException, IOException {
 		logger.debug("Generating rdf for " + sourceName);
@@ -149,8 +155,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 		{
 		
 			logger.debug("Generating worksheet for {}", sourceName);
-				Worksheet worksheet = generateWorksheet(sourceName, new BufferedInputStream(data), dataType, 
-					workspace, maxNumLines);
+			Worksheet worksheet = generateWorksheet(sourceName, new BufferedInputStream(data), dataType, inputTypeParameters,
+					workspace);
 			logger.debug("Generated worksheet for {}", sourceName);
 			logger.debug("Parsing mapping for {}", sourceName);
 			//Generate mappping data for the worksheet using the model parser
@@ -206,7 +212,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 		}
 		
 		generateRDF(request.getModelName(), request.getSourceName(), request.getContextName(), 
-				inputStream,request.getDataType(), request.getMaxNumLines(), request.isAddProvenance(), 
+				inputStream, request.getDataType(), request.getInputTypeProperties(), request.isAddProvenance(), 
 				request.getWriters(), request.getStrategy(), 
 				request.getTripleMapToKill(), request.getTripleMapToStop(), request.getPOMToKill());
 	}
@@ -223,12 +229,18 @@ public class GenericRDFGenerator extends RdfGenerator {
 			case "text/csv": {
 				return InputType.CSV;
 			}
+			case "text/excel": {
+				return InputType.EXCEL;
+			}
+			case "text/x-excel": {
+				return InputType.EXCEL;
+			}
 		}
 		return null;
 	}
 	
-	protected Worksheet generateWorksheet(String sourceName, BufferedInputStream is, InputType inputType,
-			Workspace workspace, int maxNumLines) throws IOException, KarmaException {
+	protected Worksheet generateWorksheet(String sourceName, BufferedInputStream is, InputType inputType, InputProperties inputParameters,
+			Workspace workspace) throws IOException, KarmaException {
 		Worksheet worksheet = null;
 		try{
 			is.mark(Integer.MAX_VALUE);
@@ -262,6 +274,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 				logger.info("Detected " + metadata.get(Metadata.CONTENT_TYPE));
 				inputType = getInputType(metadata);
 				encoding = metadata.get(Metadata.CONTENT_ENCODING);
+			} else if(inputParameters.get(InputProperty.ENCODING) != null) {
+				encoding = (String)inputParameters.get(InputProperty.ENCODING);
 			} else {
 				encoding = EncodingDetector.detect(is);
 			}
@@ -271,26 +285,33 @@ public class GenericRDFGenerator extends RdfGenerator {
 		     	throw new KarmaException("Content type unrecognized");
 		     }
 			
+			inputParameters.set(InputProperty.ENCODING, encoding);
+			
 			switch (inputType) {
 				case JSON : {
 	
-					worksheet = generateWorksheetFromJSONStream(sourceName, is,
-							workspace, encoding, maxNumLines);
+					worksheet = generateWorksheetFromJSONStream(sourceName, is, inputParameters,
+							workspace);
 					break;
 				}
 				case XML : {
-					worksheet = generateWorksheetFromXMLStream(sourceName, is,
-							workspace, encoding, maxNumLines);
+					worksheet = generateWorksheetFromXMLStream(sourceName, is, inputParameters,
+							workspace);
 					break;
 				}
 				case CSV : {
 					worksheet = generateWorksheetFromDelimitedStream(sourceName,
-							is, workspace, encoding, maxNumLines);
+							is, inputParameters, workspace);
+					break;
+				}
+				case EXCEL: {
+					worksheet = generateWorksheetFromExcelStream(sourceName, is, inputParameters, workspace);
 					break;
 				}
 				case AVRO : {
-					worksheet = generateWorksheetFromAvroStream(sourceName, is, workspace, encoding, maxNumLines);
+					worksheet = generateWorksheetFromAvroStream(sourceName, is, inputParameters, workspace);
 				}
+				
 			}
 		} catch (Exception e ) {
 			logger.error("Error generating worksheet", e);
@@ -328,23 +349,56 @@ public class GenericRDFGenerator extends RdfGenerator {
 		return Collections.unmodifiableMap(modelIdentifiers);
 	}
 	
+	private Worksheet generateWorksheetFromExcelStream(String sourceName, InputStream is,  InputProperties inputTypeParams,
+			Workspace workspace) throws IOException,
+			KarmaException, ClassNotFoundException, InvalidFormatException {
+		
+		
+		int worksheetIndex =  (inputTypeParams.get(InputProperty.WORKSHEET_INDEX) != null)? 
+				(int)inputTypeParams.get(InputProperty.WORKSHEET_INDEX) : 1;
+				
+		 // Convert the Excel file to a CSV file.
+        ToCSV csvConverter = new ToCSV();
+        StringWriter writer = new StringWriter();
+        csvConverter.convertWorksheetToCSV(is, worksheetIndex-1, writer);
+        String csv= writer.toString();
+        InputStream sheet = IOUtils.toInputStream(csv);
+        return this.generateWorksheetFromDelimitedStream(sourceName, sheet, inputTypeParams, workspace);	
+	}
 	
-	
-	private Worksheet generateWorksheetFromDelimitedStream(String sourceName, InputStream is,
-			Workspace workspace, String encoding, int maxNumLines) throws IOException,
+	private Worksheet generateWorksheetFromDelimitedStream(String sourceName, InputStream is,  InputProperties inputTypeParams,
+			Workspace workspace) throws IOException,
 			KarmaException, ClassNotFoundException {
 		Worksheet worksheet;
-		Import fileImport = new CSVImport(1, 2, ',', '\"', encoding, maxNumLines, 
+		int headerStartIndex =  (inputTypeParams.get(InputProperty.HEADER_START_INDEX) != null)? 
+				(int)inputTypeParams.get(InputProperty.HEADER_START_INDEX) : 1;
+		int dataStartIndex =  (inputTypeParams.get(InputProperty.DATA_START_INDEX) != null)? 
+				(int)inputTypeParams.get(InputProperty.DATA_START_INDEX) : 2;
+		char delimiter = (inputTypeParams.get(InputProperty.DELIMITER) != null)? 
+				((String)inputTypeParams.get(InputProperty.DELIMITER)).charAt(0): ',';
+		
+		char qualifier = (inputTypeParams.get(InputProperty.TEXT_QUALIFIER) != null)? 
+					((String)inputTypeParams.get(InputProperty.TEXT_QUALIFIER)).charAt(0): '\"';
+					
+		String encoding = (String)inputTypeParams.get(InputProperty.ENCODING);
+		int maxNumLines = (inputTypeParams.get(InputProperty.MAX_NUM_LINES) != null)? 
+				(int)inputTypeParams.get(InputProperty.MAX_NUM_LINES) : -1;
+		
+		Import fileImport = new CSVImport(headerStartIndex, dataStartIndex, delimiter, qualifier, encoding, maxNumLines, 
 				sourceName, is, workspace, null);
 
 		worksheet = fileImport.generateWorksheet();
 		return worksheet;
 	}
 
-	private Worksheet generateWorksheetFromXMLStream(String sourceName, InputStream is,
-			Workspace workspace, String encoding, int maxNumLines)
+	private Worksheet generateWorksheetFromXMLStream(String sourceName, InputStream is,  InputProperties inputTypeParams,
+			Workspace workspace)
 			throws IOException {
 		Worksheet worksheet;
+		String encoding = (String)inputTypeParams.get(InputProperty.ENCODING);
+		int maxNumLines = (inputTypeParams.get(InputProperty.MAX_NUM_LINES) != null)? 
+				(int)inputTypeParams.get(InputProperty.MAX_NUM_LINES) : -1;
+				
 		String contents = IOUtils.toString(is, encoding);
 		JSONObject json = XML.toJSONObject(contents);
 		JsonImport imp = new JsonImport(json, sourceName, workspace, encoding, maxNumLines);
@@ -352,20 +406,26 @@ public class GenericRDFGenerator extends RdfGenerator {
 		return worksheet;
 	}
 
-	private Worksheet generateWorksheetFromJSONStream(String sourceName, InputStream is,
-			Workspace workspace, String encoding, int maxNumLines)
+	private Worksheet generateWorksheetFromJSONStream(String sourceName, InputStream is, InputProperties inputTypeParams,
+			Workspace workspace)
 			throws IOException {
 		Worksheet worksheet;
+		String encoding = (String)inputTypeParams.get(InputProperty.ENCODING);
+		int maxNumLines = (inputTypeParams.get(InputProperty.MAX_NUM_LINES) != null)? 
+				(int)inputTypeParams.get(InputProperty.MAX_NUM_LINES) : -1;
 		Reader reader = EncodingDetector.getInputStreamReader(is, encoding);
 		Object json = JSONUtil.createJson(reader);
 		JsonImport imp = new JsonImport(json, sourceName, workspace, encoding, maxNumLines);
 		worksheet = imp.generateWorksheet();
 		return worksheet;
 	}
-	private Worksheet generateWorksheetFromAvroStream(String sourceName, InputStream is,
-			Workspace workspace, String encoding, int maxNumLines)
+	private Worksheet generateWorksheetFromAvroStream(String sourceName, InputStream is,  InputProperties inputTypeParams,
+			Workspace workspace)
 			throws IOException, JSONException, KarmaException {
 		Worksheet worksheet;
+		String encoding = (String)inputTypeParams.get(InputProperty.ENCODING);
+		int maxNumLines = (inputTypeParams.get(InputProperty.MAX_NUM_LINES) != null)? 
+				(int)inputTypeParams.get(InputProperty.MAX_NUM_LINES) : -1;
 		AvroImport imp = new AvroImport(is, sourceName, workspace, encoding, maxNumLines);
 		worksheet = imp.generateWorksheet();
 		return worksheet;

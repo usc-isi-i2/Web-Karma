@@ -10,13 +10,15 @@ import java.util.List;
 import edu.isi.karma.kr2rml.planning.RootStrategy;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
+import edu.isi.karma.rdf.InputProperties.InputProperty;
 
 public class RDFGeneratorRequest {
 
 	private RootStrategy strategy;
-	private int maxNumLines;
 	private File inputFile;
 	private String inputData;
+	protected InputProperties inputProperties
+	;
 	private InputStream inputStream;
 	private InputType dataType;
 	private boolean addProvenance;
@@ -33,7 +35,7 @@ public class RDFGeneratorRequest {
 		this.modelName = modelName;
 		this.sourceName = sourceName;
 		this.addProvenance = false;
-		this.maxNumLines = -1;
+		this.inputProperties = new InputProperties();
 		this.strategy = null;
 		this.inputFile = null;
 		this.inputStream = null;
@@ -94,14 +96,42 @@ public class RDFGeneratorRequest {
 		this.contextName = contextName;
 	}
 
-	public int getMaxNumLines() {
-		return maxNumLines;
-	}
-
 	public void setMaxNumLines(int maxNumLines) {
-		this.maxNumLines = maxNumLines;
+		this.inputProperties.set(InputProperty.MAX_NUM_LINES, maxNumLines);
 	}
 
+	public void setDelimiter(String delim) {
+		if(delim == null)
+			delim = ",";
+		this.inputProperties.set(InputProperty.DELIMITER, delim);
+	}
+	
+	public void setDataStartIndex(int idx) {
+		this.inputProperties.set(InputProperty.DATA_START_INDEX, idx);
+	}
+	
+	public void setHeaderStartIndex(int idx) {
+		this.inputProperties.set(InputProperty.HEADER_START_INDEX, idx);
+	}
+	
+	public void setTextQualifier(String qualifier) {
+		if(qualifier == null)
+			qualifier = "\"";
+		this.inputProperties.set(InputProperty.TEXT_QUALIFIER, qualifier);
+	}
+	
+	public void setEncoding(String encoding) {
+		this.inputProperties.set(InputProperty.ENCODING, encoding);
+	}
+	
+	public void setWorksheetIndex(int index) {
+		this.inputProperties.set(InputProperty.WORKSHEET_INDEX, index);
+	}
+
+	public InputProperties getInputTypeProperties() {
+		return this.inputProperties;
+	}
+	
 	public File getInputFile() {
 		return inputFile;
 	}

@@ -19,5 +19,16 @@ public class FormParameters {
 	public static final String CONTENT_TYPE_CSV = InputType.CSV.toString();
 	public static final String CONTENT_TYPE_JSON = InputType.JSON.toString();
 	public static final String CONTENT_TYPE_XML = InputType.XML.toString();
+	public static final String CONTENT_TYPE_EXCEL = InputType.EXCEL.toString();
+	
+	//Need one of these for every edu.isi.karma.rdf.InputProperties.InputProperty;
+	public static final String MAX_NUM_LINES = "MaxNumLines";
+	public static final String ENCODING = "Encoding";
+	public static final String DATA_START_INDEX = "DataStartIndex";
+	public static final String HEADER_START_INDEX = "HeaderStartIndex";
+	public static final String COLUMN_DELIMITER = "ColumnDelimiter";
+	public static final String TEXT_QUALIFIER = "TextQualifier";
+	public static final String WORKSHEET_INDEX = "WorksheetIndex";
+	
 	public static final String REFRESH_MODEL = "RefreshModel";
 }
