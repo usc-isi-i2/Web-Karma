@@ -25,8 +25,12 @@ public abstract class Import {
     private Worksheet worksheet;
     protected Workspace workspace;
     
+    public static int MAX_WORKSHEET_NAME_LEN = 100;
+    
     public Import(String worksheetName, Workspace workspace, String encoding) {
         this.factory = workspace.getFactory();
+        if(worksheetName.length() > MAX_WORKSHEET_NAME_LEN)
+        	worksheetName = worksheetName.substring(0, MAX_WORKSHEET_NAME_LEN) + "...";
         this.worksheet = factory.createWorksheet(worksheetName, workspace, encoding);
         this.workspace = workspace;
     }
