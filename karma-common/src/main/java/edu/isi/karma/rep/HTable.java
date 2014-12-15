@@ -52,6 +52,8 @@ public class HTable extends RepEntity {
 
 	private ArrayList<String> orderedNodeIds = new ArrayList<String>();
 
+	private int emptyColumnIndex = 1;
+	
 	// mariam
 	/**
 	 * the HNode that contains this table (useful for backwards traversing)
@@ -112,9 +114,11 @@ public class HTable extends RepEntity {
 		if (m.find()) {
 			return getNewColumnName(prefix.replaceAll(m.group(1), "")); 
 		}
-		for (int i=1; i<1000; i++) {
-			if (isValidNewColumnName(prefix + "_" + i))
+		for (int i=emptyColumnIndex; i<1000; i++) {
+			if (isValidNewColumnName(prefix + "_" + i)) {
+				emptyColumnIndex = i+1;
 				return prefix + "_" + i;
+			}
 		}
 		// Last resort
 		return "New Column";
@@ -159,6 +163,13 @@ public class HTable extends RepEntity {
 
 	// ////////////////////////////////////////////
 
+	private String verifyColumnName(String columnName) {
+		if(columnName.trim().length() == 0) {
+			columnName = getNewColumnName("Column");
+		}
+		return columnName;
+	}
+	
 	public HNode addHNode(String columnName, HNodeType type, Worksheet worksheet,
 			RepFactory factory) {
 		return addHNode(columnName, false, type, worksheet, factory);
@@ -166,6 +177,7 @@ public class HTable extends RepEntity {
 
 	public HNode addHNode(String columnName, boolean automaticallyAdded, HNodeType type,
 			Worksheet worksheet, RepFactory factory) {
+		columnName = verifyColumnName(columnName);
 		HNode hn = factory.createHNode(id, columnName, automaticallyAdded, type);
 		nodes.put(hn.getId(), hn);
 		orderedNodeIds.add(hn.getId());
