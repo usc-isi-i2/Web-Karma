@@ -52,7 +52,6 @@ public class HTable extends RepEntity {
 
 	private ArrayList<String> orderedNodeIds = new ArrayList<String>();
 
-	private int emptyColumnIndex = 1;
 	
 	// mariam
 	/**
@@ -114,9 +113,8 @@ public class HTable extends RepEntity {
 		if (m.find()) {
 			return getNewColumnName(prefix.replaceAll(m.group(1), "")); 
 		}
-		for (int i=emptyColumnIndex; i<1000; i++) {
+		for (int i=1; i<1000; i++) {
 			if (isValidNewColumnName(prefix + "_" + i)) {
-				emptyColumnIndex = i+1;
 				return prefix + "_" + i;
 			}
 		}
