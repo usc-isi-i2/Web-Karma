@@ -135,8 +135,14 @@ public class KR2RMLMappingColumnNameHNodeTranslator {
 				String cName = (String) strArr.get(i);
 				
 				logger.debug("Column being normalized: "+ cName);
+				
+				if(hTable == null) {
+					logger.error("Error retrieving column: " + cName);
+					return null;
+				}
+				
 				HNode hNode = hTable.getHNodeFromColumnName(cName);
-				if(hNode == null || hTable == null) {
+				if(hNode == null) {
 					logger.error("Error retrieving column: " + cName);
 					return null;
 				}
