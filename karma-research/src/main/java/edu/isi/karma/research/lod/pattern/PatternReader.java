@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
+import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -116,6 +117,8 @@ public class PatternReader {
 		HashMap<String, Node> classNodes = new HashMap<String, Node>();
 		HashMap<String, Node> dataNodes = new HashMap<String, Node>();
 		
+		NodeIdFactory nodeIdFactory = new NodeIdFactory();
+		
 		List<String> types = new ArrayList<String>();
 		for (String header : headerMap.keySet()) {
 			String s = record.get(header);
@@ -123,7 +126,7 @@ public class PatternReader {
 			if (header.startsWith(CLASS_PREFIX) && !header.equalsIgnoreCase(COUNT_COLUMN)) {
 				types.add(s);
 				key = header.substring(CLASS_PREFIX.length());
-				classNodes.put(key, new InternalNode(s, new Label(s)));
+				classNodes.put(key, new InternalNode(nodeIdFactory.getNodeId(s), new Label(s)));
 			} else if (header.startsWith(DATA_PROPERTY_PREFIX)) {
 				key = header.substring(DATA_PROPERTY_PREFIX.length());
 				dataNodes.put(key, new ColumnNode(new RandomGUID().toString(), "NA", "NA", null) );
@@ -155,7 +158,7 @@ public class PatternReader {
 						LinkIdFactory.getLinkId(s, source.getId(), target.getId()), 
 						new Label(s), ObjectPropertyType.None);
 				graph.addEdge(source, target, link);
-				graph.setEdgeWeight(link, 1.0);
+				graph.setEdgeWeight(link, frequency);
 			} else if (header.startsWith(DATA_PROPERTY_PREFIX)) {
 				key = header.substring(DATA_PROPERTY_PREFIX.length());
 				if (key.length() != 2) continue; // the object property header should be in form of prefix (dp) + [1..9] + [a..z] --> the key is "xy"
@@ -165,7 +168,7 @@ public class PatternReader {
 						LinkIdFactory.getLinkId(s, source.getId(), target.getId()), 
 						new Label(s));
 				graph.addEdge(source, target, link);
-				graph.setEdgeWeight(link, 1.0);
+				graph.setEdgeWeight(link, frequency);
 			}
 		}
 

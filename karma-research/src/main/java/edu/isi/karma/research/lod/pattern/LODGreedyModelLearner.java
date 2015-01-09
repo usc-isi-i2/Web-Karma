@@ -1,7 +1,9 @@
 package edu.isi.karma.research.lod.pattern;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +13,10 @@ import java.util.Set;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
 
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.rep.alignment.Label;
@@ -70,14 +76,70 @@ public class LODGreedyModelLearner {
 	}
 	
 	
-	private List<Pattern> findMinimalCovering(List<Pattern> sortedPatterns, List<String> types) {
-		//TODO
-		return null;
+	private List<Pattern> findMinimalCoveringSet(List<Pattern> sortedPatterns, List<String> types) {
+
+		List<Pattern> minimalSet = new LinkedList<Pattern>();
+		
+		Multiset<String> sourceTypes = HashMultiset.create(types);
+		Multiset<String> coveredTypes = HashMultiset.create();
+		
+		for (Pattern p : sortedPatterns) {
+			Multiset<String> patternTypes = HashMultiset.create(p.getTypes());
+			Multiset<String> patternCommonTypes = Multisets.intersection(patternTypes, sourceTypes);
+			if (Multisets.containsOccurrences(coveredTypes, patternCommonTypes)) // this pattern does not cover any new source type
+				continue;
+			else {
+				minimalSet.add(p);
+				coveredTypes.addAll(patternCommonTypes);
+			}
+			if (Multisets.containsOccurrences(coveredTypes, sourceTypes))
+				break;
+		}
+		return minimalSet;
 	}
 	
 	private DirectedWeightedMultigraph<Node, LabeledLink> combinePatterns(List<Pattern> patterns) {
-		//TODO
-		return null;
+		
+		DirectedWeightedMultigraph<Node, LabeledLink> graph = 
+				new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
+		
+		Set<String> nodeIds = new HashSet<String>();
+		Set<String> edgeIds = new HashSet<String>();
+		
+		Node source, target;
+		
+		HashMap<String, Integer> linkIdMap = 
+			new HashMap<String, Integer>();
+		
+		for (Pattern p : patterns) {
+			DirectedWeightedMultigraph<Node, LabeledLink> g = p.getGraph();
+			for (LabeledLink l : g.edgeSet()) {
+				source = l.getSource();
+				target = l.getTarget();
+				
+				if (!nodeIds.contains(source.getId())) {
+					graph.addVertex(source);
+					nodeIds.add(source.getId());
+				} 
+				if (!nodeIds.contains(target.getId())) {
+					graph.addVertex(target);
+					nodeIds.add(target.getId());
+				}
+				if (!edgeIds.contains(l.getId())) {
+					graph.addEdge(source, target, l);
+					graph.setEdgeWeight(l, l.getWeight());
+					linkIdMap.put(l.getId(), 1);
+				} else {
+					Integer count = linkIdMap.get(l.getId());
+					linkIdMap.put(l.getId(), ++count);
+					LabeledLink newLink = l.copy(l.getId() + count);
+					graph.addEdge(source, target, newLink);
+					graph.setEdgeWeight(newLink, newLink.getWeight());
+				}
+			}
+		}
+		
+		return graph;
 	}
 	
 	public SemanticModel learn(List<SemanticType> semanticTypes) {
@@ -125,7 +187,7 @@ public class LODGreedyModelLearner {
 		logger.info("time to sort related patterns: " + elapsedTimeSec + "s");
 
 		logger.info("finding minimal set of patterns with maximum covering of source types ...");
-		List<Pattern> minimalSet = findMinimalCovering(sortedPatterns, types);
+		List<Pattern> minimalSet = findMinimalCoveringSet(sortedPatterns, types);
 		long timeFindMinimalCover = System.currentTimeMillis();
 		elapsedTimeSec = (timeFindMinimalCover - timeSortPatterns)/1000F;
 		logger.info("time to find minimal set: " + elapsedTimeSec + "s");
@@ -154,6 +216,7 @@ public class LODGreedyModelLearner {
 	public static void main(String[] args) {
 		
 		String patternDirectoryPath = "/Users/mohsen/Dropbox/Source Modeling/datasets/lod-bm-sample/patterns/";
+		String resultsPath = "/Users/mohsen/Dropbox/Source Modeling/datasets/lod-bm-sample/results/";
 		LODGreedyModelLearner ml = new LODGreedyModelLearner(patternDirectoryPath);
 		
 		// get list of semantic types for a source
@@ -170,6 +233,16 @@ public class LODGreedyModelLearner {
 		types.add(st5);
 
 		SemanticModel sm = ml.learn(types);
+		String output = resultsPath + "out.dot";
+		logger.info("result is ready at: " + output);
+
+		// sm.print();
+		try {
+			sm.writeGraphviz(output, true, true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 }

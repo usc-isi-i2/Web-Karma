@@ -31,12 +31,18 @@ public class PatternComparator implements Comparator<Pattern> {
 		else if (a < b) 
 			return 1; 
 		else { 
-			if (p1.getSize() > p2.getSize()) 
+			if (p1.getFrequency() > p2.getFrequency()) 
 				return -1;
-			else if (p1.getSize() < p2.getSize()) 
+			else if (p1.getFrequency() < p2.getFrequency()) 
 				return 1;
-			else 
-				return 0;
+			else {
+				if (p1.getSize() > p2.getSize()) 
+					return -1;
+				else if (p1.getSize() < p2.getSize()) 
+					return 1;
+				else 
+					return 0;
+			}
 		}
 	}
 
