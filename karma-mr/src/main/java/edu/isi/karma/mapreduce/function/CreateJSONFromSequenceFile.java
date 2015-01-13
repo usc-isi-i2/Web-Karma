@@ -3,6 +3,9 @@ package edu.isi.karma.mapreduce.function;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.Group;
@@ -48,26 +51,51 @@ public class CreateJSONFromSequenceFile {
 			LocatedFileStatus status = itr.next();
 			String fileName = status.getPath().getName();
 			if (status.getLen() > 0) {
-				String outputFileName = outputPath + File.separator + fileName + ".json";
-				createJSONFromSequenceFileFrom(status.getPath(), hdfs.create(new Path(outputFileName)));
+				String outputFileName = outputPath + File.separator + fileName;// + ".json";
+				List<FSDataOutputStream> streams = new LinkedList<FSDataOutputStream>();
+				if(cl.hasOption("--splits"))
+				{
+					Integer splits = Integer.parseInt((String) cl.getValue("--splits"));
+					for(int i = 0; i < splits; i ++)
+					{
+						streams.add(hdfs.create(new Path(outputFileName+"."+i + ".json")));
+					}
+				}
+				else
+				{
+					streams.add(hdfs.create(new Path(outputFileName+ ".json")));
+				}
+				createJSONFromSequenceFileFrom(status.getPath(), streams);
 			}
 		}
 	}
 
-	public static void createJSONFromSequenceFileFrom(Path input, FSDataOutputStream fsDataOutputStream) throws IOException {
+	public static void createJSONFromSequenceFileFrom(Path input, List<FSDataOutputStream> streams) throws IOException {
 		Path inputPath = input;
 		Configuration conf = new Configuration();
-		PrintWriter fw = new PrintWriter(fsDataOutputStream);
+		List<PrintWriter> fws = new LinkedList<PrintWriter>();
+		for(FSDataOutputStream stream : streams)
+		{
+			PrintWriter fw = new PrintWriter(stream);
+			fws.add(fw);
+			fw.write("[\n");
+		}
 		SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(inputPath));
 		Text key = new Text();
 		Text val = new Text();
-		fw.write("[\n");
-		boolean writtenyet = false;
+		
+		int writtenTo = 0;
+		Iterator<PrintWriter> pwIterator = fws.iterator();
 		while(reader.next(key, val))
 		{
-			if(!writtenyet)
+			if(!pwIterator.hasNext())
 			{
-				writtenyet=true;
+				pwIterator = fws.iterator();
+			}
+			PrintWriter fw = pwIterator.next();
+			if(writtenTo < fws.size())
+			{
+				writtenTo++;
 			}
 			else
 			{
@@ -75,8 +103,11 @@ public class CreateJSONFromSequenceFile {
 			}
 			fw.write(val.toString());
 		}
-		fw.write("\n]\n");
-		fw.close();
+		for(PrintWriter fw : fws)
+		{
+			fw.write("\n]\n");
+			fw.close();
+		}
 		reader.close();
 	}
 	
@@ -90,6 +121,7 @@ public class CreateJSONFromSequenceFile {
 				.withName("options")
 				.withOption(buildOption("filepath", "location of the input file directory", "filepath", obuilder, abuilder))
 				.withOption(buildOption("outputpath", "location of output file directory", "outputpath", obuilder, abuilder))
+				.withOption(buildOption("splits", "number of splits per file", "splits", obuilder, abuilder))
 				.withOption(obuilder
 						.withLongName("help")
 						.withDescription("print this message")

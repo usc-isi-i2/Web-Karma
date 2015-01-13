@@ -27,13 +27,15 @@ public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 	public static JSONObject mergeJSONObjects(Iterator<Text> iterator) {
 
 		JSONObject accumulatorObject = new JSONObject();
+		
 		while(iterator.hasNext())
 		{
 
 			String value = iterator.next().toString();
 			JSONObject object = new JSONObject(value);
-			accumulatorObject = mergeJSONObjects(accumulatorObject, object);		
+			accumulatorObject = mergeJSONObjects(accumulatorObject, object);
 		}
+		
 		return accumulatorObject;
 	}
 
@@ -97,7 +99,7 @@ public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 		}
 		return left;
 	}
-	private static void mergeArrays(JSONObject left, String name,
+	protected static void mergeArrays(JSONObject left, String name,
 			JSONArray leftArray, JSONArray rightArray) {
 		JSONArray newArray = new JSONArray();
 		int leftIndex = 0;
@@ -134,7 +136,7 @@ public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 		{
 			left.put(name, newArray);
 		}
-		else
+		else if(newArray.length() == 1)
 		{
 			left.put(name, newArray.get(0));
 		}

@@ -46,6 +46,32 @@
 			<groupId>edu.isi</groupId>
 			<artifactId>karma-common</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+		            <artifactId>jackson-xc</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-mapper-asl</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-core</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-core-asl</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-databind</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-annotations</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		    </exclusions>
 		</dependency>
 
 		<dependency>	
@@ -69,17 +95,130 @@
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-minicluster</artifactId>
 			<version>${hadoop.version}</version>
-
+			<exclusions>
+			<exclusion>
+					<groupId>com.microsoft.windowsazure.storage</groupId>
+					<artifactId>microsoft-windowsazure-storage-sdk</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.fasterxml.jackson.core</groupId>
+		            <artifactId>jackson.core</artifactId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-jaxrs</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-xc</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-mapper-asl</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-core-asl</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-core</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-databind</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-annotations</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		    </exclusions>
 		</dependency>
         <dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-common</artifactId>
 			<version>${hadoop.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.microsoft.windowsazure.storage</groupId>
+					<artifactId>microsoft-windowsazure-storage-sdk</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.fasterxml.jackson.core</groupId>
+		            <artifactId>jackson.core</artifactId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-jaxrs</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-xc</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-mapper-asl</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-core</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-core-asl</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-databind</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-annotations</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		    </exclusions>
 		</dependency>       
         <dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-yarn-common</artifactId>
 			<version>${hadoop.version}</version>
+			<exclusions>
+			<exclusion>
+					<groupId>com.microsoft.windowsazure.storage</groupId>
+					<artifactId>microsoft-windowsazure-storage-sdk</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.fasterxml.jackson.core</groupId>
+		            <artifactId>jackson.core</artifactId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-jaxrs</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-xc</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-mapper-asl</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-core</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-core-asl</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-databind</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-annotations</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		    </exclusions>
 		</dependency> 
 		<dependency>
 			<groupId>org.apache.hive</groupId>
@@ -128,6 +267,11 @@
   			<groupId>org.elasticsearch</groupId>
   			<artifactId>elasticsearch-storm</artifactId>
   			<version>${es.hadoop.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.github.jsonld-java</groupId>
+		    <artifactId>jsonld-java</artifactId>
+		    <version>0.5.1</version>
 		</dependency>
     </dependencies>
 
