@@ -49,7 +49,8 @@ public class KarmaSequenceFileSpout extends BaseRichSpout {
 		this.outputCollector = outputCollector;
 		
 		Configuration conf = new Configuration();
-		conf.setIfUnset("fs.default.name", "file:///");
+		conf.set("fs.default.name", "hdfs://karma-dig-1.hdp.azure.karma.isi.edu:8020");
+		conf.set("fs.defaultFS", "hdfs://karma-dig-1.hdp.azure.karma.isi.edu:8020");
 		Path inputPath = new Path((String)configMap.get("input.path"));
 		try {
 			this.reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(inputPath));
