@@ -54,7 +54,6 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 
 		List<Text> jasonTriples = new LinkedList<Text>();
 		jasonTriples.add(new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("jason.json"))));
-		jasonTriples.add(new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("jason2.json"))));
 		jasonTriples.add(new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("jason3.json"))));
 
 		inputs.add(new Pair<Text,List<Text>>(new Text("http://lod.isi.edu/cs548/person/Slepicka"), jasonTriples));

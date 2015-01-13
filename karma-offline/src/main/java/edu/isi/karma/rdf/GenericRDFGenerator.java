@@ -22,7 +22,6 @@ import org.apache.tika.mime.MediaTypeRegistry;
 import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.BodyContentHandler;
-import org.hsqldb.lib.StringInputStream;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
