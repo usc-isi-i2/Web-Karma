@@ -161,5 +161,21 @@
 		</dependency>
             
 	</dependencies>
-
+	<profiles>
+		<profile>
+			<id>bloom</id>
+			
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<dependencies>
+	    		<dependency>
+					<groupId>edu.isi</groupId>
+					<artifactId>commands-bloom</artifactId>
+					<version>${project.version}</version>
+	    		</dependency>
+	    	</dependencies>
+	    	
+		</profile>
+	</profiles>
 </project>

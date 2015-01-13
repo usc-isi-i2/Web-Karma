@@ -16,14 +16,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.cli2.CommandLine;
-import org.apache.commons.cli2.Group;
-import org.apache.commons.cli2.Option;
-import org.apache.commons.cli2.builder.ArgumentBuilder;
-import org.apache.commons.cli2.builder.DefaultOptionBuilder;
-import org.apache.commons.cli2.builder.GroupBuilder;
-import org.apache.commons.cli2.commandline.Parser;
-import org.apache.commons.cli2.util.HelpFormatter;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocatedFileStatus;
@@ -37,6 +32,8 @@ import org.apache.hadoop.io.Text;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import edu.isi.karma.rdf.CommandLineArgumentParser;
 
 public class CreateSequenceFile {
 
@@ -87,24 +84,18 @@ public class CreateSequenceFile {
 	}
 
 	public void setup(String[] args) {
-		Group options = createCommandLineOptions();
-        Parser parser = new Parser();
-        parser.setGroup(options);
-        HelpFormatter hf = new HelpFormatter();
-        parser.setHelpFormatter(hf);
-        parser.setHelpTrigger("--help");
-        CommandLine cl = parser.parseAndHelp(args);
-        if (cl == null || cl.getOptions().size() == 0 || cl.hasOption("--help") || !cl.hasOption("--filepath")) {
-            hf.setGroup(options);
-            hf.print();
-            return;
-        }
-		filePath = (String) cl.getValue("--filepath");
+		Options options = createCommandLineOptions();
+		CommandLine cl = CommandLineArgumentParser.parse(args, options, CreateSequenceFile.class.getSimpleName());
+		if(cl == null)
+		{
+			return;
+		}
+		filePath = (String) cl.getOptionValue("--filepath");
 		outputPath = filePath;
-		useKey = Boolean.parseBoolean((String) cl.getValue("--usekey"));
-		outputFileName = Boolean.parseBoolean((String) cl.getValue("--outputfilename"));
+		useKey = Boolean.parseBoolean((String) cl.getOptionValue("--usekey"));
+		outputFileName = Boolean.parseBoolean((String) cl.getOptionValue("--outputfilename"));
 		if (cl.hasOption("--outputpath")) {
-			outputPath = (String) cl.getValue("--outputpath");
+			outputPath = (String) cl.getOptionValue("--outputpath");
 		}
 	}
 
@@ -192,39 +183,14 @@ public class CreateSequenceFile {
 		
 	}
 	
-	private static Group createCommandLineOptions() {
-		DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
-		ArgumentBuilder abuilder = new ArgumentBuilder();
-		GroupBuilder gbuilder = new GroupBuilder();
-
-		Group options =
-				gbuilder
-				.withName("options")
-				.withOption(buildOption("filepath", "location of the input file directory", "filepath", obuilder, abuilder))
-				.withOption(buildOption("usekey", "whether use key for sequence file", "usekey", obuilder, abuilder))
-				.withOption(buildOption("outputfilename", "whether output file name as key", "outputfilename", obuilder, abuilder))
-				.withOption(buildOption("outputpath", "location of output file directory", "outputpath", obuilder, abuilder))
-				.withOption(obuilder
-						.withLongName("help")
-						.withDescription("print this message")
-						.create())
-						.create();
+	private static Options createCommandLineOptions() {
+		Options options = new Options();
+		options.addOption(new Option("filepath", "filepath", true, "location of the input file directory"));
+		options.addOption(new Option("usekey", "usekey", true,"whether use key for sequence file"));
+		options.addOption(new Option("outputfilename", "outputfilename",true,  "whether output file name as key"));
+		options.addOption(new Option("outputpath", "outputpath", true, "location of output file directory"));
+		options.addOption(new Option("help", "help", false, "print this message"));
 
 		return options;
 	}
-
-	public static Option buildOption(String shortName, String description, String argumentName,
-			DefaultOptionBuilder obuilder, ArgumentBuilder abuilder) {
-		return obuilder
-				.withLongName(shortName)
-				.withDescription(description)
-				.withArgument(
-						abuilder
-						.withName(argumentName)
-						.withMinimum(1)
-						.withMaximum(1)
-						.create())
-						.create();
-	}
-
 }

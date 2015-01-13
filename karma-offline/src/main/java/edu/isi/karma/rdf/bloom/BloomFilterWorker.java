@@ -1,4 +1,4 @@
-package edu.isi.karma.rdf;
+package edu.isi.karma.rdf.bloom;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,7 +59,10 @@ public class BloomFilterWorker implements Runnable{
 			String tmp = getBloomfilter();
 			try {
 				if (tmp != null)
+				{
 					bf.populateFromCompressedAndBase64EncodedString(tmp);
+				}
+					
 			} catch (IOException e) {
 				
 			}

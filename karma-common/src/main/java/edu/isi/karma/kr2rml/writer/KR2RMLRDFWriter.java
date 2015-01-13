@@ -20,31 +20,47 @@
  ******************************************************************************/
 package edu.isi.karma.kr2rml.writer;
 
+import java.io.PrintWriter;
+import java.util.Properties;
+
 import edu.isi.karma.kr2rml.PredicateObjectMap;
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 
 
-public interface KR2RMLRDFWriter {
+public abstract class KR2RMLRDFWriter {
 
 
-	void outputTripleWithURIObject(String subjUri, String predicateUri,
+	protected PrintWriter outWriter;
+	
+	public void setWriter(PrintWriter outWriter)
+	{
+		this.outWriter = outWriter;
+	}
+	public void initialize(Properties p)
+	{
+		
+	}
+	public abstract void setR2RMLMappingIdentifier(R2RMLMappingIdentifier mappingIdentifer);
+	
+	public abstract void outputTripleWithURIObject(String subjUri, String predicateUri,
 			String objectUri);
 	
-	void outputTripleWithURIObject(PredicateObjectMap predicateObjectMap, String subjUri, String predicateUri,
+	public abstract void outputTripleWithURIObject(PredicateObjectMap predicateObjectMap, String subjUri, String predicateUri,
 			String objectUri);
 	
-	void outputTripleWithLiteralObject(String subjUri, String predicateUri,
+	public abstract void outputTripleWithLiteralObject(String subjUri, String predicateUri,
 			String value, String literalType);
 
-	void outputTripleWithLiteralObject(PredicateObjectMap predicateObjectMap, String subjUri, String predicateUri,
+	public abstract void outputTripleWithLiteralObject(PredicateObjectMap predicateObjectMap, String subjUri, String predicateUri,
 			String value, String literalType);
 	
-	void outputQuadWithLiteralObject(String subjUri, String predicateUri,
+	public abstract void outputQuadWithLiteralObject(String subjUri, String predicateUri,
 			String value, String literalType, String graph);
 	
-	void outputQuadWithLiteralObject(PredicateObjectMap predicateObjectMap, String subjUri, String predicateUri,
+	public abstract void outputQuadWithLiteralObject(PredicateObjectMap predicateObjectMap, String subjUri, String predicateUri,
 			String value, String literalType, String graph);
 	
-	void finishRow();
-	void flush();
-	void close();
+	public abstract void finishRow();
+	public abstract void flush();
+	public abstract void close();
 }

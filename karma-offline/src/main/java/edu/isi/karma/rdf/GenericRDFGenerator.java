@@ -47,7 +47,6 @@ import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.kr2rml.planning.RootStrategy;
 import edu.isi.karma.kr2rml.planning.SteinerTreeRootStrategy;
 import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
-import edu.isi.karma.kr2rml.writer.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rdf.InputProperties.InputProperty;
@@ -132,10 +131,9 @@ public class GenericRDFGenerator extends RdfGenerator {
 				JSONKR2RMLRDFWriter t = (JSONKR2RMLRDFWriter)writer;
 				t.setGlobalContext(context, contextId);
 			}
-			if (writer instanceof BloomFilterKR2RMLRDFWriter) {
-				BloomFilterKR2RMLRDFWriter t = (BloomFilterKR2RMLRDFWriter)writer;
-				t.setR2RMLMappingIdentifier(id);
-			}
+			
+			writer.setR2RMLMappingIdentifier(id);
+			
 		}
 		//Check if the parser for this model exists, else create one
 		WorksheetR2RMLJenaModelParser modelParser = getModelParser(modelName);

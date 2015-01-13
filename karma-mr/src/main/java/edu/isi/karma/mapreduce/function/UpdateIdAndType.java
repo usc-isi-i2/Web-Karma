@@ -5,14 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
-import org.apache.commons.cli2.CommandLine;
-import org.apache.commons.cli2.Group;
-import org.apache.commons.cli2.Option;
-import org.apache.commons.cli2.builder.ArgumentBuilder;
-import org.apache.commons.cli2.builder.DefaultOptionBuilder;
-import org.apache.commons.cli2.builder.GroupBuilder;
-import org.apache.commons.cli2.commandline.Parser;
-import org.apache.commons.cli2.util.HelpFormatter;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
@@ -24,27 +19,23 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import edu.isi.karma.rdf.CommandLineArgumentParser;
+
 public class UpdateIdAndType {
 	static String filePath = null;
 	static String outputPath = null;
 	
 	public static void main(String[] args) throws IOException {
-		Group options = createCommandLineOptions();
-        Parser parser = new Parser();
-        parser.setGroup(options);
-        HelpFormatter hf = new HelpFormatter();
-        parser.setHelpFormatter(hf);
-        parser.setHelpTrigger("--help");
-        CommandLine cl = parser.parseAndHelp(args);
-        if (cl == null || cl.getOptions().size() == 0 || cl.hasOption("--help") || !cl.hasOption("--filepath")) {
-            hf.setGroup(options);
-            hf.print();
-            return;
-        }
-		filePath = (String) cl.getValue("--filepath");
+		Options options = createCommandLineOptions();
+		CommandLine cl = CommandLineArgumentParser.parse(args, options, UpdateIdAndType.class.getSimpleName());
+		if(cl == null)
+		{
+			return;
+		}
+		filePath = (String) cl.getOptionValue("--filepath");
 		outputPath = filePath;
 		if (cl.hasOption("--outputpath")) {
-			outputPath = (String) cl.getValue("--outputpath");
+			outputPath = (String) cl.getOptionValue("--outputpath");
 		}
 		FileSystem hdfs = FileSystem.get(new Configuration());
 		RemoteIterator<LocatedFileStatus> itr = hdfs.listFiles(new Path(filePath), true);
@@ -105,37 +96,14 @@ public class UpdateIdAndType {
 		}
 	}
 	
-	private static Group createCommandLineOptions() {
-		DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
-		ArgumentBuilder abuilder = new ArgumentBuilder();
-		GroupBuilder gbuilder = new GroupBuilder();
+	private static Options createCommandLineOptions() {
 
-		Group options =
-				gbuilder
-				.withName("options")
-				.withOption(buildOption("filepath", "location of the input file directory", "filepath", obuilder, abuilder))
-				.withOption(buildOption("outputpath", "location of output file directory", "outputpath", obuilder, abuilder))
-				.withOption(obuilder
-						.withLongName("help")
-						.withDescription("print this message")
-						.create())
-						.create();
-
+		Options options = new Options();
+		options.addOption(new Option("filepath", "filepath", true, "location of the input file directory"));
+		options.addOption(new Option("outputpath", "outputpath", true, "location of output file directory"));
+		options.addOption(new Option("help", "help", false, "print this message"));
 		return options;
 	}
 
-	private static Option buildOption(String shortName, String description, String argumentName,
-			DefaultOptionBuilder obuilder, ArgumentBuilder abuilder) {
-		return obuilder
-				.withLongName(shortName)
-				.withDescription(description)
-				.withArgument(
-						abuilder
-						.withName(argumentName)
-						.withMinimum(1)
-						.withMaximum(1)
-						.create())
-						.create();
-	}
 
 }

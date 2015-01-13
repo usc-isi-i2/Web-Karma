@@ -1,4 +1,4 @@
-package edu.isi.karma.rdf;
+package edu.isi.karma.rdf.bloom;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,14 +11,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.cli2.CommandLine;
-import org.apache.commons.cli2.Group;
-import org.apache.commons.cli2.Option;
-import org.apache.commons.cli2.builder.ArgumentBuilder;
-import org.apache.commons.cli2.builder.DefaultOptionBuilder;
-import org.apache.commons.cli2.builder.GroupBuilder;
-import org.apache.commons.cli2.commandline.Parser;
-import org.apache.commons.cli2.util.HelpFormatter;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.hadoop.util.bloom.BloomFilter;
 import org.apache.hadoop.util.hash.Hash;
 
@@ -28,8 +23,9 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.uwyn.jhighlight.tools.FileUtils;
 
-import edu.isi.karma.er.helper.TripleStoreUtil;
+import edu.isi.karma.er.helper.BloomFilterTripleStoreUtil;
 import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
+import edu.isi.karma.rdf.CommandLineArgumentParser;
 import edu.isi.karma.webserver.KarmaException;
 
 
@@ -41,22 +37,15 @@ public class CombineBloomFiltersFromRDF {
     static String context;
     static String predicateURI = "http://isi.edu/integration/karma/dev#hasBloomFilter";
 	public static void main(String[] args) throws IOException, KarmaException {
-		Group options = createCommandLineOptions();
-        Parser parser = new Parser();
-        parser.setGroup(options);
-        parser.setGroup(options);
-        HelpFormatter hf = new HelpFormatter();
-        parser.setHelpFormatter(hf);
-        parser.setHelpTrigger("--help");
-        CommandLine cl = parser.parseAndHelp(args);
-        if (cl == null || cl.getOptions().size() == 0 || cl.hasOption("--help")) {
-            hf.setGroup(options);
-            hf.print();
-            return;
-        }
-        filepath = (String) cl.getValue("--filepath");
-        triplestoreURL = (String) cl.getValue("--triplestoreurl");
-        context = (String) cl.getValue("--context");
+		Options options = createCommandLineOptions();
+		CommandLine cl = CommandLineArgumentParser.parse(args, options, CombineBloomFiltersFromRDF.class.getSimpleName());
+		if(cl == null)
+		{
+			return;
+		}
+        filepath = (String) cl.getOptionValue("filepath");
+        triplestoreURL = (String) cl.getOptionValue("triplestoreurl");
+        context = (String) cl.getOptionValue("context");
         if (filepath == null || triplestoreURL == null || context == null)
         	return;
 		File file = new File(filepath);
@@ -98,7 +87,7 @@ public class CombineBloomFiltersFromRDF {
 				while(!entry.getValue().isFinished());
 				bfs.put(entry.getKey(), entry.getValue().getKR2RMLBloomFilter());
 			}
-			TripleStoreUtil utilObj = new TripleStoreUtil();
+			BloomFilterTripleStoreUtil utilObj = new BloomFilterTripleStoreUtil();
 			Set<String> triplemaps = bfs.keySet();
 			Map<String, String> bloomfilterMapping = new HashMap<String, String>();
 			bloomfilterMapping.putAll(utilObj.getBloomFiltersForMaps(triplestoreURL, context, triplemaps));
@@ -134,38 +123,15 @@ public class CombineBloomFiltersFromRDF {
 
 	}
 
-	private static Group createCommandLineOptions() {
-		DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
-		ArgumentBuilder abuilder = new ArgumentBuilder();
-		GroupBuilder gbuilder = new GroupBuilder();
+	private static Options createCommandLineOptions() {
 
-		Group options =
-				gbuilder
-				.withName("options")
-				.withOption(buildOption("filepath", "location of the input file directory", "filepath", obuilder, abuilder))
-				.withOption(buildOption("triplestoreurl", "location of the triplestore", "triplestoreurl", obuilder, abuilder))
-				.withOption(buildOption("context", "the context uri", "context", obuilder, abuilder))
-				.withOption(obuilder
-						.withLongName("help")
-						.withDescription("print this message")
-						.create())
-						.create();
+		Options options = new Options();
+		options.addOption(new Option("filepath", "filepath", false, "location of the input file directory"));
+		options.addOption(new Option("triplestoreurl", "triplestoreurl", true, "location of the triplestore"));
+		options.addOption(new Option("context", "context", true, "the context uri"));
+		options.addOption(new Option("help", "help", false, "print this message"));
 
 		return options;
-	}
-
-	public static Option buildOption(String shortName, String description, String argumentName,
-			DefaultOptionBuilder obuilder, ArgumentBuilder abuilder) {
-		return obuilder
-				.withLongName(shortName)
-				.withDescription(description)
-				.withArgument(
-						abuilder
-						.withName(argumentName)
-						.withMinimum(1)
-						.withMaximum(1)
-						.create())
-						.create();
 	}
 
 }

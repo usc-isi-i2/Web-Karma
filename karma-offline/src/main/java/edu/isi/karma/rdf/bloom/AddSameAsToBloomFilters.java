@@ -1,4 +1,4 @@
-package edu.isi.karma.rdf;
+package edu.isi.karma.rdf.bloom;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,14 +13,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.cli2.CommandLine;
-import org.apache.commons.cli2.Group;
-import org.apache.commons.cli2.Option;
-import org.apache.commons.cli2.builder.ArgumentBuilder;
-import org.apache.commons.cli2.builder.DefaultOptionBuilder;
-import org.apache.commons.cli2.builder.GroupBuilder;
-import org.apache.commons.cli2.commandline.Parser;
-import org.apache.commons.cli2.util.HelpFormatter;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.hadoop.util.bloom.Key;
 import org.apache.hadoop.util.hash.Hash;
 
@@ -29,31 +25,26 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
-import edu.isi.karma.er.helper.TripleStoreUtil;
+import edu.isi.karma.er.helper.BloomFilterTripleStoreUtil;
 import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
+import edu.isi.karma.rdf.CommandLineArgumentParser;
 import edu.isi.karma.webserver.KarmaException;
 
 public class AddSameAsToBloomFilters {
 	static String filepath;
     static String triplestoreURL;
     static String predicate;
-	public static void main(String[] args) throws KarmaException, IOException {
-		Group options = createCommandLineOptions();
-        Parser parser = new Parser();
-        parser.setGroup(options);
-        HelpFormatter hf = new HelpFormatter();
-        parser.setHelpFormatter(hf);
-        parser.setHelpTrigger("--help");
-        CommandLine cl = parser.parseAndHelp(args);
-        if (cl == null || cl.getOptions().size() == 0 || cl.hasOption("--help")) {
-            hf.setGroup(options);
-            hf.print();
-            return;
-        }
-        filepath = (String) cl.getValue("--filepath");
-        triplestoreURL = (String) cl.getValue("--triplestoreurl");
-        predicate = (String) cl.getValue("--predicate");
-        TripleStoreUtil utilObj = new TripleStoreUtil();
+	public static void main(String[] args) throws KarmaException, IOException, ParseException {
+		Options options = createCommandLineOptions();
+		CommandLine cl = CommandLineArgumentParser.parse(args, options, AddSameAsToBloomFilters.class.getSimpleName());
+		if(cl == null)
+		{
+			return;
+		}
+        filepath = (String) cl.getOptionValue("filepath");
+        triplestoreURL = (String) cl.getOptionValue("triplestoreurl");
+        predicate = (String) cl.getOptionValue("predicate");
+        BloomFilterTripleStoreUtil utilObj = new BloomFilterTripleStoreUtil();
         Set<String> predicates = new HashSet<String>();
         predicates.add(predicate);
         List<String> predicateObjectMaps = new ArrayList<String>();
@@ -79,6 +70,7 @@ public class AddSameAsToBloomFilters {
 		model.read(s, null, "TURTLE");
 		StmtIterator iterator = model.listStatements();
 		while(iterator.hasNext()) {
+			iterator.next();
 			Statement st = iterator.next();
 			String subject = "<" + st.getSubject().toString() + ">";
 			String object = "<" + st.getObject().toString() + ">";
@@ -95,38 +87,15 @@ public class AddSameAsToBloomFilters {
 		
 	}
 	
-	private static Group createCommandLineOptions() {
-		DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
-		ArgumentBuilder abuilder = new ArgumentBuilder();
-		GroupBuilder gbuilder = new GroupBuilder();
+	private static Options createCommandLineOptions() {
 
-		Group options =
-				gbuilder
-				.withName("options")
-				.withOption(buildOption("filepath", "location of the input file directory", "filepath", obuilder, abuilder))
-				.withOption(buildOption("triplestoreurl", "location of the triplestore", "triplestoreurl", obuilder, abuilder))
-				.withOption(buildOption("predicate", "the uri or the predicate", "predicate", obuilder, abuilder))
-				.withOption(obuilder
-						.withLongName("help")
-						.withDescription("print this message")
-						.create())
-						.create();
-
+		Options options = new Options();
+		options.addOption( new Option("filepath", "filepath", true, "location of the input file directory"));
+		options.addOption( new Option("triplestoreurl", "triplestoreurl", true, "location of the triple store"));
+		options.addOption( new Option("predicate", "predicate",true, "the uri or the predicate"));
+		options.addOption( new Option("help", "help", true, "print this message"));
+			
 		return options;
-	}
-
-	public static Option buildOption(String shortName, String description, String argumentName,
-			DefaultOptionBuilder obuilder, ArgumentBuilder abuilder) {
-		return obuilder
-				.withLongName(shortName)
-				.withDescription(description)
-				.withArgument(
-						abuilder
-						.withName(argumentName)
-						.withMinimum(1)
-						.withMaximum(1)
-						.create())
-						.create();
 	}
 
 

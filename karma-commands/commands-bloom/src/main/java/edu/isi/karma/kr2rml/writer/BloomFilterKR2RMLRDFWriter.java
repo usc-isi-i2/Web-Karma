@@ -3,6 +3,7 @@ package edu.isi.karma.kr2rml.writer;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Properties;
 
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
@@ -10,7 +11,7 @@ import edu.isi.karma.kr2rml.planning.TriplesMap;
 import edu.isi.karma.modeling.Uris;
 
 
-public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
+public class BloomFilterKR2RMLRDFWriter extends KR2RMLRDFWriter {
 
 	protected KR2RMLBloomFilterManager bloomFilterManager;
 	protected PrintWriter output;
@@ -19,6 +20,15 @@ public class BloomFilterKR2RMLRDFWriter implements KR2RMLRDFWriter {
 	private String baseURI;
 	public BloomFilterKR2RMLRDFWriter(PrintWriter output, boolean isRDF, String baseURI)
 	{
+		initialize(output, isRDF, baseURI);
+	}
+
+	@Override
+	public void initialize(Properties p )
+	{
+		
+	}
+	private void initialize(PrintWriter output, boolean isRDF, String baseURI) {
 		this.output = output;
 		this.isRDF = isRDF;
 		this.baseURI = baseURI;

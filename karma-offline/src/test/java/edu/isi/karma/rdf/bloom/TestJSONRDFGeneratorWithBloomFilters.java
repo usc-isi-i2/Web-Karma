@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.rdf;
+package edu.isi.karma.rdf.bloom;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -47,7 +47,10 @@ import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.writer.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
 import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilterManager;
+import edu.isi.karma.rdf.GenericRDFGenerator;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
+import edu.isi.karma.rdf.RDFGeneratorRequest;
+import edu.isi.karma.rdf.TestRdfGenerator;
 import edu.isi.karma.webserver.KarmaException;
 
 

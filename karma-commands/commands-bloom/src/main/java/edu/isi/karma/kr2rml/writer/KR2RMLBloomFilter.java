@@ -12,6 +12,7 @@ import java.util.zip.InflaterInputStream;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.hadoop.util.bloom.BloomFilter;
+//import org.apache.hadoop.util.bloom.BloomFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

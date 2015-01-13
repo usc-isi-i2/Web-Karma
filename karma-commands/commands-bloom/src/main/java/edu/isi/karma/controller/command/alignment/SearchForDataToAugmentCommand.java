@@ -28,8 +28,8 @@ import edu.isi.karma.controller.command.WorksheetSelectionCommand;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.BloomFilterTripleStoreUtil;
 import edu.isi.karma.er.helper.CloneTableUtils;
-import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
@@ -86,7 +86,7 @@ public class SearchForDataToAugmentCommand extends WorksheetSelectionCommand{
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(worksheet);
 		RepFactory factory = workspace.getFactory();
-		TripleStoreUtil util = new TripleStoreUtil();
+		BloomFilterTripleStoreUtil util = new BloomFilterTripleStoreUtil();
 		HashMap<String, List<String>> result = null;
 		nodeUri = nodeUri.trim();
 		Map<String, Label> parents = workspace.getOntologyManager().getSuperClasses(nodeUri, true);
