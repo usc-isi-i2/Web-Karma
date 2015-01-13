@@ -13,7 +13,7 @@ import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
-import edu.isi.karma.mapreduce.driver.BaseKarma;
+import edu.isi.karma.rdf.BaseKarma;
 import edu.isi.karma.storm.strategy.JoinStrategy;
 
 public class KarmaJoinBolt extends BaseRichBolt {

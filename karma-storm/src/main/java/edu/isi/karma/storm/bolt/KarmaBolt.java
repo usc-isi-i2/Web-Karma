@@ -19,7 +19,7 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
-import edu.isi.karma.mapreduce.driver.BaseKarma;
+import edu.isi.karma.rdf.BaseKarma;
 import edu.isi.karma.rdf.RDFGeneratorRequest;
 
 public class KarmaBolt extends BaseRichBolt {

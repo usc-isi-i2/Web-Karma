@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
+import edu.isi.karma.rdf.BaseKarma;
 import edu.isi.karma.rdf.RDFGeneratorRequest;
 
 public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {

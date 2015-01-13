@@ -1,76 +1,120 @@
 package edu.isi.karma.storm;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.storm.hdfs.bolt.SequenceFileBolt;
-import org.apache.storm.hdfs.bolt.format.DefaultFileNameFormat;
-import org.apache.storm.hdfs.bolt.rotation.FileSizeRotationPolicy;
-import org.apache.storm.hdfs.bolt.rotation.FileSizeRotationPolicy.Units;
-import org.apache.storm.hdfs.bolt.sync.CountSyncPolicy;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.storm.bolt.KarmaBolt;
-import edu.isi.karma.storm.bolt.KarmaReducerBolt;
-import edu.isi.karma.storm.function.KarmaSequenceFormat;
-import edu.isi.karma.storm.spout.KarmaSequenceFileSpout;
 import backtype.storm.Config;
-import backtype.storm.LocalCluster;
+import backtype.storm.ILocalCluster;
+import backtype.storm.Testing;
 import backtype.storm.generated.StormTopology;
+import backtype.storm.testing.CompleteTopologyParam;
+import backtype.storm.testing.MkClusterParam;
+import backtype.storm.testing.MockedSources;
+import backtype.storm.testing.TestJob;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
-import backtype.storm.utils.Utils;
+import backtype.storm.tuple.Values;
+import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.storm.bolt.KarmaBolt;
+import edu.isi.karma.storm.bolt.KarmaReducerBolt;
 
 public class TestBasicKarmaTopology {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TestBasicKarmaTopology.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(TestBasicKarmaTopology.class);
+
 	@Test
-	public void testBasicTopology(){ 
-		TopologyBuilder builder = new TopologyBuilder(); 
-		builder.setSpout("karma-seq-spout", new KarmaSequenceFileSpout());
-		Properties basicKarmaBoltProperties = new Properties();
-		basicKarmaBoltProperties.setProperty("name", "Stormy");
-		basicKarmaBoltProperties.setProperty("karma.input.type", "JSON");
-		basicKarmaBoltProperties.setProperty("base.uri", "http://ex.com");
-		String source = null; 
+	public void testBasicTopology() {
+		 PythonRepository.getInstance();
+		MkClusterParam mkClusterParam = new MkClusterParam();
+		Config daemonConf = new Config();
+		daemonConf.put(Config.STORM_LOCAL_MODE_ZMQ, false);
+		mkClusterParam.setDaemonConf(daemonConf);
+
 		try {
-			source = new File(this.getClass().getClassLoader().getResource("people-model.ttl").toURI()).getAbsolutePath().toString();
-			basicKarmaBoltProperties.setProperty("model.file", source);
-		} catch (URISyntaxException e) {
-			LOG.error("Unable to load model", e);
+			Testing.withSimulatedTimeLocalCluster(mkClusterParam,
+					new TestJob() {
+
+						@SuppressWarnings({ "rawtypes", "unchecked" })
+						@Override
+						public void run(ILocalCluster cluster) throws Exception {
+							// TODO Auto-generated method stub
+							TopologyBuilder builder = new TopologyBuilder(); 
+							builder.setSpout("karma-json-spout", new BasicJSONTestSpout());
+							Properties basicKarmaBoltProperties = new Properties();
+							basicKarmaBoltProperties.setProperty("name", "Stormy");
+							basicKarmaBoltProperties.setProperty("karma.input.type", "JSON");
+							basicKarmaBoltProperties.setProperty("base.uri", "http://ex.com");
+							String source = null; 
+							try {
+								source = new File(this.getClass().getClassLoader().getResource("people-model.ttl").toURI()).getAbsolutePath().toString();
+								basicKarmaBoltProperties.setProperty("model.file", source);
+							} catch (URISyntaxException e) {
+								LOG.error("Unable to load model", e);
+							}
+							builder.setBolt("karma-generate-json", new KarmaBolt(basicKarmaBoltProperties)).shuffleGrouping("karma-json-spout");
+
+							Set<String> sources = new HashSet<String>();
+							sources.add(source);
+							KarmaReducerBolt reducerBolt = new KarmaReducerBolt(sources);
+							builder.setBolt("karma-reducer-json", reducerBolt).fieldsGrouping("karma-generate-json", new Fields("id"));
+							
+							String inputs = IOUtils.toString(getTestResource("input/people.json"));
+							JSONArray array = new JSONArray(inputs);
+							List<Values> values = new LinkedList<Values>();
+							for(int i = 0; i < array.length(); i++)
+							{
+								JSONObject obj = array.getJSONObject(i);
+								values.add(new Values("a.txt",obj.toString()));
+							}
+							
+							 MockedSources mockedSources = new MockedSources();
+			                 mockedSources.addMockData("karma-json-spout", values.toArray(new Values[values.size()]));
+			                    
+							Config config = new Config();
+							config.setDebug(true);
+							
+							StormTopology topology = builder.createTopology(); 
+							CompleteTopologyParam completeTopologyParam = new CompleteTopologyParam();
+		                    completeTopologyParam.setMockedSources(mockedSources);
+		                    completeTopologyParam.setStormConf(config);
+		                    Map results = Testing.completeTopology(cluster, topology, completeTopologyParam);
+							ArrayList<String> karmaJsonSpoutResults = ( ArrayList<String>)results.get("karma-json-spout");
+		                    Assert.assertEquals(7, karmaJsonSpoutResults.size() );
+							ArrayList<String> karmaJsonReducerResults = ( ArrayList<String>)results.get("karma-reducer-json");
+		                    Assert.assertEquals(7, karmaJsonReducerResults.size() );
+							ArrayList<String> karmaBoltResults = ( ArrayList<String>)results.get("karma-generate-json");
+		                    Assert.assertEquals(7, karmaBoltResults.size() );
+						}
+					});
+
+		} catch (Exception ex) {
+			if ((ex instanceof IOException) == false) {
+				throw ex;
+			}
 		}
-		builder.setBolt("karma-generate-json", new KarmaBolt(basicKarmaBoltProperties)).shuffleGrouping("karma-seq-spout");
-		SequenceFileBolt sequenceFileBolt = new SequenceFileBolt();
-		
-		KarmaSequenceFormat sequenceFormat = new KarmaSequenceFormat("id", "json");
-		sequenceFileBolt.withSequenceFormat(sequenceFormat);
-		DefaultFileNameFormat fileNameFormat = new DefaultFileNameFormat();
-		fileNameFormat.withExtension(".seq");
-		fileNameFormat.withPath("/tmp/storm");
-		fileNameFormat.withPrefix("karma");
-		sequenceFileBolt.withFileNameFormat(fileNameFormat);
-		sequenceFileBolt.withFsUrl("file:///");
-		sequenceFileBolt.withSyncPolicy(new CountSyncPolicy(1));
-		sequenceFileBolt.withRotationPolicy(new FileSizeRotationPolicy(1, Units.KB));
-		Set<String> sources = new HashSet<String>();
-		sources.add(source);
-		KarmaReducerBolt reducerBolt = new KarmaReducerBolt(sources);
-		builder.setBolt("karma-reducer-json", reducerBolt).fieldsGrouping("karma-generate-json", new Fields("id"));
-		builder.setBolt("karma-output-json", sequenceFileBolt).shuffleGrouping("karma-reducer-json");
-		Config config = new Config();
-		config.put("input.path", "/tmp/loaded_data/simpleloader.seq");
-		config.setDebug(true);
-		StormTopology topology = builder.createTopology(); 
-		LocalCluster cluster = new LocalCluster(); 
-		cluster.submitTopology("karma-basic-topology",
-         config,
-         topology); 
-		Utils.sleep(60000);
-		cluster.killTopology("karma-basic-topology");
+
+	}
+	
+	protected URL getTestResource(String name)
+	{
+		return getClass().getClassLoader().getResource(name);
 	}
 }

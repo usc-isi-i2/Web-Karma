@@ -1,4 +1,4 @@
-package edu.isi.karma.mapreduce.driver;
+package edu.isi.karma.rdf;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +21,6 @@ import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.rdf.GenericRDFGenerator;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.webserver.KarmaException;
 

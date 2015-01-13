@@ -23,7 +23,7 @@ public class KarmaReducerBolt extends BaseRichBolt {
 	private OutputCollector collector;
 	protected Map<String, JSONToMerge> allJsonToMerge;
 	protected Set<String> models;
-	protected Boolean outputId;
+	protected Boolean outputId = false;
 	public KarmaReducerBolt(Set<String> models)
 	{
 		this.models = models;
