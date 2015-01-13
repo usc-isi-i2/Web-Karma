@@ -112,6 +112,11 @@
 									<mainClass></mainClass>
 								</transformer>
 							</transformers>
+							<artifactSet>
+                				<excludes>
+                 					<exclude>org.apache.storm:storm-core</exclude>
+                 				</excludes>
+                 			</artifactSet>
 							<filters>
 								<filter>
 									<artifact>*:*</artifact>
