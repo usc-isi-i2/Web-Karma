@@ -18,6 +18,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.rep.alignment.ColumnNode;
@@ -158,7 +159,8 @@ public class PatternReader {
 						LinkIdFactory.getLinkId(s, source.getId(), target.getId()), 
 						new Label(s), ObjectPropertyType.None);
 				graph.addEdge(source, target, link);
-				graph.setEdgeWeight(link, frequency);
+//				graph.setEdgeWeight(link, frequency);
+				graph.setEdgeWeight(link, ModelingParams.PROPERTY_DIRECT_WEIGHT - (double)size / ModelingParams.PROPERTY_DIRECT_WEIGHT);
 			} else if (header.startsWith(DATA_PROPERTY_PREFIX)) {
 				key = header.substring(DATA_PROPERTY_PREFIX.length());
 				if (key.length() != 2) continue; // the object property header should be in form of prefix (dp) + [1..9] + [a..z] --> the key is "xy"
@@ -168,7 +170,8 @@ public class PatternReader {
 						LinkIdFactory.getLinkId(s, source.getId(), target.getId()), 
 						new Label(s));
 				graph.addEdge(source, target, link);
-				graph.setEdgeWeight(link, frequency);
+//				graph.setEdgeWeight(link, frequency);
+				graph.setEdgeWeight(link, ModelingParams.PROPERTY_DIRECT_WEIGHT - (double)size / ModelingParams.PROPERTY_DIRECT_WEIGHT);
 			}
 		}
 

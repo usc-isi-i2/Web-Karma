@@ -45,7 +45,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 	}
 	
 	public GraphBuilderTopK(OntologyManager ontologyManager, DirectedWeightedMultigraph<Node, DefaultLink> graph) {
-		super(ontologyManager, graph);
+		super(ontologyManager, graph, false);
 		if (topKGraph == null) topKGraph = new HashMap<SteinerNode, TreeSet<SteinerEdge>>();
 		if (topKGraphNodes == null) topKGraphNodes = new HashMap<String, SteinerNode>();
 	}

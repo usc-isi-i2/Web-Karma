@@ -100,7 +100,7 @@ public abstract class ModelLearningGraph {
 			if (type == ModelLearningGraphType.Compact)
 				this.graphBuilder = new GraphBuilderTopK(ontologyManager, graph);
 			else
-				this.graphBuilder = new GraphBuilder(ontologyManager, graph);
+				this.graphBuilder = new GraphBuilder(ontologyManager, graph, false);
 			this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 			logger.info("loading is done!");
 		}
@@ -128,7 +128,7 @@ public abstract class ModelLearningGraph {
 	public GraphBuilder getGraphBuilderClone() {
 		GraphBuilder clonedGraphBuilder = null;
 		if (this instanceof ModelLearningGraphSparse) {
-			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, this.getGraphBuilder().getGraph());
+			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, this.getGraphBuilder().getGraph(), false);
 		} else if (this instanceof ModelLearningGraphCompact) {
 			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, this.getGraphBuilder().getGraph());
 		}

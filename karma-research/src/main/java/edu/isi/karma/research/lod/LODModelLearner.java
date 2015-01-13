@@ -168,6 +168,9 @@ public class LODModelLearner {
 
 	public List<SortableSemanticModel> hypothesize(boolean useCorrectTypes, int numberOfCandidates) throws Exception {
 
+		logger.info("graph nodes: " + this.graphBuilder.getGraph().vertexSet().size());
+		logger.info("graph links: " + this.graphBuilder.getGraph().edgeSet().size());
+
 		List<SortableSemanticModel> sortableSemanticModels = new ArrayList<SortableSemanticModel>();
 		Set<Node> addedNodes = new HashSet<Node>(); //They should be deleted from the graph after computing the semantic models
 
@@ -330,7 +333,7 @@ public class LODModelLearner {
 		Set<SemanticTypeMapping> tempSemanticTypeMappings;
 		HashMap<ColumnNode, List<SemanticType>> columnSemanticTypes = new HashMap<ColumnNode, List<SemanticType>>();
 		HashMap<String, Integer> semanticTypesCount = new HashMap<String, Integer>();
-		List<SemanticType> candidateSemanticTypes;
+		List<SemanticType> candidateSemanticTypes = null;
 		String domainUri = "", propertyUri = "";
 
 		for (Node n : steinerNodes) {
@@ -340,8 +343,18 @@ public class LODModelLearner {
 				cn = (ColumnNode)n;
 			else
 				continue;
-				
-			candidateSemanticTypes = cn.getTopKLearnedSemanticTypes(numberOfCandidates);
+			
+			if (!useCorrectTypes) {
+				candidateSemanticTypes = cn.getTopKLearnedSemanticTypes(numberOfCandidates);
+			} else if (cn.hasUserType()) {
+				candidateSemanticTypes = cn.getUserSemanticTypes();
+			}
+			
+			if (candidateSemanticTypes == null) {
+				logger.error("No candidate semantic type found for the column " + cn.getColumnName());
+				return null;
+			}
+			
 			columnSemanticTypes.put(cn, candidateSemanticTypes);
 
 			for (SemanticType semanticType: candidateSemanticTypes) {
@@ -391,22 +404,23 @@ public class LODModelLearner {
 				Integer countOfSemanticType = semanticTypesCount.get(domainUri + propertyUri);
 				logger.debug("count of semantic type: " +  countOfSemanticType);
 
-				if (cn.hasUserType()) {
-					HashMap<SemanticType, LabeledLink> domainLinks = 
-							GraphUtil.getDomainLinks(this.graphBuilder.getGraph(), cn, cn.getUserSemanticTypes());
-					if (domainLinks != null) {
-						for (SemanticType st : cn.getUserSemanticTypes()) {
-							semanticTypeMappings = new HashSet<SemanticTypeMapping>();
-							LabeledLink domainLink = domainLinks.get(st);
-							if (domainLink.getSource() == null || !(domainLink.getSource() instanceof InternalNode))
-								continue;
-							SemanticTypeMapping mp = 
-									new SemanticTypeMapping(cn, st, (InternalNode)domainLink.getSource(), domainLink, cn);
-							semanticTypeMappings.add(mp);
-							candidateSteinerSets.updateSteinerSets(semanticTypeMappings);
-						}
-					}
-				} else {
+//				if (cn.hasUserType()) {
+//					HashMap<SemanticType, LabeledLink> domainLinks = 
+//							GraphUtil.getDomainLinks(this.graphBuilder.getGraph(), cn, cn.getUserSemanticTypes());
+//					if (domainLinks != null && !domainLinks.isEmpty()) {
+//						for (SemanticType st : cn.getUserSemanticTypes()) {
+//							semanticTypeMappings = new HashSet<SemanticTypeMapping>();
+//							LabeledLink domainLink = domainLinks.get(st);
+//							if (domainLink.getSource() == null || !(domainLink.getSource() instanceof InternalNode))
+//								continue;
+//							SemanticTypeMapping mp = 
+//									new SemanticTypeMapping(cn, st, (InternalNode)domainLink.getSource(), domainLink, cn);
+//							semanticTypeMappings.add(mp);
+//							candidateSteinerSets.updateSteinerSets(semanticTypeMappings);
+//						}
+//					}
+//				} else 
+				{
 
 					tempSemanticTypeMappings = findSemanticTypeInGraph(cn, semanticType, semanticTypesCount, addedNodes);
 					logger.debug("number of matches for semantic type: " +  
@@ -806,15 +820,17 @@ public class LODModelLearner {
 		List<SemanticModel> semanticModels = 
 				ModelReader.importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
 
-		List<SemanticModel> trainingData = new ArrayList<SemanticModel>();
-
-
 		LODModelLearner modelLearner = null;
 
-		boolean useCorrectType = false;
-		int numberOfCRFCandidates = 4;
+		boolean randomModel = false;
+		boolean useCorrectType = true;
+		int numberOfCRFCandidates = 1;
 		String filePath = Params.RESULTS_DIR;
-		String filename = "results,k=" + numberOfCRFCandidates + ".csv"; 
+		String filename = "";
+		filename += "results,k=" + numberOfCRFCandidates;
+		filename += useCorrectType ? "-correct types":"";
+		filename += randomModel ? "-random":"";
+		filename += ".csv"; 
 		PrintWriter resultFile = new PrintWriter(new File(filePath + filename));
 
 		resultFile.println("source \t p \t r \t t \n");
@@ -831,15 +847,6 @@ public class LODModelLearner {
 			System.out.println(newSource.getName() + "(#attributes:" + newSource.getColumnNodes().size() + ")");
 			logger.info("======================================================");
 
-
-			trainingData.clear();
-
-			for (int j = 0; j < semanticModels.size(); j++) {
-				if (j != newSourceIndex) {
-					trainingData.add(semanticModels.get(j));
-				}
-			}
-
 			SemanticModel correctModel = newSource;
 			List<ColumnNode> columnNodes = correctModel.getColumnNodes();
 
@@ -848,12 +855,14 @@ public class LODModelLearner {
 
 			String graphName = graphPath + "lod" + Params.GRAPH_FILE_EXT; 
 
-			if (new File(graphName).exists()) {
+			if (randomModel) {
+				modelLearner = new LODModelLearner(new GraphBuilder(ontologyManager, false), steinerNodes);
+			} else if (new File(graphName).exists()) {
 				// read graph from file
 				try {
 					logger.info("loading the graph ...");
 					DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
-					modelLearner = new LODModelLearner(new GraphBuilder(ontologyManager, graph), steinerNodes);
+					modelLearner = new LODModelLearner(new GraphBuilder(ontologyManager, graph, true), steinerNodes);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -912,7 +921,7 @@ public class LODModelLearner {
 						logger.info("precision: " + me.getPrecision() + 
 								", recall: " + me.getRecall() + 
 								", time: " + elapsedTimeSec);
-						String s = newSource.getName() + me.getPrecision() + "\t" + me.getRecall() + "\t" + elapsedTimeSec;
+						String s = newSource.getName() + "\t" + me.getPrecision() + "\t" + me.getRecall() + "\t" + elapsedTimeSec;
 						resultFile.println(s);
 
 					}

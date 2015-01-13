@@ -147,7 +147,7 @@ public class ModelLearner_Old {
 		if (graphBuilder == null || graphBuilder.getGraph() == null) {
 			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, false);
 		} else {
-			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, graphBuilder.getGraph());
+			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, graphBuilder.getGraph(), false);
 		}
 		this.nodeIdFactory = clonedGraphBuilder.getNodeIdFactory();
 		return clonedGraphBuilder;
@@ -767,7 +767,7 @@ public class ModelLearner_Old {
 					try {
 						logger.info("loading the graph ...");
 						DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
-						modelLearner.graphBuilder = new GraphBuilder(ontologyManager, graph);
+						modelLearner.graphBuilder = new GraphBuilder(ontologyManager, graph, false);
 						modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					} catch (Exception e) {
 						e.printStackTrace();
