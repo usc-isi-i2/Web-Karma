@@ -1,4 +1,4 @@
-package edu.isi.karma.storm;
+package edu.isi.karma.storm.function;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;

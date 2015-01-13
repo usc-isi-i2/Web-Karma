@@ -25,8 +25,12 @@ package edu.isi.karma.rep;
 
 import java.io.PrintWriter;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.controller.command.selection.SuperSelection;
 
 /**
  * @author szekely
@@ -202,5 +206,24 @@ public class Node extends RepEntity implements Neighbor {
 	@Override
 	public Node getNeighborByColumnName(String columnName, RepFactory factory) {
 		return belongsToRow.getNeighborByColumnName(columnName, factory);
+	}
+
+	public String serializeToJSON(SuperSelection selection, RepFactory factory) {
+		if (this.hasNestedTable()) {
+			JSONArray array = new JSONArray();
+			Table t = this.getNestedTable();
+			HTable ht = factory.getHTable(t.getHTableId());
+			for (Row r : t.getRows(0, t.getNumRows(), selection)) {
+				for (HNode hNode : ht.getHNodes()) {
+					JSONObject obj = new JSONObject();
+					obj.put(hNode.getColumnName(), r.getNeighbor(hNode.getId()).serializeToJSON(selection, factory));
+					array.put(obj);
+				}
+			}
+			return array.toString();
+		}
+		else {
+			return this.getValue().asString();
+		}
 	}
 }

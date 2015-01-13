@@ -191,6 +191,8 @@
 						<label>
 							<div class="col-sm-5">On Error:</div>
 							<div class="col-sm-6"><input class="form-control" type="text" id="pythonTransformErrorDefaultValue" /></div>
+							<div class="col-sm-5">Use JSON Output:</div>
+							<div class="col-sm-6"><input class="form-control" type="checkbox" id="pythonTransformUseJSONOutput" /></div>
 						</label>
 					</div>
 					<button type="button" class="btn btn-default" id="btnErrors">View Errors</button>

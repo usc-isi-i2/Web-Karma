@@ -1,4 +1,4 @@
-package edu.isi.karma.storm;
+package edu.isi.karma.storm.strategy;
 
 import java.io.Serializable;
 import java.util.Map;

@@ -1,4 +1,6 @@
-package edu.isi.karma.storm;
+package edu.isi.karma.storm.function;
+
+import java.io.IOException;
 
 import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.Group;
@@ -9,17 +11,19 @@ import org.apache.commons.cli2.builder.GroupBuilder;
 import org.apache.commons.cli2.commandline.Parser;
 import org.apache.commons.cli2.util.HelpFormatter;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
-import org.json.JSONObject;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Transaction;
-
-public class ImportJedisData {
-
-	public static void main(String[] args) {
+public class LoadElasticSearchFromSequenceFile {
+	static String filePath = null;
+	public static void main(String[] args) throws IOException {
 		Group options = createCommandLineOptions();
         Parser parser = new Parser();
         parser.setGroup(options);
@@ -32,37 +36,35 @@ public class ImportJedisData {
             hf.print();
             return;
         }
-        String auth =  (String) cl.getValue("--auth");
-        String filePath =  (String) cl.getValue("--filepath");
-        String atId =  (String) cl.getValue("--atid");
-		Jedis jedis = new Jedis("karma-dig-service.cloudapp.net",55299);
-		jedis.auth(auth);
-		Configuration conf = new Configuration();
-		try {
-			SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(new Path(filePath)));
-			Text key = new Text();
-			Text val = new Text();
-			int i = 0;
-			Transaction t = jedis.multi();
-			while(reader.next(key, val))
-			{
-				JSONObject obj = new JSONObject(val.toString());
-				t.set(obj.getString(atId), obj.toString());
-				i++;
-				if (i % 10000 == 0) {
-					t.exec();
-					t = jedis.multi();
-				}
+		filePath = (String) cl.getValue("--filepath");
+		FileSystem hdfs = FileSystem.get(new Configuration());
+		RemoteIterator<LocatedFileStatus> itr = hdfs.listFiles(new Path(filePath), true);
+		while (itr.hasNext()) {
+			LocatedFileStatus status = itr.next();
+			if (status.getLen() > 0) {
+				createJSONFromSequenceFileFrom(status.getPath());
 			}
-			t.exec();
-			reader.close();		
 		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		jedis.close();
 	}
 
+	public static void createJSONFromSequenceFileFrom(Path input) throws IOException {
+		Path inputPath = input;
+		Configuration conf = new Configuration();
+		SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(inputPath));
+		Text key = new Text();
+		Text val = new Text();
+		Client client = new TransportClient().addTransportAddress(new InetSocketTransportAddress("localhost", 9300));
+		while(reader.next(key, val))
+		{
+			client.prepareIndex("twitter", "tweet")
+			        .setSource(val.toString())
+			        .execute()
+			        .actionGet();	
+		}
+		client.close();
+		reader.close();
+	}
+	
 	private static Group createCommandLineOptions() {
 		DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
 		ArgumentBuilder abuilder = new ArgumentBuilder();
@@ -72,8 +74,6 @@ public class ImportJedisData {
 				gbuilder
 				.withName("options")
 				.withOption(buildOption("filepath", "location of the input file directory", "filepath", obuilder, abuilder))
-				.withOption(buildOption("auth", "auth string", "auth", obuilder, abuilder))
-				.withOption(buildOption("atid", "context at id", "atid", obuilder, abuilder))
 				.withOption(obuilder
 						.withLongName("help")
 						.withDescription("print this message")
@@ -96,5 +96,7 @@ public class ImportJedisData {
 						.create())
 						.create();
 	}
+	
+
 
 }

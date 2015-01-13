@@ -133,7 +133,7 @@ public class GraphBuilder {
 		
 	}
 	
-	public GraphBuilder(OntologyManager ontologyManager, DirectedWeightedMultigraph<Node, DefaultLink> graph) {
+	public GraphBuilder(OntologyManager ontologyManager, DirectedWeightedMultigraph<Node, DefaultLink> graph, boolean useOriginalWeights) {
 		
 		this(ontologyManager, false);
 		if (graph == null)
@@ -156,7 +156,10 @@ public class GraphBuilder {
 			source = link.getSource();
 			target = link.getTarget();
 			
-			this.addLink(source, target, link);
+			if (useOriginalWeights)
+				this.addLink(source, target, link, link.getWeight());
+			else
+				this.addLink(source, target, link);
 		}
 		
 		logger.debug("graph has been loaded.");

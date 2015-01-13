@@ -10,6 +10,10 @@ import org.apache.storm.hdfs.bolt.rotation.FileSizeRotationPolicy.Units;
 import org.apache.storm.hdfs.bolt.sync.CountSyncPolicy;
 import org.junit.Test;
 
+import edu.isi.karma.storm.bolt.KarmaJoinBolt;
+import edu.isi.karma.storm.function.KarmaSequenceFormat;
+import edu.isi.karma.storm.spout.KarmaSequenceFileSpout;
+import edu.isi.karma.storm.strategy.JedisJoinStrategy;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.generated.StormTopology;

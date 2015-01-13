@@ -34,7 +34,7 @@ public class RowColumnAffinity implements ColumnAffinity {
 	@Override
 	public boolean isValidFor(HNodePath a, HNodePath b) {
 		HNodePath commonPath = HNodePath.findCommon(a, b);
-		if(commonPath == null)
+		if(commonPath == null || a == null || b == null)
 			return false;
 		int commonPathLength = commonPath.length();
 		return commonPathLength +1 == a.length() && commonPathLength +1 == b.length();

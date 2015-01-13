@@ -15,6 +15,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.storm.bolt.KarmaBolt;
+import edu.isi.karma.storm.bolt.KarmaReducerBolt;
+import edu.isi.karma.storm.function.KarmaSequenceFormat;
+import edu.isi.karma.storm.spout.KarmaSequenceFileSpout;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.generated.StormTopology;

@@ -45,6 +45,7 @@ import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphBuilderTopK;
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.GraphVizLabelType;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.ModelEvaluation;
@@ -917,7 +918,14 @@ public class ModelLearner {
 					// save graph to file
 					try {
 						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName);
-						GraphVizUtil.exportJGraphToGraphviz(modelLearner.graphBuilder.getGraph(), "test", true, false, true, graphName + ".dot");
+						GraphVizUtil.exportJGraphToGraphviz(modelLearner.graphBuilder.getGraph(), 
+								"test", 
+								true, 						
+								GraphVizLabelType.LocalId,
+								GraphVizLabelType.LocalUri,
+								false, 
+								true, 
+								graphName + ".dot");
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -999,6 +1007,8 @@ public class ModelLearner {
 						models, 
 						newSource.getName(),
 						outName,
+						GraphVizLabelType.LocalId,
+						GraphVizLabelType.LocalUri,
 						true,
 						false);
 				//				}

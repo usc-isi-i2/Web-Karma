@@ -233,7 +233,7 @@ public class ModelingConfiguration {
 	public static Boolean getManualAlignment() {
 		if (manualAlignment == null) {
 			load();
-			logger.info("Manual Alignment:" + manualAlignment);
+			logger.debug("Manual Alignment:" + manualAlignment);
 		}
 		return manualAlignment;
 	}

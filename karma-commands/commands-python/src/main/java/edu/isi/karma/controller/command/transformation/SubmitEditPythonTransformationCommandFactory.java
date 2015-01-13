@@ -38,7 +38,7 @@ public class SubmitEditPythonTransformationCommandFactory extends JSONInputComma
 	private enum Arguments {
 		newColumnName, transformationCode, worksheetId, 
 		hNodeId, errorDefaultValue, previousCommandId, 
-		targetHNodeId, selectionName
+		targetHNodeId, selectionName, isJSONOutput
 	}
 	
 	@Override
@@ -58,9 +58,15 @@ public class SubmitEditPythonTransformationCommandFactory extends JSONInputComma
 		String targetHNodeId = HistoryJsonUtil.getStringValue(Arguments.targetHNodeId.name(), inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		boolean isJSONOutput = false;
+		try {
+			isJSONOutput = Boolean.parseBoolean(CommandInputJSONUtil.getStringValue(Arguments.isJSONOutput.name(), inputJson));
+		}
+		catch(Exception e)
+		{}
 		SubmitEditPythonTransformationCommand comm = new SubmitEditPythonTransformationCommand(getNewId(workspace), 
 				newColumnName, code, worksheetId, hNodeId, errorDefaultValue, targetHNodeId, 
-				selectionName);
+				selectionName, isJSONOutput);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

@@ -12,6 +12,9 @@ import org.apache.storm.hdfs.bolt.format.DefaultFileNameFormat;
 import org.elasticsearch.storm.EsBolt;
 import org.junit.Test;
 
+import edu.isi.karma.storm.bolt.KarmaBolt;
+import edu.isi.karma.storm.bolt.KarmaReducerBolt;
+import edu.isi.karma.storm.spout.KarmaSequenceFileSpout;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.generated.StormTopology;

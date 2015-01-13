@@ -100,6 +100,7 @@ public class PythonTransformationHelper {
 			StringBuilder importStmt = new StringBuilder();
 			importStmt.append("import re\n");
 			importStmt.append("import datetime\n");
+			importStmt.append("import json\n");
 			importStmt.append("import edu.isi.karma.rep.WorkspaceManager\n");
 			importStmt.append("import edu.isi.karma.rep.Workspace\n");
 			importStmt.append("import edu.isi.karma.rep.Node\n");
