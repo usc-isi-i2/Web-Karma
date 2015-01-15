@@ -37,7 +37,7 @@ public class KarmaReducerBolt extends BaseRichBolt {
 	
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void prepare(Map stormConf, TopologyContext context,
+	public void prepare(Map globalConf, TopologyContext context,
 			OutputCollector collector) {
 		allJsonToMerge = new HashMap<String, JSONToMerge>();
 		this.collector = collector;

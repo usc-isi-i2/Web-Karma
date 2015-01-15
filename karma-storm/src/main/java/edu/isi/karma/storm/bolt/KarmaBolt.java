@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
-import java.util.Properties;
 
 import org.json.JSONArray;
 import org.slf4j.Logger;
@@ -31,19 +30,19 @@ public class KarmaBolt extends BaseRichBolt {
 	 */
 	private static final long serialVersionUID = 1L;
 	private OutputCollector outputCollector;
-	private Properties config;
+	@SuppressWarnings("rawtypes")
+	private Map localConfig;
 
-	public KarmaBolt(Properties config)
+	@SuppressWarnings("rawtypes")
+	public KarmaBolt(Map localConfig)
 	{
-		this.config = config;
+		this.localConfig = localConfig;
 	}
 	
 	@Override
 	public void execute(Tuple tuple) {
 		
-		System.out.println("My name is: " + config.getProperty("name"));
 		long start = System.currentTimeMillis();
-		System.out.println("id: "+tuple.getStringByField("id"));
 		StringWriter sw = new StringWriter();
 		KR2RMLRDFWriter outWriter = configureRDFWriter(sw);
 		try {
@@ -63,7 +62,7 @@ public class KarmaBolt extends BaseRichBolt {
 		finally{
 			outputCollector.ack(tuple);
 		}
-		System.out.println("id: "+ tuple.getStringByField("id") + " " + (System.currentTimeMillis() - start));
+		LOG.debug("id: "+ tuple.getStringByField("id") + " " + (System.currentTimeMillis() - start));
 	}
 
 	protected KR2RMLRDFWriter configureRDFWriter(StringWriter sw) {
@@ -84,12 +83,12 @@ public class KarmaBolt extends BaseRichBolt {
 	
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void prepare(Map configMap, TopologyContext arg1, OutputCollector outputCollector) {
+	public void prepare(Map globalConfig, TopologyContext arg1, OutputCollector outputCollector) {
 		this.outputCollector = outputCollector;
 		karma = new BaseKarma();
-		karma.setup(config.getProperty("karma.input.type"), config.getProperty("model.uri"), config.getProperty("model.file"), 
-				config.getProperty("base.uri"), config.getProperty("context.uri"), 
-				config.getProperty("rdf.generation.root"), config.getProperty("rdf.generation.selection"));
+		karma.setup((String)localConfig.get("karma.input.type"), (String)localConfig.get("model.uri"), (String)localConfig.get("model.file"), 
+				(String)localConfig.get("base.uri"), (String)localConfig.get("context.uri"), 
+				(String)localConfig.get("rdf.generation.root"), (String)localConfig.get("rdf.generation.selection"));
 		
 	}
 
