@@ -165,6 +165,29 @@ public class CreateSequenceFile {
 					if (tmp == ']')
 						break;
 				}
+			} else if(c == '{') {
+				tokener.back();
+				Object o = tokener.nextValue();
+				if (o instanceof JSONObject) {
+					JSONObject obj = (JSONObject) o;
+					SequenceFile.Writer writer = getWriter(obj);
+					if(useKey)
+					{
+						if(outputFileName)
+						{
+							writer.append(new Text(fileName), new Text(obj.toString()));
+						}
+						else
+						{
+							writer.append(new Text(obj.getString("@id")), new Text(obj.toString()));
+						}
+					}
+					else
+					{
+						writer.append(new BytesWritable(), new Text(obj.toString()));
+					}
+						
+				}
 			}
 		}
 		
