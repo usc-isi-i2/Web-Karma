@@ -24,6 +24,12 @@
 	</distributionManagement>
 	        
 	<dependencies>
+	<dependency>
+    <groupId>org.zeroturnaround</groupId>
+    <artifactId>zt-zip</artifactId>
+    <version>1.8</version>
+    <type>jar</type>
+</dependency>
 		<dependency>
 			<groupId>edu.isi</groupId>
 			<artifactId>karma-common</artifactId>

@@ -35,11 +35,11 @@ public class BaseKarma {
 	protected URL modelURL;
 	protected ContextIdentifier contextId; 
 	protected String rdfGenerationRoot = null;
-	public void setup(String inputTypeString, String modelUri, String modelFile, 
+	public void setup(String karmaHomePath, String inputTypeString, String modelUri, String modelFile, 
 			String baseURI, String contextURI, String root, String selection) {
 
 		try {
-			setupKarmaHome();
+			setupKarmaHome(karmaHomePath);
 			determineInputType(inputTypeString);
 			generator = new GenericRDFGenerator(selection);
 			this.modelUri = modelUri;
@@ -70,15 +70,23 @@ public class BaseKarma {
 		}
 	}
 
-	private void setupKarmaHome() throws KarmaException {
+	private void setupKarmaHome(String karmaHomePath) throws KarmaException {
 		// TODO dynamically discover the archive
-		File karmaUserHome = new File("./karma.zip/karma");
-		if (!karmaUserHome.exists()) {
+		if(null == karmaHomePath)
+		{
 			LOG.info("No Karma user home provided.  Creating default Karma configuration");
-		} else {
-			System.setProperty("KARMA_USER_HOME",
-					karmaUserHome.getAbsolutePath());
 		}
+		else
+		{
+			File karmaUserHome = new File(karmaHomePath);
+			if (!karmaUserHome.exists()) {
+				LOG.info("No Karma user home provided.  Creating default Karma configuration");
+			} else {
+				System.setProperty("KARMA_USER_HOME",
+						karmaUserHome.getAbsolutePath());
+			}	
+		}
+		
 		KarmaMetadataManager userMetadataManager;
 		userMetadataManager = new KarmaMetadataManager();
 		UpdateContainer uc = new UpdateContainer();

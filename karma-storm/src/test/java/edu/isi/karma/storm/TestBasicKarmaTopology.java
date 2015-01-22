@@ -42,7 +42,7 @@ public class TestBasicKarmaTopology {
 
 	@Test
 	public void testBasicTopology() {
-		 PythonRepository.getInstance();
+		PythonRepository.getInstance();
 		MkClusterParam mkClusterParam = new MkClusterParam();
 		Config daemonConf = new Config();
 		daemonConf.put(Config.STORM_LOCAL_MODE_ZMQ, false);
@@ -69,7 +69,8 @@ public class TestBasicKarmaTopology {
 							} catch (URISyntaxException e) {
 								LOG.error("Unable to load model", e);
 							}
-							builder.setBolt("karma-generate-json", new KarmaBolt(basicKarmaBoltProperties)).shuffleGrouping("karma-json-spout");
+							
+							builder.setBolt("karma-generate-json", new KarmaBolt(basicKarmaBoltProperties, null)).shuffleGrouping("karma-json-spout");
 
 							Set<String> sources = new HashSet<String>();
 							sources.add(source);

@@ -41,15 +41,11 @@ public class KarmaJoinBolt extends BaseRichBolt {
 	@Override
 	public void execute(Tuple tuple) {
 
-		String docid = "";
-		if (tuple.contains("docid")) {
-			docid = tuple.getStringByField("docid");
-		}
 		long start = System.currentTimeMillis();
 		JSONObject objectToJoin = new JSONObject(tuple.getStringByField(joinObjectField));
 		String[] mergePath = this.mergePath.split(",");
 		joinJSONObject(objectToJoin, mergePath, 0);
-		outputCollector.emit(new Values(objectToJoin.getString(atId), docid, objectToJoin.toString()));
+		outputCollector.emit(new Values(objectToJoin.getString(atId), objectToJoin.toString()));
 		outputCollector.ack(tuple);
 		LOG.debug("id: "+ tuple.getStringByField("id") + " " + (System.currentTimeMillis() - start));
 	}
@@ -109,6 +105,6 @@ public class KarmaJoinBolt extends BaseRichBolt {
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFields) {
-		outputFields.declare(new Fields("id", "docid", "json"));
+		outputFields.declare(new Fields("id", "json"));
 	}
 }

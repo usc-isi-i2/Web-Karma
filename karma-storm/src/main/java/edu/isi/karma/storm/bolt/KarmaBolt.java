@@ -20,6 +20,7 @@ import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rdf.BaseKarma;
 import edu.isi.karma.rdf.RDFGeneratorRequest;
+import edu.isi.karma.storm.strategy.KarmaHomeStrategy;
 
 public class KarmaBolt extends BaseRichBolt {
 
@@ -32,11 +33,13 @@ public class KarmaBolt extends BaseRichBolt {
 	private OutputCollector outputCollector;
 	@SuppressWarnings("rawtypes")
 	private Map localConfig;
+	private KarmaHomeStrategy karmaHomeStrategy;
 
 	@SuppressWarnings("rawtypes")
-	public KarmaBolt(Map localConfig)
+	public KarmaBolt(Map localConfig, KarmaHomeStrategy karmaHomeStrategy)
 	{
 		this.localConfig = localConfig;
+		this.karmaHomeStrategy = karmaHomeStrategy;
 	}
 	
 	@Override
@@ -85,8 +88,14 @@ public class KarmaBolt extends BaseRichBolt {
 	@Override
 	public void prepare(Map globalConfig, TopologyContext arg1, OutputCollector outputCollector) {
 		this.outputCollector = outputCollector;
+		String karmaHomeDirectory = null;
+		if(karmaHomeStrategy != null){
+
+			karmaHomeStrategy.prepare(globalConfig);
+			karmaHomeDirectory = karmaHomeStrategy.getKarmaHomeDirectory();	
+		}
 		karma = new BaseKarma();
-		karma.setup((String)localConfig.get("karma.input.type"), (String)localConfig.get("model.uri"), (String)localConfig.get("model.file"), 
+		karma.setup(karmaHomeDirectory, (String)localConfig.get("karma.input.type"), (String)localConfig.get("model.uri"), (String)localConfig.get("model.file"), 
 				(String)localConfig.get("base.uri"), (String)localConfig.get("context.uri"), 
 				(String)localConfig.get("rdf.generation.root"), (String)localConfig.get("rdf.generation.selection"));
 		
@@ -96,5 +105,12 @@ public class KarmaBolt extends BaseRichBolt {
 	public void declareOutputFields(OutputFieldsDeclarer outputFields) {
 		outputFields.declare(new Fields("id", "json", "model"));
 		
+	}
+	
+	@Override
+	public void cleanup()
+	{
+		super.cleanup();
+		this.karmaHomeStrategy.cleanup();
 	}
 }
