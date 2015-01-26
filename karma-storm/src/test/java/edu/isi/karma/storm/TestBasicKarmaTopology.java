@@ -17,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
+import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +33,11 @@ import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.storm.bolt.KarmaBolt;
 import edu.isi.karma.storm.bolt.KarmaReducerBolt;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class TestBasicKarmaTopology {
 
@@ -42,7 +46,8 @@ public class TestBasicKarmaTopology {
 
 	@Test
 	public void testBasicTopology() {
-		PythonRepository.getInstance();
+		PythonRepository repo = new PythonRepository(false, ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepositoryRegistry.getInstance().register(repo);
 		MkClusterParam mkClusterParam = new MkClusterParam();
 		Config daemonConf = new Config();
 		daemonConf.put(Config.STORM_LOCAL_MODE_ZMQ, false);

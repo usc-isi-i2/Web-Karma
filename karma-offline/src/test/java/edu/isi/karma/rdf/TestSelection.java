@@ -32,6 +32,7 @@ import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
@@ -54,7 +55,9 @@ import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.WorkspaceRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 
 public class TestSelection {
@@ -70,7 +73,8 @@ public class TestSelection {
         userMetadataManager.register(new UserPreferencesMetadata(), uc);
         userMetadataManager.register(new UserConfigMetadata(), uc);
         userMetadataManager.register(new PythonTransformationMetadata(), uc);
-        PythonRepository.disableReloadingLibrary();
+        PythonRepository pythonRepository = new PythonRepository(false, ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepositoryRegistry.getInstance().register(pythonRepository);
 	}
 	
 	@Before

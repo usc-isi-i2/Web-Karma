@@ -15,12 +15,15 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.er.helper.PythonTransformationHelper;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class MiniSelection extends Selection {
 
@@ -64,8 +67,8 @@ public class MiniSelection extends Selection {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), workspace.getFactory().getHTable(hTableId), tables, SuperSelectionManager.DEFAULT_SELECTION);
 		String selectionId = Thread.currentThread().getId() + this.superSelectionName;
-		PythonRepository repo = PythonRepository.getInstance();
-		PythonInterpreter interpreter = repo.interpreter;
+		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonInterpreter interpreter = repo.getInterpreter();
 		repo.initializeInterperter(interpreter);
 		PyCode code = null;
 		try {
@@ -115,8 +118,8 @@ public class MiniSelection extends Selection {
 		logger.debug("Executing PySelection\n" + selectionMethodStmt);
 
 		// Prepare the Python interpreter
-		PythonRepository repo = PythonRepository.getInstance();
-
+		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		
 		repo.compileAndAddToRepositoryAndExec(interpreter, selectionMethodStmt);
 		PyObject locals = interpreter.getLocals();
 		locals.__setitem__("workspaceid", new PyString(workspace.getId()));

@@ -12,29 +12,24 @@ import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-
 public class PythonRepository {
 
 	private static Logger logger = LoggerFactory.getLogger(PythonRepository.class);
 	private ConcurrentHashMap<String, PyCode> scripts = new ConcurrentHashMap<String, PyCode>();
 	private ConcurrentHashMap<String, PyCode> libraryScripts = new ConcurrentHashMap<String, PyCode>();
 	private ConcurrentHashMap<String, Long> fileNameTolastTimeRead = new ConcurrentHashMap<String, Long>();
-	private static PythonRepository instance = new PythonRepository();
-	private static boolean libraryHasBeenLoaded = false;
-	private static boolean reloadLibrary = true;
+	private boolean libraryHasBeenLoaded = false;
+	private boolean reloadLibrary = true;
 	private PyStringMap initialLocals = new PyStringMap();
-	public PythonInterpreter interpreter = PythonInterpreter.threadLocalStateInterpreter(initialLocals);
-	private PythonRepository()
+	private PythonInterpreter interpreter = PythonInterpreter.threadLocalStateInterpreter(initialLocals);
+	private String karmaHome;
+	
+	public PythonRepository(boolean reloadLibrary, String karmaHome)
 	{
+		this.karmaHome = karmaHome;
+		this.reloadLibrary = reloadLibrary;
 		initialize();
 		resetLibrary();
-	}
-
-	public static PythonRepository getInstance()
-	{
-		return instance;
 	}
 
 	private void initialize()
@@ -110,15 +105,13 @@ public class PythonRepository {
 	}
 
 	public synchronized void importUserScripts(PythonInterpreter interpreter) {
-		String dirpathString = ServletContextParameterMap
-				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
+		
 
-
-		if (dirpathString != null && dirpathString.compareTo("") != 0) {
+		if (karmaHome != null && karmaHome.compareTo("") != 0) {
 			
 			if(!libraryHasBeenLoaded || reloadLibrary)
 			{
-				File f = new File(dirpathString);
+				File f = new File(karmaHome);
 				String[] scripts = f.list(new FilenameFilter(){
 
 					@Override
@@ -127,7 +120,7 @@ public class PythonRepository {
 					}});
 				for(String script : scripts)
 				{
-					String fileName = dirpathString  + script;
+					String fileName = karmaHome  + script;
 					Long lastTimeRead = fileNameTolastTimeRead.get(fileName);
 					File s = new File(fileName);
 					if(lastTimeRead == null || s.lastModified() > lastTimeRead)
@@ -162,16 +155,19 @@ public class PythonRepository {
 
 	}
 
-	public static synchronized void disableReloadingLibrary()
-	{
-		reloadLibrary = false;
-	}
-
 	public synchronized void resetLibrary()
 	{
 		libraryScripts = new ConcurrentHashMap<String, PyCode>();
 		fileNameTolastTimeRead = new ConcurrentHashMap<String,Long>();		
 		libraryHasBeenLoaded = false;
 
+	}
+
+	protected String getKarmaHome() {
+		return karmaHome;
+	}
+
+	public PythonInterpreter getInterpreter() {
+		return this.interpreter;
 	}
 }

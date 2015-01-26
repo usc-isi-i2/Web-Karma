@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
@@ -26,6 +27,8 @@ import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.util.EncodingDetector;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public abstract class TestRdfGenerator {
 	private static final Logger logger = LoggerFactory.getLogger(TestRdfGenerator.class);
@@ -40,7 +43,8 @@ public abstract class TestRdfGenerator {
         userMetadataManager.register(new UserPreferencesMetadata(), uc);
         userMetadataManager.register(new UserConfigMetadata(), uc);
         userMetadataManager.register(new PythonTransformationMetadata(), uc);
-        PythonRepository.disableReloadingLibrary();
+        PythonRepository pythonRepository = new PythonRepository(false, ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepositoryRegistry.getInstance().register(pythonRepository);
 	}
 
 

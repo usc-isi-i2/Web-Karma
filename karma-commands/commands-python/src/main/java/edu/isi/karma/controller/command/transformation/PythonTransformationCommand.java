@@ -46,6 +46,7 @@ import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.er.helper.PythonTransformationHelper;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
@@ -53,6 +54,8 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 
 public abstract class PythonTransformationCommand extends WorksheetSelectionCommand {
@@ -120,9 +123,9 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		logger.debug("Executing PyTransform {}\n",  transformMethodStmt);
 
 		// Prepare the Python interpreter
-		PythonRepository repo = PythonRepository.getInstance();
+		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonInterpreter interpreter = repo.getInterpreter();
 
-		PythonInterpreter interpreter = repo.interpreter;
 		repo.initializeInterperter(interpreter);
 		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet
 				.getDataTable().getNumRows()));

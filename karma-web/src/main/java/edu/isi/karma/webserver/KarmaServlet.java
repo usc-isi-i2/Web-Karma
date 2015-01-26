@@ -41,6 +41,8 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.metadata.AvroMetadata;
 import edu.isi.karma.metadata.CSVMetadata;
 import edu.isi.karma.metadata.GraphVizMetadata;
@@ -66,6 +68,7 @@ import edu.isi.karma.rep.metadata.TagsContainer.Color;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.VWorkspaceRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class KarmaServlet extends HttpServlet {
 	private enum Arguments {
@@ -126,6 +129,8 @@ public class KarmaServlet extends HttpServlet {
 			metadataManager.register(new JSONMetadata(workspace), updateContainer);
 			metadataManager.register(new ReportMetadata(workspace), updateContainer);
 			metadataManager.register(new AvroMetadata(workspace), updateContainer);
+			PythonRepository pythonRepository = new PythonRepository(true, ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+			PythonRepositoryRegistry.getInstance().register(pythonRepository);
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}

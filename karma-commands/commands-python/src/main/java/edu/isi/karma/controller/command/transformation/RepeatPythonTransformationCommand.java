@@ -11,9 +11,12 @@ import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class RepeatPythonTransformationCommand extends PythonTransformationCommand {
 	public RepeatPythonTransformationCommand(String id, String worksheetId, 
@@ -46,7 +49,8 @@ public class RepeatPythonTransformationCommand extends PythonTransformationComma
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		JSONArray transformedRows = new JSONArray();
 		JSONArray errorValues = new JSONArray();
-		PythonRepository.getInstance().resetLibrary();
+		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		repo.resetLibrary();
 		boolean isError = false;
 		try {
 			generateTransformedValues(workspace, 

@@ -57,6 +57,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
@@ -76,6 +77,8 @@ import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.util.DBType;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class OfflineRdfGenerator {
 
@@ -177,7 +180,8 @@ public class OfflineRdfGenerator {
 		userMetadataManager.register(new UserPreferencesMetadata(), uc);
 		userMetadataManager.register(new UserConfigMetadata(), uc);
 		userMetadataManager.register(new PythonTransformationMetadata(), uc);
-		PythonRepository.disableReloadingLibrary();
+		PythonRepository pythonRepository = new PythonRepository(false, ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepositoryRegistry.getInstance().register(pythonRepository);
 
 		SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
 		ModelingConfiguration.setLearnerEnabled(false); // disable automatic learning
