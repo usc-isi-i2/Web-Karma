@@ -13,13 +13,7 @@
 
     <artifactId>karma-mr</artifactId>
 
- 	<properties>
-        <hadoop.version>2.5.0-cdh5.3.0</hadoop.version>
-        <hive.version>0.13.1-cdh5.3.0</hive.version>
-        <avro.version>1.7.6-cdh5.3.0</avro.version>
-        <es.version>1.3.2</es.version>
-        <es.hadoop.version>2.1.0.Beta2</es.hadoop.version>
-    </properties>
+ 	
         
 	<repositories>
 		<repository>
@@ -31,6 +25,11 @@
       		<id>cloudera</id>
       		<url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
     	</repository>
+    	<repository>
+			<id>HDPReleases</id>
+			<name>HDP Releases</name>
+			<url>http://repo.hortonworks.com/content/repositories/releases/</url>
+		 </repository>
 	
 		
  </repositories> 
@@ -83,13 +82,155 @@
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
+		<dependency>
+			<groupId>org.apache.mrunit</groupId>
+			<artifactId>mrunit</artifactId>
+			<version>1.1.0</version>
+			<classifier>hadoop2</classifier> 
+		</dependency> 
+		<dependency>
+	    	<groupId>edu.isi.karma.services</groupId>
+	    	<artifactId>entityExtraction</artifactId>
+	    	<version>0.0.1</version>
+	    </dependency>
+		<dependency>
+		    <groupId>com.github.jsonld-java</groupId>
+		    <artifactId>jsonld-java</artifactId>
+		    <version>0.5.1</version>
+		</dependency>
+
+		
+    </dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/config</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<plugins>
+	    	<plugin>
+		    	<groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-surefire-plugin</artifactId>
+		        <version>2.17</version>
+		        <configuration>
+		        	<skipTests>true</skipTests>
+		        </configuration>
+	    	</plugin>
+		</plugins>
+	</build>
+	
+	<profiles>
+		<profile>
+			<id>tripleparser</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/config</directory>
+					</resource>
+					<resource>
+						<directory>src/main/resources</directory>
+					</resource>
+				</resources>
+				<plugins>
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId> 
+						<version>2.3.2</version>
+						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
+						</configuration>
+					</plugin>
+					<plugin>
+		      			<artifactId>maven-assembly-plugin</artifactId>
+						<!--  >version>2.3.2</version> -->
+						<configuration>
+							<finalName>tripleparser</finalName>
+						   	<archive> <!-- if archive is commented, the main class should be specified when running jar file -->
+					          <manifest>
+					            <mainClass>edu.isi.karma.mapreduce.tripleparser.Neo4jCSVGenerator</mainClass>
+					          </manifest>
+					        </archive >
+					        <descriptorRefs>
+					          <descriptorRef>jar-with-dependencies</descriptorRef>
+					        </descriptorRefs>
+			                <appendAssemblyId>false</appendAssemblyId>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>shaded</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+    		<build>
+				<plugins>
+					<!-- Configuration for generating a self contained jar for MR -->
+					<!--
+						to generate the jar, run:
+						mvn package -P shaded
+					-->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-shade-plugin</artifactId>
+						<version>2.3</version>
+						<configuration>
+							<shadedArtifactAttached>true</shadedArtifactAttached>
+							<shadedClassifierName>shaded</shadedClassifierName>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"/>
+							</transformers>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>shade</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+  		</profile>
+  		
+  		<profile>
+  			<id>hortonworks</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+        		<hadoop.version>2.4.0.2.1.3.0-563</hadoop.version>
+        		<hive.version>0.13.0.2.1.3.0-563</hive.version>
+        		<es.version>1.4.2</es.version>
+        		<es.hadoop.version>2.1.0.Beta2</es.hadoop.version>
+        		<avro.version>1.7.6</avro.version>
+    		</properties>
+    		<dependencies>
+    		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-minicluster</artifactId>
 			<version>${hadoop.version}</version>
@@ -224,16 +365,192 @@
 			<version>${hive.version}</version>
 		</dependency>  
 		<dependency>
-			<groupId>org.apache.mrunit</groupId>
-			<artifactId>mrunit</artifactId>
-			<version>1.1.0</version>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>${es.version}</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>org.elasticsearch</groupId>
+		  <artifactId>elasticsearch-hadoop-mr</artifactId>
+		  <version>${es.hadoop.version}</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>org.elasticsearch</groupId>
+		  <artifactId>elasticsearch-hadoop-hive</artifactId>
+		  <version>${es.hadoop.version}</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.elasticsearch</groupId>
+		  <artifactId>elasticsearch-hadoop-pig</artifactId>
+		  <version>${es.hadoop.version}</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.elasticsearch</groupId>
+		  <artifactId>elasticsearch-hadoop-cascading</artifactId>
+		  <version>${es.hadoop.version}</version>
+		</dependency>
+		<dependency>
+  			<groupId>org.elasticsearch</groupId>
+  			<artifactId>elasticsearch-storm</artifactId>
+  			<version>${es.hadoop.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro-mapred</artifactId>
+			<version>${avro.version}</version>
 			<classifier>hadoop2</classifier> 
+		</dependency>
+    	</dependencies>
+  		</profile>
+  		<profile>
+  			<id>cloudera</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+        		<hadoop.version>2.5.0-cdh5.3.0</hadoop.version>
+        		<hive.version>0.13.1-cdh5.3.0</hive.version>
+        		<avro.version>1.7.6-cdh5.3.0</avro.version>
+        		<es.version>1.4.2</es.version>
+        		<es.hadoop.version>2.1.0.Beta2</es.hadoop.version>
+    		</properties>
+    		<dependencies>
+    		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-minicluster</artifactId>
+			<version>${hadoop.version}</version>
+			<exclusions>
+			<exclusion>
+					<groupId>com.microsoft.windowsazure.storage</groupId>
+					<artifactId>microsoft-windowsazure-storage-sdk</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.fasterxml.jackson.core</groupId>
+		            <artifactId>jackson.core</artifactId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-jaxrs</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-xc</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-mapper-asl</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-core-asl</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-core</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-databind</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-annotations</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		    </exclusions>
+		</dependency>
+        <dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+			<version>${hadoop.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.microsoft.windowsazure.storage</groupId>
+					<artifactId>microsoft-windowsazure-storage-sdk</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.fasterxml.jackson.core</groupId>
+		            <artifactId>jackson.core</artifactId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-jaxrs</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-xc</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-mapper-asl</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-core</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-core-asl</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-databind</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-annotations</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		    </exclusions>
+		</dependency>       
+        <dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-yarn-common</artifactId>
+			<version>${hadoop.version}</version>
+			<exclusions>
+			<exclusion>
+					<groupId>com.microsoft.windowsazure.storage</groupId>
+					<artifactId>microsoft-windowsazure-storage-sdk</artifactId>
+				</exclusion>
+				<exclusion>
+		            <groupId>com.fasterxml.jackson.core</groupId>
+		            <artifactId>jackson.core</artifactId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-jaxrs</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-xc</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+				<exclusion>
+		            <artifactId>jackson-mapper-asl</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-core</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-core-asl</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-databind</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>jackson-annotations</artifactId>
+		            <groupId>org.codehaus.jackson</groupId>
+		        </exclusion>
+		    </exclusions>
 		</dependency> 
 		<dependency>
-	    	<groupId>edu.isi.karma.services</groupId>
-	    	<artifactId>entityExtraction</artifactId>
-	    	<version>0.0.1</version>
-	    </dependency>
+			<groupId>org.apache.hive</groupId>
+			<artifactId>hive-exec</artifactId>
+			<version>${hive.version}</version>
+		</dependency>  
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
@@ -267,127 +584,12 @@
   			<version>${es.hadoop.version}</version>
 		</dependency>
 		<dependency>
-		    <groupId>com.github.jsonld-java</groupId>
-		    <artifactId>jsonld-java</artifactId>
-		    <version>0.5.1</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.avro</groupId>
 			<artifactId>avro-mapred</artifactId>
 			<version>${avro.version}</version>
 			<classifier>hadoop2</classifier> 
 		</dependency>
-		
-    </dependencies>
-
-	<build>
-		<resources>
-			<resource>
-				<directory>src/main/config</directory>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-		</resources>
-		<plugins>
-	    	<plugin>
-		    	<groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-surefire-plugin</artifactId>
-		        <version>2.17</version>
-		        <configuration>
-		        	<skipTests>true</skipTests>
-		        </configuration>
-	    	</plugin>
-		</plugins>
-	</build>
-	
-	<profiles>
-		<profile>
-			<id>tripleparser</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<build>
-				<resources>
-					<resource>
-						<directory>src/main/config</directory>
-					</resource>
-					<resource>
-						<directory>src/main/resources</directory>
-					</resource>
-				</resources>
-				<plugins>
-					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId> 
-						<version>2.3.2</version>
-						<configuration>
-							<source>1.7</source>
-							<target>1.7</target>
-						</configuration>
-					</plugin>
-					<plugin>
-		      			<artifactId>maven-assembly-plugin</artifactId>
-						<!--  >version>2.3.2</version> -->
-						<configuration>
-							<finalName>tripleparser</finalName>
-						   	<archive> <!-- if archive is commented, the main class should be specified when running jar file -->
-					          <manifest>
-					            <mainClass>edu.isi.karma.mapreduce.tripleparser.Neo4jCSVGenerator</mainClass>
-					          </manifest>
-					        </archive >
-					        <descriptorRefs>
-					          <descriptorRef>jar-with-dependencies</descriptorRef>
-					        </descriptorRefs>
-			                <appendAssemblyId>false</appendAssemblyId>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>shaded</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-    		<build>
-				<plugins>
-					<!-- Configuration for generating a self contained jar for MR -->
-					<!--
-						to generate the jar, run:
-						mvn package -P shaded
-					-->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-shade-plugin</artifactId>
-						<version>2.3</version>
-						<configuration>
-							<shadedArtifactAttached>true</shadedArtifactAttached>
-							<shadedClassifierName>shaded</shadedClassifierName>
-							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"/>
-							</transformers>
-							<filters>
-								<filter>
-									<artifact>*:*</artifact>
-									<excludes>
-										<exclude>META-INF/*.SF</exclude>
-										<exclude>META-INF/*.DSA</exclude>
-										<exclude>META-INF/*.RSA</exclude>
-									</excludes>
-								</filter>
-							</filters>
-						</configuration>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>shade</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
+    		</dependencies>
   		</profile>
 	</profiles>
 
