@@ -33,7 +33,7 @@ public class DuplicatePhoneNumberReducer extends Reducer<Text,Text,Text,Text> {
 							tmp.put(phoneObj);
 							phoneNumbersFeature.put(cleanedNumber, tmp.length() - 1);
 						}
-						else if (!rawPhoneNumber.startsWith("+1-")) {
+						else if (rawPhoneNumber.startsWith("+1-")) {
 							tmp.put(pos, phoneObj);
 						}
 					}
@@ -43,7 +43,7 @@ public class DuplicatePhoneNumberReducer extends Reducer<Text,Text,Text,Text> {
 							tmp.put(phoneObj);
 							phoneNumbers.put(cleanedNumber, tmp.length() - 1);
 						}
-						else if (!rawPhoneNumber.startsWith("+1-")) {
+						else if (rawPhoneNumber.startsWith("+1-")) {
 							tmp.put(pos, phoneObj);
 						}
 					}
