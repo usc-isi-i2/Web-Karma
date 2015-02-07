@@ -43,7 +43,9 @@ public class PythonRepository {
 
 		
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getImportStatements());
+		compileAndAddToRepository(interpreter, PythonTransformationHelper.getRowIndexDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getGetValueDefStatement());
+		compileAndAddToRepository(interpreter, PythonTransformationHelper.getGetValueFromNestedColumnByIndexDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getIsEmptyDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getHasSelectedRowsStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getVDefStatement());
@@ -91,12 +93,15 @@ public class PythonRepository {
 			interpreter.exec(scripts.get(PythonTransformationHelper.getGetValueDefStatement()));
 			interpreter.exec(scripts.get(PythonTransformationHelper.getIsEmptyDefStatement()));
 			interpreter.exec(scripts.get(PythonTransformationHelper.getHasSelectedRowsStatement()));
+			interpreter.exec(scripts.get(PythonTransformationHelper.getGetValueFromNestedColumnByIndexDefStatement()));
+			interpreter.exec(scripts.get(PythonTransformationHelper.getRowIndexDefStatement()));
 			interpreter.exec(scripts.get(PythonTransformationHelper.getVDefStatement()));
 		}
 		if(localsUninitialized ||(!libraryHasBeenLoaded || reloadLibrary))
 		{
 			importUserScripts(interpreter);
 		}
+
 	}
 
 	public PyCode getTransformCode()
