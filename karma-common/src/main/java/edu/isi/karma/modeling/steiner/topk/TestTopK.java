@@ -1,8 +1,6 @@
 package edu.isi.karma.modeling.steiner.topk;
 
-import java.io.File;
 import java.util.HashMap;
-import java.util.Queue;
 import java.util.TreeSet;
 
 public class TestTopK {
@@ -12,6 +10,7 @@ public class TestTopK {
 		SteinerNode n2= new SteinerNode("n2");
 		SteinerNode n3= new SteinerNode("n3");
 		SteinerNode n4= new SteinerNode("n4");
+		SteinerNode n5= new SteinerNode("n5");
 
 		HashMap<SteinerNode, TreeSet<SteinerEdge>> graph = new HashMap<SteinerNode, TreeSet<SteinerEdge>>();
 		HashMap<String, SteinerNode> nodes = new HashMap<String, SteinerNode>();
@@ -31,40 +30,49 @@ public class TestTopK {
 		nodes.put(n4.getNodeId(), n4);
 		graph.put(n4, new TreeSet<SteinerEdge>());
 
+		nodes.put(n5.getNodeId(), n5);
+		graph.put(n5, new TreeSet<SteinerEdge>());
+
 //		int id=0;
 //		for(SteinerNode node: graph.keySet()){
 //			nodeToId.put(node.name(), id);
 //			id++;
 //		}
 		
-		SteinerEdge e12 = new SteinerEdge(n1, "bornIn", n2, 0.6f);
-		SteinerEdge e12_ = new SteinerEdge(n1, "diedIn", n2, 0.3f);
-//		SteinerEdge e21 = new SteinerEdge(n2, "diedIn", n1, 0.3f);
-		SteinerEdge e13 = new SteinerEdge(n1, "directed", n3, 0.2f);
-		SteinerEdge e23 = new SteinerEdge(n2, "discovered", n3, 0.7f);
+		SteinerEdge e12 = new SteinerEdge(n1, "bornIn", n2, 0.1f);
+		
+		
+		SteinerEdge e15 = new SteinerEdge(n1, "test1", n5, 0.3f);
+		SteinerEdge e52 = new SteinerEdge(n5, "test2", n2, 0.3f);
+
+		SteinerEdge e21 = new SteinerEdge(n2, "diedIn", n1, 0.3f);
+		SteinerEdge e31 = new SteinerEdge(n3, "directed", n1, 0.2f);
+		SteinerEdge e32 = new SteinerEdge(n3, "discovered", n2, 0.7f);
 		SteinerEdge e14 = new SteinerEdge(n1, "describes", n4, 0.9f);
 		SteinerEdge e24 = new SteinerEdge(n2, "created", n4, 0.4f);
 		SteinerEdge e43 = new SteinerEdge(n4, "actedIn", n3, 0.3f);
 		
 		graph.get(n1).add(e12);
-		graph.get(n1).add(e12_);
-//		graph.get(n1).add(e21);
-		graph.get(n1).add(e13);
+		graph.get(n1).add(e21);
+		graph.get(n1).add(e31);
 		graph.get(n1).add(e14);
 		
 		graph.get(n2).add(e12);
-		graph.get(n2).add(e12_);
-//		graph.get(n2).add(e21);
-		graph.get(n2).add(e23);
+		graph.get(n2).add(e52);
+		graph.get(n2).add(e21);
+		graph.get(n2).add(e32);
 		graph.get(n2).add(e24);
 
-		graph.get(n3).add(e13);
-		graph.get(n3).add(e23);
+		graph.get(n3).add(e31);
+		graph.get(n3).add(e32);
 		graph.get(n3).add(e43);
 
 		graph.get(n4).add(e14);
 		graph.get(n4).add(e24);
 		graph.get(n4).add(e43);
+
+		graph.get(n5).add(e15);
+		graph.get(n5).add(e52);
 
 		TreeSet<SteinerNode> terminals= new TreeSet<SteinerNode>();
 		
@@ -72,9 +80,9 @@ public class TestTopK {
 		terminals.add(n2);
 		
 		
-		STARfromMM N = new STARfromMM(terminals);
+//		STARfromMM N = new STARfromMM(terminals);
 //		BANKSIIfromMM N = new BANKSIIfromMM(terminals);
-//		BANKSfromMM N = new BANKSfromMM(terminals);
+		BANKSfromMM N = new BANKSfromMM(terminals);
 //		DNHfromMM N = new DNHfromMM(terminals);
 //		DPBFfromMM N = new DPBFfromMM(terminals);
 		N.graph = graph;
@@ -84,7 +92,7 @@ public class TestTopK {
 //		N.loadGraphFromFile("STAR.txt");
 
 		long startTime=System.currentTimeMillis();
-		N.getTopKTrees(3);
+		N.getTopKTrees(10);
 		for(ResultGraph tree: N.resultQueue){
 			for (Fact f : tree.getFacts()) { 
 				System.out.println(f.toString());

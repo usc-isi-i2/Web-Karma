@@ -1,4 +1,4 @@
-package edu.isi.karma.research.lod;
+package edu.isi.karma.research.misc;
 /*
  *  $Id: VirtuosoTest.java,v 1.9 2008/06/30 14:29:27 source Exp $
  *

@@ -152,7 +152,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 					LabeledLink incomingLink = l;
 					Set<Node> matchedNodes = this.graphBuilder.getUriToNodesMap().get(domain.getUri());
 					if (matchedNodes == null || matchedNodes.isEmpty()) {
-						logger.error("no match found for the node " + domain.getUri() + "in the graph");
+						logger.error("no match found for the node " + domain.getUri() + " in the graph");
 						return null;
 					}
 					for (Node m : matchedNodes) {
@@ -210,16 +210,16 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		List<HashMap<Node,Node>> newMappings = new LinkedList<HashMap<Node,Node>>();
 		
 		Set<Node> matchedNodes = null;
-		if (node instanceof InternalNode) 
+		if (node instanceof InternalNode && internalNodeMatches != null) 
 			matchedNodes = internalNodeMatches.get(node);
-		else if (node instanceof ColumnNode)
+		else if (node instanceof ColumnNode && columnNodeMatches != null)
 			matchedNodes = columnNodeMatches.get(node);
 		if (matchedNodes == null) {
-			return null;
+			return null;//mappings;
 		}
 
 		if (matchedNodes == null || matchedNodes.isEmpty()) {
-			logger.error("no match found for the node " + node.getId() + "in the graph");
+			logger.error("no match found for the node " + node.getId() + " in the graph");
 			return null;
 		}
 

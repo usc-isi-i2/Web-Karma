@@ -100,7 +100,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 				newNode=newNode.predecessor;
 			}
 		}
-		clean(treeNodes);
+//		clean(treeNodes);
 		steinerNodes.addAll(treeNodes.values());
 		steinerTree=new ApprSteinerTree(terminalNodes, steinerNodes);
 
@@ -152,6 +152,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 			//expanding iterators in turn
 			while(true){
 				BANKSIterator queue=banksIterators.poll();
+				if (queue == null || count > k) return; //FIXME
 				if(!queue.banksIterator.isEmpty()){
 					SteinerNode n= (SteinerNode)queue.banksIterator.poll();
 				
@@ -196,7 +197,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 						SteinerNode v=visitedNodes.get(queue.id).get(newNode.name());
 						if(v!=null){
 							newNode=v;
-							if(newNode.distancesToSources[0]>n.distancesToSources[0]+e.getWeight()){
+							if(newNode.distancesToSources[0]>n.distancesToSources[0]+e.getWeight()){ //FIXME
 								newNode.distancesToSources[0]=n.distancesToSources[0]+e.getWeight();
 								newNode.predecessor= n;
 								newNode.relationToPredecessor=e.getEdgeLabel();
@@ -210,7 +211,8 @@ public class BANKSfromMM extends TopKSteinertrees {
 						}
 						
 						//in case newNode has not been visited
-						else{
+						else
+						{
 							newNode.distancesToSources[0]=n.distancesToSources[0]+e.getWeight();
 							newNode.predecessor= n;
 							queue.banksIterator.offer(newNode);
@@ -220,18 +222,15 @@ public class BANKSfromMM extends TopKSteinertrees {
 						if(isCommonAncestor(newNode)){
 							
 							count++;
-							if(count>k-1)break;
+//							if(count>k-1)break;
 								//break;
 						}	
 					}
 				}
-				if(count>k-1)break;
-				// added ny mohsen
-				SteinerNode sn = queue.banksIterator.peek();
-				if (sn == null) return;
-				// 
-				queue.distanceToSource=queue.banksIterator.peek().distancesToSources[0];
-				banksIterators.offer(queue);
+				if (!queue.banksIterator.isEmpty()) {
+					queue.distanceToSource=queue.banksIterator.peek().distancesToSources[0];
+					banksIterators.offer(queue);
+				}
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-package edu.isi.karma.research.lod;
+package edu.isi.karma.research.modeling;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,12 +35,12 @@ import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class LODSchemaGraphBuilder {
+public class GraphBuilder_Popularity {
 
 	private OntologyManager ontologyManager;
 	private GraphBuilder graphBuilder;
 	private NodeIdFactory nodeIdFactory;
-	private static Logger logger = LoggerFactory.getLogger(LODSchemaGraphBuilder.class);
+	private static Logger logger = LoggerFactory.getLogger(GraphBuilder_Popularity.class);
 
 	private class Triple {
 
@@ -81,7 +81,7 @@ public class LODSchemaGraphBuilder {
 
 	}
 
-	public LODSchemaGraphBuilder(OntologyManager ontologyManager, 
+	public GraphBuilder_Popularity(OntologyManager ontologyManager, 
 			String objectPropertiesFile,
 			String dataPropertiesFile) {
 
@@ -247,7 +247,7 @@ public class LODSchemaGraphBuilder {
 					n2 = nodes.iterator().next();
 				}
 
-				id = LinkIdFactory.getLinkId(predicateUri, n1.getId(), n2.getId());	
+				id = LinkIdFactory.getLinkId(predicateUri, n1.getId(), n2.getId());
 				link = new ObjectPropertyLink(id, new Label(predicateUri), ObjectPropertyType.None);
 				if (this.graphBuilder.addLink(n1, n2, link)) {
 					this.graphBuilder.changeLinkWeight(link, 1 - ((double)linkFrequency / (double)countOfObjectProperties));
@@ -342,7 +342,7 @@ public class LODSchemaGraphBuilder {
 		}
 		ontologyManager.updateCache(); 
 		
-		new LODSchemaGraphBuilder(ontologyManager, 
+		new GraphBuilder_Popularity(ontologyManager, 
 				Params.LOD_OBJECT_PROPERIES_FILE, 
 				Params.LOD_DATA_PROPERIES_FILE);
 		

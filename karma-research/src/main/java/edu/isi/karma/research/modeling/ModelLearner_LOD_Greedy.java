@@ -1,4 +1,4 @@
-package edu.isi.karma.research.lod.pattern;
+package edu.isi.karma.research.modeling;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,14 +47,14 @@ import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class LODGreedyModelLearner {
+public class ModelLearner_LOD_Greedy {
 
-	static Logger logger = LoggerFactory.getLogger(LODGreedyModelLearner.class);
+	static Logger logger = LoggerFactory.getLogger(ModelLearner_LOD_Greedy.class);
 	private Map<String, Pattern> patterns; // patternId to pattern map
 	private Map<String, Set<String>> patternIndex; // type to pattern map
 	private OntologyManager ontologyManager;
 	
-	public LODGreedyModelLearner(String patternDirectoryPath, OntologyManager ontologyManager) {
+	public ModelLearner_LOD_Greedy(String patternDirectoryPath, OntologyManager ontologyManager) {
 		
 		if (ontologyManager == null) {
 			logger.warn("ontology manager is null.");
@@ -110,18 +110,21 @@ public class LODGreedyModelLearner {
 		List<Pattern> minimalSet = new LinkedList<Pattern>();
 		
 		Multiset<String> sourceTypes = HashMultiset.create(types);
-		Multiset<String> coveredTypes = HashMultiset.create();
+//		Multiset<String> coveredTypes = HashMultiset.create();
 		
 		for (Pattern p : sortedPatterns) {
 			Multiset<String> patternTypes = HashMultiset.create(p.getTypes());
 			Multiset<String> patternCommonTypes = Multisets.intersection(patternTypes, sourceTypes);
-			if (Multisets.containsOccurrences(coveredTypes, patternCommonTypes)) // this pattern does not cover any new source type
+//			if (Multisets.containsOccurrences(coveredTypes, patternCommonTypes)) // this pattern does not cover any new source type
+			if (patternCommonTypes.size() == 0) // this pattern does not cover any new source type
 				continue;
 			else {
 				minimalSet.add(p);
-				coveredTypes.addAll(patternCommonTypes);
+//				coveredTypes.addAll(patternCommonTypes);
+				Multisets.removeOccurrences(sourceTypes, patternCommonTypes);
 			}
-			if (Multisets.containsOccurrences(coveredTypes, sourceTypes))
+//			if (Multisets.containsOccurrences(coveredTypes, sourceTypes))
+			if (sourceTypes.size() == 0)
 				break;
 		}
 		return minimalSet;
@@ -359,7 +362,7 @@ public class LODGreedyModelLearner {
 			columnNodes.add(cn);
 		}
 		
-		LODGreedyModelLearner ml = new LODGreedyModelLearner(Params.PATTERNS_DIR, null);
+		ModelLearner_LOD_Greedy ml = new ModelLearner_LOD_Greedy(Params.PATTERNS_DIR, null);
 		SemanticModel sm = ml.hypothesize(columnNodes);
 		String output = Params.RESULTS_DIR + "out.dot";
 
@@ -405,7 +408,8 @@ public class LODGreedyModelLearner {
 		}
 		ontologyManager.updateCache(); 
 		
-		LODGreedyModelLearner modelLearner = new LODGreedyModelLearner(Params.PATTERNS_DIR, ontologyManager);
+//		LODGreedyModelLearner modelLearner = new LODGreedyModelLearner(Params.PATTERNS_DIR, ontologyManager);
+		ModelLearner_LOD_Greedy modelLearner = new ModelLearner_LOD_Greedy(Params.PATTERNS_DIR, null);
 
 		String outputPath = Params.OUTPUT_DIR;
 
@@ -427,7 +431,7 @@ public class LODGreedyModelLearner {
 
 		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 0; {
+//		int i = 1; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);

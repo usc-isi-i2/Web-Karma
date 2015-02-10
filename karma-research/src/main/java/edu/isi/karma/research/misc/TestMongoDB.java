@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.research.lod;
+package edu.isi.karma.research.misc;
 
 import java.net.UnknownHostException;
 import java.util.Set;

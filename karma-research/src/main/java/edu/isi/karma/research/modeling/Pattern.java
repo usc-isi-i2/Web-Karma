@@ -1,4 +1,4 @@
-package edu.isi.karma.research.lod.pattern;
+package edu.isi.karma.research.modeling;
 
 import java.util.List;
 

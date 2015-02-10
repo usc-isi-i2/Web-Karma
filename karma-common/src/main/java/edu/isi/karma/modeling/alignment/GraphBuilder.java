@@ -456,6 +456,10 @@ public class GraphBuilder {
 		return this.forcedNodes;
 	}
 
+	protected boolean sourceIsConnectedToTarget(Node source, Node target) {
+		return this.visitedSourceTargetPairs.contains(source.getId() + target.getId());
+	}
+	
 	public boolean addLink(Node source, Node target, DefaultLink link, Double weight) {
 		if (addLink(source, target, link)) {
 			if (weight != null) changeLinkWeight(link, weight);

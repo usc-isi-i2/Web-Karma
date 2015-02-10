@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.research.lod;
+package edu.isi.karma.research.modeling;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -55,6 +55,7 @@ import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.modeling.alignment.TreePostProcess;
 import edu.isi.karma.modeling.alignment.learner.CandidateSteinerSets;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
+import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphCompact;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphType;
 import edu.isi.karma.modeling.alignment.learner.ModelReader;
 import edu.isi.karma.modeling.alignment.learner.SemanticTypeMapping;
@@ -69,6 +70,7 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
@@ -76,20 +78,19 @@ import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class LODModelLearner {
+public class ModelLearner_KnownModels {
 
-	private static Logger logger = LoggerFactory.getLogger(LODModelLearner.class);
+	private static Logger logger = LoggerFactory.getLogger(ModelLearner_KnownModels.class);
 	private OntologyManager ontologyManager = null;
 	private GraphBuilder graphBuilder = null;
 	private NodeIdFactory nodeIdFactory = null; 
 	private List<Node> steinerNodes = null;
 	private SemanticModel semanticModel = null;
 //	private long lastUpdateTimeOfGraph;
-	private boolean useKarmaAlignmentGraph;
 
 	private static final int NUM_SEMANTIC_TYPES = 4;
 
-	public LODModelLearner(OntologyManager ontologyManager, 
+	public ModelLearner_KnownModels(OntologyManager ontologyManager, 
 			List<Node> steinerNodes) {
 		if (ontologyManager == null || 
 				steinerNodes == null || 
@@ -97,12 +98,14 @@ public class LODModelLearner {
 			logger.error("cannot instanciate model learner!");
 			return;
 		}
+		GraphBuilder gb = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder();
 		this.ontologyManager = ontologyManager;
 		this.steinerNodes = steinerNodes;
-		this.useKarmaAlignmentGraph = true;
+		this.graphBuilder = cloneGraphBuilder(gb); // create a copy of the graph builder
+		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 	}
 
-	public LODModelLearner(GraphBuilder graphBuilder, 
+	public ModelLearner_KnownModels(GraphBuilder graphBuilder, 
 			List<Node> steinerNodes) {
 		if (graphBuilder == null || 
 				steinerNodes == null || 
@@ -110,19 +113,55 @@ public class LODModelLearner {
 			logger.error("cannot instanciate model learner!");
 			return;
 		}
+		this.ontologyManager = graphBuilder.getOntologyManager();
 		this.steinerNodes = steinerNodes;
-		this.graphBuilder = graphBuilder;
+		this.graphBuilder = cloneGraphBuilder(graphBuilder); // create a copy of the graph builder
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
-		this.ontologyManager = this.graphBuilder.getOntologyManager();
-		this.useKarmaAlignmentGraph = false;
 	}
 
+	public ModelLearner_KnownModels(OntologyManager ontologyManager, 
+			Set<LabeledLink> forcedLinks,
+			List<Node> steinerNodes) {
+		if (ontologyManager == null || 
+				steinerNodes == null || 
+				steinerNodes.isEmpty()) {
+			logger.error("cannot instanciate model learner!");
+			return;
+		}
+		GraphBuilder gb = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder();
+		this.ontologyManager = ontologyManager;
+		this.steinerNodes = steinerNodes;
+		this.graphBuilder = cloneGraphBuilder(gb); // create a copy of the graph builder
+		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
+		if (steinerNodes != null) {
+			for (Node n : steinerNodes) {
+				if (this.graphBuilder.getIdToNodeMap().get(n.getId()) == null) {
+					this.graphBuilder.addNodeAndUpdate(n);
+				}
+			}
+		}
+		if (forcedLinks != null) {
+			for (LabeledLink l : forcedLinks) {
+				if (l.getStatus() == LinkStatus.ForcedByUser) {
+					Node source = l.getSource();
+					Node target = l.getTarget();
+					if (!this.graphBuilder.addLink(source, target, l)) {
+						LabeledLink existingLink = this.graphBuilder.getIdToLinkMap().get(l.getId());
+						if (existingLink != null) { // the link already exist, but it may not be forced by user
+							this.graphBuilder.changeLinkStatus(existingLink, LinkStatus.ForcedByUser);
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	public SemanticModel getModel() {
 		if (this.semanticModel == null)
 			try {
 				this.learn();
 			} catch (Exception e) {
-				logger.error("error in learing the semantic model for the source " + this.semanticModel != null ? this.semanticModel.getId() : "");
+				logger.error("error in learing the semantic model for the source " + ((this.semanticModel == null) ? "" : this.semanticModel.getId()));
 				e.printStackTrace();
 			}
 
@@ -131,13 +170,6 @@ public class LODModelLearner {
 
 	public void learn() throws Exception {
 
-		if (this.useKarmaAlignmentGraph) {
-			this.graphBuilder = 
-					ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder();
-			this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
-		}
-		
-		this.graphBuilder = cloneGraphBuilder(this.graphBuilder); // create a copy of the graph builder
 		List<SortableSemanticModel> hypothesisList = this.hypothesize(true, NUM_SEMANTIC_TYPES);
 		if (hypothesisList != null && !hypothesisList.isEmpty()) {
 			SortableSemanticModel m = hypothesisList.get(0);
@@ -167,9 +199,6 @@ public class LODModelLearner {
 //	}
 
 	public List<SortableSemanticModel> hypothesize(boolean useCorrectTypes, int numberOfCandidates) throws Exception {
-
-		logger.info("graph nodes: " + this.graphBuilder.getGraph().vertexSet().size());
-		logger.info("graph links: " + this.graphBuilder.getGraph().edgeSet().size());
 
 		List<SortableSemanticModel> sortableSemanticModels = new ArrayList<SortableSemanticModel>();
 		Set<Node> addedNodes = new HashSet<Node>(); //They should be deleted from the graph after computing the semantic models
@@ -220,8 +249,9 @@ public class LODModelLearner {
 //			logger.info("START ...");
 			
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
-			if (this.graphBuilder instanceof GraphBuilderTopK)
+			if (this.graphBuilder instanceof GraphBuilderTopK) {
 				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn.getNodes(), ModelingConfiguration.getMaxCandidateModels());
+			} 
 			else 
 			{
 				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
@@ -249,8 +279,8 @@ public class LODModelLearner {
 							new SortableSemanticModel(sm, sn);
 					sortableSemanticModels.add(sortableSemanticModel);
 					
-					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));
-					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
+//					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));
+//					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
 			if (number == ModelingConfiguration.getMaxCandidateModels())
@@ -261,7 +291,7 @@ public class LODModelLearner {
 		Collections.sort(sortableSemanticModels);
 		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getMaxCandidateModels());
 		logger.info("results are ready ...");
-		sortableSemanticModels.get(0).print();
+//		sortableSemanticModels.get(0).print();
 		return sortableSemanticModels.subList(0, count);
 
 //		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
@@ -349,7 +379,8 @@ public class LODModelLearner {
 			} else if (cn.hasUserType()) {
 				candidateSemanticTypes = cn.getUserSemanticTypes();
 			}
-			
+
+				
 			if (candidateSemanticTypes == null) {
 				logger.error("No candidate semantic type found for the column " + cn.getColumnName());
 				return null;
@@ -390,38 +421,41 @@ public class LODModelLearner {
 
 			logger.info("===== Column: " + cn.getColumnName());
 
-			Set<SemanticTypeMapping> semanticTypeMappings = new HashSet<SemanticTypeMapping>();
-			for (SemanticType semanticType: candidateSemanticTypes) {
-
-				logger.info("\t" + semanticType.getConfidenceScore() + " :" + semanticType.getModelLabelString());
-
-				if (semanticType == null || 
-						semanticType.getDomain() == null ||
-						semanticType.getType() == null) continue;
-
-				domainUri = semanticType.getDomain().getUri();
-				propertyUri = semanticType.getType().getUri();
-				Integer countOfSemanticType = semanticTypesCount.get(domainUri + propertyUri);
-				logger.debug("count of semantic type: " +  countOfSemanticType);
-
-//				if (cn.hasUserType()) {
-//					HashMap<SemanticType, LabeledLink> domainLinks = 
-//							GraphUtil.getDomainLinks(this.graphBuilder.getGraph(), cn, cn.getUserSemanticTypes());
-//					if (domainLinks != null && !domainLinks.isEmpty()) {
-//						for (SemanticType st : cn.getUserSemanticTypes()) {
-//							semanticTypeMappings = new HashSet<SemanticTypeMapping>();
-//							LabeledLink domainLink = domainLinks.get(st);
-//							if (domainLink.getSource() == null || !(domainLink.getSource() instanceof InternalNode))
-//								continue;
-//							SemanticTypeMapping mp = 
-//									new SemanticTypeMapping(cn, st, (InternalNode)domainLink.getSource(), domainLink, cn);
-//							semanticTypeMappings.add(mp);
-//							candidateSteinerSets.updateSteinerSets(semanticTypeMappings);
-//						}
+			Set<SemanticTypeMapping> semanticTypeMappings = null; 
+			
+//			if (cn.hasUserType()) {
+//				HashMap<SemanticType, LabeledLink> domainLinks = 
+//						GraphUtil.getDomainLinks(this.graphBuilder.getGraph(), cn, cn.getUserSemanticTypes());
+//				if (domainLinks != null && !domainLinks.isEmpty()) {
+//					for (SemanticType st : cn.getUserSemanticTypes()) {
+//						semanticTypeMappings = new HashSet<SemanticTypeMapping>();
+//						LabeledLink domainLink = domainLinks.get(st);
+//						if (domainLink.getSource() == null || !(domainLink.getSource() instanceof InternalNode))
+//							continue;
+//						SemanticTypeMapping mp = 
+//								new SemanticTypeMapping(cn, st, (InternalNode)domainLink.getSource(), domainLink, cn);
+//						semanticTypeMappings.add(mp);
+//						candidateSteinerSets.updateSteinerSets(semanticTypeMappings);
 //					}
-//				} else 
-				{
-
+//				}
+//			} else 
+			{
+				semanticTypeMappings = new HashSet<SemanticTypeMapping>();
+				for (SemanticType semanticType: candidateSemanticTypes) {
+	
+					logger.info("\t" + semanticType.getConfidenceScore() + " :" + semanticType.getModelLabelString());
+	
+					if (semanticType == null || 
+							semanticType.getDomain() == null ||
+							semanticType.getType() == null) continue;
+	
+					domainUri = semanticType.getDomain().getUri();
+					
+					propertyUri = semanticType.getType().getUri();
+					Integer countOfSemanticType = semanticTypesCount.get(domainUri + propertyUri);
+					logger.debug("count of semantic type: " +  countOfSemanticType);
+	
+					
 					tempSemanticTypeMappings = findSemanticTypeInGraph(cn, semanticType, semanticTypesCount, addedNodes);
 					logger.debug("number of matches for semantic type: " +  
 						 + (tempSemanticTypeMappings == null ? 0 : tempSemanticTypeMappings.size()));
@@ -430,24 +464,25 @@ public class LODModelLearner {
 						semanticTypeMappings.addAll(tempSemanticTypeMappings);
 	
 					int countOfMatches = tempSemanticTypeMappings == null ? 0 : tempSemanticTypeMappings.size();
-					if (countOfMatches < countOfSemanticType) 
-//					if (countOfMatches == 0) // No struct in graph is matched with the semantic type, we add a new struct to the graph
+//					if (countOfMatches < countOfSemanticType) 
+					if (countOfMatches == 0) // No struct in graph is matched with the semantic type, we add a new struct to the graph
 					{
 						SemanticTypeMapping mp = addSemanticTypeStruct(cn, semanticType, addedNodes);
 						if (mp != null)
 							semanticTypeMappings.add(mp);
 					}
 				}
-			}
-			//			System.out.println("number of matches for column " + n.getColumnName() + 
-			//					": " + (semanticTypeMappings == null ? 0 : semanticTypeMappings.size()));
-			logger.debug("number of matches for column " + cn.getColumnName() + 
-					": " + (semanticTypeMappings == null ? 0 : semanticTypeMappings.size()));
-			numOfMappings *= (semanticTypeMappings == null || semanticTypeMappings.isEmpty() ? 1 : semanticTypeMappings.size());
 
-			logger.debug("number of candidate steiner sets before update: " + candidateSteinerSets.getSteinerSets().size());
-			candidateSteinerSets.updateSteinerSets(semanticTypeMappings);
-			logger.debug("number of candidate steiner sets after update: " + candidateSteinerSets.getSteinerSets().size());
+				//			System.out.println("number of matches for column " + n.getColumnName() + 
+				//					": " + (semanticTypeMappings == null ? 0 : semanticTypeMappings.size()));
+				logger.debug("number of matches for column " + cn.getColumnName() + 
+						": " + (semanticTypeMappings == null ? 0 : semanticTypeMappings.size()));
+				numOfMappings *= (semanticTypeMappings == null || semanticTypeMappings.isEmpty() ? 1 : semanticTypeMappings.size());
+	
+				logger.debug("number of candidate steiner sets before update: " + candidateSteinerSets.getSteinerSets().size());
+				candidateSteinerSets.updateSteinerSets(semanticTypeMappings);
+				logger.debug("number of candidate steiner sets after update: " + candidateSteinerSets.getSteinerSets().size());
+			}
 		}
 
 		for (Node n : steinerNodes) {
@@ -512,7 +547,6 @@ public class LODModelLearner {
 
 		// add dataproperty to existing classes if sl is a data node mapping
 		//		Set<Node> foundInternalNodes = new HashSet<Node>();
-		Double weight = null;
 		Set<SemanticTypeMapping> semanticTypeMatches = this.graphBuilder.getSemanticTypeMatches().get(domainUri + propertyUri);
 		if (semanticTypeMatches != null) {
 			for (SemanticTypeMapping stm : semanticTypeMatches) {
@@ -520,7 +554,6 @@ public class LODModelLearner {
 				SemanticTypeMapping mp = 
 						new SemanticTypeMapping(sourceColumn, semanticType, stm.getSource(), stm.getLink(), stm.getTarget());
 				mappings.add(mp);
-				weight = stm.getLink().getWeight();
 				//				foundInternalNodes.add(stm.getSource());
 			}
 		}
@@ -552,9 +585,7 @@ public class LODModelLearner {
 
 				String linkId = LinkIdFactory.getLinkId(propertyUri, source.getId(), target.getId());	
 				LabeledLink link = new DataPropertyLink(linkId, new Label(propertyUri));
-				
-				boolean result = weight == null ? this.graphBuilder.addLink(source, target, link) : this.graphBuilder.addLink(source, target, link, weight);
-				if (!result) continue;;
+				if (!this.graphBuilder.addLink(source, target, link)) continue;;
 
 				SemanticTypeMapping mp = new SemanticTypeMapping(sourceColumn, semanticType, (InternalNode)source, link, target);
 				mappings.add(mp);
@@ -606,16 +637,9 @@ public class LODModelLearner {
 		InternalNode source = null;
 		String nodeId;
 
-		Set<Node> nodesWithSameUri = this.graphBuilder.getUriToNodesMap().get(domainUri);
-		if (nodesWithSameUri != null && !nodesWithSameUri.isEmpty()) {
-			InternalNode copyFrom = (InternalNode)nodesWithSameUri.iterator().next();
-			source = this.graphBuilder.copyNode(copyFrom, false);
-			if (source == null) return null;
-		} else {
-			nodeId = nodeIdFactory.getNodeId(domainUri);
-			source = new InternalNode(nodeId, new Label(domainUri));
-			if (!this.graphBuilder.addNodeAndUpdate(source, addedNodes)) return null;
-		}
+		nodeId = nodeIdFactory.getNodeId(domainUri);
+		source = new InternalNode(nodeId, new Label(domainUri));
+		if (!this.graphBuilder.addNodeAndUpdate(source, addedNodes)) return null;
 
 		nodeId = new RandomGUID().toString();
 		ColumnNode target = new ColumnNode(nodeId, nodeId, sourceColumn.getColumnName(), null);
@@ -636,7 +660,6 @@ public class LODModelLearner {
 
 		return mappingStruct;
 	}
-
 
 //	private void updateWeights() {
 //
@@ -724,6 +747,13 @@ public class LODModelLearner {
 //		}
 //	}
 
+	private static double roundDecimals(double d, int k) {
+		String format = "";
+		for (int i = 0; i < k; i++) format += "#";
+        DecimalFormat DForm = new DecimalFormat("#." + format);
+        return Double.valueOf(DForm.format(d));
+	}
+
 	@SuppressWarnings("unused")
 	private static void getStatistics1(List<SemanticModel> semanticModels) {
 		for (int i = 0; i < semanticModels.size(); i++) {
@@ -772,7 +802,6 @@ public class LODModelLearner {
 
 		}
 
-
 		System.out.println(numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + numberOfAttributesWhoseTypeIsFirstCRFType);
 //		System.out.println(columnNodes.size() + "\t" + numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + numberOfAttributesWhoseTypeIsFirstCRFType);
 
@@ -781,63 +810,75 @@ public class LODModelLearner {
 //		System.out.println("numberOfAttributesWhoseTypeIsFirstCRFType:" + numberOfAttributesWhoseTypeIsFirstCRFType);
 	}
 
-	private static double roundDecimals(double d, int k) {
-		String format = "";
-		for (int i = 0; i < k; i++) format += "#";
-		DecimalFormat DForm = new DecimalFormat("#." + format);
-		return Double.valueOf(DForm.format(d));
-	}
-	
-	
-	public static void main(String[] args) throws Exception {
+	public static void test() throws Exception {
 
 		ServletContextParameterMap.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
+
+		//		String inputPath = Params.INPUT_DIR;
+		String outputPath = Params.OUTPUT_DIR;
+		String graphPath = Params.GRAPHS_DIR;
+
+		//		List<SemanticModel> semanticModels = ModelReader.importSemanticModels(inputPath);
+		List<SemanticModel> semanticModels = 
+				ModelReader.importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
+
+		//		ModelEvaluation me2 = semanticModels.get(20).evaluate(semanticModels.get(20));
+		//		System.out.println(me2.getPrecision() + "--" + me2.getRecall());
+		//		if (true)
+		//			return;
+
+		List<SemanticModel> trainingData = new ArrayList<SemanticModel>();
 
 		OntologyManager ontologyManager = new OntologyManager();
 		File ff = new File(Params.ONTOLOGY_DIR);
 		File[] files = ff.listFiles();
-		if (files == null) {
-			logger.error("no ontology to import at " + ff.getAbsolutePath());
-			return;
-		}
-
 		for (File f : files) {
-			if (f.getName().endsWith(".owl") || 
-					f.getName().endsWith(".rdf") || 
-					f.getName().endsWith(".n3") || 
-					f.getName().endsWith(".ttl") || 
-					f.getName().endsWith(".xml")) {
-				logger.info("Loading ontology file: " + f.getAbsolutePath());
-				ontologyManager.doImport(f, "UTF-8");
-			}
+			ontologyManager.doImport(f, "UTF-8");
 		}
-		ontologyManager.updateCache(); 
+		ontologyManager.updateCache();  
 
+//		getStatistics1(semanticModels);
+//
+//		if (true)
+//			return;
 
-		String outputPath = Params.OUTPUT_DIR;
-		String graphPath = Params.GRAPHS_DIR;
+		ModelLearningGraph modelLearningGraph = null;
+		
+		ModelLearner_KnownModels modelLearner;
 
-		List<SemanticModel> semanticModels = 
-				ModelReader.importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
-
-		LODModelLearner modelLearner = null;
-
-		boolean randomModel = false;
+		boolean iterativeEvaluation = false;
 		boolean useCorrectType = true;
+		boolean randomModel = false;
+
 		int numberOfCRFCandidates = 1;
+		int numberOfKnownModels;
 		String filePath = Params.RESULTS_DIR;
-		String filename = "";
+		String filename = ""; 
 		filename += "results,k=" + numberOfCRFCandidates;
 		filename += useCorrectType ? "-correct types":"";
 		filename += randomModel ? "-random":"";
+		filename += iterativeEvaluation ? "-iterative":"";
 		filename += ".csv"; 
-		PrintWriter resultFile = new PrintWriter(new File(filePath + filename));
+		
+		PrintWriter resultFileIterative = null;
+		PrintWriter resultFile = null;
+		StringBuffer[] resultsArray = null;
+		
+		if (iterativeEvaluation) {
+			resultFileIterative = new PrintWriter(new File(filePath + filename));
+			resultsArray = new StringBuffer[semanticModels.size() + 2];
+			for (int i = 0; i < resultsArray.length; i++) {
+				resultsArray[i] = new StringBuffer();
+			}
+		} else {
+			resultFile = new PrintWriter(new File(filePath + filename));
+			resultFile.println("source \t p \t r \t t \n");
+		}
 
-		resultFile.println("source \t p \t r \t t \n");
 
-		for (int i = 0; i < semanticModels.size(); i++) {
+//		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 0; {
+		int i = 4; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -847,100 +888,198 @@ public class LODModelLearner {
 			System.out.println(newSource.getName() + "(#attributes:" + newSource.getColumnNodes().size() + ")");
 			logger.info("======================================================");
 
-			SemanticModel correctModel = newSource;
-			List<ColumnNode> columnNodes = correctModel.getColumnNodes();
+			numberOfKnownModels = iterativeEvaluation ? 0 : semanticModels.size() - 1;
 
-			List<Node> steinerNodes = new LinkedList<Node>(columnNodes);
-			long start = System.currentTimeMillis();
+			if (iterativeEvaluation) {
+				if (resultsArray[0].length() > 0)	resultsArray[0].append(" \t ");			
+				resultsArray[0].append(newSource.getName() + "(" + newSource.getColumnNodes().size() + ")" + "\t" + " " + "\t" + " ");
+				if (resultsArray[1].length() > 0)	resultsArray[1].append(" \t ");			
+				resultsArray[1].append("p \t r \t t");
+			}
 
-			String graphName = graphPath + "lod" + Params.GRAPH_FILE_EXT; 
-
-			if (randomModel) {
-				modelLearner = new LODModelLearner(new GraphBuilder(ontologyManager, false), steinerNodes);
-			} else if (new File(graphName).exists()) {
-				// read graph from file
-				try {
-					logger.info("loading the graph ...");
-					DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
-					modelLearner = new LODModelLearner(new GraphBuilder(ontologyManager, graph, true), steinerNodes);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else 
+//			numberOfKnownModels = 2;
+			while (numberOfKnownModels <= semanticModels.size() - 1) 
 			{
-				logger.info("building the graph ...");
-				// create and save the graph to file
-				LODSchemaGraphBuilder b = new LODSchemaGraphBuilder(ontologyManager, 
-						Params.LOD_OBJECT_PROPERIES_FILE, 
-						Params.LOD_DATA_PROPERIES_FILE);
-				modelLearner = new LODModelLearner(b.getGraphBuilder(), steinerNodes);
-			}
 
-			if (modelLearner == null) {
-				resultFile.close();
-				return;
-			}
+				trainingData.clear();
 
-			List<SortableSemanticModel> hypothesisList = modelLearner.hypothesize(useCorrectType, numberOfCRFCandidates);
+				int j = 0, count = 0;
+				while (count < numberOfKnownModels) {
+					if (j != newSourceIndex) {
+						trainingData.add(semanticModels.get(j));
+						count++;
+					}
+					j++;
+				}
 
-			long elapsedTimeMillis = System.currentTimeMillis() - start;
-			float elapsedTimeSec = elapsedTimeMillis/1000F;
+				modelLearningGraph = (ModelLearningGraphCompact)ModelLearningGraph.getEmptyInstance(ontologyManager, ModelLearningGraphType.Compact);
+				
+				
+				SemanticModel correctModel = newSource;
+				List<ColumnNode> columnNodes = correctModel.getColumnNodes();
+				//				if (useCorrectType && numberOfCRFCandidates > 1)
+				//					updateCrfSemanticTypesForResearchEvaluation(columnNodes);
 
-			List<SortableSemanticModel> topHypotheses = null;
-			if (hypothesisList != null) {
-				topHypotheses = hypothesisList.size() > ModelingConfiguration.getMaxCandidateModels() ? 
-						hypothesisList.subList(0, ModelingConfiguration.getMaxCandidateModels()) : 
-							hypothesisList;
-			}
+				List<Node> steinerNodes = new LinkedList<Node>(columnNodes);
+				modelLearner = new ModelLearner_KnownModels(ontologyManager, steinerNodes);
+				long start = System.currentTimeMillis();
 
-			Map<String, SemanticModel> models = 
-					new TreeMap<String, SemanticModel>();
+				String graphName = !iterativeEvaluation?
+						graphPath + semanticModels.get(newSourceIndex).getName() + Params.GRAPH_FILE_EXT : 
+							graphPath + semanticModels.get(newSourceIndex).getName() + ".knownModels=" + numberOfKnownModels + Params.GRAPH_FILE_EXT;
 
-			ModelEvaluation me;
-			models.put("1-correct model", correctModel);
-			if (topHypotheses != null)
-				for (int k = 0; k < topHypotheses.size(); k++) {
-
-					SortableSemanticModel m = topHypotheses.get(k);
-
-					me = m.evaluate(correctModel);
-
-					String label = "candidate" + k + 
-							m.getSteinerNodes().getScoreDetailsString() +
-							"cost:" + roundDecimals(m.getCost(), 6) + 
-							//								"-distance:" + me.getDistance() + 
-							"-precision:" + me.getPrecision() + 
-							"-recall:" + me.getRecall();
-
-					models.put(label, m);
-
-					if (k == 0) { // first rank model
-						System.out.println("precision: " + me.getPrecision() + 
-								", recall: " + me.getRecall() + 
-								", time: " + elapsedTimeSec);
-						logger.info("precision: " + me.getPrecision() + 
-								", recall: " + me.getRecall() + 
-								", time: " + elapsedTimeSec);
-						String s = newSource.getName() + "\t" + me.getPrecision() + "\t" + me.getRecall() + "\t" + elapsedTimeSec;
-						resultFile.println(s);
-
+				if (randomModel) {
+					modelLearner = new ModelLearner_KnownModels(new GraphBuilder(ontologyManager, false), steinerNodes);
+				} else if (new File(graphName).exists()) {
+					// read graph from file
+					try {
+						logger.info("loading the graph ...");
+						DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
+						modelLearner.graphBuilder = new GraphBuilderTopK(ontologyManager, graph);
+						modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					logger.info("building the graph ...");
+					for (SemanticModel sm : trainingData)
+//						modelLearningGraph.addModel(sm);
+						modelLearningGraph.addModelAndUpdate(sm);
+					modelLearner.graphBuilder = modelLearningGraph.getGraphBuilder();
+					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
+					// save graph to file
+					try {
+						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName);
+						GraphVizUtil.exportJGraphToGraphviz(modelLearner.graphBuilder.getGraph(), 
+								"test", 
+								true, 						
+								GraphVizLabelType.LocalId,
+								GraphVizLabelType.LocalUri,
+								false, 
+								true, 
+								graphName + ".dot");
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
+				
+//				HashMap<String, Integer> test = new HashMap<String, Integer>();
+//				for (DefaultLink l : modelLearner.graphBuilder.getGraph().edgeSet()) {
+//					String key = l.getSource().getId() + l.getTarget().getId();
+//					Integer c = test.get(key);
+//					if (c == null) c = 0;
+//					test.put(key, c + 1);
+//				}
+//				for (String s : test.keySet()) {
+//					if (test.get(s) > 1)
+//						System.out.println(s + "\n" + test.get(s));
+//				}
+				
+				List<SortableSemanticModel> hypothesisList = modelLearner.hypothesize(useCorrectType, numberOfCRFCandidates);
 
-			String outName = outputPath + newSource.getName() + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT;
+				long elapsedTimeMillis = System.currentTimeMillis() - start;
+				float elapsedTimeSec = elapsedTimeMillis/1000F;
 
-			GraphVizUtil.exportSemanticModelsToGraphviz(
-					models, 
-					newSource.getName(),
-					outName,
-					GraphVizLabelType.LocalId,
-					GraphVizLabelType.LocalUri,
-					true,
-					true);
+				List<SortableSemanticModel> topHypotheses = null;
+				if (hypothesisList != null) {
+					topHypotheses = hypothesisList.size() > ModelingConfiguration.getMaxCandidateModels() ? 
+							hypothesisList.subList(0, ModelingConfiguration.getMaxCandidateModels()) : 
+								hypothesisList;
+				}
 
+				Map<String, SemanticModel> models = 
+						new TreeMap<String, SemanticModel>();
+
+				// export to json
+				//				if (topHypotheses != null)
+				//					for (int k = 0; k < topHypotheses.size() && k < 3; k++) {
+				//						
+				//						String fileExt = null;
+				//						if (k == 0) fileExt = Params.MODEL_RANK1_FILE_EXT;
+				//						else if (k == 1) fileExt = Params.MODEL_RANK2_FILE_EXT;
+				//						else if (k == 2) fileExt = Params.MODEL_RANK3_FILE_EXT;
+				//						SortableSemanticModel m = topHypotheses.get(k);
+				//						new SemanticModel(m).writeJson(Params.MODEL_DIR + 
+				//								newSource.getName() + fileExt);
+				//						
+				//					}
+
+				ModelEvaluation me;
+				models.put("1-correct model", correctModel);
+				if (topHypotheses != null)
+					for (int k = 0; k < topHypotheses.size(); k++) {
+
+						SortableSemanticModel m = topHypotheses.get(k);
+
+						me = m.evaluate(correctModel);
+
+						String label = "candidate" + k + 
+								(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +
+								"cost:" + roundDecimals(m.getCost(), 6) + 
+								//								"-distance:" + me.getDistance() + 
+								"-precision:" + me.getPrecision() + 
+								"-recall:" + me.getRecall();
+
+						models.put(label, m);
+
+						if (k == 0) { // first rank model
+							System.out.println("number of known models: " + numberOfKnownModels +
+									", precision: " + me.getPrecision() + 
+									", recall: " + me.getRecall() + 
+									", time: " + elapsedTimeSec);
+							logger.info("number of known models: " + numberOfKnownModels +
+									", precision: " + me.getPrecision() + 
+									", recall: " + me.getRecall() + 
+									", time: " + elapsedTimeSec);
+//							resultFile.println("number of known models \t precision \t recall");
+//							resultFile.println(numberOfKnownModels + "\t" + me.getPrecision() + "\t" + me.getRecall());
+							String s = me.getPrecision() + "\t" + me.getRecall() + "\t" + elapsedTimeSec;
+							if (iterativeEvaluation) {
+								if (resultsArray[numberOfKnownModels + 2].length() > 0) 
+									resultsArray[numberOfKnownModels + 2].append(" \t ");
+								resultsArray[numberOfKnownModels + 2].append(s);
+							} else {
+								s = newSource.getName() + "\t" + me.getPrecision() + "\t" + me.getRecall() + "\t" + elapsedTimeSec;
+								resultFile.println(s);
+							}
+
+//							resultFile.println(me.getPrecision() + "\t" + me.getRecall() + "\t" + elapsedTimeSec);
+						}
+					}
+
+				String outName = !iterativeEvaluation?
+						outputPath + semanticModels.get(newSourceIndex).getName() + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT : 
+							outputPath + semanticModels.get(newSourceIndex).getName() + ".knownModels=" + numberOfKnownModels + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT;
+
+				//	if (!iterativeEvaluation) {
+				GraphVizUtil.exportSemanticModelsToGraphviz(
+						models, 
+						newSource.getName(),
+						outName,
+						GraphVizLabelType.LocalId,
+						GraphVizLabelType.LocalUri,
+						true,
+						true);
+				//				}
+
+				numberOfKnownModels ++;
+
+			}
+
+		//	resultFile.println("=======================================================");
 		}
+		if (iterativeEvaluation) {
+			for (StringBuffer s : resultsArray)
+				resultFileIterative.println(s.toString());
+			resultFileIterative.close();
+		} else {
+			resultFile.close();
+		}
+	}
+	
+	public static void main(String[] args) throws Exception {
 
-		resultFile.close();
+		test();
 
 	}
 

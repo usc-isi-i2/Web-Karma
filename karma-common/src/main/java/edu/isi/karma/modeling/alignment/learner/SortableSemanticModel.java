@@ -168,6 +168,12 @@ public class SortableSemanticModel extends SemanticModel
 		double linkCoherence1 = this.linkCoherence.getCoherenceValue();
 		double linkCoherence2 = m.linkCoherence.getCoherenceValue();
 		
+		// TODO: fix coherence value --> use percentage rather than raw number
+//		if (linkCoherence1 > linkCoherence2)
+//			return greaterThan;
+//		else if (linkCoherence1 < linkCoherence2)
+//			return lessThan;
+//		
 		if (this.cost < m.cost)
 			return greaterThan;
 		else if (m.cost < this.cost)
@@ -178,16 +184,7 @@ public class SortableSemanticModel extends SemanticModel
 		else if (score1 < score2)
 			return lessThan;
 		
-		// TODO: fix coherence value --> use percentage rather than raw number
-		if (linkCoherence1 > linkCoherence2)
-			return greaterThan;
-		else if (linkCoherence1 < linkCoherence2)
-			return lessThan;
 		
-
-
-
-				
 		return 0;
 		
 	}
