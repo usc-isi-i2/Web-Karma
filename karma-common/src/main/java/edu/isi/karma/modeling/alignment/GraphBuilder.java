@@ -1144,7 +1144,7 @@ public class GraphBuilder {
 		String sourceUri;
 		String targetUri;
 
-		String id = null;
+		String id1 = null, id2 = null;
 		
 		for (int i = 0; i < nodes.size(); i++) {
 			
@@ -1167,73 +1167,104 @@ public class GraphBuilder {
 				sourceUri = source.getUri();
 				targetUri = target.getUri();
 
-				id = LinkIdFactory.getLinkId(Uris.DEFAULT_LINK_URI, source.getId(), target.getId());
+				id1 = LinkIdFactory.getLinkId(Uris.DEFAULT_LINK_URI, source.getId(), target.getId());
+				id2 = LinkIdFactory.getLinkId(Uris.DEFAULT_LINK_URI, target.getId(), source.getId());
 				CompactLink link = null; 
 
-				boolean connected = false;
+//				boolean connected = false;
+				boolean sourceConnectedToTarget = false;
+				boolean targetConnectedToSource = false;
 				
 				// order of adding the links is based on the ascending sort of their weight value
 				
 				if (ModelingConfiguration.getPropertiesDirect()) {
-					if (this.ontologyManager.isConnectedByDirectProperty(sourceUri, targetUri) ||
-							this.ontologyManager.isConnectedByDirectProperty(targetUri, sourceUri)) {
+					if (this.ontologyManager.isConnectedByDirectProperty(sourceUri, targetUri)) {
 						logger.debug( sourceUri + " and " + targetUri + " are connected by a direct object property.");
-						link = new CompactObjectPropertyLink(id, ObjectPropertyType.Direct);
+						link = new CompactObjectPropertyLink(id1, ObjectPropertyType.Direct);
 						addLink(source, target, link);
-						connected = true;
+						sourceConnectedToTarget = true;
 					}
+					if (this.ontologyManager.isConnectedByDirectProperty(targetUri, sourceUri)) {
+						logger.debug( targetUri + " and " + sourceUri + " are connected by a direct object property.");
+						link = new CompactObjectPropertyLink(id2, ObjectPropertyType.Direct);
+						addLink(target, source, link);
+						targetConnectedToSource = true;
+					}				
 				}
 				
-				if (ModelingConfiguration.getPropertiesIndirect() && !connected) {
-					if (this.ontologyManager.isConnectedByIndirectProperty(sourceUri, targetUri) ||
-							this.ontologyManager.isConnectedByIndirectProperty(targetUri, sourceUri)) { 
+				if (ModelingConfiguration.getPropertiesIndirect()) {
+					if (!sourceConnectedToTarget && this.ontologyManager.isConnectedByIndirectProperty(sourceUri, targetUri)) { 
 						logger.debug( sourceUri + " and " + targetUri + " are connected by an indirect object property.");
-						link = new CompactObjectPropertyLink(id, ObjectPropertyType.Indirect);
+						link = new CompactObjectPropertyLink(id1, ObjectPropertyType.Indirect);
 						addLink(source, target, link);
-						connected = true;
+						sourceConnectedToTarget = true;
+					}
+					if (!targetConnectedToSource && this.ontologyManager.isConnectedByIndirectProperty(targetUri, sourceUri)) { 
+						logger.debug( targetUri + " and " + sourceUri + " are connected by an indirect object property.");
+						link = new CompactObjectPropertyLink(id2, ObjectPropertyType.Indirect);
+						addLink(target, source, link);
+						targetConnectedToSource = true;
 					}
 				}
 				
-				if (ModelingConfiguration.getPropertiesWithOnlyRange() && !connected) {
-					if (this.ontologyManager.isConnectedByDomainlessProperty(sourceUri, targetUri) ||
-							this.ontologyManager.isConnectedByDomainlessProperty(targetUri, sourceUri)) { 
+				if (ModelingConfiguration.getPropertiesWithOnlyRange()) {
+					if (!sourceConnectedToTarget && this.ontologyManager.isConnectedByDomainlessProperty(sourceUri, targetUri)) { 
 						logger.debug( sourceUri + " and " + targetUri + " are connected by an object property whose range is " + sourceUri + " or " + targetUri);
-						link = new CompactObjectPropertyLink(id, ObjectPropertyType.WithOnlyRange);
+						link = new CompactObjectPropertyLink(id1, ObjectPropertyType.WithOnlyRange);
 						addLink(source, target, link);
-						connected = true;
+						sourceConnectedToTarget = true;
+					}
+					if (!targetConnectedToSource && this.ontologyManager.isConnectedByDomainlessProperty(targetUri, sourceUri)) { 
+						logger.debug( targetUri + " and " + sourceUri + " are connected by an object property whose range is " + targetUri + " or " + sourceUri);
+						link = new CompactObjectPropertyLink(id2, ObjectPropertyType.WithOnlyRange);
+						addLink(target, source, link);
+						targetConnectedToSource = true;
 					}
 				}
 				
-				if (ModelingConfiguration.getPropertiesWithOnlyDomain() && !connected) {
-					if (this.ontologyManager.isConnectedByRangelessProperty(sourceUri, targetUri) ||
-							this.ontologyManager.isConnectedByRangelessProperty(targetUri, sourceUri)) { 
+				if (ModelingConfiguration.getPropertiesWithOnlyDomain()) {
+					if (!sourceConnectedToTarget && this.ontologyManager.isConnectedByRangelessProperty(sourceUri, targetUri)) { 
 						logger.debug( sourceUri + " and " + targetUri + " are connected by an object property whose domain is " + sourceUri + " or " + targetUri);
-						link = new CompactObjectPropertyLink(id, ObjectPropertyType.WithOnlyDomain);
-						addLink(source, target, link);	
-						connected = true;
-					}
-				}
-				
-				if (ModelingConfiguration.getPropertiesSubClass() && !connected) {
-					if (this.ontologyManager.isSubClass(sourceUri, targetUri, false) ||
-							this.ontologyManager.isSubClass(targetUri, sourceUri, false)) {
-						logger.debug( sourceUri + " and " + targetUri + " are connected by a subClassOf relation.");
-						link = new CompactSubClassLink(id);
+						link = new CompactObjectPropertyLink(id1, ObjectPropertyType.WithOnlyDomain);
 						addLink(source, target, link);
-						connected = true;
+						sourceConnectedToTarget = true;
+					}
+					if (!targetConnectedToSource && this.ontologyManager.isConnectedByRangelessProperty(targetUri, sourceUri)) { 
+						logger.debug( targetUri + " and " + sourceUri + " are connected by an object property whose domain is " + targetUri + " or " + sourceUri);
+						link = new CompactObjectPropertyLink(id2, ObjectPropertyType.WithOnlyDomain);
+						addLink(target, source, link);
+						targetConnectedToSource = true;
 					}
 				}
 				
-				if (ModelingConfiguration.getPropertiesWithoutDomainRange() && !connected) {
+				if (!sourceConnectedToTarget && ModelingConfiguration.getPropertiesSubClass()) {
+					if (this.ontologyManager.isSubClass(sourceUri, targetUri, false)) {
+						logger.debug( sourceUri + " and " + targetUri + " are connected by a subClassOf relation.");
+						link = new CompactSubClassLink(id1);
+						addLink(source, target, link);
+						sourceConnectedToTarget = true;
+					}
+					if (!targetConnectedToSource && this.ontologyManager.isSubClass(targetUri, sourceUri, false)) {
+						logger.debug( targetUri + " and " + sourceUri + " are connected by a subClassOf relation.");
+						link = new CompactSubClassLink(id2);
+						addLink(target, source, link);
+						targetConnectedToSource = true;
+					}
+				}
+				
+				if (ModelingConfiguration.getPropertiesWithoutDomainRange() && !sourceConnectedToTarget && !targetConnectedToSource) {
 					if (this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(sourceUri, targetUri)) {// ||
 	//						this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(targetUri, sourceUri)) { 
-						link = new CompactObjectPropertyLink(id, ObjectPropertyType.WithoutDomainAndRange);
+						link = new CompactObjectPropertyLink(id1, ObjectPropertyType.WithoutDomainAndRange);
 						addLink(source, target, link);
-						connected = true;
+						link = new CompactObjectPropertyLink(id2, ObjectPropertyType.WithoutDomainAndRange);
+						addLink(target, source, link);
+						sourceConnectedToTarget = true;
+						targetConnectedToSource = true;
 					}
 				}
 
-				if (!connected) {
+				if (!sourceConnectedToTarget && !targetConnectedToSource) {
 					this.visitedSourceTargetPairs.add(n1.getId() + n2.getId());
 					logger.debug("did not put a link between (" + n1.getId() + ", " + n2.getId() + ")");
 				}

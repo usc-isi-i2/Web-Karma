@@ -15,6 +15,8 @@ public class BANKSfromMM extends TopKSteinertrees {
 	
 	private int iteratorCounter=0;
 	
+	private HashMap<SteinerNode,SteinerNode> recurseNodeMap;
+	private List<HashMap<SteinerNode,SteinerNode>> shortestNodeIndex;
 
 	public BANKSfromMM() {
 		// TODO Auto-generated constructor stub
@@ -35,7 +37,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 			banksIterator= new PriorityQueue<SteinerNode>(10, new Comparator<SteinerNode>(){
 				public int compare(SteinerNode n1, SteinerNode n2){
 					if(n1.distancesToSources[0]>n2.distancesToSources[0]) return 1;
-					else if(n1.distancesToSources[0]>n2.distancesToSources[0])return -1;
+					else if(n1.distancesToSources[0]<n2.distancesToSources[0])return -1;
 					else return 0;
 				}
 			});
@@ -64,12 +66,14 @@ public class BANKSfromMM extends TopKSteinertrees {
 			}
 		});
 		
+		shortestNodeIndex = new ArrayList<HashMap<SteinerNode, SteinerNode>>();
 		
 		for(int i=0; i<terminalNodes.size();i++){
 			banksIterators.offer(new BANKSIterator());
+			shortestNodeIndex.add(new HashMap<SteinerNode,SteinerNode>());
 		}
 		
-		
+		recurseNodeMap = new HashMap<SteinerNode, SteinerNode>();
 		
 	}
 	
@@ -83,21 +87,54 @@ public class BANKSfromMM extends TopKSteinertrees {
 	private void getApprTree(SteinerNode ancestor) throws Exception{
 		TreeSet<SteinerNode> steinerNodes = new TreeSet<SteinerNode>();
 		Map<String , SteinerNode> treeNodes= new HashMap<String, SteinerNode>();
-		treeNodes.put(ancestor.name(),new SteinerNode(ancestor.name()));
-		for(Map<String, SteinerNode> pnM:  visitedNodes){
-			SteinerNode newNode=pnM.get(ancestor.name());
+		
+		SteinerNode replacedNode = null;
+		if (this.recurseNodeMap.containsKey(ancestor)) {
+			replacedNode = this.recurseNodeMap.get(ancestor);
+			treeNodes.put(replacedNode.name,new SteinerNode(replacedNode.name));
+		}
+		else
+		{
+			treeNodes.put(ancestor.name(),new SteinerNode(ancestor.name()));
+		}
+		
+		String newNodeName;
+		SteinerNode searchNode;
+		for(int i = 0; i < visitedNodes.size(); i++){
+			Map<String, SteinerNode> pnM = visitedNodes.get(i);
+			if (pnM.get(ancestor.name()) == null && this.recurseNodeMap.containsKey(ancestor)) {
+				searchNode = shortestNodeIndex.get(i).get(replacedNode);
+			} else {
+				searchNode = ancestor;
+			}
+			SteinerNode newNode=pnM.get(searchNode.name);
+			newNodeName = newNode.name;
+			if (this.recurseNodeMap.containsKey(newNode))
+				newNodeName = this.recurseNodeMap.get(newNode).name;
+			
 			while(newNode.predecessor!= null){
 				SteinerNode preNode=new SteinerNode(newNode.predecessor.name());
-				if(!treeNodes.containsKey(preNode.name())){
-					preNode.addEdge(
-						treeNodes.get(newNode.name()), 
-						newNode.wasArg1,
-						newNode.relationToPredecessor, 
-						newNode.weightToPredecessor);
+				if (this.recurseNodeMap.containsKey(preNode)) {
+					preNode = new SteinerNode(this.recurseNodeMap.get(preNode).name);
+				}
+				if(!treeNodes.containsKey(preNode.name)){
 						
-					treeNodes.put(preNode.name(), preNode);
+					try {
+						preNode.addEdge(
+							treeNodes.get(newNodeName), 
+							newNode.wasArg1,
+							newNode.relationToPredecessor, 
+							newNode.weightToPredecessor);
+							
+						treeNodes.put(preNode.name(), preNode);
+					} catch (Exception e) {
+						System.out.println("exception");
+					}
 				}
 				newNode=newNode.predecessor;
+				newNodeName = newNode.name;
+				if (this.recurseNodeMap.containsKey(newNode))
+					newNodeName = this.recurseNodeMap.get(newNode).name;
 			}
 		}
 //		clean(treeNodes);
@@ -114,6 +151,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 		for(ResultGraph g: resultQueue)
 			if(g.getScore()<steinerTree.score)pos++;
 		((LinkedList<ResultGraph>)resultQueue).add(pos,steinerTree.toResultGraph());
+//		System.out.println(steinerTree.toString());
 	}
 	
 	
@@ -131,26 +169,43 @@ public class BANKSfromMM extends TopKSteinertrees {
 		//nodes polled from queues
 		List<Map<String, SteinerNode>> processedNodes= 
 				new ArrayList<Map<String, SteinerNode>>();
+		List<Map<String, SteinerNode>> processedNodesHelper= 
+				new ArrayList<Map<String, SteinerNode>>();
+
+		
+		List<HashMap<String, Integer>> recursesForNodesInQueue = 
+				new ArrayList<HashMap<String, Integer>>();
+		int maxrecurseCount = 100;
 		
 		//mark nodes in the iterators as visited
 		int j=0;
 		for(Queue<SteinerNode> queue: iterators){
 			//instatiate processedNodes for each iterator
 			processedNodes.add(new HashMap<String, SteinerNode>());
+			processedNodesHelper.add(new HashMap<String, SteinerNode>());
+			recursesForNodesInQueue.add(new HashMap<String, Integer>());
 			
 			Object[] arr =banksIterators.toArray();
 			for(SteinerNode n: queue){
 				visitedNodes.get(j).put(n.name(),n);
+				shortestNodeIndex.get(j).put(n, n);
+
 				((BANKSIterator)arr[j]).banksIterator.offer(n);
 			}
 			j++;
 		}
 		
+		String newId;
+		
+		SteinerNode replacedNode;
 		
 		while(count<k){
 			
 			//expanding iterators in turn
 			while(true){
+//				for (BANKSIterator queue : banksIterators) {
+//					System.out.println(queue.id + "-distance:" + queue.distanceToSource);
+//				}
 				BANKSIterator queue=banksIterators.poll();
 				if (queue == null || count > k) return; //FIXME
 				if(!queue.banksIterator.isEmpty()){
@@ -158,7 +213,18 @@ public class BANKSfromMM extends TopKSteinertrees {
 				
 					//mark n as processed
 					processedNodes.get(queue.id).put(n.name(), n);
+					System.out.println("poll" + queue.id + ":" + queue.distanceToSource + "-->" + n.name);
 					
+					replacedNode = n;
+					if (this.recurseNodeMap.containsKey(n)) {
+						replacedNode = this.recurseNodeMap.get(n);
+					}
+
+					processedNodesHelper.get(queue.id).put(replacedNode.name(), replacedNode);
+
+					if(isCommonAncestor(n, processedNodesHelper)){
+						count++;
+					}
 					
 					Queue<SteinerEdge> rs= new PriorityQueue<SteinerEdge>(10, new Comparator<SteinerEdge>(){
 						public int compare(SteinerEdge e1, SteinerEdge e2){
@@ -167,9 +233,8 @@ public class BANKSfromMM extends TopKSteinertrees {
 							else return 0;
 						}
 					});
-					
-					rs.addAll(graph.get(n));
-					
+											
+					rs.addAll(graph.get(replacedNode));
 					
 					while(!rs.isEmpty()){
 						
@@ -179,7 +244,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 						// getting (creating) neighbor of n
 						SteinerEdge e= rs.poll();
 						
-						if(!n.equals(e.sourceNode)){
+						if(!replacedNode.equals(e.sourceNode)){
 							newNode= new SteinerNode(e.sourceNode.name());
 							newNode.wasArg1=true;
 						}
@@ -196,18 +261,48 @@ public class BANKSfromMM extends TopKSteinertrees {
 						//check whether newNode has been visited
 						SteinerNode v=visitedNodes.get(queue.id).get(newNode.name());
 						if(v!=null){
-							newNode=v;
-							if(newNode.distancesToSources[0]>n.distancesToSources[0]+e.getWeight()){ //FIXME
-								newNode.distancesToSources[0]=n.distancesToSources[0]+e.getWeight();
-								newNode.predecessor= n;
-								newNode.relationToPredecessor=e.getEdgeLabel();
-								newNode.weightToPredecessor=e.getWeight();
-								
-								// reinsert the node into the queue;
-									queue.banksIterator.remove(newNode);
-									queue.banksIterator.offer(newNode);
-								
-							}	
+							
+							Integer recurseCount = recursesForNodesInQueue.get(queue.id).get(v.name);
+							if (recurseCount == null) {
+								recurseCount = 2;
+							} else if (recurseCount < maxrecurseCount) {
+								recurseCount = recurseCount + 1;
+							} else {
+								continue;
+							}
+							
+							recursesForNodesInQueue.get(queue.id).put(v.name, recurseCount);
+
+//							newNode=v;
+//							if(newNode.distancesToSources[0]>n.distancesToSources[0]+e.getWeight()){ //FIXME
+//								newNode.distancesToSources[0]=n.distancesToSources[0]+e.getWeight();
+//								newNode.predecessor= n;
+//								newNode.relationToPredecessor=e.getEdgeLabel();
+//								newNode.weightToPredecessor=e.getWeight();
+//								
+//								// reinsert the node into the queue;
+//									queue.banksIterator.remove(newNode);
+//									queue.banksIterator.offer(newNode);
+//								
+//							}
+													
+							newId = queue.id + ":" + newNode.name + "///" + (recurseCount);							
+							newNode.name = newId;
+							newNode.distancesToSources[0]=n.distancesToSources[0]+e.getWeight();
+							newNode.predecessor= n;
+//							System.out.println(queue.banksIterator.peek().name);
+//							System.out.println(queue.banksIterator.peek().distancesToSources[0]);
+							queue.banksIterator.add(newNode);		
+//							System.out.println(queue.banksIterator.peek().name);
+//							System.out.println(queue.banksIterator.peek().distancesToSources[0]);
+							recurseNodeMap.put(newNode, v);
+							visitedNodes.get(queue.id).put(newNode.name(), newNode);
+//							System.out.println("visited node: " + v.getNodeId());
+//							System.out.println("offer" + queue.id + ":" + newNode.distancesToSources[0] + "-->" + newNode.name);
+
+							if(newNode.distancesToSources[0] < shortestNodeIndex.get(queue.id).get(v).distancesToSources[0])
+								shortestNodeIndex.get(queue.id).put(v, newNode);
+
 						}
 						
 						//in case newNode has not been visited
@@ -215,21 +310,21 @@ public class BANKSfromMM extends TopKSteinertrees {
 						{
 							newNode.distancesToSources[0]=n.distancesToSources[0]+e.getWeight();
 							newNode.predecessor= n;
-							queue.banksIterator.offer(newNode);
+							
+							queue.banksIterator.add(newNode);
 							visitedNodes.get(queue.id).put(newNode.name(), newNode);
+							shortestNodeIndex.get(queue.id).put(newNode, newNode);
+							System.out.println("offer" + queue.id + ":" + newNode.distancesToSources[0] + "-->" + newNode.name);
 						}	
 	
-						if(isCommonAncestor(newNode)){
-							
-							count++;
-//							if(count>k-1)break;
-								//break;
-						}	
+//						if(isCommonAncestor(newNode)){
+//							count++;
+//						}	
 					}
 				}
 				if (!queue.banksIterator.isEmpty()) {
 					queue.distanceToSource=queue.banksIterator.peek().distancesToSources[0];
-					banksIterators.offer(queue);
+					banksIterators.add(queue);
 				}
 			}
 		}
@@ -237,8 +332,32 @@ public class BANKSfromMM extends TopKSteinertrees {
 	
 	public boolean isCommonAncestor(SteinerNode n)throws Exception{
 		boolean isCAncestor= true;
+
+		SteinerNode searchFor = n;
+		if (this.recurseNodeMap.containsKey(n))
+			searchFor = this.recurseNodeMap.get(n);
+
 		for(Map<String, SteinerNode> pnM: visitedNodes){
-			if(!pnM.containsKey(n.name())) isCAncestor=false;
+			if(!pnM.containsKey(searchFor.name())) isCAncestor=false;
+		}
+	
+		if(isCAncestor){
+			
+			getApprTree(n);
+			return isCAncestor;
+		}
+		return isCAncestor;
+	}
+	
+	public boolean isCommonAncestor(SteinerNode n, List<Map<String, SteinerNode>> processedNodes)throws Exception{
+		boolean isCAncestor= true;
+
+		SteinerNode searchFor = n;
+		if (this.recurseNodeMap.containsKey(n))
+			searchFor = this.recurseNodeMap.get(n);
+
+		for(Map<String, SteinerNode> pnM: processedNodes){
+			if(!pnM.containsKey(searchFor.name())) isCAncestor=false;
 		}
 	
 		if(isCAncestor){

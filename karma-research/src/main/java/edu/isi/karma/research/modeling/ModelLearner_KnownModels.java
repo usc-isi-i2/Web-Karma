@@ -243,7 +243,7 @@ public class ModelLearner_KnownModels {
 		int number = 1;
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
 			if (sn == null) continue;
-			logger.debug("computing steiner tree for steiner nodes set " + number + " ...");
+			logger.info("computing steiner tree for steiner nodes set " + number + " ...");
 			logger.debug(sn.getScoreDetailsString());
 			number++;
 //			logger.info("START ...");
@@ -878,7 +878,7 @@ public class ModelLearner_KnownModels {
 
 //		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-		int i = 4; {
+		int i = 0; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -980,10 +980,11 @@ public class ModelLearner_KnownModels {
 				long elapsedTimeMillis = System.currentTimeMillis() - start;
 				float elapsedTimeSec = elapsedTimeMillis/1000F;
 
+				int cutoff = 20;//ModelingConfiguration.getMaxCandidateModels();
 				List<SortableSemanticModel> topHypotheses = null;
 				if (hypothesisList != null) {
-					topHypotheses = hypothesisList.size() > ModelingConfiguration.getMaxCandidateModels() ? 
-							hypothesisList.subList(0, ModelingConfiguration.getMaxCandidateModels()) : 
+					topHypotheses = hypothesisList.size() > cutoff ? 
+							hypothesisList.subList(0, cutoff) : 
 								hypothesisList;
 				}
 
