@@ -125,8 +125,8 @@ public class ElasticSearchPublishServlet extends Application {
 		String bulkFormat = null;
 		StringBuilder sb = new StringBuilder();
 		
-		System.out.println("GOt JSONLD:");
-		System.out.println(jsonld);
+//		System.out.println("GOt JSONLD:");
+//		System.out.println(jsonld);
 		
 		JSON json = JSONSerializer.toJSON(jsonld);
 		JSONArray jsonArray = null;
