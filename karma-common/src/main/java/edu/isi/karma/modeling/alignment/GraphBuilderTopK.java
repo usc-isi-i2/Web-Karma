@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.Uris;
+import edu.isi.karma.modeling.alignment.learner.SemanticTypeMapping;
+import edu.isi.karma.modeling.alignment.learner.SteinerNodes;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.steiner.topk.BANKSfromMM;
 import edu.isi.karma.modeling.steiner.topk.Fact;
@@ -223,10 +225,12 @@ public class GraphBuilderTopK extends GraphBuilder {
 		}
 
 	}
-	
-	public List<DirectedWeightedMultigraph<Node, LabeledLink>> getTopKSteinerTrees(Set<Node> steinerNodes, int k) 
-			throws Exception {
 
+	public List<DirectedWeightedMultigraph<Node, LabeledLink>> getTopKSteinerTrees(Set<Node> steinerNodes, 
+			int k, 
+			boolean onlyAddInternalNodes) 
+		throws Exception {
+		
 		if (steinerNodes == null) {
 			logger.error("no steiner node specified!");
 			return null;
@@ -237,17 +241,10 @@ public class GraphBuilderTopK extends GraphBuilder {
 		
 		TreeSet<SteinerNode> terminals= new TreeSet<SteinerNode>();
 		for (Node n : steinerNodes) {
-			// FIXME: comment the if condition?!
-//			if (n instanceof ColumnNode) 
-			{
-//				String colName = ((ColumnNode)n).getColumnName();
-//				System.out.println(colName);
-//				if (colName.equalsIgnoreCase("BeginDate")) continue;
-				terminals.add(new SteinerNode(n.getId()));
-			}
-//			System.out.println(n.getId());
-//			if (n instanceof ColumnNode)
-//				System.out.println(((ColumnNode)n).getColumnName());
+			if (onlyAddInternalNodes && !(n instanceof InternalNode))
+				continue;
+
+			terminals.add(new SteinerNode(n.getId()));
 		}
 		
 //		DPBFfromMM N = new DPBFfromMM(terminals);
@@ -267,6 +264,34 @@ public class GraphBuilderTopK extends GraphBuilder {
 			if (processedTree != null) results.add(processedTree);
 		}
 
+		return results;
+	}
+	
+	public List<DirectedWeightedMultigraph<Node, LabeledLink>> getTopKSteinerTrees(
+			SteinerNodes steinerNodes, 
+			int k, 
+			boolean onlyAddInternalNodes) 
+			throws Exception {
+
+		List<DirectedWeightedMultigraph<Node, LabeledLink>> results = 
+				getTopKSteinerTrees(steinerNodes.getNodes(), k, onlyAddInternalNodes);
+		
+		// adding data property links
+		if (results != null && onlyAddInternalNodes) {
+			for (DirectedWeightedMultigraph<Node, LabeledLink> tree : results) {
+
+				if (steinerNodes.getColumnNodeInfo() != null) {
+					for (SemanticTypeMapping stm : steinerNodes.getColumnNodeInfo().values()) {
+						LabeledLink dataPropertyLink = stm.getLink();
+						tree.addVertex(stm.getTarget());
+						tree.addEdge(stm.getSource(), stm.getTarget(), dataPropertyLink); 
+						tree.setEdgeWeight(dataPropertyLink, stm.getLink().getWeight());
+					}
+				}
+				
+			}
+		}
+		
 		return results;
 	}
 	
@@ -392,7 +417,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 		steinerNodes.add(n2);
 		steinerNodes.add(n3);
 		
-		List<DirectedWeightedMultigraph<Node, LabeledLink>> trees = gbtk.getTopKSteinerTrees(steinerNodes, 10);
+		List<DirectedWeightedMultigraph<Node, LabeledLink>> trees = gbtk.getTopKSteinerTrees(steinerNodes, 10, false);
 		for (DirectedWeightedMultigraph<Node, LabeledLink> tree : trees) {
 			System.out.println(GraphUtil.labeledGraphToString(tree));
 		}

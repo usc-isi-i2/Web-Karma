@@ -220,8 +220,8 @@ public class ModelLearner_LOD {
 //			logger.info("START ...");
 			
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
-			if (this.graphBuilder instanceof GraphBuilderTopK)
-				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn.getNodes(), ModelingConfiguration.getMaxCandidateModels());
+			if (this.graphBuilder instanceof GraphBuilderTopK) // which is not in ModelLearner_LOD
+				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getMaxCandidateModels(), false);
 			else 
 			{
 				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
