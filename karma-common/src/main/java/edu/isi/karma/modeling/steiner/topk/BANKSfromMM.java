@@ -213,7 +213,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 				
 					//mark n as processed
 					processedNodes.get(queue.id).put(n.name(), n);
-					System.out.println("poll" + queue.id + ":" + queue.distanceToSource + "-->" + n.name);
+//					System.out.println("poll" + queue.id + ":" + queue.distanceToSource + "-->" + n.name);
 					
 					replacedNode = n;
 					if (this.recurseNodeMap.containsKey(n)) {
@@ -290,14 +290,9 @@ public class BANKSfromMM extends TopKSteinertrees {
 							newNode.name = newId;
 							newNode.distancesToSources[0]=n.distancesToSources[0]+e.getWeight();
 							newNode.predecessor= n;
-//							System.out.println(queue.banksIterator.peek().name);
-//							System.out.println(queue.banksIterator.peek().distancesToSources[0]);
 							queue.banksIterator.add(newNode);		
-//							System.out.println(queue.banksIterator.peek().name);
-//							System.out.println(queue.banksIterator.peek().distancesToSources[0]);
 							recurseNodeMap.put(newNode, v);
 							visitedNodes.get(queue.id).put(newNode.name(), newNode);
-//							System.out.println("visited node: " + v.getNodeId());
 //							System.out.println("offer" + queue.id + ":" + newNode.distancesToSources[0] + "-->" + newNode.name);
 
 							if(newNode.distancesToSources[0] < shortestNodeIndex.get(queue.id).get(v).distancesToSources[0])
@@ -314,7 +309,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 							queue.banksIterator.add(newNode);
 							visitedNodes.get(queue.id).put(newNode.name(), newNode);
 							shortestNodeIndex.get(queue.id).put(newNode, newNode);
-							System.out.println("offer" + queue.id + ":" + newNode.distancesToSources[0] + "-->" + newNode.name);
+//							System.out.println("offer" + queue.id + ":" + newNode.distancesToSources[0] + "-->" + newNode.name);
 						}	
 	
 //						if(isCommonAncestor(newNode)){

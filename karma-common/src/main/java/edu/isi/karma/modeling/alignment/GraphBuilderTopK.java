@@ -21,7 +21,6 @@ import edu.isi.karma.modeling.steiner.topk.ResultGraph;
 import edu.isi.karma.modeling.steiner.topk.SteinerEdge;
 import edu.isi.karma.modeling.steiner.topk.SteinerNode;
 import edu.isi.karma.modeling.steiner.topk.TopKSteinertrees;
-import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.CompactObjectPropertyLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;

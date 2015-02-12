@@ -183,7 +183,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 							if (this.graphBuilder.addNode(newNode)) {
 								String linkId = LinkIdFactory.getLinkId(incomingLink.getUri(), m.getId(), newNode.getId());
 								DataPropertyLink link = new DataPropertyLink(linkId, new Label(incomingLink.getLabel()));
-								this.graphBuilder.addLink(m, newNode, link);
+								this.graphBuilder.addLink(m, newNode, link, ModelingParams.PATTERN_LINK_WEIGHT);
 								matches.add(newNode);
 								graphNodeDomains.put(newNode, 
 										GraphUtil.getDomainLinksInDefaultGraph(this.graphBuilder.getGraph(), (ColumnNode)newNode));

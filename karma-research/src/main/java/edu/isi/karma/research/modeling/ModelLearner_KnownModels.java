@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphBuilderTopK;
 import edu.isi.karma.modeling.alignment.GraphUtil;
@@ -70,7 +71,6 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
@@ -85,11 +85,7 @@ public class ModelLearner_KnownModels {
 	private GraphBuilder graphBuilder = null;
 	private NodeIdFactory nodeIdFactory = null; 
 	private List<Node> steinerNodes = null;
-	private SemanticModel semanticModel = null;
-//	private long lastUpdateTimeOfGraph;
-
-	private static final int NUM_SEMANTIC_TYPES = 4;
-
+	
 	public ModelLearner_KnownModels(OntologyManager ontologyManager, 
 			List<Node> steinerNodes) {
 		if (ontologyManager == null || 
@@ -119,66 +115,6 @@ public class ModelLearner_KnownModels {
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 	}
 
-	public ModelLearner_KnownModels(OntologyManager ontologyManager, 
-			Set<LabeledLink> forcedLinks,
-			List<Node> steinerNodes) {
-		if (ontologyManager == null || 
-				steinerNodes == null || 
-				steinerNodes.isEmpty()) {
-			logger.error("cannot instanciate model learner!");
-			return;
-		}
-		GraphBuilder gb = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder();
-		this.ontologyManager = ontologyManager;
-		this.steinerNodes = steinerNodes;
-		this.graphBuilder = cloneGraphBuilder(gb); // create a copy of the graph builder
-		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
-		if (steinerNodes != null) {
-			for (Node n : steinerNodes) {
-				if (this.graphBuilder.getIdToNodeMap().get(n.getId()) == null) {
-					this.graphBuilder.addNodeAndUpdate(n);
-				}
-			}
-		}
-		if (forcedLinks != null) {
-			for (LabeledLink l : forcedLinks) {
-				if (l.getStatus() == LinkStatus.ForcedByUser) {
-					Node source = l.getSource();
-					Node target = l.getTarget();
-					if (!this.graphBuilder.addLink(source, target, l)) {
-						LabeledLink existingLink = this.graphBuilder.getIdToLinkMap().get(l.getId());
-						if (existingLink != null) { // the link already exist, but it may not be forced by user
-							this.graphBuilder.changeLinkStatus(existingLink, LinkStatus.ForcedByUser);
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	public SemanticModel getModel() {
-		if (this.semanticModel == null)
-			try {
-				this.learn();
-			} catch (Exception e) {
-				logger.error("error in learing the semantic model for the source " + ((this.semanticModel == null) ? "" : this.semanticModel.getId()));
-				e.printStackTrace();
-			}
-
-		return this.semanticModel;
-	}
-
-	public void learn() throws Exception {
-
-		List<SortableSemanticModel> hypothesisList = this.hypothesize(true, NUM_SEMANTIC_TYPES);
-		if (hypothesisList != null && !hypothesisList.isEmpty()) {
-			SortableSemanticModel m = hypothesisList.get(0);
-			this.semanticModel = new SemanticModel(m);
-		} else {
-			this.semanticModel = null;
-		}
-	}
-
 	private GraphBuilder cloneGraphBuilder(GraphBuilder graphBuilder) {
 
 		GraphBuilder clonedGraphBuilder = null;
@@ -189,14 +125,6 @@ public class ModelLearner_KnownModels {
 		}
 		return clonedGraphBuilder;
 	}
-
-//	private boolean isGraphUpToDate() {
-//
-//		if (this.lastUpdateTimeOfGraph < this.modelLearningGraph.getLastUpdateTime())
-//			return false;
-//		
-//		return true;
-//	}
 
 	public List<SortableSemanticModel> hypothesize(boolean useCorrectTypes, int numberOfCandidates) throws Exception {
 
