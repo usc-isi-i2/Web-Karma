@@ -39,7 +39,6 @@
 		<dependency>
 			<groupId>org.python</groupId>
 			<artifactId>jython-standalone</artifactId>
-			<version>2.5.3</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -121,11 +120,6 @@
 			<groupId>tw.edu.ntu.csie</groupId>
 			<artifactId>libsvm</artifactId>
 			<version>3.17</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.perf4j</groupId>

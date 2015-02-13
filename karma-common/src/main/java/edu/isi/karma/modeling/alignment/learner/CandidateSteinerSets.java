@@ -61,7 +61,7 @@ public class CandidateSteinerSets {
 		if (this.steinerSets.size() == 0) {
 			for (SemanticTypeMapping stm : mappings) {
 				SteinerNodes sn = new SteinerNodes();
-				sn.addNodes(stm.getSourceColumn(), stm.getSource(), stm.getTarget(), stm.getConfidence());
+				sn.addNodes(stm);
 				this.steinerSets.add(sn);
 			}			
 		} else {
@@ -74,7 +74,7 @@ public class CandidateSteinerSets {
 						continue;
 
 					SteinerNodes sn = new SteinerNodes(nodeSet);
-					sn.addNodes(stm.getSourceColumn(), stm.getSource(), stm.getTarget(), stm.getConfidence());
+					sn.addNodes(stm);
 					newSteinerNodes.add(sn);
 					numOfNewSets ++;
 				}

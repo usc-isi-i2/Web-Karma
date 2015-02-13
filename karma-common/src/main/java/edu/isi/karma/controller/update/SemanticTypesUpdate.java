@@ -32,9 +32,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
@@ -65,16 +67,16 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	private static Logger logger = LoggerFactory
 			.getLogger(SemanticTypesUpdate.class);
 
-	public SemanticTypesUpdate(Worksheet worksheet, String worksheetId, Alignment alignment) {
+	public SemanticTypesUpdate(Worksheet worksheet, String worksheetId) {
 		super();
 		this.worksheet = worksheet;
 		this.worksheetId = worksheetId;
-		this.alignment = alignment;
 	}
 
 	@Override
 	public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
-		
+		Workspace workspace = vWorkspace.getWorkspace();
+		alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
 		SemanticTypes types = worksheet.getSemanticTypes();
 		Map<String, ColumnNode> hNodeIdTocolumnNodeMap = createColumnNodeMap();
 		Map<String, SemanticTypeNode> hNodeIdToDomainNodeMap = createDomainNodeMap();

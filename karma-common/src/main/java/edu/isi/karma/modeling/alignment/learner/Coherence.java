@@ -1,7 +1,5 @@
 package edu.isi.karma.modeling.alignment.learner;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,6 +10,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 
@@ -75,14 +74,19 @@ public class Coherence {
 
 	public void updateCoherence(Node node) {
 		if (node == null) return;
+		if (node.getModelIds() == null || node.getModelIds().isEmpty()) 
+			return;
 		this.itemsCount ++;
 		updateCoherence(node.getModelIds());
 	}
 	
 	public void updateCoherence(LabeledLink link) {
 		if (link == null) return;
-		// FIXME
-		if (link.getModelIds() != null && !link.getModelIds().isEmpty()) this.itemsCount ++;
+		if (!(link.getTarget() instanceof InternalNode))
+				return;
+		this.itemsCount ++;
+		if (link.getModelIds() == null || link.getModelIds().isEmpty()) 
+			return;
 		updateCoherence(link.getModelIds());
 	}
 	
@@ -184,25 +188,26 @@ public class Coherence {
 			return Double.MIN_VALUE;
 		}
 		
-
-		BigDecimal value = BigDecimal.ZERO;
-		
-		BigDecimal denominator = BigDecimal.ONE;
-		BigDecimal factor = new BigDecimal(this.itemsCount);
-		BigDecimal b;
-		
-//		List<Integer> coherenceList = getCoherenceList();
-//		for (int i = 0; i < coherenceList.size(); i++) {
-//			int size = coherenceList.get(i);
-		for (int i = 0; i < numOfElementsInMaxPatterns; i++) {
-			int size = patternSize.get(maxPatterns[i]);
-			denominator = denominator.multiply(factor);
-			b = new BigDecimal((double)size);
-			b= b.divide(denominator, 5, RoundingMode.HALF_UP);
-			value = value.add(b);
-		}
-		
-		return Math.min(1.0, value.doubleValue());
+		if (numOfElementsInMaxPatterns > 0)
+			return (double)patternSize.get(maxPatterns[0])/(double)this.itemsCount;
+		else
+			return 0.0;
+				
+//		BigDecimal value = BigDecimal.ZERO;
+//		
+//		BigDecimal denominator = BigDecimal.ONE;
+//		BigDecimal factor = new BigDecimal(this.itemsCount);
+//		BigDecimal b;
+//		
+//		for (int i = 0; i < numOfElementsInMaxPatterns; i++) {
+//			int size = patternSize.get(maxPatterns[i]);
+//			denominator = denominator.multiply(factor);
+//			b = new BigDecimal((double)size);
+//			b= b.divide(denominator, 5, RoundingMode.HALF_UP);
+//			value = value.add(b);
+//		}
+//		
+//		return Math.min(1.0, value.doubleValue());
 	}
 
 //	public void computeCoherence(Set<Node> nodes) {

@@ -24,7 +24,6 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Workspace;
 
 
@@ -46,22 +45,14 @@ public abstract class WorksheetCommand extends Command {
 		return worksheetId;
 	}
 	
-	private Alignment getAlignmentOrCreateIt(Workspace workspace)
-	{
-		return AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, workspace.getOntologyManager());
-	}
-	
-	// TODO break this method up.  
-	public UpdateContainer computeAlignmentAndSemanticTypesAndCreateUpdates(Workspace workspace, HNodePath path)
-	{
-		Alignment alignment = getAlignmentOrCreateIt(workspace);
-		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
-	}
-		
-	// TODO break this method up.  
+
 	public UpdateContainer computeAlignmentAndSemanticTypesAndCreateUpdates(Workspace workspace)
 	{
-		Alignment alignment = getAlignmentOrCreateIt(workspace);
-		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
+		if(null != alignment)
+		{
+			alignment.updateColumnNodesInAlignment(workspace.getWorksheet(worksheetId));
+		}
+		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace);
 	}
 }

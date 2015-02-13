@@ -1,0 +1,74 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Web Service to publish json/jsonld to Elastic Search</display-name>
+  	<context-param>
+   		<param-name>ESIndex</param-name>
+   		<param-value>dig-sotera</param-value>
+   	</context-param>
+   	
+   	<context-param>
+   		<param-name>ESHostname</param-name>
+   		<param-value>localhost</param-value>
+   	</context-param>
+	
+	<context-param>
+   		<param-name>ESPort</param-name>
+   		<param-value>9200</param-value>
+   	</context-param>
+   	
+   	<context-param>
+   		<param-name>ESProtocol</param-name>
+   		<param-value>http</param-value>
+   	</context-param>
+   	
+   	<context-param>
+   		<param-name>ESType</param-name>
+   		<param-value>WebPage</param-value>
+   	</context-param>
+   	
+   	<context-param>
+   		<param-name>ESBulkSize</param-name>
+   		<param-value>100</param-value>
+   	</context-param>
+   	
+   	<context-param>
+   		<param-name>ESUploadInterval</param-name>
+   		<param-value>100</param-value>
+   	</context-param>
+   	
+   	<context-param>
+   		<param-name>ContextRoot</param-name>
+   		<param-value>http://schema.org/WebPage1</param-value>
+   	</context-param>
+	
+	<context-param>
+		<param-name>ContextURL</param-name>
+		<param-value>http://localhost:8080/data/webpage-context.json</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>R2rmlURI</param-name>
+		<param-value>http://localhost:8080/data/webpage-model.ttl</param-value>
+	</context-param>
+	
+  	<servlet>
+    	<servlet-name>ElasticSearchPublishServlet</servlet-name>
+    	<servlet-class>
+    	    com.sun.jersey.spi.container.servlet.ServletContainer
+    	</servlet-class>
+    	<init-param>
+    	    <param-name>com.sun.jersey.config.property.packages</param-name>
+    	    <param-value>edu.isi.karma.web.services.publish.es</param-value>
+    	</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	  
+  <servlet-mapping>
+    <servlet-name>ElasticSearchPublishServlet</servlet-name>
+    <url-pattern>/publish/es/*</url-pattern>
+  </servlet-mapping>
+  
+</web-app>

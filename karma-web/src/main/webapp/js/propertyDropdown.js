@@ -33,37 +33,47 @@ var PropertyDropdownMenu = (function() {
 
 		function changeLink() {
 			console.log("changeLink");
-			var dialog = IncomingOutgoingLinksDialog.getInstance();
-			dialog.setSelectedFromClass(sourceId);
-			dialog.setSelectedToClass(targetId);
-			dialog.setSelectedProperty(propertyUri);
-			dialog.show(worksheetId,
-				targetNodeId, alignmentId,
-				targetLabel, targetId, targetDomain, targetNodeType, targetIsUri,
-				"changeLink", sourceNodeId, targetNodeId, propertyUri);
+			if(targetNodeType == "ColumnNode") {
+    			SetSemanticTypeDialog.getInstance().show(worksheetId, targetId, targetLabel);
+    		} else {
+				var dialog = IncomingOutgoingLinksDialog.getInstance();
+				dialog.setSelectedFromClass(sourceId);
+				dialog.setSelectedToClass(targetId);
+				dialog.setSelectedProperty(propertyUri);
+				dialog.show(worksheetId,
+					targetNodeId, alignmentId,
+					targetLabel, targetId, targetDomain, targetNodeType, targetIsUri,
+					"changeLink", sourceNodeId, targetNodeId, propertyUri);
+    		}
 		};
 
 		function deleteLink() {
 			console.log("deleteLink");
 			if (confirm("Are you sure you wish to delete the link?")) {
-				var info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
-
-				// Prepare the input for command
-				var newInfo = info['newInfo'];
-
-				// Put the old edge information
-				var initialEdges = [];
-				var oldEdgeObj = {};
-				oldEdgeObj["edgeSourceId"] = sourceNodeId;
-				oldEdgeObj["edgeTargetId"] = targetNodeId;
-				oldEdgeObj["edgeId"] = propertyUri;
-				initialEdges.push(oldEdgeObj);
-				newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
-				newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
-				var newEdges = [];
-				newInfo.push(getParamObject("newEdges", newEdges, "other"));
-				info["newInfo"] = JSON.stringify(newInfo);
-				info["newEdges"] = newEdges;
+				var info;
+				if(targetNodeType == "ColumnNode") {
+					info = generateInfoObject(worksheetId, targetNodeId, "UnassignSemanticTypeCommand");
+					info["newInfo"] = JSON.stringify(info['newInfo']);
+				} else {
+					info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
+	
+					// Prepare the input for command
+					var newInfo = info['newInfo'];
+	
+					// Put the old edge information
+					var initialEdges = [];
+					var oldEdgeObj = {};
+					oldEdgeObj["edgeSourceId"] = sourceNodeId;
+					oldEdgeObj["edgeTargetId"] = targetNodeId;
+					oldEdgeObj["edgeId"] = propertyUri;
+					initialEdges.push(oldEdgeObj);
+					newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
+					newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
+					var newEdges = [];
+					newInfo.push(getParamObject("newEdges", newEdges, "other"));
+					info["newInfo"] = JSON.stringify(newInfo);
+					info["newEdges"] = newEdges;
+				}
 
 				showLoading(worksheetId);
 				var returned = sendRequest(info, worksheetId);
@@ -72,26 +82,33 @@ var PropertyDropdownMenu = (function() {
 
 		function changeFrom() {
 			console.log("Change From");
-
-			var dialog = IncomingOutgoingLinksDialog.getInstance();
-			dialog.setSelectedFromClass(sourceId);
-			dialog.setSelectedProperty(propertyUri);
-			dialog.show(worksheetId,
-				targetNodeId, alignmentId,
-				targetLabel, targetId, targetDomain, targetNodeType, targetIsUri,
-				"changeIncoming", sourceNodeId, targetNodeId, propertyUri);
+			if(targetNodeType == "ColumnNode") {
+    			SetSemanticTypeDialog.getInstance().show(worksheetId, targetId, targetLabel);
+    		} else {
+				var dialog = IncomingOutgoingLinksDialog.getInstance();
+				dialog.setSelectedFromClass(sourceId);
+				dialog.setSelectedProperty(propertyUri);
+				dialog.show(worksheetId,
+					targetNodeId, alignmentId,
+					targetLabel, targetId, targetDomain, targetNodeType, targetIsUri,
+					"changeIncoming", sourceNodeId, targetNodeId, propertyUri);
+			}
 
 		}
 
 		function changeTo() {
 			console.log("Change To");
-			var dialog = IncomingOutgoingLinksDialog.getInstance();
-			dialog.setSelectedToClass(targetId);
-			dialog.setSelectedProperty(propertyUri);
-			dialog.show(worksheetId,
-				sourceNodeId, alignmentId,
-				sourceLabel, sourceId, sourceDomain, sourceNodeType, sourceIsUri,
-				"changeOutgoing", sourceNodeId, targetNodeId, propertyUri);
+			if(targetNodeType == "ColumnNode") {
+				alert("Cannot change the link. You could delete it from the Delete menu option");
+			} else {
+				var dialog = IncomingOutgoingLinksDialog.getInstance();
+				dialog.setSelectedToClass(targetId);
+				dialog.setSelectedProperty(propertyUri);
+				dialog.show(worksheetId,
+					sourceNodeId, alignmentId,
+					sourceLabel, sourceId, sourceDomain, sourceNodeType, sourceIsUri,
+					"changeOutgoing", sourceNodeId, targetNodeId, propertyUri);
+			}
 		}
 
 		function generateJS() {

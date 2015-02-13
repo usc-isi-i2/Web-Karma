@@ -395,6 +395,18 @@ public class ToCSV {
 		}
 	}
 
+	public void convertWorksheetToCSV(InputStream is, int worksheetIndex, Writer writer) throws InvalidFormatException, IOException {
+		this.convertWorksheetToCSV(is, worksheetIndex, writer, ToCSV.DEFAULT_SEPARATOR, ToCSV.EXCEL_STYLE_ESCAPING);
+	}
+	
+	public void convertWorksheetToCSV(InputStream is, int worksheetIndex, Writer writer, String separator, int formattingConvention) throws InvalidFormatException, IOException {
+		this.separator = separator;
+		this.formattingConvention = formattingConvention;
+		this.openWorkbook(is);
+		
+		this.convertWorksheetToCSV(worksheetIndex, writer);
+	}
+	
 	/**
 	 * Open an Excel workbook ready for conversion.
 	 * 
@@ -422,10 +434,7 @@ public class ToCSV {
 			// DataFormatter instances that will be needed to, respectively,
 			// force evaluation of forumlae found in cells and create a
 			// formatted String encapsulating the cells contents.
-			this.workbook = WorkbookFactory.create(fis);
-			this.evaluator = this.workbook.getCreationHelper()
-					.createFormulaEvaluator();
-			this.formatter = new DataFormatter(true);
+			this.openWorkbook(fis);
 		} finally {
 			if (fis != null) {
 				fis.close();
@@ -433,6 +442,14 @@ public class ToCSV {
 		}
 	}
 
+	private void openWorkbook(InputStream is) throws InvalidFormatException, IOException {
+		
+		this.workbook = WorkbookFactory.create(is);
+		this.evaluator = this.workbook.getCreationHelper()
+				.createFormulaEvaluator();
+		this.formatter = new DataFormatter(true);
+	}
+	
 	/**
 	 * Called to convert the contents of the currently opened workbook into a
 	 * CSV file.
@@ -487,6 +504,54 @@ public class ToCSV {
 		}
 	}
 
+	private void convertWorksheetToCSV(int wsIdx, Writer writer) throws IOException {
+		Sheet sheet = this.workbook.getSheetAt(wsIdx);
+		Row row = null;
+		int lastRowNum = 0;
+		this.csvData = new ArrayList<ArrayList<String>>();
+		this.maxRowWidth = -1;
+		
+		if(sheet != null && sheet.getPhysicalNumberOfRows() > 0) {
+			lastRowNum = sheet.getLastRowNum();
+			for (int j = 0; j <= lastRowNum; j++) {
+				row = sheet.getRow(j);
+				this.rowToCSV(row);
+			}
+		}
+	
+		StringBuffer buffer;
+		ArrayList<String> line;
+		String csvLineElement;
+		BufferedWriter bw = new BufferedWriter(writer);
+		for (int i = 0; i < this.csvData.size(); i++) {
+			buffer = new StringBuffer();
+			line = this.csvData.get(i);
+			for (int j = 0; j < this.maxRowWidth; j++) {
+				if (line.size() > j) {
+					csvLineElement = line.get(j);
+					if (csvLineElement != null) {
+						buffer.append(this
+								.escapeEmbeddedCharacters(csvLineElement));
+					}
+				}
+				if (j < (this.maxRowWidth - 1)) {
+					buffer.append(this.separator);
+				}
+			}
+
+			// Once the line is built, write it away to the CSV file.
+			bw.write(buffer.toString().trim());
+
+			// Condition the inclusion of new line characters so as to
+			// avoid an additional, superfluous, new line at the end of
+			// the file.
+			if (i < (this.csvData.size() - 1)) {
+				bw.newLine();
+			}
+		}
+		bw.flush();
+	}
+	
 	/**
 	 * Called to actually save the data recovered from the Excel workbook as a
 	 * CSV file.

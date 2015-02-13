@@ -20,8 +20,8 @@
  ******************************************************************************/
 package edu.isi.karma.webserver;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Singleton class to map Workspace Ids to ExecutionController objects
@@ -33,7 +33,7 @@ public class WorkspaceRegistry {
 
 	private static WorkspaceRegistry singleton = new WorkspaceRegistry();
 
-	private final Map<String, ExecutionController> workspaceId2ExecutionController = new HashMap<String, ExecutionController>();
+	private final Map<String, ExecutionController> workspaceId2ExecutionController = new ConcurrentHashMap<String, ExecutionController>();
 
 	public static WorkspaceRegistry getInstance() {
 		return singleton;

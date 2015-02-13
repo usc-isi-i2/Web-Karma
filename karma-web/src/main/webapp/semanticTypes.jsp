@@ -191,7 +191,13 @@
 									    	Use @Context From Model
 									  	</label>
 									</div>
-								
+									<div class="radio">
+									  	<label>
+									    	<input type="radio" id="useContextFromURL" name="context">
+									    	Use @Context From URL
+									  	</label>
+									  	<input type="text" id="useContextFromURLText" class="form-control">
+									</div>
 									<div class="radio">
 									  	<label>
 										    <input type="radio" id="useContextFromFile" name="context">

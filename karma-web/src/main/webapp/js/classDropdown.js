@@ -110,7 +110,7 @@ var ClassDropdownMenu = (function() {
 			var info = generateInfoObject(worksheetId, "", "DeleteNodeCommand");
 			var newInfo = info['newInfo'];
 			var label = columnLabel;
-			newInfo.push(getParamObject("label", label, "columnLabel"));
+			newInfo.push(getParamObject("label", label, "other"));
 			newInfo.push(getParamObject("id", columnUri, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 			showLoading(worksheetId);

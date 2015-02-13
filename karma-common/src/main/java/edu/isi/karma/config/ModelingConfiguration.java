@@ -190,19 +190,19 @@ public class ModelingConfiguration {
 		Properties prop = new Properties();
 
 		File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
-		logger.info("Load modeling.properties: " + file.getAbsolutePath() + ":" + file.exists());
+		logger.debug("Load modeling.properties: " + file.getAbsolutePath() + ":" + file.exists());
 		if(!file.exists()) {
 			file.createNewFile();
 			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
 			BufferedWriter bw = new BufferedWriter(fw);
-			logger.info(defaultModelingProperties);
+			logger.debug(defaultModelingProperties);
 			bw.write(defaultModelingProperties);
 			bw.close();
-			logger.info("Written default properties to modeling.properties");
+			logger.debug("Written default properties to modeling.properties");
 		}
 
 		prop.load(new FileInputStream(file));
-		logger.info("Done Loading modeling.properties");
+		logger.debug("Done Loading modeling.properties");
 
 
 		return prop;
@@ -233,7 +233,7 @@ public class ModelingConfiguration {
 	public static Boolean getManualAlignment() {
 		if (manualAlignment == null) {
 			load();
-			logger.info("Manual Alignment:" + manualAlignment);
+			logger.debug("Manual Alignment:" + manualAlignment);
 		}
 		return manualAlignment;
 	}

@@ -38,6 +38,7 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>${jettyVersion}</version>
 				<configuration>
+					<argLine>-XX:MaxPermSize=128m</argLine>
 					<systemProperties>
 						<systemProperty>
 							<name>log4j.configuration</name>
@@ -116,6 +117,7 @@
 		        <groupId>org.codehaus.mojo</groupId>
 		  		<artifactId>tomcat-maven-plugin</artifactId>
 				<configuration>
+				<argLine>-XX:MaxPermSize=128m</argLine>
 						<server>TomcatServer</server>
 						<path>/</path>
 						<url>http://localhost:8080/manager/text</url>

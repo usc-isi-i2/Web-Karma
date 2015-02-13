@@ -35,9 +35,7 @@ import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
-import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.Namespaces;
@@ -157,11 +155,9 @@ public class SuggestAutoModelCommand extends WorksheetCommand {
 		try {
 			// Save the semantic types in the input parameter JSON
 			saveSemanticTypesInformation(worksheet, workspace, worksheet.getSemanticTypes().getListOfTypes());
-			
 			// Add the visualization update
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-			c.add(new AlignmentSVGVisualizationUpdate(
-					worksheetId, alignment));
+			c.append(this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(

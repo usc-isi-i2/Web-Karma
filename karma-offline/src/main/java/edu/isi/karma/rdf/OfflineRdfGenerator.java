@@ -31,22 +31,19 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
-import org.apache.commons.cli2.CommandLine;
-import org.apache.commons.cli2.Group;
-import org.apache.commons.cli2.Option;
-import org.apache.commons.cli2.builder.ArgumentBuilder;
-import org.apache.commons.cli2.builder.DefaultOptionBuilder;
-import org.apache.commons.cli2.builder.GroupBuilder;
-import org.apache.commons.cli2.commandline.Parser;
-import org.apache.commons.cli2.util.HelpFormatter;
-import org.json.JSONException;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +62,6 @@ import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
-import edu.isi.karma.kr2rml.writer.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
@@ -115,6 +111,8 @@ public class OfflineRdfGenerator {
 	private List<String> stopTripleMap;
 	private List<String> POMToKill;
 	private String contextFile;
+	private String contextURLString;
+	private URL contextURL;
 	public OfflineRdfGenerator(CommandLine cl)
 	{
 
@@ -124,30 +122,14 @@ public class OfflineRdfGenerator {
 
 	public static void main(String[] args) {
 
-		Group options = createCommandLineOptions();
-		Parser parser = new Parser();
-		parser.setGroup(options);
-
-		// configure a HelpFormatter
-		HelpFormatter hf = new HelpFormatter();
-
-		// configure a parser
-		Parser p = new Parser();
-		p.setGroup(options);
-		p.setHelpFormatter(hf);
-		p.setHelpTrigger("--help");
+		Options options = createCommandLineOptions();
+		CommandLine cl = CommandLineArgumentParser.parse(args, options, OfflineRdfGenerator.class.getSimpleName());
+		if(cl == null)
+		{
+			return;
+		}
 
 		try {
-			/**
-			 * PARSE THE COMMAND LINE ARGUMENTS *
-			 */
-			CommandLine cl = parser.parseAndHelp(args);
-			if (cl == null || cl.getOptions().size() == 0 || cl.hasOption("--help")) {
-				hf.setGroup(options);
-				hf.print();
-				return;
-			}
-
 			OfflineRdfGenerator generator = new OfflineRdfGenerator(cl);
 
 			long start = System.currentTimeMillis();
@@ -204,19 +186,20 @@ public class OfflineRdfGenerator {
 
 
 	protected void parseCommandLineOptions(CommandLine cl) {
-		inputType = (String) cl.getValue("--sourcetype");
-		modelFilePath = (String) cl.getValue("--modelfilepath");
-		modelURLString = (String) cl.getValue("--modelurl");
-		outputFilePath = (String) cl.getValue("--outputfile");
-		outputFileJSONPath = (String) cl.getValue("--jsonoutputfile");
-		baseURI = (String) cl.getValue("--baseuri");
-		bloomFiltersFilePath = (String) cl.getValue("--outputbloomfilter");
-		selectionName = (String) cl.getValue("--selection");
-		rootTripleMap = (String) cl.getValue("--root");
-		String killTripleMap = (String) cl.getValue("--killtriplemap");
-		String stopTripleMap = (String) cl.getValue("--stoptriplemap");
-		String POMToKill = (String) cl.getValue("--pomtokill");
-		contextFile = (String)cl.getValue("--contextfile");
+		inputType = (String) cl.getOptionValue("sourcetype");
+		modelFilePath = (String) cl.getOptionValue("modelfilepath");
+		modelURLString = (String) cl.getOptionValue("modelurl");
+		outputFilePath = (String) cl.getOptionValue("outputfile");
+		outputFileJSONPath = (String) cl.getOptionValue("jsonoutputfile");
+		baseURI = (String) cl.getOptionValue("baseuri");
+		bloomFiltersFilePath = (String) cl.getOptionValue("outputbloomfilter");
+		selectionName = (String) cl.getOptionValue("selection");
+		rootTripleMap = (String) cl.getOptionValue("root");
+		String killTripleMap = (String) cl.getOptionValue("killtriplemap");
+		String stopTripleMap = (String) cl.getOptionValue("stoptriplemap");
+		String POMToKill = (String) cl.getOptionValue("pomtokill");
+		contextFile = (String)cl.getOptionValue("contextfile");
+		contextURLString = (String)cl.getOptionValue("contexturl");
 		if (rootTripleMap == null) {
 			rootTripleMap = "";
 		}
@@ -261,23 +244,23 @@ public class OfflineRdfGenerator {
 	protected void parseDatabaseCommandLineOptions(CommandLine cl)
 	{
 
-		dbtypeStr = (String) cl.getValue("--dbtype");
-		hostname = (String) cl.getValue("--hostname");
-		username = (String) cl.getValue("--username");
-		password = (String) cl.getValue("--password");
-		encoding = (String) cl.getValue("--encoding");
-		dBorSIDName = (String) cl.getValue("--dbname");
-		tablename = (String) cl.getValue("--tablename");
-		queryFile = (String) cl.getValue("--queryfile");
-		portnumber = (String) cl.getValue("--portnumber");
+		dbtypeStr = (String) cl.getOptionValue("dbtype");
+		hostname = (String) cl.getOptionValue("hostname");
+		username = (String) cl.getOptionValue("username");
+		password = (String) cl.getOptionValue("password");
+		encoding = (String) cl.getOptionValue("encoding");
+		dBorSIDName = (String) cl.getOptionValue("dbname");
+		tablename = (String) cl.getOptionValue("tablename");
+		queryFile = (String) cl.getOptionValue("queryfile");
+		portnumber = (String) cl.getOptionValue("portnumber");
 	}
 
 	protected void parseFileCommandLineOptions(CommandLine cl)
 	{
 
-		sourceFilePath = (String) cl.getValue("--filepath");
-		sMaxNumLines = (String) cl.getValue("--maxNumLines");
-		sourceName = (String) cl.getValue("--sourcename");
+		sourceFilePath = (String) cl.getOptionValue("filepath");
+		sMaxNumLines = (String) cl.getOptionValue("maxNumLines");
+		sourceName = (String) cl.getOptionValue("sourcename");
 	}
 	protected boolean validateCommandLineOptions() throws IOException
 	{
@@ -347,6 +330,11 @@ public class OfflineRdfGenerator {
 			if (!tmp.exists()) {
 				throw new IOException("File not found: " + tmp.getAbsolutePath());
 			}
+			contextURL = tmp.toURI().toURL();
+		}
+		else if(contextURLString != null)
+		{
+			contextURL = new URL(contextURLString);
 		}
 		if (baseURI != null && !baseURI.trim().isEmpty())
 			return;
@@ -369,8 +357,7 @@ public class OfflineRdfGenerator {
 		}
 	}
 
-	private void generateRdfFromDatabaseTable() throws IOException, JSONException, KarmaException,
-	SQLException, ClassNotFoundException {
+	private void generateRdfFromDatabaseTable() throws Exception {
 		if(!validateDatabaseCommandLineOptions())
 		{
 			logger.error("Unable to generate RDF from database table!");
@@ -380,9 +367,9 @@ public class OfflineRdfGenerator {
 		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
 				hostname, port, username, password, dBorSIDName, encoding, selectionName);
 		ContextIdentifier contextId = null;
-		if (contextFile != null) {
-			File tmp = new File(contextFile);
-			contextId = new ContextIdentifier(tmp.getName(), tmp.toURI().toURL());
+		if (contextURL != null) {
+			
+			contextId = new ContextIdentifier(contextURL.getQuery(), contextURL);
 		}
 		if(inputType.equals("DB")) {
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
@@ -453,7 +440,7 @@ public class OfflineRdfGenerator {
 		}
 	}
 
-	protected void createWriters() throws IOException
+	protected void createWriters() throws Exception
 	{
 		createN3Writer();
 		createBloomFilterWriter();
@@ -476,23 +463,49 @@ public class OfflineRdfGenerator {
 		writers.add(n3Writer);
 	}
 
-	protected void createBloomFilterWriter() throws FileNotFoundException {
+	protected void createBloomFilterWriter() throws Exception {
 		if (bloomFiltersFilePath != null && !bloomFiltersFilePath.trim().isEmpty()) {
 			PrintWriter bloomfilterpw = new PrintWriter(new File(bloomFiltersFilePath));
 			logger.info(bloomFiltersFilePath);
-			BloomFilterKR2RMLRDFWriter bloomfilter = null;
-			if (bloomfilterpw != null)
-			{
-				bloomfilter = new BloomFilterKR2RMLRDFWriter(bloomfilterpw, true, baseURI);
-				writers.add(bloomfilter);
-			}
+			writers.add(createBloomFilterWriter(bloomfilterpw, true, baseURI));
 		}
 
 	}
 
+	private KR2RMLRDFWriter createBloomFilterWriter(PrintWriter bloomfilterpw, Boolean isRDF, String baseURI)
+			throws Exception {
+		
+		Reflections reflections = new Reflections("edu.isi.karma.kr2rml.writer");
+
+		Set<Class<? extends KR2RMLRDFWriter>> subTypes =
+				reflections.getSubTypesOf(KR2RMLRDFWriter.class);
+		
+		for (Class<? extends KR2RMLRDFWriter> subType : subTypes)
+		{
+			if(!Modifier.isAbstract(subType.getModifiers()) && !subType.isInterface() && subType.getName().equals("BloomFilterKR2RMLRDFWriter"))
+				try
+			{
+					KR2RMLRDFWriter writer = subType.newInstance();
+					writer.setWriter(bloomfilterpw);
+					Properties p = new Properties();
+					p.setProperty("is.rdf", isRDF.toString());
+					p.setProperty("base.uri", baseURI);
+					writer.initialize(p);
+					return writer;
+			}
+			catch (Exception e)
+			{
+				bloomfilterpw.close();
+				throw new Exception("Unable to instantiate bloom filter writer", e);
+			}
+		}
+
+		bloomfilterpw.close();
+		throw new Exception("Bloom filter writing support not enabled.  Please recompile with -Pbloom");
+	}
+
 	private void generateRdfFromFile()
-			throws JSONException, IOException, KarmaException,
-			ClassNotFoundException, SQLException {
+			throws Exception {
 		if(!validateFileCommandLineOptions())
 		{
 			logger.error("Unable to generate RDF from file because of invalid configuration");
@@ -537,67 +550,45 @@ public class OfflineRdfGenerator {
 		request.setTripleMapToKill(killTripleMap);
 		request.setTripleMapToStop(stopTripleMap);
 		request.setStrategy(new UserSpecifiedRootStrategy(rootTripleMap));
-		if (contextFile != null) {
-			File tmp = new File(contextFile);
-			ContextIdentifier contextId = new ContextIdentifier(tmp.getName(), tmp.toURI().toURL());
+		if (contextURL != null) {
+			ContextIdentifier contextId = new ContextIdentifier(contextURL.getQuery(), contextURL);
 			rdfGenerator.addContext(contextId);
-			request.setContextName(tmp.getName());
+			request.setContextName(contextURL.getQuery());
 		}
 		rdfGenerator.generateRDF(request);
 	}
 
 
-	private static Group createCommandLineOptions() {
-		DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
-		ArgumentBuilder abuilder = new ArgumentBuilder();
-		GroupBuilder gbuilder = new GroupBuilder();
+	private static Options createCommandLineOptions() {
 
-		Group options =
-				gbuilder
-				.withName("options")
-				.withOption(buildOption("sourcetype", "type of source. Valid values: DB, SQL, CSV, JSON, XML", "sourcetype", obuilder, abuilder))
-				.withOption(buildOption("filepath", "location of the input file", "filepath", obuilder, abuilder))
-				.withOption(buildOption("modelfilepath", "location of the model file", "modelfilepath", obuilder, abuilder))
-				.withOption(buildOption("modelurl", "location of the model", "modelurl", obuilder, abuilder))
-				.withOption(buildOption("sourcename", "name of the source in the model to use", "sourcename", obuilder, abuilder))
-				.withOption(buildOption("outputfile", "location of the output file", "outputfile", obuilder, abuilder))
-				.withOption(buildOption("dbtype", "database type. Valid values: Oracle, MySQL, SQLServer, PostGIS", "dbtype", obuilder, abuilder))
-				.withOption(buildOption("hostname", "hostname for database connection", "hostname", obuilder, abuilder))
-				.withOption(buildOption("username", "username for database connection", "username", obuilder, abuilder))
-				.withOption(buildOption("password", "password for database connection", "password", obuilder, abuilder))
-				.withOption(buildOption("portnumber", "portnumber for database connection", "portnumber", obuilder, abuilder))
-				.withOption(buildOption("dbname", "database or SID name for database connection", "dbname", obuilder, abuilder))
-				.withOption(buildOption("tablename", "hostname for database connection", "tablename", obuilder, abuilder))
-				.withOption(buildOption("queryfile", "query file for loading data", "queryfile", obuilder, abuilder))
-				.withOption(buildOption("outputbloomfilter", "generate bloom filters", "bloomfiltersfile", obuilder, abuilder))
-				.withOption(buildOption("baseuri", "specifies base uri", "base URI", obuilder, abuilder))
-				.withOption(buildOption("selection", "specifies selection name", "selection", obuilder, abuilder))
-				.withOption(buildOption("root", "specifies root", "root", obuilder, abuilder))
-				.withOption(buildOption("killtriplemap", "specifies TripleMap to kill", "killtriplemap", obuilder, abuilder))
-				.withOption(buildOption("stoptriplemap", "specifies TripleMap to stop", "stoptriplemap", obuilder, abuilder))
-				.withOption(buildOption("pomtokill", "specifies POM to kill", "pomtokill", obuilder, abuilder))
-				.withOption(buildOption("jsonoutputfile", "specifies JSONOutputFile", "jsonoutputfile", obuilder, abuilder))
-				.withOption(buildOption("contextfile", "specifies global context file", "contextile", obuilder, abuilder))
-				.withOption(obuilder
-						.withLongName("help")
-						.withDescription("print this message")
-						.create())
-						.create();
+		Options options = new Options();
+				
+		options.addOption(new Option("sourcetype", "sourcetype", true, "type of source. Valid values: DB, SQL, CSV, JSON, XML"));
+		options.addOption(new Option("filepath", "filepath", true, "location of the input file"));
+		options.addOption(new Option("modelfilepath", "modelfilepath", true, "location of the model file"));
+		options.addOption(new Option("modelurl", "modelurl", true, "location of the model"));
+		options.addOption(new Option("sourcename", "sourcename", true, "name of the source in the model to use"));
+		options.addOption(new Option("outputfile", "outputfile", true, "location of the output file"));
+		options.addOption(new Option("dbtype", "dbtype", true, "database type. Valid values: Oracle, MySQL, SQLServer, PostGIS"));
+		options.addOption(new Option("hostname", "hostname", true, "hostname for database connection"));
+		options.addOption(new Option("username", "username", true, "username for database connection"));
+		options.addOption(new Option("password", "password", true, "password for database connection"));
+		options.addOption(new Option("portnumber", "portnumber", true, "portnumber for database connection"));
+		options.addOption(new Option("dbname", "dbname", true, "database or SID name for database connection"));
+		options.addOption(new Option("tablename", "tablename", true, "hostname for database connection"));
+		options.addOption(new Option("queryfile", "queryfile", true, "query file for loading data"));
+		options.addOption(new Option("outputbloomfilter", "bloomfiltersfile", true, "generate bloom filters"));
+		options.addOption(new Option("baseuri", "base URI", true, "specifies base uri"));
+		options.addOption(new Option("selection", "selection", true, "specifies selection name"));
+		options.addOption(new Option("root", "root", true, "specifies root"));
+		options.addOption(new Option("killtriplemap", "killtriplemap", true, "specifies TripleMap to kill"));
+		options.addOption(new Option("stoptriplemap", "stoptriplemap", true, "specifies TripleMap to stop"));
+		options.addOption(new Option("pomtokill", "pomtokill", true, "specifies POM to kill"));
+		options.addOption(new Option("jsonoutputfile", "jsonoutputfile", true, "specifies JSONOutputFile"));
+		options.addOption(new Option("contextfile", "contextile", true, "specifies global context file"));
+		options.addOption(new Option("contexturl", "contexturl", true, "specifies global context url"));
+		options.addOption(new Option("help", "help", false, "print this message"));
 
 		return options;
-	}
-
-	public static Option buildOption(String shortName, String description, String argumentName,
-			DefaultOptionBuilder obuilder, ArgumentBuilder abuilder) {
-		return obuilder
-				.withLongName(shortName)
-				.withDescription(description)
-				.withArgument(
-						abuilder
-						.withName(argumentName)
-						.withMinimum(1)
-						.withMaximum(1)
-						.create())
-						.create();
 	}
 }

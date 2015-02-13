@@ -60,13 +60,108 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		formParams.add(FormParameters.CONTENT_TYPE, FormParameters.CONTENT_TYPE_JSON);
 		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
 				.post(String.class, formParams);
-		System.out.print(response);
 		String sampleTriple = "<20140707_134558.jpg> <http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#make> \"SAMSUNG\" .";
 		int idx = response.indexOf(sampleTriple);
 		assert(idx != -1);
 		
 		String[] lines = response.split(System.getProperty("line.separator"));
 		assertEquals(17, lines.length);
+	}
+	
+	@Test
+	public void testR2RMLJSON() {
+		WebResource webRes = resource().path("r2rml/json");
+
+		MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+		formParams.add(FormParameters.R2RML_URL,
+				getTestResource("schedule-model.ttl").toString());
+		formParams
+				.add(FormParameters.DATA_URL,
+						getTestResource("schedule-tab.csv").toString());
+		formParams.add(FormParameters.CONTENT_TYPE, FormParameters.CONTENT_TYPE_CSV);
+		formParams.add(FormParameters.COLUMN_DELIMITER, "\t");
+		formParams.add(FormParameters.HEADER_START_INDEX, "1");
+		formParams.add(FormParameters.DATA_START_INDEX, "2");
+		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
+				.post(String.class, formParams);;
+		String sampleRow = "\"uri\": \"http://lod.isi.edu/cs548/person/Szekely\"";
+		int idx = response.indexOf(sampleRow);
+		assert(idx != -1);
+		
+		String[] lines = response.split(System.getProperty("line.separator"));
+		assertEquals(438, lines.length);
+	}
+	
+	@Test
+	public void testCSVInputTab() {
+		WebResource webRes = resource().path("r2rml/rdf");
+
+		MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+		formParams.add(FormParameters.R2RML_URL,
+				getTestResource("schedule-model.ttl").toString());
+		formParams
+				.add(FormParameters.DATA_URL,
+						getTestResource("schedule-tab.csv").toString());
+		formParams.add(FormParameters.CONTENT_TYPE, FormParameters.CONTENT_TYPE_CSV);
+		formParams.add(FormParameters.COLUMN_DELIMITER, "\t");
+		formParams.add(FormParameters.HEADER_START_INDEX, "1");
+		formParams.add(FormParameters.DATA_START_INDEX, "2");
+		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
+				.post(String.class, formParams);
+		String sampleTriple = "<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .";
+		int idx = response.indexOf(sampleTriple);
+		assert(idx != -1);
+		
+		String[] lines = response.split(System.getProperty("line.separator"));
+		assertEquals(275, lines.length);
+	}
+	
+	@Test
+	public void testCSVInputComma() {
+		WebResource webRes = resource().path("r2rml/rdf");
+
+		MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+		formParams.add(FormParameters.R2RML_URL,
+				getTestResource("schedule-model.ttl").toString());
+		formParams
+				.add(FormParameters.DATA_URL,
+						getTestResource("schedule-comma.csv").toString());
+		formParams.add(FormParameters.CONTENT_TYPE, FormParameters.CONTENT_TYPE_CSV);
+		formParams.add(FormParameters.COLUMN_DELIMITER, ",");
+		formParams.add(FormParameters.HEADER_START_INDEX, "1");
+		formParams.add(FormParameters.DATA_START_INDEX, "2");
+		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
+				.post(String.class, formParams);
+		String sampleTriple = "<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .";
+		int idx = response.indexOf(sampleTriple);
+		assert(idx != -1);
+		
+		String[] lines = response.split(System.getProperty("line.separator"));
+		assertEquals(275, lines.length);
+	}
+	
+	@Test
+	public void testExcelInput() {
+		WebResource webRes = resource().path("r2rml/rdf");
+
+		MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+		formParams.add(FormParameters.R2RML_URL,
+				getTestResource("schedule-model.ttl").toString());
+		formParams
+				.add(FormParameters.DATA_URL,
+						getTestResource("schedule.xls").toString());
+		formParams.add(FormParameters.CONTENT_TYPE, FormParameters.CONTENT_TYPE_EXCEL);
+		formParams.add(FormParameters.WORKSHEET_INDEX, "2"); //Import the second worksheet. It has the correct data
+		formParams.add(FormParameters.HEADER_START_INDEX, "1");
+		formParams.add(FormParameters.DATA_START_INDEX, "2");
+		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
+				.post(String.class, formParams);
+		String sampleTriple = "<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .";
+		int idx = response.indexOf(sampleTriple);
+		assert(idx != -1);
+		
+		String[] lines = response.split(System.getProperty("line.separator"));
+		assertEquals(275, lines.length);
 	}
 	
 	@Test
@@ -104,7 +199,6 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 
 		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
 				.post(String.class, formParams);
-		System.out.print(response);
 		String sampleTriple = "<20140707_134558.jpg> <http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#make> \"SAMSUNG\" .";
 		int idx = response.indexOf(sampleTriple);
 		assert(idx != -1);
@@ -113,10 +207,10 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		assertEquals(17, lines.length);
 	}
 
-	@Test
-	public void testR2RMLRDFSesame() {
-		//TODO: Add testcase for Sesame
-	}
+//	@Test
+//	public void testR2RMLRDFSesame() {
+//		//TODO: Add testcase for Sesame
+//	}
 
 
 	private URL getTestResource(String name) {

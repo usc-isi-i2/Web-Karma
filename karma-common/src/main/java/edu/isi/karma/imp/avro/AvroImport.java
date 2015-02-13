@@ -68,7 +68,7 @@ public class AvroImport extends Import {
 			KarmaException {
 		DataFileReader<Void> schemareader = new DataFileReader<Void>(file, new GenericDatumReader<Void>());
 		Schema schema = schemareader.getSchema();
-		
+		schemareader.close();
 		DataFileReader<GenericRecord> reader = new DataFileReader<GenericRecord>(file, new GenericDatumReader<GenericRecord>(schema));
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		baos.write('[');
@@ -88,6 +88,7 @@ public class AvroImport extends Import {
 				
 			
 		}
+		reader.close();
 		baos.write('\n');
 		baos.write(']');
 		baos.flush();

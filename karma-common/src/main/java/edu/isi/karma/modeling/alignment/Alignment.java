@@ -47,6 +47,9 @@ import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphType;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.ontology.OntologyUpdateListener;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
@@ -95,7 +98,7 @@ public class Alignment implements OntologyUpdateListener {
 		}
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 		logger.debug("loading learning graph ...");
-	}
+	}  
 
 	public boolean isEmpty() {
 		return (this.graphBuilder.getGraph().edgeSet().size() == 0 || this.steinerTree == null);
@@ -207,6 +210,10 @@ public class Alignment implements OntologyUpdateListener {
 	
 	public ColumnNode addColumnNode(String hNodeId, String columnName, Label rdfLiteralType) {
 		
+		if(this.getNodeById(hNodeId) != null)
+		{
+			return null;
+		}
 		// use hNodeId as id of the node
 		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType);
 		if (this.graphBuilder.addNodeAndUpdate(node)) {
@@ -401,21 +408,18 @@ public class Alignment implements OntologyUpdateListener {
 	}
 	
 	public Set<LabeledLink> getCurrentIncomingLinksToNode(String nodeId) {
-		
 		Node node = this.getNodeById(nodeId);
-		if (node == null) return null;
-		if (this.steinerTree == null || !this.steinerTree.containsVertex(node)) return null;
-			
-		return this.steinerTree.incomingEdgesOf(node);
+		if (node == null)
+			return null;
+		
+		return this.graphBuilder.getIncomingLinksMap().get(nodeId);
 	}
 	
 	public Set<LabeledLink> getCurrentOutgoingLinksToNode(String nodeId) {
-		
 		Node node = this.getNodeById(nodeId);
-		if (node == null) return null;
-		if (this.steinerTree == null || !this.steinerTree.containsVertex(node)) return null;
-			
-		return this.steinerTree.outgoingEdgesOf(node);
+		if (node == null)
+			return null;
+		return this.graphBuilder.getOutgoingLinksMap().get(nodeId);
 	}
 
 	public List<LabeledLink> getLinks(String sourceId, String targetId) {
@@ -618,7 +622,7 @@ public class Alignment implements OntologyUpdateListener {
 				logger.debug("\t" + link.getId());
 		}
 		
-		if (ModelingConfiguration.isLearnAlignmentEnabled())
+		if (!ModelingConfiguration.getManualAlignment() && ModelingConfiguration.isLearnAlignmentEnabled())
 			learnFromKnownSemanticModels();
 		else
 			learnFromOntology();
@@ -785,6 +789,20 @@ public class Alignment implements OntologyUpdateListener {
 		this.addForcedLinks();
 		this.root = TreePostProcess.selectRoot(GraphUtil.asDefaultGraph(tree));
 
+	}
+
+	public void updateColumnNodesInAlignment(Worksheet worksheet) {
+
+		for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
+			HNode node = path.getLeaf();
+			String hNodeId = node.getId();
+			Node n = getNodeById(hNodeId);
+			if (n == null) {
+				addColumnNode(hNodeId, node.getColumnName(), null);
+			}
+		}
+	
+		
 	}
 	
 }

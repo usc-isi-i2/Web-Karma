@@ -2,14 +2,11 @@ package edu.isi.karma.rdf;
 
 import java.io.File;
 
-import org.apache.commons.cli2.CommandLine;
-import org.apache.commons.cli2.Group;
-import org.apache.commons.cli2.Option;
-import org.apache.commons.cli2.builder.ArgumentBuilder;
-import org.apache.commons.cli2.builder.DefaultOptionBuilder;
-import org.apache.commons.cli2.builder.GroupBuilder;
-import org.apache.commons.cli2.commandline.Parser;
-import org.apache.commons.cli2.util.HelpFormatter;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.uwyn.jhighlight.tools.FileUtils;
 
@@ -17,25 +14,19 @@ import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.webserver.KarmaException;
 
 public class LoadRDFToTripleStore {
+	private static Logger logger = LoggerFactory.getLogger(LoadRDFToTripleStore.class);
 	
 	public static void main(String args[]) {
 		TripleStoreUtil util = new TripleStoreUtil();
-		Group options = createCommandLineOptions();
-        Parser parser = new Parser();
-        parser.setGroup(options);
-        parser.setGroup(options);
-        HelpFormatter hf = new HelpFormatter();
-        parser.setHelpFormatter(hf);
-        parser.setHelpTrigger("--help");
-        CommandLine cl = parser.parseAndHelp(args);
-        if (cl == null || cl.getOptions().size() == 0 || cl.hasOption("--help")) {
-            hf.setGroup(options);
-            hf.print();
-            return;
-        }
-        String filepath = (String) cl.getValue("--filepath");
-        String tripleStoreUrl = (String) cl.getValue("--triplestoreurl");
-        String context = (String) cl.getValue("--context");
+		Options options = createCommandLineOptions();
+		CommandLine cl = CommandLineArgumentParser.parse(args, options, LoadRDFToTripleStore.class.getSimpleName());
+		if(cl == null)
+		{
+			return;
+		}
+        String filepath = (String) cl.getOptionValue("filepath");
+        String tripleStoreUrl = (String) cl.getOptionValue("triplestoreurl");
+        String context = (String) cl.getOptionValue("context");
         if (filepath == null || tripleStoreUrl == null || context == null)
         	return;
 		File file = new File(filepath);
@@ -59,39 +50,18 @@ public class LoadRDFToTripleStore {
 					System.err.println(e.getMessage());
 				}
 		}
+		
 	}
 	
-	private static Group createCommandLineOptions() {
-		DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
-		ArgumentBuilder abuilder = new ArgumentBuilder();
-		GroupBuilder gbuilder = new GroupBuilder();
+	private static Options createCommandLineOptions() {
 
-		Group options =
-				gbuilder
-				.withName("options")
-				.withOption(buildOption("filepath", "location of the input file directory", "filepath", obuilder, abuilder))
-				.withOption(buildOption("triplestoreurl", "location of the triplestore", "triplestoreurl", obuilder, abuilder))
-				.withOption(buildOption("context", "the context uri", "context", obuilder, abuilder))
-				.withOption(obuilder
-						.withLongName("help")
-						.withDescription("print this message")
-						.create())
-						.create();
+		Options options = new Options();
+				
+		options.addOption(new Option("filepath", "filepath", true, "location of the input file directory"));
+		options.addOption(new Option("triplestoreurl", "triplestoreurl", true, "location of the triplestore"));
+		options.addOption(new Option("context", "context", true, "the context uri"));
+		options.addOption(new Option("help", "help", false, "print this message"));
 
 		return options;
-	}
-
-	public static Option buildOption(String shortName, String description, String argumentName,
-			DefaultOptionBuilder obuilder, ArgumentBuilder abuilder) {
-		return obuilder
-				.withLongName(shortName)
-				.withDescription(description)
-				.withArgument(
-						abuilder
-						.withName(argumentName)
-						.withMinimum(1)
-						.withMaximum(1)
-						.create())
-						.create();
 	}
 }

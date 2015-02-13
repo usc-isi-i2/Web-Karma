@@ -95,8 +95,7 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		if (alignment == null) {
-			alignment = new Alignment(ontMgr);
-			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+			AlignmentManager.Instance().createAlignment(workspace.getId(), worksheetId, workspace.getOntologyManager());
 		}
 		
 		if (initialAlignment == null) {
@@ -159,14 +158,15 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 		}
 
 		
-		alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), wk.getId(), ontMgr);
-		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		alignment.updateColumnNodesInAlignment(wk);
+		//alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), wk.getId(), ontMgr);
+		//AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		UpdateContainer c = new UpdateContainer();
 		try {
 			// Add the visualization update
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
-			c.add(new SemanticTypesUpdate(wk, worksheetId, alignment));
-			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
+			c.add(new SemanticTypesUpdate(wk, worksheetId));
+			c.add(new AlignmentSVGVisualizationUpdate(worksheetId));
 		} catch (Exception e) {
 			logger.error("Error occured while populating the worksheet with service data!", e);
 			return new UpdateContainer(new ErrorUpdate(
@@ -216,9 +216,10 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 			// Add the visualization update
 			workspace.getFactory().replaceWorksheet(worksheetId, worksheetBeforeInvocation);
 			c.add(new ReplaceWorksheetUpdate(worksheetId, worksheetBeforeInvocation));
-			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
+			c.add(new AlignmentSVGVisualizationUpdate(worksheetId));
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
-			c.add(new SemanticTypesUpdate(wk, worksheetId, alignment));
+			c.add(new SemanticTypesUpdate(wk, worksheetId));
+			c.append(this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		} catch (Exception e) {
 			logger.error("Error occured while populating the worksheet with service data!", e);
 			return new UpdateContainer(new ErrorUpdate(

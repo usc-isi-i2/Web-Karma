@@ -114,7 +114,7 @@ public class AddUserLinkToAlignmentCommand extends WorksheetCommand {
 		if(!this.isExecutedInBatch())
 			alignment.align();
 		
-		return getAlignmentUpdateContainer(alignment, worksheet, workspace);
+		return getAlignmentUpdateContainer(worksheet, workspace);
 	}
 
 	@Override
@@ -126,16 +126,14 @@ public class AddUserLinkToAlignmentCommand extends WorksheetCommand {
 		oldAlignment.setGraph(oldGraph);
 		
 		// Get the alignment update
-		return getAlignmentUpdateContainer(oldAlignment, worksheet, workspace);
+		return getAlignmentUpdateContainer(worksheet, workspace);
 	}
 
-	private UpdateContainer getAlignmentUpdateContainer(Alignment alignment,
-			Worksheet worksheet, Workspace workspace) {
+	private UpdateContainer getAlignmentUpdateContainer(Worksheet worksheet, Workspace workspace) {
 		// Add the visualization update
 		UpdateContainer c = new UpdateContainer();
-		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-		c.add(new AlignmentSVGVisualizationUpdate(
-				worksheetId, alignment));
+		c.add(new SemanticTypesUpdate(worksheet, worksheetId));
+		c.add(new AlignmentSVGVisualizationUpdate(worksheetId));
 		return c;
 	}
 }

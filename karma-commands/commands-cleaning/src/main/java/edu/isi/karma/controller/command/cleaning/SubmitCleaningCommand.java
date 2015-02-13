@@ -208,7 +208,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 					.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
 			/** Add the alignment update **/
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(
-					workspace, selectedPath));
+					workspace));
 		}
 
 		c.add(new InfoUpdate("Column transformation complete"));

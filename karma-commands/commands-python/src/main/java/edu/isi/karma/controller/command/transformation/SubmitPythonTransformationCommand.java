@@ -24,6 +24,7 @@ package edu.isi.karma.controller.command.transformation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.json.JSONArray;
@@ -45,6 +46,7 @@ import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -62,8 +64,8 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 
 	public SubmitPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
 			String worksheetId, String hNodeId, 
-			String errorDefaultValue, String selectionId) {
-		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, selectionId);
+			String errorDefaultValue, String selectionId, boolean isJSONOutput) {
+		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, selectionId, isJSONOutput);
 		//logger.info("SubmitPythonTranformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
 		this.pythonNodeId = hNodeId;
 	}
@@ -92,7 +94,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		inputColumns.clear();
 		outputColumns.clear();
-//		outputColumns.add(targetHNodeId);
+		//		outputColumns.add(targetHNodeId);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		RepFactory f = workspace.getFactory();
 		HNode hNode = f.getHNode(hNodeId);
@@ -117,6 +119,11 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 				logger.debug("SubmitPythonTranformation: Tranform Existing Column" + hNodeId + ":" + nodeId);
 				UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
 						newColumnNameHNode, ctrl, nodeId);
+				if (isJSONOutput) {
+					Map<String, String> mapping = gatherTransformedResults(workspace, nodeId);
+					handleJSONOutput(workspace, mapping, newColumnNameHNode);
+				}
+				WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 				return c;
 			} else {
 				saveColumnValues(workspace);
@@ -130,7 +137,9 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 				addColCmd = (AddColumnCommand) addColumnFac.createCommand(
 						addColumnInput, workspace);
 				addColCmd.saveInHistory(false);
+				addColCmd.setExecutedInBatch(this.isExecutedInBatch());
 				addColCmd.doIt(workspace);
+				pythonNodeId = addColCmd.getNewHNodeId();
 			}
 			else if(null == hTable.getHNode(addColCmd.getNewHNodeId()))
 			{
@@ -147,6 +156,10 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		{
 			UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
 					hNode, ctrl, addColCmd.getNewHNodeId());
+			if (isJSONOutput) {
+				Map<String, String> mapping = gatherTransformedResults(workspace, addColCmd.getNewHNodeId());
+				handleJSONOutput(workspace, mapping, workspace.getFactory().getHNode(addColCmd.getNewHNodeId()));
+			}
 			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			return c;
 		}
@@ -165,10 +178,22 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			//Previous python command exists, lets reset the values, and then start again
 			this.originalColumnValues = prevCommand.getOriginalColumnValues();
 			this.resetColumnValues(workspace);
+
 		} else {
 			saveColumnValues(workspace);
+			removeNestedTable(workspace);
 		}
 
+	}
+
+	private void removeNestedTable(Workspace workspace) {
+		HNode hNode = workspace.getFactory().getHNode(pythonNodeId);
+		hNode.removeNestedTable();
+		List<Node> nodes = new ArrayList<Node>();
+		workspace.getWorksheet(worksheetId).getDataTable().collectNodes(hNode.getHNodePath(workspace.getFactory()), nodes, getSuperSelection(workspace.getWorksheet(worksheetId)));
+		for (Node node : nodes) {
+			node.setNestedTable(null, workspace.getFactory());
+		}
 	}
 
 	private JSONArray getAddColumnCommandInputJSON(String hTableId) throws JSONException {
@@ -182,6 +207,13 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
+		for (Node node : affectedNodes) {
+			HNode hNode = workspace.getFactory().getHNode(node.getHNodeId());
+			hNode.removeNestedTable();
+			node.setNestedTable(null, workspace.getFactory());
+			node.clearValue(NodeStatus.original);
+		}
+		affectedNodes.clear();
 		if(addColCmd != null) {
 			addColCmd.undoIt(workspace);
 		} else if(previousPythonTransformationCommand != null) {
@@ -218,17 +250,17 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		Collection<Node> nodes = new ArrayList<Node>();
 		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes, selection);
 		for(Node node : nodes) {
-			originalColumnValues.add(node.getValue().asString());
+			originalColumnValues.add(node.serializeToJSON(selection, f));
 		}
 	}
 
 	public void resetColumnValues(Workspace workspace) {
 		if(this.originalColumnValues != null) {
+			removeNestedTable(workspace);
 			Worksheet worksheet = workspace.getWorksheet(worksheetId);
 			SuperSelection selection = getSuperSelection(worksheet);
 			RepFactory f = workspace.getFactory();
-			HNode hNode = f.getHNode(pythonNodeId);
-
+			HNode hNode = f.getHNode(pythonNodeId);	
 			worksheet.getDataTable().setCollectedNodeValues(hNode.getHNodePath(f), this.originalColumnValues, f, selection);
 		}
 	}
@@ -255,13 +287,6 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 
 		return null;
 	}
-
-//	@Override
-//	public Set<String> getInputColumns() {
-//		Set<String> t = new HashSet<String>();
-//		t.addAll(inputColumns);
-//		return t;
-//	}
 
 	@Override
 	public Set<String> getOutputColumns() {

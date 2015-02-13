@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.RefObjectMap;
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
 import edu.isi.karma.kr2rml.planning.TriplesMapGraph;
 import edu.isi.karma.modeling.Uris;
@@ -363,5 +364,11 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 	@Override
 	protected Object convertValueWithLiteralType(String literalType, String value) {
 		return value;
+	}
+
+	@Override
+	public void setR2RMLMappingIdentifier(
+			R2RMLMappingIdentifier mappingIdentifer) {
+		
 	}
 }

@@ -15,8 +15,6 @@ import edu.isi.karma.controller.update.WorksheetDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Workspace;
 
 public class RefreshWorksheetCommand extends WorksheetSelectionCommand {
@@ -64,16 +62,13 @@ public class RefreshWorksheetCommand extends WorksheetSelectionCommand {
 								break;
 				case "alignment": 
 				{
-					Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(
-							workspace.getId(), worksheetId, workspace.getOntologyManager());
-					uc.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
+					uc.add(new AlignmentSVGVisualizationUpdate(worksheetId));
 					break;
 				}
 				case "semanticTypes":
 				{
-					Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(
-							workspace.getId(), worksheetId, workspace.getOntologyManager());
-					uc.add(new SemanticTypesUpdate(workspace.getWorksheet(worksheetId), worksheetId, alignment));
+					
+					uc.add(new SemanticTypesUpdate(workspace.getWorksheet(worksheetId), worksheetId));
 					break;
 				}
 				case "regenerate":

@@ -27,7 +27,6 @@ import edu.isi.karma.config.UIConfiguration;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.SuperSelection;
-import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
@@ -70,12 +69,12 @@ public class WorksheetUpdateFactory {
 		createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, c, sel);
 		return c;
 	}
-	public static UpdateContainer createSemanticTypesAndSVGAlignmentUpdates(String worksheetId, Workspace workspace, Alignment alignment)
+	public static UpdateContainer createSemanticTypesAndSVGAlignmentUpdates(String worksheetId, Workspace workspace)
 	{
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		UpdateContainer c = new UpdateContainer();
-		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-		c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
+		c.add(new SemanticTypesUpdate(worksheet, worksheetId));
+		c.add(new AlignmentSVGVisualizationUpdate(worksheetId));
 		return c;
 	}
 

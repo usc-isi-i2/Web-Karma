@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
+import edu.isi.karma.rdf.BaseKarma;
 import edu.isi.karma.rdf.RDFGeneratorRequest;
 
 public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
@@ -30,7 +31,7 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 		String contextURI = context.getConfiguration().get("context.uri");
 		String rdfGenerationRoot = context.getConfiguration().get("rdf.generation.root");
 		String rdfSelection = context.getConfiguration().get("rdf.generation.selection");
-		karma.setup(inputTypeString, modelUri, modelFile, 
+		karma.setup("./karma.zip/karma", inputTypeString, modelUri, modelFile, 
 				baseURI, contextURI, rdfGenerationRoot, rdfSelection);
 	
 	}
@@ -41,7 +42,7 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 
 		String filename = key.toString();
 		String contents = value.toString();
-		LOG.info(key.toString() + " started");
+		LOG.debug(key.toString() + " started");
 		StringWriter sw = new StringWriter();
 		KR2RMLRDFWriter outWriter = configureRDFWriter(sw);
 		try {
@@ -50,6 +51,11 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 			request.setInputData(contents);
 			request.setAddProvenance(false);
 			request.addWriter(outWriter);
+			request.setMaxNumLines(0);
+			if(karma.getContextId() != null)
+			{
+				request.setContextName(karma.getContextId().getName());
+			}
 			if(karma.getRdfGenerationRoot() != null)
 			{
 				request.setStrategy(new UserSpecifiedRootStrategy(karma.getRdfGenerationRoot()));
@@ -65,9 +71,10 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 				
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			LOG.error("Unable to generate RDF: " + e.getMessage());
 		}
-		LOG.info(key.toString() + " finished");
+		LOG.debug(key.toString() + " finished");
 	}
 
 	protected abstract KR2RMLRDFWriter configureRDFWriter(StringWriter sw);

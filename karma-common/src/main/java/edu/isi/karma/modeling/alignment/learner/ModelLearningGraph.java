@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphBuilderTopK;
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.GraphVizLabelType;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
@@ -99,7 +100,7 @@ public abstract class ModelLearningGraph {
 			if (type == ModelLearningGraphType.Compact)
 				this.graphBuilder = new GraphBuilderTopK(ontologyManager, graph);
 			else
-				this.graphBuilder = new GraphBuilder(ontologyManager, graph);
+				this.graphBuilder = new GraphBuilder(ontologyManager, graph, false);
 			this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 			logger.info("loading is done!");
 		}
@@ -127,7 +128,7 @@ public abstract class ModelLearningGraph {
 	public GraphBuilder getGraphBuilderClone() {
 		GraphBuilder clonedGraphBuilder = null;
 		if (this instanceof ModelLearningGraphSparse) {
-			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, this.getGraphBuilder().getGraph());
+			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, this.getGraphBuilder().getGraph(), false);
 		} else if (this instanceof ModelLearningGraphCompact) {
 			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, this.getGraphBuilder().getGraph());
 		}
@@ -193,7 +194,14 @@ public abstract class ModelLearningGraph {
 	
 	public void exportGraphviz() {
 		try {
-			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), "main graph", true, false, false, getGraphGraphvizName());
+			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), 
+					"main graph", 
+					true, 
+					GraphVizLabelType.LocalId,
+					GraphVizLabelType.LocalUri,
+					false, 
+					false, 
+					getGraphGraphvizName());
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to graphviz!");
 		}

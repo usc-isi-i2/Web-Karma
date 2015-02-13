@@ -284,7 +284,9 @@ public class SemanticModel {
 		
 		String s, p, o, triple;
 		for (LabeledLink l : g.edgeSet()) {
-			
+			// FIXME
+			if (!(l.getTarget() instanceof InternalNode))
+				continue;
 			s = nodeIds.get(l.getSource());
 			o = nodeIds.get(l.getTarget());
 			p = l.getLabel().getUri();
@@ -687,7 +689,7 @@ public class SemanticModel {
 	}
 	
 	public void writeGraphviz(String filename, boolean showNodeMetaData, boolean showLinkMetaData) throws IOException {
-		GraphVizUtil.exportSemanticModelToGraphviz(this, showNodeMetaData, showLinkMetaData, filename);
+		GraphVizUtil.exportSemanticModelToGraphviz(this, GraphVizLabelType.LocalId, GraphVizLabelType.LocalUri, showNodeMetaData, showLinkMetaData, filename);
 	}
 	
 	public void writeJson(String filename) throws IOException {

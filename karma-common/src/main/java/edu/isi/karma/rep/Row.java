@@ -255,7 +255,48 @@ public class Row extends RepEntity implements Neighbor {
 		return null;
 	}
 
+	public Node getNeighborWithNestedColumnByIndex(String hNodeId, RepFactory factory, String nestedColumnName, int index) {
+		if (nodes.containsKey(hNodeId)) {
+			Node nodeWithNestedColumn = nodes.get(hNodeId);
+			Table nestedTable = nodeWithNestedColumn.getNestedTable();
+			if(nestedTable != null)
+			{
+				String [] nestedColumnPath = nestedColumnName.split("/");
+				String nestedHNodeId = factory.getHTable(nestedTable.getHTableId()).getHNodeIdFromColumnName(nestedColumnPath[0]);
+				if (null != nestedHNodeId && nestedColumnPath.length ==1) {
+					Row r = nestedTable.getRow(index);
+					if(r != null)
+					{
+						return r.getNeighbor(nestedHNodeId);
+					}
+				}
+				else
+				{
+					return nestedTable.getRow(0).getNeighborWithNestedColumnByIndex(nestedHNodeId, factory, nestedColumnName.substring(nestedColumnName.indexOf("/")+1), index);
+				}
+			}
+		}
+		return null;
+	}
+
+	public Node getNeighborByColumnNameWithNestedColumnByRowIndex(String columnName, RepFactory factory, String nestedColumnName, int index) {
+		String hTableId = belongsToTable.getHTableId();
+		HTable hTable = factory.getHTable(hTableId);
+		String hNodeId = hTable.getHNodeIdFromColumnName(columnName);
+		if (null != hNodeId) {
+			return getNeighborWithNestedColumnByIndex(hNodeId, factory, nestedColumnName, index);
+		} else if (belongsToTable.getNestedTableInNode() != null) {
+			return belongsToTable.getNestedTableInNode()
+					.getNeighborByColumnNameWithNestedColumnByRowIndex(columnName, factory, nestedColumnName, index);
+		}
+		return null;
+	}
+
+
 	public boolean collectNodes(HNodePath path, Collection<Node> nodes, SuperSelection sel) {
+		if(path == null || path.getFirst() == null)
+			return false;
+		
 		Node n = getNode(path.getFirst().getId());
 		if (n == null) {
 			return false;

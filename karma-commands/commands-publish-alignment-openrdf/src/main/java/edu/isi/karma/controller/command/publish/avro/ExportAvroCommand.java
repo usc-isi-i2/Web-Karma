@@ -31,7 +31,6 @@ import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
 import edu.isi.karma.kr2rml.writer.AvroKR2RMLRDFWriter;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -91,7 +90,6 @@ public class ExportAvroCommand extends WorksheetSelectionCommand {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				AlignmentManager.Instance().constructAlignmentId(workspace.getId(),
 						worksheetId));
-		OntologyManager ontMgr = workspace.getOntologyManager();
 		// Set the prefix and namespace to be used while generating RDF
 		fetchRdfPrefixAndNamespaceFromPreferences(workspace);
 		
@@ -142,7 +140,7 @@ public class ExportAvroCommand extends WorksheetSelectionCommand {
 			AvroKR2RMLRDFWriter writer = new AvroKR2RMLRDFWriter(fos);
 			writer.addPrefixes(mapping.getPrefixes());
 			RootStrategy strategy = new UserSpecifiedRootStrategy(rootTriplesMapId, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
-			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, ontMgr, writer, 
+			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, writer, 
 					false, strategy, mapping, errorReport, selection);
 			try {
 				generator.generateRDF(true);
