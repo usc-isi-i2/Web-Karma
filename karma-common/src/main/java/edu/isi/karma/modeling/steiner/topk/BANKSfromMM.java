@@ -4,6 +4,7 @@ package edu.isi.karma.modeling.steiner.topk;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +18,24 @@ public class BANKSfromMM extends TopKSteinertrees {
 	
 	private HashMap<SteinerNode,SteinerNode> recurseNodeMap;
 	private List<HashMap<SteinerNode,SteinerNode>> shortestNodeIndex;
+	private List<HashMap<SteinerNode,SortedSteinerNodes>> duplicateIndex;
 
 	public BANKSfromMM() {
 		// TODO Auto-generated constructor stub
 	}
 	
+	class SortedSteinerNodes{
+		TreeSet<SteinerNode> set;
+		SortedSteinerNodes(){
+			set= new TreeSet<SteinerNode>(new Comparator<SteinerNode>(){
+				public int compare(SteinerNode n1, SteinerNode n2){
+					if(n1.distancesToSources[0]>n2.distancesToSources[0]) return 1;
+					else if(n1.distancesToSources[0]<n2.distancesToSources[0])return -1;
+					else return 0;
+				}
+			});
+		}
+	}
 	
 	/**
 	 * implements a BANKS iterator
@@ -44,9 +58,6 @@ public class BANKSfromMM extends TopKSteinertrees {
 			distanceToSource=0;
 			iteratorCounter++;
 		}
-		
-		
-		
 	}
 	
 	/*
@@ -67,6 +78,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 		});
 		
 		shortestNodeIndex = new ArrayList<HashMap<SteinerNode, SteinerNode>>();
+		duplicateIndex = new ArrayList<HashMap<SteinerNode,SortedSteinerNodes>>();
 		
 		for(int i=0; i<terminalNodes.size();i++){
 			banksIterators.offer(new BANKSIterator());
@@ -77,14 +89,80 @@ public class BANKSfromMM extends TopKSteinertrees {
 		
 	}
 	
+
+	private List<HashMap<Integer, SteinerNode>> getPermutation(
+			List<HashMap<Integer, SteinerNode>> searchNodeInQueues, 
+			List<Map<String, SteinerNode>> processedNodes,
+			SteinerNode searchNode, int queueId, int max, int mainQueueId) {
+		
+		if (queueId == duplicateIndex.size())
+			return searchNodeInQueues;
+
+		if (queueId == mainQueueId) { //ignore this queue
+			return getPermutation(searchNodeInQueues, processedNodes, searchNode, queueId + 1, max, mainQueueId);
+		}
+		
+		SortedSteinerNodes sortedNodes = duplicateIndex.get(queueId).get(searchNode);
+		List<SteinerNode> steinerNodes = new LinkedList<SteinerNode>();
+		Iterator<SteinerNode> nodeIterator = sortedNodes.set.iterator();
+		for (int i = 0; i < sortedNodes.set.size() && i < max; i++) {
+			SteinerNode n = nodeIterator.next();
+			if (processedNodes.get(queueId).containsKey(n.name))
+				steinerNodes.add(n);
+		}
+		
+		List<HashMap<Integer, SteinerNode>> newSearchNodeInQueues = 
+				new LinkedList<HashMap<Integer, SteinerNode>>();
+		
+		for (HashMap<Integer, SteinerNode> map : searchNodeInQueues) {
+			for (SteinerNode n : steinerNodes) {
+				HashMap<Integer, SteinerNode> newMap = 
+						new HashMap<Integer, SteinerNode>(map);
+				newMap.put(queueId, n);
+				newSearchNodeInQueues.add(newMap);
+			}
+		}
+		
+		return getPermutation(newSearchNodeInQueues, processedNodes, searchNode, queueId + 1, max, mainQueueId);
+	}
 	
+	private int getApprTree(SteinerNode ancestor, List<Map<String, SteinerNode>> processedNodes, int queueId) throws Exception{
+
+		SteinerNode searchNode = ancestor;
+		if (this.recurseNodeMap.containsKey(ancestor)) 
+			searchNode = this.recurseNodeMap.get(ancestor);
+
+		List<HashMap<Integer, SteinerNode>> searchNodeInQueues = 
+				new LinkedList<HashMap<Integer, SteinerNode>>();
+
+		HashMap<Integer, SteinerNode> mainQueueMap = 
+				new HashMap<Integer, SteinerNode>();
+		mainQueueMap.put(queueId, ancestor);
+		searchNodeInQueues.add(mainQueueMap);
+
+		int max = 3;
+		List<HashMap<Integer, SteinerNode>> permutations = 
+				getPermutation(searchNodeInQueues, processedNodes, searchNode, 0, max, queueId);
+		
+		int numOfCreatedTrees = 0;
+		for (HashMap<Integer, SteinerNode> map : permutations) {
+			getApprTree(ancestor, map, processedNodes, queueId);
+			numOfCreatedTrees ++;
+		}
+		
+		return numOfCreatedTrees;
+	}
 	
 	/**
 	 * reconstructs a result tree
 	 * @param ancestor the root reached by all of the iterators
 	 * @throws Exception
 	 */
-	private void getApprTree(SteinerNode ancestor) throws Exception{
+	private void getApprTree(
+			SteinerNode ancestor, 
+			HashMap<Integer, SteinerNode> searchNodeInQueues, 
+			List<Map<String, SteinerNode>> processedNodes, 
+			int queueId) throws Exception{
 		TreeSet<SteinerNode> steinerNodes = new TreeSet<SteinerNode>();
 		Map<String , SteinerNode> treeNodes= new HashMap<String, SteinerNode>();
 		
@@ -100,13 +178,12 @@ public class BANKSfromMM extends TopKSteinertrees {
 		
 		String newNodeName;
 		SteinerNode searchNode;
-		for(int i = 0; i < visitedNodes.size(); i++){
-			Map<String, SteinerNode> pnM = visitedNodes.get(i);
-			if (pnM.get(ancestor.name()) == null && this.recurseNodeMap.containsKey(ancestor)) {
-				searchNode = shortestNodeIndex.get(i).get(replacedNode);
-			} else {
-				searchNode = ancestor;
-			}
+		for(int i = 0; i  < processedNodes.size(); i++){
+				
+			int j = (i + queueId) % processedNodes.size();
+			
+			Map<String, SteinerNode> pnM = processedNodes.get(j);
+			searchNode = searchNodeInQueues.get(j);
 			SteinerNode newNode=pnM.get(searchNode.name);
 			newNodeName = newNode.name;
 			if (this.recurseNodeMap.containsKey(newNode))
@@ -175,7 +252,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 		
 		List<HashMap<String, Integer>> recursesForNodesInQueue = 
 				new ArrayList<HashMap<String, Integer>>();
-		int maxrecurseCount = 100;
+		int maxRecurseCount = 10;
 		
 		//mark nodes in the iterators as visited
 		int j=0;
@@ -189,7 +266,14 @@ public class BANKSfromMM extends TopKSteinertrees {
 			for(SteinerNode n: queue){
 				visitedNodes.get(j).put(n.name(),n);
 				shortestNodeIndex.get(j).put(n, n);
-
+				
+				HashMap<SteinerNode, SortedSteinerNodes> map = 
+						new HashMap<SteinerNode, SortedSteinerNodes>();
+				
+				SortedSteinerNodes treeSet = new SortedSteinerNodes();
+				treeSet.set.add(n);
+				map.put(n, treeSet);
+				duplicateIndex.add(map);
 				((BANKSIterator)arr[j]).banksIterator.offer(n);
 			}
 			j++;
@@ -222,9 +306,13 @@ public class BANKSfromMM extends TopKSteinertrees {
 
 					processedNodesHelper.get(queue.id).put(replacedNode.name(), replacedNode);
 
-					if(isCommonAncestor(n, processedNodesHelper)){
-						count++;
-					}
+					int numOfaddedTrees=isCommonAncestor(n, processedNodes, processedNodesHelper, queue.id);
+					count += numOfaddedTrees;
+//					if (numOfaddedTrees > 0) {
+//						System.out.println("new:" + numOfaddedTrees + ", total:" + count);
+//					}
+					
+					if (count>k) break;
 					
 					Queue<SteinerEdge> rs= new PriorityQueue<SteinerEdge>(10, new Comparator<SteinerEdge>(){
 						public int compare(SteinerEdge e1, SteinerEdge e2){
@@ -253,7 +341,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 							newNode.wasArg1=false;
 						}
 						
-						if(processedNodes.get(queue.id).containsKey(newNode.name())) continue;
+//						if(processedNodes.get(queue.id).containsKey(newNode.name())) continue;
 						
 						newNode.relationToPredecessor=e.getEdgeLabel();
 						newNode.weightToPredecessor=e.getWeight();
@@ -265,7 +353,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 							Integer recurseCount = recursesForNodesInQueue.get(queue.id).get(v.name);
 							if (recurseCount == null) {
 								recurseCount = 2;
-							} else if (recurseCount < maxrecurseCount) {
+							} else if (recurseCount < maxRecurseCount) {
 								recurseCount = recurseCount + 1;
 							} else {
 								continue;
@@ -297,7 +385,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 
 							if(newNode.distancesToSources[0] < shortestNodeIndex.get(queue.id).get(v).distancesToSources[0])
 								shortestNodeIndex.get(queue.id).put(v, newNode);
-
+							duplicateIndex.get(queue.id).get(v).set.add(newNode);
 						}
 						
 						//in case newNode has not been visited
@@ -309,6 +397,12 @@ public class BANKSfromMM extends TopKSteinertrees {
 							queue.banksIterator.add(newNode);
 							visitedNodes.get(queue.id).put(newNode.name(), newNode);
 							shortestNodeIndex.get(queue.id).put(newNode, newNode);
+							SortedSteinerNodes sortedNodes = duplicateIndex.get(queue.id).get(newNode);
+							if (sortedNodes == null) { 
+								sortedNodes = new SortedSteinerNodes();
+								duplicateIndex.get(queue.id).put(newNode,sortedNodes);
+							}
+							sortedNodes.set.add(newNode);
 //							System.out.println("offer" + queue.id + ":" + newNode.distancesToSources[0] + "-->" + newNode.name);
 						}	
 	
@@ -325,42 +419,22 @@ public class BANKSfromMM extends TopKSteinertrees {
 		}
 	}
 	
-	public boolean isCommonAncestor(SteinerNode n)throws Exception{
-		boolean isCAncestor= true;
-
+	public int isCommonAncestor(SteinerNode n, 
+			List<Map<String, SteinerNode>> processedNodes, 
+			List<Map<String, SteinerNode>> processedNodesHelper, 
+			int queueId)throws Exception{
+		
 		SteinerNode searchFor = n;
 		if (this.recurseNodeMap.containsKey(n))
 			searchFor = this.recurseNodeMap.get(n);
 
-		for(Map<String, SteinerNode> pnM: visitedNodes){
-			if(!pnM.containsKey(searchFor.name())) isCAncestor=false;
+		for(Map<String, SteinerNode> pnM: processedNodesHelper){
+			if(!pnM.containsKey(searchFor.name())) {
+				return 0;
+			}
 		}
 	
-		if(isCAncestor){
-			
-			getApprTree(n);
-			return isCAncestor;
-		}
-		return isCAncestor;
-	}
-	
-	public boolean isCommonAncestor(SteinerNode n, List<Map<String, SteinerNode>> processedNodes)throws Exception{
-		boolean isCAncestor= true;
-
-		SteinerNode searchFor = n;
-		if (this.recurseNodeMap.containsKey(n))
-			searchFor = this.recurseNodeMap.get(n);
-
-		for(Map<String, SteinerNode> pnM: processedNodes){
-			if(!pnM.containsKey(searchFor.name())) isCAncestor=false;
-		}
-	
-		if(isCAncestor){
-			
-			getApprTree(n);
-			return isCAncestor;
-		}
-		return isCAncestor;
+		return getApprTree(n, processedNodes, queueId);
 	}
 
 	@Override

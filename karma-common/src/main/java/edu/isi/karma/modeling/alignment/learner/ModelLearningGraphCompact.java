@@ -401,6 +401,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 //					logger.warn("the mappings does not include the target node " + target.getId());
 					continue;
 				}
+				
 				String id = LinkIdFactory.getLinkId(e.getUri(), n1.getId(), n2.getId());
 				LabeledLink l = this.graphBuilder.getIdToLinkMap().get(id);
 				if (l != null) {
@@ -423,6 +424,8 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			    		logger.error("cannot instanciate a link from the type: " + e.getType().toString());
 			    		continue;
 					}
+					if (link.getModelIds() != null)
+						link.getModelIds().clear();
 					link.getModelIds().add(indexedModelId);
 					if (!this.graphBuilder.addLink(n1, n2, link, ModelingParams.PATTERN_LINK_WEIGHT)) continue;
 

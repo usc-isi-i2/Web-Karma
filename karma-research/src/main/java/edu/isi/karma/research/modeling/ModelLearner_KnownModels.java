@@ -805,7 +805,7 @@ public class ModelLearner_KnownModels {
 
 		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 4; {
+//		int i = 3; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -941,9 +941,10 @@ public class ModelLearner_KnownModels {
 
 						me = m.evaluate(correctModel);
 
-						String label = "candidate" + k + 
-								(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +
-								"cost:" + roundDecimals(m.getCost(), 6) + 
+						String label = "candidate" + k + "\n" + 
+//								(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +
+								"link coherence:" + (m.getLinkCoherence() == null ? "" : m.getLinkCoherence().getCoherenceValue()) + "\n" +
+								"cost:" + roundDecimals(m.getCost(), 6) + "\n" +
 								//								"-distance:" + me.getDistance() + 
 								"-precision:" + me.getPrecision() + 
 								"-recall:" + me.getRecall();

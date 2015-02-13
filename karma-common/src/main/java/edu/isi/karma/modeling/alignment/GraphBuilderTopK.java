@@ -189,8 +189,12 @@ public class GraphBuilderTopK extends GraphBuilder {
 					for (SemanticTypeMapping stm : steinerNodes.getColumnNodeInfo().values()) {
 						LabeledLink dataPropertyLink = stm.getLink();
 						tree.addVertex(stm.getTarget());
-						tree.addEdge(stm.getSource(), stm.getTarget(), dataPropertyLink); 
-						tree.setEdgeWeight(dataPropertyLink, stm.getLink().getWeight());
+						if (tree.vertexSet().contains(stm.getSource())) {
+							tree.addEdge(stm.getSource(), stm.getTarget(), dataPropertyLink); 
+							tree.setEdgeWeight(dataPropertyLink, stm.getLink().getWeight());
+						} else {
+							logger.error("this should not conceptually happen, there should be a bug in the code!");
+						}
 					}
 				}
 				
