@@ -774,15 +774,15 @@ public class ModelLearner_KnownModels {
 		ModelLearner_KnownModels modelLearner;
 
 		boolean iterativeEvaluation = false;
-		boolean useCorrectType = true;
+		boolean useCorrectType = false;
 		boolean randomModel = false;
 
 		int numberOfCRFCandidates = 1;
 		int numberOfKnownModels;
 		String filePath = Params.RESULTS_DIR;
 		String filename = ""; 
-		filename += "results,k=" + numberOfCRFCandidates;
-		filename += useCorrectType ? "-correct types":"";
+		filename += "results";
+		filename += useCorrectType ? "-correct types":"-k=" + numberOfCRFCandidates;
 		filename += randomModel ? "-random":"";
 		filename += iterativeEvaluation ? "-iterative":"";
 		filename += ".csv"; 
