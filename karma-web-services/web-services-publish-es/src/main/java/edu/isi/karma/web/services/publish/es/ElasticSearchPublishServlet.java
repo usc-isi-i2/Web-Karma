@@ -20,11 +20,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -33,7 +28,9 @@ import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,27 +125,29 @@ public class ElasticSearchPublishServlet extends Application {
 //		System.out.println("GOt JSONLD:");
 //		System.out.println(jsonld);
 		
-		JSON json = JSONSerializer.toJSON(jsonld);
+		logger.info("Got JSONLD, now pushing to ES");
 		JSONArray jsonArray = null;
-		if(json instanceof JSONObject) {
+		if(jsonld.startsWith("["))
+			jsonArray = new JSONArray(jsonld);
+		else {
+			JSONObject jObj = new JSONObject(jsonld);
 			jsonArray = new JSONArray();
-			jsonArray.add(json);
-		} else {
-			jsonArray = (JSONArray)json;
+			jsonArray.put(jObj);
 		}
+		logger.info("FInished de-serializing JSON-LD");
 		
 		long counter = 0;
 		Exception postException = null;
 		String index = esConfig.getIndex();
 		String type = esConfig.getType();
 		
-		for(int k=0; k<jsonArray.size(); k++) {
+		for(int k=0; k<jsonArray.length(); k++) {
 			JSONObject jObj = jsonArray.getJSONObject(k);
 		
 			
 			String id = null;
 			
-			if(jObj.containsKey("uri"))
+			if(jObj.has("uri"))
 			{
 				id = jObj.getString("uri");
 			}
@@ -180,12 +179,12 @@ public class ElasticSearchPublishServlet extends Application {
 						break;
 					}catch(Exception e) {
 						ex = e;
+						logger.error("Error", e);
 						i++;
 					}
 				}
 				if (i > 0) {
-					System.out.println("Exception occurred!");
-					ex.printStackTrace();
+					logger.error("Exception occurred!", ex);
 					postException = ex;
 					break;
 				}
@@ -205,12 +204,11 @@ public class ElasticSearchPublishServlet extends Application {
 			httpClient.execute(httpPost);
 			httpClient.close();
 		} catch(Exception e) {
-			e.printStackTrace();
 			postException = e;
 		}
 		
 		if (postException != null) {
-			System.out.println("Exception occurred!");
+			logger.error("Exception occurred!", postException);
 			return "{\"result\": {\"code\": \"0\", \"message\": \"" + postException.getMessage() + "\"}}";
 		}
 		return "{\"result\": {\"code\": \"1\", \"message\": \"success\"}}";
