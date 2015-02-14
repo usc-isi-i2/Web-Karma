@@ -941,9 +941,10 @@ public class ModelLearner_KnownModels {
 
 						me = m.evaluate(correctModel);
 
-						String label = "candidate" + k + "\n" + 
+						String label = "candidate " + k + "\n" + 
 //								(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +
 								"link coherence:" + (m.getLinkCoherence() == null ? "" : m.getLinkCoherence().getCoherenceValue()) + "\n" +
+								"confidence:" + m.getConfidenceScore() + "\n" +
 								"cost:" + roundDecimals(m.getCost(), 6) + "\n" +
 								//								"-distance:" + me.getDistance() + 
 								"-precision:" + me.getPrecision() + 
