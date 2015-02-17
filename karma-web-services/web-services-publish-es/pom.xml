@@ -31,6 +31,12 @@
         </dependency>
         
        <dependency>
+       		<groupId>com.sun.jersey.contribs</groupId>
+       		<artifactId>jersey-multipart</artifactId>
+       		<version>1.8</version>
+       </dependency>
+       
+       <dependency>
 			<groupId>edu.isi</groupId>
 			<artifactId>karma-offline</artifactId>
 			<version>${project.version}</version>

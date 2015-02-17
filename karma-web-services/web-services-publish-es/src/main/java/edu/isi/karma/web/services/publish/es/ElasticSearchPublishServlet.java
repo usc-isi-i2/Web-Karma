@@ -96,6 +96,27 @@ public class ElasticSearchPublishServlet extends Application {
 	}
 	
 	@POST
+	@Path("/data")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String publishFromData(JSONObject json) {
+		try {
+			logger.info("Path - es/json . Generate jsonld from multipart and publish to ES");
+			ElasticSearchConfig esConfig = ElasticSearchConfig.parse(context, null);
+			R2RMLConfig r2rmlConfig = R2RMLConfig.parse(context, null);
+			InputStream is = IOUtils.toInputStream(json.toString());
+			r2rmlConfig.setInput(is);
+			String jsonld = generateJSONLD(r2rmlConfig);
+			if(jsonld != null)
+				return publishES(jsonld, esConfig);
+		} catch (Exception e) {
+			logger.error("Error generating JSON", e);
+			return "Exception: " + e.getMessage();
+		}
+		return null;
+	}
+	
+	
+	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/jsonld")
 	public String publishFromJsonLD(MultivaluedMap<String, String> formParams) {
@@ -322,3 +343,4 @@ public class ElasticSearchPublishServlet extends Application {
 	}
 
 }
+
