@@ -37,6 +37,12 @@
        </dependency>
        
        <dependency>
+		  <groupId>com.owlike</groupId>
+		  <artifactId>genson</artifactId>
+		  <version>1.2</version>
+		</dependency>
+
+       <dependency>
 			<groupId>edu.isi</groupId>
 			<artifactId>karma-offline</artifactId>
 			<version>${project.version}</version>
