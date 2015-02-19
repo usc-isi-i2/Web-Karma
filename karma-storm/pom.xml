@@ -19,10 +19,6 @@
         
 	
 
-	<distributionManagement>
-			<repository></repository>
-	</distributionManagement>
-	        
 	<dependencies>
 	<dependency>
     <groupId>org.zeroturnaround</groupId>
@@ -162,6 +158,5 @@
 				</plugins>
 			</build>
   		</profile>
-	</profiles>
 
 </project>
