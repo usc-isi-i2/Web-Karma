@@ -22,19 +22,24 @@ public class JSONIdentityReducerProcessor extends Configured implements Tool {
 	 {
 		
 		Configuration conf = getConf();
-		conf.setIfUnset("fs.default.name", p.getProperty("fs.default.name"));
-		conf.setIfUnset("mapred.job.tracker", p.getProperty("mapred.job.tracker"));
 		Job job = Job.getInstance(conf);
         job.setInputFormatClass(SequenceFileAsTextInputFormat.class);
         job.setJarByClass(JSONIdentityReducerProcessor.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
         job.setMapperClass(IdentityJSONMapper.class);
+        job.setCombinerClass(JSONReducer.class);
         job.setReducerClass(JSONReducer.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
-        FileInputFormat.setInputPaths(job, new Path(p.getProperty("input.directory")));
+        String[] paths = p.getProperty("input.directory").split(",");
+        Path[] array = new Path[paths.length];
+        int i = 0;
+        for (String path : paths) {
+        	array[i++] = new Path(path);
+        }
+        FileInputFormat.setInputPaths(job, array);
         FileOutputFormat.setOutputPath(job, new Path(p.getProperty("output.directory")));
         
         job.setNumReduceTasks(1);

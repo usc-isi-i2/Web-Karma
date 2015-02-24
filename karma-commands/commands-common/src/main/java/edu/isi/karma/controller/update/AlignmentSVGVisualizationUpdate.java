@@ -42,6 +42,7 @@ import edu.isi.karma.rep.ColumnMetadata;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.DisplayModel;
@@ -57,8 +58,8 @@ import edu.isi.karma.view.VWorkspace;
 
 public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 	private final String worksheetId;
-	private final DirectedWeightedMultigraph<Node, LabeledLink> alignmentGraph;
-	private final Alignment alignment;
+	private DirectedWeightedMultigraph<Node, LabeledLink> alignmentGraph;
+	private Alignment alignment;
 	private static Logger logger = LoggerFactory
 			.getLogger(AlignmentSVGVisualizationUpdate.class);
 
@@ -73,12 +74,10 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 		key, holderLink, objPropertyLink, Unassigned, FakeRoot, FakeRootLink, Add_Parent, DataPropertyOfColumnHolder, horizontalDataPropertyLink
 	}
 
-	public AlignmentSVGVisualizationUpdate(String worksheetId,
-			Alignment alignment) {
+	public AlignmentSVGVisualizationUpdate(String worksheetId) {
 		super();
 		this.worksheetId = worksheetId;
-		this.alignmentGraph = alignment.getSteinerTree();
-		this.alignment = alignment;
+		
 	}
 
 	private JSONObject getForceLayoutNodeJsonObject(int id, String label,
@@ -117,6 +116,9 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
+		Workspace workspace = vWorkspace.getWorkspace();
+		alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
+		this.alignmentGraph = alignment.getSteinerTree();
 		if (UIConfiguration.Instance().isForceModelLayoutEnabled())
 			generateJsonForForceLayout(prefix, pw, vWorkspace);
 		else

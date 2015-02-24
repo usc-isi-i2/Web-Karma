@@ -39,6 +39,7 @@ import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.HistoryJSONEditor;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.controller.update.AbstractUpdate;
+import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
@@ -94,6 +95,8 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		long start = System.currentTimeMillis();
+		
 		final Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		UpdateContainer c = new UpdateContainer();
 		
@@ -110,7 +113,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 			if (override || alignment == null || alignment.GetTreeRoot() == null) {
 				String alignmentId = alignMgr.constructAlignmentId(workspace.getId(), worksheetId);
 				alignMgr.removeAlignment(alignmentId);
-				alignMgr.getAlignmentOrCreateIt(workspace.getId(), worksheetId, workspace.getOntologyManager());
+				alignMgr.createAlignment(workspace.getId(), worksheetId,workspace.getOntologyManager());
 				editor.deleteExistingTransformationCommands();
 				historyJson = editor.getHistoryJSON();
 			}
@@ -124,8 +127,12 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 				hc.removeUpdateByClass(HistoryAddCommandUpdate.class);
 				hc.removeUpdateByClass(InfoUpdate.class);
 				hc.removeUpdateByClass(ErrorUpdate.class);
+				hc.removeUpdateByClass(AlignmentSVGVisualizationUpdate.class);
 				c.append(hc);
 			}
+			alignment = alignMgr.getAlignment(workspace.getId(), worksheetId);
+			if(alignment != null)
+				c.add(new AlignmentSVGVisualizationUpdate(worksheetId));
 		} catch (Exception e) {
 			String msg = "Error occured while applying history!";
 			logger.error(msg, e);
@@ -158,6 +165,9 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 
 		});
 		
+		long end = System.currentTimeMillis();
+		
+		logger.info("Time taken to Apply R2RML Model: " + (end-start)/1000 + "sec");
 		return c;
 	}
 

@@ -101,7 +101,7 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 			return splitCommaCommand.doIt(workspace);
 		}
 
-		logger.info("SplitValuesCommand:" + newColName + ", columnName:" + columnName);
+		logger.debug("SplitValuesCommand:" + newColName + ", columnName:" + columnName);
 		
 		HNode newhNode = null;
 		if(newHNodeId != null && newHNodeId.length() > 0)
@@ -122,7 +122,7 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 			newHNodeId = newhNode.getId();
 			hNode.addAppliedCommand("SplitValuesCommand", newhNode);
 		} else {
-			logger.info("Column names are same, re-compute the split values");
+			logger.debug("Column names are same, re-compute the split values");
 			isUpdate = true;
 		}
 		

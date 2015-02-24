@@ -14,7 +14,7 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class ExportJSONCommandFactory extends JSONInputCommandFactory {
 	private enum Arguments {
-		worksheetId, alignmentNodeId, selectionName, contextJSON, contextFromModel
+		worksheetId, alignmentNodeId, selectionName, contextJSON, contextFromModel, contextURL
 	}
 
 	@Override
@@ -30,12 +30,13 @@ public class ExportJSONCommandFactory extends JSONInputCommandFactory {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String alignmentNodeId = HistoryJsonUtil.getStringValue(Arguments.alignmentNodeId.name(), inputJson);
 		String contextJSON = HistoryJsonUtil.getStringValue(Arguments.contextJSON.name(), inputJson);
+		String contextURL = HistoryJsonUtil.getStringValue(Arguments.contextURL.name(), inputJson);
 		boolean contextFromModel = Boolean.parseBoolean(HistoryJsonUtil.getStringValue(Arguments.contextFromModel.name(), inputJson));
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		ExportJSONCommand comm = new ExportJSONCommand(
 				getNewId(workspace), alignmentNodeId, worksheetId, 
-				selectionName, contextFromModel, contextJSON);
+				selectionName, contextFromModel, contextJSON, contextURL);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

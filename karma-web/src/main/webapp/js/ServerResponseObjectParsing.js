@@ -246,7 +246,7 @@ function parse(data) {
 									$("div.svg-model", mainDiv).toggle();
 									$("div.worksheet-table-container", mainDiv).toggle(function() {
 										if (visible)
-											refreshAlignmentTree(worksheet["worksheetId"], ["all"]);
+											D3ModelManager.getInstance().refreshModel(worksheet["worksheetId"]);
 										$("div.table-data-container", mainDiv).toggle();
 									});
 									visible = !visible;
@@ -663,7 +663,7 @@ function parse(data) {
 		} else if (element["updateType"] == "InfoUpdate") {
 			$.sticky(element["Info"]);
 		} else if (element["updateType"] == "AlignmentSVGVisualizationUpdate") {
-			displayAlignmentTree_ForceKarmaLayout(element);
+			D3ModelManager.getInstance().displayModel(element);
 		} else if (element["updateType"] == "KarmaInfo") {
 			if (infos[element["Info"]]) {
 				//ignore;
@@ -784,11 +784,15 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 	$.each(columns, function(index, column) {
 		var type = column['hNodeType'].toLowerCase();
 		var status = column['status'];
+		var error = column['onError'];
+		var isPyTransform = false;
 		if (status != undefined && status == "OUT_OF_DATE")
 			status = true;
 		else
 			status = false;
-		console.log(type);
+		if (error == undefined) {
+			error = false;
+		}
 		var td = $("<td>").addClass("wk-header-cell").attr("id", column.hNodeId);
 		if (isOdd)
 			td.addClass("htable-even-" + type);
@@ -799,6 +803,7 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 		var colWidthNumber = 0;
 		if (column["pythonTransformation"]) {
 			td.data("pythonTransformation", column["pythonTransformation"]);
+			isPyTransform = true;
 		}
 		if (column["previousCommandId"]) {
 			td.data("previousCommandId", column["previousCommandId"]);
@@ -814,7 +819,7 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 				//            				.text(column["columnName"])
 				//            				.mouseenter(showColumnOptionButton)
 				//            				.mouseleave(hideColumnOptionButton);
-				.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"], false, status)).generateJS());
+				.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"], false, status, isPyTransform, error)).generateJS());
 			var nestedTableContainer = $("<div>").addClass("table-container");
 			var nestedTableHeaderContainer = $("<div>").addClass("table-header-container");
 			var nestedTable = $("<table>").addClass("wk-table");
@@ -843,7 +848,7 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 		} else {
 			headerDiv.addClass("wk-header")
 			//.text(column["columnName"]).mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);
-			.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"], true, status)).generateJS());
+			.append((new TableColumnOptions(worksheetId, column.hNodeId, column["columnName"], true, status, isPyTransform, error)).generateJS());
 			// Pedro: limit cells to 30 chars wide. This should be smarter: if the table is not too wide, then allow more character.
 			// If we impose the limit, we should set the CSS to wrap rather than use ... ellipsis.
 			// We will need a smarter data structure so we can do two passes, first to compute the desired lenghts based on number of characters

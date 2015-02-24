@@ -24,10 +24,10 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONArray;
@@ -35,6 +35,7 @@ import org.json.JSONObject;
 
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.modeling.Uris;
 
 public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
@@ -155,6 +156,12 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		{
 			for(JSONObject value : records.values())
 			{
+				if (value.has(atId)) {
+					String Id = value.get(atId).toString();
+					if (!isValidURI(Id)) {
+						value.remove(atId);
+					}
+				}
 				collapseSameType(value);
 				if (!firstObject) {
 					outWriter.println(",");
@@ -174,33 +181,46 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		outWriter.close();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected void collapseSameType(JSONObject obj) {
-		for (Object key : obj.keySet()) {
+		for (Object key : new HashSet(obj.keySet())) {
 			Object value = obj.get((String)key);
 			if (value instanceof JSONArray) {
 				JSONArray array = (JSONArray)value;
-				TreeMap<String, Object> types = new TreeMap<String, Object>();
+				Map<String, Object> types = new HashMap<String, Object>();
 				int length = array.length();
 				for (int i = 0; i < length; i++) {
 					Object o = array.remove(0);
 					if (o instanceof JSONObject) {
 						JSONObject jsonObjectValue = (JSONObject)o;
+						if (jsonObjectValue.has(atId)) {
+							String Id = jsonObjectValue.get(atId).toString();
+							if (!isValidURI(Id)) {
+								jsonObjectValue.remove(atId);
+							}
+						}
 						if(isJustIdAndType(jsonObjectValue))
 						{
 							types.put(jsonObjectValue.getString(atId), jsonObjectValue.get(atId));
 						}
 						else
 						{
+							JSONObject tmp = (JSONObject)o;
+							if (tmp.has(atId)) {
+								types.put(tmp.getString(atId), o);
+							}
+							else {
+								types.put(tmp.toString(), o);
+							}
 							collapseSameType((JSONObject)o);
-							types.put(((JSONObject)o).getString(atId), o);
 
 						}
 
 					}			
 					else
 					{
-						types.put((String)o, o);
+						types.put(o.toString(), o);
 					}
 				}
 				if (types.size() > 1) {
@@ -216,6 +236,12 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			if (value instanceof JSONObject)
 			{
 				JSONObject jsonObjectValue = (JSONObject)value;
+				if (jsonObjectValue.has(atId)) {
+					String Id = jsonObjectValue.get(atId).toString();
+					if (!isValidURI(Id)) {
+						jsonObjectValue.remove(atId);
+					}
+				}
 				if(isJustIdAndType(jsonObjectValue))
 				{
 					obj.put((String)key, jsonObjectValue.get(atId));
@@ -226,6 +252,16 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 				}
 			}
 		}
+	}
+	
+	private boolean isValidURI(String URI) {
+		try {
+			@SuppressWarnings("unused")
+			URI uri = new URI(URI);
+		}catch(Exception e) {
+			return false;
+		}
+		return true;
 	}
 
 	protected boolean isJustIdAndType(JSONObject object)
@@ -257,6 +293,14 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		object.put(atId, subjUri);
 		return object;
 	}
+	
+	public String getAtId() {
+		return atId;
+	}
+	
+	public String getAtType() {
+		return atType;
+	}
 
 	private String generateShortHandURIFromContext(String uri) {
 		if (uri.startsWith("<") && uri.endsWith(">")) { 
@@ -282,5 +326,11 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		}
 		return URI;
 	}
-
+	
+	@Override
+	public void setR2RMLMappingIdentifier(
+			R2RMLMappingIdentifier mappingIdentifer) {
+		
+	}
+	
 }

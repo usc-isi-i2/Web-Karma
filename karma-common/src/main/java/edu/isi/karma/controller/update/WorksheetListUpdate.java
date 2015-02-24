@@ -27,6 +27,8 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Iterator;
 
+import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
@@ -80,6 +82,14 @@ public class WorksheetListUpdate extends AbstractUpdate {
 	public void applyUpdate(VWorkspace vWorkspace)
 	{
 		vWorkspace.createVWorksheetsForAllWorksheets();
+		Workspace workspace = vWorkspace.getWorkspace();
+		for(VWorksheet vworksheet : vWorkspace.getViewFactory().getVWorksheets())
+		{
+			if(vworksheet.getWorksheet() != null && null == AlignmentManager.Instance().getAlignment(workspace.getId(), vworksheet.getWorksheetId()))
+			{
+				AlignmentManager.Instance().createAlignment(workspace.getId(), vworksheet.getWorksheetId(), workspace.getOntologyManager());
+			}
+		}
 	}
 	
 	public boolean equals(Object o) {

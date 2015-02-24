@@ -152,7 +152,8 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 			UpdateContainer c =  new UpdateContainer(new AddColumnUpdate(newHNodeId, worksheetId));
 			
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
-			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace, ndid.getHNodePath(workspace.getFactory())));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+			
 			return c;
 		} catch (Exception e) {
 			logger.error("Error in AddColumnCommand" + e.toString());

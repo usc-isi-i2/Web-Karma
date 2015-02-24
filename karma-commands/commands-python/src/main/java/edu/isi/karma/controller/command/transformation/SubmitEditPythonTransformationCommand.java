@@ -21,6 +21,8 @@
 
 package edu.isi.karma.controller.command.transformation;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,22 +32,24 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class SubmitEditPythonTransformationCommand extends SubmitPythonTransformationCommand {
-	
+
 	private final String targetHNodeId;
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitEditPythonTransformationCommand.class);
 
 	public SubmitEditPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
 			String worksheetId, String hNodeId, 
-			String errorDefaultValue, String targetHNodeId, String selectionId) {
-		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, selectionId);
+			String errorDefaultValue, String targetHNodeId, String selectionId, boolean isJSONOutput) {
+		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, selectionId, isJSONOutput);
 		this.targetHNodeId = targetHNodeId;
 		this.pythonNodeId = targetHNodeId;
 		logger.debug("SubmitEditPythonTransformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
@@ -81,14 +85,19 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 		outputColumns.add(targetHNodeId);
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
-		
+
 		//this.previousPythonTransformationCommand = ctrl.getWorkspace().getCommandHistory().getCommand(previousCommandId);
 		this.saveOrResetColumnValues(workspace, ctrl);
-		
+
 		try
 		{
 			UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
-				hNode, ctrl, targetHNodeId);
+					hNode, ctrl, targetHNodeId);
+			if (isJSONOutput) {
+				HNode targetHNode = workspace.getFactory().getHNode(targetHNodeId);
+				Map<String, String> mapping = gatherTransformedResults(workspace, targetHNodeId);
+				handleJSONOutput(workspace, mapping, targetHNode);
+			}
 			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			return c;
 		}
@@ -102,7 +111,13 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		
+		for (Node node : affectedNodes) {
+			HNode hNode = workspace.getFactory().getHNode(node.getHNodeId());
+			hNode.removeNestedTable();
+			node.setNestedTable(null, workspace.getFactory());
+			node.clearValue(NodeStatus.original);
+		}
+		affectedNodes.clear();
 		try {
 			if(previousPythonTransformationCommand instanceof SubmitPythonTransformationCommand)
 			{
@@ -114,23 +129,8 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 			return uc;
 		} catch (CommandException e) {
 			return new UpdateContainer(new ErrorUpdate("Error occured while  applying previous Python transformation to the column."));
-		
+
 		}
 	}
-	
-//	@Override
-//	public Set<String> getInputColumns() {
-//		Set<String> t = new HashSet<String>();
-//		t.addAll(inputColumns);
-//		return t;
-//	}
-//	
-//	@Override
-//	public Set<String> getOutputColumns() {
-//		Set<String> t = new HashSet<String>();
-//		t.add(targetHNodeId);
-//		return t;
-//	}
 
-	
 }

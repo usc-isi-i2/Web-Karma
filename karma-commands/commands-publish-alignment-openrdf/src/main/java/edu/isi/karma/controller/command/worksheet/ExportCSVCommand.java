@@ -219,7 +219,7 @@ public class ExportCSVCommand extends WorksheetSelectionCommand {
 		// Generate the RDF using KR2RML data structures
 		try {
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
-				workspace.getFactory(), workspace.getOntologyManager(),
+				workspace.getFactory(),
 				generatedRDFFileName, false, mapping, errorReport, selection);
 		
 			rdfGen.generateRDF(true);

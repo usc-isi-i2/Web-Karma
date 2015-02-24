@@ -51,8 +51,9 @@ public class MemoizedTemplateTermSetPopulatorStrategy implements
 					topRow.collectNodes(path, nodes, sel);
 					this.topRow = topRow;
 				}
+				return nodes;
 			}
-			return nodes;
+			
 		}
 		catch (Exception e)
 		{

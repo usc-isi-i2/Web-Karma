@@ -24,6 +24,7 @@ package edu.isi.karma.rdf;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public abstract class RdfGenerator {
 	protected Workspace initializeWorkspace() {
 		
 		Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
-        WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
+		WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
         ModelingConfiguration.load();
         ModelingConfiguration.setManualAlignment(true);
         return workspace;
@@ -69,7 +70,7 @@ public abstract class RdfGenerator {
 		{
 			List<CommandTag> tags = new ArrayList<CommandTag>();
 			tags.add(CommandTag.Transformation);
-			wchr.executeCommandsByTags(tags, mapping.getWorksheetHistory());
+			wchr.executeCommandsByTags(tags, new JSONArray(mapping.getWorksheetHistoryString()));
 		}
 		catch (CommandException | KarmaException e)
 		{

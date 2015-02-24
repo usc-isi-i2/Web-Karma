@@ -20,6 +20,8 @@
  ******************************************************************************/
 package edu.isi.karma.kr2rml.planning;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -144,10 +146,35 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 
 	private void dfs(TriplesMapGraph graph, String rootTriplesMapId, Set<String> visited, String triplesMapId)
 	{
+		final String localTriplesMapId = triplesMapId;
 		visited.add(triplesMapId);
 		List<TriplesMapLink> links = graph.getAllNeighboringTriplesMap(triplesMapId);
 		List<String> nodesToVisit = new LinkedList<String>();
-		for(TriplesMapLink link : links)
+		List<TriplesMapLink> sortedLinks = new LinkedList<TriplesMapLink>();
+		sortedLinks.addAll(links);
+		Collections.sort(sortedLinks, new Comparator<TriplesMapLink>(){
+
+			@Override
+			public int compare(TriplesMapLink o1, TriplesMapLink o2) {
+				boolean o1IsSource = o1.getSourceMap().getId().compareTo(localTriplesMapId) == 0;
+				boolean o2IsSource = o2.getSourceMap().getId().compareTo(localTriplesMapId) == 0;
+				if((o1IsSource && o2IsSource)||
+						(!o1IsSource && !o2IsSource))
+				{
+					return 0;
+				}
+				else if(o1IsSource && !o2IsSource)
+				{
+					return -1;
+				}
+				else 
+				{
+					return 1;
+				}
+			}
+			
+		});
+		for(TriplesMapLink link : sortedLinks)
 		{
 			String nextNode = null;
 			if(link.getSourceMap().getId().compareTo(triplesMapId) == 0)

@@ -25,6 +25,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandPreferences;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.metadata.KarmaMetadataManager;
@@ -43,6 +46,7 @@ import edu.isi.karma.semantictypes.typinghandler.LuceneBasedSTModelHandler;
  */
 public class Workspace extends Entity {
 
+	private static final Logger logger = LoggerFactory.getLogger(Workspace.class);
 	/**
 	 * Factory to create all the objects in this workspace
 	 */
@@ -66,7 +70,7 @@ public class Workspace extends Entity {
 	/**
 	 * Manages the model constructed from the imported ontologies
 	 */
-	private final OntologyManager ontologyManager = new OntologyManager();
+	private  OntologyManager ontologyManager;
 	
 	/**
 	 * The CRF Model for the workspace
@@ -130,6 +134,10 @@ public class Workspace extends Entity {
 	}
 
 	public OntologyManager getOntologyManager() {
+		if(ontologyManager == null)
+		{
+			ontologyManager = new OntologyManager();
+		}
 		return ontologyManager;
 	}
 

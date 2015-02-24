@@ -75,7 +75,7 @@ public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
 				SemanticTypeColumnModel model = new SemanticTypeUtil().predictColumnSemanticType(workspace, worksheet, currentColumnPath, 4, selection);
 				if(model != null) {
 					OntologyManager ontMgr = workspace.getOntologyManager();
-					Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, ontMgr);
+					Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
 					JSONObject json = model.getAsJSONObject(ontMgr, alignment);
 					pw.print(json.toString());
 				}

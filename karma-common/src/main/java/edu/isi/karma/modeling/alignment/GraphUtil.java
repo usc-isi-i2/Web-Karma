@@ -60,6 +60,7 @@ import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.LinkType;
+import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
@@ -351,6 +352,68 @@ public class GraphUtil {
 		return neighbors;
 	}
 	
+	public static Set<LabeledLink> getDomainLinksInLabeledGraph(DirectedGraph<Node, LabeledLink> g, ColumnNode n) {
+		
+		Set<LabeledLink> domainLinks = new HashSet<LabeledLink>();
+		if (g == null || 
+				n == null || 
+				!g.vertexSet().contains(n))
+			return domainLinks;
+		
+		Set<LabeledLink> incomingLinks = g.incomingEdgesOf(n);
+		if (incomingLinks != null) {
+			for (DefaultLink l : incomingLinks) {
+				domainLinks.add((LabeledLink)l);
+			}
+		}
+		
+		return domainLinks;
+	}
+	
+	public static Set<LabeledLink> getDomainLinksInDefaultGraph(DirectedGraph<Node, DefaultLink> g, ColumnNode n) {
+		
+		Set<LabeledLink> domainLinks = new HashSet<LabeledLink>();
+		if (g == null || 
+				n == null || 
+				!g.vertexSet().contains(n))
+			return domainLinks;
+		
+		Set<DefaultLink> incomingLinks = g.incomingEdgesOf(n);
+		if (incomingLinks != null) {
+			for (DefaultLink l : incomingLinks) {
+				if (l instanceof LabeledLink)
+					domainLinks.add((LabeledLink)l);
+			}
+		}
+		
+		return domainLinks;
+	}
+	
+	public static HashMap<SemanticType, LabeledLink> getDomainLinks(DirectedGraph<Node, DefaultLink> g, ColumnNode n, List<SemanticType> semanticTypes) {
+		
+		HashMap<SemanticType, LabeledLink> domainLinks = new HashMap<SemanticType, LabeledLink>();
+		if (g == null || 
+				n == null || 
+				semanticTypes == null ||
+				!g.vertexSet().contains(n))
+			return domainLinks;
+		
+		Set<DefaultLink> incomingLinks = g.incomingEdgesOf(n);
+		if (incomingLinks != null) {
+			for (SemanticType st : semanticTypes) {
+				for (DefaultLink l : incomingLinks) {
+					if (st.getDomain().getUri().equalsIgnoreCase(l.getSource().getUri()) &&
+							st.getType().getUri().equalsIgnoreCase(l.getUri())) {
+						if (l instanceof LabeledLink)
+							domainLinks.put(st, (LabeledLink)l);
+					}
+				}
+			}
+		}
+		
+		return domainLinks;
+	}
+	
 	public static DisplayModel getDisplayModel(DirectedWeightedMultigraph<Node, LabeledLink> g, HTable hTable) {
 		DisplayModel displayModel = new DisplayModel(g, hTable);
 		return displayModel;
@@ -506,20 +569,30 @@ public class GraphUtil {
 			writer.name("rdfLiteralType");
 			if (cn.getRdfLiteralType() == null) writer.value(nullStr);
 			else writeLabel(writer, cn.getRdfLiteralType());
-			writer.name("userSelectedSemanticType");
-			if (cn.getUserSelectedSemanticType() == null) writer.value(nullStr);
-			else writeSemanticType(writer, cn.getUserSelectedSemanticType());
-			writer.name("suggestedSemanticTypes");
-			if (cn.getSuggestedSemanticTypes() == null) writer.value(nullStr);
-//			ArrayList<SemanticType> semTypes = null;
-//			semTypes = semUtil.getColumnSemanticSuggestions(workspace, worksheet, cn, 4);
-//			if (semTypes == null) writer.value(nullStr);
+			writer.name("userSemanticTypes");
+			if (cn.getUserSemanticTypes() == null) writer.value(nullStr);
 			else {
 				writer.beginArray();
-				for (SemanticType semanticType : cn.getSuggestedSemanticTypes())
+				for (SemanticType semanticType : cn.getUserSemanticTypes())
 					writeSemanticType(writer, semanticType);
 				writer.endArray();
 			}
+			writer.name("learnedSemanticTypes");
+			if (cn.getLearnedSemanticTypes() == null) writer.value(nullStr);
+			else {
+				writer.beginArray();
+				for (SemanticType semanticType : cn.getLearnedSemanticTypes())
+					writeSemanticType(writer, semanticType);
+				writer.endArray();
+			}
+		}
+		if (node instanceof LiteralNode) {
+			LiteralNode ln = (LiteralNode) node;
+			writer.name("value").value(ln.getValue());
+			writer.name("datatype");
+			if (ln.getDatatype() == null) writer.value(nullStr);
+			else writeLabel(writer, ln.getDatatype());
+			writer.name("isUri").value(Boolean.toString(ln.isUri()));
 		}
 		
 		writer.name("modelIds");
@@ -660,8 +733,12 @@ public class GraphUtil {
 		String hNodeId = null;
 		String columnName = null;
 		Label rdfLiteralType = null;
+		Label datatype = null;
+		String value = null;
+		boolean isUri = false;
 		SemanticType userSelectedSemanticType = null;
-		List<SemanticType> suggestedSemanticTypes = null;
+		List<SemanticType> learnedSemanticTypes = null;
+		List<SemanticType> userSemanticTypes = null;
 		Set<String> modelIds = null;
 		
 		reader.beginObject();
@@ -677,16 +754,38 @@ public class GraphUtil {
 				hNodeId = reader.nextString();
 			} else if (key.equals("columnName") && reader.peek() != JsonToken.NULL) {
 				columnName = reader.nextString();
+			} else if (key.equals("datatype") && reader.peek() != JsonToken.NULL) {
+				datatype = readLabel(reader);
+			} else if (key.equals("value") && reader.peek() != JsonToken.NULL) {
+				value = reader.nextString();
+			} else if (key.equals("isUri") && reader.peek() != JsonToken.NULL) {
+				isUri = Boolean.parseBoolean(reader.nextString());
 			} else if (key.equals("rdfLiteralType") && reader.peek() != JsonToken.NULL) {
 				rdfLiteralType = readLabel(reader);
 			} else if (key.equals("userSelectedSemanticType") && reader.peek() != JsonToken.NULL) {
 				userSelectedSemanticType = readSemanticType(reader);
 			} else if (key.equals("suggestedSemanticTypes") && reader.peek() != JsonToken.NULL) {
-				suggestedSemanticTypes = new ArrayList<SemanticType>();
+				learnedSemanticTypes = new ArrayList<SemanticType>();
 				reader.beginArray();
 			    while (reader.hasNext()) {
 			    	SemanticType semanticType = readSemanticType(reader);
-			    	suggestedSemanticTypes.add(semanticType);
+			    	learnedSemanticTypes.add(semanticType);
+				}
+		    	reader.endArray();				
+			} else if (key.equals("userSemanticTypes") && reader.peek() != JsonToken.NULL) {
+				userSemanticTypes = new ArrayList<SemanticType>();
+				reader.beginArray();
+			    while (reader.hasNext()) {
+			    	SemanticType semanticType = readSemanticType(reader);
+			    	userSemanticTypes.add(semanticType);
+				}
+		    	reader.endArray();				} 
+			else if (key.equals("learnedSemanticTypes") && reader.peek() != JsonToken.NULL) {
+				learnedSemanticTypes = new ArrayList<SemanticType>();
+				reader.beginArray();
+			    while (reader.hasNext()) {
+			    	SemanticType semanticType = readSemanticType(reader);
+			    	learnedSemanticTypes.add(semanticType);
 				}
 		    	reader.endArray();				
 			} else if (key.equals("modelIds") && reader.peek() != JsonToken.NULL) {
@@ -702,9 +801,19 @@ public class GraphUtil {
     		n = new InternalNode(id, label);
     	} else if (type == NodeType.ColumnNode) {
     		n = new ColumnNode(id, hNodeId, columnName, rdfLiteralType);
-    		((ColumnNode)n).setUserSelectedSemanticType(userSelectedSemanticType);
-    		((ColumnNode)n).setSuggestedSemanticTypes(suggestedSemanticTypes);
+    		if (userSemanticTypes == null && userSelectedSemanticType != null) {
+				userSemanticTypes = new ArrayList<SemanticType>();
+				userSemanticTypes.add(userSelectedSemanticType);
+    		}
+    		((ColumnNode)n).setUserSemanticTypes(userSemanticTypes);
+    		((ColumnNode)n).setLearnedSemanticTypes(learnedSemanticTypes);
+    	} else if (type == NodeType.LiteralNode) {
+    		n = new LiteralNode(id, value, datatype, isUri);
+    	} else {
+    		logger.error("cannot instanciate a node from the type: " + type.toString());
+    		return null;
     	}
+    	
 		n.setModelIds(modelIds);
     	
     	return n;

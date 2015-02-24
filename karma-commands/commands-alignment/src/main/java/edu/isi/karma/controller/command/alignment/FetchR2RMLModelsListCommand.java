@@ -107,7 +107,7 @@ public class FetchR2RMLModelsListCommand extends WorksheetCommand{
 				}
 				else
 					obj.put("inputColumns", 0);
-				if (inputs.size() > 0)
+				if (inputs.size() > 0 || (worksheetId == null || worksheetId.trim().isEmpty()))
 					list.add(obj);
 
 			}

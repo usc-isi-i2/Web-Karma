@@ -41,7 +41,7 @@ import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
+
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.HTable;
@@ -73,10 +73,12 @@ public class WorksheetCommandHistoryExecutor {
 		JSONArray filteredCommands = HistoryJsonUtil.filterCommandsByTag(tags, historyJson);
 		return executeAllCommands(filteredCommands);
 	}
+	
 	public UpdateContainer executeAllCommands(JSONArray historyJson) 
 			throws JSONException, KarmaException, CommandException {
 		UpdateContainer uc =new UpdateContainer();
 		boolean saveToHistory = false;
+		
 		for (int i = 0; i< historyJson.length(); i++) {
 			JSONObject commObject = (JSONObject) historyJson.get(i);
 			if(i == historyJson.length() - 1) saveToHistory = true;
@@ -84,6 +86,7 @@ public class WorksheetCommandHistoryExecutor {
 			if(update != null)
 				uc.append(update);
 		}
+		
 		return uc;
 	}
 
@@ -94,7 +97,7 @@ public class WorksheetCommandHistoryExecutor {
 
 		JSONArray inputParamArr = (JSONArray) commObject.get(HistoryArguments.inputParameters.name());
 		String commandName = (String)commObject.get(HistoryArguments.commandName.name());
-		logger.info("Command in history: " + commandName);
+		logger.debug("Command in history: " + commandName);
 
 		// Change the hNode ids, vworksheet id to point to the current worksheet ids
 		try {
@@ -109,8 +112,10 @@ public class WorksheetCommandHistoryExecutor {
 					Command comm = cf.createCommand(inputParamArr, workspace);
 					if(comm != null){
 						try {
-							logger.info("Executing command: " + commandName);
+							comm.setExecutedInBatch(true);
+							logger.debug("Executing command: " + commandName);
 							uc.append(workspace.getCommandHistory().doCommand(comm, workspace, saveToHistory));
+							comm.setExecutedInBatch(false);
 						} catch(Exception e) {
 							logger.error("Error executing command: "+ commandName + ". Please notify this error");
 							Util.logException(logger, e);
@@ -134,6 +139,8 @@ public class WorksheetCommandHistoryExecutor {
 			//make these InfoUpdates so that the UI can still process the rest of the model
 			return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
 		}
+		
+		
 	}
 
 	private boolean ignoreIfBeforeColumnDoesntExist(String commandName) {
@@ -204,6 +211,25 @@ public class WorksheetCommandHistoryExecutor {
 						}
 					}
 				}
+			} else if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.linkWithHNodeId) {
+				JSONObject link = new JSONObject(inpP.get(ClientJsonKeys.value.name()).toString());
+				Object subject = link.get("subject");
+				String predicate = link.getString("predicate");
+				Object object = link.get("object");
+				
+				String objectHNodeId = null, subjectHNodeId = null;
+				if(subject instanceof JSONArray) {
+					subjectHNodeId = generateHNodeId((JSONArray)subject, hTable, addIfNonExist, uc);
+				} else {
+					subjectHNodeId = subject.toString();
+				}
+				if(object instanceof JSONArray) {
+					objectHNodeId = generateHNodeId((JSONArray)object, hTable, addIfNonExist, uc);
+				} else {
+					objectHNodeId = object.toString();
+				}
+				
+				inpP.put(ClientJsonKeys.value.name(), subjectHNodeId + "---" + predicate + "---" + objectHNodeId);
 			} else if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.worksheetId) {
 				inpP.put(ClientJsonKeys.value.name(), worksheetId);
 			} else if (HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeIdList) {
@@ -274,10 +300,60 @@ public class WorksheetCommandHistoryExecutor {
 				inpP.put(ClientJsonKeys.value.name(), hNodes.toString());
 			}
 		}
-		AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, workspace.getOntologyManager());
+		
 		return uc;
 	}
 
+	private String generateHNodeId(JSONArray hNodeJSONRep, HTable hTable, boolean addIfNonExist, UpdateContainer uc) {
+		String hNodeId = null;
+		for (int j=0; j<hNodeJSONRep.length(); j++) {
+			JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
+			if(hTable == null) {
+				AbstractUpdate update = new TrivialErrorUpdate("null HTable while normalizing JSON input for the command");
+				if (uc == null)
+					uc = new UpdateContainer(update);
+				else
+					uc.add(update);
+				continue;
+			}
+			String nameObjColumnName = cNameObj.getString("columnName");
+			logger.debug("Column being normalized: "+ nameObjColumnName);
+			HNode node = hTable.getHNodeFromColumnName(nameObjColumnName);
+			if(node == null) { //Because add column can happen even if the column after which it is to be added is not present
+				AbstractUpdate update = new TrivialErrorUpdate(nameObjColumnName + " does not exist, using empty values");
+				if (uc == null)
+					uc = new UpdateContainer(update);
+				else
+					uc.add(update);
+				if (addIfNonExist) {
+					node = hTable.addHNode(nameObjColumnName, HNodeType.Regular, workspace.getWorksheet(worksheetId), workspace.getFactory());		
+				}
+				else {
+					continue;
+				}
+			}
+
+			if (j == hNodeJSONRep.length()-1) {		// Found!
+				if(node != null)
+					hNodeId = node.getId();
+				else {
+					//Get the id of the last node in the table
+					ArrayList<String> allNodeIds = hTable.getOrderedNodeIds();
+					//TODO check for allNodeIds.size == 0
+					String lastNodeId = allNodeIds.get(allNodeIds.size()-1);
+					hNodeId = lastNodeId;
+				}
+				hTable = workspace.
+						getWorksheet(worksheetId).getHeaders();
+			} else if(node != null) {
+				hTable = node.getNestedTable();
+				if (hTable == null && addIfNonExist) {
+					hTable = node.addNestedTable("NestedTable", workspace.getWorksheet(worksheetId), workspace.getFactory());
+				}
+			}
+		}
+		return hNodeId;
+	}
 	private boolean processHNodeId(JSONArray hNodeJSONRep, HTable hTable, String commandName, JSONObject hnodeJSON) {
 		for (int j=0; j<hNodeJSONRep.length(); j++) {
 			JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);

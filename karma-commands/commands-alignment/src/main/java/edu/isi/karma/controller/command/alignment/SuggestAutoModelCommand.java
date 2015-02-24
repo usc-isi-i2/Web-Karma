@@ -35,9 +35,7 @@ import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
-import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.Namespaces;
@@ -132,21 +130,34 @@ public class SuggestAutoModelCommand extends WorksheetCommand {
 				// Create a semantic type object
 				SemanticType type = new SemanticType(hNode.getId(), propertyLabel, internalNodeLabel, SemanticType.Origin.User, 1.0);
 				worksheet.getSemanticTypes().addType(type);
-				columnNode.setUserSelectedSemanticType(type);
+				
+				List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();
+				if (userSemanticTypes == null) {
+					userSemanticTypes = new ArrayList<SemanticType>();
+					columnNode.setUserSemanticTypes(userSemanticTypes);
+				}
+				boolean duplicateSemanticType = false;
+				for (SemanticType st : userSemanticTypes) {
+					if (st.getModelLabelString().equalsIgnoreCase(type.getModelLabelString())) {
+						duplicateSemanticType = true;
+						break;
+					}
+				}
+				if (!duplicateSemanticType)
+					userSemanticTypes.add(type);
 			} else {
 				// User-defined: do nothing
 			}
 		}
-		alignment.align();
+		if(!this.isExecutedInBatch())
+			alignment.align();
 		
 		try {
 			// Save the semantic types in the input parameter JSON
 			saveSemanticTypesInformation(worksheet, workspace, worksheet.getSemanticTypes().getListOfTypes());
-			
 			// Add the visualization update
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-			c.add(new AlignmentSVGVisualizationUpdate(
-					worksheetId, alignment));
+			c.append(this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(

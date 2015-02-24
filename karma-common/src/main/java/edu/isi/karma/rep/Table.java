@@ -135,6 +135,19 @@ public class Table extends RepEntity {
 			r.addNestedTableToDataTable(hNode, this, factory);
 		}
 	}
+	
+	public int getRowIndex(Row r)
+	{
+		return rows.indexOf(r);
+	}
+	public Row getRow(int index)
+	{
+		if(0 <= index && index < rows.size())
+		{
+			return rows.get(index);
+		}
+		return null;
+	}
 
 	/**
 	 * @param startIndex
@@ -146,15 +159,16 @@ public class Table extends RepEntity {
 	public ArrayList<Row> getRows(int startIndex, int count, SuperSelection sel) {
 		ArrayList<Row> result = new ArrayList<Row>();
 		Iterator<Row> itr = rows.iterator();
-		int sum = 0;
+		int sum = 0, index = 0;
 		while(itr.hasNext()) {
 			Row r = itr.next();
-			if (!sel.isSelected(r)) {
+			if (!sel.isSelected(r) && index >= startIndex) {
 				result.add(r);
 				sum++;
 			}
 			if (sum == count)
 				break;
+			index++;
 		}
 		return result;
 	}

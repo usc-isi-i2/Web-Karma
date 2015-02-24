@@ -39,7 +39,6 @@
 		<dependency>
 			<groupId>org.python</groupId>
 			<artifactId>jython-standalone</artifactId>
-			<version>2.5.3</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -60,7 +59,37 @@
 			<groupId>xml-apis</groupId>
 			<artifactId>xml-apis</artifactId>
 			<version>1.0.b2</version>
+<<<<<<< HEAD
 		</dependency>		
+=======
+		</dependency>
+		<!-- The Java API for KML -->
+		<dependency>
+			<groupId>de.micromata.jak</groupId>
+			<artifactId>JavaAPIforKml</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.hp.hpl.jena</groupId>
+			<artifactId>arq</artifactId>
+			<version>2.8.8</version>
+		</dependency>
+		<dependency>
+			<groupId>com.hp.hpl.jena</groupId>
+			<artifactId>jena</artifactId>
+			<version>2.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.hp.hpl.jena</groupId>
+			<artifactId>iri</artifactId>
+			<version>0.8</version>
+		</dependency>
+		<dependency>
+			<groupId>com.hp.hpl.jena</groupId>
+			<artifactId>tdb</artifactId>
+			<version>0.8.10</version>
+		</dependency>
+>>>>>>> upstream/development
 		<dependency>
 			<groupId>net.sf.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
@@ -95,11 +124,6 @@
 			<groupId>tw.edu.ntu.csie</groupId>
 			<artifactId>libsvm</artifactId>
 			<version>3.17</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.perf4j</groupId>

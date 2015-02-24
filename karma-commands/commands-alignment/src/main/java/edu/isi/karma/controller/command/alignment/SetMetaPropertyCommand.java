@@ -21,6 +21,7 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -172,7 +173,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		if(metaPropertyId.endsWith(" (add)"))
 			metaPropertyId = metaPropertyId.substring(0, metaPropertyId.length()-5).trim();
 		
-		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
+	if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyId);
 			if (semanticTypeAlreadyExists) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode,
@@ -202,7 +203,22 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 					SemanticType.Origin.User, 1.0);
 		} else if (metaPropertyName
 				.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
+			
 			LabeledLink propertyLink = alignment.getLinkById(metaPropertyId);
+			Node classInstanceNode = alignment.getNodeById(LinkIdFactory
+					.getLinkSourceId(metaPropertyId));
+			
+			if(propertyLink == null && this.isExecutedInBatch()) {
+				//Try to add the link, it might not exist beacuse of the batch
+				Node targetNode = alignment.getNodeById(LinkIdFactory.getLinkTargetId(metaPropertyId));
+				Label linkLabel = new Label(LinkIdFactory.getLinkUri(metaPropertyId));
+				LabeledLink newLink = alignment.addObjectPropertyLink(classInstanceNode,
+						targetNode, linkLabel);
+				alignment.changeLinkStatus(newLink.getId(),
+						LinkStatus.ForcedByUser);
+				propertyLink = alignment.getLinkById(metaPropertyId);
+			}
+			
 			if (propertyLink == null) {
 				String errorMessage = "Error while specializing a link. The DefaultLink '"
 						+ metaPropertyId
@@ -210,9 +226,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				logger.error(errorMessage);
 				return new UpdateContainer(new ErrorUpdate(errorMessage));
 			}
-
-			Node classInstanceNode = alignment.getNodeById(LinkIdFactory
-					.getLinkSourceId(metaPropertyId));
+			
 			if (semanticTypeAlreadyExists) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode,
 						oldDomainNode, alignment, classInstanceNode);
@@ -225,6 +239,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 						columnNode, targetHNodeId, propertyLink.getId());
 				alignment.changeLinkStatus(newLink.getId(),
 						LinkStatus.ForcedByUser);
+				
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId,
 						DataPropertyOfColumnLink.getFixedLabel(),
@@ -235,6 +250,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 						classInstanceNode, columnNode, propertyLink.getId());
 				alignment.changeLinkStatus(newLink.getId(),
 						LinkStatus.ForcedByUser);
+
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId,
 						ObjectPropertySpecializationLink.getFixedLabel(),
@@ -270,11 +286,24 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 					SemanticType.Origin.User, 1.0);
 		}
 
-		columnNode.setUserSelectedSemanticType(newType);
-		columnNode.setForced(true);
+		List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();
+		if (userSemanticTypes == null) {
+			userSemanticTypes = new ArrayList<SemanticType>();
+			columnNode.setUserSemanticTypes(userSemanticTypes);
+		}
+		boolean duplicateSemanticType = false;
+		for (SemanticType st : userSemanticTypes) {
+			if (st.getModelLabelString().equalsIgnoreCase(newType.getModelLabelString())) {
+				duplicateSemanticType = true;
+				break;
+			}
+		}
+		if (!duplicateSemanticType)
+			userSemanticTypes.add(newType);
 
 		// Update the alignment
-		alignment.align();
+		if(!this.isExecutedInBatch())
+			alignment.align();
 
 
 		UpdateContainer c = new UpdateContainer();
@@ -296,10 +325,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		if (trainAndShowUpdates) {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		}
-		
-		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-		c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
-				alignment));
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}
 
@@ -331,8 +357,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		oldAlignment.setGraph(oldGraph);
 		// Get the alignment update if any
 		try {
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, oldAlignment));
-			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, oldAlignment));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		} catch (Exception e) {
 			logger.error("Error occured while unsetting the semantic type!", e);
 			return new UpdateContainer(new ErrorUpdate(

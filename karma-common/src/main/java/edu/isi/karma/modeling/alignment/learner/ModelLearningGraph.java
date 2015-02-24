@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphBuilderTopK;
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.GraphVizLabelType;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
@@ -99,7 +100,7 @@ public abstract class ModelLearningGraph {
 			if (type == ModelLearningGraphType.Compact)
 				this.graphBuilder = new GraphBuilderTopK(ontologyManager, graph);
 			else
-				this.graphBuilder = new GraphBuilder(ontologyManager, graph);
+				this.graphBuilder = new GraphBuilder(ontologyManager, graph, false);
 			this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 			logger.info("loading is done!");
 		}
@@ -112,11 +113,11 @@ public abstract class ModelLearningGraph {
 	
 	protected ModelLearningGraph(OntologyManager ontologyManager, boolean emptyInstance, ModelLearningGraphType type) {
 		this.ontologyManager = ontologyManager;
-		this.nodeIdFactory = new NodeIdFactory();
 		if (type == ModelLearningGraphType.Compact)
-			this.graphBuilder = new GraphBuilderTopK(ontologyManager, this.nodeIdFactory, false);
+			this.graphBuilder = new GraphBuilderTopK(ontologyManager, false);
 		else
-			this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
+			this.graphBuilder = new GraphBuilder(ontologyManager, false);
+		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 		this.lastUpdateTime = System.currentTimeMillis();
 	}
 	
@@ -127,7 +128,7 @@ public abstract class ModelLearningGraph {
 	public GraphBuilder getGraphBuilderClone() {
 		GraphBuilder clonedGraphBuilder = null;
 		if (this instanceof ModelLearningGraphSparse) {
-			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, this.getGraphBuilder().getGraph());
+			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, this.getGraphBuilder().getGraph(), false);
 		} else if (this instanceof ModelLearningGraphCompact) {
 			clonedGraphBuilder = new GraphBuilderTopK(this.ontologyManager, this.getGraphBuilder().getGraph());
 		}
@@ -145,11 +146,11 @@ public abstract class ModelLearningGraph {
 	public void initializeFromJsonRepository() {
 		logger.info("initializing the graph from models in the json repository ...");
 		
-		this.nodeIdFactory = new NodeIdFactory();
 		if (this instanceof ModelLearningGraphSparse)
-			this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
+			this.graphBuilder = new GraphBuilder(ontologyManager, false);
 		else 
-			this.graphBuilder = new GraphBuilderTopK(ontologyManager, this.nodeIdFactory, false);
+			this.graphBuilder = new GraphBuilderTopK(ontologyManager, false);
+		this.nodeIdFactory = new NodeIdFactory();
 		
 		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
 		Set<InternalNode> temp;
@@ -166,6 +167,7 @@ public abstract class ModelLearningGraph {
 							if (temp != null) addedNodes.addAll(temp);
 						}
 					} catch (Exception e) {
+						logger.error(e.getMessage());
 					}
 				}
 			}
@@ -192,7 +194,14 @@ public abstract class ModelLearningGraph {
 	
 	public void exportGraphviz() {
 		try {
-			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), "main graph", true, false, false, getGraphGraphvizName());
+			GraphVizUtil.exportJGraphToGraphviz(this.graphBuilder.getGraph(), 
+					"main graph", 
+					true, 
+					GraphVizLabelType.LocalId,
+					GraphVizLabelType.LocalUri,
+					false, 
+					false, 
+					getGraphGraphvizName());
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to graphviz!");
 		}
@@ -213,11 +222,11 @@ public abstract class ModelLearningGraph {
 	}
 	
 	private void updateGraphUsingOntology(SemanticModel model) {
-		this.graphBuilder.addClosureAndLinksOfNodes(model.getInternalNodes(), null);
+		this.graphBuilder.addClosureAndUpdateLinks(model.getInternalNodes(), null);
 	}
 	
 	public void updateGraphUsingOntology(Set<InternalNode> nodes) {
-		this.graphBuilder.addClosureAndLinksOfNodes(nodes, null);
+		this.graphBuilder.addClosureAndUpdateLinks(nodes, null);
 	}
 	
 }

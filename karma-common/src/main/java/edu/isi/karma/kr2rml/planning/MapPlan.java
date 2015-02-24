@@ -75,12 +75,10 @@ public abstract class MapPlan {
 		for(ColumnTemplateTerm term : subjMapTemplate.getAllColumnNameTermElements())
 		{
 			String hNodeIdForColumnName = translator.getHNodeIdForColumnName(term.getTemplateTermValue());
-			if(hNodeIdForColumnName == null)
-			{
-				throw new HNodeNotFoundKarmaException("Unable to find column name while populating terms for subject template", term.getTemplateTermValue());
+			if(hNodeIdForColumnName != null) {
+				HNodePath path = factory.getHNode(hNodeIdForColumnName).getHNodePath(factory);
+				subjectTermsToPaths.put(term, path);
 			}
-			HNodePath path = factory.getHNode(hNodeIdForColumnName).getHNodePath(factory);
-			subjectTermsToPaths.put(term, path);
 		}
 	}
 	protected TemplateTermSet generateSubjectMapTemplateForBlankNode(SubjectMap subjectMap, 

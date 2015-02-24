@@ -188,9 +188,9 @@ public class GetClassesCommand extends WorksheetCommand {
 
 	private Set<Node> getNodesUsingAlignment(Workspace workspace, Set<Label> nodeLabels) {
 		Set<Node> nodeSet = new HashSet<>();
-		final OntologyManager ontMgr = workspace.getOntologyManager();
-		final Alignment alignment = AlignmentManager.Instance().getAlignmentOrCreateIt(
-				workspace.getId(), worksheetId, ontMgr);
+		
+		final Alignment alignment = AlignmentManager.Instance().getAlignment(
+				workspace.getId(), worksheetId);
 
 		final Set<String> steinerTreeNodeIds = new HashSet<String>();
 

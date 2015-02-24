@@ -2,20 +2,16 @@ package edu.isi.karma.rep;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 
 public class HashValueManager {
-	private static Map<String, HashMap<String, String>> hashTable = new HashMap<String, HashMap<String, String>>();
-
-	public HashValueManager() {
-		// TODO Auto-generated constructor stub
-	}
+	private static Map<String, Map<String, String>> hashTable = new ConcurrentHashMap<String, Map<String, String>>();
 	
 	private static void computeHashValue(Row row, List<String> HNodeIds) {
 		for (String HNodeid : HNodeIds) {
@@ -29,13 +25,11 @@ public class HashValueManager {
 					}
 					computeHashValue(nestedRow, ids);
 				}
-				//System.out.println("CellValue:" + v.asString());
 			}
 			else {
-				//System.out.println("CellValue:" + n.getValue().asString());
-				HashMap<String, String> tmp = hashTable.get(row.getId());
+				Map<String, String> tmp = hashTable.get(row.getId());
 				if (tmp == null) 
-					tmp = new HashMap<String, String>();
+					tmp = new ConcurrentHashMap<String, String>();
 				String value = n.getValue().asString();
 				value = DigestUtils.shaHex(value);
 				tmp.put(n.getId(), value);
@@ -65,7 +59,7 @@ public class HashValueManager {
 				}
 			}
 			else {
-				HashMap<String, String> tmp = hashTable.get(row.getId());
+				Map<String, String> tmp = hashTable.get(row.getId());
 				
 				hashString.add(tmp.get(n.getId()));
 			}
@@ -75,7 +69,6 @@ public class HashValueManager {
 		for (String t : hashString) {
 			hash += t; 
 		}
-		//System.out.println(row.getId() + ": " + hash);
 		return hash;
 	}
 	

@@ -12,10 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 public class MergeJSON extends UDF{
 	private static Logger LOG = LoggerFactory.getLogger(MergeJSON.class);
-	public Text evaluate(Text target, Text source, Text path) {
+	private static String atId = "@id";
+	public Text evaluate(Text target, Text source, Text path, Text Id) {
 		try {
 			if (source == null || path == null)
 				return target;
+			if (Id != null) {
+				atId = Id.toString();
+			}
 			String sourceString = source.toString();
 			String targetString = target.toString();
 			String pathString = path.toString();
@@ -35,7 +39,7 @@ public class MergeJSON extends UDF{
 	}
 	protected static String mergeJSON(List<String> sourceStrings, String targetString,
 			String pathString) {
-		String[] array = pathString.split("\\.");
+		String[] array = CollectJSONObject.splitPath(pathString);//pathString.split("\\.");
 		
 		JSONObject rootTargetObj = new JSONObject(targetString);
 		JSONObject targetResult = rootTargetObj;
@@ -117,7 +121,7 @@ public class MergeJSON extends UDF{
 	}
 	protected static void mergeByReplacingId(JSONObject targetObj, JSONObject sourceObj,
 			String lastLevel, Object obj) {
-		if (obj instanceof String && obj.equals(sourceObj.get("@id"))) {
+		if (obj instanceof String && obj.equals(sourceObj.get(atId))) {
 			targetObj.put(lastLevel, sourceObj);
 		}
 	}
@@ -125,7 +129,7 @@ public class MergeJSON extends UDF{
 		if (obj instanceof JSONArray) {
 			JSONArray tmpArray = (JSONArray)obj;
 			for (int i = 0; i < tmpArray.length(); i++) {
-				if (tmpArray.get(i).equals(sourceObj.get("@id"))) {
+				if (tmpArray.get(i).equals(sourceObj.get(atId))) {
 					tmpArray.put(i, sourceObj);
 				}
 				Object o = tmpArray.get(i);
@@ -136,7 +140,7 @@ public class MergeJSON extends UDF{
 	protected static void mergeJSONObject(JSONObject sourceObj, Object o) {
 		if (o instanceof JSONObject) {
 			JSONObject t = (JSONObject)o;
-			if (t.has("@id") && t.get("@id").equals(sourceObj.get("@id"))) {
+			if (t.has(atId) && t.get(atId).equals(sourceObj.get(atId))) {
 				@SuppressWarnings("rawtypes")
 				Iterator itr = sourceObj.keys();
 				while(itr.hasNext()) {

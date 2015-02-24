@@ -37,7 +37,7 @@ public class SubmitPythonTransformationCommandFactory extends JSONInputCommandFa
 
 	private enum Arguments {
 		newColumnName, transformationCode, worksheetId, 
-		hNodeId, errorDefaultValue, selectionName
+		hNodeId, errorDefaultValue, selectionName, isJSONOutput
 	}
 	
 	@Override
@@ -55,9 +55,15 @@ public class SubmitPythonTransformationCommandFactory extends JSONInputCommandFa
 		String errorDefaultValue = HistoryJsonUtil.getStringValue(Arguments.errorDefaultValue.name(), inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+		boolean isJSONOutput = false;
+		try {
+			isJSONOutput = Boolean.parseBoolean(CommandInputJSONUtil.getStringValue(Arguments.isJSONOutput.name(), inputJson));
+		}
+		catch(Exception e)
+		{}
 		SubmitPythonTransformationCommand comm = new SubmitPythonTransformationCommand(getNewId(workspace), 
 				newColumnName, code, worksheetId, hNodeId, errorDefaultValue, 
-				selectionName);
+				selectionName, isJSONOutput);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

@@ -44,6 +44,7 @@ import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.GraphVizLabelType;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkFrequency;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
@@ -144,10 +145,11 @@ public class ModelLearner_Old {
 
 		GraphBuilder clonedGraphBuilder = null;
 		if (graphBuilder == null || graphBuilder.getGraph() == null) {
-			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, this.nodeIdFactory, false);
+			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, false);
 		} else {
-			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, graphBuilder.getGraph());
+			clonedGraphBuilder = new GraphBuilder(this.ontologyManager, graphBuilder.getGraph(), false);
 		}
+		this.nodeIdFactory = clonedGraphBuilder.getNodeIdFactory();
 		return clonedGraphBuilder;
 	}
 
@@ -280,7 +282,7 @@ public class ModelLearner_Old {
 
 		for (ColumnNode n : columnNodes) {
 
-			candidateSemanticTypes = getCandidateSemanticTypes(n, useCorrectTypes, numberOfCRFCandidates);
+			candidateSemanticTypes = n.getTopKLearnedSemanticTypes(numberOfCRFCandidates);
 			columnSemanticTypes.put(n, candidateSemanticTypes);
 
 			for (SemanticType semanticType: candidateSemanticTypes) {
@@ -516,40 +518,6 @@ public class ModelLearner_Old {
 		return mappingStruct;
 	}
 
-	private List<SemanticType> getCandidateSemanticTypes(ColumnNode n, boolean useCorrectType, int numberOfCRFCandidates) {
-
-		if (n == null)
-			return null;
-
-		List<SemanticType> types = new ArrayList<>();
-
-		SemanticType userSelectedType = n.getUserSelectedSemanticType();
-		if (useCorrectType && userSelectedType != null) {
-			double probability = 1.0;
-			SemanticType newType = new SemanticType(
-					userSelectedType.getHNodeId(),
-					userSelectedType.getType(),
-					userSelectedType.getDomain(),
-					userSelectedType.getOrigin(),
-					probability
-					);
-			types.add(newType);
-		} else {
-			List<SemanticType> suggestions = n.getTopKSuggestions(numberOfCRFCandidates);
-			if (suggestions != null) {
-				for (SemanticType st : suggestions) {
-					if (useCorrectType && userSelectedType != null &&
-							st.getModelLabelString().equalsIgnoreCase(userSelectedType.getModelLabelString()))
-						continue;
-					types.add(st);
-				}
-			}
-		}
-
-		return types;
-
-	}
-
 	private void updateWeights() {
 
 		List<DefaultLink> oldLinks = new ArrayList<DefaultLink>();
@@ -670,16 +638,20 @@ public class ModelLearner_Old {
 		int numberOfAttributesWhoseTypeIsFirstCRFType = 0;
 		int numberOfAttributesWhoseTypeIsInCRFTypes = 0;
 		for (ColumnNode cn : columnNodes) {
-			SemanticType userSelectedType = cn.getUserSelectedSemanticType();
-			List<SemanticType> top4Suggestions = cn.getTopKSuggestions(4);
+			List<SemanticType> userSemanticTypes = cn.getUserSemanticTypes();
+			List<SemanticType> top4Suggestions = cn.getTopKLearnedSemanticTypes(4);
 
 			for (int i = 0; i < top4Suggestions.size(); i++) {
 				SemanticType st = top4Suggestions.get(i);
-				if (userSelectedType != null &&
-						st.getModelLabelString().equalsIgnoreCase(userSelectedType.getModelLabelString())) {
-					if (i == 0) numberOfAttributesWhoseTypeIsFirstCRFType ++;
-					numberOfAttributesWhoseTypeIsInCRFTypes ++;
-					break;
+				if (userSemanticTypes != null) {
+					for (SemanticType t : userSemanticTypes) {
+						if (st.getModelLabelString().equalsIgnoreCase(t.getModelLabelString())) {
+							if (i == 0) numberOfAttributesWhoseTypeIsFirstCRFType ++;
+							numberOfAttributesWhoseTypeIsInCRFTypes ++;
+							i = top4Suggestions.size();
+							break;
+						}
+					}
 				} 
 			}
 
@@ -795,7 +767,7 @@ public class ModelLearner_Old {
 					try {
 						logger.info("loading the graph ...");
 						DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
-						modelLearner.graphBuilder = new GraphBuilder(ontologyManager, graph);
+						modelLearner.graphBuilder = new GraphBuilder(ontologyManager, graph, false);
 						modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -891,6 +863,8 @@ public class ModelLearner_Old {
 						models, 
 						newSource.getName(),
 						outName,
+						GraphVizLabelType.LocalId,
+						GraphVizLabelType.LocalUri,
 						false,
 						false);
 				//				}

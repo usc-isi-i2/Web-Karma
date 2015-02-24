@@ -72,23 +72,25 @@ public class GraphVizUtil {
 		return localName;
 	}
 	
-	private static String getModelIds(Set<String> modelIds) {
-		String label = "";
-		if (modelIds == null || modelIds.size() == 0)
-			return label;
-		label += "[";
-		for (String pId : modelIds)
-			label += pId + ",";
-		if (label.endsWith(","))
-			label = label.substring(0, label.length() - 1);
-		label += "]";
-		return label;
-	}
+//	private static String getModelIds(Set<String> modelIds) {
+//		String label = "";
+//		if (modelIds == null || modelIds.size() == 0)
+//			return label;
+//		label += "[";
+//		for (String pId : modelIds)
+//			label += pId + ",";
+//		if (label.endsWith(","))
+//			label = label.substring(0, label.length() - 1);
+//		label += "]";
+//		return label;
+//	}
 	
 	private static org.kohsuke.graphviz.Graph convertToGraphviz(
 			DirectedGraph<Node, DefaultLink> graph, 
 			Map<ColumnNode, ColumnNode> mappingToSourceColumns,
 			boolean onlyAddPatterns,
+			GraphVizLabelType nodeLabelType,
+			GraphVizLabelType linkLabelType,
 			boolean showNodeMetaData,
 			boolean showLinkMetaData) {
 
@@ -148,13 +150,23 @@ public class GraphVizUtil {
 			
 			org.kohsuke.graphviz.Node n = nodeIndex.get(source);
 			String sourceId = source.getId();
-			String sourceUri = sourceId;//source.getLabel().getUri();
-			String sourceLocalName = getLocalName(sourceUri);
-			String sourceLabel;
+			String sourceUri = source.getUri();
+			String sourceLocalId, sourceLocalUri;
+			String sourceLabel = "";
 			if (n == null) {
 				n = new org.kohsuke.graphviz.Node();
 //				label = (uri == null || uri.trim().length() == 0?id:uri));
-				sourceLabel = (sourceLocalName == null || sourceLocalName.trim().length() == 0?sourceId:sourceLocalName);
+				if (source instanceof ColumnNode) {
+					ColumnNode mappedColumn = (mappingToSourceColumns == null) ? (ColumnNode)source : mappingToSourceColumns.get(source);
+					sourceLabel = mappedColumn.getColumnName();
+				} else if (nodeLabelType == GraphVizLabelType.Id)
+					sourceLabel = sourceId;
+				else if (nodeLabelType == GraphVizLabelType.LocalId)
+					sourceLabel = (sourceLocalId = getLocalName(sourceId)) == null ? sourceId : sourceLocalId;
+				else if (nodeLabelType == GraphVizLabelType.Uri)
+					sourceLabel = sourceUri;
+				else if (nodeLabelType == GraphVizLabelType.LocalUri)
+					sourceLabel = (sourceLocalUri = getLocalName(sourceUri)) == null ? sourceUri : sourceLocalUri;
 				if (showNodeMetaData) {
 //					sourceLabel += metaDataSeparator + getModelIds(source.getModelIds());
 				}
@@ -173,22 +185,28 @@ public class GraphVizUtil {
 
 			n = nodeIndex.get(target);
 			String targetId = target.getId();
-			String targetUri = targetId;//target.getLabel().getUri();
-			String targetLocalName = getLocalName(targetUri);
-			String targetLabel;
+			String targetUri = target.getUri();
+			String targetLocalId, targetLocalUri;
+			String targetLabel = "";
 			if (n == null) {
 				n = new org.kohsuke.graphviz.Node();
 //				label = (uri == null || uri.trim().length() == 0?id:uri));
-				targetLabel = (targetLocalName == null || targetLocalName.trim().length() == 0?targetId:targetLocalName);
 				if (target instanceof ColumnNode) {
 					ColumnNode mappedColumn = (mappingToSourceColumns == null) ? (ColumnNode)target : mappingToSourceColumns.get(target);
 					targetLabel = mappedColumn.getColumnName();
-				}
+				} else if (nodeLabelType == GraphVizLabelType.Id)
+					targetLabel = targetId;
+				else if (nodeLabelType == GraphVizLabelType.LocalId)
+					targetLabel = (targetLocalId = getLocalName(targetId)) == null ? targetId : targetLocalId;
+				else if (nodeLabelType == GraphVizLabelType.Uri)
+					targetLabel = targetUri;
+				else if (nodeLabelType == GraphVizLabelType.LocalUri)
+					targetLabel = (targetLocalUri = getLocalName(targetUri)) == null ? targetUri : targetLocalUri;
 				if (showNodeMetaData) {
 //					targetLabel += metaDataSeparator + getModelIds(target.getModelIds());
 					if (target instanceof ColumnNode) {
 						ColumnNode mappedColumn = (mappingToSourceColumns == null) ? (ColumnNode)target : mappingToSourceColumns.get(target);
-						List<SemanticType> suggestedTypes = mappedColumn.getTopKSuggestions(4);
+						List<SemanticType> suggestedTypes = mappedColumn.getTopKLearnedSemanticTypes(4);
 						if (suggestedTypes != null)
 							for (SemanticType st : suggestedTypes)
 								targetLabel += "\n[" + 
@@ -216,8 +234,17 @@ public class GraphVizUtil {
 			
 			String edgeId = e.getId();
 			String edgeUri = e.getUri();
-			String edgeLocalName = getLocalName(edgeUri);
-			String edgeLabel = (edgeLocalName == null?edgeId:edgeLocalName);
+			String edgeLocalUri;
+			String edgeLabel = "";
+			
+			if (linkLabelType == GraphVizLabelType.Id)
+				edgeLabel = edgeId;
+			else if (linkLabelType == GraphVizLabelType.LocalId)
+				edgeLabel = edgeId;
+			else if (linkLabelType == GraphVizLabelType.Uri)
+				edgeLabel = edgeUri;
+			else if (linkLabelType == GraphVizLabelType.LocalUri)
+				edgeLabel = (edgeLocalUri = getLocalName(edgeUri)) == null ? edgeUri : edgeLocalUri;
 
 			if (showLinkMetaData) {
 				edgeLabel += metaDataSeparator;
@@ -239,6 +266,8 @@ public class GraphVizUtil {
 			DirectedWeightedMultigraph<Node, DefaultLink> graph, 
 			String label, 
 			boolean onlyAddPatterns,
+			GraphVizLabelType nodeLabelType,
+			GraphVizLabelType linkLabelType,
 			boolean showNodeMetaData,
 			boolean showLinkMetaData,
 			String filename) throws IOException {
@@ -246,7 +275,7 @@ public class GraphVizUtil {
 		logger.info("exporting the graph to graphviz ...");
 		
 		org.kohsuke.graphviz.Graph graphViz = 
-				convertToGraphviz(graph, null, onlyAddPatterns, showNodeMetaData, showLinkMetaData);;
+				convertToGraphviz(graph, null, onlyAddPatterns, nodeLabelType, linkLabelType, showNodeMetaData, showLinkMetaData);;
 		graphViz.attr("fontcolor", "blue");
 		graphViz.attr("remincross", "true");
 		graphViz.attr("label", label == null ? "" : label);
@@ -259,6 +288,8 @@ public class GraphVizUtil {
 	
 	public static void exportSemanticModelToGraphviz(
 			SemanticModel model, 
+			GraphVizLabelType nodeLabelType,
+			GraphVizLabelType linkLabelType,
 			boolean showNodeMetaData, 
 			boolean showLinkMetaData,
 			String filename) throws IOException {
@@ -272,7 +303,7 @@ public class GraphVizUtil {
 //		graphViz.attr("page", "8.5,11");
 
 		org.kohsuke.graphviz.Graph gViz = 
-				convertToGraphviz(GraphUtil.asDefaultGraph(model.getGraph()), model.getMappingToSourceColumns(), false, showNodeMetaData, showLinkMetaData);
+				convertToGraphviz(GraphUtil.asDefaultGraph(model.getGraph()), model.getMappingToSourceColumns(), false, nodeLabelType, linkLabelType, showNodeMetaData, showLinkMetaData);
 		gViz.attr("label", "model");
 		gViz.id("cluster");
 		graphViz.subGraph(gViz);
@@ -284,6 +315,8 @@ public class GraphVizUtil {
 			Map<String, SemanticModel> models, 
 			String label, 
 			String filename,
+			GraphVizLabelType nodeLabelType,
+			GraphVizLabelType linkLabelType,
 			boolean showNodeMetaData,
 			boolean showLinkMetaData) throws IOException {
 		
@@ -299,10 +332,10 @@ public class GraphVizUtil {
 			for(Entry<String,SemanticModel> entry : models.entrySet()) {
 				if (entry.getKey() == "1-correct model") {
 					cluster = GraphVizUtil.convertToGraphviz(GraphUtil.asDefaultGraph(entry.getValue().getGraph()), 
-							entry.getValue().getMappingToSourceColumns(), false, false, false);
+							entry.getValue().getMappingToSourceColumns(), false, nodeLabelType, linkLabelType, false, false);
 				} else {
 					cluster = GraphVizUtil.convertToGraphviz(GraphUtil.asDefaultGraph(entry.getValue().getGraph()), 
-							entry.getValue().getMappingToSourceColumns(), false, showNodeMetaData, showLinkMetaData);
+							entry.getValue().getMappingToSourceColumns(), false, nodeLabelType, linkLabelType, showNodeMetaData, showLinkMetaData);
 				}
 				cluster.id("cluster_" + counter);
 				cluster.attr("label", entry.getKey());

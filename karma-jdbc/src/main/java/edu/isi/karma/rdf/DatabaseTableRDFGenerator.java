@@ -43,7 +43,6 @@ import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
-import edu.isi.karma.kr2rml.writer.BloomFilterKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rep.HNode;
@@ -118,10 +117,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 				JSONKR2RMLRDFWriter t = (JSONKR2RMLRDFWriter)writer;
 				t.setGlobalContext(contextObj, contextId);
 			}
-			if (writer instanceof BloomFilterKR2RMLRDFWriter) {
-				BloomFilterKR2RMLRDFWriter t = (BloomFilterKR2RMLRDFWriter)writer;
-				t.setR2RMLMappingIdentifier(id);
-			}
+			writer.setR2RMLMappingIdentifier(id);
 		}
 	}
 
@@ -132,10 +128,9 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(id);
 		KR2RMLMapping mapping = parserTest.parse();
 		for (KR2RMLRDFWriter writer : writers) {
-			if (writer instanceof BloomFilterKR2RMLRDFWriter) {
-				BloomFilterKR2RMLRDFWriter t = (BloomFilterKR2RMLRDFWriter)writer;
-				t.setR2RMLMappingIdentifier(id);
-			}
+
+			writer.setR2RMLMappingIdentifier(id);
+
 		}
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		Connection conn = dbUtil.getConnection(hostname, portnumber, username, password, dBorSIDName);
@@ -214,7 +209,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 			return;
 		// RDF generation object initialization
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(wk,
-				workspace.getFactory(), workspace.getOntologyManager(), writers, false,
+				workspace.getFactory(), writers, false,
 				mapping, errorReport, selection);
 
 		// Generate the rdf

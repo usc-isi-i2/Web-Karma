@@ -68,10 +68,6 @@ public class ExecutionController {
 
 		for (Class<? extends CommandFactory> subType : subTypes)
 		{
-			if(subType.getClass().getName().contains("FetchTransformingData"))
-			{
-				System.out.println("subType: Hello");
-			}
 			if(!Modifier.isAbstract(subType.getModifiers()) && !subType.isInterface())
 				try
 			{

@@ -84,8 +84,8 @@ public class SemanticModel {
 		this.id = id;
 		this.graph = graph;
 		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
-		this.setSuggestedTypesForColumnNodes();
-		this.setUserSelectedTypeForColumnNodes();
+		this.setLearnedTypesForColumnNodes();
+		this.setUserTypesForColumnNodes();
 
 		this.sourceColumns = this.getColumnNodes();
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
@@ -102,8 +102,8 @@ public class SemanticModel {
 		this.id = id;
 		this.graph = graph;
 		this.selection = sel;
-		this.setSuggestedTypesForColumnNodes();
-		this.setUserSelectedTypeForColumnNodes();
+		this.setLearnedTypesForColumnNodes();
+		this.setUserTypesForColumnNodes();
 
 		this.sourceColumns = this.getColumnNodes();
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
@@ -187,7 +187,7 @@ public class SemanticModel {
 
 	}
 
-	private void setSuggestedTypesForColumnNodes() {
+	private void setLearnedTypesForColumnNodes() {
 		
 		if (this.graph == null)
 			return;
@@ -198,13 +198,13 @@ public class SemanticModel {
 			
 			ColumnNode cn = (ColumnNode)n;
 						
-			List<SemanticType> suggestedSemanticTypes = 
+			List<SemanticType> learnedSemanticTypes = 
 					new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4, selection);
-			cn.setSuggestedSemanticTypes(suggestedSemanticTypes);
+			cn.setLearnedSemanticTypes(learnedSemanticTypes);
 		}
 	}
 	
-	private void setUserSelectedTypeForColumnNodes() {
+	private void setUserTypesForColumnNodes() {
 		
 		if (this.graph == null)
 			return;
@@ -216,11 +216,14 @@ public class SemanticModel {
 			ColumnNode cn = (ColumnNode)n;
 						
 			Set<LabeledLink> incomingLinks = this.graph.incomingEdgesOf(n);
-			if (incomingLinks != null && incomingLinks.size() == 1) {
-				LabeledLink link = incomingLinks.toArray(new LabeledLink[0])[0];
-				Node domain = link.getSource();
-				SemanticType st = new SemanticType(cn.getHNodeId(), link.getLabel(), domain.getLabel(), Origin.User, 1.0);
-				cn.setUserSelectedSemanticType(st);
+			if (incomingLinks != null) {
+				List<SemanticType> userSemanticTypes = new ArrayList<SemanticType>();
+				for (LabeledLink link : incomingLinks) {
+					Node domain = link.getSource();
+					SemanticType st = new SemanticType(cn.getHNodeId(), link.getLabel(), domain.getLabel(), Origin.User, 1.0);
+					userSemanticTypes.add(st);
+				}
+				cn.setUserSemanticTypes(userSemanticTypes);
 			} else
 				logger.debug("The column node " + ((ColumnNode)n).getColumnName() + " does not have any domain or it has more than one domain.");
 		}
@@ -281,7 +284,9 @@ public class SemanticModel {
 		
 		String s, p, o, triple;
 		for (LabeledLink l : g.edgeSet()) {
-			
+			// FIXME
+			if (!(l.getTarget() instanceof InternalNode))
+				continue;
 			s = nodeIds.get(l.getSource());
 			o = nodeIds.get(l.getTarget());
 			p = l.getLabel().getUri();
@@ -684,7 +689,7 @@ public class SemanticModel {
 	}
 	
 	public void writeGraphviz(String filename, boolean showNodeMetaData, boolean showLinkMetaData) throws IOException {
-		GraphVizUtil.exportSemanticModelToGraphviz(this, showNodeMetaData, showLinkMetaData, filename);
+		GraphVizUtil.exportSemanticModelToGraphviz(this, GraphVizLabelType.LocalId, GraphVizLabelType.LocalUri, showNodeMetaData, showLinkMetaData, filename);
 	}
 	
 	public void writeJson(String filename) throws IOException {

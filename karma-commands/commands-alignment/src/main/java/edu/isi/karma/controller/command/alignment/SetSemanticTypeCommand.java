@@ -221,10 +221,11 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 					oldDomainNode = oldIncomingLinkToColumnNode.getSource();
 				}
 
-				if (type.getBoolean(ClientJsonKeys.isPrimary.name())) {
+				if (true) { //type.getBoolean(ClientJsonKeys.isPrimary.name())) {
 					
 					if (isClassSemanticType) {
 						if (semanticTypeAlreadyExists && oldDomainNode == domain) {
+							newLink = oldIncomingLinkToColumnNode;
 							// do nothing;
 						} else if (semanticTypeAlreadyExists) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
@@ -259,15 +260,29 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0);
 //				newType = new SemanticType(hNodeId, classNode.getLabel(), null, SemanticType.Origin.User, 1.0,isPartOfKey);
-				columnNode.setUserSelectedSemanticType(newType);
-				columnNode.setForced(true);
+				
+				List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();
+				if (userSemanticTypes == null) {
+					userSemanticTypes = new ArrayList<SemanticType>();
+					columnNode.setUserSemanticTypes(userSemanticTypes);
+				}
+				boolean duplicateSemanticType = false;
+				for (SemanticType st : userSemanticTypes) {
+					if (st.getModelLabelString().equalsIgnoreCase(newType.getModelLabelString())) {
+						duplicateSemanticType = true;
+						break;
+					}
+				}
+				if (!duplicateSemanticType)
+					userSemanticTypes.add(newType);
 				
 				if(newLink != null) {
 					alignment.changeLinkStatus(newLink.getId(),
 							LinkStatus.ForcedByUser);
 				}
 				// Update the alignment
-				alignment.align();
+				if(!this.isExecutedInBatch())
+					alignment.align();
 
 			} catch (JSONException e) {
 				logger.error("JSON Exception occured", e);
@@ -301,9 +316,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		} 
 		
-		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-		c.add(new AlignmentSVGVisualizationUpdate(worksheetId,
-				alignment));			
+		c.append(this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}
 
@@ -363,8 +376,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		
 		// Get the alignment update if any
 		try {
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, oldAlignment));
-			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, oldAlignment));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		} catch (Exception e) {
 			logger.error("Error occured while unsetting the semantic type!", e);
 			return new UpdateContainer(new ErrorUpdate(
