@@ -3,7 +3,6 @@ package edu.isi.karma.cleaning;
 import java.util.ArrayList;
 import java.util.Collection;
 
-
 public class PositionSet implements GrammarTreeNode {
 
 	ArrayList<Position> spaces = new ArrayList<Position>();

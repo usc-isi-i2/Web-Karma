@@ -3,6 +3,7 @@ package edu.isi.karma.cleaning;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -323,6 +324,7 @@ public class GradientDecendOptimizer {
 		return res;
 	}
 
+	@Test
 	public void test1() {
 		double[] p1 = { 1, 2 };
 		double[] p2 = { 50, 1 };

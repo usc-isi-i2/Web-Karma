@@ -25,9 +25,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Vector;
+
+import org.apache.mahout.math.Arrays;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.isi.karma.cleaning.DataPreProcessor;
@@ -40,7 +41,6 @@ public class Tools {
 	public void transformFile(String fpath) {
 		try {
 			Vector<String[]> examples = new Vector<String[]>();
-			ArrayList<String> data = new ArrayList<String>();
 			// read and write the data
 			File nf = new File(fpath);
 			BufferedReader cr = new BufferedReader(new FileReader(fpath));

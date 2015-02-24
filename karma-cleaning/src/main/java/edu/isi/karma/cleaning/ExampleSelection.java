@@ -21,10 +21,11 @@
 
 package edu.isi.karma.cleaning;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
+
+import org.apache.mahout.math.Arrays;
 
 import edu.isi.karma.cleaning.QuestionableRecord.OutlierDetector;
 
