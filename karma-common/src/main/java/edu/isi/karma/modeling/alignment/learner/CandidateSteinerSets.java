@@ -93,7 +93,7 @@ public class CandidateSteinerSets {
 			this.steinerSets.clear();
 			
 //			for (int i = 0; i < newSteinerNodes.size(); i++) // do not cut off
-			for (int i = 0; i < ModelingConfiguration.getMaxQueuedMappigs() && i < newSteinerNodes.size(); i++)
+			for (int i = 0; i < ModelingConfiguration.getMappingBranchingFactor() && i < newSteinerNodes.size(); i++)
 				this.steinerSets.add(newSteinerNodes.get(i));
 
 		}
@@ -137,7 +137,7 @@ public class CandidateSteinerSets {
 			this.steinerSets.clear();
 			
 //			for (int i = 0; i < newSteinerNodes.size(); i++) // do not cut off
-			for (int i = 0; i < ModelingConfiguration.getMaxQueuedMappigs() && i < newSteinerNodes.size(); i++)
+			for (int i = 0; i < ModelingConfiguration.getMappingBranchingFactor() && i < newSteinerNodes.size(); i++)
 				this.steinerSets.add(newSteinerNodes.get(i));
 
 		}
@@ -184,7 +184,7 @@ public class CandidateSteinerSets {
 		logger.info("number of steiner sets after computing pareto optimal: " + paretoFrontierSteinerSets.size());
 
 		List<SteinerNodes> results = new ArrayList<SteinerNodes>();
-		for (int i = 0; i < ModelingConfiguration.getMaxQueuedMappigs() && i < paretoFrontierSteinerSets.size(); i++) {
+		for (int i = 0; i < ModelingConfiguration.getMappingBranchingFactor() && i < paretoFrontierSteinerSets.size(); i++) {
 			if (i == 0) {
 				System.out.println(paretoFrontierSteinerSets.get(i).getScoreDetailsString());
 				for (Node n : paretoFrontierSteinerSets.get(i).getNodes())

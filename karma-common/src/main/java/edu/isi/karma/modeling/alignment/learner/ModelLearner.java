@@ -230,10 +230,10 @@ public class ModelLearner {
 //			logger.info("START ...");
 			
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
-//			if (this.graphBuilder instanceof GraphBuilderTopK) {
-//				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn.getNodes(), ModelingConfiguration.getMaxCandidateModels());
-//			} 
-//			else 
+			if (this.graphBuilder instanceof GraphBuilderTopK) {
+				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getTopKSteinerTree(), true);
+			} 
+			else 
 			{
 				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
 				SteinerTree steinerTree = new SteinerTree(
@@ -264,13 +264,13 @@ public class ModelLearner {
 //					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
-			if (number == ModelingConfiguration.getMaxCandidateModels())
+			if (number == ModelingConfiguration.getNumCandidateMappings())
 				break;
 
 		}
 
 		Collections.sort(sortableSemanticModels);
-		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getMaxCandidateModels());
+		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getNumCandidateMappings());
 		logger.info("results are ready ...");
 //		sortableSemanticModels.get(0).print();
 		return sortableSemanticModels.subList(0, count);

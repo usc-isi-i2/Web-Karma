@@ -31,8 +31,8 @@ public interface ModelingParams {
 	public static double PROPERTY_INDIRECT_WEIGHT = 100.01;
 	public static double PROPERTY_WITH_ONLY_DOMAIN_WEIGHT = 1000;
 	public static double PROPERTY_WITH_ONLY_RANGE_WEIGHT = 1000;
-	public static double SUBCLASS_WEIGHT = 4000;
-	public static double PROPERTY_WITHOUT_DOMAIN_RANGE_WEIGHT = 10000;
+	public static double SUBCLASS_WEIGHT = 10000;
+	public static double PROPERTY_WITHOUT_DOMAIN_RANGE_WEIGHT = 5000;
 	public static double PATTERN_LINK_WEIGHT = 1;
 	public static double DATA_PROPERTY_WEIGHT = 100;
 	

@@ -1237,6 +1237,18 @@ public class GraphBuilder {
 					}
 				}
 				
+				if (ModelingConfiguration.getPropertiesWithoutDomainRange() && !sourceConnectedToTarget && !targetConnectedToSource) {
+					if (this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(sourceUri, targetUri)) {// ||
+	//						this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(targetUri, sourceUri)) { 
+						link = new CompactObjectPropertyLink(id1, ObjectPropertyType.WithoutDomainAndRange);
+						addLink(source, target, link);
+						link = new CompactObjectPropertyLink(id2, ObjectPropertyType.WithoutDomainAndRange);
+						addLink(target, source, link);
+						sourceConnectedToTarget = true;
+						targetConnectedToSource = true;
+					}
+				}
+
 				if (!sourceConnectedToTarget && ModelingConfiguration.getPropertiesSubClass()) {
 					if (this.ontologyManager.isSubClass(sourceUri, targetUri, false)) {
 						logger.debug( sourceUri + " and " + targetUri + " are connected by a subClassOf relation.");
@@ -1252,18 +1264,6 @@ public class GraphBuilder {
 					}
 				}
 				
-				if (ModelingConfiguration.getPropertiesWithoutDomainRange() && !sourceConnectedToTarget && !targetConnectedToSource) {
-					if (this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(sourceUri, targetUri)) {// ||
-	//						this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(targetUri, sourceUri)) { 
-						link = new CompactObjectPropertyLink(id1, ObjectPropertyType.WithoutDomainAndRange);
-						addLink(source, target, link);
-						link = new CompactObjectPropertyLink(id2, ObjectPropertyType.WithoutDomainAndRange);
-						addLink(target, source, link);
-						sourceConnectedToTarget = true;
-						targetConnectedToSource = true;
-					}
-				}
-
 				if (!sourceConnectedToTarget && !targetConnectedToSource) {
 					this.visitedSourceTargetPairs.add(n1.getId() + n2.getId());
 					logger.debug("did not put a link between (" + n1.getId() + ", " + n2.getId() + ")");

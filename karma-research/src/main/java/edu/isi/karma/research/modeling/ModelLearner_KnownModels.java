@@ -177,7 +177,7 @@ public class ModelLearner_KnownModels {
 			
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
 			if (this.graphBuilder instanceof GraphBuilderTopK) {
-				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getMaxCandidateModels(), true);
+				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getTopKSteinerTree(), true);
 			} 
 			else 
 			{
@@ -210,13 +210,13 @@ public class ModelLearner_KnownModels {
 //					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
-			if (number == ModelingConfiguration.getMaxCandidateModels())
+			if (number == ModelingConfiguration.getNumCandidateMappings())
 				break;
 
 		}
 
 		Collections.sort(sortableSemanticModels);
-		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getMaxCandidateModels());
+		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getNumCandidateMappings());
 		logger.info("results are ready ...");
 //		sortableSemanticModels.get(0).print();
 		return sortableSemanticModels.subList(0, count);
@@ -774,7 +774,7 @@ public class ModelLearner_KnownModels {
 		ModelLearner_KnownModels modelLearner;
 
 		boolean iterativeEvaluation = false;
-		boolean useCorrectType = false;
+		boolean useCorrectType = true;
 		boolean randomModel = false;
 
 		int numberOfCRFCandidates = 1;
