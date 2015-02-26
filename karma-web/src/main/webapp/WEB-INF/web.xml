@@ -70,7 +70,7 @@
 	</context-param>
   <context-param>
   		<param-name>PYTHON_SCRIPTS_DIRECTORY</param-name>
-		<param-value>resources/pythonCleaningscripts</param-value>
+		<param-value>/resources/pythonCleaningscripts</param-value>
   </context-param>
   <context-param>
 		<param-name>MSFT</param-name>

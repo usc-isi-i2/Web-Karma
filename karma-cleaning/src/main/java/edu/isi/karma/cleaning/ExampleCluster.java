@@ -9,8 +9,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Vector;
 
-import org.apache.commons.math.optimization.linear.LinearConstraint;
-import org.apache.commons.math.optimization.linear.LinearObjectiveFunction;
 
 import edu.isi.karma.cleaning.features.Feature;
 
@@ -420,22 +418,6 @@ public class ExampleCluster {
 			}
 		}
 		return res;
-	}
-
-	public LinearObjectiveFunction formulateObjectiveFunction() {
-		return null;
-	}
-
-	public Collection<LinearConstraint> formulateContraints() {
-		Collection<LinearConstraint> constraints = new ArrayList<LinearConstraint>();
-		// A > 0
-		double[] x1 = new double[featuresize + 2];
-		for (int i = 0; i < x1.length - 2; i++) {
-			x1[i] = 1;
-		}
-		x1[featuresize] = 0;
-		x1[featuresize + 1] = 0;
-		return constraints;
 	}
 
 	// input with current contraints

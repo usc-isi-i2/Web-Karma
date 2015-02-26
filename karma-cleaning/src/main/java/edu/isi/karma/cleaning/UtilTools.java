@@ -224,8 +224,9 @@ public class UtilTools {
 					if (!findPos) {
 						allUpdates.add(poses);
 					}
-					String tarseg = org.substring(Integer.valueOf(pos[0]),
+					String tmp = org.substring(Integer.valueOf(pos[0]),
 							Integer.valueOf(pos[1]));
+					String tarseg = pos.length == 3 ? pos[2] : tmp;
 
 					if (inloop) {
 
