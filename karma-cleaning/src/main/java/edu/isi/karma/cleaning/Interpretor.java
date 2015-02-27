@@ -11,22 +11,21 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class Interpretor {
 	private PyObject interpreterClass;
-
 	private static Logger logger = LoggerFactory.getLogger(Interpretor.class);
+
 	public Interpretor() {
 		PythonInterpreter interpreter = new PythonInterpreter();
-		
-		String dirpathString = ServletContextParameterMap.getParameterValue(ContextParameter.WEBAPP_PATH) + 
-									"/" + ServletContextParameterMap
-									.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY);
-		
-									;
-		if(dirpathString == null || dirpathString.toString().length() <= 1) {
+
+		String dirpathString = ServletContextParameterMap.getParameterValue(ContextParameter.WEBAPP_PATH)+ ServletContextParameterMap.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY);
+
+		;
+		if (dirpathString == null || dirpathString.toString().length() <= 1) {
 			dirpathString = "../karma-web/src/main/webapp/resources/pythonCleaningscripts";
-		} 
-		logger.info("Setting Python Scripts Directory for karma-cleaning: " + dirpathString);
-		
+		}
+		logger.info("Setting Python Scripts Directory for karma-cleaning: "
+				+ dirpathString);
 		interpreter.exec("import sys");
+		interpreter.exec("sys.path.append('" + dirpathString + "')");
 		// /Users/bowu/projects/IDCT/src/edu/isi/karma/cleaning
 		interpreter.exec("sys.path.append('" + dirpathString + "')");
 		interpreter.exec("from FunctionList import *");

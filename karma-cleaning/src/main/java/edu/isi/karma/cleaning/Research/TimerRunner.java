@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.TimerTask;
 import java.util.Vector;
-import java.util.concurrent.Callable;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.cleaning.DataPreProcessor;

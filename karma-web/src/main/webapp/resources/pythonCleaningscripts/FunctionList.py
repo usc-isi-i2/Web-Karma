@@ -11,20 +11,64 @@ import re
 import string
 '''template function section'''
 Function_Debug = False
-
+def Cap(str):
+    if Function_Debug:
+        return colorCoding(str,_cap)
+    else:
+        return _cap(str)
+def _cap(str):
+    if str == "":
+        return ""    
+    return str[:1].upper()+str[1:]
+def Uppercase(str):
+    if Function_Debug:
+        return colorCoding(str,_uppercase)
+    else:
+        return _uppercase(str)
+def _uppercase(str):
+    return str.upper()
+def Lowercase(str):
+    if Function_Debug:
+        return colorCoding(str, _lowercase)
+    else:
+        return _lowercase(str)
+def _lowercase(str):
+    return str.lower();
+def Firstletter(str):
+    if Function_Debug:
+        return colorCoding(str, _firstletter)
+    else:
+        return _firstletter(str)
+def _firstletter(str):
+    if str == "":
+        return ""
+    return str[0:1]
+def colorCoding(value, func):
+    pattern = re.compile("{_S}(.+){_C}(.+){_C}(.+){_S}")
+    m = pattern.match(value)
+    ret = []
+    if m:
+        #check the {L}       
+        ret = [m.group(1), m.group(2), m.group(3), 0]
+    else:
+        pattern1 = re.compile("{_L}(.+){_C}(.+){_C}(.+){_L}")
+        m1 = pattern1.match(value)
+        if m1:
+            return [m.group(1), m.group(2), m.group(3), 1]
+        else:
+            ret = []
+    res = ""
+    if len(ret) != 4:
+        return "";
+    ret[2] = func(ret[2])
+    if ret[3] == 1:
+        res = '{_L}%s{_C}%s{_C}%s{_L}'%(ret[0],ret[1],ret[2])
+    else:
+        res = '{_S}%s{_C}%s{_C}%s{_S}'%(ret[0],ret[1],ret[2])
+    return res
 def indexOf(str, lregx, rregx, cnt=0):
         '''find the position'''
         pos = -1
-#        if lregx == "^":
-#           if cnt != 1 and cnt != -1:
-#               return None
-#           pos = 0
-#           return pos
-#        if rregx == "$":
-#           if cnt != 1 and cnt != -1:
-#               return None
-#           pos = len(str)
-#           return pos
         patternstr = "(" + lregx + ")" + rregx
         pattern = re.compile(patternstr)
         tpos = 0
@@ -85,7 +129,7 @@ def substr(str, p1, p2):
         return "<_1_FATAL_ERROR_>"
         
     if Function_Debug:
-        return "{_S}%d{_C}%d{_S}"%(p1,p2)
+        return "{_S}%d{_C}%d{_C}%s{_S}"%(p1,p2,str[p1:p2])
     res = str[p1:p2]
     if res != None:
         return res
