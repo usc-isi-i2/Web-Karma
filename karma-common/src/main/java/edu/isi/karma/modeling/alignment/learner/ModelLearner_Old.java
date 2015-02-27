@@ -200,7 +200,7 @@ public class ModelLearner_Old {
 						new SortableSemanticModel_Old(sm, sn);
 				sortableSemanticModels.add(sortableSemanticModel);
 			}
-			if (count == ModelingConfiguration.getMaxCandidateModels())
+			if (count == ModelingConfiguration.getNumCandidateMappings())
 				break;
 		}
 
@@ -794,8 +794,8 @@ public class ModelLearner_Old {
 
 				List<SortableSemanticModel_Old> topHypotheses = null;
 				if (hypothesisList != null) {
-					topHypotheses = hypothesisList.size() > ModelingConfiguration.getMaxCandidateModels() ? 
-							hypothesisList.subList(0, ModelingConfiguration.getMaxCandidateModels()) : 
+					topHypotheses = hypothesisList.size() > ModelingConfiguration.getNumCandidateMappings() ? 
+							hypothesisList.subList(0, ModelingConfiguration.getNumCandidateMappings()) : 
 								hypothesisList;
 				}
 

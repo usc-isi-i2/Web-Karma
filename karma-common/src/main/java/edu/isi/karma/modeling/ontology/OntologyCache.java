@@ -1023,8 +1023,8 @@ public class OntologyCache {
 			}
 			directDomainsUris = ontHandler.getResourcesUris(directDomains);
 			
-//			if (directDomainsUris != null && directDomainsUris.contains(Uris.THING_URI))
-//				directDomainsUris.remove(Uris.THING_URI);
+			if (directDomainsUris != null && directDomainsUris.contains(Uris.THING_URI))
+				directDomainsUris.remove(Uris.THING_URI);
 			
 			temp  = propertyDirectDomains.get(property.getURI());
 			if (temp == null)
@@ -1081,8 +1081,8 @@ public class OntologyCache {
 			}
 			directRangesUris = ontHandler.getResourcesUris(directRanges);
 			
-//			if (directRangesUris != null && directRangesUris.contains(Uris.THING_URI))
-//				directRangesUris.remove(Uris.THING_URI);
+			if (directRangesUris != null && directRangesUris.contains(Uris.THING_URI))
+				directRangesUris.remove(Uris.THING_URI);
 
 			temp  = propertyDirectRanges.get(property.getURI());
 			if (temp == null)

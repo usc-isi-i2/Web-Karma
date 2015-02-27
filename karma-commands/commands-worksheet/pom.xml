@@ -17,7 +17,11 @@
 		    <groupId>javax.servlet</groupId>
 		    <artifactId>javax.servlet-api</artifactId>
 	    </dependency>
-
+		<dependency>
+	    	<groupId>edu.isi.karma.services</groupId>
+	    	<artifactId>entityExtraction</artifactId>
+	    	<version>0.0.1</version>
+	    </dependency>
 	    <dependency>
 		    <groupId>edu.isi</groupId>
 		    <artifactId>commands-common</artifactId>

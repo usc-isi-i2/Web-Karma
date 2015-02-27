@@ -10,7 +10,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 
@@ -74,16 +73,16 @@ public class Coherence {
 
 	public void updateCoherence(Node node) {
 		if (node == null) return;
+		this.itemsCount ++;
 		if (node.getModelIds() == null || node.getModelIds().isEmpty()) 
 			return;
-		this.itemsCount ++;
 		updateCoherence(node.getModelIds());
 	}
 	
 	public void updateCoherence(LabeledLink link) {
 		if (link == null) return;
-		if (!(link.getTarget() instanceof InternalNode))
-				return;
+//		if (!(link.getTarget() instanceof InternalNode))
+//				return;
 		this.itemsCount ++;
 		if (link.getModelIds() == null || link.getModelIds().isEmpty()) 
 			return;
@@ -183,8 +182,11 @@ public class Coherence {
 	
 	public double getCoherenceValue() {
 		
+//		if (!this.hasInternalLink)
+//			return 1.0;
+		
 		if (this.itemsCount == 0) {
-			logger.debug("cannot compute coherence when number of nodes is zero!");
+			logger.debug("number of items is zero!");
 			return Double.MIN_VALUE;
 		}
 		
