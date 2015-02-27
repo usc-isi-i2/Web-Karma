@@ -57,9 +57,13 @@ public class CandidateSteinerSets {
 		List<SteinerNodes> newSteinerNodes = new ArrayList<SteinerNodes>();
 		if (mappings == null || mappings.isEmpty()) 
 			return;
+
+		List<SemanticTypeMapping> sortedMappings = new ArrayList<SemanticTypeMapping>(mappings);
+		Collections.sort(sortedMappings);
+
 		
 		if (this.steinerSets.size() == 0) {
-			for (SemanticTypeMapping stm : mappings) {
+			for (SemanticTypeMapping stm : sortedMappings) {
 				SteinerNodes sn = new SteinerNodes();
 				sn.addNodes(stm);
 				this.steinerSets.add(sn);
@@ -67,7 +71,7 @@ public class CandidateSteinerSets {
 		} else {
 			int numOfNewSets = 0;
 			for (SteinerNodes nodeSet : this.steinerSets) {
-				for (SemanticTypeMapping stm : mappings) {
+				for (SemanticTypeMapping stm : sortedMappings) {
 					
 					if (nodeSet.getNodes().contains(stm.getSource()) &&
 							nodeSet.getNodes().contains(stm.getTarget()))

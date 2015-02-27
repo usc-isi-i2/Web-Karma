@@ -109,15 +109,15 @@ public class ModelingConfiguration {
 			"" + newLine + 
 			"learn.alignment.enabled=false" + newLine + 
 			"" + newLine + 
-			"mapping.branching.factor=100" + newLine + 
+			"mapping.branching.factor=10" + newLine + 
 			"num.candidate.mappings=10" + newLine + 
-			"topk.steiner.tree=10" + newLine + 
+			"topk.steiner.tree=20" + newLine + 
 			"multiple.same.property.per.node=false" + newLine + 
 			"" + newLine + 
 			"# scoring coefficients, should be in range [0..1]" + newLine + 
 			"scoring.confidence.coefficient=1.0" + newLine + 
 			"scoring.coherence.coefficient=1.0" + newLine + 
-			"scoring.size.coefficient=1.0" + newLine + 
+			"scoring.size.coefficient=0.5" + newLine + 
 			"" + newLine + 
 //			"models.json.dir=models-json/" + newLine + 
 //			"models.graphviz.dir=models-graphviz/" + newLine + 
@@ -165,11 +165,11 @@ public class ModelingConfiguration {
 //			modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir", "models-graphviz/");
 //			alignmentGraphDir = modelingProperties.getProperty("alignment.graph.dir", "alignment-graph/");
 
-			mappingBranchingFactor = Integer.parseInt(modelingProperties.getProperty("mapping.branching.factor", "100"));
+			mappingBranchingFactor = Integer.parseInt(modelingProperties.getProperty("mapping.branching.factor", "10"));
 
 			numCandidateMappings = Integer.parseInt(modelingProperties.getProperty("num.candidate.mappings", "10"));
 
-			topKSteinerTree = Integer.parseInt(modelingProperties.getProperty("topk.steiner.tree", "10"));
+			topKSteinerTree = Integer.parseInt(modelingProperties.getProperty("topk.steiner.tree", "20"));
 
 			multipleSamePropertyPerNode = Boolean.parseBoolean(modelingProperties.getProperty("multiple.same.property.per.node", "false"));
 
@@ -177,7 +177,7 @@ public class ModelingConfiguration {
 
 			scoringCoherenceSCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.coherence.coefficient", "1"));
 
-			scoringSizeCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.size.coefficient", "1"));
+			scoringSizeCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.size.coefficient", "0.5"));
 
 			storeOldHistory = Boolean.parseBoolean(modelingProperties.getProperty("history.store.old", "false"));
 

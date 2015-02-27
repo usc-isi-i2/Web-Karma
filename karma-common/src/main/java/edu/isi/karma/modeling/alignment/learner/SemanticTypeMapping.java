@@ -26,7 +26,7 @@ import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 
-public class SemanticTypeMapping {
+public class SemanticTypeMapping implements Comparable<SemanticTypeMapping> {
 	
 	private SemanticType semanticType;
 	private InternalNode source;
@@ -99,5 +99,15 @@ public class SemanticTypeMapping {
 		} else if (!source.equals(other.source))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(SemanticTypeMapping o) {
+		
+		if (this.link == null || o.getLink() == null)
+			return 0;
+		
+		int compareLinkIds = this.link.getId().compareTo(o.getLink().getId());
+		return compareLinkIds;
 	}
 }
