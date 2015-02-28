@@ -955,10 +955,11 @@ public class ModelLearner_KnownModels {
 						String label = "candidate " + k + "\n" + 
 //								(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +
 								"link coherence:" + (m.getLinkCoherence() == null ? "" : m.getLinkCoherence().getCoherenceValue()) + "\n";
-						label += (m.getSteinerNodes().getCoherence() == null) ? "" : "node coherence:" + m.getSteinerNodes().getCoherence().getCoherenceValue() + "\n";
-						label += 
-								"confidence:" + m.getConfidenceScore() + "\n" +
-								"mapping score:" + m.getSteinerNodes().getScore() + "\n" +
+						label += (m.getSteinerNodes() == null || m.getSteinerNodes().getCoherence() == null) ? 
+								"" : "node coherence:" + m.getSteinerNodes().getCoherence().getCoherenceValue() + "\n";
+						label += "confidence:" + m.getConfidenceScore() + "\n";
+						label += m.getSteinerNodes() == null ? "" : "mapping score:" + m.getSteinerNodes().getScore() + "\n";
+						label +=
 								"cost:" + roundDecimals(m.getCost(), 6) + "\n" +
 								//								"-distance:" + me.getDistance() + 
 								"-precision:" + me.getPrecision() + 

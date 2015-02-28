@@ -65,7 +65,8 @@ public class SortableSemanticModel extends SemanticModel
 	}
 
 	public double getConfidenceScore() {
-		return this.steinerNodes.getConfidence() == null ? 0.0 : this.steinerNodes.getConfidence().getConfidenceValue();
+		return (this.steinerNodes == null || this.steinerNodes.getConfidence() == null) ? 
+				0.0 : this.steinerNodes.getConfidence().getConfidenceValue();
 	}
 	
 	public SteinerNodes getSteinerNodes() {
