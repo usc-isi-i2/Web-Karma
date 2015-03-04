@@ -410,10 +410,10 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
-        		<hadoop.version>2.5.0-cdh5.3.0</hadoop.version>
-        		<hive.version>0.13.1-cdh5.3.0</hive.version>
-        		<avro.version>1.7.6-cdh5.3.0</avro.version>
-        		<es.version>1.4.2</es.version>
+        		<hadoop.version>2.5.0-cdh5.3.2</hadoop.version>
+        		<hive.version>0.13.1-cdh5.3.2</hive.version>
+        		<avro.version>1.7.6-cdh5.3.2</avro.version>
+        		<es.version>1.4.4</es.version>
         		<es.hadoop.version>2.1.0.Beta2</es.hadoop.version>
     		</properties>
     		<dependencies>
