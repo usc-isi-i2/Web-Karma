@@ -55,16 +55,20 @@ public class Searcher {
 	public List<SemanticTypeLabel> getTopK(int k, String content)
 			throws ParseException, IOException {
 		List<SemanticTypeLabel> result = new ArrayList<>();
+		content = content.replaceAll("and", " ").replaceAll("or", " ").replaceAll("\\+", "").replaceAll("\\-", "");
+		
 		int spaces = content.length() - content.replace(" ", "").length();
 		if (spaces > BooleanQuery.getMaxClauseCount()) {
 			BooleanQuery.setMaxClauseCount(spaces);
 		}
 
+		//System.out.println("Query: " + content);
 		Query query = parser.parse(QueryParser.escape(content));
 
 		TopDocs results = indexSearcher.search(query, k);
 		ScoreDoc[] hits = results.scoreDocs;
-
+		//System.out.println("Num Hits:" + hits.length);
+		
 		for (int i = 0; i < hits.length; i++) {
 			Document doc = indexSearcher.doc(hits[i].doc);
 			String labelString = doc.get(Indexer.LABEL_FIELD_NAME);
