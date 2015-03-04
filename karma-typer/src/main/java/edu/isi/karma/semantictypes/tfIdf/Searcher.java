@@ -55,7 +55,7 @@ public class Searcher {
 	public List<SemanticTypeLabel> getTopK(int k, String content)
 			throws ParseException, IOException {
 		List<SemanticTypeLabel> result = new ArrayList<>();
-		content = content.replaceAll("and", " ").replaceAll("or", " ").replaceAll("\\+", "").replaceAll("\\-", "");
+		content = content.toLowerCase().replaceAll("and", " ").replaceAll("or", " ").replaceAll("\\+", "").replaceAll("\\-", "");
 		
 		int spaces = content.length() - content.replace(" ", "").length();
 		if (spaces > BooleanQuery.getMaxClauseCount()) {
