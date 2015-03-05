@@ -90,12 +90,12 @@ public class CreateSequenceFile {
 		{
 			return;
 		}
-		filePath = (String) cl.getOptionValue("--filepath");
+		filePath = (String) cl.getOptionValue("filepath");
 		outputPath = filePath;
-		useKey = Boolean.parseBoolean((String) cl.getOptionValue("--usekey"));
-		outputFileName = Boolean.parseBoolean((String) cl.getOptionValue("--outputfilename"));
-		if (cl.hasOption("--outputpath")) {
-			outputPath = (String) cl.getOptionValue("--outputpath");
+		useKey = Boolean.parseBoolean((String) cl.getOptionValue("usekey"));
+		outputFileName = Boolean.parseBoolean((String) cl.getOptionValue("outputfilename"));
+		if (cl.hasOption("outputpath")) {
+			outputPath = (String) cl.getOptionValue("outputpath");
 		}
 	}
 

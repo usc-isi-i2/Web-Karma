@@ -135,8 +135,14 @@ public class ModelLearner_KnownModels {
 			if (n instanceof ColumnNode)
 				columnNodes.add((ColumnNode)n);
 		
+//		long start = System.currentTimeMillis();
+
 		logger.info("finding candidate steiner sets ... ");
 		CandidateSteinerSets candidateSteinerSets = getCandidateSteinerSets(steinerNodes, useCorrectTypes, numberOfCandidates, addedNodes);
+
+//		long elapsedTimeMillis = System.currentTimeMillis() - start;
+//		float elapsedTimeSec = elapsedTimeMillis/1000F;
+//		System.out.println(elapsedTimeSec);
 
 		if (candidateSteinerSets == null || 
 				candidateSteinerSets.getSteinerSets() == null || 
@@ -166,6 +172,8 @@ public class ModelLearner_KnownModels {
 //		long updateWightsElapsedTimeMillis = System.currentTimeMillis() - start;
 //		logger.info("time to update weights: " + (updateWightsElapsedTimeMillis/1000F));
 		
+
+		
 		logger.info("computing steiner trees ...");
 		int number = 1;
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
@@ -177,7 +185,7 @@ public class ModelLearner_KnownModels {
 			
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
 			if (this.graphBuilder instanceof GraphBuilderTopK) {
-				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getMaxCandidateModels(), true);
+				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getTopKSteinerTree(), true);
 			} 
 			else 
 			{
@@ -189,6 +197,8 @@ public class ModelLearner_KnownModels {
 				if (treePostProcess.getTree() != null)
 					topKSteinerTrees.add(treePostProcess.getTree());
 			}
+			
+
 			
 //			System.out.println(GraphUtil.labeledGraphToString(treePostProcess.getTree()));
 			
@@ -210,13 +220,13 @@ public class ModelLearner_KnownModels {
 //					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
-			if (number == ModelingConfiguration.getMaxCandidateModels())
+			if (number == ModelingConfiguration.getNumCandidateMappings())
 				break;
 
 		}
-
+		
 		Collections.sort(sortableSemanticModels);
-		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getMaxCandidateModels());
+		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getNumCandidateMappings());
 		logger.info("results are ready ...");
 //		sortableSemanticModels.get(0).print();
 		return sortableSemanticModels.subList(0, count);
@@ -742,7 +752,6 @@ public class ModelLearner_KnownModels {
 		ServletContextParameterMap.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
 
 		//		String inputPath = Params.INPUT_DIR;
-		String outputPath = Params.OUTPUT_DIR;
 		String graphPath = Params.GRAPHS_DIR;
 
 		//		List<SemanticModel> semanticModels = ModelReader.importSemanticModels(inputPath);
@@ -774,15 +783,15 @@ public class ModelLearner_KnownModels {
 		ModelLearner_KnownModels modelLearner;
 
 		boolean iterativeEvaluation = false;
-		boolean useCorrectType = true;
+		boolean useCorrectType = false;
 		boolean randomModel = false;
 
-		int numberOfCRFCandidates = 1;
+		int numberOfCandidates = 4;
 		int numberOfKnownModels;
-		String filePath = Params.RESULTS_DIR;
+		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = ""; 
-		filename += "results,k=" + numberOfCRFCandidates;
-		filename += useCorrectType ? "-correct types":"";
+		filename += "results";
+		filename += useCorrectType ? "-correct types":"-k=" + numberOfCandidates;
 		filename += randomModel ? "-random":"";
 		filename += iterativeEvaluation ? "-iterative":"";
 		filename += ".csv"; 
@@ -805,7 +814,7 @@ public class ModelLearner_KnownModels {
 
 		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 3; {
+//		int i = 0; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -876,15 +885,15 @@ public class ModelLearner_KnownModels {
 					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					// save graph to file
 					try {
-						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName);
-						GraphVizUtil.exportJGraphToGraphviz(modelLearner.graphBuilder.getGraph(), 
-								"test", 
-								true, 						
-								GraphVizLabelType.LocalId,
-								GraphVizLabelType.LocalUri,
-								false, 
-								true, 
-								graphName + ".dot");
+//						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName);
+//						GraphVizUtil.exportJGraphToGraphviz(modelLearner.graphBuilder.getGraph(), 
+//								"test", 
+//								true, 						
+//								GraphVizLabelType.LocalId,
+//								GraphVizLabelType.LocalUri,
+//								false, 
+//								true, 
+//								graphName + ".dot");
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -902,11 +911,13 @@ public class ModelLearner_KnownModels {
 //						System.out.println(s + "\n" + test.get(s));
 //				}
 				
-				List<SortableSemanticModel> hypothesisList = modelLearner.hypothesize(useCorrectType, numberOfCRFCandidates);
+				List<SortableSemanticModel> hypothesisList = modelLearner.hypothesize(useCorrectType, numberOfCandidates);
 
 				long elapsedTimeMillis = System.currentTimeMillis() - start;
 				float elapsedTimeSec = elapsedTimeMillis/1000F;
 
+//				System.out.println("time: " + elapsedTimeSec);
+				
 				int cutoff = 20;//ModelingConfiguration.getMaxCandidateModels();
 				List<SortableSemanticModel> topHypotheses = null;
 				if (hypothesisList != null) {
@@ -941,9 +952,14 @@ public class ModelLearner_KnownModels {
 
 						me = m.evaluate(correctModel);
 
-						String label = "candidate" + k + "\n" + 
+						String label = "candidate " + k + "\n" + 
 //								(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +
-								"link coherence:" + (m.getLinkCoherence() == null ? "" : m.getLinkCoherence().getCoherenceValue()) + "\n" +
+								"link coherence:" + (m.getLinkCoherence() == null ? "" : m.getLinkCoherence().getCoherenceValue()) + "\n";
+						label += (m.getSteinerNodes() == null || m.getSteinerNodes().getCoherence() == null) ? 
+								"" : "node coherence:" + m.getSteinerNodes().getCoherence().getCoherenceValue() + "\n";
+						label += "confidence:" + m.getConfidenceScore() + "\n";
+						label += m.getSteinerNodes() == null ? "" : "mapping score:" + m.getSteinerNodes().getScore() + "\n";
+						label +=
 								"cost:" + roundDecimals(m.getCost(), 6) + "\n" +
 								//								"-distance:" + me.getDistance() + 
 								"-precision:" + me.getPrecision() + 
@@ -976,11 +992,11 @@ public class ModelLearner_KnownModels {
 						}
 					}
 
+				String outputPath = Params.OUTPUT_DIR;
 				String outName = !iterativeEvaluation?
 						outputPath + semanticModels.get(newSourceIndex).getName() + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT : 
 							outputPath + semanticModels.get(newSourceIndex).getName() + ".knownModels=" + numberOfKnownModels + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT;
 
-				//	if (!iterativeEvaluation) {
 				GraphVizUtil.exportSemanticModelsToGraphviz(
 						models, 
 						newSource.getName(),
@@ -989,7 +1005,6 @@ public class ModelLearner_KnownModels {
 						GraphVizLabelType.LocalUri,
 						true,
 						true);
-				//				}
 
 				numberOfKnownModels ++;
 

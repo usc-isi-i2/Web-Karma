@@ -258,7 +258,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 			tree.addEdge(source, target, l);
 			tree.setEdgeWeight(l, weight);
 		}
-		
+
 		TreePostProcess treePostProcess = new TreePostProcess(this, tree);
 		return treePostProcess.getTree();
 

@@ -64,8 +64,9 @@ public class SortableSemanticModel extends SemanticModel
 		return cost;
 	}
 
-	public double getScore() {
-		return this.steinerNodes.getScore();
+	public double getConfidenceScore() {
+		return (this.steinerNodes == null || this.steinerNodes.getConfidence() == null) ? 
+				0.0 : this.steinerNodes.getConfidence().getConfidenceValue();
 	}
 	
 	public SteinerNodes getSteinerNodes() {
@@ -162,26 +163,36 @@ public class SortableSemanticModel extends SemanticModel
 		int lessThan = 1;
 		int greaterThan = -1;
 		
-		double score1 = this.getScore();
-		double score2 = m.getScore();
+		double confidenceScore1 = this.getConfidenceScore();
+		double confidenceScore2 = m.getConfidenceScore();
+//		double score1 = this.getSteinerNodes().getScore();
+//		double score2 = m.getSteinerNodes().getScore();
 
 		double linkCoherence1 = this.linkCoherence.getCoherenceValue();
 		double linkCoherence2 = m.linkCoherence.getCoherenceValue();
-		
+
 		if (linkCoherence1 > linkCoherence2)
 			return greaterThan;
 		else if (linkCoherence1 < linkCoherence2)
 			return lessThan;
+
+//		if (score1 > score2)
+//			return greaterThan;
+//		else if (score1 < score2)
+//			return lessThan;	
 		
+
 		if (this.cost < m.cost)
 			return greaterThan;
 		else if (m.cost < this.cost)
 			return lessThan;
 		
-		if (score1 > score2)
+		
+		if (confidenceScore1 > confidenceScore2)
 			return greaterThan;
-		else if (score1 < score2)
-			return lessThan;
+		else if (confidenceScore1 < confidenceScore2)
+			return lessThan;	
+		
 		
 		
 		return 0;
