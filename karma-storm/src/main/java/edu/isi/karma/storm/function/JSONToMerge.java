@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import backtype.storm.tuple.Tuple;
-import edu.isi.karma.mapreduce.driver.JSONReducer;
+import edu.isi.karma.util.JSONLDUtil;
 
 public class JSONToMerge {
 
@@ -40,7 +40,7 @@ public class JSONToMerge {
 	
 	public String merge()
 	{
-		return JSONReducer.mergeJSONObjectsFromStrings(jsonBySource.values().iterator()).toString();
+		return JSONLDUtil.mergeJSONObjects(jsonBySource.values().iterator()).toString();
 	}
 
 	public List<Tuple> getTuplesToAck() {

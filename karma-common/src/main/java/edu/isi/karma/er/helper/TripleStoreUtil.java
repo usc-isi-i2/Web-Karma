@@ -25,8 +25,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,8 +33,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -61,7 +57,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.util.HTTPUtil;
 import edu.isi.karma.webserver.KarmaException;
@@ -91,7 +86,7 @@ public class TripleStoreUtil {
 				+ "/openrdf-workbench/repositories";
 	}
 
-	private static HashMap<String, String> mime_types;
+	protected static HashMap<String, String> mime_types;
 
 	public enum RDF_Types {
 		TriG, BinaryRDF, TriX, N_Triples, N_Quads, N3, RDF_XML, RDF_JSON, Turtle
@@ -536,7 +531,7 @@ public class TripleStoreUtil {
 		}
 	}
 
-	private void injectMapping(String mappingURI, StringBuilder query) {
+	protected void injectMapping(String mappingURI, StringBuilder query) {
 		query.append("{\n");
 		injectType(mappingURI, query, Uris.RR_TRIPLESMAP_CLASS_URI, Uris.KM_HAS_TRIPLES_MAP_URI);
 		injectType(mappingURI, query, Uris.RR_SUBJECTMAP_CLASS_URI, Uris.KM_HAS_SUBJECT_MAP_URI);
@@ -554,7 +549,7 @@ public class TripleStoreUtil {
 		query.append("}\n");
 	}
 
-	private void injectType(String mappingURI, StringBuilder query,
+	protected void injectType(String mappingURI, StringBuilder query,
 			String type, String hasType) {
 		query.append("{\n");
 		query.append("?s a <");
@@ -571,7 +566,7 @@ public class TripleStoreUtil {
 		query.append("UNION\n");
 	}
 
-	private void injectType(String mappingURI, StringBuilder query,
+	protected void injectType(String mappingURI, StringBuilder query,
 			String type, String hasType, String hasType2) {
 		query.append("{\n");
 		query.append("?s <");
@@ -628,7 +623,7 @@ public class TripleStoreUtil {
 		return "";
 	}
 
-	private void injectContext(String context, StringBuilder query) {
+	protected void injectContext(String context, StringBuilder query) {
 		if (null != context && !context.trim().isEmpty())
 		{
 			query.append("FROM ");
@@ -637,7 +632,7 @@ public class TripleStoreUtil {
 		}
 	}
 
-	private void formatURI(String uri, StringBuilder query) {
+	protected void formatURI(String uri, StringBuilder query) {
 		uri = uri.trim();
 		if(!uri.startsWith("<"))
 		{
@@ -816,114 +811,6 @@ public class TripleStoreUtil {
 		return values;
 	}
 
-	public Map<String, String> getBloomFiltersForMaps(String tripleStoreURL, String context, Collection<String> maps) throws KarmaException
-	{
-		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
-		testTripleStoreConnection(tripleStoreURL);
-
-		Map<String, String> bloomfilters = new HashMap<String, String>();
-		try {
-
-			StringBuilder query = new StringBuilder();
-			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
-			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			query.append("SELECT ?bf ?s \n");			
-			injectContext(context, query);
-			query.append("WHERE \n{\n");
-			Iterator<String> iterator = maps.iterator();
-			while(iterator.hasNext()) {
-				query.append("{");
-				query.append("\n ?s <");
-				query.append(Uris.KM_HAS_BLOOMFILTER);
-				query.append("> ?bf . ");
-				query.append("\n<");
-				query.append(iterator.next());
-				query.append("> <");
-				query.append(Uris.KM_HAS_BLOOMFILTER);
-				if (iterator.hasNext())
-					query.append("> ?bf . \n} UNION \n");
-				else
-					query.append("> ?bf . \n} \n");
-			}
-			query.append("}\n");
-
-			String queryString = query.toString();
-			logger.debug("query: " + queryString);
-
-
-			Map<String, String> formparams = new HashMap<String, String>();
-			formparams.put("query", queryString);
-			formparams.put("queryLn", "SPARQL");
-
-			String responseString = HTTPUtil.executeHTTPPostRequest(
-					tripleStoreURL, null, "application/sparql-results+json",
-					formparams);
-			if (responseString != null) {
-				JSONObject models = new JSONObject(responseString);
-				JSONArray values = models.getJSONObject("results")
-						.getJSONArray("bindings");
-				int count = 0;
-				while (count < values.length()) {
-					JSONObject o = values.getJSONObject(count++);
-					bloomfilters.put(o.getJSONObject("s").getString("value"), o.getJSONObject("bf").getString("value"));
-				}
-			}
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return bloomfilters;
-	}
-
-	public void deleteBloomFiltersForMaps(String tripleStoreURL, String context, Collection<String> maps) throws KarmaException
-	{
-		testTripleStoreConnection(tripleStoreURL);
-		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL) + "/statements";		
-
-		try {
-
-			StringBuilder query = new StringBuilder();
-			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
-			query.append("PREFIX rr:<http://www.w3.org/ns/r2rml#>\n");
-			if (null != context && !context.trim().isEmpty())
-			{
-				query.append("WITH ");
-				formatURI(context, query);
-				query.append("\n");
-			}
-			query.append("DELETE {?s km-dev:hasBloomFilter ?bf} \n");			
-			query.append("WHERE \n{\n");
-			Iterator<String> iterator = maps.iterator();
-			while(iterator.hasNext()) {
-				query.append("{");
-				query.append("\n ?s <");
-				query.append(Uris.KM_HAS_BLOOMFILTER);
-				query.append("> ?bf . ");
-				query.append("\n<");
-				query.append(iterator.next());
-				query.append("> <");
-				query.append(Uris.KM_HAS_BLOOMFILTER);
-				if (iterator.hasNext())
-					query.append("> ?bf . \n} UNION \n");
-				else
-					query.append("> ?bf . \n} \n");
-			}
-			query.append("}\n");
-
-			String queryString = query.toString();
-			logger.debug("query: " + queryString);
-
-
-			Map<String, String> formparams = new HashMap<String, String>();
-			formparams.put("update", queryString);
-
-			String responseString = HTTPUtil.executeHTTPPostRequest(
-					tripleStoreURL, null, mime_types.get(RDF_Types.N3.name()),
-					formparams);
-			System.out.println(responseString);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-	}
 
 	public void testTripleStoreConnection(String tripleStoreURL)
 			throws KarmaException {
@@ -936,7 +823,7 @@ public class TripleStoreUtil {
 		}
 	}
 
-	private String normalizeTripleStoreURL(String tripleStoreURL) {
+	protected String normalizeTripleStoreURL(String tripleStoreURL) {
 		if (tripleStoreURL == null || tripleStoreURL.isEmpty()) {
 			tripleStoreURL = defaultServerUrl + "/" + karma_model_repo + "/" + "statements";
 		}
@@ -1088,7 +975,7 @@ public class TripleStoreUtil {
 	 *            : Specifies the base URI to resolve any relative URIs found in uploaded data against
 	 * 
 	 * */
-	private boolean saveToStore(HttpEntity entity, String tripleStoreURL,
+	protected boolean saveToStore(HttpEntity entity, String tripleStoreURL,
 			String context, boolean replaceFlag, 
 			String rdfType, String baseURL) throws KarmaException {
 		boolean retVal = false;
@@ -1339,29 +1226,6 @@ public class TripleStoreUtil {
 		return retVal;
 	}
 	
-	public boolean updateTripleStoreWithBloomFilters(Map<String, KR2RMLBloomFilter> bfs, Map<String, String> bloomfilterMapping, String modelurl, String context) throws KarmaException, IOException {
-		Set<String> triplemaps = bfs.keySet();
-		for (String tripleUri : triplemaps) {
-			KR2RMLBloomFilter bf = bfs.get(tripleUri);
-			String oldserializedBloomFilter = bloomfilterMapping.get(tripleUri);
-			if (oldserializedBloomFilter != null) {
-				KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
-				bf2.populateFromCompressedAndBase64EncodedString(oldserializedBloomFilter);
-				bf.or(bf2);
-			}
-			bfs.put(tripleUri, bf);
-		}
-		deleteBloomFiltersForMaps(modelurl, null, triplemaps);
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		for (Entry<String, KR2RMLBloomFilter> entry : bfs.entrySet()) {
-			pw.print("<" + entry.getKey() + "> ");
-			pw.print("<" + Uris.KM_HAS_BLOOMFILTER + "> ");
-			pw.println("\"" + entry.getValue().compressAndBase64Encode() + "\" . ");
-		}
-		pw.close();
-		return saveToStoreFromString(sw.toString(), modelurl, context, new Boolean(false), null);
-	}
 
 	/**
 	 * This method clears all the statements from the given context

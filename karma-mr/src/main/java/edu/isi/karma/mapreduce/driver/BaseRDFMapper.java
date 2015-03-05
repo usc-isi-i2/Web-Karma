@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
+import edu.isi.karma.rdf.BaseKarma;
 import edu.isi.karma.rdf.RDFGeneratorRequest;
 
 public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
@@ -30,7 +31,7 @@ public abstract class BaseRDFMapper extends Mapper<Text, Text, Text, Text> {
 		String contextURI = context.getConfiguration().get("context.uri");
 		String rdfGenerationRoot = context.getConfiguration().get("rdf.generation.root");
 		String rdfSelection = context.getConfiguration().get("rdf.generation.selection");
-		karma.setup(inputTypeString, modelUri, modelFile, 
+		karma.setup("./karma.zip/karma", inputTypeString, modelUri, modelFile, 
 				baseURI, contextURI, rdfGenerationRoot, rdfSelection);
 	
 	}

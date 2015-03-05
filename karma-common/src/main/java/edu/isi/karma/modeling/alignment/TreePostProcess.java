@@ -144,14 +144,14 @@ public class TreePostProcess {
 		return possibleRoots.get(0);
 	}
 
-	private void buildOutputTree(boolean allowedChaningGraph) {
+	private void buildOutputTree(boolean allowedChangingGraph) {
 		
 		String sourceId, targetId;
 		DefaultLink[] links = tree.edgeSet().toArray(new DefaultLink[0]);
-		String linkSourceId;//, linkTargetId;
+//		String linkSourceId;//, linkTargetId;
 
 		List<LabeledLink> temp1 = null;
-		List<LabeledLink> temp2 = null;
+//		List<LabeledLink> temp2 = null;
 		List<LabeledLink> possibleLinks = new ArrayList<LabeledLink>();
 		
 		for (DefaultLink link : links) {
@@ -165,15 +165,15 @@ public class TreePostProcess {
 				
 				if (link instanceof CompactSubClassLink) {
 					temp1 = this.graphBuilder.getPossibleLinks(sourceId, targetId, LinkType.SubClassLink, null);
-					temp2 = this.graphBuilder.getPossibleLinks(targetId, sourceId, LinkType.SubClassLink, null);
+//					temp2 = this.graphBuilder.getPossibleLinks(targetId, sourceId, LinkType.SubClassLink, null);
 				} else if (link instanceof CompactObjectPropertyLink) {
 					temp1 = this.graphBuilder.getPossibleLinks(sourceId, targetId, 
 							LinkType.ObjectPropertyLink, ((CompactObjectPropertyLink) link).getObjectPropertyType());
-					temp2 = this.graphBuilder.getPossibleLinks(targetId, sourceId, 
-							LinkType.ObjectPropertyLink, ((CompactObjectPropertyLink) link).getObjectPropertyType());
+//					temp2 = this.graphBuilder.getPossibleLinks(targetId, sourceId, 
+//							LinkType.ObjectPropertyLink, ((CompactObjectPropertyLink) link).getObjectPropertyType());
 				}
 				if (temp1 != null) possibleLinks.addAll(temp1);
-				if (temp2 != null) possibleLinks.addAll(temp2);
+//				if (temp2 != null) possibleLinks.addAll(temp2);
 	
 				Collections.sort(possibleLinks, new LinkPriorityComparator());
 				if (possibleLinks.size() > 0) {
@@ -181,21 +181,21 @@ public class TreePostProcess {
 					// pick the first one 
 					LabeledLink newLink = possibleLinks.get(0);
 					
-					linkSourceId = LinkIdFactory.getLinkSourceId(newLink.getId());
+//					linkSourceId = LinkIdFactory.getLinkSourceId(newLink.getId());
 					//linkTargetId = LinkIdFactory.getLinkTargetId(newLink.getId());
 					
-					if (linkSourceId.equals(sourceId)) {
+//					if (linkSourceId.equals(sourceId)) {
 						tree.addEdge(link.getSource(), link.getTarget(), newLink);
 						tree.setEdgeWeight(newLink, link.getWeight());
-						if (allowedChaningGraph) this.graphBuilder.addLink(link.getSource(), link.getTarget(), newLink);
-					} else {
-						tree.addEdge(link.getTarget(), link.getSource(), newLink);
-						tree.setEdgeWeight(newLink, link.getWeight());
-						if (allowedChaningGraph) this.graphBuilder.addLink(link.getTarget(), link.getSource(), newLink);
-					}
+						if (allowedChangingGraph) this.graphBuilder.addLink(link.getSource(), link.getTarget(), newLink);
+//					} else {
+//						tree.addEdge(link.getTarget(), link.getSource(), newLink);
+//						tree.setEdgeWeight(newLink, link.getWeight());
+//						if (allowedChangingGraph) this.graphBuilder.addLink(link.getTarget(), link.getSource(), newLink);
+//					}
 					
 					tree.removeEdge(link);
-					if (allowedChaningGraph) this.graphBuilder.removeLink(link);
+					if (allowedChangingGraph) this.graphBuilder.removeLink(link);
 	
 				} else {
 					logger.error("Something is going wrong. " +

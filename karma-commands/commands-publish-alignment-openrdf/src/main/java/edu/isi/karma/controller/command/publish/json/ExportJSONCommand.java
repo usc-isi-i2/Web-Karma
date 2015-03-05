@@ -233,12 +233,6 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 			return new UpdateContainer(new ErrorUpdate("File Not found while generating RDF: " + e.getMessage()));
 		}
 
-		//	ExportMongoDBUtil mongo = new ExportMongoDBUtil();
-		try {
-			//	mongo.publishMongoDB(JSONArray);
-		} catch (Exception e) {
-			logger.error("Error inserting into MongoDB." + e.getMessage());
-		}		
 		return new UpdateContainer(new AbstractUpdate() {
 
 			@Override

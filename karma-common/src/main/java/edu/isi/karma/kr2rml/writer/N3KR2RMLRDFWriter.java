@@ -33,8 +33,9 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.URIFormatter;
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 
-public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
+public class N3KR2RMLRDFWriter extends KR2RMLRDFWriter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(N3KR2RMLRDFWriter.class);
 	protected URIFormatter uriFormatter;
@@ -181,5 +182,10 @@ public class N3KR2RMLRDFWriter implements KR2RMLRDFWriter {
 		this.baseURI = baseURI;
 	}
 
+	@Override
+	public void setR2RMLMappingIdentifier(
+			R2RMLMappingIdentifier mappingIdentifer) {
+		
+	}
 
 }

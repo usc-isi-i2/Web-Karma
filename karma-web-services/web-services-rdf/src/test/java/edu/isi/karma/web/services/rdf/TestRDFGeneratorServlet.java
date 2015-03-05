@@ -60,7 +60,6 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		formParams.add(FormParameters.CONTENT_TYPE, FormParameters.CONTENT_TYPE_JSON);
 		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
 				.post(String.class, formParams);
-		System.out.print(response);
 		String sampleTriple = "<20140707_134558.jpg> <http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#make> \"SAMSUNG\" .";
 		int idx = response.indexOf(sampleTriple);
 		assert(idx != -1);
@@ -84,11 +83,9 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		formParams.add(FormParameters.HEADER_START_INDEX, "1");
 		formParams.add(FormParameters.DATA_START_INDEX, "2");
 		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
-				.post(String.class, formParams);
-		System.out.print(response);
+				.post(String.class, formParams);;
 		String sampleRow = "\"uri\": \"http://lod.isi.edu/cs548/person/Szekely\"";
 		int idx = response.indexOf(sampleRow);
-		System.out.println("Index:" + idx);
 		assert(idx != -1);
 		
 		String[] lines = response.split(System.getProperty("line.separator"));
@@ -111,10 +108,8 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		formParams.add(FormParameters.DATA_START_INDEX, "2");
 		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
 				.post(String.class, formParams);
-		System.out.print(response);
 		String sampleTriple = "<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .";
 		int idx = response.indexOf(sampleTriple);
-		System.out.println("Index:" + idx);
 		assert(idx != -1);
 		
 		String[] lines = response.split(System.getProperty("line.separator"));
@@ -137,10 +132,8 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		formParams.add(FormParameters.DATA_START_INDEX, "2");
 		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
 				.post(String.class, formParams);
-		System.out.print(response);
 		String sampleTriple = "<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .";
 		int idx = response.indexOf(sampleTriple);
-		System.out.println("Index:" + idx);
 		assert(idx != -1);
 		
 		String[] lines = response.split(System.getProperty("line.separator"));
@@ -163,7 +156,6 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		formParams.add(FormParameters.DATA_START_INDEX, "2");
 		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
 				.post(String.class, formParams);
-		System.out.print(response);
 		String sampleTriple = "<http://lod.isi.edu/cs548/person/Szekely> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://lod.isi.edu/ontology/syllabus/Person> .";
 		int idx = response.indexOf(sampleTriple);
 		assert(idx != -1);
@@ -207,7 +199,6 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 
 		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
 				.post(String.class, formParams);
-		System.out.print(response);
 		String sampleTriple = "<20140707_134558.jpg> <http://www.semanticdesktop.org/ontologies/2007/05/10/nexif#make> \"SAMSUNG\" .";
 		int idx = response.indexOf(sampleTriple);
 		assert(idx != -1);

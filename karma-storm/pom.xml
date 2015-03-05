@@ -14,42 +14,22 @@
     <artifactId>karma-storm</artifactId>
 
  	<properties>
- 		<storm.version>0.9.1.2.1.3.0-563</storm.version>
-        <hadoop.version>2.4.0.2.1.3.0-563</hadoop.version>
-        <hive.version>0.13.0.2.1.3.0-563</hive.version>
-        <es.version>1.3.2</es.version>
-        <es.hadoop.version>2.1.0.Beta2</es.hadoop.version>
+ 		<storm.version>0.9.3</storm.version>
     </properties>
         
-	<repositories>
-		
-		 <repository>
-			 <releases>
-			 <enabled>true</enabled>
-			 <updatePolicy>always</updatePolicy>
-			 <checksumPolicy>warn</checksumPolicy>
-			 </releases>
-			 <snapshots>
-			 <enabled>false</enabled>
-			 <updatePolicy>never</updatePolicy>
-			 <checksumPolicy>ignore</checksumPolicy>
-			 </snapshots>
-			 <id>HDPReleases</id>
-			 <name>HDP Releases</name>
-			 <url>http://repo.hortonworks.com/content/repositories/releases/</url>
-			 <layout>default</layout>
-		 </repository>
-		 
-		
 	
-		
- </repositories> 
 
 	<distributionManagement>
 			<repository></repository>
 	</distributionManagement>
 	        
 	<dependencies>
+	<dependency>
+    <groupId>org.zeroturnaround</groupId>
+    <artifactId>zt-zip</artifactId>
+    <version>1.8</version>
+    <type>jar</type>
+</dependency>
 		<dependency>
 			<groupId>edu.isi</groupId>
 			<artifactId>karma-common</artifactId>
@@ -61,11 +41,7 @@
 			<artifactId>karma-offline</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>	
-			<groupId>edu.isi</groupId>
-			<artifactId>karma-mr</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>edu.isi</groupId>
 			<artifactId>commands-include</artifactId>
@@ -73,74 +49,27 @@
 			<type>pom</type>
 		</dependency>
 
+        <dependency>
+        	<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+        </dependency>
     	<dependency>
 		  <groupId>org.apache.storm</groupId>
 		  <artifactId>storm-core</artifactId>
 		  <version>${storm.version}</version>
 		</dependency>
-    	<dependency>
-		  <groupId>org.apache.storm</groupId>
-		  <artifactId>storm-hdfs</artifactId>
-		  <version>${storm.version}</version>
-		</dependency>
+    	
 		<dependency>
 		  <groupId>org.apache.storm</groupId>
 		  <artifactId>storm-starter</artifactId>
 		  <version>${storm.version}</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.hadoop</groupId>
-		    <artifactId>hadoop-client</artifactId>
-		    <version>${hadoop.version}</version>
-		    <exclusions>
-		        <exclusion>
-		            <groupId>org.slf4j</groupId>
-		            <artifactId>slf4j-log4j12</artifactId>
-		        </exclusion>
-		    </exclusions>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-       <dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
-			<version>${es.version}</version>
-		</dependency>
 		
-		<dependency>
-		  <groupId>org.elasticsearch</groupId>
-		  <artifactId>elasticsearch-hadoop-mr</artifactId>
-		  <version>${es.hadoop.version}</version>
-		</dependency>
-		
-		<dependency>
-		  <groupId>org.elasticsearch</groupId>
-		  <artifactId>elasticsearch-hadoop-hive</artifactId>
-		  <version>${es.hadoop.version}</version>
-		</dependency>
-		<dependency>
-		  <groupId>org.elasticsearch</groupId>
-		  <artifactId>elasticsearch-hadoop-pig</artifactId>
-		  <version>${es.hadoop.version}</version>
-		</dependency>
-		<dependency>
-		  <groupId>org.elasticsearch</groupId>
-		  <artifactId>elasticsearch-hadoop-cascading</artifactId>
-		  <version>${es.hadoop.version}</version>
-		</dependency>
-		<dependency>
-  			<groupId>org.elasticsearch</groupId>
-  			<artifactId>elasticsearch-storm</artifactId>
-  			<version>${es.hadoop.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>2.4.1</version>
-		</dependency>
 		
     </dependencies>
     
@@ -155,6 +84,18 @@
 			</resource>
 		</resources>
 		<plugins>
+			<plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-jar-plugin</artifactId>
+	        <version>2.5</version>
+	        <executions>
+	          <execution>
+	            <goals>
+	              <goal>test-jar</goal>
+	            </goals>
+	          </execution>
+	        </executions>
+	      </plugin>
       		<plugin>
         		<groupId>org.apache.maven.plugins</groupId>
         		<artifactId>maven-surefire-plugin</artifactId>
@@ -193,6 +134,11 @@
 									<mainClass></mainClass>
 								</transformer>
 							</transformers>
+							<artifactSet>
+                				<excludes>
+                 					<exclude>org.apache.storm:storm-core</exclude>
+                 				</excludes>
+                 			</artifactSet>
 							<filters>
 								<filter>
 									<artifact>*:*</artifact>

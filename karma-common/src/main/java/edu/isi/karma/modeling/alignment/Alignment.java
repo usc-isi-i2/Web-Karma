@@ -622,7 +622,7 @@ public class Alignment implements OntologyUpdateListener {
 				logger.debug("\t" + link.getId());
 		}
 		
-		if (ModelingConfiguration.isLearnAlignmentEnabled())
+		if (!ModelingConfiguration.getManualAlignment() && ModelingConfiguration.isLearnAlignmentEnabled())
 			learnFromKnownSemanticModels();
 		else
 			learnFromOntology();

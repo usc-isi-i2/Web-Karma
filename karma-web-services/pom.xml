@@ -14,6 +14,7 @@
     <artifactId>karma-web-services</artifactId>
 	<modules>
 		<module>web-services-rdf</module>
+		<module>web-services-publish-es</module>
 	</modules>
 	
 	<dependencies>

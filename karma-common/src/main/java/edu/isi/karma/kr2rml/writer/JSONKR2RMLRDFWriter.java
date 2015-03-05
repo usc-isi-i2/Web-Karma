@@ -35,6 +35,7 @@ import org.json.JSONObject;
 
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.modeling.Uris;
 
 public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
@@ -325,5 +326,11 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		}
 		return URI;
 	}
-
+	
+	@Override
+	public void setR2RMLMappingIdentifier(
+			R2RMLMappingIdentifier mappingIdentifer) {
+		
+	}
+	
 }

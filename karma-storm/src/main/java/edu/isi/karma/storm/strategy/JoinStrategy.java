@@ -7,5 +7,5 @@ import org.json.JSONObject;
 
 public interface JoinStrategy extends Serializable{
 	public JSONObject get(String uri);
-	public void config(@SuppressWarnings("rawtypes") Map configMap);
+	public void prepare(@SuppressWarnings("rawtypes") Map globalConfig);
 }

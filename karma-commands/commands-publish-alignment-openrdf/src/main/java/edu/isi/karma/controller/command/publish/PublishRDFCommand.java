@@ -30,6 +30,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,13 +40,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.hadoop.util.bloom.BloomFilter;
-import org.apache.hadoop.util.hash.Hash;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,8 +72,6 @@ import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMappingGenerator;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
-import edu.isi.karma.kr2rml.writer.BloomFilterKR2RMLRDFWriter;
-import edu.isi.karma.kr2rml.writer.KR2RMLBloomFilter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
 import edu.isi.karma.modeling.Uris;
@@ -228,7 +228,7 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 			writer.setBaseURI(rdfSourceNamespace);
 			writers.add(writer);
 			if (generateBloomFilters && utilObj.testURIExists(modelRepoUrl, "", url)) {
-				BloomFilterKR2RMLRDFWriter bfWriter = new BloomFilterKR2RMLRDFWriter(new PrintWriter(sw), false, this.rdfSourceNamespace);
+				KR2RMLRDFWriter bfWriter = createBloomFilterWriter(new PrintWriter(sw), false, this.rdfSourceNamespace);
 				writers.add(bfWriter);
 				bfWriter.setR2RMLMappingIdentifier(mapping.getId());
 			}
@@ -245,38 +245,12 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 			}
 			start = System.currentTimeMillis();
 			if (generateBloomFilters && utilObj.testURIExists(modelRepoUrl, "", url)) {
-				JSONObject obj = new JSONObject(sw.toString());
-				result &= updateTripleStore(obj, bloomfilterMapping, modelRepoUrl, modelContext, utilObj);
-				Map<String, String> verification = new HashMap<String, String>();
-				Set<String> triplemaps = new HashSet<String>(Arrays.asList(obj.getString("ids").split(",")));
-				verification.putAll(utilObj.getBloomFiltersForMaps(modelRepoUrl, modelContext, triplemaps));
-				boolean verify = true;
-				for (Entry<String, String> entry : verification.entrySet()) {
-					String key = entry.getKey();
-					String value = entry.getValue();
-					KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
-					KR2RMLBloomFilter bf = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
-					bf2.populateFromCompressedAndBase64EncodedString(value);
-					bf.populateFromCompressedAndBase64EncodedString(obj.getString(key));
-					bf2.and(bf);
-					bf2.xor(bf);
-					try {
-						Field f1 = BloomFilter.class.getDeclaredField("bits");
-						f1.setAccessible(true);
-						BitSet bits = (BitSet) f1.get(bf2);
-						if (bits.cardinality() != 0) {
-							verify = false;
-							break;
-						}
-					} catch (Exception e) {
-						
-					}
-				}
-				if (!verify) {
-					result &= updateTripleStore(obj, verification, modelRepoUrl, modelContext, utilObj);
-				}
+				TripleStoreUtil bloomFilterUtil = createBloomFilterTripleStoreUtil();
+				Method process = bloomFilterUtil.getClass().getMethod("processBloomFilter", String.class, String.class, Map.class, String.class);
+				process.invoke(bloomFilterUtil, modelContext,
+						modelRepoUrl, bloomfilterMapping, sw.toString());
 				long end = System.currentTimeMillis();
-				System.out.println("execution time: " + (end - start) + " node total: " + bloomfilterMapping.size());
+				logger.debug("execution time: " + (end - start) + " node total: " + bloomfilterMapping.size());
 			}
 		} catch (Exception e1) {
 			logger.error("Error occured while generating RDF!", e1);
@@ -353,6 +327,7 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 		}
 	}
 
+	
 	private void savePreferences(Workspace workspace){
 		try{
 			JSONObject prefObject = new JSONObject();
@@ -399,22 +374,65 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 		file.close();
 	}
 	
-	private boolean updateTripleStore(JSONObject obj, Map<String, String> bloomfilterMapping, String modelRepoUrl, String modelContext, TripleStoreUtil utilObj) throws KarmaException, IOException {
-		Set<String> triplemaps = new HashSet<String>(Arrays.asList(obj.getString("ids").split(",")));
-		bloomfilterMapping.putAll(utilObj.getBloomFiltersForMaps(modelRepoUrl, modelContext, triplemaps));
-		Map<String, KR2RMLBloomFilter> bfs = new HashMap<String, KR2RMLBloomFilter>();
-		for (String tripleUri : triplemaps) {
-			String serializedBloomFilter = obj.getString(tripleUri);
-			KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
-			bf.populateFromCompressedAndBase64EncodedString(serializedBloomFilter);
-			bfs.put(tripleUri, bf);
-		}
-		return utilObj.updateTripleStoreWithBloomFilters(bfs, bloomfilterMapping, modelRepoUrl, modelContext);
-	}
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
+	}
+	
+	private KR2RMLRDFWriter createBloomFilterWriter(PrintWriter bloomfilterpw, Boolean isRDF, String baseURI)
+			throws Exception {
+		
+		Reflections reflections = new Reflections("edu.isi.karma.kr2rml.writer");
+
+		Set<Class<? extends KR2RMLRDFWriter>> subTypes =
+				reflections.getSubTypesOf(KR2RMLRDFWriter.class);
+		
+		for (Class<? extends KR2RMLRDFWriter> subType : subTypes)
+		{
+			if(!Modifier.isAbstract(subType.getModifiers()) && !subType.isInterface() && subType.getName().equals("BloomFilterKR2RMLRDFWriter"))
+				try
+			{
+					KR2RMLRDFWriter writer = subType.newInstance();
+					writer.setWriter(bloomfilterpw);
+					Properties p = new Properties();
+					p.setProperty("is.rdf", isRDF.toString());
+					p.setProperty("base.uri", baseURI);
+					writer.initialize(p);
+					return writer;
+			}
+			catch (Exception e)
+			{
+				bloomfilterpw.close();
+				throw new Exception("Unable to instantiate bloom filter writer", e);
+			}
+		}
+		bloomfilterpw.close();
+		throw new Exception("Bloom filter writing support not enabled.  Please recompile with -Pbloom");
+	}
+
+	private TripleStoreUtil createBloomFilterTripleStoreUtil()
+			throws Exception {
+		
+		Reflections reflections = new Reflections("edu.isi.karma.er.helper");
+
+		Set<Class<? extends TripleStoreUtil>> subTypes =
+				reflections.getSubTypesOf(TripleStoreUtil.class);
+		
+		for (Class<? extends TripleStoreUtil> subType : subTypes)
+		{
+			if(!Modifier.isAbstract(subType.getModifiers()) && !subType.isInterface() && subType.getName().equals("BloomFilterTripleStoreUtil"))
+				try
+			{
+					TripleStoreUtil bloomFilterUtil = subType.newInstance();
+					return bloomFilterUtil;
+			}
+			catch (Exception e)
+			{
+				throw new Exception("Unable to instantiate bloom filter verifier", e);
+			}
+		}
+		throw new Exception("Bloom filter writing support not enabled.  Please recompile with -Pbloom");
 	}
 
 }

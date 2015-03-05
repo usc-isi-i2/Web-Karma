@@ -13,9 +13,8 @@ import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.Prefix;
 import edu.isi.karma.kr2rml.ShortHandURIGenerator;
 
-public abstract class SFKR2RMLRDFWriter<E> implements KR2RMLRDFWriter {
+public abstract class SFKR2RMLRDFWriter<E> extends KR2RMLRDFWriter {
 	protected boolean firstObject = true;
-	protected PrintWriter outWriter;
 	protected ConcurrentHashMap<String, ConcurrentHashMap<String, E>> generatedObjectsByTriplesMapId;
 	protected ConcurrentHashMap<String, E> generatedObjectsWithoutTriplesMap;
 	protected ConcurrentHashMap<String, ConcurrentHashMap<String, E>> rootObjectsByTriplesMapId = new ConcurrentHashMap<String, ConcurrentHashMap<String,E>>();

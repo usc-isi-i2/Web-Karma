@@ -81,11 +81,12 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 	static {
 		try {
 			@SuppressWarnings("rawtypes")
-			Class entityExtractorClass = Class.forName("com.karma.extractionservice.Service");
+			Class entityExtractorClass = Class.forName("edu.isi.karma.services.entityExtraction.Service");
 			entityExtractor = entityExtractorClass.newInstance();
+			logger.info("Got Entity Extraction Service");
 			entityExtractorMethod =
 					entityExtractorClass.getMethod("execute", new Class[]{String.class});
-			
+			logger.info("Got Entity Extraction Service Method");
 		} catch (Exception ie) {
 			logger.info("Entity Extraction Service Class not found. Will use the Service URL");
 			logger.debug("Entity Extraction Service Class could not be loaded", ie);
