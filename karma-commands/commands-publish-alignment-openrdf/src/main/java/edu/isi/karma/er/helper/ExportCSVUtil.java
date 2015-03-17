@@ -195,6 +195,9 @@ public class ExportCSVUtil {
 			writer.write("\n");
 			writer.flush();
 			writer.close();
+			System.gc();  //Invoke gc for windows, else it gives error: The requested operation cannot be performed on a file with a user-mapped section open
+			//when the model is republished, and the original model is earlier open
+			
 			logger.info("Writing CSV file :" + csvFilePath);
 			
 		} catch(Exception e) {

@@ -137,6 +137,9 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 				writer.close();
 				pw.flush();
 				pw.close();
+				System.gc();  //Invoke gc for windows, else it gives error: The requested operation cannot be performed on a file with a user-mapped section open
+				//when the model is republished, and the original model is earlier open
+				
 				Model model = ModelFactory.createDefaultModel();
 				InputStream s = new ReaderInputStream(new StringReader(string.toString()));
 				model.read(s, null, "TURTLE");
