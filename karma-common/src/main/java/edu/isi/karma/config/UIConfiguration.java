@@ -83,7 +83,12 @@ public class UIConfiguration {
     	        outWriter.close();
     		}
     			
-    		uiProperties.load(new FileInputStream(file));
+    		FileInputStream fis = new FileInputStream(file);
+    		try {
+    			uiProperties.load(fis);
+    		} finally {
+    			fis.close();
+    		}
 			
 			googleEarthEnabled = Boolean.parseBoolean(uiProperties.getProperty("google.earth.enabled"));
 			String sMax = uiProperties.getProperty("max.loaded.classes");
