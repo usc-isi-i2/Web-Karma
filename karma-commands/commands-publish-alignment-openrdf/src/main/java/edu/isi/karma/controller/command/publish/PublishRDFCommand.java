@@ -243,6 +243,10 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 				logger.info("Using Jena DB:" + hostName + "/"+dbName + " user="+userName);
 				saveToStore(rdfFileLocalPath);
 			}
+			bw.close();
+			System.gc();  //Invoke gc for windows, else it gives error: The requested operation cannot be performed on a file with a user-mapped section open
+			//when the model is republished, and the original model is earlier open
+			
 			start = System.currentTimeMillis();
 			if (generateBloomFilters && utilObj.testURIExists(modelRepoUrl, "", url)) {
 				TripleStoreUtil bloomFilterUtil = createBloomFilterTripleStoreUtil();

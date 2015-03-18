@@ -47,31 +47,31 @@ public class ElasticSearchConfig {
 	
 	public static ElasticSearchConfig parse(ServletContext context, MultivaluedMap<String, String> formParams) {
 		ElasticSearchConfig config = new ElasticSearchConfig();
-		if (formParams.containsKey(FormParameters.ES_HOSTNAME)) {
+		if (formParams != null && formParams.containsKey(FormParameters.ES_HOSTNAME)) {
 			config.setHostname(formParams.getFirst(FormParameters.ES_HOSTNAME));
 		} else {
 			config.setHostname(context.getInitParameter(FormParameters.ES_HOSTNAME));
 		}
 		
-		if(formParams.containsKey(FormParameters.ES_PROTOCOL)) {
+		if(formParams != null && formParams.containsKey(FormParameters.ES_PROTOCOL)) {
 			config.setProtocol(formParams.getFirst(FormParameters.ES_PROTOCOL));
 		} else {
 			config.setProtocol(context.getInitParameter(FormParameters.ES_PROTOCOL));
 		}
 		
-		if(formParams.containsKey(FormParameters.ES_INDEX)) {
+		if(formParams != null && formParams.containsKey(FormParameters.ES_INDEX)) {
 			config.setIndex(formParams.getFirst(FormParameters.ES_INDEX));
 		} else {
 			config.setIndex(context.getInitParameter(FormParameters.ES_INDEX));
 		}
 		
-		if(formParams.containsKey(FormParameters.ES_TYPE)) {
+		if(formParams != null && formParams.containsKey(FormParameters.ES_TYPE)) {
 			config.setType(formParams.getFirst(FormParameters.ES_TYPE));
 		} else {
 			config.setType(context.getInitParameter(FormParameters.ES_TYPE));
 		}
 		
-		if(formParams.containsKey(FormParameters.ES_PORT)) {
+		if(formParams != null && formParams.containsKey(FormParameters.ES_PORT)) {
 			config.setPort(formParams.getFirst(FormParameters.ES_PORT));
 		} else {
 			config.setPort(context.getInitParameter(FormParameters.ES_PORT));

@@ -284,9 +284,9 @@ public class SemanticModel {
 		
 		String s, p, o, triple;
 		for (LabeledLink l : g.edgeSet()) {
-			// FIXME
-			if (!(l.getTarget() instanceof InternalNode))
-				continue;
+			// FIXME: this line skips the links corresponding to the semantic types
+//			if (!(l.getTarget() instanceof InternalNode))
+//				continue;
 			s = nodeIds.get(l.getSource());
 			o = nodeIds.get(l.getTarget());
 			p = l.getLabel().getUri();
