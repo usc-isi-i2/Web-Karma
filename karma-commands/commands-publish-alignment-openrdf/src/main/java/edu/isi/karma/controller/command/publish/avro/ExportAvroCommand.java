@@ -151,6 +151,8 @@ public class ExportAvroCommand extends WorksheetSelectionCommand {
 			}
 			fos.flush();
 			fos.close();
+			System.gc();  //Invoke gc for windows, else it gives error: The requested operation cannot be performed on a file with a user-mapped section open
+			//when the model is republished, and the original model is earlier open
 		} catch (FileNotFoundException e) {
 			logger.error("File Not found", e);
 			return new UpdateContainer(new ErrorUpdate("File Not found while generating RDF: " + e.getMessage()));
