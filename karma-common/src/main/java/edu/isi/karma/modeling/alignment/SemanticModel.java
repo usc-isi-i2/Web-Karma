@@ -183,8 +183,6 @@ public class SemanticModel {
 					columnNodes.add((ColumnNode)n);
 		}
 		return columnNodes;
-		
-
 	}
 
 	private void setLearnedTypesForColumnNodes() {
