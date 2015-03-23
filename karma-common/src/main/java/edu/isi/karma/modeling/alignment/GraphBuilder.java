@@ -362,7 +362,7 @@ public class GraphBuilder {
 		}
 		
 		if (idToNodeMap.get(node.getId()) != null) {
-			logger.error("The node with id=" + node.getId() + " already exists in the graph.");
+			logger.debug("The node with id=" + node.getId() + " already exists in the graph.");
 			return false;
 		}
 		
@@ -370,7 +370,7 @@ public class GraphBuilder {
 			String uri = node.getUri();
 			Label label = this.ontologyManager.getUriLabel(uri);
 			if (label == null) {
-				logger.error("The resource " + uri + " does not exist in the ontology.");
+				logger.debug("The resource " + uri + " does not exist in the ontology.");
 				return false;
 			}
 			node.getLabel().setNs(label.getNs());
@@ -478,17 +478,17 @@ public class GraphBuilder {
 		}
 		
 		if (this.idToLinkMap.containsKey(link.getId())) {
-			logger.warn("The link with id=" + link.getId() + " already exists in the graph");
+			logger.debug("The link with id=" + link.getId() + " already exists in the graph");
 			return false;
 		}
 		
 		if (!this.idToNodeMap.containsKey(source.getId())) {
-			logger.error("The link source " + link.getSource().getId() + " does not exist in the graph");
+			logger.debug("The link source " + link.getSource().getId() + " does not exist in the graph");
 			return false;
 		}
 
 		if (!this.idToNodeMap.containsKey(target.getId())) {
-			logger.error("The link target " + link.getTarget().getId() + " does not exist in the graph");
+			logger.debug("The link target " + link.getTarget().getId() + " does not exist in the graph");
 			return false;
 		}
 
@@ -496,14 +496,14 @@ public class GraphBuilder {
 			String uri = link.getUri();
 			Label label = this.ontologyManager.getUriLabel(uri);
 			if (label == null) {
-				logger.error("The resource " + uri + " does not exist in the ontology.");
+				logger.debug("The resource " + uri + " does not exist in the ontology.");
 				return false;
 			}
 			((LabeledLink)link).getLabel().setNs(label.getNs());
 			((LabeledLink)link).getLabel().setPrefix(label.getPrefix());
 		}
 		
-		// whi I wrote this code?
+		// why I wrote this code?
 //		if (source instanceof InternalNode && target instanceof ColumnNode) {
 //			
 //			// remove other incoming links to this column node
