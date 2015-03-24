@@ -369,7 +369,7 @@ public class ModelLearner_KnownModels {
 //					for (SemanticType st : cn.getUserSemanticTypes()) {
 //						semanticTypeMappings = new HashSet<SemanticTypeMapping>();
 //						LabeledLink domainLink = domainLinks.get(st);
-//						if (domainLink.getSource() == null || !(domainLink.getSource() instanceof InternalNode))
+//						if (domainLink == null || domainLink.getSource() == null || !(domainLink.getSource() instanceof InternalNode))
 //							continue;
 //						SemanticTypeMapping mp = 
 //								new SemanticTypeMapping(cn, st, (InternalNode)domainLink.getSource(), domainLink, cn);

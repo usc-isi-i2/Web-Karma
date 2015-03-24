@@ -7,24 +7,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public abstract class Coherence {
 
-import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.Node;
+//	private static Logger logger = LoggerFactory.getLogger(Coherence.class);
+	protected List<CoherenceItem> items;
+	protected int itemsCount;
 
-public class Coherence {
-
-	private static Logger logger = LoggerFactory.getLogger(Coherence.class);
-	private List<CoherenceItem> items;
-	private int itemsCount;
-
-	private static int NUM_OF_MAX_SIZE_PATTERNS = 5;
-	private Map<String, Integer> patternSize;
-	private Map<String, String> patternGuid;
-	private String[] maxPatterns;
-	private int numOfElementsInMaxPatterns;
-	private HashMap<String, Integer> patternIndex;
+	protected static int NUM_OF_MAX_SIZE_PATTERNS = 5;
+	protected Map<String, Integer> patternSize;
+	protected Map<String, String> patternGuid;
+	protected String[] maxPatterns;
+	protected int numOfElementsInMaxPatterns;
+	protected HashMap<String, Integer> patternIndex;
 	
 	public Coherence() {
 		this.items = new ArrayList<>();
@@ -70,26 +64,8 @@ public class Coherence {
 		coherenceList = coherenceList.subList(0, Math.min(coherenceList.size(), 5));
 		return coherenceList;
 	}
-
-	public void updateCoherence(Node node) {
-		if (node == null) return;
-		this.itemsCount ++;
-		if (node.getModelIds() == null || node.getModelIds().isEmpty()) 
-			return;
-		updateCoherence(node.getModelIds());
-	}
 	
-	public void updateCoherence(LabeledLink link) {
-		if (link == null) return;
-//		if (!(link.getTarget() instanceof InternalNode))
-//				return;
-		this.itemsCount ++;
-		if (link.getModelIds() == null || link.getModelIds().isEmpty()) 
-			return;
-		updateCoherence(link.getModelIds());
-	}
-	
-	private void updateCoherence(Set<String> modelIds) {
+	protected void updateCoherence(Set<String> modelIds) {
 		
 		if (modelIds == null || modelIds.isEmpty())
 			return;
@@ -179,38 +155,9 @@ public class Coherence {
 //		
 //		return value.doubleValue();
 //	}
-	
-	public double getCoherenceValue() {
-		
-//		if (!this.hasInternalLink)
-//			return 1.0;
-		
-		if (this.itemsCount == 0) {
-			logger.debug("number of items is zero!");
-			return Double.MIN_VALUE;
-		}
-		
-		if (numOfElementsInMaxPatterns > 0)
-			return (double)patternSize.get(maxPatterns[0])/(double)this.itemsCount;
-		else
-			return 0.0;
-				
-//		BigDecimal value = BigDecimal.ZERO;
-//		
-//		BigDecimal denominator = BigDecimal.ONE;
-//		BigDecimal factor = new BigDecimal(this.itemsCount);
-//		BigDecimal b;
-//		
-//		for (int i = 0; i < numOfElementsInMaxPatterns; i++) {
-//			int size = patternSize.get(maxPatterns[i]);
-//			denominator = denominator.multiply(factor);
-//			b = new BigDecimal((double)size);
-//			b= b.divide(denominator, 5, RoundingMode.HALF_UP);
-//			value = value.add(b);
-//		}
-//		
-//		return Math.min(1.0, value.doubleValue());
-	}
+
+	public abstract double getCoherenceValue();
+
 
 //	public void computeCoherence(Set<Node> nodes) {
 //		

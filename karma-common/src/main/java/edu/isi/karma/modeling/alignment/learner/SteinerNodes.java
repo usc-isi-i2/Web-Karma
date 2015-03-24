@@ -41,7 +41,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	private Set<Node> nodes;
 	private Map<ColumnNode, ColumnNode> mappingToSourceColumns;
 	private Confidence confidence;
-	private Coherence nodeCoherence;
+	private NodeCoherence nodeCoherence;
 //	private int frequency;
 	private double score;
 	private int semanticTypesCount;
@@ -54,7 +54,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.columnNodeInfo = new HashMap<ColumnNode, SemanticTypeMapping>();
 		this.semanticTypesCount = 0;
 		this.confidence = new Confidence();
-		this.nodeCoherence = new Coherence();
+		this.nodeCoherence = new NodeCoherence();
 		this.nonModelNodesCount = 0;
 //		this.frequency = 0;
 		this.score = 0.0;
@@ -65,7 +65,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>(steinerNodes.getMappingToSourceColumns());
 		this.columnNodeInfo = new HashMap<ColumnNode, SemanticTypeMapping>(steinerNodes.getColumnNodeInfo());
 		this.confidence = new Confidence(steinerNodes.getConfidence());
-		this.nodeCoherence = new Coherence(steinerNodes.getCoherence());
+		this.nodeCoherence = new NodeCoherence(steinerNodes.getCoherence());
 //		this.frequency = steinerNodes.getFrequency();
 		this.semanticTypesCount = steinerNodes.getSemanticTypesCount();
 		this.nonModelNodesCount = steinerNodes.getNonModelNodesCount();
@@ -160,7 +160,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		return this.score;
 	}
 	
-	public Coherence getCoherence() {
+	public NodeCoherence getCoherence() {
 		return this.nodeCoherence;
 	}
 	

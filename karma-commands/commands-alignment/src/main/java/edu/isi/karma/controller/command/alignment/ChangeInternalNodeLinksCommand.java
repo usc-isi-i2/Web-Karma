@@ -125,9 +125,35 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 
 	private void addNewLinks(Alignment alignment, OntologyManager ontMgr)
 			throws JSONException {
-		for (int j = 0; j < newEdges.length(); j++) {
-			JSONObject newEdge = newEdges.getJSONObject(j);
+		for (int i = 0; i < newEdges.length(); i++) {
+			JSONObject newEdge = newEdges.getJSONObject(i);
 
+			boolean exists = false;
+
+			for (int j = 0; j < initialEdges.length(); j++) {
+				JSONObject initialEdge = initialEdges.getJSONObject(j);
+				if 	(
+						initialEdge.has(JsonKeys.edgeId.name()) && newEdge.has(JsonKeys.edgeId.name()) && 
+						initialEdge.getString(JsonKeys.edgeId.name()).equals(newEdge.getString(JsonKeys.edgeId.name()))
+							
+						&& initialEdge.has(JsonKeys.edgeSourceId.name()) && newEdge.has(JsonKeys.edgeSourceId.name()) && 
+						initialEdge.getString(JsonKeys.edgeSourceId.name()).equals(newEdge.getString(JsonKeys.edgeSourceId.name()))
+
+						&& initialEdge.has(JsonKeys.edgeTargetId.name()) && (newEdge.has(JsonKeys.edgeTargetId.name()) && 
+						initialEdge.getString(JsonKeys.edgeTargetId.name()).equals(newEdge.getString(JsonKeys.edgeTargetId.name())))
+					)
+					exists = true;
+			}
+			
+			if (exists) {
+				String edgeUri = newEdge.getString(JsonKeys.edgeId.name());
+				String sourceId = newEdge.getString(JsonKeys.edgeSourceId.name());
+				String targetId = newEdge.getString(JsonKeys.edgeTargetId.name());
+				String linkId = LinkIdFactory.getLinkId(edgeUri, sourceId, targetId);
+				alignment.changeLinkStatus(linkId, LinkStatus.ForcedByUser);
+				continue;
+			}
+			
 			String sourceId = newEdge.has(JsonKeys.edgeSourceId.name()) ? newEdge.getString(JsonKeys.edgeSourceId.name()) : null;
 			
 			Node sourceNode = null;
@@ -165,7 +191,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 
 
 			// Add info to description string
-			if (j == newEdges.length() - 1) {
+			if (i == newEdges.length() - 1) {
 				descStr.append(newLink.getLabel().getDisplayName());
 			} else {
 				descStr.append(newLink.getLabel().getDisplayName() + ",");
@@ -176,25 +202,25 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 	private void deleteLinks(Worksheet worksheet, Alignment alignment) throws JSONException {
 		for (int i = 0; i < initialEdges.length(); i++) {
 			JSONObject initialEdge = initialEdges.getJSONObject(i);
-//			boolean exists = false;
-//
-//			for (int j = 0; j < newEdges.length(); j++) {
-//				JSONObject newEdge = newEdges.getJSONObject(j);
-//				if (newEdge.has(JsonKeys.edgeSourceId.name()) && (initialEdge.getString(JsonKeys.edgeSourceId.name())
-//						.equals(newEdge.getString(JsonKeys.edgeSourceId.name())))
-//
-//						&& (newEdge.has(JsonKeys.edgeTargetId.name()) && initialEdge.getString(JsonKeys.edgeTargetId.name())
-//								.equals(newEdge.getString(JsonKeys.edgeTargetId
-//										.name())))
-//
-//						&& initialEdge.getString(JsonKeys.edgeId.name())
-//								.equals(newEdge.getString(JsonKeys.edgeId
-//										.name()))) {
-//					exists = true;
-//				}
-//			}
 
-//			if (!exists) {
+			boolean exists = false;
+
+			for (int j = 0; j < newEdges.length(); j++) {
+				JSONObject newEdge = newEdges.getJSONObject(j);
+				if 	(
+						initialEdge.has(JsonKeys.edgeId.name()) && newEdge.has(JsonKeys.edgeId.name()) && 
+						initialEdge.getString(JsonKeys.edgeId.name()).equals(newEdge.getString(JsonKeys.edgeId.name()))
+							
+						&& initialEdge.has(JsonKeys.edgeSourceId.name()) && newEdge.has(JsonKeys.edgeSourceId.name()) && 
+						initialEdge.getString(JsonKeys.edgeSourceId.name()).equals(newEdge.getString(JsonKeys.edgeSourceId.name()))
+
+						&& initialEdge.has(JsonKeys.edgeTargetId.name()) && (newEdge.has(JsonKeys.edgeTargetId.name()) && 
+						initialEdge.getString(JsonKeys.edgeTargetId.name()).equals(newEdge.getString(JsonKeys.edgeTargetId.name())))
+					)
+					exists = true;
+			}
+
+			if (!exists) {
 				String targetId = initialEdge.getString(JsonKeys.edgeTargetId.name());
 				String linkId = LinkIdFactory.getLinkId(
 						initialEdge.getString(JsonKeys.edgeId.name()),
@@ -209,7 +235,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 					ColumnNode cNode = (ColumnNode)node;
 					worksheet.getSemanticTypes().unassignColumnSemanticType(cNode.getHNodeId());
 				}
-//			}
+			}
 		}
 	}
 
