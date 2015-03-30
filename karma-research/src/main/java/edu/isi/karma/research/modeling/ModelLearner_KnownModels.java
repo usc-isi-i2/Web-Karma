@@ -96,7 +96,7 @@ public class ModelLearner_KnownModels {
 		GraphBuilder gb = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder();
 		this.ontologyManager = ontologyManager;
 		this.steinerNodes = steinerNodes;
-		if (this.steinerNodes != null) Collections.sort(this.steinerNodes);
+//		if (this.steinerNodes != null) Collections.sort(this.steinerNodes);
 		this.graphBuilder = cloneGraphBuilder(gb); // create a copy of the graph builder
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 	}
@@ -111,7 +111,7 @@ public class ModelLearner_KnownModels {
 		}
 		this.ontologyManager = graphBuilder.getOntologyManager();
 		this.steinerNodes = steinerNodes;
-		if (this.steinerNodes != null) Collections.sort(this.steinerNodes);
+//		if (this.steinerNodes != null) Collections.sort(this.steinerNodes);
 		this.graphBuilder = cloneGraphBuilder(graphBuilder); // create a copy of the graph builder
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 	}
@@ -751,6 +751,9 @@ public class ModelLearner_KnownModels {
 
 	public static void test() throws Exception {
 
+		/***
+		 * When running with k=1, change the flag "multiple.same.property.per.node" to true so all attributes have at least one semantic types
+		 */
 		ServletContextParameterMap.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
 
 		//		String inputPath = Params.INPUT_DIR;
@@ -784,11 +787,11 @@ public class ModelLearner_KnownModels {
 		
 		ModelLearner_KnownModels modelLearner;
 
-		boolean iterativeEvaluation = false;
+		boolean iterativeEvaluation = true;
 		boolean useCorrectType = false;
 		boolean randomModel = false;
 
-		int numberOfCandidates = 4;
+		int numberOfCandidates = 1;
 		int numberOfKnownModels;
 		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = ""; 
