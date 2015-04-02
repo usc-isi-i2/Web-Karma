@@ -40,7 +40,6 @@ public class Tools {
 	public void transformFile(String fpath) {
 		try {
 			Vector<String[]> examples = new Vector<String[]>();
-			ArrayList<String> data = new ArrayList<String>();
 			// read and write the data
 			File nf = new File(fpath);
 			BufferedReader cr = new BufferedReader(new FileReader(fpath));

@@ -16,7 +16,7 @@ class Translator(object):
         self.token2str = { 'NUM':'([\d]+)',\
                       'LWRD':'([a-z]+)',\
                       'UWRD':'([A-Z])',\
-                      'BNK':'([\s])',\
+                      'BNK':'([\s]+)',\
                       'SYB':'([^a-zA-Z0-9\s+])',\
                       'WORD':'([a-z|A-Z]+)',\
                       'ANY':'',\

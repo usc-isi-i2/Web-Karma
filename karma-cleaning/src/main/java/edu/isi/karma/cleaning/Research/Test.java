@@ -10,6 +10,7 @@ import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.cleaning.DataPreProcessor;
+import edu.isi.karma.cleaning.EmailNotification;
 import edu.isi.karma.cleaning.ExampleCluster;
 import edu.isi.karma.cleaning.ExampleCluster.method;
 import edu.isi.karma.cleaning.ExampleSelection;
@@ -19,6 +20,7 @@ import edu.isi.karma.cleaning.Messager;
 import edu.isi.karma.cleaning.ProgSynthesis;
 import edu.isi.karma.cleaning.ProgramRule;
 import edu.isi.karma.cleaning.UtilTools;
+import edu.isi.karma.cleaning.features.RecordClassifier;
 
 public class Test {
 
@@ -143,16 +145,10 @@ public class Test {
 				ExampleSelection.firsttime = false;
 				// accuracy record code
 				ArrayList<double[]> accArrayList = new ArrayList<double[]>();
-				long stime = System.currentTimeMillis();
-				boolean overtime = true;
 				while (true) // repeat as no incorrect answer appears.
 				{
 					if (examples.size() == 4) {
 						System.out.println("Hello World");
-					}
-					if (System.currentTimeMillis() - stime > 600000) {
-						overtime = false;
-						break;
 					}
 					long checknumber = 1;
 					long iterAfterNoFatalError = 0;
@@ -638,7 +634,6 @@ public class Test {
 									xHashMap.put(j + "", ts);
 								}
 							}
-
 							if (wexam == null
 									|| (entries.size() - ErrorCnt) * 1.0
 											/ entries.size() == 1.0) {
@@ -666,13 +661,11 @@ public class Test {
 								expsel = new ExampleSelection();
 								expsel.inite(xHashMap, expFeData);
 								int e = Integer.parseInt(expsel.Choose());
-								// /
-								System.out
-										.println("Recommand Example: "
-												+ Arrays.toString(xHashMap
-														.get("" + e)));
-								// /
 								if (xHashMap.get("" + e)[4].compareTo("right") != 0) {
+									System.out
+									.println("Recommand Example: "
+											+ Arrays.toString(xHashMap
+													.get("" + e)));
 									wexp[0] = "<_START>" + entries.get(e)[0]
 											+ "<_END>";
 									wexp[1] = entries.get(e)[1];
@@ -717,6 +710,7 @@ public class Test {
 						}
 					}
 				}
+				
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -733,6 +727,7 @@ public class Test {
 		File[] allfiles = nf.listFiles();
 		// statistics
 		DataCollection dCollection = new DataCollection();
+		RecordClassifier rcf;
 		// list all the csv file under the dir
 		for (File f : allfiles) {
 			Vector<String[]> examples = new Vector<String[]>();
@@ -782,13 +777,6 @@ public class Test {
 					boolean overtime = true;
 					while (true) // repeat as no incorrect answer appears.
 					{
-						if (examples.size() == 8) {
-							System.out.println("Hello World");
-						}
-						if (System.currentTimeMillis() - stime > 600000) {
-							overtime = false;
-							break;
-						}
 						long checknumber = 1;
 						long iterAfterNoFatalError = 0;
 						long isvisible = 0;
@@ -807,6 +795,8 @@ public class Test {
 						msger.updateCM_Constr(psProgSynthesis.partiCluster
 								.getConstraints());
 						msger.updateWeights(psProgSynthesis.partiCluster.weights);
+						
+						rcf = (RecordClassifier) psProgSynthesis.classifier;
 						// constraints.addAll();
 						if (ps != null) {
 							pls.addAll(ps);
@@ -832,11 +822,13 @@ public class Test {
 										.getClassForValue(entries.get(j)[0]);
 								String tmps = worker.execute_debug(entries
 										.get(j)[0]);
+								
 								HashMap<String, String> dict = new HashMap<String, String>();
 								dict.put("class", classlabel);
 								UtilTools.StringColorCode(entries.get(j)[0],
 										tmps, dict);
-								String s = dict.get("Tar");
+								String s = worker.execute(entries.get(j)[0]);
+								dict.put("Tar", s);
 								if (Test.isExample(entries.get(j)[0], examples)) {
 									s = entries.get(j)[1];
 								}
@@ -1008,11 +1000,11 @@ public class Test {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+		
 		}
 		dCollection.print();
 		dCollection.print1();
 		Prober.displayProgram();
-		//
 	}
 
 	public static boolean isExample(String var, Vector<String[]> examples) {
@@ -1039,20 +1031,35 @@ public class Test {
 	}
 
 	public static void runSeriseExper() {
-		ExampleCluster.option = method.DPIC;
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		ExampleCluster.option = method.DPIC;
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		ExampleCluster.option = method.DP;
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		ExampleCluster.option = method.SPIC;
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		ExampleCluster.option = method.SP;
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		ExampleCluster.option = method.CPIC;
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		EmailNotification notification = new EmailNotification();
 		ExampleCluster.option = method.CP;
 		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		notification.notify(true,"CP");
+		
+		ExampleCluster.option = method.DPIC;
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		notification.notify(true,"DPIC");
+
+
+		ExampleCluster.option = method.DP;
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		notification.notify(true,"DP");
+
+		ExampleCluster.option = method.SPIC;
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		notification.notify(true,"SPIC");
+
+		ExampleCluster.option = method.SP;
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		notification.notify(true,"SP");
+
+		ExampleCluster.option = method.CPIC;
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		notification.notify(true,"CPIC");
+
+		
+
+		
 	}
 
 	public static int MaximalNumber = -1;
@@ -1067,7 +1074,7 @@ public class Test {
 		DataCollection.config = cfg.getString();
 		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
 		//Test.test3("/Users/bowu/Research/testdata/TestSingleFile");
-		// Test.runSeriseExper();
+		 //Test.runSeriseExper();
 		// Test test = new Test();
 		// test.parameterSelection("/Users/bowu/Research/testdata/TestSingleFile");
 	}

@@ -208,6 +208,10 @@ public class Ruler {
 				mytype = TNode.ENDTYP;
 				txt = "";
 			}
+			else if(t.getType() == Tokenizer.WRD){
+				mytype = TNode.WORD;
+				txt = t.getText();
+			}
 			TNode tx = new TNode(mytype, txt);
 			vec.add(tx);
 			t = tk.nextToken();

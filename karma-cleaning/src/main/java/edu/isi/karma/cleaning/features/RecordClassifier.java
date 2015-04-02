@@ -16,7 +16,7 @@ import libsvm.svm_parameter;
 import libsvm.svm_print_interface;
 import libsvm.svm_problem;
 
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ public class RecordClassifier implements PartitionClassifierType {
 	HashMap<String, Double> labelMapping = new HashMap<String, Double>();
 	public double[] maxValues;
 	public double[] minValues;
-
+	public int ctype = svm_parameter.C_SVC; 
 	public RecordClassifier() {
 		this.rf = new RecordFeatureSet();
 	}
@@ -50,7 +50,10 @@ public class RecordClassifier implements PartitionClassifierType {
 	public RecordClassifier(RecordFeatureSet rf) {
 		this.rf = rf;
 	}
-
+	public RecordClassifier(RecordFeatureSet rf, int type) {
+		this.rf = rf;
+		ctype = type;
+	}
 	public void init() {
 		this.trainData = new ArrayList<svm_node[]>();
 		this.targets = new ArrayList<Double>();
@@ -335,8 +338,7 @@ public class RecordClassifier implements PartitionClassifierType {
 					// add its own data until reach the fold number
 					int times = fold / datasize;
 					@SuppressWarnings("unchecked")
-					ArrayList<Integer> ditems = (ArrayList<Integer>) labPos
-							.get(l).clone();
+					ArrayList<Integer> ditems = (ArrayList<Integer>) labPos.get(l).clone();
 					for (int t = 1; t < times+1; t++) {
 						labPos.get(l).addAll(ditems);
 					}
@@ -389,7 +391,7 @@ public class RecordClassifier implements PartitionClassifierType {
 		svm_parameter parameters = new svm_parameter();
 
 		parameters.gamma = gamma;
-		parameters.svm_type = svm_parameter.C_SVC;
+		parameters.svm_type = ctype;
 		parameters.kernel_type = svm_parameter.RBF;
 		parameters.degree = 3;
 		parameters.coef0 = 0;
