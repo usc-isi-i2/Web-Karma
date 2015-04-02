@@ -205,7 +205,12 @@ public class ModelingConfiguration {
 			logger.debug("Written default properties to modeling.properties");
 		}
 
-		prop.load(new FileInputStream(file));
+		FileInputStream fis = new FileInputStream(file);
+		try {
+			prop.load(fis);
+		} finally {
+			fis.close();
+		}
 		logger.debug("Done Loading modeling.properties");
 
 
