@@ -18,13 +18,14 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.RemoteIterator;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 
 import edu.isi.karma.rdf.CommandLineArgumentParser;
 
 public class CreateJSONFromSequenceFile {
 	static String filePath = null;
 	static String outputPath = null;
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Options options = createCommandLineOptions();
 		CommandLine cl = CommandLineArgumentParser.parse(args, options, CreateJSONFromSequenceFile.class.getSimpleName());
 		if(cl == null)
@@ -61,7 +62,7 @@ public class CreateJSONFromSequenceFile {
 		}
 	}
 
-	public static void createJSONFromSequenceFileFrom(Path input, List<FSDataOutputStream> streams) throws IOException {
+	public static void createJSONFromSequenceFileFrom(Path input, List<FSDataOutputStream> streams) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Path inputPath = input;
 		Configuration conf = new Configuration();
 		List<PrintWriter> fws = new LinkedList<PrintWriter>();
@@ -72,7 +73,7 @@ public class CreateJSONFromSequenceFile {
 			fw.write("[\n");
 		}
 		SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(inputPath));
-		Text key = new Text();
+		Writable key = (Writable) Class.forName(reader.getKeyClass().getCanonicalName()).newInstance();
 		Text val = new Text();
 		
 		int writtenTo = 0;
