@@ -12,8 +12,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.TreeSet;
 
-import edu.isi.karma.config.ModelingConfiguration;
-
 public class BANKSfromMM extends TopKSteinertrees {
 	
 	private int iteratorCounter=0;

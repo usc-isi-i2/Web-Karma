@@ -173,7 +173,8 @@ public class CommandHistory {
 			// Save the modeling commands
 			if (!(instanceOf(command, "ResetKarmaCommand"))) {
 				try {
-					if(isHistoryWriteEnabled && historySavers.get(workspace.getId()) != null) {
+					if(isHistoryWriteEnabled && command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
+							|| command.hasTag(CommandTag.Transformation)) && historySavers.get(workspace.getId()) != null) {
 						writeHistoryPerWorksheet(workspace, historySavers.get(workspace.getId()));
 					}
 				} catch (Exception e) {

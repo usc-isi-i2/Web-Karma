@@ -153,7 +153,7 @@ public class DataPreProcessor {
 			}
 		}
 		// prune infrequent terms
-		int thresdhold = (int) (data.size() * 0.10);
+		int thresdhold = (int) (data.size() * 0.005);
 		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet()
 				.iterator();
 		while (iter.hasNext()) {

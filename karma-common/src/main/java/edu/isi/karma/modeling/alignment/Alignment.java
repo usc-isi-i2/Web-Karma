@@ -634,9 +634,9 @@ public class Alignment implements OntologyUpdateListener {
 			logger.debug("total number of nodes in steiner tree: " + this.steinerTree.vertexSet().size());
 			logger.debug("total number of edges in steiner tree: " + this.steinerTree.edgeSet().size());
 		}
-		logger.debug("time to compute steiner tree: " + elapsedTimeSec);
+		
 		logger.info(GraphUtil.labeledGraphToString(this.steinerTree));
-
+		logger.info("Time to compute the Alignment: " + elapsedTimeSec + "sec");
 	}
 
 	@Override

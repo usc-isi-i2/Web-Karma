@@ -22,6 +22,8 @@
 package edu.isi.karma.modeling.alignment.learner;
 
 
+import java.text.DecimalFormat;
+
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.rep.alignment.LabeledLink;
 
@@ -30,14 +32,14 @@ public class SortableSemanticModel extends SemanticModel
 	
 	private double cost;
 	private SteinerNodes steinerNodes;
-	private Coherence linkCoherence;
+	private LinkCoherence linkCoherence;
 	
 	public SortableSemanticModel(SemanticModel semanticModel, SteinerNodes steinerNodes) {
 		
 		super(semanticModel);
 		
 		this.steinerNodes = steinerNodes;
-		this.linkCoherence = new Coherence();
+		this.linkCoherence = new LinkCoherence();
 		
 		if (this.graph != null && this.graph.edgeSet().size() > 0) {
 			this.cost = this.computeCost();
@@ -48,7 +50,7 @@ public class SortableSemanticModel extends SemanticModel
 	public SortableSemanticModel(SemanticModel semanticModel) {
 		
 		super(semanticModel);
-		this.linkCoherence = new Coherence();
+		this.linkCoherence = new LinkCoherence();
 		
 		if (this.graph != null && this.graph.edgeSet().size() > 0) {
 			this.cost = this.computeCost();
@@ -87,7 +89,7 @@ public class SortableSemanticModel extends SemanticModel
 
 	private void computeCoherence() {
 		for (LabeledLink l : this.graph.edgeSet()) {
-			linkCoherence.updateCoherence(l);
+			linkCoherence.updateCoherence(this.getGraph(), l);
 		}
 	}
 
@@ -199,4 +201,26 @@ public class SortableSemanticModel extends SemanticModel
 		
 	}
 
+	private static double roundDecimals(double d, int k) {
+		String format = "";
+		for (int i = 0; i < k; i++) format += "#";
+        DecimalFormat DForm = new DecimalFormat("#." + format);
+        return Double.valueOf(DForm.format(d));
+	}
+	
+	public String getRankingDetails() {
+		
+		String label = "";
+		label +=
+//				(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +
+				"link coherence:" + (this.getLinkCoherence() == null ? "" : this.getLinkCoherence().getCoherenceValue()) + "\n";
+		label += (this.getSteinerNodes() == null || this.getSteinerNodes().getCoherence() == null) ? 
+				"" : "node coherence:" + this.getSteinerNodes().getCoherence().getCoherenceValue() + "\n";
+		label += "confidence:" + this.getConfidenceScore() + "\n";
+		label += this.getSteinerNodes() == null ? "" : "mapping score:" + this.getSteinerNodes().getScore() + "\n";
+		label +=
+				"cost:" + roundDecimals(this.getCost(), 6) + "\n";
+		return label;
+
+	}
 }

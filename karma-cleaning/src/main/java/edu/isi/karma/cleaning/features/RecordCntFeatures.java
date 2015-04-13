@@ -21,6 +21,9 @@
 
 package edu.isi.karma.cleaning.features;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class RecordCntFeatures implements Feature {
 	public String name = "";
 	public String value = "";
@@ -35,8 +38,12 @@ public class RecordCntFeatures implements Feature {
 	}
 
 	public double computerScore() {
-		String tstr = value + " ";
-		int count = tstr.split(tar).length - 1;
+		Matcher m = Pattern.compile(tar).matcher(value);
+		int count = 0;
+		while(m.find())
+		{
+			count++;
+		}
 		return count;
 	}
 

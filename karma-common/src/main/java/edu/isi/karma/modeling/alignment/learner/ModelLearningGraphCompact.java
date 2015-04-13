@@ -293,7 +293,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		
 		List<HashMap<Node,Node>> mappings = new LinkedList<HashMap<Node,Node>>();
 
-		logger.info("max mapping size: " + MAX_MAPPING_SIZE);
+//		logger.info("max mapping size: " + MAX_MAPPING_SIZE);
 		
 		int size = 0;
 		for (Node node : model.getGraph().vertexSet()) {

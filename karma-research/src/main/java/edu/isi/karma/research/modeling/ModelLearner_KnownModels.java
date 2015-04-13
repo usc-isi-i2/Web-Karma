@@ -96,6 +96,7 @@ public class ModelLearner_KnownModels {
 		GraphBuilder gb = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder();
 		this.ontologyManager = ontologyManager;
 		this.steinerNodes = steinerNodes;
+//		if (this.steinerNodes != null) Collections.sort(this.steinerNodes);
 		this.graphBuilder = cloneGraphBuilder(gb); // create a copy of the graph builder
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 	}
@@ -110,6 +111,7 @@ public class ModelLearner_KnownModels {
 		}
 		this.ontologyManager = graphBuilder.getOntologyManager();
 		this.steinerNodes = steinerNodes;
+//		if (this.steinerNodes != null) Collections.sort(this.steinerNodes);
 		this.graphBuilder = cloneGraphBuilder(graphBuilder); // create a copy of the graph builder
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 	}
@@ -367,7 +369,7 @@ public class ModelLearner_KnownModels {
 //					for (SemanticType st : cn.getUserSemanticTypes()) {
 //						semanticTypeMappings = new HashSet<SemanticTypeMapping>();
 //						LabeledLink domainLink = domainLinks.get(st);
-//						if (domainLink.getSource() == null || !(domainLink.getSource() instanceof InternalNode))
+//						if (domainLink == null || domainLink.getSource() == null || !(domainLink.getSource() instanceof InternalNode))
 //							continue;
 //						SemanticTypeMapping mp = 
 //								new SemanticTypeMapping(cn, st, (InternalNode)domainLink.getSource(), domainLink, cn);
@@ -749,6 +751,9 @@ public class ModelLearner_KnownModels {
 
 	public static void test() throws Exception {
 
+		/***
+		 * When running with k=1, change the flag "multiple.same.property.per.node" to true so all attributes have at least one semantic types
+		 */
 		ServletContextParameterMap.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
 
 		//		String inputPath = Params.INPUT_DIR;
@@ -783,10 +788,10 @@ public class ModelLearner_KnownModels {
 		ModelLearner_KnownModels modelLearner;
 
 		boolean iterativeEvaluation = false;
-		boolean useCorrectType = false;
+		boolean useCorrectType = true;
 		boolean randomModel = false;
 
-		int numberOfCandidates = 4;
+		int numberOfCandidates = 1;
 		int numberOfKnownModels;
 		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = ""; 
@@ -814,7 +819,7 @@ public class ModelLearner_KnownModels {
 
 		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 0; {
+//		int i = 4; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -824,7 +829,7 @@ public class ModelLearner_KnownModels {
 			System.out.println(newSource.getName() + "(#attributes:" + newSource.getColumnNodes().size() + ")");
 			logger.info("======================================================");
 
-			numberOfKnownModels = iterativeEvaluation ? 0 : semanticModels.size() - 1;
+			numberOfKnownModels = 0;//iterativeEvaluation ? 0 : semanticModels.size() - 1;
 
 			if (iterativeEvaluation) {
 				if (resultsArray[0].length() > 0)	resultsArray[0].append(" \t ");			
@@ -834,7 +839,7 @@ public class ModelLearner_KnownModels {
 			}
 
 //			numberOfKnownModels = 2;
-			while (numberOfKnownModels <= semanticModels.size() - 1) 
+//			while (numberOfKnownModels <= semanticModels.size() - 1) 
 			{
 
 				trainingData.clear();

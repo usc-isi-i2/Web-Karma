@@ -82,6 +82,7 @@ public class ModelLearner {
 		GraphBuilder gb = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder();
 		this.ontologyManager = ontologyManager;
 		this.steinerNodes = steinerNodes;
+		if (this.steinerNodes != null) Collections.sort(this.steinerNodes);
 		this.graphBuilder = cloneGraphBuilder(gb); // create a copy of the graph builder
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 	}
@@ -96,6 +97,7 @@ public class ModelLearner {
 		}
 		this.ontologyManager = graphBuilder.getOntologyManager();
 		this.steinerNodes = steinerNodes;
+		if (this.steinerNodes != null) Collections.sort(this.steinerNodes);
 		this.graphBuilder = cloneGraphBuilder(graphBuilder); // create a copy of the graph builder
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 	}
@@ -112,6 +114,7 @@ public class ModelLearner {
 		GraphBuilder gb = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilder();
 		this.ontologyManager = ontologyManager;
 		this.steinerNodes = steinerNodes;
+		if (this.steinerNodes != null) Collections.sort(this.steinerNodes);
 		this.graphBuilder = cloneGraphBuilder(gb); // create a copy of the graph builder
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 		if (steinerNodes != null) {
@@ -260,7 +263,9 @@ public class ModelLearner {
 							new SortableSemanticModel(sm, sn);
 					sortableSemanticModels.add(sortableSemanticModel);
 					
+					sortableSemanticModel.print();
 //					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));
+//					System.out.println(sortableSemanticModel.getRankingDetails());
 //					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
@@ -364,7 +369,7 @@ public class ModelLearner {
 					for (SemanticType st : cn.getUserSemanticTypes()) {
 						semanticTypeMappings = new HashSet<SemanticTypeMapping>();
 						LabeledLink domainLink = domainLinks.get(st);
-						if (domainLink.getSource() == null || !(domainLink.getSource() instanceof InternalNode))
+						if (domainLink == null || domainLink.getSource() == null || !(domainLink.getSource() instanceof InternalNode))
 							continue;
 						SemanticTypeMapping mp = 
 								new SemanticTypeMapping(cn, st, (InternalNode)domainLink.getSource(), domainLink, cn);
