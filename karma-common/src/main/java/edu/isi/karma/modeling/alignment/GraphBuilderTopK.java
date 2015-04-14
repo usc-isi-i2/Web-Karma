@@ -184,7 +184,6 @@ public class GraphBuilderTopK extends GraphBuilder {
 		// adding data property links
 		if (results != null && onlyAddInternalNodes) {
 			for (DirectedWeightedMultigraph<Node, LabeledLink> tree : results) {
-
 				if (steinerNodes.getColumnNodeInfo() != null) {
 					for (SemanticTypeMapping stm : steinerNodes.getColumnNodeInfo().values()) {
 						LabeledLink dataPropertyLink = stm.getLink();

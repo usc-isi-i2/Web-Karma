@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Vector;
 
+
 import edu.isi.karma.cleaning.features.Feature;
 
 public class ExampleCluster {
@@ -127,7 +128,8 @@ public class ExampleCluster {
 			ProgramAdaptator pAdapter = new ProgramAdaptator();
 			ArrayList<String[]> exps = UtilTools
 					.extractExamplesinPartition(pars);
-			pAdapter.adapt(pSynthesis.msGer.exp2Space,pSynthesis.msGer.exp2program, exps);
+			pAdapter.adapt(pSynthesis.msGer.exp2Space,
+					pSynthesis.msGer.exp2program, exps);
 			return pars;
 		}
 		while (true) {
@@ -153,9 +155,6 @@ public class ExampleCluster {
 						legalParitions.put(key, false);
 						continue;
 					}
-					// double par_dist = getDistance(pars.get(i), pars.get(j));
-					// double par_dist = getCompScore(pars.get(i), pars.get(j),
-					// pars);// sumit heuristic
 					double par_dist = getDistance(pars.get(i), pars.get(j),
 							pars);
 					if (par_dist < mindist) {
@@ -420,7 +419,6 @@ public class ExampleCluster {
 		}
 		return res;
 	}
-
 
 	// input with current contraints
 	public void updateDistanceMetric(Vector<Partition> pars) {

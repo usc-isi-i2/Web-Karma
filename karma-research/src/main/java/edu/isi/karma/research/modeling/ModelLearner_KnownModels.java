@@ -787,8 +787,8 @@ public class ModelLearner_KnownModels {
 		
 		ModelLearner_KnownModels modelLearner;
 
-		boolean iterativeEvaluation = true;
-		boolean useCorrectType = false;
+		boolean iterativeEvaluation = false;
+		boolean useCorrectType = true;
 		boolean randomModel = false;
 
 		int numberOfCandidates = 1;
@@ -819,7 +819,7 @@ public class ModelLearner_KnownModels {
 
 		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 0; {
+//		int i = 4; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -829,7 +829,7 @@ public class ModelLearner_KnownModels {
 			System.out.println(newSource.getName() + "(#attributes:" + newSource.getColumnNodes().size() + ")");
 			logger.info("======================================================");
 
-			numberOfKnownModels = iterativeEvaluation ? 0 : semanticModels.size() - 1;
+			numberOfKnownModels = 0;//iterativeEvaluation ? 0 : semanticModels.size() - 1;
 
 			if (iterativeEvaluation) {
 				if (resultsArray[0].length() > 0)	resultsArray[0].append(" \t ");			
@@ -839,7 +839,7 @@ public class ModelLearner_KnownModels {
 			}
 
 //			numberOfKnownModels = 2;
-			while (numberOfKnownModels <= semanticModels.size() - 1) 
+//			while (numberOfKnownModels <= semanticModels.size() - 1) 
 			{
 
 				trainingData.clear();

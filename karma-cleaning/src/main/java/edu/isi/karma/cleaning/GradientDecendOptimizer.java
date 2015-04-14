@@ -323,6 +323,7 @@ public class GradientDecendOptimizer {
 		return res;
 	}
 
+	//@Test
 	public void test1() {
 		double[] p1 = { 1, 2 };
 		double[] p2 = { 50, 1 };

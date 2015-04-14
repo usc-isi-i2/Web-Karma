@@ -4,6 +4,7 @@ Created on Jul 28, 2012
 
 @author: bowu
 '''
+from FunctionList import *
 from Interpreter import *
 from ast import *
 def test0():

@@ -1,7 +1,11 @@
 package edu.isi.karma.modeling.alignment.learner;
 
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.Node;
 
 public class LinkCoherence extends Coherence {
 
@@ -13,7 +17,7 @@ public class LinkCoherence extends Coherence {
 		super(coherence);
 	}
 	
-	public void updateCoherence(LabeledLink link) {
+	public void updateCoherence(DirectedWeightedMultigraph<Node, LabeledLink> model, LabeledLink link) {
 		if (link == null) return;
 //		if (!(link.getTarget() instanceof InternalNode))
 //				return;
@@ -23,6 +27,11 @@ public class LinkCoherence extends Coherence {
 				return;
 		}
 		this.itemsCount ++;
+		if (link.getTarget() instanceof InternalNode) {
+			InternalNode in = (InternalNode)link.getTarget();	
+			if (model.outgoingEdgesOf(in) == null || model.outgoingEdgesOf(in).isEmpty())
+				return;
+		}
 		if (link.getModelIds() == null || link.getModelIds().isEmpty()) 
 			return;
 		updateCoherence(link.getModelIds());
