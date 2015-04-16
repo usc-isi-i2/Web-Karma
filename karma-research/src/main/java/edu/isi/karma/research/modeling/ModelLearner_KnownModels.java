@@ -694,7 +694,7 @@ public class ModelLearner_KnownModels {
 	}
 
 	@SuppressWarnings("unused")
-	private static void getStatistics1(List<SemanticModel> semanticModels) {
+	private static void getStatistics(List<SemanticModel> semanticModels) {
 		for (int i = 0; i < semanticModels.size(); i++) {
 			SemanticModel source = semanticModels.get(i);
 			int attributeCount = source.getColumnNodes().size();
@@ -706,50 +706,52 @@ public class ModelLearner_KnownModels {
 				if (n instanceof InternalNode) classNodeCount++;
 				if (n instanceof ColumnNode) datanodeCount++;
 			}
-			System.out.println(attributeCount + "\t" + nodeCount + "\t" + linkCount + "\t" + classNodeCount + "\t" + datanodeCount);
+//			System.out.println(attributeCount + "\t" + nodeCount + "\t" + linkCount + "\t" + classNodeCount + "\t" + datanodeCount);
 			
 			List<ColumnNode> columnNodes = source.getColumnNodes();
-			getStatistics2(columnNodes);
+
+			if (columnNodes == null)
+				return;
+			
+			
+			int numberOfAttributesWhoseTypeIsFirstCRFType = 0;
+			int numberOfAttributesWhoseTypeIsInCRFTypes = 0;
+			for (ColumnNode cn : columnNodes) {
+				List<SemanticType> userSemanticTypes = cn.getUserSemanticTypes();
+				List<SemanticType> top4Suggestions = cn.getTopKLearnedSemanticTypes(4);
+
+				for (int j = 0; j < top4Suggestions.size(); j++) {
+					SemanticType st = top4Suggestions.get(j);
+					if (userSemanticTypes != null) {
+						for (SemanticType t : userSemanticTypes) {
+							if (st.getModelLabelString().equalsIgnoreCase(t.getModelLabelString())) {
+								if (j == 0) numberOfAttributesWhoseTypeIsFirstCRFType ++;
+								numberOfAttributesWhoseTypeIsInCRFTypes ++;
+								j = top4Suggestions.size();
+								break;
+							}
+						}
+					} 
+				}
+
+			}
+
+//			System.out.println(numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + numberOfAttributesWhoseTypeIsFirstCRFType);
+			
+			System.out.println(
+					attributeCount + "\t" + 
+					nodeCount + "\t" + 
+					linkCount + "\t" + 
+					classNodeCount + "\t" + 
+					datanodeCount + "\t" + 
+					numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + 
+					numberOfAttributesWhoseTypeIsFirstCRFType);
 
 		}
 	}
 	
-	private static void getStatistics2(List<ColumnNode> columnNodes) {
-
-		if (columnNodes == null)
-			return;
-
-		int numberOfAttributesWhoseTypeIsFirstCRFType = 0;
-		int numberOfAttributesWhoseTypeIsInCRFTypes = 0;
-		for (ColumnNode cn : columnNodes) {
-			List<SemanticType> userSemanticTypes = cn.getUserSemanticTypes();
-			List<SemanticType> top4Suggestions = cn.getTopKLearnedSemanticTypes(4);
-
-			for (int i = 0; i < top4Suggestions.size(); i++) {
-				SemanticType st = top4Suggestions.get(i);
-				if (userSemanticTypes != null) {
-					for (SemanticType t : userSemanticTypes) {
-						if (st.getModelLabelString().equalsIgnoreCase(t.getModelLabelString())) {
-							if (i == 0) numberOfAttributesWhoseTypeIsFirstCRFType ++;
-							numberOfAttributesWhoseTypeIsInCRFTypes ++;
-							i = top4Suggestions.size();
-							break;
-						}
-					}
-				} 
-			}
-
-		}
-
-		System.out.println(numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + numberOfAttributesWhoseTypeIsFirstCRFType);
-//		System.out.println(columnNodes.size() + "\t" + numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + numberOfAttributesWhoseTypeIsFirstCRFType);
-
-//		System.out.println("totalNumberOfAttributes: " + columnNodes.size());
-//		System.out.println("numberOfAttributesWhoseTypeIsInCRFTypes: " + numberOfAttributesWhoseTypeIsInCRFTypes);
-//		System.out.println("numberOfAttributesWhoseTypeIsFirstCRFType:" + numberOfAttributesWhoseTypeIsFirstCRFType);
-	}
-
-	public static void test() throws Exception {
+		
+	public static void main(String[] args) throws Exception {
 
 		/***
 		 * When running with k=1, change the flag "multiple.same.property.per.node" to true so all attributes have at least one semantic types
@@ -774,14 +776,17 @@ public class ModelLearner_KnownModels {
 		File ff = new File(Params.ONTOLOGY_DIR);
 		File[] files = ff.listFiles();
 		for (File f : files) {
+			if(f.getName().startsWith(".") || f.isDirectory()) {
+				continue; //Ignore . files
+			}
 			ontologyManager.doImport(f, "UTF-8");
 		}
 		ontologyManager.updateCache();  
 
-//		getStatistics1(semanticModels);
-//
-//		if (true)
-//			return;
+		getStatistics(semanticModels);
+
+		if (true)
+			return;
 
 		ModelLearningGraph modelLearningGraph = null;
 		
@@ -819,7 +824,7 @@ public class ModelLearner_KnownModels {
 
 		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 4; {
+//		int i = 0; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -829,7 +834,8 @@ public class ModelLearner_KnownModels {
 			System.out.println(newSource.getName() + "(#attributes:" + newSource.getColumnNodes().size() + ")");
 			logger.info("======================================================");
 
-			numberOfKnownModels = 0;//iterativeEvaluation ? 0 : semanticModels.size() - 1;
+			numberOfKnownModels = iterativeEvaluation ? 0 : semanticModels.size() - 1;
+//			numberOfKnownModels = 0;
 
 			if (iterativeEvaluation) {
 				if (resultsArray[0].length() > 0)	resultsArray[0].append(" \t ");			
@@ -839,7 +845,7 @@ public class ModelLearner_KnownModels {
 			}
 
 //			numberOfKnownModels = 2;
-//			while (numberOfKnownModels <= semanticModels.size() - 1) 
+			while (numberOfKnownModels <= semanticModels.size() - 1) 
 			{
 
 				trainingData.clear();
@@ -1025,11 +1031,6 @@ public class ModelLearner_KnownModels {
 			resultFile.close();
 		}
 	}
-	
-	public static void main(String[] args) throws Exception {
 
-		test();
-
-	}
 
 }

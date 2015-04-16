@@ -233,10 +233,10 @@ public class ModelLearner {
 //			logger.info("START ...");
 			
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
-			if (this.graphBuilder instanceof GraphBuilderTopK) {
-				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getTopKSteinerTree(), true);
-			} 
-			else 
+//			if (this.graphBuilder instanceof GraphBuilderTopK) {
+//				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getTopKSteinerTree(), true);
+//			} 
+//			else 
 			{
 				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
 				SteinerTree steinerTree = new SteinerTree(
@@ -263,7 +263,7 @@ public class ModelLearner {
 							new SortableSemanticModel(sm, sn);
 					sortableSemanticModels.add(sortableSemanticModel);
 					
-					sortableSemanticModel.print();
+//					sortableSemanticModel.print();
 //					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));
 //					System.out.println(sortableSemanticModel.getRankingDetails());
 //					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
