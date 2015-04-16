@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.common.OSUtils;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
@@ -151,7 +152,8 @@ public class ExportAvroCommand extends WorksheetSelectionCommand {
 			}
 			fos.flush();
 			fos.close();
-			System.gc();  //Invoke gc for windows, else it gives error: The requested operation cannot be performed on a file with a user-mapped section open
+			if(OSUtils.isWindows())
+				System.gc();  //Invoke gc for windows, else it gives error: The requested operation cannot be performed on a file with a user-mapped section open
 			//when the model is republished, and the original model is earlier open
 		} catch (FileNotFoundException e) {
 			logger.error("File Not found", e);

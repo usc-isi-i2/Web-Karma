@@ -40,8 +40,8 @@ var saveModelDialog = (function() {
 				e.preventDefault();
 				saveDialog(e);
 			});
-
-			$('#txtGraph_URL_Save', dialog).val(window.location.protocol + "//" + window.location.host + "/R2RMLMapping/local");
+			console.log(window.location);
+			$('#txtGraph_URL_Save', dialog).val(window.location.protocol + "//" + window.location.host + window.location.pathname + "R2RMLMapping/local");
 			$('#txtModel_URL_Save', dialog).on('keyup', function(e) {
 				//$('#txtGraph_URL_Save').val($('#txtModel_URL_Save').val());
 				$('input[name="buttonCollection_Save"][value="URL"]').prop('checked', true);

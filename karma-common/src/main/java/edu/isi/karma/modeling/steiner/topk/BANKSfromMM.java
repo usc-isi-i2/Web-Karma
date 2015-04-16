@@ -12,6 +12,8 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.TreeSet;
 
+import edu.isi.karma.config.ModelingConfiguration;
+
 public class BANKSfromMM extends TopKSteinertrees {
 	
 	private int iteratorCounter=0;
@@ -142,16 +144,16 @@ public class BANKSfromMM extends TopKSteinertrees {
 
 		int max = 3;
 
-//		if (duplicateIndex.size() <= 10) max = 3;
-//		else if (duplicateIndex.size() > 10 && duplicateIndex.size() < 20) max = 2;
-//		else max = 1;
+		if (duplicateIndex.size() <= 15) max = 3;
+		else if (duplicateIndex.size() > 15 && duplicateIndex.size() < 30) max = 2;
+		else max = 1;
 		
 		List<HashMap<Integer, SteinerNode>> permutations = 
 				getPermutation(searchNodeInQueues, processedNodes, searchNode, 0, max, queueId);
 		
-//		int cutoff = ModelingConfiguration.getTopKSteinerTree();
-//		if (permutations.size() > cutoff)
-//			permutations = permutations.subList(0, cutoff);
+		int cutoff = ModelingConfiguration.getTopKSteinerTree();
+		if (permutations.size() > cutoff)
+			permutations = permutations.subList(0, cutoff);
 		
 		int numOfCreatedTrees = 0;
 		for (HashMap<Integer, SteinerNode> map : permutations) {
