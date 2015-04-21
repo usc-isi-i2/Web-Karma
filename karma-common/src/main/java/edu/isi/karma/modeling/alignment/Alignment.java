@@ -245,7 +245,8 @@ public class Alignment implements OntologyUpdateListener {
 		Label literalType = new Label(type, Namespaces.XSD, Prefixes.XSD);
 		
 		String id = nodeIdFactory.getNodeId(value);
-		
+		if(isUri && value.startsWith("\"") && value.endsWith("\""))
+			value = value.substring(1, value.length()-1);
 		LiteralNode node = new LiteralNode(id, value, literalType, isUri);
 		if(this.graphBuilder.addNode(node)) return node;
 		return null;
