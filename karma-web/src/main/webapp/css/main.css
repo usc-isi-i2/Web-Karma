@@ -110,8 +110,8 @@ body {
 }
 
 .manualModeHeader {
-	background-color: rgb(255, 255, 200);
-    border-color: rgb(255, 255, 0);
+	background-color: #FFB355;
+	border-color: #F8A135;
 }
 
 .editButton, .hideButton, .deleteButton {
