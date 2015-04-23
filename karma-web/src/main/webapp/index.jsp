@@ -73,6 +73,10 @@ and related projects, please see: http://www.isi.edu/integration
         <link rel="stylesheet" type="text/css" href="./css/model.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/augmentdata.css?<jsp:include page='version.jsp' />" />
         <%
+        
+        UIConfiguration.Instance().loadConfig();
+        ModelingConfiguration.load();
+        
         if(UIConfiguration.Instance().isForceModelLayoutEnabled()) {
         %>
         <link rel="stylesheet" href="css/d3-model-layout.css?<jsp:include page='version.jsp' />" />
@@ -524,7 +528,7 @@ and related projects, please see: http://www.isi.edu/integration
        		}
             
             function manualAlignHeader() {
-            	$("#karmaHeader").addClass("manualModeHeader");
+            	$("#karmaHeader").addClass("navbar-inverse");
             	$("#manualModeHeader").show();
             }
 		</script>
