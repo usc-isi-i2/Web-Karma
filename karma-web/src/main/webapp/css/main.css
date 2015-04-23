@@ -109,9 +109,8 @@ body {
 	cursor: pointer;
 }
 
-.manualModeHeader {
-	background-color: #FFFFFF;
-	border-color: #FFB2BA;
+#manualModeHeader a {
+	color: rgb(255, 255, 150);
 }
 
 .editButton, .hideButton, .deleteButton {

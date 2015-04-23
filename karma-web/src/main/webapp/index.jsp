@@ -155,7 +155,7 @@ and related projects, please see: http://www.isi.edu/integration
 	
 		<div class="container">
 		
-			<div id="karmaHeader" class="navbar navbar-default" role="navigation">
+			<div id="karmaHeader" class="navbar navbar-default navbar-inverse" role="navigation">
 		        <div class="navbar-header">
 		          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 		            <span class="sr-only">Toggle navigation</span>
@@ -528,7 +528,6 @@ and related projects, please see: http://www.isi.edu/integration
        		}
             
             function manualAlignHeader() {
-            	$("#karmaHeader").addClass("navbar-inverse");
             	$("#manualModeHeader").show();
             }
 		</script>
