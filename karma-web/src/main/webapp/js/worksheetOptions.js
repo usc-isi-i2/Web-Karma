@@ -69,7 +69,7 @@ function WorksheetOptions(wsId, wsTitle) {
 				name: "RDF",
 				func: publishRDF
 			}, {
-				name: "Model",
+				name: "R2RML Model",
 				func: publishModel
 			}, {
 				name: "Service Model",
@@ -78,7 +78,7 @@ function WorksheetOptions(wsId, wsTitle) {
 				name: "Report",
 				func: publishReport
 			}, {
-				name: "JSON",
+				name: "Raw JSON",
 				func: saveAsJson
 			}, ]
 		}, {
@@ -104,7 +104,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		}, {
 			name: "divider"
 		},
-
+/*
 		{
 			name: "Populate Source",
 			func: populateSource
@@ -114,9 +114,9 @@ function WorksheetOptions(wsId, wsTitle) {
 		}, {
 			name: "divider"
 		},
-
+*/
 		{
-			name: "Fold",
+			name: "Fold Columns",
 			func: Fold
 		}, {
 			name: "GroupBy",
@@ -125,7 +125,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			name: "Glue Columns",
 			func: Glue
 		}, {
-			name: "Delete",
+			name: "Delete Worksheet",
 			func: deleteWorksheet
 		}, {
 			name: "divider"

@@ -63,13 +63,14 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			leafOnly: true,
 			leafExcluded: false
 		},
-
+/*
 		{
 			name: "Invoke Service",
 			func: invokeService,
 			leafOnly: true,
 			leafExcluded: false
 		},
+*/
 		//{name:"Show Chart", func:showChart, leafOnly:true, leafExcluded: false},
 		{
 			name: "divider",
@@ -83,12 +84,12 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			leafOnly: false,
 			leafExcluded: true
 		}, {
-			name: "Unfold",
+			name: "Unfold Columns",
 			func: Unfold,
 			leafOnly: true,
 			leafExcluded: false
 		}, {
-			name: "Fold",
+			name: "Fold Columns",
 			func: Fold,
 			leafOnly: false,
 			leafExcluded: true
