@@ -47,11 +47,12 @@ public class DeleteWorksheetCommand extends WorksheetCommand {
 		}
 		
 		UpdateContainer update = new UpdateContainer();
-		update.add(new WorksheetListUpdate());
 		if(worksheetExists) {
-			update.add(new WorksheetDeleteUpdate(worksheetId));
+			update.add(new WorksheetDeleteUpdate(worksheetId));	//This one deletes it from the vWorksheet, so
+						//needs to be called first before WorksheetListUpdate
 			update.add(new HistoryUpdate(workspace.getCommandHistory()));
 		}
+		update.add(new WorksheetListUpdate());
 		return update;
 	}
 
