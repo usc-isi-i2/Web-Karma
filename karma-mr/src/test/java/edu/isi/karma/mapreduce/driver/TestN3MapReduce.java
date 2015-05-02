@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
@@ -23,7 +24,7 @@ public class TestN3MapReduce extends TestRDFMapReduce {
 
 	@Before
 	public void setUp() throws Exception {
-		Mapper<Text, Text, Text, Text> mapper = new N3Mapper();
+		Mapper<Writable, Text, Text, Text> mapper = new N3Mapper();
 		Reducer<Text,Text,Text,Text> reducer = new N3Reducer();
 
 		mapDriver = MapDriver.newMapDriver(mapper);
