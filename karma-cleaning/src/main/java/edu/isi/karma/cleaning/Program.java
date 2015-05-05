@@ -109,7 +109,7 @@ public class Program implements GrammarTreeNode {
 					ArrayList<Partition> xpars = new ArrayList<Partition>();
 					xpars.add(p);
 					ArrayList<String[]> examples = UtilTools.extractExamplesinPartition(xpars);
-					rule = programAdaptator.adapt(msger.exp2Space, msger.exp2program, examples);
+					rule = programAdaptator.adapt(msger.exp2Partition, msger.exp2program, examples);
 				}
 				if (rule.contains("null"))
 					return null;
@@ -139,7 +139,7 @@ public class Program implements GrammarTreeNode {
 				ArrayList<Partition> xpars = new ArrayList<Partition>();
 				xpars.add(partitions.get(0));
 				ArrayList<String[]> examples = UtilTools.extractExamplesinPartition(xpars);
-				s = programAdaptator.adapt(msger.exp2Space, msger.exp2program, examples);
+				s = programAdaptator.adapt(msger.exp2Partition, msger.exp2program, examples);
 			}
 			if (s.contains("null"))
 				return null;
@@ -235,5 +235,11 @@ public class Program implements GrammarTreeNode {
 	@Override
 	public String getProgram() {
 		return this.program;
+	}
+
+	@Override
+	public ArrayList<String> genAtomicPrograms() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

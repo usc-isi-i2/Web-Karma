@@ -1,5 +1,7 @@
 package edu.isi.karma.cleaning;
 
+import java.util.ArrayList;
+
 public class Loop implements GrammarTreeNode {
 	public Segment loopbody;
 	public String program = "null";
@@ -108,6 +110,13 @@ public class Loop implements GrammarTreeNode {
 	@Override
 	public String getProgram() {
 		return this.program;
+	}
+
+	@Override
+	public ArrayList<String> genAtomicPrograms() {
+		ArrayList<String> ret = new ArrayList<String>();
+		ret.addAll(loopbody.genAtomicPrograms());
+		return ret;
 	}
 
 }

@@ -1,5 +1,6 @@
 package edu.isi.karma.cleaning;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +34,6 @@ public class ProgSynthesis {
 	private static Logger ulogger = LoggerFactory
 			.getLogger(ProgSynthesis.class);
 	public Program myprog;
-	public OptimizePartition partitioner; // A* search for a consistent program
 	public ExampleCluster partiCluster;
 	public DataPreProcessor dataPreProcessor;
 	public Messager msGer;
@@ -41,22 +41,6 @@ public class ProgSynthesis {
 	public ProgSynthesis() {
 	}
 
-	public void inite(Vector<String[]> examples, String[] vocb) {
-		for (int i = 0; i < examples.size(); i++) {
-			Ruler r = new Ruler();
-			r.setNewInput(examples.get(i)[0]);
-			orgVector.add(r.vec);
-			Ruler r1 = new Ruler();
-			r1.setNewInput(examples.get(i)[1]);
-			tarVector.add(r1.vec);
-		}
-		RecordFeatureSet rSet = new RecordFeatureSet();
-		rSet.addVocabulary(vocb);
-		this.featureSet = rSet;
-		RecordClassifier r2 = new RecordClassifier(rSet);
-		this.classifier = r2;
-		partitioner = new OptimizePartition(this, r2);
-	}
 	
 	public void inite(Vector<String[]> examples, DataPreProcessor dp, Vector<Vector<String[]>> constraints) {
 		for (int i = 0; i < examples.size(); i++) {
@@ -287,9 +271,12 @@ public class ProgSynthesis {
 		StopWatch stopWatch0 = new Log4JStopWatch("adaptive_main");
 		long t1 = System.currentTimeMillis();
 		StopWatch stopWatch = new Log4JStopWatch("adaptive_producePartition");
-		Vector<Partition> par = this.adaptive_producePartition();
+		if(orgVector.size() == 5){
+			System.out.println("hello");
+		}
+		Vector<Partition> par = this.adaptive_producePartition();		
 		stopWatch.stop();
-		StopWatch stopWatch1 = new Log4JStopWatch("adaptive_produceProgram");
+		StopWatch stopWatch1 = new Log4JStopWatch("adaptive_produceProgram");		
 		Collection<ProgramRule> cpr = this.adaptive_produceProgram(par);
 		stopWatch1.stop();
 		Traces.AllSegs.clear();
@@ -382,13 +369,37 @@ public class ProgSynthesis {
 	}
 	public Vector<Partition> adaptive_producePartition()
 	{	
-		Vector<Partition> pars = this.initePartitions();
+		Vector<Partition> pars = this.adaptive_initePartitions();
 		partiCluster = new ExampleCluster(this, pars, string2Vector);
 		partiCluster.updateConstraints(msGer.getConstraints());
 		partiCluster.updateWeights(msGer.weights);
 		//update the program space and hypothesis space
 		pars = partiCluster.adaptive_cluster_weightEuclidean(pars);
 		this.ruleNo = pars.size();
+		return pars;
+	}
+	public Vector<Partition> adaptive_initePartitions(){
+		Vector<Partition> pars = new Vector<Partition>();
+		// inite partition for each example
+		for (int i = 0; i < orgVector.size(); i++) {
+			Vector<Vector<TNode>> ovt = new Vector<Vector<TNode>>();
+			Vector<Vector<TNode>> tvt = new Vector<Vector<TNode>>();
+			ovt.add(this.orgVector.get(i));
+			tvt.add(this.tarVector.get(i));
+			ArrayList<String[]> exps = new ArrayList<String[]>();
+			String[] newexp = {UtilTools.print(orgVector.get(i)), UtilTools.print(tarVector.get(i))};
+			exps.add(newexp);
+			String key = UtilTools.createkey(exps);
+			Partition pt = null;
+			if(msGer.exp2Partition.containsKey(key))
+			{
+				pt = msGer.exp2Partition.get(key);
+			}
+			else{
+				pt = new Partition(ovt, tvt);
+			}
+			pars.add(pt);
+		}
 		return pars;
 	}
 	public Collection<ProgramRule> run_main() {

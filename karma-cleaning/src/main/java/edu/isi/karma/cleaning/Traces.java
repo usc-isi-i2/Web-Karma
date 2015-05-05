@@ -889,7 +889,6 @@ public class Traces implements GrammarTreeNode {
 			t.emptyState();
 		}
 	}
-
 	public String toProgram() {
 		String resString = "";
 		while (curState < totalOrderVector.size()) {
@@ -917,7 +916,6 @@ public class Traces implements GrammarTreeNode {
 	@Override
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
 		Traces t = (Traces) a;
-
 		return this.mergewith(t);
 	}
 
@@ -942,5 +940,13 @@ public class Traces implements GrammarTreeNode {
 	@Override
 	public String getProgram() {
 		return this.program;
+	}
+	@Override
+	public ArrayList<String> genAtomicPrograms() {
+		ArrayList<String> ret = new ArrayList<String>();
+		for(Template temp:totalOrderVector){
+			ret.addAll(temp.genAtomicPrograms());
+		}
+		return ret;
 	}
 }

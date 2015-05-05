@@ -1,5 +1,6 @@
 package edu.isi.karma.cleaning;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class Template implements GrammarTreeNode {
@@ -220,6 +221,15 @@ public class Template implements GrammarTreeNode {
 	@Override
 	public String getProgram() {
 		return this.program;
+	}
+
+	@Override
+	public ArrayList<String> genAtomicPrograms() {
+		ArrayList<String> ret = new ArrayList<String>();
+		for (int i = 0; i < this.body.size(); i++) {
+			ret.addAll(this.body.get(i).genAtomicPrograms());
+		}
+		return ret;
 	}
 
 }

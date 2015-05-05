@@ -23,9 +23,11 @@ public class PositionSet implements GrammarTreeNode {
 	public String toProgram() {
 		for (Position p : spaces) {
 			if (p != null) {
-				String rule1 = p.VerifySpace(0);
-				if (rule1.indexOf("null") == -1) {
-					return rule1;
+				for (int i = 0; i < p.size(); i++) {
+					String rule1 = p.VerifySpace(i);
+					if (rule1.indexOf("null") == -1) {
+						return rule1;
+					}
 				}
 			}
 		}
@@ -82,6 +84,12 @@ public class PositionSet implements GrammarTreeNode {
 
 	@Override
 	public String getProgram() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<String> genAtomicPrograms() {
 		// TODO Auto-generated method stub
 		return null;
 	}

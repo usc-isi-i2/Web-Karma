@@ -1,5 +1,6 @@
 package edu.isi.karma.cleaning;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.internalfunlibrary.InternalTransformationLibrary;
@@ -61,9 +62,6 @@ public class Section implements GrammarTreeNode {
 					this.program = rule;
 					return rule;
 				}
-			}
-			if (rule1.indexOf("null") != -1 && rule2.indexOf("null") != -1) {
-				break;
 			}
 		}
 		this.program = "null";
@@ -231,6 +229,15 @@ public class Section implements GrammarTreeNode {
 	@Override
 	public String getProgram() {
 		return this.program;
+	}
+	@Override
+	public ArrayList<String> genAtomicPrograms() {
+		ArrayList<String> ret = new ArrayList<String>();
+		if(pair.length == 2){
+			ret.addAll(pair[0].genAtomicPrograms());
+			ret.addAll(pair[1].genAtomicPrograms());
+		}
+		return ret;
 	}
 
 }

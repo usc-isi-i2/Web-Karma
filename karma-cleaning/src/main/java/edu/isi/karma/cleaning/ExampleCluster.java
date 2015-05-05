@@ -20,7 +20,7 @@ public class ExampleCluster {
 	public ProgSynthesis pSynthesis; // data
 	HashMap<String, Vector<String>> uorgclusters = new HashMap<String, Vector<String>>();
 	HashMap<String, double[]> string2Vector = new HashMap<String, double[]>();
-	int unlabelDataAmount = 10;
+	int unlabelDataAmount = 5;
 	double assignThreshold = 0.1;
 	public int featuresize = 0;
 	public int failedCnt = 0;
@@ -109,7 +109,7 @@ public class ExampleCluster {
 
 	public void init() {
 		if (option == method.DP || option == method.DPIC) {
-			this.unlabelDataAmount = 10;
+			this.unlabelDataAmount = 5;
 		} else {
 			this.unlabelDataAmount = 0;
 		}
@@ -128,7 +128,7 @@ public class ExampleCluster {
 			ProgramAdaptator pAdapter = new ProgramAdaptator();
 			ArrayList<String[]> exps = UtilTools
 					.extractExamplesinPartition(pars);
-			pAdapter.adapt(pSynthesis.msGer.exp2Space,
+			pAdapter.adapt(pSynthesis.msGer.exp2Partition,
 					pSynthesis.msGer.exp2program, exps);
 			return pars;
 		}
@@ -137,9 +137,6 @@ public class ExampleCluster {
 			double mindist = Double.MAX_VALUE;
 			int x_ind = -1;
 			int y_ind = -1;
-			/* print the partitioning information* */
-			// ProgTracker.printPartition(pars);
-			// ProgTracker.printConstraints(constraints);
 			/***/
 			for (int i = 0; i < pars.size(); i++) {
 				for (int j = i + 1; j < pars.size(); j++) {
@@ -170,7 +167,17 @@ public class ExampleCluster {
 			/* print the partitioning information* */
 			// ProgTracker.printPartitions(pars.get(x_ind), pars.get(y_ind));
 			/***/
-			Partition z = pars.get(x_ind).mergewith(pars.get(y_ind));
+			ArrayList<Partition> tmppartitions = new ArrayList<Partition>();
+			tmppartitions.add(pars.get(x_ind));
+			tmppartitions.add(pars.get(y_ind));
+			String tmpkey = Partition.getStringKey(tmppartitions);
+			Partition z = null;
+			if(pSynthesis.msGer.exp2Partition.containsKey(tmpkey)){
+				z = pSynthesis.msGer.exp2Partition.get(tmpkey);
+			}
+			else{
+				z = pars.get(x_ind).mergewith(pars.get(y_ind));
+			}
 
 			if (adaptive_isLegalPartition(z)) {
 				legalParitions.put(z.getHashKey(), true);
@@ -592,6 +599,8 @@ public class ExampleCluster {
 		}
 		
 		String key = p.getHashKey();
+		if(pSynthesis.msGer.exp2program.containsKey(key))
+			return true;
 		if (legalParitions.containsKey(key)) {
 			return legalParitions.get(key);
 		}
@@ -608,7 +617,7 @@ public class ExampleCluster {
 		ArrayList<Partition> nPs = new ArrayList<Partition>();
 		nPs.add(p);
 		ArrayList<String[]> examps = UtilTools.extractExamplesinPartition(nPs);
-		String fprogram = pAdapter.adapt(pSynthesis.msGer.exp2Space,pSynthesis.msGer.exp2program, examps);
+		String fprogram = pAdapter.adapt(pSynthesis.msGer.exp2Partition,pSynthesis.msGer.exp2program, examps);
 		if (fprogram.indexOf("null")!= -1) {
 			failedCnt++;
 			legalParitions.put(key, false);

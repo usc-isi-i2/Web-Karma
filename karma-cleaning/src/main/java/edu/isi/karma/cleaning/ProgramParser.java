@@ -51,6 +51,9 @@ public class ProgramParser {
 		// find the endPosition
 		int eposS = sposE+2;
 		int eposE = tok.length()-1;
+		if(sposS > 15){
+			eposE = tok.length() -2;
+		}
 		String eposExpre = tok.substring(eposS, eposE);
 		ParseTreeNode sPosNode = new ParseTreeNode(nodetype.position,
 				sposExpre);

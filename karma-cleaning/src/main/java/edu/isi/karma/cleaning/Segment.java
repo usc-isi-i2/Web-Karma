@@ -1,5 +1,6 @@
 package edu.isi.karma.cleaning;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -376,5 +377,14 @@ public class Segment implements GrammarTreeNode {
 	@Override
 	public String getProgram() {
 		return this.program;
+	}
+
+	@Override
+	public ArrayList<String> genAtomicPrograms() {
+		ArrayList<String> ret = new ArrayList<String>();
+		for(Section sec:this.section){
+			ret.addAll(sec.genAtomicPrograms());
+		}
+		return ret;
 	}
 }

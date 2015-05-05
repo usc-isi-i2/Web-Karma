@@ -1,5 +1,6 @@
 package edu.isi.karma.cleaning;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,9 +23,7 @@ public class Position implements GrammarTreeNode {
 	public int fixedlength = 0;
 	public String program = "null";
 
-	public Position(Vector<Integer> absPos, Vector<TNode> lcxt,
-			Vector<TNode> rcxt, Vector<String> orgStrings,
-			Vector<String> tarStrings, boolean loop) {
+	public Position(Vector<Integer> absPos, Vector<TNode> lcxt, Vector<TNode> rcxt, Vector<String> orgStrings, Vector<String> tarStrings, boolean loop) {
 		this.absPosition = absPos;
 		this.orgStrings.addAll(orgStrings);
 		this.tarStrings.addAll(tarStrings);
@@ -50,8 +49,7 @@ public class Position implements GrammarTreeNode {
 		createTotalOrderVector();
 	}
 
-	public void getString(Vector<TNode> x, int cur, String path, Double value,
-			HashMap<String, Double> smap, boolean isleft) {
+	public void getString(Vector<TNode> x, int cur, String path, Double value, HashMap<String, Double> smap, boolean isleft) {
 		if (fixedlength == 0) {
 			if (!smap.keySet().contains(path)) {
 				String res = UtilTools.escape(path);
@@ -110,8 +108,7 @@ public class Position implements GrammarTreeNode {
 	}
 
 	// option: left or right context
-	public Vector<TNode> mergeCNXT(Vector<TNode> a, Vector<TNode> b,
-			String option) {
+	public Vector<TNode> mergeCNXT(Vector<TNode> a, Vector<TNode> b, String option) {
 		Vector<TNode> xNodes = new Vector<TNode>();
 		if (a == null || b == null)
 			return null;
@@ -177,23 +174,18 @@ public class Position implements GrammarTreeNode {
 		tmpIntegers2.retainAll(b.counters);
 		Vector<TNode> tl = b.leftContextNodes;
 		Vector<TNode> tr = b.rightContextNodes;
-		Vector<TNode> g_lcxtNodes = mergeCNXT(this.leftContextNodes, tl,
-				Segment.LEFTPOS);
-		Vector<TNode> g_rcxtNodes = mergeCNXT(this.rightContextNodes, tr,
-				Segment.RIGHTPOS);
+		Vector<TNode> g_lcxtNodes = mergeCNXT(this.leftContextNodes, tl, Segment.LEFTPOS);
+		Vector<TNode> g_rcxtNodes = mergeCNXT(this.rightContextNodes, tr, Segment.RIGHTPOS);
 		// this.leftContextNodes = g_lcxtNodes;
 		// this.rightContextNodes = g_rcxtNodes;
-		if (tmpIntegers.size() == 0 && g_lcxtNodes == null
-				&& g_rcxtNodes == null)
+		if (tmpIntegers.size() == 0 && g_lcxtNodes == null && g_rcxtNodes == null)
 			return null;
 		boolean loop = this.isinloop || b.isinloop;
 
 		Vector<String> aStrings = new Vector<String>();
 		Vector<String> bStrings = new Vector<String>();
 
-		if (this.orgStrings.size() == 1
-				&& this.orgStrings.size() == b.tarStrings.size()
-				&& this.orgStrings.get(0).compareTo(b.orgStrings.get(0)) == 0) {
+		if (this.orgStrings.size() == 1 && this.orgStrings.size() == b.tarStrings.size() && this.orgStrings.get(0).compareTo(b.orgStrings.get(0)) == 0) {
 			aStrings.addAll(this.orgStrings);
 			String[] s1 = this.tarStrings.get(0).split(",");
 			String[] s2 = b.tarStrings.get(0).split(",");
@@ -224,8 +216,7 @@ public class Position implements GrammarTreeNode {
 			bStrings.addAll(this.tarStrings);
 			bStrings.addAll(b.tarStrings);
 		}
-		return new Position(tmpIntegers, g_lcxtNodes, g_rcxtNodes, aStrings,
-				bStrings, loop);
+		return new Position(tmpIntegers, g_lcxtNodes, g_rcxtNodes, aStrings, bStrings, loop);
 	}
 
 	public void setinLoop(boolean res) {
@@ -247,14 +238,12 @@ public class Position implements GrammarTreeNode {
 			return 1;
 		else {
 			for (int i = 0; i < lsize; i++) {
-				if (leftContextNodes.get(i).text.compareTo("ANYTOK") != 0
-						&& leftContextNodes.get(i).type != TNode.ANYTYP) {
+				if (leftContextNodes.get(i).text.compareTo("ANYTOK") != 0 && leftContextNodes.get(i).type != TNode.ANYTYP) {
 					sum++;
 				}
 			}
 			for (int i = 0; i < rsize; i++) {
-				if (rightContextNodes.get(i).text.compareTo("ANYTOK") != 0
-						&& rightContextNodes.get(i).type != TNode.ANYTYP) {
+				if (rightContextNodes.get(i).text.compareTo("ANYTOK") != 0 && rightContextNodes.get(i).type != TNode.ANYTYP) {
 					sum++;
 				}
 			}
@@ -269,14 +258,12 @@ public class Position implements GrammarTreeNode {
 	public Vector<String> rules = new Vector<String>();
 
 	public String toProgram() {
-/*		if (curState >= rules.size())
-			return "null";
-		String rule = rules.get(curState);
-		if (!isinloop)
-			rule = rule.replace("counter", counters.get(1) + "");
-		curState++;
-		*/
-		
+		/*
+		 * if (curState >= rules.size()) return "null"; String rule =
+		 * rules.get(curState); if (!isinloop) rule = rule.replace("counter",
+		 * counters.get(1) + ""); curState++;
+		 */
+
 		String res = this.VerifySpace(curState);
 		return res;
 	}
@@ -296,6 +283,60 @@ public class Position implements GrammarTreeNode {
 
 	public String VerifySpace(int itercnt) {
 		String rule = "null";
+		rule = getRule(itercnt);
+		if(rule.contains("null"))
+			return "null";
+		if (isinloop) {
+			if (rule.indexOf("counter") == -1) {
+				this.program = "null";
+				return "null";
+			}
+			boolean isvalid = true;
+			for (int j = 0; j < this.orgStrings.size(); j++) {
+				int cnt = 1;
+				String r = "";
+				while (r.indexOf("None") == -1) {
+					String tmpRule = rule.replace("counter", String.valueOf(cnt));
+					ProgramRule programRule = new ProgramRule(tmpRule);
+					String val = programRule.transform(this.orgStrings.get(j));
+					if (val.indexOf("None") != -1)
+						break;
+					r += val + ",";
+					cnt++;
+				}
+				if (r.length() <= 1) {
+					this.program = "null";
+					return "null";
+				}
+				if (this.tarStrings.get(j).compareTo(r.substring(0, r.length() - 1)) != 0) {
+					isvalid = false;
+					break;
+				}
+			}
+			if (isvalid) {
+				this.program = rule;
+				return rule;
+			}
+		} else {
+			ProgramRule pr = new ProgramRule(rule);
+			boolean isValid = true;
+			for (int k = 0; k < this.orgStrings.size(); k++) {
+				String val = String.valueOf(pr.transform(this.orgStrings.get(k)));
+				if (this.tarStrings.get(k).compareTo(val) != 0) {
+					isValid = false;
+					break;
+				}
+			}
+			if (isValid) {
+				this.program = rule;
+				return rule;
+			}
+		}
+		return "null";
+	}
+
+	/*public String VerifySpace(int itercnt) {
+		String rule = "null";
 		int ruleNo = 0;
 		while (ruleNo < this.rules.size()) {
 			rule = getRule(ruleNo);
@@ -312,34 +353,28 @@ public class Position implements GrammarTreeNode {
 					int cnt = 1;
 					String r = "";
 					while (r.indexOf("None") == -1) {
-						String tmpRule = rule.replace("counter",
-								String.valueOf(cnt));
+						String tmpRule = rule.replace("counter", String.valueOf(cnt));
 						ProgramRule programRule = new ProgramRule(tmpRule);
-						String val = programRule.transform(this.orgStrings
-								.get(j));
+						String val = programRule.transform(this.orgStrings.get(j));
 						if (val.indexOf("None") != -1)
 							break;
 						r += val + ",";
 						cnt++;
 					}
-					if (r.length() <= 1)
-					{
+					if (r.length() <= 1) {
 						this.program = "null";
 						return "null";
 					}
-					if (this.tarStrings.get(j).compareTo(
-							r.substring(0, r.length() - 1)) != 0) {
+					if (this.tarStrings.get(j).compareTo(r.substring(0, r.length() - 1)) != 0) {
 						isvalid = false;
 						break;
 					}
 				}
 				if (isvalid) {
-					if (itercnt == 0)
-					{
+					if (itercnt == 0) {
 						this.program = rule;
 						return rule;
-					}
-					else
+					} else
 						itercnt--; // valid number - 1
 				}
 
@@ -347,34 +382,31 @@ public class Position implements GrammarTreeNode {
 				ProgramRule pr = new ProgramRule(rule);
 				boolean isValid = true;
 				for (int k = 0; k < this.orgStrings.size(); k++) {
-					String val = String.valueOf(pr.transform(this.orgStrings
-							.get(k)));
+					String val = String.valueOf(pr.transform(this.orgStrings.get(k)));
 					if (this.tarStrings.get(k).compareTo(val) != 0) {
 						isValid = false;
+						break;
 					}
 				}
 				if (isValid) {
-					if (itercnt == 0)
-					{
+					if (itercnt == 0) {
 						this.program = rule;
 						return rule;
-					}
-					else
+					} else
 						itercnt--;
 				}
 			}
 		}
 		this.program = "null";
 		return "null";
-	}
+	}*/
 
 	public void createTotalOrderVector() {
 		HashMap<String, Double> lMap = new HashMap<String, Double>();
 		HashMap<String, Double> rMap = new HashMap<String, Double>();
 		if (this.leftContextNodes != null) {
 			String path = "";
-			getString(this.leftContextNodes, this.leftContextNodes.size() - 1,
-					path, 1.0, lMap, true);
+			getString(this.leftContextNodes, this.leftContextNodes.size() - 1, path, 1.0, lMap, true);
 		} else {
 			lMap.put("ANY", 1.0);
 		}
@@ -395,14 +427,10 @@ public class Position implements GrammarTreeNode {
 				if (a.compareTo(b) == 0 && a.compareTo("ANY") == 0)
 					continue;
 				Double key = lMap.get(a) + rMap.get(b);
-				reString = String.format(
-						"indexOf(value,\'%s\',\'%s\',1*counter)", a, b);
-				reString2 = String.format(
-						"indexOf(value,\'%s\',\'%s\',2*counter)", a, b);
-				reString3 = String.format(
-						"indexOf(value,\'%s\',\'%s\',3*counter)", a, b);
-				negString = String.format(
-						"indexOf(value,\'%s\',\'%s\',-1*counter)", a, b);
+				reString = String.format("indexOf(value,\'%s\',\'%s\',1*counter)", a, b);
+				reString2 = String.format("indexOf(value,\'%s\',\'%s\',2*counter)", a, b);
+				reString3 = String.format("indexOf(value,\'%s\',\'%s\',3*counter)", a, b);
+				negString = String.format("indexOf(value,\'%s\',\'%s\',-1*counter)", a, b);
 				if (sortedMap.containsKey(key)) {
 					sortedMap.get(key).add(reString);
 					sortedMap.get(key).add(reString2);
@@ -429,9 +457,9 @@ public class Position implements GrammarTreeNode {
 			rules.add(line);
 		}
 	}
+
 	public String toString() {
-		return "(" + UtilTools.print(this.leftContextNodes) + ","
-				+ UtilTools.print(this.rightContextNodes) + ")";
+		return "(" + UtilTools.print(this.leftContextNodes) + "," + UtilTools.print(this.rightContextNodes) + ")";
 	}
 
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
@@ -451,5 +479,23 @@ public class Position implements GrammarTreeNode {
 	@Override
 	public String getProgram() {
 		return this.program;
+	}
+
+	private final int stopthreshold = 100;
+
+	@Override
+	public ArrayList<String> genAtomicPrograms() {
+		ArrayList<String> ret = new ArrayList<String>();
+		int cnt = curState;
+		while (cnt < stopthreshold) {
+			String rule = this.VerifySpace(cnt);
+			if (rule.compareTo("null") == 0) {
+				break;
+			} else {
+				ret.add(rule);
+			}
+			cnt++;
+		}
+		return ret;
 	}
 }

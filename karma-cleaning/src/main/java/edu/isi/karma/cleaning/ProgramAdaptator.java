@@ -14,91 +14,95 @@ import edu.isi.karma.cleaning.Research.Prober;
 public class ProgramAdaptator {
 	public ParseTreeNode program;
 
-	public String adapt(HashMap<String, Traces> exp2Space,
-			HashMap<String, String> exp2program, ArrayList<String[]> examples) {
+	public String adapt(HashMap<String, Partition> exp2Partition, HashMap<String, String> exp2program, ArrayList<String[]> examples) {
 		ArrayList<Integer> keys = chooseLargestSubset(exp2program, examples);
 		String key2 = UtilTools.createkey(examples);
-		if(exp2program.containsKey(key2))
-		{
+		if (exp2program.containsKey(key2)) {
 			return exp2program.get(key2);
 		}
-		if(examples.size() == 1 || keys.size() == 0)
-		{
-			ExampleTraces tool = new ExampleTraces();
-			Traces t1 = tool.createTrace(examples.get(0));
-			String prog = t1.toProgram();
+		if (examples.size() == 1 || keys.size() == 0) {
+			ExamplePartitions tool = new ExamplePartitions();
 			ArrayList<String[]> tmpKey = new ArrayList<String[]>();
 			tmpKey.add(examples.get(0));
 			String tK = UtilTools.createkey(tmpKey);
-			exp2Space.put(tK, t1);
-			exp2program.put(tK, prog);
+
+			Partition p1 = null;
+			String prog = null;
+			if (exp2Partition.containsKey(tK)) {
+				p1 = getProgramSpace(tK, exp2Partition);
+			} else {
+				p1 = tool.createPartition(examples.get(0));
+				exp2Partition.put(tK, p1);
+
+			}
+			if (exp2program.containsKey(tK)) {
+				prog = getProgram(tK, exp2program);
+			} else {
+				prog = p1.toProgram();
+				exp2program.put(tK, prog);
+			}
 			keys.add(0);
-			//return prog;
+			return prog;
 		}
 		ArrayList<String[]> inExps = new ArrayList<String[]>();
 		for (Integer i : keys) {
 			inExps.add(examples.get(i));
 		}
 		String subkey = this.formKey(examples, keys, true);
-		Traces wholespace = getProgramSpace(subkey, exp2Space);
+		Partition wholespace = getProgramSpace(subkey, exp2Partition);
 		ArrayList<String[]> outExps = getRestExamples(examples, keys);
-		String prog =  getProgram(subkey, exp2program);
-		
-		for(String[] exp:outExps)
-		{
-			if(prog.compareTo("null")==0)
-			{
+		String prog = getProgram(subkey, exp2program);
+
+		for (String[] exp : outExps) {
+			if (prog.compareTo("null") == 0) {
 				System.out.println("cannot adapt the program");
 				break;
 			}
-			prog = adapteOneExample(wholespace, exp, prog, inExps, exp2Space, exp2program);
+			prog = adapteOneExample(wholespace, exp, prog, inExps, exp2Partition, exp2program);
 			inExps.add(exp);
 			String nkey = formKey(inExps, new ArrayList<Integer>(), false);
-			wholespace = exp2Space.get(nkey);			
+			wholespace = exp2Partition.get(nkey);
 		}
 		return prog;
 	}
 
-	public String adapteOneExample(Traces wholespace, String[] exp,
-			String program,ArrayList<String[]> inExps,HashMap<String, Traces> exp2Space, HashMap<String, String> exp2program) {
-		ProgramParser programParser = new ProgramParser();
-		ParseTreeNode ptree = programParser.parse(program);
-		// add unknown examples incrementally
+	public String adapteOneExample(Partition wholespace, String[] exp, String program, ArrayList<String[]> inExps, HashMap<String, Partition> exp2Partition, HashMap<String, String> exp2program) {
 		String evres = "";
-		evres = ptree.eval(exp[0]);
+		ProgramRule exec = new ProgramRule(program);
+		evres = exec.transform(exp[0]);
 		ArrayList<String[]> exps = new ArrayList<String[]>();
+		exps.add(exp);
 		String skey = UtilTools.createkey(exps);
-		Traces tIn = null;
-		if(exp2Space.containsKey(skey))
-		{
-			tIn = exp2Space.get(skey); 
+		HashMap<String, ArrayList<String>> prog2Evals = new HashMap<String, ArrayList<String>>();
+		HashMap<String, String> prog2Nevals = new HashMap<String, String>();
+		Partition tIn = null;
+		if (exp2Partition.containsKey(skey)) {
+			tIn = exp2Partition.get(skey);
+		} else {
+			tIn = createSinglePartition(exp);
+			exp2Partition.put(skey, tIn);
 		}
-		else
-		{
-			tIn = createSingleTrace(exp); 
-		}
-		HashMap<String, ArrayList<String>> prog2Evals = new HashMap<String,ArrayList<String>>();
-		HashMap<String, String> prog2Nevals = new HashMap<String,String>();
-		if(evres.compareTo(exp[1]) == 0)
-		{
-			Traces nTraces = wholespace.mergewith(tIn);
+		if (evres.compareTo(exp[1]) == 0) {
+			Partition nTraces = wholespace.mergewith(tIn);
 			ArrayList<String[]> expr = new ArrayList<String[]>();
 			expr.add(exp);
 			expr.addAll(inExps);
-			String nKey = formKey(expr,new ArrayList<Integer>(), false);				
+			String nKey = formKey(expr, new ArrayList<Integer>(), false);
 			exp2program.put(nKey, program);
-			exp2Space.put(nKey, nTraces);
+			exp2Partition.put(nKey, nTraces);
 			return program;
 		}
-		ArrayList<ArrayList<Patcher>> tree_refers = createCandidates(ptree, tIn);
-		//prepare the necessary information 
+		ProgramParser programParser = new ProgramParser();
+		ParseTreeNode ptree = programParser.parse(program);
+		ptree.eval(exp[0]);
+
+		ArrayList<ArrayList<Patcher>> tree_refers = createCandidates(ptree, tIn.trace);
+		// prepare the necessary information
 		Vector<String> orgs = new Vector<String>();
-		//get all original values
-		for(GrammarTreeNode node: wholespace.traceline.values().iterator().next().body)
-		{
-			Segment xn = (Segment)node;
-			if(!xn.isConstSegment())
-			{
+		// get all original values
+		for (GrammarTreeNode node : wholespace.trace.traceline.values().iterator().next().body) {
+			Segment xn = (Segment) node;
+			if (!xn.isConstSegment()) {
 				orgs = xn.section.get(0).orgStrings;
 				break;
 			}
@@ -108,27 +112,25 @@ public class ProgramAdaptator {
 			ArrayList<String> tmpTars = new ArrayList<String>();
 			for (String org : orgs) {
 				ProgramRule tpp = new ProgramRule(node.value);
-				String tmpSeg= tpp.transform(org);
+				String tmpSeg = tpp.transform(org);
 				tmpTars.add(tmpSeg);
 			}
 			prog2Evals.put(node.value, tmpTars);
 		}
 		for (ParseTreeNode node : progs) {
 			ProgramRule tpp = new ProgramRule(node.value);
-			String tmpSeg= tpp.transform(exp[0]);			
+			String tmpSeg = tpp.transform(exp[0]);
 			prog2Nevals.put(node.value, tmpSeg);
 		}
-		//nothing to change	
 		for (ArrayList<Patcher> tTree : tree_refers) {
-			Traces cwspace = wholespace;// clone the original space
-			ArrayList<Patcher> errNodes = align(tTree, cwspace, inExps,prog2Evals,prog2Nevals);
-			if(errNodes == null)
-			{
+			Partition cwspace = wholespace;
+			ArrayList<Patcher> errNodes = align(tTree, cwspace.trace, inExps, prog2Evals, prog2Nevals);
+			if (errNodes == null) {
 				return "null";
 			}
 			// get the correct parts
 			boolean valid = true;
-			if(errNodes.size() == 0) // no solution exists
+			if (errNodes.size() == 0) // no solution exists
 				valid = false;
 			for (Patcher pat : errNodes) {
 				GrammarTreeNode newSpace = updateNewSpace(pat);
@@ -138,45 +140,42 @@ public class ProgramAdaptator {
 					break;
 				}
 			}
-			Prober.tracePatchers(program, errNodes, inExps,exp,valid,exp2program);
+			Prober.tracePatchers(program, errNodes, inExps, exp, valid, exp2program);
 			if (valid) {
-				// NEED TO UPDATE THE SUBSPACE RATHER THAN THE WHOLE ONE!!!
-				Traces nTraces = cwspace.mergewith(tIn);
+				Partition nPartition = cwspace.mergewith(tIn);
 				ArrayList<String[]> expr = new ArrayList<String[]>();
 				expr.add(exp);
 				expr.addAll(inExps);
-				String nKey = formKey(expr,new ArrayList<Integer>(), false);				
+				String nKey = formKey(expr, new ArrayList<Integer>(), false);
 				// return the successfully adapted program
 				String fprog = this.applyPatch(ptree, errNodes);
-				//update session repo 
+				if(!validProgram(fprog, expr)){
+					return "null";
+				}
+				// update session repo
 				exp2program.put(nKey, fprog);
-				exp2Space.put(nKey, nTraces);
+				exp2Partition.put(nKey, nPartition);
 				return fprog;
 			}
 		}
 		return "null";
 	}
-	public ArrayList<Patcher> refinePositionLevel(Vector<GrammarTreeNode> gtruth, Vector<ParseTreeNode> pNodes, Vector<GrammarTreeNode> gNodes)
-	{
+
+	public ArrayList<Patcher> refinePositionLevel(Vector<GrammarTreeNode> gtruth, Vector<ParseTreeNode> pNodes, Vector<GrammarTreeNode> gNodes) {
 		ArrayList<Patcher> res = new ArrayList<Patcher>();
-		if(pNodes.size()!= gtruth.size())
-		{
+		if (pNodes.size() != gtruth.size()) {
 			Patcher nPatcher = new Patcher();
 			nPatcher.groundTruth = new Vector<GrammarTreeNode>(gtruth);
 			nPatcher.patchSpace = gNodes;
 			nPatcher.programNodes = pNodes;
 			res.add(nPatcher);
 			return res;
-		}
-		else
-		{
-			for(int i = 0; i < gtruth.size(); i++)
-			{
+		} else {
+			for (int i = 0; i < gtruth.size(); i++) {
 				Patcher nPatcher = new Patcher();
-				Segment seg = ((Segment)gtruth.get(i));
-				//check if it constant segment
-				if(seg.section.size() == 0)
-				{
+				Segment seg = ((Segment) gtruth.get(i));
+				// check if it constant segment
+				if (seg.section.size() == 0) {
 					Vector<GrammarTreeNode> gs = new Vector<GrammarTreeNode>();
 					gs.add(gNodes.get(i));
 					Vector<ParseTreeNode> ps = new Vector<ParseTreeNode>();
@@ -188,20 +187,18 @@ public class ProgramAdaptator {
 					nPatcher.programNodes = ps;
 					res.add(nPatcher);
 					return res;
-				}				
+				}
 				String sVal = pNodes.get(i).children.get(0).tmpEval;
 				String eVal = pNodes.get(i).children.get(1).tmpEval;
-				String tsVal =""+seg.section.get(0).pair[0].absPosition.get(0);
-				String teVal =""+seg.section.get(0).pair[1].absPosition.get(0);
-				Segment segSpace = (Segment)gNodes.get(i);
+				String tsVal = "" + seg.section.get(0).pair[0].absPosition.get(0);
+				String teVal = "" + seg.section.get(0).pair[1].absPosition.get(0);
+				Segment segSpace = (Segment) gNodes.get(i);
 				Vector<Section> secs = segSpace.section;//
-				//fix end position expression
-				if(tsVal.compareTo(sVal)==0)
-				{
+				// fix end position expression
+				if (tsVal.compareTo(sVal) == 0) {
 					ArrayList<Position> ap = new ArrayList<Position>();
-					for(int k = 0; k < secs.size(); k++)
-					{
-						if(secs.get(k).pair[1]!=null)
+					for (int k = 0; k < secs.size(); k++) {
+						if (secs.get(k).pair[1] != null)
 							ap.add(secs.get(k).pair[1]);
 					}
 					PositionSet pos = new PositionSet(ap);
@@ -215,13 +212,10 @@ public class ProgramAdaptator {
 					nPatcher.patchSpace = gs;
 					nPatcher.programNodes = ps;
 					res.add(nPatcher);
-				}
-				else if(teVal.compareTo(eVal)==0)
-				{
+				} else if (teVal.compareTo(eVal) == 0) {
 					ArrayList<Position> ap = new ArrayList<Position>();
-					for(int k = 0; k < secs.size(); k++)
-					{
-						if(secs.get(k).pair[0]!=null)
+					for (int k = 0; k < secs.size(); k++) {
+						if (secs.get(k).pair[0] != null)
 							ap.add(secs.get(k).pair[0]);
 					}
 					PositionSet pos = new PositionSet(ap);
@@ -235,10 +229,8 @@ public class ProgramAdaptator {
 					nPatcher.patchSpace = gs;
 					nPatcher.programNodes = ps;
 					res.add(nPatcher);
-				}
-				else
-				{
-					//directly update the segment
+				} else {
+					// directly update the segment
 					Vector<GrammarTreeNode> gs = new Vector<GrammarTreeNode>();
 					gs.add(gNodes.get(i));
 					Vector<ParseTreeNode> ps = new Vector<ParseTreeNode>();
@@ -249,67 +241,58 @@ public class ProgramAdaptator {
 					nPatcher.patchSpace = gs;
 					nPatcher.programNodes = ps;
 					res.add(nPatcher);
-				}	
+				}
 			}
 		}
 		return res;
 	}
-	public ArrayList<Patcher> refinePather(Patcher pat, Vector<GrammarTreeNode> gtruth, ArrayList<Path> pathes)
-	{
+
+	public ArrayList<Patcher> refinePather(Patcher pat, Vector<GrammarTreeNode> gtruth, ArrayList<Path> pathes) {
 		ArrayList<Patcher> res = new ArrayList<Patcher>();
-		if(pathes.size() == 0)
-		{
+		if (pathes.size() == 0) {
 			return res;
 		}
-		HashMap<Integer, int[]> prog2Sections = new HashMap<Integer,int[]>();
-		//consolidate the paths into one arraylist
-		//only one segmentation exists
+		HashMap<Integer, int[]> prog2Sections = new HashMap<Integer, int[]>();
+		// consolidate the paths into one arraylist
+		// only one segmentation exists
 		Vector<GrammarTreeNode> xtemp = convertPathtoSpace(pathes);
-		//detect the parts that are correct
-		for(Path p:pathes)
-		{
+		// detect the parts that are correct
+		for (Path p : pathes) {
 			int[] pog2Sects = p.indicator;
-			for(int i = 0; i < pog2Sects.length-1; i ++)
-			{
-				//match the (i-1)-th end and i-th start position
-				if(pog2Sects[i] >= 0 && pog2Sects[i+1] >=0)
-				{
-					//check whehther the evaluated result is correct.
-					int[] secR = {pog2Sects[i],pog2Sects[i+1]};					
+			for (int i = 0; i < pog2Sects.length - 1; i++) {
+				// match the (i-1)-th end and i-th start position
+				if (pog2Sects[i] >= 0 && pog2Sects[i + 1] >= 0) {
+					// check whehther the evaluated result is correct.
+					int[] secR = { pog2Sects[i], pog2Sects[i + 1] };
 					String expected = "";
-					for(int j = secR[0]; j <secR[1]; j++ )
-					{
-						expected += ((Segment)gtruth.get(j)).tarString;
+					for (int j = secR[0]; j < secR[1]; j++) {
+						expected += ((Segment) gtruth.get(j)).tarString;
 					}
 					String evaled = p.evalNewExp.get(i);
-					//if yes, detect a reusable subprogram
-					if(evaled.compareTo(expected) == 0)
-					{
-						prog2Sections.put(i, secR);		
-					}											
+					// if yes, detect a reusable subprogram
+					if (evaled.compareTo(expected) == 0) {
+						prog2Sections.put(i, secR);
+					}
 				}
-			}		
+			}
 		}
-		//split the arraylist into several smaller lists
+		// split the arraylist into several smaller lists
 		int start = 0;
 		int progStart = 0;
-		for(int i = 0; i < pat.programNodes.size(); i++)
-		{
-			if(prog2Sections.containsKey(i))
-			{
+		for (int i = 0; i < pat.programNodes.size(); i++) {
+			if (prog2Sections.containsKey(i)) {
 				int end = prog2Sections.get(i)[0];
-				Vector<GrammarTreeNode> gtru = new Vector<GrammarTreeNode>(pat.groundTruth.subList(start, end+1));
-				Vector<GrammarTreeNode> x = new Vector<GrammarTreeNode>(xtemp.subList(start, end+1));
-				Vector<ParseTreeNode> pNodes = new Vector<ParseTreeNode>(pat.programNodes.subList(progStart, i+1));
+				Vector<GrammarTreeNode> gtru = new Vector<GrammarTreeNode>(pat.groundTruth.subList(start, end + 1));
+				Vector<GrammarTreeNode> x = new Vector<GrammarTreeNode>(xtemp.subList(start, end + 1));
+				Vector<ParseTreeNode> pNodes = new Vector<ParseTreeNode>(pat.programNodes.subList(progStart, i + 1));
 				ArrayList<Patcher> tres = refinePositionLevel(gtru, pNodes, x);
-				start = prog2Sections.get(i)[1]+1;
-				progStart = i+1;
+				start = prog2Sections.get(i)[1] + 1;
+				progStart = i + 1;
 				res.addAll(tres);
 			}
 		}
-		//add the last section if there is any
-		if(progStart < pat.programNodes.size())
-		{
+		// add the last section if there is any
+		if (progStart < pat.programNodes.size()) {
 			int end = pat.groundTruth.size();
 			Vector<GrammarTreeNode> gtru = new Vector<GrammarTreeNode>(pat.groundTruth.subList(start, end));
 			Vector<GrammarTreeNode> x = new Vector<GrammarTreeNode>(xtemp.subList(start, end));
@@ -319,13 +302,12 @@ public class ProgramAdaptator {
 		}
 		return res;
 	}
+
 	public String applyPatch(ParseTreeNode tree, ArrayList<Patcher> pats) {
 		Iterator<Patcher> xiter = pats.iterator();
-		while(xiter.hasNext())
-		{
+		while (xiter.hasNext()) {
 			Patcher xPatcher = xiter.next();
-			if(xPatcher.replaceNodes.size() == 1 && xPatcher.programNodes.size()==1)
-			{
+			if (xPatcher.replaceNodes.size() == 1 && xPatcher.programNodes.size() == 1) {
 				ParseTreeNode pNode = xPatcher.programNodes.get(0);
 				ParseTreeNode rpNode = xPatcher.replaceNodes.get(0);
 				int x = pNode.parent.children.indexOf(pNode);
@@ -364,7 +346,18 @@ public class ProgramAdaptator {
 		tree.children = nChildren;
 		return tree.toProgram();
 	}
-
+	public boolean validProgram(String prog, ArrayList<String[]> exps){
+		boolean res = true;
+		ProgramRule pr = new ProgramRule(prog);
+		for(String[] exp: exps){
+			String ret = pr.transform(exp[0]);
+			if(ret.compareTo(exp[1])!= 0){
+				res = false;
+				break;
+			}
+		}
+		return res;
+	}
 	public boolean updateProgram(Patcher pat, GrammarTreeNode space) {
 		if (space == null)
 			return false;
@@ -390,32 +383,26 @@ public class ProgramAdaptator {
 		GrammarTreeNode res = null;
 		Vector<GrammarTreeNode> space = pat.patchSpace;
 		Vector<GrammarTreeNode> groundTruth = pat.groundTruth;
-		if(space.size() == groundTruth.size())
-		{
-			if(space.size() == 1)
-			{
+		if (space.size() == groundTruth.size()) {
+			if (space.size() == 1) {
 				GrammarTreeNode node = space.get(0).mergewith(groundTruth.get(0));
 				res = node;
-			}
-			else
-			{
+			} else {
 				Template x = new Template(space);
 				Template y = new Template(groundTruth);
-				Template r = (Template)x.mergewith(y);
+				Template r = (Template) x.mergewith(y);
 				res = r;
 			}
 		}
 		return res;
 	}
-	public ArrayList<ArrayList<String>> transpose(ArrayList<ArrayList<String>> vals,ArrayList<String> tarStrings)
-	{
+
+	public ArrayList<ArrayList<String>> transpose(ArrayList<ArrayList<String>> vals, ArrayList<String> tarStrings) {
 		ArrayList<ArrayList<String>> res = new ArrayList<ArrayList<String>>();
-		for(int i = 0; i < vals.get(0).size(); i++)
-		{
+		for (int i = 0; i < vals.get(0).size(); i++) {
 			ArrayList<String> line = new ArrayList<String>();
 			String total = "";
-			for( int j = 0; j < vals.size(); j++)
-			{
+			for (int j = 0; j < vals.size(); j++) {
 				total += vals.get(j).get(i);
 				line.add(vals.get(j).get(i));
 			}
@@ -424,28 +411,24 @@ public class ProgramAdaptator {
 		}
 		return res;
 	}
-	public ArrayList<Patcher> align(ArrayList<Patcher> tTree, Traces wSpace,
-			ArrayList<String[]> preExps,HashMap<String, ArrayList<String>> prog2Eval, HashMap<String, String> prog2New) {
+
+	public ArrayList<Patcher> align(ArrayList<Patcher> tTree, Traces wSpace, ArrayList<String[]> preExps, HashMap<String, ArrayList<String>> prog2Eval, HashMap<String, String> prog2New) {
 		ArrayList<Patcher> res = new ArrayList<Patcher>();
-		/*Vector<String> orgs = new Vector<String>();
-		//get all original values
-		for(GrammarTreeNode node: wSpace.traceline.values().iterator().next().body)
-		{
-			Segment xn = (Segment)node;
-			if(!xn.isConstSegment())
-			{
-				System.out.println(""+xn.section.toString());
-				orgs = xn.section.get(0).orgStrings;
-			}
-		}*/
+		/*
+		 * Vector<String> orgs = new Vector<String>(); //get all original values
+		 * for(GrammarTreeNode node:
+		 * wSpace.traceline.values().iterator().next().body) { Segment xn =
+		 * (Segment)node; if(!xn.isConstSegment()) {
+		 * System.out.println(""+xn.section.toString()); orgs =
+		 * xn.section.get(0).orgStrings; } }
+		 */
 		for (Patcher pat : tTree) {
-			//prepare the raw data
+			// prepare the raw data
 			ArrayList<String> tarStrings = new ArrayList<String>();
 			ArrayList<ArrayList<String>> tarSegs = new ArrayList<ArrayList<String>>();
 			ArrayList<String> evalNewExp = new ArrayList<String>();
 			ArrayList<ArrayList<String>> tmp = new ArrayList<ArrayList<String>>();
-			for(ParseTreeNode node: pat.programNodes)
-			{
+			for (ParseTreeNode node : pat.programNodes) {
 				ArrayList<String> lvals = prog2Eval.get(node.value);
 				evalNewExp.add(prog2New.get(node.value));
 				tmp.add(lvals);
@@ -458,16 +441,14 @@ public class ProgramAdaptator {
 			for (Integer len : tmpts.keySet()) {
 				Vector<GrammarTreeNode> tBody = tmpts.get(len).body;
 				ArrayList<Path> paths = extractPath(tBody, tarStrings, tarSegs, evalNewExp);
-				for(Path p: paths)
-				{
-					if(p.sections.size() == groundTruth.size())
-					{
+				for (Path p : paths) {
+					if (p.sections.size() == groundTruth.size()) {
 						allPaths.add(p);
 					}
 				}
 			}
 			ArrayList<Patcher> temPats = refinePather(pat, groundTruth, allPaths);
-			if(temPats.size() == 0)
+			if (temPats.size() == 0)
 				return null;
 			res.addAll(temPats);
 		}
@@ -488,16 +469,14 @@ public class ProgramAdaptator {
 			res.add(line);
 		}
 		Traces uTraces = new Traces();
-		Vector<GrammarTreeNode> tempres = new Vector<GrammarTreeNode>(); 
-		if(res.size() > 0)
-		{
+		Vector<GrammarTreeNode> tempres = new Vector<GrammarTreeNode>();
+		if (res.size() > 0) {
 			tempres = uTraces.consolidate_tool(res);
 		}
 		return tempres;
 	}
 
-	public ArrayList<Path> extractPath(Vector<GrammarTreeNode> tBody,
-			ArrayList<String> tarStrings,ArrayList<ArrayList<String>> tarSegs, ArrayList<String> evalNewExp) {
+	public ArrayList<Path> extractPath(Vector<GrammarTreeNode> tBody, ArrayList<String> tarStrings, ArrayList<ArrayList<String>> tarSegs, ArrayList<String> evalNewExp) {
 		ArrayList<Path> res = new ArrayList<Path>();
 		ArrayList<Path> seeds = new ArrayList<Path>();
 		// initialize the seeds
@@ -534,10 +513,9 @@ public class ProgramAdaptator {
 					finished = false;
 					break;
 				}
-				
+
 			}
-			if (finished)
-			{
+			if (finished) {
 				res.add(path);
 				continue;
 			}
@@ -552,8 +530,7 @@ public class ProgramAdaptator {
 	// -1 failed, 0 succeed, 1 finished
 	public ArrayList<Path> updatePath(Path np, Vector<GrammarTreeNode> tBody) {
 		ArrayList<Path> res = new ArrayList<Path>();
-		if(np.tmplateMarker >= tBody.size())
-		{
+		if (np.tmplateMarker >= tBody.size()) {
 			return res;
 		}
 		Segment seg = (Segment) tBody.get(np.tmplateMarker);
@@ -569,8 +546,7 @@ public class ProgramAdaptator {
 	}
 
 	// if anyone is not a prefix of the other return null
-	public ArrayList<Integer> updateMarker(Vector<String> subs,
-			ArrayList<String> target, ArrayList<Integer> markers) {
+	public ArrayList<Integer> updateMarker(Vector<String> subs, ArrayList<String> target, ArrayList<Integer> markers) {
 		ArrayList<Integer> res = new ArrayList<Integer>();
 		for (int i = 0; i < subs.size(); i++) {
 			String sub = subs.get(i);
@@ -586,8 +562,7 @@ public class ProgramAdaptator {
 
 	// identify the correspondence between the subprograms and the concrete
 	// instance tree
-	public ArrayList<ArrayList<Patcher>> createCandidates(ParseTreeNode tree,
-			Traces concrete) {
+	public ArrayList<ArrayList<Patcher>> createCandidates(ParseTreeNode tree, Traces concrete) {
 		ArrayList<ArrayList<Patcher>> res = new ArrayList<ArrayList<Patcher>>();
 		// get all the parseTree segments
 		ArrayList<ParseTreeNode> segments = tree.getChildren();
@@ -627,8 +602,7 @@ public class ProgramAdaptator {
 		return res;
 	}
 
-	public void multipleAlign(ArrayList<Patcher> list,
-			Vector<GrammarTreeNode> tbody, ArrayList<ParseTreeNode> segments) {
+	public void multipleAlign(ArrayList<Patcher> list, Vector<GrammarTreeNode> tbody, ArrayList<ParseTreeNode> segments) {
 		// find anchor point, from the start point and the end
 		int progS = 0;
 		int tS = 0;
@@ -642,20 +616,20 @@ public class ProgramAdaptator {
 				break;
 			}
 		}
-		for (int i = 0; i < tbody.size() && i < segments.size()&& i>progS && i> tS; i++) {
-			String gTruth = ((Segment) tbody.get(tbody.size()-1-i)).tarString;
-			if (segments.get(segments.size()-1-i).tmpEval.compareTo(gTruth) == 0) {
-				endSpan = i+1;
+		for (int i = 0; i < tbody.size() && i < segments.size() && i > progS && i > tS; i++) {
+			String gTruth = ((Segment) tbody.get(tbody.size() - 1 - i)).tarString;
+			if (segments.get(segments.size() - 1 - i).tmpEval.compareTo(gTruth) == 0) {
+				endSpan = i + 1;
 			} else {
 				break;
 			}
 		}
 		Vector<GrammarTreeNode> grt = new Vector<GrammarTreeNode>();
-		for (int i = tS; i <= tbody.size()-1-endSpan; i++) {
+		for (int i = tS; i <= tbody.size() - 1 - endSpan; i++) {
 			grt.add(tbody.get(i));
 		}
 		Vector<ParseTreeNode> progs = new Vector<ParseTreeNode>();
-		for (int i = progS; i <= segments.size()-1-endSpan; i++) {
+		for (int i = progS; i <= segments.size() - 1 - endSpan; i++) {
 			progs.add(segments.get(i));
 		}
 		if (grt.size() > 0 && progs.size() > 0) {
@@ -666,13 +640,12 @@ public class ProgramAdaptator {
 		}
 	}
 
-	public Traces createSingleTrace(String[] exp) {
-		ExampleTraces eTraces = new ExampleTraces();
-		return eTraces.createTrace(exp);
+	public Partition createSinglePartition(String[] exp) {
+		ExamplePartitions ePs = new ExamplePartitions();
+		return ePs.createPartition(exp);
 	}
 
-	public ArrayList<Integer> chooseLargestSubset(
-			HashMap<String, String> exp2program, ArrayList<String[]> examples) {
+	public ArrayList<Integer> chooseLargestSubset(HashMap<String, String> exp2program, ArrayList<String[]> examples) {
 		ArrayList<Integer> res = new ArrayList<Integer>();
 		int maxsize = -1;
 		for (String key : exp2program.keySet()) {
@@ -682,36 +655,33 @@ public class ProgramAdaptator {
 				if (key.indexOf(line) != -1)
 					tmp.add(i);
 			}
-			if (tmp.size() > maxsize && formKey(examples, tmp, true).compareTo(key)==0) {
+			if (tmp.size() > maxsize && formKey(examples, tmp, true).compareTo(key) == 0) {
 				res = tmp;
 				maxsize = tmp.size();
 			}
 		}
 		return res;
 	}
-	public String getProgram(String subkey, HashMap<String, String> exp2Prog)
-	{
+
+	public String getProgram(String subkey, HashMap<String, String> exp2Prog) {
 		String prog = "";
-		//most compatible program
+		// most compatible program
 		int msize = -1;
-		for(String key: exp2Prog.keySet())
-		{
+		for (String key : exp2Prog.keySet()) {
 			int sz = key.split("\\*").length;
-			if(sz > msize &&UtilTools.iscovered(key, subkey))
-			{
+			if (sz > msize && UtilTools.iscovered(key, subkey)) {
 				msize = sz;
 				prog = exp2Prog.get(key);
 			}
 		}
 		return prog;
 	}
-	public Traces getProgramSpace(String subkey,
-			HashMap<String, Traces> exp2space) {
+
+	public Partition getProgramSpace(String subkey, HashMap<String, Partition> exp2space) {
 		return exp2space.get(subkey);
 	}
 
-	public ArrayList<String[]> getRestExamples(ArrayList<String[]> examples,
-			ArrayList<Integer> keys) {
+	public ArrayList<String[]> getRestExamples(ArrayList<String[]> examples, ArrayList<Integer> keys) {
 		ArrayList<String[]> restExp = new ArrayList<String[]>();
 		for (int i = 0; i < examples.size(); i++) {
 			if (!keys.contains(i)) {
@@ -721,8 +691,7 @@ public class ProgramAdaptator {
 		return restExp;
 	}
 
-	public String formKey(ArrayList<String[]> examples,
-			ArrayList<Integer> keys, boolean include) {
+	public String formKey(ArrayList<String[]> examples, ArrayList<Integer> keys, boolean include) {
 		ArrayList<String[]> resList = new ArrayList<String[]>();
 		if (include) {
 			for (int i = 0; i < examples.size(); i++) {
@@ -742,11 +711,10 @@ public class ProgramAdaptator {
 	}
 }
 
-
 class Path {
 	ArrayList<Section> sections = new ArrayList<Section>();
 	ArrayList<int[]> progCrepLandMarkers = new ArrayList<int[]>();
-	//the individual evaluation results for the new example
+	// the individual evaluation results for the new example
 	ArrayList<String> evalNewExp = new ArrayList<String>();
 	// record the progress for this path on all examples
 	ArrayList<Integer> markers = new ArrayList<Integer>();
@@ -754,44 +722,37 @@ class Path {
 	ArrayList<String> tarStrings = new ArrayList<String>();
 	// tmplate position marker
 	int tmplateMarker = -1;
-	//each evaled segments
+	// each evaled segments
 	ArrayList<ArrayList<String>> tarSegs = new ArrayList<ArrayList<String>>();
 	ArrayList<ArrayList<Integer>> landMarkers = new ArrayList<ArrayList<Integer>>();
-	//point to the start position of the segments
-	//0 unexplored , positive number matched, -2 passed without match
+	// point to the start position of the segments
+	// 0 unexplored , positive number matched, -2 passed without match
 	int[] indicator = null;
 
-	public Path(ArrayList<Section> sec, ArrayList<Integer> markers,
-			ArrayList<String> tarStrings, int tMarker,ArrayList<ArrayList<String>> tarSegs,ArrayList<String> evalNewExp) 
-	{
+	public Path(ArrayList<Section> sec, ArrayList<Integer> markers, ArrayList<String> tarStrings, int tMarker, ArrayList<ArrayList<String>> tarSegs, ArrayList<String> evalNewExp) {
 		this.sections = sec;
 		this.markers = markers;
 		this.tarStrings = tarStrings;
 		this.tmplateMarker = tMarker;
 		this.tarSegs = tarSegs;
 		this.evalNewExp = evalNewExp;
-		indicator = new int[evalNewExp.size()+1];
-		for(int i = 0; i < indicator.length; i++)
-		{
+		indicator = new int[evalNewExp.size() + 1];
+		for (int i = 0; i < indicator.length; i++) {
 			indicator[i] = 0;
 		}
 		processData();
 	}
-	
-	public void processData()
-	{
+
+	public void processData() {
 		ArrayList<Integer> xArrayList = new ArrayList<Integer>();
-		for(int i = 0; i < tarSegs.size(); i++)
-		{
+		for (int i = 0; i < tarSegs.size(); i++) {
 			xArrayList.add(0);
 		}
 		landMarkers.add(xArrayList);
-		for(int i = 0; i < tarSegs.get(0).size(); i++)
-		{
+		for (int i = 0; i < tarSegs.get(0).size(); i++) {
 			ArrayList<Integer> tmp = new ArrayList<Integer>();
-			for(int j = 0; j < tarSegs.size(); j ++)
-			{
-				int curLen = landMarkers.get(i).get(j)+tarSegs.get(j).get(i).length();
+			for (int j = 0; j < tarSegs.size(); j++) {
+				int curLen = landMarkers.get(i).get(j) + tarSegs.get(j).get(i).length();
 				tmp.add(curLen);
 			}
 			landMarkers.add(tmp);
@@ -799,60 +760,52 @@ class Path {
 	}
 
 	// 0 equal 1 x partially pass y, -1 x less than y
-	public int compareMarker(ArrayList<Integer> x, ArrayList<Integer> y)
-	{
-		if(x.size() != y.size())
-		{
+	public int compareMarker(ArrayList<Integer> x, ArrayList<Integer> y) {
+		if (x.size() != y.size()) {
 			System.out.println("The Landmarker size should match");
 		}
 		boolean equal = true;
-		for(int i = 0; i < x.size(); i++)
-		{
-			if(x.get(i) > y.get(i))
-			{
+		for (int i = 0; i < x.size(); i++) {
+			if (x.get(i) > y.get(i)) {
 				return 1;
 			}
-			if(x.get(i)< y.get(i))
-			{
+			if (x.get(i) < y.get(i)) {
 				equal = false;
 			}
 		}
-		if(equal)
+		if (equal)
 			return 0;
 		else
 			return -1;
 	}
-	public void setIndicator(int[] indic)
-	{
+
+	public void setIndicator(int[] indic) {
 		this.indicator = indic;
 	}
+
 	public Path updatePath(Section sec, ArrayList<Integer> markers) {
-		//this.sections.add(sec);
+		// this.sections.add(sec);
 		ArrayList<Section> xsections = new ArrayList<Section>();
 		xsections.addAll(this.sections);
 		xsections.add(sec);
 		ArrayList<Integer> nmarkers = new ArrayList<Integer>();
 		nmarkers = markers;
-		int mark = this.tmplateMarker+1;
-		//update the mapping info
+		int mark = this.tmplateMarker + 1;
+		// update the mapping info
 		int ptr = 0;
-		while(ptr < indicator.length-1 && indicator[ptr]!= -1)
-		{
+		while (ptr < indicator.length - 1 && indicator[ptr] != -1) {
 			ptr++;
 		}
 		ArrayList<Integer> nextMarker = landMarkers.get(ptr);
 		int cres = this.compareMarker(markers, nextMarker);
-		//check whether it reaches a landmark
-		if(cres == 0)
-		{
-			indicator[ptr] = xsections.size(); 
-		}
-		else if(cres == 1)
-		{
+		// check whether it reaches a landmark
+		if (cres == 0) {
+			indicator[ptr] = xsections.size();
+		} else if (cres == 1) {
 			indicator[ptr] = -2;
 		}
-		//update the progCrepLandmarker with the new portion
-		Path np = new Path(xsections, nmarkers, tarStrings, mark,this.tarSegs,evalNewExp);
+		// update the progCrepLandmarker with the new portion
+		Path np = new Path(xsections, nmarkers, tarStrings, mark, this.tarSegs, evalNewExp);
 		np.setIndicator(this.indicator);
 		return np;
 	}

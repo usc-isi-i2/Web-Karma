@@ -132,6 +132,11 @@ public class Partition implements GrammarTreeNode {
 		return r;
 	}
 
+	public ArrayList<String> genAtomicPrograms(){
+		ArrayList<String> ret = new ArrayList<String>();
+		ret.addAll(trace.genAtomicPrograms());
+		return ret;
+	}
 	public String toProgram() {
 		String res =  this.trace.toProgram();
 		this.program = res;
