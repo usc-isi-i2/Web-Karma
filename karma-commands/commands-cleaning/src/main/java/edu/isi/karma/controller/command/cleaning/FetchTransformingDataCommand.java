@@ -23,12 +23,11 @@ import edu.isi.karma.rep.Workspace;
 
 public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 
-	private static Logger logger = LoggerFactory
-			.getLogger(FetchTransformingDataCommand.class);
+	private static Logger logger = LoggerFactory.getLogger(FetchTransformingDataCommand.class);
 	private final String hNodeId;
+	private static final int max_sample_cnt = 100;
 
-	public FetchTransformingDataCommand(String id, String worksheetId,
-			String hNodeId, String selectionId) {
+	public FetchTransformingDataCommand(String id, String worksheetId, String hNodeId, String selectionId) {
 		super(id, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 
@@ -58,8 +57,8 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 		HashSet<Integer> inds = new HashSet<Integer>();
 		// select 30% or 50
 		int sample_size = size;
-		if (sample_size >= 500) {
-			sample_size = 500;
+		if (sample_size >= max_sample_cnt) {
+			sample_size = max_sample_cnt;
 		} else {
 			sample_size = size;
 		}
@@ -80,8 +79,7 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
 		wk.clearSessionData();
 		SuperSelection selection = getSuperSelection(wk);
-		String Msg = String.format("begin, Time,%d, Worksheet,%s",
-				System.currentTimeMillis(), worksheetId);
+		String Msg = String.format("begin, Time,%d, Worksheet,%s", System.currentTimeMillis(), worksheetId);
 		logger.info(Msg);
 		// Get the HNode
 		HashMap<String, HashMap<String, String>> rows = new HashMap<String, HashMap<String, String>>();
@@ -111,8 +109,7 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 			}
 			index++;
 		}
-		Msg = String.format("end, Time,%d, Worksheet,%s",
-				System.currentTimeMillis(), worksheetId);
+		Msg = String.format("end, Time,%d, Worksheet,%s", System.currentTimeMillis(), worksheetId);
 		logger.info(Msg);
 		return new UpdateContainer(new FetchResultUpdate(hNodeId, rows));
 	}

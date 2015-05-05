@@ -3,6 +3,11 @@ package edu.isi.karma.cleaning;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
+
+import edu.isi.karma.cleaning.grammartree.GrammarTreeNode;
+import edu.isi.karma.cleaning.grammartree.Segment;
+import edu.isi.karma.cleaning.grammartree.TNode;
+import edu.isi.karma.cleaning.grammartree.Traces;
 /*
  *store the traces for all the examples
  * */

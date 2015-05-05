@@ -11,10 +11,14 @@ import org.perf4j.log4j.Log4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.cleaning.Research.ConfigParameters;
 import edu.isi.karma.cleaning.features.Feature;
 import edu.isi.karma.cleaning.features.RecordClassifier;
 import edu.isi.karma.cleaning.features.RecordFeatureSet;
+import edu.isi.karma.cleaning.grammartree.Partition;
+import edu.isi.karma.cleaning.grammartree.Program;
+import edu.isi.karma.cleaning.grammartree.TNode;
+import edu.isi.karma.cleaning.grammartree.Traces;
+import edu.isi.karma.cleaning.research.ConfigParameters;
 
 public class ProgSynthesis {
 	public static int time_limit = 20;

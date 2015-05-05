@@ -2,6 +2,8 @@ package edu.isi.karma.cleaning;
 
 import java.util.HashMap;
 
+import edu.isi.karma.cleaning.grammartree.Program;
+
 public class ProgramRule {
 	public static final String defaultclasslabel = "attr_0";
 	public HashMap<String, InterpreterType> rules = new HashMap<String, InterpreterType>();

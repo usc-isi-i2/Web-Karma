@@ -3,6 +3,9 @@ package edu.isi.karma.cleaning;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import edu.isi.karma.cleaning.grammartree.GrammarTreeNode;
+import edu.isi.karma.cleaning.grammartree.Position;
+import edu.isi.karma.cleaning.grammartree.Segment;
 import edu.isi.karma.cleaning.internalfunlibrary.InternalTransformationLibrary;
 
 public class Section implements GrammarTreeNode {

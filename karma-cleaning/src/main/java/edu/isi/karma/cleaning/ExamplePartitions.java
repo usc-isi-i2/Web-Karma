@@ -4,6 +4,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
 
+import edu.isi.karma.cleaning.grammartree.GrammarTreeNode;
+import edu.isi.karma.cleaning.grammartree.Partition;
+import edu.isi.karma.cleaning.grammartree.Segment;
+import edu.isi.karma.cleaning.grammartree.TNode;
+import edu.isi.karma.cleaning.grammartree.Traces;
+
 public class ExamplePartitions {
 	public HashMap<String, Partition> expPartitions = new HashMap<String, Partition>();
 	public ExamplePartitions()

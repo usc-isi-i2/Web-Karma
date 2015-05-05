@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
+import edu.isi.karma.cleaning.grammartree.Segment;
+import edu.isi.karma.cleaning.grammartree.TNode;
 import edu.isi.karma.cleaning.internalfunlibrary.InternalTransformationLibrary;
 import edu.isi.karma.cleaning.internalfunlibrary.TransformFunction;
 

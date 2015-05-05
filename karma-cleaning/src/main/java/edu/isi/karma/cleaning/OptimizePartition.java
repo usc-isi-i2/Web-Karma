@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.cleaning.features.RecordClassifier;
+import edu.isi.karma.cleaning.grammartree.Partition;
 
 public class OptimizePartition {
 	public HashMap<String, Partition> existedPartition = new HashMap<String, Partition>();

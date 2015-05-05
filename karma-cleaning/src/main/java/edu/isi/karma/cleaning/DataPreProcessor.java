@@ -10,10 +10,7 @@ import java.util.Vector;
 
 import edu.isi.karma.cleaning.features.Feature;
 import edu.isi.karma.cleaning.features.RecordFeatureSet;
-//identify candidate tokens
-//vectorize string to feature vectors
-//decorrelate features
-//rescale features
+import edu.isi.karma.cleaning.grammartree.TNode;
 
 public class DataPreProcessor {
 	public Collection<String> data;
@@ -40,7 +37,6 @@ public class DataPreProcessor {
 		rfs.removeFeatures(toremove);
 		// resvectorize the data
 		xHashMap = vectorize(data);
-		// rescale the data
 		// rescale each feature
 		resacle(xHashMap);
 		this.data2Vector = xHashMap;

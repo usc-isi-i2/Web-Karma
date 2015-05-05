@@ -20,6 +20,10 @@ import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.isi.karma.cleaning.features.RecordClassifier;
+import edu.isi.karma.cleaning.grammartree.GrammarTreeNode;
+import edu.isi.karma.cleaning.grammartree.Partition;
+import edu.isi.karma.cleaning.grammartree.Segment;
+import edu.isi.karma.cleaning.grammartree.TNode;
 
 public class UtilTools {
 	public static int index = 0;

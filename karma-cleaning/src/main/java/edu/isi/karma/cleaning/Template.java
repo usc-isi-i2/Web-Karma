@@ -3,6 +3,10 @@ package edu.isi.karma.cleaning;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import edu.isi.karma.cleaning.grammartree.GrammarTreeNode;
+import edu.isi.karma.cleaning.grammartree.Loop;
+import edu.isi.karma.cleaning.grammartree.Segment;
+
 public class Template implements GrammarTreeNode {
 	public static final int temp_limit = 2048;
 	public int supermode = 1;

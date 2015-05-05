@@ -26,7 +26,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
-import edu.isi.karma.cleaning.QuestionableRecord.OutlierDetector;
+import edu.isi.karma.cleaning.grammartree.TNode;
+import edu.isi.karma.cleaning.questionablerecord.OutlierDetector;
 
 public class ExampleSelection {
 	public HashMap<String, Vector<TNode>> org = new HashMap<String, Vector<TNode>>();

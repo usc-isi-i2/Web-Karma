@@ -28,8 +28,8 @@ import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.Token;
 
-import edu.isi.karma.cleaning.TNode;
 import edu.isi.karma.cleaning.Tokenizer;
+import edu.isi.karma.cleaning.grammartree.TNode;
 
 public class RegularityFeatureSet implements FeatureSet {
 

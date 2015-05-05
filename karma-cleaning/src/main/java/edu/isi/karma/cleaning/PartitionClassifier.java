@@ -2,7 +2,7 @@ package edu.isi.karma.cleaning;
 
 import java.util.Vector;
 
-import org.python.core.PyObject;
+import edu.isi.karma.cleaning.grammartree.Partition;
 
 
 public class PartitionClassifier {

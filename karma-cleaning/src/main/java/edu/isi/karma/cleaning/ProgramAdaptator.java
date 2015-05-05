@@ -9,7 +9,13 @@ import java.util.Vector;
 import org.perf4j.StopWatch;
 import org.perf4j.log4j.Log4JStopWatch;
 
-import edu.isi.karma.cleaning.Research.Prober;
+import edu.isi.karma.cleaning.grammartree.GrammarTreeNode;
+import edu.isi.karma.cleaning.grammartree.Partition;
+import edu.isi.karma.cleaning.grammartree.Position;
+import edu.isi.karma.cleaning.grammartree.PositionSet;
+import edu.isi.karma.cleaning.grammartree.Segment;
+import edu.isi.karma.cleaning.grammartree.Traces;
+import edu.isi.karma.cleaning.research.Prober;
 
 public class ProgramAdaptator {
 	public ParseTreeNode program;

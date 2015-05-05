@@ -3,6 +3,8 @@ package edu.isi.karma.cleaning;
 import java.util.Map;
 import java.util.Vector;
 
+import edu.isi.karma.cleaning.grammartree.Partition;
+
 public class ProgTracker {
 	public static void printPartition(Vector<Partition> pars) {
 		System.out.println("-----------");

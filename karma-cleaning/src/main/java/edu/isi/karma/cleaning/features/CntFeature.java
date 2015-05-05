@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.Ruler;
-import edu.isi.karma.cleaning.TNode;
+import edu.isi.karma.cleaning.grammartree.TNode;
 
 public class CntFeature implements Feature {
 	String name = "";

@@ -9,8 +9,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Vector;
 
-
 import edu.isi.karma.cleaning.features.Feature;
+import edu.isi.karma.cleaning.grammartree.Partition;
+import edu.isi.karma.cleaning.grammartree.TNode;
 
 public class ExampleCluster {
 	public HashMap<String, Boolean> legalParitions = new HashMap<String, Boolean>();
