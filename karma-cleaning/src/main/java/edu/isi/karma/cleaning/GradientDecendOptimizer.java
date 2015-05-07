@@ -238,7 +238,6 @@ public class GradientDecendOptimizer {
 		}
 		return w_0;
 	}
-
 	// compute the r vectors
 	public ArrayList<double[]> compute_r(ArrayList<double[]> centers,
 			ArrayList<double[]> instances, double[] w) {
