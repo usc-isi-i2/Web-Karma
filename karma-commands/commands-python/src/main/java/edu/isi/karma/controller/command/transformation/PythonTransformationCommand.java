@@ -136,6 +136,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		PyObject locals = interpreter.getLocals();
 		locals.__setitem__("workspaceid", new PyString(workspace.getId()));
 		locals.__setitem__("command", Py.java2py(this));
+		locals.__setitem__("worksheetId", new PyString(worksheet.getId()));
 		locals.__setitem__("selectionName", new PyString(selection.getName()));
 		
 		repo.compileAndAddToRepositoryAndExec(interpreter, transformMethodStmt);

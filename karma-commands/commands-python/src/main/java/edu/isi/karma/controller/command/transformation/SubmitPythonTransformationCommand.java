@@ -250,7 +250,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		Collection<Node> nodes = new ArrayList<Node>();
 		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes, selection);
 		for(Node node : nodes) {
-			originalColumnValues.add(node.serializeToJSON(selection, f));
+			originalColumnValues.add(node.serializeToJSON(selection, f).toString());
 		}
 	}
 
