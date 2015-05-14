@@ -202,7 +202,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 		}
 		else if(request.getInputData() != null)
 		{
-			inputStream = IOUtils.toInputStream(request.getInputData());
+			inputStream = IOUtils.toInputStream(request.getInputData(), Charset.forName("UTF-8"));
+			request.setEncoding("UTF-8");
 		}
 		else if(request.getInputStream() != null)
 		{

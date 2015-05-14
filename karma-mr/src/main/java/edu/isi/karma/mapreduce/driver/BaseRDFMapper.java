@@ -2,7 +2,6 @@ package edu.isi.karma.mapreduce.driver;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
@@ -68,7 +67,6 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 			request.setAddProvenance(false);
 			request.addWriter(outWriter);
 			request.setMaxNumLines(0);
-			request.setEncoding(Charset.defaultCharset().toString());
 			if(delimiter != null)
 			{
 				request.setDelimiter(delimiter);
