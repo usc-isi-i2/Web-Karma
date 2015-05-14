@@ -89,6 +89,10 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 				writeRDFToContext(context, results);
 				
 			}
+			else
+			{
+				LOG.error("Unable to generate RDF: ");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOG.error("Unable to generate RDF: " + e.getMessage());
