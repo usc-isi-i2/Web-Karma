@@ -549,3 +549,164 @@ var modelManagerDialog = (function() {
 	};
 
 })();
+
+var ApplyR2RMLModelFromUrlDialog = (function() {
+	var instance = null;
+
+	function PrivateConstructor() {
+		var dialog = $("#applyR2RMLModelFromUrlDialog");
+		var worksheetId;
+		
+		function init(p_worksheetId) {
+			//Initialize what happens when we show the dialog
+			worksheetId = p_worksheetId;
+			
+			dialog.on('show.bs.modal', function(e) {
+				var info = generateInfoObject(worksheetId, "", "GetR2RMLModelURLsCommand");
+				info["command"] = "GetR2RMLModelURLsCommand";
+				var returned = $.ajax({
+					url: "RequestController",
+					type: "POST",
+					data: info,
+					dataType: "json",
+					async: false,
+					complete: function(xhr, textStatus) {
+						var json = $.parseJSON(xhr.responseText);
+						var models = json["elements"][0].models;
+						console.log(json);
+						console.log(models);
+						$('.typeahead').typeahead('destroy');
+						$("input#txtModelURL", dialog).typeahead('destroy');
+						$("input#txtModelURL", dialog).typeahead({
+							source: models,
+							minLength: 0
+						});
+					},
+					error: function(xhr, textStatus) {
+
+					}
+				});
+			});
+			
+			$('#btnSave', dialog).on('click', function(e) {
+				e.preventDefault();
+				if(validateInput()) {
+					dialog.modal('hide');
+					saveDialog(e);
+				}
+			});
+		}
+
+		function showError() {
+			$('.error', dialog).show();
+		}
+		
+		function hideError() {
+			$('.error', dialog).hide();
+		}
+		
+		function validateInput() {
+			var url = $("#txtModelURL", dialog).val();
+			if(!isValidUrl(url)) {
+				showError();
+				return false;
+			}
+			hideError();
+			return true;
+		}
+
+		function saveDialog(e) {
+			console.log("Save clicked");
+
+			var url = $("#txtModelURL", dialog).val();
+			var override = false;
+			var modelExist = false;
+			var info = generateInfoObject(worksheetId, "", "CheckModelExistenceCommand");
+			info["command"] = "CheckModelExistenceCommand";
+			var returned = $.ajax({
+				url: "RequestController",
+				type: "POST",
+				data: info,
+				dataType: "json",
+				async: false,
+				complete: function(xhr, textStatus) {
+					var json = $.parseJSON(xhr.responseText);
+					json = json.elements[0];
+					console.log(json);
+					modelExist = json['modelExist'];
+
+				},
+				error: function(xhr, textStatus) {
+
+				}
+			});
+			if (modelExist) {
+				console.log("here" + modelExist);
+				if (confirm('Clearing the current model?')) {
+					override = true;
+				} else {
+					override = false;
+				}
+			}
+			
+			var info2 = generateInfoObject(worksheetId, "", "ApplyHistoryFromR2RMLModelCommand");
+			info2["newInfo"].push(getParamObject("override", override, "other"));
+			info2["newInfo"].push(getParamObject("url", url, "other"));
+			info2["override"] = override;
+			info2["url"] = url;
+			info2["command"] = "ApplyHistoryFromR2RMLModelCommand";
+			showLoading(worksheetId);
+			var returned = $.ajax({
+				url: "RequestController",
+				type: "POST",
+				data: info2,
+				dataType: "json",
+				async: false,
+				complete: function(xhr, textStatus) {
+					var json = $.parseJSON(xhr.responseText);
+					parse(json);
+					hideLoading(worksheetId);
+
+				},
+				error: function(xhr, textStatus) {
+					hideLoading(worksheetId);
+					alert("Error applying model:" + textStatus);
+				}
+			});
+
+		};
+
+		
+
+		function show() {
+			dialog.modal({
+				keyboard: true,
+				show: true,
+				backdrop: 'static'
+			});
+		};
+
+
+		return { //Return back the public methods
+			show: show,
+			init: init
+		};
+	};
+
+	function getInstance(worksheetId) {
+		if (!instance) {
+			instance = new PrivateConstructor();
+			instance.init(worksheetId);
+		}
+		return instance;
+	}
+
+	return {
+		getInstance: getInstance
+	};
+
+})();
+
+	
+	
+	

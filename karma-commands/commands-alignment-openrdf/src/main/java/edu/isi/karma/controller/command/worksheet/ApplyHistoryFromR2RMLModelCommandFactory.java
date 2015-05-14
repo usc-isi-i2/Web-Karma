@@ -31,16 +31,21 @@ import java.io.File;
 
 public class ApplyHistoryFromR2RMLModelCommandFactory extends CommandFactory {
 	private enum Arguments {
-		worksheetId, override
+		worksheetId, override, url
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
 		boolean override = Boolean.parseBoolean(request.getParameter(Arguments.override.name()));
-		return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), uploadedFile, worksheetId, override);
+		String url = request.getParameter(Arguments.url.name());
+		if(url == null) {
+			File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
+			return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), uploadedFile, worksheetId, override);
+		} else {
+			return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), url, worksheetId, override);
+		}
 	}
 	
 	public Command createCommandFromFile(String worksheetId, File uploadedFile,

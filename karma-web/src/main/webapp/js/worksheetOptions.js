@@ -48,6 +48,9 @@ function WorksheetOptions(wsId, wsTitle) {
 				useFileUpload: true,
 				uploadDiv: "applyWorksheetHistory"
 			}, {
+				name: "From URL",
+				func: applyR2RMLModelFromUrl
+			}, {
 				name: "From Repository",
 				func: applyModel
 			}]
@@ -81,23 +84,23 @@ function WorksheetOptions(wsId, wsTitle) {
 				name: "Raw JSON",
 				func: saveAsJson
 			}, ]
-		}, {
-			name: "Export",
-			func: undefined,
-			addLevel: true,
-			levels: [{
-				name: "To CSV",
-				func: exportToCSV
-			}, {
-				name: "To Database",
-				func: exportToDatabase
-			}, {
-				name: "To MDB",
-				func: exportToMDB
-			}, {
-				name: "To SpatialData",
-				func: exportToSpatial
-			}, ] 
+//		}, {
+//			name: "Export",
+//			func: undefined,
+//			addLevel: true,
+//			levels: [{
+//				name: "To CSV",
+//				func: exportToCSV
+//			}, {
+//				name: "To Database",
+//				func: exportToDatabase
+//			}, {	
+//				name: "To MDB",
+//				func: exportToMDB
+//			}, {
+//				name: "To SpatialData",
+//				func: exportToSpatial
+//			}, ] 
 		}, { 
 			name: "Print Model",
 			func: printModel
@@ -419,6 +422,13 @@ function WorksheetOptions(wsId, wsTitle) {
 		return false;
 	}
 
+	function applyR2RMLModelFromUrl(event) {
+		console.log("Apply Model from URL: " + worksheetTitle);
+		hideDropdown();
+		ApplyR2RMLModelFromUrlDialog.getInstance(worksheetId).show();
+		return false;
+	}
+	
 	function publishServiceModel() {
 		console.log("Publish Service Model: " + worksheetTitle);
 		hideDropdown();
