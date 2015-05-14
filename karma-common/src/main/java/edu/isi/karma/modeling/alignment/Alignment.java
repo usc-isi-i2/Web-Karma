@@ -648,6 +648,8 @@ public class Alignment implements OntologyUpdateListener {
 
 	public void cleanup() {
 		this.ontologyManager.unsubscribeListener(this);
+		this.steinerTree = null;
+		this.graphBuilder = new GraphBuilder(ontologyManager, false);
 	}
 	
 	private void learnFromOntology() {
