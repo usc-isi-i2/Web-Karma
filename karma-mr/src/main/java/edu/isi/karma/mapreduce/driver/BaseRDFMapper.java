@@ -67,6 +67,7 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 			request.setAddProvenance(false);
 			request.addWriter(outWriter);
 			request.setMaxNumLines(0);
+			request.setEncoding("UTF-8");
 			if(delimiter != null)
 			{
 				request.setDelimiter(delimiter);
