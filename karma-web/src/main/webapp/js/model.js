@@ -592,7 +592,9 @@ var ApplyR2RMLModelFromUrlDialog = (function() {
 				e.preventDefault();
 				if(validateInput()) {
 					dialog.modal('hide');
-					saveDialog(e);
+					window.setTimeout(function() {
+						saveDialog(e);
+					}, 10);
 				}
 			});
 		}
@@ -617,7 +619,7 @@ var ApplyR2RMLModelFromUrlDialog = (function() {
 
 		function saveDialog(e) {
 			console.log("Save clicked");
-
+			
 			var url = $("#txtModelURL", dialog).val();
 			var override = false;
 			var modelExist = false;
