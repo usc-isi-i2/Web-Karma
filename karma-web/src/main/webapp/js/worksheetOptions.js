@@ -84,23 +84,6 @@ function WorksheetOptions(wsId, wsTitle) {
 				name: "Raw JSON",
 				func: saveAsJson
 			}, ]
-//		}, {
-//			name: "Export",
-//			func: undefined,
-//			addLevel: true,
-//			levels: [{
-//				name: "To CSV",
-//				func: exportToCSV
-//			}, {
-//				name: "To Database",
-//				func: exportToDatabase
-//			}, {	
-//				name: "To MDB",
-//				func: exportToMDB
-//			}, {
-//				name: "To SpatialData",
-//				func: exportToSpatial
-//			}, ] 
 		}, { 
 			name: "Print Model",
 			func: printModel
@@ -458,48 +441,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		FetchModelDialog.getInstance().show(worksheetId);
 		return false;
 	}
-
-	function exportToCSV() {
-		console.log("Export to CSV: " + worksheetTitle);
-		hideDropdown();
-
-		var info = generateInfoObject(worksheetId, "", "PublishCSVCommand");
-		info["command"] = "PublishCSVCommand";
-
-		showLoading(info["worksheetId"]);
-		var returned = sendRequest(info, worksheetId);
-
-		return false;
-	}
-
-	function exportToDatabase() {
-		hideDropdown();
-		PublishDatabaseDialog.getInstance().show(worksheetId);
-		return false;
-	}
-
-	function exportToMDB() {
-		console.log("Export To MDB: " + worksheetTitle);
-		hideDropdown();
-
-		var info = generateInfoObject(worksheetId, "", "PublishMDBCommand");
-
-		showLoading(info["worksheetId"]);
-		var returned = sendRequest(info, worksheetId);
-		return false;
-	}
-
-	function exportToSpatial() {
-		console.log("Export to Spatial: " + worksheetTitle);
-		hideDropdown();
-
-		var info = generateInfoObject(worksheetId, "", "PublishSpatialDataCommand");
-
-		showLoading(info["worksheetId"]);
-		var returned = sendRequest(info, worksheetId);
-		return false;
-	}
-
+	
 	function saveAsJson() {
 		console.log("Save as json");
 		hideDropdown();
