@@ -22,7 +22,8 @@ public class GetLiteralNodeCommandFactory extends CommandFactory {
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				workspace.getId(), worksheetId);
 		
-		return new GetLiteralNodeCommand(getNewId(workspace), worksheetId, alignmentId, nodeId);
+		return new GetLiteralNodeCommand(getNewId(workspace), Command.NEW_MODEL, 
+				worksheetId, alignmentId, nodeId);
 	}
 
 	@Override

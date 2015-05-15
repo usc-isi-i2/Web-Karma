@@ -62,10 +62,10 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitPythonTransformationCommand.class);
 
-	public SubmitPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
+	public SubmitPythonTransformationCommand(String id, String model, String newColumnName, String transformationCode, 
 			String worksheetId, String hNodeId, 
 			String errorDefaultValue, String selectionId, boolean isJSONOutput) {
-		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, selectionId, isJSONOutput);
+		super(id, model, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, selectionId, isJSONOutput);
 		//logger.info("SubmitPythonTranformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
 		this.pythonNodeId = hNodeId;
 	}
@@ -135,7 +135,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 						.getCommandFactoryMap().get(
 								AddColumnCommand.class.getSimpleName());
 				addColCmd = (AddColumnCommand) addColumnFac.createCommand(
-						addColumnInput, workspace);
+						addColumnInput, this.model, workspace);
 				addColCmd.saveInHistory(false);
 				addColCmd.setExecutedInBatch(this.isExecutedInBatch());
 				addColCmd.doIt(workspace);

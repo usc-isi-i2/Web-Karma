@@ -66,10 +66,10 @@ public class FetchColumnCommand extends WorksheetSelectionCommand {
 		worksheetId, alignmentNodeId, tripleStoreUrl, graphUrl, nodeId
 	}
 	
-	protected FetchColumnCommand(String id, String worksheetId, String alignmentId, 
+	protected FetchColumnCommand(String id, String model, String worksheetId, String alignmentId, 
 			String sparqlUrl, String graph, String node, 
 			String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 //		this.alignmentNodeId = alignmentId;
 //		this.tripleStoreUrl = sparqlUrl;
 //		this.graphUrl = graph;
@@ -118,7 +118,7 @@ public class FetchColumnCommand extends WorksheetSelectionCommand {
 			// If the model is not published, publish it!
 			if(!f.exists() || !f.isFile()) {
 				GenerateR2RMLModelCommandFactory factory = new GenerateR2RMLModelCommandFactory();
-				GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, graphName, selection.getName());
+				GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(model, workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, graphName, selection.getName());
 				cmd.doIt(workspace);
 			} else {
 				// if the model was published 30 min ago, publish it again, just to be sure
@@ -126,7 +126,7 @@ public class FetchColumnCommand extends WorksheetSelectionCommand {
 				if((diff / 1000L / 60L) > 30) {
 					f.delete();
 					GenerateR2RMLModelCommandFactory factory = new GenerateR2RMLModelCommandFactory();
-					GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, graphName, selection.getName());
+					GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(model, workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, graphName, selection.getName());
 					cmd.doIt(workspace);
 				}
 			}

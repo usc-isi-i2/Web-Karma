@@ -25,7 +25,7 @@ public class MultipleValueEditColumnCommandFactory extends JSONInputCommandFacto
 		return null; // Not to be used
 	}
 
-	public Command createCommand(JSONArray inputJson, Workspace workspace) throws JSONException, KarmaException {
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace) throws JSONException, KarmaException {
 		/** Parse the input arguments and create proper data structues to be passed to the command **/
 		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeID.name(), inputJson);
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
@@ -37,7 +37,7 @@ public class MultipleValueEditColumnCommandFactory extends JSONInputCommandFacto
 			rowValueMap.put(rowObj.getString(Arguments.rowID.name()), 
 					rowObj.getString(Arguments.value.name()));
 		}
-		return new MultipleValueEditColumnCommand(getNewId(workspace), worksheetId, hNodeID, rowValueMap);
+		return new MultipleValueEditColumnCommand(getNewId(workspace), model, worksheetId, hNodeID, rowValueMap);
 	}
 
 	@Override

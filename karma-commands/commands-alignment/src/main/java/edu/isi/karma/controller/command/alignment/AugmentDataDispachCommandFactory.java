@@ -19,7 +19,7 @@ public class AugmentDataDispachCommandFactory extends JSONInputCommandFactory {
 		sameAsPredicate, selectionName
 	}
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String predicateIncoming = CommandInputJSONUtil.getStringValue(Arguments.predicateIncoming.name(), inputJson);
@@ -32,7 +32,8 @@ public class AugmentDataDispachCommandFactory extends JSONInputCommandFactory {
 		String sameAsPredicate = CommandInputJSONUtil.getStringValue(Arguments.sameAsPredicate.name(), inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		AugmentDataDispachCommand cmd = new AugmentDataDispachCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
+		AugmentDataDispachCommand cmd = new AugmentDataDispachCommand(getNewId(workspace), 
+				model, dataRepoUrl, worksheetId, 
 				columnUri, predicateIncoming, otherClassIncoming, 
 				predicateOutgoing, otherClassOutgoing, hNodeId, sameAsPredicate, 
 				selectionName);
@@ -52,7 +53,8 @@ public class AugmentDataDispachCommandFactory extends JSONInputCommandFactory {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String sameAsPredicate = request.getParameter(Arguments.sameAsPredicate.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new AugmentDataDispachCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
+		return new AugmentDataDispachCommand(getNewId(workspace), 
+				Command.NEW_MODEL, dataRepoUrl, worksheetId, 
 				columnUri, predicateIncoming, otherClassIncoming, 
 				predicateOutgoing, otherClassOutgoing, hNodeId, sameAsPredicate, 
 				selectionName);

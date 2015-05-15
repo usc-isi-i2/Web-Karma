@@ -39,7 +39,7 @@ public class ImportCSVFileCommandFactory extends CommandFactory {
         File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
 
         if (request.getParameter("revisedWorksheet") == null) {
-            return new ImportCSVFileCommand(getNewId(workspace), uploadedFile);
+            return new ImportCSVFileCommand(getNewId(workspace), Command.NEW_MODEL, uploadedFile);
         }
 
         return new ImportCSVFileCommand(getNewId(workspace), request.getParameter("revisedWorksheet"), uploadedFile);

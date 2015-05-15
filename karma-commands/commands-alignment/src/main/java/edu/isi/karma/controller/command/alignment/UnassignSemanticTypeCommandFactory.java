@@ -41,15 +41,17 @@ public class UnassignSemanticTypeCommandFactory extends JSONInputCommandFactory 
 			Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		return new UnassignSemanticTypeCommand(getNewId(workspace), hNodeId, worksheetId);
+		return new UnassignSemanticTypeCommand(getNewId(workspace), Command.NEW_MODEL, 
+				hNodeId, worksheetId);
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
-		UnassignSemanticTypeCommand comm = new UnassignSemanticTypeCommand(getNewId(workspace), hNodeId, worksheetId); 
+		UnassignSemanticTypeCommand comm = new UnassignSemanticTypeCommand(getNewId(workspace), 
+				model, hNodeId, worksheetId); 
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

@@ -68,13 +68,6 @@ public class ImportServiceCommandPreferencesUpdate extends AbstractUpdate {
 			vWorkspace.getWorkspace().getCommandPreferences().setCommandPreferences(
 					"ImportServiceCommandPreferences", prefObject);
 			
-			/*
-			logger.debug("I Saved .....");
-			ViewPreferences prefs = vWorkspace.getPreferences();
-			JSONObject prefObject1 = prefs.getCommandPreferencesJSONObject("PublishDatabaseCommandPreferences");
-			logger.debug("I Saved ....."+prefObject1);
-			 */
-			
 		} catch (JSONException e) {
 			logger.error("Error in saving preferences", e);
 		}

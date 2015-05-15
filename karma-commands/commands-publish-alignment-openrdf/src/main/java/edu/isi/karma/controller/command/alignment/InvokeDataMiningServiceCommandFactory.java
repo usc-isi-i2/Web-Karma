@@ -50,7 +50,8 @@ public class InvokeDataMiningServiceCommandFactory extends CommandFactory {
 		
 		logger.info("dmUrl:"+dmURL + " csv:"+csvFileName);
 		
-		return new InvokeDataMiningServiceCommand(getNewId(workspace), worksheetId, dmURL, csvFileName);
+		return new InvokeDataMiningServiceCommand(getNewId(workspace), 
+				Command.NEW_MODEL, worksheetId, dmURL, csvFileName);
 	}
 
 	@Override

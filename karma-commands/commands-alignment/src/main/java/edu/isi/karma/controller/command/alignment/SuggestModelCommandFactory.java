@@ -50,18 +50,20 @@ public class SuggestModelCommandFactory extends JSONInputCommandFactory {
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new SuggestModelCommand(getNewId(workspace), getWorksheetId(request, workspace), false, 
+		return new SuggestModelCommand(getNewId(workspace), 
+				Command.NEW_MODEL,
+				getWorksheetId(request, workspace), false, 
 				selectionName);
 	}
 
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		SuggestModelCommand comm = new SuggestModelCommand(getNewId(workspace), worksheet.getId(), false, 
-				selectionName);
+		SuggestModelCommand comm = new SuggestModelCommand(getNewId(workspace), model,
+				worksheet.getId(), false, selectionName);
 		OntologyManager ontMgr = workspace.getOntologyManager();
 		// Add the semantic types that have saved into the history
 		for (int i=2; i<inputJson.length(); i++) {

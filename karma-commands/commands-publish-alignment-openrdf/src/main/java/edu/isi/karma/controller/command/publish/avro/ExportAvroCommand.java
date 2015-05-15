@@ -53,9 +53,9 @@ public class ExportAvroCommand extends WorksheetSelectionCommand {
     
 	
 	//TODO provde option to output pretty printed avro json
-	public ExportAvroCommand(String id, String alignmentNodeId, 
+	public ExportAvroCommand(String id, String model, String alignmentNodeId, 
 			String worksheetId, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.alignmentNodeId = alignmentNodeId;
 		
 	}

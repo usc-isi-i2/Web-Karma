@@ -56,8 +56,8 @@ public class GetCurrentLinksOfInternalNodeCommand extends Command {
 		incoming, outgoing
 	}
 	
-	protected GetCurrentLinksOfInternalNodeCommand(String id, String nodeId, String alignmentId) {
-		super(id);
+	protected GetCurrentLinksOfInternalNodeCommand(String id, String model, String nodeId, String alignmentId) {
+		super(id, model);
 		this.nodeId = nodeId;
 		this.alignmentId = alignmentId;
 	}

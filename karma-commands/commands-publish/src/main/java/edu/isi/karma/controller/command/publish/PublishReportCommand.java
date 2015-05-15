@@ -48,8 +48,8 @@ public class PublishReportCommand extends WorksheetCommand {
 	// Logger object
 	private static Logger logger = LoggerFactory.getLogger(PublishReportCommand.class);
 
-	public PublishReportCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+	public PublishReportCommand(String id, String model, String worksheetId) {
+		super(id, model, worksheetId);
 	}
 
 	@Override

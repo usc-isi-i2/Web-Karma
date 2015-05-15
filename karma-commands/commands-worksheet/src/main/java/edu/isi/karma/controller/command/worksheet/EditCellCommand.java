@@ -23,6 +23,7 @@
  */
 package edu.isi.karma.controller.command.worksheet;
 
+import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
@@ -49,9 +50,9 @@ public class EditCellCommand extends WorksheetSelectionCommand {
 
 	private final CellValue newValueArg;
 	
-	EditCellCommand(String id, String worksheetId, String nodeIdArg,
+	EditCellCommand(String id, String model, String worksheetId, String nodeIdArg,
 			String newValueArg, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.nodeIdArg = nodeIdArg;
 		this.newValueArg = new StringCellValue(newValueArg);
 	}

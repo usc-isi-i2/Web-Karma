@@ -23,7 +23,7 @@ public class PublishKMLLayerCommandFactory extends CommandFactory {
 		String worksheetId = request.getParameter(Arguments.worksheetId
 				.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new PublishKMLLayerCommand(getNewId(workspace), worksheetId,
+		return new PublishKMLLayerCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId,
 				ServletContextParameterMap
 						.getParameterValue(ContextParameter.PUBLIC_KML_ADDRESS),
 				ServletContextParameterMap

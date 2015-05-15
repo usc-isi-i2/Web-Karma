@@ -25,9 +25,9 @@ import edu.isi.karma.util.CommandInputJSONUtil;
 
 public class RefreshSuperSelectionCommand extends WorksheetSelectionCommand {
 
-	public RefreshSuperSelectionCommand(String id, String worksheetId, 
+	public RefreshSuperSelectionCommand(String id, String model, String worksheetId, 
 			String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		addTag(CommandTag.Transformation);
 	}
 	
@@ -84,7 +84,7 @@ public class RefreshSuperSelectionCommand extends WorksheetSelectionCommand {
 			inputJSON.put(CommandInputJSONUtil.createJsonObject("hNodeId", itr.next(), ParameterType.hNodeId));
 			inputJSON.put(CommandInputJSONUtil.createJsonObject("selectionName", currentSel.getName(), ParameterType.other));
 			try {
-				Command c = new RefreshSelectionCommandFactory().createCommand(inputJSON, workspace);
+				Command c = new RefreshSelectionCommandFactory().createCommand(inputJSON, model, workspace);
 				c.doIt(workspace);
 			} catch (Exception e) {
 				

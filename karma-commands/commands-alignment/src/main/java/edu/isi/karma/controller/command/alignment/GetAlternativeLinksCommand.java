@@ -55,9 +55,9 @@ public class GetAlternativeLinksCommand extends Command {
 		compatibleLinks, allObjectProperties;
 	}
 
-	public GetAlternativeLinksCommand(String id, String sourceNodeId,
+	public GetAlternativeLinksCommand(String id, String model, String sourceNodeId,
 			String targetNodeId, String alignmentId, ALTERNATIVE_LINKS_RANGE range) {
-		super(id);
+		super(id, model);
 		this.sourceNodeId = sourceNodeId;
 		this.targetNodeId = targetNodeId;
 		this.alignmentId = alignmentId;

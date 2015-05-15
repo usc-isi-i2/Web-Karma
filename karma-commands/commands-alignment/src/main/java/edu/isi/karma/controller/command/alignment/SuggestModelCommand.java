@@ -70,8 +70,8 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(SuggestModelCommand.class);
 
-	protected SuggestModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate, String selectionId) {
-		super(id, worksheetId, selectionId);
+	protected SuggestModelCommand(String id, String model, String worksheetId, boolean addVWorksheetUpdate, String selectionId) {
+		super(id, model, worksheetId, selectionId);
 //		this.addVWorksheetUpdate = addVWorksheetUpdate;
 		
 		/** NOTE Not saving this command in history for now since we are 

@@ -204,7 +204,10 @@ public class CommandHistoryUtil {
 			CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
 			if(cf != null) {
 				try { // This is sort of a hack the way I did this, but could not think of a better way to get rid of the dependency
-					Command comm = cf.createCommand(inputParamArr, workspace);
+					String model = Command.NEW_MODEL;
+					if(commObject.has(HistoryArguments.model.name()))
+						model = commObject.getString(HistoryArguments.model.name());
+					Command comm = cf.createCommand(inputParamArr, model, workspace);
 					comm.setOutputColumns(newOutputColumns);
 					if(comm != null){
 						commands.add(comm);

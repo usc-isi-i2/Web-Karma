@@ -83,12 +83,12 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass()
 			.getSimpleName());
 
-	protected SetMetaPropertyCommand(String id, String worksheetId,
+	protected SetMetaPropertyCommand(String id, String model, String worksheetId,
 			String hNodeId, METAPROPERTY_NAME metaPropertyName,
 			String metaPropertyUri, String metaPropertyId, 
 			boolean trainAndShowUpdates,
 			String rdfLiteralType, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.metaPropertyName = metaPropertyName;

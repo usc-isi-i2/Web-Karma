@@ -105,12 +105,12 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishRDFCommand.class);
 
-	protected PublishRDFCommand(String id, String worksheetId,
+	protected PublishRDFCommand(String id, String model, String worksheetId,
 			String publicRDFAddress, String rdfSourcePrefix, String rdfSourceNamespace, String addInverseProperties,
 			String saveToStore,String hostName,String dbName,String userName,String password, String modelName, String tripleStoreUrl,
 			String graphUri, boolean replace, boolean generateBloomFilters, 
 			String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.rdfSourcePrefix = rdfSourcePrefix;
 		this.rdfSourceNamespace = rdfSourceNamespace;
 		this.addInverseProperties = addInverseProperties;

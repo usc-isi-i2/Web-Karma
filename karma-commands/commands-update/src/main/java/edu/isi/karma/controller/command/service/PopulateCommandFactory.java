@@ -45,18 +45,20 @@ public class PopulateCommandFactory extends JSONInputCommandFactory {
 		String worksheetId =request.getParameter(Arguments.worksheetId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new PopulateCommand(getNewId(workspace), 
+				Command.NEW_MODEL,
 				worksheetId, 
 				selectionName);
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name()
 				, inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		return new PopulateCommand(getNewId(workspace), 
+				model,
 				worksheetId, 
 				selectionName);
 	}

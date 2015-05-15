@@ -49,9 +49,9 @@ public class ImportServiceCommand extends ImportCommand {
     private boolean includeInputAttributes;
     private String encoding;
 
-	protected ImportServiceCommand(String id, String ServiceUrl, String worksheetName,
+	protected ImportServiceCommand(String id, String model, String ServiceUrl, String worksheetName,
             boolean includeInputAttributes, String encoding) {
-        super(id);
+        super(id, model);
         this.serviceUrl = ServiceUrl;
         this.worksheetName = worksheetName;
         this.includeInputAttributes = includeInputAttributes;

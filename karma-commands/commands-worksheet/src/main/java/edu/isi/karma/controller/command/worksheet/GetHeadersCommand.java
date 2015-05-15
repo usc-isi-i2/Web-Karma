@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -26,8 +27,8 @@ public class GetHeadersCommand extends WorksheetCommand {
 	private String commandName;
 	private static Logger logger = LoggerFactory
 			.getLogger(FoldCommand.class);
-	protected GetHeadersCommand(String id, String worksheetId, String hNodeId, String commandName) {
-		super(id, worksheetId);
+	protected GetHeadersCommand(String id, String model, String worksheetId, String hNodeId, String commandName) {
+		super(id, model, worksheetId);
 		this.hNodeId = hNodeId;
 		this.commandName = commandName;
 		// TODO Auto-generated constructor stub

@@ -69,9 +69,9 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		row, error
 	}
 
-	public PythonTransformationCommand(String id, String transformationCode,
+	public PythonTransformationCommand(String id, String model, String transformationCode,
 			String worksheetId, String hNodeId, String errorDefaultValue, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.transformationCode = transformationCode;
 		this.hNodeId = hNodeId;
 		this.errorDefaultValue = errorDefaultValue;

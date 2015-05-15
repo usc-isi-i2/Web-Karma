@@ -54,10 +54,10 @@ public class AddUserLinkToAlignmentCommand extends WorksheetCommand {
 	// private String edgeLabel;
 	private static Logger logger = LoggerFactory.getLogger(AddUserLinkToAlignmentCommand.class);
 
-	public AddUserLinkToAlignmentCommand(String id, String edgeId,
+	public AddUserLinkToAlignmentCommand(String id, String model, String edgeId,
 			String alignmentId, String worksheetId) {
 
-		super(id, worksheetId);
+		super(id, model, worksheetId);
 		this.edgeId = edgeId;
 		this.alignmentId = alignmentId;
 		

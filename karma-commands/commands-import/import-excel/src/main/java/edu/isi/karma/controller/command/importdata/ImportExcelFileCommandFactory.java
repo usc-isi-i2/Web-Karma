@@ -37,7 +37,7 @@ public class ImportExcelFileCommandFactory extends CommandFactory {
             Workspace workspace) {
         File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
         if (request.getParameter("revisedWorksheet") == null) {
-            return new ImportExcelFileCommand(getNewId(workspace), uploadedFile);
+            return new ImportExcelFileCommand(getNewId(workspace), Command.NEW_MODEL, uploadedFile);
         }
 
         return new ImportExcelFileCommand(getNewId(workspace), request.getParameter("revisedWorksheet"), uploadedFile);

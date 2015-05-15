@@ -9,7 +9,7 @@ public class GetR2RMLModelURLsCommandFactory extends CommandFactory {
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
-		return new GetR2RMLModelURLsCommand(getNewId(workspace));
+		return new GetR2RMLModelURLsCommand(getNewId(workspace), Command.NEW_MODEL);
 	}
 	
 

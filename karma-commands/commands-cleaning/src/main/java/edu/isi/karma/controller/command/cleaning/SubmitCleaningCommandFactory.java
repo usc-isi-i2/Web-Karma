@@ -47,13 +47,13 @@ public class SubmitCleaningCommandFactory extends JSONInputCommandFactory {
 		String exps = request.getParameter(Arguments.examples.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
 		SubmitCleaningCommand sCleanningCommand = new SubmitCleaningCommand(
-				getNewId(workspace), hNodeid, w, exps, 
+				getNewId(workspace), Command.NEW_MODEL, hNodeid, w, exps, 
 				selectionName);
 		return sCleanningCommand;
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String hNodeId = HistoryJsonUtil.getStringValue(
 				Arguments.hNodeId.name(), inputJson);
@@ -64,7 +64,7 @@ public class SubmitCleaningCommandFactory extends JSONInputCommandFactory {
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		SubmitCleaningCommand comm = new SubmitCleaningCommand(
-				getNewId(workspace), hNodeId, worksheetId, examples, 
+				getNewId(workspace), model, hNodeId, worksheetId, examples, 
 				selectionName);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;

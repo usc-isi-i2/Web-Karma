@@ -17,8 +17,8 @@ public class GetR2RMLModelURLsCommand extends Command {
 	private static Logger logger = LoggerFactory.getLogger(GetR2RMLModelURLsCommand.class);
 
 	
-	protected GetR2RMLModelURLsCommand(String id) {
-		super(id);
+	protected GetR2RMLModelURLsCommand(String id, String model) {
+		super(id, model);
 	}
 
 	@Override

@@ -18,11 +18,12 @@ public class SaveR2RMLModelCommandFactory extends CommandFactory{
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.graphContext.name());
 		String collection = request.getParameter(Arguments.collection.name());
-		return new SaveR2RMLModelCommand(getNewId(workspace), modelUrl, tripleStoreUrl, context, collection);
+		return new SaveR2RMLModelCommand(getNewId(workspace), 
+				Command.NEW_MODEL, modelUrl, tripleStoreUrl, context, collection);
 	}
 	
-	public SaveR2RMLModelCommand createCommand(Workspace workspace, String modelUrl, String tripleStoreUrl, String context, String collection) {
-		return new SaveR2RMLModelCommand(getNewId(workspace), modelUrl, tripleStoreUrl, context, collection);
+	public SaveR2RMLModelCommand createCommand(String model, Workspace workspace, String modelUrl, String tripleStoreUrl, String context, String collection) {
+		return new SaveR2RMLModelCommand(getNewId(workspace), model, modelUrl, tripleStoreUrl, context, collection);
 	}
 
 	@Override

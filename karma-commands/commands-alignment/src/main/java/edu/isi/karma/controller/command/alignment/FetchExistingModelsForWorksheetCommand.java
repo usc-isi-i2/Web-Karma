@@ -52,8 +52,8 @@ public class FetchExistingModelsForWorksheetCommand extends WorksheetCommand {
 	
 	private static Logger logger = LoggerFactory.getLogger(FetchExistingModelsForWorksheetCommand.class);
 
-	public FetchExistingModelsForWorksheetCommand(String id, String worksheetId) {
-		super(id,worksheetId);
+	public FetchExistingModelsForWorksheetCommand(String id, String model, String worksheetId) {
+		super(id, model, worksheetId);
 	}
 
 	@Override

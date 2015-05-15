@@ -40,7 +40,8 @@ public class GenerateCleaningRulesCommandFactory extends CommandFactory {
 		String examples = request.getParameter(Arguments.examples.name());
 		String cellIDs= request.getParameter(Arguments.cellIDs.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new GenerateCleaningRulesCommand(getNewId(workspace), getWorksheetId(request, workspace), 
+		return new GenerateCleaningRulesCommand(getNewId(workspace), 
+				Command.NEW_MODEL, getWorksheetId(request, workspace), 
 				hNodeId, examples, cellIDs, 
 				selectionName);
 	}

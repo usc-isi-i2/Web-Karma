@@ -36,12 +36,12 @@ import edu.isi.karma.rep.Workspace;
 
 public class ImportXMLFileCommand extends ImportFileCommand implements IPreviewable {
 	    
-	protected ImportXMLFileCommand(String id, File uploadedFile) {
-        super(id, uploadedFile);
+	protected ImportXMLFileCommand(String id, String model, File uploadedFile) {
+        super(id, model, uploadedFile);
     }
 
-    protected ImportXMLFileCommand(String id, String revisedId, File uploadedFile) {
-        super(id, revisedId, uploadedFile);
+    protected ImportXMLFileCommand(String id, String model, String revisedId, File uploadedFile) {
+        super(id, model, revisedId, uploadedFile);
     }
 
     @Override

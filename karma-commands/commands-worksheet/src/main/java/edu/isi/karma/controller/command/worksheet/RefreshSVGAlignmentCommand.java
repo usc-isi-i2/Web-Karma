@@ -12,8 +12,8 @@ import edu.isi.karma.rep.Workspace;
 public class RefreshSVGAlignmentCommand extends WorksheetCommand {
 	private String alignmentId;
 	
-	public RefreshSVGAlignmentCommand(String id, String worksheetId, String alignmentId) {
-		super(id, worksheetId);
+	public RefreshSVGAlignmentCommand(String id, String model, String worksheetId, String alignmentId) {
+		super(id, model, worksheetId);
 		this.alignmentId = alignmentId;
 	}
 	

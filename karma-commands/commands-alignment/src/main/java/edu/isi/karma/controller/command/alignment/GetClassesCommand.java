@@ -43,8 +43,8 @@ public class GetClassesCommand extends WorksheetCommand {
 
 	private static Logger logger = LoggerFactory.getLogger(GetClassesCommand.class.getSimpleName());
 
-	protected GetClassesCommand(String id, String worksheetId, INTERNAL_NODES_RANGE range, String propertyURI) {
-		super(id, worksheetId);
+	protected GetClassesCommand(String id, String model, String worksheetId, INTERNAL_NODES_RANGE range, String propertyURI) {
+		super(id, model, worksheetId);
 		this.range = range;
 		this.propertyURI = propertyURI;
 	}

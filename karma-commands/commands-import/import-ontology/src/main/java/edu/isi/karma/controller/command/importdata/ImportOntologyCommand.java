@@ -62,8 +62,8 @@ public class ImportOntologyCommand extends ImportFileCommand implements
 		Import
 	}
 
-	public ImportOntologyCommand(String id, File file) {
-		super(id, file);
+	public ImportOntologyCommand(String id, String model, File file) {
+		super(id, model, file);
 	}
 
 	@Override

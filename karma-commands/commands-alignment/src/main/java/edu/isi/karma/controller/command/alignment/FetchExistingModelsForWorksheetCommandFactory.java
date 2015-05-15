@@ -36,7 +36,8 @@ public class FetchExistingModelsForWorksheetCommandFactory extends CommandFactor
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		return new FetchExistingModelsForWorksheetCommand(getNewId(workspace), worksheetId);
+		return new FetchExistingModelsForWorksheetCommand(getNewId(workspace), 
+				Command.NEW_MODEL, worksheetId);
 	}
 
 	@Override

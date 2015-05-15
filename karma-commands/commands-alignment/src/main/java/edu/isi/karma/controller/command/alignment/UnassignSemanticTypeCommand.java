@@ -63,8 +63,8 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(UnassignSemanticTypeCommand.class);
 
-	public UnassignSemanticTypeCommand(String id, String hNodeId, String worksheetId) {
-		super(id, worksheetId);
+	public UnassignSemanticTypeCommand(String id, String model, String hNodeId, String worksheetId) {
+		super(id, model, worksheetId);
 		this.hNodeId = hNodeId;
 		
 		addTag(CommandTag.Modeling);

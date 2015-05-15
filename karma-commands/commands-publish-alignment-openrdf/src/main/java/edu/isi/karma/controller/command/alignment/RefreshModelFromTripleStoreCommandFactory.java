@@ -17,7 +17,8 @@ public class RefreshModelFromTripleStoreCommandFactory extends CommandFactory {
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.graphContext.name());
 		String mappingURI = request.getParameter(Arguments.mappingURI.name());
-		return new RefreshModelFromTripleStoreCommand(getNewId(workspace), tripleStoreUrl, context, mappingURI);
+		return new RefreshModelFromTripleStoreCommand(getNewId(workspace), 
+				Command.NEW_MODEL, tripleStoreUrl, context, mappingURI);
 	}
 
 	@Override

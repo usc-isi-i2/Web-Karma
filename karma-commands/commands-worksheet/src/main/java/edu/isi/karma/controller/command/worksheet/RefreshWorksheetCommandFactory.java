@@ -21,7 +21,7 @@ public class RefreshWorksheetCommandFactory extends CommandFactory {
 		String updates = request.getParameter(Arguments.updates.name());
 		JSONArray updatesArr = new org.json.JSONArray(updates);
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new RefreshWorksheetCommand(getNewId(workspace), worksheetId, 
+		return new RefreshWorksheetCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, 
 				updatesArr, selectionName);
 	}
 

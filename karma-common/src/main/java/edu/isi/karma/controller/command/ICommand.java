@@ -71,6 +71,8 @@ public interface ICommand extends IEntity
 
 	void setAppendToHistory(boolean appendToHistory);
 
+	String getModel();
+	
 	public enum HistoryType {
 		undo, redo
 	}

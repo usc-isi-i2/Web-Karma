@@ -21,7 +21,7 @@ public class PublishJSONCommandFactory  extends CommandFactory {
 		boolean importAsWorksheet = false;
 		if(sImportAsWorksheet != null)
 			importAsWorksheet = Boolean.valueOf(sImportAsWorksheet);
-		return new PublishJSONCommand(getNewId(workspace), worksheetId, importAsWorksheet);
+		return new PublishJSONCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, importAsWorksheet);
 	}
 
 	@Override

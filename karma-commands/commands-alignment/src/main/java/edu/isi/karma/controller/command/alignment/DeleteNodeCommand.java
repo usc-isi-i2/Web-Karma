@@ -35,8 +35,8 @@ public class DeleteNodeCommand extends WorksheetCommand {
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 		
-	protected DeleteNodeCommand(String id, String worksheetId, String alignmentId, String nodeId, String nodeLabel) {
-		super(id, worksheetId);
+	protected DeleteNodeCommand(String id, String model, String worksheetId, String alignmentId, String nodeId, String nodeLabel) {
+		super(id, model, worksheetId);
 		this.alignmentId = alignmentId;
 		this.nodeId = nodeId;
 		this.nodeLabel = nodeLabel;

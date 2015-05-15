@@ -93,6 +93,12 @@ public class HistoryJSONEditor {
 		historyJSON = newHistoryJSON;
 	}
 
+	public void updateModelUrlInCommands(String modelUrl) {
+		for (int i = 0; i < historyJSON.length(); i++) {
+			historyJSON.getJSONObject(i).put(HistoryArguments.model.name(), modelUrl);
+		}
+	}
+	
 	private boolean isCommandTag(JSONArray tags, CommandTag tag) {
 		for (int i = 0; i < tags.length(); i++) {
 			if (tags.getString(i).equals(tag.name()))

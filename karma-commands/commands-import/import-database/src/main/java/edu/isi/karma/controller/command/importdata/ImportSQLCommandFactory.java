@@ -18,7 +18,7 @@ public class ImportSQLCommandFactory extends CommandFactory {
 
 	        String interactionType = request.getParameter("interactionType");
 
-	        ImportSQLCommand comm = new ImportSQLCommand(getNewId(workspace));
+	        ImportSQLCommand comm = new ImportSQLCommand(getNewId(workspace), Command.NEW_MODEL);
 
 	        if (request.getParameter("revisedWorksheet") != null) {
 	            comm = new ImportSQLCommand(getNewId(workspace), request.getParameter("revisedWorksheet"));

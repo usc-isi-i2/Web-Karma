@@ -59,9 +59,9 @@ public class SuggestAutoModelCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(SuggestAutoModelCommand.class);
 
-	protected SuggestAutoModelCommand(String id, String worksheetId)
+	protected SuggestAutoModelCommand(String id, String model, String worksheetId)
 			{
-		super(id, worksheetId);
+		super(id, model, worksheetId);
 		
 		/** NOTE Not saving this command in history for now since we are 
 		 * not letting CRF model assign semantic types automatically. This command 

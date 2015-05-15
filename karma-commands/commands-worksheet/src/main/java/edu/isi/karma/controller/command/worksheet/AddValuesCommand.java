@@ -54,9 +54,9 @@ public class AddValuesCommand extends WorksheetSelectionCommand{
 		updateType, hNodeId, worksheetId
 	}
 
-	protected AddValuesCommand(String id,String worksheetId, 
+	protected AddValuesCommand(String id, String model, String worksheetId, 
 			String hTableId, String hNodeId, HNodeType type, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		isNewNode = false;

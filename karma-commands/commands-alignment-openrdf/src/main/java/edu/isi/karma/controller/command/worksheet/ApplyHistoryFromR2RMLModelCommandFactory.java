@@ -42,15 +42,17 @@ public class ApplyHistoryFromR2RMLModelCommandFactory extends CommandFactory {
 		String url = request.getParameter(Arguments.url.name());
 		if(url == null) {
 			File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
-			return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), uploadedFile, worksheetId, override);
+			return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), 
+					Command.NEW_MODEL, uploadedFile, worksheetId, override);
 		} else {
-			return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), url, worksheetId, override);
+			return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), 
+					Command.NEW_MODEL, url, worksheetId, override);
 		}
 	}
 	
-	public Command createCommandFromFile(String worksheetId, File uploadedFile,
+	public Command createCommandFromFile(String model, String worksheetId, File uploadedFile,
 			Workspace workspace, boolean override) {
-		return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), uploadedFile, worksheetId, override);
+		return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), model, uploadedFile, worksheetId, override);
 	}
 
 	@Override

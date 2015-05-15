@@ -20,8 +20,8 @@ import edu.isi.karma.view.VWorkspace;
 public class ClearTripleStoreCommand extends Command{
 	private String tripleStoreUrl;
 	private String graphUrl;
-	public ClearTripleStoreCommand(String id, String tripleStoreUrl, String context) {
-		super(id);
+	public ClearTripleStoreCommand(String id, String model, String tripleStoreUrl, String context) {
+		super(id, model);
 		this.tripleStoreUrl = tripleStoreUrl;
 		if (context != null && !context.trim().isEmpty()) {
 			context = context.trim();

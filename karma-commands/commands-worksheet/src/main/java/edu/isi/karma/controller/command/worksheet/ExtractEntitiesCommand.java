@@ -93,10 +93,10 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 		}
 		
 	}
-	protected ExtractEntitiesCommand(String id, String worksheetId,
+	protected ExtractEntitiesCommand(String id, String model, String worksheetId,
 			String hNodeId, String extractionURL, 
 			String entitiesToBeExt, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.extractionURL = extractionURL;
 		this.entitiesToBeExt = entitiesToBeExt;
@@ -304,7 +304,7 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 		
 		try {
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
-			cmd = (AddValuesCommand) factory.createCommand(addValues, workspace, hNodeId, worksheetId,
+			cmd = (AddValuesCommand) factory.createCommand(addValues, model, workspace, hNodeId, worksheetId,
 					ht.getId(), HNodeType.Transformation, selection.getName());
 			
 			HNode hnode = repFactory.getHNode(hNodeId);

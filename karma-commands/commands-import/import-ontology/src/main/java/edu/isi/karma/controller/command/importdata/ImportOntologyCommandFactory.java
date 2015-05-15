@@ -34,7 +34,7 @@ public class ImportOntologyCommandFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
-		return new ImportOntologyCommand(getNewId(workspace), uploadedFile);
+		return new ImportOntologyCommand(getNewId(workspace), Command.NEW_MODEL, uploadedFile);
 	}
 
 	@Override

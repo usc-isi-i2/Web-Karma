@@ -46,7 +46,7 @@ public class ChangeInternalNodeLinksCommandFactory extends JSONInputCommandFacto
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(
 				Arguments.worksheetId.name(), inputJson);
@@ -58,16 +58,16 @@ public class ChangeInternalNodeLinksCommandFactory extends JSONInputCommandFacto
 				Arguments.newEdges.name(), inputJson);
 
 		ChangeInternalNodeLinksCommand cmd = new ChangeInternalNodeLinksCommand(
-				getNewId(workspace), worksheetId, alignmentId, initialEdges,
+				getNewId(workspace), model, worksheetId, alignmentId, initialEdges,
 				newEdges);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
 
-	public Command createCommand(String worksheetId, String alignmentId, JSONArray initialEdges, JSONArray newEdges, Workspace workspace)
+	public Command createCommand(String worksheetId, String alignmentId, JSONArray initialEdges, JSONArray newEdges, String model, Workspace workspace)
 	{
 		return  new ChangeInternalNodeLinksCommand(
-				getNewId(workspace), worksheetId, alignmentId, initialEdges,
+				getNewId(workspace), model, worksheetId, alignmentId, initialEdges,
 				newEdges);
 	}
 	@Override

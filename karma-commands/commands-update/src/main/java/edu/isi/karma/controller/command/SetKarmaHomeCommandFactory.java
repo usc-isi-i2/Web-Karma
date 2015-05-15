@@ -13,6 +13,7 @@ public class SetKarmaHomeCommandFactory extends CommandFactory {
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		SetKarmaHomeCommand comm = new SetKarmaHomeCommand(getNewId(workspace), 
+				Command.NEW_MODEL,
 				request.getParameter(Arguments.directory.name()));
 		
 		return comm;

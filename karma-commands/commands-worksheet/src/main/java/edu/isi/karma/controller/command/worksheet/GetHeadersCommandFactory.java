@@ -20,7 +20,7 @@ public class GetHeadersCommandFactory extends CommandFactory {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String commandName = request.getParameter(Arguments.commandName.name());
-		return new GetHeadersCommand(getNewId(workspace), worksheetId, hNodeId, commandName);
+		return new GetHeadersCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, hNodeId, commandName);
 	}
 
 	@Override

@@ -42,7 +42,8 @@ public class PreviewPythonTransformationResultsCommandFactory extends CommandFac
 		String errorDefaultValue = request.getParameter(Arguments.errorDefaultValue.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new PreviewPythonTransformationResultsCommand(getNewId(workspace), worksheetId, 
+		return new PreviewPythonTransformationResultsCommand(getNewId(workspace), 
+				Command.NEW_MODEL, worksheetId, 
 				transformationCode, errorDefaultValue, hNodeId, 
 				selectionName);
 	}

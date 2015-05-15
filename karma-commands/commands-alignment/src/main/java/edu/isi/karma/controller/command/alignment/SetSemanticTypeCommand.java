@@ -74,10 +74,10 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	protected SetSemanticTypeCommand(String id, String worksheetId, String hNodeId, 
+	protected SetSemanticTypeCommand(String id, String model, String worksheetId, String hNodeId, 
 			JSONArray typesArr, boolean trainAndShowUpdates, 
 			String rdfLiteralType, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.typesArr = typesArr;

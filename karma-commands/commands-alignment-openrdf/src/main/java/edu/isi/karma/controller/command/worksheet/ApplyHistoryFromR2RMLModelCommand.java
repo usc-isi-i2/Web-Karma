@@ -65,9 +65,9 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 	private boolean override;
 	private static Logger logger = LoggerFactory.getLogger(ApplyHistoryFromR2RMLModelCommand.class);
 
-	protected ApplyHistoryFromR2RMLModelCommand(String id, File uploadedFile, 
+	protected ApplyHistoryFromR2RMLModelCommand(String id, String model, File uploadedFile, 
 			String worksheetId, boolean override) {
-		super(id, worksheetId);
+		super(id, model, worksheetId);
 		URL modelFile = null;
 		try {
 			modelFile = uploadedFile.toURI().toURL();
@@ -79,9 +79,9 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 		this.override = override;
 	}
 	
-	protected ApplyHistoryFromR2RMLModelCommand(String id, String modelFileUrl, 
+	protected ApplyHistoryFromR2RMLModelCommand(String id, String model, String modelFileUrl, 
 			String worksheetId, boolean override) {
-		super(id, worksheetId);
+		super(id, model, worksheetId);
 		URL modelFile = null;
 		try {
 			modelFile = new URL(modelFileUrl);
@@ -131,6 +131,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 			if (null == historyJson || historyJson.length() == 0) {
 				return new UpdateContainer(new ErrorUpdate("No history found in R2RML Model!"));
 			}
+			editor.updateModelUrlInCommands(r2rmlModelFile.toString());
 			WorksheetCommandHistoryExecutor histExecutor = new WorksheetCommandHistoryExecutor(
 					worksheetId, workspace);
 			AlignmentManager alignMgr = AlignmentManager.Instance();

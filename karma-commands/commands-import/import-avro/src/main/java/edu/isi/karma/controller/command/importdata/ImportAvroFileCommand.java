@@ -31,12 +31,12 @@ import edu.isi.karma.rep.Workspace;
 
 public class ImportAvroFileCommand extends ImportFileCommand implements IPreviewable {
 	
-    public ImportAvroFileCommand(String id, File file) {
-        super(id, file);
+    public ImportAvroFileCommand(String id, String model, File file) {
+        super(id, model, file);
     }
 
-    public ImportAvroFileCommand(String id, String revisedId, File file) {
-        super(id, revisedId, file);
+    public ImportAvroFileCommand(String id, String model, String revisedId, File file) {
+        super(id, model, revisedId, file);
     }
 
     @Override

@@ -17,7 +17,7 @@ public class FetchTransformingDataFactory extends CommandFactory {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
 		FetchTransformingDataCommand cmd = new FetchTransformingDataCommand(getNewId(workspace),
-				getWorksheetId(request, workspace), hNodeId, 
+				Command.NEW_MODEL, getWorksheetId(request, workspace), hNodeId, 
 				selectionName);
 		return cmd;
 	}

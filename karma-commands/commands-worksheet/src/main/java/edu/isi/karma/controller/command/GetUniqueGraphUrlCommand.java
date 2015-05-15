@@ -48,8 +48,8 @@ public class GetUniqueGraphUrlCommand extends WorksheetCommand {
 	
 	private static Logger logger = LoggerFactory.getLogger(GetUniqueGraphUrlCommand.class);
 	
-	protected GetUniqueGraphUrlCommand(String id, String worksheetId, String url, String context ){
-		super(id, worksheetId);
+	protected GetUniqueGraphUrlCommand(String id, String model, String worksheetId, String url, String context ){
+		super(id, model, worksheetId);
 		this.tripleStoreUrl=url;
 		this.graphUriTobeValidated = context;
 	}

@@ -16,11 +16,12 @@ public class RefreshSuperSelectionCommandFactory extends JSONInputCommandFactory
 		worksheetId, selectionName
 	}
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String currentSelectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		Command cmd = new RefreshSuperSelectionCommand(getNewId(workspace), worksheetId, currentSelectionName);
+		Command cmd = new RefreshSuperSelectionCommand(getNewId(workspace), model,
+				worksheetId, currentSelectionName);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
@@ -29,7 +30,8 @@ public class RefreshSuperSelectionCommandFactory extends JSONInputCommandFactory
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String currentSelectionName = request.getParameter(Arguments.selectionName.name());
-		return new RefreshSuperSelectionCommand(getNewId(workspace), worksheetId, currentSelectionName);
+		return new RefreshSuperSelectionCommand(getNewId(workspace), Command.NEW_MODEL,
+				worksheetId, currentSelectionName);
 	}
 
 	@Override

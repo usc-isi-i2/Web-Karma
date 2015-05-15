@@ -66,11 +66,11 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 		updateType, fileUrl, worksheetId, contextUrl
 	}
 
-	public ExportJSONCommand(String id, String alignmentNodeId, 
+	public ExportJSONCommand(String id, String model, String alignmentNodeId, 
 			String worksheetId, String selectionId, 
 			boolean contextFromModel, String contextJSON,
 			String contextURL) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.alignmentNodeId = alignmentNodeId;
 		this.contextFromModel = contextFromModel;
 		this.contextJSON = contextJSON;
