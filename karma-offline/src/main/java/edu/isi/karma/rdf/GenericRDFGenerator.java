@@ -277,11 +277,6 @@ public class GenericRDFGenerator extends RdfGenerator {
 				encoding = (String)inputParameters.get(InputProperty.ENCODING);
 			} else {
 				encoding = EncodingDetector.detect(is);
-				if(!isCharsetSupported(encoding))
-				{
-					logger.error("Encoding: " + encoding + " not supported. Falling back to UTF-8");
-					encoding = "UTF-8";
-				}	
 			}
 			is.reset();
 			
@@ -325,9 +320,6 @@ public class GenericRDFGenerator extends RdfGenerator {
 	     	throw new KarmaException("Content type unrecognized");
 	     }
 		return worksheet;
-	}
-	boolean isCharsetSupported(String name) {
-	    return Charset.availableCharsets().keySet().contains(name);
 	}
 
 	private synchronized WorksheetR2RMLJenaModelParser loadModel(R2RMLMappingIdentifier modelIdentifier) throws JSONException, KarmaException {
