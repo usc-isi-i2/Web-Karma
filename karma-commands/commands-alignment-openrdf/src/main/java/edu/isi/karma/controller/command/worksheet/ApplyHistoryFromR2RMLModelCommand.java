@@ -131,7 +131,9 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 			if (null == historyJson || historyJson.length() == 0) {
 				return new UpdateContainer(new ErrorUpdate("No history found in R2RML Model!"));
 			}
-			editor.updateModelUrlInCommands(r2rmlModelFile.toString());
+			logger.info("Protocol:" + r2rmlModelFile.getProtocol());
+			if(!r2rmlModelFile.getProtocol().equals("file"))
+				editor.updateModelUrlInCommands(r2rmlModelFile.toString());
 			WorksheetCommandHistoryExecutor histExecutor = new WorksheetCommandHistoryExecutor(
 					worksheetId, workspace);
 			AlignmentManager alignMgr = AlignmentManager.Instance();
