@@ -390,7 +390,8 @@ and related projects, please see: http://www.isi.edu/integration
         %>
         <script>
         	var googleEarthEnabled = <%=UIConfiguration.Instance().isGoogleEarthEnabled()%>;
-        	var manualAligment = <%=ModelingConfiguration.getManualAlignment()%>;
+        	var ontologyAligment = <%=ModelingConfiguration.getOntologyAlignment()%>;
+        	var knownModelsAligment = <%=ModelingConfiguration.getKnownModelsAlignment()%>;
         	var forceLayoutEnabled = <%=UIConfiguration.Instance().isForceModelLayoutEnabled()%>;
             $(function() {
                 // Clear the workspace when closing the window
@@ -483,7 +484,7 @@ and related projects, please see: http://www.isi.edu/integration
                     .scroll(startPositionFooter)
                     .resize(startPositionFooter);
             	
-            	if(manualAligment)
+            	if(!ontologyAligment && !knownModelsAlignment)
             		manualAlignHeader();
 			});
             

@@ -221,7 +221,7 @@ public class ModelLearner_LOD {
 			
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
 			if (this.graphBuilder instanceof GraphBuilderTopK) // which is not in ModelLearner_LOD
-				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getNumCandidateMappings(), false);
+				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getNumCandidateMappings(), true);
 			else 
 			{
 				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
@@ -249,8 +249,8 @@ public class ModelLearner_LOD {
 							new SortableSemanticModel(sm, sn);
 					sortableSemanticModels.add(sortableSemanticModel);
 					
-					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));
-					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
+//					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));
+//					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
 			if (number == ModelingConfiguration.getNumCandidateMappings())
@@ -430,8 +430,8 @@ public class ModelLearner_LOD {
 						semanticTypeMappings.addAll(tempSemanticTypeMappings);
 	
 					int countOfMatches = tempSemanticTypeMappings == null ? 0 : tempSemanticTypeMappings.size();
-					if (countOfMatches < countOfSemanticType) 
-//					if (countOfMatches == 0) // No struct in graph is matched with the semantic type, we add a new struct to the graph
+//					if (countOfMatches < countOfSemanticType) 
+					if (countOfMatches == 0) // No struct in graph is matched with the semantic type, we add a new struct to the graph
 					{
 						SemanticTypeMapping mp = addSemanticTypeStruct(cn, semanticType, addedNodes);
 						if (mp != null)
@@ -870,9 +870,11 @@ public class ModelLearner_LOD {
 			{
 				logger.info("building the graph ...");
 				// create and save the graph to file
-				GraphBuilder_Popularity b = new GraphBuilder_Popularity(ontologyManager, 
-						Params.LOD_OBJECT_PROPERIES_FILE, 
-						Params.LOD_DATA_PROPERIES_FILE);
+//				GraphBuilder_Popularity b = new GraphBuilder_Popularity(ontologyManager, 
+//						Params.LOD_OBJECT_PROPERIES_FILE, 
+//						Params.LOD_DATA_PROPERIES_FILE);
+				GraphBuilder_LOD_Pattern b = new GraphBuilder_LOD_Pattern(ontologyManager, 
+						Params.PATTERNS_DIR);
 				modelLearner = new ModelLearner_LOD(b.getGraphBuilder(), steinerNodes);
 			}
 

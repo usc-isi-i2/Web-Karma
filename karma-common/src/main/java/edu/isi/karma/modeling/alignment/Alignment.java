@@ -90,7 +90,7 @@ public class Alignment implements OntologyUpdateListener {
 		this.ontologyManager = ontologyManager;
 		this.ontologyManager.subscribeListener(this);
 		this.sourceColumnNodes = new HashSet<ColumnNode>(); 
-		if (ModelingConfiguration.isLearnAlignmentEnabled()) {
+		if (ModelingConfiguration.getKnownModelsAlignment()) {
 			this.graphBuilder = 
 					ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilderClone();
 		} else {
@@ -623,7 +623,7 @@ public class Alignment implements OntologyUpdateListener {
 				logger.debug("\t" + link.getId());
 		}
 		
-		if (!ModelingConfiguration.getManualAlignment() && ModelingConfiguration.isLearnAlignmentEnabled())
+		if (ModelingConfiguration.getKnownModelsAlignment())
 			learnFromKnownSemanticModels();
 		else
 			learnFromOntology();
@@ -690,9 +690,6 @@ public class Alignment implements OntologyUpdateListener {
 	}
 	
 	private void learnFromKnownSemanticModels() {
-		
-		if (!ModelingConfiguration.isLearnAlignmentEnabled())
-			return;
 		
 		List<Node> steinerNodes = this.computeSteinerNodes();
 		if (steinerNodes == null || steinerNodes.isEmpty()) {

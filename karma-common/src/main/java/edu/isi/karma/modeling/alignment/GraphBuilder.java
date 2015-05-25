@@ -255,9 +255,12 @@ public class GraphBuilder {
 	public boolean addNodeAndUpdate(Node node, Set<Node> addedNodes) {
 		
 		boolean result = addNode(node);
-		if (!result || ModelingConfiguration.getManualAlignment()) 
+		if (!result) 
 			return result;
-			
+
+		if (!ModelingConfiguration.getOntologyAlignment()) 
+			return result;
+
 		if (addedNodes == null) 
 			addedNodes = new HashSet<Node>();
 		addedNodes.add(node);
@@ -350,7 +353,6 @@ public class GraphBuilder {
 
 		logger.debug("exit>");		
 	}
-	
 	
 	public boolean addNode(Node node) {
 		
@@ -502,19 +504,6 @@ public class GraphBuilder {
 			((LabeledLink)link).getLabel().setNs(label.getNs());
 			((LabeledLink)link).getLabel().setPrefix(label.getPrefix());
 		}
-		
-		// why I wrote this code?
-//		if (source instanceof InternalNode && target instanceof ColumnNode) {
-//			
-//			// remove other incoming links to this column node
-//			DefaultLink oldIncomingLink = null;
-//			Set<DefaultLink> incomingLinks = this.getGraph().incomingEdgesOf(target);
-//			if (incomingLinks != null && incomingLinks.size() == 1) {
-//				oldIncomingLink = incomingLinks.iterator().next();
-//			}
-//			if (oldIncomingLink != null)
-//				this.removeLink(oldIncomingLink);
-//		}
 			
 		this.graph.addEdge(source, target, link);
 		
@@ -782,7 +771,6 @@ public class GraphBuilder {
 		return true;
 	}
 	
-
 	public LinkFrequency getMoreFrequentLinkBetweenNodes(String sourceUri, String targetUri) {
 
 		List<String> possibleLinksFromSourceToTarget = new ArrayList<String>();
@@ -928,9 +916,7 @@ public class GraphBuilder {
 		return lf;
 		
 	}
-	
-	// Private Methods
-	
+		
 	private void initialGraph() {
 		
 		logger.debug("<enter");
@@ -1274,7 +1260,6 @@ public class GraphBuilder {
 		logger.debug("exit>");
 	}
 	
-
 	public List<LabeledLink> getPossibleLinks(String sourceId, String targetId) {
 		return getPossibleLinks(sourceId, targetId, null, null);
 	}

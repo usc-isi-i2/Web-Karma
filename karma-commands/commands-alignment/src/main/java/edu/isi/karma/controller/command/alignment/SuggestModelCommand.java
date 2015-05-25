@@ -155,7 +155,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 
 		steinerNodes = alignment.computeSteinerNodes();
 		ModelLearner modelLearner = null;
-		if (ModelingConfiguration.isLearnAlignmentEnabled()) 
+		if (ModelingConfiguration.getKnownModelsAlignment()) 
 			modelLearner = new ModelLearner(alignment.getGraphBuilder(), steinerNodes);
 		else
 			modelLearner = new ModelLearner(ontologyManager, alignment.getLinksByStatus(LinkStatus.ForcedByUser), steinerNodes);

@@ -27,13 +27,13 @@ public class Params {
 	
 //	private static String DATASET_NAME = "museum-saam-old";
 //	private static String DATASET_NAME = "lod-bm";
-//	private static String DATASET_NAME = "lod-bm-sample";
+	private static String DATASET_NAME = "lod-bm-sample";
 //	private static String DATASET_NAME = "lod-music";
 //	private static String DATASET_NAME = "museum-saam";
 //	private static String DATASET_NAME = "museum-edm";
 //	private static String DATASET_NAME = "museum-edm";
+//	private static String DATASET_NAME = "music";
 	
-	private static String DATASET_NAME = "music";
 	private static String ROOT_DIR = "/Users/mohsen/Dropbox/Source Modeling/datasets/" + DATASET_NAME + "/";
 	
 	public static String ONTOLOGY_DIR = ROOT_DIR + "ontology/";

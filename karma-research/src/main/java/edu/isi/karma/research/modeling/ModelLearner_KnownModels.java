@@ -783,10 +783,10 @@ public class ModelLearner_KnownModels {
 		}
 		ontologyManager.updateCache();  
 
-		getStatistics(semanticModels);
-
-		if (true)
-			return;
+//		getStatistics(semanticModels);
+//
+//		if (true)
+//			return;
 
 		ModelLearningGraph modelLearningGraph = null;
 		
