@@ -64,6 +64,7 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSemanticTypeStatus;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -346,7 +347,7 @@ public class ModelLearner_LOD {
 			
 			if (!useCorrectTypes) {
 				candidateSemanticTypes = cn.getTopKLearnedSemanticTypes(numberOfCandidates);
-			} else if (cn.hasUserType()) {
+			} else if (cn.getSemanticTypeStatus() == ColumnSemanticTypeStatus.UserAssigned) {
 				candidateSemanticTypes = cn.getUserSemanticTypes();
 			}
 			

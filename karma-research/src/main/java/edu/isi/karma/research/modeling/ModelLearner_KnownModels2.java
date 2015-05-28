@@ -61,6 +61,7 @@ import edu.isi.karma.modeling.alignment.learner.SortableSemanticModel;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSemanticTypeStatus;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -202,7 +203,7 @@ public class ModelLearner_KnownModels2 {
 
 		if (!useCorrectTypes) {
 			candidateSemanticTypes = steinerNode.getTopKLearnedSemanticTypes(numberOfCandidates);
-		} else if (steinerNode.hasUserType()) {
+		} else if (steinerNode.getSemanticTypeStatus() == ColumnSemanticTypeStatus.UserAssigned) {
 			candidateSemanticTypes = steinerNode.getUserSemanticTypes();
 		}
 

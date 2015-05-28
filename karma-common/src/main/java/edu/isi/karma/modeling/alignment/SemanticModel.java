@@ -228,13 +228,11 @@ public class SemanticModel {
 						
 			Set<LabeledLink> incomingLinks = this.graph.incomingEdgesOf(n);
 			if (incomingLinks != null) {
-				List<SemanticType> userSemanticTypes = new ArrayList<SemanticType>();
 				for (LabeledLink link : incomingLinks) {
 					Node domain = link.getSource();
 					SemanticType st = new SemanticType(cn.getHNodeId(), link.getLabel(), domain.getLabel(), Origin.User, 1.0);
-					userSemanticTypes.add(st);
+					cn.assignUserType(st);
 				}
-				cn.setUserSemanticTypes(userSemanticTypes);
 			} else
 				logger.debug("The column node " + ((ColumnNode)n).getColumnName() + " does not have any domain or it has more than one domain.");
 		}

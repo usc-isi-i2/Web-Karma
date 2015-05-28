@@ -3,6 +3,7 @@ package edu.isi.karma.modeling.alignment.learner;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSemanticTypeStatus;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
@@ -23,7 +24,7 @@ public class LinkCoherence extends Coherence {
 //				return;
 		if (link.getTarget() instanceof ColumnNode) {
 			ColumnNode cn = (ColumnNode)link.getTarget();
-			if (cn.hasUserType())
+			if (cn.getSemanticTypeStatus() == ColumnSemanticTypeStatus.UserAssigned)
 				return;
 		}
 		this.itemsCount ++;

@@ -197,6 +197,9 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		int minSize = this.semanticTypesCount;
 		int maxSize = this.semanticTypesCount * 2;
 		
+		if (maxSize - minSize == 0)
+			return 0.0;
+		
 		//feature scaling: (x - min) / (max - min)
 		// here: x: reduction in size --- min reduction: 0 --- max reduction: maxSize - minSize 
 		return (double)(maxSize - this.getNodesCount()) / 

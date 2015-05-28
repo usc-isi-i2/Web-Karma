@@ -21,7 +21,6 @@
 
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -36,9 +35,7 @@ import edu.isi.karma.controller.command.WorksheetSelectionCommand;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory.Arguments;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory.METAPROPERTY_NAME;
 import edu.isi.karma.controller.command.selection.SuperSelection;
-import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
@@ -161,7 +158,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		LabeledLink oldIncomingLinkToColumnNode = null;
 		Node oldDomainNode = null;
 		List<LabeledLink> columnNodeIncomingLinks = alignment
-				.getIncomingLinks(columnNode.getId());
+				.getIncomingLinksInGraph(columnNode.getId());
 		if (columnNodeIncomingLinks != null
 				&& !columnNodeIncomingLinks.isEmpty()) { // SemanticType already
 															// assigned
@@ -287,19 +284,17 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		}
 
 		List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();
-		if (userSemanticTypes == null) {
-			userSemanticTypes = new ArrayList<SemanticType>();
-			columnNode.setUserSemanticTypes(userSemanticTypes);
-		}
 		boolean duplicateSemanticType = false;
-		for (SemanticType st : userSemanticTypes) {
-			if (st.getModelLabelString().equalsIgnoreCase(newType.getModelLabelString())) {
-				duplicateSemanticType = true;
-				break;
+		if (userSemanticTypes != null) {
+			for (SemanticType st : userSemanticTypes) {
+				if (st.getModelLabelString().equalsIgnoreCase(newType.getModelLabelString())) {
+					duplicateSemanticType = true;
+					break;
+				}
 			}
 		}
 		if (!duplicateSemanticType)
-			userSemanticTypes.add(newType);
+			columnNode.assignUserType(newType);
 
 		// Update the alignment
 		if(!this.isExecutedInBatch())

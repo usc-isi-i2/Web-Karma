@@ -213,7 +213,7 @@ public class PublishReportCommand extends WorksheetCommand {
 					 if(node instanceof ColumnNode) {
 						 ColumnNode columnNode = (ColumnNode)node;
 						 String columnName = getClassName(columnNode);
-						 List<LabeledLink> links = alignment.getIncomingLinks(node.getId());
+						 List<LabeledLink> links = alignment.getIncomingLinksInGraph(node.getId());
 						 for(LabeledLink link : links) {
 							 String property = getPropertyName(link.getLabel());
 							 String classname = getClassName(link.getSource());
