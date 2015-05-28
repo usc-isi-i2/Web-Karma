@@ -135,8 +135,11 @@ public class ColumnNode extends Node {
 	
 	public void unassignUserType(SemanticType semanticType) {
 
-		if (semanticType == null)
+		if (semanticType == null) {
+			if (userSemanticTypes == null || userSemanticTypes.isEmpty())
+				this.semanticTypeStatus = ColumnSemanticTypeStatus.Unassigned;
 			return;
+		}
 		
 		int tobeDeletedIndex = -1;
 		if (userSemanticTypes != null) {
