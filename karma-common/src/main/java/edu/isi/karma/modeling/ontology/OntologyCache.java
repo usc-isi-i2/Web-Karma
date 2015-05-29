@@ -155,7 +155,7 @@ public class OntologyCache {
 		logger.info("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
 		logger.info("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
 
-		if (ModelingConfiguration.getManualAlignment()) {
+		if (!ModelingConfiguration.getOntologyAlignment()) {
 			float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
 			logger.info("time to build the ontology cache (manual alignment): " + elapsedTimeSec);
 			return;

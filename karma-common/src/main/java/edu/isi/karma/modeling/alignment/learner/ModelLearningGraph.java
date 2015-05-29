@@ -30,6 +30,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphBuilderTopK;
 import edu.isi.karma.modeling.alignment.GraphUtil;
@@ -211,12 +212,14 @@ public abstract class ModelLearningGraph {
 	
 	public void addModelAndUpdate(SemanticModel model) {
 		this.addModel(model);
-		this.updateGraphUsingOntology(model);
+		if (ModelingConfiguration.getAddOntologyPaths())
+			this.updateGraphUsingOntology(model);
 	}
 	
 	public void addModelAndUpdateAndExport(SemanticModel model) {
 		this.addModel(model);
-		this.updateGraphUsingOntology(model);
+		if (ModelingConfiguration.getAddOntologyPaths())
+			this.updateGraphUsingOntology(model);
 		this.exportJson();
 		this.exportGraphviz();
 	}

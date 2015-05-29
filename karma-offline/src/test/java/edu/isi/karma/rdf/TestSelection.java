@@ -78,7 +78,7 @@ public class TestSelection {
 		workspace = WorkspaceManager.getInstance().createWorkspace();
         WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
         ModelingConfiguration.load();
-        ModelingConfiguration.setManualAlignment(true);
+        ModelingConfiguration.setManualAlignment();
         File file = new File(getClass().getClassLoader().getResource("people.json").toURI());
         InputStream is = new FileInputStream(file);
         Reader reader = EncodingDetector.getInputStreamReader(is, EncodingDetector.detect(file));

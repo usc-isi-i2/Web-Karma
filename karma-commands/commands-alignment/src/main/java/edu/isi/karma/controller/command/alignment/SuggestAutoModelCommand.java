@@ -46,6 +46,7 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSemanticTypeStatus;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
@@ -122,7 +123,7 @@ public class SuggestAutoModelCommand extends WorksheetCommand {
 			String columnName = hNode.getColumnName().trim().replaceAll(" ", "_");
 			ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNode.getId());
 			
-			List<LabeledLink> columnNodeIncomingLinks = alignment.getIncomingLinks(columnNode.getId());
+			List<LabeledLink> columnNodeIncomingLinks = alignment.getIncomingLinksInGraph(columnNode.getId());
 			if (columnNodeIncomingLinks == null || columnNodeIncomingLinks.isEmpty()) { // SemanticType not yet assigned
 				Label propertyLabel = new Label(ns + columnName, ns, "karma");
 				alignment.addDataPropertyLink(classNode, columnNode, propertyLabel);
@@ -132,19 +133,17 @@ public class SuggestAutoModelCommand extends WorksheetCommand {
 				worksheet.getSemanticTypes().addType(type);
 				
 				List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();
-				if (userSemanticTypes == null) {
-					userSemanticTypes = new ArrayList<SemanticType>();
-					columnNode.setUserSemanticTypes(userSemanticTypes);
-				}
 				boolean duplicateSemanticType = false;
-				for (SemanticType st : userSemanticTypes) {
-					if (st.getModelLabelString().equalsIgnoreCase(type.getModelLabelString())) {
-						duplicateSemanticType = true;
-						break;
+				if (userSemanticTypes != null) {
+					for (SemanticType st : userSemanticTypes) {
+						if (st.getModelLabelString().equalsIgnoreCase(type.getModelLabelString())) {
+							duplicateSemanticType = true;
+							break;
+						}
 					}
 				}
 				if (!duplicateSemanticType)
-					userSemanticTypes.add(type);
+					columnNode.assignUserType(type);
 			} else {
 				// User-defined: do nothing
 			}

@@ -110,6 +110,7 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 		
 		// Remove it from the alignment
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+		columnNode.unassignUserType(oldSemanticType);
 		columnNode.setForced(false);
 		if (columnNode != null) {
 			Set<LabeledLink> links =  alignment.getCurrentIncomingLinksToNode(columnNode.getId());

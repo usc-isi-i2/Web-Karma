@@ -34,6 +34,7 @@ public class ColumnNode extends Node {
 	private final String hNodeId;
 	private final String columnName;
 	private Label rdfLiteralType;
+	private ColumnSemanticTypeStatus semanticTypeStatus; 
 
 	private List<SemanticType> userSemanticTypes;
 	private List<SemanticType> learnedSemanticTypes;
@@ -45,10 +46,15 @@ public class ColumnNode extends Node {
 		this.setRdfLiteralType(rdfLiteralType);
 		this.userSemanticTypes = null;
 		this.learnedSemanticTypes = null;
+		this.semanticTypeStatus = ColumnSemanticTypeStatus.NotAssigned;
 	}
-
-	public boolean hasUserType() {
-		return this.userSemanticTypes == null || this.userSemanticTypes.isEmpty() ? false : true;
+	
+	public void includeInAutoModel() {
+		this.semanticTypeStatus = ColumnSemanticTypeStatus.AutoAssigned;
+	}
+	
+	public ColumnSemanticTypeStatus getSemanticTypeStatus() {
+		return semanticTypeStatus;
 	}
 
 	public List<SemanticType> getLearnedSemanticTypes() {
@@ -104,11 +110,53 @@ public class ColumnNode extends Node {
 	}
 	
 	public List<SemanticType> getUserSemanticTypes() {
-		return userSemanticTypes;
+		if (userSemanticTypes == null)
+			this.userSemanticTypes = new ArrayList<SemanticType>();
+		return Collections.unmodifiableList(userSemanticTypes);
 	}
 
-	public void setUserSemanticTypes(List<SemanticType> userSemanticTypes) {
-		this.userSemanticTypes = userSemanticTypes;
+//	public void setUserSemanticTypes(List<SemanticType> userSemanticTypes) {
+//		if (userSemanticTypes != null && !userSemanticTypes.isEmpty())
+//			this.semanticTypeStatus = ColumnSemanticTypeStatus.Assigned;
+//		this.userSemanticTypes = userSemanticTypes;
+//	}
+	
+	public void assignUserType(SemanticType newType) {
+		
+		if (newType == null)
+			return;
+		
+		if (userSemanticTypes == null)
+			this.userSemanticTypes = new ArrayList<SemanticType>();
+		
+		this.userSemanticTypes.add(newType);
+		this.semanticTypeStatus = ColumnSemanticTypeStatus.UserAssigned;
+	}
+	
+	public void unassignUserType(SemanticType semanticType) {
+
+		if (semanticType == null) {
+			if (userSemanticTypes == null || userSemanticTypes.isEmpty())
+				this.semanticTypeStatus = ColumnSemanticTypeStatus.Unassigned;
+			return;
+		}
+		
+		int tobeDeletedIndex = -1;
+		if (userSemanticTypes != null) {
+			SemanticType st;
+			for (int i = 0; i < userSemanticTypes.size(); i++) {
+				st = userSemanticTypes.get(i); 
+				if (st.getModelLabelString().equalsIgnoreCase(semanticType.getModelLabelString())) {
+					tobeDeletedIndex = i;
+					break;
+				}
+			}
+		}
+		if (tobeDeletedIndex != -1) {
+			userSemanticTypes.remove(tobeDeletedIndex);
+		}
+		if (userSemanticTypes == null || userSemanticTypes.isEmpty())
+			this.semanticTypeStatus = ColumnSemanticTypeStatus.Unassigned;
 	}
 
 	public List<SemanticType> getTopKLearnedSemanticTypes(int k) {

@@ -39,7 +39,10 @@ public class ModelingConfiguration {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelingConfiguration.class);
 
-	private static Boolean manualAlignment;
+//	private static Boolean manualAlignment;
+	private static Boolean ontologyAlignment;
+	private static Boolean knownModelsAlignment;
+	
 	private static Boolean thingNode;
 	private static Boolean nodeClosure;
 	private static Boolean propertiesDirect;
@@ -52,10 +55,6 @@ public class ModelingConfiguration {
 	private static String karmaSourcePrefix;
 	private static String karmaServicePrefix; 
 
-//	private static String modelsJsonDir;
-//	private static String modelsGraphvizDir;
-//	private static String alignmentGraphDir; 
-
 	private static Integer numCandidateMappings;
 	private static Integer mappingBranchingFactor;
 	private static Integer topKSteinerTree;
@@ -65,7 +64,8 @@ public class ModelingConfiguration {
 	private static Double scoringSizeCoefficient;
 
 	private static Boolean learnerEnabled;
-	private static Boolean learnAlignmentEnabled;
+	private static Boolean addOntologyPaths;
+//	private static Boolean learnAlignmentEnabled;
 	private static Boolean multipleSamePropertyPerNode;
 
 	private static Boolean storeOldHistory;
@@ -76,10 +76,21 @@ public class ModelingConfiguration {
 	private static String defaultModelingProperties = 
 			"##########################################################################################" + newLine + 
 			"#" + newLine + 
-			"# Graph Builder" + newLine + 
+			"# Alignment" + newLine + 
 			"#" + newLine + 
 			"##########################################################################################" + newLine + 
-			"manual.alignment=false" + newLine + 
+			"" + newLine + 
+//			"manual.alignment=false" + newLine + 
+			"# turning off the next two flags is equal to manual alignment" + newLine + 
+			"ontology.alignment=false" + newLine + 
+			"knownmodels.alignment=false" + newLine + 
+			"" + newLine + 
+			"##########################################################################################" + newLine + 
+			"#" + newLine + 
+			"# Graph Builder" + newLine + 
+			"# (the flags in this section will only take effect when the \"ontology.alignment\" is true)" + newLine +
+			"#" + newLine + 
+			"##########################################################################################" + newLine + 
 			"" + newLine + 
 			"thing.node=false" + newLine + 
 			"" + newLine + 
@@ -97,6 +108,7 @@ public class ModelingConfiguration {
 			"# Prefixes" + newLine + 
 			"#" + newLine + 
 			"##########################################################################################" + newLine + 
+			"" + newLine + 
 			"karma.source.prefix=http://isi.edu/integration/karma/sources/" + newLine + 
 			"karma.service.prefix=http://isi.edu/integration/karma/services/" + newLine + 
 			"" + newLine + 
@@ -105,10 +117,13 @@ public class ModelingConfiguration {
 			"# Model Learner" + newLine + 
 			"#" + newLine + 
 			"##########################################################################################" + newLine + 
+			"" + newLine + 
 			"learner.enabled=true" + newLine + 
 			"" + newLine + 
-			"learn.alignment.enabled=false" + newLine + 
+			"add.ontology.paths=true" + newLine + 
 			"" + newLine + 
+//			"learn.alignment.enabled=false" + newLine + 
+//			"" + newLine + 
 			"mapping.branching.factor=10" + newLine + 
 			"num.candidate.mappings=10" + newLine + 
 			"topk.steiner.tree=20" + newLine + 
@@ -119,15 +134,12 @@ public class ModelingConfiguration {
 			"scoring.coherence.coefficient=1.0" + newLine + 
 			"scoring.size.coefficient=0.5" + newLine + 
 			"" + newLine + 
-//			"models.json.dir=models-json/" + newLine + 
-//			"models.graphviz.dir=models-graphviz/" + newLine + 
-//			"alignment.graph.dir=alignment-graph/" + newLine +
-//			"" + newLine + 
 			"##########################################################################################" + newLine + 
 			"#" + newLine + 
 			"# Other Settings" + newLine + 
 			"#" + newLine + 
 			"##########################################################################################" + newLine + 
+			"" + newLine + 
 			"models.display.nomatching=false" + newLine +
 			"history.store.old=false"
 			;
@@ -136,7 +148,11 @@ public class ModelingConfiguration {
 		try {
 			Properties modelingProperties = loadParams();
 
-			manualAlignment = Boolean.parseBoolean(modelingProperties.getProperty("manual.alignment", "false"));
+//			manualAlignment = Boolean.parseBoolean(modelingProperties.getProperty("manual.alignment", "false"));
+
+			ontologyAlignment = Boolean.parseBoolean(modelingProperties.getProperty("ontology.alignment", "false"));
+
+			knownModelsAlignment = Boolean.parseBoolean(modelingProperties.getProperty("knownmodels.alignment", "false"));
 
 			thingNode = Boolean.parseBoolean(modelingProperties.getProperty("thing.node", "false"));
 
@@ -159,11 +175,9 @@ public class ModelingConfiguration {
 
 			learnerEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learner.enabled", "true"));
 
-			learnAlignmentEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learn.alignment.enabled", "false"));
+			addOntologyPaths = Boolean.parseBoolean(modelingProperties.getProperty("add.ontology.paths", "true"));
 
-//			modelsJsonDir = modelingProperties.getProperty("models.json.dir", "models-json/");
-//			modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir", "models-graphviz/");
-//			alignmentGraphDir = modelingProperties.getProperty("alignment.graph.dir", "alignment-graph/");
+//			learnAlignmentEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learn.alignment.enabled", "false"));
 
 			mappingBranchingFactor = Integer.parseInt(modelingProperties.getProperty("mapping.branching.factor", "10"));
 
@@ -219,7 +233,7 @@ public class ModelingConfiguration {
 
 	public static Boolean getThingNode() {
 
-		if (getManualAlignment() == true)
+		if (getOntologyAlignment() == false)
 			return false;
 
 		if (thingNode == null)
@@ -230,7 +244,7 @@ public class ModelingConfiguration {
 
 	public static Boolean getNodeClosure() {
 
-		if (getManualAlignment() == true)
+		if (getOntologyAlignment() == false)
 			return false;
 
 		if (nodeClosure == null)
@@ -239,12 +253,28 @@ public class ModelingConfiguration {
 		return nodeClosure;
 	}
 
-	public static Boolean getManualAlignment() {
-		if (manualAlignment == null) {
+//	public static Boolean getManualAlignment() {
+//		if (manualAlignment == null) {
+//			load();
+//			logger.debug("Manual Alignment:" + manualAlignment);
+//		}
+//		return manualAlignment;
+//	}
+	
+	public static Boolean getOntologyAlignment() {
+		if (ontologyAlignment == null) {
 			load();
-			logger.debug("Manual Alignment:" + manualAlignment);
+			logger.debug("Use Ontology in Alignment:" + ontologyAlignment);
 		}
-		return manualAlignment;
+		return ontologyAlignment;
+	}
+	
+	public static Boolean getKnownModelsAlignment() {
+		if (knownModelsAlignment == null) {
+			load();
+			logger.debug("Use Known Models in Alignment:" + knownModelsAlignment);
+		}
+		return knownModelsAlignment;
 	}
 
 	public static Boolean getPropertiesDirect() {
@@ -295,24 +325,6 @@ public class ModelingConfiguration {
 		return karmaServicePrefix.trim();
 	}
 
-//	public static String getModelsJsonDir() {
-//		if (modelsJsonDir == null)
-//			load();
-//		return modelsJsonDir;
-//	}
-//
-//	public static String getModelsGraphvizDir() {
-//		if (modelsGraphvizDir == null)
-//			load();
-//		return modelsGraphvizDir;
-//	}
-//
-//	public static String getAlignmentGraphDir() {
-//		if (alignmentGraphDir == null)
-//			load();
-//		return alignmentGraphDir;
-//	}
-
 	public static Integer getNumCandidateMappings() {
 		if (numCandidateMappings == null)
 			load();
@@ -355,11 +367,17 @@ public class ModelingConfiguration {
 		return learnerEnabled;
 	}
 
-	public static boolean isLearnAlignmentEnabled() {
-		if (learnAlignmentEnabled == null)
+	public static boolean getAddOntologyPaths() {
+		if (addOntologyPaths == null)
 			load();
-		return learnAlignmentEnabled;
+		return addOntologyPaths;
 	}
+
+//	public static boolean isLearnAlignmentEnabled() {
+//		if (learnAlignmentEnabled == null)
+//			load();
+//		return learnAlignmentEnabled;
+//	}
 	
 	public static boolean isStoreOldHistoryEnabled() {
 		if (storeOldHistory == null)
@@ -383,9 +401,10 @@ public class ModelingConfiguration {
 		return multipleSamePropertyPerNode;
 	}
 
-	public static void setManualAlignment(Boolean newManualAlignment)
+	public static void setManualAlignment()
 	{
-		manualAlignment = newManualAlignment;
+		ontologyAlignment = false;
+		knownModelsAlignment = false;
 	}
 
 }
