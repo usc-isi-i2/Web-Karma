@@ -46,10 +46,10 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitEditPythonTransformationCommand.class);
 
-	public SubmitEditPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
+	public SubmitEditPythonTransformationCommand(String id, String model, String newColumnName, String transformationCode, 
 			String worksheetId, String hNodeId, 
 			String errorDefaultValue, String targetHNodeId, String selectionId, boolean isJSONOutput) {
-		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, selectionId, isJSONOutput);
+		super(id, model, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, selectionId, isJSONOutput);
 		this.targetHNodeId = targetHNodeId;
 		this.pythonNodeId = targetHNodeId;
 		logger.debug("SubmitEditPythonTransformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);

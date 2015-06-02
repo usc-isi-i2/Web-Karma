@@ -46,8 +46,8 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 		
-	protected AddLiteralNodeCommand(String id, String worksheetId, String alignmentId, String nodeId, String literalValue, String literalType, boolean isUri) {
-		super(id, worksheetId);
+	protected AddLiteralNodeCommand(String id, String model, String worksheetId, String alignmentId, String nodeId, String literalValue, String literalType, boolean isUri) {
+		super(id, model, worksheetId);
 		this.alignmentId = alignmentId;
 		this.literalValue = literalValue;
 		this.literalType = literalType;

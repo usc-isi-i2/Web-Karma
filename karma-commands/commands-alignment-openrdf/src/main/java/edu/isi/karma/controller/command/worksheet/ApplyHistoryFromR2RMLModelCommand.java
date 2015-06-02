@@ -24,6 +24,8 @@ package edu.isi.karma.controller.command.worksheet;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,18 +56,41 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.util.SavedModelURLs;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
-	private final File r2rmlModelFile;
+	private final URL r2rmlModelFile;
 	private boolean override;
 	private static Logger logger = LoggerFactory.getLogger(ApplyHistoryFromR2RMLModelCommand.class);
 
-	protected ApplyHistoryFromR2RMLModelCommand(String id, File uploadedFile, 
+	protected ApplyHistoryFromR2RMLModelCommand(String id, String model, File uploadedFile, 
 			String worksheetId, boolean override) {
-		super(id, worksheetId);
-		this.r2rmlModelFile = uploadedFile;
+		super(id, model, worksheetId);
+		URL modelFile = null;
+		try {
+			modelFile = uploadedFile.toURI().toURL();
+		} catch(MalformedURLException me) {
+			logger.error("Error locating the model file:", me);
+		} finally {
+			this.r2rmlModelFile = modelFile;
+		}
+		this.override = override;
+	}
+	
+	protected ApplyHistoryFromR2RMLModelCommand(String id, String model, String modelFileUrl, 
+			String worksheetId, boolean override) {
+		super(id, model, worksheetId);
+		URL modelFile = null;
+		try {
+			modelFile = new URL(modelFileUrl);
+			(new SavedModelURLs()).saveModelUrl(modelFileUrl);
+		} catch(Exception me) {
+			logger.error("Error locating the model file:", me);
+		} finally {
+			this.r2rmlModelFile = modelFile;
+		}
 		this.override = override;
 	}
 
@@ -85,7 +110,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 
 	@Override
 	public String getDescription() {
-		return r2rmlModelFile.getName();
+		return r2rmlModelFile.getFile();
 	}
 
 	@Override
@@ -106,11 +131,15 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 			if (null == historyJson || historyJson.length() == 0) {
 				return new UpdateContainer(new ErrorUpdate("No history found in R2RML Model!"));
 			}
+			logger.info("Protocol:" + r2rmlModelFile.getProtocol());
+			if(!r2rmlModelFile.getProtocol().equals("file"))
+				editor.updateModelUrlInCommands(r2rmlModelFile.toString());
 			WorksheetCommandHistoryExecutor histExecutor = new WorksheetCommandHistoryExecutor(
 					worksheetId, workspace);
 			AlignmentManager alignMgr = AlignmentManager.Instance();
 			Alignment alignment = alignMgr.getAlignment(workspace.getId(), worksheetId);
 			if (override || alignment == null || alignment.GetTreeRoot() == null) {
+				worksheet.clearSemanticTypes();
 				String alignmentId = alignMgr.constructAlignmentId(workspace.getId(), worksheetId);
 				alignMgr.removeAlignment(alignmentId);
 				alignMgr.createAlignment(workspace.getId(), worksheetId,workspace.getOntologyManager());
@@ -173,17 +202,21 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 
 	private JSONArray extractHistoryFromModel(Workspace workspace, UpdateContainer uc) 
 			throws RepositoryException, RDFParseException, IOException, JSONException, KarmaException {
-
-		Worksheet ws = workspace.getFactory().getWorksheet(worksheetId);
-		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(ws.getTitle(), r2rmlModelFile.toURI().toURL());
-		WorksheetR2RMLJenaModelParser parser = new WorksheetR2RMLJenaModelParser(id);
-		KR2RMLMapping mapping = parser.parse();
-		KR2RMLVersion version = mapping.getVersion();
-		if(version.compareTo(KR2RMLVersion.current) < 0)
-		{
-			uc.add(new InfoUpdate("Model version is " + version.toString() + ".  Current version is " + KR2RMLVersion.current.toString() + ".  Please publish it again."));
+		if(r2rmlModelFile != null) {
+			Worksheet ws = workspace.getFactory().getWorksheet(worksheetId);
+			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(ws.getTitle(), r2rmlModelFile);
+			WorksheetR2RMLJenaModelParser parser = new WorksheetR2RMLJenaModelParser(id);
+			KR2RMLMapping mapping = parser.parse();
+			KR2RMLVersion version = mapping.getVersion();
+			if(version.compareTo(KR2RMLVersion.current) < 0)
+			{
+				uc.add(new InfoUpdate("Model version is " + version.toString() + ".  Current version is " + KR2RMLVersion.current.toString() + ".  Please publish it again."));
+			}
+			return mapping.getWorksheetHistory();
+		} else {
+			uc.add(new ErrorUpdate("Model could not be found"));
+			return new JSONArray();
 		}
-		return mapping.getWorksheetHistory();
 
 	}
 

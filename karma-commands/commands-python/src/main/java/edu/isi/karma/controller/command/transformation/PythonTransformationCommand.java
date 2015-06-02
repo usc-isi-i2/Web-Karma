@@ -69,9 +69,9 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		row, error
 	}
 
-	public PythonTransformationCommand(String id, String transformationCode,
+	public PythonTransformationCommand(String id, String model, String transformationCode,
 			String worksheetId, String hNodeId, String errorDefaultValue, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.transformationCode = transformationCode;
 		this.hNodeId = hNodeId;
 		this.errorDefaultValue = errorDefaultValue;
@@ -136,6 +136,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		PyObject locals = interpreter.getLocals();
 		locals.__setitem__("workspaceid", new PyString(workspace.getId()));
 		locals.__setitem__("command", Py.java2py(this));
+		locals.__setitem__("worksheetId", new PyString(worksheet.getId()));
 		locals.__setitem__("selectionName", new PyString(selection.getName()));
 		
 		repo.compileAndAddToRepositoryAndExec(interpreter, transformMethodStmt);

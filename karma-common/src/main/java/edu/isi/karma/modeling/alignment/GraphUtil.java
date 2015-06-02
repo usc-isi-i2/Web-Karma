@@ -805,7 +805,10 @@ public class GraphUtil {
 				userSemanticTypes = new ArrayList<SemanticType>();
 				userSemanticTypes.add(userSelectedSemanticType);
     		}
-    		((ColumnNode)n).setUserSemanticTypes(userSemanticTypes);
+    		if (userSemanticTypes != null) {
+	    		for (SemanticType st : userSemanticTypes)
+	    			((ColumnNode)n).assignUserType(st);
+    		}
     		((ColumnNode)n).setLearnedSemanticTypes(learnedSemanticTypes);
     	} else if (type == NodeType.LiteralNode) {
     		n = new LiteralNode(id, value, datatype, isUri);

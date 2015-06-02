@@ -44,8 +44,8 @@ public class TestSPARQLEndPointCommand extends Command {
 	
 	private static Logger logger = LoggerFactory.getLogger(TestSPARQLEndPointCommand.class);
 	
-	protected TestSPARQLEndPointCommand(String id, String url){
-		super(id);
+	protected TestSPARQLEndPointCommand(String id, String model, String url){
+		super(id, model);
 		this.tripleStoreUrl=url;
 	}
 

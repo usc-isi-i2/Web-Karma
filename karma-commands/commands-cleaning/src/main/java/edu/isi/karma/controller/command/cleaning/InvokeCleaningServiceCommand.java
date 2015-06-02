@@ -60,9 +60,9 @@ public class InvokeCleaningServiceCommand extends WorksheetSelectionCommand {
 
 	private String hNodeId;
 
-	public InvokeCleaningServiceCommand(String id, String hNodeId,
+	public InvokeCleaningServiceCommand(String id, String model, String hNodeId,
 			String worksheetId, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 	}
 

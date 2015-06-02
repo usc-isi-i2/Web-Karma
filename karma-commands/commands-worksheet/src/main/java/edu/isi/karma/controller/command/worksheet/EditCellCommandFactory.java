@@ -39,6 +39,7 @@ public class EditCellCommandFactory extends CommandFactory {
 		String newValue = request.getParameter(Arguments.value.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new EditCellCommand(getNewId(workspace), 
+				Command.NEW_MODEL,
 				getWorksheetId(request, workspace), nodeId, newValue, selectionName);
 	}
 

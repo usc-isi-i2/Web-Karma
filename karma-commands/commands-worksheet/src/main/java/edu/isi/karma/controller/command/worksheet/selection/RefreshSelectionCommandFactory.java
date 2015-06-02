@@ -18,12 +18,13 @@ public class RefreshSelectionCommandFactory extends JSONInputCommandFactory {
 	}
 	
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
-		Command cmd = new RefreshSelectionCommand(getNewId(workspace), worksheetId, selectionName, hNodeId);
+		Command cmd = new RefreshSelectionCommand(getNewId(workspace), model,
+				worksheetId, selectionName, hNodeId);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}

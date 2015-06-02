@@ -52,10 +52,10 @@ public class SplitByCommaCommand extends WorksheetSelectionCommand {
 
 //	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	protected SplitByCommaCommand(String id, String worksheetId,
+	protected SplitByCommaCommand(String id, String model, String worksheetId,
 			String hNodeId, String delimiter, 
 			String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.delimiter = delimiter;
 		

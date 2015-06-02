@@ -60,9 +60,9 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 		edgeSourceId, edgeId, edgeTargetId, edgeSourceUri, edgeTargetUri
 	}
 
-	public ChangeInternalNodeLinksCommand(String id, String worksheetId,
+	public ChangeInternalNodeLinksCommand(String id, String model, String worksheetId,
 			String alignmentId, JSONArray initialEdges, JSONArray newEdges) {
-		super(id, worksheetId);
+		super(id, model, worksheetId);
 		this.alignmentId = alignmentId;
 		this.initialEdges = initialEdges;
 		this.newEdges = newEdges;

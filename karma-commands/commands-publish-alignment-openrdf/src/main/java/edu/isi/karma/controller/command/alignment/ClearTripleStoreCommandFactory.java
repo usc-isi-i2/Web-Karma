@@ -20,7 +20,8 @@ public class ClearTripleStoreCommandFactory extends CommandFactory{
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.graphContext.name());
-		return new ClearTripleStoreCommand(getNewId(workspace), tripleStoreUrl, context);
+		return new ClearTripleStoreCommand(getNewId(workspace), Command.NEW_MODEL,
+				tripleStoreUrl, context);
 	}
 
 	@Override

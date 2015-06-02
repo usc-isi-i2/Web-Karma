@@ -47,11 +47,11 @@ public class SplitValuesCommandFactory extends JSONInputCommandFactory {
 		String newColName = request.getParameter(Arguments.newColName.name());
 		String newHNodeId = request.getParameter(Arguments.newHNodeId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new SplitValuesCommand(getNewId(workspace), worksheetId, 
+		return new SplitValuesCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, 
 				hNodeId, delimiter, newColName, newHNodeId, selectionName);
 	}
 
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
@@ -61,7 +61,7 @@ public class SplitValuesCommandFactory extends JSONInputCommandFactory {
 		if(HistoryJsonUtil.valueExits(Arguments.newHNodeId.name(), inputJson))
 			newHNodeId = HistoryJsonUtil.getStringValue(Arguments.newHNodeId.name(), inputJson);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		Command comm = new SplitValuesCommand(getNewId(workspace), 
+		Command comm = new SplitValuesCommand(getNewId(workspace), model,
 				worksheetId, hNodeId,
 				delimiter, newColName, newHNodeId, selectionName);
 		comm.setInputParameterJson(inputJson.toString());

@@ -43,17 +43,18 @@ public class RenameColumnCommandFactory extends JSONInputCommandFactory {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String newColumnName = request.getParameter(Arguments.newColumnName.name());
-		return new RenameColumnCommand(getNewId(workspace), newColumnName, hNodeId, worksheetId);
+		return new RenameColumnCommand(getNewId(workspace), 
+				Command.NEW_MODEL, newColumnName, hNodeId, worksheetId);
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String newColumnName = HistoryJsonUtil.getStringValue(Arguments.newColumnName.name(), inputJson);
 		
-		RenameColumnCommand renCommand = new RenameColumnCommand(getNewId(workspace), newColumnName, hNodeId, worksheetId);
+		RenameColumnCommand renCommand = new RenameColumnCommand(getNewId(workspace), model, newColumnName, hNodeId, worksheetId);
 		renCommand.setInputParameterJson(inputJson.toString());
 		return renCommand;
 	}

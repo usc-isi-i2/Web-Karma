@@ -67,7 +67,8 @@ public abstract class Preferences {
 
 	private void populatePreferences() {
 		try {
-			if(ModelingConfiguration.getManualAlignment()) {
+			if(!ModelingConfiguration.getOntologyAlignment() && 
+					!ModelingConfiguration.getKnownModelsAlignment()) {
 				loadDefaultPreferences();
 			} else {
 				jsonFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_PREFERENCES_DIRECTORY) + 
@@ -121,7 +122,8 @@ public abstract class Preferences {
 	}
 	
 	protected void savePreferences() throws JSONException, IOException {
-		if(!ModelingConfiguration.getManualAlignment()) {
+		if(ModelingConfiguration.getOntologyAlignment() || 
+				ModelingConfiguration.getKnownModelsAlignment()) {
 			FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
 		}
 	}

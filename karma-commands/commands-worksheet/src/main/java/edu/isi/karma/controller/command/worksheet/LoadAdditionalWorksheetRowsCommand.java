@@ -33,9 +33,9 @@ public class LoadAdditionalWorksheetRowsCommand extends WorksheetSelectionComman
 	
 	private final String tableId;
 	
-	protected LoadAdditionalWorksheetRowsCommand(String id, String tableId, 
+	protected LoadAdditionalWorksheetRowsCommand(String id, String model, String tableId, 
 			String worksheetId, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.tableId = tableId;
 	}
 

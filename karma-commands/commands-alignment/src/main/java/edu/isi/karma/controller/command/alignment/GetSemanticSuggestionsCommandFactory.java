@@ -21,13 +21,13 @@ public class GetSemanticSuggestionsCommandFactory
 	}
 	
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		return new GetSemanticSuggestionsCommand(getNewId(workspace), worksheetId, hNodeId, 
+		return new GetSemanticSuggestionsCommand(getNewId(workspace), model, worksheetId, hNodeId, 
 				selectionName);
 	}
 
@@ -36,8 +36,8 @@ public class GetSemanticSuggestionsCommandFactory
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new GetSemanticSuggestionsCommand(getNewId(workspace), worksheetId, hNodeId, 
-				selectionName);
+		return new GetSemanticSuggestionsCommand(getNewId(workspace), 
+				Command.NEW_MODEL, worksheetId, hNodeId, selectionName);
 	}
 
 	@Override

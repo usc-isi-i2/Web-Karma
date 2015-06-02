@@ -32,8 +32,8 @@ public class FetchPreferencesCommand extends Command {
 	private String commandName;
 	
 
-	protected FetchPreferencesCommand(String id, String commandName){
-		super(id);
+	protected FetchPreferencesCommand(String id, String model, String commandName){
+		super(id, model);
 		this.commandName=commandName;
 	}
 

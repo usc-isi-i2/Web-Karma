@@ -47,20 +47,20 @@ public class ExtractEntitiesCommandFactory extends JSONInputCommandFactory {
 		String extractionURL = request.getParameter(Arguments.extractionURL.name());
 		String entitiesToBeExt = request.getParameter(Arguments.entitiesToBeExt.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new ExtractEntitiesCommand(getNewId(workspace), worksheetId, 
+		return new ExtractEntitiesCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, 
 				hNodeId, extractionURL, entitiesToBeExt, 
 				selectionName);
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String extractionURL = HistoryJsonUtil.getStringValue(Arguments.extractionURL.name(), inputJson);
 		String entitiesToBeExt = HistoryJsonUtil.getStringValue(Arguments.entitiesToBeExt.name(), inputJson);
 		String selectionName = HistoryJsonUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		ExtractEntitiesCommand cmd = new ExtractEntitiesCommand(getNewId(workspace), worksheetId, 
+		ExtractEntitiesCommand cmd = new ExtractEntitiesCommand(getNewId(workspace), model, worksheetId, 
 				hNodeId, extractionURL, entitiesToBeExt, 
 				selectionName);
 		

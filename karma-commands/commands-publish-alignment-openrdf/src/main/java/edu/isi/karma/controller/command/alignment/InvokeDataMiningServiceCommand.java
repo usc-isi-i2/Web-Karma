@@ -77,8 +77,8 @@ public class InvokeDataMiningServiceCommand extends WorksheetCommand {
 	 * @param csvFileName
 	 * @param isTesting A boolean flag to identify if it is the training or testing phase
 	 * */
-	protected InvokeDataMiningServiceCommand(String id, String worksheetId, String miningUrl, String fileName) {
-		super(id, worksheetId);
+	protected InvokeDataMiningServiceCommand(String id, String model, String worksheetId, String miningUrl, String fileName) {
+		super(id, model, worksheetId);
 		this.dataMiningURL = miningUrl;
 		this.csvFileName = fileName;
 	}

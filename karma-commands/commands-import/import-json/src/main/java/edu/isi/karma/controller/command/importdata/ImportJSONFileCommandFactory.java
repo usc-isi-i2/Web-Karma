@@ -40,7 +40,7 @@ public class ImportJSONFileCommandFactory extends CommandFactory {
 
 		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
 		if (request.getParameter("revisedWorksheet") == null) {
-			return new ImportJSONFileCommand(getNewId(workspace), uploadedFile);
+			return new ImportJSONFileCommand(getNewId(workspace), Command.NEW_MODEL, uploadedFile);
 		}
 		return new ImportJSONFileCommand(getNewId(workspace), request.getParameter("revisedWorksheet"), uploadedFile);
 	}

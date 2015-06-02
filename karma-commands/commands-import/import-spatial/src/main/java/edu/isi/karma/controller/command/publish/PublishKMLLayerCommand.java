@@ -44,10 +44,10 @@ public class PublishKMLLayerCommand extends WorksheetSelectionCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishKMLLayerCommand.class);
 
-	protected PublishKMLLayerCommand(String id, String worksheetId,
+	protected PublishKMLLayerCommand(String id, String model, String worksheetId,
 			String ipAddress, String kMLTransferServiceURL, 
 			String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.publicKMLAddress = ipAddress;
 		this.kMLTransferServiceURL = kMLTransferServiceURL;
 	}

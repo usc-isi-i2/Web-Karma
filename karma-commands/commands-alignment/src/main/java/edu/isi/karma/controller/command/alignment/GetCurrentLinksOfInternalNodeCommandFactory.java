@@ -37,7 +37,8 @@ public class GetCurrentLinksOfInternalNodeCommandFactory extends CommandFactory 
 			Workspace workspace) {
 		String nodeId =request.getParameter(ARGUMENTS.nodeId.name());
 		String alignmentId =request.getParameter(ARGUMENTS.alignmentId.name());
-		return new GetCurrentLinksOfInternalNodeCommand(getNewId(workspace),nodeId, alignmentId);
+		return new GetCurrentLinksOfInternalNodeCommand(getNewId(workspace),
+				Command.NEW_MODEL, nodeId, alignmentId);
 	}
 
 	@Override

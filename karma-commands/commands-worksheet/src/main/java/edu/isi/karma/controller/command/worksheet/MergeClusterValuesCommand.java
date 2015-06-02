@@ -29,9 +29,9 @@ public class MergeClusterValuesCommand extends WorksheetSelectionCommand {
 	private Map<String, String> oldRowValueMap = new HashMap<String, String>();	
 	MultipleValueEditColumnCommand edit;
 			
-	public MergeClusterValuesCommand(String id, String hNodeId,
+	public MergeClusterValuesCommand(String id, String model, String hNodeId,
 			String worksheetId, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 	}
 
@@ -115,7 +115,7 @@ public class MergeClusterValuesCommand extends WorksheetSelectionCommand {
 					i = i+1;
 					
 				}
-				edit = new MultipleValueEditColumnCommand(mainId, mainWorksheetId, mainHNodeId, rowValueMap);
+				edit = new MultipleValueEditColumnCommand(mainId, model, mainWorksheetId, mainHNodeId, rowValueMap);
 				c.append(edit.doIt(workspace));
 				
 				

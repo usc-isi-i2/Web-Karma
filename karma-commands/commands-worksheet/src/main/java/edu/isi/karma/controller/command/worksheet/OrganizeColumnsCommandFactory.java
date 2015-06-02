@@ -20,7 +20,7 @@ public class OrganizeColumnsCommandFactory extends
 	}
 	
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(
 				Arguments.worksheetId.name(), inputJson);
@@ -29,7 +29,7 @@ public class OrganizeColumnsCommandFactory extends
 				Arguments.orderedColumns.name(), inputJson));
 
 		OrganizeColumnsCommand cmd = new OrganizeColumnsCommand(
-				getNewId(workspace), workspace.getId(), worksheetId, orderedColumns);
+				getNewId(workspace), model, workspace.getId(), worksheetId, orderedColumns);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}

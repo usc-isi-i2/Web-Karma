@@ -25,13 +25,13 @@ public class ExportAvroCommandFactory extends JSONInputCommandFactory {
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String alignmentNodeId = HistoryJsonUtil.getStringValue(Arguments.alignmentNodeId.name(), inputJson);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		ExportAvroCommand comm = new ExportAvroCommand(
-				getNewId(workspace), alignmentNodeId, worksheetId, selectionName);
+				getNewId(workspace), model, alignmentNodeId, worksheetId, selectionName);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

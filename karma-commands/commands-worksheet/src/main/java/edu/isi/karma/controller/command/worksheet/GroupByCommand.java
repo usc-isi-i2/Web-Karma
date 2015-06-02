@@ -51,10 +51,10 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 		updateType, hNodeId, worksheetId
 	}
 
-	protected GroupByCommand(String id,String worksheetId, 
+	protected GroupByCommand(String id, String model, String worksheetId, 
 			String hTableId, String hNodeId, 
 			String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		addTag(CommandTag.Transformation);
 	}

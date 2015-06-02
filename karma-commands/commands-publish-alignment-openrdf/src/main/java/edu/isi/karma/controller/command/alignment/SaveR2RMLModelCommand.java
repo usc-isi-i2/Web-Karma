@@ -41,8 +41,8 @@ public class SaveR2RMLModelCommand extends Command{
 	private boolean successful;
 	private static Logger logger = LoggerFactory.getLogger(SaveR2RMLModelCommand.class);
 
-	protected SaveR2RMLModelCommand(String id, String modelUrl, String url, String context, String collection) {
-		super(id);
+	protected SaveR2RMLModelCommand(String id, String model, String modelUrl, String url, String context, String collection) {
+		super(id, model);
 		this.modelUrl = modelUrl;
 		this.tripleStoreUrl = url;
 		this.graphContext = context;

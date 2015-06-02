@@ -19,7 +19,7 @@ public class UnfoldCommandFactory extends JSONInputCommandFactory{
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String keyHNodeid = CommandInputJSONUtil.getStringValue(Arguments.keyhNodeId.name(), inputJson);
@@ -29,7 +29,7 @@ public class UnfoldCommandFactory extends JSONInputCommandFactory{
 		String valueName = workspace.getFactory().getHNode(valueHNodeid).getColumnName();
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		UnfoldCommand unfoldCmd = new UnfoldCommand(getNewId(workspace), worksheetId, 
+		UnfoldCommand unfoldCmd = new UnfoldCommand(getNewId(workspace), model, worksheetId, 
 				keyHNodeid, valueHNodeid, notOtherColumn, 
 				selectionName);
 		unfoldCmd.setInputParameterJson(inputJson.toString());

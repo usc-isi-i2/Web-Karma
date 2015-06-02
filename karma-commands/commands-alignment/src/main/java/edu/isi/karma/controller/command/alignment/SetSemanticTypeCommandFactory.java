@@ -62,12 +62,12 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 			return null;
 		}
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new SetSemanticTypeCommand(getNewId(workspace), worksheetId, hNodeId, 
+		return new SetSemanticTypeCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, hNodeId, 
 				arr, true, rdfLiteralType, 
 				selectionName);
 	}
 
-	public Command createCommand(JSONArray inputJson, Workspace workspace) throws JSONException, KarmaException {
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace) throws JSONException, KarmaException {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String arrStr = HistoryJsonUtil.getStringValue(Arguments.SemanticTypesArray.name(), inputJson);
@@ -83,7 +83,7 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 		}
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		SetSemanticTypeCommand comm = new SetSemanticTypeCommand(getNewId(workspace), 
+		SetSemanticTypeCommand comm = new SetSemanticTypeCommand(getNewId(workspace), model,
 				worksheetId, hNodeId, arr, 
 				train, rdfLiteralType, 
 				selectionName);
@@ -94,10 +94,10 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 		return comm;
 	}
 	
-	public Command createCommand(Workspace workspace, String worksheetId, String hNodeId, 
+	public Command createCommand(String model, Workspace workspace, String worksheetId, String hNodeId, 
 			boolean isPartOfKey, JSONArray arr, boolean train, 
 			String rdfLiteralType, String selectionId) {
-		return new SetSemanticTypeCommand(getNewId(workspace), worksheetId, hNodeId, 
+		return new SetSemanticTypeCommand(getNewId(workspace), model, worksheetId, hNodeId, 
 				arr, train, rdfLiteralType, selectionId);
 	}
 	@Override

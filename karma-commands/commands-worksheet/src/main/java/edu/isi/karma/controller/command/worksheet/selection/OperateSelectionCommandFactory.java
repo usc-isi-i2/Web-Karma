@@ -19,7 +19,7 @@ public class OperateSelectionCommandFactory extends JSONInputCommandFactory {
 	}
 	
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
@@ -27,7 +27,8 @@ public class OperateSelectionCommandFactory extends JSONInputCommandFactory {
 		String operation = CommandInputJSONUtil.getStringValue(Arguments.operation.name(), inputJson);
 		String pythonCode = CommandInputJSONUtil.getStringValue(Arguments.pythonCode.name(), inputJson);
 		boolean onError = Boolean.parseBoolean(CommandInputJSONUtil.getStringValue(Arguments.onError.name(), inputJson));
-		Command cmd = new OperateSelectionCommand(getNewId(workspace), worksheetId, selectionName, hNodeId, 
+		Command cmd = new OperateSelectionCommand(getNewId(workspace), model, 
+				worksheetId, selectionName, hNodeId, 
 				operation, pythonCode, onError);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;

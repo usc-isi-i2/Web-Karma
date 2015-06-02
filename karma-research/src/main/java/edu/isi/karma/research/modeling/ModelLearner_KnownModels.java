@@ -65,6 +65,7 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSemanticTypeStatus;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -315,7 +316,7 @@ public class ModelLearner_KnownModels {
 			
 			if (!useCorrectTypes) {
 				candidateSemanticTypes = cn.getTopKLearnedSemanticTypes(numberOfCandidates);
-			} else if (cn.hasUserType()) {
+			} else if (cn.getSemanticTypeStatus() == ColumnSemanticTypeStatus.UserAssigned) {
 				candidateSemanticTypes = cn.getUserSemanticTypes();
 			}
 
@@ -783,10 +784,10 @@ public class ModelLearner_KnownModels {
 		}
 		ontologyManager.updateCache();  
 
-		getStatistics(semanticModels);
-
-		if (true)
-			return;
+//		getStatistics(semanticModels);
+//
+//		if (true)
+//			return;
 
 		ModelLearningGraph modelLearningGraph = null;
 		

@@ -40,8 +40,8 @@ public class SetWorksheetPropertiesCommand extends WorksheetCommand {
 	final private String properties;
 	private Worksheet worksheet;
 
-	public SetWorksheetPropertiesCommand(String id, String worksheetId, String properties) {
-		super(id, worksheetId);
+	public SetWorksheetPropertiesCommand(String id, String model, String worksheetId, String properties) {
+		super(id, model, worksheetId);
 		this.properties = properties;
 		
 		addTag(CommandTag.Modeling);

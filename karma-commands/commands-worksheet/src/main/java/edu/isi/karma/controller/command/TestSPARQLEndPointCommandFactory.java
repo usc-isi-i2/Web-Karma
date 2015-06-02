@@ -34,6 +34,7 @@ public class TestSPARQLEndPointCommandFactory extends CommandFactory {
 			Workspace workspace) {
 
 		TestSPARQLEndPointCommand comm = new TestSPARQLEndPointCommand(getNewId(workspace), 
+				Command.NEW_MODEL,
 				request.getParameter(Arguments.tripleStoreUrl.name()));
 		
 		return comm;

@@ -57,9 +57,9 @@ public class PublishRDFCellCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishRDFCellCommand.class);
 
-	protected PublishRDFCellCommand(String id, String worksheetId,
+	protected PublishRDFCellCommand(String id, String model, String worksheetId,
 			String nodeId, String rdfSourcePrefix, String rdfSourceNamespace) {
-		super(id, worksheetId);
+		super(id, model, worksheetId);
 		//this.nodeId = nodeId;
 		//this.rdfSourcePrefix = rdfSourcePrefix;
 		//this.rdfSourceNamespace = rdfSourceNamespace;

@@ -48,8 +48,8 @@ public class PublishReportCommand extends WorksheetCommand {
 	// Logger object
 	private static Logger logger = LoggerFactory.getLogger(PublishReportCommand.class);
 
-	public PublishReportCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+	public PublishReportCommand(String id, String model, String worksheetId) {
+		super(id, model, worksheetId);
 	}
 
 	@Override
@@ -213,7 +213,7 @@ public class PublishReportCommand extends WorksheetCommand {
 					 if(node instanceof ColumnNode) {
 						 ColumnNode columnNode = (ColumnNode)node;
 						 String columnName = getClassName(columnNode);
-						 List<LabeledLink> links = alignment.getIncomingLinks(node.getId());
+						 List<LabeledLink> links = alignment.getIncomingLinksInGraph(node.getId());
 						 for(LabeledLink link : links) {
 							 String property = getPropertyName(link.getLabel());
 							 String classname = getClassName(link.getSource());

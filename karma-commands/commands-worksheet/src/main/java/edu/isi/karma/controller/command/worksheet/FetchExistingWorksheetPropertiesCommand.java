@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -49,8 +50,8 @@ public class FetchExistingWorksheetPropertiesCommand extends WorksheetCommand {
 		updateType, properties
 	}
 
-	public FetchExistingWorksheetPropertiesCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+	public FetchExistingWorksheetPropertiesCommand(String id, String model, String worksheetId) {
+		super(id, model, worksheetId);
 	}
 
 	@Override

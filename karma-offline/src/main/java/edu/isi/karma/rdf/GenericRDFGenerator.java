@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -201,7 +202,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 		}
 		else if(request.getInputData() != null)
 		{
-			inputStream = IOUtils.toInputStream(request.getInputData());
+			inputStream = IOUtils.toInputStream(request.getInputData(), Charset.forName("UTF-8"));
+			request.setEncoding("UTF-8");
 		}
 		else if(request.getInputStream() != null)
 		{
@@ -319,7 +321,6 @@ public class GenericRDFGenerator extends RdfGenerator {
 	     }
 		return worksheet;
 	}
-
 
 	private synchronized WorksheetR2RMLJenaModelParser loadModel(R2RMLMappingIdentifier modelIdentifier) throws JSONException, KarmaException {
 		if(readModelParsers.containsKey(modelIdentifier.getName()))

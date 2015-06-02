@@ -78,6 +78,19 @@ public class SemanticModel {
 	protected Workspace workspace;
 	protected Worksheet worksheet;
 	private SuperSelection selection;
+	
+	public SemanticModel(String id,
+			DirectedWeightedMultigraph<Node, LabeledLink> graph, boolean suggestSemanticTypes) {
+
+		this.id = id;
+		this.graph = graph;
+
+		this.sourceColumns = this.getColumnNodes();
+		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
+		for (ColumnNode c : this.sourceColumns)
+			this.mappingToSourceColumns.put(c, c);
+	}
+	
 	public SemanticModel(String id,
 			DirectedWeightedMultigraph<Node, LabeledLink> graph) {
 
@@ -215,13 +228,11 @@ public class SemanticModel {
 						
 			Set<LabeledLink> incomingLinks = this.graph.incomingEdgesOf(n);
 			if (incomingLinks != null) {
-				List<SemanticType> userSemanticTypes = new ArrayList<SemanticType>();
 				for (LabeledLink link : incomingLinks) {
 					Node domain = link.getSource();
 					SemanticType st = new SemanticType(cn.getHNodeId(), link.getLabel(), domain.getLabel(), Origin.User, 1.0);
-					userSemanticTypes.add(st);
+					cn.assignUserType(st);
 				}
-				cn.setUserSemanticTypes(userSemanticTypes);
 			} else
 				logger.debug("The column node " + ((ColumnNode)n).getColumnName() + " does not have any domain or it has more than one domain.");
 		}
@@ -283,8 +294,8 @@ public class SemanticModel {
 		String s, p, o, triple;
 		for (LabeledLink l : g.edgeSet()) {
 			// FIXME: this line skips the links corresponding to the semantic types
-//			if (!(l.getTarget() instanceof InternalNode))
-//				continue;
+			if (!(l.getTarget() instanceof InternalNode))
+				continue;
 			s = nodeIds.get(l.getSource());
 			o = nodeIds.get(l.getTarget());
 			p = l.getLabel().getUri();

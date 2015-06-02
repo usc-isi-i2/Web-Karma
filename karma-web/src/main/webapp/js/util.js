@@ -618,6 +618,11 @@ function refreshWorksheet(worksheetId, updates) {
 	sendRequest(info, worksheetId);
 }
 
+function isValidUrl(url) {
+	var re = /^(ht|f)tps?:\/\/[a-z0-9-\.]+\.[a-z]{2,4}\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?$/;
+    return re.test(url);
+}
+
 //Make All Modal Dialogs Resizeable
 $(".modal-dialog").resizable({
 	handles: "e, w"

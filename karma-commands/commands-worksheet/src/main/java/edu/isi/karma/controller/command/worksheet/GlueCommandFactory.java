@@ -20,7 +20,7 @@ public class GlueCommandFactory extends JSONInputCommandFactory{
 	}
 	
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
@@ -28,7 +28,7 @@ public class GlueCommandFactory extends JSONInputCommandFactory{
 		String implMethod = CommandInputJSONUtil.getStringValue(Arguments.ImplMethod.name(), inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		GlueCommand glueCmd = new GlueCommand(getNewId(workspace), worksheetId,
+		GlueCommand glueCmd = new GlueCommand(getNewId(workspace), model, worksheetId,
 				hNodeId, selectionName, hNodeIdList, implMethod);
 		glueCmd.setInputParameterJson(inputJson.toString());
 		return glueCmd;

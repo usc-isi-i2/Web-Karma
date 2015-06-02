@@ -55,10 +55,10 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 		updateType, hNodeId, worksheetId
 	}
 
-	protected UnfoldCommand(String id, String worksheetId, 
+	protected UnfoldCommand(String id, String model, String worksheetId, 
 			String keyHNodeid, String valueHNodeid, boolean notOtherColumn,
 			String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		newWorksheetId = null;
 		newHNodeId = null;
 		this.keyhNodeId = keyHNodeid;

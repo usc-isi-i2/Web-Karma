@@ -24,8 +24,8 @@ public class DeleteModelFromTripleStoreCommand extends Command{
 	private String mappingURI;
 	private static Logger logger = LoggerFactory.getLogger(DeleteModelFromTripleStoreCommand.class);
 
-	public DeleteModelFromTripleStoreCommand(String id, String tripleStoreURL, String context, String mappingURI) {
-		super(id);
+	public DeleteModelFromTripleStoreCommand(String id, String model, String tripleStoreURL, String context, String mappingURI) {
+		super(id, model);
 		this.tripleStoreURL = tripleStoreURL;
 		this.context = context;
 		this.mappingURI = mappingURI;

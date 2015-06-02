@@ -21,9 +21,9 @@ public class RefreshWorksheetCommand extends WorksheetSelectionCommand {
 
 	private JSONArray updates;
 	
-	protected RefreshWorksheetCommand(String id, String worksheetId, 
+	protected RefreshWorksheetCommand(String id, String model, String worksheetId, 
 			JSONArray updates, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.updates = updates;
 	}
 

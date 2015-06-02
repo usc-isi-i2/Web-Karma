@@ -17,7 +17,8 @@ public class DeleteModelFromTripleStoreCommandFactory extends CommandFactory {
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.graphContext.name());
 		String mappingURI = request.getParameter(Arguments.mappingURI.name());
-		return new DeleteModelFromTripleStoreCommand(getNewId(workspace), tripleStoreUrl, context, mappingURI);
+		return new DeleteModelFromTripleStoreCommand(getNewId(workspace), 
+				Command.NEW_MODEL, tripleStoreUrl, context, mappingURI);
 	}
 
 	@Override

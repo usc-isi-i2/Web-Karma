@@ -28,8 +28,8 @@ public class UndoRedoCommand extends Command {
 
 	private final String commandIdArg;
 
-	UndoRedoCommand(String id, String commandIdArg) {
-		super(id);
+	UndoRedoCommand(String id, String model, String commandIdArg) {
+		super(id, model);
 		this.commandIdArg = commandIdArg;
 	}
 

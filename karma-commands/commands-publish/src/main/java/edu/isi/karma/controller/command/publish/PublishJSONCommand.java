@@ -47,8 +47,8 @@ public class PublishJSONCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishJSONCommand.class.getSimpleName());
 
-	public PublishJSONCommand(String id, String worksheetId, boolean importAsWorksheet) {
-		super(id, worksheetId);
+	public PublishJSONCommand(String id, String model, String worksheetId, boolean importAsWorksheet) {
+		super(id, model, worksheetId);
 		this.importAsWorksheet = importAsWorksheet;
 	}
 

@@ -28,8 +28,8 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
 
 public class CreateNewModelCommand extends WorksheetCommand {
-	public CreateNewModelCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+	public CreateNewModelCommand(String id, String model, String worksheetId) {
+		super(id, model, worksheetId);
 	}
 
 	@Override

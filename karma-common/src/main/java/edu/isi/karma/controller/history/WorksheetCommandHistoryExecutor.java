@@ -41,7 +41,6 @@ import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.HTable;
@@ -109,7 +108,10 @@ public class WorksheetCommandHistoryExecutor {
 			CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
 			if(cf != null) {
 				try { // This is sort of a hack the way I did this, but could not think of a better way to get rid of the dependency
-					Command comm = cf.createCommand(inputParamArr, workspace);
+					String model = Command.NEW_MODEL;
+					if(commObject.has(HistoryArguments.model.name()))
+						model = commObject.getString(HistoryArguments.model.name());
+					Command comm = cf.createCommand(inputParamArr, model, workspace);
 					if(comm != null){
 						try {
 							comm.setExecutedInBatch(true);

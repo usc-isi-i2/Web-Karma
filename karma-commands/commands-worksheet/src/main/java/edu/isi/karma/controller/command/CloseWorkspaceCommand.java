@@ -32,8 +32,8 @@ import edu.isi.karma.webserver.WorkspaceRegistry;
 public class CloseWorkspaceCommand extends Command {
 	private final String workspaceId;
 
-	protected CloseWorkspaceCommand(String id, String workspaceId) {
-		super(id);
+	protected CloseWorkspaceCommand(String id, String model, String workspaceId) {
+		super(id, model);
 		this.workspaceId = workspaceId;
 	}
 

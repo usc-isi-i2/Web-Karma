@@ -38,7 +38,7 @@ public class ApplyModelFromTripleStoreCommandFactory extends CommandFactory {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String modelName = request.getParameter(Arguments.modelName.name());
 		String sourceName = request.getParameter(Arguments.sourceName.name());
-		return new ApplyModelFromTripleStoreCommand(getNewId(workspace), worksheetId, 
+		return new ApplyModelFromTripleStoreCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, 
 				modelName, sourceName);
 	}
 

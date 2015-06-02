@@ -48,6 +48,7 @@ import edu.isi.karma.modeling.alignment.TreePostProcess;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSemanticTypeStatus;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -233,9 +234,9 @@ public class ModelLearner {
 //			logger.info("START ...");
 			
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
-//			if (this.graphBuilder instanceof GraphBuilderTopK) {
-//				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getTopKSteinerTree(), true);
-//			} 
+			if (this.graphBuilder instanceof GraphBuilderTopK) {
+				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getTopKSteinerTree(), true);
+			} 
 //			else 
 			{
 				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
@@ -362,7 +363,7 @@ public class ModelLearner {
 
 			Set<SemanticTypeMapping> semanticTypeMappings = null; 
 			
-			if (cn.hasUserType()) {
+			if (cn.getSemanticTypeStatus() == ColumnSemanticTypeStatus.UserAssigned) {
 				HashMap<SemanticType, LabeledLink> domainLinks = 
 						GraphUtil.getDomainLinks(this.graphBuilder.getGraph(), cn, cn.getUserSemanticTypes());
 				if (domainLinks != null && !domainLinks.isEmpty()) {

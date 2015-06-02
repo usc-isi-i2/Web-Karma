@@ -26,10 +26,10 @@ public class OperateSelectionCommand extends WorksheetSelectionCommand {
 	private String operation;
 	private Selection previousSelection;
 	private boolean onError;
-	public OperateSelectionCommand(String id, String worksheetId, String selectionId, 
+	public OperateSelectionCommand(String id, String model, String worksheetId, String selectionId, 
 			String hNodeId, String operation, 
 			String pythonCode, boolean onError) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.pythonCode = pythonCode;
 		this.operation = operation;

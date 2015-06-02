@@ -36,8 +36,8 @@ public class AddNodeCommand extends WorksheetCommand {
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 		
-	protected AddNodeCommand(String id, String worksheetId, String alignmentId, String uri, String label) {
-		super(id, worksheetId);
+	protected AddNodeCommand(String id, String model, String worksheetId, String alignmentId, String uri, String label) {
+		super(id, model, worksheetId);
 		this.alignmentId = alignmentId;
 		this.nodeUri = uri;
 		this.nodeLabel = label;

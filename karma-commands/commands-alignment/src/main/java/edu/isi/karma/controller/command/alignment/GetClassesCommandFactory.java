@@ -20,7 +20,8 @@ public class GetClassesCommandFactory extends CommandFactory {
 		INTERNAL_NODES_RANGE range = INTERNAL_NODES_RANGE.valueOf(
 				request.getParameter(Arguments.nodesRange.name()));
 		
-		return new GetClassesCommand(getNewId(workspace), worksheetId, range, propertyURI);
+		return new GetClassesCommand(getNewId(workspace), 
+				Command.NEW_MODEL, worksheetId, range, propertyURI);
 	}
 
 	@Override

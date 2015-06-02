@@ -27,8 +27,8 @@ public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
 	private final String hNodeId;
 	private static Logger logger = LoggerFactory.getLogger(GetSemanticSuggestionsCommand.class.getSimpleName());
 	
-	protected GetSemanticSuggestionsCommand(String id, String worksheetId, String hNodeId, String selectionId) {
-		super(id, worksheetId, selectionId);
+	protected GetSemanticSuggestionsCommand(String id, String model, String worksheetId, String hNodeId, String selectionId) {
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 	}
 	

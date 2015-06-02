@@ -42,18 +42,18 @@ public class ImportSQLCommand extends ImportCommand implements IPreviewable {
         importSQL, getPreferencesValues, previewSQL
     }
 
-    protected ImportSQLCommand(String id) {
-        super(id);
+    protected ImportSQLCommand(String id, String model) {
+        super(id, model);
     }
 
-    protected ImportSQLCommand(String id, String revisedId) {
+    protected ImportSQLCommand(String id, String model, String revisedId) {
         super(id, revisedId);
     }
 
-    public ImportSQLCommand(String id, String dbType,
+    public ImportSQLCommand(String id, String model, String dbType,
             String hostname, int portNumber, String userName, String password,
             String dBorSIDName, String query) {
-        super(id);
+        super(id, model);
         this.dbType = DBType.valueOf(dbType);
         this.hostname = hostname;
         this.portnumber = portNumber;
@@ -63,10 +63,10 @@ public class ImportSQLCommand extends ImportCommand implements IPreviewable {
         this.query = query;
     }
 
-    public ImportSQLCommand(String id, String revisedId, String dbType,
+    public ImportSQLCommand(String id, String model, String revisedId, String dbType,
             String hostname, int portNumber, String userName, String password,
             String dBorSIDName, String query) {
-        super(id, revisedId);
+        super(id, model, revisedId);
         this.dbType = DBType.valueOf(dbType);
         this.hostname = hostname;
         this.portnumber = portNumber;
@@ -153,7 +153,7 @@ public class ImportSQLCommand extends ImportCommand implements IPreviewable {
         try {
             // Create a new Database Import Command. The interface allows the user to import 
             // multiple tables
-            ImportSQLCommand comm = new ImportSQLCommand(workspace.getFactory().getNewId("C"),
+            ImportSQLCommand comm = new ImportSQLCommand(workspace.getFactory().getNewId("C"), model,
                     dbType.name(), hostname, portnumber, username, password, dBorSIDName, query);
             workspace.getCommandHistory().addPreviewCommand(comm);
             c.add(new InfoUpdate("Sucessfully imported data using SQL"));

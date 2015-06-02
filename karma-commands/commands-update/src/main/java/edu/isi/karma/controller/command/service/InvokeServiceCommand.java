@@ -71,8 +71,8 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 	
 	private Worksheet worksheetBeforeInvocation = null;
 
-	InvokeServiceCommand(String id, String worksheetId, String hNodeId, String selectionId) {
-		super(id, worksheetId, selectionId);
+	InvokeServiceCommand(String id, String model, String worksheetId, String hNodeId, String selectionId) {
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 	}
 
