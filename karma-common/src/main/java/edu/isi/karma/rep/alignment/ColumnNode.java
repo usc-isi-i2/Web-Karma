@@ -129,6 +129,11 @@ public class ColumnNode extends Node {
 		if (userSemanticTypes == null)
 			this.userSemanticTypes = new ArrayList<SemanticType>();
 		
+		//FIXME: when user invokes SetSemanticType, we should unassign the old one, otherwise
+		// we don't know if user wants to add more types or replace the existing one
+		// currently, I assume that we replace the old one when a new type is assigned
+		this.userSemanticTypes.clear();
+		
 		this.userSemanticTypes.add(newType);
 		this.semanticTypeStatus = ColumnSemanticTypeStatus.UserAssigned;
 	}
