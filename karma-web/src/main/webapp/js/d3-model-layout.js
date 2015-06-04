@@ -16,6 +16,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var nodeClickListener = null;
 	
 	var test = [];
+	//var tableData = [];                            //store table data
+	//var columnPos = [];                            //position for each column
 	var anchorName = [];                           //store anchor name, include nested
 	var anchorData = [];                           //store anchor nodes
 	var nodesData = [];                            //store all nodes includes anchors
@@ -103,8 +105,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 
 
 	var print = false;                             //whether or not print 
-	var nodeRadius = 4;							   //radius of inside node
-	var exitTime = 200;							   //time for a component to remove
+	var nodeRadius = 4;
 	var unitLinkLength = 70;                       //difference between layers
 	var outsideUnitLinkLength = 50;                //length for outside links
 	var maxLayer = 0;                              //max layer number, base 0
@@ -115,6 +116,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var tableHeight = 0;
 	var cellWidth = $(".wk-header-cell").css("width");
 	var cScale = d3.scale.category20();
+	var transitionDisapearTime = 100;						//time for d3 components transition of deleting
 
 	//create svg
 	var svg = d3.select(htmlElement)                         
@@ -142,10 +144,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var labelLinks = forceSVG.selectAll(".labelLinks"); //all label links.
 	var linkArrow = forceSVG.selectAll(".linkArrow");   //little triangle of links
 	var labelFrame = forceSVG.selectAll(".labelFrame"); //the frame of each label
-	var labelText = null;
-	var labelFrame = null;
-	var labelBoard = null;
-	var labelClickBoard = null;
+
 	//force layout for nodes
 	var force = d3.layout.force()
 		.gravity(0)
@@ -200,11 +199,11 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	  			d.position.y = d.y;
 	  		}
 		});
-	
-
-
-
 	//draw nodes and links
+
+
+
+
 	function transit(){
 		links = links.data(linksData, function(d){
 			return d.edgeId;
@@ -213,17 +212,17 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.append("path")
 			.attr("stroke", "#555")
 			.attr("stroke-width", 1)
-			//.attr("opacity", 0.5)	
-			.attr("fill", "none");
-		links.attr("id", function(d, i){
+			//.attr("opacity", 0.5)
+			.attr("id", function(d, i){
 				return d.source.id + "link" + d.target.id;
-			})		
+			})
 			.attr("class", function(d) {
 				return "link " + d.linkType + " " + d.linkStatus;
 			})
+			.attr("fill", "none");
 		links.exit()
 			.transition()
-			.duration(exitTime)
+			.duration(transitionDisapearTime)
 			.attr("opacity", 0)
 			.remove();
 
@@ -236,7 +235,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.attr("fill", "#555")
 		linkArrow.exit()
 			.transition()
-			.duration(exitTime)
+			.duration(transitionDisapearTime)
 			.attr("opacity", 0)
 			.remove();
 			
@@ -245,8 +244,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		});
 		labels.enter()
 			.append("g")
-			.classed("label", true);
-		labels.attr("id", function(d, i){				
+			.classed("label", true)
+			.attr("id", function(d, i){
 				if (d.type == "nodeLabel"){
 					return "nodeLabelG" + d.node.id;
 				} else if (d.type == "linkLabel"){
@@ -258,17 +257,14 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			});
 		labels.exit()
 			.transition()
-			.duration(exitTime)
+			.duration(transitionDisapearTime)
 			.attr("opacity", 0)
 			.remove();
 
-		var labelCircle = labels.append("circle")
+		var test = labels.append("circle")
 			.attr("r", 0)
 			//.attr("fill", "black");
 		
-		/*labels.enter()
-			.append("g")*/
-		labelFrame = labels.selectAll("g").remove();
 		labelFrame = labels
 			.append("g")
 			.attr("class", function(d){
@@ -281,7 +277,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				}
 				return "unusedLable";
 			})
-			.attr("opacity", 0)
 			.attr("id", function(d, i){
 				if (d.type == "nodeLabel"){
 					return "nodeLabel" + d.node.id;
@@ -291,8 +286,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					return "edgeLinkLabel" + nodesData[d.node.tgt].id;
 				}
 				return "labelPart" + i;
-			});
-			
+			})
+			.attr("opacity", 0);
 			
 		labelText = labelFrame
 			.filter(function(d, i){
@@ -300,9 +295,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			})
 			.append("text")
 			.text(function(d, i){
-				/*if (d.type == "nodeLabel" && d.node.type == "anchor"){
+				if (d.type == "nodeLabel" && d.node.type == "anchor"){
 					return d.content;
-				}*/
+				}
 				if (d.content.length > 20){
 					d.alt = d.content.slice(0, 7) + "..." + d.content.slice(d.content.length - 10, d.content.length);
 					return d.alt;
@@ -435,11 +430,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					frameId = "#edgeLinkLabelG" + nodesData[d.node.tgt].id;
 				}
 				if (d.alt != undefined){
-					//console.log(d.alt + " " + d.content + " " + d.index)
 					d3.select(frameId)
 						.select("text")
 						.text(function(d){
-							//d.content = ""
 							return d.content;
 						})
 						.attr("x", function(d){
@@ -492,7 +485,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 							var dy = 0;
 							return "M " + dx + " " + dy + " L " + (dx + textWidth) + " " + dy + " Q " + (dx + textWidth + textHeight / 3) + " " + (dy - textHeight / 2) + " " + (dx + textWidth) + " " + (dy - textHeight) + " L " + dx + " " + (dy - textHeight) + " Q " + (dx - textHeight / 3) + " " + (dy - textHeight / 2) + " " + dx + " " + dy;
 						})
-				}/**/
+				}
 				d3.select(frameId)
 					.select("path")
 					.attr("stroke-width", 0);
@@ -512,7 +505,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.attr("stroke-width", 0);
 		labelLinks.exit()
 			.transition()
-			.duration(exitTime)
+			.duration(transitionDisapearTime)
 			.attr("opacity", 0)
 			.remove();
 
@@ -539,7 +532,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.attr("r", 1)
 			.attr("opacity", 0.7)
 			.attr("fill", "red")
-			.call(drag)	
+			.attr("id", function(d, i){
+				return "node" + d.id;
+			})
+			.call(drag)
 			.on("click", function(d){
 				var offset = Math.max(xOffset - leftPanelWidth,0);
 				if (d.outside.isOutside && !d.noLayer){					
@@ -638,17 +634,13 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					d.showLabel = false;
 				}
 			});
-
-		nodes.attr("id", function(d, i){
-				return "node" + d.id;
-			})		
 		nodes.transition()
 			.duration(500)
 			.attr("r", nodeRadius);
 		nodes.exit()
 			.transition()
-			.duration(exitTime)
-			.attr("opacity", 0)
+			.duration(transitionDisapearTime)
+			.attr("opacity", 500)
 			.remove();
 	}
 
@@ -658,7 +650,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		var k = 0.03 * e.alpha;
 		var kY = 0.05;
 
-		
+
 		nodes
 			.attr("cx", function(d) {
 				if (d.outside.isOutside){		
@@ -692,15 +684,30 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	        	}
 	        	return d.y = Math.max(nodeRadius, Math.min(height - nodeRadius, d.y));
 	        });
-
 	    
+
+
 	    labels.each(function(d, i){
 	    	if (i % 2 == 0){
 	    		if (d.type == "linkCircle"){
 		    		var a = nodesData[d.node.src];
 		    		var b = nodesData[d.node.tgt];
 		    		d.y = (a.y + b.y) / 2;
-		    		d.x = (a.x + b.x) / 2 + (nodesData[d.node.tgt].x - nodesData[d.node.src].x) / 6;		    			    		
+		    		d.x = (a.x + b.x) / 2 + (nodesData[d.node.tgt].x - nodesData[d.node.src].x) / 6;
+		    		/*var i, j;			
+					for (i = 0; i < 1; i += 0.1){
+						if (getXofLabel(d, i, d.y)){
+							break;
+						}
+					}
+					i -= 0.1;
+					for (j = 0; j < 0.1; j += 0.01){
+						if (getXofLabel(d, i + j, d.y)){
+							break;
+						}
+					}   	*/
+
+		    			    		
 	    		} else if (d.type == "edgeLinkCircle"){
 	    			var a = d.node.src;
 	    			var b = nodesData[d.node.tgt];
@@ -711,9 +718,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	    			d.y = d.node.y;
 	    		} 
 	    	} else {
-	    		if (textData[i - 1] == undefined){
-	    			console.log(i);
-	    		}
 				var dx = textData[i - 1].x;
 				var dy = textData[i - 1].y;
 				d.y = dy;
@@ -730,14 +734,13 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 
 	//updata link for tick function
 	var updateLink = function(){
-		
 	    this.attr("d", function(d){
 	    	var a = d.source;
 			var b = d.target;
 
 			
 			//if (d.type == "edgeLink"){
-				if (b.noLayer == undefined && b.outside.isOutside){
+				if (b.outside.isOutside && d.target.noLayer == undefined){
 					return "M" + b.x + " " + b.y + " L " + a.x + " " + a.y;
 				}
 			///} else {
@@ -794,7 +797,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			return p;
 		});	
 
-		
 		linkArrow.attr("points", function(d){
 			if (d.target.outside.isOutside && d.target.noLayer == undefined){
 				return "";
@@ -833,6 +835,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				return "rotate(" + d.angle + " " + d.arrow.x + " " + d.arrow.y + ")";
 			}
 		})
+		//alert();
 	}
 
 	//calculate the X of inside labels
@@ -969,8 +972,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	    		while (++i < n) q.visit(collideOutside(e[i]));
 	    	}
 		});
-	      
-	    	
+	      	
 		this.attr("transform", function(d) {
 			//dx = Math.max(xOffset + 20, Math.min(xOffset + width, d.x)); 
 			//d.y = Math.max(nodeRadius, Math.min(height - nodeRadius, d.y)); 
@@ -1042,16 +1044,15 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		});
 
 		//padding = 35;
-		rightPanelWidth = parseInt($("." + cssClass).css("width"));
-		leftPanelWidth = window.innerWidth - rightPanelWidth;
-		windowWidth = rightPanelWidth;
+		windowWidth = parseInt($("." + cssClass).css("width"));
+		leftPanelWidth = window.innerWidth - windowWidth;
 		maxXOfferset = 0;
 		width=0;           
 		height=0;
-		textHeight = 15;
 
 		test = [];
-	 	anchorName = [];                           //store anchor name, include nested
+	 	//tableData = [];                            //store table data
+		//columnPos = [];                            //position for each column
 		anchorData = [];                           //store anchor nodes
 		nodesData = [];                            //store all nodes includes anchors
 		linksData = [];                            //links data
@@ -1065,29 +1066,21 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		SCCNodes = [];                             //SCC nodes set
 		SCCtmpNodes = [];                          //the nodes stack of SCC
 		layerLabel = [];                           //layers are divided into sections based on its layer
-		cycleSet = [];                             //each element in the array is an arraylist, consist of edges of cycle. ex: {1->2, 2->3, 3->1}
-
+		
 		map = new myMap();
 		idMap = [];                                //map from label to id
 		edgeIdMap = [];                            //map of edge's id	
 
-		print = false;                             //whether or not print 
-		nodeRadius = 4;
-		unitLinkLength = 70;                       //difference between layers
-		outsideUnitLinkLength = 50;                //length for outside links
 		maxLayer = 0;                              //max layer number, base 0
 		reshuffleFrequency = 8;                    //pixel changes to excute scroll bar event
 		xOffset = 0;                               //x position offset
 		firstTime = true;                          //first time to load the force-layout
-		maxLabelLength = 0;    
-		tableHeight = 0;
-		cellWidth = $(".wk-header-cell").css("width");	
+		maxLabelLength = 0;    	
 	}
 
 	//initialize data
 	function initializeData(tmpL, tmpN){
 		var anchorNameIndex = 0;
-		
 		tmpN.forEach(function(d, i){
 			var node = {};
 			node.label = d.id;
@@ -1099,7 +1092,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			node.isForcedByUser = d.isForcedByUser;
 			if (d.column || d.column == 0){
 				//columnPos.push(d.xPos);
-				//node.nodeId = d.hNodeId;
+				node.nodeId = d.hNodeId;
 				node.column = d.column;
 				node.type = "anchor";
 				node.layer = 0;
@@ -1140,7 +1133,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			
 		});
 
-	
 		tmpL.forEach(function(d, i){
 			var edge = {};
 			edge.source = idMap[d.source];
@@ -1161,18 +1153,19 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			textData.push({
 				node : node,
 				type : "linkCircle",
-				nodeId : "circle" + d.id//nodesData[node.src].nodeId + "-" + nodesData[node.tgt].nodeId //node.src + "-" + node.tgt
+				nodeId : "circle" + d.id
 			});
 			textData.push({
 				node : node,
 				type : "linkLabel",
 				content : d.label,
-				nodeId : d.id//nodesData[node.src].nodeId + "-" + nodesData[node.tgt].nodeId//node.src + "-" + node.tgt
+				nodeId : d.id
 			});
+
 			textLinksData.push({
 				source : textData.length - 2,
 				target : textData.length - 1,
-				edgeId : d.id//nodesData[node.src].nodeId + "-" + nodesData[node.tgt].nodeId//node.src + "-" + node.tgt
+				edgeId : d.id
 			});
 		});
 
@@ -1200,7 +1193,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 
 	//detect the strong connect component in the graph
 	function detectCycle(){
-		
 		SCCNodes = d3.range(nodesData.length).map(function(d, i){
 			return {id : nodesData[i].id, index : -1};
 		})
@@ -1250,7 +1242,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		map.clear();
 		//model point of cycles to edge, ex: [1,2,3] to {1->2, 2->3, 3->1}
 		//edge set stored in the data structure of arraylist, and all these edge sets store into an array, defined above -- cycleSet
-		
 		cycles.forEach(function(d){
 			var tmpArrayList = new ArrayList();
 			for (var i = 0; i < d.length; i++){
@@ -1330,50 +1321,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		})
 		*/
 
-		//set the edge link
-		
-		tmpE.forEach(function(d, i){
-			var srcIndex = nodesData.length * 2 + edgeIdMap[d.source] * 2 + 1;
-			textData[srcIndex].layer = (nodesData[textData[srcIndex].node.src].layer + nodesData[textData[srcIndex].node.tgt].layer) / 2;
-
-			var edge = {};
-			edge.source = textData[srcIndex];
-			edge.target = idMap[d.target];
-			edge.id = linksData.length;
-			edge.edgeId = d.id;
-			edge.linkType = d.linkType;
-			edge.type = "edgeLink";
-			edge.node = {};
-			edge.node.original = d;
-			linksData.push(edge);
-
-			var node = {};
-			node.src = edge.source;
-			node.tgt = edge.target;
-			node.original = d;
-			textData.push({
-				node : node,
-				type : "edgeLinkCircle",
-				content : d.label,
-				nodeId : "circle" + node.src.nodeId + "-" + nodesData[node.tgt].nodeId//node.src.nodeId + "-" + node.tgt
-			});
-			textData.push({
-				node : node,
-				type : "edgeLinkLabel",
-				content : d.label,
-				nodeId : node.src.nodeId + "-" + nodesData[node.tgt].nodeId//node.src.nodeId + "-" + node.tgt
-			});
-
-			textLinksData.push({
-				source : textData.length - 2,
-				target : textData.length - 1,
-				edgeId : node.src.nodeId + "-" + nodesData[node.tgt].nodeId//node.src.nodeId + "-" + node.tgt
-			});
-
-			nodesData[node.tgt].unAssigned = false;
-			nodesData[node.tgt].degree++;
-		});
-
 		//store the node id in the sequence of layer
 		//xPos is the x position for nodes in the unit of column's width
 		layerMap = d3.range(maxLayer + 1)
@@ -1383,15 +1330,12 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		nodesData.forEach(function(d){
 			if (d.layer != undefined){
 				if (!d.unAssigned){
-					if (layerMap[d.layer] == undefined)
-						console.log(d);
 					layerMap[d.layer].push(d.id);
 				}				
 			}		
 		});
 
 		//set xpos of nodes, check whether a node is a outside nodes;
-		
 		var offset = Math.max(xOffset - leftPanelWidth,0);
 		layerMap.forEach(function(d, i){
 			if (i > 0){
@@ -1431,6 +1375,43 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				d.xpos = -1;
 			}	
 		});
+
+
+		//set the edge link
+		tmpE.forEach(function(d, i){
+			var srcIndex = nodesData.length * 2 + edgeIdMap[d.source] * 2 + 1;
+			textData[srcIndex].layer = (nodesData[textData[srcIndex].node.src].layer + nodesData[textData[srcIndex].node.tgt].layer) / 2;
+
+			var edge = {};
+			edge.source = textData[srcIndex];
+			edge.target = idMap[d.target];
+			edge.id = linksData.length;
+			edge.linkType = d.linkType;
+			edge.type = "edgeLink";
+			edge.node = {};
+			edge.node.original = d;
+			linksData.push(edge);
+
+			var node = {};
+			node.src = edge.source;
+			node.tgt = edge.target;
+			node.original = d;
+			textData.push({
+				node : node,
+				type : "edgeLinkCircle",
+				content : d.label
+			});
+			textData.push({
+				node : node,
+				type : "edgeLinkLabel",
+				content : d.label
+			});
+
+			textLinksData.push({
+				source : textData.length - 2,
+				target : textData.length - 1
+			});
+		});
 	}
 
 	//when move over show the coordinate
@@ -1444,7 +1425,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	}
 
 	//print the Extented svg
-	function printExtentedSVG(resolution, callback){
+	function printExtentedSVG(resolution){
 		var recordWidth = windowWidth;
 		windowWidth = width + 100;
 		print = true;
@@ -1458,13 +1439,11 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			print = false;
 			firstTime = true;
 			setNodePosition();
-			if(callback)
-				callback();
 		}, 1500);
 	}
 
 	//print screen shot
-	function printSVG(resolution, callback){
+	function printSVG(resolution){
 		print = true;
 		firstTime = true;
 		setNodePosition();
@@ -1474,8 +1453,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			print = false;
 			firstTime = true;
 			setNodePosition();
-			if(callback)
-				callback();
 		}, 1500);
 	}
 
@@ -1514,7 +1491,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		var offset = Math.max(xOffset - leftPanelWidth,0);
 
 		//set xpos of nodes, and check if node is an outside node
-		
 		layerMap.forEach(function(d, i){
 			if (i > 0){
 				d.forEach(function(e){
@@ -1559,7 +1535,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			}
 		});
 
-	
+
 		
 		//Set the color, opacity of nodes based on the status of isOutside
 		nodes.each(function(d){
@@ -1602,7 +1578,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		//console.log(change)
 
 		//when some node changes its status, the correspoding links, labels and the x position of inside nodes should also change.
-		
 		if (change > 0 || firstTime){
 			firstTime = false;
 			d3.select(htmlElement).selectAll(".nodeLabel")
@@ -1621,23 +1596,17 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					return 0;			
 				});
 			d3.select(htmlElement).selectAll(".linkLabel")
-				.attr("opacity", function(d, i){
-					if (d.type == "linkLabel"){						
-						/*if (nodesData[d.node.src] == undefined || nodesData[d.node.tgt] == undefined){
-							console.log(i + " " + d.node.src + " " + d.node.tgt)
-							console.log(d)
-							d.show = false;
-							return 0;
-						}*/
-						if (nodesData[d.node.tgt].noLayer){
-							d.show = true;
-							return 1;
-						}
-						if (nodesData[d.node.tgt].type == 'anchor' && !nodesData[d.node.tgt].outside.isOutside){
-							d.show = true;
-							return 1;
-						}						
-						if (nodesData[d.node.src].outside.isOutside || nodesData[d.node.tgt].outside.isOutside){
+				.attr("opacity", function(d){
+					if (d.type == "linkLabel"){
+						// if (nodesData[d.node.tgt].noLayer){
+						// 	d.show = true;
+						// 	return 1;
+						// }
+						// if (nodesData[d.node.tgt].type == 'anchor' && !nodesData[d.node.tgt].outside.isOutside){
+						// 	d.show = true;
+						// 	return 1;
+						// }
+						if ((d.node.src < nodesData.length && nodesData[d.node.src].outside.isOutside) || (d.node.tgt < nodesData.length && nodesData[d.node.tgt].outside.isOutside)){
 							d.show = false;
 							return 0;
 						}
@@ -1737,6 +1706,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				.links(textLinksData)
 				.start();
 
+			// setTimeout(function(){
+			// 	setNodePosition();
+			// },0);
 			setNodePosition();
 		};
 		processData(json);
@@ -1792,10 +1764,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	};
 
 	//The savePath format: "file/image/", include last 'image'. 
-	this.printExtented = function(resolution, callback){
-		printExtentedSVG(resolution, callback);
+	this.printExtented = function(resolution){
+		printExtentedSVG(resolution);
 	}
-	this.print = function(resolution, callback){
-		printSVG(resolution, callback);
+	this.print = function(resolution){
+		printSVG(resolution);
 	}
 };

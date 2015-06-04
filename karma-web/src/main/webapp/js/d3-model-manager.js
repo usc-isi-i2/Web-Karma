@@ -41,10 +41,11 @@ var D3ModelManager = (function() {
 			};
 		}
 		
-		function getModelManager(worksheetId, layoutElement, layoutClass, width) {
+		function getModelManager(worksheetId, layoutElement, layoutClass, width, force) {
 			if(models[worksheetId]) {
 				//This is temporary. Comment this out when the D3ModelLayout can handle updates.
-				//models[worksheetId] = new D3ModelLayout(layoutElement, layoutClass, width, worksheetId);
+				if(force)
+					models[worksheetId] = new D3ModelLayout(layoutElement, layoutClass, width, worksheetId);
 			} else { 
 				models[worksheetId] = new D3ModelLayout(layoutElement, layoutClass, width, worksheetId);
 			}
@@ -104,10 +105,18 @@ var D3ModelManager = (function() {
 			} else {
 				alignJson = json;
 			}
-			var layout = getModelManager(worksheetId, layoutElement, "col-sm-10", w);
-			console.log(JSON.stringify(alignJson));
-			layout.generateLayoutForJson(alignJson);
-			
+			var layout;
+			try {
+				layout = getModelManager(worksheetId, layoutElement, "col-sm-10", w);
+				console.log(JSON.stringify(alignJson));
+				layout.generateLayoutForJson(alignJson);
+			} catch(err) {
+				console.log("Got exception in D3ModelLayout:" + err.message);
+				//Try again generating a new D3Layout
+				layout = getModelManager(worksheetId, layoutElement, "col-sm-10", w, true);
+				console.log(JSON.stringify(alignJson));
+				layout.generateLayoutForJson(alignJson);
+			}
 			var alignmentId = json["alignmentId"];
 			$(mainWorksheetDiv).data("alignmentId", alignmentId);
 			$(mainWorksheetDiv).data("svgVis", {"svgVis":true});
