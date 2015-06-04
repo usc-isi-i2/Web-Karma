@@ -10,6 +10,10 @@ import java.util.Vector;
 
 import edu.isi.karma.cleaning.features.Feature;
 import edu.isi.karma.cleaning.features.RecordFeatureSet;
+//identify candidate tokens
+//vectorize string to feature vectors
+//decorrelate features
+//rescale features
 import edu.isi.karma.cleaning.grammartree.TNode;
 
 public class DataPreProcessor {
@@ -24,6 +28,9 @@ public class DataPreProcessor {
 	{
 		return data2Vector;
 	}
+	public String[] getAllFeatures(){
+		return rfs.xStrings;
+	}
 	public void run() {
 		Vector<String> toks = buildDict(data);
 		// vectorize String
@@ -37,9 +44,22 @@ public class DataPreProcessor {
 		rfs.removeFeatures(toremove);
 		// resvectorize the data
 		xHashMap = vectorize(data);
+		// rescale the data
 		// rescale each feature
 		resacle(xHashMap);
 		this.data2Vector = xHashMap;
+	}
+	public String[] getFeatureName(){
+		return rfs.xStrings;
+	}
+	public double[] getNormalizedreScaledVector(String data) throws Exception{
+		if(data2Vector.containsKey(data)){
+			return data2Vector.get(data);
+		}
+		else{
+			throw new Exception(data+" has not been normalized and rescaled");
+		}
+		
 	}
 	public void resacle(HashMap<String, double[]> xHashMap)
 	{
@@ -149,7 +169,7 @@ public class DataPreProcessor {
 			}
 		}
 		// prune infrequent terms
-		int thresdhold = (int) (data.size() * 0.005);
+		int thresdhold = (int) (data.size() * 0.05);
 		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet()
 				.iterator();
 		while (iter.hasNext()) {

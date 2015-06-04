@@ -96,13 +96,9 @@ public class RamblerTransformationOutput implements TransformationOutput {
 				transformations.put(r.signature, r);
 			}
 		}
-		// RamblerTransformation r = new
-		// RamblerTransformation(psProgSynthesis.getBestRule());
-		// transformations.put("BESTRULE",r);
 	}
 
 	public HashMap<String, Transformation> getTransformations() {
-		// TODO Auto-generated method stub
 		return transformations;
 	}
 

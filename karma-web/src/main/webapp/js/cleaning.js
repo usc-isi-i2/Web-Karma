@@ -253,7 +253,7 @@ var TransformColumnDialog = (function() {
 		}
 
 		function populateInfoPanel() {
-			var nodeId = topKeys[0];
+			var recommends = topKeys;
 			//tab1.append(trTag.clone(true,true));
 			var tab2 = $("table#examples");
 			$("tr", tab2).remove();
@@ -298,21 +298,20 @@ var TransformColumnDialog = (function() {
 				//$(">td",trTag1).addClass("info");
 				tab2.append(trTag1);
 			});
-			// recommanded examples
-			if (nodeId == undefined || nodeId == "-2") {
-				return;
-			}
-			var datadict = results[0]["data"];
 			var tab1 = $("table#recmd");
-			var trTag = $("tr#" + nodeId + "_suggestion_cl_row", tab1);
 			$("tr", tab1).remove();
-			// empty an array in JS
-			if (trTag.length == 0) {
-				trTag = $("<tr>").attr("id", nodeId + "_suggestion_cl_row").append($("<td>").addClass('info').html(datadict[nodeId]["Orgdis"])).append($("<td>").addClass("noBorder"));
-			} else {
-				trTag = trTag[0];
-			}
-			tab1.append(trTag);
+			var datadict = results[0]["data"];
+			$.each(topKeys,function(index, rid){
+				var trTag = $("tr#" + rid + "_suggestion_cl_row", tab1);
+				// empty an array in JS
+				if (trTag.length == 0) {
+				trTag = $("<tr>").attr("id", rid + "_suggestion_cl_row").append($("<td>").addClass('info').html(datadict[rid]["Orgdis"])).append($("<td>").addClass("noBorder"));
+				} else {
+					trTag = trTag[0];
+				}
+				tab1.append(trTag);
+			});
+			
 		}
 
 		function preprocessData(data, nodeIds) {
@@ -324,7 +323,6 @@ var TransformColumnDialog = (function() {
 		}
 
 		function handleCleaningResultUpdate(cleaningResults) {
-			console.log("handleCleaningResultUpdate: " + cleaningResults);
 			var topCol = cleaningResults[0];
 			results = cleaningResults;
 			topKeys = topCol["top"];

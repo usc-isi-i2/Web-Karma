@@ -35,8 +35,7 @@ public class UtilTools {
 		// sort list based on comparator
 		Collections.sort(list, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				return ((Comparable) ((Map.Entry) (o1)).getValue())
-						.compareTo(((Map.Entry) (o2)).getValue());
+				return ((Comparable) ((Map.Entry) (o1)).getValue()).compareTo(((Map.Entry) (o2)).getValue());
 			}
 		});
 		// put sorted list into map again
@@ -94,7 +93,7 @@ public class UtilTools {
 	}
 
 	public static double distance(double[] a, double[] b, double[] w) {
-		if(w == null || w.length == 0 || w.length != a.length){
+		if (w == null || w.length == 0 || w.length != a.length) {
 			return distance(a, b);
 		}
 		double res = 0.0;
@@ -112,8 +111,7 @@ public class UtilTools {
 		return Math.sqrt(res);
 	}
 
-	public static Vector<Integer> getStringPos(int tokenpos,
-			Vector<TNode> example) {
+	public static Vector<Integer> getStringPos(int tokenpos, Vector<TNode> example) {
 
 		Vector<Integer> poss = new Vector<Integer>();
 		if (tokenpos < 0)
@@ -189,7 +187,8 @@ public class UtilTools {
 		}
 		return true;
 	}
-	public static HashSet<String> getPositions(String org){
+
+	public static HashSet<String> getPositions(String org) {
 		HashSet<String> ret = new HashSet<String>();
 		int segmentCnt = 0;
 		Vector<int[]> allUpdates = new Vector<int[]>();
@@ -213,8 +212,7 @@ public class UtilTools {
 				}
 				if (str.indexOf("{_C}") != -1) {
 					String[] pos = str.split("\\{_C\\}");
-					int[] poses = { Integer.valueOf(pos[0]),
-							Integer.valueOf(pos[1]), segmentCnt };
+					int[] poses = { Integer.valueOf(pos[0]), Integer.valueOf(pos[1]), segmentCnt };
 					boolean findPos = false;
 					for (int i = 0; i < allUpdates.size(); i++) {
 						int[] cur = allUpdates.get(i);
@@ -231,17 +229,17 @@ public class UtilTools {
 			}
 		}
 		for (int[] update : allUpdates) {
-			if(!ret.contains(update[0]+"")){
-				ret.add(update[0]+"");
+			if (!ret.contains(update[0] + "")) {
+				ret.add(update[0] + "");
 			}
-			if(!ret.contains(update[1]+"")){
-				ret.add(update[1]+"");
+			if (!ret.contains(update[1] + "")) {
+				ret.add(update[1] + "");
 			}
 		}
 		return ret;
 	}
-	public static void StringColorCode(String org, String res,
-			HashMap<String, String> dict) throws Exception {
+
+	public static void StringColorCode(String org, String res, HashMap<String, String> dict) throws Exception {
 		int segmentCnt = 0;
 		Vector<int[]> allUpdates = new Vector<int[]>();
 		String pat = "((?<=\\{_L\\})|(?=\\{_L\\}))";
@@ -267,8 +265,7 @@ public class UtilTools {
 				}
 				if (str.indexOf("{_C}") != -1) {
 					String[] pos = str.split("\\{_C\\}");
-					int[] poses = { Integer.valueOf(pos[0]),
-							Integer.valueOf(pos[1]), segmentCnt };
+					int[] poses = { Integer.valueOf(pos[0]), Integer.valueOf(pos[1]), segmentCnt };
 					boolean findPos = false;
 					for (int i = 0; i < allUpdates.size(); i++) {
 						int[] cur = allUpdates.get(i);
@@ -281,23 +278,18 @@ public class UtilTools {
 					if (!findPos) {
 						allUpdates.add(poses);
 					}
-					String tmp = org.substring(Integer.valueOf(pos[0]),
-							Integer.valueOf(pos[1]));
+					String tmp = org.substring(Integer.valueOf(pos[0]), Integer.valueOf(pos[1]));
 					String tarseg = pos.length == 3 ? pos[2] : tmp;
 
 					if (inloop) {
 
-						tardis += String.format(
-								"<span class=\"a%d\">%s</span>", segmentCnt,
-								tarseg);
+						tardis += String.format("<span class=\"a%d\">%s</span>", segmentCnt, tarseg);
 						// orgdis +=
 						// String.format("<span class=\"a%d\">%s</span>",
 						// segmentCnt,tarseg);
 						tar += tarseg;
 					} else {
-						tardis += String.format(
-								"<span class=\"a%d\">%s</span>", segmentCnt,
-								tarseg);
+						tardis += String.format("<span class=\"a%d\">%s</span>", segmentCnt, tarseg);
 						// orgdis +=
 						// String.format("<span class=\"a%d\">%s</span>",
 						// segmentCnt,tarseg);
@@ -306,8 +298,7 @@ public class UtilTools {
 					}
 
 				} else {
-					tardis += String.format("<span class=\"ins\">%s</span>",
-							str);
+					tardis += String.format("<span class=\"ins\">%s</span>", str);
 					tar += str;
 				}
 			}
@@ -316,8 +307,7 @@ public class UtilTools {
 		for (int[] update : allUpdates) {
 			if (update[0] >= pre) {
 				orgdis += org.substring(pre, update[0]);
-				orgdis += String.format("<span class=\"a%d\">%s</span>",
-						update[2], org.substring(update[0], update[1]));
+				orgdis += String.format("<span class=\"a%d\">%s</span>", update[2], org.substring(update[0], update[1]));
 				pre = update[1];
 			}
 		}
@@ -409,8 +399,7 @@ public class UtilTools {
 		}
 		// prune infrequent terms
 		int thresdhold = (int) (data.size() * 0.10);
-		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet()
-				.iterator();
+		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet().iterator();
 		while (iter.hasNext()) {
 			Entry<String, Integer> e = iter.next();
 			if (e.getValue() < thresdhold) {
@@ -454,21 +443,18 @@ public class UtilTools {
 		return key;
 	}
 
-	public static ArrayList<String[]> extractExamplesinPartition(
-			Collection<Partition> pars) {
+	public static ArrayList<String[]> extractExamplesinPartition(Collection<Partition> pars) {
 		ArrayList<String[]> examples = new ArrayList<String[]>();
 		for (Partition par : pars) {
 			for (int i = 0; i < par.orgNodes.size(); i++) {
-				String[] exp = { UtilTools.print(par.orgNodes.get(i)),
-						UtilTools.print(par.tarNodes.get(i)) };
+				String[] exp = { UtilTools.print(par.orgNodes.get(i)), UtilTools.print(par.tarNodes.get(i)) };
 				examples.add(exp);
 			}
 		}
 		return examples;
 	}
 
-	public static void clusterData(
-			Collection<String[]> data, RecordClassifier rcf) {
+	public static void clusterData(Collection<String[]> data, RecordClassifier rcf) {
 		HashMap<String, ArrayList<String[]>> res = new HashMap<String, ArrayList<String[]>>();
 		for (String[] elem : data) {
 			String[] n = { elem[0], elem[1] };
@@ -498,9 +484,11 @@ public class UtilTools {
 			}
 		}
 	}
-	public static Vector<TNode> convertStringtoTNodes(String s1){
+
+	public static Vector<TNode> convertStringtoTNodes(String s1) {
 		Ruler r = new Ruler();
-		r.setNewInput(s1);;
+		r.setNewInput(s1);
+		;
 		return r.vec;
 	}
 }

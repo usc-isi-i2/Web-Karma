@@ -21,8 +21,8 @@ public class ExampleCluster {
 	public ProgSynthesis pSynthesis; // data
 	HashMap<String, Vector<String>> uorgclusters = new HashMap<String, Vector<String>>();
 	HashMap<String, double[]> string2Vector = new HashMap<String, double[]>();
-	public int unlabelDataAmount = 5;
-	public final double assignThreshold = 0.1;
+	int unlabelDataAmount = 5;
+	double assignThreshold = 0.1;
 	public int featuresize = 0;
 	public int failedCnt = 0;
 	public double[] weights = {};

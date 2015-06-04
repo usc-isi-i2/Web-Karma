@@ -6,7 +6,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import edu.isi.karma.cleaning.Section;
 import edu.isi.karma.cleaning.UtilTools;
 
 public class Segment implements GrammarTreeNode {

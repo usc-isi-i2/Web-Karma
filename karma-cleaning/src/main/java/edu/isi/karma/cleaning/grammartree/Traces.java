@@ -8,16 +8,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import edu.isi.karma.cleaning.Section;
 import edu.isi.karma.cleaning.SegmentMapper;
-import edu.isi.karma.cleaning.Template;
 import edu.isi.karma.cleaning.UtilTools;
 
 public class Traces implements GrammarTreeNode {
 	public static final int time_limit = 20;
 	public Vector<TNode> orgNodes;
 	public Vector<TNode> tarNodes;
-	public Vector<Vector<GrammarTreeNode>> rawlines; // used for program adaptation
+	public Vector<Vector<GrammarTreeNode>> rawlines; // used for program
+														// adaptation
 	public HashMap<Integer, Template> traceline = new HashMap<Integer, Template>();
 	public HashMap<Integer, HashMap<String, Template>> loopline = new HashMap<Integer, HashMap<String, Template>>();
 	public int curState = 0;
@@ -25,10 +24,11 @@ public class Traces implements GrammarTreeNode {
 	// keep all the segment expression to prevent repeated construction
 	public static HashMap<String, Segment> AllSegs = new HashMap<String, Segment>();
 	public String program = "null";
-	public Traces()
-	{
-		
+
+	public Traces() {
+
 	}
+
 	public Traces(Vector<TNode> org, Vector<TNode> tar) {
 		this.orgNodes = org;
 		this.tarNodes = tar;
@@ -52,8 +52,7 @@ public class Traces implements GrammarTreeNode {
 		}
 	}
 
-	public Traces(HashMap<Integer, Template> t,
-			HashMap<Integer, HashMap<String, Template>> l) {
+	public Traces(HashMap<Integer, Template> t, HashMap<Integer, HashMap<String, Template>> l) {
 		this.traceline = t;
 		this.loopline = l;
 		createTotalOrderVector();
@@ -80,177 +79,103 @@ public class Traces implements GrammarTreeNode {
 				lines.add(segs);
 				break;
 			}
-			//use previous created next segments 
+			// use previous created next segments
 			if (pos2Segs.containsKey(curPos))
 				children = pos2Segs.get(curPos);
 			else {
 				children = findSegs(curPos);
 			}
-			//reach the end and find one trace.[is this a valid sequence?]
+			// reach the end and find one trace.[is this a valid sequence?]
 			if (children == null || children.size() == 0) {
 				lines.add(segs);
-			} 
-			//create a new sequence for each new children node. add them into nlines
+			}
+			// create a new sequence for each new children node. add them into
+			// nlines
 			for (Segment s : children) {
 				Vector<Segment> tmp = new Vector<Segment>();
 				tmp.addAll(segs);
 				tmp.add(s);
 				nlines.add(tmp);
 			}
-			//update the sequence that requiring expanding.
+			// update the sequence that requiring expanding.
 			tlines.addAll(nlines);
 		}
-		
+
 		Vector<Vector<GrammarTreeNode>> vSeg = new Vector<Vector<GrammarTreeNode>>();
-		//Vector<Vector<GrammarTreeNode>> lSeg = new Vector<Vector<GrammarTreeNode>>();
+		// Vector<Vector<GrammarTreeNode>> lSeg = new
+		// Vector<Vector<GrammarTreeNode>>();
 		for (Vector<Segment> vs : lines) {
-			Vector<GrammarTreeNode> vsGrammarTreeNodes = UtilTools
-					.convertSegVector(vs);
+			Vector<GrammarTreeNode> vsGrammarTreeNodes = UtilTools.convertSegVector(vs);
 			vSeg.add(vsGrammarTreeNodes);
 		}
 		// detect loops
 		// verify loops
-		/*for (Vector<Segment> vgt : lines) {
-			Vector<Vector<GrammarTreeNode>> lLine = this.genLoop(vgt);
-			if (lLine != null)
-				lSeg.addAll(lLine);
-		}*/
+		/*
+		 * for (Vector<Segment> vgt : lines) { Vector<Vector<GrammarTreeNode>>
+		 * lLine = this.genLoop(vgt); if (lLine != null) lSeg.addAll(lLine); }
+		 */
 		// consolidate
 		this.rawlines = vSeg;
 		this.traceline = consolidateDiffSize(vSeg);
-		//this.loopline = consolidateDiffLoop(lSeg);
+		// this.loopline = consolidateDiffLoop(lSeg);
 	}
 
-	Vector<Segment> findSegs(int pos){
+	Vector<Segment> findSegs(int pos) {
 		Vector<Segment> ret = new Vector<Segment>();
 		ret = SegmentMapper.findMapping(orgNodes, tarNodes, pos);
 		return ret;
 	}
+
 	// find all segments starting from pos
-	/*Vector<Segment> findSegs(int pos) {
-		Vector<Segment> segs = new Vector<Segment>();
-		if (tarNodes.size() == 0) {
-			int[] mapping = { 0, 0 };
-			Vector<int[]> corrm = new Vector<int[]>();
-			corrm.add(mapping);
-			Segment s = new Segment(0, 0, corrm, orgNodes, tarNodes);
-			segs.add(s);
-			return segs;
-		}
-		if (pos >= tarNodes.size())
-			return segs;
-		Vector<TNode> tmp = new Vector<TNode>();
-		tmp.add(tarNodes.get(pos));
-		// identify the const string
-		int q = Ruler.Search(orgNodes, tmp, 0);
-		if (q == -1) {
-			int cnt = pos;
-			Vector<TNode> tvec = new Vector<TNode>();
-			while (q == -1) {
-				tvec.add(tarNodes.get(cnt));
-				cnt++;
-				tmp.clear();
-				if (cnt >= tarNodes.size())
-					break;
-				tmp.add(tarNodes.get(cnt));
-				q = Ruler.Search(orgNodes, tmp, 0);
-			}
-			String key = UtilTools.print(this.orgNodes)+UtilTools.print(this.tarNodes) + pos + cnt;
-			Segment seg;
-			if (AllSegs.containsKey(key)) {
-				seg = AllSegs.get(key);
-			} else {
-				seg = new Segment(pos, cnt, tvec);
-				AllSegs.put(key, seg);
-			}
-			segs.add(seg);
-			return segs;
-		}
-		for (int i = pos; i < tarNodes.size(); i++) {
-			Vector<TNode> tvec = new Vector<TNode>();
-			for (int j = pos; j <= i; j++) {
-				tvec.add(tarNodes.get(j));
-			}
-			Vector<Integer> mappings = new Vector<Integer>();
-			int r = Ruler.Search(orgNodes, tvec, 0);
-			while (r != -1) {
-				mappings.add(r);
-				r = Ruler.Search(orgNodes, tvec, r + 1);
-			}
-			if (mappings.size() > 1) {
-				Vector<int[]> corrm = new Vector<int[]>();
-				for (int t : mappings) {
-					int[] m = { t, t + tvec.size() };
-					corrm.add(m);
-				}
-				// create a segment now
-				String key = UtilTools.print(this.orgNodes)+UtilTools.print(this.tarNodes) + pos + (i + 1);
-				Segment s;
-				if (AllSegs.containsKey(key)) {
-					s = AllSegs.get(key);
-				} else {
-					s = new Segment(pos, i + 1, corrm, orgNodes, tarNodes);
-					AllSegs.put(key, s);
-				}
-				if (s.section.size() > 0)
-					segs.add(s);
-				continue;
-			} else if (mappings.size() == 1) {
-				Vector<int[]> corrm = new Vector<int[]>();
-				// creating based on whether can find segment with one more
-				// token
-				if (i >= (tarNodes.size() - 1)) {
-					int[] m = { mappings.get(0), mappings.get(0) + tvec.size() };
-					corrm.add(m);
-					String key = UtilTools.print(this.tarNodes) + UtilTools.print(this.orgNodes)+pos+(i+1);
-					Segment s;
-					if (AllSegs.containsKey(key)) {
-						s = AllSegs.get(key);
-					} else {
-						s = new Segment(pos, i + 1, corrm, orgNodes, tarNodes);
-						AllSegs.put(key, s);
-					}
-					if (s.section.size() > 0)
-						segs.add(s);
-				} else {
-					tvec.add(tarNodes.get(i + 1));
-					int p = Ruler.Search(orgNodes, tvec, 0);
-					Vector<TNode> repToken = new Vector<TNode>();
-					repToken.add(tarNodes.get(i + 1));
-					int rind = 0;
-					int tokenCnt = 0;
-					while ((rind = Ruler.Search(orgNodes, repToken, rind)) != -1) {
-						rind++;
-						tokenCnt++;
-					}
-					if (p == -1
-							|| (tokenCnt > 1 && tarNodes.get(i + 1).text
-									.compareTo(" ") != 0)) {
-						int[] m = { mappings.get(0),
-								mappings.get(0) + tvec.size() - 1 };
-						corrm.add(m);
-						String key = UtilTools.print(this.orgNodes)+UtilTools.print(this.tarNodes) + pos
-								+ (i + 1);
-						Segment s;
-						if (AllSegs.containsKey(key)) {
-							s = AllSegs.get(key);
-						} else {
-							s = new Segment(pos, i + 1, corrm, orgNodes,
-									tarNodes);
-							AllSegs.put(key, s);
-						}
-						if (s.section.size() > 0)
-							segs.add(s);
-					} else {
-						continue;
-					}
-				}
-			} else {
-				break;
-			}
-		}
-		return segs;
-	}*/
+	/*
+	 * Vector<Segment> findSegs(int pos) { Vector<Segment> segs = new
+	 * Vector<Segment>(); if (tarNodes.size() == 0) { int[] mapping = { 0, 0 };
+	 * Vector<int[]> corrm = new Vector<int[]>(); corrm.add(mapping); Segment s
+	 * = new Segment(0, 0, corrm, orgNodes, tarNodes); segs.add(s); return segs;
+	 * } if (pos >= tarNodes.size()) return segs; Vector<TNode> tmp = new
+	 * Vector<TNode>(); tmp.add(tarNodes.get(pos)); // identify the const string
+	 * int q = Ruler.Search(orgNodes, tmp, 0); if (q == -1) { int cnt = pos;
+	 * Vector<TNode> tvec = new Vector<TNode>(); while (q == -1) {
+	 * tvec.add(tarNodes.get(cnt)); cnt++; tmp.clear(); if (cnt >=
+	 * tarNodes.size()) break; tmp.add(tarNodes.get(cnt)); q =
+	 * Ruler.Search(orgNodes, tmp, 0); } String key =
+	 * UtilTools.print(this.orgNodes)+UtilTools.print(this.tarNodes) + pos +
+	 * cnt; Segment seg; if (AllSegs.containsKey(key)) { seg = AllSegs.get(key);
+	 * } else { seg = new Segment(pos, cnt, tvec); AllSegs.put(key, seg); }
+	 * segs.add(seg); return segs; } for (int i = pos; i < tarNodes.size(); i++)
+	 * { Vector<TNode> tvec = new Vector<TNode>(); for (int j = pos; j <= i;
+	 * j++) { tvec.add(tarNodes.get(j)); } Vector<Integer> mappings = new
+	 * Vector<Integer>(); int r = Ruler.Search(orgNodes, tvec, 0); while (r !=
+	 * -1) { mappings.add(r); r = Ruler.Search(orgNodes, tvec, r + 1); } if
+	 * (mappings.size() > 1) { Vector<int[]> corrm = new Vector<int[]>(); for
+	 * (int t : mappings) { int[] m = { t, t + tvec.size() }; corrm.add(m); } //
+	 * create a segment now String key =
+	 * UtilTools.print(this.orgNodes)+UtilTools.print(this.tarNodes) + pos + (i
+	 * + 1); Segment s; if (AllSegs.containsKey(key)) { s = AllSegs.get(key); }
+	 * else { s = new Segment(pos, i + 1, corrm, orgNodes, tarNodes);
+	 * AllSegs.put(key, s); } if (s.section.size() > 0) segs.add(s); continue; }
+	 * else if (mappings.size() == 1) { Vector<int[]> corrm = new
+	 * Vector<int[]>(); // creating based on whether can find segment with one
+	 * more // token if (i >= (tarNodes.size() - 1)) { int[] m = {
+	 * mappings.get(0), mappings.get(0) + tvec.size() }; corrm.add(m); String
+	 * key = UtilTools.print(this.tarNodes) +
+	 * UtilTools.print(this.orgNodes)+pos+(i+1); Segment s; if
+	 * (AllSegs.containsKey(key)) { s = AllSegs.get(key); } else { s = new
+	 * Segment(pos, i + 1, corrm, orgNodes, tarNodes); AllSegs.put(key, s); } if
+	 * (s.section.size() > 0) segs.add(s); } else { tvec.add(tarNodes.get(i +
+	 * 1)); int p = Ruler.Search(orgNodes, tvec, 0); Vector<TNode> repToken =
+	 * new Vector<TNode>(); repToken.add(tarNodes.get(i + 1)); int rind = 0; int
+	 * tokenCnt = 0; while ((rind = Ruler.Search(orgNodes, repToken, rind)) !=
+	 * -1) { rind++; tokenCnt++; } if (p == -1 || (tokenCnt > 1 &&
+	 * tarNodes.get(i + 1).text .compareTo(" ") != 0)) { int[] m = {
+	 * mappings.get(0), mappings.get(0) + tvec.size() - 1 }; corrm.add(m);
+	 * String key =
+	 * UtilTools.print(this.orgNodes)+UtilTools.print(this.tarNodes) + pos + (i
+	 * + 1); Segment s; if (AllSegs.containsKey(key)) { s = AllSegs.get(key); }
+	 * else { s = new Segment(pos, i + 1, corrm, orgNodes, tarNodes);
+	 * AllSegs.put(key, s); } if (s.section.size() > 0) segs.add(s); } else {
+	 * continue; } } } else { break; } } return segs; }
+	 */
 
 	public Traces mergewith(Traces t) {
 		// merge segment lines
@@ -278,8 +203,7 @@ public class Traces implements GrammarTreeNode {
 			for (String line2 : line2s) {
 				// System.out.println(""+line1+"\n");
 				// System.out.println(""+t.loopline.get(index).get(line2)+"\n");
-				Template nLine = (Template) line1.mergewith(t.loopline.get(
-						index).get(line2));
+				Template nLine = (Template) line1.mergewith(t.loopline.get(index).get(line2));
 				if (nLine == null)
 					continue;
 				if (allLoops.containsKey(index)) {
@@ -308,8 +232,7 @@ public class Traces implements GrammarTreeNode {
 			for (String line2 : line2s) {
 				// System.out.println(""+line1+"\n");
 				// System.out.println(""+this.loopline.get(index).get(line2)+"\n");
-				Template nLine = (Template) line1.mergewith(this.loopline.get(
-						index).get(line2));
+				Template nLine = (Template) line1.mergewith(this.loopline.get(index).get(line2));
 				if (nLine == null)
 					continue;
 				if (allLoops.containsKey(index)) {
@@ -342,9 +265,7 @@ public class Traces implements GrammarTreeNode {
 					}
 					// System.out.println(""+this.loopline.get(index).get(line1)+"\n");
 					// System.out.println(""+t.loopline.get(index).get(line2)+"\n");
-					Template nLine = (Template) this.loopline.get(index)
-							.get(line1)
-							.mergewith(t.loopline.get(index).get(line2));
+					Template nLine = (Template) this.loopline.get(index).get(line1).mergewith(t.loopline.get(index).get(line2));
 					if (nLine == null)
 						continue;
 					if (allLoops.containsKey(index)) {
@@ -367,8 +288,7 @@ public class Traces implements GrammarTreeNode {
 		}
 		for (Integer key : allLoops.keySet()) {
 			for (String subkey : allLoops.get(key).keySet()) {
-				Template xline = this
-						.consolidate(allLoops.get(key).get(subkey));
+				Template xline = this.consolidate(allLoops.get(key).get(subkey));
 				if (lLines.containsKey(key)) {
 					lLines.get(key).put(subkey, xline);
 				} else {
@@ -386,8 +306,7 @@ public class Traces implements GrammarTreeNode {
 	}
 
 	public GrammarTreeNode union(GrammarTreeNode x, GrammarTreeNode y) {
-		if (x.getNodeType().compareTo("segment") == 0
-				&& y.getNodeType().compareTo("segment") == 0) {
+		if (x.getNodeType().compareTo("segment") == 0 && y.getNodeType().compareTo("segment") == 0) {
 			Segment s = (Segment) x;
 			Segment t = (Segment) y;
 			Vector<Section> sec = new Vector<Section>();
@@ -418,8 +337,7 @@ public class Traces implements GrammarTreeNode {
 				r = new Segment(sec, loop);
 			return r;
 		}
-		if (x.getNodeType().compareTo("loop") == 0
-				&& y.getNodeType().compareTo("loop") == 0) {
+		if (x.getNodeType().compareTo("loop") == 0 && y.getNodeType().compareTo("loop") == 0) {
 			Loop s = (Loop) x;
 			Loop t = (Loop) y;
 			Vector<Section> sec = new Vector<Section>();
@@ -459,8 +377,7 @@ public class Traces implements GrammarTreeNode {
 		return null;
 	}
 
-	public HashMap<Integer, HashMap<String, Template>> consolidateDiffLoop(
-			Vector<Vector<GrammarTreeNode>> paths) {
+	public HashMap<Integer, HashMap<String, Template>> consolidateDiffLoop(Vector<Vector<GrammarTreeNode>> paths) {
 		HashMap<Integer, HashMap<String, Template>> resHashMap = new HashMap<Integer, HashMap<String, Template>>();
 		HashMap<Integer, HashMap<String, Vector<Template>>> tmpStore = new HashMap<Integer, HashMap<String, Vector<Template>>>();
 		for (Vector<GrammarTreeNode> vg : paths) {
@@ -502,8 +419,7 @@ public class Traces implements GrammarTreeNode {
 		return resHashMap;
 	}
 
-	public HashMap<Integer, Template> consolidateDiffSize(
-			Vector<Vector<GrammarTreeNode>> paths) {
+	public HashMap<Integer, Template> consolidateDiffSize(Vector<Vector<GrammarTreeNode>> paths) {
 		HashMap<Integer, Template> resHashMap = new HashMap<Integer, Template>();
 		HashMap<Integer, Vector<Template>> tmpStore = new HashMap<Integer, Vector<Template>>();
 		for (Vector<GrammarTreeNode> vg : paths) {
@@ -534,8 +450,8 @@ public class Traces implements GrammarTreeNode {
 		}
 		return true;
 	}
-	public Vector<GrammarTreeNode> consolidate_tool(Vector<Vector<GrammarTreeNode>> lists)
-	{
+
+	public Vector<GrammarTreeNode> consolidate_tool(Vector<Vector<GrammarTreeNode>> lists) {
 		Vector<GrammarTreeNode> res = lists.get(0);
 		Vector<GrammarTreeNode> result = new Vector<GrammarTreeNode>();
 		for (int i = 1; i < lists.size(); i++) {
@@ -548,6 +464,7 @@ public class Traces implements GrammarTreeNode {
 		}
 		return res;
 	}
+
 	public Template consolidate(Vector<Template> paths) {
 		Vector<GrammarTreeNode> res = paths.get(0).body;
 		Vector<GrammarTreeNode> result = new Vector<GrammarTreeNode>();
@@ -555,8 +472,7 @@ public class Traces implements GrammarTreeNode {
 
 			result = new Vector<GrammarTreeNode>();
 			for (int j = 0; j < res.size(); j++) {
-				GrammarTreeNode t = this.union(res.get(j),
-						paths.get(i).body.get(j));
+				GrammarTreeNode t = this.union(res.get(j), paths.get(i).body.get(j));
 				result.add(t);
 			}
 			res = result;
@@ -623,8 +539,7 @@ public class Traces implements GrammarTreeNode {
 		return res;
 	}
 
-	public Vector<GrammarTreeNode> subVector(Vector<Segment> nodes, int start,
-			int end) {
+	public Vector<GrammarTreeNode> subVector(Vector<Segment> nodes, int start, int end) {
 		if (start >= end || start < 0 || end > nodes.size())
 			return null;
 		Vector<GrammarTreeNode> vgt = new Vector<GrammarTreeNode>();
@@ -636,8 +551,7 @@ public class Traces implements GrammarTreeNode {
 
 	// merge the longest mergable chunk.
 	// if None chunk could be merged together return null
-	public Vector<GrammarTreeNode> createLoop(Vector<GrammarTreeNode> nodes,
-			int span) {
+	public Vector<GrammarTreeNode> createLoop(Vector<GrammarTreeNode> nodes, int span) {
 		Vector<GrammarTreeNode> res = new Vector<GrammarTreeNode>();
 		Vector<Vector<GrammarTreeNode>> gt = new Vector<Vector<GrammarTreeNode>>();
 		int pos = 0;
@@ -708,16 +622,13 @@ public class Traces implements GrammarTreeNode {
 				}
 				for (int j = 0; j < body.size(); j++) {
 					if (j == 0) {
-						Loop loop = new Loop((Segment) body.get(j),
-								Loop.LOOP_START);
+						Loop loop = new Loop((Segment) body.get(j), Loop.LOOP_START);
 						res.add(loop);
 					} else if (j == body.size() - 1) {
-						Loop loop = new Loop((Segment) body.get(j),
-								Loop.LOOP_END);
+						Loop loop = new Loop((Segment) body.get(j), Loop.LOOP_END);
 						res.add(loop);
 					} else {
-						Loop loop = new Loop((Segment) body.get(j),
-								Loop.LOOP_MID);
+						Loop loop = new Loop((Segment) body.get(j), Loop.LOOP_MID);
 						res.add(loop);
 					}
 				}
@@ -728,8 +639,7 @@ public class Traces implements GrammarTreeNode {
 		return res;
 	}
 
-	public Vector<Vector<GrammarTreeNode>> detectLoop(Vector<Integer> rep,
-			Vector<Segment> curPath) {
+	public Vector<Vector<GrammarTreeNode>> detectLoop(Vector<Integer> rep, Vector<Segment> curPath) {
 		int span = rep.get(1) - rep.get(0);
 		Vector<Vector<GrammarTreeNode>> resVector = new Vector<Vector<GrammarTreeNode>>();
 		Vector<GrammarTreeNode> nodelist = new Vector<GrammarTreeNode>();
@@ -740,8 +650,7 @@ public class Traces implements GrammarTreeNode {
 				if (i < startpos) {
 					nodelist.add(curPath.get(i));
 				} else if (i == endpos) {
-					Vector<GrammarTreeNode> sublist = this.createLoop(
-							subVector(curPath, startpos, endpos + 1), 1);
+					Vector<GrammarTreeNode> sublist = this.createLoop(subVector(curPath, startpos, endpos + 1), 1);
 					if (sublist == null)
 						return null;
 					nodelist.addAll(sublist);
@@ -759,9 +668,7 @@ public class Traces implements GrammarTreeNode {
 						nodelist.add(curPath.get(i));
 					}
 					if (i == endpos + span - 1) {
-						Vector<GrammarTreeNode> sublist = this.createLoop(
-								subVector(curPath, startpos, endpos + span),
-								span);
+						Vector<GrammarTreeNode> sublist = this.createLoop(subVector(curPath, startpos, endpos + span), span);
 						if (sublist == null)
 							return null;
 						nodelist.addAll(sublist);
@@ -771,16 +678,13 @@ public class Traces implements GrammarTreeNode {
 				}
 			}
 			// right overflow
-			else if ((startpos - span + 1) >= 0
-					&& endpos + span > curPath.size()) {
+			else if ((startpos - span + 1) >= 0 && endpos + span > curPath.size()) {
 				for (int i = 0; i < curPath.size(); i++) {
 					if (i < startpos - span + 1) {
 						nodelist.add(curPath.get(i));
 					}
 					if (i == endpos) {
-						Vector<GrammarTreeNode> sublist = this.createLoop(
-								subVector(curPath, startpos - span + 1,
-										endpos + 1), span);
+						Vector<GrammarTreeNode> sublist = this.createLoop(subVector(curPath, startpos - span + 1, endpos + 1), span);
 						if (sublist == null)
 							return null;
 						nodelist.addAll(sublist);
@@ -790,17 +694,14 @@ public class Traces implements GrammarTreeNode {
 				}
 			}
 			// two direction overflow
-			else if ((startpos - span + 1) < 0
-					&& endpos + span >= curPath.size()) {
+			else if ((startpos - span + 1) < 0 && endpos + span >= curPath.size()) {
 				// skip the startpos
 				for (int i = 0; i < curPath.size(); i++) {
 					if (i <= startpos) {
 						nodelist.add(curPath.get(i));
 					}
 					if (i == endpos) {
-						Vector<GrammarTreeNode> sublist = this.createLoop(
-								subVector(curPath, startpos + 1, endpos + 1),
-								span);
+						Vector<GrammarTreeNode> sublist = this.createLoop(subVector(curPath, startpos + 1, endpos + 1), span);
 						if (sublist == null) {
 							nodelist.clear();
 							break;
@@ -817,8 +718,7 @@ public class Traces implements GrammarTreeNode {
 						nodelist1.add(curPath.get(i));
 					}
 					if (i == endpos - 1) {
-						Vector<GrammarTreeNode> sublist = this.createLoop(
-								subVector(curPath, startpos, endpos), span);
+						Vector<GrammarTreeNode> sublist = this.createLoop(subVector(curPath, startpos, endpos), span);
 						if (sublist == null) {
 							nodelist1.clear();
 							break;
@@ -838,9 +738,7 @@ public class Traces implements GrammarTreeNode {
 						nodelist.add(curPath.get(i));
 					}
 					if (i == endpos) {
-						Vector<GrammarTreeNode> sublist = this.createLoop(
-								subVector(curPath, startpos - span + 1,
-										endpos + 1), span);
+						Vector<GrammarTreeNode> sublist = this.createLoop(subVector(curPath, startpos - span + 1, endpos + 1), span);
 						if (sublist == null) {
 							nodelist.clear();
 							break;
@@ -857,9 +755,7 @@ public class Traces implements GrammarTreeNode {
 						nodelist1.add(curPath.get(i));
 					}
 					if (i == endpos + span - 1) {
-						Vector<GrammarTreeNode> sublist = this.createLoop(
-								subVector(curPath, startpos, endpos + span),
-								span);
+						Vector<GrammarTreeNode> sublist = this.createLoop(subVector(curPath, startpos, endpos + span), span);
 						if (sublist == null) {
 							nodelist1.clear();
 							break;
@@ -894,6 +790,7 @@ public class Traces implements GrammarTreeNode {
 			t.emptyState();
 		}
 	}
+
 	public String toProgram() {
 		String resString = "";
 		while (curState < totalOrderVector.size()) {
@@ -902,7 +799,9 @@ public class Traces implements GrammarTreeNode {
 				this.program = resString;
 				return resString;
 			} else {
-				this.totalOrderVector.get(curState).emptyState();//some segments may work
+				this.totalOrderVector.get(curState).emptyState();// some
+																	// segments
+																	// may work
 				curState++;
 			}
 		}
@@ -946,10 +845,11 @@ public class Traces implements GrammarTreeNode {
 	public String getProgram() {
 		return this.program;
 	}
+
 	@Override
 	public ArrayList<String> genAtomicPrograms() {
 		ArrayList<String> ret = new ArrayList<String>();
-		for(Template temp:totalOrderVector){
+		for (Template temp : totalOrderVector) {
 			ret.addAll(temp.genAtomicPrograms());
 		}
 		return ret;

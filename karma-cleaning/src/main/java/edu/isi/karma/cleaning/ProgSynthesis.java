@@ -11,6 +11,7 @@ import org.perf4j.log4j.Log4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.cleaning.research.ConfigParameters;
 import edu.isi.karma.cleaning.features.Feature;
 import edu.isi.karma.cleaning.features.RecordClassifier;
 import edu.isi.karma.cleaning.features.RecordFeatureSet;
@@ -18,7 +19,6 @@ import edu.isi.karma.cleaning.grammartree.Partition;
 import edu.isi.karma.cleaning.grammartree.Program;
 import edu.isi.karma.cleaning.grammartree.TNode;
 import edu.isi.karma.cleaning.grammartree.Traces;
-import edu.isi.karma.cleaning.research.ConfigParameters;
 
 public class ProgSynthesis {
 	public static int time_limit = 20;
@@ -275,13 +275,11 @@ public class ProgSynthesis {
 		StopWatch stopWatch0 = new Log4JStopWatch("adaptive_main");
 		long t1 = System.currentTimeMillis();
 		StopWatch stopWatch = new Log4JStopWatch("adaptive_producePartition");
-		if(orgVector.size() == 5){
-			System.out.println("hello");
-		}
 		Vector<Partition> par = this.adaptive_producePartition();		
 		stopWatch.stop();
 		StopWatch stopWatch1 = new Log4JStopWatch("adaptive_produceProgram");		
-		Collection<ProgramRule> cpr = this.adaptive_produceProgram(par);
+		Collection<ProgramRule> cpr = new ArrayList<ProgramRule>(); 
+		cpr = this.adaptive_produceProgram(par);
 		stopWatch1.stop();
 		Traces.AllSegs.clear();
 		//record the learning time
@@ -340,13 +338,13 @@ public class ProgSynthesis {
 		while (i < prog_cnt) {
 			ProgramRule r = prog.toProgram2(msGer);
 			if (r == null)
-				return null;
+				return rules;
 			String xString = "";
 			int termCnt = 0;
 			boolean findRule = true;
 			while ((xString = this.validRule(r, pars)) != "GOOD" && findRule) {
 				if (xString.compareTo("NO_CLASIF") == 0) {
-					return null; // indistinguishable classes.
+					return rules; // indistinguishable classes.
 				}
 				for (Partition p : prog.partitions) {
 					if (p.label.compareTo(xString) == 0) {

@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Vector;
 
 import org.json.JSONArray;
@@ -34,10 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.cleaning.DataPreProcessor;
+import edu.isi.karma.cleaning.DataRecord;
 import edu.isi.karma.cleaning.ExampleSelection;
 import edu.isi.karma.cleaning.Messager;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.UtilTools;
+import edu.isi.karma.cleaning.correctness.AdaInspector;
 import edu.isi.karma.cleaning.grammartree.TNode;
 import edu.isi.karma.cleaning.research.ConfigParameters;
 import edu.isi.karma.cleaning.research.DataCollection;
@@ -51,12 +54,14 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.cleaning.RamblerTransformation;
 import edu.isi.karma.rep.cleaning.RamblerTransformationExample;
 import edu.isi.karma.rep.cleaning.RamblerTransformationInputs;
 import edu.isi.karma.rep.cleaning.RamblerTransformationOutput;
 import edu.isi.karma.rep.cleaning.RamblerValueCollection;
 import edu.isi.karma.rep.cleaning.TransformationExample;
 import edu.isi.karma.rep.cleaning.ValueCollection;
+
 public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	final String hNodeId;
 	private Vector<TransformationExample> examples;
@@ -65,8 +70,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	public String compResultString = "";
 	private static Logger logger = LoggerFactory.getLogger(GenerateCleaningRulesCommand.class);
 
-	public GenerateCleaningRulesCommand(String id, String model, String worksheetId,
-			String hNodeId, String examples, String cellIDs, String selectionId) {
+	public GenerateCleaningRulesCommand(String id, String model, String worksheetId, String hNodeId, String examples, String cellIDs, String selectionId) {
 		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.nodeIds = parseNodeIds(cellIDs);
@@ -103,8 +107,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 				ary[0] = nodeid;
 				ary[1] = "<_START>" + before + "<_END>";
 				ary[2] = after;
-				TransformationExample re = new RamblerTransformationExample(
-						ary[1], ary[2], ary[0]);
+				TransformationExample re = new RamblerTransformationExample(ary[1], ary[2], ary[0]);
 				x.add(re);
 			}
 		} catch (Exception ex) {
@@ -113,12 +116,13 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		return x;
 	}
 
-	private String getBestExample(HashMap<String, String[]> xHashMap,
-			HashMap<String, Vector<String[]>> expFeData) {
+	
+	private String getBestExample(HashMap<String, String[]> xHashMap, HashMap<String, Vector<String[]>> expFeData) {
 		ExampleSelection es = new ExampleSelection();
 		es.inite(xHashMap, expFeData);
 		return es.Choose();
 	}
+
 	@Override
 	public String getCommandName() {
 		return GenerateCleaningRulesCommand.class.getSimpleName();
@@ -144,7 +148,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(wk);
-		String msg = String.format("Gen rule start,Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
+		String msg = String.format("Gen rule start,Time,%d, Worksheet,%s", System.currentTimeMillis(), worksheetId);
 		logger.info(msg);
 		// Get the HNode
 		HashMap<String, String> rows = new HashMap<String, String>();
@@ -156,7 +160,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 				selectedPath = path;
 			}
 		}
-		
+
 		Collection<Node> nodes = new ArrayList<Node>();
 		wk.getDataTable().collectNodes(selectedPath, nodes, selection);
 		for (Node node : nodes) {
@@ -171,41 +175,25 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		RamblerValueCollection vc = new RamblerValueCollection(rows);
 		HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
 		Messager mg = null;
-		if(wk.getMsg()!= null)
-		{
+		if (wk.getMsg() != null) {
 			mg = (Messager) wk.getMsg();
-		}
-		else
-		{
+		} else {
 			mg = new Messager();
 			wk.setMsg(mg);
 		}
 		DataPreProcessor dp = null;
-		if(wk.getDpp()!= null)
-		{
+		if (wk.getDpp() != null) {
 			dp = (DataPreProcessor) wk.getDpp();
-		}
-		else
-		{
+		} else {
 			dp = new DataPreProcessor(rows.values());
 			dp.run();
 			wk.setDpp(dp);
 		}
-		inputs = new RamblerTransformationInputs(examples, vc,dp,mg);
+		inputs = new RamblerTransformationInputs(examples, vc, dp, mg);
 		// generate the program
 		boolean results = false;
 		int iterNum = 0;
 		RamblerTransformationOutput rtf = null;
-		// initialize the vocabulary
-		Iterator<String> iterx = inputs.getInputValues().getValues().iterator();
-		Vector<String> v = new Vector<String>();
-		int vb_cnt = 0;
-		while(iterx.hasNext() && vb_cnt < 30)
-		{
-			String eString = iterx.next();
-			v.add(eString);
-			vb_cnt ++;
-		}
 		while (iterNum < 1 && !results) // try to find an program within iterNum
 		{
 			rtf = new RamblerTransformationOutput(inputs);
@@ -215,95 +203,102 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 			iterNum++;
 		}
 		Iterator<String> iter = rtf.getTransformations().keySet().iterator();
-		// id:{org: tar: orgdis: tardis: }
+		// id:{"org": ,"tar": , "orgdis": ,"tardis": }
 		HashMap<String, HashMap<String, String>> resdata = new HashMap<String, HashMap<String, String>>();
-		HashSet<String> keys = new HashSet<String>();
-		while (iter.hasNext()) {
-			String tpid = iter.next();
-			ValueCollection rvco = rtf.getTransformedValues_debug(tpid);
-			if (rvco == null)
-				continue;
-			// constructing displaying data
-			HashMap<String, String[]> xyzHashMap = new HashMap<String, String[]>();
-			for (String key : rvco.getNodeIDs()) {
-				HashMap<String, String> dict = new HashMap<String, String>();
-				// add to the example selection
-				boolean isExp = false;
-				String org = vc.getValue(key);
-				String classLabel = rvco.getClass(key);
-				String pretar = rvco.getValue(key);
-				String dummyValue = pretar;
-				if(pretar.indexOf("_FATAL_ERROR_")!= -1)
-				{
-					dummyValue = org;
-					//dummyValue = "#ERROR";
-				}
-				try
-				{
-					UtilTools.StringColorCode(org, dummyValue, dict);
-				}
-				catch(Exception ex)
-				{
-					logger.info(String.format("ColorCoding Exception%s, %s", org,dummyValue));
-					//set dict 
-					dict.put("Org", org);
-					dict.put("Tar", "ERROR");
-					dict.put("Orgdis", org);
-					dict.put("Tardis", "ERROR");
-				}
-				for (TransformationExample exp : examples) {
-					if (exp.getNodeId().compareTo(key) == 0) {
-						if (!expFeData.containsKey(classLabel)) {
-							Vector<String[]> vstr = new Vector<String[]>();
-							String[] texp = {dict.get("Org"), pretar};
-							vstr.add(texp);
-							expFeData.put(classLabel, vstr);
-						} else {
-							String[] texp = { dict.get("Org"), pretar };
-							expFeData.get(classLabel).add(texp);
-						}
-						isExp = true;
-					}
-				}
-
-				if (!isExp) {
-					String[] pair = { dict.get("Org"), dict.get("Tar"), pretar,
-							classLabel };
-					xyzHashMap.put(key, pair);
-				}
-				resdata.put(key, dict);
+		String tpid = iter.next();
+		ValueCollection rvco = rtf.getTransformedValues_debug(tpid);
+		// constructing displaying data
+		HashMap<String, String[]> xyzHashMap = new HashMap<String, String[]>();
+		ArrayList<DataRecord> records = new ArrayList<DataRecord>();
+		for (String key : rvco.getNodeIDs()) {
+			HashMap<String, String> dict = new HashMap<String, String>();
+			// add to the example selection
+			boolean isExp = false;
+			String org = vc.getValue(key);
+			String classLabel = rvco.getClass(key);
+			String pretar = rvco.getValue(key);
+			String dummyValue = pretar;
+			if (pretar.indexOf("_FATAL_ERROR_") != -1) {
+				dummyValue = org;
 			}
-			if(!rtf.nullRule)
-				keys.add(getBestExample(xyzHashMap, expFeData));
+			try {
+				UtilTools.StringColorCode(org, dummyValue, dict);
+			} catch (Exception ex) {
+				logger.info(String.format("ColorCoding Exception%s, %s", org, dummyValue));
+			}
+			for (TransformationExample exp : examples) {
+				if (exp.getNodeId().compareTo(key) == 0) {
+					if (!expFeData.containsKey(classLabel)) {
+						Vector<String[]> vstr = new Vector<String[]>();
+						String[] texp = { dict.get("Org"), pretar };
+						vstr.add(texp);
+						expFeData.put(classLabel, vstr);
+					} else {
+						String[] texp = { dict.get("Org"), pretar };
+						expFeData.get(classLabel).add(texp);
+					}
+					isExp = true;
+				}
+			}
+
+			if (!isExp) {
+				String[] pair = { dict.get("Org"), dict.get("Tar"), pretar, classLabel };
+				xyzHashMap.put(key, pair);
+			}
+			resdata.put(key, dict);
+			DataRecord record = new DataRecord(key, org, dummyValue, classLabel);
+			records.add(record);
 		}
-		// find the best row
-		String vars = "";
+		ArrayList<String> sortedIds = getRecommendedIDs(dp, mg, records, rtf, tpid);
+		List<String> keys = sortedIds;
+		String vars = "";	
+		if (rtf.nullRule) {
+			keys.clear();
+		}
+		logDiagnosticInfo(rtf, resdata, keys);
+		return new UpdateContainer(new CleaningResultUpdate(hNodeId, resdata, vars, keys));
+	}
+	private void logDiagnosticInfo(RamblerTransformationOutput rtf, HashMap<String, HashMap<String, String>> resdata, List<String> keys){
 		String expstr = "";
 		String recmd = "";
-		for(TransformationExample x:examples)
-		{
-			expstr += String.format("%s|%s", x.getBefore(),x.getAfter());
+		if (!resdata.isEmpty() && !rtf.nullRule) {
+			recmd = resdata.get(keys.iterator().next()).get("Org");
+		} else {
+			recmd = "";
+		}
+		for (TransformationExample x : examples) {
+			expstr += String.format("%s|%s", x.getBefore(), x.getAfter());
 		}
 		expstr += "|";
-		if(rtf.nullRule)
-		{
-			keys.clear();
-			//keys.add("-2"); // "-2 indicates null rule"
-		}
-		if(!resdata.isEmpty() && !rtf.nullRule)
-		{
-			recmd = resdata.get(keys.iterator().next()).get("Org");
-		}
-		else
-		{
-			recmd = ""; 
-		}
-		msg = String.format("Gen rule end, Time,%d, Worksheet,%s,Examples:%s,Recmd:%s",System.currentTimeMillis(),worksheetId,expstr,recmd);
+		String msg = String.format("Gen rule end, Time,%d, Worksheet,%s,Examples:%s,Recmd:%s", System.currentTimeMillis(), worksheetId, expstr, recmd);
 		logger.info(msg);
-		return new UpdateContainer(new CleaningResultUpdate(hNodeId, resdata,
-				vars, keys));
 	}
-
+	private ArrayList<String> getRecommendedIDs(DataPreProcessor dp, Messager mg, ArrayList<DataRecord> records, RamblerTransformationOutput rtf, String tpid){
+		AdaInspector inspector = new AdaInspector();
+		inspector.initeParameter();
+		RamblerTransformation rtransformation = (RamblerTransformation)rtf.getTransformations().get(tpid);
+		inspector.initeInspector(dp, mg, records, getExampleIDs(), rtransformation.prog);
+		ArrayList<String> ret = new ArrayList<String>();
+		PriorityQueue<DataRecord> sortQueue = new PriorityQueue<DataRecord>();
+		for(DataRecord r: records){
+			double value = inspector.getActionScore(r);
+			r.value = value;
+			if(value < 0){
+				sortQueue.add(r);
+			}
+		}
+		while(!sortQueue.isEmpty()){
+			ret.add(sortQueue.poll().id);
+		}
+		return ret;
+	}
+	private ArrayList<String> getExampleIDs(){
+		ArrayList<String> ret = new ArrayList<String>();
+		for(TransformationExample e: examples){
+			ret.add(e.getNodeId());
+		}
+		return ret;
+	}
 	public String getVarJSON(HashMap<String, HashSet<String>> values) {
 		JSONObject jsobj = new JSONObject();
 		try {
@@ -337,8 +332,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		amb.put(id, tcnt);
 	}
 
-	public void updateCandiScore(ValueCollection rvco,
-			HashMap<String, HashMap<String, Integer>> values) {
+	public void updateCandiScore(ValueCollection rvco, HashMap<String, HashMap<String, Integer>> values) {
 		Iterator<String> ids = rvco.getNodeIDs().iterator();
 		while (ids.hasNext()) {
 			String id = ids.next();
@@ -359,8 +353,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		return;
 	}
 
-	public HashMap<String, Double> getScore(HashMap<String, Integer> dicts,
-			HashMap<String, HashMap<String, Integer>> values, boolean sw) {
+	public HashMap<String, Double> getScore(HashMap<String, Integer> dicts, HashMap<String, HashMap<String, Integer>> values, boolean sw) {
 
 		int topKsize = 1;
 		if (sw)
@@ -376,8 +369,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 			if (topK.keySet().size() < topKsize && div > 1) {
 				topK.put(id, score);
 			} else {
-				String[] keys = topK.keySet().toArray(
-						new String[topK.keySet().size()]);
+				String[] keys = topK.keySet().toArray(new String[topK.keySet().size()]);
 				for (String key : keys) {
 					if (topK.get(key) < score) {
 						topK.remove(key);
@@ -388,76 +380,11 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		}
 		return topK;
 	}
+
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* save for future use
-	 * public static void main(String[] args) {
-	 *
-		String dirpath = "/Users/bowu/Research/testdata/TestSingleFile";
-		File nf = new File(dirpath);
-		File[] allfiles = nf.listFiles();
-		for (File f : allfiles) {
-			try {
-				if (f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
-
-					CSVReader cr = new CSVReader(new FileReader(f), '\t');
-					String[] pair;
-					int isadded = 0;
-					HashMap<String, String> tx = new HashMap<String, String>();
-					int i = 0;
-					Vector<TransformationExample> vrt = new Vector<TransformationExample>();
-					while ((pair = cr.readNext()) != null) {
-
-						pair[0] = "<_START>" + pair[0] + "<_END>";
-						tx.put(i + "", pair[0]);
-						if (isadded < 2) {
-							RamblerTransformationExample tmp = new RamblerTransformationExample(
-									pair[0], pair[1], i + "");
-							vrt.add(tmp);
-							isadded++;
-						}
-						i++;
-					}
-					RamblerValueCollection vc = new RamblerValueCollection(tx);
-					RamblerTransformationInputs inputs = new RamblerTransformationInputs(
-							vrt, vc);
-					// generate the program
-					RamblerTransformationOutput rtf = new RamblerTransformationOutput(
-							inputs);
-					HashMap<String, Vector<String>> js2tps = new HashMap<String, Vector<String>>();
-					Iterator<String> iter = rtf.getTransformations().keySet()
-							.iterator();
-					Vector<ValueCollection> vvc = new Vector<ValueCollection>();
-					while (iter.hasNext()) {
-						String tpid = iter.next();
-						ValueCollection rvco = rtf.getTransformedValues(tpid);
-						vvc.add(rvco);
-						String reps = rvco.getJson().toString();
-						if (js2tps.containsKey(reps)) {
-							js2tps.get(reps).add(tpid); // update the variance
-														// dic
-						} else {
-							Vector<String> tps = new Vector<String>();
-							tps.add(tpid);
-							js2tps.put(reps, tps);
-						}
-					}
-					// //////
-					if (js2tps.keySet().size() == 0) {
-						logger.debug("No Rules have been found");
-						return;
-					}
-					for (String s : js2tps.keySet()) {
-						logger.debug("" + s);
-					}
-				}
-			} catch (Exception ex) {
-				logger.error("" + ex.toString());
-			}
-		}
-	}*/
+	
 }

@@ -16,6 +16,8 @@ class Interpreter(InterpreterType):
 	script = script.encode("utf-8","ignore")
 	script = script.decode("utf-8")
         trans = Translator(script)
+	reload(sys)
+	sys.setdefaultencoding('utf8')
         self.script=trans.translate(script) 
     def execute(self,value):
         value = value.encode("utf-8","ignore")

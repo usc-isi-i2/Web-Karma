@@ -43,6 +43,8 @@ public class RecordClassifier implements PartitionClassifierType {
 	public double[] maxValues;
 	public double[] minValues;
 	public int ctype = svm_parameter.C_SVC; 
+	public double nu = 0.5;
+	public int feature_cnt = 0;
 	public RecordClassifier() {
 		this.rf = new RecordFeatureSet();
 	}
@@ -50,11 +52,14 @@ public class RecordClassifier implements PartitionClassifierType {
 	public RecordClassifier(RecordFeatureSet rf) {
 		this.rf = rf;
 	}
-	public RecordClassifier(RecordFeatureSet rf, int type) {
-		this.rf = rf;
-		ctype = type;
+	public RecordClassifier(RecordFeatureSet rfs, int type){
+		this.rf = rfs;
+		this.ctype = type;
+		if(ctype == svm_parameter.ONE_CLASS){
+			this.nu = 0.01;
+		}	
 	}
-	public void init() {
+	public void init(String[] vocb) {
 		this.trainData = new ArrayList<svm_node[]>();
 		this.targets = new ArrayList<Double>();
 		labelMapping = new HashMap<String, Double>();
@@ -63,12 +68,14 @@ public class RecordClassifier implements PartitionClassifierType {
 		this.minValues = null;
 		this.maxValues = null;
 		this.rf.init();
+		this.rf.addVocabulary(vocb);
 	}
 
 	public void addTrainingData(String v, double[] value, String label) {
 		// convert value to feature vector
 		rawData.add(v);
 		svm_node[] testNodes = new svm_node[value.length];
+		feature_cnt = feature_cnt != 0 ? feature_cnt: value.length;
 		for (int k = 0; k < testNodes.length; k++) {
 			svm_node node = new svm_node();
 			node.index = k;
@@ -93,6 +100,7 @@ public class RecordClassifier implements PartitionClassifierType {
 		// convert value to feature vector
 		rawData.add(value);
 		Collection<Feature> cfeat = rf.computeFeatures(value, "");
+		feature_cnt = cfeat.size();
 		Feature[] x = cfeat.toArray(new Feature[cfeat.size()]);
 		// row.add(f.getName());
 		svm_node[] testNodes = new svm_node[cfeat.size()];
@@ -119,7 +127,7 @@ public class RecordClassifier implements PartitionClassifierType {
 	public void printTraindata(svm_node[][] data) {
 		String res = "";
 		String line = Arrays.toString(this.rf.getFeatureNames().toArray(
-				new String[this.rf.getFeatureNames().size()]));
+				new String[this.feature_cnt]));
 		res += line + "\n";
 		for (svm_node[] l : data) {
 			String tmp = "";
@@ -182,7 +190,7 @@ public class RecordClassifier implements PartitionClassifierType {
 
 	public void convertToCSVfile() {
 		ArrayList<String[]> xArrayList = new ArrayList<String[]>();
-		String[] attrname = new String[rf.getFeatureNames().size() + 1];
+		String[] attrname = new String[feature_cnt + 1];
 		String[] names = rf.getFeatureNames().toArray(
 				new String[attrname.length - 1]);
 		// add attribute names
@@ -210,7 +218,7 @@ public class RecordClassifier implements PartitionClassifierType {
 	}
 
 	public void NormalizeTrainingData() {
-		int featuresize = rf.getFeatureNames().size();
+		int featuresize = feature_cnt;
 		double[] maxvals = new double[featuresize];
 		maxvals = UtilTools.initArray(maxvals, -1);
 		double[] minvals = new double[featuresize];
@@ -393,15 +401,16 @@ public class RecordClassifier implements PartitionClassifierType {
 		parameters.gamma = gamma;
 		parameters.svm_type = ctype;
 		parameters.kernel_type = svm_parameter.RBF;
+		//parameters.kernel_type = svm_parameter.LINEAR;
 		parameters.degree = 3;
 		parameters.coef0 = 0;
-		parameters.nu = 0.5;
+		parameters.nu = this.nu;
 		parameters.cache_size = 100;
 		parameters.C = c;
 		parameters.eps = 1e-5;
 		parameters.p = 0.1;
 		parameters.shrinking = 1;
-		parameters.probability = 1;
+		parameters.probability = 0;
 
 		HashMap<Double, Double> wtsdict = adjustunbalancedData();
 		parameters.nr_weight = wtsdict.keySet().size();
@@ -424,7 +433,17 @@ public class RecordClassifier implements PartitionClassifierType {
 		svm_model model = svm.svm_train(problem, parameters);
 		return model;
 	}
-
+	public String getLabel(double[] value){
+		svm_node[] testNodes = new svm_node[value.length];
+		for(int k = 0; k < testNodes.length; k++){
+			svm_node node = new svm_node();
+			node.index = k;
+			node.value = value[k];
+			testNodes[k] = node;
+		}
+		double v = svm.svm_predict(model, testNodes);
+		return findLable(v);
+	}
 	@Override
 	public String getLabel(String value) {
 		Collection<Feature> cfeat = rf.computeFeatures(value, "");
@@ -455,7 +474,6 @@ public class RecordClassifier implements PartitionClassifierType {
 			}
 		}
 		if (label.compareTo("") == 0) {
-			ulogger.info("Double Label doesn't exist!");
 		}
 		return label;
 	}
@@ -493,7 +511,7 @@ public class RecordClassifier implements PartitionClassifierType {
 	}
 
 	public void testOnFile() {
-		String[] vocbs = { "x","DIGITs" };
+		String[] vocbs = { "=","\\(", "-","'", "\\.", "/" };
 		String fpath1 = "/Users/bowu/Research/testdata/tmp/data.txt";
 		String fpath2 = "/Users/bowu/Research/testdata/tmp/labels.txt";
 		try {
@@ -519,15 +537,11 @@ public class RecordClassifier implements PartitionClassifierType {
 				addTrainingData(data.get(i), "c" + labels.get(i));
 			}
 			learnClassifer();
-			String[] test = { "4 x 9\"",
-					"H: 58 x  W: 25\"",
-					"15\" x 18\"",
-					"14.75\" H x 11\" W",
-					"Framed at 21.75\" H x 24.25\" W",
-					"49.5\" x 9\""};
-			for (int i = 0; i < test.length; i++) {
-				System.out.println(String.format("%s, %s ", test[i],
-						getLabel(test[i])));
+			for (int i = 0; i < data.size(); i++) {
+				String predict = getLabel(data.get(i));
+				String rlabel = labels.get(i);
+				String tmpline = String.format("%s, %s, %s\n", predict, rlabel, data.get(i));
+				System.out.println(""+tmpline);
 			}
 			selfVerify();
 			br1.close();
@@ -567,10 +581,10 @@ public class RecordClassifier implements PartitionClassifierType {
 		// System.out.println(rcf.selfVerify());
 		// // System.out.println("class: "+rcf.getLabel("."));
 		// // System.out.println("class: "+rcf.getLabel("&$"));
-		RecordFeatureSet rfs1 = new RecordFeatureSet();
+		/*RecordFeatureSet rfs1 = new RecordFeatureSet();
 		String[] vocbs1 = { "by", "G", "L", "M", "K", "ade", "DIGITs" };
-		rfs1.addVocabulary(vocbs1);
-		RecordClassifier rcf1 = new RecordClassifier(rfs1);
+		rfs1.addVocabulary(vocbs1);*/
+		RecordClassifier rcf1 = new RecordClassifier();
 		rcf1.testOnFile();
 	}
 

@@ -31,12 +31,66 @@ import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.isi.karma.cleaning.DataPreProcessor;
+import edu.isi.karma.cleaning.DataRecord;
 import edu.isi.karma.cleaning.InterpreterType;
 import edu.isi.karma.cleaning.Messager;
 import edu.isi.karma.cleaning.ProgSynthesis;
 import edu.isi.karma.cleaning.ProgramRule;
 
 public class Tools {
+	public DataPreProcessor dpp;
+	public Messager msger;
+	public ProgramRule progRule = null;
+	
+	public void init(Vector<String[]> records){
+		Vector<String> tmp = new Vector<String>();
+		for(String[] r: records){
+			tmp.add(r[0]);
+		}
+		dpp = new DataPreProcessor(tmp);
+		dpp.run();
+		msger = new Messager();
+	}
+	public ProgramRule getProgramRule(){
+		return progRule;
+	}
+	public String[] constrExample(String[] data){
+		if(data.length < 2){
+			return null;
+		}
+		String[] xStrings = { "<_START>" + data[0] + "<_END>", data[1] };
+		return xStrings;
+	}
+	public void learnProgramRule(Vector<String[]> examples){
+		ProgSynthesis psProgSynthesis = new ProgSynthesis();				
+		psProgSynthesis.inite(examples,dpp,msger); //
+		Collection<ProgramRule> ps = psProgSynthesis.adaptive_main();
+		if(ps.size() > 0){
+			progRule = ps.iterator().next();
+
+		}
+		System.out.println("" + psProgSynthesis.myprog.toString());
+
+		msger.updateCM_Constr(psProgSynthesis.partiCluster
+				.getConstraints());
+		msger.updateWeights(psProgSynthesis.partiCluster.weights);
+	}
+	public Vector<String[]> transformSet(Vector<String[]> records,Vector<String[]> examples){
+		Vector<String[]> ret = new Vector<String[]>();
+		ProgramRule pr = progRule;
+		for(String[] org: records)
+		{
+			String ttar = pr.transform(org[0]);
+			if (Test.isExample(org[0], examples)) {
+				ttar = org[1];
+			}
+			if(org[1].compareTo(ttar)!= 0){
+				String[] n = {org[0], org[1], ttar};
+				ret.add(n);
+			}			
+		}
+		return ret;
+	}
 	public void transformFile(String fpath) {
 		try {
 			Vector<String[]> examples = new Vector<String[]>();

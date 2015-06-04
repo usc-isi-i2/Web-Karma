@@ -27,7 +27,7 @@ import edu.isi.karma.cleaning.ProgramRule;
 
 public class RamblerTransformation implements Transformation {
 	public String signature = "";
-	private ProgramRule prog;
+	public ProgramRule prog;
 	public RamblerTransformation(ProgramRule prog)
 	{ 
 		this.prog = prog;

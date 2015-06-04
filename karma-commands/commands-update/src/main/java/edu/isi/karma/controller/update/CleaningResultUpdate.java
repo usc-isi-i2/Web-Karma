@@ -1,6 +1,7 @@
 package edu.isi.karma.controller.update;
 
 import edu.isi.karma.view.VWorkspace;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,8 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class CleaningResultUpdate extends AbstractUpdate {
@@ -17,13 +20,13 @@ public class CleaningResultUpdate extends AbstractUpdate {
 	private HashMap<String,HashMap<String, String>> map = new HashMap<String, HashMap<String,String>>();
 	private String hNodeId = "";
 	private String varString;
-	private Set<String> topkey = new HashSet<String>();
+	private List<String> topkey = new ArrayList<String>();
 	public enum JsonKeys {
 		worksheetId, hNodeId, result
 	}
 	private static Logger logger = LoggerFactory
 			.getLogger(CleaningResultUpdate.class);
-	public CleaningResultUpdate(String hNodeId, HashMap<String,HashMap<String, String>> store,String vars,Set<String> keys) {
+	public CleaningResultUpdate(String hNodeId, HashMap<String,HashMap<String, String>> store,String vars,List<String> keys) {
 		this.hNodeId = hNodeId;
 		topkey = keys;
 		varString = vars;
@@ -52,17 +55,6 @@ public class CleaningResultUpdate extends AbstractUpdate {
 			bestpac.put("tps",new JSONObject());
 			bestpac.put("top", jba);
 			jsa.put(0,bestpac);//put the best one as the first
-			if(varString.compareTo("")!=0)
-			{
-				/*JSONObject jsBest = new JSONObject(varString);
-				JSONObject varpac = new JSONObject();
-				JSONArray jba = new JSONArray();
-				varpac.put("data", jsBest);
-				varpac.put("tps",new JSONObject());
-				jsa.put(1,varpac);//put the var as the second
-				*/
-			}
-			
 			obj.put(JsonKeys.result.name(), jsa);
 			pw.print(obj.toString(4));
 		} catch (JSONException e) {
