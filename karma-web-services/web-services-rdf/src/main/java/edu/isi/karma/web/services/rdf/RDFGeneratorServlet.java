@@ -7,9 +7,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -49,6 +52,7 @@ import edu.isi.karma.kr2rml.ContextGenerator;
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
+import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
@@ -64,12 +68,14 @@ import edu.isi.karma.util.HTTPUtil.HTTP_HEADERS;
 import edu.isi.karma.webserver.KarmaException;
 
 @Path("/r2rml")
-public class RDFGeneratorServlet {
+public class RDFGeneratorServlet implements ServletContextListener{
 
 	private static final int MODEL_CACHE_SIZE = 20;
 	private static Logger logger = LoggerFactory
 			.getLogger(RDFGeneratorServlet.class);
 	private static LRUMap modelCache = new LRUMap(MODEL_CACHE_SIZE);
+	
+	private static String webAppPath = null;
 
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -184,6 +190,8 @@ public class RDFGeneratorServlet {
 			return "Exception : " + e.getMessage();
 		}
 	}
+	
+	
 
 	/*
 	 * If URL is provided, data will be fetched from the URL, else raw Data in
@@ -239,14 +247,14 @@ public class RDFGeneratorServlet {
 	}
 	
 	private String getJSON(MultivaluedMap<String, String> formParams) throws JSONException, MalformedURLException, KarmaException, IOException{
-//		
-//		boolean refreshModel = false;
-//		if (formParams.containsKey(FormParameters.REFRESH_MODEL)
-//				&& formParams.getFirst(FormParameters.REFRESH_MODEL)
-//						.equalsIgnoreCase("true"))
-//			refreshModel = true;
 		
 		InputStream is = null;
+		URL urlContext = null;
+		String jsonContext = null;
+		InputStream isContext = null;
+		String rdfGenerationSelection=null;
+		String baseUri=null;
+		
 		if (formParams.containsKey(FormParameters.DATA_URL)
 				&& formParams.getFirst(FormParameters.DATA_URL).trim() != "")
 			is = new URL(formParams.getFirst(FormParameters.DATA_URL)).openStream();
@@ -254,33 +262,65 @@ public class RDFGeneratorServlet {
 				&& formParams.getFirst(FormParameters.RAW_DATA).trim() != "")
 			is = IOUtils.toInputStream(formParams.getFirst(FormParameters.RAW_DATA));
 		
+		if (formParams.containsKey(FormParameters.CONTEXT_URL) && formParams.getFirst(FormParameters.CONTEXT_URL).trim() != ""){
+			urlContext = new URL(formParams.getFirst(FormParameters.CONTEXT_URL));
+			isContext = urlContext.openStream();
+			jsonContext = IOUtils.toString(isContext);
+		}
+		
+		
+		if (formParams.containsKey(FormParameters.RDF_GENERATION_SELECTION) && formParams.getFirst(FormParameters.RDF_GENERATION_SELECTION).trim() != ""){
+			rdfGenerationSelection = formParams.getFirst(FormParameters.RDF_GENERATION_SELECTION).trim();
+		}
+		
+		if (formParams.containsKey(FormParameters.BASE_URI) && formParams.getFirst(FormParameters.BASE_URI).trim() != ""){
+			baseUri = formParams.getFirst(FormParameters.BASE_URI).trim();
+		}
+		
 		if(is != null) {
+			
 			String r2rmlURI = formParams.getFirst(FormParameters.R2RML_URL);
-			String jsonContext = GenerateContext(r2rmlURI);
 			String r2rmlFileName = new File(r2rmlURI).getName();
-	        String contextFileName = r2rmlFileName.substring(0,r2rmlFileName.length()-4) + "_context.json";
+	        String contextFileName = null;
 	       
-	        URL contextLocation = writeContext("context", contextFileName, jsonContext);
+	        if(urlContext == null){
+	        	
+	        	jsonContext = GenerateContext(r2rmlURI);
+	        	contextFileName = r2rmlFileName.substring(0,r2rmlFileName.length()-4) + "_context.json";
+	        	urlContext = writeContext(contextFileName, jsonContext);
+	        }
 	       
-			GenericRDFGenerator rdfGen = new GenericRDFGenerator(null);
+			GenericRDFGenerator rdfGen = new GenericRDFGenerator(rdfGenerationSelection);
 
 			// Add the models in;
 			R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
 					"generic-model", new URL(r2rmlURI)); 
 			rdfGen.addModel(modelIdentifier);
 
-			logger.info("Loading json file: " + jsonContext);
+			//logger.info("Loading json file: " + jsonContext);
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			
 			JSONTokener token = new JSONTokener(IOUtils.toInputStream(jsonContext)); 
 
-			ContextIdentifier contextId = new ContextIdentifier("generic-context", contextLocation);
-			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(pw);
+			ContextIdentifier contextId = new ContextIdentifier("generic-context", urlContext);
+			JSONKR2RMLRDFWriter writer =null;
+			if (baseUri != null)
+				 writer = new JSONKR2RMLRDFWriter(pw,baseUri);
+			else
+				writer = new JSONKR2RMLRDFWriter(pw);
+			
 			writer.setGlobalContext(new JSONObject(token), contextId); 
 			RDFGeneratorRequest request = generateRDFRequest("generic-model", "Karma-Web-Services", is, formParams, writer);
 			rdfGen.generateRDF(request);
 			String rdf = sw.toString();
+			
+			sw.close();
+			pw.close();
+			is.close();
+			if(isContext != null)
+				isContext.close();
+			
 			return rdf;
 		}
 		
@@ -314,6 +354,10 @@ public class RDFGeneratorServlet {
 			request.setHeaderStartIndex(Integer.parseInt(formParams.getFirst(FormParameters.HEADER_START_INDEX)));
 		if (formParams.containsKey(FormParameters.WORKSHEET_INDEX))
 			request.setWorksheetIndex(Integer.parseInt(formParams.getFirst(FormParameters.WORKSHEET_INDEX)));
+		
+		if (formParams.containsKey(FormParameters.RDF_GENERATION_ROOT) && formParams.getFirst(FormParameters.RDF_GENERATION_ROOT).trim() != ""){
+			request.setStrategy(new UserSpecifiedRootStrategy(formParams.getFirst(FormParameters.RDF_GENERATION_ROOT).trim()));
+		}
 		
 		return request;
 	}
@@ -400,11 +444,23 @@ public class RDFGeneratorServlet {
 		
 	}
 	
-	private URL writeContext(String dir, String filename, String jsonContext) throws IOException {
-		File contextDir = new File(dir);
-		if(!contextDir.exists())
-			contextDir.mkdir();
-        File contextFile = new File(contextDir.getAbsoluteFile() + "/" + filename);
+	private URL writeContext(String filename, String jsonContext) throws IOException {
+        if(webAppPath == null) {
+        	//another way to getting to webapp folder as webAppPath is initialised only when we run the application and fails for tests
+        	
+        	String classFolder = this.getClass().getResource(".").toString();
+        	int idx = classFolder.indexOf("/target");
+        	StringBuilder base = new StringBuilder();
+        	base.append(classFolder.substring(0,  idx));
+        	if(base.toString().startsWith("file:")){
+        		String path = base.substring(5); 
+        		base.setLength(0);
+        		base.append(path);
+        	}
+        	webAppPath = base.append("/src/main/webapp").toString();
+        }
+        
+		File contextFile = new File(webAppPath+ "/" + filename);
         if(!contextFile.exists()){
         	contextFile.createNewFile();
         }
@@ -412,7 +468,8 @@ public class RDFGeneratorServlet {
         BufferedWriter bw = new BufferedWriter(fw);
         bw.write(jsonContext);
         bw.close();
-		return contextFile.toURI().toURL();
+        
+        return new URL("http://"+InetAddress.getLocalHost().getHostAddress() + ":8080/"+filename);
 	}
 
 	static {
@@ -500,6 +557,18 @@ public class RDFGeneratorServlet {
 		logger.info(Integer.toString(response.getStatusLine().getStatusCode()));
 
 		return response.getStatusLine().getStatusCode();
+	}
+
+	@Override
+	public void contextDestroyed(ServletContextEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void contextInitialized(ServletContextEvent sce) {
+		//get path to webapp to write the contextfile to
+		webAppPath = sce.getServletContext().getRealPath("/");
 	}
 
 }
