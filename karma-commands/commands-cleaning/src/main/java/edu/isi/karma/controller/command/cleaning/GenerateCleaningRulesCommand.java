@@ -21,12 +21,12 @@
 package edu.isi.karma.controller.command.cleaning;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Random;
 import java.util.Vector;
 
 import org.json.JSONArray;
@@ -36,12 +36,10 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.cleaning.DataPreProcessor;
 import edu.isi.karma.cleaning.DataRecord;
-import edu.isi.karma.cleaning.ExampleSelection;
 import edu.isi.karma.cleaning.Messager;
-import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.UtilTools;
 import edu.isi.karma.cleaning.correctness.AdaInspector;
-import edu.isi.karma.cleaning.grammartree.TNode;
+import edu.isi.karma.cleaning.correctness.FatalErrorInspector;
 import edu.isi.karma.cleaning.research.ConfigParameters;
 import edu.isi.karma.cleaning.research.DataCollection;
 import edu.isi.karma.controller.command.CommandException;
@@ -59,11 +57,13 @@ import edu.isi.karma.rep.cleaning.RamblerTransformationExample;
 import edu.isi.karma.rep.cleaning.RamblerTransformationInputs;
 import edu.isi.karma.rep.cleaning.RamblerTransformationOutput;
 import edu.isi.karma.rep.cleaning.RamblerValueCollection;
+import edu.isi.karma.rep.cleaning.Transformation;
 import edu.isi.karma.rep.cleaning.TransformationExample;
 import edu.isi.karma.rep.cleaning.ValueCollection;
 
 public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	final String hNodeId;
+	private int sample_size = 100;
 	private Vector<TransformationExample> examples;
 	private HashSet<String> nodeIds = new HashSet<String>();
 	RamblerTransformationInputs inputs;
@@ -116,13 +116,6 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		return x;
 	}
 
-	
-	private String getBestExample(HashMap<String, String[]> xHashMap, HashMap<String, Vector<String[]>> expFeData) {
-		ExampleSelection es = new ExampleSelection();
-		es.inite(xHashMap, expFeData);
-		return es.Choose();
-	}
-
 	@Override
 	public String getCommandName() {
 		return GenerateCleaningRulesCommand.class.getSimpleName();
@@ -152,7 +145,6 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		logger.info(msg);
 		// Get the HNode
 		HashMap<String, String> rows = new HashMap<String, String>();
-		HashMap<String, Integer> amb = new HashMap<String, Integer>();
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = wk.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {
@@ -161,16 +153,26 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 			}
 		}
 
-		Collection<Node> nodes = new ArrayList<Node>();
+		HashSet<String> existed = new HashSet<String>();
+		addExampleIDsintoExistedSet(existed);
+		ArrayList<Node> nodes = new ArrayList<Node>();
 		wk.getDataTable().collectNodes(selectedPath, nodes, selection);
-		for (Node node : nodes) {
+		int cnt = 0;
+		Random rchooser = new Random();
+		while(cnt < sample_size) {
+			cnt ++;
+			int index = 	rchooser.nextInt(nodes.size());
+			Node node = nodes.get(index);
 			String id = node.getId();
-			if (!this.nodeIds.contains(id))
+			if(existed.contains(id)){
 				continue;
+			}
+			else{
+				existed.add(id);
+			}
 			String originalVal = node.getValue().asString();
 			rows.put(id, originalVal);
 			this.compResultString += originalVal + "\n";
-			calAmbScore(id, originalVal, amb);
 		}
 		RamblerValueCollection vc = new RamblerValueCollection(rows);
 		HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
@@ -210,6 +212,9 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		// constructing displaying data
 		HashMap<String, String[]> xyzHashMap = new HashMap<String, String[]>();
 		ArrayList<DataRecord> records = new ArrayList<DataRecord>();
+		ArrayList<DataRecord> nonFatalError = new ArrayList<DataRecord>();
+		ArrayList<DataRecord> fatalError = new ArrayList<DataRecord>();
+		boolean existFatalError = false;
 		for (String key : rvco.getNodeIDs()) {
 			HashMap<String, String> dict = new HashMap<String, String>();
 			// add to the example selection
@@ -220,6 +225,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 			String dummyValue = pretar;
 			if (pretar.indexOf("_FATAL_ERROR_") != -1) {
 				dummyValue = org;
+				existFatalError = true;
 			}
 			try {
 				UtilTools.StringColorCode(org, dummyValue, dict);
@@ -244,61 +250,116 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 			if (!isExp) {
 				String[] pair = { dict.get("Org"), dict.get("Tar"), pretar, classLabel };
 				xyzHashMap.put(key, pair);
+				if (existFatalError && pretar.indexOf("_FATAL_ERROR_")!= -1) {
+					DataRecord record = new DataRecord(key, pair[0], pretar, classLabel);
+					fatalError.add(record);
+				}
 			}
 			resdata.put(key, dict);
-			DataRecord record = new DataRecord(key, org, dummyValue, classLabel);
-			records.add(record);
+			if (!existFatalError) {
+				DataRecord record = new DataRecord(key, org, dict.get("Tar"), classLabel);
+				nonFatalError.add(record);
+			}
 		}
-		ArrayList<String> sortedIds = getRecommendedIDs(dp, mg, records, rtf, tpid);
-		List<String> keys = sortedIds;
-		String vars = "";	
+		if(existFatalError){
+			records = fatalError;
+		}
+		else{
+			records = nonFatalError;
+		}
+		List<String> keys = new ArrayList<String>();
+		if (!existFatalError) {
+			addExamplesIntoRecords(records, rtf.getTransformations().get(tpid));
+			ArrayList<String> sortedIds = getRecommendedIDs(dp, mg, records, rtf, tpid);
+			keys = sortedIds;
+		} else {
+			ArrayList<String> sortedIds = getRecommendedIDswithFatalError(records);
+			keys = sortedIds;
+		}
+		String vars = "";
 		if (rtf.nullRule) {
 			keys.clear();
 		}
 		logDiagnosticInfo(rtf, resdata, keys);
 		return new UpdateContainer(new CleaningResultUpdate(hNodeId, resdata, vars, keys));
 	}
-	private void logDiagnosticInfo(RamblerTransformationOutput rtf, HashMap<String, HashMap<String, String>> resdata, List<String> keys){
-		String expstr = "";
-		String recmd = "";
-		if (!resdata.isEmpty() && !rtf.nullRule) {
-			recmd = resdata.get(keys.iterator().next()).get("Org");
-		} else {
-			recmd = "";
+	private void addExamplesIntoRecords(ArrayList<DataRecord> records, Transformation tf){
+		for(TransformationExample exp: examples){
+			DataRecord rec =  new DataRecord(exp.getNodeId(), exp.getBefore(), exp.getAfter(), tf.getClassLabel(exp.getBefore()));
+			records.add(rec);
 		}
-		for (TransformationExample x : examples) {
-			expstr += String.format("%s|%s", x.getBefore(), x.getAfter());
-		}
-		expstr += "|";
-		String msg = String.format("Gen rule end, Time,%d, Worksheet,%s,Examples:%s,Recmd:%s", System.currentTimeMillis(), worksheetId, expstr, recmd);
-		logger.info(msg);
 	}
-	private ArrayList<String> getRecommendedIDs(DataPreProcessor dp, Messager mg, ArrayList<DataRecord> records, RamblerTransformationOutput rtf, String tpid){
+	private void logDiagnosticInfo(RamblerTransformationOutput rtf, HashMap<String, HashMap<String, String>> resdata, List<String> keys) {
+		try {
+			String expstr = "";
+			String recmd = "";
+			if (!resdata.isEmpty() && !rtf.nullRule && keys.size() != 0) {
+				recmd = resdata.get(keys.iterator().next()).get("Org");
+			} else {
+				recmd = "";
+			}
+			for (TransformationExample x : examples) {
+				expstr += String.format("%s|%s", x.getBefore(), x.getAfter());
+			}
+			expstr += "|";
+			String msg = String.format("Gen rule end, Time,%d, Worksheet,%s,Examples:%s,Recmd:%s", System.currentTimeMillis(), worksheetId, expstr, recmd);
+			logger.info(msg);
+		} catch (Exception ex) {
+			logger.info(ex.toString());
+		}
+	}
+
+	private ArrayList<String> getRecommendedIDswithFatalError(ArrayList<DataRecord> records) {
+		ArrayList<String> ret = new ArrayList<String>();
+		PriorityQueue<DataRecord> sortedList = new PriorityQueue<DataRecord>();
+		FatalErrorInspector inspector = new FatalErrorInspector();
+		for (DataRecord r : records) {
+			double value = inspector.getActionLabel(r);
+			r.value = value;
+			sortedList.add(r);
+		}
+		while (!sortedList.isEmpty()) {
+			DataRecord r = sortedList.poll();
+			ret.add(r.id);
+		}
+		return ret;
+	}
+	private void addExampleIDsintoExistedSet(HashSet<String> existed){
+		ArrayList<String> exampleIDs = getExampleIDs();
+		for(String id: exampleIDs){
+			if(!existed.contains(id))
+				existed.add(id);
+		}
+	}
+	private ArrayList<String> getRecommendedIDs(DataPreProcessor dp, Messager mg, ArrayList<DataRecord> records, RamblerTransformationOutput rtf, String tpid) {
 		AdaInspector inspector = new AdaInspector();
 		inspector.initeParameter();
-		RamblerTransformation rtransformation = (RamblerTransformation)rtf.getTransformations().get(tpid);
-		inspector.initeInspector(dp, mg, records, getExampleIDs(), rtransformation.prog);
+		RamblerTransformation rtransformation = (RamblerTransformation) rtf.getTransformations().get(tpid);
+		ArrayList<String> exampleIDs = getExampleIDs();
+		inspector.initeInspector(dp, mg, records, exampleIDs, rtransformation.prog);
 		ArrayList<String> ret = new ArrayList<String>();
 		PriorityQueue<DataRecord> sortQueue = new PriorityQueue<DataRecord>();
-		for(DataRecord r: records){
+		for (DataRecord r : records) {
 			double value = inspector.getActionScore(r);
 			r.value = value;
-			if(value < 0){
+			if (value < 0 && !exampleIDs.contains(r.id)) {
 				sortQueue.add(r);
 			}
 		}
-		while(!sortQueue.isEmpty()){
+		while (!sortQueue.isEmpty()) {
 			ret.add(sortQueue.poll().id);
 		}
 		return ret;
 	}
-	private ArrayList<String> getExampleIDs(){
+
+	private ArrayList<String> getExampleIDs() {
 		ArrayList<String> ret = new ArrayList<String>();
-		for(TransformationExample e: examples){
+		for (TransformationExample e : examples) {
 			ret.add(e.getNodeId());
 		}
 		return ret;
 	}
+
 	public String getVarJSON(HashMap<String, HashSet<String>> values) {
 		JSONObject jsobj = new JSONObject();
 		try {
@@ -315,76 +376,9 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		return jsobj.toString();
 	}
 
-	public void calAmbScore(String id, String org, HashMap<String, Integer> amb) {
-		Ruler ruler = new Ruler();
-		ruler.setNewInput(org);
-		Vector<TNode> tNodes = ruler.vec;
-		int tcnt = 1;
-		for (int i = 0; i < tNodes.size(); i++) {
-			if (tNodes.get(i).text.compareTo(" ") == 0)
-				continue;
-			for (int j = 0; j > i && j < tNodes.size(); j++) {
-				if (tNodes.get(j).sameNode(tNodes.get(i))) {
-					tcnt++;
-				}
-			}
-		}
-		amb.put(id, tcnt);
-	}
-
-	public void updateCandiScore(ValueCollection rvco, HashMap<String, HashMap<String, Integer>> values) {
-		Iterator<String> ids = rvco.getNodeIDs().iterator();
-		while (ids.hasNext()) {
-			String id = ids.next();
-			String value = rvco.getValue(id);
-			HashMap<String, Integer> dict;
-			if (values.containsKey(id)) {
-				dict = values.get(id);
-			} else {
-				dict = new HashMap<String, Integer>();
-				values.put(id, dict);
-			}
-			if (dict.containsKey(value)) {
-				dict.put(value, dict.get(value) + 1);
-			} else {
-				dict.put(value, 1);
-			}
-		}
-		return;
-	}
-
-	public HashMap<String, Double> getScore(HashMap<String, Integer> dicts, HashMap<String, HashMap<String, Integer>> values, boolean sw) {
-
-		int topKsize = 1;
-		if (sw)
-			topKsize = Integer.MAX_VALUE;
-		HashMap<String, Double> topK = new HashMap<String, Double>();
-		Iterator<String> iditer = dicts.keySet().iterator();
-		while (iditer.hasNext()) {
-			String id = iditer.next();
-			HashMap<String, Integer> hm = values.get(id);
-			int div = 0;
-			div = hm.keySet().size();
-			double score = div;
-			if (topK.keySet().size() < topKsize && div > 1) {
-				topK.put(id, score);
-			} else {
-				String[] keys = topK.keySet().toArray(new String[topK.keySet().size()]);
-				for (String key : keys) {
-					if (topK.get(key) < score) {
-						topK.remove(key);
-						topK.put(id, score);
-					}
-				}
-			}
-		}
-		return topK;
-	}
-
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 
-	
 }

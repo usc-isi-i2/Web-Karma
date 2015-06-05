@@ -204,7 +204,7 @@ public class ProgSynthesis {
 
 	public Vector<Partition> ProducePartitions(boolean condense) {
 		Vector<Partition> pars = this.initePartitions();
-		partiCluster = new ExampleCluster(this, pars, string2Vector);
+		partiCluster = new ExampleCluster(this, pars, dataPreProcessor);
 		partiCluster.updateConstraints(msGer.getConstraints());
 		partiCluster.updateWeights(msGer.weights);
 		if (condense) {
@@ -372,7 +372,7 @@ public class ProgSynthesis {
 	public Vector<Partition> adaptive_producePartition()
 	{	
 		Vector<Partition> pars = this.adaptive_initePartitions();
-		partiCluster = new ExampleCluster(this, pars, string2Vector);
+		partiCluster = new ExampleCluster(this, pars, dataPreProcessor);
 		partiCluster.updateConstraints(msGer.getConstraints());
 		partiCluster.updateWeights(msGer.weights);
 		//update the program space and hypothesis space

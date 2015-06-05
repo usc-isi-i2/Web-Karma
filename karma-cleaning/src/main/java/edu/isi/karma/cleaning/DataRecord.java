@@ -24,7 +24,7 @@ public class DataRecord implements Comparable{
 	}
 	public int compareTo(Object other) {
 		DataRecord cmp = (DataRecord)other;
-		if(this.value > cmp.value){
+		if(this.value < cmp.value){
 			return -1;			
 		}
 		else if(this.value == cmp.value){

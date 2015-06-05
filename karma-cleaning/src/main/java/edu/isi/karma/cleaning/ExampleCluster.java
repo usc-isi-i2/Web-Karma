@@ -20,12 +20,13 @@ public class ExampleCluster {
 	Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
 	public ProgSynthesis pSynthesis; // data
 	HashMap<String, Vector<String>> uorgclusters = new HashMap<String, Vector<String>>();
-	HashMap<String, double[]> string2Vector = new HashMap<String, double[]>();
+//	HashMap<String, double[]> string2Vector = new HashMap<String, double[]>();
 	int unlabelDataAmount = 5;
 	double assignThreshold = 0.1;
 	public int featuresize = 0;
 	public int failedCnt = 0;
 	public double[] weights = {};
+	public DataPreProcessor dpp;
 
 	public static enum method {
 		CP, CPIC, SP, SPIC, DP, DPIC
@@ -42,10 +43,10 @@ public class ExampleCluster {
 	}
 
 	public ExampleCluster(ProgSynthesis pSynthesis, Vector<Partition> examples,
-			HashMap<String, double[]> sData) {
+			DataPreProcessor dpp) {
 		this.pSynthesis = pSynthesis;
 		this.examples = examples;
-		this.string2Vector = sData;
+		this.dpp = dpp;
 		this.featuresize = pSynthesis.featureSet.getFeatureNames().size();
 		weights = new double[featuresize];
 		for (int i = 0; i < weights.length; i++) {
@@ -332,7 +333,7 @@ public class ExampleCluster {
 		}
 		HashMap<Partition, HashMap<String, Double>> testResult = new HashMap<Partition, HashMap<String, Double>>();
 
-		for (String val : string2Vector.keySet()) {
+		for (String val : dpp.data2Vector.keySet()) {
 			Partition p_index = null;
 			Partition p_index_2nd = null;
 			double min_val = Double.MAX_VALUE;
@@ -441,7 +442,7 @@ public class ExampleCluster {
 				center = UtilTools.initArray(center, 0);
 				for (Vector<TNode> org : p.orgNodes) {
 					String res = UtilTools.print(org);
-					double[] vec = string2Vector.get(res);
+					double[] vec = dpp.getFeatureArray(res);
 					list.add(vec);
 					center = addArray(center, vec);
 				}
@@ -449,10 +450,9 @@ public class ExampleCluster {
 				center = UtilTools.produce(1.0 / p.orgNodes.size(), center);
 				centers.add(center);
 			}
-			// calculate instance array
 			ArrayList<double[]> instances = new ArrayList<double[]>();
-			for (String s : string2Vector.keySet()) {
-				double[] elem = string2Vector.get(s);
+			for (String s : dpp.data2Vector.keySet()) {
+				double[] elem = dpp.data2Vector.get(s);
 				instances.add(elem);
 			}
 			// calculate constraint array
@@ -460,7 +460,7 @@ public class ExampleCluster {
 			for (Vector<String[]> consts : constraints) {
 				ArrayList<double[]> group = new ArrayList<double[]>();
 				for (String[] exp : consts) {
-					double[] e = string2Vector.get(exp[0]);
+					double[] e = dpp.getFeatureArray(exp[0]);
 					group.add(e);
 				}
 				constraintgroup.add(group);
@@ -487,10 +487,10 @@ public class ExampleCluster {
 
 	public double getDistance(String a, Partition b) {
 		// find a string
-		double[] x = string2Vector.get(a);
+		double[] x = dpp.getFeatureArray(a);
 		double mindist = Double.MAX_VALUE;
 		for (Vector<TNode> orgs : b.orgNodes) {
-			double[] e = string2Vector.get(UtilTools.print(orgs));
+			double[] e = dpp.getFeatureArray(UtilTools.print(orgs));
 			double d = getDistance(x, e);
 			if (d < mindist)
 				mindist = d;
@@ -683,7 +683,7 @@ public class ExampleCluster {
 
 		ArrayList<double[]> vecs = new ArrayList<double[]>();
 		for (Vector<TNode> orgs : p.orgNodes) {
-			vecs.add(string2Vector.get(UtilTools.print(orgs)));
+			vecs.add(dpp.getFeatureArray(UtilTools.print(orgs)));
 		}
 		double[] vec = UtilTools.sum(vecs);
 		vec = UtilTools.produce(1.0 / p.orgNodes.size(), vec);

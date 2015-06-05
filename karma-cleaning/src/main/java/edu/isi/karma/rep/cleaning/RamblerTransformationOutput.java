@@ -57,6 +57,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		try {
 			worker.get(3000, TimeUnit.SECONDS);
 		} catch (Exception e) {
+			logger.error(e.toString());
 			nullRule = true;
 			transformations.clear();
 		}

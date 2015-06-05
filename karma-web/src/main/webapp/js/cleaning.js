@@ -84,7 +84,7 @@ var TransformColumnDialog = (function() {
 			$("tr.nonHeading", cleaningTable).remove();
 			$("tr.suggestion", cleaningTable).remove();
 
-			nodeIds = [];
+			/*nodeIds = [];
 			var data = values[0]["data"]
 			for (var nodeId in data) {
 				if (data.hasOwnProperty(nodeId)) {
@@ -95,7 +95,7 @@ var TransformColumnDialog = (function() {
 					cleaningTable.append(tr);
 					nodeIds.push(nodeId);
 				}
-			}
+			}*/
 			//cleaning
 			var tab1 = $("table#recmd");
 			$("tr", tab1).remove();
@@ -134,13 +134,17 @@ var TransformColumnDialog = (function() {
 				transformedResult = new Object();
 
 				// Remove the old results
-				$("td.ruleResultsValue_rest", cleaningTable).remove();
-				$("tr.suggestion", cleaningTable).remove();
-				//$("td.ruleResultsValue_begin", cleaningTable).remove();
+				//$("td.ruleResultsValue_rest", cleaningTable).remove();
+				//$("tr.suggestion", cleaningTable).remove();
+				$("tr", cleaningTable).remove();
 
 				var data = rdata["data"];
 				$.each(data, function(nodeId, xval) {
-					var trTag = $("tr#" + nodeId + "_cl_row");
+					var trTag = $("<tr>").attr("id", nodeId + "_cl_row").addClass("nonHeading").append($("<td>").text(data[nodeId]["Org"]).attr('id', nodeId + "_origVal")) //add text and id to the td
+						.append($("<td>").addClass("noBorder"));
+					//add td to seperate org and result
+					trTag.data("originalVal", (data[nodeId]["Org"]));
+
 					if (trTag != null) {
 						transformedResult[nodeId] = xval;
 						if (xval == $("div#" + nodeId).text()) {
@@ -164,11 +168,9 @@ var TransformColumnDialog = (function() {
 											.attr("id", nodeId)))
 									.append($("<td>").addClass("noBorder")))));
 
-						console.log($("div#" + nodeId).text() + ":" + xval["Tardis"]);
 						$("div#" + nodeId, trTag).editable({
 							type: 'text',
 							success: function(response, value) {
-								console.log("Set new value:" + value);
 								var tmpnodeId = nodeId;
 								$("div", $(this).parent().prev()).html(xval["Tar"]);
 								if (nodeId.indexOf("suggestion") >= 0) {
@@ -190,6 +192,7 @@ var TransformColumnDialog = (function() {
 							inputclass: 'worksheetInputEdit'
 						});
 					}
+				cleaningTable.append(trTag);
 				});
 
 			} catch (err) {
@@ -201,7 +204,6 @@ var TransformColumnDialog = (function() {
 			var data = results;
 			var newdata = [];
 			var examples = cleaningExamples;
-			console.log(examples)
 			showCleanningWaitingSignOnScreen();
 			handleGenerateCleaningRulesButton();
 			/*else//use the trimmed data
@@ -260,11 +262,9 @@ var TransformColumnDialog = (function() {
 			var examples = cleaningExamples;
 			$.each(examples, function(index, value) {
 				var nodeID = value["nodeId"];
-				var trTag1 = $("tr#" + nodeID + "_suggestion_cl_row", tab2);
-
-				if (trTag1.length == 0) {
-					trTag1 = $("<tr>").attr("id", nodeID + "_suggestion_cl_row").append($("<td>").addClass('info').text($("tr#" + nodeID + "_cl_row").data("originalVal")));
-				}
+				//var trTag1 = $("tr#" + nodeID + "_suggestion_cl_row", tab2);
+				trTag1 = $("<tr>").attr("id", nodeID + "_example_cl_row").append($("<td>").addClass('info').text(value["before"]));
+				
 
 				var closeButton = $("<button>");
 				closeButton.attr("id", nodeID);
@@ -300,9 +300,10 @@ var TransformColumnDialog = (function() {
 			});
 			var tab1 = $("table#recmd");
 			$("tr", tab1).remove();
+			var cleaningTable = $("table#cleaningExamplesTable");
 			var datadict = results[0]["data"];
 			$.each(topKeys,function(index, rid){
-				var trTag = $("tr#" + rid + "_suggestion_cl_row", tab1);
+				var trTag = $("tr#" + rid + "_suggestion_cl_row", cleaningTable);
 				// empty an array in JS
 				if (trTag.length == 0) {
 				trTag = $("<tr>").attr("id", rid + "_suggestion_cl_row").append($("<td>").addClass('info').html(datadict[rid]["Orgdis"])).append($("<td>").addClass("noBorder"));
@@ -329,8 +330,8 @@ var TransformColumnDialog = (function() {
 
 			//var sndCol = element["result"][1];
 			preprocessData(topCol, topCol["top"]);
-			populateInfoPanel();
 			populateResult(topCol);
+			populateInfoPanel();
 			//var pdata = getVaritions(element["result"]);
 			//populateVariations(topCol["top"], sndCol["data"]);
 		}

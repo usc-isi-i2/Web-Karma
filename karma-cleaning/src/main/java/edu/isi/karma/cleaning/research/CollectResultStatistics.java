@@ -189,7 +189,7 @@ public class CollectResultStatistics {
 		AdaInspectorTrainer.questionablePreference = parameter;
 		double[] ret = {0, 0};
 		inspector = new AdaInspector();
-		inspector.initeParameterWithTraining();
+		inspector.initeParameter();
 		String line = "";
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
