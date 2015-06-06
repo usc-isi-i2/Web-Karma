@@ -20,6 +20,11 @@ public class FormParameters {
 	public static final String CONTENT_TYPE_JSON = InputType.JSON.toString();
 	public static final String CONTENT_TYPE_XML = InputType.XML.toString();
 	public static final String CONTENT_TYPE_EXCEL = InputType.EXCEL.toString();
+	public static final String CONTEXT_URL="ContextURL";
+	public static final String RDF_GENERATION_ROOT="RDFGenerationRoot";
+	public static final String RDF_GENERATION_SELECTION="RDFGenerationSelection";
+	public static final String BASE_URI="BaseURI";
+	
 	
 	//Need one of these for every edu.isi.karma.rdf.InputProperties.InputProperty;
 	public static final String MAX_NUM_LINES = "MaxNumLines";
