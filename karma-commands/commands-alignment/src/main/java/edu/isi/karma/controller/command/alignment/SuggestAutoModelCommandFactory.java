@@ -43,6 +43,7 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.util.EncodingDetector;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -66,13 +67,14 @@ public class SuggestAutoModelCommandFactory extends JSONInputCommandFactory {
 
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
+		
 		String worksheetId = HistoryJsonUtil.getStringValue(
 				Arguments.worksheetId.name(), inputJson);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		AutoOntology autoOntology = new AutoOntology(worksheet);
-		String path = ServletContextParameterMap
+		String path = contextParameters
 				.getParameterValue(ContextParameter.PRELOADED_ONTOLOGY_DIRECTORY)
 				 + worksheet.getTitle() + ".owl";
 		try {

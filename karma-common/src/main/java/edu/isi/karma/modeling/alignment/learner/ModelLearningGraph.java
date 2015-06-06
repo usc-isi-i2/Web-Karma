@@ -41,6 +41,7 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -54,13 +55,15 @@ public abstract class ModelLearningGraph {
 	protected NodeIdFactory nodeIdFactory; 
 	protected long lastUpdateTime;
 	
-	private static final String getGraphJsonName()
+	private final String getGraphJsonName()
 	{
-		return ServletContextParameterMap.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY) + "graph.json";
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId());
+		return contextParameters.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY) + "graph.json";
 	}
-	private static final String getGraphGraphvizName()
+	private final String getGraphGraphvizName()
 	{
-		return ServletContextParameterMap.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY) + "graph.dot";
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId());
+		return contextParameters.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY) + "graph.dot";
 	}
 
 	public static synchronized ModelLearningGraph getInstance(OntologyManager ontologyManager, ModelLearningGraphType type) {
@@ -145,7 +148,7 @@ public abstract class ModelLearningGraph {
 	
 	public void initializeFromJsonRepository() {
 		logger.info("initializing the graph from models in the json repository ...");
-		
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId());
 		if (this instanceof ModelLearningGraphSparse)
 			this.graphBuilder = new GraphBuilder(ontologyManager, false);
 		else 
@@ -154,7 +157,7 @@ public abstract class ModelLearningGraph {
 		
 		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
 		Set<InternalNode> temp;
-		File ff = new File(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_MODELS_DIR));
+		File ff = new File(contextParameters.getParameterValue(ContextParameter.JSON_MODELS_DIR));
 		if (ff.exists()) {
 			File[] files = ff.listFiles();
 			

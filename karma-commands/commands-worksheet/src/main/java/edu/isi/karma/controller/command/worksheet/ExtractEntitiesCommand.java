@@ -314,7 +314,7 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 			
 			UpdateContainer c = new UpdateContainer(new InfoUpdate("Extracted Entities"));
 			c.append(WorksheetUpdateFactory
-					.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+					.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			//c.append(new InfoUpdate("Extracted Entities"));
 			return c;
@@ -337,7 +337,7 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 		//remove the new column
 		ht.removeHNode(newHNodeId, worksheet);
 
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet));
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId());
 		
 	}
 

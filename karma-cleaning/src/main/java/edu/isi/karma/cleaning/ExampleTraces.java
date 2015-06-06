@@ -11,9 +11,10 @@ import java.util.Vector;
  * */
 public class ExampleTraces {
 	public HashMap<String, Traces> expTraces = new HashMap<String, Traces>();
-	public ExampleTraces()
+	String contextId;
+	public ExampleTraces(String contextId)
 	{
-		
+		this.contextId = contextId;
 	}
 	public Traces createTrace(String[] example)
 	{
@@ -24,7 +25,7 @@ public class ExampleTraces {
 		orgNodes = ruler.vec;
 		ruler.setNewInput(example[1]);
 		tarNodes = ruler.vec;
-		Traces t = new Traces(orgNodes, tarNodes);
+		Traces t = new Traces(orgNodes, tarNodes, contextId);
 		this.addTrace(example, t);
 		return t;
 	}

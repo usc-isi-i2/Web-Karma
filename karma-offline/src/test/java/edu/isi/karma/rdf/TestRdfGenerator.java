@@ -22,28 +22,37 @@ import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
 import edu.isi.karma.metadata.KarmaMetadataManager;
+import edu.isi.karma.metadata.OntologyMetadata;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.util.EncodingDetector;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public abstract class TestRdfGenerator {
 	private static final Logger logger = LoggerFactory.getLogger(TestRdfGenerator.class);
+	
+	public static ServletContextParameterMap contextParameters;
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 
-        KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
+		contextParameters = new ServletContextParameterMap(null);
+		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
+		contextParametersRegistry.register(contextParameters);
+		
+        KarmaMetadataManager userMetadataManager = new KarmaMetadataManager(contextParameters);
         UpdateContainer uc = new UpdateContainer();
-        userMetadataManager.register(new UserPreferencesMetadata(), uc);
-        userMetadataManager.register(new UserConfigMetadata(), uc);
-        userMetadataManager.register(new PythonTransformationMetadata(), uc);
-        PythonRepository pythonRepository = new PythonRepository(false, ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+        userMetadataManager.register(new UserPreferencesMetadata(contextParameters), uc);
+        userMetadataManager.register(new UserConfigMetadata(contextParameters), uc);
+        userMetadataManager.register(new PythonTransformationMetadata(contextParameters), uc);
+        userMetadataManager.register(new OntologyMetadata(contextParameters), uc);
+        PythonRepository pythonRepository = new PythonRepository(false, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 		PythonRepositoryRegistry.getInstance().register(pythonRepository);
 	}
 
@@ -67,6 +76,7 @@ public abstract class TestRdfGenerator {
 		request.setInputFile(inputFile);
 		request.setDataType(inputType);
 		request.addWriters(writers);
+		request.setContextParameters(ContextParametersRegistry.getInstance().getDefault());
 		rdfGen.generateRDF(request);
 	}
 

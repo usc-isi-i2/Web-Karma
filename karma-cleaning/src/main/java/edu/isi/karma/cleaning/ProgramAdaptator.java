@@ -11,7 +11,11 @@ import org.perf4j.log4j.Log4JStopWatch;
 
 public class ProgramAdaptator {
 	public ParseTreeNode program;
-
+	public String contextId;
+	public ProgramAdaptator(String contextId)
+	{
+		this.contextId = contextId;
+	}
 	public String adapt(HashMap<String, Traces> exp2Space,
 			HashMap<String, String> exp2program, ArrayList<String[]> examples) {
 		ArrayList<Integer> keys = chooseLargestSubset(exp2program, examples);
@@ -22,7 +26,7 @@ public class ProgramAdaptator {
 		}
 		if(examples.size() == 1 || keys.size() == 0)
 		{
-			ExampleTraces tool = new ExampleTraces();
+			ExampleTraces tool = new ExampleTraces(contextId);
 			Traces t1 = tool.createTrace(examples.get(0));
 			String prog = t1.toProgram();
 			ArrayList<String[]> tmpKey = new ArrayList<String[]>();
@@ -59,7 +63,7 @@ public class ProgramAdaptator {
 
 	public String adapteOneExample(Traces wholespace, String[] exp,
 			String program,ArrayList<String[]> inExps,HashMap<String, Traces> exp2Space, HashMap<String, String> exp2program) {
-		ProgramParser programParser = new ProgramParser();
+		ProgramParser programParser = new ProgramParser(contextId);
 		ParseTreeNode ptree = programParser.parse(program);
 		// add unknown examples incrementally
 		String evres = "";
@@ -105,14 +109,14 @@ public class ProgramAdaptator {
 		for (ParseTreeNode node : progs) {
 			ArrayList<String> tmpTars = new ArrayList<String>();
 			for (String org : orgs) {
-				ProgramRule tpp = new ProgramRule(node.value);
+				ProgramRule tpp = new ProgramRule(node.value, contextId);
 				String tmpSeg= tpp.transform(org);
 				tmpTars.add(tmpSeg);
 			}
 			prog2Evals.put(node.value, tmpTars);
 		}
 		for (ParseTreeNode node : progs) {
-			ProgramRule tpp = new ProgramRule(node.value);
+			ProgramRule tpp = new ProgramRule(node.value, contextId);
 			String tmpSeg= tpp.transform(exp[0]);			
 			prog2Nevals.put(node.value, tmpSeg);
 		}
@@ -375,7 +379,7 @@ public class ProgramAdaptator {
 			return false;
 		}
 
-		ProgramParser xParser = new ProgramParser();
+		ProgramParser xParser = new ProgramParser(contextId);
 		ParseTreeNode nroot = xParser.parse(subProg);
 		ArrayList<ParseTreeNode> children = nroot.getChildren();
 		pat.replaceNodes.clear();
@@ -479,12 +483,12 @@ public class ProgramAdaptator {
 			for (Section sec : secs) {
 				Vector<Section> st = new Vector<Section>();
 				st.add(sec);
-				Segment seg = new Segment(st, false);
+				Segment seg = new Segment(st, false, contextId);
 				line.add(seg);
 			}
 			res.add(line);
 		}
-		Traces uTraces = new Traces();
+		Traces uTraces = new Traces(contextId);
 		Vector<GrammarTreeNode> tempres = new Vector<GrammarTreeNode>(); 
 		if(res.size() > 0)
 		{
@@ -664,7 +668,7 @@ public class ProgramAdaptator {
 	}
 
 	public Traces createSingleTrace(String[] exp) {
-		ExampleTraces eTraces = new ExampleTraces();
+		ExampleTraces eTraces = new ExampleTraces(contextId);
 		return eTraces.createTrace(exp);
 	}
 

@@ -586,6 +586,7 @@ function changeKarmaHome(homeDir) {
 	var info = generateInfoObject("", "", "SetKarmaHomeCommand");
 	info["directory"] = homeDir;
 	var result = true;
+	$.cookie("karmaHome", homeDir);
 	$.ajax({
 		url: "RequestController",
 		type: "POST",

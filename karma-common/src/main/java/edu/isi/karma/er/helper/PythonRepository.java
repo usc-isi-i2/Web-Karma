@@ -22,11 +22,11 @@ public class PythonRepository {
 	private boolean reloadLibrary = true;
 	private PyStringMap initialLocals = new PyStringMap();
 	private PythonInterpreter interpreter = PythonInterpreter.threadLocalStateInterpreter(initialLocals);
-	private String karmaHome;
+	private String repositoryPath;
 	
-	public PythonRepository(boolean reloadLibrary, String karmaHome)
+	public PythonRepository(boolean reloadLibrary, String repositoryPath)
 	{
-		this.karmaHome = karmaHome;
+		this.repositoryPath = repositoryPath;
 		this.reloadLibrary = reloadLibrary;
 		initialize();
 		resetLibrary();
@@ -107,11 +107,11 @@ public class PythonRepository {
 	public synchronized void importUserScripts(PythonInterpreter interpreter) {
 		
 
-		if (karmaHome != null && karmaHome.compareTo("") != 0) {
+		if (repositoryPath != null && repositoryPath.compareTo("") != 0) {
 			
 			if(!libraryHasBeenLoaded || reloadLibrary)
 			{
-				File f = new File(karmaHome);
+				File f = new File(repositoryPath);
 				String[] scripts = f.list(new FilenameFilter(){
 
 					@Override
@@ -120,7 +120,7 @@ public class PythonRepository {
 					}});
 				for(String script : scripts)
 				{
-					String fileName = karmaHome  + script;
+					String fileName = repositoryPath  + script;
 					Long lastTimeRead = fileNameTolastTimeRead.get(fileName);
 					File s = new File(fileName);
 					if(lastTimeRead == null || s.lastModified() > lastTimeRead)
@@ -163,8 +163,8 @@ public class PythonRepository {
 
 	}
 
-	protected String getKarmaHome() {
-		return karmaHome;
+	protected String getRepositoryPath() {
+		return repositoryPath;
 	}
 
 	public PythonInterpreter getInterpreter() {

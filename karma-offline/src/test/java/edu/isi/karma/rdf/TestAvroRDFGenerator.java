@@ -39,6 +39,7 @@ import edu.isi.karma.kr2rml.writer.AvroKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 
 public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 	private static Logger logger = LoggerFactory.getLogger(TestBasicJSONRDFGenerator.class);
@@ -97,6 +98,7 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 			request.setAddProvenance(false);
 			request.setDataType(InputType.JSON);
 			request.addWriters(writers);
+			request.setContextParameters(ContextParametersRegistry.getInstance().getDefault());
 			rdfGen.generateRDF(request);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);
@@ -130,6 +132,7 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 			request.setAddProvenance(false);
 			request.setDataType(InputType.AVRO);
 			request.addWriters(writers);
+			request.setContextParameters(ContextParametersRegistry.getInstance().getDefault());
 			rdfGen.generateRDF(request);
 			fos.flush();
 			fos.close();
@@ -199,6 +202,7 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 			request.setAddProvenance(false);
 			request.setDataType(InputType.AVRO);
 			request.addWriters(writers);
+			request.setContextParameters(ContextParametersRegistry.getInstance().getDefault());
 			rdfGen.generateRDF(request);
 			String rdf = sw.toString();
 			assertNotEquals(rdf.length(), 0);

@@ -76,9 +76,9 @@ public class PublishMDBCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		CSVFileExport csvFileExport = new CSVFileExport(worksheet);
+		CSVFileExport csvFileExport = new CSVFileExport(workspace, worksheet);
 		
-		MDBFileExport mdbFileExport = new MDBFileExport(worksheet);
+		MDBFileExport mdbFileExport = new MDBFileExport(workspace, worksheet);
 
 		try {
 			final String csvFileName = csvFileExport.publishCSV();

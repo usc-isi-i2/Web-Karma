@@ -33,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -46,7 +48,7 @@ public abstract class Preferences {
 	 * Id of the workspace. Each workspace has its own view preference object.
 	 */
 	protected String preferencesId;
-	
+	protected String contextId;
 	protected JSONObject json;
 	
 	protected static Logger logger = LoggerFactory.getLogger(Preferences.class.getSimpleName());
@@ -60,17 +62,21 @@ public abstract class Preferences {
 	    "}" +
 	 "}";
 	
-	public Preferences(String preferencesId) {
+	public Preferences(String preferencesId, String contextId) {
 		this.preferencesId = preferencesId;
+		this.contextId = contextId;
 		populatePreferences();
 	}
 
 	private void populatePreferences() {
 		try {
-			if(ModelingConfiguration.getManualAlignment()) {
+			ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+				
+			ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getKarmaHome());
+			if(modelingConfiguration.getManualAlignment()) {
 				loadDefaultPreferences();
 			} else {
-				jsonFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_PREFERENCES_DIRECTORY) + 
+				jsonFile = new File(contextParameters.getParameterValue(ContextParameter.USER_PREFERENCES_DIRECTORY) + 
 						  preferencesId + ".json");
 				if(jsonFile.exists()){
 					// Populate from the existing preferences JSON file
@@ -96,7 +102,9 @@ public abstract class Preferences {
 
 	
 	private File loadWorkspacePrefTemplateFile() throws IOException {
-		File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + 
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+		
+		File file = new File(contextParameters.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + 
 				  "/workspace-pref.template");
 		if(!file.exists()) {
 			JSONObject json = new JSONObject(defaultWorkspaceTemplate);
@@ -121,7 +129,9 @@ public abstract class Preferences {
 	}
 	
 	protected void savePreferences() throws JSONException, IOException {
-		if(!ModelingConfiguration.getManualAlignment()) {
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getKarmaHome());
+		if(!modelingConfiguration.getManualAlignment()) {
 			FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
 		}
 	}

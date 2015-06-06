@@ -14,14 +14,16 @@ public class Section implements GrammarTreeNode {
 	public static Interpretor itInterpretor = null;
 	public static final int supermode = 1;
 	public String program = "null";
+	public String contextId;
 
 	public Section(Position[] p, Vector<String> orgStrings,
-			Vector<String> tarStrings, boolean isinloop) {
+			Vector<String> tarStrings, boolean isinloop, String contextId) {
+		this.contextId = contextId;
 		pair = p;
 		this.orgStrings = orgStrings;
 		this.tarStrings = tarStrings;
 		if (itInterpretor == null)
-			itInterpretor = new Interpretor();
+			itInterpretor = new Interpretor(contextId);
 		/*
 		 * if(supermode == 0) this.createTotalOrderVector();
 		 */
@@ -31,7 +33,7 @@ public class Section implements GrammarTreeNode {
 	public boolean isValid(String rule)
 	{
 		boolean res = true;
-		ProgramRule convRule = new ProgramRule(rule);
+		ProgramRule convRule = new ProgramRule(rule, contextId);
 		for(int i = 0; i < orgStrings.size(); i++)
 		{
 			if(!(convRule.transform(orgStrings.get(i)).compareTo(tarStrings.get(i))==0))
@@ -101,7 +103,7 @@ public class Section implements GrammarTreeNode {
 				tars.addAll(sec.tarStrings);
 			}
 
-			Section st = new Section(pa, strs, tars, loop);
+			Section st = new Section(pa, strs, tars, loop, contextId);
 			return st;
 
 		}

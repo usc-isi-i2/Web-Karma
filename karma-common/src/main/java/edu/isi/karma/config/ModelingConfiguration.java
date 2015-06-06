@@ -32,47 +32,49 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ModelingConfiguration {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelingConfiguration.class);
+	private String contextId;
+	private Boolean manualAlignment;
+	private Boolean thingNode;
+	private Boolean nodeClosure;
+	private Boolean propertiesDirect;
+	private Boolean propertiesIndirect;
+	private Boolean propertiesWithOnlyDomain;
+	private Boolean propertiesWithOnlyRange;
+	private Boolean propertiesWithoutDomainRange;
+	private Boolean propertiesSubClass;
 
-	private static Boolean manualAlignment;
-	private static Boolean thingNode;
-	private static Boolean nodeClosure;
-	private static Boolean propertiesDirect;
-	private static Boolean propertiesIndirect;
-	private static Boolean propertiesWithOnlyDomain;
-	private static Boolean propertiesWithOnlyRange;
-	private static Boolean propertiesWithoutDomainRange;
-	private static Boolean propertiesSubClass;
-
-	private static String karmaSourcePrefix;
-	private static String karmaServicePrefix; 
+	private String karmaSourcePrefix;
+	private String karmaServicePrefix; 
 
 //	private static String modelsJsonDir;
 //	private static String modelsGraphvizDir;
 //	private static String alignmentGraphDir; 
 
-	private static Integer maxCandidateModels;
-	private static Integer maxQueuedMappigs;
+	private Integer maxCandidateModels;
+	private Integer maxQueuedMappigs;
 
-	private static Double scoringConfidenceCoefficient;
-	private static Double scoringCoherenceSCoefficient;
-	private static Double scoringSizeCoefficient;
+	private Double scoringConfidenceCoefficient;
+	private Double scoringCoherenceSCoefficient;
+	private Double scoringSizeCoefficient;
 
-	private static Boolean learnerEnabled;
-	private static Boolean learnAlignmentEnabled;
-	private static Boolean multipleSamePropertyPerNode;
+	private Boolean learnerEnabled;
+	private Boolean learnAlignmentEnabled;
+	private Boolean multipleSamePropertyPerNode;
 
-	private static Boolean storeOldHistory;
+	private Boolean storeOldHistory;
 
-	private static Boolean showModelsWithoutMatching;
+	private Boolean showModelsWithoutMatching;
 
-	private static final String newLine = System.getProperty("line.separator").toString();
-	private static String defaultModelingProperties = 
+	private final String newLine = System.getProperty("line.separator").toString();
+	
+	private String defaultModelingProperties = 
 			"##########################################################################################" + newLine + 
 			"#" + newLine + 
 			"# Graph Builder" + newLine + 
@@ -130,7 +132,8 @@ public class ModelingConfiguration {
 			"history.store.old=false"
 			;
 
-	public static void load() {
+
+	public void load() {
 		try {
 			Properties modelingProperties = loadParams();
 
@@ -180,17 +183,22 @@ public class ModelingConfiguration {
 			showModelsWithoutMatching = Boolean.parseBoolean(modelingProperties.getProperty("models.display.nomatching", "false"));
 
 		} catch (IOException e) {
-			logger.error("Error occured while reading config file ...");
+			logger.error("Error occured while reading config file ...", e);
 			System.exit(1);
 		}
 	}
 
-	private static Properties loadParams()
+	public ModelingConfiguration(String contextId)
+	{
+		this.contextId = contextId;
+	}
+	private Properties loadParams()
 			throws IOException {
 		Properties prop = new Properties();
 
-		File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
-		logger.debug("Load modeling.properties: " + file.getAbsolutePath() + ":" + file.exists());
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+		File file = new File(contextParameters.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
+		logger.info("Load modeling.properties: " + file.getAbsolutePath() + ":" + file.exists());
 		if(!file.exists()) {
 			file.createNewFile();
 			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
@@ -208,7 +216,7 @@ public class ModelingConfiguration {
 		return prop;
 	}
 
-	public static Boolean getThingNode() {
+	public Boolean getThingNode() {
 
 		if (getManualAlignment() == true)
 			return false;
@@ -219,7 +227,7 @@ public class ModelingConfiguration {
 		return thingNode;
 	}
 
-	public static Boolean getNodeClosure() {
+	public Boolean getNodeClosure() {
 
 		if (getManualAlignment() == true)
 			return false;
@@ -230,7 +238,7 @@ public class ModelingConfiguration {
 		return nodeClosure;
 	}
 
-	public static Boolean getManualAlignment() {
+	public Boolean getManualAlignment() {
 		if (manualAlignment == null) {
 			load();
 			logger.debug("Manual Alignment:" + manualAlignment);
@@ -238,49 +246,49 @@ public class ModelingConfiguration {
 		return manualAlignment;
 	}
 
-	public static Boolean getPropertiesDirect() {
+	public Boolean getPropertiesDirect() {
 		if (propertiesDirect == null)
 			load();
 		return propertiesDirect;
 	}
 
-	public static Boolean getPropertiesIndirect() {
+	public Boolean getPropertiesIndirect() {
 		if (propertiesIndirect == null)
 			load();
 		return propertiesIndirect;
 	}
 
-	public static Boolean getPropertiesWithOnlyDomain() {
+	public Boolean getPropertiesWithOnlyDomain() {
 		if (propertiesWithOnlyDomain == null)
 			load();
 		return propertiesWithOnlyDomain;
 	}
 
-	public static Boolean getPropertiesWithOnlyRange() {
+	public Boolean getPropertiesWithOnlyRange() {
 		if (propertiesWithOnlyRange == null)
 			load();
 		return propertiesWithOnlyRange;
 	}
 
-	public static Boolean getPropertiesWithoutDomainRange() {
+	public Boolean getPropertiesWithoutDomainRange() {
 		if (propertiesWithoutDomainRange == null)
 			load();
 		return propertiesWithoutDomainRange;
 	}
 
-	public static Boolean getPropertiesSubClass() {
+	public Boolean getPropertiesSubClass() {
 		if (propertiesSubClass == null)
 			load();
 		return propertiesSubClass;
 	}
 
-	public static String getKarmaSourcePrefix() {
+	public String getKarmaSourcePrefix() {
 		if (karmaSourcePrefix == null)
 			load();
 		return karmaSourcePrefix.trim();
 	}
 
-	public static String getKarmaServicePrefix() {
+	public String getKarmaServicePrefix() {
 		if (karmaServicePrefix == null)
 			load();
 		return karmaServicePrefix.trim();
@@ -304,71 +312,71 @@ public class ModelingConfiguration {
 //		return alignmentGraphDir;
 //	}
 
-	public static Integer getMaxCandidateModels() {
+	public Integer getMaxCandidateModels() {
 		if (maxCandidateModels == null)
 			load();
 		return maxCandidateModels;
 	}
 
-	public static Integer getMaxQueuedMappigs() {
+	public Integer getMaxQueuedMappigs() {
 		if (maxQueuedMappigs == null)
 			load();
 		return maxQueuedMappigs;
 	}
 
-	public static Double getScoringConfidenceCoefficient() {
+	public Double getScoringConfidenceCoefficient() {
 		if (scoringConfidenceCoefficient == null)
 			load();
 		return scoringConfidenceCoefficient;
 	}
 
-	public static Double getScoringCoherenceSCoefficient() {
+	public Double getScoringCoherenceSCoefficient() {
 		if (scoringCoherenceSCoefficient == null)
 			load();
 		return scoringCoherenceSCoefficient;
 	}
 
-	public static Double getScoringSizeCoefficient() {
+	public Double getScoringSizeCoefficient() {
 		if (scoringSizeCoefficient == null)
 			load();
 		return scoringSizeCoefficient;
 	}
 
-	public static boolean isLearnerEnabled() {
+	public boolean isLearnerEnabled() {
 		if (learnerEnabled == null)
 			load();
 		return learnerEnabled;
 	}
 
-	public static boolean isLearnAlignmentEnabled() {
+	public boolean isLearnAlignmentEnabled() {
 		if (learnAlignmentEnabled == null)
 			load();
 		return learnAlignmentEnabled;
 	}
 	
-	public static boolean isStoreOldHistoryEnabled() {
+	public boolean isStoreOldHistoryEnabled() {
 		if (storeOldHistory == null)
 			load();
 		return storeOldHistory;
 	}
 
-	public static boolean isShowModelsWithoutMatching() {
+	public boolean isShowModelsWithoutMatching() {
 		if (showModelsWithoutMatching == null)
 			load();
 		return showModelsWithoutMatching;
 	}
 
-	public static void setLearnerEnabled(Boolean learnerEnabled) {
-		ModelingConfiguration.learnerEnabled = learnerEnabled;
+	public void setLearnerEnabled(Boolean learnerEnabled) {
+		this.learnerEnabled = learnerEnabled;
 	}
 
-	public static boolean isMultipleSamePropertyPerNode() {
+	public boolean isMultipleSamePropertyPerNode() {
 		if (multipleSamePropertyPerNode == null)
 			load();
 		return multipleSamePropertyPerNode;
 	}
 
-	public static void setManualAlignment(Boolean newManualAlignment)
+	public void setManualAlignment(Boolean newManualAlignment)
 	{
 		manualAlignment = newManualAlignment;
 	}

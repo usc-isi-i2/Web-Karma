@@ -17,7 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
-import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +35,7 @@ import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.storm.bolt.KarmaBolt;
 import edu.isi.karma.storm.bolt.KarmaReducerBolt;
-import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class TestBasicKarmaTopology {
@@ -46,7 +45,7 @@ public class TestBasicKarmaTopology {
 
 	@Test
 	public void testBasicTopology() {
-		PythonRepository repo = new PythonRepository(false, ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepository repo = new PythonRepository(false, ContextParametersRegistry.getInstance().getDefault().getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 		PythonRepositoryRegistry.getInstance().register(repo);
 		MkClusterParam mkClusterParam = new MkClusterParam();
 		Config daemonConf = new Config();

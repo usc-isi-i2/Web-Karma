@@ -6,12 +6,12 @@ import java.util.List;
 
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.metadata.SourceInformation;
 import edu.isi.karma.rep.metadata.SourceInformation.InfoAttribute;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;

@@ -24,8 +24,10 @@ public class Segment implements GrammarTreeNode {
 	public Vector<String> segStrings = new Vector<String>();
 	public int VersionSP_size = 0;
 	public String program = "null";
-
-	public Segment(Vector<TNode> cont) {
+	public String contextId; 
+	
+	public Segment(Vector<TNode> cont, String contextId) {
+		this.contextId = contextId;
 		constNodes = cont;
 		for(TNode n:cont)
 		{
@@ -34,7 +36,8 @@ public class Segment implements GrammarTreeNode {
 		createTotalOrderVector();
 	}
 
-	public Segment(int start, int end, Vector<TNode> cont) {
+	public Segment(int start, int end, Vector<TNode> cont, String contextId) {
+		this.contextId = contextId;
 		this.start = start;
 		this.end = end;
 		this.constNodes = cont;
@@ -45,7 +48,8 @@ public class Segment implements GrammarTreeNode {
 		this.createTotalOrderVector();
 	}
 
-	public Segment(Vector<Section> sections, boolean loop) {
+	public Segment(Vector<Section> sections, boolean loop, String contextId) {
+		this.contextId = contextId;
 		this.section = sections;
 		this.isinloop = loop;
 		this.createTotalOrderVector();
@@ -148,7 +152,7 @@ public class Segment implements GrammarTreeNode {
 			Vector<String> tars = new Vector<String>();
 			tars.add(sset.get(0).toString());
 			Position sPosition = new Position(sset, getLeftCxt(s, orgNodes),
-					getRightCxt(s, orgNodes), orgStrings, tars, this.isinloop);
+					getRightCxt(s, orgNodes), orgStrings, tars, this.isinloop, contextId);
 			sPosition.isinloop = this.isinloop;
 			// create the endPosition
 			Vector<Integer> eset = new Vector<Integer>();
@@ -156,14 +160,14 @@ public class Segment implements GrammarTreeNode {
 			Vector<String> tars1 = new Vector<String>();
 			tars1.add(eset.get(0).toString());
 			Position ePosition = new Position(eset, getLeftCxt(e, orgNodes),
-					getRightCxt(e, orgNodes), orgStrings, tars1, this.isinloop);
+					getRightCxt(e, orgNodes), orgStrings, tars1, this.isinloop, contextId);
 			ePosition.isinloop = this.isinloop;
 
 			if (sPosition != null && ePosition != null) {
 				Position[] pair = { sPosition, ePosition };
 
 				Section xsec = new Section(pair, orgStrings, tarStrings,
-						isinloop);
+						isinloop, contextId);
 				section.add(xsec);
 			}
 		}
@@ -206,7 +210,7 @@ public class Segment implements GrammarTreeNode {
 			} else {
 				return null;
 			}
-			Segment res = new Segment(0, 0, this.constNodes);
+			Segment res = new Segment(0, 0, this.constNodes, contextId);
 			return res;
 		}
 		// merge the position
@@ -227,7 +231,7 @@ public class Segment implements GrammarTreeNode {
 		if (newSections.size() == 0)
 			return null;
 		boolean loop = this.isinloop || s.isinloop;
-		Segment res = new Segment(newSections, loop);
+		Segment res = new Segment(newSections, loop, contextId);
 		return res;
 	}
 

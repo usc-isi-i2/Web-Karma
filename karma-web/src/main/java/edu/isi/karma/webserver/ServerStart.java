@@ -38,12 +38,8 @@ public class ServerStart extends HttpServlet {
 
 	// private static Logger logger = LoggerFactory.getLogger(ServerStart.class);
 
-	public void init() throws ServletException {
-		// Populate the ServletContextParameterMap data structure
-		// Only the parameters that are specified in the
-		// ServletContextParameterMap are valid. So, to use a context init
-		// parameter, add it to the ServletContextParameterMap
-		ServletContext ctx = getServletContext();
+	public static void initContextParameters(ServletContext ctx, ServletContextParameterMap contextParameters)
+	{
 		Enumeration<?> params = ctx.getInitParameterNames();
 		ArrayList<String> validParams = new ArrayList<String>();
 		for (ContextParameter param : ContextParameter.values()) {
@@ -54,14 +50,26 @@ public class ServerStart extends HttpServlet {
 			if (validParams.contains(param)) {
 				ContextParameter mapParam = ContextParameter.valueOf(param);
 				String value = ctx.getInitParameter(param);
-				ServletContextParameterMap.setParameterValue(mapParam, value);
+				contextParameters.setParameterValue(mapParam, value);
 			}
 		}
 
 		//String contextPath = ctx.getRealPath(File.separator);
 		String contextPath = ctx.getRealPath("/"); //File.separator was not working in Windows. / works
+		contextParameters.setParameterValue(ContextParameter.WEBAPP_PATH, contextPath);
+	}
+	public void init() throws ServletException {
+		// Populate the ServletContextParameterMap data structure
+		// Only the parameters that are specified in the
+		// ServletContextParameterMap are valid. So, to use a context init
+		// parameter, add it to the ServletContextParameterMap
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		ServletContext ctx = getServletContext();
+		initContextParameters(ctx, contextParameters);
+
+		//String contextPath = ctx.getRealPath(File.separator);
+		String contextPath = ctx.getRealPath("/"); //File.separator was not working in Windows. / works
 		logger.info("Got base path:" + contextPath);
-		ServletContextParameterMap.setParameterValue(ContextParameter.WEBAPP_PATH, contextPath);
 		
 		logger.info("************");
 		logger.info("Server start servlet initialized successfully..");

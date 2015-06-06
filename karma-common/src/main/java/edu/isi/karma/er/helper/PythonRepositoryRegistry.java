@@ -14,14 +14,14 @@ public class PythonRepositoryRegistry {
 	}
 
 	public void register(PythonRepository pythonRepository) {
-		karmaHomeToPythonRepository.put(pythonRepository.getKarmaHome(), pythonRepository);
+		karmaHomeToPythonRepository.put(pythonRepository.getRepositoryPath(), pythonRepository);
 	}
 
-	public PythonRepository getPythonRepository(String workspaceId) {
-		return karmaHomeToPythonRepository.get(workspaceId);
+	public PythonRepository getPythonRepository(String karmaHome) {
+		return karmaHomeToPythonRepository.get(karmaHome);
 	}
 	
-	public void deregister(String workspaceId) {
-		karmaHomeToPythonRepository.remove(workspaceId);
+	public void deregister(String karmaHome) {
+		karmaHomeToPythonRepository.remove(karmaHome);
 	}
 }

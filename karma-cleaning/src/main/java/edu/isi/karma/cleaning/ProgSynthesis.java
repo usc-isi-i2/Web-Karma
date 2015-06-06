@@ -37,8 +37,9 @@ public class ProgSynthesis {
 	public ExampleCluster partiCluster;
 	public DataPreProcessor dataPreProcessor;
 	public Messager msGer;
-
-	public ProgSynthesis() {
+	public String contextId;
+	public ProgSynthesis(String contextId) {
+		this.contextId = contextId;
 	}
 
 	public void inite(Vector<String[]> examples, String[] vocb) {
@@ -232,7 +233,7 @@ public class ProgSynthesis {
 	}
 	
 	public Collection<ProgramRule> producePrograms(Vector<Partition> pars) {
-		Program prog = new Program(pars, this.classifier,this.dataPreProcessor);
+		Program prog = new Program(pars, this.classifier,this.dataPreProcessor, contextId);
 		this.myprog = prog;
 		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
 		int prog_cnt = 1;
@@ -288,7 +289,7 @@ public class ProgSynthesis {
 	public Collection<ProgramRule> adaptive_produceProgram(Vector<Partition> pars)
 	{
 		
-		Program prog = new Program(pars, this.classifier,this.dataPreProcessor);
+		Program prog = new Program(pars, this.classifier,this.dataPreProcessor, contextId);
 		this.myprog = prog;
 		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
 		int prog_cnt = 1;

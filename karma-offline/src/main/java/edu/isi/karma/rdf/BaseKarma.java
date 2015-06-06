@@ -23,6 +23,7 @@ import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -90,13 +91,17 @@ public class BaseKarma {
 			}	
 		}
 		
+		ServletContextParameterMap contextParameters = new ServletContextParameterMap(null);
+		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
+		contextParametersRegistry.register(contextParameters);
+		
 		KarmaMetadataManager userMetadataManager;
-		userMetadataManager = new KarmaMetadataManager();
+		userMetadataManager = new KarmaMetadataManager(contextParameters);
 		UpdateContainer uc = new UpdateContainer();
-		userMetadataManager.register(new UserPreferencesMetadata(), uc);
-		userMetadataManager.register(new UserConfigMetadata(), uc);
-		userMetadataManager.register(new PythonTransformationMetadata(), uc);
-		PythonRepository pythonRepository = new PythonRepository(false, ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		userMetadataManager.register(new UserPreferencesMetadata(contextParameters), uc);
+		userMetadataManager.register(new UserConfigMetadata(contextParameters), uc);
+		userMetadataManager.register(new PythonTransformationMetadata(contextParameters), uc);
+		PythonRepository pythonRepository = new PythonRepository(false, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 		PythonRepositoryRegistry.getInstance().register(pythonRepository);
 	}
 

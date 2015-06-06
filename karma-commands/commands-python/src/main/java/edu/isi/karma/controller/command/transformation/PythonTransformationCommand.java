@@ -54,6 +54,7 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -105,7 +106,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 			Worksheet worksheet, RepFactory f, HNode hNode,
 			JSONArray transformedRows, JSONArray errorValues, Integer limit)
 					throws JSONException, IOException {
-
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		SuperSelection selection = getSuperSelection(worksheet);
 		String trimmedTransformationCode = transformationCode.trim();
 		// Pedro: somehow we are getting empty statements, and these are causing
@@ -123,7 +124,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		logger.debug("Executing PyTransform {}\n",  transformMethodStmt);
 
 		// Prepare the Python interpreter
-		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 		PythonInterpreter interpreter = repo.getInterpreter();
 
 		repo.initializeInterperter(interpreter);
@@ -207,7 +208,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		UpdateContainer c = (WorksheetUpdateFactory
-				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
+				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace), workspace.getContextId()));
 		// TODO is it necessary to compute alignment and semantic types for
 		// everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));

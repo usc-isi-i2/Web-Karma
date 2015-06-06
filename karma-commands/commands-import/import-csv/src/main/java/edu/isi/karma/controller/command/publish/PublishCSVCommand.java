@@ -76,7 +76,7 @@ public class PublishCSVCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
-		CSVFileExport csvFileExport = new CSVFileExport(worksheet);
+		CSVFileExport csvFileExport = new CSVFileExport(workspace, worksheet);
 
 		try {
 

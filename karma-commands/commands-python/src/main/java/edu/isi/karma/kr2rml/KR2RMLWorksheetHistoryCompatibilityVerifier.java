@@ -1,5 +1,13 @@
 package edu.isi.karma.kr2rml;
 
+import java.util.HashMap;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.ICommand.CommandTag;
@@ -11,14 +19,6 @@ import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURIValidator
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.WorkspaceRegistry;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
 
 public class KR2RMLWorksheetHistoryCompatibilityVerifier {
 

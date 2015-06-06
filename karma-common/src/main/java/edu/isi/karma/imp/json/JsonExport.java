@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class JsonExport {
@@ -29,7 +29,7 @@ public class JsonExport {
 	        Writer outUTF8=null;
 			try {
 				outUTF8 = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_DIR) +outputFile), "UTF8"));
+						new FileOutputStream(ContextParametersRegistry.getInstance().getDefault().getParameterValue(ContextParameter.JSON_PUBLISH_DIR) +outputFile), "UTF8"));
 				outUTF8.append(json);
 	    		outUTF8.flush();
 	    		outUTF8.close();

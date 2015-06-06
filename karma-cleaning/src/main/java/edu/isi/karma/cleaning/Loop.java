@@ -8,12 +8,13 @@ public class Loop implements GrammarTreeNode {
 	public static final int LOOP_END = 1;
 	public static final int LOOP_BOTH = 2;
 	public static final int LOOP_MID = 3;
-
-	public Loop(Segment loopbody, int looptype) {
+	String contextId; 
+	public Loop(Segment loopbody, int looptype, String contextId) {
+		this.contextId = contextId;
 		if (loopbody.section.size() == 0) {
-			this.loopbody = new Segment(loopbody.constNodes);
+			this.loopbody = new Segment(loopbody.constNodes, contextId);
 		} else {
-			this.loopbody = new Segment(loopbody.section, true);
+			this.loopbody = new Segment(loopbody.section, true, contextId);
 		}
 		this.looptype = looptype;
 		this.loopbody.isinloop = true;
@@ -31,7 +32,7 @@ public class Loop implements GrammarTreeNode {
 			Segment segment = this.loopbody.mergewith(a.loopbody);
 			if (segment == null)
 				return null;
-			Loop l = new Loop(segment, looptype);
+			Loop l = new Loop(segment, looptype,contextId);
 			return l;
 		} else {
 			return null;
@@ -42,7 +43,7 @@ public class Loop implements GrammarTreeNode {
 		Segment segment = this.loopbody.mergewith(a);
 		if (segment == null)
 			return null;
-		Loop l = new Loop(segment, looptype);
+		Loop l = new Loop(segment, looptype,contextId);
 		return l;
 	}
 

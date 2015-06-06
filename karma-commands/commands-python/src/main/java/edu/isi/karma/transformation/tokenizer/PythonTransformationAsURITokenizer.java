@@ -1,10 +1,14 @@
 package edu.isi.karma.transformation.tokenizer;
 
-import edu.isi.karma.controller.command.transformation.PythonTransformationCommand;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import edu.isi.karma.controller.command.transformation.PythonTransformationCommand;
 
 public class PythonTransformationAsURITokenizer {
 

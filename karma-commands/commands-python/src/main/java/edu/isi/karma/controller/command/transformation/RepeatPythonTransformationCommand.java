@@ -15,6 +15,7 @@ import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -46,10 +47,11 @@ public class RepeatPythonTransformationCommand extends PythonTransformationComma
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		JSONArray transformedRows = new JSONArray();
 		JSONArray errorValues = new JSONArray();
-		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 		repo.resetLibrary();
 		boolean isError = false;
 		try {
@@ -68,7 +70,7 @@ public class RepeatPythonTransformationCommand extends PythonTransformationComma
 		}
 		worksheet.getMetadataContainer().getColumnMetadata().addColumnOnError(hNodeId, isError);
 		UpdateContainer c = new UpdateContainer();
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));		
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));		
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

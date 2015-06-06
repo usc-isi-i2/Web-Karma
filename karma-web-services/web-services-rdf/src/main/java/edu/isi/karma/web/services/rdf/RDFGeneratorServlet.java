@@ -43,6 +43,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.er.helper.PythonRepositoryRegistry;
@@ -63,6 +64,7 @@ import edu.isi.karma.rdf.GenericRDFGenerator;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.rdf.RDFGeneratorRequest;
 import edu.isi.karma.util.HTTPUtil.HTTP_HEADERS;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -429,18 +431,22 @@ public class RDFGeneratorServlet {
 
 
 	private static void initialization() throws KarmaException {
+		 
+		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
+		ServletContextParameterMap contextParameters = contextParametersRegistry.registerByKarmaHome(null);
 		UpdateContainer uc = new UpdateContainer();
-		KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
-		userMetadataManager.register(new UserPreferencesMetadata(), uc);
-		userMetadataManager.register(new UserConfigMetadata(), uc);
-		userMetadataManager.register(new PythonTransformationMetadata(), uc);
+		KarmaMetadataManager userMetadataManager = new KarmaMetadataManager(contextParameters);
+		userMetadataManager.register(new UserPreferencesMetadata(contextParameters), uc);
+		userMetadataManager.register(new UserConfigMetadata(contextParameters), uc);
+		userMetadataManager.register(new PythonTransformationMetadata(contextParameters), uc);
 
-		PythonRepository pythonRepository = new PythonRepository(false, ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepository pythonRepository = new PythonRepository(false, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 		PythonRepositoryRegistry.getInstance().register(pythonRepository);
 		
 		SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
-
-		ModelingConfiguration.setLearnerEnabled(false); // disable automatic													// learning
+		
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().register(contextParameters.getId());
+		modelingConfiguration.setLearnerEnabled(false); // disable automatic													// learning
 	}
 
 	private int invokeHTTPRequestWithAuth(HttpHost httpHost, HttpPost httpPost,

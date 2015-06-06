@@ -80,7 +80,7 @@ public class PublishSpatialDataCommand extends WorksheetSelectionCommand {
 		SuperSelection selection = getSuperSelection(worksheet);
 
 		OntologyManager om= workspace.getOntologyManager();
-		WorksheetToFeatureCollection geo = new WorksheetToFeatureCollection(worksheet, om, selection);//ying
+		WorksheetToFeatureCollection geo = new WorksheetToFeatureCollection(workspace, worksheet, om, selection);//ying
 		
 		// Send an error update if no geospatial data found!
 		if (geo.hasNoGeospatialData()) {

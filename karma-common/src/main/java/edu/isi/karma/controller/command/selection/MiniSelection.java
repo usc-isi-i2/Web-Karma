@@ -22,6 +22,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -63,11 +64,12 @@ public class MiniSelection extends Selection {
 	}
 
 	private void populateSelection() {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		List<Table> tables = new ArrayList<Table>();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), workspace.getFactory().getHTable(hTableId), tables, SuperSelectionManager.DEFAULT_SELECTION);
 		String selectionId = Thread.currentThread().getId() + this.superSelectionName;
-		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 		PythonInterpreter interpreter = repo.getInterpreter();
 		repo.initializeInterperter(interpreter);
 		PyCode code = null;
@@ -104,7 +106,7 @@ public class MiniSelection extends Selection {
 	}
 
 	private PyCode getCompiledCode(String pythonCode, PythonInterpreter interpreter, String selectionId) throws IOException {
-
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		String trimmedSelectionCode = pythonCode.trim();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		if (trimmedSelectionCode.isEmpty()) {
@@ -118,7 +120,7 @@ public class MiniSelection extends Selection {
 		logger.debug("Executing PySelection\n" + selectionMethodStmt);
 
 		// Prepare the Python interpreter
-		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 		
 		repo.compileAndAddToRepositoryAndExec(interpreter, selectionMethodStmt);
 		PyObject locals = interpreter.getLocals();

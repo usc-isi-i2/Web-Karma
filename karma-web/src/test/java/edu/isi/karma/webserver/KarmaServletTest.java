@@ -22,9 +22,12 @@
 package edu.isi.karma.webserver;
 
 
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.WorkspaceManager;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,12 +35,9 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.WorkspaceManager;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 //@RunWith(PowerMockRunner.class)
 @PrepareForTest({ KarmaServlet.class, URL.class, HttpURLConnection.class, WorkspaceManager.class, Workspace.class})
@@ -76,7 +76,8 @@ public class KarmaServletTest {
         if(idx != -1)
         	contextPath = contextPath.substring(0, idx) + "/karma-web/src/main/webapp";
     	System.out.println("Got base path:" + contextPath);
-		ServletContextParameterMap.setParameterValue(ContextParameter.WEBAPP_PATH, contextPath);
+    	ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		contextParameters.setParameterValue(ContextParameter.WEBAPP_PATH, contextPath);
 		
         Mockito.when(this.request.getHeader("Accept-Encoding")).thenReturn("gzip,deflate,sdch");
         Mockito.when(this.request.getHeader("Accept-Language")).thenReturn("en-US,en;q=0.8");

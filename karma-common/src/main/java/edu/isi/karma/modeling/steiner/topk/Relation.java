@@ -1,10 +1,5 @@
 package edu.isi.karma.modeling.steiner.topk;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Set;
-import java.util.TreeSet;
 
 
 /**

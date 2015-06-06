@@ -38,7 +38,7 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>${jettyVersion}</version>
 				<configuration>
-					<argLine>-XX:MaxPermSize=128m</argLine>
+					<argLine>-XX:MaxPermSize=256m</argLine>
 					<systemProperties>
 						<systemProperty>
 							<name>log4j.configuration</name>

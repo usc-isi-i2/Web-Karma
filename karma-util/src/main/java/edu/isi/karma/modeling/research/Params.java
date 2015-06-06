@@ -20,7 +20,7 @@
  ******************************************************************************/
 
 package edu.isi.karma.modeling.research;
-
+// TODO this needs to be refactored into a properties file.
 public class Params {
 
 	public static boolean RESEARCH_MODE = true;

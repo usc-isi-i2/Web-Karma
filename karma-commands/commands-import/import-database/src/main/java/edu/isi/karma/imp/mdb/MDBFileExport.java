@@ -21,15 +21,6 @@
 
 package edu.isi.karma.imp.mdb;
 
-import com.healthmarketscience.jackcess.*;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,14 +28,36 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.healthmarketscience.jackcess.ColumnBuilder;
+import com.healthmarketscience.jackcess.DataType;
+import com.healthmarketscience.jackcess.Database;
+import com.healthmarketscience.jackcess.ImportFilter;
+import com.healthmarketscience.jackcess.ImportUtil;
+import com.healthmarketscience.jackcess.SimpleImportFilter;
+import com.healthmarketscience.jackcess.TableBuilder;
+
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 public class MDBFileExport {
 	private Worksheet worksheet;
+	private Workspace workspace;
 	private static final Logger logger = LoggerFactory
 			.getLogger(MDBFileExport.class);
-	public MDBFileExport(Worksheet worksheet) {
+	public MDBFileExport(Workspace workspace, Worksheet worksheet) {
+		this.workspace = workspace;
 		this.worksheet = worksheet;
 	}
 	public String publishMDB(String csvFileName) throws FileNotFoundException {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		String outputFile = "publish/MDB/" + worksheet.getTitle() + ".mdb";
 		logger.info("MDB file exported. Location:"
 				+ outputFile);
@@ -59,7 +72,7 @@ public class MDBFileExport {
 		
 		Database db;
 		try {
-			db = Database.create(new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH)+outputFile));
+			db = Database.create(new File(contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH)+outputFile));
 			
 			TableBuilder tb = new TableBuilder(worksheet.getTitle().replaceAll("\\.", "_"));
 			
@@ -80,7 +93,7 @@ public class MDBFileExport {
 			tb.toTable(db);
 			
 			ImportFilter _filter = SimpleImportFilter.INSTANCE;
-			ImportUtil.importFile(new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +csvFileName),
+			ImportUtil.importFile(new File(contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +csvFileName),
 					db,worksheet.getTitle().replaceAll("\\.", "_"), ",",'\"',_filter,true);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

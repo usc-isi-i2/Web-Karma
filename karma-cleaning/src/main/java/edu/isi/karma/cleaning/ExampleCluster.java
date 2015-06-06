@@ -24,7 +24,7 @@ public class ExampleCluster {
 	public int featuresize = 0;
 	public int failedCnt = 0;
 	public double[] weights = {};
-
+	String contextId;
 	public static enum method {
 		CP, CPIC, SP, SPIC, DP, DPIC
 	};
@@ -35,8 +35,8 @@ public class ExampleCluster {
 	 * example are (id, (input, output)) constrain: true->must link constraints,
 	 * false->cannot link constraints
 	 */
-	public ExampleCluster() {
-
+	public ExampleCluster(String contextId) {
+		this.contextId = contextId;
 	}
 
 	public ExampleCluster(ProgSynthesis pSynthesis, Vector<Partition> examples,
@@ -124,7 +124,7 @@ public class ExampleCluster {
 			Vector<Partition> pars) {
 		// single example
 		if (pars.size() == 1) {
-			ProgramAdaptator pAdapter = new ProgramAdaptator();
+			ProgramAdaptator pAdapter = new ProgramAdaptator(contextId);
 			ArrayList<String[]> exps = UtilTools
 					.extractExamplesinPartition(pars);
 			pAdapter.adapt(pSynthesis.msGer.exp2Space,pSynthesis.msGer.exp2program, exps);
@@ -606,7 +606,7 @@ public class ExampleCluster {
 				}
 			}
 		}
-		ProgramAdaptator pAdapter = new ProgramAdaptator();
+		ProgramAdaptator pAdapter = new ProgramAdaptator(contextId);
 		ArrayList<Partition> nPs = new ArrayList<Partition>();
 		nPs.add(p);
 		ArrayList<String[]> examps = UtilTools.extractExamplesinPartition(nPs);

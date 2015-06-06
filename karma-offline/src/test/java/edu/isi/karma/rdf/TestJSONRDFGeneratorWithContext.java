@@ -52,12 +52,6 @@ public class TestJSONRDFGeneratorWithContext extends TestJSONRDFGenerator {
 	public void tearDown() throws Exception {
 	}
 
-	/**
-	 * Test method for
-	 * {@link edu.isi.karma.rdf.JSONRDFGenerator#generateRDF(java.lang.String, java.lang.String, boolean, java.io.PrintWriter)}
-	 * .
-	 */
-
 	@Test
 	public void testGenerateJSONWithContext() {
 		try {

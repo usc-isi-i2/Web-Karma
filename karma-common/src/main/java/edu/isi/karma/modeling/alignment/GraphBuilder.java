@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
@@ -57,6 +58,8 @@ import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
 import edu.isi.karma.rep.alignment.SubClassLink;
 import edu.isi.karma.util.EncodingDetector;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 
 public class GraphBuilder {
 
@@ -253,9 +256,9 @@ public class GraphBuilder {
 	}
 	
 	public boolean addNodeAndUpdate(Node node, Set<Node> addedNodes) {
-		
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId()).getKarmaHome());
 		boolean result = addNode(node);
-		if (!result || ModelingConfiguration.getManualAlignment()) 
+		if (!result || modelingConfiguration.getManualAlignment()) 
 			return result;
 			
 		if (addedNodes == null) 
@@ -280,6 +283,7 @@ public class GraphBuilder {
 	
 	private void addClosureAndUpdateLinks(InternalNode node, Set<Node> addedNodes) {
 		
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId()).getKarmaHome());
 		if (addedNodes == null) addedNodes = new HashSet<Node>();
 		if (node instanceof InternalNode) {
 
@@ -288,7 +292,7 @@ public class GraphBuilder {
 
 			addedNodes.add(node);
 			
-			if (ModelingConfiguration.getNodeClosure()) {
+			if (modelingConfiguration.getNodeClosure()) {
 				addNodeClosure(node, addedNodes);
 			}
 			
@@ -930,9 +934,9 @@ public class GraphBuilder {
 	private void initialGraph() {
 		
 		logger.debug("<enter");
-		
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId()).getKarmaHome());
 		// Add Thing to the Graph 
-		if (ModelingConfiguration.getThingNode()) {
+		if (modelingConfiguration.getThingNode()) {
 			String id = nodeIdFactory.getNodeId(Uris.THING_URI);
 			Label label = new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL);
 			Node thing = new InternalNode(id, label);
@@ -1128,6 +1132,8 @@ public class GraphBuilder {
 		
 		logger.debug("<enter");
 		
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId()).getKarmaHome());
+		
 		Set<Node> nodeSet = this.typeToNodesMap.get(NodeType.InternalNode);
 		if (nodeSet == null || nodeSet.isEmpty())
 			return;
@@ -1170,7 +1176,7 @@ public class GraphBuilder {
 				
 				// order of adding the links is based on the ascending sort of their weight value
 				
-				if (ModelingConfiguration.getPropertiesDirect()) {
+				if (modelingConfiguration.getPropertiesDirect()) {
 					if (this.ontologyManager.isConnectedByDirectProperty(sourceUri, targetUri) ||
 							this.ontologyManager.isConnectedByDirectProperty(targetUri, sourceUri)) {
 						logger.debug( sourceUri + " and " + targetUri + " are connected by a direct object property.");
@@ -1180,7 +1186,7 @@ public class GraphBuilder {
 					}
 				}
 				
-				if (ModelingConfiguration.getPropertiesIndirect() && !connected) {
+				if (modelingConfiguration.getPropertiesIndirect() && !connected) {
 					if (this.ontologyManager.isConnectedByIndirectProperty(sourceUri, targetUri) ||
 							this.ontologyManager.isConnectedByIndirectProperty(targetUri, sourceUri)) { 
 						logger.debug( sourceUri + " and " + targetUri + " are connected by an indirect object property.");
@@ -1190,7 +1196,7 @@ public class GraphBuilder {
 					}
 				}
 				
-				if (ModelingConfiguration.getPropertiesWithOnlyRange() && !connected) {
+				if (modelingConfiguration.getPropertiesWithOnlyRange() && !connected) {
 					if (this.ontologyManager.isConnectedByDomainlessProperty(sourceUri, targetUri) ||
 							this.ontologyManager.isConnectedByDomainlessProperty(targetUri, sourceUri)) { 
 						logger.debug( sourceUri + " and " + targetUri + " are connected by an object property whose range is " + sourceUri + " or " + targetUri);
@@ -1200,7 +1206,7 @@ public class GraphBuilder {
 					}
 				}
 				
-				if (ModelingConfiguration.getPropertiesWithOnlyDomain() && !connected) {
+				if (modelingConfiguration.getPropertiesWithOnlyDomain() && !connected) {
 					if (this.ontologyManager.isConnectedByRangelessProperty(sourceUri, targetUri) ||
 							this.ontologyManager.isConnectedByRangelessProperty(targetUri, sourceUri)) { 
 						logger.debug( sourceUri + " and " + targetUri + " are connected by an object property whose domain is " + sourceUri + " or " + targetUri);
@@ -1210,7 +1216,7 @@ public class GraphBuilder {
 					}
 				}
 				
-				if (ModelingConfiguration.getPropertiesSubClass() && !connected) {
+				if (modelingConfiguration.getPropertiesSubClass() && !connected) {
 					if (this.ontologyManager.isSubClass(sourceUri, targetUri, false) ||
 							this.ontologyManager.isSubClass(targetUri, sourceUri, false)) {
 						logger.debug( sourceUri + " and " + targetUri + " are connected by a subClassOf relation.");
@@ -1220,7 +1226,7 @@ public class GraphBuilder {
 					}
 				}
 				
-				if (ModelingConfiguration.getPropertiesWithoutDomainRange() && !connected) {
+				if (modelingConfiguration.getPropertiesWithoutDomainRange() && !connected) {
 					if (this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(sourceUri, targetUri)) {// ||
 	//						this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(targetUri, sourceUri)) { 
 						link = new CompactObjectPropertyLink(id, ObjectPropertyType.WithoutDomainAndRange);
@@ -1307,13 +1313,15 @@ public class GraphBuilder {
 	
 	public static void main(String[] args) throws Exception {
 		
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		
 		logger.info(Integer.class.getFields()[0].getName());
 		
 		/** Check if any ontology needs to be preloaded **/
 		File ontDir = new File(Params.ONTOLOGY_DIR);
 		if (ontDir.exists()) {
 			File[] ontologies = ontDir.listFiles();
-			OntologyManager mgr = new OntologyManager();
+			OntologyManager mgr = new OntologyManager(contextParameters.getId());
 			for (File ontology: ontologies) {
 				System.out.println(ontology.getName());
 				if (ontology.getName().endsWith(".owl") || 

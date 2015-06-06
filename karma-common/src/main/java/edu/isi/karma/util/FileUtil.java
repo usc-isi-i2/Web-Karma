@@ -49,17 +49,14 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-
 public class FileUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
-    static public File downloadFileFromHTTPRequest(HttpServletRequest request) {
+    static public File downloadFileFromHTTPRequest(HttpServletRequest request, String destinationDirString) {
         // Download the file to the upload file folder
     	
-        File destinationDir = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_UPLOADED_DIR));
+        File destinationDir = new File(destinationDirString);
         logger.debug("File upload destination directory: " + destinationDir.getAbsolutePath());
 
         DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();

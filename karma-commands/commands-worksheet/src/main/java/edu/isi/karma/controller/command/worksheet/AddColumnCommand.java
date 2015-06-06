@@ -151,7 +151,7 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 			//create container and return hNodeId of newly created column
 			UpdateContainer c =  new UpdateContainer(new AddColumnUpdate(newHNodeId, worksheetId));
 			
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			
 			return c;
@@ -186,7 +186,7 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 		//remove the new column
 		currentTable.removeHNode(newHNodeId, worksheet);
 
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet));
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId());
 	}
 
 

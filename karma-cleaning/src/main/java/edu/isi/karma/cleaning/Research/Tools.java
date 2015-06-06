@@ -35,8 +35,10 @@ import edu.isi.karma.cleaning.InterpreterType;
 import edu.isi.karma.cleaning.Messager;
 import edu.isi.karma.cleaning.ProgSynthesis;
 import edu.isi.karma.cleaning.ProgramRule;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 
 public class Tools {
+	public static String contextId = ContextParametersRegistry.getInstance().getDefault().getId();
 	public void transformFile(String fpath) {
 		try {
 			Vector<String[]> examples = new Vector<String[]>();
@@ -88,7 +90,7 @@ public class Tools {
 				String ofpath = "/Users/bowu/Research/50newdata/tmp/"
 						+ nf.getName();
 				CSVWriter cw = new CSVWriter(new FileWriter(new File(ofpath)));
-				ProgSynthesis psProgSynthesis = new ProgSynthesis();				
+				ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);				
 				psProgSynthesis.inite(examples,dpp,msger); //
 				Collection<ProgramRule> ps = psProgSynthesis.run_main();
 				msger.updateCM_Constr(psProgSynthesis.partiCluster
@@ -123,7 +125,7 @@ public class Tools {
 		examples.add(yStrings);
 		ArrayList<String> data = new ArrayList<String>();
 		// examples.add(zStrings);
-		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+		ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
 		DataPreProcessor dbDataPreProcessor = new DataPreProcessor(data);
 		Vector<Vector<String[]>> cstrns = new Vector<Vector<String[]>>();
 

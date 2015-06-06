@@ -10,13 +10,13 @@ public class ProgramRule {
 	public String signString = "";
 	public static final String IDENTITY = "substr(value,'START','END')";
 	public boolean nullRule = false;
-
-	public ProgramRule(Program prog) {
+	public String contextId;
+	public ProgramRule(Program prog, String contextId) {
 		this.pClassifier = prog.classifier;
 		initInterpretor();
 	}
 
-	public ProgramRule(String rule) {
+	public ProgramRule(String rule, String contextId) {
 		initInterpretor();
 		InterpreterType worker = itInterpretor.create(rule);
 		rules.put("attr_0", worker);
@@ -31,7 +31,7 @@ public class ProgramRule {
 
 	public void initInterpretor() {
 		if (itInterpretor == null)
-			itInterpretor = new Interpretor();
+			itInterpretor = new Interpretor(contextId);
 	}
 
 	public InterpreterType getRuleForValue(String value) {

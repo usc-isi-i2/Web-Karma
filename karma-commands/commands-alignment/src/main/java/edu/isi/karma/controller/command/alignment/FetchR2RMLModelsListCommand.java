@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -28,6 +29,7 @@ import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.WorkspaceKarmaHomeRegistry;
 
 public class FetchR2RMLModelsListCommand extends WorksheetCommand{
 
@@ -64,8 +66,9 @@ public class FetchR2RMLModelsListCommand extends WorksheetCommand{
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspace.getId()));
 		TripleStoreUtil utilObj = new TripleStoreUtil();
-		boolean showModelsWithoutMatching = ModelingConfiguration.isShowModelsWithoutMatching();
+		boolean showModelsWithoutMatching = modelingConfiguration.isShowModelsWithoutMatching();
 		try {
 			HashMap<String, List<String>> metadata = utilObj.getMappingsWithMetadata(TripleStoreUrl, context);
 			RepFactory factory = workspace.getFactory();

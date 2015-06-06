@@ -105,7 +105,7 @@ public class AddValuesCommand extends WorksheetSelectionCommand{
 			}
 			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			UpdateContainer c =  new UpdateContainer(new AddColumnUpdate(newHNodeId, worksheetId));		
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
 			if (ndid == null) {
 				System.err.println("error: ndid");
 			}
@@ -129,7 +129,7 @@ public class AddValuesCommand extends WorksheetSelectionCommand{
 		ndid.removeNestedTable();
 		//remove the new column
 		currentTable.removeHNode(newHNodeId, worksheet);
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

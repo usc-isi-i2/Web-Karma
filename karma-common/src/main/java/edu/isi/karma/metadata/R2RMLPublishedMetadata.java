@@ -1,20 +1,13 @@
 package edu.isi.karma.metadata;
 
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class R2RMLPublishedMetadata extends KarmaPublishedMetadata {
 
-	public R2RMLPublishedMetadata(Workspace workspace) throws KarmaException {
-		super(workspace);
-	}
-	
-	
-	@Override
-	public void setup(UpdateContainer uc) {
-	
+	public R2RMLPublishedMetadata(ServletContextParameterMap contextParameters) throws KarmaException {
+		super(contextParameters);
 	}
 
 	@Override

@@ -1,8 +1,6 @@
 package edu.isi.karma.modeling.steiner.topk;
 
-import java.io.File;
 import java.util.HashMap;
-import java.util.Queue;
 import java.util.TreeSet;
 
 public class TestTopK {

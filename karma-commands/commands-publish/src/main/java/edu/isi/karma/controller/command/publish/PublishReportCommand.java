@@ -34,6 +34,7 @@ import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -74,15 +75,17 @@ public class PublishReportCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		final Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		this.worksheetName = worksheet.getTitle();
 		
 		// Prepare the file path and names
 		final String newWorksheetName = worksheetName;
 		final String fileName =  newWorksheetName + ".md"; 
-		final String fileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.REPORT_PUBLISH_DIR) +  
+		final String fileLocalPath = contextParameters.getParameterValue(ContextParameter.REPORT_PUBLISH_DIR) +  
 				fileName;
-		final String relFilename = ServletContextParameterMap.getParameterValue(ContextParameter.REPORT_PUBLISH_RELATIVE_DIR) + fileName;
+		final String relFilename = contextParameters.getParameterValue(ContextParameter.REPORT_PUBLISH_RELATIVE_DIR) + fileName;
 		final Workspace finalWorkspace = workspace;
 		
 		UpdateContainer uc = new UpdateContainer(new AbstractUpdate() {

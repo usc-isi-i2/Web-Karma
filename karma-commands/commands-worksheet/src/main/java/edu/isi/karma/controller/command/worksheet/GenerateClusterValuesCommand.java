@@ -26,6 +26,7 @@ import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.HTTPUtil;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -63,6 +64,8 @@ public class GenerateClusterValuesCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
+		
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(worksheet);
 		HNodePath selectedPath = null;
@@ -88,7 +91,7 @@ public class GenerateClusterValuesCommand extends WorksheetSelectionCommand {
 			String jsonString = null;
 			jsonString = requestJsonArray.toString();
 
-			String url = ServletContextParameterMap.getParameterValue(
+			String url = contextParameters.getParameterValue(
 					ContextParameter.CLUSTER_SERVICE_URL); 
 			
 			logger.info("Execute Cluster Service:" + url);
@@ -129,7 +132,7 @@ public class GenerateClusterValuesCommand extends WorksheetSelectionCommand {
 			
 			worksheet.setJsonAnnotation(ClusterAnnotation);
 			c.add(new WorksheetListUpdate());
-			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(ws.getId(), getSuperSelection(ws)));
+			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(ws.getId(), getSuperSelection(ws), workspace.getContextId()));
 			
 			return c;
 			//return null;

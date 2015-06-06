@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.UIConfiguration;
+import edu.isi.karma.config.UIConfigurationRegistry;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -33,6 +34,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VHNode;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -74,15 +76,16 @@ public class PublishJSONCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		final Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		this.worksheetName = worksheet.getTitle();
 
 		// Prepare the file path and names
 		final String newWorksheetName = worksheetName + "-" + workspace.getCommandPreferencesId() + worksheetId;
 		final String fileName =  newWorksheetName + ".json"; 
-		final String fileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_DIR) +  
+		final String fileLocalPath = contextParameters.getParameterValue(ContextParameter.JSON_PUBLISH_DIR) +  
 				fileName;
-		final String relFilename = ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR) + fileName;
+		final String relFilename = contextParameters.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR) + fileName;
 		final Workspace finalWorkspace = workspace;
 
 		final class PublishJSONUpdate extends AbstractUpdate {
@@ -125,7 +128,8 @@ public class PublishJSONCommand extends WorksheetCommand {
 					pw.println(outputObject.toString(4));
 					pw.println(",");
 					new InfoUpdate("Succesfully exported to JSON").generateJson(prefix, pw, vWorkspace);
-					boolean showCleaningCharts = UIConfiguration.Instance().isD3ChartsEnabled();
+					UIConfiguration uiConfiguration = UIConfigurationRegistry.getInstance().getUIConfiguration(vWorkspace.getWorkspace().getContextId());
+					boolean showCleaningCharts = uiConfiguration.isD3ChartsEnabled();
 					if(importAsWorksheet && newWSId != null) {
 						pw.println(",");
 						new WorksheetListUpdate().generateJson(prefix, pw, vWorkspace);

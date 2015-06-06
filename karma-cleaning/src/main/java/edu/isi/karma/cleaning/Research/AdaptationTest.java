@@ -1,7 +1,6 @@
 package edu.isi.karma.cleaning.Research;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
 
 import edu.isi.karma.cleaning.EmailNotification;
 

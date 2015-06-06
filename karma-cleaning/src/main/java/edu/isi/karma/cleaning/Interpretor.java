@@ -6,6 +6,7 @@ import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -13,11 +14,11 @@ public class Interpretor {
 	private PyObject interpreterClass;
 
 	private static Logger logger = LoggerFactory.getLogger(Interpretor.class);
-	public Interpretor() {
+	public Interpretor(String contextId) {
 		PythonInterpreter interpreter = new PythonInterpreter();
-		
-		String dirpathString = ServletContextParameterMap.getParameterValue(ContextParameter.WEBAPP_PATH) + 
-									"/" + ServletContextParameterMap
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+		String dirpathString = contextParameters.getParameterValue(ContextParameter.WEBAPP_PATH) + 
+									"/" + contextParameters
 									.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY);
 		
 									;

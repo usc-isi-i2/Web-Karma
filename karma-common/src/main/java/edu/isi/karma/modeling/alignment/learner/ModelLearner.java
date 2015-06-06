@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphBuilderTopK;
 import edu.isi.karma.modeling.alignment.GraphUtil;
@@ -67,8 +68,8 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.util.RandomGUID;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ModelLearner {
 
@@ -192,6 +193,7 @@ public class ModelLearner {
 
 	public List<SortableSemanticModel> hypothesize(boolean useCorrectTypes, int numberOfCandidates) throws Exception {
 
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId()).getKarmaHome());
 		List<SortableSemanticModel> sortableSemanticModels = new ArrayList<SortableSemanticModel>();
 		Set<Node> addedNodes = new HashSet<Node>(); //They should be deleted from the graph after computing the semantic models
 
@@ -275,13 +277,13 @@ public class ModelLearner {
 //					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
-			if (number == ModelingConfiguration.getMaxCandidateModels())
+			if (number == modelingConfiguration.getMaxCandidateModels())
 				break;
 
 		}
 
 		Collections.sort(sortableSemanticModels);
-		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getMaxCandidateModels());
+		int count = Math.min(sortableSemanticModels.size(), modelingConfiguration.getMaxCandidateModels());
 		logger.info("results are ready ...");
 //		sortableSemanticModels.get(0).print();
 		return sortableSemanticModels.subList(0, count);
@@ -347,7 +349,7 @@ public class ModelLearner {
 			return null;
 
 		int maxNumberOfSteinerNodes = steinerNodes.size() * 2;
-		CandidateSteinerSets candidateSteinerSets = new CandidateSteinerSets(maxNumberOfSteinerNodes);
+		CandidateSteinerSets candidateSteinerSets = new CandidateSteinerSets(maxNumberOfSteinerNodes, ontologyManager.getContextId());
 
 		if (addedNodes == null) 
 			addedNodes = new HashSet<Node>();
@@ -545,7 +547,7 @@ public class ModelLearner {
 		logger.debug("adding data property to the found internal nodes ...");
 
 		Integer count;
-		boolean allowMultipleSamePropertiesPerNode = ModelingConfiguration.isMultipleSamePropertyPerNode();
+		boolean allowMultipleSamePropertiesPerNode = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId()).getKarmaHome()).isMultipleSamePropertyPerNode();
 		Set<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(domainUri);
 		if (nodesWithSameUriOfDomain != null) { 
 			for (Node source : nodesWithSameUriOfDomain) {
@@ -794,9 +796,11 @@ public class ModelLearner {
 //		System.out.println("numberOfAttributesWhoseTypeIsFirstCRFType:" + numberOfAttributesWhoseTypeIsFirstCRFType);
 	}
 
+	//TODO make this a unit test!
 	public static void test() throws Exception {
 
-		ServletContextParameterMap.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getKarmaHome());
 
 		//		String inputPath = Params.INPUT_DIR;
 		String outputPath = Params.OUTPUT_DIR;
@@ -813,7 +817,7 @@ public class ModelLearner {
 
 		List<SemanticModel> trainingData = new ArrayList<SemanticModel>();
 
-		OntologyManager ontologyManager = new OntologyManager();
+		OntologyManager ontologyManager = new OntologyManager(contextParameters.getId());
 		File ff = new File(Params.ONTOLOGY_DIR);
 		File[] files = ff.listFiles();
 		for (File f : files) {
@@ -938,8 +942,8 @@ public class ModelLearner {
 
 				List<SortableSemanticModel> topHypotheses = null;
 				if (hypothesisList != null) {
-					topHypotheses = hypothesisList.size() > ModelingConfiguration.getMaxCandidateModels() ? 
-							hypothesisList.subList(0, ModelingConfiguration.getMaxCandidateModels()) : 
+					topHypotheses = hypothesisList.size() > modelingConfiguration.getMaxCandidateModels() ? 
+							hypothesisList.subList(0, modelingConfiguration.getMaxCandidateModels()) : 
 								hypothesisList;
 				}
 
@@ -1024,7 +1028,7 @@ public class ModelLearner {
 
 		resultFile.close();
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 
 		test();

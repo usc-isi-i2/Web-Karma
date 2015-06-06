@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.command.selection.MiniSelection;
@@ -53,36 +54,41 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.JSONUtil;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.WorkspaceRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import edu.isi.karma.webserver.WorkspaceRegistry;
 
 
 public class TestSelection {
 	private static Logger logger = LoggerFactory.getLogger(TestSelection.class);
 	Workspace workspace;
 	Worksheet worksheet;
+	static String contextParametersId;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 
-        KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().registerByKarmaHome(null);
+		contextParametersId = contextParameters.getId();
+        KarmaMetadataManager userMetadataManager = new KarmaMetadataManager(contextParameters);
         UpdateContainer uc = new UpdateContainer();
-        userMetadataManager.register(new UserPreferencesMetadata(), uc);
-        userMetadataManager.register(new UserConfigMetadata(), uc);
-        userMetadataManager.register(new PythonTransformationMetadata(), uc);
-        PythonRepository pythonRepository = new PythonRepository(false, ServletContextParameterMap.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+        userMetadataManager.register(new UserPreferencesMetadata(contextParameters), uc);
+        userMetadataManager.register(new UserConfigMetadata(contextParameters), uc);
+        userMetadataManager.register(new PythonTransformationMetadata(contextParameters), uc);
+        PythonRepository pythonRepository = new PythonRepository(false, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 		PythonRepositoryRegistry.getInstance().register(pythonRepository);
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().register(contextParameters.getId());
+        modelingConfiguration.setManualAlignment(true);
 	}
 	
 	@Before
 	public void setUp() throws Exception {
-		workspace = WorkspaceManager.getInstance().createWorkspace();
+		workspace = WorkspaceManager.getInstance().createWorkspace(contextParametersId);
         WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
-        ModelingConfiguration.load();
-        ModelingConfiguration.setManualAlignment(true);
+        
         File file = new File(getClass().getClassLoader().getResource("people.json").toURI());
         InputStream is = new FileInputStream(file);
         Reader reader = EncodingDetector.getInputStreamReader(is, EncodingDetector.detect(file));
@@ -128,7 +134,7 @@ public class TestSelection {
 		WorksheetR2RMLJenaModelParser modelParser = new WorksheetR2RMLJenaModelParser(modelIdentifier);
 		applyHistoryToWorksheet(workspace, worksheet, modelParser.parse());
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
-		        workspace.getFactory(), writers,
+		        workspace, writers,
 		        false, modelParser.parse(), new ErrorReport(), worksheet.getSuperSelectionManager().getSuperSelection("test"));
 		rdfGen.generateRDF(true);
 		String rdf = sw.toString();

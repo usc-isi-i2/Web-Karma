@@ -21,9 +21,9 @@
 
 package edu.isi.karma.controller.command;
 
-import edu.isi.karma.rep.Workspace;
-
 import javax.servlet.http.HttpServletRequest;
+
+import edu.isi.karma.rep.Workspace;
 
 public class ResetKarmaCommandFactory extends CommandFactory {
 	private enum Arguments {

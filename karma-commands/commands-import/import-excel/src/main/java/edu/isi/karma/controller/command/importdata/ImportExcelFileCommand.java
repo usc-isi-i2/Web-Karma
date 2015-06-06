@@ -40,6 +40,7 @@ import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.imp.excel.ToCSV;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -68,13 +69,14 @@ public class ImportExcelFileCommand extends ImportFileCommand implements IPrevie
 
     @Override
     public UpdateContainer doIt(Workspace workspace) throws CommandException {
+    	final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
         UpdateContainer c = new UpdateContainer();
 
         // Convert the Excel file to a CSV file.
         ToCSV csvConverter = new ToCSV();
         try {
             csvConverter.convertExcelToCSV(getFile().getAbsolutePath(),
-            		ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR));
+            		contextParameters.getParameterValue(ContextParameter.CSV_PUBLISH_DIR));
         } catch (Exception e) {
             String message = "Error occured while converting the Excel file to CSV file.";
             logger.error(message, e);
@@ -99,7 +101,7 @@ public class ImportExcelFileCommand extends ImportFileCommand implements IPrevie
                     }
 
                     c.add(new WorksheetListUpdate());
-                    c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION));
+                    c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId()));
                 } catch (Exception e) {
                     logger.error("Error occured while importing CSV file.", e);
                     return new UpdateContainer(new ErrorUpdate(

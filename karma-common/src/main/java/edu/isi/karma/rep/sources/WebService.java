@@ -38,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.common.HttpMethods;
-import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.rep.alignment.ColumnNode;
@@ -117,10 +116,6 @@ public class WebService extends Source {
 		this.inputAttributes = new ArrayList<Attribute>();
 		this.outputAttributes = new ArrayList<Attribute>();
 		this.attIdToAttMap = new HashMap<String, Attribute>();
-	}
-
-	public String getUri() {
-		return ModelingConfiguration.getKarmaServicePrefix() + getId() + "#";
 	}
 
 	public String getOperationName() {

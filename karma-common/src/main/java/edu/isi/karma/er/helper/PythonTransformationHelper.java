@@ -21,12 +21,8 @@
 
 package edu.isi.karma.er.helper;
 
-import java.io.File;
-import java.io.FilenameFilter;
-
 import org.python.core.PyObject;
 import org.python.core.PyType;
-import org.python.util.PythonInterpreter;
 
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
@@ -34,8 +30,6 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PythonTransformationHelper {
 
@@ -208,25 +202,6 @@ public class PythonTransformationHelper {
 				return true;
 		}
 		return false;
-	}
-
-	public void importUserScripts(PythonInterpreter interpreter) {
-		String dirpathString = ServletContextParameterMap
-				.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY);
-
-		if (dirpathString != null && dirpathString.compareTo("") != 0) {
-			File f = new File(dirpathString);
-			String[] scripts = f.list(new FilenameFilter(){
-
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.endsWith(".py");
-				}});
-			for(String script : scripts)
-			{
-				interpreter.execfile(dirpathString  + File.separator + script);
-			}
-		}
 	}
 
 }

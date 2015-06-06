@@ -35,8 +35,8 @@ import edu.isi.karma.util.Preferences;
  */
 public class ViewPreferences extends Preferences{
 	
-	public ViewPreferences(String preferencesId) {
-		super(preferencesId);
+	public ViewPreferences(String preferencesId,String contextId) {
+		super(preferencesId, contextId);
 	}
 
 	public enum ViewPreference {

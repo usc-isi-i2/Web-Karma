@@ -30,6 +30,8 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
 import edu.isi.karma.util.EncodingDetector;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 
 public class GraphBuilderTopK extends GraphBuilder {
 	
@@ -192,13 +194,16 @@ public class GraphBuilderTopK extends GraphBuilder {
 
 	public static void main(String[] args) throws Exception {
 		
+		
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters("/Users/mohsen/karma");
+
 		/** Check if any ontology needs to be preloaded **/
 		String preloadedOntDir = "/Users/mohsen/karma/preloaded-ontologies/";
 		File ontDir = new File(preloadedOntDir);
 		OntologyManager mgr = null;
 		if (ontDir.exists()) {
 			File[] ontologies = ontDir.listFiles();
-			mgr = new OntologyManager();
+			mgr = new OntologyManager(contextParameters.getId());
 			for (File ontology: ontologies) {
 				System.out.println(ontology.getName());
 				if (ontology.getName().endsWith(".owl") || 

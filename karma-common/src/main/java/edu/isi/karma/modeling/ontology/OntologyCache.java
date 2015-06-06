@@ -37,6 +37,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
@@ -108,6 +109,8 @@ public class OntologyCache {
 	// hashmap: domain+range -> object properties
 	private HashMap<String, HashSet<String>> domainRangeToDirectProperties;
 	private HashMap<String, HashSet<String>> domainRangeToIndirectProperties;
+
+	private String contextId;
 //	private HashMap<String, List<String>> domainRangeToDomainlessProperties;
 //	private HashMap<String, List<String>> domainRangeToRangelessProperties;
 
@@ -125,9 +128,9 @@ public class OntologyCache {
 
 	// public methods
 	
-	public OntologyCache(OntologyHandler ontHandler) {
+	public OntologyCache(OntologyHandler ontHandler, String contextId) {
 		this.ontHandler = ontHandler;
-
+		this.contextId = contextId;
 		allocateDataStructures();
 	}
 
@@ -154,8 +157,8 @@ public class OntologyCache {
 		// objectproperties = A - B
 		logger.info("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
 		logger.info("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
-
-		if (ModelingConfiguration.getManualAlignment()) {
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextId);
+		if (modelingConfiguration.getManualAlignment()) {
 			float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
 			logger.info("time to build the ontology cache (manual alignment): " + elapsedTimeSec);
 			return;
