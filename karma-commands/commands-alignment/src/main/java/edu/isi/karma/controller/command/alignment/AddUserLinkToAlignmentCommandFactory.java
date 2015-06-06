@@ -42,15 +42,17 @@ public class AddUserLinkToAlignmentCommandFactory extends JSONInputCommandFactor
 		String edgeId =request.getParameter(Arguments.edgeId.name());
 		String alignmentId =request.getParameter(Arguments.alignmentId.name());
 		String worksheetId =request.getParameter(Arguments.worksheetId.name());
-		return new AddUserLinkToAlignmentCommand(getNewId(workspace),edgeId, alignmentId, worksheetId);
+		return new AddUserLinkToAlignmentCommand(getNewId(workspace),
+				Command.NEW_MODEL, edgeId, alignmentId, worksheetId);
 	}
 
-	public Command createCommand(JSONArray inputJson, Workspace workspace) throws JSONException {
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace) throws JSONException {
 		String edgeId = HistoryJsonUtil.getStringValue(Arguments.edgeId.name(), inputJson);
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		
-		AddUserLinkToAlignmentCommand comm = new AddUserLinkToAlignmentCommand(getNewId(workspace),edgeId, alignmentId, worksheetId); 
+		AddUserLinkToAlignmentCommand comm = new AddUserLinkToAlignmentCommand(getNewId(workspace),
+				model, edgeId, alignmentId, worksheetId); 
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

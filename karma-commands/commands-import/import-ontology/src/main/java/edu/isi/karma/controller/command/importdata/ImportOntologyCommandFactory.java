@@ -39,7 +39,8 @@ public class ImportOntologyCommandFactory extends CommandFactory {
 			Workspace workspace) {
 		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request, contextParameters.getParameterValue(ContextParameter.USER_UPLOADED_DIR));
-		return new ImportOntologyCommand(getNewId(workspace), uploadedFile);
+		return new ImportOntologyCommand(getNewId(workspace), Command.NEW_MODEL, uploadedFile);
+
 	}
 
 	@Override

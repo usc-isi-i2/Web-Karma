@@ -9,8 +9,8 @@ import edu.isi.karma.rep.Workspace;
 
 public class GetAllWorksheetHeadersCommand extends WorksheetCommand {
 
-	protected GetAllWorksheetHeadersCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+	protected GetAllWorksheetHeadersCommand(String id, String model, String worksheetId) {
+		super(id, model, worksheetId);
 		// TODO Auto-generated constructor stub
 	}
 

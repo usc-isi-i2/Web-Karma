@@ -23,9 +23,9 @@ public class ClearSelectionCommand extends WorksheetSelectionCommand {
 	private String hNodeId;
 	private String type;
 	private Map<String, Selection> oldSelections;
-	public ClearSelectionCommand(String id, String worksheetId, String selectionId, 
+	public ClearSelectionCommand(String id, String model, String worksheetId, String selectionId, 
 			String hNodeId, String type) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.type = type;
 		oldSelections = new HashMap<String, Selection>();

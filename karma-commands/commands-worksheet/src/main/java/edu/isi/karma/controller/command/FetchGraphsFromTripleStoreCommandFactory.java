@@ -34,7 +34,7 @@ public class FetchGraphsFromTripleStoreCommandFactory extends CommandFactory {
 			Workspace workspace) {
 
 		FetchGraphsFromTripleStoreCommand comm = new FetchGraphsFromTripleStoreCommand(getNewId(workspace), 
-				request.getParameter(Arguments.tripleStoreUrl.name()));
+				Command.NEW_MODEL, request.getParameter(Arguments.tripleStoreUrl.name()));
 		
 		return comm;
 	}

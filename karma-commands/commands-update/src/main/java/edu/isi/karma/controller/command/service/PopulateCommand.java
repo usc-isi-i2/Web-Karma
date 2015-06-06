@@ -68,8 +68,8 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 	private static Logger logger = LoggerFactory
 			.getLogger(PopulateCommand.class.getSimpleName());
 
-	public PopulateCommand(String id, String worksheetId, String selectionId) {
-		super(id, worksheetId, selectionId);
+	public PopulateCommand(String id, String model, String worksheetId, String selectionId) {
+		super(id, model, worksheetId, selectionId);
 		
 		addTag(CommandTag.Transformation);
 	}

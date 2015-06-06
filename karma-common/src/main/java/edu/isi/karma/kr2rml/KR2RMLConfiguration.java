@@ -64,8 +64,13 @@ public class KR2RMLConfiguration {
 			logger.info("Wrote default properties to kr2rml.properties");
 		}
 
-		prop.load(new FileInputStream(file));
-		logger.info("Done loading kr2rml.properties");
+		FileInputStream fis = new FileInputStream(file);
+		try {
+			prop.load(fis);
+			logger.info("Done loading kr2rml.properties");
+		} finally {
+			fis.close();
+		}
 
 		return prop;
 	}

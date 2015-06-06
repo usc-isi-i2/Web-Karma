@@ -16,7 +16,7 @@ public class FetchR2RMLModelsListCommandFactory extends CommandFactory{
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.graphContext.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		return new FetchR2RMLModelsListCommand(getNewId(workspace), tripleStoreUrl, context, worksheetId);
+		return new FetchR2RMLModelsListCommand(getNewId(workspace), Command.NEW_MODEL, tripleStoreUrl, context, worksheetId);
 	}
 
 	@Override

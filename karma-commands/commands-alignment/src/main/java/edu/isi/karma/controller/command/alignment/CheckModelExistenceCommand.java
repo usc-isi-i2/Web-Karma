@@ -16,8 +16,8 @@ import edu.isi.karma.view.VWorkspace;
 
 public class CheckModelExistenceCommand extends WorksheetCommand {
 	
-	protected CheckModelExistenceCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+	protected CheckModelExistenceCommand(String id, String model, String worksheetId) {
+		super(id, model, worksheetId);
 	}
 
 	@Override

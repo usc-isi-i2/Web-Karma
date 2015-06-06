@@ -243,6 +243,7 @@ public class ProgSynthesis {
 			if (r == null)
 				return null;
 			String xString = "";
+			int termCnt = 0;
 			boolean findRule = true;
 			while ((xString = this.validRule(r, pars)) != "GOOD" && findRule) {
 				if (xString.compareTo("NO_CLASIF") == 0) {
@@ -261,6 +262,7 @@ public class ProgSynthesis {
 						r.updateClassworker(xString, newRule);
 					}
 				}
+				termCnt++;
 			}
 			if (findRule)
 			{
@@ -269,6 +271,17 @@ public class ProgSynthesis {
 			i++;
 		}
 		return rules;
+	} 
+	public Collection<ProgramRule> run_main_all()
+	{
+		long t1 = System.currentTimeMillis();
+		Vector<Partition> par = this.ProducePartitions(true);
+		Program prog = new Program(par, this.classifier,this.dataPreProcessor,contextId);
+		Collection<ProgramRule> cpr = this.produceProgram_all(par,prog);
+		Traces.AllSegs.clear();
+		//record the learning time
+		this.learnspan = (long) ((System.currentTimeMillis()-t1)*1.0/1000);
+		return cpr;
 	}
 	public Collection<ProgramRule> adaptive_main()
 	{
@@ -282,14 +295,54 @@ public class ProgSynthesis {
 		stopWatch1.stop();
 		Traces.AllSegs.clear();
 		//record the learning time
-		this.learnspan = System.currentTimeMillis()-t1;
+		this.learnspan = (long) ((System.currentTimeMillis()-t1)*1.0/1000);
 		stopWatch0.stop();
 		return cpr;
 	}
-	public Collection<ProgramRule> adaptive_produceProgram(Vector<Partition> pars)
+	public Collection<ProgramRule> produceProgram_all(Vector<Partition> pars, Program prog)
 	{
-		
-		Program prog = new Program(pars, this.classifier,this.dataPreProcessor, contextId);
+		this.myprog = prog;
+		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
+		int prog_cnt = Integer.MAX_VALUE;
+		int i = 0;
+		while(i < prog_cnt) {
+			ProgramRule r = prog.toProgram1();
+			//System.out.println(""+r.toString());
+			if (r == null)
+				break;
+			String xString = "";
+			int termCnt = 0;
+			boolean findRule = true;
+			while ((xString = this.validRule(r, pars)) != "GOOD" && findRule) {
+				if (xString.compareTo("NO_CLASIF") == 0) {
+					break; // indistinguishable classes.
+				}
+				for (Partition p : prog.partitions) {
+					if (p.label.compareTo(xString) == 0) {
+						String newRule = p.toProgram();
+						if (ConfigParameters.debug == 1)
+							System.out.println("updated Rule: " + p.label
+									+ ": " + newRule);
+						if (newRule.contains("null")) {
+							findRule = false;
+							break;
+						}
+						r.updateClassworker(xString, newRule);
+					}
+				}
+				termCnt++;
+			}
+			if (findRule)
+			{
+				rules.add(r);
+			}
+			i++;
+		}
+		return rules;
+	}
+	public Collection<ProgramRule> adaptive_produceProgram(Vector<Partition> pars)
+	{		
+		Program prog = new Program(pars, this.classifier,this.dataPreProcessor,contextId);
 		this.myprog = prog;
 		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
 		int prog_cnt = 1;
@@ -299,6 +352,7 @@ public class ProgSynthesis {
 			if (r == null)
 				return null;
 			String xString = "";
+			int termCnt = 0;
 			boolean findRule = true;
 			while ((xString = this.validRule(r, pars)) != "GOOD" && findRule) {
 				if (xString.compareTo("NO_CLASIF") == 0) {
@@ -317,6 +371,7 @@ public class ProgSynthesis {
 						r.updateClassworker(xString, newRule);
 					}
 				}
+				termCnt++;
 			}
 			if (findRule)
 			{
@@ -348,7 +403,7 @@ public class ProgSynthesis {
 		stopWatch1.stop();
 		Traces.AllSegs.clear();
 		stopWatch0.stop();
-		this.learnspan = System.currentTimeMillis()-t1;
+		this.learnspan = (long) ((System.currentTimeMillis()-t1)*1.0/1000);
 		return cpr;
 	}
 

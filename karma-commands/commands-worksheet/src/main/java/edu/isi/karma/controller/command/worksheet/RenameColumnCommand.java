@@ -47,8 +47,8 @@ public class RenameColumnCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(RenameColumnCommand.class);
 	
-	public RenameColumnCommand(String id, String newColumnName, String hNodeId, String worksheetId) {
-		super(id, worksheetId);
+	public RenameColumnCommand(String id, String model, String newColumnName, String hNodeId, String worksheetId) {
+		super(id, model, worksheetId);
 		this.newColumnName = newColumnName;
 		this.hNodeId = hNodeId;
 	}

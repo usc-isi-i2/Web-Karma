@@ -28,8 +28,8 @@ public class GetLiteralNodeCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory.getLogger(AddLiteralNodeCommand.class);
 	
 		
-	protected GetLiteralNodeCommand(String id, String worksheetId, String alignmentId, String nodeId) {
-		super(id, worksheetId);
+	protected GetLiteralNodeCommand(String id, String model, String worksheetId, String alignmentId, String nodeId) {
+		super(id, model, worksheetId);
 		this.alignmentId = alignmentId;
 		this.nodeId = nodeId;
 	}

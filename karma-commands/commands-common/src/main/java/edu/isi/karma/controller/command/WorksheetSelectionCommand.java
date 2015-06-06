@@ -9,8 +9,8 @@ import edu.isi.karma.rep.Workspace;
 
 public abstract class WorksheetSelectionCommand extends WorksheetCommand {
 	protected String selectionId;
-	public WorksheetSelectionCommand(String id, String worksheetId, String selectionId) {
-		super(id, worksheetId);
+	public WorksheetSelectionCommand(String id, String model, String worksheetId, String selectionId) {
+		super(id, model, worksheetId);
 		this.selectionId = selectionId;
 	}
 	

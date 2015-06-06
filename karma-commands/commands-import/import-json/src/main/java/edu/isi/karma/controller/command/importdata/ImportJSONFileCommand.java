@@ -37,12 +37,12 @@ import edu.isi.karma.util.EncodingDetector;
 
 public class ImportJSONFileCommand extends ImportFileCommand implements IPreviewable {
 
-	public ImportJSONFileCommand(String id, File file) {
-		super(id, file);
+	public ImportJSONFileCommand(String id, String model, File file) {
+		super(id, model, file);
 	}
 
-	public ImportJSONFileCommand(String id, String revisedId, File file) {
-		super(id, revisedId, file);
+	public ImportJSONFileCommand(String id, String model, String revisedId, File file) {
+		super(id, model, revisedId, file);
 		this.encoding = EncodingDetector.detect(file);
 	}
 

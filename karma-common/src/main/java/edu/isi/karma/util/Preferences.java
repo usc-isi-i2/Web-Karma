@@ -70,10 +70,11 @@ public abstract class Preferences {
 
 	private void populatePreferences() {
 		try {
+
 			ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
-				
-			ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getKarmaHome());
-			if(modelingConfiguration.getManualAlignment()) {
+			ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextId);
+			if(!modelingConfiguration.getOntologyAlignment() && 
+					!modelingConfiguration.getKnownModelsAlignment()) {
 				loadDefaultPreferences();
 			} else {
 				jsonFile = new File(contextParameters.getParameterValue(ContextParameter.USER_PREFERENCES_DIRECTORY) + 
@@ -131,7 +132,8 @@ public abstract class Preferences {
 	protected void savePreferences() throws JSONException, IOException {
 		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
 		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getKarmaHome());
-		if(!modelingConfiguration.getManualAlignment()) {
+		if(modelingConfiguration.getOntologyAlignment() || 
+				modelingConfiguration.getKnownModelsAlignment()) {
 			FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
 		}
 	}

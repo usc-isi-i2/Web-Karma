@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
@@ -41,7 +42,7 @@ public class EncodingDetector {
             logger.debug("No encoding detected, using default: " + DEFAULT_ENCODING);
             encoding = DEFAULT_ENCODING;
         }
-
+		encoding = validateEncoding(encoding);	
         // (5)
         detector.reset();
         
@@ -58,6 +59,7 @@ public class EncodingDetector {
 	        if (encoding == null) {
 	            encoding = DEFAULT_ENCODING;
 	        }
+			encoding = validateEncoding(encoding);	
 	        return encoding;
         } catch(Exception e) {
         	logger.debug("Exception detecting encoding, using default: " + DEFAULT_ENCODING);
@@ -68,9 +70,24 @@ public class EncodingDetector {
     public static InputStreamReader getInputStreamReader(InputStream is, String encoding) throws IOException {
         
         logger.debug("Reading stream: using encoding: " + encoding);
+		encoding = validateEncoding(encoding);	
         BOMInputStream bis = new BOMInputStream(is); //So that we can remove the BOM
         return new InputStreamReader(bis, encoding);
     }
+
+	private static String validateEncoding(String encoding) {
+		if(!isCharsetSupported(encoding))
+		{
+			logger.error("Encoding: " + encoding + " not supported. Falling back to UTF-8");
+			encoding = "UTF-8";
+		}
+		return encoding;
+	}
+    
+    public static boolean isCharsetSupported(String name) {
+	    return Charset.availableCharsets().keySet().contains(name);
+	}
+    
     public static InputStreamReader getInputStreamReader(File file, String encoding) throws IOException {
         
         FileInputStream fis = new FileInputStream(file);
@@ -84,6 +101,7 @@ public class EncodingDetector {
         
         FileInputStream fis = new FileInputStream(file);
         logger.debug("Reading file: " + file + " using encoding: " + encoding);
+		encoding = validateEncoding(encoding);	
         IOUtils.copy(fis, sw, encoding);
 
         return sw.toString();

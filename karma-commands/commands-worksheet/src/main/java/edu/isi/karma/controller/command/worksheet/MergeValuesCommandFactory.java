@@ -19,7 +19,7 @@ public class MergeValuesCommandFactory extends JSONInputCommandFactory {
 		selectionName
 	}
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		
 		String hNodeId = HistoryJsonUtil.getStringValue(
@@ -29,7 +29,7 @@ public class MergeValuesCommandFactory extends JSONInputCommandFactory {
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		MergeClusterValuesCommand comm = new MergeClusterValuesCommand(
-				getNewId(workspace), hNodeId, worksheetId, 
+				getNewId(workspace), model, hNodeId, worksheetId, 
 				selectionName);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;

@@ -25,31 +25,28 @@ public class Params {
 
 	public static boolean RESEARCH_MODE = true;
 	
-//	private static String DATASET_NAME = "museum-saam";
+//	private static String DATASET_NAME = "museum-saam-old";
 //	private static String DATASET_NAME = "lod-bm";
-	private static String DATASET_NAME = "lod-bm-sample";
+//	private static String DATASET_NAME = "lod-bm-sample";
 //	private static String DATASET_NAME = "lod-music";
+//	private static String DATASET_NAME = "museum-29-edm";
+	private static String DATASET_NAME = "museum-29-crm";
+//	private static String DATASET_NAME = "music";
+	
 	private static String ROOT_DIR = "/Users/mohsen/Dropbox/Source Modeling/datasets/" + DATASET_NAME + "/";
 	
-	public static String ONTOLOGY_DIR = ROOT_DIR + "ontology/";
+	public static String ONTOLOGY_DIR = ROOT_DIR + "preloaded-ontologies/";
 	
-	public static String INPUT_DIR = ROOT_DIR + "input/";
 	public static String OUTPUT_DIR = ROOT_DIR + "output/";
 
-	public static String GRAPHS_DIR = ROOT_DIR + "graph/";
-	public static String MODEL_DIR = ROOT_DIR + "model/";
-	public static String GRAPHVIS_DIR = ROOT_DIR + "graphviz/";
-	public static String RESULTS_DIR = ROOT_DIR + "result/";
+	public static String GRAPHS_DIR = ROOT_DIR + "alignment-graph/";
+	public static String MODEL_DIR = ROOT_DIR + "models-json/";
+	public static String GRAPHVIS_DIR = ROOT_DIR + "models-graphviz/";
+	public static String RESULTS_DIR = ROOT_DIR + "results/";
 	
 	public static String GRAPH_FILE_EXT = ".graph.json";
 	
 	public static String MODEL_MAIN_FILE_EXT = ".model.json";
-	public static String MODEL_KARMA_INITIAL_FILE_EXT = ".model.karma.initial.json";
-	public static String MODEL_KARMA_FINAL_FILE_EXT = ".model.karma.final.json";
-	public static String MODEL_RANK1_FILE_EXT = ".model.rank1.json";
-	public static String MODEL_RANK2_FILE_EXT = ".model.rank2.json";
-	public static String MODEL_RANK3_FILE_EXT = ".model.rank3.json";
-	public static String MODEL_APP2_FILE_EXT = ".model.rank1.json";
 
 	public static String GRAPHVIS_MAIN_FILE_EXT = ".model.dot";
 	public static String GRAPHVIS_OUT_FILE_EXT = ".out.dot";

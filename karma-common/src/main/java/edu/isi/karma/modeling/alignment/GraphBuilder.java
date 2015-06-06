@@ -258,9 +258,12 @@ public class GraphBuilder {
 	public boolean addNodeAndUpdate(Node node, Set<Node> addedNodes) {
 		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId()).getKarmaHome());
 		boolean result = addNode(node);
-		if (!result || modelingConfiguration.getManualAlignment()) 
+		if (!result) 
 			return result;
-			
+
+		if (!modelingConfiguration.getOntologyAlignment()) 
+			return result;
+
 		if (addedNodes == null) 
 			addedNodes = new HashSet<Node>();
 		addedNodes.add(node);
@@ -355,7 +358,6 @@ public class GraphBuilder {
 		logger.debug("exit>");		
 	}
 	
-	
 	public boolean addNode(Node node) {
 		
 		logger.debug("<enter");
@@ -366,7 +368,7 @@ public class GraphBuilder {
 		}
 		
 		if (idToNodeMap.get(node.getId()) != null) {
-			logger.error("The node with id=" + node.getId() + " already exists in the graph.");
+			logger.debug("The node with id=" + node.getId() + " already exists in the graph.");
 			return false;
 		}
 		
@@ -374,7 +376,7 @@ public class GraphBuilder {
 			String uri = node.getUri();
 			Label label = this.ontologyManager.getUriLabel(uri);
 			if (label == null) {
-				logger.error("The resource " + uri + " does not exist in the ontology.");
+				logger.debug("The resource " + uri + " does not exist in the ontology.");
 				return false;
 			}
 			node.getLabel().setNs(label.getNs());
@@ -460,6 +462,10 @@ public class GraphBuilder {
 		return this.forcedNodes;
 	}
 
+	protected boolean sourceIsConnectedToTarget(Node source, Node target) {
+		return this.visitedSourceTargetPairs.contains(source.getId() + target.getId());
+	}
+	
 	public boolean addLink(Node source, Node target, DefaultLink link, Double weight) {
 		if (addLink(source, target, link)) {
 			if (weight != null) changeLinkWeight(link, weight);
@@ -478,17 +484,17 @@ public class GraphBuilder {
 		}
 		
 		if (this.idToLinkMap.containsKey(link.getId())) {
-			logger.warn("The link with id=" + link.getId() + " already exists in the graph");
+			logger.debug("The link with id=" + link.getId() + " already exists in the graph");
 			return false;
 		}
 		
 		if (!this.idToNodeMap.containsKey(source.getId())) {
-			logger.error("The link source " + link.getSource().getId() + " does not exist in the graph");
+			logger.debug("The link source " + link.getSource().getId() + " does not exist in the graph");
 			return false;
 		}
 
 		if (!this.idToNodeMap.containsKey(target.getId())) {
-			logger.error("The link target " + link.getTarget().getId() + " does not exist in the graph");
+			logger.debug("The link target " + link.getTarget().getId() + " does not exist in the graph");
 			return false;
 		}
 
@@ -496,25 +502,12 @@ public class GraphBuilder {
 			String uri = link.getUri();
 			Label label = this.ontologyManager.getUriLabel(uri);
 			if (label == null) {
-				logger.error("The resource " + uri + " does not exist in the ontology.");
+				logger.debug("The resource " + uri + " does not exist in the ontology.");
 				return false;
 			}
 			((LabeledLink)link).getLabel().setNs(label.getNs());
 			((LabeledLink)link).getLabel().setPrefix(label.getPrefix());
 		}
-		
-		// whi I wrote this code?
-//		if (source instanceof InternalNode && target instanceof ColumnNode) {
-//			
-//			// remove other incoming links to this column node
-//			DefaultLink oldIncomingLink = null;
-//			Set<DefaultLink> incomingLinks = this.getGraph().incomingEdgesOf(target);
-//			if (incomingLinks != null && incomingLinks.size() == 1) {
-//				oldIncomingLink = incomingLinks.iterator().next();
-//			}
-//			if (oldIncomingLink != null)
-//				this.removeLink(oldIncomingLink);
-//		}
 			
 		this.graph.addEdge(source, target, link);
 		
@@ -782,7 +775,6 @@ public class GraphBuilder {
 		return true;
 	}
 	
-
 	public LinkFrequency getMoreFrequentLinkBetweenNodes(String sourceUri, String targetUri) {
 
 		List<String> possibleLinksFromSourceToTarget = new ArrayList<String>();
@@ -928,9 +920,7 @@ public class GraphBuilder {
 		return lf;
 		
 	}
-	
-	// Private Methods
-	
+		
 	private void initialGraph() {
 		
 		logger.debug("<enter");
@@ -1146,7 +1136,7 @@ public class GraphBuilder {
 		String sourceUri;
 		String targetUri;
 
-		String id = null;
+		String id1 = null, id2 = null;
 		
 		for (int i = 0; i < nodes.size(); i++) {
 			
@@ -1169,73 +1159,108 @@ public class GraphBuilder {
 				sourceUri = source.getUri();
 				targetUri = target.getUri();
 
-				id = LinkIdFactory.getLinkId(Uris.DEFAULT_LINK_URI, source.getId(), target.getId());
+				id1 = LinkIdFactory.getLinkId(Uris.DEFAULT_LINK_URI, source.getId(), target.getId());
+				id2 = LinkIdFactory.getLinkId(Uris.DEFAULT_LINK_URI, target.getId(), source.getId());
 				CompactLink link = null; 
 
-				boolean connected = false;
+//				boolean connected = false;
+				boolean sourceConnectedToTarget = false;
+				boolean targetConnectedToSource = false;
 				
 				// order of adding the links is based on the ascending sort of their weight value
 				
+
 				if (modelingConfiguration.getPropertiesDirect()) {
-					if (this.ontologyManager.isConnectedByDirectProperty(sourceUri, targetUri) ||
-							this.ontologyManager.isConnectedByDirectProperty(targetUri, sourceUri)) {
+					if (this.ontologyManager.isConnectedByDirectProperty(sourceUri, targetUri)) {
 						logger.debug( sourceUri + " and " + targetUri + " are connected by a direct object property.");
-						link = new CompactObjectPropertyLink(id, ObjectPropertyType.Direct);
+						link = new CompactObjectPropertyLink(id1, ObjectPropertyType.Direct);
 						addLink(source, target, link);
-						connected = true;
+						sourceConnectedToTarget = true;
 					}
+					if (this.ontologyManager.isConnectedByDirectProperty(targetUri, sourceUri)) {
+						logger.debug( targetUri + " and " + sourceUri + " are connected by a direct object property.");
+						link = new CompactObjectPropertyLink(id2, ObjectPropertyType.Direct);
+						addLink(target, source, link);
+						targetConnectedToSource = true;
+					}				
 				}
 				
-				if (modelingConfiguration.getPropertiesIndirect() && !connected) {
-					if (this.ontologyManager.isConnectedByIndirectProperty(sourceUri, targetUri) ||
-							this.ontologyManager.isConnectedByIndirectProperty(targetUri, sourceUri)) { 
+
+				if (modelingConfiguration.getPropertiesIndirect()) {
+					if (!sourceConnectedToTarget && this.ontologyManager.isConnectedByIndirectProperty(sourceUri, targetUri)) { 
 						logger.debug( sourceUri + " and " + targetUri + " are connected by an indirect object property.");
-						link = new CompactObjectPropertyLink(id, ObjectPropertyType.Indirect);
+						link = new CompactObjectPropertyLink(id1, ObjectPropertyType.Indirect);
 						addLink(source, target, link);
-						connected = true;
+						sourceConnectedToTarget = true;
+					}
+					if (!targetConnectedToSource && this.ontologyManager.isConnectedByIndirectProperty(targetUri, sourceUri)) { 
+						logger.debug( targetUri + " and " + sourceUri + " are connected by an indirect object property.");
+						link = new CompactObjectPropertyLink(id2, ObjectPropertyType.Indirect);
+						addLink(target, source, link);
+						targetConnectedToSource = true;
 					}
 				}
 				
-				if (modelingConfiguration.getPropertiesWithOnlyRange() && !connected) {
-					if (this.ontologyManager.isConnectedByDomainlessProperty(sourceUri, targetUri) ||
-							this.ontologyManager.isConnectedByDomainlessProperty(targetUri, sourceUri)) { 
+
+				if (modelingConfiguration.getPropertiesWithOnlyRange()) {
+					if (!sourceConnectedToTarget && this.ontologyManager.isConnectedByDomainlessProperty(sourceUri, targetUri)) { 
 						logger.debug( sourceUri + " and " + targetUri + " are connected by an object property whose range is " + sourceUri + " or " + targetUri);
-						link = new CompactObjectPropertyLink(id, ObjectPropertyType.WithOnlyRange);
+						link = new CompactObjectPropertyLink(id1, ObjectPropertyType.WithOnlyRange);
 						addLink(source, target, link);
-						connected = true;
+						sourceConnectedToTarget = true;
+					}
+
+					if (!targetConnectedToSource && this.ontologyManager.isConnectedByDomainlessProperty(targetUri, sourceUri)) { 
+						logger.debug( targetUri + " and " + sourceUri + " are connected by an object property whose range is " + targetUri + " or " + sourceUri);
+						link = new CompactObjectPropertyLink(id2, ObjectPropertyType.WithOnlyRange);
+						addLink(target, source, link);
+						targetConnectedToSource = true;
 					}
 				}
 				
-				if (modelingConfiguration.getPropertiesWithOnlyDomain() && !connected) {
-					if (this.ontologyManager.isConnectedByRangelessProperty(sourceUri, targetUri) ||
-							this.ontologyManager.isConnectedByRangelessProperty(targetUri, sourceUri)) { 
+				if (modelingConfiguration.getPropertiesWithOnlyDomain()) {
+					if (!sourceConnectedToTarget && this.ontologyManager.isConnectedByRangelessProperty(sourceUri, targetUri)) { 
 						logger.debug( sourceUri + " and " + targetUri + " are connected by an object property whose domain is " + sourceUri + " or " + targetUri);
-						link = new CompactObjectPropertyLink(id, ObjectPropertyType.WithOnlyDomain);
-						addLink(source, target, link);	
-						connected = true;
-					}
-				}
-				
-				if (modelingConfiguration.getPropertiesSubClass() && !connected) {
-					if (this.ontologyManager.isSubClass(sourceUri, targetUri, false) ||
-							this.ontologyManager.isSubClass(targetUri, sourceUri, false)) {
-						logger.debug( sourceUri + " and " + targetUri + " are connected by a subClassOf relation.");
-						link = new CompactSubClassLink(id);
+						link = new CompactObjectPropertyLink(id1, ObjectPropertyType.WithOnlyDomain);
 						addLink(source, target, link);
-						connected = true;
+						sourceConnectedToTarget = true;
+					}
+					if (!targetConnectedToSource && this.ontologyManager.isConnectedByRangelessProperty(targetUri, sourceUri)) { 
+						logger.debug( targetUri + " and " + sourceUri + " are connected by an object property whose domain is " + targetUri + " or " + sourceUri);
+						link = new CompactObjectPropertyLink(id2, ObjectPropertyType.WithOnlyDomain);
+						addLink(target, source, link);
+						targetConnectedToSource = true;
 					}
 				}
 				
-				if (modelingConfiguration.getPropertiesWithoutDomainRange() && !connected) {
+				if (modelingConfiguration.getPropertiesWithoutDomainRange() && !sourceConnectedToTarget && !targetConnectedToSource) {
 					if (this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(sourceUri, targetUri)) {// ||
 	//						this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(targetUri, sourceUri)) { 
-						link = new CompactObjectPropertyLink(id, ObjectPropertyType.WithoutDomainAndRange);
+						link = new CompactObjectPropertyLink(id1, ObjectPropertyType.WithoutDomainAndRange);
 						addLink(source, target, link);
-						connected = true;
+						link = new CompactObjectPropertyLink(id2, ObjectPropertyType.WithoutDomainAndRange);
+						addLink(target, source, link);
+						sourceConnectedToTarget = true;
+						targetConnectedToSource = true;
 					}
 				}
 
-				if (!connected) {
+				if (!sourceConnectedToTarget && modelingConfiguration.getPropertiesSubClass()) {
+					if (this.ontologyManager.isSubClass(sourceUri, targetUri, false)) {
+						logger.debug( sourceUri + " and " + targetUri + " are connected by a subClassOf relation.");
+						link = new CompactSubClassLink(id1);
+						addLink(source, target, link);
+						sourceConnectedToTarget = true;
+					}
+					if (!targetConnectedToSource && this.ontologyManager.isSubClass(targetUri, sourceUri, false)) {
+						logger.debug( targetUri + " and " + sourceUri + " are connected by a subClassOf relation.");
+						link = new CompactSubClassLink(id2);
+						addLink(target, source, link);
+						targetConnectedToSource = true;
+					}
+				}
+				
+				if (!sourceConnectedToTarget && !targetConnectedToSource) {
 					this.visitedSourceTargetPairs.add(n1.getId() + n2.getId());
 					logger.debug("did not put a link between (" + n1.getId() + ", " + n2.getId() + ")");
 				}
@@ -1245,7 +1270,6 @@ public class GraphBuilder {
 		logger.debug("exit>");
 	}
 	
-
 	public List<LabeledLink> getPossibleLinks(String sourceId, String targetId) {
 		return getPossibleLinks(sourceId, targetId, null, null);
 	}

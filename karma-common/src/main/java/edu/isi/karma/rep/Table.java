@@ -135,6 +135,19 @@ public class Table extends RepEntity {
 			r.addNestedTableToDataTable(hNode, this, factory);
 		}
 	}
+	
+	public int getRowIndex(Row r)
+	{
+		return rows.indexOf(r);
+	}
+	public Row getRow(int index)
+	{
+		if(0 <= index && index < rows.size())
+		{
+			return rows.get(index);
+		}
+		return null;
+	}
 
 	/**
 	 * @param startIndex

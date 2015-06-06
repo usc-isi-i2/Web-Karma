@@ -65,7 +65,10 @@ public class KR2RMLWorksheetHistoryCompatibilityVerifier {
 						JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
 						Command comm = null;
 						try {
-							comm = scf.createCommand(inputParamArr, workspace);
+							String model = Command.NEW_MODEL;
+							if(commObject.has(HistoryArguments.model.name()))
+								model = commObject.getString(HistoryArguments.model.name());
+							comm = scf.createCommand(inputParamArr, model, workspace);
 						} catch (JSONException | KarmaException e) {
 							logger.error("Unable to parse command from worksheet history");
 						}

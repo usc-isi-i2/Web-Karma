@@ -50,11 +50,11 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	protected SplitValuesCommand(String id, String worksheetId,
+	protected SplitValuesCommand(String id, String model, String worksheetId,
 			String hNodeId, String delimiter, String newColName, 
 			String newHNodeId,
 			String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.delimiter = delimiter;
 		this.newColName = newColName;
@@ -97,7 +97,8 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 		}
 		
 		if (columnName.equals(newColName)) {
-			splitCommaCommand = new SplitByCommaCommand(workspace.getFactory().getNewId("C"), worksheetId, hNodeId, delimiter, selectionId);
+			splitCommaCommand = new SplitByCommaCommand(workspace.getFactory().getNewId("C"), 
+					model, worksheetId, hNodeId, delimiter, selectionId);
 			return splitCommaCommand.doIt(workspace);
 		}
 

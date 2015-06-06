@@ -19,6 +19,7 @@ import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.common.OSUtils;
 import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommand.PreferencesKeys;
 import edu.isi.karma.controller.history.IHistorySaver;
 import edu.isi.karma.kr2rml.ErrorReport;
@@ -129,6 +130,9 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		mappingWriter.close();
 		writer.flush();
 		writer.close();
+		if(OSUtils.isWindows())
+			System.gc(); //Invoke gc for windows, else it gives error: The requested operation cannot be performed on a file with a user-mapped section open
+					//when the model is republished, and the original model is earlier open
 	}
 
 	@Override

@@ -86,8 +86,8 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		rdfPrefix, rdfNamespace, modelSparqlEndPoint
 	}
 
-	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String context, String selectionId) {
-		super(id, worksheetId, selectionId);
+	protected GenerateR2RMLModelCommand(String id, String model, String worksheetId, String url, String context, String selectionId) {
+		super(id, model, worksheetId, selectionId);
 		this.tripleStoreUrl = url;
 		this.graphContext = context;
 	}
@@ -249,7 +249,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		inputJSON.put(t);
 		if (newEdges.length() > 0 || initialEdges.length() > 0) {
 			try {
-				Command changeInternalNodeLinksCommand = cinlcf.createCommand(inputJSON, workspace);
+				Command changeInternalNodeLinksCommand = cinlcf.createCommand(inputJSON, model, workspace);
 				workspace.getCommandHistory().doCommand(changeInternalNodeLinksCommand, workspace);
 				uc.add(new HistoryUpdate(workspace.getCommandHistory()));
 				uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
@@ -314,7 +314,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 				UriBuilder builder = UriBuilder.fromPath(modelFileName);
 				String url = RESTserverAddress + "/R2RMLMapping/local/" + builder.build().toString();
 				SaveR2RMLModelCommandFactory factory = new SaveR2RMLModelCommandFactory();
-				SaveR2RMLModelCommand cmd = factory.createCommand(workspace, url, tripleStoreUrl, graphName, "URL");
+				SaveR2RMLModelCommand cmd = factory.createCommand(model, workspace, url, tripleStoreUrl, graphName, "URL");
 				cmd.doIt(workspace);
 				result &= cmd.getSuccessful();
 				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelUrl, url);

@@ -81,21 +81,22 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 	static {
 		try {
 			@SuppressWarnings("rawtypes")
-			Class entityExtractorClass = Class.forName("com.karma.extractionservice.Service");
+			Class entityExtractorClass = Class.forName("edu.isi.karma.services.entityExtraction.Service");
 			entityExtractor = entityExtractorClass.newInstance();
+			logger.info("Got Entity Extraction Service");
 			entityExtractorMethod =
 					entityExtractorClass.getMethod("execute", new Class[]{String.class});
-			
+			logger.info("Got Entity Extraction Service Method");
 		} catch (Exception ie) {
 			logger.info("Entity Extraction Service Class not found. Will use the Service URL");
 			logger.debug("Entity Extraction Service Class could not be loaded", ie);
 		}
 		
 	}
-	protected ExtractEntitiesCommand(String id, String worksheetId,
+	protected ExtractEntitiesCommand(String id, String model, String worksheetId,
 			String hNodeId, String extractionURL, 
 			String entitiesToBeExt, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.extractionURL = extractionURL;
 		this.entitiesToBeExt = entitiesToBeExt;
@@ -303,7 +304,7 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 		
 		try {
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
-			cmd = (AddValuesCommand) factory.createCommand(addValues, workspace, hNodeId, worksheetId,
+			cmd = (AddValuesCommand) factory.createCommand(addValues, model, workspace, hNodeId, worksheetId,
 					ht.getId(), HNodeType.Transformation, selection.getName());
 			
 			HNode hnode = repFactory.getHNode(hNodeId);

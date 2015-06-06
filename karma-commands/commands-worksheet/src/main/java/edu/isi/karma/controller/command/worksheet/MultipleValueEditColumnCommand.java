@@ -24,8 +24,8 @@ public class MultipleValueEditColumnCommand extends WorksheetCommand {
 
 	private static Logger logger = LoggerFactory.getLogger(MultipleValueEditColumnCommand.class);
 	
-	protected MultipleValueEditColumnCommand(String id, String worksheetId, String hNodeID, Map<String, String> rowValueMap) {
-		super(id, worksheetId);
+	protected MultipleValueEditColumnCommand(String id, String model, String worksheetId, String hNodeID, Map<String, String> rowValueMap) {
+		super(id, model, worksheetId);
 		this.hNodeID = hNodeID;
 		this.newRowValueMap = rowValueMap;
 	}

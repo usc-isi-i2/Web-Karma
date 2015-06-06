@@ -180,7 +180,4 @@
   </profile>
 </profiles>
 
-<distributionManagement>
-		<repository></repository>
-	</distributionManagement>
 </project>

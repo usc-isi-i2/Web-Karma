@@ -39,8 +39,8 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 public class ModelingConfiguration {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelingConfiguration.class);
+
 	private String contextId;
-	private Boolean manualAlignment;
 	private Boolean thingNode;
 	private Boolean nodeClosure;
 	private Boolean propertiesDirect;
@@ -53,21 +53,23 @@ public class ModelingConfiguration {
 	private String karmaSourcePrefix;
 	private String karmaServicePrefix; 
 
-//	private static String modelsJsonDir;
-//	private static String modelsGraphvizDir;
-//	private static String alignmentGraphDir; 
+	private Boolean ontologyAlignment;
+	private Boolean knownModelsAlignment;
 
-	private Integer maxCandidateModels;
-	private Integer maxQueuedMappigs;
+
+	private Integer numCandidateMappings;
+	private Integer mappingBranchingFactor;
+	private Integer topKSteinerTree;
+
 
 	private Double scoringConfidenceCoefficient;
 	private Double scoringCoherenceSCoefficient;
 	private Double scoringSizeCoefficient;
 
 	private Boolean learnerEnabled;
-	private Boolean learnAlignmentEnabled;
+	private Boolean addOntologyPaths;
+//	private Boolean learnAlignmentEnabled;
 	private Boolean multipleSamePropertyPerNode;
-
 	private Boolean storeOldHistory;
 
 	private Boolean showModelsWithoutMatching;
@@ -77,10 +79,21 @@ public class ModelingConfiguration {
 	private String defaultModelingProperties = 
 			"##########################################################################################" + newLine + 
 			"#" + newLine + 
-			"# Graph Builder" + newLine + 
+			"# Alignment" + newLine + 
 			"#" + newLine + 
 			"##########################################################################################" + newLine + 
-			"manual.alignment=false" + newLine + 
+			"" + newLine + 
+//			"manual.alignment=false" + newLine + 
+			"# turning off the next two flags is equal to manual alignment" + newLine + 
+			"ontology.alignment=false" + newLine + 
+			"knownmodels.alignment=false" + newLine + 
+			"" + newLine + 
+			"##########################################################################################" + newLine + 
+			"#" + newLine + 
+			"# Graph Builder" + newLine + 
+			"# (the flags in this section will only take effect when the \"ontology.alignment\" is true)" + newLine +
+			"#" + newLine + 
+			"##########################################################################################" + newLine + 
 			"" + newLine + 
 			"thing.node=false" + newLine + 
 			"" + newLine + 
@@ -98,6 +111,7 @@ public class ModelingConfiguration {
 			"# Prefixes" + newLine + 
 			"#" + newLine + 
 			"##########################################################################################" + newLine + 
+			"" + newLine + 
 			"karma.source.prefix=http://isi.edu/integration/karma/sources/" + newLine + 
 			"karma.service.prefix=http://isi.edu/integration/karma/services/" + newLine + 
 			"" + newLine + 
@@ -106,28 +120,29 @@ public class ModelingConfiguration {
 			"# Model Learner" + newLine + 
 			"#" + newLine + 
 			"##########################################################################################" + newLine + 
+			"" + newLine + 
 			"learner.enabled=true" + newLine + 
 			"" + newLine + 
-			"learn.alignment.enabled=false" + newLine + 
+			"add.ontology.paths=true" + newLine + 
 			"" + newLine + 
-			"max.queued.mappings=100" + newLine + 
-			"max.candidate.models=5" + newLine + 
+//			"learn.alignment.enabled=false" + newLine + 
+//			"" + newLine + 
+			"mapping.branching.factor=10" + newLine + 
+			"num.candidate.mappings=10" + newLine + 
+			"topk.steiner.tree=20" + newLine + 
 			"multiple.same.property.per.node=false" + newLine + 
 			"" + newLine + 
 			"# scoring coefficients, should be in range [0..1]" + newLine + 
 			"scoring.confidence.coefficient=1.0" + newLine + 
 			"scoring.coherence.coefficient=1.0" + newLine + 
-			"scoring.size.coefficient=1.0" + newLine + 
+			"scoring.size.coefficient=0.5" + newLine + 
 			"" + newLine + 
-//			"models.json.dir=models-json/" + newLine + 
-//			"models.graphviz.dir=models-graphviz/" + newLine + 
-//			"alignment.graph.dir=alignment-graph/" + newLine +
-//			"" + newLine + 
 			"##########################################################################################" + newLine + 
 			"#" + newLine + 
 			"# Other Settings" + newLine + 
 			"#" + newLine + 
 			"##########################################################################################" + newLine + 
+			"" + newLine + 
 			"models.display.nomatching=false" + newLine +
 			"history.store.old=false"
 			;
@@ -137,7 +152,11 @@ public class ModelingConfiguration {
 		try {
 			Properties modelingProperties = loadParams();
 
-			manualAlignment = Boolean.parseBoolean(modelingProperties.getProperty("manual.alignment", "false"));
+//			manualAlignment = Boolean.parseBoolean(modelingProperties.getProperty("manual.alignment", "false"));
+
+			ontologyAlignment = Boolean.parseBoolean(modelingProperties.getProperty("ontology.alignment", "false"));
+
+			knownModelsAlignment = Boolean.parseBoolean(modelingProperties.getProperty("knownmodels.alignment", "false"));
 
 			thingNode = Boolean.parseBoolean(modelingProperties.getProperty("thing.node", "false"));
 
@@ -160,15 +179,15 @@ public class ModelingConfiguration {
 
 			learnerEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learner.enabled", "true"));
 
-			learnAlignmentEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learn.alignment.enabled", "false"));
+			addOntologyPaths = Boolean.parseBoolean(modelingProperties.getProperty("add.ontology.paths", "true"));
 
-//			modelsJsonDir = modelingProperties.getProperty("models.json.dir", "models-json/");
-//			modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir", "models-graphviz/");
-//			alignmentGraphDir = modelingProperties.getProperty("alignment.graph.dir", "alignment-graph/");
+//			learnAlignmentEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learn.alignment.enabled", "false"));
 
-			maxQueuedMappigs = Integer.parseInt(modelingProperties.getProperty("max.queued.mappings", "100"));
+			mappingBranchingFactor = Integer.parseInt(modelingProperties.getProperty("mapping.branching.factor", "10"));
 
-			maxCandidateModels = Integer.parseInt(modelingProperties.getProperty("max.candidate.models", "5"));
+			numCandidateMappings = Integer.parseInt(modelingProperties.getProperty("num.candidate.mappings", "10"));
+
+			topKSteinerTree = Integer.parseInt(modelingProperties.getProperty("topk.steiner.tree", "20"));
 
 			multipleSamePropertyPerNode = Boolean.parseBoolean(modelingProperties.getProperty("multiple.same.property.per.node", "false"));
 
@@ -176,7 +195,7 @@ public class ModelingConfiguration {
 
 			scoringCoherenceSCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.coherence.coefficient", "1"));
 
-			scoringSizeCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.size.coefficient", "1"));
+			scoringSizeCoefficient = Double.parseDouble(modelingProperties.getProperty("scoring.size.coefficient", "0.5"));
 
 			storeOldHistory = Boolean.parseBoolean(modelingProperties.getProperty("history.store.old", "false"));
 
@@ -209,7 +228,12 @@ public class ModelingConfiguration {
 			logger.debug("Written default properties to modeling.properties");
 		}
 
-		prop.load(new FileInputStream(file));
+		FileInputStream fis = new FileInputStream(file);
+		try {
+			prop.load(fis);
+		} finally {
+			fis.close();
+		}
 		logger.debug("Done Loading modeling.properties");
 
 
@@ -218,7 +242,7 @@ public class ModelingConfiguration {
 
 	public Boolean getThingNode() {
 
-		if (getManualAlignment() == true)
+		if (getOntologyAlignment() == false)
 			return false;
 
 		if (thingNode == null)
@@ -229,7 +253,7 @@ public class ModelingConfiguration {
 
 	public Boolean getNodeClosure() {
 
-		if (getManualAlignment() == true)
+		if (getOntologyAlignment() == false)
 			return false;
 
 		if (nodeClosure == null)
@@ -238,12 +262,28 @@ public class ModelingConfiguration {
 		return nodeClosure;
 	}
 
-	public Boolean getManualAlignment() {
-		if (manualAlignment == null) {
+//	public static Boolean getManualAlignment() {
+//		if (manualAlignment == null) {
+//			load();
+//			logger.debug("Manual Alignment:" + manualAlignment);
+//		}
+//		return manualAlignment;
+//	}
+	
+	public Boolean getOntologyAlignment() {
+		if (ontologyAlignment == null) {
 			load();
-			logger.debug("Manual Alignment:" + manualAlignment);
+			logger.debug("Use Ontology in Alignment:" + ontologyAlignment);
 		}
-		return manualAlignment;
+		return ontologyAlignment;
+	}
+	
+	public Boolean getKnownModelsAlignment() {
+		if (knownModelsAlignment == null) {
+			load();
+			logger.debug("Use Known Models in Alignment:" + knownModelsAlignment);
+		}
+		return knownModelsAlignment;
 	}
 
 	public Boolean getPropertiesDirect() {
@@ -294,34 +334,22 @@ public class ModelingConfiguration {
 		return karmaServicePrefix.trim();
 	}
 
-//	public static String getModelsJsonDir() {
-//		if (modelsJsonDir == null)
-//			load();
-//		return modelsJsonDir;
-//	}
-//
-//	public static String getModelsGraphvizDir() {
-//		if (modelsGraphvizDir == null)
-//			load();
-//		return modelsGraphvizDir;
-//	}
-//
-//	public static String getAlignmentGraphDir() {
-//		if (alignmentGraphDir == null)
-//			load();
-//		return alignmentGraphDir;
-//	}
-
-	public Integer getMaxCandidateModels() {
-		if (maxCandidateModels == null)
+	public Integer getNumCandidateMappings() {
+		if (numCandidateMappings == null)
 			load();
-		return maxCandidateModels;
+		return numCandidateMappings;
 	}
 
-	public Integer getMaxQueuedMappigs() {
-		if (maxQueuedMappigs == null)
+	public Integer getMappingBranchingFactor() {
+		if (mappingBranchingFactor == null)
 			load();
-		return maxQueuedMappigs;
+		return mappingBranchingFactor;
+	}
+	
+	public Integer getTopKSteinerTree() {
+		if (topKSteinerTree == null)
+			load();
+		return topKSteinerTree;
 	}
 
 	public Double getScoringConfidenceCoefficient() {
@@ -348,11 +376,17 @@ public class ModelingConfiguration {
 		return learnerEnabled;
 	}
 
-	public boolean isLearnAlignmentEnabled() {
-		if (learnAlignmentEnabled == null)
+	public boolean getAddOntologyPaths() {
+		if (addOntologyPaths == null)
 			load();
-		return learnAlignmentEnabled;
+		return addOntologyPaths;
 	}
+
+//	public static boolean isLearnAlignmentEnabled() {
+//		if (learnAlignmentEnabled == null)
+//			load();
+//		return learnAlignmentEnabled;
+//	}
 	
 	public boolean isStoreOldHistoryEnabled() {
 		if (storeOldHistory == null)
@@ -376,9 +410,10 @@ public class ModelingConfiguration {
 		return multipleSamePropertyPerNode;
 	}
 
-	public void setManualAlignment(Boolean newManualAlignment)
+	public void setManualAlignment()
 	{
-		manualAlignment = newManualAlignment;
+		ontologyAlignment = false;
+		knownModelsAlignment = false;
 	}
 
 }

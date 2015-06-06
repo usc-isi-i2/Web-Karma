@@ -16,7 +16,7 @@ public class PublishReportCommandFactory extends CommandFactory {
 			Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId
 				.name());
-		return new PublishReportCommand(getNewId(workspace), worksheetId);
+		return new PublishReportCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId);
 	}
 
 	@Override

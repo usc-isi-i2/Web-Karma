@@ -35,7 +35,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ApplyHistoryFromR2RMLModelCommandFactory extends CommandFactory {
 	private enum Arguments {
-		worksheetId, override
+		worksheetId, override, url
 	}
 	
 	@Override
@@ -43,14 +43,22 @@ public class ApplyHistoryFromR2RMLModelCommandFactory extends CommandFactory {
 			Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
-		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request, contextParameters.getParameterValue(ContextParameter.USER_UPLOADED_DIR));
+	
 		boolean override = Boolean.parseBoolean(request.getParameter(Arguments.override.name()));
-		return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), uploadedFile, worksheetId, override);
+		String url = request.getParameter(Arguments.url.name());
+		if(url == null) {
+			File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request, contextParameters.getParameterValue(ContextParameter.USER_UPLOADED_DIR));
+			return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), 
+					Command.NEW_MODEL, uploadedFile, worksheetId, override);
+		} else {
+			return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), 
+					Command.NEW_MODEL, url, worksheetId, override);
+		}
 	}
 	
-	public Command createCommandFromFile(String worksheetId, File uploadedFile,
+	public Command createCommandFromFile(String model, String worksheetId, File uploadedFile,
 			Workspace workspace, boolean override) {
-		return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), uploadedFile, worksheetId, override);
+		return new ApplyHistoryFromR2RMLModelCommand(getNewId(workspace), model, uploadedFile, worksheetId, override);
 	}
 
 	@Override

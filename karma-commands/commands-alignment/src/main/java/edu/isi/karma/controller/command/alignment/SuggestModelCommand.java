@@ -54,11 +54,15 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSemanticTypeStatus;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.webserver.WorkspaceKarmaHomeRegistry;
+import edu.isi.karma.view.VWorksheet;
+import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.VWorkspaceRegistry;
 
 
 public class SuggestModelCommand extends WorksheetSelectionCommand {
@@ -72,8 +76,8 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(SuggestModelCommand.class);
 
-	protected SuggestModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate, String selectionId) {
-		super(id, worksheetId, selectionId);
+	protected SuggestModelCommand(String id, String model, String worksheetId, boolean addVWorksheetUpdate, String selectionId) {
+		super(id, model, worksheetId, selectionId);
 //		this.addVWorksheetUpdate = addVWorksheetUpdate;
 		
 		/** NOTE Not saving this command in history for now since we are 
@@ -133,18 +137,31 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 			
 			List<HNode> orderedNodeIds = new ArrayList<HNode>();
 			worksheet.getHeaders().getSortedLeafHNodes(orderedNodeIds);
+			
+			List<String> visibleHNodeIds = null;
+			VWorkspace vWorkspace = VWorkspaceRegistry.getInstance().getVWorkspace(workspace.getId());
+			if (vWorkspace != null) {
+				VWorksheet viewWorksheet = vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
+				visibleHNodeIds = viewWorksheet.getHeaderVisibleLeafNodes();
+			}
+						
 			if (orderedNodeIds != null) {
 				for (int i = 0; i < orderedNodeIds.size(); i++)
 				{
 					String hNodeId = orderedNodeIds.get(i).getId();
+
+					if (visibleHNodeIds != null && !visibleHNodeIds.contains(hNodeId))
+						continue;
+
 					ColumnNode cn = alignment.getColumnNodeByHNodeId(hNodeId);
 					
-					if (!cn.hasUserType())
+					if (cn.getSemanticTypeStatus() == ColumnSemanticTypeStatus.NotAssigned)
 					{
 						worksheet.getSemanticTypes().unassignColumnSemanticType(hNodeId);
 						List<SemanticType> suggestedSemanticTypes = 
 								new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4, selection);
 						cn.setLearnedSemanticTypes(suggestedSemanticTypes);
+						cn.includeInAutoModel();
 					} 
 				}
 			}
@@ -159,7 +176,8 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 
 		steinerNodes = alignment.computeSteinerNodes();
 		ModelLearner modelLearner = null;
-		if (modelingConfiguration.isLearnAlignmentEnabled()) 
+
+		if (modelingConfiguration.getKnownModelsAlignment()) 
 			modelLearner = new ModelLearner(alignment.getGraphBuilder(), steinerNodes);
 		else
 			modelLearner = new ModelLearner(ontologyManager, alignment.getLinksByStatus(LinkStatus.ForcedByUser), steinerNodes);

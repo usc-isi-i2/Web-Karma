@@ -20,9 +20,9 @@ import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class RepeatPythonTransformationCommand extends PythonTransformationCommand {
-	public RepeatPythonTransformationCommand(String id, String worksheetId, 
+	public RepeatPythonTransformationCommand(String id, String model, String worksheetId, 
 			String hNodeId, String transformCode, String selectionId) {
-		super(id, transformCode, worksheetId, hNodeId, "error", selectionId);
+		super(id, model, transformCode, worksheetId, hNodeId, "error", selectionId);
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class RepeatPythonTransformationCommand extends PythonTransformationComma
 			}
 			JSONArray multiCellEditInput = getMultiCellValueEditInputJSON(transformedRows, hNodeId);
 			MultipleValueEditColumnCommandFactory mfc = new MultipleValueEditColumnCommandFactory();
-			MultipleValueEditColumnCommand mvecc =  (MultipleValueEditColumnCommand) mfc.createCommand(multiCellEditInput, workspace);
+			MultipleValueEditColumnCommand mvecc =  (MultipleValueEditColumnCommand) mfc.createCommand(multiCellEditInput, model, workspace);
 			mvecc.doIt(workspace);
 		}catch(Exception e) {
 			isError = true;

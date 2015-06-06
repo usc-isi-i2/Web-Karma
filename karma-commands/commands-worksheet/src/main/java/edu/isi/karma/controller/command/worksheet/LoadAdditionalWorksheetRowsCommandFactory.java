@@ -38,6 +38,7 @@ public class LoadAdditionalWorksheetRowsCommandFactory extends CommandFactory {
 		String vWorksheetId = request.getParameter(Arguments.worksheetId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new LoadAdditionalWorksheetRowsCommand(getNewId(workspace), 
+				Command.NEW_MODEL,
 				tableId, vWorksheetId, selectionName);
 	}
 

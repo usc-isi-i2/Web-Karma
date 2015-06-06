@@ -53,8 +53,8 @@ public class AddRowCommand extends WorksheetCommand {
 		updateType, hNodeId, worksheetId
 	}
 	
-	protected AddRowCommand(String id,String worksheetId, String hNodeId) {
-		super(id, worksheetId);
+	protected AddRowCommand(String id, String model, String worksheetId, String hNodeId) {
+		super(id, model, worksheetId);
 		this.hNodeId = hNodeId;
 		
 		addTag(CommandTag.Transformation);

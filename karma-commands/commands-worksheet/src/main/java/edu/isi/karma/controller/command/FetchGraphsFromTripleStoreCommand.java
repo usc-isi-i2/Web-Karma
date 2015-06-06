@@ -51,8 +51,8 @@ public class FetchGraphsFromTripleStoreCommand extends Command {
 		return tripleStoreUrl;
 	}
 
-	protected FetchGraphsFromTripleStoreCommand(String id, String url){
-		super(id);
+	protected FetchGraphsFromTripleStoreCommand(String id, String model, String url){
+		super(id, model);
 		this.tripleStoreUrl=url;
 	}
 

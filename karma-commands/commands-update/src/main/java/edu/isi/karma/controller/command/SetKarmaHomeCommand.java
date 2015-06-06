@@ -22,8 +22,8 @@ public class SetKarmaHomeCommand extends Command {
 	enum PreferenceKeys {
 		directory
 	}
-	protected SetKarmaHomeCommand(String id, String directory) {
-		super(id);
+	protected SetKarmaHomeCommand(String id, String model, String directory) {
+		super(id, model);
 		if(!directory.endsWith(File.separator))
 			this.directory = directory + File.separator;
 		else

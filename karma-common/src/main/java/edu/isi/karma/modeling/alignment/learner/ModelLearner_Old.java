@@ -203,7 +203,8 @@ public class ModelLearner_Old {
 						new SortableSemanticModel_Old(sm, sn);
 				sortableSemanticModels.add(sortableSemanticModel);
 			}
-			if (count == ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId()).getKarmaHome()).getMaxCandidateModels())
+
+			if (count == ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId()).getKarmaHome()).getNumCandidateMappings())
 				break;
 		}
 
@@ -800,8 +801,9 @@ public class ModelLearner_Old {
 
 				List<SortableSemanticModel_Old> topHypotheses = null;
 				if (hypothesisList != null) {
-					topHypotheses = hypothesisList.size() > modelingConfiguration.getMaxCandidateModels() ? 
-							hypothesisList.subList(0, modelingConfiguration.getMaxCandidateModels()) : 
+
+					topHypotheses = hypothesisList.size() > modelingConfiguration.getNumCandidateMappings() ? 
+							hypothesisList.subList(0, modelingConfiguration.getNumCandidateMappings()) : 
 								hypothesisList;
 				}
 

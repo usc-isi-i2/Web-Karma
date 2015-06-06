@@ -34,7 +34,8 @@ public class ImportServiceCommandFactory extends CommandFactory {
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
-		return new ImportServiceCommand(getNewId(workspace), 
+		return new ImportServiceCommand(getNewId(workspace),
+				Command.NEW_MODEL,
 				request.getParameter(Arguments.serviceUrl.name()),
 				request.getParameter(Arguments.worksheetName.name()),
 				Boolean.parseBoolean(request.getParameter(Arguments.includeInputAttributes.name())),

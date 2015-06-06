@@ -56,8 +56,8 @@ public class GetCurrentLinksOfInternalNodeCommand extends Command {
 		incoming, outgoing
 	}
 	
-	protected GetCurrentLinksOfInternalNodeCommand(String id, String nodeId, String alignmentId) {
-		super(id);
+	protected GetCurrentLinksOfInternalNodeCommand(String id, String model, String nodeId, String alignmentId) {
+		super(id, model);
 		this.nodeId = nodeId;
 		this.alignmentId = alignmentId;
 	}
@@ -85,9 +85,15 @@ public class GetCurrentLinksOfInternalNodeCommand extends Command {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		final Set<LabeledLink> incomingLinks = alignment.getCurrentIncomingLinksToNode(nodeId);
-		final Set<LabeledLink> outgoingLinks = alignment.getCurrentOutgoingLinksToNode(nodeId);
-		
+		final Set<LabeledLink> incomingLinks;
+		final Set<LabeledLink> outgoingLinks;
+		if(this.isExecutedInBatch()) {
+			incomingLinks = alignment.getCurrentIncomingLinksToNode(nodeId);
+			outgoingLinks = alignment.getCurrentOutgoingLinksToNode(nodeId);
+		} else {
+			incomingLinks = alignment.getIncomingLinksInTree(nodeId);
+			outgoingLinks = alignment.getOutgoingLinksInTree(nodeId);
+		}
 		UpdateContainer upd = new UpdateContainer(new AbstractUpdate() {
 			@Override
 			public void generateJson(String prefix, PrintWriter pw,

@@ -72,10 +72,10 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	protected SetSemanticTypeCommand(String id, String worksheetId, String hNodeId, 
+	protected SetSemanticTypeCommand(String id, String model, String worksheetId, String hNodeId, 
 			JSONArray typesArr, boolean trainAndShowUpdates, 
 			String rdfLiteralType, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.typesArr = typesArr;
@@ -210,7 +210,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				// Check if a semantic type already exists for the column
 				ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 				columnNode.setRdfLiteralType(rdfLiteralType);
-				List<LabeledLink> columnNodeIncomingLinks = alignment.getIncomingLinks(columnNode.getId());
+				List<LabeledLink> columnNodeIncomingLinks = alignment.getIncomingLinksInGraph(columnNode.getId());
 				LabeledLink oldIncomingLinkToColumnNode = null;
 				Node oldDomainNode = null;
 				if (columnNodeIncomingLinks != null && !columnNodeIncomingLinks.isEmpty()) { // SemanticType already assigned
@@ -260,19 +260,17 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 //				newType = new SemanticType(hNodeId, classNode.getLabel(), null, SemanticType.Origin.User, 1.0,isPartOfKey);
 				
 				List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();
-				if (userSemanticTypes == null) {
-					userSemanticTypes = new ArrayList<SemanticType>();
-					columnNode.setUserSemanticTypes(userSemanticTypes);
-				}
 				boolean duplicateSemanticType = false;
-				for (SemanticType st : userSemanticTypes) {
-					if (st.getModelLabelString().equalsIgnoreCase(newType.getModelLabelString())) {
-						duplicateSemanticType = true;
-						break;
+				if (userSemanticTypes != null) {
+					for (SemanticType st : userSemanticTypes) {
+						if (st.getModelLabelString().equalsIgnoreCase(newType.getModelLabelString())) {
+							duplicateSemanticType = true;
+							break;
+						}
 					}
 				}
 				if (!duplicateSemanticType)
-					userSemanticTypes.add(newType);
+					columnNode.assignUserType(newType);
 				
 				if(newLink != null) {
 					alignment.changeLinkStatus(newLink.getId(),

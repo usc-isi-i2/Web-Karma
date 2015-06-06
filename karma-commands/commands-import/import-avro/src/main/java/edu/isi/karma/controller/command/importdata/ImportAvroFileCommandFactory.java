@@ -48,8 +48,9 @@ public class ImportAvroFileCommandFactory extends CommandFactory {
 		
                 
         if (request.getParameter("revisedWorksheet") == null) {
-        	return new ImportAvroFileCommand(getNewId(workspace), uploadedFile);
+        	return new ImportAvroFileCommand(getNewId(workspace), Command.NEW_MODEL, uploadedFile);
         }
+
                 
         return new ImportAvroFileCommand(getNewId(workspace), request.getParameter("revisedWorksheet"), uploadedFile);
 	}

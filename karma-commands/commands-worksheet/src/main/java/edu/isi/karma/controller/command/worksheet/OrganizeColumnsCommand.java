@@ -22,8 +22,8 @@ public class OrganizeColumnsCommand extends WorksheetCommand {
 	private ArrayList<VHNode> prevOrderedColumns;
 	private JSONArray orderedColumns;
 
-	protected OrganizeColumnsCommand(String id, String workspaceId, String worksheetId, org.json.JSONArray orderedColumns) {
-		super(id, worksheetId);
+	protected OrganizeColumnsCommand(String id, String model, String workspaceId, String worksheetId, org.json.JSONArray orderedColumns) {
+		super(id, model, worksheetId);
 		this.workspaceId = workspaceId;
 		this.orderedColumns = orderedColumns;
 

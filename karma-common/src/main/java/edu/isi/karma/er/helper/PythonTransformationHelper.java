@@ -37,6 +37,8 @@ public class PythonTransformationHelper {
 	private static String isEmptyDefStatement = null;
 	private static String hasSelectedRowsStatement = null;
 	private static String importStatement = null;
+	private static String valueFromNestedColumnByIndexDefStatement = null;
+	private static String getRowIndexDefStatement = null;
 	public static String getPyObjectValueAsString(PyObject obj) {
 		if (obj == null)
 			return "";
@@ -109,6 +111,19 @@ public class PythonTransformationHelper {
 		return importStatement;
 	}
 
+	public static String getRowIndexDefStatement()
+	{
+		if(getRowIndexDefStatement == null)
+		{
+			StringBuilder methodStmt = new StringBuilder();
+			methodStmt.append("def getRowIndex():\n");
+			methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
+			methodStmt.append("	node = factory.getNode(nodeid)\n");
+			methodStmt.append("	return node.getRowIndex()\n");
+			getRowIndexDefStatement = methodStmt.toString();
+		}
+		return getRowIndexDefStatement;
+	}
 	public static String getGetValueDefStatement() {
 
 		if(valueDefStatement == null)
@@ -116,13 +131,17 @@ public class PythonTransformationHelper {
 			StringBuilder methodStmt = new StringBuilder();
 			methodStmt.append("def getValue(columnName):\n");
 			methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
+			methodStmt.append("	worksheet = factory.getWorksheet(worksheetId)\n");
 			methodStmt.append("	node = factory.getNode(nodeid)\n");
 			methodStmt.append("	targetNode = node.getNeighborByColumnName(columnName, factory)\n");
 			methodStmt.append("	if targetNode is not None:\n");
 			methodStmt.append("		command.addInputColumns(targetNode.getHNodeId())\n");
-			methodStmt.append("		value = targetNode.getValue()\n");
+			methodStmt.append("		superSelection = worksheet.getSuperSelectionManager().getSuperSelection(selectionName)\n");
+			methodStmt.append("		value = targetNode.serializeToJSON(superSelection, factory)\n");
 			methodStmt.append("		if value is not None:\n");
-			methodStmt.append("			valueAsString = value.asString()\n");
+			methodStmt.append("			valueAsString = value\n");
+			methodStmt.append("			if (not isinstance(value, str)) and (not isinstance(value, unicode)):\n");
+			methodStmt.append("				valueAsString = value.toString()\n");
 			methodStmt.append("			if valueAsString is not None:\n");
 			methodStmt.append("				return valueAsString\n");
 			methodStmt.append("	return ''\n");
@@ -154,6 +173,31 @@ public class PythonTransformationHelper {
 		return hasSelectedRowsStatement;
 	}
 
+	
+	public static String getGetValueFromNestedColumnByIndexDefStatement() {
+		
+		if(valueFromNestedColumnByIndexDefStatement == null)
+		{
+			StringBuilder methodStmt = new StringBuilder();
+			methodStmt.append("def getValueFromNestedColumnByIndex(columnName, nestedColumnName, index):\n");
+			methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
+			methodStmt.append("	node = factory.getNode(nodeid)\n");
+			methodStmt.append("	targetNode = node.getNeighborByColumnNameWithNestedColumnByRowIndex(columnName, factory, nestedColumnName, index)\n");
+			methodStmt.append("	if targetNode is not None:\n");
+			methodStmt.append("		command.addInputColumns(targetNode.getHNodeId())\n");
+			methodStmt.append("		value = targetNode.getValue()\n");
+			methodStmt.append("		if value is not None:\n");
+			methodStmt.append("			valueAsString = value.asString()\n");
+			methodStmt.append("			if valueAsString is not None:\n");
+			methodStmt.append("				return valueAsString\n");
+			methodStmt.append("	return ''\n");
+			valueFromNestedColumnByIndexDefStatement = methodStmt.toString();
+		}
+		return valueFromNestedColumnByIndexDefStatement;
+	}
+	
+	
+	
 	public static String getIsEmptyDefStatement() {
 
 		if(isEmptyDefStatement == null)

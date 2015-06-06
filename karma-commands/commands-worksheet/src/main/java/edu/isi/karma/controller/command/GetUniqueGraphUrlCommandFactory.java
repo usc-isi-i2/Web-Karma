@@ -33,6 +33,7 @@ public class GetUniqueGraphUrlCommandFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 
 		GetUniqueGraphUrlCommand comm = new GetUniqueGraphUrlCommand(getNewId(workspace),
+				Command.NEW_MODEL,
 				request.getParameter(Arguments.worksheetId.name()),
 				request.getParameter(Arguments.tripleStoreUrl.name()),
 				request.getParameter(Arguments.graphUri.name())

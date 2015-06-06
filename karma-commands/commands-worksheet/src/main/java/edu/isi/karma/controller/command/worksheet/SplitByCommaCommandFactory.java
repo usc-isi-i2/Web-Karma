@@ -46,19 +46,19 @@ public class SplitByCommaCommandFactory extends JSONInputCommandFactory {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String delimiter = request.getParameter(Arguments.delimiter.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new SplitByCommaCommand(getNewId(workspace), worksheetId, 
+		return new SplitByCommaCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, 
 				hNodeId, delimiter, 
 				selectionName);
 	}
 
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String delimiter = HistoryJsonUtil.getStringValue(Arguments.delimiter.name(), inputJson);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		SplitByCommaCommand comm = new SplitByCommaCommand(getNewId(workspace), 
+		SplitByCommaCommand comm = new SplitByCommaCommand(getNewId(workspace), model,
 				worksheetId, hNodeId,
 				delimiter, 
 				selectionName);

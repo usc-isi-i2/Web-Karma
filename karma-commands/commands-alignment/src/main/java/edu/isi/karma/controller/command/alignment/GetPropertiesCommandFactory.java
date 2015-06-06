@@ -24,7 +24,8 @@ public class GetPropertiesCommandFactory extends CommandFactory {
 		INTERNAL_PROP_RANGE range = INTERNAL_PROP_RANGE.valueOf(
 				request.getParameter(Arguments.propertiesRange.name()));
 		
-		return new GetPropertiesCommand(getNewId(workspace), worksheetId, range, classURI, domainURI, rangeURI);
+		return new GetPropertiesCommand(getNewId(workspace), 
+				Command.NEW_MODEL, worksheetId, range, classURI, domainURI, rangeURI);
 	}
 
 	@Override

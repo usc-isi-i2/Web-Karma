@@ -52,8 +52,8 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetSelectionCom
 	private String nodeUri;
 	private String columnUri;
 	private final Integer limit = 100;
-	public SearchForDataToAugmentIncomingCommand(String id, String url, String context, String nodeUri, String worksheetId, String columnUri, String selectionId) {
-		super(id, worksheetId, selectionId);
+	public SearchForDataToAugmentIncomingCommand(String id, String model, String url, String context, String nodeUri, String worksheetId, String columnUri, String selectionId) {
+		super(id, model, worksheetId, selectionId);
 		this.tripleStoreUrl = url;
 		this.context = context;
 		this.nodeUri = nodeUri;

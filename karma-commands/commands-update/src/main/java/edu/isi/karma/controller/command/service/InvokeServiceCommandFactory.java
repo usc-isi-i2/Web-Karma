@@ -39,6 +39,7 @@ public class InvokeServiceCommandFactory extends CommandFactory {
 		String hNodeId =request.getParameter(Arguments.hNodeId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new InvokeServiceCommand(getNewId(workspace), 
+				Command.NEW_MODEL,
 				getWorksheetId(request, workspace), hNodeId, 
 				selectionName);
 	}

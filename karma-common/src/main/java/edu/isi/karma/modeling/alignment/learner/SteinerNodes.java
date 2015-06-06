@@ -43,19 +43,21 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	private Set<Node> nodes;
 	private Map<ColumnNode, ColumnNode> mappingToSourceColumns;
 	private Confidence confidence;
-	private Coherence nodeCoherence;
+	private NodeCoherence nodeCoherence;
 //	private int frequency;
 	private double score;
 	private int semanticTypesCount;
 	private int nonModelNodesCount; // nodes that do not belong to any pattern
+	private Map<ColumnNode, SemanticTypeMapping> columnNodeInfo;
 	private String contextId;
 	public SteinerNodes(String contextId) {
 		this.contextId = contextId;
 		this.nodes = new HashSet<Node>();
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
+		this.columnNodeInfo = new HashMap<ColumnNode, SemanticTypeMapping>();
 		this.semanticTypesCount = 0;
 		this.confidence = new Confidence();
-		this.nodeCoherence = new Coherence();
+		this.nodeCoherence = new NodeCoherence();
 		this.nonModelNodesCount = 0;
 //		this.frequency = 0;
 		this.score = 0.0;
@@ -65,8 +67,9 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.contextId = contextId;
 		this.nodes = new HashSet<Node>(steinerNodes.getNodes());
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>(steinerNodes.getMappingToSourceColumns());
+		this.columnNodeInfo = new HashMap<ColumnNode, SemanticTypeMapping>(steinerNodes.getColumnNodeInfo());
 		this.confidence = new Confidence(steinerNodes.getConfidence());
-		this.nodeCoherence = new Coherence(steinerNodes.getCoherence());
+		this.nodeCoherence = new NodeCoherence(steinerNodes.getCoherence());
 //		this.frequency = steinerNodes.getFrequency();
 		this.semanticTypesCount = steinerNodes.getSemanticTypesCount();
 		this.nonModelNodesCount = steinerNodes.getNonModelNodesCount();
@@ -86,7 +89,17 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		return semanticTypesCount;
 	}
 
-	public boolean addNodes(ColumnNode sourceColumn, InternalNode n1, ColumnNode n2, double confidence) {
+	public Map<ColumnNode, SemanticTypeMapping> getColumnNodeInfo() {
+		return columnNodeInfo;
+	}
+
+//	public boolean addNodes(ColumnNode sourceColumn, InternalNode n1, ColumnNode n2, double confidence) {
+	public boolean addNodes(SemanticTypeMapping stm) {
+		
+		ColumnNode sourceColumn = stm.getSourceColumn();
+		InternalNode n1 = stm.getSource();
+		ColumnNode n2 = stm.getTarget();
+		double confidence = stm.getConfidence();
 		
 		if (this.nodes.contains(n1) && this.nodes.contains(n2))
 			return false;
@@ -102,6 +115,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		if (!this.nodes.contains(n2)) {
 			this.nodes.add(n2);
 			this.nodeCoherence.updateCoherence(n2);
+			this.columnNodeInfo.put(n2, stm);
 			this.mappingToSourceColumns.put(n2, sourceColumn);
 			if (n2.getModelIds() == null || n2.getModelIds().isEmpty())
 				this.nonModelNodesCount ++;
@@ -150,7 +164,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		return this.score;
 	}
 	
-	public Coherence getCoherence() {
+	public NodeCoherence getCoherence() {
 		return this.nodeCoherence;
 	}
 	
@@ -186,6 +200,9 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		
 		int minSize = this.semanticTypesCount;
 		int maxSize = this.semanticTypesCount * 2;
+		
+		if (maxSize - minSize == 0)
+			return 0.0;
 		
 		//feature scaling: (x - min) / (max - min)
 		// here: x: reduction in size --- min reduction: 0 --- max reduction: maxSize - minSize 

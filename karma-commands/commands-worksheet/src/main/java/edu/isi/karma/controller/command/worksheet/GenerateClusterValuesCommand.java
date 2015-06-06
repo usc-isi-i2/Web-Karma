@@ -35,9 +35,9 @@ public class GenerateClusterValuesCommand extends WorksheetSelectionCommand {
 
 	private static Logger logger = LoggerFactory.getLogger(GenerateClusterValuesCommand.class.getSimpleName());
 	
-	public GenerateClusterValuesCommand(String id, String hNodeId,
+	public GenerateClusterValuesCommand(String id, String model, String hNodeId,
 			String worksheetId, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 	}
 
@@ -119,7 +119,7 @@ public class GenerateClusterValuesCommand extends WorksheetSelectionCommand {
 				JSONObject jsonAnnotationCluster = new JSONObject (worksheet.getJsonAnnotation().toString());
 				String clusterWorksheetId = jsonAnnotationCluster.get("ClusterId").toString();
 				if(workspace.getWorksheet(clusterWorksheetId) != null) {
-					DeleteWorksheetCommand deleteWorkseet = new DeleteWorksheetCommand(id, clusterWorksheetId );
+					DeleteWorksheetCommand deleteWorkseet = new DeleteWorksheetCommand(id, model, clusterWorksheetId );
 					deleteWorkseet.doIt(workspace);
 					c.add(new WorksheetDeleteUpdate(clusterWorksheetId));
 				}

@@ -42,16 +42,16 @@ public class AddRowCommandFactory extends JSONInputCommandFactory {
 			Workspace workspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		return new AddRowCommand(getNewId(workspace), worksheetId, hNodeId);
+		return new AddRowCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, hNodeId);
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		/** Parse the input arguments and create proper data structures to be passed to the command **/
 		String hNodeId = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
-		AddRowCommand rowCmd = new AddRowCommand(getNewId(workspace), worksheetId, hNodeId);
+		AddRowCommand rowCmd = new AddRowCommand(getNewId(workspace), model, worksheetId, hNodeId);
 		rowCmd.setInputParameterJson(inputJson.toString());
 		return rowCmd;
 	}

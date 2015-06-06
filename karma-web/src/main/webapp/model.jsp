@@ -117,5 +117,34 @@ a.icon-remove:hover {
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+
+<div class="modal fade" id="applyR2RMLModelFromUrlDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Apply R2RML Model From History</h4>
+				  </div>
+				  <div class="modal-body">
+				  	
+		              <div class="form-group">
+						<label for="txtModelURL">Model URL</label>
+						<input class="form-control" type="text" id="txtModelURL" required>
+						<span class="error"  style="display: none">Please enter the model URL</span>
+					 </div>
+		             
+              		</form>
+              
+		  		  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Save</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 </body>
 </html>

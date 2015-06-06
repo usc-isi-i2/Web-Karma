@@ -14,9 +14,9 @@ public class Segment implements GrammarTreeNode {
 	public static final String RIGHTPOS = "rightpos";
 	public static final int CONST = -1;
 	public static final int UNDFN = -2;
-	public int start = 0; // start position in tarNodes
-	public int end = 0; // end position in tarNodes
-	public Vector<int[]> mappings; // corresponding areas in org
+	public int start = 0; // start position in tarNodes, Token index
+	public int end = 0; // end position in tarNodes, Token index
+	public Vector<int[]> mappings; // corresponding multiple sources areas in org, Token indexes 
 	public boolean isinloop = false;
 	public Vector<TNode> constNodes = new Vector<TNode>();
 	public String repString = "";
@@ -133,6 +133,7 @@ public class Segment implements GrammarTreeNode {
 		this.program = ruleString;
 		return ruleString;
 	}
+	//only called for the first example
 	public void initSections(Vector<TNode> orgNodes) {
 		for (int[] elem : mappings) {
 			int s = elem[0];
@@ -168,6 +169,8 @@ public class Segment implements GrammarTreeNode {
 
 				Section xsec = new Section(pair, orgStrings, tarStrings,
 						isinloop, contextId);
+				if(elem.length> 2)
+					xsec.convert = elem[2];
 				section.add(xsec);
 			}
 		}
@@ -255,7 +258,7 @@ public class Segment implements GrammarTreeNode {
 				s += "loop";
 			}
 			for (Section x : this.section) {
-				s += x.pair[0] + "," + x.pair[1];
+				s += x.toString();
 			}
 			s += ">";
 			return s;

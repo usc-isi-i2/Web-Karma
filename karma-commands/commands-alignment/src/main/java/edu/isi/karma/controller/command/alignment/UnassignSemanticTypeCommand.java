@@ -63,8 +63,8 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(UnassignSemanticTypeCommand.class);
 
-	public UnassignSemanticTypeCommand(String id, String hNodeId, String worksheetId) {
-		super(id, worksheetId);
+	public UnassignSemanticTypeCommand(String id, String model, String hNodeId, String worksheetId) {
+		super(id, model, worksheetId);
 		this.hNodeId = hNodeId;
 		
 		addTag(CommandTag.Modeling);
@@ -110,6 +110,7 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 		
 		// Remove it from the alignment
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+		columnNode.unassignUserType(oldSemanticType);
 		columnNode.setForced(false);
 		if (columnNode != null) {
 			Set<LabeledLink> links =  alignment.getCurrentIncomingLinksToNode(columnNode.getId());

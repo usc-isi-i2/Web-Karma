@@ -49,9 +49,9 @@ public class ApplyModelFromTripleStoreCommand extends WorksheetCommand {
 	
 	private static Logger logger = LoggerFactory.getLogger(ApplyModelFromTripleStoreCommand.class);
 	
-	public ApplyModelFromTripleStoreCommand(String id, String worksheetId, String modelName, 
+	public ApplyModelFromTripleStoreCommand(String id, String model, String worksheetId, String modelName, 
 			String sourceName) {
-		super(id, worksheetId);
+		super(id, model, worksheetId);
 		this.modelName = modelName;
 //		this.sourceName = sourceName;
 	}

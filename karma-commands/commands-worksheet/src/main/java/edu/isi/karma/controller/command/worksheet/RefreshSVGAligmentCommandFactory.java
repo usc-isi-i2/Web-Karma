@@ -16,7 +16,8 @@ public class RefreshSVGAligmentCommandFactory extends CommandFactory {
 			Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String alignmentId = request.getParameter(Arguments.alignmentId.name());
-		return new RefreshSVGAlignmentCommand(getNewId(workspace), worksheetId, alignmentId);
+		return new RefreshSVGAlignmentCommand(getNewId(workspace), 
+				Command.NEW_MODEL, worksheetId, alignmentId);
 	}
 
 	@Override

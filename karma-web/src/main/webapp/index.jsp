@@ -76,7 +76,9 @@ and related projects, please see: http://www.isi.edu/integration
         <link rel="stylesheet" type="text/css" href="./css/model.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/augmentdata.css?<jsp:include page='version.jsp' />" />
         <%
+
         if(UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).isForceModelLayoutEnabled()) {
+
         %>
         <link rel="stylesheet" href="css/d3-model-layout.css?<jsp:include page='version.jsp' />" />
 		<%
@@ -154,7 +156,7 @@ and related projects, please see: http://www.isi.edu/integration
 	
 		<div class="container">
 		
-			<div id="karmaHeader" class="navbar navbar-default" role="navigation">
+			<div id="karmaHeader" class="navbar navbar-default navbar-inverse" role="navigation">
 		        <div class="navbar-header">
 		          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 		            <span class="sr-only">Toggle navigation</span>
@@ -352,7 +354,6 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/initWS.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/commandHistory.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/publishRDF.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/publishDatabase.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/serviceImport.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/pager.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/geospatial.js?<jsp:include page='version.jsp' />"></script>
@@ -390,7 +391,8 @@ and related projects, please see: http://www.isi.edu/integration
         %>
         <script>
         	var googleEarthEnabled = <%=UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).isGoogleEarthEnabled()%>;
-        	var manualAligment = <%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getManualAlignment()%>;
+        	var ontologyAligment = <%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getOntologyAlignment()%>;
+        	var knownModelsAlignment = <%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getKnownModelsAlignment()%>;
         	var forceLayoutEnabled = <%=UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).isForceModelLayoutEnabled()%>;
             $(function() {
                 // Clear the workspace when closing the window
@@ -483,7 +485,7 @@ and related projects, please see: http://www.isi.edu/integration
                     .scroll(startPositionFooter)
                     .resize(startPositionFooter);
             	
-            	if(manualAligment)
+            	if(!ontologyAligment && !knownModelsAlignment)
             		manualAlignHeader();
 			});
             
@@ -527,7 +529,6 @@ and related projects, please see: http://www.isi.edu/integration
        		}
             
             function manualAlignHeader() {
-            	$("#karmaHeader").addClass("manualModeHeader");
             	$("#manualModeHeader").show();
             }
 		</script>

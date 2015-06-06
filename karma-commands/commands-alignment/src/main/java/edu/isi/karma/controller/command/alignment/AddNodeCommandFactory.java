@@ -25,7 +25,7 @@ public class AddNodeCommandFactory extends JSONInputCommandFactory {
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(
 				Arguments.worksheetId.name(), inputJson);
@@ -36,7 +36,7 @@ public class AddNodeCommandFactory extends JSONInputCommandFactory {
 		String uri = HistoryJsonUtil.getStringValue(
 				Arguments.uri.name(), inputJson);
 
-		AddNodeCommand cmd = new AddNodeCommand(getNewId(workspace), worksheetId, alignmentId, uri, label);
+		AddNodeCommand cmd = new AddNodeCommand(getNewId(workspace), model, worksheetId, alignmentId, uri, label);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}

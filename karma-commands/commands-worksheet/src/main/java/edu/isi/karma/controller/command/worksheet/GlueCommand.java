@@ -43,10 +43,10 @@ public class GlueCommand extends WorksheetSelectionCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(GlueCommand.class);
 
-	protected GlueCommand(String id,String worksheetId, 
+	protected GlueCommand(String id, String model, String worksheetId, 
 			String hNodeId, String selectionId, 
 			String hNodeIdList, String implMethod) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.hNodeIdList = hNodeIdList;
 		if (implMethod != null && !implMethod.isEmpty()) {

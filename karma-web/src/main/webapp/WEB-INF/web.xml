@@ -70,7 +70,7 @@
 	</context-param>
   <context-param>
   		<param-name>PYTHON_SCRIPTS_DIRECTORY</param-name>
-		<param-value>resources/pythonCleaningscripts</param-value>
+		<param-value>/resources/pythonCleaningscripts</param-value>
   </context-param>
   <context-param>
 		<param-name>MSFT</param-name>
@@ -124,7 +124,23 @@
   	<servlet-name>R2RMLMappingTripleStoreServlet</servlet-name>
   	<servlet-class>edu.isi.karma.webserver.R2RMLMappingTripleStoreServlet</servlet-class>
   </servlet>
+  
+  <!-- Uncomment this for Windows, This is to fix an issue with
+  Jetty opening files using memory map in Windows that creates lock
+  and then Karma cannot overwrite those files -->
+  <!-- 
+  <servlet>
+     <servlet-name>default</servlet-name>
+     <servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
+     <init-param>
+       <param-name>useFileMappedBuffer</param-name>
+       <param-value>false</param-value>
+     </init-param>
+     <load-on-startup>1</load-on-startup>
+   </servlet>
+    -->
     
+      
   <servlet-mapping>
     <servlet-name>KarmaServlet</servlet-name>
     <url-pattern>/KarmaServlet</url-pattern>

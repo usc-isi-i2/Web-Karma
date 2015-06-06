@@ -42,7 +42,7 @@ public class FetchColumnCommandFactory extends CommandFactory {
 		String graphUrl = request.getParameter(Arguments.graphUrl.name());
 		String nodeId = request.getParameter(Arguments.nodeId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new FetchColumnCommand(getNewId(workspace), worksheetId, alignmentNodeId, 
+		return new FetchColumnCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, alignmentNodeId, 
 				tripleStoreUrl, graphUrl, nodeId, 
 				selectionName);
 	}

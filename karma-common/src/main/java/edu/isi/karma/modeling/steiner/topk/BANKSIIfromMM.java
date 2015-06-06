@@ -20,13 +20,13 @@ public class BANKSIIfromMM extends BANKSfromMM {
 	
 	protected int topK=0;
 	
-	public BANKSIIfromMM() {
-		// TODO Auto-generated constructor stub
+	public BANKSIIfromMM(String contextId) {
+		super(contextId);
 	}
 	
 	
-	public BANKSIIfromMM(TreeSet<SteinerNode> terminals) throws Exception {
-		super(terminals);
+	public BANKSIIfromMM(TreeSet<SteinerNode> terminals, String contextId) throws Exception {
+		super(terminals, contextId);
 	}
 	
 	

@@ -54,8 +54,8 @@ public class PublishModelCommand extends WorksheetCommand{
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishModelCommand.class.getSimpleName());
 
-	public PublishModelCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+	public PublishModelCommand(String id, String model, String worksheetId) {
+		super(id, model, worksheetId);
 	}
 
 	@Override

@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.webserver.ContextParametersRegistry;
 
 
 
@@ -59,24 +58,28 @@ public class CandidateSteinerSets {
 		List<SteinerNodes> newSteinerNodes = new ArrayList<SteinerNodes>();
 		if (mappings == null || mappings.isEmpty()) 
 			return;
+
+		List<SemanticTypeMapping> sortedMappings = new ArrayList<SemanticTypeMapping>(mappings);
+		Collections.sort(sortedMappings);
+
 		
 		if (this.steinerSets.size() == 0) {
-			for (SemanticTypeMapping stm : mappings) {
+			for (SemanticTypeMapping stm : sortedMappings) {
 				SteinerNodes sn = new SteinerNodes(contextId);
-				sn.addNodes(stm.getSourceColumn(), stm.getSource(), stm.getTarget(), stm.getConfidence());
+				sn.addNodes(stm);
 				this.steinerSets.add(sn);
 			}			
 		} else {
 			int numOfNewSets = 0;
 			for (SteinerNodes nodeSet : this.steinerSets) {
-				for (SemanticTypeMapping stm : mappings) {
+				for (SemanticTypeMapping stm : sortedMappings) {
 					
 					if (nodeSet.getNodes().contains(stm.getSource()) &&
 							nodeSet.getNodes().contains(stm.getTarget()))
 						continue;
 
 					SteinerNodes sn = new SteinerNodes(nodeSet,contextId);
-					sn.addNodes(stm.getSourceColumn(), stm.getSource(), stm.getTarget(), stm.getConfidence());
+					sn.addNodes(stm);
 					newSteinerNodes.add(sn);
 					numOfNewSets ++;
 				}
@@ -95,7 +98,8 @@ public class CandidateSteinerSets {
 			this.steinerSets.clear();
 			
 //			for (int i = 0; i < newSteinerNodes.size(); i++) // do not cut off
-			for (int i = 0; i < ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(contextId).getKarmaHome()).getMaxQueuedMappigs() && i < newSteinerNodes.size(); i++)
+
+			for (int i = 0; i < ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextId).getMappingBranchingFactor() && i < newSteinerNodes.size(); i++)
 				this.steinerSets.add(newSteinerNodes.get(i));
 
 		}
@@ -139,7 +143,7 @@ public class CandidateSteinerSets {
 			this.steinerSets.clear();
 			
 //			for (int i = 0; i < newSteinerNodes.size(); i++) // do not cut off
-			for (int i = 0; i < ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(contextId).getKarmaHome()).getMaxQueuedMappigs() && i < newSteinerNodes.size(); i++)
+			for (int i = 0; i < ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextId).getMappingBranchingFactor() && i < newSteinerNodes.size(); i++)
 				this.steinerSets.add(newSteinerNodes.get(i));
 
 		}
@@ -186,7 +190,7 @@ public class CandidateSteinerSets {
 		logger.info("number of steiner sets after computing pareto optimal: " + paretoFrontierSteinerSets.size());
 
 		List<SteinerNodes> results = new ArrayList<SteinerNodes>();
-		for (int i = 0; i < ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(contextId).getKarmaHome()).getMaxQueuedMappigs() && i < paretoFrontierSteinerSets.size(); i++) {
+		for (int i = 0; i < ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextId).getMappingBranchingFactor() && i < paretoFrontierSteinerSets.size(); i++) {
 			if (i == 0) {
 				System.out.println(paretoFrontierSteinerSets.get(i).getScoreDetailsString());
 				for (Node n : paretoFrontierSteinerSets.get(i).getNodes())

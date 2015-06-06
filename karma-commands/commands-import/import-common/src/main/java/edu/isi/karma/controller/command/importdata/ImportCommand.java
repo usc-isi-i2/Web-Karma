@@ -36,13 +36,13 @@ public abstract class ImportCommand extends Command {
     // Id of the revised worksheet, or null if no revision is present
     private String revisionId;
 
-    public ImportCommand(String id) {
-        super(id);
+    public ImportCommand(String id, String model) {
+        super(id, model);
         this.revisionId = null;
     }
 
-    public ImportCommand(String id, String revisionId) {
-        super(id);
+    public ImportCommand(String id, String model, String revisionId) {
+        super(id, model);
         this.revisionId = revisionId;
     }
 

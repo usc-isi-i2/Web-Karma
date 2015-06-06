@@ -21,6 +21,8 @@ public class Program implements GrammarTreeNode {
 		this.dpPreProcessor = dpp;
 		for (int i = 0; i < this.partitions.size(); i++) {
 			this.partitions.get(i).setLabel("attr_" + i);
+			// if(ConfigParameters.debug == 1)
+			// System.out.println(this.partitions.get(i).toString());
 		}
 		if(pars.size()>1)
 		{
@@ -198,6 +200,7 @@ public class Program implements GrammarTreeNode {
 	}
 
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -210,9 +213,12 @@ public class Program implements GrammarTreeNode {
 	}
 
 	public void createTotalOrderVector() {
+		// TODO Auto-generated method stub
 
 	}
+
 	public void emptyState() {
+		// TODO Auto-generated method stub
 		for(Partition p:partitions)
 		{
 			p.emptyState();

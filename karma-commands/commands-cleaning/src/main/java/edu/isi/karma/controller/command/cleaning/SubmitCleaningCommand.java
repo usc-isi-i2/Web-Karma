@@ -74,9 +74,9 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 			.getLogger(SubmitCleaningCommand.class);
 	private Vector<TransformationExample> examples = new Vector<TransformationExample>();
 
-	public SubmitCleaningCommand(String id, String hNodeId, String worksheetId,
+	public SubmitCleaningCommand(String id, String model, String hNodeId, String worksheetId,
 			String Examples, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model,worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.examples = GenerateCleaningRulesCommand.parseExample(Examples);
 
@@ -315,7 +315,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 		JSONInputCommandFactory scf = (JSONInputCommandFactory) cf;
 
 		// TODO handle exceptions intelligently
-		Command comm = scf.createCommand(inputParamArr, workspace);
+		Command comm = scf.createCommand(inputParamArr, Command.NEW_MODEL, workspace);
 		if (comm != null) {
 			// logger.info("Executing command: " +
 			// commObject.get(HistoryArguments.commandName.name()));
@@ -337,7 +337,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 
 		// TODO handle exceptions intelligently
 		try {
-			comm1 = scf1.createCommand(inputParamArr0, workspace);
+			comm1 = scf1.createCommand(inputParamArr0, Command.NEW_MODEL, workspace);
 		} catch (JSONException e1) {
 			logger.error(
 					"Error creating new "

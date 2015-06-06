@@ -49,12 +49,12 @@ public class ImportExcelFileCommand extends ImportFileCommand implements IPrevie
     private static Logger logger = LoggerFactory
             .getLogger(ImportExcelFileCommand.class);
 
-    protected ImportExcelFileCommand(String id, File excelFile) {
-        super(id, excelFile);
+    protected ImportExcelFileCommand(String id, String model, File excelFile) {
+        super(id, model, excelFile);
     }
 
-    protected ImportExcelFileCommand(String id, String revisedId, File uploadedFile) {
-        super(id, revisedId, uploadedFile);
+    protected ImportExcelFileCommand(String id, String model, String revisedId, File uploadedFile) {
+        super(id, model, revisedId, uploadedFile);
     }
 
     @Override

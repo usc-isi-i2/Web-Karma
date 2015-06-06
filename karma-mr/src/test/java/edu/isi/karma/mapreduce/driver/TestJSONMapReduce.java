@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
@@ -24,7 +25,7 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 
 	@Before
 	public void setUp() throws Exception {
-		Mapper<Text, Text, Text, Text> mapper = new JSONMapper();
+		Mapper<Writable, Text, Text, Text> mapper = new JSONMapper();
 		Reducer<Text,Text,Text,Text> reducer = new JSONReducer();
 
 		mapDriver = MapDriver.newMapDriver(mapper);

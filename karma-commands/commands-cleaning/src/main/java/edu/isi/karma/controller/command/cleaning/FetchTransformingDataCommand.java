@@ -27,9 +27,9 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 			.getLogger(FetchTransformingDataCommand.class);
 	private final String hNodeId;
 
-	public FetchTransformingDataCommand(String id, String worksheetId,
+	public FetchTransformingDataCommand(String id, String model, String worksheetId,
 			String hNodeId, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 
 	}

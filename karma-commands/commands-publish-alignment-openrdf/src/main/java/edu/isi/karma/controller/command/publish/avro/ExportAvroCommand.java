@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.common.OSUtils;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
@@ -52,9 +53,9 @@ public class ExportAvroCommand extends WorksheetSelectionCommand {
     
 	
 	//TODO provde option to output pretty printed avro json
-	public ExportAvroCommand(String id, String alignmentNodeId, 
+	public ExportAvroCommand(String id, String model, String alignmentNodeId, 
 			String worksheetId, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.alignmentNodeId = alignmentNodeId;
 		
 	}
@@ -151,6 +152,9 @@ public class ExportAvroCommand extends WorksheetSelectionCommand {
 			}
 			fos.flush();
 			fos.close();
+			if(OSUtils.isWindows())
+				System.gc();  //Invoke gc for windows, else it gives error: The requested operation cannot be performed on a file with a user-mapped section open
+			//when the model is republished, and the original model is earlier open
 		} catch (FileNotFoundException e) {
 			logger.error("File Not found", e);
 			return new UpdateContainer(new ErrorUpdate("File Not found while generating RDF: " + e.getMessage()));

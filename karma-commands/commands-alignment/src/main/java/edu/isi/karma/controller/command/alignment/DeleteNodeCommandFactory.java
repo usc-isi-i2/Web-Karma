@@ -25,7 +25,7 @@ public class DeleteNodeCommandFactory extends JSONInputCommandFactory {
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(
 				Arguments.worksheetId.name(), inputJson);
@@ -36,7 +36,8 @@ public class DeleteNodeCommandFactory extends JSONInputCommandFactory {
 		String id = HistoryJsonUtil.getStringValue(
 				Arguments.id.name(), inputJson);
 
-		DeleteNodeCommand cmd = new DeleteNodeCommand(getNewId(workspace), worksheetId, alignmentId, id, label);
+		DeleteNodeCommand cmd = new DeleteNodeCommand(getNewId(workspace), model,
+				worksheetId, alignmentId, id, label);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}

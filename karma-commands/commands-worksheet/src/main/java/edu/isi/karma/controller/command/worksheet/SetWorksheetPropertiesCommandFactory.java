@@ -43,11 +43,11 @@ public class SetWorksheetPropertiesCommandFactory extends JSONInputCommandFactor
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String properties = request.getParameter(Arguments.properties.name());
 		
-		return new SetWorksheetPropertiesCommand(getNewId(workspace), worksheetId, properties);
+		return new SetWorksheetPropertiesCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, properties);
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), 
 				inputJson);
@@ -55,7 +55,7 @@ public class SetWorksheetPropertiesCommandFactory extends JSONInputCommandFactor
 				inputJson);
 		
 		SetWorksheetPropertiesCommand cmd = new SetWorksheetPropertiesCommand(
-				getNewId(workspace), worksheetId, properties);
+				getNewId(workspace), model, worksheetId, properties);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}

@@ -36,7 +36,7 @@ public class FetchR2RMLModelsCommandFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		String url = request.getParameter(Arguments.tripleStoreUrl.name());
-		return new FetchR2RMLModelsCommand(getNewId(workspace), url);
+		return new FetchR2RMLModelsCommand(getNewId(workspace), Command.NEW_MODEL, url);
 	}
 
 	@Override

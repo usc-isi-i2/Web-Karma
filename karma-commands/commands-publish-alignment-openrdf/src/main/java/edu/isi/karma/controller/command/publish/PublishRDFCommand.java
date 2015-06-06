@@ -52,6 +52,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
 
+import edu.isi.karma.common.OSUtils;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
@@ -100,12 +101,12 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishRDFCommand.class);
 
-	protected PublishRDFCommand(String id, String worksheetId,
+	protected PublishRDFCommand(String id, String model, String worksheetId,
 			String publicRDFAddress, String rdfSourcePrefix, String rdfSourceNamespace, String addInverseProperties,
 			String saveToStore,String hostName,String dbName,String userName,String password, String modelName, String tripleStoreUrl,
 			String graphUri, boolean replace, boolean generateBloomFilters, 
 			String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.rdfSourcePrefix = rdfSourcePrefix;
 		this.rdfSourceNamespace = rdfSourceNamespace;
 		this.addInverseProperties = addInverseProperties;
@@ -239,6 +240,11 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 				logger.info("Using Jena DB:" + hostName + "/"+dbName + " user="+userName);
 				saveToStore(rdfFileLocalPath);
 			}
+			bw.close();
+			if(OSUtils.isWindows())
+				System.gc();  //Invoke gc for windows, else it gives error: The requested operation cannot be performed on a file with a user-mapped section open
+			//when the model is republished, and the original model is earlier open
+			
 			start = System.currentTimeMillis();
 			if (generateBloomFilters && utilObj.testURIExists(modelRepoUrl, "", url)) {
 				TripleStoreUtil bloomFilterUtil = createBloomFilterTripleStoreUtil();

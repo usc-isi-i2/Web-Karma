@@ -56,8 +56,9 @@ public abstract class RdfGenerator {
 		Workspace workspace = WorkspaceManager.getInstance().createWorkspace(contextParameters.getId());
 		WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
 		WorkspaceKarmaHomeRegistry.getInstance().register(workspace.getId(), contextParameters.getKarmaHome());
-		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().register(contextParameters.getId());
-        modelingConfiguration.setManualAlignment(true);
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().register(contextParameters.getId());        
+        modelingConfiguration.setManualAlignment();
+
         return workspace;
         
 	}

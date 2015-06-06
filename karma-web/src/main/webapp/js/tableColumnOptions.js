@@ -63,13 +63,14 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			leafOnly: true,
 			leafExcluded: false
 		},
-
+/*
 		{
 			name: "Invoke Service",
 			func: invokeService,
 			leafOnly: true,
 			leafExcluded: false
 		},
+*/
 		//{name:"Show Chart", func:showChart, leafOnly:true, leafExcluded: false},
 		{
 			name: "divider",
@@ -83,12 +84,12 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			leafOnly: false,
 			leafExcluded: true
 		}, {
-			name: "Unfold",
+			name: "Unfold Columns",
 			func: Unfold,
 			leafOnly: true,
 			leafExcluded: false
 		}, {
-			name: "Fold",
+			name: "Fold Columns",
 			func: Fold,
 			leafOnly: false,
 			leafExcluded: true
@@ -1079,13 +1080,17 @@ var ExtractEntitiesDialog = (function() {
 		entitySelDialog.modal('hide');
 
 		var worksheetId, columnId;
-
+		var serviceInBuilt = true;
+		
 		function init() {
 			// Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function(e) {
 				console.log("dialog displayed");
 				hideError();
 				$('#extractionService_URL').val("http://karmanlp.isi.edu:8080/ExtractionService/StanfordCoreNLP");
+				if(serviceInBuilt) {
+					$('#btnSave', dialog).click();
+				}
 			});
 
 			// Initialize handler for Save button
@@ -1111,7 +1116,10 @@ var ExtractEntitiesDialog = (function() {
 			info["hTableId"] = "";
 			info["extractionURL"] = $('#extractionService_URL').val();
 
-			dialog.modal('hide');
+			window.setTimeout(function() {
+				dialog.modal('hide');
+			}, 100);
+			
 			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("extractionURL", info["extractionURL"], "other"));
 			
@@ -1120,50 +1128,59 @@ var ExtractEntitiesDialog = (function() {
 			// console.log(info["worksheetId"]);
 			showLoading(info["worksheetId"]);
 
-			var userSelResp = $.ajax({
-				url: $('#extractionService_URL').val() + "/getCapabilities",
-				type: "GET",
-				dataType: "json",
-				contentType: "text/plain",
-				crossDomain: true,
-				complete: function(xhr, textStatus) {
-					console.log(xhr.responseText);
-					var jsonresp = $.parseJSON(xhr.responseText);
+			displayCapabilities = function(jsonStr) {
+				var jsonresp = $.parseJSON(jsonStr);
+				var dialogContent = $("#userSelection", entitySelDialog);
+				dialogContent.empty();
 
-					var dialogContent = $("#userSelection", entitySelDialog);
-					dialogContent.empty();
+				$.each(jsonresp, function(index, data) {
+					var row = $("<div>").addClass("checkbox");
+					var label = $("<label>").text(data.capability);
+					var input = $("<input>")
+						.attr("type", "checkbox")
+						.attr("id", "selectentities")
+						.attr("value", data.capability);
+					label.append(input);
+					row.append(label);
+					dialogContent.append(row);
+				});
 
-					$.each(jsonresp, function(index, data) {
-						var row = $("<div>").addClass("checkbox");
-						var label = $("<label>").text(data.capability);
-						var input = $("<input>")
-							.attr("type", "checkbox")
-							.attr("id", "selectentities")
-							.attr("value", data.capability);
-						label.append(input);
-						row.append(label);
-						dialogContent.append(row);
-					});
+				//Initialize handler for Save button
+				//var me = this;
+				$('#btnSave', entitySelDialog).on('click', function(e) {
+					e.preventDefault();
+					saveUserSelDialog(e, info);
+				});
 
-					//Initialize handler for Save button
-					//var me = this;
-					$('#btnSave', entitySelDialog).on('click', function(e) {
-						e.preventDefault();
-						saveUserSelDialog(e, info);
-					});
+				//display user selection dialog
+				entitySelDialog.modal('show');
+				console.log("User selection dialog displayed");
 
-					//display user selection dialog
-					entitySelDialog.modal('show');
-					console.log("User selection dialog displayed");
-
-					hideLoading(info["worksheetId"]);
-				},
-				error: function(xhr, textStatus) {
-					console.log("error");
-					alert("Error occured while getting capabilities from the specified service:" + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
+				hideLoading(info["worksheetId"]);
+			}
+			
+			var jsonStr;
+			if(serviceInBuilt) {
+				jsonStr = "[    {         \"capability\": \"Places\"     },    {     \"capability\": \"People\" },  {     \"capability\": \"Dates\" } ]"; 
+				displayCapabilities(jsonStr);
+			} else {
+				var userSelResp = $.ajax({
+					url: $('#extractionService_URL').val() + "/getCapabilities",
+					type: "GET",
+					dataType: "json",
+					contentType: "text/plain",
+					crossDomain: true,
+					complete: function(xhr, textStatus) {
+						console.log(xhr.responseText);
+						displayCapabilities(xhr.responseText);
+					},
+					error: function(xhr, textStatus) {
+						console.log("error");
+						alert("Error occured while getting capabilities from the specified service:" + textStatus);
+						hideLoading(info["worksheetId"]);
+					}
+				});
+			}
 
 		};
 

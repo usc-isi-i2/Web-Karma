@@ -78,7 +78,8 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		psProgSynthesis.inite(exps, input.dpp, input.msg);
 		// add time out here
 		Collection<ProgramRule> rules = null;
-		rules = psProgSynthesis.adaptive_main();
+		//rules = psProgSynthesis.adaptive_main();
+		rules = psProgSynthesis.run_main();
 		input.msg.updateCM_Constr(psProgSynthesis.partiCluster.getConstraints());
 		input.msg.updateWeights(psProgSynthesis.partiCluster.weights);
 

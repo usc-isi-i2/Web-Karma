@@ -48,6 +48,9 @@ function WorksheetOptions(wsId, wsTitle) {
 				useFileUpload: true,
 				uploadDiv: "applyWorksheetHistory"
 			}, {
+				name: "From URL",
+				func: applyR2RMLModelFromUrl
+			}, {
 				name: "From Repository",
 				func: applyModel
 			}]
@@ -69,7 +72,7 @@ function WorksheetOptions(wsId, wsTitle) {
 				name: "RDF",
 				func: publishRDF
 			}, {
-				name: "Model",
+				name: "R2RML Model",
 				func: publishModel
 			}, {
 				name: "Service Model",
@@ -78,33 +81,16 @@ function WorksheetOptions(wsId, wsTitle) {
 				name: "Report",
 				func: publishReport
 			}, {
-				name: "JSON",
+				name: "Raw JSON",
 				func: saveAsJson
 			}, ]
-		}, {
-			name: "Export",
-			func: undefined,
-			addLevel: true,
-			levels: [{
-				name: "To CSV",
-				func: exportToCSV
-			}, {
-				name: "To Database",
-				func: exportToDatabase
-			}, {
-				name: "To MDB",
-				func: exportToMDB
-			}, {
-				name: "To SpatialData",
-				func: exportToSpatial
-			}, ] 
 		}, { 
 			name: "Print Model",
 			func: printModel
 		}, {
 			name: "divider"
 		},
-
+/*
 		{
 			name: "Populate Source",
 			func: populateSource
@@ -114,9 +100,9 @@ function WorksheetOptions(wsId, wsTitle) {
 		}, {
 			name: "divider"
 		},
-
+*/
 		{
-			name: "Fold",
+			name: "Fold Columns",
 			func: Fold
 		}, {
 			name: "GroupBy",
@@ -125,7 +111,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			name: "Glue Columns",
 			func: Glue
 		}, {
-			name: "Delete",
+			name: "Delete Worksheet",
 			func: deleteWorksheet
 		}, {
 			name: "divider"
@@ -419,6 +405,13 @@ function WorksheetOptions(wsId, wsTitle) {
 		return false;
 	}
 
+	function applyR2RMLModelFromUrl(event) {
+		console.log("Apply Model from URL: " + worksheetTitle);
+		hideDropdown();
+		ApplyR2RMLModelFromUrlDialog.getInstance(worksheetId).show();
+		return false;
+	}
+	
 	function publishServiceModel() {
 		console.log("Publish Service Model: " + worksheetTitle);
 		hideDropdown();
@@ -448,48 +441,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		FetchModelDialog.getInstance().show(worksheetId);
 		return false;
 	}
-
-	function exportToCSV() {
-		console.log("Export to CSV: " + worksheetTitle);
-		hideDropdown();
-
-		var info = generateInfoObject(worksheetId, "", "PublishCSVCommand");
-		info["command"] = "PublishCSVCommand";
-
-		showLoading(info["worksheetId"]);
-		var returned = sendRequest(info, worksheetId);
-
-		return false;
-	}
-
-	function exportToDatabase() {
-		hideDropdown();
-		PublishDatabaseDialog.getInstance().show(worksheetId);
-		return false;
-	}
-
-	function exportToMDB() {
-		console.log("Export To MDB: " + worksheetTitle);
-		hideDropdown();
-
-		var info = generateInfoObject(worksheetId, "", "PublishMDBCommand");
-
-		showLoading(info["worksheetId"]);
-		var returned = sendRequest(info, worksheetId);
-		return false;
-	}
-
-	function exportToSpatial() {
-		console.log("Export to Spatial: " + worksheetTitle);
-		hideDropdown();
-
-		var info = generateInfoObject(worksheetId, "", "PublishSpatialDataCommand");
-
-		showLoading(info["worksheetId"]);
-		var returned = sendRequest(info, worksheetId);
-		return false;
-	}
-
+	
 	function saveAsJson() {
 		console.log("Save as json");
 		hideDropdown();

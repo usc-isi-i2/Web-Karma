@@ -208,22 +208,32 @@ public class Node extends RepEntity implements Neighbor {
 		return belongsToRow.getNeighborByColumnName(columnName, factory);
 	}
 
-	public String serializeToJSON(SuperSelection selection, RepFactory factory) {
+	public Object serializeToJSON(SuperSelection selection, RepFactory factory) {
 		if (this.hasNestedTable()) {
 			JSONArray array = new JSONArray();
 			Table t = this.getNestedTable();
 			HTable ht = factory.getHTable(t.getHTableId());
 			for (Row r : t.getRows(0, t.getNumRows(), selection)) {
+				JSONObject obj = new JSONObject();
 				for (HNode hNode : ht.getHNodes()) {
-					JSONObject obj = new JSONObject();
-					obj.put(hNode.getColumnName(), r.getNeighbor(hNode.getId()).serializeToJSON(selection, factory));
-					array.put(obj);
+					obj.put(hNode.getColumnName(), r.getNeighbor(hNode.getId()).serializeToJSON(selection, factory));			
 				}
+				array.put(obj);
 			}
-			return array.toString();
+			return array;
 		}
 		else {
 			return this.getValue().asString();
 		}
+	}
+
+	
+	public Node getNeighborByColumnNameWithNestedColumnByRowIndex(String columnName, RepFactory factory, String nestedColumnName, int index) {
+		return belongsToRow.getNeighborByColumnNameWithNestedColumnByRowIndex(columnName, factory, nestedColumnName, index);
+	}
+	
+	public int getRowIndex()
+	{
+		return belongsToRow.getBelongsToTable().getRowIndex(belongsToRow);
 	}
 }

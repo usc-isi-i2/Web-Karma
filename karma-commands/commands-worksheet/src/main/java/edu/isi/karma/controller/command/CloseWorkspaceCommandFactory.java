@@ -34,7 +34,7 @@ public class CloseWorkspaceCommandFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		String workspaceId = request.getParameter(Arguments.workspaceId.name());
-		return new CloseWorkspaceCommand(getNewId(workspace), workspaceId);
+		return new CloseWorkspaceCommand(getNewId(workspace), Command.NEW_MODEL, workspaceId);
 	}
 
 	@Override

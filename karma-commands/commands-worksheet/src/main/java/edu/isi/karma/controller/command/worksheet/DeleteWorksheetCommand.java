@@ -11,8 +11,8 @@ import edu.isi.karma.rep.Workspace;
 
 public class DeleteWorksheetCommand extends WorksheetCommand {
 
-	public DeleteWorksheetCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+	public DeleteWorksheetCommand(String id, String model, String worksheetId) {
+		super(id, model, worksheetId);
 	}
 	
 	@Override
@@ -47,11 +47,12 @@ public class DeleteWorksheetCommand extends WorksheetCommand {
 		}
 		
 		UpdateContainer update = new UpdateContainer();
-		update.add(new WorksheetListUpdate());
 		if(worksheetExists) {
-			update.add(new WorksheetDeleteUpdate(worksheetId));
+			update.add(new WorksheetDeleteUpdate(worksheetId));	//This one deletes it from the vWorksheet, so
+						//needs to be called first before WorksheetListUpdate
 			update.add(new HistoryUpdate(workspace.getCommandHistory()));
 		}
+		update.add(new WorksheetListUpdate());
 		return update;
 	}
 

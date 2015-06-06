@@ -64,10 +64,10 @@ public abstract class MutatingPythonTransformationCommand extends
 	protected final String newColumnName;
 	protected List<Node> affectedNodes = new LinkedList<Node>();
 	protected boolean isJSONOutput = false;
-	public MutatingPythonTransformationCommand(String id, String newColumnName,
+	public MutatingPythonTransformationCommand(String id, String model, String newColumnName,
 			String transformationCode, String worksheetId, String hNodeId,
 			String errorDefaultValue, String selectionId, boolean isJSONOutput) {
-		super(id, transformationCode, worksheetId, hNodeId,
+		super(id, model, transformationCode, worksheetId, hNodeId,
 				errorDefaultValue, selectionId);
 		this.newColumnName = newColumnName;
 		this.isJSONOutput = isJSONOutput;
@@ -94,7 +94,7 @@ public abstract class MutatingPythonTransformationCommand extends
 			JSONArray multiCellEditInput = getMultiCellValueEditInputJSON(transformedRows, newHNodeId);
 			MultipleValueEditColumnCommandFactory mfc = (MultipleValueEditColumnCommandFactory)
 					ctrl.getCommandFactoryMap().get(MultipleValueEditColumnCommand.class.getSimpleName());
-			MultipleValueEditColumnCommand mvecc = (MultipleValueEditColumnCommand) mfc.createCommand(multiCellEditInput, workspace);
+			MultipleValueEditColumnCommand mvecc = (MultipleValueEditColumnCommand) mfc.createCommand(multiCellEditInput, model, workspace);
 			mvecc.doIt(workspace);
 			
 		} catch (Exception e) {
@@ -167,7 +167,7 @@ public abstract class MutatingPythonTransformationCommand extends
 			obj3.put("value", array.toString());
 			obj3.put("type", "other");
 			input.put(obj3);
-			AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, newNode.getHTableId(), name, HNodeType.Transformation, getSuperSelection(workspace).getName());
+			AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, model, workspace, hNodeId, worksheetId, newNode.getHTableId(), name, HNodeType.Transformation, getSuperSelection(workspace).getName());
 			command.doIt(workspace);
 		}
 	}

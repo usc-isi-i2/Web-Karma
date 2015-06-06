@@ -81,10 +81,10 @@ public class ExportCSVCommand extends WorksheetSelectionCommand {
 	 * @param graph
 	 * @param nodes
 	 * */
-	protected ExportCSVCommand(String id, String worksheetId, String rootNode, String sparqlUrl, 
+	protected ExportCSVCommand(String id, String model, String worksheetId, String rootNode, String sparqlUrl, 
 			String graph, ArrayList<HashMap<String, String>> nodes,
 			String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.rootNodeId = rootNode;
 		this.tripleStoreUrl = sparqlUrl;
 		this.graphUrl = graph;

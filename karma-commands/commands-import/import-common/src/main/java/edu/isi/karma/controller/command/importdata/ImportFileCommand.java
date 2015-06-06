@@ -60,14 +60,14 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 		worksheetId, columns, name, id, visible, hideable, children, updateType, fileUrl
 	}
 
-	public ImportFileCommand(String id, File file) {
-		super(id);
+	public ImportFileCommand(String id, String model, File file) {
+		super(id, model);
 		this.file = file;
 		this.encoding = EncodingDetector.detect(file);
 	}
 
-	public ImportFileCommand(String id, String revisionId, File file) {
-		super(id, revisionId);
+	public ImportFileCommand(String id, String model, String revisionId, File file) {
+		super(id, model, revisionId);
 		this.file = file;
 		this.encoding = EncodingDetector.detect(file);
 	}

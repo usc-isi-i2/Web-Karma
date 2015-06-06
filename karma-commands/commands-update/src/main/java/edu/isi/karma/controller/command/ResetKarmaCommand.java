@@ -46,8 +46,8 @@ public class ResetKarmaCommand extends Command {
 	
 	private static Logger logger = LoggerFactory.getLogger(ResetKarmaCommand.class);
 	
-	protected ResetKarmaCommand(String id, boolean forgetSemanticTypes, boolean forgetModels, boolean forgetAlignment) {
-		super(id);
+	protected ResetKarmaCommand(String id, String model, boolean forgetSemanticTypes, boolean forgetModels, boolean forgetAlignment) {
+		super(id, model);
 		this.forgetSemanticTypes = forgetSemanticTypes;
 		this.forgetModels = forgetModels;
 		this.forgetAlignment = forgetAlignment;

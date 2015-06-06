@@ -69,10 +69,10 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 	private static Logger logger = LoggerFactory
 	.getLogger(AddColumnCommand.class);
 
-	protected AddColumnCommand(String id,String worksheetId,
+	protected AddColumnCommand(String id, String model, String worksheetId,
 			String hTableId, String hNodeId, String newColumnName, 
 			String defaultValue, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		this.newColumnName=newColumnName;

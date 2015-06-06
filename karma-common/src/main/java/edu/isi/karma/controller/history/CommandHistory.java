@@ -93,7 +93,7 @@ public class CommandHistory {
 	private static HashMap<String, IHistorySaver> historySavers = new HashMap<>();
 
 	public enum HistoryArguments {
-		worksheetId, commandName, inputParameters, hNodeId, tags
+		worksheetId, commandName, inputParameters, hNodeId, tags, model
 	}
 
 	public CommandHistory() {
@@ -173,7 +173,8 @@ public class CommandHistory {
 			// Save the modeling commands
 			if (!(instanceOf(command, "ResetKarmaCommand"))) {
 				try {
-					if(isHistoryWriteEnabled && historySavers.get(workspace.getId()) != null) {
+					if(isHistoryWriteEnabled && command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
+							|| command.hasTag(CommandTag.Transformation)) && historySavers.get(workspace.getId()) != null) {
 						writeHistoryPerWorksheet(workspace, historySavers.get(workspace.getId()));
 					}
 				} catch (Exception e) {
@@ -212,7 +213,8 @@ public class CommandHistory {
 	public JSONObject getCommandJSON(Workspace workspace, ICommand comm) {
 		JSONObject commObj = new JSONObject();
 		commObj.put(HistoryArguments.commandName.name(), comm.getCommandName());
-
+		commObj.put(HistoryArguments.model.name(), comm.getModel());
+		
 		// Populate the tags
 		JSONArray tagsArr = new JSONArray();
 		for (CommandTag tag : comm.getTags())
@@ -423,7 +425,10 @@ public class CommandHistory {
 					String commandName = (String)rco.historyObject.get(HistoryArguments.commandName.name());
 					executor.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, true);
 					CommandFactory cf = commandFactoryMap.get(rco.historyObject.get(HistoryArguments.commandName.name()));
-					Command comm = cf.createCommand(inputParamArr, workspace);
+					String model = Command.NEW_MODEL;
+					if(rco.historyObject.has(HistoryArguments.model.name()))
+						model = rco.historyObject.getString(HistoryArguments.model.name());
+					Command comm = cf.createCommand(inputParamArr, model, workspace);
 					effects.append(comm.doIt(workspace));
 					history.add(comm);
 				}catch(Exception e) {

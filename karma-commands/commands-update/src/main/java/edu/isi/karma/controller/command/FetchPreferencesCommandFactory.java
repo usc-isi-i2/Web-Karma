@@ -34,6 +34,7 @@ public class FetchPreferencesCommandFactory extends CommandFactory {
 			Workspace workspace) {
 
 		FetchPreferencesCommand comm = new FetchPreferencesCommand(getNewId(workspace), 
+				Command.NEW_MODEL,
 				request.getParameter(Arguments.preferenceCommand.name()));
 		
 		return comm;

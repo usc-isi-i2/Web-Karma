@@ -77,12 +77,12 @@ IPreviewable {
 		this.escapeCharacter = escapeCharacter;
 	}
 
-	public ImportCSVFileCommand(String id, File file) {
-		super(id, file);
+	public ImportCSVFileCommand(String id, String model, File file) {
+		super(id, model, file);
 	}
 
-	public ImportCSVFileCommand(String id, String revisedId, File file) {
-		super(id, revisedId, file);
+	public ImportCSVFileCommand(String id, String model, String revisedId, File file) {
+		super(id, model, revisedId, file);
 	}
 
 	@Override

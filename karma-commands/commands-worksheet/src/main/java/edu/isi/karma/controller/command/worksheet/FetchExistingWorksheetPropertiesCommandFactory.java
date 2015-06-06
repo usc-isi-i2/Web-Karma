@@ -38,7 +38,7 @@ public class FetchExistingWorksheetPropertiesCommandFactory extends
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		return new FetchExistingWorksheetPropertiesCommand(getNewId(workspace), worksheetId);
+		return new FetchExistingWorksheetPropertiesCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId);
 	}
 
 	@Override

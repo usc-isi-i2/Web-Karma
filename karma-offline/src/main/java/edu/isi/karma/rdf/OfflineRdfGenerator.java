@@ -85,7 +85,14 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 public class OfflineRdfGenerator {
 
 	private static Logger logger = LoggerFactory.getLogger(OfflineRdfGenerator.class);
+	
 	private String inputType;
+	private String inputEncoding;
+	private String inputDelimiter;
+	private String inputTextQualifier;
+	private String inputHeaderStartIndex;
+	private String inputDataStartIndex;
+	
 	private String modelFilePath;
 	private String modelURLString;
 	private String baseURI;
@@ -199,6 +206,18 @@ public class OfflineRdfGenerator {
 
 	protected void parseCommandLineOptions(CommandLine cl) {
 		inputType = (String) cl.getOptionValue("sourcetype");
+		inputEncoding = (String) cl.getOptionValue("encoding");
+		inputDelimiter  = (String) cl.getOptionValue("delimiter");
+		if(inputDelimiter != null) {
+			if(inputDelimiter.equalsIgnoreCase("tab"))
+				inputDelimiter = "\t";
+			else if(inputDelimiter.equalsIgnoreCase("space"))
+				inputDelimiter = " ";
+		}
+		inputTextQualifier = (String) cl.getOptionValue("textqualifier");
+		inputHeaderStartIndex = (String) cl.getOptionValue("headerindex");
+		inputDataStartIndex = (String) cl.getOptionValue("dataindex");
+		
 		modelFilePath = (String) cl.getOptionValue("modelfilepath");
 		modelURLString = (String) cl.getOptionValue("modelurl");
 		outputFilePath = (String) cl.getOptionValue("outputfile");
@@ -555,6 +574,12 @@ public class OfflineRdfGenerator {
 		RDFGeneratorRequest request = new RDFGeneratorRequest(sourceName, inputFile.getName());
 		request.setInputFile(inputFile);
 		request.setDataType(inputType);
+		if(inputEncoding != null) request.setEncoding(inputEncoding);
+		if(inputDelimiter != null) request.setDelimiter(this.inputDelimiter);
+		if(inputTextQualifier != null) request.setTextQualifier(inputTextQualifier);
+		if(inputHeaderStartIndex != null) request.setHeaderStartIndex(Integer.parseInt(inputHeaderStartIndex));
+		if(inputDataStartIndex != null) request.setDataStartIndex(Integer.parseInt(inputDataStartIndex));
+		
 		request.setMaxNumLines(maxNumLines);
 		request.setAddProvenance(false);
 		request.addWriters(writers);
@@ -577,6 +602,11 @@ public class OfflineRdfGenerator {
 		Options options = new Options();
 				
 		options.addOption(new Option("sourcetype", "sourcetype", true, "type of source. Valid values: DB, SQL, CSV, JSON, XML"));
+		options.addOption(new Option("delimiter","delimiter", true, "column delimter for CSV file"));
+		options.addOption(new Option("encoding","encoding",true, "source encoding"));
+		options.addOption(new Option("textqualifier","textQualifier", true, "text qualifier for CSV file"));
+		options.addOption(new Option("headerindex", "headerindex", true, "header index for CSV file"));
+		options.addOption(new Option("dataindex", "dataindex", true, "data start index for CSV file"));
 		options.addOption(new Option("filepath", "filepath", true, "location of the input file"));
 		options.addOption(new Option("modelfilepath", "modelfilepath", true, "location of the model file"));
 		options.addOption(new Option("modelurl", "modelurl", true, "location of the model"));

@@ -81,14 +81,13 @@ public class TestSelection {
         PythonRepository pythonRepository = new PythonRepository(false, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 		PythonRepositoryRegistry.getInstance().register(pythonRepository);
 		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().register(contextParameters.getId());
-        modelingConfiguration.setManualAlignment(true);
+        modelingConfiguration.setManualAlignment();
 	}
 	
 	@Before
 	public void setUp() throws Exception {
 		workspace = WorkspaceManager.getInstance().createWorkspace(contextParametersId);
         WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
-        
         File file = new File(getClass().getClassLoader().getResource("people.json").toURI());
         InputStream is = new FileInputStream(file);
         Reader reader = EncodingDetector.getInputStreamReader(is, EncodingDetector.detect(file));

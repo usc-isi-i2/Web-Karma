@@ -154,7 +154,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 					LabeledLink incomingLink = l;
 					Set<Node> matchedNodes = this.graphBuilder.getUriToNodesMap().get(domain.getUri());
 					if (matchedNodes == null || matchedNodes.isEmpty()) {
-						logger.error("no match found for the node " + domain.getUri() + "in the graph");
+						logger.error("no match found for the node " + domain.getUri() + " in the graph");
 						return null;
 					}
 					for (Node m : matchedNodes) {
@@ -185,7 +185,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 							if (this.graphBuilder.addNode(newNode)) {
 								String linkId = LinkIdFactory.getLinkId(incomingLink.getUri(), m.getId(), newNode.getId());
 								DataPropertyLink link = new DataPropertyLink(linkId, new Label(incomingLink.getLabel()));
-								this.graphBuilder.addLink(m, newNode, link);
+								this.graphBuilder.addLink(m, newNode, link, ModelingParams.PATTERN_LINK_WEIGHT);
 								matches.add(newNode);
 								graphNodeDomains.put(newNode, 
 										GraphUtil.getDomainLinksInDefaultGraph(this.graphBuilder.getGraph(), (ColumnNode)newNode));
@@ -212,16 +212,16 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		List<HashMap<Node,Node>> newMappings = new LinkedList<HashMap<Node,Node>>();
 		
 		Set<Node> matchedNodes = null;
-		if (node instanceof InternalNode) 
+		if (node instanceof InternalNode && internalNodeMatches != null) 
 			matchedNodes = internalNodeMatches.get(node);
-		else if (node instanceof ColumnNode)
+		else if (node instanceof ColumnNode && columnNodeMatches != null)
 			matchedNodes = columnNodeMatches.get(node);
 		if (matchedNodes == null) {
-			return null;
+			return null;//mappings;
 		}
 
 		if (matchedNodes == null || matchedNodes.isEmpty()) {
-			logger.error("no match found for the node " + node.getId() + "in the graph");
+			logger.error("no match found for the node " + node.getId() + " in the graph");
 			return null;
 		}
 
@@ -295,7 +295,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		
 		List<HashMap<Node,Node>> mappings = new LinkedList<HashMap<Node,Node>>();
 
-		logger.info("max mapping size: " + MAX_MAPPING_SIZE);
+//		logger.info("max mapping size: " + MAX_MAPPING_SIZE);
 		
 		int size = 0;
 		for (Node node : model.getGraph().vertexSet()) {
@@ -403,6 +403,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 //					logger.warn("the mappings does not include the target node " + target.getId());
 					continue;
 				}
+				
 				String id = LinkIdFactory.getLinkId(e.getUri(), n1.getId(), n2.getId());
 				LabeledLink l = this.graphBuilder.getIdToLinkMap().get(id);
 				if (l != null) {
@@ -410,6 +411,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 //					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
 //					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT / (double) (numOfPatterns + 1) );
 					if (n2 instanceof InternalNode)
+//						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT / (double) (numOfPatterns + 1) );
 						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT - (0.00001 * numOfPatterns) );
 					else
 						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
@@ -424,6 +426,8 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			    		logger.error("cannot instanciate a link from the type: " + e.getType().toString());
 			    		continue;
 					}
+					if (link.getModelIds() != null)
+						link.getModelIds().clear();
 					link.getModelIds().add(indexedModelId);
 					if (!this.graphBuilder.addLink(n1, n2, link, ModelingParams.PATTERN_LINK_WEIGHT)) continue;
 

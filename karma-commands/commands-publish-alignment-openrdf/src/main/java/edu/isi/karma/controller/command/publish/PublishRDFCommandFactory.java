@@ -52,7 +52,9 @@ public class PublishRDFCommandFactory extends CommandFactory {
 		String rdfPrefix =  worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.prefix);
 		String rdfNamespace = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.baseURI);
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		PublishRDFCommand comm = new PublishRDFCommand(getNewId(workspace), worksheetId,
+		PublishRDFCommand comm = new PublishRDFCommand(getNewId(workspace), 
+				Command.NEW_MODEL,
+				worksheetId,
 				contextParameters
 				.getParameterValue(ContextParameter.PUBLIC_RDF_ADDRESS),
 				rdfPrefix, rdfNamespace, addInverseProperties,

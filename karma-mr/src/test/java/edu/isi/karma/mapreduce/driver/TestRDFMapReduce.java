@@ -16,9 +16,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 public abstract class TestRDFMapReduce {
-	MapDriver<Text, Text, Text, Text> mapDriver;
+	MapDriver<Writable, Text, Text, Text> mapDriver;
 	ReduceDriver<Text, Text, Text, Text> reduceDriver;
-	MapReduceDriver<Text, Text, Text, Text, Text, Text> mapReduceDriver;
+	MapReduceDriver<Writable, Text, Text, Text, Text, Text> mapReduceDriver;
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}

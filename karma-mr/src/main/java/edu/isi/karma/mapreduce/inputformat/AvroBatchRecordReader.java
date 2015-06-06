@@ -46,7 +46,7 @@ public class AvroBatchRecordReader<T> extends AvroRecordReaderBase<Text, Text, T
 	public synchronized boolean nextKeyValue() throws IOException, InterruptedException {
 		data.clear();
 		int i = 0;
-		while (super.nextKeyValue()) {	
+		while (super.nextKeyValue()) { 
 			T tmp = getCurrentRecord();
 			data.add(new JSONObject(tmp.toString()));
 			i++;
