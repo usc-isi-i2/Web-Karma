@@ -112,7 +112,9 @@ var D3ModelManager = (function() {
 				layout.generateLayoutForJson(alignJson);
 			} catch(err) {
 				console.log("Got exception in D3ModelLayout:" + err.message);
+				console.log(err.stack);
 				//Try again generating a new D3Layout
+				$(layoutElement).empty();
 				layout = getModelManager(worksheetId, layoutElement, "col-sm-10", w, true);
 				console.log(JSON.stringify(alignJson));
 				layout.generateLayoutForJson(alignJson);
