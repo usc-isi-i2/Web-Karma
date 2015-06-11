@@ -178,7 +178,7 @@ public class ModelLearner_KnownModels {
 
 		
 		logger.info("computing steiner trees ...");
-		int number = 1;
+		int number = 0;
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
 			if (sn == null) continue;
 			logger.info("computing steiner tree for steiner nodes set " + number + " ...");
@@ -223,7 +223,7 @@ public class ModelLearner_KnownModels {
 //					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
-			if (number == ModelingConfiguration.getNumCandidateMappings())
+			if (number >= ModelingConfiguration.getNumCandidateMappings())
 				break;
 
 		}
@@ -743,6 +743,7 @@ public class ModelLearner_KnownModels {
 					attributeCount + "\t" + 
 					nodeCount + "\t" + 
 					linkCount + "\t" + 
+					(linkCount - attributeCount) + "\t" +
 					classNodeCount + "\t" + 
 					datanodeCount + "\t" + 
 					numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + 
@@ -794,16 +795,16 @@ public class ModelLearner_KnownModels {
 		ModelLearner_KnownModels modelLearner;
 
 		boolean iterativeEvaluation = false;
-		boolean useCorrectType = true;
+		boolean useCorrectType = false;
 		boolean randomModel = false;
 
-		int numberOfCandidates = 1;
+		int numberOfCandidates = 4;
 		int numberOfKnownModels;
 		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = ""; 
 		filename += "results";
 		filename += useCorrectType ? "-correct types":"-k=" + numberOfCandidates;
-		filename += randomModel ? "-random":"";
+		filename += randomModel ? "-ontology":"";
 		filename += iterativeEvaluation ? "-iterative":"";
 		filename += ".csv"; 
 		
@@ -825,7 +826,7 @@ public class ModelLearner_KnownModels {
 
 		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 0; {
+//		int i = 1; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -892,7 +893,7 @@ public class ModelLearner_KnownModels {
 					logger.info("building the graph ...");
 					for (SemanticModel sm : trainingData)
 //						modelLearningGraph.addModel(sm);
-						modelLearningGraph.addModelAndUpdate(sm);
+						modelLearningGraph.addModelAndUpdate(sm, false);
 					modelLearner.graphBuilder = modelLearningGraph.getGraphBuilder();
 					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					// save graph to file

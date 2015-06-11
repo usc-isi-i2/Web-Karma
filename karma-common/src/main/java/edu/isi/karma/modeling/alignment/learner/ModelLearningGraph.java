@@ -164,7 +164,7 @@ public abstract class ModelLearningGraph {
 					try {
 						SemanticModel model = SemanticModel.readJson(f.getAbsolutePath());
 						if (model != null) {
-							temp = this.addModel(model);
+							temp = this.addModel(model, false);
 							if (temp != null) addedNodes.addAll(temp);
 						}
 					} catch (Exception e) {
@@ -208,28 +208,28 @@ public abstract class ModelLearningGraph {
 		}
 	}
 	
-	public abstract Set<InternalNode> addModel(SemanticModel model);
-	
-	public void addModelAndUpdate(SemanticModel model) {
-		this.addModel(model);
-		if (ModelingConfiguration.getAddOntologyPaths())
-			this.updateGraphUsingOntology(model);
+	public abstract Set<InternalNode> addModel(SemanticModel model, boolean useOriginalWeights);
+
+	public void addModelAndUpdate(SemanticModel model, boolean useOriginalWeights) {
+		this.addModel(model, useOriginalWeights);
+		this.updateGraphUsingOntology(model);
 	}
 	
-	public void addModelAndUpdateAndExport(SemanticModel model) {
-		this.addModel(model);
-		if (ModelingConfiguration.getAddOntologyPaths())
-			this.updateGraphUsingOntology(model);
+	public void addModelAndUpdateAndExport(SemanticModel model, boolean useOriginalWeights) {
+		this.addModel(model, useOriginalWeights);
+		this.updateGraphUsingOntology(model);
 		this.exportJson();
 		this.exportGraphviz();
 	}
 	
 	private void updateGraphUsingOntology(SemanticModel model) {
-		this.graphBuilder.addClosureAndUpdateLinks(model.getInternalNodes(), null);
+		if (ModelingConfiguration.getAddOntologyPaths())
+			this.graphBuilder.addClosureAndUpdateLinks(model.getInternalNodes(), null);
 	}
 	
 	public void updateGraphUsingOntology(Set<InternalNode> nodes) {
-		this.graphBuilder.addClosureAndUpdateLinks(nodes, null);
+		if (ModelingConfiguration.getAddOntologyPaths())
+			this.graphBuilder.addClosureAndUpdateLinks(nodes, null);
 	}
 	
 }

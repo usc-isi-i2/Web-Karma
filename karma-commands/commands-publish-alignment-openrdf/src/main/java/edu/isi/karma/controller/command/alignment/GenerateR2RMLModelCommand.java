@@ -280,7 +280,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 		if (ModelingConfiguration.isLearnerEnabled())
 			ModelLearningGraph.getInstance(workspace.getOntologyManager(), ModelLearningGraphType.Compact).
-			addModelAndUpdateAndExport(semanticModel);
+			addModelAndUpdateAndExport(semanticModel, false);
 
 		// *****************************************************************************************
 		// *****************************************************************************************
