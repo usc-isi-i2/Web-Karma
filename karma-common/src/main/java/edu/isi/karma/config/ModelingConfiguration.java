@@ -25,8 +25,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -148,12 +150,64 @@ public class ModelingConfiguration {
 		try {
 			Properties modelingProperties = loadParams();
 
-//			manualAlignment = Boolean.parseBoolean(modelingProperties.getProperty("manual.alignment", "false"));
+			File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
 
-			ontologyAlignment = Boolean.parseBoolean(modelingProperties.getProperty("ontology.alignment", "false"));
+//			ontologyAlignment = Boolean.parseBoolean(modelingProperties.getProperty("ontology.alignment", "false"));
 
-			knownModelsAlignment = Boolean.parseBoolean(modelingProperties.getProperty("knownmodels.alignment", "false"));
+			String ontologyAlignmentStr = modelingProperties.getProperty("ontology.alignment");
+			if(ontologyAlignmentStr != null)
+				ontologyAlignment = Boolean.parseBoolean(ontologyAlignmentStr);
+			else {
+				//need to add this property to the end
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+				ontologyAlignment = false;
+				out.println();
+				out.println("ontology.alignment=false");
+				out.close();
+			}
+			
+//			knownModelsAlignment = Boolean.parseBoolean(modelingProperties.getProperty("knownmodels.alignment", "false"));
+			
+			String knownModelsAlignmentStr = modelingProperties.getProperty("knownmodels.alignment");
+			if(knownModelsAlignmentStr != null)
+				knownModelsAlignment = Boolean.parseBoolean(knownModelsAlignmentStr);
+			else {
+				//need to add this property to the end
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+				knownModelsAlignment = true;
+				out.println();
+				out.println("knownmodels.alignment=true");
+				out.close();
+			}
+			
+//			learnerEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learner.enabled", "true"));
+			
+			String learnerEnabledStr = modelingProperties.getProperty("learner.enabled");
+			if(learnerEnabledStr != null)
+				learnerEnabled = Boolean.parseBoolean(learnerEnabledStr);
+			else {
+				//need to add this property to the end
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+				learnerEnabled = true;
+				out.println();
+				out.println("learner.enabled=true");
+				out.close();
+			}
 
+//			addOntologyPaths = Boolean.parseBoolean(modelingProperties.getProperty("add.ontology.paths", "true"));
+
+			String addOntologyPathsStr = modelingProperties.getProperty("add.ontology.paths");
+			if(addOntologyPathsStr != null)
+				addOntologyPaths = Boolean.parseBoolean(addOntologyPathsStr);
+			else {
+				//need to add this property to the end
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+				addOntologyPaths = true;
+				out.println();
+				out.println("add.ontology.paths=true");
+				out.close();
+			}
+			
 			thingNode = Boolean.parseBoolean(modelingProperties.getProperty("thing.node", "false"));
 
 			nodeClosure = Boolean.parseBoolean(modelingProperties.getProperty("node.closure", "true"));
@@ -172,12 +226,6 @@ public class ModelingConfiguration {
 
 			karmaSourcePrefix = modelingProperties.getProperty("karma.source.prefix", "http://isi.edu/integration/karma/sources/");
 			karmaServicePrefix = modelingProperties.getProperty("karma.service.prefix", "http://isi.edu/integration/karma/services/");
-
-			learnerEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learner.enabled", "true"));
-
-			addOntologyPaths = Boolean.parseBoolean(modelingProperties.getProperty("add.ontology.paths", "true"));
-
-//			learnAlignmentEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learn.alignment.enabled", "false"));
 
 			mappingBranchingFactor = Integer.parseInt(modelingProperties.getProperty("mapping.branching.factor", "10"));
 
