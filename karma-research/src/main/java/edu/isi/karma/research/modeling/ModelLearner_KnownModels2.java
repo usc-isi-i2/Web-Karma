@@ -152,7 +152,9 @@ public class ModelLearner_KnownModels2 {
 		Set<Node> sn = new HashSet<Node>(steinerNodes);
 		List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
 		if (this.graphBuilder instanceof GraphBuilderTopK) {
-			topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getTopKSteinerTree(), false);
+			topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, 
+					ModelingConfiguration.getTopKSteinerTree(), 
+					null, null, false);
 		} 
 		else 
 		{

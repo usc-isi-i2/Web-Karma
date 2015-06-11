@@ -99,7 +99,7 @@ public class TestTopK {
 		
 //		STARfromMM N = new STARfromMM(terminals);
 //		BANKSIIfromMM N = new BANKSIIfromMM(terminals);
-		BANKSfromMM N = new BANKSfromMM(terminals);
+		BANKSfromMM N = new BANKSfromMM(terminals, null, null);
 //		DNHfromMM N = new DNHfromMM(terminals);
 //		DPBFfromMM N = new DPBFfromMM(terminals);
 		N.graph = graph;
