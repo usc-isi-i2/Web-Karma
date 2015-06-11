@@ -308,9 +308,13 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 //			c.add(new TagsUpdate());
 //		}
 		
+		//new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
+		
+		
 		if(trainAndShowUpdates) {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		} 
+		
 		
 		c.append(this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
