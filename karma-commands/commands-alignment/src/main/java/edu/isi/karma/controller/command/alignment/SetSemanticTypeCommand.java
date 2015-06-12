@@ -250,10 +250,11 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
 						}						
 					}
-				} else { // Synonym semantic type
-					SemanticType synType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0);
-					typesList.add(synType);
-				}
+				} 
+//				else { // Synonym semantic type
+//					SemanticType synType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0);
+//					typesList.add(synType);
+//				}
 				
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0);
