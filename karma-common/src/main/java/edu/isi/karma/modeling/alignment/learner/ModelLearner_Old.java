@@ -670,7 +670,7 @@ public class ModelLearner_Old {
 
 	public static void test() throws Exception {
 		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
-		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getKarmaHome());
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getId());
 
 		//		String inputPath = Params.INPUT_DIR;
 		String outputPath = Params.OUTPUT_DIR;

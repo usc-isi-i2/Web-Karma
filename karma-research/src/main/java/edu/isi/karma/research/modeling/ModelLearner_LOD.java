@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphBuilderTopK;
 import edu.isi.karma.modeling.alignment.GraphUtil;
@@ -74,8 +75,8 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.util.RandomGUID;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ModelLearner_LOD {
 
@@ -171,7 +172,7 @@ public class ModelLearner_LOD {
 
 		logger.info("graph nodes: " + this.graphBuilder.getGraph().vertexSet().size());
 		logger.info("graph links: " + this.graphBuilder.getGraph().edgeSet().size());
-
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ontologyManager.getContextId());
 		List<SortableSemanticModel> sortableSemanticModels = new ArrayList<SortableSemanticModel>();
 		Set<Node> addedNodes = new HashSet<Node>(); //They should be deleted from the graph after computing the semantic models
 
@@ -223,7 +224,7 @@ public class ModelLearner_LOD {
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
 			if (this.graphBuilder instanceof GraphBuilderTopK) // which is not in ModelLearner_LOD
 				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, 
-						ModelingConfiguration.getTopKSteinerTree(), 
+						modelingConfiguration.getTopKSteinerTree(), 
 						50, 1, true);
 			else 
 			{
@@ -256,7 +257,7 @@ public class ModelLearner_LOD {
 //					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
-			if (number >= ModelingConfiguration.getNumCandidateMappings())
+			if (number >= modelingConfiguration.getNumCandidateMappings())
 				break;
 
 		}
@@ -328,7 +329,7 @@ public class ModelLearner_LOD {
 			return null;
 
 		int maxNumberOfSteinerNodes = steinerNodes.size() * 2;
-		CandidateSteinerSets candidateSteinerSets = new CandidateSteinerSets(maxNumberOfSteinerNodes);
+		CandidateSteinerSets candidateSteinerSets = new CandidateSteinerSets(maxNumberOfSteinerNodes, ontologyManager.getContextId());
 
 		if (addedNodes == null) 
 			addedNodes = new HashSet<Node>();
@@ -469,7 +470,7 @@ public class ModelLearner_LOD {
 			HashMap<String, Integer> semanticTypesCount, Set<Node> addedNodes) {
 
 		logger.debug("finding matches for semantic type in the graph ... ");
-
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ontologyManager.getContextId());
 		if (addedNodes == null)
 			addedNodes = new HashSet<Node>();
 
@@ -531,7 +532,7 @@ public class ModelLearner_LOD {
 		logger.debug("adding data property to the found internal nodes ...");
 
 		Integer count;
-		boolean allowMultipleSamePropertiesPerNode = ModelingConfiguration.isMultipleSamePropertyPerNode();
+		boolean allowMultipleSamePropertiesPerNode = modelingConfiguration.isMultipleSamePropertyPerNode();
 		Set<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(domainUri);
 		if (nodesWithSameUriOfDomain != null) { 
 			for (Node source : nodesWithSameUriOfDomain) {
@@ -794,9 +795,8 @@ public class ModelLearner_LOD {
 	
 	public static void main(String[] args) throws Exception {
 
-		ServletContextParameterMap.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
-
-		OntologyManager ontologyManager = new OntologyManager();
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		OntologyManager ontologyManager = new OntologyManager(contextParameters.getId());
 		File ff = new File(Params.ONTOLOGY_DIR);
 		File[] files = ff.listFiles();
 		if (files == null) {

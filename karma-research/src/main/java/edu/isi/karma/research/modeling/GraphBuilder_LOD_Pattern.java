@@ -9,6 +9,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.GraphVizLabelType;
@@ -20,6 +22,7 @@ import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphType;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -27,10 +30,11 @@ public class GraphBuilder_LOD_Pattern {
 
 	private static Logger logger = LoggerFactory.getLogger(GraphBuilder_LOD_Pattern.class);
 	ModelLearningGraph modelLearningGraph;
-
+	OntologyManager ontologyManger;
 
 	public GraphBuilder_LOD_Pattern(OntologyManager ontologyManager, String patternsDir) {
 		
+		this.ontologyManger = ontologyManager;
 		modelLearningGraph = (ModelLearningGraphCompact)
 				ModelLearningGraph.getEmptyInstance(ontologyManager, ModelLearningGraphType.Compact);
 		
@@ -122,9 +126,9 @@ public class GraphBuilder_LOD_Pattern {
 	
 	public static void main(String[] args) throws Exception {
 
-		ServletContextParameterMap.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
-
-		OntologyManager ontologyManager = new OntologyManager();
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		
+		OntologyManager ontologyManager = new OntologyManager(contextParameters.getId());
 		File ff = new File(Params.ONTOLOGY_DIR);
 		File[] files = ff.listFiles();
 		if (files == null) {
