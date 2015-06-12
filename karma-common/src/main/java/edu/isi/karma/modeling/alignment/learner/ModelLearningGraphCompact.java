@@ -330,7 +330,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 	}
 	
 	@Override
-	public Set<InternalNode> addModel(SemanticModel model) {
+	public Set<InternalNode> addModel(SemanticModel model, boolean useOriginalWeights) {
 				
 		// adding the patterns to the graph
 		
@@ -410,11 +410,18 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 					int numOfPatterns = l.getModelIds().size();
 //					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
 //					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT / (double) (numOfPatterns + 1) );
-					if (n2 instanceof InternalNode)
-//						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT / (double) (numOfPatterns + 1) );
-						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT - (0.00001 * numOfPatterns) );
-					else
-						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
+					if (useOriginalWeights) {
+						double currentW = l.getWeight();
+						double newW = model.getGraph().getEdgeWeight(e);
+						if (newW < currentW)
+							this.graphBuilder.changeLinkWeight(l, newW);
+					} else {
+						if (n2 instanceof InternalNode)
+	//						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT / (double) (numOfPatterns + 1) );
+							this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT - (0.00001 * numOfPatterns) );
+						else
+							this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
+					}
 					l.getModelIds().add(indexedModelId);
 					n1.getModelIds().add(indexedModelId);
 					n2.getModelIds().add(indexedModelId);
@@ -429,7 +436,12 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 					if (link.getModelIds() != null)
 						link.getModelIds().clear();
 					link.getModelIds().add(indexedModelId);
-					if (!this.graphBuilder.addLink(n1, n2, link, ModelingParams.PATTERN_LINK_WEIGHT)) continue;
+
+					if (useOriginalWeights) {
+						if (!this.graphBuilder.addLink(n1, n2, link, model.getGraph().getEdgeWeight(e))) continue;
+					} else {
+						if (!this.graphBuilder.addLink(n1, n2, link, ModelingParams.PATTERN_LINK_WEIGHT)) continue;
+					}
 
 					n1.getModelIds().add(indexedModelId);
 					n2.getModelIds().add(indexedModelId);
@@ -469,7 +481,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			i++;
 			if (i == 4) continue;
 			System.out.println(sm.getId());
-			temp = ml.addModel(sm);
+			temp = ml.addModel(sm, false);
 			if (temp != null) addedNodes.addAll(temp);
 		}
 		

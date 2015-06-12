@@ -26,7 +26,7 @@ public class BANKSIIfromMM extends BANKSfromMM {
 	
 	
 	public BANKSIIfromMM(TreeSet<SteinerNode> terminals, String contextId) throws Exception {
-		super(terminals, contextId);
+		super(terminals, null, null, contextId);
 	}
 	
 	

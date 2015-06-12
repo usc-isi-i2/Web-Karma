@@ -12,17 +12,25 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.TreeSet;
 
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.config.ModelingConfigurationRegistry;
 
 public class BANKSfromMM extends TopKSteinertrees {
 	
+//	private static Logger logger = LoggerFactory.getLogger(BANKSfromMM.class);
+
 	private int iteratorCounter=0;
 	
 	private HashMap<SteinerNode,SteinerNode> recurseNodeMap;
 	private List<HashMap<SteinerNode,SteinerNode>> shortestNodeIndex;
 	private List<HashMap<SteinerNode,SortedSteinerNodes>> duplicateIndex;
 	private String contextId;
+	private Integer recursiveLevel;
+	private Integer maxPermutations;
+
 	public BANKSfromMM(String contextId) {
 		super();
 		this.contextId = contextId;
@@ -70,9 +78,13 @@ public class BANKSfromMM extends TopKSteinertrees {
 	 */
 	protected Queue<BANKSIterator> banksIterators;
 	
-	public BANKSfromMM(TreeSet<SteinerNode> terminals, String contextId) throws Exception {
+
+	public BANKSfromMM(TreeSet<SteinerNode> terminals, Integer recursiveLevel, Integer maxPermutations, String contextId) throws Exception {
 		super(terminals);
 		this.contextId = contextId;
+		this.recursiveLevel = recursiveLevel;
+		this.maxPermutations = maxPermutations;
+		
 		banksIterators=new PriorityQueue<BANKSIterator>(terminals.size(), new Comparator<BANKSIterator>(){
 			public int compare(BANKSIterator it1, BANKSIterator it2){
 				if(it1.distanceToSource>it2.distanceToSource) return 1;
@@ -144,11 +156,14 @@ public class BANKSfromMM extends TopKSteinertrees {
 		mainQueueMap.put(queueId, ancestor);
 		searchNodeInQueues.add(mainQueueMap);
 
-		int max = 3;
-
-		if (duplicateIndex.size() <= 15) max = 3;
-		else if (duplicateIndex.size() > 15 && duplicateIndex.size() < 30) max = 2;
-		else max = 1;
+		int max;
+		if (this.maxPermutations == null) {
+			if (duplicateIndex.size() <= 15) max = 3;
+			else if (duplicateIndex.size() > 15 && duplicateIndex.size() < 30) max = 2;
+			else max = 1;
+		} else {
+			max = this.maxPermutations.intValue();
+		}
 		
 		List<HashMap<Integer, SteinerNode>> permutations = 
 				getPermutation(searchNodeInQueues, processedNodes, searchNode, 0, max, queueId);
@@ -256,6 +271,13 @@ public class BANKSfromMM extends TopKSteinertrees {
 		
 		//counting computed results
 		int count=0;
+		int maxRecurseCount;
+		if (this.recursiveLevel == null)
+			maxRecurseCount = 10;
+		else
+			maxRecurseCount = this.recursiveLevel.intValue();
+		
+		boolean debug = false;
 		
 		//nodes polled from queues
 		List<Map<String, SteinerNode>> processedNodes= 
@@ -266,7 +288,6 @@ public class BANKSfromMM extends TopKSteinertrees {
 		
 		List<HashMap<String, Integer>> recursesForNodesInQueue = 
 				new ArrayList<HashMap<String, Integer>>();
-		int maxRecurseCount = 10;
 		
 		//mark nodes in the iterators as visited
 		int j=0;
@@ -311,7 +332,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 				
 					//mark n as processed
 					processedNodes.get(queue.id).put(n.name(), n);
-//					System.out.println("poll" + queue.id + ":" + queue.distanceToSource + "-->" + n.name);
+					if (debug) System.out.println("*** poll" + queue.id + ":" + queue.distanceToSource + "-->" + n.name);
 					
 					replacedNode = n;
 					if (this.recurseNodeMap.containsKey(n)) {
@@ -322,9 +343,9 @@ public class BANKSfromMM extends TopKSteinertrees {
 
 					int numOfaddedTrees=isCommonAncestor(n, processedNodes, processedNodesHelper, queue.id);
 					count += numOfaddedTrees;
-//					if (numOfaddedTrees > 0) {
-//						System.out.println("new:" + numOfaddedTrees + ", total:" + count);
-//					}
+					if (debug && numOfaddedTrees > 0) {
+						System.out.println("==========================  new:" + numOfaddedTrees + ", total:" + count);
+					}
 					
 					if (count>k) break;
 					
@@ -395,7 +416,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 							queue.banksIterator.add(newNode);		
 							recurseNodeMap.put(newNode, v);
 							visitedNodes.get(queue.id).put(newNode.name(), newNode);
-//							System.out.println("offer" + queue.id + ":" + newNode.distancesToSources[0] + "-->" + newNode.name);
+							if (debug) System.out.println("\t offer" + queue.id + ":" + newNode.distancesToSources[0] + "-->" + newNode.name);
 
 							if(newNode.distancesToSources[0] < shortestNodeIndex.get(queue.id).get(v).distancesToSources[0])
 								shortestNodeIndex.get(queue.id).put(v, newNode);
@@ -417,7 +438,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 								duplicateIndex.get(queue.id).put(newNode,sortedNodes);
 							}
 							sortedNodes.set.add(newNode);
-//							System.out.println("offer" + queue.id + ":" + newNode.distancesToSources[0] + "-->" + newNode.name);
+							if (debug) System.out.println("\t offer" + queue.id + ":" + newNode.distancesToSources[0] + "-->" + newNode.name);
 						}	
 	
 //						if(isCommonAncestor(newNode)){
