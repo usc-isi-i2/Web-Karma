@@ -80,11 +80,19 @@ public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
 				}
 				
 				SemanticTypeColumnModel model = new SemanticTypeUtil().predictColumnSemanticType(workspace, worksheet, currentColumnPath, 4, selection);
-				if(model != null) {
-					OntologyManager ontMgr = workspace.getOntologyManager();
-					Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
-					ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+				OntologyManager ontMgr = workspace.getOntologyManager();
+				Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
+				ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+				if (columnNode.getLearnedSemanticTypes() == null) {
+					// do this only one time: if user assigns a semantic type to the column, 
+					// and later clicks on Set Semantic Type button, we should not change the initially learned types 
+					logger.debug("adding learned semantic types to the column " + hNodeId);
 					columnNode.setLearnedSemanticTypes(getSuggestedTypes(ontMgr, model));
+					if (columnNode.getLearnedSemanticTypes().isEmpty()) {
+						logger.info("no semantic type learned for the column " + hNodeId);
+					}
+				}
+				if(model != null) {
 					JSONObject json = model.getAsJSONObject(ontMgr, alignment);
 					pw.print(json.toString());
 				}
