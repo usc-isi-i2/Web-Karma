@@ -52,8 +52,8 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import edu.isi.karma.controller.command.selection.SuperSelection;
-import edu.isi.karma.controller.command.selection.SuperSelectionManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+//import edu.isi.karma.controller.command.selection.SuperSelectionManager;
+//import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
@@ -77,7 +77,7 @@ public class SemanticModel {
 	protected final static int maxPathLengthForEvaluation = 2;
 	protected Workspace workspace;
 	protected Worksheet worksheet;
-	private SuperSelection selection;
+//	private SuperSelection selection;
 	
 	public SemanticModel(String id,
 			DirectedWeightedMultigraph<Node, LabeledLink> graph, boolean suggestSemanticTypes) {
@@ -96,8 +96,8 @@ public class SemanticModel {
 
 		this.id = id;
 		this.graph = graph;
-		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
-		this.setLearnedTypesForColumnNodes();
+//		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
+//		this.setLearnedTypesForColumnNodes();
 		this.setUserTypesForColumnNodes();
 
 		this.sourceColumns = this.getColumnNodes();
@@ -114,8 +114,8 @@ public class SemanticModel {
 		this.worksheet = worksheet;
 		this.id = id;
 		this.graph = graph;
-		this.selection = sel;
-		this.setLearnedTypesForColumnNodes();
+//		this.selection = sel;
+//		this.setLearnedTypesForColumnNodes();
 		this.setUserTypesForColumnNodes();
 
 		this.sourceColumns = this.getColumnNodes();
@@ -132,7 +132,7 @@ public class SemanticModel {
 		this.id = id;
 		this.graph = graph;
 		this.sourceColumns = sourceColumns;
-		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
+//		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
 		this.mappingToSourceColumns = mappingToSourceColumns;
 	}
 	
@@ -143,7 +143,7 @@ public class SemanticModel {
 		this.graph = semanticModel.getGraph();
 		this.sourceColumns = semanticModel.getSourceColumns();
 		this.mappingToSourceColumns = semanticModel.getMappingToSourceColumns();
-		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
+//		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
 	}
 	
 	public String getId() {
@@ -198,22 +198,22 @@ public class SemanticModel {
 		return columnNodes;
 	}
 
-	private void setLearnedTypesForColumnNodes() {
-		
-		if (this.graph == null)
-			return;
-		
-		for (Node n : this.graph.vertexSet()) {
-			
-			if (!(n instanceof ColumnNode)) continue;
-			
-			ColumnNode cn = (ColumnNode)n;
-						
-			List<SemanticType> learnedSemanticTypes = 
-					new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4, selection);
-			cn.setLearnedSemanticTypes(learnedSemanticTypes);
-		}
-	}
+//	private void setLearnedTypesForColumnNodes() {
+//		
+//		if (this.graph == null)
+//			return;
+//		
+//		for (Node n : this.graph.vertexSet()) {
+//			
+//			if (!(n instanceof ColumnNode)) continue;
+//			
+//			ColumnNode cn = (ColumnNode)n;
+//						
+//			List<SemanticType> learnedSemanticTypes = 
+//					new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4, selection);
+//			cn.setLearnedSemanticTypes(learnedSemanticTypes);
+//		}
+//	}
 	
 	private void setUserTypesForColumnNodes() {
 		

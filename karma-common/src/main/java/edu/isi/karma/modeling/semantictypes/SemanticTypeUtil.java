@@ -234,7 +234,7 @@ public class SemanticTypeUtil {
 					Label propertyLabel = ontologyManager.getUriLabel(propertyUri);
 					if (propertyLabel == null) continue;
 	
-					SemanticType semanticType = new SemanticType(hNodeId, propertyLabel, domainLabel, Origin.CRFModel, confidence);
+					SemanticType semanticType = new SemanticType(hNodeId, propertyLabel, domainLabel, Origin.TfIdfModel, confidence);
 					logger.info("\t" + propertyUri + " of " + domainUri + ": " + confidence);
 					suggestedSemanticTypes.add(semanticType);
 				}

@@ -71,9 +71,19 @@ public class Indexer {
 		indexWriter.addDocument(doc);
 	}
 
-	public void updateDocument(IndexableField existingContent, String newContent, String label) throws IOException {
+	public void updateDocument(IndexableField[] existingContent, String newContent, String label) throws IOException {
+		/**
+		 * @patch applied
+		 * @author pranav and aditi
+		 * @date 12th June 2015
+		 * 
+		 * 
+		 */
+		
 		Document doc = new Document();
-		doc.add(existingContent);
+		for(IndexableField singleContent: existingContent){
+			doc.add(singleContent);
+		}
 		doc.add(new TextField(CONTENT_FIELD_NAME, newContent, Field.Store.YES));
 		doc.add(new StringField(LABEL_FIELD_NAME, label, Field.Store.YES));
 		indexWriter.updateDocument(new Term(LABEL_FIELD_NAME, label), doc);

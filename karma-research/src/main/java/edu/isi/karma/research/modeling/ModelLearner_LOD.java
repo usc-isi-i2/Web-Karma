@@ -224,7 +224,7 @@ public class ModelLearner_LOD {
 			if (this.graphBuilder instanceof GraphBuilderTopK) // which is not in ModelLearner_LOD
 				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, 
 						ModelingConfiguration.getTopKSteinerTree(), 
-						30, 1, true);
+						50, 1, true);
 			else 
 			{
 				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
@@ -433,8 +433,8 @@ public class ModelLearner_LOD {
 						semanticTypeMappings.addAll(tempSemanticTypeMappings);
 	
 					int countOfMatches = tempSemanticTypeMappings == null ? 0 : tempSemanticTypeMappings.size();
-					if (countOfMatches < countOfSemanticType) 
-//					if (countOfMatches == 0) // No struct in graph is matched with the semantic type, we add a new struct to the graph
+//					if (countOfMatches < countOfSemanticType) 
+					if (countOfMatches == 0) // No struct in graph is matched with the semantic type, we add a new struct to the graph
 					{
 						SemanticTypeMapping mp = addSemanticTypeStruct(cn, semanticType, addedNodes);
 						if (mp != null)
@@ -842,7 +842,7 @@ public class ModelLearner_LOD {
 
 //		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-		int i = 0; {
+		int i = 3; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -895,6 +895,11 @@ public class ModelLearner_LOD {
 
 			List<SortableSemanticModel> topHypotheses = null;
 			if (hypothesisList != null) {
+				
+				for (SortableSemanticModel sss : hypothesisList) {
+					ModelEvaluation mmm = sss.evaluate(correctModel);
+					System.out.println(mmm.getPrecision() + ", " + mmm.getRecall());
+				}
 				topHypotheses = hypothesisList.size() > 10 ? 
 						hypothesisList.subList(0, 10) : 
 							hypothesisList;

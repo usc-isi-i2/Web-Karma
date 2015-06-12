@@ -171,9 +171,10 @@ public class PatternReader {
 		}
 
 		// adding links
+		double w;
+		String key;
 		for (String header : headerMap.keySet()) {
 			String s = record.get(header);
-			String key;
 			Node source, target;
 			if (header.startsWith(OBJECT_PROPERTY_PREFIX)) {
 				key = header.substring(OBJECT_PROPERTY_PREFIX.length());
@@ -184,7 +185,10 @@ public class PatternReader {
 						LinkIdFactory.getLinkId(s, source.getId(), target.getId()), 
 						new Label(s), ObjectPropertyType.None);
 				graph.addEdge(source, target, link);
-				graph.setEdgeWeight(link, getWeight(size, frequency, totalFrequency));
+				w = getWeight(size, frequency, totalFrequency);
+				graph.setEdgeWeight(link, w);
+//				if (size == 3 && (target.getId().contains("E21_") || target.getId().contains("E39_")) && source.getId().contains("E12_"))
+//					System.out.println("pattern size: " + size + " , link: " + link.getId() + ", count: " + frequency + ", w:" + w);
 			} else if (header.startsWith(DATA_PROPERTY_PREFIX)) {
 				key = header.substring(DATA_PROPERTY_PREFIX.length());
 				if (key.length() != 2) continue; // the object property header should be in form of prefix (dp) + [1..9] + [a..z] --> the key is "xy"
@@ -194,7 +198,8 @@ public class PatternReader {
 						LinkIdFactory.getLinkId(s, source.getId(), target.getId()), 
 						new Label(s));
 				graph.addEdge(source, target, link);
-				graph.setEdgeWeight(link, getWeight(size, frequency, totalFrequency));
+				w = getWeight(size, frequency, totalFrequency);
+				graph.setEdgeWeight(link, w);
 			}
 		}
 
@@ -212,7 +217,7 @@ public class PatternReader {
 		initialWeight = initialWeight - ((double)patternSize - 2.0) / 10.0;
 		if (totalFrequency > 0) {
 			subtract = (double)frequency / (double)totalFrequency;
-			if (subtract > initialWeight) subtract = initialWeight - Double.MIN_VALUE;
+			if (subtract > initialWeight) subtract = 0.0000001; //initialWeight - Double.MIN_VALUE;
 		}
 		
 		w = initialWeight - subtract;
